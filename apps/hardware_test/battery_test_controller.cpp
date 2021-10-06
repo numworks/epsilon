@@ -7,6 +7,7 @@ extern "C" {
 #include <ion/post_and_hardware_tests.h>
 #include <poincare/print_float.h>
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -53,22 +54,12 @@ void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryC
   constexpr int sizeForPrecision = PrintFloat::charSizeForFloatsWithPrecision(precision);
   constexpr size_t bufferLevelSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;
   char bufferLevel[bufferLevelSize];
-  const char * legend = "Battery level: ";
-  int legendLength = strlcpy(bufferLevel, legend, bufferLevelSize);
-  PoincareHelpers::ConvertFloatToTextWithDisplayMode<float>(batteryLevel, bufferLevel+legendLength, sizeForPrecision, precision, Preferences::PrintFloatMode::Decimal);
+  Poincare::Print::customPrintf(bufferLevel, bufferLevelSize, "Battery level: %*.*ef", batteryLevel, Preferences::PrintFloatMode::Decimal, precision);
   m_view.batteryLevelTextView()->setText(bufferLevel);
 
   constexpr size_t bufferChargingSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;
   char bufferCharging[bufferChargingSize];
-  int numberOfChars = 0;
-  legend = "Battery charging: ";
-  numberOfChars += strlcpy(bufferCharging, legend, bufferChargingSize);
-  legend = "no";
-  if (batteryCharging) {
-    legend = "yes";
-  }
-  numberOfChars += strlcpy(bufferCharging+numberOfChars, legend, bufferChargingSize);
-  bufferCharging[numberOfChars] = 0;
+  Poincare::Print::customPrintf(bufferCharging, bufferChargingSize, "Battery charging: %s", batteryCharging ? "yes" : "no");
   m_view.batteryChargingTextView()->setText(bufferCharging);
 }
 

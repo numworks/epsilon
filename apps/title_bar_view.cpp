@@ -2,6 +2,7 @@
 #include "exam_icon.h"
 #include "global_preferences.h"
 #include <escher/palette.h>
+#include <poincare/print.h>
 extern "C" {
 #include <assert.h>
 }
@@ -86,32 +87,16 @@ void TitleBarView::layoutSubviews(bool force) {
 void TitleBarView::refreshPreferences() {
   constexpr size_t bufferSize = 13;
   char buffer[bufferSize];
-  int numberOfChar = 0;
   Preferences * preferences = Preferences::sharedPreferences();
-  {
-    // Display Sci/ or Eng/ if the print float mode is not decimal
-    const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
-    if (printFloatMode != Preferences::PrintFloatMode::Decimal) {
-      // Check that there is no new print float mode, otherwise add its message
-      assert(printFloatMode == Preferences::PrintFloatMode::Scientific
-          || printFloatMode == Preferences::PrintFloatMode::Engineering);
-      I18n::Message printMessage = printFloatMode == Preferences::PrintFloatMode::Scientific ? I18n::Message::Sci : I18n::Message::Eng;
-      numberOfChar += strlcpy(buffer, I18n::translate(printMessage), bufferSize);
-      assert(numberOfChar < bufferSize-1);
-      assert(UTF8Decoder::CharSizeOfCodePoint('/') == 1);
-      buffer[numberOfChar++] = '/';
-    }
-  }
-  assert(numberOfChar <= bufferSize);
-  {
-    // Display the angle unit
-    const Preferences::AngleUnit angleUnit = preferences->angleUnit();
-    I18n::Message angleMessage = angleUnit == Preferences::AngleUnit::Degree ?
-        I18n::Message::Deg :
-        (angleUnit == Preferences::AngleUnit::Radian ? I18n::Message::Rad : I18n::Message::Gon);
-    numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(angleMessage), bufferSize - numberOfChar);
-    assert(numberOfChar < bufferSize-1);
-  }
+  // Display Sci/ or Eng/ if the print float mode is not decimal
+  const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
+  I18n::Message floatModeMessage = printFloatMode == Preferences::PrintFloatMode::Decimal ? I18n::Message::Default : (printFloatMode == Preferences::PrintFloatMode::Scientific ? I18n::Message::Sci : I18n::Message::Eng);
+  // Display the angle unit
+  const Preferences::AngleUnit angleUnit = preferences->angleUnit();
+  I18n::Message angleMessage = angleUnit == Preferences::AngleUnit::Degree ?
+     I18n::Message::Deg :
+     (angleUnit == Preferences::AngleUnit::Radian ? I18n::Message::Rad : I18n::Message::Gon);
+  Poincare::Print::customPrintf(buffer, bufferSize, "%s%s", I18n::translate(floatModeMessage), I18n::translate(angleMessage));
   m_preferenceView.setText(buffer);
   // Layout the exam mode icon if needed
   layoutSubviews();

@@ -6,6 +6,7 @@
 #include <escher/stack_view_controller.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/print.h>
 #include <poincare/vertical_offset_layout.h>
 #include <shared/poincare_helpers.h>
 #include <string.h>
@@ -45,10 +46,10 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
 
 const char * Probability::HypothesisController::title() {
   I18n::Message format = titleFormatForTest(App::app()->test(), App::app()->testType());
-  snprintf(m_titleBuffer,
+  Poincare::Print::customPrintf(m_titleBuffer,
            sizeof(m_titleBuffer),
            I18n::translate(format),
-           I18n::translate(I18n::Message::Test));
+           I18n::translate(I18n::Message::Test), Poincare::Print::StringFormat::Decapitalized);
   return m_titleBuffer;
 }
 

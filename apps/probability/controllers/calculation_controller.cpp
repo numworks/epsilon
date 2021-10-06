@@ -3,6 +3,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 
 #include <algorithm>
 #include <cmath>
@@ -274,16 +275,10 @@ bool CalculationController::popupDidReceiveEvent(Ion::Events::Event event) {
 void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_distribution->numberOfParameter(); index++) {
-    constexpr int bufferSize = Constants::k_shortBufferSize;
-    char buffer[bufferSize];
-    defaultConvertFloatToText(m_distribution->parameterValueAtIndex(index), buffer, bufferSize);
-    currentChar += snprintf(m_titleBuffer + currentChar,
-                            k_titleBufferSize - currentChar,
-                            "%s = %s ",
-                            I18n::translate(m_distribution->parameterNameAtIndex(index)),
-                            buffer);
+    currentChar += Poincare::Print::customPrintf(m_titleBuffer + currentChar, k_titleBufferSize - currentChar, "%s = %*.*ed ",
+        I18n::translate(m_distribution->parameterNameAtIndex(index)),
+        m_distribution->parameterValueAtIndex(index), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   }
-  m_titleBuffer[currentChar] = '\0';  // Override last '\0'
 }
 
 }  // namespace Probability

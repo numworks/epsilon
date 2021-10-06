@@ -14,8 +14,14 @@ QUIZ_CASE(poincare_print_custom_print) {
   Poincare::Print::customPrintf(buffer, bufferSize, "Hello %c", 'A');
   assert_string_equality(buffer, "Hello A");
 
+  Poincare::Print::customPrintf(buffer, bufferSize, "%c bar %c", 'a', 'z');
+  assert_string_equality(buffer, "a bar z");
+
   Poincare::Print::customPrintf(buffer, bufferSize, "Hello %s", "NumWorks");
   assert_string_equality(buffer, "Hello NumWorks");
+
+  Poincare::Print::customPrintf(buffer, bufferSize, "%s bar %s", "foo", "baz");
+  assert_string_equality(buffer, "foo bar baz");
 
   Poincare::Print::customPrintf(buffer, bufferSize, "Hello %i", 123);
   assert_string_equality(buffer, "Hello 123");

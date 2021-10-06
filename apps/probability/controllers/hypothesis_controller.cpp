@@ -151,13 +151,7 @@ bool HypothesisController::buttonAction() {
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
-  strlcpy(buffer, symbolPrefix(), bufferSize);
-  int offset = strlen(symbolPrefix());
-  buffer[offset++] = '=';
-  assert(offset < bufferSize);
-  float p = m_statistic->hypothesisParams()->firstParam();
-  defaultConvertFloatToText(p, buffer + offset, bufferSize - offset);
-
+  Poincare::Print::customPrintf(buffer, bufferSize, "%s=%*.*ef", symbolPrefix(), m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   m_h0.setAccessoryText(buffer);
   m_ha.reload();
   resetMemoization();

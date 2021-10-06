@@ -1,6 +1,7 @@
 #include "homogeneity_data_source.h"
 
 #include <apps/i18n.h>
+#include <poincare/print.h>
 #include <string.h>
 
 using namespace Probability;
@@ -68,10 +69,6 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
   // Headers
   if (row == 0 || column == 0) {
     Escher::EvenOddBufferTextCell * myCell = static_cast<Escher::EvenOddBufferTextCell *>(cell);
-    constexpr int bufferSize = k_headerTranslationBuffer;
-    char txt[bufferSize];
-    strlcpy(txt, I18n::translate(m_headerPrefix), bufferSize);
-    int length = strlen(txt);
     char digit;
     if (row == 0) {
       assert(column - 1 <= '9' - '1');
@@ -80,10 +77,9 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
       assert(row - 1 <= 'Z' - 'A');
       digit = 'A' + (row - 1);
     }
-
-    txt[length] = digit;
-    assert(length + 1 < bufferSize);
-    txt[length + 1] = 0;
+    constexpr int bufferSize = k_headerTranslationBuffer;
+    char txt[bufferSize];
+    Poincare::Print::customPrintf(txt, bufferSize, "%s%c", I18n::translate(m_headerPrefix), digit);
     myCell->setText(txt);
     KDColor textColor = KDColorBlack;
     if ((row == 0 && column == numberOfColumns() - 1) ||

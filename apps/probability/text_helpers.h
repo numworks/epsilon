@@ -10,16 +10,10 @@
 
 namespace Probability {
 
-/* Fake snprintf, only supports %s or %c */
-int snprintf(char * buffer, size_t bufferSize, const char * format, ...);
-
 const char * testToText(Data::Test t);
 const char * testToTextSymbol(Data::Test t);
 const char * testTypeToText(Data::TestType t);
 I18n::Message titleFormatForTest(Data::Test test, Data::TestType type);
-
-void decapitalize(char * text);
-void capitalize(char * text);
 
 template <typename T>
 int defaultConvertFloatToText(T value, char buffer[], int bufferSize);

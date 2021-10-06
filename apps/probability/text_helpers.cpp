@@ -16,34 +16,6 @@ using namespace Poincare;
 
 namespace Probability {
 
-// TODO export to other apps
-int snprintf(char * buffer, size_t bufferSize, const char * format, ...) {
-  char * origin = buffer;
-  va_list args;
-  va_start(args, format);
-  while (*format != 0) {
-    if (*format == '%') {
-      if (*(format + 1) == 's') {
-        // Insert text now
-        buffer += strlcpy(buffer, va_arg(args, char *), bufferSize - (buffer - origin));
-      } else if (*(format + 1) == 'c') {
-        // Insert char
-        *buffer = static_cast<char>(va_arg(args, int));
-        buffer++;
-      }
-      format += 2;
-    } else {
-      *(buffer++) = *(format++);
-    }
-    if (buffer - origin >= (int)bufferSize - 1) {
-      assert(false);
-      break;
-    }
-  }
-  *buffer = '\0';
-  return buffer - origin;
-}
-
 const char * testToText(Data::Test t) {
   I18n::Message msg;
   switch (t) {
@@ -128,20 +100,6 @@ I18n::Message titleFormatForTest(Data::Test test, Data::TestType type) {
     default:
       assert(false);
       return I18n::Message::Default;
-  }
-}
-
-void decapitalize(char * text) {
-  constexpr static int jumpToLowerCase = 'a' - 'A';
-  if (text[0] >= 'A' && text[0] <= 'Z') {
-    text[0] += jumpToLowerCase;
-  }
-}
-
-void capitalize(char * text) {
-  constexpr static int jumpToUpperCase = 'A' - 'a';
-  if (text[0] >= 'a' && text[0] <= 'z') {
-    text[0] += jumpToUpperCase;
   }
 }
 

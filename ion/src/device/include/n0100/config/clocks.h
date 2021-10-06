@@ -34,17 +34,36 @@ constexpr static int AHBPrescaler = 1;
  * AHBPrescaler to be below 96MHz/14.2MHz~6.7. */
 constexpr static Regs::RCC::CFGR::AHBPrescaler AHBLowFrequencyPrescalerReg = Regs::RCC::CFGR::AHBPrescaler::SysClkDividedBy4;
 constexpr static int AHBLowFrequencyPrescaler = 4;
-constexpr static int HCLKFrequency = SYSCLKFrequency/AHBPrescaler;
-static_assert(HCLKFrequency == 96, "HCLK frequency changed!");
-constexpr static int HCLKLowFrequency = SYSCLKFrequency/AHBLowFrequencyPrescaler;
-constexpr static int AHBFrequency = HCLKFrequency;
-//constexpr static int AHBLowFrequency = HCLKLowFrequency;
 constexpr static Regs::RCC::CFGR::APBPrescaler APB1PrescalerRegs = Regs::RCC::CFGR::APBPrescaler::AHBDividedBy2;
 constexpr static int APB1Prescaler = 2;
-constexpr static int APB1Frequency = HCLKFrequency/APB1Prescaler;
-constexpr static int APB1LowFrequency = HCLKLowFrequency/APB1Prescaler;
-constexpr static int APB1TimerFrequency = 2*APB1Frequency;
-constexpr static int APB1TimerLowFrequency = 2*APB1LowFrequency;
+
+enum class ClockSource : uint8_t {
+  PLL,
+  PLL_Prescaled, // Prescaled by a factor of 8
+};
+
+static constexpr ClockSource SuspendClockSource = ClockSource::PLL_Prescaled;
+
+static constexpr float HCLK(ClockSource source) {
+  return SYSCLKFrequency / (source == ClockSource::PLL ? AHBPrescaler : AHBLowFrequencyPrescaler);
+}
+static_assert(HCLK(ClockSource::PLL) == 96, "HCLK frequency changed!");
+
+static constexpr float Systick(ClockSource source) {
+  return HCLK(source);
+}
+
+static constexpr float APB1(ClockSource source) {
+  return HCLK(source) / APB1Prescaler;
+}
+
+static constexpr float APB1Timer(ClockSource source) {
+  return APB1(source) * 2;
+}
+
+static constexpr float AHB(ClockSource source) {
+  return HCLK(source);
+}
 
 }
 }

@@ -19,7 +19,7 @@
  * the DFU code (namely, Ion::USB::Device::Calculator::Poll). We're simply
  * making sure this is the first symbol output. */
 
-INCLUDE shared_config_flash.ld
+INCLUDE config_sram.ld
 
 PROCESS_STACK_END = USERLAND_SRAM_ORIGIN + USERLAND_SRAM_LENGTH - USERLAND_STACK_LENGTH;
 

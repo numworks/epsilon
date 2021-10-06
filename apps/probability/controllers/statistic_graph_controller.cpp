@@ -1,6 +1,7 @@
 #include "statistic_graph_controller.h"
 
 #include <escher/clipboard.h>
+#include <poincare/print.h>
 
 #include "probability/app.h"
 #include "probability/constants.h"
@@ -22,20 +23,14 @@ ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {
 
 const char * StatisticGraphController::title() {
   if (App::app()->subapp() == Data::SubApp::Tests) {
-    char zBuffer[Constants::k_shortBufferSize];
-    char pBuffer[Constants::k_shortBufferSize];
-    defaultConvertFloatToText(m_statistic->testCriticalValue(), zBuffer, sizeof(zBuffer));
-    defaultConvertFloatToText(m_statistic->pValue(), pBuffer, sizeof(pBuffer));
     const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormat);
-    snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, zBuffer, pBuffer);
+    Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), format,
+        m_statistic->testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+        m_statistic->pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   } else {
-    const char * format = I18n::translate(
-        I18n::Message::StatisticGraphControllerIntervalTitleFormat);
-    char marginOfErrorBuffer[Constants::k_shortBufferSize];
-    defaultConvertFloatToText(m_statistic->marginOfError(),
-                              marginOfErrorBuffer,
-                              sizeof(marginOfErrorBuffer));
-    snprintf(m_titleBuffer, sizeof(m_titleBuffer), format, marginOfErrorBuffer);
+    const char * format = I18n::translate(I18n::Message::StatisticGraphControllerIntervalTitleFormat);
+    Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), format,
+        m_statistic->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   }
   return m_titleBuffer;
 }

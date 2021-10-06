@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
+#include <poincare/print.h>
 
 #include "hypothesis_controller.h"
 #include "probability/app.h"
@@ -107,10 +108,7 @@ const char * TypeController::title() {
   I18n::Message testOrInterval = App::app()->subapp() == Data::SubApp::Tests
                                      ? I18n::Message::Test
                                      : I18n::Message::Interval;
-  char buffer[30];
-  strlcpy(buffer, I18n::translate(testOrInterval), sizeof(buffer));
-  decapitalize(buffer);
-  snprintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(format), buffer);
+  Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(format), I18n::translate(testOrInterval), Poincare::Print::StringFormat::Decapitalized);
   return m_titleBuffer;
 }
 

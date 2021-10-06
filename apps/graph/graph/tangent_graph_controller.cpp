@@ -3,6 +3,7 @@
 #include "../../apps_container.h"
 #include "../../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -73,19 +74,14 @@ void TangentGraphController::reloadBannerView() {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
 
   int precision = numberOfSignificantDigits();
-  const char * legend = "a=";
-  int legendLength = strlcpy(buffer, legend, bufferSize);
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), context);
-  PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, bufferSize - legendLength, precision);
+  Poincare::Print::customPrintf(buffer, bufferSize, "a=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->aView()->setText(buffer);
 
-  legend = "b=";
-  legendLength = strlcpy(buffer, legend, bufferSize);
-  Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   assert(function->plotType() == Shared::ContinuousFunction::PlotType::Cartesian);
-  y = -y*m_cursor->x()+function->evaluate2DAtParameter(m_cursor->x(), myApp->localContext()).x2();
-  PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, bufferSize - legendLength, precision);
+  y = -y*m_cursor->x()+function->evaluate2DAtParameter(m_cursor->x(), context).x2();
+  Poincare::Print::customPrintf(buffer, bufferSize, "b=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();
 }

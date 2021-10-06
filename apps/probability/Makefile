@@ -129,7 +129,6 @@ tests_src += $(addprefix apps/probability/test/,\
   chi2_law.cpp \
   statistics.cpp \
   data.cpp \
-  snprintf.cpp \
 )
 
 # Allow #include "probability/..."

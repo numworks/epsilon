@@ -3,6 +3,7 @@
 #include "../shared/function_banner_delegate.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 #include <poincare/layout_helper.h>
 #include <cmath>
 #include <algorithm>
@@ -146,29 +147,20 @@ void GraphController::reloadBannerView() {
 
   // Set point equals: "P(...) ="
   const int significantDigits = Preferences::sharedPreferences()->numberOfSignificantDigits();
+  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
   constexpr size_t bufferSize = Shared::FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
-  int numberOfChar = 0;
-  const char * legend = "P(";
-  numberOfChar += strlcpy(buffer, legend, bufferSize);
-  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-    legend = I18n::translate(I18n::Message::MeanDot);
-    assert(numberOfChar <= bufferSize);
-    numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
-  } else if (*m_selectedDotIndex < 0) {
-    legend = I18n::translate(I18n::Message::Reg);
-    assert(numberOfChar <= bufferSize);
-    numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
+
+  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex) || *m_selectedDotIndex < 0) {
+    Poincare::Print::customPrintf(buffer, bufferSize, "P(%s)",
+      *m_selectedDotIndex < 0 ? I18n::translate(I18n::Message::Reg) : I18n::translate(I18n::Message::MeanDot));
   } else {
-    numberOfChar += PoincareHelpers::ConvertFloatToTextWithDisplayMode<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, significantDigits, Preferences::PrintFloatMode::Decimal);
+    Poincare::Print::customPrintf(buffer, bufferSize, "P(%i)", *m_selectedDotIndex + 1);
   }
-  legend = ")";
-  assert(numberOfChar <= bufferSize);
-  strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   m_bannerView.dotNameView()->setText(buffer);
 
   // Set "x=..." or "xmean=..."
-  legend = "x=";
+  const char * legend = "x=";
   double x = m_cursor->x();
   // Display a specific legend if the mean dot is selected
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
@@ -178,22 +170,18 @@ void GraphController::reloadBannerView() {
   }
   m_bannerView.abscissaSymbol()->setText(legend);
 
-  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, significantDigits);
-  buffer[numberOfChar++] = '\0';
+  buffer[PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, significantDigits)] = 0;
   m_bannerView.abscissaValue()->setText(buffer);
 
   // Set "y=..." or "ymean=..."
-  numberOfChar = 0;
-  legend = "y=";
+  legend = "y=%*.*ed";
   double y = m_cursor->y();
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     // \xCC\x85 represents the combining overline ' ̅'
-    legend = "y\xCC\x85=";
+    legend = "y\xCC\x85=%*.*ed";
     y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   }
-  numberOfChar += strlcpy(buffer, legend, bufferSize);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize - numberOfChar, significantDigits);
-  buffer[numberOfChar++] = '\0';
+  Poincare::Print::customPrintf(buffer, bufferSize, legend, y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 
   // Set formula
@@ -222,11 +210,7 @@ void GraphController::reloadBannerView() {
   }
   char coefficientName = 'a';
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
-    numberOfChar = 0;
-    char leg[] = {coefficientName, '=', 0};
-    legend = leg;
-    numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer + numberOfChar, bufferSize - numberOfChar, significantDigits);
+    Poincare::Print::customPrintf(buffer, bufferSize, "%c%*.*ed", coefficientName, coefficients[i], displayMode, significantDigits);
     m_bannerView.subTextAtIndex(i)->setText(buffer);
     coefficientName++;
   }
@@ -234,19 +218,13 @@ void GraphController::reloadBannerView() {
   if (modelType == Model::Type::Linear) {
     int index = model->numberOfCoefficients();
     // Set "r=..."
-    numberOfChar = 0;
-    legend = "r=";
     double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
-    numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer + numberOfChar, bufferSize - numberOfChar, significantDigits);
+    Poincare::Print::customPrintf(buffer, bufferSize, "r=%*.*ed", r, displayMode, significantDigits);
     m_bannerView.subTextAtIndex(0+index)->setText(buffer);
 
     // Set "r2=..."
-    numberOfChar = 0;
-    legend = "r2=";
     double r2 = m_store->determinationCoefficientForSeries(*m_selectedSeriesIndex, globalContext());
-    numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, significantDigits);
+    Poincare::Print::customPrintf(buffer, bufferSize, "r2=%*.*ed", r2, displayMode, significantDigits);
     m_bannerView.subTextAtIndex(1+index)->setText(buffer);
 
     // Clean the last subview

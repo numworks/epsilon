@@ -4,6 +4,7 @@
 #include <escher/input_event_handler_delegate.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
+#include <poincare/print.h>
 
 #include "probability/app.h"
 #include "probability/text_helpers.h"
@@ -40,22 +41,18 @@ ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
 
 const char * Probability::ResultsController::title() {
   if (App::app()->subapp() == Data::SubApp::Intervals) {
-    char confidenceBuffer[k_titleBufferSize];
-    defaultConvertFloatToText(m_statistic->threshold(), confidenceBuffer, k_titleBufferSize);
     const char * confidence = I18n::translate(I18n::Message::Confidence);
     if (App::app()->page() == Data::Page::Graph) {
       const char * estimateSymbol = m_statistic->estimateSymbol();
-      char estimateBuffer[k_titleBufferSize];
-      defaultConvertFloatToText(m_statistic->estimate(), estimateBuffer, k_titleBufferSize);
-      snprintf(m_titleBuffer,
-               sizeof(m_titleBuffer),
-               "%s=%s %s=%s",
-               estimateSymbol,
-               estimateBuffer,
-               confidence,
-               confidenceBuffer);
+      Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%*.*ef %s=%*.*ef",
+          estimateSymbol,
+          m_statistic->estimate(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          confidence,
+          m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     } else {
-      snprintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%s", confidence, confidenceBuffer);
+      Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%*.*ef",
+          confidence,
+          m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     }
     return m_titleBuffer;
   }

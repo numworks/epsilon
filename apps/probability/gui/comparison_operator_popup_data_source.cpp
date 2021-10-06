@@ -1,27 +1,19 @@
 #include "comparison_operator_popup_data_source.h"
-
+#include <poincare/print.h>
 #include "probability/app.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {
 
-void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell,
-                                                                int index) {
+void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   BufferTextHighlightCell * bufferCell = static_cast<BufferTextHighlightCell *>(cell);
-
-  constexpr int firstParamBufferSize = Constants::k_shortBufferSize;
-  char firstParamBuffer[firstParamBufferSize];
-  defaultConvertFloatToText(m_hypothesisParams->firstParam(), firstParamBuffer, firstParamBufferSize);
   const char * symbol = testToTextSymbol(App::app()->test());
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
-  snprintf(buffer,
-           bufferSize,
-           "%s%s%s",
-           symbol,
-           HypothesisParams::strForComparisonOp(
-               static_cast<HypothesisParams::ComparisonOperator>(index)),
-           firstParamBuffer);
+  Poincare::Print::customPrintf(buffer, bufferSize, "%s%s%*.*ef",
+      symbol,
+      HypothesisParams::strForComparisonOp(static_cast<HypothesisParams::ComparisonOperator>(index)),
+      m_hypothesisParams->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   bufferCell->setText(buffer);
 }
 

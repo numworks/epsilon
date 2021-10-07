@@ -62,7 +62,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
   if (model()->childAtIndex(selectedRow())->numberOfChildren() == 0) {
     if (model()->childAtIndex(selectedRow())->label() == promptMessage()) {
-      if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+      if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
         globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
         return true;

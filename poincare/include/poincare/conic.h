@@ -16,8 +16,6 @@ public:
     Undefined,
     Unknown,
   };
-  // Default constructor
-  Conic();
   // Extract A,B,C,D,E,F parameters
   Conic(const Expression e, Context * context, const char * x = "x", const char * y = "y");
   // Return conic type from parameters
@@ -41,19 +39,23 @@ public:
 
 private:
   // Thereshold under which a parameter is considered null
-  static constexpr double k_tolerance = DBL_EPSILON * 10.0;
-  // Return 0.0 if value should be considered null
-  static double ApproximateForParameter(double value) {
-    return std::abs(value) < k_tolerance ? 0.0 : value;
-  }
-  // Oppose all coefficients to ensure canonic form
-  void opposeCoefficients();
+  static constexpr double k_tolerance = 10.0*DBL_EPSILON;
+  // Return target if |target-value| is neglectable compared to |amplitude|
+  double roundIfNeglectable(double value, double target, double amplitude) const;
+  // Multiply all coefficients by a factor
+  void multiplyCoefficients(double factor);
   // Update conic type from parameters
   void updateConicType();
+  // Return true if conic's coefficients are canonically rotated
+  bool isCanonicallyRotated() const;
   // Remove rotation from the parameters (B = 0)
   void rotateConic();
+  // Return true if conic's coefficients are canonically centered
+  bool isCanonicallyCentered() const;
   // Remove both rotation and off-centering from the parameters
   void centerConic();
+  // Return true if conic's coefficients are canonical
+  bool isCanonical() const;
   // Make it so that F parameter is -1 or 0
   void canonize();
   // Conic determinant, allow identification of the type

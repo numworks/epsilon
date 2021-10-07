@@ -3,6 +3,7 @@
 #include <escher/palette.h>
 #include <ion/unicode/utf8_helper.h>
 #include <python/port/port.h>
+#include "../global_preferences.h"
 
 extern "C" {
 #include "py/nlr.h"
@@ -444,6 +445,11 @@ void PythonTextArea::addAutocompletion() {
 }
 
 bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex, int * currentIndexToUpdate) {
+  // If Autocomplete disable, skip this step
+  if(!GlobalPreferences::sharedGlobalPreferences()->autocomplete()) {
+    return false;
+  }
+
   // The variable box should be loaded at this point
   const char * autocompletionTokenBeginning = nullptr;
   const char * autocompletionLocation = const_cast<char *>(cursorLocation());

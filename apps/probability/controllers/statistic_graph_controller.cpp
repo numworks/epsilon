@@ -50,15 +50,9 @@ bool StatisticGraphController::handleEvent(Ion::Events::Event event) {
   if (App::app()->subapp() == Data::SubApp::Intervals && event == Ion::Events::Copy) {
     // Copy confidence interval as matrix
     char copyBuffer[2 * Constants::k_shortBufferSize + 4];
-    char lowerBound[Constants::k_shortBufferSize];
-    char upperBound[Constants::k_shortBufferSize];
-    defaultConvertFloatToText(m_statistic->estimate() - m_statistic->marginOfError(),
-                              lowerBound,
-                              sizeof(lowerBound));
-    defaultConvertFloatToText(m_statistic->estimate() + m_statistic->marginOfError(),
-                              upperBound,
-                              sizeof(upperBound));
-    snprintf(copyBuffer, sizeof(copyBuffer), "[[%s,%s]]", lowerBound, upperBound);
+    Poincare::Print::customPrintf(copyBuffer, sizeof(copyBuffer), "[[%*.*ef,%*.*ef]]",
+        m_statistic->estimate() - m_statistic->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+        m_statistic->estimate() + m_statistic->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     Escher::Clipboard::sharedClipboard()->store(copyBuffer, strlen(copyBuffer));
     return true;
   }

@@ -26,6 +26,7 @@ public:
     BracketPairLayout,
     CeilingLayout,
     CodePointLayout,
+    CombinedCodePointLayout,
     CondensedSumLayout,
     CondensedConjugateLayout,
     ConjugateLayout,

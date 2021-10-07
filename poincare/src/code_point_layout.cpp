@@ -130,7 +130,7 @@ bool CodePointLayoutNode::isMultiplicationCodePoint() const {
 }
 
 bool CodePointLayoutNode::protectedIsIdenticalTo(Layout l) {
-  assert(l.type() == Type::CodePointLayout || l.type() == Type::CombinedCodePointLayout);
+  assert(l.type() == Type::CodePointLayout || l.type() == Type::CombinedCodePointsLayout);
   CodePointLayout & cpl = static_cast<CodePointLayout &>(l);
   return codePoint() == cpl.codePoint() && font() == cpl.font();
 }

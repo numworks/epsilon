@@ -5,7 +5,7 @@ poincare_src += $(addprefix poincare/src/,\
   bracket_layout.cpp \
   bracket_pair_layout.cpp \
   code_point_layout.cpp\
-  combined_code_point_layout.cpp\
+  combined_code_points_layout.cpp\
   condensed_sum_layout.cpp \
   conjugate_layout.cpp \
   derivative_layout.cpp \

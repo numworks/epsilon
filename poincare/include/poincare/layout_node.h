@@ -28,7 +28,6 @@ public:
     CodePointLayout,
     CombinedCodePointLayout,
     CondensedSumLayout,
-    CondensedConjugateLayout,
     ConjugateLayout,
     DerivativeLayout,
     EmptyLayout,

@@ -210,7 +210,7 @@ void GraphController::reloadBannerView() {
   }
   char coefficientName = 'a';
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
-    Poincare::Print::customPrintf(buffer, bufferSize, "%c%*.*ed", coefficientName, coefficients[i], displayMode, significantDigits);
+    Poincare::Print::customPrintf(buffer, bufferSize, "%c=%*.*ed", coefficientName, coefficients[i], displayMode, significantDigits);
     m_bannerView.subTextAtIndex(i)->setText(buffer);
     coefficientName++;
   }

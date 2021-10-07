@@ -1,8 +1,7 @@
 #include "one_mean_t_statistic.h"
 
 #include <poincare/code_point_layout.h>
-#include <poincare/condensed_conjugate_layout.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/combined_code_point_layout.h>
 
 #include <cmath>
 
@@ -62,18 +61,15 @@ void OneMeanTStatistic::computeInterval() {
 ParameterRepresentation OneMeanTStatistic::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::X: {
-      Poincare::HorizontalLayout x = Poincare::HorizontalLayout::Builder(
-          CondensedConjugateLayout::Builder(CodePointLayout::Builder('x')));
+      Poincare::Layout x = CombinedCodePointLayout::Builder('x', UCodePointCombiningOverline);
       return ParameterRepresentation{x, I18n::Message::SampleMean};
     }
     case ParamsOrder::S: {
-      Poincare::HorizontalLayout s = Poincare::HorizontalLayout::Builder(
-          CodePointLayout::Builder('s'));
+      Poincare::Layout s = CodePointLayout::Builder('s');
       return ParameterRepresentation{s, I18n::Message::SampleSTD};
     }
     case ParamsOrder::N: {
-      Poincare::HorizontalLayout n = Poincare::HorizontalLayout::Builder(
-          CodePointLayout::Builder('n'));
+      Poincare::Layout n = CodePointLayout::Builder('n');
       return ParameterRepresentation{n, I18n::Message::SampleSize};
     }
   }

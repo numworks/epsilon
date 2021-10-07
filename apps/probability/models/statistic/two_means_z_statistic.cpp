@@ -1,7 +1,7 @@
 #include "two_means_z_statistic.h"
 
 #include <poincare/code_point_layout.h>
-#include <poincare/condensed_conjugate_layout.h>
+#include <poincare/combined_code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -74,7 +74,7 @@ ParameterRepresentation TwoMeansZStatistic::paramRepresentationAtIndex(int i) co
   switch (i) {
     case ParamsOrder::X1: {
       Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
-          CondensedConjugateLayout::Builder(CodePointLayout::Builder('x')),
+          CombinedCodePointLayout::Builder('x', UCodePointCombiningOverline),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{x1, I18n::Message::Sample1Mean};
@@ -91,7 +91,7 @@ ParameterRepresentation TwoMeansZStatistic::paramRepresentationAtIndex(int i) co
     }
     case ParamsOrder::X2: {
       Poincare::HorizontalLayout x2 = Poincare::HorizontalLayout::Builder(
-          CondensedConjugateLayout::Builder(CodePointLayout::Builder('x')),
+          CombinedCodePointLayout::Builder('x', UCodePointCombiningOverline),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{x2, I18n::Message::Sample2Mean};

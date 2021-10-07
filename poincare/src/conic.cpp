@@ -1,36 +1,18 @@
 #include <poincare/conic.h>
 #include <poincare/polynomial.h>
 #include <poincare/preferences.h>
+#include <algorithm>
 
 namespace Poincare {
 
-double smallestPositive(double a, double b, bool strictly = true) {
-  /* Return smallest positive number between a and b, assuming at least one is
-   * positive */
-  if (a > b) {
-    return smallestPositive(b, a, strictly);
+// Return smallest positive number between x and y, assuming at least one is > 0
+double smallestPositive(double x, double y) {
+  if (x > y) {
+    return smallestPositive(y, x);
   }
-  // We have a <= b
-  assert(b > 0.0 || (!strictly && b == 0.0));
-  return (a > 0.0 || (!strictly && a == 0.0)) ? a : b;
-}
-
-double nonSmallestPositive(double a, double b, bool strictly = true) {
-  /* Same as smallestPositive, returning the other value. */
-  return smallestPositive(a, b, strictly) == a ? b : a;
-}
-
-Conic::Conic() :
-    m_a(NAN),
-    m_b(NAN),
-    m_c(NAN),
-    m_d(NAN),
-    m_e(NAN),
-    m_f(NAN),
-    m_cx(NAN),
-    m_cy(NAN),
-    m_r(NAN),
-    m_type(Type::Undefined) {
+  // We have x < y. Assert y is strictly positive.
+  assert(y > 0.0);
+  return (x > 0.0) ? x : y;
 }
 
 Conic::Conic(const Expression e, Context * context, const char * x, const char * y) :
@@ -44,27 +26,32 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
     m_cy(0.0),
     m_r(0.0),
     m_type(Type::Unknown) {
-  // m_a*x^2 + m_b*x*y + m_c*y^2 + m_d*x + m_e*y + m_f = 0
-  // TODO Hugo : Double check these parameters
-  Preferences::ComplexFormat complexFormat =
-      Preferences::ComplexFormat::Cartesian;
-  Preferences::AngleUnit angleUnit =
-      Preferences::sharedPreferences()->angleUnit();
+  /* Expression e represents an equation of the form :
+   * A*x^2 + B*x*y + C*y^2 + D*x + E*y + F = 0
+   * In this constructor, we extract the coefficients parameters.
+   * We then compute the conic's type and canonize the coefficients. */
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
-  ExpressionNode::SymbolicComputation symbolicComputation =
-      ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
-
+  ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
+  // Reduce Conic for analysis
+  Expression reducedExpression = e.clone().reduce(
+      ExpressionNode::ReductionContext(
+          context, complexFormat, angleUnit, unitFormat,
+          ExpressionNode::ReductionTarget::SystemForAnalysis));
+  // Extracting y parameters : C, B+E and A+D+F
   Expression coefficientsY[Expression::k_maxNumberOfPolynomialCoefficients];
-  int dy = e.getPolynomialReducedCoefficients(y, coefficientsY, context,
-                                              complexFormat, angleUnit,
-                                              unitFormat, symbolicComputation);
+  int dy = reducedExpression.getPolynomialReducedCoefficients(
+      y, coefficientsY, context, complexFormat, angleUnit, unitFormat,
+      symbolicComputation);
   if (dy > 2 || dy < 1) {
     m_type = Type::Undefined;
     return;
   }
   Expression coefficientsX[Expression::k_maxNumberOfPolynomialCoefficients];
-  // C term
+  // Extract C term
   if (dy == 2) {
+    // Ensure coefficient C does not depend on x
     int dx = coefficientsY[2].getPolynomialReducedCoefficients(
         x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
         symbolicComputation);
@@ -75,7 +62,7 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
     m_c = coefficientsY[2].approximateToScalar<double>(context, complexFormat,
                                                        angleUnit);
   }
-  // B and E terms
+  // Extract B and E terms
   int dx = coefficientsY[1].getPolynomialReducedCoefficients(
       x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
       symbolicComputation);
@@ -89,11 +76,12 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
   }
   m_e = coefficientsX[0].approximateToScalar<double>(context, complexFormat,
                                                      angleUnit);
-  // A, D and F terms
+  // Extract A, D and F terms
   dx = coefficientsY[0].getPolynomialReducedCoefficients(
       x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
       symbolicComputation);
-  if (dx > 2 || dx < 1 || (dx == 1 && dy == 1)) {
+  if (dx > 2 || dx < 0 || (dx < 2 && dy < 2) || (dx == 0 && m_b == 0.0)) {
+    // A conic must have at least 1 squared term, 1 x term and 1 y term.
     m_type = Type::Undefined;
     return;
   }
@@ -101,15 +89,17 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
     m_a = coefficientsX[2].approximateToScalar<double>(context, complexFormat,
                                                        angleUnit);
   }
-  m_d = coefficientsX[1].approximateToScalar<double>(context, complexFormat,
-                                                     angleUnit);
+  if (dx >= 1) {
+    m_d = coefficientsX[1].approximateToScalar<double>(context, complexFormat,
+                                                       angleUnit);
+  }
   m_f = coefficientsX[0].approximateToScalar<double>(context, complexFormat,
                                                      angleUnit);
   assert(std::isfinite(m_a) && std::isfinite(m_b) && std::isfinite(m_c) &&
          std::isfinite(m_d) && std::isfinite(m_e) && std::isfinite(m_f));
-  // Type may still change to undefined during canonization.
-  updateConicType();
+  // Setting type from a canonic conic is safer.
   canonize();
+  updateConicType();
 }
 
 void Conic::updateConicType() {
@@ -130,23 +120,35 @@ void Conic::updateConicType() {
   }
 }
 
-void Conic::opposeCoefficients() {
-  m_a *= -1.0;
-  m_b *= -1.0;
-  m_c *= -1.0;
-  m_d *= -1.0;
-  m_e *= -1.0;
-  m_f *= -1.0;
+double Conic::roundIfNeglectable(double value, double target, double amplitude) const {
+  return (std::abs(value-target) < k_tolerance * std::abs(amplitude)) ? target : value;
+}
+
+void Conic::multiplyCoefficients(double factor) {
+  m_a *= factor;
+  m_b *= factor;
+  m_c *= factor;
+  m_d *= factor;
+  m_e *= factor;
+  m_f *= factor;
+}
+
+bool Conic::isCanonicallyRotated() const {
+  /* For the conic to be rotated, coefficients must be of one of these forms :
+   * A*x^2 + C*y^2 + D*x + E*y + F = 0 with A > 0 and either C <= 0 or C >= A */
+  assert((m_a > 0.0 || m_c > 0.0));
+  return m_b == 0.0 && m_a == smallestPositive(m_a, m_c);
 }
 
 void Conic::rotateConic() {
+  /* Rotate the conic by first aligning it along the x and y axes. Then, rotate
+   * it up to three times by π/2 to find a unique canonic orientation. */
   if (m_a <= 0.0 && m_c <= 0.0) {
-    opposeCoefficients();
+    // This ensures that at least on of the two coefficients is always positive
+    multiplyCoefficients(-1.0);
   }
-  // TODO Hugo : Only keep m_b and smallestPositive comnditions
-  if (m_b == 0.0 && (m_a > 0.0 && (m_c <= 0.0 || m_a <= m_c) &&
-                     m_a == smallestPositive(m_a, m_c))) {
-    // Conic is already rotated.
+  if (isCanonicallyRotated()) {
+    // Conic is already rotated in canonic form.
     return;
   }
   double a = m_a;
@@ -154,19 +156,20 @@ void Conic::rotateConic() {
   double c = m_c;
   double d = m_d;
   double e = m_e;
-  // If b is non null and a = c, there is a pi/4 rotation.
-  double r = -((a == c) ? M_PI / 4 : std::atan(b / (a - c)) / 2.0);
+  double amplitude = std::max(std::fabs(a), std::max(std::fabs(b), std::fabs(c)));
+  // If B is non null and A = C, the first rotation must be of π/4
+  double r = (b == 0.0 ? 0.0
+                       : -((a == c) ? M_PI / 4 : std::atan(b / (a - c)) / 2.0));
   double cr, sr;
   for (int i = 0; i < 4; i++) {
     cr = std::cos(r);
     sr = std::sin(r);
-    // replacing x with cr*x+sr*y and y with -sr*x+cr*y to cancel B
-    m_a = ApproximateForParameter(a * cr * cr - b * cr * sr + c * sr * sr);
-    m_b = ApproximateForParameter(2 * a * cr * sr + b * cr * cr - b * sr * sr -
-                                  2 * c * sr * cr);
-    m_c = ApproximateForParameter(a * sr * sr + b * cr * sr + c * cr * cr);
+    // Replacing x with cr*x+sr*y and y with -sr*x+cr*y to cancel B coefficient
+    m_a = roundIfNeglectable(a*cr*cr - b*cr*sr + c*sr*sr, 0.0, amplitude);
+    m_b = roundIfNeglectable(2*a*cr*sr + b*cr*cr - b*sr*sr - 2*c*sr*cr, 0.0, amplitude);
+    m_c = roundIfNeglectable(a*sr*sr + b*cr*sr + c*cr*cr, 0.0, amplitude);
     assert(m_b == 0.0);
-    /* Looking at each pi/2 rotations to find the most canonic form :
+    /* Looking at each π/2 rotations to find the most canonic form :
      * - A is strictly positive (y is the axis of symmetry)
      * - C is either :
      *     - null (Parabola)
@@ -174,36 +177,41 @@ void Conic::rotateConic() {
      *     - equal (Circle)
      *     - greater than A (Elipsis, major axis along x)
      */
-    if ((m_a > 0.0 || m_c > 0.0) && m_a == smallestPositive(m_a, m_c, true)) {
-      // TODO Hugo : Remove this assert
-      assert(m_a > 0.0 && (m_c <= 0.0 || m_a <= m_c));
+    if ((m_a > 0.0 || m_c > 0.0) && isCanonicallyRotated()) {
       break;
     }
     assert(i < 3);
     r += M_PI / 2;
   }
-  /* TODO Hugo : Ensure m_r is still correct. In any case, m_r is unused and
-  * shall be removed */
-  // If rotated for second time, no more
-  assert(m_r == 0.0 || ( m_c * m_e == 0.0 && m_a * m_d == 0.0 && (r == M_PI/2 || r == M_PI*3/2)));
-  m_r += r;
-  // Conic shall be rotated such that a is positive, non-null and smaller than c
-  // if c is positive
-  assert(m_a > 0.0);
-  assert(m_c <= 0.0 || m_a <= m_c);
-  assert(m_a == smallestPositive(m_a, m_c));
+  /* If rotated for the second time, the conic has been centered, and the
+   * rotation might not be simple to compute anymore. Set it to NAN as we won't
+   * use it anyway. */
+  m_r = (m_r == 0.0) ? r : NAN;
+  // Apply the rotation to D and E (F remains unchanged)
+  amplitude = std::max(std::fabs(d), std::fabs(e));
+  m_d = roundIfNeglectable(d * cr - e * sr, 0.0, amplitude);
+  m_e = roundIfNeglectable(d * sr + e * cr, 0.0, amplitude);
+  // Assert the conic is rotated in a canonic for.
+  assert(isCanonicallyRotated());
+}
 
-  m_d = ApproximateForParameter(d * cr - e * sr);
-  m_e = ApproximateForParameter(d * sr + e * cr);
-  assert(m_b == 0.0);
+bool Conic::isCanonicallyCentered() const {
+  /* For the conic to be centered, coefficients must be of one of these forms :
+   * Ax^2 + Ey = 0 with A > 0
+   * Ax^2 + Cy^2 + F = 0 with A > 0, F != 0 and either C < 0 or C >= A
+   * Calling this method on already rotated conics ensures B is null, A > 0,
+   * and either C <= 0 or C > A. */
+  assert(isCanonicallyRotated());
+  return m_d == 0.0
+         && ((m_c == 0.0 && m_e != 0.0 && m_f == 0.0)
+             || (m_c != 0.0 && m_e == 0.0 && m_f != 0.0));
 }
 
 void Conic::centerConic() {
+  /* Rotate and center the conic so that here remains only one term in x and one
+   * term in y. If A or C is null, F should be null as well. */
   rotateConic();
-  // There should remain only one term in x and one term in y
-  // If A or C is null, F should be null
-  if (m_a * m_d == 0.0 && m_c * m_e == 0.0 &&
-      ((m_a * m_c == 0.0) == (m_f == 0.0))) {
+  if (isCanonicallyCentered()) {
     return;
   }
   assert(m_cx == 0.0 && m_cy == 0.0);
@@ -215,134 +223,141 @@ void Conic::centerConic() {
   double h;
   double k;
   // Replacing x with x-h and y with y-k in order to cancel :
-  // - F and E if A is null : Cy^2 + Dx = 0
   // - D and F if C is null : Ax^2 + Ey = 0
   // - D and E otherwise    : Ax^2 + Cy^2 = F
-  assert(a != 0.0 || c != 0.0);
-  if (a != 0.0) {
-    h = d / (2 * a);
-  }
+  assert(a != 0.0);
+  h = d / (2*a);
   if (c != 0.0) {
-    k = e / (2 * c);
+    k = e / (2*c);
   } else {
-    k = (f + a * h * h - d * h) / e;
-  }
-  if (a == 0.0) {
-    h = (f + c * k * k - e * k) / d;
+    assert(e != 0.0);
+    k = (f + a*h*h - d*h) / e;
   }
   // A and C remain unchanged
-  m_d = ApproximateForParameter(d - 2 * a * h);
-  m_e = ApproximateForParameter(e - 2 * c * k);
-  m_f = ApproximateForParameter(f + a * h * h + c * k * k - d * h - e * k);
+  m_d = roundIfNeglectable(d - 2*a*h, 0.0, std::max(std::fabs(d), std::fabs(2*a*h)));
+  m_e = roundIfNeglectable(e - 2*c*k, 0.0, std::max(std::fabs(e), std::fabs(2*c*k)));
+  double fAmplitude = std::max(std::max(std::max(std::fabs(f), std::fabs(a*h*h)), std::max(std::fabs(c*k*k), std::fabs(d*h))), std::fabs(e*k));
+  m_f = roundIfNeglectable(f + a*h*h + c*k*k - d*h - e*k, 0.0, fAmplitude);
   // Update center (taking previous rotation into account)
+  assert(!std::isnan(m_r));
   double cr = std::cos(m_r);
   double sr = std::sin(m_r);
-  m_cx = -(h * cr + k * sr);
-  m_cy = -(h * (-sr) + k * cr);
-  if (!(m_a * m_d == 0.0 && m_c * m_e == 0.0 &&
-      ((m_a * m_c == 0.0) == (m_f == 0.0)))) {
-    m_type = Type::Undefined;
-    return;
-  }
+  m_cx = -(h*cr + k*sr);
+  m_cy = -(h*(-sr) + k*cr);
+  assert(isCanonicallyCentered());
+}
+
+bool Conic::isCanonical() const {
+  /* For the conic to be canonic, coefficients must be of one of these forms :
+   * x^2 + Ey = 0 with E != 0
+   * Ax^2 + Cy^2 - 1 = 0 with A > 0 and either C < 0 or C >= A
+   * Calling this method on canonically centered conics to simplify check */
+  assert(isCanonicallyCentered());
+  return (m_f == -1.0 && m_c != 0.0) || (m_f == 0.0 && m_a == 1.0 && m_e != 0.0);
 }
 
 void Conic::canonize() {
-  // TODO Hugo : Multiply by -1 if
-  // - both a and c are negative
-  // - !(a and c positive) and f positive
-  // Canonize the equation by rotating and centering it
-  centerConic();
-  if (m_type == Type::Undefined) {
-    return;
-  }
-  /* Equation should be in either of these canonic forms :
+  /* Rotate, center the conic and ensure that coefficients are unique :
    * - Circle, Ellipse, Hyperbola : Ax^2 + Cy^2 = 1, A > 0 and 0 < C or C >= A
    * - Parabola                   : x^2 + Ey = 0
    */
-  double factor;
-  // TODO Hugo : A positive m_f may threaten the canonic form for Hyperbolas
-  if (m_f != 0.0) {
-    factor = -m_f;
-  } else {
-    assert(m_a * m_c == 0.0 && m_d * m_e == 0.0);
-    factor = m_a + m_c;
+  centerConic();
+  if (isCanonical()) {
+    return;
   }
-  m_a /= factor;
-  m_b /= factor;
-  m_c /= factor;
-  m_d /= factor;
-  m_e /= factor;
-  m_f /= factor;
-
+  // Canonize either F or A
+  if (m_f != 0.0) {
+    multiplyCoefficients(-1/m_f);
+    m_f = roundIfNeglectable(m_f, -1.0, std::abs(m_f));
+    assert(m_f == -1.0);
+  } else {
+    multiplyCoefficients(1/m_a);
+    m_a = roundIfNeglectable(m_a, 1.0, std::abs(m_a));
+    assert(m_a == 1.0);
+  }
+  /* The sign of F may sometimes change after centering. In that case, the
+   * conic needs to be rotated again to ensure the canonic form. */
   if ((m_a <= 0.0 && m_c <= 0.0)) {
-    // Both m_a, m_c and m_f are negative
+    // A, B and F are all negative the equation has no solution.
     m_type = Type::Undefined;
     return;
   }
 
-  if (m_a != smallestPositive(m_a, m_c, true)) {
-    /* When centering the conic, m_f might switch sign, threatening the
-     * assertion that a is the smallest positive for canonic form. In that case
-     * we rotate the conic once more. As everything is already centered, it
-     * isn't an issue. */
+  if (!isCanonicallyRotated()) {
+    /* We must rotate the conic once more. It isn't an issue for the center
+     * metrics as it is already centered well. However, m_r is expected to only
+     * rotate by  */
     rotateConic();
   }
-
-  assert(m_f == -1.0 || m_a + m_c == 1.0);
-  // TODO Hugo : Remove these asserts
-  assert(m_f == -1.0 || m_a == 1.0);
-  assert(m_a == smallestPositive(m_a, m_c, true));
+  assert(isCanonical());
 }
 
 double Conic::getDeterminant() const {
+  // Only the sign matters, there is no need for a canonic equation here.
   return m_b * m_b - 4.0 * m_a * m_c;
 }
 
 void Conic::getCenter(double * cx, double * cy) const {
+  // Conic must be centered
+  assert(isCanonicallyCentered());
   *cx = m_cx;
   *cy = m_cy;
 }
 
 double Conic::getEccentricity() const {
+  // Conic must be canonically rotated
+  assert(isCanonicallyRotated());
   assert(m_type != Type::Undefined);
-  double e = std::sqrt(1 - smallestPositive(m_a, m_c, false) /
-                               nonSmallestPositive(m_a, m_c, false));
-  if (m_type == Type::Circle) {
-    assert(e == 0.0);
-  } else if (m_type == Type::Parabola) {
-    assert(e == 1.0);
+  if (m_type == Type::Parabola) {
+    assert(m_a == 0.0 || m_c == 0.0);
+    return 1.0;
   }
+  // A being the smallest positive number we can assert that
+  assert(1 - m_a / m_c >= 0.0);
+  double e = std::sqrt(1 - m_a / m_c);
+  assert(m_type != Type::Circle || e == 0.0);
   return e;
 }
 
 double Conic::getSemiMajorAxis() const {
+  // Conic must be rotated, F must be -1.0
+  assert(isCanonical());
   assert(m_type == Type::Ellipse || m_type == Type::Hyperbola);
-  return std::sqrt(1 / smallestPositive(m_a, m_c));
+  return std::sqrt(1 / m_a);
 }
 
 double Conic::getSemiMinorAxis() const {
+  // Conic must be rotated, F must be -1.0
+  assert(isCanonical());
   assert(m_type == Type::Ellipse || m_type == Type::Hyperbola);
-  return std::sqrt(1 / std::abs(nonSmallestPositive(m_a, m_c)));
+  return std::sqrt(1 / std::abs(m_c));
 }
 
 double Conic::getLinearEccentricity() const {
+  // Conic must be rotated, F must be -1.0
+  assert(isCanonical());
   assert(m_type == Type::Ellipse || m_type == Type::Hyperbola);
   return std::sqrt(std::abs(1 / m_a - 1 / m_c));
 }
 
 double Conic::getParameter() const {
+  // Conic must be canonically rotated, and A must be 1.0
+  assert(isCanonical());
   assert(m_type == Type::Parabola);
-  return std::abs(m_d == 0.0 ? m_e : m_d) / 2;
+  return std::abs(m_e) / 2;
 }
 
 void Conic::getSummit(double * sx, double * sy) const {
+  // Conic must be centered
+  assert(isCanonicallyCentered());
   assert(m_type == Type::Parabola);
   // Parabola's summit is also it's center
   getCenter(sx, sy);
-  assert(m_f == 0.0 && m_b == 0.0 && m_a * m_c == 0.0 && m_d * m_e == 0.0);
 }
 
 double Conic::getRadius() const {
+  // F must be -1.0
+  assert(isCanonical());
   assert(m_type == Type::Circle);
   return std::sqrt(1 / m_a);
 }

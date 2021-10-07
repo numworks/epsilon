@@ -11,7 +11,7 @@ namespace Poincare {
 /* TODO: Make several code point classes depending on codepoint size?
  * (m_codePoint sometimes fits in a char, no need for a whole CodePoint */
 
-class CodePointLayoutNode final : public LayoutNode {
+class CodePointLayoutNode : public LayoutNode {
 public:
   static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
   CodePointLayoutNode(CodePoint c = UCodePointNull, const KDFont * font = k_defaultFont) :
@@ -74,18 +74,17 @@ protected:
     assert(false);
     return KDPointZero;
   }
-
-private:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
-  bool isMultiplicationCodePoint() const;
   bool protectedIsIdenticalTo(Layout l) override;
 
   const KDFont * m_font;
   CodePoint m_codePoint;
   DisplayType m_displayType;
+private:
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  bool isMultiplicationCodePoint() const;
 };
 
-class CodePointLayout final : public Layout {
+class CodePointLayout : public Layout {
 public:
   static void DistributeThousandDisplayType(Layout l, int start, int stop);
 

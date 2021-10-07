@@ -5,6 +5,7 @@
 #include <poincare/binomial_coefficient_layout.h>
 #include <poincare/bracket_pair_layout.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/combined_code_point_layout.h>
 #include <poincare/ceiling_layout.h>
 #include <poincare/condensed_sum_layout.h>
 #include <poincare/conjugate_layout.h>

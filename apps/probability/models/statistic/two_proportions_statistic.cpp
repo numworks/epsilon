@@ -1,6 +1,7 @@
 #include "two_proportions_statistic.h"
 
 #include <poincare/code_point_layout.h>
+#include <poincare/combined_code_points_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -59,13 +60,12 @@ void TwoProportionsStatistic::computeInterval() {
 }
 
 Poincare::Layout TwoProportionsStatistic::estimateLayout() {
-  // TODO add ^
   Poincare::HorizontalLayout p1 = Poincare::HorizontalLayout::Builder(
-      CodePointLayout::Builder('p'),
+      CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
                                     VerticalOffsetLayoutNode::Position::Subscript));
   Poincare::HorizontalLayout p2 = Poincare::HorizontalLayout::Builder(
-      CodePointLayout::Builder('p'),
+      CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
                                     VerticalOffsetLayoutNode::Position::Subscript));
   Poincare::HorizontalLayout res = Poincare::HorizontalLayout::Builder(

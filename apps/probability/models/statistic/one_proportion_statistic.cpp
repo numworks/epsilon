@@ -1,6 +1,7 @@
 #include "one_proportion_statistic.h"
 
 #include <poincare/code_point_layout.h>
+#include <poincare/combined_code_points_layout.h>
 
 #include <cmath>
 
@@ -47,7 +48,7 @@ void OneProportionStatistic::computeInterval() {
 }
 
 Poincare::Layout OneProportionStatistic::estimateLayout() {
-  return CodePointLayout::Builder('p');  // TODO replace with ^p
+  return CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex);
 }
 
 void OneProportionStatistic::setParamAtIndex(int index, float p) {

@@ -11,14 +11,14 @@ namespace Print {
  * - %s for string insertion
  * - %*s for string insertion with string preprocessing
  *   ex:
- *     customPrintf("A uppercase string: %*s",
+ *     customPrintf("A capitalized string: %*s",
  *                  "plouf",
- *                   StringFormat::UpperCase)
- *       --> "A uppercase string: PLOUF"
- *     customPrintf("A lowercase string: %*s",
- *                  "plOUf",
- *                   StringFormat::LowerCase)
- *       --> "A lowercase string: plouf"
+ *                   StringFormat::Capitalized)
+ *       --> "A capitalized string: Plouf"
+ *     customPrintf("A decapitalized string: %*s",
+ *                  "Plouf",
+ *                   StringFormat::Decapitalized)
+ *       --> "A decapitalized string: plouf"
  * - %i for integer insertion
  * - %*.*ef or %*.*ed for respectively float or double insertion.
  *   ex:

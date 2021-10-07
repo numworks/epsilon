@@ -299,7 +299,6 @@ template CondensedSumLayout TreeHandle::FixedArityBuilder<CondensedSumLayout, Co
 template ConfidenceInterval TreeHandle::FixedArityBuilder<ConfidenceInterval, ConfidenceIntervalNode>(const Tuple &);
 template Conjugate TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>(const Tuple &);
 template ConjugateLayout TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>(const Tuple &);
-template CondensedConjugateLayout TreeHandle::FixedArityBuilder<CondensedConjugateLayout, CondensedConjugateLayoutNode>(const Tuple &);
 template Cosecant TreeHandle::FixedArityBuilder<Cosecant, CosecantNode>(const Tuple &);
 template Cotangent TreeHandle::FixedArityBuilder<Cotangent, CotangentNode>(const Tuple &);
 template Cosine TreeHandle::FixedArityBuilder<Cosine, CosineNode>(const Tuple &);

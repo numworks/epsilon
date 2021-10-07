@@ -44,18 +44,18 @@ const char * InputController::title() {
     if (App::app()->page() == Data::Page::Results || App::app()->page() == Data::Page::Graph) {
       Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ef Ha:%s%s%*.*ef α=%*.*ef",
           symbol,
-          Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, m_statistic->hypothesisParams()->firstParam(),
+          m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
           symbol,
           op,
-          Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, m_statistic->hypothesisParams()->firstParam(),
-          Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, m_statistic->threshold());
+          m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     } else {
       Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ef Ha:%s%s%*.*ef",
           symbol,
-          Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, m_statistic->hypothesisParams()->firstParam(),
+          m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
           symbol,
           op,
-          Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, m_statistic->hypothesisParams()->firstParam());
+          m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     }
   } else {
     I18n::Message format = titleFormatForTest(App::app()->test(), App::app()->testType());

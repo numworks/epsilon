@@ -660,6 +660,9 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, Metric, Cartesian);
   assert_parsed_expression_simplify_to("√(-3)^2", "nonreal", User, Radian, Metric, Real);
   assert_parsed_expression_simplify_to("(-0.0001)^6.3", "nonreal", User, Radian, Metric, Real);
+  assert_parsed_expression_simplify_to("√(3.3×10^(-37))", "√(33)/10000000000000000000");
+  assert_parsed_expression_simplify_to("√(3.3×10^(-38))", "√(330)/100000000000000000000");
+  assert_parsed_expression_simplify_to("√(3.3×10^(-39))", "√(33)/100000000000000000000");
   // Principal angle of root of unity
   assert_parsed_expression_simplify_to("(-5)^(-1/3)", "root(25,3)/10+root(16875,6)/10×𝐢", User, Radian, Metric, Cartesian);
   assert_parsed_expression_simplify_to("1+((8+√(6))^(1/2))^-1+(8+√(6))^(1/2)", "\u0012√(√(6)+8)+√(6)+9\u0013/√(√(6)+8)", User, Radian, Metric, Real);

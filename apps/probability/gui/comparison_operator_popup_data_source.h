@@ -15,7 +15,7 @@ public:
         m_hypothesisParams(hypothesisParams) {}
   int numberOfRows() const override { return k_numberOfOperators; }
   KDCoordinate rowHeight(int r) override {
-    assert(false); /* Not needed because PopupListViewDataSource takes care of it */
+    assert(false); /* Not needed because DropdownPopupController takes care of it */
     return 0;
   }
   int reusableCellCount(int type) override { return k_numberOfOperators; }

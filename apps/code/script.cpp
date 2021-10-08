@@ -19,6 +19,7 @@ static inline void intToText(int i, char * buffer, int bufferSize) {
 }
 
 bool Script::DefaultName(char buffer[], size_t bufferSize) {
+  // TODO Hugo : Factorize this with Storage::firstAvailableNameStartingWith
   assert(bufferSize >= k_defaultScriptNameMaxSize);
   static constexpr char defaultScriptName[] = "script";
   static constexpr int defaultScriptNameLength = 6;

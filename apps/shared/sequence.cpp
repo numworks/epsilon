@@ -77,15 +77,16 @@ void Sequence::setType(Type t) {
   m_definition.tidyName();
   tidy();
   /* Reset all contents */
+  Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   switch (t) {
     case Type::Explicit:
-      setContent("", nullptr); // No context needed here
+      error = setContent("", nullptr); // No context needed here
       break;
     case Type::SingleRecurrence:
     {
       char ex[5] = "u(n)";
       ex[0] = fullName()[0];
-      setContent(ex, nullptr); // No context needed here
+      error = setContent(ex, nullptr); // No context needed here
       break;
     }
     case Type::DoubleRecurrence:
@@ -94,10 +95,12 @@ void Sequence::setType(Type t) {
       char name = fullName()[0];
       ex[0] = name;
       ex[7] = name;
-      setContent(ex, nullptr); // No context needed here
+      error = setContent(ex, nullptr); // No context needed here
       break;
     }
   }
+  assert(error == Ion::Storage::Record::ErrorStatus::None);
+  (void) error; // Silence compilation warning
   setFirstInitialConditionContent("", nullptr); // No context needed here
   setSecondInitialConditionContent("", nullptr); // No context needed here
 }

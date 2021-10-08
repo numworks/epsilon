@@ -502,26 +502,29 @@ void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHan
   // Invalidate the sequences context cache
   App::app()->localContext()->resetCache();
   Shared::Sequence * sequence = static_cast<Shared::Sequence *>(model.pointer());
+  Ion::Storage::Record::ErrorStatus err = Ion::Storage::Record::ErrorStatus::None;
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:
       if (sequence->firstInitialConditionExpressionClone().isUninitialized()) {
         return;
       }
-      sequence->setFirstInitialConditionContent("", nullptr); // No context needed here
+      err = sequence->setFirstInitialConditionContent("", nullptr); // No context needed here
       break;
     case 2:
       if (sequence->secondInitialConditionExpressionClone().isUninitialized()) {
         return;
       }
-      sequence->setSecondInitialConditionContent("", nullptr); // No context needed here
+      err = sequence->setSecondInitialConditionContent("", nullptr); // No context needed here
       break;
     default:
       if (sequence->expressionClone().isUninitialized()) {
         return;
       }
-      sequence->setContent("", nullptr); // No context needed
+      err = sequence->setContent("", nullptr); // No context needed
       break;
   }
+  assert(err == Ion::Storage::Record::ErrorStatus::None);
+  (void) err; // Silence compilation warning
   selectableTableView()->reloadData();
 }
 

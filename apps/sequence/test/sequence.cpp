@@ -14,17 +14,21 @@ namespace Shared {
 Sequence * addSequence(SequenceStore * store, Sequence::Type type, const char * definition, const char * condition1, const char * condition2, Context * context) {
   Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
   assert(err == Ion::Storage::Record::ErrorStatus::None);
-  (void) err; // Silence compilation warning about unused variable.
+
   Ion::Storage::Record record = store->recordAtIndex(store->numberOfModels()-1);
   Sequence * u = store->modelForRecord(record);
   u->setType(type);
-  u->setContent(definition, context);
+  err = u->setContent(definition, context);
+  assert(err == Ion::Storage::Record::ErrorStatus::None);
   if (condition1) {
-    u->setFirstInitialConditionContent(condition1, context);
+    err = u->setFirstInitialConditionContent(condition1, context);
+    assert(err == Ion::Storage::Record::ErrorStatus::None);
   }
   if (condition2) {
-    u->setSecondInitialConditionContent(condition2, context);
+    err = u->setSecondInitialConditionContent(condition2, context);
+    assert(err == Ion::Storage::Record::ErrorStatus::None);
   }
+  (void) err; // Silence compilation warning.
   return u;
 }
 

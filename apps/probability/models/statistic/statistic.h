@@ -64,7 +64,6 @@ public:
   virtual float degreeOfFreedom() { return -1; }
   /* Returns the value above/below (depending on the operator) which the probability
    * of landing is inferior to a given significance level. */
-  virtual float zAlpha() const = 0;  // TODO needed ?
   bool canRejectNull();
 
   // Confidence interval
@@ -110,7 +109,6 @@ protected:
   virtual float * paramArray() = 0;
 
   float computePValue(float z, HypothesisParams::ComparisonOperator op) const;
-  float computeZAlpha(float significanceLevel, HypothesisParams::ComparisonOperator op) const;
   float computeIntervalCriticalValue(float confidenceLevel) const;
 
   /* Threshold is either the confidence level or the significance level */

@@ -129,27 +129,6 @@ float Statistic::computePValue(float z, HypothesisParams::ComparisonOperator op)
   }
 }
 
-float Statistic::computeZAlpha(float significanceLevel,
-                               HypothesisParams::ComparisonOperator op) const {
-  // Compute the abscissa corresponding the the significance level
-  float proba;
-  switch (op) {
-    case HypothesisParams::ComparisonOperator::Higher:
-      proba = 1 - significanceLevel;
-      break;
-    case HypothesisParams::ComparisonOperator::Lower:
-      proba = significanceLevel;
-      break;
-    case HypothesisParams::ComparisonOperator::Different:
-      proba = 1 - significanceLevel / 2;
-      break;
-    default:
-      assert(false);
-      return -1;
-  }
-  return cumulativeNormalizedInverseDistributionFunction(proba);
-}
-
 float Statistic::computeIntervalCriticalValue(float confidenceLevel) const {
   return cumulativeNormalizedInverseDistributionFunction(0.5 + confidenceLevel / 2);
 }

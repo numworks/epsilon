@@ -114,9 +114,6 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     udpateModel(context);
     error = m_model.renameRecordIfNeeded(this, c, context, symbol());
-    /* TODO Hugo : Find a way to make clear the ContinuousFunction is corrupted
-     * if its name has changed. Maybe sending error as ptr, return true if
-     * renamed.*/
   }
   return error;
 }
@@ -763,7 +760,6 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
       Poincare::SymbolAbstract function = static_cast<Poincare::SymbolAbstract&>(a);
       error = record->setBaseNameWithExtension(function.name(), Ion::Storage::funcExtension);
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
-        // TODO Hugo : See TODO in ContinuousFunction::setContent, return true ?
         return error;
       }
       // Reset error, record's name will be resetted.

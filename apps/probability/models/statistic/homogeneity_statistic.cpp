@@ -192,8 +192,8 @@ bool HomogeneityStatistic::validateInputs() {
         nullColumn[col] = true;
       }
       float value = parameterAtPosition(row, col);
-      nullRow[row] = nullRow[row] && std::fabs(value) <= FLT_MIN;
-      nullColumn[col] = nullColumn[col] && std::fabs(value) <= FLT_MIN;
+      nullRow[row] = nullRow[row] && std::fabs(value) < FLT_MIN;
+      nullColumn[col] = nullColumn[col] && std::fabs(value) < FLT_MIN;
       if (std::isnan(value)) {
         return false;
       }

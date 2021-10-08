@@ -27,6 +27,7 @@ protected:
   enum ParamsOrder { X1, N1, Sigma1, X2, N2, Sigma2 };
   ParameterRepresentation paramRepresentationAtIndex(int i) const override;
   float * paramArray() override { return m_params; }
+  bool validateInputs() override;
 
 private:
   float x1() { return m_params[ParamsOrder::X1]; }

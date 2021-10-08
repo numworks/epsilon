@@ -8,8 +8,10 @@ namespace Probability {
 class HomogeneityStatistic : public Chi2Statistic {
 public:
   HomogeneityStatistic();
+  // TODO Factorize in Chi2Statistic
   void setParameterAtPosition(int row, int column, float value);
   float parameterAtPosition(int row, int column);
+  bool isValidParamAtPosition(int row, int column, float p);
   int numberOfStatisticParameters() const override {
     return k_maxNumberOfColumns * k_maxNumberOfRows;
   }
@@ -45,6 +47,7 @@ protected:
   float * paramArray() override { return m_input; }
 
 private:
+  // TODO: factorize in Chi2Statistic
   Index2D indexToIndex2D(int index);
   int index2DToIndex(Index2D indexes);
   int index2DToIndex(int row, int column);

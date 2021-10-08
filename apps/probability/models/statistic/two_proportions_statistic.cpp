@@ -47,7 +47,6 @@ bool TwoProportionsStatistic::isValidParamAtIndex(int i, float p) {
 
 void TwoProportionsStatistic::computeTest() {
   float deltaP0 = m_hypothesisParams.firstParam();
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
   m_testCriticalValue = computeZ(deltaP0, x1(), n1(), x2(), n2());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }

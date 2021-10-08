@@ -35,7 +35,6 @@ void OneProportionStatistic::computeTest() {
   float p0 = m_hypothesisParams.firstParam();
   float p = computeEstimate(x(), n());
 
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
   m_testCriticalValue = computeZ(p0, p, n());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }

@@ -49,7 +49,6 @@ bool TwoMeansTStatistic::isValidParamAtIndex(int i, float p) {
 void TwoMeansTStatistic::computeTest() {
   float deltaMean = m_hypothesisParams.firstParam();
   m_degreesOfFreedom = computeDegreesOfFreedom(s1(), n1(), s2(), n2());
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
   m_testCriticalValue = computeT(deltaMean, x1(), n1(), s1(), x2(), n2(), s2());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }

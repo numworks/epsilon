@@ -43,7 +43,6 @@ void OneMeanZStatistic::setParamAtIndex(int index, float p) {
 
 void OneMeanZStatistic::computeTest() {
   m_testCriticalValue = computeZ(m_hypothesisParams.firstParam(), x(), n(), sigma());
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }
 

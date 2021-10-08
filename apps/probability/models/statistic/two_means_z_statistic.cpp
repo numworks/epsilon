@@ -48,7 +48,6 @@ bool TwoMeansZStatistic::isValidParamAtIndex(int i, float p) {
 
 void TwoMeansZStatistic::computeTest() {
   float deltaMean = m_hypothesisParams.firstParam();
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
   m_testCriticalValue = computeZ(deltaMean, x1(), n1(), sigma1(), x2(), n2(), sigma2());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }

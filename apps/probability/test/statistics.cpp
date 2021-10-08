@@ -30,7 +30,6 @@ struct StatisticTestCase {
   bool m_hasDegreeOfFreedom;
   float m_degreesOfFreedom;
   bool m_testPassed;
-  float m_zAlpha;
   float m_testCriticalValue;
   float m_pValue;
   float m_estimate;
@@ -62,7 +61,6 @@ void runTest(Statistic * stat, StatisticTestCase & test) {
 
   quiz_assert(stat->numberOfParameters() == test.m_numberOfParameters);
   quiz_assert(stat->canRejectNull() == test.m_testPassed);
-  assertRoughlyEqual<float>(stat->zAlpha(), test.m_zAlpha, 5 * FLT_EPSILON);
   assertRoughlyEqual<float>(stat->testCriticalValue(), test.m_testCriticalValue);
   assertRoughlyEqual<float>(stat->pValue(), test.m_pValue);
   if (stat->hasDegreeOfFreedom()) {
@@ -101,7 +99,6 @@ QUIZ_CASE(probability_one_proportion_statistic) {
                         .m_numberOfParameters = 3,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = true,
-                        .m_zAlpha = -1.64485347,
                         .m_testCriticalValue = -2.30940127,
                         .m_pValue = 0.0104606748,
                         .m_estimate = 12.f / 50.f,
@@ -117,7 +114,6 @@ QUIZ_CASE(probability_one_proportion_statistic) {
                         .m_numberOfParameters = 3,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = false,
-                        .m_zAlpha = 2.5758295059,
                         .m_testCriticalValue = -1.9999998808,
                         .m_pValue = 0.0455002785,
                         .m_estimate = 84.f / 100.f,
@@ -142,7 +138,6 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
                         .m_hasDegreeOfFreedom = true,
                         .m_degreesOfFreedom = 50 - 1,
                         .m_testPassed = false,
-                        .m_zAlpha = -1.6765508652,
                         .m_testCriticalValue = -0.4419349730,
                         .m_pValue = 0.3302403092,
                         .m_estimate = 127.8,
@@ -159,7 +154,6 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
                         .m_hasDegreeOfFreedom = true,
                         .m_degreesOfFreedom = 10 - 1,
                         .m_testPassed = true,
-                        .m_zAlpha = 3.2498362064,
                         .m_testCriticalValue = 3.4152598381,
                         .m_pValue = 0.0076853633,
                         .m_estimate = 1.4f,
@@ -183,7 +177,6 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
                         .m_numberOfParameters = 4,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = false,
-                        .m_zAlpha = -1.6448534727,
                         .m_testCriticalValue = -0.4419349730,
                         .m_pValue = 0.3292680979,
                         .m_estimate = 127.8,
@@ -199,7 +192,6 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
                         .m_numberOfParameters = 4,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = true,
-                        .m_zAlpha = 2.5758295059,
                         .m_testCriticalValue = 3.1622774601,
                         .m_pValue = 0.0015654564,
                         .m_estimate = 2.3f,
@@ -223,7 +215,6 @@ QUIZ_CASE(probability_two_proportions_statistic) {
                         .m_numberOfParameters = 5,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = false,
-                        .m_zAlpha = 1.6448534727,
                         .m_testCriticalValue = 1.0940510035,
                         .m_pValue = 0.1369662881,
                         .m_estimate = 20. / 50. - 32. / 103.,
@@ -239,7 +230,6 @@ QUIZ_CASE(probability_two_proportions_statistic) {
                         .m_numberOfParameters = 5,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = true,
-                        .m_zAlpha = -2.3263483047,
                         .m_testCriticalValue = -2.6117918491,
                         .m_pValue = 0.0045034885,
                         .m_estimate = 60.f / 100.f - 44.f / 90.f,
@@ -264,7 +254,6 @@ QUIZ_CASE(probability_two_means_t_statistic) {
                         .m_hasDegreeOfFreedom = true,
                         .m_degreesOfFreedom = 60.7450408936,
                         .m_testPassed = false,
-                        .m_zAlpha = 1.6703274250,
                         .m_testCriticalValue = -1.7087153196,
                         .m_pValue = 0.9536954761,
                         .m_estimate = 20. - 24.,
@@ -281,7 +270,6 @@ QUIZ_CASE(probability_two_means_t_statistic) {
                         .m_hasDegreeOfFreedom = true,
                         .m_degreesOfFreedom = 113.2706527710,
                         .m_testPassed = false,
-                        .m_zAlpha = 2.6199319363,
                         .m_testCriticalValue = -0.6401526332,
                         .m_pValue = 0.5233662128,
                         .m_estimate = 4.2f - 18.3f,
@@ -306,7 +294,6 @@ QUIZ_CASE(probability_pooled_t_test) {
                         .m_hasDegreeOfFreedom = true,
                         .m_degreesOfFreedom = 296,
                         .m_testPassed = false,
-                        .m_zAlpha = 2.0628392696,
                         .m_testCriticalValue = -0.0446507446,
                         .m_pValue = 0.5177921057,
                         .m_estimate = 213.4f - 213.5f,
@@ -323,7 +310,6 @@ QUIZ_CASE(probability_pooled_t_test) {
                         .m_hasDegreeOfFreedom = true,
                         .m_degreesOfFreedom = 22,
                         .m_testPassed = true,
-                        .m_zAlpha = 1.3212366104,
                         .m_testCriticalValue = 2.887125562,
                         .m_pValue = 0.0042771697,
                         .m_estimate = 1.23 - 0.2,
@@ -348,7 +334,6 @@ QUIZ_CASE(probability_two_means_z_statistic) {
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = true,
-                        .m_zAlpha = 1.2815513611,
                         .m_testCriticalValue = 3.4569685459,
                         .m_pValue = 0.00027310848236,
                         .m_estimate = 3.14f - 2.07f,
@@ -364,7 +349,6 @@ QUIZ_CASE(probability_two_means_z_statistic) {
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = false,
-                        .m_zAlpha = 2.5758295059,
                         .m_testCriticalValue = 1.9819186926,
                         .m_pValue = 0.0474883318,
                         .m_estimate = 1542 - 1345.8f,
@@ -387,7 +371,6 @@ QUIZ_CASE(probability_goodness_statistic) {
                         .m_hasDegreeOfFreedom = true,
                         .m_degreesOfFreedom = 3,
                         .m_testPassed = false,
-                        .m_zAlpha = 8.9472894669,
                         .m_testCriticalValue = 2.0833332539,
                         .m_pValue = 0.5552918911}};
   GoodnessStatistic stat;
@@ -421,7 +404,6 @@ QUIZ_CASE(probability_homogeneity_statistic) {
       .m_hasDegreeOfFreedom = true,
       .m_degreesOfFreedom = 4,
       .m_testPassed = false,
-      .m_zAlpha = 10.7119007,
       .m_testCriticalValue = 3.5017316341,
       .m_pValue = 0.4776151180}};
   float expectedValues[2][HomogeneityStatistic::k_maxNumberOfColumns *

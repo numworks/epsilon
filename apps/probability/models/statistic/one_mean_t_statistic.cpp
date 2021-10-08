@@ -45,7 +45,6 @@ void OneMeanTStatistic::setParamAtIndex(int index, float p) {
 void OneMeanTStatistic::computeTest() {
   float mean = m_hypothesisParams.firstParam();
   m_degreesOfFreedom = computeDegreesOfFreedom(n());
-  m_zAlpha = computeZAlpha(m_threshold, m_hypothesisParams.comparisonOperator());
   m_testCriticalValue = computeT(mean, x(), s(), n());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }

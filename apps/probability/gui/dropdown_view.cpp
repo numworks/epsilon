@@ -65,9 +65,8 @@ void PopupItemView::drawRect(KDContext * ctx, KDRect rect) const {
   drawBorderOfRect(ctx, bounds(), borderColor);
 }
 
-Dropdown::PopupListViewDataSource::PopupListViewDataSource(
-    Escher::ListViewDataSource * listViewDataSource) :
-    m_listViewDataSource(listViewDataSource), m_memoizedCellWidth(-1) {
+Dropdown::PopupListViewDataSource::PopupListViewDataSource(Escher::ListViewDataSource * listViewDataSource, Escher::SelectableTableViewDataSource * selectionDataSource) :
+    m_listViewDataSource(listViewDataSource), m_selectionDataSource(selectionDataSource), m_memoizedCellWidth(-1) {
 }
 
 KDCoordinate Dropdown::PopupListViewDataSource::cellWidth() {
@@ -94,7 +93,7 @@ void Dropdown::PopupListViewDataSource::willDisplayCellForIndex(Escher::Highligh
                                                                 int index) {
   PopupItemView * popupView = static_cast<PopupItemView *>(cell);
   popupView->setInnerCell(m_listViewDataSource->reusableCell(index, typeAtIndex(index)));
-  popupView->setHighlighted(popupView->isHighlighted());
+  popupView->setHighlighted(m_selectionDataSource->selectedRow() == index);
   popupView->setPopping(true);
   m_listViewDataSource->willDisplayCellForIndex(popupView->innerCell(), index);
 }
@@ -114,7 +113,7 @@ Dropdown::DropdownPopupController::DropdownPopupController(
     Dropdown * dropdown,
     DropdownCallback * callback) :
     ViewController(parentResponder),
-    m_popupListDataSource(listDataSource),
+    m_popupListDataSource(listDataSource, &m_selectionDataSource),
     m_selectableTableView(this, &m_popupListDataSource, &m_selectionDataSource),
     m_borderingView(&m_selectableTableView),
     m_callback(callback),

@@ -8,6 +8,7 @@
 
 namespace Probability {
 
+// TODO: Factorize with EditableCellTableViewController?
 class HomogeneityTableViewController : public TableViewController, public DynamicCellsDataSourceDelegate {
 public:
   HomogeneityTableViewController(Escher::Responder * parent,

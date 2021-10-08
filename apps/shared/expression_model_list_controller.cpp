@@ -232,7 +232,9 @@ bool ExpressionModelListController::addEmptyModel() {
 }
 
 void ExpressionModelListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
-  model->setContent("", Container::activeApp()->localContext());
+  Ion::Storage::Record::ErrorStatus error = model->setContent("", Container::activeApp()->localContext());
+  assert(error == Ion::Storage::Record::ErrorStatus::None);
+  (void) error; // Silence compilation warning.
   // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
   resetMemoizationForIndex(k_memoizedCellsCount/2);
   selectableTableView()->reloadData();

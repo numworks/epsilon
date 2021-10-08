@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 namespace Ion {
 
@@ -67,10 +68,10 @@ public:
       return Storage::sharedStorage()->fullNameOfRecord(*this);
     }
     ErrorStatus setBaseNameWithExtension(const char * baseName, const char * extension) {
-      return Storage::sharedStorage()->setBaseNameWithExtensionOfRecord(*this, baseName, extension);
+      return Storage::sharedStorage()->setBaseNameWithExtensionOfRecord(this, baseName, strlen(baseName), extension, strlen(extension));
     }
     ErrorStatus setName(const char * fullName) {
-      return Storage::sharedStorage()->setFullNameOfRecord(*this, fullName);
+      return Storage::sharedStorage()->setFullNameOfRecord(this, fullName);
     }
     Data value() const {
       return Storage::sharedStorage()->valueOfRecord(*this);
@@ -135,8 +136,8 @@ private:
 
   /* Getters/Setters on recordID */
   const char * fullNameOfRecord(const Record record);
-  Record::ErrorStatus setFullNameOfRecord(const Record record, const char * fullName);
-  Record::ErrorStatus setBaseNameWithExtensionOfRecord(const Record record, const char * baseName, const char * extension);
+  Record::ErrorStatus setFullNameOfRecord(Record * record, const char * fullName);
+  Record::ErrorStatus setBaseNameWithExtensionOfRecord(Record * record, const char * basename, int basenameLength, const char * extension, int extensionLength);
   Record::Data valueOfRecord(const Record record);
   Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
   void destroyRecord(const Record record);
@@ -150,7 +151,7 @@ private:
   /* Overriders */
   size_t overrideSizeAtPosition(char * position, record_size_t size);
   size_t overrideFullNameAtPosition(char * position, const char * fullName);
-  size_t overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, const char * extension);
+  size_t overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, int basenameLength, const char * extension, int extensionLength);
   size_t overrideValueAtPosition(char * position, const void * data, record_size_t size);
 
   bool isFullNameTaken(const char * fullName, const Record * recordToExclude = nullptr);

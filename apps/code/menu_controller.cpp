@@ -399,7 +399,7 @@ bool MenuController::privateTextFieldDidAbortEditing(TextField * textField, bool
       return true;
     }
     Script::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, ScriptStore::k_scriptExtension);
-    scriptName = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).fullName();
+    scriptName = script.fullName();
     /* Because we use the numbered default name, the name should not be
      * already taken. Plus, the script could be added only if the storage has
      * enough available space to add a script named 'script99.py' */

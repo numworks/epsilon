@@ -6,6 +6,7 @@
 #include <poincare/vertical_offset_layout.h>
 
 #include <cmath>
+#include <float.h>
 
 #include "probability/text_helpers.h"
 
@@ -107,6 +108,12 @@ ParameterRepresentation TwoMeansTStatistic::paramRepresentationAtIndex(int i) co
   }
   assert(false);
   return ParameterRepresentation{};
+}
+
+bool TwoMeansTStatistic::validateInputs() {
+  // TODO: factorize with TwoMeansZStatistic
+  assert(s1() >= 0.0f && s2() >= 0.0f);
+  return s1() >= FLT_MIN || s2() >= FLT_MIN;
 }
 
 float TwoMeansTStatistic::_xEstimate(float meanSample1, float meanSample2) {

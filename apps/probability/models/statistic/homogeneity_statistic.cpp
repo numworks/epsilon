@@ -1,6 +1,7 @@
 #include "homogeneity_statistic.h"
 
 #include <assert.h>
+#include <float.h>
 
 namespace Probability {
 
@@ -18,6 +19,10 @@ void HomogeneityStatistic::setParameterAtPosition(int row, int column, float val
 
 float HomogeneityStatistic::parameterAtPosition(int row, int column) {
   return paramAtIndex(index2DToIndex(row, column));
+}
+
+bool HomogeneityStatistic::isValidParamAtPosition(int row, int column, float p) {
+  return isValidParamAtIndex(index2DToIndex(row, column), p);
 }
 
 void HomogeneityStatistic::computeTest() {
@@ -174,12 +179,36 @@ bool HomogeneityStatistic::validateInputs() {
   if (max.col <= 1 || max.row <= 1) {
     return false;
   }
+  /* - No value should be undef
+   * - Neither a whole row nor a whole column should be null. */
+  bool nullRow[k_maxNumberOfRows];
+  bool nullColumn[k_maxNumberOfColumns];
   for (int row = 0; row < max.row; row++) {
+    // Init nullRow array
+    nullRow[row] = true;
     for (int col = 0; col < max.col; col++) {
-      if (std::isnan(parameterAtPosition(row, col))) {
+      if (row == 0) {
+        // Init nullColumn array
+        nullColumn[col] = true;
+      }
+      float value = parameterAtPosition(row, col);
+      nullRow[row] = nullRow[row] && std::fabs(value) <= FLT_MIN;
+      nullColumn[col] = nullColumn[col] && std::fabs(value) <= FLT_MIN;
+      if (std::isnan(value)) {
         return false;
       }
+      if (row == max.row - 1 ) {
+        // Check column nullity
+        if (nullColumn[col]) {
+          return false;
+        }
+      }
     }
+    // Check row nullity
+    if (nullRow[row]) {
+      return false;
+    }
+
   }
   return true;
 }

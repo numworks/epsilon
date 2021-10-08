@@ -1,4 +1,5 @@
 #include "goodness_statistic.h"
+#include <float.h>
 
 namespace Probability {
 
@@ -62,6 +63,18 @@ float GoodnessStatistic::paramAtLocation(int row, int column) {
 
 void GoodnessStatistic::setParamAtLocation(int row, int column, float p) {
   setParamAtIndex(locationToTableIndex(row, column), p);
+}
+
+bool GoodnessStatistic::isValidParamAtLocation(int row, int column, float p) {
+  return isValidParamAtIndex(locationToTableIndex(row, column), p);
+}
+
+bool GoodnessStatistic::isValidParamAtIndex(int i, float p) {
+  if (i % 2 == 1 && std::fabs(p) < FLT_MIN) {
+    // Expected value should not be null
+    return false;
+  }
+  return Chi2Statistic::isValidParamAtIndex(i, p);
 }
 
 int GoodnessStatistic::numberOfValuePairs() {

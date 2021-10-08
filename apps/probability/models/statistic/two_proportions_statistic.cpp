@@ -119,6 +119,9 @@ ParameterRepresentation TwoProportionsStatistic::paramRepresentationAtIndex(int 
 }
 
 bool TwoProportionsStatistic::validateInputs() {
+  if (x1() < FLT_MIN && x2() < FLT_MIN) {
+    return false;
+  }
   return (x1() < n1()) && (x2() < n2());
 }
 

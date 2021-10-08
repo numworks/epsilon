@@ -17,10 +17,12 @@ public:
 
   float paramAtLocation(int row, int column);
   void setParamAtLocation(int row, int column, float p);
+  bool isValidParamAtLocation(int row, int column, float p);
 
   constexpr static int k_maxNumberOfRows = 10;
 
 private:
+  bool isValidParamAtIndex(int i, float p) override;
   float * paramArray() override { return m_input; }
   int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
   float expectedValue(int index) override;

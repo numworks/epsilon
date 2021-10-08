@@ -98,10 +98,12 @@ void CurveView::setBannerView(View * bannerView) {
  */
 
 float CurveView::pixelWidth() const {
+  assert(m_curveViewRange->xMax() != m_curveViewRange->xMin());
   return (m_curveViewRange->xMax() - m_curveViewRange->xMin()) / (m_frame.width() - 1);
 }
 
 float CurveView::pixelHeight() const {
+  assert(m_curveViewRange->yMax() != m_curveViewRange->yMin());
   return (m_curveViewRange->yMax() - m_curveViewRange->yMin()) / (m_frame.height() - 1);
 }
 

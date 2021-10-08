@@ -16,6 +16,8 @@
 
 namespace Probability {
 
+// TODO: refactor
+
 /* Wraps a HighlightCell to add margins and an optional caret. */
 class PopupItemView : public Escher::HighlightCell, public Escher::Bordered {
 public:
@@ -67,7 +69,7 @@ private:
   /* Wraps a ListViewDataSource to return PopupViews. */
   class PopupListViewDataSource : public Escher::MemoizedListViewDataSource {
   public:
-    PopupListViewDataSource(Escher::ListViewDataSource * listViewDataSource);
+    PopupListViewDataSource(Escher::ListViewDataSource * listViewDataSource, Escher::SelectableTableViewDataSource * selectionDataSource);
     int numberOfRows() const override { return m_listViewDataSource->numberOfRows(); }
     KDCoordinate cellWidth() override;
     int typeAtIndex(int index) override { return m_listViewDataSource->typeAtIndex(index); }
@@ -84,6 +86,7 @@ private:
 
   private:
     Escher::ListViewDataSource * m_listViewDataSource;
+    Escher::SelectableTableViewDataSource * m_selectionDataSource;
     PopupItemView m_popupViews[k_maxNumberOfPopupItems];
     KDCoordinate m_memoizedCellWidth;
   };

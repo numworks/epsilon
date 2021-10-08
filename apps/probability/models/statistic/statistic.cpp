@@ -105,7 +105,7 @@ void Statistic::initializeStatistic(Statistic * statistic,
 
 bool Statistic::isGraphable() const {
   float SE = standardError();
-  assert(SE >= 0);
+  assert(std::isnan(SE) || SE >= 0);
   return std::isnan(SE) || SE >= FLT_MIN;
 }
 

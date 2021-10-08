@@ -65,56 +65,15 @@ void PopupItemView::drawRect(KDContext * ctx, KDRect rect) const {
   drawBorderOfRect(ctx, bounds(), borderColor);
 }
 
-Dropdown::PopupListViewDataSource::PopupListViewDataSource(Escher::ListViewDataSource * listViewDataSource, Escher::SelectableTableViewDataSource * selectionDataSource) :
-    m_listViewDataSource(listViewDataSource), m_selectionDataSource(selectionDataSource), m_memoizedCellWidth(-1) {
-}
-
-KDCoordinate Dropdown::PopupListViewDataSource::cellWidth() {
-  if (m_memoizedCellWidth < 0) {
-    Escher::HighlightCell * cell = reusableCell(0, 0);
-    willDisplayCellForIndex(cell, 0);
-    m_memoizedCellWidth = cell->minimalSizeForOptimalDisplay().width();
-  }
-  return m_memoizedCellWidth;
-}
-
-KDCoordinate Dropdown::PopupListViewDataSource::nonMemoizedRowHeight(int j) {
-  Escher::HighlightCell * cell = reusableCell(0, 0);
-  willDisplayCellForIndex(cell, 0);
-  return cell->minimalSizeForOptimalDisplay().height();
-}
-
-PopupItemView * Dropdown::PopupListViewDataSource::reusableCell(int index, int type) {
-  assert(index >= 0 && index < numberOfRows());
-  return &m_popupViews[index];
-}
-
-void Dropdown::PopupListViewDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell,
-                                                                int index) {
-  PopupItemView * popupView = static_cast<PopupItemView *>(cell);
-  popupView->setInnerCell(m_listViewDataSource->reusableCell(index, typeAtIndex(index)));
-  popupView->setHighlighted(m_selectionDataSource->selectedRow() == index);
-  popupView->setPopping(true);
-  m_listViewDataSource->willDisplayCellForIndex(popupView->innerCell(), index);
-}
-
-void Dropdown::PopupListViewDataSource::resetMemoization(bool force) {
-  m_memoizedCellWidth = -1;
-  Escher::MemoizedListViewDataSource::resetMemoization(force);
-}
-
-Escher::HighlightCell * Dropdown::PopupListViewDataSource::innerCellAtIndex(int index) {
-  return m_listViewDataSource->reusableCell(index, m_listViewDataSource->typeAtIndex(index));
-}
-
 Dropdown::DropdownPopupController::DropdownPopupController(
     Escher::Responder * parentResponder,
     Escher::ListViewDataSource * listDataSource,
     Dropdown * dropdown,
     DropdownCallback * callback) :
     ViewController(parentResponder),
-    m_popupListDataSource(listDataSource, &m_selectionDataSource),
-    m_selectableTableView(this, &m_popupListDataSource, &m_selectionDataSource),
+    m_listViewDataSource(listDataSource),
+    m_memoizedCellWidth(-1),
+    m_selectableTableView(this, this, &m_selectionDataSource),
     m_borderingView(&m_selectableTableView),
     m_callback(callback),
     m_dropdown(dropdown) {
@@ -122,7 +81,7 @@ Dropdown::DropdownPopupController::DropdownPopupController(
 }
 
 void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
-  m_popupListDataSource.resetMemoization();
+  resetMemoization();
   if (m_selectionDataSource.selectedRow() < 0) {
     m_selectionDataSource.selectRow(0);
     m_selectableTableView.reloadData(false);
@@ -149,7 +108,7 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
 
 void Dropdown::DropdownPopupController::selectRow(int row) {
   m_selectionDataSource.selectRow(row);
-  m_dropdown->setInnerCell(m_popupListDataSource.innerCellAtIndex(row));
+  m_dropdown->setInnerCell(innerCellAtIndex(row));
 }
 
 void Dropdown::DropdownPopupController::close() {
@@ -163,6 +122,44 @@ KDPoint Dropdown::DropdownPopupController::topLeftCornerForSelection(Escher::Vie
       ->modalView()
       ->pointFromPointInView(originView, KDPointZero)
       .translatedBy(borderOffset);
+}
+
+KDCoordinate Dropdown::DropdownPopupController::cellWidth() {
+  if (m_memoizedCellWidth < 0) {
+    Escher::HighlightCell * cell = reusableCell(0, 0);
+    willDisplayCellForIndex(cell, 0);
+    m_memoizedCellWidth = cell->minimalSizeForOptimalDisplay().width();
+  }
+  return m_memoizedCellWidth;
+}
+
+KDCoordinate Dropdown::DropdownPopupController::nonMemoizedRowHeight(int j) {
+  Escher::HighlightCell * cell = reusableCell(0, 0);
+  willDisplayCellForIndex(cell, 0);
+  return cell->minimalSizeForOptimalDisplay().height();
+}
+
+PopupItemView * Dropdown::DropdownPopupController::reusableCell(int index, int type) {
+  assert(index >= 0 && index < numberOfRows());
+  return &m_popupViews[index];
+}
+
+void Dropdown::DropdownPopupController::willDisplayCellForIndex(Escher::HighlightCell * cell,
+                                                                int index) {
+  PopupItemView * popupView = static_cast<PopupItemView *>(cell);
+  popupView->setInnerCell(m_listViewDataSource->reusableCell(index, typeAtIndex(index)));
+  popupView->setHighlighted(m_selectionDataSource.selectedRow() == index);
+  popupView->setPopping(true);
+  m_listViewDataSource->willDisplayCellForIndex(popupView->innerCell(), index);
+}
+
+void Dropdown::DropdownPopupController::resetMemoization(bool force) {
+  m_memoizedCellWidth = -1;
+  Escher::MemoizedListViewDataSource::resetMemoization(force);
+}
+
+Escher::HighlightCell * Dropdown::DropdownPopupController::innerCellAtIndex(int index) {
+  return m_listViewDataSource->reusableCell(index, m_listViewDataSource->typeAtIndex(index));
 }
 
 Dropdown::Dropdown(Escher::Responder * parentResponder,
@@ -181,7 +178,7 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
 
 void Dropdown::reloadAllCells() {
   // Reload popup list
-  m_popup.m_popupListDataSource.resetMemoization();  // Reset computed width
+  m_popup.resetMemoization();  // Reset computed width
   m_popup.m_selectableTableView.reloadData(false);   // Re layout cells
 
   if (innerCell()) {
@@ -194,16 +191,16 @@ void Dropdown::reloadAllCells() {
 
 void Dropdown::init() {
   if (m_popup.m_selectionDataSource.selectedRow() < 0 ||
-      m_popup.m_selectionDataSource.selectedRow() >= m_popup.m_popupListDataSource.numberOfRows()) {
+      m_popup.m_selectionDataSource.selectedRow() >= m_popup.numberOfRows()) {
     m_popup.m_selectionDataSource.selectRow(0);
   }
   setInnerCell(
-      m_popup.m_popupListDataSource.innerCellAtIndex(m_popup.m_selectionDataSource.selectedRow()));
+      m_popup.innerCellAtIndex(m_popup.m_selectionDataSource.selectedRow()));
 }
 
 void Dropdown::open() {
   // Reload popup list
-  m_popup.m_popupListDataSource.resetMemoization();
+  m_popup.resetMemoization();
   m_popup.m_selectableTableView.reloadData(false);
 
   KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);

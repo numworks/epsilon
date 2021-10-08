@@ -66,10 +66,26 @@ public:
   void close();
 
 private:
-  /* Wraps a ListViewDataSource to return PopupViews. */
-  class PopupListViewDataSource : public Escher::MemoizedListViewDataSource {
+  /* List of PopupViews shown in a modal view + Wraps a ListViewDataSource to return PopupViews. */
+
+  class DropdownPopupController : public Escher::ViewController, public Escher::MemoizedListViewDataSource {
   public:
-    PopupListViewDataSource(Escher::ListViewDataSource * listViewDataSource, Escher::SelectableTableViewDataSource * selectionDataSource);
+    friend Dropdown;
+    DropdownPopupController(Escher::Responder * parentResponder,
+                            Escher::ListViewDataSource * listDataSource,
+                            Dropdown * dropdown,
+                            DropdownCallback * callback = nullptr);
+
+    // View Controller
+    Escher::View * view() override { return &m_borderingView; }
+    void didBecomeFirstResponder() override;
+    bool handleEvent(Ion::Events::Event e) override;
+    void registerCallback(DropdownCallback * callback) { m_callback = callback; }
+    int selectedRow() { return m_selectionDataSource.selectedRow(); }
+    void selectRow(int row);
+    void close();
+
+    // MemoizedListViewDataSource
     int numberOfRows() const override { return m_listViewDataSource->numberOfRows(); }
     KDCoordinate cellWidth() override;
     int typeAtIndex(int index) override { return m_listViewDataSource->typeAtIndex(index); }
@@ -85,33 +101,11 @@ private:
     constexpr static int k_maxNumberOfPopupItems = 4;
 
   private:
-    Escher::ListViewDataSource * m_listViewDataSource;
-    Escher::SelectableTableViewDataSource * m_selectionDataSource;
-    PopupItemView m_popupViews[k_maxNumberOfPopupItems];
-    KDCoordinate m_memoizedCellWidth;
-  };
-
-  /* List of PopupViews shown in a modal view. */
-  class DropdownPopupController : public Escher::ViewController {
-  public:
-    friend Dropdown;
-    DropdownPopupController(Escher::Responder * parentResponder,
-                            Escher::ListViewDataSource * listDataSource,
-                            Dropdown * dropdown,
-                            DropdownCallback * callback = nullptr);
-    Escher::View * view() override { return &m_borderingView; }
-    void didBecomeFirstResponder() override;
-    bool handleEvent(Ion::Events::Event e) override;
-    void registerCallback(DropdownCallback * callback) { m_callback = callback; }
-    int selectedRow() { return m_selectionDataSource.selectedRow(); }
-    void selectRow(int row);
-    void close();
-
-  private:
-    PopupListViewDataSource * popupListViewDataSource() { return &m_popupListDataSource; }
     KDPoint topLeftCornerForSelection(Escher::View * originView);
 
-    PopupListViewDataSource m_popupListDataSource;
+    Escher::ListViewDataSource * m_listViewDataSource;
+    PopupItemView m_popupViews[k_maxNumberOfPopupItems];
+    KDCoordinate m_memoizedCellWidth;
     Escher::SelectableTableView m_selectableTableView;
     Escher::SelectableTableViewDataSource m_selectionDataSource;
     BorderingView m_borderingView;

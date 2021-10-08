@@ -94,6 +94,7 @@ public:
                                   Data::CategoricalType categoricalType);
 
   // CurveViewRange
+  bool isGraphable() const;
   float yMin() const override;
 
 protected:

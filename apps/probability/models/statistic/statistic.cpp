@@ -6,6 +6,7 @@
 #include <poincare/vertical_offset_layout.h>
 
 #include <new>
+#include <float.h>
 
 #include "goodness_statistic.h"
 #include "homogeneity_statistic.h"
@@ -100,6 +101,12 @@ void Statistic::initializeStatistic(Statistic * statistic,
       break;
   }
   statistic->init(subapp);
+}
+
+bool Statistic::isGraphable() const {
+  float SE = standardError();
+  assert(SE >= 0);
+  return std::isnan(SE) || SE >= FLT_MIN;
 }
 
 float Statistic::yMin() const {

@@ -8,6 +8,15 @@ namespace Probability {
 /* Store computed results as members to avoid recomputing at every call */
 class CachedStatistic : public Statistic {
 public:
+  CachedStatistic() :
+    m_testCriticalValue(NAN),
+    m_zAlpha(NAN),
+    m_pValue(NAN),
+    m_estimate(NAN),
+    m_zCritical(NAN),
+    m_SE(NAN), // Initialize to make sure m_SE != 0 by default and test-statistics are graphable.
+    m_marginOfError(NAN) {}
+
   // Test statistic
   float testCriticalValue() const override { return m_testCriticalValue; };
   float pValue() const override { return m_pValue; };

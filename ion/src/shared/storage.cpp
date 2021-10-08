@@ -209,7 +209,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * bas
   // Fill totalSize
   newRecord += overrideSizeAtPosition(newRecord, (record_size_t)recordSize);
   // Fill name
-  newRecord += overrideBaseNameWithExtensionAtPosition(newRecord, baseName, extension);
+  newRecord += overrideBaseNameWithExtensionAtPosition(newRecord, baseName, strlen(baseName), extension, strlen(extension));
   // Fill data
   newRecord += overrideValueAtPosition(newRecord, data, size);
   // Next Record is null-sized
@@ -374,38 +374,23 @@ const char * Storage::fullNameOfRecord(const Record record) {
   return nullptr;
 }
 
-Storage::Record::ErrorStatus Storage::setFullNameOfRecord(const Record record, const char * fullName) {
+Storage::Record::ErrorStatus Storage::setFullNameOfRecord(Record * record, const char * fullName) {
   if (!FullNameCompliant(fullName)) {
     return Record::ErrorStatus::NonCompliantName;
   }
-  if (isFullNameTaken(fullName, &record)) {
-    return Record::ErrorStatus::NameTaken;
-  }
-  size_t nameSize = strlen(fullName) + 1;
-  char * p = pointerOfRecord(record);
-  if (p != nullptr) {
-    size_t previousNameSize = strlen(fullNameOfRecordStarting(p))+1;
-    record_size_t previousRecordSize = sizeOfRecordStarting(p);
-    size_t newRecordSize = previousRecordSize-previousNameSize+nameSize;
-    if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+sizeof(record_size_t)+previousNameSize, nameSize-previousNameSize)) {
-      return notifyFullnessToDelegate();
-    }
-    overrideSizeAtPosition(p, newRecordSize);
-    overrideFullNameAtPosition(p+sizeof(record_size_t), fullName);
-    notifyChangeToDelegate(record);
-    m_lastRecordRetrieved = record;
-    m_lastRecordRetrievedPointer = p;
-    return Record::ErrorStatus::None;
-  }
-  return Record::ErrorStatus::RecordDoesNotExist;
+  const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
+  int basenameLength = dotChar - fullName;
+  const char * extension = fullName + basenameLength + 1;
+  return setBaseNameWithExtensionOfRecord(record, fullName, basenameLength, extension, strlen(extension));
 }
 
-Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record record, const char * baseName, const char * extension) {
-  if (isBaseNameWithExtensionTaken(baseName, extension, &record)) {
+Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record * record, const char * baseName, int baseNameLength, const char * extension, int extensionLength) {
+  Record newRecord = Record(baseName, baseNameLength, extension, extensionLength);
+  if (isNameOfRecordTaken(newRecord, record)) {
     return Record::ErrorStatus::NameTaken;
   }
-  size_t nameSize = sizeOfBaseNameAndExtension(baseName, extension);
-  char * p = pointerOfRecord(record);
+  size_t nameSize = baseNameLength + 1 + extensionLength + 1;
+  char * p = pointerOfRecord(*record);
   if (p != nullptr) {
     size_t previousNameSize = strlen(fullNameOfRecordStarting(p))+1;
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
@@ -415,11 +400,11 @@ Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record re
     }
     overrideSizeAtPosition(p, newRecordSize);
     char * fullNamePosition = p + sizeof(record_size_t);
-    overrideBaseNameWithExtensionAtPosition(fullNamePosition, baseName, extension);
+    overrideBaseNameWithExtensionAtPosition(fullNamePosition, baseName, baseNameLength, extension, extensionLength);
     // Recompute the CRC32
-    record = Record(fullNamePosition);
-    notifyChangeToDelegate(record);
-    m_lastRecordRetrieved = record;
+    *record = newRecord;
+    notifyChangeToDelegate(newRecord);
+    m_lastRecordRetrieved = newRecord;
     m_lastRecordRetrievedPointer = p;
     return Record::ErrorStatus::None;
   }
@@ -514,13 +499,16 @@ size_t Storage::overrideFullNameAtPosition(char * position, const char * fullNam
   return strlcpy(position, fullName, strlen(fullName)+1) + 1;
 }
 
-size_t Storage::overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, const char * extension) {
-  size_t result = strlcpy(position, baseName, strlen(baseName)+1); // strlcpy copies the null terminating char
+size_t Storage::overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, int basenameLength, const char * extension, int extensionLength) {
+  memcpy(position, baseName, basenameLength);
+  position += basenameLength;
   assert(UTF8Decoder::CharSizeOfCodePoint(k_dotChar) == 1);
-  *(position+result) = k_dotChar; // Replace the null terminating char with a dot
-  result++;
-  result += strlcpy(position+result, extension, strlen(extension)+1);
-  return result+1;
+  *(position) = k_dotChar;
+  position++;
+  memcpy(position, extension, extensionLength);
+  position += extensionLength;
+  *(position) = 0;
+  return basenameLength + 1 + extensionLength + 1;
 }
 
 size_t Storage::overrideValueAtPosition(char * position, const void * data, record_size_t size) {

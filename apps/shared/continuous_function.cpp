@@ -14,6 +14,7 @@
 #include <poincare/trigonometry.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/derivative.h>
+#include <poincare/print.h>
 #include "poincare_helpers.h"
 #include <algorithm>
 #include "global_context.h"
@@ -98,13 +99,8 @@ int ContinuousFunction::printValue(int index, double cursorT, double cursorX, do
 
   PlotType type = plotType();
   if (type == PlotType::Parametric) {
-    int result = 0;
-    result += UTF8Decoder::CodePointToChars('(', buffer+result, bufferSize-result);
-    result += PoincareHelpers::ConvertFloatToText<double>(cursorX, buffer+result, bufferSize-result, precision);
-    result += UTF8Decoder::CodePointToChars(';', buffer+result, bufferSize-result);
-    result += PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer+result, bufferSize-result, precision);
-    result += UTF8Decoder::CodePointToChars(')', buffer+result, bufferSize-result);
-    return result;
+    Preferences::PrintFloatMode mode = Poincare::Preferences::sharedPreferences()->displayMode();
+    return Poincare::Print::customPrintf(buffer, bufferSize, "(%*.*ed;%*.*ed)", cursorX, mode, precision, cursorY, mode, precision);
   }
   if (type == PlotType::Polar) {
     return PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);

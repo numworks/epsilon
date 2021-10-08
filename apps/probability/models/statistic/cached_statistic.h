@@ -9,15 +9,15 @@ namespace Probability {
 class CachedStatistic : public Statistic {
 public:
   // Test statistic
-  float testCriticalValue() override { return m_testCriticalValue; };
-  float pValue() override { return m_pValue; };
-  float zAlpha() override { return m_zAlpha; }
+  float testCriticalValue() const override { return m_testCriticalValue; };
+  float pValue() const override { return m_pValue; };
+  float zAlpha() const override { return m_zAlpha; }
 
   // Confidence interval
-  float estimate() override { return m_estimate; };
-  float intervalCriticalValue() override { return m_zCritical; };
-  float standardError() override { return m_SE; };
-  float marginOfError() override { return m_marginOfError; };
+  float estimate() const override { return m_estimate; };
+  float intervalCriticalValue() const override { return m_zCritical; };
+  float standardError() const override { return m_SE; };
+  float marginOfError() const override { return m_marginOfError; };
 
 protected:
   float computeMarginOfError(float zCritical, float SE) { return zCritical * SE; }

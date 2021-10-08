@@ -31,19 +31,23 @@ bool GoodnessTableViewController::handleEvent(Ion::Events::Event event) {
 bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * textField,
                                                             const char * text,
                                                             Ion::Events::Event event) {
+  // TODO: factorize with InputCategoricalData & HomogeneityTableViewController
   float p;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false)) {
     return false;
   }
-
   int selectedColumn = m_inputTableView.selectedColumn();
-  m_statistic->setParamAtLocation(m_inputTableView.selectedRow() - 1, selectedColumn, p);
+  int selectedRow = m_inputTableView.selectedRow();
+  if (!m_statistic->isValidParamAtLocation(selectedRow - 1, selectedColumn, p)) {
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
+  m_statistic->setParamAtLocation(selectedRow - 1, selectedColumn, p);
   if (m_inputTableView.selectedRow() == m_inputTableView.numberOfRows() - 1 &&
       m_inputTableView.numberOfRows() <= GoodnessStatistic::k_maxNumberOfRows) {
     m_inputTableView.recomputeNumberOfRows();
   }
 
-  int selectedRow = m_inputTableView.selectedRow();
   m_inputTableView.reloadCellAtLocation(selectedColumn, selectedRow);
   // Select correct cell
   moveSelectionForEvent(event, &selectedRow, &selectedColumn);

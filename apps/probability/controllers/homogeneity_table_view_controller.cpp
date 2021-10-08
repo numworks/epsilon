@@ -42,11 +42,16 @@ bool HomogeneityTableViewController::handleEvent(Ion::Events::Event event) {
 bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField * textField,
                                                                const char * text,
                                                                Ion::Events::Event event) {
+  // TODO: factorize with InputCategoricalData & GoodnessTableViewController
   float p;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false)) {
     return false;
   }
   int row = m_table.selectedRow(), column = m_table.selectedColumn();
+  if (!m_statistic->isValidParamAtPosition(row, column, p)) {
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
   m_statistic->setParameterAtPosition(row - 1, column - 1, p);
 
   m_table.deselectTable();

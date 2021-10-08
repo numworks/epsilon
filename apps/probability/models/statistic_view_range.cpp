@@ -5,7 +5,9 @@
 namespace Probability {
 
 float StatisticViewRange::yMin() const {
-  return isInTestSubapp() ? canonicalYMin() : intervalYMin();
+  float ym = isInTestSubapp() ? canonicalYMin() : intervalYMin();
+  assert(ym < yMax());
+  return ym;
 }
 
 float StatisticViewRange::yMax() const {
@@ -13,7 +15,9 @@ float StatisticViewRange::yMax() const {
 }
 
 float StatisticViewRange::xMin() const {
-  return isInTestSubapp() ? canonicalXMin() : intervalXMin();
+  float xm = isInTestSubapp() ? canonicalXMin() : intervalXMin();
+  assert(xm < xMax());
+  return xm;
 }
 
 float StatisticViewRange::xMax() const {

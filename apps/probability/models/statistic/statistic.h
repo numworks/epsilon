@@ -56,15 +56,15 @@ public:
   virtual Poincare::Layout testCriticalValueSymbol() = 0;
   /* Returns the abscissa on the normalized density curve
    * corresponding to the input sample. */
-  virtual float testCriticalValue() = 0;
+  virtual float testCriticalValue() const = 0;
   /* The p-value is the probability of obtaining a results at least
    * as extreme as what was observed with the sample */
-  virtual float pValue() = 0;
+  virtual float pValue() const = 0;
   virtual bool hasDegreeOfFreedom() = 0;
   virtual float degreeOfFreedom() { return -1; }
   /* Returns the value above/below (depending on the operator) which the probability
    * of landing is inferior to a given significance level. */
-  virtual float zAlpha() = 0;  // TODO needed ?
+  virtual float zAlpha() const = 0;  // TODO needed ?
   bool canRejectNull();
 
   // Confidence interval
@@ -73,16 +73,16 @@ public:
   virtual I18n::Message estimateDescription() { return I18n::Message::Default; }
   /* The estimate is the center of the confidence interval,
    * and estimates the parameter of interest. */
-  virtual float estimate() = 0;
+  virtual float estimate() const = 0;
   Poincare::Layout intervalCriticalValueSymbol();
   /* Returns the critical value above which the probability
    * of landing is inferior to a given confidence level,
    * for the normalized distribution. */
-  virtual float intervalCriticalValue() = 0;
+  virtual float intervalCriticalValue() const = 0;
   /* Returns the variance estimated from the sample. */
-  virtual float standardError() = 0;
+  virtual float standardError() const = 0;
   /* Returns the half-width of the confidence interval. */
-  virtual float marginOfError() = 0;
+  virtual float marginOfError() const = 0;
 
   int indexOfThreshold() { return numberOfStatisticParameters(); }
   void initThreshold(Data::SubApp subapp);

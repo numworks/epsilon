@@ -29,6 +29,7 @@
 #include <ion.h>
 #include <assert.h>
 #include <cmath>
+#include <float.h>
 #include <math.h>
 #include <utility>
 
@@ -1350,13 +1351,10 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rationa
     return true;
   }
 
-  float index = maxIntegerExponent.approximate<float>();
-  float powerNumerator = std::pow(b.unsignedIntegerNumerator().approximate<float>(), index);
-  float powerDenominator = std::pow(b.integerDenominator().approximate<float>(), index);
-  if (std::isnan(powerNumerator) || std::isnan(powerDenominator) || std::isinf(powerNumerator) || std::isinf(powerDenominator)) {
-    return true;
-  }
-  return false;
+  double exponent = maxIntegerExponent.approximate<double>() / r.integerDenominator().approximate<double>();
+  double powerNumerator = std::pow(b.unsignedIntegerNumerator().approximate<double>(), exponent);
+  double powerDenominator = std::pow(b.integerDenominator().approximate<double>(), exponent);
+  return std::isnan(powerNumerator) || std::isnan(powerDenominator) || powerNumerator > FLT_MAX || powerDenominator > FLT_MAX;
 }
 
 

@@ -10,7 +10,6 @@ class CachedStatistic : public Statistic {
 public:
   CachedStatistic() :
     m_testCriticalValue(NAN),
-    m_zAlpha(NAN),
     m_pValue(NAN),
     m_estimate(NAN),
     m_zCritical(NAN),
@@ -20,7 +19,6 @@ public:
   // Test statistic
   float testCriticalValue() const override { return m_testCriticalValue; };
   float pValue() const override { return m_pValue; };
-  float zAlpha() const override { return m_zAlpha; }
 
   // Confidence interval
   float estimate() const override { return m_estimate; };
@@ -32,7 +30,6 @@ protected:
   float computeMarginOfError(float zCritical, float SE) { return zCritical * SE; }
 
   float m_testCriticalValue;
-  float m_zAlpha;
   float m_pValue;
   float m_estimate;
   float m_zCritical;

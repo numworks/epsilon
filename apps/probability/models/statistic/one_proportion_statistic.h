@@ -9,7 +9,7 @@ class OneProportionStatistic : public ZStatistic {
 public:
   void init(Data::SubApp subapp) override;
 
-  bool isValidH0(float h0) override { return h0 >= 0 && h0 <= 1; }
+  bool isValidH0(float h0) override { return h0 > 0 && h0 < 1; }
   bool isValidParamAtIndex(int i, float p) override;
   void setParamAtIndex(int index, float p) override;
 

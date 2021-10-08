@@ -29,7 +29,7 @@ bool OneMeanZStatistic::isValidParamAtIndex(int i, float p) {
       return p > 0;
     case ParamsOrder::X:
     case ParamsOrder::Sigma:
-      return p >= 0;
+      return p > 0;
   }
   return ZStatistic::isValidParamAtIndex(i, p);
 }

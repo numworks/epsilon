@@ -29,7 +29,7 @@ bool OneMeanTStatistic::isValidParamAtIndex(int i, float p) {
       return p > 1;
     case ParamsOrder::X:
     case ParamsOrder::S:
-      return p >= 0;
+      return p > 0;
       break;
   }
   return TStatistic::isValidParamAtIndex(i, p);

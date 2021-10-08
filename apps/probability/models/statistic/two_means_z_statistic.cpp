@@ -6,6 +6,7 @@
 #include <poincare/vertical_offset_layout.h>
 
 #include <cmath>
+#include <float.h>
 
 #include "probability/text_helpers.h"
 
@@ -110,6 +111,11 @@ ParameterRepresentation TwoMeansZStatistic::paramRepresentationAtIndex(int i) co
   }
   assert(false);
   return ParameterRepresentation{};
+}
+
+bool TwoMeansZStatistic::validateInputs() {
+  assert(sigma1() >= 0.0f && sigma2() >= 0.0f);
+  return sigma1() >= FLT_MIN || sigma2() >= FLT_MIN;
 }
 
 float TwoMeansZStatistic::_xEstimate(float meanSample1, float meanSample2) {

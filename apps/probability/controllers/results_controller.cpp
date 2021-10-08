@@ -60,6 +60,10 @@ const char * Probability::ResultsController::title() {
 }
 
 bool Probability::ResultsController::buttonAction() {
+  if (!m_statistic->isGraphable()) {
+    App::app()->displayWarning(I18n::Message::InvalidValues);
+    return false;
+  }
   openPage(m_statisticGraphController);
   return true;
 }

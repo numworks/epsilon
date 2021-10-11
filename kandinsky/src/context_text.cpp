@@ -29,7 +29,7 @@ KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont *
     codePointPointer = decoder.stringPosition();
     if (codePoint == UCodePointLineFeed) {
       assert(position.y() < KDCOORDINATE_MAX - glyphSize.height());
-      position = KDPoint(0, position.y() + glyphSize.height());
+      position = KDPoint(p.x(), position.y() + glyphSize.height());
       codePoint = decoder.nextCodePoint();
     } else if (codePoint == UCodePointTabulation) {
       position = position.translatedBy(KDPoint(k_tabCharacterWidth * glyphSize.width(), 0));

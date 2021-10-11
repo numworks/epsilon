@@ -57,12 +57,11 @@ mp_obj_t modkandinsky_set_pixel(mp_obj_t x, mp_obj_t y, mp_obj_t input) {
   return mp_const_none;
 }
 
-//TODO Use good colors
 mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t * args) {
   const char * text = mp_obj_str_get_str(args[0]);
   KDPoint point(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]));
-  KDColor textColor = (n_args >= 4) ? MicroPython::Color::Parse(args[3]) : KDColorBlack;
-  KDColor backgroundColor = (n_args >= 5) ? MicroPython::Color::Parse(args[4]) : KDColorWhite;
+  KDColor textColor = (n_args >= 4) ? MicroPython::Color::Parse(args[3]) : Palette::PrimaryText;
+  KDColor backgroundColor = (n_args >= 5) ? MicroPython::Color::Parse(args[4]) : Palette::HomeBackground;
   const KDFont * font = (n_args >= 6) ? ((mp_obj_is_true(args[5])) ? KDFont::SmallFont : KDFont::LargeFont) : KDFont::LargeFont;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->drawString(text, point, font, textColor, backgroundColor);

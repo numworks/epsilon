@@ -14,7 +14,7 @@ IntervalConclusionView::IntervalConclusionView() {
   setBackgroundColor(Escher::Palette::WallScreen);
 }
 
-void IntervalConclusionView::setInterval(float center, float marginOfError) {
+void IntervalConclusionView::setInterval(double center, double marginOfError) {
   constexpr static int bufferSize = Constants::k_shortBufferSize;
   char bufferCenter[bufferSize];
   char buffermarginOfError[bufferSize];
@@ -22,7 +22,7 @@ void IntervalConclusionView::setInterval(float center, float marginOfError) {
   defaultConvertFloatToText(center, bufferCenter, bufferSize);
   defaultConvertFloatToText(marginOfError, buffermarginOfError, bufferSize);
 
-  Poincare::Print::customPrintf(m_buffer, k_maxNumberOfChar, "%s\n%*.*ef ± %*.*ef",
+  Poincare::Print::customPrintf(m_buffer, k_maxNumberOfChar, "%s\n%*.*ed ± %*.*ed",
            I18n::translate(I18n::Message::ConfidenceInterval),
            center, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
            marginOfError, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);

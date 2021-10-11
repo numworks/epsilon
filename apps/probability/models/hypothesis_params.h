@@ -6,10 +6,10 @@ namespace Probability {
 struct HypothesisParams {
 public:
   enum class ComparisonOperator : char { Lower, Different, Higher };
-  HypothesisParams() : m_firstParam(0), m_operator(ComparisonOperator::Higher) {}
+  HypothesisParams() : m_firstParam(0.0), m_operator(ComparisonOperator::Higher) {}
 
-  float firstParam() const { return m_firstParam; }
-  void setFirstParam(float firstParam) { m_firstParam = firstParam; }
+  double firstParam() const { return m_firstParam; }
+  void setFirstParam(double firstParam) { m_firstParam = firstParam; }
 
   ComparisonOperator comparisonOperator() const { return m_operator; }
   void setComparisonOperator(const ComparisonOperator op) { m_operator = op; }
@@ -27,7 +27,7 @@ public:
   }
 
 private:
-  float m_firstParam;
+  double m_firstParam;
   ComparisonOperator m_operator;
 };
 

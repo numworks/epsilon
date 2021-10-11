@@ -17,7 +17,7 @@ void ResultsHomogeneityDataSource::willDisplayCellAtLocation(Escher::HighlightCe
                                                              int j) {
   EvenOddBufferTextCell * myCell = static_cast<EvenOddBufferTextCell *>(cell);
 
-  float value;
+  double value;
   if (i == m_statistic->numberOfResultColumns() && j == m_statistic->numberOfResultRows()) {
     value = m_statistic->total();
   } else if (i == m_statistic->numberOfResultColumns()) {

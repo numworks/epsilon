@@ -10,7 +10,7 @@ void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::Highligh
   const char * symbol = testToTextSymbol(App::app()->test());
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
-  Poincare::Print::customPrintf(buffer, bufferSize, "%s%s%*.*ef",
+  Poincare::Print::customPrintf(buffer, bufferSize, "%s%s%*.*ed",
       symbol,
       HypothesisParams::strForComparisonOp(static_cast<HypothesisParams::ComparisonOperator>(index)),
       m_hypothesisParams->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);

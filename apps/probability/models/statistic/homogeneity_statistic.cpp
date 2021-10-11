@@ -12,16 +12,16 @@ HomogeneityStatistic::HomogeneityStatistic() {
   }
 }
 
-void HomogeneityStatistic::setParameterAtPosition(int row, int column, float value) {
+void HomogeneityStatistic::setParameterAtPosition(int row, int column, double value) {
   assert(index2DToIndex(row, column) < indexOfThreshold());
   setParamAtIndex(index2DToIndex(row, column), value);
 }
 
-float HomogeneityStatistic::parameterAtPosition(int row, int column) {
+double HomogeneityStatistic::parameterAtPosition(int row, int column) {
   return paramAtIndex(index2DToIndex(row, column));
 }
 
-bool HomogeneityStatistic::isValidParamAtPosition(int row, int column, float p) {
+bool HomogeneityStatistic::isValidParamAtPosition(int row, int column, double p) {
   return isValidParamAtIndex(index2DToIndex(row, column), p);
 }
 
@@ -35,15 +35,15 @@ void HomogeneityStatistic::computeTest() {
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }
 
-float HomogeneityStatistic::expectedValueAtLocation(int row, int column) {
+double HomogeneityStatistic::expectedValueAtLocation(int row, int column) {
   return m_expectedValues[index2DToIndex(row, column)];
 }
 
-float HomogeneityStatistic::observedValue(int resultsIndex) {
+double HomogeneityStatistic::observedValue(int resultsIndex) {
   return paramAtIndex(resultsIndexToArrayIndex(resultsIndex));
 }
 
-float HomogeneityStatistic::expectedValue(int resultsIndex) {
+double HomogeneityStatistic::expectedValue(int resultsIndex) {
   return m_expectedValues[resultsIndexToArrayIndex(resultsIndex)];
 }
 
@@ -55,7 +55,7 @@ HomogeneityStatistic::Index2D HomogeneityStatistic::computeDimensions() {
   int maxCol = -1, maxRow = -1;
   for (int row = 0; row < k_maxNumberOfRows; row++) {
     for (int col = 0; col < k_maxNumberOfColumns; col++) {
-      float p = parameterAtPosition(row, col);
+      double p = parameterAtPosition(row, col);
       if (!std::isnan(p)) {
         if (row >= maxRow) {
           maxRow = row;
@@ -109,7 +109,7 @@ void HomogeneityStatistic::computeExpectedValues(Index2D max) {
       if (col == 0) {
         m_rowTotals[row] = 0;
       }
-      float p = parameterAtPosition(row, col);
+      double p = parameterAtPosition(row, col);
       m_columnTotals[col] += p;
       m_rowTotals[row] += p;
       m_total += p;
@@ -190,9 +190,9 @@ bool HomogeneityStatistic::validateInputs() {
         // Init nullColumn array
         nullColumn[col] = true;
       }
-      float value = parameterAtPosition(row, col);
-      nullRow[row] = nullRow[row] && std::fabs(value) < FLT_MIN;
-      nullColumn[col] = nullColumn[col] && std::fabs(value) < FLT_MIN;
+      double value = parameterAtPosition(row, col);
+      nullRow[row] = nullRow[row] && std::fabs(value) < DBL_MIN;
+      nullColumn[col] = nullColumn[col] && std::fabs(value) < DBL_MIN;
       if (std::isnan(value)) {
         return false;
       }

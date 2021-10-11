@@ -21,7 +21,7 @@ void OneProportionStatistic::init(Data::SubApp subapp) {
   }
 }
 
-bool OneProportionStatistic::isValidParamAtIndex(int i, float p) {
+bool OneProportionStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::X:
       return p >= 0;
@@ -32,8 +32,8 @@ bool OneProportionStatistic::isValidParamAtIndex(int i, float p) {
 }
 
 void OneProportionStatistic::computeTest() {
-  float p0 = m_hypothesisParams.firstParam();
-  float p = computeEstimate(x(), n());
+  double p0 = m_hypothesisParams.firstParam();
+  double p = computeEstimate(x(), n());
 
   m_testCriticalValue = computeZ(p0, p, n());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
@@ -50,7 +50,7 @@ Poincare::Layout OneProportionStatistic::estimateLayout() {
   return CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex);
 }
 
-void OneProportionStatistic::setParamAtIndex(int index, float p) {
+void OneProportionStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N || index == ParamsOrder::X) {
     p = std::round(p);
   }
@@ -76,16 +76,16 @@ bool OneProportionStatistic::validateInputs() {
   return x() <= n();
 }
 
-float OneProportionStatistic::computeEstimate(float x, float n) {
+double OneProportionStatistic::computeEstimate(double x, double n) {
   return x / n;
 }
 
-float OneProportionStatistic::computeZ(float p0, float p, float n) {
+double OneProportionStatistic::computeZ(double p0, double p, double n) {
   assert(n > 0 && p0 >= 0 && p >= 0 && p0 <= 1 && p <= 1);
   return (p - p0) / std::sqrt(p0 * (1 - p0) / n);
 }
 
-float OneProportionStatistic::computeStandardError(float pEstimate, float n) {
+double OneProportionStatistic::computeStandardError(double pEstimate, double n) {
   return std::sqrt(pEstimate * (1 - pEstimate) / n);
 }
 

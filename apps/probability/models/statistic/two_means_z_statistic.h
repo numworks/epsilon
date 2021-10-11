@@ -8,8 +8,8 @@ namespace Probability {
 class TwoMeansZStatistic : public ZStatistic {
 public:
   void init(Data::SubApp subapp) override;
-  bool isValidParamAtIndex(int i, float p) override;
-  void setParamAtIndex(int index, float p) override;
+  bool isValidParamAtIndex(int i, double p) override;
+  void setParamAtIndex(int index, double p) override;
 
   void computeTest() override;
   void computeInterval() override;
@@ -26,24 +26,24 @@ protected:
   int numberOfStatisticParameters() const override { return k_numberOfParams; }
   enum ParamsOrder { X1, N1, Sigma1, X2, N2, Sigma2 };
   ParameterRepresentation paramRepresentationAtIndex(int i) const override;
-  float * paramArray() override { return m_params; }
+  double * paramArray() override { return m_params; }
   bool validateInputs() override;
 
 private:
-  float x1() { return m_params[ParamsOrder::X1]; }
-  float n1() { return m_params[ParamsOrder::N1]; }
-  float sigma1() { return m_params[ParamsOrder::Sigma1]; }
-  float x2() { return m_params[ParamsOrder::X2]; }
-  float n2() { return m_params[ParamsOrder::N2]; }
-  float sigma2() { return m_params[ParamsOrder::Sigma2]; }
+  double x1() { return m_params[ParamsOrder::X1]; }
+  double n1() { return m_params[ParamsOrder::N1]; }
+  double sigma1() { return m_params[ParamsOrder::Sigma1]; }
+  double x2() { return m_params[ParamsOrder::X2]; }
+  double n2() { return m_params[ParamsOrder::N2]; }
+  double sigma2() { return m_params[ParamsOrder::Sigma2]; }
 
 
-  float _xEstimate(float meanSample1, float meanSample2);
-  float computeZ(float deltaMean, float meanSample1, float n1, float sigma1, float meanSample2, float n2,
-           float sigma2);
-  float computeStandardError(float sigma1, int n1, float sigma2, int n2);
+  double _xEstimate(double meanSample1, double meanSample2);
+  double computeZ(double deltaMean, double meanSample1, double n1, double sigma1, double meanSample2, double n2,
+           double sigma2);
+  double computeStandardError(double sigma1, int n1, double sigma2, int n2);
 
-  float m_params[k_numberOfParams];
+  double m_params[k_numberOfParams];
 };
 
 }  // namespace Probability

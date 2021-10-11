@@ -11,12 +11,12 @@ float TStatistic::canonicalDensityFunction(float x) const {
   return StudentLaw::EvaluateAtAbscissa<float>(x, m_degreesOfFreedom);
 }
 
-float TStatistic::cumulativeNormalizedDistributionFunction(float x) const {
+double TStatistic::cumulativeNormalizedDistributionFunction(double x) const {
   assert(m_degreesOfFreedom > 0);
   return StudentLaw::CumulativeDistributiveFunctionAtAbscissa(x, m_degreesOfFreedom);
 }
 
-float TStatistic::cumulativeNormalizedInverseDistributionFunction(float proba) const {
+double TStatistic::cumulativeNormalizedInverseDistributionFunction(double proba) const {
   assert(m_degreesOfFreedom > 0);
   return StudentLaw::CumulativeDistributiveInverseForProbability(proba, m_degreesOfFreedom);
 }

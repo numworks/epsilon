@@ -16,7 +16,7 @@ InputController::InputController(Escher::StackViewController * parent,
                                  ResultsController * resultsController,
                                  Statistic * statistic,
                                  Escher::InputEventHandlerDelegate * handler) :
-      FloatParameterPage(parent),
+      DoubleParameterPage(parent),
       DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>(this),
       m_statistic(statistic),
       m_resultsController(resultsController)
@@ -42,7 +42,7 @@ const char * InputController::title() {
     const char * op = HypothesisParams::strForComparisonOp(
         m_statistic->hypothesisParams()->comparisonOperator());
     if (App::app()->page() == Data::Page::Results || App::app()->page() == Data::Page::Graph) {
-      Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ef Ha:%s%s%*.*ef α=%*.*ef",
+      Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",
           symbol,
           m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
           symbol,
@@ -50,7 +50,7 @@ const char * InputController::title() {
           m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
           m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     } else {
-      Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ef Ha:%s%s%*.*ef",
+      Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed",
           symbol,
           m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
           symbol,
@@ -76,7 +76,7 @@ int InputController::typeAtIndex(int i) {
   if (i == m_statistic->indexOfThreshold()) {
     return k_significanceCellType;
   }
-  return FloatParameterPage::typeAtIndex(i);
+  return DoubleParameterPage::typeAtIndex(i);
 }
 
 void InputController::didBecomeFirstResponder() {
@@ -122,7 +122,7 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
     thresholdCell->innerCell()->setMessage(name);
     thresholdCell->innerCell()->setSubLabelMessage(description);
   }
-  FloatParameterPage::willDisplayCellForIndex(cell, index);
+  DoubleParameterPage::willDisplayCellForIndex(cell, index);
 }
 
 Escher::HighlightCell * InputController::reusableParameterCell(int index, int type) {
@@ -162,7 +162,7 @@ void Probability::InputController::setTextInCell(Escher::HighlightCell * cell,
   }
 }
 
-bool Probability::InputController::setParameterAtIndex(int parameterIndex, float f) {
+bool Probability::InputController::setParameterAtIndex(int parameterIndex, double f) {
   if (!m_statistic->isValidParamAtIndex(parameterIndex, f)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
@@ -171,7 +171,7 @@ bool Probability::InputController::setParameterAtIndex(int parameterIndex, float
   return true;
 }
 
-int Probability::InputController::convertFloatToText(float value, char * buffer, int bufferSize) {
+int Probability::InputController::convertFloatToText(double value, char * buffer, int bufferSize) {
   return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
       value,
       buffer,

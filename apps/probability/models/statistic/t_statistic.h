@@ -15,17 +15,17 @@ public:
     return Poincare::LayoutHelper::String("t");
   }
   bool hasDegreeOfFreedom() override { return true; }
-  float degreeOfFreedom() override { return m_degreesOfFreedom; }
+  double degreeOfFreedom() override { return m_degreesOfFreedom; }
   float canonicalDensityFunction(float x) const override;
-  float cumulativeNormalizedDistributionFunction(float x) const override;
-  float cumulativeNormalizedInverseDistributionFunction(float proba) const override;
+  double cumulativeNormalizedDistributionFunction(double x) const override;
+  double cumulativeNormalizedInverseDistributionFunction(double proba) const override;
 
   float xMin() const override;
   float xMax() const override;
   float yMax() const override;
 
 protected:
-  float m_degreesOfFreedom;
+  double m_degreesOfFreedom;
 };
 
 }  // namespace Probability

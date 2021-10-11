@@ -45,12 +45,6 @@ public:
         PageController(stackViewController, tableDelegate){};
 };
 
-class FloatParameterPage : public PageController<Shared::FloatParameterController<float>> {
-public:
-  FloatParameterPage(Escher::StackViewController * stackViewController) :
-        PageController(stackViewController) {}
-};
-
 class DoubleParameterPage : public PageController<Shared::FloatParameterController<double>> {
 public:
   DoubleParameterPage(Escher::StackViewController * stackViewController) :

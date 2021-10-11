@@ -7,10 +7,10 @@ namespace Probability {
 
 class PooledTwoMeansStatistic : public TwoMeansTStatistic {
 public:
-  float computeDegreesOfFreedom(float s1, float n1, float s2, float n2) override;
-  float computeStandardError(float s1, float n1, float s2, float n2) override;
+  double computeDegreesOfFreedom(double s1, double n1, double s2, double n2) override;
+  double computeStandardError(double s1, double n1, double s2, double n2) override;
   /* Pooled estimate of sigma */
-  float computeSP(float s1, float n1, float s2, float n2);
+  double computeSP(double s1, double n1, double s2, double n2);
 };
 
 }  // namespace Probability

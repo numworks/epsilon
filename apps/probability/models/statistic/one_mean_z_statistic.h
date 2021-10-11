@@ -9,8 +9,8 @@ class OneMeanZStatistic : public ZStatistic {
 public:
   void init(Data::SubApp subapp) override;
 
-  bool isValidParamAtIndex(int i, float p) override;
-  void setParamAtIndex(int index, float p) override;
+  bool isValidParamAtIndex(int i, double p) override;
+  void setParamAtIndex(int index, double p) override;
 
   void computeTest() override;
   void computeInterval() override;
@@ -24,18 +24,18 @@ protected:
   int numberOfStatisticParameters() const override { return k_numberOfParams; }
   enum ParamsOrder { X, N, Sigma };
   ParameterRepresentation paramRepresentationAtIndex(int i) const override;
-  float * paramArray() override { return m_params; }
+  double * paramArray() override { return m_params; }
 
 private:
-  float x() { return m_params[ParamsOrder::X]; }
-  float n() { return m_params[ParamsOrder::N]; }
-  float sigma() { return m_params[ParamsOrder::Sigma]; }
+  double x() { return m_params[ParamsOrder::X]; }
+  double n() { return m_params[ParamsOrder::N]; }
+  double sigma() { return m_params[ParamsOrder::Sigma]; }
 
   // Computation
-  float computeZ(float meanSample, float mean, float n, float sigma);
-  float computeStandardError(float sigma, float n);
+  double computeZ(double meanSample, double mean, double n, double sigma);
+  double computeStandardError(double sigma, double n);
 
-  float m_params[k_numberOfParams];
+  double m_params[k_numberOfParams];
 };
 
 }  // namespace Probability

@@ -34,7 +34,7 @@ void TwoMeansZStatistic::init(Data::SubApp subapp) {
   }
 }
 
-bool TwoMeansZStatistic::isValidParamAtIndex(int i, float p) {
+bool TwoMeansZStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::N1:
     case ParamsOrder::N2:
@@ -47,7 +47,7 @@ bool TwoMeansZStatistic::isValidParamAtIndex(int i, float p) {
 }
 
 void TwoMeansZStatistic::computeTest() {
-  float deltaMean = m_hypothesisParams.firstParam();
+  double deltaMean = m_hypothesisParams.firstParam();
   m_testCriticalValue = computeZ(deltaMean, x1(), n1(), sigma1(), x2(), n2(), sigma2());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }
@@ -63,7 +63,7 @@ Poincare::Layout TwoMeansZStatistic::estimateLayout() {
   return XOneMinusXTwoLayout();
 }
 
-void TwoMeansZStatistic::setParamAtIndex(int index, float p) {
+void TwoMeansZStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N1 || index == ParamsOrder::N2) {
     p = std::round(p);
   }
@@ -117,21 +117,21 @@ bool TwoMeansZStatistic::validateInputs() {
   return sigma1() >= FLT_MIN || sigma2() >= FLT_MIN;
 }
 
-float TwoMeansZStatistic::_xEstimate(float meanSample1, float meanSample2) {
+double TwoMeansZStatistic::_xEstimate(double meanSample1, double meanSample2) {
   return meanSample1 - meanSample2;
 }
 
-float TwoMeansZStatistic::computeZ(float deltaMean,
-                                   float meanSample1,
-                                   float n1,
-                                   float sigma1,
-                                   float meanSample2,
-                                   float n2,
-                                   float sigma2) {
+double TwoMeansZStatistic::computeZ(double deltaMean,
+                                   double meanSample1,
+                                   double n1,
+                                   double sigma1,
+                                   double meanSample2,
+                                   double n2,
+                                   double sigma2) {
   return ((meanSample1 - meanSample2) - (deltaMean)) / computeStandardError(sigma1, n1, sigma2, n2);
 }
 
-float TwoMeansZStatistic::computeStandardError(float sigma1, int n1, float sigma2, int n2) {
+double TwoMeansZStatistic::computeStandardError(double sigma1, int n1, double sigma2, int n2) {
   return std::sqrt((sigma1 * sigma1 / n1 + sigma2 * sigma2 / n2));
 }
 

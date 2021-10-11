@@ -23,7 +23,7 @@ void OneMeanTStatistic::init(Data::SubApp subapp) {
   }
 }
 
-bool OneMeanTStatistic::isValidParamAtIndex(int i, float p) {
+bool OneMeanTStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::N:
       return p > 1;
@@ -35,7 +35,7 @@ bool OneMeanTStatistic::isValidParamAtIndex(int i, float p) {
   return TStatistic::isValidParamAtIndex(i, p);
 }
 
-void OneMeanTStatistic::setParamAtIndex(int index, float p) {
+void OneMeanTStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N) {
     p = std::round(p);
   }
@@ -43,7 +43,7 @@ void OneMeanTStatistic::setParamAtIndex(int index, float p) {
 }
 
 void OneMeanTStatistic::computeTest() {
-  float mean = m_hypothesisParams.firstParam();
+  double mean = m_hypothesisParams.firstParam();
   m_degreesOfFreedom = computeDegreesOfFreedom(n());
   m_testCriticalValue = computeT(mean, x(), s(), n());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
@@ -76,15 +76,15 @@ ParameterRepresentation OneMeanTStatistic::paramRepresentationAtIndex(int i) con
   return ParameterRepresentation{};
 }
 
-float OneMeanTStatistic::computeDegreesOfFreedom(float n) {
+double OneMeanTStatistic::computeDegreesOfFreedom(double n) {
   return n - 1;
 }
 
-float OneMeanTStatistic::computeT(float mean, float meanSample, float s, float n) {
+double OneMeanTStatistic::computeT(double mean, double meanSample, double s, double n) {
   return (meanSample - mean) / (s / std::sqrt(n));
 }
 
-float OneMeanTStatistic::computeStandardError(float s, float n) {
+double OneMeanTStatistic::computeStandardError(double s, double n) {
   return s / std::sqrt(n);
 }
 

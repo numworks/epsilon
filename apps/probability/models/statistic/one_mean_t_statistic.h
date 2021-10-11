@@ -9,8 +9,8 @@ namespace Probability {
 class OneMeanTStatistic : public TStatistic {
 public:
   void init(Data::SubApp subapp) override;
-  bool isValidParamAtIndex(int i, float p) override;
-  void setParamAtIndex(int index, float p) override;
+  bool isValidParamAtIndex(int i, double p) override;
+  void setParamAtIndex(int index, double p) override;
 
   void computeTest() override;
   void computeInterval() override;
@@ -24,19 +24,19 @@ protected:
   int numberOfStatisticParameters() const override { return k_numberOfParams; }
   enum ParamsOrder { X, S, N };
   ParameterRepresentation paramRepresentationAtIndex(int i) const override;
-  float * paramArray() override { return m_params; }
+  double * paramArray() override { return m_params; }
 
 private:
-  float x() { return m_params[ParamsOrder::X]; }
-  float s() { return m_params[ParamsOrder::S]; }
-  float n() { return m_params[ParamsOrder::N]; }
+  double x() { return m_params[ParamsOrder::X]; }
+  double s() { return m_params[ParamsOrder::S]; }
+  double n() { return m_params[ParamsOrder::N]; }
 
   // Computation
-  float computeDegreesOfFreedom(float n);
-  float computeT(float mean, float meanSample, float s, float n);
-  float computeStandardError(float s, float n);
+  double computeDegreesOfFreedom(double n);
+  double computeT(double mean, double meanSample, double s, double n);
+  double computeStandardError(double s, double n);
 
-  float m_params[k_numberOfParams];
+  double m_params[k_numberOfParams];
 };
 
 }  // namespace Probability

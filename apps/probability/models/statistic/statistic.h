@@ -32,36 +32,36 @@ public:
   virtual float densityFunction(float x) {
     return canonicalDensityFunction((x - estimate()) / standardError());
   };
-  virtual float cumulativeNormalizedDistributionFunction(float x) const = 0;
-  virtual float cumulativeNormalizedInverseDistributionFunction(float proba) const = 0;
+  virtual double cumulativeNormalizedDistributionFunction(double x) const = 0;
+  virtual double cumulativeNormalizedInverseDistributionFunction(double proba) const = 0;
 
   // Input
   int numberOfParameters() { return numberOfStatisticParameters() + 1 /* threshold */; }
-  float paramAtIndex(int i);
-  virtual bool isValidParamAtIndex(int i, float p);
-  virtual void setParamAtIndex(int i, float p);
+  double paramAtIndex(int i);
+  virtual bool isValidParamAtIndex(int i, double p);
+  virtual void setParamAtIndex(int i, double p);
   Poincare::Layout paramSymbolAtIndex(int i) const {
     return paramRepresentationAtIndex(i).m_symbol;
   }
   I18n::Message paramDescriptionAtIndex(int i) const {
     return paramRepresentationAtIndex(i).m_description;
   }
-  float threshold() const { return m_threshold; }
-  void setThreshold(float s) { m_threshold = s; }
+  double threshold() const { return m_threshold; }
+  void setThreshold(double s) { m_threshold = s; }
   HypothesisParams * hypothesisParams() { return &m_hypothesisParams; }
-  virtual bool isValidH0(float h0) { return true; }
+  virtual bool isValidH0(double h0) { return true; }
   virtual bool validateInputs() { return true; };
 
   // Test statistic
   virtual Poincare::Layout testCriticalValueSymbol() = 0;
   /* Returns the abscissa on the normalized density curve
    * corresponding to the input sample. */
-  virtual float testCriticalValue() const = 0;
+  virtual double testCriticalValue() const = 0;
   /* The p-value is the probability of obtaining a results at least
    * as extreme as what was observed with the sample */
-  virtual float pValue() const = 0;
+  virtual double pValue() const = 0;
   virtual bool hasDegreeOfFreedom() = 0;
-  virtual float degreeOfFreedom() { return -1; }
+  virtual double degreeOfFreedom() { return -1; }
   /* Returns the value above/below (depending on the operator) which the probability
    * of landing is inferior to a given significance level. */
   bool canRejectNull();
@@ -72,16 +72,16 @@ public:
   virtual I18n::Message estimateDescription() { return I18n::Message::Default; }
   /* The estimate is the center of the confidence interval,
    * and estimates the parameter of interest. */
-  virtual float estimate() const = 0;
+  virtual double estimate() const = 0;
   Poincare::Layout intervalCriticalValueSymbol();
   /* Returns the critical value above which the probability
    * of landing is inferior to a given confidence level,
    * for the normalized distribution. */
-  virtual float intervalCriticalValue() const = 0;
+  virtual double intervalCriticalValue() const = 0;
   /* Returns the variance estimated from the sample. */
-  virtual float standardError() const = 0;
+  virtual double standardError() const = 0;
   /* Returns the half-width of the confidence interval. */
-  virtual float marginOfError() const = 0;
+  virtual double marginOfError() const = 0;
 
   int indexOfThreshold() { return numberOfStatisticParameters(); }
   void initThreshold(Data::SubApp subapp);
@@ -106,13 +106,13 @@ protected:
 
   virtual int numberOfStatisticParameters() const = 0;
   virtual ParameterRepresentation paramRepresentationAtIndex(int i) const = 0;
-  virtual float * paramArray() = 0;
+  virtual double * paramArray() = 0;
 
-  float computePValue(float z, HypothesisParams::ComparisonOperator op) const;
-  float computeIntervalCriticalValue(float confidenceLevel) const;
+  double computePValue(double z, HypothesisParams::ComparisonOperator op) const;
+  double computeIntervalCriticalValue(double confidenceLevel) const;
 
   /* Threshold is either the confidence level or the significance level */
-  float m_threshold;
+  double m_threshold;
   /* Hypothesis chosen */
   HypothesisParams m_hypothesisParams;
 };

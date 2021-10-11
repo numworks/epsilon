@@ -9,9 +9,9 @@ class OneProportionStatistic : public ZStatistic {
 public:
   void init(Data::SubApp subapp) override;
 
-  bool isValidH0(float h0) override { return h0 > 0 && h0 < 1; }
-  bool isValidParamAtIndex(int i, float p) override;
-  void setParamAtIndex(int index, float p) override;
+  bool isValidH0(double h0) override { return h0 > 0 && h0 < 1; }
+  bool isValidParamAtIndex(int i, double p) override;
+  void setParamAtIndex(int index, double p) override;
 
   void computeTest() override;
   void computeInterval() override;
@@ -29,17 +29,17 @@ private:
   constexpr static int k_numberOfParams = 2;
   enum ParamsOrder { X, N };
   ParameterRepresentation paramRepresentationAtIndex(int i) const override;
-  float * paramArray() override { return m_params; }
-  float m_params[k_numberOfParams];
-  float x() { return m_params[ParamsOrder::X]; }
-  float n() { return m_params[ParamsOrder::N]; }
+  double * paramArray() override { return m_params; }
+  double m_params[k_numberOfParams];
+  double x() { return m_params[ParamsOrder::X]; }
+  double n() { return m_params[ParamsOrder::N]; }
 
   bool validateInputs() override;
 
   // Computation
-  float computeEstimate(float x, float n);
-  float computeZ(float p0, float p, float n);
-  float computeStandardError(float pEstimate, float n);
+  double computeEstimate(double x, double n);
+  double computeZ(double p0, double p, double n);
+  double computeStandardError(double pEstimate, double n);
 };
 
 }  // namespace Probability

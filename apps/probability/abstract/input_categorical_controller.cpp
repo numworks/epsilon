@@ -27,7 +27,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
                                                            const char * text,
                                                            Ion::Events::Event event) {
   // Parse and check significance level
-  float p;
+  double p;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false)) {
     return false;
   }

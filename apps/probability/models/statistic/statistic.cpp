@@ -20,18 +20,18 @@
 
 namespace Probability {
 
-float Statistic::paramAtIndex(int i) {
+double Statistic::paramAtIndex(int i) {
   return i == indexOfThreshold() ? m_threshold : paramArray()[i];
 }
 
-bool Statistic::isValidParamAtIndex(int i, float p) {
+bool Statistic::isValidParamAtIndex(int i, double p) {
   if (i == indexOfThreshold()) {
     return p >= 0 && p <= 1;
   }
   return true;
 }
 
-void Statistic::setParamAtIndex(int i, float p) {
+void Statistic::setParamAtIndex(int i, double p) {
   if (i == indexOfThreshold()) {
     m_threshold = p;
   } else {
@@ -104,7 +104,7 @@ void Statistic::initializeStatistic(Statistic * statistic,
 }
 
 bool Statistic::isGraphable() const {
-  float SE = standardError();
+  double SE = standardError();
   assert(std::isnan(SE) || SE >= 0);
   return std::isnan(SE) || SE >= FLT_MIN;
 }
@@ -114,22 +114,22 @@ float Statistic::yMin() const {
   return -k_displayBottomMarginRatio * yMax();
 }
 
-float Statistic::computePValue(float z, HypothesisParams::ComparisonOperator op) const {
+double Statistic::computePValue(double z, HypothesisParams::ComparisonOperator op) const {
   // Compute probability of obtaining a more extreme result
   switch (op) {
     case HypothesisParams::ComparisonOperator::Higher:
-      return 1 - cumulativeNormalizedDistributionFunction(z);
+      return 1.0 - cumulativeNormalizedDistributionFunction(z);
     case HypothesisParams::ComparisonOperator::Lower:
       return cumulativeNormalizedDistributionFunction(z);
     case HypothesisParams::ComparisonOperator::Different:
-      return 2 * cumulativeNormalizedDistributionFunction(-std::fabs(z));
+      return 2.0 * cumulativeNormalizedDistributionFunction(-std::fabs(z));
     default:
       assert(false);
-      return -1;
+      return -1.0;
   }
 }
 
-float Statistic::computeIntervalCriticalValue(float confidenceLevel) const {
+double Statistic::computeIntervalCriticalValue(double confidenceLevel) const {
   return cumulativeNormalizedInverseDistributionFunction(0.5 + confidenceLevel / 2);
 }
 

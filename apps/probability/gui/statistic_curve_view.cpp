@@ -37,7 +37,7 @@ bool StatisticCurveView::shouldDrawLabelAtPosition(float labelValue) const {
   }
   float margin = k_marginsAroundZLabel / static_cast<float>(bounds().width()) *
                  (curveViewRange()->xMax() - curveViewRange()->xMin());
-  float z = m_statistic->testCriticalValue();
+  float z = static_cast<float>(m_statistic->testCriticalValue());
   bool res = labelValue >= z + margin || labelValue <= z - margin;
   if (m_statistic->hypothesisParams()->comparisonOperator() ==
       HypothesisParams::ComparisonOperator::Different) {
@@ -47,7 +47,7 @@ bool StatisticCurveView::shouldDrawLabelAtPosition(float labelValue) const {
 }
 
 void StatisticCurveView::drawTest(KDContext * ctx, KDRect rect) const {
-  float z = m_statistic->testCriticalValue();
+  float z = static_cast<float>(m_statistic->testCriticalValue());
 
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   drawZLabelAndZGraduation(ctx, z);

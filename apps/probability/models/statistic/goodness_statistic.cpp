@@ -56,20 +56,20 @@ bool GoodnessStatistic::validateInputs() {
   return true;
 }
 
-float GoodnessStatistic::paramAtLocation(int row, int column) {
+double GoodnessStatistic::paramAtLocation(int row, int column) {
   return paramAtIndex(locationToTableIndex(row, column));
 }
 
-void GoodnessStatistic::setParamAtLocation(int row, int column, float p) {
+void GoodnessStatistic::setParamAtLocation(int row, int column, double p) {
   setParamAtIndex(locationToTableIndex(row, column), p);
 }
 
-bool GoodnessStatistic::isValidParamAtLocation(int row, int column, float p) {
+bool GoodnessStatistic::isValidParamAtLocation(int row, int column, double p) {
   return isValidParamAtIndex(locationToTableIndex(row, column), p);
 }
 
-bool GoodnessStatistic::isValidParamAtIndex(int i, float p) {
-  if (i % 2 == 1 && std::fabs(p) < FLT_MIN) {
+bool GoodnessStatistic::isValidParamAtIndex(int i, double p) {
+  if (i % 2 == 1 && std::fabs(p) < DBL_MIN) {
     // Expected value should not be null
     return false;
   }
@@ -85,19 +85,19 @@ int GoodnessStatistic::locationToTableIndex(int row, int column) {
   return 2 * row + column;
 }
 
-float GoodnessStatistic::expectedValue(int index) {
+double GoodnessStatistic::expectedValue(int index) {
   return paramArray()[2 * index + 1];
 }
 
-float GoodnessStatistic::observedValue(int index) {
+double GoodnessStatistic::observedValue(int index) {
   return paramArray()[2 * index];
 }
 
-void GoodnessStatistic::setExpectedValue(int index, float value) {
+void GoodnessStatistic::setExpectedValue(int index, double value) {
   paramArray()[2 * index + 1] = value;
 }
 
-void GoodnessStatistic::setObservedValue(int index, float value) {
+void GoodnessStatistic::setObservedValue(int index, double value) {
   paramArray()[2 * index] = value;
 }
 

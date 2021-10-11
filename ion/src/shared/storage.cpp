@@ -75,21 +75,20 @@ uint32_t Storage::Record::checksum() {
   return Ion::crc32Word(crc32Results, 2);
 }
 
-int Storage::firstAvailableNameStartingWith(const char startingChar, char * buffer, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId) {
-  /* With '?' being startingChar, fill buffer with the first available name for
-   * the extension following this pattern : ?0, ?1, ?2, .. ?10, ?11, .. ?99 */
-  buffer[0] = startingChar;
-  int id = 0;
+int Storage::firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId) {
+  /* With '?' being the prefix, fill buffer with the first available name for
+   * the extension following this pattern : ?1, ?2, ?3, .. ?10, ?11, .. ?99 */
+  int id = 1;
   while (id <= maxId) {
-    int length = Poincare::Integer(id).serialize(buffer + 1, bufferSize - 1);
-    assert(buffer[1+length] == 0);
+    int length = Poincare::Integer(id).serialize(buffer + prefixLength, bufferSize - prefixLength);
+    assert(buffer[prefixLength+length] == 0);
     if (recordBaseNamedWithExtensions(buffer, extensions, numberOfExtensions).isNull()) {
-      return 1+length;
+      return prefixLength+length;
     }
     id++;
   }
   assert(false);
-  return 0;
+  return prefixLength;
 }
 
 Storage::Record::Record(const char * basename, int basenameLength, const char * extension, int extensionLength) {

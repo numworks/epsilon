@@ -766,7 +766,8 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
     // Rename record with a hidden record name.
     char name[4];
     const char * const extensions[1] = { Ion::Storage::funcExtension };
-    Ion::Storage::sharedStorage()->firstAvailableNameStartingWith(k_unnamedRecordFirstChar, name, 4, extensions, 1, 99);
+    name[0] = k_unnamedRecordFirstChar;
+    Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(name, 1, 4, extensions, 1, 99);
     error = record->setBaseNameWithExtension(name, Ion::Storage::funcExtension);
   }
   return error;

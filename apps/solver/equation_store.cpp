@@ -37,8 +37,10 @@ EquationStore::EquationStore() :
 
 Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
   char name[3];
+  static_assert(k_maxNumberOfEquations < 9, "Equation name record might not fit");
   const char * const extensions[1] = { Ion::Storage::eqExtension };
-  Ion::Storage::sharedStorage()->firstAvailableNameStartingWith('e', name, 3, extensions, 1, k_maxNumberOfEquations - 1);
+  name[0] = 'e';
+  Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(name, 1, 3, extensions, 1, k_maxNumberOfEquations - 1);
   return Ion::Storage::sharedStorage()->createRecordWithExtension(name, Ion::Storage::eqExtension, nullptr, 0);
 }
 

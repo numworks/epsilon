@@ -11,7 +11,7 @@ using namespace Poincare;
 
 namespace Graph {
 
-bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, int scrollSpeed, int * secondaryCurveIndex) {
+bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, int scrollSpeed, int * subCurveIndex) {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   double tCursorPosition = cursor->t();
   double t = tCursorPosition;
@@ -31,11 +31,11 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
 
   bool specialConicCursorMove = false;
   if (function->isConic() && function->hasTwoCurves()) {
-    assert(secondaryCurveIndex != nullptr);
+    assert(subCurveIndex != nullptr);
     // previousXY will be needed for conic's special horizontal cursor moves.
-    specialConicCursorMove = std::isfinite(function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex).x2());
-    if (*secondaryCurveIndex == 1 && function->plotType() != ContinuousFunction::PlotType::Hyperbola) {
-      // On the secondary curve, pressing left actually moves the cursor right
+    specialConicCursorMove = std::isfinite(function->evaluateXYAtParameter(t, App::app()->localContext(), *subCurveIndex).x2());
+    if (*subCurveIndex == 1 && function->plotType() != ContinuousFunction::PlotType::Hyperbola) {
+      // On the sub curve, pressing left actually moves the cursor right
       dir *= -1.0;
     }
   }
@@ -47,7 +47,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);
 
   t = std::max(tMin, std::min(tMax, t));
-  Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
+  Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *subCurveIndex);
 
   if (specialConicCursorMove && std::isnan(xy.x2())) {
     if (function->plotType() == ContinuousFunction::PlotType::Hyperbola) {
@@ -58,20 +58,20 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
       do {
         // Try to jump out of the undefined section
         t += dir * step;
-        xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
+        xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *subCurveIndex);
         tries ++;
       } while (std::isnan(xy.x2()) && tries < maxTries);
       if (tries >= maxTries || t < tMin || t > tMax) {
         // Reset to default t and xy
         t = previousT;
-        xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
+        xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *subCurveIndex);
       }
     } else {
       /* The cursor would end up out of the conic's bounds, do not move the
-       * cursor and switch to the other secondary curve (with inverted dir) */
+       * cursor and switch to the other sub curve (with inverted dir) */
       t = tCursorPosition;
-      *secondaryCurveIndex = 1 - *secondaryCurveIndex;
-      xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *secondaryCurveIndex);
+      *subCurveIndex = 1 - *subCurveIndex;
+      xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *subCurveIndex);
     }
   }
 

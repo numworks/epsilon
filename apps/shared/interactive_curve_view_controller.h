@@ -57,10 +57,10 @@ protected:
   Escher::Invocation calculusButtonInvocation();
 
   // Closest vertical curve helper
-  int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSecondaryCurveIndex = 0, int * secondaryCurveIndex = nullptr) const;
+  int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex = 0, int * subCurveIndex = nullptr) const;
   virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const = 0;
   virtual int selectedCurveRelativePosition() const = 0;
-  virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int secondaryCurveIndex = 0) const = 0;
+  virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const = 0;
   virtual bool suitableYValue(double y) const { return true; }
   virtual int numberOfCurves() const = 0;
   virtual bool hasTwoCurves(int curveIndex) const = 0;
@@ -70,8 +70,7 @@ protected:
 
   InteractiveCurveViewRange * interactiveRange() { return m_interactiveRange; }
 
-  // TODO Hugo : Rename this variable and all "secondary" curves related content
-  int m_selectedSecondaryCurveIndex;
+  int m_selectedSubCurveIndex;
 private:
   /* The value 21 is the actual height of the ButtonRow, that is
    * ButtonRowController::ContentView::k_plainStyleHeight + 1.

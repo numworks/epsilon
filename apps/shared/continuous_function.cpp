@@ -194,7 +194,7 @@ int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferS
   return numberOfChars + derivativeSize;
 }
 
-double ContinuousFunction::approximateDerivative(double x, Context * context, int secondaryCurveIndex) const {
+double ContinuousFunction::approximateDerivative(double x, Context * context, int subCurveIndex) const {
   assert(isAlongX());
   PlotType type = plotType();
   if (x < tMin() || x > tMax() || type == PlotType::VerticalLine) {
@@ -206,9 +206,9 @@ double ContinuousFunction::approximateDerivative(double x, Context * context, in
       assert(derivate.type() == ExpressionNode::Type::Dependency);
       derivate = derivate.childAtIndex(0);
       assert(derivate.type() == ExpressionNode::Type::Matrix);
-      derivate = derivate.childAtIndex(secondaryCurveIndex);
+      derivate = derivate.childAtIndex(subCurveIndex);
   } else {
-    assert(secondaryCurveIndex == 0);
+    assert(subCurveIndex == 0);
   }
   return PoincareHelpers::ApproximateWithValueForSymbol(derivate, k_unknownName, x, context);
 }
@@ -533,8 +533,8 @@ Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, d
 }
 
 template <typename T>
-Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * context, int secondaryCurveIndex) const {
-  Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context, secondaryCurveIndex);
+Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * context, int subCurveIndex) const {
+  Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context, subCurveIndex);
   if (plotType() != PlotType::Polar) {
     return x1x2;
   }
@@ -546,7 +546,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * 
 }
 
 template<typename T>
-Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context * context, int secondaryCurveIndex) const {
+Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context * context, int subCurveIndex) const {
   if (t < tMin() || t > tMax()) {
     return Coordinate2D<T>(isAlongX() ? t : NAN, NAN);
   }
@@ -554,10 +554,10 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
   PlotType type = plotType();
   if (type != PlotType::Parametric) {
     if (hasTwoCurves()) {
-      assert(e.numberOfChildren() > secondaryCurveIndex);
-      return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(secondaryCurveIndex), k_unknownName, t, context));
+      assert(e.numberOfChildren() > subCurveIndex);
+      return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(subCurveIndex), k_unknownName, t, context));
     } else {
-      assert(secondaryCurveIndex == 0);
+      assert(subCurveIndex == 0);
     }
     if (type == PlotType::VerticalLine) {
       // Invert x and y with vertical lines so it can be scrolled vertically

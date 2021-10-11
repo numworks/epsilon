@@ -93,9 +93,9 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
   float yMin = interactiveCurveViewRange()->yMin(), yMax = interactiveCurveViewRange()->yMax();
   float middle = (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
   float resLeft = gridUnit * std::floor(middle / gridUnit);
-  float yLeft = function->evaluateXYAtParameter(resLeft, context, m_selectedSecondaryCurveIndex).x2();
+  float yLeft = function->evaluateXYAtParameter(resLeft, context, m_selectedSubCurveIndex).x2();
   float resRight = resLeft + gridUnit;
-  float yRight = function->evaluateXYAtParameter(resRight, context, m_selectedSecondaryCurveIndex).x2();
+  float yRight = function->evaluateXYAtParameter(resRight, context, m_selectedSubCurveIndex).x2();
   if ((yMin < yLeft && yLeft < yMax) || !(yMin < yRight && yRight < yMax)) {
     return resLeft;
   }
@@ -128,8 +128,8 @@ void FunctionGraphController::initCursorParameters() {
 bool FunctionGraphController::moveCursorVertically(int direction) {
   int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  int nextSecondaryCurve = 0;
-  int nextActiveFunctionIndex = nextCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context, m_selectedSecondaryCurveIndex, &nextSecondaryCurve);
+  int nextSubCurve = 0;
+  int nextActiveFunctionIndex = nextCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context, m_selectedSubCurveIndex, &nextSubCurve);
   if (nextActiveFunctionIndex < 0) {
     return false;
   }
@@ -140,10 +140,10 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
     assert(!std::isnan(f->tMax()));
     clippedT = std::min<double>(f->tMax(), std::max<double>(f->tMin(), clippedT));
   }
-  Poincare::Coordinate2D<double> cursorPosition = f->evaluateXYAtParameter(clippedT, context, nextSecondaryCurve);
+  Poincare::Coordinate2D<double> cursorPosition = f->evaluateXYAtParameter(clippedT, context, nextSubCurve);
   m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());
   selectFunctionWithCursor(nextActiveFunctionIndex);
-  m_selectedSecondaryCurveIndex = nextSecondaryCurve;
+  m_selectedSubCurveIndex = nextSubCurve;
   return true;
 }
 
@@ -153,7 +153,7 @@ bool FunctionGraphController::cursorMatchesModel() {
     return false;
   }
   ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
-  Coordinate2D<double> xy = f->evaluateXYAtParameter(m_cursor->t(), context, m_selectedSecondaryCurveIndex);
+  Coordinate2D<double> xy = f->evaluateXYAtParameter(m_cursor->t(), context, m_selectedSubCurveIndex);
   return PoincareHelpers::equalOrBothNan(xy.x1(), m_cursor->x()) && PoincareHelpers::equalOrBothNan(xy.x2(), m_cursor->y());
 }
 
@@ -169,8 +169,8 @@ bool FunctionGraphController::closestCurveIndexIsSuitable(int newIndex, int curr
   return newIndex != currentIndex;
 }
 
-Coordinate2D<double> FunctionGraphController::xyValues(int curveIndex, double t, Poincare::Context * context, int secondaryCurveIndex) const {
-  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->evaluateXYAtParameter(t, context, secondaryCurveIndex);
+Coordinate2D<double> FunctionGraphController::xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex) const {
+  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->evaluateXYAtParameter(t, context, subCurveIndex);
 }
 
 bool FunctionGraphController::hasTwoCurves(int curveIndex) const {

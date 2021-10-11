@@ -34,7 +34,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     stack->push(graphController->rangeParameterController());
     return true;
   }, this), &m_rangeUnequalView, KDFont::SmallFont),
-  m_selectedSecondaryCurveIndex(0)
+  m_selectedSubCurveIndex(0)
 {
   m_autoButton.setState(m_interactiveRange->zoomAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
@@ -178,7 +178,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   /* If possible, round floatBody so that we go to the evaluation of the
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::getValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), curveView()->pixelWidth(), false);
-  Coordinate2D<double> xy = xyValues(selectedCurveRelativePosition(), floatBody, textFieldDelegateApp()->localContext(), m_selectedSecondaryCurveIndex);
+  Coordinate2D<double> xy = xyValues(selectedCurveRelativePosition(), floatBody, textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
   m_cursor->moveTo(floatBody, xy.x1(), xy.x2());
   reloadBannerView();
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
@@ -213,24 +213,24 @@ bool InteractiveCurveViewController::isCursorVisible() {
         && y <= range->yMax() - cursorTopMarginRatio() * yRange));
 }
 
-int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSecondaryCurveIndex, int * secondaryCurveIndex) const {
+int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
   double x = m_cursor->x();
   double y = m_cursor->y();
   if (std::isnan(y)) {
     y = goingUp ? -INFINITY : INFINITY;
   }
   double nextY = goingUp ? DBL_MAX : -DBL_MAX;
-  bool currentCurveHasSecondaryCurves = hasTwoCurves(currentCurveIndex);
+  bool currentCurveHasSubCurves = hasTwoCurves(currentCurveIndex);
   int nextCurveIndex = -1;
-  int nextSecondaryCurveIndex = 0;
+  int nextSubCurveIndex = 0;
   int curvesCount = numberOfCurves();
   for (int i = 0; i < curvesCount; i++) {
-    // Checking secondary curves if there are
+    // Checking sub curves if there are
     int startSecondaryIndex = 0;
     int totalSecondaryIndex = 1;
-    if (currentCurveHasSecondaryCurves && currentCurveIndex == i) {
-      // Check for the remaining secondary curve only
-      startSecondaryIndex = 1 - currentSecondaryCurveIndex;
+    if (currentCurveHasSubCurves && currentCurveIndex == i) {
+      // Check for the remaining sub curve only
+      startSecondaryIndex = 1 - currentSubCurveIndex;
       totalSecondaryIndex = startSecondaryIndex + 1;
     } else if (!closestCurveIndexIsSuitable(i, currentCurveIndex)) {
       // Nothing to check for
@@ -238,7 +238,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     } else if (hasTwoCurves(i)) {
         totalSecondaryIndex = 2;
     }
-    int currentIndexScore = 2*currentCurveIndex + currentSecondaryCurveIndex;
+    int currentIndexScore = 2*currentCurveIndex + currentSubCurveIndex;
     for (int iSecondary = startSecondaryIndex; iSecondary < totalSecondaryIndex; iSecondary++) {
       double newY = xyValues(i, x, context, iSecondary).x2();
       if (!suitableYValue(newY)) {
@@ -257,14 +257,14 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
        * - Of index score higher than the current curve index score if the
        *   current curve has the value y1 at the current x.
        * - Of lowest index score possible.
-       * Index score is computed so that both primary and secondary curve (with
+       * Index score is computed so that both primary and sub curve (with
        * a lesser weight) indexes are taken into account. */
       int newIndexScore = 2*i + iSecondary;
       if (goingUp) {
         if (newY > y && newY < nextY) {
           isNextCurve = true;
         } else if (newY == nextY) {
-          assert(newIndexScore > 2*nextCurveIndex + nextSecondaryCurveIndex);
+          assert(newIndexScore > 2*nextCurveIndex + nextSubCurveIndex);
           if (newY != y || currentIndexScore < 0 || newIndexScore < currentIndexScore) {
             isNextCurve = true;
           }
@@ -275,7 +275,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
         if (newY < y && newY > nextY) {
           isNextCurve = true;
         } else if (newY == nextY) {
-          assert(newIndexScore > 2*nextCurveIndex + nextSecondaryCurveIndex);
+          assert(newIndexScore > 2*nextCurveIndex + nextSubCurveIndex);
         } else if (newY == y && newIndexScore > currentIndexScore) {
           isNextCurve = true;
         }
@@ -283,12 +283,12 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
       if (isNextCurve) {
         nextY = newY;
         nextCurveIndex = i;
-        nextSecondaryCurveIndex = iSecondary;
+        nextSubCurveIndex = iSecondary;
       }
     }
   }
-  if (secondaryCurveIndex) {
-    *secondaryCurveIndex = nextSecondaryCurveIndex;
+  if (subCurveIndex) {
+    *subCurveIndex = nextSubCurveIndex;
   }
   return nextCurveIndex;
 }

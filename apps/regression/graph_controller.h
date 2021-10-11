@@ -64,7 +64,7 @@ private:
   uint32_t rangeVersion() override;
   int selectedCurveRelativePosition() const override;
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
-  Poincare::Coordinate2D<double> xyValues(int curveIndex, double x, Poincare::Context * context, int secondaryCurveIndex = 0) const override;
+  Poincare::Coordinate2D<double> xyValues(int curveIndex, double x, Poincare::Context * context, int subCurveIndex = 0) const override;
   double yValue(int curveIndex, double x, Poincare::Context * context) const;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override;

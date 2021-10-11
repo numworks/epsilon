@@ -166,9 +166,8 @@ def parse_files(files):
                     sys.stderr.write("Error: Message exceeds length limits for " + type + " : " + definition.decode('utf-8') + " (" + name + ")\n")
                     sys.exit(-1)
                 data[locale][name] = definition
-    # if (len(args.locales) >= default_number_of_locales):
-        # TODO Hugo : Uncomment this
-        # check_redundancy(messages, data, args.locales)
+    if (len(args.locales) >= default_number_of_locales):
+        check_redundancy(messages, data, args.locales)
     return {"messages": sorted(messages), "universal_messages": sorted(universal_messages), "data": data}
 
 def parse_codepoints(file):

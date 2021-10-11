@@ -649,7 +649,6 @@ Expression ContinuousFunction::Model::originalEquation(const Ion::Storage::Recor
   return ExpressionModel::expressionClone(record).replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
 }
 
-// TODO Hugo : This method logic might be usefull in other places.
 bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equationSymbol) {
   /* Examples of valid named expression : f(x)= or f(x)< or f(θ)= or f(t)=
    * Examples of invalid named expression : cos(x)= or f(θ)< or f(t)<  */
@@ -743,8 +742,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record * record, const char * c, Context * context, CodePoint symbol) {
-  // TODO Hugo : this line should be replacable with originalEquation (is it worth it ?)
-  Expression newExpression = buildExpressionFromText(c, symbol, context);
+  Expression newExpression = originalEquation(record, symbol);
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   if (Ion::Storage::FullNameHasExtension(record->fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     if (!newExpression.isUninitialized()

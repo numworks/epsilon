@@ -746,26 +746,21 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
   // TODO Hugo : this line should be replacable with originalEquation (is it worth it ?)
   Expression newExpression = buildExpressionFromText(c, symbol, context);
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
-  // TODO Hugo : Factorize this code
   if (Ion::Storage::FullNameHasExtension(record->fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     if (!newExpression.isUninitialized()
-      && Poincare::ComparisonOperator::IsComparisonOperatorType(newExpression.type())
-      && newExpression.childAtIndex(0).type() == ExpressionNode::Type::Function
-      && (newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder('x'))
-        || (newExpression.type() == ExpressionNode::Type::Equal
-          && (newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder('t'))
-            || newExpression.childAtIndex(0).childAtIndex(0).isIdenticalTo(Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta)))))
-        ) {
-      Poincare::Expression a = newExpression.childAtIndex(0);
-      Poincare::SymbolAbstract function = static_cast<Poincare::SymbolAbstract&>(a);
-      error = record->setBaseNameWithExtension(function.name(), Ion::Storage::funcExtension);
+        && ComparisonOperator::IsComparisonOperatorType(newExpression.type())
+        && isValidNamedLeftExpression(newExpression.childAtIndex(0),
+                                      newExpression.type())) {
+      Expression function = newExpression.childAtIndex(0);
+      error = record->setBaseNameWithExtension(static_cast<SymbolAbstract&>(function).name(), Ion::Storage::funcExtension);
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
         return error;
       }
-      // Reset error, record's name will be resetted.
+      // Function's name is already taken, reset records name if needed.
       error = Ion::Storage::Record::ErrorStatus::None;
-    } else if (record->fullName()[0] == k_unnamedRecordFirstChar) {
-      // No need to rename anything.
+    }
+    if (record->fullName()[0] == k_unnamedRecordFirstChar) {
+      // Record is already unnamed (and hidden).
       return error;
     }
     // Rename record with a hidden record name.

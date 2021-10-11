@@ -107,7 +107,7 @@ public:
   int numberOfRecordsStartingWithout(const char nonStartingChar, const char * extension);
 
   // Record names helper
-  int firstAvailableNameStartingWith(const char startingChar, char * buffer, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId);
+  int firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId);
   static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
 
   // Record creation

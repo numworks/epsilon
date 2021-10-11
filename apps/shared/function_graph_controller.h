@@ -45,12 +45,12 @@ protected:
   virtual FunctionStore * functionStore() const;
 
   // Closest vertical curve helper
-  virtual int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSecondaryCurveIndex, int * secondaryCurveIndex) const {
-    return closestCurveIndexVertically(goingUp, currentSelectedCurve, context, currentSecondaryCurveIndex, secondaryCurveIndex);
+  virtual int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
+    return closestCurveIndexVertically(goingUp, currentSelectedCurve, context, currentSubCurveIndex, subCurveIndex);
   }
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
   int selectedCurveRelativePosition() const override { return *m_indexFunctionSelectedByCursor; }
-  Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int secondaryCurveIndex = 0) const override;
+  Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   int numberOfCurves() const override;
   bool hasTwoCurves(int curveIndex) const override;
   void initCursorParameters() override;

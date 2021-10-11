@@ -15,8 +15,7 @@ const char * testToTextSymbol(Data::Test t);
 const char * testTypeToText(Data::TestType t);
 I18n::Message titleFormatForTest(Data::Test test, Data::TestType type);
 
-template <typename T>
-int defaultConvertFloatToText(T value, char buffer[], int bufferSize);
+int defaultConvertFloatToText(double value, char buffer[], int bufferSize);
 
 Poincare::Layout XOneMinusXTwoLayout();
 

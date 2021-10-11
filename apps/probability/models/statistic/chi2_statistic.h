@@ -14,11 +14,11 @@ public:
   Chi2Statistic();
   Poincare::Layout testCriticalValueSymbol() override;
   bool hasDegreeOfFreedom() override { return true; }
-  float degreeOfFreedom() override { return m_degreesOfFreedom; }
+  double degreeOfFreedom() override { return m_degreesOfFreedom; }
 
   float canonicalDensityFunction(float x) const override;
-  float cumulativeNormalizedDistributionFunction(float x) const override;
-  float cumulativeNormalizedInverseDistributionFunction(float proba) const override;
+  double cumulativeNormalizedDistributionFunction(double x) const override;
+  double cumulativeNormalizedInverseDistributionFunction(double proba) const override;
 
   void computeInterval() override {}
 
@@ -31,18 +31,18 @@ public:
 protected:
   using CachedStatistic::setParamAtIndex;  // Hidden
   using CachedStatistic::paramAtIndex;  // Hidden
-  float m_degreesOfFreedom;
+  double m_degreesOfFreedom;
 
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {
     return ParameterRepresentation{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
   }
 
   // Chi2 specific
-  virtual float expectedValue(int index) = 0;
-  virtual float observedValue(int index) = 0;
+  virtual double expectedValue(int index) = 0;
+  virtual double observedValue(int index) = 0;
   virtual int numberOfValuePairs() = 0;
 
-  float computeChi2();
+  double computeChi2();
 };
 
 }  // namespace Probability

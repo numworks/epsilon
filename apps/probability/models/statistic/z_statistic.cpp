@@ -8,12 +8,12 @@ float ZStatistic::canonicalDensityFunction(float x) const {
   return Poincare::NormalDistribution::EvaluateAtAbscissa<float>(x, 0, 1);
 }
 
-float ZStatistic::cumulativeNormalizedDistributionFunction(float x) const {
-  return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(x, 0, 1);
+double ZStatistic::cumulativeNormalizedDistributionFunction(double x) const {
+  return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(x, 0, 1);
 }
 
-float ZStatistic::cumulativeNormalizedInverseDistributionFunction(float proba) const {
-  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(proba, 0, 1);
+double ZStatistic::cumulativeNormalizedInverseDistributionFunction(double proba) const {
+  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<double>(proba, 0, 1);
 }
 
 float ZStatistic::xMin() const {

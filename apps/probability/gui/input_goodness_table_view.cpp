@@ -63,7 +63,7 @@ void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::High
   if (j == 0) {  // Header
     return;
   }
-  float p = m_statistic->paramAtLocation(j - 1, i);
+  double p = m_statistic->paramAtLocation(j - 1, i);
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
   if (std::isnan(p)) {
     myCell->editableTextCell()->textField()->setText("");

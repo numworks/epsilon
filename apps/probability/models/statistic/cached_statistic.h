@@ -17,24 +17,24 @@ public:
     m_marginOfError(NAN) {}
 
   // Test statistic
-  float testCriticalValue() const override { return m_testCriticalValue; };
-  float pValue() const override { return m_pValue; };
+  double testCriticalValue() const override { return m_testCriticalValue; };
+  double pValue() const override { return m_pValue; };
 
   // Confidence interval
-  float estimate() const override { return m_estimate; };
-  float intervalCriticalValue() const override { return m_zCritical; };
-  float standardError() const override { return m_SE; };
-  float marginOfError() const override { return m_marginOfError; };
+  double estimate() const override { return m_estimate; };
+  double intervalCriticalValue() const override { return m_zCritical; };
+  double standardError() const override { return m_SE; };
+  double marginOfError() const override { return m_marginOfError; };
 
 protected:
-  float computeMarginOfError(float zCritical, float SE) { return zCritical * SE; }
+  double computeMarginOfError(double zCritical, double SE) { return zCritical * SE; }
 
-  float m_testCriticalValue;
-  float m_pValue;
-  float m_estimate;
-  float m_zCritical;
-  float m_SE;
-  float m_marginOfError;
+  double m_testCriticalValue;
+  double m_pValue;
+  double m_estimate;
+  double m_zCritical;
+  double m_SE;
+  double m_marginOfError;
 };
 
 }  // namespace Probability

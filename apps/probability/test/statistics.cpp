@@ -18,33 +18,33 @@ using namespace Probability;
 
 struct StatisticTestCase {
   // Inputs
-  float m_firstHypothesisParam;
+  double m_firstHypothesisParam;
   HypothesisParams::ComparisonOperator m_op;
   int m_numberOfInputs;
-  float m_inputs[100];
-  float m_significanceLevel;
-  float m_confidenceLevel;
+  double m_inputs[100];
+  double m_significanceLevel;
+  double m_confidenceLevel;
 
   // Results
   int m_numberOfParameters;
   bool m_hasDegreeOfFreedom;
-  float m_degreesOfFreedom;
+  double m_degreesOfFreedom;
   bool m_testPassed;
-  float m_testCriticalValue;
-  float m_pValue;
-  float m_estimate;
-  float m_intervalCriticalValue;
-  float m_standardError;
-  float m_marginOfError;
+  double m_testCriticalValue;
+  double m_pValue;
+  double m_estimate;
+  double m_intervalCriticalValue;
+  double m_standardError;
+  double m_marginOfError;
 };
 
 void inputValues(Statistic * stat, StatisticTestCase & test) {
   quiz_assert(stat->hasDegreeOfFreedom() == test.m_hasDegreeOfFreedom);
 
   stat->initThreshold(Data::SubApp::Tests);
-  assertRoughlyEqual<float>(stat->threshold(), 0.05f);  // Significance level
+  assertRoughlyEqual<double>(stat->threshold(), 0.05f);  // Significance level
   stat->setThreshold(test.m_significanceLevel);
-  assertRoughlyEqual<float>(stat->threshold(), test.m_significanceLevel);
+  assertRoughlyEqual<double>(stat->threshold(), test.m_significanceLevel);
 
   stat->hypothesisParams()->setFirstParam(test.m_firstHypothesisParam);
   stat->hypothesisParams()->setComparisonOperator(test.m_op);
@@ -61,8 +61,8 @@ void runTest(Statistic * stat, StatisticTestCase & test) {
 
   quiz_assert(stat->numberOfParameters() == test.m_numberOfParameters);
   quiz_assert(stat->canRejectNull() == test.m_testPassed);
-  assertRoughlyEqual<float>(stat->testCriticalValue(), test.m_testCriticalValue);
-  assertRoughlyEqual<float>(stat->pValue(), test.m_pValue);
+  assertRoughlyEqual<double>(stat->testCriticalValue(), test.m_testCriticalValue);
+  assertRoughlyEqual<double>(stat->pValue(), test.m_pValue);
   if (stat->hasDegreeOfFreedom()) {
     assertRoughlyEqual(stat->degreeOfFreedom(), test.m_degreesOfFreedom);
   }
@@ -76,16 +76,16 @@ void testStatistic(Statistic * stat, StatisticTestCase & test) {
 
   // Confidence interval
   stat->initThreshold(Data::SubApp::Intervals);
-  assertRoughlyEqual<float>(stat->threshold(), 0.95f);  // Confidence level
+  assertRoughlyEqual<double>(stat->threshold(), 0.95);  // Confidence level
   stat->setThreshold(test.m_confidenceLevel);
-  assertRoughlyEqual<float>(stat->threshold(), test.m_confidenceLevel);
+  assertRoughlyEqual<double>(stat->threshold(), test.m_confidenceLevel);
 
   stat->computeInterval();
 
-  assertRoughlyEqual<float>(stat->estimate(), test.m_estimate);
-  assertRoughlyEqual<float>(stat->intervalCriticalValue(), test.m_intervalCriticalValue, 5 * FLT_EPSILON);
-  assertRoughlyEqual<float>(stat->standardError(), test.m_standardError, 5 * FLT_EPSILON);
-  assertRoughlyEqual<float>(stat->marginOfError(), test.m_marginOfError, 5 * FLT_EPSILON);
+  assertRoughlyEqual<double>(stat->estimate(), test.m_estimate);
+  assertRoughlyEqual<double>(stat->intervalCriticalValue(), test.m_intervalCriticalValue, 5.0 * DBL_EPSILON);
+  assertRoughlyEqual<double>(stat->standardError(), test.m_standardError, 5.0 * DBL_EPSILON);
+  assertRoughlyEqual<double>(stat->marginOfError(), test.m_marginOfError, 5.0 * DBL_EPSILON);
 }
 
 QUIZ_CASE(probability_one_proportion_statistic) {
@@ -406,10 +406,10 @@ QUIZ_CASE(probability_homogeneity_statistic) {
       .m_testPassed = false,
       .m_testCriticalValue = 3.5017316341,
       .m_pValue = 0.4776151180}};
-  float expectedValues[2][HomogeneityStatistic::k_maxNumberOfColumns *
+  double expectedValues[2][HomogeneityStatistic::k_maxNumberOfColumns *
                           HomogeneityStatistic::k_maxNumberOfRows] = {
       {1.75,  2.5,     2.75,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
-       3,     4.2857,  4.714,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       3.0,     4.2857,  4.714,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
        2.25,  3.214,   3.536,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
        NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
        NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
@@ -426,11 +426,11 @@ QUIZ_CASE(probability_homogeneity_statistic) {
     for (int j = 0;
          j < HomogeneityStatistic::k_maxNumberOfColumns * HomogeneityStatistic::k_maxNumberOfRows;
          j++) {
-      float expected = stat.expectedValueAtLocation(j / HomogeneityStatistic::k_maxNumberOfColumns,
+      double expected = stat.expectedValueAtLocation(j / HomogeneityStatistic::k_maxNumberOfColumns,
                                                     j % HomogeneityStatistic::k_maxNumberOfColumns);
-      float real = expectedValues[i][j];
+      double real = expectedValues[i][j];
       quiz_assert((std::isnan(real) && std::isnan(expected)) ||
-                  roughlyEqual<float>(real, expected, 1e-4));
+                  roughlyEqual<double>(real, expected, 1e-4));
     }
   }
 }

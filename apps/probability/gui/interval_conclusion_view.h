@@ -12,7 +12,7 @@ namespace Probability {
 class IntervalConclusionView : public Escher::BufferTextView {
 public:
   IntervalConclusionView();
-  void setInterval(float center, float marginOfError);
+  void setInterval(double center, double marginOfError);
 };
 
 }  // namespace Probability

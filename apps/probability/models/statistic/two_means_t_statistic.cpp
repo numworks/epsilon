@@ -34,7 +34,7 @@ void TwoMeansTStatistic::init(Data::SubApp subapp) {
   }
 }
 
-bool TwoMeansTStatistic::isValidParamAtIndex(int i, float p) {
+bool TwoMeansTStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::N1:
     case ParamsOrder::N2:
@@ -47,7 +47,7 @@ bool TwoMeansTStatistic::isValidParamAtIndex(int i, float p) {
 }
 
 void TwoMeansTStatistic::computeTest() {
-  float deltaMean = m_hypothesisParams.firstParam();
+  double deltaMean = m_hypothesisParams.firstParam();
   m_degreesOfFreedom = computeDegreesOfFreedom(s1(), n1(), s2(), n2());
   m_testCriticalValue = computeT(deltaMean, x1(), n1(), s1(), x2(), n2(), s2());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
@@ -65,7 +65,7 @@ Poincare::Layout TwoMeansTStatistic::estimateLayout() {
   return XOneMinusXTwoLayout();
 }
 
-void TwoMeansTStatistic::setParamAtIndex(int index, float p) {
+void TwoMeansTStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N1 || index == ParamsOrder::N2) {
     p = std::round(p);
   }
@@ -115,27 +115,27 @@ bool TwoMeansTStatistic::validateInputs() {
   return s1() >= FLT_MIN || s2() >= FLT_MIN;
 }
 
-float TwoMeansTStatistic::_xEstimate(float meanSample1, float meanSample2) {
+double TwoMeansTStatistic::_xEstimate(double meanSample1, double meanSample2) {
   return meanSample1 - meanSample2;
 }
 
-float TwoMeansTStatistic::computeT(float deltaMean,
-                                   float meanSample1,
-                                   float n1,
-                                   float s1,
-                                   float meanSample2,
-                                   float n2,
-                                   float s2) {
+double TwoMeansTStatistic::computeT(double deltaMean,
+                                   double meanSample1,
+                                   double n1,
+                                   double s1,
+                                   double meanSample2,
+                                   double n2,
+                                   double s2) {
   return ((meanSample1 - meanSample2) - (deltaMean)) / computeStandardError(s1, n1, s2, n2);
 }
 
-float TwoMeansTStatistic::computeDegreesOfFreedom(float s1, float n1, float s2, float n2) {
-  float v1 = pow(s1, 2) / n1;
-  float v2 = pow(s2, 2) / n2;
+double TwoMeansTStatistic::computeDegreesOfFreedom(double s1, double n1, double s2, double n2) {
+  double v1 = pow(s1, 2) / n1;
+  double v2 = pow(s2, 2) / n2;
   return pow(v1 + v2, 2) / (pow(v1, 2) / (n1 - 1) + pow(v2, 2) / (n2 - 1));
 }
 
-float TwoMeansTStatistic::computeStandardError(float s1, float n1, float s2, float n2) {
+double TwoMeansTStatistic::computeStandardError(double s1, double n1, double s2, double n2) {
   return std::sqrt((s1 * s1 / n1 + s2 * s2 / n2));
 }
 

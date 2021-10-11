@@ -39,7 +39,7 @@ void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(
     Escher::HighlightCell * cell,
     int column,
     int row) {
-  float p = m_statistic->parameterAtPosition(row, column);
+  double p = m_statistic->parameterAtPosition(row, column);
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
   if (std::isnan(p)) {
     myCell->editableTextCell()->textField()->setText("");

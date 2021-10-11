@@ -13,7 +13,7 @@
 
 namespace Probability {
 
-class InputController : public FloatParameterPage, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate {
+class InputController : public DoubleParameterPage, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate {
 public:
   InputController(Escher::StackViewController * parent,
                   ResultsController * resultsController,
@@ -32,7 +32,7 @@ public:
                 KDColor backgroundColor = s_titleColor,
                 KDColor separatorColor = s_titleColor,
                 KDColor textColor = KDColorWhite) {
-    FloatParameterPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
+    DoubleParameterPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
   }
 
   void initCell(void * cell, int index) override;
@@ -41,7 +41,7 @@ public:
   constexpr static int k_numberOfReusableCells =
       Ion::Display::Height / Escher::TableCell::k_minimalLargeFontCellHeight + 2;
 protected:
-  float parameterAtIndex(int i) override { return m_statistic->paramAtIndex(i); }
+  double parameterAtIndex(int i) override { return m_statistic->paramAtIndex(i); }
   bool isCellEditing(Escher::HighlightCell * cell, int index) override;
   void setTextInCell(Escher::HighlightCell * cell, const char * text, int index) override;
 
@@ -50,8 +50,8 @@ private:
 
   int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
-  int convertFloatToText(float value, char * buffer, int bufferSize);
+  bool setParameterAtIndex(int parameterIndex, double f) override;
+  int convertFloatToText(double value, char * buffer, int bufferSize);
 
   constexpr static int k_numberOfTitleSignificantDigit = 3;
   constexpr static int k_titleBufferSize = sizeof("H0:= Ha: α=") + 7 /* μ1-μ2 */ +

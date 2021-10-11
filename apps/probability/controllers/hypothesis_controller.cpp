@@ -79,7 +79,7 @@ bool Probability::HypothesisController::textFieldShouldFinishEditing(Escher::Tex
 bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextField * textField,
                                                                   const char * text,
                                                                   Ion::Events::Event event) {
-  float h0 = Shared::PoincareHelpers::ApproximateToScalar<float>(
+  double h0 = Shared::PoincareHelpers::ApproximateToScalar<double>(
       text,
       AppsContainer::sharedAppsContainer()->globalContext());
   // Check
@@ -151,7 +151,7 @@ bool HypothesisController::buttonAction() {
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
-  Poincare::Print::customPrintf(buffer, bufferSize, "%s=%*.*ef", symbolPrefix(), m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+  Poincare::Print::customPrintf(buffer, bufferSize, "%s=%*.*ed", symbolPrefix(), m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   m_h0.setAccessoryText(buffer);
   m_ha.reload();
   resetMemoization();

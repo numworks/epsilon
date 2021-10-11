@@ -41,7 +41,7 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
         static_cast<ExpressionCellWithBufferWithMessage *>(cell);
     Poincare::Layout message;
     I18n::Message subMessage = I18n::Message::Default;
-    float value;
+    double value;
     if (App::app()->subapp() == Data::SubApp::Tests) {
       switch (i) {
         case TestCellOrder::Z:

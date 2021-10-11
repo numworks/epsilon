@@ -50,7 +50,7 @@ int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferS
   constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
     'f', 'g', 'h', 'p'
   };
-  /* First default names the first of theses names f, g, h, p and then f0, f1,
+  /* First default names the first of theses names f, g, h, p and then f1, f2,
    * that does not exist yet in the storage. */
   size_t constantNameLength = 1; // 'f', no null-terminating char
   assert(bufferSize > constantNameLength+1);
@@ -62,8 +62,9 @@ int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferS
       return constantNameLength;
     }
   }
-  // f, g, h and p are already taken. Try f0, f1, ...
-  return Ion::Storage::sharedStorage()->firstAvailableNameStartingWith(k_defaultLetterNames[0], buffer, bufferSize, Shared::GlobalContext::k_extensions, Shared::GlobalContext::k_numberOfExtensions, 99);
+  // f, g, h and p are already taken. Try f1, f2, ...
+   buffer[0] = k_defaultLetterNames[0];
+  return Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(buffer, 1, bufferSize, Shared::GlobalContext::k_extensions, Shared::GlobalContext::k_numberOfExtensions, 99);
 }
 
 bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {

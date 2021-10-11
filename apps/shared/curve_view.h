@@ -138,13 +138,13 @@ private:
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
-  void joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
+  int joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, bool dashedCurve = false, int stampNumber = 0) const;
   /* Join two dots with a straight line. */
-  void straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color, bool thick) const;
+  int straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color, bool thick, bool dashedCurve = false, int stampNumber = 0) const;
   /* Stamp centered around (pxf, pyf). If pxf and pyf are not round number, the
    * function shifts the stamp (by blending adjacent pixel colors) to draw with
    * anti alising. */
-  void stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color, bool thick) const;
+  int stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color, bool thick, bool dashedCurve = false, int stampNumber = 0) const;
   void layoutSubviews(bool force = false) override;
   KDRect cursorFrame();
   KDRect bannerFrame();

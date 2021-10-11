@@ -670,6 +670,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, floa
   float y = NAN;
   int i = 0;
   bool isLastSegment = false;
+  int stampNumber = 0;
   do {
     previousT = t;
     t = tStart + (i++) * tStep;
@@ -697,11 +698,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, floa
       float upperBound = std::isnan(y) ? INFINITY : std::max(y, xyAreaBound(t, model, context).x2());
       drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, lowerBound, upperBound, color, 1, 1, areaIndex);
     }
-    if (dashedCurve && i%8 != 0) {
-      // TODO Hugo : Improve dashed curve, using derivatives for instance.
-      continue;
-    }
-    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation);
+    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation, dashedCurve, stampNumber);
   } while (!isLastSegment);
 }
 
@@ -887,7 +884,7 @@ static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC,
       && ((y1 < yC && yC < y2) || (y2 < yC && yC < y1) || (y2 == yC && yC == y1));
 }
 
-void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
+int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, int stampNumber) const {
   const bool isFirstDot = std::isnan(t);
   const bool isLeftDotValid = !(
       std::isnan(x) || std::isinf(x) ||
@@ -900,7 +897,7 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
   float puf = floatToPixel(Axis::Horizontal, u);
   float pvf = floatToPixel(Axis::Vertical, v);
   if (!isRightDotValid && !isLeftDotValid) {
-    return;
+    return stampNumber;
   }
   KDCoordinate circleDiameter = thick ? thickCircleDiameter : thinCircleDiameter;
   if (isRightDotValid) {
@@ -920,8 +917,7 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
          * because the latter solution significantly slows down the graph. */
         pvd = pvf;
       }
-      stampAtLocation(ctx, rect, puf, pvd, color, thick);
-      return;
+      return stampAtLocation(ctx, rect, puf, pvd, color, thick, dashedCurve, stampNumber);
     }
   }
   // Middle point
@@ -942,12 +938,10 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
       Coordinate2D<double> uvD = xyDoubleEvaluation(static_cast<double>(s), model, context);
       Coordinate2D<double> cxyD = xyDoubleEvaluation(static_cast<double>(ct), model, context);
       if (pointInBoundingBox(xyD.x1(), xyD.x2(), uvD.x1(), uvD.x2(), cxyD.x1(), cxyD.x2())) {
-        straightJoinDots(ctx, rect, floatToPixel(Axis::Horizontal, xyD.x1()), floatToPixel(Axis::Vertical, xyD.x2()), floatToPixel(Axis::Horizontal, uvD.x1()), floatToPixel(Axis::Vertical, uvD.x2()), color, thick);
-        return;
+        return straightJoinDots(ctx, rect, floatToPixel(Axis::Horizontal, xyD.x1()), floatToPixel(Axis::Vertical, xyD.x2()), floatToPixel(Axis::Horizontal, uvD.x1()), floatToPixel(Axis::Vertical, uvD.x2()), color, thick, dashedCurve, stampNumber);
       }
     } else {
-      straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick);
-      return;
+      return straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick, dashedCurve, stampNumber);
     }
   }
   if (maxNumberOfRecursion > 0) {
@@ -970,9 +964,10 @@ void CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamet
       nextMaxNumberOfRecursion--;
     }
 
-    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation);
-    joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation);
+    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation, dashedCurve, stampNumber);
+    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation, dashedCurve, stampNumber);
   }
+  return stampNumber;
 }
 
 static void clipBarycentricCoordinatesBetweenBounds(float & start, float & end, const KDCoordinate * bounds, const float p1f, const float p2f) {
@@ -989,7 +984,7 @@ static void clipBarycentricCoordinatesBetweenBounds(float & start, float & end, 
   }
 }
 
-void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color, bool thick) const {
+int CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color, bool thick, bool dashedCurve, int stampNumber) const {
   {
     /* Before drawing the line segment, clip it to rect:
      * start and end are the barycentric coordinates on the line segment (0
@@ -1009,7 +1004,7 @@ void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float 
     clipBarycentricCoordinatesBetweenBounds(start, end, xBounds, pxf, puf);
     clipBarycentricCoordinatesBetweenBounds(start, end, yBounds, pyf, pvf);
     if (start > end) {
-      return;
+      return stampNumber;
     }
     puf = start * pxf + (1-start) * puf;
     pvf = start * pyf + (1-start) * pvf;
@@ -1024,13 +1019,19 @@ void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float 
   const float stepY = deltaY / normsRatio;
   const int numberOfStamps = std::floor(normsRatio);
   for (int i = 0; i < numberOfStamps; i++) {
-    stampAtLocation(ctx, rect, puf, pvf, color, thick);
+    stampNumber = stampAtLocation(ctx, rect, puf, pvf, color, thick, dashedCurve, stampNumber);
     puf += stepX;
     pvf += stepY;
   }
+  return stampNumber;
 }
 
-void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color, bool thick) const {
+bool ShouldDashedCurveStamp(int stampNumber) {
+  // Stamp 5 times out of 10.
+  return stampNumber%10 >= 5;
+}
+
+int CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color, bool thick, bool dashedCurve, int stampNumber) const {
   /* The (pxf, pyf) coordinates are not generally locating the center of a
    * pixel. We use stampMask, which is one pixel wider and higher than
    * stampSize, in order to cover stampRect without aligning the pixels. Then
@@ -1044,6 +1045,9 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
    * stampMask.
    */
   assert(!std::isnan(pxf) && !std::isnan(pyf));
+  if (dashedCurve && ShouldDashedCurveStamp(stampNumber)) {
+    return stampNumber + 1;
+  }
   KDCoordinate stampSize = thick ? thickStampSize : thinStampSize;
   const uint8_t * stampMask = thick ? thickStampMask : thinStampMask;
   pxf -= (stampSize + 1 - 1)/2.0f;
@@ -1052,7 +1056,7 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
   const KDCoordinate py = std::ceil(pyf);
   KDRect stampRect(px, py, stampSize, stampSize);
   if (!rect.intersects(stampRect)) {
-    return;
+    return stampNumber + 1;
   }
   uint8_t shiftedMask[stampSize][stampSize];
   KDColor workingBuffer[stampSize*stampSize];
@@ -1069,6 +1073,7 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
     }
   }
   ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);
+  return stampNumber + 1;
 }
 
 void CurveView::layoutSubviews(bool force) {

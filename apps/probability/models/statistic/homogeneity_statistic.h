@@ -9,9 +9,9 @@ class HomogeneityStatistic : public Chi2Statistic {
 public:
   HomogeneityStatistic();
   // TODO Factorize in Chi2Statistic
-  void setParameterAtPosition(int row, int column, float value);
-  float parameterAtPosition(int row, int column);
-  bool isValidParamAtPosition(int row, int column, float p);
+  void setParameterAtPosition(int row, int column, double value);
+  double parameterAtPosition(int row, int column);
+  bool isValidParamAtPosition(int row, int column, double p);
   int numberOfStatisticParameters() const override {
     return k_maxNumberOfColumns * k_maxNumberOfRows;
   }
@@ -19,11 +19,11 @@ public:
 
   int numberOfResultRows() { return m_numberOfResultRows; }
   int numberOfResultColumns() { return m_numberOfResultColumns; }
-  float expectedValueAtLocation(int row, int column);
+  double expectedValueAtLocation(int row, int column);
 
-  float total() { return m_total;}
-  float rowTotal(int row) { return m_rowTotals[row]; }
-  float columnTotal(int column) { return m_columnTotals[column]; }
+  double total() { return m_total;}
+  double rowTotal(int row) { return m_rowTotals[row]; }
+  double columnTotal(int column) { return m_columnTotals[column]; }
 
   struct Index2D {
     int row;
@@ -38,13 +38,13 @@ public:
   constexpr static int k_maxNumberOfRows = 10;
 
 protected:
-  float observedValue(int resultsIndex) override;
-  float expectedValue(int resultsIndex) override;
-  float observedValueAtPosition(Index2D index);
-  float expectedValueAtPosition(Index2D index);
+  double observedValue(int resultsIndex) override;
+  double expectedValue(int resultsIndex) override;
+  double observedValueAtPosition(Index2D index);
+  double expectedValueAtPosition(Index2D index);
   int computeDegreesOfFreedom(Index2D max);
   int numberOfValuePairs() override;
-  float * paramArray() override { return m_input; }
+  double * paramArray() override { return m_input; }
 
 private:
   // TODO: factorize in Chi2Statistic
@@ -55,11 +55,11 @@ private:
   int resultsIndexToArrayIndex(int resultsIndex);
   void computeExpectedValues(Index2D max);
 
-  float m_input[k_maxNumberOfColumns * k_maxNumberOfRows];
-  float m_expectedValues[k_maxNumberOfColumns * k_maxNumberOfRows];
-  float m_rowTotals[k_maxNumberOfRows];
-  float m_columnTotals[k_maxNumberOfColumns];
-  float m_total;
+  double m_input[k_maxNumberOfColumns * k_maxNumberOfRows];
+  double m_expectedValues[k_maxNumberOfColumns * k_maxNumberOfRows];
+  double m_rowTotals[k_maxNumberOfRows];
+  double m_columnTotals[k_maxNumberOfColumns];
+  double m_total;
   int m_numberOfResultRows;
   int m_numberOfResultColumns;
 };

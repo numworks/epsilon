@@ -23,7 +23,7 @@ void OneMeanZStatistic::init(Data::SubApp subapp) {
   }
 }
 
-bool OneMeanZStatistic::isValidParamAtIndex(int i, float p) {
+bool OneMeanZStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::N:
       return p > 0;
@@ -34,7 +34,7 @@ bool OneMeanZStatistic::isValidParamAtIndex(int i, float p) {
   return ZStatistic::isValidParamAtIndex(i, p);
 }
 
-void OneMeanZStatistic::setParamAtIndex(int index, float p) {
+void OneMeanZStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N) {
     p = std::round(p);
   }
@@ -72,11 +72,11 @@ ParameterRepresentation OneMeanZStatistic::paramRepresentationAtIndex(int i) con
   return ParameterRepresentation{};
 }
 
-float OneMeanZStatistic::computeZ(float mean, float meanSample, float n, float sigma) {
+double OneMeanZStatistic::computeZ(double mean, double meanSample, double n, double sigma) {
   return (meanSample - mean) / (sigma / std::sqrt(n));
 }
 
-float OneMeanZStatistic::computeStandardError(float sigma, float n) {
+double OneMeanZStatistic::computeStandardError(double sigma, double n) {
   return sigma / std::sqrt(n);
 }
 

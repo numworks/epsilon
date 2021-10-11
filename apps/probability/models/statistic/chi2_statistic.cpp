@@ -25,15 +25,15 @@ Poincare::Layout Chi2Statistic::testCriticalValueSymbol() {
 
 float Chi2Statistic::canonicalDensityFunction(float x) const {
   assert(m_degreesOfFreedom > 0);
-  return Chi2Law::EvaluateAtAbscissa(x, m_degreesOfFreedom);
+  return Chi2Law::EvaluateAtAbscissa(x, static_cast<float>(m_degreesOfFreedom));
 }
 
-float Chi2Statistic::cumulativeNormalizedDistributionFunction(float x) const {
+double Chi2Statistic::cumulativeNormalizedDistributionFunction(double x) const {
   assert(m_degreesOfFreedom > 0);
   return Chi2Law::CumulativeDistributiveFunctionAtAbscissa(x, m_degreesOfFreedom);
 }
 
-float Chi2Statistic::cumulativeNormalizedInverseDistributionFunction(float proba) const {
+double Chi2Statistic::cumulativeNormalizedInverseDistributionFunction(double proba) const {
   assert(m_degreesOfFreedom > 0);
   return Chi2Law::CumulativeDistributiveInverseForProbability(proba, m_degreesOfFreedom);
 }
@@ -52,8 +52,8 @@ float Chi2Statistic::yMax() const {
   return (1 + k_displayTopMarginRatio) * max;
 }
 
-float Chi2Statistic::computeChi2() {
-  float z = 0;
+double Chi2Statistic::computeChi2() {
+  double z = 0;
   int n = numberOfValuePairs();
   for (int i = 0; i < n; i++) {
     z += std::pow(expectedValue(i) - observedValue(i), 2) / expectedValue(i);

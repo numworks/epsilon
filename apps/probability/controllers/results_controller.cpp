@@ -44,13 +44,13 @@ const char * Probability::ResultsController::title() {
     const char * confidence = I18n::translate(I18n::Message::Confidence);
     if (App::app()->page() == Data::Page::Graph) {
       const char * estimateSymbol = m_statistic->estimateSymbol();
-      Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%*.*ef %s=%*.*ef",
+      Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%*.*ed %s=%*.*ed",
           estimateSymbol,
           m_statistic->estimate(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
           confidence,
           m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     } else {
-      Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%*.*ef",
+      Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%*.*ed",
           confidence,
           m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     }

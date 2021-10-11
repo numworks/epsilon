@@ -16,8 +16,8 @@ public:
   }
   bool hasDegreeOfFreedom() override { return false; }
   float canonicalDensityFunction(float x) const override;
-  float cumulativeNormalizedDistributionFunction(float x) const override;
-  float cumulativeNormalizedInverseDistributionFunction(float proba) const override;
+  double cumulativeNormalizedDistributionFunction(double x) const override;
+  double cumulativeNormalizedInverseDistributionFunction(double proba) const override;
 
   float xMin() const override;
   float xMax() const override;

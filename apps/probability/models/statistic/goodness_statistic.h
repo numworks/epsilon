@@ -15,26 +15,26 @@ public:
   int computeNumberOfRows();
   bool validateInputs() override;
 
-  float paramAtLocation(int row, int column);
-  void setParamAtLocation(int row, int column, float p);
-  bool isValidParamAtLocation(int row, int column, float p);
+  double paramAtLocation(int row, int column);
+  void setParamAtLocation(int row, int column, double p);
+  bool isValidParamAtLocation(int row, int column, double p);
 
   constexpr static int k_maxNumberOfRows = 10;
 
 private:
-  bool isValidParamAtIndex(int i, float p) override;
-  float * paramArray() override { return m_input; }
+  bool isValidParamAtIndex(int i, double p) override;
+  double * paramArray() override { return m_input; }
   int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
-  float expectedValue(int index) override;
-  float observedValue(int index) override;
+  double expectedValue(int index) override;
+  double observedValue(int index) override;
 
-  void setExpectedValue(int index, float value);
-  void setObservedValue(int index, float value);
+  void setExpectedValue(int index, double value);
+  void setObservedValue(int index, double value);
   int numberOfValuePairs() override;
 
   int locationToTableIndex(int row, int column);
 
-  float m_input[k_maxNumberOfRows * 2];
+  double m_input[k_maxNumberOfRows * 2];
 };
 
 }  // namespace Probability

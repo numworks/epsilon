@@ -103,8 +103,7 @@ I18n::Message titleFormatForTest(Data::Test test, Data::TestType type) {
   }
 }
 
-template <typename T>
-int defaultConvertFloatToText(T value, char buffer[], int bufferSize) {
+int defaultConvertFloatToText(double value, char buffer[], int bufferSize) {
   return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
       value,
       buffer,
@@ -112,9 +111,6 @@ int defaultConvertFloatToText(T value, char buffer[], int bufferSize) {
       Poincare::Preferences::ShortNumberOfSignificantDigits,
       Poincare::Preferences::PrintFloatMode::Decimal);
 }
-
-template int defaultConvertFloatToText(float value, char buffer[], int bufferSize);
-template int defaultConvertFloatToText(double value, char buffer[], int bufferSize);
 
 Poincare::Layout XOneMinusXTwoLayout() {
   HorizontalLayout x1 = HorizontalLayout::Builder(

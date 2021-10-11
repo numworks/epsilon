@@ -43,7 +43,7 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
                                                                const char * text,
                                                                Ion::Events::Event event) {
   // TODO: factorize with InputCategoricalData & GoodnessTableViewController
-  float p;
+  double p;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false)) {
     return false;
   }

@@ -29,11 +29,11 @@ void TwoProportionsStatistic::init(Data::SubApp subapp) {
   }
 }
 
-bool TwoProportionsStatistic::isValidH0(float p) {
+bool TwoProportionsStatistic::isValidH0(double p) {
   return p <= 1 && p >= -1;
 }
 
-bool TwoProportionsStatistic::isValidParamAtIndex(int i, float p) {
+bool TwoProportionsStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::X1:
     case ParamsOrder::X2:
@@ -46,7 +46,7 @@ bool TwoProportionsStatistic::isValidParamAtIndex(int i, float p) {
 }
 
 void TwoProportionsStatistic::computeTest() {
-  float deltaP0 = m_hypothesisParams.firstParam();
+  double deltaP0 = m_hypothesisParams.firstParam();
   m_testCriticalValue = computeZ(deltaP0, x1(), n1(), x2(), n2());
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }
@@ -74,7 +74,7 @@ Poincare::Layout TwoProportionsStatistic::estimateLayout() {
   return std::move(res);
 }
 
-void TwoProportionsStatistic::setParamAtIndex(int index, float p) {
+void TwoProportionsStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N1 || index == ParamsOrder::N2 || index == ParamsOrder::X1 ||
       index == ParamsOrder::X2) {
     p = std::round(p);
@@ -125,20 +125,20 @@ bool TwoProportionsStatistic::validateInputs() {
   return (x1() < n1()) && (x2() < n2());
 }
 
-float TwoProportionsStatistic::computeEstimate(float x1, float n1, float x2, float n2) {
+double TwoProportionsStatistic::computeEstimate(double x1, double n1, double x2, double n2) {
   return x1 / n1 - x2 / n2;
 }
 
-float TwoProportionsStatistic::computeZ(float deltaP0, float x1, int n1, float x2, int n2) {
-  float p1 = x1 / n1;
-  float p2 = x2 / n2;
-  float p = (x1 + x2) / (n1 + n2);
+double TwoProportionsStatistic::computeZ(double deltaP0, double x1, int n1, double x2, int n2) {
+  double p1 = x1 / n1;
+  double p2 = x2 / n2;
+  double p = (x1 + x2) / (n1 + n2);
   return (p1 - p2 - deltaP0) / std::sqrt(p * (1 - p) * (1. / n1 + 1. / n2));
 }
 
-float TwoProportionsStatistic::computeStandardError(float x1, int n1, float x2, int n2) {
-  float p1Estimate = x1 / n1;
-  float p2Estimate = x2 / n2;
+double TwoProportionsStatistic::computeStandardError(double x1, int n1, double x2, int n2) {
+  double p1Estimate = x1 / n1;
+  double p2Estimate = x2 / n2;
   return std::sqrt(p1Estimate * (1 - p1Estimate) / n1 + p2Estimate * (1 - p2Estimate) / n2);
 }
 

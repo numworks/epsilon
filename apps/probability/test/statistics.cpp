@@ -16,6 +16,9 @@
 
 using namespace Probability;
 
+/* TODO: some values have been computed from an approximative source of
+ * verity... It should be double-checked. */
+
 struct StatisticTestCase {
   // Inputs
   double m_firstHypothesisParam;
@@ -38,13 +41,15 @@ struct StatisticTestCase {
   double m_marginOfError;
 };
 
+double tolerance() { return 1E11 * DBL_EPSILON; }
+
 void inputValues(Statistic * stat, StatisticTestCase & test) {
   quiz_assert(stat->hasDegreeOfFreedom() == test.m_hasDegreeOfFreedom);
 
   stat->initThreshold(Data::SubApp::Tests);
-  assertRoughlyEqual<double>(stat->threshold(), 0.05f);  // Significance level
+  assertRoughlyEqual<double>(stat->threshold(), 0.05, tolerance());  // Significance level
   stat->setThreshold(test.m_significanceLevel);
-  assertRoughlyEqual<double>(stat->threshold(), test.m_significanceLevel);
+  assertRoughlyEqual<double>(stat->threshold(), test.m_significanceLevel, tolerance());
 
   stat->hypothesisParams()->setFirstParam(test.m_firstHypothesisParam);
   stat->hypothesisParams()->setComparisonOperator(test.m_op);
@@ -61,10 +66,10 @@ void runTest(Statistic * stat, StatisticTestCase & test) {
 
   quiz_assert(stat->numberOfParameters() == test.m_numberOfParameters);
   quiz_assert(stat->canRejectNull() == test.m_testPassed);
-  assertRoughlyEqual<double>(stat->testCriticalValue(), test.m_testCriticalValue);
-  assertRoughlyEqual<double>(stat->pValue(), test.m_pValue);
+  assertRoughlyEqual<double>(stat->testCriticalValue(), test.m_testCriticalValue, tolerance());
+  assertRoughlyEqual<double>(stat->pValue(), test.m_pValue, tolerance());
   if (stat->hasDegreeOfFreedom()) {
-    assertRoughlyEqual(stat->degreeOfFreedom(), test.m_degreesOfFreedom);
+    assertRoughlyEqual(stat->degreeOfFreedom(), test.m_degreesOfFreedom, tolerance());
   }
 }
 
@@ -76,16 +81,16 @@ void testStatistic(Statistic * stat, StatisticTestCase & test) {
 
   // Confidence interval
   stat->initThreshold(Data::SubApp::Intervals);
-  assertRoughlyEqual<double>(stat->threshold(), 0.95);  // Confidence level
+  assertRoughlyEqual<double>(stat->threshold(), 0.95, tolerance());  // Confidence level
   stat->setThreshold(test.m_confidenceLevel);
-  assertRoughlyEqual<double>(stat->threshold(), test.m_confidenceLevel);
+  assertRoughlyEqual<double>(stat->threshold(), test.m_confidenceLevel, tolerance());
 
   stat->computeInterval();
 
-  assertRoughlyEqual<double>(stat->estimate(), test.m_estimate);
-  assertRoughlyEqual<double>(stat->intervalCriticalValue(), test.m_intervalCriticalValue, 5.0 * DBL_EPSILON);
-  assertRoughlyEqual<double>(stat->standardError(), test.m_standardError, 5.0 * DBL_EPSILON);
-  assertRoughlyEqual<double>(stat->marginOfError(), test.m_marginOfError, 5.0 * DBL_EPSILON);
+  assertRoughlyEqual<double>(stat->estimate(), test.m_estimate, tolerance());
+  assertRoughlyEqual<double>(stat->intervalCriticalValue(), test.m_intervalCriticalValue, tolerance());
+  assertRoughlyEqual<double>(stat->standardError(), test.m_standardError, tolerance());
+  assertRoughlyEqual<double>(stat->marginOfError(), test.m_marginOfError, tolerance());
 }
 
 QUIZ_CASE(probability_one_proportion_statistic) {
@@ -99,12 +104,12 @@ QUIZ_CASE(probability_one_proportion_statistic) {
                         .m_numberOfParameters = 3,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = true,
-                        .m_testCriticalValue = -2.30940127,
-                        .m_pValue = 0.0104606748,
-                        .m_estimate = 12.f / 50.f,
-                        .m_intervalCriticalValue = 1.95996439,
-                        .m_standardError = 0.0603986755,
-                        .m_marginOfError = 0.11837925},
+                        .m_testCriticalValue = -2.309401076758503,
+                        .m_pValue = 0.0104606676688970144527,
+                        .m_estimate = 12. / 50.,
+                        .m_intervalCriticalValue = 1.96,
+                        .m_standardError = 0.0603986754821659975778934784555689364657775576369870411063890152,
+                        .m_marginOfError = 0.118381403945045355252671217772915115472924012968494600568522469792},
       StatisticTestCase{.m_firstHypothesisParam = 0.9,
                         .m_op = HypothesisParams::ComparisonOperator::Different,
                         .m_numberOfInputs = 2,
@@ -114,11 +119,11 @@ QUIZ_CASE(probability_one_proportion_statistic) {
                         .m_numberOfParameters = 3,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = false,
-                        .m_testCriticalValue = -1.9999998808,
-                        .m_pValue = 0.0455002785,
-                        .m_estimate = 84.f / 100.f,
+                        .m_testCriticalValue = -2.0,
+                        .m_pValue = 0.04550026389635841440056,
+                        .m_estimate = 84. / 100.,
                         .m_intervalCriticalValue = 2.57582951,
-                        .m_standardError = 0.0366606079,
+                        .m_standardError = 0.0366606079, //
                         .m_marginOfError = 0.0944314748}};
   OneProportionStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
@@ -136,7 +141,7 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
                         .m_confidenceLevel = 0.95,
                         .m_numberOfParameters = 4,
                         .m_hasDegreeOfFreedom = true,
-                        .m_degreesOfFreedom = 50 - 1,
+                        .m_degreesOfFreedom = 50.0 - 1.0,
                         .m_testPassed = false,
                         .m_testCriticalValue = -0.4419349730,
                         .m_pValue = 0.3302403092,
@@ -156,7 +161,7 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
                         .m_testPassed = true,
                         .m_testCriticalValue = 3.4152598381,
                         .m_pValue = 0.0076853633,
-                        .m_estimate = 1.4f,
+                        .m_estimate = 1.4,
                         .m_intervalCriticalValue = 3.2498362064,
                         .m_standardError = 1.5811388493,
                         .m_marginOfError = 5.1384425163}};
@@ -178,9 +183,9 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = false,
                         .m_testCriticalValue = -0.4419349730,
-                        .m_pValue = 0.3292680979,
+                        .m_pValue = 0.3292681310859755967358,
                         .m_estimate = 127.8,
-                        .m_intervalCriticalValue = 1.9599643946,
+                        .m_intervalCriticalValue = 1.96,
                         .m_standardError = 0.4525483549,
                         .m_marginOfError = 0.8869786859},
       StatisticTestCase{.m_firstHypothesisParam = 0.9,
@@ -192,9 +197,9 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
                         .m_numberOfParameters = 4,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = true,
-                        .m_testCriticalValue = 3.1622774601,
-                        .m_pValue = 0.0015654564,
-                        .m_estimate = 2.3f,
+                        .m_testCriticalValue = 3.1622776601683793319988935444327185337195551393252168268,
+                        .m_pValue = 0.0015654022580026,
+                        .m_estimate = 2.3,
                         .m_intervalCriticalValue = 2.5758295059,
                         .m_standardError = 0.4427188933,
                         .m_marginOfError = 1.1403683424}};
@@ -218,7 +223,7 @@ QUIZ_CASE(probability_two_proportions_statistic) {
                         .m_testCriticalValue = 1.0940510035,
                         .m_pValue = 0.1369662881,
                         .m_estimate = 20. / 50. - 32. / 103.,
-                        .m_intervalCriticalValue = 1.9599643946,
+                        .m_intervalCriticalValue = 1.96,
                         .m_standardError = 0.0829409584,
                         .m_marginOfError = 0.1625613272},
       StatisticTestCase{.m_firstHypothesisParam = 0.3,
@@ -272,7 +277,7 @@ QUIZ_CASE(probability_two_means_t_statistic) {
                         .m_testPassed = false,
                         .m_testCriticalValue = -0.6401526332,
                         .m_pValue = 0.5233662128,
-                        .m_estimate = 4.2f - 18.3f,
+                        .m_estimate = 4.2 - 18.3,
                         .m_intervalCriticalValue = 2.6199319363,
                         .m_standardError = 2.7415323257,
                         .m_marginOfError = 7.1826281548}};
@@ -296,7 +301,7 @@ QUIZ_CASE(probability_pooled_t_test) {
                         .m_testPassed = false,
                         .m_testCriticalValue = -0.0446507446,
                         .m_pValue = 0.5177921057,
-                        .m_estimate = 213.4f - 213.5f,
+                        .m_estimate = 213.4 - 213.5,
                         .m_intervalCriticalValue = 1.5425841808,
                         .m_standardError = 8.9585542679,
                         .m_marginOfError = 13.8193244934},
@@ -334,9 +339,9 @@ QUIZ_CASE(probability_two_means_z_statistic) {
                         .m_numberOfParameters = 7,
                         .m_hasDegreeOfFreedom = false,
                         .m_testPassed = true,
-                        .m_testCriticalValue = 3.4569685459,
-                        .m_pValue = 0.00027310848236,
-                        .m_estimate = 3.14f - 2.07f,
+                        .m_testCriticalValue = 3.4569679750017427679395672327548454397723101938825021184918,
+                        .m_pValue = 0.000273144883100289900,
+                        .m_estimate = 3.14 - 2.07,
                         .m_intervalCriticalValue = 1.6448534727,
                         .m_standardError = 0.3095197976,
                         .m_marginOfError = 0.5091147423},
@@ -351,7 +356,7 @@ QUIZ_CASE(probability_two_means_z_statistic) {
                         .m_testPassed = false,
                         .m_testCriticalValue = 1.9819186926,
                         .m_pValue = 0.0474883318,
-                        .m_estimate = 1542 - 1345.8f,
+                        .m_estimate = 1542 - 1345.8,
                         .m_intervalCriticalValue = 2.5758295059,
                         .m_standardError = 98.9949569702,
                         .m_marginOfError = 254.9941253662}};

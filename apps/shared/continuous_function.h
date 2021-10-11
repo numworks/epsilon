@@ -134,8 +134,8 @@ public:
   void setDisplayDerivative(bool display) { return recordData()->setDisplayDerivative(display); }
   // Insert derivative name with argument in buffer (f'(x) or y')
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
-  // Approximate derivative at x, on given secondary curve if there is one
-  double approximateDerivative(double x, Poincare::Context * context, int secondaryCurveIndex = 0) const;
+  // Approximate derivative at x, on given sub curve if there is one
+  double approximateDerivative(double x, Poincare::Context * context, int subCurveIndex = 0) const;
 
   /* tMin and tMax */
 
@@ -218,9 +218,9 @@ private:
   // Compute coordinates of the next point of interest, from a starting point
   Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
   // Evaluate XY at parameter (distinct from approximation with Polar types)
-  template<typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context, int secondaryCurveIndex = 0) const;
+  template<typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context, int subCurveIndex = 0) const;
   // Approximate XY at parameter
-  template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context, int secondaryCurveIndex = 0) const;
+  template<typename T> Poincare::Coordinate2D<T> templatedApproximateAtParameter(T t, Poincare::Context * context, int subCurveIndex = 0) const;
 
   /* Record */
 

@@ -44,7 +44,7 @@
  * -+------+------+------+------+------+------|
  */
 
-
+#define KEYBOARD_CONFIG_ROWS_CONSECUTIVE 1
 
 namespace Ion {
 namespace Device {

@@ -15,10 +15,7 @@ GoodnessTableViewController::GoodnessTableViewController(
       m_inputTableView(this, statistic, this, this, delegate, scrollDelegate) {
 }
 
-void GoodnessTableViewController::didBecomeFirstResponder() {
-  m_inputTableView.recomputeNumberOfRows();
-  TableViewController::didBecomeFirstResponder();
-}
+
 
 bool GoodnessTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {

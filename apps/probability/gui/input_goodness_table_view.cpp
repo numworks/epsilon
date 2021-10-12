@@ -46,6 +46,7 @@ Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
   return cell(i);
 }
 
+// TODO: factorize with InputGoodnessTableView once models are refactored
 void InputGoodnessTableView::recomputeNumberOfRows() {
   int innerNumberOfRows = m_statistic->computeNumberOfRows();
   bool displayLastEmptyRow = innerNumberOfRows < GoodnessStatistic::k_maxNumberOfRows;

@@ -49,6 +49,10 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
   return true;
 }
 
+void InputCategoricalController::didEnterResponderChain(Responder * previousResponder) {
+  tableViewController()->recomputeDimensions();
+}
+
 void InputCategoricalController::didBecomeFirstResponder() {
   if (m_statistic->threshold() == -1) {
     // Init significance cell

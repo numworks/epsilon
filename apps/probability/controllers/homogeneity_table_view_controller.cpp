@@ -24,7 +24,6 @@ void HomogeneityTableViewController::initCell(void * cell, int index) {
 }
 
 void HomogeneityTableViewController::didBecomeFirstResponder() {
-  m_innerTableData.recomputeDimensions();
   if (m_table.selectedColumn() <= 0) {
     m_table.selectColumn(1);
   }

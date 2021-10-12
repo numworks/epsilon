@@ -16,7 +16,6 @@ public:
                               DynamicSizeTableViewDataSourceDelegate * delegate,
                               Escher::SelectableTableViewDelegate * scrollDelegate);
 
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField,
                                  const char * text,
@@ -27,6 +26,8 @@ public:
   Escher::TableViewDataSource * tableViewDataSource() override { return &m_inputTableView; }
 
   void initCell(void * cell, int index) override;
+  // TODO factorize with HomogeneityTableViewController in TableViewController
+  void recomputeDimensions() override { m_inputTableView.recomputeNumberOfRows(); }
   Escher::SelectableTableView * tableView() override { return &m_inputTableView; }
 
 private:

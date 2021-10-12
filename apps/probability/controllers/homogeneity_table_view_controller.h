@@ -26,6 +26,8 @@ public:
   Escher::TableViewDataSource * tableViewDataSource() override { return &m_tableData; }
 
   void initCell(void * cell, int index) override;
+  // TODO factorize with GoodnessTableViewController in TableViewController
+  void recomputeDimensions() override { m_innerTableData.recomputeDimensions(); }
   Escher::SelectableTableView * tableView() override { return &m_table; }
 
 private:

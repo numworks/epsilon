@@ -21,6 +21,7 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
       m_statistic(statistic) {
 }
 
+// TODO: factorize with InputGoodnessTableView
 void InputHomogeneityDataSource::recomputeDimensions() {
   HomogeneityStatistic::Index2D dimensions = m_statistic->computeDimensions();
   bool displayLastEmptyRow = dimensions.row < HomogeneityStatistic::k_maxNumberOfRows;

@@ -31,6 +31,7 @@ public:
                                  Ion::Events::Event event) override;
 
   // Responder
+  void didEnterResponderChain(Responder * previousResponder) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   // ButtonDelegate

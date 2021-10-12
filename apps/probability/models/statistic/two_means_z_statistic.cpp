@@ -14,6 +14,10 @@ using namespace Poincare;
 
 namespace Probability {
 
+TwoMeansZStatistic::~TwoMeansZStatistic() {
+  m_estimateLayout = Layout();
+}
+
 void TwoMeansZStatistic::init(Data::SubApp subapp) {
   if (subapp == Data::SubApp::Tests) {
     m_params[ParamsOrder::X1] = 5;
@@ -60,7 +64,10 @@ void TwoMeansZStatistic::computeInterval() {
 }
 
 Poincare::Layout TwoMeansZStatistic::estimateLayout() {
-  return XOneMinusXTwoLayout();
+  if (m_estimateLayout.isUninitialized()) {
+    m_estimateLayout = XOneMinusXTwoLayout();
+  }
+  return m_estimateLayout;
 }
 
 void TwoMeansZStatistic::setParamAtIndex(int index, double p) {

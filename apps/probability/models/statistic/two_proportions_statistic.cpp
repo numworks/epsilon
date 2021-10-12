@@ -13,6 +13,10 @@ using namespace Poincare;
 
 namespace Probability {
 
+TwoProportionsStatistic::~TwoProportionsStatistic() {
+  m_estimateLayout = Layout();
+}
+
 void TwoProportionsStatistic::init(Data::SubApp subapp) {
   if (App::app()->subapp() == Data::SubApp::Tests) {
     m_params[ParamsOrder::X1] = 19;
@@ -59,19 +63,22 @@ void TwoProportionsStatistic::computeInterval() {
 }
 
 Poincare::Layout TwoProportionsStatistic::estimateLayout() {
-  Poincare::HorizontalLayout p1 = Poincare::HorizontalLayout::Builder(
-      CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
-                                    VerticalOffsetLayoutNode::Position::Subscript));
-  Poincare::HorizontalLayout p2 = Poincare::HorizontalLayout::Builder(
-      CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
-                                    VerticalOffsetLayoutNode::Position::Subscript));
-  Poincare::HorizontalLayout res = Poincare::HorizontalLayout::Builder(
-      CodePointLayout::Builder('-'));
-  res.addOrMergeChildAtIndex(p2, 1, true);
-  res.addOrMergeChildAtIndex(p1, 0, true);
-  return std::move(res);
+  if (m_estimateLayout.isUninitialized()) {
+    Poincare::HorizontalLayout p1 = Poincare::HorizontalLayout::Builder(
+        CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
+        VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
+          VerticalOffsetLayoutNode::Position::Subscript));
+    Poincare::HorizontalLayout p2 = Poincare::HorizontalLayout::Builder(
+        CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
+        VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
+          VerticalOffsetLayoutNode::Position::Subscript));
+    Poincare::HorizontalLayout res = Poincare::HorizontalLayout::Builder(
+        CodePointLayout::Builder('-'));
+    res.addOrMergeChildAtIndex(p2, 1, true);
+    res.addOrMergeChildAtIndex(p1, 0, true);
+    m_estimateLayout = std::move(res);
+  }
+  return m_estimateLayout;
 }
 
 void TwoProportionsStatistic::setParamAtIndex(int index, double p) {

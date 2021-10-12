@@ -14,6 +14,10 @@ using namespace Poincare;
 
 namespace Probability {
 
+TwoMeansTStatistic::~TwoMeansTStatistic() {
+  m_estimateLayout = Layout();
+}
+
 void TwoMeansTStatistic::init(Data::SubApp subapp) {
   if (subapp == Data::SubApp::Tests) {
     m_params[ParamsOrder::X1] = 5;
@@ -62,7 +66,10 @@ void TwoMeansTStatistic::computeInterval() {
 }
 
 Poincare::Layout TwoMeansTStatistic::estimateLayout() {
-  return XOneMinusXTwoLayout();
+  if (m_estimateLayout.isUninitialized()) {
+    m_estimateLayout = XOneMinusXTwoLayout();
+  }
+  return m_estimateLayout;
 }
 
 void TwoMeansTStatistic::setParamAtIndex(int index, double p) {

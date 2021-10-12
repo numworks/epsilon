@@ -8,6 +8,12 @@ StatisticGraphView::StatisticGraphView(Statistic * statistic, StatisticViewRange
     m_curveView(range), m_testConclusionView(statistic) {
 }
 
+void StatisticGraphView::drawRect(KDContext * ctx, KDRect rect) const {
+  /* We draw a background wall screen to avoid noisy screen when switching on
+   * and off while the results are computed. */
+  ctx->fillRect(KDRect(0, m_frame.height() - k_conclusionViewHeight, m_frame.width(), k_conclusionViewHeight), Escher::Palette::WallScreen);
+}
+
 KDSize StatisticGraphView::minimalSizeForOptimalDisplay() const {
   return KDSizeZero;  // Never queried
 }

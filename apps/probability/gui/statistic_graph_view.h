@@ -17,6 +17,7 @@ namespace Probability {
 class StatisticGraphView : public Escher::View {
 public:
   StatisticGraphView(Statistic * statistic, StatisticViewRange * range);
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void setStatistic(Statistic * statistic);
   void reload();

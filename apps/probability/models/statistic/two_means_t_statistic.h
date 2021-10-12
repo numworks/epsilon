@@ -7,6 +7,7 @@ namespace Probability {
 
 class TwoMeansTStatistic : public TStatistic {
 public:
+  ~TwoMeansTStatistic();
   void init(Data::SubApp subapp) override;
   bool isValidParamAtIndex(int i, double p) override;
   void setParamAtIndex(int index, double p) override;
@@ -47,6 +48,8 @@ private:
   virtual double computeDegreesOfFreedom(double s1, double n1, double s2, double n2);
   virtual double computeStandardError(double s1, double n1, double s2, double n2);
 
+  // TODO: Factorize in IntervalStatistics
+  Poincare::Layout m_estimateLayout;
   double m_params[k_numberOfParams];
 };
 

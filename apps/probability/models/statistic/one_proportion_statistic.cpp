@@ -9,6 +9,10 @@ using namespace Poincare;
 
 namespace Probability {
 
+OneProportionStatistic::~OneProportionStatistic() {
+  m_estimateLayout = Layout();
+}
+
 void OneProportionStatistic::init(Data::SubApp subapp) {
   if (subapp == Data::SubApp::Tests) {
     m_params[ParamsOrder::X] = 47;
@@ -47,7 +51,10 @@ void OneProportionStatistic::computeInterval() {
 }
 
 Poincare::Layout OneProportionStatistic::estimateLayout() {
-  return CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex);
+  if (m_estimateLayout.isUninitialized()) {
+    m_estimateLayout = CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex);
+  }
+  return m_estimateLayout;
 }
 
 void OneProportionStatistic::setParamAtIndex(int index, double p) {

@@ -7,6 +7,8 @@ namespace Probability {
 
 class TwoProportionsStatistic : public ZStatistic {
 public:
+  // TODO: Factorize in IntervalStatistics
+  ~TwoProportionsStatistic();
   void init(Data::SubApp subapp) override;
   bool isValidH0(double p) override;
   bool isValidParamAtIndex(int i, double p) override;
@@ -44,6 +46,8 @@ private:
   double computeZ(double deltaP0, double x1, int n1, double x2, int n2);
   double computeStandardError(double p1Estimate, int n1, double p2Estimate, int n2);
 
+  // TODO: Factorize in IntervalStatistics
+  Poincare::Layout m_estimateLayout;
   double m_params[k_numberOfParams];
 };
 

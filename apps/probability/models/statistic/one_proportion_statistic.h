@@ -7,6 +7,7 @@ namespace Probability {
 
 class OneProportionStatistic : public ZStatistic {
 public:
+  ~OneProportionStatistic();
   void init(Data::SubApp subapp) override;
 
   bool isValidH0(double h0) override { return h0 > 0 && h0 < 1; }
@@ -40,6 +41,9 @@ private:
   double computeEstimate(double x, double n);
   double computeZ(double p0, double p, double n);
   double computeStandardError(double pEstimate, double n);
+
+  // TODO: Factorize in IntervalStatistics
+  Poincare::Layout m_estimateLayout;
 };
 
 }  // namespace Probability

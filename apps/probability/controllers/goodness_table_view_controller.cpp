@@ -15,8 +15,6 @@ GoodnessTableViewController::GoodnessTableViewController(
       m_inputTableView(this, statistic, this, this, delegate, scrollDelegate) {
 }
 
-
-
 bool GoodnessTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
     deleteSelectedValue();

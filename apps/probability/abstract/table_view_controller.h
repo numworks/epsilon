@@ -21,6 +21,8 @@ public:
   bool textFieldShouldFinishEditing(Escher::TextField * textField,
                                     Ion::Events::Event event) override;
 
+  virtual void recomputeDimensions() = 0;
+
 protected:
   static void moveSelectionForEvent(Ion::Events::Event event, int * selectedRow, int * selectedColumn);
 };

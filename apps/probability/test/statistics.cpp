@@ -123,7 +123,7 @@ QUIZ_CASE(probability_one_proportion_statistic) {
                         .m_pValue = 0.04550026389635841440056,
                         .m_estimate = 84. / 100.,
                         .m_intervalCriticalValue = 2.57582951,
-                        .m_standardError = 0.0366606079, //
+                        .m_standardError = 0.0366606079,
                         .m_marginOfError = 0.0944314748}};
   OneProportionStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {

@@ -4,7 +4,7 @@
 namespace Probability {
 
 GoodnessStatistic::GoodnessStatistic() {
-  for (int i = 0; i < k_maxNumberOfRows * 2; i++) {
+  for (int i = 0; i < k_maxNumberOfRows * k_maxNumberOfCols; i++) {
     m_input[i] = k_undefinedValue;
   }
 }
@@ -18,6 +18,7 @@ void GoodnessStatistic::computeTest() {
 void GoodnessStatistic::recomputeData() {
   // Delete empty rows
   int j = 0;
+  int lastNonEmptyRow = -1;
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     if (!(std::isnan(expectedValue(i)) && std::isnan(observedValue(i)))) {
       if (i != j) {
@@ -25,9 +26,10 @@ void GoodnessStatistic::recomputeData() {
         setObservedValue(j, observedValue(i));
       }
       j++;
+      lastNonEmptyRow = i;
     }
   }
-  while (j < k_maxNumberOfRows) {
+  while (j <= lastNonEmptyRow) {
     setExpectedValue(j, k_undefinedValue);
     setObservedValue(j, k_undefinedValue);
     j++;
@@ -69,11 +71,28 @@ bool GoodnessStatistic::isValidParamAtLocation(int row, int column, double p) {
 }
 
 bool GoodnessStatistic::isValidParamAtIndex(int i, double p) {
-  if (i % 2 == 1 && std::fabs(p) < DBL_MIN) {
+  if (i % k_maxNumberOfCols == 1 && std::fabs(p) < DBL_MIN) {
     // Expected value should not be null
     return false;
   }
   return Chi2Statistic::isValidParamAtIndex(i, p);
+}
+
+bool GoodnessStatistic::deleteParamAtLocation(int row, int column) {
+  /* Delete param at location, return true if the deleted param was the last non
+   * deleted value of its row. */
+  if (std::isnan(paramAtLocation(row, column))) {
+    // Param is already deleted
+    return false;
+  }
+  setParamAtLocation(row, column, k_undefinedValue);
+  for (size_t i = 0; i < k_maxNumberOfCols; i++) {
+    if (i != column && !std::isnan(paramAtLocation(row, i))) {
+      // There is another non deleted value in this row
+      return false;
+    }
+  }
+  return true;
 }
 
 int GoodnessStatistic::numberOfValuePairs() {
@@ -81,24 +100,24 @@ int GoodnessStatistic::numberOfValuePairs() {
 }
 
 int GoodnessStatistic::locationToTableIndex(int row, int column) {
-  assert((column == 0 || column == 1) && (row >= 0 && row < k_maxNumberOfRows));
-  return 2 * row + column;
+  assert((column >= 0 && column < k_maxNumberOfCols) && (row >= 0 && row < k_maxNumberOfRows));
+  return k_maxNumberOfCols * row + column;
 }
 
 double GoodnessStatistic::expectedValue(int index) {
-  return paramArray()[2 * index + 1];
+  return paramArray()[locationToTableIndex(index, 1)];
 }
 
 double GoodnessStatistic::observedValue(int index) {
-  return paramArray()[2 * index];
+  return paramArray()[locationToTableIndex(index, 0)];
 }
 
 void GoodnessStatistic::setExpectedValue(int index, double value) {
-  paramArray()[2 * index + 1] = value;
+  paramArray()[locationToTableIndex(index, 1)] = value;
 }
 
 void GoodnessStatistic::setObservedValue(int index, double value) {
-  paramArray()[2 * index] = value;
+  paramArray()[locationToTableIndex(index, 0)] = value;
 }
 
 }  // namespace Probability

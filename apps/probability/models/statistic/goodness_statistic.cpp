@@ -78,9 +78,8 @@ bool GoodnessStatistic::isValidParamAtIndex(int i, double p) {
   return Chi2Statistic::isValidParamAtIndex(i, p);
 }
 
+// TODO : factorize with HomogeneityStatistic
 bool GoodnessStatistic::deleteParamAtLocation(int row, int column) {
-  /* Delete param at location, return true if the deleted param was the last non
-   * deleted value of its row. */
   if (std::isnan(paramAtLocation(row, column))) {
     // Param is already deleted
     return false;

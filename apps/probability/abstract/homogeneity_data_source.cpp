@@ -82,10 +82,11 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
     Poincare::Print::customPrintf(txt, bufferSize, "%s%c", I18n::translate(m_headerPrefix), digit);
     myCell->setText(txt);
     KDColor textColor = KDColorBlack;
-    if ((row == 0 && column == numberOfColumns() - 1) ||
-        (column == 0 && row == numberOfRows() - 1)) {
+    if ((row == 0 && column == numberOfColumns() - 1 && column < HomogeneityStatistic::k_maxNumberOfColumns) ||
+        (column == 0 && row == numberOfRows() - 1 && row < HomogeneityStatistic::k_maxNumberOfRows)) {
       textColor = Palette::GrayDark;
     }
+    // TODO : Color the last max column or row gray if it is empty
     myCell->setTextColor(textColor);
   }
 

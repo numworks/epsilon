@@ -25,6 +25,37 @@ bool HomogeneityStatistic::isValidParamAtPosition(int row, int column, double p)
   return isValidParamAtIndex(index2DToIndex(row, column), p);
 }
 
+bool HomogeneityStatistic::deleteParamAtPosition(int row, int column) {
+  /* Delete param at location, return true if the deleted param was the last non
+   * deleted value of its row or column. */
+  if (std::isnan(parameterAtPosition(row, column))) {
+    // Param is already deleted
+    return false;
+  }
+  setParameterAtPosition(row, column, k_undefinedValue);
+  bool shouldDeleteRow = true;
+  for (size_t i = 0; i < k_maxNumberOfColumns; i++) {
+    if (i != column && !std::isnan(parameterAtPosition(row, i))) {
+      // There is another non deleted value in this row
+      shouldDeleteRow = false;
+      break;
+    }
+  }
+  if (shouldDeleteRow) {
+    return true;
+  }
+  bool shouldDeleteCol = true;
+  for (size_t j = 0; j < k_maxNumberOfRows; j++) {
+    if (j != row && !std::isnan(parameterAtPosition(j, column))) {
+      // There is another non deleted value in this column
+      shouldDeleteCol = false;
+      break;
+    }
+  }
+  return shouldDeleteCol;
+}
+
+
 void HomogeneityStatistic::computeTest() {
   Index2D max = computeDimensions();
   m_numberOfResultRows = max.row;

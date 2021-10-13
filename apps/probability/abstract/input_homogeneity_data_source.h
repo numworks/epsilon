@@ -33,7 +33,7 @@ public:
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
 
   // DynamicSizeTableViewDataSource
-  void recomputeDimensions();
+  bool recomputeDimensions();
 
 private:
   constexpr static int k_initialNumberOfRows = 2;

@@ -10,10 +10,10 @@ public:
   virtual void tableViewDataSourceDidChangeSize() = 0;
 };
 
-/* This interface can be used for TableViewDataSources which dynamically change in size (change
- * number of rows or columns).
- * DynamicSizeTableViewDataSourceDelegate can then be notified when the size changes to potentially
- * relay out. */
+/* This interface can be used for TableViewDataSources which dynamically change
+ * in size (change number of rows or columns).
+ * DynamicSizeTableViewDataSourceDelegate can then be notified when the size
+ * changes to potentially relay out. */
 class DynamicSizeTableViewDataSource {
 public:
   DynamicSizeTableViewDataSource(DynamicSizeTableViewDataSourceDelegate * delegate = nullptr) :

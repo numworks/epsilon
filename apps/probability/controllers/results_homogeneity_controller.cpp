@@ -84,11 +84,17 @@ void Probability::ResultsHomogeneityController::scrollToCorrectLocation() {
   if (m_isTableSelected) {
     // Scroll to cell
     int row = m_table.selectedRow(), column = m_table.selectedColumn();
-    KDRect cellOffset = KDRect(0,
+    KDRect cellRect = KDRect(0,
                                m_tableData.cumulatedHeightFromIndex(row) + m_table.topMargin(),
                                m_tableData.columnWidth(column),
                                m_tableData.rowHeight(row));
-    m_contentView.scrollToContentRect(cellOffset.translatedBy(m_contentView.tableOrigin()));
+    cellRect = cellRect.translatedBy(m_contentView.tableOrigin());
+    /* Include the title in the first row cells to force scrolling enough to
+     * display it */
+    if (row == 0) {
+      cellRect = cellRect.unionedWith(KDRect(cellRect.x(), 0, cellRect.width(), cellRect.height()));
+    }
+    m_contentView.scrollToContentRect(cellRect);
   } else {
     // Scroll to button
     m_contentView.scrollToContentRect(

@@ -19,7 +19,7 @@ ResultsHomogeneityController::ResultsHomogeneityController(
       m_contentView(this, &m_table, this),
       m_tableData(&m_innerTableData, this),
       m_innerTableData(statistic, this),
-      m_table(this, &m_tableData, &m_tableData, this),
+      m_table(this, &m_tableData, &m_tableData, &m_tableData),
       m_isTableSelected(true) {
   m_table.setBackgroundColor(Escher::Palette::WallScreenDark);
   m_table.setDecoratorType(Escher::ScrollView::Decorator::Type::None);

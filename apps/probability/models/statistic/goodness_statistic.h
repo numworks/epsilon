@@ -18,6 +18,8 @@ public:
   double paramAtLocation(int row, int column);
   void setParamAtLocation(int row, int column, double p);
   bool isValidParamAtLocation(int row, int column, double p);
+  /* Delete parameter at location, return true if the deleted param was the last
+   * non-deleted value of its row. */
   bool deleteParamAtLocation(int row, int column);
 
   constexpr static int k_maxNumberOfRows = 10;

@@ -50,6 +50,7 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
   return true;
 }
 
+// TODO : factorize with HomogeneityTableViewController
 void GoodnessTableViewController::deleteSelectedValue() {
   // Remove value
   int row = m_inputTableView.selectedRow(), col = m_inputTableView.selectedColumn();

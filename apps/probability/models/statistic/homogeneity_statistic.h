@@ -12,6 +12,7 @@ public:
   void setParameterAtPosition(int row, int column, double value);
   double parameterAtPosition(int row, int column);
   bool isValidParamAtPosition(int row, int column, double p);
+  bool deleteParamAtPosition(int row, int column);
   int numberOfStatisticParameters() const override {
     return k_maxNumberOfColumns * k_maxNumberOfRows;
   }
@@ -34,8 +35,8 @@ public:
   void recomputeData();
   bool validateInputs() override;
 
-  constexpr static int k_maxNumberOfColumns = 10;
-  constexpr static int k_maxNumberOfRows = 10;
+  constexpr static int k_maxNumberOfColumns = 9;
+  constexpr static int k_maxNumberOfRows = 9;
 
 protected:
   double observedValue(int resultsIndex) override;

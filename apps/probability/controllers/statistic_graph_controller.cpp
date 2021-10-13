@@ -23,7 +23,7 @@ ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {
 
 const char * StatisticGraphController::title() {
   if (App::app()->subapp() == Data::SubApp::Tests) {
-    const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormat);
+    const char * format = I18n::translate(graphTitleFormatForTest(App::app()->test(), App::app()->testType()));
     Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), format,
         m_statistic->testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
         m_statistic->pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);

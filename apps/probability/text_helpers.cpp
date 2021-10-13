@@ -103,6 +103,24 @@ I18n::Message titleFormatForTest(Data::Test test, Data::TestType type) {
   }
 }
 
+// TODO: virtualize!!
+I18n::Message graphTitleFormatForTest(Data::Test test, Data::TestType type) {
+  switch (test) {
+    case Data::Test::Categorical:
+      return I18n::Message::StatisticGraphControllerTestTitleFormatChi2Test;
+    default:
+      switch (type) {
+        case Data::TestType::ZTest:
+          return I18n::Message::StatisticGraphControllerTestTitleFormatZtest;
+        case Data::TestType::TTest:
+          return I18n::Message::StatisticGraphControllerTestTitleFormatTTest;
+        default:
+          assert(false);
+          return I18n::Message::Default;
+      }
+  }
+}
+
 int defaultConvertFloatToText(double value, char buffer[], int bufferSize) {
   return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
       value,

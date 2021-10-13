@@ -47,15 +47,18 @@ Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
 }
 
 // TODO: factorize with InputGoodnessTableView once models are refactored
-void InputGoodnessTableView::recomputeNumberOfRows() {
+bool InputGoodnessTableView::recomputeNumberOfRows() {
+  // Return true if sizes have changed
   int innerNumberOfRows = m_statistic->computeNumberOfRows();
   bool displayLastEmptyRow = innerNumberOfRows < GoodnessStatistic::k_maxNumberOfRows;
-  int newNumberOfRows = std::max(innerNumberOfRows + 1 + displayLastEmptyRow,
+  int newNumberOfRows = std::max(1 + innerNumberOfRows + displayLastEmptyRow,
                                  k_minimumNumberOfRows);
   if (newNumberOfRows != m_numberOfRows) {
     m_numberOfRows = newNumberOfRows;
     DynamicSizeTableViewDataSource::didChangeSize();
+    return true;
   }
+  return false;
 }
 
 void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::HighlightCell * cell,

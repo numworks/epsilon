@@ -8,7 +8,7 @@ namespace Probability {
 class GoodnessStatistic : public Chi2Statistic {
 public:
   GoodnessStatistic();
-  int numberOfStatisticParameters() const override { return k_maxNumberOfRows * 2; }
+  int numberOfStatisticParameters() const override { return k_maxNumberOfRows * k_maxNumberOfCols; }
 
   void computeTest() override;
   void recomputeData();
@@ -18,8 +18,10 @@ public:
   double paramAtLocation(int row, int column);
   void setParamAtLocation(int row, int column, double p);
   bool isValidParamAtLocation(int row, int column, double p);
+  bool deleteParamAtLocation(int row, int column);
 
   constexpr static int k_maxNumberOfRows = 10;
+  constexpr static int k_maxNumberOfCols = 2;
 
 private:
   bool isValidParamAtIndex(int i, double p) override;
@@ -34,7 +36,7 @@ private:
 
   int locationToTableIndex(int row, int column);
 
-  double m_input[k_maxNumberOfRows * 2];
+  double m_input[k_maxNumberOfRows * k_maxNumberOfCols];
 };
 
 }  // namespace Probability

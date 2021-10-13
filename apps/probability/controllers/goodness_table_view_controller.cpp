@@ -16,7 +16,7 @@ GoodnessTableViewController::GoodnessTableViewController(
 }
 
 bool GoodnessTableViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Backspace) {
+  if (event == Ion::Events::Backspace && m_inputTableView.typeAtLocation(m_inputTableView.selectedColumn(), m_inputTableView.selectedRow()) == InputGoodnessTableView::k_typeOfInnerCells) {
     deleteSelectedValue();
     return true;
   }
@@ -53,14 +53,23 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
 void GoodnessTableViewController::deleteSelectedValue() {
   // Remove value
   int row = m_inputTableView.selectedRow(), col = m_inputTableView.selectedColumn();
-  m_statistic->setParamAtLocation(row - 1, col, GoodnessStatistic::k_undefinedValue);
-
-  // Delete row if needed
-  // Unhighlight selected cell in case it disappears after the row is removed
-  m_inputTableView.unhighlightSelectedCell();
-  m_statistic->recomputeData();
-  m_inputTableView.recomputeNumberOfRows();
-  m_inputTableView.selectCellAtLocation(col, std::min(row, m_inputTableView.numberOfRows() - 1));
+  assert(row > 0);
+  bool shouldDeleteRow = m_statistic->deleteParamAtLocation(row - 1, col);
+  if (!shouldDeleteRow) {
+    // Only one cell needs to reload.
+    assert(row < m_inputTableView.numberOfRows());
+    m_inputTableView.reloadCellAtLocation(col, row);
+  } else {
+    // A row is empty, we should recompute data
+    m_statistic->recomputeData();
+    // At most one row has been deleted, no need to unhighlight selected cell
+    if (!m_inputTableView.recomputeNumberOfRows()) {
+      /* A row has been deleted, but size didn't change, meaning the number of
+       * non-empty rows was k_maxNumberOfRows. However, recomputeData may have
+       * moved up multiple cells, m_inputTableView should be reloaded. */
+      m_inputTableView.reloadData(false);
+    }
+  }
 }
 
 void GoodnessTableViewController::initCell(void * cell, int index) {

@@ -40,19 +40,19 @@ public:
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
-  void recomputeNumberOfRows();
+  bool recomputeNumberOfRows();
 
   constexpr static int k_minimumNumberOfRows = 2;
   constexpr static int k_numberOfColumns = 2;
   constexpr static int k_maxNumberOfReusableRows = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::StackTitleHeight) / HomogeneityTableDataSource::k_rowHeight + 2;
   constexpr static int k_numberOfReusableCells = k_numberOfColumns * k_maxNumberOfReusableRows;
+  constexpr static int k_typeOfInnerCells = 0;
+  constexpr static int k_typeOfHeader = 1;
 
   using Escher::SelectableTableView::unhighlightSelectedCell;  // Made public
 
 private:
   constexpr static int k_rowHeight = 20;
-  constexpr static int k_typeOfInnerCells = 0;
-  constexpr static int k_typeOfHeader = 1;
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_columnWidth = (Ion::Display::Width - 2 * Escher::Metric::CommonLeftMargin -
                                         k_borderBetweenColumns) /

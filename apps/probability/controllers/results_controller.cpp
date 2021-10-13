@@ -118,7 +118,14 @@ void Probability::ResultsView::tableViewDidChangeSelectionAndDidScroll(
                               m_tableDataSource->cumulatedHeightFromIndex(row),
                               m_tableDataSource->columnWidth(col),
                               m_tableDataSource->rowHeight(row));
-    scrollToContentRect(cellFrame.translatedBy(tableOrigin()));
+    cellFrame = cellFrame.translatedBy(tableOrigin());
+    /* Include the title in the first row cells to force scrolling enough to
+     * display it */
+    // TODO: factorize with ResultsHomogenityController
+    if (row == 0) {
+      cellFrame = cellFrame.unionedWith(KDRect(cellFrame.x(), 0, cellFrame.width(), cellFrame.height()));
+    }
+    scrollToContentRect(cellFrame);
   }
 }
 

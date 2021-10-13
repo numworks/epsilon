@@ -50,7 +50,7 @@ Escher::HighlightCell * InputGoodnessTableView::reusableCell(int i, int type) {
 bool InputGoodnessTableView::recomputeNumberOfRows() {
   // Return true if sizes have changed
   int innerNumberOfRows = m_statistic->computeNumberOfRows();
-  bool displayLastEmptyRow = innerNumberOfRows < GoodnessStatistic::k_maxNumberOfRows;
+  bool displayLastEmptyRow = innerNumberOfRows < m_statistic->maxNumberOfRows();
   int newNumberOfRows = std::max(1 + innerNumberOfRows + displayLastEmptyRow,
                                  k_minimumNumberOfRows);
   if (newNumberOfRows != m_numberOfRows) {
@@ -67,7 +67,7 @@ void Probability::InputGoodnessTableView::willDisplayCellAtLocation(Escher::High
   if (j == 0) {  // Header
     return;
   }
-  double p = m_statistic->paramAtLocation(j - 1, i);
+  double p = m_statistic->parameterAtPosition(j - 1, i);
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
   if (std::isnan(p)) {
     myCell->editableTextCell()->textField()->setText("");

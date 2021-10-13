@@ -47,7 +47,7 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
     return false;
   }
   int row = m_table.selectedRow(), column = m_table.selectedColumn();
-  if (!m_statistic->isValidParamAtPosition(row, column, p)) {
+  if (!m_statistic->isValidParameterAtPosition(row, column, p)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
@@ -56,9 +56,9 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
   m_table.deselectTable();
   // Add row or column
   if ((row == m_innerTableData.numberOfRows() &&
-       m_innerTableData.numberOfRows() < HomogeneityStatistic::k_maxNumberOfRows) ||
+       m_innerTableData.numberOfRows() < m_statistic->maxNumberOfRows()) ||
       (column == m_innerTableData.numberOfColumns() &&
-       m_innerTableData.numberOfColumns() < HomogeneityStatistic::k_maxNumberOfColumns)) {
+       m_innerTableData.numberOfColumns() < m_statistic->maxNumberOfColumns())) {
     m_innerTableData.recomputeDimensions();
   }
   m_table.reloadCellAtLocation(column, row);
@@ -70,7 +70,7 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
 void HomogeneityTableViewController::deleteSelectedValue() {
   int row = m_table.selectedRow(), col = m_table.selectedColumn();
   assert(row > 0 && col > 0);
-  bool shouldDeleteRowOrCol = m_statistic->deleteParamAtPosition(row - 1, col - 1);
+  bool shouldDeleteRowOrCol = m_statistic->deleteParameterAtPosition(row - 1, col - 1);
   if (!shouldDeleteRowOrCol) {
     m_table.reloadCellAtLocation(col, row);
   } else {

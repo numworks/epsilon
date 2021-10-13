@@ -5,18 +5,30 @@
 
 namespace Probability {
 
-class HomogeneityStatistic : public Chi2Statistic {
+class HomogeneityStatistic final : public Chi2Statistic {
 public:
+  // Used in HomogeneityTableDataSource
+  constexpr static int k_maxNumberOfColumns = 9;
+  constexpr static int k_maxNumberOfRows = 9;
+
   HomogeneityStatistic();
-  // TODO Factorize in Chi2Statistic
-  void setParameterAtPosition(int row, int column, double value);
-  double parameterAtPosition(int row, int column);
-  bool isValidParamAtPosition(int row, int column, double p);
-  bool deleteParamAtPosition(int row, int column);
+
+  // Statistic
+  void computeTest() override;
+  bool validateInputs() override;
+
+  // Chi2Statistic
+  void setParameterAtPosition(int row, int column, double value) override;
+  double parameterAtPosition(int row, int column) override;
+  bool isValidParameterAtPosition(int row, int column, double p) override;
+  bool deleteParameterAtPosition(int row, int column) override;
+  void recomputeData() override;
+  int maxNumberOfColumns() const override { return k_maxNumberOfColumns; };
+  int maxNumberOfRows() const override { return k_maxNumberOfRows; };
+
   int numberOfStatisticParameters() const override {
     return k_maxNumberOfColumns * k_maxNumberOfRows;
   }
-  void computeTest() override;
 
   int numberOfResultRows() { return m_numberOfResultRows; }
   int numberOfResultColumns() { return m_numberOfResultColumns; }
@@ -32,22 +44,16 @@ public:
   };
   Index2D computeDimensions();
 
-  void recomputeData();
-  bool validateInputs() override;
-
-  constexpr static int k_maxNumberOfColumns = 9;
-  constexpr static int k_maxNumberOfRows = 9;
-
-protected:
-  double observedValue(int resultsIndex) override;
+private:
+  // Chi2Statistic
   double expectedValue(int resultsIndex) override;
+  double observedValue(int resultsIndex) override;
+  int numberOfValuePairs() override;
+
   double observedValueAtPosition(Index2D index);
   double expectedValueAtPosition(Index2D index);
   int computeDegreesOfFreedom(Index2D max);
-  int numberOfValuePairs() override;
   double * paramArray() override { return m_input; }
-
-private:
   // TODO: factorize in Chi2Statistic
   Index2D indexToIndex2D(int index);
   int index2DToIndex(Index2D indexes);

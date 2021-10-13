@@ -25,8 +25,8 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
 bool InputHomogeneityDataSource::recomputeDimensions() {
   // Return true if size changed
   HomogeneityStatistic::Index2D dimensions = m_statistic->computeDimensions();
-  bool displayLastEmptyRow = dimensions.row < HomogeneityStatistic::k_maxNumberOfRows;
-  bool displayLastEmptyColumn = dimensions.col < HomogeneityStatistic::k_maxNumberOfColumns;
+  bool displayLastEmptyRow = dimensions.row < m_statistic->maxNumberOfRows();
+  bool displayLastEmptyColumn = dimensions.col < m_statistic->maxNumberOfColumns();
   int newNumberOfRows = std::max(k_initialNumberOfRows, dimensions.row + displayLastEmptyRow);
   int newNumberOfColumns = std::max(k_initialNumberOfColumns,
                                     dimensions.col + displayLastEmptyColumn);

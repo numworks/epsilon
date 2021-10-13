@@ -21,13 +21,11 @@ double HomogeneityStatistic::parameterAtPosition(int row, int column) {
   return paramAtIndex(index2DToIndex(row, column));
 }
 
-bool HomogeneityStatistic::isValidParamAtPosition(int row, int column, double p) {
+bool HomogeneityStatistic::isValidParameterAtPosition(int row, int column, double p) {
   return isValidParamAtIndex(index2DToIndex(row, column), p);
 }
 
-bool HomogeneityStatistic::deleteParamAtPosition(int row, int column) {
-  /* Delete param at location, return true if the deleted param was the last non
-   * deleted value of its row or column. */
+bool HomogeneityStatistic::deleteParameterAtPosition(int row, int column) {
   if (std::isnan(parameterAtPosition(row, column))) {
     // Param is already deleted
     return false;

@@ -4,7 +4,7 @@
 namespace Probability {
 
 GoodnessStatistic::GoodnessStatistic() {
-  for (int i = 0; i < k_maxNumberOfRows * k_maxNumberOfCols; i++) {
+  for (int i = 0; i < k_maxNumberOfRows * k_maxNumberOfColumns; i++) {
     m_input[i] = k_undefinedValue;
   }
 }
@@ -58,20 +58,20 @@ bool GoodnessStatistic::validateInputs() {
   return true;
 }
 
-double GoodnessStatistic::paramAtLocation(int row, int column) {
+double GoodnessStatistic::parameterAtPosition(int row, int column) {
   return paramAtIndex(locationToTableIndex(row, column));
 }
 
-void GoodnessStatistic::setParamAtLocation(int row, int column, double p) {
+void GoodnessStatistic::setParameterAtPosition(int row, int column, double p) {
   setParamAtIndex(locationToTableIndex(row, column), p);
 }
 
-bool GoodnessStatistic::isValidParamAtLocation(int row, int column, double p) {
+bool GoodnessStatistic::isValidParameterAtPosition(int row, int column, double p) {
   return isValidParamAtIndex(locationToTableIndex(row, column), p);
 }
 
 bool GoodnessStatistic::isValidParamAtIndex(int i, double p) {
-  if (i % k_maxNumberOfCols == 1 && std::fabs(p) < DBL_MIN) {
+  if (i % k_maxNumberOfColumns == 1 && std::fabs(p) < DBL_MIN) {
     // Expected value should not be null
     return false;
   }
@@ -79,14 +79,14 @@ bool GoodnessStatistic::isValidParamAtIndex(int i, double p) {
 }
 
 // TODO : factorize with HomogeneityStatistic
-bool GoodnessStatistic::deleteParamAtLocation(int row, int column) {
-  if (std::isnan(paramAtLocation(row, column))) {
+bool GoodnessStatistic::deleteParameterAtPosition(int row, int column) {
+  if (std::isnan(parameterAtPosition(row, column))) {
     // Param is already deleted
     return false;
   }
-  setParamAtLocation(row, column, k_undefinedValue);
-  for (size_t i = 0; i < k_maxNumberOfCols; i++) {
-    if (i != column && !std::isnan(paramAtLocation(row, i))) {
+  setParameterAtPosition(row, column, k_undefinedValue);
+  for (size_t i = 0; i < k_maxNumberOfColumns; i++) {
+    if (i != column && !std::isnan(parameterAtPosition(row, i))) {
       // There is another non deleted value in this row
       return false;
     }
@@ -99,8 +99,8 @@ int GoodnessStatistic::numberOfValuePairs() {
 }
 
 int GoodnessStatistic::locationToTableIndex(int row, int column) {
-  assert((column >= 0 && column < k_maxNumberOfCols) && (row >= 0 && row < k_maxNumberOfRows));
-  return k_maxNumberOfCols * row + column;
+  assert((column >= 0 && column < k_maxNumberOfColumns) && (row >= 0 && row < k_maxNumberOfRows));
+  return k_maxNumberOfColumns * row + column;
 }
 
 double GoodnessStatistic::expectedValue(int index) {

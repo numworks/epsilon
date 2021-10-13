@@ -5,40 +5,44 @@
 
 namespace Probability {
 
-class GoodnessStatistic : public Chi2Statistic {
+class GoodnessStatistic final : public Chi2Statistic {
 public:
   GoodnessStatistic();
-  int numberOfStatisticParameters() const override { return k_maxNumberOfRows * k_maxNumberOfCols; }
+  int numberOfStatisticParameters() const override { return k_maxNumberOfRows * k_maxNumberOfColumns; }
 
+  // Statistic
   void computeTest() override;
-  void recomputeData();
-  int computeNumberOfRows();
   bool validateInputs() override;
 
-  double paramAtLocation(int row, int column);
-  void setParamAtLocation(int row, int column, double p);
-  bool isValidParamAtLocation(int row, int column, double p);
-  /* Delete parameter at location, return true if the deleted param was the last
-   * non-deleted value of its row. */
-  bool deleteParamAtLocation(int row, int column);
+  // Chi2Statistic
+  void setParameterAtPosition(int row, int column, double p) override;
+  double parameterAtPosition(int row, int column) override;
+  bool isValidParameterAtPosition(int row, int column, double p) override;
+  bool deleteParameterAtPosition(int row, int column) override;
+  void recomputeData() override;
+  int maxNumberOfColumns() const override { return k_maxNumberOfColumns; };
+  int maxNumberOfRows() const override { return k_maxNumberOfRows; };
 
-  constexpr static int k_maxNumberOfRows = 10;
-  constexpr static int k_maxNumberOfCols = 2;
-
+  int computeNumberOfRows();
 private:
+  constexpr static int k_maxNumberOfRows = 10;
+  constexpr static int k_maxNumberOfColumns = 2;
+
+  // Statistic
   bool isValidParamAtIndex(int i, double p) override;
-  double * paramArray() override { return m_input; }
-  int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
+
+  // Chi2Statistic
   double expectedValue(int index) override;
   double observedValue(int index) override;
-
-  void setExpectedValue(int index, double value);
-  void setObservedValue(int index, double value);
   int numberOfValuePairs() override;
 
+  double * paramArray() override { return m_input; }
+  int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
+  void setExpectedValue(int index, double value);
+  void setObservedValue(int index, double value);
   int locationToTableIndex(int row, int column);
 
-  double m_input[k_maxNumberOfRows * k_maxNumberOfCols];
+  double m_input[k_maxNumberOfRows * k_maxNumberOfColumns];
 };
 
 }  // namespace Probability

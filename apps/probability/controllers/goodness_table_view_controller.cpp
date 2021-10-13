@@ -33,13 +33,13 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
   }
   int selectedColumn = m_inputTableView.selectedColumn();
   int selectedRow = m_inputTableView.selectedRow();
-  if (!m_statistic->isValidParamAtLocation(selectedRow - 1, selectedColumn, p)) {
+  if (!m_statistic->isValidParameterAtPosition(selectedRow - 1, selectedColumn, p)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_statistic->setParamAtLocation(selectedRow - 1, selectedColumn, p);
+  m_statistic->setParameterAtPosition(selectedRow - 1, selectedColumn, p);
   if (m_inputTableView.selectedRow() == m_inputTableView.numberOfRows() - 1 &&
-      m_inputTableView.numberOfRows() <= GoodnessStatistic::k_maxNumberOfRows) {
+      m_inputTableView.numberOfRows() <= m_statistic->maxNumberOfRows()) {
     m_inputTableView.recomputeNumberOfRows();
   }
 
@@ -55,7 +55,7 @@ void GoodnessTableViewController::deleteSelectedValue() {
   // Remove value
   int row = m_inputTableView.selectedRow(), col = m_inputTableView.selectedColumn();
   assert(row > 0);
-  bool shouldDeleteRow = m_statistic->deleteParamAtLocation(row - 1, col);
+  bool shouldDeleteRow = m_statistic->deleteParameterAtPosition(row - 1, col);
   if (!shouldDeleteRow) {
     // Only one cell needs to reload.
     assert(row < m_inputTableView.numberOfRows());

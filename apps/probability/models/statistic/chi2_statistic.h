@@ -20,6 +20,16 @@ public:
   double cumulativeNormalizedDistributionFunction(double x) const override;
   double cumulativeNormalizedInverseDistributionFunction(double proba) const override;
 
+  virtual void setParameterAtPosition(int row, int column, double value) = 0;
+  virtual double parameterAtPosition(int row, int column) = 0;
+  virtual bool isValidParameterAtPosition(int row, int column, double p) = 0;
+  /* Delete parameter at location, return true if the deleted param was the last
+   * non-deleted value of its row or column. */
+  virtual bool deleteParameterAtPosition(int row, int column) = 0;
+  virtual void recomputeData() = 0;
+  virtual int maxNumberOfColumns() const = 0;
+  virtual int maxNumberOfRows() const = 0;
+
   void computeInterval() override {}
 
   float xMin() const override;

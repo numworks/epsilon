@@ -22,7 +22,8 @@ InputHomogeneityDataSource::InputHomogeneityDataSource(
 }
 
 // TODO: factorize with InputGoodnessTableView
-void InputHomogeneityDataSource::recomputeDimensions() {
+bool InputHomogeneityDataSource::recomputeDimensions() {
+  // Return true if size changed
   HomogeneityStatistic::Index2D dimensions = m_statistic->computeDimensions();
   bool displayLastEmptyRow = dimensions.row < HomogeneityStatistic::k_maxNumberOfRows;
   bool displayLastEmptyColumn = dimensions.col < HomogeneityStatistic::k_maxNumberOfColumns;
@@ -33,7 +34,9 @@ void InputHomogeneityDataSource::recomputeDimensions() {
     m_numberOfRows = newNumberOfRows;
     m_numberOfColumns = newNumberOfColumns;
     DynamicSizeTableViewDataSource::didChangeSize();
+    return true;
   }
+  return false;
 }
 
 void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(

@@ -31,7 +31,7 @@ void HomogeneityTableViewController::didBecomeFirstResponder() {
 }
 
 bool HomogeneityTableViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Backspace) {
+  if (event == Ion::Events::Backspace && m_table.selectedRow() > 0 && m_table.selectedColumn() > 0) {
     deleteSelectedValue();
     return true;
   }
@@ -69,14 +69,24 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
 
 void HomogeneityTableViewController::deleteSelectedValue() {
   int row = m_table.selectedRow(), col = m_table.selectedColumn();
-  m_statistic->setParameterAtPosition(row - 1, col - 1, HomogeneityStatistic::k_undefinedValue);
-  m_statistic->recomputeData();
-  m_table.reloadCellAtLocation(col, row);
-
-  // Delete last row / column
-  m_table.deselectTable();
-  m_innerTableData.recomputeDimensions();
-  m_table.selectCellAtClippedLocation(col, row, false);
+  assert(row > 0 && col > 0);
+  bool shouldDeleteRowOrCol = m_statistic->deleteParamAtPosition(row - 1, col - 1);
+  if (!shouldDeleteRowOrCol) {
+    m_table.reloadCellAtLocation(col, row);
+  } else {
+    // A row and/or column has been deleted
+    m_statistic->recomputeData();
+    /* Due to an initial number of rows/cols of 2, we cannot ensure that at most
+     * one row and one col have been deleted here */
+    m_table.deselectTable();
+    if (!m_innerTableData.recomputeDimensions()) {
+      /* A row/col has been deleted, but size didn't change, meaning the number
+       * of non-empty rows/cols was at maximum. However, recomputeData may have
+       * moved up/left multiple cells, m_inputTableView should be reloaded. */
+      m_table.reloadData(false);
+    }
+    m_table.selectCellAtClippedLocation(col, row, false);
+  }
 }
 
 }  // namespace Probability

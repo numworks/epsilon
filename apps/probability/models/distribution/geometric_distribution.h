@@ -6,7 +6,7 @@
 namespace Probability {
 
 /* We chose the definition:
- * 0 < p <= 1 for success probability
+ * 0 < p <= 1 for probability of success
  * k number of trials needed to get one success, where k ∈ {1, 2, 3, ...}. */
 
 class GeometricDistribution final : public OneParameterDistribution {

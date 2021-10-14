@@ -41,6 +41,7 @@ public:
 private:
   void selectCorrectView();
   void scrollToCorrectLocation();
+  int stackTitleStyleStep() const override { return 1; }
 
   ResultsController * m_resultsController;
   ResultsHomogeneityView m_contentView;

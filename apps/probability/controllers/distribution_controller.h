@@ -34,6 +34,7 @@ public:
   }
 
 private:
+  int stackTitleStyleStep() const override { return 0; }
   void setDistributionAccordingToIndex(int index);
   constexpr static int k_totalNumberOfModels = 9;
   constexpr static int k_numberOfCells =

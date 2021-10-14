@@ -10,8 +10,6 @@
 
 using namespace Probability;
 
-KDColor InputController::s_titleColor = KDColor::RGB24(0xA3A0AB);
-
 InputController::InputController(Escher::StackViewController * parent,
                                  ResultsController * resultsController,
                                  Statistic * statistic,

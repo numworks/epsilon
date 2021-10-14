@@ -59,6 +59,7 @@ public:
   constexpr static int k_indexOfDescription = 3;
 
 private:
+  int stackTitleStyleStep() const override { return 0; }
   int indexFromListIndex(int i) const;
   int listIndexFromIndex(int i) const;
   I18n::Message messageForTest(Data::SubApp subapp, Data::Test t) const;

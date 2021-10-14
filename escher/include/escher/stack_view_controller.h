@@ -14,10 +14,14 @@ static_assert(k_MaxNumberOfStacks < 8, "Bit mask representation relies on less t
 
 class StackViewController : public ViewController {
 public:
+  enum class Style {
+    WhiteUniform,
+    GrayGradation
+  };
   StackViewController(Responder * parentResponder, ViewController * rootViewController);
 
   /* Push creates a new StackView and adds it */
-  void push(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright);
+  void push(ViewController * vc, Style style = Style::WhiteUniform, int styleStep = -1);
   void pop();
   void popUntilDepth(int depth, bool shouldSetupTopViewController);
 

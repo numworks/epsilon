@@ -133,3 +133,7 @@ void Probability::ResultsView::reload() {
   m_contentView.m_table->reloadData();
   layoutSubviews();
 }
+
+int Probability::ResultsController::stackTitleStyleStep() const {
+  return App::app()->test() == Data::Test::Categorical ? 1 : 2;
+}

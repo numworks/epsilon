@@ -39,13 +39,6 @@ public:
   int numberOfRows() const override { return 3; }
   bool buttonAction() override;
 
-  void openPage(ViewController * nextPage,
-                KDColor backgroundColor = Escher::Palette::GrayDark,
-                KDColor separatorColor = Escher::Palette::GrayDark,
-                KDColor textColor = KDColorWhite) {
-    SelectableListViewPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
-  }
-
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldShouldFinishEditing(Escher::TextField * textField,
                                     Ion::Events::Event event) override;
@@ -60,6 +53,7 @@ public:
 private:
   void loadHypothesisParam();
   const char * symbolPrefix();
+  int stackTitleStyleStep() const override { return 1; }
 
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;

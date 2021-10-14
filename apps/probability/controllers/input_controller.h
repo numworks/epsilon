@@ -28,13 +28,6 @@ public:
   void buttonAction() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
-  void openPage(ViewController * nextPage,
-                KDColor backgroundColor = s_titleColor,
-                KDColor separatorColor = s_titleColor,
-                KDColor textColor = KDColorWhite) {
-    DoubleParameterPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
-  }
-
   void initCell(void * cell, int index) override;
   Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
 
@@ -46,12 +39,11 @@ protected:
   void setTextInCell(Escher::HighlightCell * cell, const char * text, int index) override;
 
 private:
-  static KDColor s_titleColor;
-
   int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   int convertFloatToText(double value, char * buffer, int bufferSize);
+  int stackTitleStyleStep() const override { return 1; }
 
   constexpr static int k_numberOfTitleSignificantDigit = 3;
   constexpr static int k_titleBufferSize = sizeof("H0:= Ha: α=") + 7 /* μ1-μ2 */ +

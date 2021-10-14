@@ -50,6 +50,7 @@ public:
                                                bool withinTemporarySelection) override;
 
 protected:
+  int stackTitleStyleStep() const override { return 0; }
   Chi2Statistic * m_statistic;
   Page * m_resultsController;
   InputCategoricalView m_contentView;

@@ -37,6 +37,7 @@ public:
   constexpr static int k_indexOfInterval = 2;
 
 private:
+  int stackTitleStyleStep() const override { return 0; }
   void resetData(Data::SubApp subapp);
   void initializeProbaData();
   DistributionController * m_distributionController;

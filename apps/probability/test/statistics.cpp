@@ -366,19 +366,19 @@ QUIZ_CASE(probability_two_means_z_statistic) {
 }
 
 QUIZ_CASE(probability_goodness_statistic) {
+  GoodnessStatistic stat;
   StatisticTestCase tests[] = {
       StatisticTestCase{.m_op = HypothesisParams::ComparisonOperator::Higher,
                         .m_numberOfInputs = 8,
                         .m_inputs = {1, 2, 2, 1, 3, 4, 4, 3},
                         .m_significanceLevel = 0.03,
                         .m_confidenceLevel = 0.9,
-                        .m_numberOfParameters = GoodnessStatistic::k_maxNumberOfRows * 2 + 1,
+                        .m_numberOfParameters = stat.maxNumberOfRows() * 2 + 1,
                         .m_hasDegreeOfFreedom = true,
                         .m_degreesOfFreedom = 3,
                         .m_testPassed = false,
                         .m_testCriticalValue = 2.0833332539,
                         .m_pValue = 0.5552918911}};
-  GoodnessStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     inputValues(&stat, tests[i]);
     stat.recomputeData();
@@ -392,16 +392,15 @@ QUIZ_CASE(probability_homogeneity_statistic) {
       .m_op = HypothesisParams::ComparisonOperator::Higher,
       .m_numberOfInputs = HomogeneityStatistic::k_maxNumberOfColumns *
                           HomogeneityStatistic::k_maxNumberOfRows,
-      .m_inputs = {1,   2,   4,   NAN, NAN, NAN, NAN, NAN, NAN, NAN,
-                   2,   5,   5,   NAN, NAN, NAN, NAN, NAN, NAN, NAN,
-                   4,   3,   2,   NAN, NAN, NAN, NAN, NAN, NAN, NAN,
-                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
-                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
-                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
-                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
-                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
-                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
-                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+      .m_inputs = {1,   2,   4,   NAN, NAN, NAN, NAN, NAN, NAN,
+                   2,   5,   5,   NAN, NAN, NAN, NAN, NAN, NAN,
+                   4,   3,   2,   NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
+                   NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
       .m_significanceLevel = 0.03,
       .m_confidenceLevel = 0.9,
       .m_numberOfParameters =
@@ -413,14 +412,15 @@ QUIZ_CASE(probability_homogeneity_statistic) {
       .m_pValue = 0.4776151180}};
   double expectedValues[2][HomogeneityStatistic::k_maxNumberOfColumns *
                           HomogeneityStatistic::k_maxNumberOfRows] = {
-      {1.75,  2.5,     2.75,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
-       3.0,     4.2857,  4.714,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
-       2.25,  3.214,   3.536,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
-       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
-       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
-       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
-       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
-       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN}};
+      {1.75,  2.5,     2.75,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       3.0,   4.2857,  4.714,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       2.25,  3.214,   3.536,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
+       NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN}};
   // clang-format on
   HomogeneityStatistic stat;
   for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {

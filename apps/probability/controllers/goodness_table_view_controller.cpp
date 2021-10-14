@@ -50,26 +50,34 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
   return true;
 }
 
-// TODO : factorize with HomogeneityTableViewController
+/* TODO : factorize with HomogeneityTableViewController:
+ * - Override the statistics parameter position
+ * - In DynamicCellsDataSourceDelegate, factorize pointers into virtual methods:
+ *   - m_inputTableView / m_innerTableData (as InputHomogeneityDataSource)
+ *   - m_statistic (as Chi2Statistic)
+ * - The assert still differ, as we don't count number of rows/columns the same
+ */
 void GoodnessTableViewController::deleteSelectedValue() {
-  // Remove value
-  int row = m_inputTableView.selectedRow(), col = m_inputTableView.selectedColumn();
+  int row = tableView()->selectedRow(), col = tableView()->selectedColumn();
   assert(row > 0);
+  // Remove value
   bool shouldDeleteRow = m_statistic->deleteParameterAtPosition(row - 1, col);
   if (!shouldDeleteRow) {
     // Only one cell needs to reload.
-    assert(row < m_inputTableView.numberOfRows());
-    m_inputTableView.reloadCellAtLocation(col, row);
+    assert(row < m_inputTableView.numberOfRows() && col < m_inputTableView.numberOfColumns());
+    tableView()->reloadCellAtLocation(col, row);
   } else {
     // A row is empty, we should recompute data
     m_statistic->recomputeData();
-    // At most one row has been deleted, no need to unhighlight selected cell
+    // At most one row has been deleted, reselecting the table isn't necessary
+    tableView()->deselectTable();
     if (!m_inputTableView.recomputeNumberOfRows()) {
       /* A row has been deleted, but size didn't change, meaning the number of
        * non-empty rows was k_maxNumberOfRows. However, recomputeData may have
        * moved up multiple cells, m_inputTableView should be reloaded. */
-      m_inputTableView.reloadData(false);
+      tableView()->reloadData(false);
     }
+    tableView()->selectCellAtClippedLocation(col, row, false);
   }
 }
 

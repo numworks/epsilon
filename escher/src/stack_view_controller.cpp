@@ -165,12 +165,9 @@ const char * StackViewController::ControllerView::className() const {
 #endif
 
 StackViewController::StackViewController(Responder * parentResponder,
-                                         ViewController * rootViewController,
-                                         KDColor textColor,
-                                         KDColor backgroundColor,
-                                         KDColor separatorColor) :
+                                         ViewController * rootViewController) :
     ViewController(parentResponder), m_view(), m_numberOfChildren(0), m_isVisible(false) {
-  pushModel(Frame(rootViewController, textColor, backgroundColor, separatorColor));
+  pushModel(Frame(rootViewController, KDColorWhite, Palette::PopUpTitleBackground, Palette::PurpleDark));
   rootViewController->setParentResponder(this);
 }
 

@@ -14,8 +14,7 @@ static_assert(k_MaxNumberOfStacks < 8, "Bit mask representation relies on less t
 
 class StackViewController : public ViewController {
 public:
-  StackViewController(Responder * parentResponder, ViewController * rootViewController,
-    KDColor textColor = KDColorWhite, KDColor backgroundColor = Palette::PopUpTitleBackground, KDColor separatorColor = Palette::PurpleDark);
+  StackViewController(Responder * parentResponder, ViewController * rootViewController);
 
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright);

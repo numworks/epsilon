@@ -41,7 +41,7 @@ public:
 private:
   class Frame {
   public:
-    Frame(ViewController * viewController = nullptr, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright) :
+    Frame(ViewController * viewController = nullptr, KDColor textColor = Palette::GrayDarkMiddle, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright) :
       m_viewController(viewController),
       m_textColor(textColor),
       m_backgroundColor(backgroundColor),

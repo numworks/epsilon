@@ -185,10 +185,10 @@ ViewController * StackViewController::topViewController() {
 
 void StackViewController::push(ViewController * vc, Style style, int styleStep) {
   assert(m_numberOfChildren < k_MaxNumberOfStacks);
-  constexpr KDColor k_grayGradationColors[] = { Palette::PurpleBright, Palette::GrayDark, Palette::SubTab };
+  constexpr KDColor k_grayGradationColors[] = { Palette::PurpleBright, Palette::GrayDark, Palette::GrayDarkMiddle };
   KDColor textColor, backgroundColor, separatorColor;
   if (style == Style::WhiteUniform) {
-    textColor = Palette::SubTab;
+    textColor = Palette::GrayDarkMiddle;
     backgroundColor = KDColorWhite;
     separatorColor = Palette::GrayBright;
   } else {

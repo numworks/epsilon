@@ -112,6 +112,7 @@ I18n::Message graphTitleFormatForTest(Data::Test test, Data::TestType type) {
       switch (type) {
         case Data::TestType::ZTest:
           return I18n::Message::StatisticGraphControllerTestTitleFormatZtest;
+        case Data::TestType::PooledTTest:
         case Data::TestType::TTest:
           return I18n::Message::StatisticGraphControllerTestTitleFormatTTest;
         default:

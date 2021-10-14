@@ -21,14 +21,9 @@ public:
   TELEMETRY_ID("Parameters");
   int numberOfRows() const override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  void openPage(ViewController * nextPage,
-                KDColor backgroundColor = Escher::Palette::SubTab,
-                KDColor separatorColor = Escher::Palette::SubTab,
-                KDColor textColor = KDColorWhite) {
-    DoubleParameterPage::openPage(nextPage, backgroundColor, separatorColor, textColor);
-  }
 
 private:
+  int stackTitleStyleStep() const override { return 1; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   void buttonAction() override;

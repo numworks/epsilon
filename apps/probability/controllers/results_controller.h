@@ -66,12 +66,6 @@ public:
   const char * title() override;
   void didBecomeFirstResponder() override;
   bool buttonAction() override;
-  void openPage(ViewController * nextPage,
-                KDColor backgroundColor = Escher::Palette::GraySlightlyDark,
-                KDColor separatorColor = Escher::Palette::GraySlightlyDark,
-                KDColor textColor = KDColorWhite) {
-    Page::openPage(nextPage, backgroundColor, separatorColor, textColor);
-  }
   Escher::View * view() override { return &m_contentView; }
 
   void initCell(void * cell, int index) override;
@@ -89,7 +83,7 @@ protected:
   char m_titleBuffer[k_titleBufferSize];
 
 private:
-  static KDColor s_titleColor;
+  int stackTitleStyleStep() const override;
 };
 
 }  // namespace Probability

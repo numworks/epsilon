@@ -183,11 +183,23 @@ ViewController * StackViewController::topViewController() {
   return m_childrenFrame[m_numberOfChildren - 1].viewController();
 }
 
-void StackViewController::push(ViewController * vc,
-                               KDColor textColor,
-                               KDColor backgroundColor,
-                               KDColor separatorColor) {
+void StackViewController::push(ViewController * vc, Style style, int styleStep) {
   assert(m_numberOfChildren < k_MaxNumberOfStacks);
+  constexpr KDColor k_grayGradationColors[] = { Palette::PurpleBright, Palette::GrayDark, Palette::SubTab };
+  KDColor textColor, backgroundColor, separatorColor;
+  if (style == Style::WhiteUniform) {
+    textColor = Palette::SubTab;
+    backgroundColor = KDColorWhite;
+    separatorColor = Palette::GrayBright;
+  } else {
+    assert(style == Style::GrayGradation);
+    assert(m_numberOfChildren > 0);
+    styleStep = styleStep < 0 ? m_numberOfChildren - 1 : styleStep;
+    textColor = KDColorWhite;
+    assert(styleStep < sizeof(k_grayGradationColors)/sizeof(KDColor));
+    backgroundColor = k_grayGradationColors[styleStep];
+    separatorColor = k_grayGradationColors[styleStep];
+  }
   Frame frame = Frame(vc, textColor, backgroundColor, separatorColor);
   /* Add the frame to the model */
   pushModel(frame);

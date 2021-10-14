@@ -22,12 +22,11 @@ public:
     return static_cast<Escher::StackViewController *>(T::parentResponder());
   }
   /* Pushes the given controller onto the StackViewController */
-  void openPage(Escher::ViewController * nextPage,
-                KDColor backgroundColor = Escher::Palette::PurpleBright,
-                KDColor separatorColor = Escher::Palette::PurpleBright,
-                KDColor textColor = KDColorWhite) {
-    stackViewController()->push(nextPage, textColor, backgroundColor, separatorColor);
+  void openPage(Escher::ViewController * nextPage) {
+    stackViewController()->push(nextPage, Escher::StackViewController::Style::GrayGradation, stackTitleStyleStep());
   }
+private:
+  virtual int stackTitleStyleStep() const { return -1; }
 };
 
 /* A Page is a controller that requires a StackViewController as its parent
@@ -49,6 +48,8 @@ class DoubleParameterPage : public PageController<Shared::FloatParameterControll
 public:
   DoubleParameterPage(Escher::StackViewController * stackViewController) :
         PageController(stackViewController) {}
+private:
+  virtual int stackTitleStyleStep() const { return 1; }
 };
 
 }  // namespace Probability

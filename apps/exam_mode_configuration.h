@@ -9,6 +9,7 @@ namespace ExamModeConfiguration {
 
 // Settings menu
 int numberOfAvailableExamMode();
+bool pressToTestExamModeAvailable();
 GlobalPreferences::ExamMode examModeAtIndex(int index);
 I18n::Message examModeActivationMessage(int index);
 
@@ -20,6 +21,12 @@ KDColor examModeColor(GlobalPreferences::ExamMode mode);
 bool appIsForbiddenInExamMode(I18n::Message appName, GlobalPreferences::ExamMode mode);
 bool exactExpressionIsForbidden(GlobalPreferences::ExamMode mode, Poincare::Expression e);
 bool additionalResultsAreForbidden(GlobalPreferences::ExamMode mode);
+bool inequalityGraphingIsForbidden(GlobalPreferences::ExamMode mode);
+bool implicitPlotsAreForbidden(GlobalPreferences::ExamMode mode);
+bool statsDiagnosticsAreForbidden(GlobalPreferences::ExamMode mode);
+bool vectorsAreForbidden(GlobalPreferences::ExamMode mode);
+bool basedLogarithmIsForbidden(GlobalPreferences::ExamMode mode);
+bool sumIsForbidden(GlobalPreferences::ExamMode mode);
 
 }
 

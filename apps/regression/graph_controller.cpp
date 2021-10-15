@@ -1,5 +1,7 @@
 #include "graph_controller.h"
 #include "../apps_container.h"
+#include "../exam_mode_configuration.h"
+#include "../global_preferences.h"
 #include "../shared/function_banner_delegate.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
@@ -143,7 +145,8 @@ Poincare::Context * GraphController::globalContext() {
 void GraphController::reloadBannerView() {
   Model * model = m_store->modelForSeries(*m_selectedSeriesIndex);
   Model::Type modelType = m_store->seriesRegressionType(*m_selectedSeriesIndex);
-  m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + (modelType == Model::Type::Linear ? 2 : 0) + model->numberOfCoefficients() + BannerView::k_numberOfSharedSubviews);
+  bool displayRandR2 = modelType == Model::Type::Linear && !ExamModeConfiguration::statsDiagnosticsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
+  m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + (displayRandR2 ? 2 : 0) + model->numberOfCoefficients() + BannerView::k_numberOfSharedSubviews);
 
   // Set point equals: "P(...) ="
   const int significantDigits = Preferences::sharedPreferences()->numberOfSignificantDigits();
@@ -215,7 +218,7 @@ void GraphController::reloadBannerView() {
     coefficientName++;
   }
 
-  if (modelType == Model::Type::Linear) {
+  if (displayRandR2) {
     int index = model->numberOfCoefficients();
     // Set "r=..."
     double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);

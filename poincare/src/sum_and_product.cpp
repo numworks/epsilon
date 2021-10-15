@@ -1,3 +1,5 @@
+#include <apps/exam_mode_configuration.h>
+#include <apps/global_preferences.h>
 #include <poincare/sum_and_product.h>
 #include <poincare/decimal.h>
 #include <poincare/undefined.h>
@@ -26,6 +28,9 @@ Expression SumAndProductNode::shallowReduce(ReductionContext reductionContext) {
 
 template<typename T>
 Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext approximationContext) const {
+  if (type() == ExpressionNode::Type::Sum && ExamModeConfiguration::sumIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+    return Complex<T>::Undefined();
+  }
   Evaluation<T> aInput = childAtIndex(2)->approximate(T(), approximationContext);
   Evaluation<T> bInput = childAtIndex(3)->approximate(T(), approximationContext);
   T start = aInput.toScalar();
@@ -60,6 +65,9 @@ Expression SumAndProduct::shallowReduce(Context * context) {
     if (!e.isUninitialized()) {
       return e;
     }
+  }
+  if (type() == ExpressionNode::Type::Sum && ExamModeConfiguration::sumIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+    return replaceWithUndefinedInPlace();
   }
   assert(!childAtIndex(1).deepIsMatrix(context));
   if (childAtIndex(2).deepIsMatrix(context) || childAtIndex(3).deepIsMatrix(context)) {

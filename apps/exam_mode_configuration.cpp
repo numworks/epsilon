@@ -6,13 +6,29 @@
 using namespace Poincare;
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
-  if (GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::StandardOnly
-      || GlobalPreferences::sharedGlobalPreferences()->isInExamMode())
-  {
+  // TODO Hugo : Use this method to display examMode in settings
+  if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Standard
+      || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch) {
+    // Reactivation button
     return 1;
   }
-  assert(GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::All);
+  if (GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::PressToTestOnly) {
+    // Menu shouldn't be visible
+    return 0;
+  }
+  if (GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::StandardOnly) {
+    // Activation button
+    return 1;
+  }
+  assert(GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::StandardAndDutch);
+  // Activation buttons
   return 2;
+}
+
+bool ExamModeConfiguration::pressToTestExamModeAvailable() {
+  // TODO Hugo : Use this method to display pressToTest in settings
+  return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
+    || GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::PressToTestOnly;
 }
 
 GlobalPreferences::ExamMode ExamModeConfiguration::examModeAtIndex(int index) {
@@ -59,7 +75,11 @@ KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
 }
 
 bool ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message appName, GlobalPreferences::ExamMode mode) {
-  return appName == I18n::Message::CodeApp && mode == GlobalPreferences::ExamMode::Dutch;
+  // TODO Hugo : Update the error message accordingly, check PressToTestParams::equationSolver
+  return (appName == I18n::Message::CodeApp
+          && mode == GlobalPreferences::ExamMode::Dutch)
+         || (appName == I18n::Message::SolverApp
+             && mode == GlobalPreferences::ExamMode::PressToTest);
 }
 
 static bool isPrimeFactorization(Expression expression) {
@@ -83,4 +103,30 @@ bool ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::ExamMo
 
 bool ExamModeConfiguration::additionalResultsAreForbidden(GlobalPreferences::ExamMode mode) {
   return mode == GlobalPreferences::ExamMode::Dutch;
+}
+
+bool ExamModeConfiguration::inequalityGraphingIsForbidden(GlobalPreferences::ExamMode mode) {
+  // TODO Hugo : Implement it after conics, check PressToTestParams::inequalityGraphing
+  return mode == GlobalPreferences::ExamMode::PressToTest;
+  // return extendedExamMode.pressToTest && extendedExamMode.inequalityGraphing;
+}
+bool ExamModeConfiguration::implicitPlotsAreForbidden(GlobalPreferences::ExamMode mode) {
+  // TODO Hugo : Implement it after conics, check PressToTestParams::implicitPlots
+  return mode == GlobalPreferences::ExamMode::PressToTest;
+}
+bool ExamModeConfiguration::statsDiagnosticsAreForbidden(GlobalPreferences::ExamMode mode) {
+  // TODO Hugo : check PressToTestParams::statDiagnostic
+  return mode == GlobalPreferences::ExamMode::PressToTest;
+}
+bool ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::ExamMode mode) {
+  // TODO Hugo : check PressToTestParams::vectors
+  return mode == GlobalPreferences::ExamMode::PressToTest;
+}
+bool ExamModeConfiguration::basedLogarithmIsForbidden(GlobalPreferences::ExamMode mode) {
+  // TODO Hugo : check PressToTestParams::basedLogarithm
+  return mode == GlobalPreferences::ExamMode::PressToTest;
+}
+bool ExamModeConfiguration::sumIsForbidden(GlobalPreferences::ExamMode mode) {
+  // TODO Hugo : check PressToTestParams::sum
+  return mode == GlobalPreferences::ExamMode::PressToTest;
 }

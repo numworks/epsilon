@@ -1,5 +1,7 @@
 #include "calculation_controller.h"
 #include "../apps_container.h"
+#include "../exam_mode_configuration.h"
+#include "../global_preferences.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
@@ -232,6 +234,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     if (j > k_regressionCellIndex + maxNumberCoefficients) {
       // Fill r (if needed, before last row) and r2 (last row)
       if ((modelType == Model::Type::Linear && j == numberRows - 2) || j == numberRows - 1) {
+        if (ExamModeConfiguration::statsDiagnosticsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+          // TODO Hugo : Gray out this text
+          bufferCell->setText(I18n::translate(I18n::Message::Disabled));
+          return;
+        }
         double calculation;
         if (j == numberRows - 1) {
           calculation = m_store->determinationCoefficientForSeries(seriesNumber, globContext);

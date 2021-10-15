@@ -11,8 +11,20 @@ public:
     Unknown = -1,
     Off = 0,
     Standard = 1,
-    Dutch = 2
+    Dutch = 2,
+    PressToTest = 3
   };
+  // TODO Hugo : Handle PressToTest exam modes settings, store it properly.
+  // struct PressToTestParams {
+  //   bool pressToTest;
+  //   bool equationSolver;
+  //   bool inequalityGraphing;
+  //   bool implicitPlots;
+  //   bool statDiagnostic;
+  //   bool vectors;
+  //   bool basedLogarithm;
+  //   bool sum;
+  // };
   static GlobalPreferences * sharedGlobalPreferences();
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }

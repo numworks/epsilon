@@ -1,3 +1,5 @@
+#include <apps/exam_mode_configuration.h>
+#include <apps/global_preferences.h>
 #include <poincare/addition.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
@@ -27,6 +29,9 @@ int VectorNormNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 
 template<typename T>
 Evaluation<T> VectorNormNode::templatedApproximate(ApproximationContext approximationContext) const {
+  if (ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+    return Complex<T>::Undefined();
+  }
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   return Complex<T>::Builder(input.norm());
 }
@@ -38,6 +43,9 @@ Expression VectorNorm::shallowReduce(ExpressionNode::ReductionContext reductionC
     if (!e.isUninitialized()) {
       return e;
     }
+  }
+  if (ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+    return replaceWithUndefinedInPlace();
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {

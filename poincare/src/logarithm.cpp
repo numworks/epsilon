@@ -1,3 +1,5 @@
+#include <apps/global_preferences.h>
+#include <apps/exam_mode_configuration.h>
 #include <poincare/logarithm.h>
 #include <poincare/addition.h>
 #include <poincare/approximation_helper.h>
@@ -113,8 +115,13 @@ template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(Approx
 
 template<>
 template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<U> x = childAtIndex(0)->approximate(U(), approximationContext);
   Evaluation<U> n = childAtIndex(1)->approximate(U(), approximationContext);
+  if (ExamModeConfiguration::basedLogarithmIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())
+      && n.toScalar() != (U)10.0
+      && n.toScalar() != Complex<U>::Builder(M_E).toScalar()) {
+    return Complex<U>::Undefined();
+  }
+  Evaluation<U> x = childAtIndex(0)->approximate(U(), approximationContext);
   std::complex<U> result = std::complex<U>(NAN, NAN);
   if (x.type() == EvaluationNode<U>::Type::Complex && n.type() == EvaluationNode<U>::Type::Complex) {
     std::complex<U> xc = (static_cast<Complex<U>&>(x)).stdComplex();
@@ -155,14 +162,21 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
       return e;
     }
   }
-
-  if (childAtIndex(1).deepIsMatrix(reductionContext.context())) {
+  Expression base = childAtIndex(1);
+  if (base.deepIsMatrix(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
 
+
+  if (ExamModeConfiguration::basedLogarithmIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+    if (!((base.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant&>(base).isConstant("ℯ")) ||
+          (base.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(base).isTen()))) {
+      return replaceWithUndefinedInPlace();
+    }
+  }
   Expression c = childAtIndex(0);
   if (c.sign(reductionContext.context()) == ExpressionNode::Sign::Negative
-      || childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Negative)
+      || base.sign(reductionContext.context()) == ExpressionNode::Sign::Negative)
   {
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       Expression result = Nonreal::Builder();
@@ -189,7 +203,6 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
 
   // log(+inf, a) ?
   if (c.type() == ExpressionNode::Type::Infinity && c.sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
-    Expression base = childAtIndex(1);
     // log(+inf, a) --> ±inf with a rational and a > 0
     if (base.type() == ExpressionNode::Type::Rational && !static_cast<Rational&>(base).isNegative() && !static_cast<Rational&>(base).isZero()) {
       // log(+inf,a) with a < 1 --> -inf
@@ -243,8 +256,8 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     Rational r = static_cast<Rational &>(c);
     Addition a = Addition::Builder();
     // if the log base is Integer: log_b(r) = c + log_b(r') with r = b^c*r'
-    if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isInteger()) {
-      Integer b = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
+    if (base.type() == ExpressionNode::Type::Rational && base.convert<Rational>().isInteger()) {
+      Integer b = base.convert<Rational>().signedIntegerNumerator();
       Integer newNumerator = simplifyLogarithmIntegerBaseInteger(r.signedIntegerNumerator(), b, a, false);
       Integer newDenomitor = simplifyLogarithmIntegerBaseInteger(r.integerDenominator(), b, a, true);
       r = Rational::Builder(newNumerator, newDenomitor);

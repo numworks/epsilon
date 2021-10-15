@@ -27,19 +27,21 @@ bool ReadBookController::handleEvent(Ion::Events::Event event) {
     m_readerView.previousPage();
     return true;
   }
-  if(event == Ion::Events::Back || event == Ion::Events::Home) {
-    savePosition();
-  }
   return false;
 }
 
+void ReadBookController::viewDidDisappear() {
+  savePosition();
+}
+
 void ReadBookController::savePosition() const {
-  int pageOffset = m_readerView.getPageOffset(); 
-  Ion::Storage::Record::ErrorStatus status = Ion::Storage::sharedStorage()->createRecordWithFullName(m_file->name, &pageOffset, sizeof(pageOffset));
+  BookSave save = m_readerView.getBookSave();
+
+  Ion::Storage::Record::ErrorStatus status = Ion::Storage::sharedStorage()->createRecordWithFullName(m_file->name, &save, sizeof(save));
   if(Ion::Storage::Record::ErrorStatus::NameTaken == status) {
     Ion::Storage::Record::Data data;
-    data.buffer = &pageOffset;
-    data.size = sizeof(pageOffset);
+    data.buffer = &save;
+    data.size = sizeof(save);
     status = Ion::Storage::sharedStorage()->recordNamed(m_file->name).setValue(data);
   }
 }
@@ -47,11 +49,14 @@ void ReadBookController::savePosition() const {
 void ReadBookController::loadPosition() {
   Ion::Storage::Record r = Ion::Storage::sharedStorage()->recordNamed(m_file->name);
   if(Ion::Storage::sharedStorage()->hasRecord(r)) {
-    int pageOffset = *(static_cast<const int*>(r.value().buffer));
-    m_readerView.setPageOffset(pageOffset);
+    BookSave save = *(static_cast<const BookSave*>(r.value().buffer));
+    m_readerView.setBookSave(save);
   }
   else {
-    m_readerView.setPageOffset(0);
+    m_readerView.setBookSave({
+      0,
+      Palette::PrimaryText
+    });
   }
 }
 

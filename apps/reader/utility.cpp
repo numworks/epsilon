@@ -110,4 +110,21 @@ int filesWithExtension(const char* extension, External::Archive::File* files, in
 }
 #endif
 
+const char * EndOfPrintableWord(const char * word, const char * end) {
+  if (word == end) {
+    return word;
+  }
+  UTF8Decoder decoder(word);
+  CodePoint codePoint = decoder.nextCodePoint();
+  const char * result = word;
+  while (codePoint != '\n' && codePoint != ' ' && codePoint != '%') {
+    result = decoder.stringPosition();
+    if (result >= end) {
+      break;
+    }
+    codePoint = decoder.nextCodePoint();
+  }
+  return result;
+}
+
 }

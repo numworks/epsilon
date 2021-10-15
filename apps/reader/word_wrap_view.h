@@ -7,20 +7,28 @@
 namespace Reader
 {
 
+struct BookSave {
+  int offset;
+  KDColor color;
+};
+
 class WordWrapTextView : public PointerTextView {
 public:
-  WordWrapTextView() : PointerTextView(GlobalPreferences::sharedGlobalPreferences()->font()) {};
+  WordWrapTextView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setText(const char*, int length);
   void nextPage();
   void previousPage();
-  int getPageOffset() const;
-  void setPageOffset(int o);
-protected:
-  int m_pageOffset = 0;
-  mutable int m_nextPageOffset = 0;
-  int m_length = 0;
+  BookSave getBookSave() const;
+  void setBookSave(BookSave save);
+private:
+  bool updateTextColorForward(const char * colorStart) const;
+  bool updateTextColorBackward(const char * colorStart) const;
   static const int k_margin = 10;
+  int m_pageOffset;
+  mutable int m_nextPageOffset;
+  int m_length;
+  mutable KDColor m_textColor;
 };
 
 }

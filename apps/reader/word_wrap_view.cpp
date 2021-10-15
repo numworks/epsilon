@@ -1,9 +1,21 @@
 
 #include "word_wrap_view.h"
 #include "utility.h"
+#include <poincare/expression.h>
+#include "../shared/poincare_helpers.h"
+#include <poincare/undefined.h>
 
 namespace Reader
 {
+
+WordWrapTextView::WordWrapTextView() : 
+  PointerTextView(GlobalPreferences::sharedGlobalPreferences()->font()),
+  m_pageOffset(0),
+  m_nextPageOffset(0),
+  m_length(0)
+{
+  
+}
 
 void WordWrapTextView::nextPage() {
   if(m_nextPageOffset >= m_length) {
@@ -29,12 +41,35 @@ void WordWrapTextView::previousPage() {
   const char * endOfWord = text() + m_pageOffset - 1;
   const char * startOfWord = UTF8Helper::BeginningOfWord(text(), endOfWord);
 
+  KDSize textSize = KDSizeZero;
+
   KDPoint textEndPosition(m_frame.width() - k_margin, m_frame.height() - k_margin);
 
   while(startOfWord>=text()) {
     startOfWord = UTF8Helper::BeginningOfWord(text(), endOfWord);
-    endOfWord = UTF8Helper::EndOfWord(startOfWord); 
-    KDSize textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
+    endOfWord = UTF8Helper::EndOfWord(startOfWord);
+
+    if (*startOfWord == '%') {
+      if (updateTextColorBackward(startOfWord)) {
+        endOfWord = startOfWord - 1;
+        continue;
+      }
+    }
+    if (*startOfWord == '$' && *(endOfWord-1) == '$') {
+      const int wordMaxLength = 128;
+      char word[wordMaxLength];
+      stringNCopy(word, wordMaxLength, startOfWord + 1, endOfWord-startOfWord-2);
+      Poincare::Expression expr = Poincare::Expression::Parse(word, nullptr);
+      if (expr.isUninitialized()) {
+        expr = Poincare::Undefined::Builder();
+      }
+      Poincare::Layout layout = Shared::PoincareHelpers::CreateLayout(expr);
+      textSize = layout.layoutSize();
+      
+    }
+    else {
+      textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
+    }
     KDPoint textStartPosition = KDPoint(textEndPosition.x()-textSize.width(), textEndPosition.y());
 
     if(textStartPosition.x() < k_margin) {
@@ -84,37 +119,85 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
 
   const char * endOfFile = text() + m_length;
   const char * startOfWord = text() + m_pageOffset;
-  const char * endOfWord = UTF8Helper::EndOfWord(startOfWord);
+  const char * endOfWord = EndOfPrintableWord(startOfWord, endOfFile);
   KDPoint textPosition(k_margin, k_margin);
 
   const int wordMaxLength = 128;
   char word[wordMaxLength];
 
+  Poincare::Layout layout;
+
+  enum class ToDraw {
+    Text,
+    Expression,
+    Nothing
+  };
+
+  ToDraw toDraw = ToDraw::Text;
+
   const int charWidth = m_font->glyphSize().width();
   const int charHeight = m_font->glyphSize().height();
 
+  int nextLineOffset = charHeight;
+
+  KDSize textSize = KDSizeZero;
+
+
   while(startOfWord < endOfFile) {
-    KDSize textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
+
+    if (*startOfWord == '%') { // Look for color keyword (ex '%bl%')
+      if (updateTextColorForward(startOfWord)) {
+        startOfWord = endOfWord + 1;
+        endOfWord = EndOfPrintableWord(startOfWord, endOfFile);
+        continue;
+      }
+    }
+    
+    if (*startOfWord == '$' && *(endOfWord-1) == '$') { // Look for expression
+      stringNCopy(word, wordMaxLength, startOfWord + 1, endOfWord-startOfWord-2);
+      Poincare::Expression expr = Poincare::Expression::Parse(word, nullptr);
+      if (expr.isUninitialized()) {
+        expr = Poincare::Undefined::Builder();
+      }
+      layout = Shared::PoincareHelpers::CreateLayout(expr);
+      textSize = layout.layoutSize();
+      toDraw = ToDraw::Expression;
+    }
+    else {
+      textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
+      stringNCopy(word, wordMaxLength, startOfWord, endOfWord-startOfWord);
+      toDraw = ToDraw::Text;
+    }
+
     KDPoint nextTextPosition = KDPoint(textPosition.x()+textSize.width(), textPosition.y());
     
     if(nextTextPosition.x() > m_frame.width() - k_margin) { // Right overflow
-      textPosition = KDPoint(k_margin, textPosition.y() + textSize.height());
+      textPosition = KDPoint(k_margin, textPosition.y() + nextLineOffset);
       nextTextPosition = KDPoint(k_margin + textSize.width(), textPosition.y());
+      nextLineOffset = charHeight;
+    }
+    if (nextLineOffset < textSize.height()) {
+      nextLineOffset = textSize.height();
     }
 
     if(textPosition.y() + textSize.height() > m_frame.height() - k_margin) { // Bottom overflow
       break;
     }
 
-    stringNCopy(word, wordMaxLength, startOfWord, endOfWord-startOfWord);
-    ctx->drawString(word, textPosition, m_font, m_textColor, m_backgroundColor);
+    if (toDraw == ToDraw::Expression) {
+      layout.draw(ctx, textPosition, m_textColor);
+    }
+    else if (toDraw == ToDraw::Text) {
+      ctx->drawString(word, textPosition, m_font, m_textColor, m_backgroundColor);
+    }
 
     while(*endOfWord == ' ' || *endOfWord == '\n') {
       if(*endOfWord == ' ') {
         nextTextPosition = KDPoint(nextTextPosition.x() + charWidth, nextTextPosition.y());
       }
       else {
-        nextTextPosition = KDPoint(k_margin, nextTextPosition.y() + charHeight);
+        nextTextPosition = KDPoint(k_margin, nextTextPosition.y() + nextLineOffset);
+        nextLineOffset = charHeight;
       }
       ++endOfWord;
     }
@@ -123,6 +206,10 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
     //two times the same word if the break below is used
     startOfWord = endOfWord;
 
+    if (endOfWord >= endOfFile) {
+      break;
+    }
+
     if(nextTextPosition.y() + textSize.height() > m_frame.height() - k_margin) { // If out of page, quit
       break;
     }
@@ -130,22 +217,181 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
       nextTextPosition = KDPoint(k_margin, nextTextPosition.y());
     }
     if(nextTextPosition.x() > m_frame.width() - k_margin) { // Go to line if right overflow
-      nextTextPosition = KDPoint(k_margin, nextTextPosition.y() + textSize.height());
+      nextTextPosition = KDPoint(k_margin, nextTextPosition.y() + nextLineOffset);
+      nextLineOffset = charHeight;
     }
 
     textPosition = nextTextPosition;
-    endOfWord = UTF8Helper::EndOfWord(startOfWord);
+    endOfWord = EndOfPrintableWord(startOfWord+1, endOfFile);
   }
 
   m_nextPageOffset = startOfWord - text();
 };
 
-int WordWrapTextView::getPageOffset() const {
-  return m_pageOffset;
+BookSave WordWrapTextView::getBookSave() const {
+  return {
+    m_pageOffset,
+    m_textColor
+  };
 }
 
-void WordWrapTextView::setPageOffset(int o) {
-  m_pageOffset = o;
+void WordWrapTextView::setBookSave(BookSave save) {
+  m_pageOffset = save.offset;
+  m_textColor = save.color;
 }
+
+bool WordWrapTextView::updateTextColorForward(const char * colorStart) const {
+
+  if (*(colorStart + 1) == '\\') {
+    m_textColor = Palette::PrimaryText;
+    return (*(colorStart + 3) == '%' || *(colorStart + 4) == '%');
+  }
+
+  int keySize = 1;
+  KDColor lastColor = m_textColor;
+  
+  switch (*(colorStart+1))
+  {
+    case 'r':
+        if (*(colorStart+2) == 'l') {
+            m_textColor = Palette::RedLight;
+            keySize = 2;
+        }
+        else {
+            m_textColor = Palette::Red;
+        }
+        break;
+    case 'm':
+        m_textColor = Palette::Magenta;
+        break;
+    case 't':
+        m_textColor = Palette::Turquoise;
+        break;
+    case 'p':
+        if (*(colorStart+2) == 'k') {
+            m_textColor = Palette::Pink;
+            keySize = 2;
+        }
+        else if (*(colorStart+2) == 'p') {
+            m_textColor = Palette::Purple;
+            keySize = 2;
+        }
+        break;
+    case 'b':
+        if (*(colorStart+2) == 'r') {
+            m_textColor = Palette::Brown;
+            keySize = 2;
+        }
+        if (*(colorStart+2) == 'l') {
+            m_textColor = Palette::BlueLight;
+            keySize = 2;
+        }
+        else {
+            m_textColor = Palette::Blue;
+        }
+        break;
+    case 'o':
+        m_textColor = Palette::Orange;
+        break;
+    case 'g':
+        if (*(colorStart+2) == 'l') {
+            m_textColor = Palette::GreenLight;
+            keySize = 2;
+        }
+        else {
+            m_textColor = Palette::Green;
+        }
+        break;
+    case 'c':
+        m_textColor = Palette::Cyan;
+        break;
+
+    default:
+        return false;
+  }
+
+  if (*(colorStart + keySize + 1) != '%') {
+    m_textColor = lastColor;
+    return false;
+  }
+
+  return true;
+}
+
+bool WordWrapTextView::updateTextColorBackward(const char * colorStart) const {
+
+  if (*(colorStart++) != '\\') {
+    return false;
+  }
+
+  int keySize = 1;
+  KDColor lastColor = m_textColor;
+  switch (*(colorStart+1))
+  {
+    case 'r':
+        if (*(colorStart+2) == 'l') {
+            m_textColor = Palette::RedLight;
+            keySize = 2;
+        }
+        else {
+            m_textColor = Palette::Red;
+        }
+        break;
+    case 'm':
+        m_textColor = Palette::Magenta;
+        break;
+    case 't':
+        m_textColor = Palette::Turquoise;
+        break;
+    case 'p':
+        if (*(colorStart+2) == 'k') {
+            m_textColor = Palette::Pink;
+            keySize = 2;
+        }
+        else if (*(colorStart+2) == 'p') {
+            m_textColor = Palette::Purple;
+            keySize = 2;
+        }
+        break;
+    case 'b':
+        if (*(colorStart+2) == 'r') {
+            m_textColor = Palette::Brown;
+            keySize = 2;
+        }
+        if (*(colorStart+2) == 'l') {
+            m_textColor = Palette::BlueLight;
+            keySize = 2;
+        }
+        else {
+            m_textColor = Palette::Blue;
+        }
+        break;
+    case 'o':
+        m_textColor = Palette::Orange;
+        break;
+    case 'g':
+        if (*(colorStart+2) == 'l') {
+            m_textColor = Palette::GreenLight;
+            keySize = 2;
+        }
+        else {
+            m_textColor = Palette::Green;
+        }
+        break;
+    case 'c':
+        m_textColor = Palette::Cyan;
+        break;
+
+    default:
+        return false;
+  }
+
+  if (*(colorStart + keySize + 1) != '%') {
+    m_textColor = lastColor;
+    return false;
+  }
+
+  return true;
+}  
 
 }

@@ -59,7 +59,7 @@ $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
 .PHONY: binpack
 binpack:
 ifndef USE_IN_FACTORY
-	@echo "CAUTION: You are building a binpack."
+	@echo "\033[0;31mWARNING\033[0m You are building a binpack."
 	@echo "You must specify where this binpack will be used."
 	@echo "Please set the USE_IN_FACTORY environment variable to either:"
 	@echo "  - 0 for use in diagnostic"
@@ -69,14 +69,15 @@ endif
 	rm -rf output/binpack
 	mkdir -p output/binpack
 	$(MAKE) clean
-	$(MAKE) IN_FACTORY=$(USE_IN_FACTORY) $(BUILD_DIR)/flasher.bin
-	cp $(BUILD_DIR)/flasher.bin output/binpack
-	$(MAKE) IN_FACTORY=$(USE_IN_FACTORY) $(BUILD_DIR)/bench.flash.bin
-	$(MAKE) IN_FACTORY=$(USE_IN_FACTORY) $(BUILD_DIR)/bench.ram.bin
-	cp $(BUILD_DIR)/bench.ram.bin $(BUILD_DIR)/bench.flash.bin output/binpack
-	$(MAKE) IN_FACTORY=$(USE_IN_FACTORY) epsilon.onboarding.update.two_binaries
-	cp $(BUILD_DIR)/epsilon.onboarding.update.internal.bin $(BUILD_DIR)/epsilon.onboarding.update.external.bin output/binpack
+	$(MAKE) FIRMWARE_COMPONENT=flasher IN_FACTORY=$(USE_IN_FACTORY) flasher.bin
+	cp $(subst binpack,flasher,$(BUILD_DIR))/flasher.bin output/binpack
+	$(MAKE) FIRMWARE_COMPONENT=bench IN_FACTORY=$(USE_IN_FACTORY) bench.flash.bin
+	$(MAKE) FIRMWARE_COMPONENT=bench IN_FACTORY=$(USE_IN_FACTORY) bench.ram.dfu
+	cp $(subst binpack,bench,$(BUILD_DIR)/bench.flash.bin $(BUILD_DIR)/bench.ram.dfu) output/binpack
+	$(MAKE) FIRMWARE_COMPONENT=epsilon IN_FACTORY=$(USE_IN_FACTORY) epsilon.onboarding.update.dfu
+	cp $(subst binpack,epsilon,$(BUILD_DIR))/epsilon.onboarding.update.dfu output/binpack
 	$(MAKE) clean
-	cd output && for binary in flasher.bin bench.flash.bin bench.ram.bin epsilon.onboarding.update.internal.bin epsilon.onboarding.update.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd output && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
+	@echo "Binpack created as \033[0;32moutput/binpack-`git rev-parse HEAD | head -c 7`.tgz\033[0m"
+	@echo "\033[0;31mWARNING\033[0m Files bench.ram.dfu and epsilon.official.onboarding.update.dfu need to be signed"
 	rm -rf output/binpack

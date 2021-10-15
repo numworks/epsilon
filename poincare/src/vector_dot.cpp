@@ -1,3 +1,5 @@
+#include <apps/exam_mode_configuration.h>
+#include <apps/global_preferences.h>
 #include <poincare/vector_dot.h>
 #include <poincare/addition.h>
 #include <poincare/layout_helper.h>
@@ -26,6 +28,9 @@ int VectorDotNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 
 template<typename T>
 Evaluation<T> VectorDotNode::templatedApproximate(ApproximationContext approximationContext) const {
+  if (ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+    return Complex<T>::Undefined();
+  }
   Evaluation<T> input0 = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> input1 = childAtIndex(1)->approximate(T(), approximationContext);
   return Complex<T>::Builder(input0.dot(&input1));
@@ -38,6 +43,9 @@ Expression VectorDot::shallowReduce(ExpressionNode::ReductionContext reductionCo
     if (!e.isUninitialized()) {
       return e;
     }
+  }
+  if (ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+    return replaceWithUndefinedInPlace();
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);

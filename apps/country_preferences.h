@@ -7,7 +7,8 @@ class CountryPreferences {
 public:
   enum class AvailableExamModes : uint8_t {
     StandardOnly,
-    All
+    StandardAndDutch,
+    PressToTestOnly
   };
 
   enum class MethodForQuartiles : uint8_t {

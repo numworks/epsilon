@@ -11,7 +11,7 @@ Reader app supports now a rich text format :
 ### Color codes :
 |code|color|
 | --:| ---:|
-|`%d%`|Default color|
+|`%\last_color%`|Stop using last color|
 |`%r%`|Red|
 |`%rl%`|Light red|
 |`%m%`|Magenta|

@@ -13,6 +13,7 @@
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/localization_controller.h"
 #include "sub_menu/preferences_controller.h"
+#include "sub_menu/press_to_test_controller.h"
 
 namespace Settings {
 
@@ -52,6 +53,7 @@ private:
   DisplayModeController m_displayModeController;
   LocalizationController m_localizationController;
   ExamModeController m_examModeController;
+  PressToTestController m_pressToTestController;
   AboutController m_aboutController;
   Shared::PopUpController m_resetController;
 };

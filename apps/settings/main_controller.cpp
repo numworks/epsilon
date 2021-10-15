@@ -29,6 +29,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_displayModeController(this, inputEventHandlerDelegate),
   m_localizationController(this, LocalizationController::Mode::Language),
   m_examModeController(this),
+  m_pressToTestController(this),
   m_aboutController(this),
   m_resetController(
     Invocation([](void * context, void * sender) {
@@ -84,7 +85,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
        * brightness cell. The case of pressing Right has been handled above. */
       return true;
     }
-
+    // TODO Hugo : Display either ExamMode or PressToTest (US country)
     if (selectedMessage == I18n::Message::Language) {
       m_localizationController.setMode(LocalizationController::Mode::Language);
     } else if (selectedMessage == I18n::Message::Country) {
@@ -254,6 +255,8 @@ ViewController * MainController::subControllerForCell(I18n::Message cellMessage)
       return &m_localizationController;
     case I18n::Message::ExamMode:
       return &m_examModeController;
+    case I18n::Message::PressToTest:
+      return &m_pressToTestController;
     case I18n::Message::About:
       return &m_aboutController;
     default:

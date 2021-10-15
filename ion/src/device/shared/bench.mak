@@ -10,9 +10,13 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   base64.cpp \
   battery.cpp \
   battery_charge.cpp \
-  board_frequency.cpp \
+  board_frequency_stm32f.cpp:-n0120 \
+  board_frequency_stm32h.cpp:+n0120 \
+  board_peripherals_clocks_n0110.cpp:+n0110 \
+  board_peripherals_clocks_n0120.cpp:+n0120 \
   board_privileged.cpp \
-  board_privileged_n0110.cpp \
+  board_privileged_n0110.cpp:+n0110 \
+  board_privileged_n0120.cpp:+n0120 \
   board_unprotected.cpp \
   cache.cpp \
   crc32.cpp \
@@ -20,19 +24,26 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   display_shortcut.cpp \
   display_vblank.cpp \
   external_flash.cpp \
-  external_flash_command.cpp \
-  internal_flash_otp.cpp \
+  external_flash_qspi_n0110.cpp:+n0110 \
+  external_flash_qspi_n0120.cpp:+n0120 \
+  internal_flash.cpp \
+  internal_flash_otp_n0110.cpp:+n0110 \
+  internal_flash_otp_n0120.cpp:+n0120 \
   keyboard.cpp \
   keyboard_init.cpp \
   led.cpp \
-  power.cpp \
-  power_configuration.cpp \
+  power_stm32f.cpp:-n0120 \
+  power_stm32h.cpp:+n0120 \
+  power_standby_n0110.cpp:+n0110 \
+  power_standby_n0120.cpp:+n0120 \
   power_suspend.cpp \
   reset.cpp \
   serial_number.cpp \
   timing.cpp \
-  usb_n0110.cpp \
-  usb_privileged.cpp \
+  usb.cpp \
+  usb_gpio_n0100.cpp:+n0100 \
+  usb_gpio_n0110.cpp:+n0110 \
+  usb_gpio_n0120.cpp:+n0120 \
   wakeup.cpp \
 )
 

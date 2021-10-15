@@ -53,6 +53,7 @@ public:
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
+  void didBecomeActive(Window * window) override;
 
   // Data access
   Data::Page page() { return snapshot()->navigation()->page(); }

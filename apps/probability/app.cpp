@@ -82,13 +82,16 @@ App::App(Snapshot * snapshot) :
     m_stackViewController(&m_modalViewController, &m_menuController),
     m_bufferDestructor(nullptr)
 {
+}
+
+void App::didBecomeActive(Window * windows) {
   // Reopen correct page
   // TODO delegate decisions to controllers somehow
-  Data::Page page = snapshot->navigation()->page();
-  Data::SubApp subapp = snapshot->navigation()->subapp();
-  Data::Test test = snapshot->data()->test();
-  Data::TestType type = snapshot->data()->testType();
-  Data::CategoricalType categoricalType = snapshot->data()->categoricalType();
+  Data::Page page = snapshot()->navigation()->page();
+  Data::SubApp subapp = snapshot()->navigation()->subapp();
+  Data::Test test = snapshot()->data()->test();
+  Data::TestType type = snapshot()->data()->testType();
+  Data::CategoricalType categoricalType = snapshot()->data()->categoricalType();
 
   initTableSelections(page, subapp, test, type, categoricalType);
   switch (page) {
@@ -215,6 +218,7 @@ App::App(Snapshot * snapshot) :
       m_resultsController.openPage(&m_statisticGraphController);
       break;
   }
+  Escher::App::didBecomeActive(windows);
 }
 
 void App::initTableSelections(Data::Page page,

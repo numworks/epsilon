@@ -49,7 +49,7 @@ public:
   DoubleParameterPage(Escher::StackViewController * stackViewController) :
         PageController(stackViewController) {}
 private:
-  virtual int stackTitleStyleStep() const { return 1; }
+  int stackTitleStyleStep() const override { return 1; }
 };
 
 }  // namespace Probability

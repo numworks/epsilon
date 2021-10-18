@@ -19,17 +19,17 @@ using namespace Probability;
 MenuController::MenuController(Escher::StackViewController * parentResponder,
                                DistributionController * distributionController,
                                TestController * testController,
-                               Data::SubApp * globalSubapp,
                                Data::Test * globalTest,
                                Data::TestType * globalTestType,
+                               Statistic * globalStatistic,
                                Distribution * globalDistribution,
                                Calculation * globalCalculation) :
       SelectableListViewPage(parentResponder),
       m_distributionController(distributionController),
       m_testController(testController),
-      m_globalSubapp(globalSubapp),
       m_globalTest(globalTest),
       m_globalTestType(globalTestType),
+      m_globalStatistic(globalStatistic),
       m_globalDistribution(globalDistribution),
       m_globalCalculation(globalCalculation),
       m_contentView(&m_selectableTableView) {
@@ -74,27 +74,34 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     }
     assert(controller != nullptr);
     if (subapp != App::app()->subapp()) {
-      resetData(subapp);
+      tidyData(App::app()->subapp());
+      App::app()->setSubapp(subapp);
+      initData(subapp);
     }
     if (controller == m_testController) {
       m_testController->selectRow(0);
     }
-    *m_globalSubapp = subapp;
     openPage(controller);
     return true;
   }
   return false;
 }
 
-void MenuController::initializeProbaData() {
-  new (m_globalDistribution) BinomialDistribution();
-  new (m_globalCalculation) LeftIntegralCalculation(m_globalDistribution);
+void Probability::MenuController::tidyData(Data::SubApp subapp) {
+  if (subapp == Data::SubApp::Probability) {
+    m_globalDistribution->~Distribution();
+    m_globalCalculation->~Calculation();
+  } else if (subapp == Data::SubApp::Tests || subapp == Data::SubApp::Intervals) {
+    m_globalStatistic->~Statistic();
+  }
 }
 
-void Probability::MenuController::resetData(Data::SubApp subapp) {
+void Probability::MenuController::initData(Data::SubApp subapp) {
   if (subapp == Data::SubApp::Probability) {
-    initializeProbaData();
-  } else {
+    new (m_globalDistribution) BinomialDistribution();
+    new (m_globalCalculation) LeftIntegralCalculation(m_globalDistribution);
+  } else if (subapp == Data::SubApp::Tests || subapp == Data::SubApp::Intervals) {
+    new (m_globalStatistic) OneProportionStatistic();
     *m_globalTest = Data::Test::Unset;
     *m_globalTestType = Data::TestType::Unset;
   }

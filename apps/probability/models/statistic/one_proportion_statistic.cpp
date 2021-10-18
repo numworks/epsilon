@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Probability {
 
-OneProportionStatistic::~OneProportionStatistic() {
+void OneProportionStatistic::tidy() {
   m_estimateLayout = Layout();
 }
 

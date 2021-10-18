@@ -74,9 +74,9 @@ App::App(Snapshot * snapshot) :
     m_menuController(&m_stackViewController,
                      &m_distributionController,
                      &m_testController,
-                     snapshot->navigation()->subappPointer(),
                      snapshot->data()->testPointer(),
                      snapshot->data()->testTypePointer(),
+                     snapshot->data()->statistic(),
                      snapshot->data()->distribution(),
                      snapshot->data()->calculation()),
     m_stackViewController(&m_modalViewController, &m_menuController),
@@ -303,6 +303,23 @@ void * App::buffer() {
 const App::Descriptor * App::Snapshot::descriptor() const {
   static App::Descriptor s_descriptor;
   return &s_descriptor;
+}
+
+App::Snapshot::~Snapshot() {
+  Data::SubApp subApp = navigation()->subapp();
+  if (subApp == Data::SubApp::Probability) {
+    m_data.distribution()->~Distribution();
+    m_data.calculation()->~Calculation();
+  } else if (subApp == Data::SubApp::Tests || subApp == Data::SubApp::Intervals) {
+    m_data.statistic()->~Statistic();
+  }
+}
+
+void App::Snapshot::tidy() {
+  Data::SubApp subApp = navigation()->subapp();
+  if (subApp == Data::SubApp::Tests || subApp == Data::SubApp::Intervals) {
+    m_data.statistic()->tidy();
+  }
 }
 
 }  // namespace Probability

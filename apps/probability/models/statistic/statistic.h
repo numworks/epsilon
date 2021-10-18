@@ -21,7 +21,9 @@ struct ParameterRepresentation {
 class Statistic : public Shared::CurveViewRange {
 public:
   Statistic() : m_threshold(-1) {}
-  virtual ~Statistic() = default;
+  virtual ~Statistic();
+
+  virtual void tidy() {}
 
   virtual void init(Data::SubApp subapp) {}
 

@@ -13,7 +13,7 @@ using namespace Poincare;
 
 namespace Probability {
 
-TwoProportionsStatistic::~TwoProportionsStatistic() {
+void TwoProportionsStatistic::tidy() {
   m_estimateLayout = Layout();
 }
 

@@ -7,7 +7,7 @@ namespace Probability {
 
 class TwoMeansTStatistic : public TStatistic {
 public:
-  ~TwoMeansTStatistic();
+  void tidy() override;
   void init(Data::SubApp subapp) override;
   bool isValidParamAtIndex(int i, double p) override;
   void setParamAtIndex(int index, double p) override;

@@ -28,7 +28,6 @@ enum class SubApp { Unset, Probability, Tests, Intervals };
 class AppNavigation {
 public:
   SubApp subapp() { return m_subApp; };
-  SubApp * subappPointer() { return &m_subApp; };
   void setSubapp(SubApp app) { m_subApp = app; };
   Page page() const { return m_page; }
   void setPage(Page page) { m_page = page; }

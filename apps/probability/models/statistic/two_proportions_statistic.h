@@ -7,8 +7,7 @@ namespace Probability {
 
 class TwoProportionsStatistic : public ZStatistic {
 public:
-  // TODO: Factorize in IntervalStatistics
-  ~TwoProportionsStatistic();
+  void tidy() override;
   void init(Data::SubApp subapp) override;
   bool isValidH0(double p) override;
   bool isValidParamAtIndex(int i, double p) override;

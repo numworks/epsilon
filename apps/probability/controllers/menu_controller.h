@@ -21,9 +21,9 @@ public:
   MenuController(Escher::StackViewController * parentResponder,
                  DistributionController * distributionController,
                  TestController * testController,
-                 Data::SubApp * globalSubapp,
                  Data::Test * globalTest,
                  Data::TestType * globalTestType,
+                 Statistic * globalStatistic,
                  Distribution * globalDistribution,
                  Calculation * globalCalculation);
   int numberOfRows() const override { return k_numberOfCells; }
@@ -38,16 +38,16 @@ public:
 
 private:
   int stackTitleStyleStep() const override { return 0; }
-  void resetData(Data::SubApp subapp);
-  void initializeProbaData();
+  void initData(Data::SubApp subapp);
+  void tidyData(Data::SubApp subapp);
   DistributionController * m_distributionController;
   TestController * m_testController;
 
   constexpr static int k_numberOfCells = 3;
   SubappCell m_cells[k_numberOfCells];
-  Data::SubApp * m_globalSubapp;
   Data::Test * m_globalTest;
   Data::TestType * m_globalTestType;
+  Statistic * m_globalStatistic;
   Distribution * m_globalDistribution;
   Calculation * m_globalCalculation;
 

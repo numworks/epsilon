@@ -41,7 +41,9 @@ public:
     App * unpack(Escher::Container * container) override {
       return new (container->currentAppBuffer()) App(this);
     };
+    ~Snapshot();
     const Descriptor * descriptor() const override;
+    void tidy() override;
     void reset() override{};
     Data::AppNavigation * navigation() { return &m_navigation; }
 
@@ -59,6 +61,7 @@ public:
   Data::Page page() { return snapshot()->navigation()->page(); }
   void setPage(Data::Page p) { snapshot()->navigation()->setPage(p); }
   Data::SubApp subapp() { return snapshot()->navigation()->subapp(); }
+  void setSubapp(Data::SubApp subapp) { return snapshot()->navigation()->setSubapp(subapp); }
   Data::Test test() { return snapshot()->data()->test(); }
   Data::TestType testType() { return snapshot()->data()->testType(); }
   Data::CategoricalType categoricalType() { return snapshot()->data()->categoricalType(); }

@@ -41,6 +41,7 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
 }
 
 int ExamModeController::numberOfRows() const {
+  assert(ExamModeConfiguration::numberOfAvailableExamMode() > 0);
   return ExamModeConfiguration::numberOfAvailableExamMode();
 }
 

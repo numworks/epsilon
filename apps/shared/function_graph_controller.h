@@ -52,7 +52,7 @@ protected:
   int selectedCurveRelativePosition() const override { return *m_indexFunctionSelectedByCursor; }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   int numberOfCurves() const override;
-  bool hasTwoCurves(int curveIndex) const override;
+  bool hasTwoSubCurves(int curveIndex) const override;
   void initCursorParameters() override;
   bool cursorMatchesModel() override;
   CurveView * curveView() override;

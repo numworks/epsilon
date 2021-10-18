@@ -68,7 +68,7 @@ private:
   double yValue(int curveIndex, double x, Poincare::Context * context) const;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override;
-  bool hasTwoCurves(int curveIndex) const override { return false; }
+  bool hasTwoSubCurves(int curveIndex) const override { return false; }
   bool openMenuForCurveAtIndex(int index) override;
   SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
   Escher::Button * calculusButton() const override { return const_cast<Escher::Button * >(&m_calculusButton); }

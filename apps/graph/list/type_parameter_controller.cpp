@@ -114,23 +114,23 @@ I18n::Message TypeParameterController::detailsTitle(int i) const {
   assert(i < detailsNumberOfSections());
   switch (plotType()) {
     case Shared::ContinuousFunction::PlotType::Line: {
-      constexpr I18n::Message titles[k_lineDetailsSections] = {
+      constexpr I18n::Message k_titles[k_lineDetailsSections] = {
           I18n::Message::LineEquationTitle,
           I18n::Message::LineSlopeTitle,
           I18n::Message::LineYInterceptTitle,
       };
-      return titles[i];
+      return k_titles[i];
     }
     case Shared::ContinuousFunction::PlotType::Circle: {
-      constexpr I18n::Message titles[k_circleDetailsSections] = {
+      constexpr I18n::Message k_titles[k_circleDetailsSections] = {
           I18n::Message::CircleRadiusTitle,
           I18n::Message::CenterAbscissaTitle,
           I18n::Message::CenterOrdinateTitle,
       };
-      return titles[i];
+      return k_titles[i];
     }
     case Shared::ContinuousFunction::PlotType::Ellipse: {
-      constexpr I18n::Message titles[k_ellipseDetailsSections] = {
+      constexpr I18n::Message k_titles[k_ellipseDetailsSections] = {
           I18n::Message::EllipseSemiMajorAxisTitle,
           I18n::Message::EllipseSemiMinorAxisTitle,
           I18n::Message::LinearEccentricityTitle,
@@ -138,19 +138,19 @@ I18n::Message TypeParameterController::detailsTitle(int i) const {
           I18n::Message::CenterAbscissaTitle,
           I18n::Message::CenterOrdinateTitle,
       };
-      return titles[i];
+      return k_titles[i];
     }
     case Shared::ContinuousFunction::PlotType::Parabola: {
-      constexpr I18n::Message titles[k_parabolaDetailsSections] = {
+      constexpr I18n::Message k_titles[k_parabolaDetailsSections] = {
           I18n::Message::ParabolaParameterTitle,
           I18n::Message::ParabolaVertexAbscissaTitle,
           I18n::Message::ParabolaVertexOrdinateTitle,
       };
-      return titles[i];
+      return k_titles[i];
     }
     default: {
       assert(plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
-      constexpr I18n::Message titles[k_hyperbolaDetailsSections] = {
+      constexpr I18n::Message k_titles[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisTitle,
           I18n::Message::HyperbolaSemiMinorAxisTitle,
           I18n::Message::LinearEccentricityTitle,
@@ -158,7 +158,7 @@ I18n::Message TypeParameterController::detailsTitle(int i) const {
           I18n::Message::CenterAbscissaTitle,
           I18n::Message::CenterOrdinateTitle,
       };
-      return titles[i];
+      return k_titles[i];
     }
   }
 }
@@ -167,23 +167,23 @@ I18n::Message TypeParameterController::detailsDescription(int i) const {
   assert(i < detailsNumberOfSections());
   switch (plotType()) {
     case Shared::ContinuousFunction::PlotType::Line: {
-      constexpr I18n::Message descriptions[k_lineDetailsSections] = {
+      constexpr I18n::Message k_descriptions[k_lineDetailsSections] = {
           I18n::Message::LineEquationDescription,
           I18n::Message::LineSlopeDescription,
           I18n::Message::LineYInterceptDescription,
       };
-      return descriptions[i];
+      return k_descriptions[i];
     }
     case Shared::ContinuousFunction::PlotType::Circle: {
-      constexpr I18n::Message descriptions[k_circleDetailsSections] = {
+      constexpr I18n::Message k_descriptions[k_circleDetailsSections] = {
           I18n::Message::CircleRadiusDescription,
           I18n::Message::CenterAbscissaDescription,
           I18n::Message::CenterOrdinateDescription,
       };
-      return descriptions[i];
+      return k_descriptions[i];
     }
     case Shared::ContinuousFunction::PlotType::Ellipse: {
-      constexpr I18n::Message descriptions[k_ellipseDetailsSections] = {
+      constexpr I18n::Message k_descriptions[k_ellipseDetailsSections] = {
           I18n::Message::EllipseSemiMajorAxisDescription,
           I18n::Message::EllipseSemiMinorAxisDescription,
           I18n::Message::LinearEccentricityDescription,
@@ -191,19 +191,19 @@ I18n::Message TypeParameterController::detailsDescription(int i) const {
           I18n::Message::CenterAbscissaDescription,
           I18n::Message::CenterOrdinateDescription,
       };
-      return descriptions[i];
+      return k_descriptions[i];
     }
     case Shared::ContinuousFunction::PlotType::Parabola: {
-      constexpr I18n::Message descriptions[k_parabolaDetailsSections] = {
+      constexpr I18n::Message k_descriptions[k_parabolaDetailsSections] = {
           I18n::Message::ParabolaParameterDescription,
           I18n::Message::ParabolaVertexAbscissaDescription,
           I18n::Message::ParabolaVertexOrdinateDescription,
       };
-      return descriptions[i];
+      return k_descriptions[i];
     }
     default: {
       assert(plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
-      constexpr I18n::Message descriptions[k_hyperbolaDetailsSections] = {
+      constexpr I18n::Message k_descriptions[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisDescription,
           I18n::Message::HyperbolaSemiMinorAxisDescription,
           I18n::Message::LinearEccentricityDescription,
@@ -211,7 +211,7 @@ I18n::Message TypeParameterController::detailsDescription(int i) const {
           I18n::Message::CenterAbscissaDescription,
           I18n::Message::CenterOrdinateDescription,
       };
-      return descriptions[i];
+      return k_descriptions[i];
     }
   }
 }

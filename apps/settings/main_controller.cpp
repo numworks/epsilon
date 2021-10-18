@@ -1,4 +1,5 @@
 #include "main_controller.h"
+#include "../exam_mode_configuration.h"
 #include "../global_preferences.h"
 #include <apps/i18n.h>
 #include <assert.h>
@@ -43,6 +44,9 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
     }
   )
 {
+  // Assert the ExamMode and Press-to-test cells are correctly placed.
+  assert(subControllerForCell(messageAtModelIndex(k_indexOfExamModeCell)) == &m_examModeController);
+  assert(subControllerForCell(messageAtModelIndex(k_indexOfExamModeCell + 1)) == &m_pressToTestController);
 }
 
 void MainController::didBecomeFirstResponder() {
@@ -54,14 +58,14 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  I18n::Message selectedMessage = messageAtIndex(selectedRow());
+  int type = typeAtIndex(selectedRow());
 
-  if (selectedMessage == I18n::Message::ResetCalculator) {
+  if (type == k_resetCellType) {
     // Needed for event == Ion::Events::Right when the Reset button is selected
     return false;
   }
 
-  if (selectedMessage == I18n::Message::UpdatePopUp || selectedMessage == I18n::Message::BetaPopUp) {
+  if (type == k_popUpCellType) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
       globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
       m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
@@ -70,7 +74,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     return false;
   }
 
-  if (selectedMessage == I18n::Message::Brightness
+  if (type == k_brightnessCellType
    && (event == Ion::Events::Left || event == Ion::Events::Right || event == Ion::Events::Minus || event == Ion::Events::Plus)) {
     int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
     int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
@@ -80,23 +84,25 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
 
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    if (selectedMessage == I18n::Message::Brightness) {
+    if (type == k_brightnessCellType) {
       /* Nothing is supposed to happen when OK or EXE are pressed on the
        * brightness cell. The case of pressing Right has been handled above. */
       return true;
     }
-    // TODO Hugo : Display either ExamMode or PressToTest (US country)
+    assert(type == k_defaultCellType);
+    int modelIndex = getModelIndex(selectedRow());
+    I18n::Message selectedMessage = messageAtModelIndex(modelIndex);
+
     if (selectedMessage == I18n::Message::Language) {
       m_localizationController.setMode(LocalizationController::Mode::Language);
     } else if (selectedMessage == I18n::Message::Country) {
       m_localizationController.setMode(LocalizationController::Mode::Country);
     }
 
-
     ViewController * selectedSubController = subControllerForCell(selectedMessage);
     assert(selectedSubController);
-    if (model()->childAtIndex(selectedRow())->numberOfChildren() != 0) {
-      static_cast<GenericSubController *>(selectedSubController)->setMessageTreeModel(model()->childAtIndex(selectedRow()));
+    if (model()->childAtIndex(modelIndex)->numberOfChildren() != 0) {
+      static_cast<GenericSubController *>(selectedSubController)->setMessageTreeModel(model()->childAtIndex(modelIndex));
       static_cast<GenericSubController *>(selectedSubController)->resetMemoization();
     }
     stackController()->push(selectedSubController);
@@ -107,17 +113,17 @@ bool MainController::handleEvent(Ion::Events::Event event) {
 }
 
 int MainController::numberOfRows() const {
-  return model()->numberOfChildren();
+  assert(hasExamModeCell() != hasPressToTestCell());
+  return model()->numberOfChildren() + hasExamModeCell() + hasPressToTestCell() - 2 ;
 };
 
 KDCoordinate MainController::nonMemoizedRowHeight(int index) {
-  switch (messageAtIndex(index)) {
-    case I18n::Message::Brightness:
+  switch (typeAtIndex(index)) {
+    case k_brightnessCellType:
       return heightForCellAtIndex(&m_brightnessCell, index);
-    case I18n::Message::UpdatePopUp:
-    case  I18n::Message::BetaPopUp:
+    case k_popUpCellType:
       return heightForCellAtIndex(&m_popUpCell, index);
-    case I18n::Message::ResetCalculator:
+    case k_resetCellType:
       return heightForCellAtIndex(&m_resetButton, index);
     default:
       MessageTableCellWithChevronAndMessage tempCell;
@@ -127,74 +133,76 @@ KDCoordinate MainController::nonMemoizedRowHeight(int index) {
 
 HighlightCell * MainController::reusableCell(int index, int type) {
   assert(index >= 0);
-  if (type == 0) {
+  if (type == k_defaultCellType) {
     assert(index < k_numberOfSimpleChevronCells);
     return &m_cells[index];
   }
   assert(index == 0);
-  if (type == 2) {
+  if (type == k_popUpCellType) {
     return &m_popUpCell;
   }
-  if (type == 3) {
+  if (type == k_resetCellType) {
     return &m_resetButton;
   }
-  assert(type == 1);
+  assert(type == k_brightnessCellType);
   return &m_brightnessCell;
 }
 
 int MainController::reusableCellCount(int type) {
-  if (type == 0) {
+  if (type == k_defaultCellType) {
     return k_numberOfSimpleChevronCells;
   }
   return 1;
 }
 
 int MainController::typeAtIndex(int index) {
-  switch (messageAtIndex(index)) {
+  switch (messageAtModelIndex(getModelIndex(index))) {
     case I18n::Message::Brightness:
-      return 1;
+      return k_brightnessCellType;
     case I18n::Message::UpdatePopUp:
     case I18n::Message::BetaPopUp:
-      return 2;
+      return k_popUpCellType;
     case I18n::Message::ResetCalculator:
-      return 3;
+      return k_resetCellType;
     default:
-      return 0;
+      return k_defaultCellType;
   };
-  return 0;
 }
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   Preferences * preferences = Preferences::sharedPreferences();
-  I18n::Message title = model()->childAtIndex(index)->label();
-  I18n::Message message = messageAtIndex(index);
-  if (message == I18n::Message::Brightness) {
+  int modelIndex = getModelIndex(index);
+  I18n::Message title = model()->childAtIndex(modelIndex)->label();
+  int type = typeAtIndex(index);
+  if (type == k_brightnessCellType) {
     MessageTableCellWithGaugeWithSeparator * myGaugeCell = static_cast<MessageTableCellWithGaugeWithSeparator *>(cell);
     myGaugeCell->setMessage(title);
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-  if (message == I18n::Message::ResetCalculator) {
+  if (type == k_resetCellType) {
     return;
   }
   MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(title);
-  if (message == I18n::Message::Language) {
-    int index = (int)(globalPreferences->language());
-    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
-    return;
-  }
-  if (message == I18n::Message::Country) {
-    int index = (int)(globalPreferences->country());
-    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::CountryNames[index]);
-    return;
-  }
-  if (message == I18n::Message::UpdatePopUp || message == I18n::Message::BetaPopUp) {
+  if (type == k_popUpCellType) {
     MessageTableCellWithSwitch * mySwitchCell = static_cast<MessageTableCellWithSwitch *>(cell);
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
+    return;
+  }
+  assert(type == k_defaultCellType);
+  I18n::Message message = messageAtModelIndex(modelIndex);
+  if (message == I18n::Message::Language) {
+    int languageIndex = (int)(globalPreferences->language());
+    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[languageIndex]);
+    return;
+  }
+  if (message == I18n::Message::Country) {
+    int countryIndex = (int)(globalPreferences->country());
+    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::CountryNames[countryIndex]);
     return;
   }
   MessageTableCellWithChevronAndMessage * myTextCell = static_cast<MessageTableCellWithChevronAndMessage *>(cell);
@@ -219,7 +227,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       childIndex = -1;
       break;
   }
-  I18n::Message subtitle = childIndex >= 0 ? model()->childAtIndex(index)->childAtIndex(childIndex)->label() : I18n::Message::Default;
+  I18n::Message subtitle = childIndex >= 0 ? model()->childAtIndex(modelIndex)->childAtIndex(childIndex)->label() : I18n::Message::Default;
   myTextCell->setSubtitle(subtitle);
 }
 
@@ -229,7 +237,7 @@ void MainController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-I18n::Message MainController::messageAtIndex(int i) const {
+I18n::Message MainController::messageAtModelIndex(int i) const {
   return model()->childAtIndex(i)->label();
 }
 
@@ -262,6 +270,27 @@ ViewController * MainController::subControllerForCell(I18n::Message cellMessage)
     default:
       return nullptr;
   }
+}
+
+bool MainController::hasExamModeCell() const {
+  return ExamModeConfiguration::numberOfAvailableExamMode() > 0;
+}
+
+bool MainController::hasPressToTestCell() const {
+  return ExamModeConfiguration::pressToTestExamModeAvailable();
+}
+
+int MainController::getModelIndex(int index) const {
+  /* Return the index of the model from the index of the displayed row.
+   * Up until k_indexOfExamModeCell, no cell is hidden, the index is the same.
+   * Then, either the exam mode or the press-to-test cell is hidden. */
+  assert(index >= 0 && index < numberOfRows());
+  if (index > k_indexOfExamModeCell || (index == k_indexOfExamModeCell && !hasExamModeCell())) {
+    // Hidden exam mode or press-to-test cell
+    index += 1;
+  }
+  assert(index < model()->numberOfChildren());
+  return index;
 }
 
 }

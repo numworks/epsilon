@@ -63,7 +63,8 @@ int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferS
     }
   }
   // f, g, h and p are already taken. Try f1, f2, ...
-   buffer[0] = k_defaultLetterNames[0];
+  buffer[0] = k_defaultLetterNames[0];
+  assert(bufferSize > ContinuousFunctionStore::k_maxDefaultNameSize);
   return Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(buffer, 1, bufferSize, Shared::GlobalContext::k_extensions, Shared::GlobalContext::k_numberOfExtensions, 99);
 }
 

@@ -185,7 +185,6 @@ ViewController * StackViewController::topViewController() {
 
 void StackViewController::push(ViewController * vc, Style style, int styleStep) {
   assert(m_numberOfChildren < k_MaxNumberOfStacks);
-  constexpr KDColor k_grayGradationColors[] = { Palette::PurpleBright, Palette::GrayDark, Palette::GrayDarkMiddle };
   KDColor textColor, backgroundColor, separatorColor;
   if (style == Style::WhiteUniform) {
     textColor = Palette::GrayDarkMiddle;
@@ -194,6 +193,7 @@ void StackViewController::push(ViewController * vc, Style style, int styleStep) 
   } else {
     assert(style == Style::GrayGradation);
     assert(m_numberOfChildren > 0);
+    constexpr KDColor k_grayGradationColors[] = { Palette::PurpleBright, Palette::GrayDark, Palette::GrayDarkMiddle };
     styleStep = styleStep < 0 ? m_numberOfChildren - 1 : styleStep;
     textColor = KDColorWhite;
     assert(styleStep < sizeof(k_grayGradationColors)/sizeof(KDColor));

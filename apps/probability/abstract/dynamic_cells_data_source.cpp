@@ -40,6 +40,10 @@ void DynamicCellsDataSource<T,N>::destroyCells() {
    * virtualization here but we didn't - we don't want to call a derived
    * destructor of children T class. */
   for (int i = 0; i < N; i++) {
+    Responder * cellResponder = m_cells[i].responder();
+    if (cellResponder->commonAncestorWith(App::app()->firstResponder()) == cellResponder) {
+      App::app()->setFirstResponder(cellResponder->parentResponder());
+    }
     m_cells[i].T::~T();
   }
   m_cells = nullptr;

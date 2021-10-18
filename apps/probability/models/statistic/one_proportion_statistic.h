@@ -7,7 +7,7 @@ namespace Probability {
 
 class OneProportionStatistic : public ZStatistic {
 public:
-  ~OneProportionStatistic();
+  void tidy() override;
   void init(Data::SubApp subapp) override;
 
   bool isValidH0(double h0) override { return h0 > 0 && h0 < 1; }

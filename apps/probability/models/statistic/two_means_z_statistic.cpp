@@ -14,7 +14,7 @@ using namespace Poincare;
 
 namespace Probability {
 
-TwoMeansZStatistic::~TwoMeansZStatistic() {
+void TwoMeansZStatistic::tidy() {
   m_estimateLayout = Layout();
 }
 

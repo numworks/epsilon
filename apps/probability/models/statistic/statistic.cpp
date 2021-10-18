@@ -20,6 +20,10 @@
 
 namespace Probability {
 
+Statistic::~Statistic() {
+  tidy();
+}
+
 double Statistic::paramAtIndex(int i) {
   return i == indexOfThreshold() ? m_threshold : paramArray()[i];
 }
@@ -66,6 +70,7 @@ void Statistic::initializeStatistic(Statistic * statistic,
                                     Data::Test t,
                                     Data::TestType type,
                                     Data::CategoricalType categoricalType) {
+  statistic->~Statistic();
   switch (t) {
     case Data::Test::OneProp:
       new (statistic) OneProportionStatistic();

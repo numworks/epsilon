@@ -2,12 +2,10 @@
 #include "../exam_mode_configuration.h"
 #include <apps/i18n.h>
 
-using namespace Shared;
-
 namespace Settings {
 
 constexpr MessageTree s_modelMenu[] =
-  {MessageTree(I18n::Message::AngleUnit, s_modelAngleChildren),
+  { MessageTree(I18n::Message::AngleUnit, s_modelAngleChildren),
     MessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren),
     MessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren),
     MessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren),

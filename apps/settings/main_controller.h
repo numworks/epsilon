@@ -40,11 +40,24 @@ public:
   void viewWillAppear() override;
   TELEMETRY_ID("");
 private:
-  I18n::Message messageAtIndex(int i) const;
+  I18n::Message messageAtModelIndex(int i) const;
   static const MessageTree * model();
   Escher::StackViewController * stackController() const;
   ViewController * subControllerForCell(I18n::Message cellMessage);
+  bool hasExamModeCell() const;
+  bool hasPressToTestCell() const;
+  int getModelIndex(int index) const;
+
+  // Cell type
+  constexpr static int k_defaultCellType = 0;
+  constexpr static int k_brightnessCellType = 1;
+  constexpr static int k_popUpCellType = 2;
+  constexpr static int k_resetCellType = 3;
+  // Model index
+  constexpr static int k_indexOfExamModeCell = 8;
+  // Max number of visible cells
   constexpr static int k_numberOfSimpleChevronCells = ((Ion::Display::Height - Escher::Metric::TitleBarHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
+
   Escher::MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGaugeWithSeparator m_brightnessCell;
   Escher::MessageTableCellWithSwitch m_popUpCell;

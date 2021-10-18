@@ -6,29 +6,38 @@
 using namespace Poincare;
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
+  GlobalPreferences::ExamMode examMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
   // TODO Hugo : Use this method to display examMode in settings
-  if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Standard
-      || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch) {
+  if (examMode == GlobalPreferences::ExamMode::Standard
+      || examMode == GlobalPreferences::ExamMode::Dutch) {
     // Reactivation button
     return 1;
   }
-  if (GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::PressToTestOnly) {
+  CountryPreferences::AvailableExamModes availableExamModes = GlobalPreferences::sharedGlobalPreferences()->availableExamModes();
+
+  if (availableExamModes == CountryPreferences::AvailableExamModes::PressToTestOnly
+      || examMode == GlobalPreferences::ExamMode::PressToTest) {
     // Menu shouldn't be visible
     return 0;
   }
-  if (GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::StandardOnly) {
+  assert(examMode == GlobalPreferences::ExamMode::Off);
+  if (availableExamModes == CountryPreferences::AvailableExamModes::StandardOnly) {
     // Activation button
     return 1;
   }
-  assert(GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::StandardAndDutch);
+  assert(availableExamModes == CountryPreferences::AvailableExamModes::StandardAndDutch);
   // Activation buttons
   return 2;
 }
 
 bool ExamModeConfiguration::pressToTestExamModeAvailable() {
   // TODO Hugo : Use this method to display pressToTest in settings
-  return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
-    || GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::PressToTestOnly;
+  GlobalPreferences::ExamMode examMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+  CountryPreferences::AvailableExamModes availableExamModes = GlobalPreferences::sharedGlobalPreferences()->availableExamModes();
+  return examMode != GlobalPreferences::ExamMode::Standard
+         && examMode != GlobalPreferences::ExamMode::Dutch
+         && (availableExamModes == CountryPreferences::AvailableExamModes::PressToTestOnly
+             || examMode == GlobalPreferences::ExamMode::PressToTest);
 }
 
 GlobalPreferences::ExamMode ExamModeConfiguration::examModeAtIndex(int index) {

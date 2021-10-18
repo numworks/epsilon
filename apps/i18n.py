@@ -368,7 +368,7 @@ const char * translate(Message m) {
   }
   int languageIndex = (int)GlobalPreferences::sharedGlobalPreferences()->language();
   int messageIndex = (int)m - localizedMessageOffset;
-  // assert((messageIndex*NumberOfLanguages+languageIndex)*sizeof(char *) < sizeof(messages));
+  assert((messageIndex*NumberOfLanguages+languageIndex)*sizeof(char *) < sizeof(messages));
   return messages[messageIndex][languageIndex];
 }
 

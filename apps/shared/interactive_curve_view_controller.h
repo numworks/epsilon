@@ -63,7 +63,7 @@ protected:
   virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const = 0;
   virtual bool suitableYValue(double y) const { return true; }
   virtual int numberOfCurves() const = 0;
-  virtual bool hasTwoCurves(int curveIndex) const = 0;
+  virtual bool hasTwoSubCurves(int curveIndex) const = 0;
 
   // SimpleInteractiveCurveViewController
   bool handleEnter() override { return openMenu(); }

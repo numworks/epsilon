@@ -220,7 +220,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     y = goingUp ? -INFINITY : INFINITY;
   }
   double nextY = goingUp ? DBL_MAX : -DBL_MAX;
-  bool currentCurveHasSubCurves = hasTwoCurves(currentCurveIndex);
+  bool currentCurveHasSubCurves = hasTwoSubCurves(currentCurveIndex);
   int nextCurveIndex = -1;
   int nextSubCurveIndex = 0;
   int curvesCount = numberOfCurves();
@@ -235,7 +235,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     } else if (!closestCurveIndexIsSuitable(i, currentCurveIndex)) {
       // Nothing to check for
       continue;
-    } else if (hasTwoCurves(i)) {
+    } else if (hasTwoSubCurves(i)) {
         totalSecondaryIndex = 2;
     }
     int currentIndexScore = 2*currentCurveIndex + currentSubCurveIndex;

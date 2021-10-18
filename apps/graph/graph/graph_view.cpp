@@ -172,7 +172,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
              * NAN as well, and there is no need to check that the equation is
              * defined at this value of x. */
           }
-          // 3 - Draw the first curve
+          // 3 - Draw the second curve
           drawCartesianCurve(
               ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
               context(), f->color(), true, record == m_selectedRecord,

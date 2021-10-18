@@ -1,6 +1,14 @@
 #ifndef SHARED_CONTINUOUS_FUNCTION_H
 #define SHARED_CONTINUOUS_FUNCTION_H
 
+/* Although the considered functions are not generally continuous
+ * mathematically speaking, the present class is named ContinuousFunction to
+ * mark the difference with the Sequence class.
+ *
+ * We could not simply name it Function, since such a class already exists:
+ * it is the base class of ContinuousFunction and Sequence.
+ */
+
 #include "function.h"
 #include "range_1D.h"
 #include <apps/i18n.h>
@@ -104,6 +112,8 @@ public:
   void getLineParameters(double * slope, double * intercept, Poincare::Context * context) const;
   // Compute conic parameters from ContinuousFunction
   Poincare::Conic getConicParameters(Poincare::Context * context) const;
+  // Return the number of curves to plot
+  int numberOfCurves() { return (hasTwoCurves() ? 2 : 1); }
 
   /* Expression */
 

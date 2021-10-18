@@ -173,7 +173,7 @@ Coordinate2D<double> FunctionGraphController::xyValues(int curveIndex, double t,
   return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->evaluateXYAtParameter(t, context, subCurveIndex);
 }
 
-bool FunctionGraphController::hasTwoCurves(int curveIndex) const {
+bool FunctionGraphController::hasTwoSubCurves(int curveIndex) const {
   return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->hasTwoCurves();
 }
 

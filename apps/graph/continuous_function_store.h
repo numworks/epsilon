@@ -8,6 +8,8 @@ namespace Graph {
 
 class ContinuousFunctionStore : public Shared::FunctionStore {
 public:
+  static constexpr int k_maxDefaultNameSize = 4;
+
   ContinuousFunctionStore() : FunctionStore() {}
   int numberOfActiveFunctionsInTable() const {
     return numberOfModelsSatisfyingTest(&isFunctionActiveInTable, nullptr);

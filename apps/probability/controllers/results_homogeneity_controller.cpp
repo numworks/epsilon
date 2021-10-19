@@ -27,6 +27,7 @@ ResultsHomogeneityController::ResultsHomogeneityController(
                      Metric::CommonRightMargin,
                      ResultsHomogeneityView::k_topMargin,
                      Metric::CommonLeftMargin);
+  m_tableData.setScrollViewDelegate(&m_table);
 }
 
 void ResultsHomogeneityController::didBecomeFirstResponder() {

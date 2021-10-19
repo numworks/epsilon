@@ -1,6 +1,12 @@
 #include "selectable_table_view_with_background.h"
 
+using namespace Escher;
+
 namespace Probability {
+
+void SelectableTableViewWithBackground::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
+  markRectAsDirty(bounds());
+}
 
 void SelectableTableViewWithBackground::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw only part borders between cells (in *)
@@ -13,7 +19,7 @@ void SelectableTableViewWithBackground::drawRect(KDContext * ctx, KDRect rect) c
   // └─────┘
 
   KDPoint offset = KDPoint(leftMargin(), topMargin()).translatedBy(contentOffset().opposite());
-  Escher::TableViewDataSource * data =
+  TableViewDataSource * data =
       const_cast<SelectableTableViewWithBackground *>(this)->dataSource();
 
   for (int row = 0; row < data->numberOfRows() - 1; row++) {

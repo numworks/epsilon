@@ -175,7 +175,6 @@ void ScrollView::layoutSubviews(bool force) {
 void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {
   if (m_dataSource->setOffset(offset) || forceRelayout) {
     layoutSubviews();
-    markRectAsDirty(bounds());
   }
 }
 

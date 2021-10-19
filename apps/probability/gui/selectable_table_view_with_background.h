@@ -5,9 +5,10 @@
 
 namespace Probability {
 
-class SelectableTableViewWithBackground : public Escher::SelectableTableView {
+class SelectableTableViewWithBackground : public Escher::SelectableTableView, public Escher::ScrollViewDelegate {
 public:
   using Escher::SelectableTableView::SelectableTableView;
+  void scrollViewDidChangeOffset(Escher::ScrollViewDataSource * scrollViewDataSource) override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 };
 

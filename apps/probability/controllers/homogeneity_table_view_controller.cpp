@@ -14,6 +14,7 @@ HomogeneityTableViewController::HomogeneityTableViewController(
       m_table(this, &m_tableData, &m_selectionDataSource, &m_tableData),
       m_statistic(statistic) {
   m_selectionDataSource.selectColumn(-1);
+  m_selectionDataSource.setScrollViewDelegate(&m_table);
 }
 
 void HomogeneityTableViewController::initCell(void * cell, int index) {

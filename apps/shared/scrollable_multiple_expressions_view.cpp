@@ -24,13 +24,13 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::setHighlighted(bool
   // Do not call HighlightCell::setHighlighted to avoid marking all cell as dirty
   m_highlighted = highlight;
   KDColor defaultColor = backgroundColor();
-  KDColor color = highlight && m_selectedSubviewPosition == SubviewPosition::Center ? Palette::ExpressionInputBackground : defaultColor;
+  KDColor color = highlight && m_selectedSubviewPosition == SubviewPosition::Center ? Palette::Select : defaultColor;
   m_centeredExpressionView.setBackgroundColor(color);
-  color = highlight && m_selectedSubviewPosition == SubviewPosition::Right ? Palette::ExpressionInputBackground : defaultColor;
+  color = highlight && m_selectedSubviewPosition == SubviewPosition::Right ? Palette::Select : defaultColor;
   m_rightExpressionView.setBackgroundColor(color);
   m_approximateSign.setBackgroundColor(defaultColor);
   if (leftExpressionView()) {
-    color = highlight && m_selectedSubviewPosition == SubviewPosition::Left ? Palette::ExpressionInputBackground : defaultColor;
+    color = highlight && m_selectedSubviewPosition == SubviewPosition::Left ? Palette::Select : defaultColor;
     leftExpressionView()->setBackgroundColor(color);
   }
 }

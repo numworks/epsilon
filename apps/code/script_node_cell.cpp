@@ -21,10 +21,10 @@ void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) cons
   const int nodeNameLength = m_scriptNode->nameLength();
   KDSize nameSize = k_font->stringSize(nodeName, nodeNameLength);
   const KDCoordinate nodeNameY = k_topMargin;
-  ctx->drawString(nodeName, KDPoint(0, nodeNameY), k_font, KDColorBlack, backgroundColor, nodeNameLength);
+  ctx->drawString(nodeName, KDPoint(0, nodeNameY), k_font, Palette::PrimaryText, backgroundColor, nodeNameLength);
   // If it is needed, draw the parentheses
   if (m_scriptNode->type() == ScriptNode::Type::WithParentheses) {
-    ctx->drawString(ScriptNodeCell::k_parentheses, KDPoint(nameSize.width(), nodeNameY), k_font, KDColorBlack, backgroundColor);
+    ctx->drawString(ScriptNodeCell::k_parentheses, KDPoint(nameSize.width(), nodeNameY), k_font, Palette::PrimaryText, backgroundColor);
   }
 
   /* If it exists, draw the source name. If it did not fit, we would have put

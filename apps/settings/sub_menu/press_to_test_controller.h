@@ -34,6 +34,8 @@ private:
   // Switch Cells
   // TODO Hugo : Handle change of accessory if exam mode is activated
   Escher::MessageTableCellWithMessageWithSwitch m_switchCells[k_numberOfReusableSwitchCells];
+  void initSwitches();
+
   bool m_tempSwitchState[k_numberOfSwitchCells];
   // Shared::ButtonWithSeparator m_activateButton;
   static I18n::Message LabelAtIndex(int index);

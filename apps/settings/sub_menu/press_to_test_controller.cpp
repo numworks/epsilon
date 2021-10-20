@@ -17,7 +17,18 @@ PressToTestController::PressToTestController(Responder * parentResponder) :
   m_switchCells{},
   m_tempSwitchState{}
 {
-  // TODO Hugo : Initialize m_tempSwitchState
+  initSwitches();
+}
+
+void PressToTestController::initSwitches() {
+  // TODO Hugo : Rename and improve this method
+  m_tempSwitchState[0] = ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message::SolverApp,GlobalPreferences::sharedGlobalPreferences()->examMode());
+  m_tempSwitchState[1] = ExamModeConfiguration::inequalityGraphingIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
+  m_tempSwitchState[2] = ExamModeConfiguration::implicitPlotsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
+  m_tempSwitchState[3] = ExamModeConfiguration::statsDiagnosticsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
+  m_tempSwitchState[4] = ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
+  m_tempSwitchState[5] = ExamModeConfiguration::basedLogarithmIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
+  m_tempSwitchState[6] = ExamModeConfiguration::sumIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
 }
 
 bool PressToTestController::handleEvent(Ion::Events::Event event) {

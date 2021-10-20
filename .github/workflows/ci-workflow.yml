@@ -140,7 +140,7 @@ jobs:
     steps:
       - uses: numworks/setup-emscripten@v1
         with:
-          sdk: latest-upstream
+          sdk: latest-fastcomp
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'

@@ -363,6 +363,11 @@ Q(upper)
 Q(value)
 Q(values)
 Q(zip)
+Q(doc)
+Q(property)
+Q(getter)
+Q(setter)
+Q(deleter)
 
   // Ion QSTR
 Q(ion)

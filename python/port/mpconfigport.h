@@ -61,7 +61,7 @@
 #define MICROPY_PY_BUILTINS_FROZENSET (1)
 
 // Whether to support property object
-#define MICROPY_PY_BUILTINS_PROPERTY (0)
+#define MICROPY_PY_BUILTINS_PROPERTY (1)
 
 // Whether to support unicode strings
 #define MICROPY_PY_BUILTINS_STR_UNICODE (1)

@@ -60,6 +60,14 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(GlobalPref
       I18n::Message warnings[] = {I18n::Message::ActiveExamModeWithResetMessage1, I18n::Message::ActiveExamModeWithResetMessage2, I18n::Message::ActiveExamModeWithResetMessage3, I18n::Message::ActiveExamModeWithResetMessage4};
       return warnings[line];
     }
+  } else if (mode == GlobalPreferences::ExamMode::PressToTest) {
+    if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
+      I18n::Message warnings[] = {I18n::Message::ActivePressToTestModeMessage1, I18n::Message::ActivePressToTestModeMessage2, I18n::Message::ActivePressToTestModeMessage3, I18n::Message::Default};
+      return warnings[line];
+    } else {
+      I18n::Message warnings[] = {I18n::Message::ActivePressToTestWithResetMessage1, I18n::Message::ActivePressToTestWithResetMessage2, I18n::Message::ActivePressToTestWithResetMessage3, I18n::Message::ActivePressToTestWithResetMessage4};
+      return warnings[line];
+    }
   }
   assert(mode == GlobalPreferences::ExamMode::Dutch);
   if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {

@@ -15,7 +15,11 @@ namespace Settings {
 PressToTestController::PressToTestController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_switchCells{},
-  m_tempSwitchState{}
+  m_tempSwitchState{},
+  m_activateButton{&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {
+    // TODO Hugo : Set temporary press to test mode parameters
+    AppsContainer::sharedAppsContainer()->displayExamModePopUp(GlobalPreferences::ExamMode::PressToTest);
+    return true; }, this)}
 {
   initSwitches();
 }
@@ -32,13 +36,7 @@ void PressToTestController::initSwitches() {
 }
 
 bool PressToTestController::handleEvent(Ion::Events::Event event) {
-  // TODO Hugo : Use type here
-  // TODO Hugo : Uncomment this with implemented button
-  // if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == numberOfRows() - 1 && !GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-  //   AppsContainer::sharedAppsContainer()->displayExamModePopUp(GlobalPreferences::ExamMode::USTestMode); // examMode()
-  //   return true;
-  // }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(selectedRow()) == k_switchCellType && !GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     assert(selectedRow() >= 0 && selectedRow() < k_numberOfSwitchCells);
     m_tempSwitchState[selectedRow()] = !m_tempSwitchState[selectedRow()];
     resetMemoization();
@@ -52,31 +50,46 @@ void PressToTestController::didEnterResponderChain(Responder * previousFirstResp
   /* When a pop-up is dismissed, the exam mode status might have changed. We
    * reload the selection as the number of rows might have also changed. We
    * force to reload the entire data because they might have changed. */
+  // TODO Hugo : Fix visible artefact issue after activating exam mode
   selectCellAtLocation(0, initialSelectedRow());
-  // m_content->reload();
+  m_selectableTableView.reloadData();
   // TODO Hugo : Add a message when the mode exam is on
 }
 
 int PressToTestController::numberOfRows() const {
-  // TODO Hugo : Add Button (GlobalPreferences::sharedGlobalPreferences()->isInExamMode() ? 0 : 1) +
-  return k_numberOfSwitchCells;
+  return k_numberOfSwitchCells + (GlobalPreferences::sharedGlobalPreferences()->isInExamMode() ? 0 : 1);
+}
+
+int PressToTestController::typeAtIndex(int index) {
+  assert(index >= 0 && index <= k_numberOfSwitchCells);
+  return index < k_numberOfSwitchCells ? k_switchCellType : k_buttonCellType;
 }
 
 HighlightCell * PressToTestController::reusableCell(int index, int type) {
-  // TODO Hugo : Use more types
-  assert(type == 0);
+  if (type == k_buttonCellType) {
+    assert(index == 0);
+    return &m_activateButton;
+  }
+  assert(type == k_switchCellType);
   assert(index >= 0 && index < k_numberOfReusableSwitchCells);
   return &m_switchCells[index];
 }
 
 int PressToTestController::reusableCellCount(int type) {
-  return k_numberOfReusableSwitchCells;
+  return type == k_buttonCellType ? 1 : k_numberOfReusableSwitchCells;
 }
 
 void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if (typeAtIndex(index) == k_buttonCellType) {
+    assert(!GlobalPreferences::sharedGlobalPreferences()->isInExamMode());
+    return;
+  }
   Escher::MessageTableCellWithMessageWithSwitch * myCell = static_cast<Escher::MessageTableCellWithMessageWithSwitch *>(cell);
   myCell->setMessage(LabelAtIndex(index));
   myCell->setSubLabelMessage(SubLabelAtIndex(index));
+  // TODO Hugo : Set switch layout according to exam mode status.
+  // if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+  // }
   SwitchView * switchView = (SwitchView *)myCell->accessoryView();
   switchView->setState(m_tempSwitchState[index]);
 }

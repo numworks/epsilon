@@ -17,18 +17,24 @@ public:
   TELEMETRY_ID("PressToTest");
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   int numberOfRows() const override;
+  int typeAtIndex(int index) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   // Override GenericSubController implementation
   KDCoordinate nonMemoizedRowHeight(int j) override {
+    // TODO Hugo : Improve this
+    if (typeAtIndex(j) == k_buttonCellType) {
+      return heightForCellAtIndex(&m_activateButton, j);
+    }
     Escher::MessageTableCellWithMessageWithSwitch tempCell;
     return heightForCellAtIndex(&tempCell, j);
-    // return MemoizedListViewDataSource::nonMemoizedRowHeight(j);
   }
 private:
   static constexpr int k_numberOfSwitchCells = 7;
   static constexpr int k_numberOfReusableSwitchCells = 6;
+  static constexpr int k_switchCellType = 0;
+  static constexpr int k_buttonCellType = 1;
   // TODO Hugo : Add instructions and deactivation messages
 
   // Switch Cells
@@ -37,7 +43,7 @@ private:
   void initSwitches();
 
   bool m_tempSwitchState[k_numberOfSwitchCells];
-  // Shared::ButtonWithSeparator m_activateButton;
+  Shared::ButtonWithSeparator m_activateButton;
   static I18n::Message LabelAtIndex(int index);
   static I18n::Message SubLabelAtIndex(int index);
 };

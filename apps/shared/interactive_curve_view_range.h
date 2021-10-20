@@ -58,7 +58,8 @@ public:
   void computeRanges() { privateComputeRanges(m_xAuto, m_yAuto); }
   void normalize();
   void centerAxisAround(Axis axis, float position);
-  bool panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation, float pixelWidth);
+  bool panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) { return makePointVisible(x, y, topMarginRatio, rightMarginRatio, bottomMarginRatio, leftMarginRatio, pixelWidth, true); }
+  bool zoomOutToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) { return makePointVisible(x, y, topMarginRatio, rightMarginRatio, bottomMarginRatio, leftMarginRatio, pixelWidth, false); }
 
 protected:
   constexpr static float k_upperMaxFloat = 1E+8f;
@@ -92,6 +93,7 @@ private:
   void privateSetZoomAuto(bool xAuto, bool yAuto);
   void privateComputeRanges(bool computeX, bool computeY);
   bool intrinsicYRangeIsUnset() const { return std::isnan(m_yMinIntrinsic) && std::isnan(m_yMaxIntrinsic); }
+  bool makePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth, bool updateBothAxes);
 
   float m_offscreenYAxis;
   float m_yMinIntrinsic;

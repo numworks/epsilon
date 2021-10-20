@@ -82,44 +82,52 @@ def write_palette_h(data, file_p):
     file_p.write("class Palette {\n")
     file_p.write("public:\n")
 
+    # Default values - sometimes never used
+    defaults = {
+        "YellowDark": "ffb734",
+        "YellowLight": "ffcc7b",
+        "PurpleBright": "656975",
+        "PurpleDark": "414147",
+        "GrayWhite": "f5f5f5",
+        "GrayBright": "ececec",
+        "GrayMiddle": "d9d9d9",
+        "GrayDark": "a7a7a7",
+        "GrayVeryDark": "8c8c8c",
+        "Select": "d4d7e0",
+        "SelectDark": "b0b8d8",
+        "WallScreen": "f7f9fa",
+        "WallScreenDark": "e0e6ed",
+        "SubTab": "b8bbc5",
+        "LowBattery": "f30211",
+        "Red": "ff000c",
+        "RedLight": "fe6363",
+        "Magenta": "ff0588",
+        "Turquoise": "60c1ec",
+        "Pink": "ffabb6",
+        "Blue": "5075f2",
+        "BlueLight": "718fee",
+        "Orange": "fe871f",
+        "Green": "50c102",
+        "GreenLight": "52db8f",
+        "Brown": "8d7350",
+        "Purple": "6e2d79",
+        "BlueishGrey": "919ea4",
+        "Cyan": "00ffff",
+    }
+
     for key in data["colors"].keys():
         if type(data["colors"][key]) is str:
             file_p.write("  constexpr static KDColor " + key + " = KDColor::RGB24(0x" + data["colors"][key] + ");\n")
+            if defaults.keys().__contains__(key):
+                del defaults[key]
         else:
             for sub_key in data["colors"][key].keys():
                 file_p.write("  constexpr static KDColor " + key + sub_key + " = KDColor::RGB24(0x" + data["colors"][key][sub_key] + ");\n")
+            if defaults.keys().__contains__(key+sub_key):
+                del defaults[key+sub_key]
 
-    # Default values - Sometimes never used
-    file_p.write("  constexpr static KDColor YellowDark = KDColor::RGB24(0xffb734);\n")
-    file_p.write("  constexpr static KDColor YellowLight = KDColor::RGB24(0xffcc7b);\n")
-    file_p.write("  constexpr static KDColor PurpleBright = KDColor::RGB24(0x656975);\n")
-    file_p.write("  constexpr static KDColor PurpleDark = KDColor::RGB24(0x414147);\n")
-    file_p.write("  constexpr static KDColor GrayWhite = KDColor::RGB24(0xf5f5f5);\n")
-    file_p.write("  constexpr static KDColor GrayBright = KDColor::RGB24(0xececec);\n")
-    file_p.write("  constexpr static KDColor GrayMiddle = KDColor::RGB24(0xd9d9d9);\n")
-    file_p.write("  constexpr static KDColor GrayDark = KDColor::RGB24(0xa7a7a7);\n")
-    file_p.write("  constexpr static KDColor GrayVeryDark = KDColor::RGB24(0x8c8c8c);\n")
-    file_p.write("  constexpr static KDColor Select = KDColor::RGB24(0xd4d7e0);\n")
-    file_p.write("  constexpr static KDColor SelectDark = KDColor::RGB24(0xb0b8d8);\n")
-    file_p.write("  constexpr static KDColor WallScreen = KDColor::RGB24(0xf7f9fa);\n")
-    file_p.write("  constexpr static KDColor WallScreenDark = KDColor::RGB24(0xe0e6ed);\n")
-    file_p.write("  constexpr static KDColor SubTab = KDColor::RGB24(0xb8bbc5);\n")
-    file_p.write("  constexpr static KDColor LowBattery = KDColor::RGB24(0xf30211);\n")
-    file_p.write("  constexpr static KDColor Red = KDColor::RGB24(0xff000c);\n")
-    file_p.write("  constexpr static KDColor RedLight = KDColor::RGB24(0xfe6363);\n")
-    file_p.write("  constexpr static KDColor Magenta = KDColor::RGB24(0xff0588);\n")
-    file_p.write("  constexpr static KDColor Turquoise = KDColor::RGB24(0x60c1ec);\n")
-    file_p.write("  constexpr static KDColor Pink = KDColor::RGB24(0xffabb6);\n")
-    file_p.write("  constexpr static KDColor Blue = KDColor::RGB24(0x5075f2);\n")
-    file_p.write("  constexpr static KDColor BlueLight = KDColor::RGB24(0x718fee);\n")
-    file_p.write("  constexpr static KDColor Orange = KDColor::RGB24(0xfe871f);\n")
-    file_p.write("  constexpr static KDColor Green = KDColor::RGB24(0x50c102);\n")
-    file_p.write("  constexpr static KDColor GreenLight = KDColor::RGB24(0x52db8f);\n")
-    file_p.write("  constexpr static KDColor Brown = KDColor::RGB24(0x8d7350);\n")
-    file_p.write("  constexpr static KDColor Purple = KDColor::RGB24(0x6e2d79);\n")
-    file_p.write("  constexpr static KDColor BlueishGrey = KDColor::RGB24(0x919ea4);\n")
-    file_p.write("  constexpr static KDColor Cyan = KDColorBlue;\n")
-    # End
+    for key in defaults.keys():
+        file_p.write("  constexpr static KDColor " + key + " = KDColor::RGB24(0x" + defaults[key] + ");\n")
 
     file_p.write("  constexpr static KDColor DataColor[] = {Red, Blue, Green, YellowDark, Magenta, Turquoise, Pink, Orange};\n")
     file_p.write("  constexpr static KDColor DataColorLight[] = {RedLight, BlueLight, GreenLight, YellowLight};\n")

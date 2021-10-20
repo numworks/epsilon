@@ -184,7 +184,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   setZoomNormalize(isOrthonormal());
 }
 
-bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) {
+bool InteractiveCurveViewRange::makePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth, bool updateBothAxes) {
   bool moved = false;
   if (!std::isinf(x) && !std::isnan(x)) {
     const float xRange = xMax() - xMin();
@@ -194,15 +194,21 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       /* The panning increment is a whole number of pixels so that the caching
        * for cartesian functions is not invalidated. */
       const float newXMin = std::floor((x - leftMargin - xMin()) / pixelWidth) * pixelWidth + xMin();
-      m_xRange.setMax(newXMin + xRange, k_lowerMaxFloat, k_upperMaxFloat);
-      MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
+      if (updateBothAxes) {
+        m_xRange.setMax(newXMin + xRange, k_lowerMaxFloat, k_upperMaxFloat);
+      }
+      m_xRange.setMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
+      m_xGridUnit = CurveViewRange::xGridUnit();
     }
     const float rightMargin = rightMarginRatio * xRange;
     if (x > xMax() - rightMargin) {
       moved = true;
       const float newXMax = std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax();
       m_xRange.setMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
-      MemoizedCurveViewRange::protectedSetXMin(xMax() - xRange, k_lowerMaxFloat, k_upperMaxFloat);
+      if (updateBothAxes) {
+        m_xRange.setMin(xMax() - xRange, k_lowerMaxFloat, k_upperMaxFloat);
+      }
+      m_xGridUnit = CurveViewRange::xGridUnit();
     }
   }
   if (!std::isinf(y) && !std::isnan(y)) {
@@ -211,14 +217,20 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
     if (y < yMin() + bottomMargin) {
       moved = true;
       const float newYMin = y - bottomMargin;
-      m_yRange.setMax(newYMin + yRange, k_lowerMaxFloat, k_upperMaxFloat);
-      MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
+      if (updateBothAxes) {
+        m_yRange.setMax(newYMin + yRange, k_lowerMaxFloat, k_upperMaxFloat);
+      }
+      m_yRange.setMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
+      m_yGridUnit = CurveViewRange::yGridUnit();
     }
     const float topMargin = topMarginRatio * yRange;
     if (y > yMax() - topMargin) {
       moved = true;
       m_yRange.setMax(y + topMargin, k_lowerMaxFloat, k_upperMaxFloat);
-      MemoizedCurveViewRange::protectedSetYMin(yMax() - yRange, k_lowerMaxFloat, k_upperMaxFloat);
+      if (updateBothAxes) {
+        m_yRange.setMin(yMax() - yRange, k_lowerMaxFloat, k_upperMaxFloat);
+      }
+      m_yGridUnit = CurveViewRange::yGridUnit();
     }
   }
 

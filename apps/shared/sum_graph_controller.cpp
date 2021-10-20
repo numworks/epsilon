@@ -77,7 +77,8 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
     m_graphView->setAreaHighlight(m_startSum, m_cursor->x());
   }
   m_legendView.setEditableZone(m_cursor->x());
-  m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
+  m_graphRange->zoomOutToMakePointVisible(x, y, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
+  m_graphRange->zoomOutToMakePointVisible(x, 0, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   m_graphView->reload();
   return true;
 }

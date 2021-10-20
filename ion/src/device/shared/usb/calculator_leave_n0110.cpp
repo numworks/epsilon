@@ -6,12 +6,10 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
+/* This implementation is used by the flasher, which does not need to handle
+ * priviledge escalation */
 void Calculator::leave(uint32_t leaveAddress) {
-  if (leaveAddress == Ion::Device::InternalFlash::Config::StartAddress) {
-    Ion::Reset::core();
-  } else {
-    Reset::jump(leaveAddress);
-  }
+  Reset::jump(leaveAddress);
 }
 
 }

@@ -991,7 +991,7 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
    * (pxf,pyf) which is then translated to the center of the top-left pixel of
    * stampMask.
    */
-  assert(!isnan(pxf) && !isnan(pyf));
+  assert(!std::isnan(pxf) && !std::isnan(pyf));
   KDCoordinate stampSize = thick ? thickStampSize : thinStampSize;
   const uint8_t * stampMask = thick ? thickStampMask : thinStampMask;
   pxf -= (stampSize + 1 - 1)/2.0f;

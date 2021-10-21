@@ -4,13 +4,20 @@
 
 namespace Escher {
 
+bool Responder::hasAncestor(Responder * responder) const {
+  if (responder == nullptr) {
+    return false;
+  }
+  return privateHasAncestor(responder);
+}
+
 Responder * Responder::commonAncestorWith(Responder * responder) {
   if (responder == nullptr) {
     return nullptr;
   }
   Responder * p = this;
   while (p != nullptr) {
-    if (responder->hasAncestor(p)) {
+    if (responder->privateHasAncestor(p)) {
       return p;
     }
     p = p->parentResponder();
@@ -18,7 +25,7 @@ Responder * Responder::commonAncestorWith(Responder * responder) {
   return nullptr;
 }
 
-bool Responder::hasAncestor(Responder * responder) const {
+bool Responder::privateHasAncestor(Responder * responder) const {
   assert(responder != nullptr);
   Responder * p = const_cast<Responder *>(this);
   while (p != nullptr) {

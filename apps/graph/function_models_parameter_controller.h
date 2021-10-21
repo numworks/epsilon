@@ -40,7 +40,7 @@ private:
   // Expression cells
   constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;
   static constexpr I18n::Message k_modelDescriptions[k_numberOfExpressionCells] = {
-    I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::EllipseType, I18n::Message::ParametricType, I18n::Message::PolarType
+    I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::ConicNamedTemplate, I18n::Message::ParametricType, I18n::Message::PolarType
   };
   Escher::StackViewController * stackController() const;
   Escher::MessageTableCell m_emptyModelCell;

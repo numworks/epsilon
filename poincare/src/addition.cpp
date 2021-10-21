@@ -72,7 +72,7 @@ int Addition::getPolynomialCoefficients(Context * context, const char * symbolNa
     return -1;
   }
   for (int k = 0; k < deg+1; k++) {
-    coefficients[k] = Addition::Builder(Rational::Builder(0));
+    coefficients[k] = Addition::Builder();
   }
   Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   for (int i = 0; i < numberOfChildren(); i++) {

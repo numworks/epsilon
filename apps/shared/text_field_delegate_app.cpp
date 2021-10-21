@@ -66,16 +66,16 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder
     int XNTIndex = Ion::Events::repetitionFactor(true);
     if (XNTIndex > 0) {
       // Cycle through XNT CodePoints, starting from default code point position
-      constexpr size_t numberOfCodePoints = 4;
-      constexpr CodePoint XNTCodePoints[numberOfCodePoints] = {'x', 'n', 't', UCodePointGreekSmallLetterTheta};
-      for (size_t i = 0; i < numberOfCodePoints; i++) {
+      constexpr size_t k_numberOfCodePoints = 4;
+      constexpr CodePoint XNTCodePoints[k_numberOfCodePoints] = {'x', 'n', 't', UCodePointGreekSmallLetterTheta};
+      for (size_t i = 0; i < k_numberOfCodePoints; i++) {
         XNTIndex++;
         if (XNTCodePoints[i] == defaultXNT) {
           break;
         }
       }
       // Unknown default code point
-      defaultXNT = XNTCodePoints[XNTIndex%numberOfCodePoints];
+      defaultXNT = XNTCodePoints[XNTIndex % k_numberOfCodePoints];
     }
     /* TODO Hugo : Select the inserted XNT so that, if the inserted codePoint is
      * more than 1 character long, it is correctly replaced when cycling. */

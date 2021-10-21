@@ -21,17 +21,12 @@ private:
   // ComparisonOperatorNode
   CodePoint comparisonCodePoint() const override { return '<'; };
   const char * comparisonString() const override { return "<"; };
-  // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
 };
 
 class Inferior final : public ComparisonOperator {
 public:
   Inferior(const InferiorNode * n) : ComparisonOperator(n) {}
   static Inferior Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Inferior, InferiorNode>({child0, child1}); }
-
-  // Expression
-  Expression shallowReduce();
 };
 
 }

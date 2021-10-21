@@ -13,6 +13,7 @@ namespace Shared {
 InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion) :
   SimpleInteractiveCurveViewController(parentResponder, cursor),
   ButtonRowDelegate(header, nullptr),
+  m_selectedSubCurveIndex(0),
   m_rangeVersion(rangeVersion),
   m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
@@ -33,8 +34,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
     return true;
-  }, this), &m_rangeUnequalView, KDFont::SmallFont),
-  m_selectedSubCurveIndex(0)
+  }, this), &m_rangeUnequalView, KDFont::SmallFont)
 {
   m_autoButton.setState(m_interactiveRange->zoomAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());

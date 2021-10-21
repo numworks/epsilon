@@ -21,17 +21,12 @@ private:
   // ComparisonOperatorNode
   CodePoint comparisonCodePoint() const override { return '='; };
   const char * comparisonString() const override { return "="; };
-  // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
 };
 
 class Equal final : public ComparisonOperator {
 public:
   Equal(const EqualNode * n) : ComparisonOperator(n) {}
   static Equal Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Equal, EqualNode>({child0, child1}); }
-
-  // Expression
-  Expression shallowReduce();
 };
 
 }

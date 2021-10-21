@@ -14,17 +14,21 @@ public:
     Dutch = 2,
     PressToTest = 3
   };
-  // TODO Hugo : Handle PressToTest exam modes settings, store it properly.
-  // struct PressToTestParams {
-  //   bool pressToTest;
-  //   bool equationSolver;
-  //   bool inequalityGraphing;
-  //   bool implicitPlots;
-  //   bool statDiagnostic;
-  //   bool vectors;
-  //   bool basedLogarithm;
-  //   bool sum;
-  // };
+  typedef union {
+    uint8_t value;
+    struct {
+      bool isUnknown: 1;
+      bool equationSolver: 1;
+      bool inequalityGraphing: 1;
+      bool implicitPlots: 1;
+      bool statDiagnostic: 1;
+      bool vectors: 1;
+      bool basedLogarithm: 1;
+      bool sum: 1;
+    };
+  } PressToTestParams;
+  static_assert(sizeof(PressToTestParams) == sizeof(uint8_t), "PressToTestParams can have 8 params at most");
+
   static GlobalPreferences * sharedGlobalPreferences();
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }
@@ -37,7 +41,9 @@ public:
   const char * discriminantSymbol() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].discriminantSymbol(); }
   bool isInExamMode() const { return (int8_t)examMode() > 0; }
   ExamMode examMode() const;
+  PressToTestParams pressToTestParams() const;
   void setExamMode(ExamMode examMode);
+  void setPressToTestParams(PressToTestParams pressToTestParams);
   static_assert((int8_t)GlobalPreferences::ExamMode::Off == 0, "GlobalPreferences::isInExamMode() is not right");
   static_assert((int8_t)GlobalPreferences::ExamMode::Unknown < 0, "GlobalPreferences::isInExamMode() is not right");
 
@@ -52,6 +58,8 @@ public:
   void setFont(const KDFont * font) { m_font = font; }
 
 private:
+  static constexpr int k_examModePersistingByteIndex = 0;
+  static constexpr int k_pressToTestParamsPersistingByteIndex = 1;
   static_assert(I18n::NumberOfLanguages > 0, "I18n::NumberOfLanguages is not superior to 0"); // There should already have been an error when processing an empty EPSILON_I18N flag
   static_assert(I18n::NumberOfCountries > 0, "I18n::NumberOfCountries is not superior to 0"); // There should already have been an error when processing an empty EPSILON_COUNTRIES flag
   GlobalPreferences() :
@@ -60,12 +68,13 @@ private:
     m_examMode(ExamMode::Unknown),
     m_showPopUp(true),
     m_brightnessLevel(Ion::Backlight::MaxBrightness),
-    m_font(KDFont::LargeFont) {}
+    m_font(KDFont::LargeFont) { m_pressToTestParams.isUnknown = true; }
   I18n::Language m_language;
   I18n::Country m_country;
   static_assert((int8_t)GlobalPreferences::ExamMode::Off == 0, "GlobalPreferences::isInExamMode() is not right");
   static_assert((int8_t)GlobalPreferences::ExamMode::Unknown < 0, "GlobalPreferences::isInExamMode() is not right");
   mutable ExamMode m_examMode;
+  mutable PressToTestParams m_pressToTestParams;
   bool m_showPopUp;
   int m_brightnessLevel;
   const KDFont * m_font;

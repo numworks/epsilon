@@ -42,7 +42,8 @@ void DynamicCellsDataSource<T,N>::destroyCells() {
   for (int i = 0; i < N; i++) {
     // Make sure not to keep the first responder pointing on a destroyed cell
     Responder * cellResponder = m_cells[i].responder();
-    if (App::app()->firstResponder()->hasAncestor(cellResponder)) {
+    Responder * appFirstResponder = App::app()->firstResponder();
+    if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
       App::app()->setFirstResponder(cellResponder->parentResponder());
     }
     m_cells[i].T::~T();

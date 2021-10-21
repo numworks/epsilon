@@ -407,7 +407,7 @@ void ContinuousFunction::updatePlotType(Context * context) {
   if (m_model.equationSymbol() != ExpressionNode::Type::Equal) {
     ExpressionNode::Sign ySign;
     // Inequations are handled with a few constraint on y and x degrees.
-    if ((yDeg == 1 || (yDeg == 2 && xDeg > 0)) && isYCoefficientNonNull(equation, yDeg, context, &ySign) && ySign != ExpressionNode::Sign::Unknown) {
+    if ((yDeg == 1 || (yDeg == 2 && xDeg >= 0)) && isYCoefficientNonNull(equation, yDeg, context, &ySign) && ySign != ExpressionNode::Sign::Unknown) {
       if (ySign == ExpressionNode::Sign::Negative) {
         // Oppose the comparison operator
         ExpressionNode::Type newEquationSymbol = ComparisonOperator::Opposite(m_model.equationSymbol());

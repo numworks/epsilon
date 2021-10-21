@@ -1,7 +1,7 @@
 FunctionApp = "Funções"
 FunctionAppCapital = "FUNÇÕES"
 FunctionTab = "Funções"
-UseFunctionModel = "Usar um modelo de função"
+UseFunctionModel = "Adicionar um elemento"
 AddFunction = "Adicionar um elemento"
 DeleteFunction = "Eliminar a função"
 IntervalT = "Intervalo t"

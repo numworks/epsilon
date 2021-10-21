@@ -91,6 +91,7 @@ template <class T> struct SameType<T,T> { enum{value = true}; };
 #define ENSURE_SVC_TYPE(svcallindex, svcallhandler) \
   static_assert(SameType<decltype(&svcallhandler), void (*)()>::value || \
                 SameType<decltype(&svcallhandler), void (*)(uint8_t)>::value || \
+                SameType<decltype(&svcallhandler), void (*)(uint8_t, uint8_t)>::value || \
                 SameType<decltype(&svcallhandler), bool (*)()>::value || \
                 SameType<decltype(&svcallhandler), float (*)()>::value || \
                 SameType<decltype(&svcallhandler), uint32_t (*)()>::value || \
@@ -123,7 +124,8 @@ template <class T> struct SameType<T,T> { enum{value = true}; };
                 SameType<decltype(&svcallhandler), void (*)(uint32_t)>::value || \
                 SameType<decltype(&svcallhandler), uint64_t (*)()>::value || \
                 SameType<decltype(&svcallhandler), Ion::Authentication::ClearanceLevel (*)()>::value || \
-                SameType<decltype(&svcallhandler), uint8_t (*)()>::value \
+                SameType<decltype(&svcallhandler), uint8_t (*)()>::value || \
+                SameType<decltype(&svcallhandler), uint8_t (*)(uint8_t)>::value \
       ); \
   assert(k_SVCallTable[svcallindex] == MAKE_SVCALL_HANDLER_ENTRY(svcallhandler));
 

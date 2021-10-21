@@ -2,17 +2,15 @@
 #define ION_DEVICE_KERNEL_DRIVERS_PERSISTING_BYTES_H
 
 #include <stdint.h>
+#include <ion/persisting_bytes.h>
 
 namespace Ion {
 namespace Device {
 namespace PersistingBytes {
 
-/*
- * TODO EMILIE:
- * - Optimize? don't eat another byte if you can avoid
- * - Robustize? Do we look for the first non 0xFF backwards? Or are we subject to corrupted memory? */
-uint8_t read();
-void write(uint8_t byte);
+uint8_t read(uint8_t index);
+void write(uint8_t byte, uint8_t index);
+static constexpr uint8_t k_numberOfPersistingBytes = Ion::PersistingBytes::k_numberOfPersistingBytes;
 
 }
 }

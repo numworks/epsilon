@@ -350,8 +350,10 @@ void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
   if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
     reset();
-    Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
-    Ion::LED::setBlinking(1000, 0.1f);
+    if (examMode != GlobalPreferences::ExamMode::PressToTest) {
+      Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
+      Ion::LED::setBlinking(1000, 0.1f);
+    }
   } else {
     Ion::Reset::core();
   }

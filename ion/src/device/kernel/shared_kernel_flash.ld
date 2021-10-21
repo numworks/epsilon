@@ -65,8 +65,10 @@ SECTIONS {
      * it. We write the first byte of the persisting bytes to make sure the
      * section is not empty. Also, 0xFF is a forbidden value for the persisting
      * byte (since it is not distinguishable from unused persisting bytes. So
-     * we init the first persisting byte to be the current significant address. */
-    BYTE(0x0)
+     * we init the first two persisting bytes to be the current significant
+     * address. Warning : More bytes should be initialized if
+     * PersistingBytes::k_numberOfPersistingBytes is changed. */
+    SHORT(0)
     . = ORIGIN(PERSITING_BYTES) + LENGTH(PERSITING_BYTES);
     _persisting_bytes_buffer_end = .;
   } >PERSITING_BYTES

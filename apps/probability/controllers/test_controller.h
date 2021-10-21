@@ -28,6 +28,7 @@ public:
                  Data::TestType * globalTestType,
                  Data::CategoricalType * globalCategoricalType,
                  Statistic * statistic);
+  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override;

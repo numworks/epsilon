@@ -33,16 +33,12 @@ TestController::TestController(Escher::StackViewController * parentResponder,
       m_globalTestType(globalTestType),
       m_globalCategoricalType(globalCategoricalType),
       m_statistic(statistic) {
-  // Create cells
   static_assert(k_numberOfRows < 8, "If more than 8 cells they should be reused");
+  // Create cells
   m_cells[k_indexOfOneProp].setMessage(I18n::Message::TestOneProp);
-  m_cells[k_indexOfOneProp].setSubtitle(I18n::Message::ZTest);
   m_cells[k_indexOfOneMean].setMessage(I18n::Message::TestOneMean);
-  m_cells[k_indexOfOneMean].setSubtitle(I18n::Message::TOrZTest);
   m_cells[k_indexOfTwoProps].setMessage(I18n::Message::TestTwoProps);
-  m_cells[k_indexOfTwoProps].setSubtitle(I18n::Message::ZTest);
   m_cells[k_indexOfTwoMeans].setMessage(I18n::Message::TestTwoMeans);
-  m_cells[k_indexOfTwoMeans].setSubtitle(I18n::Message::TOrZTest);
   m_cells[k_indexOfCategorical].setMessage(I18n::Message::TestCategorical);
   m_cells[k_indexOfCategorical].setSubtitle(I18n::Message::X2Test);
 }
@@ -52,6 +48,17 @@ const char * TestController::title() {
                             ? I18n::Message::Tests
                             : I18n::Message::ConfidenceInterval;
   return I18n::translate(title);
+}
+
+void Probability::TestController::viewWillAppear() {
+  SelectableCellListPage::viewWillAppear();
+  // Create cells whose legends vary
+  I18n::Message zMessage = App::app()->subapp() == Data::SubApp::Tests ? I18n::Message::ZTest : I18n::Message::ZInterval;
+  I18n::Message tOrZMessage = App::app()->subapp() == Data::SubApp::Tests ? I18n::Message::TOrZTest : I18n::Message::TOrZInterval;
+  m_cells[k_indexOfOneProp].setSubtitle(zMessage);
+  m_cells[k_indexOfOneMean].setSubtitle(tOrZMessage);
+  m_cells[k_indexOfTwoProps].setSubtitle(zMessage);
+  m_cells[k_indexOfTwoMeans].setSubtitle(tOrZMessage);
 }
 
 void TestController::didBecomeFirstResponder() {

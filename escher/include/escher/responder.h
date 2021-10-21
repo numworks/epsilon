@@ -14,10 +14,11 @@ public:
   virtual void didEnterResponderChain(Responder * previousFirstResponder) {}
   virtual void willExitResponderChain(Responder * nextFirstResponder) {}
   Responder * parentResponder() const { return m_parentResponder; }
+  bool hasAncestor(Responder * responder) const;
   Responder * commonAncestorWith(Responder * responder);
   void setParentResponder(Responder * responder) { m_parentResponder = responder; }
 private:
-  bool hasAncestor(Responder * responder) const;
+  bool privateHasAncestor(Responder * responder) const;
   Responder * m_parentResponder;
 };
 

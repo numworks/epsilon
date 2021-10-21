@@ -646,7 +646,11 @@ Expression ContinuousFunction::Model::expressionClone(const Ion::Storage::Record
 }
 
 Expression ContinuousFunction::Model::originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const {
-  return ExpressionModel::expressionClone(record).replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
+  Expression unknownSymbolEquation = ExpressionModel::expressionClone(record);
+  if (unknownSymbolEquation.isUninitialized()) {
+    return unknownSymbolEquation;
+  }
+  return unknownSymbolEquation.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
 }
 
 bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equationSymbol) {

@@ -69,7 +69,17 @@ public:
   // Buffer API
   void * buffer();
   void setBufferDestructor(DynamicCellsDataSourceDestructor * destructor) { m_bufferDestructor = destructor; }
-  static constexpr int k_bufferSize = 46080; // = max(sizeof(Escher::EvenOddBufferTextCell),sizeof(Escher::EvenOddEditableTextCell)) * HomogeneityTableDataSource::k_numberOfReusableCells = max(360,640)*72
+  static constexpr int k_bufferSize =
+    constexpr_max<size_t>(
+        sizeof(ExpressionCellWithBufferWithMessage) * k_maxNumberOfExpressionCellsWithBufferWithMessage,
+        constexpr_max<size_t>(
+          sizeof(ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage,
+          constexpr_max<size_t>(
+            sizeof(EvenOddBufferTextCell) * k_maxNumberOfEvenOddBufferTextCells,
+            sizeof(EvenOddEditableTextCell) * k_maxNumberOfEvenOddEditableTextCells
+            )
+          )
+        );
 
   TELEMETRY_ID("Probability");
 

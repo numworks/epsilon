@@ -452,7 +452,7 @@ void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Ax
     assert(pixelCoordinate >= 0 && dashSize == 1);
     /* Draw an inequation area. Up to four areas are handled. Otherwise, they
      * override. */
-    int areaId = areaIndex%4;
+    int areaId = areaIndex % 4;
     /* Inequation Area is tiled over 4x4 blocks of pixels.
      * Depending on the areaIndex, the colorized pixel will be :
      *

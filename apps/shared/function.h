@@ -47,12 +47,13 @@ public:
   // Name
   int name(char * buffer, size_t bufferSize);
   virtual int nameWithArgument(char * buffer, size_t bufferSize);
-  virtual int printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context);
+  // Insert the value of the evaluation (or the symbol if symbolValue) in buffer
+  virtual int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context, bool symbolValue = false);
   virtual I18n::Message parameterMessageName() const = 0;
 
   // Evaluation
-  virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context, int i = 0) const = 0;
-  virtual Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context, int i = 0) const = 0;
+  virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(float t, Poincare::Context * context, int subCurveIndex = 0) const = 0;
+  virtual Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context, int subCurveIndex = 0) const = 0;
   virtual Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 
   // Range

@@ -28,7 +28,7 @@ ExpressionModel::ExpressionModel() :
 
 void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t bufferSize, CodePoint symbol) const {
   assert(record->fullName() != nullptr);
-  Expression e = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+  Expression e = ExpressionModel::expressionClone(record);
   if (e.isUninitialized()) {
     if (bufferSize > 0) {
       buffer[0] = 0;
@@ -108,7 +108,7 @@ Expression ExpressionModel::expressionClone(const Storage::Record * record) cons
 Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol) const {
   if (m_layout.isUninitialized()) {
     assert(record->fullName() != nullptr);
-    Expression clone = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
+    Expression clone = ExpressionModel::expressionClone(record);
     if (!clone.isUninitialized() && symbol != 0) {
       clone = clone.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
     }

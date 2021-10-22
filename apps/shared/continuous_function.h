@@ -31,13 +31,19 @@ public:
   // Builder
   ContinuousFunction(Ion::Storage::Record record = Record()) : Function(record), m_cache(nullptr) {}
 
-  /* Symbol and Plot types */
+  /* Area, Symbol and Plot types */
+
+  enum class AreaType : uint8_t {
+    None = 0,
+    Inferior,
+    Superior
+  };
 
   static constexpr size_t k_numberOfSymbolTypes = 3;
   enum class SymbolType : uint8_t {
     Theta = 0,
     T,
-    X,
+    X
   };
 
   static constexpr size_t k_numberOfPlotTypes = 14;
@@ -70,6 +76,8 @@ public:
   static I18n::Message MessageForSymbolType(SymbolType symbolType);
   // Return Message corresponding to PlotType
   static I18n::Message MessageForPlotType(PlotType plotType);
+  // Return the type of area to draw
+  AreaType areaType() const;
   // Return ContinuousFunction's PlotType
   PlotType plotType() const { return recordData()->plotType(); }
   // Return ContinuousFunction's SymbolType
@@ -83,8 +91,8 @@ public:
   CodePoint symbol() const override;
   // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")
   int nameWithArgument(char * buffer, size_t bufferSize) override;
-  // Insert x or y (depending on index) value in buffer
-  int printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context) override;
+  // Insert the value of the evaluation (or the symbol if symbolValue) in buffer
+  int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context, bool symbolValue = false) override;
 
   /* ExpressionModel */
 
@@ -94,10 +102,6 @@ public:
 
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool drawDottedCurve() const;
-  // Wether to draw the area "below" the curve or not
-  bool drawInferiorArea() const;
-  // Wether to draw the area "above" the curve or not
-  bool drawSuperiorArea() const;
   // If the ContinuousFunction should be plot with two curves
   bool hasTwoCurves() const override { return m_model.hasTwoCurves(); }
   // If the ContinuousFunction should be considered active in table

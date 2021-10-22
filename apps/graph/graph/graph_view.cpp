@@ -95,9 +95,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       } else {
         // Cartesian.
         // 1 - Define the evaluation functions for curve and area
-        bool superiorArea = f->drawSuperiorArea();
-        bool inferiorArea = f->drawInferiorArea();
-        assert(!(superiorArea && inferiorArea));
+        ContinuousFunction::AreaType area = f->areaType();
         Shared::CurveView::EvaluateXYForFloatParameter xyInfinite =
             [](float t, void *, void *) {
               return Poincare::Coordinate2D<float>(t, INFINITY);
@@ -120,7 +118,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
               Poincare::Context * c = (Poincare::Context *)context;
               return f->evaluateXYAtParameter(t, c, 0);
             };
-        if (superiorArea || inferiorArea) {
+        if (area != ContinuousFunction::AreaType::None) {
           /* The drawn area goes from the xyFloatEvaluation to xyAreaBound.
            * With a single curve, the drawn area is either above or below the
            * curve. With two curves, the equation was of the form "a*y^2_(...)"
@@ -128,7 +126,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
            * With an inferior comparison, the area to color is between both
            * curves. With a superior comparison, the area is the opposite : both
            * above the first curve and under the second curve. */
-          if (superiorArea) {
+          if (area == ContinuousFunction::AreaType::Superior) {
             // Superior area ends at +inf
             xyAreaBound = xyInfinite;
           } else if (!f->hasTwoCurves()) {
@@ -162,7 +160,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             return f->evaluateXYAtParameter(t, c, 1);
           };
           xyAreaBound = nullptr;
-          if (superiorArea) {
+          if (area == ContinuousFunction::AreaType::Superior) {
             // Superior area starts from the second curve and ends at -inf
             xyAreaBound = xyMinusInfinite;
             /* Note : If the second curve evaluation is NAN, the
@@ -179,7 +177,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
               m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
               f->drawDottedCurve(), xyAreaBound, true, areaIndex, tCacheStep);
         }
-        if (superiorArea || inferiorArea) {
+        if (area != ContinuousFunction::AreaType::None) {
           // We can properly display the superposition of up to 4 areas
           areaIndex++;
         }

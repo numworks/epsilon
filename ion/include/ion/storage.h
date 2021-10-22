@@ -102,9 +102,13 @@ public:
   Record::ErrorStatus notifyFullnessToDelegate() const;
 
   // Record counters
-  int numberOfRecordsWithExtension(const char * extension);
-  // TODO Hugo : Either go with this, or handle a "hidden" status ar Record level
-  int numberOfRecordsStartingWithout(const char nonStartingChar, const char * extension);
+  int numberOfRecordsWithExtension(const char * extension) {
+    return numberOfRecordsWithFilter(extension, ExtensionOnlyFilter);
+  }
+  // TODO Hugo : Maybe handle a "hidden" status at Record level instead ?
+  int numberOfRecordsStartingWithout(const char nonStartingChar, const char * extension) {
+    return numberOfRecordsWithFilter(extension, FirstCharFilter, &nonStartingChar);
+  }
 
   // Record names helper
   int firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId);
@@ -116,8 +120,12 @@ public:
 
   // Record getters
   bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
-  Record recordWithExtensionAtIndex(const char * extension, int index);
-  Record recordWithExtensionAtIndexStartingWithout(const char nonStartingChar, const char * extension, int index);
+  Record recordWithExtensionAtIndex(const char * extension, int index) {
+    return recordWithFilterAtIndex(extension, index, ExtensionOnlyFilter);
+  }
+  Record recordWithExtensionAtIndexStartingWithout(const char nonStartingChar, const char * extension, int index) {
+    return recordWithFilterAtIndex(extension, index, FirstCharFilter, &nonStartingChar);
+  }
   Record recordNamed(const char * fullName);
   Record recordBaseNamedWithExtension(const char * baseName, const char * extension);
   Record recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions);
@@ -131,6 +139,14 @@ public:
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
+
+  // Record filter on fullNames
+  typedef bool (*recordFilter)(const char * name, const void * auxiliary);
+  static recordFilter ExtensionOnlyFilter;
+  static recordFilter FirstCharFilter;
+  // Private record counters and getters
+  int numberOfRecordsWithFilter(const char * extension, recordFilter filter, const void * auxiliary = nullptr);
+  Record recordWithFilterAtIndex(const char * extension, int index, recordFilter filter, const void * auxiliary = nullptr);
 
   Storage();
 

@@ -220,63 +220,34 @@ Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * bas
   return Record::ErrorStatus::None;
 }
 
-int Storage::numberOfRecordsWithExtension(const char * extension) {
+Storage::recordFilter Storage::ExtensionOnlyFilter = [](const char * name, const void * auxiliary) {
+  return true;
+};
+
+Storage::recordFilter Storage::FirstCharFilter = [](const char * name, const void * auxiliary) {
+  return name[0] != *static_cast<const char *>(auxiliary);
+};
+
+int Storage::numberOfRecordsWithFilter(const char * extension, recordFilter filter, const void * auxiliary) {
   int count = 0;
   size_t extensionLength = strlen(extension);
   for (char * p : *this) {
     const char * name = fullNameOfRecordStarting(p);
-    if (FullNameHasExtension(name, extension, extensionLength)) {
+    if (filter(name, auxiliary) && FullNameHasExtension(name, extension, extensionLength)) {
       count++;
     }
   }
   return count;
 }
 
-int Storage::numberOfRecordsStartingWithout(const char nonStartingChar, const char * extension) {
-  int count = 0;
-  size_t extensionLength = strlen(extension);
-  for (char * p : *this) {
-    const char * name = fullNameOfRecordStarting(p);
-    if (name[0] != nonStartingChar && FullNameHasExtension(name, extension, extensionLength)) {
-      count++;
-    }
-  }
-  return count;
-}
-
-Storage::Record Storage::recordWithExtensionAtIndex(const char * extension, int index) {
+Storage::Record Storage::recordWithFilterAtIndex(const char * extension, int index, recordFilter filter, const void * auxiliary) {
   int currentIndex = -1;
   const char * name = nullptr;
   size_t extensionLength = strlen(extension);
   char * recordAddress = nullptr;
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
-    if (FullNameHasExtension(currentName, extension, extensionLength)) {
-      currentIndex++;
-    }
-    if (currentIndex == index) {
-      recordAddress = p;
-      name = currentName;
-      break;
-    }
-  }
-  if (name == nullptr) {
-    return Record();
-  }
-  Record r = Record(name);
-  m_lastRecordRetrieved = r;
-  m_lastRecordRetrievedPointer = recordAddress;
-  return Record(name);
-}
-
-Storage::Record Storage::recordWithExtensionAtIndexStartingWithout(const char nonStartingChar, const char * extension, int index) {
-  int currentIndex = -1;
-  const char * name = nullptr;
-  size_t extensionLength = strlen(extension);
-  char * recordAddress = nullptr;
-  for (char * p : *this) {
-    const char * currentName = fullNameOfRecordStarting(p);
-    if (currentName[0] != nonStartingChar && FullNameHasExtension(currentName, extension, extensionLength)) {
+    if (filter(currentName, auxiliary) && FullNameHasExtension(currentName, extension, extensionLength)) {
       currentIndex++;
     }
     if (currentIndex == index) {

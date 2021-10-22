@@ -7,7 +7,6 @@ using namespace Poincare;
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
   GlobalPreferences::ExamMode examMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
-  // TODO Hugo : Use this method to display examMode in settings
   if (examMode == GlobalPreferences::ExamMode::Standard
       || examMode == GlobalPreferences::ExamMode::Dutch) {
     // Reactivation button
@@ -31,7 +30,6 @@ int ExamModeConfiguration::numberOfAvailableExamMode() {
 }
 
 bool ExamModeConfiguration::pressToTestExamModeAvailable() {
-  // TODO Hugo : Use this method to display pressToTest in settings
   GlobalPreferences::ExamMode examMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
   CountryPreferences::AvailableExamModes availableExamModes = GlobalPreferences::sharedGlobalPreferences()->availableExamModes();
   return examMode != GlobalPreferences::ExamMode::Standard
@@ -91,16 +89,19 @@ KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
   return mode == GlobalPreferences::ExamMode::Dutch ? KDColorYellow : KDColorRed;
 }
 
-bool ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message appName, GlobalPreferences::ExamMode mode) {
+bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
   // TODO Hugo : Update the error message accordingly, check PressToTestParams::equationSolver
+  GlobalPreferences::ExamMode mode = GlobalPreferences::sharedGlobalPreferences()->examMode();
   return (appName == I18n::Message::CodeApp
           && mode == GlobalPreferences::ExamMode::Dutch)
          || (appName == I18n::Message::SolverApp
-             && mode == GlobalPreferences::ExamMode::PressToTest);
+             && mode == GlobalPreferences::ExamMode::PressToTest
+             && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().equationSolver);
 }
 
 static bool isPrimeFactorization(Expression expression) {
-  /* A prime factorization can only be built with integers, powers of integers, and a multiplication. */
+  /* A prime factorization can only be built with integers, powers of integers,
+   * and a multiplication. */
   return !expression.hasExpression([](const Expression e, const void *) {
     return !(e.type() == ExpressionNode::Type::BasedInteger
           || e.type() == ExpressionNode::Type::Multiplication
@@ -110,40 +111,46 @@ static bool isPrimeFactorization(Expression expression) {
   }, nullptr);
 }
 
-bool ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::ExamMode mode, Expression e) {
-  if (mode != GlobalPreferences::ExamMode::Dutch) {
+bool ExamModeConfiguration::exactExpressionIsForbidden(Expression e) {
+  if (GlobalPreferences::sharedGlobalPreferences()->examMode() != GlobalPreferences::ExamMode::Dutch) {
     return false;
   }
   bool isFraction = e.type() == ExpressionNode::Type::Division && e.childAtIndex(0).isNumber() && e.childAtIndex(1).isNumber();
   return !(e.isNumber() || isFraction || isPrimeFactorization(e));
 }
 
-bool ExamModeConfiguration::additionalResultsAreForbidden(GlobalPreferences::ExamMode mode) {
-  return mode == GlobalPreferences::ExamMode::Dutch;
+bool ExamModeConfiguration::additionalResultsAreForbidden() {
+  return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch;
 }
 
-bool ExamModeConfiguration::inequalityGraphingIsForbidden(GlobalPreferences::ExamMode mode) {
-  // TODO Hugo : Implement it after conics, check PressToTestParams::inequalityGraphing
-  return mode == GlobalPreferences::ExamMode::PressToTest;
-  // return extendedExamMode.pressToTest && extendedExamMode.inequalityGraphing;
+bool ExamModeConfiguration::inequalityGraphingIsForbidden() {
+  // TODO Hugo : Implement it after conics
+  return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
+    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().inequalityGraphing;
 }
-bool ExamModeConfiguration::implicitPlotsAreForbidden(GlobalPreferences::ExamMode mode) {
-  // TODO Hugo : Implement it after conics, check PressToTestParams::implicitPlots
-  return mode == GlobalPreferences::ExamMode::PressToTest;
+
+bool ExamModeConfiguration::implicitPlotsAreForbidden() {
+  // TODO Hugo : Implement it after conics
+  return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
+    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().implicitPlots;
 }
-bool ExamModeConfiguration::statsDiagnosticsAreForbidden(GlobalPreferences::ExamMode mode) {
-  // TODO Hugo : check PressToTestParams::statDiagnostic
-  return mode == GlobalPreferences::ExamMode::PressToTest;
+
+bool ExamModeConfiguration::statsDiagnosticsAreForbidden() {
+  return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
+    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().statDiagnostic;
 }
-bool ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::ExamMode mode) {
-  // TODO Hugo : check PressToTestParams::vectors
-  return mode == GlobalPreferences::ExamMode::PressToTest;
+
+bool ExamModeConfiguration::vectorsAreForbidden() {
+  return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
+    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().vectors;
 }
-bool ExamModeConfiguration::basedLogarithmIsForbidden(GlobalPreferences::ExamMode mode) {
-  // TODO Hugo : check PressToTestParams::basedLogarithm
-  return mode == GlobalPreferences::ExamMode::PressToTest;
+
+bool ExamModeConfiguration::basedLogarithmIsForbidden() {
+  return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
+    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().basedLogarithm;
 }
-bool ExamModeConfiguration::sumIsForbidden(GlobalPreferences::ExamMode mode) {
-  // TODO Hugo : check PressToTestParams::sum
-  return mode == GlobalPreferences::ExamMode::PressToTest;
+
+bool ExamModeConfiguration::sumIsForbidden() {
+  return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
+    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().sum;
 }

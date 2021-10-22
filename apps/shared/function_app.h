@@ -45,8 +45,6 @@ protected:
   FunctionApp(Snapshot * snapshot, Escher::ViewController * rootViewController) :
     ExpressionFieldDelegateApp(snapshot, rootViewController)
   {}
-  // TextFieldDelegateApp
-  bool isAcceptableExpression(const Poincare::Expression expression) override;
 };
 
 }

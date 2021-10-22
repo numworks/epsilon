@@ -1,6 +1,7 @@
 #include "app.h"
 #include "calculation_icon.h"
 #include <apps/i18n.h>
+#include <poincare/comparison_operator.h>
 #include <poincare/symbol.h>
 
 using namespace Poincare;
@@ -63,13 +64,15 @@ bool App::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::E
 }
 
 bool App::isAcceptableExpression(const Poincare::Expression expression) {
+  /* Override ExpressionFieldDelegateApp because Store is acceptable, and
+   * ans has an expression. */
   {
     Expression ansExpression = static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext());
     if (!TextFieldDelegateApp::ExpressionCanBeSerialized(expression, true, ansExpression, localContext())) {
       return false;
     }
   }
-  return !(expression.isUninitialized() || expression.type() == ExpressionNode::Type::Equal);
+  return !(expression.isUninitialized() || ComparisonOperator::IsComparisonOperatorType(expression.type()));
 }
 
 void App::didBecomeActive(Window * window) {

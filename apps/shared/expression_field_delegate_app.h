@@ -11,6 +11,7 @@ public:
   virtual ~ExpressionFieldDelegateApp() = default;
   bool layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
+  bool isAcceptableExpression(const Poincare::Expression expression) override;
 protected:
   ExpressionFieldDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
 };

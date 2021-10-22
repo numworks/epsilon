@@ -1,6 +1,7 @@
 #include "app.h"
 #include <apps/i18n.h>
 #include "solver_icon.h"
+#include <poincare/comparison_operator.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -72,8 +73,11 @@ void App::willBecomeInactive() {
 
 
 bool App::isAcceptableExpression(const Poincare::Expression exp) {
-  return TextFieldDelegateApp::ExpressionCanBeSerialized(exp, false, Poincare::Expression(), localContext())
-      && !(exp.isUninitialized() || exp.type() == Poincare::ExpressionNode::Type::Store);
+  /* Complete ExpressionFieldDelegateApp acceptable conditions by only accepting
+   * the Equal OperatorType. */
+  return ExpressionFieldDelegateApp::isAcceptableExpression(exp) && (
+    exp.type() == Poincare::ExpressionNode::Type::Equal
+    || !Poincare::ComparisonOperator::IsComparisonOperatorType(exp.type()));
 }
 
 }

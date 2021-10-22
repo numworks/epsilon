@@ -57,6 +57,7 @@ public:
   Escher::InputViewController * inputViewController() override {
     return &m_inputViewController;
   }
+  bool isAcceptableExpression(const Poincare::Expression expression) override;
 private:
   App(Snapshot * snapshot);
   Shared::SequenceContext m_sequenceContext;

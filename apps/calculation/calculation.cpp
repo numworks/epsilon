@@ -162,7 +162,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
    || (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0
     && strcmp(inputText(), exactOutputText()) == 0)
       // Force all outputs to be ApproximateOnly if required by the exam mode configuration
-   || ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode(), outputExp)
+   || ExamModeConfiguration::exactExpressionIsForbidden(outputExp)
       /* If the input contains the following types, we only display the
        * approximate output. */
    || inputExp.recursivelyMatches(
@@ -239,7 +239,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
 }
 
 Calculation::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
-  if (ExamModeConfiguration::additionalResultsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())
+  if (ExamModeConfiguration::additionalResultsAreForbidden()
       || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), "undef") == 0) {
     return AdditionalInformationType::None;
   }

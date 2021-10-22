@@ -26,13 +26,13 @@ PressToTestController::PressToTestController(Responder * parentResponder) :
 
 void PressToTestController::initSwitches() {
   // TODO Hugo : Rename and improve this method
-  m_tempSwitchState[0] = ExamModeConfiguration::appIsForbiddenInExamMode(I18n::Message::SolverApp,GlobalPreferences::sharedGlobalPreferences()->examMode());
-  m_tempSwitchState[1] = ExamModeConfiguration::inequalityGraphingIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
-  m_tempSwitchState[2] = ExamModeConfiguration::implicitPlotsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
-  m_tempSwitchState[3] = ExamModeConfiguration::statsDiagnosticsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
-  m_tempSwitchState[4] = ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
-  m_tempSwitchState[5] = ExamModeConfiguration::basedLogarithmIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
-  m_tempSwitchState[6] = ExamModeConfiguration::sumIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode());
+  m_tempSwitchState[0] = ExamModeConfiguration::appIsForbidden(I18n::Message::SolverApp);
+  m_tempSwitchState[1] = ExamModeConfiguration::inequalityGraphingIsForbidden();
+  m_tempSwitchState[2] = ExamModeConfiguration::implicitPlotsAreForbidden();
+  m_tempSwitchState[3] = ExamModeConfiguration::statsDiagnosticsAreForbidden();
+  m_tempSwitchState[4] = ExamModeConfiguration::vectorsAreForbidden();
+  m_tempSwitchState[5] = ExamModeConfiguration::basedLogarithmIsForbidden();
+  m_tempSwitchState[6] = ExamModeConfiguration::sumIsForbidden();
 }
 
 bool PressToTestController::handleEvent(Ion::Events::Event event) {

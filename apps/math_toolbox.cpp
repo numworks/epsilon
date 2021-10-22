@@ -335,7 +335,7 @@ constexpr ToolboxMessageTree unitChildren[] = {
 constexpr ToolboxMessageTree calculChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, false, I18n::Message::DiffCommand),
   ToolboxMessageTree::Leaf(I18n::Message::IntCommandWithArg, I18n::Message::Integral, false, I18n::Message::IntCommand),
-  // TODO : Disable it if ExamModeConfiguration::sumIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())
+  // TODO : Disable it if ExamModeConfiguration::sumIsForbidden()
   ToolboxMessageTree::Leaf(I18n::Message::SumCommandWithArg, I18n::Message::Sum, false, I18n::Message::SumCommand),
   ToolboxMessageTree::Leaf(I18n::Message::ProductCommandWithArg, I18n::Message::Product, false, I18n::Message::ProductCommand)
 };
@@ -412,7 +412,7 @@ constexpr ToolboxMessageTree matricesChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ReducedRowEchelonFormCommandWithArg, I18n::Message::ReducedRowEchelonForm),
 };
 
-// TODO : Disable it if ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())
+// TODO : Disable it if ExamModeConfiguration::vectorsAreForbidden()
 constexpr ToolboxMessageTree vectorsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DotCommandWithArg, I18n::Message::Dot),
   ToolboxMessageTree::Leaf(I18n::Message::CrossCommandWithArg, I18n::Message::Cross),
@@ -478,7 +478,7 @@ constexpr ToolboxMessageTree listsChildren[] = {
 constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
   ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
-  // TODO : Disable it if ExamModeConfiguration::basedLogarithmIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())
+  // TODO : Disable it if ExamModeConfiguration::basedLogarithmIsForbidden()
   ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
   ToolboxMessageTree::Node(I18n::Message::Calculus, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),

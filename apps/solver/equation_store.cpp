@@ -312,7 +312,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
       /* Cheat: declare exact and approximate solutions to be identical in when
        * the exam mode forbids this exact solution to display only the
        * approximate solutions. */
-      m_exactSolutionIdentity[solutionIndex] = ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode(), exactSolutions[i]) || strcmp(exactBuffer, approximateBuffer) == 0;
+      m_exactSolutionIdentity[solutionIndex] = ExamModeConfiguration::exactExpressionIsForbidden(exactSolutions[i]) || strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
         m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
       }

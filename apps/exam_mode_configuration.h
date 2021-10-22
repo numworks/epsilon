@@ -18,15 +18,15 @@ I18n::Message examModeActivationWarningMessage(GlobalPreferences::ExamMode mode,
 
 // Exam mode behaviour
 KDColor examModeColor(GlobalPreferences::ExamMode mode);
-bool appIsForbiddenInExamMode(I18n::Message appName, GlobalPreferences::ExamMode mode);
-bool exactExpressionIsForbidden(GlobalPreferences::ExamMode mode, Poincare::Expression e);
-bool additionalResultsAreForbidden(GlobalPreferences::ExamMode mode);
-bool inequalityGraphingIsForbidden(GlobalPreferences::ExamMode mode);
-bool implicitPlotsAreForbidden(GlobalPreferences::ExamMode mode);
-bool statsDiagnosticsAreForbidden(GlobalPreferences::ExamMode mode);
-bool vectorsAreForbidden(GlobalPreferences::ExamMode mode);
-bool basedLogarithmIsForbidden(GlobalPreferences::ExamMode mode);
-bool sumIsForbidden(GlobalPreferences::ExamMode mode);
+bool appIsForbidden(I18n::Message appName);
+bool exactExpressionIsForbidden(Poincare::Expression e);
+bool additionalResultsAreForbidden();
+bool inequalityGraphingIsForbidden();
+bool implicitPlotsAreForbidden();
+bool statsDiagnosticsAreForbidden();
+bool vectorsAreForbidden();
+bool basedLogarithmIsForbidden();
+bool sumIsForbidden();
 
 }
 

@@ -2,6 +2,7 @@
 #include <apps/apps_container.h>
 #include <apps/constant.h>
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/comparison_operator.h>
 #include <cmath>
 #include <string.h>
 
@@ -89,7 +90,8 @@ bool TextFieldDelegateApp::isFinishingEvent(Ion::Events::Event event) {
 }
 
 bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
-  return !(exp.isUninitialized() || exp.type() == ExpressionNode::Type::Store || exp.type() == ExpressionNode::Type::Equal);
+  // Most TextFieldDelegateApps shouldn't accept Store or ComparisonOperators.
+  return !(exp.isUninitialized() || exp.type() == ExpressionNode::Type::Store || ComparisonOperator::IsComparisonOperatorType(exp.type()));
 }
 
 bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression, bool replaceAns, Expression ansExpression, Context * context) {

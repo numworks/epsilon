@@ -67,4 +67,10 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
   return false;
 }
 
+bool ExpressionFieldDelegateApp::isAcceptableExpression(const Expression exp) {
+  /* Override TextFieldDelegateApp because most ExpressionFieldDelegateApp
+   * accept comparison operatoras. They should also be serializeable. */
+  return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store && TextFieldDelegateApp::ExpressionCanBeSerialized(exp, false, Poincare::Expression(), localContext());
+}
+
 }

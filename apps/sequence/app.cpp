@@ -2,6 +2,7 @@
 #include "../apps_container.h"
 #include "sequence_icon.h"
 #include "../shared/global_context.h"
+#include <poincare/comparison_operator.h>
 
 using namespace Poincare;
 using namespace Escher;
@@ -44,6 +45,12 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 void App::Snapshot::tidy() {
   m_graphRange.setDelegate(nullptr);
   functionStore()->tidy();
+}
+
+bool App::isAcceptableExpression(const Poincare::Expression exp) {
+  /* Complete ExpressionFieldDelegateApp acceptable conditions by not accepting
+   * any OperatorType. */
+  return ExpressionFieldDelegateApp::isAcceptableExpression(exp) && !ComparisonOperator::IsComparisonOperatorType(exp.type());
 }
 
 App::App(Snapshot * snapshot) :

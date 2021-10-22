@@ -71,7 +71,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     int appIndex = selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1;
     if (appIndex < container->numberOfBuiltinApps()) {
       ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1));
-      if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->name(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+      if (ExamModeConfiguration::appIsForbidden(selectedSnapshot->descriptor()->name())) {
         App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
       } else {
         container->switchToBuiltinApp(selectedSnapshot);

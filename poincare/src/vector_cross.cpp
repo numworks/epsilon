@@ -1,5 +1,4 @@
 #include <apps/exam_mode_configuration.h>
-#include <apps/global_preferences.h>
 #include <poincare/vector_cross.h>
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
@@ -28,7 +27,7 @@ int VectorCrossNode::serialize(char * buffer, int bufferSize, Preferences::Print
 
 template<typename T>
 Evaluation<T> VectorCrossNode::templatedApproximate(ApproximationContext approximationContext) const {
-  if (ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+  if (ExamModeConfiguration::vectorsAreForbidden()) {
     return Complex<T>::Undefined();
   }
   Evaluation<T> input0 = childAtIndex(0)->approximate(T(), approximationContext);
@@ -44,7 +43,7 @@ Expression VectorCross::shallowReduce(ExpressionNode::ReductionContext reduction
       return e;
     }
   }
-  if (ExamModeConfiguration::vectorsAreForbidden(GlobalPreferences::sharedGlobalPreferences()->examMode())) {
+  if (ExamModeConfiguration::vectorsAreForbidden()) {
     return replaceWithUndefinedInPlace();
   }
   Expression c0 = childAtIndex(0);

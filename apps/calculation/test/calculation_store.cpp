@@ -158,7 +158,7 @@ QUIZ_CASE(calculation_ans) {
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 
   GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Dutch);
-  assert(ExamModeConfiguration::exactExpressionIsForbidden(GlobalPreferences::ExamMode::Dutch, SquareRoot::Builder(Rational::Builder(2))));
+  assert(ExamModeConfiguration::exactExpressionIsForbidden(SquareRoot::Builder(Rational::Builder(2))));
 
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 

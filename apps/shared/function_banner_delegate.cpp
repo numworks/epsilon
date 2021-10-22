@@ -15,7 +15,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);
   bannerView()->abscissaSymbol()->setText(buffer);
 
-  numberOfChar = function->printValue(0, cursor->t(), cursor->x(),cursor->y(), buffer, k_textBufferSize, numberOfSignificantDigits(), context);
+  numberOfChar = function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer, k_textBufferSize, numberOfSignificantDigits(), context, true);
 
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = '\0';
@@ -24,7 +24,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   numberOfChar = function->nameWithArgument(buffer, k_textBufferSize);
   assert(numberOfChar <= k_textBufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, "=", k_textBufferSize-numberOfChar);
-  numberOfChar += function->printValue(1, cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, k_textBufferSize-numberOfChar, numberOfSignificantDigits(), context);
+  numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, k_textBufferSize-numberOfChar, numberOfSignificantDigits(), context, false);
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = '\0';
   bannerView()->ordinateView()->setText(buffer);

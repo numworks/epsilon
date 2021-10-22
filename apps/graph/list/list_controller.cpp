@@ -26,10 +26,6 @@ ListController::ListController(Responder * parentResponder, ButtonRowController 
 
 /* TableViewDataSource */
 
-KDCoordinate ListController::cellWidth() {
-  return selectableTableView()->bounds().width();
-}
-
 int ListController::typeAtIndex(int index) {
   if (isAddEmptyRow(index)) {
     return k_addNewModelType;
@@ -65,10 +61,10 @@ const char * ListController::title() {
 bool layoutRepresentsAnEquation(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
-      constexpr size_t numberOfSymbols = 5;
-      CodePoint symbols[numberOfSymbols] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
-      for (size_t i = 0; i < numberOfSymbols; i++) {
-        if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == symbols[i]) {
+      CodePoint k_symbols[] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
+      constexpr size_t k_numberOfSymbols = sizeof(k_symbols)/sizeof(CodePoint);
+      for (size_t i = 0; i < k_numberOfSymbols; i++) {
+        if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == k_symbols[i]) {
           return true;
         }
       }
@@ -78,8 +74,9 @@ bool layoutRepresentsAnEquation(Poincare::Layout l) {
 }
 
 // Fills buffer with a default polar function equation, such as "f(θ)="
-void polarDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController) {
-  int length = modelsParameterController->defaultName(buffer, bufferSize - 6);
+void fillWithPolarDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController) {
+  constexpr size_t k_polarParamLength = sizeof("(θ)=") - 1;
+  int length = modelsParameterController->defaultName(buffer, bufferSize - k_polarParamLength);
   buffer[length++] = '(';
   length += UTF8Decoder::CodePointToChars(UCodePointGreekSmallLetterTheta, buffer + length, bufferSize - length);
   assert(bufferSize >= length + 3);
@@ -105,9 +102,9 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
       layoutField->putCursorLeftOfLayout();
       if (layoutRepresentsPolarFunction(layoutField->layout())) {
         // Insert "f(θ)=" or, if "f" is taken, another default function name
-        constexpr int bufferSize = 10;
-        char buffer[bufferSize];
-        polarDefaultFunctionEquation(buffer, bufferSize, &m_modelsParameterController);
+        constexpr size_t k_bufferSize = sizeof("f99(θ)=");
+        char buffer[k_bufferSize];
+        fillWithPolarDefaultFunctionEquation(buffer, k_bufferSize, &m_modelsParameterController);
         layoutField->handleEventWithText(buffer);
       } else {
         // Insert "y="
@@ -121,10 +118,10 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
 /* TextFieldDelegate */
 
 bool textRepresentsAnEquation(const char * text) {
-  constexpr size_t numberOfSymbols = 5;
-  CodePoint symbols[numberOfSymbols] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
-  for (size_t i = 0; i < numberOfSymbols; i++) {
-    if (UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, symbols[i]), symbols[i])) {
+  CodePoint k_symbols[] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
+  constexpr size_t k_numberOfSymbols = sizeof(k_symbols)/sizeof(CodePoint);
+  for (size_t i = 0; i < k_numberOfSymbols; i++) {
+    if (UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, k_symbols[i]), k_symbols[i])) {
       return true;
     }
   }
@@ -145,7 +142,7 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
         // Insert "f(θ)=" or, if "f" is taken, another default function name
         constexpr int bufferSize = 10;
         char buffer[bufferSize];
-        polarDefaultFunctionEquation(buffer, bufferSize, &m_modelsParameterController);
+        fillWithPolarDefaultFunctionEquation(buffer, bufferSize, &m_modelsParameterController);
         textField->handleEventWithText(buffer);
       } else {
         // Insert "y="

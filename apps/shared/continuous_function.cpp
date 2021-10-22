@@ -52,6 +52,17 @@ I18n::Message ContinuousFunction::MessageForSymbolType(SymbolType symbolType) {
   }
 }
 
+ContinuousFunction::AreaType ContinuousFunction::areaType() const {
+  ExpressionNode::Type eqSymbol = equationSymbol();
+  if (eqSymbol == ExpressionNode::Type::Inferior || eqSymbol == ExpressionNode::Type::InferiorEqual) {
+    return AreaType::Inferior;
+  }
+  if (eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual) {
+    return AreaType::Superior;
+  }
+  return AreaType::None;
+}
+
 ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
   PlotType functionPlotType = plotType();
   return functionPlotType >= PlotType::Cartesian ? SymbolType::X : static_cast<SymbolType>(functionPlotType);
@@ -60,7 +71,7 @@ ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
 I18n::Message ContinuousFunction::MessageForPlotType(PlotType plotType) {
   const size_t plotTypeIndex = static_cast<size_t>(plotType);
   assert(plotTypeIndex < k_numberOfPlotTypes);
-  constexpr I18n::Message category[k_numberOfPlotTypes] = {
+  constexpr I18n::Message k_categories[k_numberOfPlotTypes] = {
       I18n::Message::PolarType,          I18n::Message::ParametricType,
       I18n::Message::CartesianType,      I18n::Message::LineType,
       I18n::Message::HorizontalLineType, I18n::Message::VerticalLineType,
@@ -69,7 +80,7 @@ I18n::Message ContinuousFunction::MessageForPlotType(PlotType plotType) {
       I18n::Message::HyperbolaType,      I18n::Message::OtherType,
       I18n::Message::UndefinedType,      I18n::Message::UnhandledType,
   };
-  return category[plotTypeIndex];
+  return k_categories[plotTypeIndex];
 }
 
 CodePoint ContinuousFunction::symbol() const {
@@ -90,8 +101,8 @@ int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
   return strlcpy(buffer, k_ordinateName, bufferSize);
 }
 
-int ContinuousFunction::printValue(int index, double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context) {
-  if (index == 0) {
+int ContinuousFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context, bool symbolValue) {
+  if (symbolValue) {
     /* With Vertical curves, cursorT != cursorX .
      * We need the value for symbol=... */
     return PoincareHelpers::ConvertFloatToText<double>(isAlongX() ? cursorX : cursorT, buffer, bufferSize, precision);
@@ -121,16 +132,6 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
 bool ContinuousFunction::drawDottedCurve() const {
   ExpressionNode::Type eqSymbol = equationSymbol();
   return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::Inferior;
-}
-
-bool ContinuousFunction::drawInferiorArea() const {
-  ExpressionNode::Type eqSymbol = equationSymbol();
-  return eqSymbol == ExpressionNode::Type::Inferior || eqSymbol == ExpressionNode::Type::InferiorEqual;
-}
-
-bool ContinuousFunction::drawSuperiorArea() const {
-  ExpressionNode::Type eqSymbol = equationSymbol();
-  return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual;
 }
 
 bool ContinuousFunction::isNamed() const {
@@ -766,10 +767,11 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
       return error;
     }
     // Rename record with a hidden record name.
-    char name[4];
+    constexpr size_t k_maxDefaultSize = sizeof("f99");
+    char name[k_maxDefaultSize];
     const char * const extensions[1] = { Ion::Storage::funcExtension };
     name[0] = k_unnamedRecordFirstChar;
-    Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(name, 1, 4, extensions, 1, 99);
+    Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(name, 1, k_maxDefaultSize, extensions, 1, 99);
     error = record->setBaseNameWithExtension(name, Ion::Storage::funcExtension);
   }
   return error;

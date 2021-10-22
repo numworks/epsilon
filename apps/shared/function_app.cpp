@@ -32,9 +32,4 @@ void FunctionApp::willBecomeInactive() {
   ::App::willBecomeInactive();
 }
 
-
-bool FunctionApp::isAcceptableExpression(const Expression exp) {
- return TextFieldDelegateApp::isAcceptableExpression(exp) && ExpressionCanBeSerialized(exp, false, Expression(), localContext());
-}
-
 }

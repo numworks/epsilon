@@ -161,11 +161,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     if (field->isEditing()) {
       return;
     }
-    constexpr int bufferSize = Constants::k_shortBufferSize;
+    constexpr int bufferSize = Constants::k_largeBufferSize;
     char buffer[bufferSize];
     // FIXME: Leo has not decided yet if we should use the prefered mode instead of always using
     // scientific mode
-    defaultConvertFloatToText(m_calculation->parameterAtIndex(i - 1), buffer, bufferSize);
+    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(m_calculation->parameterAtIndex(i - 1), buffer, bufferSize, Poincare::Preferences::LargeNumberOfSignificantDigits, Poincare::Preferences::PrintFloatMode::Decimal);
     field->setText(buffer);
   }
 }

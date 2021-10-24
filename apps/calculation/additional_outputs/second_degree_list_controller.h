@@ -14,6 +14,7 @@ public:
   void setExpression(Poincare::Expression e) override;
 
 private:
+  Poincare::Expression getOppositeIfExists(Poincare::Expression e, Poincare::ExpressionNode::ReductionContext * reductionContext);
   I18n::Message messageAtIndex(int index) override;
   int m_numberOfSolutions;
 };

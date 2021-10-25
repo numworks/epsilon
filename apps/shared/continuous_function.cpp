@@ -203,10 +203,10 @@ double ContinuousFunction::approximateDerivative(double x, Context * context, in
   }
   // Derivative is simplified once and for all
   Expression derivate = expressionDerivateReduced(context);
-  if (hasTwoCurves()) {
+  if (numberOfSubCurves() > 1) {
       assert(derivate.type() == ExpressionNode::Type::Dependency);
       derivate = derivate.childAtIndex(0);
-      assert(derivate.type() == ExpressionNode::Type::Matrix);
+      assert(derivate.type() == ExpressionNode::Type::Matrix && derivate.numberOfChildren() > subCurveIndex);
       derivate = derivate.childAtIndex(subCurveIndex);
   } else {
     assert(subCurveIndex == 0);
@@ -235,7 +235,7 @@ bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
 void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Context * context) const {
   if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
-    assert(!hasTwoCurves());
+    assert(numberOfSubCurves() == 1);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
     *yMinIntrinsic = FLT_MAX;
     *yMaxIntrinsic = -FLT_MAX;
@@ -264,7 +264,8 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
   };
   Zoom::InterestingRangesForDisplay(evaluation, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, std::max(tMin(), xMinLimit), std::min(tMax(), xMaxLimit), context, this);
 
-  if (hasTwoCurves()) {
+  if (numberOfSubCurves() >= 2) {
+    assert(numberOfSubCurves() == 2);
     // Temporarily store previous results
     float xMinTemp = *xMin;
     float xMaxTemp = *xMax;
@@ -291,7 +292,7 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
 void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context, bool optimizeRange) const {
   if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
-    assert(!hasTwoCurves());
+    assert(numberOfSubCurves() == 1);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
     return;
   }
@@ -319,9 +320,10 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
    * with multiple curves. For that, RangeWithRatioForDisplay should be changed
    * to handle a second evaluation. In the meantime, all ContinuousFunctions
    * having two curves are displayed orthonormal. */
-  if (yMaxForced - yMinForced <= ratio * (xMax - xMin) && !hasTwoCurves()) {
+  if (yMaxForced - yMinForced <= ratio * (xMax - xMin) && numberOfSubCurves() == 1) {
     Zoom::RangeWithRatioForDisplay(evaluation, ratio, xMin, xMax, yMinForced, yMaxForced, yMin, yMax, context, this);
-    // if (hasTwoCurves()) {
+    // if (numberOfSubCurves() >= 2) {
+    //   assert(numberOfSubCurves() == 2);
     //   float yMinTemp = *yMin;
     //   float yMaxTemp = *yMax;
     //   *yMin = NAN;
@@ -342,7 +344,8 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
 
   Zoom::RefinedYRangeForDisplay(evaluation, xMin, xMax, yMin, yMax, context, this);
 
-  if (hasTwoCurves()) {
+  if (numberOfSubCurves() >= 2) {
+    assert(numberOfSubCurves() == 2);
     float yMinTemp = *yMin;
     float yMaxTemp = *yMax;
     *yMin = NAN;
@@ -554,7 +557,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
   Expression e = expressionReduced(context);
   PlotType type = plotType();
   if (type != PlotType::Parametric) {
-    if (hasTwoCurves()) {
+    if (numberOfSubCurves() >= 2) {
       assert(e.numberOfChildren() > subCurveIndex);
       return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(subCurveIndex), k_unknownName, t, context));
     } else {
@@ -584,7 +587,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
   if (m_expression.isUninitialized()) {
     // Retrieve the expression equation's expression.
     m_expression = expressionEquation(record, context);
-    m_hasTwoCurves = false;
+    m_numberOfSubCurves = 1;
     if (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar) {
       /* Function isn't named, m_expression currently is an expression in y such
        * as m_expression = 0. We extract the solution by solving in y. */
@@ -621,7 +624,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
           if (solutions <= 1) {
             m_expression = root1;
           } else {
-            m_hasTwoCurves = true;
+            m_numberOfSubCurves++;
             // Curves are stored in a 2x1 matrix
             Matrix newExpr = Matrix::Builder();
             // Roots are ordered so that the first curve is above the second
@@ -722,13 +725,14 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
   // m_expressionDerivate might already be memmoized.
   if (m_expressionDerivate.isUninitialized()) {
     Expression expression = expressionReduced(record, context).clone();
-    if (hasTwoCurves()) {
+    if (numberOfSubCurves() > 1) {
       // Derive each curve individually, return a matrix of each derivatives
       Matrix newExpr = Matrix::Builder();
       assert(expression.type() == ExpressionNode::Type::Matrix);
-      newExpr.addChildAtIndexInPlace(Derivative::Builder(expression.childAtIndex(1), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown)), 0, 0);
-      newExpr.addChildAtIndexInPlace(Derivative::Builder(expression.childAtIndex(0), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown)), 1, 1);
-      newExpr.setDimensions(2, 1);
+      for (size_t i = 0; i < numberOfSubCurves(); i++) {
+        newExpr.addChildAtIndexInPlace(Derivative::Builder(expression.childAtIndex(i), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown)), i, i);
+      }
+      newExpr.setDimensions(numberOfSubCurves(), 1);
       m_expressionDerivate = newExpr;
     } else {
       m_expressionDerivate = Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
@@ -817,7 +821,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
 }
 
 void ContinuousFunction::Model::tidy() const {
-  m_hasTwoCurves = false;
+  m_numberOfSubCurves = 1;
   m_equationSymbol = ExpressionNode::Type::Equal;
   m_plotType = PlotType::Undefined;
   m_expressionDerivate = Expression();

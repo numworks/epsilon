@@ -37,7 +37,7 @@ public:
   bool isActive() const;
   KDColor color() const;
   void setActive(bool active);
-  virtual bool hasTwoCurves() const { return false; }
+  virtual int numberOfSubCurves() const { return 1; }
 
   // Definition Interval
   virtual float tMin() const { return NAN; }

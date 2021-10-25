@@ -81,18 +81,17 @@ int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedC
   if (!functionStore()->displaysNonCartesianFunctions(&nbOfActiveFunctions)) {
     return FunctionGraphController::nextCurveIndexVertically(goingUp, currentSelectedCurve, context, currentSubCurveIndex, nextSubCurveIndex);
   }
-  // By default, select first sub curve
-  *nextSubCurveIndex = 0;
-  if (!goingUp && currentSubCurveIndex == 0) {
-    // Check for sub curve in current function
+  // Handle for sub curve in current function
+  if (!goingUp) {
     ExpiringPointer<ContinuousFunction> currentF = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(currentSelectedCurve));
-    if (currentF->hasTwoCurves()) {
-      // Switch to second sub curve
-      *nextSubCurveIndex = 1;
+    if (currentF->numberOfSubCurves() > currentSubCurveIndex + 1) {
+      // Switch to next sub curve
+      *nextSubCurveIndex = currentSubCurveIndex + 1;
       return currentSelectedCurve;
     }
-  } else if (goingUp && currentSubCurveIndex == 1) {
-    // Switch to first sub curve
+  } else if (goingUp && currentSubCurveIndex > 0) {
+    // Switch to previous sub curve
+    *nextSubCurveIndex = currentSubCurveIndex - 1;
     return currentSelectedCurve;
   }
   // Go to the next function
@@ -101,12 +100,12 @@ int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedC
     return -1;
   }
   if (goingUp) {
-    // Check for sub curve in next function when going up
+    // Select last sub curve in next function when going up
     ExpiringPointer<ContinuousFunction> nextF = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(nextActiveFunctionIndex));
-    if (nextF->hasTwoCurves()) {
-      // Select second sub curve
-      *nextSubCurveIndex = 1;
-    }
+    *nextSubCurveIndex = nextF->numberOfSubCurves() - 1;
+  } else {
+    // Select first sub curve in next function
+    *nextSubCurveIndex = 0;
   }
   return nextActiveFunctionIndex;
 }
@@ -153,7 +152,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
         double potentialNextTMax = f->tMax();
         double potentialNextT = std::max(potentialNextTMin, std::min(potentialNextTMax, t));
         // If a function has two curves
-        for (int subCurveIndex = 0; subCurveIndex < f->numberOfCurves(); subCurveIndex++) {
+        for (int subCurveIndex = 0; subCurveIndex < f->numberOfSubCurves(); subCurveIndex++) {
           Coordinate2D<double> xy = f->evaluateXYAtParameter(potentialNextT, App::app()->localContext(), subCurveIndex);
           if (currentXDelta < xDelta || std::abs(xy.x2() - m_cursor->y()) < std::abs(nextY - m_cursor->y())) {
             nextCurveIndex = i;

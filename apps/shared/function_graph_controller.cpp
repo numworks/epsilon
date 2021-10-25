@@ -165,16 +165,12 @@ uint32_t FunctionGraphController::rangeVersion() {
   return interactiveCurveViewRange()->rangeChecksum();
 }
 
-bool FunctionGraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
-  return newIndex != currentIndex;
-}
-
 Coordinate2D<double> FunctionGraphController::xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex) const {
   return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->evaluateXYAtParameter(t, context, subCurveIndex);
 }
 
-bool FunctionGraphController::hasTwoSubCurves(int curveIndex) const {
-  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->hasTwoCurves();
+int FunctionGraphController::numberOfSubCurves(int curveIndex) const {
+  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->numberOfSubCurves();
 }
 
 int FunctionGraphController::numberOfCurves() const {

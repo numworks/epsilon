@@ -10,6 +10,8 @@ using namespace Escher;
 
 namespace Graph {
 
+const CodePoint ListController::k_equationSymbols[];
+
 ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
   Shared::InputEventHandlerDelegate(),
@@ -57,24 +59,8 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::FunctionTab);
 }
 
-// Return true if given layout contains a comparison operator
-bool layoutRepresentsAnEquation(Poincare::Layout l) {
-  Poincare::Layout match = l.recursivelyMatches(
-      [](Poincare::Layout layout) {
-      CodePoint k_symbols[] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
-      constexpr size_t k_numberOfSymbols = sizeof(k_symbols)/sizeof(CodePoint);
-      for (size_t i = 0; i < k_numberOfSymbols; i++) {
-        if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == k_symbols[i]) {
-          return true;
-        }
-      }
-      return false;
-    });
-  return !match.isUninitialized();
-}
-
 // Fills buffer with a default polar function equation, such as "f(θ)="
-void fillWithPolarDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController) {
+void ListController::fillWithPolarDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController) const {
   constexpr size_t k_polarParamLength = sizeof("(θ)=") - 1;
   int length = modelsParameterController->defaultName(buffer, bufferSize - k_polarParamLength);
   buffer[length++] = '(';
@@ -85,8 +71,23 @@ void fillWithPolarDefaultFunctionEquation(char * buffer, size_t bufferSize, Func
   buffer[length++] = 0;
 }
 
+// Return true if given layout contains a comparison operator
+bool ListController::layoutRepresentsAnEquation(Poincare::Layout l) const {
+  Poincare::Layout match = l.recursivelyMatches(
+      [](Poincare::Layout layout) {
+      constexpr size_t k_numberOfSymbols = sizeof(k_equationSymbols)/sizeof(CodePoint);
+      for (size_t i = 0; i < k_numberOfSymbols; i++) {
+        if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == k_equationSymbols[i]) {
+          return true;
+        }
+      }
+      return false;
+    });
+  return !match.isUninitialized();
+}
+
 // Return true if given layout contains θ
-bool layoutRepresentsPolarFunction(Poincare::Layout l) {
+bool ListController::layoutRepresentsPolarFunction(Poincare::Layout l) const {
   Poincare::Layout match = l.recursivelyMatches(
     [](Poincare::Layout layout) {
       return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == UCodePointGreekSmallLetterTheta;
@@ -117,18 +118,17 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
 
 /* TextFieldDelegate */
 
-bool textRepresentsAnEquation(const char * text) {
-  CodePoint k_symbols[] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
-  constexpr size_t k_numberOfSymbols = sizeof(k_symbols)/sizeof(CodePoint);
+bool ListController::textRepresentsAnEquation(const char * text) const {
+  constexpr size_t k_numberOfSymbols = sizeof(k_equationSymbols)/sizeof(CodePoint);
   for (size_t i = 0; i < k_numberOfSymbols; i++) {
-    if (UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, k_symbols[i]), k_symbols[i])) {
+    if (UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, k_equationSymbols[i]), k_equationSymbols[i])) {
       return true;
     }
   }
   return false;
 }
 
-bool textRepresentsPolarFunction(const char * text) {
+bool ListController::textRepresentsPolarFunction(const char * text) const {
   return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, UCodePointGreekSmallLetterTheta), UCodePointGreekSmallLetterTheta);
 }
 

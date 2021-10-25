@@ -82,6 +82,8 @@ int Addition::getPolynomialCoefficients(Context * context, const char * symbolNa
       static_cast<Addition&>(coefficients[j]).addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());
     }
   }
+  // No coefficient should be left as an empty addition.
+  assert(coefficients[deg].numberOfChildren() > 0);
   return deg;
 }
 

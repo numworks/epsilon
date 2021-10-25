@@ -9,7 +9,6 @@
 namespace ExamModeConfiguration {
 
 // Settings menu
-extern const Shared::SettingsMessageTree s_modelExamChildren[2];
 int numberOfAvailableExamMode();
 GlobalPreferences::ExamMode examModeAtIndex(int index);
 I18n::Message examModeActivationMessage(int index);

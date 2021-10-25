@@ -12,14 +12,9 @@ DynamicCellsDataSource<T,N>::~DynamicCellsDataSource() {
 }
 
 template <typename T, int N>
-void DynamicCellsDataSource<T,N>::createCells() {
+void DynamicCellsDataSource<T, N>::createCells() {
   if (m_cells == nullptr) {
-    static_assert(sizeof(T) * N <= Probability::App::k_bufferSize, "Probability::App::m_buffer is not large enough");
-    m_cells = new (Probability::App::app()->buffer()) T[N];
-    Probability::App::app()->setBufferDestructor(this);
-    for (int i = 0; i < N; i++) {
-      m_delegate->initCell(&m_cells[i], i);
-    }
+    createCellsWithOffset(0);
     // TODO: reloadData(setFirstResponder = false, setSelection = false),
     // selSelection argument was made especially for this local use. Should we
     // use 'm_delegate->tableView()->deselectTable();' and ensure that the
@@ -31,22 +26,40 @@ void DynamicCellsDataSource<T,N>::createCells() {
 }
 
 template <typename T, int N>
-void DynamicCellsDataSource<T,N>::destroyCells() {
-  /* We manually call T destructor since we cannot use 'delete' due to the
-   * placement new.
-   * Note Bene: we qualify the destructor call (by prefixing it by its class
-   * name) to avoid a compiler warning: T is not a final class and has virtual
-   * methods but no virtual destructor; the compiler might think we forgot some
-   * virtualization here but we didn't - we don't want to call a derived
-   * destructor of children T class. */
+void DynamicCellsDataSource<T,N>::createCellsWithOffset(size_t offset) {
+  assert(m_cells == nullptr);
+  static_assert(sizeof(T) * N <= Probability::App::k_bufferSize, "Probability::App::m_buffer is not large enough");
+  assert(offset + sizeof(T) * N <= Probability::App::k_bufferSize);
+  if (offset == 0) {
+    /* The buffer gets entirely clean only when creating cells from the
+     * beginning of the buffer. */
+    Probability::App::app()->cleanBuffer(this);
+  }
+  m_cells = new (Probability::App::app()->buffer(offset)) T[N];
   for (int i = 0; i < N; i++) {
-    // Make sure not to keep the first responder pointing on a destroyed cell
-    Responder * cellResponder = m_cells[i].responder();
-    Responder * appFirstResponder = App::app()->firstResponder();
-    if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
-      App::app()->setFirstResponder(cellResponder->parentResponder());
+    m_delegate->initCell(T(), &m_cells[i], i);
+  }
+}
+
+template <typename T, int N>
+void DynamicCellsDataSource<T,N>::destroyCells() {
+  if (m_cells) {
+    /* We manually call T destructor since we cannot use 'delete' due to the
+     * placement new.
+     * Note Bene: we qualify the destructor call (by prefixing it by its class
+     * name) to avoid a compiler warning: T is not a final class and has virtual
+     * methods but no virtual destructor; the compiler might think we forgot some
+     * virtualization here but we didn't - we don't want to call a derived
+     * destructor of children T class. */
+    for (int i = 0; i < N; i++) {
+      // Make sure not to keep the first responder pointing on a destroyed cell
+      Responder * cellResponder = m_cells[i].responder();
+      Responder * appFirstResponder = App::app()->firstResponder();
+      if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
+        App::app()->setFirstResponder(cellResponder->parentResponder());
+      }
+      m_cells[i].T::~T();
     }
-    m_cells[i].T::~T();
   }
   m_cells = nullptr;
 }
@@ -57,11 +70,15 @@ Escher::HighlightCell * DynamicCellsDataSource<T,N>::cell(int i) {
   return &m_cells[i];
 }
 
+static_assert(k_homogeneityTableNumberOfReusableHeaderCells == HomogeneityTableDataSource::k_numberOfReusableColumns + HomogeneityTableDataSource::k_numberOfReusableRows, "k_homogeneityTableNumberOfReusableHeaderCells should be updated with HomogeneityTableDataSource::k_numberOfReusableColumns and HomogeneityTableDataSource::k_numberOfReusableRows");
+static_assert(k_homogeneityTableNumberOfReusableInnerCells == HomogeneityTableDataSource::k_numberOfReusableCells, "k_homogeneityTableNumberOfReusableHeaderCells should be updated with HomogeneityTableDataSource::k_numberOfReusableCells");
 static_assert(k_inputGoodnessTableNumberOfReusableCells == InputGoodnessTableView::k_numberOfReusableCells, "k_inputGoodnessTableNumberOfReusableCells should be updated with InputGoodnessTableView::k_numberOfReusableCells");
 static_assert(k_inputControllerNumberOfReusableCells == InputController::k_numberOfReusableCells, "k_inputControllerNumberOfReusableCells should be updated with InputController::k_numberOfReusableCells");
 static_assert(k_resultDataSourceNumberOfReusableCells == ResultsDataSource::k_numberOfReusableCells, "k_resultDataSourceNumberOfReusableCells should be updated with ResultsDataSource::k_numberOfReusableCells");
-template class DynamicCellsDataSource<Escher::EvenOddBufferTextCell, k_maxNumberOfEvenOddBufferTextCells>;
-template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_maxNumberOfEvenOddEditableTextCells>;
+template class DynamicCellsDataSource<Escher::EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>;
+template class DynamicCellsDataSource<Escher::EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>;
+template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>;
+template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells>;
 template class DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>;
 template class DynamicCellsDataSource<ExpressionCellWithBufferWithMessage, k_maxNumberOfExpressionCellsWithBufferWithMessage>;
 

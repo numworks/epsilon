@@ -3,13 +3,13 @@
 
 #include <escher/highlight_cell.h>
 #include <escher/selectable_table_view.h>
-#include "probability/abstract/homogeneity_data_source.h"
 #include "probability/helpers.h"
 
 namespace Probability {
 
 /* This DataSource allocated its cells in a external buffer provided by the app. */
 
+template <typename T>
 class DynamicCellsDataSourceDelegate;
 
 class DynamicCellsDataSourceDestructor {
@@ -19,27 +19,32 @@ public:
 
 template <typename T, int N>
 class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
+  /* Cells are created at in the App::buffer. If not overriden, the cells are
+   * created on the left-edge of the buffer. 'createCells' can be overriden to
+   * create different types of cells with a specific offset in the buffer using
+   * 'createCellsWithOffset'.   */
 public:
-  DynamicCellsDataSource(DynamicCellsDataSourceDelegate * delegate) : m_cells(nullptr), m_delegate(delegate) {}
+  DynamicCellsDataSource(DynamicCellsDataSourceDelegate<T> * delegate) : m_cells(nullptr), m_delegate(delegate) {}
   ~DynamicCellsDataSource();
   Escher::HighlightCell * cell(int i);
   void destroyCells() override;
 protected:
-  void createCells();
+  virtual void createCells();
+  void createCellsWithOffset(size_t offset);
   T * m_cells;
-private:
-  DynamicCellsDataSourceDelegate * m_delegate;
+  DynamicCellsDataSourceDelegate<T> * m_delegate;
 };
 
+template <typename T>
 class DynamicCellsDataSourceDelegate {
 public:
-  virtual void initCell(void * cell, int index) = 0;
+  virtual void initCell(T, void * cell, int index) {}
   virtual Escher::SelectableTableView * tableView() = 0;
 };
 
-constexpr int k_maxNumberOfEvenOddBufferTextCells = HomogeneityTableDataSource::k_numberOfReusableCells;
+constexpr int k_homogeneityTableNumberOfReusableHeaderCells = 6 + 12; // static assertion in implementation
+constexpr int k_homogeneityTableNumberOfReusableInnerCells = 72; // static assertion in implementation
 constexpr int k_inputGoodnessTableNumberOfReusableCells = 24; // static assertion in implementation
-constexpr int k_maxNumberOfEvenOddEditableTextCells = constexpr_max(HomogeneityTableDataSource::k_numberOfReusableCells, k_inputGoodnessTableNumberOfReusableCells);
 constexpr int k_inputControllerNumberOfReusableCells = 8;
 constexpr int k_maxNumberOfExpressionCellsWithEditableTextWithMessage = k_inputControllerNumberOfReusableCells;
 constexpr int k_resultDataSourceNumberOfReusableCells = 5;

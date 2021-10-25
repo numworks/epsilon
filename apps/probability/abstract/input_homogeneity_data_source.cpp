@@ -10,15 +10,28 @@ namespace Probability {
 constexpr int InputHomogeneityDataSource::k_initialNumberOfRows;
 constexpr int InputHomogeneityDataSource::k_initialNumberOfColumns;
 
-InputHomogeneityDataSource::InputHomogeneityDataSource(
-    DynamicCellsDataSourceDelegate * dynamicTableViewDataSourceDelegate,
-    HomogeneityStatistic * statistic,
-    DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate) :
-      DynamicCellsDataSource<EvenOddEditableTextCell, k_maxNumberOfEvenOddEditableTextCells>(dynamicTableViewDataSourceDelegate),
-      DynamicSizeTableViewDataSource(dataSourceDelegate),
-      m_numberOfRows(k_initialNumberOfRows),
-      m_numberOfColumns(k_initialNumberOfColumns),
-      m_statistic(statistic) {
+InputHomogeneityDataSource::InputHomogeneityDataSource(Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicOuterTableViewDataSourceDelegate, DynamicCellsDataSourceDelegate<EvenOddEditableTextCell> * dynamicInnerTableViewDataSourceDelegate, DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate, HomogeneityStatistic * statistic) :
+  HomogeneityTableDataSource(tableDelegate, dynamicOuterTableViewDataSourceDelegate),
+  DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>(dynamicInnerTableViewDataSourceDelegate),
+  DynamicSizeTableViewDataSource(dataSourceDelegate),
+  m_numberOfRows(k_initialNumberOfRows),
+  m_numberOfColumns(k_initialNumberOfColumns),
+  m_statistic(statistic) {
+}
+
+void InputHomogeneityDataSource::createCells() {
+  // We could equivalently use DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>::m_cells
+  if (DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::m_cells == nullptr) {
+    DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::createCellsWithOffset(0);
+    DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>::createCellsWithOffset(k_homogeneityTableNumberOfReusableHeaderCells * sizeof(EvenOddBufferTextCell));
+    // We could equivalently use DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>::m_delegate
+    DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::m_delegate->tableView()->reloadData(false, false);
+  }
+}
+
+void InputHomogeneityDataSource::destroyCells() {
+  DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>::destroyCells();
+  DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
 }
 
 // TODO: factorize with InputGoodnessTableView
@@ -39,10 +52,7 @@ bool InputHomogeneityDataSource::recomputeDimensions() {
   return false;
 }
 
-void Probability::InputHomogeneityDataSource::willDisplayCellAtLocation(
-    Escher::HighlightCell * cell,
-    int column,
-    int row) {
+void Probability::InputHomogeneityDataSource::willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
   double p = m_statistic->parameterAtPosition(row, column);
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
   if (std::isnan(p)) {

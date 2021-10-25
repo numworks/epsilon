@@ -7,6 +7,7 @@
 #include <escher/table_view_data_source.h>
 
 #include "probability/abstract/chained_selectable_table_view_delegate.h"
+#include "probability/abstract/dynamic_cells_data_source.h"
 #include "probability/gui/bordered_table_view_data_source.h"
 #include "probability/gui/solid_color_cell.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
@@ -17,20 +18,12 @@ namespace Probability {
 
 /* This class wraps a TableViewDataSource by adding a Row & Column header around it.
  * Specifically meant for InputHomogeneity and HomogeneityResults. */
-class HomogeneityTableDataSource : public BorderedTableViewDataSource,
-                                   public SelectableTableViewDataSource,
-                                   public ChainedSelectableTableViewDelegate {
+class HomogeneityTableDataSource : public BorderedTableViewDataSource, public DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>, public SelectableTableViewDataSource, public ChainedSelectableTableViewDelegate {
 public:
-  HomogeneityTableDataSource(TableViewDataSource * contentTable,
-                             Escher::SelectableTableViewDelegate * tableDelegate,
-                             I18n::Message headerPrefix = I18n::Message::Group);
-  int numberOfRows() const override { return m_innerDataSource->numberOfRows() + 1; }
-  int numberOfColumns() const override { return m_innerDataSource->numberOfColumns() + 1; }
-  int reusableCellCount(int type) override {
-    return type == 0
-               ? m_innerDataSource->reusableCellCount(0) + numberOfColumns() + numberOfRows() - 1
-               : m_innerDataSource->reusableCellCount(type);
-  }
+  HomogeneityTableDataSource(Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicDataSourceDelegate);
+  int numberOfRows() const override { return innerNumberOfRows() + 1; }
+  int numberOfColumns() const override { return innerNumberOfColumns() + 1; }
+  int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
   HighlightCell * reusableCell(int i, int type) override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
@@ -61,19 +54,19 @@ public:
   constexpr static int k_numberOfReusableCells = k_numberOfReusableRows * k_numberOfReusableColumns;
 
 protected:
-  TableViewDataSource * m_innerDataSource;
+  virtual int innerNumberOfRows() const = 0;
+  virtual int innerNumberOfColumns() const = 0;
+  virtual void willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) = 0;
+  virtual Escher::HighlightCell * innerCell(int i) = 0;
 
 private:
-  constexpr static int k_typeOfRowHeader = 17;
-  constexpr static int k_typeOfColumnHeader = 18;
+  constexpr static int k_typeInnerCells = 17;
+  constexpr static int k_typeOfHeaderCells = 18;
   constexpr static int k_typeOfTopLeftCell = 19;
   constexpr static int k_headerTranslationBuffer = 20;
 
   I18n::Message m_headerPrefix;
-
   SolidColorCell m_topLeftCell;
-  EvenOddBufferTextCell m_rowHeader[k_maxNumberOfRows];
-  EvenOddBufferTextCell m_colHeader[k_maxNumberOfColumns];
 };
 
 }  // namespace Probability

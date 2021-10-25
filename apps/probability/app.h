@@ -67,19 +67,17 @@ public:
   Data::CategoricalType categoricalType() { return snapshot()->data()->categoricalType(); }
 
   // Buffer API
-  void * buffer();
-  void setBufferDestructor(DynamicCellsDataSourceDestructor * destructor) { m_bufferDestructor = destructor; }
-  static constexpr int k_bufferSize =
-    constexpr_max<size_t>(
-        sizeof(ExpressionCellWithBufferWithMessage) * k_maxNumberOfExpressionCellsWithBufferWithMessage,
-        constexpr_max<size_t>(
-          sizeof(ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage,
-          constexpr_max<size_t>(
-            sizeof(EvenOddBufferTextCell) * k_maxNumberOfEvenOddBufferTextCells,
-            sizeof(EvenOddEditableTextCell) * k_maxNumberOfEvenOddEditableTextCells
-            )
-          )
-        );
+  void * buffer(size_t offset = 0) { return m_buffer + offset; }
+  void cleanBuffer(DynamicCellsDataSourceDestructor * destructor);
+
+  static constexpr int k_dynamicCellsSizes[] = {
+    sizeof(ExpressionCellWithBufferWithMessage) * k_maxNumberOfExpressionCellsWithBufferWithMessage,
+    sizeof(ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage,
+    sizeof(EvenOddBufferTextCell) * (k_homogeneityTableNumberOfReusableHeaderCells + k_homogeneityTableNumberOfReusableInnerCells),
+    sizeof(EvenOddEditableTextCell) * k_homogeneityTableNumberOfReusableInnerCells + sizeof(EvenOddBufferTextCell) * k_homogeneityTableNumberOfReusableHeaderCells,
+    sizeof(EvenOddEditableTextCell) * k_inputGoodnessTableNumberOfReusableCells
+  };
+  static constexpr int k_bufferSize = arrayMax(k_dynamicCellsSizes);
 
   TELEMETRY_ID("Probability");
 

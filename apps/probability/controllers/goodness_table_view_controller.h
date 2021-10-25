@@ -9,7 +9,7 @@
 namespace Probability {
 
 /* Controls the InputGoodnessTableView */
-class GoodnessTableViewController : public TableViewController, public DynamicCellsDataSourceDelegate {
+class GoodnessTableViewController : public TableViewController, public DynamicCellsDataSourceDelegate<EvenOddEditableTextCell> {
 public:
   GoodnessTableViewController(Escher::Responder * parent,
                               GoodnessStatistic * statistic,
@@ -25,7 +25,7 @@ public:
   Escher::SelectableTableView * selectableTableView() override { return &m_inputTableView; }
   Escher::TableViewDataSource * tableViewDataSource() override { return &m_inputTableView; }
 
-  void initCell(void * cell, int index) override;
+  void initCell(EvenOddEditableTextCell, void * cell, int index) override;
   // TODO factorize with HomogeneityTableViewController in TableViewController
   void recomputeDimensions() override { m_inputTableView.recomputeNumberOfRows(); }
   Escher::SelectableTableView * tableView() override { return &m_inputTableView; }

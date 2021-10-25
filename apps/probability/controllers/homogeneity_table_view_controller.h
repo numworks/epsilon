@@ -8,8 +8,9 @@
 
 namespace Probability {
 
+// TODO: change name InputHomogeneityTableViewController
 // TODO: Factorize with EditableCellTableViewController?
-class HomogeneityTableViewController : public TableViewController, public DynamicCellsDataSourceDelegate {
+class HomogeneityTableViewController : public TableViewController, DynamicCellsDataSourceDelegate<EvenOddEditableTextCell>, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> {
 public:
   HomogeneityTableViewController(Escher::Responder * parent,
                                  HomogeneityStatistic * statistic,
@@ -25,16 +26,16 @@ public:
   Escher::SelectableTableView * selectableTableView() override { return &m_table; }
   Escher::TableViewDataSource * tableViewDataSource() override { return &m_tableData; }
 
-  void initCell(void * cell, int index) override;
+  void initCell(EvenOddBufferTextCell, void * cell, int index) override;
+  void initCell(EvenOddEditableTextCell, void * cell, int index) override;
   // TODO factorize with GoodnessTableViewController in TableViewController
-  void recomputeDimensions() override { m_innerTableData.recomputeDimensions(); }
+  void recomputeDimensions() override { m_tableData.recomputeDimensions(); }
   Escher::SelectableTableView * tableView() override { return &m_table; }
 
 private:
   void deleteSelectedValue();
   Escher::SelectableTableViewDataSource m_selectionDataSource;
-  InputHomogeneityDataSource m_innerTableData;
-  HomogeneityTableDataSource m_tableData;
+  InputHomogeneityDataSource m_tableData;
   SelectableTableViewWithBackground m_table;
   HomogeneityStatistic * m_statistic;
 };

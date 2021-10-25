@@ -81,7 +81,7 @@ void GoodnessTableViewController::deleteSelectedValue() {
   }
 }
 
-void GoodnessTableViewController::initCell(void * cell, int index) {
+void GoodnessTableViewController::initCell(EvenOddEditableTextCell, void * cell, int index) {
   Escher::EvenOddEditableTextCell * c = static_cast<Escher::EvenOddEditableTextCell *>(cell);
   c->setParentResponder(&m_inputTableView);
   c->editableTextCell()->textField()->setDelegates(Probability::App::app(), this);

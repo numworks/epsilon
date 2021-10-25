@@ -55,7 +55,7 @@ private:
 class ResultsController : public Page,
                           public ButtonDelegate,
                           public Escher::SelectableTableViewDataSource,
-                          public DynamicCellsDataSourceDelegate {
+                          public DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> {
 public:
   ResultsController(Escher::StackViewController * parent,
                     Statistic * statistic,
@@ -68,7 +68,7 @@ public:
   bool buttonAction() override;
   Escher::View * view() override { return &m_contentView; }
 
-  void initCell(void * cell, int index) override;
+  void initCell(ExpressionCellWithBufferWithMessage, void * cell, int index) override;
   Escher::SelectableTableView * tableView() override { return &m_tableView; }
 
 protected:

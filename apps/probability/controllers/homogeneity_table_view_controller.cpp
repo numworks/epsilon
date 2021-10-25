@@ -9,19 +9,22 @@ HomogeneityTableViewController::HomogeneityTableViewController(
     DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate,
     Escher::SelectableTableViewDelegate * tableDelegate) :
       TableViewController(parent),
-      m_innerTableData(this, statistic, dataSourceDelegate),
-      m_tableData(&m_innerTableData, tableDelegate),
+      m_tableData(tableDelegate, this, this, dataSourceDelegate, statistic),
       m_table(this, &m_tableData, &m_selectionDataSource, &m_tableData),
       m_statistic(statistic) {
   m_selectionDataSource.selectColumn(-1);
   m_selectionDataSource.setScrollViewDelegate(&m_table);
 }
 
-void HomogeneityTableViewController::initCell(void * cell, int index) {
+void HomogeneityTableViewController::initCell(EvenOddEditableTextCell, void * cell, int index) {
   EvenOddEditableTextCell * c = static_cast<EvenOddEditableTextCell *>(cell);
   c->setParentResponder(&m_table);
   c->editableTextCell()->textField()->setDelegates(Probability::App::app(), this);
   c->setFont(KDFont::SmallFont);
+}
+
+void HomogeneityTableViewController::initCell(EvenOddBufferTextCell, void * cell, int index) {
+  static_cast<EvenOddBufferTextCell *>(cell)->setFont(KDFont::SmallFont);
 }
 
 void HomogeneityTableViewController::didBecomeFirstResponder() {
@@ -56,11 +59,11 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
 
   m_table.deselectTable();
   // Add row or column
-  if ((row == m_innerTableData.numberOfRows() &&
-       m_innerTableData.numberOfRows() < m_statistic->maxNumberOfRows()) ||
-      (column == m_innerTableData.numberOfColumns() &&
-       m_innerTableData.numberOfColumns() < m_statistic->maxNumberOfColumns())) {
-    m_innerTableData.recomputeDimensions();
+  if ((row == m_tableData.innerNumberOfRows() &&
+       m_tableData.innerNumberOfRows() < m_statistic->maxNumberOfRows()) ||
+      (column == m_tableData.innerNumberOfColumns() &&
+       m_tableData.innerNumberOfColumns() < m_statistic->maxNumberOfColumns())) {
+    m_tableData.recomputeDimensions();
   }
   m_table.reloadCellAtLocation(column, row);
   moveSelectionForEvent(event, &row, &column);
@@ -76,7 +79,7 @@ void HomogeneityTableViewController::deleteSelectedValue() {
   bool shouldDeleteRowOrCol = m_statistic->deleteParameterAtPosition(row - 1, col - 1);
   if (!shouldDeleteRowOrCol) {
     // Only one cell needs to reload.
-    assert(row <= m_innerTableData.numberOfRows() && col <= m_innerTableData.numberOfColumns());
+    assert(row <=  m_tableData.innerNumberOfRows() && col <= m_tableData.innerNumberOfColumns());
     tableView()->reloadCellAtLocation(col, row);
   } else {
     // A row and/or column has been deleted, we should recompute data
@@ -84,7 +87,7 @@ void HomogeneityTableViewController::deleteSelectedValue() {
     /* Due to an initial number of rows/ols of 2, we cannot ensure that at most
      * one row and one col have been deleted here */
     tableView()->deselectTable();
-    if (!m_innerTableData.recomputeDimensions()) {
+    if (!m_tableData.recomputeDimensions()) {
       /* A row/col has been deleted, but size didn't change, meaning the number
        * of non-empty rows/cols was at maximum. However, recomputeData may have
        * moved up/left multiple cells, m_inputTableView should be reloaded. */

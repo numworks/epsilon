@@ -27,7 +27,7 @@ InputController::InputController(Escher::StackViewController * parent,
   m_significanceCell.innerCell()->setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
 
-void InputController::initCell(void * cell, int index) {
+void InputController::initCell(ExpressionCellWithEditableTextWithMessage, void * cell, int index) {
   ExpressionCellWithEditableTextWithMessage * c = static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
   c->setParentResponder(&m_selectableTableView);
   c->setDelegates(Probability::App::app(), this);

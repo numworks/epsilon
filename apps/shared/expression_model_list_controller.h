@@ -62,7 +62,6 @@ protected:
 private:
   // Memoization
   static constexpr int k_resetedMemoizedValue = -1;
-  static constexpr KDCoordinate k_addModelLeftMargin = Escher::Metric::CommonLeftMargin;
   void resetMemoization();
 
   bool addEmptyModel();

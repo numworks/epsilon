@@ -16,7 +16,7 @@ namespace Shared {
 
 ExpressionModelListController::ExpressionModelListController(Responder * parentResponder, I18n::Message text) :
   ViewController(parentResponder),
-  m_addNewModel(KDFont::LargeFont, KDContext::k_alignLeft, KDContext::k_alignCenter, k_addModelLeftMargin)
+  m_addNewModel(KDFont::LargeFont, KDContext::k_alignLeft)
 {
   resetMemoization();
   m_addNewModel.setMessage(text);

@@ -68,7 +68,7 @@ bool Probability::ResultsController::buttonAction() {
   return true;
 }
 
-void Probability::ResultsController::initCell(void * cell, int index) {
+void Probability::ResultsController::initCell(ExpressionCellWithBufferWithMessage, void * cell, int index) {
   static_cast<ExpressionCellWithBufferWithMessage *>(cell)->setParentResponder(&m_tableView);
 }
 

@@ -14,30 +14,25 @@ namespace Probability {
 
 using namespace Escher;
 
-class InputHomogeneityDataSource : public Escher::TableViewDataSource, public DynamicCellsDataSource<EvenOddEditableTextCell, k_maxNumberOfEvenOddEditableTextCells>, public DynamicSizeTableViewDataSource {
+class InputHomogeneityDataSource : public HomogeneityTableDataSource, public DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>, public DynamicSizeTableViewDataSource {
 public:
-  InputHomogeneityDataSource(DynamicCellsDataSourceDelegate * dynamicTableViewDataSourceDelegate,
-                             HomogeneityStatistic * statistic,
-                             DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate);
-  int numberOfRows() const override { return m_numberOfRows; }
-  int numberOfColumns() const override { return m_numberOfColumns; }
-  Escher::HighlightCell * reusableCell(int i, int type) override { return cell(i); }
-  int reusableCellCount(int type) override {
-    return HomogeneityTableDataSource::k_numberOfReusableCells;
-  }
-  int typeAtLocation(int i, int j) override { return 0; }
-
-  KDCoordinate columnWidth(int i) override { return HomogeneityTableDataSource::k_columnWidth; }
-  KDCoordinate rowHeight(int j) override { return HomogeneityTableDataSource::k_rowHeight; }
-
-  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
+  InputHomogeneityDataSource(Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicOuterTableViewDataSourceDelegate, DynamicCellsDataSourceDelegate<EvenOddEditableTextCell> * dynamicInnerTableViewDataSourceDelegate, DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate, HomogeneityStatistic * statistic);
 
   // DynamicSizeTableViewDataSource
   bool recomputeDimensions();
 
+  int innerNumberOfRows() const override { return m_numberOfRows; }
+  int innerNumberOfColumns() const override { return m_numberOfColumns; }
 private:
   constexpr static int k_initialNumberOfRows = 2;
   constexpr static int k_initialNumberOfColumns = 2;
+
+  Escher::HighlightCell * innerCell(int i) override { return DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>::cell(i); }
+  void willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
+
+  // DynamicCellsDataSource
+  void createCells() override;
+  void destroyCells() override;
 
   int m_numberOfRows;
   int m_numberOfColumns;

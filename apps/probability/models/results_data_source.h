@@ -16,7 +16,7 @@ namespace Probability {
  */
 class ResultsDataSource : public Escher::MemoizedListViewDataSource, public DynamicCellsDataSource<ExpressionCellWithBufferWithMessage, k_maxNumberOfExpressionCellsWithBufferWithMessage> {
 public:
-  ResultsDataSource(Escher::Responder * parent, Statistic * statistic, ButtonDelegate * buttonDelegate, DynamicCellsDataSourceDelegate * dynamicCellsDataSourceDelegate);
+  ResultsDataSource(Escher::Responder * parent, Statistic * statistic, ButtonDelegate * buttonDelegate, DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> * dynamicCellsDataSourceDelegate);
   int numberOfRows() const override;
   KDCoordinate cellWidth() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;

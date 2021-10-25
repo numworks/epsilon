@@ -293,11 +293,12 @@ void App::initTableSelections(Data::Page page,
   }
 }
 
-void * App::buffer() {
+void App::cleanBuffer(DynamicCellsDataSourceDestructor * destructor) {
+  assert(destructor);
   if (m_bufferDestructor) {
     m_bufferDestructor->destroyCells();
   }
-  return m_buffer;
+  m_bufferDestructor = destructor;
 }
 
 const App::Descriptor * App::Snapshot::descriptor() const {

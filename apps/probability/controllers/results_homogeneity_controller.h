@@ -15,7 +15,7 @@ namespace Probability {
 class ResultsHomogeneityController : public Page,
                                      public ButtonDelegate,
                                      public Escher::SelectableTableViewDelegate,
-                                     public DynamicCellsDataSourceDelegate {
+                                     public DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> {
 public:
   ResultsHomogeneityController(StackViewController * stackViewController,
                                HomogeneityStatistic * statistic,
@@ -35,7 +35,7 @@ public:
                                                int previousSelectedCellY,
                                                bool withinTemporarySelection = false) override;
 
-  void initCell(void * cell, int index) override;
+  void initCell(EvenOddBufferTextCell, void * cell, int index) override;
   Escher::SelectableTableView * tableView() override { return &m_table; }
 
 private:
@@ -45,8 +45,7 @@ private:
 
   ResultsController * m_resultsController;
   ResultsHomogeneityView m_contentView;
-  HomogeneityTableDataSourceWithTotals m_tableData;
-  ResultsHomogeneityDataSource m_innerTableData;
+  ResultsHomogeneityDataSource m_tableData;
 
   SelectableTableViewWithBackground m_table;
   bool m_isTableSelected;

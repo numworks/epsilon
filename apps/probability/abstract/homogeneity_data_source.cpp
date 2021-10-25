@@ -6,74 +6,60 @@
 
 using namespace Probability;
 
-HomogeneityTableDataSource::HomogeneityTableDataSource(
-    TableViewDataSource * contentTable,
-    Escher::SelectableTableViewDelegate * tableDelegate,
-    I18n::Message headerPrefix) :
-      ChainedSelectableTableViewDelegate(tableDelegate),
-      m_innerDataSource(contentTable),
-      m_headerPrefix(headerPrefix),
-      m_topLeftCell(Escher::Palette::WallScreenDark) {
-  // First row
-  for (int i = 0; i < k_maxNumberOfColumns; i++) {
-    m_colHeader[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
-    m_colHeader[i].setFont(KDFont::SmallFont);
-    m_colHeader[i].setEven(true);
+HomogeneityTableDataSource::HomogeneityTableDataSource(Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicDataSourceDelegate) :
+  DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>(dynamicDataSourceDelegate),
+  ChainedSelectableTableViewDelegate(tableDelegate),
+  m_headerPrefix(I18n::Message::Group),
+  m_topLeftCell(Escher::Palette::WallScreenDark) {
+}
+
+int HomogeneityTableDataSource::reusableCellCount(int type) {
+  if (type == k_typeOfTopLeftCell) {
+    return 1;
+  } else if (type == k_typeOfHeaderCells) {
+    return k_numberOfReusableRows + k_numberOfReusableColumns;
   }
-  // First column
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_rowHeader[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
-    m_rowHeader[i].setFont(KDFont::SmallFont);
-    m_rowHeader[i].setEven(i % 2 == 0);
-  }
+  return k_numberOfReusableCells;
 }
 
 HighlightCell * HomogeneityTableDataSource::reusableCell(int i, int type) {
   if (type == k_typeOfTopLeftCell) {
     assert(i == 0);
     return &m_topLeftCell;
+  } else if (type == k_typeOfHeaderCells) {
+    return cell(i);
   }
-  if (type == k_typeOfColumnHeader) {
-    return &m_colHeader[i];
-  }
-  if (type == k_typeOfRowHeader) {
-    return &m_rowHeader[i];
-  }
-  return m_innerDataSource->reusableCell(i, type);
+  return innerCell(i);
 }
 
 int HomogeneityTableDataSource::typeAtLocation(int i, int j) {
   if (i == 0 && j == 0) {
     return k_typeOfTopLeftCell;
   }
-  if (j == 0) {
-    return k_typeOfColumnHeader;
+  if (i== 0 || j == 0) {
+    return k_typeOfHeaderCells;
   }
-  if (i == 0) {
-    return k_typeOfRowHeader;
-  }
-  assert(m_innerDataSource->typeAtLocation(i - 1, j - 1) != k_typeOfTopLeftCell &&
-         m_innerDataSource->typeAtLocation(i - 1, j - 1) != k_typeOfColumnHeader &&
-         m_innerDataSource->typeAtLocation(i - 1, j - 1) != k_typeOfRowHeader);
-  return m_innerDataSource->typeAtLocation(i - 1, j - 1);
+  return k_typeInnerCells;
 }
 
-void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
-    Escher::HighlightCell * cell,
-    int column,
-    int row) {
+void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
   if (row == 0 && column == 0) {
     return;  // Top left
   }
-
   // Headers
   if (row == 0 || column == 0) {
     Escher::EvenOddBufferTextCell * myCell = static_cast<Escher::EvenOddBufferTextCell *>(cell);
     char digit;
     if (row == 0) {
+      myCell->setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
+      myCell->setFont(KDFont::SmallFont);
+      myCell->setEven(true);
       assert(column - 1 <= '9' - '1');
       digit = '1' + (column - 1);
     } else {
+      myCell->setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
+      myCell->setFont(KDFont::SmallFont);
+      myCell->setEven(row % 2 == 0);
       assert(row - 1 <= 'Z' - 'A');
       digit = 'A' + (row - 1);
     }
@@ -91,7 +77,7 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(
   }
 
   else {
-    m_innerDataSource->willDisplayCellAtLocation(cell, column - 1, row - 1);
+    willDisplayInnerCellAtLocation(cell, column - 1, row - 1);
   }
 }
 

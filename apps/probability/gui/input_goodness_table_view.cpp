@@ -14,11 +14,11 @@ InputGoodnessTableView::InputGoodnessTableView(
     Escher::Responder * parentResponder,
     GoodnessStatistic * statistic,
     Escher::TextFieldDelegate * textFieldDelegate,
-    DynamicCellsDataSourceDelegate * dynamicCellsDataSourceDelegate,
+    DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell> * dynamicCellsDataSourceDelegate,
     DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSource,
     Escher::SelectableTableViewDelegate * scrollDelegate) :
       SelectableTableViewWithBackground(parentResponder, this, &m_tableSelection, scrollDelegate),
-      DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_maxNumberOfEvenOddEditableTextCells>(dynamicCellsDataSourceDelegate),
+      DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells>(dynamicCellsDataSourceDelegate),
       DynamicSizeTableViewDataSource(dynamicSizeTableViewDataSource),
       m_numberOfRows(k_minimumNumberOfRows),
       m_statistic(statistic) {

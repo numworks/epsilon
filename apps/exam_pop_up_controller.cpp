@@ -14,6 +14,8 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
         ExamPopUpController * controller = (ExamPopUpController *)context;
         GlobalPreferences::ExamMode mode = controller->targetExamMode();
         assert(mode != GlobalPreferences::ExamMode::Unknown);
+        assert(mode == GlobalPreferences::ExamMode::PressToTest || controller->targetPressToTestParams().value == 0);
+        GlobalPreferences::sharedGlobalPreferences()->setPressToTestParams(controller->targetPressToTestParams());
         GlobalPreferences::sharedGlobalPreferences()->setExamMode(mode);
         AppsContainer * container = AppsContainer::sharedAppsContainer();
         if (mode == GlobalPreferences::ExamMode::Off) {

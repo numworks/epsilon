@@ -300,7 +300,16 @@ void AppsContainer::reloadTitleBarView() {
 
 void AppsContainer::displayExamModePopUp(GlobalPreferences::ExamMode mode) {
   m_examPopUpController.setTargetExamMode(mode);
+  if (mode != GlobalPreferences::ExamMode::PressToTest) {
+    // PressToTestParams({0}) is an all false PressToTestParams
+    m_examPopUpController.setTargetPressToTestParams(GlobalPreferences::PressToTestParams({0}));
+  }
   s_activeApp->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
+}
+
+void AppsContainer::displayPressToTestPopUp(GlobalPreferences::PressToTestParams pressToTestParams) {
+  m_examPopUpController.setTargetPressToTestParams(pressToTestParams);
+  displayExamModePopUp(GlobalPreferences::ExamMode::PressToTest);
 }
 
 void AppsContainer::shutdownDueToLowBattery() {

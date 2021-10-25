@@ -72,6 +72,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     if (appIndex < container->numberOfBuiltinApps()) {
       ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1));
       if (ExamModeConfiguration::appIsForbidden(selectedSnapshot->descriptor()->name())) {
+        // TODO Hugo : Update the error message according to the exam mode
         App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
       } else {
         container->switchToBuiltinApp(selectedSnapshot);

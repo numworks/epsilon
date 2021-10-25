@@ -759,7 +759,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
         && isValidNamedLeftExpression(newExpression.childAtIndex(0),
                                       newExpression.type())) {
       Expression function = newExpression.childAtIndex(0);
-      error = record->setBaseNameWithExtension(static_cast<SymbolAbstract&>(function).name(), Ion::Storage::funcExtension);
+      error = Ion::Storage::Record::SetBaseNameWithExtension(record, static_cast<SymbolAbstract&>(function).name(), Ion::Storage::funcExtension);
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
         return error;
       }
@@ -776,7 +776,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
     const char * const extensions[1] = { Ion::Storage::funcExtension };
     name[0] = k_unnamedRecordFirstChar;
     Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(name, 1, k_maxDefaultSize, extensions, 1, 99);
-    error = record->setBaseNameWithExtension(name, Ion::Storage::funcExtension);
+    error = Ion::Storage::Record::SetBaseNameWithExtension(record, name, Ion::Storage::funcExtension);
   }
   return error;
 }

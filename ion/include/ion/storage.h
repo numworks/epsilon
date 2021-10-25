@@ -67,12 +67,6 @@ public:
     const char * fullName() const {
       return Storage::sharedStorage()->fullNameOfRecord(*this);
     }
-    ErrorStatus setBaseNameWithExtension(const char * baseName, const char * extension) {
-      return Storage::sharedStorage()->setBaseNameWithExtensionOfRecord(this, baseName, strlen(baseName), extension, strlen(extension));
-    }
-    ErrorStatus setName(const char * fullName) {
-      return Storage::sharedStorage()->setFullNameOfRecord(this, fullName);
-    }
     Data value() const {
       return Storage::sharedStorage()->valueOfRecord(*this);
     }
@@ -81,6 +75,13 @@ public:
     }
     void destroy() {
       return Storage::sharedStorage()->destroyRecord(*this);
+    }
+    // This methods are static to prevent any calling these methods on "this"
+    static Record::ErrorStatus SetBaseNameWithExtension(Record * record, const char * baseName, const char * extension) {
+      return Storage::sharedStorage()->setBaseNameWithExtensionOfRecord(record, baseName, strlen(baseName), extension, strlen(extension));
+    }
+    static Record::ErrorStatus SetName(Record * record, const char * fullName) {
+      return Storage::sharedStorage()->setFullNameOfRecord(record, fullName);
     }
   private:
     Record(const char * basename, int basenameLength, const char * extension, int extensionLength);

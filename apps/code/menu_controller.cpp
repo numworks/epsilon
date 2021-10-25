@@ -317,7 +317,8 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     }
     newName = const_cast<const char *>(numberedDefaultName);
   }
-  Script::ErrorStatus error = Script::NameCompliant(newName) ? m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).setName(newName) : Script::ErrorStatus::NonCompliantName;
+  Script script = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow());
+  Script::ErrorStatus error = Script::NameCompliant(newName) ? Ion::Storage::Record::SetName(&script, newName) : Script::ErrorStatus::NonCompliantName;
   if (error == Script::ErrorStatus::None) {
     updateAddScriptRowDisplay();
     textField->setText(newName);
@@ -398,7 +399,7 @@ bool MenuController::privateTextFieldDidAbortEditing(TextField * textField, bool
       deleteScript(script);
       return true;
     }
-    Script::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, ScriptStore::k_scriptExtension);
+    Script::ErrorStatus error = Ion::Storage::Record::SetBaseNameWithExtension(&script, numberedDefaultName, ScriptStore::k_scriptExtension);
     scriptName = script.fullName();
     /* Because we use the numbered default name, the name should not be
      * already taken. Plus, the script could be added only if the storage has

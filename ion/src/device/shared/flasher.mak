@@ -18,6 +18,7 @@ ion_device_flasher_src += $(addprefix ion/src/device/shared/drivers/, \
   board_privileged_n0110.cpp:+n0110 \
   board_privileged_n0120.cpp:+n0120 \
   board_unprotected.cpp \
+  cache.cpp \
   display.cpp \
   external_flash.cpp \
   external_flash_qspi_n0110.cpp:+n0110 \

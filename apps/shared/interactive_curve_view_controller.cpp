@@ -220,26 +220,16 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     y = goingUp ? -INFINITY : INFINITY;
   }
   double nextY = goingUp ? DBL_MAX : -DBL_MAX;
-  bool currentCurveHasSubCurves = hasTwoSubCurves(currentCurveIndex);
   int nextCurveIndex = -1;
   int nextSubCurveIndex = 0;
   int curvesCount = numberOfCurves();
   for (int i = 0; i < curvesCount; i++) {
-    // Checking sub curves if there are
-    int startSecondaryIndex = 0;
-    int totalSecondaryIndex = 1;
-    if (currentCurveHasSubCurves && currentCurveIndex == i) {
-      // Check for the remaining sub curve only
-      startSecondaryIndex = 1 - currentSubCurveIndex;
-      totalSecondaryIndex = startSecondaryIndex + 1;
-    } else if (!closestCurveIndexIsSuitable(i, currentCurveIndex)) {
-      // Nothing to check for
-      continue;
-    } else if (hasTwoSubCurves(i)) {
-        totalSecondaryIndex = 2;
-    }
     int currentIndexScore = 2*currentCurveIndex + currentSubCurveIndex;
-    for (int iSecondary = startSecondaryIndex; iSecondary < totalSecondaryIndex; iSecondary++) {
+    for (int iSecondary = 0; iSecondary < numberOfSubCurves(i); iSecondary++) {
+      if (!closestCurveIndexIsSuitable(i, currentCurveIndex, iSecondary, currentSubCurveIndex)) {
+        // Nothing to check for
+        continue;
+      }
       double newY = xyValues(i, x, context, iSecondary).x2();
       if (!suitableYValue(newY)) {
         continue;
@@ -291,6 +281,10 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     *subCurveIndex = nextSubCurveIndex;
   }
   return nextCurveIndex;
+}
+
+bool InteractiveCurveViewController::closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const {
+  return newIndex != currentIndex || newSubIndex != currentSubIndex;
 }
 
 bool InteractiveCurveViewController::autoButtonAction() {

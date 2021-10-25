@@ -50,11 +50,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       ContinuousFunction::PlotType type = f->plotType();
       Poincare::Expression e = f->expressionReduced(context());
       if (e.isUndefined() || (
-            (type == ContinuousFunction::PlotType::Parametric || f->hasTwoCurves()) &&
+            (type == ContinuousFunction::PlotType::Parametric || f->numberOfSubCurves() == 2) &&
             e.childAtIndex(0).isUndefined() &&
             e.childAtIndex(1).isUndefined())) {
         continue;
       }
+      assert(f->numberOfSubCurves() <= 2);
       float tmin = f->tMin();
       float tmax = f->tMax();
 
@@ -129,7 +130,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           if (area == ContinuousFunction::AreaType::Superior) {
             // Superior area ends at +inf
             xyAreaBound = xyInfinite;
-          } else if (!f->hasTwoCurves()) {
+          } else if (f->numberOfSubCurves() == 1) {
             // Inferior area ends at -inf
             xyAreaBound = xyMinusInfinite;
           } else {
@@ -147,7 +148,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             context(), f->color(), true, record == m_selectedRecord,
             m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
             f->drawDottedCurve(), xyAreaBound, false, areaIndex, tCacheStep);
-        if (f->hasTwoCurves()) {
+        if (f->numberOfSubCurves() == 2) {
           // Draw the second cartesian curve, which is lesser than the first
           xyDoubleEvaluation = [](double t, void * model, void * context) {
             ContinuousFunction * f = (ContinuousFunction *)model;
@@ -183,7 +184,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         }
         // 4 - Draw tangent
         if (m_tangent && record == m_selectedRecord) {
-          assert(!f->hasTwoCurves());
+          assert(f->numberOfSubCurves() == 1);
           /* TODO : We could handle tangent on second curve here by finding out
            * which of the two curves is selected. */
           float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context(), 0);

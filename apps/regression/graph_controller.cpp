@@ -405,8 +405,8 @@ int GraphController::selectedCurveRelativePosition() const {
   return res;
 }
 
-bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
-  return newIndex != currentIndex && !m_store->seriesIsEmpty(newIndex);
+bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const {
+  return InteractiveCurveViewController::closestCurveIndexIsSuitable(newIndex, currentIndex, newSubIndex, currentSubIndex) && !m_store->seriesIsEmpty(newIndex);
 }
 
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double x, Poincare::Context * context, int subCurveIndex) const {

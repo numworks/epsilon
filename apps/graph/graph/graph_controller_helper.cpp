@@ -30,7 +30,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   double step = function->isAlongX() ? static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit : (tMax-tMin)/k_definitionDomainDivisor;
 
   bool specialConicCursorMove = false;
-  if (function->isConic() && function->hasTwoCurves()) {
+  if (function->isConic() && function->numberOfSubCurves() == 2) {
     assert(subCurveIndex != nullptr);
     // previousXY will be needed for conic's special horizontal cursor moves.
     specialConicCursorMove = std::isfinite(function->evaluateXYAtParameter(t, App::app()->localContext(), *subCurveIndex).x2());
@@ -38,6 +38,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
       // On the sub curve, pressing left actually moves the cursor right
       dir *= -1.0;
     }
+  } else {
+    assert(function->numberOfSubCurves() == 1);
   }
 
   // Cursor's default horizontal movement

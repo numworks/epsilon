@@ -90,7 +90,6 @@ KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
 }
 
 bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
-  // TODO Hugo : Update the error message accordingly, check PressToTestParams::equationSolver
   GlobalPreferences::ExamMode mode = GlobalPreferences::sharedGlobalPreferences()->examMode();
   return (appName == I18n::Message::CodeApp
           && mode == GlobalPreferences::ExamMode::Dutch)

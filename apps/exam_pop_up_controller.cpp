@@ -26,6 +26,8 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
         }
         container->refreshPreferences();
         Container::activeApp()->dismissModalViewController();
+        /* TODO Hugo : Fix issues with menus that would be no longer up-to-date:
+         *     - Go back to Home Menu ? */
         return true;
       }, this),
     I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel

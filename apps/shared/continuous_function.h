@@ -102,8 +102,6 @@ public:
 
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool drawDottedCurve() const;
-  // If the ContinuousFunction should be plot with two curves
-  bool hasTwoCurves() const override { return m_model.hasTwoCurves(); }
   // If the ContinuousFunction should be considered active in table
   bool isActiveInTable() const { return plotType() < PlotType::VerticalLine && isActive(); }
   // If the ContinuousFunction has x for unknown symbol
@@ -116,8 +114,8 @@ public:
   void getLineParameters(double * slope, double * intercept, Poincare::Context * context) const;
   // Compute conic parameters from ContinuousFunction
   Poincare::Conic getConicParameters(Poincare::Context * context) const;
-  // Return the number of curves to plot
-  int numberOfCurves() { return (hasTwoCurves() ? 2 : 1); }
+  // Return the number of subcurves to plot
+  int numberOfSubCurves() const override { return m_model.numberOfSubCurves(); }
 
   /* Expression */
 
@@ -281,7 +279,7 @@ private:
   public:
     Model() :
         ExpressionModel(),
-        m_hasTwoCurves(false),
+        m_numberOfSubCurves(1),
         m_equationSymbol(Poincare::ExpressionNode::Type::Equal),
         m_plotType(PlotType::Undefined),
         m_expressionDerivate() {}
@@ -301,8 +299,8 @@ private:
     Poincare::Expression buildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr) const override;
     // Tidy the model
     void tidy() const override;
-    // m_hasTwoCurves getter
-    bool hasTwoCurves() const { return m_hasTwoCurves; }
+    // m_numberOfSubCurves getter
+    int numberOfSubCurves() const { return m_numberOfSubCurves; }
     // m_equationSymbol getter
     Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
     // m_equationSymbol setter
@@ -314,7 +312,7 @@ private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
     // Return size of the record's expression
     size_t expressionSize(const Ion::Storage::Record * record) const override;
-    mutable bool m_hasTwoCurves;
+    mutable int m_numberOfSubCurves;
     mutable Poincare::ExpressionNode::Type m_equationSymbol;
     // TODO Hugo : Improve this m_plotType workaround
     mutable PlotType m_plotType;

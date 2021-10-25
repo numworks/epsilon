@@ -1,7 +1,5 @@
 #include "press_to_test_controller.h"
-#include "../../global_preferences.h"
 #include "../../apps_container.h"
-#include "../../exam_mode_configuration.h"
 #include <apps/i18n.h>
 #include <assert.h>
 #include <cmath>
@@ -15,30 +13,74 @@ namespace Settings {
 PressToTestController::PressToTestController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_switchCells{},
-  m_tempSwitchState{},
+  m_tempPressToTestParams{},
   m_activateButton{&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {
-    // TODO Hugo : Set temporary press to test mode parameters
-    AppsContainer::sharedAppsContainer()->displayExamModePopUp(GlobalPreferences::ExamMode::PressToTest);
+    AppsContainer::sharedAppsContainer()->displayPressToTestPopUp(static_cast<PressToTestController *>(context)->getPressToTestParams());
     return true; }, this)}
 {
-  initSwitches();
+  resetSwitches();
 }
 
-void PressToTestController::initSwitches() {
-  // TODO Hugo : Rename and improve this method
-  m_tempSwitchState[0] = ExamModeConfiguration::appIsForbidden(I18n::Message::SolverApp);
-  m_tempSwitchState[1] = ExamModeConfiguration::inequalityGraphingIsForbidden();
-  m_tempSwitchState[2] = ExamModeConfiguration::implicitPlotsAreForbidden();
-  m_tempSwitchState[3] = ExamModeConfiguration::statsDiagnosticsAreForbidden();
-  m_tempSwitchState[4] = ExamModeConfiguration::vectorsAreForbidden();
-  m_tempSwitchState[5] = ExamModeConfiguration::basedLogarithmIsForbidden();
-  m_tempSwitchState[6] = ExamModeConfiguration::sumIsForbidden();
+void PressToTestController::resetSwitches() {
+  // Reset switches states to press-to-test current parameter.
+  m_tempPressToTestParams = GlobalPreferences::sharedGlobalPreferences()->pressToTestParams();
+}
+
+GlobalPreferences::PressToTestParams PressToTestController::getPressToTestParams() {
+  return m_tempPressToTestParams;
+}
+
+void PressToTestController::setParamAtIndex(int index, bool value) {
+  switch (index) {
+    case k_equationSolverIndex:
+      m_tempPressToTestParams.equationSolver = value;
+      break;
+    case k_inequalityGraphingIndex:
+      m_tempPressToTestParams.inequalityGraphing = value;
+      break;
+    case k_implicitPlotsIndex:
+      m_tempPressToTestParams.implicitPlots = value;
+      break;
+    case k_statDiagnosticIndex:
+      m_tempPressToTestParams.statDiagnostic = value;
+      break;
+    case k_vectorsIndex:
+      m_tempPressToTestParams.vectors = value;
+      break;
+    case k_basedLogarithmIndex:
+      m_tempPressToTestParams.basedLogarithm = value;
+      break;
+    default:
+      assert(index == k_sumIndex);
+      m_tempPressToTestParams.sum = value;
+      break;
+  }
+}
+
+bool PressToTestController::getParamAtIndex(int index) {
+  switch (index) {
+    case k_equationSolverIndex:
+      return m_tempPressToTestParams.equationSolver;
+    case k_inequalityGraphingIndex:
+      return m_tempPressToTestParams.inequalityGraphing;
+    case k_implicitPlotsIndex:
+      return m_tempPressToTestParams.implicitPlots;
+    case k_statDiagnosticIndex:
+      return m_tempPressToTestParams.statDiagnostic;
+    case k_vectorsIndex:
+      return m_tempPressToTestParams.vectors;
+    case k_basedLogarithmIndex:
+      return m_tempPressToTestParams.basedLogarithm;
+    default:
+      assert(index == k_sumIndex);
+      return m_tempPressToTestParams.sum;
+  }
 }
 
 bool PressToTestController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(selectedRow()) == k_switchCellType && !GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
     assert(selectedRow() >= 0 && selectedRow() < k_numberOfSwitchCells);
-    m_tempSwitchState[selectedRow()] = !m_tempSwitchState[selectedRow()];
+    setParamAtIndex(selectedRow(), !getParamAtIndex(selectedRow()));
     resetMemoization();
     m_selectableTableView.reloadData();
     return true;
@@ -91,7 +133,7 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int in
   // if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
   // }
   SwitchView * switchView = (SwitchView *)myCell->accessoryView();
-  switchView->setState(m_tempSwitchState[index]);
+  switchView->setState(getParamAtIndex(index));
 }
 
 I18n::Message PressToTestController::LabelAtIndex(int i) {

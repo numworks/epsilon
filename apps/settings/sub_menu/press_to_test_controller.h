@@ -30,20 +30,35 @@ public:
     Escher::MessageTableCellWithMessageWithSwitch tempCell;
     return heightForCellAtIndex(&tempCell, j);
   }
+  GlobalPreferences::PressToTestParams getPressToTestParams();
 private:
-  static constexpr int k_numberOfSwitchCells = 7;
-  static constexpr int k_numberOfReusableSwitchCells = 6;
+  /* Cell type */
   static constexpr int k_switchCellType = 0;
   static constexpr int k_buttonCellType = 1;
+  /* Switch cells index */
+  static constexpr int k_equationSolverIndex = 0;
+  static constexpr int k_inequalityGraphingIndex = k_equationSolverIndex + 1;
+  static constexpr int k_implicitPlotsIndex = k_inequalityGraphingIndex + 1;
+  static constexpr int k_statDiagnosticIndex = k_implicitPlotsIndex + 1;
+  static constexpr int k_vectorsIndex = k_statDiagnosticIndex + 1;
+  static constexpr int k_basedLogarithmIndex = k_vectorsIndex + 1;
+  static constexpr int k_sumIndex = k_basedLogarithmIndex + 1;
+  /* Switch cells count */
+  static constexpr int k_numberOfSwitchCells = k_sumIndex + 1;
+  // At most 6 switch cells fit in the screen.
+  static constexpr int k_numberOfReusableSwitchCells = 6;
   // TODO Hugo : Add instructions and deactivation messages
 
   // Switch Cells
   // TODO Hugo : Handle change of accessory if exam mode is activated
-  Escher::MessageTableCellWithMessageWithSwitch m_switchCells[k_numberOfReusableSwitchCells];
-  void initSwitches();
+  void resetSwitches();
+  void setParamAtIndex(int index, bool value);
+  bool getParamAtIndex(int index);
 
-  bool m_tempSwitchState[k_numberOfSwitchCells];
+  Escher::MessageTableCellWithMessageWithSwitch m_switchCells[k_numberOfReusableSwitchCells];
+  GlobalPreferences::PressToTestParams m_tempPressToTestParams;
   Shared::ButtonWithSeparator m_activateButton;
+
   static I18n::Message LabelAtIndex(int index);
   static I18n::Message SubLabelAtIndex(int index);
 };

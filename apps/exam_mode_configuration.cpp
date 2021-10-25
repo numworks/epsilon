@@ -5,8 +5,6 @@
 
 using namespace Poincare;
 
-constexpr Shared::SettingsMessageTree ExamModeConfiguration::s_modelExamChildren[2] = {Shared::SettingsMessageTree(I18n::Message::ActivateExamMode), Shared::SettingsMessageTree(I18n::Message::ActivateDutchExamMode)};
-
 int ExamModeConfiguration::numberOfAvailableExamMode() {
   if (GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::StandardOnly
       || GlobalPreferences::sharedGlobalPreferences()->isInExamMode())

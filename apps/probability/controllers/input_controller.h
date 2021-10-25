@@ -13,7 +13,7 @@
 
 namespace Probability {
 
-class InputController : public DoubleParameterPage, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate {
+class InputController : public DoubleParameterPage, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate<ExpressionCellWithEditableTextWithMessage> {
 public:
   InputController(Escher::StackViewController * parent,
                   ResultsController * resultsController,
@@ -28,7 +28,7 @@ public:
   void buttonAction() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
-  void initCell(void * cell, int index) override;
+  void initCell(ExpressionCellWithEditableTextWithMessage, void * cell, int index) override;
   Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
 
   constexpr static int k_numberOfReusableCells =

@@ -6,15 +6,45 @@
 
 namespace Probability {
 
-ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic * statistic, DynamicCellsDataSourceDelegate * dynamicCellsDataSourceDelegate) :
-  DynamicCellsDataSource<EvenOddBufferTextCell, k_maxNumberOfEvenOddBufferTextCells>(dynamicCellsDataSourceDelegate),
+/* HomogeneityTableDataSourceWithTotals */
+
+HomogeneityTableDataSourceWithTotals::HomogeneityTableDataSourceWithTotals(Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicDataSourceDelegate) :
+  HomogeneityTableDataSource(tableDelegate, dynamicDataSourceDelegate),
+  m_totalMessage(I18n::Message::Total) {
+}
+
+void HomogeneityTableDataSourceWithTotals::willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
+  if ((column == 0 && row == innerNumberOfRows()) ||
+      (row == 0 && column == innerNumberOfColumns())) {
+    // Override to display "Total" instead
+    Escher::EvenOddBufferTextCell * myCell = static_cast<Escher::EvenOddBufferTextCell *>(cell);
+    myCell->setText(I18n::translate(m_totalMessage));
+  } else {
+    HomogeneityTableDataSource::willDisplayCellAtLocation(cell, column, row);
+  }
+}
+
+ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic * statistic, Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicDataSourceDelegate) :
+  HomogeneityTableDataSourceWithTotals(tableDelegate, dynamicDataSourceDelegate),
+  DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>(dynamicDataSourceDelegate),
   m_statistic(statistic)
 {
 }
 
-void ResultsHomogeneityDataSource::willDisplayCellAtLocation(Escher::HighlightCell * cell,
-                                                             int i,
-                                                             int j) {
+void ResultsHomogeneityDataSource::createCells() {
+  if (DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::m_cells == nullptr) {
+    DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::createCellsWithOffset(0);
+    DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>::createCellsWithOffset(k_homogeneityTableNumberOfReusableHeaderCells * sizeof(EvenOddBufferTextCell));
+    DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::m_delegate->tableView()->reloadData(false, false);
+  }
+}
+
+void ResultsHomogeneityDataSource::destroyCells() {
+  DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>::destroyCells();
+  DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
+}
+
+void ResultsHomogeneityDataSource::willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int i, int j) {
   EvenOddBufferTextCell * myCell = static_cast<EvenOddBufferTextCell *>(cell);
 
   double value;
@@ -33,28 +63,6 @@ void ResultsHomogeneityDataSource::willDisplayCellAtLocation(Escher::HighlightCe
   defaultConvertFloatToText(value, buffer, bufferSize);
   myCell->setText(buffer);
   myCell->setEven(j % 2 == 0);
-}
-
-HomogeneityTableDataSourceWithTotals::HomogeneityTableDataSourceWithTotals(
-    TableViewDataSource * contentTable,
-    Escher::SelectableTableViewDelegate * tableDelegate,
-    I18n::Message headerPrefix,
-    I18n::Message totalMessage) :
-      HomogeneityTableDataSource(contentTable, tableDelegate, headerPrefix),
-      m_totalMessage(totalMessage) {
-}
-
-void HomogeneityTableDataSourceWithTotals::willDisplayCellAtLocation(Escher::HighlightCell * cell,
-                                                                     int column,
-                                                                     int row) {
-  if ((column == 0 && row == m_innerDataSource->numberOfRows()) ||
-      (row == 0 && column == m_innerDataSource->numberOfColumns())) {
-    // Override to display "Total" instead
-    Escher::EvenOddBufferTextCell * myCell = static_cast<Escher::EvenOddBufferTextCell *>(cell);
-    myCell->setText(I18n::translate(m_totalMessage));
-  } else {
-    HomogeneityTableDataSource::willDisplayCellAtLocation(cell, column, row);
-  }
 }
 
 }  // namespace Probability

@@ -19,13 +19,13 @@ namespace Probability {
 /* This is the table used to input Expected and Observed results. */
 class InputGoodnessTableView : public SelectableTableViewWithBackground,
                                public BorderedTableViewDataSource,
-                               public DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_maxNumberOfEvenOddEditableTextCells>,
+                               public DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells>,
                                public DynamicSizeTableViewDataSource {
 public:
   InputGoodnessTableView(Escher::Responder * parentResponder,
                          GoodnessStatistic * statistic,
                          Escher::TextFieldDelegate * textFieldDelegate,
-                         DynamicCellsDataSourceDelegate * dynamicCellsDataSourceDelegate,
+                         DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell> * dynamicCellsDataSourceDelegate,
                          DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate = nullptr,
                          Escher::SelectableTableViewDelegate * scrollDelegate = nullptr);
   // DataSource

@@ -34,11 +34,8 @@ void ListParameterController::viewWillAppear() {
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (cell == &m_enableCell) {
-    SwitchView * switchView = (SwitchView *)m_enableCell.accessoryView();
-    if (!m_record.isNull()) {
-      switchView->setState(function()->isActive());
-    }
+  if (cell == &m_enableCell && !m_record.isNull()) {
+    m_enableCell.setState(function()->isActive());
   }
 }
 

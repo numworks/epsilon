@@ -25,8 +25,7 @@ const char * CurveParameterController::title() {
 
 void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_derivativeCell) {
-    SwitchView * switchView = (SwitchView *)m_derivativeCell.accessoryView();
-    switchView->setState(m_graphController->displayDerivativeInBanner());
+    m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
   }
 }
 

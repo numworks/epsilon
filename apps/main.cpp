@@ -5,47 +5,29 @@
 #define DUMMY_MAIN 0
 #if DUMMY_MAIN
 
-#include <kandinsky/ion_context.h>
-#include <poincare/print_int.h>
-#include <ion/include/ion/persisting_bytes.h>
-#include <stdint.h>
+#include <ion.h>
+
+char digit_to_char(int n) {
+  return '0' + (n % 10);
+}
 
 void ion_main(int argc, const char * const argv[]) {
-  Ion::Power::selectStandbyMode(false);
-  // Initialize the backlight
-  Ion::LED::setColor(KDColorRed);
-  Ion::LED::setBlinking(1000, 0.1f);
-  Ion::PersistingBytes::write(1);
+  Ion::LED::setColor(KDColorBlack);
+  Ion::Display::pushRectUniform(KDRect(0, 0, 320, 240), KDColorWhite);
 
-  uint64_t startMillis = Ion::Timing::millis();
-  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorBlue);
-  Ion::Timing::msleep(2000);
-  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
-  uint64_t time = Ion::Timing::millis() - startMillis;
-  KDContext * ctx = KDIonContext::sharedContext();
-  char buffer[120];
-  buffer[Poincare::PrintInt::Left(time, buffer, 120)] = 0;
-  ctx->drawString(buffer, KDPointZero);
-
-  while (1) {}
-
-  while(1) {
-      Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
-      for (int i = 0; i < 5000; i++) {
-        Ion::Timing::usleep(1000);
-      }
-      Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorBlue);
-      Ion::Timing::msleep(5000);
-  }
+  constexpr int bufsiz = 32;
+  char txtbuf[bufsiz];
 
   while (1) {
-    if (Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::OnOff)) {
-      while (Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::OnOff)) {}
-      Ion::Power::suspend();
-      Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorRed);
-      while (Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::OnOff)) {}
-    }
-    Ion::Timing::msleep(100);
+    float volt = Ion::Battery::voltage();
+    txtbuf[0] = digit_to_char(static_cast<int>(volt));
+    txtbuf[1] = '.';
+    txtbuf[2] = digit_to_char(static_cast<int>(volt * 10));
+    txtbuf[3] = digit_to_char(static_cast<int>(volt * 100));
+    txtbuf[4] = '\0';
+    Ion::Console::writeLine(txtbuf);
+
+    Ion::Timing::msleep(1000);
   }
 }
 

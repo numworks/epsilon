@@ -95,7 +95,7 @@ bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
           && mode == GlobalPreferences::ExamMode::Dutch)
          || (appName == I18n::Message::SolverApp
              && mode == GlobalPreferences::ExamMode::PressToTest
-             && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().equationSolver);
+             && !GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().equationSolver);
 }
 
 static bool isPrimeFactorization(Expression expression) {
@@ -125,31 +125,31 @@ bool ExamModeConfiguration::additionalResultsAreForbidden() {
 bool ExamModeConfiguration::inequalityGraphingIsForbidden() {
   // TODO Hugo : Implement it after conics
   return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
-    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().inequalityGraphing;
+    && !GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().inequalityGraphing;
 }
 
 bool ExamModeConfiguration::implicitPlotsAreForbidden() {
   // TODO Hugo : Implement it after conics
   return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
-    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().implicitPlots;
+    && !GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().implicitPlots;
 }
 
 bool ExamModeConfiguration::statsDiagnosticsAreForbidden() {
   return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
-    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().statDiagnostic;
+    && !GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().statDiagnostic;
 }
 
 bool ExamModeConfiguration::vectorsAreForbidden() {
   return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
-    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().vectors;
+    && !GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().vectors;
 }
 
 bool ExamModeConfiguration::basedLogarithmIsForbidden() {
   return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
-    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().basedLogarithm;
+    && !GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().basedLogarithm;
 }
 
 bool ExamModeConfiguration::sumIsForbidden() {
   return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
-    && GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().sum;
+    && !GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().sum;
 }

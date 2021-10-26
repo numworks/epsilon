@@ -11,6 +11,8 @@ public:
   MessageTableCellWithMessageWithSwitch(I18n::Message message = (I18n::Message)0) : MessageTableCellWithMessage(message), m_accessoryView() {}
   const View * accessoryView() const override { return &m_accessoryView; }
   void setState(bool state) { m_accessoryView.setState(state); }
+protected:
+  bool state() const { return m_accessoryView.state(); }
 private:
   SwitchView m_accessoryView;
 };

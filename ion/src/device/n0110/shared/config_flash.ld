@@ -1,19 +1,19 @@
 INCLUDE shared_config_flash.ld
 
 /*
- * |                INTERNAL FLASH                |
- * | SECTOR 1 | SECTOR 2 | SECTOR 3 | SECTOR 4    |
- * |           BOOTLOADER           |  TRAMPOLINE |
+ * |                        INTERNAL FLASH                    |
+ * | SECTOR 1 | SECTOR 2 | SECTOR 3 |         SECTOR 4        |
+ * |           BOOTLOADER                        | TRAMPOLINE |
  */
 
 INTERNAL_FLASH_ORIGIN = 0x00200000;
 INTERNAL_FLASH_LENGTH = 64K;
-INTERNAL_FLASH_SECTOR_LENGTH = 8K;
+TRAMPOLINE_LENGTH = 8K;
 
 BOOTLOADER_ORIGIN = INTERNAL_FLASH_ORIGIN;
-BOOTLOADER_LENGTH = INTERNAL_FLASH_LENGTH - INTERNAL_FLASH_SECTOR_LENGTH;
-BOOTLOADER_TRAMPOLINE_ORIGIN = INTERNAL_FLASH_ORIGIN + INTERNAL_FLASH_LENGTH - INTERNAL_FLASH_SECTOR_LENGTH;
-BOOTLOADER_TRAMPOLINE_LENGTH = INTERNAL_FLASH_SECTOR_LENGTH;
+BOOTLOADER_LENGTH = INTERNAL_FLASH_LENGTH - TRAMPOLINE_LENGTH;
+BOOTLOADER_TRAMPOLINE_ORIGIN = INTERNAL_FLASH_ORIGIN + INTERNAL_FLASH_LENGTH - TRAMPOLINE_LENGTH;
+BOOTLOADER_TRAMPOLINE_LENGTH = TRAMPOLINE_LENGTH;
 
 /*
  * |                                             EXTERNAL FLASH                                                                                 |
@@ -22,7 +22,7 @@ BOOTLOADER_TRAMPOLINE_LENGTH = INTERNAL_FLASH_SECTOR_LENGTH;
  * || SP* HEADER | KERNEL A | USERLAND A | SIGNATURE | EXTERN APPS | PERSISTING BYTES ||               ... Identical slot B ...                 ||
  *
  * SIGNED PAYLOAD structure:| SP HEADER |                           DATA                                       | SIGNATURE |
- * KERNEL structure:                     | HEADER | INIT VECTOR | CODE | 0x11..1 |
+ * KERNEL structure:        | SP HEADER | HEADER | INIT VECTOR | CODE | 0x11..1 |
  * USERLAND structure:                                                           | HEADER | INIT VECTOR | CODE |
  *
  * Kernel and Userland are prefixed by:

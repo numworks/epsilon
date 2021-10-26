@@ -1,7 +1,7 @@
 #ifndef SETTINGS_PRESS_TO_TEST_CONTROLLER_H
 #define SETTINGS_PRESS_TO_TEST_CONTROLLER_H
 
-#include <escher/message_table_cell_with_message_with_switch.h>
+#include "press_to_test_switch.h"
 #include <apps/shared/button_with_separator.h>
 #include "generic_sub_controller.h"
 #include "selectable_view_with_messages.h"
@@ -50,12 +50,10 @@ private:
   // TODO Hugo : Add instructions and deactivation messages
 
   // Switch Cells
-  // TODO Hugo : Handle change of accessory if exam mode is activated
   void resetSwitches();
   void setParamAtIndex(int index, bool value);
   bool getParamAtIndex(int index);
-
-  Escher::MessageTableCellWithMessageWithSwitch m_switchCells[k_numberOfReusableSwitchCells];
+  PressToTestSwitch m_switchCells[k_numberOfReusableSwitchCells];
   GlobalPreferences::PressToTestParams m_tempPressToTestParams;
   Shared::ButtonWithSeparator m_activateButton;
 

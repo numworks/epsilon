@@ -126,13 +126,12 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int in
     assert(!GlobalPreferences::sharedGlobalPreferences()->isInExamMode());
     return;
   }
-  Escher::MessageTableCellWithMessageWithSwitch * myCell = static_cast<Escher::MessageTableCellWithMessageWithSwitch *>(cell);
+  PressToTestSwitch * myCell = static_cast<PressToTestSwitch *>(cell);
   myCell->setMessage(LabelAtIndex(index));
   myCell->setSubLabelMessage(SubLabelAtIndex(index));
-  // TODO Hugo : Set switch layout according to exam mode status.
-  // if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-  // }
+  // TODO Hugo : Fix the On/Off offset and default switch values.
   myCell->setState(getParamAtIndex(index));
+  myCell->setDisplayImage(GlobalPreferences::sharedGlobalPreferences()->isInExamMode());
 }
 
 I18n::Message PressToTestController::LabelAtIndex(int i) {

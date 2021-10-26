@@ -1,0 +1,20 @@
+#include "press_to_test_switch.h"
+#include "press_to_test_success.h"
+
+namespace Settings {
+
+PressToTestSwitch::PressToTestSwitch(I18n::Message message) :
+    Escher::MessageTableCellWithMessageWithSwitch(message),
+    m_accessoryView(),
+    m_displayImage(false) {
+  // TODO Hugo : Factorize press_to_test_success.h with test_success.png
+  m_accessoryView.setImage(ImageStore::PressToTestSuccess);
+}
+
+const Escher::View * PressToTestSwitch::accessoryView() const {
+  return (m_displayImage
+              ? (state() ? &m_accessoryView : nullptr)
+              : Escher::MessageTableCellWithMessageWithSwitch::accessoryView());
+}
+
+}  // namespace Settings

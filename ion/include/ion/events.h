@@ -74,7 +74,8 @@ void logTo(Journal * l);
 ShiftAlphaStatus shiftAlphaStatus();
 void setShiftAlphaStatus(ShiftAlphaStatus s);
 void setSpinner(bool spinner);
-int repetitionFactor(bool repetition = false);
+int repetitionFactor();
+int longPressFactor();
 
 // Plain
 

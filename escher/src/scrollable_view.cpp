@@ -14,7 +14,7 @@ ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollV
 
 bool ScrollableView::handleEvent(Ion::Events::Event event) {
   KDPoint translation = KDPointZero;
-  KDCoordinate scrollStep = Ion::Events::repetitionFactor() * Metric::ScrollStep;
+  KDCoordinate scrollStep = Ion::Events::longPressFactor() * Metric::ScrollStep;
   if (event == Ion::Events::Left) {
     KDCoordinate movementToEdge = contentOffset().x();
     if (movementToEdge > 0) {

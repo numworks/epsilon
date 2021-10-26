@@ -90,20 +90,19 @@ void updateModifiersFromEvent(Event e) {
   }
 }
 
-// Two repetition factors are available :
+// Two factors are available :
 static int sLongPressCounter = 0;
 static int sRepetitionCounter = 0;
 
+// How long the event has been pressed (Computed value)
 int longPressFactor() {
   // The long press factor is increased by 4 every 20 loops in getEvent(2 sec)
   return (sLongPressCounter / 20) * 4 + 1;
 }
 
-int repetitionFactor(bool repetition) {
-  // Depending on repetition flag, Two repetition factors are available :
-  // - How much the event has been repeatedly pressed (Raw value)
-  // - How long the event has been pressed (Computed value)
-  return repetition ? sRepetitionCounter : longPressFactor();
+// How much the event has been repeatedly pressed (Raw value)
+int repetitionFactor() {
+  return sRepetitionCounter;
 }
 
 void resetLongPress() {

@@ -8,7 +8,8 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight.cpp \
   backlight_advanced.cpp \
   base64.cpp \
-  battery.cpp \
+  battery_stm32f.cpp:-n0120 \
+  battery_stm32h.cpp:+n0120 \
   battery_charge.cpp \
   board_frequency_stm32f.cpp:-n0120 \
   board_frequency_stm32h.cpp:+n0120 \

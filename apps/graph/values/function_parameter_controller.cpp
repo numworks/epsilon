@@ -62,8 +62,7 @@ void FunctionParameterController::viewWillAppear() {
 
 void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_displayDerivativeColumn) {
-    SwitchView * switchView = (SwitchView *)m_displayDerivativeColumn.accessoryView();
-    switchView->setState(function()->displayDerivative());
+    m_displayDerivativeColumn.setState(function()->displayDerivative());
   }
 }
 

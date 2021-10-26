@@ -10,6 +10,7 @@ class MessageTableCellWithSwitch : public MessageTableCell {
 public:
   MessageTableCellWithSwitch(I18n::Message message = (I18n::Message)0) : MessageTableCell(message), m_accessoryView() {}
   const View * accessoryView() const override { return &m_accessoryView; }
+  void setState(bool state) { m_accessoryView.setState(state); }
 private:
   SwitchView m_accessoryView;
 };

@@ -46,8 +46,7 @@ KDCoordinate SingleRangeController::nonMemoizedRowHeight(int j) {
 void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   int type = typeAtIndex(index);
   if (type == k_autoCellType) {
-    SwitchView * switchView = static_cast<SwitchView *>(const_cast<View *>(m_autoCell.accessoryView()));
-    switchView->setState(autoStatus());
+    m_autoCell.setState(autoStatus());
     return;
   }
   if (type == k_parameterCellType) {

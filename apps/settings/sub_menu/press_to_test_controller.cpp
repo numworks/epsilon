@@ -132,8 +132,7 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int in
   // TODO Hugo : Set switch layout according to exam mode status.
   // if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
   // }
-  SwitchView * switchView = (SwitchView *)myCell->accessoryView();
-  switchView->setState(getParamAtIndex(index));
+  myCell->setState(getParamAtIndex(index));
 }
 
 I18n::Message PressToTestController::LabelAtIndex(int i) {

@@ -189,8 +189,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   myCell->setMessage(title);
   if (type == k_popUpCellType) {
     MessageTableCellWithSwitch * mySwitchCell = static_cast<MessageTableCellWithSwitch *>(cell);
-    SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
-    mySwitch->setState(globalPreferences->showPopUp());
+    mySwitchCell->setState(globalPreferences->showPopUp());
     return;
   }
   assert(type == k_defaultCellType);

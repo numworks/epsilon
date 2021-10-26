@@ -129,7 +129,6 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int in
   PressToTestSwitch * myCell = static_cast<PressToTestSwitch *>(cell);
   myCell->setMessage(LabelAtIndex(index));
   myCell->setSubLabelMessage(SubLabelAtIndex(index));
-  // TODO Hugo : Fix the On/Off offset and default switch values.
   myCell->setState(getParamAtIndex(index));
   myCell->setDisplayImage(GlobalPreferences::sharedGlobalPreferences()->isInExamMode());
 }

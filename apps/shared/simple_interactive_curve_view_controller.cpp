@@ -24,7 +24,7 @@ bool SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(TextField * 
 
 bool SimpleInteractiveCurveViewController::handleLeftRightEvent(Ion::Events::Event event) {
   int direction = event == Ion::Events::Left ? -1 : 1;
-  if (moveCursorHorizontally(direction, Ion::Events::repetitionFactor())) {
+  if (moveCursorHorizontally(direction, Ion::Events::longPressFactor())) {
     reloadBannerView();
     bool moved = interactiveCurveViewRange()->panToMakePointVisible(
       m_cursor->x(), m_cursor->y(),

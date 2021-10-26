@@ -11,7 +11,7 @@ StoreSelectableTableView::StoreSelectableTableView(DoublePairStore * store, Resp
 }
 
 bool StoreSelectableTableView::handleEvent(Ion::Events::Event event) {
-  int step = Ion::Events::repetitionFactor();
+  int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::Down) {
     return selectNonHiddenCellAtClippedLocation(selectedColumn(), selectedRow() + step);
   }

@@ -347,7 +347,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   Layout xnt = m_contentView.cursor()->layout().XNTLayout();
   if (xnt.isUninitialized()) {
     xnt = CodePointLayout::Builder(defaultXNTCodePoint);
-    if (Ion::Events::repetitionFactor(true) > 0 && isEditing() && m_contentView.selectionIsEmpty()) {
+    if (Ion::Events::repetitionFactor() > 0 && isEditing() && m_contentView.selectionIsEmpty()) {
       // XNT is Cycling, remove the last inserted character
       // TODO Hugo : Handle cycling when xnt is initialized.
       m_contentView.cursor()->performBackspace();
@@ -647,7 +647,7 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
     return true;
   }
   LayoutCursor result;
-  int step = Ion::Events::repetitionFactor();
+  int step = Ion::Events::longPressFactor();
   result = m_contentView.cursor()->cursorAtDirection(DirectionForMoveEvent(event), shouldRecomputeLayout, false, step);
   if (result.isDefined()) {
     if (eventShouldUpdateInsertionCursor(event)) {
@@ -684,7 +684,7 @@ bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * s
   if (!IsSelectionEvent(event)) {
     return false;
   }
-  int step = Ion::Events::repetitionFactor();
+  int step = Ion::Events::longPressFactor();
   // Selection is handled one step at a time. Repeat selection for each step.
   for (int i = 0; i < step; ++i) {
     Layout addedSelection;

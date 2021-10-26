@@ -64,7 +64,7 @@ TextFieldDelegateApp::TextFieldDelegateApp(Snapshot * snapshot, ViewController *
 bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event) {
   if (event == Ion::Events::XNT) {
     CodePoint defaultXNT = XNT();
-    int XNTIndex = Ion::Events::repetitionFactor(true);
+    int XNTIndex = Ion::Events::repetitionFactor();
     if (XNTIndex > 0) {
       // Cycle through XNT CodePoints, starting from default code point position
       constexpr size_t k_numberOfCodePoints = 4;

@@ -1,7 +1,7 @@
 #ifndef REGS_REGS_H
 #define REGS_REGS_H
 
-#include <regs/adc.h>
+#include <regs/adc_stm32f.h>
 #include <regs/cortex.h>
 #include <regs/crc.h>
 #include <regs/dma.h>

@@ -23,15 +23,23 @@ public:
   Poincare::Coordinate2D<float> valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t, int curveIndex);
   // Sets step parameters for non-cartesian curves
   static void ComputeNonCartesianSteps(float * tStep, float * tCacheStep, float tMax, float tMin);
+  // Signaling NAN, indicating a default cache value. See comment on k_sNAN
+  static bool IsSignalingNan(float f) { return IntFloat{.f = f}.i == k_sNAN.i; }
+  static float SignalingNan() { return k_sNAN.f; }
 private:
+  /* Default value indicates the cache value has been cleared and should be
+   * re-computed. We can't use a regular quiet NAN as it can often be an actual
+   * function value. Using an union, we create a signaling NAN instead.
+   * 0x7fa00000 corresponds to std::numeric_limits<float>::signaling_NaN()
+   * TODO : Move this logic in Poincare if it is useful elsewhere. */
+  union IntFloat {
+    int i;
+    float f;
+  };
+  static constexpr IntFloat k_sNAN = IntFloat{ .i = 0x7fa00000 };
   /* The size of the cache is chosen to optimize the display of cartesian
    * functions */
   static constexpr int k_sizeOfCache = Ion::Display::Width;
-  /* Default value indicates the cache value has been cleared and should be
-   * re-computed. We can't use NAN as it can often be an actual function value.
-   * Worst case scenario : When plotting f(x)=k_magicDefaultValue, nothing can
-   * be cached. This magic float value is -1.7014118346e+38 */
-  static constexpr float k_magicDefaultValue = static_cast<float>(0xff000000);
   /* We need a certain amount of tolerance since we try to evaluate the
    * equality of floats. But the value has to be chosen carefully. Too high of
    * a tolerance causes false positives, which lead to errors in curves

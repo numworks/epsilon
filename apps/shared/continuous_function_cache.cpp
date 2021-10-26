@@ -80,7 +80,7 @@ void ContinuousFunctionCache::ComputeNonCartesianSteps(float * tStep, float * tC
 // private
 void ContinuousFunctionCache::invalidateBetween(int iInf, int iSup) {
   for (int i = iInf; i < iSup; i++) {
-    m_cache[i] = k_magicDefaultValue;
+    m_cache[i] = SignalingNan();
   }
 }
 
@@ -113,12 +113,12 @@ int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * functi
 Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i, int curveIndex) {
   assert(curveIndex == 0);
   if (function->isAlongX()) {
-    if (k_magicDefaultValue == m_cache[i]) {
+    if (IsSignalingNan(m_cache[i])) {
       m_cache[i] = function->privateEvaluateXYAtParameter(t, context, curveIndex).x2();
     }
     return Poincare::Coordinate2D<float>(t, m_cache[i]);
   }
-  if (k_magicDefaultValue == m_cache[2 * i] || k_magicDefaultValue == m_cache[2 * i + 1]) {
+  if (IsSignalingNan(m_cache[2 * i]) || IsSignalingNan(m_cache[2 * i + 1])) {
     Poincare::Coordinate2D<float> res = function->privateEvaluateXYAtParameter(t, context, curveIndex);
     m_cache[2 * i] = res.x1();
     m_cache[2 * i + 1] = res.x2();

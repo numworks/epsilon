@@ -169,7 +169,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   if (handleBoxEvent(event)) {
     return true;
   }
-  int step = Ion::Events::repetitionFactor();
+  int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
     selectLeftRight(event == Ion::Events::ShiftLeft, false, step);
     return true;

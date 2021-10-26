@@ -81,7 +81,8 @@ void * const k_SVCallTable[SVC_NUMBER_OF_CALLS] = {
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::USB::didExecuteDFU),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::USB::isPlugged),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::USB::shouldInterruptDFU),
-  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::USB::willExecuteDFU)
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::USB::willExecuteDFU),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Events::longPressFactor)
 };
 
 template <class T1, class T2> struct SameType { enum{value = false}; };
@@ -101,7 +102,6 @@ template <class T> struct SameType<T,T> { enum{value = true}; };
                 SameType<decltype(&svcallhandler), uint32_t (*)(const uint32_t *, size_t)>::value || \
                 SameType<decltype(&svcallhandler), uint32_t (*)(uint32_t, uint8_t)>::value || \
                 SameType<decltype(&svcallhandler), int (*)()>::value || \
-                SameType<decltype(&svcallhandler), int (*)(bool)>::value || \
                 SameType<decltype(&svcallhandler), void (*)(int, int)>::value || \
                 SameType<decltype(&svcallhandler), void (*)(KDRect, KDColor *)>::value || \
                 SameType<decltype(&svcallhandler), void (*)(KDRect, const KDColor *)>::value || \
@@ -181,6 +181,7 @@ void * svcallHandler(int svcNumber) {
   ENSURE_SVC_TYPE(SVC_USB_IS_PLUGGED, Ion::USB::isPlugged)
   ENSURE_SVC_TYPE(SVC_USB_SHOULD_INTERRUPT, Ion::Device::USB::shouldInterruptDFU)
   ENSURE_SVC_TYPE(SVC_USB_WILL_EXECUTE_DFU, Ion::Device::USB::willExecuteDFU)
+  ENSURE_SVC_TYPE(SVC_EVENTS_LONG_PRESS_FACTOR, Ion::Events::longPressFactor)
   return k_SVCallTable[svcNumber];
 }
 

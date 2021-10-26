@@ -8,7 +8,7 @@ namespace Escher {
 class ToggleableView : public TransparentView {
 public:
   ToggleableView() : m_state(true) {}
-  bool state() { return m_state; }
+  bool state() const { return m_state; }
   void setState(bool state);
 protected:
   bool m_state;

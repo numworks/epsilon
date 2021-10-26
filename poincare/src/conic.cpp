@@ -3,6 +3,11 @@
 #include <poincare/preferences.h>
 #include <algorithm>
 
+/* Double comparison is extensively used in Conic's methods for performances.
+ * To limit the approximation errors that may rise from these comparisons, we
+ * round the values of coefficients to 0 (or 1) before and after manipulating
+ * them. */
+
 namespace Poincare {
 
 // Return smallest positive number between x and y, assuming at least one is > 0
@@ -97,6 +102,8 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
                                                      angleUnit);
   assert(std::isfinite(m_a) && std::isfinite(m_b) && std::isfinite(m_c) &&
          std::isfinite(m_d) && std::isfinite(m_e) && std::isfinite(m_f));
+  // Round the coefficients to 0 if they are neglectable against the other ones
+  roundCoefficientsIfNeglectable();
   // Setting type from a canonic conic is safer.
   canonize();
   updateConicType();
@@ -122,6 +129,18 @@ void Conic::updateConicType() {
 
 double Conic::roundIfNeglectable(double value, double target, double amplitude) const {
   return (std::abs(value-target) < k_tolerance * std::abs(amplitude)) ? target : value;
+}
+
+void Conic::roundCoefficientsIfNeglectable() {
+  double amplitude = std::max(
+      std::max(std::max(std::fabs(m_a), std::fabs(m_b)), std::fabs(m_c)),
+      std::max(std::max(std::fabs(m_d), std::fabs(m_e)), std::fabs(m_f)));
+  m_a = roundIfNeglectable(m_a, 0.0, amplitude);
+  m_b = roundIfNeglectable(m_b, 0.0, amplitude);
+  m_c = roundIfNeglectable(m_c, 0.0, amplitude);
+  m_d = roundIfNeglectable(m_d, 0.0, amplitude);
+  m_e = roundIfNeglectable(m_e, 0.0, amplitude);
+  m_f = roundIfNeglectable(m_f, 0.0, amplitude);
 }
 
 void Conic::multiplyCoefficients(double factor) {

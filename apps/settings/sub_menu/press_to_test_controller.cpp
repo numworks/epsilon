@@ -10,8 +10,79 @@ using namespace Escher;
 
 namespace Settings {
 
+/* PressToTestView */
+
+void PressToTestView::reload() {
+  m_contentView.m_table->reloadData();
+  layoutSubviews();
+}
+
+void PressToTestView::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  // Scroll to correct location
+  int row = m_contentView.m_table->selectedRow(), col = m_contentView.m_table->selectedColumn();
+  if (row >= 0 && col >= 0) {
+    KDRect cellFrame = KDRect(m_tableDataSource->cumulatedWidthFromIndex(col),
+                              m_tableDataSource->cumulatedHeightFromIndex(row),
+                              m_tableDataSource->columnWidth(col),
+                              m_tableDataSource->rowHeight(row));
+    cellFrame = cellFrame.translatedBy(m_contentView.tableOrigin());
+     /* Include the message in the first or last row cells to force scrolling
+      * enough todisplay it */
+    if (row == 0) {
+      cellFrame = cellFrame.unionedWith(KDRect(cellFrame.x(), 0, cellFrame.width(), cellFrame.height()));
+    } else if (row == m_contentView.m_table->numberOfDisplayableRows() - 1) {
+      // TODO Hugo : Understand and fix the -1
+      KDCoordinate remainingheight = m_contentView.totalHeight() - cellFrame.y() - 1;
+      cellFrame = cellFrame.unionedWith(KDRect(cellFrame.x(), cellFrame.y(), cellFrame.width(), remainingheight));
+    }
+    scrollToContentRect(cellFrame);
+  }
+}
+
+/* PressToTestView::ContentView */
+
+PressToTestView::ContentView::ContentView(SelectableTableView * table) :
+    m_table(table),
+    m_topMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
+    m_bottomMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen) {
+  // Margins between the table and messages
+  m_table->setMargins(PressToTestView::k_marginAroundTexts, 0, PressToTestView::k_marginAroundTexts, 0);
+}
+
+void PressToTestView::ContentView::setMessages(I18n::Message top, I18n::Message bottom) {
+  m_topMessageView.setMessage(top);
+  m_bottomMessageView.setMessage(bottom);
+}
+
+KDPoint PressToTestView::ContentView::tableOrigin() const {
+  return KDPoint(0, m_topMessageView.minimalSizeForOptimalDisplay().height());
+}
+
+KDCoordinate PressToTestView::ContentView::totalHeight() const {
+  KDCoordinate topMessageHeight = m_topMessageView.minimalSizeForOptimalDisplay().height();
+  KDCoordinate tableHeight = m_table->minimalSizeForOptimalDisplay().height();
+  KDCoordinate bottomMessageHeight = !isBottomMessageEmpty() ? m_bottomMessageView.minimalSizeForOptimalDisplay().height() : 0;
+  return topMessageHeight + tableHeight + bottomMessageHeight;
+}
+
+Escher::View * PressToTestView::ContentView::subviewAtIndex(int i) {
+  switch (i) {
+  case 0:
+    return &m_topMessageView;
+  case 1:
+    return m_table;
+  default:
+    assert(i == numberOfSubviews() - 1);
+    return &m_bottomMessageView;
+  }
+}
+
+/* PressToTestController */
+
 PressToTestController::PressToTestController(Responder * parentResponder) :
-  GenericSubController(parentResponder),
+  ViewController(parentResponder),
+  m_selectableTableView(this, this, this, &m_view),
+  m_view(&m_selectableTableView, this),
   m_switchCells{},
   m_tempPressToTestParams{},
   m_activateButton{&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {
@@ -28,6 +99,17 @@ void PressToTestController::resetSwitches() {
 
 GlobalPreferences::PressToTestParams PressToTestController::getPressToTestParams() {
   return m_tempPressToTestParams;
+}
+
+KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
+  if (typeAtIndex(j) == k_buttonCellType) {
+    return heightForCellAtIndex(&m_activateButton, j);
+  }
+  assert(typeAtIndex(j) == k_switchCellType);
+  Escher::MessageTableCellWithMessageWithSwitch tempCell;
+  // TODO Hugo : See if this setSize can be avoided.
+  tempCell.setSize(KDSize(cellWidth(), tempCell.bounds().height()));
+  return heightForCellAtIndex(&tempCell, j);
 }
 
 void PressToTestController::setParamAtIndex(int index, bool value) {
@@ -77,25 +159,47 @@ bool PressToTestController::getParamAtIndex(int index) {
   }
 }
 
+void PressToTestController::setMessages() {
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    assert(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest);
+    return m_view.setMessages(I18n::Message::PressToTestActiveIntro, I18n::Message::ToDeactivatePressToTest1);
+  }
+  return m_view.setMessages(I18n::Message::PressToTestIntro1, I18n::Message::Default);
+}
+
+void PressToTestController::viewDidDisappear() {
+  m_selectableTableView.deselectTable();
+}
+
 bool PressToTestController::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(selectedRow()) == k_switchCellType && !GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-    assert(selectedRow() >= 0 && selectedRow() < k_numberOfSwitchCells);
-    setParamAtIndex(selectedRow(), !getParamAtIndex(selectedRow()));
-    resetMemoization();
+  int row = selectedRow();
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(row) == k_switchCellType && !GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    assert(row >= 0 && row < k_numberOfSwitchCells);
+    setParamAtIndex(row, !getParamAtIndex(row));
+    /* Memoization isn't resetted here because changing a switch state does not
+     * alter the cell's height. */
     m_selectableTableView.reloadData();
     return true;
   }
-  return GenericSubController::handleEvent(event);
+  if (event == Ion::Events::Left) {
+    ((StackViewController *)parentResponder())->pop();
+    return true;
+  }
+  return false;
+}
+
+void PressToTestController::didBecomeFirstResponder() {
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 void PressToTestController::didEnterResponderChain(Responder * previousFirstResponder) {
   /* When a pop-up is dismissed, the exam mode status might have changed. We
    * reload the selection as the number of rows might have also changed. We
    * force to reload the entire data because they might have changed. */
-  // TODO Hugo : Fix visible artefact issue after activating exam mode
-  selectCellAtLocation(0, initialSelectedRow());
-  m_selectableTableView.reloadData();
-  // TODO Hugo : Add a message when the mode exam is on
+  selectCellAtLocation(0, 0);
+  setMessages();
+  resetMemoization();
+  m_view.reload();
 }
 
 int PressToTestController::numberOfRows() const {

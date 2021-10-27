@@ -1,5 +1,6 @@
 #include <poincare/layout_helper.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/combined_code_points_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/right_parenthesis_layout.h>
@@ -87,18 +88,22 @@ Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * f
   int layoutIndex = 0;
   int bufferIndex = 0;
   while (codePoint != UCodePointNull && bufferIndex < bufferLen) {
-    resultLayout.addChildAtIndex(CodePointLayout::Builder(codePoint, font), layoutIndex, layoutIndex, nullptr);
-    layoutIndex++;
-    bufferIndex+= nextPointer - currentPointer;
-    currentPointer = nextPointer;
-    codePoint = decoder.nextCodePoint();
-    nextPointer = decoder.stringPosition();
-    while (codePoint.isCombining()) {
-      bufferIndex+= nextPointer - currentPointer;
-      currentPointer = nextPointer;
-      codePoint = decoder.nextCodePoint();
+    CodePoint nextCodePoint = decoder.nextCodePoint();
+    Layout nextChild;
+    if (nextCodePoint.isCombining()) {
+      nextChild = CombinedCodePointsLayout::Builder(codePoint, nextCodePoint, font);
       nextPointer = decoder.stringPosition();
+      nextCodePoint = decoder.nextCodePoint();
+    } else {
+      nextChild = CodePointLayout::Builder(codePoint, font);
     }
+    resultLayout.addChildAtIndex(nextChild, layoutIndex, layoutIndex, nullptr);
+    layoutIndex++;
+    bufferIndex += nextPointer - currentPointer;
+    currentPointer = nextPointer;
+    codePoint = nextCodePoint;
+    nextPointer = decoder.stringPosition();
+    assert(!codePoint.isCombining());
   }
   return resultLayout.squashUnaryHierarchyInPlace();
 }
@@ -107,6 +112,8 @@ Layout LayoutHelper::CodePointString(const CodePoint * buffer, int bufferLen, co
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   for (int i = 0; i < bufferLen; i++) {
+    assert(!buffer[i].isCombining());
+    // TODO support combining code point?
     resultLayout.addChildAtIndex(CodePointLayout::Builder(buffer[i], font), i, i, nullptr);
   }
   return resultLayout.squashUnaryHierarchyInPlace();

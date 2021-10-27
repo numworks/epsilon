@@ -32,6 +32,7 @@ QUIZ_CASE(poincare_layout_constructors) {
   VerticalOffsetLayout e26 = VerticalOffsetLayout::Builder(e25, VerticalOffsetLayoutNode::Position::Superscript);
   CodePointLayout e27 = CodePointLayout::Builder('t');
   DerivativeLayout e28 = DerivativeLayout::Builder(e15, e27, e26);
+  Layout e29 = LayoutHelper::String("Hé");
 }
 
 QUIZ_CASE(poincare_layout_comparison) {

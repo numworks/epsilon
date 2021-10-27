@@ -20,7 +20,7 @@ QUIZ_CASE(poincare_print_custom_print) {
   Poincare::Print::customPrintf(buffer, bufferSize, "Hello %s", "NumWorks");
   assert_string_equality(buffer, "Hello NumWorks");
 
-  Poincare::Print::customPrintf(buffer, bufferSize, "%*s bar %*s", "foo", Poincare::Print::StringFormat::Capitalized, "BAz", Poincare::Print::StringFormat::Decapitalized);
+  Poincare::Print::customPrintf(buffer, bufferSize, "%Cs bar %cs", "foo", "BAz");
   assert_string_equality(buffer, "Foo bar bAz");
 
   Poincare::Print::customPrintf(buffer, bufferSize, "Hello %i", 123);

@@ -22,18 +22,15 @@ int customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
     if (*format == '%') {
       assert(*(format + 1) != 0);
       int formatLength = 2;
-      if (*(format + 1) == 's' || (*(format + 1) == '*' && *(format + 2) == 's')) {
+      if (*(format + 1) == 's' || (*(format + 1) != 0 && *(format + 2) == 's')) {
         char * insertedText = buffer;
         // Insert text now
         buffer += strlcpy(buffer, va_arg(args, char *), bufferSize - (buffer - origin));
-        if (*(format + 1) == '*') {
-          StringFormat format = static_cast<StringFormat>(va_arg(args, int));
-          if (format == StringFormat::Capitalized) {
-            capitalize(insertedText);
-          } else {
-            assert(format == StringFormat::Decapitalized);
-            decapitalize(insertedText);
-          }
+        if (*(format + 1) == 'C') {
+          capitalize(insertedText);
+          formatLength = 3;
+        } else if (*(format + 1) == 'c') {
+          decapitalize(insertedText);
           formatLength = 3;
         }
       } else if (*(format + 1) == 'c') {

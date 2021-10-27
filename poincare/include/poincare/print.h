@@ -9,15 +9,12 @@ namespace Print {
 /* Custom printf which supports the following formats:
  * - %c for character insertion
  * - %s for string insertion
- * - %*s for string insertion with string preprocessing
+ * - %Cs for string insertion capitalizing the first character
+ * - %cs for string insertion decapitalizing the first character
  *   ex:
- *     customPrintf("A capitalized string: %*s",
- *                  "plouf",
- *                   StringFormat::Capitalized)
+ *     customPrintf("A capitalized string: %Cs", "plouf")
  *       --> "A capitalized string: Plouf"
- *     customPrintf("A decapitalized string: %*s",
- *                  "Plouf",
- *                   StringFormat::Decapitalized)
+ *     customPrintf("A decapitalized string: %cs", "Plouf")
  *       --> "A decapitalized string: plouf"
  * - %i for integer insertion
  * - %*.*ef or %*.*ed for respectively float or double insertion.
@@ -33,11 +30,6 @@ namespace Print {
  *                   4)
  *       --> "A double 1.235E-2!"
  */
-
-enum class StringFormat {
-  Capitalized,
-  Decapitalized
-};
 
 int customPrintf(char * buffer, size_t bufferSize, const char * format, ...);
 void capitalize(char * text);

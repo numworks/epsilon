@@ -10,12 +10,8 @@ CodeOptionsController::CodeOptionsController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_preferencesController(this)
 {
-  for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_cells[i].setMessageFont(KDFont::LargeFont);
-  }
-  for (int i = 0; i < k_totalNumberOfSwitchCells; i++) {
-    m_switchCells[i].setMessageFont(KDFont::LargeFont);
-  }
+  m_chevronCell.setMessageFont(KDFont::LargeFont);
+  m_switchCell.setMessageFont(KDFont::LargeFont);
 }
 
 bool CodeOptionsController::handleEvent(Ion::Events::Event event) {
@@ -44,7 +40,10 @@ bool CodeOptionsController::handleEvent(Ion::Events::Event event) {
 HighlightCell * CodeOptionsController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0 && index < k_totalNumberOfCell);
-  return &m_cells[index];
+  if (index == 0) {
+    return &m_chevronCell;
+  }
+  return &m_switchCell;
 }
 
 int CodeOptionsController::reusableCellCount(int type) {

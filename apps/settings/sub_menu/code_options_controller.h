@@ -14,11 +14,10 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  constexpr static int k_totalNumberOfCell = 1;
-  constexpr static int k_totalNumberOfSwitchCells = 1;
+  constexpr static int k_totalNumberOfCell = 2;
   PreferencesController m_preferencesController;
-  MessageTableCellWithChevronAndMessage m_cells[k_totalNumberOfCell];
-  MessageTableCellWithSwitch m_switchCells[k_totalNumberOfCell];
+  MessageTableCellWithChevronAndMessage m_chevronCell;
+  MessageTableCellWithSwitch m_switchCell;
 };
 
 }

@@ -108,7 +108,7 @@ const char * TypeController::title() {
   I18n::Message testOrInterval = App::app()->subapp() == Data::SubApp::Tests
                                      ? I18n::Message::Test
                                      : I18n::Message::Interval;
-  Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(format), I18n::translate(testOrInterval), Poincare::Print::StringFormat::Decapitalized);
+  Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(format), I18n::translate(testOrInterval));
   return m_titleBuffer;
 }
 

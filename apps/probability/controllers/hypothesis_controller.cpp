@@ -49,7 +49,7 @@ const char * Probability::HypothesisController::title() {
   Poincare::Print::customPrintf(m_titleBuffer,
            sizeof(m_titleBuffer),
            I18n::translate(format),
-           I18n::translate(I18n::Message::Test), Poincare::Print::StringFormat::Decapitalized);
+           I18n::translate(I18n::Message::Test));
   return m_titleBuffer;
 }
 

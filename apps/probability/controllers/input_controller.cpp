@@ -58,7 +58,7 @@ const char * InputController::title() {
   } else {
     I18n::Message format = titleFormatForTest(App::app()->test(), App::app()->testType());
     Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(format),
-           I18n::translate(I18n::Message::Interval), Poincare::Print::StringFormat::Decapitalized);
+           I18n::translate(I18n::Message::Interval));
   }
   return m_titleBuffer;
 }

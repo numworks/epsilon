@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+    "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg width="100%" height="100%" viewBox="0 0 366 480" version="1.1"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+     xmlns:serif="http://www.serif.com/"
+     style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <rect id="Calculation" x="0" y="0" width="55" height="56" style="fill:COLORID8;"/>
+    <clipPath id="_clip1">
+        <rect x="0" y="0" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip1)">
+        <g>
+            <path d="M55,8c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l-0,40c-0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M55,8c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l-0,40c-0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Zm-1,0l0,40c0,3.863 -3.137,7 -7,7l-39,-0c-3.863,-0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <path d="M54,28l-26.5,0l0,27l19.5,0c3.863,0 7,-3.137 7,-7l0,-20Z"
+              style="fill:COLORID6;"/>
+        <path d="M0,28l55,0" style="fill:none;stroke:COLORID3;stroke-width:1px;"/>
+        <text x="32.039px" y="52.124px"
+              style="font-family:'ArialMT', 'Arial', sans-serif;font-size:30px;fill:COLORID8;">=</text><text x="5.827px"
+              y="25.078px"
+              style="font-family:'ArialMT', 'Arial', sans-serif;font-size:30px;fill:COLORID1;">+</text><text x="6.361px"
+              y="52.234px"
+              style="font-family:'ArialMT', 'Arial', sans-serif;font-size:30px;fill:COLORID1;">÷</text><text x="35.796px"
+              y="25.078px"
+              style="font-family:'ArialMT', 'Arial', sans-serif;font-size:30px;fill:COLORID1;">-</text><path d="M27.5,0l0,56"
+              style="fill:none;stroke:COLORID3;stroke-width:1px;"/></g>
+    <rect id="Xcas" x="80.104" y="341.837" width="55" height="56"
+          style="fill:COLORID8;"/>
+    <clipPath id="_clip2">
+        <rect x="80.104" y="341.837" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip2)">
+        <g>
+            <path d="M135.104,349.837c-0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l-0,40c-0,4.416 3.585,8 8,8l39,0c4.415,0 8,-3.584 8,-8l-0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M135.104,349.837c-0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l-0,40c-0,4.416 3.585,8 8,8l39,0c4.415,0 8,-3.584 8,-8l-0,-40Zm-1,0l-0,40c-0,3.864 -3.137,7 -7,7c-0,0 -39,0 -39,0c-3.864,0 -7,-3.136 -7,-7c-0,0 -0,-40 -0,-40c-0,-3.863 3.136,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <g transform="matrix(1,0,0,1,20.2427,1.61535)">
+            <text x="65.472px" y="375.263px"
+                  style="font-family:'ArialMT', 'Arial', sans-serif;font-size:20px;fill:COLORID6;">X</text><text x="78.811px"
+                  y="375.263px"
+                  style="font-family:'ArialMT', 'Arial', sans-serif;font-size:20px;fill:COLORID1;">cas</text></g></g><rect id="Python"
+          x="0" y="87" width="55" height="56" style="fill:COLORID8;"/>
+    <clipPath id="_clip3">
+        <rect x="0" y="87" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip3)">
+        <g id="Icon-Border" serif:id="Icon Border">
+            <path d="M55,95c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l-0,40c-0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M55,95c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l-0,40c-0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Zm-1,0l0,40c0,3.863 -3.137,7 -7,7c0,-0 -39,-0 -39,-0c-3.863,-0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <path d="M16.131,125.124l-0,-7c-0,-0 -0.252,-4 4,-4l14,-0c-0,-0 3,-0.077 3,-3l-0,-12c-0,-0 0.049,-3 -3,-3l-14,-0c-0,-0 -3,-0.158 -3,3l-0,5l10.5,-0l-0,2l-16.5,-0c-0,-0 -3,-0.26 -3,3l-0,13c-0,-0 -0.406,3 3,3l5,-0Z"
+              style="fill:COLORID6;"/>
+        <path d="M38.869,104.876l0,7c0,0 0.252,4 -4,4l-14,0c0,0 -3,0.077 -3,3l0,12c0,0 -0.049,3 3,3l14,0c0,0 3,0.158 3,-3l0,-5l-10.5,0l0,-2l16.5,0c0,0 3,0.26 3,-3l0,-13c0,0 0.406,-3 -3,-3l-5,0Z"
+              style="fill:COLORID1;"/>
+        <circle cx="21.312" cy="100.312" r="1.312" style="fill:COLORID8;"/>
+        <circle cx="33.585" cy="129.916" r="1.312" style="fill:COLORID8;"/></g>
+    <rect id="Equation" x="0" y="173" width="55" height="56" style="fill:COLORID8;"/>
+    <clipPath id="_clip4">
+        <rect x="0" y="173" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip4)">
+        <g id="Icon-Border1" serif:id="Icon Border">
+            <path d="M55,181c0,-4.415 -3.585,-8 -8,-8l-39,-0c-4.415,-0 -8,3.585 -8,8l-0,40c-0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M55,181c0,-4.415 -3.585,-8 -8,-8l-39,-0c-4.415,-0 -8,3.585 -8,8l-0,40c-0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Zm-1,0l0,40c0,3.863 -3.137,7 -7,7l-39,-0c-3.863,-0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <path d="M1,201l53,-0"
+              style="fill:none;stroke:COLORID3;stroke-width:1px;"/>
+        <text x="11.274px" y="194.422px"
+              style="font-family:'ArialMT', 'Arial', sans-serif;font-size:20px;fill:COLORID1;">x=?</text><g transform="matrix(1,0,0,1,-60.3104,-155.06)">
+            <text x="71.202px" y="375.263px"
+                  style="font-family:'ArialMT', 'Arial', sans-serif;font-size:20px;fill:COLORID6;">y</text><text x="81.202px"
+                  y="375.263px"
+                  style="font-family:'ArialMT', 'Arial', sans-serif;font-size:20px;fill:COLORID6;">=</text><text x="93.081px"
+                  y="375.263px"
+                  style="font-family:'ArialMT', 'Arial', sans-serif;font-size:20px;fill:COLORID6;">?</text></g></g><rect id="Regression"
+          x="0" y="258" width="55" height="56" style="fill:COLORID8;"/>
+    <clipPath id="_clip5">
+        <rect x="0" y="258" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip5)">
+        <g id="Icon-Border2" serif:id="Icon Border">
+            <path d="M55,266c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l-0,40c-0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M55,266c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l-0,40c-0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Zm-1,0l0,40c0,3.863 -3.137,7 -7,7l-39,0c-3.863,0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <path d="M44,300l-33,0l0,-29"
+              style="fill:none;stroke:COLORID6;stroke-width:2px;"/>
+        <path d="M17.5,294l20,-20"
+              style="fill:none;stroke:COLORID3;stroke-width:2px;"/>
+        <circle cx="19.5" cy="278.059" r="2" style="fill:COLORID1;"/>
+        <circle cx="31.631" cy="294" r="2" style="fill:COLORID1;"/>
+        <circle cx="37.5" cy="284" r="2" style="fill:COLORID1;"/></g>
+    <rect id="Upsilon" x="0" y="342" width="55" height="56" style="fill:COLORID8;"/>
+    <clipPath id="_clip6">
+        <rect x="0" y="342" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip6)">
+        <g id="Icon-Border3" serif:id="Icon Border">
+            <path d="M55,350c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l-0,40c-0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID1;"/>
+            <path d="M55,350c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l-0,40c-0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Zm-1,0l0,40c0,3.863 -3.137,7 -7,7c0,-0 -39,-0 -39,-0c-3.863,-0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID4;"/></g>
+        <path id="Upsilon1" serif:id="Upsilon"
+              d="M30.31,350.039c4.961,0.603 8.627,2.7 10.998,6.291c2.371,3.59 3.556,7.743 3.557,12.457c-0.001,5.783 -1.727,10.758 -5.181,14.924c-3.453,4.167 -7.578,6.25 -12.375,6.25c-2.659,-0 -5.084,-0.72 -7.277,-2.159c-2.193,-1.439 -3.659,-3.186 -4.399,-5.242c-0.74,-2.055 -1.11,-4.947 -1.11,-8.675l-0,-13.608c-0,-2.467 -0.233,-4.153 -0.699,-5.057c-0.466,-0.905 -1.33,-1.357 -2.59,-1.357c-1.837,-0 -3.043,1.836 -3.618,5.509l-1.481,0c0.357,-6.222 3.029,-9.333 8.018,-9.333c1.699,0 3.104,0.439 4.214,1.316c1.11,0.877 1.877,1.884 2.302,3.022c0.425,1.137 0.637,3.214 0.637,6.229l0,13.814c0,3.234 0.185,5.667 0.555,7.297c0.37,1.631 1.206,2.967 2.508,4.009c1.302,1.042 2.734,1.562 4.297,1.562c2.631,0 4.755,-1.528 6.372,-4.584c1.617,-3.056 2.426,-7.668 2.426,-13.835c0,-5.509 -0.603,-9.572 -1.809,-12.19c-1.206,-2.617 -3.07,-4.337 -5.591,-5.16l0.246,-1.48Z"
+              style="fill:COLORID8;fill-rule:nonzero;"/></g>
+    <rect id="Settings" x="80" y="258" width="55" height="56" style="fill:COLORID8;"/>
+    <clipPath id="_clip7">
+        <rect x="80" y="258" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip7)">
+        <g id="Icon-Border4" serif:id="Icon Border">
+            <path d="M135,266c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M135,266c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Zm-1,-0l0,40c0,3.863 -3.137,7 -7,7l-39,0c-3.863,0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <path d="M92.482,275l30.036,0"
+              style="fill:none;stroke:COLORID6;stroke-width:2px;"/>
+        <path d="M92.482,286l30.036,0"
+              style="fill:none;stroke:COLORID6;stroke-width:2px;"/>
+        <path d="M92.482,297l30.036,0"
+              style="fill:none;stroke:COLORID6;stroke-width:2px;"/>
+        <circle cx="107" cy="297" r="2"
+                style="fill:COLORID1;stroke:COLORID1;stroke-width:2px;"/>
+        <circle cx="117" cy="286" r="2"
+                style="fill:COLORID1;stroke:COLORID1;stroke-width:2px;"/>
+        <circle cx="99" cy="275" r="2"
+                style="fill:COLORID1;stroke:COLORID1;stroke-width:2px;"/></g>
+    <rect id="Logo" x="0" y="447" width="116" height="33" style="fill:COLORID8;"/>
+    <text x="0.271px" y="472.604px"
+          style="font-family:'ArialMT', 'Arial', sans-serif;font-size:35.145px;fill:COLORID1;">Upsilon</text><rect id="External"
+          x="160" y="258" width="55" height="56" style="fill:COLORID8;"/>
+    <clipPath id="_clip8">
+        <rect x="160" y="258" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip8)">
+        <g id="Icon-Border5" serif:id="Icon Border">
+            <path d="M215,266c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M215,266c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Zm-1,0l0,40c0,3.863 -3.137,7 -7,7l-39,0c-3.863,0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <path d="M186.226,290.819c-0,-1.966 -1.596,-3.562 -3.562,-3.562l-7.123,0c-1.966,0 -3.562,1.596 -3.562,3.562l0,7.123c0,1.965 1.596,3.561 3.562,3.561l7.123,0c1.966,0 3.562,-1.596 3.562,-3.561l-0,-7.123Z"
+              style="fill:COLORID6;"/>
+        <path d="M186.226,274.058c-0,-1.965 -1.596,-3.561 -3.562,-3.561l-7.123,-0c-1.966,-0 -3.562,1.596 -3.562,3.561l0,7.123c0,1.966 1.596,3.562 3.562,3.562l7.123,-0c1.966,-0 3.562,-1.596 3.562,-3.562l-0,-7.123Z"
+              style="fill:COLORID6;"/>
+        <path d="M203.021,290.819c-0,-1.966 -1.596,-3.562 -3.562,-3.562l-7.123,0c-1.966,0 -3.562,1.596 -3.562,3.562l0,7.123c0,1.965 1.596,3.561 3.562,3.561l7.123,0c1.966,0 3.562,-1.596 3.562,-3.561l-0,-7.123Z"
+              style="fill:COLORID6;"/>
+        <path d="M203.453,280.138c1.39,-1.39 1.39,-3.647 -0,-5.037l-5.037,-5.036c-1.39,-1.39 -3.647,-1.39 -5.037,-0l-5.037,5.036c-1.39,1.39 -1.39,3.647 0,5.037l5.037,5.037c1.39,1.39 3.647,1.39 5.037,0l5.037,-5.037Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Atom" x="80" y="173" width="55" height="56" style="fill:COLORID8;"/>
+    <clipPath id="_clip9">
+        <rect x="80" y="173" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip9)">
+        <g id="Icon-Border6" serif:id="Icon Border">
+            <path d="M135,181c0,-4.415 -3.585,-8 -8,-8l-39,-0c-4.415,-0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M135,181c0,-4.415 -3.585,-8 -8,-8l-39,-0c-4.415,-0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Zm-1,-0l0,40c0,3.863 -3.137,7 -7,7l-39,-0c-3.863,-0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <circle cx="107.5" cy="201" r="2" style="fill:COLORID1;"/>
+        <ellipse cx="107.5" cy="201" rx="18" ry="6"
+                 style="fill:none;stroke:COLORID6;stroke-width:2px;"/>
+        <path d="M102.304,198c4.967,-8.604 11.328,-14.244 14.196,-12.588c2.868,1.655 1.163,9.984 -3.804,18.588c-4.967,8.604 -11.328,14.244 -14.196,12.588c-2.868,-1.655 -1.163,-9.984 3.804,-18.588Z"
+              style="fill:none;stroke:COLORID6;stroke-width:2px;"/>
+        <path d="M102.304,204c-4.967,-8.604 -6.672,-16.933 -3.804,-18.588c2.868,-1.656 9.229,3.984 14.196,12.588c4.967,8.604 6.672,16.933 3.804,18.588c-2.868,1.656 -9.229,-3.984 -14.196,-12.588Z"
+              style="fill:none;stroke:COLORID6;stroke-width:2px;"/></g>
+    <rect id="Sequence" x="160" y="173" width="55" height="56"
+          style="fill:COLORID8;"/>
+    <clipPath id="_clip10">
+        <rect x="160" y="173" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip10)">
+        <g id="Icon-Border7" serif:id="Icon Border">
+            <path d="M215,181c0,-4.415 -3.585,-8 -8,-8l-39,-0c-4.415,-0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M215,181c0,-4.415 -3.585,-8 -8,-8l-39,-0c-4.415,-0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Zm-1,0l0,40c0,3.863 -3.137,7 -7,7l-39,-0c-3.863,-0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <path d="M203,215l-32,-0l0,-8l8,-0l-0,-6l8,-0l-0,-6l8,0l-0,-6l8,0l-0,26Z"
+              style="fill:COLORID1;"/>
+        <path d="M204,216l-33,0l0,-29"
+              style="fill:none;stroke:COLORID6;stroke-width:2px;"/></g>
+    <rect id="Statistics" x="80" y="87" width="55" height="56"
+          style="fill:COLORID8;"/>
+    <clipPath id="_clip11">
+        <rect x="80" y="87" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip11)">
+        <g id="Icon-Border8" serif:id="Icon Border">
+            <path d="M135,95c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M135,95c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Zm-1,-0l0,40c0,3.863 -3.137,7 -7,7c0,-0 -39,-0 -39,-0c-3.863,-0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <rect x="102" y="100" width="11" height="33" style="fill:COLORID1;"/>
+        <rect x="115" y="108" width="11" height="25" style="fill:COLORID6;"/>
+        <rect x="89" y="116.5" width="11" height="16.5" style="fill:COLORID6;"/></g>
+    <rect id="Probability" x="160" y="87" width="55" height="56"
+          style="fill:COLORID8;"/>
+    <clipPath id="_clip12">
+        <rect x="160" y="87" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip12)">
+        <g id="Icon-Border9" serif:id="Icon Border">
+            <path d="M215,95c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M215,95c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Zm-1,0l0,40c0,3.863 -3.137,7 -7,7c0,-0 -39,-0 -39,-0c-3.863,-0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <path d="M168,132.5c0,0 7.774,-4.662 9,-16.5c0.808,-7.8 3.251,-12.5 9,-12.5l0,29l-18,0Z"
+              style="fill:COLORID6;stroke:COLORID6;stroke-width:1px;"/>
+        <path d="M207,132.5c0,0 -7.774,-4.662 -9,-16.5c-0.808,-7.8 -3.251,-12.5 -9,-12.5l0,29l18,0Z"
+              style="fill:COLORID1;stroke:COLORID1;stroke-width:1px;"/></g>
+    <rect id="RPN" x="80" y="0" width="55" height="56" style="fill:COLORID8;"/>
+    <clipPath id="_clip13">
+        <rect x="80" y="0" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip13)">
+        <g id="Icon-Border10" serif:id="Icon Border">
+            <path d="M135,8c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M135,8c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Zm-1,-0l0,40c0,3.863 -3.137,7 -7,7l-39,-0c-3.863,-0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <path d="M134,35l-53,0l0,13c0,3.863 3.137,7 7,7l39,0c3.863,0 7,-3.137 7,-7l0,-13Z"
+              style="fill:COLORID6;"/>
+        <path d="M81,34.5l53,0"
+              style="fill:none;stroke:COLORID3;stroke-width:1px;"/>
+        <text x="121.602px" y="16.263px"
+              style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;fill:COLORID1;">0</text><text x="112.594px"
+              y="30.64px"
+              style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;fill:COLORID1;">16</text><text x="103.711px"
+              y="50.084px"
+              style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;fill:COLORID8;">215</text></g><rect id="Functions"
+          x="160" y="0" width="55" height="56" style="fill:COLORID8;"/>
+    <clipPath id="_clip14">
+        <rect x="160" y="0" width="55" height="56"/></clipPath>
+    <g clip-path="url(#_clip14)">
+        <g id="Icon-Border11" serif:id="Icon Border">
+            <path d="M215,8c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,0c4.415,0 8,-3.585 8,-8l0,-40Z"
+                  style="fill:COLORID5;"/>
+            <path d="M215,8c0,-4.415 -3.585,-8 -8,-8l-39,0c-4.415,0 -8,3.585 -8,8l0,40c0,4.415 3.585,8 8,8l39,-0c4.415,-0 8,-3.585 8,-8l0,-40Zm-1,0l0,40c0,3.863 -3.137,7 -7,7l-39,-0c-3.863,-0 -7,-3.137 -7,-7l0,-40c0,-3.863 3.137,-7 7,-7l39,0c3.863,0 7,3.137 7,7Z"
+                  style="fill:COLORID3;"/></g>
+        <path d="M171,42.5c0,0 3.314,-24.5 28,-24.5l0,24.5l-28,0Z"
+              style="fill:COLORID1;"/>
+        <path d="M204,43l-33,0l0,-29"
+              style="fill:none;stroke:COLORID6;stroke-width:2px;"/></g>
+    <rect id="Binomial" x="273" y="0" width="35" height="19" style="fill:COLORID8;"/>
+    <clipPath id="_clip15">
+        <rect x="273" y="0" width="35" height="19"/></clipPath>
+    <g clip-path="url(#_clip15)">
+        <g>
+            <rect x="274" y="18" width="1" height="1" style="fill:COLORID1;"/>
+            <rect x="306" y="18" width="1" height="1" style="fill:COLORID1;"/>
+            <rect x="276" y="17" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="304" y="17" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="278" y="16" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="302" y="16" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="280" y="13" width="1" height="6" style="fill:COLORID1;"/>
+            <rect x="300" y="13" width="1" height="6" style="fill:COLORID1;"/>
+            <rect x="282" y="9" width="1" height="10" style="fill:COLORID1;"/>
+            <rect x="298" y="9" width="1" height="10" style="fill:COLORID1;"/>
+            <rect x="284" y="6" width="1" height="13" style="fill:COLORID1;"/>
+            <rect x="296" y="6" width="1" height="13" style="fill:COLORID1;"/>
+            <rect x="286" y="3" width="1" height="16" style="fill:COLORID1;"/>
+            <rect x="294" y="3" width="1" height="16" style="fill:COLORID1;"/>
+            <rect x="288" y="1" width="1" height="18" style="fill:COLORID1;"/>
+            <rect x="292" y="1" width="1" height="18" style="fill:COLORID1;"/>
+            <rect x="290" y="-0" width="1" height="19" style="fill:COLORID1;"/></g></g>
+    <rect id="Binomial-Focused" serif:id="Binomial Focused" x="327" y="0"
+          width="35" height="19" style="fill:COLORID7;"/>
+    <clipPath id="_clip16">
+        <rect x="327" y="0" width="35" height="19"/></clipPath>
+    <g clip-path="url(#_clip16)">
+        <g id="Binomial1" serif:id="Binomial">
+            <rect x="328" y="18" width="1" height="1" style="fill:COLORID1;"/>
+            <rect x="360" y="18" width="1" height="1" style="fill:COLORID1;"/>
+            <rect x="330" y="17" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="358" y="17" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="332" y="16" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="356" y="16" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="334" y="13" width="1" height="6" style="fill:COLORID1;"/>
+            <rect x="354" y="13" width="1" height="6" style="fill:COLORID1;"/>
+            <rect x="336" y="9" width="1" height="10" style="fill:COLORID1;"/>
+            <rect x="352" y="9" width="1" height="10" style="fill:COLORID1;"/>
+            <rect x="338" y="6" width="1" height="13" style="fill:COLORID1;"/>
+            <rect x="350" y="6" width="1" height="13" style="fill:COLORID1;"/>
+            <rect x="340" y="3" width="1" height="16" style="fill:COLORID1;"/>
+            <rect x="348" y="3" width="1" height="16" style="fill:COLORID1;"/>
+            <rect x="342" y="1" width="1" height="18" style="fill:COLORID1;"/>
+            <rect x="346" y="1" width="1" height="18" style="fill:COLORID1;"/>
+            <rect x="344" y="-0" width="1" height="19" style="fill:COLORID1;"/></g></g>
+    <rect id="Chi-Squared" serif:id="Chi Squared" x="273" y="29" width="35"
+          height="19" style="fill:COLORID8;"/>
+    <g>
+        <path d="M273,42c0,0 1.512,-6 6,-6c4.488,0 14.504,11 29,11l0,1l-35,0l0,-6"
+              style="fill:COLORID1;"/></g>
+    <rect id="Chi-Squared-Focused" serif:id="Chi Squared Focused" x="327" y="29"
+          width="35" height="19" style="fill:COLORID7;"/>
+    <g id="Chi-Squared1" serif:id="Chi Squared">
+        <path d="M327,42c0,0 1.512,-6 6,-6c4.488,0 14.504,11 29,11l0,1l-35,0l0,-6"
+              style="fill:COLORID1;"/></g>
+    <rect id="Exponential" x="273" y="58" width="35" height="19"
+          style="fill:COLORID8;"/>
+    <g>
+        <path d="M308,76l0,1l-35,0l0,-19l1,0c0,0 -0.356,8.136 11,13c11.356,4.864 23,5 23,5Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Exponential-Focused" serif:id="Exponential Focused" x="327" y="58"
+          width="35" height="19" style="fill:COLORID7;"/>
+    <g id="Exponential1" serif:id="Exponential">
+        <path d="M362,76l0,1l-35,0l0,-19l1,0c0,0 -0.356,8.136 11,13c11.356,4.864 23,5 23,5Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Fisher" x="273" y="87" width="35" height="19" style="fill:COLORID8;"/>
+    <g>
+        <path d="M273,106c0,0 1.751,-16 4,-16c2.249,0 0.362,5.694 7,10c6.638,4.306 17.257,6 21,6c3.743,0 -32,0 -32,0Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Fisher-Focused" serif:id="Fisher Focused" x="327" y="87"
+          width="35" height="19" style="fill:COLORID7;"/>
+    <g id="Fisher1" serif:id="Fisher">
+        <path d="M327,106c0,0 1.751,-16 4,-16c2.249,0 0.362,5.694 7,10c6.638,4.306 17.257,6 21,6c3.743,0 -32,0 -32,0Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Geometric" x="273" y="116" width="35" height="19"
+          style="fill:COLORID8;"/>
+    <clipPath id="_clip17">
+        <rect x="273" y="116" width="35" height="19"/></clipPath>
+    <g clip-path="url(#_clip17)">
+        <g>
+            <rect x="273" y="117" width="1" height="18" style="fill:COLORID1;"/>
+            <rect x="275" y="120" width="1" height="15" style="fill:COLORID1;"/>
+            <rect x="277" y="123" width="1" height="12" style="fill:COLORID1;"/>
+            <rect x="279" y="125" width="1" height="10" style="fill:COLORID1;"/>
+            <rect x="281" y="127" width="1" height="8" style="fill:COLORID1;"/>
+            <rect x="283" y="129" width="1" height="6" style="fill:COLORID1;"/>
+            <rect x="285" y="130" width="1" height="5" style="fill:COLORID1;"/>
+            <rect x="287" y="131" width="1" height="4" style="fill:COLORID1;"/>
+            <rect x="289" y="132" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="291" y="132" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="295" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="297" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="299" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="301" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="303" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="305" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="307" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="293" y="132.5" width="1" height="2.5" style="fill:COLORID1;"/></g></g>
+    <rect id="Geometric-Focused" serif:id="Geometric Focused" x="327" y="116"
+          width="35" height="19" style="fill:COLORID7;"/>
+    <clipPath id="_clip18">
+        <rect x="327" y="116" width="35" height="19"/></clipPath>
+    <g clip-path="url(#_clip18)">
+        <g id="Geometric1" serif:id="Geometric">
+            <rect x="327" y="117" width="1" height="18" style="fill:COLORID1;"/>
+            <rect x="329" y="120" width="1" height="15" style="fill:COLORID1;"/>
+            <rect x="331" y="123" width="1" height="12" style="fill:COLORID1;"/>
+            <rect x="333" y="125" width="1" height="10" style="fill:COLORID1;"/>
+            <rect x="335" y="127" width="1" height="8" style="fill:COLORID1;"/>
+            <rect x="337" y="129" width="1" height="6" style="fill:COLORID1;"/>
+            <rect x="339" y="130" width="1" height="5" style="fill:COLORID1;"/>
+            <rect x="341" y="131" width="1" height="4" style="fill:COLORID1;"/>
+            <rect x="343" y="132" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="345" y="132" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="349" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="351" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="353" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="355" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="357" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="359" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="361" y="133" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="347" y="132.5" width="1" height="2.5" style="fill:COLORID1;"/></g></g>
+    <rect id="Normal" x="273" y="145" width="35" height="19" style="fill:COLORID8;"/>
+    <clipPath id="_clip19">
+        <rect x="273" y="145" width="35" height="19"/></clipPath>
+    <g clip-path="url(#_clip19)">
+        <g>
+            <path d="M290.5,145c1.298,0 3.641,-0.034 7,9.5c3.043,8.639 10.5,8.5 10.5,8.5l0,1l-35,0l0,-1c0,0 7.457,0.139 10.5,-8.5c3.359,-9.534 5.702,-9.5 7,-9.5Z"
+                  style="fill:COLORID1;"/></g></g>
+    <rect id="Normal-Focused" serif:id="Normal Focused" x="327" y="145"
+          width="35" height="19" style="fill:COLORID7;"/>
+    <clipPath id="_clip20">
+        <rect x="327" y="145" width="35" height="19"/></clipPath>
+    <g clip-path="url(#_clip20)">
+        <g id="Normal1" serif:id="Normal">
+            <path d="M344.5,145c1.298,0 3.641,-0.034 7,9.5c3.043,8.639 10.5,8.5 10.5,8.5l0,1l-35,0l0,-1c0,0 7.457,0.139 10.5,-8.5c3.359,-9.534 5.702,-9.5 7,-9.5Z"
+                  style="fill:COLORID1;"/></g></g>
+    <rect id="Poisson" x="273" y="174" width="35" height="19" style="fill:COLORID8;"/>
+    <clipPath id="_clip21">
+        <rect x="273" y="174" width="35" height="19"/></clipPath>
+    <g clip-path="url(#_clip21)">
+        <g>
+            <rect x="273" y="192" width="1" height="1" style="fill:COLORID1;"/>
+            <rect x="307" y="192" width="1" height="1" style="fill:COLORID1;"/>
+            <rect x="275" y="191" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="305" y="191" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="277" y="190" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="303" y="190" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="279" y="188" width="1" height="5" style="fill:COLORID1;"/>
+            <rect x="301" y="188" width="1" height="5" style="fill:COLORID1;"/>
+            <rect x="281" y="185" width="1" height="8" style="fill:COLORID1;"/>
+            <rect x="299" y="185" width="1" height="8" style="fill:COLORID1;"/>
+            <rect x="283" y="182" width="1" height="11" style="fill:COLORID1;"/>
+            <rect x="297" y="182" width="1" height="11" style="fill:COLORID1;"/>
+            <rect x="285" y="179" width="1" height="14" style="fill:COLORID1;"/>
+            <rect x="295" y="179" width="1" height="14" style="fill:COLORID1;"/>
+            <rect x="287" y="177" width="1" height="16" style="fill:COLORID1;"/>
+            <rect x="293" y="177" width="1" height="16" style="fill:COLORID1;"/>
+            <rect x="289" y="174" width="1" height="19" style="fill:COLORID1;"/>
+            <rect x="291" y="174" width="1" height="19" style="fill:COLORID1;"/></g></g>
+    <rect id="Poisson-Focused" serif:id="Poisson Focused" x="327" y="174"
+          width="35" height="19" style="fill:COLORID7;"/>
+    <clipPath id="_clip22">
+        <rect x="327" y="174" width="35" height="19"/></clipPath>
+    <g clip-path="url(#_clip22)">
+        <g id="Poisson1" serif:id="Poisson">
+            <rect x="327" y="192" width="1" height="1" style="fill:COLORID1;"/>
+            <rect x="361" y="192" width="1" height="1" style="fill:COLORID1;"/>
+            <rect x="329" y="191" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="359" y="191" width="1" height="2" style="fill:COLORID1;"/>
+            <rect x="331" y="190" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="357" y="190" width="1" height="3" style="fill:COLORID1;"/>
+            <rect x="333" y="188" width="1" height="5" style="fill:COLORID1;"/>
+            <rect x="355" y="188" width="1" height="5" style="fill:COLORID1;"/>
+            <rect x="335" y="185" width="1" height="8" style="fill:COLORID1;"/>
+            <rect x="353" y="185" width="1" height="8" style="fill:COLORID1;"/>
+            <rect x="337" y="182" width="1" height="11" style="fill:COLORID1;"/>
+            <rect x="351" y="182" width="1" height="11" style="fill:COLORID1;"/>
+            <rect x="339" y="179" width="1" height="14" style="fill:COLORID1;"/>
+            <rect x="349" y="179" width="1" height="14" style="fill:COLORID1;"/>
+            <rect x="341" y="177" width="1" height="16" style="fill:COLORID1;"/>
+            <rect x="347" y="177" width="1" height="16" style="fill:COLORID1;"/>
+            <rect x="343" y="174" width="1" height="19" style="fill:COLORID1;"/>
+            <rect x="345" y="174" width="1" height="19" style="fill:COLORID1;"/></g></g>
+    <rect id="Student" x="273" y="203" width="35" height="19" style="fill:COLORID8;"/>
+    <clipPath id="_clip23">
+        <rect x="273" y="203" width="35" height="19"/></clipPath>
+    <g clip-path="url(#_clip23)">
+        <g>
+            <path d="M273,222c0,0 11.784,-0.846 13.5,-8.5c1.75,-7.808 2.629,-10.5 4,-10.5l0.032,0c1.368,0.027 2.224,2.753 3.968,10.5c1.723,7.653 13.5,8.5 13.5,8.5l-35,0Z"
+                  style="fill:COLORID1;"/></g></g>
+    <rect id="Student-Focused" serif:id="Student Focused" x="327" y="203"
+          width="35" height="19" style="fill:COLORID7;"/>
+    <clipPath id="_clip24">
+        <rect x="327" y="203" width="35" height="19"/></clipPath>
+    <g clip-path="url(#_clip24)">
+        <g id="Student1" serif:id="Student">
+            <path d="M327,222c0,0 11.784,-0.846 13.5,-8.5c1.75,-7.808 2.629,-10.5 4,-10.5l0.032,0c1.368,0.027 2.224,2.753 3.968,10.5c1.723,7.653 13.5,8.5 13.5,8.5l-35,0Z"
+                  style="fill:COLORID1;"/></g></g>
+    <rect id="Uniform" x="273" y="232" width="35" height="19" style="fill:COLORID8;"/>
+    <g>
+        <path d="M273,250l7,0l0,-11l22,0l0,11l6,0l0,1l-7,0l0,-11l-9,0l0,11l-19,0l0,-1Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Uniform-Focused" serif:id="Uniform Focused" x="327" y="232"
+          width="35" height="19" style="fill:COLORID7;"/>
+    <g id="Uniform1" serif:id="Uniform">
+        <path d="M327,250l7,0l0,-11l22,0l0,11l6,0l0,1l-7,0l0,-11l-9,0l0,11l-19,0l0,-1Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Calcul-1" serif:id="Calcul 1" x="273" y="261" width="39"
+          height="23" style="fill:COLORID8;"/>
+    <g>
+        <path d="M293,282l-16,-0l0,-1c0,-0 8.063,-0.478 10,-8.5c1.937,-8.022 4.044,-9.5 6,-9.5l0.023,0c1.981,0.023 4.055,1.54 5.977,9.5c1.937,8.022 10,8.5 10,8.5l0,1c0,-0 -9.018,-0.333 -11.118,-9.5c-1.01,-3.802 -1.907,-6.138 -2.837,-7.245c-1.032,-1.228 -2.045,-1.01 -2.045,-1.01l0,17.755Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Calcul-1-Focused" serif:id="Calcul 1 Focused" x="327" y="261"
+          width="39" height="23" style="fill:COLORID7;"/>
+    <g id="Calcul-11" serif:id="Calcul 1">
+        <path d="M346.5,282l-16,-0l0,-1c0,-0 8.063,-0.478 10,-8.5c1.937,-8.022 4.044,-9.5 6,-9.5l0.023,0c1.981,0.023 4.055,1.54 5.977,9.5c1.937,8.022 10,8.5 10,8.5l0,1c0,-0 -9.018,-0.333 -11.118,-9.5c-1.01,-3.802 -1.907,-6.138 -2.837,-7.245c-1.032,-1.228 -2.045,-1.01 -2.045,-1.01l0,17.755Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Calcul-4" serif:id="Calcul 4" x="273" y="360" width="39"
+          height="23" style="fill:COLORID8;"/>
+    <g>
+        <path d="M292.998,363.246c-0.091,-0 -2.799,-0.482 -4.88,8.254c-2.1,9.167 -11.118,9.5 -11.118,9.5l0,-1c0,0 8.063,-0.478 10,-8.5c1.922,-7.96 4.018,-9.477 6,-9.5l0.006,0c1.988,0.03 4.076,1.556 5.994,9.5c1.937,8.022 10,8.5 10,8.5l0,1c0,0 -9.018,-0.333 -11.118,-9.5c-0.603,-2.27 -1.068,-3.915 -1.693,-5.109l-0,14.61l-1,0l-0,-16.202c-0.938,-1.666 -2.189,-1.554 -2.189,-1.554l-0.002,0.001Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Calcul-4-Focused" serif:id="Calcul 4 Focused" x="327" y="360"
+          width="39" height="23" style="fill:COLORID7;"/>
+    <g id="Calcul-41" serif:id="Calcul 4">
+        <path d="M346.498,363.245c-0.091,-0 -2.799,-0.482 -4.88,8.254c-2.1,9.167 -11.118,9.5 -11.118,9.5l0,-1c0,0 8.063,-0.478 10,-8.5c1.922,-7.959 4.018,-9.476 6,-9.5l0.006,0.001c1.988,0.029 4.076,1.555 5.994,9.499c1.937,8.022 10,8.5 10,8.5l0,1c0,0 -9.018,-0.333 -11.118,-9.5c-0.603,-2.27 -1.068,-3.915 -1.693,-5.108l-0,14.61l-1,-0l-0,-16.203c-0.938,-1.666 -2.189,-1.554 -2.189,-1.554l-0.002,0.001Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Exam" x="273" y="393" width="18" height="9" style="fill:COLORID1;"/>
+    <clipPath id="_clip25">
+        <rect x="273" y="393" width="18" height="9"/></clipPath>
+    <g clip-path="url(#_clip25)">
+        <path d="M282,393l8,3l-8,3l-8,-3l8,-3Z" style="fill:COLORID8;"/>
+        <path d="M274,397l2,0.5l-1,3.5l-2,-1l1,-3Z" style="fill:COLORID8;"/>
+        <path d="M277,398l4,2l2,0l4,-2l0,2l-4,2l-2,-0l-4,-2l0,-2"
+              style="fill:COLORID8;"/></g>
+    <rect id="Calcul-3" serif:id="Calcul 3" x="273" y="327" width="39"
+          height="23" style="fill:COLORID8;"/>
+    <g>
+        <path d="M293,348l16,-0l0,-1c0,-0 -8.063,-0.478 -10,-8.5c-1.937,-8.022 -4.044,-9.5 -6,-9.5l-0.023,0c-1.981,0.023 -4.055,1.54 -5.977,9.5c-1.937,8.022 -10,8.5 -10,8.5l0,1c0,-0 9.018,-0.333 11.118,-9.5c2.066,-9.019 4.882,-8.255 4.882,-8.255l0,17.755Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Calcul-3-Focused" serif:id="Calcul 3 Focused" x="327" y="327"
+          width="39" height="23" style="fill:COLORID7;"/>
+    <g id="Calcul-31" serif:id="Calcul 3">
+        <path d="M346.5,348l16,-0l0,-1c0,-0 -8.063,-0.478 -10,-8.5c-1.937,-8.022 -4.044,-9.5 -6,-9.5l-0.023,0c-1.981,0.023 -4.055,1.54 -5.977,9.5c-1.937,8.022 -10,8.5 -10,8.5l0,1c0,-0 9.018,-0.333 11.118,-9.5c2.066,-9.019 4.882,-8.255 4.882,-8.255l0,17.755Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Calcul-2" serif:id="Calcul 2" x="273" y="294" width="39"
+          height="23" style="fill:COLORID8;"/>
+    <g>
+        <path d="M289,302.336c-0.3,0.814 -0.597,2.09 -0.882,3.164c-2.1,9.167 -11.118,9.5 -11.118,9.5l0,-1c0,-0 8.063,-0.478 10,-8.5c1.922,-7.96 4.018,-9.477 6,-9.5l0.023,0.001c2.007,0.047 4.07,1.601 5.977,9.499c1.937,8.022 10,8.5 10,8.5l0,1c0,-0 -9.018,-0.333 -11.118,-9.5c-0.285,-1.075 -0.582,-2.351 -0.882,-3.164l0,12.664l-8,-0l0,-12.664Z"
+              style="fill:COLORID1;"/></g>
+    <rect id="Calcul-2-Focused" serif:id="Calcul 2 Focused" x="327" y="294"
+          width="39" height="23" style="fill:COLORID7;"/>
+    <g id="Calcul-21" serif:id="Calcul 2">
+        <path d="M342.5,302.336c-0.3,0.814 -0.597,2.09 -0.882,3.164c-2.1,9.167 -11.118,9.5 -11.118,9.5l0,-1c0,-0 8.063,-0.478 10,-8.5c1.922,-7.96 4.018,-9.477 6,-9.5l0.023,0.001c2.007,0.047 4.07,1.601 5.977,9.499c1.937,8.022 10,8.5 10,8.5l0,1c0,-0 -9.018,-0.333 -11.118,-9.5c-0.285,-1.075 -0.582,-2.351 -0.882,-3.164l0,12.664l-8,-0l0,-12.664Z"
+              style="fill:COLORID1;"/></g></svg>

@@ -25,7 +25,7 @@ bool AccessibilityController::handleEvent(Ion::Events::Event event) {
   int redGamma, greenGamma, blueGamma;
   KDIonContext::sharedContext()->gamma.gamma(redGamma, greenGamma, blueGamma);
 
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && (selectedRow() <= 2)) {
     if (selectedRow() == 0) {
       invertEnabled = !invertEnabled;
     }

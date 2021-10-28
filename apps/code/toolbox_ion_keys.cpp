@@ -37,10 +37,10 @@ namespace Code {
     }
 
   void toolboxIonKeys::toolboxIonView::drawRect(KDContext * ctx, KDRect rect) const {
-    ctx->fillRect(rect, Palette::GrayBright);
-    ctx->strokeRect(rect, Palette::GrayDark);
-    ctx->drawString(I18n::translate(I18n::Message::PressAKey),KDPoint(rect.left()+80, rect.top()+20));
-
+    ctx->fillRect(rect, Palette::WallScreen);
+    ctx->strokeRect(rect, Palette::ListCellBorder);
+    ctx->drawString(I18n::translate(I18n::Message::PressAKey),KDPoint(rect.left()+80, rect.top()+20),KDFont::LargeFont,Palette::PrimaryText,Palette::WallScreen);
+  
   }
 
   View * toolboxIonKeys::view(){

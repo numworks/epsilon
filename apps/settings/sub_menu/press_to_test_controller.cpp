@@ -240,7 +240,6 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int in
 }
 
 I18n::Message PressToTestController::LabelAtIndex(int i) {
-  // TODO Hugo : Add Sigma symbol in PressToTestSum
   // TODO Hugo : Translate the texts
   assert(i >= 0 && i < k_numberOfSwitchCells);
   constexpr I18n::Message labels[k_numberOfSwitchCells] = {

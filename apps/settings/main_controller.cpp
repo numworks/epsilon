@@ -21,7 +21,9 @@ constexpr SettingsMessageTree s_accessibilityChildren[6] = {SettingsMessageTree(
 constexpr SettingsMessageTree s_contributorsChildren[23] = {SettingsMessageTree(I18n::Message::Developers), SettingsMessageTree(I18n::Message::QuentinGuidee), SettingsMessageTree(I18n::Message::JoachimLeFournis), SettingsMessageTree(I18n::Message::MaximeFriess), SettingsMessageTree(I18n::Message::JeanBaptisteBoric), SettingsMessageTree(I18n::Message::SandraSimmons), SettingsMessageTree(I18n::Message::David), SettingsMessageTree(I18n::Message::DamienNicolet), SettingsMessageTree(I18n::Message::EvannDreumont), SettingsMessageTree(I18n::Message::SzaboLevente), SettingsMessageTree(I18n::Message::VenceslasDuet), SettingsMessageTree(I18n::Message::CharlotteThomas), SettingsMessageTree(I18n::Message::AntoninLoubiere), SettingsMessageTree(I18n::Message::CyprienMejat), SettingsMessageTree(I18n::Message::BetaTesters), SettingsMessageTree(I18n::Message::TimeoArnouts), SettingsMessageTree(I18n::Message::JulieC), SettingsMessageTree(I18n::Message::LelahelHideux), SettingsMessageTree(I18n::Message::Madil), SettingsMessageTree(I18n::Message::HilaireLeRoux), SettingsMessageTree(I18n::Message::HectorNussbaumer), SettingsMessageTree(I18n::Message::RaphaelDyda), SettingsMessageTree(I18n::Message::ThibautC)};
 
 // Code Settings
+#ifdef HAS_CODE
 constexpr SettingsMessageTree s_codeChildren[2] = {SettingsMessageTree(I18n::Message::FontSizes, s_modelFontChildren), SettingsMessageTree(I18n::Message::Autocomplete)};
+#endif
 constexpr SettingsMessageTree s_modelFontChildren[2] = {SettingsMessageTree(I18n::Message::LargeFont), SettingsMessageTree(I18n::Message::SmallFont)};
 
 

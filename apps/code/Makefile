@@ -1,6 +1,8 @@
 apps += Code::App
 app_headers += apps/code/app.h
 
+SFLAGS += -DHAS_CODE
+
 app_code_src = $(addprefix apps/code/,\
   app.cpp \
   console_controller.cpp \

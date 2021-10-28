@@ -13,7 +13,9 @@ constexpr SettingsMessageTree s_modelMenu[] =
     SettingsMessageTree(I18n::Message::Language),
     SettingsMessageTree(I18n::Message::Country),
     SettingsMessageTree(I18n::Message::ExamMode, ExamModeConfiguration::s_modelExamChildren),
+#ifdef HAS_CODE
     SettingsMessageTree(I18n::Message::CodeApp, s_codeChildren),
+#endif
     SettingsMessageTree(I18n::Message::BetaPopUp),
     SettingsMessageTree(I18n::Message::About, s_modelAboutChildren),
     SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren)};

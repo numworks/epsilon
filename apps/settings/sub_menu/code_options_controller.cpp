@@ -61,11 +61,14 @@ void CodeOptionsController::willDisplayCellForIndex(HighlightCell * cell, int in
     GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont
         ? myTextCell->setSubtitle(I18n::Message::LargeFont) 
         : myTextCell->setSubtitle(I18n::Message::SmallFont);
-  } else if (thisLabel == I18n::Message::Autocomplete) {
+  } 
+#ifdef HAS_CODE
+  else if (thisLabel == I18n::Message::Autocomplete) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->autocomplete());
   }
+#endif
 }
 
 }

@@ -136,9 +136,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     if (j == numberRows - 1) {
       EvenOddExpressionCell * myCell = static_cast<EvenOddExpressionCell *>(cell);
       myCell->setLayout(m_r2Layout);
+      myCell->setTextColor(ExamModeConfiguration::statsDiagnosticsAreForbidden() ? Palette::GrayDark : KDColorBlack);
       return;
     }
     EvenOddMessageTextCell * myCell = static_cast<EvenOddMessageTextCell *>(cell);
+    myCell->setTextColor(KDColorBlack);
     myCell->setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
     if (j <= k_regressionCellIndex) {
       I18n::Message titles[k_regressionCellIndex] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression};
@@ -147,6 +149,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     }
     if (hasLinearRegression() && j == numberRows - 2) {
       myCell->setMessage(I18n::Message::R);
+      if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
+        myCell->setTextColor(Palette::GrayDark);
+      }
       return;
     }
     I18n::Message titles[5] = {I18n::Message::A, I18n::Message::B, I18n::Message::C, I18n::Message::D, I18n::Message::E};
@@ -185,6 +190,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
   SeparatorEvenOddBufferTextCell * bufferCell = static_cast<SeparatorEvenOddBufferTextCell *>(cell);
+  bufferCell->setTextColor(KDColorBlack);
   if (i > 0 && j == k_regressionCellIndex) {
     Model * model = m_store->modelForSeries(seriesNumber);
     const char * formula = I18n::translate(model->formulaMessage());
@@ -234,7 +240,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       // Fill r (if needed, before last row) and r2 (last row)
       if ((modelType == Model::Type::Linear && j == numberRows - 2) || j == numberRows - 1) {
         if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
-          // TODO Hugo : Gray out this text
+          bufferCell->setTextColor(Palette::GrayDark);
           bufferCell->setText(I18n::translate(I18n::Message::Disabled));
           return;
         }

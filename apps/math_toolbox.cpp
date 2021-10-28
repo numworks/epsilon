@@ -1,4 +1,5 @@
 #include "math_toolbox.h"
+#include "exam_mode_configuration.h"
 #include "global_preferences.h"
 #include "shared/global_context.h"
 #include "./shared/toolbox_helpers.h"
@@ -335,7 +336,6 @@ constexpr ToolboxMessageTree unitChildren[] = {
 constexpr ToolboxMessageTree calculChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, false, I18n::Message::DiffCommand),
   ToolboxMessageTree::Leaf(I18n::Message::IntCommandWithArg, I18n::Message::Integral, false, I18n::Message::IntCommand),
-  // TODO : Disable it if ExamModeConfiguration::sumIsForbidden()
   ToolboxMessageTree::Leaf(I18n::Message::SumCommandWithArg, I18n::Message::Sum, false, I18n::Message::SumCommand),
   ToolboxMessageTree::Leaf(I18n::Message::ProductCommandWithArg, I18n::Message::Product, false, I18n::Message::ProductCommand)
 };
@@ -412,7 +412,6 @@ constexpr ToolboxMessageTree matricesChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ReducedRowEchelonFormCommandWithArg, I18n::Message::ReducedRowEchelonForm),
 };
 
-// TODO : Disable it if ExamModeConfiguration::vectorsAreForbidden()
 constexpr ToolboxMessageTree vectorsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DotCommandWithArg, I18n::Message::Dot),
   ToolboxMessageTree::Leaf(I18n::Message::CrossCommandWithArg, I18n::Message::Cross),
@@ -478,7 +477,6 @@ constexpr ToolboxMessageTree listsChildren[] = {
 constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
   ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
-  // TODO : Disable it if ExamModeConfiguration::basedLogarithmIsForbidden()
   ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
   ToolboxMessageTree::Node(I18n::Message::Calculus, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
@@ -524,6 +522,18 @@ KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
   return Escher::Toolbox::nonMemoizedRowHeight(index);
 }
 
+bool MathToolbox::isMessageTreeDisabled(const ToolboxMessageTree * messageTree) const {
+  I18n::Message label = messageTree->label();
+  return (label == I18n::Message::SumCommandWithArg
+          && ExamModeConfiguration::sumIsForbidden())
+         || (label == I18n::Message::LogCommandWithArg
+             && ExamModeConfiguration::basedLogarithmIsForbidden())
+         || ((label == I18n::Message::DotCommandWithArg
+              || label == I18n::Message::CrossCommandWithArg
+              || label == I18n::Message::NormVectorCommandWithArg)
+             && ExamModeConfiguration::vectorsAreForbidden());
+}
+
 void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   /* Unhighlight reusableCell to prevent display of multiple selected rows.
    * See SelectableTableView::reloadData comment. */
@@ -557,6 +567,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 
     myCell->setLayout(resultLayout);
     myCell->setSubLabelMessage(messageTree->text());
+    myCell->setTextColor(isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack);
     return;
   }
   Escher::Toolbox::willDisplayCellForIndex(cell, index);
@@ -565,6 +576,11 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 bool MathToolbox::selectLeaf(int selectedRow) {
   assert(typeAtIndex(selectedRow) == k_leafCellType);
   const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(selectedRow);
+  if (isMessageTreeDisabled(messageTree)) {
+    // TODO Hugo : Warning should not dismiss the toolbox
+    Container::activeApp()->displayWarning(I18n::Message::DisabledFeatureInPressToTestMode1, I18n::Message::DisabledFeatureInPressToTestMode2);
+    return true;
+  }
   m_selectableTableView.deselectTable();
 
   // Translate the message

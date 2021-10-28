@@ -12,6 +12,7 @@ public:
   const View * labelView() const override { return &m_labelExpressionView; }
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);
+  void setTextColor(KDColor color) { m_labelExpressionView.setTextColor(color); }
   Poincare::Layout layout() const override { return m_labelExpressionView.layout(); }
 
   Responder * responder() override {

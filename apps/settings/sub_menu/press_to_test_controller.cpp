@@ -42,7 +42,7 @@ void PressToTestView::tableViewDidChangeSelectionAndDidScroll(SelectableTableVie
 PressToTestView::ContentView::ContentView(SelectableTableView * table) :
     m_table(table),
     m_topMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
-    m_bottomMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen) {
+    m_bottomMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen) {
   // Margins between the table and messages
   m_table->setMargins(topTableMargin(), 0, bottomTableMargin(), 0);
 }
@@ -229,8 +229,7 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
   PressToTestSwitch * myCell = static_cast<PressToTestSwitch *>(cell);
   myCell->setMessage(LabelAtIndex(index));
-  myCell->setTextColor(GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && !getParamAtIndex(index) ? Palette::GrayDarkMiddle : KDColorBlack);
-  myCell->setSublabelTextColor(GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && !getParamAtIndex(index) ? Palette::GrayDarkMiddle : Palette::GrayDark);
+  myCell->setTextColor(GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && !getParamAtIndex(index) ? Palette::GrayDark : KDColorBlack);
   myCell->setSubLabelMessage(SubLabelAtIndex(index));
   myCell->setState(getParamAtIndex(index));
   myCell->setDisplayImage(GlobalPreferences::sharedGlobalPreferences()->isInExamMode());

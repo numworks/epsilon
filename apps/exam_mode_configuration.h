@@ -17,6 +17,7 @@ I18n::Message examModeActivationMessage(int index);
 I18n::Message examModeActivationWarningMessage(GlobalPreferences::ExamMode mode, int line);
 
 // Exam mode behaviour
+I18n::Message forbiddenAppMessage(GlobalPreferences::ExamMode mode, int line);
 KDColor examModeColor(GlobalPreferences::ExamMode mode);
 bool appIsForbidden(I18n::Message appName);
 bool exactExpressionIsForbidden(Poincare::Expression e);

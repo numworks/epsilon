@@ -16,7 +16,7 @@ static char* pref_path = nullptr;
 static char* file_buffer = nullptr;
 
 void loadPython(Args * arguments) {
-  pref_path = SDL_GetPrefPath("io.github.omega", "omega-simulator");
+  pref_path = SDL_GetPrefPath("io.github.upsilon", "upsilon-simulator");
   std::string path(pref_path);
   printf("Loading from %s\n", (path + "python.dat").c_str());
   

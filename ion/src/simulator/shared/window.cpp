@@ -36,7 +36,7 @@ void init(bool screen_only, bool fullscreen, bool unresizable) {
   if (screen_only) {
     sScreenOnly = true;
     sWindow = SDL_CreateWindow(
-      "Omega",
+      "Upsilon",
       SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED,
       Ion::Display::Width, Ion::Display::Height,
@@ -48,7 +48,7 @@ void init(bool screen_only, bool fullscreen, bool unresizable) {
     );
   } else {
     sWindow = SDL_CreateWindow(
-      "Omega",
+      "Upsilon",
       SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED,
       458, 888,

@@ -240,7 +240,7 @@ You need devkitPro and devkitARM installed and in your path (instructions [here]
 ```bash
 git clone --recursive https://github.com/Lauryy06/Upsilon.git
 cd Upsilon
-git checkout --recursive omega-dev
+git checkout --recursive upsilon-dev
 make PLATFORM=simulator TARGET=3ds -j
 ```
 You can then put epsilon.3dsx on a SD card to run it from the HBC or use 3dslink to launch it over the network:

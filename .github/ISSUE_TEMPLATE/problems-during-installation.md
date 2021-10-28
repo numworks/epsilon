@@ -1,6 +1,6 @@
 ---
 name: Problems during installation
-about: Need help to install Omega?
+about: Need help to install Upsilon?
 title: ''
 labels: 'Status: Triage, Type: Installation issue'
 assignees: ''
@@ -16,4 +16,4 @@ Copy/paste the logs here (If you have some)
 ```
 
 **Environment**
- - Omega Version: {go to settings > about > Omega Version and type the version here}
+ - Upsilon Version: {go to settings > about > Upsilon Version and type the version here}

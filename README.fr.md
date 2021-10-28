@@ -126,7 +126,7 @@ Vous aurez besoin de devkitPro et de devkitARM disponible dans votre `$PATH` (in
 ```bash
 git clone --recursive https://github.com/Lauryy06/Upsilon.git
 cd Upsilon
-git checkout --recursive omega-dev
+git checkout --recursive upsilon-dev
 make PLATFORM=simulator TARGET=3ds -j
 ```
 

@@ -1,6 +1,6 @@
 ---
-name: OMEGA BETA ONLY - Bug report
-about: Omega 1.21 is not working like it should? Let us know!
+name: UPSILON BETA ONLY - Bug report
+about: Upsilon 1.21 is not working like it should? Let us know!
 title: "[BETA-1.21] …"
 labels: 'Status: Triage, Type: Bug'
 assignees: ''
@@ -24,5 +24,5 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - Omega Version: [go to settings > about > Omega Version and type the version here]
+ - Upsilon Version: [go to settings > about > Upsilon Version and type the version here]
  - Discord username: ..........#....

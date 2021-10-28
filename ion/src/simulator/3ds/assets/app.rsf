@@ -1,7 +1,7 @@
 BasicInfo:
-  Title                   : Omega
+  Title                   : Upsilon
   CompanyCode             : "00"
-  ProductCode             : CTR-E-OMEGA
+  ProductCode             : CTR-E-Upsilon
   Logo                    : Homebrew # Nintendo / Licensed / Distributed / iQue / iQueForSystem
 
 RomFs:

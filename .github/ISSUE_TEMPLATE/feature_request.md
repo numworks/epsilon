@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for Omega
+about: Suggest an idea for Upsilon
 title: ''
 labels: 'Status: Triage, Type: Feature'
 assignees: ''

@@ -1,10 +1,11 @@
 {
-  "MainColor": "#BB2244",
-  "UnknownColor1": "#FFFFFF",
-  "RegressionLineGrey": "#4D4D4D",
-  "UnknownColor2": "#CCCCCC",
-  "LogoBackgroundColor": "#2F2F2F",
-  "SecondaryColor": "#888888",
-  "StatisticsSelectedBG": "#998899",
-  "BackgroundColor": "#FFFFFF"
+  "COLOR_MAIN": "#7EA2CE",
+  "COLOR_ICON_SECONDARY": "#4A4A4A",
+  "COLOR_DRAWINGS": "#F2F2F2",
+  "COLOR_REGRESSION_LINE": "#D4D4D4",
+  "COLOR_ICON_BORDER": "#E6E6E6",
+  "COLOR_ICON_BACKGROUND": "#F2F2F2",
+  "COLOR_FOCUSED_STATS_ICONS_BACKGROUND": "#E0E0E0",
+  "COLOR_STATS_ICONS_BACKGROUND": "#FFFFFF",
+  "COLOR_ICON_CROPPED": "#FFFFFF"
 }

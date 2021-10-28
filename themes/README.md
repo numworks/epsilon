@@ -40,6 +40,8 @@ Example:
 make THEME_REPO=https://github.com/Omega-Numworks/Omega-Theme-Example.git THEME_NAME=omega_blue
 ```
 
+> You can use `./themes/script.sh your_theme_name` to build the icons of your theme from the colors of `themes/logocolors.json`.
+
 ## License
 
 Omega-Themes is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode). NumWorks is a registered trademark.

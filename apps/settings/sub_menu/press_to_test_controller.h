@@ -19,10 +19,10 @@ namespace Settings {
 
 class PressToTestView : public Escher::ScrollView, public Escher::SelectableTableViewDelegate {
 public:
-constexpr static int k_marginAroundTexts = Escher::Metric::TableSeparatorThickness;
+  constexpr static int k_verticalMargins = Escher::Metric::TableSeparatorThickness;
   PressToTestView(Escher::SelectableTableView * table, Escher::TableViewDataSource * tableDataSource) : Escher::ScrollView(&m_contentView, &m_scrollDataSource), m_contentView(table), m_tableDataSource(tableDataSource) {
     // Set the outer margins around the table and texts
-    setMargins(k_marginAroundTexts, Escher::Metric::CommonMargin, k_marginAroundTexts, Escher::Metric::CommonMargin);
+    setMargins(k_verticalMargins, Escher::Metric::CommonMargin, k_verticalMargins, Escher::Metric::CommonMargin);
   }
   void reload();
   void setMessages(I18n::Message top, I18n::Message bottom) { m_contentView.setMessages(top, bottom); }
@@ -34,15 +34,20 @@ private:
   public:
     ContentView(Escher::SelectableTableView * table);
     void setMessages(I18n::Message top, I18n::Message bottom);
-    KDPoint tableOrigin() const;
+    KDCoordinate tableOrigin() const;
     KDCoordinate totalHeight() const;
     /* View */
     // Hide bottom message if empty
     int numberOfSubviews() const override { return 2 + !isBottomMessageEmpty(); }
     Escher::View * subviewAtIndex(int i) override;
   private:
-    bool isBottomMessageEmpty() const { return m_bottomMessageView.text()[0] == 0; }
     friend PressToTestView;
+    constexpr static int k_tableMargins = PressToTestView::k_verticalMargins;
+
+    bool isBottomMessageEmpty() const { return m_bottomMessageView.text()[0] == 0; }
+    KDCoordinate topTableMargin() const { return PressToTestView::k_verticalMargins; }
+    KDCoordinate bottomTableMargin() const { return isBottomMessageEmpty() ? 0 : PressToTestView::k_verticalMargins; }
+
     Escher::SelectableTableView * m_table;
     Escher::MessageTextView m_topMessageView;
     Escher::MessageTextView m_bottomMessageView;

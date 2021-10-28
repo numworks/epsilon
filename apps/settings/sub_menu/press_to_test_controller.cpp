@@ -103,7 +103,7 @@ KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
     return heightForCellAtIndex(&m_activateButton, j);
   }
   assert(typeAtIndex(j) == k_switchCellType);
-  Escher::MessageTableCellWithMessageWithSwitch tempCell;
+  PressToTestSwitch tempCell;
   // TODO Hugo : See if this setSize can be avoided.
   tempCell.setSize(KDSize(cellWidth(), tempCell.bounds().height()));
   return heightForCellAtIndex(&tempCell, j);

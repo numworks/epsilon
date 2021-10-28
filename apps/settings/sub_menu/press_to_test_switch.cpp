@@ -7,14 +7,21 @@ PressToTestSwitch::PressToTestSwitch(I18n::Message message) :
     Escher::MessageTableCellWithMessageWithSwitch(message),
     m_accessoryView(),
     m_displayImage(false) {
-  // TODO Hugo : Factorize press_to_test_success.h with test_success.png
   m_accessoryView.setImage(ImageStore::PressToTestSuccess);
+  m_accessoryView.setBackgroundColor(KDColorWhite);
 }
 
 const Escher::View * PressToTestSwitch::accessoryView() const {
   return (m_displayImage
               ? (state() ? &m_accessoryView : nullptr)
               : Escher::MessageTableCellWithMessageWithSwitch::accessoryView());
+}
+
+void PressToTestSwitch::setHighlighted(bool highlighted) {
+  MessageTableCellWithMessageWithSwitch::setHighlighted(highlighted);
+  if (m_displayImage && state()) {
+    m_accessoryView.setBackgroundColor(highlighted ? Escher::Palette::Select : KDColorWhite);
+  }
 }
 
 }  // namespace Settings

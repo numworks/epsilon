@@ -21,19 +21,17 @@ void PressToTestView::tableViewDidChangeSelectionAndDidScroll(SelectableTableVie
   // Scroll to correct location
   int row = m_contentView.m_table->selectedRow(), col = m_contentView.m_table->selectedColumn();
   if (row >= 0 && col >= 0) {
-    KDRect cellFrame = KDRect(m_tableDataSource->cumulatedWidthFromIndex(col),
-                              m_tableDataSource->cumulatedHeightFromIndex(row),
-                              m_tableDataSource->columnWidth(col),
-                              m_tableDataSource->rowHeight(row));
-    cellFrame = cellFrame.translatedBy(m_contentView.tableOrigin());
-     /* Include the message in the first or last row cells to force scrolling
-      * enough todisplay it */
+    KDRect cellFrame = KDRect(
+        m_tableDataSource->cumulatedWidthFromIndex(col),
+        m_contentView.tableOrigin()
+            + m_tableDataSource->cumulatedHeightFromIndex(row),
+        m_tableDataSource->columnWidth(col), m_tableDataSource->rowHeight(row));
+    /* Include the message in the first or last row cells to force scrolling
+     * enough to display it */
     if (row == 0) {
       cellFrame = cellFrame.unionedWith(KDRect(cellFrame.x(), 0, cellFrame.width(), cellFrame.height()));
-    } else if (row == m_contentView.m_table->numberOfDisplayableRows() - 1) {
-      // TODO Hugo : Understand and fix the -1
-      KDCoordinate remainingheight = m_contentView.totalHeight() - cellFrame.y() - 1;
-      cellFrame = cellFrame.unionedWith(KDRect(cellFrame.x(), cellFrame.y(), cellFrame.width(), remainingheight));
+    } else if (row + 1 == m_contentView.m_table->numberOfDisplayableRows()) {
+      cellFrame = cellFrame.unionedWith(KDRect(cellFrame.x(), cellFrame.y(), cellFrame.width(), m_contentView.totalHeight() - cellFrame.y()));
     }
     scrollToContentRect(cellFrame);
   }
@@ -46,23 +44,22 @@ PressToTestView::ContentView::ContentView(SelectableTableView * table) :
     m_topMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
     m_bottomMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen) {
   // Margins between the table and messages
-  m_table->setMargins(PressToTestView::k_marginAroundTexts, 0, PressToTestView::k_marginAroundTexts, 0);
+  m_table->setMargins(topTableMargin(), 0, bottomTableMargin(), 0);
 }
 
 void PressToTestView::ContentView::setMessages(I18n::Message top, I18n::Message bottom) {
   m_topMessageView.setMessage(top);
   m_bottomMessageView.setMessage(bottom);
+  // Bottom message might have (dis)appeared, reset table's margins
+  m_table->setMargins(topTableMargin(), 0, bottomTableMargin(), 0);
 }
 
-KDPoint PressToTestView::ContentView::tableOrigin() const {
-  return KDPoint(0, m_topMessageView.minimalSizeForOptimalDisplay().height());
+KDCoordinate PressToTestView::ContentView::tableOrigin() const {
+  return m_topMessageView.minimalSizeForOptimalDisplay().height() + topTableMargin();
 }
 
 KDCoordinate PressToTestView::ContentView::totalHeight() const {
-  KDCoordinate topMessageHeight = m_topMessageView.minimalSizeForOptimalDisplay().height();
-  KDCoordinate tableHeight = m_table->minimalSizeForOptimalDisplay().height();
-  KDCoordinate bottomMessageHeight = !isBottomMessageEmpty() ? m_bottomMessageView.minimalSizeForOptimalDisplay().height() : 0;
-  return topMessageHeight + tableHeight + bottomMessageHeight;
+  return minimalSizeForOptimalDisplay().height();
 }
 
 Escher::View * PressToTestView::ContentView::subviewAtIndex(int i) {

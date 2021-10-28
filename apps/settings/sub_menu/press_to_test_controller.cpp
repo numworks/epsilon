@@ -232,6 +232,8 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
   PressToTestSwitch * myCell = static_cast<PressToTestSwitch *>(cell);
   myCell->setMessage(LabelAtIndex(index));
+  myCell->setTextColor(GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && !getParamAtIndex(index) ? Palette::GrayDarkMiddle : KDColorBlack);
+  myCell->setSublabelTextColor(GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && !getParamAtIndex(index) ? Palette::GrayDarkMiddle : Palette::GrayDark);
   myCell->setSubLabelMessage(SubLabelAtIndex(index));
   myCell->setState(getParamAtIndex(index));
   myCell->setDisplayImage(GlobalPreferences::sharedGlobalPreferences()->isInExamMode());

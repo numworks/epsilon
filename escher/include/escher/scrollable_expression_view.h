@@ -18,6 +18,7 @@ public:
                            KDColor backgroundColor = KDColorWhite);
   Poincare::Layout layout() const;
   void setLayout(Poincare::Layout layout);
+  void setTextColor(KDColor color) { m_expressionView.setTextColor(color); }
   void setBackgroundColor(KDColor backgroundColor) override;
   void setExpressionBackgroundColor(KDColor backgroundColor);
 private:

@@ -77,6 +77,16 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(GlobalPref
   }
 }
 
+I18n::Message ExamModeConfiguration::forbiddenAppMessage(GlobalPreferences::ExamMode mode, int line) {
+  if (mode == GlobalPreferences::ExamMode::PressToTest) {
+    I18n::Message messages[] = {I18n::Message::ForbiddenAppInPressToTestMode1, I18n::Message::ForbiddenAppInPressToTestMode2};
+    return messages[line];
+  }
+  assert(mode != GlobalPreferences::ExamMode::Off);
+  I18n::Message messages[] = {I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2};
+  return messages[line];
+}
+
 KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
   /* The Dutch exam mode LED is supposed to be orange but we can only make
    * blink "pure" colors: with RGB leds on or off (as the PWM is used for
@@ -86,6 +96,7 @@ KDColor ExamModeConfiguration::examModeColor(GlobalPreferences::ExamMode mode) {
    * confusing states when the battery is charging and states when the Dutch
    * exam mode is on. */
   // TODO Emilie: what color do we forbid with unofficial userland?
+  assert(mode == GlobalPreferences::ExamMode::Dutch || mode == GlobalPreferences::ExamMode::Standard);
   return mode == GlobalPreferences::ExamMode::Dutch ? KDColorYellow : KDColorRed;
 }
 

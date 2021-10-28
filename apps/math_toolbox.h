@@ -22,6 +22,7 @@ protected:
   int maxNumberOfDisplayedRows() override;
   constexpr static int k_maxNumberOfDisplayedRows = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
 private:
+  bool isMessageTreeDisabled(const Escher::ToolboxMessageTree * messageTree) const;
   int indexAfterFork() const override;
 
   Escher::ExpressionTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];

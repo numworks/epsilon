@@ -15,6 +15,7 @@ public:
   void setMessage(I18n::Message textContent, KDColor textColor = KDColorBlack);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   void setMessageFont(const KDFont * font) { m_messageTextView.setFont(font); }
+  void setTextColor(KDColor color) { m_messageTextView.setTextColor(color); }
 protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

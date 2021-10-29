@@ -26,8 +26,9 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
         }
         container->refreshPreferences();
         Container::activeApp()->dismissModalViewController();
-        /* TODO Hugo : Fix issues with menus that would be no longer up-to-date:
-         *     - Go back to Home Menu ? */
+        /* Warning : By unplugging before confirmation, the examMode may be
+         * deactivated within menus that depend on the examMode status (such as
+         * PressToTest settings menu after having changed the country). */
         return true;
       }, this),
     I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel

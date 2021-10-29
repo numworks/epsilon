@@ -577,7 +577,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   assert(typeAtIndex(selectedRow) == k_leafCellType);
   const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(selectedRow);
   if (isMessageTreeDisabled(messageTree)) {
-    // TODO Hugo : Warning should not dismiss the toolbox
+    // TODO : It would be better if warning did not dismiss the toolbox
     Container::activeApp()->displayWarning(I18n::Message::DisabledFeatureInPressToTestMode1, I18n::Message::DisabledFeatureInPressToTestMode2);
     return true;
   }

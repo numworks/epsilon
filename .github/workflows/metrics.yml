@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:
       - name: Install ARM toolchain
-        uses: numworks/setup-arm-toolchain@2020-q4
+        uses: numworks/setup-arm-toolchain@latest
       - name: Checkout PR base
         uses: actions/checkout@v2
         with:

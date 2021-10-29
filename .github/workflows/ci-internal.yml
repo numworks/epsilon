@@ -24,7 +24,7 @@ jobs:
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4
-      - uses: numworks/setup-arm-toolchain@2020-q4
+      - uses: numworks/setup-arm-toolchain@2021-10
       - uses: actions/checkout@v2
       - run: make MODEL=n0110 kernel.A.elf
       - run: make MODEL=n0110 userland.A.elf

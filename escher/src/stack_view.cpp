@@ -38,10 +38,7 @@ void StackView::drawRect(KDContext * ctx, KDRect rect) const {
   drawInnerRect(ctx, b, m_backgroundColor);
   // Write title
   const KDFont * font = KDFont::SmallFont;
-  // Add horizontal margins
-  KDPoint point = KDPoint(Metric::CellLeftMargin, 0);
-  KDSize size = KDSize(m_frame.width() - Metric::CellLeftMargin - Metric::CellRightMargin, m_frame.height());
-  ctx->alignAndDrawString(m_controller->title(), point, size, KDContext::k_alignCenter, KDContext::k_alignCenter,
+  ctx->alignAndDrawString(m_controller->title(), KDPointZero, m_frame.size(), KDContext::k_alignCenter, KDContext::k_alignCenter,
                           font, m_textColor, m_backgroundColor);
 }
 

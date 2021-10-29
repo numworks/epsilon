@@ -10,7 +10,7 @@
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/table_view_controller.h"
-#include "probability/gui/horizontal_or_vertical_layout.h"
+#include <escher/horizontal_or_vertical_layout.h>
 
 namespace Probability {
 
@@ -56,7 +56,7 @@ public:
 
 private:
   /* Layout a Table, a cell and a button separated by spacers. */
-  class ContentView : public VerticalLayout {
+  class ContentView : public Escher::VerticalLayout {
   public:
     ContentView(Escher::SelectableTableView * dataInputTableView,
                 Escher::MessageTableCellWithEditableTextWithMessage * significanceCell,
@@ -67,7 +67,7 @@ private:
 
   private:
     /* Layout cell and button with side margins */
-    class InnerVerticalLayout : public VerticalLayout {
+    class InnerVerticalLayout : public Escher::VerticalLayout {
     public:
       InnerVerticalLayout(Escher::MessageTableCellWithEditableTextWithMessage * significanceCell,
                           Escher::Button * next) :

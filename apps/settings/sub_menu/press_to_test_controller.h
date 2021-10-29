@@ -1,9 +1,8 @@
 #ifndef SETTINGS_PRESS_TO_TEST_CONTROLLER_H
 #define SETTINGS_PRESS_TO_TEST_CONTROLLER_H
 
-// TODO Hugo : Move horizontal_or_vertical_layout.h in Escher
-#include <apps/probability/gui/horizontal_or_vertical_layout.h>
 #include <apps/shared/button_with_separator.h>
+#include <escher/horizontal_or_vertical_layout.h>
 #include <escher/memoized_list_view_data_source.h>
 #include <escher/scroll_view.h>
 #include <escher/selectable_table_view.h>
@@ -32,7 +31,7 @@ public:
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 private:
   /* Lays out a message, a table and a message */
-  class ContentView : public Probability::VerticalLayout {
+  class ContentView : public Escher::VerticalLayout {
   public:
     ContentView(Escher::SelectableTableView * table);
     void setMessages(I18n::Message top, I18n::Message bottom);
@@ -92,8 +91,10 @@ private:
   static constexpr int k_sumIndex = k_basedLogarithmIndex + 1;
   /* Switch cells count */
   static constexpr int k_numberOfSwitchCells = k_sumIndex + 1;
-  // TODO Hugo: At most 6 switch cells only fit in the screen.
-  static constexpr int k_numberOfReusableSwitchCells = 7;
+  /* TODO : At most 6 switch cells only fit in the screen, but an OrientedLayout
+   * currently gives its subviews(such as m_selectableTableView) a frame of
+   * minimalSizeForOptimalDisplay size, which contains all cells. */
+  static constexpr int k_numberOfReusableSwitchCells = k_numberOfSwitchCells;
 
   // Switch Cells
   void resetSwitches();

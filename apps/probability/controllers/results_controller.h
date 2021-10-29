@@ -10,7 +10,7 @@
 #include <escher/text_field_delegate.h>
 
 #include "probability/abstract/button_delegate.h"
-#include "probability/gui/horizontal_or_vertical_layout.h"
+#include <escher/horizontal_or_vertical_layout.h>
 #include "probability/gui/page_controller.h"
 #include "probability/models/results_data_source.h"
 #include "probability/models/statistic/statistic.h"
@@ -34,7 +34,7 @@ public:
 
 private:
   /* Lays out a title and a table */
-  class ContentView : public VerticalLayout {
+  class ContentView : public Escher::VerticalLayout {
   public:
     ContentView(Escher::SelectableTableView * table, I18n::Message titleMessage);
     int numberOfSubviews() const override { return 2; }

@@ -115,7 +115,7 @@ KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
   }
   assert(typeAtIndex(j) == k_switchCellType);
   PressToTestSwitch tempCell;
-  // TODO Hugo : See if this setSize can be avoided.
+  // tempCell needs a width so that we can compute its height.
   tempCell.setSize(KDSize(cellWidth(), tempCell.bounds().height()));
   return heightForCellAtIndex(&tempCell, j);
 }

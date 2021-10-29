@@ -66,6 +66,7 @@ tests_src += $(addprefix ion/test/,\
   crc32.cpp\
   events.cpp\
   keyboard.cpp\
+  persisting_bytes.cpp\
   storage.cpp\
   utf8_decoder.cpp\
   utf8_helper.cpp\

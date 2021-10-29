@@ -1,4 +1,4 @@
-name: Internal Metrics
+name: Metrics
 on: [pull_request_target]
 env:
   MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}

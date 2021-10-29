@@ -76,7 +76,8 @@ public:
     void destroy() {
       return Storage::sharedStorage()->destroyRecord(*this);
     }
-    // This methods are static to prevent any calling these methods on "this"
+    /* This methods are static to prevent any calling these methods on "this",
+     * since these methods might modify in-place the record */
     static Record::ErrorStatus SetBaseNameWithExtension(Record * record, const char * baseName, const char * extension) {
       return Storage::sharedStorage()->setBaseNameWithExtensionOfRecord(record, baseName, strlen(baseName), extension, strlen(extension));
     }
@@ -104,11 +105,11 @@ public:
 
   // Record counters
   int numberOfRecordsWithExtension(const char * extension) {
-    return numberOfRecordsWithFilter(extension, ExtensionOnlyFilter);
+    return numberOfRecordsWithFilter(extension, s_extensionOnlyFilter);
   }
   // TODO Hugo : Maybe handle a "hidden" status at Record level instead ?
   int numberOfRecordsStartingWithout(const char nonStartingChar, const char * extension) {
-    return numberOfRecordsWithFilter(extension, FirstCharFilter, &nonStartingChar);
+    return numberOfRecordsWithFilter(extension, s_firstCharFilter, &nonStartingChar);
   }
 
   // Record names helper
@@ -122,10 +123,10 @@ public:
   // Record getters
   bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
   Record recordWithExtensionAtIndex(const char * extension, int index) {
-    return recordWithFilterAtIndex(extension, index, ExtensionOnlyFilter);
+    return recordWithFilterAtIndex(extension, index, s_extensionOnlyFilter);
   }
   Record recordWithExtensionAtIndexStartingWithout(const char nonStartingChar, const char * extension, int index) {
-    return recordWithFilterAtIndex(extension, index, FirstCharFilter, &nonStartingChar);
+    return recordWithFilterAtIndex(extension, index, s_firstCharFilter, &nonStartingChar);
   }
   Record recordNamed(const char * fullName);
   Record recordBaseNamedWithExtension(const char * baseName, const char * extension);
@@ -142,12 +143,12 @@ private:
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
 
   // Record filter on fullNames
-  typedef bool (*recordFilter)(const char * name, const void * auxiliary);
-  static recordFilter ExtensionOnlyFilter;
-  static recordFilter FirstCharFilter;
+  typedef bool (*RecordFilter)(const char * name, const void * auxiliary);
+  static RecordFilter s_extensionOnlyFilter;
+  static RecordFilter s_firstCharFilter;
   // Private record counters and getters
-  int numberOfRecordsWithFilter(const char * extension, recordFilter filter, const void * auxiliary = nullptr);
-  Record recordWithFilterAtIndex(const char * extension, int index, recordFilter filter, const void * auxiliary = nullptr);
+  int numberOfRecordsWithFilter(const char * extension, RecordFilter filter, const void * auxiliary = nullptr);
+  Record recordWithFilterAtIndex(const char * extension, int index, RecordFilter filter, const void * auxiliary = nullptr);
 
   Storage();
 

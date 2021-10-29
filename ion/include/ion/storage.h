@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 
 namespace Ion {
 
@@ -105,11 +106,11 @@ public:
 
   // Record counters
   int numberOfRecordsWithExtension(const char * extension) {
-    return numberOfRecordsWithFilter(extension, s_extensionOnlyFilter);
+    return numberOfRecordsWithFilter(extension, ExtensionOnlyFilter);
   }
   // TODO Hugo : Maybe handle a "hidden" status at Record level instead ?
   int numberOfRecordsStartingWithout(const char nonStartingChar, const char * extension) {
-    return numberOfRecordsWithFilter(extension, s_firstCharFilter, &nonStartingChar);
+    return numberOfRecordsWithFilter(extension, FirstCharFilter, &nonStartingChar);
   }
 
   // Record names helper
@@ -123,10 +124,10 @@ public:
   // Record getters
   bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
   Record recordWithExtensionAtIndex(const char * extension, int index) {
-    return recordWithFilterAtIndex(extension, index, s_extensionOnlyFilter);
+    return recordWithFilterAtIndex(extension, index, ExtensionOnlyFilter);
   }
   Record recordWithExtensionAtIndexStartingWithout(const char nonStartingChar, const char * extension, int index) {
-    return recordWithFilterAtIndex(extension, index, s_firstCharFilter, &nonStartingChar);
+    return recordWithFilterAtIndex(extension, index, FirstCharFilter, &nonStartingChar);
   }
   Record recordNamed(const char * fullName);
   Record recordBaseNamedWithExtension(const char * baseName, const char * extension);
@@ -144,8 +145,11 @@ private:
 
   // Record filter on fullNames
   typedef bool (*RecordFilter)(const char * name, const void * auxiliary);
-  static RecordFilter s_extensionOnlyFilter;
-  static RecordFilter s_firstCharFilter;
+  static bool ExtensionOnlyFilter(const char * name, const void * auxiliary) { return true; };
+  static bool FirstCharFilter(const char * name, const void * auxiliary) {
+    assert(auxiliary != nullptr);
+    return name[0] != *static_cast<const char *>(auxiliary);
+  };
   // Private record counters and getters
   int numberOfRecordsWithFilter(const char * extension, RecordFilter filter, const void * auxiliary = nullptr);
   Record recordWithFilterAtIndex(const char * extension, int index, RecordFilter filter, const void * auxiliary = nullptr);

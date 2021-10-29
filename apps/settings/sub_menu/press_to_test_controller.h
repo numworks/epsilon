@@ -10,8 +10,6 @@
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/view_controller.h>
-// TODO Hugo : Delete when cellWidth() workaround is fixed
-#include <ion.h>
 #include "../../global_preferences.h"
 #include "press_to_test_switch.h"
 
@@ -26,6 +24,10 @@ public:
   }
   void reload();
   void setMessages(I18n::Message top, I18n::Message bottom) { m_contentView.setMessages(top, bottom); }
+
+  /* ScrollView */
+  void layoutSubviews(bool force = false) override;
+
   /* SelectableTableViewDelegate */
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 private:
@@ -75,8 +77,7 @@ public:
   GlobalPreferences::PressToTestParams getPressToTestParams();
   void viewDidDisappear() override;
   Escher::View * view() override { return &m_view; }
-  // TODO Hugo : fix this workaround
-  KDCoordinate cellWidth() override { return Ion::Display::Width - 2 * Escher::Metric::CommonMargin; }
+  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
 private:
   /* Cell type */
   static constexpr int k_switchCellType = 0;

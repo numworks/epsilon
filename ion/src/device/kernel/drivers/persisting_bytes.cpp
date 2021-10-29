@@ -13,8 +13,6 @@ namespace Ion {
 namespace Device {
 namespace PersistingBytes {
 
-// TODO Hugo : Add tests
-
 /*  With two persisting bytes :
  *  Erased Memory  -> 11111111|11111111|11111111|11111111|11111111|11111111|
  *  Persisted byte -> 01010101|01111111|11111111|11111111|11111111|11111111|
@@ -55,7 +53,7 @@ void write(uint8_t byte, uint8_t index) {
     writingAddress += k_numberOfPersistingBytes;
     if (writingAddress + k_numberOfPersistingBytes > reinterpret_cast<uint8_t *>(&_persisting_bytes_buffer_end)) {
       /* If there are no remaining erased bytes, go back to the beginning of the
-      * buffer. */
+       * buffer. */
       int bufferSector = Ion::Device::Flash::SectorAtAddress(reinterpret_cast<uint32_t >(&_persisting_bytes_buffer_start));
       assert(bufferSector == Ion::Device::Flash::SectorAtAddress(reinterpret_cast<uint32_t >(&_persisting_bytes_buffer_end - 1)));
       Ion::Device::Flash::EraseSector(bufferSector);

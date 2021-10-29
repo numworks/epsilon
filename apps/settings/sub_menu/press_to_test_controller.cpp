@@ -54,6 +54,17 @@ void PressToTestView::ContentView::setMessages(I18n::Message top, I18n::Message 
   m_table->setMargins(topTableMargin(), 0, bottomTableMargin(), 0);
 }
 
+void PressToTestView::layoutSubviews(bool force) {
+  /* Content view must be given a width, so that it can give its
+   * SelectableTableView a width and compute it height. */
+  if (m_contentView.bounds().isEmpty()) {
+    m_contentView.setFrame(KDRect(KDPointZero, KDSize(visibleContentRect().width(), 0)), force);
+  } else {
+    assert(m_contentView.bounds().width() == visibleContentRect().width());
+  }
+  ScrollView::layoutSubviews(force);
+}
+
 KDCoordinate PressToTestView::ContentView::tableOrigin() const {
   return m_topMessageView.minimalSizeForOptimalDisplay().height() + topTableMargin();
 }

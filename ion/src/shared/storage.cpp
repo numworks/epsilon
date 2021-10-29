@@ -220,14 +220,6 @@ Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * bas
   return Record::ErrorStatus::None;
 }
 
-Storage::RecordFilter Storage::s_extensionOnlyFilter = [](const char * name, const void * auxiliary) {
-  return true;
-};
-
-Storage::RecordFilter Storage::s_firstCharFilter = [](const char * name, const void * auxiliary) {
-  return name[0] != *static_cast<const char *>(auxiliary);
-};
-
 int Storage::numberOfRecordsWithFilter(const char * extension, RecordFilter filter, const void * auxiliary) {
   int count = 0;
   size_t extensionLength = strlen(extension);

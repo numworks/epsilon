@@ -1,9 +1,11 @@
 name: Internal Metrics
 on: [pull_request_target]
+env:
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
 
 jobs:
   binary-size:
-    runs-on: ubuntu-latest
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:
       - name: Install ARM toolchain
         uses: numworks/setup-arm-toolchain@2020-q4

@@ -3,6 +3,7 @@ on: [pull_request_target]
 
 jobs:
   binary-size:
+    runs-on: ubuntu-latest
     steps:
       - name: Install ARM toolchain
         uses: numworks/setup-arm-toolchain@2020-q4

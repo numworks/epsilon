@@ -8,11 +8,12 @@ on:
       - master
 
 env:
-  MAKEFLAGS: '-j2'
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
 
 jobs:
   android:
     runs-on: ubuntu-latest
+    if: ${{ github.repository != 'numworks/epsilon-internal' }}
     steps:
       - run: pip3 install lz4
       - uses: actions/checkout@v2
@@ -24,7 +25,7 @@ jobs:
           name: epsilon-android.apk
           path: output/release/simulator/android/epsilon.apk
   n0100:
-    runs-on: ubuntu-latest
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4 pypng stringcase
@@ -35,11 +36,12 @@ jobs:
       - run: make MODEL=n0100 epsilon.onboarding.update.dfu
       - run: make MODEL=n0100 test.dfu
       - uses: actions/upload-artifact@master
+        if: ${{ github.repository != 'numworks/epsilon-internal' }}
         with:
           name: epsilon-n0100.dfu
           path: output/release/device/n0100/epsilon.dfu
   n0110:
-    runs-on: ubuntu-latest
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4
@@ -56,11 +58,13 @@ jobs:
       - run: make MODEL=n0110 flasher.dfu
       - run: make MODEL=n0110 bench.ram.dfu
       - uses: actions/upload-artifact@master
+        if: ${{ github.repository != 'numworks/epsilon-internal' }}
         with:
           name: epsilon-n0110.dfu
           path: output/release/device/n0110/epsilon.dfu
   windows:
     runs-on: windows-latest
+    if: ${{ github.repository != 'numworks/epsilon-internal' }}
     defaults:
        run:
          shell: msys2 {0}
@@ -78,7 +82,7 @@ jobs:
           name: epsilon-windows.exe
           path: output/release/simulator/windows/epsilon.exe
   web:
-    runs-on: ubuntu-latest
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:
       - uses: numworks/setup-emscripten@v1
         with:
@@ -90,6 +94,7 @@ jobs:
       - run: make PLATFORM=simulator TARGET=web test.js
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
+        if: ${{ github.repository != 'numworks/epsilon-internal' }}
         with:
           name: epsilon-web.zip
           path: output/release/simulator/web/epsilon.zip
@@ -104,11 +109,13 @@ jobs:
       - run: make PLATFORM=simulator test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
+        if: ${{ github.repository != 'numworks/epsilon-internal' }}
         with:
           name: epsilon-linux.bin
           path: output/release/simulator/linux/epsilon.bin
   macos:
     runs-on: macOS-latest
+    if: ${{ github.repository != 'numworks/epsilon-internal' }}
     steps:
       - run: brew install numworks/tap/epsilon-sdk
       - run: pip3 install lz4 # TODO: should be part of brew formula
@@ -123,6 +130,7 @@ jobs:
           path: output/release/simulator/macos/epsilon.app
   ios:
     runs-on: macOS-latest
+    if: ${{ github.repository != 'numworks/epsilon-internal' }}
     steps:
       - run: brew install numworks/tap/epsilon-sdk
       - run: pip3 install lz4 # TODO: should be part of brew formula

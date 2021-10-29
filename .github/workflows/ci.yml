@@ -88,7 +88,7 @@ jobs:
       - run: make PLATFORM=simulator TARGET=web
       - run: make PLATFORM=simulator TARGET=web epsilon.zip
       - run: make PLATFORM=simulator TARGET=web test.js
-      - run: node output/release/simulator/web/test.js --headless --limit-stack-usage
+      - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-web.zip

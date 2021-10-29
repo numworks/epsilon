@@ -5,7 +5,7 @@
 #include <escher/message_text_view.h>
 
 #include "probability/gui/highlight_image_cell.h"
-#include "probability/gui/horizontal_or_vertical_layout.h"
+#include <escher/horizontal_or_vertical_layout.h>
 #include "probability/models/statistic/statistic.h"
 
 namespace Probability {

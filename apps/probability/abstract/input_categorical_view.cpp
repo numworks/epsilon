@@ -2,7 +2,7 @@
 
 #include "probability/abstract/button_delegate.h"
 #include "probability/abstract/table_view_controller.h"
-#include "probability/gui/horizontal_or_vertical_layout.h"
+#include <escher/horizontal_or_vertical_layout.h>
 
 using namespace Probability;
 

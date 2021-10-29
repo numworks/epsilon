@@ -73,7 +73,6 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   dropdown_view.cpp \
   expression_cell_with_editable_text_with_message.cpp \
   highlight_image_cell.cpp \
-  horizontal_or_vertical_layout.cpp \
   input_goodness_table_view.cpp \
   interval_conclusion_view.cpp \
   legend_view.cpp \

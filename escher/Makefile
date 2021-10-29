@@ -28,6 +28,7 @@ escher_src += $(addprefix escher/src/,\
   expression_table_cell_with_message.cpp \
   expression_view.cpp \
   highlight_cell.cpp \
+  horizontal_or_vertical_layout.cpp \
   gauge_view.cpp \
   image_view.cpp \
   input_event_handler.cpp \

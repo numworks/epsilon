@@ -6,7 +6,7 @@
 #include <escher/selectable_table_view.h>
 
 #include "probability/abstract/button_delegate.h"
-#include "probability/gui/horizontal_or_vertical_layout.h"
+#include <escher/horizontal_or_vertical_layout.h>
 
 namespace Probability {
 
@@ -31,7 +31,7 @@ public:
   constexpr static int k_topMargin = 5;
 
 private:
-  class ContentView : public VerticalLayout {
+  class ContentView : public Escher::VerticalLayout {
   public:
     ContentView(Escher::Responder * parent,
                 Escher::SelectableTableView * table,
@@ -43,7 +43,7 @@ private:
     KDPoint buttonOrigin();
 
   private:
-    class ButtonWithHorizontalMargins : public VerticalLayout {
+    class ButtonWithHorizontalMargins : public Escher::VerticalLayout {
     public:
       ButtonWithHorizontalMargins(Escher::Button * button,
                                   KDCoordinate margin = k_defaultHorizontalMargin);

@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Omega is not working like it should? Let us know!
+about: Upsilon is not working like it should? Let us know!
 title: ''
 labels: 'Status: Triage, Type: Bug'
 assignees: ''

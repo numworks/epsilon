@@ -55,7 +55,7 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
 bool HistogramParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back && (extractParameterAtIndex(0) != parameterAtIndex(0) || extractParameterAtIndex(1) != parameterAtIndex(1))) {
     // Temporary values are different, open pop-up to confirm discarding values
-    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
+    m_confirmPopUpController.presentModally();
     return true;
   }
   return false;

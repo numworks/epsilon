@@ -130,7 +130,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     || m_interactiveRange->yAuto() != m_tempInteractiveRange.yAuto()))
   {
     // Open pop-up to confirm discarding values
-    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
+    m_confirmPopUpController.presentModally();
     return true;
   }
   if (displayNormalizeCell() && selectedRow() == 0

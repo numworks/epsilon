@@ -64,7 +64,7 @@ bool SingleRangeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left || event == Ion::Events::Back) {
     bool sourceAuto = m_editXRange ? m_range->xAuto() : m_range->yAuto();
     if (m_range->rangeChecksum() != m_tempRange.rangeChecksum() || sourceAuto != autoStatus()) {
-      Container::activeApp()->displayModalViewController(m_confirmPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
+      m_confirmPopUpController->presentModally();
     } else {
       stackController()->pop();
     }

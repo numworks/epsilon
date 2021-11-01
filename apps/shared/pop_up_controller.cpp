@@ -1,4 +1,6 @@
 #include "pop_up_controller.h"
+#include <escher/container.h>
+#include <escher/metric.h>
 
 namespace Shared {
 
@@ -7,6 +9,10 @@ PopUpController::PopUpController(Escher::Invocation OkInvocation, std::initializ
   for (I18n::Message message : messages) {
     m_contentView.setMessage(index++, message);
   }
+}
+
+void PopUpController::presentModally() {
+  Escher::Container::activeApp()->displayModalViewController(this, 0.f, 0.f, Escher::Metric::PopUpTopMargin, Escher::Metric::PopUpRightMargin, Escher::Metric::PopUpBottomMargin, Escher::Metric::PopUpLeftMargin);
 }
 
 }

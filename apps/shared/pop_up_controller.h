@@ -10,6 +10,7 @@ namespace Shared {
 class PopUpController : public Escher::PopUpController {
 public:
   PopUpController(Escher::Invocation OkInvocation, std::initializer_list<I18n::Message> messages = {I18n::Message::ConfirmDiscard1, I18n::Message::ConfirmDiscard2});
+  void presentModally();
 };
 
 }

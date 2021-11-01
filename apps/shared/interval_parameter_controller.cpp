@@ -96,7 +96,7 @@ bool IntervalParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Back && !m_interval->hasSameParameters(*SharedTempIntervalParameters())) {
     // Open pop-up to confirm discarding values
-    Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
+    m_confirmPopUpController.presentModally();
     return true;
   }
   return false;

@@ -13,11 +13,16 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   unix/platform_files.cpp \
   circuit_breaker.cpp \
   clipboard_helper.cpp \
-  collect_registers_x86_64.s \
-  collect_registers.cpp \
   haptics.cpp \
   journal.cpp \
 )
+
+ifeq ($(ARCH),x86_64)
+ion_src += ion/src/simulator/shared/collect_registers.cpp
+ion_src += ion/src/simulator/shared/collect_registers_x86_64.s
+else
+ion_src += ion/src/shared/collect_registers.cpp
+endif
 
 ifeq ($(EPSILON_TELEMETRY),1)
 ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp

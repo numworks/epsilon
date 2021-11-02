@@ -28,9 +28,9 @@ void FunctionTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
     KDColor separatorColor = m_even ? Palette::WallScreen : KDColorWhite;
     KDColor backgroundColor = m_even ? KDColorWhite : Palette::WallScreen;
     // Draw the color indicator
-    ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height() - k_separatorThickness), m_functionColor);
+    ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height() - (m_connectColorIndicator ? 0 : k_separatorThickness)), m_functionColor);
     // Draw the horizontal separator
-    ctx->fillRect(KDRect(0, bounds().height()-k_separatorThickness, bounds().width()-k_colorIndicatorThickness, k_separatorThickness), separatorColor);
+    ctx->fillRect(KDRect((m_connectColorIndicator ? k_colorIndicatorThickness : 0), bounds().height() - k_separatorThickness, bounds().width() - (m_connectColorIndicator ? k_colorIndicatorThickness : 0), k_separatorThickness), separatorColor);
     // Draw some background
     ctx->fillRect(KDRect(bounds().width() - k_equalWidthWithMargins, 0, k_equalWidthWithMargins, bounds().height() - k_separatorThickness), backgroundColor);
     // Draw '='

@@ -44,12 +44,14 @@ private:
   constexpr static int k_functionCellType = 0;
   constexpr static int k_addNewModelType = 1;
   constexpr static int k_maxNumberOfDisplayableRows = 5;
-  constexpr static CodePoint k_equationSymbols[] = { '=', '<', '>', UCodePointInferiorEqual, UCodePointSuperiorEqual};
-  void fillWithPolarDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController) const;
+  constexpr static CodePoint k_equationSymbols[] = { '=', '>', '<', UCodePointSuperiorEqual, UCodePointInferiorEqual};
+  void fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint Symbol) const;
   bool layoutRepresentsAnEquation(Poincare::Layout l) const;
   bool layoutRepresentsPolarFunction(Poincare::Layout l) const;
   bool textRepresentsAnEquation(const char * text) const;
   bool textRepresentsPolarFunction(const char * text) const;
+  // Complete the equationField with a valid left equation side
+  bool completeEquation(InputEventHandler * equationField, bool polarFunction);
   KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override {
     return ListViewDataSource::cumulatedHeightFromIndex(j);
   }

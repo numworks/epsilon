@@ -21,11 +21,19 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   SelectableListViewController(parentResponder),
   m_brightnessCell(I18n::Message::Default),
   m_popUpCell(I18n::Message::Default),
+  m_resetButton(&m_selectableTableView, I18n::Message::ResetCalculator, Invocation([](void * context, void * sender) {
+    static_cast<MainController *>(context)->m_resetController.presentModally();
+    return true;
+  }, this)),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
   m_localizationController(this, LocalizationController::Mode::Language),
   m_examModeController(this),
-  m_aboutController(this)
+  m_aboutController(this),
+  m_resetController(Invocation([](void * context, void * sender) {
+    Ion::Reset::core();
+    return true;
+  }, this))
 {
 }
 
@@ -39,6 +47,11 @@ void MainController::didBecomeFirstResponder() {
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   I18n::Message selectedMessage = messageAtIndex(selectedRow());
+
+  if (selectedMessage == I18n::Message::ResetCalculator) {
+    // Needed for event == Ion::Events::Right when the Reset button is selected
+    return false;
+  }
 
   if (selectedMessage == I18n::Message::UpdatePopUp || selectedMessage == I18n::Message::BetaPopUp) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -96,6 +109,8 @@ KDCoordinate MainController::nonMemoizedRowHeight(int index) {
     case I18n::Message::UpdatePopUp:
     case  I18n::Message::BetaPopUp:
       return heightForCellAtIndex(&m_popUpCell, index);
+    case I18n::Message::ResetCalculator:
+      return heightForCellAtIndex(&m_resetButton, index);
     default:
       MessageTableCellWithChevronAndMessage tempCell;
       return heightForCellAtIndex(&tempCell, index);
@@ -111,6 +126,9 @@ HighlightCell * MainController::reusableCell(int index, int type) {
   assert(index == 0);
   if (type == 2) {
     return &m_popUpCell;
+  }
+  if (type == 3) {
+    return &m_resetButton;
   }
   assert(type == 1);
   return &m_brightnessCell;
@@ -130,9 +148,12 @@ int MainController::typeAtIndex(int index) {
     case I18n::Message::UpdatePopUp:
     case I18n::Message::BetaPopUp:
       return 2;
+    case I18n::Message::ResetCalculator:
+      return 3;
     default:
       return 0;
   };
+  return 0;
 }
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -145,6 +166,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     myGaugeCell->setMessage(title);
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
+    return;
+  }
+  if (message == I18n::Message::ResetCalculator) {
     return;
   }
   MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);

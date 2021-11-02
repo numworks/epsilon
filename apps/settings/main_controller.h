@@ -1,6 +1,8 @@
 #ifndef SETTINGS_MAIN_CONTROLLER_H
 #define SETTINGS_MAIN_CONTROLLER_H
 
+#include <apps/shared/button_with_separator.h>
+#include <apps/shared/pop_up_controller.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_switch.h>
@@ -45,12 +47,13 @@ private:
   Escher::MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGaugeWithSeparator m_brightnessCell;
   Escher::MessageTableCellWithSwitch m_popUpCell;
+  Shared::ButtonWithSeparator m_resetButton;
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
   LocalizationController m_localizationController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
-
+  Shared::PopUpController m_resetController;
 };
 
 }

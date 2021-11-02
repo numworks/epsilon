@@ -9,13 +9,13 @@ using namespace Escher;
 
 namespace Settings {
 
-constexpr SettingsMessageTree s_modelAngleChildren[3] = {SettingsMessageTree(I18n::Message::Radian), SettingsMessageTree(I18n::Message::Degrees), SettingsMessageTree(I18n::Message::Gradians)};
-constexpr SettingsMessageTree s_modelEditionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
-constexpr SettingsMessageTree s_modelExamChildren[2] = {SettingsMessageTree(I18n::Message::ActivateExamMode), SettingsMessageTree(I18n::Message::ActivateDutchExamMode)};
-constexpr SettingsMessageTree s_modelFloatDisplayModeChildren[4] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::Engineering), SettingsMessageTree(I18n::Message::SignificantFigures)};
-constexpr SettingsMessageTree s_modelComplexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
-constexpr SettingsMessageTree s_modelFontChildren[2] = {SettingsMessageTree(I18n::Message::LargeFont), SettingsMessageTree(I18n::Message::SmallFont)};
-constexpr SettingsMessageTree s_modelAboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
+constexpr MessageTree s_modelAngleChildren[3] = {MessageTree(I18n::Message::Radian), MessageTree(I18n::Message::Degrees), MessageTree(I18n::Message::Gradians)};
+constexpr MessageTree s_modelEditionModeChildren[2] = {MessageTree(I18n::Message::Edition2D), MessageTree(I18n::Message::EditionLinear)};
+constexpr MessageTree s_modelExamChildren[2] = {MessageTree(I18n::Message::ActivateExamMode), MessageTree(I18n::Message::ActivateDutchExamMode)};
+constexpr MessageTree s_modelFloatDisplayModeChildren[4] = {MessageTree(I18n::Message::Decimal), MessageTree(I18n::Message::Scientific), MessageTree(I18n::Message::Engineering), MessageTree(I18n::Message::SignificantFigures)};
+constexpr MessageTree s_modelComplexFormatChildren[3] = {MessageTree(I18n::Message::Real), MessageTree(I18n::Message::Cartesian), MessageTree(I18n::Message::Polar)};
+constexpr MessageTree s_modelFontChildren[2] = {MessageTree(I18n::Message::LargeFont), MessageTree(I18n::Message::SmallFont)};
+constexpr MessageTree s_modelAboutChildren[3] = {MessageTree(I18n::Message::SoftwareVersion), MessageTree(I18n::Message::SerialNumber), MessageTree(I18n::Message::FccId)};
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   SelectableListViewController(parentResponder),
@@ -204,7 +204,7 @@ void MainController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-const SettingsMessageTree * MainController::model() {
+const MessageTree * MainController::model() {
   return &s_model;
 }
 

@@ -1,7 +1,7 @@
 #ifndef SHARED_SINGLE_RANGE_CONTROLLER_H
 #define SHARED_SINGLE_RANGE_CONTROLLER_H
 
-#include "discard_pop_up_controller.h"
+#include "pop_up_controller.h"
 #include "float_parameter_controller.h"
 #include "interactive_curve_view_range.h"
 #include <escher/message_table_cell_with_editable_text.h>
@@ -11,7 +11,7 @@ namespace Shared {
 
 class SingleRangeController : public FloatParameterController<float> {
 public:
-  SingleRangeController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveCurveViewRange, DiscardPopUpController * confirmPopUpController);
+  SingleRangeController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveCurveViewRange, PopUpController * confirmPopUpController);
 
   const char * title() override { return I18n::translate(m_editXRange ? I18n::Message::ValuesOfX : I18n::Message::ValuesOfY); }
   void viewWillAppear() override;
@@ -52,7 +52,7 @@ private:
   LockableEditableCell m_boundsCells[k_numberOfTextCells];
   InteractiveCurveViewRange m_tempRange;
   InteractiveCurveViewRange * m_range;
-  DiscardPopUpController * m_confirmPopUpController;
+  PopUpController * m_confirmPopUpController;
   bool m_editXRange;
 };
 

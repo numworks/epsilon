@@ -9,6 +9,7 @@ template<class T>
 class initializer_list {
 public:
   initializer_list() noexcept : m_begin(nullptr), m_size(0) {}
+  size_t size() const noexcept { return m_size; }
   const T * begin() const noexcept { return m_begin; }
   const T * end() const noexcept { return m_begin + m_size; }
 private:

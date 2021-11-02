@@ -1,11 +1,11 @@
 #ifndef POP_UP_CONTROLLER_H
 #define POP_UP_CONTROLLER_H
 
-#include <escher/pop_up_controller.h>
+#include "../shared/pop_up_controller.h"
 
 namespace HardwareTest {
 
-class PopUpController : public Escher::PopUpController {
+class PopUpController : public Shared::PopUpController {
 public:
   PopUpController();
 };

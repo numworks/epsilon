@@ -4,10 +4,9 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_message.h>
 #include <escher/message_table_cell.h>
-#include <escher/pop_up_controller.h>
 #include <apps/i18n.h>
-#include "discard_pop_up_controller.h"
 #include "double_pair_store.h"
+#include "pop_up_controller.h"
 
 namespace Shared {
 
@@ -36,12 +35,6 @@ protected:
   DoublePairStore * m_store;
   int m_series;
 private:
-
-  class DeleteColumnPopupController : public Escher::PopUpController {
-  public:
-    DeleteColumnPopupController(Escher::Invocation okInvocation);
-  };
-
   void popFromStackView();
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
   void deleteColumn();
@@ -53,7 +46,7 @@ private:
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_sortCellType = 1;
 
-  DeleteColumnPopupController m_confirmPopUpController;
+  PopUpController m_confirmPopUpController;
   Escher::MessageTableCell m_cells[k_totalNumberOfCell-1];
   Escher::MessageTableCellWithMessage m_sortCell;
   StoreController * m_storeController;

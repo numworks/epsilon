@@ -53,11 +53,11 @@ I18n::Message ContinuousFunction::MessageForSymbolType(SymbolType symbolType) {
 }
 
 ContinuousFunction::AreaType ContinuousFunction::areaType() const {
-  ExpressionNode::Type eqSymbol = equationSymbol();
-  if (eqSymbol == ExpressionNode::Type::Inferior || eqSymbol == ExpressionNode::Type::InferiorEqual) {
+  ExpressionNode::Type eqType = equationType();
+  if (eqType == ExpressionNode::Type::Inferior || eqType == ExpressionNode::Type::InferiorEqual) {
     return AreaType::Inferior;
   }
-  if (eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::SuperiorEqual) {
+  if (eqType == ExpressionNode::Type::Superior || eqType == ExpressionNode::Type::SuperiorEqual) {
     return AreaType::Superior;
   }
   return AreaType::None;
@@ -92,6 +92,16 @@ CodePoint ContinuousFunction::symbol() const {
   default:
     return 'x';
   }
+}
+
+static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 1 == static_cast<uint8_t>(ExpressionNode::Type::Superior), "equationType() relies on this type order");
+static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 2 == static_cast<uint8_t>(ExpressionNode::Type::Inferior), "equationType() relies on this type order");
+static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 3 == static_cast<uint8_t>(ExpressionNode::Type::SuperiorEqual), "equationType() relies on this type order");
+static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 4 == static_cast<uint8_t>(ExpressionNode::Type::InferiorEqual), "equationType() relies on this type order");
+
+CodePoint ContinuousFunction::equationSymbol() const {
+  constexpr static CodePoint k_equationSymbols[] = { '=', '>', '<', UCodePointSuperiorEqual, UCodePointInferiorEqual};
+  return k_equationSymbols[static_cast<uint8_t>(equationType()) - static_cast<uint8_t>(ExpressionNode::Type::Equal)];
 }
 
 int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
@@ -130,8 +140,8 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
 }
 
 bool ContinuousFunction::drawDottedCurve() const {
-  ExpressionNode::Type eqSymbol = equationSymbol();
-  return eqSymbol == ExpressionNode::Type::Superior || eqSymbol == ExpressionNode::Type::Inferior;
+  ExpressionNode::Type eqType = equationType();
+  return eqType == ExpressionNode::Type::Superior || eqType == ExpressionNode::Type::Inferior;
 }
 
 bool ContinuousFunction::isNamed() const {
@@ -407,16 +417,16 @@ void ContinuousFunction::updatePlotType(Context * context) {
   int yDeg = equation.polynomialDegree(context, k_ordinateName);
   int xDeg = equation.polynomialDegree(context, k_unknownName);
   // Inequations : equation symbol has been updated when parsing the equation
-  recordData()->setEquationSymbol(m_model.equationSymbol());
-  if (m_model.equationSymbol() != ExpressionNode::Type::Equal) {
+  recordData()->setEquationType(m_model.equationType());
+  if (m_model.equationType() != ExpressionNode::Type::Equal) {
     ExpressionNode::Sign ySign;
     // Inequations are handled with a few constraint on y and x degrees.
     if ((yDeg == 1 || (yDeg == 2 && xDeg >= 0)) && isYCoefficientNonNull(equation, yDeg, context, &ySign) && ySign != ExpressionNode::Sign::Unknown) {
       if (ySign == ExpressionNode::Sign::Negative) {
         // Oppose the comparison operator
-        ExpressionNode::Type newEquationSymbol = ComparisonOperator::Opposite(m_model.equationSymbol());
-        m_model.setEquationSymbol(newEquationSymbol);
-        recordData()->setEquationSymbol(newEquationSymbol);
+        ExpressionNode::Type newEquationType = ComparisonOperator::Opposite(m_model.equationType());
+        m_model.setEquationType(newEquationType);
+        recordData()->setEquationType(newEquationType);
       }
       return recordData()->setPlotType(PlotType::Inequation);
     } else if (yDeg <= 0 && m_model.plotType() == PlotType::Cartesian) {
@@ -657,7 +667,7 @@ Expression ContinuousFunction::Model::originalEquation(const Ion::Storage::Recor
   return unknownSymbolEquation.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
 }
 
-bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equationSymbol) {
+bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equationType) {
   /* Examples of valid named expression : f(x)= or f(x)< or f(θ)= or f(t)=
    * Examples of invalid named expression : cos(x)= or f(θ)< or f(t)<  */
   if (e.type() != ExpressionNode::Type::Function) {
@@ -665,7 +675,7 @@ bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equatio
   }
   Expression functionSymbol = e.childAtIndex(0);
   return (functionSymbol.isIdenticalTo(Symbol::Builder('x'))
-          || (equationSymbol == ExpressionNode::Type::Equal
+          || (equationType == ExpressionNode::Type::Equal
               && (functionSymbol.isIdenticalTo(
                       Symbol::Builder(UCodePointGreekSmallLetterTheta))
                   || functionSymbol.isIdenticalTo(Symbol::Builder('t')))));
@@ -682,12 +692,12 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   if (result.isUninitialized()) {
     return Undefined::Builder();
   }
-  m_equationSymbol = result.type();
-  assert(ComparisonOperator::IsComparisonOperatorType(m_equationSymbol));
+  m_equationType = result.type();
+  assert(ComparisonOperator::IsComparisonOperatorType(m_equationType));
   bool isUnnamedFunction = true;
   Expression leftExpression = result.childAtIndex(0);
 
-  if (isValidNamedLeftExpression(leftExpression, m_equationSymbol)) {
+  if (isValidNamedLeftExpression(leftExpression, m_equationType)) {
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
     const char * functionName = static_cast<Poincare::Function&>(leftExpression).name();
@@ -821,7 +831,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
 
 void ContinuousFunction::Model::tidy() const {
   m_numberOfSubCurves = 1;
-  m_equationSymbol = ExpressionNode::Type::Equal;
+  m_equationType = ExpressionNode::Type::Equal;
   m_plotType = PlotType::Undefined;
   m_expressionDerivate = Expression();
   ExpressionModel::tidy();

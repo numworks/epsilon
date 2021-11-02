@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/symbol_abstract.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -59,13 +60,13 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::FunctionTab);
 }
 
-// Fills buffer with a default polar function equation, such as "f(θ)="
-void ListController::fillWithPolarDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController) const {
-  constexpr size_t k_polarParamLength = sizeof("(θ)=") - 1;
-  int length = modelsParameterController->defaultName(buffer, bufferSize - k_polarParamLength);
+// Fills buffer with a default function equation, such as "f(x)="
+void ListController::fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint symbol) const {
+  int length = modelsParameterController->defaultName(buffer, bufferSize);
+  assert(bufferSize > length);
   buffer[length++] = '(';
-  length += UTF8Decoder::CodePointToChars(UCodePointGreekSmallLetterTheta, buffer + length, bufferSize - length);
-  assert(bufferSize >= length + 3);
+  length += UTF8Decoder::CodePointToChars(symbol, buffer + length, bufferSize - length);
+  assert(bufferSize > length + 2);
   buffer[length++] = ')';
   buffer[length++] = '=';
   buffer[length++] = 0;
@@ -95,22 +96,39 @@ bool ListController::layoutRepresentsPolarFunction(Poincare::Layout l) const {
   return !match.isUninitialized();
 }
 
+bool ListController::completeEquation(InputEventHandler * equationField, bool polarFunction) {
+  // Retrieve the edited function
+  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+  if (f->isNull() || f->plotType() == ContinuousFunction::PlotType::Undefined) {
+    // Function is new or undefined, complete the equation with a default name
+    constexpr size_t k_bufferSize = Shared::ContinuousFunction::k_maxDefaultNameSize + sizeof("(θ)=") - 1;
+    char buffer[k_bufferSize];
+    // If layout represents a polar function, use θ as symbol
+    CodePoint symbol = polarFunction ? UCodePointGreekSmallLetterTheta : static_cast<CodePoint>('x');
+    // Insert "f(x)=", with f the default function name and x the symbol
+    fillWithDefaultFunctionEquation(buffer, k_bufferSize, &m_modelsParameterController, symbol);
+    return equationField->handleEventWithText(buffer);
+  }
+  // Insert the name, symbol and equation symbol of the existing function
+  constexpr size_t k_bufferSize = Poincare::SymbolAbstract::k_maxNameSize + sizeof("(x)≥") - 1;
+  static_assert(sizeof("(x)≥") >= sizeof("(θ)="), "k_bufferSize should fit both situations.");
+  // (θ)≥ would not fit, but inequations on polar are not handled.
+  assert(f->symbol() != UCodePointGreekSmallLetterTheta || f->equationSymbol() == '=');
+  char buffer[k_bufferSize];
+  int nameLength = f->nameWithArgument(buffer, k_bufferSize);
+  nameLength += UTF8Decoder::CodePointToChars(f->equationSymbol(), buffer + nameLength, k_bufferSize - nameLength);
+  assert(nameLength < k_bufferSize);
+  buffer[nameLength] = 0;
+  return equationField->handleEventWithText(buffer);
+}
+
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   m_parameterColumnSelected = false;
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutRepresentsAnEquation(layoutField->layout())) {
       // Inserted Layout must be an equation
       layoutField->putCursorLeftOfLayout();
-      if (layoutRepresentsPolarFunction(layoutField->layout())) {
-        // Insert "f(θ)=" or, if "f" is taken, another default function name
-        constexpr size_t k_bufferSize = sizeof("f99(θ)=");
-        char buffer[k_bufferSize];
-        fillWithPolarDefaultFunctionEquation(buffer, k_bufferSize, &m_modelsParameterController);
-        layoutField->handleEventWithText(buffer);
-      } else {
-        // Insert "y="
-        layoutField->handleEventWithText("y=");
-      }
+      completeEquation(layoutField, layoutRepresentsPolarFunction(layoutField->layout()));
     }
   }
   return Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
@@ -138,16 +156,7 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
     if (!textRepresentsAnEquation(text)) {
       // Inserted text must be an equation
       textField->setCursorLocation(text);
-      if (textRepresentsPolarFunction(text)) {
-        // Insert "f(θ)=" or, if "f" is taken, another default function name
-        constexpr int bufferSize = 10;
-        char buffer[bufferSize];
-        fillWithPolarDefaultFunctionEquation(buffer, bufferSize, &m_modelsParameterController);
-        textField->handleEventWithText(buffer);
-      } else {
-        // Insert "y="
-        textField->handleEventWithText("y=");
-      }
+      completeEquation(textField, textRepresentsPolarFunction(text));
     }
   }
   return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);

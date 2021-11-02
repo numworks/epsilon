@@ -91,6 +91,8 @@ public:
   I18n::Message parameterMessageName() const override { return MessageForSymbolType(symbolType()); }
   // Return CodePoint corresponding to ContinuousFunction's SymbolType
   CodePoint symbol() const override;
+  // Return CodePoint corresponding to ContinuousFunction's equation symbol
+  CodePoint equationSymbol() const;
   // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")
   int nameWithArgument(char * buffer, size_t bufferSize) override;
   // Insert the value of the evaluation (or the symbol if symbolValue) in buffer
@@ -222,7 +224,7 @@ private:
   // Update ContinuousFunction's PlotType
   void updatePlotType(Poincare::Context * context);
   // Return the equation's symbol
-  Poincare::ExpressionNode::Type equationSymbol() const { return recordData()->equationSymbol(); }
+  Poincare::ExpressionNode::Type equationType() const { return recordData()->equationType(); }
   // If y coefficient at yDeg in equation is NonNull. Can also compute its sign.
   bool isYCoefficientNonNull(Poincare::Expression equation, int yDeg, Poincare::Context * context, Poincare::ExpressionNode::Sign * YSign = nullptr) const;
 
@@ -244,14 +246,14 @@ private:
         Shared::Function::RecordDataBuffer(color),
         m_domain(-INFINITY, INFINITY),
         m_plotType(PlotType::Undefined),
-        m_equationSymbol(Poincare::ExpressionNode::Type::Equal),
+        m_equationType(Poincare::ExpressionNode::Type::Equal),
         m_displayDerivative(false) {}
     PlotType plotType() const { return m_plotType; }
     void setPlotType(PlotType plotType) { m_plotType = plotType; }
     bool displayDerivative() const { return m_displayDerivative; }
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
-    Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
-    void setEquationSymbol(Poincare::ExpressionNode::Type equationSymbol) { m_equationSymbol = equationSymbol; }
+    Poincare::ExpressionNode::Type equationType() const { return m_equationType; }
+    void setEquationType(Poincare::ExpressionNode::Type equationType) { m_equationType = equationType; }
     bool isActive() const override { return Shared::Function::RecordDataBuffer::isActive() && m_plotType != PlotType::Unhandled && m_plotType != PlotType::Undefined; }
     float tMin() const { return m_domain.min(); }
     float tMax() const { return m_domain.max(); }
@@ -260,7 +262,7 @@ private:
   private:
     Range1D m_domain;
     PlotType m_plotType;
-    Poincare::ExpressionNode::Type m_equationSymbol;
+    Poincare::ExpressionNode::Type m_equationType;
     bool m_displayDerivative;
     /* In the record, after the boolean flag about displayDerivative, there is
      * the expression of the function, directly copied from the pool. */
@@ -282,7 +284,7 @@ private:
     Model() :
         ExpressionModel(),
         m_numberOfSubCurves(1),
-        m_equationSymbol(Poincare::ExpressionNode::Type::Equal),
+        m_equationType(Poincare::ExpressionNode::Type::Equal),
         m_plotType(PlotType::Undefined),
         m_expressionDerivate() {}
     // Return the expression to plot.
@@ -303,10 +305,10 @@ private:
     void tidy() const override;
     // m_numberOfSubCurves getter
     int numberOfSubCurves() const { return m_numberOfSubCurves; }
-    // m_equationSymbol getter
-    Poincare::ExpressionNode::Type equationSymbol() const { return m_equationSymbol; }
-    // m_equationSymbol setter
-    void setEquationSymbol(Poincare::ExpressionNode::Type equationSymbol) const { m_equationSymbol = equationSymbol; }
+    // m_equationType getter
+    Poincare::ExpressionNode::Type equationType() const { return m_equationType; }
+    // m_equationType setter
+    void setEquationType(Poincare::ExpressionNode::Type equationType) const { m_equationType = equationType; }
     // m_plotType getter
     PlotType plotType() const { return m_plotType; }
   private:
@@ -315,7 +317,7 @@ private:
     // Return size of the record's expression
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     mutable int m_numberOfSubCurves;
-    mutable Poincare::ExpressionNode::Type m_equationSymbol;
+    mutable Poincare::ExpressionNode::Type m_equationType;
     // TODO Hugo : Improve this m_plotType workaround
     mutable PlotType m_plotType;
     mutable Poincare::Expression m_expressionDerivate;

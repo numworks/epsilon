@@ -1,9 +1,9 @@
 #ifndef SETTINGS_GENERIC_SUB_CONTROLLER_H
 #define SETTINGS_GENERIC_SUB_CONTROLLER_H
 
+#include <escher/message_tree.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
-#include <apps/shared/settings_message_tree.h>
 
 namespace Settings {
 

@@ -1,11 +1,11 @@
 #ifndef SETTINGS_MAIN_CONTROLLER_H
 #define SETTINGS_MAIN_CONTROLLER_H
 
-#include <apps/shared/settings_message_tree.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_switch.h>
 #include "message_table_cell_with_gauge_with_separator.h"
+#include "message_tree.h"
 #include "sub_menu/about_controller.h"
 #include "sub_menu/display_mode_controller.h"
 #include "sub_menu/exam_mode_controller.h"
@@ -14,14 +14,14 @@
 
 namespace Settings {
 
-extern const Shared::SettingsMessageTree s_modelAngleChildren[3];
-extern const Shared::SettingsMessageTree s_modelEditionModeChildren[2];
-extern const Shared::SettingsMessageTree s_modelFloatDisplayModeChildren[4];
-extern const Shared::SettingsMessageTree s_modelComplexFormatChildren[3];
-extern const Shared::SettingsMessageTree s_modelFontChildren[2];
-extern const Shared::SettingsMessageTree s_modelExamChildren[2];
-extern const Shared::SettingsMessageTree s_modelAboutChildren[3];
-extern const Shared::SettingsMessageTree s_model;
+extern const MessageTree s_modelAngleChildren[3];
+extern const MessageTree s_modelEditionModeChildren[2];
+extern const MessageTree s_modelFloatDisplayModeChildren[4];
+extern const MessageTree s_modelComplexFormatChildren[3];
+extern const MessageTree s_modelFontChildren[2];
+extern const MessageTree s_modelExamChildren[2];
+extern const MessageTree s_modelAboutChildren[3];
+extern const MessageTree s_model;
 
 class MainController : public Escher::SelectableListViewController {
 public:
@@ -52,7 +52,7 @@ private:
    * k_indexOfAboutCell) */
   constexpr static int k_indexOfPopUpCell = k_indexOfExamModeCell + 1;
   constexpr static int k_indexOfAboutCell = k_indexOfExamModeCell + 1;
-  static const Shared::SettingsMessageTree * model();
+  static const MessageTree * model();
   Escher::StackViewController * stackController() const;
   I18n::Message promptMessage() const;
   bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }

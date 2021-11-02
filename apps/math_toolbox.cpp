@@ -230,7 +230,7 @@ constexpr ToolboxMessageTree electricityChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitPotentialMenu, unitPotentialVoltChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitResistanceMenu, unitResistanceOhmChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitCapacitanceMenu, unitCapacitanceFaradChildren),
-  ToolboxMessageTree::Node(I18n::Message::OthersMenu, electricitOtherChildren),
+  ToolboxMessageTree::Node(I18n::Message::OtherUnitsMenu, electricitOtherChildren),
 };
 
 constexpr ToolboxMessageTree unitForceNewtonChildren[] = {
@@ -302,6 +302,22 @@ constexpr ToolboxMessageTree OtherChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitAmountMenu, unitAmountMoleChildren),
 };
 
+constexpr ToolboxMessageTree ConstantsChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::SpeedOfLightSymbol, I18n::Message::SpeedOfLight),
+  ToolboxMessageTree::Leaf(I18n::Message::ElementaryChargeSymbol, I18n::Message::ElementaryCharge),
+  ToolboxMessageTree::Leaf(I18n::Message::GravitationalConstantSymbol, I18n::Message::GravitationalConstant),
+  ToolboxMessageTree::Leaf(I18n::Message::AccelerationOfGravitySymbol, I18n::Message::AccelerationOfGravity),
+  ToolboxMessageTree::Leaf(I18n::Message::BoltzmannConstantSymbol, I18n::Message::BoltzmannConstant),
+  ToolboxMessageTree::Leaf(I18n::Message::CoulombConstantSymbol, I18n::Message::CoulombConstant),
+  ToolboxMessageTree::Leaf(I18n::Message::ElectronMassSymbol, I18n::Message::ElectronMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NeutronMassSymbol, I18n::Message::NeutronMass),
+  ToolboxMessageTree::Leaf(I18n::Message::ProtonMassSymbol, I18n::Message::ProtonMass),
+  ToolboxMessageTree::Leaf(I18n::Message::AvogadroConstantSymbol, I18n::Message::AvogadroConstant),
+  ToolboxMessageTree::Leaf(I18n::Message::MolarGasConstantSymbol, I18n::Message::MolarGasConstant),
+  ToolboxMessageTree::Leaf(I18n::Message::VacuumPermittivitySymbol, I18n::Message::VacuumPermittivity),
+  ToolboxMessageTree::Leaf(I18n::Message::VacuumPermeabilitySymbol, I18n::Message::VacuumPermeability)
+};
+
 constexpr ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitConversionCommandWithArg, I18n::Message::UnitConversion, false, I18n::Message::UnitConversionCommand),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceFork, true),
@@ -312,7 +328,8 @@ constexpr ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitForceAndPressureMenu, forceAndPressureChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyAndPowerMenu, energyAndPowerChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitTemperatureMenu, unitTemperatureFork, true),
-  ToolboxMessageTree::Node(I18n::Message::OthersMenu, OtherChildren),
+  ToolboxMessageTree::Node(I18n::Message::OtherUnitsMenu, OtherChildren),
+  ToolboxMessageTree::Node(I18n::Message::Constants, ConstantsChildren),
 };
 
 constexpr ToolboxMessageTree calculChildren[] = {
@@ -463,7 +480,7 @@ constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::Calculus, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
   ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildrenFork, true),
-  ToolboxMessageTree::Node(I18n::Message::Unit, unitChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitAndConstant, unitChildren),
   ToolboxMessageTree::Node(I18n::Message::MatricesAndVectors, matricesVectorsChildren),
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
   ToolboxMessageTree::Node(I18n::Message::Trigonometry, trigonometryChildren),

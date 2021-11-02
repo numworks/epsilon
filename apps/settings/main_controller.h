@@ -37,25 +37,10 @@ public:
   void viewWillAppear() override;
   TELEMETRY_ID("");
 private:
-  constexpr static int k_indexOfAngleUnitCell = 0;
-  constexpr static int k_indexOfDisplayModeCell = k_indexOfAngleUnitCell + 1;
-  constexpr static int k_indexOfEditionModeCell = k_indexOfDisplayModeCell + 1;
-  constexpr static int k_indexOfComplexFormatCell = k_indexOfEditionModeCell + 1;
-  constexpr static int k_indexOfBrightnessCell = k_indexOfComplexFormatCell + 1;
-  constexpr static int k_indexOfFontCell = k_indexOfBrightnessCell + 1;
-  constexpr static int k_indexOfLanguageCell = k_indexOfFontCell + 1;
-  constexpr static int k_indexOfCountryCell = k_indexOfLanguageCell + 1;
-  constexpr static int k_indexOfExamModeCell = k_indexOfCountryCell + 1;
-  /* Pop-up cell and About cell are located at the same index because pop-up
-   * cell is optional. We must always correct k_indexOfAboutCell with
-   * hasPrompt() (TODO: make hasPrompt() constexpr and correct
-   * k_indexOfAboutCell) */
-  constexpr static int k_indexOfPopUpCell = k_indexOfExamModeCell + 1;
-  constexpr static int k_indexOfAboutCell = k_indexOfExamModeCell + 1;
+  I18n::Message messageAtIndex(int i) const;
   static const MessageTree * model();
   Escher::StackViewController * stackController() const;
-  I18n::Message promptMessage() const;
-  bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
+  ViewController * subControllerForCell(I18n::Message cellMessage);
   constexpr static int k_numberOfSimpleChevronCells = ((Ion::Display::Height - Escher::Metric::TitleBarHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
   Escher::MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGaugeWithSeparator m_brightnessCell;

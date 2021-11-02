@@ -38,9 +38,9 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  int rowIndex = selectedRow();
+  I18n::Message selectedMessage = messageAtIndex(selectedRow());
 
-  if (hasPrompt() && rowIndex == k_indexOfPopUpCell) {
+  if (selectedMessage == I18n::Message::UpdatePopUp || selectedMessage == I18n::Message::BetaPopUp) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
       globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
       m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
@@ -49,7 +49,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     return false;
   }
 
-  if (rowIndex == k_indexOfBrightnessCell
+  if (selectedMessage == I18n::Message::Brightness
    && (event == Ion::Events::Left || event == Ion::Events::Right || event == Ion::Events::Minus || event == Ion::Events::Plus)) {
     int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
     int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
@@ -59,38 +59,23 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
 
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    if (rowIndex == k_indexOfBrightnessCell) {
+    if (selectedMessage == I18n::Message::Brightness) {
       /* Nothing is supposed to happen when OK or EXE are pressed on the
        * brightness cell. The case of pressing Right has been handled above. */
       return true;
     }
 
-    if (rowIndex == k_indexOfLanguageCell) {
+    if (selectedMessage == I18n::Message::Language) {
       m_localizationController.setMode(LocalizationController::Mode::Language);
-    } else if (rowIndex == k_indexOfCountryCell) {
+    } else if (selectedMessage == I18n::Message::Country) {
       m_localizationController.setMode(LocalizationController::Mode::Country);
     }
-    /* The About cell can either be found at index k_indexOfExamModeCell + 1 or
-     * k_indexOfExamModeCell + 2, depending on whether there is a Pop-Up cell.
-     * Since the Pop-Up cell has been handled above, we can use those two
-     * indices for the About cell. */
-    ViewController * subControllers[k_indexOfAboutCell + 2] = {
-      &m_preferencesController,
-      &m_displayModeController,
-      &m_preferencesController,
-      &m_preferencesController,
-      nullptr, //&m_brightnessController
-      &m_preferencesController,
-      &m_localizationController,
-      &m_localizationController,
-      &m_examModeController,
-      &m_aboutController,
-      &m_aboutController
-    };
-    ViewController * selectedSubController = subControllers[rowIndex];
+
+
+    ViewController * selectedSubController = subControllerForCell(selectedMessage);
     assert(selectedSubController);
-    if (model()->childAtIndex(rowIndex)->numberOfChildren() != 0) {
-      static_cast<GenericSubController *>(selectedSubController)->setMessageTreeModel(model()->childAtIndex(rowIndex));
+    if (model()->childAtIndex(selectedRow())->numberOfChildren() != 0) {
+      static_cast<GenericSubController *>(selectedSubController)->setMessageTreeModel(model()->childAtIndex(selectedRow()));
       static_cast<GenericSubController *>(selectedSubController)->resetMemoization();
     }
     stackController()->push(selectedSubController);
@@ -105,14 +90,16 @@ int MainController::numberOfRows() const {
 };
 
 KDCoordinate MainController::nonMemoizedRowHeight(int index) {
-  if (index == k_indexOfBrightnessCell) {
-    return heightForCellAtIndex(&m_brightnessCell, index);
+  switch (messageAtIndex(index)) {
+    case I18n::Message::Brightness:
+      return heightForCellAtIndex(&m_brightnessCell, index);
+    case I18n::Message::UpdatePopUp:
+    case  I18n::Message::BetaPopUp:
+      return heightForCellAtIndex(&m_popUpCell, index);
+    default:
+      MessageTableCellWithChevronAndMessage tempCell;
+      return heightForCellAtIndex(&tempCell, index);
   }
-  if (hasPrompt() && index == k_indexOfPopUpCell) {
-    return heightForCellAtIndex(&m_popUpCell, index);
-  }
-  MessageTableCellWithChevronAndMessage tempCell;
-  return heightForCellAtIndex(&tempCell, index);
 }
 
 HighlightCell * MainController::reusableCell(int index, int type) {
@@ -137,20 +124,23 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtIndex(int index) {
-  if (index == k_indexOfBrightnessCell) {
-    return 1;
-  }
-  if (hasPrompt() && index == k_indexOfPopUpCell) {
-    return 2;
-  }
-  return 0;
+  switch (messageAtIndex(index)) {
+    case I18n::Message::Brightness:
+      return 1;
+    case I18n::Message::UpdatePopUp:
+    case I18n::Message::BetaPopUp:
+      return 2;
+    default:
+      return 0;
+  };
 }
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   Preferences * preferences = Preferences::sharedPreferences();
   I18n::Message title = model()->childAtIndex(index)->label();
-  if (index == k_indexOfBrightnessCell) {
+  I18n::Message message = messageAtIndex(index);
+  if (message == I18n::Message::Brightness) {
     MessageTableCellWithGaugeWithSeparator * myGaugeCell = static_cast<MessageTableCellWithGaugeWithSeparator *>(cell);
     myGaugeCell->setMessage(title);
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
@@ -159,17 +149,17 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(title);
-  if (index == k_indexOfLanguageCell) {
+  if (message == I18n::Message::Language) {
     int index = (int)(globalPreferences->language());
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-  if (index == k_indexOfCountryCell) {
+  if (message == I18n::Message::Country) {
     int index = (int)(globalPreferences->country());
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::CountryNames[index]);
     return;
   }
-  if (hasPrompt() && index == k_indexOfPopUpCell) {
+  if (message == I18n::Message::UpdatePopUp || message == I18n::Message::BetaPopUp) {
     MessageTableCellWithSwitch * mySwitchCell = static_cast<MessageTableCellWithSwitch *>(cell);
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
@@ -177,25 +167,28 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   MessageTableCellWithChevronAndMessage * myTextCell = static_cast<MessageTableCellWithChevronAndMessage *>(cell);
   int childIndex = -1;
-  switch (index) {
-    case k_indexOfAngleUnitCell:
+  switch (message) {
+    case I18n::Message::AngleUnit:
       childIndex = (int)preferences->angleUnit();
       break;
-    case k_indexOfDisplayModeCell:
+    case I18n::Message::DisplayMode:
       childIndex = (int)preferences->displayMode();
       break;
-    case k_indexOfEditionModeCell:
+    case I18n::Message::EditionMode:
       childIndex = (int)preferences->editionMode();
       break;
-    case k_indexOfComplexFormatCell:
+    case I18n::Message::ComplexFormat:
       childIndex = (int)preferences->complexFormat();
       break;
-    case k_indexOfFontCell:
+    case I18n::Message::FontSizes:
       childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
       break;
+    default:
+      childIndex = -1;
+      break;
   }
-  I18n::Message message = childIndex >= 0 ? model()->childAtIndex(index)->childAtIndex(childIndex)->label() : I18n::Message::Default;
-  myTextCell->setSubtitle(message);
+  I18n::Message subtitle = childIndex >= 0 ? model()->childAtIndex(index)->childAtIndex(childIndex)->label() : I18n::Message::Default;
+  myTextCell->setSubtitle(subtitle);
 }
 
 void MainController::viewWillAppear() {
@@ -204,12 +197,37 @@ void MainController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
+I18n::Message MainController::messageAtIndex(int i) const {
+  return model()->childAtIndex(i)->label();
+}
+
 const MessageTree * MainController::model() {
   return &s_model;
 }
 
 StackViewController * MainController::stackController() const {
   return (StackViewController *)parentResponder();
+}
+
+ViewController * MainController::subControllerForCell(I18n::Message cellMessage) {
+  switch (cellMessage) {
+    case I18n::Message::AngleUnit:
+    case I18n::Message::EditionMode:
+    case I18n::Message::ComplexFormat:
+    case I18n::Message::FontSizes:
+      return &m_preferencesController;
+    case I18n::Message::DisplayMode:
+      return &m_displayModeController;
+    case I18n::Message::Language:
+    case I18n::Message::Country:
+      return &m_localizationController;
+    case I18n::Message::ExamMode:
+      return &m_examModeController;
+    case I18n::Message::About:
+      return &m_aboutController;
+    default:
+      return nullptr;
+  }
 }
 
 }

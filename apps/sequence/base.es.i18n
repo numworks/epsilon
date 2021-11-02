@@ -1,7 +1,7 @@
 SequenceApp = "Sucesión"
 SequenceAppCapital = "SUCESIÓN"
 SequenceTab = "Sucesiones"
-AddSequence = "Agregar una sucesión"
+AddSequence = " Agregar una sucesión"
 ChooseSequenceType = "Seleccionar el tipo de sucesión"
 SequenceType = "Tipo de sucesión"
 Explicit = "Fórmula explícita"

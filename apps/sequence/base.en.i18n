@@ -1,7 +1,7 @@
 SequenceApp = "Sequences"
 SequenceAppCapital = "SEQUENCES"
 SequenceTab = "Sequences"
-AddSequence = "Add sequence"
+AddSequence = " Add sequence"
 ChooseSequenceType = "Choose sequence type"
 SequenceType = "Sequence type"
 Explicit = "Explicit expression"

@@ -1,7 +1,7 @@
 SequenceApp = "Suites"
 SequenceAppCapital = "SUITES"
 SequenceTab = "Suites"
-AddSequence = "Ajouter une suite"
+AddSequence = " Ajouter une suite"
 ChooseSequenceType = "Choisir le type de suite"
 SequenceType = "Type de suite"
 Explicit = "Explicite"

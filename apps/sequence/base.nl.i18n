@@ -1,7 +1,7 @@
 SequenceApp = "Rijen"
 SequenceAppCapital = "RIJEN"
 SequenceTab = "Rijen"
-AddSequence = "Rij toevoegen"
+AddSequence = " Rij toevoegen"
 ChooseSequenceType = "Kies type rij"
 SequenceType = "Rij-type"
 Explicit = "Directe formule"

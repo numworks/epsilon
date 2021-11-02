@@ -34,7 +34,6 @@ app_shared_src = $(addprefix apps/shared/,\
   button_with_separator.cpp \
   cell_with_separator.cpp \
   cursor_view.cpp \
-  discard_pop_up_controller.cpp \
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \
   expression_model_list_controller.cpp \
@@ -65,6 +64,7 @@ app_shared_src = $(addprefix apps/shared/,\
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
   poincare_helpers.cpp \
+  pop_up_controller.cpp \
   prefaced_table_view.cpp \
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \

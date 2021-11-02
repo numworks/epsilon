@@ -2,7 +2,6 @@
 #define APPS_EXAM_MODE_CONFIGURATION_H
 
 #include "global_preferences.h"
-#include "shared/settings_message_tree.h"
 #include <apps/i18n.h>
 #include <poincare/expression.h>
 

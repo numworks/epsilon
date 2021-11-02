@@ -6,20 +6,20 @@ namespace Settings {
 
 using namespace Shared;
 
-constexpr SettingsMessageTree s_modelMenu[] =
-  {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren),
-    SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren),
-    SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren),
-    SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren),
-    SettingsMessageTree(I18n::Message::Brightness),
-    SettingsMessageTree(I18n::Message::FontSizes, s_modelFontChildren),
-    SettingsMessageTree(I18n::Message::Language),
-    SettingsMessageTree(I18n::Message::Country),
-    SettingsMessageTree(I18n::Message::ExamMode, s_modelExamChildren),
-    SettingsMessageTree(I18n::Message::UpdatePopUp),
-    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren)};
+constexpr MessageTree s_modelMenu[] =
+  {MessageTree(I18n::Message::AngleUnit, s_modelAngleChildren),
+    MessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren),
+    MessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren),
+    MessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren),
+    MessageTree(I18n::Message::Brightness),
+    MessageTree(I18n::Message::FontSizes, s_modelFontChildren),
+    MessageTree(I18n::Message::Language),
+    MessageTree(I18n::Message::Country),
+    MessageTree(I18n::Message::ExamMode, s_modelExamChildren),
+    MessageTree(I18n::Message::UpdatePopUp),
+    MessageTree(I18n::Message::About, s_modelAboutChildren)};
 
-constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu);
+constexpr MessageTree s_model = MessageTree(I18n::Message::SettingsApp, s_modelMenu);
 
 I18n::Message MainController::promptMessage() const {
   return I18n::Message::UpdatePopUp;

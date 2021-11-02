@@ -5,6 +5,7 @@
 #include <poincare/preferences.h>
 #include <assert.h>
 #include "../shared/global_context.h"
+#include "../shared/continuous_function.h"
 #include "app.h"
 #include <string.h>
 
@@ -64,7 +65,7 @@ int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferS
   }
   // f, g, h and p are already taken. Try f1, f2, ...
   buffer[0] = k_defaultLetterNames[0];
-  assert(bufferSize > ContinuousFunctionStore::k_maxDefaultNameSize);
+  assert(bufferSize >= Shared::ContinuousFunction::k_maxDefaultNameSize);
   return Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(buffer, 1, bufferSize, Shared::GlobalContext::k_extensions, Shared::GlobalContext::k_numberOfExtensions, 99);
 }
 

@@ -771,11 +771,10 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
       return error;
     }
     // Rename record with a hidden record name.
-    constexpr size_t k_maxDefaultSize = sizeof("f99");
-    char name[k_maxDefaultSize];
+    char name[k_maxDefaultNameSize];
     const char * const extensions[1] = { Ion::Storage::funcExtension };
     name[0] = k_unnamedRecordFirstChar;
-    Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(name, 1, k_maxDefaultSize, extensions, 1, 99);
+    Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(name, 1, k_maxDefaultNameSize, extensions, 1, 99);
     error = Ion::Storage::Record::SetBaseNameWithExtension(record, name, Ion::Storage::funcExtension);
   }
   return error;

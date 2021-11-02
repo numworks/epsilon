@@ -26,6 +26,8 @@ class ContinuousFunction : public Function {
 public:
   /* ContinuousFunction */
 
+  static constexpr int k_maxDefaultNameSize = sizeof("f99");
+
   // Create a record with baseName
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
   // Builder

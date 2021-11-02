@@ -20,8 +20,4 @@ constexpr MessageTree s_modelMenu[] =
 
 constexpr MessageTree s_model = MessageTree(I18n::Message::SettingsApp, s_modelMenu);
 
-I18n::Message MainController::promptMessage() const {
-  return I18n::Message::Default;
-}
-
 }

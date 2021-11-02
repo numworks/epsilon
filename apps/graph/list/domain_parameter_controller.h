@@ -8,7 +8,7 @@
 #include "../../shared/expiring_pointer.h"
 #include "../../shared/float_parameter_controller.h"
 #include "../../shared/range_1D.h"
-#include "../../shared/discard_pop_up_controller.h"
+#include "../../shared/pop_up_controller.h"
 
 namespace Graph {
 
@@ -45,7 +45,7 @@ private:
   Escher::MessageTableCellWithEditableText m_domainCells[k_totalNumberOfCell];
   Ion::Storage::Record m_record;
   Shared::Range1D m_tempDomain;
-  Shared::DiscardPopUpController m_confirmPopUpController;
+  Shared::PopUpController m_confirmPopUpController;
 };
 
 }

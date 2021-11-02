@@ -1,25 +1,26 @@
 #include "pop_up_controller.h"
 #include "../apps_container.h"
-#include <apps/i18n.h>
 
 namespace HardwareTest {
 
 PopUpController::PopUpController() :
-  Escher::PopUpController(
-    4,
+  Shared::PopUpController(
     Escher::Invocation(
       [](void * context, void * sender) {
         AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
         appsContainer->switchToBuiltinApp(appsContainer->hardwareTestAppSnapshot());
         return true;
-      }, this),
-    I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel
+      },
+      this
+    ),
+    {
+      I18n::Message::HardwareTestLaunch1,
+      I18n::Message::HardwareTestLaunch2,
+      I18n::Message::HardwareTestLaunch3,
+      I18n::Message::HardwareTestLaunch4
+    }
   )
 {
-  m_contentView.setMessage(0, I18n::Message::HardwareTestLaunch1);
-  m_contentView.setMessage(1, I18n::Message::HardwareTestLaunch2);
-  m_contentView.setMessage(2, I18n::Message::HardwareTestLaunch3);
-  m_contentView.setMessage(3, I18n::Message::HardwareTestLaunch4);
 }
 
 }

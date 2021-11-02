@@ -10,22 +10,18 @@ using namespace Escher;
 
 namespace Shared {
 
-StoreParameterController::DeleteColumnPopupController::DeleteColumnPopupController(Escher::Invocation okInvocation) :
-    PopUpController(2, okInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel) {
-  m_contentView.setMessage(0, I18n::Message::ConfirmDeleteColumn1);
-  m_contentView.setMessage(1, I18n::Message::ConfirmDeleteColumn2);
-}
-
-
 StoreParameterController::StoreParameterController(Responder * parentResponder, DoublePairStore * store, StoreController * storeController) :
   SelectableListViewController(parentResponder),
   m_store(store),
   m_series(0),
-  m_confirmPopUpController(Invocation([](void * context, void * parent){
-    StoreParameterController * param = static_cast<StoreParameterController *>(context);
-    param->deleteColumn();
-    return true;
-  }, this)),
+  m_confirmPopUpController(
+    Invocation([](void * context, void * parent){
+      StoreParameterController * param = static_cast<StoreParameterController *>(context);
+      param->deleteColumn();
+      return true;
+    }, this),
+    {I18n::Message::ConfirmDeleteColumn1, I18n::Message::ConfirmDeleteColumn2}
+  ),
   m_cells{I18n::Message::FillWithFormula, I18n::Message::ClearColumn},
   m_sortCell(I18n::Message::SortCellLabel),
   m_storeController(storeController),

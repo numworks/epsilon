@@ -21,6 +21,9 @@ void shutdown();
 void shutdownCompensationCell();
 void setDefaultGPIO();
 
+void setActivePLLConfig();
+void setDeactivatedPLLConfig();
+
 enum class Frequency {
   Low = 0,
   High = 1

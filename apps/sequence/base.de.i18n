@@ -1,7 +1,7 @@
 SequenceApp = "Folge"
 SequenceAppCapital = "FOLGE"
 SequenceTab = "Folgen"
-AddSequence = "Folge hinzufügen"
+AddSequence = " Folge hinzufügen"
 ChooseSequenceType = "Bildungsgesetz der Folge auswählen"
 SequenceType = "Bildungsgesetz der Folge"
 Explicit = "Explizit"

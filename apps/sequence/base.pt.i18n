@@ -1,7 +1,7 @@
 SequenceApp = "Sequências"
 SequenceAppCapital = "SEQUÊNCIAS"
 SequenceTab = "Sequências"
-AddSequence = "Adicionar uma sequência"
+AddSequence = " Adicionar uma sequência"
 ChooseSequenceType = "Escolha o tipo de sequência"
 SequenceType = "Tipo de sequência"
 Explicit = "Explícita"

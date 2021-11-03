@@ -66,6 +66,8 @@ class Constant final : public SymbolAbstract {
 public:
   Constant(const ConstantNode * node) : SymbolAbstract(node) {}
   static Constant Builder(CodePoint c);
+  static Constant Builder(const char * name, int length) { return SymbolAbstract::Builder<Constant, ConstantNode>(name, length); }
+  static Constant Builder(const char * name) { return Builder(name, strlen(name)); }
 
   // Constant properties
   bool isPi() const { return node()->isPi(); }

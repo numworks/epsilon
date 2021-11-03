@@ -363,7 +363,7 @@ void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {
 
 void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  leftHandSide = Constant::Builder(m_currentToken.codePoint());
+  leftHandSide = Constant::Builder(m_currentToken.text(), m_currentToken.length());
   isThereImplicitMultiplication();
 }
 

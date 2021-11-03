@@ -203,7 +203,7 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_parsed_expression_is("2--2+-1", Addition::Builder(Subtraction::Builder(BasedInteger::Builder(2),Opposite::Builder(BasedInteger::Builder(2))),Opposite::Builder(BasedInteger::Builder(1))));
   assert_parsed_expression_is("2--2×-1", Subtraction::Builder(BasedInteger::Builder(2),Opposite::Builder(Multiplication::Builder(BasedInteger::Builder(2),Opposite::Builder(BasedInteger::Builder(1))))));
   assert_parsed_expression_is("-1^2", Opposite::Builder(Power::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2))));
-  assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE),Parenthesis::Builder(BasedInteger::Builder(3)))));
+  assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("ℯ"),Parenthesis::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_is("2/-3/-4", Division::Builder(Division::Builder(BasedInteger::Builder(2),Opposite::Builder(BasedInteger::Builder(3))),Opposite::Builder(BasedInteger::Builder(4))));
   assert_parsed_expression_is("1×2-3×4", Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)),Multiplication::Builder(BasedInteger::Builder(3),BasedInteger::Builder(4))));
   assert_parsed_expression_is("-1×2", Opposite::Builder(Multiplication::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2))));
@@ -316,8 +316,8 @@ QUIZ_CASE(poincare_parsing_units) {
   // Can parse implicit multiplication with units
   Expression kilometer = Expression::Parse("_km", nullptr);
   Expression second = Expression::Parse("_s", nullptr);
-  assert_parsed_expression_is("_kmπ", Multiplication::Builder(kilometer, Constant::Builder(UCodePointGreekSmallLetterPi)));
-  assert_parsed_expression_is("π_km", Multiplication::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), kilometer));
+  assert_parsed_expression_is("_kmπ", Multiplication::Builder(kilometer, Constant::Builder("π")));
+  assert_parsed_expression_is("π_km", Multiplication::Builder(Constant::Builder("π"), kilometer));
   assert_parsed_expression_is("_s_km", Multiplication::Builder(second, kilometer));
   assert_parsed_expression_is("3_s", Multiplication::Builder(BasedInteger::Builder(3), second));
 }
@@ -344,9 +344,9 @@ QUIZ_CASE(poincare_parsing_identifiers) {
 
   // Reserved symbols
   assert_parsed_expression_is("ans", Symbol::Builder("ans", 3));
-  assert_parsed_expression_is("𝐢", Constant::Builder(UCodePointMathematicalBoldSmallI));
-  assert_parsed_expression_is("π", Constant::Builder(UCodePointGreekSmallLetterPi));
-  assert_parsed_expression_is("ℯ", Constant::Builder(UCodePointScriptSmallE));
+  assert_parsed_expression_is("𝐢", Constant::Builder("𝐢"));
+  assert_parsed_expression_is("π", Constant::Builder("π"));
+  assert_parsed_expression_is("ℯ", Constant::Builder("ℯ"));
   assert_parsed_expression_is(Infinity::Name(), Infinity::Builder(false));
   assert_parsed_expression_is(Undefined::Name(), Undefined::Builder());
 
@@ -463,7 +463,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("1ans", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("ans", 3)));
   assert_parsed_expression_is("x1", Symbol::Builder("x1", 2));
   assert_parsed_expression_is("1x+2", Addition::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)),BasedInteger::Builder(2)));
-  assert_parsed_expression_is("1π", Multiplication::Builder(BasedInteger::Builder(1),Constant::Builder(UCodePointGreekSmallLetterPi)));
+  assert_parsed_expression_is("1π", Multiplication::Builder(BasedInteger::Builder(1),Constant::Builder("π")));
   assert_parsed_expression_is("1x-2", Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)),BasedInteger::Builder(2)));
   assert_parsed_expression_is("-1x", Opposite::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1))));
   assert_parsed_expression_is("2×1x", Multiplication::Builder(BasedInteger::Builder(2),Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1))));
@@ -476,7 +476,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("sin(1)2", Multiplication::Builder(Sine::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(2)));
   assert_parsed_expression_is("1cos(2)", Multiplication::Builder(BasedInteger::Builder(1),Cosine::Builder(BasedInteger::Builder(2))));
   assert_parsed_expression_is("1!2", Multiplication::Builder(Factorial::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(2)));
-  assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE),Parenthesis::Builder(BasedInteger::Builder(3)))));
+  assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("ℯ"),Parenthesis::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_is("\u00122^3\u00133", Multiplication::Builder(Power::Builder(BasedInteger::Builder(2),BasedInteger::Builder(3)), BasedInteger::Builder(3)));
   Expression m1[] = {BasedInteger::Builder(1)}; Matrix M1 = BuildMatrix(1,1,m1);
   Expression m2[] = {BasedInteger::Builder(2)}; Matrix M2 = BuildMatrix(1,1,m2);
@@ -488,7 +488,7 @@ QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {
   assert_parsed_expression_with_user_parentheses_is("1--2", Subtraction::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2)))));
   assert_parsed_expression_with_user_parentheses_is("1+conj(-2)", Addition::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(2))))));
   assert_parsed_expression_with_user_parentheses_is("1-conj(-2)", Subtraction::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(2))))));
-  assert_parsed_expression_with_user_parentheses_is("3conj(1+𝐢)", Multiplication::Builder(BasedInteger::Builder(3), Parenthesis::Builder(Conjugate::Builder(Addition::Builder(BasedInteger::Builder(1), Constant::Builder(UCodePointMathematicalBoldSmallI))))));
+  assert_parsed_expression_with_user_parentheses_is("3conj(1+𝐢)", Multiplication::Builder(BasedInteger::Builder(3), Parenthesis::Builder(Conjugate::Builder(Addition::Builder(BasedInteger::Builder(1), Constant::Builder("𝐢"))))));
   assert_parsed_expression_with_user_parentheses_is("2×-3", Multiplication::Builder(BasedInteger::Builder(2), Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_with_user_parentheses_is("2×-3", Multiplication::Builder(BasedInteger::Builder(2), Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_with_user_parentheses_is("--2", Opposite::Builder(Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2)))));

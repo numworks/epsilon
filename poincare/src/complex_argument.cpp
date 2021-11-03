@@ -62,11 +62,11 @@ Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reduc
   } else if (c.sign(context) == ExpressionNode::Sign::Positive) {
     res = Rational::Builder(0);
   } else if (c.sign(context) == ExpressionNode::Sign::Negative) {
-    res = Constant::Builder(UCodePointGreekSmallLetterPi);
+    res = Constant::Builder("π");
   } else {
     double approximation = c.approximateToScalar<double>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true);
     if (approximation < 0.0) {
-      res = Constant::Builder(UCodePointGreekSmallLetterPi);
+      res = Constant::Builder("π");
     } else if (approximation > 0.0) {
       res = Rational::Builder(0);
     } else if (approximation == 0.0) {

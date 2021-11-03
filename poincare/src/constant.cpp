@@ -94,13 +94,6 @@ bool ConstantNode::isConstantCodePoint(CodePoint c) const {
   return result;
 }
 
-Constant Constant::Builder(CodePoint c) {
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char buffer[bufferSize];
-  size_t codePointLength = SerializationHelper::CodePoint(buffer, bufferSize, c);
-  return SymbolAbstract::Builder<Constant, ConstantNode>(buffer, codePointLength);
-}
-
 Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression result;
   bool isI = isIComplex();

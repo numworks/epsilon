@@ -92,9 +92,9 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   // √(2)x2
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(SquareRoot::Builder(Rational::Builder(2)), Rational::Builder(2)), "√\u00122\u0013×2");
   // 2π
-  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Constant::Builder(UCodePointGreekSmallLetterPi)), "2π");
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Constant::Builder("π")), "2π");
   // π·𝐢
-  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Constant::Builder(UCodePointMathematicalBoldSmallI)), "π·𝐢");
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Constant::Builder("π"), Constant::Builder("𝐢")), "π·𝐢");
   // conj(2)√(2)
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Conjugate::Builder(Rational::Builder(2)), SquareRoot::Builder(Rational::Builder(2))), "conj\u00122\u0013√\u00122\u0013");
   //√(2)a!
@@ -102,7 +102,7 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   // a 2/3
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Symbol::Builder('a'), Division::Builder(Rational::Builder(2), Rational::Builder(3))), "a\u0012\u00122\u0013/\u00123\u0013\u0013");
   // (1+π)a
-  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Constant::Builder(UCodePointGreekSmallLetterPi))), Symbol::Builder('a')), "(1+π)a");
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Constant::Builder("π"))), Symbol::Builder('a')), "(1+π)a");
   // 2·root(2,a)
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), NthRoot::Builder(Rational::Builder(2), Symbol::Builder('a'))), "2·root\u0012\u00122\u0013,\u0012a\u0013\u0013");
 
@@ -110,9 +110,9 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   // 1x2xa
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(1), Rational::Builder(2), Symbol::Builder('a')), "1×2×a");
   // 2·π·a
-  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Constant::Builder(UCodePointGreekSmallLetterPi), Symbol::Builder('a')), "2·π·a");
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Constant::Builder("π"), Symbol::Builder('a')), "2·π·a");
   // 2(1+a)(1+π)
-  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Symbol::Builder('a'))), Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Constant::Builder(UCodePointGreekSmallLetterPi)))), "2(1+a)(1+π)");
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Symbol::Builder('a'))), Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Constant::Builder("π")))), "2(1+a)(1+π)");
 }
 
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout) {

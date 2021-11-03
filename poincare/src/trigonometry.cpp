@@ -46,7 +46,7 @@ static constexpr int s_piDivisor[] {
 
 Expression Trigonometry::PiExpressionInAngleUnit(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Radian) {
-    return Constant::Builder(UCodePointGreekSmallLetterPi);
+    return Constant::Builder("π");
   }
   if (angleUnit == Preferences::AngleUnit::Degree) {
     return Rational::Builder(180);

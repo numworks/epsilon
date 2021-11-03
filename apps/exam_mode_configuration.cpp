@@ -134,13 +134,11 @@ bool ExamModeConfiguration::additionalResultsAreForbidden() {
 }
 
 bool ExamModeConfiguration::inequalityGraphingIsForbidden() {
-  // TODO Hugo : Implement it after conics
   return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
     && !GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().inequalityGraphing;
 }
 
 bool ExamModeConfiguration::implicitPlotsAreForbidden() {
-  // TODO Hugo : Implement it after conics
   return GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest
     && !GlobalPreferences::sharedGlobalPreferences()->pressToTestParams().implicitPlots;
 }

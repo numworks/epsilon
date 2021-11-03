@@ -497,7 +497,7 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('3'),
         VerticalOffsetLayoutNode::Position::Superscript));
-  e = Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE), BasedInteger::Builder(3)));
+  e = Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("ℯ"), BasedInteger::Builder(3)));
   assert_parsed_layout_is(l, e);
 
   // x|2|

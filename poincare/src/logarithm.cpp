@@ -385,7 +385,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Expre
 
 Expression Logarithm::shallowBeautify() {
   assert(numberOfChildren() == 2);
-  Constant e = Constant::Builder(UCodePointScriptSmallE);
+  Constant e = Constant::Builder("ℯ");
   if (childAtIndex(1).isIdenticalTo(e)) {
     NaperianLogarithm np = NaperianLogarithm::Builder(childAtIndex(0));
     replaceWithInPlace(np);

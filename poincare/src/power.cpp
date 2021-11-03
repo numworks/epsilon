@@ -1319,17 +1319,17 @@ bool Power::isNthRootOfUnity() const {
 
 Expression Power::CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext) {
   // Returns e^(i*pi*r)
-  const Constant exp = Constant::Builder(UCodePointScriptSmallE);
-  Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
-  const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
+  const Constant exp = Constant::Builder("ℯ");
+  Constant iComplex = Constant::Builder("𝐢");
+  const Constant pi = Constant::Builder("π");
   Multiplication mExp = Multiplication::Builder(iComplex, pi, r.clone());
   iComplex.shallowReduce(reductionContext);
   Power p = Power::Builder(exp, mExp);
   mExp.shallowReduce(reductionContext);
   return std::move(p);
 #if 0
-  const Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
-  const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
+  const Constant iComplex = Constant::Builder("𝐢");
+  const Constant pi = Constant::Builder("π");
   Expression op = Multiplication::Builder(pi, r).shallowReduce(reductionContext, false);
   Cosine cos = Cosine(op).shallowReduce(reductionContext, false);;
   Sine sin = Sine(op).shallowReduce(reductionContext, false);

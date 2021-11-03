@@ -770,11 +770,11 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
 Expression Expression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Degree) {
     // e*180/Pi
-    return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
+    return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder("π"), Rational::Builder(-1)));
   }
   else if (angleUnit == Preferences::AngleUnit::Gradian) {
     // e*200/Pi
-    return Multiplication::Builder(*this, Rational::Builder(200), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
+    return Multiplication::Builder(*this, Rational::Builder(200), Power::Builder(Constant::Builder("π"), Rational::Builder(-1)));
   }
   return *this;
 }
@@ -782,11 +782,11 @@ Expression Expression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {
 Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Degree) {
     // e*Pi/180
-    return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder(UCodePointGreekSmallLetterPi));
+    return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder("π"));
   }
   else if (angleUnit == Preferences::AngleUnit::Gradian) {
     // e*Pi/200
-    return Multiplication::Builder(*this, Rational::Builder(1, 200), Constant::Builder(UCodePointGreekSmallLetterPi));
+    return Multiplication::Builder(*this, Rational::Builder(1, 200), Constant::Builder("π"));
   }
   return *this;
 }
@@ -910,9 +910,9 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       }
       if (!isZeroTb) {
         if (isOneTb) {
-          imag = Constant::Builder(UCodePointMathematicalBoldSmallI);
+          imag = Constant::Builder("𝐢");
         } else {
-          imag = Multiplication::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
+          imag = Multiplication::Builder(tb, Constant::Builder("𝐢"));
           imag.shallowAddMissingParenthesis();
         }
       }
@@ -950,15 +950,15 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       if (!isZeroRa && !isZeroTb) {
         Expression arg;
         if (isOneTb) {
-          arg = Constant::Builder(UCodePointMathematicalBoldSmallI);
+          arg = Constant::Builder("𝐢");
         } else {
-          arg = Multiplication::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
+          arg = Multiplication::Builder(tb, Constant::Builder("𝐢"));
         }
         if (isNegativeTb) {
           arg = Opposite::Builder(arg);
         }
         arg.shallowAddMissingParenthesis();
-        exp = Power::Builder(Constant::Builder(UCodePointScriptSmallE), arg);
+        exp = Power::Builder(Constant::Builder("ℯ"), arg);
         exp.shallowAddMissingParenthesis();
       }
       if (exp.isUninitialized()) {

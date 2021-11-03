@@ -235,7 +235,7 @@ QUIZ_CASE(poincare_properties_expression_sign) {
   quiz_assert(VectorNorm::Builder(BasedInteger::Builder(1)).sign(&context) == ExpressionNode::Sign::Positive);
   quiz_assert(Division::Builder(Rational::Builder(7,3), Rational::Builder(-1)).sign(&context) == ExpressionNode::Sign::Negative);
   quiz_assert(DivisionQuotient::Builder(Rational::Builder(-7), Rational::Builder(-1)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(ArcSine::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(ArcCosine::Builder(Constant::Builder(UCodePointGreekSmallLetterPi)))))).sign(&context) == ExpressionNode::Sign::Negative);
+  quiz_assert(ArcSine::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(ArcCosine::Builder(Constant::Builder("π")))))).sign(&context) == ExpressionNode::Sign::Negative);
 }
 
 QUIZ_CASE(poincare_properties_sign) {
@@ -287,7 +287,7 @@ QUIZ_CASE(poincare_properties_set_sign_positive) {
   assert_sign_sets_to(Float<double>::Builder(-2.468), ExpressionNode::Sign::Positive);
   assert_sign_sets_to(Rational::Builder(2, 7), ExpressionNode::Sign::Positive);
   assert_sign_sets_to(RealPart::Builder(ComplexCartesian::Builder(Rational::Builder(3, 2), Rational::Builder(0))), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Constant::Builder(UCodePointGreekSmallLetterPi), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Constant::Builder("π"), ExpressionNode::Sign::Positive);
   assert_sign_sets_to(FracPart::Builder(Rational::Builder(-34, 5)), ExpressionNode::Sign::Positive);
   assert_sign_sets_to(Round::Builder(Rational::Builder(67, 34), Rational::Builder(1)), ExpressionNode::Sign::Positive);
   assert_sign_sets_to(DivisionQuotient::Builder(Rational::Builder(-23), Rational::Builder(12)), ExpressionNode::Sign::Positive);
@@ -297,7 +297,7 @@ QUIZ_CASE(poincare_properties_set_sign_positive) {
   assert_sign_sets_to(Factor::Builder(Rational::Builder(120)), ExpressionNode::Sign::Positive);
   assert_sign_sets_to(ArcCosine::Builder(Rational::Builder(1, 4)), ExpressionNode::Sign::Positive);
   assert_sign_sets_to(AbsoluteValue::Builder(Symbol::Builder("p", 1)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(SignFunction::Builder(Constant::Builder(UCodePointGreekSmallLetterPi)), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(SignFunction::Builder(Constant::Builder("π")), ExpressionNode::Sign::Positive);
   assert_sign_sets_to(Infinity::Builder(true), ExpressionNode::Sign::Positive);
   assert_sign_sets_to(Random::Builder(), ExpressionNode::Sign::Positive);
 }

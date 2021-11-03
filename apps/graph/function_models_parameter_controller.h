@@ -23,7 +23,7 @@ public:
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return index == 0 ? k_emptyModelCellType : k_modelCellType; }
+  int typeAtIndex(int index) override { return index == k_indexOfEmptyModel ? k_emptyModelCellType : k_modelCellType; }
   int defaultName(char buffer[], size_t bufferSize) const;
 private:
   constexpr static int k_emptyModelCellType = 0;
@@ -33,9 +33,14 @@ private:
     "", "f(x)=x", "x+y+1=0", "x+y≤0", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)"
   };
   // Models starting with f(x)=
+  constexpr static int k_indexOfEmptyModel = 0;
   constexpr static int k_indexOfCartesianModel = 1;
+  constexpr static int k_indexOfInequationModel = 3;
+  constexpr static int k_indexOfConicModel = 4;
   constexpr static int k_indexOfParametricModel = 5;
   constexpr static int k_indexOfPolarModel = 6;
+  static_assert(k_indexOfEmptyModel == 0, "Empty model must be first.");
+  static_assert(k_indexOfInequationModel < k_indexOfConicModel, "These models are assumed to be in this order.");
   constexpr static size_t k_maxSizeOfNamedModel = 26;
   // Expression cells
   constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;
@@ -43,6 +48,8 @@ private:
     I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::ConicNamedTemplate, I18n::Message::ParametricType, I18n::Message::PolarType
   };
   Escher::StackViewController * stackController() const;
+  // Some models may be hidden. return the model index from a visible row index
+  int getModelIndex(int row) const;
   Escher::MessageTableCell m_emptyModelCell;
   Escher::ExpressionTableCellWithMessage m_modelCells[k_numberOfExpressionCells];
   Poincare::Layout m_layouts[k_numberOfExpressionCells];

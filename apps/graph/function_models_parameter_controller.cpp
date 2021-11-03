@@ -1,5 +1,6 @@
 #include "function_models_parameter_controller.h"
 #include "list/list_controller.h"
+#include <apps/exam_mode_configuration.h>
 #include <poincare/integer.h>
 #include <poincare/layout_helper.h>
 #include <poincare/preferences.h>
@@ -77,19 +78,19 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
       return false;
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
-    int rowIndex = selectedRow();
-    assert(rowIndex >= 0 && rowIndex < k_numberOfModels);
+    int modelIndex = getModelIndex(selectedRow());
+    assert(modelIndex >= 0 && modelIndex < k_numberOfModels);
     bool success;
-    if (rowIndex != k_indexOfCartesianModel && rowIndex != k_indexOfParametricModel && rowIndex != k_indexOfPolarModel) {
-      success = m_listController->editSelectedRecordWithText(k_models[rowIndex]);
+    if (modelIndex != k_indexOfCartesianModel && modelIndex != k_indexOfParametricModel && modelIndex != k_indexOfPolarModel) {
+      success = m_listController->editSelectedRecordWithText(k_models[modelIndex]);
     } else {
       /* Model starts with a named function. If that name is already taken, use
        * another one. */
       char buffer[k_maxSizeOfNamedModel];
       int functionNameLength = defaultName(buffer, k_maxSizeOfNamedModel);
       size_t constantNameLength = 1; // 'f', no null-terminating char
-      assert(strlen(k_models[rowIndex] + constantNameLength) + functionNameLength < k_maxSizeOfNamedModel);
-      strlcpy(buffer + functionNameLength, k_models[rowIndex] + constantNameLength, k_maxSizeOfNamedModel - functionNameLength);
+      assert(strlen(k_models[modelIndex] + constantNameLength) + functionNameLength < k_maxSizeOfNamedModel);
+      strlcpy(buffer + functionNameLength, k_models[modelIndex] + constantNameLength, k_maxSizeOfNamedModel - functionNameLength);
       success = m_listController->editSelectedRecordWithText(buffer);
     }
     assert(success);
@@ -102,7 +103,9 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int FunctionModelsParameterController::numberOfRows() const {
-  return 1 + k_numberOfExpressionCells;
+  return 1 + k_numberOfExpressionCells
+         - ExamModeConfiguration::implicitPlotsAreForbidden()
+         - ExamModeConfiguration::inequalityGraphingIsForbidden();
 };
 
 KDCoordinate FunctionModelsParameterController::nonMemoizedRowHeight(int j) {
@@ -117,10 +120,10 @@ KDCoordinate FunctionModelsParameterController::nonMemoizedRowHeight(int j) {
 void FunctionModelsParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   int type = typeAtIndex(index);
   if (type == k_modelCellType) {
-    int modelIndex = index - reusableCellCount(k_emptyModelCellType);
+    int expressionCellIndex = getModelIndex(index) - reusableCellCount(k_emptyModelCellType);
     Escher::ExpressionTableCellWithMessage * modelCell = static_cast<Escher::ExpressionTableCellWithMessage *>(cell);
-    modelCell->setLayout(m_layouts[modelIndex]);
-    modelCell->setSubLabelMessage(k_modelDescriptions[modelIndex]);
+    modelCell->setLayout(m_layouts[expressionCellIndex]);
+    modelCell->setSubLabelMessage(k_modelDescriptions[expressionCellIndex]);
   } else {
     assert(cell == reusableCell(index, type));
   }
@@ -141,6 +144,24 @@ int FunctionModelsParameterController::reusableCellCount(int type) {
   }
   assert(type == k_modelCellType);
   return k_numberOfExpressionCells;
+}
+
+int FunctionModelsParameterController::getModelIndex(int row) const {
+  if (row < k_indexOfInequationModel) {
+    return row;
+  }
+  if (row == k_indexOfInequationModel && !ExamModeConfiguration::inequalityGraphingIsForbidden()) {
+    return row;
+  }
+  row += ExamModeConfiguration::inequalityGraphingIsForbidden();
+  if (row < k_indexOfConicModel) {
+    return row;
+  }
+  if (row == k_indexOfConicModel && !ExamModeConfiguration::implicitPlotsAreForbidden()) {
+    return row;
+  }
+  row += ExamModeConfiguration::implicitPlotsAreForbidden();
+  return row;
 }
 
 }

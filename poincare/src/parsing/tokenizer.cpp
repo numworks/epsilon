@@ -146,7 +146,7 @@ Token Tokenizer::popToken() {
       c == UCodePointScriptSmallE)
   {
     Token result(Token::Constant);
-    result.setCodePoint(c);
+    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));
     return result;
   }
   if (c == '_') {

@@ -1,4 +1,5 @@
 #include "continuous_function.h"
+#include <apps/exam_mode_configuration.h>
 #include <escher/palette.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
@@ -72,14 +73,21 @@ I18n::Message ContinuousFunction::MessageForPlotType(PlotType plotType) {
   const size_t plotTypeIndex = static_cast<size_t>(plotType);
   assert(plotTypeIndex < k_numberOfPlotTypes);
   constexpr I18n::Message k_categories[k_numberOfPlotTypes] = {
-      I18n::Message::PolarType,          I18n::Message::ParametricType,
-      I18n::Message::CartesianType,      I18n::Message::LineType,
-      I18n::Message::HorizontalLineType, I18n::Message::VerticalLineType,
-      I18n::Message::InequationType,     I18n::Message::CircleType,
-      I18n::Message::EllipseType,        I18n::Message::ParabolaType,
-      I18n::Message::HyperbolaType,      I18n::Message::OtherType,
-      I18n::Message::UndefinedType,      I18n::Message::UnhandledType,
-  };
+      I18n::Message::PolarType,
+      I18n::Message::ParametricType,
+      I18n::Message::CartesianType,
+      I18n::Message::LineType,
+      I18n::Message::HorizontalLineType,
+      I18n::Message::VerticalLineType,
+      I18n::Message::InequationType,
+      I18n::Message::CircleType,
+      I18n::Message::EllipseType,
+      I18n::Message::ParabolaType,
+      I18n::Message::HyperbolaType,
+      I18n::Message::OtherType,
+      I18n::Message::UndefinedType,
+      I18n::Message::UnhandledType,
+      I18n::Message::Disabled};
   return k_categories[plotTypeIndex];
 }
 
@@ -419,10 +427,13 @@ void ContinuousFunction::updatePlotType(Context * context) {
   // Compute equation's degree regarding x and y.
   int yDeg = equation.polynomialDegree(context, k_ordinateName);
   int xDeg = equation.polynomialDegree(context, k_unknownName);
+  ExpressionNode::Sign ySign = ExpressionNode::Sign::Unknown;
   // Inequations : equation symbol has been updated when parsing the equation
   recordData()->setEquationType(m_model.equationType());
   if (m_model.equationType() != ExpressionNode::Type::Equal) {
-    ExpressionNode::Sign ySign;
+    if (ExamModeConfiguration::inequalityGraphingIsForbidden()) {
+      return recordData()->setPlotType(PlotType::Disabled);
+    }
     /* Inequations are handled with a few constraint on y and x degrees :
      * Polynomial x and y degrees are enforced to prevent issues with inequality
      * Area where equation would be undefined. The y coefficient of highest
@@ -475,7 +486,8 @@ void ContinuousFunction::updatePlotType(Context * context) {
   if (yDeg == 0 && xDeg == 1) {
     return recordData()->setPlotType(PlotType::VerticalLine);
   }
-  if (yDeg <= 0 || yDeg > 2 || !hasNonNullCoefficients(equation, context)) {
+
+  if (yDeg <= 0 || yDeg > 2 || !hasNonNullCoefficients(equation, context, &ySign)) {
     /* Any other case where yDeg is null ,> 2 or negative isn't handled.
      * We also do not handle equations where every coefficients depends on x.
      * TODO : This restriction (hasNonNullCoefficients) could be made more
@@ -487,20 +499,30 @@ void ContinuousFunction::updatePlotType(Context * context) {
   if (yDeg == 1 && xDeg == 0) {
     return recordData()->setPlotType(PlotType::HorizontalLine);
   }
-  // Try to identify a conic. For instance, x*y=1 as an hyperbola
-  Conic equationConic = Conic(equation, context, k_unknownName);
-  Conic::Type ctype = equationConic.getConicType();
-  if (ctype == Conic::Type::Hyperbola) {
-    return recordData()->setPlotType(PlotType::Hyperbola);
-  } else if (ctype == Conic::Type::Parabola) {
-    return recordData()->setPlotType(PlotType::Parabola);
-  } else if (ctype == Conic::Type::Ellipse) {
-    return recordData()->setPlotType(PlotType::Ellipse);
-  } else if (ctype == Conic::Type::Circle) {
-    return recordData()->setPlotType(PlotType::Circle);
+
+  if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
+    if (yDeg == 2 || ySign == ExpressionNode::Sign::Unknown) {
+      // Equation with y^2 or such as y*f(x)=... are disabled.
+      return recordData()->setPlotType(PlotType::Disabled);
+    }
+    // Ignore conics (such as y=x^2) to hide details.
+  } else {
+    // Try to identify a conic. For instance, x*y=1 as an hyperbola
+    Conic equationConic = Conic(equation, context, k_unknownName);
+    Conic::Type ctype = equationConic.getConicType();
+    if (ctype == Conic::Type::Hyperbola) {
+      return recordData()->setPlotType(PlotType::Hyperbola);
+    } else if (ctype == Conic::Type::Parabola) {
+      return recordData()->setPlotType(PlotType::Parabola);
+    } else if (ctype == Conic::Type::Ellipse) {
+      return recordData()->setPlotType(PlotType::Ellipse);
+    } else if (ctype == Conic::Type::Circle) {
+      return recordData()->setPlotType(PlotType::Circle);
+    }
+    // A conic could not be identified.
   }
-  // A conic could not be identified.
-  if (yDeg == 1 && xDeg == 1) {
+  if (yDeg == 1 && xDeg == 1 && ySign != ExpressionNode::Sign::Unknown) {
+    // An Unknown y coefficient sign would mean it depends on x (y*x = ...)
     return recordData()->setPlotType(PlotType::Line);
   }
   if (yDeg == 1) {

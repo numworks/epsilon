@@ -48,7 +48,7 @@ public:
     X
   };
 
-  static constexpr size_t k_numberOfPlotTypes = 14;
+  static constexpr size_t k_numberOfPlotTypes = 15;
   enum class PlotType : uint8_t {
     Polar = 0,
     Parametric,
@@ -65,7 +65,8 @@ public:
     Other,
     // All following types shall never be active
     Undefined,
-    Unhandled
+    Unhandled,
+    Disabled
   };
 
   static_assert(
@@ -253,7 +254,7 @@ private:
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
     Poincare::ExpressionNode::Type equationType() const { return m_equationType; }
     void setEquationType(Poincare::ExpressionNode::Type equationType) { m_equationType = equationType; }
-    bool isActive() const override { return Shared::Function::RecordDataBuffer::isActive() && m_plotType != PlotType::Unhandled && m_plotType != PlotType::Undefined; }
+    bool isActive() const override { return Shared::Function::RecordDataBuffer::isActive() && m_plotType < PlotType::Undefined; }
     float tMin() const { return m_domain.min(); }
     float tMax() const { return m_domain.max(); }
     void setTMin(float tMin) { m_domain.setMin(tMin); }

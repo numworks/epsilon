@@ -108,6 +108,12 @@ Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * f
   return resultLayout.squashUnaryHierarchyInPlace();
 }
 
+Layout LayoutHelper::StringLayoutOfSerialization(const Expression & expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) {
+  int length = expression.serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  assert(length < bufferSize);
+  return LayoutHelper::String(buffer, length);
+}
+
 Layout LayoutHelper::CodePointString(const CodePoint * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();

@@ -15,9 +15,8 @@ QUIZ_CASE(ion_persisting_bytes) {
   quiz_assert(PersistingBytes::read(1) == 0);
   PersistingBytes::write(111, 1);
   uint8_t value = 240;
-  /* Persisting bytes might take up to 64k on N0110. With 2 persisting bytes,
-   * writing more than 32k time should trigger an erase of the sector. */
-  for (int i = 0; i < 33000; i++) {
+  // TODO : Test a sector erase by writting a lot more (very slow on device)
+  for (int i = 0; i < 5; i++) {
     // Writting the opposite (bitwise) byte to prevent any value overriding
     value = ~value;
     PersistingBytes::write(value, 0);

@@ -45,11 +45,12 @@ public:
   }
 #endif
 
-private:
-  virtual size_t nodeSize() const = 0;
-
+protected:
   // Layout
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+
+private:
+  virtual size_t nodeSize() const = 0;
 };
 
 /* WARNING: symbol abstract cannot have any virtual methods. Otherwise,

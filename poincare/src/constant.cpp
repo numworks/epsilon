@@ -46,8 +46,23 @@ int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
   return rankOfConstant() - static_cast<const ConstantNode *>(e)->rankOfConstant();
 }
 
+int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  assert(bufferSize >= 0);
+  ConstantInfo info = constantInfo();
+  int underscoreLength = 0;
+  if (info.unit() != nullptr) {
+    // Precede with underscore
+    underscoreLength = std::min<int>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
+    buffer += underscoreLength;
+    bufferSize -= underscoreLength;
+  }
+  return underscoreLength + SymbolAbstractNode::serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+}
+
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::String(m_name, strlen(m_name));
+  static constexpr size_t bufferSize = 10; // TODO: optimize buffer size
+  char buffer[bufferSize];
+  return LayoutHelper::StringLayoutOfSerialization(Constant(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
 template<typename T>

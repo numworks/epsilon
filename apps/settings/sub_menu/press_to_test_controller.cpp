@@ -247,7 +247,6 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int in
 }
 
 I18n::Message PressToTestController::LabelAtIndex(int i) {
-  // TODO Hugo : Translate the texts
   assert(i >= 0 && i < k_numberOfSwitchCells);
   constexpr I18n::Message labels[k_numberOfSwitchCells] = {
     I18n::Message::PressToTestEquationSolver,

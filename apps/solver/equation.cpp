@@ -16,7 +16,7 @@ using namespace Shared;
 namespace Solver {
 
 bool Equation::containsIComplex(Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {
-  return expressionClone().recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, context, replaceSymbols);
+  return expressionClone().recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isConstant("𝐢"); }, context, replaceSymbols);
 }
 
 Expression Equation::Model::standardForm(const Storage::Record * record, Context * context, bool replaceFunctionsButNotSymbols, ExpressionNode::ReductionTarget reductionTarget) const {

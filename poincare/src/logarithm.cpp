@@ -199,7 +199,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
       }
       replaceWithInPlace(c);
       return c;
-    } else if (base.type() == ExpressionNode::Type::Constant && (static_cast<Constant &>(base).isExponential() || static_cast<Constant &>(base).isPi())) {
+    } else if (base.type() == ExpressionNode::Type::Constant && (static_cast<Constant &>(base).isConstant("ℯ") || static_cast<Constant &>(base).isConstant("π"))) {
       replaceWithInPlace(c);
       return c;
     }

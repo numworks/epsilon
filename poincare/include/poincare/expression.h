@@ -41,6 +41,7 @@ class Expression : public TreeHandle {
   friend class ComplexHelper;
   friend class ConfidenceInterval;
   friend class Conjugate;
+  friend class Constant;
   friend class Cosecant;
   friend class Cosine;
   friend class Cotangent;

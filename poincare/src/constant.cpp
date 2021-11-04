@@ -10,6 +10,7 @@
 #include <poincare/nonreal.h>
 #include <ion.h>
 #include <cmath>
+#include <algorithm>
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
 

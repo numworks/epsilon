@@ -230,7 +230,7 @@ Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 // Serialize
 
 bool PowerNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
-  if (childAtIndex(0)->type() == Type::Constant && static_cast<const ConstantNode *>(childAtIndex(0))->isExponential() && indexOfChild(child) == 1) {
+  if (childAtIndex(0)->type() == Type::Constant && static_cast<const ConstantNode *>(childAtIndex(0))->isConstant("ℯ") && indexOfChild(child) == 1) {
     return static_cast<const ExpressionNode *>(child)->type() != Type::Parenthesis;
   }
   if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
@@ -711,7 +711,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   /* Step 9
    * Depending on the target, the constant 𝐢 is not always reduced to a
    * cartesian, but its rational power can be simplified nonetheless. */
-  if (baseType == ExpressionNode::Type::Constant && static_cast<Constant &>(base).isIComplex()) {
+  if (baseType == ExpressionNode::Type::Constant && static_cast<Constant &>(base).isConstant("𝐢")) {
     Expression result;
     Integer numerator = rationalIndex.signedIntegerNumerator();
     Integer four(4);
@@ -1289,7 +1289,7 @@ bool Power::isLogarithmOfSameBase(Expression e) const {
   }
   return e.type() == ExpressionNode::Type::NaperianLogarithm
     && base.type() == ExpressionNode::Type::Constant
-    && static_cast<Constant &>(base).isExponential();
+    && static_cast<Constant &>(base).isConstant("ℯ");
 }
 
 bool Power::isNthRootOfUnity() const {
@@ -1301,16 +1301,16 @@ bool Power::isNthRootOfUnity() const {
   if (base.type() != ExpressionNode::Type::Constant
       || index.type() != ExpressionNode::Type::Multiplication
       || n < 2 || n > 3
-      || !static_cast<Constant &>(base).isExponential())
+      || !static_cast<Constant &>(base).isConstant("ℯ"))
   {
     return false;
   }
   const Expression i = index.childAtIndex(n - 2);
   const Expression pi = index.childAtIndex(n - 1);
   if (i.type() != ExpressionNode::Type::Constant
-      || !static_cast<const Constant &>(i).isIComplex()
+      || !static_cast<const Constant &>(i).isConstant("𝐢")
       || pi.type() != ExpressionNode::Type::Constant
-      || !static_cast<const Constant &>(pi).isPi())
+      || !static_cast<const Constant &>(pi).isConstant("π"))
   {
     return false;
   }

@@ -1,5 +1,6 @@
 #include "tokenizer.h"
 #include <poincare/based_integer.h>
+#include <poincare/constant.h>
 #include <poincare/number.h>
 #include <ion/unicode/utf8_decoder.h>
 
@@ -150,9 +151,9 @@ Token Tokenizer::popToken() {
     return result;
   }
   if (c == '_') {
-    /* For now, unit symbols must be prefixed with an underscore. Otherwise,
-     * common custom identifiers would be systematically parsed as units (for
-     * instance, A and g).
+    /* For now, unit/constants symbols must be prefixed with an underscore.
+     * Otherwise, common custom identifiers would be systematically parsed as
+     * units (for instance, A and g).
      * TODO The Context of the Parser might be used to decide whether a symbol
      * as 'A' should be parsed as a custom identifier, if 'A' already exists in
      * the context, or as a unit if not.
@@ -163,6 +164,9 @@ Token Tokenizer::popToken() {
      */
     Token result(Token::Unit);
     result.setString(start + 1, popIdentifier(UCodePointDegreeSign)); // + 1 for the underscore
+    if (Constant::IsConstant(result.text())) {
+      result.setType(Token::Constant);
+    }
     return result;
   }
   if (c.isLatinLetter() ||

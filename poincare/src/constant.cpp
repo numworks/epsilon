@@ -1,5 +1,6 @@
 #include <poincare/constant.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/complex_cartesian.h>
@@ -122,15 +123,22 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
   } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User && isI) {
     result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
   } else {
-    return *this;
+    result = Multiplication::Builder(
+        Float<double>::Builder(info.value()),
+        Expression::Parse(info.unit(), nullptr));
+    result.childAtIndex(1).deepReduce(reductionContext);
   }
   replaceWithInPlace(result);
   return result;
 }
 
 bool Constant::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  replaceWithInPlace(Rational::Builder(0));
-  return true;
+  ConstantNode::ConstantInfo info = constantInfo();
+  if (info.unit() == nullptr && !std::isnan(info.value())) {
+    replaceWithInPlace(Rational::Builder(0));
+    return true;
+  }
+  return false;
 }
 
 }

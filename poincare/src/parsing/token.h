@@ -62,6 +62,7 @@ public:
   Token(Type type) : m_type(type), m_text(0), m_length(0) {};
 
   Type type() const { return m_type; }
+  void setType(Type t) { m_type = t; }
   bool is(Type t) const { return m_type == t; }
   bool isNumber() const { return m_type == Type::Number || m_type == Type::BinaryNumber || m_type == HexadecimalNumber; }
   bool isEndOfStream() const { return is(Type::EndOfStream); }

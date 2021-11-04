@@ -666,9 +666,7 @@ Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
    * which would change the required size?*/
   static constexpr size_t bufferSize = 10;
   char buffer[bufferSize];
-  int length = serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
-  assert(length < bufferSize);
-  return LayoutHelper::String(buffer, length);
+  return LayoutHelper::StringLayoutOfSerialization(Unit(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
 int UnitNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

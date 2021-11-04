@@ -3,7 +3,7 @@
 
 #include <escher/message_table_cell_with_buffer.h>
 #include "generic_sub_controller.h"
-#include "../../hardware_test/pop_up_controller.h"
+#include "../../shared/pop_up_controller.h"
 
 namespace Settings {
 
@@ -18,7 +18,7 @@ public:
 private:
   constexpr static int k_totalNumberOfCell = 3;
   Escher::MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
-  HardwareTest::PopUpController m_hardwareTestPopUpController;
+  Shared::PopUpController m_hardwareTestPopUpController;
 };
 
 }

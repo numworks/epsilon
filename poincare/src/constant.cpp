@@ -14,12 +14,15 @@
 
 namespace Poincare {
 
+constexpr ConstantNode::ConstantInfo Constant::k_constants[];
+
 ConstantNode::ConstantNode(const char * newName, int length) : SymbolAbstractNode() {
   strlcpy(const_cast<char*>(name()), newName, length+1);
 }
 
 ExpressionNode::Sign ConstantNode::sign(Context * context) const {
-  if (isPi() || isExponential()) {
+  ConstantInfo info = constantInfo();
+  if (isConstant("π", info) || isConstant("ℯ", info)) {
     return Sign::Positive;
   }
   return Sign::Unknown;
@@ -31,28 +34,8 @@ Expression ConstantNode::setSign(Sign s, ReductionContext reductionContext) {
 }
 
 bool ConstantNode::isReal() const {
-  return !isIComplex();
-}
-
-int rankOfConstant(CodePoint c) {
-  switch (c) {
-    case UCodePointMathematicalBoldSmallI :
-      return 0;
-    case UCodePointGreekSmallLetterPi :
-      return 1;
-    case UCodePointScriptSmallE :
-      return 2;
-    default:
-      assert(false);
-      return -1;
-  }
-}
-
-CodePoint ConstantNode::codePoint() const {
-  UTF8Decoder decoder = UTF8Decoder(m_name);
-  CodePoint result = decoder.nextCodePoint();
-  assert(decoder.nextCodePoint() == UCodePointNull);
-  return result;
+  ConstantInfo info = constantInfo();
+  return isConstant("π", info) || isConstant("ℯ", info);
 }
 
 int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
@@ -60,7 +43,7 @@ int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
   assert(type() == e->type());
-  return rankOfConstant(codePoint()) - rankOfConstant(static_cast<const ConstantNode *>(e)->codePoint());
+  return rankOfConstant() - static_cast<const ConstantNode *>(e)->rankOfConstant();
 }
 
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -69,14 +52,14 @@ Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 
 template<typename T>
 Evaluation<T> ConstantNode::templatedApproximate() const {
-  if (isIComplex()) {
+  ConstantInfo info = constantInfo();
+  if (isConstant("𝐢", info)) {
     return Complex<T>::Builder(0.0, 1.0);
   }
-  if (isPi()) {
-    return Complex<T>::Builder(M_PI);
+  if (isConstant("π", info) || isConstant("ℯ", info)) {
+    return Complex<T>::Builder(info.value());
   }
-  assert(isExponential());
-  return Complex<T>::Builder(M_E);
+  return Complex<T>::Undefined();
 }
 
 Expression ConstantNode::shallowReduce(ReductionContext reductionContext) {
@@ -87,16 +70,38 @@ bool ConstantNode::derivate(ReductionContext reductionContext, Expression symbol
   return Constant(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-bool ConstantNode::isConstantCodePoint(CodePoint c) const {
-  UTF8Decoder decoder(m_name);
-  bool result = (decoder.nextCodePoint() == c);
-  assert(decoder.nextCodePoint() == UCodePointNull);
-  return result;
+ConstantNode::ConstantInfo ConstantNode::constantInfo() const {
+  for (ConstantNode::ConstantInfo info : Constant::k_constants) {
+    if (strcmp(info.name(), m_name) == 0) {
+      return info;
+    }
+  }
+  return ConstantInfo("", -1);
+}
+
+bool ConstantNode::isConstant(const char * constantName, ConstantInfo info) const {
+  if (info.name() == nullptr) {
+    info = constantInfo();
+  }
+  return strcmp(info.name(), constantName) == 0;
+}
+
+bool Constant::IsConstant(const char * name) {
+  for (ConstantNode::ConstantInfo info : Constant::k_constants) {
+    if (strcmp(info.name(), name) == 0) {
+      return true;
+    }
+  }
+  return false;
 }
 
 Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  ConstantNode::ConstantInfo info = constantInfo();
+  if (isConstant("ℯ", info) || isConstant("π", info)) {
+    return *this;
+  }
   Expression result;
-  bool isI = isIComplex();
+  bool isI = isConstant("𝐢",info);
   if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real && isI) {
     result = Nonreal::Builder();
   } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User && isI) {

@@ -121,11 +121,14 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return *this;
   }
   Expression result;
-  bool isI = isConstant("𝐢",info);
-  if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real && isI) {
-    result = Nonreal::Builder();
-  } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User && isI) {
-    result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
+  if (isConstant("𝐢", info)) {
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+      result = Nonreal::Builder();
+    } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
+      result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
+    } else {
+      return *this;
+    }
   } else {
     result = Multiplication::Builder(
         Float<double>::Builder(info.value()),

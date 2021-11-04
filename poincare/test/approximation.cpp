@@ -1,4 +1,5 @@
 #include <apps/shared/global_context.h>
+#include <poincare/constant.h>
 #include <poincare/infinity.h>
 #include <poincare/undefined.h>
 #include "helper.h"
@@ -177,13 +178,25 @@ QUIZ_CASE(poincare_approximation_subtraction) {
 }
 
 QUIZ_CASE(poincare_approximation_constant) {
-  assert_expression_approximates_to<float>("𝐢", "𝐢");
   assert_expression_approximates_to<double>("π", "3.1415926535898");
   assert_expression_approximates_to<float>("ℯ", "2.718282");
-
-  assert_expression_approximates_to_scalar<float>("𝐢", NAN);
-  assert_expression_approximates_to_scalar<double>("π", 3.141592653589793238);
-  assert_expression_approximates_to_scalar<double>("ℯ", 2.718281828459045235);
+  for (ConstantNode::ConstantInfo info : Constant::k_constants) {
+    if (strcmp(info.name(), "𝐢") == 0) {
+      assert_expression_approximates_to<float>("𝐢", "𝐢");
+      assert_expression_approximates_to<double>("𝐢", "𝐢");
+      assert_expression_approximates_to_scalar<float>("𝐢", NAN);
+      assert_expression_approximates_to_scalar<double>("𝐢", NAN);
+    } else if (info.unit() == nullptr) {
+      constexpr int k_bufferSize = PrintFloat::charSizeForFloatsWithPrecision(PrintFloat::SignificantDecimalDigits<double>());
+      char buffer[k_bufferSize];
+      PrintFloat::ConvertFloatToText<double>(info.value(), buffer, k_bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::SignificantDecimalDigits<double>(), DecimalMode);
+      assert_expression_approximates_to<double>(info.name(), buffer);
+      assert_expression_approximates_to_scalar<float>(info.name(), info.value());
+    } else {
+      assert_expression_approximates_to<double>(info.name(), "undef");
+      assert_expression_approximates_to_scalar<float>(info.name(), NAN);
+    }
+  }
 }
 
 QUIZ_CASE(poincare_approximation_division) {

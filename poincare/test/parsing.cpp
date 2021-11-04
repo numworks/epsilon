@@ -29,6 +29,11 @@ void assert_tokenizes_as_unit(const char * string) {
   assert_tokenizes_as(types, string);
 }
 
+void assert_tokenizes_as_constant(const char * string) {
+  const Token::Type types[] = {Token::Constant, Token::EndOfStream};
+  assert_tokenizes_as(types, string);
+}
+
 void assert_tokenizes_as_undefined_token(const char * string) {
   Tokenizer tokenizer(string);
   while (true) {
@@ -281,6 +286,19 @@ QUIZ_CASE(poincare_parsing_matrices) {
   assert_text_not_parsable("[[1,]]");
   assert_text_not_parsable(",");
   assert_text_not_parsable("[,]");
+}
+
+QUIZ_CASE(poincare_parsing_constants) {
+  for (ConstantNode::ConstantInfo info : Constant::k_constants) {
+    if (info.unit() == nullptr) {
+      assert_tokenizes_as_constant(info.name());
+    } else {
+      constexpr int k_bufferSize = 10;
+      char buffer[k_bufferSize] = "_";
+      strlcpy(buffer + 1, info.name(), k_bufferSize - 1);
+      assert_tokenizes_as_constant(buffer);
+    }
+  }
 }
 
 QUIZ_CASE(poincare_parsing_units) {

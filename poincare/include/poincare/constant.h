@@ -77,12 +77,18 @@ private:
 class Constant final : public SymbolAbstract {
 public:
   Constant(const ConstantNode * node) : SymbolAbstract(node) {}
-  static Constant Builder(const char * name, int length) { return SymbolAbstract::Builder<Constant, ConstantNode>(name, length); }
-  static Constant Builder(const char * name) { return Builder(name, strlen(name)); }
+  static Constant Builder(const char * name, int length) {
+    assert(Constant::IsConstant(name, length));
+    return SymbolAbstract::Builder<Constant, ConstantNode>(name, length);
+  }
+  static Constant Builder(const char * name) {
+    assert(Constant::IsConstant(name, strlen(name)));
+    return Builder(name, strlen(name));
+  }
 
   // Constant properties
   bool isConstant(const char * constantName, ConstantNode::ConstantInfo info = ConstantNode::ConstantInfo()) const { return node()->isConstant(constantName, info); }
-  static bool IsConstant(const char * name);
+  static bool IsConstant(const char * name, size_t length);
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

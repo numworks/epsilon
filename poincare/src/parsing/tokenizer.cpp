@@ -164,7 +164,7 @@ Token Tokenizer::popToken() {
      */
     Token result(Token::Unit);
     result.setString(start + 1, popIdentifier(UCodePointDegreeSign)); // + 1 for the underscore
-    if (Constant::IsConstant(result.text())) {
+    if (Constant::IsConstant(result.text(), result.length())) {
       result.setType(Token::Constant);
     }
     return result;

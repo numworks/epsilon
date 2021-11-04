@@ -102,9 +102,13 @@ bool ConstantNode::isConstant(const char * constantName, ConstantInfo info) cons
   return strcmp(info.name(), constantName) == 0;
 }
 
-bool Constant::IsConstant(const char * name) {
+bool Constant::IsConstant(const char * name, size_t length) {
   for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    if (strcmp(info.name(), name) == 0) {
+    size_t constantLength = strlen(info.name());
+    if (length < constantLength) {
+     continue;
+    }
+    if (strncmp(info.name(), name, length) == 0) {
       return true;
     }
   }

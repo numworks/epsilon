@@ -1,4 +1,5 @@
 #include <ion/storage.h>
+#include <poincare/constant.h>
 #include <poincare/function.h>
 #include <poincare/infinity.h>
 #include <poincare/rational.h>
@@ -220,6 +221,25 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("2^x×2^(-x)", "1", SystemForAnalysis);
   assert_parsed_expression_simplify_to("y^x×y^(-x)", "y^0", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x/√(x)", "x/√(x)", SystemForAnalysis);
+}
+
+QUIZ_CASE(poincare_simplification_constants) {
+  assert_parsed_expression_simplify_to("𝐢", "𝐢");
+  assert_parsed_expression_simplify_to("π", "π");
+  assert_parsed_expression_simplify_to("ℯ", "ℯ");
+  assert_parsed_expression_simplify_to("_c", "299792.458×_km×_s^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("_e", "1.602176634ᴇ-19×_C");
+  //assert_parsed_expression_simplify_to("_G", "_m^3*_kg^\u0012-1\u0013*_s^\u0012-2\u0013");
+  assert_parsed_expression_simplify_to("_g0", "9.80665×_m×_s^\u0012-2\u0013");
+  //assert_parsed_expression_simplify_to("_k", "1.380649e-23×_J×_K^\u0012-1\u0013");
+  //assert_parsed_expression_simplify_to("_ke", "8.9875517923×_N*_m^\u00122\u0013/_C^\u00122\u0013");
+  assert_parsed_expression_simplify_to("_me", "9.1093837015ᴇ-31×_kg");
+  assert_parsed_expression_simplify_to("_mn", "1.67492749804ᴇ-27×_kg");
+  assert_parsed_expression_simplify_to("_mp", "1.67262192369ᴇ-27×_kg");
+  //assert_parsed_expression_simplify_to("_Na", "6.02214076ᴇ23×_mol^\u0012-1\u0013");
+  assert_parsed_expression_simplify_to("_R", "8.3144626181532×_J×_mol^\u0012-1\u0013×_K^\u0012-1\u0013");
+  //assert_parsed_expression_simplify_to("_ε0", "8.8541878128ᴇ-12×_F×_m^\u0012-1\u0013");
+  //assert_parsed_expression_simplify_to("_μ0", "1.25663706212ᴇ-6×_N×_A^\u0012-2\u0013");
 }
 
 void assert_parsed_unit_simplify_to_with_prefixes(const Unit::Representative * representative) {

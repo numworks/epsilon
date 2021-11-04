@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <poincare/addition.h>
+#include <poincare/constant.h>
 #include <poincare/decimal.h>
 #include <poincare/expression.h>
 #include <poincare/rational.h>
@@ -72,6 +73,11 @@ QUIZ_CASE(poincare_expression_rational_constructor) {
   Rational e = Rational::Builder(overflow);
   Rational f = Rational::Builder(overflow, overflow);
   assert_pool_size(initialPoolSize+6);
+}
+
+QUIZ_CASE(poincare_expression_constant_constructor) {
+  Constant c = Constant::Builder("π");
+  c = Constant::Builder("ke");
 }
 
 QUIZ_CASE(poincare_expression_unit_constructor) {

@@ -11,7 +11,10 @@
 
 #include "test_helper.h"
 
-LawTestCase studentTests[]{
+constexpr int k_numberOfTestCases = 79;
+
+LawTestCase getStudentTestCase(int i) {
+  static LawTestCase s_studentTests[k_numberOfTestCases] {
     LawTestCase(0.28, -10, 0.0051917760715735, 0.1857118516896359),
     LawTestCase(1, -10, 0.0031515830315226806, 0.03172551743055356),
     LawTestCase(2.57, -10, 0.0005030925333730742, 0.001996706792893251),
@@ -91,11 +94,13 @@ LawTestCase studentTests[]{
     LawTestCase(5, 18, 1.3324661240937334e-06, 0.9999951397795279, 1e-5),
     LawTestCase(6, 18, 3.1018888949841117e-07, 0.9999990543824999, 1e-5),
     LawTestCase(7, 18, 7.700718899661956e-08, 0.999999798186122, 1e-3),
-};
+  };
+  return s_studentTests[i];
+}
 
 QUIZ_CASE(probability_student_law) {
-  for (int i = 0; i < sizeof(studentTests) / sizeof(LawTestCase); i++) {
-    LawTestCase t = studentTests[i];
+  for (int i = 0; i < k_numberOfTestCases; i++) {
+    LawTestCase t = getStudentTestCase(i);
     // double
     assertRoughlyEqual(Probability::StudentLaw::EvaluateAtAbscissa(t.x, t.k),
                        t.density,

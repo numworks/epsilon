@@ -5,7 +5,10 @@
 
 #include "test_helper.h"
 
-LawTestCase chi2Tests[] = {
+constexpr int k_numberOfTestCases = 40;
+
+LawTestCase getChi2TestCase(int i) {
+  static LawTestCase s_chi2Tests[k_numberOfTestCases] {
     LawTestCase(0.28, 0, 0, 0.0),
     LawTestCase(0.28, 0.123, 0.7735483671408104, 0.7173556658305531),
     LawTestCase(0.28, 0.25, 0.39445708636423615, 0.7863197131812323, 1e-6),
@@ -45,11 +48,14 @@ LawTestCase chi2Tests[] = {
     LawTestCase(20, 5.3, 0.0006273926980786215, 0.0004347478563383611, 1e-6),
     LawTestCase(20, 20, 0.06255501786056658, 0.5420702855281478, 1e-5),
     LawTestCase(100, 0, 0.0, 0.0),
-    LawTestCase(100, 100, 0.028162503162596778, 0.5188083154720433, 1e-6)};
+    LawTestCase(100, 100, 0.028162503162596778, 0.5188083154720433, 1e-6),
+  };
+  return s_chi2Tests[i];
+}
 
 QUIZ_CASE(probability_chi2_law) {
-  for (unsigned int i = 0; i < sizeof(chi2Tests) / sizeof(LawTestCase); i++) {
-    LawTestCase t = chi2Tests[i];
+  for (unsigned int i = 0; i < k_numberOfTestCases; i++) {
+    LawTestCase t = getChi2TestCase(i);
     // double
     assertRoughlyEqual(Probability::Chi2Law::EvaluateAtAbscissa(t.x, t.k), t.density, t.precision);
     assertRoughlyEqual(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa(t.x, t.k),

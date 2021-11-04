@@ -72,7 +72,7 @@ Evaluation<T> ConstantNode::templatedApproximate() const {
   if (isConstant("𝐢", info)) {
     return Complex<T>::Builder(0.0, 1.0);
   }
-  if (isConstant("π", info) || isConstant("ℯ", info)) {
+  if (info.unit() == nullptr) {
     return Complex<T>::Builder(info.value());
   }
   return Complex<T>::Undefined();

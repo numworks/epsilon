@@ -1,5 +1,5 @@
 #include "about_controller.h"
-#include <escher/container.h>
+#include "../../apps_container.h"
 #include <assert.h>
 #include <cmath>
 
@@ -8,7 +8,23 @@ using namespace Escher;
 namespace Settings {
 
 AboutController::AboutController(Responder * parentResponder) :
-  GenericSubController(parentResponder)
+  GenericSubController(parentResponder),
+  m_hardwareTestPopUpController(
+    Escher::Invocation(
+      [](void * context, void * sender) {
+        AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
+        appsContainer->switchToBuiltinApp(appsContainer->hardwareTestAppSnapshot());
+        return true;
+      },
+      this
+    ),
+    {
+      I18n::Message::HardwareTestLaunch1,
+      I18n::Message::HardwareTestLaunch2,
+      I18n::Message::HardwareTestLaunch3,
+      I18n::Message::HardwareTestLaunch4
+    }
+  )
 {
 }
 

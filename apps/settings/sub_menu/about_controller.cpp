@@ -100,6 +100,22 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
         
         return true;
       }
+      if(childLabel == I18n::Message::Battery){
+        MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
+        char batteryLevel[15];
+        if(strchr(myCell->accessoryText(), '%') == NULL){
+          int batteryLen = Poincare::Integer((int) ((Ion::Battery::voltage() - 3.6) * 166)).serialize(batteryLevel, 15);
+          batteryLevel[batteryLen] = '%';
+          batteryLevel[batteryLen+1] = '\0';
+        }else{
+          int batteryLen = Poincare::Number::FloatNumber(Ion::Battery::voltage()).serialize(batteryLevel, 15, Poincare::Preferences::PrintFloatMode::Decimal, 3);
+          batteryLevel[batteryLen] = 'V';
+          batteryLevel[batteryLen+1] = '\0';
+        }
+
+        myCell->setAccessoryText(batteryLevel);
+        return true;
+      }
     }
     return false;
   }

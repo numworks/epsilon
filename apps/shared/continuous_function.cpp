@@ -413,6 +413,9 @@ void ContinuousFunction::updatePlotType(Context * context) {
   setCache(nullptr);
   // Retrieve ContinuousFunction's equation
   Expression equation = expressionEquation(context);
+  if (equation.type() == ExpressionNode::Type::Undefined) {
+    return recordData()->setPlotType(PlotType::Undefined);
+  }
   // Compute equation's degree regarding x and y.
   int yDeg = equation.polynomialDegree(context, k_ordinateName);
   int xDeg = equation.polynomialDegree(context, k_unknownName);
@@ -420,8 +423,11 @@ void ContinuousFunction::updatePlotType(Context * context) {
   recordData()->setEquationType(m_model.equationType());
   if (m_model.equationType() != ExpressionNode::Type::Equal) {
     ExpressionNode::Sign ySign;
-    // Inequations are handled with a few constraint on y and x degrees.
-    if ((yDeg == 1 || (yDeg == 2 && xDeg >= 0)) && isYCoefficientNonNull(equation, yDeg, context, &ySign) && ySign != ExpressionNode::Sign::Unknown) {
+    /* Inequations are handled with a few constraint on y and x degrees :
+     * Polynomial x and y degrees are enforced to prevent issues with inequality
+     * Area where equation would be undefined. The y coefficient of highest
+     * degree must also have a constant sign. */
+    if ((yDeg == 1 || (yDeg == 2 && xDeg >= 0)) && hasNonNullCoefficients(equation, context, &ySign) && ySign != ExpressionNode::Sign::Unknown) {
       if (ySign == ExpressionNode::Sign::Negative) {
         // Oppose the comparison operator
         ExpressionNode::Type newEquationType = ComparisonOperator::Opposite(m_model.equationType());
@@ -444,12 +450,13 @@ void ContinuousFunction::updatePlotType(Context * context) {
     if (yDeg > 0) {
       return recordData()->setPlotType(PlotType::Unhandled);
     }
+    // TODO : f(x)=1+x could be labelled as line.
     return recordData()->setPlotType(m_model.plotType());
   }
 
   /* We can now rely on x and y degree to identify plot type :
    * | y  | x  | Status
-   * | 0  | 0  | Undefined
+   * | 0  | 0  | Unhandled
    * | 0  | 1  | Vertical Line
    * | 0  | +  | Unhandled
    * | 1  | 0  | Horizontal Line
@@ -462,77 +469,79 @@ void ContinuousFunction::updatePlotType(Context * context) {
    * | +  | +  | Unhandled
    */
 
-  if (yDeg == 0 && xDeg == 0) {
-    return recordData()->setPlotType(PlotType::Undefined);
+  if (yDeg <= 0 && xDeg <= 0) {
+    return recordData()->setPlotType(PlotType::Unhandled);
   }
   if (yDeg == 0 && xDeg == 1) {
     return recordData()->setPlotType(PlotType::VerticalLine);
   }
-  if (yDeg <= 0 || yDeg > 2 || !isYCoefficientNonNull(equation, yDeg, context)) {
+  if (yDeg <= 0 || yDeg > 2 || !hasNonNullCoefficients(equation, context)) {
     /* Any other case where yDeg is null ,> 2 or negative isn't handled.
-     * Same if y's highest degree term depends on x, or may be null. */
+     * We also do not handle equations where every coefficients depend on x.
+     * TODO : This restriction (hasNonNullCoefficients) could be made more
+     * general either by checking that all coefficient don't share a same root
+     * or by ploting an additional vertical curve for each of these shared roots
+     */
     return recordData()->setPlotType(PlotType::Unhandled);
   }
   if (yDeg == 1 && xDeg == 0) {
     return recordData()->setPlotType(PlotType::HorizontalLine);
   }
+  // Try to identify a conic. For instance, x*y=1 as an hyperbola
+  Conic equationConic = Conic(equation, context, k_unknownName);
+  Conic::Type ctype = equationConic.getConicType();
+  if (ctype == Conic::Type::Hyperbola) {
+    return recordData()->setPlotType(PlotType::Hyperbola);
+  } else if (ctype == Conic::Type::Parabola) {
+    return recordData()->setPlotType(PlotType::Parabola);
+  } else if (ctype == Conic::Type::Ellipse) {
+    return recordData()->setPlotType(PlotType::Ellipse);
+  } else if (ctype == Conic::Type::Circle) {
+    return recordData()->setPlotType(PlotType::Circle);
+  }
+  // A conic could not be identified.
   if (yDeg == 1 && xDeg == 1) {
     return recordData()->setPlotType(PlotType::Line);
   }
   if (yDeg == 1) {
     return recordData()->setPlotType(PlotType::Cartesian);
   }
-  if (yDeg == 2 && (xDeg == 1 || xDeg == 2)) {
-    Conic equationConic = Conic(equation, context, k_unknownName);
-    Conic::Type ctype = equationConic.getConicType();
-    if (ctype == Conic::Type::Hyperbola) {
-      return recordData()->setPlotType(PlotType::Hyperbola);
-    } else if (ctype == Conic::Type::Parabola) {
-      return recordData()->setPlotType(PlotType::Parabola);
-    } else if (ctype == Conic::Type::Ellipse) {
-      return recordData()->setPlotType(PlotType::Ellipse);
-    } else if (ctype == Conic::Type::Circle) {
-      return recordData()->setPlotType(PlotType::Circle);
-    }
-  }
   assert(yDeg == 2);
   // Unknown type that we are able to plot anyway.
   return recordData()->setPlotType(PlotType::Other);
 }
 
-bool ContinuousFunction::isYCoefficientNonNull(Expression equation, int yDeg, Context * context, ExpressionNode::Sign * coefficientSign) const {
-  assert(yDeg >= 0 && !equation.isUninitialized());
-  if (coefficientSign != nullptr) {
-    *coefficientSign = ExpressionNode::Sign::Unknown;
-  }
-  // Compute y coefficients
+bool ContinuousFunction::hasNonNullCoefficients(Expression equation, Context * context, ExpressionNode::Sign * highestDegreeCoefficientSign) const {
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   int dy = equation.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
-  assert(dy >= yDeg);
-  (void) dy; // Silence warnings
-  // Retrieve requested coefficient
-  ExpressionNode::NullStatus coefficientNullStatus = coefficients[yDeg].nullStatus(context);
-  if (coefficientNullStatus == ExpressionNode::NullStatus::Null || coefficients[yDeg].polynomialDegree(context, k_unknownName) != 0) {
-    // Coefficient is null or depends on x (which may be null)
-    // NOTE : We could handle here cases where it depends on x but is never null
-    return false;
+  if (highestDegreeCoefficientSign != nullptr && dy >= 0) {
+    ExpressionNode::Sign sign = coefficients[dy].sign(context);
+    if (sign == ExpressionNode::Sign::Unknown) {
+      // Approximate for a better estimation. Nan if coefficient depends on x.
+      double approximation = coefficients[dy].approximateToScalar<double>(context, complexFormat, angleUnit);
+      if (!std::isnan(approximation) && approximation != 0) {
+        sign = approximation < 0 ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
+      }
+    }
+    *highestDegreeCoefficientSign = sign;
   }
-  if (coefficientSign != nullptr) {
-    *coefficientSign = coefficients[yDeg].sign(context);
+  // Look for a NonNull coefficient.
+  for (int d = 0; d <= dy; d++) {
+    ExpressionNode::NullStatus nullStatus = coefficients[d].nullStatus(context);
+    if (nullStatus == ExpressionNode::NullStatus::NonNull) {
+      return true;
+    }
+    if (nullStatus == ExpressionNode::NullStatus::Unknown) {
+      // Approximate for a better estimation. Nan if coefficient depends on x.
+      double approximation = coefficients[d].approximateToScalar<double>(context, complexFormat, angleUnit);
+      if (!std::isnan(approximation) && approximation != 0) {
+        return true;
+      }
+    }
   }
-  if (coefficientNullStatus == ExpressionNode::NullStatus::NonNull && (coefficientSign == nullptr || *coefficientSign != ExpressionNode::Sign::Unknown)) {
-    // Coefficient is non null, sign is either known or disregarded.
-    return true;
-  }
-  // Approximate the coefficient, update sign and nullstatus
-  double approximation = coefficients[yDeg].approximateToScalar<double>(context, complexFormat, angleUnit);
-  coefficientNullStatus = approximation != 0. ? ExpressionNode::NullStatus::NonNull : ExpressionNode::NullStatus::Null;
-  if (coefficientSign != nullptr) {
-    *coefficientSign = approximation < 0. ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
-  }
-  return coefficientNullStatus == ExpressionNode::NullStatus::NonNull;
+  return false;
 }
 
 Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {

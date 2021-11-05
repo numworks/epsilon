@@ -59,8 +59,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     case k_indexOfRemoveColumn:
     {
       // Display confirmation popup before removing column
-      Container::activeApp()->displayModalViewController(&m_confirmPopUpController, 0.f, 0.f,
-          Metric::PopUpTopMargin, Metric::PopUpRightMargin, Metric::PopUpBottomMargin, Metric::PopUpLeftMargin);
+      m_confirmPopUpController.presentModally();
       return true;
     }
     case k_indexOfFillFormula:

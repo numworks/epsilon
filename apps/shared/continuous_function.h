@@ -225,8 +225,8 @@ private:
   void updatePlotType(Poincare::Context * context);
   // Return the equation's symbol
   Poincare::ExpressionNode::Type equationType() const { return recordData()->equationType(); }
-  // If y coefficient at yDeg in equation is NonNull. Can also compute its sign.
-  bool isYCoefficientNonNull(Poincare::Expression equation, int yDeg, Poincare::Context * context, Poincare::ExpressionNode::Sign * YSign = nullptr) const;
+  // If equation has a NonNull coeff. Can also compute last coeff sign.
+  bool hasNonNullCoefficients(Poincare::Expression equation, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign = nullptr) const;
 
   /* Evaluation */
 

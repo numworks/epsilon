@@ -38,8 +38,6 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
       // On the sub curve, pressing left actually moves the cursor right
       dir *= -1.0;
     }
-  } else {
-    assert(function->numberOfSubCurves() == 1);
   }
 
   // Cursor's default horizontal movement

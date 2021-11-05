@@ -77,7 +77,7 @@ QUIZ_CASE(graph_ranges_single_function) {
   Preferences::ComplexFormat previousComplexFormat = Preferences::sharedPreferences()->complexFormat();
   Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Cartesian);
 
-  assert_best_cartesian_range_is("f(x)=undef", -10, 10, -5.66249943, 4.96249962);
+  assert_best_cartesian_range_is("f(x)=undef", -10, 10, -5.66249943, 4.96249962, Radian, ContinuousFunction::PlotType::Undefined);
   assert_best_cartesian_range_is("f(x)=x!", -10, 10, -5.66249943, 4.96249962);
   assert_best_cartesian_range_is("f(x)=abs(x)", -10, 10, -1.702784, 8.922215);
 

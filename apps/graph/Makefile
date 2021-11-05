@@ -44,6 +44,7 @@ tests_src += $(addprefix apps/graph/test/,\
   caching.cpp \
   helper.cpp \
   ranges.cpp \
+  plot_type.cpp \
 )
 
 $(eval $(call depends_on_image,apps/graph/app.cpp,apps/graph/graph_icon.png))

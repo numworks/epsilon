@@ -96,6 +96,8 @@ QUIZ_CASE(poincare_conics_canonic) {
 }
 
 QUIZ_CASE(poincare_conics_invalid) {
+  quiz_assert_undefined("3*y");
+  quiz_assert_undefined("3*y+x");
   quiz_assert_undefined("y+x+1");
   quiz_assert_undefined("y^2+y+1");
   quiz_assert_undefined("y^2+x^2-ln(x)");
@@ -104,6 +106,9 @@ QUIZ_CASE(poincare_conics_invalid) {
   quiz_assert_undefined("y^2+x^2+1");
   quiz_assert_undefined("y^2+x^2+x*y+x+y+1");
   quiz_assert_undefined("y^2+1");
+  quiz_assert_undefined("y^2-x^2");
+  quiz_assert_undefined("(y-x-1)(y-x+1)");
+  quiz_assert_undefined("y*(y-x)");
 }
 
 QUIZ_CASE(poincare_conics_general) {
@@ -132,6 +137,8 @@ QUIZ_CASE(poincare_conics_general) {
                       3.4641, 0.722315, 0.0, 0.0);
   quiz_assert_ellipse("(23x^2+y^2-12)*10^(-9)", 0.978019, 0.978019 * 3.4641,
                       3.4641, 0.722315, 0.0, 0.0);
+  quiz_assert_hyperbola("x*y-1", 1.41421, 1.41421 * 1.41421, 1.41421, 1.41421,
+                      0.0, 0.0);  // sqrt(2)
 }
 
 void quiz_assert_same_circle(const char * canonicForm, const char * offCenteredForm, double cx, double cy) {

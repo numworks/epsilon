@@ -56,7 +56,6 @@ public:
     Cartesian,
     Line,
     HorizontalLine,
-    // All following types shall never be active in values table
     VerticalLine,
     Inequation,
     Circle,
@@ -107,7 +106,7 @@ public:
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool drawDottedCurve() const;
   // If the ContinuousFunction should be considered active in table
-  bool isActiveInTable() const { return plotType() < PlotType::VerticalLine && isActive(); }
+  bool isActiveInTable() const { return (plotType() < PlotType::VerticalLine || (isConic() && numberOfSubCurves() == 1)) && isActive(); }
   // If the ContinuousFunction has x for unknown symbol
   bool isAlongX() const { return symbol() == 'x'; }
   // If the ContinuousFunction is a conic

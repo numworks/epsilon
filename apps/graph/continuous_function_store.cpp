@@ -18,12 +18,11 @@ bool ContinuousFunctionStore::displaysFunctionsToNormalize(int * nbActiveFunctio
   if (nbActiveFunctions != nullptr) {
     *nbActiveFunctions = numberOfActiveFunctions();
   }
+  // Normalization isn't enforced on Parabola and Hyperbola for a better zooms
   return numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Polar)
        + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parametric)
        + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Circle)
        + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Ellipse)
-       + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Hyperbola)
-       + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parabola)
        != 0;
 }
 

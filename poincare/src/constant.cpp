@@ -131,6 +131,7 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
       return *this;
     }
   } else {
+    assert(info.unit() != nullptr);
     result = Multiplication::Builder(
         Float<double>::Builder(info.value()),
         Expression::Parse(info.unit(), nullptr));

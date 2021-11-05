@@ -85,7 +85,7 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
   dx = coefficientsY[0].getPolynomialReducedCoefficients(
       x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
       symbolicComputation);
-  if (dx > 2 || dx < 0 || (dx < 2 && dy < 2) || (dx == 0 && m_b == 0.0)) {
+  if (dx > 2 || dx < 0 || (dx < 2 && dy < 2 && m_b == 0.0) || (dx == 0 && m_b == 0.0)) {
     // A conic must have at least 1 squared term, 1 x term and 1 y term.
     m_type = Type::Undefined;
     return;
@@ -166,7 +166,7 @@ void Conic::rotateConic() {
     // This ensures that at least on of the two coefficients is always positive
     multiplyCoefficients(-1.0);
   }
-  if (isCanonicallyRotated()) {
+  if ((m_a > 0.0 || m_c > 0.0) && isCanonicallyRotated()) {
     // Conic is already rotated in canonic form.
     return;
   }
@@ -217,13 +217,13 @@ void Conic::rotateConic() {
 bool Conic::isCanonicallyCentered() const {
   /* For the conic to be centered, coefficients must be of one of these forms :
    * Ax^2 + Ey = 0 with A > 0
-   * Ax^2 + Cy^2 + F = 0 with A > 0, F != 0 and either C < 0 or C >= A
+   * Ax^2 + Cy^2 + F = 0 with A > 0 and either C <= 0 or (C >= A and F != 0)
    * Calling this method on already rotated conics ensures B is null, A > 0,
-   * and either C <= 0 or C > A. */
+   * and either C <= 0 or C >= A. */
   assert(isCanonicallyRotated());
   return m_d == 0.0
          && ((m_c == 0.0 && m_e != 0.0 && m_f == 0.0)
-             || (m_c != 0.0 && m_e == 0.0 && m_f != 0.0));
+             || (m_e == 0.0 && (m_c <= 0.0 || m_f != 0.0)));
 }
 
 void Conic::centerConic() {
@@ -248,9 +248,11 @@ void Conic::centerConic() {
   h = d / (2*a);
   if (c != 0.0) {
     k = e / (2*c);
-  } else {
-    assert(e != 0.0);
+  } else if (e != 0.0) {
     k = (f + a*h*h - d*h) / e;
+  } else {
+    assert(d == 0.0);
+    k = 0.0;
   }
   // A and C remain unchanged
   m_d = roundIfNeglectable(d - 2*a*h, 0.0, std::max(std::fabs(d), std::fabs(2*a*h)));
@@ -277,11 +279,19 @@ bool Conic::isCanonical() const {
 
 void Conic::canonize() {
   /* Rotate, center the conic and ensure that coefficients are unique :
-   * - Circle, Ellipse, Hyperbola : Ax^2 + Cy^2 = 1, A > 0 and 0 < C or C >= A
-   * - Parabola                   : x^2 + Ey = 0
+   * - Circle, Ellipse, Hyperbola : Ax^2 + Cy^2 = 1, A > 0 and (C < 0 or C >= A)
+   * - Parabola                   : x^2 + Ey = 0 with E != 0
    */
   centerConic();
   if (isCanonical()) {
+    return;
+  }
+  if (m_e == 0.0 && (m_f == 0.0 || m_c == 0.0)) {
+    /* The equation is of one of the forms :
+     * Ax^2 + Cy^2 = 0 with A > 0 and C <= 0
+     * Ax^2 = F with A > 0 and F >= 0
+     * This is a set of two lines and not considered as a conic here. */
+    m_type = Type::Undefined;
     return;
   }
   // Canonize either F or A

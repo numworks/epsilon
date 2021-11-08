@@ -462,7 +462,7 @@ Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Prefere
 }
 
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & exp, Context * context) {
-  if (complexFormat == Preferences::ComplexFormat::Real && exp.recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isConstant("𝐢"); }, context)) {
+  if (complexFormat == Preferences::ComplexFormat::Real && exp.recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::ConstantMaths && static_cast<const Constant &>(e).isConstant("𝐢"); }, context)) {
     return Preferences::ComplexFormat::Cartesian;
   }
   return complexFormat;
@@ -496,7 +496,7 @@ bool Expression::isReal(Context * context) const {
     return convert<NAryExpression>().allChildrenAreReal(context) == 1;
   }
 
-  if (type() == ExpressionNode::Type::Constant) {
+  if (type() == ExpressionNode::Type::ConstantMaths) {
     return static_cast<ConstantNode *>(node())->isReal();
   }
 

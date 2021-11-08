@@ -104,7 +104,7 @@ Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionCo
     replaceWithInPlace(fact);
     return std::move(fact);
   }
-  if (c.type() == ExpressionNode::Type::Constant) {
+  if (c.type() == ExpressionNode::Type::ConstantMaths || c.type() == ExpressionNode::Type::ConstantPhysics) {
     // e! = undef, i! = undef, pi! = undef
     return replaceWithUndefinedInPlace();
   }

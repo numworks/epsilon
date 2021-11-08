@@ -168,6 +168,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
    || inputExp.recursivelyMatches(
         [](const Expression e, Context * c) {
           ExpressionNode::Type approximateOnlyTypes[] = {
+            ExpressionNode::Type::ConstantPhysics,
             ExpressionNode::Type::Random,
             ExpressionNode::Type::Unit,
             ExpressionNode::Type::Round,

@@ -123,26 +123,26 @@ KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
 void PressToTestController::setParamAtIndex(int index, bool value) {
   switch (index) {
     case k_equationSolverIndex:
-      m_tempPressToTestParams.equationSolver = value;
+      m_tempPressToTestParams.m_equationSolver = value;
       break;
     case k_inequalityGraphingIndex:
-      m_tempPressToTestParams.inequalityGraphing = value;
+      m_tempPressToTestParams.m_inequalityGraphing = value;
       break;
     case k_implicitPlotsIndex:
-      m_tempPressToTestParams.implicitPlots = value;
+      m_tempPressToTestParams.m_implicitPlots = value;
       break;
     case k_statDiagnosticIndex:
-      m_tempPressToTestParams.statDiagnostic = value;
+      m_tempPressToTestParams.m_statDiagnostic = value;
       break;
     case k_vectorsIndex:
-      m_tempPressToTestParams.vectors = value;
+      m_tempPressToTestParams.m_vectors = value;
       break;
     case k_basedLogarithmIndex:
-      m_tempPressToTestParams.basedLogarithm = value;
+      m_tempPressToTestParams.m_basedLogarithm = value;
       break;
     default:
       assert(index == k_sumIndex);
-      m_tempPressToTestParams.sum = value;
+      m_tempPressToTestParams.m_sum = value;
       break;
   }
 }
@@ -150,20 +150,20 @@ void PressToTestController::setParamAtIndex(int index, bool value) {
 bool PressToTestController::getParamAtIndex(int index) {
   switch (index) {
     case k_equationSolverIndex:
-      return m_tempPressToTestParams.equationSolver;
+      return m_tempPressToTestParams.m_equationSolver;
     case k_inequalityGraphingIndex:
-      return m_tempPressToTestParams.inequalityGraphing;
+      return m_tempPressToTestParams.m_inequalityGraphing;
     case k_implicitPlotsIndex:
-      return m_tempPressToTestParams.implicitPlots;
+      return m_tempPressToTestParams.m_implicitPlots;
     case k_statDiagnosticIndex:
-      return m_tempPressToTestParams.statDiagnostic;
+      return m_tempPressToTestParams.m_statDiagnostic;
     case k_vectorsIndex:
-      return m_tempPressToTestParams.vectors;
+      return m_tempPressToTestParams.m_vectors;
     case k_basedLogarithmIndex:
-      return m_tempPressToTestParams.basedLogarithm;
+      return m_tempPressToTestParams.m_basedLogarithm;
     default:
       assert(index == k_sumIndex);
-      return m_tempPressToTestParams.sum;
+      return m_tempPressToTestParams.m_sum;
   }
 }
 

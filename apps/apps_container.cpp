@@ -299,7 +299,7 @@ void AppsContainer::reloadTitleBarView() {
 }
 
 void AppsContainer::displayExamModePopUp(GlobalPreferences::ExamMode mode, GlobalPreferences::PressToTestParams pressToTestParams) {
-  assert(pressToTestParams.value == 0 || mode == GlobalPreferences::ExamMode::PressToTest);
+  assert(pressToTestParams.m_value == 0 || mode == GlobalPreferences::ExamMode::PressToTest);
   m_examPopUpController.setTargetExamMode(mode);
   m_examPopUpController.setTargetPressToTestParams(pressToTestParams);
   m_examPopUpController.presentModally();

@@ -4,7 +4,7 @@
 using namespace Escher;
 
 KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
-  int requiredSecondaryDirectionLength = 0, requiredMainDirectionLength = 2 * mainDirectionMargin();
+  int requiredSecondaryDirectionLength = 0, requiredMainDirectionLength = 0;
   KDCoordinate proposedSecondaryDirection = secondaryDirectionLength(bounds().size()) -
                                             2 * secondaryDirectionMargin();
   int n = numberOfSubviews();
@@ -17,31 +17,34 @@ KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
     requiredSecondaryDirectionLength = std::max<int>(requiredSecondaryDirectionLength,
                                                      secondaryDirectionLength(subviewSize));
   }
-  return sizeFromMainAndSecondaryDirection(requiredMainDirectionLength,
-                       requiredSecondaryDirectionLength + 2 * secondaryDirectionMargin());
+  // Add margins
+  requiredMainDirectionLength += 2 * mainDirectionMargin();
+  requiredSecondaryDirectionLength += 2 * secondaryDirectionMargin();
+  return sizeFromMainAndSecondaryDirection(requiredMainDirectionLength, requiredSecondaryDirectionLength);
 }
 
 void OrientedLayout::layoutSubviews(bool force) {
-  KDSize boundsSize = bounds().size();
-  KDCoordinate availableSecondaryDirection = secondaryDirectionLength(boundsSize) -
+  const KDSize boundsSize = bounds().size();
+  const KDCoordinate availableSecondaryDirection = secondaryDirectionLength(boundsSize) -
                                              2 * secondaryDirectionMargin();
-  KDCoordinate availableMainDirection = mainDirectionLength(boundsSize) - 2 * mainDirectionMargin();
+  const KDCoordinate availableMainDirection = mainDirectionLength(boundsSize) - 2 * mainDirectionMargin();
   KDCoordinate offsetMainDirection = mainDirectionMargin();
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
     View * subview = subviewAtIndex(i);
+    /* Temporarily give subview all available space in secondary direction
+     * before calling minimalSizeForOptimalDisplay. */
     subview->setSize(
         sizeFromMainAndSecondaryDirection(mainDirectionLength(subview->bounds().size()), availableSecondaryDirection));
-    KDCoordinate requiredMainDirectionLength = mainDirectionLength(
+    const KDCoordinate requiredMainDirectionLength = mainDirectionLength(
         subview->minimalSizeForOptimalDisplay());
-    KDRect proposedFrame = rectFromMainAndSecondaryDirection(
+    assert(availableMainDirection >= offsetMainDirection + requiredMainDirectionLength);
+    const KDRect proposedFrame = rectFromMainAndSecondaryDirection(
         KDRect(KDPoint(offsetMainDirection, secondaryDirectionMargin()),
                requiredMainDirectionLength,
                availableSecondaryDirection));
     subview->setFrame(proposedFrame, false);
-    availableMainDirection -= requiredMainDirectionLength;
     offsetMainDirection += requiredMainDirectionLength;
-    assert(availableMainDirection >= 0);
   }
 }
 

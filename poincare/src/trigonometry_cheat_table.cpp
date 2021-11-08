@@ -50,7 +50,7 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
       || (inputType == Type::AngleInRadians
         && e.type() != ExpressionNode::Type::Rational
         && e.type() != ExpressionNode::Type::Multiplication
-        && e.type() != ExpressionNode::Type::Constant)
+        && e.type() != ExpressionNode::Type::ConstantMaths)
       || (inputType > Type::AngleInRadians
         && e.type() != ExpressionNode::Type::Rational
         && e.type() != ExpressionNode::Type::Multiplication

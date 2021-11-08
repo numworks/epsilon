@@ -26,7 +26,7 @@ public:
   bool isReal() const;
 
   // Expression Properties
-  Type type() const override { return Type::Constant; }
+  Type type() const override { return constantInfo().unit() == nullptr ? Type::ConstantMaths : Type::ConstantPhysics; }
   Sign sign(Context * context) const override;
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   NullStatus nullStatus(Context * context) const override { return NullStatus::NonNull; }

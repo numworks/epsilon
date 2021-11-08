@@ -28,19 +28,21 @@ public:
 private:
   constexpr static int k_emptyModelCellType = 0;
   constexpr static int k_modelCellType = 1;
-  constexpr static int k_numberOfModels = 7;
+
+  constexpr static int k_indexOfEmptyModel = 0;
+  constexpr static int k_indexOfCartesianModel = k_indexOfEmptyModel + 1;
+  constexpr static int k_indexOfImplicitModel = k_indexOfCartesianModel + 1;
+  constexpr static int k_indexOfInequationModel = k_indexOfImplicitModel + 1;
+  constexpr static int k_indexOfConicModel = k_indexOfInequationModel + 1;
+  constexpr static int k_indexOfParametricModel = k_indexOfConicModel + 1;
+  constexpr static int k_indexOfPolarModel = k_indexOfParametricModel + 1;
+  static_assert(k_indexOfEmptyModel == 0, "Empty model must be first.");
+  static_assert(k_indexOfInequationModel < k_indexOfConicModel, "These models are assumed to be in this order.");
+
+  constexpr static int k_numberOfModels = k_indexOfPolarModel + 1;
   static constexpr const char * k_models[k_numberOfModels] = {
     "", "f(x)=x", "x+y+1=0", "x+y≤0", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)"
   };
-  // Models starting with f(x)=
-  constexpr static int k_indexOfEmptyModel = 0;
-  constexpr static int k_indexOfCartesianModel = 1;
-  constexpr static int k_indexOfInequationModel = 3;
-  constexpr static int k_indexOfConicModel = 4;
-  constexpr static int k_indexOfParametricModel = 5;
-  constexpr static int k_indexOfPolarModel = 6;
-  static_assert(k_indexOfEmptyModel == 0, "Empty model must be first.");
-  static_assert(k_indexOfInequationModel < k_indexOfConicModel, "These models are assumed to be in this order.");
   constexpr static size_t k_maxSizeOfNamedModel = 26;
   // Expression cells
   constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;

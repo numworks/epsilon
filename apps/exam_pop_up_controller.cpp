@@ -7,8 +7,7 @@
 using namespace Escher;
 
 ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate) :
-  PopUpController(
-    k_numberOfLines,
+  Shared::PopUpController(
     Invocation(
       [](void * context, void * sender) {
         ExamPopUpController * controller = (ExamPopUpController *)context;
@@ -31,7 +30,12 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
          * PressToTest settings menu after having changed the country). */
         return true;
       }, this),
-    I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel
+    {
+      I18n::Message::Default,
+      I18n::Message::Default,
+      I18n::Message::Default,
+      I18n::Message::Default
+    }
   ),
   m_targetExamMode(GlobalPreferences::ExamMode::Unknown),
   m_delegate(delegate)
@@ -56,5 +60,5 @@ bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
     Container::activeApp()->dismissModalViewController();
     return false;
   }
-  return PopUpController::handleEvent(event);
+  return Shared::PopUpController::handleEvent(event);
 }

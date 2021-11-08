@@ -1,11 +1,11 @@
 #ifndef APPS_EXAM_POP_UP_CONTROLLER_H
 #define APPS_EXAM_POP_UP_CONTROLLER_H
 
-#include <escher/pop_up_controller.h>
+#include "shared/pop_up_controller.h"
 #include "exam_pop_up_controller_delegate.h"
 #include "global_preferences.h"
 
-class ExamPopUpController : public Escher::PopUpController {
+class ExamPopUpController : public Shared::PopUpController {
 public:
   ExamPopUpController(ExamPopUpControllerDelegate * delegate);
   void setTargetExamMode(GlobalPreferences::ExamMode mode);

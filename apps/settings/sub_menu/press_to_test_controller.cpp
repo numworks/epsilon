@@ -94,7 +94,7 @@ PressToTestController::PressToTestController(Responder * parentResponder) :
   m_switchCells{},
   m_tempPressToTestParams{},
   m_activateButton{&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {
-    AppsContainer::sharedAppsContainer()->displayPressToTestPopUp(static_cast<PressToTestController *>(context)->getPressToTestParams());
+    AppsContainer::sharedAppsContainer()->displayExamModePopUp(GlobalPreferences::ExamMode::PressToTest, static_cast<PressToTestController *>(context)->getPressToTestParams());
     return true; }, this)}
 {
   resetSwitches();

@@ -44,8 +44,7 @@ public:
   bool updateBatteryState();
   void refreshPreferences();
   void reloadTitleBarView();
-  void displayExamModePopUp(GlobalPreferences::ExamMode mode);
-  void displayPressToTestPopUp(GlobalPreferences::PressToTestParams pressToTestParams);
+  void displayExamModePopUp(GlobalPreferences::ExamMode mode, GlobalPreferences::PressToTestParams pressToTestParams = GlobalPreferences::PressToTestParams({0}));
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PromptController * promptController();

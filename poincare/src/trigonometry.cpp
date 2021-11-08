@@ -242,7 +242,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
   if ((angleUnit == Preferences::AngleUnit::Radian
         && e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
         && e.childAtIndex(0).numberOfChildren() == 2
-        && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Constant
+        && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::ConstantMaths
         && e.childAtIndex(0).childAtIndex(1).convert<Constant>().isConstant("π")
         && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational)
       || ((angleUnit == Preferences::AngleUnit::Degree || angleUnit == Preferences::AngleUnit::Gradian)

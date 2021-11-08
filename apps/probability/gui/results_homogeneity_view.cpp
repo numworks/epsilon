@@ -26,7 +26,7 @@ ResultsHomogeneityView::ContentView::ContentView(Responder * parent,
 Probability::ResultsHomogeneityView::ContentView::ButtonWithHorizontalMargins::
     ButtonWithHorizontalMargins(Escher::Button * button, KDCoordinate margin) :
       VerticalLayout(Palette::WallScreenDark), m_button(button) {
-  setMargins(margin, KDCoordinate(0));
+  setSecondaryDirectionMargin(margin);
 }
 
 Escher::View * Probability::ResultsHomogeneityView::ContentView::subviewAtIndex(int i) {

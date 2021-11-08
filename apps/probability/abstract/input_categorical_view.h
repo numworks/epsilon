@@ -74,7 +74,7 @@ private:
             VerticalLayout(Escher::Palette::WallScreenDark),
             m_significanceCell(significanceCell),
             m_next(next) {
-        setMargins(Escher::Metric::CommonRightMargin, 0);
+        setSecondaryDirectionMargin(Escher::Metric::CommonMargin);
       };
       Escher::View * subviewAtIndex(int i) override;
       int numberOfSubviews() const override { return 2; }

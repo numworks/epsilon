@@ -477,7 +477,7 @@ void ContinuousFunction::updatePlotType(Context * context) {
   }
   if (yDeg <= 0 || yDeg > 2 || !hasNonNullCoefficients(equation, context)) {
     /* Any other case where yDeg is null ,> 2 or negative isn't handled.
-     * We also do not handle equations where every coefficients depend on x.
+     * We also do not handle equations where every coefficients depends on x.
      * TODO : This restriction (hasNonNullCoefficients) could be made more
      * general either by checking that all coefficient don't share a same root
      * or by ploting an additional vertical curve for each of these shared roots
@@ -521,8 +521,8 @@ bool ContinuousFunction::hasNonNullCoefficients(Expression equation, Context * c
     if (sign == ExpressionNode::Sign::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x.
       double approximation = coefficients[dy].approximateToScalar<double>(context, complexFormat, angleUnit);
-      if (!std::isnan(approximation) && approximation != 0) {
-        sign = approximation < 0 ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
+      if (!std::isnan(approximation) && approximation != 0.0) {
+        sign = approximation < 0.0 ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
       }
     }
     *highestDegreeCoefficientSign = sign;
@@ -536,7 +536,7 @@ bool ContinuousFunction::hasNonNullCoefficients(Expression equation, Context * c
     if (nullStatus == ExpressionNode::NullStatus::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x.
       double approximation = coefficients[d].approximateToScalar<double>(context, complexFormat, angleUnit);
-      if (!std::isnan(approximation) && approximation != 0) {
+      if (!std::isnan(approximation) && approximation != 0.0) {
         return true;
       }
     }

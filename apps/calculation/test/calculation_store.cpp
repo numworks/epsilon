@@ -237,6 +237,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("√(8)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("cos(45)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("cos(π/2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("cos(π/2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("_G", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("_g0", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
 
   GlobalPreferences::sharedGlobalPreferences()->setExamMode(previousExamMode);
   Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);

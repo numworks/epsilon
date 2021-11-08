@@ -24,18 +24,19 @@ namespace PersistingBytes {
 uint8_t * SignificantPersistedByteAddress() {
   uint32_t * persistence_start_32 = reinterpret_cast<uint32_t *>(&_persisting_bytes_buffer_start);
   uint32_t * persistence_end_32 = reinterpret_cast<uint32_t *>(&_persisting_bytes_buffer_end);
-  uint32_t numberOfPersistingBytes_32 = (k_numberOfPersistingBytes - 1) / 4;
+  // Add 3 so that, with 1,2,3 or 4 persisting bytes, this number is 1.
+  uint32_t numberOfPersistingBytes_32 = (k_numberOfPersistingBytes + 3) / 4;
   do {
     // Scan backwards by groups of 4 bytes to reach first non-one uint32_t
     persistence_end_32--;
-  } while (persistence_end_32 - numberOfPersistingBytes_32 > persistence_start_32 && *persistence_end_32 == 0xFFFFFFFF);
+  } while (persistence_end_32 - numberOfPersistingBytes_32 >= persistence_start_32 && *persistence_end_32 == 0xFFFFFFFF);
   uint8_t * persistence_start_8 = reinterpret_cast<uint8_t *>(persistence_start_32);
   uint8_t * persistence_end_8 = reinterpret_cast<uint8_t *>(persistence_end_32 + 1);
   do {
     // Scan backwards by byte to reach first non-one byte
     persistence_end_8--;
   } while (persistence_end_8 - k_numberOfPersistingBytes >= persistence_start_8 && *persistence_end_8 == 0xFF);
-  return persistence_end_8 - k_numberOfPersistingBytes + 1;
+  return persistence_end_8 + 1 - k_numberOfPersistingBytes;
 }
 
 /* TODO : Add a write(uint8_t * byteArray, uint8_t size) to avoid multiple

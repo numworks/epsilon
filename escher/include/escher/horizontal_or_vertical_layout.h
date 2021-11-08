@@ -8,67 +8,60 @@
 
 namespace Escher {
 
+/* An oriented layout handles multiple views layouted alongside a main axis.
+ * Each elements takes all the space available along the secondary axis.
+ * A VerticalLayout uses x as it secondary axis and y as the main one.
+ * An HorizontalLayout uses y as it secondary axis and x as the main one.
+ * To simplify code, OrientedLayout handles coordinates as if it was a vertical
+ * oriented layout. Each time an extern methods return or takes as parameter
+ * coordinates (point, size or rect), it is adapted to the orientation using the
+ * adapt() virtual methods. If it is an horizontal layout, these structures will
+ * be transposed. */
+
 class OrientedLayout : public View {
 public:
   OrientedLayout(KDColor color = Palette::WallScreen) :
         m_backgroundColor(color), m_secondaryDirectionMargin(0), m_mainDirectionMargin(0) {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
-  void setMargins(KDCoordinate secondaryDirectionMargin, KDCoordinate mainDirectionMargin) {
-    m_secondaryDirectionMargin = secondaryDirectionMargin;
-    m_mainDirectionMargin = mainDirectionMargin;
+  void setSecondaryDirectionMargin(KDCoordinate margin) {
+    m_secondaryDirectionMargin = margin;
   }
-
-  virtual KDCoordinate secondaryDirectionCoordinate(KDPoint p) const = 0;
-  virtual KDCoordinate mainDirectionCoordinate(KDPoint p) const = 0;
-  virtual KDCoordinate secondaryDirectionLength(KDSize p) const = 0;
-  virtual KDCoordinate mainDirectionLength(KDSize p) const = 0;
-
+  void setMainDirectionMargin(KDCoordinate margin) {
+    m_mainDirectionMargin = margin;
+  }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
-protected:
+private:
+  virtual KDRect adaptRect(KDRect rect) const = 0;
+  virtual KDSize adaptSize(KDSize size) const = 0;
+  virtual KDPoint adaptPoint(KDPoint point) const = 0;
+
   KDColor m_backgroundColor;
   KDCoordinate m_secondaryDirectionMargin;
   KDCoordinate m_mainDirectionMargin;
-
-private:
-  virtual KDSize sizeFromMainAndSecondaryDirection(KDCoordinate mainDirection,
-                                                   KDCoordinate secondaryDirection) const = 0;
-  KDCoordinate secondaryDirectionMargin() const;
-  KDCoordinate mainDirectionMargin() const;
-  KDPoint pointFromMainAndSecondaryDirection(KDCoordinate mainDirection,
-                                             KDCoordinate secondaryDirection) const;
-  KDRect rectFromMainAndSecondaryDirection(KDRect rect) const;
 };
 
 /* View that lays out its subviews vertically.*/
 class VerticalLayout : public OrientedLayout {
 public:
   VerticalLayout(KDColor color = Palette::WallScreen) : OrientedLayout(color) {}
-
-  KDCoordinate secondaryDirectionCoordinate(KDPoint p) const override { return p.x(); }
-  KDCoordinate mainDirectionCoordinate(KDPoint p) const override { return p.y(); }
-  KDCoordinate secondaryDirectionLength(KDSize p) const override { return p.width(); }
-  KDCoordinate mainDirectionLength(KDSize p) const override { return p.height(); }
-  KDSize sizeFromMainAndSecondaryDirection(KDCoordinate mainDirection,
-                                           KDCoordinate secondaryDirection) const override {
-    return KDSize(secondaryDirection, mainDirection);
-  }
+private:
+  // Main direction is along y, there is no need to adapt anything.
+  KDRect adaptRect(KDRect rect) const override { return rect; }
+  KDSize adaptSize(KDSize size) const override { return size; }
+  KDPoint adaptPoint(KDPoint point) const override { return point; }
 };
 
 /* View that lays out its subviews horizontally.*/
 class HorizontalLayout : public OrientedLayout {
 public:
   HorizontalLayout(KDColor color = Palette::WallScreen) : OrientedLayout(color) {}
-
-  KDCoordinate secondaryDirectionCoordinate(KDPoint p) const override { return p.y(); }
-  KDCoordinate mainDirectionCoordinate(KDPoint p) const override { return p.x(); }
-  KDCoordinate secondaryDirectionLength(KDSize p) const override { return p.height(); }
-  KDCoordinate mainDirectionLength(KDSize p) const override { return p.width(); }
-  KDSize sizeFromMainAndSecondaryDirection(KDCoordinate mainDirection,
-                                           KDCoordinate secondaryDirection) const override {
-    return KDSize(mainDirection, secondaryDirection);
-  }
+private:
+  // Main direction is along x, coordinates must be transposed.
+  KDRect adaptRect(KDRect rect) const override { return KDRect(adaptPoint(rect.origin()), adaptSize(rect.size())); }
+  KDSize adaptSize(KDSize size) const override { return KDSize(size.height(), size.width()); }
+  KDPoint adaptPoint(KDPoint point) const override { return KDPoint(point.y(), point.x()); }
 };
 
 }  // namespace Escher

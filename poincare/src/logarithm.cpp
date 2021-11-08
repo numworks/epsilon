@@ -116,7 +116,7 @@ template<>
 template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(ApproximationContext approximationContext) const {
   Evaluation<U> n = childAtIndex(1)->approximate(U(), approximationContext);
   if (ExamModeConfiguration::basedLogarithmIsForbidden()
-      && n.toScalar() != (U)10.0
+      && n.toScalar() != static_cast<U>(10.0)
       && n.toScalar() != Complex<U>::Builder(M_E).toScalar()) {
     return Complex<U>::Undefined();
   }

@@ -6,6 +6,8 @@
 using namespace Poincare;
 
 int ExamModeConfiguration::numberOfAvailableExamMode() {
+  /* Available exam mode depends on the selected country and the active mode.
+   * A user could first activate an exam mode and then change the country. */
   GlobalPreferences::ExamMode examMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
   if (examMode == GlobalPreferences::ExamMode::Standard
       || examMode == GlobalPreferences::ExamMode::Dutch) {
@@ -16,6 +18,7 @@ int ExamModeConfiguration::numberOfAvailableExamMode() {
 
   if (availableExamModes == CountryPreferences::AvailableExamModes::PressToTestOnly
       || examMode == GlobalPreferences::ExamMode::PressToTest) {
+    assert(examMode == GlobalPreferences::ExamMode::Off || examMode == GlobalPreferences::ExamMode::PressToTest);
     // Menu shouldn't be visible
     return 0;
   }
@@ -32,10 +35,9 @@ int ExamModeConfiguration::numberOfAvailableExamMode() {
 bool ExamModeConfiguration::pressToTestExamModeAvailable() {
   GlobalPreferences::ExamMode examMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
   CountryPreferences::AvailableExamModes availableExamModes = GlobalPreferences::sharedGlobalPreferences()->availableExamModes();
-  return examMode != GlobalPreferences::ExamMode::Standard
-         && examMode != GlobalPreferences::ExamMode::Dutch
-         && (availableExamModes == CountryPreferences::AvailableExamModes::PressToTestOnly
-             || examMode == GlobalPreferences::ExamMode::PressToTest);
+  return examMode == GlobalPreferences::ExamMode::PressToTest
+         || (availableExamModes == CountryPreferences::AvailableExamModes::PressToTestOnly
+             && examMode == GlobalPreferences::ExamMode::Off);
 }
 
 GlobalPreferences::ExamMode ExamModeConfiguration::examModeAtIndex(int index) {

@@ -30,10 +30,17 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_localizationController(this, LocalizationController::Mode::Language),
   m_examModeController(this),
   m_aboutController(this),
-  m_resetController(Invocation([](void * context, void * sender) {
-    Ion::Reset::core();
-    return true;
-  }, this))
+  m_resetController(
+    Invocation([](void * context, void * sender) {
+      Ion::Reset::core();
+      return true;
+      }, this),
+    {
+      I18n::Message::ResetCalculatorWarning1,
+      I18n::Message::ResetCalculatorWarning2,
+      I18n::Message::ResetCalculatorWarning3,
+    }
+  )
 {
 }
 

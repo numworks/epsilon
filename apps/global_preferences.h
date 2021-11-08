@@ -15,16 +15,16 @@ public:
     PressToTest = 3
   };
   typedef union {
-    uint8_t value;
+    uint8_t m_value;
     struct {
-      bool isUnknown: 1;
-      bool equationSolver: 1;
-      bool inequalityGraphing: 1;
-      bool implicitPlots: 1;
-      bool statDiagnostic: 1;
-      bool vectors: 1;
-      bool basedLogarithm: 1;
-      bool sum: 1;
+      bool m_isUnknown: 1;
+      bool m_equationSolver: 1;
+      bool m_inequalityGraphing: 1;
+      bool m_implicitPlots: 1;
+      bool m_statDiagnostic: 1;
+      bool m_vectors: 1;
+      bool m_basedLogarithm: 1;
+      bool m_sum: 1;
     };
   } PressToTestParams;
   static_assert(sizeof(PressToTestParams) == sizeof(uint8_t), "PressToTestParams can have 8 params at most");
@@ -68,7 +68,7 @@ private:
     m_examMode(ExamMode::Unknown),
     m_showPopUp(true),
     m_brightnessLevel(Ion::Backlight::MaxBrightness),
-    m_font(KDFont::LargeFont) { m_pressToTestParams.isUnknown = true; }
+    m_font(KDFont::LargeFont) { m_pressToTestParams.m_isUnknown = true; }
   I18n::Language m_language;
   I18n::Country m_country;
   static_assert((int8_t)GlobalPreferences::ExamMode::Off == 0, "GlobalPreferences::isInExamMode() is not right");

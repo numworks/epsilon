@@ -19,12 +19,12 @@ GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
 }
 
 GlobalPreferences::PressToTestParams GlobalPreferences::pressToTestParams() const {
-  if (m_pressToTestParams.isUnknown) {
+  if (m_pressToTestParams.m_isUnknown) {
     /* Persisting bytes are initialized at 0xFF but we set the first two ones at
      * 0 in shared_kernel_flash.ld to ensure pressToTestParams are false after
      * flashing. */
     PressToTestParams newPressToTestParams = {Ion::PersistingBytes::read(k_pressToTestParamsPersistingByteIndex)};
-    assert(!newPressToTestParams.isUnknown);
+    assert(!newPressToTestParams.m_isUnknown);
     m_pressToTestParams = newPressToTestParams;
   }
   return m_pressToTestParams;
@@ -42,11 +42,11 @@ void GlobalPreferences::setExamMode(ExamMode mode) {
 
 void GlobalPreferences::setPressToTestParams(PressToTestParams newPressToTestParams) {
   PressToTestParams currentPressToTestParams = pressToTestParams();
-  if (currentPressToTestParams.value == newPressToTestParams.value) {
+  if (currentPressToTestParams.m_value == newPressToTestParams.m_value) {
     return;
   }
-  assert(!newPressToTestParams.isUnknown);
-  Ion::PersistingBytes::write(newPressToTestParams.value, k_pressToTestParamsPersistingByteIndex);
+  assert(!newPressToTestParams.m_isUnknown);
+  Ion::PersistingBytes::write(newPressToTestParams.m_value, k_pressToTestParamsPersistingByteIndex);
   m_pressToTestParams = newPressToTestParams;
 }
 

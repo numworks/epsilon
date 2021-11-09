@@ -94,8 +94,9 @@ const char * const s_nameForEvent[255] = {
   "UpperM", "UpperN", "UpperO", "UpperP", "UpperQ", nullptr,
   "UpperR", "UpperS", "UpperT", "UpperU", "UpperV", nullptr,
   "UpperW", "UpperX", "UpperY", "UpperZ", nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   // Special
-  "None", "Termination", nullptr, nullptr, nullptr, nullptr,
+  "None", "Termination", nullptr, "USBEnumeration", "USBPlug", "BatteryCharging",
 };
 
 #endif

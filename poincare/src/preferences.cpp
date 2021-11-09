@@ -13,7 +13,10 @@ Preferences::Preferences() :
   m_displayMode(Preferences::PrintFloatMode::Decimal),
   m_editionMode(EditionMode::Edition2D),
   m_complexFormat(Preferences::ComplexFormat::Real),
-  m_numberOfSignificantDigits(Preferences::DefaultNumberOfPrintedSignificantDigits)
+  m_numberOfSignificantDigits(Preferences::DefaultNumberOfPrintedSignificantDigits),
+  m_vectorsAreForbidden(false),
+  m_sumIsForbidden(false),
+  m_basedLogarithmIsForbidden(false)
 {}
 
 Preferences * Preferences::sharedPreferences() {

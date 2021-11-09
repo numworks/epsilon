@@ -1,4 +1,3 @@
-#include <apps/exam_mode_configuration.h>
 #include <poincare/logarithm.h>
 #include <poincare/addition.h>
 #include <poincare/approximation_helper.h>
@@ -115,7 +114,7 @@ template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(Approx
 template<>
 template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(ApproximationContext approximationContext) const {
   Evaluation<U> n = childAtIndex(1)->approximate(U(), approximationContext);
-  if (ExamModeConfiguration::basedLogarithmIsForbidden()
+  if (Poincare::Preferences::sharedPreferences()->basedLogarithmIsForbidden()
       && n.toScalar() != static_cast<U>(10.0)
       && n.toScalar() != Complex<U>::Builder(M_E).toScalar()) {
     return Complex<U>::Undefined();
@@ -166,8 +165,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     return replaceWithUndefinedInPlace();
   }
 
-
-  if (ExamModeConfiguration::basedLogarithmIsForbidden()) {
+  if (Poincare::Preferences::sharedPreferences()->basedLogarithmIsForbidden()) {
     if (!((base.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant&>(base).isConstant("ℯ")) ||
           (base.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(base).isTen()))) {
       return replaceWithUndefinedInPlace();

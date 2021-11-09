@@ -81,16 +81,8 @@ private:
   /* Cell type */
   static constexpr int k_switchCellType = 0;
   static constexpr int k_buttonCellType = 1;
-  /* Switch cells index */
-  static constexpr int k_equationSolverIndex = 0;
-  static constexpr int k_inequalityGraphingIndex = k_equationSolverIndex + 1;
-  static constexpr int k_implicitPlotsIndex = k_inequalityGraphingIndex + 1;
-  static constexpr int k_statDiagnosticIndex = k_implicitPlotsIndex + 1;
-  static constexpr int k_vectorsIndex = k_statDiagnosticIndex + 1;
-  static constexpr int k_basedLogarithmIndex = k_vectorsIndex + 1;
-  static constexpr int k_sumIndex = k_basedLogarithmIndex + 1;
   /* Switch cells count */
-  static constexpr int k_numberOfSwitchCells = k_sumIndex + 1;
+  static constexpr int k_numberOfSwitchCells = 7;
   /* TODO : At most 6 switch cells only fit in the screen, but an OrientedLayout
    * currently gives its subviews(such as m_selectableTableView) a frame of
    * minimalSizeForOptimalDisplay size, which contains all cells. */

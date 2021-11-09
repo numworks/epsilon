@@ -127,49 +127,51 @@ KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
 }
 
 void PressToTestController::setParamAtIndex(int index, bool value) {
-  switch (index) {
-    case k_equationSolverIndex:
+  switch (LabelAtIndex(index)) {
+    case I18n::Message::PressToTestEquationSolver:
       m_tempPressToTestParams.m_equationSolverIsForbidden = value;
       break;
-    case k_inequalityGraphingIndex:
+    case I18n::Message::PressToTestInequalityGraphing:
       m_tempPressToTestParams.m_inequalityGraphingIsForbidden = value;
       break;
-    case k_implicitPlotsIndex:
+    case I18n::Message::PressToTestImplicitPlots:
       m_tempPressToTestParams.m_implicitPlotsAreForbidden = value;
       break;
-    case k_statDiagnosticIndex:
+    case I18n::Message::PressToTestStatDiagnostics:
       m_tempPressToTestParams.m_statsDiagnosticsAreForbidden = value;
       break;
-    case k_vectorsIndex:
+    case I18n::Message::PressToTestVectors:
       m_tempPressToTestParams.m_vectorsAreForbidden = value;
       break;
-    case k_basedLogarithmIndex:
+    case I18n::Message::PressToTestLogBaseA:
       m_tempPressToTestParams.m_basedLogarithmIsForbidden = value;
       break;
-    default:
-      assert(index == k_sumIndex);
+    case I18n::Message::PressToTestSum:
       m_tempPressToTestParams.m_sumIsForbidden = value;
       break;
+    default:
+      assert(false);
   }
 }
 
 bool PressToTestController::getParamAtIndex(int index) {
-  switch (index) {
-    case k_equationSolverIndex:
+  switch (LabelAtIndex(index)) {
+    case I18n::Message::PressToTestEquationSolver:
       return m_tempPressToTestParams.m_equationSolverIsForbidden;
-    case k_inequalityGraphingIndex:
+    case I18n::Message::PressToTestInequalityGraphing:
       return m_tempPressToTestParams.m_inequalityGraphingIsForbidden;
-    case k_implicitPlotsIndex:
+    case I18n::Message::PressToTestImplicitPlots:
       return m_tempPressToTestParams.m_implicitPlotsAreForbidden;
-    case k_statDiagnosticIndex:
+    case I18n::Message::PressToTestStatDiagnostics:
       return m_tempPressToTestParams.m_statsDiagnosticsAreForbidden;
-    case k_vectorsIndex:
+    case I18n::Message::PressToTestVectors:
       return m_tempPressToTestParams.m_vectorsAreForbidden;
-    case k_basedLogarithmIndex:
+    case I18n::Message::PressToTestLogBaseA:
       return m_tempPressToTestParams.m_basedLogarithmIsForbidden;
-    default:
-      assert(index == k_sumIndex);
+    case I18n::Message::PressToTestSum:
       return m_tempPressToTestParams.m_sumIsForbidden;
+    default:
+      assert(false);
   }
 }
 
@@ -270,17 +272,14 @@ I18n::Message PressToTestController::LabelAtIndex(int i) {
 }
 
 I18n::Message PressToTestController::SubLabelAtIndex(int i) {
-  assert(i >= 0 && i < k_numberOfSwitchCells);
-  constexpr I18n::Message subLabels[k_numberOfSwitchCells] = {
-    I18n::Message::Default,
-    I18n::Message::Default,
-    I18n::Message::Default,
-    I18n::Message::PressToTestStatDiagnosticsDescription,
-    I18n::Message::PressToTestVectorsDescription,
-    I18n::Message::Default,
-    I18n::Message::Default
-  };
-  return subLabels[i];
+  switch (LabelAtIndex(i)) {
+    case I18n::Message::PressToTestStatDiagnostics:
+      return I18n::Message::PressToTestStatDiagnosticsDescription;
+    case I18n::Message::PressToTestVectors:
+      return I18n::Message::PressToTestVectorsDescription;
+    default:
+      return I18n::Message::Default;
+  }
 }
 
 }

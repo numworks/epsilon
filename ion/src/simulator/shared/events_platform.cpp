@@ -50,6 +50,12 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
           return Arccosine;
         case SDLK_t:
           return Arctangent;
+        case SDLK_e:
+          return USBEnumeration;
+        case SDLK_p:
+          return USBPlug;
+        case SDLK_b:
+          return BatteryCharging;
       }
     }
     switch (event.keysym.sym) {

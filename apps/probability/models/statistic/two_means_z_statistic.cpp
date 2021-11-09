@@ -42,7 +42,7 @@ bool TwoMeansZStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::N1:
     case ParamsOrder::N2:
-      return p > 0;
+      return p >= 1.0;
     case ParamsOrder::Sigma1:
     case ParamsOrder::Sigma2:
       return p >= 0;
@@ -73,6 +73,7 @@ Poincare::Layout TwoMeansZStatistic::estimateLayout() {
 void TwoMeansZStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N1 || index == ParamsOrder::N2) {
     p = std::round(p);
+    assert(p > 0.0);
   }
   ZStatistic::setParamAtIndex(index, p);
 }

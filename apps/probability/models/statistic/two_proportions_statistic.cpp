@@ -43,7 +43,7 @@ bool TwoProportionsStatistic::isValidParamAtIndex(int i, double p) {
     case ParamsOrder::X2:
     case ParamsOrder::N1:
     case ParamsOrder::N2:
-      return p >= 0;
+      return p >= 0.0;
       break;
   }
   return ZStatistic::isValidParamAtIndex(i, p);
@@ -85,6 +85,7 @@ void TwoProportionsStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N1 || index == ParamsOrder::N2 || index == ParamsOrder::X1 ||
       index == ParamsOrder::X2) {
     p = std::round(p);
+    assert(p >= 0.0);
   }
   ZStatistic::setParamAtIndex(index, p);
 }

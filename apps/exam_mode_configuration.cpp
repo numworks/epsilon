@@ -41,6 +41,13 @@ bool ExamModeConfiguration::pressToTestExamModeAvailable() {
              && examMode == Preferences::ExamMode::Off);
 }
 
+bool ExamModeConfiguration::testModeAvailable() {
+  return Preferences::sharedPreferences()->examMode()
+             == Preferences::ExamMode::Off
+         && GlobalPreferences::sharedGlobalPreferences()->availableExamModes()
+                == CountryPreferences::AvailableExamModes::All;
+}
+
 Preferences::ExamMode ExamModeConfiguration::examModeAtIndex(int index) {
   return index == 0 ? Preferences::ExamMode::Standard : Preferences::ExamMode::Dutch;
 }

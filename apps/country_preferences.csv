@@ -1,5 +1,5 @@
 CountryCode,CountryPreferences::AvailableExamModes,CountryPreferences::MethodForQuartiles,Poincare::Preferences::UnitFormat,CountryPreferences::HomeAppsLayout,CountryPreferences::DiscriminantSymbol
-WW,StandardOnly,MedianOfSublist,Metric,Default,Delta
+WW,All,MedianOfSublist,Metric,Default,Delta
 CA,StandardOnly,MedianOfSublist,Metric,Default,Delta
 DE,StandardOnly,MedianOfSublist,Metric,Default,D
 ES,StandardOnly,MedianOfSublist,Metric,Default,Delta

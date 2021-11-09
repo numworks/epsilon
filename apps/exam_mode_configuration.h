@@ -10,6 +10,7 @@ namespace ExamModeConfiguration {
 // Settings menu
 int numberOfAvailableExamMode();
 bool pressToTestExamModeAvailable();
+bool testModeAvailable();
 Poincare::Preferences::ExamMode examModeAtIndex(int index);
 I18n::Message examModeActivationMessage(int index);
 

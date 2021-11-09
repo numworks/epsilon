@@ -5,6 +5,8 @@
 using namespace Ion;
 
 QUIZ_CASE(ion_persisting_bytes) {
+  uint8_t initialValue0 = PersistingBytes::read(0);
+  uint8_t initialValue1 = PersistingBytes::read(1);
   PersistingBytes::write(255, 0);
   quiz_assert(PersistingBytes::read(0) == 255);
   PersistingBytes::write(0, 1);
@@ -23,4 +25,7 @@ QUIZ_CASE(ion_persisting_bytes) {
   }
   quiz_assert(PersistingBytes::read(0) == value);
   quiz_assert(PersistingBytes::read(1) == 111);
+  // Restore persisting bytes
+  PersistingBytes::write(initialValue0, 0);
+  PersistingBytes::write(initialValue1, 1);
 }

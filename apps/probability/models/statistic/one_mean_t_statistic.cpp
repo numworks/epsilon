@@ -26,10 +26,10 @@ void OneMeanTStatistic::init(Data::SubApp subapp) {
 bool OneMeanTStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::N:
-      return p > 1;
+      return p >= 2.0;
     case ParamsOrder::X:
     case ParamsOrder::S:
-      return p > 0;
+      return p > 0.0;
       break;
   }
   return TStatistic::isValidParamAtIndex(i, p);
@@ -38,6 +38,7 @@ bool OneMeanTStatistic::isValidParamAtIndex(int i, double p) {
 void OneMeanTStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N) {
     p = std::round(p);
+    assert(p > 1.0);
   }
   TStatistic::setParamAtIndex(index, p);
 }
@@ -77,7 +78,7 @@ ParameterRepresentation OneMeanTStatistic::paramRepresentationAtIndex(int i) con
 }
 
 double OneMeanTStatistic::computeDegreesOfFreedom(double n) {
-  return n - 1;
+  return n - 1.0;
 }
 
 double OneMeanTStatistic::computeT(double mean, double meanSample, double s, double n) {

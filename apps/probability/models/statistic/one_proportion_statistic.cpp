@@ -28,9 +28,9 @@ void OneProportionStatistic::init(Data::SubApp subapp) {
 bool OneProportionStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::X:
-      return p >= 0;
+      return p >= 0.0;
     case ParamsOrder::N:
-      return p > 0;
+      return p >= 1.0;
   }
   return ZStatistic::isValidParamAtIndex(i, p);
 }
@@ -60,6 +60,7 @@ Poincare::Layout OneProportionStatistic::estimateLayout() {
 void OneProportionStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N || index == ParamsOrder::X) {
     p = std::round(p);
+    assert(p > 0.0);
   }
   ZStatistic::setParamAtIndex(index, p);
 }

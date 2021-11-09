@@ -42,10 +42,10 @@ bool TwoMeansTStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::N1:
     case ParamsOrder::N2:
-      return p > 1;
+      return p >= 2.0;
     case ParamsOrder::S1:
     case ParamsOrder::S2:
-      return p >= 0;
+      return p >= 0.0;
   }
   return TStatistic::isValidParamAtIndex(i, p);
 }
@@ -75,6 +75,7 @@ Poincare::Layout TwoMeansTStatistic::estimateLayout() {
 void TwoMeansTStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N1 || index == ParamsOrder::N2) {
     p = std::round(p);
+    assert(p > 1.0);
   }
   TStatistic::setParamAtIndex(index, p);
 }

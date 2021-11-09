@@ -30,7 +30,7 @@ double Statistic::paramAtIndex(int i) {
 
 bool Statistic::isValidParamAtIndex(int i, double p) {
   if (i == indexOfThreshold()) {
-    return p >= 0 && p <= 1;
+    return p >= 0.0 && p <= 1.0;
   }
   return true;
 }

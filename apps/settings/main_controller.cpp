@@ -18,6 +18,31 @@ constexpr MessageTree s_modelComplexFormatChildren[3] = {MessageTree(I18n::Messa
 constexpr MessageTree s_modelFontChildren[2] = {MessageTree(I18n::Message::LargeFont), MessageTree(I18n::Message::SmallFont)};
 constexpr MessageTree s_modelAboutChildren[3] = {MessageTree(I18n::Message::SoftwareVersion), MessageTree(I18n::Message::SerialNumber), MessageTree(I18n::Message::FccId)};
 
+// TODO : Add IBExamMode : I18n::Message::IBExamMode
+// TODO : Rename Exam Mode -> French Exam Mode
+// TODO : Fix issue when going back after activating exam mode and exploring forbidden menus
+constexpr MessageTree s_modeltestModeMenu[2] =
+  { MessageTree(I18n::Message::ExamMode, s_modelExamChildren),
+    MessageTree(I18n::Message::PressToTest)};
+
+// TODO : Fix Beta and update prompts
+constexpr MessageTree s_modelMenu[] =
+  { MessageTree(I18n::Message::AngleUnit, s_modelAngleChildren),
+    MessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren),
+    MessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren),
+    MessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren),
+    MessageTree(I18n::Message::Brightness),
+    MessageTree(I18n::Message::FontSizes, s_modelFontChildren),
+    MessageTree(I18n::Message::Language),
+    MessageTree(I18n::Message::Country),
+    MessageTree(I18n::Message::ExamMode, s_modelExamChildren),
+    MessageTree(I18n::Message::PressToTest),
+    MessageTree(I18n::Message::TestMode, s_modeltestModeMenu),
+    MessageTree(I18n::Message::About, s_modelAboutChildren),
+    MessageTree(I18n::Message::ResetCalculator)};
+
+constexpr MessageTree s_model = MessageTree(I18n::Message::SettingsApp, s_modelMenu);
+
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   SelectableListViewController(parentResponder),
   m_brightnessCell(I18n::Message::Default),
@@ -31,6 +56,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_localizationController(this, LocalizationController::Mode::Language),
   m_examModeController(this),
   m_pressToTestController(this),
+  m_testModeController(this, this),
   m_aboutController(this),
   m_resetController(
     Invocation([](void * context, void * sender) {
@@ -98,23 +124,26 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     } else if (selectedMessage == I18n::Message::Country) {
       m_localizationController.setMode(LocalizationController::Mode::Country);
     }
-
-    ViewController * selectedSubController = subControllerForCell(selectedMessage);
-    assert(selectedSubController);
-    if (model()->childAtIndex(modelIndex)->numberOfChildren() != 0) {
-      static_cast<GenericSubController *>(selectedSubController)->setMessageTreeModel(model()->childAtIndex(modelIndex));
-      static_cast<GenericSubController *>(selectedSubController)->resetMemoization();
-    }
-    stackController()->push(selectedSubController);
+    pushModel(model()->childAtIndex(modelIndex));
     return true;
   }
 
   return false;
 }
 
+void MainController::pushModel(const Escher::MessageTree * messageTreeModel) {
+  ViewController * selectedSubController = subControllerForCell(messageTreeModel->label());
+  assert(selectedSubController);
+  if (messageTreeModel->numberOfChildren() != 0) {
+    static_cast<GenericSubController *>(selectedSubController)->setMessageTreeModel(messageTreeModel);
+    static_cast<GenericSubController *>(selectedSubController)->resetMemoization();
+  }
+  stackController()->push(selectedSubController);
+}
+
 int MainController::numberOfRows() const {
-  assert(hasExamModeCell() != hasPressToTestCell());
-  return model()->numberOfChildren() + hasExamModeCell() + hasPressToTestCell() - 2 ;
+  assert(hasExamModeCell() + hasPressToTestCell() + hasTestModeCell() == 1);
+  return model()->numberOfChildren() + hasExamModeCell() + hasPressToTestCell() + hasTestModeCell() - 3;
 };
 
 KDCoordinate MainController::nonMemoizedRowHeight(int index) {
@@ -264,6 +293,8 @@ ViewController * MainController::subControllerForCell(I18n::Message cellMessage)
       return &m_examModeController;
     case I18n::Message::PressToTest:
       return &m_pressToTestController;
+    case I18n::Message::TestMode:
+      return &m_testModeController;
     case I18n::Message::About:
       return &m_aboutController;
     default:
@@ -272,11 +303,15 @@ ViewController * MainController::subControllerForCell(I18n::Message cellMessage)
 }
 
 bool MainController::hasExamModeCell() const {
-  return ExamModeConfiguration::numberOfAvailableExamMode() > 0;
+  return !hasTestModeCell() && ExamModeConfiguration::numberOfAvailableExamMode() > 0;
 }
 
 bool MainController::hasPressToTestCell() const {
-  return ExamModeConfiguration::pressToTestExamModeAvailable();
+  return !hasTestModeCell() && ExamModeConfiguration::pressToTestExamModeAvailable();
+}
+
+bool MainController::hasTestModeCell() const {
+  return ExamModeConfiguration::testModeAvailable();
 }
 
 int MainController::getModelIndex(int index) const {
@@ -284,9 +319,19 @@ int MainController::getModelIndex(int index) const {
    * Up until k_indexOfExamModeCell, no cell is hidden, the index is the same.
    * Then, either the exam mode or the press-to-test cell is hidden. */
   assert(index >= 0 && index < numberOfRows());
-  if (index > k_indexOfExamModeCell || (index == k_indexOfExamModeCell && !hasExamModeCell())) {
-    // Hidden exam mode or press-to-test cell
-    index += 1;
+  if (index > k_indexOfExamModeCell) {
+    // 2 of the 3 exam mode cells are hidden.
+    index += 2;
+  } else if (index == k_indexOfExamModeCell) {
+    if (!hasExamModeCell()) {
+      // Hidden exam mode cell
+      index += 1;
+      if (!hasPressToTestCell()) {
+        // Hidden press-to-test cell
+        assert(hasTestModeCell());
+        index += 1;
+      }
+    }
   }
   assert(index < model()->numberOfChildren());
   return index;

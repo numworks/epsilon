@@ -58,19 +58,19 @@ bool RunLoop::step() {
       }
     }
   }
-
-#if ESCHER_LOG_EVENTS_BINARY
-  Ion::Console::writeChar(static_cast<uint8_t>(event));
-#endif
-#if ESCHER_LOG_EVENTS_NAME
-  const char * name = event.name();
-  if (name != nullptr) {
-    Ion::Console::writeLine("Event: ", false);
-    Ion::Console::writeLine(name);
-  }
-#endif
-
   if (event != Ion::Events::None) {
+#if ESCHER_LOG_EVENTS_BINARY
+    Ion::Console::writeChar(static_cast<uint8_t>(event));
+#endif
+
+#if ESCHER_LOG_EVENTS_NAME
+    const char * name = event.name();
+    if (name != nullptr) {
+      Ion::Console::writeLine("Event: ", false);
+      Ion::Console::writeLine(name);
+    }
+#endif
+
 #if !PLATFORM_DEVICE
     if (event == Ion::Events::ExternalText && !KDFont::CanBeWrittenWithGlyphs(event.text())) {
       return true;

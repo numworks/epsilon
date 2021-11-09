@@ -14,8 +14,8 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
         GlobalPreferences::ExamMode mode = controller->targetExamMode();
         assert(mode != GlobalPreferences::ExamMode::Unknown);
         assert(mode == GlobalPreferences::ExamMode::PressToTest || controller->targetPressToTestParams().m_value == 0);
-        GlobalPreferences::sharedGlobalPreferences()->setPressToTestParams(controller->targetPressToTestParams());
         GlobalPreferences::sharedGlobalPreferences()->setExamMode(mode);
+        GlobalPreferences::sharedGlobalPreferences()->setPressToTestParams(controller->targetPressToTestParams());
         AppsContainer * container = AppsContainer::sharedAppsContainer();
         if (mode == GlobalPreferences::ExamMode::Off) {
           Ion::LED::setColor(KDColorBlack);

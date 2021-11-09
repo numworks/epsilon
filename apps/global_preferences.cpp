@@ -41,7 +41,6 @@ void GlobalPreferences::setExamMode(ExamMode mode) {
   assert(mode != ExamMode::Unknown);
   Ion::PersistingBytes::write(static_cast<uint8_t>(mode), k_examModePersistingByteIndex);
   m_examMode = mode;
-  updatePoincareSharedPreferences();
 }
 
 void GlobalPreferences::setPressToTestParams(PressToTestParams newPressToTestParams) {
@@ -65,31 +64,38 @@ void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {
 }
 
 bool GlobalPreferences::equationSolverIsForbidden() const {
-  return examMode() == ExamMode::PressToTest && pressToTestParams().m_equationSolverIsForbidden;
+  assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_equationSolverIsForbidden);
+  return pressToTestParams().m_equationSolverIsForbidden;
 }
 
 bool GlobalPreferences::inequalityGraphingIsForbidden() const {
-  return examMode() == ExamMode::PressToTest && pressToTestParams().m_inequalityGraphingIsForbidden;
+  assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_inequalityGraphingIsForbidden);
+  return pressToTestParams().m_inequalityGraphingIsForbidden;
 }
 
 bool GlobalPreferences::implicitPlotsAreForbidden() const {
-  return examMode() == ExamMode::PressToTest && pressToTestParams().m_implicitPlotsAreForbidden;
+  assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_implicitPlotsAreForbidden);
+  return pressToTestParams().m_implicitPlotsAreForbidden;
 }
 
 bool GlobalPreferences::statsDiagnosticsAreForbidden() const {
-  return examMode() == ExamMode::PressToTest && pressToTestParams().m_statsDiagnosticsAreForbidden;
+  assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_statsDiagnosticsAreForbidden);
+  return pressToTestParams().m_statsDiagnosticsAreForbidden;
 }
 
 bool GlobalPreferences::vectorsAreForbidden() const {
-  return examMode() == ExamMode::PressToTest && pressToTestParams().m_vectorsAreForbidden;
+  assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_vectorsAreForbidden);
+  return pressToTestParams().m_vectorsAreForbidden;
 }
 
 bool GlobalPreferences::basedLogarithmIsForbidden() const {
-  return examMode() == ExamMode::PressToTest && pressToTestParams().m_basedLogarithmIsForbidden;
+  assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_basedLogarithmIsForbidden);
+  return pressToTestParams().m_basedLogarithmIsForbidden;
 }
 
 bool GlobalPreferences::sumIsForbidden() const {
-  return examMode() == ExamMode::PressToTest && pressToTestParams().m_sumIsForbidden;
+  assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_sumIsForbidden);
+  return pressToTestParams().m_sumIsForbidden;
 }
 
 void GlobalPreferences::updatePoincareSharedPreferences() const {

@@ -118,12 +118,11 @@ double Solver::NextRoot(ValueAtAbscissa evaluation, Context * context, const voi
   SolverHelper<double>::BracketSearch search = [](double a, double b, double c, double fa, double fb, double fc, SolverHelper<double>::ValueAtAbscissa f, Context * context, const void * auxiliary) {
     Coordinate2D<double> result(NAN, NAN);
     if (SolverHelper<double>::RootExistsOnInterval(fa, fb, fc)) {
-      /* a being a root is not supposed to trigger RootExistsOnInterval. If a
-       * is a root, this means there is a second root between b and c, and the
-       * Brent algorithm could pick up either. To avoid inifnite loop, we only
-       * focus on the second one. */
-      bool aIsRoot = RoundCoordinatesToZero(Coordinate2D<double>(a, fa), a, c, f, context, auxiliary).x2() == 0.;
-      result = Coordinate2D<double>(BrentRoot(aIsRoot ? b : a, c, std::fabs(c-b)/k_precisionByGradUnit, f, context, auxiliary), 0.);
+      /* a might be a root and a being a root is not supposed to trigger
+       * RootExistsOnInterval. If we're here, this means there is a second root
+       * between b and c, and the Brent algorithm could pick up either.
+       * To avoid inifnite loop, we only focus on the second range [b, c]. */
+      result = Coordinate2D<double>(BrentRoot(b, c, std::fabs(c-b)/k_precisionByGradUnit, f, context, auxiliary), 0.);
     } else if (SolverHelper<double>::MinimumExistsOnInterval(fa, fb, fc) && fb >= 0) {
       result = BrentMinimum(a, c, f, context, auxiliary);
     } else if (SolverHelper<double>::MaximumExistsOnInterval(fa, fb, fc) && fb <= 0) {

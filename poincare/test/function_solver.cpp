@@ -252,6 +252,13 @@ QUIZ_CASE(poincare_function_root) {
     };
     assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "a", nullptr, "a", 1e208, 1e208);
   }
+  {
+    constexpr int numberOfRoots = 1;
+    Coordinate2D<double> roots[numberOfRoots] = {
+      Coordinate2D<double>(-107.28473553804895, 0.0),
+    };
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "4*sin(cos(-1+809*x))", nullptr, "x", -109.45938558974652, 10.0, Real, Radian);
+  }
 }
 
 QUIZ_CASE(poincare_function_intersection) {

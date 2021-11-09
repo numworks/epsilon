@@ -53,12 +53,21 @@ public:
   void setComplexFormat(Preferences::ComplexFormat complexFormat) { m_complexFormat = complexFormat; }
   uint8_t numberOfSignificantDigits() const { return m_numberOfSignificantDigits; }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
+  bool vectorsAreForbidden() const { return m_vectorsAreForbidden; }
+  void setVectorsAreForbidden(bool vectorsAreForbidden) { m_vectorsAreForbidden = vectorsAreForbidden; }
+  bool sumIsForbidden() const { return m_sumIsForbidden; }
+  void setSumIsForbidden(bool sumIsForbidden) { m_sumIsForbidden = sumIsForbidden; }
+  bool basedLogarithmIsForbidden() const { return m_basedLogarithmIsForbidden; }
+  void setBasedLogarithmIsForbidden(bool basedLogarithmIsForbidden) { m_basedLogarithmIsForbidden = basedLogarithmIsForbidden; }
 private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;
   EditionMode m_editionMode;
   ComplexFormat m_complexFormat;
   uint8_t m_numberOfSignificantDigits;
+  bool m_vectorsAreForbidden;
+  bool m_sumIsForbidden;
+  bool m_basedLogarithmIsForbidden;
 };
 
 }

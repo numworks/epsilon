@@ -1,7 +1,6 @@
 HANDY_TARGETS += bench.flash bench.ram
 
-# TODO : Remove $(apps_src). It is needed to build some unused poincare sources
-bench_src = $(ion_src) $(ion_device_bench_src) $(liba_src) $(liba_bench_src) $(libaxx_src) $(kandinsky_src) $(poincare_src) $(apps_src)
+bench_src = $(ion_src) $(ion_device_bench_src) $(liba_src) $(liba_bench_src) $(libaxx_src) $(kandinsky_src) $(poincare_src)
 $(BUILD_DIR)/bench.ram.$(EXE): $(call flavored_object_for,$(bench_src),consoleuart)
 $(BUILD_DIR)/bench.flash.$(EXE): $(call flavored_object_for,$(bench_src),consoleuart)
 

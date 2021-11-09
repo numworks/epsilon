@@ -101,8 +101,14 @@ PressToTestController::PressToTestController(Responder * parentResponder) :
 }
 
 void PressToTestController::resetSwitches() {
-  // Reset switches states to press-to-test current parameter.
-  m_tempPressToTestParams = GlobalPreferences::sharedGlobalPreferences()->pressToTestParams();
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    // Reset switches states to press-to-test current parameter.
+    m_tempPressToTestParams = GlobalPreferences::sharedGlobalPreferences()->pressToTestParams();
+  } else {
+    // Reset switches so that all features are disabled, isUnknown is false.
+    m_tempPressToTestParams = GlobalPreferences::PressToTestParams({0xFE});
+    assert(!m_tempPressToTestParams.m_isUnknown);
+  }
 }
 
 GlobalPreferences::PressToTestParams PressToTestController::getPressToTestParams() {
@@ -123,26 +129,26 @@ KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
 void PressToTestController::setParamAtIndex(int index, bool value) {
   switch (index) {
     case k_equationSolverIndex:
-      m_tempPressToTestParams.m_equationSolver = value;
+      m_tempPressToTestParams.m_equationSolverIsForbidden = value;
       break;
     case k_inequalityGraphingIndex:
-      m_tempPressToTestParams.m_inequalityGraphing = value;
+      m_tempPressToTestParams.m_inequalityGraphingIsForbidden = value;
       break;
     case k_implicitPlotsIndex:
-      m_tempPressToTestParams.m_implicitPlots = value;
+      m_tempPressToTestParams.m_implicitPlotsAreForbidden = value;
       break;
     case k_statDiagnosticIndex:
-      m_tempPressToTestParams.m_statDiagnostic = value;
+      m_tempPressToTestParams.m_statsDiagnosticsAreForbidden = value;
       break;
     case k_vectorsIndex:
-      m_tempPressToTestParams.m_vectors = value;
+      m_tempPressToTestParams.m_vectorsAreForbidden = value;
       break;
     case k_basedLogarithmIndex:
-      m_tempPressToTestParams.m_basedLogarithm = value;
+      m_tempPressToTestParams.m_basedLogarithmIsForbidden = value;
       break;
     default:
       assert(index == k_sumIndex);
-      m_tempPressToTestParams.m_sum = value;
+      m_tempPressToTestParams.m_sumIsForbidden = value;
       break;
   }
 }
@@ -150,20 +156,20 @@ void PressToTestController::setParamAtIndex(int index, bool value) {
 bool PressToTestController::getParamAtIndex(int index) {
   switch (index) {
     case k_equationSolverIndex:
-      return m_tempPressToTestParams.m_equationSolver;
+      return m_tempPressToTestParams.m_equationSolverIsForbidden;
     case k_inequalityGraphingIndex:
-      return m_tempPressToTestParams.m_inequalityGraphing;
+      return m_tempPressToTestParams.m_inequalityGraphingIsForbidden;
     case k_implicitPlotsIndex:
-      return m_tempPressToTestParams.m_implicitPlots;
+      return m_tempPressToTestParams.m_implicitPlotsAreForbidden;
     case k_statDiagnosticIndex:
-      return m_tempPressToTestParams.m_statDiagnostic;
+      return m_tempPressToTestParams.m_statsDiagnosticsAreForbidden;
     case k_vectorsIndex:
-      return m_tempPressToTestParams.m_vectors;
+      return m_tempPressToTestParams.m_vectorsAreForbidden;
     case k_basedLogarithmIndex:
-      return m_tempPressToTestParams.m_basedLogarithm;
+      return m_tempPressToTestParams.m_basedLogarithmIsForbidden;
     default:
       assert(index == k_sumIndex);
-      return m_tempPressToTestParams.m_sum;
+      return m_tempPressToTestParams.m_sumIsForbidden;
   }
 }
 
@@ -239,10 +245,13 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int in
     return;
   }
   PressToTestSwitch * myCell = static_cast<PressToTestSwitch *>(cell);
+  // A true params means the feature is disabled,
+  bool featureIsDisabled = getParamAtIndex(index);
   myCell->setMessage(LabelAtIndex(index));
-  myCell->setTextColor(GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && !getParamAtIndex(index) ? Palette::GrayDark : KDColorBlack);
+  myCell->setTextColor(GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && featureIsDisabled ? Palette::GrayDark : KDColorBlack);
   myCell->setSubLabelMessage(SubLabelAtIndex(index));
-  myCell->setState(getParamAtIndex(index));
+  // Switch is toggled if the feature must stay activated.
+  myCell->setState(!featureIsDisabled);
   myCell->setDisplayImage(GlobalPreferences::sharedGlobalPreferences()->isInExamMode());
 }
 

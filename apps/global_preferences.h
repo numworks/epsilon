@@ -14,17 +14,19 @@ public:
     Dutch = 2,
     PressToTest = 3
   };
+  /* By default, a 0 PressToTestParams has all parameters set to false. Params
+   * are false if the feature is activated (allowed) and true if forbidden. */
   typedef union {
     uint8_t m_value;
     struct {
       bool m_isUnknown: 1;
-      bool m_equationSolver: 1;
-      bool m_inequalityGraphing: 1;
-      bool m_implicitPlots: 1;
-      bool m_statDiagnostic: 1;
-      bool m_vectors: 1;
-      bool m_basedLogarithm: 1;
-      bool m_sum: 1;
+      bool m_equationSolverIsForbidden: 1;
+      bool m_inequalityGraphingIsForbidden: 1;
+      bool m_implicitPlotsAreForbidden: 1;
+      bool m_statsDiagnosticsAreForbidden: 1;
+      bool m_vectorsAreForbidden: 1;
+      bool m_basedLogarithmIsForbidden: 1;
+      bool m_sumIsForbidden: 1;
     };
   } PressToTestParams;
   static_assert(sizeof(PressToTestParams) == sizeof(uint8_t), "PressToTestParams can have 8 params at most");
@@ -57,6 +59,15 @@ public:
   const KDFont * font() const { return m_font; }
   void setFont(const KDFont * font) { m_font = font; }
 
+  // Check if both exam mode and press-to-test parameters forbid these features
+  bool equationSolverIsForbidden() const;
+  bool inequalityGraphingIsForbidden() const;
+  bool implicitPlotsAreForbidden() const;
+  bool statsDiagnosticsAreForbidden() const;
+  bool vectorsAreForbidden() const;
+  bool basedLogarithmIsForbidden() const;
+  bool sumIsForbidden() const;
+
 private:
   static constexpr int k_examModePersistingByteIndex = 0;
   static constexpr int k_pressToTestParamsPersistingByteIndex = 1;
@@ -69,6 +80,9 @@ private:
     m_showPopUp(true),
     m_brightnessLevel(Ion::Backlight::MaxBrightness),
     m_font(KDFont::LargeFont) { m_pressToTestParams.m_isUnknown = true; }
+  /* Some ExamMode Press-to-test parameters must be replicated in
+   * Poincare::Preferences::sharedPreferences() */
+  void updatePoincareSharedPreferences() const;
   I18n::Language m_language;
   I18n::Country m_country;
   static_assert((int8_t)GlobalPreferences::ExamMode::Off == 0, "GlobalPreferences::isInExamMode() is not right");

@@ -28,7 +28,7 @@ int ExamModeConfiguration::numberOfAvailableExamMode() {
     // Activation button
     return 1;
   }
-  assert(availableExamModes == CountryPreferences::AvailableExamModes::StandardAndDutch);
+  assert(availableExamModes == CountryPreferences::AvailableExamModes::StandardAndDutch || availableExamModes == CountryPreferences::AvailableExamModes::All);
   // Activation buttons
   return 2;
 }
@@ -37,7 +37,8 @@ bool ExamModeConfiguration::pressToTestExamModeAvailable() {
   Preferences::ExamMode examMode = Preferences::sharedPreferences()->examMode();
   CountryPreferences::AvailableExamModes availableExamModes = GlobalPreferences::sharedGlobalPreferences()->availableExamModes();
   return examMode == Preferences::ExamMode::PressToTest
-         || (availableExamModes == CountryPreferences::AvailableExamModes::PressToTestOnly
+         || ((availableExamModes == CountryPreferences::AvailableExamModes::PressToTestOnly
+              || availableExamModes == CountryPreferences::AvailableExamModes::All)
              && examMode == Preferences::ExamMode::Off);
 }
 

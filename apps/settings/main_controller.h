@@ -14,6 +14,7 @@
 #include "sub_menu/localization_controller.h"
 #include "sub_menu/preferences_controller.h"
 #include "sub_menu/press_to_test_controller.h"
+#include "sub_menu/test_mode_controller.h"
 
 namespace Settings {
 
@@ -23,6 +24,7 @@ extern const MessageTree s_modelFloatDisplayModeChildren[4];
 extern const MessageTree s_modelComplexFormatChildren[3];
 extern const MessageTree s_modelFontChildren[2];
 extern const MessageTree s_modelExamChildren[2];
+extern const MessageTree s_modeltestModeChildren[2];
 extern const MessageTree s_modelAboutChildren[3];
 extern const MessageTree s_model;
 
@@ -30,6 +32,7 @@ class MainController : public Escher::SelectableListViewController {
 public:
   MainController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   bool handleEvent(Ion::Events::Event event) override;
+  void pushModel(const Escher::MessageTree * messageTreeModel);
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
@@ -46,6 +49,7 @@ private:
   ViewController * subControllerForCell(I18n::Message cellMessage);
   bool hasExamModeCell() const;
   bool hasPressToTestCell() const;
+  bool hasTestModeCell() const;
   int getModelIndex(int index) const;
 
   // Cell type
@@ -67,6 +71,7 @@ private:
   LocalizationController m_localizationController;
   ExamModeController m_examModeController;
   PressToTestController m_pressToTestController;
+  TestModeController m_testModeController;
   AboutController m_aboutController;
   Shared::PopUpController m_resetController;
 };

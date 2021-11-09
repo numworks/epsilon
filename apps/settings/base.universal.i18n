@@ -1,1 +1,5 @@
 PressToTest = "Press-to-test"
+TestMode = "Test mode"
+IBExamMode = "IB exam mode"
+FrenchExamMode = "French exam mode"
+DutchExamMode = "Dutch exam mode"

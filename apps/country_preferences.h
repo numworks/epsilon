@@ -8,7 +8,8 @@ public:
   enum class AvailableExamModes : uint8_t {
     StandardOnly,
     StandardAndDutch,
-    PressToTestOnly
+    PressToTestOnly,
+    All
   };
 
   enum class MethodForQuartiles : uint8_t {

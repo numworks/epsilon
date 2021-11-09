@@ -26,10 +26,10 @@ void OneMeanZStatistic::init(Data::SubApp subapp) {
 bool OneMeanZStatistic::isValidParamAtIndex(int i, double p) {
   switch (i) {
     case ParamsOrder::N:
-      return p > 0;
+      return p >= 1.0;
     case ParamsOrder::X:
     case ParamsOrder::Sigma:
-      return p > 0;
+      return p > 0.0;
   }
   return ZStatistic::isValidParamAtIndex(i, p);
 }
@@ -37,6 +37,7 @@ bool OneMeanZStatistic::isValidParamAtIndex(int i, double p) {
 void OneMeanZStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N) {
     p = std::round(p);
+    assert(p > 0.0);
   }
   ZStatistic::setParamAtIndex(index, p);
 }

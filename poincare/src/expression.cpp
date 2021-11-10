@@ -523,9 +523,7 @@ bool Expression::isIdenticalToWithoutParentheses(const Expression e) const {
 bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat) {
   Expression exp0 = Expression::ParseAndSimplify(e0, context, complexFormat, angleUnit, unitFormat, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   Expression exp1 = Expression::ParseAndSimplify(e1, context, complexFormat, angleUnit, unitFormat, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  if (exp0.isUninitialized() || exp1.isUninitialized()) {
-    return false;
-  }
+  assert(!exp0.isUninitialized() && !exp1.isUninitialized());
   return exp0.isIdenticalTo(exp1);
 }
 
@@ -578,11 +576,7 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
     return Undefined::Builder();
   }
   exp = exp.simplify(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion));
-  /* simplify might have been interrupted, in which case the resulting
-   * expression is uninitialized, so we need to check that. */
-  if (exp.isUninitialized()) {
-    return Parse(text, context);
-  }
+  assert(!exp.isUninitialized());
   return exp;
 }
 
@@ -595,14 +589,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
     return;
   }
   exp.simplifyAndApproximate(simplifiedExpression, approximateExpression, context, complexFormat, angleUnit, unitFormat, symbolicComputation, unitConversion);
-  /* simplify might have been interrupted, in which case the resulting
-   * expression is uninitialized, so we need to check that. */
-  if (simplifiedExpression->isUninitialized()) {
-    *simplifiedExpression = Parse(text, context);
-    if (approximateExpression) {
-      *approximateExpression = simplifiedExpression->approximate<double>(context, complexFormat, angleUnit);
-    }
-  }
+  assert(!simplifiedExpression->isUninitialized() && (!approximateExpression || !approximateExpression->isUninitialized()));
 }
 
 Expression Expression::simplify(ExpressionNode::ReductionContext reductionContext) {

@@ -97,7 +97,7 @@ private:
 
   // Heights and widths
   constexpr static KDCoordinate k_defaultCellHeight = 20;
-  constexpr static int k_symbolCellWidth = 90;
+  constexpr static int k_symbolCellWidth = 10 * (Poincare::SymbolAbstract::k_maxNameSize - 1 + 2) + 2 * Escher::EvenOddBufferTextCell::k_horizontalMargin; // We concatenate symbol name with a number of at most 2 digits and KDFont::LargeFont->glyphSize().width() = 10
   constexpr static int k_valueCellWidth = 190;
 
   // Number of cells

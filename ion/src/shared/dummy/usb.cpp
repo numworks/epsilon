@@ -3,10 +3,10 @@
 namespace Ion {
 namespace USB {
 
-bool plugged = false;
+bool s_plugged = false;
 
 bool isPlugged() {
-  return plugged;
+  return s_plugged;
 }
 
 bool isEnumerated() {
@@ -20,14 +20,20 @@ void clearEnumerationInterrupt() {
 void DFU() {
 }
 
+/* To be able to fully emulate plugged states and events on simulator, we take
+ * advantage of enable and disable methods, which are conveniently called
+ * in AppsContainer::processEvent when processing USBPlug events. */
+
+// Called when a USBPlugged event is received while being "plugged"
 void enable() {
-  // A USBPlugged event on an already "plugged" simulator will "unplug" it.
-  plugged = false;
+  // "Unplug" the simulator.
+  s_plugged = false;
 }
 
+// Called when a USBPlugged event is received while being "unplugged"
 void disable() {
-  // A USBPlugged event on an "uplugged" simulator will "plug" it.
-  plugged = true;
+  // "Plug" the simulator.
+  s_plugged = true;
 }
 
 }

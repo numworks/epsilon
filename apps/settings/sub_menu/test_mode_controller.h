@@ -15,6 +15,7 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   bool handleEvent(Ion::Events::Event event) override;
   int reusableCellCount(int type) override { return k_numberOfCells; };
+  void didBecomeFirstResponder() override;
 private:
   // TODO : Settle for a k_numberOfCells
   constexpr static int k_numberOfCells = 4;

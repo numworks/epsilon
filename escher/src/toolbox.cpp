@@ -58,11 +58,11 @@ bool Toolbox::selectSubMenu(int selectedRow) {
 bool Toolbox::returnToPreviousMenu() {
   m_selectableTableView.deselectTable();
   // Start from root to find parent messageTreeModel
-  int currentDepth = m_stack.depth();
+  int currentDepth = stack()->depth();
   int stateDepth = 0;
   m_messageTreeModel = rootModel();
   while (stateDepth < currentDepth - 1) {
-    Stack::State * previousState = m_stack.stateAtIndex(stateDepth++);
+    const Stack::State * previousState = stack()->stateAtIndex(stateDepth++);
     m_messageTreeModel = messageTreeModelAtIndex(previousState->selectedRow());
   }
   return NestedMenuController::returnToPreviousMenu();

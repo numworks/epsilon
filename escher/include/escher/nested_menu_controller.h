@@ -27,25 +27,8 @@ public:
   // MemoizedListViewDataSource
   KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   HighlightCell * reusableCell(int index, int type) override;
-protected:
-  class BreadcrumbController : public ViewController {
-  public:
-    BreadcrumbController(Responder * parentResponder, SelectableTableView * tableView) : ViewController(parentResponder), m_selectableTableView(tableView), m_titleCount(0), m_titleBuffer("") {}
-    const char * title() override { return m_titleBuffer; }
-    void popTitle();
-    void pushTitle(I18n::Message title);
-    void resetTitle();
-    View * view() override { return m_selectableTableView; }
-  private:
-    constexpr static int k_maxTitleLength = (Ion::Display::Width - Metric::PopUpLeftMargin - 2 * Metric::CellSeparatorThickness - Metric::CellLeftMargin - Metric::CellRightMargin - Metric::PopUpRightMargin) / 7; // With 7 = KDFont::SmallFont->glyphSize().width()
-    constexpr static int k_maxModelTreeDepth = StackViewController::k_maxNumberOfChildren-1;
-    void updateTitle();
-    SelectableTableView * m_selectableTableView;
-    int m_titleCount;
-    I18n::Message m_titles[k_maxModelTreeDepth];
-    char m_titleBuffer[k_maxTitleLength+1];
-  };
 
+protected:
   class Stack {
   public:
     class State {
@@ -81,7 +64,26 @@ protected:
   virtual I18n::Message subTitle() = 0;
   SelectableTableView m_selectableTableView;
   const Stack * stack() const { return &m_stack; }
+
 private:
+  class BreadcrumbController : public ViewController {
+  public:
+    BreadcrumbController(Responder * parentResponder, SelectableTableView * tableView) : ViewController(parentResponder), m_selectableTableView(tableView), m_titleCount(0), m_titleBuffer("") {}
+    const char * title() override { return m_titleBuffer; }
+    void popTitle();
+    void pushTitle(I18n::Message title);
+    void resetTitle();
+    View * view() override { return m_selectableTableView; }
+  private:
+    constexpr static int k_maxTitleLength = (Ion::Display::Width - Metric::PopUpLeftMargin - 2 * Metric::CellSeparatorThickness - Metric::CellLeftMargin - Metric::CellRightMargin - Metric::PopUpRightMargin) / 7; // With 7 = KDFont::SmallFont->glyphSize().width()
+    constexpr static int k_maxModelTreeDepth = StackViewController::k_maxNumberOfChildren-1;
+    void updateTitle();
+    SelectableTableView * m_selectableTableView;
+    int m_titleCount;
+    I18n::Message m_titles[k_maxModelTreeDepth];
+    char m_titleBuffer[k_maxTitleLength+1];
+  };
+
   class ListController : public ViewController {
   public:
     ListController(Responder * parentResponder, SelectableTableView * tableView, I18n::Message title) : ViewController(parentResponder), m_selectableTableView(tableView), m_firstSelectedRow(0), m_title(title) {}

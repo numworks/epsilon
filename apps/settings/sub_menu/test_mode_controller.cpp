@@ -1,5 +1,6 @@
 #include "test_mode_controller.h"
 #include "../main_controller.h"
+#include "../../exam_mode_configuration.h"
 #include <assert.h>
 
 using namespace Escher;
@@ -22,6 +23,16 @@ bool TestModeController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return GenericSubController::handleEvent(event);
+}
+
+void TestModeController::didBecomeFirstResponder() {
+  /* After activating an exam mode and going back, this controller shouldn't be
+   * available anymore. Skip it and go back to the main settings menu. */
+  if (!m_mainController->hasTestModeCell()) {
+    stackController()->pop();
+  } else {
+    GenericSubController::didBecomeFirstResponder();
+  }
 }
 
 }

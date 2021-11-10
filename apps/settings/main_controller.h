@@ -41,6 +41,7 @@ public:
   int typeAtIndex(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void viewWillAppear() override;
+  bool hasTestModeCell() const;
   TELEMETRY_ID("");
 private:
   I18n::Message messageAtModelIndex(int i) const;
@@ -49,7 +50,6 @@ private:
   ViewController * subControllerForCell(I18n::Message cellMessage);
   bool hasExamModeCell() const;
   bool hasPressToTestCell() const;
-  bool hasTestModeCell() const;
   int getModelIndex(int index) const;
 
   // Cell type

@@ -528,10 +528,11 @@ bool MathToolbox::isMessageTreeDisabled(const ToolboxMessageTree * messageTree) 
           && ExamModeConfiguration::sumIsForbidden())
          || (label == I18n::Message::LogCommandWithArg
              && ExamModeConfiguration::basedLogarithmIsForbidden())
+         || (label == I18n::Message::NormVectorCommandWithArg
+             && ExamModeConfiguration::vectorNormIsForbidden())
          || ((label == I18n::Message::DotCommandWithArg
-              || label == I18n::Message::CrossCommandWithArg
-              || label == I18n::Message::NormVectorCommandWithArg)
-             && ExamModeConfiguration::vectorsAreForbidden());
+              || label == I18n::Message::CrossCommandWithArg)
+             && ExamModeConfiguration::vectorProductsAreForbidden());
 }
 
 void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {

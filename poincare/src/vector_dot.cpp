@@ -26,7 +26,7 @@ int VectorDotNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 
 template<typename T>
 Evaluation<T> VectorDotNode::templatedApproximate(ApproximationContext approximationContext) const {
-  if (Poincare::Preferences::sharedPreferences()->vectorsAreForbidden()) {
+  if (Poincare::Preferences::sharedPreferences()->vectorProductsAreForbidden()) {
     return Complex<T>::Undefined();
   }
   Evaluation<T> input0 = childAtIndex(0)->approximate(T(), approximationContext);
@@ -42,7 +42,7 @@ Expression VectorDot::shallowReduce(ExpressionNode::ReductionContext reductionCo
       return e;
     }
   }
-  if (Poincare::Preferences::sharedPreferences()->vectorsAreForbidden()) {
+  if (Poincare::Preferences::sharedPreferences()->vectorProductsAreForbidden()) {
     return replaceWithUndefinedInPlace();
   }
   Expression c0 = childAtIndex(0);

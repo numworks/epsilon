@@ -91,7 +91,12 @@ bool Preferences::statsDiagnosticsAreForbidden() const {
   return pressToTestParams().m_statsDiagnosticsAreForbidden;
 }
 
-bool Preferences::vectorsAreForbidden() const {
+bool Preferences::vectorProductsAreForbidden() const {
+  assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_vectorsAreForbidden);
+  return pressToTestParams().m_vectorsAreForbidden || examMode() == ExamMode::IBTest;
+}
+
+bool Preferences::vectorNormIsForbidden() const {
   assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_vectorsAreForbidden);
   return pressToTestParams().m_vectorsAreForbidden;
 }

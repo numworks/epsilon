@@ -11,7 +11,8 @@ int ExamModeConfiguration::numberOfAvailableExamMode() {
    * A user could first activate an exam mode and then change the country. */
   Preferences::ExamMode examMode = Preferences::sharedPreferences()->examMode();
   if (examMode == Preferences::ExamMode::Standard
-      || examMode == Preferences::ExamMode::Dutch) {
+      || examMode == Preferences::ExamMode::Dutch
+      || examMode == Preferences::ExamMode::IBTest) {
     // Reactivation button
     return 1;
   }
@@ -140,7 +141,8 @@ bool ExamModeConfiguration::exactExpressionIsForbidden(Expression e) {
 }
 
 bool ExamModeConfiguration::additionalResultsAreForbidden() {
-  return Preferences::sharedPreferences()->examMode() == Preferences::ExamMode::Dutch;
+  Preferences::ExamMode mode = Preferences::sharedPreferences()->examMode();
+  return mode == Preferences::ExamMode::Dutch || mode == Preferences::ExamMode::IBTest;
 }
 
 bool ExamModeConfiguration::inequalityGraphingIsForbidden() {
@@ -155,8 +157,12 @@ bool ExamModeConfiguration::statsDiagnosticsAreForbidden() {
   return Preferences::sharedPreferences()->statsDiagnosticsAreForbidden();
 }
 
-bool ExamModeConfiguration::vectorsAreForbidden() {
-  return Preferences::sharedPreferences()->vectorsAreForbidden();
+bool ExamModeConfiguration::vectorNormIsForbidden() {
+  return Preferences::sharedPreferences()->vectorNormIsForbidden();
+}
+
+bool ExamModeConfiguration::vectorProductsAreForbidden() {
+  return Preferences::sharedPreferences()->vectorProductsAreForbidden();
 }
 
 bool ExamModeConfiguration::basedLogarithmIsForbidden() {

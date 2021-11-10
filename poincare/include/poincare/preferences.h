@@ -46,7 +46,8 @@ public:
     Off = 0,
     Standard = 1,
     Dutch = 2,
-    PressToTest = 3
+    IBTest = 3,
+    PressToTest = 4
   };
   /* By default, a 0 PressToTestParams has all parameters set to false. Params
    * are false if the feature is activated (allowed) and true if forbidden. */
@@ -88,7 +89,8 @@ public:
   bool inequalityGraphingIsForbidden() const;
   bool implicitPlotsAreForbidden() const;
   bool statsDiagnosticsAreForbidden() const;
-  bool vectorsAreForbidden() const;
+  bool vectorProductsAreForbidden() const;
+  bool vectorNormIsForbidden() const;
   bool basedLogarithmIsForbidden() const;
   bool sumIsForbidden() const;
 private:

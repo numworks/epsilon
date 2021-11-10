@@ -68,6 +68,11 @@ bool Toolbox::returnToPreviousMenu() {
   return NestedMenuController::returnToPreviousMenu();
 }
 
+bool Toolbox::returnToRootMenu() {
+  m_messageTreeModel = rootModel();
+  return NestedMenuController::returnToRootMenu();
+}
+
 const ToolboxMessageTree * Toolbox::messageTreeModelAtIndex(int index) const {
   assert(index >= 0);
   const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));

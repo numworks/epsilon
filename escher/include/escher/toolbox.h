@@ -25,6 +25,7 @@ protected:
   constexpr static int k_maxMessageSize = 100;
   bool selectSubMenu(int selectedRow) override;
   bool returnToPreviousMenu() override;
+  bool returnToRootMenu() override;
   virtual int maxNumberOfDisplayedRows() = 0;
   virtual const ToolboxMessageTree * rootModel() const = 0;
   /* indexAfterFork is called when a fork-node is encountered to choose which

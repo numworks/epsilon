@@ -35,15 +35,7 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
      * replace with the left side of the store without simplifying it.
      * The simplification fails for [1+2]->a for instance, because we do not
      * have exact simplification of matrices yet. */
-    Expression reducedE;
-    {
-      SystemCircuitBreakerCheckpoint checkpoint;
-      if (CircuitBreakerRun(checkpoint)) {
-        reducedE = storedExpression.clone().deepReduce(reductionContext);
-      } else {
-        reductionContext.context()->tidy();
-      }
-    }
+    Expression reducedE = storedExpression.reduce(reductionContext);
     if (!reducedE.isUninitialized() ) {
       storedExpression = reducedE;
     }

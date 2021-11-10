@@ -1,45 +1,55 @@
 #include <escher/horizontal_or_vertical_layout.h>
+
 #include <algorithm>
 
 using namespace Escher;
 
 KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
   int requiredSecondaryDirectionLength = 0, requiredMainDirectionLength = 0;
-  KDCoordinate proposedSecondaryDirection = adaptSize(bounds().size()).width() -
-                                            2 * m_secondaryDirectionMargin;
+  KDCoordinate proposedSecondaryDirection = adaptSize(bounds().size()).width()
+                                            - 2 * m_secondaryDirectionMargin;
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
     View * subview = const_cast<OrientedLayout *>(this)->subviewAtIndex(i);
-    KDCoordinate currentSubviewMainDirectionLength = adaptSize(subview->bounds().size()).height();
-    subview->setSize(adaptSize(KDSize(proposedSecondaryDirection, currentSubviewMainDirectionLength)));
+    KDCoordinate currentSubviewMainDirectionLength
+        = adaptSize(subview->bounds().size()).height();
+    subview->setSize(adaptSize(
+        KDSize(proposedSecondaryDirection, currentSubviewMainDirectionLength)));
     KDSize subviewSize = adaptSize(subview->minimalSizeForOptimalDisplay());
     requiredMainDirectionLength += subviewSize.height();
-    requiredSecondaryDirectionLength = std::max<int>(requiredSecondaryDirectionLength,
-                                                     subviewSize.width());
+    requiredSecondaryDirectionLength = std::max<int>(
+        requiredSecondaryDirectionLength, subviewSize.width());
   }
   // Add margins
   requiredMainDirectionLength += 2 * m_mainDirectionMargin;
   requiredSecondaryDirectionLength += 2 * m_secondaryDirectionMargin;
-  return adaptSize(KDSize(requiredSecondaryDirectionLength, requiredMainDirectionLength));
+  return adaptSize(
+      KDSize(requiredSecondaryDirectionLength, requiredMainDirectionLength));
 }
 
 void OrientedLayout::layoutSubviews(bool force) {
   const KDSize boundsSize = adaptSize(bounds().size());
-  const KDCoordinate availableSecondaryDirection = boundsSize.width() -
-                                             2 * m_secondaryDirectionMargin;
-  const KDCoordinate availableMainDirection = boundsSize.height() - 2 * m_mainDirectionMargin;
+  const KDCoordinate availableSecondaryDirection
+      = boundsSize.width() - 2 * m_secondaryDirectionMargin;
+  const KDCoordinate availableMainDirection = boundsSize.height()
+                                              - 2 * m_mainDirectionMargin;
   KDCoordinate offsetMainDirection = m_mainDirectionMargin;
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
     View * subview = subviewAtIndex(i);
     /* Temporarily give subview all available space in secondary direction
      * before calling minimalSizeForOptimalDisplay. */
-    KDCoordinate currentSubviewMainDirectionLength = adaptSize(subview->bounds().size()).height();
-    subview->setSize(adaptSize(KDSize(availableSecondaryDirection, currentSubviewMainDirectionLength)));
-    const KDCoordinate requiredMainDirectionLength = adaptSize(subview->minimalSizeForOptimalDisplay()).height();
-    assert(availableMainDirection >= offsetMainDirection + requiredMainDirectionLength);
-    const KDRect proposedFrame = KDRect(KDPoint(m_secondaryDirectionMargin, offsetMainDirection),
-               availableSecondaryDirection, requiredMainDirectionLength);
+    KDCoordinate currentSubviewMainDirectionLength
+        = adaptSize(subview->bounds().size()).height();
+    subview->setSize(adaptSize(KDSize(availableSecondaryDirection,
+                                      currentSubviewMainDirectionLength)));
+    const KDCoordinate requiredMainDirectionLength
+        = adaptSize(subview->minimalSizeForOptimalDisplay()).height();
+    assert(availableMainDirection
+           >= offsetMainDirection + requiredMainDirectionLength);
+    const KDRect proposedFrame = KDRect(
+        KDPoint(m_secondaryDirectionMargin, offsetMainDirection),
+        availableSecondaryDirection, requiredMainDirectionLength);
     subview->setFrame(adaptRect(proposedFrame), false);
     offsetMainDirection += requiredMainDirectionLength;
   }
@@ -49,23 +59,25 @@ void OrientedLayout::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw in margins
   const KDSize boundsSize = adaptSize(bounds().size());
   // Left margin
-  ctx->fillRect(adaptRect(KDRect(0, 0, m_secondaryDirectionMargin, boundsSize.height())), m_backgroundColor);
+  ctx->fillRect(
+      adaptRect(KDRect(0, 0, m_secondaryDirectionMargin, boundsSize.height())),
+      m_backgroundColor);
   // Right margin
-  ctx->fillRect(adaptRect(KDRect(boundsSize.width() - m_secondaryDirectionMargin,
-                       0,
-                       m_secondaryDirectionMargin,
-                       boundsSize.height())),
-                m_backgroundColor);
+  ctx->fillRect(
+      adaptRect(KDRect(boundsSize.width() - m_secondaryDirectionMargin, 0,
+                       m_secondaryDirectionMargin, boundsSize.height())),
+      m_backgroundColor);
   // Top margin
-  ctx->fillRect(adaptRect(KDRect(m_secondaryDirectionMargin,
-                       0,
+  ctx->fillRect(
+      adaptRect(KDRect(m_secondaryDirectionMargin, 0,
                        boundsSize.width() - 2 * m_secondaryDirectionMargin,
                        m_mainDirectionMargin)),
-                m_backgroundColor);
+      m_backgroundColor);
   // Bottom margin
-  ctx->fillRect(adaptRect(KDRect(m_secondaryDirectionMargin,
+  ctx->fillRect(
+      adaptRect(KDRect(m_secondaryDirectionMargin,
                        boundsSize.height() - m_mainDirectionMargin,
                        boundsSize.width() - 2 * m_secondaryDirectionMargin,
                        m_mainDirectionMargin)),
-                m_backgroundColor);
+      m_backgroundColor);
 }

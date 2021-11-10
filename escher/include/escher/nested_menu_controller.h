@@ -53,14 +53,14 @@ protected:
     public:
       State(int selectedRow = -1, KDCoordinate verticalScroll = 0) : m_selectedRow(selectedRow), m_verticalScroll(verticalScroll) {}
       bool isNull() const { return m_selectedRow == -1; }
-      int selectedRow() { return m_selectedRow; }
-      KDCoordinate verticalScroll() { return m_verticalScroll; }
+      int selectedRow() const { return m_selectedRow; }
+      KDCoordinate verticalScroll() const { return m_verticalScroll; }
     private:
       int m_selectedRow;
       KDCoordinate m_verticalScroll;
     };
     void push(int selectedRow, KDCoordinate verticalScroll, I18n::Message title = (I18n::Message)0);
-    State * stateAtIndex(int index) { return &m_statesStack[index]; }
+    const State * stateAtIndex(int index) const { return &m_statesStack[index]; }
     State pop();
     int depth() const;
     void resetStack();
@@ -83,7 +83,7 @@ protected:
   virtual HighlightCell * nodeCellAtIndex(int index) = 0;
   virtual I18n::Message subTitle() = 0;
   SelectableTableView m_selectableTableView;
-  Stack m_stack;
+  const Stack * stack() const { return &m_stack; }
 private:
   class ListController : public ViewController {
   public:
@@ -99,6 +99,8 @@ private:
     int m_firstSelectedRow;
     I18n::Message m_title;
   };
+
+  Stack m_stack;
   ListController m_listController;
   static constexpr int k_nestedMenuStackDepth = 1;
   InputEventHandler * m_sender;

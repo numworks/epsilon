@@ -23,9 +23,7 @@ private:
   int initialSelectedRow() const override;
   Poincare::Preferences::ExamMode examMode();
   static constexpr int k_maxNumberOfCells = 3;
-  /* TODO Hugo : Fix the text margins in SelectableViewWithMessages.
-   * And the artefact when selecting Dutch exam mode with the exam mode list
-   * scrolled to the bottom. */
+  // TODO Hugo : Fix the scroll view apperaring after IB activation.
   SelectableViewWithMessages m_contentView;
   Escher::MessageTableCell m_cell[k_maxNumberOfCells];
 };

@@ -36,6 +36,8 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
   if (Preferences::sharedPreferences()->isInExamMode()) {
     I18n::Message deactivateMessages[] = {I18n::Message::ToDeactivateExamMode1, I18n::Message::ToDeactivateExamMode2, I18n::Message::ToDeactivateExamMode3};
     m_contentView.setMessages(deactivateMessages, k_numberOfDeactivationMessageLines);
+  } else {
+    m_contentView.setMessages(nullptr, 0);
   }
 }
 
@@ -58,9 +60,6 @@ void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(ExamModeConfiguration::examModeActivationMessage(index));
-  if (Preferences::sharedPreferences()->isInExamMode()) {
-    myCell->setMessage(I18n::Message::ExamModeActive);
-  }
 }
 
 int ExamModeController::initialSelectedRow() const {

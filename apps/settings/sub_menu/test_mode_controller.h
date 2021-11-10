@@ -17,8 +17,7 @@ public:
   int reusableCellCount(int type) override { return k_numberOfCells; };
   void didBecomeFirstResponder() override;
 private:
-  // TODO : Settle for a k_numberOfCells
-  constexpr static int k_numberOfCells = 4;
+  constexpr static int k_numberOfCells = 2;
   MainController * m_mainController;
   Escher::MessageTableCellWithChevron m_cells[k_numberOfCells];
 };

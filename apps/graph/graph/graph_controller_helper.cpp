@@ -47,7 +47,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);
 
   t = std::max(tMin, std::min(tMax, t));
-  Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext(), *subCurveIndex);
+  int subCurveIndexValue = subCurveIndex == nullptr ? 0 : *subCurveIndex;
+  Coordinate2D<double> xy = function->evaluateXYAtParameter(t, App::app()->localContext(), subCurveIndexValue);
 
   if (specialConicCursorMove && std::isnan(xy.x2())) {
     if (function->plotType() == ContinuousFunction::PlotType::Hyperbola) {

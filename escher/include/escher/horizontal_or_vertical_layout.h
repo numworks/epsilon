@@ -21,7 +21,9 @@ namespace Escher {
 class OrientedLayout : public View {
 public:
   OrientedLayout(KDColor color = Palette::WallScreen) :
-        m_backgroundColor(color), m_secondaryDirectionMargin(0), m_mainDirectionMargin(0) {}
+      m_backgroundColor(color),
+      m_secondaryDirectionMargin(0),
+      m_mainDirectionMargin(0) {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
   void setSecondaryDirectionMargin(KDCoordinate margin) {
@@ -46,6 +48,7 @@ private:
 class VerticalLayout : public OrientedLayout {
 public:
   VerticalLayout(KDColor color = Palette::WallScreen) : OrientedLayout(color) {}
+
 private:
   // Main direction is along y, there is no need to adapt anything.
   KDRect adaptRect(KDRect rect) const override { return rect; }
@@ -56,12 +59,20 @@ private:
 /* View that lays out its subviews horizontally.*/
 class HorizontalLayout : public OrientedLayout {
 public:
-  HorizontalLayout(KDColor color = Palette::WallScreen) : OrientedLayout(color) {}
+  HorizontalLayout(KDColor color = Palette::WallScreen) :
+      OrientedLayout(color) {}
+
 private:
   // Main direction is along x, coordinates must be transposed.
-  KDRect adaptRect(KDRect rect) const override { return KDRect(adaptPoint(rect.origin()), adaptSize(rect.size())); }
-  KDSize adaptSize(KDSize size) const override { return KDSize(size.height(), size.width()); }
-  KDPoint adaptPoint(KDPoint point) const override { return KDPoint(point.y(), point.x()); }
+  KDRect adaptRect(KDRect rect) const override {
+    return KDRect(adaptPoint(rect.origin()), adaptSize(rect.size()));
+  }
+  KDSize adaptSize(KDSize size) const override {
+    return KDSize(size.height(), size.width());
+  }
+  KDPoint adaptPoint(KDPoint point) const override {
+    return KDPoint(point.y(), point.x());
+  }
 };
 
 }  // namespace Escher

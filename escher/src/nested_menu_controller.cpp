@@ -66,26 +66,13 @@ void NestedMenuController::Stack::push(int selectedRow, KDCoordinate verticalScr
   int stackDepth = depth();
   assert(stackDepth < k_maxModelTreeDepth && m_statesStack[stackDepth].isNull());
   m_statesStack[stackDepth] = State(selectedRow, verticalScroll);
-  /* Unless breadcrumb wasn't visible (depth 0), we need to pop it first to push
-   * it again, in order to force title refresh. */
-  if (stackDepth != 0) {
-    m_parentMenu->pop();
-  }
-  m_breadcrumbController.pushTitle(title);
-  m_parentMenu->push(&m_breadcrumbController);
+
 }
 
 NestedMenuController::Stack::State NestedMenuController::Stack::pop() {
   int stackDepth = depth();
   if (stackDepth == 0) {
     return State();
-  }
-  /* Unless breadcrumb is no longer visible (depth 1), we need to pop it first,
-   * to push it again in order to force title refresh. */
-  m_parentMenu->pop();
-  m_breadcrumbController.popTitle();
-  if (stackDepth != 1) {
-    m_parentMenu->push(&m_breadcrumbController);
   }
   NestedMenuController::Stack::State state = m_statesStack[stackDepth-1];
   m_statesStack[stackDepth-1] = State();
@@ -101,12 +88,9 @@ int NestedMenuController::Stack::depth() const {
 }
 
 void NestedMenuController::Stack::resetStack() {
-  // Breadcrumb shouldn't be visible
-  assert(m_parentMenu->depth() == k_nestedMenuStackDepth);
   for (int i = 0; i < k_maxModelTreeDepth; i++) {
     m_statesStack[i] = State();
   }
-  m_breadcrumbController.resetTitle();
 }
 
 /* List Controller */
@@ -122,9 +106,10 @@ void NestedMenuController::ListController::didBecomeFirstResponder() {
 NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Message title) :
   StackViewController(parentResponder, &m_listController),
   m_selectableTableView(&m_listController, this, this, this),
-  m_stack(this, &m_selectableTableView),
+  m_breadcrumbController(this, &m_selectableTableView),
   m_listController(this, &m_selectableTableView, title),
-  m_sender(nullptr)
+  m_sender(nullptr),
+  m_stack()
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
@@ -149,8 +134,10 @@ void NestedMenuController::viewDidDisappear() {
    * viewWillAppear. Stacks (and breadcrumb) must be reseted here. */
   // Restore stack depth (will remove breadcrumb if it was visible)
   popUntilDepth(k_nestedMenuStackDepth, false);
+  assert(StackViewController::depth() == k_nestedMenuStackDepth); // Breadcrumb shouldn't be visible
   // Reset state stacks
   m_stack.resetStack();
+  m_breadcrumbController.resetTitle();
 
   StackViewController::viewDidDisappear();
   m_selectableTableView.deselectTable();
@@ -185,7 +172,17 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
 
 bool NestedMenuController::selectSubMenu(int selectedRow) {
   resetMemoization();
-  m_stack.push(selectedRow, m_selectableTableView.contentOffset().y(), subTitle());
+  int previousDepth = stackDepth();
+  m_stack.push(selectedRow, m_selectableTableView.contentOffset().y());
+
+  /* Unless breadcrumb wasn't visible (depth 0), we need to pop it first to push
+   * it again, in order to force title refresh. */
+  if (previousDepth != 0) {
+    StackViewController::pop();
+  }
+  m_breadcrumbController.pushTitle(subTitle());
+  StackViewController::push(&m_breadcrumbController);
+
   m_listController.setFirstSelectedRow(0);
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;
@@ -194,7 +191,17 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
 bool NestedMenuController::returnToPreviousMenu() {
   assert(m_stack.depth() > 0);
   resetMemoization();
+  int previousDepth = stackDepth();
   NestedMenuController::Stack::State state = m_stack.pop();
+
+  /* Unless breadcrumb is no longer visible (depth 1), we need to pop it first,
+   * to push it again in order to force title refresh. */
+  StackViewController::pop();
+  m_breadcrumbController.popTitle();
+  if (previousDepth != 1) {
+    StackViewController::push(&m_breadcrumbController);
+  }
+
   m_listController.setFirstSelectedRow(state.selectedRow());
   KDPoint scroll = m_selectableTableView.contentOffset();
   m_selectableTableView.setContentOffset(KDPoint(scroll.x(), state.verticalScroll()));

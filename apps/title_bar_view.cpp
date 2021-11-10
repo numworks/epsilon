@@ -1,8 +1,8 @@
 #include "title_bar_view.h"
 #include "exam_icon.h"
-#include "global_preferences.h"
 #include <escher/palette.h>
 #include <poincare/print.h>
+#include <poincare/preferences.h>
 extern "C" {
 #include <assert.h>
 }
@@ -75,7 +75,7 @@ void TitleBarView::layoutSubviews(bool force) {
   m_preferenceView.setFrame(KDRect(Metric::TitleBarExternHorizontalMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()), force);
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize), force);
-  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+  if (Preferences::sharedPreferences()->isInExamMode()) {
     m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight), force);
   } else {
     m_examModeIconView.setFrame(KDRectZero, force);

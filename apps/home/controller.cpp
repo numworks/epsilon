@@ -2,8 +2,8 @@
 #include "app.h"
 #include <apps/home/apps_layout.h>
 #include "../apps_container.h"
-#include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
+#include <poincare/preferences.h>
 
 extern "C" {
 #include <assert.h>
@@ -69,7 +69,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
     int appIndex = selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1;
-    GlobalPreferences::ExamMode examMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+    Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences()->examMode();
     if (appIndex < container->numberOfBuiltinApps()) {
       ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1));
       if (ExamModeConfiguration::appIsForbidden(selectedSnapshot->descriptor()->name())) {
@@ -78,7 +78,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
         container->switchToBuiltinApp(selectedSnapshot);
       }
     } else {
-      if (examMode != GlobalPreferences::ExamMode::Off) {
+      if (examMode != Poincare::Preferences::ExamMode::Off) {
         App::app()->displayWarning(ExamModeConfiguration::forbiddenAppMessage(examMode, 0), ExamModeConfiguration::forbiddenAppMessage(examMode, 1));
       } else {
         m_view.reload();

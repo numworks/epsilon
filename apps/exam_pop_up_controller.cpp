@@ -11,13 +11,13 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
     Invocation(
       [](void * context, void * sender) {
         ExamPopUpController * controller = (ExamPopUpController *)context;
-        GlobalPreferences::ExamMode mode = controller->targetExamMode();
-        assert(mode != GlobalPreferences::ExamMode::Unknown);
-        assert(mode == GlobalPreferences::ExamMode::PressToTest || controller->targetPressToTestParams().m_value == 0);
-        GlobalPreferences::sharedGlobalPreferences()->setExamMode(mode);
-        GlobalPreferences::sharedGlobalPreferences()->setPressToTestParams(controller->targetPressToTestParams());
+        Poincare::Preferences::ExamMode mode = controller->targetExamMode();
+        assert(mode != Poincare::Preferences::ExamMode::Unknown);
+        assert(mode == Poincare::Preferences::ExamMode::PressToTest || controller->targetPressToTestParams().m_value == 0);
+        Poincare::Preferences::sharedPreferences()->setExamMode(mode);
+        Poincare::Preferences::sharedPreferences()->setPressToTestParams(controller->targetPressToTestParams());
         AppsContainer * container = AppsContainer::sharedAppsContainer();
-        if (mode == GlobalPreferences::ExamMode::Off) {
+        if (mode == Poincare::Preferences::ExamMode::Off) {
           Ion::LED::setColor(KDColorBlack);
           Ion::LED::updateColorWithPlugAndCharge();
         } else {
@@ -37,12 +37,12 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
       I18n::Message::Default
     }
   ),
-  m_targetExamMode(GlobalPreferences::ExamMode::Unknown),
+  m_targetExamMode(Poincare::Preferences::ExamMode::Unknown),
   m_delegate(delegate)
 {
 }
 
-void ExamPopUpController::setTargetExamMode(GlobalPreferences::ExamMode mode) {
+void ExamPopUpController::setTargetExamMode(Poincare::Preferences::ExamMode mode) {
   m_targetExamMode = mode;
   for (int i = 0; i < k_numberOfLines; i++) {
     m_contentView.setMessage(i, ExamModeConfiguration::examModeActivationWarningMessage(mode, i));
@@ -50,7 +50,7 @@ void ExamPopUpController::setTargetExamMode(GlobalPreferences::ExamMode mode) {
 }
 
 void ExamPopUpController::viewDidDisappear() {
-  if (m_targetExamMode == GlobalPreferences::ExamMode::Off) {
+  if (m_targetExamMode == Poincare::Preferences::ExamMode::Off) {
     m_delegate->examDeactivatingPopUpIsDismissed();
   }
 }

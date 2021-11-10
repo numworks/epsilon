@@ -41,7 +41,7 @@ protected:
       int m_selectedRow;
       KDCoordinate m_verticalScroll;
     };
-    void push(int selectedRow, KDCoordinate verticalScroll, I18n::Message title = (I18n::Message)0);
+    void push(State state);
     const State * stateAtIndex(int index) const { return &m_statesStack[index]; }
     State pop();
     int depth() const;

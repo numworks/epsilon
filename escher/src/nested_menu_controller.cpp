@@ -62,11 +62,10 @@ void NestedMenuController::BreadcrumbController::updateTitle() {
 
 /* Stack */
 
-void NestedMenuController::Stack::push(int selectedRow, KDCoordinate verticalScroll, I18n::Message title) {
+void NestedMenuController::Stack::push(NestedMenuController::Stack::State state) {
   int stackDepth = depth();
   assert(stackDepth < k_maxModelTreeDepth && m_statesStack[stackDepth].isNull());
-  m_statesStack[stackDepth] = State(selectedRow, verticalScroll);
-
+  m_statesStack[stackDepth] = state;
 }
 
 NestedMenuController::Stack::State NestedMenuController::Stack::pop() {
@@ -155,7 +154,7 @@ HighlightCell * NestedMenuController::reusableCell(int index, int type) {
 
 bool NestedMenuController::handleEvent(Ion::Events::Event event) {
   const int rowIndex = selectedRow();
-  if ((event == Ion::Events::Back || event == Ion::Events::Left) && m_stack.depth() > 0) {
+  if ((event == Ion::Events::Back || event == Ion::Events::Left) && stackDepth() > 0) {
     return returnToPreviousMenu();
   }
   if (selectedRow() < 0) {
@@ -177,7 +176,7 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
 bool NestedMenuController::selectSubMenu(int selectedRow) {
   resetMemoization();
   int previousDepth = stackDepth();
-  m_stack.push(selectedRow, m_selectableTableView.contentOffset().y());
+  m_stack.push(Stack::State(selectedRow, m_selectableTableView.contentOffset().y()));
 
   /* Unless breadcrumb wasn't visible (depth 0), we need to pop it first to push
    * it again, in order to force title refresh. */
@@ -193,7 +192,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
 }
 
 bool NestedMenuController::returnToPreviousMenu() {
-  assert(m_stack.depth() > 0);
+  assert(stackDepth() > 0);
   resetMemoization();
   int previousDepth = stackDepth();
   NestedMenuController::Stack::State state = m_stack.pop();

@@ -48,7 +48,6 @@ protected:
 
   class Stack {
   public:
-    Stack(NestedMenuController * parentMenu, SelectableTableView * tableView) : m_breadcrumbController(parentMenu, tableView), m_parentMenu(parentMenu) {}
     class State {
     public:
       State(int selectedRow = -1, KDCoordinate verticalScroll = 0) : m_selectedRow(selectedRow), m_verticalScroll(verticalScroll) {}
@@ -68,8 +67,6 @@ protected:
     // A state is needed for all StackView children but the first
     constexpr static int k_maxModelTreeDepth = StackViewController::k_maxNumberOfChildren-1;
     State m_statesStack[k_maxModelTreeDepth];
-    BreadcrumbController m_breadcrumbController;
-    NestedMenuController * m_parentMenu;
   };
 
   static constexpr int k_leafCellType = 0;
@@ -100,10 +97,11 @@ private:
     I18n::Message m_title;
   };
 
-  Stack m_stack;
+  BreadcrumbController m_breadcrumbController;
   ListController m_listController;
-  static constexpr int k_nestedMenuStackDepth = 1;
   InputEventHandler * m_sender;
+  Stack m_stack;
+  static constexpr int k_nestedMenuStackDepth = 1;
 };
 
 }

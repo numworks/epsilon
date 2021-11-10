@@ -65,14 +65,29 @@ Preferences::ExamMode ExamModeConfiguration::examModeAtIndex(int index) {
 }
 
 I18n::Message ExamModeConfiguration::examModeActivationMessage(int index) {
-  switch (index) {
-  case 0:
-    return I18n::Message::ActivateExamMode;
-  case 1:
-    return I18n::Message::ActivateDutchExamMode;
-  default:
-    assert(index == 2);
-    return I18n::Message::ActivateIBExamMode;
+  Preferences::ExamMode examMode = Preferences::sharedPreferences()->examMode();
+  /* If the country has all exam mode, we specify which one will be reactivated.
+   * The country might still have been updated by the user after activation. */
+  bool specifyFrenchExamModeType = GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::All;
+  assert(examMode == Preferences::ExamMode::Off || index == 0);
+  switch (examMode) {
+    case Preferences::ExamMode::Standard:
+      return (specifyFrenchExamModeType ? I18n::Message::ReactivateFrenchExamMode : I18n::Message::ReactivateExamMode);
+    case Preferences::ExamMode::Dutch:
+      return I18n::Message::ReactivateDutchExamMode;
+    case Preferences::ExamMode::IBTest:
+      return I18n::Message::ReactivateIBExamMode;
+    default:
+      assert(examMode == Preferences::ExamMode::Off);
+      switch (index) {
+      case 0:
+        return (specifyFrenchExamModeType ? I18n::Message::ActivateFrenchExamMode : I18n::Message::ActivateExamMode);
+      case 1:
+        return I18n::Message::ActivateDutchExamMode;
+      default:
+        assert(index == 2);
+        return I18n::Message::ActivateIBExamMode;
+      }
   }
 }
 

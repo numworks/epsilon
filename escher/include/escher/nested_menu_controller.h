@@ -72,6 +72,19 @@ protected:
     NestedMenuController * m_parentMenu;
   };
 
+  static constexpr int k_leafCellType = 0;
+  static constexpr int k_nodeCellType = 1;
+  int stackDepth() const { return m_stack.depth(); }
+  virtual bool selectSubMenu(int selectedRow);
+  virtual bool returnToPreviousMenu();
+  virtual bool selectLeaf(int selectedRow) = 0;
+  InputEventHandler * sender() { return m_sender; }
+  virtual HighlightCell * leafCellAtIndex(int index) = 0;
+  virtual HighlightCell * nodeCellAtIndex(int index) = 0;
+  virtual I18n::Message subTitle() = 0;
+  SelectableTableView m_selectableTableView;
+  Stack m_stack;
+private:
   class ListController : public ViewController {
   public:
     ListController(Responder * parentResponder, SelectableTableView * tableView, I18n::Message title) : ViewController(parentResponder), m_selectableTableView(tableView), m_firstSelectedRow(0), m_title(title) {}
@@ -86,21 +99,7 @@ protected:
     int m_firstSelectedRow;
     I18n::Message m_title;
   };
-
-  static constexpr int k_leafCellType = 0;
-  static constexpr int k_nodeCellType = 1;
-  int stackDepth() const { return m_stack.depth(); }
-  virtual bool selectSubMenu(int selectedRow);
-  virtual bool returnToPreviousMenu();
-  virtual bool selectLeaf(int selectedRow) = 0;
-  InputEventHandler * sender() { return m_sender; }
-  virtual HighlightCell * leafCellAtIndex(int index) = 0;
-  virtual HighlightCell * nodeCellAtIndex(int index) = 0;
-  virtual I18n::Message subTitle() = 0;
-  SelectableTableView m_selectableTableView;
-  Stack m_stack;
   ListController m_listController;
-private:
   static constexpr int k_nestedMenuStackDepth = 1;
   InputEventHandler * m_sender;
 };

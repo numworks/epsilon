@@ -6,6 +6,7 @@
 #include <ion.h>
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
+#include "global_preferences.h"
 
 extern "C" {
 #include <assert.h>
@@ -131,8 +132,8 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
-      if (m_firstUSBEnumeration && GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-        displayExamModePopUp(GlobalPreferences::ExamMode::Off);
+      if (m_firstUSBEnumeration && Poincare::Preferences::sharedPreferences()->isInExamMode()) {
+        displayExamModePopUp(Poincare::Preferences::ExamMode::Off);
         // Warning: if the window is dirtied, you need to call window()->redraw()
         window()->redraw();
       } else {
@@ -243,9 +244,9 @@ void AppsContainer::run() {
    * and it is visible when reflashing a N0100 (there is some noise on the
    * screen before the logo appears). */
   Ion::Display::pushRectUniform(screenRect, KDColorWhite);
-  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  if (globalPreferences->isInExamMode()) {
-    activateExamMode(globalPreferences->examMode());
+  Poincare::Preferences * poincarePreferences = Poincare::Preferences::sharedPreferences();
+  if (poincarePreferences->isInExamMode()) {
+    activateExamMode(poincarePreferences->examMode());
   }
   refreshPreferences();
   Ion::Power::selectStandbyMode(false);
@@ -271,7 +272,7 @@ void AppsContainer::run() {
      * loaded the checkpoint and did not call AppsContainer::dispatchEvent */
     m_backlightDimmingTimer.reset();
     m_suspendTimer.reset();
-    Ion::Backlight::setBrightness(globalPreferences->brightnessLevel());
+    Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
     Ion::Events::setSpinner(true);
     handleRunException(false);
   }
@@ -298,8 +299,8 @@ void AppsContainer::reloadTitleBarView() {
   m_window.reloadTitleBarView();
 }
 
-void AppsContainer::displayExamModePopUp(GlobalPreferences::ExamMode mode, GlobalPreferences::PressToTestParams pressToTestParams) {
-  assert(pressToTestParams.m_value == 0 || mode == GlobalPreferences::ExamMode::PressToTest);
+void AppsContainer::displayExamModePopUp(Poincare::Preferences::ExamMode mode, Poincare::Preferences::PressToTestParams pressToTestParams) {
+  assert(pressToTestParams.m_value == 0 || mode == Poincare::Preferences::ExamMode::PressToTest);
   m_examPopUpController.setTargetExamMode(mode);
   m_examPopUpController.setTargetPressToTestParams(pressToTestParams);
   m_examPopUpController.presentModally();
@@ -316,7 +317,7 @@ void AppsContainer::shutdownDueToLowBattery() {
   }
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY && !Ion::USB::isPlugged()) {
     Ion::Backlight::setBrightness(0);
-    if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    if (!Poincare::Preferences::sharedPreferences()->isInExamMode()) {
       /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
        * low battery event happened during the Power-On Self-Test, a LED might
        * have stayed lit up. */
@@ -348,11 +349,11 @@ void AppsContainer::redrawWindow() {
   m_window.redraw();
 }
 
-void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
-  assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
+void AppsContainer::activateExamMode(Poincare::Preferences::ExamMode examMode) {
+  assert(examMode != Poincare::Preferences::ExamMode::Off && examMode != Poincare::Preferences::ExamMode::Unknown);
   if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
     reset();
-    if (examMode != GlobalPreferences::ExamMode::PressToTest) {
+    if (examMode != Poincare::Preferences::ExamMode::PressToTest) {
       Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
       Ion::LED::setBlinking(1000, 0.1f);
     }
@@ -362,7 +363,7 @@ void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
 }
 
 void AppsContainer::examDeactivatingPopUpIsDismissed() {
-  if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+  if (!Poincare::Preferences::sharedPreferences()->isInExamMode()) {
     Ion::ExternalApps::setVisible();
     m_window.redraw(true);
   }

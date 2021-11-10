@@ -57,6 +57,7 @@ protected:
   int stackDepth() const { return m_stack.depth(); }
   virtual bool selectSubMenu(int selectedRow);
   virtual bool returnToPreviousMenu();
+  virtual bool returnToRootMenu();
   virtual bool selectLeaf(int selectedRow) = 0;
   InputEventHandler * sender() { return m_sender; }
   virtual HighlightCell * leafCellAtIndex(int index) = 0;

@@ -30,12 +30,7 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
   Expression storedExpression = storeValueForSymbol(reductionContext.context());
 
   if (symbol().type() == ExpressionNode::Type::Symbol) {
-    /* If the symbol is not a function, we want to replace the store with its
-     * reduced left side. If the simplification of the left side failed, just
-     * replace with the left side of the store without simplifying it.
-     * The simplification fails for [1+2]->a for instance, because we do not
-     * have exact simplification of matrices yet. */
-    Expression reducedE = storedExpression.reduce(reductionContext);
+    Expression reducedE = storedExpression.clone().reduce(reductionContext);
     if (!reducedE.isUninitialized() ) {
       storedExpression = reducedE;
     }

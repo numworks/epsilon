@@ -24,14 +24,16 @@ int ExamModeConfiguration::numberOfAvailableExamMode() {
     // Menu shouldn't be visible
     return 0;
   }
+  // Activation button(s)
   assert(examMode == Preferences::ExamMode::Off);
   if (availableExamModes == CountryPreferences::AvailableExamModes::StandardOnly) {
-    // Activation button
     return 1;
   }
-  assert(availableExamModes == CountryPreferences::AvailableExamModes::StandardAndDutch || availableExamModes == CountryPreferences::AvailableExamModes::All);
-  // Activation buttons
-  return 2;
+  if (availableExamModes == CountryPreferences::AvailableExamModes::StandardAndDutch) {
+    return 2;
+  }
+  assert(availableExamModes == CountryPreferences::AvailableExamModes::All);
+  return 3;
 }
 
 bool ExamModeConfiguration::pressToTestExamModeAvailable() {
@@ -51,11 +53,27 @@ bool ExamModeConfiguration::testModeAvailable() {
 }
 
 Preferences::ExamMode ExamModeConfiguration::examModeAtIndex(int index) {
-  return index == 0 ? Preferences::ExamMode::Standard : Preferences::ExamMode::Dutch;
+  switch (index) {
+  case 0:
+    return Preferences::ExamMode::Standard;
+  case 1:
+    return Preferences::ExamMode::Dutch;
+  default:
+    assert(index == 2);
+    return Preferences::ExamMode::IBTest;
+  }
 }
 
 I18n::Message ExamModeConfiguration::examModeActivationMessage(int index) {
-  return index == 0 ? I18n::Message::ActivateExamMode : I18n::Message::ActivateDutchExamMode;
+  switch (index) {
+  case 0:
+    return I18n::Message::ActivateExamMode;
+  case 1:
+    return I18n::Message::ActivateDutchExamMode;
+  default:
+    assert(index == 2);
+    return I18n::Message::ActivateIBExamMode;
+  }
 }
 
 I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(Preferences::ExamMode mode, int line) {
@@ -68,6 +86,14 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(Preference
       return warnings[line];
     } else {
       I18n::Message warnings[] = {I18n::Message::ActiveExamModeWithResetMessage1, I18n::Message::ActiveExamModeWithResetMessage2, I18n::Message::ActiveExamModeWithResetMessage3, I18n::Message::ActiveExamModeWithResetMessage4};
+      return warnings[line];
+    }
+  } else if (mode == Preferences::ExamMode::IBTest) {
+    if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
+      I18n::Message warnings[] = {I18n::Message::ActiveIBExamModeMessage1, I18n::Message::ActiveIBExamModeMessage2, I18n::Message::ActiveIBExamModeMessage3, I18n::Message::ActiveIBExamModeMessage4};
+      return warnings[line];
+    } else {
+      I18n::Message warnings[] = {I18n::Message::ActiveIBExamModeWithResetMessage1, I18n::Message::ActiveIBExamModeWithResetMessage2, I18n::Message::ActiveIBExamModeWithResetMessage3, I18n::Message::ActiveIBExamModeWithResetMessage4};
       return warnings[line];
     }
   } else if (mode == Preferences::ExamMode::PressToTest) {

@@ -22,7 +22,10 @@ private:
   static constexpr int k_numberOfDeactivationMessageLines = 3;
   int initialSelectedRow() const override;
   Poincare::Preferences::ExamMode examMode();
-  static constexpr int k_maxNumberOfCells = 2;
+  static constexpr int k_maxNumberOfCells = 3;
+  /* TODO Hugo : Fix the text margins in SelectableViewWithMessages.
+   * And the artefact when selecting Dutch exam mode with the exam mode list
+   * scrolled to the bottom. */
   SelectableViewWithMessages m_contentView;
   Escher::MessageTableCell m_cell[k_maxNumberOfCells];
 };

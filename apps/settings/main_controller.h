@@ -23,7 +23,7 @@ extern const MessageTree s_modelEditionModeChildren[2];
 extern const MessageTree s_modelFloatDisplayModeChildren[4];
 extern const MessageTree s_modelComplexFormatChildren[3];
 extern const MessageTree s_modelFontChildren[2];
-extern const MessageTree s_modelExamChildren[2];
+extern const MessageTree s_modelExamChildren[3];
 extern const MessageTree s_modeltestModeChildren[2];
 extern const MessageTree s_modelAboutChildren[3];
 extern const MessageTree s_model;

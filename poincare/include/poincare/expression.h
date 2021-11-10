@@ -438,6 +438,7 @@ private:
    * representation but some smaller integers can't - like 2E308-1). */
   static constexpr double k_largestExactIEEE754Integer = 9007199254740992.0;
   Expression deepReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression deepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext) const;
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
     node()->deepReduceChildren(reductionContext);
   }

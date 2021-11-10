@@ -26,7 +26,8 @@ bool additionalResultsAreForbidden();
 bool inequalityGraphingIsForbidden();
 bool implicitPlotsAreForbidden();
 bool statsDiagnosticsAreForbidden();
-bool vectorsAreForbidden();
+bool vectorProductsAreForbidden();
+bool vectorNormIsForbidden();
 bool basedLogarithmIsForbidden();
 bool sumIsForbidden();
 

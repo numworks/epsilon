@@ -353,7 +353,7 @@ void AppsContainer::activateExamMode(Poincare::Preferences::ExamMode examMode) {
   assert(examMode != Poincare::Preferences::ExamMode::Off && examMode != Poincare::Preferences::ExamMode::Unknown);
   if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
     reset();
-    if (examMode != Poincare::Preferences::ExamMode::PressToTest) {
+    if (examMode == Poincare::Preferences::ExamMode::Standard || examMode == Poincare::Preferences::ExamMode::Dutch) {
       Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
       Ion::LED::setBlinking(1000, 0.1f);
     }

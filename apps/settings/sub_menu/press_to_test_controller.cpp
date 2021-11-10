@@ -94,24 +94,24 @@ PressToTestController::PressToTestController(Responder * parentResponder) :
   m_switchCells{},
   m_tempPressToTestParams{},
   m_activateButton{&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {
-    AppsContainer::sharedAppsContainer()->displayExamModePopUp(GlobalPreferences::ExamMode::PressToTest, static_cast<PressToTestController *>(context)->getPressToTestParams());
+    AppsContainer::sharedAppsContainer()->displayExamModePopUp(Preferences::ExamMode::PressToTest, static_cast<PressToTestController *>(context)->getPressToTestParams());
     return true; }, this)}
 {
   resetSwitches();
 }
 
 void PressToTestController::resetSwitches() {
-  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+  if (Preferences::sharedPreferences()->isInExamMode()) {
     // Reset switches states to press-to-test current parameter.
-    m_tempPressToTestParams = GlobalPreferences::sharedGlobalPreferences()->pressToTestParams();
+    m_tempPressToTestParams = Preferences::sharedPreferences()->pressToTestParams();
   } else {
     // Reset switches so that all features are disabled, isUnknown is false.
-    m_tempPressToTestParams = GlobalPreferences::PressToTestParams({0xFE});
+    m_tempPressToTestParams = Preferences::PressToTestParams({0xFE});
     assert(!m_tempPressToTestParams.m_isUnknown);
   }
 }
 
-GlobalPreferences::PressToTestParams PressToTestController::getPressToTestParams() {
+Preferences::PressToTestParams PressToTestController::getPressToTestParams() {
   return m_tempPressToTestParams;
 }
 
@@ -176,8 +176,8 @@ bool PressToTestController::getParamAtIndex(int index) {
 }
 
 void PressToTestController::setMessages() {
-  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-    assert(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::PressToTest);
+  if (Preferences::sharedPreferences()->isInExamMode()) {
+    assert(Preferences::sharedPreferences()->examMode() == Preferences::ExamMode::PressToTest);
     return m_view.setMessages(I18n::Message::PressToTestActiveIntro, I18n::Message::ToDeactivatePressToTest1);
   }
   return m_view.setMessages(I18n::Message::PressToTestIntro1, I18n::Message::Default);
@@ -189,7 +189,7 @@ void PressToTestController::viewDidDisappear() {
 
 bool PressToTestController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(row) == k_switchCellType && !GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(row) == k_switchCellType && !Preferences::sharedPreferences()->isInExamMode()) {
     assert(row >= 0 && row < k_numberOfSwitchCells);
     setParamAtIndex(row, !getParamAtIndex(row));
     /* Memoization isn't resetted here because changing a switch state does not
@@ -219,7 +219,7 @@ void PressToTestController::didEnterResponderChain(Responder * previousFirstResp
 }
 
 int PressToTestController::numberOfRows() const {
-  return k_numberOfSwitchCells + (GlobalPreferences::sharedGlobalPreferences()->isInExamMode() ? 0 : 1);
+  return k_numberOfSwitchCells + (Preferences::sharedPreferences()->isInExamMode() ? 0 : 1);
 }
 
 int PressToTestController::typeAtIndex(int index) {
@@ -243,18 +243,18 @@ int PressToTestController::reusableCellCount(int type) {
 
 void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (typeAtIndex(index) == k_buttonCellType) {
-    assert(!GlobalPreferences::sharedGlobalPreferences()->isInExamMode());
+    assert(!Preferences::sharedPreferences()->isInExamMode());
     return;
   }
   PressToTestSwitch * myCell = static_cast<PressToTestSwitch *>(cell);
   // A true params means the feature is disabled,
   bool featureIsDisabled = getParamAtIndex(index);
   myCell->setMessage(LabelAtIndex(index));
-  myCell->setTextColor(GlobalPreferences::sharedGlobalPreferences()->isInExamMode() && featureIsDisabled ? Palette::GrayDark : KDColorBlack);
+  myCell->setTextColor(Preferences::sharedPreferences()->isInExamMode() && featureIsDisabled ? Palette::GrayDark : KDColorBlack);
   myCell->setSubLabelMessage(SubLabelAtIndex(index));
   // Switch is toggled if the feature must stay activated.
   myCell->setState(!featureIsDisabled);
-  myCell->setDisplayImage(GlobalPreferences::sharedGlobalPreferences()->isInExamMode());
+  myCell->setDisplayImage(Preferences::sharedPreferences()->isInExamMode());
 }
 
 I18n::Message PressToTestController::LabelAtIndex(int i) {

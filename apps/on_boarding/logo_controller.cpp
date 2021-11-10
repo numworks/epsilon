@@ -1,7 +1,7 @@
 #include "logo_controller.h"
 #include "power_on_self_test.h"
 #include <apps/apps_container.h>
-#include <apps/global_preferences.h>
+#include <poincare/preferences.h>
 #include <ion/led.h>
 
 using namespace Escher;
@@ -51,8 +51,8 @@ void LogoController::viewDidDisappear() {
     Ion::LED::setColor(m_previousLEDColor);
     /* TODO: instead of setting again the exam mode, put the previous led color
      * AND BLINKING.*/
-    if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-      AppsContainer::sharedAppsContainer()->activateExamMode(GlobalPreferences::sharedGlobalPreferences()->examMode());
+    if (Poincare::Preferences::sharedPreferences()->isInExamMode()) {
+      AppsContainer::sharedAppsContainer()->activateExamMode(Poincare::Preferences::sharedPreferences()->examMode());
     }
   }
   ViewController::viewDidDisappear();

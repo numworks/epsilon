@@ -3,7 +3,7 @@
 
 #include "generic_sub_controller.h"
 #include "selectable_view_with_messages.h"
-#include "../../global_preferences.h"
+#include <poincare/preferences.h>
 
 namespace Settings {
 
@@ -21,7 +21,7 @@ public:
 private:
   static constexpr int k_numberOfDeactivationMessageLines = 3;
   int initialSelectedRow() const override;
-  GlobalPreferences::ExamMode examMode();
+  Poincare::Preferences::ExamMode examMode();
   static constexpr int k_maxNumberOfCells = 2;
   SelectableViewWithMessages m_contentView;
   Escher::MessageTableCell m_cell[k_maxNumberOfCells];

@@ -1,7 +1,7 @@
 #include <quiz.h>
-#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <poincare/test/helper.h>
+#include <poincare/preferences.h>
 #include <poincare_expressions.h>
 #include <string.h>
 #include <assert.h>
@@ -132,9 +132,9 @@ QUIZ_CASE(calculation_ans) {
   CalculationStore store(calculationBuffer,calculationBufferSize);
   // Setup complex format and exam mode
   Poincare::Preferences::ComplexFormat previousComplexFormat = Poincare::Preferences::sharedPreferences()->complexFormat();
-  GlobalPreferences::ExamMode previousExamMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+  Poincare::Preferences::ExamMode previousExamMode = Poincare::Preferences::sharedPreferences()->examMode();
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
-  GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Off);
+  Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Off);
 
   store.push("1+3/4", &globalContext, dummyHeight);
   store.push("ans+2/3", &globalContext, dummyHeight);
@@ -157,13 +157,13 @@ QUIZ_CASE(calculation_ans) {
 
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 
-  GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Dutch);
+  Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Dutch);
   assert(ExamModeConfiguration::exactExpressionIsForbidden(SquareRoot::Builder(Rational::Builder(2))));
 
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 
   // Restore complex format and exam mode
-  GlobalPreferences::sharedGlobalPreferences()->setExamMode(previousExamMode);
+  Poincare::Preferences::sharedPreferences()->setExamMode(previousExamMode);
   Poincare::Preferences::sharedPreferences()->setComplexFormat(previousComplexFormat);
   store.deleteAll();
 }
@@ -228,8 +228,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("cos(45)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("cos(π/2)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
 
-  GlobalPreferences::ExamMode previousExamMode = GlobalPreferences::sharedGlobalPreferences()->examMode();
-  GlobalPreferences::sharedGlobalPreferences()->setExamMode(GlobalPreferences::ExamMode::Dutch);
+  Poincare::Preferences::ExamMode previousExamMode = Poincare::Preferences::sharedPreferences()->examMode();
+  Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Dutch);
 
   assertCalculationIs("1+1", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate, EqualSign::Equal, "1/2", "0.5", nullptr, &globalContext, &store);
@@ -241,7 +241,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("_G", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("_g0", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
 
-  GlobalPreferences::sharedGlobalPreferences()->setExamMode(previousExamMode);
+  Poincare::Preferences::sharedPreferences()->setExamMode(previousExamMode);
   Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);
 }
 

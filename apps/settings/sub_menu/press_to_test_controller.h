@@ -1,6 +1,7 @@
 #ifndef SETTINGS_PRESS_TO_TEST_CONTROLLER_H
 #define SETTINGS_PRESS_TO_TEST_CONTROLLER_H
 
+#include <apps/i18n.h>
 #include <apps/shared/button_with_separator.h>
 #include <escher/horizontal_or_vertical_layout.h>
 #include <escher/memoized_list_view_data_source.h>
@@ -9,9 +10,8 @@
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/view_controller.h>
-#include "../../global_preferences.h"
+#include <poincare/preferences.h>
 #include "press_to_test_switch.h"
-
 namespace Settings {
 
 class PressToTestView : public Escher::ScrollView, public Escher::SelectableTableViewDelegate {
@@ -73,7 +73,7 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  GlobalPreferences::PressToTestParams getPressToTestParams();
+  Poincare::Preferences::PressToTestParams getPressToTestParams();
   void viewDidDisappear() override;
   Escher::View * view() override { return &m_view; }
   KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
@@ -97,7 +97,7 @@ private:
   Escher::SelectableTableView m_selectableTableView;
   PressToTestView m_view;
   PressToTestSwitch m_switchCells[k_numberOfReusableSwitchCells];
-  GlobalPreferences::PressToTestParams m_tempPressToTestParams;
+  Poincare::Preferences::PressToTestParams m_tempPressToTestParams;
   Shared::ButtonWithSeparator m_activateButton;
 
   static I18n::Message LabelAtIndex(int index);

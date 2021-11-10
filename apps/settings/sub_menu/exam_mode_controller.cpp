@@ -1,5 +1,4 @@
 #include "exam_mode_controller.h"
-#include "../../global_preferences.h"
 #include "../../apps_container.h"
 #include "../../exam_mode_configuration.h"
 #include <apps/i18n.h>
@@ -34,7 +33,7 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
   selectCellAtLocation(0, initialSelectedRow());
   m_contentView.reload();
   // We add a message when the mode exam is on
-  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+  if (Preferences::sharedPreferences()->isInExamMode()) {
     I18n::Message deactivateMessages[] = {I18n::Message::ToDeactivateExamMode1, I18n::Message::ToDeactivateExamMode2, I18n::Message::ToDeactivateExamMode3};
     m_contentView.setMessages(deactivateMessages, k_numberOfDeactivationMessageLines);
   }
@@ -59,7 +58,7 @@ void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(ExamModeConfiguration::examModeActivationMessage(index));
-  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+  if (Preferences::sharedPreferences()->isInExamMode()) {
     myCell->setMessage(I18n::Message::ExamModeActive);
   }
 }
@@ -74,11 +73,11 @@ int ExamModeController::initialSelectedRow() const {
   return row;
 }
 
-GlobalPreferences::ExamMode ExamModeController::examMode() {
-  GlobalPreferences::ExamMode mode = ExamModeConfiguration::examModeAtIndex(selectedRow());
-  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+Preferences::ExamMode ExamModeController::examMode() {
+  Preferences::ExamMode mode = ExamModeConfiguration::examModeAtIndex(selectedRow());
+  if (Preferences::sharedPreferences()->isInExamMode()) {
     // If the exam mode is already on, this re-activate the same exam mode
-    mode = GlobalPreferences::sharedGlobalPreferences()->examMode();
+    mode = Preferences::sharedPreferences()->examMode();
   }
   return mode;
 }

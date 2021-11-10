@@ -13,11 +13,11 @@
 #include "exam_pop_up_controller_delegate.h"
 #include "battery_timer.h"
 #include "suspend_timer.h"
-#include "global_preferences.h"
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
 #include "on_boarding/prompt_controller.h"
 #include <escher/container.h>
+#include <poincare/preferences.h>
 #include <ion/events.h>
 
 class AppsContainer : public Escher::Container, ExamPopUpControllerDelegate, Ion::StorageDelegate {
@@ -44,12 +44,12 @@ public:
   bool updateBatteryState();
   void refreshPreferences();
   void reloadTitleBarView();
-  void displayExamModePopUp(GlobalPreferences::ExamMode mode, GlobalPreferences::PressToTestParams pressToTestParams = GlobalPreferences::PressToTestParams({0}));
+  void displayExamModePopUp(Poincare::Preferences::ExamMode mode, Poincare::Preferences::PressToTestParams pressToTestParams = Poincare::Preferences::PressToTestParams({0}));
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PromptController * promptController();
   void redrawWindow();
-  void activateExamMode(GlobalPreferences::ExamMode examMode);
+  void activateExamMode(Poincare::Preferences::ExamMode examMode);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
   // Ion::StorageDelegate

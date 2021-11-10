@@ -12,7 +12,7 @@ namespace Settings {
 
 constexpr MessageTree s_modelAngleChildren[3] = {MessageTree(I18n::Message::Radian), MessageTree(I18n::Message::Degrees), MessageTree(I18n::Message::Gradians)};
 constexpr MessageTree s_modelEditionModeChildren[2] = {MessageTree(I18n::Message::Edition2D), MessageTree(I18n::Message::EditionLinear)};
-constexpr MessageTree s_modelExamChildren[2] = {MessageTree(I18n::Message::ActivateExamMode), MessageTree(I18n::Message::ActivateDutchExamMode)};
+constexpr MessageTree s_modelExamChildren[3] = {MessageTree(I18n::Message::ActivateExamMode), MessageTree(I18n::Message::ActivateDutchExamMode), MessageTree(I18n::Message::ActivateIBExamMode)};
 constexpr MessageTree s_modelFloatDisplayModeChildren[4] = {MessageTree(I18n::Message::Decimal), MessageTree(I18n::Message::Scientific), MessageTree(I18n::Message::Engineering), MessageTree(I18n::Message::SignificantFigures)};
 constexpr MessageTree s_modelComplexFormatChildren[3] = {MessageTree(I18n::Message::Real), MessageTree(I18n::Message::Cartesian), MessageTree(I18n::Message::Polar)};
 constexpr MessageTree s_modelFontChildren[2] = {MessageTree(I18n::Message::LargeFont), MessageTree(I18n::Message::SmallFont)};

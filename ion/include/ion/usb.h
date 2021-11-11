@@ -8,7 +8,7 @@ bool isPlugged();
 bool isEnumerated(); // Speed-enumerated, to be accurate
 void clearEnumerationInterrupt();
 
-void DFU(bool exitWithKeyboard = true);
+void DFU(bool exitWithKeyboard = true, bool unlocked = false, int level = 0);
 void enable();
 void disable();
 

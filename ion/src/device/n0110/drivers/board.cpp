@@ -30,7 +30,9 @@ void initMPU() {
   Cache::dmb();
 
   // 1.2 Disable fault exceptions
-  CORTEX.SHCRS()->setMEMFAULTENA(false);
+  CORTEX.SHCRS()->setMEMFAULTENA(true);
+  CORTEX.SHCRS()->setBUSFAULTENA(true);
+  CORTEX.SHCRS()->setUSGFAULTENA(true); 
 
   // 1.3 Disable the MPU and clear the control register
   MPU.CTRL()->setENABLE(false);
@@ -121,7 +123,7 @@ void init() {
   initClocks();
 
   // The bootloader leaves its own after flashing
-  //SYSCFG.MEMRMP()->setMEM_MODE(SYSCFG::MEMRMP::MemMode::MainFlashmemory);
+  // SYSCFG.MEMRMP()->setMEM_MODE(SYSCFG::MEMRMP::MemMode::MainFlashmemory);
   // Ensure right location of interrupt vectors
   CORTEX.VTOR()->setVTOR((void*)&InitialisationVector);
 

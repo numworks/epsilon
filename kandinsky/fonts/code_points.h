@@ -105,6 +105,7 @@ uint32_t CodePoints[] = {
   0x7d, // } // RIGHT CURLY BRACKET
   0x7e, // ~ // TILDE
 
+  0xa1, // ¡ // INVERTED EXCLAMATION MARK
   0xb0, // ° // DEGREE SIGN
   0xb7, // · // MIDDLE DOT
 

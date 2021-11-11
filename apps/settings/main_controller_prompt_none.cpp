@@ -1,28 +1,30 @@
-#include "main_controller.h"
-#include "../exam_mode_configuration.h"
 #include <apps/i18n.h>
+
+#include "../exam_mode_configuration.h"
+#include "main_controller.h"
 
 using namespace Shared;
 
 namespace Settings {
 
 constexpr SettingsMessageTree s_modelMenu[] =
-  {SettingsMessageTree(I18n::Message::MathOptions, s_modelMathOptionsChildren),
-    SettingsMessageTree(I18n::Message::Brightness),
-    SettingsMessageTree(I18n::Message::DateTime, s_modelDateTimeChildren),
-    SettingsMessageTree(I18n::Message::Language),
-    SettingsMessageTree(I18n::Message::Country),
-    SettingsMessageTree(I18n::Message::ExamMode, ExamModeConfiguration::s_modelExamChildren),
+    {SettingsMessageTree(I18n::Message::MathOptions, s_modelMathOptionsChildren),
+     SettingsMessageTree(I18n::Message::Brightness),
+     SettingsMessageTree(I18n::Message::DateTime, s_modelDateTimeChildren),
+     SettingsMessageTree(I18n::Message::Language),
+     SettingsMessageTree(I18n::Message::Country),
+     SettingsMessageTree(I18n::Message::ExamMode, ExamModeConfiguration::s_modelExamChildren),
 #ifdef HAS_CODE
-    SettingsMessageTree(I18n::Message::CodeApp, s_codeChildren),
+     SettingsMessageTree(I18n::Message::CodeApp, s_codeChildren),     
 #endif
-    SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren),
-    SettingsMessageTree(I18n::Message::About, s_modelAboutChildren)};
+     SettingsMessageTree(I18n::Message::UsbSetting, s_usbSteps),
+     SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren),
+     SettingsMessageTree(I18n::Message::About, s_modelAboutChildren)};
 
 constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu);
 
 I18n::Message MainController::promptMessage() const {
-  return I18n::Message::Default;
+    return I18n::Message::Default;
 }
 
-}
+}  // namespace Settings

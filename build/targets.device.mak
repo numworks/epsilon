@@ -27,11 +27,11 @@ $(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
 	@echo "LDMAP   $@"
 	$(Q) $(LD) $^ $(LDFLAGS) -Wl,-M -Wl,-Map=$@ -o /dev/null
 
-.PHONY: %_memory_map
-%_memory_map: $(BUILD_DIR)/%.map
-	@echo "========== MEMORY MAP ========="
-	$(Q) awk -f build/device/memory_map.awk < $<
-	@echo "==============================="
+.PHONY: mapfile
+mapfile:
+	$(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
+		@echo "LDMAP   $@"
+		$(Q) $(LD) $^ $(LDFLAGS) -Wl,-M -Wl,-Map=$@ -o /dev/null
 
 .PHONY: openocd
 openocd:
@@ -72,3 +72,4 @@ binpack: $(BUILD_DIR)/flasher.light.bin $(BUILD_DIR)/epsilon.onboarding.two_bina
 	cp $(BUILD_DIR)/epsilon.onboarding.internal.bin $(BUILD_DIR)/epsilon.onboarding.external.bin $(BUILD_DIR)/binpack
 	cd $(BUILD_DIR) && for binary in flasher.light.bin epsilon.onboarding.internal.bin epsilon.onboarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd $(BUILD_DIR) && tar cvfz binpack-$(MODEL)-`git rev-parse HEAD | head -c 7`.tgz binpack/*
+	$(PYTHON) build/device/secure_ext.py $(BUILD_DIR)/epsilon.onboarding.external.bin

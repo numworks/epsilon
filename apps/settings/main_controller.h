@@ -12,6 +12,7 @@
 #include "sub_menu/localization_controller.h"
 #include "sub_menu/math_options_controller.h"
 #include "sub_menu/preferences_controller.h"
+#include "sub_menu/usb_info_controller.h"
 
 namespace Settings {
 
@@ -28,6 +29,8 @@ extern const Shared::SettingsMessageTree s_modelDateTimeChildren[3];
 extern const Shared::SettingsMessageTree s_accessibilityChildren[6];
 extern const Shared::SettingsMessageTree s_contributorsChildren[23];
 extern const Shared::SettingsMessageTree s_modelAboutChildren[9];
+extern const Shared::SettingsMessageTree s_usbLevelSelector[3];
+extern const Shared::SettingsMessageTree s_usbSteps[2];
 extern const Shared::SettingsMessageTree s_model;
 
 class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
@@ -76,6 +79,7 @@ private:
   ExamModeController m_examModeController;
   AboutController m_aboutController;
   PreferencesController m_preferencesController;
+  UsbInfoController m_usbInfoController;
 };
 
 }

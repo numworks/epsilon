@@ -20,10 +20,10 @@ public:
   constexpr static int k_tickHeight = 6;
   constexpr static int k_tickWidth = 8;
 private:
-  constexpr static KDCoordinate k_batteryHeight = 8;
-  constexpr static KDCoordinate k_batteryWidth = 15;
+  constexpr static KDCoordinate k_batteryHeight = 9;
+  constexpr static KDCoordinate k_batteryWidth = 16;
   constexpr static KDCoordinate k_elementWidth = 1;
-  constexpr static KDCoordinate k_capHeight = 4;
+  constexpr static KDCoordinate k_capHeight = 3;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   Ion::Battery::Charge m_chargeState;
   bool m_isCharging;

@@ -31,11 +31,6 @@ MathVariableBoxController::MathVariableBoxController() :
   }
 }
 
-void MathVariableBoxController::viewWillAppear() {
-  assert(m_currentPage == Page::RootMenu);
-  AlternateEmptyNestedMenuController::viewWillAppear();
-}
-
 void MathVariableBoxController::viewDidDisappear() {
   AlternateEmptyNestedMenuController::viewDidDisappear();
 
@@ -49,10 +44,10 @@ void MathVariableBoxController::viewDidDisappear() {
     m_leafCells[i].setLayout(Layout());
     m_leafCells[i].setSubLabelLayout(Layout());
   }
-  /* We reset the page when view disappears rather than when it appears because
-   * subview layout is done before viewWillAppear. If the page at that point is
-   * wrong, the memoized layouts are going be filled with wrong layouts. */
-  setPage(Page::RootMenu);
+
+  /* We need to remove the memoized layouts otherwise we risk leaking them into
+   * the pool when quitting the app. */
+  resetVarBoxMemoization();
 }
 
 bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {

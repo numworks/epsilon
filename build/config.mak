@@ -5,9 +5,9 @@ DEBUG ?= 0
 
 HOME_DISPLAY_EXTERNALS ?= 1
 EPSILON_VERSION ?= 15.5.0
-OMEGA_VERSION ?= 1.22.0
+OMEGA_VERSION ?= 1.23.0
 # OMEGA_USERNAME ?= N/A
-OMEGA_STATE ?= dev
+OMEGA_STATE ?= public
 EPSILON_APPS ?= calculation rpn graph code statistics probability solver atomic sequence regression settings external
 SUBMODULES_APPS = atomic rpn
 EPSILON_I18N ?= en fr nl pt it de es hu

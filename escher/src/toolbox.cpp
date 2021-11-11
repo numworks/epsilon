@@ -10,11 +10,6 @@ Toolbox::Toolbox(Responder * parentResponder, I18n::Message title) :
   m_messageTreeModel(nullptr)
 {}
 
-void Toolbox::viewWillAppear() {
-  m_messageTreeModel = rootModel();
-  NestedMenuController::viewWillAppear();
-}
-
 int Toolbox::numberOfRows() const {
   if (m_messageTreeModel == nullptr) {
     m_messageTreeModel = rootModel();

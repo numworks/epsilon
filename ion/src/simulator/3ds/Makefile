@@ -32,6 +32,7 @@ sdl_simu_needs_to_be_removed += $(addprefix ion/src/simulator/shared/, \
   keyboard_sdl.cpp:-headless \
   main_sdl.cpp:-headless \
   layout.cpp:-headless \
+  dummy/store_script.cpp \
 )
 
 # Remove the dummy diplay (re-implemented) and the SDL simulator stuff.

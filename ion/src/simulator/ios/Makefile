@@ -1,13 +1,13 @@
-ion_src += $(addprefix ion/src/simulator/ios/, \
-  images.m \
-)
-
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  apple/language.m \
-  dummy/callback.cpp \
+  apple/platform_images.mm \
+  apple/platform_language.mm \
   dummy/haptics_enabled.cpp \
+  dummy/journal.cpp \
+  dummy/keyboard_callback.cpp \
+  dummy/window_callback.cpp \
   clipboard_helper.cpp \
   haptics.cpp \
+	store_script.cpp \
 )
 
 ion_src += ion/src/shared/collect_registers.cpp
@@ -30,6 +30,9 @@ LDFLAGS += -framework SystemConfiguration
 LDFLAGS += -framework CoreData
 LDFLAGS += -Lion/src/simulator/ios/GoogleAnalyticsServices
 endif
+
+LDFLAGS += -framework MobileCoreServices
+LDFLAGS += -framework ImageIO
 
 ifndef ARCH
 

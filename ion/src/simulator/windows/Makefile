@@ -1,14 +1,22 @@
+ION_SIMULATOR_FILES = 1
+
 ion_src += $(addprefix ion/src/simulator/windows/, \
-  images.cpp \
-  language.cpp \
+  platform_files.cpp \
+  platform_images.cpp \
+  platform_language.cpp \
   resources.rc \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  dummy/callback.cpp \
   dummy/haptics_enabled.cpp \
+  dummy/keyboard_callback.cpp \
+  dummy/window_callback.cpp \
+  actions.cpp \
   clipboard_helper.cpp \
   haptics.cpp \
+  journal.cpp \
+  state_file.cpp \
+  store_script.cpp \
 )
 
 ion_src += ion/src/shared/collect_registers.cpp
@@ -21,10 +29,8 @@ endif
 # RC file dependencies
 $(call object_for,ion/src/simulator/windows/resources.rc): WRFLAGS += -I $(BUILD_DIR)
 
-# The header of images is refered to as <ion/src/simulator/windows/resources.h> so make sure it's findable this way
-SFLAGS += -I$(BUILD_DIR)
-
-LDFLAGS += -lgdiplus
+# Linker flags
+LDFLAGS += -lgdiplus -lcomdlg32
 
 $(eval $(call rule_for, \
   RESGEN, \
@@ -34,6 +40,5 @@ $(eval $(call rule_for, \
   global \
 ))
 
-$(call object_for,ion/src/simulator/windows/images.cpp): $(BUILD_DIR)/ion/src/simulator/windows/images.h
+$(call object_for,ion/src/simulator/windows/platform_images.cpp): $(BUILD_DIR)/ion/src/simulator/windows/images.h
 $(call object_for,ion/src/simulator/windows/resources.rc): $(BUILD_DIR)/ion/src/simulator/windows/resources_gen.rc
-

@@ -7,6 +7,7 @@ extern "C" {
 #include <py/objtuple.h>
 }
 
+#include <ion.h>
 #include <ion/storage.h>
 
 #ifndef OMEGA_VERSION
@@ -44,6 +45,10 @@ STATIC MP_DEFINE_CONST_DICT(modos_uname_info_obj, modos_uname_info_table);
 
 mp_obj_t modos_uname(void) {
   return (mp_obj_t)&modos_uname_info_obj;
+}
+
+mp_obj_t modos_getlogin(void) {
+  return mp_obj_new_str((const char *)Ion::username(), MIN(strlen((const char *)Ion::username()), 16));
 }
 
 mp_obj_t modos_remove(mp_obj_t o_file_name) {

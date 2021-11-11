@@ -13,12 +13,12 @@ LocalizationController::ContentView::ContentView(LocalizationController * contro
   m_countryTitleMessage(KDFont::LargeFont, I18n::Message::Country),
   m_borderView(Palette::BackgroundApps)
 {
-  m_countryTitleMessage.setBackgroundColor(Palette::WallScreen);
+  m_countryTitleMessage.setBackgroundColor(Palette::BackgroundHard);
   m_countryTitleMessage.setAlignment(0.5f, 0.5f);
   assert(k_numberOfCountryWarningLines == 2); // textMessages is not overflowed
   I18n::Message textMessages[k_numberOfCountryWarningLines] = {I18n::Message::CountryWarning1, I18n::Message::CountryWarning2};
   for (int i = 0; i < k_numberOfCountryWarningLines; i++) {
-    m_countryWarningLines[i].setBackgroundColor(Palette::WallScreen);
+    m_countryWarningLines[i].setBackgroundColor(Palette::BackgroundHard);
     m_countryWarningLines[i].setFont(KDFont::SmallFont);
     m_countryWarningLines[i].setAlignment(0.5f, 0.5f);
     m_countryWarningLines[i].setMessage(textMessages[i]);

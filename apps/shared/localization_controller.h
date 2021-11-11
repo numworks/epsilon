@@ -45,7 +45,7 @@ protected:
     ContentView(LocalizationController * controller, SelectableTableViewDataSource * dataSource);
 
     SelectableTableView * selectableTableView() { return &m_selectableTableView; }
-    void drawRect(KDContext * ctx, KDRect rect) const override { ctx->fillRect(bounds(), Palette::WallScreen); }
+    void drawRect(KDContext * ctx, KDRect rect) const override { ctx->fillRect(bounds(), Palette::BackgroundApps); }
     void modeHasChanged();
 
   private:

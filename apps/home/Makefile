@@ -3,6 +3,7 @@ app_home_src = $(addprefix apps/home/,\
   app_cell.cpp \
   apps_layout.py \
   controller.cpp \
+  selectable_table_view_with_background.cpp \
 )
 
 apps_src += $(app_home_src)

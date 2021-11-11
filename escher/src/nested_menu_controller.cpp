@@ -108,7 +108,8 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
   m_breadcrumbController(this, &m_selectableTableView),
   m_listController(this, &m_selectableTableView, title),
   m_sender(nullptr),
-  m_stack()
+  m_stack(),
+  m_lastState(0)
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
@@ -118,29 +119,18 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
 }
 
 void NestedMenuController::viewWillAppear() {
-  assert(depth() == k_nestedMenuStackDepth && stackDepth() == 0);
   // Reset memoization first, so that the right cells are manipulated
   resetMemoization();
   StackViewController::viewWillAppear();
   m_selectableTableView.reloadData();
-  m_listController.setFirstSelectedRow(0);
+
+  // Load last state
+  loadState(m_lastState);
 }
 
 void NestedMenuController::viewDidDisappear() {
-  /* As stacks and stack states are very intertwined, and
-   * StackViewController::viewDidDisappear() alone would leave the
-   * NestedMenuController in an invalid state which couldn't be cleaned in
-   * viewWillAppear. Stacks (and breadcrumb) must be reseted here. */
-  // Restore stack depth (will remove breadcrumb if it was visible)
-  popUntilDepth(k_nestedMenuStackDepth, false);
-  assert(StackViewController::depth() == k_nestedMenuStackDepth); // Breadcrumb shouldn't be visible
-  // Reset state stacks
-  m_stack.resetStack();
-  m_breadcrumbController.resetTitle();
-
   StackViewController::viewDidDisappear();
   m_selectableTableView.deselectTable();
-  assert(depth() == k_nestedMenuStackDepth && stackDepth() == 0);
 }
 
 HighlightCell * NestedMenuController::reusableCell(int index, int type) {
@@ -205,9 +195,8 @@ bool NestedMenuController::returnToPreviousMenu() {
     StackViewController::push(&m_breadcrumbController);
   }
 
-  m_listController.setFirstSelectedRow(state.selectedRow());
-  KDPoint scroll = m_selectableTableView.contentOffset();
-  m_selectableTableView.setContentOffset(KDPoint(scroll.x(), state.verticalScroll()));
+  loadState(state);
+
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;
 }
@@ -220,6 +209,18 @@ bool NestedMenuController::returnToRootMenu() {
   m_listController.setFirstSelectedRow(0);
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;
+}
+
+void NestedMenuController::loadState(NestedMenuController::Stack::State state) {
+  m_listController.setFirstSelectedRow(state.selectedRow());
+  KDPoint scroll = m_selectableTableView.contentOffset();
+  m_selectableTableView.setContentOffset(KDPoint(scroll.x(), state.verticalScroll()));
+}
+
+void NestedMenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (selectedRow() >= 0) {
+    m_lastState = currentState(); // Persist current state
+  }
 }
 
 }

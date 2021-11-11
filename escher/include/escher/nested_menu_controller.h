@@ -28,6 +28,8 @@ public:
   KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   HighlightCell * reusableCell(int index, int type) override;
 
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
+
 protected:
   class Stack {
   public:
@@ -100,10 +102,13 @@ private:
     I18n::Message m_title;
   };
 
+  Stack::State currentState() const { return Stack::State(selectedRow(), m_selectableTableView.contentOffset().y()); }
+  void loadState(Stack::State state);
   BreadcrumbController m_breadcrumbController;
   ListController m_listController;
   InputEventHandler * m_sender;
   Stack m_stack;
+  Stack::State m_lastState;
   static constexpr int k_nestedMenuStackDepth = 1;
 };
 

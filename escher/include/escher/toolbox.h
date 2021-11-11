@@ -11,9 +11,6 @@ class Toolbox : public NestedMenuController {
 public:
   Toolbox(Responder * parentResponder, I18n::Message title = (I18n::Message)0);
 
-  // StackViewController
-  void viewWillAppear() override;
-
   // MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;
   int numberOfRows() const override;

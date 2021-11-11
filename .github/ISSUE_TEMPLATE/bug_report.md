@@ -23,5 +23,7 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+**Device (please complete the following information):**
+ - The device on which you're running Upsilon (computer, n0110, n0100, etc...)
  - Upsilon Version: [go to settings > about > Upsilon Version and type the version here]
+ - Upsilon commit: [settings > about > click one time on epsilon version]

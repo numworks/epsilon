@@ -808,6 +808,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
         {
           // Stop the reduction due to a multiplication overflow
           SystemCircuitBreakerCheckpoint::InterruptDueToReductionFailure();
+          assert(false);
         }
         if (m.isUndefined()) {
           return replaceWithUndefinedInPlace();

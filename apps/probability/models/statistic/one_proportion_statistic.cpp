@@ -60,7 +60,6 @@ Poincare::Layout OneProportionStatistic::estimateLayout() {
 void OneProportionStatistic::setParamAtIndex(int index, double p) {
   if (index == ParamsOrder::N || index == ParamsOrder::X) {
     p = std::round(p);
-    assert(p > 0.0);
   }
   ZStatistic::setParamAtIndex(index, p);
 }

@@ -1805,3 +1805,11 @@ QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("normcdf2(1,2,0,1)", "normcdf2(1,2,0,1)");
   assert_parsed_expression_simplify_to("normpdf(2,0,1)", "normpdf(2,0,1)");
 }
+
+QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {
+  // Try with ReductionTarget = User --> fails --> retry with ReductionTarget = SystemForApproximatio
+  //
+  assert_parsed_expression_simplify_to("(π+𝐢)^√(𝐢×(𝐢+2))", "(π+𝐢)^√(2×𝐢-1)");
+  // Multiplication overflows --> don't reduce
+  assert_parsed_expression_simplify_to("20^23×20^23×20^23×20^23×20^23×20^23×25^23×20^23×20^23×20^23×20^23×20^23×20^23×25^23", "20^23×20^23×20^23×20^23×20^23×20^23×25^23×20^23×20^23×20^23×20^23×20^23×20^23×25^23");
+}

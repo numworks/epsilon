@@ -25,7 +25,7 @@ void assert_expression_simplify_to_with_dependencies(
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   ExpressionNode::ReductionContext reductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target, symbolicComputation, unitConversion);
-  Expression d = e.simplify(reductionContext);
+  Expression d = e.cloneAndSimplify(reductionContext);
 
   quiz_assert_print_if_failure(d.type() == ExpressionNode::Type::Dependency, expression);
   assert_expression_serialize_to(d.childAtIndex(0), simplifiedExpression);

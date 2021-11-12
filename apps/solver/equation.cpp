@@ -32,8 +32,8 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
   Context * contextToUse = replaceFunctionsButNotSymbols ? &emptyContext : context;
 
   // Reduce the expression
-  Expression expressionRed = expressionInputWithoutFunctions.clone();
-  PoincareHelpers::Simplify(&expressionRed, contextToUse, reductionTarget);
+  Expression expressionRed = expressionInputWithoutFunctions;
+  PoincareHelpers::CloneAndSimplify(&expressionRed, contextToUse, reductionTarget);
 
   if (expressionRed.type() == ExpressionNode::Type::Nonreal) {
     returnedExpression = Nonreal::Builder();

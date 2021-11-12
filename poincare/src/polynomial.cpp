@@ -22,8 +22,8 @@ int Polynomial::LinearPolynomialRoots(Expression a, Expression b, Expression * r
   assert(!(a.isUninitialized() || b.isUninitialized()));
   ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
 
-  *root = Division::Builder(Opposite::Builder(b), a).simplify(reductionContext);
-  *root = root->simplify(reductionContext);
+  *root = Division::Builder(Opposite::Builder(b), a).cloneAndSimplify(reductionContext);
+  *root = root->cloneAndSimplify(reductionContext);
   return !root->isUndefined();
 }
 
@@ -34,7 +34,7 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
   ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
 
   *delta = Subtraction::Builder(Power::Builder(b.clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), a.clone(), c.clone()));
-  *delta = delta->simplify(reductionContext);
+  *delta = delta->cloneAndSimplify(reductionContext);
   if (delta->isUndefined()) {
     *root1 = Undefined::Builder();
     *root2 = Undefined::Builder();
@@ -67,8 +67,8 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
   }
 
   if (!approximateSolutions) {
-    *root1 = root1->simplify(reductionContext);
-    *root2 = root2->simplify(reductionContext);
+    *root1 = root1->cloneAndSimplify(reductionContext);
+    *root2 = root2->cloneAndSimplify(reductionContext);
     if (root1->type() == ExpressionNode::Type::Undefined
      || (!multipleRoot && root2->type() == ExpressionNode::Type::Undefined))
     {
@@ -131,7 +131,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
       Multiplication::Builder(Rational::Builder(-4), a.clone(), Power::Builder(c.clone(), Rational::Builder(3))),
       Multiplication::Builder(Rational::Builder(-4), d.clone(), Power::Builder(b.clone(), Rational::Builder(3)))});
   if (!approximate) {
-    *delta = delta->simplify(reductionContext);
+    *delta = delta->cloneAndSimplify(reductionContext);
     if (delta->type() == ExpressionNode::Type::Undefined) {
       // Simplification has been interrupted, recompute approximated roots.
       approximate = true;
@@ -165,7 +165,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     && (b.nullStatus(context) == ExpressionNode::NullStatus::Null || b.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.)
     && (c.nullStatus(context) == ExpressionNode::NullStatus::Null || c.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.)) {
     *root1 = NthRoot::Builder(Division::Builder(Opposite::Builder(d.clone()), a.clone()), Rational::Builder(3));
-    *root1 = root1->simplify(reductionContext);
+    *root1 = root1->cloneAndSimplify(reductionContext);
     if (root1->numberOfDescendants(true) * 2 > k_maxNumberOfNodesBeforeApproximatingDelta
       || (complexFormat == Preferences::ComplexFormat::Polar && !equationIsReal)) {
       /* Approximate roots if root1 is uninitialized, too big (roots 2 and 3
@@ -204,8 +204,8 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   if (!root1->isUninitialized() && root2->isUninitialized()) {
     /* We have found one simple solution, we can factor and solve the quadratic
      * equation. */
-    Expression beta = Addition::Builder({b.clone(), Multiplication::Builder(a.clone(), root1->clone())}).simplify(reductionContext);
-    Expression gamma = root1->nullStatus(context) == ExpressionNode::NullStatus::Null ? c.clone() : Opposite::Builder(Division::Builder(d.clone(), root1->clone())).simplify(reductionContext);
+    Expression beta = Addition::Builder({b.clone(), Multiplication::Builder(a.clone(), root1->clone())}).cloneAndSimplify(reductionContext);
+    Expression gamma = root1->nullStatus(context) == ExpressionNode::NullStatus::Null ? c.clone() : Opposite::Builder(Division::Builder(d.clone(), root1->clone())).cloneAndSimplify(reductionContext);
     Expression delta2;
     QuadraticPolynomialRoots(a.clone(), beta, gamma, root2, root3, &delta2, context, complexFormat, angleUnit);
     assert(!root2->isUninitialized() && !root3->isUninitialized());
@@ -223,7 +223,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
       assert(!std::isnan(deltaValue) || deltaSign == -1);
     }
     // b^2 - 3ac
-    Expression delta0 = Subtraction::Builder(Power::Builder(b.clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(3), a.clone(), c.clone())).simplify(reductionContext);
+    Expression delta0 = Subtraction::Builder(Power::Builder(b.clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(3), a.clone(), c.clone())).cloneAndSimplify(reductionContext);
     if (deltaSign == 0) {
       if (delta0.nullStatus(context) == ExpressionNode::NullStatus::Null || delta0.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.) {
         // -b / 3a
@@ -243,7 +243,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
           Multiplication::Builder(Rational::Builder(2), Power::Builder(b.clone(), Rational::Builder(3))),
           Multiplication::Builder(Rational::Builder(-9), a.clone(), b.clone(), c.clone()),
           Multiplication::Builder(Rational::Builder(27), Power::Builder(a.clone(), Rational::Builder(2)), d.clone())
-          }).simplify(reductionContext);
+          }).cloneAndSimplify(reductionContext);
       /* Cardano's formula is famous for introducing complex numbers in the
        * resolution of some real equations. As such, we temporarily set the
        * complex format to Cartesian. */
@@ -279,7 +279,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
             }
           }
         } else {
-          roots[i] = roots[i].simplify(complexContext);
+          roots[i] = roots[i].cloneAndSimplify(complexContext);
         }
       }
       if (loneRealRootIndex >= 0) {
@@ -293,14 +293,14 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
 
   /* Simplify the results with the correct complexFormat */
   if (!approximate) {
-    *root1 = root1->simplify(reductionContext);
+    *root1 = root1->cloneAndSimplify(reductionContext);
     bool simplificationFailed = root1->type() == ExpressionNode::Type::Undefined;
     if (root2->isUninitialized() || root2->type() != ExpressionNode::Type::Undefined) {
-      *root2 = root2->simplify(reductionContext);
+      *root2 = root2->cloneAndSimplify(reductionContext);
       simplificationFailed |=root2->type() == ExpressionNode::Type::Undefined;
     }
     if (root3->isUninitialized() || root3->type() != ExpressionNode::Type::Undefined) {
-      *root3 = root3->simplify(reductionContext);
+      *root3 = root3->cloneAndSimplify(reductionContext);
       simplificationFailed |= root3->type() == ExpressionNode::Type::Undefined;
     }
     if (simplificationFailed) {
@@ -364,7 +364,7 @@ Expression Polynomial::ReducePolynomial(const Expression * coefficients, int deg
     polynomial.addChildAtIndexInPlace(Multiplication::Builder(coefficients[i].clone(), Power::Builder(parameter.clone(), Rational::Builder(i))), i, i);
   }
   // Try to simplify polynomial
-  Expression simplifiedReducedPolynomial = polynomial.clone().simplify(reductionContext);
+  Expression simplifiedReducedPolynomial = polynomial.cloneAndSimplify(reductionContext);
   return simplifiedReducedPolynomial;
 }
 
@@ -471,7 +471,7 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
     }
     C = Division::Builder(diff, Rational::Builder(2));
   }
-  C = NthRoot::Builder(C, Rational::Builder(3)).simplify(reductionContext);
+  C = NthRoot::Builder(C, Rational::Builder(3)).cloneAndSimplify(reductionContext);
 
   if (C.type() == ExpressionNode::Type::NthRoot || C.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Unknown) {
     C = C.approximate<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());

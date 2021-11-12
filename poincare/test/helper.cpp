@@ -96,7 +96,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
       if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
         e.simplifyAndApproximate(&simplifiedExpression, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation(), reductionContext.unitConversion());
       } else {
-        simplifiedExpression = e.clone().simplify(reductionContext);
+        simplifiedExpression = e.cloneAndSimplify(reductionContext);
       }
       return simplifiedExpression;
     });
@@ -141,7 +141,7 @@ void assert_expression_simplifies_approximates_to(const char * expression, const
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
   assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
-      e = e.simplify(reductionContext);
+      e = e.cloneAndSimplify(reductionContext);
       return e.approximate<T>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     }, numberOfDigits);
 }

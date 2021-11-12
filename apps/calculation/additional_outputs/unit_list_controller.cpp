@@ -41,16 +41,16 @@ void UnitListController::setExpression(Poincare::Expression e) {
 
   // 2. SI units only
   assert(numberOfExpressions < k_maxNumberOfRows - 1);
-  expressions[numberOfExpressions] = m_expression.clone();
-  Shared::PoincareHelpers::Simplify(&expressions[numberOfExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
+  expressions[numberOfExpressions] = m_expression;
+  Shared::PoincareHelpers::CloneAndSimplify(&expressions[numberOfExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
   numberOfExpressions++;
 
   /* 3. Get rid of duplicates
    * We find duplicates by comparing the serializations, to eliminate
    * expressions that only differ by the types of their number nodes. */
-  Expression reduceExpression = m_expression.clone();
+  Expression reduceExpression = m_expression;
   // Make m_expression comparable to expressions (turn BasedInteger into Rational for instance)
-  Shared::PoincareHelpers::Simplify(&reduceExpression, App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::None);
+  Shared::PoincareHelpers::CloneAndSimplify(&reduceExpression, App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::None);
   int currentExpressionIndex = 0;
   while (currentExpressionIndex < numberOfExpressions) {
     bool duplicateFound = false;

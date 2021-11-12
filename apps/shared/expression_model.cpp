@@ -81,9 +81,7 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
-      Expression tempExpression = m_expression.clone();
-      PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
-      m_expression = tempExpression;
+      PoincareHelpers::CloneAndSimplify(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
     }
   }
   return m_expression;

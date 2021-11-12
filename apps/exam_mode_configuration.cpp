@@ -53,15 +53,9 @@ bool ExamModeConfiguration::testModeAvailable() {
 }
 
 Preferences::ExamMode ExamModeConfiguration::examModeAtIndex(int index) {
-  switch (index) {
-  case 0:
-    return Preferences::ExamMode::Standard;
-  case 1:
-    return Preferences::ExamMode::Dutch;
-  default:
-    assert(index == 2);
-    return Preferences::ExamMode::IBTest;
-  }
+  Preferences::ExamMode examModes[] = {Preferences::ExamMode::Standard, Preferences::ExamMode::Dutch, Preferences::ExamMode::IBTest};
+  assert(index >= 0 && index < sizeof(examModes)/sizeof(Preferences::ExamMode));
+  return examModes[index];
 }
 
 I18n::Message ExamModeConfiguration::examModeActivationMessage(int index) {
@@ -79,15 +73,13 @@ I18n::Message ExamModeConfiguration::examModeActivationMessage(int index) {
       return I18n::Message::ReactivateIBExamMode;
     default:
       assert(examMode == Preferences::ExamMode::Off);
-      switch (index) {
-      case 0:
-        return (specifyFrenchExamModeType ? I18n::Message::ActivateFrenchExamMode : I18n::Message::ActivateExamMode);
-      case 1:
-        return I18n::Message::ActivateDutchExamMode;
-      default:
-        assert(index == 2);
-        return I18n::Message::ActivateIBExamMode;
-      }
+      I18n::Message messages[] = {
+          (specifyFrenchExamModeType ? I18n::Message::ActivateFrenchExamMode
+                                     : I18n::Message::ActivateExamMode),
+          I18n::Message::ActivateDutchExamMode,
+          I18n::Message::ActivateIBExamMode};
+      assert(index >= 0 && index < sizeof(messages) / sizeof(I18n::Message));
+      return messages[index];
   }
 }
 

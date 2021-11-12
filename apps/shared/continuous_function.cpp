@@ -781,7 +781,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
      * A workaround could be to identify big functions to skip simplification at
      * the cost of possible inaccurate evaluations (such as diff(abs(x),x,0) not
      * being undefined). */
-    PoincareHelpers::Simplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+    PoincareHelpers::CloneAndSimplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   }
   return m_expressionDerivate;
 }

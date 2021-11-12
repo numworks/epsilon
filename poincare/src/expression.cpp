@@ -575,7 +575,7 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
-  exp = exp.simplify(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion));
+  exp = exp.cloneAndSimplify(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion));
   assert(!exp.isUninitialized());
   return exp;
 }
@@ -592,8 +592,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
   assert(!simplifiedExpression->isUninitialized() && (!approximateExpression || !approximateExpression->isUninitialized()));
 }
 
-Expression Expression::simplify(ExpressionNode::ReductionContext reductionContext) {
-  // TODO
+Expression Expression::cloneAndSimplify(ExpressionNode::ReductionContext reductionContext) {
   bool reduceFailure = false;
   Expression e = cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
   if (reduceFailure) {

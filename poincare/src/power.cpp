@@ -729,7 +729,12 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Integer denominator = rationalIndex.integerDenominator();
     Power p = Power::Builder(result, Rational::Builder(one, denominator));
     replaceWithInPlace(p);
-    return std::move(p);
+    if (result.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant &>(result).isConstant("𝐢")) {
+      // Don't shallowReduce to avoid infinite loop
+      return std::move(p);
+    } else {
+      return p.shallowReduce(reductionContext);
+    }
   }
 
   /* Step 10

@@ -6,15 +6,15 @@ using namespace Escher;
 
 KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
   int requiredSecondaryDirectionLength = 0, requiredMainDirectionLength = 0;
-  KDCoordinate proposedSecondaryDirection = adaptSize(bounds().size()).width()
-                                            - 2 * m_secondaryDirectionMargin;
+  KDCoordinate suggestedSecondaryDirectionLength
+      = adaptSize(bounds().size()).width() - 2 * m_secondaryDirectionMargin;
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
     View * subview = const_cast<OrientedLayout *>(this)->subviewAtIndex(i);
     KDCoordinate currentSubviewMainDirectionLength
         = adaptSize(subview->bounds().size()).height();
-    subview->setSize(adaptSize(
-        KDSize(proposedSecondaryDirection, currentSubviewMainDirectionLength)));
+    subview->setSize(adaptSize(KDSize(suggestedSecondaryDirectionLength,
+                                      currentSubviewMainDirectionLength)));
     KDSize subviewSize = adaptSize(subview->minimalSizeForOptimalDisplay());
     requiredMainDirectionLength += subviewSize.height();
     requiredSecondaryDirectionLength = std::max<int>(
@@ -47,10 +47,10 @@ void OrientedLayout::layoutSubviews(bool force) {
         = adaptSize(subview->minimalSizeForOptimalDisplay()).height();
     assert(availableMainDirection
            >= offsetMainDirection + requiredMainDirectionLength);
-    const KDRect proposedFrame = KDRect(
+    const KDRect suggestedFrame = KDRect(
         KDPoint(m_secondaryDirectionMargin, offsetMainDirection),
         availableSecondaryDirection, requiredMainDirectionLength);
-    subview->setFrame(adaptRect(proposedFrame), false);
+    subview->setFrame(adaptRect(suggestedFrame), false);
     offsetMainDirection += requiredMainDirectionLength;
   }
 }

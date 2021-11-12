@@ -373,7 +373,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
       m_numberOfSolutions = n;
       for (int i = 0; i < m_numberOfSolutions; i++) {
         exactSolutions[i] = Expression();
-        Ab.matrixChild(i,n).simplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), angleUnit, unitFormat);
+        Ab.matrixChild(i,n).cloneAndSimplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), angleUnit, unitFormat);
       }
     }
   }
@@ -397,7 +397,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
     } else {
       Expression exactSolution = exactSolutions[i];
       exactSolutions[i] = Expression();
-      exactSolution.simplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
+      exactSolution.cloneAndSimplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
     }
   }
   return Error::NoError;

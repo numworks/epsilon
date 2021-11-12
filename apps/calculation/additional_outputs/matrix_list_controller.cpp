@@ -85,7 +85,7 @@ Poincare::Layout MatrixListController::getLayoutFromExpression(Expression e, Con
   // Simplify or approximate expression
   Expression approximateExpression;
   Expression simplifiedExpression;
-  e.simplifyAndApproximate(&simplifiedExpression, &approximateExpression, context,
+  e.cloneAndSimplifyAndApproximate(&simplifiedExpression, &approximateExpression, context,
     preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
     ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   // simplify might have been interrupted, in which case we use approximate

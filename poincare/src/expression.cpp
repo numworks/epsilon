@@ -588,7 +588,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
     *approximateExpression = Undefined::Builder();
     return;
   }
-  exp.simplifyAndApproximate(simplifiedExpression, approximateExpression, context, complexFormat, angleUnit, unitFormat, symbolicComputation, unitConversion);
+  exp.cloneAndSimplifyAndApproximate(simplifiedExpression, approximateExpression, context, complexFormat, angleUnit, unitFormat, symbolicComputation, unitConversion);
   assert(!simplifiedExpression->isUninitialized() && (!approximateExpression || !approximateExpression->isUninitialized()));
 }
 
@@ -664,7 +664,7 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
   }
 }
 
-void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) const {
+void Expression::cloneAndSimplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) const {
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   assert(!approximateExpression || approximateExpression->isUninitialized());
   // TODO: Store and reset the previous Checkpoint if there is on but override this one to ensure changing reductionContext !

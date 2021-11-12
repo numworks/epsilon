@@ -94,7 +94,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
   assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, unitFormat, symbolicComputation, unitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       Expression simplifiedExpression;
       if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
-        e.simplifyAndApproximate(&simplifiedExpression, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation(), reductionContext.unitConversion());
+        e.cloneAndSimplifyAndApproximate(&simplifiedExpression, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation(), reductionContext.unitConversion());
       } else {
         simplifiedExpression = e.cloneAndSimplify(reductionContext);
       }
@@ -131,7 +131,7 @@ void assert_expression_simplifies_and_approximates_to(const char * expression, c
   assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
       Expression reduced;
       Expression approximated;
-      e.simplifyAndApproximate(&reduced, &approximated, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation());
+      e.cloneAndSimplifyAndApproximate(&reduced, &approximated, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation());
       return approximated;
     }, numberOfDigits);
 }

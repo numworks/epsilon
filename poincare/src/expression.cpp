@@ -593,7 +593,13 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
 }
 
 Expression Expression::simplify(ExpressionNode::ReductionContext reductionContext) {
-  return deepReduceWithSystemCheckpoint(&reductionContext).deepBeautify(reductionContext);
+  bool reduceFailure = false;
+  Expression e = deepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  if (reduceFailure) {
+    // We can't beautify unreduced expression
+    return e;
+  }
+  return e.deepBeautify(reductionContext);
 }
 
 void makePositive(Expression * e, bool * isNegative) {
@@ -670,7 +676,16 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
    * again with ReductionTarget::SystemForApproximation. */
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion);
   ExpressionNode::ReductionContext reductionContext = userReductionContext;
-  Expression e = deepReduceWithSystemCheckpoint(&reductionContext);
+  bool reduceFailure = false;
+  Expression e = deepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  if (reduceFailure) {
+    // We can't beautify unreduced expression
+    *simplifiedExpression = e;
+    if (approximateExpression) {
+      *approximateExpression = simplifiedExpression->approximate<double>(context, complexFormat, angleUnit);
+    }
+    return;
+  }
 
   // Step 2: we approximate and beautify the reduced expression
   /* Case 1: the reduced expression is a matrix: We scan the matrix children to
@@ -768,29 +783,44 @@ Expression Expression::reduceAndRemoveUnit(ExpressionNode::ReductionContext redu
   return deepReduce(reductionContext).removeUnit(Unit);
 }
 
-Expression Expression::deepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext) const {
+Expression Expression::deepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const {
+  *reduceFailure = false;
 #if __EMSCRIPTEN__
   Expression e = clone().deepReduce(*reductionContext);
   if (SystemCircuitBreakerCheckpoint::HasBeenInterrupted()) {
     SystemCircuitBreakerCheckpoint::ClearInterruption();
     reductionContext->setTarget(ExpressionNode::ReductionTarget::SystemForApproximation);
     e = clone().deepReduce(*reductionContext);
+    if (SystemCircuitBreakerCheckpoint::HasBeenInterrupted()) {
+      SystemCircuitBreakerCheckpoint::ClearInterruption();
+      e = clone();
+      *reduceFailure = true;
+    }
   }
 #else
+  Expression e;
   SystemCircuitBreakerCheckpoint systemCheckpoint;
   if (!CircuitBreakerRun(systemCheckpoint)) {
-    reductionContext->context()->tidy();
-    // System interruption, try again with another ReductionTarget
-    reductionContext->setTarget(ExpressionNode::ReductionTarget::SystemForApproximation);
-    systemCheckpoint.discard();
+    if (reductionContext->target() != ExpressionNode::ReductionTarget::SystemForApproximation) {
+      reductionContext->context()->tidy();
+      // System interruption, try again with another ReductionTarget
+      reductionContext->setTarget(ExpressionNode::ReductionTarget::SystemForApproximation);
+      e = clone().deepReduce(*reductionContext);
+    } else {
+      *reduceFailure = true;
+      e = clone();
+    }
+  } else {
+    e = clone().deepReduce(*reductionContext);
   }
-  Expression e = clone().deepReduce(*reductionContext);
 #endif
   return e;
 }
 
 Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext) {
-  return deepReduceWithSystemCheckpoint(&reductionContext);
+  // TODO: clone and reduce
+  bool reduceFailure;
+  return deepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {

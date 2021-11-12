@@ -782,10 +782,6 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
      * the cost of possible inaccurate evaluations (such as diff(abs(x),x,0) not
      * being undefined). */
     PoincareHelpers::Simplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
-    // simplify might return an uninitialized Expression if interrupted
-    if (m_expressionDerivate.isUninitialized()) {
-      m_expressionDerivate = Derivative::Builder(expressionReduced(record, context).clone(), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
-    }
   }
   return m_expressionDerivate;
 }

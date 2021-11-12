@@ -83,10 +83,7 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
        * 'Simplify'. Thus, we use a temporary expression. */
       Expression tempExpression = m_expression.clone();
       PoincareHelpers::Simplify(&tempExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
-      // simplify might return an uninitialized Expression if interrupted
-      if (!tempExpression.isUninitialized()) {
-        m_expression = tempExpression;
-      }
+      m_expression = tempExpression;
     }
   }
   return m_expression;

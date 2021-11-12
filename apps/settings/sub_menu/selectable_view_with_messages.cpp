@@ -50,11 +50,10 @@ void SelectableViewWithMessages::layoutSubviews(bool force) {
   KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
   KDCoordinate defOrigin = std::max<KDCoordinate>(
     bounds().height() - Metric::CommonBottomMargin - m_numberOfMessages*textHeight,
-    k_minSelectableTableViewHeight + Metric::CommonBottomMargin);
-  assert(defOrigin >= k_minSelectableTableViewHeight + Metric::CommonBottomMargin);
+    Metric::CommonBottomMargin + k_minSelectableTableViewHeight + Metric::CommonBottomMargin);
 
   // Layout the table view
-  m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), defOrigin - Metric::CommonBottomMargin), force);
+  m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), defOrigin), force);
 
   // Layout the text
   for (int i = 0; i < m_numberOfMessages; i++) {

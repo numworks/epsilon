@@ -23,7 +23,6 @@ private:
   int initialSelectedRow() const override;
   Poincare::Preferences::ExamMode examMode();
   static constexpr int k_maxNumberOfCells = 3;
-  // TODO Hugo : Fix the scroll view apperaring after IB activation.
   SelectableViewWithMessages m_contentView;
   Escher::MessageTableCell m_cell[k_maxNumberOfCells];
 };

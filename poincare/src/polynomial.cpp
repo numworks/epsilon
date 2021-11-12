@@ -35,7 +35,6 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
 
   *delta = Subtraction::Builder(Power::Builder(b.clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), a.clone(), c.clone()));
   *delta = delta->simplify(reductionContext);
-  assert(!delta->isUninitialized());
   if (delta->isUndefined()) {
     *root1 = Undefined::Builder();
     *root2 = Undefined::Builder();
@@ -70,9 +69,7 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
   if (!approximateSolutions) {
     *root1 = root1->simplify(reductionContext);
     *root2 = root2->simplify(reductionContext);
-    if (root1->isUninitialized()
-     || root2->isUninitialized()
-     || root1->type() == ExpressionNode::Type::Undefined
+    if (root1->type() == ExpressionNode::Type::Undefined
      || (!multipleRoot && root2->type() == ExpressionNode::Type::Undefined))
     {
       // Simplification has been interrupted, recompute approximated roots.
@@ -135,7 +132,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
       Multiplication::Builder(Rational::Builder(-4), d.clone(), Power::Builder(b.clone(), Rational::Builder(3)))});
   if (!approximate) {
     *delta = delta->simplify(reductionContext);
-    if (delta->isUninitialized() || delta->type() == ExpressionNode::Type::Undefined) {
+    if (delta->type() == ExpressionNode::Type::Undefined) {
       // Simplification has been interrupted, recompute approximated roots.
       approximate = true;
       if (approximateSolutions != nullptr) {
@@ -169,8 +166,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     && (c.nullStatus(context) == ExpressionNode::NullStatus::Null || c.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.)) {
     *root1 = NthRoot::Builder(Division::Builder(Opposite::Builder(d.clone()), a.clone()), Rational::Builder(3));
     *root1 = root1->simplify(reductionContext);
-    if (root1->isUninitialized()
-      || root1->numberOfDescendants(true) * 2 > k_maxNumberOfNodesBeforeApproximatingDelta
+    if (root1->numberOfDescendants(true) * 2 > k_maxNumberOfNodesBeforeApproximatingDelta
       || (complexFormat == Preferences::ComplexFormat::Polar && !equationIsReal)) {
       /* Approximate roots if root1 is uninitialized, too big (roots 2 and 3
        * might be twice root1's size), or if complex format is Polar, which can
@@ -298,16 +294,16 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   /* Simplify the results with the correct complexFormat */
   if (!approximate) {
     *root1 = root1->simplify(reductionContext);
-    bool simplificationInterrupted = root1->isUninitialized() || root1->type() == ExpressionNode::Type::Undefined;
+    bool simplificationFailed = root1->type() == ExpressionNode::Type::Undefined;
     if (root2->isUninitialized() || root2->type() != ExpressionNode::Type::Undefined) {
       *root2 = root2->simplify(reductionContext);
-      simplificationInterrupted |= root2->isUninitialized() || root2->type() == ExpressionNode::Type::Undefined;
+      simplificationFailed |=root2->type() == ExpressionNode::Type::Undefined;
     }
     if (root3->isUninitialized() || root3->type() != ExpressionNode::Type::Undefined) {
       *root3 = root3->simplify(reductionContext);
-      simplificationInterrupted |= root3->isUninitialized() || root3->type() == ExpressionNode::Type::Undefined;
+      simplificationFailed |= root3->type() == ExpressionNode::Type::Undefined;
     }
-    if (simplificationInterrupted) {
+    if (simplificationFailed) {
       // Simplification has been interrupted, recompute approximated roots.
       approximate = true;
       if (approximateSolutions != nullptr) {
@@ -320,7 +316,6 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     *root2 = root2->approximate<double>(context, complexFormat, angleUnit);
     *root3 = root3->approximate<double>(context, complexFormat, angleUnit);
   }
-  assert(!(root1->isUninitialized() || root2->isUninitialized() || root3->isUninitialized()));
 
   /* Remove duplicates */
   if (root3->isIdenticalTo(*root1) || root3->isIdenticalTo(*root2)) {
@@ -370,7 +365,7 @@ Expression Polynomial::ReducePolynomial(const Expression * coefficients, int deg
   }
   // Try to simplify polynomial
   Expression simplifiedReducedPolynomial = polynomial.clone().simplify(reductionContext);
-  return simplifiedReducedPolynomial.isUninitialized() ? polynomial : simplifiedReducedPolynomial;
+  return simplifiedReducedPolynomial;
 }
 
 Rational Polynomial::ReduceRationalPolynomial(const Rational * coefficients, int degree, Rational parameter) {

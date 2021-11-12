@@ -814,6 +814,7 @@ Expression Expression::deepReduceWithSystemCheckpoint(ExpressionNode::ReductionC
     e = clone().deepReduce(*reductionContext);
   }
 #endif
+  assert(!e.isUninitialized());
   return e;
 }
 

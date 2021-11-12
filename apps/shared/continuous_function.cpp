@@ -758,7 +758,6 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
     result = Subtraction::Builder(leftExpression, result.childAtIndex(1));
   }
   PoincareHelpers::Reduce(&result, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
-  assert(!result.isUninitialized());
   return result;
 }
 

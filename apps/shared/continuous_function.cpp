@@ -678,7 +678,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       }
     }
     // Reduce m_expression to optimize approximations
-    PoincareHelpers::Reduce(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+    PoincareHelpers::CloneAndReduce(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   }
   return m_expression;
 }
@@ -757,7 +757,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   if (isUnnamedFunction) {
     result = Subtraction::Builder(leftExpression, result.childAtIndex(1));
   }
-  PoincareHelpers::Reduce(&result, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  PoincareHelpers::CloneAndReduce(&result, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
   return result;
 }
 

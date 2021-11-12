@@ -9,7 +9,7 @@ void assert_roots_of_polynomial_are(const char * polynomial, const char * const 
   Shared::GlobalContext context;
   ExpressionNode::ReductionContext reductionContext(&context, complexFormat, angleUnit, MetricUnitFormat, User);
 
-  Expression polynomialExp = parse_expression(polynomial, &context, false).reduce(reductionContext);
+  Expression polynomialExp = parse_expression(polynomial, &context, false).cloneAndReduce(reductionContext);
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   int degree = polynomialExp.getPolynomialReducedCoefficients(symbol, coefficients, &context, complexFormat, angleUnit, MetricUnitFormat, ReplaceAllDefinedSymbolsWithDefinition);
 

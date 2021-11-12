@@ -86,7 +86,7 @@ void assert_expression_reduce(Expression e, Preferences::AngleUnit angleUnit, Pr
   Shared::GlobalContext globalContext;
   ExpressionNode::ReductionContext context = ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target);
   bool reductionFailure = false;
-  e = e.deepReduceWithSystemCheckpoint(&context, &reductionFailure);
+  e = e.cloneAndDeepReduceWithSystemCheckpoint(&context, &reductionFailure);
   quiz_assert_print_if_failure(!reductionFailure, printIfFailure);
 }
 

@@ -232,7 +232,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
     equation = polynomialCoefficients[0];
     index++;
   }
-  constant[0] = Opposite::Builder(equation.clone()).reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
+  constant[0] = Opposite::Builder(equation).cloneAndReduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
   /* The expression can be linear on all coefficients taken one by one but
    * non-linear (ex: xy = 2). We delete the results and return false if one of
    * the coefficients contains a variable. */
@@ -433,7 +433,7 @@ int Expression::defaultGetPolynomialCoefficients(Context * context, const char *
 int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const {
   int degree = getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
-    coefficients[i] = coefficients[i].reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
+    coefficients[i] = coefficients[i].cloneAndReduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
   }
   return degree;
 }
@@ -593,8 +593,9 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
 }
 
 Expression Expression::simplify(ExpressionNode::ReductionContext reductionContext) {
+  // TODO
   bool reduceFailure = false;
-  Expression e = deepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  Expression e = cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
   if (reduceFailure) {
     // We can't beautify unreduced expression
     return e;
@@ -677,7 +678,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion);
   ExpressionNode::ReductionContext reductionContext = userReductionContext;
   bool reduceFailure = false;
-  Expression e = deepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  Expression e = cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
   if (reduceFailure) {
     // We can't beautify unreduced expression
     *simplifiedExpression = e;
@@ -783,7 +784,7 @@ Expression Expression::reduceAndRemoveUnit(ExpressionNode::ReductionContext redu
   return deepReduce(reductionContext).removeUnit(Unit);
 }
 
-Expression Expression::deepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const {
+Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const {
   *reduceFailure = false;
 #if __EMSCRIPTEN__
   Expression e = clone().deepReduce(*reductionContext);
@@ -818,10 +819,10 @@ Expression Expression::deepReduceWithSystemCheckpoint(ExpressionNode::ReductionC
   return e;
 }
 
-Expression Expression::reduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Expression::cloneAndReduce(ExpressionNode::ReductionContext reductionContext) const {
   // TODO: clone and reduce
   bool reduceFailure;
-  return deepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {

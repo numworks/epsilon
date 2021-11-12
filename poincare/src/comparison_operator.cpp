@@ -60,7 +60,7 @@ ExpressionNode::Type ComparisonOperator::Opposite(ExpressionNode::Type type) {
 
 Expression ComparisonOperator::standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::ReductionTarget reductionTarget) const {
   Expression sub = Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());
-  return sub.reduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, reductionTarget));
+  return sub.cloneAndReduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, reductionTarget));
 }
 
 }

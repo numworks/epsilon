@@ -51,7 +51,7 @@ void MatrixListController::setExpression(Poincare::Expression e) {
     /* Determinant is reduced so that a null determinant can be detected.
      * However, some exceptions remain such as cos(x)^2+sin(x)^2-1 which will
      * not be reduced to a rational, but will be null in theory. */
-    Expression determinant = Determinant::Builder(m_expression.clone()).reduce(reductionContext);
+    Expression determinant = Determinant::Builder(m_expression).cloneAndReduce(reductionContext);
     m_indexMessageMap[index] = messageIndex++;
     m_layouts[index++] = getLayoutFromExpression(determinant, context, preferences);
     // 2. Matrix inverse if invertible matrix
@@ -59,12 +59,12 @@ void MatrixListController::setExpression(Poincare::Expression e) {
     if (!determinant.isUndefined() && determinant.nullStatus(context) != ExpressionNode::NullStatus::Null) {
       // TODO: Handle ExpressionNode::NullStatus::Unknown
       m_indexMessageMap[index] = messageIndex++;
-      m_layouts[index++] = getLayoutFromExpression(MatrixInverse::Builder(m_expression.clone()), context, preferences);
+      m_layouts[index++] = getLayoutFromExpression(MatrixInverse::Builder(m_expression), context, preferences);
     }
   }
   // 3. Matrix row echelon form
   messageIndex = 2;
-  Expression rowEchelonForm = MatrixRowEchelonForm::Builder(m_expression.clone());
+  Expression rowEchelonForm = MatrixRowEchelonForm::Builder(m_expression);
   m_indexMessageMap[index] = messageIndex++;
   m_layouts[index++] = getLayoutFromExpression(rowEchelonForm, context, preferences);
   /* 4. Matrix reduced row echelon form
@@ -74,7 +74,7 @@ void MatrixListController::setExpression(Poincare::Expression e) {
   // 5. Matrix trace if square matrix
   if (mIsSquared) {
     m_indexMessageMap[index] = messageIndex++;
-    m_layouts[index++] = getLayoutFromExpression(MatrixTrace::Builder(m_expression.clone()), context, preferences);
+    m_layouts[index++] = getLayoutFromExpression(MatrixTrace::Builder(m_expression), context, preferences);
   }
   // Reset complex format as before
   preferences->setComplexFormat(currentComplexFormat);

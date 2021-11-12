@@ -40,7 +40,7 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
   // Reduce Conic for analysis
-  Expression reducedExpression = e.clone().reduce(
+  Expression reducedExpression = e.cloneAndReduce(
       ExpressionNode::ReductionContext(
           context, complexFormat, angleUnit, unitFormat,
           ExpressionNode::ReductionTarget::SystemForAnalysis));

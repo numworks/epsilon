@@ -1550,6 +1550,7 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("1/(1+𝐢)", "1/\u0012𝐢+1\u0013", SystemForAnalysis);
   assert_parsed_expression_simplify_to("1/(1+𝐢)", "1/\u0012𝐢+1\u0013", SystemForApproximation);
   assert_parsed_expression_simplify_to("1/(1+𝐢)", "1/2-1/2×𝐢", User);
+  assert_parsed_expression_simplify_to("√(𝐢×(𝐢+2))", "√(2×𝐢-1)", SystemForApproximation);
 
   // Replace sin/cos-->tan for ReductionTarget = User
   assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))", "sin(x)/cos(x)^2", SystemForAnalysis);

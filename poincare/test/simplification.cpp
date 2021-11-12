@@ -1807,8 +1807,7 @@ QUIZ_CASE(poincare_probability) {
 }
 
 QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {
-  // Try with ReductionTarget = User --> fails --> retry with ReductionTarget = SystemForApproximatio
-  //
+  // Try with ReductionTarget = User --> fails --> retry with ReductionTarget = SystemForApproximation
   assert_parsed_expression_simplify_to("(π+𝐢)^√(𝐢×(𝐢+2))", "(π+𝐢)^√(2×𝐢-1)");
   // Multiplication overflows --> don't reduce
   assert_parsed_expression_simplify_to("20^23×20^23×20^23×20^23×20^23×20^23×25^23×20^23×20^23×20^23×20^23×20^23×20^23×25^23", "20^23×20^23×20^23×20^23×20^23×20^23×25^23×20^23×20^23×20^23×20^23×20^23×20^23×25^23");

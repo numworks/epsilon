@@ -134,24 +134,22 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
   Expression rank = symbol.childAtIndex(0).clone();
   rank = rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<float>::Builder(unknownSymbolValue));
   rank = rank.simplify(ExpressionNode::ReductionContext(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::SystemForApproximation));
-  if (!rank.isUninitialized()) {
-    bool rankIsInteger = false;
-    double rankValue = rank.approximateToScalar<double>(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
-    if (rank.type() == ExpressionNode::Type::Rational) {
-      Rational n = static_cast<Rational &>(rank);
-      rankIsInteger = n.isInteger();
-    } else if (!std::isnan(unknownSymbolValue)) {
-      /* If unknownSymbolValue is not nan, then we are in the graph app. In order
-       * to allow functions like f(x) = u(x+0.5) to be ploted, we need to
-       * approximate the rank and check if it is an integer. Unfortunatly this
-       * leads to some edge cases were, because of quantification, we have
-       * floor(x) = x while x is not integer.*/
-      rankIsInteger = std::floor(rankValue) == rankValue;
-    }
-    if (rankIsInteger && !seq.badlyReferencesItself(ctx)) {
-      SequenceContext sqctx(ctx, sequenceStore());
-      return Float<double>::Builder(seq.evaluateXYAtParameter(rankValue, &sqctx).x2());
-    }
+  bool rankIsInteger = false;
+  double rankValue = rank.approximateToScalar<double>(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
+  if (rank.type() == ExpressionNode::Type::Rational) {
+    Rational n = static_cast<Rational &>(rank);
+    rankIsInteger = n.isInteger();
+  } else if (!std::isnan(unknownSymbolValue)) {
+    /* If unknownSymbolValue is not nan, then we are in the graph app. In order
+     * to allow functions like f(x) = u(x+0.5) to be ploted, we need to
+     * approximate the rank and check if it is an integer. Unfortunatly this
+     * leads to some edge cases were, because of quantification, we have
+     * floor(x) = x while x is not integer.*/
+  rankIsInteger = std::floor(rankValue) == rankValue;
+  }
+  if (rankIsInteger && !seq.badlyReferencesItself(ctx)) {
+    SequenceContext sqctx(ctx, sequenceStore());
+    return Float<double>::Builder(seq.evaluateXYAtParameter(rankValue, &sqctx).x2());
   }
   return Float<double>::Builder(NAN);
 }

@@ -35,10 +35,6 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
   Expression expressionRed = expressionInputWithoutFunctions.clone();
   PoincareHelpers::Simplify(&expressionRed, contextToUse, reductionTarget);
 
-  // simplify might return an uninitialized Expression if interrupted
-  if (expressionRed.isUninitialized()) {
-    expressionRed = expressionInputWithoutFunctions;
-  }
   if (expressionRed.type() == ExpressionNode::Type::Nonreal) {
     returnedExpression = Nonreal::Builder();
   } else if (expressionRed.recursivelyMatches(

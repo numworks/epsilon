@@ -259,6 +259,8 @@ public:
   static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
   void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default) const;
   Expression reduce(ExpressionNode::ReductionContext context);
+  // TODO: deepReduceWithSystemCheckpoint should be private but we need to make poincare/text/helper.h a class to be able to friend it
+  Expression deepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const;
   Expression reduceAndRemoveUnit(ExpressionNode::ReductionContext context, Expression * Unit);
   // WARNING: this must be called on reduced expressions
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
@@ -438,7 +440,6 @@ private:
    * representation but some smaller integers can't - like 2E308-1). */
   static constexpr double k_largestExactIEEE754Integer = 9007199254740992.0;
   Expression deepReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression deepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const;
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
     node()->deepReduceChildren(reductionContext);
   }

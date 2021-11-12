@@ -84,8 +84,10 @@ void assert_reduce(const char * expression, Preferences::AngleUnit angleUnit, Pr
 
 void assert_expression_reduce(Expression e, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target, const char * printIfFailure) {
   Shared::GlobalContext globalContext;
-  e = e.reduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target));
-  quiz_assert_print_if_failure(!(e.isUninitialized()), printIfFailure);
+  ExpressionNode::ReductionContext context = ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target);
+  bool reductionFailure = false;
+  e = e.deepReduceWithSystemCheckpoint(&context, &reductionFailure);
+  quiz_assert_print_if_failure(!reductionFailure, printIfFailure);
 }
 
 void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
@@ -95,9 +97,6 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
         e.simplifyAndApproximate(&simplifiedExpression, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation(), reductionContext.unitConversion());
       } else {
         simplifiedExpression = e.clone().simplify(reductionContext);
-      }
-      if (simplifiedExpression.isUninitialized()) {
-        return e;
       }
       return simplifiedExpression;
     });

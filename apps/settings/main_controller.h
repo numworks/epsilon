@@ -24,7 +24,7 @@ extern const MessageTree s_modelFloatDisplayModeChildren[4];
 extern const MessageTree s_modelComplexFormatChildren[3];
 extern const MessageTree s_modelFontChildren[2];
 extern const MessageTree s_modelExamChildren[3];
-extern const MessageTree s_modeltestModeChildren[2];
+extern const MessageTree s_modelTestModeMenu[2];
 extern const MessageTree s_modelAboutChildren[3];
 extern const MessageTree s_model;
 

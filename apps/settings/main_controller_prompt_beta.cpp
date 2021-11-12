@@ -15,7 +15,7 @@ constexpr MessageTree s_modelMenu[] =
     MessageTree(I18n::Message::Country),
     MessageTree(I18n::Message::ExamMode, s_modelExamChildren),
     MessageTree(I18n::Message::PressToTest),
-    MessageTree(I18n::Message::TestMode, s_modeltestModeChildren),
+    MessageTree(I18n::Message::TestMode, s_modelTestModeMenu),
     MessageTree(I18n::Message::BetaPopUp),
     MessageTree(I18n::Message::About, s_modelAboutChildren),
     MessageTree(I18n::Message::ResetCalculator)};

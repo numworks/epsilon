@@ -22,7 +22,6 @@ public:
   Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, const Poincare::Expression & newExpression);
 
   virtual void tidy() const;
-  bool hasValidExpression() { return !m_expression.isUninitialized(); }
 protected:
   // Setters helper
   virtual Poincare::Expression buildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr) const;

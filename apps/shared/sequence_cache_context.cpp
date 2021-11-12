@@ -42,7 +42,7 @@ const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poin
       if (seq->fullName() != nullptr) {
         if (std::floor(n) == n) {
           Expression sequenceExpression = seq->expressionReduced(this);
-          if (seq->hasValidExpression(this)) {
+          if (!seq->badlyReferencesItself(this)) {
             return Float<T>::Builder(seq->valueAtRank<T>(n, m_sequenceContext));
           }
         }

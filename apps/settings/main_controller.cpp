@@ -16,32 +16,8 @@ constexpr MessageTree s_modelExamChildren[3] = {MessageTree(I18n::Message::Activ
 constexpr MessageTree s_modelFloatDisplayModeChildren[4] = {MessageTree(I18n::Message::Decimal), MessageTree(I18n::Message::Scientific), MessageTree(I18n::Message::Engineering), MessageTree(I18n::Message::SignificantFigures)};
 constexpr MessageTree s_modelComplexFormatChildren[3] = {MessageTree(I18n::Message::Real), MessageTree(I18n::Message::Cartesian), MessageTree(I18n::Message::Polar)};
 constexpr MessageTree s_modelFontChildren[2] = {MessageTree(I18n::Message::LargeFont), MessageTree(I18n::Message::SmallFont)};
+constexpr MessageTree s_modelTestModeMenu[2] = {MessageTree(I18n::Message::ExamMode, s_modelExamChildren), MessageTree(I18n::Message::PressToTest)};
 constexpr MessageTree s_modelAboutChildren[3] = {MessageTree(I18n::Message::SoftwareVersion), MessageTree(I18n::Message::SerialNumber), MessageTree(I18n::Message::FccId)};
-
-// TODO : Add IBExamMode : I18n::Message::IBExamMode
-// TODO : Rename Exam Mode -> French Exam Mode
-// TODO : Fix issue when going back after activating exam mode and exploring forbidden menus
-constexpr MessageTree s_modeltestModeMenu[2] =
-  { MessageTree(I18n::Message::ExamMode, s_modelExamChildren),
-    MessageTree(I18n::Message::PressToTest)};
-
-// TODO : Fix Beta and update prompts
-constexpr MessageTree s_modelMenu[] =
-  { MessageTree(I18n::Message::AngleUnit, s_modelAngleChildren),
-    MessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren),
-    MessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren),
-    MessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren),
-    MessageTree(I18n::Message::Brightness),
-    MessageTree(I18n::Message::FontSizes, s_modelFontChildren),
-    MessageTree(I18n::Message::Language),
-    MessageTree(I18n::Message::Country),
-    MessageTree(I18n::Message::ExamMode, s_modelExamChildren),
-    MessageTree(I18n::Message::PressToTest),
-    MessageTree(I18n::Message::TestMode, s_modeltestModeMenu),
-    MessageTree(I18n::Message::About, s_modelAboutChildren),
-    MessageTree(I18n::Message::ResetCalculator)};
-
-constexpr MessageTree s_model = MessageTree(I18n::Message::SettingsApp, s_modelMenu);
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   SelectableListViewController(parentResponder),

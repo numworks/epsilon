@@ -30,7 +30,7 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
   Expression storedExpression = storeValueForSymbol(reductionContext.context());
 
   if (symbol().type() == ExpressionNode::Type::Symbol) {
-    storedExpression = storedExpression.clone().reduce(reductionContext);
+    storedExpression = storedExpression.cloneAndReduce(reductionContext);
   }
 
   replaceWithInPlace(storedExpression);

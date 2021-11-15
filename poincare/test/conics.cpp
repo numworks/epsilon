@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/conic.h>
+#include <ion/storage.h>
 
 #include "helper.h"
 
@@ -109,6 +110,8 @@ QUIZ_CASE(poincare_conics_invalid) {
   quiz_assert_undefined("y^2-x^2");
   quiz_assert_undefined("(y-x-1)(y-x+1)");
   quiz_assert_undefined("y*(y-x)");
+  Ion::Storage::sharedStorage()->recordNamed("a").destroy();
+  quiz_assert_undefined("y^2-x^2+a");
 }
 
 QUIZ_CASE(poincare_conics_general) {

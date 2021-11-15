@@ -256,6 +256,23 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
        * complex format to Cartesian. */
       ExpressionNode::ReductionContext complexContext(context, Preferences::ComplexFormat::Cartesian, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForApproximation);
       Expression cardano = CardanoNumber(delta0, delta1, &approximate, complexContext);
+      if (cardano.type() == ExpressionNode::Type::Undefined
+          || cardano.recursivelyMatches(
+              [](const Expression e, Context * context) {
+                return e.type() == ExpressionNode::Type::Undefined
+                       || e.type() == ExpressionNode::Type::Infinity;
+              },
+              context)) {
+        assert(approximate);
+        if (approximateSolutions != nullptr) {
+          *approximateSolutions = approximate;
+        }
+        // Due to overflows, cardano contains infinite or couldn't be computed
+        *root1 = Undefined::Builder();
+        *root2 = Undefined::Builder();
+        *root3 = Undefined::Builder();
+        return 0;
+      }
       /* cardano is only null when there is a triple root. */
       assert(cardano.nullStatus(context) != ExpressionNode::NullStatus::Null);
       int loneRealRootIndex = -1;
@@ -487,7 +504,6 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
     *approximate = false;
   }
   assert(C.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null);
-  assert(C.type() != ExpressionNode::Type::Undefined);
   return C;
 }
 }

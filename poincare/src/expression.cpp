@@ -789,7 +789,7 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(ExpressionNode::Re
   Expression e = clone().deepReduce(*reductionContext);
   if (SystemCircuitBreakerCheckpoint::HasBeenInterrupted()) {
     SystemCircuitBreakerCheckpoint::ClearInterruption();
-    if (reductionContext.target() == ExpressionNode::ReductionTarget::SystemForApproximation) {
+    if (reductionContext->target() == ExpressionNode::ReductionTarget::SystemForApproximation) {
       goto failure;
     }
     reductionContext->setTarget(ExpressionNode::ReductionTarget::SystemForApproximation);

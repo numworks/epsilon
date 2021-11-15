@@ -1,7 +1,7 @@
 #ifndef PROBABILITY_MODELS_STATISTIC_STATISTIC_VIEW_RANGE_H
 #define PROBABILITY_MODELS_STATISTIC_STATISTIC_VIEW_RANGE_H
 
-#include <apps/shared/curve_view_range.h>
+#include <apps/shared/memoized_curve_view_range.h>
 
 #include "probability/models/statistic/statistic.h"
 
@@ -11,14 +11,9 @@ namespace Probability {
  * It wraps the range required by the statistic and scales it if needed, depending on the type of
  * the graph (Test or Interval)
  */
-class StatisticViewRange : public Shared::CurveViewRange {
+class StatisticViewRange : public Shared::MemoizedCurveViewRange {
 public:
-  void setStatistic(Statistic * statistic) { m_statistic = statistic; }
-  float yMin() const override;
-  float yMax() const override;
-  float xMin() const override;
-  float xMax() const override;
-
+  void setStatistic(Statistic * statistic);
 private:
   bool isInTestSubapp() const;
   float intervalYMin() const;

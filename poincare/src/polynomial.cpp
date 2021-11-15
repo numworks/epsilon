@@ -12,6 +12,7 @@
 #include <poincare/power.h>
 #include <poincare/real_part.h>
 #include <poincare/square_root.h>
+#include <poincare/sign_function.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
 
@@ -463,7 +464,7 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
           Multiplication::Builder(Rational::Builder(4), Power::Builder(delta0.clone(), Rational::Builder(3)))
           ));
     Expression diff;
-    if (delta1.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+    if (SignFunction::Builder(delta1).approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()) <= 0.0) {
       diff = Subtraction::Builder(delta1.clone(), rootDeltaDifference);
     } else {
       diff = Addition::Builder(delta1.clone(), rootDeltaDifference);

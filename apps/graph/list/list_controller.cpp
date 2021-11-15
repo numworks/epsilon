@@ -122,13 +122,18 @@ bool ListController::completeEquation(InputEventHandler * equationField, bool po
   return equationField->handleEventWithText(buffer);
 }
 
+// TODO: factorize with solver
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   m_parameterColumnSelected = false;
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutRepresentsAnEquation(layoutField->layout())) {
-      // Inserted Layout must be an equation
       layoutField->putCursorLeftOfLayout();
-      completeEquation(layoutField, layoutRepresentsPolarFunction(layoutField->layout()));
+      // Inserted Layout must be an equation
+      if (!completeEquation(layoutField, layoutRepresentsPolarFunction(layoutField->layout()))) {
+        layoutField->putCursorRightOfLayout();
+        Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
+        return true;
+      }
     }
   }
   return Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
@@ -150,13 +155,18 @@ bool ListController::textRepresentsPolarFunction(const char * text) const {
   return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, UCodePointGreekSmallLetterTheta), UCodePointGreekSmallLetterTheta);
 }
 
+// TODO: factorize with solver
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     const char * text = textField->text();
     if (!textRepresentsAnEquation(text)) {
       // Inserted text must be an equation
       textField->setCursorLocation(text);
-      completeEquation(textField, textRepresentsPolarFunction(text));
+      if (!completeEquation(textField, textRepresentsPolarFunction(text))) {
+        textField->setCursorLocation(text + strlen(text));
+        Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
+        return true;
+      }
     }
   }
   return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);

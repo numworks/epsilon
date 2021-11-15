@@ -472,7 +472,7 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
   }
   C = NthRoot::Builder(C, Rational::Builder(3)).cloneAndSimplify(reductionContext);
 
-  if (C.type() == ExpressionNode::Type::NthRoot || C.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Unknown) {
+  if (C.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Unknown) {
     C = C.approximate<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     *approximate = true;
   } else {

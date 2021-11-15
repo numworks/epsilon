@@ -86,6 +86,8 @@ void MicroPython::ExecutionEnvironment::HandleException(nlr_buf_t * nlr_buf, Mic
   }
   assert(sCurrentExecutionEnvironment != nullptr);
 
+  sCurrentExecutionEnvironment->hideAnyDisplayedViewController();
+
   /* mp_obj_print_exception is supposed to handle error printing. However,
    * because we want to print custom information, we copied and modified the
    * content of mp_obj_print_exception instead of calling it. */

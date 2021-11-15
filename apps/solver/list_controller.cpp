@@ -121,13 +121,13 @@ bool layoutRepresentsAnEquality(Poincare::Layout l) {
   return !match.isUninitialized();
 }
 
+// TODO factorize with Graph?
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     const char * text = textField->text();
     if (!textRepresentsAnEquality(text)) {
       textField->setCursorLocation(text + strlen(text));
-      textField->handleEventWithText("=0");
-      if (!textRepresentsAnEquality(text)) {
+      if (!textField->handleEventWithText("=0")) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }
@@ -136,12 +136,12 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
   return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
 }
 
+// TODO factorize with Graph?
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutRepresentsAnEquality(layoutField->layout())) {
       layoutField->putCursorRightOfLayout();
-      layoutField->handleEventWithText("=0");
-      if (!layoutRepresentsAnEquality(layoutField->layout())) {
+      if (!layoutField->handleEventWithText("=0")) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }

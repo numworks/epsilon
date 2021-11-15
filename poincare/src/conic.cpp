@@ -100,8 +100,11 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
   }
   m_f = coefficientsX[0].approximateToScalar<double>(context, complexFormat,
                                                      angleUnit);
-  assert(std::isfinite(m_a) && std::isfinite(m_b) && std::isfinite(m_c) &&
-         std::isfinite(m_d) && std::isfinite(m_e) && std::isfinite(m_f));
+  if (!std::isfinite(m_a) || !std::isfinite(m_b) || !std::isfinite(m_c) ||
+      !std::isfinite(m_d) || !std::isfinite(m_e) || !std::isfinite(m_f)) {
+    m_type = Type::Undefined;
+    return;
+  }
   // Round the coefficients to 0 if they are neglectable against the other ones
   roundCoefficientsIfNeglectable();
   // Setting type from a canonic conic is safer.

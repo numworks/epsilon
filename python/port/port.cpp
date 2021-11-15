@@ -86,6 +86,8 @@ void MicroPython::ExecutionEnvironment::HandleException(nlr_buf_t * nlr_buf, Mic
   }
   assert(sCurrentExecutionEnvironment != nullptr);
 
+  /* If the exception happens while displaying the view controller, we need to
+   * hide it to avoid redrawing uncomplete objects. */
   sCurrentExecutionEnvironment->hideAnyDisplayedViewController();
 
   /* mp_obj_print_exception is supposed to handle error printing. However,

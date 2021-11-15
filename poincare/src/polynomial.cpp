@@ -148,6 +148,13 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     *delta = delta->approximate<double>(context, complexFormat, angleUnit);
   }
   assert(!delta->isUninitialized());
+  if (delta->type() == ExpressionNode::Type::Undefined) {
+    // There is an undefined coefficient/delta, do not return any solution.
+    *root1 = Undefined::Builder();
+    *root2 = Undefined::Builder();
+    *root3 = Undefined::Builder();
+    return 0;
+  }
 
   /* To avoid applying Cardano's formula right away, we use techniques to find
    * a simple solution, based on some particularly common forms of cubic
@@ -480,6 +487,7 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
     *approximate = false;
   }
   assert(C.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null);
+  assert(C.type() != ExpressionNode::Type::Undefined);
   return C;
 }
 }

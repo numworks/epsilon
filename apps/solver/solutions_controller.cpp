@@ -149,8 +149,13 @@ void SolutionsController::viewWillAppear() {
     m_contentView.setWarningMessages(I18n::Message::OnlyFirstSolutionsDisplayed0, I18n::Message::OnlyFirstSolutionsDisplayed1);
   } else if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && numberOfDisplayedSolutions() == 1) {
     // There are no real solutions
-    assert(Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Real && m_equationStore->degree() == 2);
-    m_contentView.setWarningMessages(I18n::Message::PolynomeHasNoRealSolution0, I18n::Message::PolynomeHasNoRealSolution1);
+    if (m_equationStore->degree() == 2) {
+      assert(Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Real);
+      m_contentView.setWarningMessages(I18n::Message::PolynomeHasNoRealSolution0, I18n::Message::PolynomeHasNoRealSolution1);
+    } else {
+      // TODO : Message could be updated. The user did not input any interval.
+      m_contentView.setWarningMessages(I18n::Message::NoSolutionInterval, I18n::Message::Default);
+    }
   } else {
     requireWarning = false;
   }

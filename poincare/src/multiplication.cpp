@@ -70,6 +70,28 @@ Expression MultiplicationNode::removeUnit(Expression * unit) {
   return Multiplication(this).removeUnit(unit);
 }
 
+template<typename T> Complex<T> MultiplicationNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
+  // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
+  if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
+    constexpr T zero = static_cast<T>(0.0);
+    // Handle case of pure imaginary/real multiplications
+    if (c.imag() == zero && d.imag() == zero) {
+      return Complex<T>::Builder(c.real()*d.real(), zero);
+    }
+    if (c.real() == zero && d.real() == zero) {
+      return Complex<T>::Builder(-c.imag()*d.imag(), zero);
+    }
+    if (c.imag() == zero && d.real() == zero) {
+      return Complex<T>::Builder(zero, c.real()*d.imag());
+    }
+    if (c.real() == zero && d.imag() == zero) {
+      return Complex<T>::Builder(zero, c.imag()*d.real());
+    }
+    // Other cases are left to the standard library, and might return NaN.
+  }
+  return Complex<T>::Builder(c*d);
+}
+
 template<typename T>
 MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
   if (m.numberOfColumns() != n.numberOfRows()) {

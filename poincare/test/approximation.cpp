@@ -87,7 +87,14 @@ QUIZ_CASE(poincare_approximation_float) {
 
 QUIZ_CASE(poincare_approximation_infinity) {
   assert_expression_approximates_to<double>("10^1000", "inf");
+  assert_expression_approximates_to<double>("2*10^1000", "inf");
+  assert_expression_approximates_to<double>("(10^1000)/2", "inf");
   assert_expression_approximates_to_scalar<double>("10^1000", INFINITY);
+  assert_expression_approximates_to<double>("(inf)×(𝐢)", "inf×𝐢");
+  assert_expression_approximates_to<double>("(inf×𝐢)×(𝐢)", "-inf");
+  assert_expression_approximates_to<double>("(inf×𝐢)×(2)", "inf×𝐢");
+  // (inf+𝐢)×(2) = inf * 2 - 1 * 0 + 𝐢 * (inf * 0 + 1 * 2), inf * 0 return NAN
+  assert_expression_approximates_to<double>("(inf+𝐢)×(2)", Undefined::Name());
 }
 
 QUIZ_CASE(poincare_approximation_addition) {
@@ -1070,8 +1077,8 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<float>("-2ᴇ10+2ᴇ10×𝐢", "2.828427ᴇ10×ℯ^\u00122.356194×𝐢\u0013", Radian, MetricUnitFormat, Polar);
   assert_expression_approximates_to<double>("1ᴇ155-1ᴇ155×𝐢", "1ᴇ155-1ᴇ155×𝐢", Radian, MetricUnitFormat, Cartesian);
   assert_expression_approximates_to<double>("1ᴇ155-1ᴇ155×𝐢", "1.41421356237ᴇ155×ℯ^\u0012-0.785398163397×𝐢\u0013", Radian, MetricUnitFormat, Polar,12);
-  assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ100×𝐢", Undefined::Name());
-  assert_expression_approximates_to<double>("-2ᴇ360+2ᴇ360×𝐢", Undefined::Name());
+  assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ100×𝐢", "-inf+inf×𝐢");
+  assert_expression_approximates_to<double>("-2ᴇ360+2ᴇ360×𝐢", "-inf+inf×𝐢");
   assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ10×𝐢", "-inf+2ᴇ10×𝐢");
   assert_expression_approximates_to<double>("-2ᴇ360+2×𝐢", "-inf+2×𝐢");
   assert_expression_approximates_to<float>("undef+2ᴇ100×𝐢", Undefined::Name());

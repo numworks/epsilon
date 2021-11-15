@@ -57,8 +57,26 @@ Expression DivisionNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
-  if (d.real() == (T)0.0 && d.imag() == (T)0.0) {
+  constexpr T zero = static_cast<T>(0.0);
+  if (d.real() == zero && d.imag() == zero) {
     return Complex<T>::Undefined();
+  }
+  // Special case to prevent (inf,0)/(1,0) from returning (inf, nan).
+  if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
+    // Handle case of pure imaginary/real divisions
+    if (c.imag() == zero && d.imag() == zero) {
+      return Complex<T>::Builder(c.real()/d.real(), zero);
+    }
+    if (c.real() == zero && d.real() == zero) {
+      return Complex<T>::Builder(c.imag()/d.imag(), zero);
+    }
+    if (c.imag() == zero && d.real() == zero) {
+      return Complex<T>::Builder(zero, -c.real()/d.imag());
+    }
+    if (c.real() == zero && d.imag() == zero) {
+      return Complex<T>::Builder(zero, c.imag()/d.real());
+    }
+    // Other cases are left to the standard library, and might return NaN.
   }
   return Complex<T>::Builder(c/d);
 }

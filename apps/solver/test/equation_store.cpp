@@ -7,6 +7,7 @@ QUIZ_CASE(equation_solve) {
   assert_solves_to_error("cos(x)=0", RequireApproximateSolution);
   assert_solves_to_error("x^2+1=u(0)", EquationUndefined);
   assert_solves_to_error("x^3+x^2+1=int(1/t,t,0,1)", EquationUndefined);
+  assert_solves_to_error("x×(x^2×int(1/t,t,0,1)+1)=0", EquationUndefined);
 
   assert_solves_to_no_solution("2=0");
   assert_solves_to_no_solution("x-x+2=0");
@@ -30,10 +31,11 @@ QUIZ_CASE(equation_solve) {
   assert_solves_to("(x-√(2))(x-√(3))=0", {"x=√(2)", "x=√(3)", "delta=-2×√(6)+5"});
   assert_solves_to("(x-π)(x-ln(2))=0", {"x=ln(2)", "x=π", "delta=ln(2)^2-2×π×ln(2)+π^2"});
 
-   assert_solves_to("x^3-4x^2+6x-24=0", {"x=4", "x=-√(6)×𝐢", "x=√(6)×𝐢", "delta=-11616"});
-   assert_solves_to("x^3+x^2+1=0", {"x=-1.465571232", "x=0.2327856159-0.7925519925×𝐢", "x=0.2327856159+0.7925519925×𝐢", "delta=-31"});
-   assert_solves_to("x^3-3x-2=0", {"x=-1", "x=2", "delta=0"});
-   assert_solves_to("x^3+x+1=0", {"x=-0.6823278038", "x=0.3411639019-1.1615414×𝐢", "x=0.3411639019+1.1615414×𝐢", "delta=-31"});
+  assert_solves_to("x^3-4x^2+6x-24=0", {"x=4", "x=-√(6)×𝐢", "x=√(6)×𝐢", "delta=-11616"});
+  assert_solves_to("x^3+x^2+1=0", {"x=-1.465571232", "x=0.2327856159-0.7925519925×𝐢", "x=0.2327856159+0.7925519925×𝐢", "delta=-31"});
+  assert_solves_to("x^3-3x-2=0", {"x=-1", "x=2", "delta=0"});
+  assert_solves_to("x^3+x+1=0", {"x=-0.6823278038", "x=0.3411639019-1.1615414×𝐢", "x=0.3411639019+1.1615414×𝐢", "delta=-31"});
+  assert_solves_to("x^3+x^2=10^200", {"x=inf-inf×𝐢", "x=-inf", "x=inf+inf×𝐢", "delta=-27×10^400+4×10^200"});
 
   // Linear System
   assert_solves_to_infinite_solutions("x+y=0");

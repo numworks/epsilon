@@ -4,24 +4,13 @@
 
 namespace Probability {
 
-float StatisticViewRange::yMin() const {
-  float ym = isInTestSubapp() ? canonicalYMin() : intervalYMin();
-  assert(ym < yMax());
-  return ym;
-}
+void StatisticViewRange::setStatistic(Statistic * statistic) {
+  m_statistic = statistic;
 
-float StatisticViewRange::yMax() const {
-  return isInTestSubapp() ? canonicalYMax() : intervalYMax();
-}
-
-float StatisticViewRange::xMin() const {
-  float xm = isInTestSubapp() ? canonicalXMin() : intervalXMin();
-  assert(xm < xMax());
-  return xm;
-}
-
-float StatisticViewRange::xMax() const {
-  return isInTestSubapp() ? canonicalXMax() : intervalXMax();
+  setXMin(isInTestSubapp() ? canonicalXMin() : intervalXMin());
+  setXMax(isInTestSubapp() ? canonicalXMax() : intervalXMax());
+  setYMin(isInTestSubapp() ? canonicalYMin() : intervalYMin());
+  setYMax(isInTestSubapp() ? canonicalYMax() : intervalYMax());
 }
 
 bool StatisticViewRange::isInTestSubapp() const {

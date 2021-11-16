@@ -105,8 +105,8 @@ void PressToTestController::resetSwitches() {
     // Reset switches states to press-to-test current parameter.
     m_tempPressToTestParams = Preferences::sharedPreferences()->pressToTestParams();
   } else {
-    // Reset switches so that all features are disabled, isUnknown is false.
-    m_tempPressToTestParams = Preferences::PressToTestParams({0xFE});
+    // Reset switches so that all features are enabled, isUnknown is false.
+    m_tempPressToTestParams = Preferences::PressToTestParams({0});
     assert(!m_tempPressToTestParams.m_isUnknown);
   }
 }

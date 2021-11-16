@@ -13,6 +13,7 @@ public:
   MathVariableBoxController();
 
   // View Controller
+  void viewWillAppear() override;
   void viewDidDisappear() override;
 
   // Responder

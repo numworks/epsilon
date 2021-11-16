@@ -10,7 +10,6 @@ public:
     m_isEmpty(false)
   {}
   // View Controller
-  void viewWillAppear() override;
   void viewDidDisappear() override;
 protected:
   virtual Escher::ViewController * emptyViewController() = 0;

@@ -31,6 +31,11 @@ MathVariableBoxController::MathVariableBoxController() :
   }
 }
 
+void MathVariableBoxController::viewWillAppear() {
+  AlternateEmptyNestedMenuController::viewWillAppear();
+  displayEmptyControllerIfNeeded();
+}
+
 void MathVariableBoxController::viewDidDisappear() {
   AlternateEmptyNestedMenuController::viewDidDisappear();
 

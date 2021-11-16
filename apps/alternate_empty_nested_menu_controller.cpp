@@ -1,10 +1,5 @@
 #include "alternate_empty_nested_menu_controller.h"
 
-void AlternateEmptyNestedMenuController::viewWillAppear() {
-  NestedMenuController::viewWillAppear();
-  displayEmptyControllerIfNeeded();
-}
-
 void AlternateEmptyNestedMenuController::viewDidDisappear() {
   if (isDisplayingEmptyController()) {
     m_isEmpty = false;

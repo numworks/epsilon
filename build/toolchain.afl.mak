@@ -1,7 +1,7 @@
 export AFL_QUIET = 1
-CC = afl-clang
-CXX = afl-clang++
-LD = afl-clang++
+CC = afl-cc
+CXX = afl-c++
+LD = afl-c++
 
 ifeq ($(ASAN),1)
 export AFL_USE_ASAN = 1

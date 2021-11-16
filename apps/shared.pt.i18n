@@ -1,6 +1,5 @@
 ActivateDeactivate = "Ativar/Desativar"
 ActivateExamMode = "Ativar o modo de exame"
-ActivateDutchExamMode = "Ativar o modo de exame NL"
 ActiveExamModeMessage1 = "Todos os seus dados serão "
 ActiveExamModeMessage2 = "apagados se ativar "
 ActiveExamModeMessage3 = "o modo de exame."

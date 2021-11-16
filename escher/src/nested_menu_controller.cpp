@@ -212,9 +212,10 @@ bool NestedMenuController::returnToRootMenu() {
 }
 
 void NestedMenuController::loadState(NestedMenuController::Stack::State state) {
-  m_listController.setFirstSelectedRow(state.selectedRow());
+  bool isStateValid = state.selectedRow() < numberOfRows();
+  m_listController.setFirstSelectedRow(isStateValid ? state.selectedRow() : 0);
   KDPoint scroll = m_selectableTableView.contentOffset();
-  m_selectableTableView.setContentOffset(KDPoint(scroll.x(), state.verticalScroll()));
+  m_selectableTableView.setContentOffset(KDPoint(scroll.x(), isStateValid ? state.verticalScroll() : 0));
 }
 
 void NestedMenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {

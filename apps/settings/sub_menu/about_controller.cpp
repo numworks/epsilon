@@ -184,6 +184,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     static char batteryLevel[15];
     int batteryLen = Poincare::Number::FloatNumber(Ion::Battery::voltage()).serialize(batteryLevel, 15, Poincare::Preferences::PrintFloatMode::Decimal, 3);
     batteryLevel[batteryLen] = 'V';
+    batteryLevel[batteryLen+1] = '\0';
 
     static const char * messages[] = {
       (const char*) Ion::username(),

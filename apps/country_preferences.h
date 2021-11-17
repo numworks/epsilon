@@ -21,7 +21,8 @@ public:
     Default,
     Variant1,
     Variant2,
-    Variant3
+    Variant3,
+    Variant4
   };
 
   enum class DiscriminantSymbol : uint8_t {

@@ -28,10 +28,10 @@ bool CircuitBreakerCheckpoint::setActive(Ion::CircuitBreaker::Status status) {
   };
 }
 
-void CircuitBreakerCheckpoint::discard() {
+void CircuitBreakerCheckpoint::discard(CircuitBreakerCheckpoint * checkpoint) {
   if (isCurrentCircuitBreakerCheckpoint()) {
     Ion::CircuitBreaker::unsetCheckpoint(type());
-    setCurrentCircuitBreakerCheckpoint(nullptr);
+    setCurrentCircuitBreakerCheckpoint(checkpoint);
   }
 }
 
@@ -54,8 +54,14 @@ UserCircuitBreakerCheckpoint::~UserCircuitBreakerCheckpoint() {
   discard();
 }
 
+SystemCircuitBreakerCheckpoint::SystemCircuitBreakerCheckpoint() :
+  CircuitBreakerCheckpoint(),
+  m_parent(s_currentSystemCircuitBreakerCheckpoint)
+{
+}
+
 SystemCircuitBreakerCheckpoint::~SystemCircuitBreakerCheckpoint() {
-  discard();
+  discard(m_parent);
 }
 
 #if __EMSCRIPTEN__

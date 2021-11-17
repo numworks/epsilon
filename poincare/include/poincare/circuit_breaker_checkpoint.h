@@ -18,7 +18,7 @@ class CircuitBreakerCheckpoint : public Checkpoint {
 public:
   using Checkpoint::Checkpoint;
   bool setActive(Ion::CircuitBreaker::Status status);
-  void discard();
+  void discard(CircuitBreakerCheckpoint * checkpoint = nullptr);
   virtual Ion::CircuitBreaker::CheckpointType type() const = 0;
   static TreeNode * TopmostEndOfPoolBeforeCheckpoint();
   static void DiscardYoungerCircuitBreakerCheckpoints(TreeNode * node);
@@ -50,7 +50,7 @@ public:
   static void ClearInterruption();
 #endif
   static void InterruptDueToReductionFailure();
-  using CircuitBreakerCheckpoint::CircuitBreakerCheckpoint;
+  SystemCircuitBreakerCheckpoint();
   ~SystemCircuitBreakerCheckpoint();
   Ion::CircuitBreaker::CheckpointType type() const override { return Ion::CircuitBreaker::CheckpointType::System; }
   static TreeNode * TopmostEndOfPoolBeforeCheckpoint() { return s_currentSystemCircuitBreakerCheckpoint ? s_currentSystemCircuitBreakerCheckpoint->getEndOfPoolBeforeCheckpoint() : nullptr; }
@@ -59,6 +59,7 @@ private:
   void setCurrentCircuitBreakerCheckpoint(CircuitBreakerCheckpoint * checkpoint) override { s_currentSystemCircuitBreakerCheckpoint = checkpoint; }
   virtual bool isCurrentCircuitBreakerCheckpoint() const override { return s_currentSystemCircuitBreakerCheckpoint == this; }
   static CircuitBreakerCheckpoint * s_currentSystemCircuitBreakerCheckpoint;
+  CircuitBreakerCheckpoint * m_parent;
 };
 
 }

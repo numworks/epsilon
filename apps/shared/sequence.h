@@ -53,6 +53,7 @@ public:
   Poincare::Expression secondInitialConditionExpressionClone() const { return m_secondInitialCondition.expressionClone(this); }
   Poincare::Layout secondInitialConditionLayout() { return m_secondInitialCondition.layout(this); }
   Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(const char * c, Poincare::Context * context) { return m_secondInitialCondition.setContent(this, c, context); }
+  void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) const override;
 
   // Sequence properties
   int numberOfElements() { return (int)type() + 1; }

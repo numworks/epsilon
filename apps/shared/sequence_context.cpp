@@ -118,8 +118,8 @@ void TemplatedSequenceContext<T>::step(SequenceContext * sqctx, int sequenceInde
   }
 }
 
-void SequenceContext::tidy() {
-  m_sequenceStore->tidy();
+void SequenceContext::tidyDownstreamPoolFrom(char * treePoolCursor) {
+  m_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 template class TemplatedSequenceContext<float>;

@@ -24,12 +24,9 @@ public:
   virtual bool isDefined();
   virtual bool isEmpty();
   virtual bool shouldBeClearedBeforeRemove() { return !isEmpty(); }
-  /* tidy is responsible to tidy the whole model whereas tidyExpressionModel
-   * tidies only the members associated with the ExpressionModel. In
-   * ExpressionModel, tidy and tidyExpressionModel trigger the same
-   * behaviour but it is not true for its child classes (for example, in
-   * Sequence). */
-  virtual void tidy() { model()->tidy(); }
+  /* tidyDownstreamPoolFrom tidy the model if its members are located downstream
+   * in Poincare pool of the node given as arguments. */
+  virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) { model()->tidyDownstreamPoolFrom(treePoolCursor); }
   virtual Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) { return editableModel()->setContent(this, c, context, symbol()); }
   Ion::Storage::Record::ErrorStatus setExpressionContent(const Poincare::Expression & e) { return editableModel()->setExpressionContent(this, e); }
 protected:

@@ -21,7 +21,7 @@ public:
   virtual SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) = 0;
   virtual const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) = 0;
   virtual void setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) = 0;
-  virtual void tidy() {}
+  virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) {}
 };
 
 }

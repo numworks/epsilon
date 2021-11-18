@@ -32,7 +32,7 @@ public:
   const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override;
   void setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol) override;
   static SequenceStore * sequenceStore();
-  void tidy() override;
+  void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) override;
 private:
   // Expression getters
   static const Poincare::Expression ExpressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue = NAN);

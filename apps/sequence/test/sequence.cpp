@@ -54,7 +54,7 @@ void check_sequences_defined_by(double result[MaxNumberOfSequences][10], Sequenc
   /* The store is a global variable that has been contructed through
    * GlobalContext::sequenceStore singleton. It won't be destructed. However,
    * we need to make sure that the pool is empty between quiz_cases. */
-  store->tidy();
+  store->tidyDownstreamPoolFrom();
 }
 
 void check_sum_of_sequence_between_bounds(double result, double start, double end, Sequence::Type type, const char * definition, const char * condition1, const char * condition2) {
@@ -68,7 +68,7 @@ void check_sum_of_sequence_between_bounds(double result, double start, double en
   quiz_assert(std::fabs(sum - result) < 0.00000001);
 
   store->removeAll();
-  store->tidy(); // Cf comment above
+  store->tidyDownstreamPoolFrom(); // Cf comment above
 }
 
 QUIZ_CASE(sequence_evaluation) {
@@ -496,7 +496,7 @@ QUIZ_CASE(sequence_order) {
   quiz_assert(v->evaluateXYAtParameter(1., &sequenceContext).x2() == 4.);
 
   store->removeAll();
-  store->tidy();
+  store->tidyDownstreamPoolFrom();
 }
 
 QUIZ_CASE(sequence_sum_evaluation) {

@@ -24,6 +24,8 @@ public:
 
   TreePool() : m_cursor(buffer()) {}
 
+  char * cursor() const { return m_cursor; }
+
   // Node
   TreeNode * node(uint16_t identifier) const {
     assert(TreeNode::IsValidIdentifier(identifier) && identifier < MaxNumberOfNodes);

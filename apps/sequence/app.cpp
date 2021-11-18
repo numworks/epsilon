@@ -44,7 +44,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 
 void App::Snapshot::tidy() {
   m_graphRange.setDelegate(nullptr);
-  functionStore()->tidy();
+  functionStore()->tidyDownstreamPoolFrom();
 }
 
 bool App::isAcceptableExpression(const Poincare::Expression exp) {

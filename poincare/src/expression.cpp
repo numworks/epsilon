@@ -803,10 +803,15 @@ failure:
   }
 #else
   Expression e;
+  char * treePoolCursor = TreePool::sharedPool()->cursor();
   SystemCircuitBreakerCheckpoint systemCheckpoint;
   if (!CircuitBreakerRun(systemCheckpoint)) {
+    /* We don't want to tidy all the Pool in the cas we are in a nested
+     * cloneAndDeepReduceWithSystemCheckpoint: cleaning all the pool might
+     * discard ExpressionHandles that are used by parent
+     * cloneAndDeepReduceWithSystemCheckpoint. */
+    reductionContext->context()->tidyDownstreamPoolFrom(treePoolCursor);
     if (reductionContext->target() != ExpressionNode::ReductionTarget::SystemForApproximation) {
-      reductionContext->context()->tidy();
       // System interruption, try again with another ReductionTarget
       reductionContext->setTarget(ExpressionNode::ReductionTarget::SystemForApproximation);
       e = clone().deepReduce(*reductionContext);

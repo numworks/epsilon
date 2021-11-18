@@ -182,6 +182,12 @@ bool Sequence::badlyReferencesItself(Context * context) {
   return res || expressionClone().hasExpression(test, pack);
 }
 
+void Sequence::tidyDownstreamPoolFrom(char * treePoolCursor) const {
+  model()->tidyDownstreamPoolFrom(treePoolCursor);
+  m_firstInitialCondition.tidyDownstreamPoolFrom(treePoolCursor);
+  m_secondInitialCondition.tidyDownstreamPoolFrom(treePoolCursor);
+}
+
 template<typename T>
 T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
   T n = std::round(x);

@@ -197,8 +197,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       }
     } else {
       setFunctionInterrupted(i);
-      f->tidy();
-      m_context->tidy();
+      f->tidyDownstreamPoolFrom();
+      m_context->tidyDownstreamPoolFrom();
     }
   }
 }

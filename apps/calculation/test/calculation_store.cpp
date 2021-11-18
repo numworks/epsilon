@@ -565,5 +565,5 @@ QUIZ_CASE(calculation_involving_sequence) {
 
   assertMainCalculationOutputIs("√(𝐢×u(0))×√(6)", "undef", &globalContext, &calcStore);
   seqStore->removeAll();
-  seqStore->tidy();
+  seqStore->tidyDownstreamPoolFrom();
 }

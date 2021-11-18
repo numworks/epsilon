@@ -191,7 +191,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     m_calculationAreaEnd = addressOfCalculation;
     m_numberOfCalculations = totalOlderCalculations;
     Ion::CircuitBreaker::unlock();
-    context->tidy();
+    context->tidyDownstreamPoolFrom();
     return nullptr;
   }
 }

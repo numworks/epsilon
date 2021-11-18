@@ -194,7 +194,7 @@ void FunctionGraphController::tidyModels() {
   int nbOfFunctions = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < nbOfFunctions; i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    f->tidy();
+    f->tidyDownstreamPoolFrom();
   }
 }
 

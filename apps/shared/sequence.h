@@ -122,11 +122,12 @@ private:
   class SequenceModel : public Shared::ExpressionModel {
   public:
     SequenceModel() : Shared::ExpressionModel(), m_name() {}
-    void tidyName() { m_name = Poincare::Layout(); }
+    void tidyName() const { m_name = Poincare::Layout(); }
     Poincare::Layout name(Sequence * sequence);
+    void tidyDownstreamPoolFrom(char * treePoolCursor) const override;
   protected:
     virtual void buildName(Sequence * sequence) = 0;
-    Poincare::Layout m_name;
+    mutable Poincare::Layout m_name;
   private:
     void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) override;
     virtual void updateMetaData(const Ion::Storage::Record * record, size_t newSize) {}

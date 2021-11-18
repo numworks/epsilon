@@ -27,7 +27,7 @@ void solve_and_process_error(std::initializer_list<const char *> equations, T &&
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None, equation);
   }
   bool replaceFunctionsButNotSymbols = false;
-  equationStore.tidy();
+  equationStore.tidyDownstreamPoolFrom();
   EquationStore::Error err = equationStore.exactSolve(&globalContext, &replaceFunctionsButNotSymbols);
   lambda(&equationStore, err);
   equationStore.removeAll();

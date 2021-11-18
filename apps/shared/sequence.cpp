@@ -75,7 +75,7 @@ void Sequence::setType(Type t) {
   }
   recordData()->setType(t);
   m_definition.tidyName();
-  tidy();
+  tidyDownstreamPoolFrom();
   /* Reset all contents */
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   switch (t) {
@@ -342,6 +342,11 @@ Poincare::Layout Sequence::SequenceModel::name(Sequence * sequence) {
     buildName(sequence);
   }
   return m_name;
+}
+
+void Sequence::SequenceModel::tidyDownstreamPoolFrom(char * treePoolCursor) const {
+  tidyName();
+  ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 void Sequence::SequenceModel::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) {

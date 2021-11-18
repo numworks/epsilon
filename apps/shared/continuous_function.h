@@ -302,7 +302,7 @@ private:
     // Build the expression from text, handling f(x)=... cartesian equations
     Poincare::Expression buildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr) const override;
     // Tidy the model
-    void tidy() const override;
+    void tidyDownstreamPoolFrom(char * treePoolCursor) const override;
     // m_numberOfSubCurves getter
     int numberOfSubCurves() const { return m_numberOfSubCurves; }
     // m_equationType getter

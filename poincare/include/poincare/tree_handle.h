@@ -70,6 +70,7 @@ public:
 
   bool isGhost() const { return node()->isGhost(); }
   bool isUninitialized() const { return m_identifier == TreeNode::NoNodeIdentifier; }
+  bool isDownstreamOf(char * treePoolCursor) { return !isUninitialized() && (node() == nullptr || reinterpret_cast<char *>(node()) >= treePoolCursor); }
 
   /* Hierarchy */
   bool hasChild(TreeHandle t) const;

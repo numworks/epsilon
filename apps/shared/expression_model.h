@@ -21,7 +21,7 @@ public:
   Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, Poincare::Context * context, CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, const Poincare::Expression & newExpression);
 
-  virtual void tidy() const;
+  virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) const;
 protected:
   // Setters helper
   virtual Poincare::Expression buildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr) const;

@@ -22,7 +22,7 @@ private:
   static constexpr int k_numberOfDeactivationMessageLines = 3;
   int initialSelectedRow() const override;
   Poincare::Preferences::ExamMode examMode();
-  static constexpr int k_maxNumberOfCells = 3;
+  static constexpr int k_maxNumberOfCells = 4;
   SelectableViewWithMessages m_contentView;
   Escher::MessageTableCell m_cell[k_maxNumberOfCells];
 };

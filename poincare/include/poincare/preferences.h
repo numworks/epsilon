@@ -47,7 +47,8 @@ public:
     Standard = 1,
     Dutch = 2,
     IBTest = 3,
-    PressToTest = 4
+    PressToTest = 4,
+    Portuguese = 5,
   };
   /* By default, a 0 PressToTestParams has all parameters set to false. Params
    * are false if the feature is activated (allowed) and true if forbidden. */

@@ -9,6 +9,7 @@ public:
     StandardOnly,
     StandardAndDutch,
     PressToTestOnly,
+    PortugueseOnly,
     All
   };
 

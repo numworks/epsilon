@@ -164,6 +164,7 @@ void InteractiveCurveViewController::viewDidDisappear() {
 void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
+    m_selectedSubCurveIndex = 0;
     curveView()->selectMainView(false);
     header()->setSelectedButton(-1);
     curveView()->reload();

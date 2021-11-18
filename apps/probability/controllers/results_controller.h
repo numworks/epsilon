@@ -79,7 +79,7 @@ protected:
   Statistic * m_statistic;
 
   StatisticGraphController * m_statisticGraphController;
-  constexpr static int k_titleBufferSize = 40;
+  constexpr static int k_titleBufferSize = 50;
   char m_titleBuffer[k_titleBufferSize];
 
 private:

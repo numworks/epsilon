@@ -547,3 +547,23 @@ QUIZ_CASE(calculation_complex_format) {
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
 }
+
+QUIZ_CASE(calculation_involving_sequence) {
+  Shared::GlobalContext globalContext;
+
+  Shared::SequenceStore * seqStore = globalContext.sequenceStore();
+  Ion::Storage::Record::ErrorStatus err = seqStore->addEmptyModel();
+  assert(err == Ion::Storage::Record::ErrorStatus::None);
+  Ion::Storage::Record record = seqStore->recordAtIndex(seqStore->numberOfModels()-1);
+  Shared::Sequence * u = seqStore->modelForRecord(record);
+  u->setType(Shared::Sequence::Type::Explicit);
+  err = u->setContent("𝐢", &globalContext);
+  assert(err == Ion::Storage::Record::ErrorStatus::None);
+  (void) err; // Silence compilation warning.
+
+  CalculationStore calcStore(calculationBuffer,calculationBufferSize);
+
+  assertMainCalculationOutputIs("√(𝐢×u(0))×√(6)", "undef", &globalContext, &calcStore);
+  seqStore->removeAll();
+  seqStore->tidy();
+}

@@ -113,6 +113,8 @@ public:
   bool isAlongX() const { return symbol() == 'x'; }
   // If the ContinuousFunction is a conic
   bool isConic() const { return plotType() >= PlotType::Circle && plotType() <= PlotType::Hyperbola; }
+  // If the ContinuousFunction is made of vertical lines
+  bool hasVerticalLines() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::VerticalLines; }
   // If the ContinuousFunction is named ("f(x)=...")
   bool isNamed() const;
   // Compute line parameters (slope and intercept) from ContinuousFunction

@@ -79,6 +79,7 @@ I18n::Message ContinuousFunction::MessageForPlotType(PlotType plotType) {
       I18n::Message::LineType,
       I18n::Message::HorizontalLineType,
       I18n::Message::VerticalLineType,
+      I18n::Message::OtherType, // VerticalLines are displayed as Others
       I18n::Message::InequationType,
       I18n::Message::CircleType,
       I18n::Message::EllipseType,
@@ -216,7 +217,7 @@ int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferS
 double ContinuousFunction::approximateDerivative(double x, Context * context, int subCurveIndex) const {
   assert(isAlongX());
   PlotType type = plotType();
-  if (x < tMin() || x > tMax() || type == PlotType::VerticalLine) {
+  if (x < tMin() || x > tMax() || type == PlotType::VerticalLine || type == PlotType::VerticalLines) {
     return NAN;
   }
   // Derivative is simplified once and for all
@@ -469,6 +470,7 @@ void ContinuousFunction::updatePlotType(Context * context) {
    * | y  | x  | Status
    * | 0  | 0  | Unhandled
    * | 0  | 1  | Vertical Line
+   * | 0  | 2  | Vertical Lines
    * | 0  | +  | Unhandled
    * | 1  | 0  | Horizontal Line
    * | 1  | 1  | Line
@@ -487,9 +489,12 @@ void ContinuousFunction::updatePlotType(Context * context) {
     return recordData()->setPlotType(PlotType::VerticalLine);
   }
 
-  if (yDeg <= 0 || yDeg > 2 || !hasNonNullCoefficients(equation, context, &ySign)) {
-    /* Any other case where yDeg is null ,> 2 or negative isn't handled.
-     * We also do not handle equations where every coefficients depends on x.
+  bool typeIsVerticalLines = (yDeg == 0 && xDeg == 2);
+
+  if (!typeIsVerticalLines && (yDeg <= 0 || yDeg > 2 || !hasNonNullCoefficients(equation, context, &ySign))) {
+    /* Except for VerticalLines, any other case where yDeg is null ,> 2 or
+     * negative isn't handled. We also do not handle equations where every
+     * coefficients depends on x.
      * TODO : This restriction (hasNonNullCoefficients) could be made more
      * general either by checking that all coefficient don't share a same root
      * or by ploting an additional vertical curve for each of these shared roots
@@ -501,12 +506,12 @@ void ContinuousFunction::updatePlotType(Context * context) {
   }
 
   if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
-    if (yDeg == 2 || ySign == ExpressionNode::Sign::Unknown) {
-      // Equation with y^2 or such as y*f(x)=... are disabled.
+    if (typeIsVerticalLines || yDeg == 2 || ySign == ExpressionNode::Sign::Unknown) {
+      // Equation with y^2 or such as y*f(x)=... or x^2 = 1 are disabled.
       return recordData()->setPlotType(PlotType::Disabled);
     }
     // Ignore conics (such as y=x^2) to hide details.
-  } else {
+  } else if (yDeg >= 1 && xDeg >= 1) {
     // Try to identify a conic. For instance, x*y=1 as an hyperbola
     Conic equationConic = Conic(equation, context, k_unknownName);
     Conic::Type ctype = equationConic.getConicType();
@@ -520,6 +525,9 @@ void ContinuousFunction::updatePlotType(Context * context) {
       return recordData()->setPlotType(PlotType::Circle);
     }
     // A conic could not be identified.
+  }
+  if (typeIsVerticalLines) {
+    return recordData()->setPlotType(PlotType::VerticalLines);
   }
   if (yDeg == 1 && xDeg == 1 && ySign != ExpressionNode::Sign::Unknown) {
     // An Unknown y coefficient sign would mean it depends on x (y*x = ...)
@@ -600,11 +608,11 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
   if (type != PlotType::Parametric) {
     if (numberOfSubCurves() >= 2) {
       assert(e.numberOfChildren() > subCurveIndex);
-      return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(subCurveIndex), k_unknownName, t, context));
+      e = e.childAtIndex(subCurveIndex);
     } else {
       assert(subCurveIndex == 0);
     }
-    if (type == PlotType::VerticalLine) {
+    if (type == PlotType::VerticalLine || type == PlotType::VerticalLines) {
       // Invert x and y with vertical lines so it can be scrolled vertically
       return Coordinate2D<T>(PoincareHelpers::ApproximateWithValueForSymbol(e, k_unknownName, t, context), t);
     }
@@ -633,35 +641,53 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       /* Function isn't named, m_expression currently is an expression in y such
        * as m_expression = 0. We extract the solution by solving in y. */
       int degree = m_expression.polynomialDegree(context, k_ordinateName);
+      Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
       if (degree < 0 || degree >= 3) {
         // Such degrees of equation in y are not handled.
         m_expression = Undefined::Builder();
       } else if (degree == 0) {
-        // Vertical line (x=...).
+        // Vertical line (... * x^2 + ... * x = ...).
         int xDegree = m_expression.polynomialDegree(context, k_unknownName);
-        if (xDegree != 1) {
-           /* TODO : We could handle equations of any degree by solving the
+        if (xDegree == 1 || xDegree == 2) {
+          Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+          int d = m_expression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, Preferences::ComplexFormat::Cartesian, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
+          assert(d == xDegree);
+          // Solve the equation in x
+          if (d == 1) {
+            Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &m_expression, context, Preferences::ComplexFormat::Real, angleUnit);
+          } else {
+            // x is of degree 2, each root is a curve to plot.
+            Expression root1, root2, delta;
+            int solutions = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Preferences::ComplexFormat::Real, angleUnit);
+            if (solutions <= 1) {
+              m_expression = root1;
+            } else {
+              m_numberOfSubCurves++;
+              // Curves are stored in a 2x1 matrix
+              Matrix newExpr = Matrix::Builder();
+              // Roots are ordered so that the first curve is above the second
+              newExpr.addChildAtIndexInPlace(root2, 0, 0);
+              newExpr.addChildAtIndexInPlace(root1, 1, 1);
+              newExpr.setDimensions(2, 1);
+              m_expression = newExpr;
+            }
+          }
+        } else {
+          /* TODO : We could handle equations of any degree by solving the
            * equation within the graph view bounds, to plot as many vertical
            * lines as needed. */
           m_expression = Undefined::Builder();
-        } else {
-          Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-          int d = m_expression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), k_defaultUnitFormat, k_defaultSymbolicComputation);
-          assert(d == xDegree);
-          (void) d; // Silence compilation warning
-          // Solve the equation in x
-          Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &m_expression, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
         }
       } else {
         Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-        int d = m_expression.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, Preferences::ComplexFormat::Cartesian, Preferences::sharedPreferences()->angleUnit(), k_defaultUnitFormat, k_defaultSymbolicComputation);
+        int d = m_expression.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, Preferences::ComplexFormat::Cartesian, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
         assert(d == degree);
         if (d == 1) {
-          Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &m_expression, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
+          Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &m_expression, context, Preferences::ComplexFormat::Real, angleUnit);
         } else {
           // y is of degree 2, each root is a curve to plot.
           Expression root1, root2, delta;
-          int solutions = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Preferences::ComplexFormat::Real, Preferences::sharedPreferences()->angleUnit());
+          int solutions = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Preferences::ComplexFormat::Real, angleUnit);
           if (solutions <= 1) {
             m_expression = root1;
           } else {

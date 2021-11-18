@@ -638,69 +638,44 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
     m_expression = expressionEquation(record, context);
     m_numberOfSubCurves = 1;
     if (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar) {
-      /* Function isn't named, m_expression currently is an expression in y such
-       * as m_expression = 0. We extract the solution by solving in y. */
-      int degree = m_expression.polynomialDegree(context, k_ordinateName);
+      /* Function isn't named, m_expression currently is an expression in y or x
+       * such as y = x. We extract the solution by solving in y or x. */
+      int yDegree = m_expression.polynomialDegree(context, k_ordinateName);
       Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-      if (degree < 0 || degree >= 3) {
+      if (yDegree < 0 || yDegree > 2) {
         // Such degrees of equation in y are not handled.
         m_expression = Undefined::Builder();
-      } else if (degree == 0) {
-        // Vertical line (... * x^2 + ... * x = ...).
-        int xDegree = m_expression.polynomialDegree(context, k_unknownName);
-        if (xDegree == 1 || xDegree == 2) {
-          Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-          int d = m_expression.getPolynomialReducedCoefficients(k_unknownName, coefficients, context, Preferences::ComplexFormat::Cartesian, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
-          assert(d == xDegree);
-          // Solve the equation in x
-          if (d == 1) {
-            Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &m_expression, context, Preferences::ComplexFormat::Real, angleUnit);
-          } else {
-            // x is of degree 2, each root is a curve to plot.
-            Expression root1, root2, delta;
-            int solutions = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Preferences::ComplexFormat::Real, angleUnit);
-            if (solutions <= 1) {
-              m_expression = root1;
-            } else {
-              m_numberOfSubCurves++;
-              // Curves are stored in a 2x1 matrix
-              Matrix newExpr = Matrix::Builder();
-              // Roots are ordered so that the first curve is above the second
-              newExpr.addChildAtIndexInPlace(root2, 0, 0);
-              newExpr.addChildAtIndexInPlace(root1, 1, 1);
-              newExpr.setDimensions(2, 1);
-              m_expression = newExpr;
-            }
-          }
+        return m_expression;
+      }
+      bool isVertical = (yDegree == 0);
+      // Solve the equation in y (or x if isVertical)
+      Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+      int degree = m_expression.getPolynomialReducedCoefficients(isVertical ? k_unknownName : k_ordinateName, coefficients, context, Preferences::ComplexFormat::Cartesian, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
+      assert(isVertical || degree == yDegree);
+      if (degree == 1) {
+        Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &m_expression, context, Preferences::ComplexFormat::Real, angleUnit);
+      } else if (degree == 2) {
+        // Equation is of degree 2, each root is a subcurve to plot.
+        Expression root1, root2, delta;
+        int solutions = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Preferences::ComplexFormat::Real, angleUnit);
+        if (solutions <= 1) {
+          m_expression = root1;
         } else {
-          /* TODO : We could handle equations of any degree by solving the
-           * equation within the graph view bounds, to plot as many vertical
-           * lines as needed. */
-          m_expression = Undefined::Builder();
+          m_numberOfSubCurves = 2;
+          // SubCurves are stored in a 2x1 matrix
+          Matrix newExpr = Matrix::Builder();
+          // Roots are ordered so that the first one is superior to the second
+          newExpr.addChildAtIndexInPlace(root2, 0, 0);
+          newExpr.addChildAtIndexInPlace(root1, 1, 1);
+          newExpr.setDimensions(2, 1);
+          m_expression = newExpr;
         }
       } else {
-        Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-        int d = m_expression.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, Preferences::ComplexFormat::Cartesian, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
-        assert(d == degree);
-        if (d == 1) {
-          Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &m_expression, context, Preferences::ComplexFormat::Real, angleUnit);
-        } else {
-          // y is of degree 2, each root is a curve to plot.
-          Expression root1, root2, delta;
-          int solutions = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Preferences::ComplexFormat::Real, angleUnit);
-          if (solutions <= 1) {
-            m_expression = root1;
-          } else {
-            m_numberOfSubCurves++;
-            // Curves are stored in a 2x1 matrix
-            Matrix newExpr = Matrix::Builder();
-            // Roots are ordered so that the first curve is above the second
-            newExpr.addChildAtIndexInPlace(root2, 0, 0);
-            newExpr.addChildAtIndexInPlace(root1, 1, 1);
-            newExpr.setDimensions(2, 1);
-            m_expression = newExpr;
-          }
-        }
+        /* TODO : We could handle simple equations of any degree by solving the
+         * equation within the graph view bounds, to plot as many vertical or
+         * horizontal lines as needed. */
+        m_expression = Undefined::Builder();
+        return m_expression;
       }
     }
     // Reduce m_expression to optimize approximations

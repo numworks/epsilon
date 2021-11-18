@@ -146,11 +146,18 @@ void initMPU() {
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
-  /* 2.7 Empty sector
-   * We have to override the sector configured by the bootloader. */
+  /* 2.7 Enable unpriveleged access to ITCM RAM
+   * This memory is only used by external application. */
   MPU.RNR()->setREGION(sector++);
-  MPU.RBAR()->setADDR(0);
-  MPU.RASR()->setENABLE(0);
+  MPU.RBAR()->setADDR(Board::Config::ITCMRAMAdress);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_16KB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setXN(false);
+  MPU.RASR()->setTEX(1);
+  MPU.RASR()->setS(1);
+  MPU.RASR()->setC(1);
+  MPU.RASR()->setB(1);
+  MPU.RASR()->setENABLE(true);
 
   /* We assert that all sectors have been initialized. Otherwise, the bootloader
    * configuration is still active on the last sectors when their configuration
@@ -321,14 +328,14 @@ void shutdownPeripheralsClocks(bool keepLEDAwake) {
 }
 
 bool isRunningSlotA() {
-  return reinterpret_cast<uint32_t>(&_isr_vector_table_start_flash) < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+  return reinterpret_cast<uint32_t>(&_isr_vector_table_start_flash) < Board::Config::SlotBStartAddress;
 }
 
 bool isInReflashableSector(uint32_t address) {
   if (isRunningSlotA()) {
-    return address >= ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2 && address < ExternalFlash::Config::EndAddress;
+    return address >= Board::Config::SlotBStartAddress && address < ExternalFlash::Config::EndAddress;
   }
-  return address >= ExternalFlash::Config::StartAddress && address < ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+  return (address >= ExternalFlash::Config::StartAddress && address < Board::Config::SlotBStartAddress) || (address >= Board::Config::StorageStartAdress && address < ExternalFlash::Config::EndAddress);
 }
 
 void switchExecutableSlot(uint32_t leaveAddress) {

@@ -30,8 +30,10 @@ constexpr static uint32_t BootloaderTrampolineSize = 0x2000; // 8k
 constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::NumberOfSectors * BootloaderSectionSize - BootloaderTrampolineSize;
 
 // Slots
+constexpr static uint32_t SlotSize = 1536*1024; // 1M + 500K
 constexpr static uint32_t SlotAStartAddress = ExternalFlash::Config::StartAddress;
-constexpr static uint32_t SlotBStartAddress = ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+constexpr static uint32_t SlotBStartAddress = ExternalFlash::Config::StartAddress + SlotSize;
+constexpr static uint32_t StorageStartAdress = ExternalFlash::Config::StartAddress + 2 * SlotSize;
 
 // Kernel
 constexpr static uint32_t KernelSize = 0x10000; // 64kB

@@ -24,6 +24,8 @@ constexpr static size_t SignatureSize = 64;
 constexpr static uint32_t SRAMAddress = 0x20000000;
 constexpr static uint32_t SRAMLength = 0x40000; // 256kB
 
+constexpr static uint32_t ITCMRAMAdress = 0x00000000; // 16kB
+
 // Kernal RAM
 constexpr static uint32_t KernelSRAMDataBSSLength = 0xC00; // 3k
 constexpr static uint32_t KernelStackLength = 0x400; // 1K

@@ -162,8 +162,16 @@ KDColor ExamModeConfiguration::examModeColor(Preferences::ExamMode mode) {
    * that the yellow LED only means that Dutch exam mode is on and avoid
    * confusing states when the battery is charging and states when the Dutch
    * exam mode is on. */
-  assert(mode == Preferences::ExamMode::Dutch || mode == Preferences::ExamMode::Portuguese || mode == Preferences::ExamMode::Standard);
-  return mode == Preferences::ExamMode::Dutch ? KDColorYellow : mode == Preferences::ExamMode::Portuguese ? KDColorGreen : KDColorRed;
+  switch (mode) {
+  case Preferences::ExamMode::Standard:
+    return KDColorRed;
+  case Preferences::ExamMode::Dutch:
+    return KDColorYellow;
+  case Preferences::ExamMode::Portuguese:
+    return KDColorGreen;
+  default:
+    return KDColorBlack;
+  }
 }
 
 bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {

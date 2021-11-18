@@ -39,12 +39,12 @@ static size_t extractArgumentsAndCheckEqualSize(mp_obj_t x, mp_obj_t y, mp_obj_t
 
 /* Extract one scalar or array arguments and check that it is either:
  * - of size 1
- * - of the required size
+ * - of the required non null size
 */
 
 static size_t extractArgumentAndValidateSize(mp_obj_t arg, size_t requiredlength, mp_obj_t ** items) {
   size_t itemLength = extractArgument(arg, items);
-  if (itemLength > 1 && requiredlength > 1 && itemLength != requiredlength) {
+  if (itemLength == 0 || !(itemLength == 1 || requiredlength == 1 || itemLength == requiredlength)) {
     mp_raise_ValueError("shape mismatch");
   }
   return itemLength;
@@ -182,7 +182,7 @@ mp_obj_t modpyplot_axis(size_t n_args, const mp_obj_t *args) {
 
 mp_obj_t modpyplot_bar(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args) {
   assert(sPlotStore != nullptr);
-if (n_args > 4) {
+  if (n_args > 4) {
     nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,"bar() takes from 2 to 4 positional arguments but %d were given",n_args));
   }
   sPlotStore->setShow(true);
@@ -195,6 +195,9 @@ if (n_args > 4) {
 
   // x arg
   size_t xLength = extractArgument(args[0], &xItems);
+  if (xLength == 0) {
+    return mp_const_none;
+  }
 
   // height arg
   size_t hLength = extractArgumentAndValidateSize(args[1], xLength, &hItems);
@@ -216,6 +219,7 @@ if (n_args > 4) {
     bItems = m_new(mp_obj_t, 1);
     bItems[0] = mp_obj_new_float(0.0f);
   }
+  assert(hLength > 0 && wLength > 0 && bLength > 0);
 
   // Setting bar color
   // color keyword

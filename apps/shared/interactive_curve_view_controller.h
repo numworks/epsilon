@@ -64,6 +64,7 @@ protected:
   virtual bool suitableYValue(double y) const { return true; }
   virtual int numberOfCurves() const = 0;
   virtual int numberOfSubCurves(int curveIndex) const = 0;
+  virtual bool hasVerticalLines (int curveIndex) const = 0;
 
   // SimpleInteractiveCurveViewController
   bool handleEnter() override { return openMenu(); }

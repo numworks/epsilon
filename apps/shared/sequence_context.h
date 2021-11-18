@@ -97,7 +97,7 @@ public:
     static_cast<TemplatedSequenceContext<T>*>(helper<T>())->step(this, sequenceIndex);
   }
   SequenceStore * sequenceStore() { return m_sequenceStore; }
-  void tidy() override;
+  void tidyDownstreamPoolFrom(char * treePoolCursor) override;
 private:
   TemplatedSequenceContext<float> m_floatSequenceContext;
   TemplatedSequenceContext<double> m_doubleSequenceContext;

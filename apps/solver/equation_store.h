@@ -75,7 +75,7 @@ public:
   void approximateSolve(Poincare::Context * context, bool shouldReplaceFuncionsButNotSymbols);
   bool haveMoreApproximationSolutions() { return m_hasMoreThanMaxNumberOfApproximateSolution; }
 
-  void tidy() override;
+  void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) override;
 
   static constexpr int k_maxNumberOfExactSolutions = Poincare::Expression::k_maxNumberOfVariables > Poincare::Expression::k_maxPolynomialDegree + 1? Poincare::Expression::k_maxNumberOfVariables : Poincare::Expression::k_maxPolynomialDegree + 1;
   static constexpr int k_maxNumberOfApproximateSolutions = 10;
@@ -96,7 +96,7 @@ private:
   Error privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols);
   Error resolveLinearSystem(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression constants[k_maxNumberOfEquations], Poincare::Context * context);
   Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], Poincare::Context * context);
-  void tidySolution();
+  void tidySolution(char * treePoolCursor);
   bool isExplictlyComplex(Poincare::Context * context);
   Poincare::Preferences::ComplexFormat updatedComplexFormat(Poincare::Context * context);
 

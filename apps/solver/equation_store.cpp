@@ -55,9 +55,9 @@ ExpressionModelHandle * EquationStore::memoizedModelAtIndex(int cacheIndex) cons
   return &m_equations[cacheIndex];
 }
 
-void EquationStore::tidy() {
-  ExpressionModelStore::tidy();
-  tidySolution();
+void EquationStore::tidyDownstreamPoolFrom(char * treePoolCursor) {
+  ExpressionModelStore::tidyDownstreamPoolFrom(treePoolCursor);
+  tidySolution(treePoolCursor);
 }
 
 Poincare::Layout EquationStore::exactSolutionLayoutAtIndex(int i, bool exactLayout) {
@@ -403,10 +403,13 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   return Error::NoError;
 }
 
-void EquationStore::tidySolution() {
+void EquationStore::tidySolution(char * treePoolCursor) {
   for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
-    m_exactSolutionExactLayouts[i] = Layout();
-    m_exactSolutionApproximateLayouts[i] = Layout();
+    if (treePoolCursor == nullptr || m_exactSolutionExactLayouts[i].isDownstreamOf(treePoolCursor)) {
+      m_exactSolutionExactLayouts[i] = Layout();
+      assert(treePoolCursor == nullptr || m_exactSolutionApproximateLayouts[i].isDownstreamOf(treePoolCursor));
+      m_exactSolutionApproximateLayouts[i] = Layout();
+    }
   }
 }
 

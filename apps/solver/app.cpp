@@ -46,7 +46,7 @@ void App::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record)
 
 void App::Snapshot::tidy() {
   // Delete all expressions of equations
-  m_equationStore.tidy();
+  m_equationStore.tidyDownstreamPoolFrom();
 }
 
 App::App(Snapshot * snapshot) :

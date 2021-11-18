@@ -169,7 +169,7 @@ void ListController::resolveEquations() {
     return;
   }
   // Tidy model before checkpoint, during which older TreeNodes can't be altered
-  modelStore()->tidy();
+  modelStore()->tidyDownstreamPoolFrom();
   Poincare::UserCircuitBreakerCheckpoint checkpoint;
   if (CircuitBreakerRun(checkpoint)) {
     bool resultWithoutUserDefinedSymbols = false;
@@ -202,7 +202,7 @@ void ListController::resolveEquations() {
       }
     }
   } else {
-    modelStore()->tidy();
+    modelStore()->tidyDownstreamPoolFrom();
   }
 }
 

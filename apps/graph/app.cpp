@@ -46,7 +46,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 }
 
 void App::Snapshot::tidy() {
-  m_functionStore.tidy();
+  m_functionStore.tidyDownstreamPoolFrom();
   m_graphRange.setDelegate(nullptr);
 }
 

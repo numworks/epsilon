@@ -149,7 +149,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
 
   /* Here we delete only the elements relative to the expression model kept in
    * this handle. */
-  tidy();
+  tidyDownstreamPoolFrom();
   return error;
 }
 
@@ -159,10 +159,13 @@ void ExpressionModel::updateNewDataWithExpression(Ion::Storage::Record * record,
   }
 }
 
-void ExpressionModel::tidy() const {
-  m_layout = Layout();
-  m_expression = Expression();
-  m_circular = -1;
+void ExpressionModel::tidyDownstreamPoolFrom(char * treePoolCursor) const {
+  if (treePoolCursor == nullptr || m_expression.isDownstreamOf(treePoolCursor)) {
+    assert(treePoolCursor == nullptr || m_layout.isUninitialized() || m_layout.isDownstreamOf(treePoolCursor));
+    m_layout = Layout();
+    m_expression = Expression();
+    m_circular = -1;
+  }
 }
 
 Poincare::Expression ExpressionModel::buildExpressionFromText(const char * c, CodePoint symbol, Poincare::Context * context) const {

@@ -34,7 +34,7 @@ public:
   void removeModel(Ion::Storage::Record record);
 
   // Other
-  virtual void tidy();
+  virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr);
   void storageDidChangeForRecord(const Ion::Storage::Record record) const { resetMemoizedModelsExceptRecord(record); }
 protected:
   virtual int maxNumberOfMemoizedModels() const = 0;

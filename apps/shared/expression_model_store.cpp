@@ -36,8 +36,10 @@ void ExpressionModelStore::removeModel(Ion::Storage::Record record) {
   record.destroy();
 }
 
-void ExpressionModelStore::tidy() {
-  resetMemoizedModelsExceptRecord();
+void ExpressionModelStore::tidyDownstreamPoolFrom(char * treePoolCursor) {
+  for (int i = 0; i < maxNumberOfMemoizedModels(); i++) {
+    memoizedModelAtIndex(i)->tidyDownstreamPoolFrom(treePoolCursor);
+  }
 }
 
 int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test, void * context) const {

@@ -88,11 +88,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color());
-      } else if (type == ContinuousFunction::PlotType::VerticalLine) {
-        float abscissa = f->evaluateXYAtParameter(0.0, context(), 0).x1();
-        float minOrdinate = pixelToFloat(Axis::Vertical, rect.top());
-        float maxOrdinate = pixelToFloat(Axis::Vertical, rect.bottom());
-        drawSegment(ctx, rect, abscissa, minOrdinate, abscissa, maxOrdinate, f->color(), false);
+      } else if (type == ContinuousFunction::PlotType::VerticalLine || type == ContinuousFunction::PlotType::VerticalLines) {
+        for (int subCurveIndex = 0; subCurveIndex < f->numberOfSubCurves(); subCurveIndex++) {
+          float abscissa = f->evaluateXYAtParameter(0.0, context(), subCurveIndex).x1();
+          float minOrdinate = pixelToFloat(Axis::Vertical, rect.top());
+          float maxOrdinate = pixelToFloat(Axis::Vertical, rect.bottom());
+          drawSegment(ctx, rect, abscissa, minOrdinate, abscissa, maxOrdinate, f->color(), false);
+        }
       } else {
         // Cartesian.
         // 1 - Define the evaluation functions for curve and area

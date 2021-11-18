@@ -48,7 +48,7 @@ public:
     X
   };
 
-  static constexpr size_t k_numberOfPlotTypes = 15;
+  static constexpr size_t k_numberOfPlotTypes = 16;
   enum class PlotType : uint8_t {
     Polar = 0,
     Parametric,
@@ -57,6 +57,7 @@ public:
     Line,
     HorizontalLine,
     VerticalLine,
+    VerticalLines,
     Inequation,
     Circle,
     Ellipse,

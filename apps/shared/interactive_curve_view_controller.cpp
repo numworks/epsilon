@@ -215,8 +215,16 @@ bool InteractiveCurveViewController::isCursorVisible() {
 }
 
 int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
+  /* Vertical curves are quite hard to handle when moving the cursor.
+   * To simplify things here, we consider vertical curves as if it they were
+   * rotated by 90 degrees by swapping x and y when dealing with them. */
   double x = m_cursor->x();
   double y = m_cursor->y();
+  if (hasVerticalLines(currentCurveIndex)) {
+    double temp = x;
+    x = y;
+    y = temp;
+  }
   if (std::isnan(y)) {
     y = goingUp ? -INFINITY : INFINITY;
   }
@@ -231,7 +239,11 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
         // Nothing to check for
         continue;
       }
-      double newY = xyValues(i, x, context, iSecondary).x2();
+      Poincare::Coordinate2D<double> newXY = xyValues(i, x, context, iSecondary);
+      double newY = newXY.x2();
+      if (hasVerticalLines(i)) {
+        newY = newXY.x1();
+      }
       if (!suitableYValue(newY)) {
         continue;
       }

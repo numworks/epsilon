@@ -216,8 +216,7 @@ int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferS
 
 double ContinuousFunction::approximateDerivative(double x, Context * context, int subCurveIndex) const {
   assert(isAlongX());
-  PlotType type = plotType();
-  if (x < tMin() || x > tMax() || type == PlotType::VerticalLine || type == PlotType::VerticalLines) {
+  if (x < tMin() || x > tMax() || hasVerticalLines()) {
     return NAN;
   }
   // Derivative is simplified once and for all

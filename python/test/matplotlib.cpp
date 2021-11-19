@@ -60,13 +60,18 @@ QUIZ_CASE(python_matplotlib_pyplot_bar) {
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "bar([0,2,3],[10,12,23])");
+  assert_command_execution_succeeds(env, "bar(10,[0,2,3])");
   assert_command_execution_succeeds(env, "bar([0,2,3],10)");
-  assert_command_execution_succeeds(env, "bar([],[])");
   assert_command_execution_succeeds(env, "bar([1,2,3],[1,2,3],2,3)");
   assert_command_execution_succeeds(env, "bar([1,2,3],[1,2,3],[1,2,3],[1,2,3])");
   assert_command_execution_succeeds(env, "bar([1,2,3],[1,2,3],[1,2,3],[1,2,3], color=\"orange\")");
   assert_command_execution_succeeds(env, "show()");
+  assert_command_execution_succeeds(env, "bar([],[])");
+  assert_command_execution_succeeds(env, "bar([],[1,2,3])");
+  assert_command_execution_succeeds(env, "bar(1,[1,2,3],[1,2],[1,2,3,4])");
   assert_command_execution_fails(env, "bar([1,2,3],[1,2,3,4],[1,2,3],[1,2,3])");
+  assert_command_execution_fails(env, "bar(1,[])");
+  assert_command_execution_fails(env, "bar(1,[1,2,3],[])");
   deinit_environment();
 }
 

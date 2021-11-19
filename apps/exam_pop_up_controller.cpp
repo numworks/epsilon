@@ -25,6 +25,7 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
         }
         container->refreshPreferences();
         Container::activeApp()->dismissModalViewController();
+        container->switchToBuiltinApp(container->homeAppSnapshot());
         /* Warning : By unplugging before confirmation, the examMode may be
          * deactivated within menus that depend on the examMode status (such as
          * PressToTest settings menu after having changed the country). */

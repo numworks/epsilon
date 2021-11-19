@@ -32,6 +32,7 @@ public:
   Escher::App::Snapshot * hardwareTestAppSnapshot();
   Escher::App::Snapshot * onBoardingAppSnapshot();
   Escher::App::Snapshot * usbConnectedAppSnapshot();
+  Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
   void reset();
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
@@ -56,7 +57,6 @@ public:
   void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   void storageIsFull() override;
 protected:
-  Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
   int numberOfExternalApps() { return Ion::ExternalApps::numberOfApps(); }
 private:
   Escher::Window * window() override;

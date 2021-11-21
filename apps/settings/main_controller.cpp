@@ -15,6 +15,8 @@ constexpr SettingsMessageTree s_modelFloatDisplayModeChildren[4] = {SettingsMess
 constexpr SettingsMessageTree s_modelComplexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
 constexpr SettingsMessageTree s_modelDateTimeChildren[3] = {SettingsMessageTree(I18n::Message::ActivateClock), SettingsMessageTree(I18n::Message::Date), SettingsMessageTree(I18n::Message::Time)};
 constexpr SettingsMessageTree s_symbolChildren[4] = {SettingsMessageTree(I18n::Message::SymbolMultiplicationCross),SettingsMessageTree(I18n::Message::SymbolMultiplicationMiddleDot),SettingsMessageTree(I18n::Message::SymbolMultiplicationStar),SettingsMessageTree(I18n::Message::SymbolMultiplicationAutoSymbol)};
+constexpr SettingsMessageTree s_usbLevelSelector[3] = {SettingsMessageTree(I18n::Message::USBDefaultLevel), SettingsMessageTree(I18n::Message::USBLowLevel), SettingsMessageTree(I18n::Message::USBParanoidLevel)};
+constexpr SettingsMessageTree s_usbSteps[2] = {SettingsMessageTree(I18n::Message::USBProtection), SettingsMessageTree(I18n::Message::USBLevelProtect, s_usbLevelSelector)};
 constexpr SettingsMessageTree s_symbolFunctionChildren[3] = {SettingsMessageTree(I18n::Message::SymbolDefaultFunction), SettingsMessageTree(I18n::Message::SymbolArgDefaultFunction), SettingsMessageTree(I18n::Message::SymbolArgFunction)};
 constexpr SettingsMessageTree s_modelMathOptionsChildren[6] = {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren), SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren), SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren), SettingsMessageTree(I18n::Message::SymbolFunction, s_symbolFunctionChildren), SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren), SettingsMessageTree(I18n::Message::SymbolMultiplication, s_symbolChildren)};
 constexpr SettingsMessageTree s_accessibilityChildren[6] = {SettingsMessageTree(I18n::Message::AccessibilityInvertColors), SettingsMessageTree(I18n::Message::AccessibilityMagnify),SettingsMessageTree(I18n::Message::AccessibilityGamma),SettingsMessageTree(I18n::Message::AccessibilityGammaRed),SettingsMessageTree(I18n::Message::AccessibilityGammaGreen),SettingsMessageTree(I18n::Message::AccessibilityGammaBlue)};
@@ -41,7 +43,8 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_codeOptionsController(this),
   m_examModeController(this),
   m_aboutController(this),
-  m_preferencesController(this)
+  m_preferencesController(this),
+  m_usbInfoController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -111,6 +114,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       subController = &m_dateTimeController;
     } else if (title == I18n::Message::MathOptions) {
       subController = &m_mathOptionsController;
+    } else if (title == I18n::Message::UsbSetting) {
+      subController = &m_usbInfoController;
     } else if (title == I18n::Message::CodeApp) {
       subController = &m_codeOptionsController;
     } else {

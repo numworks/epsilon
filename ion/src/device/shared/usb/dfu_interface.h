@@ -8,15 +8,20 @@
 #include "stack/endpoint0.h"
 #include "stack/setup_packet.h"
 #include "stack/streamable.h"
+#include <drivers/config/internal_flash.h>
+#include <drivers/config/external_flash.h>
 
-namespace Ion {
-namespace Device {
-namespace USB {
+namespace Ion
+{
+namespace Device
+{
+namespace USB
+{
 
 class DFUInterface : public Interface {
 
 public:
-  DFUInterface(Device * device, Endpoint0 * ep0, uint8_t bInterfaceAlternateSetting) :
+  DFUInterface(Device *device, Endpoint0 *ep0, uint8_t bInterfaceAlternateSetting): 
     Interface(ep0),
     m_device(device),
     m_status(Status::OK),
@@ -27,14 +32,23 @@ public:
     m_largeBuffer{0},
     m_largeBufferLength(0),
     m_writeAddress(0),
+    m_eraseAddress(0),
     m_bInterfaceAlternateSetting(bInterfaceAlternateSetting),
-    m_isErasingAndWriting(false)
+    m_lastErasedPage(-1),
+    m_isErasingAndWriting(false),
+    m_isTemporaryUnlocked(false),
+    m_haveAlreadyFlashedExternal(false),
+    m_dfuUnlocked(false),
+    m_dfuLevel(0)
   {
+
   }
   uint32_t addressPointer() const { return m_addressPointer; }
-  void wholeDataReceivedCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
-  void wholeDataSentCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
+  void wholeDataReceivedCallback(SetupPacket *request, uint8_t *transferBuffer, uint16_t *transferBufferLength) override;
+  void wholeDataSentCallback(SetupPacket *request, uint8_t *transferBuffer, uint16_t *transferBufferLength) override;
   bool isErasingAndWriting() const { return m_isErasingAndWriting; }
+  void unlockDfu() { m_dfuUnlocked = true; };
+  void setLevel(uint8_t lvl) { m_dfuLevel = lvl; }
 
 protected:
   void setActiveInterfaceAlternative(uint8_t interfaceAlternativeIndex) override {
@@ -43,7 +57,7 @@ protected:
   uint8_t getActiveInterfaceAlternative() override {
     return m_bInterfaceAlternateSetting;
   }
-  bool processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) override;
+  bool processSetupInRequest(SetupPacket *request, uint8_t *transferBuffer, uint16_t *transferBufferLength, uint16_t transferBufferMaxLength) override;
 
 private:
   // DFU Request Codes
@@ -100,11 +114,11 @@ private:
 
   class StatusData : public Streamable {
   public:
-    StatusData(Status status, State state, uint32_t pollTimeout = 1) :
-      /* We put a default pollTimeout value of 1ms: if the device is busy, the
-       * host has to wait 1ms before sending a getStatus Request. */
+    StatusData(Status status, State state, uint32_t pollTimeout = 10): 
+    /* We put a default pollTimeout value of 1ms: if the device is busy, the
+    * host has to wait 1ms before sending a getStatus Request. */
       m_bStatus((uint8_t)status),
-      m_bwPollTimeout{uint8_t((pollTimeout>>16) & 0xFF), uint8_t((pollTimeout>>8) & 0xFF), uint8_t(pollTimeout & 0xFF)},
+      m_bwPollTimeout{uint8_t((pollTimeout >> 16) & 0xFF), uint8_t((pollTimeout >> 8) & 0xFF), uint8_t(pollTimeout & 0xFF)},
       m_bState((uint8_t)state),
       m_iString(0)
     {
@@ -112,17 +126,18 @@ private:
   protected:
     void push(Channel * c) const override;
   private:
-    uint8_t m_bStatus;  // Status resulting from the execution of the most recent request
+    uint8_t m_bStatus;          // Status resulting from the execution of the most recent request
     uint8_t m_bwPollTimeout[3]; // m_bwPollTimeout is 24 bits
-    uint8_t m_bState; // State of the device immediately following transmission of this response
+    uint8_t m_bState;           // State of the device immediately following transmission of this response
     uint8_t m_iString;
   };
 
-  class StateData : public Streamable {
+  class StateData : public Streamable
+  {
   public:
     StateData(State state) : m_bState((uint8_t)state) {}
   protected:
-    void push(Channel * c) const override;
+    void push(Channel *c) const override;
   private:
     uint8_t m_bState; // Current state of the device
   };
@@ -131,36 +146,44 @@ private:
    * linked with dfu.ld, so we cannot access the values. */
   constexpr static uint32_t k_sramStartAddress = 0x20000000;
   constexpr static uint32_t k_sramEndAddress = 0x20040000;
+  constexpr static uint32_t k_externalAppsBorderAddress = 0x90200000;
+
+  const static int k_internalMagikPointer = 0x1C4;
+  constexpr static int k_externalMagikPointer = 0x44F;
+  constexpr static uint8_t k_internalMagik[4] = {0xF0, 0x0D, 0xC0, 0xDE};
+  constexpr static uint8_t k_externalMagik[9] = {0x64, 0x6c, 0x31, 0x31, 0x23, 0x39, 0x38, 0x33, 0x35};
 
   // Download and upload
-  bool processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength);
-  bool processUploadRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
+  bool processDownloadRequest(uint16_t wLength, uint16_t *transferBufferLength);
+  bool processUploadRequest(SetupPacket *request, uint8_t *transferBuffer, uint16_t *transferBufferLength, uint16_t transferBufferMaxLength);
   // Address pointer
-  void setAddressPointerCommand(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength);
+  void setAddressPointerCommand(SetupPacket *request, uint8_t *transferBuffer, uint16_t transferBufferLength);
   void changeAddressPointerIfNeeded();
   // Access memory
-  void eraseCommand(uint8_t * transferBuffer, uint16_t transferBufferLength);
+  void eraseCommand(uint8_t *transferBuffer, uint16_t transferBufferLength);
   void eraseMemoryIfNeeded();
+  void eraseMemoryIfNeededWithoutErasingAtAll();
   void writeOnMemory();
   void unlockFlashMemory();
   void lockFlashMemoryAndPurgeCaches();
   // Status
-  bool getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
-  bool clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
+  bool getStatus(SetupPacket *request, uint8_t *transferBuffer, uint16_t *transferBufferLength, uint16_t transferBufferMaxLength);
+  bool clearStatus(SetupPacket *request, uint8_t *transferBuffer, uint16_t *transferBufferLength, uint16_t transferBufferMaxLength);
   // State
-  bool getState(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize);
+  bool getState(uint8_t *transferBuffer, uint16_t *transferBufferLength, uint16_t maxSize);
   // Abort
-  bool dfuAbort(uint16_t * transferBufferLength);
+  bool dfuAbort(uint16_t *transferBufferLength);
   // Leave DFU
-  void leaveDFUAndReset();
+  void leaveDFUAndReset(bool do_reset=true);
   /* Erase and Write state. After starting the erase of flash memory, the user
    * can no longer leave DFU mode by pressing the Back key of the keyboard. This
    * way, we prevent the user from interrupting a software download. After every
    * software download, the calculator resets, which unlocks the "exit on
    * pressing back". */
   void willErase() { m_isErasingAndWriting = true; }
+  void resetProtectionVariables() { m_lastErasedPage = -1; m_isTemporaryUnlocked = false; m_haveAlreadyFlashedExternal = false; }
 
-  Device * m_device;
+  Device *m_device;
   Status m_status;
   State m_state;
   uint32_t m_addressPointer;
@@ -169,8 +192,14 @@ private:
   uint8_t m_largeBuffer[Endpoint0::MaxTransferSize];
   uint16_t m_largeBufferLength;
   uint32_t m_writeAddress;
+  uint32_t m_eraseAddress;
   uint8_t m_bInterfaceAlternateSetting;
+  uint8_t m_lastErasedPage;
   bool m_isErasingAndWriting;
+  bool m_isTemporaryUnlocked;
+  bool m_haveAlreadyFlashedExternal;
+  bool m_dfuUnlocked;
+  uint8_t m_dfuLevel; // 0: Upsilon only, 1: Omega-forked only, 2: No update
 };
 
 }

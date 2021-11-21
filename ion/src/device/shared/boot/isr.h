@@ -5,6 +5,15 @@
 extern "C" {
 #endif
 
+void bf_abort();
+void uf_abort();
+void nmi_abort();
+// Here and below, we mean init the abort handler, not the opposite
+void abort_init();
+void abort_core(const char *);
+void abort_screen(const char *);
+void abort_sleeping();
+void abort_economy();
 void start();
 void abort();
 void isr_systick();

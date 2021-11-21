@@ -11,9 +11,9 @@ extern char _dfu_bootloader_flash_end;
 namespace Ion {
 namespace USB {
 
-typedef void (*PollFunctionPointer)(bool exitWithKeyboard);
+typedef void (*PollFunctionPointer)(bool exitWithKeyboard, bool unlocked, int level);
 
-void DFU(bool exitWithKeyboard) {
+void DFU(bool exitWithKeyboard, bool unlocked, int level) {
 
   /* DFU transfers can serve two purposes:
    *  - Transfering RAM data between the machine and a host, e.g. Python scripts
@@ -74,7 +74,7 @@ void DFU(bool exitWithKeyboard) {
    *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
    */
 
-  dfu_bootloader_entry(exitWithKeyboard);
+  dfu_bootloader_entry(exitWithKeyboard, unlocked, level);
 
   /* 5- Restore interrupts */
   Device::Timing::init();

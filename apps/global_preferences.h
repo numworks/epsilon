@@ -30,6 +30,10 @@ public:
   void setTempExamMode(ExamMode examMode);
   bool showPopUp() const { return m_showPopUp; }
   void setShowPopUp(bool showPopUp) { m_showPopUp = showPopUp; }
+  bool dfuStatus() const { return m_dfuUnlocked; }
+  void setDfuStatus(bool status) { m_dfuUnlocked = status; }
+  int getDfuLevel() const { return m_dfuProtectLevel; }
+  void setDfuLevel(int level) { m_dfuProtectLevel = level; }
   bool autocomplete() const { return m_autoComplete; }
   void setAutocomplete(bool autocomple) { m_autoComplete = autocomple; }
   int brightnessLevel() const { return m_brightnessLevel; }
@@ -37,6 +41,7 @@ public:
   const KDFont * font() const { return m_font; }
   void setFont(const KDFont * font) { m_font = font; }
   constexpr static int NumberOfBrightnessStates = 15;
+  constexpr static int DfuUnlockStep = 3;
 private:
   static_assert(I18n::NumberOfLanguages > 0, "I18n::NumberOfLanguages is not superior to 0"); // There should already have been an error when processing an empty EPSILON_I18N flag
   static_assert(I18n::NumberOfCountries > 0, "I18n::NumberOfCountries is not superior to 0"); // There should already have been an error when processing an empty EPSILON_COUNTRIES flag
@@ -46,6 +51,8 @@ private:
     m_examMode(ExamMode::Unknown),
     m_tempExamMode(ExamMode::Standard),
     m_showPopUp(true),
+    m_dfuUnlocked(false),
+    m_dfuProtectLevel(0),
     m_autoComplete(true),
     m_brightnessLevel(Ion::Backlight::MaxBrightness),
     m_font(KDFont::LargeFont) {}
@@ -56,9 +63,9 @@ private:
   mutable ExamMode m_examMode;
   mutable ExamMode m_tempExamMode;
   bool m_showPopUp;
+  bool m_dfuUnlocked;
   bool m_autoComplete;
   int m_brightnessLevel;
-  const KDFont * m_font;
 };
 
 #endif

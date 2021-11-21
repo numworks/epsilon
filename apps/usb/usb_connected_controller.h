@@ -2,7 +2,6 @@
 #define USB_USB_CONNECTED_CONTROLLER_H
 
 #include <escher.h>
-#include "usb_view.h"
 
 namespace USB {
 
@@ -12,13 +11,23 @@ public:
   View * view() override { return &m_messageView; }
   USBView * getMessageView() {return &m_messageView; }
   bool handleEvent(Ion::Events::Event event) override { return false; };
-private:
-  int step;
-  bool already_init;
-  USBView m_messageView;
+  public:
+    ContentView(KDColor * fgcolors, KDColor * bgcolors);
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+  protected:
+    int numberOfSubviews() const override { return k_numberOfMessages; }
+    View * subviewAtIndex(int index) override;
+    void layoutSubviews(bool force = false) override;
+  private:
+    constexpr static KDCoordinate k_titleMargin = 30;
+    constexpr static KDCoordinate k_paragraphHeight = 80;
+    constexpr static uint8_t k_numberOfUSBMessages = 9;
+    constexpr static uint8_t k_numberOfMessages = k_numberOfUSBMessages + 1;
+    MessageTextView m_messageTextViews[k_numberOfMessages];
+  };
+  ContentView m_contentView;
 };
 
 }
-
 #endif
 

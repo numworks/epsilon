@@ -19,16 +19,12 @@ class UsbInfoController : public GenericSubController {
     HighlightCell* reusableCell(int index, int type) override;
     int reusableCellCount(int type) override;
     void willDisplayCellForIndex(HighlightCell* cell, int index) override;
-    int typeAtLocation(int i, int j) override;
 
    private:
-    static constexpr int k_numberOfInfoE16MessageLines = 3;
-    int numberOfInfoLines() const { return k_numberOfInfoE16MessageLines; };
-    static constexpr int k_maxSwitchCells = 1;
-    MessageTableCellWithSwitch m_switchCells[k_maxSwitchCells];
-    UsbProtectionLevelController m_usbprotectlevel;
-    MessageTableCellWithChevronAndMessage m_dfuLevel;
-    SelectableViewWithMessages m_contentView;
+    static constexpr int k_numberOfExplanationMessages = 3;
+    MessageTableCellWithSwitch m_switchCell;
+    UsbProtectionLevelController m_usbProtectionLevelController;
+    MessageTableCellWithChevronAndMessage m_dfuLevelCell;
 };
 
 }

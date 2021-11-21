@@ -12,7 +12,6 @@ void Calculator::PollAndReset(bool exitWithKeyboard, bool unlock, int level) {
   Ion::Device::SerialNumber::copy(serialNumber);
   Calculator c(serialNumber);
   
-
   /* Leave DFU mode if the Back key is pressed, the calculator unplugged or the
    * USB core soft-disconnected. */
   Ion::Keyboard::Key exitKey = Ion::Keyboard::Key::Back;

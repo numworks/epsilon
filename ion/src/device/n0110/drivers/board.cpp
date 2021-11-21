@@ -29,7 +29,7 @@ void initMPU() {
   // 1.1 Memory barrier
   Cache::dmb();
 
-  // 1.2 Disable fault exceptions
+  // 1.2 Enable fault exceptions
   CORTEX.SHCRS()->setMEMFAULTENA(true);
   CORTEX.SHCRS()->setBUSFAULTENA(true);
   CORTEX.SHCRS()->setUSGFAULTENA(true); 

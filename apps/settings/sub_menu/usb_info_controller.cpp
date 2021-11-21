@@ -16,119 +16,86 @@ using namespace Shared;
 
 namespace Settings {
 
-UsbInfoController::UsbInfoController(Responder *parentResponder) : GenericSubController(parentResponder),
-                                                                   m_usbprotectlevel(this),
-                                                                   m_dfuLevel(KDFont::LargeFont, KDFont::SmallFont),
-                                                                   m_contentView(&m_selectableTableView) {
-    for (int i = 0; i < k_maxSwitchCells; i++) {
-        m_switchCells[i].setMessageFont(KDFont::LargeFont);
-        //Ancien code au cas ou on souhaite ajouter d'autres éléments dans le menu
-        // m_cell[i].setMessageFont(KDFont::LargeFont);
-        // m_cell[i].setAccessoryFont(KDFont::SmallFont);
-        // m_cell[i].setAccessoryTextColor(Palette::SecondaryText);
-    }
+UsbInfoController::UsbInfoController(Responder *parentResponder): 
+  GenericSubController(parentResponder),
+  m_usbProtectionLevelController(this),
+  m_dfuLevel(KDFont::LargeFont, KDFont::SmallFont)
+{
+  for (int i = 0; i < k_maxSwitchCells; i++) {
+    m_switchCells[i].setMessageFont(KDFont::LargeFont);
+  }
 }
 
 bool UsbInfoController::handleEvent(Ion::Events::Event event) {
-    if ((Ion::Events::OK == event || Ion::Events::EXE == event) && selectedRow() == 0) {
-        if(GlobalPreferences::sharedGlobalPreferences()->showDfuDeacAlert()){
-            GlobalPreferences::sharedGlobalPreferences()->setDfuDeacAlert(false);
-            Container::activeApp()->displayWarning(I18n::Message::USBDeacAlert1, I18n::Message::USBDeacAlert2);
-            return true;
-        }
-        if (!GlobalPreferences::sharedGlobalPreferences()->dfuStatus()) {
-            if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-                Ion::LED::setColor(KDColorPurple);
-                Ion::LED::setBlinking(500, 0.5f);
-            }
-            GlobalPreferences::sharedGlobalPreferences()->setDfuStatus(true);
-            Container::activeApp()->displayWarning(I18n::Message::DfuWarning1, I18n::Message::DfuWarning2);
-        } else {
-            if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-                Ion::LED::setColor(KDColorBlack);
-            }
-            GlobalPreferences::sharedGlobalPreferences()->setDfuStatus(false);
-        }
-        m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-        AppsContainer::sharedAppsContainer()->redrawWindow(true);
-        return true;
+  if ((Ion::Events::OK == event || Ion::Events::EXE == event) && selectedRow() == 0) {
+    if (!GlobalPreferences::sharedGlobalPreferences()->dfuStatus()) {
+      if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+        Ion::LED::setColor(KDColorPurple);
+        Ion::LED::setBlinking(500, 0.5f);
+      }
+      GlobalPreferences::sharedGlobalPreferences()->setDfuStatus(true);
+      Container::activeApp()->displayWarning(I18n::Message::DfuWarning1, I18n::Message::DfuWarning2);
+    } else {
+      if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+        Ion::LED::setColor(KDColorBlack);
+      }
+      GlobalPreferences::sharedGlobalPreferences()->setDfuStatus(false);
     }
-
-    if (GlobalPreferences::sharedGlobalPreferences()->dfuStatus() && event != Ion::Events::USBPlug && event != Ion::Events::USBEnumeration) {
-        Container::activeApp()->displayWarning(I18n::Message::UsbSetting, I18n::Message::USBSettingDeact);
-        return true;
-    }
-
-    if ((Ion::Events::OK == event || Ion::Events::EXE == event) && selectedRow() == 1) {
-        GenericSubController *subController = &m_usbprotectlevel;
-        subController->setMessageTreeModel(m_messageTreeModel->childAtIndex(1));
-        StackViewController *stack = stackController();
-        m_lastSelect = selectedRow();
-        stack->push(subController);
-        return true;
-    }
-    GlobalPreferences::sharedGlobalPreferences()->setDfuDeacAlert(true);
-    return GenericSubController::handleEvent(event);
+    m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    AppsContainer::sharedAppsContainer()->redrawWindow(true);
+    return true;
+  }
+  // We cannot use things like willExitResponderChain because this view can disappear due to an USB connection,
+  // and in this case we must keep the DFU status.
+  if ((Ion::Events::Left == event || Ion::Events::Home == event) && GlobalPreferences::sharedGlobalPreferences()->dfuStatus()) {
+    Container::activeApp()->displayWarning(I18n::Message::USBProtectionReanabled);
+    GlobalPreferences::sharedGlobalPreferences()->setDfuStatus(false);
+  }
+  if ((Ion::Events::OK == event || Ion::Events::EXE == event) && selectedRow() == 1) {
+    GenericSubController *subController = &m_usbProtectionLevelController;
+    subController->setMessageTreeModel(m_messageTreeModel->childAtIndex(1));
+    StackViewController *stack = stackController();
+    m_lastSelect = selectedRow();
+    stack->push(subController);
+    return true;
+  }
+  return GenericSubController::handleEvent(event);
 }
 
 HighlightCell *UsbInfoController::reusableCell(int index, int type) {
-    assert(type == 2 || type == 1);
-    if (type == 2) {
-        assert(index >= 0 && index < k_maxSwitchCells);
-        return &m_switchCells[index];
-    }
-    return &m_dfuLevel;
+  assert(index == 0 || index == 1);
+  return index == 0 ? &m_switchCell : &m_dfuLevelCell;
 }
 
 int UsbInfoController::reusableCellCount(int type) {
-    assert(type == 2 || type == 1);
-    if (type == 2) {
-        return k_maxSwitchCells;
-    }
-    return 1;
+  assert(type == 0);
+  return 1;
 }
 
 void UsbInfoController::willDisplayCellForIndex(HighlightCell *cell, int index) {
-    GenericSubController::willDisplayCellForIndex(cell, index);
+  GenericSubController::willDisplayCellForIndex(cell, index);
 
-    if (index == 0) {
-        MessageTableCellWithSwitch *myCell = (MessageTableCellWithSwitch *)cell;
-        SwitchView *mySwitch = (SwitchView *)myCell->accessoryView();
-        mySwitch->setState(!GlobalPreferences::sharedGlobalPreferences()->dfuStatus());
-    } else if (index == 1) {
-        MessageTableCellWithChevronAndMessage *mcell = (MessageTableCellWithChevronAndMessage *)cell;
-        int currentLevel = GlobalPreferences::sharedGlobalPreferences()->getDfuLevel();
-        if (currentLevel == 0) {
-            // mcell->setSubtitle(I18n::Message::USBDefaultLevel);
-            mcell->setSubtitle(I18n::Message::USBDefaultLevelDesc);
-        } else if (currentLevel == 1) {
-            // mcell->setSubtitle(I18n::Message::USBLowLevel);
-            mcell->setSubtitle(I18n::Message::USBLowLevelDesc);
-        } else if (currentLevel == 2) {
-            // mcell->setSubtitle(I18n::Message::USBParanoidLevel);
-            mcell->setSubtitle(I18n::Message::USBParanoidLevelDesc);
-        } else {
-            // mcell->setSubtitle(I18n::Message::USBMegaParanoidLevel);
-            mcell->setSubtitle(I18n::Message::USBMegaParanoidLevelDesc);
-        }
+  if (index == 0) {
+    MessageTableCellWithSwitch *myCell = (MessageTableCellWithSwitch *)cell;
+    SwitchView *mySwitch = (SwitchView *)myCell->accessoryView();
+    mySwitch->setState(!GlobalPreferences::sharedGlobalPreferences()->dfuStatus());
+  } else if (index == 1) {
+    MessageTableCellWithChevronAndMessage *mcell = (MessageTableCellWithChevronAndMessage *)cell;
+    int currentLevel = GlobalPreferences::sharedGlobalPreferences()->getDfuLevel();
+    if (currentLevel == 0) {
+      mcell->setSubtitle(I18n::Message::USBDefaultLevelDesc);
+    } else if (currentLevel == 1) {;
+      mcell->setSubtitle(I18n::Message::USBLowLevelDesc);
+    } else {
+      assert(currentLevel == 2);
+      mcell->setSubtitle(I18n::Message::USBParanoidLevelDesc);
     }
-}
-
-int UsbInfoController::typeAtLocation(int i, int j) {
-    switch (j) {
-        case 0:
-            return 2;
-        default:
-            return 1;
-    }
+  }
 }
 
 void UsbInfoController::didEnterResponderChain(Responder *previousFirstResponder) {
-    m_contentView.reload();
-
-    if (numberOfInfoLines() > 0) {
-        I18n::Message infoMessages[] = {I18n::Message::USBE16_expl1, I18n::Message::USBE16_expl2, I18n::Message::USBE16_expl3};
-        m_contentView.setMessages(infoMessages, numberOfInfoLines());
-    }
+  m_selectableTableView.reload();
+  I18n::Message infoMessages[] = {I18n::Message::USBExplanation1, I18n::Message::USBExplanation2, I18n::Message::USBExplanation3};
+  m_selectableTableView.setMessages(infoMessages, k_numberOfExplanationMessages);
 }
 }  

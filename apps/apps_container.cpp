@@ -148,7 +148,6 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       updateBatteryState();
       if (switchTo(usbConnectedAppSnapshot())) {
         Ion::USB::DFU(true, GlobalPreferences::sharedGlobalPreferences()->dfuStatus(), GlobalPreferences::sharedGlobalPreferences()->getDfuLevel());
-        GlobalPreferences::sharedGlobalPreferences()->dfuResetStep();
         GlobalPreferences::sharedGlobalPreferences()->setDfuStatus(false);
         // Update LED when exiting DFU mode
         Ion::LED::updateColorWithPlugAndCharge();

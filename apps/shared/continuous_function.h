@@ -77,8 +77,8 @@ public:
     "First PlotTypes should match SymbolTypes");
   // Return Message corresponding to SymbolType
   static I18n::Message MessageForSymbolType(SymbolType symbolType);
-  // Return Message corresponding to PlotType
-  static I18n::Message MessageForPlotType(PlotType plotType);
+  // Return message describing function's PlotType
+  I18n::Message plotTypeMessage();
   // Return the type of area to draw
   AreaType areaType() const;
   // Return ContinuousFunction's PlotType

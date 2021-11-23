@@ -69,8 +69,8 @@ ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
   return functionPlotType >= PlotType::Cartesian ? SymbolType::X : static_cast<SymbolType>(functionPlotType);
 }
 
-I18n::Message ContinuousFunction::MessageForPlotType(PlotType plotType) {
-  const size_t plotTypeIndex = static_cast<size_t>(plotType);
+I18n::Message ContinuousFunction::plotTypeMessage() {
+  const size_t plotTypeIndex = static_cast<size_t>(plotType());
   assert(plotTypeIndex < k_numberOfPlotTypes);
   constexpr I18n::Message k_categories[k_numberOfPlotTypes] = {
       I18n::Message::PolarType,

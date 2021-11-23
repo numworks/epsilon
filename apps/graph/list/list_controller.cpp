@@ -261,7 +261,7 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   FunctionCell * functionCell = static_cast<FunctionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   functionCell->setLayout(f->layout());
-  functionCell->setMessage(ContinuousFunction::MessageForPlotType(f->plotType()));
+  functionCell->setMessage(f->plotTypeMessage());
   KDColor functionColor = f->isActive() ? f->color() : Palette::GrayDark;
   functionCell->setColor(functionColor);
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;

@@ -382,19 +382,8 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void TextField::removePreviousGlyphIfRepetition(bool defaultXNTHasChanged) {
-  if (!defaultXNTHasChanged && Ion::Events::repetitionFactor() > 0 && isEditing() && m_contentView.selectionIsEmpty()) {
-    // Since XNT is cycling on simple glyphs, remove the last inserted one
-    bool success = removePreviousGlyph();
-    assert(success);
-    (void) success; // Silence compilation warnings
-    /* TODO Hugo : Handle cycling with non-default layouts.
-     * TODO Hugo : Fix issues with repetition over a syntax error dismissal
-     * A solution is to "select" the inserted XNT, so that next xnt will
-     * override it, and any other action will deselect it. */
-  }
-}
-
+/* TODO Hugo : Handle cycling with non-default layouts.
+ * TODO Hugo : Fix issues with repetition over a syntax error dismissal */
 size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength) {
   /* If cursor is in one of the following functions, and everything before the
    * cursor is correctly nested, the default XNTCodePoint will be improved.
@@ -479,7 +468,6 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
   // Step 2 : Handle intermediary cases
   if (!functionFound || cursorInVariableField) {
     // General or local default code point.
-    removePreviousGlyphIfRepetition(defaultXNTHasChanged);
     return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
   }
   // Step 3 : Search variable field
@@ -507,7 +495,6 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
     }
   }
   if (!variableFound || c == UCodePointNull) {
-    removePreviousGlyphIfRepetition(defaultXNTHasChanged);
     return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
   }
   // Step 4 : Identify where variable text starts and ends.
@@ -538,7 +525,6 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
     }
   }
   // Fall back on default code point
-  removePreviousGlyphIfRepetition(defaultXNTHasChanged);
   return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
 }
 
@@ -549,7 +535,12 @@ bool TextField::addXNTCodePoint(CodePoint xnt) {
 
   assert(length < bufferSize);
   buffer[length] = 0;
-  return handleEventWithText(buffer, false, true);
+  // Delete selected text (and any pending XNT suggestion)
+  if (!contentView()->selectionIsEmpty()) {
+    deleteSelection();
+  }
+  m_selectionIsXNT = handleEventWithText(buffer, false, true, true);
+  return m_selectionIsXNT;
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {
@@ -588,6 +579,16 @@ void TextField::scrollToCursor() {
     return;
   }
   return TextInput::scrollToCursor();
+}
+
+void TextField::resetSelection() {
+  TextInput::resetSelection();
+  m_selectionIsXNT = false;
+}
+
+void TextField::deleteSelection() {
+  TextInput::deleteSelection();
+  m_selectionIsXNT = false;
 }
 
 bool TextField::shouldFinishEditing(Ion::Events::Event event) {
@@ -629,7 +630,7 @@ bool TextField::privateHandleSelectEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
+bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText, bool selectInsertedText) {
   size_t previousTextLength = strlen(text());
 
   if (!isEditing()) {
@@ -642,7 +643,11 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
 
   // Delete the selected text if needed
   if (!contentView()->selectionIsEmpty()) {
-    deleteSelection();
+    if (m_selectionIsXNT) {
+      resetSelection();
+    } else {
+      deleteSelection();
+    }
   }
 
   if (eventText[0] != 0) {
@@ -667,10 +672,14 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
        * the cursor at the end of the text and sometimes after the first
        * parenthesis. */
       const char * nextCursorLocation = cursorLocation();
+      size_t bufferLength = strlen(buffer);
       if (forceCursorRightOfText) {
-        nextCursorLocation+= strlen(buffer);
+        nextCursorLocation+= bufferLength;
       } else {
         nextCursorLocation+= TextInputHelpers::CursorPositionInCommand(eventText) - eventText;
+      }
+      if (selectInsertedText) {
+        selectLeftRight(false, false, bufferLength);
       }
       setCursorLocation(nextCursorLocation);
     }

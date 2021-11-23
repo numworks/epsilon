@@ -44,12 +44,14 @@ public:
   void setEditing(bool isEditing) override { m_contentView.setEditing(isEditing); }
   size_t insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength);
   bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
-  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false, bool selectInsertedText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   constexpr static int maxBufferSize() {
      return ContentView::k_maxBufferSize;
   }
   void scrollToCursor() override;
+  void resetSelection() override;
+  void deleteSelection() override;
   // TODO: factorize with TextField (see TODO of EditableField)
   bool shouldFinishEditing(Ion::Events::Event event) override;
   const KDFont * font() const { return m_contentView.font(); }
@@ -107,7 +109,6 @@ protected:
   ContentView m_contentView;
 
 private:
-  void removePreviousGlyphIfRepetition(bool defaultXNTHasChanged);
   bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event);
   bool privateHandleSelectEvent(Ion::Events::Event event);

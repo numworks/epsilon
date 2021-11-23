@@ -36,7 +36,9 @@ static inline void InsertSpacesAtLocation(int spacesCount, char * buffer, int bu
   }
 }
 
-bool TextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
+bool TextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText, bool selectInsertedText) {
+  /* selectInsertedText is ignored in textArea because there is currently no
+   * XNT circulation implemented in textAreas. */
   if (*text == 0) {
     return false;
   }

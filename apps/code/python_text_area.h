@@ -25,7 +25,7 @@ public:
   void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false, bool selectInsertedText = false) override;
   /* autocompletionType returns:
    * - EndOfIdentifier if there is currently autocompletion, or if the cursor is
    *   at the end of an identifier,

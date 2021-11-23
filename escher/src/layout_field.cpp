@@ -343,25 +343,22 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   if (!isEditing()) {
     setEditing(true);
   }
+  // TODO Hugo : Cycle default XNT and local XNT layouts
   // Query bottom-most layout
   Layout xnt = m_contentView.cursor()->layout().XNTLayout();
   if (xnt.isUninitialized()) {
     xnt = CodePointLayout::Builder(defaultXNTCodePoint);
-    if (Ion::Events::repetitionFactor() > 0 && isEditing() && m_contentView.selectionIsEmpty()) {
-      // XNT is Cycling, remove the last inserted character
-      // TODO Hugo : Handle cycling when xnt is initialized.
-      m_contentView.cursor()->performBackspace();
-    }
   }
 
-  // Delete the selected layouts if needed
+  // Delete the selected layouts (and any pending XNT suggestion)
   deleteSelection();
   // Do not insert layout if it has too many descendants
   if (m_contentView.expressionView()->numberOfLayouts() + xnt.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
     return true;
   }
   // No need to provide an expression because cursor is forced right of text.
-  insertLayoutAtCursor(xnt, Poincare::Expression(), true);
+  insertLayoutAtCursor(xnt, Poincare::Expression(), true, false, true);
+  m_selectionIsXNT = true;
   return true;
 }
 
@@ -390,7 +387,7 @@ void LayoutField::reload(KDSize previousSize) {
 
 typedef void (Poincare::LayoutCursor::*AddLayoutPointer)();
 
-bool LayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
+bool LayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText, bool selectInsertedText) {
   /* The text here can be:
    * - the result of a key pressed, such as "," or "cos(•)"
    * - the text added after a toolbox selection
@@ -403,11 +400,17 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
 
   /* TODO : dirty code : Reloads are handled in different places (handleEvent(),
    *        insertLayoutAtCursor() or here) and can be called several times
-   *        depending on text source (events, copy-paste, or toolbox). */
+   *        depending on text source (events, copy-paste, or toolbox).
+   * Being currently only used with XNT events, selectInsertedText isn't handled
+   * in every cases. */
   m_contentView.invalidateInsertionCursor();
 
   // Delete the selected layouts if needed
-  deleteSelection();
+  if (m_selectionIsXNT) {
+    resetSelection();
+  } else {
+    deleteSelection();
+  }
 
   if (text[0] == 0) {
     // The text is empty
@@ -432,11 +435,13 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   for (int i = 0; i < numberOfSpecialEvents; i++) {
     Ion::Events::copyText(static_cast<uint8_t>(specialEvents[i]), buffer, Ion::Events::EventData::k_maxDataSize);
     if (strcmp(text, buffer) == 0) {
+      assert(!selectInsertedText);
       (cursor->*handleSpecialEvents[i])();
       return true;
     }
   }
   if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
+    assert(!selectInsertedText);
     cursor->addEmptyMatrixLayout();
     return true;
   }
@@ -444,6 +449,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   // If first inserted character was empty, cursor must be left of layout
   bool forceCursorLeftOfText = !forceCursorRightOfText && text[0] == UCodePointEmpty;
   if (resultExpression.isUninitialized()) {
+    assert(!selectInsertedText);
     // The text is not parsable (for instance, ",") and is added char by char.
     KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
     cursor->insertText(text, forceCursorRightOfText, forceCursorLeftOfText);
@@ -455,7 +461,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
     return false;
   }
-  insertLayoutAtCursor(resultLayout, resultExpression, forceCursorRightOfText, forceCursorLeftOfText);
+  insertLayoutAtCursor(resultLayout, resultExpression, forceCursorRightOfText, forceCursorLeftOfText, selectInsertedText);
   return true;
 }
 
@@ -518,7 +524,13 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
+bool LayoutField::resetSelection() {
+  m_selectionIsXNT = false;
+  return m_contentView.resetSelection();
+}
+
 void LayoutField::deleteSelection() {
+  m_selectionIsXNT = false;
   m_contentView.deleteSelection();
 }
 
@@ -722,7 +734,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect, true);
 }
 
-void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout, bool forceCursorLeftOfText) {
+void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout, bool forceCursorLeftOfText, bool selectInsertedText) {
   if (layoutR.isUninitialized()) {
     return;
   }
@@ -735,6 +747,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
 
   bool layoutWillBeMerged = layoutR.type() == LayoutNode::Type::HorizontalLayout;
   Layout lastMergedLayoutChild = (layoutWillBeMerged && layoutR.numberOfChildren() > 0) ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : Layout();
+  Layout firstMergedLayoutChild = (layoutWillBeMerged && layoutR.numberOfChildren() > 0) ? layoutR.childAtIndex(0) : Layout();
 
   // If the layout will be merged, find now where the cursor will point
   Layout cursorMergedLayout = Layout();
@@ -757,6 +770,15 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
 
   // Add the layout. This puts the cursor at the right of the added layout
   cursor->addLayoutAndMoveCursor(layoutR);
+  if (selectInsertedText) {
+    if (layoutWillBeMerged) {
+      // Layout has been merged, select from the first to the last merged child
+      m_contentView.addSelection(firstMergedLayoutChild);
+      m_contentView.addSelection(lastMergedLayoutChild);
+    } else {
+      m_contentView.addSelection(layoutR);
+    }
+  }
 
   /* Move the cursor if needed.
    *

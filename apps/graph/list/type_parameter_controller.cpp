@@ -54,7 +54,7 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   if (index == 0) {
     myCell->setMessage(I18n::Message::CurveType);
     myCell->setSubLabelMessage(I18n::Message::Default);
-    myCell->setAccessoryText(I18n::translate(Shared::ContinuousFunction::MessageForPlotType(plotType())));
+    myCell->setAccessoryText(I18n::translate(plotTypeMessage()));
   } else {
     myCell->setMessage(detailsTitle(index - 1));
     double value = detailsValue(index - 1);

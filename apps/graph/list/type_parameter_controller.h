@@ -41,6 +41,8 @@ private:
   static constexpr size_t k_parabolaDetailsSections = 3;
   static constexpr size_t k_hyperbolaDetailsSections = 6;
   static constexpr int k_numberOfDataPoints = 7; // max + 1 for plot type
+  // Return record's plot type message
+  I18n::Message plotTypeMessage() const { assert(!m_record.isNull()); return ((Shared::ContinuousFunction)m_record).plotTypeMessage(); }
   // Return record's plot type
   Shared::ContinuousFunction::PlotType plotType() const { assert(!m_record.isNull()); return ((Shared::ContinuousFunction)m_record).plotType(); }
   // Title of given section in ContinuousFunction's detail menu

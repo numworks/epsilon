@@ -20,9 +20,9 @@ QUIZ_CASE(graph_function_plot_type) {
   addFunction("0=x^2", ContinuousFunction::PlotType::VerticalLines, &store, &context);
   addFunction("1=x^2+x", ContinuousFunction::PlotType::VerticalLines, &store, &context);
   addFunction("1+x^2=0", ContinuousFunction::PlotType::VerticalLines, &store, &context);
-  addFunction("2-y>log(x)", ContinuousFunction::PlotType::Inequation, &store, &context);
-  addFunction("2-y^2>x^2+x+y", ContinuousFunction::PlotType::Inequation, &store, &context);
-  addFunction("p(x)>log(x)", ContinuousFunction::PlotType::Inequation, &store, &context);
+  addFunction("2-y>log(x)", ContinuousFunction::PlotType::Cartesian, &store, &context);
+  addFunction("2-y^2>x^2+x+y", ContinuousFunction::PlotType::Circle, &store, &context);
+  addFunction("p(x)>log(x)", ContinuousFunction::PlotType::Cartesian, &store, &context);
   addFunction("x^2+y^2=12", ContinuousFunction::PlotType::Circle, &store, &context);
   addFunction("x^2+2*y^2=12", ContinuousFunction::PlotType::Ellipse, &store, &context);
   addFunction("y=x^2", ContinuousFunction::PlotType::Parabola, &store, &context);

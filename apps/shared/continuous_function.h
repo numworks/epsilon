@@ -48,7 +48,7 @@ public:
     X
   };
 
-  static constexpr size_t k_numberOfPlotTypes = 16;
+  static constexpr size_t k_numberOfPlotTypes = 15;
   enum class PlotType : uint8_t {
     Polar = 0,
     Parametric,
@@ -58,7 +58,6 @@ public:
     HorizontalLine,
     VerticalLine,
     VerticalLines,
-    Inequation,
     Circle,
     Ellipse,
     Parabola,
@@ -110,7 +109,7 @@ public:
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool drawDottedCurve() const;
   // If the ContinuousFunction should be considered active in table
-  bool isActiveInTable() const { return (plotType() < PlotType::VerticalLine || (isConic() && numberOfSubCurves() == 1)) && isActive(); }
+  bool isActiveInTable() const { return  numberOfSubCurves() == 1 && equationType() == Poincare::ExpressionNode::Type::Equal && !hasVerticalLines() && isActive(); }
   // If the ContinuousFunction has x for unknown symbol
   bool isAlongX() const { return symbol() == 'x'; }
   // If the ContinuousFunction is a conic
@@ -231,7 +230,7 @@ private:
   // Return the equation's symbol
   Poincare::ExpressionNode::Type equationType() const { return recordData()->equationType(); }
   // If equation has a NonNull coeff. Can also compute last coeff sign.
-  bool hasNonNullCoefficients(Poincare::Expression equation, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign = nullptr) const;
+  bool hasNonNullCoefficients(Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign) const;
 
   /* Evaluation */
 

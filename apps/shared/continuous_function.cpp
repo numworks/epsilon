@@ -442,6 +442,9 @@ void ContinuousFunction::updatePlotType(Context * context) {
     if (yDeg > 0 || (m_model.equationType() != ExpressionNode::Type::Equal && m_model.plotType() != PlotType::Cartesian)) {
       return recordData()->setPlotType(PlotType::Unhandled);
     }
+    if (ExamModeConfiguration::inequalityGraphingIsForbidden() && m_model.equationType() != ExpressionNode::Type::Equal) {
+      return recordData()->setPlotType(PlotType::Disabled);
+    }
     // TODO : f(x)=1+x could be labelled as line.
     return recordData()->setPlotType(m_model.plotType());
   }
@@ -460,14 +463,14 @@ void ContinuousFunction::updatePlotType(Context * context) {
   }
 
   if (m_model.equationType() != ExpressionNode::Type::Equal) {
-    if (ExamModeConfiguration::inequalityGraphingIsForbidden()) {
-      return recordData()->setPlotType(PlotType::Disabled);
-    }
     if (ySign == ExpressionNode::Sign::Unknown || (yDeg == 2 && xDeg == -1)) {
       /* Are unhandled equation with :
        * - An unknown highest coefficient sign: sign must be strict and constant
        * - A non polynomial x coefficient in a quadratic equation on y. */
       return recordData()->setPlotType(PlotType::Unhandled);
+    }
+    if (ExamModeConfiguration::inequalityGraphingIsForbidden()) {
+      return recordData()->setPlotType(PlotType::Disabled);
     }
     if (ySign == ExpressionNode::Sign::Negative) {
       // Oppose the comparison operator

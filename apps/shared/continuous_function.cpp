@@ -70,7 +70,12 @@ ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
 }
 
 I18n::Message ContinuousFunction::plotTypeMessage() {
-  const size_t plotTypeIndex = static_cast<size_t>(plotType());
+  PlotType type = plotType();
+  if (!IsPlotTypeInactive(type) && equationType() != ExpressionNode::Type::Equal) {
+    // Whichever the plot type, InequationType describes the function
+    return I18n::Message::InequationType;
+  }
+  const size_t plotTypeIndex = static_cast<size_t>(type);
   assert(plotTypeIndex < k_numberOfPlotTypes);
   constexpr I18n::Message k_categories[k_numberOfPlotTypes] = {
       I18n::Message::PolarType,
@@ -80,7 +85,6 @@ I18n::Message ContinuousFunction::plotTypeMessage() {
       I18n::Message::HorizontalLineType,
       I18n::Message::VerticalLineType,
       I18n::Message::OtherType, // VerticalLines are displayed as Others
-      I18n::Message::InequationType,
       I18n::Message::CircleType,
       I18n::Message::EllipseType,
       I18n::Message::ParabolaType,
@@ -424,53 +428,59 @@ void ContinuousFunction::updatePlotType(Context * context) {
   if (equation.type() == ExpressionNode::Type::Undefined) {
     return recordData()->setPlotType(PlotType::Undefined);
   }
-  // Compute equation's degree regarding x and y.
+  // Compute equation's degree regarding y and x.
   int yDeg = equation.polynomialDegree(context, k_ordinateName);
   int xDeg = equation.polynomialDegree(context, k_unknownName);
-  ExpressionNode::Sign ySign = ExpressionNode::Sign::Unknown;
+
   // Inequations : equation symbol has been updated when parsing the equation
   recordData()->setEquationType(m_model.equationType());
-  if (m_model.equationType() != ExpressionNode::Type::Equal) {
-    if (ExamModeConfiguration::inequalityGraphingIsForbidden()) {
-      return recordData()->setPlotType(PlotType::Disabled);
-    }
-    /* Inequations are handled with a few constraint on y and x degrees :
-     * Polynomial x and y degrees are enforced to prevent issues with inequality
-     * Area where equation would be undefined. The y coefficient of highest
-     * degree must also have a constant sign. */
-    if ((yDeg == 1 || (yDeg == 2 && xDeg >= 0)) && hasNonNullCoefficients(equation, context, &ySign) && ySign != ExpressionNode::Sign::Unknown) {
-      if (ySign == ExpressionNode::Sign::Negative) {
-        // Oppose the comparison operator
-        ExpressionNode::Type newEquationType = ComparisonOperator::Opposite(m_model.equationType());
-        m_model.setEquationType(newEquationType);
-        recordData()->setEquationType(newEquationType);
-      }
-      return recordData()->setPlotType(PlotType::Inequation);
-    } else if (yDeg <= 0 && m_model.plotType() == PlotType::Cartesian) {
-      // Inequation on a named cartesian function
-      return recordData()->setPlotType(PlotType::Inequation);
-    } else {
-      // TODO : Handle vertical lines inequations
-      return recordData()->setPlotType(PlotType::Unhandled);
-    }
-  }
+
   // TODO Hugo : Improve how named functions are detected
   // Named functions : PlotType has been updated when parsing the equation
   if (m_model.plotType() != PlotType::Undefined) {
-    // There should be no y symbol.
-    if (yDeg > 0) {
+    // There should be no y symbol. Inequations are handled on cartesians only
+    if (yDeg > 0 || (m_model.equationType() != ExpressionNode::Type::Equal && m_model.plotType() != PlotType::Cartesian)) {
       return recordData()->setPlotType(PlotType::Unhandled);
     }
     // TODO : f(x)=1+x could be labelled as line.
     return recordData()->setPlotType(m_model.plotType());
   }
 
+  bool isYMainSymbol = (yDeg != 0);
+  if (yDeg < 0 || yDeg > 2 || (!isYMainSymbol && xDeg != 1 && xDeg != 2)) {
+    // Any equation with such a y and x degree won't be handled anyway.
+    return recordData()->setPlotType(PlotType::Unhandled);
+  }
+
+  const char * symbolName = isYMainSymbol ? k_ordinateName : k_unknownName;
+  ExpressionNode::Sign ySign = ExpressionNode::Sign::Unknown;
+  if (!hasNonNullCoefficients(equation, symbolName, context, &ySign)) {
+    // The equation must have at least one nonNull coefficient.
+    return recordData()->setPlotType(PlotType::Unhandled);
+  }
+
+  if (m_model.equationType() != ExpressionNode::Type::Equal) {
+    if (ExamModeConfiguration::inequalityGraphingIsForbidden()) {
+      return recordData()->setPlotType(PlotType::Disabled);
+    }
+    if (ySign == ExpressionNode::Sign::Unknown || (yDeg == 2 && xDeg == -1)) {
+      /* Are unhandled equation with :
+       * - An unknown highest coefficient sign: sign must be strict and constant
+       * - A non polynomial x coefficient in a quadratic equation on y. */
+      return recordData()->setPlotType(PlotType::Unhandled);
+    }
+    if (ySign == ExpressionNode::Sign::Negative) {
+      // Oppose the comparison operator
+      ExpressionNode::Type newEquationType = ComparisonOperator::Opposite(m_model.equationType());
+      m_model.setEquationType(newEquationType);
+      recordData()->setEquationType(newEquationType);
+    }
+  }
+
   /* We can now rely on x and y degree to identify plot type :
    * | y  | x  | Status
-   * | 0  | 0  | Unhandled
    * | 0  | 1  | Vertical Line
    * | 0  | 2  | Vertical Lines
-   * | 0  | +  | Unhandled
    * | 1  | 0  | Horizontal Line
    * | 1  | 1  | Line
    * | 1  | +  | Cartesian
@@ -478,39 +488,34 @@ void ContinuousFunction::updatePlotType(Context * context) {
    * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola, Other
    * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola, Other
    * | 2  | +  | Other
-   * | +  | +  | Unhandled
+   *
+   * Other cases should have been escaped above.
    */
-
-  if (yDeg <= 0 && xDeg <= 0) {
-    return recordData()->setPlotType(PlotType::Unhandled);
+  if (yDeg == 0) {
+    if (xDeg == 1) {
+      return recordData()->setPlotType(PlotType::VerticalLine);
+    }
+    if (xDeg == 2) {
+      return recordData()->setPlotType(ExamModeConfiguration::implicitPlotsAreForbidden() ? PlotType::Disabled : PlotType::VerticalLines);
+    }
   }
-  if (yDeg == 0 && xDeg == 1) {
-    return recordData()->setPlotType(PlotType::VerticalLine);
-  }
 
-  bool typeIsVerticalLines = (yDeg == 0 && xDeg == 2);
-
-  if (!typeIsVerticalLines && (yDeg <= 0 || yDeg > 2 || !hasNonNullCoefficients(equation, context, &ySign))) {
-    /* Except for VerticalLines, any other case where yDeg is null ,> 2 or
-     * negative isn't handled. We also do not handle equations where every
-     * coefficients depends on x.
-     * TODO : This restriction (hasNonNullCoefficients) could be made more
-     * general either by checking that all coefficient don't share a same root
-     * or by ploting an additional vertical curve for each of these shared roots
-     */
-    return recordData()->setPlotType(PlotType::Unhandled);
-  }
   if (yDeg == 1 && xDeg == 0) {
     return recordData()->setPlotType(PlotType::HorizontalLine);
   }
 
+  if (yDeg == 1 && xDeg == 1 && ySign != ExpressionNode::Sign::Unknown) {
+    // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
+    return recordData()->setPlotType(PlotType::Line);
+  }
+
   if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
-    if (typeIsVerticalLines || yDeg == 2 || ySign == ExpressionNode::Sign::Unknown) {
-      // Equation with y^2 or such as y*f(x)=... or x^2 = 1 are disabled.
+    if (yDeg == 2 || ySign == ExpressionNode::Sign::Unknown) {
+      // Equation with y^2 or such as y*x=1 are disabled.
       return recordData()->setPlotType(PlotType::Disabled);
     }
-    // Ignore conics (such as y=x^2) to hide details.
-  } else if (yDeg >= 1 && xDeg >= 1) {
+    // Deliberately ignore conics (such as y=x^2) to hide details.
+  } else if (yDeg >= 1 && xDeg >= 1 && xDeg <= 2) {
     // Try to identify a conic. For instance, x*y=1 as an hyperbola
     Conic equationConic = Conic(equation, context, k_unknownName);
     Conic::Type ctype = equationConic.getConicType();
@@ -525,31 +530,27 @@ void ContinuousFunction::updatePlotType(Context * context) {
     }
     // A conic could not be identified.
   }
-  if (typeIsVerticalLines) {
-    return recordData()->setPlotType(PlotType::VerticalLines);
-  }
-  if (yDeg == 1 && xDeg == 1 && ySign != ExpressionNode::Sign::Unknown) {
-    // An Unknown y coefficient sign would mean it depends on x (y*x = ...)
-    return recordData()->setPlotType(PlotType::Line);
-  }
+
   if (yDeg == 1) {
     return recordData()->setPlotType(PlotType::Cartesian);
   }
+
   assert(yDeg == 2);
   // Unknown type that we are able to plot anyway.
   return recordData()->setPlotType(PlotType::Other);
 }
 
-bool ContinuousFunction::hasNonNullCoefficients(Expression equation, Context * context, ExpressionNode::Sign * highestDegreeCoefficientSign) const {
+bool ContinuousFunction::hasNonNullCoefficients(Expression equation, const char * symbolName, Context * context, ExpressionNode::Sign * highestDegreeCoefficientSign) const {
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-  int dy = equation.getPolynomialReducedCoefficients(k_ordinateName, coefficients, context, complexFormat, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
-  if (highestDegreeCoefficientSign != nullptr && dy >= 0) {
-    ExpressionNode::Sign sign = coefficients[dy].sign(context);
+  int degree = equation.getPolynomialReducedCoefficients(symbolName, coefficients, context, complexFormat, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
+  assert(degree >= 0 && degree <= Expression::k_maxPolynomialDegree);
+  if (highestDegreeCoefficientSign != nullptr && degree >= 0) {
+    ExpressionNode::Sign sign = coefficients[degree].sign(context);
     if (sign == ExpressionNode::Sign::Unknown) {
-      // Approximate for a better estimation. Nan if coefficient depends on x.
-      double approximation = coefficients[dy].approximateToScalar<double>(context, complexFormat, angleUnit);
+      // Approximate for a better estimation. Nan if coefficient depends on x/y.
+      double approximation = coefficients[degree].approximateToScalar<double>(context, complexFormat, angleUnit);
       if (!std::isnan(approximation) && approximation != 0.0) {
         sign = approximation < 0.0 ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
       }
@@ -557,13 +558,13 @@ bool ContinuousFunction::hasNonNullCoefficients(Expression equation, Context * c
     *highestDegreeCoefficientSign = sign;
   }
   // Look for a NonNull coefficient.
-  for (int d = 0; d <= dy; d++) {
+  for (int d = 0; d <= degree; d++) {
     ExpressionNode::NullStatus nullStatus = coefficients[d].nullStatus(context);
     if (nullStatus == ExpressionNode::NullStatus::NonNull) {
       return true;
     }
     if (nullStatus == ExpressionNode::NullStatus::Unknown) {
-      // Approximate for a better estimation. Nan if coefficient depends on x.
+      // Approximate for a better estimation. Nan if coefficient depends on x/y.
       double approximation = coefficients[d].approximateToScalar<double>(context, complexFormat, angleUnit);
       if (!std::isnan(approximation) && approximation != 0.0) {
         return true;

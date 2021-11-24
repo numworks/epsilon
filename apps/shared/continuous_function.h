@@ -77,6 +77,8 @@ public:
     "First PlotTypes should match SymbolTypes");
   // Return Message corresponding to SymbolType
   static I18n::Message MessageForSymbolType(SymbolType symbolType);
+  // If the ContinuousFunction is of an inactive plotType
+  static bool IsPlotTypeInactive(PlotType plotType) { return plotType >= PlotType::Undefined; };
   // Return message describing function's PlotType
   I18n::Message plotTypeMessage();
   // Return the type of area to draw
@@ -257,7 +259,7 @@ private:
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
     Poincare::ExpressionNode::Type equationType() const { return m_equationType; }
     void setEquationType(Poincare::ExpressionNode::Type equationType) { m_equationType = equationType; }
-    bool isActive() const override { return Shared::Function::RecordDataBuffer::isActive() && m_plotType < PlotType::Undefined; }
+    bool isActive() const override { return Shared::Function::RecordDataBuffer::isActive() && !IsPlotTypeInactive(m_plotType); }
     float tMin() const { return m_domain.min(); }
     float tMax() const { return m_domain.max(); }
     void setTMin(float tMin) { m_domain.setMin(tMin); }

@@ -82,6 +82,8 @@ public:
   I18n::Message plotTypeMessage();
   // Return the type of area to draw
   AreaType areaType() const;
+  // Return the equation's symbol
+  Poincare::ExpressionNode::Type equationType() const { return recordData()->equationType(); }
   // Return ContinuousFunction's PlotType
   PlotType plotType() const { return recordData()->plotType(); }
   // Return ContinuousFunction's SymbolType
@@ -227,8 +229,6 @@ private:
 
   // Update ContinuousFunction's PlotType
   void updatePlotType(Poincare::Context * context);
-  // Return the equation's symbol
-  Poincare::ExpressionNode::Type equationType() const { return recordData()->equationType(); }
   // If equation has a NonNull coeff. Can also compute last coeff sign.
   bool hasNonNullCoefficients(Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign) const;
 

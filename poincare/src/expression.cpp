@@ -805,7 +805,9 @@ failure:
   Expression e;
   char * treePoolCursor = TreePool::sharedPool()->cursor();
   ExceptionCheckpoint ecp;
-  if (!ExceptionRun(ecp)) {
+  if (ExceptionRun(ecp)) {
+    e = clone().deepReduce(*reductionContext);
+  } else {
     /* We don't want to tidy all the Pool in the cas we are in a nested
      * cloneAndDeepReduceWithSystemCheckpoint: cleaning all the pool might
      * discard ExpressionHandles that are used by parent
@@ -819,8 +821,6 @@ failure:
       *reduceFailure = true;
       e = clone();
     }
-  } else {
-    e = clone().deepReduce(*reductionContext);
   }
 #endif
   assert(!e.isUninitialized());

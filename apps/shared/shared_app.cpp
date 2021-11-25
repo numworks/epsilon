@@ -7,7 +7,7 @@ namespace Shared {
 void SharedApp::Snapshot::pack(App * app) {
   /* Since the sequence store is now accessible from every app, when exiting
    * any application, we need to tidy it.*/
-  static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->tidyDownstreamPoolFrom();
+  AppsContainer::sharedAppsContainer()->globalContext()->tidyDownstreamPoolFrom();
   App::Snapshot::pack(app);
 }
 

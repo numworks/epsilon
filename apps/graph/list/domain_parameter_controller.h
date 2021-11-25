@@ -25,6 +25,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
+  bool isVisible() const { return function()->canHavePlotRestrictions(); }
 private:
   constexpr static int k_totalNumberOfCell = 2;
   void viewWillAppear() override;

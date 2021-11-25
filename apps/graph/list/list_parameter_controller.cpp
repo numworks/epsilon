@@ -21,18 +21,14 @@ ListParameterController::ListParameterController(Responder * parentResponder, I1
 }
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  if (!displayDetails()) {
-    index += 1;
-  }
-  switch (index) {
-  case 0:
+  switch (type) {
+  case k_typeCellType:
+    assert(displayDetails());
     return &m_typeCell;
-  case 1:
+  case k_domainCellType:
+    assert(displayDomain());
     return &m_functionDomain;
   default:
-    if (!displayDetails()) {
-      index -= 1;
-    }
     return Shared::ListParameterController::reusableCell(index, type);
   }
 }
@@ -42,10 +38,10 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Right) {
-    int selectedR = selectedRow();
-    if (selectedR == 0 || selectedR == 1) {
+    int index = selectedRow();
+    if (index < displayDetails() + displayDomain()) {
       // Go in the submenu
-      return handleEnterOnRow(selectedR);
+      return handleEnterOnRow(index);
     }
   }
   return false;
@@ -53,9 +49,10 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 
 void ListParameterController::setRecord(Ion::Storage::Record record) {
   Shared::ListParameterController::setRecord(record);
-  /* Set m_typeParameterController record here because we need record's
-   * detailsNumberOfSections() to know if it should be displayed. */
+  /* Set controllers' record here because we need to know which ones should be
+   * displayed. */
   m_typeParameterController.setRecord(m_record);
+  m_domainParameterController.setRecord(m_record);
 }
 
 char intervalBracket(double value, bool opening) {
@@ -77,10 +74,11 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     assert(!m_record.isNull());
     Shared::ExpiringPointer<ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
     if (cell == &m_typeCell) {
+      assert(typeAtIndex(index) == k_typeCellType);
       m_typeCell.setMessage(I18n::Message::Details);
       m_typeCell.setSubtitle(function->plotTypeMessage());
     } else {
-      assert(cell == &m_functionDomain);
+      assert(cell == &m_functionDomain && typeAtIndex(index) == k_domainCellType);
       m_functionDomain.setMessage(I18n::Message::FunctionDomain);
       double min = function->tMin();
       double max = function->tMax();
@@ -93,23 +91,27 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
 }
 
+int ListParameterController::typeAtIndex(int index) {
+  if (displayDetails() && index == 0) {
+    return k_typeCellType;
+  }
+  if (displayDomain() && index == displayDetails()) {
+    return k_domainCellType;
+  }
+  return Shared::ListParameterController::typeAtIndex(index);
+}
+
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
   StackViewController * stack = (StackViewController *)(parentResponder());
-  if (!displayDetails()) {
-    rowIndex += 1;
-  }
-  switch (rowIndex) {
-  case 0:
+  int type = typeAtIndex(rowIndex);
+  switch (type) {
+  case k_typeCellType:
     stack->push(&m_typeParameterController);
     return true;
-  case 1:
-    m_domainParameterController.setRecord(m_record);
+  case k_domainCellType:
     stack->push(&m_domainParameterController);
     return true;
   default:
-    if (!displayDetails()) {
-      rowIndex -= 1;
-    }
     return Shared::ListParameterController::handleEnterOnRow(rowIndex);
   }
 }

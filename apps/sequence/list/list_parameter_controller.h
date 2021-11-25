@@ -30,9 +30,12 @@ public:
   // MemoizedListViewDataSource
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  int numberOfRows() const override { return Shared::ListParameterController::numberOfRows() + numberOfNonInheritedCells(); }
+  int numberOfRows() const override { return numberOfNonInheritedCells() + Shared::ListParameterController::numberOfRows(); }
+  int typeAtIndex(int index) override;
 private:
-  int numberOfNonInheritedCells() const { return 1 + (hasInitialRankRow() ? 1 : 0); } // number of non inherited cells
+  constexpr static int k_typeCellType = k_numberOfSharedCells;
+  constexpr static int k_initialRankCellType = k_typeCellType + 1;
+  int numberOfNonInheritedCells() const { return 1 + hasInitialRankRow(); } // number of non inherited cells
   Shared::Sequence * sequence() { return static_cast<Shared::Sequence *>(function().pointer()); }
   bool hasInitialRankRow() const;
   Escher::MessageTableCellWithChevronAndExpression m_typeCell;

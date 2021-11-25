@@ -9,7 +9,7 @@ namespace Poincare {
  */
 TreeNode * Checkpoint::TopmostEndOfPoolBeforeCheckpoint() {
   TreeNode * exceptionCheckpointEnd = ExceptionCheckpoint::TopmostEndOfPoolBeforeCheckpoint();
-  TreeNode * circuitBreakerCheckpointEnd = CircuitBreakerCheckpoint::TopmostEndOfPoolBeforeCheckpoint();
+  TreeNode * circuitBreakerCheckpointEnd = UserCircuitBreakerCheckpoint::TopmostEndOfPoolBeforeCheckpoint();
   return circuitBreakerCheckpointEnd > exceptionCheckpointEnd ? circuitBreakerCheckpointEnd : exceptionCheckpointEnd;
 }
 

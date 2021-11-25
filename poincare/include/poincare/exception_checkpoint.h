@@ -16,7 +16,7 @@
 namespace Poincare {
 
 class ExceptionCheckpoint final : public Checkpoint {
-friend CircuitBreakerCheckpoint;
+friend UserCircuitBreakerCheckpoint;
 public:
 #if __EMSCRIPTEN__
   static bool HasBeenInterrupted();

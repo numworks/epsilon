@@ -136,16 +136,16 @@ enum class InternalStatus {
 InternalStatus sInternalStatus = InternalStatus::Loaded;
 CheckpointType sCheckpointType = CheckpointType::Home;
 
-constexpr static int k_numberOfCheckpointTypes = 3;
+constexpr static int k_numberOfCheckpointTypes = 2;
 
 static int s_numberOfLocks = 0;
 
 // Process snapshots
 uint8_t sProcessStackSnapshot[k_numberOfCheckpointTypes][k_processStackSnapshotMaxSize];
-uint8_t * sProcessStackSnapshotAddress[k_numberOfCheckpointTypes] = {nullptr, nullptr, nullptr};
+uint8_t * sProcessStackSnapshotAddress[k_numberOfCheckpointTypes] = {nullptr, nullptr};
 // Main snapshots
 uint8_t sMainStackSnapshot[k_numberOfCheckpointTypes][k_mainStackSnapshotMaxSize];
-uint8_t * sMainStackSnapshotAddress[k_numberOfCheckpointTypes] = {nullptr, nullptr, nullptr};
+uint8_t * sMainStackSnapshotAddress[k_numberOfCheckpointTypes] = {nullptr, nullptr};
 // Registers buffers
 jmp_buf sRegisters[k_numberOfCheckpointTypes];
 
@@ -175,8 +175,6 @@ bool hasCheckpoint(CheckpointType type) {
 void unsetCheckpoint(CheckpointType type) {
   if (type == CheckpointType::Home) {
     Device::CircuitBreaker::unsetCheckpoint(CheckpointType::User);
-  } else if (type == CheckpointType::User) {
-    Device::CircuitBreaker::unsetCheckpoint(CheckpointType::System);
   }
   sProcessStackSnapshotAddress[static_cast<int>(type)] = nullptr;
 }
@@ -212,8 +210,6 @@ void loadCheckpoint(CheckpointType type) {
   /* Unset lower checkpoints to avoid keeping references to an unwound stack. */
   if (type == CheckpointType::Home) {
     Device::CircuitBreaker::unsetCheckpoint(CheckpointType::User);
-  } else if (type == CheckpointType::User) {
-    Device::CircuitBreaker::unsetCheckpoint(CheckpointType::System);
   }
   setPendingAction(type, InternalStatus::PendingLoadCheckpoint);
 }

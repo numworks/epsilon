@@ -28,4 +28,29 @@ void ExceptionCheckpoint::rollback() {
   longjmp(m_jumpBuffer, 1);
 }
 
+#if __EMSCRIPTEN__
+
+bool sInterrupted = false;
+
+bool ExceptionCheckpoint::HasBeenInterrupted() {
+  return sInterrupted;
+}
+
+void ExceptionCheckpoint::ClearInterruption() {
+  sInterrupted = false;
+}
+
+void ExceptionCheckpoint::Raise() {
+  sInterrupted = true;
+}
+
+#else
+
+void ExceptionCheckpoint::Raise() {
+  assert(s_topmostExceptionCheckpoint != nullptr);
+  s_topmostExceptionCheckpoint->rollback();
+  assert(false);
+}
+
+#endif
 }

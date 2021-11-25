@@ -25,18 +25,19 @@ const char * ListParameterController::title() {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0)) {
-    int selectedRowIndex = selectedRow();
-    if (selectedRowIndex == 0) {
+    int index = selectedRow();
+    int type = typeAtIndex(index);
+    if (type == k_typeCellType) {
       StackViewController * stack = (StackViewController *)(parentResponder());
       m_typeParameterController.setRecord(m_record);
       stack->push(&m_typeParameterController);
       return true;
     }
-    if (selectedRowIndex == numberOfNonInheritedCells() + 1) {
+    if (type == k_enableCellType) {
       // Shared::ListParameterController::m_enableCell is selected
       App::app()->localContext()->resetCache();
     }
-    return handleEnterOnRow(selectedRowIndex);
+    return handleEnterOnRow(index);
   }
   return false;
 }
@@ -84,13 +85,12 @@ void ListParameterController::tableViewDidChangeSelectionAndDidScroll(Selectable
 }
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  switch (index) {
-    case 0:
+  switch (type) {
+    case k_typeCellType:
       return &m_typeCell;
-    case 1:
-      if (hasInitialRankRow()) {
-        return &m_initialRankCell;
-      }
+    case k_initialRankCellType:
+      assert(hasInitialRankRow());
+      return &m_initialRankCell;
     default:
       return Shared::ListParameterController::reusableCell(index, type);
   }
@@ -100,9 +100,11 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_typeCell && !m_record.isNull()) {
+    assert(typeAtIndex(index) == k_typeCellType);
     m_typeCell.setLayout(sequence()->definitionName());
   }
   if (cell == &m_initialRankCell && !m_record.isNull()) {
+    assert(typeAtIndex(index) == k_initialRankCellType);
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
     if (myCell->isEditing()) {
       return;
@@ -111,6 +113,16 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     Poincare::Integer(sequence()->initialRank()).serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits+1);
     myCell->setAccessoryText(buffer);
   }
+}
+
+int ListParameterController::typeAtIndex(int index) {
+  if (index == 0) {
+    return k_typeCellType;
+  }
+  if (index == 1 && hasInitialRankRow()) {
+    return k_initialRankCellType;
+  }
+  return Shared::ListParameterController::typeAtIndex(index);
 }
 
 bool ListParameterController::hasInitialRankRow() const {

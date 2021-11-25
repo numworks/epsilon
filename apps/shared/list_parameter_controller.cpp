@@ -35,7 +35,18 @@ void ListParameterController::viewWillAppear() {
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_enableCell && !m_record.isNull()) {
+    assert(typeAtIndex(index) == k_enableCellType);
     m_enableCell.setState(function()->isActive());
+  }
+}
+
+int ListParameterController::typeAtIndex(int index) {
+  switch (sharedCellIndex(index)) {
+  case 0:
+    return k_enableCellType;
+  default:
+    assert(sharedCellIndex(index) == 1);
+    return k_deleteCellType;
   }
 }
 
@@ -58,18 +69,21 @@ int ListParameterController::sharedCellIndex(int j) {
 }
 
 HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  HighlightCell * cells[] = {&m_enableCell, &m_deleteCell};
-  return cells[sharedCellIndex(index)];
+  if (type == k_enableCellType) {
+    return &m_enableCell;
+  }
+  assert(type == k_deleteCellType);
+  return &m_deleteCell;
 }
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
-  switch (sharedCellIndex(rowIndex)) {
-    case 0:
+  switch (typeAtIndex(rowIndex)) {
+    case k_enableCellType:
       function()->setActive(!function()->isActive());
       resetMemoization();
       m_selectableTableView.reloadData();
       return true;
-    case 1:
+    case k_deleteCellType:
       {
         assert(functionStore()->numberOfModels() > 0);
         m_selectableTableView.deselectTable();

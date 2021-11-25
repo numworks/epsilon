@@ -24,7 +24,12 @@ public:
   int numberOfRows() const override { return k_numberOfSharedCells; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  int reusableCellCount(int type) override { return 1; }
+  int typeAtIndex(int index) override;
 protected:
+  constexpr static int k_enableCellType = 0;
+  constexpr static int k_deleteCellType = k_enableCellType + 1;
+  constexpr static int k_numberOfSharedCells = k_deleteCellType + 1;
   virtual bool handleEnterOnRow(int rowIndex);
   FunctionStore * functionStore();
   ExpiringPointer<Function> function();
@@ -32,7 +37,6 @@ protected:
 private:
   // Return index of shared cell from row number
   int sharedCellIndex(int j);
-  constexpr static int k_numberOfSharedCells = 2;
   Escher::MessageTableCellWithSwitch m_enableCell;
   Escher::MessageTableCell m_deleteCell;
 };

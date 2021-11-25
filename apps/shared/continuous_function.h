@@ -108,10 +108,12 @@ public:
 
   /* Properties */
 
+  // Wether the ContinuousFunction can have plot restrictions.
+  bool canHavePlotRestrictions() const { return !hasVerticalLines() && equationType() == Poincare::ExpressionNode::Type::Equal; }
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool drawDottedCurve() const;
   // If the ContinuousFunction should be considered active in table
-  bool isActiveInTable() const { return  numberOfSubCurves() == 1 && equationType() == Poincare::ExpressionNode::Type::Equal && !hasVerticalLines() && isActive(); }
+  bool isActiveInTable() const { return numberOfSubCurves() == 1 && equationType() == Poincare::ExpressionNode::Type::Equal && !hasVerticalLines() && isActive(); }
   // If the ContinuousFunction has x for unknown symbol
   bool isAlongX() const { return symbol() == 'x'; }
   // If the ContinuousFunction is a conic

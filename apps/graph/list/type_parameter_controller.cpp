@@ -54,7 +54,7 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   if (index == 0) {
     myCell->setMessage(I18n::Message::CurveType);
     myCell->setSubLabelMessage(I18n::Message::Default);
-    myCell->setAccessoryText(I18n::translate(plotTypeMessage()));
+    myCell->setAccessoryText(I18n::translate(function()->plotTypeMessage()));
   } else {
     myCell->setMessage(detailsTitle(index - 1));
     double value = detailsValue(index - 1);
@@ -81,38 +81,46 @@ MessageTableCellWithMessageWithBuffer * TypeParameterController::reusableCell(in
 void TypeParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   if (!m_record.isNull()) {
-    Shared::ContinuousFunction function = (Shared::ContinuousFunction)m_record;
+    Shared::ExpiringPointer<Shared::ContinuousFunction> f = function();
     Poincare::Context * context = App::app()->localContext();
-    if (function.plotType() == Shared::ContinuousFunction::PlotType::Line) {
+    if (f->plotType() == Shared::ContinuousFunction::PlotType::Line) {
       double slope, intercept;
-      function.getLineParameters(&slope, &intercept, context);
+      f->getLineParameters(&slope, &intercept, context);
       setLineDetailsValues(slope, intercept);
-    } else if (function.isConic()) {
-      setConicDetailsValues(function.getConicParameters(context));
+    } else if (f->isConic()) {
+      setConicDetailsValues(f->getConicParameters(context));
     }
   }
 }
 
 int TypeParameterController::detailsNumberOfSections() const {
-  switch (plotType()) {
-    case Shared::ContinuousFunction::PlotType::Line:
+  /* Switch on function's type message instead of types because we don't want to
+   * display details on a line's inequation for instance. */
+  switch (function()->plotTypeMessage()) {
+    case I18n::Message::LineType:
       return k_lineDetailsSections;
-    case Shared::ContinuousFunction::PlotType::Circle:
+    case I18n::Message::CircleType:
       return k_circleDetailsSections;
-    case Shared::ContinuousFunction::PlotType::Ellipse:
+    case I18n::Message::EllipseType:
       return k_ellipseDetailsSections;
-    case Shared::ContinuousFunction::PlotType::Parabola:
+    case I18n::Message::ParabolaType:
       return k_parabolaDetailsSections;
-    case Shared::ContinuousFunction::PlotType::Hyperbola:
+    case I18n::Message::HyperbolaType:
       return k_hyperbolaDetailsSections;
     default:
       return 0;
   }
 }
 
+Shared::ExpiringPointer<Shared::ContinuousFunction> TypeParameterController::function() const {
+  assert(!m_record.isNull());
+  App * myApp = App::app();
+  return myApp->functionStore()->modelForRecord(m_record);
+}
+
 I18n::Message TypeParameterController::detailsTitle(int i) const {
   assert(i < detailsNumberOfSections());
-  switch (plotType()) {
+  switch (function()->plotType()) {
     case Shared::ContinuousFunction::PlotType::Line: {
       constexpr I18n::Message k_titles[k_lineDetailsSections] = {
           I18n::Message::LineEquationTitle,
@@ -149,7 +157,7 @@ I18n::Message TypeParameterController::detailsTitle(int i) const {
       return k_titles[i];
     }
     default: {
-      assert(plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
+      assert(function()->plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
       constexpr I18n::Message k_titles[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisTitle,
           I18n::Message::HyperbolaSemiMinorAxisTitle,
@@ -165,7 +173,7 @@ I18n::Message TypeParameterController::detailsTitle(int i) const {
 
 I18n::Message TypeParameterController::detailsDescription(int i) const {
   assert(i < detailsNumberOfSections());
-  switch (plotType()) {
+  switch (function()->plotType()) {
     case Shared::ContinuousFunction::PlotType::Line: {
       constexpr I18n::Message k_descriptions[k_lineDetailsSections] = {
           I18n::Message::LineEquationDescription,
@@ -202,7 +210,7 @@ I18n::Message TypeParameterController::detailsDescription(int i) const {
       return k_descriptions[i];
     }
     default: {
-      assert(plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
+      assert(function()->plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
       constexpr I18n::Message k_descriptions[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisDescription,
           I18n::Message::HyperbolaSemiMinorAxisDescription,
@@ -217,14 +225,14 @@ I18n::Message TypeParameterController::detailsDescription(int i) const {
 }
 
 void TypeParameterController::setLineDetailsValues(double slope, double intercept) {
-  assert(plotType() == Shared::ContinuousFunction::PlotType::Line);
+  assert(function()->plotType() == Shared::ContinuousFunction::PlotType::Line);
   m_detailValues[0] = NAN;
   m_detailValues[1] = slope;
   m_detailValues[2] = intercept;
 }
 
 void TypeParameterController::setConicDetailsValues(Poincare::Conic conic) {
-  Shared::ContinuousFunction::PlotType type = plotType();
+  Shared::ContinuousFunction::PlotType type = function()->plotType();
   double cx, cy;
   if (type == Shared::ContinuousFunction::PlotType::Parabola) {
     conic.getSummit(&cx, &cy);

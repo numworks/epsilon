@@ -1,5 +1,5 @@
 #include <poincare/expression.h>
-#include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/expression_node.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/comparison_operator.h>
@@ -804,8 +804,8 @@ failure:
 #else
   Expression e;
   char * treePoolCursor = TreePool::sharedPool()->cursor();
-  SystemCircuitBreakerCheckpoint systemCheckpoint;
-  if (!CircuitBreakerRun(systemCheckpoint)) {
+  ExceptionCheckpoint ecp;
+  if (!ExceptionRun(ecp)) {
     /* We don't want to tidy all the Pool in the cas we are in a nested
      * cloneAndDeepReduceWithSystemCheckpoint: cleaning all the pool might
      * discard ExpressionHandles that are used by parent

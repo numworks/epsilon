@@ -787,15 +787,15 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(ExpressionNode::Re
   *reduceFailure = false;
 #if __EMSCRIPTEN__
   Expression e = clone().deepReduce(*reductionContext);
-  if (SystemCircuitBreakerCheckpoint::HasBeenInterrupted()) {
-    SystemCircuitBreakerCheckpoint::ClearInterruption();
+  if (ExceptionCheckpoint::HasBeenInterrupted()) {
+    ExceptionCheckpoint::ClearInterruption();
     if (reductionContext->target() == ExpressionNode::ReductionTarget::SystemForApproximation) {
       goto failure;
     }
     reductionContext->setTarget(ExpressionNode::ReductionTarget::SystemForApproximation);
     e = clone().deepReduce(*reductionContext);
-    if (SystemCircuitBreakerCheckpoint::HasBeenInterrupted()) {
-      SystemCircuitBreakerCheckpoint::ClearInterruption();
+    if (ExceptionCheckpoint::HasBeenInterrupted()) {
+      ExceptionCheckpoint::ClearInterruption();
 failure:
       e = clone();
       *reduceFailure = true;

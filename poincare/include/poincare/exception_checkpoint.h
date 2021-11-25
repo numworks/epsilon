@@ -18,10 +18,11 @@ namespace Poincare {
 class ExceptionCheckpoint final : public Checkpoint {
 friend CircuitBreakerCheckpoint;
 public:
-  static void Raise() {
-    assert(s_topmostExceptionCheckpoint != nullptr);
-    s_topmostExceptionCheckpoint->rollback();
-  }
+#if __EMSCRIPTEN__
+  static bool HasBeenInterrupted();
+  static void ClearInterruption();
+#endif
+  static void Raise();
 
   ExceptionCheckpoint();
   ~ExceptionCheckpoint();

@@ -402,7 +402,6 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, ExpressionNod
 ComplexCartesian ComplexCartesian::interruptComputationIfManyNodes() {
   if (numberOfDescendants(true) > k_maxNumberOfNodesBeforeInterrupting) {
     ExceptionCheckpoint::Raise();
-    assert(false);
     return ComplexCartesian::Builder(Undefined::Builder(), Undefined::Builder());
   }
   return *this;

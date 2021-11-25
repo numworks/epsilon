@@ -350,8 +350,14 @@ Poincare::Layout Sequence::SequenceModel::name(Sequence * sequence) {
   return m_name;
 }
 
+void Sequence::SequenceModel::tidyName(char * treePoolCursor) const {
+  if (treePoolCursor == nullptr || m_name.isDownstreamOf(treePoolCursor)) {
+    m_name = Poincare::Layout();
+  }
+}
+
 void Sequence::SequenceModel::tidyDownstreamPoolFrom(char * treePoolCursor) const {
-  tidyName();
+  tidyName(treePoolCursor);
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }
 

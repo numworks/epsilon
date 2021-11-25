@@ -231,15 +231,6 @@ bool ExpressionModelListController::addEmptyModel() {
   return true;
 }
 
-void ExpressionModelListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
-  Ion::Storage::Record::ErrorStatus error = model->setContent("", Container::activeApp()->localContext());
-  assert(error == Ion::Storage::Record::ErrorStatus::None);
-  (void) error; // Silence compilation warning.
-  // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
-  resetMemoizationForIndex(k_memoizedCellsCount/2);
-  selectableTableView()->reloadData();
-}
-
 void ExpressionModelListController::editExpression(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));

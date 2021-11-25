@@ -10,7 +10,6 @@ namespace CircuitBreaker {
 enum class CheckpointType : uint8_t {
   Home, // Checkpoint where the code jumps on Home Event
   User, // Checkpoint where the code jumps on Back Event if the device is stalling
-  System // Checkpoint used by system to try different paths at run-time
 };
 
 enum class Status : uint8_t {

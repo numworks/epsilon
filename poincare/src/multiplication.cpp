@@ -1,9 +1,9 @@
 #include <poincare/multiplication.h>
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
-#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/float.h>
 #include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
@@ -829,7 +829,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
             && !IsInfinity(o, context) && !o.isUndefined())
         {
           // Stop the reduction due to a multiplication overflow
-          SystemCircuitBreakerCheckpoint::InterruptDueToReductionFailure();
+          ExceptionCheckpoint::Raise();
           assert(false);
         }
         if (m.isUndefined()) {

@@ -4,10 +4,10 @@
 #include <poincare/addition.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/binomial_coefficient.h>
-#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/cosine.h>
 #include <poincare/constant.h>
 #include <poincare/division.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/rational.h>
 #include <poincare/square_root.h>
@@ -401,7 +401,7 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, ExpressionNod
 
 ComplexCartesian ComplexCartesian::interruptComputationIfManyNodes() {
   if (numberOfDescendants(true) > k_maxNumberOfNodesBeforeInterrupting) {
-    SystemCircuitBreakerCheckpoint::InterruptDueToReductionFailure();
+    ExceptionCheckpoint::Raise();
     assert(false);
     return ComplexCartesian::Builder(Undefined::Builder(), Undefined::Builder());
   }

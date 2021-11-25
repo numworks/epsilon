@@ -500,36 +500,6 @@ void ListController::editExpression(Ion::Events::Event event) {
   editExpression(sequenceDefinitionForRow(selectedRow()), event);
 }
 
-void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
-  // Invalidate the sequences context cache
-  App::app()->localContext()->resetCache();
-  Shared::Sequence * sequence = static_cast<Shared::Sequence *>(model.pointer());
-  Ion::Storage::Record::ErrorStatus err = Ion::Storage::Record::ErrorStatus::None;
-  switch (sequenceDefinitionForRow(selectedRow())) {
-    case 1:
-      if (sequence->firstInitialConditionExpressionClone().isUninitialized()) {
-        return;
-      }
-      err = sequence->setFirstInitialConditionContent("", nullptr); // No context needed here
-      break;
-    case 2:
-      if (sequence->secondInitialConditionExpressionClone().isUninitialized()) {
-        return;
-      }
-      err = sequence->setSecondInitialConditionContent("", nullptr); // No context needed here
-      break;
-    default:
-      if (sequence->expressionClone().isUninitialized()) {
-        return;
-      }
-      err = sequence->setContent("", nullptr); // No context needed
-      break;
-  }
-  assert(err == Ion::Storage::Record::ErrorStatus::None);
-  (void) err; // Silence compilation warning
-  selectableTableView()->reloadData();
-}
-
 bool ListController::removeModelRow(Ion::Storage::Record record) {
   Shared::FunctionListController::removeModelRow(record);
   // Invalidate the sequences context cache

@@ -29,7 +29,6 @@ protected:
   bool handleEventOnExpression(Ion::Events::Event event);
   virtual void addModel();
   virtual void didChangeModelsList() { resetMemoization(); }
-  virtual void reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model);
   virtual void editExpression(Ion::Events::Event event);
   virtual bool editSelectedRecordWithText(const char * text);
   virtual bool removeModelRow(Ion::Storage::Record record);

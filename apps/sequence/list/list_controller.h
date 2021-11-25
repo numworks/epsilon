@@ -76,7 +76,6 @@ private:
     return TableViewDataSource::indexFromCumulatedHeight(offsetY);
   }
   void addModel() override;
-  void reinitSelectedExpression(Shared::ExpiringPointer<Shared::ExpressionModelHandle> model) override;
   void editExpression(Ion::Events::Event event) override;
   bool removeModelRow(Ion::Storage::Record record) override;
   Shared::SequenceStore * modelStore() override;

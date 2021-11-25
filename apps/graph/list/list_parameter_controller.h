@@ -20,11 +20,14 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   // Shared cells + m_typeCell + m_functionDomain
-  int numberOfRows() const override { return displayDetails() + 1 + Shared::ListParameterController::numberOfRows(); }
-protected:
-  bool handleEnterOnRow(int rowIndex) override;
+  int numberOfRows() const override { return displayDetails() + displayDomain() + Shared::ListParameterController::numberOfRows(); }
+  int typeAtIndex(int index) override;
 private:
+  constexpr static int k_typeCellType = k_numberOfSharedCells;
+  constexpr static int k_domainCellType = k_typeCellType + 1;
+  bool handleEnterOnRow(int rowIndex) override;
   bool displayDetails() const { return m_typeParameterController.detailsNumberOfSections() > 0; }
+  bool displayDomain() const { return m_domainParameterController.isVisible() > 0; }
   Escher::MessageTableCellWithChevronAndMessage m_typeCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomain;
   TypeParameterController m_typeParameterController;

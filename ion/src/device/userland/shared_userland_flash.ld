@@ -81,13 +81,13 @@ SECTIONS {
     /* The compiler may choose to allocate uninitialized global variables as
      * COMMON blocks. This can be disabled with -fno-common if needed. */
     *(COMMON)
+    _heap_start = .;
     KEEP(*(.app_buffer))
     /**(.bss._ZZN13AppsContainer19sharedAppsContainerEvE20appsContainerStorage)*/
     _bss_section_end_ram = .;
   } >SRAM
 
   .heap : {
-    _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
     . = (ORIGIN(SRAM) + LENGTH(SRAM) - USERLAND_STACK_LENGTH);
     _heap_end = .;

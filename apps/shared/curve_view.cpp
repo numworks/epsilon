@@ -909,7 +909,7 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
       // the dots are already joined
       /* We need to be sure that the point is not an artifact caused by error
        * in float approximation. */
-      float pvd = xyDoubleEvaluation ? floatToPixel(Axis::Vertical, static_cast<float>(xyDoubleEvaluation(u, model, context).x2())) : pvf;
+      float pvd = xyDoubleEvaluation ? floatToPixel(Axis::Vertical, static_cast<float>(xyDoubleEvaluation(s, model, context).x2())) : pvf;
       if (std::isnan(pvd)) {
         /* Double evaluation is NAN while float evaluation is not. It can happen
          * with precision sensitive functions such as (-1)^x. We stamp at pvf

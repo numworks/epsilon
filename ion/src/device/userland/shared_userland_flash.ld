@@ -83,7 +83,6 @@ SECTIONS {
     *(COMMON)
     _heap_start = .;
     KEEP(*(.app_buffer))
-    /**(.bss._ZZN13AppsContainer19sharedAppsContainerEvE20appsContainerStorage)*/
     _bss_section_end_ram = .;
   } >SRAM
 

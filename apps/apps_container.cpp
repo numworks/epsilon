@@ -16,7 +16,7 @@ using namespace Shared;
 using namespace Escher;
 
 AppsContainer * AppsContainer::sharedAppsContainer() {
-  static AppsContainerStorage appsContainerStorage __attribute__((section(".app_container_storage")));
+  static AppsContainerStorage appsContainerStorage;
   return &appsContainerStorage;
 }
 

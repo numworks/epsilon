@@ -808,7 +808,7 @@ failure:
   if (ExceptionRun(ecp)) {
     e = clone().deepReduce(*reductionContext);
   } else {
-    /* We don't want to tidy all the Pool in the cas we are in a nested
+    /* We don't want to tidy all the Pool in the case we are in a nested
      * cloneAndDeepReduceWithSystemCheckpoint: cleaning all the pool might
      * discard ExpressionHandles that are used by parent
      * cloneAndDeepReduceWithSystemCheckpoint. */

@@ -659,7 +659,7 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex, Axis axis) const {
   /* ContinuousFunction caching relies on a consistent tStart and tStep. These
    * values shouldn't be altered here. */
   float previousT = NAN;
@@ -690,38 +690,45 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, floa
     Coordinate2D<float> xy = xyFloatEvaluation(t, model, context);
     x = xy.x1();
     y = xy.x2();
-    if (colorUnderCurve && !std::isnan(x) && colorLowerBound < x && x < colorUpperBound && !(std::isnan(y) || std::isinf(y))) {
-      drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, std::min(0.0f, y), std::max(0.0f, y), color, 1);
+    float mainCoordinate = axis == Axis::Horizontal ? x : y;
+    float secondaryCoordinate = axis == Axis::Horizontal ? y : x;
+    Axis secondaryAxis = axis == Axis::Horizontal ? Axis::Vertical : Axis::Horizontal;
+    if (colorUnderCurve && !std::isnan(mainCoordinate) && colorLowerBound < mainCoordinate && mainCoordinate < colorUpperBound && !(std::isnan(secondaryCoordinate) || std::isinf(secondaryCoordinate))) {
+      drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, std::min(0.0f, secondaryCoordinate), std::max(0.0f, secondaryCoordinate), color, 1);
     }
-    if (xyAreaBound && (shouldColorAreaWhenNan || !std::isnan(y))) {
-      float lowerBound = std::isnan(y) ? -INFINITY : std::min(y, xyAreaBound(t, model, context).x2());
-      float upperBound = std::isnan(y) ? INFINITY : std::max(y, xyAreaBound(t, model, context).x2());
-      drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, lowerBound, upperBound, color, 1, 1, areaIndex);
+    if (xyAreaBound && (shouldColorAreaWhenNan || !std::isnan(secondaryCoordinate))) {
+      Coordinate2D<float> xyArea = xyAreaBound(t, model, context);
+      float areaBound = axis == Axis::Horizontal ? xyArea.x2() : xyArea.x1();
+      float lowerBound = std::isnan(secondaryCoordinate) ? -INFINITY : std::min(secondaryCoordinate, areaBound);
+      float upperBound = std::isnan(secondaryCoordinate) ? INFINITY : std::max(secondaryCoordinate, areaBound);
+      drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, lowerBound, upperBound, color, 1, 1, areaIndex);
     }
     stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation, dashedCurve, stampNumber);
   } while (!isLastSegment);
 }
 
-void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex, float cachedTStep) const {
-  float tStart = xMin;
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, float tMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex, float cachedTStep, Axis axis) const {
+  float tStart = tMin;
   float tStep = cachedTStep;
+  KDCoordinate pixelMin = axis == Axis::Horizontal ? rect.left() : rect.bottom();
+  KDCoordinate pixelMax = axis == Axis::Horizontal ? rect.right() : rect.top();
   if (cachedTStep == 0) {
     /* cachedTStep isn't given, there are no constraints with cache parameters.
      * We can then compute tStep and clip tStart. */
-    float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
-    tStart = std::isnan(rectLeft) ? xMin : std::max(xMin, rectLeft);
-    tStep = pixelWidth();
+    float rectMin = pixelToFloat(Axis::Horizontal, pixelMin - k_externRectMargin);
+    tStart = std::isnan(rectMin) ? tMin : std::max(tMin, rectMin);
+    tStep = axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
     // Round to pixel perfect position to avoid landing in the middle of pixels
     tStart = roundFloatToPixelPerfect(tStart);
     colorLowerBound = roundFloatToPixelPerfect(colorLowerBound);
   }
-  float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-  float tEnd = std::isnan(rectRight) ? xMax : std::min(xMax, rectRight);
+  float rectMax = pixelToFloat(axis, pixelMax + k_externRectMargin);
+  float tEnd = std::isnan(rectMax) ? tMax : std::min(tMax, rectMax);
   assert(!std::isnan(tStart) && !std::isnan(tEnd));
   if (std::isinf(tStart) || std::isinf(tEnd) || tStart > tEnd) {
     return;
   }
-  drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation, dashedCurve, xyAreaBound, shouldColorAreaWhenNan, areaIndex);
+  drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation, dashedCurve, xyAreaBound, shouldColorAreaWhenNan, areaIndex, axis);
 }
 
 float PolarThetaFromCoordinates(float x, float y, Preferences::AngleUnit angleUnit) {

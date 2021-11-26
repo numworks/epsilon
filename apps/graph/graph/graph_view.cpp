@@ -58,15 +58,18 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       assert(f->numberOfSubCurves() <= 2);
       float tmin = f->tMin();
       float tmax = f->tMax();
+      Axis axis = f->hasVerticalLines() ? Axis::Vertical : Axis::Horizontal;
+      KDCoordinate rectMin = axis == Axis::Horizontal ? rect.left() : rect.bottom();
+      KDCoordinate rectMax = axis == Axis::Horizontal ? rect.right() : rect.top();
 
       float tCacheMin, tCacheStep, tStepNonCartesian;
       if (f->isAlongX()) {
-        float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+        float rectLimit = pixelToFloat(axis, rectMin - k_externRectMargin);
         /* Here, tCacheMin can depend on rect (and change as the user move)
          * because cache can be panned for cartesian curves, instead of being
          * entirely invalidated. */
-        tCacheMin = std::isnan(rectLeft) ? tmin : std::max(tmin, rectLeft);
-        tCacheStep = pixelWidth();
+        tCacheMin = std::isnan(rectLimit) ? tmin : std::max(tmin, rectLimit);
+        tCacheStep = axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
       } else {
         tCacheMin = tmin;
         // Compute tCacheStep and tStepNonCartesian
@@ -88,24 +91,28 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color());
-      } else if (type == ContinuousFunction::PlotType::VerticalLine || type == ContinuousFunction::PlotType::VerticalLines) {
+      } else if (f->hasVerticalLines() && f->areaType() == ContinuousFunction::AreaType::None) {
+        // Optimize plot by only drawing the expected segment.
         for (int subCurveIndex = 0; subCurveIndex < f->numberOfSubCurves(); subCurveIndex++) {
           float abscissa = f->evaluateXYAtParameter(0.0, context(), subCurveIndex).x1();
-          float minOrdinate = pixelToFloat(Axis::Vertical, rect.top());
-          float maxOrdinate = pixelToFloat(Axis::Vertical, rect.bottom());
-          drawSegment(ctx, rect, abscissa, minOrdinate, abscissa, maxOrdinate, f->color(), false);
+          float minOrdinate = pixelToFloat(axis, rectMax);
+          float maxOrdinate = pixelToFloat(axis, rectMin);
+          drawSegment(ctx, rect, abscissa, minOrdinate, abscissa, maxOrdinate, f->color());
         }
       } else {
+        /* TODO Hugo : Fix issues with areas of y^2>0 or  1+y^2>0 :
+         * Implement more area types : Outside, Inside, Above, Below, None */
         // Cartesian.
         // 1 - Define the evaluation functions for curve and area
         ContinuousFunction::AreaType area = f->areaType();
+        // Return INFINITY on booth coordinates to accommodate for any axis.
         Shared::CurveView::EvaluateXYForFloatParameter xyInfinite =
             [](float t, void *, void *) {
-              return Poincare::Coordinate2D<float>(t, INFINITY);
+              return Poincare::Coordinate2D<float>(INFINITY, INFINITY);
             };
         Shared::CurveView::EvaluateXYForFloatParameter xyMinusInfinite =
             [](float t, void *, void *) {
-              return Poincare::Coordinate2D<float>(t, -INFINITY);
+              return Poincare::Coordinate2D<float>(-INFINITY, -INFINITY);
             };
         Shared::CurveView::EvaluateXYForFloatParameter xyAreaBound = nullptr;
         // Draw the first cartesian curve
@@ -145,11 +152,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           }
         }
         // 2 - Draw the first curve
-        drawCartesianCurve(
-            ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
-            context(), f->color(), true, record == m_selectedRecord,
-            m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
-            f->drawDottedCurve(), xyAreaBound, false, areaIndex, tCacheStep);
+        drawCartesianCurve(ctx, rect, tCacheMin, tmax, xyFloatEvaluation,
+                           f.operator->(), context(), f->color(), true,
+                           record == m_selectedRecord, m_highlightedStart,
+                           m_highlightedEnd, xyDoubleEvaluation,
+                           f->drawDottedCurve(), xyAreaBound, false, areaIndex,
+                           tCacheStep, axis);
         if (f->numberOfSubCurves() == 2) {
           // Draw the second cartesian curve, which is lesser than the first
           xyDoubleEvaluation = [](double t, void * model, void * context) {
@@ -174,11 +182,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
              * defined at this value of x. */
           }
           // 3 - Draw the second curve
-          drawCartesianCurve(
-              ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
-              context(), f->color(), true, record == m_selectedRecord,
-              m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
-              f->drawDottedCurve(), xyAreaBound, true, areaIndex, tCacheStep);
+          drawCartesianCurve(ctx, rect, tCacheMin, tmax, xyFloatEvaluation,
+                             f.operator->(), context(), f->color(), true,
+                             record == m_selectedRecord, m_highlightedStart,
+                             m_highlightedEnd, xyDoubleEvaluation,
+                             f->drawDottedCurve(), xyAreaBound, true, areaIndex,
+                             tCacheStep, axis);
         }
         if (area != ContinuousFunction::AreaType::None) {
           // We can properly display the superposition of up to 4 areas
@@ -192,8 +201,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context(), 0);
           float tangentParameterB = -tangentParameterA*m_curveViewCursor->x()+f->evaluateXYAtParameter(m_curveViewCursor->x(), context(), 0).x2();
           // To represent the tangent, we draw segment from and to abscissas at the extremity of the drawn rect
-          float minAbscissa = pixelToFloat(Axis::Horizontal, rect.left());
-          float maxAbscissa = pixelToFloat(Axis::Horizontal, rect.right());
+          float minAbscissa = pixelToFloat(axis, rectMin);
+          float maxAbscissa = pixelToFloat(axis, rectMax);
           drawSegment(ctx, rect, minAbscissa, tangentParameterA*minAbscissa+tangentParameterB, maxAbscissa, tangentParameterA*maxAbscissa+tangentParameterB, Palette::GrayVeryDark, false);
         }
       }

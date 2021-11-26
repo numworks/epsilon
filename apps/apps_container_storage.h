@@ -27,8 +27,8 @@ private:
     HardwareTest::App m_hardwareTestApp;
     USB::App m_usbApp;
   };
-  Apps m_apps;
   APPS_CONTAINER_SNAPSHOT_DECLARATIONS
+  Apps m_apps;
 };
 
 #endif

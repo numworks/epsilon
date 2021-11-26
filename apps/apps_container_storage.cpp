@@ -37,3 +37,23 @@ Escher::App::Snapshot * AppsContainerStorage::appSnapshotAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfCommonApps);
   return snapshots[index];
 }
+
+union Apps {
+public:
+  /* Enforce a trivial constructor and destructor that just leave the memory
+   * unmodified. This way, m_apps can be trivially destructed. */
+  Apps() {};
+  ~Apps() {};
+private:
+  APPS_CONTAINER_APPS_DECLARATION
+    Home::App m_homeApp;
+  OnBoarding::App m_onBoardingApp;
+  HardwareTest::App m_hardwareTestApp;
+  USB::App m_usbApp;
+};
+
+
+void * AppsContainerStorage::currentAppBuffer() {
+  static Apps s_apps __attribute__((section(".app_buffer")));
+  return &s_apps;
+}

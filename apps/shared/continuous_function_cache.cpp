@@ -20,6 +20,13 @@ void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCa
     return;
   }
 
+  if (function->hasVerticalLines()) {
+    /* Ignore cache on vertical line functions because it wouldn't be usefull
+     * caching either x or y values on such simple curves. */
+    function->setCache(nullptr);
+    return;
+  }
+
   if (tStep < 3 * k_cacheHitTolerance) {
     /* If tStep is lower than twice the tolerance, we risk shifting the index
      * by 1 for cache hits. As an added safety, we add another buffer of

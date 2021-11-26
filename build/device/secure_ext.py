@@ -1,8 +1,8 @@
 import sys
 import os
 
-MAGIK_CODE = [0x64, 0x6c, 0x31, 0x31, 0x23, 0x39, 0x38, 0x33, 0x35]
-MAGIK_POS = [0x03, 0xb, 0x44f]
+MAGIK_CODE = [0x32, 0x30, 0x30, 0x36]
+MAGIK_POS = 0x44F
 
 if len(sys.argv) > 1:
     print("Patching external bin...")
@@ -18,11 +18,7 @@ if len(sys.argv) > 1:
             sys.exit(-1)
     
     for i in range(4):
-        first_packet[MAGIK_POS[0] + i] = MAGIK_CODE[i]
-    for i in range(4):
-        first_packet[MAGIK_POS[1] + i] = MAGIK_CODE[i + 5]
-    for i in range(len(MAGIK_CODE)):
-        first_packet[MAGIK_POS[2] + i] = MAGIK_CODE[i]
+        first_packet[MAGIK_POS + i] = MAGIK_CODE[i]
 
     file.seek(0)
     file.write(first_packet)

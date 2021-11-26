@@ -87,32 +87,8 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Six) {
-    GlobalPreferences::sharedGlobalPreferences()->dfuIncreaseStep();
-    if (GlobalPreferences::sharedGlobalPreferences()->dfuCurrentStep() >= GlobalPreferences::DfuUnlockStep && !GlobalPreferences::sharedGlobalPreferences()->dfuStatus()) {
-      if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-        Ion::LED::setColor(KDColorPurple);
-        Ion::LED::setBlinking(500, 0.5f);
-      }
-      GlobalPreferences::sharedGlobalPreferences()->setDfuStatus(true);
-      App::app()->displayWarning(I18n::Message::DfuWarning1, I18n::Message::DfuWarning2);
-      return true;
-    } else if (GlobalPreferences::sharedGlobalPreferences()->dfuStatus()) {
-      if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-        Ion::LED::setColor(KDColorBlack);
-      }
-      GlobalPreferences::sharedGlobalPreferences()->dfuResetStep();
-      GlobalPreferences::sharedGlobalPreferences()->setDfuStatus(false);
-    }
-  }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
-
-    if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
-        Ion::LED::setColor(KDColorBlack);
-    }
-    GlobalPreferences::sharedGlobalPreferences()->dfuResetStep();
-    GlobalPreferences::sharedGlobalPreferences()->setDfuStatus(false);
 
     int index = selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1;
 #ifdef HOME_DISPLAY_EXTERNALS

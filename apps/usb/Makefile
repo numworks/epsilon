@@ -1,7 +1,6 @@
 app_usb_src = $(addprefix apps/usb/,\
   app.cpp \
   usb_connected_controller.cpp \
-  usb_view.cpp \
 )
 
 apps_src += $(app_usb_src)

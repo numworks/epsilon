@@ -138,7 +138,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     Ion::LED::updateColorWithPlugAndCharge();
   }
   if (event == Ion::Events::USBEnumeration) {
-    if (Ion::USB::isPlugged() && GlobalPreferences::sharedGlobalPreferences()->getDfuLevel() != 3) {
+    if (Ion::USB::isPlugged()) {
       App::Snapshot * activeSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
       /* Just after a software update, the battery timer does not have time to
        * fire before the calculator enters DFU mode. As the DFU mode blocks the
@@ -147,8 +147,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
        * pictogram. */
       updateBatteryState();
       if (switchTo(usbConnectedAppSnapshot())) {
-        Ion::USB::DFU(true, GlobalPreferences::sharedGlobalPreferences()->dfuStatus(), GlobalPreferences::sharedGlobalPreferences()->getDfuLevel());
-        GlobalPreferences::sharedGlobalPreferences()->setDfuStatus(false);
+        Ion::USB::DFU(true, GlobalPreferences::sharedGlobalPreferences()->dfuUnlocked(), GlobalPreferences::sharedGlobalPreferences()->dfuLevel());
         // Update LED when exiting DFU mode
         Ion::LED::updateColorWithPlugAndCharge();
         bool switched = switchTo(activeSnapshot);

@@ -10,9 +10,12 @@
 #include <ion/storage.h>
 #include <ion/timing.h>
 #include <string.h>
+
 namespace Ion {
 namespace Device {
 namespace USB {
+
+constexpr static uint8_t k_externalMagik[9] = {0x64, 0x6c, 0x31, 0x31, 0x23, 0x39, 0x38, 0x33, 0x35};
 
 static inline uint32_t minUint32T(uint32_t x, uint32_t y) { return x < y ? x : y; }
 
@@ -54,7 +57,6 @@ void DFUInterface::wholeDataReceivedCallback(SetupPacket *request, uint8_t *tran
     if (request->wLength() > 0) {
       // The request is a "real" download. Compute the writing address.
       m_writeAddress = (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
-
       // Store the received data until we copy it on the flash.
       memcpy(m_largeBuffer, transferBuffer, *transferBufferLength);
       m_largeBufferLength = *transferBufferLength;
@@ -67,9 +69,6 @@ void DFUInterface::wholeDataSentCallback(SetupPacket *request, uint8_t *transfer
   if (request->bRequest() == (uint8_t)DFURequest::GetStatus) {
     // Do any needed action after the GetStatus request.
     if (m_state == State::dfuMANIFEST) {
-      if (m_dfuLevel == 1 && m_isFirstExternalFlash && !m_isInternalLocked) {
-        return;
-      }
       /* If we leave the DFU and reset immediately, dfu-util outputs an error:
      * "File downloaded successfully
      *  dfu-util: Error during download get_status"
@@ -81,7 +80,6 @@ void DFUInterface::wholeDataSentCallback(SetupPacket *request, uint8_t *transfer
       // Leave DFU routine: Leave DFU, reset device, jump to application code
       leaveDFUAndReset();
     } else if (m_state == State::dfuDNBUSY) {
-      m_state = State::dfuDNBUSY;
       if (m_largeBufferLength != 0) {
         // Here, copy the data from the transfer buffer to the flash memory
         writeOnMemory();
@@ -168,7 +166,10 @@ bool DFUInterface::processUploadRequest(SetupPacket *request, uint8_t *transferB
 void DFUInterface::setAddressPointerCommand(SetupPacket *request, uint8_t *transferBuffer, uint16_t transferBufferLength) {
   assert(transferBufferLength == 5);
   // Compute the new address but change it after the next getStatus request.
-  m_potentialNewAddressPointer = transferBuffer[1] + (transferBuffer[2] << 8) + (transferBuffer[3] << 16) + (transferBuffer[4] << 24);
+  m_potentialNewAddressPointer = transferBuffer[1]
+    + (transferBuffer[2] << 8)
+    + (transferBuffer[3] << 16)
+    + (transferBuffer[4] << 24);
   m_state = State::dfuDNLOADSYNC;
 }
 
@@ -198,7 +199,10 @@ void DFUInterface::eraseCommand(uint8_t *transferBuffer, uint16_t transferBuffer
   // Sector erase
   assert(transferBufferLength == 5);
 
-  m_eraseAddress = transferBuffer[1] + (transferBuffer[2] << 8) + (transferBuffer[3] << 16) + (transferBuffer[4] << 24);
+  uint32_t m_eraseAddress = transferBuffer[1]
+    + (transferBuffer[2] << 8)
+    + (transferBuffer[3] << 16)
+    + (transferBuffer[4] << 24);
 
   m_erasePage = Flash::SectorAtAddress(m_eraseAddress);
   if (m_erasePage < 0) {
@@ -210,13 +214,24 @@ void DFUInterface::eraseCommand(uint8_t *transferBuffer, uint16_t transferBuffer
 
 void DFUInterface::eraseMemoryIfNeeded() {
   if (m_erasePage < 0) {
+    // There was no erase waiting.
     return;
   }
+
   willErase();
-  if ((m_eraseAddress >= k_ExternalBorderAddress && m_eraseAddress < ExternalFlash::Config::EndAddress) || m_dfuUnlocked) {
-    int32_t order = Flash::SectorAtAddress(m_eraseAddress);
-    Flash::EraseSector(order);
+
+#if 0 // We don't erase now the flash memory to avoid crash if writing is refused
+  if (m_erasePage == Flash::TotalNumberOfSectors()) {
+  Flash::MassErase();
   }
+#endif
+
+  if ((m_eraseAddress >= k_externalAppsBorderAddress && m_eraseAddress < ExternalFlash::Config::EndAddress) || m_dfuUnlocked) {
+    Flash::EraseSector(m_erasePage);
+  }
+  /* Put an out of range value in m_erasePage to indicate that no erase is
+    * waiting. */
+  m_erasePage = -1;
   m_state = State::dfuDNLOADIDLE;
   m_status = Status::OK;
   m_erasePage = -1;
@@ -227,238 +242,67 @@ void DFUInterface::writeOnMemory() {
     // Write on SRAM
     // FIXME We should check that we are not overriding the current instructions.
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
-    reset_custom_vars();  // On reset les vars car la ram n'a pas de secteur à effacer
+    resetProtectionVariables(); // We can reset the protection variables because update process is finsihed.
   } else if (Flash::SectorAtAddress(m_writeAddress) >= 0) {
-    if (m_dfuLevel == 2) {
+    if (m_dfuLevel == 2) { // If no-update mode, we throw an error
       m_largeBufferLength = 0;
       m_state = State::dfuERROR;
       m_status = Status::errWRITE;
+      leaveDFUAndReset(false);
       return;
     }
-
-    int current_memory_flashed;
-    if (m_writeAddress >= InternalFlash::Config::StartAddress && m_writeAddress <= InternalFlash::Config::EndAddress) {
-      if (m_isInternalLocked && !m_dfuUnlocked)  // On vérifie si l'external a été flash
-      {
-        m_largeBufferLength = 0;
-        m_state = State::dfuERROR;
-        m_status = Status::errTARGET;
-        leaveDFUAndReset(false);  // Numworks flash l'internal avant donc on exit pour afficher le message
-        return;
-      }
-      current_memory_flashed = 0;
-
-      //on écrit dans la mémoire interne
-      if (m_isFirstInternalFlash && !m_dfuUnlocked) {
-        m_temp_is_valid = true;
-        for (int i = 0; i < 4; i++) {
-          if (magik[i] != m_largeBuffer[magik_adrs + i]) {
-            m_temp_is_valid = false;
-            break;
+    
+    if (!(m_isTemporaryUnlocked || m_dfuUnlocked)) {
+      if (m_writeAddress >= InternalFlash::Config::StartAddress && m_writeAddress <= InternalFlash::Config::EndAddress) {
+        // We check if the user is autorized to write on the internal flash
+        if (m_haveAlreadyFlashedExternal) {
+          for (size_t i = 0; i < 4; i++) {
+            if (k_internalMagik[i] != m_largeBuffer[k_internalMagikPointer + i]) {
+              m_largeBufferLength = 0;
+              m_state = State::dfuERROR;
+              m_status = Status::errWRITE;
+              // We don't leave DFU to avoid having only external flashed
+              return;
+            }
+            m_largeBuffer[k_internalMagikPointer + i] = 0; // We reset the buffer to its initial value
           }
         }
-        if (!m_temp_is_valid) {
+        else { // All people trying to write on the internal flash before external are considered as not authorized
           m_largeBufferLength = 0;
           m_state = State::dfuERROR;
-          m_status = Status::errVERIFY;
-          //leaveDFUAndReset(); On ne leave plus sinon on fait crash la calc si il n'y a que la partie ext.
+          m_status = Status::errTARGET;
+          leaveDFUAndReset(false);
           return;
-        } else {
-          m_isFirstInternalFlash = false;
         }
       }
-    } else {
-      current_memory_flashed = 1;
-      // Nous écrivons la partie external os
-      if (m_writeAddress < k_ExternalBorderAddress && m_isFirstExternalFlash && !m_dfuUnlocked)  // On vérifie si on installe des apps ext
-      {
-        // if (m_dfuLevel == 1 && m_isInternalLocked) {
-        //   m_largeBufferLength = 0;
-        //   m_state = State::dfuERROR;
-        //   m_status = Status::errTARGET;
-        //   return;
-        // }
+      else if (m_writeAddress < k_externalAppsBorderAddress) { // If we are not installing external apps
         if (m_dfuLevel == 0) {
-          // Partie moche du code parce que je n'arrivais pas à compil avec 3 boucles for sous msys
-          int adress_magik = magik_ext_adrs[0];
-          m_temp_is_valid = external_magik[0] == m_largeBuffer[adress_magik];
-          m_largeBuffer[adress_magik] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
+          for (size_t i = 0; i < 9; i++) {
+            if (k_externalMagik[i] != m_largeBuffer[k_externalMagikPointer + i]) {
+              m_largeBufferLength = 0;
+              m_state = State::dfuERROR;
+              m_status = Status::errWRITE;
+              leaveDFUAndReset(false);
+              return;
+            }
+            m_largeBuffer[k_externalMagikPointer + i] = 0; // We reset the buffer to its initial value
           }
-
-          m_temp_is_valid = external_magik[1] == m_largeBuffer[adress_magik + 1];
-          m_largeBuffer[adress_magik + 1] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          m_temp_is_valid = external_magik[2] == m_largeBuffer[adress_magik + 2];
-          m_largeBuffer[adress_magik + 2] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          m_temp_is_valid = external_magik[3] == m_largeBuffer[adress_magik + 3];
-          m_largeBuffer[adress_magik + 3] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          adress_magik = magik_ext_adrs[1];
-
-          m_temp_is_valid = external_magik[5] == m_largeBuffer[adress_magik];
-          m_largeBuffer[adress_magik] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          m_temp_is_valid = external_magik[6] == m_largeBuffer[adress_magik + 1];
-          m_largeBuffer[adress_magik + 1] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          m_temp_is_valid = external_magik[7] == m_largeBuffer[adress_magik + 2];
-          m_largeBuffer[adress_magik + 2] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          m_temp_is_valid = external_magik[8] == m_largeBuffer[adress_magik + 3];
-          m_largeBuffer[adress_magik + 3] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          adress_magik = magik_ext_adrs[2];
-          m_temp_is_valid = true;
-
-          m_temp_is_valid = external_magik[0] == m_largeBuffer[adress_magik];
-          m_largeBuffer[adress_magik] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          m_temp_is_valid = external_magik[1] == m_largeBuffer[adress_magik + 1];
-          m_largeBuffer[adress_magik + 1] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          m_temp_is_valid = external_magik[2] == m_largeBuffer[adress_magik + 2];
-          m_largeBuffer[adress_magik + 2] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          m_temp_is_valid = external_magik[3] == m_largeBuffer[adress_magik + 3];
-          m_largeBuffer[adress_magik + 3] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-
-          m_temp_is_valid = external_magik[4] == m_largeBuffer[adress_magik + 4];
-          m_largeBuffer[adress_magik + 4] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-          m_temp_is_valid = external_magik[5] == m_largeBuffer[adress_magik + 5];
-          m_largeBuffer[adress_magik + 5] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-          m_temp_is_valid = external_magik[6] == m_largeBuffer[adress_magik + 6];
-          m_largeBuffer[adress_magik + 6] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-          m_temp_is_valid = external_magik[7] == m_largeBuffer[adress_magik + 7];
-          m_largeBuffer[adress_magik + 7] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          }
-          m_temp_is_valid = external_magik[8] == m_largeBuffer[adress_magik + 8];
-          m_largeBuffer[adress_magik + 8] = 0xff;
-
-          if (!m_temp_is_valid) {
-            m_largeBufferLength = 0;
-            leaveDFUAndReset(false);
-            return;
-          } else {
-            m_isFirstExternalFlash = false;
-            m_isInternalLocked = false;
-          }
-        } else {
-          m_isFirstExternalFlash = false;
-          m_isInternalLocked = false;
+          m_isTemporaryUnlocked = true; // We can unlock the flash because signature is good
+        }
+        else {
+          m_haveAlreadyFlashedExternal = true;
         }
       }
     }
-    if (m_last_memoryFlashed >= 0 && current_memory_flashed != m_last_memoryFlashed) {
-      m_last_memoryFlashed = -1;
-    }
 
-    m_erasePage = Flash::SectorAtAddress(m_writeAddress);
+    int pageToErase = Flash::SectorAtAddress(m_writeAddress);
 
     //On vérifie qu'on a pas déjà effacé le secteur et si ce n'est pas un secteur external déjà effacé
-    if ((m_last_memoryFlashed < 0 || m_erasePage != m_lastPageErased) && m_writeAddress < k_ExternalBorderAddress && !m_dfuUnlocked) {
-      Flash::EraseSector(m_erasePage);
-      m_last_memoryFlashed = current_memory_flashed;
+    if ((m_lastErasedPage == -1 || pageToErase != m_lastErasedPage) && m_writeAddress < k_externalAppsBorderAddress && !m_dfuUnlocked) {
+      Flash::EraseSector(pageToErase);
+      m_lastErasedPage = pageToErase;
     }
 
-    m_lastPageErased = m_erasePage;
-    m_erasePage = -1;
-
-    Ion::Timing::msleep(1);
     Flash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength);
   } else {
     // Invalid write address
@@ -467,6 +311,7 @@ void DFUInterface::writeOnMemory() {
     m_status = Status::errTARGET;
     return;
   }
+
   // Reset the buffer length
   m_largeBufferLength = 0;
   // Change the interface state and status
@@ -505,14 +350,11 @@ bool DFUInterface::dfuAbort(uint16_t *transferBufferLength) {
 }
 
 void DFUInterface::leaveDFUAndReset(bool do_reset) {
-  reset_custom_vars();
-  m_isInternalLocked = true;
-  m_isFirstInternalFlash = true;
-  m_isFirstExternalFlash = true;
+  resetProtectionVariables();
   m_device->setResetOnDisconnect(do_reset);
   m_device->detach();
 }
 
-}  // namespace USB
-}  // namespace Device
-}  // namespace Ion
+} 
+}
+}

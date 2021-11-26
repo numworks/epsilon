@@ -17,14 +17,14 @@ constexpr SettingsMessageTree s_modelMenu[] =
 #ifdef HAS_CODE
      SettingsMessageTree(I18n::Message::CodeApp, s_codeChildren),
 #endif
-     SettingsMessageTree(I18n::Message::UsbSetting, s_usbSteps),
+     SettingsMessageTree(I18n::Message::UsbSetting, s_usbProtectionChildren),
      SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren),
      SettingsMessageTree(I18n::Message::About, s_modelAboutChildren)};
 
 constexpr SettingsMessageTree s_model = SettingsMessageTree(I18n::Message::SettingsApp, s_modelMenu);
 
 I18n::Message MainController::promptMessage() const {
-    return I18n::Message::Default;
+  return I18n::Message::Default;
 }
 
-}  // namespace Settings
+}

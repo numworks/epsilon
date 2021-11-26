@@ -8,11 +8,12 @@ namespace USB {
 class USBConnectedController : public ViewController {
 public:
   USBConnectedController();
-  View * view() override { return &m_messageView; }
-  USBView * getMessageView() {return &m_messageView; }
+  View * view() override { return &m_contentView; }
   bool handleEvent(Ion::Events::Event event) override { return false; };
+private:
+  class ContentView : public View {
   public:
-    ContentView(KDColor * fgcolors, KDColor * bgcolors);
+    ContentView();
     void drawRect(KDContext * ctx, KDRect rect) const override;
   protected:
     int numberOfSubviews() const override { return k_numberOfMessages; }

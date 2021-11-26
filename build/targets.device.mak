@@ -27,11 +27,11 @@ $(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
 	@echo "LDMAP   $@"
 	$(Q) $(LD) $^ $(LDFLAGS) -Wl,-M -Wl,-Map=$@ -o /dev/null
 
-.PHONY: mapfile
-mapfile:
-	$(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
-		@echo "LDMAP   $@"
-		$(Q) $(LD) $^ $(LDFLAGS) -Wl,-M -Wl,-Map=$@ -o /dev/null
+.PHONY: %_memory_map
+%_memory_map: $(BUILD_DIR)/%.map
+	@echo "========== MEMORY MAP ========="
+	$(Q) awk -f build/device/memory_map.awk < $<
+	@echo "==============================="
 
 .PHONY: openocd
 openocd:

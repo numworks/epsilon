@@ -170,6 +170,15 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       return LayoutHelper::String(text, strlen(text), font);
     }
 
+    // DFU Protection level
+    case I18n::Message::USBDefaultLevel:
+    case I18n::Message::USBLowLevel:
+    case I18n::Message::USBParanoidLevel:
+    {
+      const char * text = " ";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+
     default:
       assert(false);
       return Layout();
@@ -213,6 +222,8 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
     preferences->setSymbolOfFunction((Preferences::SymbolFunction)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
     GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::LargeFont : KDFont::SmallFont);
+  } else if (message == I18n::Message::USBProtectionLevel) {
+    GlobalPreferences::sharedGlobalPreferences()->setDfuLevel(valueIndex);
   }
 }
 
@@ -238,6 +249,9 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
   }
   if (message == I18n::Message::FontSizes) {
     return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
+  }
+  if (message == I18n::Message::USBProtectionLevel) {
+    return GlobalPreferences::sharedGlobalPreferences()->dfuLevel();
   }
   return 0;
 }

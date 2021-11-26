@@ -25,8 +25,7 @@ app_settings_src = $(addprefix apps/settings/,\
 	sub_menu/contributors_controller.cpp \
 	sub_menu/math_options_controller.cpp \
   sub_menu/selectable_view_with_messages.cpp \
-  sub_menu/usb_info_controller.cpp \
-  sub_menu/usb_protection_level_controller.cpp \
+  sub_menu/usb_protection_controller.cpp \
 )
 
 SFLAGS += -DOMEGA_STATE="$(OMEGA_STATE)"
@@ -34,6 +33,6 @@ SFLAGS += -DOMEGA_STATE="$(OMEGA_STATE)"
 app_settings_src += $(app_settings_test_src)
 apps_src += $(app_settings_src)
 
-i18n_files += $(call i18n_without_universal_for,settings/base)
+i18n_files += $(call i18n_with_universal_for,settings/base)
 
 $(eval $(call depends_on_image,apps/settings/app.cpp,apps/settings/settings_icon.png))

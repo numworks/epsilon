@@ -148,10 +148,10 @@ private:
   constexpr static uint32_t k_sramEndAddress = 0x20040000;
   constexpr static uint32_t k_externalAppsBorderAddress = 0x90200000;
 
-  const static int k_internalMagikPointer = 0x1C4;
+  constexpr static int k_internalMagikPointer = 0x1C4;
   constexpr static int k_externalMagikPointer = 0x44F;
   constexpr static uint8_t k_internalMagik[4] = {0xF0, 0x0D, 0xC0, 0xDE};
-  constexpr static uint8_t k_externalMagik[9] = {0x64, 0x6c, 0x31, 0x31, 0x23, 0x39, 0x38, 0x33, 0x35};
+  constexpr static uint8_t k_externalMagik[4] = {0x32, 0x30, 0x30, 0x36};
 
   // Download and upload
   bool processDownloadRequest(uint16_t wLength, uint16_t *transferBufferLength);

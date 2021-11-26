@@ -123,7 +123,7 @@ void init() {
   initClocks();
 
   // The bootloader leaves its own after flashing
-  // SYSCFG.MEMRMP()->setMEM_MODE(SYSCFG::MEMRMP::MemMode::MainFlashmemory);
+  //SYSCFG.MEMRMP()->setMEM_MODE(SYSCFG::MEMRMP::MemMode::MainFlashmemory);
   // Ensure right location of interrupt vectors
   CORTEX.VTOR()->setVTOR((void*)&InitialisationVector);
 

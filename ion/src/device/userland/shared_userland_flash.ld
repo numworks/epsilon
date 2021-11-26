@@ -81,6 +81,8 @@ SECTIONS {
     /* The compiler may choose to allocate uninitialized global variables as
      * COMMON blocks. This can be disabled with -fno-common if needed. */
     *(COMMON)
+    KEEP(*(.app_container_storage))
+    /**(.bss._ZZN13AppsContainer19sharedAppsContainerEvE20appsContainerStorage)*/
     _bss_section_end_ram = .;
   } >SRAM
 

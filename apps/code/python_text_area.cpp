@@ -25,7 +25,7 @@ constexpr KDColor HighlightColor = Palette::CodeBackgroundSelected;
 constexpr KDColor AutocompleteColor = KDColor::RGB24(0xC6C6C6); // TODO Palette change
 
 static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
-  if(!GlobalPreferences::sharedGlobalPreferences()->syntaxhighlighting()) {
+  if (!GlobalPreferences::sharedGlobalPreferences()->syntaxhighlighting()) {
     return Palette::CodeText;
   }
   if (tokenKind == MP_TOKEN_STRING) {
@@ -309,7 +309,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
     tokenFrom += tokenLength;
 
     KDColor color = CommentColor;
-    if(!GlobalPreferences::sharedGlobalPreferences()->syntaxhighlighting()) {
+    if (!GlobalPreferences::sharedGlobalPreferences()->syntaxhighlighting()) {
       color = Palette::CodeText;
     }
     // Even if the token is being autocompleted, use CommentColor

@@ -10,9 +10,9 @@ CodeOptionsController::CodeOptionsController(Responder * parentResponder) :
   GenericSubController(parentResponder),
   m_preferencesController(this)
 {
-  m_chevronCell.setMessageFont(KDFont::LargeFont);
-  m_switchCell.setMessageFont(KDFont::LargeFont);
-  m_switchCell_syntax_highlighting.setMessageFont(KDFont::LargeFont);
+  m_chevronCellFontSize.setMessageFont(KDFont::LargeFont);
+  m_switchCellAutoCompletion.setMessageFont(KDFont::LargeFont);
+  m_switchCellSyntaxHighlighting.setMessageFont(KDFont::LargeFont);
 }
 
 bool CodeOptionsController::handleEvent(Ion::Events::Event event) {
@@ -26,7 +26,6 @@ bool CodeOptionsController::handleEvent(Ion::Events::Event event) {
         GlobalPreferences::sharedGlobalPreferences()->setSyntaxhighlighting(!GlobalPreferences::sharedGlobalPreferences()->syntaxhighlighting());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
         break;
-
       default:
         GenericSubController * subController = nullptr;
         subController = &m_preferencesController;
@@ -46,12 +45,12 @@ HighlightCell * CodeOptionsController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0 && index < k_totalNumberOfCell);
   if (index == 0) {
-    return &m_chevronCell;
+    return &m_chevronCellFontSize;
   }
   else if (index == 1) {
-    return &m_switchCell;
+    return &m_switchCellAutoCompletion;
   }
-  return &m_switchCell_syntax_highlighting;
+  return &m_switchCellSyntaxHighlighting;
 }
 
 int CodeOptionsController::reusableCellCount(int type) {

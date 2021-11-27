@@ -16,9 +16,9 @@ public:
 private:
   constexpr static int k_totalNumberOfCell = 3;
   PreferencesController m_preferencesController;
-  MessageTableCellWithChevronAndMessage m_chevronCell;
-  MessageTableCellWithSwitch m_switchCell;
-  MessageTableCellWithSwitch m_switchCell_syntax_highlighting;
+  MessageTableCellWithChevronAndMessage m_chevronCellFontSize;
+  MessageTableCellWithSwitch m_switchCellAutoCompletion;
+  MessageTableCellWithSwitch m_switchCellSyntaxHighlighting;
 };
 
 }

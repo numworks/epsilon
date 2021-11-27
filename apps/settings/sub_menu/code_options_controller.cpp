@@ -12,6 +12,7 @@ CodeOptionsController::CodeOptionsController(Responder * parentResponder) :
 {
   m_chevronCell.setMessageFont(KDFont::LargeFont);
   m_switchCell.setMessageFont(KDFont::LargeFont);
+  m_switchCell_syntax_highlighting.setMessageFont(KDFont::LargeFont);
 }
 
 bool CodeOptionsController::handleEvent(Ion::Events::Event event) {
@@ -19,6 +20,10 @@ bool CodeOptionsController::handleEvent(Ion::Events::Event event) {
     switch (selectedRow()){
       case 1:
         GlobalPreferences::sharedGlobalPreferences()->setAutocomplete(!GlobalPreferences::sharedGlobalPreferences()->autocomplete());
+        m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+        break;      
+      case 2:
+        GlobalPreferences::sharedGlobalPreferences()->setSyntaxhighlighting(!GlobalPreferences::sharedGlobalPreferences()->syntaxhighlighting());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
         break;
 
@@ -43,7 +48,10 @@ HighlightCell * CodeOptionsController::reusableCell(int index, int type) {
   if (index == 0) {
     return &m_chevronCell;
   }
-  return &m_switchCell;
+  else if (index == 1) {
+    return &m_switchCell;
+  }
+  return &m_switchCell_syntax_highlighting;
 }
 
 int CodeOptionsController::reusableCellCount(int type) {
@@ -67,6 +75,11 @@ void CodeOptionsController::willDisplayCellForIndex(HighlightCell * cell, int in
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->autocomplete());
+  }
+  else if (thisLabel == I18n::Message::SyntaxHighlighting) {
+    MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
+    SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
+    mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->syntaxhighlighting());
   }
 #endif
 }

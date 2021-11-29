@@ -50,6 +50,8 @@ public:
     PressToTest = 4,
     Portuguese = 5,
   };
+  static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
+  static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
   /* By default, a 0 PressToTestParams has all parameters set to false. Params
    * are false if the feature is activated (allowed) and true if forbidden. */
   typedef union {

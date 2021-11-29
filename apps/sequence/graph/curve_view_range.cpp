@@ -23,7 +23,7 @@ void CurveViewRange::protectedNormalize(bool canChangeX, bool canChangeY, bool c
    * the X range rightward to the origin. */
   float interestingXMin = m_delegate->interestingXMin();
   float xRange = xMax() - xMin();
-  m_xRange.setMin(interestingXMin - k_displayLeftMarginRatio * xRange);
+  MemoizedCurveViewRange::protectedSetXMin(interestingXMin - k_displayLeftMarginRatio * xRange, INFINITY, INFINITY, false);
   MemoizedCurveViewRange::protectedSetXMax(xMin() + xRange, k_lowerMaxFloat, k_upperMaxFloat);
 }
 

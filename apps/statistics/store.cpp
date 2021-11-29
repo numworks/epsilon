@@ -67,14 +67,14 @@ bool Store::scrollToSelectedBarIndex(int series, int index) {
   float windowRange = xMax() - xMin();
   float range = windowRange/(1+k_displayLeftMarginRatio+k_displayRightMarginRatio);
   if (xMin() + k_displayLeftMarginRatio*range > startSelectedBar) {
-    m_xRange.setMin(startSelectedBar - k_displayLeftMarginRatio*range);
-    // Call MemoizedCurveViewRange::protectedSetXMax to update the grid unit
+    // Only update the grid unit when setting xMax
+    MemoizedCurveViewRange::protectedSetXMin(startSelectedBar - k_displayLeftMarginRatio*range, INFINITY, INFINITY, false);
     MemoizedCurveViewRange::protectedSetXMax(xMin() + windowRange);
     return true;
   }
   float endSelectedBar = endOfBarAtIndex(series, index);
   if (endSelectedBar > xMax() - k_displayRightMarginRatio*range) {
-    m_xRange.setMax(endSelectedBar + k_displayRightMarginRatio*range);
+    MemoizedCurveViewRange::protectedSetXMax(endSelectedBar + k_displayRightMarginRatio*range, INFINITY, INFINITY, false);
     MemoizedCurveViewRange::protectedSetXMin(xMax() - windowRange);
     return true;
   }

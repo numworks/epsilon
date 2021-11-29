@@ -13,24 +13,24 @@ MemoizedCurveViewRange::MemoizedCurveViewRange() :
 {
 }
 
-void MemoizedCurveViewRange::protectedSetXMin(float xMin, float lowerMaxFloat, float upperMaxFloat) {
+void MemoizedCurveViewRange::protectedSetXMin(float xMin, float lowerMaxFloat, float upperMaxFloat, bool updateGridUnit) {
   m_xRange.setMin(xMin, lowerMaxFloat, upperMaxFloat);
-  m_xGridUnit = CurveViewRange::xGridUnit();
+  m_xGridUnit = updateGridUnit ? CurveViewRange::xGridUnit() : 0.0f;
 }
 
-void MemoizedCurveViewRange::protectedSetXMax(float xMax, float lowerMaxFloat, float upperMaxFloat) {
+void MemoizedCurveViewRange::protectedSetXMax(float xMax, float lowerMaxFloat, float upperMaxFloat, bool updateGridUnit) {
   m_xRange.setMax(xMax, lowerMaxFloat, upperMaxFloat);
-  m_xGridUnit = CurveViewRange::xGridUnit();
+  m_xGridUnit = updateGridUnit ? CurveViewRange::xGridUnit() : 0.0f;
 }
 
-void MemoizedCurveViewRange::protectedSetYMin(float yMin, float lowerMaxFloat, float upperMaxFloat) {
+void MemoizedCurveViewRange::protectedSetYMin(float yMin, float lowerMaxFloat, float upperMaxFloat, bool updateGridUnit) {
   m_yRange.setMin(yMin, lowerMaxFloat, upperMaxFloat);
-  m_yGridUnit = CurveViewRange::yGridUnit();
+  m_yGridUnit = updateGridUnit ? CurveViewRange::yGridUnit() : 0.0f;
 }
 
-void MemoizedCurveViewRange::protectedSetYMax(float yMax, float lowerMaxFloat, float upperMaxFloat) {
+void MemoizedCurveViewRange::protectedSetYMax(float yMax, float lowerMaxFloat, float upperMaxFloat, bool updateGridUnit) {
   m_yRange.setMax(yMax, lowerMaxFloat, upperMaxFloat);
-  m_yGridUnit = CurveViewRange::yGridUnit();
+  m_yGridUnit = updateGridUnit ? CurveViewRange::yGridUnit() : 0.0f;
 }
 
 }

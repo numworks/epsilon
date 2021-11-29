@@ -219,14 +219,13 @@ void Conic::rotateConic() {
 
 bool Conic::isCanonicallyCentered() const {
   /* For the conic to be centered, coefficients must be of one of these forms :
-   * Ax^2 + Ey = 0 with A > 0
-   * Ax^2 + Cy^2 + F = 0 with A > 0 and either C <= 0 or (C >= A and F != 0)
+   * Ax^2 + Ey = 0 with A > 0 and E != 0
+   * Ax^2 + Cy^2 + F = 0 with A > 0 and either C <= 0 or C >= A
    * Calling this method on already rotated conics ensures B is null, A > 0,
    * and either C <= 0 or C >= A. */
   assert(isCanonicallyRotated());
   return m_d == 0.0
-         && ((m_c == 0.0 && m_e != 0.0 && m_f == 0.0)
-             || (m_e == 0.0 && (m_c <= 0.0 || m_f != 0.0)));
+         && (m_e == 0.0 || (m_c == 0.0 && m_e != 0.0 && m_f == 0.0));
 }
 
 void Conic::centerConic() {
@@ -291,9 +290,10 @@ void Conic::canonize() {
   }
   if (m_e == 0.0 && (m_f == 0.0 || m_c == 0.0)) {
     /* The equation is of one of the forms :
-     * Ax^2 + Cy^2 = 0 with A > 0 and C <= 0
+     * Ax^2 + Cy^2 = 0 with A > 0 and C <= 0 or C >= A
      * Ax^2 = F with A > 0 and F >= 0
-     * This is a set of two lines and not considered as a conic here. */
+     * This can be a set of two lines or points, and isn't considered as a conic
+     * here. */
     m_type = Type::Undefined;
     return;
   }

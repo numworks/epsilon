@@ -108,8 +108,8 @@ public:
 
   /* Properties */
 
-  // Wether the ContinuousFunction can have plot restrictions.
-  bool canHavePlotRestrictions() const { return !hasVerticalLines() && equationType() == Poincare::ExpressionNode::Type::Equal; }
+  // Wether the ContinuousFunction can have a custom domain of definition.
+  bool canHaveCustomDomain() const { return !hasVerticalLines() && equationType() == Poincare::ExpressionNode::Type::Equal; }
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool drawDottedCurve() const;
   // If the ContinuousFunction should be considered active in table

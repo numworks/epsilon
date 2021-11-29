@@ -189,7 +189,7 @@ Conic ContinuousFunction::getConicParameters(Context * context) const {
 void ContinuousFunction::udpateModel(Context * context) {
   bool previousAlongXStatus = isAlongX();
   updatePlotType(context);
-  if (previousAlongXStatus != isAlongX() || canHavePlotRestrictions()) {
+  if (previousAlongXStatus != isAlongX() || canHaveCustomDomain()) {
     // The definition's domain must be resetted.
     setTMin(!isAlongX() ? 0.0 : -INFINITY);
     setTMax(!isAlongX()

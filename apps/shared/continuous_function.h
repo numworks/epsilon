@@ -36,9 +36,13 @@ public:
   /* Area, Symbol and Plot types */
 
   enum class AreaType : uint8_t {
-    None = 0,
-    Inferior,
-    Superior
+    /* Which area to fill (#) around the curve (|). For example:
+     *  Equation:      x^2-1    x^2     x^2+1    x      */
+    None = 0, //  =0    | |      |               |
+    Above,    //  >0     -       -        -      |#
+    Below,    //  <0     -       -        -     #|
+    Inside,   //  <0    |#|      |               -
+    Outside   //  >0   #| |#    #|#       #      -
   };
 
   static constexpr size_t k_numberOfSymbolTypes = 3;

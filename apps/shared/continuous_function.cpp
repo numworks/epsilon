@@ -55,13 +55,42 @@ I18n::Message ContinuousFunction::MessageForSymbolType(SymbolType symbolType) {
 
 ContinuousFunction::AreaType ContinuousFunction::areaType() const {
   ExpressionNode::Type eqType = equationType();
+  PlotType type = plotType();
+  if (IsPlotTypeInactive(type) || eqType == ExpressionNode::Type::Equal) {
+    return AreaType::None;
+  }
+  /* Multiplicity represents how many time at most a single subcurve can be
+   * solution. For example, y^2=0 can have a single solution curve y=0, but a
+   * multiplicity of 2. To draw y^2>0, the area plotted should be Outside and
+   * not Above. */
+  int multiplicity = 0;
+  switch (type) {
+  case PlotType::Cartesian:
+  case PlotType::Line:
+  case PlotType::HorizontalLine:
+  case PlotType::VerticalLine:
+    multiplicity = 1;
+    break;
+  case PlotType::VerticalLines:
+  case PlotType::Circle:
+  case PlotType::Ellipse:
+  case PlotType::Other:
+    multiplicity = 2;
+    break;
+  default:
+    assert(type == PlotType::Parabola || type == PlotType::Hyperbola);
+    /* Along y, y>x^2 has only 1 subcurve and a multiplicity of 1, the area
+     * should be Above. y^2>x has 2 subcurves, a multiplicity of 2 and the area
+     * should be Outside. */
+    multiplicity = numberOfSubCurves();
+    break;
+  }
+  assert(numberOfSubCurves() <= multiplicity);
   if (eqType == ExpressionNode::Type::Inferior || eqType == ExpressionNode::Type::InferiorEqual) {
-    return AreaType::Inferior;
+    return multiplicity == 1 ? AreaType::Below : AreaType::Inside;
   }
-  if (eqType == ExpressionNode::Type::Superior || eqType == ExpressionNode::Type::SuperiorEqual) {
-    return AreaType::Superior;
-  }
-  return AreaType::None;
+  assert(eqType == ExpressionNode::Type::Superior || eqType == ExpressionNode::Type::SuperiorEqual);
+  return multiplicity == 1 ? AreaType::Above : AreaType::Outside;
 }
 
 ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {

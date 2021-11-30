@@ -699,9 +699,11 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, floa
     if (xyAreaBound && (shouldColorAreaWhenNan || !std::isnan(secondaryCoordinate))) {
       Coordinate2D<float> xyArea = xyAreaBound(t, model, context);
       float areaBound = axis == Axis::Horizontal ? xyArea.x2() : xyArea.x1();
-      float lowerBound = std::isnan(secondaryCoordinate) ? -INFINITY : std::min(secondaryCoordinate, areaBound);
-      float upperBound = std::isnan(secondaryCoordinate) ? INFINITY : std::max(secondaryCoordinate, areaBound);
-      drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, lowerBound, upperBound, color, 1, 1, areaIndex);
+      if (shouldColorAreaWhenNan || !std::isnan(areaBound)) {
+        float lowerBound = std::isnan(secondaryCoordinate) || std::isnan(areaBound) ? -INFINITY : std::min(secondaryCoordinate, areaBound);
+        float upperBound = std::isnan(secondaryCoordinate) || std::isnan(areaBound) ? INFINITY : std::max(secondaryCoordinate, areaBound);
+        drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, lowerBound, upperBound, color, 1, 1, areaIndex);
+      }
     }
     stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation, dashedCurve, stampNumber);
   } while (!isLastSegment);

@@ -49,10 +49,11 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
       ContinuousFunction::PlotType type = f->plotType();
       Poincare::Expression e = f->expressionReduced(context());
-      if (e.isUndefined() || (
+      ContinuousFunction::AreaType area = f->areaType();
+      if (area == ContinuousFunction::AreaType::None && (e.isUndefined() || (
             (type == ContinuousFunction::PlotType::Parametric || f->numberOfSubCurves() == 2) &&
             e.childAtIndex(0).isUndefined() &&
-            e.childAtIndex(1).isUndefined())) {
+            e.childAtIndex(1).isUndefined()))) {
         continue;
       }
       assert(f->numberOfSubCurves() <= 2);
@@ -91,7 +92,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color());
-      } else if (f->hasVerticalLines() && f->areaType() == ContinuousFunction::AreaType::None) {
+      } else if (f->hasVerticalLines() && area == ContinuousFunction::AreaType::None) {
         // Optimize plot by only drawing the expected segment.
         for (int subCurveIndex = 0; subCurveIndex < f->numberOfSubCurves(); subCurveIndex++) {
           float abscissa = f->evaluateXYAtParameter(0.0, context(), subCurveIndex).x1();
@@ -100,12 +101,16 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           drawSegment(ctx, rect, abscissa, minOrdinate, abscissa, maxOrdinate, f->color());
         }
       } else {
-        /* TODO Hugo : Fix issues with areas of y^2>0 or  1+y^2>0 :
-         * Implement more area types : Outside, Inside, Above, Below, None */
         // Cartesian.
         // 1 - Define the evaluation functions for curve and area
-        ContinuousFunction::AreaType area = f->areaType();
-        // Return INFINITY on booth coordinates to accommodate for any axis.
+        // Return nan or inf on booth coordinates to accommodate for any axis.
+        bool shouldColorAreaWhenNan = false;
+        /* A true shouldColorAreaWhenNan with a xyNan as xyAreaBound plots the
+         * area from -inf to inf. We need it for curves such as y^2>-1. */
+        Shared::CurveView::EvaluateXYForFloatParameter xyNan =
+            [](float t, void *, void *) {
+              return Poincare::Coordinate2D<float>(NAN, NAN);
+            };
         Shared::CurveView::EvaluateXYForFloatParameter xyInfinite =
             [](float t, void *, void *) {
               return Poincare::Coordinate2D<float>(INFINITY, INFINITY);
@@ -115,7 +120,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
               return Poincare::Coordinate2D<float>(-INFINITY, -INFINITY);
             };
         Shared::CurveView::EvaluateXYForFloatParameter xyAreaBound = nullptr;
-        // Draw the first cartesian curve
+        // Evaluations for the first curve
         Shared::CurveView::EvaluateXYForDoubleParameter xyDoubleEvaluation =
             [](double t, void * model, void * context) {
               ContinuousFunction * f = (ContinuousFunction *)model;
@@ -129,21 +134,21 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
               return f->evaluateXYAtParameter(t, c, 0);
             };
         if (area != ContinuousFunction::AreaType::None) {
-          /* The drawn area goes from the xyFloatEvaluation to xyAreaBound.
-           * With a single curve, the drawn area is either above or below the
-           * curve. With two curves, the equation was of the form "a*y^2_(...)"
-           * with a strictly positive and _ being either <, <=, > or >=.
-           * With an inferior comparison, the area to color is between both
-           * curves. With a superior comparison, the area is the opposite : both
-           * above the first curve and under the second curve. */
-          if (area == ContinuousFunction::AreaType::Superior) {
-            // Superior area ends at +inf
+          if (area == ContinuousFunction::AreaType::Outside) {
+            // Either plot the area above the first curve, or everywhere.
+            xyAreaBound = f->numberOfSubCurves() == 2 ? xyInfinite : xyNan;
+            /* On equations such as x^2+y^2>1 or y^2>-1, area must be plotted
+             * when subcurves evaluate to nan. */
+            shouldColorAreaWhenNan = true;
+          } else if (area == ContinuousFunction::AreaType::Above) {
+            assert(f->numberOfSubCurves() == 1);
             xyAreaBound = xyInfinite;
-          } else if (f->numberOfSubCurves() == 1) {
-            // Inferior area ends at -inf
+          } else if (area == ContinuousFunction::AreaType::Below) {
+            assert(f->numberOfSubCurves() == 1);
             xyAreaBound = xyMinusInfinite;
-          } else {
-            // Inferior area ends at the second curve
+          } else if (f->numberOfSubCurves() == 2) {
+            assert(area == ContinuousFunction::AreaType::Inside);
+            // Plot the area inside : Between first and second curve evaluation
             xyAreaBound = [](float t, void * model, void * context) {
               ContinuousFunction * f = (ContinuousFunction *)model;
               Poincare::Context * c = (Poincare::Context *)context;
@@ -156,10 +161,11 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
                            f.operator->(), context(), f->color(), true,
                            record == m_selectedRecord, m_highlightedStart,
                            m_highlightedEnd, xyDoubleEvaluation,
-                           f->drawDottedCurve(), xyAreaBound, false, areaIndex,
-                           tCacheStep, axis);
+                           f->drawDottedCurve(), xyAreaBound,
+                           shouldColorAreaWhenNan, areaIndex, tCacheStep, axis);
         if (f->numberOfSubCurves() == 2) {
-          // Draw the second cartesian curve, which is lesser than the first
+          /* Evaluations for the second cartesian curve, which is lesser than
+           * the first one */
           xyDoubleEvaluation = [](double t, void * model, void * context) {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
@@ -170,24 +176,20 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c, 1);
           };
+          // Reset the area plot constraints
           xyAreaBound = nullptr;
-          if (area == ContinuousFunction::AreaType::Superior) {
-            // Superior area starts from the second curve and ends at -inf
+          shouldColorAreaWhenNan = false;
+          if (area == ContinuousFunction::AreaType::Outside && f->numberOfSubCurves() == 2) {
+            // Only case where a second area is to be plot : Below second curve.
             xyAreaBound = xyMinusInfinite;
-            /* Note : If the second curve evaluation is NAN, the
-             * superior area must stretch from -inf to inf. Inequations are
-             * currently supported only between polynoms of x and y. Therfore, a
-             * NAN second curve evaluation means the first curve evaluated to
-             * NAN as well, and there is no need to check that the equation is
-             * defined at this value of x. */
           }
           // 3 - Draw the second curve
-          drawCartesianCurve(ctx, rect, tCacheMin, tmax, xyFloatEvaluation,
-                             f.operator->(), context(), f->color(), true,
-                             record == m_selectedRecord, m_highlightedStart,
-                             m_highlightedEnd, xyDoubleEvaluation,
-                             f->drawDottedCurve(), xyAreaBound, true, areaIndex,
-                             tCacheStep, axis);
+          drawCartesianCurve(
+              ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
+              context(), f->color(), true, record == m_selectedRecord,
+              m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
+              f->drawDottedCurve(), xyAreaBound, shouldColorAreaWhenNan,
+              areaIndex, tCacheStep, axis);
         }
         if (area != ContinuousFunction::AreaType::None) {
           // We can properly display the superposition of up to 4 areas

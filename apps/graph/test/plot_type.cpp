@@ -6,14 +6,17 @@ using namespace Shared;
 
 namespace Graph {
 
-void assert_check_function_properties(const char * expression, ContinuousFunction::PlotType plotType, ExpressionNode::Type expectedEquationType = ExpressionNode::Type::Equal) {
+void assert_check_function_properties(const char * expression, ContinuousFunction::PlotType plotType, ExpressionNode::Type expectedEquationType = ExpressionNode::Type::Equal, ContinuousFunction::AreaType expectedAreaType = ContinuousFunction::AreaType::None) {
   GlobalContext context;
   ContinuousFunctionStore store;
   // AddFunction asserts the function is of the expected plotType.
-  ExpressionNode::Type observedEquationType = addFunction(expression, plotType, &store, &context)->equationType();
+  Shared::ContinuousFunction * function = addFunction(expression, plotType, &store, &context);
   if (!ContinuousFunction::IsPlotTypeInactive(plotType)) {
+    ExpressionNode::Type observedEquationType = function->equationType();
+    ContinuousFunction::AreaType observedAreaType = function->areaType();
     // EquationType is accurate on active plot types only.
     quiz_assert(observedEquationType == expectedEquationType);
+    quiz_assert(observedAreaType == expectedAreaType);
   }
   store.removeAll();
 }
@@ -40,9 +43,10 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("0=x^2", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::VerticalLines);
     assert_check_function_properties("1=x^2+x", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::VerticalLines);
     assert_check_function_properties("1+x^2=0", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::VerticalLines);
-    assert_check_function_properties("2-y>log(x)", noInequations ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Cartesian, ExpressionNode::Type::Inferior);
-    assert_check_function_properties("2-y^2>x^2+x+y", (noInequations || noImplicitPlot) ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Circle, ExpressionNode::Type::Inferior);
-    assert_check_function_properties("p(x)>log(x)", noInequations ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Cartesian, ExpressionNode::Type::Superior);
+    assert_check_function_properties("x^2<0", (noInequations || noImplicitPlot) ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::VerticalLines, ExpressionNode::Type::Inferior, ContinuousFunction::AreaType::Inside);
+    assert_check_function_properties("2-y>log(x)", noInequations ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Cartesian, ExpressionNode::Type::Inferior, ContinuousFunction::AreaType::Below);
+    assert_check_function_properties("2-y^2>x^2+x+y", (noInequations || noImplicitPlot) ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Circle, ExpressionNode::Type::Inferior, ContinuousFunction::AreaType::Inside);
+    assert_check_function_properties("p(x)>log(x)", noInequations ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Cartesian, ExpressionNode::Type::Superior, ContinuousFunction::AreaType::Above);
     assert_check_function_properties("x^2+y^2=12", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Circle);
     assert_check_function_properties("x^2+2*y^2=12", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Ellipse);
     assert_check_function_properties("x=y^2", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Parabola);
@@ -55,6 +59,8 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("x^2-y^2=0", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Other);
     assert_check_function_properties("x*y^2=1", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Other);
     assert_check_function_properties("x^2-y^2+log(x)=0", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Other);
+    assert_check_function_properties("y^2>-1", (noInequations || noImplicitPlot) ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Other, ExpressionNode::Type::Superior, ContinuousFunction::AreaType::Outside);
+    assert_check_function_properties("(y-x+x^2)^2>=0", (noInequations || noImplicitPlot) ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Other, ExpressionNode::Type::SuperiorEqual, ContinuousFunction::AreaType::Outside);
     assert_check_function_properties("", ContinuousFunction::PlotType::Undefined);
     assert_check_function_properties("3=2", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("y^3=x", ContinuousFunction::PlotType::Unhandled);

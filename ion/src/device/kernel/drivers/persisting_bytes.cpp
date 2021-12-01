@@ -17,7 +17,7 @@ namespace PersistingBytes {
  *  Erased Memory  -> 11111111|11111111|11111111|11111111|11111111|11111111|
  *  Persisted byte -> 01010101|01111111|11111111|11111111|11111111|11111111|
  *                    ^ SignificantPersistedByteAddress
- *                    01010101|01111111|11111111|0111011|11111111|11111111|
+ *                    01010101|01111111|11111111|01110111|11111111|11111111|
  *                                      ^ SignificantPersistedByteAddress
  * */
 

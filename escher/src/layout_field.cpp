@@ -343,7 +343,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   if (!isEditing()) {
     setEditing(true);
   }
-  // TODO Hugo : Cycle default XNT and local XNT layouts
+  // TODO : Cycle default XNT and local XNT layouts
   // Query bottom-most layout
   Layout xnt = m_contentView.cursor()->layout().XNTLayout();
   if (xnt.isUninitialized()) {

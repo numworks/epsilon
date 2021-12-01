@@ -78,8 +78,6 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder
       // Unknown default code point
       defaultXNT = XNTCodePoints[XNTIndex % k_numberOfCodePoints];
     }
-    /* TODO Hugo : Select the inserted XNT so that, if the inserted codePoint is
-     * more than 1 character long, it is correctly replaced when cycling. */
     return field->addXNTCodePoint(defaultXNT);
   }
   return false;

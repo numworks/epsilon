@@ -382,8 +382,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
-/* TODO Hugo : Handle cycling with non-default layouts.
- * TODO Hugo : Fix issues with repetition over a syntax error dismissal */
+// TODO : Handle cycling with non-default layouts.
 size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength) {
   /* If cursor is in one of the following functions, and everything before the
    * cursor is correctly nested, the default XNTCodePoint will be improved.

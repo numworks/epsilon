@@ -33,7 +33,7 @@ Preferences::ExamMode Preferences::examMode() const {
      * flashing. */
     uint8_t mode = Ion::PersistingBytes::read(k_examModePersistingByteIndex);
     // mode can be cast in ExamMode (Off, Standard, Dutch or Press-to-test)
-    assert(mode >= static_cast<uint8_t>(ExamMode::Off) && mode <= static_cast<uint8_t>(ExamMode::PressToTest));
+    assert(mode >= static_cast<uint8_t>(ExamMode::Off) && mode < static_cast<uint8_t>(ExamMode::Undefined));
     m_examMode = static_cast<ExamMode>(mode);
   }
   return m_examMode;
@@ -52,21 +52,21 @@ Preferences::PressToTestParams Preferences::pressToTestParams() const {
 }
 
 void Preferences::setExamMode(ExamMode mode) {
+  assert(mode != ExamMode::Unknown && mode < ExamMode::Undefined);
   ExamMode currentMode = examMode();
   if (currentMode == mode) {
     return;
   }
-  assert(mode != ExamMode::Unknown);
   Ion::PersistingBytes::write(static_cast<uint8_t>(mode), k_examModePersistingByteIndex);
   m_examMode = mode;
 }
 
 void Preferences::setPressToTestParams(PressToTestParams newPressToTestParams) {
+  assert(!newPressToTestParams.m_isUnknown);
   PressToTestParams currentPressToTestParams = pressToTestParams();
   if (currentPressToTestParams.m_value == newPressToTestParams.m_value) {
     return;
   }
-  assert(!newPressToTestParams.m_isUnknown);
   Ion::PersistingBytes::write(newPressToTestParams.m_value, k_pressToTestParamsPersistingByteIndex);
   m_pressToTestParams = newPressToTestParams;
 }

@@ -70,10 +70,10 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder
       constexpr size_t k_numberOfCodePoints = 4;
       constexpr CodePoint XNTCodePoints[k_numberOfCodePoints] = {'x', 'n', 't', UCodePointGreekSmallLetterTheta};
       for (size_t i = 0; i < k_numberOfCodePoints; i++) {
-        XNTIndex++;
         if (XNTCodePoints[i] == defaultXNT) {
           break;
         }
+        XNTIndex++;
       }
       // Unknown default code point
       defaultXNT = XNTCodePoints[XNTIndex % k_numberOfCodePoints];

@@ -49,6 +49,7 @@ public:
     IBTest = 3,
     PressToTest = 4,
     Portuguese = 5,
+    Undefined = 6, // Undefined must be the last ExamMode.
   };
   static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
   static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");

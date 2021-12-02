@@ -258,6 +258,8 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
     .append('g')
     .attr("class", "maps")
 
+  maps.nodes()[0].classList.add("selected") // Mark first map as selected
+
   let tabs = maps.append("g")
   tabs
     .append("rect")
@@ -339,7 +341,7 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
 
     yAxis = d3.axisLeft(yScale)
       .tickValues(ticksFor(source, yScale, 20))
-    .tickFormat(NumberToHumanAddress)
+      .tickFormat(NumberToHumanAddress)
 
 
     yDomAxis.transition()

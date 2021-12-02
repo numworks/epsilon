@@ -163,6 +163,11 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
   return error;
 }
 
+void ContinuousFunction::tidyDownstreamPoolFrom(char * treePoolCursor) const {
+  ExpressionModelHandle::tidyDownstreamPoolFrom(treePoolCursor);
+  m_cache = nullptr;
+}
+
 bool ContinuousFunction::drawDottedCurve() const {
   ExpressionNode::Type eqType = equationType();
   return eqType == ExpressionNode::Type::Superior || eqType == ExpressionNode::Type::Inferior;

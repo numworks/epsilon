@@ -1,0 +1,55 @@
+<html>
+  <head>
+<style>
+#chart {
+  width: 800px;
+  height: 800px;
+}
+
+#chart .cursor {
+  stroke: red;
+}
+rect {
+  fill: #77F;
+  stroke: black;
+}
+rect.label {
+  fill: #FFB734;
+}
+rect:hover {
+  fill: #F77;
+}
+
+text {
+  pointer-events: none;
+  font-size: 10pt;
+}
+
+</style>
+  </head>
+
+  <body>
+    <div id="chart"></div>
+    <div id="legend"></div>
+  </body>
+  <span>Gap</span>
+  <input id="gap" type="range" value="0.8" min="0" max="1" step="any">
+  <span>Normalize</span>
+  <input id="normalize" type="range" value="0.3" min="0" max="1" step="any">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="data.js"></script>
+  <script src="immv.js"></script>
+  <script>
+    let viewer = new InteractiveMemoryMapViewer('#chart', '#legend', data)
+    let gapSlider = document.getElementById("gap")
+    let normalizeSlider = document.getElementById("normalize")
+    viewer.setGapRemovalRatio(gapSlider.value)
+    viewer.setEqualizingRatio(normalizeSlider.value)
+    gapSlider.addEventListener('input', function(e){
+      viewer.setGapRemovalRatio(e.target.value)
+    });
+    normalizeSlider.addEventListener('input', function(e){
+      viewer.setEqualizingRatio(e.target.value)
+    });
+  </script>
+</html>

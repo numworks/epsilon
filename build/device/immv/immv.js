@@ -237,6 +237,7 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
       selectionEnd = undefined;
       redraw();
     })
+  svg
     .on("mousemove", function(e) {
       let coords = d3.pointer(e);
       selectionEnd = yScale.invert(coords[1]);

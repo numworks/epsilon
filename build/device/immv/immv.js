@@ -229,8 +229,8 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
   let selectionEnd = undefined;
   pointerEventCatcher
     .on("mousedown", function(e) {
-      let coords = d3.pointer(e);
-      selectionOrigin = yScale.invert(coords[1]);
+      let y = Math.max(Math.min(height,d3.pointer(e)[1]),0)
+      selectionOrigin = Math.round(yScale.invert(y))
     })
     .on("mouseup", function(e) {
       cursor.attr("y", yScale(selectionEnd));
@@ -242,18 +242,18 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
     })
   svg
     .on("mousemove", function(e) {
-      let coords = d3.pointer(e);
-      selectionEnd = yScale.invert(coords[1]);
+      let y = Math.max(Math.min(height,d3.pointer(e)[1]),0)
+      selectionEnd = Math.round(yScale.invert(y))
       if (selectionOrigin) {
-        cursor.attr("y", yScale(selectionOrigin));
-        cursor.attr("height", yScale(selectionEnd)-yScale(selectionOrigin));
+        cursor.attr("y", Math.min(yScale(selectionOrigin), yScale(selectionEnd)));
+        cursor.attr("height", Math.abs(yScale(selectionEnd)-yScale(selectionOrigin)));
       } else {
-        cursor.attr("y", coords[1]);
+        cursor.attr("y", y);
         cursor.attr("height", "0.1");
       }
       cursorLegend
-        .attr("transform", `translate(${width}, ${coords[1]})`)
-        .text(NumberToHumanAddress(Math.round(yScale.invert(coords[1]))));
+        .attr("transform", `translate(${width}, ${y})`)
+        .text(NumberToHumanAddress(selectionEnd));
     });
 
 

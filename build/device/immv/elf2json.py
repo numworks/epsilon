@@ -20,7 +20,7 @@ def sections(elffile):
     zones.append({"name": name, "start": start, "end": end})
   return zones
 
-def symbols(elffile):
+def symbols(elffile, number):
   zones = []
   for section in elffile.iter_sections():
     if isinstance(section, SymbolTableSection):
@@ -29,13 +29,14 @@ def symbols(elffile):
         start = symbol.entry['st_value']
         end = start + symbol.entry['st_size']
         zones.append({"name": name, "start": start, "end": end})
-  return zones
+  zones.sort(key=lambda z:(z["end"]-z["start"]))
+  return zones[-number:]
 
 # Argument parsing
 parser = argparse.ArgumentParser(description='Parse ELF file and output metrics in JSON')
 parser.add_argument('files', type=str, nargs='+', help='an ELF file')
-parser.add_argument('-s', '--symbols', action='store_true', help='output each symbol name, start and end')
-parser.add_argument('-S', '--sections', action='store_true', help='output each section name, start and end')
+parser.add_argument('-s', '--symbols', type=int, metavar='N', help='output symbols information (only the N largest)')
+parser.add_argument('-S', '--sections', action='store_true', help='output sections information')
 args = parser.parse_args()
 
 # Execution
@@ -46,7 +47,7 @@ for file in args.files:
   if args.sections:
     zones.extend(sections(elffile))
   if args.symbols:
-    zones.extend(symbols(elffile))
+    zones.extend(symbols(elffile, args.symbols))
   zones.sort(key=lambda z:z["start"])
   results.append({
     "name": os.path.basename(file),

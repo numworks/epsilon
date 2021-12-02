@@ -39,7 +39,7 @@ parser.add_argument('-S', '--sections', action='store_true', help='output each s
 args = parser.parse_args()
 
 # Execution
-table = []
+results = []
 for file in args.files:
   elffile = ELFFile(open(file, 'rb'))
   zones = []
@@ -48,15 +48,10 @@ for file in args.files:
   if args.symbols:
     zones.extend(symbols(elffile))
   zones.sort(key=lambda z:z["start"])
-
-  result = {
+  results.append({
     "name": os.path.basename(file),
     "start": min(map(lambda z:z["start"], zones)),
     "end": max(map(lambda z:z["end"], zones)),
     "zones": zones
-  }
-  print(json.dumps(result))
-#and i < len(args.labels):
-#    label = args.labels[i]
-#  table.append({'label': label, 'values': row_for_elf(filename, args.sections)})
-#formatted_table = format_table(table)
+  })
+print(json.dumps(results))

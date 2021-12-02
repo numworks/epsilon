@@ -305,7 +305,7 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
     } else if (number > 1024) {
       return `${Math.round(number/1024)} KB`
     } else {
-      return `${Math.round(number)} Bytes`
+      return `${Math.round(number)} B`
     }
   }
 
@@ -316,10 +316,29 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
   zones.append("rect")
     .attr("width", function(d) { return 100; })
     .on("mouseover", function(element, datum) {
-      legendNode.text(`Size = ${NumberToHumanBytes(datum.end-datum.start)} from ${NumberToHumanAddress(datum.start)} to ${NumberToHumanAddress(datum.end)}`);
+      let legend = ''
+      legend += '<table>'
+      legend += '  <tr>'
+      legend += '    <th>Name</th>'
+      legend += '    <td><code>' + datum.name + '</code></td>'
+      legend += '  </tr>'
+      legend += '  <tr>'
+      legend += '    <th>Size</th>'
+      legend += '    <td><code>' + NumberToHumanBytes(datum.end-datum.start) + ' (' + (datum.end-datum.start).toLocaleString() + ' bytes)' + '</code></td>'
+      legend += '  </tr>'
+      legend += '  <tr>'
+      legend += '    <th>Start</th>'
+      legend += '    <td><code>' + NumberToHumanAddress(datum.start) + '</code></td>'
+      legend += '  </tr>'
+      legend += '  <tr>'
+      legend += '    <th>End</th>'
+      legend += '    <td><code>' + NumberToHumanAddress(datum.end) + '</code></td>'
+      legend += '  </tr>'
+      legend += '</table'
+      legendNode.html(legend)
     })
     .on("mouseout", function(element, datum) {
-      legendNode.text("")
+      legendNode.html("")
     })
     .on("click", function(element, datum) {
       console.log(datum)

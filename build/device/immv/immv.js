@@ -180,7 +180,7 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
   }
 
   let chartNode = document.querySelector(chartNodeSelector)
-  let legendNode = document.querySelector(legendNodeSelector)
+  let legendNode = d3.select(legendNodeSelector)
 
   // set the dimensions and margins of the graph
   let margin = {top: 30, right: 30, bottom: 70, left: 100};
@@ -202,6 +202,9 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
     .attr("y", "0")
     .attr("width", width)
     .attr("height", "0.1")
+  let cursorLegend = svg
+    .append("text")
+    .attr("text-anchor", "end")
 
   let source = data[0]
 
@@ -248,7 +251,9 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
         cursor.attr("y", coords[1]);
         cursor.attr("height", "0.1");
       }
-      d3.select(legendNode).text(`Pos = ${NumberToHumanAddress(Math.round(yScale.invert(coords[1])))}`);
+      cursorLegend
+        .attr("transform", `translate(${width}, ${coords[1]})`)
+        .text(NumberToHumanAddress(Math.round(yScale.invert(coords[1]))));
     });
 
 
@@ -311,7 +316,10 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
   zones.append("rect")
     .attr("width", function(d) { return 100; })
     .on("mouseover", function(element, datum) {
-      d3.select("#legend").text(`Size = ${NumberToHumanBytes(datum.end-datum.start)} from ${NumberToHumanAddress(datum.start)} to ${NumberToHumanAddress(datum.end)}`);
+      legendNode.text(`Size = ${NumberToHumanBytes(datum.end-datum.start)} from ${NumberToHumanAddress(datum.start)} to ${NumberToHumanAddress(datum.end)}`);
+    })
+    .on("mouseout", function(element, datum) {
+      legendNode.text("")
     })
     .on("click", function(element, datum) {
       console.log(datum)

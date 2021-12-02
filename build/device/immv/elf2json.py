@@ -16,7 +16,7 @@ def sections(elffile):
       continue
     name = section.name
     start = section['sh_addr']
-    end = start + section.data_size
+    end = start + section.data_size - 1
     zones.append({"name": name, "start": start, "end": end})
   return zones
 
@@ -27,7 +27,7 @@ def symbols(elffile, number):
       for symbol in section.iter_symbols():
         name = symbol.name
         start = symbol.entry['st_value']
-        end = start + symbol.entry['st_size']
+        end = start + symbol.entry['st_size'] - 1
         zones.append({"name": name, "start": start, "end": end})
   zones.sort(key=lambda z:(z["end"]-z["start"]))
   return zones[-number:]

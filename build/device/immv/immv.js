@@ -246,7 +246,7 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
         cursor.attr("y", coords[1]);
         cursor.attr("height", "0.1");
       }
-      d3.select(legendNode).text(`Pos = ${NumberToHumanAddress(Math.round(yScale.invert(coords[0])))}`);
+      d3.select(legendNode).text(`Pos = ${NumberToHumanAddress(Math.round(yScale.invert(coords[1])))}`);
     });
 
 

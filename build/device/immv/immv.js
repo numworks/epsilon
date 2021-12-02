@@ -258,7 +258,11 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
     .text(d => d.name)
     .attr("transform", `translate(5,${height+25})`)
   tabs
-    .on("click", function(element, datum, index) {
+    .on("click", function(ev, datum) {
+      for (const map of this.parentElement.parentElement.querySelectorAll(".maps")) {
+        map.classList.remove("selected")
+      }
+      this.parentElement.classList.add("selected")
       source = datum;
       redraw(300);
     })

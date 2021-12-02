@@ -28,6 +28,8 @@ public:
    * - min > max : the range is empty, min = FLT_MAX and max = -FLT_MAX are the
    *   only values allowed.  */
 
+  /* Add breathing room around ranges. */
+  static void AddBreathingRoom(float * xMin, float * xMax);
   /* Find the most suitable window to display the function's points of
    * interest.. */
   static void InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary);

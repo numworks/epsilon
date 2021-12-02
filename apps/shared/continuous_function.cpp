@@ -309,6 +309,23 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
     return;
   }
 
+  if (hasVerticalLines()) {
+    /* Vertical lines' x range are quite simple and could not be computed with
+     * InterestingRangesForDisplay. We use curve(s) x-position(s). */
+    *xMin = FLT_MAX;
+    *xMax = -FLT_MAX;
+    for (int i = 0; i < numberOfSubCurves(); i++) {
+      float line = evaluateXYAtParameter(0.0f, context, i).x1();
+      *xMax = std::max<double>(*xMax, line);
+      *xMin = std::min<double>(*xMin, line);
+    }
+    Zoom::AddBreathingRoom(xMin, xMax);
+    // No intrinsic y ranges to suggest
+    *yMinIntrinsic = FLT_MAX;
+    *yMaxIntrinsic = -FLT_MAX;
+    return;
+  }
+
   *xMin = NAN;
   *xMax = NAN;
   *yMinIntrinsic = NAN;
@@ -367,9 +384,10 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
   *yMin = NAN;
   *yMax = NAN;
 
-  if (basedOnCostlyAlgorithms(context)) {
+  if (basedOnCostlyAlgorithms(context) || hasVerticalLines()) {
     /* The function makes use of some costly algorithms, such as integration or
-     * sequences, and cannot be computed in a timely manner. */
+     * sequences, and cannot be computed in a timely manner.
+     * Vertical Lines have no interesting y ranges. */
     return;
   }
 

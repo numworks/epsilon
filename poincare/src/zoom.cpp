@@ -24,6 +24,17 @@ constexpr float
   Zoom::k_largeUnitMantissa,
   Zoom::k_minimalRangeLength;
 
+void Zoom::AddBreathingRoom(float * xMin, float * xMax) {
+  if (*xMin > *xMax) {
+    *xMin = FLT_MAX;
+    *xMax = -FLT_MAX;
+  } else {
+    float xBreadth = *xMin == *xMax ? k_defaultHalfRange : k_breathingRoom * (*xMax - *xMin);
+    *xMin -= xBreadth;
+    *xMax += xBreadth;
+  }
+}
+
 void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin, float * xMax, float * yMin, float * yMax, float tMin, float tMax, Context * context, const void * auxiliary) {
   assert(xMin && xMax && yMin && yMax);
 
@@ -174,16 +185,8 @@ void Zoom::InterestingRangesForDisplay(ValueAtAbscissa evaluation, float * xMin,
     resultYMin = fallbackYMin;
     resultYMax = fallbackYMax;
   }
-  /* Add breathing room */
-  if (resultXMin > resultXMax) {
-    resultXMin = FLT_MAX;
-    resultXMax = -FLT_MAX;
-    assert(resultYMin == FLT_MAX && resultYMax == -FLT_MAX);
-  } else {
-    float xBreadth = resultXMin == resultXMax ? k_defaultHalfRange : k_breathingRoom * (resultXMax - resultXMin);
-    resultXMin -= xBreadth;
-    resultXMax += xBreadth;
-  }
+  assert(resultXMin <= resultXMax || (resultYMin == FLT_MAX && resultYMax == -FLT_MAX));
+  AddBreathingRoom(&resultXMin, &resultXMax);
   *xMin = resultXMin;
   *xMax = resultXMax;
   *yMin = resultYMin;

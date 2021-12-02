@@ -102,6 +102,7 @@ public:
   /* ExpressionModel */
 
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
+  void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) const override;
 
   /* Properties */
 
@@ -330,7 +331,7 @@ private:
   const ExpressionModel * model() const override { return &m_model; }
 
   Model m_model;
-  ContinuousFunctionCache * m_cache;
+  mutable ContinuousFunctionCache * m_cache;
 };
 
 }

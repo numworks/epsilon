@@ -338,7 +338,14 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
       .selectAll(".zone text")
       .transition()
       .duration(transitionDuration)
-      .attr("transform", function(d) { return `translate(10,${(yScale(d.start)-yScale(d.end)+fontHeight)/2})`; })
+      .attr("transform", function(d) {
+        let rectHeight = yScale(d.start)-yScale(d.end)
+        let transform = `translate(10,${(rectHeight+fontHeight)/2})` // Vertical centering in rect
+        if (rectHeight < fontHeight) {
+          transform += ' scale(1,0)'
+        }
+        return transform
+      })
 
     yAxis = d3.axisLeft(yScale)
       .tickValues(ticksFor(source, yScale, 20))

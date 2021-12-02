@@ -1,6 +1,7 @@
 function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data) {
   let gapRemovalRatio = 0.5
   let equalizingRatio = 0.5
+  let fontHeight = 10 // In pixels
 
   function compressedScaleFor(zone, gapRemovalRatio, equalizingRatio, rangeMin, rangeMax) {
     if (!zone.zones) {
@@ -316,8 +317,6 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
     })
 
   zones.append("text")
-    .attr("transform", "translate(10, 10)")
-    .attr("width", "100")
     .text(d => d.name)
 
   function redraw(transitionDuration = 0) {
@@ -332,6 +331,11 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
       .transition()
       .duration(transitionDuration)
       .attr("height", function(d) { return yScale(d.start)-yScale(d.end); })
+    maps
+      .selectAll(".zone text")
+      .transition()
+      .duration(transitionDuration)
+      .attr("transform", function(d) { return `translate(10,${(yScale(d.start)-yScale(d.end)+fontHeight)/2})`; })
 
     yAxis = d3.axisLeft(yScale)
       .tickValues(ticksFor(source, yScale, 20))

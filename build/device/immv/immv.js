@@ -135,7 +135,7 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
     return d3.scaleLinear().domain(limits).range(correctedRange);
   }
 
-  function ticksFor(zone) {
+  function ticksFor(zone, scale, minTickDistance) {
     let sortedChildren = zone.zones ? zone.zones.sort((a, b) => (a.start > b.start) ? 1 : -1) : []
     let ticks = []
     function pushTick(value) {
@@ -154,7 +154,18 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
       pushTick(child.end)
     }
     pushTick(zone.end)
-    return ticks
+
+    // Let's filter out ticks that are too close to each other
+    let filteredTicks = []
+    let lastTick
+    for (let tick of ticks) {
+      if (lastTick && Math.abs(scale(lastTick)-scale(tick))<minTickDistance) {
+        continue
+      }
+      lastTick = tick
+      filteredTicks.push(tick)
+    }
+    return filteredTicks
   }
 
   this.setGapRemovalRatio = function(ratio, transitionDuration) {
@@ -323,7 +334,7 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector, data)
       .attr("height", function(d) { return yScale(d.start)-yScale(d.end); })
 
     yAxis = d3.axisLeft(yScale)
-      .tickValues(ticksFor(source))
+      .tickValues(ticksFor(source, yScale, 20))
     .tickFormat(NumberToHumanAddress)
 
 

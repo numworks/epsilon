@@ -39,7 +39,9 @@ rect.cursor {
   </head>
 
   <body>
-    <div id="chart"></div>
+    <h1>Interactive Memory Map Visualizer</h1>
+    <p>Drag and drop memory map JSON file on the chart to visualize them.</p>
+    <div id="chart" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);"></div>
     <div id="legend"></div>
   </body>
   <div>
@@ -54,10 +56,11 @@ rect.cursor {
     <p>This slider sets how much the scale will be adjusted to make each zone a similar size. A value of 0 will not adjust the scale whatsoever and each zone will be displayed proportionnaly to its actual memory size. A value of 1 will compress the scale so that each zone has the same display size.</p>
   </div>
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="data.js"></script>
   <script src="immv.js"></script>
   <script>
-    let viewer = new InteractiveMemoryMapViewer('#chart', '#legend', data)
+    let data = []
+    let viewer = new InteractiveMemoryMapViewer('#chart', '#legend')
+    //  viewer.load(data)
     let gapSlider = document.getElementById("gap")
     let normalizeSlider = document.getElementById("normalize")
     viewer.setGapRemovalRatio(gapSlider.value)
@@ -68,5 +71,22 @@ rect.cursor {
     normalizeSlider.addEventListener('input', function(e){
       viewer.setEqualizingRatio(e.target.value)
     });
+    function dropHandler(ev) {
+      ev.preventDefault()
+
+      for (let file of ev.dataTransfer.files) {
+        let reader = new FileReader()
+        reader.onload = function(ev) {
+          fileContent = ev.target.result
+          maps = JSON.parse(fileContent)
+          data = data.concat(maps)
+          viewer.load(data)
+        }
+        reader.readAsText(file)
+      }
+    }
+    function dragOverHandler(ev) {
+      ev.preventDefault()
+    }
   </script>
 </html>

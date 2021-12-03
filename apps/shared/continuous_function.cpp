@@ -466,12 +466,16 @@ void ContinuousFunction::updatePlotType(Context * context) {
     if (ExamModeConfiguration::inequalityGraphingIsForbidden() && modelEquationType != ExpressionNode::Type::Equal) {
       return recordData()->setPlotType(PlotType::Disabled);
     }
-    if (modelPlotType == PlotType::Parametric
-        && !(equation.type() == ExpressionNode::Type::Matrix
-             && static_cast<Matrix &>(equation).numberOfRows() == 2
-             && static_cast<Matrix &>(equation).numberOfColumns() == 1)) {
-      // Invalid parametric format
-      return recordData()->setPlotType(PlotType::UnhandledParametric);
+    if (modelPlotType == PlotType::Parametric) {
+      if (equation.type() == ExpressionNode::Type::Dependency) {
+        equation = equation.childAtIndex(0);
+      }
+      if (equation.type() != ExpressionNode::Type::Matrix
+          || static_cast<Matrix &>(equation).numberOfRows() != 2
+          || static_cast<Matrix &>(equation).numberOfColumns() != 1) {
+        // Invalid parametric format
+        return recordData()->setPlotType(PlotType::UnhandledParametric);
+      }
     }
     // TODO : f(x)=1+x could be labelled as line.
     return recordData()->setPlotType(modelPlotType);

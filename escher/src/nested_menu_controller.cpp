@@ -109,7 +109,8 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
   m_listController(this, &m_selectableTableView, title),
   m_sender(nullptr),
   m_stack(),
-  m_lastState(0)
+  m_lastState(0),
+  m_savedChecksum(0)
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
@@ -125,7 +126,13 @@ void NestedMenuController::viewWillAppear() {
   m_selectableTableView.reloadData();
 
   // Load last state
-  loadState(m_lastState);
+  int checksum = controlChecksum();
+  if (checksum != m_savedChecksum) {
+    m_savedChecksum = checksum;
+    returnToRootMenu();
+  } else {
+    loadState(m_lastState);
+  }
 }
 
 void NestedMenuController::viewDidDisappear() {

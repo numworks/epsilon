@@ -617,6 +617,10 @@ int MathToolbox::maxNumberOfDisplayedRows() {
  return k_maxNumberOfDisplayedRows;
 }
 
+int MathToolbox::controlChecksum() const {
+  return static_cast<int>(GlobalPreferences::sharedGlobalPreferences()->country());
+}
+
 int MathToolbox::indexAfterFork() const {
     Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
     if (unitFormat == Preferences::UnitFormat::Metric) {

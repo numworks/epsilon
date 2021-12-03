@@ -7,6 +7,7 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector) {
   let height = 0
   let svg = undefined
   let yDomAxis = undefined
+  let yScale
 
   function NumberToHumanBytes(number) {
     if (number > 1024*1024*1024) {
@@ -163,7 +164,7 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector) {
     function pushTick(value) {
       if (ticks.length > 0) {
         let lastTick = ticks[ticks.length-1]
-        console.assert(lastTick < value, "Overlapping zones")
+        console.assert(lastTick <= value, "Overlapping zones", lastTick, value)
         if (value == lastTick+1) {
           ticks.pop()
         }
@@ -191,6 +192,9 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector) {
   }
 
   function redraw(transitionDuration = 0) {
+    if (!source) {
+      return
+    }
     yScale = compressedScaleFor(source, gapRemovalRatio, equalizingRatio, height, 0)
     let maps = svg.selectAll("g.maps");
     maps.selectAll("g.zone")
@@ -272,7 +276,7 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector) {
     source = data[0]
 
     let xScale = d3.scaleLinear().domain([0,1]).range([0, width])
-    let yScale = d3.scaleLinear() // Placeholder
+    yScale = d3.scaleLinear().domain([0,1]).range([0,0]) // Placeholder
     //let yScale = compressedScaleFor(source, gapRemovalRatio, equalizingRatio, 0, height)
 
     let yAxis = d3.axisLeft(yScale)
@@ -328,7 +332,9 @@ function InteractiveMemoryMapViewer(chartNodeSelector, legendNodeSelector) {
       .append('g')
       .attr("class", "maps")
 
-    maps.nodes()[0].classList.add("selected") // Mark first map as selected
+    if (maps.nodes().length > 0) {
+      maps.nodes()[0].classList.add("selected") // Mark first map as selected
+    }
 
     let tabs = maps.append("g")
     tabs

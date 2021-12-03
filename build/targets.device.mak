@@ -25,6 +25,14 @@ $(eval $(call rule_for, \
 %_run: $(BUILD_DIR)/%.$(EXE)
 	$(GDB) -x build/$(PLATFORM)/gdb_script.gdb $<
 
+$(BUILD_DIR)/%.sections.json: $(BUILD_DIR)/%.elf
+	@echo "ELF2JS  $@"
+	$(Q) $(PYTHON) build/device/immv/elf2json.py -S $^ > $@
+
+$(BUILD_DIR)/%.symbols.json: $(BUILD_DIR)/%.elf
+	@echo "ELF2JS  $@"
+	$(Q) $(PYTHON) build/device/immv/elf2json.py -s 20 $^ > $@
+
 $(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
 	@echo "LDMAP   $@"
 	$(Q) $(LD) $^ $(LDFLAGS) -Wl,-M -Wl,-Map=$@ -o /dev/null

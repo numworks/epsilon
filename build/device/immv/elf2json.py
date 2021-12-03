@@ -44,13 +44,16 @@ results = []
 for file in args.files:
   elffile = ELFFile(open(file, 'rb'))
   zones = []
+  name = os.path.basename(file)
   if args.sections:
     zones.extend(sections(elffile))
+    name += " sections"
   if args.symbols:
     zones.extend(symbols(elffile, args.symbols))
+    name += " symbols"
   zones.sort(key=lambda z:z["start"])
   results.append({
-    "name": os.path.basename(file),
+    "name": name,
     "start": min(map(lambda z:z["start"], zones)),
     "end": max(map(lambda z:z["end"], zones)),
     "zones": zones

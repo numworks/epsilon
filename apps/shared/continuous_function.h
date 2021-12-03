@@ -48,7 +48,7 @@ public:
     X
   };
 
-  static constexpr size_t k_numberOfPlotTypes = 15;
+  static constexpr size_t k_numberOfPlotTypes = 17;
   enum class PlotType : uint8_t {
     Polar = 0,
     Parametric,
@@ -66,14 +66,11 @@ public:
     // All following types shall never be active
     Undefined,
     Unhandled,
+    UnhandledPolar,
+    UnhandledParametric,
     Disabled
   };
 
-  static_assert(
-    (static_cast<SymbolType>(PlotType::Polar) == SymbolType::Theta &&
-      static_cast<SymbolType>(PlotType::Parametric) == SymbolType::T &&
-      static_cast<SymbolType>(PlotType::Cartesian) == SymbolType::X),
-    "First PlotTypes should match SymbolTypes");
   // Return Message corresponding to SymbolType
   static I18n::Message MessageForSymbolType(SymbolType symbolType);
   // If the ContinuousFunction is of an inactive plotType

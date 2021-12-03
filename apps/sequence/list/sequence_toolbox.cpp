@@ -1,4 +1,5 @@
 #include "sequence_toolbox.h"
+#include "../../global_preferences.h"
 #include "../../shared/sequence_store.h"
 #include <poincare/layout_helper.h>
 #include <assert.h>
@@ -96,6 +97,12 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
         );
     }
   }
+}
+
+int SequenceToolbox::controlChecksum() const {
+  /* We make sure the country cannot interfere with the number of cells by
+   * multiplying by the number of countries. */
+  return I18n::NumberOfCountries * m_numberOfAddedCells + static_cast<int>(GlobalPreferences::sharedGlobalPreferences()->country());
 }
 
 bool SequenceToolbox::selectAddedCell(int selectedRow){

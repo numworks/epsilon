@@ -212,6 +212,7 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
   else if (m_numberOfSolutions == 1) {
     Expression x0Opposite = getOppositeIfExists(x0, &reductionContext);
     Expression factor;
+    
     if (x0Opposite.isUninitialized()) {
       PoincareHelpers::Simplify(&x0, context, ExpressionNode::ReductionTarget::User);
       factor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), x0);
@@ -220,6 +221,7 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
       PoincareHelpers::Simplify(&x0Opposite, context, ExpressionNode::ReductionTarget::User);
       factor = Addition::Builder(Symbol::Builder("x", strlen("x")), x0Opposite);
     }
+
     Expression solutionProduct = Power::Builder(Parenthesis::Builder(factor), Rational::Builder(2));
     switch (multiplicationTypeForA)
     {
@@ -261,6 +263,9 @@ Expression SecondDegreeListController::getOppositeIfExists(Expression e, Poincar
   if (e.isNumber() && e.sign(reductionContext->context()) == ExpressionNode::Sign::Negative) {
     Number n = static_cast<Number&>(e);
     return std::move(n.setSign(ExpressionNode::Sign::Positive));
+  }
+  else if(e.type() == ExpressionNode::Type::Opposite) {
+    return std::move(e.childAtIndex(0).clone());
   }
   else if (e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() > 0 && e.childAtIndex(0).isNumber() && e.childAtIndex(0).sign(reductionContext->context()) == ExpressionNode::Sign::Negative) {
     Multiplication m = static_cast<Multiplication&>(e);

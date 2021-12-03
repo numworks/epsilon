@@ -22,6 +22,7 @@ protected:
     assert(index >= addedCellsAtRoot());
     return MathToolbox::messageTreeModelAtIndex(index - addedCellsAtRoot());
   }
+  int controlChecksum() const override;
 private:
   static constexpr int k_addedCellType = 2;
   // At root depth, there are additional rows to display.

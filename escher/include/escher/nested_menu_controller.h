@@ -67,6 +67,7 @@ protected:
   virtual I18n::Message subTitle() = 0;
   SelectableTableView m_selectableTableView;
   const Stack * stack() const { return &m_stack; }
+  virtual int controlChecksum() const { return 0; }
 
 private:
   class BreadcrumbController : public ViewController {
@@ -109,6 +110,7 @@ private:
   InputEventHandler * m_sender;
   Stack m_stack;
   Stack::State m_lastState;
+  int m_savedChecksum;
   static constexpr int k_nestedMenuStackDepth = 1;
 };
 

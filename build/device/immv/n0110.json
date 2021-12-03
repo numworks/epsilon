@@ -1,0 +1,52 @@
+{
+  "name": "STM32F730",
+  "start": 0,
+  "end": 4294967295,
+  "zones": [
+    {
+      "name": "ITCM RAM",
+      "start": 0,
+      "end": 16383
+    },
+    {
+      "name": "System memory",
+      "start": 1048576,
+      "end": 1109439
+    },
+    {
+      "name": "Flash memory on ITCM interface",
+      "start": 2097152,
+      "end": 2162687
+    },
+    {
+      "name": "Flash memory on AXIM interface",
+      "start": 134217728,
+      "end": 134283263
+    },
+    {
+      "name": "Option Bytes",
+      "start": 536805376,
+      "end": 536805407
+    },
+    {
+      "name": "DTCM",
+      "start": 536870912,
+      "end": 536936447
+    },
+    {
+      "name": "SRAM1",
+      "start": 536936448,
+      "end": 537116671
+    },
+    {
+      "name": "SRAM2",
+      "start": 537116672,
+      "end": 537133055
+    },
+    {
+      "name": "External Flash",
+      "start": 2415919104,
+      "end": 2424307711
+    }
+  ]
+}

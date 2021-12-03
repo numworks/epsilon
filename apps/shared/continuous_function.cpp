@@ -66,7 +66,16 @@ ContinuousFunction::AreaType ContinuousFunction::areaType() const {
 
 ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
   PlotType functionPlotType = plotType();
-  return functionPlotType >= PlotType::Cartesian ? SymbolType::X : static_cast<SymbolType>(functionPlotType);
+  switch (functionPlotType) {
+  case PlotType::Parametric:
+  case PlotType::UnhandledParametric:
+    return SymbolType::T;
+  case PlotType::Polar:
+  case PlotType::UnhandledPolar:
+    return SymbolType::Theta;
+  default:
+    return SymbolType::X;
+  }
 }
 
 I18n::Message ContinuousFunction::plotTypeMessage() {
@@ -91,6 +100,8 @@ I18n::Message ContinuousFunction::plotTypeMessage() {
       I18n::Message::HyperbolaType,
       I18n::Message::OtherType,
       I18n::Message::UndefinedType,
+      I18n::Message::UnhandledType,
+      I18n::Message::UnhandledType,
       I18n::Message::UnhandledType,
       I18n::Message::Disabled};
   return k_categories[plotTypeIndex];
@@ -433,20 +444,37 @@ void ContinuousFunction::updatePlotType(Context * context) {
   int xDeg = equation.polynomialDegree(context, k_unknownName);
 
   // Inequations : equation symbol has been updated when parsing the equation
-  recordData()->setEquationType(m_model.equationType());
+  ExpressionNode::Type modelEquationType = m_model.equationType();
+  recordData()->setEquationType(modelEquationType);
 
   // TODO Hugo : Improve how named functions are detected
   // Named functions : PlotType has been updated when parsing the equation
-  if (m_model.plotType() != PlotType::Undefined) {
+  PlotType modelPlotType = m_model.plotType();
+  if (modelPlotType != PlotType::Undefined) {
     // There should be no y symbol. Inequations are handled on cartesians only
-    if (yDeg > 0 || (m_model.equationType() != ExpressionNode::Type::Equal && m_model.plotType() != PlotType::Cartesian)) {
-      return recordData()->setPlotType(PlotType::Unhandled);
+    if (yDeg > 0 || (modelEquationType != ExpressionNode::Type::Equal && modelPlotType != PlotType::Cartesian)) {
+      // We distinguish the Unhandled type so that x/θ/t symbol is preserved.
+      switch (modelPlotType) {
+      case PlotType::Parametric:
+        return recordData()->setPlotType(PlotType::UnhandledParametric);
+      case PlotType::Polar:
+        return recordData()->setPlotType(PlotType::UnhandledPolar);
+      default:
+        return recordData()->setPlotType(PlotType::Unhandled);
+      }
     }
-    if (ExamModeConfiguration::inequalityGraphingIsForbidden() && m_model.equationType() != ExpressionNode::Type::Equal) {
+    if (ExamModeConfiguration::inequalityGraphingIsForbidden() && modelEquationType != ExpressionNode::Type::Equal) {
       return recordData()->setPlotType(PlotType::Disabled);
     }
+    if (modelPlotType == PlotType::Parametric
+        && !(equation.type() == ExpressionNode::Type::Matrix
+             && static_cast<Matrix &>(equation).numberOfRows() == 2
+             && static_cast<Matrix &>(equation).numberOfColumns() == 1)) {
+      // Invalid parametric format
+      return recordData()->setPlotType(PlotType::UnhandledParametric);
+    }
     // TODO : f(x)=1+x could be labelled as line.
-    return recordData()->setPlotType(m_model.plotType());
+    return recordData()->setPlotType(modelPlotType);
   }
 
   bool isYMainSymbol = (yDeg != 0);
@@ -462,7 +490,7 @@ void ContinuousFunction::updatePlotType(Context * context) {
     return recordData()->setPlotType(PlotType::Unhandled);
   }
 
-  if (m_model.equationType() != ExpressionNode::Type::Equal) {
+  if (modelEquationType != ExpressionNode::Type::Equal) {
     if (ySign == ExpressionNode::Sign::Unknown || (yDeg == 2 && xDeg == -1)) {
       /* Are unhandled equation with :
        * - An unknown highest coefficient sign: sign must be strict and constant
@@ -474,9 +502,9 @@ void ContinuousFunction::updatePlotType(Context * context) {
     }
     if (ySign == ExpressionNode::Sign::Negative) {
       // Oppose the comparison operator
-      ExpressionNode::Type newEquationType = ComparisonOperator::Opposite(m_model.equationType());
-      m_model.setEquationType(newEquationType);
-      recordData()->setEquationType(newEquationType);
+      modelEquationType = ComparisonOperator::Opposite(modelEquationType);
+      m_model.setEquationType(modelEquationType);
+      recordData()->setEquationType(modelEquationType);
     }
   }
 

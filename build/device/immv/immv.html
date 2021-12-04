@@ -1,6 +1,9 @@
 <html>
   <head>
 <style>
+body {
+  font-family: "Source Sans 3", "Avenir", sans-serif;
+}
 #chart {
   width: 800px;
   height: 800px;
@@ -71,16 +74,17 @@ rect.cursor {
     normalizeSlider.addEventListener('input', function(e){
       viewer.setEqualizingRatio(e.target.value)
     });
+    function addMaps(maps) {
+      data = data.concat(maps)
+      viewer.load(data)
+    }
     function dropHandler(ev) {
       ev.preventDefault()
-
       for (let file of ev.dataTransfer.files) {
         let reader = new FileReader()
         reader.onload = function(ev) {
           fileContent = ev.target.result
-          maps = JSON.parse(fileContent)
-          data = data.concat(maps)
-          viewer.load(data)
+          addMaps(JSON.parse(fileContent))
         }
         reader.readAsText(file)
       }

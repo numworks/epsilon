@@ -14,6 +14,14 @@ $(eval $(call rule_for, \
   local \
 ))
 
+$(BUILD_DIR)/immv.html: build/device/immv/$(MODEL).json $(BUILD_DIR)/kernel.A.sections.json $(BUILD_DIR)/kernel.A.symbols.json $(BUILD_DIR)/userland.A.sections.json $(BUILD_DIR)/userland.A.symbols.json
+	@echo "INLINE  $@"
+	$(Q) ion/src/simulator/web/inline.py --script build/device/immv/immv.js build/device/immv/immv.html > $@
+	@echo "INJMAP  $@"
+	$(Q) echo "<script>" >> $@
+	$(Q) for MAP in $^;do echo "addMaps(" >> $@; cat $${MAP} >> $@;echo ")" >> $@;done
+	$(Q) echo "</script>" >> $@
+
 .PHONY: %_size
 %_size: $(BUILD_DIR)/%.$(EXE)
 	@echo "========= BUILD OUTPUT ========"

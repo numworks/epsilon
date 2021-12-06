@@ -26,7 +26,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
   bool editXRange() const { return m_editXRange; }
-  void setEditXRange(bool editXRange) { m_editXRange = editXRange; }
+  void setEditXRange(bool editXRange);
 
 private:
   constexpr static int k_numberOfTextCells = 2;
@@ -41,18 +41,22 @@ private:
     SingleRangeController * m_controller;
   };
 
-  bool autoStatus() const { return m_editXRange ? m_tempRange.xAuto() : m_tempRange.yAuto(); }
+  bool autoStatus() const { return m_autoParam; }
   float parameterAtIndex(int index) override;
   int reusableParameterCellCount(int type) override { return k_numberOfTextCells; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
+  void extractParameters();
+  bool parametersAreDifferent();
+  void confirmParameters();
   void buttonAction() override;
 
   Escher::MessageTableCellWithSwitch m_autoCell;
   LockableEditableCell m_boundsCells[k_numberOfTextCells];
-  InteractiveCurveViewRange m_tempRange;
   InteractiveCurveViewRange * m_range;
   PopUpController * m_confirmPopUpController;
+  Range1D m_rangeParam;
+  bool m_autoParam;
   bool m_editXRange;
 };
 

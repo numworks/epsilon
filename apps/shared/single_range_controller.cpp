@@ -11,7 +11,6 @@ SingleRangeController::SingleRangeController(Responder * parentResponder, InputE
   FloatParameterController<float>(parentResponder),
   m_autoCell(I18n::Message::DefaultSetting),
   m_boundsCells{},
-  m_tempRange(*interactiveRange),
   m_range(interactiveRange),
   m_confirmPopUpController(confirmPopUpController)
 {
@@ -23,7 +22,7 @@ SingleRangeController::SingleRangeController(Responder * parentResponder, InputE
 }
 
 void SingleRangeController::viewWillAppear() {
-  m_tempRange = *m_range;
+  extractParameters();
   FloatParameterController<float>::viewWillAppear();
 }
 
@@ -61,8 +60,7 @@ void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell
 
 bool SingleRangeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left || event == Ion::Events::Back) {
-    bool sourceAuto = m_editXRange ? m_range->xAuto() : m_range->yAuto();
-    if (m_range->rangeChecksum() != m_tempRange.rangeChecksum() || sourceAuto != autoStatus()) {
+    if (parametersAreDifferent()) {
       m_confirmPopUpController->presentModally();
     } else {
       stackController()->pop();
@@ -70,12 +68,26 @@ bool SingleRangeController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (selectedRow() == 0 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
-    if (m_editXRange) {
-      m_tempRange.setXAuto(!m_tempRange.xAuto());
-    } else {
-      m_tempRange.setYAuto(!m_tempRange.yAuto());
+    // Update auto status
+    m_autoParam = !m_autoParam;
+    if (m_autoParam) {
+      if (m_editXRange ? m_range->xAuto() : m_range->yAuto()) {
+        // Parameters are already computed in m_range
+        extractParameters();
+      } else {
+        /* Create and update a temporary InteractiveCurveViewRange to recompute
+         * parameters. */
+        Shared::InteractiveCurveViewRange tempRange(*m_range);
+        if (m_editXRange) {
+          tempRange.setXAuto(m_autoParam);
+        } else {
+          tempRange.setYAuto(m_autoParam);
+        }
+        tempRange.computeRanges();
+        m_rangeParam.setMin(m_editXRange ? tempRange.xMin() : tempRange.yMin());
+        m_rangeParam.setMax(m_editXRange ? tempRange.xMax() : tempRange.yMax());
+      }
     }
-    m_tempRange.computeRanges();
     resetMemoization();
     m_selectableTableView.reloadData();
     return true;
@@ -83,11 +95,14 @@ bool SingleRangeController::handleEvent(Ion::Events::Event event) {
   return FloatParameterController<float>::handleEvent(event);
 }
 
+void SingleRangeController::setEditXRange(bool editXRange) {
+  m_editXRange = editXRange;
+  extractParameters();
+}
+
 float SingleRangeController::parameterAtIndex(int index) {
   assert(index >= 1 && index < k_numberOfTextCells + 1);
-  index--;
-  ParameterGetterPointer getters[] = { &InteractiveCurveViewRange::yMin, &InteractiveCurveViewRange::yMax, &InteractiveCurveViewRange::xMin, &InteractiveCurveViewRange::xMax };
-  return (m_tempRange.*getters[index + 2 * m_editXRange])();
+  return (index == 1 ? m_rangeParam.min() : m_rangeParam.max());
 }
 
 HighlightCell * SingleRangeController::reusableParameterCell(int index, int type) {
@@ -97,14 +112,47 @@ HighlightCell * SingleRangeController::reusableParameterCell(int index, int type
 
 bool SingleRangeController::setParameterAtIndex(int parameterIndex, float f) {
   assert(parameterIndex >= 1 && parameterIndex < k_numberOfTextCells + 1);
-  parameterIndex--;
-  ParameterSetterPointer setters[] = { &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax, &InteractiveCurveViewRange::setXMin, &InteractiveCurveViewRange::setXMax };
-  (m_tempRange.*setters[parameterIndex + 2 * m_editXRange])(f);
+  // Apply InteractiveCurveViewRange float bounds
+  if (parameterIndex == 1) {
+    m_rangeParam.setMin(f, InteractiveCurveViewRange::k_lowerMaxFloat, InteractiveCurveViewRange::k_upperMaxFloat);
+  } else {
+    m_rangeParam.setMax(f, InteractiveCurveViewRange::k_lowerMaxFloat, InteractiveCurveViewRange::k_upperMaxFloat);
+  }
   return true;
 }
 
+void SingleRangeController::extractParameters() {
+  m_autoParam = m_editXRange ? m_range->xAuto() : m_range->yAuto();
+  m_rangeParam.setMin(m_editXRange ? m_range->xMin() : m_range->yMin());
+  m_rangeParam.setMax(m_editXRange ? m_range->xMax() : m_range->yMax());
+}
+
+bool SingleRangeController::parametersAreDifferent() {
+  return m_autoParam != (m_editXRange ? m_range->xAuto() : m_range->yAuto())
+         || m_rangeParam.min() != (m_editXRange ? m_range->xMin() : m_range->yMin())
+         || m_rangeParam.max() != (m_editXRange ? m_range->xMax() : m_range->yMax());
+}
+
+void SingleRangeController::confirmParameters() {
+  if (parametersAreDifferent()) {
+    // Deactivate auto status before updating values.
+    if (m_editXRange) {
+      m_range->setXAuto(false);
+      m_range->setXMin(m_rangeParam.min());
+      m_range->setXMax(m_rangeParam.max());
+      m_range->setXAuto(m_autoParam);
+    } else {
+      m_range->setYAuto(false);
+      m_range->setYMin(m_rangeParam.min());
+      m_range->setYMax(m_rangeParam.max());
+      m_range->setYAuto(m_autoParam);
+    }
+    assert(!parametersAreDifferent());
+  }
+}
+
 void SingleRangeController::buttonAction() {
-  *m_range = m_tempRange;
+  confirmParameters();
   FloatParameterController<float>::buttonAction();
 }
 

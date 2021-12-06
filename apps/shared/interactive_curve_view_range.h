@@ -11,6 +11,9 @@ namespace Shared {
 
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
+  constexpr static float k_upperMaxFloat = 1E+8f;
+  constexpr static float k_lowerMaxFloat = 9E+7f;
+
   InteractiveCurveViewRange(InteractiveCurveViewRangeDelegate * delegate = nullptr) :
     MemoizedCurveViewRange(),
     m_delegate(delegate),
@@ -62,8 +65,6 @@ public:
   bool zoomOutToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) { return makePointVisible(x, y, topMarginRatio, rightMarginRatio, bottomMarginRatio, leftMarginRatio, pixelWidth, false); }
 
 protected:
-  constexpr static float k_upperMaxFloat = 1E+8f;
-  constexpr static float k_lowerMaxFloat = 9E+7f;
   constexpr static float k_maxRatioPositionRange = 1E5f;
   /* The tolerance is chosen to normalize sqrt(x) */
   constexpr static float k_orthonormalTolerance = 1.78f;

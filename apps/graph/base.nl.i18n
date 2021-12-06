@@ -1,6 +1,6 @@
 FunctionApp = "Functies"
 FunctionAppCapital = "FUNCTIES"
-FunctionTab = "Functies"
+FunctionTab = "Uitdrukkingen"
 UseFunctionModel = "Gebruik een template"
 AddFunction = " Element toevoegen"
 DeleteFunction = "Functie verwijderen"

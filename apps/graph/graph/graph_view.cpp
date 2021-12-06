@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/matrix.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -46,17 +47,25 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
     Poincare::UserCircuitBreakerCheckpoint checkpoint;
     if (CircuitBreakerRun(checkpoint)) {
-      ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
-      ContinuousFunction::PlotType type = f->plotType();
-      Poincare::Expression e = f->expressionReduced(context());
       ContinuousFunction::AreaType area = f->areaType();
-      if (area == ContinuousFunction::AreaType::None && (e.isUndefined() || (
-            (type == ContinuousFunction::PlotType::Parametric || f->numberOfSubCurves() == 2) &&
-            e.childAtIndex(0).isUndefined() &&
-            e.childAtIndex(1).isUndefined()))) {
-        continue;
-      }
+      Poincare::Expression e = f->expressionReduced(context());
+      ContinuousFunction::PlotType type = f->plotType();
       assert(f->numberOfSubCurves() <= 2);
+      bool hasTwoCurves = (f->numberOfSubCurves() == 2);
+      if (area == ContinuousFunction::AreaType::None) {
+        bool isUndefined = e.isUndefined();
+        if (!isUndefined && (type == ContinuousFunction::PlotType::Parametric || hasTwoCurves)) {
+          assert(e.type() == Poincare::ExpressionNode::Type::Matrix);
+          assert(static_cast<Poincare::Matrix&>(e).numberOfRows() == 2);
+          assert(static_cast<Poincare::Matrix&>(e).numberOfColumns() == 1);
+          isUndefined = e.childAtIndex(0).isUndefined() && e.childAtIndex(1).isUndefined();
+        }
+        if (isUndefined) {
+          // There is no need to plot anything.
+          continue;
+        }
+      }
+      ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
       float tmin = f->tMin();
       float tmax = f->tMax();
       Axis axis = f->hasVerticalLines() ? Axis::Vertical : Axis::Horizontal;
@@ -136,17 +145,17 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         if (area != ContinuousFunction::AreaType::None) {
           if (area == ContinuousFunction::AreaType::Outside) {
             // Either plot the area above the first curve, or everywhere.
-            xyAreaBound = f->numberOfSubCurves() == 2 ? xyInfinite : xyNan;
+            xyAreaBound = hasTwoCurves ? xyInfinite : xyNan;
             /* On equations such as x^2+y^2>1 or y^2>-1, area must be plotted
              * when subcurves evaluate to nan. */
             shouldColorAreaWhenNan = true;
           } else if (area == ContinuousFunction::AreaType::Above) {
-            assert(f->numberOfSubCurves() == 1);
+            assert(!hasTwoCurves);
             xyAreaBound = xyInfinite;
           } else if (area == ContinuousFunction::AreaType::Below) {
-            assert(f->numberOfSubCurves() == 1);
+            assert(!hasTwoCurves);
             xyAreaBound = xyMinusInfinite;
-          } else if (f->numberOfSubCurves() == 2) {
+          } else if (hasTwoCurves) {
             assert(area == ContinuousFunction::AreaType::Inside);
             // Plot the area inside : Between first and second curve evaluation
             xyAreaBound = [](float t, void * model, void * context) {
@@ -163,7 +172,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
                            m_highlightedEnd, xyDoubleEvaluation,
                            f->drawDottedCurve(), xyAreaBound,
                            shouldColorAreaWhenNan, areaIndex, tCacheStep, axis);
-        if (f->numberOfSubCurves() == 2) {
+        if (hasTwoCurves) {
           /* Evaluations for the second cartesian curve, which is lesser than
            * the first one */
           xyDoubleEvaluation = [](double t, void * model, void * context) {
@@ -179,7 +188,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           // Reset the area plot constraints
           xyAreaBound = nullptr;
           shouldColorAreaWhenNan = false;
-          if (area == ContinuousFunction::AreaType::Outside && f->numberOfSubCurves() == 2) {
+          if (area == ContinuousFunction::AreaType::Outside && hasTwoCurves) {
             // Only case where a second area is to be plot : Below second curve.
             xyAreaBound = xyMinusInfinite;
           }
@@ -197,7 +206,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         }
         // 4 - Draw tangent
         if (m_tangent && record == m_selectedRecord) {
-          assert(f->numberOfSubCurves() == 1);
+          assert(!hasTwoCurves);
           /* TODO : We could handle tangent on second curve here by finding out
            * which of the two curves is selected. */
           float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context(), 0);

@@ -52,10 +52,10 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("x=y^2", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Parabola);
     /* When implicit plots are disabled, these conics are no longer identified
      * to hide details */
-    assert_check_function_properties("y=x^2", noImplicitPlot ? ContinuousFunction::PlotType::Cartesian : ContinuousFunction::PlotType::Parabola);
+    assert_check_function_properties("y=x^2", noImplicitPlot ? ContinuousFunction::PlotType::Cartesian : ContinuousFunction::PlotType::CartesianParabola);
 
     assert_check_function_properties("x^2-2*y^2=12", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Hyperbola);
-    assert_check_function_properties("y*x=1", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Hyperbola);
+    assert_check_function_properties("y*x=1", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::CartesianHyperbola);
     assert_check_function_properties("x^2-y^2=0", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Other);
     assert_check_function_properties("x*y^2=1", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Other);
     assert_check_function_properties("x^2-y^2+log(x)=0", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Other);

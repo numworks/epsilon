@@ -860,7 +860,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
       // Derive each curve individually, return a matrix of each derivatives
       Matrix newExpr = Matrix::Builder();
       assert(expression.type() == ExpressionNode::Type::Matrix);
-      for (size_t i = 0; i < numberOfSubCurves(); i++) {
+      for (int i = 0; i < numberOfSubCurves(); i++) {
         newExpr.addChildAtIndexInPlace(Derivative::Builder(expression.childAtIndex(i), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown)), i, i);
       }
       newExpr.setDimensions(numberOfSubCurves(), 1);

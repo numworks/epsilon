@@ -948,7 +948,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
 
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(char * treePoolCursor) const {
   if (treePoolCursor == nullptr || m_expressionDerivate.isDownstreamOf(treePoolCursor)) {
-    m_numberOfSubCurves = 1;
+    m_numberOfSubCurves = 0;
     m_equationType = ExpressionNode::Type::Equal;
     m_plotType = PlotType::Undefined;
     m_expressionDerivate = Expression();

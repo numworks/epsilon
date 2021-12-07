@@ -129,7 +129,7 @@ public:
   // Compute conic parameters from ContinuousFunction
   Poincare::Conic getConicParameters(Poincare::Context * context) const;
   // Return the number of subcurves to plot
-  int numberOfSubCurves() const override { return m_model.numberOfSubCurves(); }
+  int numberOfSubCurves() const override { assert(m_model.numberOfSubCurves() > 0); return m_model.numberOfSubCurves(); }
 
   /* Expression */
 
@@ -291,7 +291,7 @@ private:
   public:
     Model() :
         ExpressionModel(),
-        m_numberOfSubCurves(1),
+        m_numberOfSubCurves(0),
         m_equationType(Poincare::ExpressionNode::Type::Equal),
         m_plotType(PlotType::Undefined),
         m_expressionDerivate() {}

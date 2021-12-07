@@ -132,7 +132,11 @@ public:
   void getLineParameters(double * slope, double * intercept, Poincare::Context * context) const;
   // Compute conic parameters from ContinuousFunction
   Poincare::Conic getConicParameters(Poincare::Context * context) const;
-  // Return the number of subcurves to plot
+  /* Return the number of subcurves to plot.
+   * Warning : This function needs the solutions to have been computed in the
+   * (expensive) expressionReduced method before yielding a non-zero result.
+   * numberOfSubCurves shouldn't be called at stages where the expressionReduced
+   * has not been executed yet. */
   int numberOfSubCurves() const override { assert(m_model.numberOfSubCurves() > 0); return m_model.numberOfSubCurves(); }
 
   /* Expression */

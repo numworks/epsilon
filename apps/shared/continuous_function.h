@@ -52,21 +52,25 @@ public:
     X
   };
 
-  static constexpr size_t k_numberOfPlotTypes = 17;
+  static constexpr size_t k_numberOfPlotTypes = 19;
   enum class PlotType : uint8_t {
-    Polar = 0,
-    Parametric,
-    // All following types use x as a symbol
-    Cartesian,
+    Cartesian = 0,
+    CartesianParabola,
+    CartesianHyperbola,
     Line,
     HorizontalLine,
+    // All previous types are active in the values table
     VerticalLine,
+    // All previous types plot with only one subcurve
     VerticalLines,
     Circle,
     Ellipse,
     Parabola,
     Hyperbola,
     Other,
+    // All previous types are expressions of x and y
+    Polar,
+    Parametric,
     // All following types shall never be active
     Undefined,
     Unhandled,
@@ -115,11 +119,11 @@ public:
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool drawDottedCurve() const;
   // If the ContinuousFunction should be considered active in table
-  bool isActiveInTable() const { return numberOfSubCurves() == 1 && equationType() == Poincare::ExpressionNode::Type::Equal && !hasVerticalLines() && isActive(); }
+  bool isActiveInTable() const { return equationType() == Poincare::ExpressionNode::Type::Equal && plotType() <= PlotType::HorizontalLine && isActive(); }
   // If the ContinuousFunction has x for unknown symbol
   bool isAlongX() const { return symbol() == 'x'; }
   // If the ContinuousFunction is a conic
-  bool isConic() const { return plotType() >= PlotType::Circle && plotType() <= PlotType::Hyperbola; }
+  bool isConic() const;
   // If the ContinuousFunction is made of vertical lines
   bool hasVerticalLines() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::VerticalLines; }
   // If the ContinuousFunction is named ("f(x)=...")

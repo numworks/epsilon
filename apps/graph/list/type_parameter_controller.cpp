@@ -94,18 +94,18 @@ void TypeParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 int TypeParameterController::detailsNumberOfSections() const {
-  /* Switch on function's type message instead of types because we don't want to
-   * display details on a line's inequation for instance. */
-  switch (function()->plotTypeMessage()) {
-    case I18n::Message::LineType:
+  switch (function()->plotType()) {
+    case Shared::ContinuousFunction::PlotType::Line:
       return k_lineDetailsSections;
-    case I18n::Message::CircleType:
+    case Shared::ContinuousFunction::PlotType::Circle:
       return k_circleDetailsSections;
-    case I18n::Message::EllipseType:
+    case Shared::ContinuousFunction::PlotType::Ellipse:
       return k_ellipseDetailsSections;
-    case I18n::Message::ParabolaType:
+    case Shared::ContinuousFunction::PlotType::CartesianParabola:
+    case Shared::ContinuousFunction::PlotType::Parabola:
       return k_parabolaDetailsSections;
-    case I18n::Message::HyperbolaType:
+    case Shared::ContinuousFunction::PlotType::CartesianHyperbola:
+    case Shared::ContinuousFunction::PlotType::Hyperbola:
       return k_hyperbolaDetailsSections;
     default:
       return 0;
@@ -148,6 +148,7 @@ I18n::Message TypeParameterController::detailsTitle(int i) const {
       };
       return k_titles[i];
     }
+    case Shared::ContinuousFunction::PlotType::CartesianParabola:
     case Shared::ContinuousFunction::PlotType::Parabola: {
       constexpr I18n::Message k_titles[k_parabolaDetailsSections] = {
           I18n::Message::ParabolaParameterTitle,
@@ -157,7 +158,8 @@ I18n::Message TypeParameterController::detailsTitle(int i) const {
       return k_titles[i];
     }
     default: {
-      assert(function()->plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
+      assert(function()->plotType() == Shared::ContinuousFunction::PlotType::CartesianHyperbola
+             || function()->plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
       constexpr I18n::Message k_titles[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisTitle,
           I18n::Message::HyperbolaSemiMinorAxisTitle,
@@ -201,6 +203,7 @@ I18n::Message TypeParameterController::detailsDescription(int i) const {
       };
       return k_descriptions[i];
     }
+    case Shared::ContinuousFunction::PlotType::CartesianParabola:
     case Shared::ContinuousFunction::PlotType::Parabola: {
       constexpr I18n::Message k_descriptions[k_parabolaDetailsSections] = {
           I18n::Message::ParabolaParameterDescription,
@@ -210,7 +213,8 @@ I18n::Message TypeParameterController::detailsDescription(int i) const {
       return k_descriptions[i];
     }
     default: {
-      assert(function()->plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
+      assert(function()->plotType() == Shared::ContinuousFunction::PlotType::CartesianHyperbola
+             || function()->plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
       constexpr I18n::Message k_descriptions[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisDescription,
           I18n::Message::HyperbolaSemiMinorAxisDescription,
@@ -234,7 +238,8 @@ void TypeParameterController::setLineDetailsValues(double slope, double intercep
 void TypeParameterController::setConicDetailsValues(Poincare::Conic conic) {
   Shared::ContinuousFunction::PlotType type = function()->plotType();
   double cx, cy;
-  if (type == Shared::ContinuousFunction::PlotType::Parabola) {
+  if (type == Shared::ContinuousFunction::PlotType::CartesianParabola
+      || type == Shared::ContinuousFunction::PlotType::Parabola) {
     conic.getSummit(&cx, &cy);
   } else {
     conic.getCenter(&cx, &cy);
@@ -254,13 +259,15 @@ void TypeParameterController::setConicDetailsValues(Poincare::Conic conic) {
     m_detailValues[5] = cy;
     return;
   }
-  if (type == Shared::ContinuousFunction::PlotType::Parabola) {
+  if (type == Shared::ContinuousFunction::PlotType::CartesianParabola
+      || type == Shared::ContinuousFunction::PlotType::Parabola) {
     m_detailValues[0] = conic.getParameter();
     m_detailValues[1] = cx;
     m_detailValues[2] = cy;
     return;
   }
-  assert(type == Shared::ContinuousFunction::PlotType::Hyperbola);
+  assert(type == Shared::ContinuousFunction::PlotType::CartesianHyperbola
+         || type == Shared::ContinuousFunction::PlotType::Hyperbola);
   m_detailValues[0] = conic.getSemiMajorAxis();
   m_detailValues[1] = conic.getSemiMinorAxis();
   m_detailValues[2] = conic.getLinearEccentricity();

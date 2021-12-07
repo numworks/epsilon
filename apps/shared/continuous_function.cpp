@@ -59,38 +59,15 @@ ContinuousFunction::AreaType ContinuousFunction::areaType() const {
   if (IsPlotTypeInactive(type) || eqType == ExpressionNode::Type::Equal) {
     return AreaType::None;
   }
-  /* Multiplicity represents how many time at most a single subcurve can be
-   * solution. For example, y^2=0 can have a single solution curve y=0, but a
-   * multiplicity of 2. To draw y^2>0, the area plotted should be Outside and
-   * not Above. */
-  int multiplicity = 0;
-  switch (type) {
-  case PlotType::Cartesian:
-  case PlotType::Line:
-  case PlotType::HorizontalLine:
-  case PlotType::VerticalLine:
-    multiplicity = 1;
-    break;
-  case PlotType::VerticalLines:
-  case PlotType::Circle:
-  case PlotType::Ellipse:
-  case PlotType::Other:
-    multiplicity = 2;
-    break;
-  default:
-    assert(type == PlotType::Parabola || type == PlotType::Hyperbola);
-    /* Along y, y>x^2 has only 1 subcurve and a multiplicity of 1, the area
-     * should be Above. y^2>x has 2 subcurves, a multiplicity of 2 and the area
-     * should be Outside. */
-    multiplicity = numberOfSubCurves();
-    break;
-  }
-  assert(numberOfSubCurves() <= multiplicity);
+  assert(type <= PlotType::Other);
+  // To draw y^2>a, the area plotted should be Outside and not Above.
+  bool inequationIsLinear = type <= PlotType::VerticalLine;
+  assert(numberOfSubCurves() == 1 || !inequationIsLinear);
   if (eqType == ExpressionNode::Type::Inferior || eqType == ExpressionNode::Type::InferiorEqual) {
-    return multiplicity == 1 ? AreaType::Below : AreaType::Inside;
+    return inequationIsLinear ? AreaType::Below : AreaType::Inside;
   }
   assert(eqType == ExpressionNode::Type::Superior || eqType == ExpressionNode::Type::SuperiorEqual);
-  return multiplicity == 1 ? AreaType::Above : AreaType::Outside;
+  return inequationIsLinear ? AreaType::Above : AreaType::Outside;
 }
 
 ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
@@ -116,22 +93,24 @@ I18n::Message ContinuousFunction::plotTypeMessage() {
   const size_t plotTypeIndex = static_cast<size_t>(type);
   assert(plotTypeIndex < k_numberOfPlotTypes);
   constexpr I18n::Message k_categories[k_numberOfPlotTypes] = {
-      I18n::Message::PolarType,
-      I18n::Message::ParametricType,
       I18n::Message::CartesianType,
+      I18n::Message::ParabolaType,  // CartesianParabola displayed as Parabola
+      I18n::Message::HyperbolaType, // CartesianHyperbola displayed as Hyperbola
       I18n::Message::LineType,
       I18n::Message::HorizontalLineType,
       I18n::Message::VerticalLineType,
-      I18n::Message::OtherType, // VerticalLines are displayed as Others
+      I18n::Message::OtherType,     // VerticalLines displayed as Others
       I18n::Message::CircleType,
       I18n::Message::EllipseType,
       I18n::Message::ParabolaType,
       I18n::Message::HyperbolaType,
       I18n::Message::OtherType,
+      I18n::Message::PolarType,
+      I18n::Message::ParametricType,
       I18n::Message::UndefinedType,
       I18n::Message::UnhandledType,
-      I18n::Message::UnhandledType,
-      I18n::Message::UnhandledType,
+      I18n::Message::UnhandledType, // UnhandledPolar displayed as Unhandled
+      I18n::Message::UnhandledType, // UnhandledParametric displayed as Unhandled
       I18n::Message::Disabled};
   return k_categories[plotTypeIndex];
 }
@@ -200,6 +179,20 @@ void ContinuousFunction::tidyDownstreamPoolFrom(char * treePoolCursor) const {
 bool ContinuousFunction::drawDottedCurve() const {
   ExpressionNode::Type eqType = equationType();
   return eqType == ExpressionNode::Type::Superior || eqType == ExpressionNode::Type::Inferior;
+}
+
+bool ContinuousFunction::isConic() const {
+  switch (plotType()) {
+    case PlotType::CartesianParabola:
+    case PlotType::CartesianHyperbola:
+    case PlotType::Circle:
+    case PlotType::Ellipse:
+    case PlotType::Parabola:
+    case PlotType::Hyperbola:
+      return true;
+    default:
+      return false;
+  }
 }
 
 bool ContinuousFunction::isNamed() const {
@@ -607,9 +600,9 @@ void ContinuousFunction::updatePlotType(Context * context) {
     Conic equationConic = Conic(equation, context, k_unknownName);
     Conic::Type ctype = equationConic.getConicType();
     if (ctype == Conic::Type::Hyperbola) {
-      return recordData()->setPlotType(PlotType::Hyperbola);
+      return recordData()->setPlotType(yDeg > 1 ? PlotType::Hyperbola : PlotType::CartesianHyperbola);
     } else if (ctype == Conic::Type::Parabola) {
-      return recordData()->setPlotType(PlotType::Parabola);
+      return recordData()->setPlotType(yDeg > 1 ? PlotType::Parabola : PlotType::CartesianParabola);
     } else if (ctype == Conic::Type::Ellipse) {
       return recordData()->setPlotType(PlotType::Ellipse);
     } else if (ctype == Conic::Type::Circle) {

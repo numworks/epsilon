@@ -86,6 +86,12 @@ bool SingleRangeController::handleEvent(Ion::Events::Event event) {
         tempRange.computeRanges();
         m_rangeParam.setMin(m_editXRange ? tempRange.xMin() : tempRange.yMin());
         m_rangeParam.setMax(m_editXRange ? tempRange.xMax() : tempRange.yMax());
+        if (m_editXRange) {
+          /* The y range has been updated too and must be stored for
+           * confirmParameters. */
+          m_secondaryRangeParam.setMin(tempRange.yMin());
+          m_secondaryRangeParam.setMax(tempRange.yMax());
+        }
       }
     }
     resetMemoization();
@@ -131,9 +137,14 @@ void SingleRangeController::extractParameters() {
     m_rangeParam.setMin(m_range->yMin());
     m_rangeParam.setMax(m_range->yMax());
   }
+  // Reset m_secondaryRangeParam
+  m_secondaryRangeParam.setMin(NAN);
+  m_secondaryRangeParam.setMax(NAN);
 }
 
 bool SingleRangeController::parametersAreDifferent() {
+  /* m_secondaryRangeParam is ignored here because it is only relevant when main
+   * parameters (xAuto) are different. */
   if (m_editXRange) {
     return m_autoParam != (m_range->xAuto())
            || m_rangeParam.min() != (m_range->xMin())
@@ -152,6 +163,16 @@ void SingleRangeController::confirmParameters() {
       m_range->setXMin(m_rangeParam.min());
       m_range->setXMax(m_rangeParam.max());
       m_range->setXAuto(m_autoParam);
+      if (m_autoParam && m_range->yAuto()) {
+        /* yMin and yMax must also be updated. We could avoid having to store
+         * these values if we called m_range->computeRanges() instead, but it
+         * would cost a significant computation time. */
+        assert(!std::isnan(m_secondaryRangeParam.min()) && !std::isnan(m_secondaryRangeParam.max()));
+        m_range->setYAuto(false);
+        m_range->setYMin(m_secondaryRangeParam.min());
+        m_range->setYMax(m_secondaryRangeParam.max());
+        m_range->setYAuto(true);
+      }
     } else {
       m_range->setYAuto(false);
       m_range->setYMin(m_rangeParam.min());

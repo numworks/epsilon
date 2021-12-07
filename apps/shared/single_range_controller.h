@@ -56,6 +56,8 @@ private:
   InteractiveCurveViewRange * m_range;
   PopUpController * m_confirmPopUpController;
   Range1D m_rangeParam;
+  // m_secondaryRangeParam is only used when activating xAuto while yAuto is on.
+  Range1D m_secondaryRangeParam;
   bool m_autoParam;
   bool m_editXRange;
 };

@@ -122,15 +122,26 @@ bool SingleRangeController::setParameterAtIndex(int parameterIndex, float f) {
 }
 
 void SingleRangeController::extractParameters() {
-  m_autoParam = m_editXRange ? m_range->xAuto() : m_range->yAuto();
-  m_rangeParam.setMin(m_editXRange ? m_range->xMin() : m_range->yMin());
-  m_rangeParam.setMax(m_editXRange ? m_range->xMax() : m_range->yMax());
+  if (m_editXRange) {
+    m_autoParam = m_range->xAuto();
+    m_rangeParam.setMin(m_range->xMin());
+    m_rangeParam.setMax(m_range->xMax());
+  } else {
+    m_autoParam = m_range->yAuto();
+    m_rangeParam.setMin(m_range->yMin());
+    m_rangeParam.setMax(m_range->yMax());
+  }
 }
 
 bool SingleRangeController::parametersAreDifferent() {
-  return m_autoParam != (m_editXRange ? m_range->xAuto() : m_range->yAuto())
-         || m_rangeParam.min() != (m_editXRange ? m_range->xMin() : m_range->yMin())
-         || m_rangeParam.max() != (m_editXRange ? m_range->xMax() : m_range->yMax());
+  if (m_editXRange) {
+    return m_autoParam != (m_range->xAuto())
+           || m_rangeParam.min() != (m_range->xMin())
+           || m_rangeParam.max() != (m_range->xMax());
+  }
+  return m_autoParam != (m_range->yAuto())
+         || m_rangeParam.min() != (m_range->yMin())
+         || m_rangeParam.max() != (m_range->yMax());
 }
 
 void SingleRangeController::confirmParameters() {

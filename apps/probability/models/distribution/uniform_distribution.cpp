@@ -2,6 +2,7 @@
 #include <cmath>
 #include <float.h>
 #include <assert.h>
+#include <algorithm>
 
 namespace Probability {
 
@@ -27,14 +28,16 @@ I18n::Message UniformDistribution::parameterDefinitionAtIndex(int index) {
 float UniformDistribution::xMin() const {
   assert(m_parameter2 >= m_parameter1);
   if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
-    return m_parameter1 - 1.0f;
+    // If parameter is too big, subtracting only 1.0 wouldn't do anything.
+    return m_parameter1 - std::max(1.0, std::fabs(m_parameter1) * k_displayLeftMarginRatio);
   }
   return m_parameter1 - 0.6f * (m_parameter2 - m_parameter1);
 }
 
 float UniformDistribution::xMax() const {
   if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
-    return m_parameter1 + 1.0f;
+    // If parameter is too big, adding only 1.0 wouldn't do anything.
+    return m_parameter1 + std::max(1.0, std::fabs(m_parameter1) * k_displayRightMarginRatio);
   }
   return m_parameter2 + 0.6f * (m_parameter2 - m_parameter1);
 }
@@ -75,7 +78,8 @@ bool UniformDistribution::authorizedValueAtIndex(double x, int index) const {
 void UniformDistribution::setParameterAtIndex(double f, int index) {
   TwoParameterDistribution::setParameterAtIndex(f, index);
   if (index == 0 && m_parameter2 < m_parameter1) {
-    m_parameter2 = m_parameter1 + 1.0;
+    // Add more than 1.0 if first parameter is greater than 100.
+    m_parameter2 = m_parameter1 + std::max(1.0, std::round(std::fabs(m_parameter1) * 0.01));
   }
 }
 

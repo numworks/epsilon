@@ -29,17 +29,14 @@ float BinomialDistribution::evaluateAtAbscissa(float x) const {
 
 float BinomialDistribution::xMin() const {
   float min = 0.0f;
-  float max = m_parameter1 > 0.0 ? m_parameter1 : 1.0f;
+  float max = m_parameter1 > min ? m_parameter1 : 1.0f;
   return min - k_displayLeftMarginRatio * (max - min);
 }
 
 float BinomialDistribution::xMax() const {
   float min = 0.0f;
-  float max = m_parameter1;
-  if (max <= min) {
-    max = min + 1.0f;
-  }
-  return max + k_displayRightMarginRatio*(max - min);
+  float max = m_parameter1 > min ? m_parameter1 : 1.0f;
+  return max + k_displayRightMarginRatio * (max - min);
 }
 
 float BinomialDistribution::yMax() const {

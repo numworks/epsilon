@@ -81,8 +81,12 @@ public:
 
   // Return Message corresponding to SymbolType
   static I18n::Message MessageForSymbolType(SymbolType symbolType);
-  // If the ContinuousFunction is of an inactive plotType
+  // If a plotType is an inactive plotType
   static bool IsPlotTypeInactive(PlotType plotType) { return plotType >= PlotType::Undefined; };
+  // If a plotType is equivalent to a parabola
+  static bool IsPlotTypeParabola(PlotType type) { return type == PlotType::CartesianParabola || type == PlotType::Parabola; }
+  // If a plotType is equivalent to an hyperbola
+  static bool IsPlotTypeHyperbola(PlotType type) { return type == PlotType::CartesianHyperbola || type == PlotType::Hyperbola; }
   // Return message describing function's PlotType
   I18n::Message plotTypeMessage();
   // Return the type of area to draw

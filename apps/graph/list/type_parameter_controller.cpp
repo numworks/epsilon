@@ -158,8 +158,7 @@ I18n::Message TypeParameterController::detailsTitle(int i) const {
       return k_titles[i];
     }
     default: {
-      assert(function()->plotType() == Shared::ContinuousFunction::PlotType::CartesianHyperbola
-             || function()->plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
+      assert(Shared::ContinuousFunction::IsPlotTypeHyperbola(function()->plotType()));
       constexpr I18n::Message k_titles[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisTitle,
           I18n::Message::HyperbolaSemiMinorAxisTitle,
@@ -213,8 +212,7 @@ I18n::Message TypeParameterController::detailsDescription(int i) const {
       return k_descriptions[i];
     }
     default: {
-      assert(function()->plotType() == Shared::ContinuousFunction::PlotType::CartesianHyperbola
-             || function()->plotType() == Shared::ContinuousFunction::PlotType::Hyperbola);
+      assert(Shared::ContinuousFunction::IsPlotTypeHyperbola(function()->plotType()));
       constexpr I18n::Message k_descriptions[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisDescription,
           I18n::Message::HyperbolaSemiMinorAxisDescription,
@@ -238,8 +236,7 @@ void TypeParameterController::setLineDetailsValues(double slope, double intercep
 void TypeParameterController::setConicDetailsValues(Poincare::Conic conic) {
   Shared::ContinuousFunction::PlotType type = function()->plotType();
   double cx, cy;
-  if (type == Shared::ContinuousFunction::PlotType::CartesianParabola
-      || type == Shared::ContinuousFunction::PlotType::Parabola) {
+  if (Shared::ContinuousFunction::IsPlotTypeParabola(function()->plotType())) {
     conic.getSummit(&cx, &cy);
   } else {
     conic.getCenter(&cx, &cy);
@@ -259,15 +256,13 @@ void TypeParameterController::setConicDetailsValues(Poincare::Conic conic) {
     m_detailValues[5] = cy;
     return;
   }
-  if (type == Shared::ContinuousFunction::PlotType::CartesianParabola
-      || type == Shared::ContinuousFunction::PlotType::Parabola) {
+  if (Shared::ContinuousFunction::IsPlotTypeParabola(function()->plotType())) {
     m_detailValues[0] = conic.getParameter();
     m_detailValues[1] = cx;
     m_detailValues[2] = cy;
     return;
   }
-  assert(type == Shared::ContinuousFunction::PlotType::CartesianHyperbola
-         || type == Shared::ContinuousFunction::PlotType::Hyperbola);
+  assert(Shared::ContinuousFunction::IsPlotTypeHyperbola(function()->plotType()));
   m_detailValues[0] = conic.getSemiMajorAxis();
   m_detailValues[1] = conic.getSemiMinorAxis();
   m_detailValues[2] = conic.getLinearEccentricity();

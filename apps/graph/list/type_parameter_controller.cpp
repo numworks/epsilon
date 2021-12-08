@@ -94,6 +94,9 @@ void TypeParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 int TypeParameterController::detailsNumberOfSections() const {
+  if (m_record.isNull()) {
+    return 0;
+  }
   switch (function()->plotType()) {
     case Shared::ContinuousFunction::PlotType::Line:
       return k_lineDetailsSections;

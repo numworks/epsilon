@@ -352,6 +352,18 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
 
     mp_lexer_free(lex);
     nlr_pop();
+  } else { // Uncaught exception
+    drawStringAt(
+        ctx,
+        line,
+        fromColumn,
+        text,
+        byteLength,
+        DefaultColor,
+        BackgroundColor,
+        selectionStart,
+        selectionEnd,
+        HighlightColor);
   }
 
   // Redraw the autocompleted word in the right color

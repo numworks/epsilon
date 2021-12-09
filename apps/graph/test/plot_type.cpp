@@ -11,6 +11,8 @@ void assert_check_function_properties(const char * expression, ContinuousFunctio
   ContinuousFunctionStore store;
   // AddFunction asserts the function is of the expected plotType.
   Shared::ContinuousFunction * function = addFunction(expression, plotType, &store, &context);
+  // Memoize the reduced expression so that numberOfSubCurves() can be asserted
+  function->expressionReduced(&context);
   if (!ContinuousFunction::IsPlotTypeInactive(plotType)) {
     ExpressionNode::Type observedEquationType = function->equationType();
     ContinuousFunction::AreaType observedAreaType = function->areaType();

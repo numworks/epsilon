@@ -295,8 +295,8 @@ bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
 void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Context * context) const {
   if (!isAlongX()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
-    assert(numberOfSubCurves() == 1);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
+    assert(numberOfSubCurves() == 1);
     *yMinIntrinsic = FLT_MAX;
     *yMaxIntrinsic = -FLT_MAX;
     return;

@@ -63,6 +63,14 @@ QUIZ_CASE(tree_handle_can_be_returned) {
 }
 
 QUIZ_CASE(tree_handle_memory_failure) {
+#if __EMSCRIPTEN__
+  /* We skip the following test on the web simulator, as it depends on a rollback
+   * using a longjump in ExceptionCheckpoint::Raise. This longjump was removed
+   * from the web implementation, as it cannot be made to work reliably in the
+   * version of emscripten we depend on.
+   * Fortuitously, this test used to succeed on the web simulator, but we cannot
+   * rely on this behaviour. */
+#else
   int initialPoolSize = pool_size();
   int memoryFailureHasBeenHandled = false;
   Poincare::ExceptionCheckpoint ecp;
@@ -76,6 +84,7 @@ QUIZ_CASE(tree_handle_memory_failure) {
   }
   quiz_assert(memoryFailureHasBeenHandled);
   assert_pool_size(initialPoolSize);
+#endif
 }
 
 QUIZ_CASE(tree_handle_does_not_copy) {

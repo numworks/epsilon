@@ -15,12 +15,13 @@ ListBookController::ListBookController(Responder * parentResponder):
   m_tableView(this, this, this),
   m_readBookController(this)
 {
-  m_filesNumber = filesWithExtension(".txt", m_files, k_maxFilesNumber);
+  m_txtFilesNumber = filesWithExtension(".txt", m_files, k_maxFilesNumber);
+  m_urtFilesNumber = filesWithExtension(".urt", m_files + m_txtFilesNumber, k_maxFilesNumber - m_txtFilesNumber);
   cleanRemovedBookRecord();
 }
 
 int ListBookController::numberOfRows() const {
-  return m_filesNumber;
+  return m_txtFilesNumber + m_urtFilesNumber;
 }
 
 KDCoordinate ListBookController::cellHeight() {
@@ -52,7 +53,7 @@ void ListBookController::didBecomeFirstResponder() {
 bool ListBookController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right)
   {
-    m_readBookController.setBook(m_files[selectedRow()]);
+    m_readBookController.setBook(m_files[selectedRow()], selectedRow() >= m_txtFilesNumber);
     static_cast<StackViewController*>(parentResponder())->push(&m_readBookController);
     Container::activeApp()->setFirstResponder(&m_readBookController);
     return true;
@@ -63,10 +64,9 @@ bool ListBookController::handleEvent(Ion::Events::Event event) {
 
 
 bool ListBookController::hasBook(const char* filename) const {
-  for(int i=0;i<m_filesNumber;i++)
+  for(int i=0;i<m_txtFilesNumber + m_urtFilesNumber;i++)
   {
-    if(strcmp(m_files[i].name, filename) == 0)
-    {
+    if(strcmp(m_files[i].name, filename) == 0) {
       return true;
     }
   }
@@ -75,18 +75,24 @@ bool ListBookController::hasBook(const char* filename) const {
 
 void ListBookController::cleanRemovedBookRecord() {
   int nb = Ion::Storage::sharedStorage()->numberOfRecordsWithExtension("txt");
-  for(int i=0; i<nb; i++)
-  {
-  Ion::Storage::Record r = Ion::Storage::sharedStorage()->recordWithExtensionAtIndex("txt", i);
-  if(!hasBook(r.fullName()))
-  {
-    r.destroy();
+  for(int i=0; i<nb; i++) {
+    Ion::Storage::Record r = Ion::Storage::sharedStorage()->recordWithExtensionAtIndex("txt", i);
+    if(!hasBook(r.fullName())) {
+      r.destroy();
+    }
   }
+
+  nb = Ion::Storage::sharedStorage()->numberOfRecordsWithExtension("urt");
+  for(int i=0; i<nb; i++) {
+    Ion::Storage::Record r = Ion::Storage::sharedStorage()->recordWithExtensionAtIndex("urt", i);
+    if(!hasBook(r.fullName())) {
+      r.destroy();
+    }
   }
 }
 
 bool ListBookController::isEmpty() const {
-  return m_filesNumber == 0;
+  return m_txtFilesNumber + m_urtFilesNumber == 0;
 }
 
 I18n::Message ListBookController::emptyMessage() {

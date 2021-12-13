@@ -11,7 +11,7 @@ class ReadBookController : public ViewController {
 public:
   ReadBookController(Responder * parentResponder);
   View * view() override;
-  void setBook(const External::Archive::File& file);
+  void setBook(const External::Archive::File& file, bool isRichTextFile);
   bool handleEvent(Ion::Events::Event event) override;
   void viewDidDisappear() override;
   void savePosition() const;

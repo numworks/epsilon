@@ -12,7 +12,8 @@ WordWrapTextView::WordWrapTextView() :
   PointerTextView(GlobalPreferences::sharedGlobalPreferences()->font()),
   m_pageOffset(0),
   m_nextPageOffset(0),
-  m_length(0)
+  m_length(0),
+  m_isRichTextFile(false) // Value isn't important, it will change when the file is loaded
 {
   
 }
@@ -25,9 +26,10 @@ void WordWrapTextView::nextPage() {
   markRectAsDirty(bounds());
 }
 
-void WordWrapTextView::setText(const char* text, int length) {
+void WordWrapTextView::setText(const char* text, int length, bool isRichTextFile) {
   PointerTextView::setText(text);
   m_length = length;
+  m_isRichTextFile = isRichTextFile;
 }
 
 void WordWrapTextView::previousPage() {

@@ -31,7 +31,8 @@ private:
   SelectableTableView m_tableView;
   static const int k_maxFilesNumber = 20;
   External::Archive::File m_files[k_maxFilesNumber];
-  int m_filesNumber = 0;
+  int m_txtFilesNumber;
+  int m_urtFilesNumber;
   static const int k_cellsNumber = 6;
   MessageTableCellWithChevron m_cells[k_cellsNumber];
   ReadBookController m_readBookController;

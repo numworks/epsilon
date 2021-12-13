@@ -16,7 +16,7 @@ class WordWrapTextView : public PointerTextView {
 public:
   WordWrapTextView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setText(const char*, int length);
+  void setText(const char*, int length, bool isRichTextFile);
   void nextPage();
   void previousPage();
   BookSave getBookSave() const;
@@ -28,6 +28,7 @@ private:
   int m_pageOffset;
   mutable int m_nextPageOffset;
   int m_length;
+  bool m_isRichTextFile;
   mutable KDColor m_textColor;
 };
 

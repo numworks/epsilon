@@ -12,10 +12,10 @@ View * ReadBookController::view() {
   return &m_readerView;
 }
 
-void ReadBookController::setBook(const External::Archive::File& file) {
+void ReadBookController::setBook(const External::Archive::File& file, bool isRichTextFile) {
   m_file = &file;
   loadPosition();
-  m_readerView.setText(reinterpret_cast<const char*>(file.data), file.dataLength);
+  m_readerView.setText(reinterpret_cast<const char*>(file.data), file.dataLength, isRichTextFile);
 }
 
 bool ReadBookController::handleEvent(Ion::Events::Event event) {  

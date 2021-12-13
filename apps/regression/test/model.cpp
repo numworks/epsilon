@@ -140,7 +140,7 @@ QUIZ_CASE(quartic_regression) {
 QUIZ_CASE(logarithmic_regression) {
   double x[] = {0.2, 0.5, 5, 7};
   double y[] = {-11.952, -9.035, -1.695, -0.584};
-  double coefficients[] = {3.19383, -6.81679};
+  double coefficients[] = {-6.81679, 3.19383};
   double r2 = 0.999994;
   assert_regression_is(x, y, 4, Model::Type::Logarithmic, coefficients, r2);
 }

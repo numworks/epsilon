@@ -10,7 +10,7 @@ namespace Regression {
 
 Layout LogarithmicModel::layout() {
   if (m_layout.isUninitialized()) {
-    const char * s = "a·ln(X)+b";
+    const char * s = "a+b·ln(X)";
     m_layout = LayoutHelper::String(s, strlen(s), k_layoutFont);
   }
   return m_layout;
@@ -19,26 +19,26 @@ Layout LogarithmicModel::layout() {
 double LogarithmicModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
-  return a*log(x)+b;
+  return a+b*log(x);
 }
 
 double LogarithmicModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
-  if (a == 0) {
+  if (b == 0) {
     return NAN;
   }
-  return exp((y-b)/a);
+  return exp((y-a)/b);
 }
 
 double LogarithmicModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
-  if (derivateCoefficientIndex == 0) {
-    // Derivate with respect to a: ln(x)
+  if (derivateCoefficientIndex == 1) {
+    // Derivate with respect to b: ln(x)
     assert(x > 0);
     return log(x);
   }
-  assert(derivateCoefficientIndex == 1);
-  // Derivate with respect to b: 1
+  assert(derivateCoefficientIndex == 0);
+  // Derivate with respect to a: 1
   return 1.0;
 }
 

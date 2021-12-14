@@ -77,6 +77,12 @@ bool MicroPython::ExecutionEnvironment::runCode(const char * str) {
   return runSucceeded;
 }
 
+void MicroPython::ExecutionEnvironment::HandleExceptionSilently() {
+  // Flush the store if an error is encountered to avoid being stuck with a full memory
+  modpyplot_flush_used_heap();
+  // TODO: do the same for other modules?
+}
+
 void MicroPython::ExecutionEnvironment::HandleException(nlr_buf_t * nlr_buf, MicroPython::ExecutionEnvironment * env) {
   /* We need a static execution environment to print. If it's not already set,
    * the caller should give it as a parameter. */
@@ -124,9 +130,7 @@ void MicroPython::ExecutionEnvironment::HandleException(nlr_buf_t * nlr_buf, Mic
   mp_print_str(&mp_plat_print, "\n");
   /* End of mp_obj_print_exception. */
 
-  // Flush the store if an error is encountered to avoid being stuck with a full memory
-  modpyplot_flush_used_heap();
-  // TODO: do the same for other modules?
+  HandleExceptionSilently();
 
   // Clean the static ExecutionEnvironment
   if (env != nullptr) {

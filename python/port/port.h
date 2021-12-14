@@ -23,6 +23,7 @@ public:
   static ExecutionEnvironment * currentExecutionEnvironment();
   bool runCode(const char * );
   static void HandleException(nlr_buf_t * nlr_buf, MicroPython::ExecutionEnvironment * env = nullptr);
+  static void HandleExceptionSilently();
   virtual const char * inputText(const char * prompt) { return nullptr; }
 
   // Sandbox

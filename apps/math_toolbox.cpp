@@ -550,8 +550,9 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
    * See SelectableTableView::reloadData comment. */
   cell->setHighlighted(false);
   const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(index);
-  // Message is leaf
+  KDColor textColor = isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack;
   if (messageTree->numberOfChildren() == 0) {
+    // Message is leaf
     ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
     const char * text = I18n::translate(messageTree->label());
     Layout resultLayout;
@@ -578,10 +579,13 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 
     myCell->setLayout(resultLayout);
     myCell->setSubLabelMessage(messageTree->text());
-    myCell->setTextColor(isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack);
-    return;
+    myCell->setTextColor(textColor);
+  } else {
+    // Message is a submenu
+    MessageTableCell * typedCell = static_cast<MessageTableCell *>(cell);
+    typedCell->setTextColor(textColor);
+    Escher::Toolbox::willDisplayCellForIndex(cell, index);
   }
-  Escher::Toolbox::willDisplayCellForIndex(cell, index);
 }
 
 bool MathToolbox::selectSubMenu(int selectedRow) {

@@ -325,4 +325,9 @@ void App::Snapshot::tidy() {
   }
 }
 
+void App::Snapshot::reset() {
+  navigation()->setSubapp(Data::SubApp::Unset);
+  navigation()->setPage(Data::Page::Menu);
+}
+
 }  // namespace Probability

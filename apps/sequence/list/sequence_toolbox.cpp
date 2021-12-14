@@ -100,9 +100,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
 }
 
 int SequenceToolbox::controlChecksum() const {
-  /* We make sure the country cannot interfere with the number of cells by
-   * multiplying by the number of countries. */
-  return I18n::NumberOfCountries * m_numberOfAddedCells + static_cast<int>(GlobalPreferences::sharedGlobalPreferences()->country());
+  return (m_numberOfAddedCells * I18n::NumberOfCountries + static_cast<int>(GlobalPreferences::sharedGlobalPreferences()->country())) * Preferences::k_numberOfExamModes + static_cast<int>(Preferences::sharedPreferences()->examMode());
 }
 
 bool SequenceToolbox::selectAddedCell(int selectedRow){

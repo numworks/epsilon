@@ -51,6 +51,7 @@ public:
     Portuguese = 5,
     Undefined = 6, // Undefined must be the last ExamMode.
   };
+  static constexpr int k_numberOfExamModes = 6;
   static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
   static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
   /* By default, a 0 PressToTestParams has all parameters set to false. Params

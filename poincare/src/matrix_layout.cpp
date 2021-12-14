@@ -96,28 +96,41 @@ void MatrixLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
    * deleting the top empty layout of an empty column deletes the column. */
   assert(cursor != nullptr);
   LayoutNode * pointedChild = cursor->layoutNode();
-  if (pointedChild->isEmpty()) {
-    int indexOfPointedLayout = indexOfChild(pointedChild);
+  int indexOfPointedLayout = indexOfChild(pointedChild);
+  if (indexOfPointedLayout >= 0) {
     int columnIndex = columnAtChildIndex(indexOfPointedLayout);
     int rowIndex = rowAtChildIndex(indexOfPointedLayout);
-    bool deleted = false;
-    if (columnIndex == 0) {
-      if (m_numberOfRows > 2 && rowIndex < m_numberOfRows - 1 && isRowEmpty(rowIndex)) {
-        deleteRowAtIndex(rowIndex);
-        deleted = true;
+    if (pointedChild->isEmpty()) {
+      bool deleted = false;
+      if (columnIndex == 0) {
+        if (m_numberOfRows > 2 && rowIndex < m_numberOfRows - 1 && isRowEmpty(rowIndex)) {
+          deleteRowAtIndex(rowIndex);
+          deleted = true;
+        }
       }
-    }
-    if (rowIndex == 0) {
-      if (m_numberOfColumns > 2 && columnIndex < m_numberOfColumns - 1 && isColumnEmpty(columnIndex)) {
-        deleteColumnAtIndex(columnIndex);
-        deleted = true;
+      if (rowIndex == 0) {
+        if (m_numberOfColumns > 2 && columnIndex < m_numberOfColumns - 1 && isColumnEmpty(columnIndex)) {
+          deleteColumnAtIndex(columnIndex);
+          deleted = true;
+        }
       }
-    }
-    if (deleted) {
+      if (deleted) {
         assert(indexOfPointedLayout >= 0 && indexOfPointedLayout < m_numberOfColumns*m_numberOfRows);
         cursor->setLayoutNode(childAtIndex(indexOfPointedLayout));
         cursor->setPosition(LayoutCursor::Position::Right);
         return;
+      }
+    }
+    if (columnIndex == 0 && rowIndex == 0 && cursor->position() == LayoutCursor::Position::Left && numberOfChildren() == 4) {
+      /* The matrix has 4 children while the cursor is inside: there is one
+       * value and three empty squares. */
+      Layout onlyValue = Layout(pointedChild);
+      Layout thisRef = Layout(this);
+      thisRef.replaceChildWithGhostInPlace(onlyValue);
+      cursor->setLayout(thisRef.childAtIndex(0));
+      thisRef.replaceWith(onlyValue, cursor);
+      cursor->setPosition(LayoutCursor::Position::Left);
+      return;
     }
   }
   GridLayoutNode::deleteBeforeCursor(cursor);

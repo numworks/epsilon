@@ -579,7 +579,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(selectedRow);
   if (isMessageTreeDisabled(messageTree)) {
     // TODO : It would be better if warning did not dismiss the toolbox
-    Container::activeApp()->displayWarning(I18n::Message::DisabledFeatureInPressToTestMode1, I18n::Message::DisabledFeatureInPressToTestMode2);
+    Container::activeApp()->displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
     return true;
   }
   m_selectableTableView.deselectTable();

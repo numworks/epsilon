@@ -15,6 +15,7 @@ public:
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:
+  bool selectSubMenu(int selectedRow) override;
   bool selectLeaf(int selectedRow) override;
   const Escher::ToolboxMessageTree * rootModel() const override;
   Escher::ExpressionTableCellWithMessage * leafCellAtIndex(int index) override;

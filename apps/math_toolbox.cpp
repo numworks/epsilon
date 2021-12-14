@@ -525,14 +525,15 @@ KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
 bool MathToolbox::isMessageTreeDisabled(const ToolboxMessageTree * messageTree) const {
   I18n::Message label = messageTree->label();
   return (label == I18n::Message::SumCommandWithArg
-          && ExamModeConfiguration::sumIsForbidden())
-         || (label == I18n::Message::LogCommandWithArg
-             && ExamModeConfiguration::basedLogarithmIsForbidden())
-         || (label == I18n::Message::NormVectorCommandWithArg
-             && ExamModeConfiguration::vectorNormIsForbidden())
-         || ((label == I18n::Message::DotCommandWithArg
-              || label == I18n::Message::CrossCommandWithArg)
-             && ExamModeConfiguration::vectorProductsAreForbidden());
+       && ExamModeConfiguration::sumIsForbidden())
+      || (label == I18n::Message::LogCommandWithArg
+       && ExamModeConfiguration::basedLogarithmIsForbidden())
+      || (label == I18n::Message::NormVectorCommandWithArg
+       && ExamModeConfiguration::vectorNormIsForbidden())
+      || ((label == I18n::Message::DotCommandWithArg || label == I18n::Message::CrossCommandWithArg)
+       && ExamModeConfiguration::vectorProductsAreForbidden())
+      || (label == I18n::Message::UnitAndConstant
+       && ExamModeConfiguration::unitsAreForbidden());
 }
 
 void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -572,6 +573,14 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     return;
   }
   Escher::Toolbox::willDisplayCellForIndex(cell, index);
+}
+
+bool MathToolbox::selectSubMenu(int selectedRow) {
+  if (isMessageTreeDisabled(messageTreeModelAtIndex(selectedRow))) {
+    Container::activeApp()->displayWarning(I18n::Message::DisabledFeatureInPressToTestMode1, I18n::Message::DisabledFeatureInPressToTestMode2);
+    return true;
+  }
+  return Toolbox::selectSubMenu(selectedRow);
 }
 
 bool MathToolbox::selectLeaf(int selectedRow) {

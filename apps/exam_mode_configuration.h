@@ -23,6 +23,7 @@ KDColor examModeColor(Poincare::Preferences::ExamMode mode);
 bool appIsForbidden(I18n::Message appName);
 bool exactExpressionIsForbidden(Poincare::Expression e);
 bool additionalResultsAreForbidden();
+bool lineDetailsAreForbidden();
 bool inequalityGraphingIsForbidden();
 bool implicitPlotsAreForbidden();
 bool statsDiagnosticsAreForbidden();

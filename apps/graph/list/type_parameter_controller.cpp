@@ -1,4 +1,5 @@
 #include "type_parameter_controller.h"
+#include <apps/exam_mode_configuration.h>
 #include <poincare/layout_helper.h>
 #include <poincare/expression.h>
 #include <apps/i18n.h>
@@ -99,7 +100,7 @@ int TypeParameterController::detailsNumberOfSections() const {
   }
   switch (function()->plotType()) {
     case Shared::ContinuousFunction::PlotType::Line:
-      return k_lineDetailsSections;
+      return ExamModeConfiguration::lineDetailsAreForbidden() ? 0 : k_lineDetailsSections;
     case Shared::ContinuousFunction::PlotType::Circle:
       return k_circleDetailsSections;
     case Shared::ContinuousFunction::PlotType::Ellipse:

@@ -242,3 +242,7 @@ bool ExamModeConfiguration::basedLogarithmIsForbidden() {
 bool ExamModeConfiguration::sumIsForbidden() {
   return Preferences::sharedPreferences()->sumIsForbidden();
 }
+
+bool ExamModeConfiguration::unitsAreForbidden() {
+  return Preferences::sharedPreferences()->examMode() == Preferences::ExamMode::Dutch;
+}

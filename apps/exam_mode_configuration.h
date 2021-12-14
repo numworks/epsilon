@@ -32,6 +32,7 @@ bool vectorProductsAreForbidden();
 bool vectorNormIsForbidden();
 bool basedLogarithmIsForbidden();
 bool sumIsForbidden();
+bool unitsAreForbidden();
 
 }
 

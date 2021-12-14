@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include <apps/shared/text_field_delegate_app.h>
+#include <apps/exam_mode_configuration.h>
 
 #include "models/statistic/homogeneity_statistic.h"
 #include "probability_icon.h"
@@ -215,6 +216,7 @@ void App::didBecomeActive(Window * windows) {
         m_hypothesisController.openPage(&m_inputController);
         m_inputController.openPage(&m_resultsController);
       }
+      assert(!ExamModeConfiguration::testsGraphResultsAreForbidden());
       m_resultsController.openPage(&m_statisticGraphController);
       break;
   }

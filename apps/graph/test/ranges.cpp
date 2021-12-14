@@ -127,6 +127,13 @@ QUIZ_CASE(graph_ranges_single_function) {
   // TODO : Fix ranges for x^x with real complex format
   assert_best_cartesian_range_is("f(x)=x^x", -19.1054859, 14.1054859, -60, 120);
 
+  // Vertical line
+  {
+    const char * definition[1] = { "x=-1" };
+    ContinuousFunction::PlotType type[1] = { ContinuousFunction::PlotType::VerticalLine };
+    assert_best_range_is(definition, type, -11, 9, -5.66249943, 4.962499);
+  }
+
   // Restore previous complex format
   Preferences::sharedPreferences()->setComplexFormat(previousComplexFormat);
 }

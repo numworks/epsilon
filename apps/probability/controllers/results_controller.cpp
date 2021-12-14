@@ -1,6 +1,7 @@
 #include "results_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/exam_mode_configuration.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
@@ -62,6 +63,10 @@ const char * Probability::ResultsController::title() {
 bool Probability::ResultsController::buttonAction() {
   if (!m_statistic->isGraphable()) {
     App::app()->displayWarning(I18n::Message::InvalidValues);
+    return false;
+  }
+  if (ExamModeConfiguration::testsGraphResultsAreForbidden() && App::app()->subapp() == Data::SubApp::Tests) {
+    App::app()->displayWarning(I18n::Message::DisabledFeatureInPressToTestMode1, I18n::Message::DisabledFeatureInPressToTestMode2);
     return false;
   }
   openPage(m_statisticGraphController);

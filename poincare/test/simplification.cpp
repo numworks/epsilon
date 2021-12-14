@@ -1134,6 +1134,10 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("inverse([[1,2][3,4]])", "[[-2,1][3/2,-1/2]]");
   assert_parsed_expression_simplify_to("inverse([[π,2×π][3,2]])", "[[-1/\u00122×π\u0013,1/2][3/\u00124×π\u0013,-1/4]]");
 
+  // Divison : should be undefined
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]/[[1,2][-2,3]]", Undefined::Name());
+  assert_parsed_expression_simplify_to("1/identity(2)^500", Undefined::Name());
+
   // Trace
   assert_parsed_expression_simplify_to("trace([[1/√(2),1/2,3][2,1,-3]])", Undefined::Name());
   assert_parsed_expression_simplify_to("trace([[√(2),2][4,3+log(3)]])", "log(3)+√(2)+3");
@@ -1192,9 +1196,6 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("cos(3a)*abs(transpose(a))", "cos(3×confidence(cos(2)/25,3))×abs(transpose(confidence(cos(2)/25,3)))");
   assert_parsed_expression_simplify_to("abs(transpose(a))*cos(3a)", "abs(transpose(confidence(cos(2)/25,3)))×cos(3×confidence(cos(2)/25,3))");
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-
-  // Mix
-  assert_parsed_expression_simplify_to("1/identity(2)^500", "1/[[1,0][0,1]]^500");
 }
 
 QUIZ_CASE(poincare_simplification_functions_of_matrices) {

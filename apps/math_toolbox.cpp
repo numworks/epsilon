@@ -536,6 +536,15 @@ bool MathToolbox::isMessageTreeDisabled(const ToolboxMessageTree * messageTree) 
        && ExamModeConfiguration::unitsAreForbidden());
 }
 
+bool MathToolbox::displayMessageTreeDisabledPopUp(const Escher::ToolboxMessageTree * messageTree) {
+  if (isMessageTreeDisabled(messageTree)) {
+    // TODO : It would be better if warning did not dismiss the toolbox
+    Container::activeApp()->displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
+    return true;
+  }
+  return false;
+}
+
 void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   /* Unhighlight reusableCell to prevent display of multiple selected rows.
    * See SelectableTableView::reloadData comment. */
@@ -576,19 +585,14 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
 }
 
 bool MathToolbox::selectSubMenu(int selectedRow) {
-  if (isMessageTreeDisabled(messageTreeModelAtIndex(selectedRow))) {
-    Container::activeApp()->displayWarning(I18n::Message::DisabledFeatureInPressToTestMode1, I18n::Message::DisabledFeatureInPressToTestMode2);
-    return true;
-  }
-  return Toolbox::selectSubMenu(selectedRow);
+  return displayMessageTreeDisabledPopUp(messageTreeModelAtIndex(selectedRow))
+      || Toolbox::selectSubMenu(selectedRow);
 }
 
 bool MathToolbox::selectLeaf(int selectedRow) {
   assert(typeAtIndex(selectedRow) == k_leafCellType);
   const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(selectedRow);
-  if (isMessageTreeDisabled(messageTree)) {
-    // TODO : It would be better if warning did not dismiss the toolbox
-    Container::activeApp()->displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
+  if (displayMessageTreeDisabledPopUp(messageTree)) {
     return true;
   }
   m_selectableTableView.deselectTable();

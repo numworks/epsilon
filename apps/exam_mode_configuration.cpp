@@ -207,6 +207,10 @@ bool ExamModeConfiguration::additionalResultsAreForbidden() {
   return mode == Preferences::ExamMode::Dutch || mode == Preferences::ExamMode::IBTest;
 }
 
+bool ExamModeConfiguration::lineDetailsAreForbidden() {
+  return Preferences::sharedPreferences()->examMode() == Preferences::ExamMode::IBTest;
+}
+
 bool ExamModeConfiguration::inequalityGraphingIsForbidden() {
   return Preferences::sharedPreferences()->inequalityGraphingIsForbidden();
 }

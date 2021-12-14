@@ -15,8 +15,6 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-constexpr static uint8_t k_externalMagik[9] = {0x64, 0x6c, 0x31, 0x31, 0x23, 0x39, 0x38, 0x33, 0x35};
-
 static inline uint32_t minUint32T(uint32_t x, uint32_t y) { return x < y ? x : y; }
 
 void DFUInterface::StatusData::push(Channel *c) const {
@@ -111,6 +109,9 @@ bool DFUInterface::processSetupInRequest(SetupPacket *request, uint8_t *transfer
       return getState(transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (uint8_t)DFURequest::Abort:
       return dfuAbort(transferBufferLength);
+    case (uint8_t)DFURequest::Unlock:
+      m_dfuUnlocked = true;
+      return true;
   }
   return false;
 }
@@ -140,17 +141,17 @@ bool DFUInterface::processUploadRequest(SetupPacket *request, uint8_t *transferB
   }
   if (request->wValue() == 0) {
     /* The host requests to read the commands supported by the bootloader. After
-   * receiving this command, the device  should returns N bytes representing
-   * the command codes for :
-   * Get command / Set Address Pointer / Erase / Read Unprotect
-   * We no not need it for now. */
+     * receiving this command, the device  should returns N bytes representing
+     * the command codes for :
+     * Get command / Set Address Pointer / Erase / Read Unprotect
+     * We no not need it for now. */
     return false;
   } else if (request->wValue() == 1) {
     m_ep0->stallTransaction();
     return false;
   } else {
     /* We decided to never protect Read operation. Else we would have to check
-   * here it is not protected before reading. */
+     * here it is not protected before reading. */
 
     // Compute the reading address
     uint32_t readAddress = (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
@@ -199,7 +200,7 @@ void DFUInterface::eraseCommand(uint8_t *transferBuffer, uint16_t transferBuffer
   // Sector erase
   assert(transferBufferLength == 5);
 
-  uint32_t m_eraseAddress = transferBuffer[1]
+  m_eraseAddress = transferBuffer[1]
     + (transferBuffer[2] << 8)
     + (transferBuffer[3] << 16)
     + (transferBuffer[4] << 24);
@@ -214,24 +215,21 @@ void DFUInterface::eraseCommand(uint8_t *transferBuffer, uint16_t transferBuffer
 
 void DFUInterface::eraseMemoryIfNeeded() {
   if (m_erasePage < 0) {
-    // There was no erase waiting.
     return;
   }
 
   willErase();
 
-#if 0 // We don't erase now the flash memory to avoid crash if writing is refused
+  #if 0 // We don't erase now the flash memory to avoid crash if writing is refused
   if (m_erasePage == Flash::TotalNumberOfSectors()) {
-  Flash::MassErase();
+    Flash::MassErase();
   }
-#endif
+  #endif
 
-  if ((m_eraseAddress >= k_externalAppsBorderAddress && m_eraseAddress < ExternalFlash::Config::EndAddress) || m_dfuUnlocked) {
-    Flash::EraseSector(m_erasePage);
+  if ((m_eraseAddress >= k_ExternalBorderAddress && m_eraseAddress < ExternalFlash::Config::EndAddress) || m_dfuUnlocked) {
+    int32_t order = Flash::SectorAtAddress(m_eraseAddress);
+    Flash::EraseSector(order);
   }
-  /* Put an out of range value in m_erasePage to indicate that no erase is
-    * waiting. */
-  m_erasePage = -1;
   m_state = State::dfuDNLOADIDLE;
   m_status = Status::OK;
   m_erasePage = -1;
@@ -242,67 +240,89 @@ void DFUInterface::writeOnMemory() {
     // Write on SRAM
     // FIXME We should check that we are not overriding the current instructions.
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
-    resetProtectionVariables(); // We can reset the protection variables because update process is finsihed.
+    resetFlashParameters();  // We are writing in SRAM, so we can reset flash parameters
   } else if (Flash::SectorAtAddress(m_writeAddress) >= 0) {
-    if (m_dfuLevel == 2) { // If no-update mode, we throw an error
+    if (m_dfuLevel == 2) { // We don't accept update
       m_largeBufferLength = 0;
       m_state = State::dfuERROR;
       m_status = Status::errWRITE;
-      leaveDFUAndReset(false);
       return;
     }
-    
-    if (!(m_isTemporaryUnlocked || m_dfuUnlocked)) {
-      if (m_writeAddress >= InternalFlash::Config::StartAddress && m_writeAddress <= InternalFlash::Config::EndAddress) {
-        // We check if the user is autorized to write on the internal flash
-        if (m_haveAlreadyFlashedExternal) {
-          for (size_t i = 0; i < 4; i++) {
-            if (k_internalMagik[i] != m_largeBuffer[k_internalMagikPointer + i]) {
-              m_largeBufferLength = 0;
-              m_state = State::dfuERROR;
-              m_status = Status::errWRITE;
-              // We don't leave DFU to avoid having only external flashed
-              return;
-            }
-            m_largeBuffer[k_internalMagikPointer + i] = 0; // We reset the buffer to its initial value
+
+    int currentMemoryType; // Detection of the current memory type (Internal or External)
+
+    if (m_writeAddress >= InternalFlash::Config::StartAddress && m_writeAddress <= InternalFlash::Config::EndAddress) {
+      // We are writing in Internal where live the internal recovery (it's the most sensitive memory type)
+      if (m_isInternalLocked && !m_dfuUnlocked) {
+        // We have to check if external was written in order to
+        // prevent recovery mode loop or the necessity to activate STM bootloader (which is like a superuser mode)
+        // Nevertheless, unlike NumWorks, we don't forbid its access.
+        m_largeBufferLength = 0;
+        m_state = State::dfuERROR;
+        m_status = Status::errTARGET;
+        leaveDFUAndReset(false);
+        return;
+      }
+
+      currentMemoryType = 0;
+
+      // If the protection is activated,
+      // we check the internal magic code in order to prevent the NumWorks' Bootloader flash
+
+      if (m_isFirstInternalPacket && !m_dfuUnlocked) {
+        for (int i = 0; i < 4; i++) {
+          if (k_omegaMagic[i] != m_largeBuffer[k_internalMagicAddress + i]) {
+            m_largeBufferLength = 0;
+            m_state = State::dfuERROR;
+            m_status = Status::errVERIFY;
+            return;
           }
         }
-        else { // All people trying to write on the internal flash before external are considered as not authorized
-          m_largeBufferLength = 0;
-          m_state = State::dfuERROR;
-          m_status = Status::errTARGET;
-          leaveDFUAndReset(false);
-          return;
-        }
+        // We only check the first packet because there is some predictable data in there
+        m_isFirstInternalPacket = false;
       }
-      else if (m_writeAddress < k_externalAppsBorderAddress) { // If we are not installing external apps
-        if (m_dfuLevel == 0) {
-          for (size_t i = 0; i < 9; i++) {
-            if (k_externalMagik[i] != m_largeBuffer[k_externalMagikPointer + i]) {
-              m_largeBufferLength = 0;
-              m_state = State::dfuERROR;
-              m_status = Status::errWRITE;
-              leaveDFUAndReset(false);
-              return;
-            }
-            m_largeBuffer[k_externalMagikPointer + i] = 0; // We reset the buffer to its initial value
+    } else {
+
+      currentMemoryType = 1;
+      // We are writing in the external part where live the users apps. It's not a sensitive memory,
+      // but we check it in Upsilon Mode to ensure compatibility between the internal and the external.
+      if (m_writeAddress < k_ExternalBorderAddress && m_isFirstExternalPacket && m_dfuLevel == 0 &&
+          !m_dfuUnlocked) {
+        // We skip any data verification if the user is writing in the Optionals Applications part in the
+        // external (Externals Apps)
+        for (int i = 0; i < 4; i++) {
+          if (k_externalUpsilonMagic[i] != m_largeBuffer[k_externalMagicAddress + i]) {
+            m_largeBufferLength = 0;
+            leaveDFUAndReset(false);
+            return;
           }
-          m_isTemporaryUnlocked = true; // We can unlock the flash because signature is good
-        }
-        else {
-          m_haveAlreadyFlashedExternal = true;
         }
       }
+      // We only check the first packet because there is some predictable data in there,
+      // and we unlock the internal memory
+      m_isFirstExternalPacket = false;
+      m_isInternalLocked = false;
     }
 
-    int pageToErase = Flash::SectorAtAddress(m_writeAddress);
-
-    //On vérifie qu'on a pas déjà effacé le secteur et si ce n'est pas un secteur external déjà effacé
-    if ((m_lastErasedPage == -1 || pageToErase != m_lastErasedPage) && m_writeAddress < k_externalAppsBorderAddress && !m_dfuUnlocked) {
-      Flash::EraseSector(pageToErase);
-      m_lastErasedPage = pageToErase;
+    // We check if we changed the memory type where we are writing from last time.
+    if (m_lastMemoryType >= 0 && currentMemoryType != m_lastMemoryType) {
+      m_lastMemoryType = -1;
     }
 
+    m_erasePage = Flash::SectorAtAddress(m_writeAddress);
+
+    // We check if the Sector where we are writing was not already erased and if not, we erase it.
+    if ((m_lastMemoryType < 0 || m_erasePage != m_lastPageErased) &&
+        m_writeAddress < k_ExternalBorderAddress && !m_dfuUnlocked) {
+      Flash::EraseSector(m_erasePage);
+      m_lastMemoryType = currentMemoryType;
+    }
+
+    m_lastPageErased = m_erasePage;
+    m_erasePage = -1;
+
+    // We wait a little before writing in order to prevent some memory error.
+    Ion::Timing::msleep(1);
     Flash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength);
   } else {
     // Invalid write address
@@ -311,7 +331,6 @@ void DFUInterface::writeOnMemory() {
     m_status = Status::errTARGET;
     return;
   }
-
   // Reset the buffer length
   m_largeBufferLength = 0;
   // Change the interface state and status
@@ -350,11 +369,14 @@ bool DFUInterface::dfuAbort(uint16_t *transferBufferLength) {
 }
 
 void DFUInterface::leaveDFUAndReset(bool do_reset) {
-  resetProtectionVariables();
+  resetFlashParameters();
+  m_isInternalLocked = true;
+  m_isFirstInternalPacket = true;
+  m_isFirstExternalPacket = true;
   m_device->setResetOnDisconnect(do_reset);
   m_device->detach();
 }
 
-} 
+}
 }
 }

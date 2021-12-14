@@ -13,7 +13,7 @@ using namespace Shared;
 
 namespace Settings {
 
-UsbInfoController::UsbInfoController(Responder *parentResponder): 
+UsbInfoController::UsbInfoController(Responder *parentResponder):
   GenericSubController(parentResponder),
   m_usbProtectionLevelController(this),
   m_contentView(&m_selectableTableView)
@@ -23,7 +23,7 @@ UsbInfoController::UsbInfoController(Responder *parentResponder):
 }
 
 bool UsbInfoController::handleEvent(Ion::Events::Event event) {
-  if ((Ion::Events::OK == event || Ion::Events::EXE == event) && selectedRow() == 0) {
+  if ((Ion::Events::OK == event || Ion::Events::EXE == event || Ion::Events::Right == event) && selectedRow() == 0) {
     if (!GlobalPreferences::sharedGlobalPreferences()->dfuUnlocked()) {
       if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
         Ion::LED::setColor(KDColorPurple);
@@ -39,15 +39,8 @@ bool UsbInfoController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.reloadCellAtLocation(0, 0);
     return true;
   }
-  // We cannot use things like willExitResponderChain because this view can disappear due to an USB connection,
-  // and in this case we must keep the DFU status.
-  if ((Ion::Events::Left == event || Ion::Events::Home == event || Ion::Events::Back == event) && GlobalPreferences::sharedGlobalPreferences()->dfuUnlocked()) {
-    GlobalPreferences::sharedGlobalPreferences()->setDfuUnlocked(false);
-    m_selectableTableView.reloadCellAtLocation(0, 0);
-    Container::activeApp()->displayWarning(I18n::Message::USBProtectionReactivated);
-    return true;
-  }
-  if ((Ion::Events::OK == event || Ion::Events::EXE == event) && selectedRow() == 1) {
+
+  if ((Ion::Events::OK == event || Ion::Events::EXE == event || Ion::Events::Right == event) && selectedRow() == 1) {
     GenericSubController *subController = &m_usbProtectionLevelController;
     subController->setMessageTreeModel(m_messageTreeModel->childAtIndex(1));
     StackViewController *stack = stackController();
@@ -55,6 +48,20 @@ bool UsbInfoController::handleEvent(Ion::Events::Event event) {
     stack->push(subController);
     return true;
   }
+
+  // We cannot use things like willExitResponderChain because this view can disappear due to an USB connection,
+  // and in this case we must keep the DFU status.
+  if ((event != Ion::Events::USBPlug && event != Ion::Events::USBEnumeration) &&
+      GlobalPreferences::sharedGlobalPreferences()->dfuUnlocked()) {
+    GlobalPreferences::sharedGlobalPreferences()->setDfuUnlocked(false);
+    m_selectableTableView.reloadCellAtLocation(0, 0);
+    Container::activeApp()->displayWarning(I18n::Message::USBProtectionReactivated);
+    if (!GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+      Ion::LED::setColor(KDColorBlack);
+    }
+    return true;
+  }
+
   return GenericSubController::handleEvent(event);
 }
 

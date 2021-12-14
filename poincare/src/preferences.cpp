@@ -83,7 +83,7 @@ bool Preferences::inequalityGraphingIsForbidden() const {
 
 bool Preferences::implicitPlotsAreForbidden() const {
   assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_implicitPlotsAreForbidden);
-  return pressToTestParams().m_implicitPlotsAreForbidden;
+  return pressToTestParams().m_implicitPlotsAreForbidden || examMode() == ExamMode::IBTest;
 }
 
 bool Preferences::statsDiagnosticsAreForbidden() const {

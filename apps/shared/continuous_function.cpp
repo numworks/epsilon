@@ -302,6 +302,14 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
     return;
   }
 
+  /* Call basedOnCostlyAlgorithms first to ensure expressionReduced is called
+   * and the conic equation is solved if applicable. */
+  if (basedOnCostlyAlgorithms(context)) {
+    /* The function makes use of some costly algorithms, such as integration or
+     * sequences, and cannot be computed in a timely manner. */
+    return;
+  }
+
   if (hasVerticalLines()) {
     /* Vertical lines' x range are quite simple and could not be computed with
      * InterestingRangesForDisplay. We use curve(s) x-position(s). */
@@ -323,12 +331,6 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
   *xMax = NAN;
   *yMinIntrinsic = NAN;
   *yMaxIntrinsic = NAN;
-
-  if (basedOnCostlyAlgorithms(context)) {
-    /* The function makes use of some costly algorithms, such as integration or
-     * sequences, and cannot be computed in a timely manner. */
-    return;
-  }
 
   Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
     /* When evaluating sin(x)/x close to zero using the standard sine function,

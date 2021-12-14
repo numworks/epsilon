@@ -10,6 +10,7 @@
 #include <ion/unicode/utf8_helper.h>
 #include <string.h>
 #include <algorithm>
+#include <python/port/port.h>
 
 extern "C" {
 #include "py/lexer.h"
@@ -584,6 +585,8 @@ void VariableBoxController::loadImportedVariablesInScript(const char * scriptCon
         addNodesFromImportMaybe((mp_parse_node_struct_t *) pn, textToAutocomplete, textToAutocompleteLength);
     }
     nlr_pop();
+  } else {
+    MicroPython::ExecutionEnvironment::HandleExceptionSilently();
   }
 }
 

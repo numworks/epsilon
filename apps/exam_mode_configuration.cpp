@@ -211,6 +211,10 @@ bool ExamModeConfiguration::lineDetailsAreForbidden() {
   return Preferences::sharedPreferences()->examMode() == Preferences::ExamMode::IBTest;
 }
 
+bool ExamModeConfiguration::testsGraphResultsAreForbidden() {
+  return Preferences::sharedPreferences()->examMode() == Preferences::ExamMode::IBTest;
+}
+
 bool ExamModeConfiguration::inequalityGraphingIsForbidden() {
   return Preferences::sharedPreferences()->inequalityGraphingIsForbidden();
 }

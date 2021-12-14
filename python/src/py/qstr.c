@@ -154,6 +154,14 @@ STATIC qstr qstr_add(const byte *q_ptr) {
         qstr_pool_t *pool = m_new_obj_var_maybe(qstr_pool_t, const char*, new_alloc);
         if (pool == NULL) {
             QSTR_EXIT();
+            /* Warning: this is a NumWorks change to MicroPython 1.12. A PR has
+             * been submitted to MicroPython github repo. This code could be
+             * part of the next version update. */
+            /* Clean potential dangling pointer:
+             * qstr_last_chunk can refer to an object in the heap that might
+             * have been sweeped because the execution failed before adding it
+             * to the pool. */
+            MP_STATE_VM(qstr_last_chunk) = NULL;
             m_malloc_fail(new_alloc);
         }
         pool->prev = MP_STATE_VM(last_pool);

@@ -66,7 +66,7 @@ bool Probability::ResultsController::buttonAction() {
     return false;
   }
   if (ExamModeConfiguration::testsGraphResultsAreForbidden() && App::app()->subapp() == Data::SubApp::Tests) {
-    App::app()->displayWarning(I18n::Message::DisabledFeatureInPressToTestMode1, I18n::Message::DisabledFeatureInPressToTestMode2);
+    App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
     return false;
   }
   openPage(m_statisticGraphController);

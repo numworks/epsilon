@@ -203,6 +203,7 @@ PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(const char
     mp_lexer_free(lex);
     nlr_pop();
   } else { // Uncaught exception
+    MicroPython::ExecutionEnvironment::HandleExceptionSilently();
     autocompleteType = AutocompletionType::NoIdentifier;
   }
   if (autocompletionLocationBeginning != nullptr) {
@@ -353,6 +354,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
     mp_lexer_free(lex);
     nlr_pop();
   } else { // Uncaught exception
+    MicroPython::ExecutionEnvironment::HandleExceptionSilently();
     drawStringAt(
         ctx,
         line,

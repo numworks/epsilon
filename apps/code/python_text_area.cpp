@@ -492,7 +492,7 @@ void PythonTextArea::addAutocompletion(int index) {
   const char * autocompletionLocation = const_cast<char *>(cursorLocation());
   m_autocompletionResultIndex = index;
   if (autocompletionType(autocompletionLocation, &autocompletionTokenBeginning) != AutocompletionType::EndOfIdentifier) {
-    /* The cursor is not at the end of an identifier or Python uncounterd an
+    /* The cursor is not at the end of an identifier or Python encountered an
      * uncaught exception. */
     return;
   }

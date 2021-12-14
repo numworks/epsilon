@@ -44,7 +44,7 @@ public:
     ~Snapshot();
     const Descriptor * descriptor() const override;
     void tidy() override;
-    void reset() override{};
+    void reset() override;
     Data::AppNavigation * navigation() { return &m_navigation; }
 
   private:

@@ -12,6 +12,7 @@ bool stringEndsWith(const char* str, const char* end);
 int filesWithExtension(const char* extension, External::Archive::File* files, int filesSize);
 void stringNCopy(char* dest, int max, const char* src, int len);
 const char * EndOfPrintableWord(const char * word, const char * end);
+const char * StartOfPrintableWord(const char * word, const char * start);
   
 }
 #endif

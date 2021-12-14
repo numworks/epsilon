@@ -26,6 +26,7 @@ poincare_src += $(addprefix poincare/src/,\
   right_square_bracket_layout.cpp \
   sequence_layout.cpp \
   sum_layout.cpp \
+  vector_layout.cpp \
   vertical_offset_layout.cpp \
 )
 

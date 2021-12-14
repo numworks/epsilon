@@ -27,6 +27,10 @@ ifeq (${MODEL}, n0100)
   endif
 endif
 
+ifeq ($(filter reader,$(apps_list)),)
+  HAS_READER := 1
+endif
+
 ifeq (${MODEL}, n0110)
   apps_list = ${EPSILON_APPS}
 else

@@ -16,6 +16,7 @@
 #include FT_FREETYPE_H
 
 #include "code_points.h"
+
 #include "../../ion/src/external/lz4/lz4hc.h"
 
 
@@ -49,17 +50,18 @@ int main(int argc, char * argv[]) {
   FT_Face face;
   image_t bitmap_image;
 
-  int expectedNumberOfArguments = 8;
+  int expectedNumberOfArguments = 9;
 #ifdef GENERATE_PNG
-  expectedNumberOfArguments = 9;
+  expectedNumberOfArguments = 10;
 #endif
   if (argc != expectedNumberOfArguments) {
 #ifdef GENERATE_PNG
-    fprintf(stderr, "Usage: %s font_file glyph_width glyph_height font_name output_cpp output_png\n", argv[0]);
+    fprintf(stderr, "Usage: %s font_file extended glyph_width glyph_height font_name output_cpp output_png\n", argv[0]);
 #else
-    fprintf(stderr, "Usage: %s font_file glyph_width glyph_height font_name output_cpp\n", argv[0]);
+    fprintf(stderr, "Usage: %s font_file extended glyph_width glyph_height font_name output_cpp\n", argv[0]);
 #endif
     fprintf(stderr, "  font_file: Path of the font file to load\n");
+    fprintf(stderr, "  extended: 0 if simple set of code points, else 1\n");
     fprintf(stderr, "  glyph_width: Width of bitmap glyphs, in pixels\n");
     fprintf(stderr, "  glyph_height: Height of bitmap glyphs, in pixels\n");
     fprintf(stderr, "  packed_glyph_width: Minimal glyph width in pixels. Pass 0 if unsure.\n");
@@ -73,15 +75,19 @@ int main(int argc, char * argv[]) {
   }
 
   char * font_file = argv[1];
-  int requested_glyph_width = atoi(argv[2]);
-  int requested_glyph_height = atoi(argv[3]);
-  int packed_glyph_width = atoi(argv[4]);
-  int packed_glyph_height = atoi(argv[5]);
-  char * font_name = argv[6];
-  char * output_cpp = argv[7];
+  int extended_set = atoi(argv[2]);
+  int requested_glyph_width = atoi(argv[3]);
+  int requested_glyph_height = atoi(argv[4]);
+  int packed_glyph_width = atoi(argv[5]);
+  int packed_glyph_height = atoi(argv[6]);
+  char * font_name = argv[7];
+  char * output_cpp = argv[8];
 #ifdef GENERATE_PNG
-  char * output_png = argv[8];
+  char * output_png = argv[9];
 #endif
+
+  uint32_t * CodePoints = extended_set ? ExtendedCodePoints : SimpleCodePoints;
+  int NumberOfCodePoints = extended_set ? NumberOfExtendedCodePoints : NumberOfSimpleCodePoints;
 
   ENSURE(!FT_Init_FreeType(&library), "Initializing library");
 

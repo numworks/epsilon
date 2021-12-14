@@ -6,8 +6,10 @@ Thanks to [Gabriel79](https://github.com/Gabriel79) for the original reader app,
 # Rich text format
 Reader app supports now a rich text format : 
 
- * `$` around a mathematical expression **without spaces** to render it
+ * `$` around a LaTeX expression to render it
  * `%` around a color-code (see below) to change the color of the text
+### LaTeX expressions
+You can read the documentation for the LaTeX Parser [here](TexParser.md).
 ### Color codes :
 |code|color|
 | --:| ---:|

@@ -117,12 +117,29 @@ const char * EndOfPrintableWord(const char * word, const char * end) {
   UTF8Decoder decoder(word);
   CodePoint codePoint = decoder.nextCodePoint();
   const char * result = word;
-  while (codePoint != '\n' && codePoint != ' ' && codePoint != '%') {
+  while (codePoint != '\n' && codePoint != ' ' && codePoint != '%' && codePoint != '$') {
     result = decoder.stringPosition();
     if (result >= end) {
       break;
     }
     codePoint = decoder.nextCodePoint();
+  }
+  return result;
+}
+
+const char * StartOfPrintableWord(const char * word, const char * start) {
+  if (word == start) {
+    return word;
+  }
+  UTF8Decoder decoder(start, word);
+  CodePoint codePoint = decoder.previousCodePoint();
+  const char * result = word;
+  while (codePoint != '\n' && codePoint != ' ' && codePoint != '%' && codePoint != '$') {
+    result = decoder.stringPosition();
+    if (result <= start) {
+      break;
+    }
+    codePoint = decoder.previousCodePoint();
   }
   return result;
 }

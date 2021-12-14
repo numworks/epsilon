@@ -23,6 +23,7 @@ class LayoutCursor final {
   friend class MatrixLayoutNode;
   friend class NthRootLayoutNode;
   friend class SequenceLayoutNode;
+  friend class VectorLayoutNode;
   friend class VerticalOffsetLayoutNode;
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;

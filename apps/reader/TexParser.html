@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>TexParser</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css">
+  <style>
+    /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+    code[class*="language-"],
+    pre[class*="language-"] {
+      color: #333;
+      background: none;
+      font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      text-align: left;
+      white-space: pre;
+      word-spacing: normal;
+      word-break: normal;
+      word-wrap: normal;
+      line-height: 1.4;
+
+      -moz-tab-size: 8;
+      -o-tab-size: 8;
+      tab-size: 8;
+
+      -webkit-hyphens: none;
+      -moz-hyphens: none;
+      -ms-hyphens: none;
+      hyphens: none;
+    }
+
+    /* Code blocks */
+    pre[class*="language-"] {
+      padding: .8em;
+      overflow: auto;
+      /* border: 1px solid #ddd; */
+      border-radius: 3px;
+      /* background: #fff; */
+      background: #f5f5f5;
+    }
+
+    /* Inline code */
+    :not(pre)>code[class*="language-"] {
+      padding: .1em;
+      border-radius: .3em;
+      white-space: normal;
+      background: #f5f5f5;
+    }
+
+    .token.comment,
+    .token.blockquote {
+      color: #969896;
+    }
+
+    .token.cdata {
+      color: #183691;
+    }
+
+    .token.doctype,
+    .token.punctuation,
+    .token.variable,
+    .token.macro.property {
+      color: #333;
+    }
+
+    .token.operator,
+    .token.important,
+    .token.keyword,
+    .token.rule,
+    .token.builtin {
+      color: #a71d5d;
+    }
+
+    .token.string,
+    .token.url,
+    .token.regex,
+    .token.attr-value {
+      color: #183691;
+    }
+
+    .token.property,
+    .token.number,
+    .token.boolean,
+    .token.entity,
+    .token.atrule,
+    .token.constant,
+    .token.symbol,
+    .token.command,
+    .token.code {
+      color: #0086b3;
+    }
+
+    .token.tag,
+    .token.selector,
+    .token.prolog {
+      color: #63a35c;
+    }
+
+    .token.function,
+    .token.namespace,
+    .token.pseudo-element,
+    .token.class,
+    .token.class-name,
+    .token.pseudo-class,
+    .token.id,
+    .token.url-reference .token.variable,
+    .token.attr-name {
+      color: #795da3;
+    }
+
+    .token.entity {
+      cursor: help;
+    }
+
+    .token.title,
+    .token.title .token.punctuation {
+      font-weight: bold;
+      color: #1d3e81;
+    }
+
+    .token.list {
+      color: #ed6a43;
+    }
+
+    .token.inserted {
+      background-color: #eaffea;
+      color: #55a532;
+    }
+
+    .token.deleted {
+      background-color: #ffecec;
+      color: #bd2c00;
+    }
+
+    .token.bold {
+      font-weight: bold;
+    }
+
+    .token.italic {
+      font-style: italic;
+    }
+
+
+    /* JSON */
+    .language-json .token.property {
+      color: #183691;
+    }
+
+    .language-markup .token.tag .token.punctuation {
+      color: #333;
+    }
+
+    /* CSS */
+    code.language-css,
+    .language-css .token.function {
+      color: #0086b3;
+    }
+
+    /* YAML */
+    .language-yaml .token.atrule {
+      color: #63a35c;
+    }
+
+    code.language-yaml {
+      color: #183691;
+    }
+
+    /* Ruby */
+    .language-ruby .token.function {
+      color: #333;
+    }
+
+    /* Markdown */
+    .language-markdown .token.url {
+      color: #795da3;
+    }
+
+    /* Makefile */
+    .language-makefile .token.symbol {
+      color: #795da3;
+    }
+
+    .language-makefile .token.variable {
+      color: #183691;
+    }
+
+    .language-makefile .token.builtin {
+      color: #0086b3;
+    }
+
+    /* Bash */
+    .language-bash .token.keyword {
+      color: #0086b3;
+    }
+
+    /* highlight */
+    pre[data-line] {
+      position: relative;
+      padding: 1em 0 1em 3em;
+    }
+
+    pre[data-line] .line-highlight-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: transparent;
+      display: block;
+      width: 100%;
+    }
+
+    pre[data-line] .line-highlight {
+      position: absolute;
+      left: 0;
+      right: 0;
+      padding: inherit 0;
+      margin-top: 1em;
+      background: hsla(24, 20%, 50%, .08);
+      background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+      pointer-events: none;
+      line-height: inherit;
+      white-space: pre;
+    }
+
+    pre[data-line] .line-highlight:before,
+    pre[data-line] .line-highlight[data-end]:after {
+      content: attr(data-start);
+      position: absolute;
+      top: .4em;
+      left: .6em;
+      min-width: 1em;
+      padding: 0 .5em;
+      background-color: hsla(24, 20%, 50%, .4);
+      color: hsl(24, 20%, 95%);
+      font: bold 65%/1.5 sans-serif;
+      text-align: center;
+      vertical-align: .3em;
+      border-radius: 999px;
+      text-shadow: none;
+      box-shadow: 0 1px white;
+    }
+
+    pre[data-line] .line-highlight[data-end]:after {
+      content: attr(data-end);
+      top: auto;
+      bottom: .4em;
+    }
+
+    html body {
+      font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+      background-color: #fff;
+      overflow: initial;
+      box-sizing: border-box;
+      word-wrap: break-word
+    }
+
+    html body>:first-child {
+      margin-top: 0
+    }
+
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5,
+    html body h6 {
+      line-height: 1.2;
+      margin-top: 1em;
+      margin-bottom: 16px;
+      color: #000
+    }
+
+    html body h1 {
+      font-size: 2.25em;
+      font-weight: 300;
+      padding-bottom: .3em
+    }
+
+    html body h2 {
+      font-size: 1.75em;
+      font-weight: 400;
+      padding-bottom: .3em
+    }
+
+    html body h3 {
+      font-size: 1.5em;
+      font-weight: 500
+    }
+
+    html body h4 {
+      font-size: 1.25em;
+      font-weight: 600
+    }
+
+    html body h5 {
+      font-size: 1.1em;
+      font-weight: 600
+    }
+
+    html body h6 {
+      font-size: 1em;
+      font-weight: 600
+    }
+
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5 {
+      font-weight: 600
+    }
+
+    html body h5 {
+      font-size: 1em
+    }
+
+    html body h6 {
+      color: #5c5c5c
+    }
+
+    html body strong {
+      color: #000
+    }
+
+    html body del {
+      color: #5c5c5c
+    }
+
+    html body a:not([href]) {
+      color: inherit;
+      text-decoration: none
+    }
+
+    html body a {
+      color: #08c;
+      text-decoration: none
+    }
+
+    html body a:hover {
+      color: #00a3f5;
+      text-decoration: none
+    }
+
+    html body img {
+      max-width: 100%
+    }
+
+    html body>p {
+      margin-top: 0;
+      margin-bottom: 16px;
+      word-wrap: break-word
+    }
+
+    html body>ul,
+    html body>ol {
+      margin-bottom: 16px
+    }
+
+    html body ul,
+    html body ol {
+      padding-left: 2em
+    }
+
+    html body ul.no-list,
+    html body ol.no-list {
+      padding: 0;
+      list-style-type: none
+    }
+
+    html body ul ul,
+    html body ul ol,
+    html body ol ol,
+    html body ol ul {
+      margin-top: 0;
+      margin-bottom: 0
+    }
+
+    html body li {
+      margin-bottom: 0
+    }
+
+    html body li.task-list-item {
+      list-style: none
+    }
+
+    html body li>p {
+      margin-top: 0;
+      margin-bottom: 0
+    }
+
+    html body .task-list-item-checkbox {
+      margin: 0 .2em .25em -1.8em;
+      vertical-align: middle
+    }
+
+    html body .task-list-item-checkbox:hover {
+      cursor: pointer
+    }
+
+    html body blockquote {
+      margin: 16px 0;
+      font-size: inherit;
+      padding: 0 15px;
+      color: #5c5c5c;
+      background-color: #f0f0f0;
+      border-left: 4px solid #d6d6d6
+    }
+
+    html body blockquote>:first-child {
+      margin-top: 0
+    }
+
+    html body blockquote>:last-child {
+      margin-bottom: 0
+    }
+
+    html body hr {
+      height: 4px;
+      margin: 32px 0;
+      background-color: #d6d6d6;
+      border: 0 none
+    }
+
+    html body table {
+      margin: 10px 0 15px 0;
+      border-collapse: collapse;
+      border-spacing: 0;
+      display: block;
+      width: 100%;
+      overflow: auto;
+      word-break: normal;
+      word-break: keep-all
+    }
+
+    html body table th {
+      font-weight: bold;
+      color: #000
+    }
+
+    html body table td,
+    html body table th {
+      border: 1px solid #d6d6d6;
+      padding: 6px 13px
+    }
+
+    html body dl {
+      padding: 0
+    }
+
+    html body dl dt {
+      padding: 0;
+      margin-top: 16px;
+      font-size: 1em;
+      font-style: italic;
+      font-weight: bold
+    }
+
+    html body dl dd {
+      padding: 0 16px;
+      margin-bottom: 16px
+    }
+
+    html body code {
+      font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+      font-size: .85em !important;
+      color: #000;
+      background-color: #f0f0f0;
+      border-radius: 3px;
+      padding: .2em 0
+    }
+
+    html body code::before,
+    html body code::after {
+      letter-spacing: -0.2em;
+      content: "\00a0"
+    }
+
+    html body pre>code {
+      padding: 0;
+      margin: 0;
+      font-size: .85em !important;
+      word-break: normal;
+      white-space: pre;
+      background: transparent;
+      border: 0
+    }
+
+    html body .highlight {
+      margin-bottom: 16px
+    }
+
+    html body .highlight pre,
+    html body pre {
+      padding: 1em;
+      overflow: auto;
+      font-size: .85em !important;
+      line-height: 1.45;
+      border: #d6d6d6;
+      border-radius: 3px
+    }
+
+    html body .highlight pre {
+      margin-bottom: 0;
+      word-break: normal
+    }
+
+    html body pre code,
+    html body pre tt {
+      display: inline;
+      max-width: initial;
+      padding: 0;
+      margin: 0;
+      overflow: initial;
+      line-height: inherit;
+      word-wrap: normal;
+      background-color: transparent;
+      border: 0
+    }
+
+    html body pre code:before,
+    html body pre tt:before,
+    html body pre code:after,
+    html body pre tt:after {
+      content: normal
+    }
+
+    html body p,
+    html body blockquote,
+    html body ul,
+    html body ol,
+    html body dl,
+    html body pre {
+      margin-top: 0;
+      margin-bottom: 16px
+    }
+
+    html body kbd {
+      color: #000;
+      border: 1px solid #d6d6d6;
+      border-bottom: 2px solid #c7c7c7;
+      padding: 2px 4px;
+      background-color: #f0f0f0;
+      border-radius: 3px
+    }
+
+    @media print {
+      html body {
+        background-color: #fff
+      }
+
+      html body h1,
+      html body h2,
+      html body h3,
+      html body h4,
+      html body h5,
+      html body h6 {
+        color: #000;
+        page-break-after: avoid
+      }
+
+      html body blockquote {
+        color: #5c5c5c
+      }
+
+      html body pre {
+        page-break-inside: avoid
+      }
+
+      html body table {
+        display: table
+      }
+
+      html body img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%
+      }
+
+      html body pre,
+      html body code {
+        word-wrap: break-word;
+        white-space: pre
+      }
+    }
+
+    .markdown-preview {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box
+    }
+
+    .markdown-preview .pagebreak,
+    .markdown-preview .newpage {
+      page-break-before: always
+    }
+
+    .markdown-preview pre.line-numbers {
+      position: relative;
+      padding-left: 3.8em;
+      counter-reset: linenumber
+    }
+
+    .markdown-preview pre.line-numbers>code {
+      position: relative
+    }
+
+    .markdown-preview pre.line-numbers .line-numbers-rows {
+      position: absolute;
+      pointer-events: none;
+      top: 1em;
+      font-size: 100%;
+      left: 0;
+      width: 3em;
+      letter-spacing: -1px;
+      border-right: 1px solid #999;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none
+    }
+
+    .markdown-preview pre.line-numbers .line-numbers-rows>span {
+      pointer-events: none;
+      display: block;
+      counter-increment: linenumber
+    }
+
+    .markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+      content: counter(linenumber);
+      color: #999;
+      display: block;
+      padding-right: .8em;
+      text-align: right
+    }
+
+    .markdown-preview .mathjax-exps .MathJax_Display {
+      text-align: center !important
+    }
+
+    .markdown-preview:not([for="preview"]) .code-chunk .btn-group {
+      display: none
+    }
+
+    .markdown-preview:not([for="preview"]) .code-chunk .status {
+      display: none
+    }
+
+    .markdown-preview:not([for="preview"]) .code-chunk .output-div {
+      margin-bottom: 16px
+    }
+
+    .scrollbar-style::-webkit-scrollbar {
+      width: 8px
+    }
+
+    .scrollbar-style::-webkit-scrollbar-track {
+      border-radius: 10px;
+      background-color: transparent
+    }
+
+    .scrollbar-style::-webkit-scrollbar-thumb {
+      border-radius: 5px;
+      background-color: rgba(150, 150, 150, 0.66);
+      border: 4px solid rgba(150, 150, 150, 0.66);
+      background-clip: content-box
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode]) {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      margin: 0;
+      padding: 0;
+      overflow: auto
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+      position: relative;
+      top: 0
+    }
+
+    @media screen and (min-width:914px) {
+      html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        padding: 2em calc(50% - 457px + 2em)
+      }
+    }
+
+    @media screen and (max-width:914px) {
+      html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        padding: 2em
+      }
+    }
+
+    @media screen and (max-width:450px) {
+      html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        font-size: 14px !important;
+        padding: 1em
+      }
+    }
+
+    @media print {
+      html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+        display: none
+      }
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+      position: fixed;
+      bottom: 8px;
+      left: 8px;
+      font-size: 28px;
+      cursor: pointer;
+      color: inherit;
+      z-index: 99;
+      width: 32px;
+      text-align: center;
+      opacity: .4
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+      opacity: 1
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100%;
+      padding: 32px 0 48px 0;
+      font-size: 14px;
+      box-shadow: 0 0 4px rgba(150, 150, 150, 0.33);
+      box-sizing: border-box;
+      overflow: auto;
+      background-color: inherit
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+      width: 8px
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+      border-radius: 10px;
+      background-color: transparent
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+      border-radius: 5px;
+      background-color: rgba(150, 150, 150, 0.66);
+      border: 4px solid rgba(150, 150, 150, 0.66);
+      background-clip: content-box
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+      text-decoration: none
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+      padding: 0 1.6em;
+      margin-top: .8em
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li {
+      margin-bottom: .8em
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+      list-style-type: none
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+      left: 300px;
+      width: calc(100% - 300px);
+      padding: 2em calc(50% - 457px - 150px);
+      margin: 0;
+      box-sizing: border-box
+    }
+
+    @media screen and (max-width:1274px) {
+      html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        padding: 2em
+      }
+    }
+
+    @media screen and (max-width:450px) {
+      html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        width: 100%
+      }
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview {
+      left: 50%;
+      transform: translateX(-50%)
+    }
+
+    html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+      display: none
+    }
+
+    /* Please visit the URL below for more information: */
+    /*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+  </style>
+</head>
+
+<body for="html-export">
+  <div class="mume markdown-preview  ">
+    <h1 class="mume-header" id="latex-parser">LaTeX Parser</h1>
+
+    <p>In the reader app, you can read a txt file. You can also read a txt file with LaTeX expression inside of it.</p>
+    <p>All the symbols you can use are listed here :</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:right">Command</th>
+          <th style="text-align:center">Output</th>
+          <th style="text-align:right"></th>
+          <th style="text-align:right">Command</th>
+          <th style="text-align:center">Output</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align:right">Math</td>
+          <td style="text-align:center">Expressions</td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:center"></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\frac{ab}{cd}</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mfrac>
+                        <mrow>
+                          <mi>a</mi>
+                          <mi>b</mi>
+                        </mrow>
+                        <mrow>
+                          <mi>c</mi>
+                          <mi>d</mi>
+                        </mrow>
+                      </mfrac>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\frac{ab}{cd}</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:1.2251079999999999em;vertical-align:-0.345em;"></span><span class="mord"><span
+                      class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span
+                          class="vlist-r"><span class="vlist" style="height:0.8801079999999999em;"><span
+                              style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span
+                                class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span
+                                    class="mord mathnormal mtight">c</span><span
+                                    class="mord mathnormal mtight">d</span></span></span></span><span
+                              style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span
+                                class="frac-line" style="border-bottom-width:0.04em;"></span></span><span
+                              style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span
+                                class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span
+                                    class="mord mathnormal mtight">ab</span></span></span></span></span><span
+                            class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist"
+                            style="height:0.345em;"><span></span></span></span></span></span><span
+                      class="mclose nulldelimiter"></span></span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\sqrt[n]{x}</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mroot>
+                        <mi>x</mi>
+                        <mi>n</mi>
+                      </mroot>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\sqrt[n]{x}</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:1.04em;vertical-align:-0.23972em;"></span><span class="mord sqrt"><span
+                      class="root"><span class="vlist-t"><span class="vlist-r"><span class="vlist"
+                            style="height:0.5516160000000001em;"><span style="top:-2.836336em;"><span class="pstrut"
+                                style="height:2.5em;"></span><span class="sizing reset-size6 size1 mtight"><span
+                                  class="mord mtight"><span
+                                    class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span><span
+                      class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist"
+                          style="height:0.8002800000000001em;"><span class="svg-align" style="top:-3em;"><span
+                              class="pstrut" style="height:3em;"></span><span class="mord"
+                              style="padding-left:0.833em;"><span class="mord mathnormal">x</span></span></span><span
+                            style="top:-2.76028em;"><span class="pstrut" style="height:3em;"></span><span
+                              class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em"
+                                viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice">
+                                <path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z" />
+                              </svg></span></span></span><span class="vlist-s">&#x200B;</span></span><span
+                        class="vlist-r"><span class="vlist"
+                          style="height:0.23972em;"><span></span></span></span></span></span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right">Math</td>
+          <td style="text-align:center">Symbols</td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:center"></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\times</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#xD7;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\times</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.66666em;vertical-align:-0.08333em;"></span><span
+                    class="mord">&#xD7;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\div</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#xF7;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\div</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.66666em;vertical-align:-0.08333em;"></span><span
+                    class="mord">&#xF7;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\forall</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x2200;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\forall</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.69444em;vertical-align:0em;"></span><span
+                    class="mord">&#x2200;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\exists</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x2203;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\exists</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.69444em;vertical-align:0em;"></span><span
+                    class="mord">&#x2203;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\partial</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x2202;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\partial</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.69444em;vertical-align:0em;"></span><span class="mord"
+                    style="margin-right:0.05556em;">&#x2202;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\pm</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#xB1;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\pm</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.66666em;vertical-align:-0.08333em;"></span><span
+                    class="mord">&#xB1;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\infty</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x221E;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\infty</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span
+                    class="mord">&#x221E;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\approx</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x2248;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\approx</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.48312em;vertical-align:0em;"></span><span
+                    class="mrel">&#x2248;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\neq</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo mathvariant="normal">&#x2260;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\neq</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mrel"><span
+                      class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut"
+                              style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span
+                              class="inner"><span class="mord"><span class="mrel">&#xE020;</span></span></span><span
+                              class="fix"></span></span></span></span></span><span
+                      class="mrel">=</span></span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\equiv</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x2261;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\equiv</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.46375em;vertical-align:0em;"></span><span
+                    class="mrel">&#x2261;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\leq</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x2264;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\leq</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span
+                    class="mrel">&#x2264;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\geq</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x2265;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\geq</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span
+                    class="mrel">&#x2265;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right">Simple</td>
+          <td style="text-align:center">Arrows</td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right">Double</td>
+          <td style="text-align:center">Arrows</td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\leftarrow</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x2190;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\leftarrow</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.36687em;vertical-align:0em;"></span><span
+                    class="mrel">&#x2190;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\Leftarrow</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x21D0;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Leftarrow</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.36687em;vertical-align:0em;"></span><span
+                    class="mrel">&#x21D0;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\rightarrow</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x2192;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\rightarrow</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.36687em;vertical-align:0em;"></span><span
+                    class="mrel">&#x2192;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\Rightarrow</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x21D2;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Rightarrow</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.36687em;vertical-align:0em;"></span><span
+                    class="mrel">&#x21D2;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\uparrow</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x2191;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\uparrow</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span
+                    class="mrel">&#x2191;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\Uparrow</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x21D1;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Uparrow</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span
+                    class="mrel">&#x21D1;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\downarrow</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x2193;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\downarrow</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span
+                    class="mrel">&#x2193;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\Downarrow</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x21D3;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Downarrow</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span
+                    class="mrel">&#x21D3;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\leftrightarrow</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x2194;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\leftrightarrow</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.36687em;vertical-align:0em;"></span><span
+                    class="mrel">&#x2194;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:center"></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\updownarrow</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mo>&#x2195;</mo>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\updownarrow</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:1em;vertical-align:-0.25em;"></span><span
+                    class="mrel">&#x2195;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:center"></td>
+        </tr>
+        <tr>
+          <td style="text-align:right">Greek Capital</td>
+          <td style="text-align:center">Letters</td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right">Greek Small</td>
+          <td style="text-align:center">Letters</td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Alpha</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">A</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Alpha</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">A</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\alpha</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3B1;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\alpha</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.0037em;">&#x3B1;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Beta</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">B</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Beta</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">B</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\beta</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3B2;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\beta</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.05278em;">&#x3B2;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Gamma</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x393;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Gamma</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x393;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\gamma</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3B3;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\gamma</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.05556em;">&#x3B3;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Delta</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x394;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Delta</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x394;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\delta</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3B4;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\delta</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.03785em;">&#x3B4;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Epsilon</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">E</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Epsilon</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">E</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\epsilon</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3F5;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\epsilon</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span
+                    class="mord mathnormal">&#x3F5;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Zeta</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">Z</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Zeta</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">Z</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\zeta</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3B6;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\zeta</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.07378em;">&#x3B6;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Eta</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">H</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Eta</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">H</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\eta</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3B7;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\eta</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.03588em;">&#x3B7;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Theta</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x398;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Theta</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x398;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\theta</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3B8;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\theta</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.02778em;">&#x3B8;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Iota</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">I</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Iota</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">I</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\iota</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3B9;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\iota</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span
+                    class="mord mathnormal">&#x3B9;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Kappa</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">K</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Kappa</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">K</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\kappa</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3BA;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\kappa</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span
+                    class="mord mathnormal">&#x3BA;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Lambda</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x39B;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Lambda</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x39B;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\lambda</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3BB;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\lambda</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.69444em;vertical-align:0em;"></span><span
+                    class="mord mathnormal">&#x3BB;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Mu</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">M</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Mu</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">M</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\mu</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3BC;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\mu</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.625em;vertical-align:-0.19444em;"></span><span
+                    class="mord mathnormal">&#x3BC;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Nu</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">N</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Nu</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">N</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\nu</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3BD;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\nu</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.06366em;">&#x3BD;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Xi</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x39E;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Xi</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x39E;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\xi</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3BE;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\xi</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.04601em;">&#x3BE;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Omicron</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">O</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Omicron</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">O</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:center"></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Pi</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x3A0;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Pi</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x3A0;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\pi</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3C0;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\pi</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.03588em;">&#x3C0;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Rho</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">P</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Rho</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">P</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\rho</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3C1;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\rho</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.625em;vertical-align:-0.19444em;"></span><span
+                    class="mord mathnormal">&#x3C1;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Sigma</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x3A3;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Sigma</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x3A3;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\sigma</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3C3;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\sigma</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.03588em;">&#x3C3;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Tau</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">T</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Tau</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">T</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\tau</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3C4;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\tau</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.1132em;">&#x3C4;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Upsilon</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x3A5;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Upsilon</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x3A5;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\upsilon</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3C5;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\upsilon</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.03588em;">&#x3C5;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Phi</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x3A6;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Phi</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x3A6;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\phi</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3D5;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\phi</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span
+                    class="mord mathnormal">&#x3D5;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Chi</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">X</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Chi</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord mathrm">X</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\chi</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3C7;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\chi</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.625em;vertical-align:-0.19444em;"></span><span
+                    class="mord mathnormal">&#x3C7;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Psi</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x3A8;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Psi</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x3A8;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\psi</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3C8;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\psi</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.03588em;">&#x3C8;</span></span></span></span></td>
+        </tr>
+        <tr>
+          <td style="text-align:right"><code>\Omega</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi mathvariant="normal">&#x3A9;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\Omega</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.68333em;vertical-align:0em;"></span><span
+                    class="mord">&#x3A9;</span></span></span></span></td>
+          <td style="text-align:right"></td>
+          <td style="text-align:right"><code>\omega</code></td>
+          <td style="text-align:center"><span class="katex"><span class="katex-mathml"><math
+                  xmlns="http://www.w3.org/1998/Math/MathML">
+                  <semantics>
+                    <mrow>
+                      <mi>&#x3C9;</mi>
+                    </mrow>
+                    <annotation encoding="application/x-tex">\omega</annotation>
+                  </semantics>
+                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut"
+                    style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal"
+                    style="margin-right:0.03588em;">&#x3C9;</span></span></span></span></td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>

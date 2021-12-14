@@ -40,6 +40,7 @@ public:
     RightParenthesisLayout,
     RightSquareBracketLayout,
     SumLayout,
+    VectorLayout,
     VectorNormLayout,
     VerticalOffsetLayout
   };

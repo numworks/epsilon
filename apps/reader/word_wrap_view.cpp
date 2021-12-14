@@ -1,6 +1,7 @@
 
 #include "word_wrap_view.h"
 #include "utility.h"
+#include "tex_parser.h"
 #include <poincare/expression.h>
 #include "../shared/poincare_helpers.h"
 #include <poincare/undefined.h>
@@ -40,16 +41,17 @@ void WordWrapTextView::previousPage() {
   const int charWidth = m_font->glyphSize().width();
   const int charHeight = m_font->glyphSize().height();
 
-  const char * endOfWord = text() + m_pageOffset - 1;
-  const char * startOfWord = UTF8Helper::BeginningOfWord(text(), endOfWord);
+  const char * endOfFile = text() + m_length;
+  const char * endOfWord = text() + m_pageOffset;
+  const char * startOfWord = StartOfPrintableWord(endOfWord, text());
 
   KDSize textSize = KDSizeZero;
 
   KDPoint textEndPosition(m_frame.width() - k_margin, m_frame.height() - k_margin);
 
   while(startOfWord>=text()) {
-    startOfWord = UTF8Helper::BeginningOfWord(text(), endOfWord);
-    endOfWord = UTF8Helper::EndOfWord(startOfWord);
+    startOfWord = StartOfPrintableWord(endOfWord-1, text());
+    //endOfWord = EndOfPrintableWord(startOfWord, endOfFile);
 
     if (*startOfWord == '%') {
       if (updateTextColorBackward(startOfWord)) {
@@ -57,20 +59,28 @@ void WordWrapTextView::previousPage() {
         continue;
       }
     }
-    if (*startOfWord == '$' && *(endOfWord-1) == '$') {
-      const int wordMaxLength = 128;
-      char word[wordMaxLength];
-      stringNCopy(word, wordMaxLength, startOfWord + 1, endOfWord-startOfWord-2);
-      Poincare::Expression expr = Poincare::Expression::Parse(word, nullptr);
-      if (expr.isUninitialized()) {
-        expr = Poincare::Undefined::Builder();
+
+    if (*endOfWord == '$') {
+      startOfWord = endOfWord - 1;
+      while (*startOfWord != '$') {
+        if (startOfWord < text()) {
+          break; // File isn't rightly formated
+        }
+        startOfWord --;
       }
-      Poincare::Layout layout = Shared::PoincareHelpers::CreateLayout(expr);
-      textSize = layout.layoutSize();
-      
+      startOfWord --;
+
+      TexParser parser = TexParser(startOfWord + 1, endOfWord - 2);
+      Poincare::Layout layout = parser.getLayout();
+      textSize = layout.layoutSize(); 
     }
     else {
-      textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
+      if (*startOfWord == '\\' || *(startOfWord + 1) == '$') {
+        textSize = m_font->stringSizeUntil(startOfWord + 1, endOfWord);
+      }
+      else {
+        textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
+      }
     }
     KDPoint textStartPosition = KDPoint(textEndPosition.x()-textSize.width(), textEndPosition.y());
 
@@ -111,7 +121,7 @@ void WordWrapTextView::previousPage() {
     m_pageOffset = 0;
   }
   else {
-    m_pageOffset = UTF8Helper::EndOfWord(startOfWord) - text() + 1;
+    m_pageOffset = EndOfPrintableWord(startOfWord, endOfFile) - text() + 1;
   }
   markRectAsDirty(bounds());
 }
@@ -121,7 +131,12 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
 
   const char * endOfFile = text() + m_length;
   const char * startOfWord = text() + m_pageOffset;
-  const char * endOfWord = EndOfPrintableWord(startOfWord, endOfFile);
+  const char * endOfWord;
+  
+  if (*startOfWord != '$') {
+    endOfWord = EndOfPrintableWord(startOfWord, endOfFile);
+  } // Else we don't need to update endOfWord
+
   KDPoint textPosition(k_margin, k_margin);
 
   const int wordMaxLength = 128;
@@ -154,18 +169,26 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
         continue;
       }
     }
-    
-    if (*startOfWord == '$' && *(endOfWord-1) == '$') { // Look for expression
-      stringNCopy(word, wordMaxLength, startOfWord + 1, endOfWord-startOfWord-2);
-      Poincare::Expression expr = Poincare::Expression::Parse(word, nullptr);
-      if (expr.isUninitialized()) {
-        expr = Poincare::Undefined::Builder();
+
+    if (*startOfWord == '$') { // Look for expression
+      endOfWord = startOfWord + 1;
+      while (*endOfWord != '$') {
+        if (endOfWord > endOfFile) {
+          break; // If we are here, it's bad...
+        }
+        endOfWord ++;
       }
-      layout = Shared::PoincareHelpers::CreateLayout(expr);
+      endOfWord ++;
+
+      TexParser parser = TexParser(startOfWord + 1, endOfWord - 1);
+      layout = parser.getLayout();
       textSize = layout.layoutSize();
       toDraw = ToDraw::Expression;
     }
     else {
+      if (*startOfWord == '\\' || *(startOfWord + 1) == '$') {
+        startOfWord ++;
+      }
       textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
       stringNCopy(word, wordMaxLength, startOfWord, endOfWord-startOfWord);
       toDraw = ToDraw::Text;
@@ -187,7 +210,7 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
     }
 
     if (toDraw == ToDraw::Expression) {
-      layout.draw(ctx, textPosition, m_textColor);
+      layout.draw(ctx, textPosition, m_textColor, m_backgroundColor);
     }
     else if (toDraw == ToDraw::Text) {
       ctx->drawString(word, textPosition, m_font, m_textColor, m_backgroundColor);
@@ -224,7 +247,10 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
     }
 
     textPosition = nextTextPosition;
-    endOfWord = EndOfPrintableWord(startOfWord+1, endOfFile);
+
+    if (*startOfWord != '$') {
+      endOfWord = EndOfPrintableWord(startOfWord+1, endOfFile);
+    } // Else we don't need to update endOfWord
   }
 
   m_nextPageOffset = startOfWord - text();

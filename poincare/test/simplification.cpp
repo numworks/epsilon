@@ -1785,3 +1785,12 @@ QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {
   // Multiplication overflows --> don't reduce
   assert_parsed_expression_simplify_to("20^23×20^23×20^23×20^23×20^23×20^23×25^23×20^23×20^23×20^23×20^23×20^23×20^23×25^23", "20^23×20^23×20^23×20^23×20^23×20^23×25^23×20^23×20^23×20^23×20^23×20^23×20^23×25^23");
 }
+
+QUIZ_CASE(poincare_simplification_list) {
+  assert_parsed_expression_simplify_to("{}", "{}");
+  // Inner simplifications
+  assert_parsed_expression_simplify_to("{1,2,3}", "{1,2,3}");
+  assert_parsed_expression_simplify_to("{1,8/4,27/45}", "{1,2,3/5}");
+  assert_parsed_expression_simplify_to("{1,2+2,3^2}", "{1,4,9}");
+  assert_parsed_expression_simplify_to("{-1,1/0}", "{-1,undef}");
+}

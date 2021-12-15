@@ -69,7 +69,8 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
       && MP_TOKEN_KW_TRY        + 1 == MP_TOKEN_KW_WHILE
       && MP_TOKEN_KW_WHILE      + 1 == MP_TOKEN_KW_WITH
       && MP_TOKEN_KW_WITH       + 1 == MP_TOKEN_KW_YIELD
-      && MP_TOKEN_KW_YIELD      + 1 == MP_TOKEN_OP_TILDE,
+      && MP_TOKEN_KW_YIELD      + 1 == MP_TOKEN_OP_ASSIGN
+      && MP_TOKEN_OP_ASSIGN     + 1 == MP_TOKEN_OP_TILDE,
     "MP_TOKEN order changed, so Code::PythonTextArea::TokenColor might need to change too.");
   if (tokenKind >= MP_TOKEN_KW_FALSE && tokenKind <= MP_TOKEN_KW_YIELD) {
     return KeywordColor;
@@ -122,7 +123,8 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
 
   if ((tokenKind >= MP_TOKEN_OP_TILDE && tokenKind <= MP_TOKEN_DEL_DBL_STAR_EQUAL)
       || tokenKind == MP_TOKEN_DEL_EQUAL
-      || tokenKind == MP_TOKEN_DEL_MINUS_MORE)
+      || tokenKind == MP_TOKEN_DEL_MINUS_MORE
+      || tokenKind == MP_TOKEN_OP_ASSIGN)
   {
     return OperatorColor;
   }

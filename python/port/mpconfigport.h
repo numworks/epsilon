@@ -97,7 +97,7 @@
 #define MICROPY_PY_STRUCT (0)
 
 // Whether to provide "sys" module
-#define MICROPY_PY_SYS (1)
+#define MICROPY_PY_SYS (0)
 
 // Whether to provide the "urandom" module
 #define MICROPY_PY_URANDOM (1)

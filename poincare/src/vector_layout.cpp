@@ -13,6 +13,7 @@ namespace Poincare
     {0xf3, 0x2c, 0xd9, 0xff, 0xff},
     {0xff, 0xf7, 0xff, 0xff, 0xff}
   };
+
   void VectorLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
     if (cursor->layoutNode() == childAtIndex(0)
       && cursor->position() == LayoutCursor::Position::Left)

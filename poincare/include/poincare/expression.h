@@ -67,6 +67,7 @@ class Expression : public TreeHandle {
   friend class Integral;
   friend class InvNorm;
   friend class LeastCommonMultiple;
+  friend class List;
   friend class Logarithm;
   friend class Matrix;
   friend class MatrixDimension;

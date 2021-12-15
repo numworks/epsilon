@@ -108,6 +108,7 @@ poincare_src += $(addprefix poincare/src/,\
   inv_norm.cpp \
   layout_helper.cpp \
   least_common_multiple.cpp \
+  list.cpp \
   logarithm.cpp \
   matrix.cpp \
   matrix_complex.cpp \

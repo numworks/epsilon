@@ -295,6 +295,41 @@ QUIZ_CASE(poincare_parsing_matrices) {
   assert_text_not_parsable("[,]");
 }
 
+template<size_t N>
+List BuildList(Expression (&elements)[N]) {
+  List l = List::Builder();
+  for (int i = 0; i < N; i++) {
+    l.addChildAtIndexInPlace(elements[i], i, i);
+  }
+  return l;
+}
+
+QUIZ_CASE(poincare_parse_lists) {
+  assert_parsed_expression_is("{}", List::Builder());
+  {
+    Expression elements[] = { BasedInteger::Builder(1) };
+    assert_parsed_expression_is("{1}", BuildList(elements));
+  }
+  {
+    Expression elements[] = { BasedInteger::Builder(1), BasedInteger::Builder(2), BasedInteger::Builder(3) };
+    assert_parsed_expression_is("{1,2,3}", BuildList(elements));
+  }
+  {
+    Expression inner[] = { BasedInteger::Builder(2), BasedInteger::Builder(3) };
+    Expression outer[] = { BasedInteger::Builder(1), BuildList(inner), BasedInteger::Builder(4) };
+    assert_parsed_expression_is("{1,{2,3},4}", BuildList(outer));
+  }
+  assert_text_not_parsable("{");
+  assert_text_not_parsable("{{");
+  assert_text_not_parsable("}");
+  assert_text_not_parsable("}}");
+  assert_text_not_parsable("}{");
+  assert_text_not_parsable("{,}");
+  assert_text_not_parsable("{1,2,}");
+  assert_text_not_parsable("{1,,3}");
+  assert_text_not_parsable("{,2,3}");
+}
+
 QUIZ_CASE(poincare_parsing_constants) {
   for (ConstantNode::ConstantInfo info : Constant::k_constants) {
     if (info.unit() == nullptr) {

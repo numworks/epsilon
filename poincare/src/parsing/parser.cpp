@@ -78,7 +78,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseCaretWithParenthesis, // Token::CaretWithParenthesis
     &Parser::parseMatrix,          // Token::LeftBracket
     &Parser::parseLeftParenthesis, // Token::LeftParenthesis
-    &Parser::parseUnexpected,      // Token::LeftBrace
+    &Parser::parseList,            // Token::LeftBrace
     &Parser::parseLeftSystemParenthesis, // Token::LeftSystemParenthesis
     &Parser::parseEmpty,           // Token::Empty
     &Parser::parseConstant,        // Token::Constant
@@ -632,6 +632,30 @@ void Parser::defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & 
     leftHandSide = Parenthesis::Builder(leftHandSide);
   }
   isThereImplicitMultiplication();
+}
+
+void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
+  if (!leftHandSide.isUninitialized()) {
+    m_status = Status::Error; //FIXME
+    return;
+  }
+  List result = List::Builder();
+  if (!popTokenIfType(Token::RightBrace)) {
+    Expression commaSeparatedList = parseCommaSeparatedList();
+    if (m_status != Status::Progress) {
+      // There has been an error during the parsing of the comma separated list
+      return;
+    }
+    if (!popTokenIfType(Token::RightBrace)) {
+      m_status = Status::Error; // Right brace missing.
+      return;
+    }
+    int numberOfElements = commaSeparatedList.numberOfChildren();
+    for (int i = 0; i < numberOfElements; i++) {
+      result.addChildAtIndexInPlace(commaSeparatedList.childAtIndex(i), i, i);
+    }
+  }
+  leftHandSide = result;
 }
 
 }

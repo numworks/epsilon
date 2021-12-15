@@ -338,6 +338,7 @@ template InvNorm TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(const Tuple
 template LeastCommonMultiple TreeHandle::NAryBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);
 template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayout, LeftParenthesisLayoutNode>(const Tuple &);
 template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(const Tuple &);
+template List TreeHandle::NAryBuilder<List, ListNode>(const Tuple &);
 template Logarithm TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2> >(const Tuple &);
 template Matrix TreeHandle::NAryBuilder<Matrix, MatrixNode>(const Tuple &);
 template MatrixComplex<double> TreeHandle::NAryBuilder<MatrixComplex<double>, MatrixComplexNode<double> >(const Tuple &);

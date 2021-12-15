@@ -82,17 +82,19 @@ SECTIONS {
     /* The compiler may choose to allocate uninitialized global variables as
      * COMMON blocks. This can be disabled with -fno-common if needed. */
     *(COMMON)
-    _heap_start = .;
+    _app_sandbox_start = .;
     KEEP(*(.bss.App_buffer))
     _bss_section_end_ram = .;
     *(.bss.*)
     _bss_section_assert_end_ram = .;
-    ASSERT (( _bss_section_assert_end_ram == _bss_section_assert_end_ram), ".bss.App_buffer section should be the last symbol of bss to be included in the heap range.");
+    ASSERT (( _bss_section_assert_end_ram == _bss_section_assert_end_ram), ".bss.App_buffer section should be the last symbol of bss to be included in the app sandbox range.");
   } >SRAM
 
   .heap : {
+    _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
     . = (ORIGIN(SRAM) + LENGTH(SRAM) - USERLAND_STACK_LENGTH);
+    _app_sandbox_end = .;
     _heap_end = .;
   } >SRAM
 

@@ -698,26 +698,47 @@ void Expression::cloneAndSimplifyAndApproximate(Expression * simplifiedExpressio
   // Step 2: we approximate and beautify the reduced expression
   /* Case 1: the reduced expression is a matrix: We scan the matrix children to
    * beautify them with the right complex format. */
-  if (e.type() == ExpressionNode::Type::Matrix) {
-    Matrix m = static_cast<Matrix &>(e);
-    *simplifiedExpression = Matrix::Builder();
-    if (approximateExpression) {
-      *approximateExpression = Matrix::Builder();
+  /* FIXME Code is heavily duplicated between List and Matrices */
+  if (e.type() == ExpressionNode::Type::Matrix || e.type() == ExpressionNode::Type::List) {
+    if (e.type() == ExpressionNode::Type::Matrix) {
+      *simplifiedExpression = Matrix::Builder();
+      if (approximateExpression) {
+        *approximateExpression = Matrix::Builder();
+      }
+    } else {
+      assert(e.type() == ExpressionNode::Type::List);
+      *simplifiedExpression = List::Builder();
+      if (approximateExpression) {
+        *approximateExpression = List::Builder();
+      }
     }
     for (int i = 0; i < e.numberOfChildren(); i++) {
       Expression simplifiedChild;
       Expression approximateChild = approximateExpression ? Expression() : nullptr;
       e.childAtIndex(i).beautifyAndApproximateScalar(&simplifiedChild, &approximateChild, userReductionContext, context, complexFormat, angleUnit);
-      static_cast<Matrix *>(simplifiedExpression)->addChildAtIndexInPlace(simplifiedChild, i, i);
-      if (approximateExpression) {
-        /* Clone the child in case it was set to the same node as simplified
-         * child. This can happen when beautifying an unreduced matrix. */
-        static_cast<Matrix *>(approximateExpression)->addChildAtIndexInPlace(approximateChild.clone(), i, i);
+      if (e.type() == ExpressionNode::Type::Matrix) {
+        static_cast<Matrix *>(simplifiedExpression)->addChildAtIndexInPlace(simplifiedChild, i, i);
+        if (approximateExpression) {
+          /* Clone the child in case it was set to the same node as simplified
+           * child. This can happen when beautifying an unreduced matrix. */
+          static_cast<Matrix *>(approximateExpression)->addChildAtIndexInPlace(approximateChild.clone(), i, i);
+        }
+      } else {
+        assert(e.type() == ExpressionNode::Type::List);
+        static_cast<List *>(simplifiedExpression)->addChildAtIndexInPlace(simplifiedChild, i, i);
+        if (approximateExpression) {
+          /* Clone the child in case it was set to the same node as simplified
+           * child. This can happen when beautifying an unreduced matrix. */
+          static_cast<List *>(approximateExpression)->addChildAtIndexInPlace(approximateChild.clone(), i, i);
+        }
       }
     }
-    static_cast<Matrix *>(simplifiedExpression)->setDimensions(m.numberOfRows(), m.numberOfColumns());
-    if (approximateExpression) {
-      static_cast<Matrix *>(approximateExpression)->setDimensions(m.numberOfRows(), m.numberOfColumns());
+    if (e.type() == ExpressionNode::Type::Matrix) {
+      Matrix m = static_cast<Matrix &>(e);
+      static_cast<Matrix *>(simplifiedExpression)->setDimensions(m.numberOfRows(), m.numberOfColumns());
+      if (approximateExpression) {
+        static_cast<Matrix *>(approximateExpression)->setDimensions(m.numberOfRows(), m.numberOfColumns());
+      }
     }
   } else {
     /* Case 3: the reduced expression is scalar or too complex to respect the

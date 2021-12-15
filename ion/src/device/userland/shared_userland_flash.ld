@@ -77,13 +77,17 @@ SECTIONS {
     . = ALIGN(4);
     _bss_section_start_ram = .;
     *(.bss)
-    *(.bss.*)
+    *(.bss._*)
+    *(.bss.[a-z]*)
     /* The compiler may choose to allocate uninitialized global variables as
      * COMMON blocks. This can be disabled with -fno-common if needed. */
     *(COMMON)
     _heap_start = .;
-    KEEP(*(.app_buffer))
+    KEEP(*(.bss.App_buffer))
     _bss_section_end_ram = .;
+    *(.bss.*)
+    _bss_section_assert_end_ram = .;
+    ASSERT (( _bss_section_assert_end_ram == _bss_section_assert_end_ram), ".bss.App_buffer section should be the last symbol of bss to be included in the heap range.");
   } >SRAM
 
   .heap : {

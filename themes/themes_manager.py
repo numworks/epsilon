@@ -70,7 +70,16 @@ def get_data(theme, path):
 
     return data
 
-
+def theme_to_dict(data):
+    r = {}
+    for key in data["colors"].keys():
+        if type(data["colors"][key]) is str:
+            r[key]=data["colors"][key]
+        else:
+            for sub_key in data["colors"][key].keys():
+                r[key+sub_key] = data["colors"][key][sub_key]
+    return r
+        
 def write_palette_h(data, file_p):
     """
     Write the header to file_p
@@ -115,17 +124,9 @@ def write_palette_h(data, file_p):
         "Cyan": "00ffff",
     }
 
-    for key in data["colors"].keys():
-        if type(data["colors"][key]) is str:
-            file_p.write("  constexpr static KDColor " + key + " = KDColor::RGB24(0x" + data["colors"][key] + ");\n")
-            if defaults.keys().__contains__(key):
-                del defaults[key]
-        else:
-            for sub_key in data["colors"][key].keys():
-                file_p.write("  constexpr static KDColor " + key + sub_key + " = KDColor::RGB24(0x" + data["colors"][key][sub_key] + ");\n")
-            if defaults.keys().__contains__(key+sub_key):
-                del defaults[key+sub_key]
-
+    # First apply a fallback theme to ensure backwards compatibility
+    defaults.update(theme_to_dict(get_data("upsilon_light",os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "themes" + os.path.sep + "local")))
+    defaults.update(theme_to_dict(data))
     for key in defaults.keys():
         file_p.write("  constexpr static KDColor " + key + " = KDColor::RGB24(0x" + defaults[key] + ");\n")
 

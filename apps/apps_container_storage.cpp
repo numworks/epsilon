@@ -54,9 +54,9 @@ private:
 
 
 void * AppsContainerStorage::currentAppBuffer() {
-  /* We use the # char to be able to link this symbol at a specific location,
+  /* We use the $ char to be able to link this symbol at a specific location,
    * namely, the end of bss section, in order to extend the external app
    * sandbox range. */
-  static Apps s_apps __attribute__((section(".bss.#app_buffer")));
+  static Apps s_apps __attribute__((section(".bss.$app_buffer")));
   return &s_apps;
 }

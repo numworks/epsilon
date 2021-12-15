@@ -49,6 +49,7 @@ class List : public Expression {
 public:
   List(const ListNode * n) : Expression(n) {}
   static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
+  using TreeHandle::addChildAtIndexInPlace;
 };
 
 }

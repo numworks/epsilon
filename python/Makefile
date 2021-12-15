@@ -199,6 +199,13 @@ endif
 $(call object_for,python/src/py/objmodule.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
 $(call object_for,python/src/extmod/modurandom.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
 
+# Rename usys to sys
+# In order to change the name of the micropython module 'usys' to 'usys'
+# (without altering micropython files), we redefined the macro MP_QSTR_usys
+# by DMP_QSTR_sys.
+$(call object_for,python/src/py/objmodule.c): SFLAGS += -DMP_QSTR_usys="MP_QSTR_sys"
+$(call object_for,python/src/extmod/modusys.c): SFLAGS += -DMP_QSTR_usys="MP_QSTR_sys"
+
 # Handle upward-growing stack
 # Some platforms such as emscripten have a stack that grows up. We've rewritten
 # the stack control file to handle this case.

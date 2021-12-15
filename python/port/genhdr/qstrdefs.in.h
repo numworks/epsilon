@@ -9,7 +9,8 @@
  * - "cat build/genhdr/qstrdefs.preprocessed.h|grep '^Q'|uniq". CAUTION: the
  *   order is important, don't sort.
  * - Insert the result below in the MicroPython QSTRs section
- * - remove "QSTR(urandom)" as we renamed it to random */
+ * - remove "QSTR(urandom)" as we renamed it to random 
+ * - remove "QSTR(usys)" as we renamed it to sys */
 
 // Global configuration
 QCFG(BYTES_IN_LEN, (1))
@@ -331,7 +332,7 @@ Q(union)
 Q(update)
 Q(upper)
 Q(random)
-Q(usys)
+Q(sys)
 Q(value)
 Q(values)
 Q(version)

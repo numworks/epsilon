@@ -403,7 +403,7 @@ const ToolboxMessageTree OsModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonOsCommandListdir, I18n::Message::PythonOsListdir, false)
 };
 
-#ifdef MICROPY_PY_SYS
+#if MICROPY_PY_SYS
 const ToolboxMessageTree SysModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportSys, I18n::Message::PythonImportSys, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromSys, I18n::Message::PythonImportSys, false),
@@ -429,7 +429,7 @@ const ToolboxMessageTree modulesChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::KandinskyModule, KandinskyModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::IonModule, IonModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::OsModule, OsModuleChildren),
-#ifdef MICROPY_PY_SYS
+#if MICROPY_PY_SYS
   ToolboxMessageTree::Node(I18n::Message::SysModule, SysModuleChildren),
 #endif
   ToolboxMessageTree::Node(I18n::Message::TimeModule, TimeModuleChildren)

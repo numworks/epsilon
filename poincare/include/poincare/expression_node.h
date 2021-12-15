@@ -92,6 +92,7 @@ public:
     InvBinom,
     InvNorm,
     LeastCommonMultiple,
+    List,
     Logarithm,
     MatrixTrace,
     NaperianLogarithm,

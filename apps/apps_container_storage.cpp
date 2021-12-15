@@ -54,6 +54,6 @@ private:
 
 
 void * AppsContainerStorage::currentAppBuffer() {
-  static Apps s_apps __attribute__((section(".app_buffer")));
+  static Apps s_apps __attribute__((section(".bss.App_buffer")));
   return &s_apps;
 }

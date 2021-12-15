@@ -87,7 +87,7 @@ SECTIONS {
     _bss_section_end_ram = .;
     *(.bss.*)
     _bss_section_assert_end_ram = .;
-    ASSERT (( _bss_section_assert_end_ram == _bss_section_assert_end_ram), ".bss.App_buffer section should be the last symbol of bss to be included in the app sandbox range.");
+    ASSERT (( _bss_section_end_ram == _bss_section_assert_end_ram), ".bss.#app_buffer section should be the last symbol of bss to be included in the app sandbox range.");
   } >SRAM
 
   .heap : {

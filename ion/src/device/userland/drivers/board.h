@@ -10,7 +10,7 @@ namespace Board {
 
 void switchExecutableSlot(uint32_t leaveAddress);
 void enableExternalApps();
-void heapRange(uint32_t * start, uint32_t * end);
+void appSandboxRange(uint32_t * start, uint32_t * end);
 
 }
 }

@@ -77,17 +77,18 @@ SECTIONS {
     . = ALIGN(4);
     _bss_section_start_ram = .;
     *(.bss)
-    *(.bss._*)
-    *(.bss.[a-z]*)
+    /* The # char is used on symbols that need to be to be linked at the end of
+     * the bss section */
+    *(.bss.[^$]*)
     /* The compiler may choose to allocate uninitialized global variables as
      * COMMON blocks. This can be disabled with -fno-common if needed. */
     *(COMMON)
     _app_sandbox_start = .;
-    KEEP(*(.bss.App_buffer))
+    KEEP(*(.bss.$app_buffer))
     _bss_section_end_ram = .;
     *(.bss.*)
     _bss_section_assert_end_ram = .;
-    ASSERT (( _bss_section_end_ram == _bss_section_assert_end_ram), ".bss.#app_buffer section should be the last symbol of bss to be included in the app sandbox range.");
+    ASSERT (( _bss_section_end_ram == _bss_section_assert_end_ram), ".bss.$app_buffer section should be the last symbol of bss to be included in the app sandbox range.");
   } >SRAM
 
   .heap : {

@@ -131,7 +131,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
       Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
       PoincareHelpers::ParseAndSimplifyAndApproximate(addressOfCalculation + calcSize, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-      if (ExamModeConfiguration::exactExpressionIsForbidden(outputs[1]) && outputs[1].hasUnit()) {
+      if (ExamModeConfiguration::unitsAreForbidden() && outputs[1].hasUnit()) {
         /* Hide results with units on units if required by the exam mode
          * configuration. */
         outputs[1] = Undefined::Builder();

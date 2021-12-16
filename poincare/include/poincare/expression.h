@@ -178,6 +178,13 @@ public:
   bool hasExpression(ExpressionTypeTest test, const void * context) const;
   // WARNING: this method must be called on reduced (sorted) expressions
   bool deepIsMatrix(Context * context) const;
+  /* Returns:
+   * - a number >= 0 if all the lists have the same size,
+   * - -1 if there are no lists in the children
+   * - -2 if there are lists of differents lengths. */
+  static constexpr int k_noList = -1;
+  static constexpr int k_mismatchedLists = -2;
+  int lengthOfListChildren() const;
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsNAry(const Expression e, Context * context);
   static bool IsApproximate(const Expression e, Context * context);

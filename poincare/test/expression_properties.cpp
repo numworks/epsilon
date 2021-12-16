@@ -621,3 +621,17 @@ QUIZ_CASE(poincare_expression_additional_results) {
   const char * array13[2] = {"2.236936×_mi×_h^\x12-1\x13", "3.6×_km×_h^\x12-1\x13"};
   assert_additional_results_compute_to("1×_m/_s", array13, 2, Imperial);
 }
+
+void assert_list_length_in_children_is(const char * definition, int targetLength) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(definition, &globalContext, false);
+  quiz_assert_print_if_failure(e.lengthOfListChildren() == targetLength, definition);
+}
+
+QUIZ_CASE(poincare_expression_children_list_length) {
+  assert_list_length_in_children_is("1+1", Expression::k_noList);
+  assert_list_length_in_children_is("1+{}", 0);
+  assert_list_length_in_children_is("1*{2,3,4}*5*{6,7,8}", 3);
+  assert_list_length_in_children_is("{1,-2,3,-4}^2", 4);
+  assert_list_length_in_children_is("{1,2}+{3,4,5}", Expression::k_mismatchedLists);
+}

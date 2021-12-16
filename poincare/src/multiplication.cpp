@@ -7,6 +7,7 @@
 #include <poincare/float.h>
 #include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
+#include <poincare/list.h>
 #include <poincare/matrix.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
@@ -241,6 +242,10 @@ Expression MultiplicationNode::shallowBeautify(ReductionContext * reductionConte
 
 Expression MultiplicationNode::denominator(ReductionContext reductionContext) const {
   return Multiplication(this).denominator(reductionContext);
+}
+
+Expression MultiplicationNode::distributeOverLists(ReductionContext reductionContext, int listLength) {
+  return Multiplication(this).specializedDistributeOverLists(reductionContext, listLength);
 }
 
 bool MultiplicationNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
@@ -640,7 +645,14 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   // Step 2: Sort the children
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, context);
 
-  // Step 3: Handle matrices
+  /* Step 3
+   * Distribute the multiplication over lists */
+  Expression distributed = distributeOverLists(reductionContext);
+  if (!distributed.isUninitialized()) {
+    return distributed;
+  }
+
+  // Step 4: Handle matrices
   /* Thanks to the simplification order, all matrix children (if any) are the
    * last children. */
   Expression lastChild = childAtIndex(numberOfChildren()-1);
@@ -729,7 +741,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     return resultMatrix.shallowReduce(context);
   }
 
-  /* Step 4: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
+  /* Step 5: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
   int i = 0;
@@ -779,7 +791,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     i++;
   }
 
-  /* Step 5: We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
+  /* Step 6: We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
    * opposite signs. We replace them by either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
@@ -805,7 +817,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, context);
   }
 
-  /* Step 6: We remove rational children that appeared in the middle of sorted
+  /* Step 7: We remove rational children that appeared in the middle of sorted
    * children. It's important to do this after having factorized because
    * factorization can lead to new ones. Indeed:
    * pi^(-1)*pi-> 1
@@ -846,7 +858,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     i++;
   }
 
-   /* Step 7: If the first child is zero, the multiplication result is zero. We
+   /* Step 8: If the first child is zero, the multiplication result is zero. We
     * do this after merging the rational children, because the merge takes care
     * of turning 0*inf into undef. We still have to check that no other child
     * involves an infinity expression to avoid reducing 0*e^(inf) to 0.
@@ -868,11 +880,11 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     }
   }
 
-  /* Step 8: Expand multiplication over addition children if any. For example,
+  /* Step 9: Expand multiplication over addition children if any. For example,
    * turn (a+b)*c into a*c + b*c. We do not want to do this step right now if
    * the parent is a multiplication or if the reduction is done bottom up to
    * avoid missing factorization such as (x+y)^(-1)*((a+b)*(x+y)).
-   * Note: This step must be done after Step 4, otherwise we wouldn't be able to
+   * Note: This step must be done after Step 5, otherwise we wouldn't be able to
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b).
    * If there is a random somewhere, do not expand. */
   Expression p = parent();
@@ -888,13 +900,13 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     }
   }
 
-  // Step 9: Let's remove the multiplication altogether if it has one child
+  // Step 10: Let's remove the multiplication altogether if it has one child
   Expression result = squashUnaryHierarchyInPlace();
   if (result != *this) {
     return result;
   }
 
-  /* Step 10: Let's bubble up the complex operator if possible
+  /* Step 11: Let's bubble up the complex operator if possible
    * 3 cases:
    * - All children are real, we do nothing (allChildrenAreReal == 1)
    * - One of the child is non-real and not a ComplexCartesian: it means a
@@ -1281,6 +1293,29 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
   if (numberOfFactorsInDenominator) {
     denominator = mDenominator.squashUnaryHierarchyInPlace();
   }
+}
+
+Expression Multiplication::specializedDistributeOverLists(ExpressionNode::ReductionContext reductionContext, int listLength) {
+  List result = List::Builder();
+  int nunmberOfFactors = numberOfChildren();
+  for (int listIndex = 0; listIndex < listLength; listIndex++) {
+    Multiplication element = Multiplication::Builder();
+    for (int sumIndex = 0; sumIndex < nunmberOfFactors; sumIndex++) {
+      Expression child = childAtIndex(sumIndex);
+      if (child.type() == ExpressionNode::Type::List) {
+        assert(child.numberOfChildren() == listLength);
+        element.addChildAtIndexInPlace(child.childAtIndex(listIndex), sumIndex, sumIndex);
+      } else {
+        element.addChildAtIndexInPlace(child.clone(), sumIndex, sumIndex);
+      }
+    }
+    assert(element.numberOfChildren() == nunmberOfFactors);
+    result.addChildAtIndexInPlace(element, listIndex, listIndex);
+    element.shallowReduce(reductionContext);
+  }
+  assert(result.numberOfChildren() == listLength);
+  replaceWithInPlace(result);
+  return std::move(result);
 }
 
 const Expression Multiplication::Base(const Expression e) {

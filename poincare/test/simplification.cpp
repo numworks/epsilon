@@ -1793,4 +1793,19 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("{1,8/4,27/45}", "{1,2,3/5}");
   assert_parsed_expression_simplify_to("{1,2+2,3^2}", "{1,4,9}");
   assert_parsed_expression_simplify_to("{-1,1/0}", "{-1,undef}");
+  // Operations on lists of different lengths
+  assert_parsed_expression_simplify_to("{}+{1}+{2,3}", Undefined::Name());
+  assert_parsed_expression_simplify_to("{1,2,3,4}×{-1,-2}", Undefined::Name());
+  assert_parsed_expression_simplify_to("{1,4,9}^{1,1/2}", Undefined::Name());
+  // Operations on lists of the same length
+  assert_parsed_expression_simplify_to("{}×{}", "{}");
+  assert_parsed_expression_simplify_to("{1,2,3}-{3,2,1}", "{-2,0,2}");
+  assert_parsed_expression_simplify_to("{1,2,3,4}×{2,-2,2,-2}", "{2,-4,6,-8}");
+  assert_parsed_expression_simplify_to("{4,8,16}^{1/2,1/3,1/4}", "{2,2,2}");
+  // Operations on lists and scalars
+  assert_parsed_expression_simplify_to("{}^(-1)", "{}");
+  assert_parsed_expression_simplify_to("{1,2,3}+1", "{2,3,4}");
+  assert_parsed_expression_simplify_to("11/{11,33,55,77}", "{1,1/3,1/5,1/7}");
+  assert_parsed_expression_simplify_to("2×{1,2,3}×[[1,0][0,-1]]", "{[[2,0][0,-2]],[[4,0][0,-4]],[[6,0][0,-6]]}");
+  assert_parsed_expression_simplify_to("{1,4,9,16,25}^(1/2)", "{1,2,3,4,5}");
 }

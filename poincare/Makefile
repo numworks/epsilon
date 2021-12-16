@@ -2,6 +2,7 @@ SFLAGS += -Ipoincare/include
 
 poincare_src += $(addprefix poincare/src/,\
   binomial_coefficient_layout.cpp \
+  brace_layout.cpp \
   bracket_layout.cpp \
   bracket_pair_layout.cpp \
   code_point_layout.cpp\
@@ -21,7 +22,6 @@ poincare_src += $(addprefix poincare/src/,\
   left_square_bracket_layout.cpp \
   matrix_layout.cpp \
   nth_root_layout.cpp \
-  parenthesis_layout.cpp \
   product_layout.cpp \
   right_parenthesis_layout.cpp \
   right_square_bracket_layout.cpp \

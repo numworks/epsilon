@@ -11,7 +11,7 @@ using namespace Escher;
 
 namespace Graph {
 
-const CodePoint ListController::k_equationSymbols[];
+constexpr CodePoint ListController::k_equationSymbols[];
 
 ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),

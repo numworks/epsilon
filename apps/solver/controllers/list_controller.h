@@ -3,11 +3,11 @@
 
 #include <escher/button_row_controller.h>
 #include <escher/even_odd_expression_cell.h>
-#include "../shared/expression_model_list_controller.h"
-#include "../shared/layout_field_delegate.h"
-#include "../shared/text_field_delegate.h"
-#include "equation_store.h"
-#include "equation_list_view.h"
+#include <apps/shared/expression_model_list_controller.h>
+#include <apps/shared/layout_field_delegate.h>
+#include <apps/shared/text_field_delegate.h>
+#include "../model/equation_store.h"
+#include "../gui/equation_list_view.h"
 #include "equation_models_parameter_controller.h"
 #include <apps/i18n.h>
 

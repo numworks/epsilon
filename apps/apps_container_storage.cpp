@@ -57,6 +57,9 @@ void * AppsContainerStorage::currentAppBuffer() {
   /* We use the $ char to be able to link this symbol at a specific location,
    * namely, the end of bss section, in order to extend the external app
    * sandbox range. */
-  static Apps s_apps __attribute__((section(".bss.$app_buffer")));
+  static Apps s_apps
+#if PLATFORM_DEVICE
+    __attribute__((section(".bss.$app_buffer")));
+#endif
   return &s_apps;
 }

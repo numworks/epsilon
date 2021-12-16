@@ -1,14 +1,14 @@
 #ifndef POINCARE_PARENTHESIS_LAYOUT_NODE_H
 #define POINCARE_PARENTHESIS_LAYOUT_NODE_H
 
-#include <poincare/bracket_layout.h>
+#include <poincare/brace_layout.h>
 
 namespace Poincare {
 
-class ParenthesisLayoutNode : public BracketLayoutNode {
+class ParenthesisLayoutNode : public BraceLayoutNode {
   friend class SequenceLayoutNode;
 public:
-  using BracketLayoutNode::BracketLayoutNode;
+  using BraceLayoutNode::BraceLayoutNode;
   constexpr static KDCoordinate ParenthesisWidth() { return k_widthMargin + k_lineThickness + k_externWidthMargin; }
   constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
   constexpr static KDCoordinate k_parenthesisCurveHeight = 7;
@@ -25,7 +25,6 @@ public:
     stream << "ParenthesisLayout";
   }
 #endif
-  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
 
 protected:
   KDSize computeSize() override {
@@ -37,6 +36,9 @@ protected:
   static KDCoordinate ChildHeightGivenLayoutHeight(KDCoordinate layoutHeight) {
     return layoutHeight - k_verticalMargin;
   }
+
+  Type leftLayoutType() const override { return Type::LeftParenthesisLayout; }
+  Type rightLayoutType() const override { return Type::RightParenthesisLayout; }
 };
 
 }

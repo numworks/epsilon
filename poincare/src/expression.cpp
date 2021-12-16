@@ -148,6 +148,22 @@ bool Expression::deepIsMatrix(Context * context) const {
   return false;
 }
 
+int Expression::lengthOfListChildren() const {
+  int lastLength = k_noList;
+  int n = numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    if (childAtIndex(i).type() == ExpressionNode::Type::List) {
+      int length = childAtIndex(i).numberOfChildren();
+      if (lastLength == k_noList) {
+        lastLength = length;
+      } else if (lastLength != length) {
+        return k_mismatchedLists;
+      }
+    }
+  }
+  return lastLength;
+}
+
 bool Expression::IsApproximate(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || e.type() == ExpressionNode::Type::Double;
 }

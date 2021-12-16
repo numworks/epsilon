@@ -2,6 +2,7 @@
 #include <poincare/complex_cartesian.h>
 #include <poincare/derivative.h>
 #include <poincare/layout_helper.h>
+#include <poincare/list.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
@@ -49,6 +50,10 @@ Expression AdditionNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression AdditionNode::shallowBeautify(ReductionContext * reductionContext) {
   return Addition(this).shallowBeautify(reductionContext);
+}
+
+Expression AdditionNode::distributeOverLists(ReductionContext reductionContext, int listLength) {
+  return Addition(this).specializedDistributeOverLists(reductionContext, listLength);
 }
 
 // Derivation
@@ -164,7 +169,14 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   const int childrenCount = numberOfChildren();
   assert(childrenCount > 1);
 
-  /* Step 2: Handle the units. All children should have the same unit, otherwise
+  /* Step 2
+   * Distribute the addition over lists */
+  Expression distributed = distributeOverLists(reductionContext);
+  if (!distributed.isUninitialized()) {
+    return distributed;
+  }
+
+  /* Step 3: Handle the units. All children should have the same unit, otherwise
    * the result is not homogeneous. */
   {
     Expression unit;
@@ -197,10 +209,10 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     }
   }
 
-  // Step 3: Sort the children
+  // Step 4: Sort the children
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context());
 
-  /* Step 4: Handle matrices. We return undef for a scalar added to a matrix.
+  /* Step 5: Handle matrices. We return undef for a scalar added to a matrix.
    * Thanks to the simplification order, all matrix children (if any) are the
    * last children. */
   {
@@ -254,7 +266,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     }
   }
 
-  /* Step 5: Factorize like terms. Thanks to the simplification order, those are
+  /* Step 6: Factorize like terms. Thanks to the simplification order, those are
    * next to each other at this point. */
   int i = 0;
   while (i < numberOfChildren()-1) {
@@ -275,7 +287,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     i++;
   }
 
-  /* Step 6: Let's remove any zero. It's important to do this after having
+  /* Step 7: Let's remove any zero. It's important to do this after having
    * factorized because factorization can lead to new zeroes. For example
    * pi+(-1)*pi. We don't remove the last zero if it's the only child left
    * though. */
@@ -289,13 +301,13 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     i++;
   }
 
-  // Step 7: Let's remove the addition altogether if it has a single child
+  // Step 8: Let's remove the addition altogether if it has a single child
   Expression result = squashUnaryHierarchyInPlace();
   if (result != *this) {
     return result;
   }
 
-  /* Step 8: Let's bubble up the complex operator if possible
+  /* Step 9: Let's bubble up the complex operator if possible
    * 3 cases:
    * - All children are real, we do nothing (allChildrenAreReal == 1)
    * - One of the child is non-real and not a ComplexCartesian: it means a
@@ -328,7 +340,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return newComplexCartesian.shallowReduce(reductionContext);
   }
 
-  /* Step 9: Let's put everything under a common denominator.
+  /* Step 10: Let's put everything under a common denominator.
    * This step is done only for ReductionTarget::User if the parent expression
    * is not an addition. */
   Expression p = result.parent();
@@ -511,6 +523,29 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Express
 
   // Step 5: Reduce the multiplication (in case the new rational factor is zero)
   m.shallowReduce(reductionContext);
+}
+
+Expression Addition::specializedDistributeOverLists(ExpressionNode::ReductionContext reductionContext, int listLength) {
+  List result = List::Builder();
+  int numberOfTerms = numberOfChildren();
+  for (int listIndex = 0; listIndex < listLength; listIndex++) {
+    Addition element = Addition::Builder();
+    for (int sumIndex = 0; sumIndex < numberOfTerms; sumIndex++) {
+      Expression child = childAtIndex(sumIndex);
+      if (child.type() == ExpressionNode::Type::List) {
+        assert(child.numberOfChildren() == listLength);
+        element.addChildAtIndexInPlace(child.childAtIndex(listIndex), sumIndex, sumIndex);
+      } else {
+        element.addChildAtIndexInPlace(child.clone(), sumIndex, sumIndex);
+      }
+    }
+    assert(element.numberOfChildren() == numberOfTerms);
+    result.addChildAtIndexInPlace(element, listIndex, listIndex);
+    element.shallowReduce(reductionContext);
+  }
+  assert(result.numberOfChildren() == listLength);
+  replaceWithInPlace(result);
+  return std::move(result);
 }
 
 template Complex<float> Poincare::AdditionNode::compute<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);

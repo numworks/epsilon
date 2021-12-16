@@ -144,7 +144,8 @@ void Parser::isThereImplicitMultiplication() {
     m_nextToken.is(Token::Identifier) ||
     m_nextToken.is(Token::LeftParenthesis) ||
     m_nextToken.is(Token::LeftSystemParenthesis) ||
-    m_nextToken.is(Token::LeftBracket)
+    m_nextToken.is(Token::LeftBracket) ||
+    m_nextToken.is(Token::LeftBrace)
   );
 }
 

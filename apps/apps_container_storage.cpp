@@ -60,6 +60,8 @@ void * AppsContainerStorage::currentAppBuffer() {
   static Apps s_apps
 #if PLATFORM_DEVICE
     __attribute__((section(".bss.$app_buffer")));
+#else
+  ;
 #endif
   return &s_apps;
 }

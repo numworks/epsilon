@@ -49,6 +49,7 @@ private:
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const override;
+  Expression distributeOverLists(ReductionContext reductionContext, int listLength) override;
   // Derivation
   bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
 
@@ -90,6 +91,7 @@ public:
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context) {
     NAryExpression::sortChildrenInPlace(order, context, false);
   }
+  Expression specializedDistributeOverLists(ExpressionNode::ReductionContext reductionContext, int listLength);
   // Derivation
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
 private:

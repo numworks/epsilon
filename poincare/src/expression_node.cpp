@@ -121,6 +121,11 @@ Expression ExpressionNode::unaryFunctionDifferential(ReductionContext reductionC
   return Expression(this).defaultUnaryFunctionDifferential();
 }
 
+Expression ExpressionNode::distributeOverLists(ReductionContext reductionContext, int listLength) {
+  assert(false);
+  return Expression();
+}
+
 bool ExpressionNode::isOfType(Type * types, int length) const {
   for (int i = 0; i < length; i++) {
     if (type() == types[i]) {

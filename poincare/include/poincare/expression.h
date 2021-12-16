@@ -417,6 +417,11 @@ protected:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext) { return node()->shallowBeautify(reductionContext); }
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
+  /* Distribute an operator by matching elements in lists at the same position
+   * and duplicating scalars.
+   * i.e.: {1,2}+{3,4} -> {1+3,2+4} and -2*{5,6} -> {-2*5,-2*6}
+   * Returns an uninitialized expression if nothing has been done. */
+  Expression distributeOverLists(ExpressionNode::ReductionContext reductionContext);
 
   /* Derivation */
   /* This method is used for the reduction of Derivative expressions.

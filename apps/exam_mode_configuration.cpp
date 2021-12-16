@@ -244,5 +244,6 @@ bool ExamModeConfiguration::sumIsForbidden() {
 }
 
 bool ExamModeConfiguration::unitsAreForbidden() {
-  return Preferences::sharedPreferences()->examMode() == Preferences::ExamMode::Dutch;
+  Preferences::ExamMode mode = Preferences::sharedPreferences()->examMode();
+  return mode == Preferences::ExamMode::Dutch || mode == Preferences::ExamMode::IBTest;
 }

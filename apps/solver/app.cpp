@@ -8,25 +8,8 @@ using namespace Escher;
 
 namespace Solver {
 
-I18n::Message App::Descriptor::name() const {
-  return I18n::Message::SolverApp;
-}
-
-I18n::Message App::Descriptor::upperName() const {
-  return I18n::Message::SolverAppCapital;
-}
-
 const Image * App::Descriptor::icon() const {
   return ImageStore::SolverIcon;
-}
-
-App::Snapshot::Snapshot() :
-  m_equationStore()
-{
-}
-
-App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(this);
 }
 
 static constexpr App::Descriptor sDescriptor;

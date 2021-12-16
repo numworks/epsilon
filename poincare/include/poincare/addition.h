@@ -56,6 +56,7 @@ private:
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression distributeOverLists(ReductionContext reductionContext, int listLength) override;
 
   // Derivation
   bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
@@ -89,6 +90,8 @@ public:
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context) {
     NAryExpression::sortChildrenInPlace(order, context, true);
   }
+  Expression specializedDistributeOverLists(ExpressionNode::ReductionContext reductionContext, int listLength);
+
 private:
   static const Number NumeralFactor(const Expression & e);
   static inline int NumberOfNonNumeralFactors(const Expression & e);

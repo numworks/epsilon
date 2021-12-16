@@ -120,7 +120,11 @@ void fileNameToSnakeCaseName(const char * fileName, char * snakeCaseName, size_t
 
 void snakeCaseNameToUpperSnakeName(const char * snakeCaseName, char * upperSnakeCaseName, size_t maxLength) {
   for (int i=0; i<maxLength; i++) {
-    upperSnakeCaseName[i] = toupper(snakeCaseName[i]);
+    char nextLetter = snakeCaseName[i];
+    upperSnakeCaseName[i] = toupper(nextLetter);
+    if (nextLetter == 0) {
+      break;
+    }
   }
 }
 
@@ -133,6 +137,9 @@ void camelCaseNameFromSnakeCaseNames(const char * snakeCaseName, const char * up
     }
     if (i==0 || snakeCaseName[i-1] == '_') {
       nextLetter = upperSnakeCaseName[i];
+    }
+    if (nextLetter == 0) {
+      break;
     }
     camelCaseName[j++] = nextLetter;
   }

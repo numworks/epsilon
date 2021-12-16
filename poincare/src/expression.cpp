@@ -918,6 +918,19 @@ Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionCo
   return e;
 }
 
+Expression Expression::distributeOverLists(ExpressionNode::ReductionContext reductionContext) {
+  int listLength = lengthOfListChildren();
+  if (listLength == Expression::k_noList) {
+    /* No list in children, shallow reduce as usual. */
+    return Expression();
+  } else if (listLength == Expression::k_mismatchedLists) {
+    /* Operators only apply to lists of the same length. */
+    return replaceWithUndefinedInPlace();
+  }
+  assert(listLength >= 0);
+  return node()->distributeOverLists(reductionContext, listLength);
+}
+
 Expression Expression::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   return node()->setSign(s, reductionContext);

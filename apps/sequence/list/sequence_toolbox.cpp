@@ -100,7 +100,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
 }
 
 int SequenceToolbox::controlChecksum() const {
-  return (m_numberOfAddedCells * I18n::NumberOfCountries + static_cast<int>(GlobalPreferences::sharedGlobalPreferences()->country())) * Preferences::k_numberOfExamModes + static_cast<int>(Preferences::sharedPreferences()->examMode());
+  return MathToolbox::controlChecksum() + m_numberOfAddedCells * Preferences::k_numberOfExamModes * I18n::NumberOfCountries;
 }
 
 bool SequenceToolbox::selectAddedCell(int selectedRow){

@@ -1,8 +1,8 @@
 #include "equation_store.h"
-#include "../constant.h"
-#include "../shared/poincare_helpers.h"
-#include "../exam_mode_configuration.h"
-#include "../global_preferences.h"
+#include <apps/constant.h>
+#include <apps/shared/poincare_helpers.h>
+#include <apps/exam_mode_configuration.h>
+#include <apps/global_preferences.h>
 #include <limits.h>
 
 #include <poincare/addition.h>

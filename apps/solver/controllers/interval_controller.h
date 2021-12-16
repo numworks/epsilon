@@ -2,8 +2,8 @@
 #define SOLVER_INTERVAL_CONTROLLER_H
 
 #include <escher/message_table_cell_with_editable_text.h>
-#include "equation_store.h"
-#include "../shared/float_parameter_controller.h"
+#include "../model/equation_store.h"
+#include <apps/shared/float_parameter_controller.h>
 
 namespace Solver {
 

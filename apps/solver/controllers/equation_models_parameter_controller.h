@@ -5,7 +5,7 @@
 #include <escher/expression_table_cell.h>
 #include <escher/message_table_cell.h>
 #include <escher/stack_view_controller.h>
-#include "equation_store.h"
+#include "../model/equation_store.h"
 
 namespace Solver {
 

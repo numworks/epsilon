@@ -1,7 +1,7 @@
 #ifndef SOLVER_EQUATION_h
 #define SOLVER_EQUATION_h
 
-#include "../shared/expression_model_handle.h"
+#include <apps/shared/expression_model_handle.h>
 
 namespace Solver {
 

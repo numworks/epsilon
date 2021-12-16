@@ -10,8 +10,8 @@
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/table_view_data_source.h>
 #include <ion.h>
-#include "equation_store.h"
-#include "../shared/scrollable_two_expressions_cell.h"
+#include "../model/equation_store.h"
+#include <apps/shared/scrollable_two_expressions_cell.h>
 
 namespace Solver {
 

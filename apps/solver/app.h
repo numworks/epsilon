@@ -3,11 +3,11 @@
 
 #include <apps/i18n.h>
 #include "../shared/expression_field_delegate_app.h"
-#include "list_controller.h"
-#include "equation_store.h"
-#include "interval_controller.h"
-#include "solutions_controller.h"
 #include "../shared/shared_app.h"
+#include "model/equation_store.h"
+#include "controllers/list_controller.h"
+#include "controllers/interval_controller.h"
+#include "controllers/solutions_controller.h"
 
 namespace Solver {
 

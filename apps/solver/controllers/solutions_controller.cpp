@@ -1,6 +1,6 @@
 #include "solutions_controller.h"
-#include "app.h"
-#include "../shared/poincare_helpers.h"
+#include "../app.h"
+#include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <limits.h>
 #include <poincare/layout_helper.h>

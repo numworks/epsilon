@@ -118,8 +118,9 @@ And there you can go to step 2!
 <summary><b>1.3 Windows</b></summary>
 
 <br>
-
-[Msys2](https://www.msys2.org/) environment is recommended to get most of the required tools on Windows easily. It's where you'll paste all the commands of this tutorial. Once it's installed, paste these commands into the Msys2 terminal.
+<details>
+<summary>With Msys2/Mingw (officialized by numworks but with a lot of bugs)</summary>
+[Msys2](https://www.msys2.org/) environment is recommended by Numworks to get most of the required tools on Windows easily. It's where you'll paste all the commands of this tutorial. Once it's installed, paste these commands into the Msys2 terminal.
 
 ```bash
 pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-libusb git make python
@@ -131,7 +132,77 @@ Next, you'll need to install the [GCC toolchain for ARM](https://developer.arm.c
 ```bash
 echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc
 ```
-Just restart and you can go to step 2!
+Just restart terminal and you can go to step 2!
+
+</details>
+
+<details>
+<summary>With WSL 2</summary>
+
+
+You need a windows version >= 1903.
+
+#### WSL Installation
+
+1. Use simultaneously win + X keys and then click on "admin powershell".
+```powershell
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux all /norestart
+```
+This command activate WSL functionnalities.
+
+```powershell
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+```
+This one allows virtual machines developped by Microsoft.
+
+2. Restart your computer.
+
+3. Download [this file](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi) and follow instructions.
+
+4. Now open powershell admain like before and type:
+```powershell
+wsl --set-default-version 2
+```
+5. Download [Ubuntu](https://www.microsoft.com/store/apps/9n6svws3rx71) from Microsoft store.
+
+WSL is now installed.
+
+### Usbipd installation to connect your calculator
+If you want to connect to the calculator, you have to connect to install this [tool](https://github.com/dorssel/usbipd-win/releases/download/v1.3.0/usbipd-win_1.3.0.msi). This will allow you to connect WSL to the calculator through internet. Follow the on screen informations to install.
+#### Ubuntu
+1. In a WSL Ubuntu command prompt, type:
+```bash
+sudo apt install linux-tools-5.4.0-77-generic hwdata
+```
+2. Edit /etc/sudoers so that root can find the usbip command. On Ubuntu, run this command.
+```bash
+sudo visudo
+```
+3. Add `/usr/lib/linux-tools/5.4.0-77-generic` to the beginning of secure_path. After editing, the line should look similar to this.
+`Defaults secure_path="/usr/lib/linux-tools/5.4.0-77-generic:/usr/local/sbin:..."`
+
+#### Debian
+1. If you use debian for your WSL distro, use this comand instead:
+```bash
+sudo apt install usbip hwdata usbutils
+```
+And that's all for installation and set up.
+
+### To connect your calculator
+1. Open an Admin powershell and type:
+```powershell
+  usbipd wsl list
+```
+This will list your usb devices connected. Look at the BUSID column and remember the one for your calculator (it should be called "Numworks Calculator").
+2. Now run this command replacing <BUSID> by your calculator's usb port id:
+```powershell
+usbipd wsl attach --busid <BUSID>
+```
+It will ask you to type your wsl's password and will connect your calculator to WSL.
+
+You can now go to step 2!
+</details>
+
 </details>
 
 <br>
@@ -301,3 +372,4 @@ NumWorks SAS and Nintendo of America Inc aren't associated in any shape or form 
 * NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 * Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 * Upsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+

@@ -20,6 +20,7 @@ public:
   Escher::Responder * defaultController() override;
 
   // ViewController
+  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::NeverDisplayOwnTitle; }
   Escher::View * view() override { return multipleDataView(); }
   void viewWillAppear() override;
 

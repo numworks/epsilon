@@ -12,6 +12,7 @@ public:
   AlternateEmptyViewController(Responder * parentResponder, ViewController * mainViewController, AlternateEmptyViewDelegate * delegate);
   View * view() override;
   const char * title() override;
+  ViewController::TitlesDisplay titlesDisplay() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void initView() override;

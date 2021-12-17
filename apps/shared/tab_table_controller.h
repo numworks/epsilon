@@ -18,6 +18,7 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
+  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::NeverDisplayOwnTitle; }
 protected:
   virtual Escher::SelectableTableView * selectableTableView() = 0;
   virtual Escher::Responder * tabController() const = 0;

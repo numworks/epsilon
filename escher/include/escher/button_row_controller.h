@@ -29,6 +29,7 @@ public:
   ButtonRowController(Responder * parentResponder, ViewController * mainViewController, ButtonRowDelegate * delegate, Position position = Position::Top, Style = Style::PlainWhite, Size size = Size::Small);
   View * view() override { return &m_contentView; }
   const char * title() override;
+  ViewController::TitlesDisplay titlesDisplay() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   int selectedButton();
@@ -38,7 +39,6 @@ public:
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::NeverDisplayOwnTitle; }
 private:
   class ContentView : public View {
   public:

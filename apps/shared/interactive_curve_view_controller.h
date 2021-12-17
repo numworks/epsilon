@@ -22,6 +22,7 @@ public:
   InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion);
 
   const char * title() override;
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::NeverDisplayOwnTitle; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("Graph");

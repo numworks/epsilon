@@ -336,6 +336,7 @@ template IntegralLayout TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLa
 template InvBinom TreeHandle::FixedArityBuilder<InvBinom, InvBinomNode>(const Tuple &);
 template InvNorm TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(const Tuple &);
 template LeastCommonMultiple TreeHandle::NAryBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);
+template LeftCurlyBraceLayout TreeHandle::FixedArityBuilder<LeftCurlyBraceLayout, LeftCurlyBraceLayoutNode>(const Tuple &);
 template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayout, LeftParenthesisLayoutNode>(const Tuple &);
 template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(const Tuple &);
 template List TreeHandle::NAryBuilder<List, ListNode>(const Tuple &);
@@ -365,6 +366,7 @@ template ProductLayout TreeHandle::FixedArityBuilder<ProductLayout, ProductLayou
 template Randint TreeHandle::FixedArityBuilder<Randint, RandintNode>(const Tuple &);
 template Random TreeHandle::FixedArityBuilder<Random, RandomNode>(const Tuple &);
 template RealPart TreeHandle::FixedArityBuilder<RealPart, RealPartNode>(const Tuple &);
+template RightCurlyBraceLayout TreeHandle::FixedArityBuilder<RightCurlyBraceLayout, RightCurlyBraceLayoutNode>(const Tuple &);
 template RightParenthesisLayout TreeHandle::FixedArityBuilder<RightParenthesisLayout, RightParenthesisLayoutNode>(const Tuple &);
 template RightSquareBracketLayout TreeHandle::FixedArityBuilder<RightSquareBracketLayout, RightSquareBracketLayoutNode>(const Tuple &);
 template Round TreeHandle::FixedArityBuilder<Round, RoundNode>(const Tuple &);

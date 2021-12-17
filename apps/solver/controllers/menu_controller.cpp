@@ -37,7 +37,6 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     ViewController * controller = nullptr;
     switch (selectedRow()) {
       case k_indexOfEquation:
-        // TODO Hugo : Add stack title to the equation app
         controller = m_listController;
         break;
       case k_indexOfFinance:

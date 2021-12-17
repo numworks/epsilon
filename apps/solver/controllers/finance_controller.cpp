@@ -6,8 +6,10 @@
 
 using namespace Solver;
 
-FinanceController::FinanceController(Escher::StackViewController * parentResponder) :
-      SelectableCellListPage(parentResponder) {
+FinanceController::FinanceController(Escher::StackViewController * parentResponder, SimpleInterestController * simpleInterestController, CompoundInterestController * compoundInterestController) :
+      SelectableCellListPage(parentResponder),
+      m_simpleInterestController(simpleInterestController),
+      m_compoundInterestController(compoundInterestController) {
   selectRow(0);
   m_cells[k_indexOfSimpleIntereset].setMessage(I18n::Message::SimpleInterest);
   m_cells[k_indexOfSimpleIntereset].setSubtitle(I18n::Message::SimpleInterestDescription);
@@ -28,12 +30,10 @@ bool FinanceController::handleEvent(Ion::Events::Event event) {
     ViewController * controller = nullptr;
     switch (selectedRow()) {
       case k_indexOfSimpleIntereset:
-        // TODO Hugo : Add SimpleInterestController
-        controller = nullptr;
+        controller = m_simpleInterestController;
         break;
       case k_indexOfCompoundInterest:
-        // TODO Hugo : Add CompoundInterestController
-        controller = nullptr;
+        controller = m_compoundInterestController;
         break;
     }
     assert(controller != nullptr);

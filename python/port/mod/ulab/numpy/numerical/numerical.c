@@ -78,7 +78,8 @@ static mp_obj_t numerical_all_any(mp_obj_t oin, mp_obj_t axis, uint8_t optype) {
         }
         // always get a float, so that we don't have to resolve the dtype later
         mp_float_t (*func)(void *) = ndarray_get_float_function(ndarray->dtype);
-        ndarray_obj_t *results = NULL;
+        // We set results to true here because it crash if it is NULL
+        ndarray_obj_t *results = mp_const_true;
         uint8_t *rarray = NULL;
         shape_strides _shape_strides = tools_reduce_axes(ndarray, axis);
         if(axis != mp_const_none) {

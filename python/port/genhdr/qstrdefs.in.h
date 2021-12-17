@@ -698,6 +698,8 @@ Q(from_uint16_buffer)
 Q(from_int32_buffer)
 Q(from_uint32_buffer)
 #endif
+
+#if MICROPY_PY_SYS
 // sys QSTRs
 Q(sys)
 Q(info)
@@ -707,3 +709,4 @@ Q(exit)
 Q(modules)
 Q(print_exception)
 Q(version_info)
+#endif

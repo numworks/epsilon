@@ -148,7 +148,12 @@ def abort_request():
 
 def unlock_request():
     """Deactivate the protection"""
-    __dev.ctrl_transfer(0x21, __DFU_UNLOCK, 0, __DFU_INTERFACE, None, __TIMEOUT)
+    try:
+        __dev.ctrl_transfer(0x21, __DFU_UNLOCK, 0, __DFU_INTERFACE, None, 
+                            __TIMEOUT)
+    except usb.core.USBError:
+        print("Error when disabling protection, ignoring", file=sys.stderr)
+
 
 def clr_status():
     """Clears any error status (perhaps left over from a previous session)."""

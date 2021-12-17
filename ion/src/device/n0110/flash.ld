@@ -244,6 +244,7 @@ SECTIONS {
     *(.rodata._ZL12KDColorWhite*)
     *(.rodata._ZL10KDColorRed*)
     *(.rodata._ZL12KDColorBlack*)
+    *(.rodata._ZN4CodeL15BackgroundColorEd*)
     *(.rodata._ZN3Ion6Device3SWD6ConfigL4PinsE)
     *(.rodata._ZN3Ion6Device7Display6ConfigL8FSMCPinsE)
     *(.rodata._ZZN3Ion6Device7Display9initPanelEvE11calibration)

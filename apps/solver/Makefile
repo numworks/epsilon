@@ -17,6 +17,7 @@ app_solver_src = $(addprefix apps/solver/,\
   controllers/list_controller.cpp \
   controllers/menu_controller.cpp \
   controllers/solutions_controller.cpp \
+  controllers/finance_controller.cpp \
 )
 
 app_solver_src += $(app_solver_test_src)

@@ -39,7 +39,8 @@ App::App(Snapshot * snapshot) :
   m_alternateEmptyViewController(nullptr, &m_solutionsController, &m_solutionsController),
   m_listController(&m_listFooter, snapshot->equationStore(), &m_listFooter),
   m_listFooter(&m_stackViewController, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray, ButtonRowController::Size::Large),
-  m_menuController(&m_stackViewController, &m_listFooter),
+  m_financeController(&m_stackViewController),
+  m_menuController(&m_stackViewController, &m_listFooter, &m_financeController),
   m_stackViewController(&m_inputViewController, &m_menuController),
   m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController)
 {

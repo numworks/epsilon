@@ -37,6 +37,7 @@ public:
   void editExpression(Ion::Events::Event event) override { return Shared::ExpressionModelListController::editExpression(event); }
   bool editSelectedRecordWithText(const char * text) override { return Shared::ExpressionModelListController::editSelectedRecordWithText(text); }
   /* ViewController */
+  const char * title() override { return I18n::translate(I18n::Message::EquationsSubAppTitle); }
   Escher::View * view() override { return &m_equationListView; }
   TELEMETRY_ID("List");
   /* Text/Layout Field Delegate */
@@ -47,7 +48,11 @@ public:
   /* Specific to Solver */
   void resolveEquations();
 private:
-  constexpr static int k_maxNumberOfRows = 5; // Ion::Display::Height / Metric::StoreRowHeight = 4.8;
+  /* Ion::Display::Height - Escher::Metric::TitleBarHeight -
+   * - Escher::Metric::StackTitleHeight
+   * - ButtonRowController::k_embossedStyleHeightLarge
+   * = Metric::StoreRowHeight * 3.0 (240-18-20-52 = 50 * 3) */
+  constexpr static int k_maxNumberOfRows = 3 + 1;
   Escher::SelectableTableView * selectableTableView() override;
   void reloadButtonMessage();
   void addModel() override;

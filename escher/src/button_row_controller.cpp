@@ -172,6 +172,10 @@ const char * ButtonRowController::title() {
   return m_contentView.mainViewController()->title();
 }
 
+ViewController::TitlesDisplay ButtonRowController::titlesDisplay() {
+  return m_contentView.mainViewController()->titlesDisplay();
+}
+
 void ButtonRowController::didBecomeFirstResponder(){
   Container::activeApp()->setFirstResponder(m_contentView.mainViewController());
 }

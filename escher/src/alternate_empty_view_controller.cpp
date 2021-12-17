@@ -56,6 +56,10 @@ const char * AlternateEmptyViewController::title() {
   return m_contentView.mainViewController()->title();
 }
 
+ViewController::TitlesDisplay AlternateEmptyViewController::titlesDisplay() {
+  return m_contentView.mainViewController()->titlesDisplay();
+}
+
 bool AlternateEmptyViewController::handleEvent(Ion::Events::Event event) {
   if (m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
     if (event != Ion::Events::Home && event != Ion::Events::OnOff && event != Ion::Events::USBEnumeration) {

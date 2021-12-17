@@ -14,10 +14,10 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
       m_listController(listController),
       m_contentView(&m_selectableTableView) {
   selectRow(0);
-  // TODO Hugo : Update texts and image
-  m_cells[k_indexOfEquation].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
+  // TODO Hugo : Update images
+  m_cells[k_indexOfEquation].setMessages(I18n::Message::EquationsSubAppTitle, I18n::Message::EquationsSubAppDescription);
   m_cells[k_indexOfEquation].setImage(ImageStore::Equations);
-  m_cells[k_indexOfFinance].setMessages(I18n::Message::Tests, I18n::Message::TestDescr);
+  m_cells[k_indexOfFinance].setMessages(I18n::Message::FinanceSubAppTitle, I18n::Message::FinanceSubAppDescription);
   m_cells[k_indexOfFinance].setImage(ImageStore::Finances);
 }
 

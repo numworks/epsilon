@@ -75,6 +75,11 @@ QUIZ_CASE(poincare_layout_serialization) {
         CodePointLayout::Builder('3')),
       "int\u0012\u00121\u0013,\u0012x\u0013,\u00122\u0013,\u00123\u0013\u0013");
 
+  // LeftCurlyBraceLayout
+  assert_layout_serialize_to(
+      LeftCurlyBraceLayout::Builder(),
+      "{");
+
   // LeftParenthesisLayout
   assert_layout_serialize_to(
       LeftParenthesisLayout::Builder(),
@@ -112,6 +117,11 @@ QUIZ_CASE(poincare_layout_serialization) {
         CodePointLayout::Builder('2'),
         CodePointLayout::Builder('3')),
       "product\u0012\u00121\u0013,\u0012x\u0013,\u00122\u0013,\u00123\u0013\u0013");
+
+  // RightCurlyBraceLayout
+  assert_layout_serialize_to(
+      RightCurlyBraceLayout::Builder(),
+      "}");
 
   // RightParenthesisLayout
   assert_layout_serialize_to(

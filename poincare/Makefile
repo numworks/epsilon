@@ -9,6 +9,7 @@ poincare_src += $(addprefix poincare/src/,\
   combined_code_points_layout.cpp\
   condensed_sum_layout.cpp \
   conjugate_layout.cpp \
+  curly_brace_layout.cpp \
   derivative_layout.cpp \
   empty_layout.cpp \
   fraction_layout.cpp \

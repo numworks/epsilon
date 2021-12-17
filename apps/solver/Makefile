@@ -8,10 +8,14 @@ app_solver_test_src = $(addprefix apps/solver/,\
 
 app_solver_src = $(addprefix apps/solver/,\
   app.cpp \
+  gui/centering_view.cpp \
   gui/equation_list_view.cpp \
+  gui/highlight_image_cell.cpp \
+  gui/subapp_cell.cpp \
   controllers/equation_models_parameter_controller.cpp \
   controllers/interval_controller.cpp \
   controllers/list_controller.cpp \
+  controllers/menu_controller.cpp \
   controllers/solutions_controller.cpp \
 )
 
@@ -25,4 +29,11 @@ tests_src += $(addprefix apps/solver/test/,\
   helpers.cpp \
 )
 
+# Image dependencies
+
 $(eval $(call depends_on_image,apps/solver/app.cpp,apps/solver/solver_icon.png))
+
+$(eval $(call depends_on_transparent_image,apps/solver/controllers/menu_controller.cpp,$(addprefix apps/solver/images/,\
+  Equations.png \
+  Finances.png \
+)))

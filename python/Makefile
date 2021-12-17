@@ -169,19 +169,20 @@ port_src += $(addprefix python/port/,\
   mod/ulab/ulab_tools.c \
   mod/ulab/ndarray.c \
   mod/ulab/ndarray_properties.c \
-  mod/ulab/numpy/approx/approx.c \
-  mod/ulab/numpy/compare/compare.c \
+  mod/ulab/numpy/approx.c \
+  mod/ulab/numpy/compare.c \
   mod/ulab/ulab_create.c \
   mod/ulab/numpy/fft/fft.c \
   mod/ulab/numpy/fft/fft_tools.c \
-  mod/ulab/numpy/filter/filter.c \
+  mod/ulab/numpy/filter.c \
   mod/ulab/numpy/linalg/linalg.c \
   mod/ulab/numpy/linalg/linalg_tools.c \
-  mod/ulab/numpy/numerical/numerical.c \
-  mod/ulab/numpy/poly/poly.c \
-  mod/ulab/numpy/stats/stats.c \
-  mod/ulab/numpy/transform/transform.c \
-  mod/ulab/numpy/vector/vector.c \
+  mod/ulab/numpy/ndarray/ndarray_iter.c \
+  mod/ulab/numpy/numerical.c \
+  mod/ulab/numpy/poly.c \
+  mod/ulab/numpy/stats.c \
+  mod/ulab/numpy/transform.c \
+  mod/ulab/numpy/vector.c \
   mod/ulab/numpy/numpy.c \
   mod/ulab/scipy/scipy.c \
   mod/ulab/user/user.c \

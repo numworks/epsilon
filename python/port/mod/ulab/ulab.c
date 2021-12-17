@@ -14,27 +14,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <py/runtime.h>
-#include <py/binary.h>
-#include <py/obj.h>
-#include <py/objarray.h>
+#include "py/runtime.h"
+#include "py/binary.h"
+#include "py/obj.h"
+#include "py/objarray.h"
 
 #include "ulab.h"
 #include "ulab_create.h"
 #include "ndarray.h"
 #include "ndarray_properties.h"
+#include "numpy/ndarray/ndarray_iter.h"
 
 #include "numpy/numpy.h"
 #include "scipy/scipy.h"
-#include "numpy/fft/fft.h"
-#include "numpy/linalg/linalg.h"
 // TODO: we should get rid of this; array.sort depends on it
-#include "numpy/numerical/numerical.h"
+#include "numpy/numerical.h"
 
 #include "user/user.h"
 #include "utils/utils.h"
 
-#define ULAB_VERSION 3.1.0
+#define ULAB_VERSION 3.3.8
 #define xstr(s) str(s)
 #define str(s) #s
 #define ULAB_VERSION_STRING xstr(ULAB_VERSION) xstr(-) xstr(ULAB_MAX_DIMS) xstr(D)
@@ -70,6 +69,9 @@ STATIC const mp_rom_map_elem_t ulab_ndarray_locals_dict_table[] = {
         #if NDARRAY_HAS_DTYPE
             { MP_ROM_QSTR(MP_QSTR_dtype), MP_ROM_PTR(&ndarray_dtype_obj) },
         #endif
+        #if NDARRAY_HAS_FLATITER
+            { MP_ROM_QSTR(MP_QSTR_flat), MP_ROM_PTR(&ndarray_flat_obj) },
+        #endif
         #if NDARRAY_HAS_ITEMSIZE
             { MP_ROM_QSTR(MP_QSTR_itemsize), MP_ROM_PTR(&ndarray_itemsize_obj) },
         #endif
@@ -89,12 +91,15 @@ STATIC MP_DEFINE_CONST_DICT(ulab_ndarray_locals_dict, ulab_ndarray_locals_dict_t
 
 const mp_obj_type_t ulab_ndarray_type = {
     { &mp_type_type },
+    .flags = MP_TYPE_FLAG_EXTENDED
     #if defined(MP_TYPE_FLAG_EQ_CHECKS_OTHER_TYPE) && defined(MP_TYPE_FLAG_EQ_HAS_NEQ_TEST)
-    .flags = MP_TYPE_FLAG_EQ_CHECKS_OTHER_TYPE | MP_TYPE_FLAG_EQ_HAS_NEQ_TEST,
+        | MP_TYPE_FLAG_EQ_CHECKS_OTHER_TYPE | MP_TYPE_FLAG_EQ_HAS_NEQ_TEST,
     #endif
     .name = MP_QSTR_ndarray,
     .print = ndarray_print,
     .make_new = ndarray_make_new,
+    .locals_dict = (mp_obj_dict_t*)&ulab_ndarray_locals_dict,
+    MP_TYPE_EXTENDED_FIELDS(
     #if NDARRAY_IS_SLICEABLE
     .subscr = ndarray_subscr,
     #endif
@@ -111,7 +116,7 @@ const mp_obj_type_t ulab_ndarray_type = {
     .attr = ndarray_properties_attr,
     #endif
     .buffer_p = { .get_buffer = ndarray_get_buffer, },
-    .locals_dict = (mp_obj_dict_t*)&ulab_ndarray_locals_dict,
+    )
 };
 
 #if ULAB_HAS_DTYPE_OBJECT
@@ -120,6 +125,16 @@ const mp_obj_type_t ulab_dtype_type = {
     .name = MP_QSTR_dtype,
     .print = ndarray_dtype_print,
     .make_new = ndarray_dtype_make_new,
+};
+#endif
+
+#if NDARRAY_HAS_FLATITER
+const mp_obj_type_t ndarray_flatiter_type = {
+    { &mp_type_type },
+    .name = MP_QSTR_flatiter,
+    MP_TYPE_EXTENDED_FIELDS(
+    .getiter = ndarray_get_flatiterator,
+    )
 };
 #endif
 

@@ -12,8 +12,8 @@
 #ifndef _COMPARE_
 #define _COMPARE_
 
-#include "../../ulab.h"
-#include "../../ndarray.h"
+#include "../ulab.h"
+#include "../ndarray.h"
 
 enum COMPARE_FUNCTION_TYPE {
     COMPARE_EQUAL,

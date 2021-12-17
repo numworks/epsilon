@@ -13,7 +13,7 @@
 */
 
 #include <math.h>
-#include <py/runtime.h>
+#include "py/runtime.h"
 
 #include "../ulab.h"
 #include "optimize/optimize.h"

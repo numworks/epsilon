@@ -14,8 +14,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <py/obj.h>
-#include <py/runtime.h>
+#include "py/obj.h"
+#include "py/runtime.h"
 
 #include "ulab.h"
 #include "ulab_create.h"
@@ -89,24 +89,6 @@ static ndarray_obj_t *create_linspace_arange(mp_float_t start, mp_float_t step, 
 #endif
 
 #if ULAB_NUMPY_HAS_ARANGE
-//| @overload
-//| def arange(stop: _float, step: _float = 1, *, dtype: _DType = ulab.float) -> ulab.ndarray: ...
-//| @overload
-//| def arange(start: _float, stop: _float, step: _float = 1, *, dtype: _DType = ulab.float) -> ulab.ndarray:
-//|     """
-//|     .. param: start
-//|       First value in the array, optional, defaults to 0
-//|     .. param: stop
-//|       Final value in the array
-//|     .. param: step
-//|       Difference between consecutive elements, optional, defaults to 1.0
-//|     .. param: dtype
-//|       Type of values in the array
-//|
-//|     Return a new 1-D array with elements ranging from ``start`` to ``stop``, with step size ``step``."""
-//|     ...
-//|
-
 mp_obj_t create_arange(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_, MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_rom_obj = mp_const_none } },
@@ -157,17 +139,6 @@ MP_DEFINE_CONST_FUN_OBJ_KW(create_arange_obj, 1, create_arange);
 #endif
 
 #if ULAB_NUMPY_HAS_CONCATENATE
-//| def concatenate(arrays: Tuple[ulab.ndarray], *, axis: int = 0) -> ulab.ndarray:
-//|     """
-//|     .. param: arrays
-//|       tuple of ndarrays
-//|     .. param: axis
-//|       axis along which the arrays will be joined
-//|
-//|     Join a sequence of arrays along an existing axis."""
-//|     ...
-//|
-
 mp_obj_t create_concatenate(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_, MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_rom_obj = mp_const_none } },
@@ -281,17 +252,8 @@ mp_obj_t create_concatenate(size_t n_args, const mp_obj_t *pos_args, mp_map_t *k
 MP_DEFINE_CONST_FUN_OBJ_KW(create_concatenate_obj, 1, create_concatenate);
 #endif
 
+#if ULAB_MAX_DIMS > 1
 #if ULAB_NUMPY_HAS_DIAG
-//| def diag(a: ulab.ndarray, *, k: int = 0) -> ulab.ndarray:
-//|     """
-//|     .. param: a
-//|       an ndarray
-//|     .. param: k
-//|       Offset of the diagonal from the main diagonal. Can be positive or negative.
-//|
-//|     Return specified diagonals."""
-//|     ...
-//|
 mp_obj_t create_diag(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_, MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_rom_obj = mp_const_none } },
@@ -353,14 +315,7 @@ mp_obj_t create_diag(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args)
 MP_DEFINE_CONST_FUN_OBJ_KW(create_diag_obj, 1, create_diag);
 #endif /* ULAB_NUMPY_HAS_DIAG */
 
-#if ULAB_MAX_DIMS > 1
 #if ULAB_NUMPY_HAS_EYE
-//| def eye(size: int, *, M: Optional[int] = None, k: int = 0, dtype: _DType = ulab.float) -> ulab.ndarray:
-//|     """Return a new square array of size, with the diagonal elements set to 1
-//|        and the other elements set to 0."""
-//|     ...
-//|
-
 mp_obj_t create_eye(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_, MP_ARG_REQUIRED | MP_ARG_INT, { .u_int = 0 } },
@@ -407,19 +362,6 @@ MP_DEFINE_CONST_FUN_OBJ_KW(create_eye_obj, 1, create_eye);
 #endif /* ULAB_MAX_DIMS > 1 */
 
 #if ULAB_NUMPY_HAS_FULL
-//| def full(shape: Union[int, Tuple[int, ...]], fill_value: Union[_float, _bool], *, dtype: _DType = ulab.float) -> ulab.ndarray:
-//|    """
-//|    .. param: shape
-//|       Shape of the array, either an integer (for a 1-D array) or a tuple of integers (for tensors of higher rank)
-//|    .. param: fill_value
-//|       scalar, the value with which the array is filled
-//|    .. param: dtype
-//|       Type of values in the array
-//|
-//|    Return a new array of the given shape with all elements set to 0."""
-//|    ...
-//|
-
 mp_obj_t create_full(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_, MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_obj = MP_OBJ_NULL } },
@@ -440,35 +382,6 @@ MP_DEFINE_CONST_FUN_OBJ_KW(create_full_obj, 0, create_full);
 
 
 #if ULAB_NUMPY_HAS_LINSPACE
-//| def linspace(
-//|     start: _float,
-//|     stop: _float,
-//|     *,
-//|     dtype: _DType = ulab.float,
-//|     num: int = 50,
-//|     endpoint: _bool = True,
-//|     retstep: _bool = False
-//| ) -> ulab.ndarray:
-//|     """
-//|     .. param: start
-//|       First value in the array
-//|     .. param: stop
-//|       Final value in the array
-//|     .. param int: num
-//|       Count of values in the array.
-//|     .. param: dtype
-//|       Type of values in the array
-//|     .. param bool: endpoint
-//|       Whether the ``stop`` value is included.  Note that even when
-//|       endpoint=True, the exact ``stop`` value may not be included due to the
-//|       inaccuracy of floating point arithmetic.
-//      .. param bool: retstep,
-//|       If True, return (`samples`, `step`), where `step` is the spacing between samples.
-//|
-//|     Return a new 1-D array with ``num`` elements ranging from ``start`` to ``stop`` linearly."""
-//|     ...
-//|
-
 mp_obj_t create_linspace(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_, MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_rom_obj = mp_const_none } },
@@ -506,37 +419,6 @@ MP_DEFINE_CONST_FUN_OBJ_KW(create_linspace_obj, 2, create_linspace);
 #endif
 
 #if ULAB_NUMPY_HAS_LOGSPACE
-//| def logspace(
-//|     start: _float,
-//|     stop: _float,
-//|     *,
-//|     dtype: _DType = ulab.float,
-//|     num: int = 50,
-//|     endpoint: _bool = True,
-//|     base: _float = 10.0
-//| ) -> ulab.ndarray:
-//|     """
-//|     .. param: start
-//|       First value in the array
-//|     .. param: stop
-//|       Final value in the array
-//|     .. param int: num
-//|       Count of values in the array. Defaults to 50.
-//|     .. param: base
-//|       The base of the log space. The step size between the elements in
-//|       ``ln(samples) / ln(base)`` (or ``log_base(samples)``) is uniform. Defaults to 10.0.
-//|     .. param: dtype
-//|       Type of values in the array
-//|     .. param bool: endpoint
-//|       Whether the ``stop`` value is included.  Note that even when
-//|       endpoint=True, the exact ``stop`` value may not be included due to the
-//|       inaccuracy of floating point arithmetic. Defaults to True.
-//|
-//|     Return a new 1-D array with ``num`` evenly spaced elements on a log scale.
-//|     The sequence starts at ``base ** start``, and ends with ``base ** stop``."""
-//|     ...
-//|
-
 const mp_obj_float_t create_float_const_ten = {{&mp_type_float}, MICROPY_FLOAT_CONST(10.0)};
 
 mp_obj_t create_logspace(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
@@ -593,16 +475,6 @@ MP_DEFINE_CONST_FUN_OBJ_KW(create_logspace_obj, 2, create_logspace);
 #endif
 
 #if ULAB_NUMPY_HAS_ONES
-//| def ones(shape: Union[int, Tuple[int, ...]], *, dtype: _DType = ulab.float) -> ulab.ndarray:
-//|    """
-//|    .. param: shape
-//|       Shape of the array, either an integer (for a 1-D array) or a tuple of 2 integers (for a 2-D array)
-//|    .. param: dtype
-//|       Type of values in the array
-//|
-//|    Return a new array of the given shape with all elements set to 1."""
-//|    ...
-//|
 
 mp_obj_t create_ones(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
@@ -622,16 +494,6 @@ MP_DEFINE_CONST_FUN_OBJ_KW(create_ones_obj, 0, create_ones);
 #endif
 
 #if ULAB_NUMPY_HAS_ZEROS
-//| def zeros(shape: Union[int, Tuple[int, ...]], *, dtype: _DType = ulab.float) -> ulab.ndarray:
-//|    """
-//|    .. param: shape
-//|       Shape of the array, either an integer (for a 1-D array) or a tuple of 2 integers (for a 2-D array)
-//|    .. param: dtype
-//|       Type of values in the array
-//|
-//|    Return a new array of the given shape with all elements set to 0."""
-//|    ...
-//|
 
 mp_obj_t create_zeros(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {

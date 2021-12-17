@@ -14,22 +14,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <py/runtime.h>
-#include <py/builtin.h>
-#include <py/binary.h>
-#include <py/obj.h>
-#include <py/objarray.h>
+#include "py/runtime.h"
+#include "py/builtin.h"
+#include "py/binary.h"
+#include "py/obj.h"
+#include "py/objarray.h"
 
 #include "fft.h"
 
 //| """Frequency-domain functions"""
 //|
+//| import ulab.numpy
 
 
-//| def fft(r: ulab.ndarray, c: Optional[ulab.ndarray] = None) -> Tuple[ulab.ndarray, ulab.ndarray]:
+//| def fft(r: ulab.numpy.ndarray, c: Optional[ulab.numpy.ndarray] = None) -> Tuple[ulab.numpy.ndarray, ulab.numpy.ndarray]:
 //|     """
-//|     :param ulab.ndarray r: A 1-dimension array of values whose size is a power of 2
-//|     :param ulab.ndarray c: An optional 1-dimension array of values whose size is a power of 2, giving the complex part of the value
+//|     :param ulab.numpy.ndarray r: A 1-dimension array of values whose size is a power of 2
+//|     :param ulab.numpy.ndarray c: An optional 1-dimension array of values whose size is a power of 2, giving the complex part of the value
 //|     :return tuple (r, c): The real and complex parts of the FFT
 //|
 //|     Perform a Fast Fourier Transform from the time domain into the frequency domain
@@ -48,10 +49,10 @@ static mp_obj_t fft_fft(size_t n_args, const mp_obj_t *args) {
 
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(fft_fft_obj, 1, 2, fft_fft);
 
-//| def ifft(r: ulab.ndarray, c: Optional[ulab.ndarray] = None) -> Tuple[ulab.ndarray, ulab.ndarray]:
+//| def ifft(r: ulab.numpy.ndarray, c: Optional[ulab.numpy.ndarray] = None) -> Tuple[ulab.numpy.ndarray, ulab.numpy.ndarray]:
 //|     """
-//|     :param ulab.ndarray r: A 1-dimension array of values whose size is a power of 2
-//|     :param ulab.ndarray c: An optional 1-dimension array of values whose size is a power of 2, giving the complex part of the value
+//|     :param ulab.numpy.ndarray r: A 1-dimension array of values whose size is a power of 2
+//|     :param ulab.numpy.ndarray c: An optional 1-dimension array of values whose size is a power of 2, giving the complex part of the value
 //|     :return tuple (r, c): The real and complex parts of the inverse FFT
 //|
 //|     Perform an Inverse Fast Fourier Transform from the frequeny domain into the time domain"""

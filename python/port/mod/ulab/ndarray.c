@@ -16,11 +16,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <py/runtime.h>
-#include <py/binary.h>
-#include <py/obj.h>
-#include <py/objtuple.h>
-#include <py/objint.h>
+#include "py/runtime.h"
+#include "py/binary.h"
+#include "py/obj.h"
+#include "py/objtuple.h"
+#include "py/objint.h"
 
 #include "ulab_tools.h"
 #include "ndarray.h"
@@ -45,195 +45,6 @@ mp_uint_t ndarray_print_edgeitems = NDARRAY_PRINT_EDGEITEMS;
 //| possible.  Numpy's documentation can be found at
 //| https://docs.scipy.org/doc/numpy/index.html"""
 //|
-//| from typing import Dict
-//|
-//| _DType = int
-//| """`ulab.int8`, `ulab.uint8`, `ulab.int16`, `ulab.uint16`, `ulab.float` or `ulab.bool`"""
-//|
-//| _float = float
-//| """Type alias of the bulitin float"""
-//|
-//| _bool = bool
-//| """Type alias of the bulitin bool"""
-//|
-//| _Index = Union[int, slice, ulab.ndarray, Tuple[Union[int, slice], ...]]
-//|
-
-//| class ndarray:
-//|     """1- and 2- dimensional ndarray"""
-//|
-//|     def __init__(
-//|         self,
-//|         values: Union[ndarray, Iterable[Union[_float, _bool, Iterable[Any]]]],
-//|         *,
-//|         dtype: _DType = ulab.float
-//|     ) -> None:
-//|         """:param sequence values: Sequence giving the initial content of the ndarray.
-//|           :param ~ulab._DType dtype: The type of ndarray values, `ulab.int8`, `ulab.uint8`, `ulab.int16`, `ulab.uint16`, `ulab.float` or `ulab.bool`
-//|
-//|           The ``values`` sequence can either be another ~ulab.ndarray, sequence of numbers
-//|           (in which case a 1-dimensional ndarray is created), or a sequence where each
-//|           subsequence has the same length (in which case a 2-dimensional ndarray is
-//|           created).
-//|
-//|           Passing a `ulab.ndarray` and a different dtype can be used to convert an ndarray
-//|           from one dtype to another.
-//|
-//|           In many cases, it is more convenient to create an ndarray from a function
-//|           like `zeros` or `linspace`.
-//|
-//|           `ulab.ndarray` implements the buffer protocol, so it can be used in many
-//|           places an `array.array` can be used."""
-//|         ...
-//|
-//|     shape: Tuple[int, ...]
-//|     """The size of the array, a tuple of length 1 or 2"""
-//|
-//|     size: int
-//|     """The number of elements in the array"""
-//|
-//|     itemsize: int
-//|     """The size of a single item in the array"""
-//|
-//|     strides: Tuple[int, ...]
-//|     """Tuple of bytes to step in each dimension, a tuple of length 1 or 2"""
-//|
-//|     def copy(self) -> ulab.ndarray:
-//|         """Return a copy of the array"""
-//|         ...
-//|
-//|     def dtype(self) -> _DType:
-//|         """Returns the dtype of the array"""
-//|         ...
-//|
-//|     def flatten(self, *, order: str = "C") -> ulab.ndarray:
-//|         """:param order: Whether to flatten by rows ('C') or columns ('F')
-//|
-//|            Returns a new `ulab.ndarray` object which is always 1 dimensional.
-//|            If order is 'C' (the default", then the data is ordered in rows;
-//|            If it is 'F', then the data is ordered in columns.  "C" and "F" refer
-//|            to the typical storage organization of the C and Fortran languages."""
-//|         ...
-//|
-//|     def reshape(self, shape: Tuple[int, ...]) -> ulab.ndarray:
-//|         """Returns an ndarray containing the same data with a new shape."""
-//|         ...
-//|
-//|     def sort(self, *, axis: Optional[int] = 1) -> None:
-//|         """:param axis: Whether to sort elements within rows (0), columns (1), or elements (None)"""
-//|         ...
-//|
-//|     def tobytes(self) -> bytearray:
-//|         """Return the raw data bytes in the ndarray"""
-//|         ...
-//|
-//|     def transpose(self) -> ulab.ndarray:
-//|         """Swap the rows and columns of a 2-dimensional ndarray"""
-//|         ...
-//|
-//|     def __add__(self, other: Union[ndarray, _float]) -> ulab.ndarray:
-//|         """Adds corresponding elements of the two ndarrays, or adds a number to all
-//|            elements of the ndarray.  If both arguments are ndarrays, their sizes must match."""
-//|         ...
-//|     def __radd__(self, other: _float) -> ulab.ndarray: ...
-//|
-//|     def __sub__(self, other: Union[ndarray, _float]) -> ulab.ndarray:
-//|         """Subtracts corresponding elements of the two ndarrays, or subtracts a number from all
-//|            elements of the ndarray.  If both arguments are ndarrays, their sizes must match."""
-//|         ...
-//|     def __rsub__(self, other: _float) -> ulab.ndarray: ...
-//|
-//|     def __mul__(self, other: Union[ndarray, _float]) -> ulab.ndarray:
-//|         """Multiplies corresponding elements of the two ndarrays, or multiplies
-//|            all elements of the ndarray by a number.  If both arguments are ndarrays,
-//|            their sizes must match."""
-//|         ...
-//|     def __rmul__(self, other: _float) -> ulab.ndarray: ...
-//|
-//|     def __div__(self, other: Union[ndarray, _float]) -> ulab.ndarray:
-//|         """Multiplies corresponding elements of the two ndarrays, or divides
-//|            all elements of the ndarray by a number.  If both arguments are ndarrays,
-//|            their sizes must match."""
-//|         ...
-//|     def __rdiv__(self, other: _float) -> ulab.ndarray: ...
-//|
-//|     def __pow__(self, other: Union[ndarray, _float]) -> ulab.ndarray:
-//|         """Computes the power (x**y) of corresponding elements of the the two ndarrays,
-//|            or one number and one ndarray.  If both arguments are ndarrays, their sizes
-//|            must match."""
-//|         ...
-//|     def __rpow__(self, other: _float) -> ulab.ndarray: ...
-//|
-//|     def __inv__(self) -> ulab.ndarray:
-//|         ...
-//|     def __neg__(self) -> ulab.ndarray:
-//|         ...
-//|     def __pos__(self) -> ulab.ndarray:
-//|         ...
-//|     def __abs__(self) -> ulab.ndarray:
-//|         ...
-//|     def __len__(self) -> int:
-//|         ...
-//|     def __lt__(self, other: Union[ndarray, _float]) -> ulab.ndarray:
-//|         ...
-//|     def __le__(self, other: Union[ndarray, _float]) -> ulab.ndarray:
-//|         ...
-//|     def __gt__(self, other: Union[ndarray, _float]) -> ulab.ndarray:
-//|         ...
-//|     def __ge__(self, other: Union[ndarray, _float]) -> ulab.ndarray:
-//|         ...
-//|
-//|     def __iter__(self) -> Union[Iterator[ndarray], Iterator[_float]]:
-//|         ...
-//|
-//|     def __getitem__(self, index: _Index) -> Union[ndarray, _float]:
-//|         """Retrieve an element of the ndarray."""
-//|         ...
-//|
-//|     def __setitem__(self, index: _Index, value: Union[ndarray, _float]) -> None:
-//|         """Set an element of the ndarray."""
-//|         ...
-//|
-//| _ArrayLike = Union[ndarray, List[_float], Tuple[_float], range]
-//| """`ulab.ndarray`, ``List[float]``, ``Tuple[float]`` or `range`"""
-//|
-//| int8: _DType
-//| """Type code for signed integers in the range -128 .. 127 inclusive, like the 'b' typecode of `array.array`"""
-//|
-//| int16: _DType
-//| """Type code for signed integers in the range -32768 .. 32767 inclusive, like the 'h' typecode of `array.array`"""
-//|
-//| float: _DType
-//| """Type code for floating point values, like the 'f' typecode of `array.array`"""
-//|
-//| uint8: _DType
-//| """Type code for unsigned integers in the range 0 .. 255 inclusive, like the 'H' typecode of `array.array`"""
-//|
-//| uint16: _DType
-//| """Type code for unsigned integers in the range 0 .. 65535 inclusive, like the 'h' typecode of `array.array`"""
-//|
-//| bool: _DType
-//| """Type code for boolean values"""
-//|
-//| def get_printoptions() -> Dict[str, int]:
-//|     """Get printing options"""
-//|     ...
-//|
-//| def set_printoptions(threshold: Optional[int] = None, edgeitems: Optional[int] = None) -> None:
-//|     """Set printing options"""
-//|     ...
-//|
-//| def ndinfo(array: ulab.ndarray) -> None:
-//|     ...
-//|
-//| def array(
-//|     values: Union[ndarray, Iterable[Union[_float, _bool, Iterable[Any]]]],
-//|     *,
-//|     dtype: _DType = ulab.float
-//| ) -> ulab.ndarray:
-//|     """alternate constructor function for `ulab.ndarray`. Mirrors numpy.array"""
-//|     ...
-
 
 #ifdef CIRCUITPY
 void ndarray_set_value(char typecode, void *p, size_t index, mp_obj_t val_in) {
@@ -257,7 +68,7 @@ void ndarray_set_value(char typecode, void *p, size_t index, mp_obj_t val_in) {
 }
 #endif
 
-#if defined(MICROPY_VERSION_MAJOR) && MICROPY_VERSION_MAJOR == 1 && MICROPY_VERSION_MINOR == 12
+#if defined(MICROPY_VERSION_MAJOR) && MICROPY_VERSION_MAJOR == 1 && MICROPY_VERSION_MINOR == 11
 
 void mp_obj_slice_indices(mp_obj_t self_in, mp_int_t length, mp_bound_slice_t *result) {
     mp_obj_slice_t *self = MP_OBJ_TO_PTR(self_in);
@@ -581,11 +392,13 @@ static void ndarray_print_row(const mp_print_t *print, ndarray_obj_t * ndarray, 
     mp_print_str(print, "]");
 }
 
+#if ULAB_MAX_DIMS > 1
 static void ndarray_print_bracket(const mp_print_t *print, const size_t condition, const size_t shape, const char *string) {
     if(condition < shape) {
         mp_print_str(print, string);
     }
 }
+#endif
 
 void ndarray_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
     (void)kind;
@@ -596,9 +409,13 @@ void ndarray_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t ki
         mp_print_str(print, "[]");
         if(self->ndim > 1) {
             mp_print_str(print, ", shape=(");
+            #if ULAB_MAX_DIMS > 1
             for(uint8_t ndim = self->ndim; ndim > 1; ndim--) {
                 mp_printf(MP_PYTHON_PRINTER, "%d,", self->shape[ULAB_MAX_DIMS - ndim]);
             }
+            #else
+            mp_printf(MP_PYTHON_PRINTER, "%d,", self->shape[0]);
+            #endif
             mp_printf(MP_PYTHON_PRINTER, "%d)", self->shape[ULAB_MAX_DIMS - 1]);
         }
     } else {
@@ -1110,18 +927,6 @@ mp_obj_t ndarray_array_constructor(size_t n_args, const mp_obj_t *pos_args, mp_m
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(ndarray_array_constructor_obj, 1, ndarray_array_constructor);
 
-#ifdef CIRCUITPY
-mp_obj_t ndarray_make_new(const mp_obj_type_t *type, size_t n_args, const mp_obj_t *args, mp_map_t *kw_args) {
-    (void) type;
-    mp_arg_check_num(n_args, kw_args, 1, 2, true);
-    size_t n_kw = 0;
-    if (kw_args != 0) {
-        n_kw = kw_args->used;
-    }
-    mp_map_init_fixed_table(kw_args, n_kw, args + n_args);
-    return ndarray_make_new_core(type, n_args, n_kw, args, kw_args);
-}
-#else
 mp_obj_t ndarray_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     (void) type;
     mp_arg_check_num(n_args, n_kw, 1, 2, true);
@@ -1129,7 +934,6 @@ mp_obj_t ndarray_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw,
     mp_map_init_fixed_table(&kw_args, n_kw, args + n_args);
     return ndarray_make_new_core(type, n_args, n_kw, args, &kw_args);
 }
-#endif
 
 // broadcasting is used at a number of places, always include
 bool ndarray_can_broadcast(ndarray_obj_t *lhs, ndarray_obj_t *rhs, uint8_t *ndim, size_t *shape, int32_t *lstrides, int32_t *rstrides) {
@@ -1555,12 +1359,12 @@ mp_obj_t ndarray_iternext(mp_obj_t self_in) {
 
 mp_obj_t ndarray_new_ndarray_iterator(mp_obj_t ndarray, mp_obj_iter_buf_t *iter_buf) {
     assert(sizeof(mp_obj_ndarray_it_t) <= sizeof(mp_obj_iter_buf_t));
-    mp_obj_ndarray_it_t *o = (mp_obj_ndarray_it_t*)iter_buf;
-    o->base.type = &mp_type_polymorph_iter;
-    o->iternext = ndarray_iternext;
-    o->ndarray = ndarray;
-    o->cur = 0;
-    return MP_OBJ_FROM_PTR(o);
+    mp_obj_ndarray_it_t *iter = (mp_obj_ndarray_it_t *)iter_buf;
+    iter->base.type = &mp_type_polymorph_iter;
+    iter->iternext = ndarray_iternext;
+    iter->ndarray = ndarray;
+    iter->cur = 0;
+    return MP_OBJ_FROM_PTR(iter);
 }
 #endif /* NDARRAY_IS_ITERABLE */
 
@@ -1675,12 +1479,13 @@ mp_obj_t ndarray_itemsize(mp_obj_t self_in) {
 #if NDARRAY_HAS_SHAPE
 mp_obj_t ndarray_shape(mp_obj_t self_in) {
     ndarray_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    mp_obj_t *items = m_new(mp_obj_t, self->ndim);
-    for(uint8_t i=0; i < self->ndim; i++) {
-        items[self->ndim - i - 1] = mp_obj_new_int(self->shape[ULAB_MAX_DIMS - i - 1]);
+    uint8_t nitems = MAX(1, self->ndim);
+    mp_obj_t *items = m_new(mp_obj_t, nitems);
+    for(uint8_t i = 0; i < nitems; i++) {
+        items[nitems - i - 1] = mp_obj_new_int(self->shape[ULAB_MAX_DIMS - i - 1]);
     }
-    mp_obj_t tuple = mp_obj_new_tuple(self->ndim, items);
-    m_del(mp_obj_t, items, self->ndim);
+    mp_obj_t tuple = mp_obj_new_tuple(nitems, items);
+    m_del(mp_obj_t, items, nitems);
     return tuple;
 }
 #endif

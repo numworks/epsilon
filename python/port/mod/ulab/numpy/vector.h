@@ -12,8 +12,8 @@
 #ifndef _VECTOR_
 #define _VECTOR_
 
-#include "../../ulab.h"
-#include "../../ndarray.h"
+#include "../ulab.h"
+#include "../ndarray.h"
 
 MP_DECLARE_CONST_FUN_OBJ_1(vectorise_acos_obj);
 MP_DECLARE_CONST_FUN_OBJ_1(vectorise_acosh_obj);

@@ -14,14 +14,14 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <py/obj.h>
-#include <py/objint.h>
-#include <py/runtime.h>
-#include <py/builtin.h>
-#include <py/misc.h>
+#include "py/obj.h"
+#include "py/objint.h"
+#include "py/runtime.h"
+#include "py/builtin.h"
+#include "py/misc.h"
 
-#include "../../ulab.h"
-#include "../../ulab_tools.h"
+#include "../ulab.h"
+#include "../ulab_tools.h"
 #include "numerical.h"
 
 enum NUMERICAL_FUNCTION_TYPE {
@@ -41,7 +41,33 @@ enum NUMERICAL_FUNCTION_TYPE {
 //| Most of these functions take an "axis" argument, which indicates whether to
 //| operate over the flattened array (None), or a particular axis (integer)."""
 //|
-//| from ulab import _ArrayLike
+//| from typing import Dict
+//|
+//| _ArrayLike = Union[ndarray, List[_float], Tuple[_float], range]
+//|
+//| _DType = int
+//| """`ulab.numpy.int8`, `ulab.numpy.uint8`, `ulab.numpy.int16`, `ulab.numpy.uint16`, `ulab.numpy.float` or `ulab.numpy.bool`"""
+//|
+//| from builtins import float as _float
+//| from builtins import bool as _bool
+//|
+//| int8: _DType
+//| """Type code for signed integers in the range -128 .. 127 inclusive, like the 'b' typecode of `array.array`"""
+//|
+//| int16: _DType
+//| """Type code for signed integers in the range -32768 .. 32767 inclusive, like the 'h' typecode of `array.array`"""
+//|
+//| float: _DType
+//| """Type code for floating point values, like the 'f' typecode of `array.array`"""
+//|
+//| uint8: _DType
+//| """Type code for unsigned integers in the range 0 .. 255 inclusive, like the 'H' typecode of `array.array`"""
+//|
+//| uint16: _DType
+//| """Type code for unsigned integers in the range 0 .. 65535 inclusive, like the 'h' typecode of `array.array`"""
+//|
+//| bool: _DType
+//| """Type code for boolean values"""
 //|
 
 static void numerical_reduce_axes(ndarray_obj_t *ndarray, int8_t axis, size_t *shape, int32_t *strides) {
@@ -78,8 +104,7 @@ static mp_obj_t numerical_all_any(mp_obj_t oin, mp_obj_t axis, uint8_t optype) {
         }
         // always get a float, so that we don't have to resolve the dtype later
         mp_float_t (*func)(void *) = ndarray_get_float_function(ndarray->dtype);
-        // We set results to true here because it crash if it is NULL
-        ndarray_obj_t *results = mp_const_true;
+        ndarray_obj_t *results = NULL;
         uint8_t *rarray = NULL;
         shape_strides _shape_strides = tools_reduce_axes(ndarray, axis);
         if(axis != mp_const_none) {
@@ -153,8 +178,16 @@ static mp_obj_t numerical_all_any(mp_obj_t oin, mp_obj_t axis, uint8_t optype) {
             array -= _shape_strides.strides[ULAB_MAX_DIMS - 2] * _shape_strides.shape[ULAB_MAX_DIMS - 2];
             array += _shape_strides.strides[ULAB_MAX_DIMS - 3];
             i++;
-        } while(i < _shape_strides.shape[ULAB_MAX_DIMS - 3])
+        } while(i < _shape_strides.shape[ULAB_MAX_DIMS - 3]);
         #endif
+        if(axis == mp_const_none) {
+            // the innermost loop fell through, so return the result here
+            if(!anytype) {
+                return mp_const_false;
+            } else {
+                return mp_const_true;
+            }
+        }
         return results;
     } else if(mp_obj_is_int(oin) || mp_obj_is_float(oin)) {
         return mp_obj_is_true(oin) ? mp_const_true : mp_const_false;
@@ -265,7 +298,7 @@ static mp_obj_t numerical_sum_mean_std_ndarray(ndarray_obj_t *ndarray, mp_obj_t 
             if(ndarray->dtype == NDARRAY_FLOAT) {
                 return mp_obj_new_float(M * ndarray->len);
             } else {
-                return mp_obj_new_int((int32_t)(M * ndarray->len));
+                return mp_obj_new_int((int32_t)MICROPY_FLOAT_C_FUN(round)(M * ndarray->len));
             }
         } else if(optype == NUMERICAL_MEAN) {
             return mp_obj_new_float(M);
@@ -551,6 +584,7 @@ static mp_obj_t numerical_sort_helper(mp_obj_t oin, mp_obj_t axis, uint8_t inpla
     int8_t ax = 0;
     if(axis == mp_const_none) {
         // flatten the array
+        #if ULAB_MAX_DIMS > 1
         for(uint8_t i=0; i < ULAB_MAX_DIMS - 1; i++) {
             ndarray->shape[i] = 0;
             ndarray->strides[i] = 0;
@@ -558,6 +592,7 @@ static mp_obj_t numerical_sort_helper(mp_obj_t oin, mp_obj_t axis, uint8_t inpla
         ndarray->shape[ULAB_MAX_DIMS - 1] = ndarray->len;
         ndarray->strides[ULAB_MAX_DIMS - 1] = ndarray->itemsize;
         ndarray->ndim = 1;
+        #endif
     } else {
         ax = mp_obj_get_int(axis);
         if(ax < 0) ax += ndarray->ndim;
@@ -630,7 +665,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_argmin_obj, 1, numerical_argmin);
 #endif
 
 #if ULAB_NUMPY_HAS_ARGSORT
-//| def argsort(array: ulab.ndarray, *, axis: int = -1) -> ulab.ndarray:
+//| def argsort(array: ulab.numpy.ndarray, *, axis: int = -1) -> ulab.numpy.ndarray:
 //|     """Returns an array which gives indices into the input array from least to greatest."""
 //|     ...
 //|
@@ -739,7 +774,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_argsort_obj, 1, numerical_argsort);
 #endif
 
 #if ULAB_NUMPY_HAS_CROSS
-//| def cross(a: ulab.ndarray, b: ulab.ndarray) -> ulab.ndarray:
+//| def cross(a: ulab.numpy.ndarray, b: ulab.numpy.ndarray) -> ulab.numpy.ndarray:
 //|     """Return the cross product of two vectors of length 3"""
 //|     ...
 //|
@@ -817,7 +852,7 @@ MP_DEFINE_CONST_FUN_OBJ_2(numerical_cross_obj, numerical_cross);
 #endif /* ULAB_NUMERICAL_HAS_CROSS */
 
 #if ULAB_NUMPY_HAS_DIFF
-//| def diff(array: ulab.ndarray, *, n: int = 1, axis: int = -1) -> ulab.ndarray:
+//| def diff(array: ulab.numpy.ndarray, *, n: int = 1, axis: int = -1) -> ulab.numpy.ndarray:
 //|     """Return the numerical derivative of successive elements of the array, as
 //|        an array.  axis=None is not supported."""
 //|     ...
@@ -898,7 +933,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_diff_obj, 1, numerical_diff);
 #endif
 
 #if ULAB_NUMPY_HAS_FLIP
-//| def flip(array: ulab.ndarray, *, axis: Optional[int] = None) -> ulab.ndarray:
+//| def flip(array: ulab.numpy.ndarray, *, axis: Optional[int] = None) -> ulab.numpy.ndarray:
 //|     """Returns a new array that reverses the order of the elements along the
 //|        given axis, or along all axes if axis is None."""
 //|     ...
@@ -946,7 +981,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_flip_obj, 1, numerical_flip);
 #endif
 
 #if ULAB_NUMPY_HAS_MINMAX
-//| def max(array: _ArrayLike, *, axis: Optional[int] = None) -> float:
+//| def max(array: _ArrayLike, *, axis: Optional[int] = None) -> _float:
 //|     """Return the maximum element of the 1D array"""
 //|     ...
 //|
@@ -959,7 +994,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_max_obj, 1, numerical_max);
 #endif
 
 #if ULAB_NUMPY_HAS_MEAN
-//| def mean(array: _ArrayLike, *, axis: Optional[int] = None) -> float:
+//| def mean(array: _ArrayLike, *, axis: Optional[int] = None) -> _float:
 //|     """Return the mean element of the 1D array, as a number if axis is None, otherwise as an array."""
 //|     ...
 //|
@@ -972,7 +1007,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_mean_obj, 1, numerical_mean);
 #endif
 
 #if ULAB_NUMPY_HAS_MEDIAN
-//| def median(array: ulab.ndarray, *, axis: int = -1) -> ulab.ndarray:
+//| def median(array: ulab.numpy.ndarray, *, axis: int = -1) -> ulab.numpy.ndarray:
 //|     """Find the median value in an array along the given axis, or along all axes if axis is None."""
 //|     ...
 //|
@@ -1072,7 +1107,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_median_obj, 1, numerical_median);
 #endif
 
 #if ULAB_NUMPY_HAS_MINMAX
-//| def min(array: _ArrayLike, *, axis: Optional[int] = None) -> float:
+//| def min(array: _ArrayLike, *, axis: Optional[int] = None) -> _float:
 //|     """Return the minimum element of the 1D array"""
 //|     ...
 //|
@@ -1085,7 +1120,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_min_obj, 1, numerical_min);
 #endif
 
 #if ULAB_NUMPY_HAS_ROLL
-//| def roll(array: ulab.ndarray, distance: int, *, axis: Optional[int] = None) -> None:
+//| def roll(array: ulab.numpy.ndarray, distance: int, *, axis: Optional[int] = None) -> None:
 //|     """Shift the content of a vector by the positions given as the second
 //|        argument. If the ``axis`` keyword is supplied, the shift is applied to
 //|        the given axis.  The array is modified in place."""
@@ -1250,7 +1285,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_roll_obj, 2, numerical_roll);
 #endif
 
 #if ULAB_NUMPY_HAS_SORT
-//| def sort(array: ulab.ndarray, *, axis: int = -1) -> ulab.ndarray:
+//| def sort(array: ulab.numpy.ndarray, *, axis: int = -1) -> ulab.numpy.ndarray:
 //|     """Sort the array along the given axis, or along all axes if axis is None.
 //|        The array is modified in place."""
 //|     ...
@@ -1289,7 +1324,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_sort_inplace_obj, 1, numerical_sort_inplace
 #endif /* NDARRAY_HAS_SORT */
 
 #if ULAB_NUMPY_HAS_STD
-//| def std(array: _ArrayLike, *, axis: Optional[int] = None, ddof: int = 0) -> float:
+//| def std(array: _ArrayLike, *, axis: Optional[int] = None, ddof: int = 0) -> _float:
 //|     """Return the standard deviation of the array, as a number if axis is None, otherwise as an array."""
 //|     ...
 //|
@@ -1326,7 +1361,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(numerical_std_obj, 1, numerical_std);
 #endif
 
 #if ULAB_NUMPY_HAS_SUM
-//| def sum(array: _ArrayLike, *, axis: Optional[int] = None) -> Union[float, int, ulab.ndarray]:
+//| def sum(array: _ArrayLike, *, axis: Optional[int] = None) -> Union[_float, int, ulab.numpy.ndarray]:
 //|     """Return the sum of the array, as a number if axis is None, otherwise as an array."""
 //|     ...
 //|

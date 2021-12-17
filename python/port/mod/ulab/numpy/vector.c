@@ -15,13 +15,13 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <py/runtime.h>
-#include <py/binary.h>
-#include <py/obj.h>
-#include <py/objarray.h>
+#include "py/runtime.h"
+#include "py/binary.h"
+#include "py/obj.h"
+#include "py/objarray.h"
 
-#include "../../ulab.h"
-#include "../../ulab_tools.h"
+#include "../ulab.h"
+#include "../ulab_tools.h"
 #include "vector.h"
 
 //| """Element-by-element functions
@@ -29,8 +29,6 @@
 //| These functions can operate on numbers, 1-D iterables, and arrays of 1 to 4 dimensions by
 //| applying the function to every element in the array.  This is typically
 //| much more efficient than expressing the same operation as a Python loop."""
-//|
-//| from ulab import _DType, _ArrayLike
 //|
 
 static mp_obj_t vectorise_generic_vector(mp_obj_t o_in, mp_float_t (*f)(mp_float_t)) {
@@ -111,7 +109,7 @@ static mp_obj_t vectorise_generic_vector(mp_obj_t o_in, mp_float_t (*f)(mp_float
 }
 
 #if ULAB_NUMPY_HAS_ACOS
-//| def acos(a: _ArrayLike) -> ulab.ndarray:
+//| def acos(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the inverse cosine function"""
 //|    ...
 //|
@@ -121,7 +119,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_acos_obj, vectorise_acos);
 #endif
 
 #if ULAB_NUMPY_HAS_ACOSH
-//| def acosh(a: _ArrayLike) -> ulab.ndarray:
+//| def acosh(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the inverse hyperbolic cosine function"""
 //|    ...
 //|
@@ -131,7 +129,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_acosh_obj, vectorise_acosh);
 #endif
 
 #if ULAB_NUMPY_HAS_ASIN
-//| def asin(a: _ArrayLike) -> ulab.ndarray:
+//| def asin(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the inverse sine function"""
 //|    ...
 //|
@@ -141,7 +139,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_asin_obj, vectorise_asin);
 #endif
 
 #if ULAB_NUMPY_HAS_ASINH
-//| def asinh(a: _ArrayLike) -> ulab.ndarray:
+//| def asinh(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the inverse hyperbolic sine function"""
 //|    ...
 //|
@@ -151,7 +149,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_asinh_obj, vectorise_asinh);
 #endif
 
 #if ULAB_NUMPY_HAS_AROUND
-//| def around(a: _ArrayLike, *, decimals: int = 0) -> ulab.ndarray:
+//| def around(a: _ArrayLike, *, decimals: int = 0) -> ulab.numpy.ndarray:
 //|    """Returns a new float array in which each element is rounded to
 //|       ``decimals`` places."""
 //|    ...
@@ -221,7 +219,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(vectorise_around_obj, 1, vectorise_around);
 #endif
 
 #if ULAB_NUMPY_HAS_ATAN
-//| def atan(a: _ArrayLike) -> ulab.ndarray:
+//| def atan(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the inverse tangent function; the return values are in the
 //|       range [-pi/2,pi/2]."""
 //|    ...
@@ -232,7 +230,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_atan_obj, vectorise_atan);
 #endif
 
 #if ULAB_NUMPY_HAS_ARCTAN2
-//| def arctan2(ya: _ArrayLike, xa: _ArrayLike) -> ulab.ndarray:
+//| def arctan2(ya: _ArrayLike, xa: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the inverse tangent function of y/x; the return values are in
 //|       the range [-pi, pi]."""
 //|    ...
@@ -315,7 +313,7 @@ MP_DEFINE_CONST_FUN_OBJ_2(vectorise_arctan2_obj, vectorise_arctan2);
 #endif /* ULAB_VECTORISE_HAS_ARCTAN2 */
 
 #if ULAB_NUMPY_HAS_ATANH
-//| def atanh(a: _ArrayLike) -> ulab.ndarray:
+//| def atanh(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the inverse hyperbolic tangent function"""
 //|    ...
 //|
@@ -325,7 +323,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_atanh_obj, vectorise_atanh);
 #endif
 
 #if ULAB_NUMPY_HAS_CEIL
-//| def ceil(a: _ArrayLike) -> ulab.ndarray:
+//| def ceil(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Rounds numbers up to the next whole number"""
 //|    ...
 //|
@@ -335,7 +333,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_ceil_obj, vectorise_ceil);
 #endif
 
 #if ULAB_NUMPY_HAS_COS
-//| def cos(a: _ArrayLike) -> ulab.ndarray:
+//| def cos(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the cosine function"""
 //|    ...
 //|
@@ -345,7 +343,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_cos_obj, vectorise_cos);
 #endif
 
 #if ULAB_NUMPY_HAS_COSH
-//| def cosh(a: _ArrayLike) -> ulab.ndarray:
+//| def cosh(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the hyperbolic cosine function"""
 //|    ...
 //|
@@ -355,7 +353,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_cosh_obj, vectorise_cosh);
 #endif
 
 #if ULAB_NUMPY_HAS_DEGREES
-//| def degrees(a: _ArrayLike) -> ulab.ndarray:
+//| def degrees(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Converts angles from radians to degrees"""
 //|    ...
 //|
@@ -372,7 +370,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_degrees_obj, vectorise_degrees);
 #endif
 
 #if ULAB_SCIPY_SPECIAL_HAS_ERF
-//| def erf(a: _ArrayLike) -> ulab.ndarray:
+//| def erf(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the error function, which has applications in statistics"""
 //|    ...
 //|
@@ -382,7 +380,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_erf_obj, vectorise_erf);
 #endif
 
 #if ULAB_SCIPY_SPECIAL_HAS_ERFC
-//| def erfc(a: _ArrayLike) -> ulab.ndarray:
+//| def erfc(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the complementary error function, which has applications in statistics"""
 //|    ...
 //|
@@ -392,7 +390,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_erfc_obj, vectorise_erfc);
 #endif
 
 #if ULAB_NUMPY_HAS_EXP
-//| def exp(a: _ArrayLike) -> ulab.ndarray:
+//| def exp(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the exponent function."""
 //|    ...
 //|
@@ -402,7 +400,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_exp_obj, vectorise_exp);
 #endif
 
 #if ULAB_NUMPY_HAS_EXPM1
-//| def expm1(a: _ArrayLike) -> ulab.ndarray:
+//| def expm1(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes $e^x-1$.  In certain applications, using this function preserves numeric accuracy better than the `exp` function."""
 //|    ...
 //|
@@ -412,7 +410,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_expm1_obj, vectorise_expm1);
 #endif
 
 #if ULAB_NUMPY_HAS_FLOOR
-//| def floor(a: _ArrayLike) -> ulab.ndarray:
+//| def floor(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Rounds numbers up to the next whole number"""
 //|    ...
 //|
@@ -422,7 +420,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_floor_obj, vectorise_floor);
 #endif
 
 #if ULAB_SCIPY_SPECIAL_HAS_GAMMA
-//| def gamma(a: _ArrayLike) -> ulab.ndarray:
+//| def gamma(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the gamma function"""
 //|    ...
 //|
@@ -432,7 +430,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_gamma_obj, vectorise_gamma);
 #endif
 
 #if ULAB_SCIPY_SPECIAL_HAS_GAMMALN
-//| def lgamma(a: _ArrayLike) -> ulab.ndarray:
+//| def lgamma(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the natural log of the gamma function"""
 //|    ...
 //|
@@ -442,7 +440,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_lgamma_obj, vectorise_lgamma);
 #endif
 
 #if ULAB_NUMPY_HAS_LOG
-//| def log(a: _ArrayLike) -> ulab.ndarray:
+//| def log(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the natural log"""
 //|    ...
 //|
@@ -452,7 +450,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_log_obj, vectorise_log);
 #endif
 
 #if ULAB_NUMPY_HAS_LOG10
-//| def log10(a: _ArrayLike) -> ulab.ndarray:
+//| def log10(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the log base 10"""
 //|    ...
 //|
@@ -462,7 +460,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_log10_obj, vectorise_log10);
 #endif
 
 #if ULAB_NUMPY_HAS_LOG2
-//| def log2(a: _ArrayLike) -> ulab.ndarray:
+//| def log2(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the log base 2"""
 //|    ...
 //|
@@ -472,7 +470,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_log2_obj, vectorise_log2);
 #endif
 
 #if ULAB_NUMPY_HAS_RADIANS
-//| def radians(a: _ArrayLike) -> ulab.ndarray:
+//| def radians(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Converts angles from degrees to radians"""
 //|    ...
 //|
@@ -489,7 +487,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_radians_obj, vectorise_radians);
 #endif
 
 #if ULAB_NUMPY_HAS_SIN
-//| def sin(a: _ArrayLike) -> ulab.ndarray:
+//| def sin(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the sine function"""
 //|    ...
 //|
@@ -499,7 +497,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_sin_obj, vectorise_sin);
 #endif
 
 #if ULAB_NUMPY_HAS_SINH
-//| def sinh(a: _ArrayLike) -> ulab.ndarray:
+//| def sinh(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the hyperbolic sine"""
 //|    ...
 //|
@@ -509,7 +507,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_sinh_obj, vectorise_sinh);
 #endif
 
 #if ULAB_NUMPY_HAS_SQRT
-//| def sqrt(a: _ArrayLike) -> ulab.ndarray:
+//| def sqrt(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the square root"""
 //|    ...
 //|
@@ -519,7 +517,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_sqrt_obj, vectorise_sqrt);
 #endif
 
 #if ULAB_NUMPY_HAS_TAN
-//| def tan(a: _ArrayLike) -> ulab.ndarray:
+//| def tan(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the tangent"""
 //|    ...
 //|
@@ -529,7 +527,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(vectorise_tan_obj, vectorise_tan);
 #endif
 
 #if ULAB_NUMPY_HAS_TANH
-//| def tanh(a: _ArrayLike) -> ulab.ndarray:
+//| def tanh(a: _ArrayLike) -> ulab.numpy.ndarray:
 //|    """Computes the hyperbolic tangent"""
 //|    ...
 
@@ -549,7 +547,7 @@ static mp_obj_t vectorise_vectorized_function_call(mp_obj_t self_in, size_t n_ar
         ndarray_obj_t *ndarray = ndarray_new_dense_ndarray(source->ndim, source->shape, self->otypes);
         for(size_t i=0; i < source->len; i++) {
             avalue[0] = mp_binary_get_val_array(source->dtype, source->array, i);
-            fvalue = self->type->call(self->fun, 1, 0, avalue);
+            fvalue = self->type->MP_TYPE_CALL(self->fun, 1, 0, avalue);
             ndarray_set_value(self->otypes, ndarray->array, i, fvalue);
         }
         return MP_OBJ_FROM_PTR(ndarray);
@@ -561,14 +559,14 @@ static mp_obj_t vectorise_vectorized_function_call(mp_obj_t self_in, size_t n_ar
         mp_obj_t iterable = mp_getiter(args[0], &iter_buf);
         size_t i=0;
         while ((avalue[0] = mp_iternext(iterable)) != MP_OBJ_STOP_ITERATION) {
-            fvalue = self->type->call(self->fun, 1, 0, avalue);
+            fvalue = self->type->MP_TYPE_CALL(self->fun, 1, 0, avalue);
             ndarray_set_value(self->otypes, ndarray->array, i, fvalue);
             i++;
         }
         return MP_OBJ_FROM_PTR(ndarray);
     } else if(mp_obj_is_int(args[0]) || mp_obj_is_float(args[0])) {
         ndarray_obj_t *ndarray = ndarray_new_linear_array(1, self->otypes);
-        fvalue = self->type->call(self->fun, 1, 0, args);
+        fvalue = self->type->MP_TYPE_CALL(self->fun, 1, 0, args);
         ndarray_set_value(self->otypes, ndarray->array, 0, fvalue);
         return MP_OBJ_FROM_PTR(ndarray);
     } else {
@@ -579,15 +577,18 @@ static mp_obj_t vectorise_vectorized_function_call(mp_obj_t self_in, size_t n_ar
 
 const mp_obj_type_t vectorise_function_type = {
     { &mp_type_type },
+    .flags = MP_TYPE_FLAG_EXTENDED,
     .name = MP_QSTR_,
+    MP_TYPE_EXTENDED_FIELDS(
     .call = vectorise_vectorized_function_call,
+    )
 };
 
 //| def vectorize(
-//|     f: Union[Callable[[int], float], Callable[[float], float]],
+//|     f: Union[Callable[[int], _float], Callable[[_float], _float]],
 //|     *,
 //|     otypes: Optional[_DType] = None
-//| ) -> Callable[[_ArrayLike], ulab.ndarray]:
+//| ) -> Callable[[_ArrayLike], ulab.numpy.ndarray]:
 //|    """
 //|    :param callable f: The function to wrap
 //|    :param otypes: List of array types that may be returned by the function.  None is interpreted to mean the return value is float.
@@ -605,7 +606,7 @@ static mp_obj_t vectorise_vectorize(size_t n_args, const mp_obj_t *pos_args, mp_
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
     const mp_obj_type_t *type = mp_obj_get_type(args[0].u_obj);
-    if(type->call == NULL) {
+    if(mp_type_get_call_slot(type) == NULL) {
         mp_raise_TypeError(translate("first argument must be a callable"));
     }
     mp_obj_t _otypes = args[1].u_obj;

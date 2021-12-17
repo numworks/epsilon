@@ -34,16 +34,22 @@
 
 // Determines, whether scipy is defined in ulab. The sub-modules and functions
 // of scipy have to be defined separately
+#ifndef ULAB_HAS_SCIPY
 #define ULAB_HAS_SCIPY                      (1)
+#endif
 
 // The maximum number of dimensions the firmware should be able to support
 // Possible values lie between 1, and 4, inclusive
+#ifndef ULAB_MAX_DIMS
 #define ULAB_MAX_DIMS                       2
+#endif
 
 // By setting this constant to 1, iteration over array dimensions will be implemented
 // as a function (ndarray_rewind_array), instead of writing out the loops in macros
 // This reduces firmware size at the expense of speed
+#ifndef ULAB_HAS_FUNCTION_ITERATOR
 #define ULAB_HAS_FUNCTION_ITERATOR          (0)
+#endif
 
 // If NDARRAY_IS_ITERABLE is 1, the ndarray object defines its own iterator function
 // This option saves approx. 250 bytes of flash space
@@ -80,11 +86,7 @@
 // 2 kB in the two-dimensional case, and around 4 kB in the four-dimensional case.
 
 #ifndef NDARRAY_BINARY_USES_FUN_POINTER
-#if defined(DEVICE_N0100)
-#define NDARRAY_BINARY_USES_FUN_POINTER     (1)
-#else
 #define NDARRAY_BINARY_USES_FUN_POINTER     (0)
-#endif
 #endif
 
 #ifndef NDARRAY_HAS_BINARY_OP_ADD
@@ -262,6 +264,12 @@
 #define ULAB_NUMPY_HAS_NDINFO           (1)
 #endif
 
+// if this constant is set to 1, the interpreter can iterate
+// over the flat array without copying any data
+#ifndef NDARRAY_HAS_FLATITER
+#define NDARRAY_HAS_FLATITER            (1)
+#endif
+
 // frombuffer adds 600 bytes to the firmware
 #ifndef ULAB_NUMPY_HAS_FROMBUFFER
 #define ULAB_NUMPY_HAS_FROMBUFFER       (1)
@@ -365,6 +373,10 @@
 
 #ifndef ULAB_LINALG_HAS_NORM
 #define ULAB_LINALG_HAS_NORM            (1)
+#endif
+
+#ifndef ULAB_LINALG_HAS_QR
+#define ULAB_LINALG_HAS_QR              (1)
 #endif
 
 // the FFT module; functions of the fft module still have
@@ -638,7 +650,7 @@
 #endif
 
 #ifndef ULAB_HAS_UTILS_MODULE
-#define ULAB_HAS_UTILS_MODULE               (0)
+#define ULAB_HAS_UTILS_MODULE               (1)
 #endif
 
 #ifndef ULAB_UTILS_HAS_FROM_INT16_BUFFER

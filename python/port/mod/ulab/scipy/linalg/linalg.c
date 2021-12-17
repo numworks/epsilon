@@ -7,30 +7,30 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2021 Vikas Udupa
- * 
+ *
 */
 
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <py/obj.h>
-#include <py/runtime.h>
-#include <py/misc.h>
+#include "py/obj.h"
+#include "py/runtime.h"
+#include "py/misc.h"
 
 #include "../../ulab.h"
 #include "../../ulab_tools.h"
+#include "../../numpy/linalg/linalg_tools.h"
 #include "linalg.h"
 
 #if ULAB_SCIPY_HAS_LINALG_MODULE
 //|
 //| import ulab.scipy
+//| import ulab.numpy
 //|
 //| """Linear algebra functions"""
 //|
 
 #if ULAB_MAX_DIMS > 1
-
-#define TOLERANCE 0.0000001
 
 //| def solve_triangular(A: ulab.numpy.ndarray, b: ulab.numpy.ndarray, lower: bool) -> ulab.numpy.ndarray:
 //|    """
@@ -46,9 +46,9 @@
 //|
 
 static mp_obj_t solve_triangular(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    
+
     size_t i, j;
-    
+
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_, MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_rom_obj = mp_const_none} } ,
         { MP_QSTR_, MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_rom_obj = mp_const_none} } ,
@@ -64,7 +64,7 @@ static mp_obj_t solve_triangular(size_t n_args, const mp_obj_t *pos_args, mp_map
 
     ndarray_obj_t *A = MP_OBJ_TO_PTR(args[0].u_obj);
     ndarray_obj_t *b = MP_OBJ_TO_PTR(args[1].u_obj);
-    
+
     if(!ndarray_is_dense(A) || !ndarray_is_dense(b)) {
         mp_raise_TypeError(translate("input must be a dense ndarray"));
     }
@@ -82,7 +82,7 @@ static mp_obj_t solve_triangular(size_t n_args, const mp_obj_t *pos_args, mp_map
 
     // check if input matrix A is singular
     for (i = 0; i < A_rows; i++) {
-        if (MICROPY_FLOAT_C_FUN(fabs)(get_A_ele(A_arr)) < TOLERANCE)
+        if (MICROPY_FLOAT_C_FUN(fabs)(get_A_ele(A_arr)) < LINALG_EPSILON)
             mp_raise_ValueError(translate("input matrix is singular"));
         A_arr += A->strides[ULAB_MAX_DIMS - 2];
         A_arr += A->strides[ULAB_MAX_DIMS - 1];
@@ -92,7 +92,7 @@ static mp_obj_t solve_triangular(size_t n_args, const mp_obj_t *pos_args, mp_map
 
     ndarray_obj_t *x = ndarray_new_dense_ndarray(b->ndim, b->shape, NDARRAY_FLOAT);
     mp_float_t *x_arr = (mp_float_t *)x->array;
-    
+
     if (mp_obj_is_true(args[2].u_obj)) {
         // Solve the lower triangular matrix by iterating each row of A.
         // Start by finding the first unknown using the first row.
@@ -166,7 +166,7 @@ static mp_obj_t cho_solve(mp_obj_t _L, mp_obj_t _b) {
 
     ndarray_obj_t *L = MP_OBJ_TO_PTR(_L);
     ndarray_obj_t *b = MP_OBJ_TO_PTR(_b);
-    
+
     if(!ndarray_is_dense(L) || !ndarray_is_dense(b)) {
         mp_raise_TypeError(translate("input must be a dense ndarray"));
     }

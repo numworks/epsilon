@@ -13,12 +13,12 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <py/obj.h>
-#include <py/runtime.h>
-#include <py/misc.h>
+#include "py/obj.h"
+#include "py/runtime.h"
+#include "py/misc.h"
 
-#include "../../ulab.h"
-#include "../../ulab_tools.h"
+#include "../ulab.h"
+#include "../ulab_tools.h"
 #include "approx.h"
 
 //| """Numerical approximation methods"""
@@ -28,17 +28,17 @@ const mp_obj_float_t approx_trapz_dx = {{&mp_type_float}, MICROPY_FLOAT_CONST(1.
 
 #if ULAB_NUMPY_HAS_INTERP
 //| def interp(
-//|     x: ulab.ndarray,
-//|     xp: ulab.ndarray,
-//|     fp: ulab.ndarray,
+//|     x: ulab.numpy.ndarray,
+//|     xp: ulab.numpy.ndarray,
+//|     fp: ulab.numpy.ndarray,
 //|     *,
-//|     left: Optional[float] = None,
-//|     right: Optional[float] = None
-//| ) -> ulab.ndarray:
+//|     left: Optional[_float] = None,
+//|     right: Optional[_float] = None
+//| ) -> ulab.numpy.ndarray:
 //|     """
-//|     :param ulab.ndarray x: The x-coordinates at which to evaluate the interpolated values.
-//|     :param ulab.ndarray xp: The x-coordinates of the data points, must be increasing
-//|     :param ulab.ndarray fp: The y-coordinates of the data points, same length as xp
+//|     :param ulab.numpy.ndarray x: The x-coordinates at which to evaluate the interpolated values.
+//|     :param ulab.numpy.ndarray xp: The x-coordinates of the data points, must be increasing
+//|     :param ulab.numpy.ndarray fp: The y-coordinates of the data points, same length as xp
 //|     :param left: Value to return for ``x < xp[0]``, default is ``fp[0]``.
 //|     :param right: Value to return for ``x > xp[-1]``, default is ``fp[-1]``.
 //|
@@ -136,10 +136,10 @@ MP_DEFINE_CONST_FUN_OBJ_KW(approx_interp_obj, 2, approx_interp);
 #endif
 
 #if ULAB_NUMPY_HAS_TRAPZ
-//| def trapz(y: ulab.ndarray, x: Optional[ulab.ndarray] = None, dx: float = 1.0) -> float:
+//| def trapz(y: ulab.numpy.ndarray, x: Optional[ulab.numpy.ndarray] = None, dx: _float = 1.0) -> _float:
 //|     """
-//|     :param 1D ulab.ndarray y: the values of the dependent variable
-//|     :param 1D ulab.ndarray x: optional, the coordinates of the independent variable. Defaults to uniformly spaced values.
+//|     :param 1D ulab.numpy.ndarray y: the values of the dependent variable
+//|     :param 1D ulab.numpy.ndarray x: optional, the coordinates of the independent variable. Defaults to uniformly spaced values.
 //|     :param float dx: the spacing between sample points, if x=None
 //|
 //|     Returns the integral of y(x) using the trapezoidal rule.

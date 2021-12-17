@@ -10,7 +10,7 @@
 
 
 #include <string.h>
-#include <py/runtime.h>
+#include "py/runtime.h"
 
 #include "ulab.h"
 #include "ndarray.h"

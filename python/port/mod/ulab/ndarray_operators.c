@@ -11,8 +11,8 @@
 
 #include <math.h>
 
-#include <py/runtime.h>
-#include <py/objtuple.h>
+#include "py/runtime.h"
+#include "py/objtuple.h"
 #include "ndarray.h"
 #include "ndarray_operators.h"
 #include "ulab.h"

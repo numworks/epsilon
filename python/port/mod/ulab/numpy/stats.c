@@ -15,18 +15,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <py/obj.h>
-#include <py/runtime.h>
-#include <py/misc.h>
+#include "py/obj.h"
+#include "py/runtime.h"
+#include "py/misc.h"
 
-#include "../../ulab.h"
-#include "../../ulab_tools.h"
+#include "../ulab.h"
+#include "../ulab_tools.h"
 #include "stats.h"
 
 #if ULAB_MAX_DIMS > 1
 #if ULAB_NUMPY_HAS_TRACE
 
-//| def trace(m: ulab.numpy.ndarray) -> float:
+//| def trace(m: ulab.numpy.ndarray) -> _float:
 //|     """
 //|     :param m: a square matrix
 //|

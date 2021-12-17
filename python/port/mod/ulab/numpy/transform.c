@@ -12,17 +12,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <py/obj.h>
-#include <py/runtime.h>
-#include <py/misc.h>
+#include "py/obj.h"
+#include "py/runtime.h"
+#include "py/misc.h"
 
-#include "../../ulab.h"
-#include "../../ulab_tools.h"
+#include "../ulab.h"
+#include "../ulab_tools.h"
 #include "transform.h"
 
-
+#if ULAB_MAX_DIMS > 1
 #if ULAB_NUMPY_HAS_DOT
-//| def dot(m1: ulab.numpy.ndarray, m2: ulab.numpy.ndarray) -> Union[ulab.numpy.ndarray, float]:
+//| def dot(m1: ulab.numpy.ndarray, m2: ulab.numpy.ndarray) -> Union[ulab.numpy.ndarray, _float]:
 //|    """
 //|    :param ~ulab.numpy.ndarray m1: a matrix, or a vector
 //|    :param ~ulab.numpy.ndarray m2: a matrix, or a vector
@@ -86,4 +86,5 @@ mp_obj_t transform_dot(mp_obj_t _m1, mp_obj_t _m2) {
 }
 
 MP_DEFINE_CONST_FUN_OBJ_2(transform_dot_obj, transform_dot);
+#endif
 #endif

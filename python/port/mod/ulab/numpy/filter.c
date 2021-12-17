@@ -15,12 +15,12 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <py/obj.h>
-#include <py/runtime.h>
-#include <py/misc.h>
+#include "py/obj.h"
+#include "py/runtime.h"
+#include "py/misc.h"
 
-#include "../../ulab.h"
-#include "../../scipy/signal/signal.h"
+#include "../ulab.h"
+#include "../scipy/signal/signal.h"
 #include "filter.h"
 
 #if ULAB_NUMPY_HAS_CONVOLVE
@@ -57,7 +57,7 @@ mp_obj_t filter_convolve(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_a
     mp_float_t *outptr = (mp_float_t *)out->array;
     uint8_t *aarray = (uint8_t *)a->array;
     uint8_t *carray = (uint8_t *)c->array;
-    
+
     int32_t off = len_c - 1;
     int32_t as = a->strides[ULAB_MAX_DIMS - 1] / a->itemsize;
     int32_t cs = c->strides[ULAB_MAX_DIMS - 1] / c->itemsize;

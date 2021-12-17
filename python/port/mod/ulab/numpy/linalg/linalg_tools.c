@@ -10,7 +10,7 @@
 
 #include <math.h>
 #include <string.h>
-#include <py/runtime.h>
+#include "py/runtime.h"
 
 #include "linalg_tools.h"
 

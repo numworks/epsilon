@@ -581,6 +581,10 @@ Q(listdir)
 
 #if defined(INCLUDE_ULAB)
 // ulab QSTRs
+Q(reduced)
+Q(qr)
+Q(flat)
+Q(flatiter)
 Q(threshold)
 Q(edgeitems)
 Q(inplace)

@@ -13,10 +13,10 @@
 */
 
 #include <math.h>
-#include <py/runtime.h>
+#include "py/runtime.h"
 
 #include "../../ulab.h"
-#include "../../numpy/vector/vector.h"
+#include "../../numpy/vector.h"
 
 static const mp_rom_map_elem_t ulab_scipy_special_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_special) },

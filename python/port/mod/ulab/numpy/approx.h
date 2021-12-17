@@ -12,8 +12,8 @@
 #ifndef _APPROX_
 #define _APPROX_
 
-#include "../../ulab.h"
-#include "../../ndarray.h"
+#include "../ulab.h"
+#include "../ndarray.h"
 
 #define     APPROX_EPS          MICROPY_FLOAT_CONST(1.0e-4)
 #define     APPROX_NONZDELTA    MICROPY_FLOAT_CONST(0.05)

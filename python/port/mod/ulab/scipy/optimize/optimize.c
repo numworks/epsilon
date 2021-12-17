@@ -13,9 +13,9 @@
 */
 
 #include <math.h>
-#include <py/obj.h>
-#include <py/runtime.h>
-#include <py/misc.h>
+#include "py/obj.h"
+#include "py/runtime.h"
+#include "py/misc.h"
 
 #include "../../ndarray.h"
 #include "../../ulab.h"
@@ -30,7 +30,7 @@ static mp_float_t optimize_python_call(const mp_obj_type_t *type, mp_obj_t fun, 
     // where f is defined in python. Takes a float, returns a float.
     // The array of mp_obj_t type must be supplied, as must the number of parameters (a, b, c...) in nparams
     fargs[0] = mp_obj_new_float(x);
-    return mp_obj_get_float(type->call(fun, nparams+1, 0, fargs));
+    return mp_obj_get_float(type->MP_TYPE_CALL(fun, nparams+1, 0, fargs));
 }
 
 #if ULAB_SCIPY_OPTIMIZE_HAS_BISECT
@@ -70,7 +70,7 @@ STATIC mp_obj_t optimize_bisect(size_t n_args, const mp_obj_t *pos_args, mp_map_
 
     mp_obj_t fun = args[0].u_obj;
     const mp_obj_type_t *type = mp_obj_get_type(fun);
-    if(type->call == NULL) {
+    if(mp_type_get_call_slot(type) == NULL) {
         mp_raise_TypeError(translate("first argument must be a function"));
     }
     mp_float_t xtol = mp_obj_get_float(args[3].u_obj);
@@ -140,7 +140,7 @@ STATIC mp_obj_t optimize_fmin(size_t n_args, const mp_obj_t *pos_args, mp_map_t 
 
     mp_obj_t fun = args[0].u_obj;
     const mp_obj_type_t *type = mp_obj_get_type(fun);
-    if(type->call == NULL) {
+    if(mp_type_get_call_slot(type) == NULL) {
         mp_raise_TypeError(translate("first argument must be a function"));
     }
 
@@ -276,7 +276,7 @@ mp_obj_t optimize_curve_fit(size_t n_args, const mp_obj_t *pos_args, mp_map_t *k
 
     mp_obj_t fun = args[0].u_obj;
     const mp_obj_type_t *type = mp_obj_get_type(fun);
-    if(type->call == NULL) {
+    if(mp_type_get_call_slot(type) == NULL) {
         mp_raise_TypeError(translate("first argument must be a function"));
     }
 
@@ -365,7 +365,7 @@ static mp_obj_t optimize_newton(size_t n_args, const mp_obj_t *pos_args, mp_map_
 
     mp_obj_t fun = args[0].u_obj;
     const mp_obj_type_t *type = mp_obj_get_type(fun);
-    if(type->call == NULL) {
+    if(mp_type_get_call_slot(type) == NULL) {
         mp_raise_TypeError(translate("first argument must be a function"));
     }
     mp_float_t x = mp_obj_get_float(args[1].u_obj);

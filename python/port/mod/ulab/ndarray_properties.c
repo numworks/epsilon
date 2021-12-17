@@ -14,11 +14,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <py/obj.h>
-#include <py/runtime.h>
+#include "py/obj.h"
+#include "py/runtime.h"
 
 #include "ulab.h"
 #include "ndarray.h"
+#include "numpy/ndarray/ndarray_iter.h"
 
 #ifndef CIRCUITPY
 
@@ -49,6 +50,11 @@ void ndarray_properties_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
             #if NDARRAY_HAS_DTYPE
             case MP_QSTR_dtype:
                 dest[0] = ndarray_dtype(self_in);
+                break;
+            #endif
+            #if NDARRAY_HAS_FLATITER
+            case MP_QSTR_flat:
+                dest[0] = ndarray_flatiter_make_new(self_in);
                 break;
             #endif
             #if NDARRAY_HAS_ITEMSIZE
@@ -83,10 +89,12 @@ void ndarray_properties_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
     } else {
         if(dest[1]) {
             switch(attr) {
+                #if ULAB_MAX_DIMS > 1
                 #if NDARRAY_HAS_RESHAPE
                 case MP_QSTR_shape:
                     ndarray_reshape_core(self_in, dest[1], 1);
                     break;
+                #endif
                 #endif
                 default:
                     return;

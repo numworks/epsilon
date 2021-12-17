@@ -12,8 +12,8 @@
 #ifndef _NUMERICAL_
 #define _NUMERICAL_
 
-#include "../../ulab.h"
-#include "../../ndarray.h"
+#include "../ulab.h"
+#include "../ndarray.h"
 
 // TODO: implement cumsum
 
@@ -201,7 +201,7 @@
 } while(0)
 
 #define RUN_MEAN_STD(type, array, rarray, ss, div, isStd) do {\
-    RUN_MEAN_STD1(type, (array), (results), (rarray), (ss), (div), (isStd));\
+    RUN_MEAN_STD1(type, (array), (rarray), (ss), (div), (isStd));\
 } while(0)
 
 #define RUN_ARGMIN(ndarray, type, array, results, rarray, shape, strides, index, op) do {\
@@ -444,7 +444,7 @@
 #endif
 
 #if ULAB_MAX_DIMS == 4
-#define RUN_SUM(type, array, results, rarray, shape, strides, index) do {\
+#define RUN_SUM(type, array, results, rarray, ss) do {\
     size_t j = 0;\
     do {\
         size_t k = 0;\

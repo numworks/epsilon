@@ -84,7 +84,7 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHe
   assert(topBarHeight == bottomBarHeight || topBarHeight + 1 == bottomBarHeight);
 
   // Top curve
-  KDCoordinate dy = p.y() + k_verticalExternalMargin;
+  KDCoordinate dy = p.y();
   KDRect frame(
       p.x() + leftMargin + curveLeftOffset,
       dy,

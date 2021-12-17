@@ -1,5 +1,5 @@
 #include <poincare/list.h>
-#include <poincare/code_point_layout.h>
+#include <poincare/curly_brace_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -27,13 +27,13 @@ Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
   Layout result;
   if (m_numberOfChildren > 1) {
     Layout elementsLayout = LayoutHelper::Infix(List(this), floatDisplayMode, numberOfSignificantDigits, ",");
-    result = HorizontalLayout::Builder(CodePointLayout::Builder('{'), elementsLayout, CodePointLayout::Builder('}'));
+    result = HorizontalLayout::Builder(LeftCurlyBraceLayout::Builder(), elementsLayout, RightCurlyBraceLayout::Builder());
     result.mergeChildrenAtIndexInPlace(elementsLayout, 1);
   } else if (m_numberOfChildren == 1) {
-    result = HorizontalLayout::Builder(CodePointLayout::Builder('{'), childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), CodePointLayout::Builder('}'));
+    result = HorizontalLayout::Builder(LeftCurlyBraceLayout::Builder(), childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), RightCurlyBraceLayout::Builder());
   } else {
     assert(m_numberOfChildren == 0);
-    result = HorizontalLayout::Builder(CodePointLayout::Builder('{'), CodePointLayout::Builder('}'));
+    result = HorizontalLayout::Builder(LeftCurlyBraceLayout::Builder(), RightCurlyBraceLayout::Builder());
   }
   return result;
 }

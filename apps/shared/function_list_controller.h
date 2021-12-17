@@ -23,6 +23,9 @@ public:
   /* Responder */
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
+
+  /* ViewController */
+  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::NeverDisplayOwnTitle; }
 protected:
   Escher::StackViewController * stackController() const;
   void configureFunction(Ion::Storage::Record record);

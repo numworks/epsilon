@@ -46,9 +46,9 @@ KDCoordinate BracketLayoutNode::computeBaseline() {
   assert(parentLayout != nullptr);
   int idxInParent = parentLayout->indexOfChild(this);
   int numberOfSiblings = parentLayout->numberOfChildren();
-  if (((type() == Type::LeftParenthesisLayout || type() == Type::LeftSquareBracketLayout) && idxInParent == numberOfSiblings - 1)
-      || ((type() == Type::RightParenthesisLayout || type() == Type::RightSquareBracketLayout) && idxInParent == 0)
-      || ((type() == Type::LeftParenthesisLayout || type() == Type::LeftSquareBracketLayout) && idxInParent < numberOfSiblings - 1 && parentLayout->childAtIndex(idxInParent + 1)->type() == Type::VerticalOffsetLayout))
+  if ((IsLeftBracket(type()) && (idxInParent == numberOfSiblings - 1
+                            || (idxInParent < numberOfSiblings - 1 && parentLayout->childAtIndex(idxInParent + 1)->type() == Type::VerticalOffsetLayout)))
+   || (IsRightBracket(type()) && idxInParent == 0))
   {
     /* The bracket does not have siblings on its open direction, or it is a left
      * bracket that is base of a superscript layout. In the latter case, it
@@ -67,29 +67,27 @@ KDCoordinate BracketLayoutNode::computeBaseline() {
      * sublayouts, we use this escape case.*/
     return result;
   }
-  int increment = (type() == Type::LeftParenthesisLayout || type() == Type::LeftSquareBracketLayout) ? 1 : -1;
+  int increment = IsLeftBracket(type()) ? 1 : -1;
   for (int i = idxInParent + increment; i >= 0 && i < numberOfSiblings; i+=increment) {
     LayoutNode * sibling = parentLayout->childAtIndex(i);
-    if ((type() == Type::LeftParenthesisLayout && sibling->type() == Type::RightParenthesisLayout)
-        || (type() == Type::LeftSquareBracketLayout && sibling->type() == Type::RightSquareBracketLayout)
-        || (type() == Type::RightParenthesisLayout && sibling->type() == Type::LeftParenthesisLayout)
-        || (type() == Type::RightSquareBracketLayout && sibling->type() == Type::LeftSquareBracketLayout))
-    {
-      if (i == idxInParent + increment) {
-        /* If the bracket is immediately closed, we set the baseline to half the
-         * bracket height. */
-        return layoutSize().height()/2;
+    if (IsSquareBracket(type()) == IsSquareBracket(sibling->type())) {
+      if ((IsLeftBracket(type()) && IsLeftBracket(sibling->type()))
+          || (IsRightBracket(type()) && IsRightBracket(sibling->type())))
+      {
+        currentNumberOfOpenBrackets++;
+      } else if ((IsLeftBracket(type()) && IsRightBracket(sibling->type()))
+          || (IsRightBracket(type()) && IsLeftBracket(sibling->type())))
+      {
+        if (i == idxInParent + increment) {
+          /* If the bracket is immediately closed, we set the baseline to half the
+           * bracket height. */
+          return layoutSize().height()/2;
+        }
+        currentNumberOfOpenBrackets--;
+        if (currentNumberOfOpenBrackets == 0) {
+          break;
+        }
       }
-      currentNumberOfOpenBrackets--;
-      if (currentNumberOfOpenBrackets == 0) {
-        break;
-      }
-    } else if ((type() == Type::LeftParenthesisLayout && sibling->type() == Type::LeftParenthesisLayout)
-        || (type() == Type::LeftSquareBracketLayout && sibling->type() == Type::LeftSquareBracketLayout)
-        || (type() == Type::RightParenthesisLayout && sibling->type() == Type::RightParenthesisLayout)
-        || (type() == Type::RightSquareBracketLayout && sibling->type() == Type::RightSquareBracketLayout))
-    {
-      currentNumberOfOpenBrackets++;
     }
     result = std::max(result, sibling->baseline());
   }
@@ -118,9 +116,9 @@ KDCoordinate BracketLayoutNode::computeChildHeight() {
     return result;
   }
   int numberOfSiblings = parentLayout->numberOfChildren();
-  if ((type() == Type::LeftParenthesisLayout || type() == Type::LeftSquareBracketLayout)
-      && idxInParent < numberOfSiblings - 1
-      && parentLayout->childAtIndex(idxInParent + 1)->type() == Type::VerticalOffsetLayout)
+  if (IsLeftBracket(type())
+   && idxInParent < numberOfSiblings - 1
+   && parentLayout->childAtIndex(idxInParent + 1)->type() == Type::VerticalOffsetLayout)
   {
     /* If a left bracket is the base of a superscript layout, it should have a
      * a default height, else it creates an infinite loop because the bracket
@@ -131,24 +129,22 @@ KDCoordinate BracketLayoutNode::computeChildHeight() {
   KDCoordinate maxAboveBaseline = 0;
 
   int currentNumberOfOpenBrackets = 1;
-  int increment = (type() == Type::LeftParenthesisLayout || type() == Type::LeftSquareBracketLayout) ? 1 : -1;
+  int increment = IsLeftBracket(type()) ? 1 : -1;
   for (int i = idxInParent + increment; i >= 0 && i < numberOfSiblings; i+= increment) {
     LayoutNode * sibling = parentLayout->childAtIndex(i);
-    if ((type() == Type::LeftParenthesisLayout && sibling->type() == Type::RightParenthesisLayout)
-        || (type() == Type::LeftSquareBracketLayout && sibling->type() == Type::RightSquareBracketLayout)
-        || (type() == Type::RightParenthesisLayout && sibling->type() == Type::LeftParenthesisLayout)
-        || (type() == Type::RightSquareBracketLayout && sibling->type() == Type::LeftSquareBracketLayout))
-    {
-      currentNumberOfOpenBrackets--;
-      if (currentNumberOfOpenBrackets == 0) {
-        break;
+    if (IsSquareBracket(type()) == IsSquareBracket(sibling->type())) {
+      if ((IsLeftBracket(type()) && IsLeftBracket(sibling->type()))
+          || (IsRightBracket(type()) && IsRightBracket(sibling->type())))
+      {
+        currentNumberOfOpenBrackets++;
+      } else if ((IsLeftBracket(type()) && IsRightBracket(sibling->type()))
+          || (IsRightBracket(type()) && IsLeftBracket(sibling->type())))
+      {
+        currentNumberOfOpenBrackets--;
+        if (currentNumberOfOpenBrackets == 0) {
+          break;
+        }
       }
-    } else if ((type() == Type::LeftParenthesisLayout && sibling->type() == Type::LeftParenthesisLayout)
-        || (type() == Type::LeftSquareBracketLayout && sibling->type() == Type::LeftSquareBracketLayout)
-        || (type() == Type::RightParenthesisLayout && sibling->type() == Type::RightParenthesisLayout)
-        || (type() == Type::RightSquareBracketLayout && sibling->type() == Type::RightSquareBracketLayout))
-    {
-      currentNumberOfOpenBrackets++;
     }
     KDCoordinate siblingHeight = sibling->layoutSize().height();
     KDCoordinate siblingBaseline = sibling->baseline();
@@ -161,6 +157,22 @@ KDCoordinate BracketLayoutNode::computeChildHeight() {
 KDPoint BracketLayoutNode::positionOfChild(LayoutNode * child) {
   assert(false);
   return KDPointZero;
+}
+
+bool BracketLayoutNode::IsLeftBracket(Type t) {
+  return t == Type::LeftCurlyBraceLayout
+      || t == Type::LeftParenthesisLayout
+      || t == Type::LeftSquareBracketLayout;
+}
+
+bool BracketLayoutNode::IsRightBracket(Type t) {
+  return t == Type::RightCurlyBraceLayout
+      || t == Type::RightParenthesisLayout
+      || t == Type::RightSquareBracketLayout;
+}
+
+bool BracketLayoutNode::IsSquareBracket(Type t) {
+  return t == Type::LeftSquareBracketLayout || t == Type::RightSquareBracketLayout;
 }
 
 }

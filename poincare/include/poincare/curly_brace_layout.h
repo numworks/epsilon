@@ -37,9 +37,6 @@ protected:
   static void RenderWithChildHeight(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
 
   KDSize computeSize() override { return KDSize(CurlyBraceWidth(), HeightGivenChildHeight(childHeight())); }
-
-  Type leftLayoutType() const override { return Type::LeftCurlyBraceLayout; }
-  Type rightLayoutType() const override { return Type::RightCurlyBraceLayout; }
 };
 
 class LeftCurlyBraceLayoutNode final : public CurlyBraceLayoutNode {

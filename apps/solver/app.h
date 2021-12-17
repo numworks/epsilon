@@ -8,6 +8,7 @@
 #include "controllers/list_controller.h"
 #include "controllers/interval_controller.h"
 #include "controllers/solutions_controller.h"
+#include "controllers/menu_controller.h"
 
 namespace Solver {
 
@@ -58,6 +59,7 @@ private:
   Escher::AlternateEmptyViewController m_alternateEmptyViewController;
   ListController m_listController;
   Escher::ButtonRowController m_listFooter;
+  MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;
 };

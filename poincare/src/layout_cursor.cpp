@@ -1,5 +1,6 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/curly_brace_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -202,6 +203,10 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
       }
     } else if (codePoint == ')' || codePoint == UCodePointRightSystemParenthesis) {
       newChild = RightParenthesisLayout::Builder();
+    } else if (codePoint == '{') {
+      newChild = LeftCurlyBraceLayout::Builder();
+    } else if (codePoint == '}') {
+      newChild = RightCurlyBraceLayout::Builder();
     }
     /* We never insert text with brackets for now. Removing this code saves the
      * binary file 2K. */

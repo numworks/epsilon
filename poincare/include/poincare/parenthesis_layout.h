@@ -36,9 +36,6 @@ protected:
   static KDCoordinate ChildHeightGivenLayoutHeight(KDCoordinate layoutHeight) {
     return layoutHeight - k_verticalMargin;
   }
-
-  Type leftLayoutType() const override { return Type::LeftParenthesisLayout; }
-  Type rightLayoutType() const override { return Type::RightParenthesisLayout; }
 };
 
 }

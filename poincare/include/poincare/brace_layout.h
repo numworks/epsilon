@@ -19,10 +19,6 @@ public:
   }
 #endif
   bool isCollapsable(int * numberOfOpenBraces, bool goingLeft) const override;
-
-protected:
-  virtual Type leftLayoutType() const = 0;
-  virtual Type rightLayoutType() const = 0;
 };
 
 }

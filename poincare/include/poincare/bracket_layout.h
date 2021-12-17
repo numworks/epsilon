@@ -27,11 +27,16 @@ public:
 #endif
 
 protected:
+  static bool IsLeftBracket(Type t);
+  static bool IsRightBracket(Type t);
+  static bool IsSquareBracket(Type t);
+
   // LayoutNode
   KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
   KDCoordinate childHeight();
   KDCoordinate computeChildHeight();
+
   bool m_childHeightComputed;
   uint16_t m_childHeight;
 };

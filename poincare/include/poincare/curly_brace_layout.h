@@ -16,10 +16,8 @@ public:
   static constexpr KDCoordinate k_barWidth = 1;
   // Margins
   static constexpr KDCoordinate k_horizontalExternalMargin = 1;
-  static constexpr KDCoordinate k_horizontalInternalMargin = 5;
-  static constexpr KDCoordinate k_verticalExternalMargin = 2;
-  static constexpr KDCoordinate k_topInternalMargin = 3;
-  static constexpr KDCoordinate k_bottomInternalMargin = 4;
+  static constexpr KDCoordinate k_horizontalInternalMargin = 1;
+  static constexpr KDCoordinate k_verticalInternalMargin = 4;
 
   static constexpr KDCoordinate CurlyBraceWidth() { return k_horizontalExternalMargin + (k_centerWidth + k_curveWidth - k_barWidth) + k_horizontalInternalMargin; }
 
@@ -32,8 +30,8 @@ public:
 #endif
 
 protected:
-  static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) { return childHeight + k_topInternalMargin + k_bottomInternalMargin; }
-  static KDCoordinate ChildHeightGivenLayoutHeight(KDCoordinate layoutHeight) { return layoutHeight - k_topInternalMargin - k_bottomInternalMargin; }
+  static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) { return childHeight + k_verticalInternalMargin; }
+  static KDCoordinate ChildHeightGivenLayoutHeight(KDCoordinate layoutHeight) { return layoutHeight - k_verticalInternalMargin; }
   static void RenderWithChildHeight(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
 
   KDSize computeSize() override { return KDSize(CurlyBraceWidth(), HeightGivenChildHeight(childHeight())); }

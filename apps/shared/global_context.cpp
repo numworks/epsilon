@@ -27,7 +27,9 @@ bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
 
 const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
-  if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
+  if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))
+   || Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::lisExtension, strlen(Ion::Storage::expExtension)))
+  {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record));
   } else if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     return PoincareHelpers::CreateLayout(ExpressionForFunction(Symbol::Builder(ContinuousFunction(record).symbol()), record));
@@ -53,6 +55,8 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const cha
     return Context::SymbolAbstractType::Symbol;
   } else if (extension == Ion::Storage::funcExtension) {
     return Context::SymbolAbstractType::Function;
+  } else if (extension == Ion::Storage::lisExtension) {
+    return Context::SymbolAbstractType::List;
   } else {
     assert(extension == Ion::Storage::seqExtension);
     return Context::SymbolAbstractType::Sequence;
@@ -103,7 +107,9 @@ const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstrac
 }
 
 const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r) {
-  if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
+  if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))
+   && !Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::lisExtension, strlen(Ion::Storage::expExtension)))
+  {
     return Expression();
   }
   // An expression record value is the expression itself
@@ -163,7 +169,9 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   }
   // Delete any record with same name (as it is going to be overriden)
   previousRecord.destroy();
-  return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), Ion::Storage::expExtension, expression.addressInPool(), expression.size());
+  /* TODO expression could also reduce to a list: implement a reducesToList predicate. */
+  const char * extension = expression.type() == ExpressionNode::Type::List ? Ion::Storage::lisExtension : Ion::Storage::expExtension;
+  return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), extension, expression.addressInPool(), expression.size());
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {

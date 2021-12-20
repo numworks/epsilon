@@ -500,22 +500,24 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
     return;
   }
   assert(!parameter.isUninitialized());
-  if (parameter.numberOfChildren() != 1) {
-    m_status = Status::Error;
-    return;
-  }
 
-  parameter = parameter.childAtIndex(0);
+  int numberOfParameters = parameter.numberOfChildren();
   Expression result;
-  if (idType == Context::SymbolAbstractType::List) {
-    Symbol listSymbol = Symbol::Builder(name, length);
-    result = ListElement::Builder(parameter, listSymbol);
-  } else {
-    if (parameter.type() == ExpressionNode::Type::Symbol && strncmp(static_cast<SymbolAbstract&>(parameter).name(), name, length) == 0) {
+  if (numberOfParameters == 2) {
+    result = ListSlice::Builder(parameter.childAtIndex(0), parameter.childAtIndex(1), Symbol::Builder(name, length));
+  } else if (numberOfParameters == 1) {
+    parameter = parameter.childAtIndex(0);
+    if (idType == Context::SymbolAbstractType::List) {
+      result = ListElement::Builder(parameter, Symbol::Builder(name, length));
+    } else if (parameter.type() == ExpressionNode::Type::Symbol && strncmp(static_cast<SymbolAbstract&>(parameter).name(), name, length) == 0) {
       m_status = Status::Error; // Function and variable must have distinct names.
       return;
+    } else {
+      result = Function::Builder(name, length, parameter);
     }
-    result = Function::Builder(name, length, parameter);
+  } else {
+    m_status = Status::Error;
+    return;
   }
 
   Token::Type correspondingRightParenthesis = poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis : Token::Type::RightParenthesis;

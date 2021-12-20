@@ -6,6 +6,7 @@
 #include <ion/events.h>
 
 #include "../gui/selectable_cell_list_controller.h"
+#include "../model/data.h"
 #include "simple_interest_menu_controller.h"
 #include "compound_interest_menu_controller.h"
 
@@ -18,7 +19,8 @@ class FinanceMenuController : public SelectableCellListPage<Escher::MessageTable
 public:
   FinanceMenuController(Escher::StackViewController * parentResponder,
                     SimpleInterestMenuController * simpleInterestMenuController,
-                    CompoundInterestMenuController * compoundInterestMenuController);
+                    CompoundInterestMenuController * compoundInterestMenuController,
+                    FinanceData * data);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override;
@@ -32,6 +34,7 @@ private:
 
   SimpleInterestMenuController * m_simpleInterestMenuController;
   CompoundInterestMenuController * m_compoundInterestMenuController;
+  FinanceData * m_data;
 };
 
 }  // namespace Solver

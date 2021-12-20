@@ -6,8 +6,8 @@
 
 using namespace Solver;
 
-SimpleInterestMenuController::SimpleInterestMenuController(Escher::StackViewController * parentResponder) :
-      SelectableCellListPage(parentResponder) {
+SimpleInterestMenuController::SimpleInterestMenuController(Escher::StackViewController * parentResponder, FinanceData * data) :
+      SelectableCellListPage(parentResponder), m_data(data) {
   selectRow(0);
   m_cells[k_indexOfN].setMessage(I18n::Message::FinanceLowerN);
   m_cells[k_indexOfN].setSubtitle(I18n::Message::NumberOfDays);
@@ -28,18 +28,22 @@ bool SimpleInterestMenuController::handleEvent(Ion::Events::Event event) {
     ViewController * controller = nullptr;
     switch (selectedRow()) {
       case k_indexOfN:
+        m_data->m_data.m_simpleInterestData.m_unknown = SimpleInterestUnknown::n;
         // TODO Hugo : Add controller
         controller = nullptr;
         break;
       case k_indexOfRPct:
+        m_data->m_data.m_simpleInterestData.m_unknown = SimpleInterestUnknown::rPct;
         // TODO Hugo : Add controller
         controller = nullptr;
         break;
       case k_indexOfP:
+        m_data->m_data.m_simpleInterestData.m_unknown = SimpleInterestUnknown::P;
         // TODO Hugo : Add controller
         controller = nullptr;
         break;
       case k_indexOfI:
+        m_data->m_data.m_simpleInterestData.m_unknown = SimpleInterestUnknown::I;
         // TODO Hugo : Add controller
         controller = nullptr;
         break;

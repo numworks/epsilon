@@ -6,8 +6,8 @@
 
 using namespace Solver;
 
-CompoundInterestMenuController::CompoundInterestMenuController(Escher::StackViewController * parentResponder) :
-      SelectableCellListPage(parentResponder) {
+CompoundInterestMenuController::CompoundInterestMenuController(Escher::StackViewController * parentResponder, FinanceData * data) :
+      SelectableCellListPage(parentResponder), m_data(data) {
   selectRow(0);
   m_cells[k_indexOfN].setMessage(I18n::Message::FinanceN);
   m_cells[k_indexOfN].setSubtitle(I18n::Message::NumberOfPeriods);
@@ -30,22 +30,27 @@ bool CompoundInterestMenuController::handleEvent(Ion::Events::Event event) {
     ViewController * controller = nullptr;
     switch (selectedRow()) {
       case k_indexOfN:
+        m_data->m_data.m_compoundInterestData.m_unknown = CompoundInterestUnknown::N;
         // TODO Hugo : Add controller
         controller = nullptr;
         break;
       case k_indexOfRPct:
+        m_data->m_data.m_compoundInterestData.m_unknown = CompoundInterestUnknown::rPct;
         // TODO Hugo : Add controller
         controller = nullptr;
         break;
       case k_indexOfPV:
+        m_data->m_data.m_compoundInterestData.m_unknown = CompoundInterestUnknown::PV;
         // TODO Hugo : Add controller
         controller = nullptr;
         break;
       case k_indexOfPmt:
+        m_data->m_data.m_compoundInterestData.m_unknown = CompoundInterestUnknown::Pmt;
         // TODO Hugo : Add controller
         controller = nullptr;
         break;
       case k_indexOfFV:
+        m_data->m_data.m_compoundInterestData.m_unknown = CompoundInterestUnknown::FV;
         // TODO Hugo : Add controller
         controller = nullptr;
         break;

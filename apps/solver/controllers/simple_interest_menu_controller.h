@@ -6,6 +6,7 @@
 #include <ion/events.h>
 
 #include "../gui/selectable_cell_list_controller.h"
+#include "../model/data.h"
 
 namespace Solver {
 
@@ -16,7 +17,7 @@ constexpr static int k_numberOfSimpleInterestCells = 4;
 class SimpleInterestMenuController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfSimpleInterestCells> {
 public:
-  SimpleInterestMenuController(Escher::StackViewController * parentResponder);
+  SimpleInterestMenuController(Escher::StackViewController * parentResponder, FinanceData * data);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override { return I18n::translate(I18n::Message::SimpleInterest); }
@@ -27,6 +28,8 @@ public:
   constexpr static int k_indexOfRPct = 1;
   constexpr static int k_indexOfP = 2;
   constexpr static int k_indexOfI = 3;
+private:
+  FinanceData * m_data;
 };
 
 }  // namespace Solver

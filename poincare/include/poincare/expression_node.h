@@ -94,6 +94,7 @@ public:
     LeastCommonMultiple,
     List,
     ListElement,
+    ListSlice,
     Logarithm,
     MatrixTrace,
     NaperianLogarithm,

@@ -54,7 +54,7 @@
 #include <poincare/inv_norm.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/list.h>
-#include <poincare/list_element.h>
+#include <poincare/list_access.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_complex.h>

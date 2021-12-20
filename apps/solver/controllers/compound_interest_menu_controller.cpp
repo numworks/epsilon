@@ -1,4 +1,4 @@
-#include "compound_interest_controller.h"
+#include "compound_interest_menu_controller.h"
 
 #include <apps/i18n.h>
 #include <assert.h>
@@ -6,7 +6,7 @@
 
 using namespace Solver;
 
-CompoundInterestController::CompoundInterestController(Escher::StackViewController * parentResponder) :
+CompoundInterestMenuController::CompoundInterestMenuController(Escher::StackViewController * parentResponder) :
       SelectableCellListPage(parentResponder) {
   selectRow(0);
   m_cells[k_indexOfN].setMessage(I18n::Message::FinanceN);
@@ -21,11 +21,11 @@ CompoundInterestController::CompoundInterestController(Escher::StackViewControll
   m_cells[k_indexOfFV].setSubtitle(I18n::Message::FutureValue);
 }
 
-void CompoundInterestController::didBecomeFirstResponder() {
+void CompoundInterestMenuController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
 }
 
-bool CompoundInterestController::handleEvent(Ion::Events::Event event) {
+bool CompoundInterestMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     ViewController * controller = nullptr;
     switch (selectedRow()) {

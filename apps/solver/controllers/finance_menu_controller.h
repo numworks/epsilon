@@ -1,24 +1,24 @@
-#ifndef SOLVER_CONTROLLERS_FINANCE_CONTROLLER_H
-#define SOLVER_CONTROLLERS_FINANCE_CONTROLLER_H
+#ifndef SOLVER_CONTROLLERS_FINANCE_MENU_CONTROLLER_H
+#define SOLVER_CONTROLLERS_FINANCE_MENU_CONTROLLER_H
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
 
 #include "../gui/selectable_cell_list_controller.h"
-#include "simple_interest_controller.h"
-#include "compound_interest_controller.h"
+#include "simple_interest_menu_controller.h"
+#include "compound_interest_menu_controller.h"
 
 namespace Solver {
 
 constexpr static int k_numberOfFinanceCells = 2;
 
-class FinanceController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
+class FinanceMenuController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfFinanceCells> {
 public:
-  FinanceController(Escher::StackViewController * parentResponder,
-                    SimpleInterestController * simpleInterestController,
-                    CompoundInterestController * compoundInterestController);
+  FinanceMenuController(Escher::StackViewController * parentResponder,
+                    SimpleInterestMenuController * simpleInterestMenuController,
+                    CompoundInterestMenuController * compoundInterestMenuController);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override;
@@ -30,10 +30,10 @@ public:
 private:
   int stackTitleStyleStep() const override { return 0; }
 
-  SimpleInterestController * m_simpleInterestController;
-  CompoundInterestController * m_compoundInterestController;
+  SimpleInterestMenuController * m_simpleInterestMenuController;
+  CompoundInterestMenuController * m_compoundInterestMenuController;
 };
 
 }  // namespace Solver
 
-#endif /* SOLVER_CONTROLLERS_FINANCE_CONTROLLER_H */
+#endif /* SOLVER_CONTROLLERS_FINANCE_MENU_CONTROLLER_H */

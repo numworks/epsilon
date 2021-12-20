@@ -1,4 +1,4 @@
-#include "finance_controller.h"
+#include "finance_menu_controller.h"
 
 #include <apps/i18n.h>
 #include <assert.h>
@@ -6,10 +6,10 @@
 
 using namespace Solver;
 
-FinanceController::FinanceController(Escher::StackViewController * parentResponder, SimpleInterestController * simpleInterestController, CompoundInterestController * compoundInterestController) :
+FinanceMenuController::FinanceMenuController(Escher::StackViewController * parentResponder, SimpleInterestMenuController * simpleInterestMenuController, CompoundInterestMenuController * compoundInterestMenuController) :
       SelectableCellListPage(parentResponder),
-      m_simpleInterestController(simpleInterestController),
-      m_compoundInterestController(compoundInterestController) {
+      m_simpleInterestMenuController(simpleInterestMenuController),
+      m_compoundInterestMenuController(compoundInterestMenuController) {
   selectRow(0);
   m_cells[k_indexOfSimpleIntereset].setMessage(I18n::Message::SimpleInterest);
   m_cells[k_indexOfSimpleIntereset].setSubtitle(I18n::Message::SimpleInterestDescription);
@@ -17,23 +17,23 @@ FinanceController::FinanceController(Escher::StackViewController * parentRespond
   m_cells[k_indexOfCompoundInterest].setSubtitle(I18n::Message::CompoundInterestDescription);
 }
 
-const char * FinanceController::title() {
+const char * FinanceMenuController::title() {
   return I18n::translate(I18n::Message::FinanceSubAppTitle);
 }
 
-void FinanceController::didBecomeFirstResponder() {
+void FinanceMenuController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
 }
 
-bool FinanceController::handleEvent(Ion::Events::Event event) {
+bool FinanceMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     ViewController * controller = nullptr;
     switch (selectedRow()) {
       case k_indexOfSimpleIntereset:
-        controller = m_simpleInterestController;
+        controller = m_simpleInterestMenuController;
         break;
       case k_indexOfCompoundInterest:
-        controller = m_compoundInterestController;
+        controller = m_compoundInterestMenuController;
         break;
     }
     assert(controller != nullptr);

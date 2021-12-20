@@ -10,10 +10,10 @@ using namespace Solver;
 
 MenuController::MenuController(Escher::StackViewController * parentResponder,
                                Escher::ButtonRowController * listController,
-                               FinanceController * financeController) :
+                               FinanceMenuController * financeMenuController) :
       SelectableListViewPage(parentResponder),
       m_listController(listController),
-      m_financeController(financeController),
+      m_financeMenuController(financeMenuController),
       m_contentView(&m_selectableTableView) {
   selectRow(0);
   // TODO Hugo : Update images
@@ -42,7 +42,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         controller = m_listController;
         break;
       case k_indexOfFinance:
-        controller = m_financeController;
+        controller = m_financeMenuController;
         break;
     }
     assert(controller != nullptr);

@@ -169,6 +169,7 @@ bool Expression::reducesToList(Context * context) const {
   const char * name;
   switch (t) {
   case ExpressionNode::Type::List:
+  case ExpressionNode::Type::ListSlice:
     return true;
   case ExpressionNode::Type::Symbol:
     name = static_cast<const Symbol &>(*this).name();

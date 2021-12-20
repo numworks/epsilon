@@ -5,6 +5,7 @@
 #include "../shared/expression_field_delegate_app.h"
 #include "../shared/shared_app.h"
 #include "model/equation_store.h"
+#include "model/data.h"
 #include "controllers/list_controller.h"
 #include "controllers/interval_controller.h"
 #include "controllers/solutions_controller.h"
@@ -68,6 +69,7 @@ private:
   MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;
+  FinanceData m_data;
 };
 
 }  // namespace Solver

@@ -1,5 +1,5 @@
-#ifndef SOLVER_CONTROLLERS_SIMPLE_INTEREST_CONTROLLER_H
-#define SOLVER_CONTROLLERS_SIMPLE_INTEREST_CONTROLLER_H
+#ifndef SOLVER_CONTROLLERS_SIMPLE_INTEREST_MENU_CONTROLLER_H
+#define SOLVER_CONTROLLERS_SIMPLE_INTEREST_MENU_CONTROLLER_H
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/stack_view_controller.h>
@@ -13,10 +13,10 @@ namespace Solver {
 
 constexpr static int k_numberOfSimpleInterestCells = 4;
 
-class SimpleInterestController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
+class SimpleInterestMenuController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfSimpleInterestCells> {
 public:
-  SimpleInterestController(Escher::StackViewController * parentResponder);
+  SimpleInterestMenuController(Escher::StackViewController * parentResponder);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override { return I18n::translate(I18n::Message::SimpleInterest); }
@@ -31,4 +31,4 @@ public:
 
 }  // namespace Solver
 
-#endif /* SOLVER_CONTROLLERS_SIMPLE_INTEREST_CONTROLLER_H */
+#endif /* SOLVER_CONTROLLERS_SIMPLE_INTEREST_MENU_CONTROLLER_H */

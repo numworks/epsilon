@@ -185,6 +185,7 @@ public:
   static constexpr int k_noList = -1;
   static constexpr int k_mismatchedLists = -2;
   int lengthOfListChildren() const;
+  bool reducesToList(Context * context) const;
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsNAry(const Expression e, Context * context);
   static bool IsApproximate(const Expression e, Context * context);

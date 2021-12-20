@@ -93,6 +93,7 @@ public:
     InvNorm,
     LeastCommonMultiple,
     List,
+    ListElement,
     Logarithm,
     MatrixTrace,
     NaperianLogarithm,

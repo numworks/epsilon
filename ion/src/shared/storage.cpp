@@ -25,10 +25,11 @@ namespace Ion {
 
 uintptr_t staticStorageArea[sizeof(Storage)/sizeof(uintptr_t)] = {0};
 
+constexpr char Storage::eqExtension[];
 constexpr char Storage::expExtension[];
 constexpr char Storage::funcExtension[];
+constexpr char Storage::lisExtension[];
 constexpr char Storage::seqExtension[];
-constexpr char Storage::eqExtension[];
 
 Storage * Storage::sharedStorage() {
   static Storage * storage = new (staticStorageArea) Storage();

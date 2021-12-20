@@ -28,6 +28,7 @@ public:
   static constexpr char eqExtension[] = "eq";
   static constexpr char expExtension[] = "exp";
   static constexpr char funcExtension[] = "func";
+  static constexpr char lisExtension[] = "lis";
   static constexpr char seqExtension[] = "seq";
 
   class Record {

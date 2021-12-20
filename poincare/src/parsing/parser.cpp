@@ -472,21 +472,18 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
   bool poppedParenthesisIsSystem = false;
 
   /* If m_symbolPlusParenthesesAreFunctions is false, check the context: if the
-   * identifier does not already exist as a function, interpret it as a symbol,
-   * even if there are parentheses afterwards. */
-
+   * identifier does not already exist as a function or a list, interpret it as
+   * a symbol, even if there are parentheses afterwards. */
   Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
   if (m_context != nullptr && !m_symbolPlusParenthesesAreFunctions) {
     idType = m_context->expressionTypeForIdentifier(name, length);
-    if (idType != Context::SymbolAbstractType::Function) {
+    if (idType != Context::SymbolAbstractType::Function && idType != Context::SymbolAbstractType::List) {
       leftHandSide = Symbol::Builder(name, length);
       return;
     }
   }
 
-  /* If the identifier is followed by parentheses it is a function, else it is a
-   * symbol. The parentheses can be system parentheses, if serialized using
-   * SerializationHelper::Prefix. */
+  /* If the identifier is not followed by parentheses, it is a symbol. */
   if (!popTokenIfType(Token::LeftParenthesis)) {
     if (!popTokenIfType(Token::LeftSystemParenthesis)) {
       leftHandSide = Symbol::Builder(name, length);
@@ -494,26 +491,39 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
     }
     poppedParenthesisIsSystem = true;
   }
+
+  /* The identifier is followed by parentheses. It can be:
+   * - a function call
+   * - an access to a list element   */
   Expression parameter = parseCommaSeparatedList();
   if (m_status != Status::Progress) {
     return;
   }
   assert(!parameter.isUninitialized());
   if (parameter.numberOfChildren() != 1) {
-    m_status = Status::Error; // Unexpected number of parameters.
+    m_status = Status::Error;
     return;
   }
+
   parameter = parameter.childAtIndex(0);
-  if (parameter.type() == ExpressionNode::Type::Symbol && strncmp(static_cast<SymbolAbstract&>(parameter).name(), name, length) == 0) {
-    m_status = Status::Error; // Function and variable must have distinct names.
+  Expression result;
+  if (idType == Context::SymbolAbstractType::List) {
+    Symbol listSymbol = Symbol::Builder(name, length);
+    result = ListElement::Builder(parameter, listSymbol);
   } else {
-    Token::Type correspondingRightParenthesis = poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis : Token::Type::RightParenthesis;
-    if (!popTokenIfType(correspondingRightParenthesis)) {
-      m_status = Status::Error; // Right parenthesis missing or wrong type of right parenthesis
-    } else {
-      leftHandSide = Function::Builder(name, length, parameter);
+    if (parameter.type() == ExpressionNode::Type::Symbol && strncmp(static_cast<SymbolAbstract&>(parameter).name(), name, length) == 0) {
+      m_status = Status::Error; // Function and variable must have distinct names.
+      return;
     }
+    result = Function::Builder(name, length, parameter);
   }
+
+  Token::Type correspondingRightParenthesis = poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis : Token::Type::RightParenthesis;
+  if (!popTokenIfType(correspondingRightParenthesis)) {
+    m_status = Status::Error;
+    return;
+  }
+  leftHandSide = result;
 }
 
 void Parser::parseIdentifier(Expression & leftHandSide, Token::Type stoppingType) {

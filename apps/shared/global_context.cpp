@@ -80,7 +80,7 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.type() == ExpressionNode::Type::Symbol) {
-    SetExpressionForActualSymbol(finalExpression, symbol, record);
+    SetExpressionForActualSymbol(finalExpression, symbol, record, this);
   } else {
     assert(symbol.type() == ExpressionNode::Type::Function && symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
     Expression childSymbol = symbol.childAtIndex(0);
@@ -160,7 +160,7 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
   return Float<double>::Builder(NAN);
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
+Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord, Context * context) {
   if (!previousRecord.isNull() && Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     /* A function can overwrite a variable, but a variable cannot be created if
      * it has the same name as an existing function. */
@@ -169,8 +169,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   }
   // Delete any record with same name (as it is going to be overriden)
   previousRecord.destroy();
-  /* TODO expression could also reduce to a list: implement a reducesToList predicate. */
-  const char * extension = expression.type() == ExpressionNode::Type::List ? Ion::Storage::lisExtension : Ion::Storage::expExtension;
+  const char * extension = expression.reducesToList(context) ? Ion::Storage::lisExtension : Ion::Storage::expExtension;
   return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), extension, expression.addressInPool(), expression.size());
 }
 

@@ -1893,7 +1893,12 @@ QUIZ_CASE(poincare_simplification_list) {
   Ion::Storage::sharedStorage()->recordNamed("l2.lis").destroy();
 
   // Functions on lists
+  // List length
   assert_parsed_expression_simplify_to("dim({})", "0");
   assert_parsed_expression_simplify_to("dim({1,2,3})", "3");
   assert_parsed_expression_simplify_to("dim({{1,2,3,4,5}})", "1");
+  // Sum of elements
+  assert_parsed_expression_simplify_to("sum({})", "0");
+  assert_parsed_expression_simplify_to("sum({1,2,3})", "6");
+  assert_parsed_expression_simplify_to("sum({{1,2,3}, 1, {-1,-2,-3}})", "{1,1,1}");
 }

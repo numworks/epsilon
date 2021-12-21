@@ -54,6 +54,15 @@ void MathVariableBoxEmptyController::setType(Type type) {
       messages[3] = I18n::Message::Default;
       break;
     }
+    case Type::List:
+    {
+      messages[0] = I18n::Message::EmptyListBox0;
+      messages[1] = I18n::Message::EmptyListBox1;
+      messages[2] = I18n::Message::EmptyListBox2;
+      const char * storeList = "{3,4}→L";
+      layout = Poincare::LayoutHelper::String(storeList, strlen(storeList), MathVariableBoxEmptyView::k_font);
+      break;
+    }
     default:
       assert(false);
   }

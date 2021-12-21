@@ -14,7 +14,8 @@ public:
     None = 0,
     Expressions = 1,
     Functions = 2,
-    Sequence = 3
+    Sequence = 3,
+    List = 4,
   };
   void setType(Type type);
   // View Controller

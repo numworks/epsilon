@@ -421,7 +421,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_text_not_parsable("diff(1,2,3)");
   assert_text_not_parsable("diff(0,_s,0)");
   assert_parsed_expression_is("diff(1,x,3)", Derivative::Builder(BasedInteger::Builder(1),Symbol::Builder("x",1),BasedInteger::Builder(3)));
-  assert_parsed_expression_is("dim(1)", MatrixDimension::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("dim(1)", Dimension::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("conj(1)", Conjugate::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("cot(1)", Cotangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("det(1)", Determinant::Builder(BasedInteger::Builder(1)));

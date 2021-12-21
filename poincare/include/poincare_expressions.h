@@ -25,6 +25,7 @@
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/determinant.h>
+#include <poincare/dimension.h>
 #include <poincare/division.h>
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
@@ -58,7 +59,6 @@
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_complex.h>
-#include <poincare/matrix_dimension.h>
 #include <poincare/matrix_identity.h>
 #include <poincare/matrix_inverse.h>
 #include <poincare/matrix_trace.h>

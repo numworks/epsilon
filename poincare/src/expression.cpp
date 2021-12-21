@@ -195,7 +195,8 @@ bool Expression::IsNAry(const Expression e, Context * context) {
 
 bool Expression::IsMatrix(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Matrix
-    || e.type() == ExpressionNode::Type::MatrixDimension
+    /* FIXME 'Dimension' is not a matrix when its child is a list. */
+    || e.type() == ExpressionNode::Type::Dimension
     || e.type() == ExpressionNode::Type::MatrixInverse
     || e.type() == ExpressionNode::Type::MatrixIdentity
     || e.type() == ExpressionNode::Type::MatrixTranspose

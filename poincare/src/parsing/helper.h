@@ -60,7 +60,7 @@ private:
     &Dependency::s_functionHelper,
     &Determinant::s_functionHelper,
     &Derivative::s_functionHelper,
-    &MatrixDimension::s_functionHelper,
+    &Dimension::s_functionHelper,
     &VectorDot::s_functionHelper,
     &Factor::s_functionHelper,
     &Floor::s_functionHelper,

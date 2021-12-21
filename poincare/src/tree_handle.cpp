@@ -308,6 +308,7 @@ template Dependency TreeHandle::FixedArityBuilder<Dependency, DependencyNode>(co
 template Derivative TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(const Tuple &);
 template DerivativeLayout TreeHandle::FixedArityBuilder<DerivativeLayout, DerivativeLayoutNode>(const Tuple &);
 template Determinant TreeHandle::FixedArityBuilder<Determinant, DeterminantNode>(const Tuple &);
+template Dimension TreeHandle::FixedArityBuilder<Dimension, DimensionNode>(const Tuple &);
 template Division TreeHandle::FixedArityBuilder<Division, DivisionNode>(const Tuple &);
 template DivisionQuotient TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>(const Tuple &);
 template DivisionRemainder TreeHandle::FixedArityBuilder<DivisionRemainder, DivisionRemainderNode>(const Tuple &);
@@ -346,7 +347,6 @@ template Logarithm TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2> >(c
 template Matrix TreeHandle::NAryBuilder<Matrix, MatrixNode>(const Tuple &);
 template MatrixComplex<double> TreeHandle::NAryBuilder<MatrixComplex<double>, MatrixComplexNode<double> >(const Tuple &);
 template MatrixComplex<float> TreeHandle::NAryBuilder<MatrixComplex<float>, MatrixComplexNode<float> >(const Tuple &);
-template MatrixDimension TreeHandle::FixedArityBuilder<MatrixDimension, MatrixDimensionNode>(const Tuple &);
 template MatrixIdentity TreeHandle::FixedArityBuilder<MatrixIdentity, MatrixIdentityNode>(const Tuple &);
 template MatrixInverse TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>(const Tuple &);
 template MatrixTrace TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>(const Tuple &);

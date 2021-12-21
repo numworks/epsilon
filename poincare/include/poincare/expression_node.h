@@ -95,6 +95,7 @@ public:
     List,
     ListElement,
     ListSlice,
+    ListSum,
     Logarithm,
     MatrixTrace,
     NaperianLogarithm,

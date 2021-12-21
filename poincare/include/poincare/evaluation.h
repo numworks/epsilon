@@ -70,6 +70,10 @@ public:
   Evaluation<T> cross(Evaluation<T> * e) const { return node()->cross(e); }
   std::complex<T> dot(Evaluation<T> * e) const { return node()->dot(e); }
   std::complex<T> norm() const { return node()->norm(); }
+
+  /* Operations */
+  static Evaluation<T> Sum(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat);
+
 protected:
   Evaluation(EvaluationNode<T> * n) : TreeHandle(n) {}
 };

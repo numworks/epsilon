@@ -1808,4 +1808,26 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("11/{11,33,55,77}", "{1,1/3,1/5,1/7}");
   assert_parsed_expression_simplify_to("2×{1,2,3}×[[1,0][0,-1]]", "{[[2,0][0,-2]],[[4,0][0,-4]],[[6,0][0,-6]]}");
   assert_parsed_expression_simplify_to("{1,4,9,16,25}^(1/2)", "{1,2,3,4,5}");
+  // Access to an element
+  assert_reduce("{1,4,9}→l1");
+  assert_reduce("{}→l2");
+  assert_parsed_expression_simplify_to("l1(1)", "1");
+  assert_parsed_expression_simplify_to("l1(2)", "4");
+  assert_parsed_expression_simplify_to("l1(3)", "9");
+  assert_parsed_expression_simplify_to("l1(0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("l1(5)", Undefined::Name());
+  assert_parsed_expression_simplify_to("l1(-2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("l1(1.23)", Undefined::Name());
+  assert_parsed_expression_simplify_to("l2(1)", Undefined::Name());
+  // Slice of a list
+  assert_parsed_expression_simplify_to("l1(1,2)", "{1,4}");
+  assert_parsed_expression_simplify_to("l1(2,3)", "{4,9}");
+  assert_parsed_expression_simplify_to("l1(1,3)", "{1,4,9}");
+  assert_parsed_expression_simplify_to("l1(2,2)", "{4}");
+  assert_parsed_expression_simplify_to("l1(0,2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("l1(1,5)", Undefined::Name());
+  assert_parsed_expression_simplify_to("l1(3,2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("l2(1,2)", Undefined::Name());
+  Ion::Storage::sharedStorage()->recordNamed("l1.lis").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("l2.lis").destroy();
 }

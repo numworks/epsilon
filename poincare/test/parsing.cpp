@@ -540,8 +540,10 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   Expression m1[] = {BasedInteger::Builder(1)}; Matrix M1 = BuildMatrix(1,1,m1);
   Expression m2[] = {BasedInteger::Builder(2)}; Matrix M2 = BuildMatrix(1,1,m2);
   assert_parsed_expression_is("[[1]][[2]]", Multiplication::Builder(M1,M2));
-  Expression l[] = {BasedInteger::Builder(1), BasedInteger::Builder(2)};
-  assert_parsed_expression_is("2{1,2}", Multiplication::Builder(BasedInteger::Builder(2), BuildList(l)));
+  Expression l1[] = {BasedInteger::Builder(1), BasedInteger::Builder(2)};
+  assert_parsed_expression_is("2{1,2}", Multiplication::Builder(BasedInteger::Builder(2), BuildList(l1)));
+  Expression l2[] = {BasedInteger::Builder(1), BasedInteger::Builder(2)};
+  assert_parsed_expression_is("{1,2}2", Multiplication::Builder(BuildList(l2), BasedInteger::Builder(2)));
 }
 
 QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {

@@ -1,4 +1,4 @@
-#include <poincare/matrix_dimension.h>
+#include <poincare/dimension.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
@@ -10,24 +10,24 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper MatrixDimension::s_functionHelper;
+constexpr Expression::FunctionHelper Dimension::s_functionHelper;
 
-int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::s_functionHelper.numberOfChildren(); }
+int DimensionNode::numberOfChildren() const { return Dimension::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixDimensionNode::shallowReduce(ReductionContext reductionContext) {
-  return MatrixDimension(this).shallowReduce(reductionContext.context());
+Expression DimensionNode::shallowReduce(ReductionContext reductionContext) {
+  return Dimension(this).shallowReduce(reductionContext.context());
 }
 
-Layout MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(MatrixDimension(this), floatDisplayMode, numberOfSignificantDigits, MatrixDimension::s_functionHelper.name());
+Layout DimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(Dimension(this), floatDisplayMode, numberOfSignificantDigits, Dimension::s_functionHelper.name());
 }
 
-int MatrixDimensionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixDimension::s_functionHelper.name());
+int DimensionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Dimension::s_functionHelper.name());
 }
 
 template<typename T>
-Evaluation<T> MatrixDimensionNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> DimensionNode::templatedApproximate(ApproximationContext approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   std::complex<T> operands[2];
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
@@ -41,7 +41,7 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(ApproximationContext app
 }
 
 
-Expression MatrixDimension::shallowReduce(Context * context) {
+Expression Dimension::shallowReduce(Context * context) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
@@ -49,6 +49,9 @@ Expression MatrixDimension::shallowReduce(Context * context) {
     }
   }
   Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::List) {
+    return Rational::Builder(c.numberOfChildren());
+  }
   if (c.deepIsMatrix(context) && c.type() != ExpressionNode::Type::Matrix) {
     return *this;
   }

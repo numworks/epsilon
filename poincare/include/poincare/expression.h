@@ -50,6 +50,7 @@ class Expression : public TreeHandle {
   friend class Dependency;
   friend class Derivative;
   friend class Determinant;
+  friend class Dimension;
   friend class Division;
   friend class DivisionQuotient;
   friend class DivisionRemainder;
@@ -72,7 +73,6 @@ class Expression : public TreeHandle {
   friend class List;
   friend class Logarithm;
   friend class Matrix;
-  friend class MatrixDimension;
   friend class MatrixIdentity;
   friend class MatrixInverse;
   friend class MatrixTrace;

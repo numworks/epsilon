@@ -5,20 +5,20 @@
 
 namespace Poincare {
 
-class MatrixDimensionNode final : public ExpressionNode {
+class DimensionNode final : public ExpressionNode {
 public:
 
   // TreeNode
-  size_t size() const override { return sizeof(MatrixDimensionNode); }
+  size_t size() const override { return sizeof(DimensionNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << "MatrixDimension";
+    stream << "Dimension";
   }
 #endif
 
   // Properties
-  Type type() const override { return Type::MatrixDimension; }
+  Type type() const override { return Type::Dimension; }
 
 private:
   // Layout
@@ -34,12 +34,12 @@ private:
  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class MatrixDimension final : public Expression {
+class Dimension final : public Expression {
 public:
-  MatrixDimension(const MatrixDimensionNode * n) : Expression(n) {}
-  static MatrixDimension Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixDimension, MatrixDimensionNode>({child}); }
+  Dimension(const DimensionNode * n) : Expression(n) {}
+  static Dimension Builder(Expression child) { return TreeHandle::FixedArityBuilder<Dimension, DimensionNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, &UntypedBuilderOneChild<MatrixDimension>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, &UntypedBuilderOneChild<Dimension>);
 
   Expression shallowReduce(Context * context);
 };

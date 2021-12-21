@@ -124,7 +124,7 @@ public:
     // - Complexes
     ComplexCartesian,
     // - Any kind of matrices :
-    MatrixDimension,
+    Dimension,
     MatrixIdentity,
     MatrixInverse,
     MatrixTranspose,

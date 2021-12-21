@@ -81,6 +81,7 @@ poincare_src += $(addprefix poincare/src/,\
   dependency.cpp \
   derivative.cpp \
   determinant.cpp \
+  dimension.cpp \
   division.cpp \
   division_quotient.cpp \
   division_remainder.cpp \
@@ -115,7 +116,6 @@ poincare_src += $(addprefix poincare/src/,\
   logarithm.cpp \
   matrix.cpp \
   matrix_complex.cpp \
-  matrix_dimension.cpp \
   matrix_identity.cpp \
   matrix_inverse.cpp \
   matrix_trace.cpp \

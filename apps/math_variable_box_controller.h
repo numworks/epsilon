@@ -31,13 +31,14 @@ public:
     RootMenu = 0,
     Expression = 1,
     Function = 2,
-    Sequence = 3
+    Sequence = 3,
+    List = 4,
   };
   void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
 
 private:
   constexpr static int k_maxNumberOfDisplayedRows = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
-  constexpr static int k_numberOfMenuRows = 3;
+  constexpr static int k_numberOfMenuRows = 4;
   constexpr static KDCoordinate k_leafMargin = 20;
   Escher::ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron * nodeCellAtIndex(int index) override;

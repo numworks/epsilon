@@ -56,6 +56,7 @@
 #include <poincare/least_common_multiple.h>
 #include <poincare/list.h>
 #include <poincare/list_access.h>
+#include <poincare/list_sum.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_complex.h>

@@ -669,6 +669,7 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
     }
   }
   leftHandSide = result;
+  isThereImplicitMultiplication();
 }
 
 }

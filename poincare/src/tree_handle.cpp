@@ -342,8 +342,9 @@ template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayo
 template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(const Tuple &);
 template List TreeHandle::NAryBuilder<List, ListNode>(const Tuple &);
 template ListElement TreeHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>(const Tuple &);
-template ListSlice TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(const Tuple &);
+template ListMean TreeHandle::FixedArityBuilder<ListMean, ListMeanNode>(const Tuple &);
 template ListProduct TreeHandle::FixedArityBuilder<ListProduct, ListProductNode>(const Tuple &);
+template ListSlice TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(const Tuple &);
 template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(const Tuple &);
 template ListSum TreeHandle::FixedArityBuilder<ListSum, ListSumNode>(const Tuple &);
 template Logarithm TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2> >(const Tuple &);

@@ -57,6 +57,7 @@
 #include <poincare/list.h>
 #include <poincare/list_access.h>
 #include <poincare/list_product.h>
+#include <poincare/list_sort.h>
 #include <poincare/list_sum.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>

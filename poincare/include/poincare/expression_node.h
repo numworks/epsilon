@@ -96,6 +96,7 @@ public:
     ListElement,
     ListSlice,
     ListProduct,
+    ListSort,
     ListSum,
     Logarithm,
     MatrixTrace,

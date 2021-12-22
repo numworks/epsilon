@@ -1905,4 +1905,11 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("product({})", "1");
   assert_parsed_expression_simplify_to("product({1,4,9})", "36");
   assert_parsed_expression_simplify_to("product({{1,2,3}, 2, {-1,-2,-3}})", "{-2,-8,-18}");
+  // Sorting a list
+  assert_parsed_expression_simplify_to("sort({})", "{}");
+  assert_parsed_expression_simplify_to("sort({1})", "{1}");
+  assert_parsed_expression_simplify_to("sort({3,2,1})", "{1,2,3}");
+  assert_parsed_expression_simplify_to("sort({3,2,{1,4}})", Undefined::Name());
+
+
 }

@@ -32,10 +32,7 @@ template<typename T> Evaluation<T> ListMeanNode::templatedApproximate(Approximat
     return Complex<T>::Undefined();
   }
 
-  Evaluation<T> sum = Complex<T>::Builder(0);
-  for (int i = 0; i < n; i++) {
-    sum = Evaluation<T>::Sum(sum, child->childAtIndex(i)->approximate(static_cast<T>(0), approximationContext), approximationContext.complexFormat());
-  }
+  Evaluation<T> sum = ListSumNode::SumOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
   return Evaluation<T>::Product(sum, Complex<T>::Builder(static_cast<T>(1)/n), approximationContext.complexFormat());
 }
 

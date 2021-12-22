@@ -25,24 +25,31 @@ Expression ListVarianceNode::shallowReduce(ReductionContext reductionContext) {
   return ListVariance(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListVarianceNode::templatedApproximate(ApproximationContext approximationContext) const {
-  ExpressionNode * child = childAtIndex(0);
-  int n = child->numberOfChildren();
-  if (child->type() != ExpressionNode::Type::List || n == 0) {
-    return Complex<T>::Undefined();
-  }
-
+template<typename T> Evaluation<T> ListVarianceNode::VarianceOfListNode(ListNode * list, ApproximationContext approximationContext) {
+  int n = list->numberOfChildren();
   Preferences::ComplexFormat complexFormat = approximationContext.complexFormat();
 
   Evaluation<T> m = Complex<T>::Builder(0);
   Evaluation<T> ml2 = Complex<T>::Builder(0);
   for (int i = 0; i < n; i++) {
-    Evaluation<T> c = child->childAtIndex(i)->approximate(static_cast<T>(0), approximationContext);
+    Evaluation<T> c = list->childAtIndex(i)->approximate(static_cast<T>(0), approximationContext);
     m = Evaluation<T>::Sum(m, c,complexFormat);
     ml2 = Evaluation<T>::Sum(ml2, Evaluation<T>::Product(c, c, complexFormat), complexFormat);
   }
+  Complex<T> div = Complex<T>::Builder(static_cast<T>(1)/n);
+  m = Evaluation<T>::Product(m, div, complexFormat);
+  ml2 = Evaluation<T>::Product(ml2, div, complexFormat);
 
   return Evaluation<T>::Sum(ml2, Evaluation<T>::Product(Complex<T>::Builder(-1), Evaluation<T>::Product(m, m, complexFormat), complexFormat), complexFormat);
+}
+
+template<typename T> Evaluation<T> ListVarianceNode::templatedApproximate(ApproximationContext approximationContext) const {
+  ExpressionNode * child = childAtIndex(0);
+  if (child->type() != ExpressionNode::Type::List || child->numberOfChildren() == 0) {
+    return Complex<T>::Undefined();
+  }
+
+  return VarianceOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
 }
 
 Expression ListVariance::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

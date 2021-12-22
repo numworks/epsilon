@@ -23,18 +23,22 @@ Expression ListSumNode::shallowReduce(ReductionContext reductionContext) {
   return ListSum(this).shallowReduce(reductionContext);
 }
 
+template<typename T> Evaluation<T> ListSumNode::SumOfListNode(ListNode * list, ApproximationContext approximationContext) {
+  Evaluation<T> result = Complex<T>::Builder(0);
+  int n = list->numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    result = Evaluation<T>::Sum(result, list->childAtIndex(i)->approximate(static_cast<T>(0), approximationContext), approximationContext.complexFormat());
+  }
+  return result;
+}
+
 template<typename T> Evaluation<T> ListSumNode::templatedApproximate(ApproximationContext approximationContext) const {
   ExpressionNode * child = childAtIndex(0);
   if (child->type() != ExpressionNode::Type::List) {
     return Complex<T>::Undefined();
   }
 
-  Evaluation<T> result = Complex<T>::Builder(0);
-  int n = child->numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    result = Evaluation<T>::Sum(result, child->childAtIndex(i)->approximate(static_cast<T>(0), approximationContext), approximationContext.complexFormat());
-  }
-  return result;
+  return SumOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
 }
 
 Expression ListSum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

@@ -1,5 +1,6 @@
 #include <poincare/list_maximum.h>
 #include <poincare/layout_helper.h>
+#include <poincare/list_minimum.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 
@@ -29,21 +30,7 @@ template<typename T> Evaluation<T> ListMaximumNode::templatedApproximate(Approxi
     return Complex<T>::Undefined();
   }
 
-  Evaluation<T> result = Complex<T>::Undefined();
-  float value = -INFINITY;
-  int n = child->numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    Evaluation<T> candidate = child->childAtIndex(i)->approximate(static_cast<T>(0), approximationContext);
-    float newValue = candidate.toScalar();
-    if (std::isnan(newValue)) {
-      return Complex<T>::Undefined();
-    }
-    if (newValue > value) {
-      result = candidate;
-      value = newValue;
-    }
-  }
-  return result;
+  return ListMinimumNode::ExtremumOfListNode<T>(static_cast<ListNode *>(child), approximationContext, false);
 }
 
 Expression ListMaximum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
@@ -52,24 +39,7 @@ Expression ListMaximum::shallowReduce(ExpressionNode::ReductionContext reduction
     return replaceWithUndefinedInPlace();
   }
 
-  Context * context = reductionContext.context();
-  Preferences::ComplexFormat complexFormat = reductionContext.complexFormat();
-  Preferences::AngleUnit angleUnit = reductionContext.angleUnit();
-
-  Expression result = Undefined::Builder();
-  float value = -INFINITY;
-  int n = child.numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    Expression candidate = child.childAtIndex(i);
-    float newValue = candidate.approximateToScalar<float>(context, complexFormat, angleUnit, true);
-    if (std::isnan(newValue)) {
-      return replaceWithUndefinedInPlace();
-    }
-    if (newValue > value) {
-      result = candidate;
-      value = newValue;
-    }
-  }
+  Expression result = ListMinimum::ExtremumOfList(static_cast<List &>(child), reductionContext, false);
   replaceWithInPlace(result);
   return result;
 }

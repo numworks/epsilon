@@ -1,7 +1,7 @@
 #ifndef POINCARE_LIST_MEAN_H
 #define POINCARE_LIST_MEAN_H
 
-#include <poincare/expression.h>
+#include <poincare/list.h>
 
 namespace Poincare {
 

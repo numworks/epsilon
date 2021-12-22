@@ -58,6 +58,7 @@
 #include <poincare/list_access.h>
 #include <poincare/list_maximum.h>
 #include <poincare/list_mean.h>
+#include <poincare/list_median.h>
 #include <poincare/list_minimum.h>
 #include <poincare/list_product.h>
 #include <poincare/list_sample_standard_deviation.h>

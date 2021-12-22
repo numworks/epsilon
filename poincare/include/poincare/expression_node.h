@@ -101,6 +101,7 @@ public:
     ListSlice,
     ListSort,
     ListSum,
+    ListVariance,
     Logarithm,
     MatrixTrace,
     NaperianLogarithm,

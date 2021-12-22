@@ -441,15 +441,15 @@ QUIZ_CASE(poincare_properties_get_variables) {
 
   // f: x → 0
   assert_reduce("0→f(x)");
-  assert_reduce("x→var");
-  const char * variableBuffer12[] = {"var", ""};
-  assert_expression_has_variables("f(var)", variableBuffer12, 1);
+  assert_reduce("x→va");
+  const char * variableBuffer12[] = {"va", ""};
+  assert_expression_has_variables("f(va)", variableBuffer12, 1);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   // f: x → a, with a = 12
   assert_reduce("12→a");
   assert_reduce("a→f(x)");
-  const char * variableBuffer13[] = {"a", "var", ""};
-  assert_expression_has_variables("f(var)", variableBuffer13, 2);
+  const char * variableBuffer13[] = {"a", "x", ""};
+  assert_expression_has_variables("f(x)", variableBuffer13, 2);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // f: x → 1, g: x → 2
@@ -478,12 +478,12 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_reduce("b+c+x→a");
   assert_reduce("x+b→g(x)");
   assert_reduce("a+g(x+y)→f(x)");
-  const char * variableBuffer17[] = {"a", "var", "y", "b", ""};
-  assert_expression_has_variables("f(var)", variableBuffer17, 4);
+  const char * variableBuffer17[] = {"a", "x", "y", "b", ""};
+  assert_expression_has_variables("f(x)", variableBuffer17, 4);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("var.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("va.exp").destroy();
 }
 
 void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = MetricUnitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition) {

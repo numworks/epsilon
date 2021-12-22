@@ -1922,4 +1922,8 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("max({})", Undefined::Name());
   assert_parsed_expression_simplify_to("max({1,2,3})", "3");
   assert_parsed_expression_simplify_to("max({1,{2,4},3})", Undefined::Name());
+  // Variance of a list
+  assert_parsed_expression_simplify_to("var({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("var({1})", "0");
+  assert_parsed_expression_simplify_to("var({1,2,3,4,5,6})", "35/12");
 }

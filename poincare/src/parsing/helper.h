@@ -76,7 +76,9 @@ private:
     &NaperianLogarithm::s_functionHelper,
     &CommonLogarithm::s_functionHelper,
     &Logarithm::s_functionHelper,
+    &ListMaximum::s_functionHelper,
     &ListMean::s_functionHelper,
+    &ListMinimum::s_functionHelper,
     &VectorNorm::s_functionHelper,
     &NormCDF::s_functionHelper,
     &NormCDFRange::s_functionHelper,
@@ -104,6 +106,7 @@ private:
     &HyperbolicTangent::s_functionHelper,
     &MatrixTrace::s_functionHelper,
     &MatrixTranspose::s_functionHelper,
+    &ListVariance::s_functionHelper,
     &SquareRoot::s_functionHelper
   };
 

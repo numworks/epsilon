@@ -527,17 +527,17 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
         BasedInteger::Builder(5)));
   assert_parsed_layout_is(l, e);
 
-  // diff(1/var, var, cos(2))
+  // diff(1/Var, Var, cos(2))
   l = DerivativeLayout::Builder(
       FractionLayout::Builder(
         CodePointLayout::Builder('1'),
         HorizontalLayout::Builder({
-          CodePointLayout::Builder('v'),
+          CodePointLayout::Builder('V'),
           CodePointLayout::Builder('a'),
           CodePointLayout::Builder('r')
           })),
       HorizontalLayout::Builder({
-        CodePointLayout::Builder('v'),
+        CodePointLayout::Builder('V'),
         CodePointLayout::Builder('a'),
         CodePointLayout::Builder('r')
         }),
@@ -552,8 +552,8 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
   e = Derivative::Builder(
       Division::Builder(
         BasedInteger::Builder(1),
-        Symbol::Builder("var", 3)),
-      Symbol::Builder("var", 3),
+        Symbol::Builder("Var", 3)),
+      Symbol::Builder("Var", 3),
       Cosine::Builder(
         BasedInteger::Builder(2))
       );

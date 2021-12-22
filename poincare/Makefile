@@ -119,6 +119,7 @@ poincare_src += $(addprefix poincare/src/,\
   list_product.cpp \
   list_sort.cpp \
   list_sum.cpp \
+  list_variance.cpp \
   logarithm.cpp \
   matrix.cpp \
   matrix_complex.cpp \

@@ -95,6 +95,7 @@ public:
     List,
     ListElement,
     ListMean,
+    ListMinimum,
     ListProduct,
     ListSlice,
     ListSort,

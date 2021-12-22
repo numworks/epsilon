@@ -98,6 +98,7 @@ public:
     ListMean,
     ListMinimum,
     ListProduct,
+    ListSampleStandardDeviation,
     ListSlice,
     ListSort,
     ListStandardDeviation,

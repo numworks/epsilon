@@ -91,6 +91,7 @@ private:
     &Random::s_functionHelper,
     &RealPart::s_functionHelper,
     &MatrixRowEchelonForm::s_functionHelper,
+    &ListSampleStandardDeviation::s_functionHelper,
     &DivisionRemainder::s_functionHelper,
     &NthRoot::s_functionHelper,
     &Round::s_functionHelper,

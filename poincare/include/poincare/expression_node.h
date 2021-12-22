@@ -94,6 +94,7 @@ public:
     LeastCommonMultiple,
     List,
     ListElement,
+    ListMaximum,
     ListMean,
     ListMinimum,
     ListProduct,

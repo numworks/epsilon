@@ -6,7 +6,7 @@ extern "C" {
 #include <py/obj.h>
 #include <py/objfun.h>
 }
-extern const mp_rom_map_elem_t modion_module_globals_table[48];
+extern "C" const mp_rom_map_elem_t modion_module_globals_table[52];
 
 namespace Code {
   toolboxIonKeys::toolboxIonKeys() :

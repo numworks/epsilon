@@ -1926,4 +1926,8 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("var({})", Undefined::Name());
   assert_parsed_expression_simplify_to("var({1})", "0");
   assert_parsed_expression_simplify_to("var({1,2,3,4,5,6})", "35/12");
+  // Standard deviation of a list
+  assert_parsed_expression_simplify_to("stddev({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("stddev({1})", "0");
+  assert_parsed_expression_simplify_to("stddev({1,2,3,4,5,6})", "√(105)/6");
 }

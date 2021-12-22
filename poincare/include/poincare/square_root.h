@@ -23,6 +23,8 @@ public:
   }
 #endif
 
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -31,7 +33,6 @@ private:
   Expression shallowReduce(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::Root; };
   // Evaluation
-  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::Map<float>(this, approximationContext, computeOnComplex<float>);
   }

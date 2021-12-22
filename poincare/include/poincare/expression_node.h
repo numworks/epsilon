@@ -100,6 +100,7 @@ public:
     ListProduct,
     ListSlice,
     ListSort,
+    ListStandardDeviation,
     ListSum,
     ListVariance,
     Logarithm,

@@ -3,6 +3,7 @@
 #include <poincare/complex.h>
 #include <poincare/expression.h>
 #include <poincare/matrix_complex.h>
+#include <poincare/multiplication.h>
 
 namespace Poincare {
 
@@ -32,11 +33,28 @@ Evaluation<T> Evaluation<T>::Sum(Evaluation<T> a, Evaluation<T> b, Preferences::
   return AdditionNode::computeOnMatrices(static_cast<MatrixComplex<T> &>(a), static_cast<MatrixComplex<T> &>(b), complexFormat);
 }
 
+template<typename T>
+Evaluation<T> Evaluation<T>::Product(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) {
+  assert(a.type() != EvaluationNode<T>::Type::Exception && b.type() != EvaluationNode<T>::Type::Exception);
+  if (a.type() == EvaluationNode<T>::Type::Complex) {
+    if (b.type() == EvaluationNode<T>::Type::Complex) {
+      return MultiplicationNode::compute(static_cast<Complex<T> &>(a).stdComplex(), static_cast<Complex<T> &>(b).stdComplex(), complexFormat);
+    }
+    return MultiplicationNode::computeOnComplexAndMatrix(static_cast<Complex<T> &>(a).stdComplex(), static_cast<MatrixComplex<T> &>(b), complexFormat);
+  }
+  if (b.type() == EvaluationNode<T>::Type::Complex) {
+    return MultiplicationNode::computeOnComplexAndMatrix(static_cast<Complex<T> &>(b).stdComplex(), static_cast<MatrixComplex<T> &>(a), complexFormat);
+  }
+  return MultiplicationNode::computeOnMatrices(static_cast<MatrixComplex<T> &>(a), static_cast<MatrixComplex<T> &>(b), complexFormat);
+}
+
 template Evaluation<float> Evaluation<float>::childAtIndex(int i) const;
 template Evaluation<double> Evaluation<double>::childAtIndex(int i) const;
 template Expression Evaluation<float>::complexToExpression(Preferences::ComplexFormat) const;
 template Expression Evaluation<double>::complexToExpression(Preferences::ComplexFormat) const;
 template Evaluation<float> Evaluation<float>::Sum(Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat);
 template Evaluation<double> Evaluation<double>::Sum(Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat);
+template Evaluation<float> Evaluation<float>::Product(Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat);
+template Evaluation<double> Evaluation<double>::Product(Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat);
 
 }

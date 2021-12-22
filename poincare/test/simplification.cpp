@@ -1918,4 +1918,8 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("min({})", Undefined::Name());
   assert_parsed_expression_simplify_to("min({1,2,3})", "1");
   assert_parsed_expression_simplify_to("min({1,{2,4},3})", Undefined::Name());
+  // Maximum of a list
+  assert_parsed_expression_simplify_to("max({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("max({1,2,3})", "3");
+  assert_parsed_expression_simplify_to("max({1,{2,4},3})", Undefined::Name());
 }

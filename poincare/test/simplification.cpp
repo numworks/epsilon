@@ -1914,4 +1914,8 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("mean({})", Undefined::Name());
   assert_parsed_expression_simplify_to("mean({1,2,3})", "2");
   assert_parsed_expression_simplify_to("mean({5,8,7,4,12})", "36/5");
+  // Minimum of a list
+  assert_parsed_expression_simplify_to("min({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("min({1,2,3})", "1");
+  assert_parsed_expression_simplify_to("min({1,{2,4},3})", Undefined::Name());
 }

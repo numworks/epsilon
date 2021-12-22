@@ -140,6 +140,7 @@ private:
     &CommonLogarithm::s_functionHelper,
     &Logarithm::s_functionHelper,
     &ListMean::s_functionHelper,
+    &ListMinimum::s_functionHelper,
     &VectorNorm::s_functionHelper,
     &NormCDF::s_functionHelper,
     &NormCDF2::s_functionHelper,

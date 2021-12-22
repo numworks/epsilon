@@ -343,6 +343,7 @@ template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracket
 template List TreeHandle::NAryBuilder<List, ListNode>(const Tuple &);
 template ListElement TreeHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>(const Tuple &);
 template ListMean TreeHandle::FixedArityBuilder<ListMean, ListMeanNode>(const Tuple &);
+template ListMinimum TreeHandle::FixedArityBuilder<ListMinimum, ListMinimumNode>(const Tuple &);
 template ListProduct TreeHandle::FixedArityBuilder<ListProduct, ListProductNode>(const Tuple &);
 template ListSlice TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(const Tuple &);
 template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(const Tuple &);

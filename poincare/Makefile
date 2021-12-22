@@ -114,6 +114,7 @@ poincare_src += $(addprefix poincare/src/,\
   list.cpp \
   list_access.cpp \
   list_mean.cpp \
+  list_minimum.cpp \
   list_product.cpp \
   list_sort.cpp \
   list_sum.cpp \

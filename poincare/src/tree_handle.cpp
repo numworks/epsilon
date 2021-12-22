@@ -348,6 +348,7 @@ template ListMinimum TreeHandle::FixedArityBuilder<ListMinimum, ListMinimumNode>
 template ListProduct TreeHandle::FixedArityBuilder<ListProduct, ListProductNode>(const Tuple &);
 template ListSlice TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(const Tuple &);
 template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(const Tuple &);
+template ListStandardDeviation TreeHandle::FixedArityBuilder<ListStandardDeviation, ListStandardDeviationNode>(const Tuple &);
 template ListSum TreeHandle::FixedArityBuilder<ListSum, ListSumNode>(const Tuple &);
 template ListVariance TreeHandle::FixedArityBuilder<ListVariance, ListVarianceNode>(const Tuple &);
 template Logarithm TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2> >(const Tuple &);

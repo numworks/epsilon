@@ -1,12 +1,14 @@
 #ifndef POINCARE_LIST_MINIMUM_H
 #define POINCARE_LIST_MINIMUM_H
 
-#include <poincare/expression.h>
+#include <poincare/list.h>
 
 namespace Poincare {
 
 class ListMinimumNode : public ExpressionNode {
 public:
+  template<typename T> static Evaluation<T> ExtremumOfListNode(ListNode * list, ApproximationContext approximationContext, bool minimum);
+
   size_t size() const override { return sizeof(ListMinimumNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
@@ -32,6 +34,7 @@ private:
 class ListMinimum : public Expression {
 public:
   static constexpr FunctionHelper s_functionHelper = FunctionHelper("min", 1, &UntypedBuilderOneChild<ListMinimum>);
+  static Expression ExtremumOfList(List list, ExpressionNode::ReductionContext reductionContext, bool minimum);
 
   ListMinimum(const ListMinimumNode * n) : Expression(n) {}
   static ListMinimum Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListMinimum, ListMinimumNode>({list}); }

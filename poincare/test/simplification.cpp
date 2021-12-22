@@ -1910,6 +1910,8 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("sort({1})", "{1}");
   assert_parsed_expression_simplify_to("sort({3,2,1})", "{1,2,3}");
   assert_parsed_expression_simplify_to("sort({3,2,{1,4}})", Undefined::Name());
-
-
+  // Mean of a list
+  assert_parsed_expression_simplify_to("mean({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("mean({1,2,3})", "2");
+  assert_parsed_expression_simplify_to("mean({5,8,7,4,12})", "36/5");
 }

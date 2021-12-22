@@ -1934,4 +1934,9 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("samplestddev({})", Undefined::Name());
   assert_parsed_expression_simplify_to("samplestddev({1})", Undefined::Name());
   assert_parsed_expression_simplify_to("samplestddev({1,2,3,4,5,6})", "√(14)/2");
+  // Median of a list
+  assert_parsed_expression_simplify_to("med({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("med({1})", "1");
+  assert_parsed_expression_simplify_to("med({4,2,3,1,6})", "3");
+  assert_parsed_expression_simplify_to("med({1,6,3,4,5,2})", "7/2");
 }

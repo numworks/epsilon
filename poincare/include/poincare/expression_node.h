@@ -96,6 +96,7 @@ public:
     ListElement,
     ListMaximum,
     ListMean,
+    ListMedian,
     ListMinimum,
     ListProduct,
     ListSampleStandardDeviation,

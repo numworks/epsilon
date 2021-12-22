@@ -81,6 +81,7 @@ private:
     &NormCDFRange::s_functionHelper,
     &NormPDF::s_functionHelper,
     &PermuteCoefficient::s_functionHelper,
+    &ListProduct::s_functionHelper,
     &Product::s_functionHelper,
     &DivisionQuotient::s_functionHelper,
     &Randint::s_functionHelper,

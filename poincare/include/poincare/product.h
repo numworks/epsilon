@@ -22,12 +22,11 @@ private:
   Layout createSumAndProductLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const override {
-    return templatedApproximateWithNextTerm<double>(a, b, complexFormat);
+    return Evaluation<double>::Product(a, b, complexFormat);
   }
   Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat) const override {
-    return templatedApproximateWithNextTerm<float>(a, b, complexFormat);
+    return Evaluation<float>::Product(a, b, complexFormat);
   }
-  template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) const;
 };
 
 class Product final : public SumAndProduct {

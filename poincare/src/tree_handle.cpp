@@ -349,6 +349,7 @@ template ListProduct TreeHandle::FixedArityBuilder<ListProduct, ListProductNode>
 template ListSlice TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(const Tuple &);
 template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(const Tuple &);
 template ListSum TreeHandle::FixedArityBuilder<ListSum, ListSumNode>(const Tuple &);
+template ListVariance TreeHandle::FixedArityBuilder<ListVariance, ListVarianceNode>(const Tuple &);
 template Logarithm TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2> >(const Tuple &);
 template Matrix TreeHandle::NAryBuilder<Matrix, MatrixNode>(const Tuple &);
 template MatrixComplex<double> TreeHandle::NAryBuilder<MatrixComplex<double>, MatrixComplexNode<double> >(const Tuple &);

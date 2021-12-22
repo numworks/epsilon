@@ -62,6 +62,7 @@
 #include <poincare/list_product.h>
 #include <poincare/list_sort.h>
 #include <poincare/list_sum.h>
+#include <poincare/list_variance.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_complex.h>

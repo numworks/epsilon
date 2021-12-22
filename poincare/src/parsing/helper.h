@@ -96,6 +96,7 @@ private:
     &SignFunction::s_functionHelper,
     &Sine::s_functionHelper,
     &HyperbolicSine::s_functionHelper,
+    &ListSort::s_functionHelper,
     &ListSum::s_functionHelper,
     &Sum::s_functionHelper,
     &Tangent::s_functionHelper,

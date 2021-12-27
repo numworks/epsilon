@@ -6,11 +6,11 @@ ifeq ($(PLATFORM) $(TARGET) $(CXX),simulator macos clang++)
 OUTPUT := output/struct_layout
 
 .PHONY: $(OUTPUT)/records_layout.ast
-$(OUTPUT)/records_layout.ast: apps/apps_container.cpp
+$(OUTPUT)/records_layout.ast: apps/apps_container_storage.cpp
 	@echo "AST     $@"
 	@mkdir -p $(OUTPUT)
 	@$(MAKE) epsilon.bin
-	@$(CXX) -fno-color-diagnostics -Xclang -fdump-record-layouts $(SFLAGS) $(CXXFLAGS) $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -Iapps -MF /dev/null -c $< -o /dev/null > $@
+	@$(CXX) -fno-color-diagnostics -Xclang -fdump-record-layouts $(SFLAGS) $(CXXFLAGS) $(snapshot_includes) -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -Iapps -MF /dev/null -c $< -o /dev/null > $@
 
 $(OUTPUT)/%.ast.json: $(OUTPUT)/records_layout.ast
 	@echo "JSON    $@"

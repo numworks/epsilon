@@ -39,7 +39,7 @@ private:
 
   class Status {
   public:
-    Status() {
+    Status() : m_status(0) {
       setAutoImportation(true);
     }
 

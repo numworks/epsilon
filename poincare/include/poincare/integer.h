@@ -192,7 +192,11 @@ private:
     if (i >= numberOfHalfDigits()) {
       return 0;
     }
-    return (usesImmediateDigit() ? ((half_native_uint_t *)&m_digit)[i] : ((half_native_uint_t *)digits())[i]);
+    if (usesImmediateDigit()) {
+      return (reinterpret_cast<const half_native_uint_t *>(&m_digit))[i];
+    } else {
+      return (reinterpret_cast<const half_native_uint_t *>(digits()))[i];
+    }
   }
 
   native_uint_t digit(uint8_t i) const {

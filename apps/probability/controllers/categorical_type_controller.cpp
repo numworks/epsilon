@@ -33,7 +33,7 @@ void CategoricalTypeController::didBecomeFirstResponder() {
 
 bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    Escher::ViewController * view;
+    Escher::ViewController * view = nullptr;
     Data::CategoricalType type;
     switch (selectedRow()) {
       case k_indexOfGoodnessCell:

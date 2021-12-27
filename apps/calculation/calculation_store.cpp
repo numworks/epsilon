@@ -100,6 +100,11 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         assert(m_numberOfCalculations == 1);
         addressOfCalculation = m_buffer;
         totalOlderCalculations = 0;
+        /* Silent static analyzer warning: these variables are used in case of
+         * circuit breaker interruption (longjmp) but the compiler analyzer gets
+         * lost in such cases. */
+        (void)addressOfCalculation;
+        (void)totalOlderCalculations;
         Ion::CircuitBreaker::unlock();
         /* If the input does not fit in the store (event if the current
          * calculation is the only calculation), just replace the calculation
@@ -184,6 +189,12 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     calculation->setHeights(
         heightComputer(calculation.pointer(), context, false),
         heightComputer(calculation.pointer(), context, true));
+
+    /* Silent static analyzer warning: these variables are used in case of
+     * circuit breaker interruption (longjmp) but the compiler analyzer gets
+     * lost in such cases. */
+    (void)addressOfCalculation;
+    (void)totalOlderCalculations;
     return calculation;
   } else {
     // Restore Calculation store in a safe state.

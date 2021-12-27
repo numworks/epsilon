@@ -72,7 +72,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       KDCoordinate rectMin = axis == Axis::Horizontal ? rect.left() : rect.bottom();
       KDCoordinate rectMax = axis == Axis::Horizontal ? rect.right() : rect.top();
 
-      float tCacheMin, tCacheStep, tStepNonCartesian;
+      float tCacheMin, tCacheStep;
+      float tStepNonCartesian = NAN;
       if (f->isAlongX()) {
         float rectLimit = pixelToFloat(axis, rectMin - k_externRectMargin);
         /* Here, tCacheMin can depend on rect (and change as the user move)
@@ -89,12 +90,14 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
 
       if (type == ContinuousFunction::PlotType::Polar) {
         // Polar
+        assert(!std::isnan(tStepNonCartesian));
         drawPolarCurve(ctx, rect, tCacheMin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color());
       } else if (type == ContinuousFunction::PlotType::Parametric) {
+        assert(!std::isnan(tStepNonCartesian));
         // Parametric
         drawCurve(ctx, rect, tCacheMin, tmax, tStepNonCartesian, [](float t, void * model, void * context) {
             ContinuousFunction * f = (ContinuousFunction *)model;

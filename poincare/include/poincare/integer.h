@@ -159,7 +159,7 @@ private:
 
   // Constructors
   Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);
-  Integer(int identifier, bool negative) : TreeHandle(identifier), m_negative(negative) {}
+  Integer(int identifier, bool negative) : TreeHandle(identifier), m_negative(negative), m_digit(0) {}
   IntegerNode * node() const { return static_cast<IntegerNode *>(TreeHandle::node()); }
 
   // Arithmetic

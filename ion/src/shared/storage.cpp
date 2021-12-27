@@ -19,9 +19,11 @@ namespace Ion {
  * preventing the PlatformInfo from retrieving its address. And making the
  * Storage variable global yields the static init fiasco issue. We're working
  * around both issues by creating a global staticStorageArea buffer, and by
- * placement-newing the Storage into that area on first use. */
+ * placement-newing the Storage into that area on first use.
+ * We use 'uintptr_t' to ensure the Storage to be correctly aligned accordingly
+ * to the platform. */
 
-uint32_t staticStorageArea[sizeof(Storage)/sizeof(uint32_t)] = {0};
+uintptr_t staticStorageArea[sizeof(Storage)/sizeof(uintptr_t)] = {0};
 
 constexpr char Storage::expExtension[];
 constexpr char Storage::funcExtension[];

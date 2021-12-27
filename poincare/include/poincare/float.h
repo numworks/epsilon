@@ -65,12 +65,18 @@ class Float final : public Number {
 public:
   static Float Builder(T value);
   constexpr static T epsilon();
+  constexpr static T min();
+  constexpr static T max();
 private:
   FloatNode<T> * node() const { return static_cast<FloatNode<T> *>(Number::node()); }
 };
 
 template <> constexpr inline float Float<float>::epsilon() { return FLT_EPSILON; }
 template <> constexpr inline double Float<double>::epsilon() { return DBL_EPSILON; }
+template <> constexpr inline float Float<float>::min() { return FLT_MIN; }
+template <> constexpr inline double Float<double>::min() { return DBL_MIN; }
+template <> constexpr inline float Float<float>::max() { return FLT_MAX; }
+template <> constexpr inline double Float<double>::max() { return DBL_MAX; }
 
 }
 

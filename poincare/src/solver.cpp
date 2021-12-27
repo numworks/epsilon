@@ -12,8 +12,8 @@ template<typename T>
 Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep) {
   assert(relativePrecision > static_cast<T>(0.f) && minimalStep >= static_cast<T>(0.f) && maximalStep >= minimalStep);
 
-  constexpr T overflow = sizeof(T) == sizeof(float) ? FLT_MAX : DBL_MAX;
-  constexpr T underflow = sizeof(T) == sizeof(float) ? FLT_MIN : DBL_MIN;
+  constexpr T overflow = Float<T>::max();
+  constexpr T underflow = Float<T>::min();
 
   if (start == static_cast<T>(INFINITY)) {
     start = overflow;

@@ -80,19 +80,13 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probabilit
     return n;
   }
   T proba = probability;
-  const void * pack[3] = { &isDouble, &n, &p };
+  const void * pack[2] = { &n, &p };
   return Solver::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](double x, Context * context, const void * auxiliary) {
         const void * const * pack = static_cast<const void * const *>(auxiliary);
-        bool isDouble = *static_cast<const bool *>(pack[0]);
-        if (isDouble) {
-          double n = *static_cast<const double *>(pack[1]);
-          double p = *static_cast<const double *>(pack[2]);
-          return (double)BinomialDistribution::EvaluateAtAbscissa<T>(x, n, p);
-        }
-        double n = *static_cast<const float *>(pack[1]);
-        double p = *static_cast<const float *>(pack[2]);
+        double n = *static_cast<const T *>(pack[0]);
+        double p = *static_cast<const T *>(pack[1]);
         return (double)BinomialDistribution::EvaluateAtAbscissa<T>(x, n, p);
       }, nullptr, pack);
 }

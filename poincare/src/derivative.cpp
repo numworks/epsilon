@@ -58,7 +58,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
   T error = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   T result = 1.0;
   T h = k_minInitialRate;
-  constexpr T tenEpsilon = sizeof(T) == sizeof(double) ? 10.0*DBL_EPSILON : 10.0f*FLT_EPSILON;
+  constexpr T tenEpsilon = static_cast<T>(10.0)*Float<T>::epsilon();
   do {
     T currentError;
     T currentResult = riddersApproximation(approximationContext, evaluationArgument, h, &currentError);

@@ -1,3 +1,4 @@
+#include <poincare/float.h>
 #include <poincare/solver.h>
 #include <poincare/ieee754.h>
 #include <assert.h>
@@ -393,7 +394,7 @@ Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double
 
 template<typename T>
 T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, ValueAtAbscissa evaluation, Context * context, const void * auxiliary) {
-  constexpr T precision = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
+  constexpr T precision = Float<T>::epsilon();
   assert(*probability <= (static_cast<T>(1.f) - precision) && *probability >= precision);
   (void) precision;
 

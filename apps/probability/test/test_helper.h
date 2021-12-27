@@ -1,14 +1,11 @@
 #ifndef APPS_PROBABILITY_TEST_TEST_HELPER_H
 #define APPS_PROBABILITY_TEST_TEST_HELPER_H
 
-#include <quiz.h>
-#include <stdio.h>
-
 #include <algorithm>
 #include <cmath>
-
-template <class T>
-constexpr T minRepresentable(T valueType);
+#include <poincare/float.h>
+#include <quiz.h>
+#include <stdio.h>
 
 template <typename T>
 bool inline roughlyEqual(T a, T b, T threshold, bool absolute = false) {
@@ -24,18 +21,8 @@ bool inline roughlyEqual(T a, T b, T threshold, bool absolute = false) {
   return res;
 }
 
-template <>
-inline float minRepresentable<float>(float valueType) {
-  return FLT_EPSILON;
-}
-
-template <>
-inline double minRepresentable(double valueType) {
-  return DBL_EPSILON;
-}
-
 template <typename T>
-void inline assertRoughlyEqual(T a, T b, T threshold = minRepresentable(T()), bool absolute = false) {
+void inline assertRoughlyEqual(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool absolute = false) {
   quiz_assert(roughlyEqual<T>(a, b, threshold, absolute));
 }
 

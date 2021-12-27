@@ -1,6 +1,7 @@
 #ifndef POINCARE_FLOAT_H
 #define POINCARE_FLOAT_H
 
+#include <float.h>
 #include <poincare/number.h>
 #include <poincare/approximation_helper.h>
 
@@ -63,9 +64,13 @@ template<typename T>
 class Float final : public Number {
 public:
   static Float Builder(T value);
+  constexpr static T epsilon();
 private:
   FloatNode<T> * node() const { return static_cast<FloatNode<T> *>(Number::node()); }
 };
+
+template <> constexpr inline float Float<float>::epsilon() { return FLT_EPSILON; }
+template <> constexpr inline double Float<double>::epsilon() { return DBL_EPSILON; }
 
 }
 

@@ -1,4 +1,5 @@
 #include <poincare/binomial_distribution.h>
+#include <poincare/float.h>
 #include <poincare/rational.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <cmath>
@@ -12,7 +13,7 @@ T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
   if (std::isnan(x) || std::isinf(x) || !ParametersAreOK(n, p)){
     return NAN;
   }
-  T precision = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
+  constexpr T precision = Float<T>::epsilon();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
   bool pIsOne = !pIsZero && std::abs(p - (T)1.0) < precision;
@@ -62,8 +63,7 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probabilit
   if (!ParametersAreOK(n, p)) {
     return NAN;
   }
-  bool isDouble = sizeof(T) == sizeof(double);
-  T precision = isDouble ? DBL_EPSILON : FLT_EPSILON;
+  constexpr T precision = Float<T>::epsilon();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
   bool pIsOne = !pIsZero && std::abs(p - (T)1.0) < precision;

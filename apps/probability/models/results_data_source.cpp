@@ -58,6 +58,8 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
               I18n::translate(I18n::Message::DegreesOfFreedom));
           value = m_statistic->degreeOfFreedom();
           break;
+        default:
+          assert(false);
       }
     } else {
       if (m_statistic->estimateLayout().isUninitialized()) {
@@ -90,6 +92,8 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
               I18n::translate(I18n::Message::DegreesOfFreedom));
           value = m_statistic->degreeOfFreedom();
           break;
+        default:
+          assert(false);
       }
     }
     constexpr int bufferSize = Constants::k_largeBufferSize;

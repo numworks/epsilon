@@ -112,6 +112,8 @@ void Probability::HypothesisController::onDropdownSelected(int selectedRow) {
     case 2:
       op = HypothesisParams::ComparisonOperator::Higher;
       break;
+    default:
+      assert(false);
   }
   m_statistic->hypothesisParams()->setComparisonOperator(op);
 }

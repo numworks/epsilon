@@ -65,6 +65,8 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
       case k_indexOfZTest:
         t = Data::TestType::ZTest;
         break;
+      default:
+        assert(false);
     }
     if (App::app()->subapp() == Data::SubApp::Intervals) {
       view = m_inputController;
@@ -134,6 +136,8 @@ void Probability::TypeController::willDisplayCellForIndex(Escher::HighlightCell 
         message = isTestSubApp ? I18n::Message::PooledTTest : I18n::Message::PooledTInterval;
         submessage = I18n::Message::RarelyUsed;
         break;
+      default:
+        assert(false);
     }
     Escher::MessageTableCellWithChevronAndMessage * mcell =
         static_cast<Escher::MessageTableCellWithChevronAndMessage *>(cell);

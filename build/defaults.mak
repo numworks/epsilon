@@ -24,6 +24,10 @@ SFLAGS += -fsanitize=address
 LDFLAGS += -fsanitize=address
 endif
 
+ifeq ($(STATIC_ANALYZER),1)
+SFLAGS += --analyze
+endif
+
 # Flags - Header search path
 SFLAGS += -Ilib -I.
 

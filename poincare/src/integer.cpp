@@ -677,7 +677,9 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   }
   native_int_t base = 1 << 16;
   for (int j = m-1; j >= 0; j--) {
-    native_uint_t qj2 = ((native_uint_t)A.halfDigit(n+j)*base+(native_uint_t)A.halfDigit(n+j-1))/(native_uint_t)B.halfDigit(n-1); // (a[n+j]*beta+a[n+j-1])/b[n-1]
+    half_native_uint_t bnMinus1 = (native_uint_t)B.halfDigit(n-1);
+    assert(bnMinus1 != 0);
+    native_uint_t qj2 = ((native_uint_t)A.halfDigit(n+j)*base+(native_uint_t)A.halfDigit(n+j-1))/bnMinus1; // (a[n+j]*beta+a[n+j-1])/b[n-1]
     half_native_uint_t baseMinus1 = (1 << 16) -1; // beta-1
     qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1; // std::min(qj2, beta -1)
     A = Integer::addition(A, multiplication(qDigits[j], B.multiplyByPowerOfBase(j), true), true, true); // A-q[j]*beta^j*B

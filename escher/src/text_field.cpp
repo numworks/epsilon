@@ -402,7 +402,6 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
   }
-  bool defaultXNTHasChanged = false;
   const char * text = this->text();
   assert(text == m_contentView.editedText());
   const char * locationOfCursor = cursorLocation();
@@ -438,7 +437,6 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
             functionFound = true;
             // Update default code point
             defaultXNTCodePoint = CodePoint(sFunctions[i].xnt);
-            defaultXNTHasChanged = true;
           }
         }
         if (!functionFound) {

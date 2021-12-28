@@ -20,7 +20,6 @@ app_probability_test_src = $(addprefix apps/probability/models/distribution/,\
 )
 
 app_probability_test_src += $(addprefix apps/probability/models/,\
-  student_law.cpp \
   chi2_law.cpp \
 )
 
@@ -33,7 +32,6 @@ app_probability_test_src += apps/probability/text_helpers.cpp
 
 app_probability_src += $(addprefix apps/probability/models/,\
   statistic_view_range.cpp \
-  student_law.cpp \
   chi2_law.cpp \
   results_data_source.cpp \
 )
@@ -119,7 +117,6 @@ tests_src += $(addprefix apps/probability/test/,\
   hypergeometric_function.cpp\
   distributions.cpp\
   regularized_gamma.cpp \
-  student_law.cpp \
   chi2_law.cpp \
   statistics.cpp \
   data.cpp \

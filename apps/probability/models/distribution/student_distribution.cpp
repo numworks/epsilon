@@ -1,13 +1,11 @@
 #include "student_distribution.h"
-
+#include <poincare/student_distribution.h>
 #include <cmath>
-
-#include "probability/models/student_law.h"
 
 namespace Probability {
 
 float StudentDistribution::evaluateAtAbscissa(float x) const {
-  return Probability::StudentLaw::EvaluateAtAbscissa<float>(x, m_parameter1);
+  return Poincare::StudentDistribution::EvaluateAtAbscissa<float>(x, m_parameter1);
 }
 
 bool StudentDistribution::authorizedValueAtIndex(double x, int index) const {
@@ -18,11 +16,11 @@ bool StudentDistribution::authorizedValueAtIndex(double x, int index) const {
 }
 
 double StudentDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  return Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<double>(x, m_parameter1);
+  return Poincare::StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(x, m_parameter1);
 }
 
 double StudentDistribution::cumulativeDistributiveInverseForProbability(double * probability) {
-  return Probability::StudentLaw::CumulativeDistributiveInverseForProbability<double>(*probability, m_parameter1);
+  return Poincare::StudentDistribution::CumulativeDistributiveInverseForProbability<double>(*probability, m_parameter1);
 }
 
 float StudentDistribution::computeXMin() const {
@@ -34,7 +32,7 @@ float StudentDistribution::computeXMax() const {
 }
 
 float StudentDistribution::computeYMax() const {
-  return std::exp(StudentLaw::lnCoefficient<float>(m_parameter1)) * (1.0f + k_displayTopMarginRatio);
+  return std::exp(Poincare::StudentDistribution::lnCoefficient<float>(m_parameter1)) * (1.0f + k_displayTopMarginRatio);
 }
 
 }

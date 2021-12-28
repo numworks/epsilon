@@ -197,38 +197,12 @@ Emscripten_CreateWindow(_THIS, SDL_Window * window)
     }
 
     wdata->canvas_id = SDL_strdup("#canvas");
+    wdata->pixel_ratio = 320 / 240;
 
-    if (window->flags & SDL_WINDOW_ALLOW_HIGHDPI) {
-        wdata->pixel_ratio = emscripten_get_device_pixel_ratio();
-    } else {
-        wdata->pixel_ratio = 1.0f;
-    }
+    window->w = 320;
+    window->h = 240;
 
-    scaled_w = SDL_floor(window->w * wdata->pixel_ratio);
-    scaled_h = SDL_floor(window->h * wdata->pixel_ratio);
-
-    /* set a fake size to check if there is any CSS sizing the canvas */
-    emscripten_set_canvas_element_size(wdata->canvas_id, 1, 1);
-    emscripten_get_element_css_size(wdata->canvas_id, &css_w, &css_h);
-
-    wdata->external_size = SDL_floor(css_w) != 1 || SDL_floor(css_h) != 1;
-
-    if ((window->flags & SDL_WINDOW_RESIZABLE) && wdata->external_size) {
-        /* external css has resized us */
-        scaled_w = css_w * wdata->pixel_ratio;
-        scaled_h = css_h * wdata->pixel_ratio;
-
-        SDL_SendWindowEvent(window, SDL_WINDOWEVENT_RESIZED, css_w, css_h);
-    }
-    emscripten_set_canvas_element_size(wdata->canvas_id, scaled_w, scaled_h);
-
-    /* if the size is not being controlled by css, we need to scale down for hidpi */
-    if (!wdata->external_size) {
-        if (wdata->pixel_ratio != 1.0f) {
-            /*scale canvas down*/
-            emscripten_set_element_css_size(wdata->canvas_id, window->w, window->h);
-        }
-    }
+    emscripten_set_canvas_element_size(wdata->canvas_id, 320, 240);  
 
 #if SDL_VIDEO_OPENGL_EGL
     if (window->flags & SDL_WINDOW_OPENGL) {

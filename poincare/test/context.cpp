@@ -12,7 +12,7 @@ template<typename T>
 void assert_parsed_expression_approximates_with_value_for_symbol(Expression expression, const char * symbol, T value, T approximation, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::Preferences::AngleUnit angleUnit = Radian) {
   Shared::GlobalContext globalContext;
   T result = expression.approximateWithValueForSymbol(symbol, value, &globalContext, complexFormat, angleUnit);
-  quiz_assert((std::isnan(result) && std::isnan(approximation)) || std::fabs(result - approximation) < Float<T>::EpsilonLax());
+  assert_roughly_equal(result, approximation, Poincare::Float<T>::epsilon(), true);
 }
 
 QUIZ_CASE(poincare_context_store_overwrite) {

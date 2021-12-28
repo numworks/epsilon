@@ -97,6 +97,7 @@ bool PressToTestController::getParamAtIndex(int index) {
       return m_tempPressToTestParams.m_sumIsForbidden;
     default:
       assert(false);
+      return false;
   }
 }
 

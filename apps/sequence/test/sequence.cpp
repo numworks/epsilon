@@ -512,11 +512,11 @@ QUIZ_CASE(sequence_order) {
   SequenceContext sequenceContext(&globalContext, store);
 
   Sequence * u = addSequence(store, Sequence::Type::Explicit, "", nullptr, nullptr, &sequenceContext);
-  assert(u->fullName()[0] == 'u');
+  quiz_assert(u->fullName()[0] == 'u');
   Sequence * v = addSequence(store, Sequence::Type::Explicit, "", nullptr, nullptr, &sequenceContext);
-  assert(v->fullName()[0] == 'v');
+  quiz_assert(v->fullName()[0] == 'v');
   Sequence * w = addSequence(store, Sequence::Type::Explicit, "3", nullptr, nullptr, &sequenceContext);
-  assert(w->fullName()[0] == 'w');
+  quiz_assert(w->fullName()[0] == 'w');
   Ion::Storage::sharedStorage()->recordNamed("u.seq").destroy();
   Ion::Storage::sharedStorage()->recordNamed("v.seq").destroy();
   u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, &sequenceContext);

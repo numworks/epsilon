@@ -1,5 +1,6 @@
 #include <poincare/randint.h>
 #include <poincare/complex.h>
+#include <poincare/float.h>
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/layout_helper.h>
@@ -50,7 +51,7 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Approximati
   if (std::isnan(a) || std::isnan(b) || std::isinf(a) || std::isinf(b)
       || a > b
       || a != (int)a || b != (int)b
-      || (Expression::Epsilon<T>()*(b+(T)1.0-a) > (T)1.0)) {
+      || (Float<T>::EpsilonLax()*(b+(T)1.0-a) > (T)1.0)) {
     return Complex<T>::RealUndefined();
   }
   T result = std::floor(Random::random<T>()*(b+(T)1.0-a)+a);

@@ -39,10 +39,6 @@ private:
   mutable ContinuousFunctionStore m_store;
 };
 
-bool float_equal(float a, float b, float tolerance = 10.f * FLT_EPSILON) {
-  return IsApproximatelyEqual(a, b, tolerance, 0.);
-}
-
 template <size_t N>
 void assert_best_range_is(const char * const (&definitions)[N], ContinuousFunction::PlotType const (&plotTypes)[N], float targetXMin, float targetXMax, float targetYMin, float targetYMax, Poincare::Preferences::AngleUnit angleUnit = Radian) {
   assert(std::isfinite(targetXMin) && std::isfinite(targetXMax) && std::isfinite(targetYMin) && std::isfinite(targetYMax)
@@ -62,7 +58,10 @@ void assert_best_range_is(const char * const (&definitions)[N], ContinuousFuncti
   float xMax = graphRange.xMax();
   float yMin = graphRange.yMin();
   float yMax = graphRange.yMax();
-  quiz_assert(float_equal(xMin, targetXMin) && float_equal(xMax, targetXMax) && float_equal(yMin, targetYMin) && float_equal(yMax, targetYMax));
+  assert_roughly_equal(xMin, targetXMin, 10.0f * FLT_EPSILON);
+  assert_roughly_equal(xMax, targetXMax, 10.0f * FLT_EPSILON);
+  assert_roughly_equal(yMin, targetYMin, 10.0f * FLT_EPSILON);
+  assert_roughly_equal(yMax, targetYMax, 10.0f * FLT_EPSILON);
 
   graphController.functionStore()->removeAll();
 }
@@ -175,8 +174,11 @@ void assert_zooms_to(float xMin, float xMax, float yMin, float yMax, float targe
 
   graphRange.zoom(ratio, xCenter, yCenter);
 
-  quiz_assert(float_equal(graphRange.xMin(), targetXMin) && float_equal(graphRange.xMax(), targetXMax) && float_equal(graphRange.yMin(), targetYMin) && float_equal(graphRange.yMax(), targetYMax));
-  quiz_assert(float_equal((yMax - yMin) / (xMax - xMin), (targetYMax - targetYMin) / (targetXMax - targetXMin)) == conserveRatio);
+  assert_roughly_equal(graphRange.xMin(), targetXMin);
+  assert_roughly_equal(graphRange.xMax(), targetXMax);
+  assert_roughly_equal(graphRange.yMin(), targetYMin);
+  assert_roughly_equal(graphRange.yMax(), targetYMax);
+  quiz_assert(roughly_equal((yMax - yMin) / (xMax - xMin), (targetYMax - targetYMin) / (targetXMax - targetXMin)) == conserveRatio);
 }
 
 void assert_zooms_in_to(float xMin, float xMax, float yMin, float yMax, float targetXMin, float targetXMax, float targetYMin, float targetYMax, bool conserveRatio) {

@@ -35,25 +35,6 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode = Poincare::Pref
 void quiz_assert_print_if_failure(bool test, const char * information);
 void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
 
-
-template <typename T>
-bool inline roughly_equal(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool acceptNAN = false) {
-  if (std::isnan(a) || std::isnan(b)) {
-    return acceptNAN && std::isnan(a) && std::isnan(b);
-  }
-  T max = std::max(std::fabs(a), std::fabs(b));
-  if (max == INFINITY) {
-    return a == b;
-  }
-  T relerr = max == 0.0 ? 0.0 : std::fabs(a - b) / max;
-  return relerr < threshold;
-}
-
-template <typename T>
-void inline assert_roughly_equal(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool acceptNAN = false) {
-  quiz_assert(roughly_equal<T>(a, b, threshold, acceptNAN));
-}
-
 typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::ExpressionNode::ReductionContext reductionContext);
 
 void assert_parsed_expression_process_to(const char * expression, const char * result, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::Preferences::UnitFormat unitFormat, Poincare::ExpressionNode::SymbolicComputation symbolicComputation, Poincare::ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
@@ -73,9 +54,30 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 
 // Approximation
 
-/* Return true if observedValue and expectedValue are approximately equal,
- * according to precision and reference parameters */
-bool IsApproximatelyEqual(double observedValue, double expectedValue, double precision, double reference);
+/* Return true if a and b are approximately equal,
+ * according to threshold and reference parameters */
+template <typename T>
+bool inline roughly_equal(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool acceptNAN = false) {
+  if (std::isnan(a) || std::isnan(b)) {
+    return acceptNAN && std::isnan(a) && std::isnan(b);
+  }
+  T max = std::max(std::fabs(a), std::fabs(b));
+  if (max == INFINITY) {
+    return a == b;
+  }
+  T relerr = max == 0.0 ? 0.0 : std::fabs(a - b) / max;
+  return relerr <= threshold;
+}
+
+template <typename T>
+void inline assert_roughly_equal(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool acceptNAN = false) {
+  quiz_assert(roughly_equal<T>(a, b, threshold, acceptNAN));
+}
+
+inline bool roughly_equal_with_reference(double observedValue, double expectedValue, double precision, double reference) {
+  return roughly_equal(observedValue, expectedValue, precision) || std::fabs(observedValue / reference) <= precision;
+}
+
 template<typename T>
 void assert_expression_approximates_to(const char * expression, const char * approximation, Poincare::Preferences::AngleUnit angleUnit = Degree, Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, int numberOfSignificantDigits = -1);
 void assert_expression_simplifies_and_approximates_to(const char * expression, const char * approximation, Poincare::Preferences::AngleUnit angleUnit = Degree, Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, int numberOfSignificantDigits = -1);

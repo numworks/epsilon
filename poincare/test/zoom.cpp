@@ -34,14 +34,8 @@ float evaluate_expression(float x, Context * context, const void * auxiliary) {
   return pack->expression().approximateWithValueForSymbol<float>(pack->symbol(), x, context, Real, pack->angleUnit());
 }
 
-bool float_equal(float a, float b, float tolerance = StandardTolerance) {
-  assert(std::isfinite(tolerance));
-  return !(std::isnan(a) || std::isnan(b))
-      && IsApproximatelyEqual(a, b, tolerance, 0.);
-}
-
 bool range1D_matches(float min, float max, float targetMin, float targetMax, float tolerance = StandardTolerance) {
-  return (float_equal(min, targetMin, tolerance) && float_equal(max, targetMax, tolerance))
+  return (roughly_equal(min, targetMin, tolerance) && roughly_equal(max, targetMax, tolerance))
       || (std::isnan(min) && std::isnan(max) && std::isnan(targetMin) && std::isnan(targetMax));
 }
 
@@ -137,7 +131,7 @@ QUIZ_CASE(poincare_zoom_refined_range) {
 
 void assert_orthonormal_range_is(const char * definition, float xMin, float xMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
   assert(std::isfinite(xMin) && std::isfinite(xMax) && xMin <= xMax);
-  assert((targetYMin == FLT_MAX && targetYMax == -FLT_MAX) || float_equal((targetYMax - targetYMin) / (xMax - xMin), NormalRatio));
+  assert((targetYMin == FLT_MAX && targetYMax == -FLT_MAX) || roughly_equal((targetYMax - targetYMin) / (xMax - xMin), NormalRatio, StandardTolerance));
   float yMin, yMax;
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(definition, &globalContext, false);

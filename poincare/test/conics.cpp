@@ -18,7 +18,7 @@ void quiz_assert_undefined(const char * expression) {
 }
 
 void quiz_assert_conic_parameter_is(double observed, double expected) {
-  quiz_assert(IsApproximatelyEqual(observed, expected, 1e-5, FLT_EPSILON));
+  quiz_assert(roughly_equal_with_reference(observed, expected, 1e-5, FLT_EPSILON));
 }
 
 void quiz_assert_circle(const char * expression,

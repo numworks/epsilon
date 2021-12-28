@@ -8,10 +8,10 @@ using namespace Shared;
 
 namespace Graph {
 
-bool floatEquals(float a, float b, float tolerance = 1.f/static_cast<float>(Ion::Display::Height)) {
+void assert_float_equals(float a, float b, float tolerance = 1.f/static_cast<float>(Ion::Display::Height)) {
   /* The default value for the tolerance is chosen so that the error introduced
    * by caching would not typically be visible on screen. */
-  return (std::isnan(a) && std::isnan(b)) || IsApproximatelyEqual(a, b, tolerance, 0.);
+  assert_roughly_equal(a, b, tolerance, true);
 }
 
 void assert_check_cartesian_cache_against_function(ContinuousFunction * function, ContinuousFunctionCache * cache, Context * context, float tMin) {
@@ -24,9 +24,9 @@ void assert_check_cartesian_cache_against_function(ContinuousFunction * function
     t = tMin + i*cache->step();
     Coordinate2D<float> cacheValues = cache->valueForParameter(function, context, t, 0);
     Coordinate2D<float> functionValues = function->evaluateXYAtParameter(t, context);
-    quiz_assert(floatEquals(t, cacheValues.x1()));
-    quiz_assert(floatEquals(t, functionValues.x1()));
-    quiz_assert(floatEquals(cacheValues.x2(), functionValues.x2()));
+    assert_float_equals(t, cacheValues.x1());
+    assert_float_equals(t, functionValues.x1());
+    assert_float_equals(cacheValues.x2(), functionValues.x2());
   }
   /* We set back the cache, so that it will not be invalidated in
    * PrepareForCaching later. */
@@ -74,8 +74,8 @@ void assert_check_polar_cache_against_function(ContinuousFunction * function, Co
     t = tMin + i*cache->step();
     Coordinate2D<float> cacheValues = cache->valueForParameter(function, context, t, 0);
     Coordinate2D<float> functionValues = function->evaluateXYAtParameter(t, context);
-    quiz_assert(floatEquals(cacheValues.x1(), functionValues.x1()));
-    quiz_assert(floatEquals(cacheValues.x2(), functionValues.x2()));
+    assert_float_equals(cacheValues.x1(), functionValues.x1());
+    assert_float_equals(cacheValues.x2(), functionValues.x2());
   }
 }
 

@@ -911,12 +911,6 @@ U Expression::approximateWithValueForSymbol(const char * symbol, U x, Context * 
   return approximateToScalar<U>(&variableContext, complexFormat, angleUnit);
 }
 
-template<typename U>
-U Expression::Epsilon() {
-  constexpr U epsilon = sizeof(U) == sizeof(double) ? 1E-15 : 1E-7f;
-  return epsilon;
-}
-
 /* Builder */
 
 bool Expression::IsZero(const Expression e) {
@@ -1100,9 +1094,6 @@ Coordinate2D<double> Expression::nextIntersection(const char * symbol, double st
   double resultX = Solver::NextRoot(evaluation, context, pack, start, max, relativePrecision, minimalStep, maximalStep);
   return Coordinate2D<double>(resultX, approximateWithValueForSymbol(symbol, resultX, context, complexFormat, angleUnit));
 }
-
-template float Expression::Epsilon<float>();
-template double Expression::Epsilon<double>();
 
 template Expression Expression::approximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;
 template Expression Expression::approximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;

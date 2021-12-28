@@ -2,6 +2,7 @@
 #include "../store.h"
 #include "../../shared/poincare_helpers.h"
 #include <poincare/decimal.h>
+#include <poincare/float.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <math.h>
@@ -134,8 +135,8 @@ double Model::alphaPrimeCoefficient(Store * store, int series, double * modelCoe
      * a'(k,k) = 2*epsilon so that the inversion method does not detect a'(k,k)
      * as a zero. */
     result = alphaCoefficient(store, series, modelCoefficients, k, l)*(1.0+lambda);
-    if (std::fabs(result) < Expression::Epsilon<double>()) {
-      result = 2*Expression::Epsilon<double>();
+    if (std::fabs(result) < Float<double>::EpsilonLax()) {
+      result = 2*Float<double>::EpsilonLax();
     }
   } else {
     result = alphaCoefficient(store, series, modelCoefficients, l, k);

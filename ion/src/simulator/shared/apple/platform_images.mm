@@ -88,6 +88,8 @@ public:
     m_green(c.green()),
     m_blue(c.blue()),
     m_alpha(255) {
+      // Silent warning about unused private member
+      (void)m_alpha;
   }
 private:
   uint8_t m_red;

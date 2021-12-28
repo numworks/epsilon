@@ -1,4 +1,5 @@
 #include <poincare/trigonometry_cheat_table.h>
+#include <poincare/float.h>
 
 namespace Poincare {
 
@@ -68,7 +69,7 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
   }
   for (int i = 0; i < k_numberOfEntries; i++) {
     float inputValue = floatForTypeAtIndex(inputType, i);
-    if (std::isnan(inputValue) || std::fabs(inputValue - eValue) > Expression::Epsilon<float>()) {
+    if (std::isnan(inputValue) || std::fabs(inputValue - eValue) > Float<float>::EpsilonLax()) {
       continue;
     }
     /* e's approximation matches a table entry, check that both expressions are

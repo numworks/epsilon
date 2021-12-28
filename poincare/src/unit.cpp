@@ -232,13 +232,13 @@ const UnitNode::Representative * UnitNode::Representative::RepresentativeForDime
 static bool compareMagnitudeOrders(float order, float otherOrder) {
   /* Precision can be lost (with a year conversion for instance), so the order
    * value is rounded */
-  if (std::fabs(order) < Expression::Epsilon<float>()) {
+  if (std::fabs(order) < Float<float>::EpsilonLax()) {
     order = 0.0f;
   }
-  if (std::fabs(otherOrder) < Expression::Epsilon<float>()) {
+  if (std::fabs(otherOrder) < Float<float>::EpsilonLax()) {
     otherOrder = 0.0f;
   }
-  if (std::fabs(std::fabs(order) - std::fabs(otherOrder)) <= 3.0f + Expression::Epsilon<float>() && order * otherOrder < 0.0f) {
+  if (std::fabs(std::fabs(order) - std::fabs(otherOrder)) <= 3.0f + Float<float>::EpsilonLax() && order * otherOrder < 0.0f) {
     /* If the two values are close, and their sign are opposed, the positive
      * order is preferred */
     return (order >= 0.0f);
@@ -382,7 +382,7 @@ const UnitNode::Prefix * UnitNode::Representative::findBestPrefix(double value, 
   if (!isOutputPrefixable()) {
     return Prefix::EmptyPrefix();
   }
-  if (value < Expression::Epsilon<double>()) {
+  if (value < Float<double>::EpsilonLax()) {
     return basePrefix();
   }
   const Prefix * res = basePrefix();
@@ -798,7 +798,7 @@ Expression Unit::BuildSplit(double value, const Unit * units, int length, Expres
 
   double baseRatio = units->node()->representative()->ratio();
   double basedValue = value / baseRatio;
-  if (std::isinf(value) || std::fabs(value) < Expression::Epsilon<double>()) {
+  if (std::isinf(value) || std::fabs(value) < Float<double>::EpsilonLax()) {
     return Multiplication::Builder(Number::FloatNumber(value), units[0]);
   }
   double err = std::pow(10.0, Poincare::PrintFloat::k_numberOfStoredSignificantDigits - 1 - std::ceil(log10(std::fabs(basedValue))));
@@ -813,7 +813,7 @@ Expression Unit::BuildSplit(double value, const Unit * units, int length, Expres
       share = (share > 0.0) ? std::floor(share) : std::ceil(share);
     }
     remain -= share * factor;
-    if (std::abs(share) > Expression::Epsilon<double>()) {
+    if (std::abs(share) > Float<double>::EpsilonLax()) {
       res.addChildAtIndexInPlace(Multiplication::Builder(Float<double>::Builder(share), units[i]), res.numberOfChildren(), res.numberOfChildren());
     }
   }

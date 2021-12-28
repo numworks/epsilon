@@ -1,6 +1,7 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
 #include <poincare/evaluation.h>
+#include <poincare/float.h>
 #include <poincare/matrix_complex.h>
 #include <cmath>
 #include <float.h>
@@ -25,23 +26,6 @@ template < typename T> T minimalNonNullMagnitudeOfParts(std::complex<T> c) {
     return absImagInput;
   }
   return absRealInput;
-}
-
-/* To prevent incorrect approximations, such as cos(1.5707963267949) = 0
- * we made the neglect threshold stricter. This way, the approximation is more
- * selective.
- * However, when ploting functions such as e^(i.pi+x), the float approximation
- * fails by giving non-real results and therefore, the function appears "undef".
- * As a result we created two functions Epsilon that behave differently
- * according to the number's type. When it is a double we want maximal precision
- * -> precision_double = 1x10^(-15).
- * When it is a float, we accept more agressive approximations
- * -> precision_float = x10^(-6). */
-
-template<typename T>
-T ApproximationHelper::Epsilon() {
-  constexpr T precision = (sizeof(T) == sizeof(double)) ? 1E-15 : 1E-6f;
-  return precision;
 }
 
 template<typename T>
@@ -84,7 +68,7 @@ template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginar
   }
   T magnitude1 = minimalNonNullMagnitudeOfParts(input1);
   T magnitude2 = minimalNonNullMagnitudeOfParts(input2);
-  T precision = Epsilon<T>();
+  T precision = Float<T>::EpsilonLax();
   if (isNegligeable(result.imag(), precision, magnitude1, magnitude2)) {
     result.imag(0);
   }
@@ -158,8 +142,6 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnComplexM
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
   return matrix;
 }
-template float Poincare::ApproximationHelper::Epsilon<float>();
-template double Poincare::ApproximationHelper::Epsilon<double>();
 template bool Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<float>(float x);
 template bool Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<double>(double x);
 template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, ExpressionNode::ApproximationContext);

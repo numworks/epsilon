@@ -64,6 +64,7 @@ template<typename T>
 class Float final : public Number {
 public:
   static Float Builder(T value);
+  constexpr static T EpsilonLax();
   constexpr static T epsilon();
   constexpr static T min();
   constexpr static T max();
@@ -71,6 +72,19 @@ private:
   FloatNode<T> * node() const { return static_cast<FloatNode<T> *>(Number::node()); }
 };
 
+/* To prevent incorrect approximations, such as cos(1.5707963267949) = 0
+ * we made the neglect threshold stricter. This way, the approximation is more
+ * selective.
+ * However, when ploting functions such as e^(i.pi+x), the float approximation
+ * fails by giving non-real results and therefore, the function appears "undef".
+ * As a result we created two functions Epsilon that behave differently
+ * according to the number's type. When it is a double we want maximal precision
+ * -> precision_double = 1x10^(-15).
+ * When it is a float, we accept more agressive approximations
+ * -> precision_float = x10^(-6). */
+
+template <> constexpr inline float Float<float>::EpsilonLax() { return 1E-6f; }
+template <> constexpr inline double Float<double>::EpsilonLax() { return 1E-15; }
 template <> constexpr inline float Float<float>::epsilon() { return FLT_EPSILON; }
 template <> constexpr inline double Float<double>::epsilon() { return DBL_EPSILON; }
 template <> constexpr inline float Float<float>::min() { return FLT_MIN; }

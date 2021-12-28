@@ -4,6 +4,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/absolute_value_layout.h>
 #include <poincare/complex_cartesian.h>
+#include <poincare/float.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/derivative.h>
@@ -52,14 +53,14 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
   if (c.isReal(reductionContext.context())) {
     double app = c.node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
     if (!std::isnan(app)) {
-      if ((c.isNumber() && app >= 0) || app >= Expression::Epsilon<double>()) {
+      if ((c.isNumber() && app >= 0) || app >= Float<double>::EpsilonLax()) {
         /* abs(a) = a with a >= 0
          * To check that a > 0, if a is a number we can use float comparison;
          * in other cases, we are more conservative and rather check that
          * a > epsilon ~ 1E-7 to avoid potential error due to float precision. */
         replaceWithInPlace(c);
         return c;
-      } else if ((c.isNumber() && app < 0.0f) || app <= -Expression::Epsilon<double>()) {
+      } else if ((c.isNumber() && app < 0.0f) || app <= -Float<double>::EpsilonLax()) {
         // abs(a) = -a with a < 0 (same comment as above to check that a < 0)
         Multiplication m = Multiplication::Builder(Rational::Builder(-1), c);
         replaceWithInPlace(m);

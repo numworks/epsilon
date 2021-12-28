@@ -8,7 +8,8 @@
 #include <poincare/addition.h>
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/matrix_complex.h>
+#include <poincare/exception_checkpoint.h>
+#include <poincare/float.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
@@ -185,7 +186,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   // Check inversibility
   for (int i = 0; i < dim; i++) {
     T cell = operands[i*2*dim+i];
-    if (!std::isfinite(std::abs(cell)) || std::abs(cell - (T)1.0) > Expression::Epsilon<float>()) {
+    if (!std::isfinite(std::abs(cell)) || std::abs(cell - (T)1.0) > Float<float>::EpsilonLax()) {
       return -2;
     }
   }

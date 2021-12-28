@@ -57,7 +57,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 /* Return true if a and b are approximately equal,
  * according to threshold and reference parameters */
 template <typename T>
-bool inline roughly_equal(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool acceptNAN = false) {
+bool inline roughly_equal(T a, T b, T threshold = Poincare::Float<T>::Epsilon(), bool acceptNAN = false) {
   if (std::isnan(a) || std::isnan(b)) {
     return acceptNAN && std::isnan(a) && std::isnan(b);
   }
@@ -70,7 +70,7 @@ bool inline roughly_equal(T a, T b, T threshold = Poincare::Float<T>::epsilon(),
 }
 
 template <typename T>
-void inline assert_roughly_equal(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool acceptNAN = false) {
+void inline assert_roughly_equal(T a, T b, T threshold = Poincare::Float<T>::Epsilon(), bool acceptNAN = false) {
   quiz_assert(roughly_equal<T>(a, b, threshold, acceptNAN));
 }
 

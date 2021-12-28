@@ -12,8 +12,8 @@ template<typename T>
 Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep) {
   assert(relativePrecision > static_cast<T>(0.f) && minimalStep >= static_cast<T>(0.f) && maximalStep >= minimalStep);
 
-  constexpr T overflow = Float<T>::max();
-  constexpr T underflow = Float<T>::min();
+  constexpr T overflow = Float<T>::Max();
+  constexpr T underflow = Float<T>::Min();
 
   if (start == static_cast<T>(INFINITY)) {
     start = overflow;
@@ -394,7 +394,7 @@ Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double
 
 template<typename T>
 T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, ValueAtAbscissa evaluation, Context * context, const void * auxiliary) {
-  constexpr T precision = Float<T>::epsilon();
+  constexpr T precision = Float<T>::Epsilon();
   assert(*probability <= (static_cast<T>(1.f) - precision) && *probability >= precision);
   (void) precision;
 

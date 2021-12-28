@@ -106,7 +106,7 @@ T IntegralNode::lagrangeGaussQuadrature(T a, T b, ApproximationContext approxima
 
 template<typename T>
 IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, ApproximationContext approximationContext) const {
-  constexpr T epsilon = Float<T>::epsilon();
+  constexpr T epsilon = Float<T>::Epsilon();
   constexpr T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
    * The abscissa and weights are taken from QUADPACK library. */

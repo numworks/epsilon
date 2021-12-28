@@ -45,8 +45,9 @@ void OrientedLayout::layoutSubviews(bool force) {
                                       currentSubviewMainDirectionLength)));
     const KDCoordinate requiredMainDirectionLength
         = adaptSize(subview->minimalSizeForOptimalDisplay()).height();
-    assert(availableMainDirection
-           >= offsetMainDirection + requiredMainDirectionLength);
+    assert(availableMainDirection >= offsetMainDirection + requiredMainDirectionLength);
+    // Silent unused variable warning
+    (void)availableMainDirection;
     const KDRect suggestedFrame = KDRect(
         KDPoint(m_secondaryDirectionMargin, offsetMainDirection),
         availableSecondaryDirection, requiredMainDirectionLength);

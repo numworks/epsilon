@@ -5,6 +5,7 @@
 
 #include <cmath>
 
+#include <poincare/test/helper.h>
 #include "probability/models/distribution/binomial_distribution.h"
 #include "probability/models/distribution/chi_squared_distribution.h"
 #include "probability/models/distribution/exponential_distribution.h"
@@ -14,7 +15,6 @@
 #include "probability/models/distribution/poisson_distribution.h"
 #include "probability/models/distribution/student_distribution.h"
 #include "probability/models/distribution/uniform_distribution.h"
-#include "test_helper.h"
 
 void assert_cumulative_distributive_function_direct_and_inverse_is(Probability::Distribution * distribution, double x, double result) {
   double r = distribution->cumulativeDistributiveFunctionAtAbscissa(x);

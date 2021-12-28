@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <float.h>
 #include <poincare/normal_distribution.h>
+#include <poincare/test/helper.h>
 #include <quiz.h>
 #include <string.h>
 

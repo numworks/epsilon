@@ -1,6 +1,7 @@
 #include <math.h>
 #include <quiz.h>
 
+#include <poincare/test/helper.h>
 #include "probability/models/data.h"
 #include "probability/models/statistic/goodness_statistic.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
@@ -12,7 +13,6 @@
 #include "probability/models/statistic/two_means_t_statistic.h"
 #include "probability/models/statistic/two_means_z_statistic.h"
 #include "probability/models/statistic/two_proportions_statistic.h"
-#include "test_helper.h"
 
 using namespace Probability;
 

@@ -1,4 +1,7 @@
+#include <algorithm>
+#include <cmath>
 #include <poincare/expression_node.h>
+#include <poincare/float.h>
 #include <poincare/print_float.h>
 #include <quiz.h>
 
@@ -31,6 +34,26 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode = Poincare::Pref
 
 void quiz_assert_print_if_failure(bool test, const char * information);
 void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
+
+
+template <typename T>
+bool inline roughlyEqual(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool absolute = false) {
+  if (absolute) {
+    return std::fabs(a - b) < threshold;
+  }
+  T max = std::max(std::fabs(a), std::fabs(b));
+  if (max == INFINITY) {
+    return a == b;
+  }
+  T relerr = std::fabs(a - b) / max;
+  bool res = max == 0 || relerr < threshold;
+  return res;
+}
+
+template <typename T>
+void inline assertRoughlyEqual(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool absolute = false) {
+  quiz_assert(roughlyEqual<T>(a, b, threshold, absolute));
+}
 
 typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::ExpressionNode::ReductionContext reductionContext);
 

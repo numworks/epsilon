@@ -3,6 +3,8 @@
 #include <math.h>
 #include <quiz.h>
 
+#include <poincare/test/helper.h>
+
 #include "test_helper.h"
 
 constexpr int k_numberOfTestCases = 40;

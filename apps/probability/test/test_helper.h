@@ -7,25 +7,6 @@
 #include <quiz.h>
 #include <stdio.h>
 
-template <typename T>
-bool inline roughlyEqual(T a, T b, T threshold, bool absolute = false) {
-  if (absolute) {
-    return std::fabs(a - b) < threshold;
-  }
-  T max = std::max(std::fabs(a), std::fabs(b));
-  if (max == INFINITY) {
-    return a == b;
-  }
-  T relerr = std::fabs(a - b) / max;
-  bool res = max == 0 || relerr < threshold;
-  return res;
-}
-
-template <typename T>
-void inline assertRoughlyEqual(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool absolute = false) {
-  quiz_assert(roughlyEqual<T>(a, b, threshold, absolute));
-}
-
 struct LawTestCase {
   LawTestCase(double K, double X, double d, double p, float precision = 1e-7) :
       k(K), x(X), density(d), probability(p), precision(precision) {}

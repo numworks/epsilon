@@ -36,11 +36,13 @@ poincare_src += $(addprefix poincare/src/,\
   binomial_distribution.cpp \
   checkpoint.cpp \
   circuit_breaker_checkpoint.cpp \
+  distribution.cpp \
   erf_inv.cpp \
   exception_checkpoint.cpp \
   helpers.cpp \
   normal_distribution.cpp \
   regularized_incomplete_beta_function.cpp \
+  student_distribution.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/,\
@@ -190,6 +192,7 @@ tests_src += $(addprefix poincare/test/,\
   erf_inv.cpp \
   dependency.cpp\
   derivative.cpp\
+  distribution.cpp\
   expression.cpp\
   expression_order.cpp\
   expression_properties.cpp\

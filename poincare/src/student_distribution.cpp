@@ -1,22 +1,15 @@
-#include "student_law.h"
-
-#include <float.h>
+#include <poincare/student_distribution.h>
 #include <poincare/regularized_incomplete_beta_function.h>
-#include <poincare/solver.h>
-
 #include <cmath>
+#include <float.h>
 
-#include "law_helper.h"
+namespace Poincare {
 
-namespace Probability {
-
-template <typename T>
-T StudentLaw::EvaluateAtAbscissa(T x, T k) {
+template <typename T> T StudentDistribution::EvaluateAtAbscissa(T x, T k) {
   return std::exp(lnCoefficient(k) - (k + 1.0) / 2.0 * std::log(1.0 + x * x / k));
 }
 
-template <typename T>
-T StudentLaw::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
+template <typename T> T StudentDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
   if (x == 0.0) {
     return (T)0.5;
   }
@@ -31,8 +24,7 @@ T StudentLaw::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
   return Poincare::RegularizedIncompleteBetaFunction(k / 2.0, k / 2.0, t);
 }
 
-template <typename T>
-T StudentLaw::CumulativeDistributiveInverseForProbability(T probability, T k) {
+template <typename T> T StudentDistribution::CumulativeDistributiveInverseForProbability(T probability, T k) {
   if (probability == 0.5) {
     return (T)0.0;
   } else if (probability > 1.0 - DBL_EPSILON) {
@@ -64,18 +56,18 @@ T StudentLaw::CumulativeDistributiveInverseForProbability(T probability, T k) {
 }
 
 template <typename T>
-T StudentLaw::lnCoefficient(T k) {
+T StudentDistribution::lnCoefficient(T k) {
   return std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) - std::log(std::sqrt(k * M_PI));
 }
 
 // Specialisations
-template float StudentLaw::EvaluateAtAbscissa<float>(float, float);
-template double StudentLaw::EvaluateAtAbscissa<double>(double, double);
-template float StudentLaw::lnCoefficient<float>(float);
-template double StudentLaw::lnCoefficient<double>(double);
-template float StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(float, float);
-template double StudentLaw::CumulativeDistributiveFunctionAtAbscissa<double>(double, double);
-template float StudentLaw::CumulativeDistributiveInverseForProbability<float>(float, float);
-template double StudentLaw::CumulativeDistributiveInverseForProbability<double>(double, double);
+template float StudentDistribution::EvaluateAtAbscissa<float>(float, float);
+template double StudentDistribution::EvaluateAtAbscissa<double>(double, double);
+template float StudentDistribution::lnCoefficient<float>(float);
+template double StudentDistribution::lnCoefficient<double>(double);
+template float StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, float);
+template double StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double);
+template float StudentDistribution::CumulativeDistributiveInverseForProbability<float>(float, float);
+template double StudentDistribution::CumulativeDistributiveInverseForProbability<double>(double, double);
 
-}  // namespace Probability
+}

@@ -106,7 +106,7 @@ T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
   if (probability > (T)1.0 || probability < (T)0.0 || std::isnan(probability) || std::isinf(probability)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::epsilon();
+  constexpr T precision = Float<T>::Epsilon();
   if (((T)1.0) - probability < precision) {
     return INFINITY;
   }

@@ -13,7 +13,7 @@ T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
   if (std::isnan(x) || std::isinf(x) || !ParametersAreOK(n, p)){
     return NAN;
   }
-  constexpr T precision = Float<T>::epsilon();
+  constexpr T precision = Float<T>::Epsilon();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
   bool pIsOne = !pIsZero && std::abs(p - (T)1.0) < precision;
@@ -63,7 +63,7 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probabilit
   if (!ParametersAreOK(n, p)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::epsilon();
+  constexpr T precision = Float<T>::Epsilon();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
   bool pIsOne = !pIsZero && std::abs(p - (T)1.0) < precision;

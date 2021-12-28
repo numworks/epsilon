@@ -5,8 +5,8 @@
 
 namespace Code {
 
-/* Record: | Size |  Name |            Body                |
- * Script: |      |       | Status |       Content         |
+/* Record: | Size |  Name |            Body                                         |
+ * Script: |      |       | Status | CursorPosition |           Content             |
  *
  *
  *                           |FetchedForVariableBoxBit
@@ -23,7 +23,9 @@ namespace Code {
  * FetchedForVariableBoxBit is used to prevent circular importation problems,
  * such as scriptA importing scriptB, which imports scriptA. Once we get the
  * variables from a script to put them in the variable box, we switch the bit to
- * 1 and won't reload it afterwards. */
+ * 1 and won't reload it afterwards. 
+ * 
+ * Cursor Position is one byte long and has the cursor position value*/
 
 class Script : public Ion::Storage::Record {
 private:
@@ -33,6 +35,7 @@ private:
 
   // See the comment at the beginning of the file
   static constexpr size_t k_statusSize = 1;
+  static constexpr size_t k_cursorPositionSize = 1;
 
 public:
   static constexpr int k_defaultScriptNameMaxSize = 6 + k_defaultScriptNameNumberMaxSize + 1;
@@ -43,13 +46,16 @@ public:
   static bool DefaultName(char buffer[], size_t bufferSize);
   static bool nameCompliant(const char * name);
   static constexpr size_t StatusSize() { return k_statusSize; }
+  static constexpr size_t CursorPositionSize() { return k_cursorPositionSize; }
 
 
   Script(Ion::Storage::Record r = Ion::Storage::Record()) : Record(r) {}
   bool autoImportationStatus() const;
   void toggleAutoimportationStatus();
   const char * content() const;
-  size_t contentSize() { return value().size - k_statusSize; }
+  size_t contentSize() { return value().size - k_statusSize - k_cursorPositionSize; }
+  void setCursorPosition(uint8_t position);
+  uint8_t * CursorPosition();
 
   /* Fetched status */
   bool fetchedFromConsole() const;

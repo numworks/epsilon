@@ -91,6 +91,7 @@ I18n::Message ExamModeConfiguration::examModeActivationMessage(int index) {
         return I18n::Message::ActivateIBExamMode;
       default:
         assert(false);
+        return I18n::Message::Default;
       }
   }
 }

@@ -63,7 +63,7 @@ QUIZ_CASE(variable_box_controller) {
   };
   // FIXME This test does not load imported variables for now
   assert_variables_are(
-      "\x01 from math import *\nfroo=3",
+      "\x01\x01 from math import *\nfroo=3",
       "fr",
       expectedVariables,
       sizeof(expectedVariables) / sizeof(const char *));

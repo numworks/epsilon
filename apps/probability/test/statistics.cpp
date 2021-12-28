@@ -47,9 +47,9 @@ void inputValues(Statistic * stat, StatisticTestCase & test) {
   quiz_assert(stat->hasDegreeOfFreedom() == test.m_hasDegreeOfFreedom);
 
   stat->initThreshold(Data::SubApp::Tests);
-  assertRoughlyEqual<double>(stat->threshold(), 0.05, tolerance());  // Significance level
+  assert_roughly_equal<double>(stat->threshold(), 0.05, tolerance());  // Significance level
   stat->setThreshold(test.m_significanceLevel);
-  assertRoughlyEqual<double>(stat->threshold(), test.m_significanceLevel, tolerance());
+  assert_roughly_equal<double>(stat->threshold(), test.m_significanceLevel, tolerance());
 
   stat->hypothesisParams()->setFirstParam(test.m_firstHypothesisParam);
   stat->hypothesisParams()->setComparisonOperator(test.m_op);
@@ -66,10 +66,10 @@ void runTest(Statistic * stat, StatisticTestCase & test) {
 
   quiz_assert(stat->numberOfParameters() == test.m_numberOfParameters);
   quiz_assert(stat->canRejectNull() == test.m_testPassed);
-  assertRoughlyEqual<double>(stat->testCriticalValue(), test.m_testCriticalValue, tolerance());
-  assertRoughlyEqual<double>(stat->pValue(), test.m_pValue, tolerance());
+  assert_roughly_equal<double>(stat->testCriticalValue(), test.m_testCriticalValue, tolerance());
+  assert_roughly_equal<double>(stat->pValue(), test.m_pValue, tolerance());
   if (stat->hasDegreeOfFreedom()) {
-    assertRoughlyEqual(stat->degreeOfFreedom(), test.m_degreesOfFreedom, tolerance());
+    assert_roughly_equal(stat->degreeOfFreedom(), test.m_degreesOfFreedom, tolerance());
   }
 }
 
@@ -81,16 +81,16 @@ void testStatistic(Statistic * stat, StatisticTestCase & test) {
 
   // Confidence interval
   stat->initThreshold(Data::SubApp::Intervals);
-  assertRoughlyEqual<double>(stat->threshold(), 0.95, tolerance());  // Confidence level
+  assert_roughly_equal<double>(stat->threshold(), 0.95, tolerance());  // Confidence level
   stat->setThreshold(test.m_confidenceLevel);
-  assertRoughlyEqual<double>(stat->threshold(), test.m_confidenceLevel, tolerance());
+  assert_roughly_equal<double>(stat->threshold(), test.m_confidenceLevel, tolerance());
 
   stat->computeInterval();
 
-  assertRoughlyEqual<double>(stat->estimate(), test.m_estimate, tolerance());
-  assertRoughlyEqual<double>(stat->intervalCriticalValue(), test.m_intervalCriticalValue, tolerance());
-  assertRoughlyEqual<double>(stat->standardError(), test.m_standardError, tolerance());
-  assertRoughlyEqual<double>(stat->marginOfError(), test.m_marginOfError, tolerance());
+  assert_roughly_equal<double>(stat->estimate(), test.m_estimate, tolerance());
+  assert_roughly_equal<double>(stat->intervalCriticalValue(), test.m_intervalCriticalValue, tolerance());
+  assert_roughly_equal<double>(stat->standardError(), test.m_standardError, tolerance());
+  assert_roughly_equal<double>(stat->marginOfError(), test.m_marginOfError, tolerance());
 }
 
 QUIZ_CASE(probability_one_proportion_statistic) {
@@ -513,8 +513,7 @@ QUIZ_CASE(probability_homogeneity_statistic) {
       double expected = stat.expectedValueAtLocation(j / HomogeneityStatistic::k_maxNumberOfColumns,
                                                     j % HomogeneityStatistic::k_maxNumberOfColumns);
       double real = expectedValues[i][j];
-      quiz_assert((std::isnan(real) && std::isnan(expected)) ||
-                  roughlyEqual<double>(real, expected, 1e-4));
+      assert_roughly_equal(real, expected, 1E-4, true);
     }
   }
 }

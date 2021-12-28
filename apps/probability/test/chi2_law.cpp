@@ -59,24 +59,24 @@ QUIZ_CASE(probability_chi2_law) {
   for (unsigned int i = 0; i < k_numberOfTestCases; i++) {
     LawTestCase t = getChi2TestCase(i);
     // double
-    assertRoughlyEqual(Probability::Chi2Law::EvaluateAtAbscissa(t.x, t.k), t.density, t.precision);
-    assertRoughlyEqual(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa(t.x, t.k),
+    assert_roughly_equal(Probability::Chi2Law::EvaluateAtAbscissa(t.x, t.k), t.density, t.precision);
+    assert_roughly_equal(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa(t.x, t.k),
                        t.probability,
                        t.precision);
-    assertRoughlyEqual(
+    assert_roughly_equal(
         Probability::Chi2Law::CumulativeDistributiveInverseForProbability(t.probability, t.k),
         t.x,
         t.precision / 10);
 
     // floats
-    assertRoughlyEqual<float>(Probability::Chi2Law::EvaluateAtAbscissa<float>(t.x, t.k),
+    assert_roughly_equal<float>(Probability::Chi2Law::EvaluateAtAbscissa<float>(t.x, t.k),
                               t.density,
                               sqrt(t.precision));
-    assertRoughlyEqual<float>(
+    assert_roughly_equal<float>(
         Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<float>(t.x, t.k),
         t.probability,
         sqrt(t.precision));
-    assertRoughlyEqual<float>(
+    assert_roughly_equal<float>(
         Probability::Chi2Law::CumulativeDistributiveInverseForProbability<float>(t.probability,
                                                                                  t.k),
         t.x,
@@ -85,26 +85,26 @@ QUIZ_CASE(probability_chi2_law) {
   // Special cases
   // double
   quiz_assert(std::isnan(Probability::Chi2Law::EvaluateAtAbscissa<double>(-1, 5.)));
-  assertRoughlyEqual<double>(Probability::Chi2Law::EvaluateAtAbscissa<double>(INFINITY, 5.), 0);
-  assertRoughlyEqual<double>(Probability::Chi2Law::EvaluateAtAbscissa<double>(0, 2.), 0);
-  assertRoughlyEqual<double>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<double>(INFINITY, 3.),
+  assert_roughly_equal<double>(Probability::Chi2Law::EvaluateAtAbscissa<double>(INFINITY, 5.), 0);
+  assert_roughly_equal<double>(Probability::Chi2Law::EvaluateAtAbscissa<double>(0, 2.), 0);
+  assert_roughly_equal<double>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<double>(INFINITY, 3.),
                      1.);
-  assertRoughlyEqual<double>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<double>(0, 3.), 0.);
-  assertRoughlyEqual<double>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<double>(0, .3), 0.);
-  assertRoughlyEqual<double>(Probability::Chi2Law::CumulativeDistributiveInverseForProbability<double>(0, 5.), 0.);
-  assertRoughlyEqual<double>(Probability::Chi2Law::CumulativeDistributiveInverseForProbability<double>(1, 5.),
+  assert_roughly_equal<double>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<double>(0, 3.), 0.);
+  assert_roughly_equal<double>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<double>(0, .3), 0.);
+  assert_roughly_equal<double>(Probability::Chi2Law::CumulativeDistributiveInverseForProbability<double>(0, 5.), 0.);
+  assert_roughly_equal<double>(Probability::Chi2Law::CumulativeDistributiveInverseForProbability<double>(1, 5.),
                      INFINITY);
 
   // floats
   quiz_assert(std::isnan(Probability::Chi2Law::EvaluateAtAbscissa<float>(-1, 5.)));
-  assertRoughlyEqual<float>(Probability::Chi2Law::EvaluateAtAbscissa<float>(INFINITY, 5.f), 0);
-  assertRoughlyEqual<float>(Probability::Chi2Law::EvaluateAtAbscissa<float>(0, 2.f), 0);
-  assertRoughlyEqual<float>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<float>(INFINITY, 3.f),
+  assert_roughly_equal<float>(Probability::Chi2Law::EvaluateAtAbscissa<float>(INFINITY, 5.f), 0);
+  assert_roughly_equal<float>(Probability::Chi2Law::EvaluateAtAbscissa<float>(0, 2.f), 0);
+  assert_roughly_equal<float>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<float>(INFINITY, 3.f),
                      1.f);
-  assertRoughlyEqual<float>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<float>(0, 3.f), 0.f);
-  assertRoughlyEqual<float>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<float>(0, .3f), 0.f);
-  assertRoughlyEqual<float>(Probability::Chi2Law::CumulativeDistributiveInverseForProbability<float>(0, 5.f),
+  assert_roughly_equal<float>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<float>(0, 3.f), 0.f);
+  assert_roughly_equal<float>(Probability::Chi2Law::CumulativeDistributiveFunctionAtAbscissa<float>(0, .3f), 0.f);
+  assert_roughly_equal<float>(Probability::Chi2Law::CumulativeDistributiveInverseForProbability<float>(0, 5.f),
                      0.f);
-  assertRoughlyEqual<float>(Probability::Chi2Law::CumulativeDistributiveInverseForProbability<float>(1, 5.f),
+  assert_roughly_equal<float>(Probability::Chi2Law::CumulativeDistributiveInverseForProbability<float>(1, 5.f),
                      INFINITY);
 }

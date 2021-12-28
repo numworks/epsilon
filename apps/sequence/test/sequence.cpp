@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <cmath>
+#include <poincare/test/helper.h>
 #include "../../shared/sequence_store.h"
 #include "../../shared/sequence_context.h"
 #include "../../shared/poincare_helpers.h"
@@ -66,7 +67,7 @@ void check_sum_of_sequence_between_bounds(double result, double start, double en
   Sequence * seq = addSequence(store, type, definition, condition1, condition2, &globalContext);
 
   double sum = PoincareHelpers::ApproximateToScalar<double>(seq->sumBetweenBounds(start, end, &sequenceContext), &globalContext);
-  quiz_assert(std::fabs(sum - result) < 0.00000001);
+  assert_roughly_equal(sum, result);
 
   store->removeAll();
   store->tidyDownstreamPoolFrom(); // Cf comment above

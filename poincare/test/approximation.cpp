@@ -11,7 +11,7 @@ void assert_expression_approximates_to_scalar(const char * expression, T approxi
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   T result = e.approximateToScalar<T>(&globalContext, complexFormat, angleUnit);
-  quiz_assert_print_if_failure((std::isnan(result) && std::isnan(approximation)) || (std::isinf(result) && std::isinf(approximation) && result*approximation >= 0) || (std::fabs(result - approximation) <= Poincare::Float<T>::EpsilonLax()), expression);
+  quiz_assert_print_if_failure(roughly_equal(result, approximation, Poincare::Float<T>::EpsilonLax(), true), expression);
 }
 
 QUIZ_CASE(poincare_approximation_decimal) {

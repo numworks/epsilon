@@ -42,7 +42,7 @@ void TextToInsertForCommandText(const char * command, int commandLength, char * 
   UTF8Decoder decoder(command);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull &&
-         index + UTF8Decoder::CharSizeOfCodePoint(codePoint) < bufferSize &&
+         index + static_cast<int>(UTF8Decoder::CharSizeOfCodePoint(codePoint)) < bufferSize &&
          (commandLength < 0 ||
           (decoder.stringPosition() - command <= commandLength))) {
     if (codePoint == ')') {

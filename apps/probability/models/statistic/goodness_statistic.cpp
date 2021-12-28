@@ -85,7 +85,7 @@ bool GoodnessStatistic::deleteParameterAtPosition(int row, int column) {
     return false;
   }
   setParameterAtPosition(row, column, k_undefinedValue);
-  for (size_t i = 0; i < k_maxNumberOfColumns; i++) {
+  for (int i = 0; i < k_maxNumberOfColumns; i++) {
     if (i != column && !std::isnan(parameterAtPosition(row, i))) {
       // There is another non deleted value in this row
       return false;

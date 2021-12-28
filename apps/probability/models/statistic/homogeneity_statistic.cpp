@@ -32,7 +32,7 @@ bool HomogeneityStatistic::deleteParameterAtPosition(int row, int column) {
   }
   setParameterAtPosition(row, column, k_undefinedValue);
   bool shouldDeleteRow = true;
-  for (size_t i = 0; i < k_maxNumberOfColumns; i++) {
+  for (int i = 0; i < k_maxNumberOfColumns; i++) {
     if (i != column && !std::isnan(parameterAtPosition(row, i))) {
       // There is another non deleted value in this row
       shouldDeleteRow = false;
@@ -43,7 +43,7 @@ bool HomogeneityStatistic::deleteParameterAtPosition(int row, int column) {
     return true;
   }
   bool shouldDeleteCol = true;
-  for (size_t j = 0; j < k_maxNumberOfRows; j++) {
+  for (int j = 0; j < k_maxNumberOfRows; j++) {
     if (j != row && !std::isnan(parameterAtPosition(j, column))) {
       // There is another non deleted value in this column
       shouldDeleteCol = false;

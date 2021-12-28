@@ -130,7 +130,7 @@ QUIZ_CASE(probability_one_proportion_statistic) {
   tests[1].m_marginOfError = 0.0944314748;
 
   OneProportionStatistic stat;
-  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     testStatistic(&stat, tests[i]);
   }
 }
@@ -176,7 +176,7 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
   tests[1].m_marginOfError = 5.1384425163;
 
   OneMeanTStatistic stat;
-  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     testStatistic(&stat, tests[i]);
   }
 }
@@ -220,7 +220,7 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   tests[1].m_marginOfError = 1.1403683424;
 
   OneMeanZStatistic stat;
-  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     testStatistic(&stat, tests[i]);
   }
 }
@@ -266,7 +266,7 @@ QUIZ_CASE(probability_two_proportions_statistic) {
   tests[1].m_marginOfError = 0.1853238344;
 
   TwoProportionsStatistic stat;
-  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     testStatistic(&stat, tests[i]);
   }
 }
@@ -318,7 +318,7 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   tests[1].m_marginOfError = 7.1826281548;
 
   TwoMeansTStatistic stat;
-  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     testStatistic(&stat, tests[i]);
   }
 }
@@ -370,7 +370,7 @@ QUIZ_CASE(probability_pooled_t_test) {
   tests[1].m_marginOfError = 0.6126018763;
 
   PooledTwoMeansStatistic stat;
-  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     testStatistic(&stat, tests[i]);
   }
 }
@@ -420,7 +420,7 @@ QUIZ_CASE(probability_two_means_z_statistic) {
   tests[1].m_standardError = 98.9949569702;
   tests[1].m_marginOfError = 254.9941253662;
 
-  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     testStatistic(&stat, tests[i]);
   }
 }
@@ -446,7 +446,7 @@ QUIZ_CASE(probability_goodness_statistic) {
   tests[0].m_testPassed = false;
   tests[0].m_testCriticalValue = 2.0833332539;
   tests[0].m_pValue = 0.5552918911;
-  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     inputValues(&stat, tests[i]);
     stat.recomputeData();
     runTest(&stat, tests[i]);
@@ -468,7 +468,7 @@ QUIZ_CASE(probability_homogeneity_statistic) {
      NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
      NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
      NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN} */
-  for (int i = 0; i < sizeof(tests[0].m_inputs)/sizeof(tests[0].m_inputs[0]); i++) {
+  for (size_t i = 0; i < sizeof(tests[0].m_inputs)/sizeof(tests[0].m_inputs[0]); i++) {
     tests[0].m_inputs[i] = NAN;
   }
   tests[0].m_inputs[0 * 9 + 0] = 1;
@@ -502,7 +502,7 @@ QUIZ_CASE(probability_homogeneity_statistic) {
        NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN}};
   // clang-format on
   HomogeneityStatistic stat;
-  for (int i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     inputValues(&stat, tests[i]);
     stat.recomputeData();
     runTest(&stat, tests[i]);

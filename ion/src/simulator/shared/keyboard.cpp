@@ -59,7 +59,7 @@ State scan() {
 #if !EPSILON_SDL_SCREEN_ONLY
   // Register a key for the mouse, if any
   Key k = Simulator::Layout::getHighlightedKey();
-  if (SDL_GetMouseState(nullptr, nullptr) && SDL_BUTTON(SDL_BUTTON_LEFT)) {
+  if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
     state.setKey(k);
   }
 #endif

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <float.h>
 #include <cmath>
+#include <poincare/test/helper.h>
 #include "probability/models/distribution/student_distribution.h"
 #include "probability/models/distribution/hypergeometric_function.h"
 
@@ -10,7 +11,7 @@ void assert_hypergeometric_is(double a, double b, double c, double z, double res
   double r = 0.0;
   const double precision = FLT_EPSILON;
   quiz_assert(hypergeometricFunction(a, b, c, z, precision, 1000, &r));
-  quiz_assert(std::fabs(r - result)/result <= 100 * precision); // Multiply by 100 because precision is too strict
+  assert_roughly_equal(r, result, 100 * precision); // Multiply by 100 because precision is too strict
 }
 
 QUIZ_CASE(probability_hypergeometric_function) {

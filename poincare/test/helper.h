@@ -37,22 +37,21 @@ void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
 
 
 template <typename T>
-bool inline roughlyEqual(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool absolute = false) {
-  if (absolute) {
-    return std::fabs(a - b) < threshold;
+bool inline roughly_equal(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool acceptNAN = false) {
+  if (std::isnan(a) || std::isnan(b)) {
+    return acceptNAN && std::isnan(a) && std::isnan(b);
   }
   T max = std::max(std::fabs(a), std::fabs(b));
   if (max == INFINITY) {
     return a == b;
   }
-  T relerr = std::fabs(a - b) / max;
-  bool res = max == 0 || relerr < threshold;
-  return res;
+  T relerr = max == 0.0 ? 0.0 : std::fabs(a - b) / max;
+  return relerr < threshold;
 }
 
 template <typename T>
-void inline assertRoughlyEqual(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool absolute = false) {
-  quiz_assert(roughlyEqual<T>(a, b, threshold, absolute));
+void inline assert_roughly_equal(T a, T b, T threshold = Poincare::Float<T>::epsilon(), bool acceptNAN = false) {
+  quiz_assert(roughly_equal<T>(a, b, threshold, acceptNAN));
 }
 
 typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::ExpressionNode::ReductionContext reductionContext);

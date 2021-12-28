@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <float.h>
 #include <cmath>
+#include <poincare/test/helper.h>
 #include "probability/models/distribution/chi_squared_distribution.h"
 #include "probability/models/distribution/regularized_gamma.h"
 
@@ -10,7 +11,7 @@ void assert_regularized_gamma_is(double s, double x, double result) {
   double r = 0.0;
   const double precision = FLT_EPSILON;
   regularizedGamma(s, x, precision, Probability::ChiSquaredDistribution::k_maxRegularizedGammaIterations, &r);
-  quiz_assert(std::fabs(r - result) <= precision);
+  assert_roughly_equal(r, result, precision);
 }
 
 QUIZ_CASE(probability_regularized_gamma) {

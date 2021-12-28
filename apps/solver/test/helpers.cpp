@@ -120,7 +120,7 @@ void assert_solves_numerically_to(const char * equation, double min, double max,
     quiz_assert(strcmp(store->variableAtIndex(0), variable)== 0);
     int i = 0;
     for (double solution : solutions) {
-      quiz_assert(std::fabs(store->approximateSolutionAtIndex(i++) - solution) < 1E-5);
+      assert_roughly_equal(store->approximateSolutionAtIndex(i++), solution, 1E-5);
     }
     quiz_assert(store->numberOfSolutions() == i);
   });

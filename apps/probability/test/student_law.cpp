@@ -103,26 +103,26 @@ QUIZ_CASE(probability_student_law) {
   for (int i = 0; i < k_numberOfTestCases; i++) {
     LawTestCase t = getStudentTestCase(i);
     // double
-    assertRoughlyEqual(Probability::StudentLaw::EvaluateAtAbscissa(t.x, t.k),
+    assert_roughly_equal(Probability::StudentLaw::EvaluateAtAbscissa(t.x, t.k),
                        t.density,
                        t.precision);
-    assertRoughlyEqual(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa(t.x, t.k),
+    assert_roughly_equal(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa(t.x, t.k),
                        t.probability,
                        t.precision);
-    assertRoughlyEqual(
+    assert_roughly_equal(
         Probability::StudentLaw::CumulativeDistributiveInverseForProbability(t.probability, t.k),
         t.x,
         t.precision / 10);
 
     // floats
-    assertRoughlyEqual<float>(Probability::StudentLaw::EvaluateAtAbscissa<float>(t.x, t.k),
+    assert_roughly_equal<float>(Probability::StudentLaw::EvaluateAtAbscissa<float>(t.x, t.k),
                               t.density,
                               std::sqrt(t.precision));
-    assertRoughlyEqual<float>(
+    assert_roughly_equal<float>(
         Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(t.x, t.k),
         t.probability,
         std::sqrt(t.precision));
-    assertRoughlyEqual<float>(
+    assert_roughly_equal<float>(
         Probability::StudentLaw::CumulativeDistributiveInverseForProbability<float>(t.probability,
                                                                                     t.k),
         t.x,
@@ -131,26 +131,26 @@ QUIZ_CASE(probability_student_law) {
 
   // Special cases p=0
   // double
-  assertRoughlyEqual<double>(Probability::StudentLaw::EvaluateAtAbscissa<double>(INFINITY, 5.), 0);
-  assertRoughlyEqual<double>(Probability::StudentLaw::EvaluateAtAbscissa<double>(-INFINITY, 5.), 0);
-  assertRoughlyEqual<double>(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<double>(INFINITY, 3.),
+  assert_roughly_equal<double>(Probability::StudentLaw::EvaluateAtAbscissa<double>(INFINITY, 5.), 0);
+  assert_roughly_equal<double>(Probability::StudentLaw::EvaluateAtAbscissa<double>(-INFINITY, 5.), 0);
+  assert_roughly_equal<double>(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<double>(INFINITY, 3.),
                      1.);
-  assertRoughlyEqual<double>(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<double>(-INFINITY, 3.),
+  assert_roughly_equal<double>(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<double>(-INFINITY, 3.),
                      0.);
-  assertRoughlyEqual<double>(Probability::StudentLaw::CumulativeDistributiveInverseForProbability<double>(0, 5.),
+  assert_roughly_equal<double>(Probability::StudentLaw::CumulativeDistributiveInverseForProbability<double>(0, 5.),
                      -INFINITY);
-  assertRoughlyEqual<double>(Probability::StudentLaw::CumulativeDistributiveInverseForProbability<double>(1, 5.),
+  assert_roughly_equal<double>(Probability::StudentLaw::CumulativeDistributiveInverseForProbability<double>(1, 5.),
                      INFINITY);
 
   // floats
-  assertRoughlyEqual<float>(Probability::StudentLaw::EvaluateAtAbscissa<float>(INFINITY, 5.), 0);
-  assertRoughlyEqual<float>(Probability::StudentLaw::EvaluateAtAbscissa<float>(-INFINITY, 5.), 0);
-  assertRoughlyEqual<float>(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(INFINITY, 3.),
+  assert_roughly_equal<float>(Probability::StudentLaw::EvaluateAtAbscissa<float>(INFINITY, 5.), 0);
+  assert_roughly_equal<float>(Probability::StudentLaw::EvaluateAtAbscissa<float>(-INFINITY, 5.), 0);
+  assert_roughly_equal<float>(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(INFINITY, 3.),
                      1.);
-  assertRoughlyEqual<float>(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(-INFINITY, 3.),
+  assert_roughly_equal<float>(Probability::StudentLaw::CumulativeDistributiveFunctionAtAbscissa<float>(-INFINITY, 3.),
                      0.);
-  assertRoughlyEqual<float>(Probability::StudentLaw::CumulativeDistributiveInverseForProbability<float>(0, 5.),
+  assert_roughly_equal<float>(Probability::StudentLaw::CumulativeDistributiveInverseForProbability<float>(0, 5.),
                      -INFINITY);
-  assertRoughlyEqual<float>(Probability::StudentLaw::CumulativeDistributiveInverseForProbability<float>(1, 5.),
+  assert_roughly_equal<float>(Probability::StudentLaw::CumulativeDistributiveInverseForProbability<float>(1, 5.),
                      INFINITY);
 }

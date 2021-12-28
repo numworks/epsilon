@@ -13,7 +13,10 @@ __attribute__((noinline))uintptr_t collectRegisters(jmp_buf buf) {
    * ensure that it also works for other platforms. */
   setjmp(buf);
   int dummy;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-stack-address"
   return (uintptr_t)&dummy;
+#pragma GCC diagnostic pop
 }
 
 }

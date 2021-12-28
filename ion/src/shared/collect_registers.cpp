@@ -14,8 +14,13 @@ __attribute__((noinline))uintptr_t collectRegisters(jmp_buf buf) {
   setjmp(buf);
   int dummy;
 #pragma GCC diagnostic push
+  /* Depending on compilers, "return-stack-address" option might be unknown, we
+   * silent eventual warnings about unknown options in pragmas. */
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wreturn-stack-address"
   return (uintptr_t)&dummy;
+#pragma GCC diagnostic pop
 #pragma GCC diagnostic pop
 }
 

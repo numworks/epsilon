@@ -8,9 +8,6 @@ namespace Probability {
 
 class ChiSquaredDistribution : public OneParameterDistribution {
 public:
-  static constexpr int k_maxRegularizedGammaIterations = 1000;
-  static constexpr double k_regularizedGammaPrecision = DBL_EPSILON;
-
   ChiSquaredDistribution() : OneParameterDistribution(1.0) { computeCurveViewRange(); }
   I18n::Message title() override { return I18n::Message::ChiSquaredDistribution; }
   Type type() const override { return Type::ChiSquared; }

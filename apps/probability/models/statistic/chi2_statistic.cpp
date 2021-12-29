@@ -1,13 +1,12 @@
 #include "chi2_statistic.h"
 
 #include <assert.h>
+#include <poincare/chi2_distribution.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
 #include <cmath>
-
-#include "probability/models/chi2_law.h"
 
 namespace Probability {
 
@@ -25,17 +24,17 @@ Poincare::Layout Chi2Statistic::testCriticalValueSymbol() {
 
 float Chi2Statistic::canonicalDensityFunction(float x) const {
   assert(m_degreesOfFreedom > 0);
-  return Chi2Law::EvaluateAtAbscissa(x, static_cast<float>(m_degreesOfFreedom));
+  return Poincare::Chi2Distribution::EvaluateAtAbscissa(x, static_cast<float>(m_degreesOfFreedom));
 }
 
 double Chi2Statistic::cumulativeNormalizedDistributionFunction(double x) const {
   assert(m_degreesOfFreedom > 0);
-  return Chi2Law::CumulativeDistributiveFunctionAtAbscissa(x, m_degreesOfFreedom);
+  return Poincare::Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(x, m_degreesOfFreedom);
 }
 
 double Chi2Statistic::cumulativeNormalizedInverseDistributionFunction(double proba) const {
   assert(m_degreesOfFreedom > 0);
-  return Chi2Law::CumulativeDistributiveInverseForProbability(proba, m_degreesOfFreedom);
+  return Poincare::Chi2Distribution::CumulativeDistributiveInverseForProbability(proba, m_degreesOfFreedom);
 }
 
 float Chi2Statistic::xMin() const {

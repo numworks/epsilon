@@ -35,12 +35,14 @@ poincare_src += $(addprefix poincare/src/,\
   beta_function.cpp \
   binomial_distribution.cpp \
   checkpoint.cpp \
+  chi2_distribution.cpp \
   circuit_breaker_checkpoint.cpp \
   distribution.cpp \
   erf_inv.cpp \
   exception_checkpoint.cpp \
   helpers.cpp \
   normal_distribution.cpp \
+  regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
   student_distribution.cpp \
 )
@@ -212,7 +214,7 @@ tests_src += $(addprefix poincare/test/,\
   print_float.cpp\
   print_int.cpp\
   rational.cpp\
-  regularized_incomplete_beta_function.cpp \
+  regularized_function.cpp \
   simplification.cpp\
   zoom.cpp\
 )

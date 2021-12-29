@@ -7,20 +7,12 @@ app_probability_test_src = $(addprefix apps/probability/models/distribution/,\
   distribution.cpp \
   fisher_distribution.cpp \
   geometric_distribution.cpp \
-  helper.cpp \
-  hypergeometric_function.cpp\
-  regularized_gamma.cpp \
   student_distribution.cpp \
   two_parameter_distribution.cpp \
   exponential_distribution.cpp \
   normal_distribution.cpp \
   poisson_distribution.cpp \
-  regularized_gamma.cpp \
   uniform_distribution.cpp \
-)
-
-app_probability_test_src += $(addprefix apps/probability/models/,\
-  chi2_law.cpp \
 )
 
 app_probability_src = $(addprefix apps/probability/,\
@@ -32,7 +24,6 @@ app_probability_test_src += apps/probability/text_helpers.cpp
 
 app_probability_src += $(addprefix apps/probability/models/,\
   statistic_view_range.cpp \
-  chi2_law.cpp \
   results_data_source.cpp \
 )
 
@@ -114,10 +105,7 @@ apps_src += $(app_probability_src)
 i18n_files += $(call i18n_with_universal_for,probability/translations/base)
 
 tests_src += $(addprefix apps/probability/test/,\
-  hypergeometric_function.cpp\
   distributions.cpp\
-  regularized_gamma.cpp \
-  chi2_law.cpp \
   statistics.cpp \
   data.cpp \
 )

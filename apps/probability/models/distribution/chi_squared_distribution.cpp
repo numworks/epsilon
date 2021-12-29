@@ -1,13 +1,12 @@
 #include "chi_squared_distribution.h"
 
 #include <cmath>
-
-#include "probability/models/chi2_law.h"
+#include <poincare/chi2_distribution.h>
 
 namespace Probability {
 
 float ChiSquaredDistribution::evaluateAtAbscissa(float x) const {
-  return Chi2Law::EvaluateAtAbscissa<float>(x, m_parameter1);
+  return Poincare::Chi2Distribution::EvaluateAtAbscissa<float>(x, m_parameter1);
 }
 
 bool ChiSquaredDistribution::authorizedValueAtIndex(double x, int index) const {
@@ -19,11 +18,11 @@ bool ChiSquaredDistribution::authorizedValueAtIndex(double x, int index) const {
 }
 
 double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  return Chi2Law::CumulativeDistributiveFunctionAtAbscissa(x, m_parameter1);
+  return Poincare::Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(x, m_parameter1);
 }
 
 double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(double * probability) {
-  return Chi2Law::CumulativeDistributiveInverseForProbability(*probability, m_parameter1);
+  return Poincare::Chi2Distribution::CumulativeDistributiveInverseForProbability(*probability, m_parameter1);
 }
 
 float ChiSquaredDistribution::computeXMax() const {

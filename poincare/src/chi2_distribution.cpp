@@ -1,24 +1,19 @@
-#include "chi2_law.h"
-
-#include <poincare/solver.h>
-
+#include <poincare/chi2_distribution.h>
+#include <poincare/regularized_gamma_function.h>
 #include <cmath>
 
-#include "law_helper.h"
-#include "probability/models/distribution/regularized_gamma.h"
-
-namespace Probability {
+namespace Poincare {
 
 template <typename T>
-T Chi2Law::EvaluateAtAbscissa(T x, T k) {
-  if (x < 0.0f) {
+T Chi2Distribution::EvaluateAtAbscissa(T x, T k) {
+  if (x < 0.0) {
     return NAN;
   }
-  if (x == 0) {
-    return 0;
+  if (x == 0.0) {
+    return 0.0;
   }
   if (std::isinf(x)) {
-    return 0;
+    return 0.0;
   }
   const T halfk = k / 2.0;
   const T halfX = x / 2.0;
@@ -26,12 +21,12 @@ T Chi2Law::EvaluateAtAbscissa(T x, T k) {
 }
 
 template <typename T>
-T Chi2Law::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
+T Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
   if (x < DBL_EPSILON) {
     return 0.0;
   }
   double result = 0.0;
-  if (regularizedGamma(k / 2.0,
+  if (RegularizedGammaFunction(k / 2.0,
                        x / 2.0,
                        k_regularizedGammaPrecision,
                        k_maxRegularizedGammaIterations,
@@ -42,7 +37,7 @@ T Chi2Law::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
 }
 
 template <typename T>
-T Chi2Law::CumulativeDistributiveInverseForProbability(T probability, T k) {
+T Chi2Distribution::CumulativeDistributiveInverseForProbability(T probability, T k) {
   // Compute inverse using Solver::IncreasingFunctionRoot
   if (probability > 1.0 - DBL_EPSILON) {
     return INFINITY;
@@ -71,11 +66,11 @@ T Chi2Law::CumulativeDistributiveInverseForProbability(T probability, T k) {
 }
 
 // Specialisations
-template float Chi2Law::EvaluateAtAbscissa<float>(float, float);
-template double Chi2Law::EvaluateAtAbscissa<double>(double, double);
-template float Chi2Law::CumulativeDistributiveFunctionAtAbscissa<float>(float, float);
-template double Chi2Law::CumulativeDistributiveFunctionAtAbscissa<double>(double, double);
-template float Chi2Law::CumulativeDistributiveInverseForProbability<float>(float, float);
-template double Chi2Law::CumulativeDistributiveInverseForProbability<double>(double, double);
+template float Chi2Distribution::EvaluateAtAbscissa<float>(float, float);
+template double Chi2Distribution::EvaluateAtAbscissa<double>(double, double);
+template float Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, float);
+template double Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double);
+template float Chi2Distribution::CumulativeDistributiveInverseForProbability<float>(float, float);
+template double Chi2Distribution::CumulativeDistributiveInverseForProbability<double>(double, double);
 
-}  // namespace Probability
+}

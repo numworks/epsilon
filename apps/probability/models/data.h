@@ -21,7 +21,6 @@
 #include "distribution/geometric_distribution.h"
 #include "distribution/normal_distribution.h"
 #include "distribution/poisson_distribution.h"
-#include "distribution/regularized_gamma.h"
 #include "distribution/student_distribution.h"
 #include "distribution/uniform_distribution.h"
 #include "probability/helpers.h"

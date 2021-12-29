@@ -1,16 +1,29 @@
 #include <quiz.h>
-#include <string.h>
-#include <assert.h>
+#include <poincare/regularized_gamma_function.h>
+#include <poincare/regularized_incomplete_beta_function.h>
+#include <poincare/test/helper.h>
 #include <float.h>
 #include <cmath>
-#include <poincare/test/helper.h>
-#include "probability/models/distribution/chi_squared_distribution.h"
-#include "probability/models/distribution/regularized_gamma.h"
+
+using namespace Poincare;
+
+void assert_regularized_incomplete_beta_function_is(double a, double b, double x, double result) {
+  double r = RegularizedIncompleteBetaFunction(a, b, x);
+  assert_roughly_equal(r, result, 10E-6);
+}
+
+QUIZ_CASE(regularized_incomplete_beta_function) {
+  assert_regularized_incomplete_beta_function_is(1.0, 2.0, 0.0, 0.0);
+  assert_regularized_incomplete_beta_function_is(1.0, 2.0, 1.0, 1.0);
+  assert_regularized_incomplete_beta_function_is(1.7, 0.9, 0.3, 0.114276013523787293056995598423812417112640756984394176432);
+  assert_regularized_incomplete_beta_function_is(7.3, 3.9, 0.4, 0.042393671346062170259328642902287422849467242046012782022);
+  assert_regularized_incomplete_beta_function_is(128.4, 31.5, 0.8, 0.446264065069106243051390524472702916228137487657780205030);
+}
 
 void assert_regularized_gamma_is(double s, double x, double result) {
   double r = 0.0;
   const double precision = FLT_EPSILON;
-  regularizedGamma(s, x, precision, Probability::ChiSquaredDistribution::k_maxRegularizedGammaIterations, &r);
+  RegularizedGammaFunction(s, x, precision, k_maxRegularizedGammaIterations, &r);
   assert_roughly_equal(r, result, precision);
 }
 
@@ -122,3 +135,22 @@ QUIZ_CASE(probability_regularized_gamma) {
   assert_regularized_gamma_is(1.5, 4.13, 0.95906693562948053255468039424158632755279541015625);
 }
 
+#if 0
+
+void assert_hypergeometric_is(double a, double b, double c, double z, double result) {
+  double r = 0.0;
+  const double precision = FLT_EPSILON;
+  quiz_assert(HypergeometricFunction(a, b, c, z, precision, 1000, &r));
+  assert_roughly_equal(r, result, 100 * precision); // Multiply by 100 because precision is too strict
+}
+
+QUIZ_CASE(probability_hypergeometric_function) {
+  assert_hypergeometric_is(1.0, 2.0, 3.0, 0.5, 1.545177444479562475337856971665412544604001074882042032965);
+  assert_hypergeometric_is(0.5, 0.6, 0.9, 0.2, 1.076590925287316818209663064430201685162648800967441005164);
+  assert_hypergeometric_is(1.4, 0.72, 3.56, 0.9, 1.496490448634238403792101320605116555747748144140465947806);
+  assert_hypergeometric_is(10.0, 0.2, 13.3, 0.12, 1.019119266590223428068941990750518046484840980662175905693);
+  assert_hypergeometric_is(0.1, 0.2, 56.0, 0.21, 1.000075183394368041565539149267931545331418014779591403758);
+  assert_hypergeometric_is(33.0, 0.3, 0.5678, 0.765, 85766460438444348287.386477193902261907533508044855870);
+}
+
+#endif

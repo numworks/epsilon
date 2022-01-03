@@ -36,6 +36,7 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/drivers/, \
   power_standby_n0120.cpp:+n0120 \
   random.cpp \
   reset.cpp \
+  swd.cpp \
   serial_number.cpp \
   timing.cpp \
   usb.cpp \

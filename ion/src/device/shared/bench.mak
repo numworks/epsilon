@@ -40,6 +40,7 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   power_suspend.cpp \
   reset.cpp \
   serial_number.cpp \
+  swd.cpp \
   timing.cpp \
   usb.cpp \
   usb_gpio_n0100.cpp:+n0100 \

@@ -28,6 +28,7 @@ ion_device_flasher_src += $(addprefix ion/src/device/shared/drivers/, \
   internal_flash_otp_n0120.cpp:+n0120 \
   reset.cpp \
   serial_number.cpp \
+  swd.cpp \
   timing.cpp \
   usb.cpp \
   usb_gpio_n0110.cpp:+n0110 \

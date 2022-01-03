@@ -36,6 +36,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   random.cpp \
   reset.cpp \
   serial_number.cpp \
+  swd.cpp \
   timing.cpp \
   trampoline.cpp:-n0100 \
   usb.cpp \

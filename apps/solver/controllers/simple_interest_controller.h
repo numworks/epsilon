@@ -32,7 +32,7 @@ public:
   int typeAtIndex(int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   HighlightCell * reusableCell(int i, int type) override;
-  int numberOfRows() const override { return 6; }
+  int numberOfRows() const override { return k_indexOfNext + 1; }
   bool buttonAction() override;
    ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
 
@@ -48,14 +48,13 @@ public:
   void onDropdownSelected(int selectedRow) override;
 
 private:
+  SimpleInterestParameter paramaterAtIndex(int index) const;
+  SimpleInterestData * simpleInterestData() const { assert(m_data->isSimpleInterest); return &(m_data->m_data.m_simpleInterestData); }
   int stackTitleStyleStep() const override { return 1; }
 
-  constexpr static int k_indexOfN = 0;
-  constexpr static int k_indexOfRPct = 1;
-  constexpr static int k_indexOfP = 2;
-  constexpr static int k_indexOfI = 3;
-  constexpr static int k_indexOfYear = 4;
-  constexpr static int k_indexOfNext = 5;
+  // TODO Hugo : Justify this number
+  constexpr static int k_indexOfYear = 3;
+  constexpr static int k_indexOfNext = k_indexOfYear + 1;
 
   constexpr static int k_inputCellType = 0;
   constexpr static int k_dropdownCellType = 1;
@@ -63,6 +62,7 @@ private:
 
   // TODO Hugo : Justify this number
   constexpr static int k_numberOfReusableInputs = 4; // Visible cell max
+  static_assert(k_numberOfReusableInputs <= k_indexOfYear + 1, "Too many reusable inputs");
 
   YearPopupDataSource m_operatorDataSource;
 
@@ -71,8 +71,8 @@ private:
   Shared::ButtonWithSeparator m_next;
 
   // TODO Hugo : Add title
-  // static constexpr int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
-  // char m_titleBuffer[k_titleBufferSize];
+  static constexpr int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
+  char m_titleBuffer[k_titleBufferSize];
   FinanceData * m_data;
 };
 

@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_N0110_SHARED_DRIVERS_CONFIG_BOARD_H
-#define ION_DEVICE_N0110_SHARED_DRIVERS_CONFIG_BOARD_H
+#ifndef ION_DEVICE_N0120_SHARED_DRIVERS_CONFIG_BOARD_H
+#define ION_DEVICE_N0120_SHARED_DRIVERS_CONFIG_BOARD_H
 
 #include <config/internal_flash.h>
 #include <config/external_flash.h>
@@ -21,11 +21,12 @@ namespace Config {
 // Bootloader
 constexpr static uint32_t BootloaderSize = InternalFlash::Config::TotalSize; // 1MiB
 constexpr static uint32_t STBootloaderAddress = 0x1FF00000;
-constexpr static uint32_t AXIMInterface = 0x08000000;
+constexpr static uint32_t AXIMInterface = InternalFlash::Config::StartAddress;
 constexpr static uint32_t BootloaderStartAddress = AXIMInterface;
 constexpr static uint32_t BootloaderSectionSize = InternalFlash::Config::TotalSize / InternalFlash::Config::NumberOfSectors;
 constexpr static uint32_t BootloaderTrampolineSize = 0x400; // 1k
-constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::NumberOfSectors * BootloaderSectionSize - BootloaderTrampolineSize;
+constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::TotalSize - BootloaderTrampolineSize;
+static_assert(BootloaderTrampolineAddress + BootloaderTrampolineSize == InternalFlash::Config::EndAddress, "Bootloader auxiliary section (pseudo-OTP + trampoline) are ill-mapped.");
 
 // Slots
 constexpr static uint32_t SlotAStartAddress = ExternalFlash::Config::StartAddress;

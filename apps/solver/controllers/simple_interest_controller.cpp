@@ -4,11 +4,10 @@
 #include <escher/input_event_handler_delegate.h>
 #include <escher/stack_view_controller.h>
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/print.h>
 #include "../app.h"
 
 using namespace Solver;
-
-// TODO Hugo : Hide the selected parameter (depends on m_data)
 
 SimpleInterestController::SimpleInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, FinanceData * data) :
     SelectableListViewPage(parent),
@@ -25,15 +24,18 @@ SimpleInterestController::SimpleInterestController(Escher::StackViewController *
 }
 
 const char * SimpleInterestController::title() {
-  // TODO : I18n::Message::FinanceSolving (%s depends on m_data)
-  return "Title todo";
+  SimpleInterestParameter unknownParam = simpleInterestData()->m_unknown;
+  Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize,
+    I18n::translate(I18n::Message::FinanceSolving),
+    I18n::translate(SimpleInterestData::LabelForParameter(unknownParam)),
+    I18n::translate(SimpleInterestData::SublabelForParameter(unknownParam)));
+  return m_titleBuffer;
 }
 
 void SimpleInterestController::didBecomeFirstResponder() {
   // Init from data
   selectCellAtLocation(0, 0);
-  // TODO Hugo : Dropdown selected row depends on m_data
-  m_year.dropdown()->selectRow(0);
+  m_year.dropdown()->selectRow(simpleInterestData()->m_yearConventionIs360 ? 0 : 1);
   m_year.dropdown()->init();
   m_year.reload();
   resetMemoization();
@@ -60,30 +62,15 @@ void SimpleInterestController::willDisplayCellForIndex(Escher::HighlightCell * c
   assert(type != k_dropdownCellType || &m_year == cell);
   if (type == k_inputCellType) {
     Escher::MessageTableCellWithEditableTextWithMessage * myCell = static_cast<Escher::MessageTableCellWithEditableTextWithMessage *>(cell);
-    I18n::Message label;
-    I18n::Message sublabel;
-    switch (index) {
-    case k_indexOfN:
-      label = I18n::Message::FinanceLowerN;
-      sublabel = I18n::Message::NumberOfDays;
-      break;
-    case k_indexOfRPct:
-      label = I18n::Message::FinanceRPct;
-      sublabel = I18n::Message::AnnualInterestRate;
-      break;
-    case k_indexOfP:
-      label = I18n::Message::FinanceP;
-      sublabel = I18n::Message::InitialPrincipal;
-      break;
-    default:
-      assert(index == k_indexOfI);
-      label = I18n::Message::FinanceI;
-      sublabel = I18n::Message::FinalInterestAmount;
-    }
-    myCell->setMessage(label);
-    myCell->setMessage(sublabel);
-    // TODO Hugo : Depends on m_data
-    myCell->setAccessoryText("0");
+    SimpleInterestParameter param = paramaterAtIndex(index);
+    myCell->setMessage(SimpleInterestData::LabelForParameter(param));
+    myCell->setSubLabelMessage(SimpleInterestData::SublabelForParameter(param));
+    double value = simpleInterestData()->getValue(param);
+    constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
+    constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
+    char buffer[bufferSize];
+    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
+    myCell->setAccessoryText(buffer);
   }
 }
 
@@ -136,27 +123,34 @@ bool SimpleInterestController::textFieldShouldFinishEditing(Escher::TextField * 
 bool SimpleInterestController::textFieldDidFinishEditing(Escher::TextField * textField,
                                                                   const char * text,
                                                                   Ion::Events::Event event) {
-  double h0 = Shared::PoincareHelpers::ApproximateToScalar<double>(
+  SimpleInterestParameter param = paramaterAtIndex(selectedRow());
+  double value = Shared::PoincareHelpers::ApproximateToScalar<double>(
       text,
       AppsContainer::sharedAppsContainer()->globalContext());
-  // TODO Hugo : Check each parameter's validity
-  if (std::isnan(h0)) {
+  if (!SimpleInterestData::CheckValue(param, value)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  // TODO Hugo : Set param in m_data
+  simpleInterestData()->setValue(param, value);
+  m_selectableTableView.reloadData();
+  // Select next cell
   m_selectableTableView.selectCellAtLocation(0, selectedRow()+1);
   return true;
 }
 
 void SimpleInterestController::onDropdownSelected(int selectedRow) {
-  // TODO Hugo : Set param in m_data
-  switch (selectedRow) {
-    case 0:
-      // 360
-      break;
-    case 1:
-      // 365
-      break;
+  simpleInterestData()->m_yearConventionIs360 = (selectedRow == 0);
+}
+
+SimpleInterestParameter SimpleInterestController::paramaterAtIndex(int index) const {
+  if (index == k_indexOfYear) {
+    return SimpleInterestParameter::YearConvention;
   }
+  SimpleInterestParameter unknownParam = simpleInterestData()->m_unknown;
+  assert(unknownParam != SimpleInterestParameter::YearConvention);
+  if (static_cast<int>(unknownParam) <= index) {
+    index += 1;
+  }
+  assert(index < k_numberOfSimpleInterestParameters);
+  return static_cast<SimpleInterestParameter>(index);
 }

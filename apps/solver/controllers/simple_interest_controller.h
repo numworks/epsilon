@@ -6,6 +6,7 @@
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
+#include "finance_result_controller.h"
 #include "../abstract/button_delegate.h"
 #include "../gui/year_popup_data_source.h"
 #include "../gui/message_table_cell_with_sublabel_and_dropdown.h"
@@ -23,6 +24,7 @@ class SimpleInterestController : public SelectableListViewPage,
 public:
   SimpleInterestController(Escher::StackViewController * parent,
                            InputEventHandlerDelegate * handler,
+                           FinanceResultController * financeResultController,
                            FinanceData * data);
   const char * title() override;
   void didBecomeFirstResponder() override;
@@ -73,6 +75,8 @@ private:
   // TODO Hugo : Add title
   static constexpr int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   char m_titleBuffer[k_titleBufferSize];
+
+  FinanceResultController * m_financeResultController;
   FinanceData * m_data;
 };
 

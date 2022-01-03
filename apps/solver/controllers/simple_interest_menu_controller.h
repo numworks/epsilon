@@ -25,6 +25,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
   int numberOfRows() const override { return k_numberOfSimpleInterestCells; }
 private:
+  int stackTitleStyleStep() const override { return 1; }
   SimpleInterestParameter paramaterAtIndex(int index) const;
   SimpleInterestController * m_simpleInterestController;
   FinanceData * m_data;

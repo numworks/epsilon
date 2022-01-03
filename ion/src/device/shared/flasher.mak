@@ -3,7 +3,7 @@ include ion/src/device/shared/usb/Makefile
 ion_device_flasher_src += $(addprefix ion/src/device/shared/boot/, \
   isr.c \
   rt0.cpp \
-  rt0_n0110.cpp \
+  rt0_start.cpp \
 )
 
 ion_device_flasher_src += $(addprefix ion/src/device/shared/drivers/, \

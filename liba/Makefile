@@ -22,12 +22,6 @@ liba_internal_flash_src += $(addprefix liba/src/, \
 )
 
 liba_bench_src += $(addprefix liba/src/, \
-  memcpy.c \
-  memmove.c \
-  memset.c \
-  strcmp.c \
-  strlcpy.c \
-  strlen.c \
 )
 
 liba_flasher_src += $(addprefix liba/src/, \

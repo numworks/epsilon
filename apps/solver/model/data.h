@@ -28,6 +28,7 @@ public:
   double getValue(SimpleInterestParameter param) const;
   void setUnknown(SimpleInterestParameter param);
   SimpleInterestParameter getUnknown() const { return m_unknown; }
+  double computeUnknownValue() const;
   bool m_yearConventionIs360;
 private:
   constexpr static int k_numberOfDoubleValues = static_cast<int>(SimpleInterestParameter::YearConvention);

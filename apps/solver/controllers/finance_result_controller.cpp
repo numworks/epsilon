@@ -18,7 +18,7 @@ void FinanceResultController::didBecomeFirstResponder() {
   SimpleInterestParameter unknownParam = simpleInterestData()->getUnknown();
   m_cells[0].setMessage(SimpleInterestData::LabelForParameter(unknownParam));
   m_cells[0].setSubLabelMessage(SimpleInterestData::SublabelForParameter(unknownParam));
-  double value = simpleInterestData()->getValue(unknownParam);
+  double value = simpleInterestData()->computeUnknownValue();
   constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
   constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];

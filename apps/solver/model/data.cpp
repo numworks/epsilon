@@ -60,11 +60,6 @@ void SimpleInterestData::setValue(SimpleInterestParameter param, double value) {
 }
 
 double SimpleInterestData::getValue(SimpleInterestParameter param) const {
-  if (param == m_unknown) {
-    assert(std::isnan(m_values[static_cast<uint8_t>(param)]));
-    // TODO Hugo : Compute it and return
-    return 1234.0;
-  }
   assert(param < SimpleInterestParameter::YearConvention);
   return m_values[static_cast<uint8_t>(param)];
 }
@@ -74,6 +69,30 @@ void SimpleInterestData::setUnknown(SimpleInterestParameter param) {
     setValue(m_unknown, DefaultValue(m_unknown));
     m_unknown = param;
     setValue(m_unknown, NAN);
+  }
+}
+
+double SimpleInterestData::computeUnknownValue() const {
+  double year = m_yearConventionIs360 ? 360.0 : 365.0;
+  double I = getValue(SimpleInterestParameter::I);
+  double rPct = getValue(SimpleInterestParameter::rPct);
+  double P = getValue(SimpleInterestParameter::P);
+  double n = getValue(SimpleInterestParameter::n);
+  /* Using the formula
+   * I = -P * r * n'
+   * With rPct = r * 100
+   *      n = n' * 360 (or 365 depending on year convention)
+   */
+  switch (m_unknown) {
+  case SimpleInterestParameter::n :
+    return -I*100.0*year/(rPct*P);
+  case SimpleInterestParameter::rPct :
+    return -I*100.0*year/(n*P);
+  case SimpleInterestParameter::P :
+    return -I*100.0*year/(rPct*n);
+  default:
+    assert(m_unknown == SimpleInterestParameter::I);
+    return -rPct*n*P/(100.0*year);
   }
 }
 

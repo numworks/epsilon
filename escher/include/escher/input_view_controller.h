@@ -15,7 +15,7 @@ namespace Escher {
 /* TODO Implement a split view. Because we use a modal view, the main view is
  * redrawn underneath the modal view, which is visible and ugly. */
 
-class InputViewController : public ModalViewController, InputEventHandlerDelegate, TextFieldDelegate, LayoutFieldDelegate {
+class InputViewController : public ModalViewController, public InputEventHandlerDelegate, TextFieldDelegate, LayoutFieldDelegate {
 public:
   InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
   const char * textBody() {

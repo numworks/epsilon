@@ -12,12 +12,15 @@ app_solver_src = $(addprefix apps/solver/,\
   gui/equation_list_view.cpp \
   gui/highlight_image_cell.cpp \
   gui/subapp_cell.cpp \
+  gui/bordering_view.cpp \
+  gui/dropdown_view.cpp \
   controllers/equation_models_parameter_controller.cpp \
   controllers/interval_controller.cpp \
   controllers/list_controller.cpp \
   controllers/menu_controller.cpp \
   controllers/solutions_controller.cpp \
   controllers/finance_menu_controller.cpp \
+  controllers/simple_interest_controller.cpp \
   controllers/simple_interest_menu_controller.cpp \
   controllers/compound_interest_menu_controller.cpp \
 )
@@ -39,4 +42,8 @@ $(eval $(call depends_on_image,apps/solver/app.cpp,apps/solver/solver_icon.png))
 $(eval $(call depends_on_transparent_image,apps/solver/controllers/menu_controller.cpp,$(addprefix apps/solver/images/,\
   Equations.png \
   Finances.png \
+)))
+
+$(eval $(call depends_on_transparent_image,apps/solver/gui/dropdown_view.cpp,$(addprefix apps/solver/images/,\
+  temp.png \
 )))

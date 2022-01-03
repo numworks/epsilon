@@ -5,6 +5,7 @@
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
 
+#include "simple_interest_controller.h"
 #include "../gui/selectable_cell_list_controller.h"
 #include "../model/data.h"
 
@@ -17,7 +18,7 @@ constexpr static int k_numberOfSimpleInterestCells = 4;
 class SimpleInterestMenuController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfSimpleInterestCells> {
 public:
-  SimpleInterestMenuController(Escher::StackViewController * parentResponder, FinanceData * data);
+  SimpleInterestMenuController(Escher::StackViewController * parentResponder, SimpleInterestController * simpleInterestController, FinanceData * data);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override { return I18n::translate(I18n::Message::SimpleInterest); }
@@ -29,6 +30,7 @@ public:
   constexpr static int k_indexOfP = 2;
   constexpr static int k_indexOfI = 3;
 private:
+  SimpleInterestController * m_simpleInterestController;
   FinanceData * m_data;
 };
 

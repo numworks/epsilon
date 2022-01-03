@@ -6,6 +6,12 @@ endif
 
 -include ion/src/$(PLATFORM)/shared/$(FIRMWARE_COMPONENT).mak
 
+$(call object_for,$(ion_device_bench_src)): SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
+$(call object_for,$(ion_device_bootloader_src)): SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
+$(call object_for,$(ion_device_flasher_src)): SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
+$(call object_for,$(ion_device_kernel_src)): SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
+$(call object_for,$(ion_device_userland_src)): SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
+
 # We need to work around a GCC bug (concerning versions < 5.1). It is valid in
 # C++11 to initialize a character array by providing a string litteral (e.g.
 # char test[4]= "ab"; is valid and should initialize test to 'a','b',0,0).

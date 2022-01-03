@@ -21,7 +21,7 @@ void SimpleInterestMenuController::didBecomeFirstResponder() {
 
 bool SimpleInterestMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    m_data->m_data.m_simpleInterestData.m_unknown = paramaterAtIndex(selectedRow());
+    m_data->m_data.m_simpleInterestData.setUnknown(paramaterAtIndex(selectedRow()));
     openPage(m_simpleInterestController);
   } else if (event == Ion::Events::Left) {
     stackViewController()->pop();

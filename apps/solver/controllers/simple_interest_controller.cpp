@@ -9,11 +9,12 @@
 
 using namespace Solver;
 
-SimpleInterestController::SimpleInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, FinanceData * data) :
+SimpleInterestController::SimpleInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, FinanceData * data) :
     SelectableListViewPage(parent),
     m_operatorDataSource(),
     m_year(&m_selectableTableView, &m_operatorDataSource, this),
     m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
+    m_financeResultController(financeResultController),
     m_data(data) {
   for (size_t i = 0; i < k_numberOfReusableInputs; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);
@@ -24,7 +25,7 @@ SimpleInterestController::SimpleInterestController(Escher::StackViewController *
 }
 
 const char * SimpleInterestController::title() {
-  SimpleInterestParameter unknownParam = simpleInterestData()->m_unknown;
+  SimpleInterestParameter unknownParam = simpleInterestData()->getUnknown();
   Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize,
     I18n::translate(I18n::Message::FinanceSolving),
     I18n::translate(SimpleInterestData::LabelForParameter(unknownParam)),
@@ -108,9 +109,7 @@ HighlightCell * SimpleInterestController::reusableCell(int i, int type) {
 }
 
 bool SimpleInterestController::buttonAction() {
-  // TODO Hugo : Load result controller
-  assert(false);
-  openPage(nullptr);
+  openPage(m_financeResultController);
   return true;
 }
 
@@ -146,7 +145,7 @@ SimpleInterestParameter SimpleInterestController::paramaterAtIndex(int index) co
   if (index == k_indexOfYear) {
     return SimpleInterestParameter::YearConvention;
   }
-  SimpleInterestParameter unknownParam = simpleInterestData()->m_unknown;
+  SimpleInterestParameter unknownParam = simpleInterestData()->getUnknown();
   assert(unknownParam != SimpleInterestParameter::YearConvention);
   if (static_cast<int>(unknownParam) <= index) {
     index += 1;

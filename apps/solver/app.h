@@ -14,6 +14,7 @@
 #include "controllers/simple_interest_menu_controller.h"
 #include "controllers/compound_interest_menu_controller.h"
 #include "controllers/simple_interest_controller.h"
+#include "controllers/finance_result_controller.h"
 
 namespace Solver {
 
@@ -64,6 +65,7 @@ private:
   Escher::AlternateEmptyViewController m_alternateEmptyViewController;
   ListController m_listController;
   Escher::ButtonRowController m_listFooter;
+  FinanceResultController m_financeResultController;
   SimpleInterestController m_simpleInterestController;
   SimpleInterestMenuController m_simpleInterestMenuController;
   CompoundInterestMenuController m_compoundInterestMenuController;

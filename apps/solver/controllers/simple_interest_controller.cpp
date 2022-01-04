@@ -11,8 +11,8 @@ using namespace Solver;
 
 SimpleInterestController::SimpleInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, FinanceData * data) :
     SelectableListViewPage(parent),
-    m_operatorDataSource(),
-    m_year(&m_selectableTableView, &m_operatorDataSource, this),
+    m_yearDataSource(),
+    m_year(&m_selectableTableView, &m_yearDataSource, this),
     m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
     m_financeResultController(financeResultController),
     m_data(data) {

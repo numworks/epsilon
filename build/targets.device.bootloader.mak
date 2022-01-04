@@ -8,3 +8,4 @@ bootloader_obj = $(call flavored_object_for,$(bootloader_src),leavebootloader $(
 $(BUILD_DIR)/bootloader.$(EXE): $(bootloader_obj)
 
 $(BUILD_DIR)/bootloader.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/epsilon-bootloader/bootloader/flash/$(MODEL)/bootloader_flash.ld
+$(BUILD_DIR)/bootloader.$(EXE): LDDEPS += $(LDSCRIPT)

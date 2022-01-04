@@ -28,6 +28,7 @@ public:
   int numberOfRows() const override { return k_numberOfResultCells; }
 private:
   SimpleInterestData * simpleInterestData() const { assert(m_data->isSimpleInterest); return &(m_data->m_data.m_simpleInterestData); }
+  CompoundInterestData * compoundInterestData() const { assert(!m_data->isSimpleInterest); return &(m_data->m_data.m_compoundInterestData); }
   int stackTitleStyleStep() const override { return 1; }
   FinanceData * m_data;
 };

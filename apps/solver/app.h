@@ -14,6 +14,7 @@
 #include "controllers/simple_interest_menu_controller.h"
 #include "controllers/compound_interest_menu_controller.h"
 #include "controllers/simple_interest_controller.h"
+#include "controllers/compound_interest_controller.h"
 #include "controllers/finance_result_controller.h"
 
 namespace Solver {
@@ -68,6 +69,7 @@ private:
   FinanceResultController m_financeResultController;
   SimpleInterestController m_simpleInterestController;
   SimpleInterestMenuController m_simpleInterestMenuController;
+  CompoundInterestController m_compoundInterestController;
   CompoundInterestMenuController m_compoundInterestMenuController;
   FinanceMenuController m_financeMenuController;
   MenuController m_menuController;

@@ -42,12 +42,15 @@ App::App(Snapshot * snapshot) :
   m_financeResultController(&m_stackViewController, &m_data),
   m_simpleInterestController(&m_stackViewController, &m_inputViewController, &m_financeResultController, &m_data),
   m_simpleInterestMenuController(&m_stackViewController, &m_simpleInterestController, &m_data),
-  m_compoundInterestMenuController(&m_stackViewController, &m_data),
+  m_compoundInterestController(&m_stackViewController, &m_inputViewController, &m_financeResultController, &m_data),
+  m_compoundInterestMenuController(&m_stackViewController, &m_compoundInterestController, &m_data),
   m_financeMenuController(&m_stackViewController, &m_simpleInterestMenuController, &m_compoundInterestMenuController, &m_data),
   m_menuController(&m_stackViewController, &m_listFooter, &m_financeMenuController),
   m_stackViewController(&m_inputViewController, &m_menuController),
   m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController)
 {
+  m_data.isSimpleInterest = true;
+  m_data.m_data.m_simpleInterestData.resetValues();
 }
 
 bool App::isAcceptableExpression(const Poincare::Expression exp) {

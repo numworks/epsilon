@@ -31,12 +31,17 @@ bool FinanceMenuController::handleEvent(Ion::Events::Event event) {
     ViewController * controller = nullptr;
     switch (selectedRow()) {
       case k_indexOfSimpleIntereset:
-        m_data->isSimpleInterest = true;
-        m_data->m_data.m_simpleInterestData.resetValues();
+        if (!m_data->isSimpleInterest) {
+          m_data->isSimpleInterest = true;
+          m_data->m_data.m_simpleInterestData.resetValues();
+        }
         controller = m_simpleInterestMenuController;
         break;
       case k_indexOfCompoundInterest:
-        m_data->isSimpleInterest = false;
+        if (m_data->isSimpleInterest) {
+          m_data->isSimpleInterest = false;
+          m_data->m_data.m_compoundInterestData.resetValues();
+        }
         controller = m_compoundInterestMenuController;
         break;
     }

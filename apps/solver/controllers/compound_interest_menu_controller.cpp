@@ -6,19 +6,13 @@
 
 using namespace Solver;
 
-CompoundInterestMenuController::CompoundInterestMenuController(Escher::StackViewController * parentResponder, FinanceData * data) :
-      SelectableCellListPage(parentResponder), m_data(data) {
+CompoundInterestMenuController::CompoundInterestMenuController(Escher::StackViewController * parentResponder, CompoundInterestController * compoundInterestController, FinanceData * data) :
+      SelectableCellListPage(parentResponder), m_compoundInterestController(compoundInterestController), m_data(data) {
   selectRow(0);
-  m_cells[k_indexOfN].setMessage(I18n::Message::FinanceN);
-  m_cells[k_indexOfN].setSubtitle(I18n::Message::NumberOfPeriods);
-  m_cells[k_indexOfRPct].setMessage(I18n::Message::FinanceRPct);
-  m_cells[k_indexOfRPct].setSubtitle(I18n::Message::NominalAnnualInterestRate);
-  m_cells[k_indexOfPV].setMessage(I18n::Message::FinancePV);
-  m_cells[k_indexOfPV].setSubtitle(I18n::Message::PresentValue);
-  m_cells[k_indexOfPmt].setMessage(I18n::Message::FinancePmt);
-  m_cells[k_indexOfPmt].setSubtitle(I18n::Message::PaymentEachPeriod);
-  m_cells[k_indexOfFV].setMessage(I18n::Message::FinanceFV);
-  m_cells[k_indexOfFV].setSubtitle(I18n::Message::FutureValue);
+  for (size_t i = 0; i < numberOfRows(); i++) {
+    m_cells[i].setMessage(CompoundInterestData::LabelForParameter(paramaterAtIndex(i)));
+    m_cells[i].setSubtitle(CompoundInterestData::SublabelForParameter(paramaterAtIndex(i)));
+  }
 }
 
 void CompoundInterestMenuController::didBecomeFirstResponder() {
@@ -27,42 +21,20 @@ void CompoundInterestMenuController::didBecomeFirstResponder() {
 
 bool CompoundInterestMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    ViewController * controller = nullptr;
-    switch (selectedRow()) {
-      case k_indexOfN:
-        m_data->m_data.m_compoundInterestData.m_unknown = CompoundInterestUnknown::N;
-        // TODO Hugo : Add controller
-        controller = nullptr;
-        break;
-      case k_indexOfRPct:
-        m_data->m_data.m_compoundInterestData.m_unknown = CompoundInterestUnknown::rPct;
-        // TODO Hugo : Add controller
-        controller = nullptr;
-        break;
-      case k_indexOfPV:
-        m_data->m_data.m_compoundInterestData.m_unknown = CompoundInterestUnknown::PV;
-        // TODO Hugo : Add controller
-        controller = nullptr;
-        break;
-      case k_indexOfPmt:
-        m_data->m_data.m_compoundInterestData.m_unknown = CompoundInterestUnknown::Pmt;
-        // TODO Hugo : Add controller
-        controller = nullptr;
-        break;
-      case k_indexOfFV:
-        m_data->m_data.m_compoundInterestData.m_unknown = CompoundInterestUnknown::FV;
-        // TODO Hugo : Add controller
-        controller = nullptr;
-        break;
-    }
-    assert(controller != nullptr);
-    openPage(controller);
+    m_data->m_data.m_compoundInterestData.setUnknown(paramaterAtIndex(selectedRow()));
+    openPage(m_compoundInterestController);
   } else if (event == Ion::Events::Left) {
     stackViewController()->pop();
   } else {
     return false;
   }
   return true;
+}
 
-
+CompoundInterestParameter CompoundInterestMenuController::paramaterAtIndex(int index) const {
+  // Parameters are displayed in the same order as the enum order.
+  assert(index >= 0 && index < k_numberOfCompoundInterestParameters);
+  // P/Y, C/Y and Payment parameters aren't displayed in this menu.
+  assert(static_cast<CompoundInterestParameter>(index) < CompoundInterestParameter::PY);
+  return static_cast<CompoundInterestParameter>(index);
 }

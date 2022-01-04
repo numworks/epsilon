@@ -15,10 +15,18 @@ FinanceResultController::FinanceResultController(Escher::StackViewController * p
 
 void FinanceResultController::didBecomeFirstResponder() {
   selectRow(-1);
-  SimpleInterestParameter unknownParam = simpleInterestData()->getUnknown();
-  m_cells[0].setMessage(SimpleInterestData::LabelForParameter(unknownParam));
-  m_cells[0].setSubLabelMessage(SimpleInterestData::SublabelForParameter(unknownParam));
-  double value = simpleInterestData()->computeUnknownValue();
+  double value;
+  if (m_data->isSimpleInterest) {
+    SimpleInterestParameter unknownParam = simpleInterestData()->getUnknown();
+    m_cells[0].setMessage(SimpleInterestData::LabelForParameter(unknownParam));
+    m_cells[0].setSubLabelMessage(SimpleInterestData::SublabelForParameter(unknownParam));
+    value = simpleInterestData()->computeUnknownValue();
+  } else {
+    CompoundInterestParameter unknownParam = compoundInterestData()->getUnknown();
+    m_cells[0].setMessage(CompoundInterestData::LabelForParameter(unknownParam));
+    m_cells[0].setSubLabelMessage(CompoundInterestData::SublabelForParameter(unknownParam));
+    value = compoundInterestData()->computeUnknownValue();
+  }
   constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
   constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];

@@ -78,6 +78,7 @@ endif
 	$(MAKE) FIRMWARE_COMPONENT=epsilon IN_FACTORY=$(USE_IN_FACTORY) epsilon.onboarding.update.dfu
 	cp $(subst binpack,epsilon,$(BUILD_DIR))/epsilon.onboarding.update.dfu output/binpack
 	$(MAKE) clean
+	cd output/binpack && for binary in flasher.bin bench.flash.bin; do shasum -a 256 -b $${binary} > $${binary}.sha256;done
 	cd output && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
 	@echo "Binpack created as \033[0;32moutput/binpack-`git rev-parse HEAD | head -c 7`.tgz\033[0m"
 	@echo "\033[0;31mWARNING\033[0m Files bench.ram.dfu and epsilon.official.onboarding.update.dfu need to be signed"

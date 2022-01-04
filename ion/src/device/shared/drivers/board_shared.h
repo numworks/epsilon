@@ -47,11 +47,10 @@ typedef uint32_t PCBVersion;
  * unlocked, we fully write OTP0 and treat it the same as fully blank.
  * This way, pcbVersion will be 0 if OTP0 is either 0x00000000 or 0xFFFFFFFF.*/
 constexpr PCBVersion k_alternateBlankVersion = 0xFFFFFFFF;
+constexpr int k_pcbVersionOTPBlock = 0;
+constexpr int k_pcbVersionOTPIndex = 0;
 PCBVersion pcbVersion();
 PCBVersion readPCBVersionInMemory();
-bool pcbVersionIsLocked();
-void lockPCBVersion();
-void writePCBVersion(PCBVersion version);
 
 uint32_t writableSRAMEndAddress();
 uint32_t writableSRAMStartAddress();

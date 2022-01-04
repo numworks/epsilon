@@ -25,8 +25,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   flash_privileged.cpp:-n0100 \
   flash_unprivileged.cpp:-n0100 \
   internal_flash.cpp \
-  internal_flash_otp_n0110.cpp:+n0110 \
-  internal_flash_otp_n0120.cpp:+n0120 \
+  internal_flash_otp_dual_slots.cpp:-n0100 \
   keyboard.cpp \
   led.cpp \
   power_stm32f.cpp:-n0120 \

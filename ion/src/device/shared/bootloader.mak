@@ -27,8 +27,7 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/drivers/, \
   flash_privileged.cpp \
   flash_unprivileged.cpp \
   internal_flash.cpp \
-  internal_flash_otp_n0110.cpp:+n0110 \
-  internal_flash_otp_n0120.cpp:+n0120 \
+  internal_flash_otp_dual_slots.cpp:-n0100 \
   keyboard.cpp \
   keyboard_init.cpp \
   power_suspend.cpp \

@@ -12,8 +12,10 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   board_frequency_stm32f.cpp:-n0120 \
   board_frequency_stm32h.cpp:+n0120 \
   board_privileged.cpp \
+  board_privileged_dual_slots.cpp:-n0100 \
   board_privileged_n0110.cpp:+n0110 \
   board_privileged_n0120.cpp:+n0120 \
+  board_privileged_standalone.cpp:+n0100 \
   board_unprivileged.cpp \
   board_unprivileged_standalone.cpp:+n0100 \
   board_unprivileged_dual_slots.cpp:-n0100 \

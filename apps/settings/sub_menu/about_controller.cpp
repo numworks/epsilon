@@ -73,6 +73,15 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
         myCell->setAccessoryText(Ion::UpsilonVersion());
         return true;
       }
+      if (childLabel == I18n::Message::OmegaVersion) {
+        MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
+        if (strcmp(myCell->accessoryText(), Ion::OmegaVersion()) == 0) {
+          myCell->setAccessoryText(MP_STRINGIFY(OMEGA_STATE)); //Change for public/dev
+          return true;
+        }
+        myCell->setAccessoryText(Ion::OmegaVersion());
+        return true;
+      }
       if (childLabel == I18n::Message::MemUse) {
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         
@@ -188,8 +197,9 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
 
     static const char * messages[] = {
       (const char*) Ion::username(),
-      Ion::softwareVersion(),
       Ion::UpsilonVersion(),
+      Ion::OmegaVersion(),
+      Ion::softwareVersion(),
       mpVersion,
       batteryLevel,
       "",

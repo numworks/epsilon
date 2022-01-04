@@ -1,5 +1,5 @@
-#ifndef SOLVER_CONTROLLERS_HYPOTHESIS_CONTROLLER_H
-#define SOLVER_CONTROLLERS_HYPOTHESIS_CONTROLLER_H
+#ifndef SOLVER_CONTROLLERS_SIMPLE_INTEREST_CONTROLLER_H
+#define SOLVER_CONTROLLERS_SIMPLE_INTEREST_CONTROLLER_H
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/highlight_cell.h>
@@ -36,7 +36,7 @@ public:
   HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return k_indexOfNext + 1; }
   bool buttonAction() override;
-   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
 
 
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override { return false; }
@@ -66,14 +66,14 @@ private:
   constexpr static int k_numberOfReusableInputs = 4; // Visible cell max
   static_assert(k_numberOfReusableInputs <= k_indexOfYear + 1, "Too many reusable inputs");
 
-  YearPopupDataSource m_operatorDataSource;
+  YearPopupDataSource m_yearDataSource;
 
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfReusableInputs];
   MessageTableCellWithSublabelAndDropdown m_year;
   Shared::ButtonWithSeparator m_next;
 
   // TODO Hugo : Add title
-  static constexpr int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
+  static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   char m_titleBuffer[k_titleBufferSize];
 
   FinanceResultController * m_financeResultController;
@@ -82,4 +82,4 @@ private:
 
 }  // namespace Solver
 
-#endif /* SOLVER_CONTROLLERS_HYPOTHESIS_CONTROLLER_H */
+#endif /* SOLVER_CONTROLLERS_SIMPLE_INTEREST_CONTROLLER_H */

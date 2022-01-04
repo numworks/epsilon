@@ -7,3 +7,4 @@ $(BUILD_DIR)/bench.flash.$(EXE): $(call flavored_object_for,$(bench_src),console
 $(BUILD_DIR)/bench.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/bench
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/bench/flash.ld
 $(BUILD_DIR)/bench.ram.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/bench/ram.ld
+$(BUILD_DIR)/bench.%.$(EXE): LDDEPS += $(LDSCRIPT)

@@ -6,6 +6,7 @@ $(BUILD_DIR)/test.external_flash.read.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ext
 $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_write_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_write_src))
 
 
+$(BUILD_DIR)/%.$(EXE): LDDEPS += ion/src/$(PLATFORM)/shared/flash/$(MODEL)/config_ram.ld
 $(BUILD_DIR)/%.A.$(EXE): LDDEPS += ion/src/$(PLATFORM)/shared/flash/config_slot_a.ld
 $(BUILD_DIR)/%.B.$(EXE): LDDEPS += ion/src/$(PLATFORM)/shared/flash/config_slot_b.ld
 

@@ -24,8 +24,7 @@ ion_device_flasher_src += $(addprefix ion/src/device/shared/drivers/, \
   external_flash_qspi_n0110.cpp:+n0110 \
   external_flash_qspi_n0120.cpp:+n0120 \
   internal_flash.cpp \
-  internal_flash_otp_n0110.cpp:+n0110 \
-  internal_flash_otp_n0120.cpp:+n0120 \
+  internal_flash_otp_dual_slots.cpp:-n0100 \
   reset.cpp \
   serial_number.cpp \
   swd.cpp \

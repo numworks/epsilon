@@ -22,6 +22,7 @@ app_solver_src = $(addprefix apps/solver/,\
   controllers/finance_menu_controller.cpp \
   controllers/simple_interest_controller.cpp \
   controllers/simple_interest_menu_controller.cpp \
+  controllers/compound_interest_controller.cpp \
   controllers/compound_interest_menu_controller.cpp \
   controllers/finance_result_controller.cpp \
   model/data.cpp \

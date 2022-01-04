@@ -5,6 +5,8 @@
 
 namespace Solver {
 
+// TODO : Factorize classes
+
 constexpr static uint8_t k_numberOfSimpleInterestParameters = 5;
 
 enum class SimpleInterestParameter : uint8_t {
@@ -12,7 +14,7 @@ enum class SimpleInterestParameter : uint8_t {
   rPct,
   P,
   I,
-  YearConvention
+  YearConvention // Is not a double parameter and can't be unknown
 };
 
 static_assert(static_cast<uint8_t>(SimpleInterestParameter::YearConvention) == k_numberOfSimpleInterestParameters-1, "YearConvention must be last.");
@@ -37,28 +39,39 @@ private:
   double m_values[k_numberOfDoubleValues];
 };
 
-// TODO Hugo : Update CompoundInterest as well
+constexpr static uint8_t k_numberOfCompoundInterestParameters = 8;
 
-enum class CompoundInterestUnknown : uint8_t {
-  None = 0,
+enum class CompoundInterestParameter : uint8_t {
   N,
   rPct,
   PV,
   Pmt,
-  FV
+  FV,
+  PY, // Can't be unknown
+  CY, // Can't be unknown
+  Payment // Is not a double parameter and can't be unknown
 };
+
+static_assert(static_cast<uint8_t>(CompoundInterestParameter::Payment) == k_numberOfCompoundInterestParameters-1, "Payment must be last.");
 
 class CompoundInterestData {
 public:
-  CompoundInterestUnknown m_unknown;
-  double m_N;
-  double m_rPct;
-  double m_PV;
-  double m_Pmt;
-  double m_FV;
-  double m_PY;
-  double m_CY;
-  bool m_paymentIsEnd;
+  static I18n::Message LabelForParameter(CompoundInterestParameter param);
+  static I18n::Message SublabelForParameter(CompoundInterestParameter param);
+  static double DefaultValue(CompoundInterestParameter param);
+  static bool CheckValue(CompoundInterestParameter param, double value);
+  void resetValues();
+  void setValue(CompoundInterestParameter param, double value);
+  double getValue(CompoundInterestParameter param) const;
+  void setUnknown(CompoundInterestParameter param);
+  CompoundInterestParameter getUnknown() const { return m_unknown; }
+  double computeUnknownValue() const;
+  bool m_paymentIsBeginning;
+private:
+  constexpr static int k_numberOfDoubleValues = static_cast<int>(CompoundInterestParameter::Payment);
+
+  CompoundInterestParameter m_unknown;
+  double m_values[k_numberOfDoubleValues];
 };
 
 union FinanceDataUnion {

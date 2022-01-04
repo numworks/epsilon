@@ -16,8 +16,10 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   board_peripherals_clocks_n0110.cpp:+n0110 \
   board_peripherals_clocks_n0120.cpp:+n0120 \
   board_privileged.cpp \
+  board_privileged_dual_slots.cpp:-n0100 \
   board_privileged_n0110.cpp:+n0110 \
   board_privileged_n0120.cpp:+n0120 \
+  board_privileged_standalone.cpp:+n0100 \
   board_unprotected.cpp \
   cache.cpp \
   crc32.cpp \

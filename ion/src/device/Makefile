@@ -6,12 +6,6 @@ endif
 
 -include ion/src/$(PLATFORM)/shared/$(FIRMWARE_COMPONENT).mak
 
-$(call object_for,$(ion_device_bench_src)): SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
-$(call object_for,$(ion_device_bootloader_src)): SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
-$(call object_for,$(ion_device_flasher_src)): SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
-$(call object_for,$(ion_device_kernel_src)): SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
-$(call object_for,$(ion_device_userland_src)): SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
-
 # We need to work around a GCC bug (concerning versions < 5.1). It is valid in
 # C++11 to initialize a character array by providing a string litteral (e.g.
 # char test[4]= "ab"; is valid and should initialize test to 'a','b',0,0).
@@ -20,6 +14,7 @@ initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
 $(call object_for,ion/src/$(PLATFORM)/kernel/drivers/kernel_header.cpp ion/src/$(PLATFORM)/userland/drivers/userland_header.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
 
 ION_DEVICE_SFLAGS += -Iion/src/$(PLATFORM)/include/$(MODEL) -Iion/src/$(PLATFORM)/shared -Iion/src/$(PLATFORM) #TODO EMILIE: remove */shared and specify shared in inclusions
+ION_DEVICE_SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
 
 IN_FACTORY ?= 0
 ION_DEVICE_SFLAGS += -DPCB_LATEST=$(PCB_LATEST) -DIN_FACTORY=$(IN_FACTORY)

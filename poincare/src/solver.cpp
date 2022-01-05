@@ -45,7 +45,10 @@ Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation,
     return result;
   }
   constexpr T marginAroundZero = static_cast<T>(1e-3);
-  result = search(-marginAroundZero, static_cast<T>(0.f), marginAroundZero, evaluation(-marginAroundZero, context, auxiliary), evaluation(static_cast<T>(0.f), context, auxiliary), evaluation(marginAroundZero, context, auxiliary), evaluation, context, auxiliary);
+  /* We deviate slightly from zero, as many common functions with an
+   * interesting behaviour around zero are undefined for x=0. */
+  constexpr T fakeZero = sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON;
+  result = search(-marginAroundZero, fakeZero, marginAroundZero, evaluation(-marginAroundZero, context, auxiliary), evaluation(fakeZero, context, auxiliary), evaluation(marginAroundZero, context, auxiliary), evaluation, context, auxiliary);
   if (std::isfinite(result.x1())) {
     return result;
   }

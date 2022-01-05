@@ -12,7 +12,7 @@
 
 namespace Solver {
 
-constexpr static int k_numberOfFinanceCells = 2;
+constexpr int k_numberOfFinanceCells = 2;
 
 class FinanceMenuController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfFinanceCells> {

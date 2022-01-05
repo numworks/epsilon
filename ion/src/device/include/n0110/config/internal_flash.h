@@ -13,6 +13,8 @@ constexpr int NumberOfForbiddenFirstSectors = 2;
 constexpr uint32_t StartAddress = 0x08000000;
 constexpr uint32_t EndAddress = 0x08010000;
 constexpr uint32_t TotalSize = EndAddress - StartAddress;
+constexpr Regs::MPU::RASR::RegionSize InternalFlashRegionSize = Regs::MPU::RASR::RegionSize::_64KB;
+
 constexpr int NumberOfSectors = 4;
 constexpr uint32_t SectorAddresses[NumberOfSectors+1] = {
   0x08000000, 0x08004000, 0x08008000, 0x0800C000,
@@ -30,6 +32,7 @@ constexpr int NumberOfOTPBlocks = 16;
 constexpr uint32_t OTPBlockSize = 0x20;
 constexpr uint32_t OTPAddress(int block, int index) { return OTPStartAddress + block * OTPBlockSize + index * sizeof(uint32_t); };
 constexpr uint32_t OTPLockAddress(int block) { return OTPLocksAddress + block; }
+constexpr Regs::MPU::RASR::RegionSize OTPRegionSize = Regs::MPU::RASR::RegionSize::_1KB;
 
 }
 }

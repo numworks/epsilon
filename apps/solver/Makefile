@@ -14,6 +14,7 @@ app_solver_src = $(addprefix apps/solver/,\
   gui/subapp_cell.cpp \
   gui/bordering_view.cpp \
   gui/dropdown_view.cpp \
+  gui/title_table_view.cpp \
   controllers/equation_models_parameter_controller.cpp \
   controllers/interval_controller.cpp \
   controllers/list_controller.cpp \

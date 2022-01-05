@@ -72,7 +72,6 @@ private:
   MessageTableCellWithSublabelAndDropdown m_year;
   Shared::ButtonWithSeparator m_next;
 
-  // TODO Hugo : Add title
   static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   char m_titleBuffer[k_titleBufferSize];
 

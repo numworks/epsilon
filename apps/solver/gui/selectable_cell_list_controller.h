@@ -20,7 +20,7 @@ namespace Solver {
 template <typename Cell, int n>
 class SelectableCellListPage : public SelectableListViewPage {
  public:
-  SelectableCellListPage(Escher::StackViewController * parent) : SelectableListViewPage(parent) {}
+  SelectableCellListPage(Escher::StackViewController * parent, Escher::SelectableTableViewDelegate * tableDelegate = nullptr) : SelectableListViewPage(parent, tableDelegate) {}
   int numberOfRows() const override { return k_numberOfRows; }
   Escher::HighlightCell * reusableCell(int i, int type) override {
     assert(type == 0);

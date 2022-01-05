@@ -7,11 +7,10 @@
 
 #include "simple_interest_controller.h"
 #include "../gui/selectable_cell_list_controller.h"
+#include "../gui/title_table_view.h"
 #include "../model/data.h"
 
 namespace Solver {
-
-// TODO Hugo : Add "Choose a parameter to solve" intro message
 
 constexpr static int k_numberOfSimpleInterestCells = 4;
 
@@ -23,10 +22,13 @@ public:
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override { return I18n::translate(I18n::Message::SimpleInterest); }
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
+  Escher::View * view() override { return &m_contentView; }
   int numberOfRows() const override { return k_numberOfSimpleInterestCells; }
 private:
   int stackTitleStyleStep() const override { return 1; }
   SimpleInterestParameter paramaterAtIndex(int index) const;
+
+  TitleTableView m_contentView;
   SimpleInterestController * m_simpleInterestController;
   FinanceData * m_data;
 };

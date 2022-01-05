@@ -14,7 +14,7 @@ namespace Solver {
 
 // TODO Hugo : Factorize with compound interest result controller
 
-constexpr static int k_numberOfResultCells = 1;
+constexpr int k_numberOfResultCells = 1;
 
 class FinanceResultController : public SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer,
                                                      k_numberOfResultCells> {

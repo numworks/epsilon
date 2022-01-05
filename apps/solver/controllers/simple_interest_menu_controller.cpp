@@ -7,7 +7,7 @@
 using namespace Solver;
 
 SimpleInterestMenuController::SimpleInterestMenuController(Escher::StackViewController * parentResponder, SimpleInterestController * simpleInterestController, FinanceData * data) :
-      SelectableCellListPage(parentResponder), m_simpleInterestController(simpleInterestController), m_data(data) {
+      SelectableCellListPage(parentResponder, &m_contentView), m_contentView(&m_selectableTableView, this, I18n::Message::ParameterChoose), m_simpleInterestController(simpleInterestController), m_data(data) {
   selectRow(0);
   for (size_t i = 0; i < numberOfRows(); i++) {
     m_cells[i].setMessage(SimpleInterestData::LabelForParameter(paramaterAtIndex(i)));

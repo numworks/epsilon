@@ -111,7 +111,7 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   const char * delta = GlobalPreferences::sharedGlobalPreferences()->discriminantSymbol();
   size_t lenDelta = strlen(delta);
   const char * equalB = "=b";
-  m_delta2Layout = HorizontalLayout::Builder(
+  m_delta2Layout = Poincare::HorizontalLayout::Builder(
     LayoutHelper::String(delta, lenDelta, KDFont::SmallFont),
     LayoutHelper::String(equalB, strlen(equalB), KDFont::SmallFont),
     VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript),

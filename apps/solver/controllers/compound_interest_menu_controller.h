@@ -12,7 +12,7 @@
 
 namespace Solver {
 
-constexpr static int k_numberOfCompoundInterestCells = 5;
+constexpr int k_numberOfCompoundInterestCells = 5;
 
 class CompoundInterestMenuController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfCompoundInterestCells> {

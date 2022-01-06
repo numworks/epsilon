@@ -32,6 +32,9 @@ private:
   CompoundInterestData * compoundInterestData() const { assert(!m_data->isSimpleInterest); return &(m_data->m_data.m_compoundInterestData); }
   int stackTitleStyleStep() const override { return 1; }
 
+  static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
+  char m_titleBuffer[k_titleBufferSize];
+
   TitleTableView m_contentView;
   FinanceData * m_data;
 };

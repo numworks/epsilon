@@ -93,9 +93,10 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
   float yMin = interactiveCurveViewRange()->yMin(), yMax = interactiveCurveViewRange()->yMax();
   float middle = (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
   float resLeft = gridUnit * std::floor(middle / gridUnit);
-  float yLeft = function->evaluateXYAtParameter(resLeft, context, m_selectedSubCurveIndex).x2();
+  // Using first subCurve for default cursor.
+  float yLeft = function->evaluateXYAtParameter(resLeft, context, 0).x2();
   float resRight = resLeft + gridUnit;
-  float yRight = function->evaluateXYAtParameter(resRight, context, m_selectedSubCurveIndex).x2();
+  float yRight = function->evaluateXYAtParameter(resRight, context, 0).x2();
   if ((yMin < yLeft && yLeft < yMax) || !(yMin < yRight && yRight < yMax)) {
     return resLeft;
   }

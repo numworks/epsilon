@@ -155,7 +155,7 @@ private:
   void computeHorizontalExtremaLabels(bool increaseNumberOfSignificantDigits = false);
   float labelValueAtIndex(Axis axis, int i) const;
   bool bannerIsVisible() const;
-  float roundFloatToPixelPerfect(float x) const;
+  float roundFloatToPixelPerfect(Axis axis, float x) const;
 
   CurveViewRange * m_curveViewRange;
   CursorView * m_cursorView;

@@ -717,12 +717,12 @@ void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, flo
   if (cachedTStep == 0) {
     /* cachedTStep isn't given, there are no constraints with cache parameters.
      * We can then compute tStep and clip tStart. */
-    float rectMin = pixelToFloat(Axis::Horizontal, pixelMin - k_externRectMargin);
+    float rectMin = pixelToFloat(axis, pixelMin - k_externRectMargin);
     tStart = std::isnan(rectMin) ? tMin : std::max(tMin, rectMin);
     tStep = axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
     // Round to pixel perfect position to avoid landing in the middle of pixels
-    tStart = roundFloatToPixelPerfect(tStart);
-    colorLowerBound = roundFloatToPixelPerfect(colorLowerBound);
+    tStart = roundFloatToPixelPerfect(axis, tStart);
+    colorLowerBound = roundFloatToPixelPerfect(axis, colorLowerBound);
   }
   float rectMax = pixelToFloat(axis, pixelMax + k_externRectMargin);
   float tEnd = std::isnan(rectMax) ? tMax : std::min(tMax, rectMax);
@@ -1205,8 +1205,8 @@ bool CurveView::bannerIsVisible() const {
   return m_bannerView && m_mainViewSelected;
 }
 
-float CurveView::roundFloatToPixelPerfect(float x) const {
-  float pixelStart = floatToPixel(Axis::Horizontal, x);
+float CurveView::roundFloatToPixelPerfect(Axis axis, float x) const {
+  float pixelStart = floatToPixel(axis, x);
   x -= (pixelStart - std::round(pixelStart)) * pixelWidth();
   return x;
 }

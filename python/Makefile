@@ -13,6 +13,7 @@ py_src = $(addprefix python/src/py/,\
   nlrx86.c \
   nlrx64.c \
   nlrthumb.c \
+  nlraarch64.c \
   nlrpowerpc.c \
   nlrxtensa.c \
   nlrsetjmp.c \
@@ -54,6 +55,7 @@ py_src = $(addprefix python/src/py/,\
   runtime_utils.c \
   scheduler.c \
   nativeglue.c \
+  pairheap.c \
   ringbuf.c \
   stackctrl.c \
   argcheck.c \

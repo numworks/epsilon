@@ -1206,6 +1206,9 @@ bool CurveView::bannerIsVisible() const {
 }
 
 float CurveView::roundFloatToPixelPerfect(Axis axis, float x) const {
+  if (!std::isfinite(x)) {
+    return x;
+  }
   float pixelStart = floatToPixel(axis, x);
   x -= (pixelStart - std::round(pixelStart)) * pixelWidth();
   return x;

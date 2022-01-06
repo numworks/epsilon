@@ -87,17 +87,26 @@ double SimpleInterestData::computeUnknownValue() const {
    * With rPct = r * 100
    *      n = n' * 360 (or 365 depending on year convention)
    */
+  double result;
   switch (m_unknown) {
   case SimpleInterestParameter::n :
-    return -I*100.0*year/(rPct*P);
+    result = -I*100.0*year/(rPct*P);
+    break;
   case SimpleInterestParameter::rPct :
-    return -I*100.0*year/(n*P);
+    result = -I*100.0*year/(n*P);
+    break;
   case SimpleInterestParameter::P :
-    return -I*100.0*year/(rPct*n);
+    result = -I*100.0*year/(rPct*n);
+    break;
   default:
     assert(m_unknown == SimpleInterestParameter::I);
-    return -rPct*n*P/(100.0*year);
+    result = -rPct*n*P/(100.0*year);
   }
+  if (!std::isfinite(result)) {
+    // Prevent 0 divisions from returning inf
+    return NAN;
+  }
+  return result;
 }
 
 I18n::Message CompoundInterestData::LabelForParameter(CompoundInterestParameter param) {
@@ -217,23 +226,33 @@ double CompoundInterestData::computeUnknownValue() const {
     b = std::pow(1.0 + i, -N);
     a = (1.0 + i * S) * (1.0 - b) / i;
   }
+  double result;
   switch (m_unknown) {
     case CompoundInterestParameter::N:
-      return (rPct == 0.0) ? -(PV + FV) / Pmt
+      result = (rPct == 0.0) ? -(PV + FV) / Pmt
                            : std::log(((1.0 + i * S) * Pmt - FV * i)
                                       / ((1.0 + i * S) * Pmt + PV * i))
                                  / std::log(1.0 + i);
+      break;
     case CompoundInterestParameter::rPct:
       // TODO : Solve rPct
-      return 0.0;
+      result = 0.0;
+      break;
     case CompoundInterestParameter::PV:
-      return -a * Pmt - b * FV;
+      result = -a * Pmt - b * FV;
+      break;
     case CompoundInterestParameter::Pmt:
-      return -(PV + b * FV) / a;
+      result = -(PV + b * FV) / a;
+      break;
     default:
       assert(m_unknown == CompoundInterestParameter::FV);
-      return -(PV + a * Pmt) / b;
+      result = -(PV + a * Pmt) / b;
   }
+  if (!std::isfinite(result)) {
+    // Prevent 0 divisions from returning inf
+    return NAN;
+  }
+  return result;
 }
 
 }  // namespace Solver

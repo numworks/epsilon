@@ -18,6 +18,9 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int typeAtIndex(int i) override;
 
+  // StackViewController
+  bool handleEvent(Ion::Events::Event event) override;
+
 protected:
   constexpr static int k_maxMessageSize = 100;
   bool selectSubMenu(int selectedRow) override;

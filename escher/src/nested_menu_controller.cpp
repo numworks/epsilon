@@ -207,8 +207,11 @@ bool NestedMenuController::returnToPreviousMenu() {
 
 bool NestedMenuController::returnToRootMenu() {
   resetMemoization();
-  while (stackDepth() > 0) {
-    returnToPreviousMenu();
+  if (stackDepth() > 0) {
+    // Reset breadcrumb and stack
+    m_stack.resetStack();
+    m_breadcrumbController.resetTitle();
+    StackViewController::pop();
   }
   m_listController.setFirstSelectedRow(0);
   Container::activeApp()->setFirstResponder(&m_listController);

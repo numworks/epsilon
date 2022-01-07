@@ -20,6 +20,8 @@ public:
   double startOfBarAtIndex(int series, int index) const;
   double endOfBarAtIndex(int series, int index) const;
   double numberOfBars(int series) const;
+  void setHistogramXMin(float f, bool updateGridUnit) { protectedSetXMin(f, k_lowerMaxFloat, k_upperMaxFloat, updateGridUnit); }
+  void setHistogramXMax(float f, bool updateGridUnit) { protectedSetXMax(f, k_lowerMaxFloat, k_upperMaxFloat, updateGridUnit); }
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);
   bool isEmpty() const override;
@@ -59,6 +61,11 @@ public:
   void updateNonEmptySeriesCount();
 
 private:
+  /* We use these values to bound the graph ranges for the Histogram bars.
+   * The values are derived from FLT_MAX with an arbitrary margin. */
+  constexpr static float k_upperMaxFloat = 1E+35f;
+  constexpr static float k_lowerMaxFloat = 9E+34f;
+
   double defaultValue(int series, int i, int j) const override;
   double sumOfValuesBetween(int series, double x1, double x2) const;
   double sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement = false) const;

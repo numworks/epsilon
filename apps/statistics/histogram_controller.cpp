@@ -224,8 +224,8 @@ void HistogramController::preinitXRangeParameters(double * xMin) {
   }
   assert(xMin != nullptr);
   *xMin = minValue;
-  m_store->setXMin(minValue);
-  m_store->setXMax(maxValue);
+  m_store->setHistogramXMin(minValue, false);
+  m_store->setHistogramXMax(maxValue, true);
 }
 
 void HistogramController::initRangeParameters() {
@@ -238,8 +238,8 @@ void HistogramController::initRangeParameters() {
   if ((xMax - xMin)/barWidth > k_maxNumberOfBarsPerWindow) {
     xMax = xMin + k_maxNumberOfBarsPerWindow*barWidth;
   }
-  m_store->setXMin(xMin - Store::k_displayLeftMarginRatio*(xMax-xMin));
-  m_store->setXMax(xMax + Store::k_displayRightMarginRatio*(xMax-xMin));
+  m_store->setHistogramXMin(xMin - Store::k_displayLeftMarginRatio*(xMax-xMin), false);
+  m_store->setHistogramXMax(xMax + Store::k_displayRightMarginRatio*(xMax-xMin), true);
 
   initYRangeParameters(selectedSeriesIndex());
 }

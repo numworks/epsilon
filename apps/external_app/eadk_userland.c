@@ -2,8 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define TRAMPOLINE_BOARD_APP_SANDBOX 0
-#define TRAMPOLINE_DISPLAY_DRAW_STRING 1
+#define TRAMPOLINE_DISPLAY_DRAW_STRING 0
 
 #define TRAMPOLINE_INTERFACE(index, function, argsList, returnType, args...) \
   typedef returnType (*FunctionType##_##function)(args); \

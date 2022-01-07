@@ -32,6 +32,5 @@ typedef struct {
   uint16_t y;
 } eadk_point;
 
-TRAMPOLINE_INTERFACE(TRAMPOLINE_BOARD_APP_SANDBOX, app_sandbox_range, (start, end), void, uint32_t * start, uint32_t * end)
 TRAMPOLINE_INTERFACE(TRAMPOLINE_DISPLAY_DRAW_STRING, draw_string, (text, point, largeFont, textColor, backgroundColor), void, const char * text, eadk_point point, bool largeFont, eadk_color textColor, eadk_color backgroundColor)
 

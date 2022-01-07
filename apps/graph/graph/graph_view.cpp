@@ -47,8 +47,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
     Poincare::UserCircuitBreakerCheckpoint checkpoint;
     if (CircuitBreakerRun(checkpoint)) {
-      ContinuousFunction::AreaType area = f->areaType();
       Poincare::Expression e = f->expressionReduced(context());
+      ContinuousFunction::AreaType area = f->areaType();
       ContinuousFunction::PlotType type = f->plotType();
       assert(f->numberOfSubCurves() <= 2);
       bool hasTwoCurves = (f->numberOfSubCurves() == 2);

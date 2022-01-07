@@ -19,14 +19,16 @@ $(BUILD_DIR)/%.B.$(EXE): LDDEPS += ion/src/$(PLATFORM)/shared/flash/config_slot_
 
 $(dfu_targets): DFUFLAGS += --custom
 
+$(dfu_targets): NO_BOOTLOADER = $(findstring noboot,$@)
+
 $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
-	$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 bootloader.elf
+	$(if $(findstring noboot,$@),,$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 bootloader.elf)
 	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.A.elf
 	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.B.elf
 	$(MAKE) FIRMWARE_COMPONENT=userland userland$(USERLAND_STEM).A.elf
 	$(MAKE) FIRMWARE_COMPONENT=userland userland$(USERLAND_STEM).B.elf
 	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
-	  $(subst $(FIRMWARE_COMPONENT),bootloader,$(subst debug,release,$(BUILD_DIR)))/bootloader.elf \
+	  $(if $(findstring noboot,$@),,$(subst $(FIRMWARE_COMPONENT),bootloader,$(subst debug,release,$(BUILD_DIR)))/bootloader.elf) \
 	  $(subst $(FIRMWARE_COMPONENT),userland,$(BUILD_DIR))/userland$(USERLAND_STEM).A.elf \
 	  $(subst $(FIRMWARE_COMPONENT),kernel,$(subst debug,release,$(BUILD_DIR)))/kernel.A.elf \
 	  $(subst $(FIRMWARE_COMPONENT),userland,$(BUILD_DIR))/userland$(USERLAND_STEM).B.elf \

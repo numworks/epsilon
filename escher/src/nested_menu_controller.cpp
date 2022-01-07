@@ -163,9 +163,6 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(rowIndex) == k_leafCellType) {
     return selectLeaf(rowIndex);
   }
-  if (event == Ion::Events::Toolbox) {
-    return returnToRootMenu();
-  }
 
   return false;
 }

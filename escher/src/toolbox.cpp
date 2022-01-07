@@ -43,6 +43,13 @@ int Toolbox::typeAtIndex(int index) {
   return k_nodeCellType;
 }
 
+bool Toolbox::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Toolbox) {
+    return returnToRootMenu();
+  }
+  return NestedMenuController::handleEvent(event);
+}
+
 bool Toolbox::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
   assert(typeAtIndex(selectedRow) == k_nodeCellType);

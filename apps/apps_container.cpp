@@ -202,6 +202,7 @@ typedef void (*ExternalAppMain)();
 
 void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
   // TODO: should we set stricter MPU bounds?
+  Container::switchToBuiltinApp(nullptr);
   reloadTitleBarView();
   Ion::Events::setSpinner(false);
   ExternalAppMain appStart = reinterpret_cast<ExternalAppMain>(app.entryPoint());

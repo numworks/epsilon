@@ -15,8 +15,10 @@ public:
   bool isValid() const {
     if (m_storageAddressRAM == nullptr
       || m_storageSizeRAM == 0
-      || m_storageAddressFlashStart == nullptr
-      || m_storageAddressFlashEnd == nullptr
+      || m_externalAppsFlashStart == nullptr
+      || m_externalAppsFlashEnd == nullptr
+      || m_externalAppsRAMStart == nullptr
+      || m_externalAppsRAMEnd == nullptr
       || m_header != Magic
       || m_footer != Magic) {
       return false;
@@ -26,17 +28,19 @@ public:
   const char * expectedEpsilonVersion() const {
     assert(m_storageAddressRAM != nullptr);
     assert(m_storageSizeRAM != 0);
-    assert(m_storageAddressFlashStart != nullptr);
-    assert(m_storageAddressFlashEnd != nullptr);
+    assert(m_externalAppsFlashStart != nullptr);
+    assert(m_externalAppsFlashEnd != nullptr);
+    assert(m_externalAppsRAMStart != nullptr);
+    assert(m_externalAppsRAMEnd != nullptr);
     assert(m_header == Magic);
     assert(m_footer == Magic);
     return m_expectedEpsilonVersion;
   }
-  void * storageAddressFlash() const {
-    return m_storageAddressFlashStart;
+  void * externalAppsAddressFlash() const {
+    return m_externalAppsFlashStart;
   }
-  size_t storageSizeFlash() const {
-    return static_cast<uint8_t *>(m_storageAddressFlashEnd) - static_cast<uint8_t *>(m_storageAddressFlashStart);
+  size_t externalAppsSizeFlash() const {
+    return static_cast<uint8_t *>(m_externalAppsFlashEnd) - static_cast<uint8_t *>(m_externalAppsFlashStart);
   }
 private:
   constexpr static uint32_t Magic = 0xDEC0EDFE;
@@ -44,10 +48,12 @@ private:
   const char m_expectedEpsilonVersion[8];
   void * m_storageAddressRAM;
   size_t m_storageSizeRAM;
-  /* We store the range addresses of flash storage because storing the size is
-   * complicated due to c++11 constexpr. */
-  void * m_storageAddressFlashStart;
-  void * m_storageAddressFlashEnd;
+  /* We store the range addresses of external apps memory because storing the
+   * size is complicated due to c++11 constexpr. */
+  void * m_externalAppsFlashStart;
+  void * m_externalAppsFlashEnd;
+  void * m_externalAppsRAMStart;
+  void * m_externalAppsRAMEnd;
   uint32_t m_footer;
 };
 

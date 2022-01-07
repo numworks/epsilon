@@ -16,15 +16,15 @@ bool ForbiddenSector(int i) {
      * - the external apps section of both slots
      * - the whole other slot. */
     int firstForbiddenSector = SectorAtAddress(reinterpret_cast<uint32_t>(Board::kernelHeader()));
-    int lastForbiddenSector = SectorAtAddress(reinterpret_cast<uint32_t>(Board::userlandHeader()->storageAddressFlash()));
+    int lastForbiddenSector = SectorAtAddress(reinterpret_cast<uint32_t>(Board::userlandHeader()->externalAppsAddressFlash()));
     return i >= firstForbiddenSector && i < lastForbiddenSector;
   }
   /* Non-authenticated userland can write:
    * - the external apps section of the running slot,
    * - the persisting bytes section of the running slot. */
-  uint32_t storageAddress = reinterpret_cast<uint32_t>(Board::userlandHeader()->storageAddressFlash());
+  uint32_t storageAddress = reinterpret_cast<uint32_t>(Board::userlandHeader()->externalAppsAddressFlash());
   int firstSectorExternalApps = SectorAtAddress(storageAddress);
-  int lastSectorExternalApps = SectorAtAddress(storageAddress + Board::userlandHeader()->storageSizeFlash());
+  int lastSectorExternalApps = SectorAtAddress(storageAddress + Board::userlandHeader()->externalAppsSizeFlash());
   // We add the persisting bytes sector
   int lastAuthorizedSector = lastSectorExternalApps + 1;
   return !(i >= firstSectorExternalApps && i <= lastAuthorizedSector);

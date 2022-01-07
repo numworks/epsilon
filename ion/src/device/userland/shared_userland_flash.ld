@@ -63,8 +63,8 @@ SECTIONS {
     INCLUDE flash/signature.ld
   } >FLASH_USERLAND
 
-  .storage_flash : {
-    INCLUDE flash/storage.ld
+  .external_apps : {
+    INCLUDE flash/external_apps.ld
   } >FLASH_USERLAND
 
   .bss : {
@@ -83,19 +83,19 @@ SECTIONS {
     /* The compiler may choose to allocate uninitialized global variables as
      * COMMON blocks. This can be disabled with -fno-common if needed. */
     *(COMMON)
-    _app_sandbox_start = .;
+    _external_apps_RAM_start = .;
     KEEP(*(.bss.$app_buffer))
     _bss_section_end_ram = .;
     *(.bss.*)
     _bss_section_assert_end_ram = .;
-    ASSERT (( _bss_section_end_ram == _bss_section_assert_end_ram), ".bss.$app_buffer section should be the last symbol of bss to be included in the app sandbox range.");
+    ASSERT (( _bss_section_end_ram == _bss_section_assert_end_ram), ".bss.$app_buffer section should be the last symbol of bss to be included in the external apps RAM range.");
   } >SRAM
 
   .heap : {
     _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
     . = (ORIGIN(SRAM) + LENGTH(SRAM) - USERLAND_STACK_LENGTH);
-    _app_sandbox_end = .;
+    _external_apps_RAM_end = .;
     _heap_end = .;
   } >SRAM
 

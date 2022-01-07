@@ -18,7 +18,7 @@ static inline uint32_t addressOfFunction(int index) {
   uint32_t slotStart = (uint32_t)programCounter & (~(0x400000 - 1));
   // Find the trampoline address start
   uint32_t kernelSize = 0x10000;
-  uint32_t userlandHeaderSize = 4 + 8 + 4 + 4 + 4 + 4 + 4;
+  uint32_t userlandHeaderSize = 4 + 8 + 4 + 4 + 4 + 4 + 4 + 4 + 4;
   uint32_t isrOffset = 4 + 4;
   uint32_t trampolineFunctionStart = slotStart + kernelSize + userlandHeaderSize + isrOffset;
   return trampolineFunctionStart + index * 4;

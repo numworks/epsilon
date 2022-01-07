@@ -68,14 +68,14 @@ bool Store::scrollToSelectedBarIndex(int series, int index) {
   float range = windowRange/(1+k_displayLeftMarginRatio+k_displayRightMarginRatio);
   if (xMin() + k_displayLeftMarginRatio*range > startSelectedBar) {
     // Only update the grid unit when setting xMax
-    MemoizedCurveViewRange::protectedSetXMin(startSelectedBar - k_displayLeftMarginRatio*range, INFINITY, INFINITY, false);
-    MemoizedCurveViewRange::protectedSetXMax(xMin() + windowRange);
+    setHistogramXMin(startSelectedBar - k_displayLeftMarginRatio*range, false);
+    setHistogramXMax(xMin() + windowRange, true);
     return true;
   }
   float endSelectedBar = endOfBarAtIndex(series, index);
   if (endSelectedBar > xMax() - k_displayRightMarginRatio*range) {
-    MemoizedCurveViewRange::protectedSetXMax(endSelectedBar + k_displayRightMarginRatio*range, INFINITY, INFINITY, false);
-    MemoizedCurveViewRange::protectedSetXMin(xMax() - windowRange);
+    setHistogramXMax(endSelectedBar + k_displayRightMarginRatio*range, false);
+    setHistogramXMin(xMax() - windowRange, true);
     return true;
   }
   return false;

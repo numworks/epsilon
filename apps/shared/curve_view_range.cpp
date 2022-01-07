@@ -21,6 +21,8 @@ float CurveViewRange::computeGridUnit(float minNumberOfUnits, float maxNumberOfU
   int b = 0;
   constexpr int unitsCount = 3;
   float units[unitsCount] = {k_smallGridUnitMantissa, k_mediumGridUnitMantissa, k_largeGridUnitMantissa};
+  // An infinite range would return an exponentBase10 of 39 and a null gridUnit
+  assert(range > 0.0f && std::isfinite(range));
   for (int k = 0; k < unitsCount; k++) {
     float currentA = units[k];
     int b1 = Poincare::IEEE754<float>::exponentBase10(range/(currentA*maxNumberOfUnits));

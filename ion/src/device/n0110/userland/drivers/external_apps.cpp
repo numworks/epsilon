@@ -8,8 +8,8 @@
 #endif
 
 extern "C" {
-  extern uint8_t _storage_flash_start;
-  extern uint8_t _storage_flash_end;
+  extern uint8_t _external_apps_flash_start;
+  extern uint8_t _external_apps_flash_end;
 }
 
 namespace Ion {
@@ -34,7 +34,7 @@ App::App(uint8_t * a) : m_startAddress(a) {
 }
 
 bool addressWithinExternalAppsSection(const uint8_t * address) {
-  return address >= &_storage_flash_start && address < &_storage_flash_end;
+  return address >= &_external_apps_flash_start && address < &_external_apps_flash_end;
 }
 
 uint8_t * App::addressAtIndexInAppInfo(int index) const {
@@ -111,7 +111,7 @@ AppIterator & AppIterator::operator++() {
   m_currentAddress += sizeOfCurrentApp;
   // Find the next address aligned on external apps sector size
   m_currentAddress = nextSectorAlignedAddress(m_currentAddress);
-  if (m_currentAddress < &_storage_flash_start || m_currentAddress + k_minAppSize > &_storage_flash_end || !App::appAtAddress(m_currentAddress)) {
+  if (m_currentAddress < &_external_apps_flash_start || m_currentAddress + k_minAppSize > &_external_apps_flash_end || !App::appAtAddress(m_currentAddress)) {
     m_currentAddress = nullptr;
   }
   return *this;
@@ -120,7 +120,7 @@ AppIterator & AppIterator::operator++() {
 bool s_externalAppsVisible = false;
 
 AppIterator Apps::begin() const {
-  uint8_t * storageStart = &_storage_flash_start;
+  uint8_t * storageStart = &_external_apps_flash_start;
   assert(nextSectorAlignedAddress(storageStart) == storageStart);
   if (!s_externalAppsVisible || !App::appAtAddress(storageStart)) {
     return end();

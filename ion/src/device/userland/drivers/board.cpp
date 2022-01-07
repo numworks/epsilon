@@ -2,8 +2,8 @@
 #include <userland/drivers/svcall.h>
 
 extern "C" {
-extern uint8_t _app_sandbox_start;
-extern uint8_t _app_sandbox_end;
+extern char _external_apps_RAM_start;
+extern char _external_apps_RAM_end;
 }
 
 namespace Ion {
@@ -19,8 +19,8 @@ void SVC_ATTRIBUTES enableExternalApps() {
 }
 
 void appSandboxRange(uint32_t * start, uint32_t * end) {
-  *start = reinterpret_cast<uint32_t>(&_app_sandbox_start);
-  *end = reinterpret_cast<uint32_t>(&_app_sandbox_end);
+  *start = reinterpret_cast<uint32_t>(&_external_apps_RAM_start);
+  *end = reinterpret_cast<uint32_t>(&_external_apps_RAM_end);
 }
 
 }

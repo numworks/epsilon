@@ -7,8 +7,10 @@
 #endif
 
 extern "C" {
-extern char _storage_flash_start;
-extern char _storage_flash_end;
+extern char _external_apps_flash_start;
+extern char _external_apps_flash_end;
+extern char _external_apps_RAM_start;
+extern char _external_apps_RAM_end;
 }
 
 namespace Ion {
@@ -24,8 +26,10 @@ constexpr UserlandHeader::UserlandHeader() :
   m_expectedEpsilonVersion{EPSILON_VERSION},
   m_storageAddressRAM(storageAddress),
   m_storageSizeRAM(Ion::Storage::k_storageSize),
-  m_storageAddressFlashStart(&_storage_flash_start),
-  m_storageAddressFlashEnd(&_storage_flash_end),
+  m_externalAppsFlashStart(&_external_apps_flash_start),
+  m_externalAppsFlashEnd(&_external_apps_flash_end),
+  m_externalAppsRAMStart(&_external_apps_RAM_start),
+  m_externalAppsRAMEnd(&_external_apps_RAM_end),
   m_footer(Magic) { }
 
 constexpr UserlandHeader __attribute__((section(".userland_header"),used)) k_userlandHeader;

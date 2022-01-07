@@ -69,7 +69,7 @@ bool Toolbox::returnToRootMenu() {
 }
 
 const ToolboxMessageTree * Toolbox::messageTreeModelAtIndex(int index) const {
-  assert(index >= 0);
+  assert(index >= 0 && index < m_messageTreeModel->numberOfChildren());
   const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));
   if (messageTree->isFork()) {
     messageTree = static_cast<const ToolboxMessageTree *>(messageTree->childAtIndex(indexAfterFork()));

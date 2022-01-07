@@ -19,7 +19,7 @@ public:
   void buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth);
 protected:
   const Escher::ToolboxMessageTree * messageTreeModelAtIndex(int index) const override {
-    assert(index >= addedCellsAtRoot());
+    assert(index >= addedCellsAtRoot() && index - addedCellsAtRoot() < m_messageTreeModel->numberOfChildren());
     return MathToolbox::messageTreeModelAtIndex(index - addedCellsAtRoot());
   }
   int controlChecksum() const override;

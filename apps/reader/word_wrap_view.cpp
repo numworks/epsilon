@@ -14,15 +14,20 @@ WordWrapTextView::WordWrapTextView() :
   m_pageOffset(0),
   m_nextPageOffset(0),
   m_length(0),
-  m_isRichTextFile(false) // Value isn't important, it will change when the file is loaded
+  m_isRichTextFile(false), // Value isn't important, it will change when the file is loaded
+  m_lastPagesOffsetsIndex(0)
 {
-  
+  for (int i = 0; i < k_lastOffsetsBufferSize; i++) {
+    m_lastPagesOffsets[i] = -1; // -1 Means : no informations
+  }
 }
 
 void WordWrapTextView::nextPage() {
   if(m_nextPageOffset >= m_length) {
     return;
   }
+  m_lastPagesOffsets[m_lastPagesOffsetsIndex] = m_pageOffset;
+  m_lastPagesOffsetsIndex = (m_lastPagesOffsetsIndex + 1) % k_lastOffsetsBufferSize;
   m_pageOffset = m_nextPageOffset;
   markRectAsDirty(bounds());
 }
@@ -38,223 +43,342 @@ void WordWrapTextView::previousPage() {
     return;
   }
 
+  /* We check if we have available data in our buffer */
+  int offsetToCheck = (m_lastPagesOffsetsIndex + k_lastOffsetsBufferSize - 1) % k_lastOffsetsBufferSize;
+  if (m_lastPagesOffsets[offsetToCheck] != -1) {
+    m_lastPagesOffsetsIndex = offsetToCheck;
+    m_pageOffset = m_lastPagesOffsets[offsetToCheck];
+    m_lastPagesOffsets[offsetToCheck] = -1;
+    markRectAsDirty(bounds());
+    return;
+  }
+
   const int charWidth = m_font->glyphSize().width();
   const int charHeight = m_font->glyphSize().height();
 
-  const char * endOfFile = text() + m_length;
-  const char * endOfWord = text() + m_pageOffset;
-  const char * startOfWord = StartOfPrintableWord(endOfWord, text());
+  const char * endOfWord = text() + m_pageOffset - 1;
 
-  KDSize textSize = KDSizeZero;
+  KDCoordinate baseline = charHeight;
 
-  KDPoint textEndPosition(m_frame.width() - k_margin, m_frame.height() - k_margin);
+  KDPoint textBottomEndPosition = KDPoint(m_frame.width() - k_margin, m_frame.height() - k_margin);
+  KDCoordinate lineHeight = charHeight;
 
-  while(startOfWord>=text()) {
-    startOfWord = StartOfPrintableWord(endOfWord-1, text());
-    //endOfWord = EndOfPrintableWord(startOfWord, endOfFile);
+  while(endOfWord >= text()) {
+    // 1. Skip whitespaces and line jumps
+    while(endOfWord >= text() && (*endOfWord == ' ' || *endOfWord == '\n')) {
+      if(*endOfWord == '\n') {
+        textBottomEndPosition = KDPoint(m_frame.width() - k_margin, textBottomEndPosition.y() - lineHeight);
+        lineHeight = charHeight;
+        // We check if we must change page
+        if (textBottomEndPosition.y() - lineHeight <= k_margin) {
+          break;
+        }
+      } else {
+        textBottomEndPosition = KDPoint(textBottomEndPosition.x() - charWidth, textBottomEndPosition.y());
+      }
+      endOfWord--;
+    }
 
-    if (*startOfWord == '%') {
+    // 3. If word is a color change
+    if (*endOfWord == '%' && *(endOfWord - 1) != '\\') {
+      const char * startOfWord = endOfWord - 2;
+      while (*startOfWord != '%') {
+        startOfWord--;
+      }
+
       if (updateTextColorBackward(startOfWord)) {
-        endOfWord = startOfWord - 1;
+        endOfWord = startOfWord - 1; // Update next endOfWord
         continue;
+      } else {
+        // TODO: print error
       }
     }
 
-    if (*endOfWord == '$') {
-      startOfWord = endOfWord - 1;
-      while (*startOfWord != '$') {
-        if (startOfWord < text()) {
+    KDSize textSize = KDSizeZero;
+
+    // 4. If word is a mathematical expression
+    if (*endOfWord == '$' && *(endOfWord - 1) != '\\') {
+      // We go to the end  of the expression + 1
+      const char * expressionStart = --endOfWord;
+      while (*expressionStart != '$') {
+        if (expressionStart < text()) {
           break; // File isn't rightly formated
         }
-        startOfWord --;
+        expressionStart ++;
       }
-      startOfWord --;
 
-      TexParser parser = TexParser(startOfWord + 1, endOfWord - 2);
-      Poincare::Layout layout = parser.getLayout();
-      textSize = layout.layoutSize(); 
+      TexParser parser = TexParser(expressionStart, endOfWord);
+      Layout layout = parser.getLayout();
+
+      KDCoordinate layoutBaseline = layout.baseline();
+
+      // We check if we must change baseline
+      if (layoutBaseline > baseline) {
+        baseline = layoutBaseline;
+      }
+
+      KDSize layoutSize = layout.layoutSize();
+      textSize = KDSize(layoutSize.width(), layoutSize.height() + baseline - layoutBaseline);
+
+      endOfWord = expressionStart;
     }
+
+    // 5. Else it's text
     else {
-      if (*startOfWord == '\\' || *(startOfWord + 1) == '$') {
-        textSize = m_font->stringSizeUntil(startOfWord + 1, endOfWord);
+      // We go to the start of the word
+      const char * startOfWord = StartOfPrintableWord(endOfWord, text());
+
+      textSize = m_font->stringSizeUntil(startOfWord, endOfWord + 1);
+
+      endOfWord = startOfWord;
+    }
+
+    // 6. We check if we must change line
+    if (textBottomEndPosition.x() - textSize.width() <= k_margin) {
+      textBottomEndPosition = KDPoint(m_frame.width() - k_margin, textBottomEndPosition.y() - lineHeight);
+      lineHeight = 0;
+      // We will check if we must change page below
+    }
+    textBottomEndPosition = KDPoint(textBottomEndPosition.x() - textSize.width(), textBottomEndPosition.y());
+    
+    // 7. We update height of the line if needed
+    if (textSize.height() > lineHeight) {
+      lineHeight = textSize.height();
+      // We check if we must change page
+      if (textBottomEndPosition.y() - lineHeight <= k_margin) {
+        break;
       }
-      else {
-        textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
-      }
-    }
-    KDPoint textStartPosition = KDPoint(textEndPosition.x()-textSize.width(), textEndPosition.y());
-
-    if(textStartPosition.x() < k_margin) {
-      textEndPosition = KDPoint(m_frame.width() - k_margin, textEndPosition.y() - charHeight);
-      textStartPosition = KDPoint(textEndPosition.x() - textSize.width(), textEndPosition.y());
-    }
-    if(textEndPosition.y() - textSize.height() < k_margin) {
-      break;
     }
 
-    --startOfWord;
-    while(startOfWord >= text() && (*startOfWord == ' ' || *startOfWord == '\n')) {
-      if(*startOfWord == ' ') {
-        textStartPosition = KDPoint(textStartPosition.x() - charWidth, textStartPosition.y());
-      }
-      else {
-        textStartPosition = KDPoint(m_frame.width() - k_margin, textStartPosition.y() - charHeight);
-      }
-      --startOfWord;
-    }
-
-    if(textStartPosition.y() < k_margin) { // If out of page, quit
-      break;
-    }
-
-    if(textStartPosition.y() != textEndPosition.y()) { // If line changed, x is at start of line 
-      textStartPosition = KDPoint(m_frame.width() - k_margin, textStartPosition.y());
-    }
-    if(textStartPosition.x() < k_margin) { // Go to line if left overflow
-      textStartPosition = KDPoint(m_frame.width() - k_margin, textStartPosition.y() - charHeight);
-    }
-
-    textEndPosition = textStartPosition;
-    endOfWord = startOfWord + 1;
+    endOfWord -= 1;
   }
-  if(startOfWord + 1 == text()) {
-    m_pageOffset = 0;
+
+  if (endOfWord + 1 == text()) {
+      m_pageOffset = 0;
+  } else {
+      m_pageOffset = endOfWord - text();
   }
-  else {
-    m_pageOffset = EndOfPrintableWord(startOfWord, endOfFile) - text() + 1;
-  }
+
+  // Because we ask for a redraw, m_endTextPosition must auto update at the bottom of drawRect...
   markRectAsDirty(bounds());
 }
 
 void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, bounds().width(), bounds().height()), m_backgroundColor);
 
-  const char * endOfFile = text() + m_length;
-  const char * startOfWord = text() + m_pageOffset;
-  const char * endOfWord;
-  
-  if (*startOfWord != '$') {
-    endOfWord = EndOfPrintableWord(startOfWord, endOfFile);
-  } // Else we don't need to update endOfWord
-
-  KDPoint textPosition(k_margin, k_margin);
-
-  const int wordMaxLength = 128;
-  char word[wordMaxLength];
-
-  Poincare::Layout layout;
-
   enum class ToDraw {
     Text,
-    Expression,
-    Nothing
+    Expression
   };
 
-  ToDraw toDraw = ToDraw::Text;
+  bool endOfPage = false;
+
+  const char * endOfFile = text() + m_length;
+  const char * startOfWord = text() + m_pageOffset;
 
   const int charWidth = m_font->glyphSize().width();
   const int charHeight = m_font->glyphSize().height();
 
-  int nextLineOffset = charHeight;
+  const int wordMaxLength = (m_frame.width() - 2*k_margin )  / charWidth;
+  char word[wordMaxLength];
 
-  KDSize textSize = KDSizeZero;
+  Layout layout;
 
+  KDPoint textPosition = KDPoint(k_margin, k_margin);
+  
+  while (!endOfPage && startOfWord < endOfFile) {
+    // We process line by line
 
-  while(startOfWord < endOfFile) {
+    const char * firstReadIndex = startOfWord;
 
-    if (*startOfWord == '%') { // Look for color keyword (ex '%bl%')
-      if (updateTextColorForward(startOfWord)) {
-        startOfWord = endOfWord + 1;
-        endOfWord = EndOfPrintableWord(startOfWord, endOfFile);
+    // 1. We compute the size of what we are going to draw and the baseline
+    KDSize lineSize = KDSize(0, charHeight);
+    KDCoordinate baseline = charHeight / 2;
+
+    while (firstReadIndex < endOfFile) {
+      
+      KDSize textSize = KDSizeZero;
+
+      // 1.1. And we check if we are at the end of the line
+      if(*firstReadIndex == '\n') {
+        break;
+      }
+
+      // 1.2. Check if we are in a color change
+      if (*firstReadIndex == '%') {  // We assume each '%' non-escaped is announcing a color change // TODO : check file is rightly formated
+        // We go to the end of the color change + 1
+        do {
+          firstReadIndex ++;
+        } while (*firstReadIndex != '%');
+        firstReadIndex ++;
         continue;
       }
+
+      // 1.3. Check if we are in a math expression
+      if (*firstReadIndex == '$') {
+        // We go to the end  of the expression + 1
+        const char * expressionStart = ++firstReadIndex;
+        while (*firstReadIndex != '$') {
+          if (firstReadIndex > endOfFile) {
+            break; // File isn't rightly formated
+          }
+          firstReadIndex ++;
+        }
+
+        TexParser parser = TexParser(expressionStart, firstReadIndex);
+        Layout layout = parser.getLayout();
+
+        KDCoordinate layoutBaseline = layout.baseline();
+        // We check if we must change baseline
+        if (layoutBaseline > baseline) {
+          baseline = layoutBaseline;
+        }
+
+        KDSize layoutSize = layout.layoutSize();
+        textSize = KDSize(layoutSize.width(), layoutSize.height() + baseline - layoutBaseline);
+
+        firstReadIndex ++;
+      }
+
+      // 1.4. Else it's text
+      else {
+        if ((*firstReadIndex == '\\' && *(firstReadIndex + 1) == '$') || (*firstReadIndex == '\\' && *(firstReadIndex + 1) == '%')) { // We escape '$' and '%' if needed
+          firstReadIndex ++;
+        }
+
+        const char * endOfWord = EndOfPrintableWord(firstReadIndex + 1, endOfFile);
+        
+        textSize = m_font->stringSizeUntil(firstReadIndex, endOfWord);
+        
+        firstReadIndex = endOfWord;
+      }
+
+      // 1.5. We update size
+      int newWidth = lineSize.width() + textSize.width();
+      // We check if the new text fit on the line
+      if (newWidth > m_frame.width() - 2 * k_margin) {
+        break;
+      }
+
+      int newHeight;
+      if (lineSize.height() > textSize.height()) {
+        newHeight = lineSize.height();
+      } else {
+        newHeight = textSize.height();
+        // We check if all the content can be displayed
+        if (textPosition.y() + newHeight > bounds().height() -  k_margin) {
+          endOfPage = true;
+          break;
+        }
+      }
+      lineSize = KDSize(lineSize.width() + textSize.width(), newHeight);
+
+      // 1.6. We go to the next word
+      while (*firstReadIndex == ' ') {
+        lineSize = KDSize(lineSize.width() + charWidth, lineSize.height());
+        ++firstReadIndex;
+      }
     }
 
-    if (*startOfWord == '$') { // Look for expression
-      endOfWord = startOfWord + 1;
-      while (*endOfWord != '$') {
-        if (endOfWord > endOfFile) {
-          break; // If we are here, it's bad...
+    if (endOfPage) {
+      break;
+    }
+
+    // 2. And now... we read the line again to draw it !
+    while (startOfWord < endOfFile) {
+
+      //2.1. We check if we are at the end of the line
+      if (*startOfWord == '\n') {
+        startOfWord++; 
+        textPosition = KDPoint(k_margin, textPosition.y() + lineSize.height());
+        break;
+        // We aren't supposed to be at the end of the page, else the loop on top would have stopped drawing
+      }
+
+
+      const char * endOfWord;
+      
+      // 2.2. Check if we are in a color change
+      if (*startOfWord == '%') {
+        if (updateTextColorForward(startOfWord)) {
+          startOfWord += 2;  // We can add at least 2 ('%' + the color first char)
+          while (*startOfWord != '%') {
+            startOfWord ++;
+          }
+          startOfWord ++;
+          continue;
+        }
+        else {
+          // TODO: Print exception
+        }
+      }
+
+      // 2.3. Check what we are going to draw and his size
+
+      KDSize textSize = KDSizeZero;
+      ToDraw toDraw;
+
+      // 2.3.1. Check if we are in a math expression
+      if (*startOfWord == '$') {
+        endOfWord = startOfWord + 1;
+        while (*endOfWord != '$') {
+          if (endOfWord > endOfFile) {
+            break; // File isn't rightly formated
+          }
+          endOfWord ++;
         }
         endOfWord ++;
+
+        TexParser parser = TexParser(startOfWord + 1, endOfWord - 1);
+        layout = parser.getLayout();
+        textSize = layout.layoutSize();
+
+        toDraw = ToDraw::Expression;
       }
-      endOfWord ++;
 
-      TexParser parser = TexParser(startOfWord + 1, endOfWord - 1);
-      layout = parser.getLayout();
-      textSize = layout.layoutSize();
-      toDraw = ToDraw::Expression;
-    }
-    else {
-      if (*startOfWord == '\\' || *(startOfWord + 1) == '$') {
-        startOfWord ++;
+      // 2.3.2 Else it's text
+      else {
+        if ((*startOfWord == '\\' && *(startOfWord + 1) == '$') || (*startOfWord == '\\' && *(startOfWord + 1) == '%')) {
+          startOfWord ++;
+        }
+        endOfWord = EndOfPrintableWord(startOfWord + 1, endOfFile);
+        textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
+        stringNCopy(word, wordMaxLength, startOfWord, endOfWord-startOfWord);
+        toDraw = ToDraw::Text;
       }
-      textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
-      stringNCopy(word, wordMaxLength, startOfWord, endOfWord-startOfWord);
-      toDraw = ToDraw::Text;
-    }
 
-    KDPoint nextTextPosition = KDPoint(textPosition.x()+textSize.width(), textPosition.y());
-    
-    if(nextTextPosition.x() > m_frame.width() - k_margin) { // Right overflow
-      textPosition = KDPoint(k_margin, textPosition.y() + nextLineOffset);
-      nextTextPosition = KDPoint(k_margin + textSize.width(), textPosition.y());
-      nextLineOffset = charHeight;
-    }
-    if (nextLineOffset < textSize.height()) {
-      nextLineOffset = textSize.height();
-    }
+      // 2.4 We decide where to draw and if we must change line
+      KDPoint endTextPosition = KDPoint(textPosition.x() + textSize.width(), textPosition.y());
+      
+      // 2.4.1. Check if we need to go to the next line
+      if(endTextPosition.x() > m_frame.width() - k_margin) {
+        textPosition = KDPoint(k_margin, textPosition.y() + lineSize.height());
+        break;
+      }
 
-    if(textPosition.y() + textSize.height() > m_frame.height() - k_margin) { // Bottom overflow
-      break;
-    }
-
-    if (toDraw == ToDraw::Expression) {
-      layout.draw(ctx, textPosition, m_textColor, m_backgroundColor);
-    }
-    else if (toDraw == ToDraw::Text) {
-      ctx->drawString(word, textPosition, m_font, m_textColor, m_backgroundColor);
-    }
-
-    while(*endOfWord == ' ' || *endOfWord == '\n') {
-      if(*endOfWord == ' ') {
-        nextTextPosition = KDPoint(nextTextPosition.x() + charWidth, nextTextPosition.y());
+      // 2.5. Now we draw !
+      if (toDraw == ToDraw::Expression) {
+        KDPoint position = KDPoint(textPosition.x(), textPosition.y() + baseline - layout.baseline());
+        layout.draw(ctx, position, m_textColor, m_backgroundColor);
       }
       else {
-        nextTextPosition = KDPoint(k_margin, nextTextPosition.y() + nextLineOffset);
-        nextLineOffset = charHeight;
+        KDPoint position = KDPoint(textPosition.x(), textPosition.y() + baseline - charHeight / 2);
+        ctx->drawString(word, position, m_font, m_textColor, m_backgroundColor);
       }
-      ++endOfWord;
-    }
 
-    //We must change value of startOfWord now to avoid having
-    //two times the same word if the break below is used
-    startOfWord = endOfWord;
+      // 2.6. Update the position
+      textPosition = endTextPosition;
 
-    if (endOfWord >= endOfFile) {
-      break;
-    }
-
-    if(nextTextPosition.y() + textSize.height() > m_frame.height() - k_margin) { // If out of page, quit
-      break;
-    }
-    if(nextTextPosition.y() != textPosition.y()) { // If line changed, x is at start of line 
-      nextTextPosition = KDPoint(k_margin, nextTextPosition.y());
-    }
-    if(nextTextPosition.x() > m_frame.width() - k_margin) { // Go to line if right overflow
-      nextTextPosition = KDPoint(k_margin, nextTextPosition.y() + nextLineOffset);
-      nextLineOffset = charHeight;
-    }
-
-    textPosition = nextTextPosition;
-
-    if (*startOfWord != '$') {
-      endOfWord = EndOfPrintableWord(startOfWord+1, endOfFile);
-    } // Else we don't need to update endOfWord
+      // 2.7. And we go to the next word
+      while (*endOfWord == ' ') {
+        endOfWord++;
+        textPosition = KDPoint(textPosition.x() + charWidth, textPosition.y());
+      }
+      startOfWord = endOfWord;
+    } 
   }
-
   m_nextPageOffset = startOfWord - text();
-};
+}
 
 BookSave WordWrapTextView::getBookSave() const {
   return {
@@ -270,9 +394,9 @@ void WordWrapTextView::setBookSave(BookSave save) {
 
 bool WordWrapTextView::updateTextColorForward(const char * colorStart) const {
 
-  if (*(colorStart + 1) == '\\') {
+  if (*(colorStart + 1) == '\\' && (*(colorStart + 3) == '%' || *(colorStart + 4) == '%')) {
     m_textColor = Palette::PrimaryText;
-    return (*(colorStart + 3) == '%' || *(colorStart + 4) == '%');
+    return true;
   }
 
   int keySize = 1;

@@ -117,7 +117,7 @@ const char * EndOfPrintableWord(const char * word, const char * end) {
   UTF8Decoder decoder(word);
   CodePoint codePoint = decoder.nextCodePoint();
   const char * result = word;
-  while (codePoint != '\n' && codePoint != ' ' && codePoint != '%' && codePoint != '$') {
+  while (codePoint != '\n' && codePoint != ' ' && codePoint != '%' && codePoint != '$' && codePoint != '\\') {
     result = decoder.stringPosition();
     if (result >= end) {
       break;

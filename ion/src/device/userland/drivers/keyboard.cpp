@@ -4,12 +4,20 @@
 namespace Ion {
 namespace Keyboard {
 
-State SVC_ATTRIBUTES scan() {
-  SVC_RETURNING_STASH_ADDRESS_IN_R0(SVC_KEYBOARD_SCAN, State)
+uint64_t SVC_ATTRIBUTES privateScan() {
+  SVC_RETURNING_R0R1(SVC_KEYBOARD_SCAN, State)
 }
 
-State SVC_ATTRIBUTES popState() {
-  SVC_RETURNING_STASH_ADDRESS_IN_R0(SVC_KEYBOARD_POP_STATE, State)
+uint64_t SVC_ATTRIBUTES privatePopState() {
+  SVC_RETURNING_R0R1(SVC_KEYBOARD_POP_STATE, State)
+}
+
+State scan() {
+  return State(privateScan());
+}
+
+State popState() {
+  return State(privatePopState());
 }
 
 }

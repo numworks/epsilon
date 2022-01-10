@@ -13,17 +13,8 @@ Charge SVC_ATTRIBUTES level() {
   SVC_RETURNING_R0(SVC_BATTERY_LEVEL, Charge)
 }
 
-uint32_t SVC_ATTRIBUTES voltage_int() {
-  SVC_RETURNING_R0(SVC_BATTERY_VOLTAGE, uint32_t);
-}
-
-float voltage() {
-  union {
-    volatile float f;
-    volatile uint32_t i;
-  };
-  i = voltage_int();
-  return f;
+float SVC_ATTRIBUTES voltage() {
+  SVC_RETURNING_S0(SVC_BATTERY_VOLTAGE, float);
 }
 
 }

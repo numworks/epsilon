@@ -20,7 +20,6 @@ namespace SVCall {
 
 #define SVC_RETURNING_R0(code, returnType) SVC_RETURNING_SINGLE_REGISTER(code, returnType, "svc %[immediate] ; mov %[returnValue], r0")
 
-/* FIXME This SVCall will always return 0, as the value in s0 is lost on context switch. */
 #define SVC_RETURNING_S0(code, returnType) SVC_RETURNING_SINGLE_REGISTER(code, returnType, "svc %[immediate] ; vmov %[returnValue], s0")
 
 #define SVC_RETURNING_MULTIPLE_REGISTERS(code, returnType, instruction) \

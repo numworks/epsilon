@@ -35,6 +35,9 @@ float NormalDistribution::evaluateAtAbscissa(float x) const {
 }
 
 bool NormalDistribution::authorizedValueAtIndex(double x, int index) const {
+  if (!TwoParameterDistribution::authorizedValueAtIndex(x, index)) {
+    return false;
+  }
   if (index == 0) {
     return true;
   }

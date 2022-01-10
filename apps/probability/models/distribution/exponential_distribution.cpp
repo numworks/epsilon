@@ -41,6 +41,9 @@ float ExponentialDistribution::evaluateAtAbscissa(float x) const {
 }
 
 bool ExponentialDistribution::authorizedValueAtIndex(double x, int index) const {
+  if (!OneParameterDistribution::authorizedValueAtIndex(x, index)) {
+    return false;
+  }
   if (x <= 0.0 || x > 7500.0) {
     return false;
   }

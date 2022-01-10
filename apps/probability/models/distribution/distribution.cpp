@@ -140,4 +140,8 @@ float Distribution::yMin() const {
   return -k_displayBottomMarginRatio * yMax();
 }
 
+bool Distribution::authorizedValueAtIndex(double x, int index) const {
+  return std::isfinite(static_cast<float>(x));
+}
+
 }

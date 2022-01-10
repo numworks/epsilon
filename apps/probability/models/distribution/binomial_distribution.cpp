@@ -50,6 +50,9 @@ float BinomialDistribution::yMax() const {
 
 
 bool BinomialDistribution::authorizedValueAtIndex(double x, int index) const {
+  if (!TwoParameterDistribution::authorizedValueAtIndex(x, index)) {
+    return false;
+  }
   if (index == 0) {
     // n must be a positive integer
     return (x == (int)x) && x >= 0.0;

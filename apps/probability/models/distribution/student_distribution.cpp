@@ -23,6 +23,9 @@ float StudentDistribution::evaluateAtAbscissa(float x) const {
 }
 
 bool StudentDistribution::authorizedValueAtIndex(double x, int index) const {
+  if (!OneParameterDistribution::authorizedValueAtIndex(x, index)) {
+    return false;
+  }
   return x >= DBL_EPSILON && x <= 200.0; // We cannot draw the curve for x > 200 (coefficient() is too small)
 }
 

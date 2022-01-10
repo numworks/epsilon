@@ -66,6 +66,9 @@ float UniformDistribution::evaluateAtAbscissa(float t) const {
 }
 
 bool UniformDistribution::authorizedValueAtIndex(double x, int index) const {
+  if (!TwoParameterDistribution::authorizedValueAtIndex(x, index)) {
+    return false;
+  }
   if (index == 0) {
     return true;
   }

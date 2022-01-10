@@ -100,13 +100,12 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
   }
   m_f = coefficientsX[0].approximateToScalar<double>(context, complexFormat,
                                                      angleUnit);
-  if (!std::isfinite(m_a) || !std::isfinite(m_b) || !std::isfinite(m_c) ||
-      !std::isfinite(m_d) || !std::isfinite(m_e) || !std::isfinite(m_f)) {
+  // Round the coefficients to 0 if they are neglectable against the other ones
+  roundCoefficientsIfNeglectable();
+  if (!isConic()) {
     m_type = Type::Undefined;
     return;
   }
-  // Round the coefficients to 0 if they are neglectable against the other ones
-  roundCoefficientsIfNeglectable();
   // Setting type from a canonic conic is safer.
   canonize();
   updateConicType();
@@ -114,9 +113,7 @@ Conic::Conic(const Expression e, Context * context, const char * x, const char *
 
 void Conic::updateConicType() {
   if (m_type == Type::Unknown) {
-    if ((m_a == 0.0 && m_c == 0.0) ||
-        (m_b == 0.0 &&
-         ((m_a == 0.0 && m_d == 0.0) || (m_c == 0.0 && m_e == 0.0)))) {
+    if (!isConic()) {
       // A conic must have at least 1 squared term, 1 x term and 1 y term.
       m_type = Type::Undefined;
     } else {
@@ -153,6 +150,18 @@ void Conic::multiplyCoefficients(double factor) {
   m_d *= factor;
   m_e *= factor;
   m_f *= factor;
+}
+
+bool Conic::isConic() const {
+  /* Constraints are :
+   * - Coefficients are all finite
+   * - There is at least one squared (A or C) coefficient
+   * - There is at least one x (B, A or D) and one y (B, C or E) coefficient */
+  return std::isfinite(m_a) && std::isfinite(m_b) && std::isfinite(m_c)
+         && std::isfinite(m_d) && std::isfinite(m_e) && std::isfinite(m_f)
+         && (m_a != 0.0 || m_c != 0.0)
+         && (m_b != 0.0
+             || ((m_a != 0.0 || m_d != 0.0) && (m_c != 0.0 || m_e != 0.0)));
 }
 
 bool Conic::isCanonicallyRotated() const {

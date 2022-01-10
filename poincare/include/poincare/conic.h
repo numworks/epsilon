@@ -48,6 +48,8 @@ private:
   void multiplyCoefficients(double factor);
   // Update conic type from parameters
   void updateConicType();
+  // Return true if coefficients are those of a conic
+  bool isConic() const;
   // Return true if conic's coefficients are canonically rotated
   bool isCanonicallyRotated() const;
   // Remove rotation from the parameters (B = 0)

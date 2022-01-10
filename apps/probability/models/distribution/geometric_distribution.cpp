@@ -21,6 +21,9 @@ float GeometricDistribution::yMax() const {
 
 bool GeometricDistribution::authorizedValueAtIndex(double x, int index) const {
   assert(index == 0);
+  if (!OneParameterDistribution::authorizedValueAtIndex(x, index)) {
+    return false;
+  }
   if (x <= 0.0 || x > 1.0) {
     return false;
   }

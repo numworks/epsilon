@@ -31,6 +31,9 @@ float ChiSquaredDistribution::evaluateAtAbscissa(float x) const {
 
 bool ChiSquaredDistribution::authorizedValueAtIndex(double x, int index) const {
   assert(index == 0);
+  if (!OneParameterDistribution::authorizedValueAtIndex(x, index)) {
+    return false;
+  }
   return x > 0.0 && x == (double)((int)x) && x <= k_maxK;
 }
 

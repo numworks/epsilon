@@ -52,6 +52,9 @@ float FisherDistribution::evaluateAtAbscissa(float x) const {
 
 bool FisherDistribution::authorizedValueAtIndex(double x, int index) const {
   assert(index == 0 || index == 1);
+  if (!TwoParameterDistribution::authorizedValueAtIndex(x, index)) {
+    return false;
+  }
   return x > DBL_MIN && x <= k_maxParameter;
 }
 

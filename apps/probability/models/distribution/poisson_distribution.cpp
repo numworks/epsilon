@@ -25,6 +25,9 @@ float PoissonDistribution::yMax() const {
 }
 
 bool PoissonDistribution::authorizedValueAtIndex(double x, int index) const {
+  if (!OneParameterDistribution::authorizedValueAtIndex(x, index)) {
+    return false;
+  }
   if (x <= 0.0 || x > 999.0) {
     return false;
   }

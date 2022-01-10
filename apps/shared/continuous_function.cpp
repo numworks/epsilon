@@ -182,9 +182,13 @@ bool ContinuousFunction::drawDottedCurve() const {
 }
 
 bool ContinuousFunction::isActiveInTable() const {
+  /* In addition to isActive(), a function must not be an inequality, must not
+   * have any vertical lines and must always plot with a single subcurve. */
+  static_assert(PlotType::VerticalLine > PlotType::HorizontalLine, "VerticalLine shouldn't be active in table.");
   return equationType() == Poincare::ExpressionNode::Type::Equal
          && (plotType() <= PlotType::HorizontalLine
-             || plotType() >= PlotType::Polar)
+             || plotType() == PlotType::Polar
+             || plotType() == PlotType::Parametric)
          && isActive();
 }
 

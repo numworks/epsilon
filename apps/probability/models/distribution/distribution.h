@@ -31,7 +31,7 @@ public:
   virtual I18n::Message parameterDefinitionAtIndex(int index) = 0;
   virtual void setParameterAtIndex(double f, int index) = 0;
   virtual float evaluateAtAbscissa(float x) const = 0;
-  virtual bool authorizedValueAtIndex(double x, int index) const = 0;
+  virtual bool authorizedValueAtIndex(double x, int index) const;
   virtual double cumulativeDistributiveFunctionAtAbscissa(double x) const;
   double rightIntegralFromAbscissa(double x) const;
   double finiteIntegralBetweenAbscissas(double a, double b) const;

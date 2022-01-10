@@ -60,8 +60,8 @@ void * const k_SVCallTable[SVC_NUMBER_OF_CALLS] = {
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Flash::EraseSector),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Flash::MassErase),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Flash::WriteMemory),
-  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Keyboard::popState),
-  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Keyboard::scan),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Keyboard::popStateSVC),
+  MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::Keyboard::scanSVC),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::getColor),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::setBlinking),
   MAKE_SVCALL_HANDLER_ENTRY(Ion::Device::LED::setColorSecure),
@@ -115,7 +115,6 @@ template <class T> struct SameType<T,T> { enum{value = true}; };
                 SameType<decltype(&svcallhandler), const char * (*)()>::value || \
                 SameType<decltype(&svcallhandler), bool (*)(int)>::value || \
                 SameType<decltype(&svcallhandler), bool (*)(uint8_t *, const uint8_t *, size_t)>::value || \
-                SameType<decltype(&svcallhandler), Ion::Keyboard::State (*)()>::value || \
                 SameType<decltype(&svcallhandler), KDColor (*)()>::value || \
                 SameType<decltype(&svcallhandler), void (*)(KDColor)>::value || \
                 SameType<decltype(&svcallhandler), void (*)(uint16_t, float)>::value || \
@@ -161,8 +160,8 @@ void * svcallHandler(int svcNumber) {
   ENSURE_SVC_TYPE(SVC_FLASH_ERASE_SECTOR, Ion::Device::Flash::EraseSector)
   ENSURE_SVC_TYPE(SVC_FLASH_MASS_ERASE, Ion::Device::Flash::MassErase)
   ENSURE_SVC_TYPE(SVC_FLASH_WRITE_MEMORY, Ion::Device::Flash::WriteMemory)
-  ENSURE_SVC_TYPE(SVC_KEYBOARD_POP_STATE, Ion::Device::Keyboard::popState)
-  ENSURE_SVC_TYPE(SVC_KEYBOARD_SCAN, Ion::Device::Keyboard::scan)
+  ENSURE_SVC_TYPE(SVC_KEYBOARD_POP_STATE, Ion::Device::Keyboard::popStateSVC)
+  ENSURE_SVC_TYPE(SVC_KEYBOARD_SCAN, Ion::Device::Keyboard::scanSVC)
   ENSURE_SVC_TYPE(SVC_LED_GET_COLOR, Ion::Device::LED::getColor)
   ENSURE_SVC_TYPE(SVC_LED_SET_BLINKING, Ion::Device::LED::setBlinking)
   ENSURE_SVC_TYPE(SVC_LED_SET_COLOR, Ion::Device::LED::setColorSecure)

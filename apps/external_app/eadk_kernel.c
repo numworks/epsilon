@@ -98,11 +98,11 @@ bool SVC_ATTRIBUTES eadk_display_wait_for_vblank() {
 typedef uint64_t eadk_keyboard_state;
 
 eadk_keyboard_state SVC_ATTRIBUTES eadk_keyboard_scan() {
-  SVC_RETURNING_STASH_ADDRESS_IN_R0(SVC_KEYBOARD_SCAN, eadk_keyboard_state)
+  SVC_RETURNING_R0R1(SVC_KEYBOARD_SCAN, eadk_keyboard_state)
 }
 
 eadk_keyboard_state SVC_ATTRIBUTES eadk_keyboard_pop_state() {
-  SVC_RETURNING_STASH_ADDRESS_IN_R0(SVC_KEYBOARD_POP_STATE, eadk_keyboard_state)
+  SVC_RETURNING_R0R1(SVC_KEYBOARD_POP_STATE, eadk_keyboard_state)
 }
 
 void SVC_ATTRIBUTES eadk_timing_usleep(uint32_t us) {

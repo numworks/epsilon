@@ -7,6 +7,14 @@ namespace Ion {
 namespace Device {
 namespace Keyboard {
 
+uint64_t popStateSVC() {
+  return static_cast<uint64_t>(popState());
+}
+
+uint64_t scanSVC() {
+  return static_cast<uint64_t>(scan());
+}
+
 State popState() {
   if (Queue::sharedQueue()->isEmpty()) {
     return State(-1);

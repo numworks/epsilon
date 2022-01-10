@@ -20,6 +20,11 @@ void handleInterruption();
 
 State popState();
 
+/* SVC handlers return basic types to make it easy for external apps to
+ * interface with. */
+uint64_t scanSVC();
+uint64_t popStateSVC();
+
 inline uint8_t rowForKey(Key key) {
   return (int)key/Config::numberOfColumns;
 }

@@ -9,21 +9,27 @@ namespace ExternalFlash {
 TRAMPOLINE_INTERFACE(TRAMPOLINE_EXTERNAL_FLASH_ERASE_SECTOR, PrivateEraseSector, (i), void, int i)
 TRAMPOLINE_INTERFACE(TRAMPOLINE_EXTERNAL_FLASH_WRITE_MEMORY, PrivateWriteMemory, (destination, source, length), void, uint8_t * destination, const uint8_t * source, size_t length)
 
+using namespace Regs;
+
 void MassErase() {
   // Mass erase is not enabled on kernel
   assert(false);
 }
 
 void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
-  //Board::shutdownInterruptions();
+  /* Ideally, we should assert that all interruptions are disables since their
+   * handler code might be located in the external flash. Writing/erasing the
+   * external falsh requires to priorly stop the memory-mapped mode preventing
+   * executing any code living there. In practice, we only assert the the
+   * systick is off because all interruptions are switch on and off at the same
+   * time. */
+  assert(!CORTEX.SYST_CSR()->getTICKINT());
   PrivateWriteMemory(destination, source, length);
-  //Board::initInterruptions();
 }
 
 void EraseSector(int i) {
-  //Board::shutdownInterruptions();
+  // See comment in WriteMemory
   PrivateEraseSector(i);
-  //Board::initInterruptions();
 }
 
 }

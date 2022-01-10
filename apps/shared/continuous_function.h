@@ -59,9 +59,9 @@ public:
     CartesianHyperbola,
     Line,
     HorizontalLine,
-    // All previous types are active in the values table
+    // All previous types + Polar and Parametric are active in the values table
     VerticalLine,
-    // All previous types plot with only one subcurve
+    // All previous types + Polar and Parametric plot with only one subcurve
     VerticalLines,
     Circle,
     Ellipse,
@@ -123,7 +123,7 @@ public:
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool drawDottedCurve() const;
   // If the ContinuousFunction should be considered active in table
-  bool isActiveInTable() const { return equationType() == Poincare::ExpressionNode::Type::Equal && plotType() <= PlotType::HorizontalLine && isActive(); }
+  bool isActiveInTable() const;
   // If the ContinuousFunction has x for unknown symbol
   bool isAlongX() const { return symbol() == 'x'; }
   // If the ContinuousFunction is a conic

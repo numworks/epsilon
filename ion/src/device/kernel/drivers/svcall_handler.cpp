@@ -255,50 +255,56 @@ void __attribute__((externally_visible)) svcall_handler(uint32_t processStackPoi
 
   void * svcallHandlerPointer = svcallHandler(svcNumber);
 
-  // Step 5: store r4-r5, callee-saved registers to use them as scratch regs
-  asm volatile ("push {r4-r5}");
-
-  /* Step 6: find kernel function address */
-  asm volatile ("mov r4, %[kernelFunction]" : : [kernelFunction] "rn" (svcallHandlerPointer));
-
-  /* Step 7: restore r0-r4, d0-d7 registers from stack frame since they might
+  /* Step 5: restore r0-r4, d0-d7 registers from stack frame since they might
    * hold the arguments/return value of the kernel function. */
   asm volatile ("mov r5, %[value]" : : [value] "r" (processStackPointer));
   if (extendedStackFrame) {
-    asm volatile ("vldr d0, [r5, #32]");
-    asm volatile ("vldr d1, [r5, #40]");
-    asm volatile ("vldr d2, [r5, #48]");
-    asm volatile ("vldr d3, [r5, #56]");
-    asm volatile ("vldr d4, [r5, #64]");
-    asm volatile ("vldr d5, [r5, #72]");
-    asm volatile ("vldr d6, [r5, #80]");
-    asm volatile ("vldr d7, [r5, #88]");
+    asm volatile ("vldr d0, [%[value], #32]; \
+                   vldr d1, [%[value], #40]; \
+                   vldr d2, [%[value], #48]; \
+                   vldr d3, [%[value], #56]; \
+                   vldr d4, [%[value], #64]; \
+                   vldr d5, [%[value], #72]; \
+                   vldr d6, [%[value], #80]; \
+                   vldr d7, [%[value], #88];"
+                 :
+                 : [value] "r" (processStackPointer)
+                 : "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7");
   }
-  asm volatile ("ldr r0, [r5]");
-  asm volatile ("ldr r1, [r5, #4]");
-  asm volatile ("ldr r2, [r5, #8]");
-  asm volatile ("ldr r3, [r5, #12]");
+  asm volatile ("ldr r0, [%[value]]; \
+                 ldr r1, [%[value], #4]; \
+                 ldr r2, [%[value], #8]; \
+                 ldr r3, [%[value], #12];"
+                 :
+                 : [value] "r" (processStackPointer)
+                 : "r0", "r1", "r2", "r3", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7");
 
-  // Step 8: jump to the kernel function
-  asm volatile ("blx r4");
+  // Step 6: jump to the kernel function
+  asm volatile ("blx %[kernelFunction]"
+      :
+      : [kernelFunction] "rn" (svcallHandlerPointer)
+      : "r0", "r1", "r2", "r3", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7");
 
-  /* Step 9: save the new values of the argument/return values registers in
+  /* Step 7: save the new values of the argument/return values registers in
    * the stack frame. */
-  asm volatile ("str r0, [r5]");
-  asm volatile ("str r1, [r5, #4]");
-  asm volatile ("str r2, [r5, #8]");
-  asm volatile ("str r3, [r5, #12]");
+  asm volatile ("str r0, [%[value]]; \
+                 str r1, [%[value], #4]; \
+                 str r2, [%[value], #8]; \
+                 str r3, [%[value], #12];"
+                 :
+                 : [value] "r" (processStackPointer)
+                 : "r0", "r1", "r2", "r3", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7");
   if (extendedStackFrame) {
-    asm volatile ("vstr d0, [r5, #32]");
-    asm volatile ("vstr d1, [r5, #40]");
-    asm volatile ("vstr d2, [r5, #48]");
-    asm volatile ("vstr d3, [r5, #56]");
-    asm volatile ("vstr d4, [r5, #64]");
-    asm volatile ("vstr d5, [r5, #72]");
-    asm volatile ("vstr d6, [r5, #80]");
-    asm volatile ("vstr d7, [r5, #88]");
+    asm volatile ("vstr d0, [%[value], #32]; \
+                   vstr d1, [%[value], #40]; \
+                   vstr d2, [%[value], #48]; \
+                   vstr d3, [%[value], #56]; \
+                   vstr d4, [%[value], #64]; \
+                   vstr d5, [%[value], #72]; \
+                   vstr d6, [%[value], #80]; \
+                   vstr d7, [%[value], #88];"
+                 :
+                 : [value] "r" (processStackPointer)
+                 : "r0", "r1", "r2", "r3", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7");
   }
-
-  // Step 10: restore callee-saved registers
-  asm volatile ("pop {r4-r5}");
 }

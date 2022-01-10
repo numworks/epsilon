@@ -46,7 +46,7 @@ public:
     /* This function allows to convert Evaluation to derived Evaluation.
      *
      * We could have overriden the operator T(). However, even with the
-     * 'explicit' keyword (which prevents implicit casts), direct initilization
+     * 'explicit' keyword (which prevents implicit casts), direct initialization
      * are enable which can lead to weird code:
      * ie, you can write: 'Complex<float> a(2); MatrixComplex<float> b(a);'
      * */

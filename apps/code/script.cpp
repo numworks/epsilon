@@ -2,7 +2,7 @@
 #include "script_store.h"
 
 #if APP_SCRIPT_LOG
-#include<iostream>
+#include <iostream>
 #endif
 namespace Code {
 
@@ -72,13 +72,12 @@ uint8_t * StatusFromData(Script::Data d) {
   return const_cast<uint8_t *>(static_cast<const uint8_t *>(d.buffer));
 }
 
-uint8_t * Script::CursorPosition() {
+uint16_t * Script::CursorPosition() {
   assert(!isNull());
   Data d = value();
-  return StatusFromData(d) + StatusSize();
+  return (uint16_t *)(StatusFromData(d) + StatusSize());
 }
-
-void Script::setCursorPosition(uint8_t position) {
+void Script::setCursorPosition(uint16_t position) {
   assert(!isNull());
   Data d = value();
   *CursorPosition() = position;

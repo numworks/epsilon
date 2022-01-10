@@ -23,9 +23,9 @@ namespace Code {
  * FetchedForVariableBoxBit is used to prevent circular importation problems,
  * such as scriptA importing scriptB, which imports scriptA. Once we get the
  * variables from a script to put them in the variable box, we switch the bit to
- * 1 and won't reload it afterwards. 
- * 
- * Cursor Position is one byte long and has the cursor position value*/
+ * 1 and won't reload it afterwards.
+ *
+ * Cursor Position is two bytes long and has the cursor position value */
 
 class Script : public Ion::Storage::Record {
 private:
@@ -35,7 +35,7 @@ private:
 
   // See the comment at the beginning of the file
   static constexpr size_t k_statusSize = 1;
-  static constexpr size_t k_cursorPositionSize = 1;
+  static constexpr size_t k_cursorPositionSize = 2;
 
 public:
   static constexpr int k_defaultScriptNameMaxSize = 6 + k_defaultScriptNameNumberMaxSize + 1;
@@ -54,8 +54,8 @@ public:
   void toggleAutoimportationStatus();
   const char * content() const;
   size_t contentSize() { return value().size - k_statusSize - k_cursorPositionSize; }
-  void setCursorPosition(uint8_t position);
-  uint8_t * CursorPosition();
+  void setCursorPosition(uint16_t position);
+  uint16_t * CursorPosition();
 
   /* Fetched status */
   bool fetchedFromConsole() const;

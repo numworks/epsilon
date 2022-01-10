@@ -49,9 +49,9 @@ private:
    * k_fullFreeSpaceSizeLimit, we consider the script store as full.
    * To be able to add a new empty record, the available space should at least
    * be able to store a Script with default name and its extension, the
-   * importation status (1 char), the default content "from math import *\n"
+   * importation status (1 char), the cursor (2 char), the default content "from math import *\n"
    * (20 char) and 10 char of free space. */
-  static constexpr int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::record_size_t)+Script::k_defaultScriptNameMaxSize+k_scriptExtensionLength+1+20+10+1;
+  static constexpr int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::record_size_t)+Script::k_defaultScriptNameMaxSize+k_scriptExtensionLength+1+20+10+2;
 };
 
 }

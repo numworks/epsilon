@@ -122,8 +122,8 @@ public:
 
   // Useful
   static bool FullNameCompliant(const char * name);
-  
-  // User by Python OS module
+
+  // Used by Python OS module
   int numberOfRecords();
   Record recordAtIndex(int index);
 

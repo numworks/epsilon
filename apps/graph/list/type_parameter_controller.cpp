@@ -59,8 +59,10 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   } else {
     myCell->setMessage(detailsTitle(index - 1));
     double value = detailsValue(index - 1);
-    if (std::isnan(value)) {
-      // There are no value to display, use the accessory for description
+    if (index - 1 == 0 && function()->plotType() == Shared::ContinuousFunction::PlotType::Line) {
+      assert(std::isnan(value));
+      /* For the line's equation cell, we want the detail description (y=mx+b)
+       * to be displayed as the value would : a large font accessory. */
       myCell->setAccessoryText(I18n::translate(detailsDescription(index - 1)));
       myCell->setSubLabelMessage(I18n::Message::Default);
     } else {

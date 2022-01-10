@@ -181,6 +181,13 @@ bool ContinuousFunction::drawDottedCurve() const {
   return eqType == ExpressionNode::Type::Superior || eqType == ExpressionNode::Type::Inferior;
 }
 
+bool ContinuousFunction::isActiveInTable() const {
+  return equationType() == Poincare::ExpressionNode::Type::Equal
+         && (plotType() <= PlotType::HorizontalLine
+             || plotType() >= PlotType::Polar)
+         && isActive();
+}
+
 bool ContinuousFunction::isConic() const {
   switch (plotType()) {
     case PlotType::CartesianParabola:

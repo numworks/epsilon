@@ -1,4 +1,5 @@
 #include "persisting_bytes.h"
+#include <drivers/board.h>
 #include <drivers/cache.h>
 #include <drivers/flash_privileged.h>
 #include <assert.h>
@@ -44,6 +45,9 @@ uint8_t * SignificantPersistedByteAddress() {
 void write(uint8_t byte, uint8_t index) {
   assert(index < k_numberOfPersistingBytes);
   assert(byte != 0xFF); // Unvalid value // TODO : assert or escape ?
+  /* Shutdown interruptions whose handlers can be located in the external flash
+   * (writing the external flash requires to stop the memory mapped mode.) */
+  Board::shutdownInterruptions();
   uint8_t * writingAddress = SignificantPersistedByteAddress();
   assert(writingAddress + k_numberOfPersistingBytes <= reinterpret_cast<uint8_t *>(&_persisting_bytes_buffer_end));
   if ((*(writingAddress + index) & byte) != byte) {
@@ -70,6 +74,7 @@ void write(uint8_t byte, uint8_t index) {
   // Write the value in flash
   Ion::Device::Flash::WriteMemory(writingAddress + index, &byte, 1);
   Ion::Device::Cache::invalidateDCache();
+  Board::initInterruptions();
 }
 
 uint8_t read(uint8_t index) {

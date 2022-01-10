@@ -1,4 +1,3 @@
-#include <kernel/drivers/board.h>
 #include <shared/drivers/external_flash_write.h>
 #include <shared/drivers/trampoline.h>
 #include <assert.h>
@@ -16,15 +15,15 @@ void MassErase() {
 }
 
 void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
-  Board::shutdownInterruptions();
+  //Board::shutdownInterruptions();
   PrivateWriteMemory(destination, source, length);
-  Board::initInterruptions();
+  //Board::initInterruptions();
 }
 
 void EraseSector(int i) {
-  Board::shutdownInterruptions();
+  //Board::shutdownInterruptions();
   PrivateEraseSector(i);
-  Board::initInterruptions();
+  //Board::initInterruptions();
 }
 
 }

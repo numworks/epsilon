@@ -17,12 +17,12 @@ void MassErase() {
 }
 
 void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
-  /* Ideally, we should assert that all interruptions are disables since their
+  /* Ideally, we should assert that all interruptions are disabled since their
    * handler code might be located in the external flash. Writing/erasing the
-   * external falsh requires to priorly stop the memory-mapped mode preventing
+   * external flash requires to priorly stop the memory-mapped mode preventing
    * executing any code living there. In practice, we only assert the the
-   * systick is off because all interruptions are switch on and off at the same
-   * time. */
+   * systick is off because all interruptions are switched on and off at the
+   * same time. */
   assert(!CORTEX.SYST_CSR()->getTICKINT());
   PrivateWriteMemory(destination, source, length);
 }

@@ -6,33 +6,29 @@
 
 namespace Shared {
 
-void Range1D::setMin(float min, float lowerMaxFloat, float upperMaxFloat) {
-  min = clipped(min, false, lowerMaxFloat, upperMaxFloat);
-  if (std::isnan(min)) {
-    return;
-  }
-  m_min = min;
-  if (m_min >= m_max) {
-    m_max = min + defaultRangeLengthFor(min);
-  }
-  if (m_max - min < k_minFloat) {
-    m_max = clipped(min + k_minFloat, true, lowerMaxFloat, upperMaxFloat);
-  }
+void Range1D::setMin(float f, float lowerMaxFloat, float upperMaxFloat) {
+  m_min = checkedMin(f, &m_max, lowerMaxFloat, upperMaxFloat);
 }
 
-void Range1D::setMax(float max, float lowerMaxFloat, float upperMaxFloat) {
-  max = clipped(max, true, lowerMaxFloat, upperMaxFloat);
-  if (std::isnan(max)) {
-    return;
-  }
-  m_max = max;
-  if (m_min >= m_max) {
-    m_min = max - defaultRangeLengthFor(max);
-  }
-  if (max-m_min < k_minFloat) {
-    m_min = clipped(max - k_minFloat, false, lowerMaxFloat, upperMaxFloat);
-  }
+void Range1D::setMax(float f, float lowerMaxFloat, float upperMaxFloat) {
+  m_max = checkedMax(f, &m_min, lowerMaxFloat, upperMaxFloat);
 }
+
+float Range1D::checkedValue(float value, float * otherValue, float lowerMaxFloat, float upperMaxFloat, bool isMax) {
+  value = clipped(value, isMax, lowerMaxFloat, upperMaxFloat);
+  if (std::isnan(value) || otherValue == nullptr) {
+    return value;
+  }
+  float factor = isMax ? -1.0f : +1.0f;
+  if (value < *otherValue == isMax || value == *otherValue) {
+    *otherValue = value + factor * defaultRangeLengthFor(value);
+  }
+  if (std::fabs(*otherValue - value) < k_minFloat) {
+    *otherValue = clipped(value + factor * k_minFloat, isMax, lowerMaxFloat, upperMaxFloat);
+  }
+  return value;
+}
+
 
 float Range1D::defaultRangeLengthFor(float position) {
   return std::pow(10.0f, Poincare::IEEE754<float>::exponentBase10(position)-1.0f);

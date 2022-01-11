@@ -7,6 +7,7 @@
 namespace Statistics {
 
 class Store : public Shared::MemoizedCurveViewRange, public Shared::DoublePairStore {
+friend class BoxRange;
 public:
   Store();
   uint32_t barChecksum() const;

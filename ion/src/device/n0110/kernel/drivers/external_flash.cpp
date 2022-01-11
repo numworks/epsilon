@@ -20,7 +20,7 @@ void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
   /* Ideally, we should assert that all interruptions are disabled since their
    * handler code might be located in the external flash. Writing/erasing the
    * external flash requires to priorly stop the memory-mapped mode preventing
-   * executing any code living there. In practice, we only assert the the
+   * executing any code living there. In practice, we only assert that the
    * systick is off because all interruptions are switched on and off at the
    * same time. */
   assert(!CORTEX.SYST_CSR()->getTICKINT());

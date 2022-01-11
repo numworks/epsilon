@@ -29,6 +29,7 @@ void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
 
 void EraseSector(int i) {
   // See comment in WriteMemory
+  assert(!CORTEX.SYST_CSR()->getTICKINT());
   PrivateEraseSector(i);
 }
 

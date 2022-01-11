@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.repository != 'numworks/epsilon-internal' }}
     steps:
-      - run: pip3 install lz4
+      - run: pip3 install lz4 pypng stringcase
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator TARGET=android
       - run: make PLATFORM=simulator TARGET=android epsilon.apk
@@ -44,7 +44,7 @@ jobs:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
-      - run: pip3 install lz4
+      - run: pip3 install lz4 pypng stringcase
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v2
       - run: make MODEL=n0110 kernel.A.elf
@@ -72,7 +72,7 @@ jobs:
       - uses: msys2/setup-msys2@v2
       - uses: actions/checkout@v2
       - run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng mingw-w64-x86_64-imagemagick mingw-w64-x86_64-librsvg mingw-w64-x86_64-inkscape mingw-w64-x86_64-python3-pip
-      - run: pip3 install lz4
+      - run: pip3 install lz4 pypng stringcase
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.exe
       - run: make PLATFORM=simulator test.exe
@@ -87,7 +87,7 @@ jobs:
       - uses: numworks/setup-emscripten@v1
         with:
           sdk: 1.39.16-fastcomp
-      - run: pip3 install lz4
+      - run: pip3 install lz4 pypng stringcase
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator TARGET=web
       - run: make PLATFORM=simulator TARGET=web epsilon.zip
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
-      - run: pip3 install lz4
+      - run: pip3 install lz4 pypng stringcase
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.bin
@@ -118,7 +118,7 @@ jobs:
     if: ${{ github.repository != 'numworks/epsilon-internal' }}
     steps:
       - run: brew install numworks/tap/epsilon-sdk
-      - run: pip3 install lz4 # TODO: should be part of brew formula
+      - run: pip3 install lz4 pypng stringcase # TODO: should be part of brew formula
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.app
@@ -133,7 +133,7 @@ jobs:
     if: ${{ github.repository != 'numworks/epsilon-internal' }}
     steps:
       - run: brew install numworks/tap/epsilon-sdk
-      - run: pip3 install lz4 # TODO: should be part of brew formula
+      - run: pip3 install lz4 pypng stringcase # TODO: should be part of brew formula
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.ipa

@@ -7,18 +7,13 @@ BoxRange::BoxRange(Store * store) :
 {
 }
 
-float BoxRange::xMin() const {
+float BoxRange::computeMinMax(bool isMax) const {
   float min = m_store->minValueForAllSeries();
   float max = m_store->maxValueForAllSeries();
-  max = min >= max ? min + 1 : max;
-  return min - k_displayLeftMarginRatio*(max-min);
-}
-
-float BoxRange::xMax() const {
-  float min = m_store->minValueForAllSeries();
-  float max = m_store->maxValueForAllSeries();
-  max = min >= max ? min + 1 : max;
-  return max + k_displayRightMarginRatio*(max - min);
+  max = Shared::Range1D::checkedMax(max, nullptr, Store::k_lowerMaxFloat, Store::k_upperMaxFloat);
+  min = Shared::Range1D::checkedMin(min, &max, Store::k_lowerMaxFloat, Store::k_upperMaxFloat);
+  float margin = k_displayRightMarginRatio * (max - min);
+  return isMax ? max + margin : min - margin;
 }
 
 }

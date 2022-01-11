@@ -216,18 +216,22 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
   assert(plotType() == PlotType::Line);
   Expression equation = expressionReduced(context);
   // Compute metrics for details view of Line
-  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
-  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  // Separate the two line coefficients
+  // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
-      k_unknownName, coefficients, context, complexFormat, angleUnit,
-      k_defaultUnitFormat, k_defaultSymbolicComputation);
-  assert(d == 1);
-  (void) d;  // Silence compilation warnings
+      k_unknownName, coefficients, context, ComplexFormat(), AngleUnit(),
+      k_defaultUnitFormat,
+      ExpressionNode::SymbolicComputation::
+          ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert(d <= 1);
+  // Degree might vary depending on symbols definition and complex format.
   // Approximate and return the two line coefficients
-  *slope = coefficients[1].approximateToScalar<double>(context, complexFormat, angleUnit);
-  *intercept = coefficients[0].approximateToScalar<double>(context, complexFormat, angleUnit);
+  *slope = (d != 1) ? (d == 0 ? 0.0 : NAN)
+                    : coefficients[1].approximateToScalar<double>(
+                        context, ComplexFormat(), AngleUnit());
+  *intercept = (d < 0) ? NAN
+                       : coefficients[0].approximateToScalar<double>(
+                           context, ComplexFormat(), AngleUnit());
 }
 
 Conic ContinuousFunction::getConicParameters(Context * context) const {
@@ -241,10 +245,8 @@ void ContinuousFunction::udpateModel(Context * context) {
   if (previousAlongXStatus != isAlongX() || canHaveCustomDomain()) {
     // The definition's domain must be resetted.
     setTMin(!isAlongX() ? 0.0 : -INFINITY);
-    setTMax(!isAlongX()
-                ? 2.0 * Trigonometry::PiInAngleUnit(
-                            Preferences::sharedPreferences()->angleUnit())
-                : INFINITY);
+    setTMax(!isAlongX() ? 2.0 * Trigonometry::PiInAngleUnit(AngleUnit())
+                        : INFINITY);
   }
 }
 
@@ -547,8 +549,10 @@ void ContinuousFunction::updatePlotType(Context * context) {
 
   const char * symbolName = isYMainSymbol ? k_ordinateName : k_unknownName;
   ExpressionNode::Sign ySign = ExpressionNode::Sign::Unknown;
-  if (!hasNonNullCoefficients(equation, symbolName, context, &ySign)) {
+  if (!hasNonNullCoefficients(equation, symbolName, context, &ySign)
+      || hasComplexTerms(equation, context)) {
     // The equation must have at least one nonNull coefficient.
+    // TODO : Accept equations such as y=re(𝐢)
     return recordData()->setPlotType(PlotType::Unhandled);
   }
 
@@ -635,17 +639,22 @@ void ContinuousFunction::updatePlotType(Context * context) {
 
 bool ContinuousFunction::hasNonNullCoefficients(Expression equation, const char * symbolName, Context * context, ExpressionNode::Sign * highestDegreeCoefficientSign) const {
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
-  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-  int degree = equation.getPolynomialReducedCoefficients(symbolName, coefficients, context, complexFormat, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
+  // Symbols will be replaced anyway to compute nullStatus
+  int degree = equation.getPolynomialReducedCoefficients(
+      symbolName, coefficients, context, ComplexFormat(), AngleUnit(),
+      k_defaultUnitFormat,
+      ExpressionNode::SymbolicComputation::
+          ReplaceAllDefinedSymbolsWithDefinition);
   assert(degree >= 0 && degree <= Expression::k_maxPolynomialDegree);
   if (highestDegreeCoefficientSign != nullptr && degree >= 0) {
     ExpressionNode::Sign sign = coefficients[degree].sign(context);
     if (sign == ExpressionNode::Sign::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
-      double approximation = coefficients[degree].approximateToScalar<double>(context, complexFormat, angleUnit);
+      double approximation = coefficients[degree].approximateToScalar<double>(
+          context, ComplexFormat(), AngleUnit());
       if (!std::isnan(approximation) && approximation != 0.0) {
-        sign = approximation < 0.0 ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive;
+        sign = approximation < 0.0 ? ExpressionNode::Sign::Negative
+                                   : ExpressionNode::Sign::Positive;
       }
     }
     *highestDegreeCoefficientSign = sign;
@@ -658,13 +667,20 @@ bool ContinuousFunction::hasNonNullCoefficients(Expression equation, const char 
     }
     if (nullStatus == ExpressionNode::NullStatus::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
-      double approximation = coefficients[d].approximateToScalar<double>(context, complexFormat, angleUnit);
+      double approximation = coefficients[d].approximateToScalar<double>(
+          context, ComplexFormat(), AngleUnit());
       if (!std::isnan(approximation) && approximation != 0.0) {
         return true;
       }
     }
   }
   return false;
+}
+
+bool ContinuousFunction::hasComplexTerms(Expression equation, Context * context) const {
+  return Expression::UpdatedComplexFormatWithExpressionInput(
+             Preferences::ComplexFormat::Real, equation, context)
+         != Preferences::ComplexFormat::Real;
 }
 
 Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {
@@ -684,9 +700,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * 
   if (plotType() != PlotType::Polar) {
     return x1x2;
   }
-  const T angle = x1x2.x1() * M_PI /
-                  Trigonometry::PiInAngleUnit(
-                      Preferences::sharedPreferences()->angleUnit());
+  const T angle = x1x2.x1() * M_PI / Trigonometry::PiInAngleUnit(AngleUnit());
   return Coordinate2D<T>(x1x2.x2() * std::cos(angle),
                          x1x2.x2() * std::sin(angle));
 }
@@ -737,7 +751,6 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       /* Function isn't named, m_expression currently is an expression in y or x
        * such as y = x. We extract the solution by solving in y or x. */
       int yDegree = m_expression.polynomialDegree(context, k_ordinateName);
-      Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
       if (yDegree < 0 || yDegree > 2) {
         // Such degrees of equation in y are not handled.
         m_expression = Undefined::Builder();
@@ -746,14 +759,21 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       bool isVertical = (yDegree == 0);
       // Solve the equation in y (or x if isVertical)
       Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-      int degree = m_expression.getPolynomialReducedCoefficients(isVertical ? k_unknownName : k_ordinateName, coefficients, context, Preferences::ComplexFormat::Cartesian, angleUnit, k_defaultUnitFormat, k_defaultSymbolicComputation);
+      int degree = m_expression.getPolynomialReducedCoefficients(
+          isVertical ? k_unknownName : k_ordinateName, coefficients, context,
+          ComplexFormat(), AngleUnit(), k_defaultUnitFormat,
+          ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
       assert(isVertical || degree == yDegree);
       if (degree == 1) {
-        Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0], &m_expression, context, Preferences::ComplexFormat::Real, angleUnit);
+        Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0],
+                                          &m_expression, context,
+                                          ComplexFormat(), AngleUnit());
       } else if (degree == 2) {
         // Equation is of degree 2, each root is a subcurve to plot.
         Expression root1, root2, delta;
-        int solutions = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], &root1, &root2, &delta, context, Preferences::ComplexFormat::Real, angleUnit);
+        int solutions = Polynomial::QuadraticPolynomialRoots(
+            coefficients[2], coefficients[1], coefficients[0], &root1, &root2,
+            &delta, context, ComplexFormat(), AngleUnit());
         if (solutions <= 1) {
           m_expression = root1;
         } else {
@@ -854,7 +874,12 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   if (isUnnamedFunction) {
     result = Subtraction::Builder(leftExpression, result.childAtIndex(1));
   }
-  PoincareHelpers::CloneAndReduce(&result, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  /* Do not replace symbols to preserve y as a symbol. However, functions must
+   * be replaced here so that unknown symbol is fully developped. */
+  PoincareHelpers::CloneAndReduce(
+      &result, context, ExpressionNode::ReductionTarget::SystemForAnalysis,
+      ExpressionNode::SymbolicComputation::
+          ReplaceDefinedFunctionsWithDefinitions);
   return result;
 }
 

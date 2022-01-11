@@ -678,7 +678,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
         nextCursorLocation+= TextInputHelpers::CursorPositionInCommand(eventText) - eventText;
       }
       if (selectInsertedText) {
-        selectLeftRight(false, false, bufferLength);
+        selectLeftRight(false, false, UTF8Helper::StringGlyphLength(buffer));
       }
       setCursorLocation(nextCursorLocation);
     }

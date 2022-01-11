@@ -69,10 +69,36 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("x*y^2>1", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("2-y^2>log(x)", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("x*y^2=x", ContinuousFunction::PlotType::Unhandled);
+    assert_check_function_properties("y=𝐢*x+1", ContinuousFunction::PlotType::Unhandled);
+    // TODO : Handle this function
+    assert_check_function_properties("y=im(𝐢*x+1)", ContinuousFunction::PlotType::Unhandled);
   }
   // Restore an Off exam mode.
   Poincare::Preferences::sharedPreferences()->setPressToTestParams(Preferences::PressToTestParams({0}));
   Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Off);
+}
+
+QUIZ_CASE(graph_function_plot_type_with_predefined_variables) {
+    GlobalContext context;
+    ContinuousFunctionStore store;
+    // Add a predefined test function
+    addFunction("test(x)=1+x", ContinuousFunction::PlotType::Cartesian, &store, &context);
+
+    addFunction("y=x", ContinuousFunction::PlotType::Line, &store, &context);
+    addFunction("y=test(x)", ContinuousFunction::PlotType::Line, &store, &context);
+    addFunction("y=a*x+1", ContinuousFunction::PlotType::Line, &store, &context);
+
+    // Add a predefined a symbol
+    Expression::Parse("0→a", &context);
+    addFunction("y=a*x+1", ContinuousFunction::PlotType::Line, &store, &context);
+
+    // Add a predefined y symbol
+    Expression::Parse("1→y", &context);
+    addFunction("y=x", ContinuousFunction::PlotType::Line, &store, &context);
+
+    Ion::Storage::sharedStorage()->recordNamed("a").destroy();
+    Ion::Storage::sharedStorage()->recordNamed("y").destroy();
+    store.removeAll();
 }
 
 }

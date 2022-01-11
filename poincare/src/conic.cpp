@@ -155,11 +155,11 @@ void Conic::multiplyCoefficients(double factor) {
 bool Conic::isConic() const {
   /* Constraints are :
    * - Coefficients are all finite
-   * - There is at least one squared (A or C) coefficient
+   * - There is at least one "squared" (A, B or C) coefficient
    * - There is at least one x (B, A or D) and one y (B, C or E) coefficient */
   return std::isfinite(m_a) && std::isfinite(m_b) && std::isfinite(m_c)
          && std::isfinite(m_d) && std::isfinite(m_e) && std::isfinite(m_f)
-         && (m_a != 0.0 || m_c != 0.0)
+         && (m_a != 0.0 || m_b != 0.0 || m_c != 0.0)
          && (m_b != 0.0
              || ((m_a != 0.0 || m_d != 0.0) && (m_c != 0.0 || m_e != 0.0)));
 }

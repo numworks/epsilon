@@ -47,7 +47,7 @@ Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation,
   constexpr T marginAroundZero = static_cast<T>(1e-3);
   /* We deviate slightly from zero, as many common functions with an
    * interesting behaviour around zero are undefined for x=0. */
-  constexpr T fakeZero = sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON;
+  T fakeZero = (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON) * static_cast<T>(start < end ? 1.f : -1.f);
   result = search(-marginAroundZero, fakeZero, marginAroundZero, evaluation(-marginAroundZero, context, auxiliary), evaluation(fakeZero, context, auxiliary), evaluation(marginAroundZero, context, auxiliary), evaluation, context, auxiliary);
   if (std::isfinite(result.x1())) {
     return result;

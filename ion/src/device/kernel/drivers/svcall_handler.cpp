@@ -255,7 +255,7 @@ void __attribute__((externally_visible)) svcall_handler(uint32_t processStackPoi
 
   void * svcallHandlerPointer = svcallHandler(svcNumber);
 
-  /* Step 5: restore r0-r4, d0-d7 registers from stack frame since they might
+  /* Step 5: restore r0-r3, d0-d7 registers from stack frame since they might
    * hold the arguments/return value of the kernel function. */
   asm volatile ("mov r5, %[value]" : : [value] "r" (processStackPointer));
   if (extendedStackFrame) {

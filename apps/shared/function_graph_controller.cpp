@@ -51,9 +51,8 @@ void FunctionGraphController::viewWillAppear() {
 
 bool FunctionGraphController::openMenuForCurveAtIndex(int index) {
   if (index != *m_indexFunctionSelectedByCursor) {
-    *m_indexFunctionSelectedByCursor = index;
-    // Secondary index isn't relevant here
-    Coordinate2D<double> xy = xyValues(index, m_cursor->t(), textFieldDelegateApp()->localContext());
+    selectFunctionWithCursor(index);
+    Coordinate2D<double> xy = xyValues(index, m_cursor->t(), textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
@@ -64,7 +63,10 @@ bool FunctionGraphController::openMenuForCurveAtIndex(int index) {
 }
 
 void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
-  *m_indexFunctionSelectedByCursor = functionIndex;
+  if (functionIndex != *m_indexFunctionSelectedByCursor) {
+    m_selectedSubCurveIndex = 0;
+    *m_indexFunctionSelectedByCursor = functionIndex;
+  }
 }
 
 KDCoordinate FunctionGraphController::FunctionSelectionController::rowHeight(int j) {

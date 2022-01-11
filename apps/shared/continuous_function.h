@@ -222,10 +222,17 @@ public:
   static constexpr char k_unnamedRecordFirstChar = '?';
 private:
   static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
+  /* Ordinate name could have a definition in the global context. Care should be
+   * taken to preserve it when replacing symbols. */
   static constexpr char k_ordinateName[2] = "y";
   static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
+  // Units are not handled in the graph app. The default unit does not matters
   static constexpr Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;
-  static constexpr Poincare::ExpressionNode::SymbolicComputation k_defaultSymbolicComputation = Poincare::ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
+
+  /* Context */
+
+  static Poincare::Preferences::AngleUnit AngleUnit() { return Poincare::Preferences::sharedPreferences()->angleUnit(); }
+  static Poincare::Preferences::ComplexFormat ComplexFormat() { return Poincare::Preferences::sharedPreferences()->complexFormat(); }
 
   /* Range */
 
@@ -247,6 +254,8 @@ private:
   void updatePlotType(Poincare::Context * context);
   // If equation has a NonNull coeff. Can also compute last coeff sign.
   bool hasNonNullCoefficients(Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign) const;
+  // If equation has a complex terms.
+  bool hasComplexTerms(Poincare::Expression equation, Poincare::Context * context) const;
 
   /* Evaluation */
 

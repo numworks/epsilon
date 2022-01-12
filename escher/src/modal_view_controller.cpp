@@ -84,11 +84,9 @@ void ModalViewController::ContentView::presentModalView(View * modalView, float 
   layoutSubviews();
 }
 
-void ModalViewController::ContentView::dismissModalView(bool willExitApp) {
+void ModalViewController::ContentView::dismissModalView() {
   m_isDisplayingModal = false;
-  if (!willExitApp) {
-    layoutSubviews();
-  }
+  layoutSubviews();
   m_currentModalView->resetSuperview();
   m_currentModalView = nullptr;
 }
@@ -134,12 +132,10 @@ void ModalViewController::reloadModalViewController() {
   m_contentView.layoutSubviews();
 }
 
-void ModalViewController::dismissModalViewController(bool willExitApp) {
+void ModalViewController::dismissModalViewController() {
   m_currentModalViewController->viewDidDisappear();
-  if (!willExitApp) {
-    Container::activeApp()->setFirstResponder(m_previousResponder);
-  }
-  m_contentView.dismissModalView(willExitApp);
+  Container::activeApp()->setFirstResponder(m_previousResponder);
+  m_contentView.dismissModalView();
   m_currentModalViewController = nullptr;
 }
 

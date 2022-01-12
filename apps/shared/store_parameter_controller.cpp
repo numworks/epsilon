@@ -106,7 +106,7 @@ void StoreParameterController::deleteColumn() {
   } else {
     m_store->resetColumn(m_series, 1);
   }
-  Container::activeApp()->dismissModalViewController(false);
+  Container::activeApp()->dismissModalViewController();
   popFromStackView();
 }
 

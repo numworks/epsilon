@@ -16,7 +16,7 @@ public:
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0,  KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void reloadModalViewController();
-  void dismissModalViewController(bool willExitApp = false);
+  void dismissModalViewController();
   bool isDisplayingModal();
   void initView() override;
   void viewWillAppear() override;
@@ -33,7 +33,7 @@ private:
     void layoutSubviews(bool force = false) override;
     void presentModalView(View * modalView, float verticalAlignment, float horizontalAlignment,
       KDCoordinate topMargin, KDCoordinate leftMargin,  KDCoordinate bottomMargin, KDCoordinate rightMargin);
-    void dismissModalView(bool willExitApp = false);
+    void dismissModalView();
     bool isDisplayingModal() const;
     void reload();
   private:

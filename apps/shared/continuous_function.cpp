@@ -586,12 +586,15 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
         return m_expression;
       }
       bool isVertical = (yDegree == 0);
-      // Solve the equation in y (or x if isVertical)
+      /* Solve the equation in y (or x if isVertical)
+       * We replace symbols here because at this point there won't be any y
+       * symbol left in the coefficients and it might simplify roots. */
       Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
       int degree = m_expression.getPolynomialReducedCoefficients(
           isVertical ? k_unknownName : k_ordinateName, coefficients, context,
           ComplexFormat(), AngleUnit(), k_defaultUnitFormat,
-          ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+          ExpressionNode::SymbolicComputation::
+              ReplaceAllDefinedSymbolsWithDefinition);
       assert(isVertical || degree == yDegree);
       if (degree == 1) {
         Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0],
@@ -713,7 +716,9 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
     result = Subtraction::Builder(leftExpression, result.childAtIndex(1));
   }
   /* Do not replace symbols to preserve y as a symbol. However, functions must
-   * be replaced here so that unknown symbol is fully developped. */
+   * be replaced here so that unknown symbol is fully developped. Symbols are
+   * considered constant and will not influence polynomial degree nor the
+   * equation solution anyway. */
   PoincareHelpers::CloneAndReduce(
       &result, context, ExpressionNode::ReductionTarget::SystemForAnalysis,
       ExpressionNode::SymbolicComputation::

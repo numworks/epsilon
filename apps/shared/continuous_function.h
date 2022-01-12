@@ -331,8 +331,6 @@ private:
     void updatePlotType(const Poincare::Expression equation, Poincare::Context * context) const;
     // If equation has a NonNull coeff. Can also compute last coeff sign.
     static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign);
-    // If equation has a complex terms.
-    static bool HasComplexTerms(const Poincare::Expression equation, Poincare::Context * context);
   private:
     // Return address of the record's expression
     void * expressionAddress(const Ion::Storage::Record * record) const override;

@@ -462,10 +462,19 @@ Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Prefere
 }
 
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & exp, Context * context) {
-  if (complexFormat == Preferences::ComplexFormat::Real && exp.recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::ConstantMaths && static_cast<const Constant &>(e).isConstant("𝐢"); }, context)) {
+  if (complexFormat == Preferences::ComplexFormat::Real && exp.hasComplexI(context)) {
     return Preferences::ComplexFormat::Cartesian;
   }
   return complexFormat;
+}
+
+bool Expression::hasComplexI(Context * context) const {
+  return recursivelyMatches(
+      [](const Expression e, Context * context) {
+        return e.type() == ExpressionNode::Type::ConstantMaths
+               && static_cast<const Constant &>(e).isConstant("𝐢");
+      },
+      context);
 }
 
 bool Expression::isReal(Context * context) const {

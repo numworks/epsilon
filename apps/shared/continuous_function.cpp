@@ -891,7 +891,7 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
   const char * symbolName = isYMainSymbol ? k_ordinateName : k_unknownName;
   ExpressionNode::Sign ySign = ExpressionNode::Sign::Unknown;
   if (!HasNonNullCoefficients(equation, symbolName, context, &ySign)
-      || HasComplexTerms(equation, context)) {
+      || equation.hasComplexI(context)) {
     // The equation must have at least one nonNull coefficient.
     // TODO : Accept equations such as y=re(𝐢)
     return setPlotType(PlotType::Unhandled);
@@ -1015,12 +1015,6 @@ bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation
     }
   }
   return false;
-}
-
-bool ContinuousFunction::Model::HasComplexTerms(const Expression equation, Context * context) {
-  return Expression::UpdatedComplexFormatWithExpressionInput(
-             Preferences::ComplexFormat::Real, equation, context)
-         != Preferences::ComplexFormat::Real;
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {

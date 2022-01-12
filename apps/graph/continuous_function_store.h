@@ -20,6 +20,9 @@ public:
   int numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType plotType) const {
     return numberOfModelsSatisfyingTest(&isFunctionActiveOfType, &plotType);
   }
+  Ion::Storage::Record activeRecordInTableAtIndex(int i) const {
+    return recordSatisfyingTestAtIndex(i, &isFunctionActiveInTable, nullptr);
+  }
   Ion::Storage::Record activeRecordOfSymbolTypeAtIndex(Shared::ContinuousFunction::SymbolType symbolType, int i) const {
     return recordSatisfyingTestAtIndex(i, &isFunctionActiveOfSymbolType, &symbolType);
   }

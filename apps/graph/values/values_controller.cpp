@@ -177,7 +177,7 @@ void ValuesController::updateNumberOfColumns() const {
     m_numberOfValuesColumnsForType[symbolTypeIndex] = 0;
   }
   for (int i = 0; i < functionStore()->numberOfActiveFunctionsInTable(); i++) {
-    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
+    Ion::Storage::Record record = functionStore()->activeRecordInTableAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
     int symbolTypeIndex = static_cast<int>(f->symbolType());
     m_numberOfValuesColumnsForType[symbolTypeIndex] += numberOfColumnsForRecord(record);

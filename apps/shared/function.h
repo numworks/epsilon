@@ -34,7 +34,7 @@ public:
   Function(Ion::Storage::Record record) : ExpressionModelHandle(record){}
 
   // Properties
-  bool isActive() const;
+  virtual bool isActive() const;
   KDColor color() const;
   void setActive(bool active);
   virtual int numberOfSubCurves() const { return 1; }

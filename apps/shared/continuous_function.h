@@ -52,7 +52,7 @@ public:
     X
   };
 
-  static constexpr size_t k_numberOfPlotTypes = 19;
+  static constexpr size_t k_numberOfPlotTypes = 20;
   enum class PlotType : uint8_t {
     Cartesian = 0,
     CartesianParabola,
@@ -76,7 +76,8 @@ public:
     Unhandled,
     UnhandledPolar,
     UnhandledParametric,
-    Disabled
+    Disabled,
+    Unknown
   };
 
   // Return Message corresponding to SymbolType
@@ -92,9 +93,9 @@ public:
   // Return the type of area to draw
   AreaType areaType() const;
   // Return the equation's symbol
-  Poincare::ExpressionNode::Type equationType() const { return recordData()->equationType(); }
-  // Return ContinuousFunction's PlotType
-  PlotType plotType() const { return recordData()->plotType(); }
+  Poincare::ExpressionNode::Type equationType() const { return m_model.equationType(); }
+  // Return ContinuousFunction's PlotType. Recompute it if it was unknown.
+  PlotType plotType() const;
   // Return ContinuousFunction's SymbolType
   SymbolType symbolType() const;
 
@@ -110,6 +111,8 @@ public:
   int nameWithArgument(char * buffer, size_t bufferSize) override;
   // Insert the value of the evaluation (or the symbol if symbolValue) in buffer
   int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context, bool symbolValue = false) override;
+  // Return true if the ContinuousFunction is active
+  bool isActive() const override { return Function::isActive() && !IsPlotTypeInactive(plotType()); };
 
   /* ExpressionModel */
 
@@ -248,15 +251,6 @@ private:
   // Return reduced curve expression derivative
   Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
 
-  /* Properties */
-
-  // Update ContinuousFunction's PlotType
-  void updatePlotType(Poincare::Context * context);
-  // If equation has a NonNull coeff. Can also compute last coeff sign.
-  bool hasNonNullCoefficients(Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign) const;
-  // If equation has a complex terms.
-  bool hasComplexTerms(Poincare::Expression equation, Poincare::Context * context) const;
-
   /* Evaluation */
 
   typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
@@ -274,24 +268,15 @@ private:
     RecordDataBuffer(KDColor color) :
         Shared::Function::RecordDataBuffer(color),
         m_domain(-INFINITY, INFINITY),
-        m_plotType(PlotType::Undefined),
-        m_equationType(Poincare::ExpressionNode::Type::Equal),
         m_displayDerivative(false) {}
-    PlotType plotType() const { return m_plotType; }
-    void setPlotType(PlotType plotType) { m_plotType = plotType; }
     bool displayDerivative() const { return m_displayDerivative; }
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
-    Poincare::ExpressionNode::Type equationType() const { return m_equationType; }
-    void setEquationType(Poincare::ExpressionNode::Type equationType) { m_equationType = equationType; }
-    bool isActive() const override { return Shared::Function::RecordDataBuffer::isActive() && !IsPlotTypeInactive(m_plotType); }
     float tMin() const { return m_domain.min(); }
     float tMax() const { return m_domain.max(); }
     void setTMin(float tMin) { m_domain.setMin(tMin); }
     void setTMax(float tMax) { m_domain.setMax(tMax); }
   private:
     Range1D m_domain;
-    PlotType m_plotType;
-    Poincare::ExpressionNode::Type m_equationType;
     bool m_displayDerivative;
     /* In the record, after the boolean flag about displayDerivative, there is
      * the expression of the function, directly copied from the pool. */
@@ -314,7 +299,7 @@ private:
         ExpressionModel(),
         m_numberOfSubCurves(0),
         m_equationType(Poincare::ExpressionNode::Type::Equal),
-        m_plotType(PlotType::Undefined),
+        m_plotType(PlotType::Unknown),
         m_expressionDerivate() {}
     // Return the expression to plot.
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
@@ -340,6 +325,14 @@ private:
     void setEquationType(Poincare::ExpressionNode::Type equationType) const { m_equationType = equationType; }
     // m_plotType getter
     PlotType plotType() const { return m_plotType; }
+    // m_plotType setter
+    void setPlotType(PlotType plotType) const { m_plotType = plotType; }
+    // Update m_plotType depending on the equation
+    void updatePlotType(const Poincare::Expression equation, Poincare::Context * context) const;
+    // If equation has a NonNull coeff. Can also compute last coeff sign.
+    static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign);
+    // If equation has a complex terms.
+    static bool HasComplexTerms(const Poincare::Expression equation, Poincare::Context * context);
   private:
     // Return address of the record's expression
     void * expressionAddress(const Ion::Storage::Record * record) const override;
@@ -347,7 +340,6 @@ private:
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     mutable int m_numberOfSubCurves;
     mutable Poincare::ExpressionNode::Type m_equationType;
-    // TODO Hugo : Improve this m_plotType workaround
     mutable PlotType m_plotType;
     mutable Poincare::Expression m_expressionDerivate;
   };

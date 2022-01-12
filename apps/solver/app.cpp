@@ -61,17 +61,6 @@ App::App(Snapshot * snapshot) :
 {
 }
 
-void App::willBecomeInactive() {
-  if (m_modalViewController.isDisplayingModal()) {
-    m_modalViewController.dismissModalViewController(true);
-  }
-  if (inputViewController()->isDisplayingModal()) {
-    inputViewController()->abortEditionAndDismiss();
-  }
-  ::App::willBecomeInactive();
-}
-
-
 bool App::isAcceptableExpression(const Poincare::Expression exp) {
   /* Complete ExpressionFieldDelegateApp acceptable conditions by only accepting
    * the Equal OperatorType. */

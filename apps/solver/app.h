@@ -43,7 +43,6 @@ public:
   Escher::ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
   Escher::ViewController * intervalController() { return &m_intervalController; }
   SolutionsController * solutionsController() { return &m_solutionsController; }
-  void willBecomeInactive() override;
   TELEMETRY_ID("Solver");
 private:
   // TextFieldDelegateApp

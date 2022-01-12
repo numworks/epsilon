@@ -39,8 +39,6 @@ public:
   virtual FunctionStore * functionStore() { return snapshot()->functionStore(); }
   virtual ValuesController * valuesController() = 0;
   virtual Escher::InputViewController * inputViewController() = 0;
-  void willBecomeInactive() override;
-
 protected:
   FunctionApp(Snapshot * snapshot, Escher::ViewController * rootViewController) :
     ExpressionFieldDelegateApp(snapshot, rootViewController)

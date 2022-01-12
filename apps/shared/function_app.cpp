@@ -22,14 +22,4 @@ void FunctionApp::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record
   functionStore()->storageDidChangeForRecord(record);
 }
 
-void FunctionApp::willBecomeInactive() {
-  if (m_modalViewController.isDisplayingModal()) {
-    m_modalViewController.dismissModalViewController(true);
-  }
-  if (inputViewController()->isDisplayingModal()) {
-    inputViewController()->abortEditionAndDismiss();
-  }
-  ::App::willBecomeInactive();
-}
-
 }

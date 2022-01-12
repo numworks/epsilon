@@ -75,9 +75,6 @@ void App::didBecomeActive(Window * window) {
 }
 
 void App::willBecomeInactive() {
-  if (m_modalViewController.isDisplayingModal()) {
-    dismissModalViewController(true);
-  }
   setFirstResponder(nullptr);
   m_modalViewController.viewDidDisappear();
 }

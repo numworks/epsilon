@@ -34,6 +34,11 @@ public:
   static float checkedMax(float max, float * min = nullptr, float lowerMaxFloat = INFINITY, float upperMaxFloat = INFINITY) { return checkedValue(max, min, lowerMaxFloat, upperMaxFloat, true); }
   static float clipped(float x, bool isMax, float lowerMaxFloat, float upperMaxFloat);
   static float defaultRangeLengthFor(float position);
+
+  /* We use these values to bound the graph ranges to avoid infinite ranges.
+   * The values are derived from FLT_MAX with an arbitrary margin. */
+  constexpr static float k_upperMaxFloat = 1E+35f;
+  constexpr static float k_lowerMaxFloat = 9E+34f;
 private:
   static float checkedValue(float value, float * otherValue, float lowerMaxFloat, float upperMaxFloat, bool isMax);
 

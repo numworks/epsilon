@@ -12,9 +12,6 @@ public:
   I18n::Message title() override { return I18n::Message::StudentDistribution; }
   Type type() const override { return Type::Student; }
   bool isContinuous() const override { return true; }
-  float xMin() const override;
-  float xMax() const override;
-  float yMax() const override;
   I18n::Message parameterNameAtIndex(int index) override {
     assert(index == 0);
     return I18n::Message::K;
@@ -27,6 +24,10 @@ public:
   bool authorizedValueAtIndex(double x, int index) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
+private:
+  float computeXMin() const override;
+  float computeXMax() const override;
+  float computeYMax() const override;
 };
 
 }

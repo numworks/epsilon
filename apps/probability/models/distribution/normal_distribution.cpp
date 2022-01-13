@@ -5,15 +5,6 @@
 
 namespace Probability {
 
-float NormalDistribution::yMax() const {
-  float maxAbscissa = m_parameter1;
-  float result = evaluateAtAbscissa(maxAbscissa);
-  if (std::isnan(result) || result <= 0.0f) {
-    result = 1.0f;
-  }
-  return result * (1.0f + k_displayTopMarginRatio);
-}
-
 I18n::Message NormalDistribution::parameterNameAtIndex(int index) {
   if (index == 0) {
     return I18n::Message::Mu;
@@ -68,6 +59,15 @@ float NormalDistribution::xExtremum(bool min) const {
     return m_parameter1 + coefficient * 1.0f;
   }
   return m_parameter1 + coefficient * 5.0f * std::fabs(m_parameter2);
+}
+
+float NormalDistribution::computeYMax() const {
+  float maxAbscissa = m_parameter1;
+  float result = evaluateAtAbscissa(maxAbscissa);
+  if (std::isnan(result) || result <= 0.0f) {
+    result = 1.0f;
+  }
+  return result * (1.0f + k_displayTopMarginRatio);
 }
 
 }

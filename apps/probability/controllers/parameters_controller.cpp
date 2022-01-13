@@ -77,8 +77,9 @@ bool ParametersController::handleEvent(Ion::Events::Event event) {
   }
   return false;
 }
+
 void ParametersController::reinitCalculation() {
-  m_calculationController->setCalculationAccordingToIndex(0, true);
+  m_calculationController->reinitCalculation();
 }
 
 void ParametersController::didBecomeFirstResponder() {
@@ -130,7 +131,7 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
     return false;
   }
   m_distribution->setParameterAtIndex(f, parameterIndex);
-  m_calculationController->setCalculationAccordingToIndex(0, true);
+  reinitCalculation();
   return true;
 }
 

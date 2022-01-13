@@ -44,7 +44,7 @@ private:
 class DropdownCallback {
 public:
   virtual void onDropdownSelected(int selectedRow) = 0;
-  virtual bool popupDidReceiveEvent(Ion::Events::Event event) { return false; }
+  virtual bool popupDidReceiveEvent(Ion::Events::Event event, Escher::Responder * responder) { return false; }
 };
 
 /* A Dropdown is a view that, when clicked on, displays a list of views to choose from

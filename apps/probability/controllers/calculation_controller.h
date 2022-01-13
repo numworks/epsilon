@@ -69,7 +69,7 @@ public:
 
   // Dropdown
   void onDropdownSelected(int selectedRow) override;
-  bool popupDidReceiveEvent(Ion::Events::Event event) override;
+  bool popupDidReceiveEvent(Ion::Events::Event event, Escher::Responder * responder) override;
 
 private:
   constexpr static int k_numberOfCalculationCells = 3;

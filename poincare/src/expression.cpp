@@ -835,7 +835,7 @@ failure:
 }
 
 Expression Expression::cloneAndReduce(ExpressionNode::ReductionContext reductionContext) const {
-  // TODO: clone and reduce
+  // TODO: Ensure all cloneAndReduce usages handle reduction failure.
   bool reduceFailure;
   return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
 }

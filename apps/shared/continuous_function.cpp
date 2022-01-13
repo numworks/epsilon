@@ -1002,7 +1002,8 @@ bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation
       k_defaultUnitFormat,
       ExpressionNode::SymbolicComputation::
           ReplaceAllDefinedSymbolsWithDefinition);
-  assert(degree >= 0 && degree <= Expression::k_maxPolynomialDegree);
+  // Degree should be >= 0 but reduction failure may result in a -1 degree.
+  assert(degree <= Expression::k_maxPolynomialDegree);
   if (highestDegreeCoefficientSign != nullptr && degree >= 0) {
     ExpressionNode::Sign sign = coefficients[degree].sign(context);
     if (sign == ExpressionNode::Sign::Unknown) {

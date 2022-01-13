@@ -7,6 +7,13 @@
 
 namespace Probability {
 
+CalculationPopupDataSource::CalculationPopupDataSource(Distribution * distribution) :
+  m_distribution(distribution)
+{
+  // Initialize width to default
+  m_imageCells[0].setImage(ImageStore::Calculation1Icon);
+}
+
 int CalculationPopupDataSource::numberOfRows() const {
   return k_numberOfImages - m_distribution->isContinuous();
 }

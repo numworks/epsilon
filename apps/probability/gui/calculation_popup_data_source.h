@@ -11,7 +11,7 @@ namespace Probability {
 /* Provides the views shown to select the desired calculation. */
 class CalculationPopupDataSource : public Escher::ListViewDataSource {
 public:
-  CalculationPopupDataSource(Distribution * distribution) : m_distribution(distribution) {}
+  CalculationPopupDataSource(Distribution * distribution);
   int numberOfRows() const override;
   KDCoordinate rowHeight(int r) override {
     assert(false); /* Not needed because DropdownPopupController takes care of it */

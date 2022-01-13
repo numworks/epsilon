@@ -4,34 +4,6 @@
 
 namespace Probability {
 
-float ExponentialDistribution::xMin() const {
-  return - k_displayLeftMarginRatio * xMax();
-}
-
-float ExponentialDistribution::xMax() const {
-  assert(m_parameter1 != 0.0f);
-  float result = 5.0f/m_parameter1;
-  if (result <= FLT_EPSILON) {
-    result = 1.0f;
-  }
-  if (std::isinf(result)) {
-    // Lower xMax. It is used for drawing so the value is not that important.
-    return 1.0f/m_parameter1;
-  }
-  return result * (1.0f + k_displayRightMarginRatio);
-}
-
-float ExponentialDistribution::yMax() const {
-  float result = m_parameter1;
-  if (result <= 0.0f || std::isnan(result)) {
-    result = 1.0f;
-  }
-  if (result <= 0.0f) {
-    result = 1.0f;
-  }
-  return result * (1.0f + k_displayTopMarginRatio);
-}
-
 float ExponentialDistribution::evaluateAtAbscissa(float x) const {
   if (x < 0.0f) {
     return NAN;
@@ -65,6 +37,34 @@ double ExponentialDistribution::cumulativeDistributiveInverseForProbability(doub
     return 0.0;
   }
   return -std::log(1.0 - *probability)/m_parameter1;
+}
+
+float ExponentialDistribution::computeXMin() const {
+  return - k_displayLeftMarginRatio * computeXMax();
+}
+
+float ExponentialDistribution::computeXMax() const {
+  assert(m_parameter1 != 0.0f);
+  float result = 5.0f/m_parameter1;
+  if (result <= FLT_EPSILON) {
+    result = 1.0f;
+  }
+  if (std::isinf(result)) {
+    // Lower computeXMax. It is used for drawing so the value is not that important.
+    return 1.0f/m_parameter1;
+  }
+  return result * (1.0f + k_displayRightMarginRatio);
+}
+
+float ExponentialDistribution::computeYMax() const {
+  float result = m_parameter1;
+  if (result <= 0.0f || std::isnan(result)) {
+    result = 1.0f;
+  }
+  if (result <= 0.0f) {
+    result = 1.0f;
+  }
+  return result * (1.0f + k_displayTopMarginRatio);
 }
 
 }

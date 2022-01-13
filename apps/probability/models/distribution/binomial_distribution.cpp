@@ -27,28 +27,6 @@ float BinomialDistribution::evaluateAtAbscissa(float x) const {
   return Poincare::BinomialDistribution::EvaluateAtAbscissa<float>(x, m_parameter1, m_parameter2);
 }
 
-float BinomialDistribution::xMin() const {
-  float min = 0.0f;
-  float max = m_parameter1 > min ? m_parameter1 : 1.0f;
-  return min - k_displayLeftMarginRatio * (max - min);
-}
-
-float BinomialDistribution::xMax() const {
-  float min = 0.0f;
-  float max = m_parameter1 > min ? m_parameter1 : 1.0f;
-  return max + k_displayRightMarginRatio * (max - min);
-}
-
-float BinomialDistribution::yMax() const {
-  int maxAbscissa = m_parameter2 < 1.0 ? (m_parameter1+1)*m_parameter2 : m_parameter1;
-  float result = evaluateAtAbscissa(maxAbscissa);
-  if (result <= 0.0f || std::isnan(result)) {
-    result = 1.0f;
-  }
-  return result*(1.0f+ k_displayTopMarginRatio);
-}
-
-
 bool BinomialDistribution::authorizedValueAtIndex(double x, int index) const {
   if (!TwoParameterDistribution::authorizedValueAtIndex(x, index)) {
     return false;
@@ -77,6 +55,27 @@ double BinomialDistribution::rightIntegralInverseForProbability(double * probabi
 
 double BinomialDistribution::evaluateAtDiscreteAbscissa(int k) const {
   return Poincare::BinomialDistribution::EvaluateAtAbscissa<double>((double) k, m_parameter1, m_parameter2);
+}
+
+float BinomialDistribution::computeXMin() const {
+  float min = 0.0f;
+  float max = m_parameter1 > min ? m_parameter1 : 1.0f;
+  return min - k_displayLeftMarginRatio * (max - min);
+}
+
+float BinomialDistribution::computeXMax() const {
+  float min = 0.0f;
+  float max = m_parameter1 > min ? m_parameter1 : 1.0f;
+  return max + k_displayRightMarginRatio * (max - min);
+}
+
+float BinomialDistribution::computeYMax() const {
+  int maxAbscissa = m_parameter2 < 1.0 ? (m_parameter1+1)*m_parameter2 : m_parameter1;
+  float result = evaluateAtAbscissa(maxAbscissa);
+  if (result <= 0.0f || std::isnan(result)) {
+    result = 1.0f;
+  }
+  return result*(1.0f+ k_displayTopMarginRatio);
 }
 
 }

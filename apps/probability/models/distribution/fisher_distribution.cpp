@@ -7,21 +7,6 @@
 
 namespace Probability {
 
-float FisherDistribution::xMin() const {
-  return -k_displayLeftMarginRatio * xMax();
-}
-
-float FisherDistribution::xMax() const {
-  return 5.0f; // The mode is always < 1
-}
-
-float FisherDistribution::yMax() const {
-  const float m = mode();
-  float max = std::isnan(m) ? k_defaultMax : evaluateAtAbscissa(m);
-  max = std::isnan(max) ? k_defaultMax : max;
-  return max * (1.0f + k_displayTopMarginRatio);
-}
-
 I18n::Message FisherDistribution::parameterNameAtIndex(int index) {
   if (index == 0) {
     return I18n::Message::D1;
@@ -84,6 +69,21 @@ float FisherDistribution::mode() const {
     return (d1 - 2.0f)/d1 * d2/(d2 + 2.0f);
   }
   return NAN;
+}
+
+float FisherDistribution::computeXMin() const {
+  return -k_displayLeftMarginRatio * computeXMax();
+}
+
+float FisherDistribution::computeXMax() const {
+  return 5.0f; // The mode is always < 1
+}
+
+float FisherDistribution::computeYMax() const {
+  const float m = mode();
+  float max = std::isnan(m) ? k_defaultMax : evaluateAtAbscissa(m);
+  max = std::isnan(max) ? k_defaultMax : max;
+  return max * (1.0f + k_displayTopMarginRatio);
 }
 
 }

@@ -15,9 +15,6 @@ public:
   I18n::Message title() override { return I18n::Message::GeometricDistribution; }
   Type type() const override { return Type::Geometric; }
   bool isContinuous() const override { return false; }
-  float xMin() const override;
-  float xMax() const override;
-  float yMax() const override;
   I18n::Message parameterNameAtIndex(int index) override {
     assert(index == 0);
     return I18n::Message::P;
@@ -36,6 +33,9 @@ private:
     return templatedApproximateAtAbscissa<double>(static_cast<double>(k));
   }
   template<typename T> T templatedApproximateAtAbscissa(T x) const;
+  float computeXMin() const override;
+  float computeXMax() const override;
+  float computeYMax() const override;
 };
 
 }

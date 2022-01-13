@@ -5,6 +5,13 @@
 
 namespace Probability {
 
+void Distribution::computeCurveViewRange() {
+  protectedSetXMin(computeXMin(), Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat);
+  protectedSetXMax(computeXMax(), Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat);
+  protectedSetYMin(computeYMin(), Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat);
+  protectedSetYMax(computeYMax(), Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat);
+}
+
 double Distribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   if (!isContinuous()) {
     return Poincare::Solver::CumulativeDistributiveFunctionForNDefinedFunction<double>(x,
@@ -136,7 +143,7 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
    return result.x1();
 }
 
-float Distribution::yMin() const {
+float Distribution::computeXMin() const {
   return -k_displayBottomMarginRatio * yMax();
 }
 

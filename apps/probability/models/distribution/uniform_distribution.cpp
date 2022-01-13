@@ -25,31 +25,6 @@ I18n::Message UniformDistribution::parameterDefinitionAtIndex(int index) {
   }
 }
 
-float UniformDistribution::xMin() const {
-  assert(m_parameter2 >= m_parameter1);
-  if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
-    // If parameter is too big, subtracting only 1.0 wouldn't do anything.
-    return m_parameter1 - std::max(1.0, std::fabs(m_parameter1) * k_displayLeftMarginRatio);
-  }
-  return m_parameter1 - 0.6f * (m_parameter2 - m_parameter1);
-}
-
-float UniformDistribution::xMax() const {
-  if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
-    // If parameter is too big, adding only 1.0 wouldn't do anything.
-    return m_parameter1 + std::max(1.0, std::fabs(m_parameter1) * k_displayRightMarginRatio);
-  }
-  return m_parameter2 + 0.6f * (m_parameter2 - m_parameter1);
-}
-
-float UniformDistribution::yMax() const {
-  float result = m_parameter2 - m_parameter1 < FLT_EPSILON ? k_diracMaximum : 1.0f/(m_parameter2-m_parameter1);
-  if (result <= 0.0f || std::isnan(result) || std::isinf(result)) {
-    result = 1.0f;
-  }
-  return result * (1.0f+ k_displayTopMarginRatio);
-}
-
 float UniformDistribution::evaluateAtAbscissa(float t) const {
   float parameter1 = m_parameter1;
   float parameter2 = m_parameter2;
@@ -104,6 +79,31 @@ double UniformDistribution::cumulativeDistributiveInverseForProbability(double *
     return m_parameter1;
   }
   return m_parameter1 * (1 - *probability) + *probability * m_parameter2;
+}
+
+float UniformDistribution::computeXMin() const {
+  assert(m_parameter2 >= m_parameter1);
+  if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
+    // If parameter is too big, subtracting only 1.0 wouldn't do anything.
+    return m_parameter1 - std::max(1.0, std::fabs(m_parameter1) * k_displayLeftMarginRatio);
+  }
+  return m_parameter1 - 0.6f * (m_parameter2 - m_parameter1);
+}
+
+float UniformDistribution::computeXMax() const {
+  if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
+    // If parameter is too big, adding only 1.0 wouldn't do anything.
+    return m_parameter1 + std::max(1.0, std::fabs(m_parameter1) * k_displayRightMarginRatio);
+  }
+  return m_parameter2 + 0.6f * (m_parameter2 - m_parameter1);
+}
+
+float UniformDistribution::computeYMax() const {
+  float result = m_parameter2 - m_parameter1 < FLT_EPSILON ? k_diracMaximum : 1.0f/(m_parameter2-m_parameter1);
+  if (result <= 0.0f || std::isnan(result) || std::isinf(result)) {
+    result = 1.0f;
+  }
+  return result * (1.0f+ k_displayTopMarginRatio);
 }
 
 }

@@ -5,20 +5,6 @@
 
 namespace Probability {
 
-float GeometricDistribution::xMin() const {
-  return -k_displayLeftMarginRatio * xMax();
-}
-
-float GeometricDistribution::xMax() const {
-  assert(m_parameter1 != 0.0f);
-  return 5/m_parameter1 * (1.0f + k_displayRightMarginRatio);
-}
-
-float GeometricDistribution::yMax() const {
-  float result = evaluateAtAbscissa(1.0); // Tha probability is max for x == 1
-  return result * (1.0f + k_displayTopMarginRatio);
-}
-
 bool GeometricDistribution::authorizedValueAtIndex(double x, int index) const {
   assert(index == 0);
   if (!OneParameterDistribution::authorizedValueAtIndex(x, index)) {
@@ -43,6 +29,20 @@ T GeometricDistribution::templatedApproximateAtAbscissa(T k) const {
   // The result is p * (1-p)^{k-1}
   T lResult = (k - castedOne) * std::log(castedOne - p);
   return p * std::exp(lResult);
+}
+
+float GeometricDistribution::computeXMin() const {
+  return -k_displayLeftMarginRatio * computeXMax();
+}
+
+float GeometricDistribution::computeXMax() const {
+  assert(m_parameter1 != 0.0f);
+  return 5.0f/m_parameter1 * (1.0f + k_displayRightMarginRatio);
+}
+
+float GeometricDistribution::computeYMax() const {
+  float result = evaluateAtAbscissa(1.0); // Tha distribution is max for x == 1
+  return result * (1.0f + k_displayTopMarginRatio);
 }
 
 }

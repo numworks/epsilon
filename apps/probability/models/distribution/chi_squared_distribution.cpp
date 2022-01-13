@@ -6,25 +6,6 @@
 
 namespace Probability {
 
-float ChiSquaredDistribution::xMin() const {
-  return -k_displayLeftMarginRatio * xMax();
-}
-
-float ChiSquaredDistribution::xMax() const {
-  assert(m_parameter1 != 0.0);
-  return (m_parameter1 + 5.0f * std::sqrt(m_parameter1)) * (1.0f + k_displayRightMarginRatio);
-}
-
-float ChiSquaredDistribution::yMax() const {
-  float result;
-  if (m_parameter1/2.0f <= 1.0f + FLT_EPSILON) {
-    result = 0.5f;
-  } else {
-    result = evaluateAtAbscissa(m_parameter1 - 1.0f) * 1.2f;
-  }
-  return result * (1.0f + k_displayTopMarginRatio);
-}
-
 float ChiSquaredDistribution::evaluateAtAbscissa(float x) const {
   return Chi2Law::EvaluateAtAbscissa<float>(x, m_parameter1);
 }
@@ -43,6 +24,25 @@ double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(double x
 
 double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(double * probability) {
   return Chi2Law::CumulativeDistributiveInverseForProbability(*probability, m_parameter1);
+}
+
+float ChiSquaredDistribution::computeXMin() const {
+  return -k_displayLeftMarginRatio * computeXMax();
+}
+
+float ChiSquaredDistribution::computeXMax() const {
+  assert(m_parameter1 != 0.0);
+  return (m_parameter1 + 5.0f * std::sqrt(m_parameter1)) * (1.0f + k_displayRightMarginRatio);
+}
+
+float ChiSquaredDistribution::computeYMax() const {
+  float result;
+  if (m_parameter1/2.0f <= 1.0f + FLT_EPSILON) {
+    result = 0.5f;
+  } else {
+    result = evaluateAtAbscissa(m_parameter1 - 1.0f) * 1.2f;
+  }
+  return result * (1.0f + k_displayTopMarginRatio);
 }
 
 }

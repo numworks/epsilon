@@ -43,10 +43,6 @@ bool FisherDistribution::authorizedValueAtIndex(double x, int index) const {
   return x > DBL_MIN && x <= k_maxParameter;
 }
 
-void FisherDistribution::setParameterAtIndex(double f, int index) {
-  TwoParameterDistribution::setParameterAtIndex(f, index);
-}
-
 double FisherDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   return Poincare::RegularizedIncompleteBetaFunction(m_parameter1/2.0, m_parameter2/2.0, m_parameter1*x/(m_parameter1*x+m_parameter2));
 }

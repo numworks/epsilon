@@ -39,10 +39,11 @@ bool NormalDistribution::authorizedValueAtIndex(double x, int index) const {
 }
 
 void NormalDistribution::setParameterAtIndex(double f, int index) {
-  TwoParameterDistribution::setParameterAtIndex(f, index);
+  TwoParameterDistribution::protectedSetParameterAtIndex(f, index);
   if (index == 0 && std::fabs(m_parameter1/m_parameter2) > k_maxRatioMuSigma) {
     m_parameter2 = m_parameter1/k_maxRatioMuSigma;
   }
+  computeCurveViewRange();
 }
 
 double NormalDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {

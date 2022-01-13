@@ -71,10 +71,6 @@ CalculationController::CalculationController(Escher::StackViewController * paren
     m_calculationCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,
                                                                         this);
   }
-
-  HighlightImageCell * firstImageCell = m_imagesDataSource.reusableCell(0, 0);
-  m_dropdown.setInnerCell(firstImageCell);
-  firstImageCell->setImage(ImageStore::Calculation1Icon);
 }
 
 void CalculationController::reinitCalculation() {

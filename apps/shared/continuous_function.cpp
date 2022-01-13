@@ -715,14 +715,12 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   if (isUnnamedFunction) {
     result = Subtraction::Builder(leftExpression, result.childAtIndex(1));
   }
-  /* Do not replace symbols to preserve y as a symbol. However, functions must
-   * be replaced here so that unknown symbol is fully developped. Symbols are
-   * considered constant and will not influence polynomial degree nor the
-   * equation solution anyway. */
+  /* Replace all symbols and functions with definition.
+   * TODO : y symbol should be preserved in case it has been predefined. */
   PoincareHelpers::CloneAndReduce(
       &result, context, ExpressionNode::ReductionTarget::SystemForAnalysis,
       ExpressionNode::SymbolicComputation::
-          ReplaceDefinedFunctionsWithDefinitions);
+          ReplaceAllDefinedSymbolsWithDefinition);
   if (shouldRecomputePlotType) {
     // Use the computed equation to update the plot type.
     updatePlotType(result, context);

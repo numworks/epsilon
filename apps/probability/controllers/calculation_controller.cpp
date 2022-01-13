@@ -77,6 +77,11 @@ CalculationController::CalculationController(Escher::StackViewController * paren
   firstImageCell->setImage(ImageStore::Calculation1Icon);
 }
 
+void CalculationController::reinitCalculation() {
+  setCalculationAccordingToIndex(0, true);
+  m_dropdown.selectRow(0);
+}
+
 void CalculationController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::ProbaGraph);
   updateTitle();

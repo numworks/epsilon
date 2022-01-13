@@ -25,6 +25,9 @@ public:
                         Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                         Distribution * distribution,
                         Calculation * calculation);
+
+  void reinitCalculation();
+
   /* Responder */
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

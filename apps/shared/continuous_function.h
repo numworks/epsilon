@@ -225,8 +225,6 @@ public:
   static constexpr char k_unnamedRecordFirstChar = '?';
 private:
   static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
-  /* Ordinate name could have a definition in the global context. Care should be
-   * taken to preserve it when replacing symbols. */
   static constexpr char k_ordinateName[2] = "y";
   static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   // Units are not handled in the graph app. The default unit does not matters

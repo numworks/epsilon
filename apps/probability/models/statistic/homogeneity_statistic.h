@@ -50,6 +50,8 @@ private:
   double observedValue(int resultsIndex) override;
   int numberOfValuePairs() override;
 
+  bool isValidParamAtIndex(int i, double p) override;
+
   double observedValueAtPosition(Index2D index);
   double expectedValueAtPosition(Index2D index);
   int computeDegreesOfFreedom(Index2D max);

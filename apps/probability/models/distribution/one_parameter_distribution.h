@@ -17,6 +17,7 @@ public:
   void setParameterAtIndex(double f, int index) override {
     assert(index == 0);
     m_parameter1 = f;
+    Distribution::computeCurveViewRange();
   }
 protected:
   double m_parameter1;

@@ -6,18 +6,6 @@
 
 namespace Probability {
 
-float StudentDistribution::xMin() const {
-  return -xMax();
-}
-
-float StudentDistribution::xMax() const {
-  return 5.0f;
-}
-
-float StudentDistribution::yMax() const {
-  return std::exp(StudentLaw::lnCoefficient<float>(m_parameter1)) * (1.0f + k_displayTopMarginRatio);
-}
-
 float StudentDistribution::evaluateAtAbscissa(float x) const {
   return Probability::StudentLaw::EvaluateAtAbscissa<float>(x, m_parameter1);
 }
@@ -37,5 +25,16 @@ double StudentDistribution::cumulativeDistributiveInverseForProbability(double *
   return Probability::StudentLaw::CumulativeDistributiveInverseForProbability<double>(*probability, m_parameter1);
 }
 
+float StudentDistribution::computeXMin() const {
+  return -computeXMax();
+}
+
+float StudentDistribution::computeXMax() const {
+  return 5.0f;
+}
+
+float StudentDistribution::computeYMax() const {
+  return std::exp(StudentLaw::lnCoefficient<float>(m_parameter1)) * (1.0f + k_displayTopMarginRatio);
+}
 
 }

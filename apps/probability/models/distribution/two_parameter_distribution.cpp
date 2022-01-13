@@ -18,6 +18,7 @@ void TwoParameterDistribution::setParameterAtIndex(double f, int index) {
   } else {
     m_parameter2 = f;
   }
+  Distribution::computeCurveViewRange();
 }
 
 }

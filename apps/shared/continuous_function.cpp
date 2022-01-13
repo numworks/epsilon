@@ -587,8 +587,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       }
       bool isVertical = (yDegree == 0);
       /* Solve the equation in y (or x if isVertical)
-       * We replace symbols here because at this point there won't be any y
-       * symbol left in the coefficients and it might simplify roots. */
+       * Symbols are replaced to simplify roots. */
       Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
       int degree = m_expression.getPolynomialReducedCoefficients(
           isVertical ? k_unknownName : k_ordinateName, coefficients, context,

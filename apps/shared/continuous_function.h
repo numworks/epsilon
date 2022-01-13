@@ -95,9 +95,9 @@ public:
   // Return the equation's symbol
   Poincare::ExpressionNode::Type equationType() const { return m_model.equationType(); }
   // Return ContinuousFunction's PlotType. Recompute if Unknown can't be handled
-  PlotType plotType(bool canHandleUnknownType = false) const;
+  PlotType plotType() const;
   // Return ContinuousFunction's SymbolType
-  SymbolType symbolType(bool canHandleUnknownType = false) const;
+  SymbolType symbolType() const;
 
   /* Function */
 
@@ -319,12 +319,10 @@ private:
     int numberOfSubCurves() const { return m_numberOfSubCurves; }
     // m_equationType getter
     Poincare::ExpressionNode::Type equationType() const { return m_equationType; }
-    // m_equationType setter
-    void setEquationType(Poincare::ExpressionNode::Type equationType) const { m_equationType = equationType; }
     // m_plotType getter
     PlotType plotType() const { return m_plotType; }
-    // m_plotType setter
-    void setPlotType(PlotType plotType) const { m_plotType = plotType; }
+    // Reset m_plotType to Unknown type
+    void resetPlotType() const { m_plotType = PlotType::Unknown; }
     // Update m_plotType depending on the equation
     void updatePlotType(const Poincare::Expression equation, Poincare::Context * context) const;
     // If equation has a NonNull coeff. Can also compute last coeff sign.

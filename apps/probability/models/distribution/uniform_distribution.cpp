@@ -54,11 +54,12 @@ bool UniformDistribution::authorizedValueAtIndex(double x, int index) const {
 }
 
 void UniformDistribution::setParameterAtIndex(double f, int index) {
-  TwoParameterDistribution::setParameterAtIndex(f, index);
+  TwoParameterDistribution::protectedSetParameterAtIndex(f, index);
   if (index == 0 && m_parameter2 < m_parameter1) {
     // Add more than 1.0 if first parameter is greater than 100.
     m_parameter2 = m_parameter1 + std::max(1.0, std::round(std::fabs(m_parameter1) * 0.01));
   }
+  computeCurveViewRange();
 }
 
 double UniformDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {

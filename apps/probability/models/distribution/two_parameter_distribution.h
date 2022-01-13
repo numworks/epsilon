@@ -15,6 +15,7 @@ public:
   double parameterValueAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
 protected:
+  void protectedSetParameterAtIndex(double f, int index);
   double m_parameter1;
   double m_parameter2;
 };

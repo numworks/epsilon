@@ -11,14 +11,18 @@ double TwoParameterDistribution::parameterValueAtIndex(int index) {
   return m_parameter2;
 }
 
-void TwoParameterDistribution::setParameterAtIndex(double f, int index) {
-  assert(index >= 0 && index < 2);
-  if (index == 0) {
+void TwoParameterDistribution::protectedSetParameterAtIndex(double f, int i) {
+  assert(i >= 0 && i < 2);
+  if (i == 0) {
     m_parameter1 = f;
   } else {
     m_parameter2 = f;
   }
-  Distribution::computeCurveViewRange();
+}
+
+void TwoParameterDistribution::setParameterAtIndex(double f, int i) {
+  protectedSetParameterAtIndex(f, i);
+  computeCurveViewRange();
 }
 
 }

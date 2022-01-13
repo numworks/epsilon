@@ -66,7 +66,6 @@ public:
 
   void reloadDistributionCurveView();
   void reload();
-  void setCalculationAccordingToIndex(int index, bool forceReinitialisation = false);
 
   // Dropdown
   void onDropdownSelected(int selectedRow) override;
@@ -76,6 +75,7 @@ private:
   constexpr static int k_numberOfCalculationCells = 3;
   constexpr static KDCoordinate k_tableMargin = 3;
   void updateTitle();
+  void setCalculationAccordingToIndex(int index, bool forceReinitialisation = false);
   class ContentView : public Escher::View {
   public:
     ContentView(Escher::SelectableTableView * selectableTableView,

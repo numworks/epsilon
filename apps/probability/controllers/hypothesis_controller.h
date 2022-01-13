@@ -58,7 +58,9 @@ private:
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;
   constexpr static int k_indexOfNext = 2;
-  constexpr static int k_cellBufferSize = 50 ;
+  constexpr static int k_cellBufferSize = 7 /* μ1-μ2 */ + 1 /* = */ +
+                                          Constants::k_shortFloatNumberOfChars /* float */ +
+                                          1 /* \0 */;
   InputController * m_inputController;
 
   ComparisonOperatorPopupDataSource m_operatorDataSource;

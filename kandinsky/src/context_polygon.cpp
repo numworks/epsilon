@@ -11,6 +11,7 @@ void KDContext::fillPolygon(KDCoordinate pointsX[], KDCoordinate pointsY[], int 
   KDCoordinate right = m_clippingRect.width();
   KDCoordinate left = 0;
 
+  // We find top and bottom of the polygon
   for (int i = 0; i < numberOfPoints; i++) {
     if (pointsY[i] < top) {
       top = pointsY[i];
@@ -20,6 +21,7 @@ void KDContext::fillPolygon(KDCoordinate pointsX[], KDCoordinate pointsY[], int 
     }
   }
 
+  // We update them if needed
   if (top < 0) {
     top = 0;
   }
@@ -29,13 +31,13 @@ void KDContext::fillPolygon(KDCoordinate pointsX[], KDCoordinate pointsY[], int 
 
 
   for (int y=top; y<=bottom; y++) {
-
     int switches=0;
-    KDCoordinate switchesX[KDContext::k_polygonMaxNumberOfPoints];
+    KDCoordinate switchesX[numberOfPoints];
     int lastPointIndex = numberOfPoints-1;
 
     for (int i=0; i<numberOfPoints; i++) {
-      if (((pointsY[i]<=y && pointsY[lastPointIndex]>=y) || (pointsY[lastPointIndex]<= y && pointsY[i]>=y)) && pointsY[i] != pointsY[lastPointIndex]) {
+      if (((pointsY[i]<y && pointsY[lastPointIndex]>=y) || (pointsY[lastPointIndex]<y && pointsY[i]>=y)) &&
+          pointsY[i] != pointsY[lastPointIndex]) {
         switchesX[switches++] = (int) round(pointsX[i]+1.0*(y-pointsY[i])/(pointsY[lastPointIndex]-pointsY[i])*(pointsX[lastPointIndex]-pointsX[i])); 
       }
       lastPointIndex=i; 
@@ -60,7 +62,7 @@ void KDContext::fillPolygon(KDCoordinate pointsX[], KDCoordinate pointsY[], int 
         break;
       }
       if (switchesX[i+1]>left) {
-          fillRect( KDRect( switchesX[ i ] , y, switchesX[ i+1 ] - switchesX[ i ], 1 ), color ) ;
+          fillRect( KDRect(switchesX[ i ], y, switchesX[ i+1 ] - switchesX[ i ], 1 ), color ) ;
       }
     }
   }

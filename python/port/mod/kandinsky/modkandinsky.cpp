@@ -132,23 +132,19 @@ mp_obj_t modkandinsky_fill_circle(size_t n_args, const mp_obj_t * args) {
 }
 
 mp_obj_t modkandinsky_fill_polygon(size_t n_args, const mp_obj_t * args) {
-  KDCoordinate pointsX[KDContext::k_polygonMaxNumberOfPoints];
-  KDCoordinate pointsY[KDContext::k_polygonMaxNumberOfPoints];
-
   size_t itemLength;
   mp_obj_t * items;
 
   mp_obj_get_array(args[0], &itemLength, &items);
 
+  KDCoordinate pointsX[itemLength];
+  KDCoordinate pointsY[itemLength];
+
   if (itemLength < 3) {
     mp_raise_ValueError("polygon must have at least 3 points");
   }
-  else if (itemLength > KDContext::k_polygonMaxNumberOfPoints) {
-    mp_raise_ValueError("polygon is defined by too many points");
-  }
 
-  for(unsigned int i=0; i<itemLength; i++)
-  {
+  for(int i=0; i<itemLength; i++) {
     mp_obj_t * coordinates;
     mp_obj_get_array_fixed_n(items[i], 2, &coordinates);
 

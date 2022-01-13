@@ -42,7 +42,6 @@ public:
   virtual void pullRect(KDRect rect, KDColor * pixels) = 0;
 
   //Polygon 
-  static const int k_polygonMaxNumberOfPoints = 32;
   void fillPolygon(KDCoordinate pointsX[], KDCoordinate pointsY[], int numberOfPoints, KDColor color);
 protected:
   KDContext(KDPoint origin, KDRect clippingRect);

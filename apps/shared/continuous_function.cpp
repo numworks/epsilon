@@ -71,19 +71,17 @@ ContinuousFunction::AreaType ContinuousFunction::areaType() const {
   return inequationIsLinear ? AreaType::Above : AreaType::Outside;
 }
 
-ContinuousFunction::PlotType ContinuousFunction::plotType(bool canHandleUnknownType) const {
-  /* Some calls to plotType can handle PlotType::Unknown result and shouldn't
-   * call expressionEquation. */
-  if (!canHandleUnknownType && m_model.plotType() == PlotType::Unknown) {
+ContinuousFunction::PlotType ContinuousFunction::plotType() const {
+  if (m_model.plotType() == PlotType::Unknown) {
     // Computing the expression equation will update the unknown plot type.
     expressionEquation(Escher::Container::activeApp()->localContext());
   }
-  assert(canHandleUnknownType || m_model.plotType() != PlotType::Unknown);
+  assert(m_model.plotType() != PlotType::Unknown);
   return m_model.plotType();
 }
 
-ContinuousFunction::SymbolType ContinuousFunction::symbolType(bool canHandleUnknownType) const {
-  PlotType functionPlotType = plotType(canHandleUnknownType);
+ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
+  PlotType functionPlotType = plotType();
   switch (functionPlotType) {
   case PlotType::Parametric:
   case PlotType::UnhandledParametric:
@@ -129,10 +127,13 @@ I18n::Message ContinuousFunction::plotTypeMessage() {
 }
 
 CodePoint ContinuousFunction::symbol() const {
-  /* Symbol can handle Unknown plot type because
-   * ExpressionModelHandle::setContent needs a continuous function's symbol
-   * before having set the content. */
-  switch (symbolType(true)) {
+  if (m_model.plotType() == PlotType::Unknown) {
+    /* Symbol can handle Unknown plot type without having to update it because
+     * ExpressionModelHandle::setContent needs a continuous function's symbol
+     * before having set the content. */
+    return 'x';
+  }
+  switch (symbolType()) {
   case SymbolType::T:
     return 't';
   case SymbolType::Theta:
@@ -242,12 +243,17 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
   assert(d <= 1);
   // Degree might vary depending on symbols definition and complex format.
   // Approximate and return the two line coefficients
-  *slope = (d != 1) ? (d == 0 ? 0.0 : NAN)
-                    : coefficients[1].approximateToScalar<double>(
-                        context, ComplexFormat(), AngleUnit());
-  *intercept = (d < 0) ? NAN
-                       : coefficients[0].approximateToScalar<double>(
-                           context, ComplexFormat(), AngleUnit());
+  if (d < 0) {
+    *slope = NAN;
+    *intercept = NAN;
+  } else {
+    *intercept = coefficients[0].approximateToScalar<double>(context, ComplexFormat(), AngleUnit());
+    if (d == 0) {
+      *slope = 0.0;
+    } else {
+      *slope = coefficients[1].approximateToScalar<double>(context, ComplexFormat(), AngleUnit());
+    }
+  }
 }
 
 Conic ContinuousFunction::getConicParameters(Context * context) const {
@@ -259,9 +265,9 @@ void ContinuousFunction::udpateModel(Context * context) {
   bool previousAlongXStatus = isAlongX();
   setCache(nullptr);
   // Reset model's plot type. expressionEquation() will update plotType
-  m_model.setPlotType(PlotType::Unknown);
+  m_model.resetPlotType();
   expressionEquation(context);
-  assert(plotType(true) != PlotType::Unknown);
+  assert(m_model.plotType() != PlotType::Unknown);
   if (previousAlongXStatus != isAlongX() || canHaveCustomDomain()) {
     // The definition's domain must be resetted.
     setTMin(!isAlongX() ? 0.0 : -INFINITY);
@@ -662,28 +668,22 @@ bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equatio
 
 Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
   // See comment on isCircularlyDefined in ExpressionModel::expressionReduced.
-  bool shouldRecomputePlotType = (plotType() == PlotType::Unknown);
   if (record->fullName() != nullptr && record->fullName()[0] != k_unnamedRecordFirstChar && isCircularlyDefined(record, context)) {
-    if (shouldRecomputePlotType) {
-      setPlotType(PlotType::Undefined);
-    }
+    m_plotType = PlotType::Undefined;
     return Undefined::Builder();
   }
   Expression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
-    if (shouldRecomputePlotType) {
-      setPlotType(PlotType::Undefined);
-    }
+    m_plotType = PlotType::Undefined;
     return Undefined::Builder();
   }
-  if (shouldRecomputePlotType) {
-    setEquationType(result.type());
-  }
-  assert(ComparisonOperator::IsComparisonOperatorType(m_equationType));
+  PlotType computedPlotType = PlotType::Unknown;
+  ExpressionNode::Type computedEquationType = result.type();
+  assert(ComparisonOperator::IsComparisonOperatorType(computedEquationType));
   bool isUnnamedFunction = true;
   Expression leftExpression = result.childAtIndex(0);
 
-  if (isValidNamedLeftExpression(leftExpression, m_equationType)) {
+  if (isValidNamedLeftExpression(leftExpression, computedEquationType)) {
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
     const char * functionName = static_cast<Poincare::Function&>(leftExpression).name();
@@ -693,15 +693,13 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
             && memcmp(record->fullName(), functionName, functionNameLength) == 0
             && record->fullName()[functionNameLength] == Ion::Storage::k_dotChar)) {
       Expression functionSymbol = leftExpression.childAtIndex(0);
-      if (shouldRecomputePlotType) {
-        // Set the model's plot type.
-        if (functionSymbol.isIdenticalTo(Symbol::Builder('t'))) {
-          setPlotType(PlotType::Parametric);
-        } else if (functionSymbol.isIdenticalTo(Symbol::Builder('x'))) {
-          setPlotType(PlotType::Cartesian);
-        } else {
-          setPlotType(PlotType::Polar);
-        }
+      // Set the model's plot type.
+      if (functionSymbol.isIdenticalTo(Symbol::Builder('t'))) {
+        computedPlotType = PlotType::Parametric;
+      } else if (functionSymbol.isIdenticalTo(Symbol::Builder('x'))) {
+        computedPlotType = PlotType::Cartesian;
+      } else {
+        computedPlotType = PlotType::Polar;
       }
       result = result.childAtIndex(1);
       isUnnamedFunction = false;
@@ -720,7 +718,9 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
       &result, context, ExpressionNode::ReductionTarget::SystemForAnalysis,
       ExpressionNode::SymbolicComputation::
           ReplaceAllDefinedSymbolsWithDefinition);
-  if (shouldRecomputePlotType) {
+  if (plotType() == PlotType::Unknown) {
+    m_plotType = computedPlotType;
+    m_equationType = computedEquationType;
     // Use the computed equation to update the plot type.
     updatePlotType(result, context);
   }
@@ -834,7 +834,8 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(char * treePoolCursor) co
 void ContinuousFunction::Model::updatePlotType(const Expression equation, Context * context) const {
   // Retrieve ContinuousFunction's equation
   if (equation.type() == ExpressionNode::Type::Undefined) {
-    return setPlotType(PlotType::Undefined);
+    m_plotType = PlotType::Undefined;
+    return;
   }
   // Compute equation's degree regarding y and x.
   int yDeg = equation.polynomialDegree(context, k_ordinateName);
@@ -842,7 +843,6 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
 
   // Inequations : equation symbol has been updated when parsing the equation
   ExpressionNode::Type modelEquationType = equationType();
-  setEquationType(modelEquationType);
 
   // Named functions : PlotType has been updated when parsing the equation
   PlotType modelPlotType = plotType();
@@ -852,15 +852,19 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
       // We distinguish the Unhandled type so that x/θ/t symbol is preserved.
       switch (modelPlotType) {
       case PlotType::Parametric:
-        return setPlotType(PlotType::UnhandledParametric);
+        m_plotType = PlotType::UnhandledParametric;
+        return;
       case PlotType::Polar:
-        return setPlotType(PlotType::UnhandledPolar);
+        m_plotType = PlotType::UnhandledPolar;
+        return;
       default:
-        return setPlotType(PlotType::Unhandled);
+        m_plotType = PlotType::Unhandled;
+        return;
       }
     }
     if (ExamModeConfiguration::inequalityGraphingIsForbidden() && modelEquationType != ExpressionNode::Type::Equal) {
-      return setPlotType(PlotType::Disabled);
+      m_plotType = PlotType::Disabled;
+      return;
     }
     if (modelPlotType == PlotType::Parametric) {
       const Expression matrixEquation = (equation.type()
@@ -872,17 +876,20 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
           || static_cast<const Matrix &>(matrixEquation).numberOfColumns()
                  != 1) {
         // Invalid parametric format
-        return setPlotType(PlotType::UnhandledParametric);
+        m_plotType = PlotType::UnhandledParametric;
+        return;
       }
     }
     // TODO : f(x)=1+x could be labelled as line.
-    return setPlotType(modelPlotType);
+    m_plotType = modelPlotType;
+    return;
   }
 
   bool isYMainSymbol = (yDeg != 0);
   if (yDeg < 0 || yDeg > 2 || (!isYMainSymbol && xDeg != 1 && xDeg != 2)) {
     // Any equation with such a y and x degree won't be handled anyway.
-    return setPlotType(PlotType::Unhandled);
+    m_plotType = PlotType::Unhandled;
+    return;
   }
 
   const char * symbolName = isYMainSymbol ? k_ordinateName : k_unknownName;
@@ -891,7 +898,8 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
       || equation.hasComplexI(context)) {
     // The equation must have at least one nonNull coefficient.
     // TODO : Accept equations such as y=re(𝐢)
-    return setPlotType(PlotType::Unhandled);
+    m_plotType = PlotType::Unhandled;
+    return;
   }
 
   if (modelEquationType != ExpressionNode::Type::Equal) {
@@ -899,15 +907,16 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
       /* Are unhandled equation with :
        * - An unknown highest coefficient sign: sign must be strict and constant
        * - A non polynomial x coefficient in a quadratic equation on y. */
-      return setPlotType(PlotType::Unhandled);
+      m_plotType = PlotType::Unhandled;
+      return;
     }
     if (ExamModeConfiguration::inequalityGraphingIsForbidden()) {
-      return setPlotType(PlotType::Disabled);
+      m_plotType = PlotType::Disabled;
+      return;
     }
     if (ySign == ExpressionNode::Sign::Negative) {
       // Oppose the comparison operator
-      modelEquationType = ComparisonOperator::Opposite(modelEquationType);
-      setEquationType(modelEquationType);
+      m_equationType = ComparisonOperator::Opposite(modelEquationType);
     }
   }
 
@@ -927,26 +936,31 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
    */
   if (yDeg == 0) {
     if (xDeg == 1) {
-      return setPlotType(PlotType::VerticalLine);
+      m_plotType = PlotType::VerticalLine;
+      return;
     }
     if (xDeg == 2) {
-      return setPlotType(ExamModeConfiguration::implicitPlotsAreForbidden() ? PlotType::Disabled : PlotType::VerticalLines);
+      m_plotType = ExamModeConfiguration::implicitPlotsAreForbidden() ? PlotType::Disabled : PlotType::VerticalLines;
+      return;
     }
   }
 
   if (yDeg == 1 && xDeg == 0) {
-    return setPlotType(PlotType::HorizontalLine);
+    m_plotType = PlotType::HorizontalLine;
+    return;
   }
 
   if (yDeg == 1 && xDeg == 1 && ySign != ExpressionNode::Sign::Unknown) {
     // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
-    return setPlotType(PlotType::Line);
+    m_plotType = PlotType::Line;
+    return;
   }
 
   if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
     if (yDeg == 2 || ySign == ExpressionNode::Sign::Unknown) {
       // Equation with y^2 or such as y*x=1 are disabled.
-      return setPlotType(PlotType::Disabled);
+      m_plotType = PlotType::Disabled;
+      return;
     }
     // Deliberately ignore conics (such as y=x^2) to hide details.
   } else if (yDeg >= 1 && xDeg >= 1 && xDeg <= 2) {
@@ -954,24 +968,30 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
     Conic equationConic = Conic(equation, context, k_unknownName);
     Conic::Type ctype = equationConic.getConicType();
     if (ctype == Conic::Type::Hyperbola) {
-      return setPlotType(yDeg > 1 ? PlotType::Hyperbola : PlotType::CartesianHyperbola);
+      m_plotType = yDeg > 1 ? PlotType::Hyperbola : PlotType::CartesianHyperbola;
+      return;
     } else if (ctype == Conic::Type::Parabola) {
-      return setPlotType(yDeg > 1 ? PlotType::Parabola : PlotType::CartesianParabola);
+      m_plotType = yDeg > 1 ? PlotType::Parabola : PlotType::CartesianParabola;
+      return;
     } else if (ctype == Conic::Type::Ellipse) {
-      return setPlotType(PlotType::Ellipse);
+      m_plotType = PlotType::Ellipse;
+      return;
     } else if (ctype == Conic::Type::Circle) {
-      return setPlotType(PlotType::Circle);
+      m_plotType = PlotType::Circle;
+      return;
     }
     // A conic could not be identified.
   }
 
   if (yDeg == 1) {
-    return setPlotType(PlotType::Cartesian);
+    m_plotType = PlotType::Cartesian;
+    return;
   }
 
   assert(yDeg == 2);
   // Unknown type that we are able to plot anyway.
-  return setPlotType(PlotType::Other);
+  m_plotType = PlotType::Other;
+  return;
 }
 
 bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation, const char * symbolName, Context * context, ExpressionNode::Sign * highestDegreeCoefficientSign) {

@@ -216,7 +216,7 @@ void App::didBecomeActive(Window * windows) {
         m_hypothesisController.openPage(&m_inputController);
         m_inputController.openPage(&m_resultsController);
       }
-      assert(!ExamModeConfiguration::testsGraphResultsAreForbidden());
+      assert(!(subapp == Data::SubApp::Tests && ExamModeConfiguration::testsGraphResultsAreForbidden()));
       m_resultsController.openPage(&m_statisticGraphController);
       break;
   }

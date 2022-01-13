@@ -94,10 +94,10 @@ public:
   AreaType areaType() const;
   // Return the equation's symbol
   Poincare::ExpressionNode::Type equationType() const { return m_model.equationType(); }
-  // Return ContinuousFunction's PlotType. Recompute it if it was unknown.
-  PlotType plotType() const;
+  // Return ContinuousFunction's PlotType. Recompute if Unknown can't be handled
+  PlotType plotType(bool canHandleUnknownType = false) const;
   // Return ContinuousFunction's SymbolType
-  SymbolType symbolType() const;
+  SymbolType symbolType(bool canHandleUnknownType = false) const;
 
   /* Function */
 

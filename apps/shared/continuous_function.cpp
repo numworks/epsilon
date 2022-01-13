@@ -71,17 +71,19 @@ ContinuousFunction::AreaType ContinuousFunction::areaType() const {
   return inequationIsLinear ? AreaType::Above : AreaType::Outside;
 }
 
-ContinuousFunction::PlotType ContinuousFunction::plotType() const {
-  if (m_model.plotType() == PlotType::Unknown) {
+ContinuousFunction::PlotType ContinuousFunction::plotType(bool canHandleUnknownType) const {
+  /* Some calls to plotType can handle PlotType::Unknown result and shouldn't
+   * call expressionEquation. */
+  if (!canHandleUnknownType && m_model.plotType() == PlotType::Unknown) {
     // Computing the expression equation will update the unknown plot type.
     expressionEquation(Escher::Container::activeApp()->localContext());
   }
-  assert(m_model.plotType() != PlotType::Unknown);
+  assert(canHandleUnknownType || m_model.plotType() != PlotType::Unknown);
   return m_model.plotType();
 }
 
-ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
-  PlotType functionPlotType = plotType();
+ContinuousFunction::SymbolType ContinuousFunction::symbolType(bool canHandleUnknownType) const {
+  PlotType functionPlotType = plotType(canHandleUnknownType);
   switch (functionPlotType) {
   case PlotType::Parametric:
   case PlotType::UnhandledParametric:
@@ -127,7 +129,10 @@ I18n::Message ContinuousFunction::plotTypeMessage() {
 }
 
 CodePoint ContinuousFunction::symbol() const {
-  switch (symbolType()) {
+  /* Symbol can handle Unknown plot type because
+   * ExpressionModelHandle::setContent needs a continuous function's symbol
+   * before having set the content. */
+  switch (symbolType(true)) {
   case SymbolType::T:
     return 't';
   case SymbolType::Theta:
@@ -253,8 +258,10 @@ Conic ContinuousFunction::getConicParameters(Context * context) const {
 void ContinuousFunction::udpateModel(Context * context) {
   bool previousAlongXStatus = isAlongX();
   setCache(nullptr);
-  // Reset model's plot type. It will be recomputed when needed.
+  // Reset model's plot type. expressionEquation() will update plotType
   m_model.setPlotType(PlotType::Unknown);
+  expressionEquation(context);
+  assert(plotType(true) != PlotType::Unknown);
   if (previousAlongXStatus != isAlongX() || canHaveCustomDomain()) {
     // The definition's domain must be resetted.
     setTMin(!isAlongX() ? 0.0 : -INFINITY);
@@ -842,20 +849,23 @@ bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equatio
 
 Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
   // See comment on isCircularlyDefined in ExpressionModel::expressionReduced.
+  bool shouldRecomputePlotType = (plotType() == PlotType::Unknown);
   if (record->fullName() != nullptr && record->fullName()[0] != k_unnamedRecordFirstChar && isCircularlyDefined(record, context)) {
-    if (plotType() == PlotType::Unknown) {
+    if (shouldRecomputePlotType) {
       setPlotType(PlotType::Undefined);
     }
     return Undefined::Builder();
   }
   Expression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
-    if (plotType() == PlotType::Unknown) {
+    if (shouldRecomputePlotType) {
       setPlotType(PlotType::Undefined);
     }
     return Undefined::Builder();
   }
-  m_equationType = result.type();
+  if (shouldRecomputePlotType) {
+    setEquationType(result.type());
+  }
   assert(ComparisonOperator::IsComparisonOperatorType(m_equationType));
   bool isUnnamedFunction = true;
   Expression leftExpression = result.childAtIndex(0);
@@ -870,14 +880,14 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
             && memcmp(record->fullName(), functionName, functionNameLength) == 0
             && record->fullName()[functionNameLength] == Ion::Storage::k_dotChar)) {
       Expression functionSymbol = leftExpression.childAtIndex(0);
-      if (m_plotType == PlotType::Unknown) {
+      if (shouldRecomputePlotType) {
         // Set the model's plot type.
         if (functionSymbol.isIdenticalTo(Symbol::Builder('t'))) {
-          m_plotType = PlotType::Parametric;
+          setPlotType(PlotType::Parametric);
         } else if (functionSymbol.isIdenticalTo(Symbol::Builder('x'))) {
-          m_plotType = PlotType::Cartesian;
+          setPlotType(PlotType::Cartesian);
         } else {
-          m_plotType = PlotType::Polar;
+          setPlotType(PlotType::Polar);
         }
       }
       result = result.childAtIndex(1);
@@ -897,7 +907,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
       &result, context, ExpressionNode::ReductionTarget::SystemForAnalysis,
       ExpressionNode::SymbolicComputation::
           ReplaceDefinedFunctionsWithDefinitions);
-  if (plotType() == PlotType::Unknown) {
+  if (shouldRecomputePlotType) {
     // Use the computed equation to update the plot type.
     updatePlotType(result, context);
   }

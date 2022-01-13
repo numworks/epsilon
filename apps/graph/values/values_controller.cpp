@@ -1,6 +1,7 @@
 #include "values_controller.h"
 #include <assert.h>
 #include <escher/clipboard.h>
+#include <poincare/serialization_helper.h>
 #include "../../shared/poincare_helpers.h"
 #include "../../constant.h"
 #include "../app.h"
@@ -119,7 +120,9 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
       if (function->isNamed()) {
         function->nameWithArgument(bufferName, bufferNameSize);
       } else {
-        PoincareHelpers::Serialize(function->originalEquation(&record), bufferName, bufferNameSize, Preferences::LargeNumberOfSignificantDigits);
+        PoincareHelpers::Serialize(function->originalEquation(&record), bufferName, bufferNameSize, Preferences::VeryShortNumberOfSignificantDigits);
+        // Serialization may have introduced system parentheses.
+        SerializationHelper::ReplaceSystemParenthesesByUserParentheses(bufferName, bufferNameSize-1);
       }
     }
     myFunctionCell->setText(bufferName);

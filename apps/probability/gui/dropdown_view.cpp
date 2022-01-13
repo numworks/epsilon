@@ -90,7 +90,7 @@ void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
 }
 
 bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
-  if (m_callback->popupDidReceiveEvent(e)) {
+  if (m_callback->popupDidReceiveEvent(e, this)) {
     return true;
   }
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {

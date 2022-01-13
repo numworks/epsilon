@@ -1,15 +1,15 @@
 #ifndef PROBABILITE_DISTRIBUTION_H
 #define PROBABILITE_DISTRIBUTION_H
 
-#include <apps/shared/curve_view_range.h>
+#include <apps/shared/memoized_curve_view_range.h>
 #include <apps/i18n.h>
 #include <poincare/preferences.h>
 
 namespace Probability {
 
-class Distribution : public Shared::CurveViewRange {
+class Distribution : public Shared::MemoizedCurveViewRange {
 public:
-  Distribution() : Shared::CurveViewRange() {}
+  Distribution() : Shared::MemoizedCurveViewRange() {}
   enum class Type : uint8_t{
     Binomial,
     Uniform,
@@ -47,9 +47,13 @@ protected:
   constexpr static float k_displayLeftMarginRatio = 0.05f;
   constexpr static float k_displayRightMarginRatio = 0.05f;
   double cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(double * probability, double ax, double bx);
+  void computeCurveViewRange();
 private:
   constexpr static float k_displayBottomMarginRatio = 0.2f;
-  float yMin() const override;
+  virtual float computeXMin() const = 0;
+  virtual float computeXMax() const = 0;
+  virtual float computeYMin() const { return -k_displayBottomMarginRatio * computeYMax(); }
+  virtual float computeYMax() const = 0;
 };
 
 }

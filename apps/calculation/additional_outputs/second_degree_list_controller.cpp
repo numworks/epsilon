@@ -170,28 +170,27 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
     if (x0Opposite.isUninitialized()) {
       PoincareHelpers::Simplify(&x0, context, ExpressionNode::ReductionTarget::User);
       if (x0.type() == ExpressionNode::Type::Addition || x0.type() == ExpressionNode::Type::Subtraction) {
-        firstFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), Parenthesis::Builder(x0));
+        firstFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), Parenthesis::Builder(x0.clone()));
       }
       else {
-        firstFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), x0);
+        firstFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), x0.clone());
       }
     }
     else {
-      PoincareHelpers::Simplify(&x0Opposite, context, ExpressionNode::ReductionTarget::User);
-      firstFactor = Addition::Builder(Symbol::Builder("x", strlen("x")), x0Opposite);
-    }
-    if (x0.type() == ExpressionNode::Type::Opposite) {
-      factorized = Parenthesis::Builder(Addition::Builder(Symbol::Builder("x", strlen("x")), x0.childAtIndex(0).clone()));
+      if (x0Opposite.type() == ExpressionNode::Type::Addition || x0Opposite.type() == ExpressionNode::Type::Subtraction) {
+        x0Opposite = Parenthesis::Builder(x0Opposite.clone());
+      }
+      secondFactor = Addition::Builder(Symbol::Builder("x", strlen("x")), x0Opposite.clone());
     }
 
     Expression x1Opposite = getOppositeIfExists(x1, &reductionContext);
     if (x1Opposite.isUninitialized()) {
       PoincareHelpers::Simplify(&x1, context, ExpressionNode::ReductionTarget::User);
-      if (x0.type() == ExpressionNode::Type::Addition || x1.type() == ExpressionNode::Type::Subtraction) {
-        secondFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), Parenthesis::Builder(x1));
+      if (x1.type() == ExpressionNode::Type::Addition || x1.type() == ExpressionNode::Type::Subtraction) {
+        secondFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), Parenthesis::Builder(x1.clone()));
       }
       else {
-        secondFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), x1);
+        secondFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), x1.clone());
       }
     }
     else {
@@ -199,7 +198,7 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
       if (x1Opposite.type() == ExpressionNode::Type::Addition || x1Opposite.type() == ExpressionNode::Type::Subtraction) {
         x1Opposite = Parenthesis::Builder(x1Opposite.clone());
       }
-      secondFactor = Addition::Builder(Symbol::Builder("x", strlen("x")), x1Opposite);
+      secondFactor = Addition::Builder(Symbol::Builder("x", strlen("x")), x1Opposite.clone());
     }
 
     Expression solutionProduct = Multiplication::Builder(Parenthesis::Builder(firstFactor), Parenthesis::Builder(secondFactor));
@@ -228,16 +227,16 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
     
     if (x0Opposite.isUninitialized()) {
       PoincareHelpers::Simplify(&x0, context, ExpressionNode::ReductionTarget::User);
-      if (x0.type() == ExpressionNode::Type::Addition || x1.type() == ExpressionNode::Type::Subtraction) {
-        factor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), Parenthesis::Builder(x0));
+      if (x0.type() == ExpressionNode::Type::Addition || x0.type() == ExpressionNode::Type::Subtraction) {
+        factor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), Parenthesis::Builder(x0.clone()));
       }
       else {
-        factor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), x0);
+        factor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), x0.clone());
       }
     }
     else {
       PoincareHelpers::Simplify(&x0Opposite, context, ExpressionNode::ReductionTarget::User);
-      factor = Addition::Builder(Symbol::Builder("x", strlen("x")), x0Opposite);
+      factor = Addition::Builder(Symbol::Builder("x", strlen("x")), x0Opposite.clone());
     }
 
     Expression solutionProduct = Power::Builder(Parenthesis::Builder(factor), Rational::Builder(2));

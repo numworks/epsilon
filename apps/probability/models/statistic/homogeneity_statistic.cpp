@@ -202,6 +202,14 @@ void HomogeneityStatistic::recomputeData() {
   }
 }
 
+bool HomogeneityStatistic::isValidParamAtIndex(int i, double p) {
+  if (p < 0.0) {
+    // Frequencies should be >= 0
+    return false;
+  }
+  return Chi2Statistic::isValidParamAtIndex(i, p);
+}
+
 bool HomogeneityStatistic::validateInputs() {
   Index2D max = computeDimensions();
   if (max.col <= 1 || max.row <= 1) {

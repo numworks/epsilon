@@ -7,7 +7,7 @@ namespace Probability {
 
 class BinomialDistribution final : public TwoParameterDistribution {
 public:
-  BinomialDistribution() : TwoParameterDistribution(20.0, 0.5) {}
+  BinomialDistribution() : TwoParameterDistribution(20.0, 0.5) { computeCurveViewRange(); }
   I18n::Message title() override { return I18n::Message::BinomialDistribution; }
   Type type() const override { return Type::Binomial; }
   bool isContinuous() const override { return false; }

@@ -1,6 +1,7 @@
 #include <shared/drivers/external_flash_write.h>
 #include <shared/drivers/trampoline.h>
 #include <assert.h>
+#include <regs/regs.h>
 
 namespace Ion {
 namespace Device {

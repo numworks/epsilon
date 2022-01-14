@@ -2,20 +2,17 @@
 #include <poincare/based_integer.h>
 #include <poincare/constant.h>
 #include <poincare/number.h>
-#include <ion/unicode/utf8_decoder.h>
 
 namespace Poincare {
 
 const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, bool * testResult) {
-  UTF8Decoder decoder(m_text);
-  CodePoint c = decoder.nextCodePoint();
-  const char * nextTextPosition = decoder.stringPosition();
+  CodePoint c = m_decoder.nextCodePoint();
   bool shouldPop = popTest(c, context);
   if (testResult != nullptr) {
     *testResult = shouldPop;
   }
-  if (shouldPop) {
-    m_text = nextTextPosition;
+  if (!shouldPop) {
+    m_decoder.previousCodePoint();
   }
   return c;
 }
@@ -65,22 +62,22 @@ size_t Tokenizer::popHexadecimalDigits() {
 }
 
 Token Tokenizer::popNumber() {
-  const char * integralPartText = m_text;
+  const char * integralPartText = m_decoder.stringPosition();
   size_t integralPartLength = popDigits();
 
-  const char * fractionalPartText = m_text;
+  const char * fractionalPartText = m_decoder.stringPosition();
   size_t fractionalPartLength = 0;
 
   // Check for binary or hexadecimal number
   if (integralPartLength == 1 && integralPartText[0] == '0') {
     // Save string position if no binary/hexadecimal number
-    const char * string = m_text;
+    const char * string = m_decoder.stringPosition();
     // Look for "0b"
     bool binary = canPopCodePoint('b');
     // Look for "0x"
     bool hexa = canPopCodePoint('x');
     if (binary || hexa) {
-      const char * binaryOrHexaText = m_text;
+      const char * binaryOrHexaText = m_decoder.stringPosition();
       size_t binaryOrHexaLength = binary ? popBinaryDigits() : popHexadecimalDigits();
       if (binaryOrHexaLength > 0) {
         Token result(binary ? Token::BinaryNumber : Token::HexadecimalNumber);
@@ -88,13 +85,13 @@ Token Tokenizer::popNumber() {
         return result;
       } else {
         // Rewind before 'b'/'x' letter
-        m_text = string;
+        m_decoder.setPosition(string);
       }
     }
   }
 
   if (canPopCodePoint('.')) {
-    fractionalPartText = m_text;
+    fractionalPartText = m_decoder.stringPosition();
     fractionalPartLength = popDigits();
   } else {
     assert(integralPartLength > 0);
@@ -104,12 +101,12 @@ Token Tokenizer::popNumber() {
     return Token(Token::Undefined);
   }
 
-  const char * exponentPartText = m_text;
+  const char * exponentPartText = m_decoder.stringPosition();
   size_t exponentPartLength = 0;
   bool exponentIsNegative = false;
   if (canPopCodePoint(UCodePointLatinLetterSmallCapitalE)) {
     exponentIsNegative = canPopCodePoint('-');
-    exponentPartText = m_text;
+    exponentPartText = m_decoder.stringPosition();
     exponentPartLength = popDigits();
     if (exponentPartLength == 0) {
       return Token(Token::Undefined);
@@ -125,9 +122,9 @@ Token Tokenizer::popToken() {
   // Skip whitespaces
   while (canPopCodePoint(' ')) {}
 
-  /* Save for later use (since m_text is altered by popNumber,
-   * popIdentifier). */
-  const char * start = m_text;
+  /* Save for later use (since m_decoder.stringPosition() is altered by
+   * popNumber, popIdentifier). */
+  const char * start = m_decoder.stringPosition();
 
   /* If the next code point is the start of a number, we do not want to pop it
    * because popNumber needs this code point. */

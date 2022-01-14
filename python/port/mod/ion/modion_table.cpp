@@ -16,6 +16,11 @@ const mp_obj_fun_builtin_fixed_t modion_keyboard_keydown_obj = {
   {(mp_fun_0_t)modion_keyboard_keydown}
 };
 
+const mp_obj_fun_builtin_fixed_t modion_get_keys_obj = {
+  {&mp_type_fun_builtin_0},
+  {(mp_fun_0_t)modion_get_keys}
+};
+
 const mp_obj_fun_builtin_fixed_t modion_battery_obj = {
   {&mp_type_fun_builtin_0},
   {(mp_fun_0_t)modion_battery}
@@ -37,6 +42,7 @@ extern "C" const mp_rom_map_elem_t modion_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_battery_level), MP_ROM_PTR(&modion_battery_level_obj) },
   { MP_ROM_QSTR(MP_QSTR_battery_ischarging), MP_ROM_PTR(&modion_battery_ischarging_obj) },
   { MP_ROM_QSTR(MP_QSTR_keydown), MP_ROM_PTR(&modion_keyboard_keydown_obj) },
+  { MP_ROM_QSTR(MP_QSTR_get_keys), MP_ROM_PTR(&modion_get_keys_obj) },
   { MP_ROM_QSTR(MP_QSTR_KEY_LEFT), MP_OBJ_NEW_SMALL_INT(Ion::Keyboard::Key::Left) },
   { MP_ROM_QSTR(MP_QSTR_KEY_UP), MP_OBJ_NEW_SMALL_INT(Ion::Keyboard::Key::Up) },
   { MP_ROM_QSTR(MP_QSTR_KEY_DOWN), MP_OBJ_NEW_SMALL_INT(Ion::Keyboard::Key::Down) },

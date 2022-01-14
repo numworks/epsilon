@@ -10,7 +10,6 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modkandinsky_fill_rect_obj, 5, 5, mod
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modkandinsky_fill_circle_obj, 4, 4, modkandinsky_fill_circle);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modkandinsky_fill_polygon_obj, 2, 2, modkandinsky_fill_polygon);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modkandinsky_wait_vblank_obj, modkandinsky_wait_vblank);
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(modkandinsky_get_keys_obj, modkandinsky_get_keys);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modkandinsky_get_palette_obj, modkandinsky_get_palette);
 
 STATIC const mp_rom_map_elem_t modkandinsky_module_globals_table[] = {
@@ -27,7 +26,6 @@ STATIC const mp_rom_map_elem_t modkandinsky_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_large_font), mp_const_true },
   { MP_ROM_QSTR(MP_QSTR_small_font), mp_const_false },
   { MP_ROM_QSTR(MP_QSTR_wait_vblank), (mp_obj_t)&modkandinsky_wait_vblank_obj },
-  { MP_ROM_QSTR(MP_QSTR_get_keys), (mp_obj_t)&modkandinsky_get_keys_obj },
   { MP_ROM_QSTR(MP_QSTR_get_palette), (mp_obj_t)&modkandinsky_get_palette_obj },
 };
 

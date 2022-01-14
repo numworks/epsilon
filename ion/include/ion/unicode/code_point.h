@@ -42,8 +42,9 @@ private:
 
 static constexpr CodePoint UCodePointNull                     = 0x0;
 
-// 0x1 represents soh. It is not used, so we can use it for another purpose.
+// 0x1 and 0x2 are not used, so we can use them for another purpose
 static constexpr CodePoint UCodePointUnknown                  = 0x1;
+static constexpr CodePoint UCodePointTemporaryUnknown         = 0x2;
 
 static constexpr CodePoint UCodePointTabulation               = 0x9;
 static constexpr CodePoint UCodePointLineFeed                 = 0xa;
@@ -53,7 +54,6 @@ static constexpr CodePoint UCodePointCarriageReturn           = 0xd;
 static constexpr CodePoint UCodePointEmpty                    = 0x11; // Used to be parsed into EmptyExpression
 static constexpr CodePoint UCodePointLeftSystemParenthesis    = 0x12; // Used for serialization
 static constexpr CodePoint UCodePointRightSystemParenthesis   = 0x13; // Used for serialization
-static constexpr CodePoint UCodePointTemporaryUnknown         = 0x14; // Used for some reductions
 
 static constexpr CodePoint UCodePointDegreeSign               = 0xb0;    // °
 static constexpr CodePoint UCodePointMiddleDot                = 0xb7;    // ·

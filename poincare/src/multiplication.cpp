@@ -227,7 +227,7 @@ Layout  MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDispla
 int MultiplicationNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
   char string[stringMaxSize];
-  SerializationHelper::CodePoint(string, stringMaxSize, operatorSymbol());
+  SerializationHelper::CodePoint(string, stringMaxSize, UCodePointMultiplicationSign);
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, string);
 }
 

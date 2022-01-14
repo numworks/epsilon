@@ -166,6 +166,7 @@ Dropdown::Dropdown(Escher::Responder * parentResponder,
                    Escher::ListViewDataSource * listDataSource,
                    DropdownCallback * callback) :
     Responder(parentResponder), m_popup(this, listDataSource, this, callback) {
+  selectRow(0);
 }
 
 bool Dropdown::handleEvent(Ion::Events::Event e) {

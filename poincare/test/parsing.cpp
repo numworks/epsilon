@@ -86,8 +86,6 @@ QUIZ_CASE(poincare_parsing_tokenize_numbers) {
   assert_tokenizes_as_undefined_token("1ᴇ--4");
   assert_tokenizes_as_undefined_token("1.ᴇᴇ4");
   assert_tokenizes_as_undefined_token("1ᴇ2ᴇ4");
-  assert_tokenizes_as_undefined_token("0b2");
-  assert_tokenizes_as_undefined_token("0xG");
 }
 
 QUIZ_CASE(poincare_parsing_memory_exhaustion) {
@@ -489,6 +487,9 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("1x", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)));
   assert_parsed_expression_is("1ans", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("ans", 3)));
   assert_parsed_expression_is("x1", Symbol::Builder("x1", 2));
+  // Fallback from binary number
+  assert_parsed_expression_is("0b2", Multiplication::Builder(BasedInteger::Builder(0), Symbol::Builder("b2", 2)));
+  assert_parsed_expression_is("0xG", Multiplication::Builder(BasedInteger::Builder(0), Symbol::Builder("xG", 2)));
   assert_parsed_expression_is("1x+2", Addition::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)),BasedInteger::Builder(2)));
   assert_parsed_expression_is("1π", Multiplication::Builder(BasedInteger::Builder(1),Constant::Builder("π")));
   assert_parsed_expression_is("1x-2", Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)),BasedInteger::Builder(2)));

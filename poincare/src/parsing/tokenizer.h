@@ -7,13 +7,14 @@
  * Tokenizer determines a Type and may save other relevant data intended for the
  * Parser. */
 
+#include <ion/unicode/utf8_decoder.h>
 #include "token.h"
 
 namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text) : m_text(text) {}
+  Tokenizer(const char * text) : m_decoder(text) {}
   Token popToken();
 private:
   typedef bool (*PopTest)(CodePoint c, CodePoint context);
@@ -26,7 +27,7 @@ private:
   size_t popIdentifier(CodePoint additionalAcceptedCodePoint);
   Token popNumber();
 
-  const char * m_text;
+  UTF8Decoder m_decoder;
 };
 
 }

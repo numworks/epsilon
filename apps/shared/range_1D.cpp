@@ -7,11 +7,19 @@
 namespace Shared {
 
 void Range1D::setMin(float f, float lowerMaxFloat, float upperMaxFloat) {
-  m_min = checkedMin(f, &m_max, lowerMaxFloat, upperMaxFloat);
+  /* We can't use &m_max directly: Range1D is 'packed' so &m_max address might
+   * be unaligned. It can be off by a few bits and not referable by an actual
+   * address. */
+  float max;
+  m_min = checkedMin(f, &max, lowerMaxFloat, upperMaxFloat);
+  m_max = max;
 }
 
 void Range1D::setMax(float f, float lowerMaxFloat, float upperMaxFloat) {
-  m_max = checkedMax(f, &m_min, lowerMaxFloat, upperMaxFloat);
+  // Same comment as setMin
+  float min;
+  m_max = checkedMax(f, &min, lowerMaxFloat, upperMaxFloat);
+  m_min = min;
 }
 
 float Range1D::checkedValue(float value, float * otherValue, float lowerMaxFloat, float upperMaxFloat, bool isMax) {

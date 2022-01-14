@@ -8,7 +8,7 @@ namespace Probability {
 
 class StudentDistribution : public OneParameterDistribution {
 public:
-  StudentDistribution() : OneParameterDistribution(1.0) {}
+  StudentDistribution() : OneParameterDistribution(1.0) { computeCurveViewRange(); }
   I18n::Message title() override { return I18n::Message::StudentDistribution; }
   Type type() const override { return Type::Student; }
   bool isContinuous() const override { return true; }

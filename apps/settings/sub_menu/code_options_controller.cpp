@@ -13,6 +13,7 @@ CodeOptionsController::CodeOptionsController(Responder * parentResponder) :
   m_chevronCellFontSize.setMessageFont(KDFont::LargeFont);
   m_switchCellAutoCompletion.setMessageFont(KDFont::LargeFont);
   m_switchCellSyntaxHighlighting.setMessageFont(KDFont::LargeFont);
+  m_switchCellCursorSaving.setMessageFont(KDFont::LargeFont);
 }
 
 bool CodeOptionsController::handleEvent(Ion::Events::Event event) {
@@ -21,9 +22,13 @@ bool CodeOptionsController::handleEvent(Ion::Events::Event event) {
       case 1:
         GlobalPreferences::sharedGlobalPreferences()->setAutocomplete(!GlobalPreferences::sharedGlobalPreferences()->autocomplete());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-        break;      
+        break;
       case 2:
         GlobalPreferences::sharedGlobalPreferences()->setSyntaxhighlighting(!GlobalPreferences::sharedGlobalPreferences()->syntaxhighlighting());
+        m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+        break;
+      case 3:
+        GlobalPreferences::sharedGlobalPreferences()->setCursorSaving(!GlobalPreferences::sharedGlobalPreferences()->cursorSaving());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
         break;
       default:
@@ -34,7 +39,6 @@ bool CodeOptionsController::handleEvent(Ion::Events::Event event) {
         m_lastSelect = selectedRow();
         stack->push(subController);
         break;
-        
     }
     return true;
   }
@@ -49,6 +53,9 @@ HighlightCell * CodeOptionsController::reusableCell(int index, int type) {
   }
   else if (index == 1) {
     return &m_switchCellAutoCompletion;
+  }
+  else if (index == 2) {
+    return &m_switchCellCursorSaving;
   }
   return &m_switchCellSyntaxHighlighting;
 }
@@ -66,9 +73,9 @@ void CodeOptionsController::willDisplayCellForIndex(HighlightCell * cell, int in
     MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
     myTextCell->setMessage(thisLabel);
     GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont
-        ? myTextCell->setSubtitle(I18n::Message::LargeFont) 
+        ? myTextCell->setSubtitle(I18n::Message::LargeFont)
         : myTextCell->setSubtitle(I18n::Message::SmallFont);
-  } 
+  }
 #ifdef HAS_CODE
   else if (thisLabel == I18n::Message::Autocomplete) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
@@ -79,6 +86,11 @@ void CodeOptionsController::willDisplayCellForIndex(HighlightCell * cell, int in
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->syntaxhighlighting());
+  }
+  else if (thisLabel == I18n::Message::CursorSaving) {
+    MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
+    SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
+    mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->cursorSaving());
   }
 #endif
 }

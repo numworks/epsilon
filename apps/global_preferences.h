@@ -38,6 +38,8 @@ public:
   void setAutocomplete(bool autocomple) { m_autoComplete = autocomple; }
   bool syntaxhighlighting() const { return m_syntaxhighlighting; }
   void setSyntaxhighlighting(bool syntaxhighlight) { m_syntaxhighlighting = syntaxhighlight; }
+  bool cursorSaving() const { return m_cursorSaving; }
+  void setCursorSaving(bool cursorsave) { m_cursorSaving = cursorsave; }
   int brightnessLevel() const { return m_brightnessLevel; }
   void setBrightnessLevel(int brightnessLevel);
   const KDFont * font() const { return m_font; }
@@ -56,6 +58,7 @@ private:
     m_dfuLevel(0),
     m_autoComplete(true),
     m_syntaxhighlighting(true),
+    m_cursorSaving(true),
     m_brightnessLevel(Ion::Backlight::MaxBrightness),
     m_font(KDFont::LargeFont) {}
   I18n::Language m_language;
@@ -69,6 +72,7 @@ private:
   uint8_t m_dfuLevel;
   bool m_autoComplete;
   bool m_syntaxhighlighting;
+  bool m_cursorSaving;
   int m_brightnessLevel;
   const KDFont * m_font;
 };

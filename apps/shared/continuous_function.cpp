@@ -711,13 +711,23 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   }
   if (isUnnamedFunction) {
     result = Subtraction::Builder(leftExpression, result.childAtIndex(1));
+    /* Replace all y symbols with UCodePointTemporaryUnknown so that they are
+     * not replaced if they had a predefined value. This will not replace the y
+     * symbols nested in function, which is not a supported behavior anyway.
+     * TODO: Make a consistent behavior calculation/additional_outputs using a
+     *       VariableContext to temporary disable y's predefinition. */
+    result.replaceSymbolWithExpression(Symbol::Builder(k_ordinateName[0]), Symbol::Builder(UCodePointTemporaryUnknown));
   }
-  /* Replace all symbols and functions with definition.
-   * TODO : y symbol should be preserved in case it has been predefined. */
+  // Replace all defined symbols and functions to extract symbols
   PoincareHelpers::CloneAndReduce(
       &result, context, ExpressionNode::ReductionTarget::SystemForAnalysis,
       ExpressionNode::SymbolicComputation::
           ReplaceAllDefinedSymbolsWithDefinition);
+
+  if (isUnnamedFunction) {
+    result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateName[0]));
+  }
+
   if (plotType() == PlotType::Unknown) {
     m_plotType = computedPlotType;
     m_equationType = computedEquationType;

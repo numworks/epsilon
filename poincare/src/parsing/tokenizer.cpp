@@ -73,27 +73,23 @@ Token Tokenizer::popNumber() {
 
   // Check for binary or hexadecimal number
   if (integralPartLength == 1 && integralPartText[0] == '0') {
+    // Save string position if no binary/hexadecimal number
+    const char * string = m_text;
     // Look for "0b"
-    if (canPopCodePoint('b')) {
-      const char * binaryText = m_text;
-      size_t binaryLength = popBinaryDigits();
-      if (binaryLength == 0) {
-        return Token(Token::Undefined);
-      }
-      Token result(Token::BinaryNumber);
-      result.setExpression(BasedInteger::Builder(binaryText, binaryLength, Integer::Base::Binary));
-      return result;
-    }
+    bool binary = canPopCodePoint('b');
     // Look for "0x"
-    if (canPopCodePoint('x')) {
-      const char * hexaText = m_text;
-      size_t hexaLength = popHexadecimalDigits();
-      if (hexaLength == 0) {
-        return Token(Token::Undefined);
+    bool hexa = canPopCodePoint('x');
+    if (binary || hexa) {
+      const char * binaryOrHexaText = m_text;
+      size_t binaryOrHexaLength = binary ? popBinaryDigits() : popHexadecimalDigits();
+      if (binaryOrHexaLength > 0) {
+        Token result(binary ? Token::BinaryNumber : Token::HexadecimalNumber);
+        result.setExpression(BasedInteger::Builder(binaryOrHexaText, binaryOrHexaLength, binary ? Integer::Base::Binary : Integer::Base::Hexadecimal));
+        return result;
+      } else {
+        // Rewind before 'b'/'x' letter
+        m_text = string;
       }
-      Token result(Token::HexadecimalNumber);
-      result.setExpression(BasedInteger::Builder(hexaText, hexaLength, Integer::Base::Hexadecimal));
-      return result;
     }
   }
 

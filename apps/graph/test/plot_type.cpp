@@ -101,7 +101,7 @@ QUIZ_CASE(graph_function_plot_type_with_predefined_variables) {
 
     // Add a predefined y symbol
     assert_reduce("1→y", Preferences::AngleUnit::Radian, Poincare::Preferences::UnitFormat::Metric, Poincare::Preferences::ComplexFormat::Real);
-    addFunction("y=x", ContinuousFunction::PlotType::VerticalLine, &store, &context);
+    addFunction("y=x", ContinuousFunction::PlotType::Line, &store, &context);
 
     Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
     Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();

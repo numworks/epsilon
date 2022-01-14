@@ -7,7 +7,7 @@ namespace Probability {
 
 class UniformDistribution final : public TwoParameterDistribution {
 public:
-  UniformDistribution() : TwoParameterDistribution(-1.0, 1.0) {}
+  UniformDistribution() : TwoParameterDistribution(-1.0, 1.0) { computeCurveViewRange(); }
   I18n::Message title() override { return I18n::Message::UniformDistribution; }
   Type type() const override { return Type::Uniform; }
   bool isContinuous() const override { return true; }

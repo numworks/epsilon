@@ -7,7 +7,7 @@ namespace Probability {
 
 class FisherDistribution final : public TwoParameterDistribution {
 public:
-  FisherDistribution() : TwoParameterDistribution(1.0, 1.0) {}
+  FisherDistribution() : TwoParameterDistribution(1.0, 1.0) { computeCurveViewRange(); }
   I18n::Message title() override { return I18n::Message::FisherDistribution; }
   Type type() const override { return Type::Fisher; }
   bool isContinuous() const override { return true; }

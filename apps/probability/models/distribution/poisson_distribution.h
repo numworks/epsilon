@@ -7,7 +7,7 @@ namespace Probability {
 
 class PoissonDistribution final : public OneParameterDistribution {
 public:
-  PoissonDistribution() : OneParameterDistribution(4.0) {}
+  PoissonDistribution() : OneParameterDistribution(4.0) { computeCurveViewRange(); }
   I18n::Message title() override { return I18n::Message::PoissonDistribution; }
   Type type() const override { return Type::Poisson; }
   bool isContinuous() const override { return false; }

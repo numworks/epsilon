@@ -7,7 +7,7 @@ namespace Probability {
 
 class NormalDistribution final : public TwoParameterDistribution {
 public:
-  NormalDistribution() : TwoParameterDistribution(0.0, 1.0) {}
+  NormalDistribution() : TwoParameterDistribution(0.0, 1.0) { computeCurveViewRange(); }
   I18n::Message title() override { return I18n::Message::NormalDistribution; }
   Type type() const override { return Type::Normal; }
   bool isContinuous() const override { return true; }

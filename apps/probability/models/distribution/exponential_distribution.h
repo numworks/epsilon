@@ -8,7 +8,7 @@ namespace Probability {
 
 class ExponentialDistribution final : public OneParameterDistribution {
 public:
-  ExponentialDistribution() : OneParameterDistribution(1.0) {}
+  ExponentialDistribution() : OneParameterDistribution(1.0) { computeCurveViewRange(); }
   I18n::Message title() override { return I18n::Message::ExponentialDistribution; }
   Type type() const override { return Type::Exponential; }
   bool isContinuous() const override { return true; }

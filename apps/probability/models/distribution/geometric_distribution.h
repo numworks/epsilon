@@ -11,7 +11,7 @@ namespace Probability {
 
 class GeometricDistribution final : public OneParameterDistribution {
 public:
-  GeometricDistribution() : OneParameterDistribution(0.5) {}
+  GeometricDistribution() : OneParameterDistribution(0.5) { computeCurveViewRange(); }
   I18n::Message title() override { return I18n::Message::GeometricDistribution; }
   Type type() const override { return Type::Geometric; }
   bool isContinuous() const override { return false; }

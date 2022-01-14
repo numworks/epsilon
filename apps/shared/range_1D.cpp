@@ -10,14 +10,14 @@ void Range1D::setMin(float f, float lowerMaxFloat, float upperMaxFloat) {
   /* We can't use &m_max directly: Range1D is 'packed' so &m_max address might
    * be unaligned. It can be off by a few bits and not referable by an actual
    * address. */
-  float max;
+  float max = m_max;
   m_min = checkedMin(f, &max, lowerMaxFloat, upperMaxFloat);
   m_max = max;
 }
 
 void Range1D::setMax(float f, float lowerMaxFloat, float upperMaxFloat) {
   // Same comment as setMin
-  float min;
+  float min = m_min;
   m_max = checkedMax(f, &min, lowerMaxFloat, upperMaxFloat);
   m_min = min;
 }
@@ -28,7 +28,7 @@ float Range1D::checkedValue(float value, float * otherValue, float lowerMaxFloat
     return value;
   }
   float factor = isMax ? -1.0f : +1.0f;
-  if (value < *otherValue == isMax || value == *otherValue) {
+  if ((value < *otherValue) == isMax || value == *otherValue) {
     *otherValue = value + factor * defaultRangeLengthFor(value);
   }
   if (std::fabs(*otherValue - value) < k_minFloat) {

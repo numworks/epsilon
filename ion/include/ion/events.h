@@ -141,6 +141,7 @@ constexpr Event ShiftLeft  = Event::ShiftKey(Keyboard::Key::Left);
 constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::Right);
 constexpr Event ShiftUp    = Event::ShiftKey(Keyboard::Key::Up);
 constexpr Event ShiftDown  = Event::ShiftKey(Keyboard::Key::Down);
+constexpr Event ShiftOK    = Event::ShiftKey(Keyboard::Key::OK);
 
 constexpr Event AlphaLock = Event::ShiftKey(Keyboard::Key::Alpha);
 constexpr Event Cut = Event::ShiftKey(Keyboard::Key::XNT);
@@ -182,6 +183,8 @@ constexpr Event ShiftSix = Event::ShiftKey(Keyboard::Key::Six);
 constexpr Event ShiftSeven = Event::ShiftKey(Keyboard::Key::Seven);
 constexpr Event ShiftEight = Event::ShiftKey(Keyboard::Key::Eight);
 constexpr Event ShiftNine = Event::ShiftKey(Keyboard::Key::Nine);
+
+constexpr Event ShiftEXE = Event::ShiftKey(Keyboard::Key::EXE);
 
 // Alpha
 

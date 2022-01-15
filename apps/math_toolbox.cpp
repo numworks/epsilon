@@ -877,7 +877,7 @@ MathToolbox::MathToolbox() :
 {
 }
 
-bool MathToolbox::selectLeaf(int selectedRow) {
+bool MathToolbox::selectLeaf(int selectedRow, bool quitToolbox) {
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
   m_selectableTableView.deselectTable();
 

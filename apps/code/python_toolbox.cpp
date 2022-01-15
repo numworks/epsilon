@@ -696,14 +696,13 @@ KDCoordinate PythonToolbox::rowHeight(int j) {
   return Toolbox::rowHeight(j);
 }
 
-bool PythonToolbox::selectLeaf(int selectedRow) {
+bool PythonToolbox::selectLeaf(int selectedRow, bool quitToolbox) {
   ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(selectedRow);
 #if defined(INCLUDE_ULAB)
   if(node->text() == I18n::Message::UlabDocumentationLink){
     return true;
   }
 #endif
-  m_selectableTableView.deselectTable();
   if(node->insertedText() == I18n::Message::IonSelector){
     m_ionKeys.setSender(sender());
     Container::activeApp()->displayModalViewController(static_cast<ViewController*>(&m_ionKeys), 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
@@ -719,7 +718,10 @@ bool PythonToolbox::selectLeaf(int selectedRow) {
     editedText = strippedEditedText;
   }
   sender()->handleEventWithText(editedText, true);
-  Container::activeApp()->dismissModalViewController();
+  if (quitToolbox) {
+    m_selectableTableView.deselectTable();
+    Container::activeApp()->dismissModalViewController();
+  }
   return true;
 }
 

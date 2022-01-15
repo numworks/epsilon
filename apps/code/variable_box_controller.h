@@ -80,7 +80,7 @@ private:
   // NestedMenuController
   HighlightCell * leafCellAtIndex(int index) override { assert(false); return nullptr; }
   HighlightCell * nodeCellAtIndex(int index) override { assert(false); return nullptr; }
-  bool selectLeaf(int rowIndex) override;
+  bool selectLeaf(int rowIndex, bool quitToolbox) override;
   void insertTextInCaller(const char * text, int textLength = -1);
 
   // Loading

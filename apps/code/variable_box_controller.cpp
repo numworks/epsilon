@@ -365,7 +365,7 @@ int VariableBoxController::typeAndOriginAtLocation(int i, NodeOrigin * resultOri
 
 }
 
-bool VariableBoxController::selectLeaf(int rowIndex) {
+bool VariableBoxController::selectLeaf(int rowIndex, bool quitToolbox) {
   assert(rowIndex >= 0 && rowIndex < numberOfRows());
   m_selectableTableView.deselectTable();
 

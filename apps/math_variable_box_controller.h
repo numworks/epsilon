@@ -42,7 +42,7 @@ private:
   void setPage(Page page);
   bool selectSubMenu(int selectedRow) override;
   bool returnToPreviousMenu() override;
-  bool selectLeaf(int selectedRow) override;
+  bool selectLeaf(int selectedRow, bool quitToolbox) override;
   I18n::Message nodeLabelAtIndex(int index);
   Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record, int index);
   const char * extension() const;

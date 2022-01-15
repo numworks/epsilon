@@ -52,19 +52,15 @@ Expression Equal::standardEquation(Context * context, Preferences::ComplexFormat
 Expression Equal::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   
   Expression e = Equal::Builder(Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone()).shallowReduce(reductionContext), Rational::Builder(0));
+  
   Expression leftSide = e.childAtIndex(0);
-  if (leftSide.isIdenticalTo(e.childAtIndex(1))) {
-    Expression result = Rational::Builder(1);
-    replaceWithInPlace(result);
-    return result;
-  }
   if (leftSide.isUndefined()) {
-    return leftSide;
+    return leftSide; // <=> undefined
   }
-  if (leftSide.type() == ExpressionNode::Type::Multiplication) {
+  if (leftSide.type() == ExpressionNode::Type::Multiplication) { // Simplify multiplication
     Multiplication m = static_cast<Multiplication&>(leftSide);
     int i = 0;
-    while (i < numberOfChildren()-1) {
+    while (i < m.numberOfChildren()) {
       if (m.childAtIndex(i).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::NonNull) {
         m.removeChildAtIndexInPlace(i);
       }
@@ -72,6 +68,23 @@ Expression Equal::shallowReduce(ExpressionNode::ReductionContext reductionContex
         i++;
       }
     }
+
+    // Replace if 0 child
+    if (m.numberOfChildren() == 0) {
+      e.replaceChildAtIndexInPlace(0, Rational::Builder(0));
+    } else {
+      // Squash if one child 
+      Expression result = m.squashUnaryHierarchyInPlace();
+      if (result != *this) {
+        e.replaceChildAtIndexInPlace(0, result);
+      }
+    }
+  }
+  
+  if (leftSide.isIdenticalTo(e.childAtIndex(1))) {
+    Expression result = Rational::Builder(1);
+    replaceWithInPlace(result);
+    return result;
   }
 
   return e;

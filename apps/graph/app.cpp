@@ -27,7 +27,8 @@ const Image * App::Descriptor::icon() {
 App::Snapshot::Snapshot() :
   Shared::FunctionApp::Snapshot::Snapshot(),
   m_functionStore(),
-  m_graphRange()
+  m_graphRange(),
+  m_shouldDisplayDerivative(false)
 {
 }
 
@@ -40,6 +41,7 @@ void App::Snapshot::reset() {
   for (int i = 0; i < Shared::ContinuousFunction::k_numberOfPlotTypes; i++) {
     m_interval[i].reset();
   }
+  m_shouldDisplayDerivative = false;
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -58,7 +60,7 @@ App::App(Snapshot * snapshot) :
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray),
   m_listHeader(&m_listStackViewController, &m_listFooter, &m_listController),
   m_listStackViewController(&m_tabViewController, &m_listHeader),
-  m_graphController(&m_graphAlternateEmptyViewController, this, snapshot->graphRange(), snapshot->cursor(), snapshot->indexFunctionSelectedByCursor(), snapshot->rangeVersion(), &m_graphHeader),
+  m_graphController(&m_graphAlternateEmptyViewController, this, snapshot->graphRange(), snapshot->cursor(), snapshot->indexFunctionSelectedByCursor(), snapshot->rangeVersion(), &m_graphHeader, snapshot->shouldDisplayDerivative()),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),

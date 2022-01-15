@@ -31,11 +31,13 @@ public:
     Shared::Interval * intervalForType(Shared::ContinuousFunction::PlotType plotType) {
       return m_interval + static_cast<size_t>(plotType);
     }
+    bool * shouldDisplayDerivative() { return &m_shouldDisplayDerivative; }
   private:
     void tidy() override;
     ContinuousFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
     Shared::Interval m_interval[Shared::ContinuousFunction::k_numberOfPlotTypes];
+    bool m_shouldDisplayDerivative;
   };
   static App * app() {
     return static_cast<App *>(Container::activeApp());

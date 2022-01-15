@@ -15,13 +15,13 @@ namespace Graph {
 
 class GraphController : public Shared::FunctionGraphController, public GraphControllerHelper {
 public:
-  GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, ButtonRowController * header);
+  GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, ButtonRowController * header, bool * shouldDisplayDerivative);
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
-  bool displayDerivativeInBanner() const { return m_displayDerivativeInBanner; }
-  void setDisplayDerivativeInBanner(bool displayDerivative) { m_displayDerivativeInBanner = displayDerivative; }
+  bool displayDerivativeInBanner() const { return *m_displayDerivativeInBanner; }
+  void setDisplayDerivativeInBanner(bool displayDerivative) { *m_displayDerivativeInBanner = displayDerivative; }
 private:
-  int estimatedBannerNumberOfLines() const override { return 1 + m_displayDerivativeInBanner; }
+  int estimatedBannerNumberOfLines() const override { return 1 + *m_displayDerivativeInBanner; }
   void selectFunctionWithCursor(int functionIndex) override;
   BannerView * bannerView() override { return &m_bannerView; }
   void reloadBannerView() override;
@@ -41,7 +41,7 @@ private:
   GraphView m_view;
   Shared::InteractiveCurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
-  bool m_displayDerivativeInBanner;
+  bool * m_displayDerivativeInBanner;
 };
 
 }

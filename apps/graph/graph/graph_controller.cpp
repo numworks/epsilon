@@ -7,13 +7,13 @@ using namespace Shared;
 
 namespace Graph {
 
-GraphController::GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, ButtonRowController * header) :
+GraphController::GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, ButtonRowController * header, bool * shouldDisplayDerivative) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, rangeVersion),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
   m_curveParameterController(inputEventHandlerDelegate, curveViewRange, &m_bannerView, m_cursor, &m_view, this),
-  m_displayDerivativeInBanner(false)
+  m_displayDerivativeInBanner(shouldDisplayDerivative)
 {
   m_graphRange->setDelegate(this);
 }
@@ -47,7 +47,7 @@ void GraphController::selectFunctionWithCursor(int functionIndex) {
 
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  bool displayDerivative = m_displayDerivativeInBanner &&
+  bool displayDerivative = *m_displayDerivativeInBanner &&
     functionStore()->modelForRecord(record)->plotType() == ContinuousFunction::PlotType::Cartesian;
   m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + displayDerivative);
   FunctionGraphController::reloadBannerView();

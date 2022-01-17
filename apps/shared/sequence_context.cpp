@@ -85,7 +85,7 @@ void TemplatedSequenceContext<T>::step(SequenceContext * sqctx, int sequenceInde
   Sequence * sequences[MaxNumberOfSequences] = {nullptr, nullptr, nullptr};
   int usedSize = stepMultipleSequences ? MaxNumberOfSequences : 1;
   SequenceStore * sequenceStore = sqctx->sequenceStore();
-  stop = stepMultipleSequences ? sequenceStore->numberOfModels() : start + 1;
+  stop = stepMultipleSequences ? stop : start + 1;
   for (int i = start; i < stop; i++) {
     Ion::Storage::Record record = sequenceStore->recordAtNameIndex(i);
     if (!record.isNull()) {

@@ -493,7 +493,15 @@ QUIZ_CASE(sequence_order) {
   v = addSequence(store, Sequence::Type::Explicit, "1+w(1)", nullptr, nullptr, &sequenceContext);
   assert(v->fullName()[0] == 'v');
 
+  sequenceContext.resetCache();
   quiz_assert(v->evaluateXYAtParameter(1., &sequenceContext).x2() == 4.);
+
+  store->removeAll();
+  u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, &sequenceContext);
+  v = addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, &sequenceContext);
+  Ion::Storage::sharedStorage()->recordNamed("u.seq").destroy();
+  sequenceContext.resetCache();
+  quiz_assert(v->evaluateXYAtParameter(1., &sequenceContext).x2() == 1.);
 
   store->removeAll();
   store->tidyDownstreamPoolFrom();

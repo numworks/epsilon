@@ -48,7 +48,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     Poincare::UserCircuitBreakerCheckpoint checkpoint;
     if (CircuitBreakerRun(checkpoint)) {
       /* Calling ExpressionReduced here so that plot type and numberOfSubCurves
-       * are properly update, even if e isn't used. */
+       * are properly updated, even if e isn't used. */
       Poincare::Expression e = f->expressionReduced(context());
       ContinuousFunction::AreaType area = f->areaType();
       ContinuousFunction::PlotType type = f->plotType();

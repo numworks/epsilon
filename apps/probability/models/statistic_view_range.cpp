@@ -7,10 +7,10 @@ namespace Probability {
 void StatisticViewRange::setStatistic(Statistic * statistic) {
   m_statistic = statistic;
 
-  setXMin(isInTestSubapp() ? canonicalXMin() : intervalXMin());
-  setXMax(isInTestSubapp() ? canonicalXMax() : intervalXMax());
-  setYMin(isInTestSubapp() ? canonicalYMin() : intervalYMin());
-  setYMax(isInTestSubapp() ? canonicalYMax() : intervalYMax());
+  protectedSetXMin(isInTestSubapp() ? canonicalXMin() : intervalXMin(), Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, false);
+  protectedSetXMax(isInTestSubapp() ? canonicalXMax() : intervalXMax(), Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, true);
+  protectedSetYMin(isInTestSubapp() ? canonicalYMin() : intervalYMin(), Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, false);
+  protectedSetYMax(isInTestSubapp() ? canonicalYMax() : intervalYMax(), Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, true);
 }
 
 bool StatisticViewRange::isInTestSubapp() const {

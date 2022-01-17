@@ -47,12 +47,15 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
     Poincare::UserCircuitBreakerCheckpoint checkpoint;
     if (CircuitBreakerRun(checkpoint)) {
-      Poincare::Expression e = f->expressionReduced(context());
       ContinuousFunction::AreaType area = f->areaType();
       ContinuousFunction::PlotType type = f->plotType();
       assert(f->numberOfSubCurves() <= 2);
       bool hasTwoCurves = (f->numberOfSubCurves() == 2);
       if (area == ContinuousFunction::AreaType::None) {
+        Poincare::Expression e = f->expressionReduced(context());
+        if (e.type() == Poincare::ExpressionNode::Type::Dependency) {
+          e = e.childAtIndex(0);
+        }
         bool isUndefined = e.isUndefined();
         if (!isUndefined && (type == ContinuousFunction::PlotType::Parametric || hasTwoCurves)) {
           assert(e.type() == Poincare::ExpressionNode::Type::Matrix);

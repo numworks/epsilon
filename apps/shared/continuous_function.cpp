@@ -679,7 +679,10 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   }
   PlotType computedPlotType = PlotType::Unknown;
   ExpressionNode::Type computedEquationType = result.type();
-  assert(ComparisonOperator::IsComparisonOperatorType(computedEquationType));
+  if (!ComparisonOperator::IsComparisonOperatorType(computedEquationType)) {
+    m_plotType = PlotType::Undefined;
+    return Undefined::Builder();
+  }
   bool isUnnamedFunction = true;
   Expression leftExpression = result.childAtIndex(0);
 

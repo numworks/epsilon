@@ -680,6 +680,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   PlotType computedPlotType = PlotType::Unknown;
   ExpressionNode::Type computedEquationType = result.type();
   if (!ComparisonOperator::IsComparisonOperatorType(computedEquationType)) {
+    // Happens when the inputted text is too long and "f(x)=" can't be inserted
     m_plotType = PlotType::Undefined;
     return Undefined::Builder();
   }

@@ -92,8 +92,6 @@ void TemplatedSequenceContext<T>::step(SequenceContext * sqctx, int sequenceInde
       Sequence * u = sequenceStore->modelForRecord(record);
       int index = stepMultipleSequences ? SequenceStore::sequenceIndexForName(u->fullName()[0]) : 0;
       sequences[index] = u->isDefined() ? u : nullptr;
-    } else {
-      sequences[i] = nullptr;
     }
   }
 

@@ -206,7 +206,7 @@ void saveImage(const KDColor * pixels, int width, int height, const char * path)
     }
     png_write_row(png, reinterpret_cast<png_bytep>(row));
   }
-  delete row;
+  delete[] row;
 
   png_write_end(png, NULL);
 

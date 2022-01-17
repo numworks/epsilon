@@ -745,18 +745,10 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
   // m_expressionDerivate might already be memmoized.
   if (m_expressionDerivate.isUninitialized()) {
     Expression expression = expressionReduced(record, context).clone();
-    if (numberOfSubCurves() > 1) {
-      // Derive each curve individually, return a matrix of each derivatives
-      Matrix newExpr = Matrix::Builder();
-      assert(expression.type() == ExpressionNode::Type::Matrix);
-      for (int i = 0; i < numberOfSubCurves(); i++) {
-        newExpr.addChildAtIndexInPlace(Derivative::Builder(expression.childAtIndex(i), Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown)), i, i);
-      }
-      newExpr.setDimensions(numberOfSubCurves(), 1);
-      m_expressionDerivate = newExpr;
-    } else {
-      m_expressionDerivate = Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
-    }
+    /* In CurveParameterController::shouldDisplayCalculationAndDerivative,
+     * derivative isn't available on curves with multiple subcurves */
+    assert(numberOfSubCurves() <= 1);
+    m_expressionDerivate = Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
     /* On complex functions, this step can take a significant time.
      * A workaround could be to identify big functions to skip simplification at
      * the cost of possible inaccurate evaluations (such as diff(abs(x),x,0) not

@@ -1,4 +1,3 @@
-SolverApp = "Equazioni"
 SolverAppCapital = "EQUAZIONI"
 AddEquation = "Aggiungi equazione"
 ResolveEquation = "Risolvi l'equazione"

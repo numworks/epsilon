@@ -1,4 +1,3 @@
-SolverApp = "Vergelijking"
 SolverAppCapital = "VERGELIJKING"
 AddEquation = "Vergelijking toevoegen"
 ResolveEquation = "Vergelijking oplossen"

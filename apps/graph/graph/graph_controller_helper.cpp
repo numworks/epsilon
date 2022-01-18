@@ -85,6 +85,7 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize);
+  assert(function->canDisplayDerivative());
   Poincare::Print::customPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "=%*.*ed",
     function->approximateDerivative(cursor->x(), App::app()->localContext()), Poincare::Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits());
   bannerView()->derivativeView()->setText(buffer);

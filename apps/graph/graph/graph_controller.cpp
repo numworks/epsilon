@@ -61,7 +61,7 @@ void GraphController::selectFunctionWithCursor(int functionIndex) {
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   bool displayDerivative = m_displayDerivativeInBanner &&
-    functionStore()->modelForRecord(record)->isAlongX();
+    functionStore()->modelForRecord(record)->canDisplayDerivative();
   m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + displayDerivative);
   FunctionGraphController::reloadBannerView();
   if (!displayDerivative) {

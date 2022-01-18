@@ -75,6 +75,7 @@ void TangentGraphController::reloadBannerView() {
 
   int precision = numberOfSignificantDigits();
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
+  assert(function->canDisplayDerivative());
   double y = function->approximateDerivative(m_cursor->x(), context);
   Poincare::Print::customPrintf(buffer, bufferSize, "a=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->aView()->setText(buffer);

@@ -744,15 +744,17 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
   // m_expressionDerivate might already be memmoized.
   if (m_expressionDerivate.isUninitialized()) {
     Expression expression = expressionReduced(record, context).clone();
-    /* In CurveParameterController::shouldDisplayCalculationAndDerivative,
-     * derivative isn't available on curves with multiple subcurves */
-    assert(numberOfSubCurves() <= 1);
-    m_expressionDerivate = Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
-    /* On complex functions, this step can take a significant time.
-     * A workaround could be to identify big functions to skip simplification at
-     * the cost of possible inaccurate evaluations (such as diff(abs(x),x,0) not
-     * being undefined). */
-    PoincareHelpers::CloneAndSimplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+    // Derivative isn't available on curves with multiple subcurves
+    if (numberOfSubCurves() > 1) {
+      m_expressionDerivate = Undefined::Builder();
+    } else {
+      m_expressionDerivate = Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
+      /* On complex functions, this step can take a significant time.
+      * A workaround could be to identify big functions to skip simplification
+      * at the cost of possible inaccurate evaluations (such as diff(abs(x),x,0)
+      * not being undefined). */
+      PoincareHelpers::CloneAndSimplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+    }
   }
   return m_expressionDerivate;
 }

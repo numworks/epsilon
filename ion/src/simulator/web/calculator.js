@@ -13,7 +13,7 @@ function Calculator(emModule) {
   var mainCanvas = calculatorElement.querySelector("canvas");
   if (typeof emModule.mirrorCanvas === 'undefined') {
     /* If emModule.mirrorCanvas is defined as null, don't do anything */
-    emModule.mirrorCanvas = document.querySelector('.calculator-mirror canvas');
+    emModule.mirrorCanvas = document.querySelector('canvas.calculator-mirror');
   }
   var mirrorCanvasContext = emModule.mirrorCanvas ? emModule.mirrorCanvas.getContext('2d') : null;
   var defaultModule = {

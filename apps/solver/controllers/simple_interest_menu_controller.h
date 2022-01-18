@@ -12,7 +12,7 @@
 
 namespace Solver {
 
-constexpr int k_numberOfSimpleInterestCells = 4;
+constexpr int k_numberOfSimpleInterestCells = SimpleInterestData::k_numberOfUnknowns;
 
 class SimpleInterestMenuController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfSimpleInterestCells> {

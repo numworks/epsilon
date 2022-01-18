@@ -30,9 +30,9 @@ I18n::Message SimpleInterestData::SublabelForParameter(SimpleInterestParameter p
 }
 
 double SimpleInterestData::DefaultValue(SimpleInterestParameter param) {
-  assert(param < SimpleInterestParameter::YearConvention);
   uint8_t index = static_cast<uint8_t>(param);
-  constexpr double k_defaultValues[k_numberOfSimpleInterestParameters-1] = {
+  assert(index < k_numberOfDoubleValues);
+  constexpr double k_defaultValues[k_numberOfDoubleValues] = {
     100.0,
     1.0,
     -1000.0,
@@ -41,7 +41,7 @@ double SimpleInterestData::DefaultValue(SimpleInterestParameter param) {
 }
 
 bool SimpleInterestData::CheckValue(SimpleInterestParameter param, double value) {
-  assert(param < SimpleInterestParameter::YearConvention);
+  assert(param < static_cast<SimpleInterestParameter>(k_numberOfDoubleValues));
   return !std::isnan(value) && (param != SimpleInterestParameter::n || value >= 0);
 }
 
@@ -55,21 +55,22 @@ void SimpleInterestData::resetValues() {
 }
 
 void SimpleInterestData::setValue(SimpleInterestParameter param, double value) {
-  assert(param < SimpleInterestParameter::YearConvention);
-  m_values[static_cast<uint8_t>(param)] = value;
+  uint8_t paramIndex = static_cast<uint8_t>(param);
+  assert(paramIndex < k_numberOfDoubleValues);
+  m_values[paramIndex] = value;
 }
 
 double SimpleInterestData::getValue(SimpleInterestParameter param) const {
-  assert(param < SimpleInterestParameter::YearConvention);
-  return m_values[static_cast<uint8_t>(param)];
+  uint8_t paramIndex = static_cast<uint8_t>(param);
+  assert(paramIndex < k_numberOfDoubleValues);
+  return m_values[paramIndex];
 }
 
 void SimpleInterestData::setUnknown(SimpleInterestParameter param) {
-  if (m_unknown == SimpleInterestParameter::YearConvention) {
+  if (m_unknown >= static_cast<SimpleInterestParameter>(k_numberOfUnknowns)) {
     // Can happen because of the union
     m_unknown = param;
-  }
-  if (param != m_unknown) {
+  } else if (param != m_unknown) {
     setValue(m_unknown, DefaultValue(m_unknown));
     m_unknown = param;
     setValue(m_unknown, NAN);
@@ -140,9 +141,9 @@ I18n::Message CompoundInterestData::SublabelForParameter(CompoundInterestParamet
 }
 
 double CompoundInterestData::DefaultValue(CompoundInterestParameter param) {
-  assert(param < CompoundInterestParameter::Payment);
   uint8_t index = static_cast<uint8_t>(param);
-  constexpr double k_defaultValues[k_numberOfCompoundInterestParameters-1] = {
+  assert(index < k_numberOfDoubleValues);
+  constexpr double k_defaultValues[k_numberOfDoubleValues] = {
     24.0,
     6.4,
     0.0,
@@ -154,7 +155,7 @@ double CompoundInterestData::DefaultValue(CompoundInterestParameter param) {
 }
 
 bool CompoundInterestData::CheckValue(CompoundInterestParameter param, double value) {
-  assert(param < CompoundInterestParameter::Payment);
+  assert(param < static_cast<CompoundInterestParameter>(k_numberOfDoubleValues));
   return !std::isnan(value)
          && ((param != CompoundInterestParameter::N
               && param != CompoundInterestParameter::CY
@@ -175,21 +176,22 @@ void CompoundInterestData::resetValues() {
 }
 
 void CompoundInterestData::setValue(CompoundInterestParameter param, double value) {
-  assert(param < CompoundInterestParameter::Payment);
-  m_values[static_cast<uint8_t>(param)] = value;
+  uint8_t paramIndex = static_cast<uint8_t>(param);
+  assert(paramIndex < k_numberOfDoubleValues);
+  m_values[paramIndex] = value;
 }
 
 double CompoundInterestData::getValue(CompoundInterestParameter param) const {
-  assert(param < CompoundInterestParameter::Payment);
-  return m_values[static_cast<uint8_t>(param)];
+  uint8_t paramIndex = static_cast<uint8_t>(param);
+  assert(paramIndex < k_numberOfDoubleValues);
+  return m_values[paramIndex];
 }
 
 void CompoundInterestData::setUnknown(CompoundInterestParameter param) {
-  if (m_unknown == CompoundInterestParameter::Payment) {
+  if (m_unknown >= static_cast<CompoundInterestParameter>(k_numberOfUnknowns)) {
     // Can happen because of the union
     m_unknown = param;
-  }
-  if (param != m_unknown) {
+  } else if (param != m_unknown) {
     setValue(m_unknown, DefaultValue(m_unknown));
     m_unknown = param;
     setValue(m_unknown, NAN);

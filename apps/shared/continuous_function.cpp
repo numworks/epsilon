@@ -296,20 +296,13 @@ int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferS
 }
 
 double ContinuousFunction::approximateDerivative(double x, Context * context, int subCurveIndex) const {
-  assert(isAlongX());
-  if (x < tMin() || x > tMax() || hasVerticalLines()) {
+  assert(canDisplayDerivative());
+  if (x < tMin() || x > tMax() || hasVerticalLines() || numberOfSubCurves() > 1) {
     return NAN;
   }
   // Derivative is simplified once and for all
   Expression derivate = expressionDerivateReduced(context);
-  if (numberOfSubCurves() > 1) {
-      assert(derivate.type() == ExpressionNode::Type::Dependency);
-      derivate = derivate.childAtIndex(0);
-      assert(derivate.type() == ExpressionNode::Type::Matrix && derivate.numberOfChildren() > subCurveIndex);
-      derivate = derivate.childAtIndex(subCurveIndex);
-  } else {
-    assert(subCurveIndex == 0);
-  }
+  assert(subCurveIndex == 0);
   return PoincareHelpers::ApproximateWithValueForSymbol(derivate, k_unknownName, x, context);
 }
 

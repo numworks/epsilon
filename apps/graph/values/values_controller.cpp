@@ -208,7 +208,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
     const int numberOfColumnsForCurrentRecord = numberOfColumnsForRecord(record);
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
       ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
-      *isDerivative = i != index && f->isAlongX();
+      *isDerivative = i != index && f->canDisplayDerivative();
       return record;
     }
     index += numberOfColumnsForCurrentRecord;
@@ -288,6 +288,7 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   bool isParametric = function->symbolType() == ContinuousFunction::SymbolType::T;
   if (isDerivative) {
+    assert(function->canDisplayDerivative());
     evaluationY = function->approximateDerivative(abscissa, context);
   } else {
     Poincare::Coordinate2D<double> eval = function->evaluate2DAtParameter(abscissa, context);

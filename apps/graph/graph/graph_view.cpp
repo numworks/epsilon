@@ -214,7 +214,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         }
         // 4 - Draw tangent
         if (m_tangent && record == m_selectedRecord) {
-          assert(!hasTwoCurves);
+          assert(f->canDisplayDerivative());
           /* TODO : We could handle tangent on second curve here by finding out
            * which of the two curves is selected. */
           float tangentParameterA = f->approximateDerivative(m_curveViewCursor->x(), context(), 0);

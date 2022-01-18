@@ -2,6 +2,7 @@ apps += Solver::App
 app_headers += apps/solver/app.h
 
 app_solver_test_src = $(addprefix apps/solver/,\
+  model/data.cpp \
   model/equation.cpp \
   model/equation_store.cpp \
 )
@@ -26,7 +27,6 @@ app_solver_src = $(addprefix apps/solver/,\
   controllers/compound_interest_controller.cpp \
   controllers/compound_interest_menu_controller.cpp \
   controllers/finance_result_controller.cpp \
-  model/data.cpp \
 )
 
 app_solver_src += $(app_solver_test_src)
@@ -36,6 +36,7 @@ i18n_files += $(call i18n_with_universal_for,solver/translations/base)
 
 tests_src += $(addprefix apps/solver/test/,\
   equation_store.cpp \
+  finance.cpp \
   helpers.cpp \
 )
 

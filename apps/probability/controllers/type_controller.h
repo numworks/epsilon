@@ -11,7 +11,7 @@
 
 #include "hypothesis_controller.h"
 #include "input_controller.h"
-#include "probability/gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 
 using namespace Escher;
 
@@ -33,7 +33,7 @@ private:
   MessageTextView * m_description;
 };
 
-class TypeController : public SelectableListViewPage {
+class TypeController : public Shared::SelectableListViewPage {
 public:
   TypeController(StackViewController * parent,
                  HypothesisController * hypothesisController,

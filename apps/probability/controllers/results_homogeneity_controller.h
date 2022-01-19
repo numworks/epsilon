@@ -4,7 +4,7 @@
 #include "probability/abstract/chained_selectable_table_view_delegate.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/abstract/results_homogeneity_data_source.h"
-#include "probability/gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 #include "probability/gui/results_homogeneity_view.h"
 #include "probability/gui/selectable_table_view_with_background.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
@@ -12,7 +12,7 @@
 
 namespace Probability {
 
-class ResultsHomogeneityController : public Page,
+class ResultsHomogeneityController : public Shared::Page,
                                      public Escher::ButtonDelegate,
                                      public Escher::SelectableTableViewDelegate,
                                      public DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> {

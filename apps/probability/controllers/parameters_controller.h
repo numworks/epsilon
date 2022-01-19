@@ -3,12 +3,12 @@
 
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include "probability/models/distribution/distribution.h"
-#include "probability/gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 #include "calculation_controller.h"
 
 namespace Probability {
 
-class ParametersController : public DoubleParameterPage {
+class ParametersController : public Shared::DoubleParameterPage {
 public:
   ParametersController(Escher::StackViewController * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * m_distribution, CalculationController * calculationController);
   const char * title() override;

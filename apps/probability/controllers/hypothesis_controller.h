@@ -23,7 +23,7 @@ namespace Probability {
 class HypothesisController : public Shared::SelectableListViewPage,
                              public Escher::ButtonDelegate,
                              public Escher::TextFieldDelegate,
-                             public DropdownCallback {
+                             public Escher::DropdownCallback {
 public:
   HypothesisController(Escher::StackViewController * parent,
                        InputController * inputController,
@@ -47,7 +47,7 @@ public:
                                  Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
 
-  // DropdownCallback
+  // Escher::DropdownCallback
   void onDropdownSelected(int selectedRow) override;
 
 private:

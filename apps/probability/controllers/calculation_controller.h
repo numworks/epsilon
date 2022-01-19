@@ -7,7 +7,7 @@
 #include "probability/gui/calculation_cell.h"
 #include "probability/gui/calculation_popup_data_source.h"
 #include "probability/gui/distribution_curve_view.h"
-#include "probability/gui/dropdown_view.h"
+#include <escher/dropdown_view.h>
 #include <apps/shared/page_controller.h>
 #include "probability/models/calculation/calculation.h"
 #include "probability/models/distribution/distribution.h"
@@ -19,7 +19,7 @@ class CalculationController : public Shared::Page,
                               public Escher::TableViewDataSource,
                               public Escher::SelectableTableViewDataSource,
                               public Shared::ParameterTextFieldDelegate,
-                              public DropdownCallback {
+                              public Escher::DropdownCallback {
 public:
   CalculationController(Escher::StackViewController * parentResponder,
                         Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
@@ -67,7 +67,7 @@ public:
   void reloadDistributionCurveView();
   void reload();
 
-  // Dropdown
+  // Escher::Dropdown
   void onDropdownSelected(int selectedRow) override;
   bool popupDidReceiveEvent(Ion::Events::Event event, Escher::Responder * responder) override;
 
@@ -95,7 +95,7 @@ private:
   ContentView m_contentView;
   Escher::SelectableTableView m_selectableTableView;
   CalculationPopupDataSource m_imagesDataSource;
-  Dropdown m_dropdown;
+  Escher::Dropdown m_dropdown;
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
   constexpr static int k_titleBufferSize = sizeof("d1 =  d2 =  ") +
                                            2 * Constants::k_shortFloatNumberOfChars;

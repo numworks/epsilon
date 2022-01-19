@@ -1,4 +1,4 @@
-#include "dropdown_view.h"
+#include <escher/dropdown_view.h>
 
 #include <assert.h>
 #include <escher/container.h>
@@ -6,13 +6,12 @@
 
 #include <algorithm>
 
-// TODO Hugo : Factorize or rename this class or image
-#include "../images/temp.h"
+#include <escher/image/caret.h>
 
-namespace Solver {
+namespace Escher {
 
-PopupItemView::PopupItemView(Escher::HighlightCell * cell) : m_cell(cell) {
-  m_caret.setImage(ImageStore::Temp);
+PopupItemView::PopupItemView(HighlightCell * cell) : m_cell(cell) {
+  m_caret.setImage(ImageStore::Caret);
 }
 
 void PopupItemView::setHighlighted(bool highlighted) {
@@ -20,7 +19,7 @@ void PopupItemView::setHighlighted(bool highlighted) {
     m_cell->setHighlighted(highlighted);
   }
   m_caret.setHighlighted(highlighted);
-  Escher::HighlightCell::setHighlighted(highlighted);
+  HighlightCell::setHighlighted(highlighted);
 }
 
 KDSize PopupItemView::minimalSizeForOptimalDisplay() const {
@@ -48,7 +47,7 @@ int PopupItemView::numberOfSubviews() const {
   return 1 + !m_isPoppingUp;  // Hide caret when popping
 }
 
-Escher::View * PopupItemView::subviewAtIndex(int i) {
+View * PopupItemView::subviewAtIndex(int i) {
   assert(i >= 0 && ((m_isPoppingUp && i == 0) || (i < 2)));
   if (i == 0) {
     return m_cell;
@@ -57,18 +56,18 @@ Escher::View * PopupItemView::subviewAtIndex(int i) {
 }
 
 void PopupItemView::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor backgroundColor = isHighlighted() ? Escher::Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
   drawInnerRect(ctx, bounds(), backgroundColor);
   // When popping, the cell has no borders
   KDColor borderColor = m_isPoppingUp     ? backgroundColor
-                        : isHighlighted() ? Escher::Palette::GrayDark
-                                          : Escher::Palette::Select;
+                        : isHighlighted() ? Palette::GrayDark
+                                          : Palette::Select;
   drawBorderOfRect(ctx, bounds(), borderColor);
 }
 
 Dropdown::DropdownPopupController::DropdownPopupController(
-    Escher::Responder * parentResponder,
-    Escher::ListViewDataSource * listDataSource,
+    Responder * parentResponder,
+    ListViewDataSource * listDataSource,
     Dropdown * dropdown,
     DropdownCallback * callback) :
     ViewController(parentResponder),
@@ -87,11 +86,11 @@ void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
     m_selectionDataSource.selectRow(0);
     m_selectableTableView.reloadData(false);
   }
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
-  if (m_callback->popupDidReceiveEvent(e)) {
+  if (m_callback->popupDidReceiveEvent(e, this)) {
     return true;
   }
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
@@ -113,13 +112,13 @@ void Dropdown::DropdownPopupController::selectRow(int row) {
 }
 
 void Dropdown::DropdownPopupController::close() {
-  Escher::Container::activeApp()->dismissModalViewController();
+  Container::activeApp()->dismissModalViewController();
 }
 
-KDPoint Dropdown::DropdownPopupController::topLeftCornerForSelection(Escher::View * originView) {
-  KDPoint borderOffset = KDPoint(-Escher::BorderingView::k_separatorThickness,
-                                 -Escher::BorderingView::k_separatorThickness);
-  return Escher::Container::activeApp()
+KDPoint Dropdown::DropdownPopupController::topLeftCornerForSelection(View * originView) {
+  KDPoint borderOffset = KDPoint(-BorderingView::k_separatorThickness,
+                                 -BorderingView::k_separatorThickness);
+  return Container::activeApp()
       ->modalView()
       ->pointFromPointInView(originView, KDPointZero)
       .translatedBy(borderOffset);
@@ -127,7 +126,7 @@ KDPoint Dropdown::DropdownPopupController::topLeftCornerForSelection(Escher::Vie
 
 KDCoordinate Dropdown::DropdownPopupController::cellWidth() {
   if (m_memoizedCellWidth < 0) {
-    Escher::HighlightCell * cell = reusableCell(0, 0);
+    HighlightCell * cell = reusableCell(0, 0);
     willDisplayCellForIndex(cell, 0);
     m_memoizedCellWidth = cell->minimalSizeForOptimalDisplay().width();
   }
@@ -135,7 +134,7 @@ KDCoordinate Dropdown::DropdownPopupController::cellWidth() {
 }
 
 KDCoordinate Dropdown::DropdownPopupController::nonMemoizedRowHeight(int j) {
-  Escher::HighlightCell * cell = reusableCell(0, 0);
+  HighlightCell * cell = reusableCell(0, 0);
   willDisplayCellForIndex(cell, 0);
   return cell->minimalSizeForOptimalDisplay().height();
 }
@@ -145,7 +144,7 @@ PopupItemView * Dropdown::DropdownPopupController::reusableCell(int index, int t
   return &m_popupViews[index];
 }
 
-void Dropdown::DropdownPopupController::willDisplayCellForIndex(Escher::HighlightCell * cell,
+void Dropdown::DropdownPopupController::willDisplayCellForIndex(HighlightCell * cell,
                                                                 int index) {
   PopupItemView * popupView = static_cast<PopupItemView *>(cell);
   popupView->setInnerCell(m_listViewDataSource->reusableCell(index, typeAtIndex(index)));
@@ -156,17 +155,18 @@ void Dropdown::DropdownPopupController::willDisplayCellForIndex(Escher::Highligh
 
 void Dropdown::DropdownPopupController::resetMemoization(bool force) {
   m_memoizedCellWidth = -1;
-  Escher::MemoizedListViewDataSource::resetMemoization(force);
+  MemoizedListViewDataSource::resetMemoization(force);
 }
 
-Escher::HighlightCell * Dropdown::DropdownPopupController::innerCellAtIndex(int index) {
+HighlightCell * Dropdown::DropdownPopupController::innerCellAtIndex(int index) {
   return m_listViewDataSource->reusableCell(index, m_listViewDataSource->typeAtIndex(index));
 }
 
-Dropdown::Dropdown(Escher::Responder * parentResponder,
-                   Escher::ListViewDataSource * listDataSource,
+Dropdown::Dropdown(Responder * parentResponder,
+                   ListViewDataSource * listDataSource,
                    DropdownCallback * callback) :
     Responder(parentResponder), m_popup(this, listDataSource, this, callback) {
+  selectRow(0);
 }
 
 bool Dropdown::handleEvent(Ion::Events::Event e) {
@@ -205,7 +205,7 @@ void Dropdown::open() {
   m_popup.m_selectableTableView.reloadData(false);
 
   KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
-  Escher::Container::activeApp()->displayModalViewController(&m_popup,
+  Container::activeApp()->displayModalViewController(&m_popup,
                                                              0.f,
                                                              0.f,
                                                              topLeftAngle.y(),
@@ -216,4 +216,4 @@ void Dropdown::close() {
   m_popup.close();
 }
 
-}  // namespace Solver
+}  // namespace Escher

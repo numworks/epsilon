@@ -68,7 +68,6 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   comparison_operator_popup_data_source.cpp \
   distribution_cell.cpp \
   distribution_curve_view.cpp \
-  dropdown_view.cpp \
   expression_cell_with_editable_text_with_message.cpp \
   input_goodness_table_view.cpp \
   interval_conclusion_view.cpp \
@@ -164,7 +163,3 @@ $(eval $(call depends_on_transparent_image,apps/probability/controllers/calculat
 $(eval $(call depends_on_transparent_image,apps/probability/gui/test_conclusion_view.cpp,$(addprefix apps/probability/images/,\
   test_success.png \
 )))
-
-$(eval $(call depends_on_transparent_image,apps/probability/gui/dropdown_view.cpp,\
-  apps/probability/images/caret.png \
-))

@@ -6,8 +6,7 @@
 #include <escher/responder.h>
 #include <apps/i18n.h>
 #include <escher/button_delegate.h>
-
-#include "dropdown_view.h"
+#include <escher/dropdown_view.h>
 
 namespace Solver {
 
@@ -15,12 +14,12 @@ class MessageTableCellWithSublabelAndDropdown : public Escher::MessageTableCellW
 public:
   MessageTableCellWithSublabelAndDropdown(Escher::Responder * parentResponder,
                                         Escher::ListViewDataSource * listDataSource,
-                                        DropdownCallback * callback = nullptr) :
+                                        Escher::DropdownCallback * callback = nullptr) :
         MessageTableCellWithMessage(I18n::Message::Ok),
         Escher::Responder(parentResponder),
         m_dropdown(this, listDataSource, callback) {}
   const Escher::View * accessoryView() const override { return &m_dropdown; }
-  Dropdown * dropdown() { return &m_dropdown; }
+  Escher::Dropdown * dropdown() { return &m_dropdown; }
   Escher::Responder * responder() override { return this; }
   void didBecomeFirstResponder() override {
     Escher::Container::activeApp()->setFirstResponder(&m_dropdown);
@@ -38,7 +37,7 @@ public:
   bool shouldAlignLabelAndAccessory() const override { return true; }
 
 private:
-  Dropdown m_dropdown;
+  Escher::Dropdown m_dropdown;
 };
 
 }  // namespace Solver

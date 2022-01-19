@@ -20,7 +20,7 @@ namespace Solver {
 class CompoundInterestController : public Shared::SelectableListViewPage,
                              public Escher::ButtonDelegate,
                              public Escher::TextFieldDelegate,
-                             public DropdownCallback {
+                             public Escher::DropdownCallback {
 public:
   CompoundInterestController(Escher::StackViewController * parent,
                            InputEventHandlerDelegate * handler,
@@ -46,7 +46,7 @@ public:
                                  const char * text,
                                  Ion::Events::Event event) override;
 
-  // DropdownCallback
+  // Escher::DropdownCallback
   void onDropdownSelected(int selectedRow) override;
 
 private:

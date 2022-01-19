@@ -7,7 +7,7 @@
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
 
-#include "probability/gui/selectable_cell_list_controller.h"
+#include <apps/shared/selectable_cell_list_controller.h>
 #include "probability/models/statistic/chi2_statistic.h"
 
 namespace Probability {
@@ -17,7 +17,7 @@ class InputHomogeneityController;
 
 constexpr static int k_numberOfCategoricalCells = 2;
 
-class CategoricalTypeController : public SelectableCellListPage<Escher::MessageTableCellWithChevron,
+class CategoricalTypeController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithChevron,
                                                                 k_numberOfCategoricalCells> {
 public:
   CategoricalTypeController(Escher::StackViewController * parent,

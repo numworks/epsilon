@@ -1,7 +1,6 @@
 ion_device_bench_src += $(addprefix ion/src/device/shared/boot/, \
   isr.c \
   rt0.cpp \
-  rt0_start.cpp \
 )
 
 ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \

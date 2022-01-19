@@ -1,14 +1,12 @@
-#ifndef SOLVER_GUI_PAGE_CONTROLLER_H
-#define SOLVER_GUI_PAGE_CONTROLLER_H
-
-// TODO Hugo : Factorize with probability
+#ifndef SHARED_PAGE_CONTROLLER_H
+#define SHARED_PAGE_CONTROLLER_H
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 
-namespace Solver {
+namespace Shared {
 
 /*
  * This templatized class adds some utils function to handle the parentResponder as a
@@ -46,7 +44,7 @@ public:
         PageController(stackViewController, tableDelegate){};
 };
 
-class DoubleParameterPage : public PageController<Shared::FloatParameterController<double>> {
+class DoubleParameterPage : public PageController<FloatParameterController<double>> {
 public:
   DoubleParameterPage(Escher::StackViewController * stackViewController) :
         PageController(stackViewController) {}
@@ -54,6 +52,6 @@ private:
   int stackTitleStyleStep() const override { return 1; }
 };
 
-}  // namespace Solver
+}  // namespace Shared
 
-#endif /* SOLVER_GUI_PAGE_CONTROLLER_H */
+#endif /* SHARED_PAGE_CONTROLLER_H */

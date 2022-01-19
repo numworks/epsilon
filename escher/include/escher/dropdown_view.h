@@ -1,5 +1,5 @@
-#ifndef SOLVER_GUI_DROPDOWN_VIEW_H
-#define SOLVER_GUI_DROPDOWN_VIEW_H
+#ifndef ESCHER_DROPDOWN_VIEW_H
+#define ESCHER_DROPDOWN_VIEW_H
 
 #include <escher/bordered.h>
 #include <escher/image_view.h>
@@ -14,21 +14,21 @@
 #include <escher/bordering_view.h>
 #include <escher/highlight_image_cell.h>
 
-namespace Solver {
+namespace Escher {
 
 // TODO: refactor
 
 /* Wraps a HighlightCell to add margins and an optional caret. */
-class PopupItemView : public Escher::HighlightCell, public Escher::Bordered {
+class PopupItemView : public HighlightCell, public Bordered {
 public:
-  PopupItemView(Escher::HighlightCell * cell = nullptr);
+  PopupItemView(HighlightCell * cell = nullptr);
   void setHighlighted(bool highlighted) override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force) override;
   int numberOfSubviews() const override;
-  Escher::View * subviewAtIndex(int i) override;
-  Escher::HighlightCell * innerCell() { return m_cell; }
-  void setInnerCell(Escher::HighlightCell * cell) { m_cell = cell; }
+  View * subviewAtIndex(int i) override;
+  HighlightCell * innerCell() { return m_cell; }
+  void setInnerCell(HighlightCell * cell) { m_cell = cell; }
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setPopping(bool popping) { m_isPoppingUp = popping; }
 
@@ -36,25 +36,25 @@ private:
   constexpr static int k_marginCaretRight = 2;
   constexpr static int k_marginImageHorizontal = 3;
   constexpr static int k_marginImageVertical = 2;
-  Escher::HighlightCell * m_cell;
-  Escher::HighlightImageCell m_caret;
+  HighlightCell * m_cell;
+  HighlightImageCell m_caret;
   bool m_isPoppingUp;
 };
 
 class DropdownCallback {
 public:
   virtual void onDropdownSelected(int selectedRow) = 0;
-  virtual bool popupDidReceiveEvent(Ion::Events::Event event) { return false; }
+  virtual bool popupDidReceiveEvent(Ion::Events::Event event, Responder * responder) { return false; }
 };
 
 /* A Dropdown is a view that, when clicked on, displays a list of views to choose from
  * It requires a DropdownDataSource to provide a list of views */
-class Dropdown : public PopupItemView, public Escher::Responder {
+class Dropdown : public PopupItemView, public Responder {
 public:
-  Dropdown(Escher::Responder * parentResponder,
-           Escher::ListViewDataSource * listDataSource,
+  Dropdown(Responder * parentResponder,
+           ListViewDataSource * listDataSource,
            DropdownCallback * callback = nullptr);
-  Escher::Responder * responder() override { return this; }
+  Responder * responder() override { return this; }
   bool handleEvent(Ion::Events::Event e) override;
   void registerCallback(DropdownCallback * callback) { m_popup.registerCallback(callback); }
   void reloadAllCells();
@@ -68,16 +68,16 @@ public:
 private:
   /* List of PopupViews shown in a modal view + Wraps a ListViewDataSource to return PopupViews. */
 
-  class DropdownPopupController : public Escher::ViewController, public Escher::MemoizedListViewDataSource {
+  class DropdownPopupController : public ViewController, public MemoizedListViewDataSource {
   public:
     friend Dropdown;
-    DropdownPopupController(Escher::Responder * parentResponder,
-                            Escher::ListViewDataSource * listDataSource,
+    DropdownPopupController(Responder * parentResponder,
+                            ListViewDataSource * listDataSource,
                             Dropdown * dropdown,
                             DropdownCallback * callback = nullptr);
 
     // View Controller
-    Escher::View * view() override { return &m_borderingView; }
+    View * view() override { return &m_borderingView; }
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event e) override;
     void registerCallback(DropdownCallback * callback) { m_callback = callback; }
@@ -94,21 +94,21 @@ private:
       return m_listViewDataSource->reusableCellCount(type);
     }
     PopupItemView * reusableCell(int index, int type) override;
-    void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+    void willDisplayCellForIndex(HighlightCell * cell, int index) override;
     void resetMemoization(bool force = true) override;
-    Escher::HighlightCell * innerCellAtIndex(int index);
+    HighlightCell * innerCellAtIndex(int index);
 
     constexpr static int k_maxNumberOfPopupItems = 4;
 
   private:
-    KDPoint topLeftCornerForSelection(Escher::View * originView);
+    KDPoint topLeftCornerForSelection(View * originView);
 
-    Escher::ListViewDataSource * m_listViewDataSource;
+    ListViewDataSource * m_listViewDataSource;
     PopupItemView m_popupViews[k_maxNumberOfPopupItems];
     KDCoordinate m_memoizedCellWidth;
-    Escher::SelectableTableView m_selectableTableView;
-    Escher::SelectableTableViewDataSource m_selectionDataSource;
-    Escher::BorderingView m_borderingView;
+    SelectableTableView m_selectableTableView;
+    SelectableTableViewDataSource m_selectionDataSource;
+    BorderingView m_borderingView;
     DropdownCallback * m_callback;
     Dropdown * m_dropdown;
   };
@@ -116,6 +116,6 @@ private:
   DropdownPopupController m_popup;
 };
 
-}  // namespace Solver
+}  // namespace Escher
 
-#endif /* SOLVER_GUI_DROPDOWN_VIEW_H */
+#endif /* ESCHER_DROPDOWN_VIEW_H */

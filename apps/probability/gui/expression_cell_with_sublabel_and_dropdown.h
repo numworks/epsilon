@@ -5,8 +5,7 @@
 #include <escher/expression_table_cell_with_message.h>
 #include <escher/message_table_cell_with_message.h>
 #include <escher/responder.h>
-
-#include "dropdown_view.h"
+#include <escher/dropdown_view.h>
 
 namespace Probability {
 
@@ -14,11 +13,11 @@ class ExpressionCellWithSublabelAndDropdown : public Escher::ExpressionTableCell
 public:
   ExpressionCellWithSublabelAndDropdown(Escher::Responder * parentResponder,
                                         Escher::ListViewDataSource * listDataSource,
-                                        DropdownCallback * callback = nullptr) :
+                                        Escher::DropdownCallback * callback = nullptr) :
         ExpressionTableCellWithMessage(parentResponder),
         m_dropdown(this, listDataSource, callback) {}
   const Escher::View * accessoryView() const override { return &m_dropdown; }
-  Dropdown * dropdown() { return &m_dropdown; }
+  Escher::Dropdown * dropdown() { return &m_dropdown; }
   Escher::Responder * responder() override { return this; }
   void didBecomeFirstResponder() override {
     Escher::Container::activeApp()->setFirstResponder(&m_dropdown);
@@ -36,7 +35,7 @@ public:
   bool shouldAlignLabelAndAccessory() const override { return true; }
 
 private:
-  Dropdown m_dropdown;
+  Escher::Dropdown m_dropdown;
 };
 
 }  // namespace Probability

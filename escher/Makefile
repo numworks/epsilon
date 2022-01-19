@@ -16,6 +16,7 @@ escher_src += $(addprefix escher/src/,\
   chevron_view.cpp \
   clipboard.cpp \
   container.cpp \
+  dropdown_view.cpp \
   editable_text_cell.cpp \
   ellipsis_view.cpp \
   expression_field.cpp \
@@ -142,3 +143,7 @@ define depends_on_transparent_image
 $(call object_for,$(2)): INLINER_ARGS += --transparent
 $(call depends_on_image,$(1),$(2))
 endef
+
+$(eval $(call depends_on_transparent_image,escher/src/dropdown_view.cpp,$(addprefix escher/image/,\
+  caret.png \
+)))

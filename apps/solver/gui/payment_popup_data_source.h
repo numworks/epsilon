@@ -3,7 +3,7 @@
 
 #include <escher/list_view_data_source.h>
 
-#include "buffer_text_highlight_cell.h"
+#include <escher/buffer_text_highlight_cell.h>
 
 namespace Solver {
 
@@ -16,15 +16,15 @@ public:
     return 0;
   }
   int reusableCellCount(int type) override { return k_numberOfRows; }
-  BufferTextHighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
+  Escher::BufferTextHighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override {
-    BufferTextHighlightCell * bufferCell = static_cast<BufferTextHighlightCell *>(cell);
+    Escher::BufferTextHighlightCell * bufferCell = static_cast<Escher::BufferTextHighlightCell *>(cell);
     bufferCell->setText(index == 0 ? I18n::translate(I18n::Message::FinanceBeginning) : I18n::translate(I18n::Message::FinanceEnd));
   }
 
 private:
   constexpr static int k_numberOfRows = 2;
-  BufferTextHighlightCell m_cells[k_numberOfRows];
+  Escher::BufferTextHighlightCell m_cells[k_numberOfRows];
 };
 
 }  // namespace Solver

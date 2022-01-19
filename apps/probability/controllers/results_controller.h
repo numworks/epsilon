@@ -9,7 +9,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
-#include "probability/abstract/button_delegate.h"
+#include <escher/button_delegate.h>
 #include <escher/horizontal_or_vertical_layout.h>
 #include "probability/gui/page_controller.h"
 #include "probability/models/results_data_source.h"
@@ -53,7 +53,7 @@ private:
 };
 
 class ResultsController : public Page,
-                          public ButtonDelegate,
+                          public Escher::ButtonDelegate,
                           public Escher::SelectableTableViewDataSource,
                           public DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> {
 public:

@@ -13,7 +13,7 @@
 namespace Probability {
 
 class ResultsHomogeneityController : public Page,
-                                     public ButtonDelegate,
+                                     public Escher::ButtonDelegate,
                                      public Escher::SelectableTableViewDelegate,
                                      public DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> {
 public:

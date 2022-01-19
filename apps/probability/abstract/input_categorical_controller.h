@@ -3,7 +3,7 @@
 
 #include <escher/selectable_table_view.h>
 
-#include "button_delegate.h"
+#include <escher/button_delegate.h>
 #include "input_categorical_view.h"
 #include "probability/gui/page_controller.h"
 #include "probability/models/statistic/chi2_statistic.h"
@@ -14,7 +14,7 @@ namespace Probability {
  * significance level input and own the content view. */
 class InputCategoricalController : public Page,
                                    public Shared::ParameterTextFieldDelegate,
-                                   public ButtonDelegate,
+                                   public Escher::ButtonDelegate,
                                    public Escher::SelectableTableViewDelegate {
 public:
   InputCategoricalController(Escher::StackViewController * parent,

@@ -13,7 +13,7 @@ namespace Probability {
 
 ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
                                      Statistic * statistic,
-                                     ButtonDelegate * buttonDelegate,
+                                     Escher::ButtonDelegate * buttonDelegate,
                                      DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> * dynamicCellsDataSourceDelegate) :
       MemoizedListViewDataSource(),
       DynamicCellsDataSource<ExpressionCellWithBufferWithMessage, k_maxNumberOfExpressionCellsWithBufferWithMessage>(dynamicCellsDataSourceDelegate),

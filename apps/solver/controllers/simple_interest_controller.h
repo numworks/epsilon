@@ -7,7 +7,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include "finance_result_controller.h"
-#include "../abstract/button_delegate.h"
+#include <escher/button_delegate.h>
 #include "../gui/year_popup_data_source.h"
 #include "../gui/message_table_cell_with_sublabel_and_dropdown.h"
 #include "../gui/page_controller.h"
@@ -18,7 +18,7 @@ using namespace Escher;
 namespace Solver {
 
 class SimpleInterestController : public SelectableListViewPage,
-                             public ButtonDelegate,
+                             public Escher::ButtonDelegate,
                              public Escher::TextFieldDelegate,
                              public DropdownCallback {
 public:

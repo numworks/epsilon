@@ -1,4 +1,5 @@
 #include "data.h"
+#include <poincare/solver.h>
 #include <assert.h>
 #include <stdint.h>
 #include <cmath>
@@ -78,16 +79,16 @@ void SimpleInterestData::setUnknown(SimpleInterestParameter param) {
 }
 
 double SimpleInterestData::computeUnknownValue() const {
-  double year = m_yearConventionIs360 ? 360.0 : 365.0;
-  double I = getValue(SimpleInterestParameter::I);
-  double rPct = getValue(SimpleInterestParameter::rPct);
-  double P = getValue(SimpleInterestParameter::P);
-  double n = getValue(SimpleInterestParameter::n);
   /* Using the formula
    * I = -P * r * n'
    * With rPct = r * 100
    *      n = n' * 360 (or 365 depending on year convention)
    */
+  double year = m_yearConventionIs360 ? 360.0 : 365.0;
+  double I = getValue(SimpleInterestParameter::I);
+  double rPct = getValue(SimpleInterestParameter::rPct);
+  double P = getValue(SimpleInterestParameter::P);
+  double n = getValue(SimpleInterestParameter::n);
   double result;
   switch (m_unknown) {
   case SimpleInterestParameter::n :
@@ -144,13 +145,13 @@ double CompoundInterestData::DefaultValue(CompoundInterestParameter param) {
   uint8_t index = static_cast<uint8_t>(param);
   assert(index < k_numberOfDoubleValues);
   constexpr double k_defaultValues[k_numberOfDoubleValues] = {
-    24.0,
-    6.4,
+    72.0,
+    12.5,
+    14000.0,
+    -250.0,
     0.0,
-    -14000.0,
-    0.0,
-    4.0,
-    2.7};
+    12.0,
+    12.0};
   return k_defaultValues[index];
 }
 
@@ -198,15 +199,64 @@ void CompoundInterestData::setUnknown(CompoundInterestParameter param) {
   }
 }
 
-double CompoundInterestData::computeUnknownValue() const {
-  double N = getValue(CompoundInterestParameter::N);
-  double rPct = getValue(CompoundInterestParameter::rPct);
-  double PV = getValue(CompoundInterestParameter::PV);
-  double Pmt = getValue(CompoundInterestParameter::Pmt);
-  double FV = getValue(CompoundInterestParameter::FV);
-  double PY = getValue(CompoundInterestParameter::PY);
-  double CY = getValue(CompoundInterestParameter::CY);
+double computeI(double rPct, double CY, double PY) {
+  return std::pow(1.0 + rPct / (100.0 * CY), CY / PY) - 1.0;
+}
 
+double computeB(double i, double N) {
+  return std::pow(1.0 + i, -N);
+}
+
+double computeA(double i, double S, double b, double N) {
+  return i == 0.0 ? N : (1.0 + i * S) * (1.0 - b) / i;
+}
+
+double computeN(double rPct, double PV, double Pmt, double FV, double S, double i) {
+  if (rPct == 0.0) {
+    return -(PV + FV) / Pmt;
+  }
+  return std::log(((1.0 + i * S) * Pmt - FV * i)
+                  / ((1.0 + i * S) * Pmt + PV * i))
+         / std::log(1.0 + i);
+}
+
+double computeRPct(double N, double PV, double Pmt, double FV, double PY, double CY, double S) {
+  if (Pmt == 0.0) {
+    // FV = PV * (1 + rPct/100CY)^N
+    return 100.0 * CY * (std::pow(FV/PV, 1/N) - 1.0);
+  }
+  const double parameters[7] = {N, PV, Pmt, FV, PY, CY, S};
+  // We must solve this expression. An exact solution cannot be found.
+  Poincare::Solver::ValueAtAbscissa evaluation = [](double x, Poincare::Context *, const void * aux) {
+    const double * pack = static_cast<const double *>(aux);
+    double N = pack[0];
+    double PV = pack[1];
+    double Pmt = pack[2];
+    double FV = pack[3];
+    double PY = pack[4];
+    double CY = pack[5];
+    double S = pack[6];
+    double i = computeI(x, CY, PY);
+    double b = computeB(i, N);
+    double a = computeA(i, S, b, N);
+    return PV + a * Pmt + b * FV;
+  };
+  return Poincare::Solver::NextRoot(evaluation, nullptr, parameters, -100.0, 100, Poincare::Solver::k_relativePrecision, Poincare::Solver::k_minimalStep, Poincare::Solver::DefaultMaximalStep(-100.0, 100));
+}
+
+double computePV(double Pmt, double FV, double a, double b) {
+  return -a * Pmt - b * FV;
+}
+
+double computePmt(double PV, double FV, double a, double b) {
+  return -(PV + b * FV) / a;
+}
+
+double computeFV(double PV, double Pmt, double a, double b) {
+  return -(PV + a * Pmt) / b;
+}
+
+double CompoundInterestData::computeUnknownValue() const {
   /* Using the formulas
    * PV + α*Pmt + β*FV = 0
    * With α = (1 + i*S) * (1-β)/i
@@ -214,41 +264,37 @@ double CompoundInterestData::computeUnknownValue() const {
    *      S = 1 if m_paymentIsBeginning, 0 otherwise
    *      i = (1 + rPct/(100*CY))^(CY/PY) - 1
    * If rPct is 0, α = N and β = 1
+   * If Pmt is 0, PY = CY and FV = PV * (1 + rPct/100CY)^N
    */
-  double i;
+  double N = getValue(CompoundInterestParameter::N);
+  double rPct = getValue(CompoundInterestParameter::rPct);
+  double PV = getValue(CompoundInterestParameter::PV);
+  double Pmt = getValue(CompoundInterestParameter::Pmt);
+  double FV = getValue(CompoundInterestParameter::FV);
+  double CY = getValue(CompoundInterestParameter::CY);
+  // Discard PY so that PY/CY is 1 if Pmt is null.
+  double PY = (Pmt == 0.0) ? CY : getValue(CompoundInterestParameter::PY);
   double S = (m_paymentIsBeginning ? 1.0 : 0.0);
-  double b;
-  double a;
-  if (rPct == 0.0) {
-    i = 0.0;
-    b = 1.0;
-    a = N;
-  } else {
-    i = std::pow(1.0 + rPct / (100.0 * CY), CY / PY) - 1.0;
-    b = std::pow(1.0 + i, -N);
-    a = (1.0 + i * S) * (1.0 - b) / i;
-  }
+  double i = computeI(rPct, CY, PY);
+  double b = computeB(i, N);
+  double a = computeA(i, S, b, N);
   double result;
   switch (m_unknown) {
     case CompoundInterestParameter::N:
-      result = (rPct == 0.0) ? -(PV + FV) / Pmt
-                           : std::log(((1.0 + i * S) * Pmt - FV * i)
-                                      / ((1.0 + i * S) * Pmt + PV * i))
-                                 / std::log(1.0 + i);
+      result = computeN(rPct, PV, Pmt, FV, S, i);
       break;
     case CompoundInterestParameter::rPct:
-      // TODO : Solve rPct
-      result = 0.0;
+      result = computeRPct(N, PV, Pmt, FV, PY, CY, S);
       break;
     case CompoundInterestParameter::PV:
-      result = -a * Pmt - b * FV;
+      result = computePV(Pmt, FV, a, b);
       break;
     case CompoundInterestParameter::Pmt:
-      result = -(PV + b * FV) / a;
+      result = computePmt(PV, FV, a, b);
       break;
     default:
       assert(m_unknown == CompoundInterestParameter::FV);
-      result = -(PV + a * Pmt) / b;
+      result = computeFV(PV, Pmt, a, b);
   }
   if (!std::isfinite(result)) {
     // Prevent 0 divisions from returning inf

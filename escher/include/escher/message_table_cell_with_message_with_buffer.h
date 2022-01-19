@@ -16,6 +16,7 @@ public:
     return m_accessoryView.text();
   }
 private:
+  bool shouldAlignLabelAndAccessory() const override { return true; }
   bool shouldAlignSublabelRight() const override { return false; }
   BufferTextView m_accessoryView;
 };

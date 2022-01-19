@@ -14,7 +14,6 @@ FinanceResultController::FinanceResultController(Escher::StackViewController * p
 }
 
 void FinanceResultController::didBecomeFirstResponder() {
-  selectRow(-1);
   double value;
   if (m_data->isSimpleInterest) {
     SimpleInterestParameter unknownParam = simpleInterestData()->getUnknown();
@@ -32,7 +31,9 @@ void FinanceResultController::didBecomeFirstResponder() {
   char buffer[bufferSize];
   Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
   m_cells[0].setAccessoryText(buffer);
-  m_selectableTableView.reloadData();
+  resetMemoization(true);
+  selectRow(-1);
+  m_contentView.reload();
 }
 
 bool FinanceResultController::handleEvent(Ion::Events::Event event) {

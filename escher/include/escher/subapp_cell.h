@@ -1,28 +1,25 @@
-#ifndef SOLVER_GUI_SUBAPP_CELL_H
-#define SOLVER_GUI_SUBAPP_CELL_H
-
-// TODO Hugo : Factorize with probability
+#ifndef ESCHER_SUBAPP_CELL_H
+#define ESCHER_SUBAPP_CELL_H
 
 #include <escher/bordered.h>
 #include <escher/chevron_view.h>
-
 #include <escher/highlight_image_cell.h>
 #include <escher/highlight_message_view.h>
 
-namespace Solver {
+namespace Escher {
 
 /* Cell made of an icon, a title, a chevron and a subtitle below. */
-class SubappCell : public Escher::HighlightCell, public Escher::Bordered {
+class SubappCell : public HighlightCell, public Bordered {
 public:
   SubappCell();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setHighlighted(bool highlighted) override;
-  Escher::View * subviewAtIndex(int i) override;
+  View * subviewAtIndex(int i) override;
   int numberOfSubviews() const override { return 4; }
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
 
-  void setImage(const Escher::Image * image);
+  void setImage(const Image * image);
   void setMessages(I18n::Message title, I18n::Message subTitle);
 
 private:
@@ -31,12 +28,12 @@ private:
   constexpr static int k_verticalMarginBottom = 7;
   constexpr static int k_horizontalMarginBetweenTextAndIcon = 15;
 
-  Escher::HighlightImageCell m_icon;
-  Escher::HighlightMessageView m_title;
-  Escher::HighlightMessageView m_subTitle;
-  Escher::ChevronView m_chevron;
+  HighlightImageCell m_icon;
+  HighlightMessageView m_title;
+  HighlightMessageView m_subTitle;
+  ChevronView m_chevron;
 };
 
-}  // namespace Solver
+}  // namespace Escher
 
-#endif /* SOLVER_GUI_SUBAPP_CELL_H */
+#endif /* ESCHER_SUBAPP_CELL_H */

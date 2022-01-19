@@ -4,7 +4,6 @@
 #include <escher/expression_view.h>
 #include <escher/message_text_view.h>
 
-#include "probability/gui/highlight_image_cell.h"
 #include <escher/horizontal_or_vertical_layout.h>
 #include "probability/models/statistic/statistic.h"
 

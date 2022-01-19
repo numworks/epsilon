@@ -5,7 +5,7 @@
 #include <escher/message_table_cell_with_message.h>
 #include <escher/responder.h>
 #include <apps/i18n.h>
-#include "../abstract/button_delegate.h"
+#include <escher/button_delegate.h>
 
 #include "dropdown_view.h"
 

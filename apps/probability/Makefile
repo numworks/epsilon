@@ -63,7 +63,6 @@ app_probability_test_src += $(addprefix apps/probability/models/statistic/,\
 )
 
 app_probability_src += $(addprefix apps/probability/gui/,\
-  bordering_view.cpp \
   calculation_cell.cpp \
   calculation_popup_data_source.cpp \
   centering_view.cpp \

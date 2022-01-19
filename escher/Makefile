@@ -5,6 +5,7 @@ escher_src += $(addprefix escher/src/,\
   app.cpp \
   bank_view_controller.cpp \
   bordered.cpp \
+  bordering_view.cpp \
   buffer_text_view.cpp \
   button.cpp \
   button_state.cpp \

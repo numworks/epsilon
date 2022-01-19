@@ -10,7 +10,7 @@
 #include <escher/view.h>
 
 #include "input_controller.h"
-#include "probability/abstract/button_delegate.h"
+#include <escher/button_delegate.h>
 #include "probability/gui/comparison_operator_popup_data_source.h"
 #include "probability/gui/expression_cell_with_editable_text_with_message.h"
 #include "probability/gui/expression_cell_with_sublabel_and_dropdown.h"
@@ -21,7 +21,7 @@ using namespace Escher;
 namespace Probability {
 
 class HypothesisController : public SelectableListViewPage,
-                             public ButtonDelegate,
+                             public Escher::ButtonDelegate,
                              public Escher::TextFieldDelegate,
                              public DropdownCallback {
 public:

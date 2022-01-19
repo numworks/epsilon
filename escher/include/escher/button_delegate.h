@@ -1,9 +1,9 @@
-#ifndef SOLVER_ABSTRACT_BUTTON_DELEGATE_H
-#define SOLVER_ABSTRACT_BUTTON_DELEGATE_H
+#ifndef ESCHER_ABSTRACT_BUTTON_DELEGATE_H
+#define ESCHER_ABSTRACT_BUTTON_DELEGATE_H
 
 #include <escher/invocation.h>
 
-namespace Solver {
+namespace Escher {
 
 /* Simple Delegate interface to use a button
  * Just need to define buttonAction() */
@@ -11,8 +11,8 @@ namespace Solver {
 class ButtonDelegate {
 public:
   virtual bool buttonAction() = 0;
-  Escher::Invocation buttonActionInvocation() {
-    return Escher::Invocation(
+  Invocation buttonActionInvocation() {
+    return Invocation(
         [](void * c, void * s) {
           return static_cast<ButtonDelegate *>(c)->buttonAction();
         },
@@ -20,6 +20,6 @@ public:
   }
 };
 
-}  // namespace Solver
+}  // namespace Escher
 
-#endif /* SOLVER_ABSTRACT_BUTTON_DELEGATE_H */
+#endif /* ESCHER_ABSTRACT_BUTTON_DELEGATE_H */

@@ -73,6 +73,7 @@ escher_src += $(addprefix escher/src/,\
   solid_color_view.cpp \
   stack_view.cpp \
   stack_view_controller.cpp \
+  subapp_cell.cpp \
   switch_view.cpp \
   tab_view.cpp \
   tab_view_cell.cpp \

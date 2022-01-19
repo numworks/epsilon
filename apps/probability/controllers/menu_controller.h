@@ -10,7 +10,7 @@
 #include "probability/controllers/test_controller.h"
 #include <escher/centering_view.h>
 #include <apps/shared/page_controller.h>
-#include "probability/gui/subapp_cell.h"
+#include <escher/subapp_cell.h>
 #include "probability/models/data.h"
 
 namespace Probability {
@@ -44,7 +44,7 @@ private:
   TestController * m_testController;
 
   constexpr static int k_numberOfCells = 3;
-  SubappCell m_cells[k_numberOfCells];
+  Escher::SubappCell m_cells[k_numberOfCells];
   Data::Test * m_globalTest;
   Data::TestType * m_globalTestType;
   Statistic * m_globalStatistic;

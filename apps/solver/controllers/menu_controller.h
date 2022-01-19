@@ -12,7 +12,7 @@
 #include "finance_menu_controller.h"
 #include <escher/centering_view.h>
 #include <apps/shared/page_controller.h>
-#include "../gui/subapp_cell.h"
+#include <escher/subapp_cell.h>
 
 namespace Solver {
 
@@ -37,7 +37,7 @@ private:
   FinanceMenuController * m_financeMenuController;
 
   constexpr static int k_numberOfCells = 2;
-  SubappCell m_cells[k_numberOfCells];
+  Escher::SubappCell m_cells[k_numberOfCells];
 
   Escher::CenteringView m_contentView;
 };

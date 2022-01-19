@@ -6,7 +6,7 @@
 #include <ion/events.h>
 
 #include "simple_interest_controller.h"
-#include "../gui/selectable_cell_list_controller.h"
+#include <apps/shared/selectable_cell_list_controller.h>
 #include "../gui/title_table_view.h"
 #include "../model/data.h"
 
@@ -14,7 +14,7 @@ namespace Solver {
 
 constexpr int k_numberOfSimpleInterestCells = SimpleInterestData::k_numberOfUnknowns;
 
-class SimpleInterestMenuController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
+class SimpleInterestMenuController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfSimpleInterestCells> {
 public:
   SimpleInterestMenuController(Escher::StackViewController * parentResponder, SimpleInterestController * simpleInterestController, FinanceData * data);

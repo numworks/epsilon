@@ -208,8 +208,10 @@ void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
   ExternalAppMain appStart = reinterpret_cast<ExternalAppMain>(app.entryPoint());
   if (appStart) {
     appStart();
-  } else {
-    assert(s_activeApp);
+  }
+  switchToBuiltinApp(appSnapshotAtIndex(0));
+  assert(s_activeApp);
+  if (!appStart) {
     s_activeApp->displayWarning(I18n::Message::ExternalAppIncompatible1, I18n::Message::ExternalAppIncompatible2, true);
   }
 }

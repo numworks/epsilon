@@ -6,7 +6,6 @@
 #include "input_goodness_controller.h"
 #include "input_homogeneity_controller.h"
 #include "probability/app.h"
-#include "probability/gui/selectable_cell_list_controller.h"
 
 using namespace Probability;
 
@@ -16,7 +15,7 @@ CategoricalTypeController::CategoricalTypeController(
     Data::CategoricalType * globalCategoricalType,
     InputGoodnessController * inputGoodnessController,
     InputHomogeneityController * inputHomogeneityController) :
-      SelectableCellListPage(parent),
+      Shared::SelectableCellListPage<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells>(parent),
       m_statistic(statistic),
       m_globalCategoricalType(globalCategoricalType),
       m_inputGoodnessController(inputGoodnessController),

@@ -19,7 +19,7 @@ int CalculationPopupDataSource::numberOfRows() const {
 }
 
 void CalculationPopupDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  HighlightImageCell * myCell = static_cast<HighlightImageCell *>(cell);
+  Escher::HighlightImageCell * myCell = static_cast<Escher::HighlightImageCell *>(cell);
   const Escher::Image * images[k_numberOfImages] = {ImageStore::Calculation1Icon,
                                                     ImageStore::Calculation2Icon,
                                                     ImageStore::Calculation3Icon,

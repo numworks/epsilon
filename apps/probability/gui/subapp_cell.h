@@ -4,7 +4,7 @@
 #include <escher/bordered.h>
 #include <escher/chevron_view.h>
 
-#include "highlight_image_cell.h"
+#include <escher/highlight_image_cell.h>
 #include <escher/highlight_message_view.h>
 
 namespace Probability {
@@ -29,7 +29,7 @@ private:
   constexpr static int k_verticalMarginBottom = 7;
   constexpr static int k_horizontalMarginBetweenTextAndIcon = 15;
 
-  HighlightImageCell m_icon;
+  Escher::HighlightImageCell m_icon;
   Escher::HighlightMessageView m_title;
   Escher::HighlightMessageView m_subTitle;
   Escher::ChevronView m_chevron;

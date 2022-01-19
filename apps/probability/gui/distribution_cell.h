@@ -6,7 +6,7 @@
 #include <escher/message_text_view.h>
 #include <escher/table_cell.h>
 
-#include "highlight_image_cell.h"
+#include <escher/highlight_image_cell.h>
 
 namespace Probability {
 
@@ -29,7 +29,7 @@ private:
   constexpr static KDCoordinate k_chevronWidth = 8;
   constexpr static KDCoordinate k_chevronMargin = 10;
   Escher::MessageTextView m_messageView;
-  HighlightImageCell m_iconView;
+  Escher::HighlightImageCell m_iconView;
   Escher::ChevronView m_chevronView;
 };
 

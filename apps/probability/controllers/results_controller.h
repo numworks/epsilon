@@ -11,7 +11,7 @@
 
 #include <escher/button_delegate.h>
 #include <escher/horizontal_or_vertical_layout.h>
-#include "probability/gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 #include "probability/models/results_data_source.h"
 #include "probability/models/statistic/statistic.h"
 #include "statistic_graph_controller.h"
@@ -52,7 +52,7 @@ private:
   Escher::TableViewDataSource * m_tableDataSource;
 };
 
-class ResultsController : public Page,
+class ResultsController : public Shared::Page,
                           public Escher::ButtonDelegate,
                           public Escher::SelectableTableViewDataSource,
                           public DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> {

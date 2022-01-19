@@ -5,20 +5,20 @@
 
 #include <escher/button_delegate.h>
 #include "input_categorical_view.h"
-#include "probability/gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 #include "probability/models/statistic/chi2_statistic.h"
 
 namespace Probability {
 
 /* This is the common Controller between Homogeneity and Goodness input controllers. It parses
  * significance level input and own the content view. */
-class InputCategoricalController : public Page,
+class InputCategoricalController : public Shared::Page,
                                    public Shared::ParameterTextFieldDelegate,
                                    public Escher::ButtonDelegate,
                                    public Escher::SelectableTableViewDelegate {
 public:
   InputCategoricalController(Escher::StackViewController * parent,
-                             Page * resultsController,
+                             Shared::Page * resultsController,
                              Chi2Statistic * statistic,
                              Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
 
@@ -52,7 +52,7 @@ public:
 protected:
   int stackTitleStyleStep() const override { return 0; }
   Chi2Statistic * m_statistic;
-  Page * m_resultsController;
+  Shared::Page * m_resultsController;
   InputCategoricalView m_contentView;
 };
 

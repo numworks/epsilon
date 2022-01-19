@@ -7,12 +7,12 @@
 
 #include "parameters_controller.h"
 #include "probability/gui/distribution_cell.h"
-#include "probability/gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 #include "probability/models/distribution/distribution.h"
 
 namespace Probability {
 
-class DistributionController : public SelectableListViewPage {
+class DistributionController : public Shared::SelectableListViewPage {
 public:
   DistributionController(Escher::StackViewController * parentResponder,
                          Distribution * distribution,

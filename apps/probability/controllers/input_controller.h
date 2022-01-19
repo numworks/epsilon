@@ -7,13 +7,13 @@
 #include "probability/abstract/dynamic_cells_data_source.h"
 #include "probability/gui/expression_cell_with_editable_text_with_message.h"
 #include "probability/gui/message_table_cell_with_separator.h"
-#include "probability/gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 #include "probability/models/statistic/statistic.h"
 #include "results_controller.h"
 
 namespace Probability {
 
-class InputController : public DoubleParameterPage, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate<ExpressionCellWithEditableTextWithMessage> {
+class InputController : public Shared::DoubleParameterPage, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate<ExpressionCellWithEditableTextWithMessage> {
 public:
   InputController(Escher::StackViewController * parent,
                   ResultsController * resultsController,

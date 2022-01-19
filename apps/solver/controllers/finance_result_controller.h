@@ -5,7 +5,7 @@
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
 
-#include "../gui/selectable_cell_list_controller.h"
+#include <apps/shared/selectable_cell_list_controller.h>
 #include "../gui/title_table_view.h"
 #include "../model/data.h"
 
@@ -16,7 +16,7 @@ namespace Solver {
 
 constexpr int k_numberOfResultCells = 1;
 
-class FinanceResultController : public SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer,
+class FinanceResultController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer,
                                                      k_numberOfResultCells> {
 public:
   FinanceResultController(Escher::StackViewController * parentResponder, FinanceData * data);

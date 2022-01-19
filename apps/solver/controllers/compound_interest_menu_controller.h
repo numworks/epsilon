@@ -6,7 +6,7 @@
 #include <ion/events.h>
 
 #include "compound_interest_controller.h"
-#include "../gui/selectable_cell_list_controller.h"
+#include <apps/shared/selectable_cell_list_controller.h>
 #include "../gui/title_table_view.h"
 #include "../model/data.h"
 
@@ -14,7 +14,7 @@ namespace Solver {
 
 constexpr int k_numberOfCompoundInterestCells = CompoundInterestData::k_numberOfUnknowns;
 
-class CompoundInterestMenuController : public SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
+class CompoundInterestMenuController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfCompoundInterestCells> {
 public:
   CompoundInterestMenuController(Escher::StackViewController * parentResponder, CompoundInterestController * compoundInterestController, FinanceData * data);

@@ -1,21 +1,19 @@
-#include "subapp_cell.h"
-
+#include <escher/subapp_cell.h>
 #include <kandinsky/font.h>
-
 #include <algorithm>
 
-namespace Solver {
+namespace Escher {
 
 SubappCell::SubappCell() {
   m_title.setFont(KDFont::LargeFont);
   m_subTitle.setFont(KDFont::SmallFont);
-  m_subTitle.setTextColor(Escher::Palette::GrayDark);
+  m_subTitle.setTextColor(Palette::GrayDark);
 }
 
 void SubappCell::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor backColor = isHighlighted() ? Escher::Palette::Select : KDColorWhite;
+  KDColor backColor = isHighlighted() ? Palette::Select : KDColorWhite;
   drawInnerRect(ctx, bounds(), backColor);
-  drawBorderOfRect(ctx, bounds(), Escher::Palette::GrayBright);
+  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
 
 void SubappCell::setHighlighted(bool highlighted) {
@@ -25,7 +23,7 @@ void SubappCell::setHighlighted(bool highlighted) {
   HighlightCell::setHighlighted(highlighted);
 }
 
-Escher::View * SubappCell::subviewAtIndex(int i) {
+View * SubappCell::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
   switch (i) {
     case 0:
@@ -46,10 +44,10 @@ KDSize SubappCell::minimalSizeForOptimalDisplay() const {
   KDSize subTitleSize = m_subTitle.minimalSizeForOptimalDisplay();
   KDSize chevronSize = m_chevron.minimalSizeForOptimalDisplay();
 
-  return KDSize(Escher::Metric::CellLeftMargin + iconSize.width() +
+  return KDSize(Metric::CellLeftMargin + iconSize.width() +
                     k_horizontalMarginBetweenTextAndIcon +
                     std::max(titleSize.width(), subTitleSize.width()) + chevronSize.width() +
-                    Escher::Metric::CellRightMargin,
+                    Metric::CellRightMargin,
                 k_verticalMarginTop + titleSize.height() + k_verticalMarginBetweenTexts +
                     subTitleSize.height() + k_verticalMarginBottom);
 }
@@ -60,26 +58,26 @@ void SubappCell::layoutSubviews(bool force) {
 
   KDSize iconSize = m_icon.minimalSizeForOptimalDisplay();
   m_icon.setFrame(
-      KDRect(Escher::Metric::CellLeftMargin, (height - iconSize.height()) / 2, iconSize),
+      KDRect(Metric::CellLeftMargin, (height - iconSize.height()) / 2, iconSize),
       force);
   KDSize titleSize = m_title.minimalSizeForOptimalDisplay();
   KDSize subTitleSize = m_subTitle.minimalSizeForOptimalDisplay();
-  KDCoordinate textXPosition = Escher::Metric::CellLeftMargin + iconSize.width() +
+  KDCoordinate textXPosition = Metric::CellLeftMargin + iconSize.width() +
                                k_horizontalMarginBetweenTextAndIcon;
   m_title.setFrame(KDRect(textXPosition, k_verticalMarginTop, titleSize), force);
   m_subTitle.setFrame(
       KDRect(textXPosition,
-             Escher::Metric::CellTopMargin + titleSize.height() + k_verticalMarginBetweenTexts,
+             Metric::CellTopMargin + titleSize.height() + k_verticalMarginBetweenTexts,
              subTitleSize),
       force);
   KDSize chevronSize = m_chevron.minimalSizeForOptimalDisplay();
-  m_chevron.setFrame(KDRect(width - chevronSize.width() - Escher::Metric::CellRightMargin,
+  m_chevron.setFrame(KDRect(width - chevronSize.width() - Metric::CellRightMargin,
                             (height - chevronSize.height()) / 2,
                             chevronSize),
                      force);
 }
 
-void SubappCell::setImage(const Escher::Image * image) {
+void SubappCell::setImage(const Image * image) {
   m_icon.setImage(image);
 }
 
@@ -88,4 +86,4 @@ void SubappCell::setMessages(I18n::Message title, I18n::Message subTitle) {
   m_subTitle.setMessage(subTitle);
 }
 
-}  // namespace Solver
+}  // namespace Escher

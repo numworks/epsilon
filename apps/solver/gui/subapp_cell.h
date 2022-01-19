@@ -7,7 +7,7 @@
 #include <escher/chevron_view.h>
 
 #include "highlight_image_cell.h"
-#include "highlight_message_view.h"
+#include <escher/highlight_message_view.h>
 
 namespace Solver {
 
@@ -32,8 +32,8 @@ private:
   constexpr static int k_horizontalMarginBetweenTextAndIcon = 15;
 
   HighlightImageCell m_icon;
-  HighlightMessageView m_title;
-  HighlightMessageView m_subTitle;
+  Escher::HighlightMessageView m_title;
+  Escher::HighlightMessageView m_subTitle;
   Escher::ChevronView m_chevron;
 };
 

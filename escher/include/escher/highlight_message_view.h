@@ -1,18 +1,18 @@
-#ifndef PROBABILITY_GUI_HIGHLIGHT_MESSAGE_VIEW_H
-#define PROBABILITY_GUI_HIGHLIGHT_MESSAGE_VIEW_H
+#ifndef ESCHER_HIGHLIGHT_MESSAGE_VIEW_H
+#define ESCHER_HIGHLIGHT_MESSAGE_VIEW_H
 
-#include <apps/i18n.h>
+#include <escher/i18n.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_text_view.h>
 
-namespace Probability {
+namespace Escher {
 
 /* Highlightable view with a message */
-class HighlightMessageView : public Escher::HighlightCell {
+class HighlightMessageView : public HighlightCell {
 public:
   void setHighlighted(bool highlighted) override {
     HighlightCell::setHighlighted(highlighted);
-    m_messageView.setBackgroundColor(highlighted ? Escher::Palette::Select : KDColorWhite);
+    m_messageView.setBackgroundColor(highlighted ? Palette::Select : KDColorWhite);
   }
   void setMessage(I18n::Message m) { m_messageView.setMessage(m); }
   int numberOfSubviews() const override { return 1; }
@@ -25,9 +25,9 @@ public:
   void setTextColor(KDColor color) { m_messageView.setTextColor(color); }
 
 private:
-  Escher::MessageTextView m_messageView;
+  MessageTextView m_messageView;
 };
 
-}  // namespace Probability
+}  // namespace Escher
 
-#endif /* PROBABILITY_GUI_HIGHLIGHT_MESSAGE_VIEW_H */
+#endif /* ESCHER_HIGHLIGHT_MESSAGE_VIEW_H */

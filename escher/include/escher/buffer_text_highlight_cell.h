@@ -1,28 +1,28 @@
-#ifndef SOLVER_GUI_TEXT_HIGHLIGHT_VIEW_H
-#define SOLVER_GUI_TEXT_HIGHLIGHT_VIEW_H
+#ifndef ESCHER_GUI_TEXT_HIGHLIGHT_VIEW_H
+#define ESCHER_GUI_TEXT_HIGHLIGHT_VIEW_H
 
 #include <escher/buffer_text_view.h>
 #include <escher/highlight_cell.h>
 
-namespace Solver {
+namespace Escher {
 
-class BufferTextHighlightCell : public Escher::HighlightCell {
+class BufferTextHighlightCell : public HighlightCell {
 public:
   void setText(const char * text) { m_textView.setText(text); }
-  Escher::View * subviewAtIndex(int i) override { return &m_textView; }
+  View * subviewAtIndex(int i) override { return &m_textView; }
   int numberOfSubviews() const override { return 1; }
   KDSize minimalSizeForOptimalDisplay() const override {
     return m_textView.minimalSizeForOptimalDisplay();
   }
   void layoutSubviews(bool force) override { m_textView.setFrame(bounds(), force); }
   void setHighlighted(bool highlight) override {
-    m_textView.setBackgroundColor(highlight ? Escher::Palette::Select : KDColorWhite);
+    m_textView.setBackgroundColor(highlight ? Palette::Select : KDColorWhite);
   }
 
 private:
-  Escher::BufferTextView m_textView;
+  BufferTextView m_textView;
 };
 
-}  // namespace Solver
+}  // namespace Escher
 
-#endif /* SOLVER_GUI_TEXT_HIGHLIGHT_VIEW_H */
+#endif /* ESCHER_GUI_TEXT_HIGHLIGHT_VIEW_H */

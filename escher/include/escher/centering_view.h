@@ -1,19 +1,19 @@
-#ifndef PROBABILITY_GUI_CENTERING_VIEW_H
-#define PROBABILITY_GUI_CENTERING_VIEW_H
+#ifndef ESCHER_CENTERING_VIEW_H
+#define ESCHER_CENTERING_VIEW_H
 
 #include <escher/view.h>
 #include <escher/palette.h>
 
-namespace Probability {
+namespace Escher {
 
-class CenteringView : public Escher::View {
+class CenteringView : public View {
 public:
-  CenteringView(Escher::View * v, KDColor background = Escher::Palette::WallScreen);
+  CenteringView(View * v, KDColor background = Palette::WallScreen);
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force) override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   int numberOfSubviews() const override { return 1; }
-  Escher::View * subviewAtIndex(int i) override { return m_contentView; }
+  View * subviewAtIndex(int i) override { return m_contentView; }
 
 private:
   KDCoordinate zeroIfNegative(KDCoordinate x) { return x < 0 ? 0 : x; }
@@ -21,6 +21,6 @@ private:
   KDColor m_backgroundColor;
 };
 
-} // namespace Probability
+} // namespace Escher
 
-#endif /* PROBABILITY_GUI_CENTERING_VIEW_H */
+#endif /* ESCHER_CENTERING_VIEW_H */

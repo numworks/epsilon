@@ -26,10 +26,15 @@ CompoundInterestController::CompoundInterestController(Escher::StackViewControll
 
 const char * CompoundInterestController::title() {
   CompoundInterestParameter unknownParam = compoundInterestData()->getUnknown();
-  Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize,
-    I18n::translate(I18n::Message::FinanceSolving),
-    I18n::translate(CompoundInterestData::LabelForParameter(unknownParam)),
-    I18n::translate(CompoundInterestData::SublabelForParameter(unknownParam)));
+  const char * pattern = I18n::translate(I18n::Message::FinanceSolving);
+  const char * label = I18n::translate(CompoundInterestData::LabelForParameter(unknownParam));
+  const char * sublabel = I18n::translate(CompoundInterestData::SublabelForParameter(unknownParam));
+  if (strlen(pattern) + strlen(label) + strlen(sublabel) - 2 * strlen("%s") <= k_titleBufferSize - 1) {
+    Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, pattern, label, sublabel);
+  } else {
+    // If the title does not fit, use a reduced pattern
+    Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, I18n::translate(I18n::Message::FinanceSolvingReduced), label);
+  }
   return m_titleBuffer;
 }
 

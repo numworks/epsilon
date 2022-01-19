@@ -12,7 +12,7 @@
 #include <ion/events.h>
 
 #include <escher/bordering_view.h>
-#include "highlight_image_cell.h"
+#include <escher/highlight_image_cell.h>
 
 namespace Solver {
 
@@ -37,7 +37,7 @@ private:
   constexpr static int k_marginImageHorizontal = 3;
   constexpr static int k_marginImageVertical = 2;
   Escher::HighlightCell * m_cell;
-  HighlightImageCell m_caret;
+  Escher::HighlightImageCell m_caret;
   bool m_isPoppingUp;
 };
 

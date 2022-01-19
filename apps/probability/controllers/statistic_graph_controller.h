@@ -3,13 +3,13 @@
 
 #include <escher/stack_view_controller.h>
 
-#include "probability/gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 #include "probability/gui/statistic_graph_view.h"
 #include "probability/models/statistic_view_range.h"
 
 namespace Probability {
 
-class StatisticGraphController : public Page {
+class StatisticGraphController : public Shared::Page {
 public:
   StatisticGraphController(Escher::StackViewController * stack, Statistic * statistic);
   ViewController::TitlesDisplay titlesDisplay() override;

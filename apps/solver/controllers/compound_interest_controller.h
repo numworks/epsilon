@@ -10,14 +10,14 @@
 #include <escher/button_delegate.h>
 #include "../gui/payment_popup_data_source.h"
 #include "../gui/message_table_cell_with_sublabel_and_dropdown.h"
-#include "../gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 #include "../model/data.h"
 
 using namespace Escher;
 
 namespace Solver {
 
-class CompoundInterestController : public SelectableListViewPage,
+class CompoundInterestController : public Shared::SelectableListViewPage,
                              public Escher::ButtonDelegate,
                              public Escher::TextFieldDelegate,
                              public DropdownCallback {

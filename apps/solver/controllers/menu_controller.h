@@ -11,13 +11,13 @@
 #include "list_controller.h"
 #include "finance_menu_controller.h"
 #include "../gui/centering_view.h"
-#include "../gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 #include "../gui/subapp_cell.h"
 
 namespace Solver {
 
 // Controller
-class MenuController : public SelectableListViewPage {
+class MenuController : public Shared::SelectableListViewPage {
 public:
   MenuController(Escher::StackViewController * parentResponder,
                  Escher::ButtonRowController * listController,

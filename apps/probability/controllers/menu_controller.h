@@ -9,14 +9,14 @@
 #include "probability/controllers/distribution_controller.h"
 #include "probability/controllers/test_controller.h"
 #include "probability/gui/centering_view.h"
-#include "probability/gui/page_controller.h"
+#include <apps/shared/page_controller.h>
 #include "probability/gui/subapp_cell.h"
 #include "probability/models/data.h"
 
 namespace Probability {
 
 // Controller
-class MenuController : public SelectableListViewPage {
+class MenuController : public Shared::SelectableListViewPage {
 public:
   MenuController(Escher::StackViewController * parentResponder,
                  DistributionController * distributionController,

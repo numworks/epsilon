@@ -11,7 +11,7 @@
 #include <escher/view.h>
 #include <ion/events.h>
 
-#include "bordering_view.h"
+#include <escher/bordering_view.h>
 #include "highlight_image_cell.h"
 
 namespace Solver {
@@ -108,7 +108,7 @@ private:
     KDCoordinate m_memoizedCellWidth;
     Escher::SelectableTableView m_selectableTableView;
     Escher::SelectableTableViewDataSource m_selectionDataSource;
-    BorderingView m_borderingView;
+    Escher::BorderingView m_borderingView;
     DropdownCallback * m_callback;
     Dropdown * m_dropdown;
   };

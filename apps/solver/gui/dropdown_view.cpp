@@ -117,8 +117,8 @@ void Dropdown::DropdownPopupController::close() {
 }
 
 KDPoint Dropdown::DropdownPopupController::topLeftCornerForSelection(Escher::View * originView) {
-  KDPoint borderOffset = KDPoint(-BorderingView::k_separatorThickness,
-                                 -BorderingView::k_separatorThickness);
+  KDPoint borderOffset = KDPoint(-Escher::BorderingView::k_separatorThickness,
+                                 -Escher::BorderingView::k_separatorThickness);
   return Escher::Container::activeApp()
       ->modalView()
       ->pointFromPointInView(originView, KDPointZero)

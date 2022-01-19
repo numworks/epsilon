@@ -8,7 +8,7 @@ using namespace Solver;
 constexpr double k_precision = 1e-3;
 constexpr double k_reference = FLT_EPSILON;
 
-void assert_simple_interest_solves(const double expectedValues[SimpleInterestData::k_numberOfDoubleValues], bool yearConvention, SimpleInterestData * data) {
+void assert_simple_interest_solves(const double expectedValues[SimpleInterestData::k_numberOfDoubleValues], bool yearConvention, SimpleInterestData * data, double reference = k_reference) {
   // Set all parameters
   data->m_yearConventionIs360 = yearConvention;
   for (uint8_t paramIndex = 0; paramIndex < SimpleInterestData::k_numberOfDoubleValues; paramIndex++) {
@@ -32,7 +32,7 @@ void assert_simple_interest_solves(const double expectedValues[SimpleInterestDat
   data->resetValues();
 }
 
-void assert_compound_interest_solves(const double expectedValues[CompoundInterestData::k_numberOfDoubleValues], bool payment, CompoundInterestData * data) {
+void assert_compound_interest_solves(const double expectedValues[CompoundInterestData::k_numberOfDoubleValues], bool payment, CompoundInterestData * data, double reference = k_reference) {
   // Set all parameters
   data->m_paymentIsBeginning = payment;
   for (uint8_t paramIndex = 0; paramIndex < CompoundInterestData::k_numberOfDoubleValues; paramIndex++) {
@@ -51,7 +51,7 @@ void assert_compound_interest_solves(const double expectedValues[CompoundInteres
     // Compute and check unknown parameter's value
     double expectedValue = expectedValues[paramIndex];
 
-    quiz_assert(IsApproximatelyEqual(data->computeUnknownValue(), expectedValue, k_precision, k_reference));
+    quiz_assert(IsApproximatelyEqual(data->computeUnknownValue(), expectedValue, k_precision, reference));
   }
   data->resetValues();
 }
@@ -65,7 +65,6 @@ QUIZ_CASE(equation_finance_simple_interest) {
 
 QUIZ_CASE(equation_finance_compound_interest) {
   CompoundInterestData data;
-  // TODO : Fix this test (rPct)
-  // const double values[CompoundInterestData::k_numberOfDoubleValues] = {72.0, 12.55741064, 12600, -250.0, 0.0, 12.0, 12.0};
-  // assert_compound_interest_solves(values, false, &data);
+  const double values[CompoundInterestData::k_numberOfDoubleValues] = {72.0, 12.55741064, 12600, -250.0, 0.0, 12.0, 12.0};
+  assert_compound_interest_solves(values, false, &data, 1.0);
 }

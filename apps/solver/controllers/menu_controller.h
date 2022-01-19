@@ -10,7 +10,7 @@
 
 #include "list_controller.h"
 #include "finance_menu_controller.h"
-#include "../gui/centering_view.h"
+#include <escher/centering_view.h>
 #include <apps/shared/page_controller.h>
 #include "../gui/subapp_cell.h"
 
@@ -39,7 +39,7 @@ private:
   constexpr static int k_numberOfCells = 2;
   SubappCell m_cells[k_numberOfCells];
 
-  CenteringView m_contentView;
+  Escher::CenteringView m_contentView;
 };
 
 }  // namespace Solver

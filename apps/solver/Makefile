@@ -9,7 +9,6 @@ app_solver_test_src = $(addprefix apps/solver/,\
 
 app_solver_src = $(addprefix apps/solver/,\
   app.cpp \
-  gui/centering_view.cpp \
   gui/equation_list_view.cpp \
   gui/highlight_image_cell.cpp \
   gui/subapp_cell.cpp \

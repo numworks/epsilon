@@ -8,7 +8,7 @@
 
 #include "probability/controllers/distribution_controller.h"
 #include "probability/controllers/test_controller.h"
-#include "probability/gui/centering_view.h"
+#include <escher/centering_view.h>
 #include <apps/shared/page_controller.h>
 #include "probability/gui/subapp_cell.h"
 #include "probability/models/data.h"
@@ -51,7 +51,7 @@ private:
   Distribution * m_globalDistribution;
   Calculation * m_globalCalculation;
 
-  CenteringView m_contentView;
+  Escher::CenteringView m_contentView;
 };
 
 }  // namespace Probability

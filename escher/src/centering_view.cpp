@@ -1,8 +1,8 @@
-#include "centering_view.h"
+#include <escher/centering_view.h>
 
-namespace Probability {
+namespace Escher {
 
-CenteringView::CenteringView(Escher::View * v, KDColor background) :
+CenteringView::CenteringView(View * v, KDColor background) :
     m_contentView(v), m_backgroundColor(background) {
 }
 
@@ -25,4 +25,4 @@ void CenteringView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
 }
 
-}  // namespace Probability
+}  // namespace Escher

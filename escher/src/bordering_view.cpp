@@ -1,11 +1,11 @@
-#include "bordering_view.h"
+#include <escher/bordering_view.h>
 
 #include <escher/palette.h>
 
-namespace Solver {
+namespace Escher {
 
 void BorderingView::drawRect(KDContext * ctx, KDRect rect) const {
-  drawBorderOfRect(ctx, bounds(), Escher::Palette::Select);
+  drawBorderOfRect(ctx, bounds(), Palette::Select);
 }
 
 KDSize BorderingView::minimalSizeForOptimalDisplay() const {
@@ -20,4 +20,4 @@ void BorderingView::layoutSubviews(bool force) {
   m_contentView->setFrame(KDRect(k_separatorThickness, k_separatorThickness, contentSize), force);
 }
 
-}  // namespace Solver
+}  // namespace Escher

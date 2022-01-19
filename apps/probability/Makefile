@@ -77,7 +77,6 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   selectable_table_view_with_background.cpp \
   statistic_curve_view.cpp \
   statistic_graph_view.cpp \
-  subapp_cell.cpp \
   test_conclusion_view.cpp \
 )
 

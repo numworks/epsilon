@@ -16,7 +16,6 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
       m_financeMenuController(financeMenuController),
       m_contentView(&m_selectableTableView) {
   selectRow(0);
-  // TODO Hugo : Update images
   m_cells[k_indexOfEquation].setMessages(I18n::Message::EquationsSubAppTitle, I18n::Message::EquationsSubAppDescription);
   m_cells[k_indexOfEquation].setImage(ImageStore::Equations);
   m_cells[k_indexOfFinance].setMessages(I18n::Message::FinanceSubAppTitle, I18n::Message::FinanceSubAppDescription);

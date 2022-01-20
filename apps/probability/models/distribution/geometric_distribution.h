@@ -33,7 +33,6 @@ private:
     return templatedApproximateAtAbscissa<double>(static_cast<double>(k));
   }
   template<typename T> T templatedApproximateAtAbscissa(T x) const;
-  float computeXMin() const override;
   float computeXMax() const override;
   float computeYMax() const override;
 };

@@ -1,14 +1,14 @@
-#ifndef SOLVER_CONTROLLERS_COMPOUND_INTEREST_MENU_CONTROLLER_H
-#define SOLVER_CONTROLLERS_COMPOUND_INTEREST_MENU_CONTROLLER_H
+#ifndef SOLVER_COMPOUND_INTEREST_MENU_CONTROLLER_H
+#define SOLVER_COMPOUND_INTEREST_MENU_CONTROLLER_H
 
-#include <escher/message_table_cell_with_chevron_and_message.h>
-#include <escher/stack_view_controller.h>
-#include <escher/view_controller.h>
-#include <escher/message_text_view.h>
-#include <escher/table_view_with_top_and_bottom_views.h>
 #include <apps/shared/selectable_cell_list_controller.h>
+#include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/message_text_view.h>
+#include <escher/stack_view_controller.h>
+#include <escher/table_view_with_top_and_bottom_views.h>
+#include <escher/view_controller.h>
 #include <ion/events.h>
-#include "../model/data.h"
+#include "data.h"
 
 namespace Solver {
 
@@ -36,4 +36,4 @@ private:
 
 }  // namespace Solver
 
-#endif /* SOLVER_CONTROLLERS_COMPOUND_INTEREST_MENU_CONTROLLER_H */
+#endif /* SOLVER_COMPOUND_INTEREST_MENU_CONTROLLER_H */

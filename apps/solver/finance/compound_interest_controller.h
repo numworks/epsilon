@@ -1,17 +1,17 @@
-#ifndef SOLVER_CONTROLLERS_COMPOUND_INTEREST_CONTROLLER_H
-#define SOLVER_CONTROLLERS_COMPOUND_INTEREST_CONTROLLER_H
+#ifndef SOLVER_COMPOUND_INTEREST_CONTROLLER_H
+#define SOLVER_COMPOUND_INTEREST_CONTROLLER_H
 
 #include <apps/shared/button_with_separator.h>
+#include <apps/shared/page_controller.h>
+#include <escher/button_delegate.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include <escher/view_controller.h>
-#include <escher/button_delegate.h>
-#include "../gui/two_message_popup_data_source.h"
-#include "../gui/message_table_cell_with_sublabel_and_dropdown.h"
-#include <apps/shared/page_controller.h>
-#include "../model/data.h"
+#include "data.h"
+#include "message_table_cell_with_sublabel_and_dropdown.h"
+#include "two_message_popup_data_source.h"
 
 using namespace Escher;
 
@@ -79,4 +79,4 @@ private:
 
 }  // namespace Solver
 
-#endif /* SOLVER_CONTROLLERS_COMPOUND_INTEREST_CONTROLLER_H */
+#endif /* SOLVER_COMPOUND_INTEREST_CONTROLLER_H */

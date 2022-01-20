@@ -6,7 +6,8 @@
 #include <ion/events.h>
 
 #include <apps/shared/selectable_cell_list_controller.h>
-#include "../gui/title_table_view.h"
+#include <escher/table_view_with_top_and_bottom_views.h>
+#include <escher/message_text_view.h>
 #include "../model/data.h"
 
 
@@ -35,7 +36,8 @@ private:
   static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   char m_titleBuffer[k_titleBufferSize];
 
-  TitleTableView m_contentView;
+  Escher::MessageTextView m_messageView;
+  Escher::TableViewWithTopAndBottomViews m_contentView;
   FinanceData * m_data;
 };
 

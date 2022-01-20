@@ -1,5 +1,5 @@
-#ifndef ESCHER_GUI_TEXT_HIGHLIGHT_VIEW_H
-#define ESCHER_GUI_TEXT_HIGHLIGHT_VIEW_H
+#ifndef ESCHER_TEXT_HIGHLIGHT_VIEW_H
+#define ESCHER_TEXT_HIGHLIGHT_VIEW_H
 
 #include <escher/buffer_text_view.h>
 #include <escher/highlight_cell.h>
@@ -25,4 +25,4 @@ private:
 
 }  // namespace Escher
 
-#endif /* ESCHER_GUI_TEXT_HIGHLIGHT_VIEW_H */
+#endif /* ESCHER_TEXT_HIGHLIGHT_VIEW_H */

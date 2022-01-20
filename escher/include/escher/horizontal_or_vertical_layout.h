@@ -1,5 +1,5 @@
-#ifndef ESCHER_GUI_HORIZONTAL_OR_VERTICAL_LAYOUT_H
-#define ESCHER_GUI_HORIZONTAL_OR_VERTICAL_LAYOUT_H
+#ifndef ESCHER_HORIZONTAL_OR_VERTICAL_LAYOUT_H
+#define ESCHER_HORIZONTAL_OR_VERTICAL_LAYOUT_H
 
 #include <escher/palette.h>
 #include <escher/solid_color_view.h>
@@ -77,4 +77,4 @@ private:
 
 }  // namespace Escher
 
-#endif /* ESCHER_GUI_HORIZONTAL_OR_VERTICAL_LAYOUT_H */
+#endif /* ESCHER_HORIZONTAL_OR_VERTICAL_LAYOUT_H */

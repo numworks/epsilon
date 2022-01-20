@@ -10,7 +10,10 @@
 using namespace Solver;
 
 FinanceResultController::FinanceResultController(Escher::StackViewController * parentResponder, FinanceData * data) :
-      Shared::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells>(parentResponder), m_contentView(&m_selectableTableView, this, I18n::Message::CalculatedValues), m_data(data) {
+      Shared::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells>(parentResponder),
+      m_messageView(KDFont::SmallFont, I18n::Message::CalculatedValues, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
+      m_contentView(&m_selectableTableView, this, &m_messageView),
+      m_data(data) {
 }
 
 void FinanceResultController::didBecomeFirstResponder() {

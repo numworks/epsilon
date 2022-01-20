@@ -7,7 +7,11 @@
 using namespace Solver;
 
 CompoundInterestMenuController::CompoundInterestMenuController(Escher::StackViewController * parentResponder, CompoundInterestController * compoundInterestController, FinanceData * data) :
-      Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfCompoundInterestCells>(parentResponder, &m_contentView), m_contentView(&m_selectableTableView, this, I18n::Message::ParameterChoose), m_compoundInterestController(compoundInterestController), m_data(data) {
+      Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfCompoundInterestCells>(parentResponder, &m_contentView),
+      m_messageView(KDFont::SmallFont, I18n::Message::ParameterChoose, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
+      m_contentView(&m_selectableTableView, this, &m_messageView),
+      m_compoundInterestController(compoundInterestController),
+      m_data(data) {
   selectRow(0);
   for (size_t i = 0; i < numberOfRows(); i++) {
     m_cells[i].setMessage(CompoundInterestData::LabelForParameter(paramaterAtIndex(i)));

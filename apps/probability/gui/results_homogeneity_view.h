@@ -8,6 +8,8 @@
 #include <escher/button_delegate.h>
 #include <escher/horizontal_or_vertical_layout.h>
 
+// Factorize with Escher::TableViewWithTopAndBottomViews
+
 namespace Probability {
 
 class ResultsHomogeneityView : public Escher::ScrollView {

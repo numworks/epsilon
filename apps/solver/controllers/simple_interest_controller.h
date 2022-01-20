@@ -8,7 +8,7 @@
 #include <escher/text_field_delegate.h>
 #include "finance_result_controller.h"
 #include <escher/button_delegate.h>
-#include "../gui/year_popup_data_source.h"
+#include "../gui/two_message_popup_data_source.h"
 #include "../gui/message_table_cell_with_sublabel_and_dropdown.h"
 #include <apps/shared/page_controller.h>
 #include "../model/data.h"
@@ -65,8 +65,7 @@ private:
   constexpr static int k_numberOfReusableInputs = 4;
   static_assert(k_numberOfReusableInputs <= k_indexOfYear + 1, "Too many reusable inputs");
 
-  YearPopupDataSource m_yearDataSource;
-
+  TwoMessagePopupDataSource m_yearDataSource;
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfReusableInputs];
   MessageTableCellWithSublabelAndDropdown m_year;
   Shared::ButtonWithSeparator m_next;

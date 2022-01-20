@@ -11,7 +11,7 @@ using namespace Solver;
 
 CompoundInterestController::CompoundInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, FinanceData * data) :
     SelectableListViewPage(parent),
-    m_paymentDataSource(),
+    m_paymentDataSource(I18n::Message::FinanceBeginning, I18n::Message::FinanceEnd),
     m_payment(&m_selectableTableView, &m_paymentDataSource, this),
     m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
     m_financeResultController(financeResultController),

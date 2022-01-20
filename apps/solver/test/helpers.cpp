@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <cmath>
-#include "../model/equation_store.h"
+#include "../equations/equation_store.h"
 
 #include "helpers.h"
 

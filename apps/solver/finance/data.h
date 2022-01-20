@@ -1,5 +1,5 @@
-#ifndef SOLVER_MODELS_DATA_H
-#define SOLVER_MODELS_DATA_H
+#ifndef SOLVER_DATA_H
+#define SOLVER_DATA_H
 
 #include <apps/i18n.h>
 
@@ -93,4 +93,4 @@ public:
 
 }  // namespace Solver
 
-#endif /* SOLVER_MODELS_DATA_H */
+#endif /* SOLVER_DATA_H */

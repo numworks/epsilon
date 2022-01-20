@@ -41,10 +41,10 @@ static constexpr Event scenariPythonMandelbrot[] = { Right, Right, OK, Down, Dow
 static constexpr Event scenariStatistics[] = { Down, OK, One, OK, Two, OK, Right, Five, OK, One, Zero, OK, Back, Right, OK, Right, Right, Right, OK, One, OK, Down, OK, Back, Right, OK, Back, Right, OK, Down, Down, Down, Down, Down, Down, Down, Down, Down, Down, Up, Up, Up, Up, Up, Up, Up, Up, Up, Home, Home
 };
 
-static constexpr Event scenaryProbability[] = { Down, Right, OK, Down, Down, Down, OK, Two, OK, Zero, Dot, Three, OK, OK, Left, Down, Down, OK, Right, Right, Right, Zero, Dot, Eight, OK, Home, Home
+static constexpr Event scenariProbability[] = { Down, Right, OK, Down, Down, Down, OK, Two, OK, Zero, Dot, Three, OK, OK, Left, Down, Down, OK, Right, Right, Right, Zero, Dot, Eight, OK, Home, Home
 };
 
-static constexpr Event scenaryEquation[] = { Down, Right, Right, OK, OK, Down, Down, OK, Six, OK, Down, Down, OK, Left, Left, Left, Down, Down, Home, Home
+static constexpr Event scenariEquation[] = { Down, Right, Right, OK, OK, Down, Down, OK, Six, OK, Down, Down, OK, Left, Left, Left, Down, Down, Home, Home
 };
 
 static constexpr Scenario scenari[] = {
@@ -52,8 +52,8 @@ static constexpr Scenario scenari[] = {
   Scenario::build("Sin/Cos graph", scenariFunctionCosSin),
   Scenario::build("Mandelbrot(15)", scenariPythonMandelbrot),
   Scenario::build("Statistics", scenariStatistics),
-  Scenario::build("Probability", scenaryProbability),
-  Scenario::build("Equation", scenaryEquation)
+  Scenario::build("Probability", scenariProbability),
+  Scenario::build("Equation", scenariEquation)
 };
 
 constexpr static int numberOfScenari = sizeof(scenari)/sizeof(Scenario);

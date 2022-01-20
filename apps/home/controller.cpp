@@ -94,7 +94,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
 #ifdef HOME_DISPLAY_EXTERNALS
     if (index >= container->numberOfApps()) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Dutch || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSymNoText || GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::NoSym) {
-        App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
+        App::app()->displayWarning(I18n::Message::ForbiddenAppInExamMode1, I18n::Message::ForbiddenAppInExamMode2);
       } else {
         External::Archive::File executable;
         if (External::Archive::executableAtIndex(index - container->numberOfApps(), executable)) {
@@ -120,7 +120,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
 #endif
     ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(index);
     if (ExamModeConfiguration::appIsForbiddenInExamMode(selectedSnapshot->descriptor()->examinationLevel(), GlobalPreferences::sharedGlobalPreferences()->examMode())) {
-      App::app()->displayWarning(I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2);
+      App::app()->displayWarning(I18n::Message::ForbiddenAppInExamMode1, I18n::Message::ForbiddenAppInExamMode2);
     } else {
       bool switched = container->switchTo(selectedSnapshot);
       assert(switched);

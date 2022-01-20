@@ -30,7 +30,7 @@ public:
   }
 
   /* Derivation
-   * Unlike Numbers that derivate to 0, Undefined derivates to Undefined. */
+   * Unlike Numbers that derivate to 0, Undefined derivatives to Undefined. */
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return true; }
 
   // Layout

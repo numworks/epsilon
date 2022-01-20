@@ -28,7 +28,7 @@ public:
   }
 
   /* Derivation
-   * Unlike Numbers that derivate to 0, Unreal derivates to Unreal. */
+   * Unlike Numbers that derivate to 0, Unreal derivatives to Unreal. */
   bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return true; }
 
   // Layout

@@ -182,7 +182,7 @@ createWindowFramebuffer(_THIS, SDL_Window * window, Uint32 * format,
  * Informs the window manager that the window needs to be updated.
  * @param   _THIS
  * @param   window      The window to update
- * @param   rects       An array of reectangular areas to update
+ * @param   rects       An array of rectangular areas to update
  * @param   numrects    Rect array length
  * @return  0 if successful, -1 on error
  */

@@ -36,7 +36,7 @@ private:
   constexpr static int k_totalNumberOfCell = 3;
   ExpressionTableCellWithPointer m_explicitCell;
   ExpressionTableCellWithPointer m_singleRecurrenceCell;
-  ExpressionTableCellWithPointer m_doubleRecurenceCell;
+  ExpressionTableCellWithPointer m_doubleRecurrenceCell;
   Poincare::Layout m_layouts[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;

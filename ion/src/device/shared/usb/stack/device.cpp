@@ -108,7 +108,7 @@ bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuff
     case (int) Request::GetStatus:
       return getStatus(transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (int) Request::SetAddress:
-      // Make sure the request is adress is valid.
+      // Make sure the request is address is valid.
       assert(request->wValue() < 128);
       /* According to the reference manual, the address should be set after the
        * Status stage of the current transaction, but this is not true.

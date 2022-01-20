@@ -30,7 +30,7 @@ const ToolboxMessageTree calculChildren[] = {
 
 const ToolboxMessageTree complexChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg,I18n::Message::ComplexAbsoluteValue),
-  ToolboxMessageTree::Leaf(I18n::Message::ArgCommandWithArg, I18n::Message::Agument),
+  ToolboxMessageTree::Leaf(I18n::Message::ArgCommandWithArg, I18n::Message::Argument),
   ToolboxMessageTree::Leaf(I18n::Message::ReCommandWithArg, I18n::Message::RealPart),
   ToolboxMessageTree::Leaf(I18n::Message::ImCommandWithArg, I18n::Message::ImaginaryPart),
   ToolboxMessageTree::Leaf(I18n::Message::ConjCommandWithArg, I18n::Message::Conjugate)
@@ -252,7 +252,7 @@ const ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
 };
 const ToolboxMessageTree unitEnergyChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitEnergyJouleMenu, unitEnergyJouleChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitEnergyEletronVoltMenu, unitEnergyElectronVoltChildren)};
+  ToolboxMessageTree::Node(I18n::Message::UnitEnergyElectronVoltMenu, unitEnergyElectronVoltChildren)};
 
 const ToolboxMessageTree unitPowerWattChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMicroSymbol, I18n::Message::UnitPowerWattMicro),

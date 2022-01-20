@@ -17,7 +17,7 @@ public:
   };
 
   class CCMR : Register64 {
-    /* We're declaring CCMR as a 64 bits register. CCMR doesn't exsist per se,
+    /* We're declaring CCMR as a 64 bits register. CCMR doesn't exist per se,
      * it is in fact the consolidation of CCMR1 and CCMR2. Both are 16 bits
      * registers, so one could expect the consolidation to be 32 bits. However,
      * both CCMR1 and CCMR2 live on 32-bits boundaries, so the consolidation has

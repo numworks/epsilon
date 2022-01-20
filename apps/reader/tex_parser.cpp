@@ -27,7 +27,7 @@ namespace Reader {
   
   // List of available Function Commands that don't require a specific handling
   static constexpr char const * k_FunctionCommands[] = {
-    "arcos", "arcsin", "arctan", "arg", "cos", "cosh", "cot", "coth", 
+    "arccos", "arcsin", "arctan", "arg", "cos", "cosh", "cot", "coth", 
     "csc", "deg", "det", "dim", "exp", "gcd", "hom", "inf", 
     "ker", "lg", "lim", "liminf", "limsup", "ln", "log", "max", 
     "min", "Pr", "sec", "sin", "sinh", "sup", "tan", "tanh"

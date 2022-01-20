@@ -3,14 +3,14 @@
 
 QUIZ_CASE(python_kandinsky_import) {
   // Test "from kandinsky import *"
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environnement();
   assert_command_execution_fails(env, "get_pixel(0,0)");
   assert_command_execution_succeeds(env, "from kandinsky import *");
   assert_command_execution_succeeds(env, "get_pixel(0,0)");
   deinit_environment();
 
   // "import kandinsky"
-  env = init_environement();
+  env = init_environnement();
   assert_command_execution_fails(env, "kandinsky.get_pixel(0,0)");
   assert_command_execution_succeeds(env, "import kandinsky");
   assert_command_execution_succeeds(env, "kandinsky.get_pixel(0,0)");
@@ -18,7 +18,7 @@ QUIZ_CASE(python_kandinsky_import) {
 }
 
 QUIZ_CASE(python_kandinsky_basics) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environnement();
   assert_command_execution_succeeds(env, "from kandinsky import *");
   assert_command_execution_succeeds(env, "set_pixel(0,0,color(12,12,12))");
   assert_command_execution_succeeds(env, "get_pixel(0,0)");

@@ -215,7 +215,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process the themes.")
-    parser.add_argument("repo", nargs="?", help="git remote from wtich to get the themes from. Set to \"local\" for included themes")
+    parser.add_argument("repo", nargs="?", help="git remote from witch to get the themes from. Set to \"local\" for included themes")
     parser.add_argument("theme", nargs="?", help="the name of the theme")
     parser.add_argument("output", nargs="?", help="path to the output header file")
     parser.add_argument("build_dir", nargs="?", help="path to the output folder")

@@ -143,7 +143,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
   // Set the data with the right size
   newData.size = newDataSize;
   error = record->setValue(newData);
-  // Any error would have occured at the first call to setValue
+  // Any error would have occurred at the first call to setValue
   assert(error == Ion::Storage::Record::ErrorStatus::None);
 
   /* Here we delete only the elements relative to the expression model kept in

@@ -22,7 +22,7 @@ endif
 
 DISPLAY_TARGET ?= "Undefined"
 
-PLS_IGNORE := $(shell >&2 printf "\e[32m  Targetting $(DISPLAY_TARGET)\n")
+PLS_IGNORE := $(shell >&2 printf "\e[32m  Targeting $(DISPLAY_TARGET)\n")
 
 ifeq ($(OS),Windows_NT)
     DISPLAY_OS = Windows

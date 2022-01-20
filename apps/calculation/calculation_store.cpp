@@ -25,7 +25,7 @@ CalculationStore::CalculationStore(char * buffer, int size) :
 // Returns an expiring pointer to the calculation of index i
 ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
   assert(i >= 0 && i < m_numberOfCalculations);
-  // m_buffer is the adress of the oldest calculation in calculation store
+  // m_buffer is the address of the oldest calculation in calculation store
   Calculation * c = (Calculation *) m_buffer;
   if (i != m_numberOfCalculations-1) {
     // The calculation we want is not the oldest one so we get its pointer
@@ -100,9 +100,9 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         numberOfSignificantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
       }
       if (!pushSerializeExpression(outputs[i], beginingOfFreeSpace, &endOfFreeSpace, numberOfSignificantDigits)) {
-        /* If the exat/approximate output does not fit in the store (event if the
+        /* If the exact/approximate output does not fit in the store (event if the
          * current calculation is the only calculation), replace the output with
-         * undef if it fits, else replace the whole calcualtion with undef. */
+         * undef if it fits, else replace the whole calculation with undef. */
         Expression undef = Undefined::Builder();
         if (!pushSerializeExpression(undef, beginingOfFreeSpace, &endOfFreeSpace)) {
           return emptyStoreAndPushUndef(context, heightComputer);
@@ -177,8 +177,8 @@ Expression CalculationStore::ansExpression(Context * context) {
    * parsed), ans is replaced by the approximation output when any Store or
    * Equal expression appears. */
   Expression e = mostRecentCalculation->exactOutput();
-  bool exactOuptutInvolvesStoreEqual = e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
-  if (mostRecentCalculation->input().recursivelyMatches(Expression::IsApproximate, context) || exactOuptutInvolvesStoreEqual) {
+  bool exactOutputInvolvesStoreEqual = e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
+  if (mostRecentCalculation->input().recursivelyMatches(Expression::IsApproximate, context) || exactOutputInvolvesStoreEqual) {
     return mostRecentCalculation->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal);
   }
   return mostRecentCalculation->exactOutput();

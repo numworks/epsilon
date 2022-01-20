@@ -143,7 +143,7 @@ static wchar_t *utf8_to_wchar_t(const char *utf8)
 	return ret;
 }
 
-/* Get an attribute value from a udev_device and return it as a whar_t
+/* Get an attribute value from a udev_device and return it as a wchar_t
    string. The returned string must be freed with free() when done.*/
 static wchar_t *copy_udev_string(struct udev_device *dev, const char *udev_name)
 {

@@ -54,7 +54,7 @@ void IconView::drawRect(KDContext * ctx, KDRect rect) const {
   //Then we push the rectangular part of the image
   ctx->fillRectWithPixels(KDRect(0, 6, m_frame.width(), 44),pixelBuffer+(6*55), nullptr);
 
-  //Finaly we push the last 5 lines of the image so that they are truncated on the sides 
+  //Finally we push the last 5 lines of the image so that they are truncated on the sides 
   ctx->fillRectWithPixels(KDRect(1, 50, m_frame.width()-2, 1),pixelBuffer+1+(50*55), nullptr);
   ctx->fillRectWithPixels(KDRect(1, 51, m_frame.width()-2, 1),pixelBuffer+1+(51*55), nullptr);
   ctx->fillRectWithPixels(KDRect(2, 52, m_frame.width()-4, 1),pixelBuffer+2+(52*55), nullptr);

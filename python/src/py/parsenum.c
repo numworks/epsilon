@@ -98,7 +98,7 @@ mp_obj_t mp_parse_num_integer(const char *restrict str_, size_t len, int base, m
             break;
         }
 
-        // add next digi and check for overflow
+        // add next digit and check for overflow
         if (mp_small_int_mul_overflow(int_val, base)) {
             goto overflow;
         }

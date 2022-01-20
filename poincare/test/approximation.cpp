@@ -987,7 +987,7 @@ QUIZ_CASE(poincare_approximation_complex_format) {
 QUIZ_CASE(poincare_approximation_mix) {
   assert_expression_approximates_to<float>("-2-3", "-5");
   assert_expression_approximates_to<float>("1.2×ℯ^(1)", "3.261938");
-  assert_expression_approximates_to<float>("2ℯ^(3)", "40.1711", Radian, Metric, Cartesian, 6); // WARNING: the 7th significant digit is wrong on blackbos simulator
+  assert_expression_approximates_to<float>("2ℯ^(3)", "40.1711", Radian, Metric, Cartesian, 6); // WARNING: the 7th significant digit is wrong on blackbox simulator
   assert_expression_approximates_to<float>("ℯ^2×ℯ^(1)", "20.0855", Radian, Metric, Cartesian, 6); // WARNING: the 7th significant digit is wrong on simulator
   assert_expression_approximates_to<double>("ℯ^2×ℯ^(1)", "20.085536923188");
   assert_expression_approximates_to<double>("2×3^4+2", "164");

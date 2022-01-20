@@ -67,7 +67,7 @@ bool GoToParameterController::confirmParameterAtIndex(int parameterIndex, double
   } else {
     double yFromX = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), unknown);
     /* We here compute y2 = a*((y1-b)/a)+b, which does not always give y1,
-     * because of computation precision. y2 migth thus be invalid. */
+     * because of computation precision. y2 might thus be invalid. */
     if (std::isnan(yFromX) || std::isinf(yFromX)) {
       Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;

@@ -45,7 +45,7 @@ sqrtf(float x)
 	    for(i=0;(ix&0x00800000)==0;i++) ix<<=1;
 	    m -= i-1;
 	}
-	m -= 127;	/* unbias exponent */
+	m -= 127;	/* unbiased exponent */
 	ix = (ix&0x007fffff)|0x00800000;
 	if(m&1)	/* odd m, double x to make it even */
 	    ix += ix;

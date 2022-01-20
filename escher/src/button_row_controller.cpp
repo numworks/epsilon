@@ -37,7 +37,7 @@ int ButtonRowController::ContentView::numberOfSubviews() const {
 }
 
 View * ButtonRowController::ContentView::subviewAtIndex(int index) {
-  /* Warning: the order of the subviews is important for drity tracking.
+  /* Warning: the order of the subviews is important for dirty tracking.
    * Indeed, when a child is redrawn, the redrawn area is the smallest
    * rectangle unioniong the dirty rectangle and the previous redrawn area.
    * As the main view is more likely to be bigger, we prefer to set it as the
@@ -217,7 +217,7 @@ void ButtonRowController::initView() {
 
 void ButtonRowController::viewWillAppear() {
   /* We need to layout subviews at first appearance because the number of
-   * buttons might have changed between 2 appearences. */
+   * buttons might have changed between 2 appearances. */
   m_contentView.layoutSubviews();
   m_contentView.mainViewController()->viewWillAppear();
 }

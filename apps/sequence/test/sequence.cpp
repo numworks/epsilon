@@ -47,7 +47,7 @@ void check_sequences_defined_by(double result[MaxNumberOfSequences][10], Sequenc
     }
   }
   store->removeAll();
-  /* The store is a global variable that has been contructed through
+  /* The store is a global variable that has been constructed through
    * GlobalContext::sequenceStore singleton. It won't be destructed. However,
    * we need to make sure that the pool is empty between quiz_cases. */
   store->tidy();

@@ -52,7 +52,7 @@ SECTIONS {
     /* The data section is written to Flash but linked as if it were in RAM.
      *
      * This is required because its initial value matters (so it has to be in
-     * persistant memory in the first place), but it is a R/W area of memory
+     * persistent memory in the first place), but it is a R/W area of memory
      * so it will have to live in RAM upon execution (in linker lingo, that
      * translates to the data section having a LMA in Flash and a VMA in RAM).
      *

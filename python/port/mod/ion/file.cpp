@@ -762,7 +762,7 @@ STATIC mp_obj_t file_writelines(mp_obj_t o_in, mp_obj_t o_lines) {
 }
 
 /*
- * Simpler read function usef by read and readline.
+ * Simpler read function used by read and readline.
  */
 STATIC mp_obj_t __file_read_backend(file_obj_t* file, mp_int_t size, bool with_line_sep) {
     size_t file_size = file->record.value().size;

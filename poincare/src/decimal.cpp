@@ -234,7 +234,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
        *
        * We should use the UTF8Helper to manipulate chars, but it is clearer to
        * manipulate chars directly, so we just put assumptions on the char size
-       * of the code points we manipuate. */
+       * of the code points we manipulate. */
       assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
       currentChar++;
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
@@ -275,7 +275,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     }
   }
   currentChar += mantissaLength;
-  if (currentChar >= bufferSize - 1) { return bufferSize-1; } // Check if strlcpy returned prematuraly
+  if (currentChar >= bufferSize - 1) { return bufferSize-1; } // Check if strlcpy returned prematurely
   if (exponent >= 0 && exponent < mantissaLength-1) {
     if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
     int decimalMarkerPosition = m_negative ? exponent + 1 : exponent;

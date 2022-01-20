@@ -10,7 +10,7 @@ extern "C" {
 
 namespace Poincare {
 
-template <typename T> bool isNegligeable(T x, T precision, T norm1, T norm2) {
+template <typename T> bool isNegligible(T x, T precision, T norm1, T norm2) {
   T absX = std::fabs(x);
   return absX <= 10.0*precision && absX/norm1 <= precision && absX/norm2 <= precision;
 }
@@ -70,10 +70,10 @@ template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginar
   T magnitude1 = minimalNonNullMagnitudeOfParts(input1);
   T magnitude2 = minimalNonNullMagnitudeOfParts(input2);
   T precision = Epsilon<T>();
-  if (isNegligeable(result.imag(), precision, magnitude1, magnitude2)) {
+  if (isNegligible(result.imag(), precision, magnitude1, magnitude2)) {
     result.imag(0);
   }
-  if (isNegligeable(result.real(), precision, magnitude1, magnitude2)) {
+  if (isNegligible(result.real(), precision, magnitude1, magnitude2)) {
     result.real(0);
   }
   return result;

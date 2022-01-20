@@ -59,7 +59,7 @@ constexpr static double modulationDepth = 0.25; // Must be (0.25% <= md <= 2%)
 constexpr static uint32_t SSCG_INCSTEP = (32767*modulationDepth*PLL_N)/(1.0*100*5*SSCG_MODPER);
 static_assert(SSCG_MODPER == 250, "SSCG_MODPER changed");
 static_assert(SSCG_INCSTEP == 25, "SSCG_INCSTEP changed");
-static_assert(SSCG_INCSTEP * SSCG_MODPER < 32767, "Wrong values for the Spread spectrun clock generator");
+static_assert(SSCG_INCSTEP * SSCG_MODPER < 32767, "Wrong values for the Spread spectrum clock generator");
 }
 }
 }

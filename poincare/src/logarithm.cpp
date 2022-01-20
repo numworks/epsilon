@@ -247,8 +247,8 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isInteger()) {
       Integer b = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
       Integer newNumerator = simplifyLogarithmIntegerBaseInteger(r.signedIntegerNumerator(), b, a, false);
-      Integer newDenomitor = simplifyLogarithmIntegerBaseInteger(r.integerDenominator(), b, a, true);
-      r = Rational::Builder(newNumerator, newDenomitor);
+      Integer newDenominator = simplifyLogarithmIntegerBaseInteger(r.integerDenominator(), b, a, true);
+      r = Rational::Builder(newNumerator, newDenominator);
     }
     // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
     a.addChildAtIndexInPlace(splitLogarithmInteger(r.signedIntegerNumerator(), false, reductionContext), a.numberOfChildren(), a.numberOfChildren());

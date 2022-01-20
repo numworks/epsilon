@@ -68,7 +68,7 @@ __kernel_rem_pio2f(float *x, float *y, int e0, int nx, int prec,
 
 	jz = jk;
 recompute:
-    /* distill q[] into iq[] reversingly */
+    /* distill q[] into iq[] reversely */
 	for(i=0,j=jz,z=q[jz];j>0;i++,j--) {
 	    fw    =  (float)((int32_t)(twon8* z));
 	    iq[i] =  (int32_t)(z-two8*fw);

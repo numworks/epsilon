@@ -15,7 +15,7 @@ private:
   size_t m_printTextIndex;
 };
 
-TestExecutionEnvironment init_environement();
+TestExecutionEnvironment init_environnement();
 void deinit_environment();
 
 void assert_script_execution_succeeds(const char * script, const char * outputText = nullptr);

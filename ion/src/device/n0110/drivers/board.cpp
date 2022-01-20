@@ -42,7 +42,7 @@ void initMPU() {
   /* This is needed for interfacing with the LCD
    * We define the whole FMC memory bank 1 as strongly ordered, non-executable
    * and not accessible. We define the FMC command and data addresses as
-   * writeable non-cachable, non-buffereable and non shareable. */
+   * writeable non-cacheable, non-buffereable and non shareable. */
   int sector = 0;
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x60000000);
@@ -84,7 +84,7 @@ void initMPU() {
    * then an AHB error is given (AN4760). To prevent this to happen, we
    * configure the MPU to define the whole Quad-SPI addressable space as
    * strongly ordered, non-executable and not accessible. Plus, we define the
-   * Quad-SPI region corresponding to the Expternal Chip as executable and
+   * Quad-SPI region corresponding to the External Chip as executable and
    * fully accessible (AN4861). */
   MPU.RNR()->setREGION(sector++);
   MPU.RBAR()->setADDR(0x90000000);

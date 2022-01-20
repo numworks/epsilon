@@ -164,7 +164,7 @@ mp_obj_t poly_polyval(mp_obj_t o_p, mp_obj_t o_x) {
 
         mp_float_t (*func)(void *) = ndarray_get_float_function(source->dtype);
 
-        // TODO: these loops are really nothing, but the re-impplementation of
+        // TODO: these loops are really nothing, but the re-implementation of
         // ITERATE_VECTOR from vectorise.c. We could pass a function pointer here
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;

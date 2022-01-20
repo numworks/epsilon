@@ -51,28 +51,28 @@ size_t numberOfBitsAfterLeadingZeroes(int i) {
 }
 
 uint8_t * SignificantExamModeAddress() {
-  uint32_t * persitence_start_32 = (uint32_t *)&_exam_mode_buffer_start;
-  uint32_t * persitence_end_32 = (uint32_t *)&_exam_mode_buffer_end;
-  assert((persitence_end_32 - persitence_start_32) % 4 == 0);
-  while (persitence_start_32 < persitence_end_32 && *persitence_start_32 == 0x0) {
+  uint32_t * persistence_start_32 = (uint32_t *)&_exam_mode_buffer_start;
+  uint32_t * persistence_end_32 = (uint32_t *)&_exam_mode_buffer_end;
+  assert((persistence_end_32 - persistence_start_32) % 4 == 0);
+  while (persistence_start_32 < persistence_end_32 && *persistence_start_32 == 0x0) {
     // Scan by groups of 32 bits to reach first non-zero bit
-    persitence_start_32++;
+    persistence_start_32++;
   }
-  uint8_t * persitence_start_8 = (uint8_t *)persitence_start_32;
-  uint8_t * persitence_end_8 = (uint8_t *)persitence_end_32;
-  while (persitence_start_8 < persitence_end_8 && *persitence_start_8 == 0x0) {
+  uint8_t * persistence_start_8 = (uint8_t *)persistence_start_32;
+  uint8_t * persistence_end_8 = (uint8_t *)persistence_end_32;
+  while (persistence_start_8 < persistence_end_8 && *persistence_start_8 == 0x0) {
     // Scan by groups of 8 bits to reach first non-zero bit
-    persitence_start_8++;
+    persistence_start_8++;
   }
-  if (persitence_start_8 == persitence_end_8
+  if (persistence_start_8 == persistence_end_8
   // we can't toggle from 0[3] to 2[3] when there is only one 1 bit in the whole sector
-  || (persitence_start_8 + 1 == persitence_end_8 && *persitence_start_8 == 1)) {
+  || (persistence_start_8 + 1 == persistence_end_8 && *persistence_start_8 == 1)) {
     assert(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start) >= 0);
     Ion::Device::Flash::EraseSector(Ion::Device::Flash::SectorAtAddress((uint32_t)&_exam_mode_buffer_start));
     return (uint8_t *)&_exam_mode_buffer_start;
   }
 
-  return persitence_start_8;
+  return persistence_start_8;
 }
 
 uint8_t FetchExamMode() {

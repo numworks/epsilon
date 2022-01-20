@@ -195,10 +195,10 @@ Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, 
    * avoid weird results as e(i*pi) = -1+6E-17*i, we compute the argument of
    * the result of c^d and if arg ~ 0 [Pi], we discard the residual imaginary
    * part and if arg ~ Pi/2 [Pi], we discard the residual real part.
-   * Let's determine when the arg [Pi] (or arg [Pi/2]) is negligeable:
+   * Let's determine when the arg [Pi] (or arg [Pi/2]) is negligible:
    * With c = r*e^(iθ) and d = x+iy, c^d = r^x*e^(yθ)*e^i(yln(r)+xθ)
    * so arg(c^d) = y*ln(r)+xθ.
-   * We consider that arg[π] is negligeable if it is negligeable compared to
+   * We consider that arg[π] is negligible if it is negligible compared to
    * norm(d) = sqrt(x^2+y^2) and ln(r) = ln(norm(c)).*/
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c, d, false));
 }

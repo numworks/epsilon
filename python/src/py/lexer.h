@@ -32,7 +32,7 @@
 #include "py/qstr.h"
 #include "py/reader.h"
 
-/* lexer.h -- simple tokeniser for MicroPython
+/* lexer.h -- simple tokenizer for MicroPython
  *
  * Uses (byte) length instead of null termination.
  * Tokens are the same - UTF-8 with (byte) length.

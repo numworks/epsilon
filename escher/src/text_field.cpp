@@ -155,7 +155,7 @@ bool TextField::ContentView::removePreviousGlyph() {
   assert(m_isEditing);
 
   if (m_horizontalAlignment > 0.0f) {
-    /* Reload the view. If we do it later, the text beins supposedly shorter, we
+    /* Reload the view. If we do it later, the text beings supposedly shorter, we
      * will not clean the first char. */
     reloadRectFromPosition(s_draftTextBuffer);
   }
@@ -290,7 +290,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (isEditing() && shouldFinishEditing(event)) {
-    /* If textFieldDidFinishEditing displays a pop-up (because of an unvalid
+    /* If textFieldDidFinishEditing displays a pop-up (because of an invalid
      * text for instance), the text field will call willResignFirstResponder.
      * This will call textFieldDidAbortEditing if the textfield is still editing,
      * which we do not want, as we are not really aborting edition, just

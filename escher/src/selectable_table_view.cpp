@@ -93,7 +93,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
    *   ExpressionModelListController needs to update its memoized cell before
    *   being able to scroll;
    * - after scrolling: for instance, the calculation history table might
-   *   change its cell content when selected (outup toggling, ellipsis toggling)
+   *   change its cell content when selected (output toggling, ellipsis toggling)
    *   and thus need to access the right used cell - which is defined only
    *   after scrolling.
    */

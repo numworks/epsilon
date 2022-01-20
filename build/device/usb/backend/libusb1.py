@@ -300,7 +300,7 @@ def _setup_prototypes(lib):
     # void libusb_exit (struct libusb_context *ctx)
     lib.libusb_exit.argtypes = [c_void_p]
 
-    # ssize_t libusb_get_device_list (libusb_context *ctx,
+    # size_t libusb_get_device_list (libusb_context *ctx,
     #                                 libusb_device ***list)
     lib.libusb_get_device_list.argtypes = [
             c_void_p,

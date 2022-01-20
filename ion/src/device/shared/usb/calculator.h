@@ -154,7 +154,7 @@ private:
   ExtendedCompatIDDescriptor m_extendedCompatIdDescriptor;
 
   Descriptor * m_descriptors[8];
-  /* m_descriptors contains only descriptors that sould be returned via the
+  /* m_descriptors contains only descriptors that should be returned via the
    * method descriptor(uint8_t type, uint8_t index), so do not count descriptors
    * included in other descriptors or returned by other functions. */
 

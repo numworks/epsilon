@@ -63,15 +63,15 @@ void UsbInfoController::willDisplayCellForIndex(HighlightCell *cell, int index) 
     SwitchView *mySwitch = (SwitchView *)myCell->accessoryView();
     mySwitch->setState(!GlobalPreferences::sharedGlobalPreferences()->dfuUnlocked());
   } else if (index == 1) {
-    MessageTableCellWithChevronAndMessage *mcell = (MessageTableCellWithChevronAndMessage *)cell;
+    MessageTableCellWithChevronAndMessage *m_cell = (MessageTableCellWithChevronAndMessage *)cell;
     int currentLevel = GlobalPreferences::sharedGlobalPreferences()->dfuLevel();
     if (currentLevel == 0) {
-      mcell->setSubtitle(I18n::Message::USBDefaultLevelDesc);
+      m_cell->setSubtitle(I18n::Message::USBDefaultLevelDesc);
     } else if (currentLevel == 1) {;
-      mcell->setSubtitle(I18n::Message::USBLowLevelDesc);
+      m_cell->setSubtitle(I18n::Message::USBLowLevelDesc);
     } else {
       assert(currentLevel == 2);
-      mcell->setSubtitle(I18n::Message::USBParanoidLevelDesc);
+      m_cell->setSubtitle(I18n::Message::USBParanoidLevelDesc);
     }
   }
 }

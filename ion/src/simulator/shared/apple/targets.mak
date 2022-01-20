@@ -1,7 +1,7 @@
 .PRECIOUS: $(simulator_app_deps)
 
 # CAUTION: The empty line in this rule is important!
-# Indeed, rule without receipe serve a special purpose
+# Indeed, rule without recipe serve a special purpose
 # https://www.gnu.org/software/make/manual/html_node/Canceling-Rules.html
 .PRECIOUS: $(BUILD_DIR)/%.app
 $(BUILD_DIR)/%.app: $(simulator_app_deps)

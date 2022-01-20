@@ -444,7 +444,7 @@ Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext * re
   if (hasUnit()) {
     Expression units;
     /* removeUnit has to be called on reduced expression but we want to modify
-     * the least the expression so we use the uninvasive reduction context. */
+     * the least the expression so we use the noninvasive reduction context. */
     self = self.reduceAndRemoveUnit(ExpressionNode::ReductionContext::NonInvasiveReductionContext(*reductionContext), &units);
 
     if (self.isUndefined() || units.isUninitialized()) {

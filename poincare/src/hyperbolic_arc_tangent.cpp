@@ -23,7 +23,7 @@ Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, P
    * this cut. We followed the convention chosen by the lib c++ of llvm on
    * ]-inf+0i, -1+0i[ (warning: atanh takes the other side of the cut values on
    * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply with
-   * atanh(-x) = -atanh(x) and sin(artanh(x)) = x/sqrt(1-x^2). */
+   * atanh(-x) = -atanh(x) and sin(atanh(x)) = x/sqrt(1-x^2). */
   if (c.imag() == 0 && c.real() > 1) {
     result.imag(-result.imag()); // other side of the cut
   }

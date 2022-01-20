@@ -570,7 +570,7 @@ bool Expression::isReal(Context * context) const {
 
 bool Expression::isIdenticalTo(const Expression e) const {
   /* We use the simplification order only because it is a already-coded total
-   * order on expresssions. */
+   * order on expressions. */
   return ExpressionNode::SimplificationOrder(node(), e.node(), true, true) == 0;
 }
 
@@ -656,7 +656,7 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
     if (approximateExpression) {
       /* Step 1: Approximation
        * We compute the approximate expression from the Cartesian form to avoid
-       * unprecision. For example, if the result is the ComplexCartesian(a,b),
+       * imprecision. For example, if the result is the ComplexCartesian(a,b),
        * the final expression is going to be sqrt(a^2+b^2)*exp(i*atan(b/a)...
        * in Polar ComplexFormat. If we approximate this expression instead of
        * ComplexCartesian(a,b), we are going to loose precision on the resulting

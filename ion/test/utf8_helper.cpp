@@ -3,15 +3,15 @@
 #include <ion/unicode/utf8_helper.h>
 #include <string.h>
 
-void assert_occurences_count(const char * string, CodePoint c, int result) {
+void assert_occurrences_count(const char * string, CodePoint c, int result) {
   quiz_assert(UTF8Helper::CountOccurrences(string, c) == result);
 }
 
 QUIZ_CASE(ion_utf8_helper_count_occurrences) {
-  assert_occurences_count("1234", '1', 1);
-  assert_occurences_count("2232", '2', 3);
-  assert_occurences_count("2π2∑32∑", UCodePointGreekSmallLetterPi, 1);
-  assert_occurences_count("2π2∑32∑", UCodePointNArySummation, 2);
+  assert_occurrences_count("1234", '1', 1);
+  assert_occurrences_count("2232", '2', 3);
+  assert_occurrences_count("2π2∑32∑", UCodePointGreekSmallLetterPi, 1);
+  assert_occurrences_count("2π2∑32∑", UCodePointNArySummation, 2);
 }
 
 void assert_code_point_searched_is(const char * string, CodePoint c, const char * result) {

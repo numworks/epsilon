@@ -2,7 +2,7 @@
 title: Installing the SDK
 breadcrumb: SDK
 ---
-# Build and run your own version of Epsilon
+# Build and run your own version of Upsilon
 
 ## Install the SDK
 
@@ -46,13 +46,13 @@ apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
 
 ## Retrieve the source code
 
-The code is hosted on <a href="https://github.com/numworks/epsilon">GitHub</a>. You can retrieve it using the follwing command.
+The code is hosted on <a href="https://github.com/Lauryy06/Upsilon">GitHub</a>. You can retrieve it using the following command.
 
 ```
-git clone https://github.com/numworks/epsilon.git
+git clone https://github.com/Lauryy06/Upsilon.git
 ```
 
-## Run Epsilon on your computer
+## Run Upsilon on your computer
 
 Once the SDK has been installed, just open your terminal (Msys2, Terminal.app, xterm…) and type the following commands:
 
@@ -61,7 +61,7 @@ make PLATFORM=simulator clean
 make PLATFORM=simulator epsilon_run
 ```
 
-## Run Epsilon on your calculator
+## Run Upsilon on your calculator
 
 You can also update your NumWorks calculator easily. Note that you'll need to press the Reset button and that all data on your calculator will be lost.
 
@@ -71,4 +71,4 @@ make
 make epsilon_flash
 ```
 
-Congratulations, you're running your very own version of Epsilon!
+Congratulations, you're running your very own version of Upsilon!

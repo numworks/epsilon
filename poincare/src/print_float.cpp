@@ -243,7 +243,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
 
   if (mode == Preferences::PrintFloatMode::Decimal && exponentInBase10 >= numberOfSignificantDigits) {
     /* Exception 1: avoid inventing digits to fill the printed float: when
-     * displaying 12345 with 2 significant digis in Decimal mode for instance.
+     * displaying 12345 with 2 significant digits in Decimal mode for instance.
      * This exception is caught by ConvertFloatToText and forces the mode to
      * Scientific */
     return exceptionResult;

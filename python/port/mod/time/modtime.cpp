@@ -21,7 +21,7 @@ mp_obj_t modtime_monotonic() {
 }
 
 //
-// Omega extensions, based off MicroPython's modutime.c
+// Upsilon extensions, based off MicroPython's modutime.c
 //
 
 // LEAPOCH corresponds to 2000-03-01, which is a mod-400 year, immediately

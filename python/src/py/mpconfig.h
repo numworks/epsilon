@@ -1221,7 +1221,7 @@ typedef double mp_float_t;
 // the semantics of CPython's pkg_resources.resource_stream()
 // (allows to access binary resources in frozen source packages).
 // Note that the same functionality can be achieved in "pure
-// Python" by prepocessing binary resources into Python source
+// Python" by preprocessing binary resources into Python source
 // and bytecode-freezing it (with a simple helper module available
 // e.g. in micropython-lib).
 #ifndef MICROPY_PY_IO_RESOURCE_STREAM

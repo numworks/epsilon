@@ -32,7 +32,7 @@ public class OmegaActivity extends SDLActivity {
         this.getResources().getAssets().open(identifier)
       );
     } catch (Exception e) {
-      Log.w("LoadTexture", "Coundn't load a file:" + identifier);
+      Log.w("LoadTexture", "Couldn't load a file:" + identifier);
     }
     return bitmap;
   }

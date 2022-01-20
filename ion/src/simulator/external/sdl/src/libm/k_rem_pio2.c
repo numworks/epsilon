@@ -47,7 +47,7 @@
  *			64-bit  precision	2
  *			113-bit precision	3
  *		The actual value is the sum of them. Thus for 113-bit
- *		precison, one may have to do something like:
+ *		precision, one may have to do something like:
  *
  *		long double t,w,r_head, r_tail;
  *		t = (long double)y[2] + (long double)y[1];
@@ -184,7 +184,7 @@ int32_t attribute_hidden __kernel_rem_pio2(double *x, double *y, int e0, int nx,
 
 	jz = jk;
 recompute:
-    /* distill q[] into iq[] reversingly */
+    /* distill q[] into iq[] reversely */
 	for(i=0,j=jz,z=q[jz];j>0;i++,j--) {
 	    fw    =  (double)((int32_t)(twon24* z));
 	    iq[i] =  (int32_t)(z-two24*fw);

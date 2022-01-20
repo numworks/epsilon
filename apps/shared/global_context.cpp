@@ -134,7 +134,7 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
     } else if (!std::isnan(unknownSymbolValue)) {
       /* If unknownSymbolValue is not nan, then we are in the graph app. In order
        * to allow functions like f(x) = u(x+0.5) to be ploted, we need to
-       * approximate the rank and check if it is an integer. Unfortunatly this
+       * approximate the rank and check if it is an integer. Unfortunately this
        * leads to some edge cases were, because of quantification, we have
        * floor(x) = x while x is not integer.*/
       rankIsInteger = std::floor(rankValue) == rankValue;

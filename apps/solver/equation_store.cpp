@@ -136,8 +136,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool
  * the exact answer is given to the user.
  * 3) If no classic form has been found in the developped form, we need to use
  * numerical approximation. Therefore, to prevent precision losses, we work
- * with the undevelopped form of the equation. Therefore we set reductionTarget
- * to SystemForApproximation. Solutions are then numericaly approximated
+ * with the undeveloped form of the equation. Therefore we set reductionTarget
+ * to SystemForApproximation. Solutions are then numerically approximated
  * between the bounds provided by the user. */
 
 EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols) {
@@ -244,7 +244,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
     if (degree == 2) {
       // Polynomial degree <= 2
       m_type = Type::PolynomialMonovariable;
-      error = oneDimensialPolynomialSolve(exactSolutions, exactSolutionsApproximations, polynomialCoefficients, degree, context);
+      error = oneDimensionalPolynomialSolve(exactSolutions, exactSolutionsApproximations, polynomialCoefficients, degree, context);
     } else {
       // Step 4. Monovariable non-polynomial or polynomial with degree > 2
       m_type = Type::Monovariable;
@@ -340,7 +340,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   return Error::NoError;
 }
 
-EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression exactSolutionsApproximations[k_maxNumberOfExactSolutions], Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients], int degree, Context * context) {
+EquationStore::Error EquationStore::oneDimensionalPolynomialSolve(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression exactSolutionsApproximations[k_maxNumberOfExactSolutions], Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients], int degree, Context * context) {
   /* Equation ax^2+bx+c = 0 */
   assert(degree == 2);
   // Compute delta = b*b-4ac
@@ -441,13 +441,13 @@ void EquationStore::tidySolution() {
 
 Preferences::ComplexFormat EquationStore::updatedComplexFormat(Context * context) {
   Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
-  if (complexFormat == Preferences::ComplexFormat::Real && isExplictlyComplex(context)) {
+  if (complexFormat == Preferences::ComplexFormat::Real && isExplicitlyComplex(context)) {
     return Preferences::ComplexFormat::Cartesian;
   }
   return complexFormat;
 }
 
-bool EquationStore::isExplictlyComplex(Context * context) {
+bool EquationStore::isExplicitlyComplex(Context * context) {
   for (int i = 0; i < numberOfDefinedModels(); i++) {
     if (modelForRecord(definedRecordAtIndex(i))->containsIComplex(context)) {
       return true;

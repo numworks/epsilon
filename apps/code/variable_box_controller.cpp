@@ -516,7 +516,7 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
   assert(sizeof(builtinNames) / sizeof(builtinNames[0]) == k_totalBuiltinNodesCount);
   for (int i = 0; i < k_totalBuiltinNodesCount; i++) {
     if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, builtinNames[i].type, NodeOrigin::Builtins, builtinNames[i].name)) {
-      /* We can leverage on the fact that buitin nodes are stored in
+      /* We can leverage on the fact that builtin nodes are stored in
        * alphabetical order. */
       return;
     }
@@ -575,7 +575,7 @@ void VariableBoxController::loadImportedVariablesInScript(const char * scriptCon
 }
 
 void VariableBoxController::loadCurrentVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
-  /* To find variable and funtion names: we lex the script and keep all
+  /* To find variable and function names: we lex the script and keep all
    * MP_TOKEN_NAME that complete the text to autocomplete and are not already in
    * the builtins or imported scripts. */
 
@@ -653,7 +653,7 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(Scr
         /* At this point, if the script node is not of type "file_input_2", it
          * will not have main structures of the wanted type.
          * We look for structures at first level (not inside nested scopes) that
-         * are either dunction definitions, variables statements or imports. */
+         * are either function definitions, variables statements or imports. */
         size_t n = MP_PARSE_NODE_STRUCT_NUM_NODES(pns);
         for (size_t i = 0; i < n; i++) {
           mp_parse_node_t child = pns->nodes[i];
@@ -826,15 +826,15 @@ bool VariableBoxController::importationSourceIsModule(const char * sourceName, c
   return mp_module_get(qstr_from_str(sourceName)) != MP_OBJ_NULL;
 }
 
-bool VariableBoxController::importationSourceIsScript(const char * sourceName, const char * * scriptFullName, Script * retreivedScript) {
+bool VariableBoxController::importationSourceIsScript(const char * sourceName, const char * * scriptFullName, Script * retrievedScript) {
    // Try fetching the nodes from a script
    Script importedScript = ScriptStore::ScriptBaseNamed(sourceName);
    if (importedScript.isNull()) {
      return false;
    }
    *scriptFullName = importedScript.fullName();
-   if (retreivedScript != nullptr) {
-      *retreivedScript = importedScript;
+   if (retrievedScript != nullptr) {
+      *retrievedScript = importedScript;
    }
    return true;
 }

@@ -45,7 +45,7 @@ protected:
   Poincare::Layout m_layout;
 private:
   // Model attributes
-  virtual Poincare::Expression expression(double * modelCoefficients) { return Poincare::Expression(); } // expression is overrided only by Models that do not override levelSet
+  virtual Poincare::Expression expression(double * modelCoefficients) { return Poincare::Expression(); } // expression is overridden only by Models that do not override levelSet
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;
 
   // Levenberg-Marquardt

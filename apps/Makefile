@@ -23,7 +23,7 @@ ifneq ($(strip $(apps_missing)),)
     $(foreach i, $(SUBMODULES_APPS), $(if $(call app_equals, $(filter $(i), $(apps_missing)), $(i)), $(eval miss_modules=1)))
 
     ifeq ($(miss_modules), 1)
-        PLS_IGNORE := $(shell >&2 printf "\nSome submodules apps seem to be missing. To download them, assumming you git clone'd the repo, do\n")
+        PLS_IGNORE := $(shell >&2 printf "\nSome submodules apps seem to be missing. To download them, assuming you git clone'd the repo, do\n")
         PLS_IGNORE := $(shell >&2 printf "  git submodule init\n")
         PLS_IGNORE := $(shell >&2 printf "  git submodule update\n\n")
     endif
@@ -81,7 +81,7 @@ $(call object_for,apps/apps_container_storage.cpp apps/apps_container.cpp apps/m
 country_preferences = apps/country_preferences.csv
 language_preferences = apps/language_preferences.csv
 
-# The header is refered to as <apps/i18n.h> so make sure it's findable this way
+# The header is referred to as <apps/i18n.h> so make sure it's findable this way
 SFLAGS += -I$(BUILD_DIR)
 
 i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N)))

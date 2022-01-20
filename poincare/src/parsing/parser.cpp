@@ -159,7 +159,7 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
   leftHandSide = m_currentToken.expression();
    // No implicit multiplication between two numbers
   if (m_nextToken.isNumber()
-       // No implicit multiplication between a hexadecimal number and an identifer (avoid parsing 0x2abch as 0x2ABC*h)
+       // No implicit multiplication between a hexadecimal number and an identifier (avoid parsing 0x2abch as 0x2ABC*h)
       || (m_currentToken.is(Token::Type::HexadecimalNumber) && m_nextToken.is(Token::Type::Identifier))) {
     m_status = Status::Error;
     return;
@@ -239,7 +239,7 @@ void Parser::parseCaret(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType) {
   /* When parsing 2^(4) ! (with system parentheses), the factorial should stay
    * out of the power. To do this, we tokenized ^( as one token that should be
-   * matched by a closing parenthesis. Otherwise, the ! would take precendence
+   * matched by a closing parenthesis. Otherwise, the ! would take precedence
    * over the power. */
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Power must have a left operand

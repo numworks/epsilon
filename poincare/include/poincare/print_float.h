@@ -21,13 +21,13 @@ public:
   constexpr static int k_maxFloatGlyphLength = 2 // '-' and '.'
     + k_numberOfStoredSignificantDigits // mantissa
     + 1  // ᴇ
-    + 1  // exponant '-'
-    + 3; // exponant
+    + 1  // exponent '-'
+    + 3; // exponent
   constexpr static int k_maxFloatCharSize = 2 // '-' and '.'
     + k_numberOfStoredSignificantDigits // mantissa
     + k_specialECodePointByteLength // ᴇ
-    + 1  // exponant '-'
-    + 3  // exponant
+    + 1  // exponent '-'
+    + 3  // exponent
     + 1; // null-terminated
 
   constexpr static int glyphLengthForFloatWithPrecision(int numberOfSignificantDigits) {
@@ -36,15 +36,15 @@ public:
       + numberOfSignificantDigits // mantissa
       + 1  // glyph ᴇ
       + 1  // '-'
-      + 3; // exponant
+      + 3; // exponent
   }
   constexpr static int charSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
     // The worst case is -1.234ᴇ-328
     return 2 // '-' and '.'
       + numberOfSignificantDigits // mantissa
       + k_specialECodePointByteLength // ᴇ
-      + 1  // exponant '-'
-      + 3  // exponant
+      + 1  // exponent '-'
+      + 3  // exponent
       + 1; // null-terminated
   }
 

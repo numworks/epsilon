@@ -62,7 +62,7 @@ public:
     m_sequenceStore(sequenceStore) {}
   /* expressionForSymbolAbstract & setExpressionForSymbolAbstractName directly call the parent
    * context respective methods. Indeed, special chars like n, u(n), u(n+1),
-   * v(n), v(n+1) are taken into accound only when evaluating sequences which
+   * v(n), v(n+1) are taken into account only when evaluating sequences which
    * is done in another context. */
   template<typename T> T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->valueOfCommonRankSequenceAtPreviousRank(sequenceIndex, rank);

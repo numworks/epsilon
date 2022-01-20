@@ -1,4 +1,4 @@
 Apps = "Applicazioni"
 AppsCapital = "UPSILON"
-ForbidenAppInExamMode1 = "Questa applicazione è"
-ForbidenAppInExamMode2 = "proibita nella modalità d'esame"
+ForbiddenAppInExamMode1 = "Questa applicazione è"
+ForbiddenAppInExamMode2 = "proibita nella modalità d'esame"

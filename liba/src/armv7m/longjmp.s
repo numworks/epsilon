@@ -5,7 +5,7 @@
 .thumb
 .global longjmp
 longjmp:
-  /* Restore all the regsiters to get back in the original state (whenever the
+  /* Restore all the registers to get back in the original state (whenever the
      matching setjmp was called. */
   // General purpose registers
   ldmia  r0!, { r4-r11, ip, lr }

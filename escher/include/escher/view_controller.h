@@ -8,7 +8,7 @@ extern "C" {
 #include <stdint.h>
 }
 
-/* ViewControllers are reponsible for
+/* ViewControllers are responsible for
  *  - Building the view hierarchy
  *  - Handling user input
  *
@@ -23,7 +23,7 @@ extern "C" {
  * - willExitResponderChain
  * - willResignFirstResponder
  *
- * Both methods are always called after setting a view and laying its subwiews
+ * Both methods are always called after setting a view and laying its subviews
  * out.
  *
  * The method initView is called before setting a View (or often sets itself)

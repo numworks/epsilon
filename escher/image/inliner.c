@@ -4,7 +4,7 @@
  *
  * The inliner creates a .h and a .cpp file in the same directory as the input
  * file. The implementation file declares an Image in the ImageStore namespace,
- * and the header exposes a pointer to this variable. The Image embedds the
+ * and the header exposes a pointer to this variable. The Image embedded the
  * bitmap data in the RGB565 format. */
 
 #include <stdio.h>

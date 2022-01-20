@@ -201,7 +201,7 @@ $(call object_for,python/src/py/objmodule.c): SFLAGS += -DMP_QSTR_urandom="MP_QS
 $(call object_for,python/src/extmod/modurandom.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
 
 # Rename usys to sys
-# In order to change the name of the micropython module 'usys' to 'usys'
+# In order to change the name of the micropython module 'usys' to 'sys'
 # (without altering micropython files), we redefined the macro MP_QSTR_usys
 # by DMP_QSTR_sys.
 $(call object_for,python/src/py/objmodule.c): SFLAGS += -DMP_QSTR_usys="MP_QSTR_sys"

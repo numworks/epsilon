@@ -190,7 +190,7 @@ QUIZ_CASE(power_regression) {
   // assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r22);
 }
 
-void assert_trigonomatric_regression_is(double * xi, double * yi, int numberOfPoints, double * trueCoefficients, double trueR2, Poincare::Preferences::AngleUnit trueCoeffcientsUnit) {
+void assert_trigonometric_regression_is(double * xi, double * yi, int numberOfPoints, double * trueCoefficients, double trueR2, Poincare::Preferences::AngleUnit trueCoeffcientsUnit) {
   // Test the trigonometric regression at all angle units
   const Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
   const Poincare::Preferences::AngleUnit units[3] = {Poincare::Preferences::AngleUnit::Radian, Poincare::Preferences::AngleUnit::Degree, Poincare::Preferences::AngleUnit::Gradian};
@@ -214,7 +214,7 @@ QUIZ_CASE(trigonometric_regression1) {
   int numberOfPoints = sizeof(x) / sizeof(double);
   assert(sizeof(y) == sizeof(double) * numberOfPoints);
 
-  assert_trigonomatric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
+  assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
 }
 
 QUIZ_CASE(trigonometric_regression2) {
@@ -225,7 +225,7 @@ QUIZ_CASE(trigonometric_regression2) {
   int numberOfPoints = sizeof(x) / sizeof(double);
   assert(sizeof(y) == sizeof(double) * numberOfPoints);
 
-  assert_trigonomatric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
+  assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
 }
 
 

@@ -185,7 +185,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
     }
   }
   ArrayRowCanonize(operands, dim, 2*dim);
-  // Check inversibility
+  // Check invertibility
   for (int i = 0; i < dim; i++) {
     T cell = operands[i*2*dim+i];
     if (!std::isfinite(std::abs(cell)) || std::abs(cell - (T)1.0) > Expression::Epsilon<float>()) {
@@ -407,7 +407,7 @@ Expression Matrix::createRef(ExpressionNode::ReductionContext reductionContext, 
   if (ExceptionRun(ecp)) {
     /* We clone the current matrix to extract its children later. We can't clone
      * its children directly. Indeed, the current matrix node (this->node()) is
-     * located before the exception checkpoint. In order to clone its chidlren,
+     * located before the exception checkpoint. In order to clone its children,
      * we would temporary increase the reference counter of each child (also
      * located before the checkpoint). If an exception is raised before
      * destroying the child handle, its reference counter would be off by one
@@ -568,7 +568,7 @@ Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, Expressi
   if (ExceptionRun(ecp)) {
     /* We clone the current matrix to extract its children later. We can't clone
      * its children directly. Indeed, the current matrix node (this->node()) is
-     * located before the exception checkpoint. In order to clone its chidlren,
+     * located before the exception checkpoint. In order to clone its children,
      * we would temporary increase the reference counter of each child (also
      * located before the checkpoint). If an exception is raised before
      * destroying the child handle, its reference counter would be off by one
@@ -596,7 +596,7 @@ Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, Expressi
     }
     // Compute the inverse
     matrixAI = matrixAI.rowCanonize(reductionContext, nullptr);
-    // Check inversibility
+    // Check invertibility
     for (int i = 0; i < dim; i++) {
       if (!matrixAI.matrixChild(i, i).isRationalOne()) {
         return Undefined::Builder();

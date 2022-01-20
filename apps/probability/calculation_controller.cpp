@@ -183,7 +183,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
-    // FIXME: Leo has not decided yet if we should use the prefered mode instead of always using scientific mode
+    // FIXME: Leo has not decided yet if we should use the preferred mode instead of always using scientific mode
     PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(m_calculation->parameterAtIndex(i-1), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     field->setText(buffer);
   }

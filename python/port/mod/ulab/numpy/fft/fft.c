@@ -55,7 +55,7 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(fft_fft_obj, 1, 2, fft_fft);
 //|     :param ulab.numpy.ndarray c: An optional 1-dimension array of values whose size is a power of 2, giving the complex part of the value
 //|     :return tuple (r, c): The real and complex parts of the inverse FFT
 //|
-//|     Perform an Inverse Fast Fourier Transform from the frequeny domain into the time domain"""
+//|     Perform an Inverse Fast Fourier Transform from the frequency domain into the time domain"""
 //|     ...
 //|
 

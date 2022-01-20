@@ -574,7 +574,7 @@ STATIC void emit_native_start_pass(emit_t *emit, pass_kind_t pass, scope_t *scop
             if (emit->pass == MP_PASS_CODE_SIZE) {
                 // Commit to the encoding size based on the value of prelude_offset in this pass.
                 // By using 32768 as the cut-off it is highly unlikely that prelude_offset will
-                // grow beyond 65535 by the end of thiss pass, and so require the larger encoding.
+                // grow beyond 65535 by the end of this pass, and so require the larger encoding.
                 emit->prelude_offset_uses_u16_encoding = emit->prelude_offset < 32768;
             }
             if (emit->prelude_offset_uses_u16_encoding) {
@@ -874,7 +874,7 @@ STATIC vtype_kind_t load_reg_stack_imm(emit_t *emit, int reg_dest, const stack_i
     }
 }
 
-// Copies all unsettled registers and immediates that are Python values into the
+// Copies all unsettled registers and immediate that are Python values into the
 // concrete Python stack.  This ensures the concrete Python stack holds valid
 // values for the current stack_size.
 // This function may clobber REG_TEMP1.
@@ -1070,7 +1070,7 @@ STATIC void emit_get_stack_pointer_to_reg_for_pop(emit_t *emit, mp_uint_t reg_de
         }
     }
 
-    // Adujust the stack for a pop of n_pop items, and load the stack pointer into reg_dest.
+    // Adjust the stack for a pop of n_pop items, and load the stack pointer into reg_dest.
     adjust_stack(emit, -n_pop);
     emit_native_mov_reg_state_addr(emit, reg_dest, emit->stack_start + emit->stack_size);
 }

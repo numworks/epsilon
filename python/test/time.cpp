@@ -2,7 +2,7 @@
 #include "execution_environment.h"
 
 QUIZ_CASE(python_time) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environnement();
   assert_command_execution_fails(env, "monotonic()");
   assert_command_execution_succeeds(env, "from time import *");
   assert_command_execution_succeeds(env, "monotonic()");

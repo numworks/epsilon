@@ -1,4 +1,4 @@
-# This file contains all the recipies shared between iOS and macOS.
+# This file contains all the recipes shared between iOS and macOS.
 # The only things that have to be customized per platform are the icons and the
 # Info.plist.
 

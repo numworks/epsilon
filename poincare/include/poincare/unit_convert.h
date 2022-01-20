@@ -25,7 +25,7 @@ private:
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override;
   void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
-  // Evalutation
+  // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;

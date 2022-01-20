@@ -74,7 +74,7 @@ private:
     Unlock       = 11
   };
 
-  // DFU Download Commmand Codes
+  // DFU Download Command Codes
   enum class DFUDownloadCommand {
     GetCommand        = 0x00,
     SetAddressPointer = 0x21,

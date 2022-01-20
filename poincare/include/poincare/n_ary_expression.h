@@ -48,7 +48,7 @@ public:
   /* allChildrenAreReal returns:
    * - 1 if all children are real
    * - 0 if all non real children are ComplexCartesian
-   * - -1 if some chidren are non-real and non ComplexCartesian */
+   * - -1 if some children are non-real and non ComplexCartesian */
   int allChildrenAreReal(Context * context) const;
 protected:
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canSwapMatrices, bool canBeInterrupted) {

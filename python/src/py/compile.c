@@ -705,7 +705,7 @@ STATIC void compile_funcdef_lambdef_param(compiler_t *comp, mp_parse_node_t pn) 
 
         } else {
             // this parameter has a default value
-            // in CPython, None (and True, False?) as default parameters are loaded with LOAD_NAME; don't understandy why
+            // in CPython, None (and True, False?) as default parameters are loaded with LOAD_NAME; don't understand why
 
             if (comp->have_star) {
                 comp->num_dict_params += 1;

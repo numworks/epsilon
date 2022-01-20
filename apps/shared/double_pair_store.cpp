@@ -115,15 +115,15 @@ bool DoublePairStore::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i)
     if (count >= i) {
       return true;
     }
-    double currentAbsissa = m_data[series][0][j];
-    bool firstOccurence = true;
+    double currentAbscissa = m_data[series][0][j];
+    bool firstOccurrence = true;
     for (int k = 0; k < j; k++) {
-      if (m_data[series][0][k] == currentAbsissa) {
-        firstOccurence = false;
+      if (m_data[series][0][k] == currentAbscissa) {
+        firstOccurrence = false;
         break;
       }
     }
-    if (firstOccurence) {
+    if (firstOccurrence) {
       count++;
     }
   }

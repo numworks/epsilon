@@ -594,7 +594,7 @@ void mp_lexer_to_next(mp_lexer_t *lex) {
         // a string or bytes literal
 
         // Python requires adjacent string/bytes literals to be automatically
-        // concatenated.  We do it here in the tokeniser to make efficient use of RAM,
+        // concatenated.  We do it here in the tokenizer to make efficient use of RAM,
         // because then the lexer's vstr can be used to accumulate the string literal,
         // in contrast to creating a parse tree of strings and then joining them later
         // in the compiler.  It's also more compact in code size to do it here.

@@ -1,4 +1,4 @@
 Apps = "Alkalmazások"
 AppsCapital = "UPSILON"
-ForbidenAppInExamMode1 = "Ez az alkalmazás"
-ForbidenAppInExamMode2 = "tilos vizsga módban"
+ForbiddenAppInExamMode1 = "Ez az alkalmazás"
+ForbiddenAppInExamMode2 = "tilos vizsga módban"

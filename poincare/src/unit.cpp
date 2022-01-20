@@ -109,7 +109,7 @@ UnitNode::Vector<int> UnitNode::Vector<int>::FromBaseUnits(const Expression base
     .current            = 0,
     .temperature        = 0,
     .amountOfSubstance  = 0,
-    .luminuousIntensity = 0,
+    .luminousIntensity = 0,
   };
   int numberOfFactors;
   int factorIndex = 0;

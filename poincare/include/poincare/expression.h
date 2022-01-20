@@ -338,7 +338,7 @@ protected:
      * Float to Symbol for instance).
      *
      * We could have overriden the operator T(). However, even with the
-     * 'explicit' keyword (which prevents implicit casts), direct initilization
+     * 'explicit' keyword (which prevents implicit casts), direct initialization
      * are enable which can lead to weird code:
      * ie, you can write: 'Rational a(2); AbsoluteValue b(a);'
      * */
@@ -407,7 +407,7 @@ private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
   static bool sSymbolReplacementsCountLock;
 
-  /* Add missing parenthesis will add parentheses that easen the reading of the
+  /* Add missing parenthesis will add parentheses that ease the reading of the
    * expression or that are required by math rules. For example:
    * 2+-1 --> 2+(-1)
    * *(+(2,1),3) --> (2+1)*3

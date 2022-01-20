@@ -15,7 +15,7 @@ static OPENFILENAME * getOFN(const char * extension) {
 
   static char filter[32];
   if (snprintf(filter, sizeof(filter), "%s%c*.%s%c%c", extension, 0, extension, 0, 0) < 0) {
-    /* Note: We cannot use litteral \0 in the format string, otherwise snprintf
+    /* Note: We cannot use literal \0 in the format string, otherwise snprintf
      * will think the format string is finished... */
     return nullptr;
   }

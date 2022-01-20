@@ -49,8 +49,8 @@ EM_JS(void, get_clipboard_text, (char * buffer, uint32_t bufferSize, AsyncStatus
   try {
     navigator.clipboard.readText().then(
       function(text) {
-        var lenghtBytes = Math.min(lengthBytesUTF8(text) + 1, bufferSize);
-        stringToUTF8(text, buffer, lenghtBytes);
+        var lengthBytes = Math.min(lengthBytesUTF8(text) + 1, bufferSize);
+        stringToUTF8(text, buffer, lengthBytes);
         HEAP32[status>>2] = success;
       },
       function(text) { HEAP32[status>>2] = failure; }

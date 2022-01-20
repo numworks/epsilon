@@ -40,14 +40,14 @@ static bool canRepeatEvent(Event e) {
 
 Event getPlatformEvent();
 
-void ComputeAndSetRepetionFactor(int eventRepetitionCount) {
+void ComputeAndSetRepetitionFactor(int eventRepetitionCount) {
   // The Repetition factor is increased by 4 every 20 loops in getEvent(2 sec)
   setLongRepetition((eventRepetitionCount / 20) * 4 + 1);
 }
 
 void resetLongRepetition() {
   sEventRepetitionCount = 0;
-  ComputeAndSetRepetionFactor(sEventRepetitionCount);
+  ComputeAndSetRepetitionFactor(sEventRepetitionCount);
 }
 
 static Keyboard::Key keyFromState(Keyboard::State state) {
@@ -59,7 +59,7 @@ static inline Event innerGetEvent(int * timeout) {
   assert(*timeout > delayBetweenRepeat);
   int time = 0;
   uint64_t keysSeenUp = 0;
-  uint64_t keysSeenTransitionningFromUpToDown = 0;
+  uint64_t keysSeenTransitioningFromUpToDown = 0;
   while (true) {
     Event platformEvent = getPlatformEvent();
     if (platformEvent != None) {
@@ -68,11 +68,11 @@ static inline Event innerGetEvent(int * timeout) {
 
     Keyboard::State state = Keyboard::scan();
     keysSeenUp |= ~state;
-    keysSeenTransitionningFromUpToDown = keysSeenUp & state;
+    keysSeenTransitioningFromUpToDown = keysSeenUp & state;
 
     bool lock = isLockActive();
 
-    if (keysSeenTransitionningFromUpToDown != 0) {
+    if (keysSeenTransitioningFromUpToDown != 0) {
       sEventIsRepeating = false;
       resetLongRepetition();
       didPressNewKey();
@@ -81,7 +81,7 @@ static inline Event innerGetEvent(int * timeout) {
        * processors have an instruction (ARM thumb uses CLZ).
        * Unfortunately there's no way to express this in standard C, so we have
        * to resort to using a builtin function. */
-      Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
+      Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitioningFromUpToDown));
       bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
       bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
       bool lock = isLockActive();
@@ -114,7 +114,7 @@ static inline Event innerGetEvent(int * timeout) {
     }
     time += 10;
 
-    // At this point, we know that keysSeenTransitionningFromUpToDown has *always* been zero
+    // At this point, we know that keysSeenTransitioningFromUpToDown has *always* been zero
     // In other words, no new key has been pressed
     if (canRepeatEvent(sLastEvent)
         && state == sLastKeyboardState
@@ -125,7 +125,7 @@ static inline Event innerGetEvent(int * timeout) {
       if (time >= delay) {
         sEventIsRepeating = true;
         sEventRepetitionCount++;
-        ComputeAndSetRepetionFactor(sEventRepetitionCount);
+        ComputeAndSetRepetitionFactor(sEventRepetitionCount);
         return sLastEvent;
       }
     }

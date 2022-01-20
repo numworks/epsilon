@@ -212,7 +212,7 @@ void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
   uintptr_t alignedAddress = reinterpret_cast<uintptr_t>(address) & bitMaskZeros;
   /* Increase the length consequently with the new alignment
    * (We don't need to increase the byteLength to a sizeof(uintptr_t)-aligned
-   * lenght because no pointer can be stored on less than sizeof(uintptr_t)
+   * length because no pointer can be stored on less than sizeof(uintptr_t)
    * bytes.) */
   int alignedByteLength = byteLength;
   alignedByteLength += reinterpret_cast<uintptr_t>(address) & bitMaskOnes;

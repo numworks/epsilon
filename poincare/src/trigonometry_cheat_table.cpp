@@ -79,7 +79,7 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
 }
 
 /* Some cheat tables values were not entered because they would never be needed
- * For instance, when simplfy a Cosine, we always compute the value for an angle
+ * For instance, when simplify a Cosine, we always compute the value for an angle
  * in the top right trigonometric quadrant. */
 const TrigonometryCheatTable * TrigonometryCheatTable::Table() {
   static const Row sTableRows[] = {

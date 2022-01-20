@@ -47,7 +47,7 @@ AppsContainer::AppsContainer() :
    * poincareCircuitBreaker is run. This means either whitelisting all Epsilon
    * (which makes bigger files to download and slower execution), or
    * whitelisting all the symbols (that's a big amount of symbols to find and
-   * quite painy to maintain).
+   * quite paint to maintain).
    * We just remove the circuit breaker for now.
    * TODO: Put the Poincare circuit breaker back on epsilon's web emulator */
 
@@ -319,7 +319,7 @@ void AppsContainer::run() {
        * destroyed from the pool. To avoid using them before packing the app
        * (in App::willBecomeInactive for instance), we tidy them early on. */
       s_activeApp->snapshot()->tidy();
-      /* When an app encoutered an exception due to a full pool, the next time
+      /* When an app encountered an exception due to a full pool, the next time
        * the user enters the app, the same exception could happen again which
        * would prevent from reopening the app. To avoid being stuck outside the
        * app causing the issue, we reset its snapshot when leaving it due to

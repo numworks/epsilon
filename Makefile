@@ -105,7 +105,7 @@ print-%:
 	@echo $*\'s origin is $(origin $*)
 
 # Since we're building out-of-tree, we need to make sure the output directories
-# are created, otherwise the receipes will fail (e.g. gcc will fail to create
+# are created, otherwise the recipes will fail (e.g. gcc will fail to create
 # "output/foo/bar.o" because the directory "output/foo" doesn't exist).
 # We need to mark those directories as precious, otherwise Make will try to get
 # rid of them upon completion (and fail, since those folders won't be empty).

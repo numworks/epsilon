@@ -102,7 +102,7 @@ T DerivativeNode::growthRateAroundAbscissa(T x, T h, ApproximationContext approx
 template<typename T>
 T DerivativeNode::riddersApproximation(ApproximationContext approximationContext, T x, T h, T * error) const {
   /* Ridders' Algorithm
-   * Blibliography:
+   * Bibliography:
    * - Ridders, C.J.F. 1982, Advances in Helperering Software, vol. 4, no. 2,
    * pp. 75–76. */
 

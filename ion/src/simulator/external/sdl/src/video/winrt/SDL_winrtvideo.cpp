@@ -597,7 +597,7 @@ WINRT_CreateWindow(_THIS, SDL_Window * window)
         /* OpenGL ES 2 wasn't requested.  Don't set up an EGL surface. */
         data->egl_surface = EGL_NO_SURFACE;
     } else {
-        /* OpenGL ES 2 was reuqested.  Set up an EGL surface. */
+        /* OpenGL ES 2 was requested.  Set up an EGL surface. */
         SDL_VideoData * video_data = (SDL_VideoData *)_this->driverdata;
 
         /* Call SDL_EGL_ChooseConfig and eglCreateWindowSurface directly,

@@ -37,7 +37,7 @@
  *	If (2) is false, then q   = q ; otherwise q   = q  + 2      .
  *		 	       i+1   i             i+1   i
  *
- *	With some algebric manipulation, it is not difficult to see
+ *	With some algebraic manipulation, it is not difficult to see
  *	that (2) is equivalent to
  *                             -(i+1)
  *			s  +  2       <= y			(3)
@@ -116,7 +116,7 @@ double attribute_hidden __ieee754_sqrt(double x)
 	    ix0 |= (ix1>>(32-i));
 	    ix1 <<= i;
 	}
-	m -= 1023;	/* unbias exponent */
+	m -= 1023;	/* unbiased exponent */
 	ix0 = (ix0&0x000fffff)|0x00100000;
 	if(m&1){	/* odd m, double x to make it even */
 	    ix0 += ix0 + ((ix1&sign)>>31);
@@ -280,7 +280,7 @@ A.  sqrt(x) by Newton Iteration
 	This formula has one division fewer than the one above; however,
 	it requires more multiplications and additions. Also x must be
 	scaled in advance to avoid spurious overflow in evaluating the
-	expression 3y*y+x. Hence it is not recommended uless division
+	expression 3y*y+x. Hence it is not recommended unless division
 	is slow. If division is very slow, then one should use the
 	reciproot algorithm given in section B.
 
@@ -330,7 +330,7 @@ B.  sqrt(x) by Reciproot Iteration
 
 	Let x0 and x1 be the leading and the trailing 32-bit words of
 	a floating point number x (in IEEE double format) respectively
-	(see section A). By performing shifs and subtracts on x0 and y0,
+	(see section A). By performing shifts and subtracts on x0 and y0,
 	we obtain a 7.8-bit approximation of 1/sqrt(x) as follows.
 
 	    k := 0x5fe80000 - (x0>>1);

@@ -230,9 +230,9 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
     /* Step 4.1. In radians:
      * We first check if p/q * π is already in the right quadrant:
      * p/q * π < π/2 => p/q < 2 => 2p < q */
-    Integer dividand = Integer::Addition(r.unsignedIntegerNumerator(), r.unsignedIntegerNumerator());
+    Integer dividend = Integer::Addition(r.unsignedIntegerNumerator(), r.unsignedIntegerNumerator());
     Integer divisor = Integer::Multiplication(r.integerDenominator(), Integer(s_piDivisor[(int)angleUnit]));
-    if (divisor.isLowerThan(dividand)) {
+    if (divisor.isLowerThan(dividend)) {
       /* Step 4.2. p/q * π is not in the wanted trigonometrical quadrant.
        * We could subtract n*π to p/q with n an integer.
        * Given p/q = (q'*q+r')/q, we have
@@ -241,8 +241,8 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
       int unaryCoefficient = 1; // store 1 or -1 for the final result.
       Integer piDivisor = Integer::Multiplication(r.integerDenominator(), Integer(s_piDivisor[(int)angleUnit]));
       IntegerDivision div = Integer::Division(r.unsignedIntegerNumerator(), piDivisor);
-      dividand = Integer::Addition(div.remainder, div.remainder);
-      if (divisor.isLowerThan(dividand)) {
+      dividend = Integer::Addition(div.remainder, div.remainder);
+      if (divisor.isLowerThan(dividend)) {
         /* Step 4.3. r'/q * π is not in the wanted trigonometrical quadrant,
          * and because r'<q (as r' is the remainder of an euclidian division
          * by q), we know that r'/q*π is in [π/2; π[.

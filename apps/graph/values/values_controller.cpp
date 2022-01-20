@@ -343,7 +343,7 @@ EvenOddBufferTextCell * ValuesController::floatCells(int j) {
 
 /* ValuesController::ValuesSelectableTableView */
 
-int writeMatrixBrakets(char * buffer, const int bufferSize, int type) {
+int writeMatrixBrackets(char * buffer, const int bufferSize, int type) {
   /* Write the double brackets required in matrix notation.
    * - type == 1: "[["
    * - type == 0: "]["
@@ -365,14 +365,14 @@ bool ValuesController::ValuesSelectableTableView::handleEvent(Ion::Events::Event
       constexpr int bufferSize = 2*PrintFloat::k_maxFloatCharSize + 6; // "[[a][b]]" gives 6 characters in addition to the 2 floats
       char buffer[bufferSize];
       int currentChar = 0;
-      currentChar += writeMatrixBrakets(buffer + currentChar, bufferSize - currentChar, -1);
+      currentChar += writeMatrixBrackets(buffer + currentChar, bufferSize - currentChar, -1);
       assert(currentChar < bufferSize-1);
       size_t semiColonPosition = UTF8Helper::CopyUntilCodePoint(buffer+currentChar, TextField::maxBufferSize() - currentChar, text+1, ';');
       currentChar += semiColonPosition;
-      currentChar += writeMatrixBrakets(buffer + currentChar, bufferSize - currentChar, 0);
+      currentChar += writeMatrixBrackets(buffer + currentChar, bufferSize - currentChar, 0);
       assert(currentChar < bufferSize-1);
       currentChar += UTF8Helper::CopyUntilCodePoint(buffer+currentChar, TextField::maxBufferSize() - currentChar, text+1+semiColonPosition+1, ')');
-      currentChar += writeMatrixBrakets(buffer + currentChar, bufferSize - currentChar, 1);
+      currentChar += writeMatrixBrackets(buffer + currentChar, bufferSize - currentChar, 1);
       assert(currentChar < bufferSize-1);
       buffer[currentChar] = 0;
       Clipboard::sharedClipboard()->store(buffer);

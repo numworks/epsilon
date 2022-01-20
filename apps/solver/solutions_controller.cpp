@@ -168,7 +168,7 @@ int SolutionsController::numberOfRows() const {
 void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   if (j == rowOfUserVariablesMessage) {
-    // Predefined varaible used/ignored message
+    // Predefined variable used/ignored message
     assert(i >= 0);
     MessageCell * messageCell = static_cast<MessageCell *>(cell);
     messageCell->setHorizontalAlignment(i == 0 ? 1.0f : 0.0f);

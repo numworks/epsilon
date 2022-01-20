@@ -77,10 +77,10 @@ void KDContext::blendRectWithMask(KDRect rect, KDColor color, const uint8_t * ma
   startingJ = startingJ > 0 ? startingJ : 0;
   for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
     for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
-      KDColor * currentPixelAdress = workingBuffer + i + absoluteRect.width()*j;
+      KDColor * currentPixelAddress = workingBuffer + i + absoluteRect.width()*j;
       const uint8_t * currentMaskAddress = mask + i + startingI + rect.width()*(j + startingJ);
-      *currentPixelAdress = KDColor::blend(*currentPixelAdress, color, *currentMaskAddress);
-      //*currentPixelAdress = KDColorBlend(*currentPixelAdress, color, *currentMaskAddress);
+      *currentPixelAddress = KDColor::blend(*currentPixelAddress, color, *currentMaskAddress);
+      //*currentPixelAddress = KDColorBlend(*currentPixelAddress, color, *currentMaskAddress);
     }
   }
   pushRect(absoluteRect, workingBuffer);

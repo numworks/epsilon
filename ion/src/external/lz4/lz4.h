@@ -103,7 +103,7 @@ extern "C" {
 #define LZ4_VERSION_STRING LZ4_EXPAND_AND_QUOTE(LZ4_LIB_VERSION)
 
 LZ4LIB_API int LZ4_versionNumber (void);  /**< library version number; useful to check dll version */
-LZ4LIB_API const char* LZ4_versionString (void);   /**< library version string; unseful to check dll version */
+LZ4LIB_API const char* LZ4_versionString (void);   /**< library version string; useful to check dll version */
 
 
 /*-************************************

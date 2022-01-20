@@ -10,7 +10,7 @@ public:
 private:
   constexpr static int k_idleBeforeDimmingDuration = 30*1000; // In miliseconds
   constexpr static int k_dimBacklightBrightness = 0;
-  constexpr static int decreaseby = 15;
+  constexpr static int decreaseBy = 15;
   constexpr static int decreasetime = 1*1000; // In miliseconds
   int m_dimerExecutions = 0;
   int m_brightnessLevel;

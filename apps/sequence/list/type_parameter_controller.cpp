@@ -17,7 +17,7 @@ TypeParameterController::TypeParameterController(Responder * parentResponder, Li
   ViewController(parentResponder),
   m_explicitCell(&m_selectableTableView, I18n::Message::Explicit, cellLayout),
   m_singleRecurrenceCell(&m_selectableTableView, I18n::Message::SingleRecurrence, cellLayout),
-  m_doubleRecurenceCell(&m_selectableTableView, I18n::Message::DoubleRecurrence, cellLayout),
+  m_doubleRecurrenceCell(&m_selectableTableView, I18n::Message::DoubleRecurrence, cellLayout),
   m_layouts{},
   m_selectableTableView(this),
   m_record(),
@@ -100,7 +100,7 @@ int TypeParameterController::numberOfRows() const {
 HighlightCell * TypeParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_explicitCell, &m_singleRecurrenceCell, &m_doubleRecurenceCell};
+  HighlightCell * cells[] = {&m_explicitCell, &m_singleRecurrenceCell, &m_doubleRecurrenceCell};
   return cells[index];
 }
 

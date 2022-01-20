@@ -19,8 +19,8 @@ $(call object_for,ion/src/simulator/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_F
 
 LDFLAGS += -ljnigraphics -llog
 
-# If ARCH is not defined, we will re-trigger a build for each avaialble ARCH.
-# This is used to build APKs, which needs to embbed a binary for each ARCH.
+# If ARCH is not defined, we will re-trigger a build for each available ARCH.
+# This is used to build APKs, which needs to embed a binary for each ARCH.
 
 ifndef ARCH
 

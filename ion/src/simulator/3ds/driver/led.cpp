@@ -21,7 +21,7 @@ void setColor(KDColor c) {
   
   /* 
    * According to https://www.3dbrew.org/wiki/MCURTC:SetInfoLEDPattern
-   * annimation pattern is as follow
+   * animation pattern is as follow
    * u8 ??? | u8 loop_delay | u8 smoothing | u8 delay
    */
   RGBLedPattern pat;
@@ -44,10 +44,10 @@ void setBlinking(uint16_t period, float dutyCycle) {
   
   /* 
    * According to https://www.3dbrew.org/wiki/MCURTC:SetInfoLEDPattern
-   * annimation pattern is as follow
+   * animation pattern is as follow
    * u8 ??? | u8 loop_delay | u8 smoothing | u8 delay
    *
-   * Se, we seet ??? to 0, loop_delay to 0 (to have it loop)
+   * Se, we set ??? to 0, loop_delay to 0 (to have it loop)
    */
   RGBLedPattern pat;
   memset(&pat, 0, sizeof(pat));

@@ -232,12 +232,12 @@ void SumGraphController::LegendView::layoutSubviews(bool force) {
 
 void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
   KDCoordinate width = bounds().width();
-  KDCoordinate heigth = bounds().height();
+  KDCoordinate height = bounds().height();
   KDSize legendSize = m_legend.minimalSizeForOptimalDisplay();
 
   if (legendSize.width() > 0) {
     m_sum.setFrame(KDRect(0, k_symbolHeightMargin, width-legendSize.width(), m_sum.minimalSizeForOptimalDisplay().height()), force);
-    m_legend.setFrame(KDRect(width-legendSize.width(), 0, legendSize.width(), heigth), force);
+    m_legend.setFrame(KDRect(width-legendSize.width(), 0, legendSize.width(), height), force);
   } else {
     m_sum.setFrame(bounds(), force);
     m_legend.setFrame(KDRectZero, force);

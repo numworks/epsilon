@@ -25,7 +25,7 @@
 static EGLDisplay   egl_disp;
 
 /**
- * Detertmines the pixel format to use based on the current display and EGL
+ * Determines the pixel format to use based on the current display and EGL
  * configuration.
  * @param   egl_conf    EGL configuration to use
  * @return  A SCREEN_FORMAT* constant for the pixel format to use

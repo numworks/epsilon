@@ -849,7 +849,7 @@ STATIC uint8_t ndarray_init_helper(size_t n_args, const mp_obj_t *pos_args, mp_m
     if(mp_obj_is_type(args[1].u_obj, &ulab_dtype_type)) {
         dtype_obj_t *dtype = MP_OBJ_TO_PTR(args[1].u_obj);
         _dtype = dtype->dtype;
-    } else { // this must be an integer defined as a class constant (ulba.uint8 etc.)
+    } else { // this must be an integer defined as a class constant (ulab.uint8 etc.)
         _dtype = mp_obj_get_int(args[1].u_obj);
     }
     #else

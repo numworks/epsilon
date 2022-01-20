@@ -35,7 +35,7 @@ This module exports:
 IBackend - backend interface.
 
 Backends are Python objects which implement the IBackend interface.
-The easiest way to do so is inherinting from IBackend.
+The easiest way to do so is inheriting from IBackend.
 
 PyUSB already provides backends for libusb versions 0.1 and 1.0,
 and OpenUSB library. Backends modules included with PyUSB are required to
@@ -87,7 +87,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
 
     IBackend is the basic interface for backend implementations. By default,
     the methods of the interface raise a NotImplementedError exception. A
-    backend implementation should replace the methods to provide the funcionality
+    backend implementation should replace the methods to provide the functionality
     necessary.
 
     As Python is a dynamic typed language, you are not obligated to inherit from
@@ -126,7 +126,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
         r"""Return a configuration descriptor of the given device.
 
         The object returned is required to have all the Configuration Descriptor
-        fields acessible as member variables. They must be convertible (but
+        fields accessible as member variables. They must be convertible (but
         not required to be equal) to the int type.
 
         The dev parameter is the device identification object.
@@ -156,7 +156,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
         r"""Return an endpoint descriptor of the given device.
 
         The object returned is required to have all the Endpoint Descriptor
-        fields acessible as member variables. They must be convertible (but
+        fields accessible as member variables. They must be convertible (but
         not required to be equal) to the int type.
 
         The ep parameter is the endpoint logical index (not the bEndpointAddress
@@ -246,7 +246,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
         of the interface containing the endpoint. The data parameter
         is the data to be sent. It must be an instance of the array.array
         class. The timeout parameter specifies a time limit to the operation
-        in miliseconds.
+        in milliseconds.
 
         The method returns the number of bytes written.
         """
@@ -261,7 +261,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
         of the interface containing the endpoint. The buff parameter
         is the buffer to receive the data read, the length of the buffer
         tells how many bytes should be read. The timeout parameter
-        specifies a time limit to the operation in miliseconds.
+        specifies a time limit to the operation in milliseconds.
 
         The method returns the number of bytes actually read.
         """
@@ -276,7 +276,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
         of the interface containing the endpoint. The data parameter
         is the data to be sent. It must be an instance of the array.array
         class. The timeout parameter specifies a time limit to the operation
-        in miliseconds.
+        in milliseconds.
 
         The method returns the number of bytes written.
         """
@@ -291,7 +291,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
         of the interface containing the endpoint. The buff parameter
         is the buffer to receive the data read, the length of the buffer
         tells how many bytes should be read.  The timeout parameter
-        specifies a time limit to the operation in miliseconds.
+        specifies a time limit to the operation in milliseconds.
 
         The method returns the number of bytes actually read.
         """
@@ -306,7 +306,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
         of the interface containing the endpoint. The data parameter
         is the data to be sent. It must be an instance of the array.array
         class. The timeout parameter specifies a time limit to the operation
-        in miliseconds.
+        in milliseconds.
 
         The method returns the number of bytes written.
         """
@@ -321,7 +321,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
         of the interface containing the endpoint. The buff parameter
         is buffer to receive the data read, the length of the buffer tells
         how many bytes should be read. The timeout parameter specifies
-        a time limit to the operation in miliseconds.
+        a time limit to the operation in milliseconds.
 
         The method returns the number of bytes actually read.
         """
@@ -347,7 +347,7 @@ class IBackend(_objfinalizer.AutoFinalizedObject):
         IN requests it is the buffer to hold the data read. The number
         of bytes requested to transmit or receive is equal to the length
         of the array times the data.itemsize field. The timeout parameter
-        specifies a time limit to the operation in miliseconds.
+        specifies a time limit to the operation in milliseconds.
 
         Return the number of bytes written (for OUT transfers) or the data
         read (for IN transfers), as an array.array object.

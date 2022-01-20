@@ -29,7 +29,7 @@ typedef int64_t sqlite3_int64;
 #define UNUSED_PARAMETER(x) ((void)0)
 #define SQLITE_OK 0
 
-/* Completly ignore asserts: one of them contains a modulo, which our platform
+/* Completely ignore asserts: one of them contains a modulo, which our platform
  * doesn't support in hardware. This therefore translates to a __aeabi_idivmod
  * call, which we do not provide. */
 #define assert(x) ((void)0)

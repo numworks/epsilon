@@ -190,7 +190,6 @@ SECTIONS {
     *(.text._ZN3Ion6Device9Backlight*)
     *(.text._ZN3Ion9Backlight*)
 
-    /* Rodata Truc Relou */
     *(.text._ZNK10Statistics5Store6medianEi)
     *(.text._ZNK10Regression5Store12meanOfColumnEiib)
     *(.text._ZNK6Shared15DoublePairStore11sumOfColumnEiib)
@@ -322,7 +321,7 @@ SECTIONS {
     /* The data section is written to Flash but linked as if it were in RAM.
      *
      * This is required because its initial value matters (so it has to be in
-     * persistant memory in the first place), but it is a R/W area of memory
+     * persistent memory in the first place), but it is a R/W area of memory
      * so it will have to live in RAM upon execution (in linker lingo, that
      * translates to the data section having a LMA in Flash and a VMA in RAM).
      *

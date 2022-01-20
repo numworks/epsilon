@@ -57,7 +57,7 @@ void DFU(bool exitWithKeyboard, bool unlocked, int level) {
 
   /* 4- Disable all interrupts
    * The interrupt service routines live in the Flash and could be overwritten
-   * by garbage during a firmware upgrade opration, so we disable them. */
+   * by garbage during a firmware upgrade operation, so we disable them. */
   Device::Timing::shutdown();
 
   /* 5- Jump to DFU bootloader code. We made sure in the linker script that the

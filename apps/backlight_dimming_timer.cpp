@@ -9,7 +9,7 @@ BacklightDimmingTimer::BacklightDimmingTimer() :
 bool BacklightDimmingTimer::fire() {
   if (m_dimerExecutions == 0) {
     m_brightnessLevel = GlobalPreferences::sharedGlobalPreferences()->brightnessLevel();
-    m_dimerSteps = m_brightnessLevel / decreaseby;
+    m_dimerSteps = m_brightnessLevel / decreaseBy;
     m_timeToSleep = decreasetime / m_dimerSteps;
     m_period = m_timeToSleep / Timer::TickDuration;
     if (m_period == 0) {

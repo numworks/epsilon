@@ -45,7 +45,7 @@ We're listing here all the topics you should be familiar with before being able 
 The choice of a programming language is a controversial topic. Not all of them can be used to write an operating system, but quite a few can. We settled on C++ for several reasons:
 
 - It is a [system](https://en.wikipedia.org/wiki/System_programming_language) programming language, which is something we need since we have to write some low-level code.
-- It has excellent tooling: several extremly high-quality compilers
+- It has excellent tooling: several extremely high-quality compilers
 - It is used for several high-profile projects LLVM, WebKit, MySQL, Photoshop… This ensures a strong ecosystem of tools, code and documentation.
 - It easily allows Object-Oriented Programming, which is a convenient abstraction.
 
@@ -57,7 +57,7 @@ If you want to contribute to Epsilon, you'll need to learn some C++.
 
 ### Working with limited memory
 
-Our device has 256 KB of RAM. That's very little memory by today's standards. That being said, by writing code carefuly, a huge lot can be achieved in that space. After all, that's 64 times more memory than the computer of the Apollo mission!
+Our device has 256 KB of RAM. That's very little memory by today's standards. That being said, by writing code carefully, a huge lot can be achieved in that space. After all, that's 64 times more memory than the computer of the Apollo mission!
 
 #### Stack memory
 

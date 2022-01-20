@@ -57,7 +57,7 @@ IntervalController::IntervalController(Responder * parentResponder, InputEventHa
 }
 
 const char * IntervalController::title() {
-  return I18n::translate(I18n::Message::SearchInverval);
+  return I18n::translate(I18n::Message::SearchInterval);
 }
 
 int IntervalController::numberOfRows() const {

@@ -9,7 +9,7 @@
 
 using namespace Solver;
 
-SimpleInterestController::SimpleInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, FinanceData * data) :
+SimpleInterestController::SimpleInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, Escher::ViewController * financeResultController, FinanceData * data) :
     SelectableListViewPage(parent),
     m_yearDataSource(I18n::Message::Finance360, I18n::Message::Finance365),
     m_year(&m_selectableTableView, &m_yearDataSource, this),

@@ -3,12 +3,11 @@
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/stack_view_controller.h>
-#include <ion/events.h>
-
-#include "compound_interest_controller.h"
-#include <apps/shared/selectable_cell_list_controller.h>
+#include <escher/view_controller.h>
 #include <escher/message_text_view.h>
 #include <escher/table_view_with_top_and_bottom_views.h>
+#include <apps/shared/selectable_cell_list_controller.h>
+#include <ion/events.h>
 #include "../model/data.h"
 
 namespace Solver {
@@ -18,7 +17,7 @@ constexpr int k_numberOfCompoundInterestCells = CompoundInterestData::k_numberOf
 class CompoundInterestMenuController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfCompoundInterestCells> {
 public:
-  CompoundInterestMenuController(Escher::StackViewController * parentResponder, CompoundInterestController * compoundInterestController, FinanceData * data);
+  CompoundInterestMenuController(Escher::StackViewController * parentResponder, Escher::ViewController * compoundInterestController, FinanceData * data);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override { return I18n::translate(I18n::Message::CompoundInterest); }
@@ -31,7 +30,7 @@ private:
 
   Escher::MessageTextView m_messageView;
   Escher::TableViewWithTopAndBottomViews m_contentView;
-  CompoundInterestController * m_compoundInterestController;
+  Escher::ViewController * m_compoundInterestController;
   FinanceData * m_data;
 };
 

@@ -7,9 +7,8 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/table_cell.h>
+#include <escher/view_controller.h>
 
-#include "list_controller.h"
-#include "finance_menu_controller.h"
 #include <escher/centering_view.h>
 #include <apps/shared/page_controller.h>
 #include <escher/subapp_cell.h>
@@ -20,8 +19,8 @@ namespace Solver {
 class MenuController : public Shared::SelectableListViewPage {
 public:
   MenuController(Escher::StackViewController * parentResponder,
-                 Escher::ButtonRowController * listController,
-                 FinanceMenuController * financeMenuController);
+                 Escher::ViewController * listController,
+                 Escher::ViewController * financeMenuController);
   int numberOfRows() const override { return k_numberOfCells; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
@@ -33,8 +32,8 @@ public:
 
 private:
   int stackTitleStyleStep() const override { return 0; }
-  Escher::ButtonRowController * m_listController;
-  FinanceMenuController * m_financeMenuController;
+  Escher::ViewController * m_listController;
+  Escher::ViewController * m_financeMenuController;
 
   constexpr static int k_numberOfCells = 2;
   Escher::SubappCell m_cells[k_numberOfCells];

@@ -1,8 +1,7 @@
-#ifndef SOLVER_GUI_TWO_MESSAGE_POPUP_DATA_SOURCE_H
-#define SOLVER_GUI_TWO_MESSAGE_POPUP_DATA_SOURCE_H
+#ifndef SOLVER_TWO_MESSAGE_POPUP_DATA_SOURCE_H
+#define SOLVER_TWO_MESSAGE_POPUP_DATA_SOURCE_H
 
 #include <escher/list_view_data_source.h>
-
 #include <escher/buffer_text_highlight_cell.h>
 
 namespace Solver {
@@ -33,4 +32,4 @@ private:
 
 }  // namespace Solver
 
-#endif /* SOLVER_GUI_TWO_MESSAGE_POPUP_DATA_SOURCE_H */
+#endif /* SOLVER_TWO_MESSAGE_POPUP_DATA_SOURCE_H */

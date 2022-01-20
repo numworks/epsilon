@@ -1,10 +1,8 @@
 #include "menu_controller.h"
-
 #include <apps/i18n.h>
 #include <assert.h>
-
-#include "../images/Equations.h"
-#include "../images/Finances.h"
+#include "equations_icon.h"
+#include "finance_icon.h"
 
 using namespace Solver;
 
@@ -17,9 +15,9 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
       m_contentView(&m_selectableTableView) {
   selectRow(0);
   m_cells[k_indexOfEquation].setMessages(I18n::Message::EquationsSubAppTitle, I18n::Message::EquationsSubAppDescription);
-  m_cells[k_indexOfEquation].setImage(ImageStore::Equations);
+  m_cells[k_indexOfEquation].setImage(ImageStore::EquationsIcon);
   m_cells[k_indexOfFinance].setMessages(I18n::Message::FinanceSubAppTitle, I18n::Message::FinanceSubAppDescription);
-  m_cells[k_indexOfFinance].setImage(ImageStore::Finances);
+  m_cells[k_indexOfFinance].setImage(ImageStore::FinanceIcon);
 }
 
 void MenuController::didBecomeFirstResponder() {

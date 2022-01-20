@@ -1,11 +1,12 @@
 #include "simple_interest_controller.h"
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
+#include <apps/shared/poincare_helpers.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/stack_view_controller.h>
-#include <apps/shared/poincare_helpers.h>
 #include <poincare/print.h>
 #include "../app.h"
+
 
 using namespace Solver;
 

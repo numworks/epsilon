@@ -1,7 +1,7 @@
 #include <quiz.h>
 #include <poincare/test/helper.h>
 #include <float.h>
-#include "../model/data.h"
+#include "../finance/data.h"
 
 using namespace Solver;
 

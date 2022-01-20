@@ -1,15 +1,13 @@
-#ifndef SOLVER_CONTROLLERS_FINANCE_RESULT_CONTROLLER_H
-#define SOLVER_CONTROLLERS_FINANCE_RESULT_CONTROLLER_H
-
-#include <escher/message_table_cell_with_message_with_buffer.h>
-#include <escher/stack_view_controller.h>
-#include <ion/events.h>
+#ifndef SOLVER_FINANCE_RESULT_CONTROLLER_H
+#define SOLVER_FINANCE_RESULT_CONTROLLER_H
 
 #include <apps/shared/selectable_cell_list_controller.h>
-#include <escher/table_view_with_top_and_bottom_views.h>
+#include <escher/message_table_cell_with_message_with_buffer.h>
 #include <escher/message_text_view.h>
-#include "../model/data.h"
-
+#include <escher/stack_view_controller.h>
+#include <escher/table_view_with_top_and_bottom_views.h>
+#include <ion/events.h>
+#include "data.h"
 
 namespace Solver {
 
@@ -43,4 +41,4 @@ private:
 
 }  // namespace Solver
 
-#endif /* SOLVER_CONTROLLERS_FINANCE_RESULT_CONTROLLER_H */
+#endif /* SOLVER_FINANCE_RESULT_CONTROLLER_H */

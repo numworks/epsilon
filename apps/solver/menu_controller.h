@@ -1,17 +1,16 @@
-#ifndef SOLVER_CONTROLLERS_MENU_CONTROLLER_H
-#define SOLVER_CONTROLLERS_MENU_CONTROLLER_H
+#ifndef SOLVER_MENU_CONTROLLER_H
+#define SOLVER_MENU_CONTROLLER_H
 
 // TODO : Factorize with Probability::MenuController
 
+#include <apps/shared/page_controller.h>
+#include <escher/centering_view.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
+#include <escher/subapp_cell.h>
 #include <escher/table_cell.h>
 #include <escher/view_controller.h>
-
-#include <escher/centering_view.h>
-#include <apps/shared/page_controller.h>
-#include <escher/subapp_cell.h>
 
 namespace Solver {
 
@@ -43,4 +42,4 @@ private:
 
 }  // namespace Solver
 
-#endif /* SOLVER_CONTROLLERS_MENU_CONTROLLER_H */
+#endif /* SOLVER_MENU_CONTROLLER_H */

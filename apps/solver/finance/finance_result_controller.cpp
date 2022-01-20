@@ -1,11 +1,10 @@
 #include "finance_result_controller.h"
-
 #include <apps/i18n.h>
-#include <assert.h>
-#include <escher/container.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/print.h>
 #include <escher/clipboard.h>
+#include <escher/container.h>
+#include <poincare/print.h>
+#include <assert.h>
 
 using namespace Solver;
 

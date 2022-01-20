@@ -1,5 +1,5 @@
 #include "equation_list_view.h"
-#include "../controllers/list_controller.h"
+#include "list_controller.h"
 
 using namespace Escher;
 

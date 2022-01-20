@@ -24,10 +24,6 @@ T PoissonDistribution::templatedApproximateAtAbscissa(T x) const {
   return std::exp(lResult);
 }
 
-float PoissonDistribution::computeXMin() const {
-  return -k_displayLeftMarginRatio * computeXMax();
-}
-
 float PoissonDistribution::computeXMax() const {
   assert(m_parameter1 != 0);
   return (m_parameter1 + 5.0f * std::sqrt(m_parameter1)) * (1.0f + k_displayRightMarginRatio);

@@ -67,10 +67,6 @@ float FisherDistribution::mode() const {
   return NAN;
 }
 
-float FisherDistribution::computeXMin() const {
-  return -k_displayLeftMarginRatio * computeXMax();
-}
-
 float FisherDistribution::computeXMax() const {
   return 5.0f; // The mode is always < 1
 }

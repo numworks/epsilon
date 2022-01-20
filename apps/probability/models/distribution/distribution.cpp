@@ -143,10 +143,6 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
    return result.x1();
 }
 
-float Distribution::computeXMin() const {
-  return -k_displayBottomMarginRatio * yMax();
-}
-
 bool Distribution::authorizedValueAtIndex(double x, int index) const {
   return std::isfinite(static_cast<float>(x));
 }

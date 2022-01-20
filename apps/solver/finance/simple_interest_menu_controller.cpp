@@ -1,8 +1,7 @@
 #include "simple_interest_menu_controller.h"
-
 #include <apps/i18n.h>
-#include <assert.h>
 #include <escher/container.h>
+#include <assert.h>
 
 using namespace Solver;
 

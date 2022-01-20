@@ -1,13 +1,12 @@
-#ifndef SOLVER_CONTROLLERS_FINANCE_MENU_CONTROLLER_H
-#define SOLVER_CONTROLLERS_FINANCE_MENU_CONTROLLER_H
+#ifndef SOLVER_FINANCE_MENU_CONTROLLER_H
+#define SOLVER_FINANCE_MENU_CONTROLLER_H
 
+#include <apps/shared/selectable_cell_list_controller.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
-
-#include <apps/shared/selectable_cell_list_controller.h>
-#include "../model/data.h"
+#include "data.h"
 
 namespace Solver {
 
@@ -38,4 +37,4 @@ private:
 
 }  // namespace Solver
 
-#endif /* SOLVER_CONTROLLERS_FINANCE_MENU_CONTROLLER_H */
+#endif /* SOLVER_FINANCE_MENU_CONTROLLER_H */

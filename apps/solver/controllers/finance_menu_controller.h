@@ -3,12 +3,11 @@
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/stack_view_controller.h>
+#include <escher/view_controller.h>
 #include <ion/events.h>
 
 #include <apps/shared/selectable_cell_list_controller.h>
 #include "../model/data.h"
-#include "simple_interest_menu_controller.h"
-#include "compound_interest_menu_controller.h"
 
 namespace Solver {
 
@@ -18,8 +17,8 @@ class FinanceMenuController : public Shared::SelectableCellListPage<Escher::Mess
                                                      k_numberOfFinanceCells> {
 public:
   FinanceMenuController(Escher::StackViewController * parentResponder,
-                    SimpleInterestMenuController * simpleInterestMenuController,
-                    CompoundInterestMenuController * compoundInterestMenuController,
+                    Escher::ViewController * simpleInterestMenuController,
+                    Escher::ViewController * compoundInterestMenuController,
                     FinanceData * data);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
@@ -32,8 +31,8 @@ public:
 private:
   int stackTitleStyleStep() const override { return 0; }
 
-  SimpleInterestMenuController * m_simpleInterestMenuController;
-  CompoundInterestMenuController * m_compoundInterestMenuController;
+  Escher::ViewController * m_simpleInterestMenuController;
+  Escher::ViewController * m_compoundInterestMenuController;
   FinanceData * m_data;
 };
 

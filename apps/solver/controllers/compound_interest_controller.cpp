@@ -9,7 +9,7 @@
 
 using namespace Solver;
 
-CompoundInterestController::CompoundInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, FinanceData * data) :
+CompoundInterestController::CompoundInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, Escher::ViewController * financeResultController, FinanceData * data) :
     SelectableListViewPage(parent),
     m_paymentDataSource(I18n::Message::FinanceBeginning, I18n::Message::FinanceEnd),
     m_payment(&m_selectableTableView, &m_paymentDataSource, this),

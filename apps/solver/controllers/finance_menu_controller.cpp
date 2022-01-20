@@ -6,7 +6,7 @@
 
 using namespace Solver;
 
-FinanceMenuController::FinanceMenuController(Escher::StackViewController * parentResponder, SimpleInterestMenuController * simpleInterestMenuController, CompoundInterestMenuController * compoundInterestMenuController, FinanceData * data) :
+FinanceMenuController::FinanceMenuController(Escher::StackViewController * parentResponder, Escher::ViewController * simpleInterestMenuController, Escher::ViewController * compoundInterestMenuController, FinanceData * data) :
       Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells>(parentResponder),
       m_simpleInterestMenuController(simpleInterestMenuController),
       m_compoundInterestMenuController(compoundInterestMenuController),

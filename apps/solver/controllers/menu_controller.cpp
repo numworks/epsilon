@@ -9,8 +9,8 @@
 using namespace Solver;
 
 MenuController::MenuController(Escher::StackViewController * parentResponder,
-                               Escher::ButtonRowController * listController,
-                               FinanceMenuController * financeMenuController) :
+                               Escher::ViewController * listController,
+                               Escher::ViewController * financeMenuController) :
       SelectableListViewPage(parentResponder),
       m_listController(listController),
       m_financeMenuController(financeMenuController),

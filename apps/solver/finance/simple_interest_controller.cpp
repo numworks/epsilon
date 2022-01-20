@@ -10,7 +10,7 @@
 
 using namespace Solver;
 
-SimpleInterestController::SimpleInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, Escher::ViewController * financeResultController, FinanceData * data) :
+SimpleInterestController::SimpleInterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, Escher::ViewController * financeResultController, FinanceData * data) :
     SelectableListViewPage(parent),
     m_yearDataSource(I18n::Message::Finance360, I18n::Message::Finance365),
     m_year(&m_selectableTableView, &m_yearDataSource, this),
@@ -86,7 +86,7 @@ int SimpleInterestController::typeAtIndex(int index) {
 KDCoordinate SimpleInterestController::nonMemoizedRowHeight(int j) {
   int type = typeAtIndex(j);
   if (type == k_inputCellType) {
-    MessageTableCellWithEditableTextWithMessage tempCell;
+    Escher::MessageTableCellWithEditableTextWithMessage tempCell;
     return heightForCellAtIndex(&tempCell, j);
   } else if (type == k_dropdownCellType) {
     return heightForCellAtIndex(&m_year, j);
@@ -95,7 +95,7 @@ KDCoordinate SimpleInterestController::nonMemoizedRowHeight(int j) {
   return heightForCellAtIndex(&m_next, j);
 }
 
-HighlightCell * SimpleInterestController::reusableCell(int i, int type) {
+Escher::HighlightCell * SimpleInterestController::reusableCell(int i, int type) {
   switch (type) {
     case k_inputCellType:
       assert(i < k_numberOfReusableInputs);

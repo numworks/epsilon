@@ -13,8 +13,6 @@
 #include "message_table_cell_with_sublabel_and_dropdown.h"
 #include "two_message_popup_data_source.h"
 
-using namespace Escher;
-
 namespace Solver {
 
 class CompoundInterestController : public Shared::SelectableListViewPage,
@@ -23,7 +21,7 @@ class CompoundInterestController : public Shared::SelectableListViewPage,
                              public Escher::DropdownCallback {
 public:
   CompoundInterestController(Escher::StackViewController * parent,
-                           InputEventHandlerDelegate * handler,
+                          Escher::InputEventHandlerDelegate * handler,
                            Escher::ViewController * financeResultController,
                            FinanceData * data);
   const char * title() override;
@@ -33,10 +31,10 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int typeAtIndex(int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  HighlightCell * reusableCell(int i, int type) override;
+  Escher::HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return k_indexOfNext + 1; }
   bool buttonAction() override;
-  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
+  Escher::ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
 
 
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override { return false; }

@@ -9,7 +9,7 @@
 
 using namespace Solver;
 
-CompoundInterestController::CompoundInterestController(Escher::StackViewController * parent, InputEventHandlerDelegate * handler, Escher::ViewController * financeResultController, FinanceData * data) :
+CompoundInterestController::CompoundInterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, Escher::ViewController * financeResultController, FinanceData * data) :
     SelectableListViewPage(parent),
     m_paymentDataSource(I18n::Message::FinanceBeginning, I18n::Message::FinanceEnd),
     m_payment(&m_selectableTableView, &m_paymentDataSource, this),
@@ -90,7 +90,7 @@ int CompoundInterestController::typeAtIndex(int index) {
 KDCoordinate CompoundInterestController::nonMemoizedRowHeight(int j) {
   int type = typeAtIndex(j);
   if (type == k_inputCellType) {
-    MessageTableCellWithEditableTextWithMessage tempCell;
+    Escher::MessageTableCellWithEditableTextWithMessage tempCell;
     return heightForCellAtIndex(&tempCell, j);
   } else if (type == k_dropdownCellType) {
     return heightForCellAtIndex(&m_payment, j);
@@ -99,7 +99,7 @@ KDCoordinate CompoundInterestController::nonMemoizedRowHeight(int j) {
   return heightForCellAtIndex(&m_next, j);
 }
 
-HighlightCell * CompoundInterestController::reusableCell(int i, int type) {
+Escher::HighlightCell * CompoundInterestController::reusableCell(int i, int type) {
   switch (type) {
     case k_inputCellType:
       assert(i < k_numberOfReusableInputs);

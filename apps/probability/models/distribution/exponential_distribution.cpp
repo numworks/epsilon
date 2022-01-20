@@ -39,10 +39,6 @@ double ExponentialDistribution::cumulativeDistributiveInverseForProbability(doub
   return -std::log(1.0 - *probability)/m_parameter1;
 }
 
-float ExponentialDistribution::computeXMin() const {
-  return - k_displayLeftMarginRatio * computeXMax();
-}
-
 float ExponentialDistribution::computeXMax() const {
   assert(m_parameter1 != 0.0f);
   float result = 5.0f/m_parameter1;

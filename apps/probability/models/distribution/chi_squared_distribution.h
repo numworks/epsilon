@@ -29,7 +29,6 @@ public:
   double cumulativeDistributiveInverseForProbability(double * probability) override;
 private:
   static constexpr double k_maxK = 31500.0;
-  float computeXMin() const override;
   float computeXMax() const override;
   float computeYMax() const override;
 };

@@ -50,7 +50,7 @@ protected:
   void computeCurveViewRange();
 private:
   constexpr static float k_displayBottomMarginRatio = 0.2f;
-  virtual float computeXMin() const;
+  virtual float computeXMin() const { return  -k_displayLeftMarginRatio * computeXMax(); }
   virtual float computeXMax() const = 0;
   virtual float computeYMin() const { return -k_displayBottomMarginRatio * computeYMax(); }
   virtual float computeYMax() const = 0;

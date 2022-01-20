@@ -25,7 +25,6 @@ public:
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
 private:
-  float computeXMin() const override;
   float computeXMax() const override;
   float computeYMax() const override;
 };

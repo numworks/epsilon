@@ -8,7 +8,7 @@
 #include <escher/text_field_delegate.h>
 #include "finance_result_controller.h"
 #include <escher/button_delegate.h>
-#include "../gui/payment_popup_data_source.h"
+#include "../gui/two_message_popup_data_source.h"
 #include "../gui/message_table_cell_with_sublabel_and_dropdown.h"
 #include <apps/shared/page_controller.h>
 #include "../model/data.h"
@@ -65,8 +65,7 @@ private:
   constexpr static int k_numberOfReusableInputs = 5;
   static_assert(k_numberOfReusableInputs <= k_indexOfPayment + 1, "Too many reusable inputs");
 
-  PaymentPopupDataSource m_paymentDataSource;
-
+  TwoMessagePopupDataSource m_paymentDataSource;
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfReusableInputs];
   MessageTableCellWithSublabelAndDropdown m_payment;
   Shared::ButtonWithSeparator m_next;

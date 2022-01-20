@@ -1,7 +1,7 @@
 #ifndef SOLVER_CONTROLLERS_MENU_CONTROLLER_H
 #define SOLVER_CONTROLLERS_MENU_CONTROLLER_H
 
-// TODO Hugo : Factorize with probability ?
+// TODO : Factorize with Probability::MenuController
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_list_view_controller.h>

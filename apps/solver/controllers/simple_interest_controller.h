@@ -54,16 +54,15 @@ private:
   SimpleInterestData * simpleInterestData() const { assert(m_data->isSimpleInterest); return &(m_data->m_data.m_simpleInterestData); }
   int stackTitleStyleStep() const override { return 1; }
 
-  // TODO Hugo : Justify this number
-  constexpr static int k_indexOfYear = 3;
+  constexpr static int k_indexOfYear = SimpleInterestData::k_numberOfDoubleValues - 1;
   constexpr static int k_indexOfNext = k_indexOfYear + 1;
 
   constexpr static int k_inputCellType = 0;
   constexpr static int k_dropdownCellType = 1;
   constexpr static int k_confirmCellType = 2;
 
-  // TODO Hugo : Justify this number
-  constexpr static int k_numberOfReusableInputs = 4; // Visible cell max
+  // Max number of visible cells (5). Only 4 are needed.
+  constexpr static int k_numberOfReusableInputs = 4;
   static_assert(k_numberOfReusableInputs <= k_indexOfYear + 1, "Too many reusable inputs");
 
   YearPopupDataSource m_yearDataSource;

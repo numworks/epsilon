@@ -54,16 +54,15 @@ private:
   CompoundInterestData * compoundInterestData() const { assert(!m_data->isSimpleInterest); return &(m_data->m_data.m_compoundInterestData); }
   int stackTitleStyleStep() const override { return 1; }
 
-  // TODO Hugo : Justify this number
-  constexpr static int k_indexOfPayment = 6;
+  constexpr static int k_indexOfPayment = CompoundInterestData::k_numberOfDoubleValues - 1;
   constexpr static int k_indexOfNext = k_indexOfPayment + 1;
 
   constexpr static int k_inputCellType = 0;
   constexpr static int k_dropdownCellType = 1;
   constexpr static int k_confirmCellType = 2;
 
-  // TODO Hugo : Justify this number
-  constexpr static int k_numberOfReusableInputs = 5; // Visible cell max
+  // Max number of visible cells
+  constexpr static int k_numberOfReusableInputs = 5;
   static_assert(k_numberOfReusableInputs <= k_indexOfPayment + 1, "Too many reusable inputs");
 
   PaymentPopupDataSource m_paymentDataSource;

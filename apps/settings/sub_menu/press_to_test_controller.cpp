@@ -10,87 +10,12 @@ using namespace Escher;
 
 namespace Settings {
 
-/* PressToTestView */
-
-void PressToTestView::reload() {
-  m_contentView.m_table->reloadData();
-  layoutSubviews();
-}
-
-void PressToTestView::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
-  // Scroll to correct location
-  int row = m_contentView.m_table->selectedRow(), col = m_contentView.m_table->selectedColumn();
-  if (row >= 0 && col >= 0) {
-    KDRect cellFrame = KDRect(
-        m_tableDataSource->cumulatedWidthFromIndex(col),
-        m_contentView.tableOrigin()
-            + m_tableDataSource->cumulatedHeightFromIndex(row),
-        m_tableDataSource->columnWidth(col), m_tableDataSource->rowHeight(row));
-    /* Include the message in the first or last row cells to force scrolling
-     * enough to display it */
-    if (row == 0) {
-      cellFrame = cellFrame.unionedWith(KDRect(cellFrame.x(), 0, cellFrame.width(), cellFrame.height()));
-    } else if (row + 1 == m_contentView.m_table->numberOfDisplayableRows()) {
-      cellFrame = cellFrame.unionedWith(KDRect(cellFrame.x(), cellFrame.y(), cellFrame.width(), m_contentView.totalHeight() - cellFrame.y()));
-    }
-    scrollToContentRect(cellFrame);
-  }
-}
-
-/* PressToTestView::ContentView */
-
-PressToTestView::ContentView::ContentView(SelectableTableView * table) :
-    m_table(table),
-    m_topMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
-    m_bottomMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen) {
-  // Margins between the table and messages
-  m_table->setMargins(topTableMargin(), 0, bottomTableMargin(), 0);
-}
-
-void PressToTestView::ContentView::setMessages(I18n::Message top, I18n::Message bottom) {
-  m_topMessageView.setMessage(top);
-  m_bottomMessageView.setMessage(bottom);
-  // Bottom message might have (dis)appeared, reset table's margins
-  m_table->setMargins(topTableMargin(), 0, bottomTableMargin(), 0);
-}
-
-void PressToTestView::layoutSubviews(bool force) {
-  /* Content view must be given a width, so that it can give its
-   * SelectableTableView a width and compute it height. */
-  if (m_contentView.bounds().isEmpty()) {
-    m_contentView.setFrame(KDRect(KDPointZero, KDSize(visibleContentRect().width(), 0)), force);
-  } else {
-    assert(m_contentView.bounds().width() == visibleContentRect().width());
-  }
-  ScrollView::layoutSubviews(force);
-}
-
-KDCoordinate PressToTestView::ContentView::tableOrigin() const {
-  return m_topMessageView.minimalSizeForOptimalDisplay().height() + topTableMargin();
-}
-
-KDCoordinate PressToTestView::ContentView::totalHeight() const {
-  return minimalSizeForOptimalDisplay().height();
-}
-
-Escher::View * PressToTestView::ContentView::subviewAtIndex(int i) {
-  switch (i) {
-  case 0:
-    return &m_topMessageView;
-  case 1:
-    return m_table;
-  default:
-    assert(i == numberOfSubviews() - 1);
-    return &m_bottomMessageView;
-  }
-}
-
-/* PressToTestController */
-
 PressToTestController::PressToTestController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, this, &m_view),
-  m_view(&m_selectableTableView, this),
+  m_topMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
+  m_bottomMessageView(KDFont::SmallFont, I18n::Message::ToDeactivatePressToTest1, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen),
+  m_view(&m_selectableTableView, this, &m_topMessageView, &m_bottomMessageView),
   m_switchCells{},
   m_tempPressToTestParams{},
   m_activateButton{&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {
@@ -178,9 +103,12 @@ bool PressToTestController::getParamAtIndex(int index) {
 void PressToTestController::setMessages() {
   if (Preferences::sharedPreferences()->isInExamMode()) {
     assert(Preferences::sharedPreferences()->examMode() == Preferences::ExamMode::PressToTest);
-    return m_view.setMessages(I18n::Message::PressToTestActiveIntro, I18n::Message::ToDeactivatePressToTest1);
+    m_topMessageView.setMessage(I18n::Message::PressToTestActiveIntro);
+    m_view.setBottomView(&m_bottomMessageView);
+  } else {
+    m_topMessageView.setMessage(I18n::Message::PressToTestIntro1);
+    m_view.setBottomView(nullptr);
   }
-  return m_view.setMessages(I18n::Message::PressToTestIntro1, I18n::Message::Default);
 }
 
 void PressToTestController::viewDidDisappear() {

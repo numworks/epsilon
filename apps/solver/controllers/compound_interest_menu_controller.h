@@ -7,7 +7,8 @@
 
 #include "compound_interest_controller.h"
 #include <apps/shared/selectable_cell_list_controller.h>
-#include "../gui/title_table_view.h"
+#include <escher/message_text_view.h>
+#include <escher/table_view_with_top_and_bottom_views.h>
 #include "../model/data.h"
 
 namespace Solver {
@@ -28,7 +29,8 @@ private:
   int stackTitleStyleStep() const override { return 1; }
   CompoundInterestParameter paramaterAtIndex(int index) const;
 
-  TitleTableView m_contentView;
+  Escher::MessageTextView m_messageView;
+  Escher::TableViewWithTopAndBottomViews m_contentView;
   CompoundInterestController * m_compoundInterestController;
   FinanceData * m_data;
 };

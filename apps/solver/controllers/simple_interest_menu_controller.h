@@ -3,12 +3,11 @@
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/stack_view_controller.h>
-#include <ion/events.h>
-
-#include "simple_interest_controller.h"
-#include <apps/shared/selectable_cell_list_controller.h>
+#include <escher/view_controller.h>
 #include <escher/message_text_view.h>
 #include <escher/table_view_with_top_and_bottom_views.h>
+#include <apps/shared/selectable_cell_list_controller.h>
+#include <ion/events.h>
 #include "../model/data.h"
 
 namespace Solver {
@@ -18,7 +17,7 @@ constexpr int k_numberOfSimpleInterestCells = SimpleInterestData::k_numberOfUnkn
 class SimpleInterestMenuController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfSimpleInterestCells> {
 public:
-  SimpleInterestMenuController(Escher::StackViewController * parentResponder, SimpleInterestController * simpleInterestController, FinanceData * data);
+  SimpleInterestMenuController(Escher::StackViewController * parentResponder, Escher::ViewController * simpleInterestController, FinanceData * data);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override { return I18n::translate(I18n::Message::SimpleInterest); }
@@ -31,7 +30,7 @@ private:
 
   Escher::MessageTextView m_messageView;
   Escher::TableViewWithTopAndBottomViews m_contentView;
-  SimpleInterestController * m_simpleInterestController;
+  Escher::ViewController * m_simpleInterestController;
   FinanceData * m_data;
 };
 

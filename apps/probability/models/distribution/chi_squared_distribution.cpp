@@ -26,10 +26,6 @@ double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(doubl
   return Chi2Law::CumulativeDistributiveInverseForProbability(*probability, m_parameter1);
 }
 
-float ChiSquaredDistribution::computeXMin() const {
-  return -k_displayLeftMarginRatio * computeXMax();
-}
-
 float ChiSquaredDistribution::computeXMax() const {
   assert(m_parameter1 != 0.0);
   return (m_parameter1 + 5.0f * std::sqrt(m_parameter1)) * (1.0f + k_displayRightMarginRatio);

@@ -31,10 +31,6 @@ T GeometricDistribution::templatedApproximateAtAbscissa(T k) const {
   return p * std::exp(lResult);
 }
 
-float GeometricDistribution::computeXMin() const {
-  return -k_displayLeftMarginRatio * computeXMax();
-}
-
 float GeometricDistribution::computeXMax() const {
   assert(m_parameter1 != 0.0f);
   return 5.0f/m_parameter1 * (1.0f + k_displayRightMarginRatio);

@@ -21,7 +21,6 @@ private:
   constexpr static double k_maxParameter = 144.0; // The display works badly for d1 = d2 > 144.
   constexpr static float k_defaultMax = 3.0f;
   float mode() const;
-  float computeXMin() const override;
   float computeXMax() const override;
   float computeYMax() const override;
 };

@@ -1,0 +1,122 @@
+#include "goodness_test.h"
+#include <float.h>
+#include <probability/models/statistic/interfaces/significance_tests.h>
+
+namespace Probability {
+
+GoodnessTest::GoodnessTest() {
+  for (int i = 0; i < k_maxNumberOfRows * k_maxNumberOfColumns; i++) {
+    m_input[i] = k_undefinedValue;
+  }
+}
+
+void GoodnessTest::computeTest() {
+  m_testCriticalValue = computeChi2();
+  m_pValue = SignificanceTest::ComputePValue(this);
+}
+
+void GoodnessTest::recomputeData() {
+  // Delete empty rows
+  int j = 0;
+  int lastNonEmptyRow = -1;
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
+    if (!(std::isnan(expectedValue(i)) && std::isnan(observedValue(i)))) {
+      if (i != j) {
+        setExpectedValue(j, expectedValue(i));
+        setObservedValue(j, observedValue(i));
+      }
+      j++;
+      lastNonEmptyRow = i;
+    }
+  }
+  while (j <= lastNonEmptyRow) {
+    setExpectedValue(j, k_undefinedValue);
+    setObservedValue(j, k_undefinedValue);
+    j++;
+  }
+}
+
+int GoodnessTest::computeNumberOfRows() const {
+  // Compute number of rows based on undefined flag
+  int i = k_maxNumberOfRows - 1;
+  while (i >= 0 && std::isnan(expectedValue(i)) && std::isnan(observedValue(i))) {
+    i--;
+  }
+  return i + 1;
+}
+
+bool GoodnessTest::validateInputs() {
+  if (numberOfValuePairs() <= 1) {
+    return false;
+  }
+  int n = computeNumberOfRows();
+  for (int row = 0; row < n; row++) {
+    if (std::isnan(expectedValue(row)) || std::isnan(observedValue(row))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+double GoodnessTest::parameterAtPosition(int row, int column) const {
+  return parameterAtIndex(locationToTableIndex(row, column));
+}
+
+void GoodnessTest::setParameterAtPosition(int row, int column, double p) {
+  setParameterAtIndex(locationToTableIndex(row, column), p);
+}
+
+bool GoodnessTest::authorizedParameterAtPosition(int row, int column, double p) const {
+  return authorizedParameterAtIndex(locationToTableIndex(row, column), p);
+}
+
+bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
+  if (i < numberOfStatisticParameters() && i % k_maxNumberOfColumns == 1 && std::fabs(p) < DBL_MIN) {
+    // Expected value should not be null
+    return false;
+  }
+  return Chi2Test::authorizedParameterAtIndex(i, p);
+}
+
+// TODO : factorize with HomogeneityTest
+bool GoodnessTest::deleteParameterAtPosition(int row, int column) {
+  if (std::isnan(parameterAtPosition(row, column))) {
+    // Param is already deleted
+    return false;
+  }
+  setParameterAtPosition(row, column, k_undefinedValue);
+  for (int i = 0; i < k_maxNumberOfColumns; i++) {
+    if (i != column && !std::isnan(parameterAtPosition(row, i))) {
+      // There is another non deleted value in this row
+      return false;
+    }
+  }
+  return true;
+}
+
+int GoodnessTest::numberOfValuePairs() const {
+  return computeNumberOfRows();
+}
+
+int GoodnessTest::locationToTableIndex(int row, int column) const {
+  assert((column >= 0 && column < k_maxNumberOfColumns) && (row >= 0 && row < k_maxNumberOfRows));
+  return k_maxNumberOfColumns * row + column;
+}
+
+double GoodnessTest::expectedValue(int index) const {
+  return m_input[locationToTableIndex(index, 1)];
+}
+
+double GoodnessTest::observedValue(int index) const {
+  return m_input[locationToTableIndex(index, 0)];
+}
+
+void GoodnessTest::setExpectedValue(int index, double value) {
+  parametersArray()[locationToTableIndex(index, 1)] = value;
+}
+
+void GoodnessTest::setObservedValue(int index, double value) {
+  parametersArray()[locationToTableIndex(index, 0)] = value;
+}
+
+}  // namespace Probability

@@ -121,7 +121,7 @@ int ParametersController::reusableParameterCellCount(int type) {
   return m_distribution->numberOfParameter();
 }
 
-double ParametersController::parameterAtIndex(int index) {
+double ParametersController::parameterAtIndex(int index) const {
   return m_distribution->parameterValueAtIndex(index);
 }
 

@@ -222,8 +222,9 @@ double computeN(double rPct, double PV, double Pmt, double FV, double S, double 
 
 double computeRPct(double N, double PV, double Pmt, double FV, double PY, double CY, double S) {
   if (Pmt == 0.0) {
-    // FV = PV * (1 + rPct/100CY)^N
-    return 100.0 * CY * (std::pow(FV/PV, 1/N) - 1.0);
+    // PV + FV*(1 + r/(100*CY))^(-N*CY/PY) = 0
+    assert(CY == PY);
+    return 100.0 * CY * (std::pow(-FV/PV, 1/N) - 1.0);
   }
   const double parameters[7] = {N, PV, Pmt, FV, PY, CY, S};
   // We must solve this expression. An exact solution cannot be found.

@@ -14,19 +14,7 @@ namespace Probability {
 
 constexpr KDColor StatisticCurveView::k_backgroundColor;
 
-float StatisticCurveView::LargestMarginOfError(Statistic * statistic) {
-  /* Temporarily sets the statistic's threshold to the largest displayed
-   * interval to compute the margin of error needed to display all intervals. */
-  double previousThreshold = statistic->threshold();
-  float intervalTemp = IntervalThresholdAtIndex(previousThreshold, k_numberOfIntervals - 1);
-  statistic->setThreshold(intervalTemp);
-  statistic->computeInterval();
-  double marginOfError = statistic->marginOfError();
-  // Restore the statistic
-  statistic->setThreshold(previousThreshold);
-  statistic->computeInterval();
-  return marginOfError;
-}
+
 
 void StatisticCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), k_backgroundColor);
@@ -69,47 +57,9 @@ void StatisticCurveView::drawTest(KDContext * ctx, KDRect rect) const {
   colorUnderCurve(ctx, rect, m_statistic->hypothesisParams()->comparisonOperator(), z);
 }
 
-// Return the displayed position of the main threshold interval
-int StatisticCurveView::IntervalMainThresholdIndex(float mainThreshold) {
-  constexpr float k_thresholdLimits[k_numberOfIntervals - 1] = {0.1f, 0.2f, 0.99f};
-  // If mainThreshold is in ]0.2, 0.99], it is the third displayed interval
-  for (int index = 0; index < k_numberOfIntervals - 1; index++) {
-    if (mainThreshold <= k_thresholdLimits[index]) {
-      return index;
-    }
-  }
-  return k_numberOfIntervals - 1;
-}
-
-// Return the interval threshold to display at given index
-float StatisticCurveView::IntervalThresholdAtIndex(float threshold, int index) {
-  int direction = index - IntervalMainThresholdIndex(threshold);
-  if (direction == 0) {
-    return threshold;
-  }
-  // There are significant interval thresholds to display
-  constexpr size_t k_numberOfSignificantThresholds = 14;
-  constexpr float k_significantThresholds[k_numberOfSignificantThresholds] = {
-      0.1f, 0.2f,  0.3f, 0.4f,  0.5f,  0.6f,  0.7f,
-      0.8f, 0.85f, 0.9f, 0.95f, 0.98f, 0.99f, 0.999f};
-  assert((direction > 0 && threshold <= 0.99f) || (direction < 0 && threshold > 0.1f));
-  // If threshold is in ]0.99, 1.0] display 0.99 with a direction of 1
-  int significantThresholdIndex = k_numberOfSignificantThresholds - 1;
-  // If threshold is in ]0.2, 0.3], display 0.4 with a direction of 1, 0.2 if -1
-  for (size_t i = 0; i < k_numberOfSignificantThresholds; i++) {
-    if (threshold <= k_significantThresholds[i]) {
-      significantThresholdIndex = i;
-      break;
-    }
-  }
-  size_t nextIndex = significantThresholdIndex + direction;
-  assert(nextIndex >= 0 && nextIndex < k_numberOfSignificantThresholds);
-  return k_significantThresholds[nextIndex];
-}
-
 // Draw the main interval along side with 3 other significant intervals.
 void StatisticCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
-  /* Distribute the k_numberOfIntervals intervals between top of rect and axis:
+  /* Distribute the Interval::k_numberOfDisplayedIntervals intervals between top of rect and axis:
    *  i   isMainInterval
    *                                            |10%|
    *  0       false                             |▔▔▔|
@@ -127,11 +77,11 @@ void StatisticCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
   // The main interval is the confidence level the user inputted
   float estimate = m_statistic->estimate();
   float mainThreshold = m_statistic->threshold();
-  int mainThresholdIndex = IntervalMainThresholdIndex(mainThreshold);
+  int mainThresholdIndex = Interval::MainDisplayedIntervalThresholdIndex(mainThreshold);
   // Draw each intervals
-  for (int i = 0; i < k_numberOfIntervals; i++) {
-    float verticalPosition = top - (top - bot) * (i + 1) / (k_numberOfIntervals + 1);
-    float threshold = IntervalThresholdAtIndex(mainThreshold, i);
+  for (int i = 0; i < Interval::k_numberOfDisplayedIntervals; i++) {
+    float verticalPosition = top - (top - bot) * (i + 1) / (Interval::k_numberOfDisplayedIntervals + 1);
+    float threshold = Interval::DisplayedIntervalThresholdAtIndex(mainThreshold, i);
     bool isMainInterval = (i == mainThresholdIndex);
     // Temporarily set the interval to compute the margin of error
     m_statistic->setThreshold(threshold);

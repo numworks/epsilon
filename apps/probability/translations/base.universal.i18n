@@ -1,5 +1,3 @@
-D1 = "d1"
-D2 = "d2"
 DiscreteLegend = "P(X="
 FiniteIntegralFirstLegend = "P("
 FiniteIntegralLegend = "≤X≤"

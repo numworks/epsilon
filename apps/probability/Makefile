@@ -1,14 +1,15 @@
 apps += Probability::App
 app_headers += apps/probability/app.h
 
-app_probability_test_src = $(addprefix apps/probability/models/distribution/,\
+app_probability_test_src = apps/probability/models/inference.cpp
+
+app_probability_test_src += $(addprefix apps/probability/models/probability/distribution/,\
   binomial_distribution.cpp \
   chi_squared_distribution.cpp \
   distribution.cpp \
   fisher_distribution.cpp \
   geometric_distribution.cpp \
   student_distribution.cpp \
-  two_parameter_distribution.cpp \
   exponential_distribution.cpp \
   normal_distribution.cpp \
   poisson_distribution.cpp \
@@ -22,12 +23,7 @@ app_probability_src = $(addprefix apps/probability/,\
 
 app_probability_test_src += apps/probability/text_helpers.cpp
 
-app_probability_src += $(addprefix apps/probability/models/,\
-  statistic_view_range.cpp \
-  results_data_source.cpp \
-)
-
-app_probability_src += $(addprefix apps/probability/models/calculation/,\
+app_probability_src += $(addprefix apps/probability/models/probability/calculation/,\
   calculation.cpp \
   discrete_calculation.cpp \
   left_integral_calculation.cpp \
@@ -36,19 +32,18 @@ app_probability_src += $(addprefix apps/probability/models/calculation/,\
 )
 
 app_probability_test_src += $(addprefix apps/probability/models/statistic/,\
+  interfaces/distributions.cpp \
+  interfaces/significance_tests.cpp \
+  chi2_test.cpp \
+  goodness_test.cpp \
+  homogeneity_test.cpp \
+  interval.cpp \
+  one_mean_t_interval.cpp \
+  one_mean_t_test.cpp \
   statistic.cpp \
-  z_statistic.cpp \
-  t_statistic.cpp \
-  one_proportion_statistic.cpp \
-  two_proportions_statistic.cpp \
-  one_mean_z_statistic.cpp \
-  one_mean_t_statistic.cpp \
-  two_means_z_statistic.cpp \
-  two_means_t_statistic.cpp \
-  pooled_two_means_statistic.cpp \
-  chi2_statistic.cpp \
-  goodness_statistic.cpp \
-  homogeneity_statistic.cpp \
+  two_means_t_test.cpp \
+  two_means_t_interval.cpp \
+  test.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/gui/,\
@@ -96,6 +91,7 @@ app_probability_src +=  $(addprefix apps/probability/abstract/,\
   input_goodness_view.cpp \
   input_homogeneity_view.cpp \
   input_homogeneity_data_source.cpp \
+  results_data_source.cpp \
   results_homogeneity_data_source.cpp \
   table_view_controller.cpp \
 )

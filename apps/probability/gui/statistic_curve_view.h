@@ -24,7 +24,6 @@ protected:
 
 private:
   constexpr static int k_marginsAroundZLabel = 30;
-  constexpr static int k_numberOfIntervals = 4;
 
   constexpr static KDCoordinate k_axisWidth = 1;
   constexpr static KDCoordinate k_intervalThickness = k_axisWidth;

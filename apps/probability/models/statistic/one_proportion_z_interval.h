@@ -1,0 +1,49 @@
+#ifndef PROBABILITY_MODELS_STATISTIC_ONE_PROPORTION_Z_INTERVAL_H
+#define PROBABILITY_MODELS_STATISTIC_ONE_PROPORTION_Z_INTERVAL_H
+
+#include "interfaces/distributions.h"
+#include "interfaces/significance_tests.h"
+#include "interval.h"
+
+namespace Probability {
+
+class OneProportionZInterval : public Interval {
+friend class OneProportion;
+public:
+  I18n::Message title() const override { return OneProportion::Title(); }
+  // Significance Test: OneProportion
+  void initParameters() override { OneProportion::InitIntervalParameters(this); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return OneProportion::AuthorizedParameterAtIndex(i, p); }
+  void setParameterAtIndex(double p, int index) override {
+    p = OneProportion::ProcessParamaterForIndex(p, index);
+    Interval::setParameterAtIndex(p, index);
+  }
+
+  void computeInterval() override { OneProportion::ComputeInterval(this); }
+
+  const char * estimateSymbol() override { return OneProportion::EstimateSymbol(); }
+  Poincare::Layout testCriticalValueSymbol() override { return DistributionZ::TestCriticalValueSymbol(); }
+  Poincare::Layout estimateLayout() override { return OneProportion::EstimateLayout(&m_estimateLayout); }
+  I18n::Message estimateDescription() override { return OneProportion::EstimateDescription(); };
+
+  // Distribution: z
+  float canonicalDensityFunction(float x) const override { return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom); }
+  double cumulativeDistributiveFunctionAtAbscissa(double x) const override { return DistributionZ::CumulativeNormalizedDistributionFunction(x, m_degreesOfFreedom); }
+  double cumulativeDistributiveInverseForProbability(double * p) override { return DistributionZ::CumulativeNormalizedInverseDistributionFunction(*p, m_degreesOfFreedom); }
+
+private:
+  // Significance Test: OneProportion
+  bool validateInputs() override { return OneProportion::ValidateInputs(m_params); }
+  int numberOfStatisticParameters() const override { return OneMean::NumberOfParameters(); }
+  ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneMean::ParameterRepresentationAtIndex(i); }
+  double * parametersArray() override { return m_params; }
+
+    // Distribution: z
+  float computeYMax() const override { return DistributionZ::YMax(m_degreesOfFreedom); }
+
+  double m_params[OneProportion::k_numberOfParams];
+};
+
+}  // namespace Probability
+
+#endif /* PROBABILITY_MODELS_STATISTIC_ONE_PROPORTION_Z_INTERVAL_H */

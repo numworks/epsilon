@@ -7,6 +7,16 @@ namespace Solver {
 
 /* InterestData */
 
+void InterestData::Initialize(void * m_buffer, bool simple) {
+  // Destroy previous model and initialize a new one
+  static_cast<InterestData *>(m_buffer)->~InterestData();
+  if (simple) {
+    new (m_buffer) SimpleInterestData();
+  } else {
+    new (m_buffer) CompoundInterestData();
+  }
+}
+
 void InterestData::resetValues() {
   m_booleanParam = true;
   // Set first parameter as unknown by default

@@ -33,41 +33,82 @@ void assert_interest_solves(const double * expectedValues, bool booleanParam, In
 }
 
 QUIZ_CASE(equation_finance_simple_interest) {
-  // n, rPct, P, I
   SimpleInterestData data;
   {
     const double values[SimpleInterestData::k_numberOfDoubleValues] = {
-      100.0, 1.0, -1000.0, 2.777777778};
-    assert_interest_solves(values, true, &data);
+      100.0,      // n
+      1.0,        // rPct
+      -1000.0,    // P
+      2.777777778 // I
+    };
+
+    bool yearConventionIs360 = true;
+    assert_interest_solves(values, yearConventionIs360, &data);
   }
   {
     const double values[SimpleInterestData::k_numberOfDoubleValues] = {
-      365.0, 10.0, 1000.0, -100.0};
-    assert_interest_solves(values, false, &data);
+      365.0,      // n
+      10.0,       // rPct
+      1000.0,     // P
+      -100.0      // I
+    };
+    bool yearConventionIs360 = false;
+    assert_interest_solves(values, yearConventionIs360, &data);
   }
 }
 
 QUIZ_CASE(equation_finance_compound_interest) {
-  // N, rPct, PV, Pmt, FV, PY, CY
   CompoundInterestData data;
   {
     const double values[CompoundInterestData::k_numberOfDoubleValues] = {
-      72.0, 12.55741064, 12600.0, -250.0, 0.0, 12.0, 12.0};
-    assert_interest_solves(values, false, &data, 10.0);
+      72.0,       // N
+      12.55741064,// rPct
+      12600.0,    // PV
+      -250.0,     // Pmt
+      0.0,        // FV
+      12.0,       // PY
+      12.0        // CY
+    };
+    bool paymentIsAtBegining = false;
+    assert_interest_solves(values, paymentIsAtBegining, &data, 10.0);
   }
   {
     const double values[CompoundInterestData::k_numberOfDoubleValues] = {
-      8.0, 6.4, -37000.0, 0.0, 42009.9, 4.0, 4.0};
-    assert_interest_solves(values, false, &data, 10.0);
+      8.0,        // N
+      6.4,        // rPct
+      -37000.0,   // PV
+      0.0,        // Pmt
+      42009.9,    // FV
+      4.0,        // PY
+      4.0         // CY
+    };
+    bool paymentIsAtBegining = false;
+    assert_interest_solves(values, paymentIsAtBegining, &data, 10.0);
   }
   {
     const double values[CompoundInterestData::k_numberOfDoubleValues] = {
-      22.0, 0.0, -24000.0, 1000.0, 2000.0, 4.0, 4.0};
-    assert_interest_solves(values, false, &data, 0.1);
+      22.0,       // N
+      0.0,        // rPct
+      -24000.0,   // PV
+      1000.0,     // Pmt
+      2000.0,     // FV
+      4.0,        // PY
+      4.0         // CY
+    };
+    bool paymentIsAtBegining = false;
+    assert_interest_solves(values, paymentIsAtBegining, &data, 0.1);
   }
   {
     const double values[CompoundInterestData::k_numberOfDoubleValues] = {
-      18.9692, 6.4, -37000.0, 0.0, 50000.0, 4.0, 4.0};
-    assert_interest_solves(values, false, &data, 1.0);
+      18.9692,    // N
+      6.4,        // rPct
+      -37000.0,   // PV
+      0.0,        // Pmt
+      50000.0,    // FV
+      4.0,        // PY
+      4.0         // CY
+    };
+    bool paymentIsAtBegining = false;
+    assert_interest_solves(values, paymentIsAtBegining, &data, 1.0);
   }
 }

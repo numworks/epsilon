@@ -9,29 +9,30 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 #include "data.h"
+#include "interest_controller.h"
 
 namespace Solver {
 
-constexpr int k_numberOfSimpleInterestCells = SimpleInterestData::k_numberOfUnknowns;
+constexpr int k_numberOfInterestCells = InterestData::k_maxNumberOfUnknowns;
 
-class SimpleInterestMenuController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
-                                                     k_numberOfSimpleInterestCells> {
+class InterestMenuController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells> {
 public:
-  SimpleInterestMenuController(Escher::StackViewController * parentResponder, Escher::ViewController * simpleInterestController, FinanceData * data);
+  InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController, InterestData * data);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
-  const char * title() override { return I18n::translate(I18n::Message::SimpleInterest); }
+  const char * title() override { return I18n::translate(m_data->menuTitle()); }
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
   Escher::View * view() override { return &m_contentView; }
-  int numberOfRows() const override { return k_numberOfSimpleInterestCells; }
+  int numberOfRows() const override { return m_data->numberOfUnknowns(); }
+  void setData(InterestData * data) { m_data = data; }
 private:
   int stackTitleStyleStep() const override { return 1; }
-  SimpleInterestParameter paramaterAtIndex(int index) const;
+  uint8_t paramaterAtIndex(int index) const;
 
   Escher::MessageTextView m_messageView;
   Escher::TableViewWithTopAndBottomViews m_contentView;
-  Escher::ViewController * m_simpleInterestController;
-  FinanceData * m_data;
+  InterestController * m_interestController;
+  InterestData * m_data;
 };
 
 }  // namespace Solver

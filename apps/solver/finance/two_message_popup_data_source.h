@@ -8,8 +8,8 @@ namespace Solver {
 
 class TwoMessagePopupDataSource : public Escher::ListViewDataSource {
 public:
-  TwoMessagePopupDataSource(I18n::Message message1, I18n::Message message2) :
-    m_message1(message1), m_message2(message2) {}
+  TwoMessagePopupDataSource() :
+      m_message1(I18n::Message::Default), m_message2(I18n::Message::Default) {}
   int numberOfRows() const override { return k_numberOfRows; }
   // Not needed because DropdownPopupController takes care of it
   KDCoordinate rowHeight(int r) override { assert(false); return 0; }
@@ -20,6 +20,10 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override {
     static_cast<Escher::BufferTextHighlightCell *>(cell)->setText(
       I18n::translate(index == 0 ? m_message1 : m_message2));
+  }
+  void setMessages(I18n::Message message1, I18n::Message message2) {
+    m_message1 = message1;
+    m_message2 = message2;
   }
 
 private:

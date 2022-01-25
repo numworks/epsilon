@@ -11,10 +11,8 @@
 #include "equations/solutions_controller.h"
 #include "menu_controller.h"
 #include "finance/finance_menu_controller.h"
-#include "finance/simple_interest_menu_controller.h"
-#include "finance/compound_interest_menu_controller.h"
-#include "finance/simple_interest_controller.h"
-#include "finance/compound_interest_controller.h"
+#include "finance/interest_controller.h"
+#include "finance/interest_menu_controller.h"
 #include "finance/finance_result_controller.h"
 
 namespace Solver {
@@ -66,16 +64,14 @@ private:
   Escher::AlternateEmptyViewController m_alternateEmptyViewController;
   ListController m_listController;
   Escher::ButtonRowController m_listFooter;
+  FinanceData m_financeData;
   FinanceResultController m_financeResultController;
-  SimpleInterestController m_simpleInterestController;
-  SimpleInterestMenuController m_simpleInterestMenuController;
-  CompoundInterestController m_compoundInterestController;
-  CompoundInterestMenuController m_compoundInterestMenuController;
+  InterestController m_interestController;
+  InterestMenuController m_interestMenuController;
   FinanceMenuController m_financeMenuController;
   MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;
-  FinanceData m_data;
 };
 
 }  // namespace Solver

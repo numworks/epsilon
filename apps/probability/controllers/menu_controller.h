@@ -9,14 +9,13 @@
 #include "probability/controllers/distribution_controller.h"
 #include "probability/controllers/test_controller.h"
 #include <escher/centering_view.h>
-#include <apps/shared/page_controller.h>
 #include <escher/subapp_cell.h>
 #include "probability/models/data.h"
 
 namespace Probability {
 
 // Controller
-class MenuController : public Shared::SelectableListViewPage {
+class MenuController : public Escher::SelectableListViewController {
 public:
   MenuController(Escher::StackViewController * parentResponder,
                  DistributionController * distributionController,
@@ -37,7 +36,6 @@ public:
   constexpr static int k_indexOfInterval = 2;
 
 private:
-  int stackTitleStyleStep() const override { return 0; }
   void initData(Data::SubApp subapp);
   void tidyData(Data::SubApp subapp);
   DistributionController * m_distributionController;

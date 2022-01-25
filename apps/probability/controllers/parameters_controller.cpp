@@ -53,7 +53,7 @@ ParametersController::ParametersController(Escher::StackViewController * parentR
                                            InputEventHandlerDelegate * inputEventHandlerDelegate,
                                            Distribution * distribution,
                                            CalculationController * calculationController) :
-      DoubleParameterPage(parentResponder),
+      FloatParameterController<double>(parentResponder),
       m_contentView(&m_selectableTableView),
       m_menuListCell{},
       m_distribution(distribution),
@@ -147,7 +147,7 @@ bool ParametersController::textFieldDidFinishEditing(TextField * textField,
 }
 
 void ParametersController::buttonAction() {
-  openPage(m_calculationController);
+  stackOpenPage(m_calculationController, 1);
 }
 
 }  // namespace Probability

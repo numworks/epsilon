@@ -17,7 +17,7 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
                                      StatisticGraphController * statisticGraphController,
                                      Escher::InputEventHandlerDelegate * handler,
                                      Escher::TextFieldDelegate * textFieldDelegate) :
-      Page(parent),
+      Escher::ViewController(parent),
       m_tableView(this, &m_resultsDataSource, this, &m_contentView),
       m_title(KDFont::SmallFont, I18n::Message::CalculatedValues, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
       m_contentView(&m_tableView, &m_resultsDataSource, &m_title),
@@ -70,14 +70,10 @@ bool Probability::ResultsController::buttonAction() {
     App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
     return false;
   }
-  openPage(m_statisticGraphController);
+  stackOpenPage(m_statisticGraphController, (App::app()->test() == Data::Test::Categorical ? 1 : 2));
   return true;
 }
 
 void Probability::ResultsController::initCell(ExpressionCellWithBufferWithMessage, void * cell, int index) {
   static_cast<ExpressionCellWithBufferWithMessage *>(cell)->setParentResponder(&m_tableView);
-}
-
-int Probability::ResultsController::stackTitleStyleStep() const {
-  return App::app()->test() == Data::Test::Categorical ? 1 : 2;
 }

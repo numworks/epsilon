@@ -6,7 +6,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
-#include <apps/shared/page_controller.h>
+// TODO : Move this file in selectable_list_view_controller.h
 
 namespace Shared {
 /*
@@ -16,9 +16,9 @@ namespace Shared {
  * MemoizedListViewDataSource (every cell is stored).
  */
 template <typename Cell, int n>
-class SelectableCellListPage : public SelectableListViewPage {
+class SelectableCellListPage : public Escher::SelectableListViewController {
  public:
-  SelectableCellListPage(Escher::StackViewController * parent, Escher::SelectableTableViewDelegate * tableDelegate = nullptr) : SelectableListViewPage(parent, tableDelegate) {}
+  SelectableCellListPage(Escher::StackViewController * parent, Escher::SelectableTableViewDelegate * tableDelegate = nullptr) : Escher::SelectableListViewController(parent, tableDelegate) {}
   int numberOfRows() const override { return k_numberOfRows; }
   Escher::HighlightCell * reusableCell(int i, int type) override {
     assert(type == 0);

@@ -3,7 +3,6 @@
 
 // TODO : Factorize with Probability::MenuController
 
-#include <apps/shared/page_controller.h>
 #include <escher/centering_view.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_list_view_controller.h>
@@ -15,7 +14,7 @@
 namespace Solver {
 
 // Controller
-class MenuController : public Shared::SelectableListViewPage {
+class MenuController : public Escher::SelectableListViewController {
 public:
   MenuController(Escher::StackViewController * parentResponder,
                  Escher::ViewController * listController,
@@ -30,7 +29,6 @@ public:
   constexpr static int k_indexOfFinance = 1;
 
 private:
-  int stackTitleStyleStep() const override { return 0; }
   Escher::ViewController * m_listController;
   Escher::ViewController * m_financeMenuController;
 

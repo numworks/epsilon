@@ -11,7 +11,6 @@
 
 #include "hypothesis_controller.h"
 #include "input_controller.h"
-#include <apps/shared/page_controller.h>
 
 using namespace Escher;
 
@@ -33,7 +32,7 @@ private:
   MessageTextView * m_description;
 };
 
-class TypeController : public Shared::SelectableListViewPage {
+class TypeController : public Escher::SelectableListViewController {
 public:
   TypeController(StackViewController * parent,
                  HypothesisController * hypothesisController,
@@ -59,7 +58,6 @@ public:
   constexpr static int k_indexOfDescription = 3;
 
 private:
-  int stackTitleStyleStep() const override { return 0; }
   int indexFromListIndex(int i) const;
   int listIndexFromIndex(int i) const;
   I18n::Message messageForTest(Data::SubApp subapp, Data::Test t) const;

@@ -27,7 +27,7 @@ TypeController::TypeController(StackViewController * parent,
                                Data::Test * globalTest,
                                Data::TestType * globalTestType,
                                Statistic * statistic) :
-      SelectableListViewPage(parent),
+      Escher::SelectableListViewController(parent),
       m_hypothesisController(hypothesisController),
       m_inputController(inputController),
       m_contentView(&m_selectableTableView, &m_description),
@@ -82,10 +82,10 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
                                      Data::CategoricalType::Unset);
     }
     *m_globalTestType = t;
-    openPage(view);
+    stackOpenPage(view, 0);
     return true;
   } else if (event == Ion::Events::Left) {
-    stackViewController()->pop();
+    popStackViewControllerParentResponder();
     return true;
   }
   return false;

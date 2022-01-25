@@ -6,6 +6,7 @@
 #include "../../shared/sequence_store.h"
 #include "../../shared/sequence_context.h"
 #include "../../shared/poincare_helpers.h"
+#include <poincare/test/helper.h>
 
 using namespace Poincare;
 
@@ -473,6 +474,21 @@ QUIZ_CASE(sequence_evaluation) {
   conditions1[1] = "9";
   conditions2[1] = "u(u(0))";
   check_sequences_defined_by(result36, types, definitions, conditions1, conditions2);
+}
+
+QUIZ_CASE(sequence_context) {
+  assert_reduce("3→f(x)");
+  assert_expression_simplifies_approximates_to<double>("f(u(0))", "undef");
+
+  Shared::GlobalContext globalContext;
+  SequenceStore * store = globalContext.sequenceStore();
+  SequenceContext sequenceContext(&globalContext, store);
+  addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, &sequenceContext);
+  assert_expression_simplifies_approximates_to<double>("f(u(2))", "3");
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+
+  store->removeAll();
+  store->tidyDownstreamPoolFrom();
 }
 
 QUIZ_CASE(sequence_order) {

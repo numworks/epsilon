@@ -7,13 +7,13 @@
 #include "probability/abstract/dynamic_cells_data_source.h"
 #include "probability/gui/expression_cell_with_editable_text_with_message.h"
 #include "probability/gui/message_table_cell_with_separator.h"
-#include <apps/shared/page_controller.h>
+#include <apps/shared/float_parameter_controller.h>
 #include "probability/models/statistic/statistic.h"
 #include "results_controller.h"
 
 namespace Probability {
 
-class InputController : public Shared::DoubleParameterPage, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate<ExpressionCellWithEditableTextWithMessage> {
+class InputController : public Shared::FloatParameterController<double>, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate<ExpressionCellWithEditableTextWithMessage> {
 public:
   InputController(Escher::StackViewController * parent,
                   ResultsController * resultsController,
@@ -43,7 +43,6 @@ private:
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   int convertFloatToText(double value, char * buffer, int bufferSize);
-  int stackTitleStyleStep() const override { return 1; }
 
   constexpr static int k_numberOfTitleSignificantDigit = 3;
   constexpr static int k_titleBufferSize = sizeof("H0:= Ha: α=") + 7 /* μ1-μ2 */ +

@@ -8,14 +8,15 @@
 #include "probability/gui/calculation_popup_data_source.h"
 #include "probability/gui/distribution_curve_view.h"
 #include <escher/dropdown_view.h>
-#include <apps/shared/page_controller.h>
+#include <escher/view_controller.h>
+#include <escher/stack_view_controller.h>
 #include "probability/models/calculation/calculation.h"
 #include "probability/models/distribution/distribution.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {
 
-class CalculationController : public Shared::Page,
+class CalculationController : public Escher::ViewController,
                               public Escher::TableViewDataSource,
                               public Escher::SelectableTableViewDataSource,
                               public Shared::ParameterTextFieldDelegate,

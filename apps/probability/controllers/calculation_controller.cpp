@@ -52,7 +52,7 @@ CalculationController::CalculationController(Escher::StackViewController * paren
                                              InputEventHandlerDelegate * inputEventHandlerDelegate,
                                              Distribution * distribution,
                                              Calculation * calculation) :
-      Page(parentResponder),
+      Escher::ViewController(parentResponder),
       m_calculation(calculation),
       m_distribution(distribution),
       m_contentView(&m_selectableTableView, distribution, calculation),

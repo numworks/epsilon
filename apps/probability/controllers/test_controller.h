@@ -41,7 +41,6 @@ public:
   constexpr static int k_indexOfCategorical = 4;
 
 private:
-  int stackTitleStyleStep() const override { return 0; }
   HypothesisController * m_hypothesisController;
   TypeController * m_typeController;
   InputController * m_inputController;

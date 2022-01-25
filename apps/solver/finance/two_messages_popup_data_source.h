@@ -6,9 +6,9 @@
 
 namespace Solver {
 
-class TwoMessagePopupDataSource : public Escher::ListViewDataSource {
+class TwoMessagesPopupDataSource : public Escher::ListViewDataSource {
 public:
-  TwoMessagePopupDataSource() :
+  TwoMessagesPopupDataSource() :
       m_message1(I18n::Message::Default), m_message2(I18n::Message::Default) {}
   int numberOfRows() const override { return k_numberOfRows; }
   // Not needed because DropdownPopupController takes care of it

@@ -12,7 +12,7 @@
 #include <escher/view_controller.h>
 #include "data.h"
 #include "finance_result_controller.h"
-#include "two_message_popup_data_source.h"
+#include "two_messages_popup_data_source.h"
 
 namespace Solver {
 
@@ -57,7 +57,7 @@ private:
   // Max number of visible cells
   constexpr static int k_numberOfReusableInputs = 5;
 
-  TwoMessagePopupDataSource m_dropdownDataSource;
+  TwoMessagesPopupDataSource m_dropdownDataSource;
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfReusableInputs];
   Escher::MessageTableCellWithSublabelAndDropdown m_dropdownCell;
   Shared::ButtonWithSeparator m_next;

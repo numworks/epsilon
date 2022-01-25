@@ -2,9 +2,9 @@
 #define PROBABILITY_CONTROLLERS_TEST_CONTROLLER_H
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/selectable_list_view_controller.h>
 #include <ion/events.h>
 
-#include <apps/shared/selectable_cell_list_controller.h>
 #include "probability/models/statistic/statistic.h"
 
 namespace Probability {
@@ -16,7 +16,7 @@ class InputController;
 
 constexpr static int k_numberOfTestCells = 5;
 
-class TestController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
+class TestController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
                                                      k_numberOfTestCells> {
 public:
   TestController(Escher::StackViewController * parentResponder,

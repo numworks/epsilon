@@ -23,11 +23,15 @@ InterestController::InterestController(Escher::StackViewController * parent, Esc
 
 const char * InterestController::title() {
   uint8_t unknownParam = m_data->getUnknown();
-  Poincare::Print::customPrintf(
-      m_titleBuffer, k_titleBufferSize,
-      I18n::translate(I18n::Message::FinanceSolving),
-      I18n::translate(m_data->labelForParameter(unknownParam)),
-      I18n::translate(m_data->sublabelForParameter(unknownParam)));
+  const char * pattern = I18n::translate(I18n::Message::FinanceSolving);
+  const char * label = I18n::translate(m_data->labelForParameter(unknownParam));
+  const char * sublabel = I18n::translate(m_data->sublabelForParameter(unknownParam));
+  if (strlen(pattern) + strlen(label) + strlen(sublabel) - 2 * strlen("%s") < k_titleBufferSize) {
+    Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, pattern, label, sublabel);
+  } else {
+    // If the title does not fit, use a reduced pattern
+    Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, I18n::translate(I18n::Message::FinanceSolvingReduced), label);
+  }
   return m_titleBuffer;
 }
 

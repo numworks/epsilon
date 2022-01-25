@@ -6,12 +6,12 @@
 #include <escher/button_delegate.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
+#include <escher/message_table_cell_with_sublabel_and_dropdown.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include <escher/view_controller.h>
 #include "data.h"
 #include "finance_result_controller.h"
-#include "message_table_cell_with_sublabel_and_dropdown.h"
 #include "two_message_popup_data_source.h"
 
 namespace Solver {
@@ -59,7 +59,7 @@ private:
 
   TwoMessagePopupDataSource m_dropdownDataSource;
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfReusableInputs];
-  MessageTableCellWithSublabelAndDropdown m_dropdownCell;
+  Escher::MessageTableCellWithSublabelAndDropdown m_dropdownCell;
   Shared::ButtonWithSeparator m_next;
 
   // KDFont::SmallFont->glyphSize().width() = 7

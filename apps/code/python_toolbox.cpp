@@ -376,6 +376,8 @@ const ToolboxMessageTree IonModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandBattery, I18n::Message::PythonBattery),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandBatteryLevel, I18n::Message::PythonBatteryLevel),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandBatteryIscharging, I18n::Message::PythonBatteryIscharging),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSetBrightness, I18n::Message::PythonSetBrightness),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGetBrightness, I18n::Message::PythonGetBrightness),
   ToolboxMessageTree::Leaf(I18n::Message::IonSelector, I18n::Message::IonSelector)
 };
 

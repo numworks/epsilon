@@ -6,6 +6,7 @@
 #include <escher/message_text_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/table_view_with_top_and_bottom_views.h>
+#include <ion/display.h>
 #include <ion/events.h>
 #include "data.h"
 
@@ -29,8 +30,6 @@ public:
 
   void setData(InterestData * data) { m_data = data; }
 private:
-  int stackTitleStyleStep() const override { return 1; }
-
   static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   char m_titleBuffer[k_titleBufferSize];
 

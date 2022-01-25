@@ -128,10 +128,10 @@ bool TestController::handleEvent(Ion::Events::Event event) {
       m_categoricalController->selectRow(0);
     }
 
-    openPage(controller);
+    stackOpenPage(controller, 0);
     return true;
   } else if (event == Ion::Events::Left) {
-    stackViewController()->pop();
+    popStackViewControllerParentResponder();
     return true;
   }
 

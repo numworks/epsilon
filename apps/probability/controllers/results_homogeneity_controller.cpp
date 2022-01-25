@@ -14,7 +14,7 @@ ResultsHomogeneityController::ResultsHomogeneityController(
     StackViewController * stackViewController,
     HomogeneityStatistic * statistic,
     ResultsController * resultsController) :
-      Page(stackViewController),
+      Escher::ViewController(stackViewController),
       m_resultsController(resultsController),
       m_contentView(this, &m_table, this),
       m_tableData(statistic, this, this),
@@ -52,7 +52,7 @@ bool Probability::ResultsHomogeneityController::handleEvent(Ion::Events::Event e
 }
 
 bool Probability::ResultsHomogeneityController::buttonAction() {
-  openPage(m_resultsController);
+  stackOpenPage(m_resultsController, 1);
   return true;
 }
 

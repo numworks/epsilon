@@ -1,5 +1,6 @@
 #include <escher/view_controller.h>
 #include <escher/container.h>
+#include <escher/stack_view_controller.h>
 #include <string.h>
 #include <ion/telemetry.h>
 
@@ -29,6 +30,18 @@ void ViewController::viewWillAppear() {
 
   Ion::Telemetry::reportScreen(reportedName);
 #endif
+}
+
+void ViewController::stackOpenPage(ViewController * nextPage, int styleStep) {
+  StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
+  assert(stackViewControllerResponder != nullptr);
+  stackViewControllerResponder->push(nextPage, StackViewController::Style::GrayGradation, styleStep);
+}
+
+void ViewController::popStackViewControllerParentResponder() {
+  StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
+  assert(stackViewControllerResponder != nullptr);
+  stackViewControllerResponder->pop();
 }
 
 #if EPSILON_TELEMETRY

@@ -28,8 +28,6 @@ public:
   constexpr static int k_indexOfCompoundInterest = 1;
 
 private:
-  int stackTitleStyleStep() const override { return 0; }
-
   InterestMenuController * m_interestMenuController;
   FinanceData * m_financeData;
 };

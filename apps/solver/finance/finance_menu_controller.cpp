@@ -34,9 +34,9 @@ bool FinanceMenuController::handleEvent(Ion::Events::Event event) {
     InterestData::Initialize(interestData, simpleInterestRowSelected);
     m_interestMenuController->setData(interestData);
 
-    openPage(m_interestMenuController);
+    stackOpenPage(m_interestMenuController, 0);
   } else if (event == Ion::Events::Left) {
-    stackViewController()->pop();
+    popStackViewControllerParentResponder();
   } else {
     return false;
   }

@@ -32,7 +32,7 @@ namespace Probability {
 DistributionController::DistributionController(Escher::StackViewController * parentResponder,
                                                Distribution * distribution,
                                                ParametersController * parametersController) :
-      SelectableListViewPage(parentResponder),
+      Escher::SelectableListViewController(parentResponder),
       m_distribution(distribution),
       m_parametersController(parametersController) {
   assert(m_distribution != nullptr);

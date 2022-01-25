@@ -14,13 +14,13 @@
 #include "probability/gui/comparison_operator_popup_data_source.h"
 #include "probability/gui/expression_cell_with_editable_text_with_message.h"
 #include "probability/gui/expression_cell_with_sublabel_and_dropdown.h"
-#include <apps/shared/page_controller.h>
+#include <escher/selectable_list_view_controller.h>
 
 using namespace Escher;
 
 namespace Probability {
 
-class HypothesisController : public Shared::SelectableListViewPage,
+class HypothesisController : public Escher::SelectableListViewController,
                              public Escher::ButtonDelegate,
                              public Escher::TextFieldDelegate,
                              public Escher::DropdownCallback {
@@ -53,7 +53,6 @@ public:
 private:
   void loadHypothesisParam();
   const char * symbolPrefix();
-  int stackTitleStyleStep() const override { return 1; }
 
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;

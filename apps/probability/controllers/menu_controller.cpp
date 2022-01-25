@@ -24,7 +24,7 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
                                Statistic * globalStatistic,
                                Distribution * globalDistribution,
                                Calculation * globalCalculation) :
-      SelectableListViewPage(parentResponder),
+      Escher::SelectableListViewController(parentResponder),
       m_distributionController(distributionController),
       m_testController(testController),
       m_globalTest(globalTest),
@@ -81,7 +81,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     if (controller == m_testController) {
       m_testController->selectRow(0);
     }
-    openPage(controller);
+    stackOpenPage(controller, 0);
     return true;
   }
   return false;

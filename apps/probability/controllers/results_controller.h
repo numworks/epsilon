@@ -9,7 +9,7 @@
 #include <escher/text_field_delegate.h>
 #include <escher/table_view_with_top_and_bottom_views.h>
 #include <escher/button_delegate.h>
-#include <apps/shared/page_controller.h>
+#include <escher/view_controller.h>
 
 #include "probability/models/results_data_source.h"
 #include "probability/models/statistic/statistic.h"
@@ -17,7 +17,7 @@
 
 namespace Probability {
 
-class ResultsController : public Shared::Page,
+class ResultsController : public Escher::ViewController,
                           public Escher::ButtonDelegate,
                           public Escher::SelectableTableViewDataSource,
                           public DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> {
@@ -47,9 +47,6 @@ protected:
   StatisticGraphController * m_statisticGraphController;
   constexpr static int k_titleBufferSize = 50;
   char m_titleBuffer[k_titleBufferSize];
-
-private:
-  int stackTitleStyleStep() const override;
 };
 
 }  // namespace Probability

@@ -33,7 +33,7 @@ bool FinanceResultController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     Escher::Clipboard::sharedClipboard()->store(m_cells[0].text());
   } else if (event == Ion::Events::Left) {
-    stackViewController()->pop();
+    popStackViewControllerParentResponder();
   } else {
     return false;
   }

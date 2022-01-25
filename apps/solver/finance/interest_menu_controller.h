@@ -26,7 +26,6 @@ public:
   int numberOfRows() const override { return m_data->numberOfUnknowns(); }
   void setData(InterestData * data) { m_data = data; }
 private:
-  int stackTitleStyleStep() const override { return 1; }
   uint8_t paramaterAtIndex(int index) const;
 
   Escher::MessageTextView m_messageView;

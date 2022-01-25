@@ -9,7 +9,7 @@ using namespace Solver;
 MenuController::MenuController(Escher::StackViewController * parentResponder,
                                Escher::ViewController * listController,
                                Escher::ViewController * financeMenuController) :
-      SelectableListViewPage(parentResponder),
+      Escher::SelectableListViewController(parentResponder),
       m_listController(listController),
       m_financeMenuController(financeMenuController),
       m_contentView(&m_selectableTableView) {
@@ -43,7 +43,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(controller != nullptr);
-    openPage(controller);
+    stackOpenPage(controller, 0);
     return true;
   }
   return false;

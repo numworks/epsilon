@@ -3,12 +3,12 @@
 
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include "probability/models/distribution/distribution.h"
-#include <apps/shared/page_controller.h>
+#include <apps/shared/float_parameter_controller.h>
 #include "calculation_controller.h"
 
 namespace Probability {
 
-class ParametersController : public Shared::DoubleParameterPage {
+class ParametersController : public Shared::FloatParameterController<double> {
 public:
   ParametersController(Escher::StackViewController * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Distribution * m_distribution, CalculationController * calculationController);
   const char * title() override;
@@ -23,7 +23,6 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
 private:
-  int stackTitleStyleStep() const override { return 1; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
   void buttonAction() override;

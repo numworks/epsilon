@@ -10,7 +10,7 @@
 using namespace Solver;
 
 InterestController::InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, InterestData * data) :
-    SelectableListViewPage(parent),
+    Escher::SelectableListViewController(parent),
     m_dropdownCell(&m_selectableTableView, &m_dropdownDataSource, this),
     m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
     m_financeResultController(financeResultController),
@@ -45,7 +45,7 @@ void InterestController::didBecomeFirstResponder() {
 
 bool InterestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
-    stackViewController()->pop();
+    popStackViewControllerParentResponder();
     return true;
   }
   return false;
@@ -116,7 +116,7 @@ Escher::HighlightCell * InterestController::reusableCell(int i, int type) {
 
 bool InterestController::buttonAction() {
   m_financeResultController->setData(m_data);
-  openPage(m_financeResultController);
+  stackOpenPage(m_financeResultController, 1);
   return true;
 }
 

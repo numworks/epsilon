@@ -8,7 +8,7 @@
 
 using namespace Solver;
 
-FinanceResultController::FinanceResultController(Escher::StackViewController * parentResponder, FinanceData * data) :
+FinanceResultController::FinanceResultController(Escher::StackViewController * parentResponder, InterestData * data) :
       Shared::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells>(parentResponder),
       m_messageView(KDFont::SmallFont, I18n::Message::CalculatedValues, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
       m_contentView(&m_selectableTableView, this, &m_messageView),
@@ -16,18 +16,9 @@ FinanceResultController::FinanceResultController(Escher::StackViewController * p
 }
 
 void FinanceResultController::didBecomeFirstResponder() {
-  double value;
-  if (m_data->isSimpleInterest) {
-    SimpleInterestParameter unknownParam = simpleInterestData()->getUnknown();
-    m_cells[0].setMessage(SimpleInterestData::LabelForParameter(unknownParam));
-    m_cells[0].setSubLabelMessage(SimpleInterestData::SublabelForParameter(unknownParam));
-    value = simpleInterestData()->computeUnknownValue();
-  } else {
-    CompoundInterestParameter unknownParam = compoundInterestData()->getUnknown();
-    m_cells[0].setMessage(CompoundInterestData::LabelForParameter(unknownParam));
-    m_cells[0].setSubLabelMessage(CompoundInterestData::SublabelForParameter(unknownParam));
-    value = compoundInterestData()->computeUnknownValue();
-  }
+  m_cells[0].setMessage(m_data->labelForParameter(m_data->getUnknown()));
+  m_cells[0].setSubLabelMessage(m_data->sublabelForParameter(m_data->getUnknown()));
+  double value = m_data->computeUnknownValue();
   constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
   constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
@@ -54,29 +45,24 @@ bool FinanceResultController::handleEvent(Ion::Events::Event event) {
 const char * FinanceResultController::title() {
   // Try fitting the known parameters values in the title
   // We don't display the boolean parameter and the unknown one.
-  int totalParameters = (m_data->isSimpleInterest ? k_numberOfSimpleInterestParameters : k_numberOfCompoundInterestParameters) - 2;
+  uint8_t totalParameters = m_data->numberOfDoubleValues();
   // Using a minimal precision
   constexpr int precision = Poincare::Preferences::ShortNumberOfSignificantDigits;
   constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
   char valueBuffer[bufferSize];
   // Last char index before the text does not fit
   int charIndex = 0;
-  int paramIndex = 0;
-  int unknownIndex = m_data->isSimpleInterest ? static_cast<int>(simpleInterestData()->getUnknown()) : static_cast<int>(compoundInterestData()->getUnknown());
-  for (int i = 0; i < totalParameters; i++) {
+  uint8_t unknownIndex = m_data->getUnknown();
+  bool unknownIndexIsLast = (unknownIndex == totalParameters - 1);
+  for (uint8_t paramIndex = 0; paramIndex < totalParameters; paramIndex++) {
     if (paramIndex == unknownIndex) {
       // Avoid unknown parameter
-      paramIndex += 1;
+      continue;
     }
     // Parameter's name
-    I18n::Message label = m_data->isSimpleInterest ?
-      SimpleInterestData::LabelForParameter(static_cast<SimpleInterestParameter>(paramIndex)) :
-      CompoundInterestData::LabelForParameter(static_cast<CompoundInterestParameter>(paramIndex));
-    const char * labelBuffer = I18n::translate(label);
+    const char * labelBuffer = I18n::translate(m_data->labelForParameter(paramIndex));
     // Parameter's value
-    double value = m_data->isSimpleInterest ?
-      m_data->m_data.m_simpleInterestData.getValue(static_cast<SimpleInterestParameter>(paramIndex)) :
-      m_data->m_data.m_compoundInterestData.getValue(static_cast<CompoundInterestParameter>(paramIndex));
+    double value = m_data->getValue(paramIndex);
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, valueBuffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
     // Expected length
     int nextLength = charIndex + strlen(labelBuffer) + strlen("=") + strlen(valueBuffer);
@@ -84,8 +70,8 @@ const char * FinanceResultController::title() {
       // Add a space between chars
       nextLength += strlen(" ");
     }
-    if (paramIndex != totalParameters) {
-      // If it is not the last parameter, ensure a "..." fits after anyway
+    if (paramIndex != totalParameters - 1 - unknownIndexIsLast) {
+      // If it is not the last known parameter, ensure a "..." fits after anyway
       nextLength += strlen("...");
     }
     if (nextLength >= k_titleBufferSize) {
@@ -101,7 +87,6 @@ const char * FinanceResultController::title() {
     charIndex += strlcpy(m_titleBuffer + charIndex, labelBuffer, k_titleBufferSize - charIndex);
     charIndex += strlcpy(m_titleBuffer + charIndex, "=", k_titleBufferSize - charIndex);
     charIndex += strlcpy(m_titleBuffer + charIndex, valueBuffer, k_titleBufferSize - charIndex);
-    paramIndex += 1;
     assert(charIndex < k_titleBufferSize);
   }
   m_titleBuffer[charIndex] = 0;

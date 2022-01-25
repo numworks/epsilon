@@ -18,7 +18,7 @@ constexpr int k_numberOfResultCells = 1;
 class FinanceResultController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer,
                                                      k_numberOfResultCells> {
 public:
-  FinanceResultController(Escher::StackViewController * parentResponder, FinanceData * data);
+  FinanceResultController(Escher::StackViewController * parentResponder, InterestData * data);
 
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
@@ -26,9 +26,9 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastAndThirdToLast; }
   Escher::View * view() override { return &m_contentView; }
   int numberOfRows() const override { return k_numberOfResultCells; }
+
+  void setData(InterestData * data) { m_data = data; }
 private:
-  SimpleInterestData * simpleInterestData() const { assert(m_data->isSimpleInterest); return &(m_data->m_data.m_simpleInterestData); }
-  CompoundInterestData * compoundInterestData() const { assert(!m_data->isSimpleInterest); return &(m_data->m_data.m_compoundInterestData); }
   int stackTitleStyleStep() const override { return 1; }
 
   static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
@@ -36,7 +36,7 @@ private:
 
   Escher::MessageTextView m_messageView;
   Escher::TableViewWithTopAndBottomViews m_contentView;
-  FinanceData * m_data;
+  InterestData * m_data;
 };
 
 }  // namespace Solver

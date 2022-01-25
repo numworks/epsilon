@@ -22,7 +22,7 @@ public:
   int typeAtLocation(int i, int j) override;
   int numberOfRows() const override;
 private:
-  constexpr static int k_totalNumberOfCell = 9;
+  constexpr static int k_totalNumberOfCell = 8;
   bool hasUsernameCell() const;
   ContributorsController m_contributorsController;
   MessageTableCellWithChevronAndMessage m_contributorsCell;

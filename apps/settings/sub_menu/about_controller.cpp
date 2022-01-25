@@ -168,7 +168,6 @@ bool AboutController::hasUsernameCell() const {
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   int i = index + (!hasUsernameCell());
   GenericSubController::willDisplayCellForIndex(cell, i);
-  assert(index >= 0 && index < k_totalNumberOfCell);
   if (m_messageTreeModel->childAtIndex(i)->label() == I18n::Message::Contributors) {
     MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
     myTextCell->setSubtitle(I18n::Message::Default);

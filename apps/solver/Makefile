@@ -16,10 +16,8 @@ app_solver_src = $(addprefix apps/solver/,\
   equations/list_controller.cpp \
   equations/solutions_controller.cpp \
   finance/finance_menu_controller.cpp \
-  finance/simple_interest_controller.cpp \
-  finance/simple_interest_menu_controller.cpp \
-  finance/compound_interest_controller.cpp \
-  finance/compound_interest_menu_controller.cpp \
+  finance/interest_controller.cpp \
+  finance/interest_menu_controller.cpp \
   finance/finance_result_controller.cpp \
 )
 

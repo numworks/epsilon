@@ -3,6 +3,7 @@
 
 #include <escher/view.h>
 #include <escher/palette.h>
+#include <algorithm>
 
 namespace Escher {
 
@@ -16,7 +17,7 @@ public:
   View * subviewAtIndex(int i) override { return m_contentView; }
 
 private:
-  KDCoordinate zeroIfNegative(KDCoordinate x) { return x < 0 ? 0 : x; }
+  KDCoordinate zeroIfNegative(KDCoordinate x) { return std::max<KDCoordinate>(x, 0); }
   View * m_contentView;
   KDColor m_backgroundColor;
 };

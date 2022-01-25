@@ -7,6 +7,7 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 #include "data.h"
+#include "interest_menu_controller.h"
 
 namespace Solver {
 
@@ -16,23 +17,21 @@ class FinanceMenuController : public Shared::SelectableCellListPage<Escher::Mess
                                                      k_numberOfFinanceCells> {
 public:
   FinanceMenuController(Escher::StackViewController * parentResponder,
-                    Escher::ViewController * simpleInterestMenuController,
-                    Escher::ViewController * compoundInterestMenuController,
-                    FinanceData * data);
+                    InterestMenuController * interestMenuController,
+                    FinanceData * financeData);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override;
   int numberOfRows() const override { return k_numberOfFinanceCells; }
 
-  constexpr static int k_indexOfSimpleIntereset = 0;
+  constexpr static int k_indexOfSimpleInterest = 0;
   constexpr static int k_indexOfCompoundInterest = 1;
 
 private:
   int stackTitleStyleStep() const override { return 0; }
 
-  Escher::ViewController * m_simpleInterestMenuController;
-  Escher::ViewController * m_compoundInterestMenuController;
-  FinanceData * m_data;
+  InterestMenuController * m_interestMenuController;
+  FinanceData * m_financeData;
 };
 
 }  // namespace Solver

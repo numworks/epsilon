@@ -10,20 +10,18 @@
 #include <escher/text_field_delegate.h>
 #include <escher/view_controller.h>
 #include "data.h"
+#include "finance_result_controller.h"
 #include "message_table_cell_with_sublabel_and_dropdown.h"
 #include "two_message_popup_data_source.h"
 
 namespace Solver {
 
-class SimpleInterestController : public Shared::SelectableListViewPage,
-                             public Escher::ButtonDelegate,
-                             public Escher::TextFieldDelegate,
-                             public Escher::DropdownCallback {
+class InterestController : public Shared::SelectableListViewPage,
+                           public Escher::ButtonDelegate,
+                           public Escher::TextFieldDelegate,
+                           public Escher::DropdownCallback {
 public:
-  SimpleInterestController(Escher::StackViewController * parent,
-                           Escher::InputEventHandlerDelegate * handler,
-                           Escher::ViewController * financeResultController,
-                           FinanceData * data);
+  InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, InterestData * data);
   const char * title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -32,47 +30,45 @@ public:
   int typeAtIndex(int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int i, int type) override;
-  int numberOfRows() const override { return k_indexOfNext + 1; }
+  // Confirm cell plus all parameters but the unknown one
+  int numberOfRows() const override { return m_data->numberOfParameters(); }
   bool buttonAction() override;
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
 
-
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override { return false; }
-  bool textFieldShouldFinishEditing(Escher::TextField * textField,
-                                    Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField,
-                                 const char * text,
-                                 Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
   // Escher::DropdownCallback
   void onDropdownSelected(int selectedRow) override;
 
+  void setData(InterestData * data) { m_data = data; }
+
 private:
-  SimpleInterestParameter paramaterAtIndex(int index) const;
-  SimpleInterestData * simpleInterestData() const { assert(m_data->isSimpleInterest); return &(m_data->m_data.m_simpleInterestData); }
+  uint8_t paramaterAtIndex(int index) const;
   int stackTitleStyleStep() const override { return 1; }
 
-  constexpr static int k_indexOfYear = SimpleInterestData::k_numberOfDoubleValues - 1;
-  constexpr static int k_indexOfNext = k_indexOfYear + 1;
+  // Dropdown cell is right after all double parameters but the unknown one
+  int indexOfDropdown() const { return m_data->numberOfDoubleValues() - 1; }
 
   constexpr static int k_inputCellType = 0;
   constexpr static int k_dropdownCellType = 1;
   constexpr static int k_confirmCellType = 2;
 
-  // Max number of visible cells (5). Only 4 are needed.
-  constexpr static int k_numberOfReusableInputs = 4;
-  static_assert(k_numberOfReusableInputs <= k_indexOfYear + 1, "Too many reusable inputs");
+  // Max number of visible cells
+  constexpr static int k_numberOfReusableInputs = 5;
 
-  TwoMessagePopupDataSource m_yearDataSource;
+  TwoMessagePopupDataSource m_dropdownDataSource;
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfReusableInputs];
-  MessageTableCellWithSublabelAndDropdown m_year;
+  MessageTableCellWithSublabelAndDropdown m_dropdownCell;
   Shared::ButtonWithSeparator m_next;
 
-  static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
+  // KDFont::SmallFont->glyphSize().width() = 7
+  static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7;
   char m_titleBuffer[k_titleBufferSize];
 
-  Escher::ViewController * m_financeResultController;
-  FinanceData * m_data;
+  FinanceResultController * m_financeResultController;
+  InterestData * m_data;
 };
 
 }  // namespace Solver

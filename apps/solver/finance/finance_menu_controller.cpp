@@ -5,14 +5,13 @@
 
 using namespace Solver;
 
-FinanceMenuController::FinanceMenuController(Escher::StackViewController * parentResponder, Escher::ViewController * simpleInterestMenuController, Escher::ViewController * compoundInterestMenuController, FinanceData * data) :
+FinanceMenuController::FinanceMenuController(Escher::StackViewController * parentResponder, InterestMenuController * interestMenuController, FinanceData * financeData) :
       Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells>(parentResponder),
-      m_simpleInterestMenuController(simpleInterestMenuController),
-      m_compoundInterestMenuController(compoundInterestMenuController),
-      m_data(data) {
+      m_interestMenuController(interestMenuController),
+      m_financeData(financeData) {
   selectRow(0);
-  m_cells[k_indexOfSimpleIntereset].setMessage(I18n::Message::SimpleInterest);
-  m_cells[k_indexOfSimpleIntereset].setSubtitle(I18n::Message::SimpleInterestDescription);
+  m_cells[k_indexOfSimpleInterest].setMessage(I18n::Message::SimpleInterest);
+  m_cells[k_indexOfSimpleInterest].setSubtitle(I18n::Message::SimpleInterestDescription);
   m_cells[k_indexOfCompoundInterest].setMessage(I18n::Message::CompoundInterest);
   m_cells[k_indexOfCompoundInterest].setSubtitle(I18n::Message::CompoundInterestDescription);
 }
@@ -27,31 +26,16 @@ void FinanceMenuController::didBecomeFirstResponder() {
 
 bool FinanceMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    ViewController * controller = nullptr;
-    switch (selectedRow()) {
-      case k_indexOfSimpleIntereset:
-        if (!m_data->isSimpleInterest) {
-          m_data->isSimpleInterest = true;
-          m_data->m_data.m_simpleInterestData.resetValues();
-        }
-        controller = m_simpleInterestMenuController;
-        break;
-      case k_indexOfCompoundInterest:
-        if (m_data->isSimpleInterest) {
-          m_data->isSimpleInterest = false;
-          m_data->m_data.m_compoundInterestData.resetValues();
-        }
-        controller = m_compoundInterestMenuController;
-        break;
-    }
-    assert(controller != nullptr);
-    openPage(controller);
+    bool simpleInterestRowSelected = (selectedRow() == k_indexOfSimpleInterest);
+    assert(simpleInterestRowSelected || selectedRow() == k_indexOfCompoundInterest);
+    InterestData * interestData = m_financeData->getInterestData(simpleInterestRowSelected);
+    interestData->resetValues();
+    m_interestMenuController->setData(interestData);
+    openPage(m_interestMenuController);
   } else if (event == Ion::Events::Left) {
     stackViewController()->pop();
   } else {
     return false;
   }
   return true;
-
-
 }

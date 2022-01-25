@@ -23,7 +23,7 @@ TestController::TestController(Escher::StackViewController * parentResponder,
                                Data::TestType * globalTestType,
                                Data::CategoricalType * globalCategoricalType,
                                Statistic * statistic) :
-      Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells>(parentResponder),
+      Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells>(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
       m_inputController(inputController),
@@ -50,7 +50,7 @@ const char * TestController::title() {
 }
 
 void Probability::TestController::viewWillAppear() {
-  Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells>::viewWillAppear();
+  Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells>::viewWillAppear();
   // Create cells whose legends vary
   I18n::Message zMessage = App::app()->subapp() == Data::SubApp::Tests ? I18n::Message::ZTest : I18n::Message::ZInterval;
   I18n::Message tOrZMessage = App::app()->subapp() == Data::SubApp::Tests ? I18n::Message::TOrZTest : I18n::Message::TOrZInterval;

@@ -1,9 +1,9 @@
 #ifndef SOLVER_FINANCE_RESULT_CONTROLLER_H
 #define SOLVER_FINANCE_RESULT_CONTROLLER_H
 
-#include <apps/shared/selectable_cell_list_controller.h>
 #include <escher/message_table_cell_with_message_with_buffer.h>
 #include <escher/message_text_view.h>
+#include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/table_view_with_top_and_bottom_views.h>
 #include <ion/display.h>
@@ -16,7 +16,7 @@ namespace Solver {
 
 constexpr int k_numberOfResultCells = 1;
 
-class FinanceResultController : public Shared::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer,
+class FinanceResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer,
                                                      k_numberOfResultCells> {
 public:
   FinanceResultController(Escher::StackViewController * parentResponder, InterestData * data);

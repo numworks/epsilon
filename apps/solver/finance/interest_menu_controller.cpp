@@ -6,7 +6,7 @@
 using namespace Solver;
 
 InterestMenuController::InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController, InterestData * data) :
-      Shared::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells>(parentResponder, &m_contentView),
+      Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells>(parentResponder, &m_contentView),
       m_messageView(KDFont::SmallFont, I18n::Message::ParameterChoose, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
       m_contentView(&m_selectableTableView, this, &m_messageView),
       m_interestController(interestController),

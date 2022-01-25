@@ -15,8 +15,7 @@ public:
   // Replace a data model at buffer
   static void Initialize(void * m_buffer, bool simple);
 
-  // 5 = static_cast<uint8_t>(CompoundInterestData::Parameter::PY)
-  constexpr static uint8_t k_maxNumberOfUnknowns = 5;
+  constexpr static uint8_t k_maxNumberOfUnknowns = 5; // static_cast<uint8_t>(CompoundInterestData::Parameter::PY)
 
   virtual I18n::Message labelForParameter(uint8_t param) const = 0;
   virtual I18n::Message sublabelForParameter(uint8_t param) const = 0;
@@ -40,12 +39,14 @@ public:
   }
   void setUnknown(uint8_t param);
   uint8_t getUnknown() const { return m_unknown; }
-  // Each FinanceData has one boolean parameter
+  /* For SimpleInterestData, this param tells if the convention for the number
+   * of days per year is 360 (365 otherwise). For CompoundInterestData, it tells
+   * if the payment is made at the end or at the begining of the payment period
+   * (end otherwise). */
   bool m_booleanParam;
 
 protected:
-  // 7 = static_cast<uint8_t>(CompoundInterestData::Parameter::Payment)
-  constexpr static uint8_t k_maxNumberOfDoubleValues = 7;
+  constexpr static uint8_t k_maxNumberOfDoubleValues = 7; // static_cast<uint8_t>(CompoundInterestData::Parameter::Payment)
   uint8_t m_unknown;
 
 private:
@@ -53,10 +54,7 @@ private:
 };
 
 class SimpleInterestData : public InterestData {
-public:
-  SimpleInterestData() { resetValues(); }
-
-  constexpr static uint8_t k_numberOfParameters = 5;
+private:
   enum class Parameter : uint8_t {
     n = 0,
     rPct,
@@ -64,6 +62,10 @@ public:
     I,
     YearConvention  // Is not a double parameter and can't be unknown
   };
+public:
+  SimpleInterestData() { resetValues(); }
+
+  constexpr static uint8_t k_numberOfParameters = 5;
   static_assert(static_cast<uint8_t>(Parameter::YearConvention) == k_numberOfParameters - 1, "YearConvention must be last.");
 
   constexpr static uint8_t k_numberOfDoubleValues = static_cast<uint8_t>(Parameter::YearConvention);
@@ -91,10 +93,7 @@ public:
 };
 
 class CompoundInterestData : public InterestData {
-public:
-  CompoundInterestData() { resetValues(); }
-
-  constexpr static uint8_t k_numberOfParameters = 8;
+private:
   enum class Parameter : uint8_t {
     N = 0,
     rPct,
@@ -105,6 +104,10 @@ public:
     CY,      // Can't be unknown
     Payment  // Is not a double parameter and can't be unknown
   };
+public:
+  CompoundInterestData() { resetValues(); }
+
+  constexpr static uint8_t k_numberOfParameters = 8;
   static_assert(static_cast<uint8_t>(Parameter::PY) == k_numberOfParameters - 3, "PY must be third from last.");
   static_assert(static_cast<uint8_t>(Parameter::CY) == k_numberOfParameters - 2, "CY must be second from last.");
   static_assert(static_cast<uint8_t>(Parameter::Payment) == k_numberOfParameters - 1, "Payment must be last.");

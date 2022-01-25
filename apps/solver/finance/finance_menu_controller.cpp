@@ -28,9 +28,12 @@ bool FinanceMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     bool simpleInterestRowSelected = (selectedRow() == k_indexOfSimpleInterest);
     assert(simpleInterestRowSelected || selectedRow() == k_indexOfCompoundInterest);
-    InterestData * interestData = m_financeData->getInterestData(simpleInterestRowSelected);
-    interestData->resetValues();
+
+    // Update and reset fianceData's interest data model
+    InterestData * interestData = m_financeData->interestData();
+    InterestData::Initialize(interestData, simpleInterestRowSelected);
     m_interestMenuController->setData(interestData);
+
     openPage(m_interestMenuController);
   } else if (event == Ion::Events::Left) {
     stackViewController()->pop();

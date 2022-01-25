@@ -39,17 +39,14 @@ App::App(Snapshot * snapshot) :
   m_alternateEmptyViewController(nullptr, &m_solutionsController, &m_solutionsController),
   m_listController(&m_listFooter, snapshot->equationStore(), &m_listFooter),
   m_listFooter(&m_stackViewController, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray, ButtonRowController::Size::Large),
-  m_financeResultController(&m_stackViewController, m_financeData.getInterestData(true)),
-  m_interestController(&m_stackViewController, &m_inputViewController, &m_financeResultController, m_financeData.getInterestData(true)),
-  m_interestMenuController(&m_stackViewController, &m_interestController, m_financeData.getInterestData(true)),
+  m_financeResultController(&m_stackViewController, m_financeData.interestData()),
+  m_interestController(&m_stackViewController, &m_inputViewController, &m_financeResultController, m_financeData.interestData()),
+  m_interestMenuController(&m_stackViewController, &m_interestController, m_financeData.interestData()),
   m_financeMenuController(&m_stackViewController, &m_interestMenuController, &m_financeData),
   m_menuController(&m_stackViewController, &m_listFooter, &m_financeMenuController),
   m_stackViewController(&m_inputViewController, &m_menuController),
   m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController)
-{
-  m_financeData.getInterestData(true)->resetValues();
-  m_financeData.getInterestData(false)->resetValues();
-}
+{}
 
 bool App::isAcceptableExpression(const Poincare::Expression exp) {
   /* Complete ExpressionFieldDelegateApp acceptable conditions by only accepting

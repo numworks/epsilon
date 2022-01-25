@@ -4,10 +4,17 @@
 #include <apps/i18n.h>
 #include <assert.h>
 
+#include <new>
+
 namespace Solver {
 
 class InterestData {
 public:
+  // Allow destruction of data models from an InterestData pointer
+  virtual ~InterestData() = default;
+  // Replace a data model at buffer
+  static void Initialize(void * m_buffer, bool simple);
+
   // 5 = static_cast<uint8_t>(CompoundInterestData::Parameter::PY)
   constexpr static uint8_t k_maxNumberOfUnknowns = 5;
 
@@ -47,6 +54,8 @@ private:
 
 class SimpleInterestData : public InterestData {
 public:
+  SimpleInterestData() { resetValues(); }
+
   constexpr static uint8_t k_numberOfParameters = 5;
   enum class Parameter : uint8_t {
     n = 0,
@@ -83,6 +92,8 @@ public:
 
 class CompoundInterestData : public InterestData {
 public:
+  CompoundInterestData() { resetValues(); }
+
   constexpr static uint8_t k_numberOfParameters = 8;
   enum class Parameter : uint8_t {
     N = 0,
@@ -123,15 +134,14 @@ public:
   double computeUnknownValue() const override;
 };
 
-// TODO : Create an union for the financial data
-
-class FinanceData {
+union FinanceData {
 public:
-  InterestData * getInterestData(bool simpleInterest) {
-    if (simpleInterest) {
-      return &m_simpleInterestData;
-    }
-    return &m_compoundInterestData;
+  // By default, use a simple interest data model
+  FinanceData() { new (&m_simpleInterestData) SimpleInterestData(); }
+  // Destroy current data model, using InterestData's virtual destructor
+  ~FinanceData() { interestData()->~InterestData(); }
+  InterestData * interestData() {
+    return reinterpret_cast<InterestData *>(this);
   }
 
 private:

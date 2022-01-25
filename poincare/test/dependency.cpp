@@ -123,7 +123,16 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   assert_reduce("1→f(x)");
   assert_expression_simplify_to_with_dependencies("f(a)", "1", {"a"});
   assert_reduce("sum(1/n,n,0,5)→a"); // a = undef
-  assert_expression_simplify_to_with_dependencies("f(a)", Undefined::Name(), {""});
+  assert_expression_simplify_to_with_dependencies("f(a)", "1", {"sum(1/n,n,0,5)"});
+  assert_expression_approximates_to<float>("f(a)", "undef");
+
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+}
+
+QUIZ_CASE(poincare_dependency_sequence) {
+  assert_reduce("3→f(x)");
+  // Sequence are kept in dependency
+  assert_expression_simplify_to_with_dependencies("f(u(2))", "3", {"u(2)"});
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }

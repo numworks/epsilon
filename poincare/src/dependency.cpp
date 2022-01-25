@@ -35,22 +35,19 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
     return dependencies;
   }
   assert(dependencies.type() == ExpressionNode::Type::Matrix);
-  char variables[k_maxNumberOfVariables * SymbolAbstract::k_maxNameSize];
 
   int numberOfUselessDependencies = 0;
   int totalNumberOfDependencies = numberOfDependencies();
   for (int i = 0; i < totalNumberOfDependencies; i++) {
     Expression e = dependencies.childAtIndex(i);
-    variables[0] = '\0';
-    int n = e.getVariables(reductionContext.context(), [](const char * s, Context * c) { return true; }, variables, SymbolAbstract::k_maxNameSize);
-    if (n <= 0) {
-      /* This dependency contains no symbol or function. If it is undefined,
-       * the whole expression is undefined; otherwise we remove it. */
-      Expression approximation = e.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
-      if (approximation.isUndefined()) {
-        replaceWithInPlace(approximation);
-        return approximation;
-      }
+    Expression approximation = e.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
+    if (approximation.isUndefined()) {
+      /* We can't decide now that the main expression is undefined because its
+       * depencencies are. Indeed, the dependency might involve unresolved
+       * symbol/function/sequence (especially sequences that are not
+       * approximated while in reducing routine). */
+      continue;
+    } else {
       numberOfUselessDependencies++;
     }
   }

@@ -7,11 +7,13 @@ CenteringView::CenteringView(View * v, KDColor background) :
 }
 
 KDSize CenteringView::minimalSizeForOptimalDisplay() const {
-  m_contentView->setFrame(m_frame, false);
+  // Expecting m_contentView's frame to have a width here.
+  assert(m_contentView->bounds().width() != 0);
   return m_contentView->minimalSizeForOptimalDisplay();
 }
 
 void CenteringView::layoutSubviews(bool force) {
+  // Some views need a width to compute a minimalSizeForOptimalDisplay
   m_contentView->setFrame(m_frame, false);
   KDSize requiredSize = m_contentView->minimalSizeForOptimalDisplay();
   KDCoordinate dx = m_frame.width() - requiredSize.width();

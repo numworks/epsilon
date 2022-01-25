@@ -15,7 +15,7 @@ CategoricalTypeController::CategoricalTypeController(
     Data::CategoricalType * globalCategoricalType,
     InputGoodnessController * inputGoodnessController,
     InputHomogeneityController * inputHomogeneityController) :
-      Shared::SelectableCellListPage<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells>(parent),
+      Escher::SelectableCellListPage<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells>(parent),
       m_statistic(statistic),
       m_globalCategoricalType(globalCategoricalType),
       m_inputGoodnessController(inputGoodnessController),

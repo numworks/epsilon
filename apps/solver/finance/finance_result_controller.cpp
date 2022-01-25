@@ -84,9 +84,7 @@ const char * FinanceResultController::title() {
       charIndex += strlcpy(m_titleBuffer + charIndex, " ", k_titleBufferSize - charIndex);
     }
     // Insert label, '=' and value
-    charIndex += strlcpy(m_titleBuffer + charIndex, labelBuffer, k_titleBufferSize - charIndex);
-    charIndex += strlcpy(m_titleBuffer + charIndex, "=", k_titleBufferSize - charIndex);
-    charIndex += strlcpy(m_titleBuffer + charIndex, valueBuffer, k_titleBufferSize - charIndex);
+    charIndex += Poincare::Print::customPrintf(m_titleBuffer + charIndex, k_titleBufferSize - charIndex, "%s = %s", labelBuffer, valueBuffer);
     assert(charIndex < k_titleBufferSize);
   }
   m_titleBuffer[charIndex] = 0;

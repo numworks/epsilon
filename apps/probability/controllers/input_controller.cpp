@@ -1,5 +1,6 @@
 #include "input_controller.h"
 
+#include <apps/shared/float_parameter_controller.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/print.h>
 
@@ -14,7 +15,7 @@ InputController::InputController(Escher::StackViewController * parent,
                                  ResultsController * resultsController,
                                  Statistic * statistic,
                                  Escher::InputEventHandlerDelegate * handler) :
-      DoubleParameterPage(parent),
+      FloatParameterController<double>(parent),
       DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>(this),
       m_statistic(statistic),
       m_resultsController(resultsController)
@@ -74,7 +75,7 @@ int InputController::typeAtIndex(int i) {
   if (i == m_statistic->indexOfThreshold()) {
     return k_significanceCellType;
   }
-  return DoubleParameterPage::typeAtIndex(i);
+  return FloatParameterController<double>::typeAtIndex(i);
 }
 
 void InputController::didBecomeFirstResponder() {
@@ -97,7 +98,7 @@ void InputController::buttonAction() {
   } else {
     m_statistic->computeInterval();
   }
-  openPage(m_resultsController);
+  stackOpenPage(m_resultsController, 1);
 }
 
 void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
@@ -120,7 +121,7 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
     thresholdCell->innerCell()->setMessage(name);
     thresholdCell->innerCell()->setSubLabelMessage(description);
   }
-  DoubleParameterPage::willDisplayCellForIndex(cell, index);
+  FloatParameterController<double>::willDisplayCellForIndex(cell, index);
 }
 
 Escher::HighlightCell * InputController::reusableParameterCell(int index, int type) {
@@ -134,7 +135,7 @@ Escher::HighlightCell * InputController::reusableParameterCell(int index, int ty
 
 bool Probability::InputController::handleEvent(Ion::Events::Event event) {
   if ((App::app()->subapp() == Data::SubApp::Intervals) && (event == Ion::Events::Left)) {
-    stackViewController()->pop();
+    popStackViewControllerParentResponder();
     return true;
   }
   return false;

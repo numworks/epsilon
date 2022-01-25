@@ -2,7 +2,7 @@
 #define SOLVER_SIMPLE_INTEREST_CONTROLLER_H
 
 #include <apps/shared/button_with_separator.h>
-#include <apps/shared/page_controller.h>
+#include <escher/selectable_list_view_controller.h>
 #include <escher/button_delegate.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
@@ -16,7 +16,7 @@
 
 namespace Solver {
 
-class InterestController : public Shared::SelectableListViewPage,
+class InterestController : public Escher::SelectableListViewController,
                            public Escher::ButtonDelegate,
                            public Escher::TextFieldDelegate,
                            public Escher::DropdownCallback {
@@ -46,7 +46,6 @@ public:
 
 private:
   uint8_t paramaterAtIndex(int index) const;
-  int stackTitleStyleStep() const override { return 1; }
 
   // Dropdown cell is right after all double parameters but the unknown one
   int indexOfDropdown() const { return m_data->numberOfDoubleValues() - 1; }

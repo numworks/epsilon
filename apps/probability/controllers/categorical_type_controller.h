@@ -38,7 +38,6 @@ public:
   constexpr static int k_indexOfHomogeneityCell = 1;
 
 private:
-  int stackTitleStyleStep() const override { return 0; }
   Chi2Statistic * m_statistic;
   Data::CategoricalType * m_globalCategoricalType;
   InputGoodnessController * m_inputGoodnessController;

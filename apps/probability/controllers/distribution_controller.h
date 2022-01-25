@@ -7,12 +7,11 @@
 
 #include "parameters_controller.h"
 #include "probability/gui/distribution_cell.h"
-#include <apps/shared/page_controller.h>
 #include "probability/models/distribution/distribution.h"
 
 namespace Probability {
 
-class DistributionController : public Shared::SelectableListViewPage {
+class DistributionController : public Escher::SelectableListViewController {
 public:
   DistributionController(Escher::StackViewController * parentResponder,
                          Distribution * distribution,
@@ -34,7 +33,6 @@ public:
   }
 
 private:
-  int stackTitleStyleStep() const override { return 0; }
   void setDistributionAccordingToIndex(int index);
   constexpr static int k_totalNumberOfModels = 9;
   constexpr static int k_numberOfCells =

@@ -21,7 +21,7 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
                                            InputController * inputController,
                                            InputEventHandlerDelegate * handler,
                                            Statistic * statistic) :
-      SelectableListViewPage(parent),
+      Escher::SelectableListViewController(parent),
       m_inputController(inputController),
       m_operatorDataSource(statistic->hypothesisParams()),
       m_h0(&m_selectableTableView, handler, this),
@@ -55,7 +55,7 @@ const char * Probability::HypothesisController::title() {
 
 bool Probability::HypothesisController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
-    stackViewController()->pop();
+    popStackViewControllerParentResponder();
     return true;
   }
   return false;
@@ -146,7 +146,7 @@ void HypothesisController::didBecomeFirstResponder() {
 }
 
 bool HypothesisController::buttonAction() {
-  openPage(m_inputController);
+  stackOpenPage(m_inputController, 1);
   return true;
 }
 

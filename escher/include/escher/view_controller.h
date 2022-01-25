@@ -58,6 +58,11 @@ public:
   virtual void viewWillAppear();
   virtual void viewDidDisappear() {}
   virtual TitlesDisplay titlesDisplay() { return TitlesDisplay::DisplayAllTitles; }
+  /* Use these two functions only if the controller is in a stack hierarchy */
+  // Pushes the given controller onto the parent StackViewController responder
+  void stackOpenPage(ViewController * nextPage, int styleStep);
+  // Pop the parent StackViewController responder
+  void popStackViewControllerParentResponder();
 protected:
 #if EPSILON_TELEMETRY
   virtual const char * telemetryId() const { return nullptr; }

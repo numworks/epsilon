@@ -8,10 +8,10 @@ namespace Probability {
 
 InputCategoricalController::InputCategoricalController(
     StackViewController * parent,
-    Page * resultsController,
+    Escher::ViewController * resultsController,
     Chi2Statistic * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
-      Page(parent),
+      Escher::ViewController(parent),
       m_statistic(statistic),
       m_resultsController(resultsController),
       m_contentView(this, this, nullptr, inputEventHandlerDelegate, this) {
@@ -67,7 +67,7 @@ void InputCategoricalController::didBecomeFirstResponder() {
 
 bool InputCategoricalController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
-    stackViewController()->pop();
+    popStackViewControllerParentResponder();
     return true;
   }
   return false;
@@ -79,7 +79,7 @@ bool InputCategoricalController::buttonAction() {
     return false;
   }
   m_statistic->computeTest();
-  openPage(m_resultsController);
+  stackOpenPage(m_resultsController, 0);
   return true;
 }
 

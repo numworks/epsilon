@@ -33,7 +33,7 @@ bool MatrixNode::hasMatrixChild(Context * context) const {
   return false;
 }
 
-void MatrixNode::didAddChildAtIndex(int newNumberOfChildren) {
+void MatrixNode::didChangeArity(int newNumberOfChildren) {
   setNumberOfRows(1);
   setNumberOfColumns(newNumberOfChildren);
 }

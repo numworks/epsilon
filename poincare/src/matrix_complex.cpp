@@ -11,7 +11,7 @@
 namespace Poincare {
 
 template<typename T>
-void MatrixComplexNode<T>::didAddChildAtIndex(int newNumberOfChildren) {
+void MatrixComplexNode<T>::didChangeArity(int newNumberOfChildren) {
   setNumberOfRows(1);
   setNumberOfColumns(newNumberOfChildren);
 }

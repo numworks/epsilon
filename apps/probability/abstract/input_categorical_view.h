@@ -7,7 +7,7 @@
 #include <escher/responder.h>
 #include <ion/events.h>
 
-#include <escher/button_delegate.h>
+#include <escher/invocation.h>
 #include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/table_view_controller.h"
 #include <escher/horizontal_or_vertical_layout.h>
@@ -23,7 +23,7 @@ class InputCategoricalView : public Escher::ScrollView,
                              public DynamicSizeTableViewDataSourceDelegate {
 public:
   InputCategoricalView(Escher::Responder * parentResponder,
-                       Escher::ButtonDelegate * buttonDelegate,
+                       Escher::Invocation invocation,
                        TableViewController * tableViewController,
                        Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                        Escher::TextFieldDelegate * textFieldDelegate);

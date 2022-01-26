@@ -2,7 +2,6 @@
 #define ESCHER_EXPRESSION_CELL_WITH_SUBLABEL_AND_DROPDOWN_H
 
 #include <escher/i18n.h>
-#include <escher/button_delegate.h>
 #include <escher/container.h>
 #include <escher/dropdown_view.h>
 #include <escher/message_table_cell_with_message.h>

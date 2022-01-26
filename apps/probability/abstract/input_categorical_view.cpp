@@ -1,6 +1,6 @@
 #include "input_categorical_view.h"
 
-#include <escher/button_delegate.h>
+#include <escher/invocation.h>
 #include "probability/abstract/table_view_controller.h"
 #include <escher/horizontal_or_vertical_layout.h>
 
@@ -41,7 +41,7 @@ Escher::View * InputCategoricalView::ContentView::subviewAtIndex(int i) {
 }
 
 InputCategoricalView::InputCategoricalView(Responder * parentResponder,
-                                           Escher::ButtonDelegate * buttonDelegate,
+                                           Escher::Invocation invocation,
                                            TableViewController * tableViewController,
                                            Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                                            Escher::TextFieldDelegate * textFieldDelegate) :
@@ -51,7 +51,7 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
       m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
       m_next(this,
              I18n::Message::Next,
-             buttonDelegate->buttonActionInvocation(),
+             invocation,
              Escher::Palette::WallScreenDark),
       m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
                     &m_significanceCell,

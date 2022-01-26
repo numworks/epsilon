@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <escher/input_event_handler_delegate.h>
+#include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -26,7 +27,7 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
       m_operatorDataSource(statistic->hypothesisParams()),
       m_h0(&m_selectableTableView, handler, this),
       m_ha(&m_selectableTableView, &m_operatorDataSource, this),
-      m_next(&m_selectableTableView, I18n::Message::Next, buttonActionInvocation()),
+      m_next(&m_selectableTableView, I18n::Message::Next, Escher::Invocation([](void * c, void * s) { return static_cast<HypothesisController *>(c)->buttonAction(); }, this)),
       m_statistic(statistic) {
   Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder('H', KDFont::LargeFont),

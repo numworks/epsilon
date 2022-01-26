@@ -5,7 +5,7 @@
 #include <escher/message_text_view.h>
 #include <escher/selectable_table_view.h>
 
-#include <escher/button_delegate.h>
+#include <escher/invocation.h>
 #include <escher/horizontal_or_vertical_layout.h>
 
 // Factorize with Escher::TableViewWithTopAndBottomViews
@@ -16,7 +16,7 @@ class ResultsHomogeneityView : public Escher::ScrollView {
 public:
   ResultsHomogeneityView(Escher::Responder * parent,
                          Escher::SelectableTableView * table,
-                         Escher::ButtonDelegate * buttonDelegate);
+                         Escher::Invocation invocation);
 
   Escher::Button * button() { return m_contentView.button(); }
   // ScrollView
@@ -37,7 +37,7 @@ private:
   public:
     ContentView(Escher::Responder * parent,
                 Escher::SelectableTableView * table,
-                Escher::ButtonDelegate * buttonDelegate);
+                Escher::Invocation invocation);
     int numberOfSubviews() const override { return 3; }
     Escher::View * subviewAtIndex(int i) override;
     Escher::Button * button() { return &m_next; }

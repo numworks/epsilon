@@ -161,6 +161,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
        * equal */
    || (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0
     && strcmp(inputText(), exactOutputText()) == 0)
+      // Exact output with remaining dependency are not displayed to avoid 2 ≈ undef
+   || outputExp.type() == ExpressionNode::Type::Dependency
       // Force all outputs to be ApproximateOnly if required by the exam mode configuration
    || ExamModeConfiguration::exactExpressionIsForbidden(outputExp)
       /* If the input contains the following types, we only display the

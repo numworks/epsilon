@@ -164,9 +164,12 @@ void TreeHandle::addChildAtIndexInPlace(TreeHandle t, int index, int currentNumb
 
 void TreeHandle::removeChildAtIndexInPlace(int i) {
   assert(!isUninitialized());
-  assert(i >= 0 && i < numberOfChildren());
+  int nbOfChildren = numberOfChildren();
+  assert(i >= 0 && i < nbOfChildren);
   TreeHandle t = childAtIndex(i);
   removeChildInPlace(t, t.numberOfChildren());
+
+  node()->didChangeArity(nbOfChildren - 1);
 }
 
 void TreeHandle::removeChildInPlace(TreeHandle t, int childNumberOfChildren) {

@@ -61,6 +61,7 @@ public:
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
   using TreeHandle::addChildAtIndexInPlace;
+  using TreeHandle::removeChildAtIndexInPlace;
   void addChildrenAsRowInPlace(TreeHandle t, int i);
   Expression matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
 

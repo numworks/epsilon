@@ -94,7 +94,7 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-void GridLayoutNode::didAddChildAtIndex(int newNumberOfChildren) {
+void GridLayoutNode::didChangeArity(int newNumberOfChildren) {
   setNumberOfRows(1);
   setNumberOfColumns(newNumberOfChildren);
 }

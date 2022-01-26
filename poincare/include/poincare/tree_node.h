@@ -80,7 +80,7 @@ public:
     changeParentIdentifierInChildren(NoNodeIdentifier);
   }
   // AddChild collateral effect
-  virtual void didAddChildAtIndex(int newNumberOfChildren) {}
+  virtual void didChangeArity(int newNumberOfChildren) {}
 
   // Serialization
   // Return the number of chars written, without the null-terminating char.

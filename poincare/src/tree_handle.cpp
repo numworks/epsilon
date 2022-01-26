@@ -157,7 +157,7 @@ void TreeHandle::addChildAtIndexInPlace(TreeHandle t, int index, int currentNumb
   node()->incrementNumberOfChildren();
   t.setParentIdentifier(identifier());
 
-  node()->didAddChildAtIndex(currentNumberOfChildren+1);
+  node()->didChangeArity(currentNumberOfChildren+1);
 }
 
 // Remove

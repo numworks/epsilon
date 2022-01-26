@@ -2,17 +2,16 @@
 #define ESCHER_DROPDOWN_VIEW_H
 
 #include <escher/bordered.h>
+#include <escher/bordering_view.h>
 #include <escher/image_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/memoized_list_view_data_source.h>
 #include <escher/responder.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
+#include <escher/transparent_image_view.h>
 #include <escher/view.h>
 #include <ion/events.h>
-
-#include <escher/bordering_view.h>
-#include <escher/highlight_image_cell.h>
 
 namespace Escher {
 
@@ -37,7 +36,7 @@ private:
   constexpr static int k_marginImageHorizontal = 3;
   constexpr static int k_marginImageVertical = 2;
   HighlightCell * m_cell;
-  HighlightImageCell m_caret;
+  TransparentImageView m_caret;
   bool m_isPoppingUp;
 };
 

@@ -91,10 +91,7 @@ QUIZ_CASE(poincare_dependency_derivative) {
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 
   assert_reduce("3→f(x)");
-  /* FIXME: For now, we only remove none or all of the dependencies when
-   * trimming them. As such, a useless dependency is not trimmed when there
-   * also is a non-trivial one.  */
-  assert_expression_simplify_to_with_dependencies("diff(cos(x)+f(y),x,0)", "0", {"y", "4"});
+  assert_expression_simplify_to_with_dependencies("diff(cos(x)+f(y),x,0)", "0", {"y"});
   assert_reduce("1/0→y");
   assert_expression_simplify_to_with_dependencies("diff(cos(x)+f(y),x,0)", Undefined::Name(), {""});
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();

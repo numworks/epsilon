@@ -36,9 +36,9 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
   }
   assert(dependencies.type() == ExpressionNode::Type::Matrix);
 
-  int numberOfUselessDependencies = 0;
   int totalNumberOfDependencies = numberOfDependencies();
-  for (int i = 0; i < totalNumberOfDependencies; i++) {
+  int i = 0;
+  while (i < totalNumberOfDependencies) {
     Expression e = dependencies.childAtIndex(i);
     Expression approximation = e.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
     if (approximation.isUndefined()) {
@@ -46,14 +46,14 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
        * depencencies are. Indeed, the dependency might involve unresolved
        * symbol/function/sequence (especially sequences that are not
        * approximated while in reducing routine). */
-      continue;
+      i++;
     } else {
-      numberOfUselessDependencies++;
+      static_cast<Matrix &>(dependencies).removeChildAtIndexInPlace(i);
+      totalNumberOfDependencies--;
     }
   }
 
-  /* FIXME: Remove all useless dependencies one by one instead of batching. */
-  if (childAtIndex(0).isUndefined() || numberOfDependencies() == numberOfUselessDependencies) {
+  if (childAtIndex(0).isUndefined() || totalNumberOfDependencies == 0) {
     Expression trueExpression = childAtIndex(0);
     replaceWithInPlace(trueExpression);
     return trueExpression;

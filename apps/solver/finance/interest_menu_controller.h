@@ -24,7 +24,6 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
   Escher::View * view() override { return &m_contentView; }
   int numberOfRows() const override { return m_data->numberOfUnknowns(); }
-  void setData(InterestData * data) { m_data = data; }
 private:
   uint8_t paramaterAtIndex(int index) const;
 

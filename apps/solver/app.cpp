@@ -42,7 +42,7 @@ App::App(Snapshot * snapshot) :
   m_financeResultController(&m_stackViewController, m_financeData.interestData()),
   m_interestController(&m_stackViewController, &m_inputViewController, &m_financeResultController, m_financeData.interestData()),
   m_interestMenuController(&m_stackViewController, &m_interestController, m_financeData.interestData()),
-  m_financeMenuController(&m_stackViewController, &m_interestMenuController, &m_financeData),
+  m_financeMenuController(&m_stackViewController, &m_interestMenuController, m_financeData.interestData()),
   m_menuController(&m_stackViewController, &m_listFooter, &m_financeMenuController),
   m_stackViewController(&m_inputViewController, &m_menuController),
   m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController)

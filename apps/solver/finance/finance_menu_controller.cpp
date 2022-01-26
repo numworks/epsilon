@@ -5,10 +5,10 @@
 
 using namespace Solver;
 
-FinanceMenuController::FinanceMenuController(Escher::StackViewController * parentResponder, InterestMenuController * interestMenuController, FinanceData * financeData) :
+FinanceMenuController::FinanceMenuController(Escher::StackViewController * parentResponder, InterestMenuController * interestMenuController, InterestData * interestData) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells>(parentResponder),
       m_interestMenuController(interestMenuController),
-      m_financeData(financeData) {
+      m_interestData(interestData) {
   selectRow(0);
   m_cells[k_indexOfSimpleInterest].setMessage(I18n::Message::SimpleInterest);
   m_cells[k_indexOfSimpleInterest].setSubtitle(I18n::Message::SimpleInterestDescription);
@@ -29,10 +29,8 @@ bool FinanceMenuController::handleEvent(Ion::Events::Event event) {
     bool simpleInterestRowSelected = (selectedRow() == k_indexOfSimpleInterest);
     assert(simpleInterestRowSelected || selectedRow() == k_indexOfCompoundInterest);
 
-    // Update and reset fianceData's interest data model
-    InterestData * interestData = m_financeData->interestData();
-    InterestData::Initialize(interestData, simpleInterestRowSelected);
-    m_interestMenuController->setData(interestData);
+    // Initialize a new interest data model
+    InterestData::Initialize(m_interestData, simpleInterestRowSelected);
 
     stackOpenPage(m_interestMenuController, 0);
   } else if (event == Ion::Events::Left) {

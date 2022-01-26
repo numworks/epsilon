@@ -12,7 +12,9 @@ namespace Sequence {
 
 class ListController;
 
-class TypeParameterController : public Escher::SelectableListViewController {
+constexpr int k_numberOfCells = 3;
+
+class TypeParameterController : public Escher::SelectableCellListPage<Escher::ExpressionTableCellWithMessage, k_numberOfCells> {
 public:
   TypeParameterController(Escher::Responder * parentResponder, ListController * list,
     KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
@@ -22,24 +24,20 @@ public:
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() const override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
-  Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;
   void setRecord(Ion::Storage::Record record);
 private:
+  constexpr static int k_indexOfExplicit = static_cast<int>(Shared::Sequence::Type::Explicit);
+  constexpr static int k_indexOfRecurrence = static_cast<int>(Shared::Sequence::Type::SingleRecurrence);
+  constexpr static int k_indexOfDoubleRecurrence = static_cast<int>(Shared::Sequence::Type::DoubleRecurrence);
+
   Escher::StackViewController * stackController() const;
   Shared::Sequence * sequence() {
     assert(!m_record.isNull());
     return sequenceStore()->modelForRecord(m_record);
   }
   Shared::SequenceStore * sequenceStore();
-  constexpr static int k_totalNumberOfCell = 3;
-  Escher::ExpressionTableCellWithMessage m_explicitCell;
-  Escher::ExpressionTableCellWithMessage m_singleRecurrenceCell;
-  Escher::ExpressionTableCellWithMessage m_doubleRecurenceCell;
-  Poincare::Layout m_layouts[k_totalNumberOfCell];
+  Poincare::Layout m_layouts[k_numberOfCells];
   Ion::Storage::Record m_record;
   ListController * m_listController;
 };

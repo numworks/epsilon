@@ -16,8 +16,8 @@ InterestMenuController::InterestMenuController(Escher::StackViewController * par
 
 void InterestMenuController::didBecomeFirstResponder() {
   for (size_t i = 0; i < numberOfRows(); i++) {
-    m_cells[i].setMessage(m_data->labelForParameter(paramaterAtIndex(i)));
-    m_cells[i].setSubtitle(m_data->sublabelForParameter(paramaterAtIndex(i)));
+    cellAtIndex(i)->setMessage(m_data->labelForParameter(paramaterAtIndex(i)));
+    cellAtIndex(i)->setSubtitle(m_data->sublabelForParameter(paramaterAtIndex(i)));
   }
   resetMemoization();
   m_contentView.reload();

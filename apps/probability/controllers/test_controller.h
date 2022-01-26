@@ -3,6 +3,7 @@
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_list_view_controller.h>
+#include <escher/stack_view_controller.h>
 #include <ion/events.h>
 
 #include "probability/models/statistic/statistic.h"

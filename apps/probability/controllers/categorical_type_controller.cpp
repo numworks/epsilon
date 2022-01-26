@@ -21,8 +21,8 @@ CategoricalTypeController::CategoricalTypeController(
       m_inputGoodnessController(inputGoodnessController),
       m_inputHomogeneityController(inputHomogeneityController) {
   selectRow(0);  // Select first row by default
-  m_cells[k_indexOfGoodnessCell].setMessage(I18n::Message::GoodnessOfFit);
-  m_cells[k_indexOfHomogeneityCell].setMessage(I18n::Message::Homogeneity);
+  cellAtIndex(k_indexOfGoodnessCell)->setMessage(I18n::Message::GoodnessOfFit);
+  cellAtIndex(k_indexOfHomogeneityCell)->setMessage(I18n::Message::Homogeneity);
 }
 
 void CategoricalTypeController::didBecomeFirstResponder() {

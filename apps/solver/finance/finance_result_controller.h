@@ -26,7 +26,6 @@ public:
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastAndThirdToLast; }
   Escher::View * view() override { return &m_contentView; }
-  int numberOfRows() const override { return k_numberOfResultCells; }
 
 private:
   static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7

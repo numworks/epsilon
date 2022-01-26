@@ -15,14 +15,17 @@ namespace Sequence {
 
 TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  SelectableListViewController(parentResponder),
-  m_explicitCell(&m_selectableTableView, I18n::Message::Explicit),
-  m_singleRecurrenceCell(&m_selectableTableView, I18n::Message::SingleRecurrence),
-  m_doubleRecurenceCell(&m_selectableTableView, I18n::Message::DoubleRecurrence),
+  SelectableCellListPage<ExpressionTableCellWithMessage, k_numberOfCells>(parentResponder),
   m_layouts{},
   m_record(),
   m_listController(list)
 {
+  for (int i = 0; i < k_numberOfCells; i++) {
+    cellAtIndex(i)->setParentResponder(&m_selectableTableView);
+  }
+  cellAtIndex(k_indexOfExplicit)->setSubLabelMessage(I18n::Message::Explicit);
+  cellAtIndex(k_indexOfRecurrence)->setSubLabelMessage(I18n::Message::SingleRecurrence);
+  cellAtIndex(k_indexOfDoubleRecurrence)->setSubLabelMessage(I18n::Message::DoubleRecurrence);
   m_selectableTableView.setMargins(topMargin, rightMargin, bottomMargin, leftMargin);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
@@ -53,7 +56,7 @@ void TypeParameterController::didBecomeFirstResponder() {
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (!m_record.isNull()) {
-      Shared::Sequence::Type sequenceType = (Shared::Sequence::Type)selectedRow();
+      Shared::Sequence::Type sequenceType = static_cast<Shared::Sequence::Type>(selectedRow());
       if (sequence()->type() != sequenceType) {
         m_listController->selectPreviousNewSequenceCell();
         sequence()->setType(sequenceType);
@@ -78,7 +81,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     Ion::Storage::Record record = sequenceStore()->recordAtIndex(sequenceStore()->numberOfModels()-1);
     Shared::Sequence * newSequence = sequenceStore()->modelForRecord(record);
-    newSequence->setType((Shared::Sequence::Type)selectedRow());
+    newSequence->setType(static_cast<Shared::Sequence::Type>(selectedRow()));
     Container::activeApp()->dismissModalViewController();
     m_listController->editExpression(0, Ion::Events::OK);
     return true;
@@ -88,21 +91,6 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
-}
-
-int TypeParameterController::numberOfRows() const {
-  return k_totalNumberOfCell;
-};
-
-HighlightCell * TypeParameterController::reusableCell(int index, int type) {
-  assert(index >= 0);
-  assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_explicitCell, &m_singleRecurrenceCell, &m_doubleRecurenceCell};
-  return cells[index];
-}
-
-int TypeParameterController::reusableCellCount(int type) {
-  return k_totalNumberOfCell;
 }
 
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int j) {
@@ -127,11 +115,6 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       );
   ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
   myCell->setLayout(m_layouts[j]);
-}
-
-KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
-  ExpressionTableCellWithMessage tempCell;
-  return heightForCellAtIndex(&tempCell, j);
 }
 
 void TypeParameterController::setRecord(Ion::Storage::Record record) {

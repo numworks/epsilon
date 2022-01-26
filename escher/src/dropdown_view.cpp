@@ -12,13 +12,14 @@ namespace Escher {
 
 PopupItemView::PopupItemView(HighlightCell * cell) : m_cell(cell) {
   m_caret.setImage(ImageStore::Caret);
+  m_caret.setBackgroundColor(KDColorWhite);
 }
 
 void PopupItemView::setHighlighted(bool highlighted) {
   if (m_cell) {
     m_cell->setHighlighted(highlighted);
   }
-  m_caret.setHighlighted(highlighted);
+  m_caret.setBackgroundColor(highlighted ? Palette::Select : KDColorWhite);
   HighlightCell::setHighlighted(highlighted);
 }
 

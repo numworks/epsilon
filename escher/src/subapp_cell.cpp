@@ -5,6 +5,7 @@
 namespace Escher {
 
 SubappCell::SubappCell() {
+  m_icon.setBackgroundColor(KDColorWhite);
   m_title.setFont(KDFont::LargeFont);
   m_subTitle.setFont(KDFont::SmallFont);
   m_subTitle.setTextColor(Palette::GrayDark);
@@ -17,7 +18,7 @@ void SubappCell::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void SubappCell::setHighlighted(bool highlighted) {
-  m_icon.setHighlighted(highlighted);
+  m_icon.setBackgroundColor(highlighted ? Palette::Select : KDColorWhite);
   m_title.setHighlighted(highlighted);
   m_subTitle.setHighlighted(highlighted);
   HighlightCell::setHighlighted(highlighted);

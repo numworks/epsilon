@@ -28,7 +28,6 @@ public:
   virtual I18n::Message dropdownMessageAtIndex(int index) const = 0;
   virtual double computeUnknownValue() const = 0;
 
-  void resetValues();
   void setValue(uint8_t param, double value) {
     assert(param < numberOfDoubleValues());
     m_values[param] = value;
@@ -47,6 +46,7 @@ public:
 
 protected:
   constexpr static uint8_t k_maxNumberOfDoubleValues = 7; // static_cast<uint8_t>(CompoundInterestData::Parameter::Payment)
+  void resetValues();
   uint8_t m_unknown;
 
 private:

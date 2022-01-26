@@ -16,20 +16,18 @@ void assert_interest_solves(const double * expectedValues, bool booleanParam, In
   }
   // Test each parameters
   for (uint8_t paramIndex = 0; paramIndex < data->numberOfUnknowns(); paramIndex++) {
-    uint8_t previousUnknownParam = data->getUnknown();
+    uint8_t previousUnknownParamIndex = data->getUnknown();
     // Set new unknown parameter, previous unknown parameter's value is resetted
     data->setUnknown(paramIndex);
     // Restore previous unknown parameter's value
-    uint8_t previousUnknownParamIndex = previousUnknownParam;
     if (previousUnknownParamIndex < data->numberOfDoubleValues() && previousUnknownParamIndex != paramIndex) {
-      data->setValue(previousUnknownParam, expectedValues[previousUnknownParamIndex]);
+      data->setValue(previousUnknownParamIndex, expectedValues[previousUnknownParamIndex]);
     }
     // Compute and check unknown parameter's value
     double expectedValue = expectedValues[paramIndex];
 
     quiz_assert(IsApproximatelyEqual(data->computeUnknownValue(), expectedValue, k_precision, reference));
   }
-  data->resetValues();
 }
 
 QUIZ_CASE(equation_finance_simple_interest) {

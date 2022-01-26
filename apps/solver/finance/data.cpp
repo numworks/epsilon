@@ -17,6 +17,16 @@ void InterestData::Initialize(void * m_buffer, bool simple) {
   }
 }
 
+void InterestData::setUnknown(uint8_t param) {
+  if (m_unknown >= numberOfUnknowns()) {
+    m_unknown = param;
+  } else if (param != m_unknown) {
+    setValue(m_unknown, defaultValue(m_unknown));
+    m_unknown = param;
+    setValue(m_unknown, NAN);
+  }
+}
+
 void InterestData::resetValues() {
   m_booleanParam = true;
   // Set first parameter as unknown by default
@@ -25,16 +35,6 @@ void InterestData::resetValues() {
   // Default the other double parameters
   for (uint8_t param = 1; param < numberOfDoubleValues(); param++) {
     setValue(param, defaultValue(param));
-  }
-}
-
-void InterestData::setUnknown(uint8_t param) {
-  if (m_unknown >= numberOfUnknowns()) {
-    m_unknown = param;
-  } else if (param != m_unknown) {
-    setValue(m_unknown, defaultValue(m_unknown));
-    m_unknown = param;
-    setValue(m_unknown, NAN);
   }
 }
 

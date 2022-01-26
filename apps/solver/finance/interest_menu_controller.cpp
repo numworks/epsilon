@@ -27,12 +27,9 @@ bool InterestMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     m_data->setUnknown(paramaterAtIndex(selectedRow()));
     stackOpenPage(m_interestController, 1);
-  } else if (event == Ion::Events::Left) {
-    popStackViewControllerParentResponder();
-  } else {
-    return false;
+    return true;
   }
-  return true;
+  return popFromStackViewControllerOnLeftEvent(event);
 }
 
 uint8_t InterestMenuController::paramaterAtIndex(int index) const {

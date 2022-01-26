@@ -48,11 +48,7 @@ void InterestController::didBecomeFirstResponder() {
 }
 
 bool InterestController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left) {
-    popStackViewControllerParentResponder();
-    return true;
-  }
-  return false;
+  return popFromStackViewControllerOnLeftEvent(event);
 }
 
 int InterestController::reusableCellCount(int type) {

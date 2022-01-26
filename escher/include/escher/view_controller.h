@@ -3,6 +3,7 @@
 
 #include <escher/i18n.h>
 #include <escher/telemetry.h>
+#include <ion/events.h>
 extern "C" {
 #include <stdint.h>
 }
@@ -61,8 +62,8 @@ public:
   /* Use these two functions only if the controller is in a stack hierarchy */
   // Pushes the given controller onto the parent StackViewController responder
   void stackOpenPage(ViewController * nextPage, int styleStep);
-  // Pop the parent StackViewController responder
-  void popStackViewControllerParentResponder();
+  // Pop the parent StackViewController responder on a Left event
+  bool popFromStackViewControllerOnLeftEvent(Ion::Events::Event event);
 protected:
 #if EPSILON_TELEMETRY
   virtual const char * telemetryId() const { return nullptr; }

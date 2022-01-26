@@ -38,10 +38,14 @@ void ViewController::stackOpenPage(ViewController * nextPage, int styleStep) {
   stackViewControllerResponder->push(nextPage, StackViewController::Style::GrayGradation, styleStep);
 }
 
-void ViewController::popStackViewControllerParentResponder() {
-  StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
-  assert(stackViewControllerResponder != nullptr);
-  stackViewControllerResponder->pop();
+bool ViewController::popFromStackViewControllerOnLeftEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left) {
+    StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
+    assert(stackViewControllerResponder != nullptr);
+    stackViewControllerResponder->pop();
+    return true;
+  }
+  return false;
 }
 
 #if EPSILON_TELEMETRY

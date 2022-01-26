@@ -488,6 +488,10 @@ QUIZ_CASE(sequence_context) {
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 
   store->removeAll();
+  addSequence(store, Sequence::Type::Explicit, "1/0", nullptr, nullptr, &sequenceContext);
+  assert_expression_simplifies_approximates_to<double>("f(u(2))", "undef");
+
+  store->removeAll();
   store->tidyDownstreamPoolFrom();
 }
 

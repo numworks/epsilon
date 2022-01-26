@@ -24,7 +24,7 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
                                Statistic * globalStatistic,
                                Distribution * globalDistribution,
                                Calculation * globalCalculation) :
-      Escher::SelectableListViewController(parentResponder),
+      Escher::SelectableCellListPage<Escher::SubappCell, k_numberOfCells>(parentResponder),
       m_distributionController(distributionController),
       m_testController(testController),
       m_globalTest(globalTest),
@@ -34,24 +34,17 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
       m_globalCalculation(globalCalculation),
       m_contentView(&m_selectableTableView) {
   selectRow(0);
-  m_cells[k_indexOfProbability].setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
-  m_cells[k_indexOfProbability].setImage(ImageStore::Probability);
-  m_cells[k_indexOfTest].setImage(ImageStore::SignificanceTest);
-  m_cells[k_indexOfTest].setMessages(I18n::Message::Tests, I18n::Message::TestDescr);
-  m_cells[k_indexOfInterval].setMessages(I18n::Message::Intervals, I18n::Message::IntervalDescr);
-  m_cells[k_indexOfInterval].setImage(ImageStore::ConfidenceInterval);
+  cellAtIndex(k_indexOfProbability)->setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
+  cellAtIndex(k_indexOfProbability)->setImage(ImageStore::Probability);
+  cellAtIndex(k_indexOfTest)->setImage(ImageStore::SignificanceTest);
+  cellAtIndex(k_indexOfTest)->setMessages(I18n::Message::Tests, I18n::Message::TestDescr);
+  cellAtIndex(k_indexOfInterval)->setMessages(I18n::Message::Intervals, I18n::Message::IntervalDescr);
+  cellAtIndex(k_indexOfInterval)->setImage(ImageStore::ConfidenceInterval);
 }
 
 void MenuController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::Menu);
   m_selectableTableView.reloadData(true);
-}
-
-Escher::HighlightCell * MenuController::reusableCell(int index, int type) {
-  // Return correct cell
-  assert(type == 0);
-  assert(index >= 0 && index <= k_numberOfCells);
-  return &m_cells[index];
 }
 
 bool MenuController::handleEvent(Ion::Events::Event event) {

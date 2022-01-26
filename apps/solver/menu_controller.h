@@ -13,14 +13,14 @@
 
 namespace Solver {
 
+constexpr int k_numberOfCells = 2;
+
 // Controller
-class MenuController : public Escher::SelectableListViewController {
+class MenuController : public Escher::SelectableCellListPage<Escher::SubappCell, k_numberOfCells> {
 public:
   MenuController(Escher::StackViewController * parentResponder,
                  Escher::ViewController * listController,
                  Escher::ViewController * financeMenuController);
-  int numberOfRows() const override { return k_numberOfCells; }
-  Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::View * view() override { return &m_contentView; }
@@ -31,9 +31,6 @@ public:
 private:
   Escher::ViewController * m_listController;
   Escher::ViewController * m_financeMenuController;
-
-  constexpr static int k_numberOfCells = 2;
-  Escher::SubappCell m_cells[k_numberOfCells];
 
   Escher::CenteringView m_contentView;
 };

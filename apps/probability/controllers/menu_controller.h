@@ -14,8 +14,10 @@
 
 namespace Probability {
 
+constexpr int k_numberOfCells = 3;
+
 // Controller
-class MenuController : public Escher::SelectableListViewController {
+class MenuController : public Escher::SelectableCellListPage<Escher::SubappCell, k_numberOfCells> {
 public:
   MenuController(Escher::StackViewController * parentResponder,
                  DistributionController * distributionController,
@@ -25,8 +27,6 @@ public:
                  Statistic * globalStatistic,
                  Distribution * globalDistribution,
                  Calculation * globalCalculation);
-  int numberOfRows() const override { return k_numberOfCells; }
-  Escher::HighlightCell * reusableCell(int index, int type) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::View * view() override { return &m_contentView; }
@@ -41,8 +41,6 @@ private:
   DistributionController * m_distributionController;
   TestController * m_testController;
 
-  constexpr static int k_numberOfCells = 3;
-  Escher::SubappCell m_cells[k_numberOfCells];
   Data::Test * m_globalTest;
   Data::TestType * m_globalTestType;
   Statistic * m_globalStatistic;

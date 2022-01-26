@@ -66,11 +66,7 @@ void InputCategoricalController::didBecomeFirstResponder() {
 }
 
 bool InputCategoricalController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left) {
-    popStackViewControllerParentResponder();
-    return true;
-  }
-  return false;
+  return popFromStackViewControllerOnLeftEvent(event);
 }
 
 bool InputCategoricalController::buttonAction() {

@@ -84,11 +84,8 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     *m_globalTestType = t;
     stackOpenPage(view, 0);
     return true;
-  } else if (event == Ion::Events::Left) {
-    popStackViewControllerParentResponder();
-    return true;
   }
-  return false;
+  return popFromStackViewControllerOnLeftEvent(event);
 }
 
 Escher::View * TypeView::subviewAtIndex(int i) {

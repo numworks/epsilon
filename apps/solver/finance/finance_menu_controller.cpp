@@ -10,10 +10,10 @@ FinanceMenuController::FinanceMenuController(Escher::StackViewController * paren
       m_interestMenuController(interestMenuController),
       m_interestData(interestData) {
   selectRow(0);
-  m_cells[k_indexOfSimpleInterest].setMessage(I18n::Message::SimpleInterest);
-  m_cells[k_indexOfSimpleInterest].setSubtitle(I18n::Message::SimpleInterestDescription);
-  m_cells[k_indexOfCompoundInterest].setMessage(I18n::Message::CompoundInterest);
-  m_cells[k_indexOfCompoundInterest].setSubtitle(I18n::Message::CompoundInterestDescription);
+  cellAtIndex(k_indexOfSimpleInterest)->setMessage(I18n::Message::SimpleInterest);
+  cellAtIndex(k_indexOfSimpleInterest)->setSubtitle(I18n::Message::SimpleInterestDescription);
+  cellAtIndex(k_indexOfCompoundInterest)->setMessage(I18n::Message::CompoundInterest);
+  cellAtIndex(k_indexOfCompoundInterest)->setSubtitle(I18n::Message::CompoundInterestDescription);
 }
 
 const char * FinanceMenuController::title() {

@@ -16,14 +16,14 @@ FinanceResultController::FinanceResultController(Escher::StackViewController * p
 }
 
 void FinanceResultController::didBecomeFirstResponder() {
-  m_cells[0].setMessage(m_data->labelForParameter(m_data->getUnknown()));
-  m_cells[0].setSubLabelMessage(m_data->sublabelForParameter(m_data->getUnknown()));
+  cellAtIndex(0)->setMessage(m_data->labelForParameter(m_data->getUnknown()));
+  cellAtIndex(0)->setSubLabelMessage(m_data->sublabelForParameter(m_data->getUnknown()));
   double value = m_data->computeUnknownValue();
   constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
   constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
   Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
-  m_cells[0].setAccessoryText(buffer);
+  cellAtIndex(0)->setAccessoryText(buffer);
   resetMemoization(true);
   selectRow(-1);
   m_contentView.reload();
@@ -31,7 +31,7 @@ void FinanceResultController::didBecomeFirstResponder() {
 
 bool FinanceResultController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    Escher::Clipboard::sharedClipboard()->store(m_cells[0].text());
+    Escher::Clipboard::sharedClipboard()->store(cellAtIndex(0)->text());
     return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);

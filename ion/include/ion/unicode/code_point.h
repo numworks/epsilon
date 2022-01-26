@@ -54,6 +54,7 @@ static constexpr CodePoint UCodePointCarriageReturn           = 0xd;
 static constexpr CodePoint UCodePointEmpty                    = 0x11; // Used to be parsed into EmptyExpression
 static constexpr CodePoint UCodePointLeftSystemParenthesis    = 0x12; // Used for serialization
 static constexpr CodePoint UCodePointRightSystemParenthesis   = 0x13; // Used for serialization
+static constexpr CodePoint UCodePointSystem                   = 0x14; // Marker that it's readable by system only (used for Poincare::Dependency)
 
 static constexpr CodePoint UCodePointDegreeSign               = 0xb0;    // °
 static constexpr CodePoint UCodePointMiddleDot                = 0xb7;    // ·

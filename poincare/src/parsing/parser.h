@@ -121,6 +121,7 @@ private:
     &Cotangent::s_functionHelper,
     &VectorCross::s_functionHelper,
     &Cosecant::s_functionHelper,
+    &Dependency::s_functionHelper,
     &Determinant::s_functionHelper,
     &Derivative::s_functionHelper,
     &MatrixDimension::s_functionHelper,

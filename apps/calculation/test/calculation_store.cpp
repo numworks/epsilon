@@ -228,6 +228,13 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("cos(45)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("cos(π/2)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
 
+  // Exact output that have dependencies are not displayed
+  assertCalculationIs("sum(1/i,i,0,5)→a", DisplayOutput::ApproximateOnly, EqualSign::Approximation, "sum(1/i,i,0,5)", "undef", "undef", &globalContext, &store);
+  assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Equal, "2", "2", "2", &globalContext, &store);
+  assertCalculationIs("f(a)", DisplayOutput::ApproximateOnly, EqualSign::Approximation, "dep\U00000014(2,[[sum(1/i,i,0,5)]])", "undef", "undef", &globalContext, &store);
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+
   Poincare::Preferences::ExamMode previousExamMode = Poincare::Preferences::sharedPreferences()->examMode();
   Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Dutch);
 

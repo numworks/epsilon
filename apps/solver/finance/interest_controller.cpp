@@ -119,7 +119,6 @@ Escher::HighlightCell * InterestController::reusableCell(int i, int type) {
 }
 
 bool InterestController::buttonAction() {
-  m_financeResultController->setData(m_data);
   stackOpenPage(m_financeResultController, 1);
   return true;
 }

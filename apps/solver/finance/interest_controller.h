@@ -42,8 +42,6 @@ public:
   // Escher::DropdownCallback
   void onDropdownSelected(int selectedRow) override;
 
-  void setData(InterestData * data) { m_data = data; }
-
 private:
   uint8_t paramaterAtIndex(int index) const;
 

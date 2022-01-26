@@ -134,11 +134,7 @@ Escher::HighlightCell * InputController::reusableParameterCell(int index, int ty
 }
 
 bool Probability::InputController::handleEvent(Ion::Events::Event event) {
-  if ((App::app()->subapp() == Data::SubApp::Intervals) && (event == Ion::Events::Left)) {
-    popStackViewControllerParentResponder();
-    return true;
-  }
-  return false;
+  return (App::app()->subapp() == Data::SubApp::Intervals) && popFromStackViewControllerOnLeftEvent(event);
 }
 
 bool Probability::InputController::isCellEditing(Escher::HighlightCell * cell, int index) {

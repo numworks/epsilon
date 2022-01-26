@@ -130,12 +130,8 @@ bool TestController::handleEvent(Ion::Events::Event event) {
 
     stackOpenPage(controller, 0);
     return true;
-  } else if (event == Ion::Events::Left) {
-    popStackViewControllerParentResponder();
-    return true;
   }
-
-  return false;
+  return popFromStackViewControllerOnLeftEvent(event);
 }
 
 int TestController::numberOfRows() const {

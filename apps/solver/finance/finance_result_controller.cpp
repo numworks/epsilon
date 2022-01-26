@@ -32,12 +32,9 @@ void FinanceResultController::didBecomeFirstResponder() {
 bool FinanceResultController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     Escher::Clipboard::sharedClipboard()->store(m_cells[0].text());
-  } else if (event == Ion::Events::Left) {
-    popStackViewControllerParentResponder();
-  } else {
-    return false;
+    return true;
   }
-  return true;
+  return popFromStackViewControllerOnLeftEvent(event);
 }
 
 /* TODO Hugo : Improve Probability::CalculationController::updateTitle, which

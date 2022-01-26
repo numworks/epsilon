@@ -3,9 +3,9 @@
 
 #include <escher/bordered.h>
 #include <escher/chevron_view.h>
+#include <escher/highlight_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/transparent_image_view.h>
-#include <escher/highlight_message_view.h>
-
 namespace Escher {
 
 /* Cell made of an icon, a title, a chevron and a subtitle below. */
@@ -29,8 +29,8 @@ private:
   constexpr static int k_horizontalMarginBetweenTextAndIcon = 15;
 
   TransparentImageView m_icon;
-  HighlightMessageView m_title;
-  HighlightMessageView m_subTitle;
+  MessageTextView m_title;
+  MessageTextView m_subTitle;
   ChevronView m_chevron;
 };
 

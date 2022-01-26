@@ -3,7 +3,6 @@
 
 #include <escher/selectable_table_view.h>
 
-#include <escher/button_delegate.h>
 #include "input_categorical_view.h"
 #include <shared/parameter_text_field_delegate.h>
 #include <escher/stack_view_controller.h>
@@ -16,7 +15,6 @@ namespace Probability {
  * significance level input and own the content view. */
 class InputCategoricalController : public Escher::ViewController,
                                    public Shared::ParameterTextFieldDelegate,
-                                   public Escher::ButtonDelegate,
                                    public Escher::SelectableTableViewDelegate {
 public:
   InputCategoricalController(Escher::StackViewController * parent,
@@ -36,8 +34,8 @@ public:
   void didEnterResponderChain(Responder * previousResponder) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  // ButtonDelegate
-  bool buttonAction() override;
+
+  bool buttonAction();
 
   // ViewController
   Escher::View * view() override { return &m_contentView; }

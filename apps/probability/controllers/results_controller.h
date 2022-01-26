@@ -8,7 +8,6 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include <escher/table_view_with_top_and_bottom_views.h>
-#include <escher/button_delegate.h>
 #include <escher/view_controller.h>
 
 #include "probability/models/results_data_source.h"
@@ -18,7 +17,6 @@
 namespace Probability {
 
 class ResultsController : public Escher::ViewController,
-                          public Escher::ButtonDelegate,
                           public Escher::SelectableTableViewDataSource,
                           public DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> {
 public:
@@ -30,7 +28,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override;
   const char * title() override;
   void didBecomeFirstResponder() override;
-  bool buttonAction() override;
+  bool buttonAction();
   Escher::View * view() override { return &m_contentView; }
 
   void initCell(ExpressionCellWithBufferWithMessage, void * cell, int index) override;

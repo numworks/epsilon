@@ -13,7 +13,6 @@
 namespace Probability {
 
 class ResultsHomogeneityController : public Escher::ViewController,
-                                     public Escher::ButtonDelegate,
                                      public Escher::SelectableTableViewDelegate,
                                      public DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> {
 public:
@@ -28,7 +27,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  bool buttonAction() override;
+  bool buttonAction();
 
   void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
                                                int previousSelectedCellX,

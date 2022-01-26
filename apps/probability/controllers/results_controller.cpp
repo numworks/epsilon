@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <apps/exam_mode_configuration.h>
 #include <escher/input_event_handler_delegate.h>
+#include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include <poincare/print.h>
@@ -21,7 +22,7 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
       m_tableView(this, &m_resultsDataSource, this, &m_contentView),
       m_title(KDFont::SmallFont, I18n::Message::CalculatedValues, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
       m_contentView(&m_tableView, &m_resultsDataSource, &m_title),
-      m_resultsDataSource(&m_tableView, statistic, this, this),
+      m_resultsDataSource(&m_tableView, statistic, Escher::Invocation([](void * c, void * s) { return static_cast<ResultsController *>(c)->buttonAction(); }, this), this),
       m_statistic(statistic),
       m_statisticGraphController(statisticGraphController) {
 }

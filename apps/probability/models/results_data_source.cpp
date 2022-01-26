@@ -13,12 +13,12 @@ namespace Probability {
 
 ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
                                      Statistic * statistic,
-                                     Escher::ButtonDelegate * buttonDelegate,
+                                     Escher::Invocation invocation,
                                      DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> * dynamicCellsDataSourceDelegate) :
       MemoizedListViewDataSource(),
       DynamicCellsDataSource<ExpressionCellWithBufferWithMessage, k_maxNumberOfExpressionCellsWithBufferWithMessage>(dynamicCellsDataSourceDelegate),
       m_statistic(statistic),
-      m_next(parent, I18n::Message::Next, buttonDelegate->buttonActionInvocation())
+      m_next(parent, I18n::Message::Next, invocation)
 {
 }
 

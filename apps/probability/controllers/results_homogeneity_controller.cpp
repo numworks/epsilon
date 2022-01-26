@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <escher/container.h>
+#include <escher/invocation.h>
 #include <escher/palette.h>
 #include <kandinsky/font.h>
 
@@ -16,7 +17,7 @@ ResultsHomogeneityController::ResultsHomogeneityController(
     ResultsController * resultsController) :
       Escher::ViewController(stackViewController),
       m_resultsController(resultsController),
-      m_contentView(this, &m_table, this),
+      m_contentView(this, &m_table, Escher::Invocation([](void * c, void * s) { return static_cast<ResultsHomogeneityController *>(c)->buttonAction(); }, this)),
       m_tableData(statistic, this, this),
       m_table(this, &m_tableData, &m_tableData, &m_tableData),
       m_isTableSelected(true) {

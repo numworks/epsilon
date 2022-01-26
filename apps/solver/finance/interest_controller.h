@@ -3,7 +3,6 @@
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/selectable_list_view_controller.h>
-#include <escher/button_delegate.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/message_table_cell_with_sublabel_and_dropdown.h>
@@ -17,7 +16,6 @@
 namespace Solver {
 
 class InterestController : public Escher::SelectableListViewController,
-                           public Escher::ButtonDelegate,
                            public Escher::TextFieldDelegate,
                            public Escher::DropdownCallback {
 public:
@@ -32,7 +30,7 @@ public:
   Escher::HighlightCell * reusableCell(int i, int type) override;
   // Confirm cell plus all parameters but the unknown one
   int numberOfRows() const override { return m_data->numberOfParameters(); }
-  bool buttonAction() override;
+  bool buttonAction();
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
 
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override { return false; }

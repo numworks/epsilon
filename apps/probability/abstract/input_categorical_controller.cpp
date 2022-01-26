@@ -3,6 +3,7 @@
 #include "probability/app.h"
 #include "probability/constants.h"
 #include "probability/text_helpers.h"
+#include <escher/invocation.h>
 
 namespace Probability {
 
@@ -14,7 +15,7 @@ InputCategoricalController::InputCategoricalController(
       Escher::ViewController(parent),
       m_statistic(statistic),
       m_resultsController(resultsController),
-      m_contentView(this, this, nullptr, inputEventHandlerDelegate, this) {
+      m_contentView(this, Escher::Invocation([](void * c, void * s) { return static_cast<InputCategoricalController *>(c)->buttonAction(); }, this), nullptr, inputEventHandlerDelegate, this) {
 }
 
 bool InputCategoricalController::textFieldShouldFinishEditing(TextField * textField,

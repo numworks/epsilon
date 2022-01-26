@@ -8,7 +8,7 @@ namespace Probability {
 
 ResultsHomogeneityView::ContentView::ContentView(Responder * parent,
                                                  SelectableTableView * table,
-                                                 ButtonDelegate * buttonDelegate) :
+                                                 Invocation invocation) :
       m_title(KDFont::SmallFont,
               I18n::Message::HomogeneityResultsTitle,
               KDContext::k_alignCenter,
@@ -18,7 +18,7 @@ ResultsHomogeneityView::ContentView::ContentView(Responder * parent,
       m_table(table),
       m_next(parent,
              I18n::Message::Next,
-             buttonDelegate->buttonActionInvocation(),
+             invocation,
              KDFont::LargeFont),
       m_buttonWrapper(&m_next) {
 }
@@ -52,9 +52,9 @@ KDPoint Probability::ResultsHomogeneityView::ContentView::buttonOrigin() {
 
 Probability::ResultsHomogeneityView::ResultsHomogeneityView(Responder * parent,
                                                             SelectableTableView * table,
-                                                            ButtonDelegate * buttonDelegate) :
+                                                            Invocation invocation) :
       ScrollView(&m_contentView, &m_scrollDataSource),
-      m_contentView(parent, table, buttonDelegate) {
+      m_contentView(parent, table, invocation) {
   setMargins(Metric::CellTopMargin, 0, Metric::CommonBottomMargin, 0);
   setBackgroundColor(Palette::WallScreenDark);
 }

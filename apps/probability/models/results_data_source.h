@@ -4,7 +4,7 @@
 #include <apps/shared/button_with_separator.h>
 #include <escher/memoized_list_view_data_source.h>
 
-#include <escher/button_delegate.h>
+#include <escher/invocation.h>
 #include "probability/abstract/dynamic_cells_data_source.h"
 #include "probability/gui/expression_cell_with_buffer_with_message.h"
 #include "probability/models/statistic/statistic.h"
@@ -16,7 +16,7 @@ namespace Probability {
  */
 class ResultsDataSource : public Escher::MemoizedListViewDataSource, public DynamicCellsDataSource<ExpressionCellWithBufferWithMessage, k_maxNumberOfExpressionCellsWithBufferWithMessage> {
 public:
-  ResultsDataSource(Escher::Responder * parent, Statistic * statistic, Escher::ButtonDelegate * buttonDelegate, DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> * dynamicCellsDataSourceDelegate);
+  ResultsDataSource(Escher::Responder * parent, Statistic * statistic, Escher::Invocation invocation, DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> * dynamicCellsDataSourceDelegate);
   int numberOfRows() const override;
   KDCoordinate cellWidth() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;

@@ -18,7 +18,7 @@ class FinanceMenuController : public Escher::SelectableCellListPage<Escher::Mess
 public:
   FinanceMenuController(Escher::StackViewController * parentResponder,
                     InterestMenuController * interestMenuController,
-                    FinanceData * financeData);
+                    InterestData * interestData);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override;
@@ -29,7 +29,7 @@ public:
 
 private:
   InterestMenuController * m_interestMenuController;
-  FinanceData * m_financeData;
+  InterestData * m_interestData;
 };
 
 }  // namespace Solver

@@ -28,7 +28,7 @@ public:
 
   typename Poincare::EvaluationNode<T>::Type type() const override { return Poincare::EvaluationNode<T>::Type::Complex; }
   bool isUndefined() const override {
-    return (std::isnan(this->real()) && std::isnan(this->imag()));
+    return (std::isnan(this->real()) || std::isnan(this->imag()));
   }
   T toScalar() const override;
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;

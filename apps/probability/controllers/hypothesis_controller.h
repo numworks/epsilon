@@ -10,7 +10,6 @@
 #include <escher/view.h>
 
 #include "input_controller.h"
-#include <escher/button_delegate.h>
 #include "probability/gui/comparison_operator_popup_data_source.h"
 #include "probability/gui/expression_cell_with_editable_text_with_message.h"
 #include "probability/gui/expression_cell_with_sublabel_and_dropdown.h"
@@ -21,7 +20,6 @@ using namespace Escher;
 namespace Probability {
 
 class HypothesisController : public Escher::SelectableListViewController,
-                             public Escher::ButtonDelegate,
                              public Escher::TextFieldDelegate,
                              public Escher::DropdownCallback {
 public:
@@ -37,7 +35,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }
-  bool buttonAction() override;
+  bool buttonAction();
 
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldShouldFinishEditing(Escher::TextField * textField,

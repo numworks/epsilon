@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <escher/input_event_handler_delegate.h>
+#include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/print.h>
 #include "../app.h"
@@ -12,7 +13,7 @@ using namespace Solver;
 InterestController::InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, InterestData * data) :
     Escher::SelectableListViewController(parent),
     m_dropdownCell(&m_selectableTableView, &m_dropdownDataSource, this),
-    m_next(&m_selectableTableView, I18n::Message::Ok, buttonActionInvocation()),
+    m_next(&m_selectableTableView, I18n::Message::Ok, Escher::Invocation([](void * c, void * s) { return static_cast<InterestController *>(c)->buttonAction(); }, this)),
     m_financeResultController(financeResultController),
     m_data(data) {
   for (size_t i = 0; i < k_numberOfReusableInputs; i++) {

@@ -22,8 +22,8 @@ public:
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override { return childAtIndex(0)->getPolynomialCoefficients(context, symbolName, coefficients); }
 
   // Layout
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return childAtIndex(0)->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits); }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { assert(false); return Layout(); }
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
 
   // Evaluation
@@ -51,6 +51,11 @@ public:
   /* Store the dependecies in m and replace the dependency node with the true expression. */
   void extractDependencies(Matrix m);
   bool dependencyRecursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols); }
+
+  // Parser utils
+  static Expression UntypedBuilder(Expression children);
+  static_assert(UCodePointSystem == 0x14, "UCodePointSystem value was modified");
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dep\x14", 2, &UntypedBuilder);
 };
 
 }

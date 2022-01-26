@@ -48,7 +48,7 @@ size_t Tokenizer::popIdentifier(CodePoint additionalAcceptedCodePoint) {
    * instance input '2πx' without any danger.
    */
   return popWhile([](CodePoint c, CodePoint context) {
-      return c.isDecimalDigit() || c.isLatinLetter() || (c != UCodePointNull && c == context) || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+      return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || (c != UCodePointNull && c == context) || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
       }, additionalAcceptedCodePoint);
 }
 

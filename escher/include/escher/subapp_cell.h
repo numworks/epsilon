@@ -3,7 +3,7 @@
 
 #include <escher/bordered.h>
 #include <escher/chevron_view.h>
-#include <escher/highlight_image_cell.h>
+#include <escher/transparent_image_view.h>
 #include <escher/highlight_message_view.h>
 
 namespace Escher {
@@ -28,7 +28,7 @@ private:
   constexpr static int k_verticalMarginBottom = 7;
   constexpr static int k_horizontalMarginBetweenTextAndIcon = 15;
 
-  HighlightImageCell m_icon;
+  TransparentImageView m_icon;
   HighlightMessageView m_title;
   HighlightMessageView m_subTitle;
   ChevronView m_chevron;

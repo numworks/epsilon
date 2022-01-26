@@ -54,11 +54,7 @@ const char * Probability::HypothesisController::title() {
 }
 
 bool Probability::HypothesisController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left) {
-    popStackViewControllerParentResponder();
-    return true;
-  }
-  return false;
+  return popFromStackViewControllerOnLeftEvent(event);
 }
 
 // TextFieldDelegate

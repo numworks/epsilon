@@ -6,7 +6,6 @@
 #include <escher/responder.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_delegate.h>
-#include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 
 namespace Escher {
@@ -27,24 +26,19 @@ protected:
 
 /*
  * This Class is useful to create a SelectableListViewController of
- * the same type of cells.
+ * the same type of cells with a constant number of rows that all have their own
+ * reusable cell.
  */
-template <typename Cell, int n>
+template <typename Cell, int numberOfCells>
 class SelectableCellListPage : public SelectableListViewController {
- public:
-  SelectableCellListPage(StackViewController * parent, SelectableTableViewDelegate * tableDelegate = nullptr) :
-    SelectableListViewController(parent, tableDelegate)
-  {}
-  int numberOfRows() const override { return k_numberOfRows; }
-  HighlightCell * reusableCell(int i, int type) override {
-    assert(type == 0);
-    assert(i >= 0 && i < k_numberOfRows);
-    return &m_cells[i];
-  }
-  Cell * cellAtIndex(int i) { return &m_cells[i]; }
- protected:
-  constexpr static int k_numberOfRows = n;
-  Cell m_cells[n];
+  static_assert(numberOfCells < 8, "There should'nt be a need for more than 8 reusable cells.");
+public:
+  SelectableCellListPage(Responder * parent, SelectableTableViewDelegate * tableDelegate = nullptr) : SelectableListViewController(parent, tableDelegate) {}
+  Cell * cellAtIndex(int i) { assert(i >= 0 && i < numberOfCells); return &m_cells[i]; }
+  int numberOfRows() const override { return numberOfCells; }
+  HighlightCell * reusableCell(int i, int type) final { assert(type == 0); return cellAtIndex(i); }
+private:
+  Cell m_cells[numberOfCells];
 };
 
 }

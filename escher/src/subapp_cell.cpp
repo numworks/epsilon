@@ -1,4 +1,5 @@
 #include <escher/subapp_cell.h>
+#include <escher/palette.h>
 #include <kandinsky/font.h>
 #include <algorithm>
 
@@ -18,9 +19,10 @@ void SubappCell::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void SubappCell::setHighlighted(bool highlighted) {
-  m_icon.setBackgroundColor(highlighted ? Palette::Select : KDColorWhite);
-  m_title.setHighlighted(highlighted);
-  m_subTitle.setHighlighted(highlighted);
+  KDColor backgroundColor = highlighted ? Palette::Select : KDColorWhite;
+  m_icon.setBackgroundColor(backgroundColor);
+  m_title.setBackgroundColor(backgroundColor);
+  m_subTitle.setBackgroundColor(backgroundColor);
   HighlightCell::setHighlighted(highlighted);
 }
 

@@ -1,12 +1,19 @@
 #include <poincare/dependency.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/symbol_abstract.h>
 
 namespace Poincare {
+
+constexpr Expression::FunctionHelper Dependency::s_functionHelper;
 
 // DependencyNode
 
 Expression DependencyNode::shallowReduce(ReductionContext reductionContext) {
   return Dependency(this).shallowReduce(reductionContext);
+}
+
+int DependencyNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Dependency::s_functionHelper.name());
 }
 
 template<typename T> Evaluation<T> DependencyNode::templatedApproximate(ApproximationContext approximationContext) const {
@@ -105,6 +112,15 @@ void Dependency::extractDependencies(Matrix m) {
   }
 
   replaceWithInPlace(childAtIndex(0));
+}
+
+Expression Dependency::UntypedBuilder(Expression children) {
+  assert(children.type() == ExpressionNode::Type::Matrix);
+  if (children.childAtIndex(1).type() != ExpressionNode::Type::Matrix) {
+    // Second parameter must be a Matrix.
+    return Expression();
+  }
+  return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Matrix>());
 }
 
 }

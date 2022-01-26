@@ -103,7 +103,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   /* Dependencies are not bubbled up out of an integral, but they are still
    * present inside the integral. */
   assert_reduce("1→f(x)");
-  assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", "int(2,x,0,1)", {""});
+  assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", "int(dep\u0014(2,[[x,a]]),x,0,1)", {""});
   assert_reduce("1/0→a");
   assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", Undefined::Name(), {""});
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
@@ -112,7 +112,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   /* If the derivation is not handled properly, the symbol x could be reduced
    * to undef. */
   assert_reduce("x→f(x)");
-  assert_expression_simplify_to_with_dependencies("int(diff(f(x),x,x),x,0,1)", "int(1,x,0,1)", {""});
+  assert_expression_simplify_to_with_dependencies("int(diff(f(x),x,x),x,0,1)", "int(dep\u0014(1,[[x,x]]),x,0,1)", {""});
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 
   /* When trimming dependencies, we must be able to recognize unreduced

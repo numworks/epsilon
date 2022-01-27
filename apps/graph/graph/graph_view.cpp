@@ -74,13 +74,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       float tmin = f->tMin();
       float tmax = f->tMax();
       Axis axis = f->hasVerticalLines() ? Axis::Vertical : Axis::Horizontal;
-      KDCoordinate rectMin = axis == Axis::Horizontal ? rect.left() : rect.bottom();
-      KDCoordinate rectMax = axis == Axis::Horizontal ? rect.right() : rect.top();
+      KDCoordinate rectMin = axis == Axis::Horizontal ? rect.left() - k_externRectMargin : rect.bottom() + k_externRectMargin;
+      KDCoordinate rectMax = axis == Axis::Horizontal ? rect.right() + k_externRectMargin : rect.top() - k_externRectMargin;
 
       float tCacheMin, tCacheStep;
       float tStepNonCartesian = NAN;
       if (f->isAlongX()) {
-        float rectLimit = pixelToFloat(axis, rectMin - k_externRectMargin);
+        float rectLimit = pixelToFloat(axis, rectMin);
         /* Here, tCacheMin can depend on rect (and change as the user move)
          * because cache can be panned for cartesian curves, instead of being
          * entirely invalidated. */
@@ -111,10 +111,10 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           }, f.operator->(), context(), false, f->color());
       } else if (f->hasVerticalLines() && area == ContinuousFunction::AreaType::None) {
         // Optimize plot by only drawing the expected segment.
+        float minOrdinate = pixelToFloat(axis, rectMax);
+        float maxOrdinate = pixelToFloat(axis, rectMin);
         for (int subCurveIndex = 0; subCurveIndex < f->numberOfSubCurves(); subCurveIndex++) {
           float abscissa = f->evaluateXYAtParameter(0.0, context(), subCurveIndex).x1();
-          float minOrdinate = pixelToFloat(axis, rectMax);
-          float maxOrdinate = pixelToFloat(axis, rectMin);
           drawSegment(ctx, rect, abscissa, minOrdinate, abscissa, maxOrdinate, f->color());
         }
       } else {

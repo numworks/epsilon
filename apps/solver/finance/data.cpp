@@ -28,7 +28,7 @@ void InterestData::setUnknown(uint8_t param) {
 }
 
 void InterestData::resetValues() {
-  m_booleanParam = true;
+  m_booleanParam = false;
   // Set first parameter as unknown by default
   setValue(0, NAN);
   m_unknown = 0;
@@ -133,7 +133,7 @@ I18n::Message CompoundInterestData::sublabelForParameter(uint8_t param) const {
 double CompoundInterestData::defaultValue(uint8_t param) const {
   assert(param < numberOfDoubleValues());
   constexpr double k_defaultValues[k_numberOfDoubleValues] = {
-      72.0, 12.5, 14000.0, -250.0, 0.0, 12.0, 12.0};
+      0.0, 0.0, 0.0, 0.0, 0.0, 12.0, 12.0};
   return k_defaultValues[param];
 }
 

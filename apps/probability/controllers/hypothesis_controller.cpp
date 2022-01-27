@@ -143,7 +143,7 @@ void HypothesisController::didBecomeFirstResponder() {
 }
 
 bool HypothesisController::ButtonAction(void * c, void * s) {
-  HypothesisController * controller = static_cast<HypothesisController *>(s);
+  HypothesisController * controller = static_cast<HypothesisController *>(c);
   controller->stackOpenPage(controller->m_inputController, 1);
   return true;
 }

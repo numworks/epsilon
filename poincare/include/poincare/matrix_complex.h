@@ -23,7 +23,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(MatrixComplexNode<T>); }
   int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }
-  void didChangeArity(int newNumberOfChildren) override;
+  void didChangeArity(int newNumberOfChildren) override { return Array::didChangeNumberOfChildren(newNumberOfChildren); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "MatrixComplex";

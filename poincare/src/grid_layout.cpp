@@ -94,11 +94,6 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-void GridLayoutNode::didChangeArity(int newNumberOfChildren) {
-  setNumberOfRows(1);
-  setNumberOfColumns(newNumberOfChildren);
-}
-
 // Protected
 void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
   GridLayout thisRef = GridLayout(this);

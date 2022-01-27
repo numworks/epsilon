@@ -41,7 +41,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(GridLayoutNode); }
-  void didChangeArity(int newNumberOfChildren) override;
+  void didChangeArity(int newNumberOfChildren) override { return Array::didChangeNumberOfChildren(newNumberOfChildren); }
   int numberOfChildren() const override { return m_numberOfRows * m_numberOfColumns; }
   void eraseNumberOfChildren() override {
     m_numberOfRows = 0;

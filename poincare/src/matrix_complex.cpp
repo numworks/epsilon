@@ -11,12 +11,6 @@
 namespace Poincare {
 
 template<typename T>
-void MatrixComplexNode<T>::didChangeArity(int newNumberOfChildren) {
-  setNumberOfRows(1);
-  setNumberOfColumns(newNumberOfChildren);
-}
-
-template<typename T>
 std::complex<T> MatrixComplexNode<T>::complexAtIndex(int index) const {
   EvaluationNode<T> * child = EvaluationNode<T>::childAtIndex(index);
   if (child->type() == EvaluationNode<T>::Type::Complex) {

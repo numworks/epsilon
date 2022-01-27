@@ -33,11 +33,6 @@ bool MatrixNode::hasMatrixChild(Context * context) const {
   return false;
 }
 
-void MatrixNode::didChangeArity(int newNumberOfChildren) {
-  setNumberOfRows(1);
-  setNumberOfColumns(newNumberOfChildren);
-}
-
 int MatrixNode::polynomialDegree(Context * context, const char * symbolName) const {
   return -1;
 }

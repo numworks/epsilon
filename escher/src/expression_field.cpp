@@ -121,11 +121,11 @@ bool ExpressionField::inputViewHeightDidChange() {
   return didChange;
 }
 
-bool ExpressionField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText, bool selectInsertedText) {
+bool ExpressionField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   if (editionIsInTextField()) {
-    return m_textField.handleEventWithText(text, indentation, forceCursorRightOfText, selectInsertedText);
+    return m_textField.handleEventWithText(text, indentation, forceCursorRightOfText);
   } else {
-    return m_layoutField.handleEventWithText(text, indentation, forceCursorRightOfText, selectInsertedText);
+    return m_layoutField.handleEventWithText(text, indentation, forceCursorRightOfText);
   }
 }
 

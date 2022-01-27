@@ -21,8 +21,8 @@ public:
   virtual void scrollToCursor();
   // Selection
   bool selectionIsEmpty() const { return nonEditableContentView()->selectionIsEmpty(); }
-  virtual void resetSelection() { contentView()->resetSelection(); }
-  virtual void deleteSelection();
+  void resetSelection() { contentView()->resetSelection(); }
+  void deleteSelection();
   // Alignment
   void setAlignment(float horizontalAlignment, float verticalAlignment);
 protected:

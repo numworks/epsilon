@@ -461,14 +461,14 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
   return result;
 }
 
-bool PythonTextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText, bool selectInsertedText) {
+bool PythonTextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   if (*text == 0) {
     return false;
   }
   if (m_contentView.isAutocompleting()) {
     removeAutocompletion();
   }
-  bool result = TextArea::handleEventWithText(text, indentation, forceCursorRightOfText, selectInsertedText);
+  bool result = TextArea::handleEventWithText(text, indentation, forceCursorRightOfText);
   addAutocompletion();
   return result;
 }

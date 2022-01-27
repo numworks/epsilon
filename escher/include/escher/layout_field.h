@@ -50,13 +50,13 @@ public:
   float marginPortionTolerance() const override { return 0.f; }
 
   /* Responder */
-  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false, bool selectInsertedText = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   // TODO: factorize with TextField (see TODO of EditableField)
   bool shouldFinishEditing(Ion::Events::Event event) override;
 
   // Selection
-  bool resetSelection();
+  bool resetSelection() { return m_contentView.resetSelection(); }
   void deleteSelection();
 
 private:
@@ -68,7 +68,7 @@ private:
   bool privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
   void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false, bool forceCursorLeftOfText = false, bool selectInsertedText = false);
+  void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false, bool forceCursorLeftOfText = false);
   bool eventShouldUpdateInsertionCursor(Ion::Events::Event event) { return event == m_insertionCursorEvent; }
 
   class ContentView : public View {

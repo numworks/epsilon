@@ -41,6 +41,7 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("y=log(x)", ContinuousFunction::PlotType::Cartesian);
     assert_check_function_properties("y+x+1=0", ContinuousFunction::PlotType::Line);
     assert_check_function_properties("2=y", ContinuousFunction::PlotType::HorizontalLine);
+    assert_check_function_properties("y=0", ContinuousFunction::PlotType::HorizontalLine);
     assert_check_function_properties("0=x", ContinuousFunction::PlotType::VerticalLine);
     assert_check_function_properties("0=x^2", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::VerticalLines);
     assert_check_function_properties("1=x^2+x", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::VerticalLines);

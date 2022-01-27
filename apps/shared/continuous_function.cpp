@@ -712,7 +712,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
      * symbols nested in function, which is not a supported behavior anyway.
      * TODO: Make a consistent behavior calculation/additional_outputs using a
      *       VariableContext to temporary disable y's predefinition. */
-    result.replaceSymbolWithExpression(Symbol::Builder(k_ordinateName[0]), Symbol::Builder(UCodePointTemporaryUnknown));
+    result = result.replaceSymbolWithExpression(Symbol::Builder(k_ordinateName[0]), Symbol::Builder(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
   PoincareHelpers::CloneAndReduce(
@@ -721,7 +721,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
           ReplaceAllDefinedSymbolsWithDefinition);
 
   if (isUnnamedFunction) {
-    result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateName[0]));
+    result = result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateName[0]));
   }
 
   if (plotType() == PlotType::Unknown) {

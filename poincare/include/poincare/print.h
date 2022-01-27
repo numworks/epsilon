@@ -29,9 +29,14 @@ namespace Print {
  *                   Preferences::PrintFloatMode::Scientific,
  *                   4)
  *       --> "A double 1.235E-2!"
+ *
+ * In contrast to safeCustomPrintf, customPrintf method asserts that the
+ * bufferSize is large enough. If the text does not fit, the buffer is erased
+ * and a length equal or bigger than bufferSize is returned.
  */
 
 int customPrintf(char * buffer, size_t bufferSize, const char * format, ...);
+int safeCustomPrintf(char * buffer, size_t bufferSize, const char * format, ...);
 void capitalize(char * text);
 void decapitalize(char * text);
 

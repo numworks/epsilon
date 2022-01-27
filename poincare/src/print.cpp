@@ -10,10 +10,8 @@
 namespace Poincare {
 namespace Print {
 
-int customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
-  char * origin = buffer;
-  va_list args;
-  va_start(args, format);
+int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, va_list args) {
+  char * const origin = buffer;
   while (*format != 0) {
     if (*format == '%') {
       assert(*(format + 1) != 0);
@@ -58,14 +56,32 @@ int customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
     } else {
       *(buffer++) = *(format++);
     }
-    if (buffer - origin >= (int)bufferSize - 1) {
-      assert(false);
-      break;
+    if (buffer - origin >= static_cast<int>(bufferSize)) {
+      *origin = '\0';
+      /* We still return the required sizes even if we could not write in the
+       * buffer in order to indicate that we overflew the buffer. */
+      return buffer - origin;
     }
   }
-  va_end(args);
   *buffer = '\0';
   return buffer - origin;
+}
+
+int customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
+  va_list args;
+  va_start(args, format);
+  int length = privateCustomPrintf(buffer, bufferSize, format, args);
+  va_end(args);
+  assert(length < static_cast<int>(bufferSize));
+  return length;
+}
+
+int safeCustomPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
+  va_list args;
+  va_start(args, format);
+  int length = privateCustomPrintf(buffer, bufferSize, format, args);
+  va_end(args);
+  return length;
 }
 
 void capitalize(char * text) {

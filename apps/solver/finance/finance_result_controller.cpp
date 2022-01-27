@@ -37,53 +37,49 @@ bool FinanceResultController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-/* TODO Hugo : Improve Probability::CalculationController::updateTitle, which
- * may crash if text does not fit*/
 const char * FinanceResultController::title() {
-  // Try fitting the known parameters values in the title
-  // We don't display the boolean parameter and the unknown one.
-  uint8_t totalParameters = m_data->numberOfDoubleValues();
-  // Using a minimal precision
+  /* Try fitting the known parameters values in the title using a minimal
+   * precision. Use "..." at the end if not all parameters fit. */
   constexpr int precision = Poincare::Preferences::ShortNumberOfSignificantDigits;
-  constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
-  char valueBuffer[bufferSize];
-  // Last char index before the text does not fit
-  int charIndex = 0;
-  uint8_t unknownIndex = m_data->getUnknown();
-  bool unknownIndexIsLast = (unknownIndex == totalParameters - 1);
-  for (uint8_t paramIndex = 0; paramIndex < totalParameters; paramIndex++) {
-    if (paramIndex == unknownIndex) {
-      // Avoid unknown parameter
+  constexpr Poincare::Preferences::PrintFloatMode printFloatMode = Poincare::Preferences::PrintFloatMode::Decimal;
+  // At least "..." should fit in the title.
+  assert(k_titleBufferSize > strlen("..."));
+  const char * parameterTemplate = "%s = %*.*ed...";
+  const char * lastKnownParameterTemplate = "%s = %*.*ed";
+  // The boolean parameter isn't displayed
+  uint8_t doubleParameters = m_data->numberOfDoubleValues();
+  uint8_t unknownParam = m_data->getUnknown();
+  bool unknownParamIsLast = (unknownParam == doubleParameters - 1);
+  int length = 0;
+  for (uint8_t param = 0; param < doubleParameters; param++) {
+    if (param == unknownParam) {
+      // The unknown parameter isn't displayed
       continue;
     }
-    // Parameter's name
-    const char * labelBuffer = I18n::translate(m_data->labelForParameter(paramIndex));
-    // Parameter's value
-    double value = m_data->getValue(paramIndex);
-    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, valueBuffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
-    // Expected length
-    int nextLength = charIndex + strlen(labelBuffer) + strlen("=") + strlen(valueBuffer);
-    if (charIndex > 0) {
-      // Add a space between chars
-      nextLength += strlen(" ");
-    }
-    if (paramIndex != totalParameters - 1 - unknownIndexIsLast) {
-      // If it is not the last known parameter, ensure a "..." fits after anyway
-      nextLength += strlen("...");
-    }
-    if (nextLength >= k_titleBufferSize) {
-      // Text does not fit, insert "..."
-      charIndex += strlcpy(m_titleBuffer + charIndex, "...", k_titleBufferSize - charIndex);
+    // Ensure "..." fits if it isn't the last known parameter
+    bool lastKnownParameter = (param == doubleParameters - 1 - unknownParamIsLast);
+    // Attempting the parameter insertion
+    int parameterLength = Poincare::Print::safeCustomPrintf(
+        m_titleBuffer + length, k_titleBufferSize - length,
+        (lastKnownParameter ? lastKnownParameterTemplate : parameterTemplate),
+        I18n::translate(m_data->labelForParameter(param)),
+        m_data->getValue(param), printFloatMode, precision);
+    if (length + parameterLength >= k_titleBufferSize) {
+      // Text did not fit, insert "..." and overwite last " " if there is one
+      if (length > strlen(" ")) {
+        length -= strlen(" ");
+      }
+      length += Poincare::Print::customPrintf(m_titleBuffer + length, k_titleBufferSize - length, "...");
       break;
     }
-    if (charIndex > 0) {
-      // Insert a space in between parameters
-      charIndex += strlcpy(m_titleBuffer + charIndex, " ", k_titleBufferSize - charIndex);
+    length += parameterLength;
+    if (!lastKnownParameter) {
+      // Text did fit, "..." isn't needed for now and can be replaced with " "
+      length -= strlen("...");
+      length += Poincare::Print::customPrintf(m_titleBuffer + length, k_titleBufferSize - length, " ");
     }
-    // Insert label, '=' and value
-    charIndex += Poincare::Print::customPrintf(m_titleBuffer + charIndex, k_titleBufferSize - charIndex, "%s = %s", labelBuffer, valueBuffer);
-    assert(charIndex < k_titleBufferSize);
   }
-  m_titleBuffer[charIndex] = 0;
+  assert(length < k_titleBufferSize);
+  m_titleBuffer[length] = 0;
   return m_titleBuffer;
 }

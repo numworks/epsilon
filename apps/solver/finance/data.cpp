@@ -119,7 +119,7 @@ I18n::Message CompoundInterestData::labelForParameter(uint8_t param) const {
 I18n::Message CompoundInterestData::sublabelForParameter(uint8_t param) const {
   assert(param < numberOfParameters());
   constexpr I18n::Message k_sublabels[k_numberOfParameters] = {
-      I18n::Message::NumberOfPeriods,
+      I18n::Message::NumberOfPayments,
       I18n::Message::NominalAnnualInterestRate,
       I18n::Message::PresentValue,
       I18n::Message::PaymentEachPeriod,
@@ -181,8 +181,7 @@ double computeRPct(double N,
                    double S) {
   if (Pmt == 0.0) {
     // PV + FV*(1 + r/(100*CY))^(-N*CY/PY) = 0
-    assert(CY == PY);
-    return 100.0 * CY * (std::pow(-FV / PV, 1 / N) - 1.0);
+    return 100.0 * CY * (std::pow(-FV / PV, PY / (N * CY)) - 1.0);
   }
   const double parameters[7] = {N, PV, Pmt, FV, PY, CY, S};
   // We must solve this expression. An exact solution cannot be found.
@@ -235,8 +234,7 @@ double CompoundInterestData::computeUnknownValue() const {
   double Pmt = getValue(static_cast<uint8_t>(Parameter::Pmt));
   double FV = getValue(static_cast<uint8_t>(Parameter::FV));
   double CY = getValue(static_cast<uint8_t>(Parameter::CY));
-  // Discard PY so that PY/CY is 1 if Pmt is null.
-  double PY = (Pmt == 0.0) ? CY : getValue(static_cast<uint8_t>(Parameter::PY));
+  double PY = getValue(static_cast<uint8_t>(Parameter::PY));
   double S = (m_booleanParam ? 1.0 : 0.0);
   double i = computeI(rPct, CY, PY);
   double b = computeB(i, N);

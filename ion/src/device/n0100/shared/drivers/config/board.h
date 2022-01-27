@@ -16,11 +16,11 @@ namespace Config {
  * (to flash them easily).
  * The internal memory layout is the following:
  * 4*16k + 64k + 7*128k with the division:
- * +-------------+------------------+------------+
- * |    3*16k    |        16k       +  64k+7*128k |
- * +-------------+------------------+------------+
- * |    Kernel   | Persisting bytes |  Userland  |
- * +-------------+------------------+------------+
+ * +-------------+------------------+----------------+
+ * |    2*16k    |        16k       + 16k+64k+7*128k |
+ * +-------------+------------------+----------------+
+ * |    Kernel   | Persisting bytes |    Userland    |
+ * +-------------+------------------+----------------+
  * Hence the kernel total size.
  *
  */

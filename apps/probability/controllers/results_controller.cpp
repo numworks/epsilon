@@ -63,7 +63,7 @@ const char * Probability::ResultsController::title() {
 }
 
 bool Probability::ResultsController::ButtonAction(void * c, void * s) {
-  ResultsController * controller = static_cast<ResultsController *>(s);
+  ResultsController * controller = static_cast<ResultsController *>(c);
   if (!controller->m_statistic->isGraphable()) {
     App::app()->displayWarning(I18n::Message::InvalidValues);
     return false;

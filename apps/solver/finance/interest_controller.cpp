@@ -113,7 +113,7 @@ Escher::HighlightCell * InterestController::reusableCell(int i, int type) {
 }
 
 bool InterestController::ButtonAction(void * c, void * s) {
-  InterestController * controller = static_cast<InterestController *>(s);
+  InterestController * controller = static_cast<InterestController *>(c);
   controller->stackOpenPage(controller->m_financeResultController, 1);
   return true;
 }

@@ -71,7 +71,7 @@ bool InputCategoricalController::handleEvent(Ion::Events::Event event) {
 }
 
 bool InputCategoricalController::ButtonAction(void * c, void * s) {
-  InputCategoricalController * controller = static_cast<InputCategoricalController *>(s);
+  InputCategoricalController * controller = static_cast<InputCategoricalController *>(c);
   if (!controller->m_statistic->validateInputs()) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
     return false;

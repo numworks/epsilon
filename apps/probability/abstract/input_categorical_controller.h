@@ -35,7 +35,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  bool buttonAction();
+  static bool ButtonAction(void * c, void * s);
 
   // ViewController
   Escher::View * view() override { return &m_contentView; }

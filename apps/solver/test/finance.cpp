@@ -109,4 +109,30 @@ QUIZ_CASE(equation_finance_compound_interest) {
     bool paymentIsAtBegining = false;
     assert_interest_solves(values, paymentIsAtBegining, &data, 1.0);
   }
+  {
+    const double values[CompoundInterestData::k_numberOfDoubleValues] = {
+      6.0,        // N
+      0.0,        // rPct
+      0.0,        // PV
+      -1.0,       // Pmt
+      6.0,        // FV
+      12.0,       // PY
+      1.0         // CY
+    };
+    bool paymentIsAtBegining = true;
+    assert_interest_solves(values, paymentIsAtBegining, &data, 1.0);
+  }
+  {
+    const double values[CompoundInterestData::k_numberOfDoubleValues] = {
+      120.0,      // N
+      5.0,        // rPct
+      0.0,        // PV
+      100.0,      // Pmt
+      -15511.0514,// FV
+      12.0,       // PY
+      4.0         // CY
+    };
+    bool paymentIsAtBegining = false;
+    assert_interest_solves(values, paymentIsAtBegining, &data, 1.0);
+  }
 }

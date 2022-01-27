@@ -21,6 +21,7 @@ public:
   int numberOfColumns() const { return m_numberOfColumns; }
   void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
   void setNumberOfColumns(int columns) { assert(columns >= 0); m_numberOfColumns = columns; }
+  void didChangeNumberOfChildren(int newNumberOfChildren);
 protected:
   /* We could store 2 uint8_t but multiplying m_numberOfRows and
    * m_numberOfColumns could then lead to overflow. As we are unlikely to use

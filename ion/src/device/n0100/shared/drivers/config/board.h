@@ -27,7 +27,7 @@ namespace Config {
 
 constexpr static uint32_t KernelStartAddress = InternalFlash::Config::StartAddress;
 constexpr static uint32_t KernelHeaderAddress = KernelStartAddress + INITIALISATION_VECTOR_SIZE * sizeof(uint32_t);
-constexpr static uint32_t KernelSize = 3*0x4000; // 3*16k
+constexpr static uint32_t KernelSize = 2*0x4000; // 2*16k
 constexpr static uint32_t PersistingBytesSize = 0x4000; // 16k
 constexpr static uint32_t UserlandStartAddress = KernelStartAddress + KernelSize + PersistingBytesSize;
 

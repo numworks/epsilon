@@ -95,8 +95,11 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
 }
 
 // Protected
+
 void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
   GridLayout thisRef = GridLayout(this);
+  /* addChildAtIndex messes with the number of rows to keep it consistent with
+   * the number of children */
   int previousNumberOfChildren = numberOfChildren();
   int columnsCount = m_numberOfColumns;
   int previousRowCount = m_numberOfRows;
@@ -113,6 +116,8 @@ void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
 
 void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
   GridLayout thisRef = GridLayout(this);
+  /* addChildAtIndex messes with the number of rows to keep it consistent with
+   * the number of children */
   int previousNumberOfChildren = numberOfChildren();
   int rowsCount = m_numberOfRows;
   int futureColumnsCount = m_numberOfColumns + 1;
@@ -129,20 +134,28 @@ void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
 
 void GridLayoutNode::deleteRowAtIndex(int index) {
   assert(index >= 0 && index < m_numberOfRows);
-  Layout thisRef = Layout(this);
-  for (int i = 0; i < m_numberOfColumns; i++) {
-    thisRef.removeChildAtIndexInPlace(index * m_numberOfColumns);
+  GridLayout thisRef = GridLayout(this);
+  /* removeChildAtIndexInPlace messes with the number of rows to keep it
+   * consistent with the number of children */
+  int numberOfColumns = m_numberOfColumns;
+  int numberOfRows = m_numberOfRows;
+  for (int i = 0; i < numberOfColumns; i++) {
+    thisRef.removeChildAtIndexInPlace(index * numberOfColumns);
   }
-  m_numberOfRows--;
+  thisRef.setDimensions(numberOfRows - 1, numberOfColumns);
 }
 
 void GridLayoutNode::deleteColumnAtIndex(int index) {
   assert(index >= 0 && index < m_numberOfColumns);
-  Layout thisRef = Layout(this);
-  for (int i = (m_numberOfRows - 1) * m_numberOfColumns + index; i > -1; i-= m_numberOfColumns) {
+  GridLayout thisRef = GridLayout(this);
+  /* removeChildAtIndexInPlace messes with the number of rows to keep it
+   * consistent with the number of children */
+  int numberOfColumns = m_numberOfColumns;
+  int numberOfRows = m_numberOfRows;
+    for (int i = (numberOfRows - 1) * numberOfColumns + index; i > -1; i-= numberOfColumns) {
     thisRef.removeChildAtIndexInPlace(i);
   }
-  m_numberOfColumns--;
+  thisRef.setDimensions(numberOfRows, numberOfColumns - 1);
 }
 
 bool GridLayoutNode::childIsLeftOfGrid(int index) const {

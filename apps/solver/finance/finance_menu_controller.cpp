@@ -31,7 +31,7 @@ bool FinanceMenuController::handleEvent(Ion::Events::Event event) {
 
     // Initialize a new interest data model
     InterestData::Initialize(m_interestData, simpleInterestRowSelected);
-
+    m_interestMenuController->selectRow(0);
     stackOpenPage(m_interestMenuController, 0);
     return true;
   }

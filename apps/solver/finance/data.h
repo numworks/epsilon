@@ -40,8 +40,8 @@ public:
   uint8_t getUnknown() const { return m_unknown; }
   /* For SimpleInterestData, this param tells if the convention for the number
    * of days per year is 360 (365 otherwise). For CompoundInterestData, it tells
-   * if the payment is made at the end or at the begining of the payment period
-   * (end otherwise). */
+   * if the payment is made at the beginning of the payment period (end
+   * otherwise). */
   bool m_booleanParam;
 
 protected:

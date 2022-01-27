@@ -712,19 +712,19 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, floa
 void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, float tMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex, float cachedTStep, Axis axis) const {
   float tStart = tMin;
   float tStep = cachedTStep;
-  KDCoordinate pixelMin = axis == Axis::Horizontal ? rect.left() : rect.bottom();
-  KDCoordinate pixelMax = axis == Axis::Horizontal ? rect.right() : rect.top();
+  KDCoordinate pixelMin = axis == Axis::Horizontal ? rect.left() - k_externRectMargin : rect.bottom() + k_externRectMargin;
+  KDCoordinate pixelMax = axis == Axis::Horizontal ? rect.right() + k_externRectMargin : rect.top() - k_externRectMargin;
   if (cachedTStep == 0) {
     /* cachedTStep isn't given, there are no constraints with cache parameters.
      * We can then compute tStep and clip tStart. */
-    float rectMin = pixelToFloat(axis, pixelMin - k_externRectMargin);
+    float rectMin = pixelToFloat(axis, pixelMin);
     tStart = std::isnan(rectMin) ? tMin : std::max(tMin, rectMin);
     tStep = axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
     // Round to pixel perfect position to avoid landing in the middle of pixels
     tStart = roundFloatToPixelPerfect(axis, tStart);
     colorLowerBound = roundFloatToPixelPerfect(axis, colorLowerBound);
   }
-  float rectMax = pixelToFloat(axis, pixelMax + k_externRectMargin);
+  float rectMax = pixelToFloat(axis, pixelMax);
   float tEnd = std::isnan(rectMax) ? tMax : std::min(tMax, rectMax);
   assert(!std::isnan(tStart) && !std::isnan(tEnd));
   if (std::isinf(tStart) || std::isinf(tEnd) || tStart > tEnd) {
@@ -742,8 +742,8 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
   // Compute rect limits
   float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-  float rectUp = pixelToFloat(Axis::Vertical, rect.top() + k_externRectMargin);
-  float rectDown = pixelToFloat(Axis::Vertical, rect.bottom() - k_externRectMargin);
+  float rectUp = pixelToFloat(Axis::Vertical, rect.top() - k_externRectMargin);
+  float rectDown = pixelToFloat(Axis::Vertical, rect.bottom() + k_externRectMargin);
 
   const Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);

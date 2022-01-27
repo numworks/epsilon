@@ -27,7 +27,7 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
       m_operatorDataSource(statistic->hypothesisParams()),
       m_h0(&m_selectableTableView, handler, this),
       m_ha(&m_selectableTableView, &m_operatorDataSource, this),
-      m_next(&m_selectableTableView, I18n::Message::Next, Escher::Invocation([](void * c, void * s) { return static_cast<HypothesisController *>(c)->buttonAction(); }, this)),
+      m_next(&m_selectableTableView, I18n::Message::Next, Escher::Invocation(&HypothesisController::ButtonAction, this)),
       m_statistic(statistic) {
   Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder('H', KDFont::LargeFont),
@@ -142,8 +142,9 @@ void HypothesisController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData(true);
 }
 
-bool HypothesisController::buttonAction() {
-  stackOpenPage(m_inputController, 1);
+bool HypothesisController::ButtonAction(void * c, void * s) {
+  HypothesisController * controller = static_cast<HypothesisController *>(s);
+  controller->stackOpenPage(controller->m_inputController, 1);
   return true;
 }
 

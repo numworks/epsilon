@@ -30,7 +30,7 @@ public:
   Escher::HighlightCell * reusableCell(int i, int type) override;
   // Confirm cell plus all parameters but the unknown one
   int numberOfRows() const override { return m_data->numberOfParameters(); }
-  bool buttonAction();
+  static bool ButtonAction(void * c, void * s);
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
 
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override { return false; }

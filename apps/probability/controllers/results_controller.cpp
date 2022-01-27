@@ -22,7 +22,7 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
       m_tableView(this, &m_resultsDataSource, this, &m_contentView),
       m_title(KDFont::SmallFont, I18n::Message::CalculatedValues, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
       m_contentView(&m_tableView, &m_resultsDataSource, &m_title),
-      m_resultsDataSource(&m_tableView, statistic, Escher::Invocation([](void * c, void * s) { return static_cast<ResultsController *>(c)->buttonAction(); }, this), this),
+      m_resultsDataSource(&m_tableView, statistic, Escher::Invocation(&ResultsController::ButtonAction, this), this),
       m_statistic(statistic),
       m_statisticGraphController(statisticGraphController) {
 }
@@ -62,8 +62,9 @@ const char * Probability::ResultsController::title() {
   return nullptr;
 }
 
-bool Probability::ResultsController::buttonAction() {
-  if (!m_statistic->isGraphable()) {
+bool Probability::ResultsController::ButtonAction(void * c, void * s) {
+  ResultsController * controller = static_cast<ResultsController *>(s);
+  if (!controller->m_statistic->isGraphable()) {
     App::app()->displayWarning(I18n::Message::InvalidValues);
     return false;
   }
@@ -71,7 +72,7 @@ bool Probability::ResultsController::buttonAction() {
     App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
     return false;
   }
-  stackOpenPage(m_statisticGraphController, (App::app()->test() == Data::Test::Categorical ? 1 : 2));
+  controller->stackOpenPage(controller->m_statisticGraphController, (App::app()->test() == Data::Test::Categorical ? 1 : 2));
   return true;
 }
 

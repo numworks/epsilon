@@ -13,7 +13,7 @@ using namespace Solver;
 InterestController::InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, InterestData * data) :
     Escher::SelectableListViewController(parent),
     m_dropdownCell(&m_selectableTableView, &m_dropdownDataSource, this),
-    m_next(&m_selectableTableView, I18n::Message::Ok, Escher::Invocation([](void * c, void * s) { return static_cast<InterestController *>(c)->buttonAction(); }, this)),
+    m_next(&m_selectableTableView, I18n::Message::Ok, Escher::Invocation(&InterestController::ButtonAction, this)),
     m_financeResultController(financeResultController),
     m_data(data) {
   for (size_t i = 0; i < k_numberOfReusableInputs; i++) {
@@ -112,8 +112,9 @@ Escher::HighlightCell * InterestController::reusableCell(int i, int type) {
   }
 }
 
-bool InterestController::buttonAction() {
-  stackOpenPage(m_financeResultController, 1);
+bool InterestController::ButtonAction(void * c, void * s) {
+  InterestController * controller = static_cast<InterestController *>(s);
+  controller->stackOpenPage(controller->m_financeResultController, 1);
   return true;
 }
 

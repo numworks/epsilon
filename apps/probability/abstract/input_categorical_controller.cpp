@@ -15,7 +15,7 @@ InputCategoricalController::InputCategoricalController(
       Escher::ViewController(parent),
       m_statistic(statistic),
       m_resultsController(resultsController),
-      m_contentView(this, Escher::Invocation([](void * c, void * s) { return static_cast<InputCategoricalController *>(c)->buttonAction(); }, this), nullptr, inputEventHandlerDelegate, this) {
+      m_contentView(this, Escher::Invocation(&InputCategoricalController::ButtonAction, this), nullptr, inputEventHandlerDelegate, this) {
 }
 
 bool InputCategoricalController::textFieldShouldFinishEditing(TextField * textField,
@@ -70,13 +70,14 @@ bool InputCategoricalController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-bool InputCategoricalController::buttonAction() {
-  if (!m_statistic->validateInputs()) {
+bool InputCategoricalController::ButtonAction(void * c, void * s) {
+  InputCategoricalController * controller = static_cast<InputCategoricalController *>(s);
+  if (!controller->m_statistic->validateInputs()) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
     return false;
   }
-  m_statistic->computeTest();
-  stackOpenPage(m_resultsController, 0);
+  controller->m_statistic->computeTest();
+  controller->stackOpenPage(controller->m_resultsController, 0);
   return true;
 }
 

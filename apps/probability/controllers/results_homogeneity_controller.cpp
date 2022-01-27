@@ -17,7 +17,7 @@ ResultsHomogeneityController::ResultsHomogeneityController(
     ResultsController * resultsController) :
       Escher::ViewController(stackViewController),
       m_resultsController(resultsController),
-      m_contentView(this, &m_table, Escher::Invocation([](void * c, void * s) { return static_cast<ResultsHomogeneityController *>(c)->buttonAction(); }, this)),
+      m_contentView(this, &m_table, Escher::Invocation(&ResultsHomogeneityController::ButtonAction, this)),
       m_tableData(statistic, this, this),
       m_table(this, &m_tableData, &m_tableData, &m_tableData),
       m_isTableSelected(true) {
@@ -52,8 +52,9 @@ bool Probability::ResultsHomogeneityController::handleEvent(Ion::Events::Event e
   return false;
 }
 
-bool Probability::ResultsHomogeneityController::buttonAction() {
-  stackOpenPage(m_resultsController, 1);
+bool Probability::ResultsHomogeneityController::ButtonAction(void * c, void * s) {
+  ResultsHomogeneityController * controller = static_cast<ResultsHomogeneityController *>(s);
+  controller->stackOpenPage(controller->m_resultsController, 1);
   return true;
 }
 

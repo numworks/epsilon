@@ -44,8 +44,8 @@ const char * FinanceResultController::title() {
   constexpr Poincare::Preferences::PrintFloatMode printFloatMode = Poincare::Preferences::PrintFloatMode::Decimal;
   // At least "..." should fit in the title.
   assert(k_titleBufferSize > strlen("..."));
-  const char * parameterTemplate = "%s = %*.*ed...";
-  const char * lastKnownParameterTemplate = "%s = %*.*ed";
+  const char * parameterTemplate = "%s=%*.*ed...";
+  const char * lastKnownParameterTemplate = "%s=%*.*ed";
   // The boolean parameter isn't displayed
   uint8_t doubleParameters = m_data->numberOfDoubleValues();
   uint8_t unknownParam = m_data->getUnknown();

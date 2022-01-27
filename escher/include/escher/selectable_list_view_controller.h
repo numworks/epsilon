@@ -29,16 +29,16 @@ protected:
  * the same type of cells with a constant number of rows that all have their own
  * reusable cell.
  */
-template <typename Cell, int numberOfCells>
+template <typename Cell, int NumberOfCells>
 class SelectableCellListPage : public SelectableListViewController {
-  static_assert(numberOfCells < 8, "There should'nt be a need for more than 8 reusable cells.");
+  static_assert(NumberOfCells < 8, "There should'nt be a need for more than 8 reusable cells.");
 public:
   SelectableCellListPage(Responder * parent, SelectableTableViewDelegate * tableDelegate = nullptr) : SelectableListViewController(parent, tableDelegate) {}
-  Cell * cellAtIndex(int i) { assert(i >= 0 && i < numberOfCells); return &m_cells[i]; }
-  int numberOfRows() const override { return numberOfCells; }
+  Cell * cellAtIndex(int i) { assert(i >= 0 && i < NumberOfCells); return &m_cells[i]; }
+  int numberOfRows() const override { return NumberOfCells; }
   HighlightCell * reusableCell(int i, int type) final { assert(type == 0); return cellAtIndex(i); }
 private:
-  Cell m_cells[numberOfCells];
+  Cell m_cells[NumberOfCells];
 };
 
 }

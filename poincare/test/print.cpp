@@ -31,4 +31,13 @@ QUIZ_CASE(poincare_print_custom_print) {
 
   Poincare::Print::customPrintf(buffer, bufferSize, "A double: %*.*ed!", 0.0123456789, Preferences::PrintFloatMode::Scientific, 4);
   assert_string_equality(buffer, "A double: 1.235ᴇ-2!");
+
+  constexpr int shortBufferSize = 5;
+  char shortBuffer[shortBufferSize];
+
+  Poincare::Print::customPrintf(shortBuffer, shortBufferSize, "%s", "1234");
+  assert_string_equality(shortBuffer, "1234");
+
+  quiz_assert(Poincare::Print::safeCustomPrintf(shortBuffer, shortBufferSize, "%s", "12345") >= shortBufferSize);
+  assert_string_equality(shortBuffer, "");
 }

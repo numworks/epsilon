@@ -266,4 +266,12 @@ double CompoundInterestData::computeUnknownValue() const {
   return result;
 }
 
+void CompoundInterestData::setValue(uint8_t param, double value) {
+  if (param == static_cast<uint8_t>(Parameter::PY)) {
+    // Updating PY should also update CY
+    InterestData::setValue(static_cast<uint8_t>(Parameter::CY), value);
+  }
+  InterestData::setValue(param, value);
+}
+
 }  // namespace Solver

@@ -49,10 +49,7 @@ const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poin
         if (seq->fullName() != nullptr) {
           if (std::floor(n) == n) {
             Expression sequenceExpression = seq->expressionReduced(this);
-            // TODO: remove badlyReferencesItself
-            if (!seq->badlyReferencesItself(this)) {
-              result = seq->valueAtRank<T>(n, m_sequenceContext);
-            }
+            result = seq->valueAtRank<T>(n, m_sequenceContext);
           }
         }
       }

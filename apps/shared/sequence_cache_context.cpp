@@ -12,10 +12,11 @@ using namespace Poincare;
 namespace Shared {
 
 template<typename T>
-SequenceCacheContext<T>::SequenceCacheContext(SequenceContext * sequenceContext) :
+SequenceCacheContext<T>::SequenceCacheContext(SequenceContext * sequenceContext, int forbiddenSequenceIndex) :
   ContextWithParent(sequenceContext),
   m_values{{NAN, NAN},{NAN, NAN},{NAN,NAN}},
-  m_sequenceContext(sequenceContext)
+  m_sequenceContext(sequenceContext),
+  m_forbiddenSequenceIndex(forbiddenSequenceIndex)
 {
 }
 
@@ -23,33 +24,40 @@ template<typename T>
 const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue ) {
   // [u|v|w](n(+1)?)
   if (symbol.type() == ExpressionNode::Type::Sequence) {
+    T result = NAN;
     int index = nameIndexForSymbol(const_cast<Symbol &>(static_cast<const Symbol &>(symbol)));
     Expression rank = symbol.childAtIndex(0).clone();
     if (rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
-      return Float<T>::Builder(m_values[index][0]);
+      result = m_values[index][0];
     } if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))) {
-      return Float<T>::Builder(m_values[index][1]);
+      result = m_values[index][1];
     }
-    /* Do not use recordAtIndex : if the sequences have been reordered, the
-     * name index and the record index may not correspond. */
-    Ion::Storage::Record record = m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
-    if (!record.isNull()) {
-      assert(record.fullName()[0] == symbol.name()[0]);
-      Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
-      rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<T>::Builder(unknownSymbolValue));
-      T n = PoincareHelpers::ApproximateToScalar<T>(rank, this);
-      // In case the sequence referenced is not defined or if the rank is not an int, return NAN
-      if (seq->fullName() != nullptr) {
-        if (std::floor(n) == n) {
-          Expression sequenceExpression = seq->expressionReduced(this);
-          if (!seq->badlyReferencesItself(this)) {
-            return Float<T>::Builder(seq->valueAtRank<T>(n, m_sequenceContext));
+    /* If the symbol was not in the two previous ranks, we try to approximate
+     * the sequence independently from the others at the required rank (this
+     * will solve u(n) = 5*n, v(n) = u(n+10) for instance). But we avoid doing
+     * so if the sequence referencing itself to avoid an infinite loop. */
+    if (std::isnan(result) && index != m_forbiddenSequenceIndex) {
+      /* Do not use recordAtIndex : if the sequences have been reordered, the
+       * name index and the record index may not correspond. */
+      Ion::Storage::Record record = m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
+      if (!record.isNull()) {
+        assert(record.fullName()[0] == symbol.name()[0]);
+        Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
+        rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<T>::Builder(unknownSymbolValue));
+        T n = PoincareHelpers::ApproximateToScalar<T>(rank, this);
+        // In case the sequence referenced is not defined or if the rank is not an int, return NAN
+        if (seq->fullName() != nullptr) {
+          if (std::floor(n) == n) {
+            Expression sequenceExpression = seq->expressionReduced(this);
+            // TODO: remove badlyReferencesItself
+            if (!seq->badlyReferencesItself(this)) {
+              result = seq->valueAtRank<T>(n, m_sequenceContext);
+            }
           }
         }
       }
-    } else {
-      return Float<T>::Builder(NAN);
     }
+    return Float<T>::Builder(result);
   }
   return ContextWithParent::expressionForSymbolAbstract(symbol, clone);
 }

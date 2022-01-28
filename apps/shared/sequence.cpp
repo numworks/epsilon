@@ -230,7 +230,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
   char unknownN[bufferSize];
   Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknown);
 
-  SequenceCacheContext<T> ctx = SequenceCacheContext<T>(sqctx);
+  SequenceCacheContext<T> ctx = SequenceCacheContext<T>(sqctx, sequenceIndex);
   // Hold values u(n), u(n-1), u(n-2), v(n), v(n-1), v(n-2)...
   T values[MaxNumberOfSequences][MaxRecurrenceDepth+1];
 

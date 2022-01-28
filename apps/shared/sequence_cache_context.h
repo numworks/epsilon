@@ -11,7 +11,7 @@ namespace Shared {
 template<typename T>
 class SequenceCacheContext : public Poincare::ContextWithParent {
 public:
-  SequenceCacheContext(SequenceContext * sequenceContext);
+  SequenceCacheContext(SequenceContext * sequenceContext, int forbiddenSequenceIndex);
   const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override;
   void setValueForSymbol(T value, const Poincare::Symbol & symbol);
 private:
@@ -19,6 +19,7 @@ private:
   int rankIndexForSymbol(const Poincare::Symbol & symbol);
   T m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
   SequenceContext * m_sequenceContext;
+  int m_forbiddenSequenceIndex;
 };
 
 }

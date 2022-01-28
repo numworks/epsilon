@@ -343,14 +343,14 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   if (!isEditing()) {
     setEditing(true);
   }
-  // TODO : Cycle default XNT and local XNT layouts
+  /* TODO : Cycle default XNT and local XNT layouts in parametered expressions
+   * such as derivative, sum, integral or layouts. */
   // Query bottom-most layout
   Layout xnt = m_contentView.cursor()->layout().XNTLayout();
   if (xnt.isUninitialized()) {
     xnt = CodePointLayout::Builder(defaultXNTCodePoint);
     if (Ion::Events::repetitionFactor() > 0 && isEditing() && m_contentView.selectionIsEmpty()) {
       // XNT is Cycling, remove the last inserted character
-      // TODO Hugo : Handle cycling when xnt is initialized.
       m_contentView.cursor()->performBackspace();
     }
   }

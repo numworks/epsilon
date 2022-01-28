@@ -147,7 +147,7 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
      * floor(x) = x while x is not integer.*/
   rankIsInteger = std::floor(rankValue) == rankValue;
   }
-  if (rankIsInteger && !seq.badlyReferencesItself(ctx)) {
+  if (rankIsInteger) {
     SequenceContext sqctx(ctx, sequenceStore());
     return Float<double>::Builder(seq.evaluateXYAtParameter(rankValue, &sqctx).x2());
   }

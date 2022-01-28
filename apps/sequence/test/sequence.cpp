@@ -474,6 +474,16 @@ QUIZ_CASE(sequence_evaluation) {
   conditions1[1] = "9";
   conditions2[1] = "u(u(0))";
   check_sequences_defined_by(result36, types, definitions, conditions1, conditions2);
+
+  // u(n+2) = u(n+1) + u(n), v(n) = u(n+1)
+  double result37[MaxNumberOfSequences][10] = {{0., 1., 1., 2., 3., 5., 8., 13., 21., 34.}, {1., 1., 2., 3., 5., 8., 13., 21., 34., 55.}, {}};
+  types[0] = Sequence::Type::DoubleRecurrence;
+  types[1] = Sequence::Type::Explicit;
+  definitions[0] = "u(n+1)+u(n)";
+  definitions[1] = "u(n+1)";
+  conditions1[0] = "0";
+  conditions2[0] = "1";
+  check_sequences_defined_by(result37, types, definitions, conditions1, conditions2);
 }
 
 QUIZ_CASE(sequence_context) {

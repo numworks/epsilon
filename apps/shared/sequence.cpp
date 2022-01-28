@@ -139,49 +139,6 @@ bool Sequence::isEmpty() {
         (type == Type::SingleRecurrence || data->initialConditionSize(1) == 0)));
 }
 
-bool Sequence::badlyReferencesItself(Context * context) {
-  bool allowFirstCondition = false, allowSecondCondition = false, allowFirstOrderSelfReference = false, allowSecondOrderSelfReference = false;
-  const void * pack[] = { this, &allowFirstCondition, &allowSecondCondition, &allowFirstOrderSelfReference, &allowSecondOrderSelfReference };
-
-  Poincare::Expression::ExpressionTypeTest test = [](const Expression e, const void * aux) {
-    if (e.isUninitialized() || e.type() != ExpressionNode::Type::Sequence) {
-      return false;
-    }
-    const char * eName = static_cast<const Poincare::Sequence &>(e).name();
-    assert(strlen(eName) == 1);
-    const void * const * pack = static_cast<const void * const *>(aux);
-    const Sequence * sequence = static_cast<const Sequence *>(pack[0]);
-    if (sequence->fullName()[0] == eName[0]) {
-      Expression rank = e.childAtIndex(0);
-      bool allowFirstCondition = *static_cast<const bool *>(pack[1]),
-           allowSecondCondition = *static_cast<const bool *>(pack[2]),
-           allowFirstOrderSelfReference = *static_cast<const bool *>(pack[3]),
-           allowSecondOrderSelfReference = *static_cast<const bool *>(pack[4]);
-      return !(
-          (allowFirstCondition && rank.isIdenticalTo(BasedInteger::Builder(sequence->initialRank())))
-       || (allowSecondCondition && rank.isIdenticalTo(BasedInteger::Builder(sequence->initialRank() + 1)))
-       || (allowFirstOrderSelfReference && rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown)))
-       || (allowSecondOrderSelfReference && rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), BasedInteger::Builder(1))))
-       );
-    }
-    return false;
-  };
-
-  bool res = false;
-  if (type() != Sequence::Type::Explicit) {
-    res |= firstInitialConditionExpressionClone().hasExpression(test, pack);
-    allowFirstCondition = true;
-    if (type() == Sequence::Type::DoubleRecurrence) {
-      res |= secondInitialConditionExpressionClone().hasExpression(test, pack);
-      allowSecondCondition = true;
-      allowSecondOrderSelfReference = true;
-    }
-    allowFirstOrderSelfReference = true;
-  }
-
-  return res || expressionClone().hasExpression(test, pack);
-}
-
 void Sequence::tidyDownstreamPoolFrom(char * treePoolCursor) const {
   model()->tidyDownstreamPoolFrom(treePoolCursor);
   m_firstInitialCondition.tidyDownstreamPoolFrom(treePoolCursor);
@@ -200,7 +157,7 @@ T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
 
 template<typename T>
 T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
-  if (n < 0 || badlyReferencesItself(sqctx)) {
+  if (n < 0) {
     return NAN;
   }
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);

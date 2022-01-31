@@ -48,13 +48,6 @@ bool InterestController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-int InterestController::reusableParameterCellCount(int type) {
-  if (type == k_inputCellType) {
-    return k_numberOfReusableInputs;
-  }
-  return 1;
-}
-
 void InterestController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   int type = typeAtIndex(index);
   if (type == k_buttonCellType) {
@@ -92,31 +85,6 @@ KDCoordinate InterestController::nonMemoizedRowHeight(int j) {
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(j);
 }
 
-Escher::HighlightCell * InterestController::reusableParameterCell(int i, int type) {
-  switch (type) {
-    case k_inputCellType:
-      assert(i < k_numberOfReusableInputs);
-      return m_cells + i;
-    default:
-      assert(type == k_dropdownCellType && i == 0);
-      return &m_dropdownCell;
-  }
-}
-
-void InterestController::buttonAction() {
-  stackOpenPage(m_financeResultController, 1);
-}
-
-bool InterestController::setParameterAtIndex(int parameterIndex, double f) {
-  uint8_t param = interestParamaterAtIndex(parameterIndex);
-  if (!m_data->checkValue(param, f)) {
-    App::app()->displayWarning(I18n::Message::UndefinedValue);
-    return false;
-  }
-  m_data->setValue(param, f);
-  return true;
-}
-
 void InterestController::onDropdownSelected(int selectedRow) {
   m_data->m_booleanParam = (selectedRow == 0);
 }
@@ -129,4 +97,32 @@ uint8_t InterestController::interestParamaterAtIndex(int index) const {
   }
   assert(index < m_data->numberOfParameters());
   return index;
+}
+
+int InterestController::reusableParameterCellCount(int type) {
+  if (type == k_inputCellType) {
+    return k_numberOfReusableInputs;
+  }
+  return 1;
+}
+
+Escher::HighlightCell * InterestController::reusableParameterCell(int i, int type) {
+  switch (type) {
+    case k_inputCellType:
+      assert(i < k_numberOfReusableInputs);
+      return m_cells + i;
+    default:
+      assert(type == k_dropdownCellType && i == 0);
+      return &m_dropdownCell;
+  }
+}
+
+bool InterestController::setParameterAtIndex(int parameterIndex, double f) {
+  uint8_t param = interestParamaterAtIndex(parameterIndex);
+  if (!m_data->checkValue(param, f)) {
+    App::app()->displayWarning(I18n::Message::UndefinedValue);
+    return false;
+  }
+  m_data->setValue(param, f);
+  return true;
 }

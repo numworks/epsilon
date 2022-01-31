@@ -22,24 +22,25 @@ public:
   const char * title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  int reusableParameterCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int typeAtIndex(int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  Escher::HighlightCell * reusableParameterCell(int i, int type) override;
   // Confirm cell plus all parameters but the unknown one
   int numberOfRows() const override { return m_data->numberOfParameters(); }
-  void buttonAction() override;
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
-
-  bool setParameterAtIndex(int parameterIndex, double f) override;
-  double parameterAtIndex(int index) override { return m_data->getValue(interestParamaterAtIndex(index)); }
 
   // Escher::DropdownCallback
   void onDropdownSelected(int selectedRow) override;
 
 private:
   uint8_t interestParamaterAtIndex(int index) const;
+
+  // Shared::FloatParameterController<double>
+  int reusableParameterCellCount(int type) override;
+  Escher::HighlightCell * reusableParameterCell(int i, int type) override;
+  double parameterAtIndex(int index) override { return m_data->getValue(interestParamaterAtIndex(index)); }
+  bool setParameterAtIndex(int parameterIndex, double f) override;
+  void buttonAction() override { stackOpenPage(m_financeResultController, 1); }
 
   // Dropdown cell is right after all double parameters but the unknown one
   int indexOfDropdown() const { return m_data->numberOfDoubleValues() - 1; }
@@ -54,8 +55,7 @@ private:
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfReusableInputs];
   Escher::MessageTableCellWithSublabelAndDropdown m_dropdownCell;
 
-  // KDFont::SmallFont->glyphSize().width() = 7
-  static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7;
+  static constexpr int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   char m_titleBuffer[k_titleBufferSize];
 
   FinanceResultController * m_financeResultController;

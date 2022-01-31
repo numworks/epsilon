@@ -144,6 +144,12 @@ public:
   FinanceData() { new (&m_simpleInterestData) SimpleInterestData(); }
   // Destroy current data model, using InterestData's virtual destructor
   ~FinanceData() { interestData()->~InterestData(); }
+  // Delete the implicit copy and move constructors and assignments
+  FinanceData(const FinanceData& other) = delete;
+  FinanceData(FinanceData&& other) = delete;
+  FinanceData& operator=(const FinanceData& other) = delete;
+  FinanceData& operator=(FinanceData&& other) = delete;
+
   InterestData * interestData() {
     return reinterpret_cast<InterestData *>(this);
   }

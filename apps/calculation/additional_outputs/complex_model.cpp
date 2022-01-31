@@ -1,4 +1,5 @@
 #include "complex_model.h"
+#include <apps/shared/range_1D.h>
 
 namespace Calculation {
 
@@ -17,11 +18,14 @@ float ComplexModel::rangeBound(float direction, bool horizontal) const {
     maxFactor = k_maxHorizontalMarginFactor;
     value = real();
   }
-  float factor = direction*value >= 0.0f ? maxFactor : minFactor;
   if (std::isnan(value) || std::isinf(value) || value == 0.0f) {
-    return direction*factor;
+    return direction * maxFactor;
   }
-  return factor*value;
+  float r1 = minFactor * value;
+  float r2 = maxFactor * value;
+  r2 = Shared::Range1D::checkedValue(r2, nullptr, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, value >= 0.0f);
+  r1 = Shared::Range1D::checkedValue(r1, &r2, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, value < 0.0f);
+  return direction * value >= 0.0f ? r2 : r1;
 }
 
 float ComplexModel::xMin() const {

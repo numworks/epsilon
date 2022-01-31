@@ -637,6 +637,9 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
 Expression ContinuousFunction::Model::expressionClone(const Ion::Storage::Record * record) const {
   assert(record->fullName() != nullptr && record->fullName()[0] != k_unnamedRecordFirstChar);
   Expression e = ExpressionModel::expressionClone(record);
+  if (e.isUninitialized()) {
+    return e;
+  }
   return e.childAtIndex(1);
 }
 

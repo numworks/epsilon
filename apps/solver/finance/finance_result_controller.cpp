@@ -16,6 +16,8 @@ FinanceResultController::FinanceResultController(Escher::StackViewController * p
 }
 
 void FinanceResultController::didBecomeFirstResponder() {
+  /* Build the result cell here because it only needs to be updated once this
+   * controller become first responder. */
   cellAtIndex(0)->setMessage(m_data->labelForParameter(m_data->getUnknown()));
   cellAtIndex(0)->setSubLabelMessage(m_data->sublabelForParameter(m_data->getUnknown()));
   double value = m_data->computeUnknownValue();

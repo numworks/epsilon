@@ -29,7 +29,7 @@ const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poin
     Expression rank = symbol.childAtIndex(0).clone();
     if (rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
       result = m_values[index][0];
-    } if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))) {
+    } else if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))) {
       result = m_values[index][1];
     }
     /* If the symbol was not in the two previous ranks, we try to approximate

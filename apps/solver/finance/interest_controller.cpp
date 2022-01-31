@@ -11,9 +11,8 @@
 using namespace Solver;
 
 InterestController::InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, InterestData * data) :
-    Escher::SelectableListViewController(parent),
+    Shared::FloatParameterController<double>(parent),
     m_dropdownCell(&m_selectableTableView, &m_dropdownDataSource, this),
-    m_next(&m_selectableTableView, I18n::Message::Ok, Escher::Invocation(&InterestController::ButtonAction, this)),
     m_financeResultController(financeResultController),
     m_data(data) {
   for (size_t i = 0; i < k_numberOfReusableInputs; i++) {
@@ -49,7 +48,7 @@ bool InterestController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-int InterestController::reusableCellCount(int type) {
+int InterestController::reusableParameterCellCount(int type) {
   if (type == k_inputCellType) {
     return k_numberOfReusableInputs;
   }
@@ -58,10 +57,10 @@ int InterestController::reusableCellCount(int type) {
 
 void InterestController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   int type = typeAtIndex(index);
-  if (type == k_confirmCellType) {
+  if (type == k_buttonCellType) {
     return;
   }
-  uint8_t param = paramaterAtIndex(index);
+  uint8_t param = interestParamaterAtIndex(index);
   if (type == k_dropdownCellType) {
     assert(&m_dropdownCell == cell);
     m_dropdownCell.setMessage(m_data->labelForParameter(param));
@@ -71,19 +70,14 @@ void InterestController::willDisplayCellForIndex(Escher::HighlightCell * cell, i
   Escher::MessageTableCellWithEditableTextWithMessage * myCell = static_cast<Escher::MessageTableCellWithEditableTextWithMessage *>(cell);
   myCell->setMessage(m_data->labelForParameter(param));
   myCell->setSubLabelMessage(m_data->sublabelForParameter(param));
-  double value = m_data->getValue(param);
-  constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
-  constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
-  char buffer[bufferSize];
-  Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
-  myCell->setAccessoryText(buffer);
+  return Shared::FloatParameterController<double>::willDisplayCellForIndex(cell, index);
 }
 
 int InterestController::typeAtIndex(int index) {
   if (index < indexOfDropdown()) {
     return k_inputCellType;
   }
-  return (index == indexOfDropdown()) ? k_dropdownCellType : k_confirmCellType;
+  return (index == indexOfDropdown()) ? k_dropdownCellType : k_buttonCellType;
 }
 
 KDCoordinate InterestController::nonMemoizedRowHeight(int j) {
@@ -94,45 +88,32 @@ KDCoordinate InterestController::nonMemoizedRowHeight(int j) {
   } else if (type == k_dropdownCellType) {
     return heightForCellAtIndex(&m_dropdownCell, j);
   }
-  assert(type == k_confirmCellType);
-  return heightForCellAtIndex(&m_next, j);
+  assert(type == k_buttonCellType);
+  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(j);
 }
 
-Escher::HighlightCell * InterestController::reusableCell(int i, int type) {
+Escher::HighlightCell * InterestController::reusableParameterCell(int i, int type) {
   switch (type) {
     case k_inputCellType:
       assert(i < k_numberOfReusableInputs);
       return m_cells + i;
-    case k_dropdownCellType:
-      assert(i == 0);
-      return &m_dropdownCell;
     default:
-      assert(type == k_confirmCellType && i == 0);
-      return &m_next;
+      assert(type == k_dropdownCellType && i == 0);
+      return &m_dropdownCell;
   }
 }
 
-bool InterestController::ButtonAction(void * c, void * s) {
-  InterestController * controller = static_cast<InterestController *>(c);
-  controller->stackOpenPage(controller->m_financeResultController, 1);
-  return true;
+void InterestController::buttonAction() {
+  stackOpenPage(m_financeResultController, 1);
 }
 
-bool InterestController::textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
-bool InterestController::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
-  uint8_t param = paramaterAtIndex(selectedRow());
-  double value = Shared::PoincareHelpers::ApproximateToScalar<double>(text, AppsContainer::sharedAppsContainer()->globalContext());
-  if (!m_data->checkValue(param, value)) {
+bool InterestController::setParameterAtIndex(int parameterIndex, double f) {
+  uint8_t param = interestParamaterAtIndex(parameterIndex);
+  if (!m_data->checkValue(param, f)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  m_data->setValue(param, value);
-  m_selectableTableView.reloadData();
-  // Select next cell
-  m_selectableTableView.selectCellAtLocation(0, selectedRow() + 1);
+  m_data->setValue(param, f);
   return true;
 }
 
@@ -140,7 +121,7 @@ void InterestController::onDropdownSelected(int selectedRow) {
   m_data->m_booleanParam = (selectedRow == 0);
 }
 
-uint8_t InterestController::paramaterAtIndex(int index) const {
+uint8_t InterestController::interestParamaterAtIndex(int index) const {
   uint8_t unknownParam = m_data->getUnknown();
   assert(unknownParam < m_data->numberOfUnknowns());
   if (unknownParam <= index) {

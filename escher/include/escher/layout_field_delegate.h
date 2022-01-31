@@ -9,7 +9,7 @@ namespace Escher {
 
 class LayoutField;
 
-class LayoutFieldDelegate : public ContextProvider{
+class LayoutFieldDelegate : public ContextProvider {
 public:
   virtual bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) = 0;
   virtual bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) = 0;

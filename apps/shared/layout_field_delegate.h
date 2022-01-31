@@ -13,7 +13,6 @@ public:
   bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
   bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
-  Poincare::Context * context() const override { return expressionFieldDelegateApp()->localContext(); }
 protected:
   ExpressionFieldDelegateApp * expressionFieldDelegateApp() const {
     return static_cast<ExpressionFieldDelegateApp *>(Escher::Container::activeApp());

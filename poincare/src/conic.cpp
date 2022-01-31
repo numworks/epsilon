@@ -262,7 +262,6 @@ void Conic::centerConic() {
   } else if (e != 0.0) {
     k = (f + a*h*h - d*h) / e;
   } else {
-    assert(d == 0.0);
     k = 0.0;
   }
   // A and C remain unchanged

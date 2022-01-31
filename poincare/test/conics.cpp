@@ -114,6 +114,7 @@ QUIZ_CASE(poincare_conics_invalid) {
   Ion::Storage::sharedStorage()->recordNamed("a").destroy();
   quiz_assert_undefined("y^2-x^2+a");
   quiz_assert_undefined("x^2+y^2+x*y+x+y-5*10^70");
+  quiz_assert_undefined("x^2+y^2+2*x*y+x+y");
 }
 
 QUIZ_CASE(poincare_conics_general) {

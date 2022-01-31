@@ -46,7 +46,7 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
       displayWarning(I18n::Message::SyntaxError);
       return true;
     }
-    /* Step 3: Expression serialization. Tesulting texts are parseable and
+    /* Step 3: Expression serialization. Resulting texts are parseable and
      * displayable, like:
      * - 2*a
      * - log(x,2) */

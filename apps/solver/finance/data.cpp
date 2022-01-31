@@ -18,13 +18,10 @@ void InterestData::Initialize(void * m_buffer, bool simple) {
 }
 
 void InterestData::setUnknown(uint8_t param) {
-  if (m_unknown >= numberOfUnknowns()) {
-    m_unknown = param;
-  } else if (param != m_unknown) {
-    setValue(m_unknown, defaultValue(m_unknown));
-    m_unknown = param;
-    setValue(m_unknown, NAN);
-  }
+  assert(m_unknown < numberOfUnknowns());
+  setValue(m_unknown, defaultValue(m_unknown));
+  m_unknown = param;
+  setValue(m_unknown, NAN);
 }
 
 void InterestData::resetValues() {

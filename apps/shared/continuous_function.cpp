@@ -268,7 +268,7 @@ void ContinuousFunction::udpateModel(Context * context) {
   m_model.resetPlotType();
   expressionEquation(context);
   assert(m_model.plotType() != PlotType::Unknown);
-  if (previousAlongXStatus != isAlongX() || canHaveCustomDomain()) {
+  if (previousAlongXStatus != isAlongX() || !canHaveCustomDomain()) {
     // The definition's domain must be resetted.
     setTMin(!isAlongX() ? 0.0 : -INFINITY);
     setTMax(!isAlongX() ? 2.0 * Trigonometry::PiInAngleUnit(AngleUnit())

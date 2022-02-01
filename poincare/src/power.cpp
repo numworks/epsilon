@@ -1088,8 +1088,12 @@ bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Expressi
   derivedFromExponent.addChildAtIndexInPlace(exponent.clone(), 0, 0);
   derivedFromExponent.derivateChildAtIndexInPlace(0, reductionContext, symbol, symbolValue);
   /* Reduce the derived g, to check for its null status and, if null, prevent
-   * using naperian logarithm of f, which rely on the sign of f. */
+   * using naperian logarithm of f, which rely on the sign of f. Prevent the
+   * replacement of any symbols to preserve the local symbols. */
+  ExpressionNode::SymbolicComputation previousSymbolicComputation = reductionContext.symbolicComputation();
+  reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
   derivedFromExponent.deepReduceChildren(reductionContext);
+  reductionContext.setSymbolicComputation(previousSymbolicComputation);
   if (derivedFromExponent.childAtIndex(0).nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
     derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 1, 1);
     derivedFromExponent.addChildAtIndexInPlace(clone(), 2, 2);

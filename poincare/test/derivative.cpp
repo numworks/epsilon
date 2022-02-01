@@ -62,6 +62,7 @@ void assert_reduces_for_approximation(const char * expression, const char * resu
 }
 
 QUIZ_CASE(poincare_derivative_reduced_approximation) {
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
   assert_reduces_for_approximation("diff(ln(x),x,1)", "1");
   assert_reduces_for_approximation("diff(ln(x),x,2.2)", "5/11");
   assert_reduces_for_approximation("diff(ln(x),x,0)", Undefined::Name());
@@ -74,6 +75,7 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
 
   assert_reduces_for_approximation("diff(1/x,x,-2)", "-1/4");
   assert_reduces_for_approximation("diff(x^3+5*x^2,x,0)", "0");
+  assert_reduces_for_approximation("diff(5^(sin(x)),x,3)", "5^sin(3)×cos(3)×ln(5)");
 }
 
 void assert_approximate_to(const char * expression, const char * result, Preferences::AngleUnit angleUnit = Radian) {

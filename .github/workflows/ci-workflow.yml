@@ -50,6 +50,18 @@ jobs:
         with:
           submodules: 'recursive'
       - run: make -j2 PLATFORM=simulator TARGET=android
+      - id: 'auth'
+        if: ${{ github.event_name == 'push' }}
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{secrets.GOOGLE_CREDENTIALS}}'
+      - id: 'upload-file'
+        if: ${{ github.event_name == 'push' }}
+        uses: 'google-github-actions/upload-cloud-storage@v0'
+        with:
+          path: 'output/release/simulator/android/epsilon.apk'
+          destination: 'upsilon-binfiles.appspot.com/dev/simulator/'
+          parent: false
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-android.apk
@@ -91,6 +103,18 @@ jobs:
       - run: mv output/release/device/n0100/flasher.light.bin final-output/flasher.light.bin
       - run: find final-output/ -type f -exec bash -c "shasum -a 256 -b {} > {}.sha256" \;
       - run: tar cvfz binpack-n0100.tgz final-output/*
+      - id: 'auth'
+        if: ${{ github.event_name == 'push'}}
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{secrets.GOOGLE_CREDENTIALS}}'
+      - id: 'upload-directory'
+        if: ${{ github.event_name == 'push'}}
+        uses: 'google-github-actions/upload-cloud-storage@v0'
+        with:
+          path: 'final-output/'
+          destination: 'upsilon-binfiles.appspot.com/dev/n100/'
+          parent: false
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-binpack-n0100.tgz
@@ -113,6 +137,18 @@ jobs:
       - run: make -j2 bench.flash.dfu
       - run: make -j2 binpack
       - run: cp output/release/device/n0110/binpack-n0110-`git rev-parse HEAD | head -c 7`.tgz output/release/device/n0110/binpack-n0110.tgz
+      - id: 'auth'
+        if: ${{ github.event_name == 'push' }}
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{secrets.GOOGLE_CREDENTIALS}}'
+      - id: 'upload-directory'
+        if: ${{ github.event_name == 'push' }}
+        uses: 'google-github-actions/upload-cloud-storage@v0'
+        with:
+          path: 'output/release/device/n0110/binpack/'
+          destination: 'upsilon-binfiles.appspot.com/dev/n110/'
+          parent: false
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-binpack-n0110.tgz
@@ -131,6 +167,18 @@ jobs:
       - run: make -j2 PLATFORM=simulator
       - run: make -j2 PLATFORM=simulator test.exe
       - run: cmd /c output\release\simulator\windows\test.exe --headless
+      - id: 'auth'
+        if: ${{ github.event_name == 'push' }}
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{secrets.GOOGLE_CREDENTIALS}}'
+      - id: 'upload-file'
+        if: ${{ github.event_name == 'push' }}
+        uses: 'google-github-actions/upload-cloud-storage@v0'
+        with:
+          path: 'output/release/simulator/windows/epsilon.exe'
+          destination: 'upsilon-binfiles.appspot.com/dev/simulator/'
+          parent: false
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-windows.exe
@@ -147,6 +195,18 @@ jobs:
       - run: make -j2 PLATFORM=simulator TARGET=web
       - run: make -j2 PLATFORM=simulator TARGET=web test.js
       - run: node output/release/simulator/web/test.js --headless
+      - id: 'auth'
+        if: ${{ github.event_name == 'push' }}
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{secrets.GOOGLE_CREDENTIALS}}'
+      - id: 'upload-file'
+        if: ${{ github.event_name == 'push' }}
+        uses: 'google-github-actions/upload-cloud-storage@v0'
+        with:
+          path: 'output/release/simulator/web/epsilon.js'
+          destination: 'upsilon-binfiles.appspot.com/dev/simulator/'
+          parent: false
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-web.zip
@@ -161,6 +221,18 @@ jobs:
       - run: make -j2 PLATFORM=simulator
       - run: make -j2 PLATFORM=simulator test.bin
       - run: output/release/simulator/linux/test.bin --headless
+      - id: 'auth'
+        if: ${{ github.event_name == 'push' }}
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{secrets.GOOGLE_CREDENTIALS}}'
+      - id: 'upload-file'
+        if: ${{ github.event_name == 'push' }}
+        uses: 'google-github-actions/upload-cloud-storage@v0'
+        with:
+          path: 'output/release/simulator/linux/epsilon.bin'
+          destination: 'upsilon-binfiles.appspot.com/dev/simulator/'
+          parent: false
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-linux.bin

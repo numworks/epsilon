@@ -16,6 +16,7 @@ void initSystemClocks();
 void initPeripheralsClocks();
 void initCompensationCell();
 void initInterruptions();
+void initPowerSupply();
 
 void shutdown();
 void shutdownCompensationCell();

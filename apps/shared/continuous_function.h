@@ -52,7 +52,7 @@ public:
     X
   };
 
-  static constexpr size_t k_numberOfPlotTypes = 20;
+  static constexpr size_t k_numberOfPlotTypes = 22;
   enum class PlotType : uint8_t {
     Cartesian = 0,
     CartesianParabola,
@@ -73,6 +73,8 @@ public:
     Parametric,
     // All following types shall never be active
     Undefined,
+    UndefinedPolar,
+    UndefinedParametric,
     Unhandled,
     UnhandledPolar,
     UnhandledParametric,

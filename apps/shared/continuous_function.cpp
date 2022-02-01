@@ -84,9 +84,11 @@ ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
   PlotType functionPlotType = plotType();
   switch (functionPlotType) {
   case PlotType::Parametric:
+  case PlotType::UndefinedParametric:
   case PlotType::UnhandledParametric:
     return SymbolType::T;
   case PlotType::Polar:
+  case PlotType::UndefinedPolar:
   case PlotType::UnhandledPolar:
     return SymbolType::Theta;
   default:
@@ -118,6 +120,8 @@ I18n::Message ContinuousFunction::plotTypeMessage() {
       I18n::Message::PolarType,
       I18n::Message::ParametricType,
       I18n::Message::UndefinedType,
+      I18n::Message::UndefinedType, // UndefinedPolar displayed as Undefined
+      I18n::Message::UndefinedType, // UndefinedParametric displayed as Undefined
       I18n::Message::UnhandledType,
       I18n::Message::UnhandledType, // UnhandledPolar displayed as Unhandled
       I18n::Message::UnhandledType, // UnhandledParametric displayed as Unhandled
@@ -832,10 +836,22 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(char * treePoolCursor) co
 }
 
 void ContinuousFunction::Model::updatePlotType(const Expression equation, Context * context) const {
-  // Retrieve ContinuousFunction's equation
+  // Named functions : PlotType has been updated when parsing the equation
+  PlotType modelPlotType = plotType();
+
   if (equation.type() == ExpressionNode::Type::Undefined) {
-    m_plotType = PlotType::Undefined;
-    return;
+    // Equation is undefined, preserve symbol.
+    switch (modelPlotType) {
+    case PlotType::Parametric:
+      m_plotType = PlotType::UndefinedParametric;
+      return;
+    case PlotType::Polar:
+      m_plotType = PlotType::UndefinedPolar;
+      return;
+    default:
+      m_plotType = PlotType::Undefined;
+      return;
+    }
   }
   // Compute equation's degree regarding y and x.
   int yDeg = equation.polynomialDegree(context, k_ordinateName);
@@ -844,8 +860,6 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
   // Inequations : equation symbol has been updated when parsing the equation
   ExpressionNode::Type modelEquationType = equationType();
 
-  // Named functions : PlotType has been updated when parsing the equation
-  PlotType modelPlotType = plotType();
   if (modelPlotType == PlotType::Parametric || modelPlotType == PlotType::Polar || modelPlotType == PlotType::Cartesian) {
     // There should be no y symbol. Inequations are handled on cartesians only
     if (yDeg > 0 || (modelEquationType != ExpressionNode::Type::Equal && modelPlotType != PlotType::Cartesian)) {

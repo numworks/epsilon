@@ -14,6 +14,7 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/drivers/, \
   board_frequency_stm32h.cpp:+n0120 \
   board_peripherals_clocks_n0110.cpp:+n0110 \
   board_peripherals_clocks_n0120.cpp:+n0120 \
+  board_power_supply_n0120.cpp:+n0120 \
   board_privileged.cpp \
   board_privileged_dual_slots.cpp:-n0100 \
   board_privileged_n0110.cpp:+n0110 \

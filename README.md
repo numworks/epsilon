@@ -31,7 +31,7 @@ Upsilon is a fork of Omega, an user-made OS that runs on the Numworks calculator
 
 ### Installer
 
-Go to the [Upsilon website](https://lolocomotive.github.io/Upsilon-website) to the "Install" section. 
+Go to the [Upsilon website](https://lolocomotive.github.io/Upsilon-website) to the "Install" section.
 If your calculator is recognized, contains a version of Epsilon lower than 16 and your browser accepts WebUSB, the page will suggest you to install Upsilon.
 Do not disconnect your calculator until the installation is complete.
 
@@ -46,12 +46,13 @@ Do not disconnect your calculator until the installation is complete.
 <br>
 
 <details>
+
 <summary><b>1.1 Linux</b></summary>
 
 <br>
 
-
 <details>
+
 <summary>Debian or Ubuntu</summary>
 
 <br>
@@ -69,26 +70,27 @@ And there you can go to step 2!
 </details>
 
 <details>
+
 <summary>Fedora</summary>
 
 <br>
 
-First install basics dev tools.
+To install basics dev tools:
 
 ```bash
 dnf install make automake gcc gcc-c++ kernel-devel
 ```
 
-Then install required packages.
+And then install required packages.
 
 ```bash
-dnf install git ImageMagick libX11-devel libXext-devel freetype-devel libpng-devel libjpeg-devel pkg-config
+install git ImageMagick libX11-devel libXext-devel freetype-devel libpng-devel libjpeg-devel pkg-config
 ```
 
 Then, install GCC cross compiler for ARM.
 
 ```bash
-dnf install arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++
+        dnf install arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++
 ```
 
 <br>
@@ -100,14 +102,17 @@ dnf install arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++
 </details>
 
 <details>
+
 <summary><b>1.2 Mac</b></summary>
 
 <br>
 
 It's recommended to use [Homebrew](https://brew.sh/). Once it's installed, just run:
+
 ```bash
 brew install numworks/tap/epsilon-sdk
 ```
+
 and it will install all dependencies.
 
 <br>
@@ -116,24 +121,26 @@ And there you can go to step 2!
 
 <br>
 
-
-
 </details>
 
 <details>
+
 <summary><b>1.3 Windows</b></summary>
 
 <br>
+
 <details>
+
 <summary>With Msys2/Mingw (officialized by numworks but with a lot of bugs)</summary>
-[Msys2](https://www.msys2.org/) environment is recommended by Numworks to get most of the required tools on Windows easily. It's where you'll paste all the commands of this tutorial. Once it's installed, paste these commands into the Msys2 terminal.
+
+[Msys2](https://www.msys2.org/) environment is recommended by Numworks to get most of the required tools on Windows easily. It's where you'll paste all the commands of this tutorial. Once it'sinstalled, paste these commands into the Msys2 terminal.
 
 ```bash
 pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-libusb git make python
 echo "export PATH=/mingw64/bin:$PATH" >> .bashrc
 ```
 
-Next, you'll need to install the [GCC toolchain for ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for an install location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your $PATH. Just enter:
+Next, you'll need to install the [GCC toolchain for ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for aninstall location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your $PATH. Just enter:
 
 ```bash
 echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc
@@ -143,8 +150,8 @@ Just restart terminal and you can go to step 2!
 </details>
 
 <details>
-<summary>With WSL 2</summary>
 
+<summary>With WSL 2</summary>
 
 You need a windows version >= 1903.
 
@@ -168,13 +175,13 @@ This one allows virtual machines developed by Microsoft.
 4. Now open powershell admin like before and type:
 ```powershell
 wsl --set-default-version 2
-```
+        ```
 5. Download [Ubuntu](https://www.microsoft.com/store/apps/9n6svws3rx71) from Microsoft store.
 
 WSL is now installed.
 
 ### Usbipd installation to connect your calculator
-If you want to connect to the calculator, you have to connect to install this [tool](https://github.com/dorssel/usbipd-win/releases/download/v1.3.0/usbipd-win_1.3.0.msi). This will allow you to connect WSL to the calculator through internet. Follow the on screen information to install.
+If you want to connect to the calculator, you have to connect to install this [tool](https://github.com/dorssel/usbipd-win/releases/download/v1.3.0/usbipd-win_1.3.0.msi). This will allow you toconnect WSL to the calculator through internet. Follow the on screen information to install.
 #### Ubuntu
 1. In a WSL Ubuntu command prompt, type:
 ```bash
@@ -188,6 +195,7 @@ sudo visudo
 `Defaults secure_path="/usr/lib/linux-tools/5.4.0-77-generic:/usr/local/sbin:..."`
 
 #### Debian
+
 1. If you use debian for your WSL distro, use this command instead:
 ```bash
 sudo apt install usbip hwdata usbutils
@@ -207,11 +215,13 @@ usbipd wsl attach --busid <BUSID>
 It will ask you to type your wsl's password and will connect your calculator to WSL.
 
 You can now go to step 2!
+
 </details>
 
 </details>
 
 <br>
+
 
 ### 2. Set up repo
 
@@ -230,7 +240,8 @@ git checkout upsilon-dev
 
 
 <details>
-  <summary><b>Model n0100</b></summary>
+
+<summary><b>Model n0100</b></summary>
 
 (note: you can change the `EPSILON_I18N=en` flag to `fr`, `nl`, `pt`, `it`, `de`, `es` or `hu`).
 
@@ -253,12 +264,13 @@ or:
 ```bash
 make MODEL=n0100 OMEGA_USERNAME="" binpack -j4
 ```
-to make binpack witch you can flash to the calculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0100/). Binpacks are a great way to share a custom build of Upsilon to friends.
-  
+to make binpack which you can flash to the calculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0100/). Binpacks are a great way to share a custom build of Upsilonto friends.
+
 </details>
 
 <details>
-  <summary><b>Model n0110</b></summary>
+
+<summary><b>Model n0110</b></summary>
 
 
 ```bash
@@ -285,8 +297,9 @@ to make binpack witch you can flash to the calculator from [Ti-planet's webDFU](
 </details>
 
 <details>
-  <summary><b>Web simulator</b></summary>
-  
+
+<summary><b>Web simulator</b></summary>
+
 First, install emsdk :
 
 ```bash
@@ -306,12 +319,12 @@ make PLATFORM=simulator TARGET=web OMEGA_USERNAME="{Your name, max 15 characters
 
 The simulator is now in `output/release/simulator/web/simulator.zip`
 
-
 </details>
 
 <details>
-  <summary><b>3DS Simulator</b></summary>
-  
+
+<summary><b>3DS Simulator</b></summary>
+
 You need devkitPro and devkitARM installed and in your path (instructions [here](https://devkitpro.org/wiki/Getting_Started))
 
 ```bash
@@ -347,7 +360,7 @@ If you need help, you can join our Discord server here : https://discord.gg/NFvz
 ## Contributing
 
 To contribute, please refer to [Omega's Wiki](https://github.com/Omega-Numworks/Omega/wiki/Contributing), the same rules apply here.
-  
+
 ## Related repositories
 
 Here are the main links toward Omega's different websites and repositories, that have been used for the creation of Upsilon.
@@ -378,4 +391,3 @@ NumWorks SAS and Nintendo of America Inc aren't associated in any shape or form 
 * NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 * Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 * Upsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
-

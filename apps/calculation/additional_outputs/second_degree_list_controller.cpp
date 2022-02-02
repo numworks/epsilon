@@ -20,20 +20,20 @@ using namespace Poincare;
 using namespace Shared;
 
 namespace Calculation {
-    
+
 void SecondDegreeListController::setExpression(Poincare::Expression e) {
   ExpressionsListController::setExpression(e);
   assert(!m_expression.isUninitialized());
 
   Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  
+
   Context * context = App::app()->localContext();
   Preferences * preferences = Preferences::sharedPreferences();
-  Poincare::ExpressionNode::ReductionContext reductionContext = Poincare::ExpressionNode::ReductionContext(context, 
-          preferences->complexFormat(), preferences->angleUnit(), 
-          GlobalPreferences::sharedGlobalPreferences()->unitFormat(), 
-          ExpressionNode::ReductionTarget::SystemForApproximation, 
-          ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, 
+  Poincare::ExpressionNode::ReductionContext reductionContext = Poincare::ExpressionNode::ReductionContext(context,
+          preferences->complexFormat(), preferences->angleUnit(),
+          GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
+          ExpressionNode::ReductionTarget::SystemForApproximation,
+          ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
           Poincare::ExpressionNode::UnitConversion::Default);
 
   PoincareHelpers::Reduce(&m_expression, context, ExpressionNode::ReductionTarget::SystemForAnalysis);
@@ -52,7 +52,7 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
   Expression a = polynomialCoefficients[2];
   Expression b = polynomialCoefficients[1];
   Expression c = polynomialCoefficients[0];
-  
+
   Expression delta = Subtraction::Builder(Power::Builder(b.clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), a.clone(), c.clone()));
   PoincareHelpers::Simplify(&delta, context, ExpressionNode::ReductionTarget::SystemForApproximation);
 
@@ -72,25 +72,22 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
   };
 
   MultiplicationTypeForA multiplicationTypeForA;
-  
+
   if (a.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(a).isOne()) {
     multiplicationTypeForA = MultiplicationTypeForA::Nothing;
-  }
-  else if(a.type() == ExpressionNode::Type::Rational &&  static_cast<const Rational &>(a).isMinusOne()){
+  } else if(a.type() == ExpressionNode::Type::Rational &&  static_cast<const Rational &>(a).isMinusOne()){
     multiplicationTypeForA = MultiplicationTypeForA::Minus;
-  }
-  else if (a.type() == ExpressionNode::Type::Addition) {
+  } else if (a.type() == ExpressionNode::Type::Addition) {
     multiplicationTypeForA = MultiplicationTypeForA::Parenthesis;
-  }
-  else {
+  } else {
     multiplicationTypeForA = MultiplicationTypeForA::Normal;
   }
 
   PoincareHelpers::Simplify(&a, context, ExpressionNode::ReductionTarget::User);
 
-  /* 
-   * Because when can't apply reduce or simplify to keep the 
-   * canonized form we must beautify the expression manually 
+  /*
+   * Because when can't apply reduce or simplify to keep the
+   * canonized form we must beautify the expression manually
   */
 
   Expression xMinusAlphaPowerTwo;
@@ -99,12 +96,11 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
   if (alpha.isUninitialized()) {
     PoincareHelpers::Simplify(&minusAlpha, context, ExpressionNode::ReductionTarget::User);
     xMinusAlphaPowerTwo = Power::Builder(Parenthesis::Builder(Addition::Builder(Symbol::Builder("x", strlen("x")), minusAlpha)), Rational::Builder(2));
-  }
-  else {
+  } else {
     PoincareHelpers::Simplify(&alpha, context, ExpressionNode::ReductionTarget::User);
     xMinusAlphaPowerTwo = Power::Builder(Parenthesis::Builder(Subtraction::Builder(Symbol::Builder("x", strlen("x")), alpha)), Rational::Builder(2));
   }
-  
+
   Expression xMinusAlphaPowerTwoWithFactor;
 
   switch (multiplicationTypeForA)
@@ -125,18 +121,21 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
       assert(false);
       break;
   }
-  
+
   Expression canonized;
+  PoincareHelpers::Simplify(&minusBeta, context, ExpressionNode::ReductionTarget::User);
   Expression beta = getOppositeIfExists(minusBeta, &reductionContext);
   if (beta.isUninitialized()) {
-    PoincareHelpers::Simplify(&minusBeta, context, ExpressionNode::ReductionTarget::User);
-    canonized = Subtraction::Builder(xMinusAlphaPowerTwoWithFactor, minusBeta);
-  }
-  else {
+    if (minusBeta.type() == ExpressionNode::Type::Addition || minusBeta.type() == ExpressionNode::Type::Subtraction) {
+      canonized = Subtraction::Builder(xMinusAlphaPowerTwoWithFactor, Parenthesis::Builder(minusBeta));
+    } else {
+      canonized = Subtraction::Builder(xMinusAlphaPowerTwoWithFactor, minusBeta);
+    }
+  } else {
     PoincareHelpers::Simplify(&beta, context, ExpressionNode::ReductionTarget::User);
     canonized = Addition::Builder(xMinusAlphaPowerTwoWithFactor, beta);
   }
- 
+
   Expression x0;
   Expression x1;
 
@@ -145,8 +144,7 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
     x0 = Division::Builder(Opposite::Builder(b.clone()), Multiplication::Builder(Rational::Builder(2), a.clone()));
     m_numberOfSolutions = 1;
     PoincareHelpers::Simplify(&x0, context, ExpressionNode::ReductionTarget::SystemForApproximation);
-  } 
-  else {
+  } else {
     // x0 = (-b-sqrt(delta))/(2a)
     x0 = Division::Builder(Subtraction::Builder(Opposite::Builder(b.clone()), SquareRoot::Builder(delta.clone())), Multiplication::Builder(Rational::Builder(2), a.clone()));
     // x1 = (-b+sqrt(delta))/(2a)
@@ -171,16 +169,14 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
       PoincareHelpers::Simplify(&x0, context, ExpressionNode::ReductionTarget::User);
       if (x0.type() == ExpressionNode::Type::Addition || x0.type() == ExpressionNode::Type::Subtraction) {
         firstFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), Parenthesis::Builder(x0.clone()));
-      }
-      else {
+      } else {
         firstFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), x0.clone());
       }
-    }
-    else {
+    } else {
       if (x0Opposite.type() == ExpressionNode::Type::Addition || x0Opposite.type() == ExpressionNode::Type::Subtraction) {
         x0Opposite = Parenthesis::Builder(x0Opposite.clone());
       }
-      secondFactor = Addition::Builder(Symbol::Builder("x", strlen("x")), x0Opposite.clone());
+      firstFactor = Addition::Builder(Symbol::Builder("x", strlen("x")), x0Opposite.clone());
     }
 
     Expression x1Opposite = getOppositeIfExists(x1, &reductionContext);
@@ -188,12 +184,10 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
       PoincareHelpers::Simplify(&x1, context, ExpressionNode::ReductionTarget::User);
       if (x1.type() == ExpressionNode::Type::Addition || x1.type() == ExpressionNode::Type::Subtraction) {
         secondFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), Parenthesis::Builder(x1.clone()));
-      }
-      else {
+      } else {
         secondFactor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), x1.clone());
       }
-    }
-    else {
+    } else {
       PoincareHelpers::Simplify(&x1Opposite, context, ExpressionNode::ReductionTarget::User);
       if (x1Opposite.type() == ExpressionNode::Type::Addition || x1Opposite.type() == ExpressionNode::Type::Subtraction) {
         x1Opposite = Parenthesis::Builder(x1Opposite.clone());
@@ -220,21 +214,18 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
         assert(false);
         break;
     }
-  }
-  else if (m_numberOfSolutions == 1) {
+  } else if (m_numberOfSolutions == 1) {
     Expression x0Opposite = getOppositeIfExists(x0, &reductionContext);
     Expression factor;
-    
+
     if (x0Opposite.isUninitialized()) {
       PoincareHelpers::Simplify(&x0, context, ExpressionNode::ReductionTarget::User);
       if (x0.type() == ExpressionNode::Type::Addition || x0.type() == ExpressionNode::Type::Subtraction) {
         factor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), Parenthesis::Builder(x0.clone()));
-      }
-      else {
+      } else {
         factor = Subtraction::Builder(Symbol::Builder("x", strlen("x")), x0.clone());
       }
-    }
-    else {
+    } else {
       PoincareHelpers::Simplify(&x0Opposite, context, ExpressionNode::ReductionTarget::User);
       factor = Addition::Builder(Symbol::Builder("x", strlen("x")), x0Opposite.clone());
     }
@@ -259,7 +250,7 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
         break;
     }
   }
-  
+
   PoincareHelpers::Simplify(&delta, context, ExpressionNode::ReductionTarget::User);
 
   m_layouts[0] = PoincareHelpers::CreateLayout(canonized);
@@ -270,8 +261,7 @@ void SecondDegreeListController::setExpression(Poincare::Expression e) {
     if (m_numberOfSolutions > 1) {
       m_layouts[4] = PoincareHelpers::CreateLayout(x1);
     }
-  }
-  else {
+  } else {
     m_layouts[1] = PoincareHelpers::CreateLayout(delta);
   }
 }
@@ -280,11 +270,9 @@ Expression SecondDegreeListController::getOppositeIfExists(Expression e, Poincar
   if (e.isNumber() && e.sign(reductionContext->context()) == ExpressionNode::Sign::Negative) {
     Number n = static_cast<Number&>(e);
     return std::move(n.setSign(ExpressionNode::Sign::Positive));
-  }
-  else if(e.type() == ExpressionNode::Type::Opposite) {
+  } else if(e.type() == ExpressionNode::Type::Opposite) {
     return std::move(e.childAtIndex(0).clone());
-  }
-  else if (e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() > 0 && e.childAtIndex(0).isNumber() && e.childAtIndex(0).sign(reductionContext->context()) == ExpressionNode::Sign::Negative) {
+  } else if (e.type() == ExpressionNode::Type::Multiplication && e.numberOfChildren() > 0 && e.childAtIndex(0).isNumber() && e.childAtIndex(0).sign(reductionContext->context()) == ExpressionNode::Sign::Negative) {
     Multiplication m = static_cast<Multiplication&>(e);
     if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational&>(e).isMinusOne()) {
       // The negative numeral factor is -1, we just remove it
@@ -304,7 +292,7 @@ I18n::Message SecondDegreeListController::messageAtIndex(int index) {
   if (m_numberOfSolutions > 0) {
     if (index == 0) {
       return I18n::Message::CanonicalForm;
-    } 
+    }
     if (index == 1) {
       return I18n::Message::FactorizedForm;
     }
@@ -314,14 +302,12 @@ I18n::Message SecondDegreeListController::messageAtIndex(int index) {
     if (index == 3) {
       if (m_numberOfSolutions == 1) {
         return I18n::Message::OnlyRoot;
-      }
-      else {
+      } else {
         return I18n::Message::FirstRoot;
       }
     }
     return I18n::Message::SecondRoot;
-  }
-  else {
+  } else {
     switch (index) {
       case 0:
         return I18n::Message::CanonicalForm;

@@ -31,13 +31,13 @@ KDCoordinate ListBookController::cellHeight() {
 HighlightCell * ListBookController::reusableCell(int index) {
   return &m_cells[index];
 }
-  
+
 int ListBookController::reusableCellCount() const {
   return k_cellsNumber;
 }
 
 void ListBookController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell* myTextCell = static_cast<MessageTableCell*>(cell);  
+  MessageTableCell* myTextCell = static_cast<MessageTableCell*>(cell);
   MessageTextView* textView = static_cast<MessageTextView*>(myTextCell->labelView());
   textView->setText(m_files[index].name);
   myTextCell->setMessageFont(KDFont::LargeFont); //TODO set cell font at building ?

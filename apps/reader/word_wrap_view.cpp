@@ -9,7 +9,7 @@
 namespace Reader
 {
 
-WordWrapTextView::WordWrapTextView() : 
+WordWrapTextView::WordWrapTextView() :
   PointerTextView(GlobalPreferences::sharedGlobalPreferences()->font()),
   m_pageOffset(0),
   m_nextPageOffset(0),
@@ -49,10 +49,16 @@ void WordWrapTextView::previousPage() {
     m_lastPagesOffsetsIndex = offsetToCheck;
     m_pageOffset = m_lastPagesOffsets[offsetToCheck];
     m_lastPagesOffsets[offsetToCheck] = -1;
-    markRectAsDirty(bounds());
-    return;
+  } else if (m_isRichTextFile) {
+    richTextPreviousPage();
+  } else {
+    plainTextPreviousPage();
   }
 
+  markRectAsDirty(bounds());
+}
+
+void WordWrapTextView::richTextPreviousPage() {
   const int charWidth = m_font->glyphSize().width();
   const int charHeight = m_font->glyphSize().height();
 
@@ -140,7 +146,7 @@ void WordWrapTextView::previousPage() {
       // We will check if we must change page below
     }
     textBottomEndPosition = KDPoint(textBottomEndPosition.x() - textSize.width(), textBottomEndPosition.y());
-    
+
     // 7. We update height of the line if needed
     if (textSize.height() > lineHeight) {
       lineHeight = textSize.height();
@@ -158,14 +164,68 @@ void WordWrapTextView::previousPage() {
   } else {
       m_pageOffset = endOfWord - text();
   }
+}
 
-  // Because we ask for a redraw, m_endTextPosition must auto update at the bottom of drawRect...
-  markRectAsDirty(bounds());
+void WordWrapTextView::plainTextPreviousPage() {
+  const int charWidth = m_font->glyphSize().width();
+  const int charHeight = m_font->glyphSize().height();
+
+  const char * endOfWord = text() + m_pageOffset - 1;
+  const char * startOfWord = UTF8Helper::BeginningOfWord(text(), endOfWord);
+
+  KDPoint textEndPosition(m_frame.width() - k_margin, m_frame.height() - k_margin);
+
+  while(startOfWord>=text()) {
+    startOfWord = UTF8Helper::BeginningOfWord(text(), endOfWord);
+    endOfWord = UTF8Helper::EndOfWord(startOfWord);
+    KDSize textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
+    KDPoint textStartPosition = KDPoint(textEndPosition.x()-textSize.width(), textEndPosition.y());
+
+    if (textStartPosition.x() < k_margin) {
+      textEndPosition = KDPoint(m_frame.width() - k_margin, textEndPosition.y() - charHeight);
+      textStartPosition = KDPoint(textEndPosition.x() - textSize.width(), textEndPosition.y());
+    }
+    if (textEndPosition.y() - textSize.height() < k_margin) {
+      break;
+    }
+
+    --startOfWord;
+    while (startOfWord >= text() && (*startOfWord == ' ' || *startOfWord == '\n')) {
+      if (*startOfWord == ' ') {
+        textStartPosition = KDPoint(textStartPosition.x() - charWidth, textStartPosition.y());
+      } else {
+        textStartPosition = KDPoint(m_frame.width() - k_margin, textStartPosition.y() - charHeight);
+      }
+      --startOfWord;
+    }
+
+    if (textStartPosition.y() < k_margin) { // If out of page, quit
+      break;
+    }
+
+    if (textStartPosition.y() != textEndPosition.y()) { // If line changed, x is at start of line 
+      textStartPosition = KDPoint(m_frame.width() - k_margin, textStartPosition.y());
+    }
+    if (textStartPosition.x() < k_margin) { // Go to line if left overflow
+      textStartPosition = KDPoint(m_frame.width() - k_margin, textStartPosition.y() - charHeight);
+    }
+
+    textEndPosition = textStartPosition;
+    endOfWord = startOfWord + 1;
+  }
 }
 
 void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, bounds().width(), bounds().height()), m_backgroundColor);
 
+  if (m_isRichTextFile) {
+    richTextDrawRect(ctx, rect);
+  } else {
+    plainTextDrawRect(ctx, rect);
+  }
+}
+
+void WordWrapTextView::richTextDrawRect(KDContext * ctx, KDRect rect) const {
   enum class ToDraw {
     Text,
     Expression
@@ -185,7 +245,7 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
   Layout layout;
 
   KDPoint textPosition = KDPoint(k_margin, k_margin);
-  
+
   while (!endOfPage && startOfWord < endOfFile) {
     // We process line by line
 
@@ -196,7 +256,7 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
     KDCoordinate baseline = charHeight / 2;
 
     while (firstReadIndex < endOfFile) {
-      
+
       KDSize textSize = KDSizeZero;
 
       // 1.1. And we check if we are at the end of the line
@@ -247,9 +307,9 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
         }
 
         const char * endOfWord = EndOfPrintableWord(firstReadIndex + 1, endOfFile);
-        
+
         textSize = m_font->stringSizeUntil(firstReadIndex, endOfWord);
-        
+
         firstReadIndex = endOfWord;
       }
 
@@ -289,7 +349,7 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
 
       //2.1. We check if we are at the end of the line
       if (*startOfWord == '\n') {
-        startOfWord++; 
+        startOfWord++;
         textPosition = KDPoint(k_margin, textPosition.y() + lineSize.height());
         break;
         // We aren't supposed to be at the end of the page, else the loop on top would have stopped drawing
@@ -297,7 +357,7 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
 
 
       const char * endOfWord;
-      
+
       // 2.2. Check if we are in a color change
       if (*startOfWord == '%') {
         if (updateTextColorForward(startOfWord)) {
@@ -349,7 +409,7 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
 
       // 2.4 We decide where to draw and if we must change line
       KDPoint endTextPosition = KDPoint(textPosition.x() + textSize.width(), textPosition.y());
-      
+
       // 2.4.1. Check if we need to go to the next line
       if(endTextPosition.x() > m_frame.width() - k_margin) {
         textPosition = KDPoint(k_margin, textPosition.y() + lineSize.height());
@@ -375,8 +435,70 @@ void WordWrapTextView::drawRect(KDContext * ctx, KDRect rect) const {
         textPosition = KDPoint(textPosition.x() + charWidth, textPosition.y());
       }
       startOfWord = endOfWord;
-    } 
+    }
   }
+  m_nextPageOffset = startOfWord - text();
+}
+
+
+void WordWrapTextView::plainTextDrawRect(KDContext * ctx, KDRect rect) const {
+  ctx->fillRect(KDRect(0, 0, bounds().width(), bounds().height()), m_backgroundColor);
+
+  const char * endOfFile = text() + m_length;
+  const char * startOfWord = text() + m_pageOffset;
+  const char * endOfWord = UTF8Helper::EndOfWord(startOfWord);
+  KDPoint textPosition(k_margin, k_margin);
+
+  const int wordMaxLength = 128;
+  char word[wordMaxLength];
+
+  const int charWidth = m_font->glyphSize().width();
+  const int charHeight = m_font->glyphSize().height();
+
+  while(startOfWord < endOfFile) {
+    KDSize textSize = m_font->stringSizeUntil(startOfWord, endOfWord);
+    KDPoint nextTextPosition = KDPoint(textPosition.x()+textSize.width(), textPosition.y());
+    
+    if(nextTextPosition.x() > m_frame.width() - k_margin) { // Right overflow
+      textPosition = KDPoint(k_margin, textPosition.y() + textSize.height());
+      nextTextPosition = KDPoint(k_margin + textSize.width(), textPosition.y());
+    }
+
+    if(textPosition.y() + textSize.height() > m_frame.height() - k_margin) { // Bottom overflow
+      break;
+    }
+
+    stringNCopy(word, wordMaxLength, startOfWord, endOfWord-startOfWord);
+    ctx->drawString(word, textPosition, m_font, m_textColor, m_backgroundColor);
+
+    while(*endOfWord == ' ' || *endOfWord == '\n') {
+      if(*endOfWord == ' ') {
+        nextTextPosition = KDPoint(nextTextPosition.x() + charWidth, nextTextPosition.y());
+      }
+      else {
+        nextTextPosition = KDPoint(k_margin, nextTextPosition.y() + charHeight);
+      }
+      ++endOfWord;
+    }
+
+    //We must change value of startOfWord now to avoid having
+    //two times the same word if the break below is used
+    startOfWord = endOfWord;
+
+    if(nextTextPosition.y() + textSize.height() > m_frame.height() - k_margin) { // If out of page, quit
+      break;
+    }
+    if(nextTextPosition.y() != textPosition.y()) { // If line changed, x is at start of line 
+      nextTextPosition = KDPoint(k_margin, nextTextPosition.y());
+    }
+    if(nextTextPosition.x() > m_frame.width() - k_margin) { // Go to line if right overflow
+      nextTextPosition = KDPoint(k_margin, nextTextPosition.y() + textSize.height());
+    }
+
+    textPosition = nextTextPosition;
+    endOfWord = UTF8Helper::EndOfWord(startOfWord);
+  }
+
   m_nextPageOffset = startOfWord - text();
 }
 

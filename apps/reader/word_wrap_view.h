@@ -22,6 +22,10 @@ public:
   BookSave getBookSave() const;
   void setBookSave(BookSave save);
 private:
+  void richTextPreviousPage();
+  void plainTextPreviousPage();
+  void richTextDrawRect(KDContext * ctx, KDRect rect) const;
+  void plainTextDrawRect(KDContext * ctx, KDRect rect) const;
   bool updateTextColorForward(const char * colorStart) const;
   bool updateTextColorBackward(const char * colorStart) const;
   static const int k_margin = 10;

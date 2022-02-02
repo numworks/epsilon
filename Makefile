@@ -209,3 +209,8 @@ clean_run: cleanandcompile
 .PHONY: run
 run: compile
 	${MAKE} start
+
+.PHONY: translations
+translations:
+	@echo "TRANSLATIONS"
+	$(Q) ${PYTHON} build/utilities/translate.py

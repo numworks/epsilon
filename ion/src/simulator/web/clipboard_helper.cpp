@@ -32,15 +32,11 @@ enum class AsyncStatus : uint32_t {
  *   https://discourse.wicg.io/t/user-gesture-restrictions-and-async-code/1640
  */
 
-EM_JS(void, set_clipboard_text, (const char * text, AsyncStatus * status, AsyncStatus failure, AsyncStatus success), {
+EM_JS(void, set_clipboard_text, (const char * text), {
   try {
-    navigator.clipboard.writeText(UTF8ToString(text)).then(
-      function () { HEAP32[status>>2] = success; },
-      function () { HEAP32[status>>2] = failure; }
-    );
+    navigator.clipboard.writeText(UTF8ToString(text));
   } catch (error) {
     console.error(error);
-    HEAP32[status>>2] = failure;
   }
 });
 
@@ -67,8 +63,7 @@ void sendToSystemClipboard(const char * text) {
   /* As the rest of the execution does not depend on the system clipboard being
    * properly filled at this point, the call to set_clipboard_text does not
    * need to be made synchronous. */
-  AsyncStatus lock;
-  set_clipboard_text(text, &lock, AsyncStatus::Failure, AsyncStatus::Success);
+  set_clipboard_text(text);
 }
 
 void fetchFromSystemClipboard(char * buffer, size_t bufferSize) {

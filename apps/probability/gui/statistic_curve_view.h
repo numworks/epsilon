@@ -22,6 +22,14 @@ protected:
 
 private:
   constexpr static int k_marginsAroundZLabel = 30;
+  constexpr static int k_numberOfIntervals = 4;
+  constexpr static KDCoordinate k_intervalThickness = 1;
+  constexpr static KDCoordinate k_mainIntervalBoundHeight = 9;
+
+  static int IntervalMainThresholdIndex(float mainThreshold);
+  static float NextThreshold(float threshold, bool up);
+  static float IntervalThresholdAtIndex(float mainThreshold, int index);
+
   void drawTest(KDContext * ctx, KDRect rect) const;
   void drawInterval(KDContext * ctx, KDRect rect) const;
   void colorUnderCurve(KDContext * ctx,
@@ -32,7 +40,7 @@ private:
   void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, Poincare::Layout symbol) const;
   void drawZLabelAndZGraduation(KDContext * ctx, float x) const;
   void drawIntervalLabelAndGraduation(KDContext * ctx) const;
-  KDCoordinate drawGraduationAtPosition(KDContext * ctx, float position) const;
+  KDCoordinate drawGraduationAtPosition(KDContext * ctx, float horizontalPosition, float verticalPosition = 0.0f, KDColor color = KDColorBlack, KDCoordinate length = k_labelGraduationLength, KDCoordinate axisThickness = 2) const;
 
   void convertFloatToText(float value, char * buffer, int bufferSize) const;
 

@@ -7,6 +7,7 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/boot/, \
 ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   backlight.cpp \
   backlight_advanced.cpp \
+  backup_ram.cpp:+n0120 \
   base64.cpp \
   battery_stm32f.cpp:-n0120 \
   battery_stm32h.cpp:+n0120 \
@@ -39,6 +40,7 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   power_stm32h.cpp:+n0120 \
   power_suspend.cpp \
   reset.cpp \
+  rtc.cpp:+n0120 \
   serial_number.cpp \
   swd.cpp \
   timing.cpp \

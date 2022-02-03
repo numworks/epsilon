@@ -33,6 +33,9 @@ int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, v
         buffer++;
       } else if (*(format + 1) == 'i') {
         buffer += Poincare::PrintInt::Left(va_arg(args, int), buffer, bufferSize - (buffer - origin) - 1);
+      } else if (*(format + 1) == '%') {
+        *buffer = '%';
+        buffer++;
       } else {
         // Format of form %*.*e[d|f]
         assert(*(format + 1) == '*'

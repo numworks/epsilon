@@ -30,7 +30,7 @@ public:
   // Snapshot
   class Snapshot : public Shared::SharedApp::Snapshot {
   public:
-    Snapshot() : m_equationStore() {};
+    Snapshot() : m_isEquationViewActive(false), m_equationStore() {};
     App * unpack(Escher::Container * container) override {
       return new (container->currentAppBuffer()) App(this);
     };
@@ -38,12 +38,14 @@ public:
     void reset() override;
     EquationStore * equationStore() { return &m_equationStore; }
     void storageDidChangeForRecord(const Ion::Storage::Record record) override;
+    bool m_isEquationViewActive;
   private:
     void tidy() override;
     EquationStore m_equationStore;
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
+  void didBecomeActive(Escher::Window * window) override;
   Snapshot * snapshot() { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   EquationStore * equationStore() { return snapshot()->equationStore(); }
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }

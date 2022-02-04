@@ -20,7 +20,8 @@ class MenuController : public Escher::SelectableCellListPage<Escher::SubappCell,
 public:
   MenuController(Escher::StackViewController * parentResponder,
                  Escher::ViewController * listController,
-                 Escher::ViewController * financeMenuController);
+                 Escher::ViewController * financeMenuController,
+                 bool * isEquationViewActive);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::View * view() override { return &m_contentView; }
@@ -33,6 +34,7 @@ private:
   Escher::ViewController * m_financeMenuController;
 
   Escher::CenteringView m_contentView;
+  bool * m_isEquationViewActive;
 };
 
 }  // namespace Solver

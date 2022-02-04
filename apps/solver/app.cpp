@@ -21,6 +21,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 void App::Snapshot::reset() {
   // Delete all equations
   m_equationStore.removeAll();
+  m_isEquationViewActive = false;
 }
 
 void App::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record) {
@@ -43,10 +44,18 @@ App::App(Snapshot * snapshot) :
   m_interestController(&m_stackViewController, &m_inputViewController, &m_financeResultController, m_financeData.interestData()),
   m_interestMenuController(&m_stackViewController, &m_interestController, m_financeData.interestData()),
   m_financeMenuController(&m_stackViewController, &m_interestMenuController, m_financeData.interestData()),
-  m_menuController(&m_stackViewController, &m_listFooter, &m_financeMenuController),
+  m_menuController(&m_stackViewController, &m_listFooter, &m_financeMenuController, &(snapshot->m_isEquationViewActive)),
   m_stackViewController(&m_inputViewController, &m_menuController),
   m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController)
 {}
+
+void App::didBecomeActive(Escher::Window * windows) {
+  if (snapshot()->m_isEquationViewActive) {
+    // Directly open the equation list view
+    m_menuController.stackOpenPage(&m_listController, 0);
+  }
+  Escher::App::didBecomeActive(windows);
+}
 
 bool App::isAcceptableExpression(const Poincare::Expression exp) {
   /* Complete ExpressionFieldDelegateApp acceptable conditions by only accepting

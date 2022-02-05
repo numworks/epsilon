@@ -26,7 +26,7 @@ AboutController::AboutController(Responder * parentResponder) :
   m_contributorsCell(KDFont::LargeFont, KDFont::SmallFont)
   //m_view(&m_selectableTableView)
 {
-  for (int i = 0; i < k_totalNumberOfCell; i++) {
+  for (int i = 0; i < k_totalNumberOfCell - 1; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
     m_cells[i].setAccessoryFont(KDFont::SmallFont);
     m_cells[i].setAccessoryTextColor(Palette::SecondaryText);
@@ -138,8 +138,8 @@ int AboutController::numberOfRows() const {
 HighlightCell * AboutController::reusableCell(int index, int type) {
   assert(index >= 0);
   if (type == 0) {
-    assert(index < k_totalNumberOfCell-1-(!hasUsernameCell()));
-    return &m_cells[index+(!hasUsernameCell())];
+    assert(index < k_totalNumberOfCell-1);
+    return &m_cells[index];
   }
   assert(index == 0);
   return &m_contributorsCell;
@@ -152,7 +152,7 @@ int AboutController::typeAtLocation(int i, int j) {
 int AboutController::reusableCellCount(int type) {
   switch (type) {
     case 0:
-      return k_totalNumberOfCell-1-(!hasUsernameCell());
+      return k_totalNumberOfCell-1;
     case 1:
       return 1;
     default:
@@ -177,12 +177,12 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     memUseBuffer[len] = 'k';
     memUseBuffer[len+1] = 'B';
     memUseBuffer[len+2] = '/';
-    
+
     len = Poincare::Integer((int)((float) Ion::Storage::k_storageSize / 1024.f)).serialize(memUseBuffer + len + 3, 4) + len + 3;
     memUseBuffer[len] = 'k';
     memUseBuffer[len+1] = 'B';
     memUseBuffer[len+2] = '\0';
-    
+
     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
     myCell->setAccessoryText(memUseBuffer);
   } else {

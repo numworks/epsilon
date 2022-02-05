@@ -28,8 +28,14 @@ int ContributorsController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-constexpr static int s_numberOfDevelopers = 13;
+constexpr static int s_numberOfDevelopers = 18;
+constexpr static int s_numberOfUpsilonDevelopers = 5;
 constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
+  I18n::Message::PLaurianFournier,
+  I18n::Message::PYannCouturier,
+  I18n::Message::PDavidLuca,
+  I18n::Message::PLoicE,
+  I18n::Message::PVictorKretz,
   I18n::Message::PQuentinGuidee,
   I18n::Message::PJoachimLeFournis,
   I18n::Message::PMaximeFriess,
@@ -45,32 +51,13 @@ constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
   I18n::Message::PCyprienMejat,
 };
 
-constexpr static int s_numberOfBetaTesters = 8;
-constexpr static I18n::Message s_betaTestersUsernames[s_numberOfBetaTesters] = {
-  I18n::Message::PTimeoArnouts,
-  I18n::Message::PJulieC,
-  I18n::Message::PLelahelHideux,
-  I18n::Message::PMadil,
-  I18n::Message::PHilaireLeRoux,
-  I18n::Message::PHectorNussbaumer,
-  I18n::Message::PRaphaelDyda,
-  I18n::Message::PThibautC,
-};
-
 void ContributorsController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCellWithBuffer * myTextCell = (MessageTableCellWithBuffer *)cell;
-  if (index == 0) {
-    myTextCell->setAccessoryText("");
-    myTextCell->setTextColor(KDColor::RGB24(0xC03535));
-  } else if (index > 0 && index <= s_numberOfDevelopers) {
-    myTextCell->setAccessoryText(I18n::translate(s_developersUsernames[index - 1]));
-    myTextCell->setTextColor(Palette::PrimaryText);
-  } else if (index == s_numberOfDevelopers + 1) {
-    myTextCell->setAccessoryText("");
-    myTextCell->setTextColor(KDColor::RGB24(0x1ABC9A));
+  myTextCell->setAccessoryText(I18n::translate(s_developersUsernames[index]));
+  if (index < s_numberOfUpsilonDevelopers) {
+    myTextCell->setTextColor(KDColor::RGB24(0x5e81ac));
   } else {
-    myTextCell->setAccessoryText(I18n::translate(s_betaTestersUsernames[index - 2 - s_numberOfDevelopers]));
-    myTextCell->setTextColor(Palette::PrimaryText);
+    myTextCell->setTextColor(KDColor::RGB24(0xc53431));
   }
   myTextCell->setAccessoryTextColor(Palette::SecondaryText);
   GenericSubController::willDisplayCellForIndex(cell, index);

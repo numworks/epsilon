@@ -766,7 +766,7 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(Expression units, double * 
 }
 
 bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Preferences::UnitFormat unitFormat) {
-  if (unit.isUninitialized()) {
+  if (unit.isUninitialized() || !std::isfinite(value)) {
     return false;
   }
   UnitNode::Vector<int> vector = UnitNode::Vector<int>::FromBaseUnits(unit);

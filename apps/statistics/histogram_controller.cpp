@@ -207,7 +207,7 @@ bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
   return false;
 }
 
-void HistogramController::preinitXRangeParameters(double * xMin) {
+void HistogramController::preinitXRangeParameters(double * xMin, double * xMax) {
   /* Compute m_store's min and max values, hold them temporarily in the
    * CurveViewRange, for later use by initRangeParameters and
    * initBarParameters. Indeed, initRangeParameters will anyway alter the
@@ -224,6 +224,9 @@ void HistogramController::preinitXRangeParameters(double * xMin) {
   }
   assert(xMin != nullptr);
   *xMin = minValue;
+  if (xMax != nullptr) {
+    *xMax = maxValue;
+  }
   m_store->setHistogramXMin(minValue, false);
   m_store->setHistogramXMax(maxValue, true);
 }
@@ -274,9 +277,15 @@ void HistogramController::initYRangeParameters(int series) {
 void HistogramController::initBarParameters() {
   assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
   double xMin;
-  preinitXRangeParameters(&xMin);
+  double xMax;
+  preinitXRangeParameters(&xMin, &xMax);
   m_store->setFirstDrawnBarAbscissa(xMin);
   double barWidth = m_store->xGridUnit();
+  if ((xMax - xMin)/barWidth > Store::k_maxNumberOfBars) {
+    /* xMax may exceed m_store->xMax() because of graph range limitations,
+     * increase barWidth to ensure less than Store::k_maxNumberOfBars bars. */
+    barWidth = std::ceil((xMax - xMin)/Store::k_maxNumberOfBars);
+  }
   if (barWidth <= 0.0) {
     barWidth = 1.0;
   } else {

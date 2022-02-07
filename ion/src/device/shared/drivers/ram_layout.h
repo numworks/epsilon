@@ -28,6 +28,10 @@ constexpr static uint32_t UserlandSRAMAddress = SRAMAddress;
 constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
 constexpr static uint32_t UserlandStackLength = 0x8000; // 32K
 
+// Programs executed in RAM
+constexpr uint32_t BenchLength = 0x20000; // 128KiB
+constexpr uint32_t FlasherLength = 0x10000; // 64KiB
+
 }
 }
 }

@@ -11,7 +11,6 @@ namespace Board {
 // RAM
 constexpr uint32_t SRAMAddress = 0x24000000;
 constexpr uint32_t SRAMLength = 0x40000; // 256kB
-constexpr uint32_t BenchLength = 0x20000; // 128KiB
 
 }
 }

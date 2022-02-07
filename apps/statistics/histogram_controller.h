@@ -38,7 +38,7 @@ private:
   void highlightSelection() override;
   Escher::Responder * tabController() const override;
   void reloadBannerView() override;
-  void preinitXRangeParameters(double * xMin);
+  void preinitXRangeParameters(double * xMin, double * xMax = nullptr);
   void initRangeParameters();
   void initYRangeParameters(int series);
   void initBarParameters();

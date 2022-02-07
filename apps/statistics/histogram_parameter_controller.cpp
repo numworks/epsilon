@@ -27,12 +27,8 @@ HistogramParameterController::HistogramParameterController(Responder * parentRes
 
 void HistogramParameterController::viewWillAppear() {
   // Initialize temporary parameters to the extracted value.
-  /* setParameterAtIndex uses the value of the other parameter, so we need to
-   * manually set the value of the second parameter before the first call. */
-  double parameterAtIndex1 = extractParameterAtIndex(1);
-  m_tempFirstDrawnBarAbscissa = parameterAtIndex1;
-  setParameterAtIndex(0, extractParameterAtIndex(0));
-  setParameterAtIndex(1, parameterAtIndex1);
+  m_tempBarWidth = extractParameterAtIndex(0);
+  m_tempFirstDrawnBarAbscissa = extractParameterAtIndex(1);
   FloatParameterController::viewWillAppear();
 }
 
@@ -88,6 +84,7 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
 
   if (setBarWidth && value <= 0.0) {
     // The bar width cannot be negative
+    assert(m_tempBarWidth > 0.0);
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
@@ -101,6 +98,8 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
     const double min = std::min(m_store->minValue(i), nextFirstDrawnBarAbscissa);
     double numberOfBars = std::ceil((m_store->maxValue(i) - min)/nextBarWidth);
     if (numberOfBars > Store::k_maxNumberOfBars) {
+      // Assert the current temporary values were valid in the first place
+      assert(nextBarWidth != m_tempBarWidth || nextFirstDrawnBarAbscissa != m_tempFirstDrawnBarAbscissa);
       Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }

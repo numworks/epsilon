@@ -14,7 +14,7 @@ Charge SVC_ATTRIBUTES level() {
 }
 
 float SVC_ATTRIBUTES voltage() {
-  SVC_RETURNING_S0(SVC_BATTERY_VOLTAGE, float);
+  SVC_RETURNING_S0(SVC_BATTERY_VOLTAGE, float)
 }
 
 }

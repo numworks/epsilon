@@ -34,6 +34,7 @@ ion_device_flasher_src += $(addprefix ion/src/device/shared/drivers/, \
   usb.cpp \
   usb_gpio_n0110.cpp:+n0110 \
   usb_gpio_n0120.cpp:+n0120 \
+  usb_unprivileged.cpp \
 )
 
 ion_device_flasher_src += $(ion_device_dfu_src)

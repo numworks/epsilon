@@ -31,6 +31,7 @@ ListController::ListController(EditExpressionController * editExpressionControll
 
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    assert(selectedRow() >= 0);
     char buffer[Constant::MaxSerializedExpressionSize];
     textAtIndex(buffer, Constant::MaxSerializedExpressionSize, selectedRow());
     /* The order is important here: we dismiss the pop-up first because it
@@ -47,6 +48,8 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 void ListController::didBecomeFirstResponder() {
   resetMemoization();
   Container::activeApp()->setFirstResponder(&m_listController);
+  // Additional outputs should have at least one row to display
+  assert(numberOfRows() > 0);
 }
 
 }

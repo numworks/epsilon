@@ -8,7 +8,6 @@ namespace Device {
 namespace InternalFlash {
 namespace Config {
 
-constexpr static int NumberOfForbiddenFirstSectors = 2;
 constexpr static uint32_t StartAddress = 0x08000000;
 constexpr static uint32_t EndAddress = 0x08100000;
 constexpr static uint32_t TotalSize = EndAddress - StartAddress;

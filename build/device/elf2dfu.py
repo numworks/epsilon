@@ -91,7 +91,7 @@ def customized_elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
   kernel_elf_files = [f for f in elf_files if "kernel" in f]
   userland_elf_files = [f for f in elf_files if "userland" in f]
   if len(bootloader_elf_file) > 1:
-    sys.stderr.write("Missing or extra bootloader elf file")
+    sys.stderr.write("Extra bootloader elf file")
     sys.exit(-1)
   if len(kernel_elf_files) != 2:
     sys.stderr.write("Missing or extra kernel elf file")

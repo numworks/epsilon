@@ -43,6 +43,7 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/drivers/, \
   usb.cpp \
   usb_gpio_n0110.cpp:+n0110 \
   usb_gpio_n0120.cpp:+n0120 \
+  usb_unprivileged.cpp \
 )
 
 ion_device_bootloader_src += ion/src/device/shared/post_and_hardware_tests

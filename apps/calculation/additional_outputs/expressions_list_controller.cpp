@@ -82,6 +82,7 @@ Poincare::Layout ExpressionsListController::layoutAtIndex(int index) {
 }
 
 int ExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
+  assert(index >= 0 && index < k_maxNumberOfRows);
   return m_layouts[index].serializeParsedExpression(buffer, bufferSize, App::app()->localContext());
 }
 

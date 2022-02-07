@@ -1,12 +1,5 @@
 SFLAGS += -Iliba/include
 
-liba_driver_src += $(addprefix liba/src/, \
-  assert.c \
-  memcpy.c \
-  memset.c \
-  strlen.c \
-)
-
 liba_internal_flash_src += $(addprefix liba/src/, \
   assert.c \
   memcmp.c \
@@ -19,9 +12,6 @@ liba_internal_flash_src += $(addprefix liba/src/, \
   strlcat.c \
   strlcpy.c \
   strlen.c \
-)
-
-liba_bench_src += $(addprefix liba/src/, \
 )
 
 liba_flasher_src += $(addprefix liba/src/, \

@@ -14,7 +14,7 @@ namespace Config {
 /* The bootloader, kernel and userland starts should be aligned to the begining of a sector (to flash them easily).
  * The bootloader should occupy the whole internal flash
  * The memory layouts are the following:
- * - internal flash: 4*16k
+ * - internal flash: 8*128K
  * - external flash: 8*4k + 32K + 127 * 64K
  */
 

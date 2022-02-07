@@ -44,6 +44,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   usb_gpio_n0100.cpp:+n0100 \
   usb_gpio_n0110.cpp:+n0110 \
   usb_gpio_n0120.cpp:+n0120 \
+  usb_unprivileged.cpp \
   wakeup.cpp \
 )
 

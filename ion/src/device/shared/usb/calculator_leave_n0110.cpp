@@ -8,7 +8,7 @@ namespace Device {
 namespace USB {
 
 /* This implementation is used by the flasher, which does not need to handle
- * priviledge escalation */
+ * privilege escalation */
 void Calculator::leave(uint32_t leaveAddress) {
   Board::shutdown();
   Reset::jump(leaveAddress);

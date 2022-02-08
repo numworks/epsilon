@@ -81,38 +81,30 @@ int StatisticCurveView::IntervalMainThresholdIndex(float mainThreshold) {
   return k_numberOfIntervals - 1;
 }
 
-// Return the next threshold interval to display going up or down
-float StatisticCurveView::NextThreshold(float threshold, bool up) {
-  // There are significant interval threshold to display
+// Return the interval threshold to display at given index
+float StatisticCurveView::IntervalThresholdAtIndex(float threshold, int index) {
+  int direction = index - IntervalMainThresholdIndex(threshold);
+  if (direction == 0) {
+    return threshold;
+  }
+  // There are significant interval thresholds to display
   constexpr size_t k_numberOfSignificantThresholds = 14;
   constexpr float k_significantThresholds[k_numberOfSignificantThresholds] = {
       0.1f, 0.2f,  0.3f, 0.4f,  0.5f,  0.6f,  0.7f,
       0.8f, 0.85f, 0.9f, 0.95f, 0.98f, 0.99f, 0.999f};
-  assert((up && threshold <= 0.99f) || (!up && threshold > 0.1f));
-  size_t start = up ? 0 : 1;
-  size_t end = k_numberOfSignificantThresholds + start - 1;
-  // If threshold is in ]0.2, 0.3], display 0.4 if going up and 0.2 otherwise
-  for (size_t i = start; i < end; i++) {
-    if (threshold <= k_significantThresholds[i] || i == end - 1) {
-      assert(threshold <= k_significantThresholds[i] || !up);
-      size_t nextIndex = up ? i + 1 : i - 1;
-      assert(nextIndex >= 0 && nextIndex < k_numberOfSignificantThresholds);
-      return k_significantThresholds[nextIndex];
+  assert((direction > 0 && threshold <= 0.99f) || (direction < 0 && threshold > 0.1f));
+  // If threshold is in ]0.99, 1.0] display 0.99 with a direction of 1
+  int significantThresholdIndex = k_numberOfSignificantThresholds - 1;
+  // If threshold is in ]0.2, 0.3], display 0.4 with a direction of 1, 0.2 if -1
+  for (size_t i = 0; i < k_numberOfSignificantThresholds; i++) {
+    if (threshold <= k_significantThresholds[i]) {
+      significantThresholdIndex = i;
+      break;
     }
   }
-  assert(false);
-  return NAN;
-}
-
-// Return the interval threshold to display at given index
-float StatisticCurveView::IntervalThresholdAtIndex(float threshold, int index) {
-  int mainIndex = IntervalMainThresholdIndex(threshold);
-  bool up = index > mainIndex;
-  int interations = up ? index - mainIndex : mainIndex - index;
-  for (int i = 0; i < interations; i++) {
-    threshold = NextThreshold(threshold, up);
-  }
-  return threshold;
+  size_t nextIndex = significantThresholdIndex + direction;
+  assert(nextIndex >= 0 && nextIndex < k_numberOfSignificantThresholds);
+  return k_significantThresholds[nextIndex];
 }
 
 // Draw the main interval along side with 3 other significant intervals.

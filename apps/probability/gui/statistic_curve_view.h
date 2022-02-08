@@ -33,7 +33,6 @@ private:
   constexpr static KDCoordinate k_graduationHalfHeight = (k_labelGraduationLength - k_axisWidth) / 2;
 
   static int IntervalMainThresholdIndex(float mainThreshold);
-  static float NextThreshold(float threshold, bool up);
   static float IntervalThresholdAtIndex(float mainThreshold, int index);
 
   void drawTest(KDContext * ctx, KDRect rect) const;

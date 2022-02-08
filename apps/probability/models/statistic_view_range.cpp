@@ -26,11 +26,11 @@ float StatisticViewRange::intervalYMax() const {
 }
 
 float StatisticViewRange::intervalXMin() const {
-  return m_statistic->estimate() + canonicalXMin() * m_statistic->standardError();
+  return m_statistic->estimate() - StatisticCurveView::LargestMarginOfError(m_statistic) * k_intervalMarginRatio;
 }
 
 float StatisticViewRange::intervalXMax() const {
-  return m_statistic->estimate() + canonicalXMax() * m_statistic->standardError();
+  return m_statistic->estimate() + StatisticCurveView::LargestMarginOfError(m_statistic) * k_intervalMarginRatio;
 }
 
 float StatisticViewRange::canonicalYMin() const {

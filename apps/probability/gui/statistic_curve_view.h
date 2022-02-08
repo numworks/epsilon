@@ -12,6 +12,8 @@ namespace Probability {
 
 class StatisticCurveView : public Shared::CurveView {
 public:
+  static float LargestMarginOfError(Statistic * statistic);
+
   using Shared::CurveView::CurveView;
   void setStatistic(Statistic * statistic) { m_statistic = statistic; }
   void drawRect(KDContext * ctx, KDRect rect) const override;

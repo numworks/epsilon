@@ -15,6 +15,7 @@ class StatisticViewRange : public Shared::MemoizedCurveViewRange {
 public:
   void setStatistic(Statistic * statistic);
 private:
+  constexpr static float k_intervalMarginRatio = 1.25f;
   bool isInTestSubapp() const;
   float intervalYMin() const;
   float intervalYMax() const;

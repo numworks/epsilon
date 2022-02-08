@@ -188,11 +188,11 @@ char hexadecimalCharacterForDigit(uint8_t d) {
 
 int Integer::serialize(char * buffer, int bufferSize, Base base) const {
   if (bufferSize == 0) {
-    return -1;
+    return bufferSize-1;
   }
   buffer[bufferSize-1] = 0;
   if (bufferSize == 1) {
-    return 0;
+    return bufferSize-1;
   }
   if (isOverflow()) {
     return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal).CharLength;
@@ -246,7 +246,7 @@ int Integer::serializeInBinaryBase(char * buffer, int bufferSize, int bitsPerDig
   int currentChar = 0;
   // Check that we can at least write "0x0"
   if (bufferSize <= 4) {
-    return -1;
+    return bufferSize-1;
   }
   // Fill buffer with "0x"
   buffer[currentChar++] = '0';
@@ -278,7 +278,7 @@ int Integer::serializeInBinaryBase(char * buffer, int bufferSize, int bitsPerDig
   // Don't forget 0x prefix and the null termination
   requiredBufferSize += 3;
   if (requiredBufferSize > bufferSize) {
-    return -1;
+    return bufferSize-1;
   }
 
   currentChar = requiredBufferSize - 1;

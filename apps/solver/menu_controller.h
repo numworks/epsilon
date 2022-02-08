@@ -15,13 +15,15 @@ namespace Solver {
 
 constexpr int k_numberOfCells = 2;
 
+class App;
+
 // Controller
 class MenuController : public Escher::SelectableCellListPage<Escher::SubappCell, k_numberOfCells> {
 public:
   MenuController(Escher::StackViewController * parentResponder,
                  Escher::ViewController * listController,
                  Escher::ViewController * financeMenuController,
-                 bool * isEquationViewActive);
+                 App * app);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::View * view() override { return &m_contentView; }
@@ -34,7 +36,7 @@ private:
   Escher::ViewController * m_financeMenuController;
 
   Escher::CenteringView m_contentView;
-  bool * m_isEquationViewActive;
+  App * m_app;
 };
 
 }  // namespace Solver

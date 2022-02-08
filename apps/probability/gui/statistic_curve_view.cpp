@@ -128,7 +128,7 @@ void StatisticCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
    *                                             40%
    *  3       false                 ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
    *
-   *  axis                   ------------|--------|--------|-------------------
+   *  axis                   ------------|-----------------|-------------------
    *  */
   float top = pixelToFloat(Axis::Vertical, rect.top());
   float bot = 0.0f;
@@ -214,9 +214,7 @@ void StatisticCurveView::colorUnderCurve(KDContext * ctx,
                      max);
 }
 
-void StatisticCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx,
-                                                          float position,
-                                                          const char * text) const {
+void StatisticCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float position, const char * text, RelativePosition horizontalPosition) const {
   // Draw only if visible
   if ((curveViewRange()->xMin() <= position) && (position <= curveViewRange()->xMax())) {
     float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
@@ -226,7 +224,7 @@ void StatisticCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx,
     KDPoint labelPosition = positionLabel(graduationPosition,
                                           verticalOrigin,
                                           KDFont::SmallFont->stringSize(text),
-                                          RelativePosition::None,
+                                          horizontalPosition,
                                           RelativePosition::Before);
     ctx->drawString(text, labelPosition, KDFont::SmallFont, KDColorBlack, k_backgroundColor);
   }
@@ -270,15 +268,16 @@ void StatisticCurveView::drawZLabelAndZGraduation(KDContext * ctx, float z) cons
 }
 
 void StatisticCurveView::drawIntervalLabelAndGraduation(KDContext * ctx) const {
-  char buffer[k_labelBufferMaxSize];
-  convertFloatToText(m_statistic->estimate(), buffer, k_labelBufferMaxSize);
-  drawLabelAndGraduationAtPosition(ctx, m_statistic->estimate(), buffer);
   float lowerBound = m_statistic->estimate() - m_statistic->marginOfError();
   float upperBound = m_statistic->estimate() + m_statistic->marginOfError();
+  float spaceBetweenBounds = floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound);
+  // Align labels left and right if they would overlap
+  bool realignLabels = spaceBetweenBounds <= k_labelBufferMaxGlyphLength * KDFont::SmallFont->glyphSize().width();
+  char buffer[k_labelBufferMaxSize];
   convertFloatToText(lowerBound, buffer, k_labelBufferMaxSize);
-  drawLabelAndGraduationAtPosition(ctx, lowerBound, buffer);
+  drawLabelAndGraduationAtPosition(ctx, lowerBound, buffer, realignLabels ? RelativePosition::Before : RelativePosition::None);
   convertFloatToText(upperBound, buffer, k_labelBufferMaxSize);
-  drawLabelAndGraduationAtPosition(ctx, upperBound, buffer);
+  drawLabelAndGraduationAtPosition(ctx, upperBound, buffer, realignLabels ? RelativePosition::After : RelativePosition::None);
 }
 
 KDCoordinate StatisticCurveView::drawGraduationAtPosition(KDContext * ctx, float horizontalPosition, float verticalPosition, KDColor color, KDCoordinate length, KDCoordinate axisThickness) const {

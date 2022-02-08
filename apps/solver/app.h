@@ -30,7 +30,13 @@ public:
   // Snapshot
   class Snapshot : public Shared::SharedApp::Snapshot {
   public:
-    Snapshot() : m_isEquationViewActive(false), m_equationStore() {};
+    // Subapp
+    enum class SubApp {
+      Equation,
+      Finance,
+      Unknown
+    };
+    Snapshot() : m_activeSubapp(SubApp::Unknown), m_equationStore() {};
     App * unpack(Escher::Container * container) override {
       return new (container->currentAppBuffer()) App(this);
     };
@@ -38,9 +44,11 @@ public:
     void reset() override;
     EquationStore * equationStore() { return &m_equationStore; }
     void storageDidChangeForRecord(const Ion::Storage::Record record) override;
-    bool m_isEquationViewActive;
+    void setSubApp(SubApp subapp) { m_activeSubapp = subapp; }
+    SubApp subApp() const { return m_activeSubapp; }
   private:
     void tidy() override;
+    SubApp m_activeSubapp;
     EquationStore m_equationStore;
   };
 

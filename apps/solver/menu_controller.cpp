@@ -3,15 +3,16 @@
 #include <assert.h>
 #include "equations_icon.h"
 #include "finance_icon.h"
+#include "app.h"
 
 using namespace Solver;
 
-MenuController::MenuController(Escher::StackViewController * parentResponder, Escher::ViewController * listController, Escher::ViewController * financeMenuController, bool * const isEquationViewActive) :
+MenuController::MenuController(Escher::StackViewController * parentResponder, Escher::ViewController * listController, Escher::ViewController * financeMenuController, App * app) :
       Escher::SelectableCellListPage<Escher::SubappCell, k_numberOfCells>(parentResponder),
       m_listController(listController),
       m_financeMenuController(financeMenuController),
       m_contentView(&m_selectableTableView),
-      m_isEquationViewActive(isEquationViewActive) {
+      m_app(app) {
   selectRow(0);
   cellAtIndex(k_indexOfEquation)->setMessages(I18n::Message::EquationsSubAppTitle, I18n::Message::EquationsSubAppDescription);
   cellAtIndex(k_indexOfEquation)->setImage(ImageStore::EquationsIcon);
@@ -20,8 +21,15 @@ MenuController::MenuController(Escher::StackViewController * parentResponder, Es
 }
 
 void MenuController::didBecomeFirstResponder() {
-  // We may just have popped from m_listController, update snapshot's status
-  *m_isEquationViewActive = false;
+  App::Snapshot::SubApp previousSubApp = m_app->snapshot()->subApp();
+  if (previousSubApp != App::Snapshot::SubApp::Unknown) {
+    // We just popped from a subapp controller
+    int index = previousSubApp == App::Snapshot::SubApp::Equation ? k_indexOfEquation : k_indexOfFinance;
+    // After unpacking, the selected row is lost
+    selectRow(index);
+    // Update snapshot's selected subapp
+    m_app->snapshot()->setSubApp(App::Snapshot::SubApp::Unknown);
+  }
   m_selectableTableView.reloadData(true);
 }
 
@@ -31,10 +39,11 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     switch (selectedRow()) {
       case k_indexOfEquation:
         controller = m_listController;
-        *m_isEquationViewActive = true;
+        m_app->snapshot()->setSubApp(App::Snapshot::SubApp::Equation);
         break;
       case k_indexOfFinance:
         controller = m_financeMenuController;
+        m_app->snapshot()->setSubApp(App::Snapshot::SubApp::Finance);
         break;
     }
     assert(controller != nullptr);

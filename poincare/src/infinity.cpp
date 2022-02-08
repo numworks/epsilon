@@ -22,7 +22,7 @@ Layout InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 
 int InfinityNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
-    return -1;
+    return bufferSize-1;
   }
   return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, numberOfSignificantDigits, floatDisplayMode).CharLength;
 }

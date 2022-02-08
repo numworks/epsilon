@@ -73,7 +73,7 @@ void RationalNode::logAttributes(std::ostream & stream) const {
 
 int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
-    return -1;
+    return bufferSize-1;
   }
   buffer[bufferSize-1] = 0;
   int numberOfChar = signedNumerator().serialize(buffer, bufferSize);

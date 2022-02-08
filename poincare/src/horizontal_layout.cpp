@@ -185,7 +185,7 @@ int HorizontalLayoutNode::serialize(char * buffer, int bufferSize, Preferences::
 
 int HorizontalLayoutNode::serializeChildrenBetweenIndexes(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool forceIndexes, int firstIndex, int lastIndex) const {
   if (bufferSize == 0) {
-    return -1;
+    return bufferSize-1;
   }
   int childrenCount = numberOfChildren();
   if (childrenCount == 0 || bufferSize == 1) {

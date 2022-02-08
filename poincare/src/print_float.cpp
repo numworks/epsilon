@@ -66,11 +66,11 @@ void PrintFloat::Long::MultiplySmallLongByTen(Long & smallLong) {
 
 int PrintFloat::Long::serialize(char * buffer, int bufferSize) const {
   if (bufferSize == 0) {
-    return -1;
+    return bufferSize-1;
   }
   if (bufferSize == 1) {
     buffer[0] = 0;
-    return 0;
+    return bufferSize-1;
   }
   int numberOfChars = m_negative ? 1 : 0; // 1 for the minus sign char
   if (m_digits[0] != 0) {

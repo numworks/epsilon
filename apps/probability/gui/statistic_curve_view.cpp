@@ -14,6 +14,20 @@ namespace Probability {
 
 constexpr KDColor StatisticCurveView::k_backgroundColor;
 
+float StatisticCurveView::LargestMarginOfError(Statistic * statistic) {
+  /* Temporarily sets the statistic's threshold to the largest displayed
+   * interval to compute the margin of error needed to display all intervals. */
+  double previousThreshold = statistic->threshold();
+  float intervalTemp = IntervalThresholdAtIndex(previousThreshold, k_numberOfIntervals - 1);
+  statistic->setThreshold(intervalTemp);
+  statistic->computeInterval();
+  double marginOfError = statistic->marginOfError();
+  // Restore the statistic
+  statistic->setThreshold(previousThreshold);
+  statistic->computeInterval();
+  return marginOfError;
+}
+
 void StatisticCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), k_backgroundColor);
   drawAxis(ctx, rect, Axis::Horizontal);

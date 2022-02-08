@@ -81,7 +81,7 @@ void BracketPairLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
 
 int BracketPairLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
-    return -1;
+    return bufferSize-1;
   }
   buffer[bufferSize-1] = 0;
 

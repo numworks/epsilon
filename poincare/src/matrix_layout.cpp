@@ -140,11 +140,11 @@ void MatrixLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 
 int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
-    return -1;
+    return bufferSize-1;
   }
   buffer[bufferSize-1] = 0;
   if (bufferSize == 1) {
-    return 0;
+    return bufferSize-1;
   }
 
   // Write the opening bracket

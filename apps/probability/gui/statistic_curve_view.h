@@ -38,7 +38,7 @@ private:
                        KDRect rect,
                        HypothesisParams::ComparisonOperator op,
                        float z) const;
-  void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, const char * text) const;
+  void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, const char * text, RelativePosition horizontal = RelativePosition::None) const;
   void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, Poincare::Layout symbol) const;
   void drawZLabelAndZGraduation(KDContext * ctx, float x) const;
   void drawIntervalLabelAndGraduation(KDContext * ctx) const;

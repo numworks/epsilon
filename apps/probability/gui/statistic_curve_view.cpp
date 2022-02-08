@@ -119,14 +119,14 @@ float StatisticCurveView::IntervalThresholdAtIndex(float threshold, int index) {
 void StatisticCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
   /* Distribute the k_numberOfIntervals intervals between top of rect and axis:
    *  i   isMainInterval
-   *                                             10%
-   *  0       false                              ▔▔▔
-   *                                             20%
-   *  1       false                          ▔▔▔▔▔▔▔▔▔▔▔
+   *                                            |10%|
+   *  0       false                             |▔▔▔|
+   *                                        |    20%    |
+   *  1       false                         |▔▔▔▔▔▔▔▔▔▔▔|
    *                                     |      25.4%      |
    *  2       true                       |▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔|
-   *                                             40%
-   *  3       false                 ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+   *                               |            40%                |
+   *  3       false                |▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔|
    *
    *  axis                   ------------|-----------------|-------------------
    *  */
@@ -163,18 +163,17 @@ void StatisticCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
     double intervalRightBound = estimate - marginOfError;
     double intervalLeftBound = estimate + marginOfError;
     KDColor intervalColor = isMainInterval ? Escher::Palette::YellowDark : Escher::Palette::GrayDarkMiddle;
+    KDCoordinate intervalThickness = isMainInterval ? k_mainIntervalThickness : k_intervalThickness;
     drawHorizontalOrVerticalSegment(
         ctx, rect, Axis::Horizontal, verticalPosition, intervalRightBound,
-        intervalLeftBound, intervalColor, k_intervalThickness);
-    if (isMainInterval) {
-      // Draw each bounds of the main interval : |--------|
-      drawGraduationAtPosition(ctx, intervalRightBound, verticalPosition,
-                               intervalColor, k_mainIntervalBoundHeight,
-                               k_intervalThickness);
-      drawGraduationAtPosition(ctx, intervalLeftBound, verticalPosition,
-                               intervalColor, k_mainIntervalBoundHeight,
-                               k_intervalThickness);
-    }
+        intervalLeftBound, intervalColor, intervalThickness);
+    // Draw each bounds of the interval : |--------|
+    drawGraduationAtPosition(ctx, intervalRightBound, verticalPosition,
+                             intervalColor, k_intervalBoundHalfHeight,
+                             intervalThickness);
+    drawGraduationAtPosition(ctx, intervalLeftBound, verticalPosition,
+                             intervalColor, k_intervalBoundHalfHeight,
+                             intervalThickness);
   }
 
   // Restore initial threshold and interval
@@ -280,14 +279,14 @@ void StatisticCurveView::drawIntervalLabelAndGraduation(KDContext * ctx) const {
   drawLabelAndGraduationAtPosition(ctx, upperBound, buffer, realignLabels ? RelativePosition::After : RelativePosition::None);
 }
 
-KDCoordinate StatisticCurveView::drawGraduationAtPosition(KDContext * ctx, float horizontalPosition, float verticalPosition, KDColor color, KDCoordinate length, KDCoordinate axisThickness) const {
+KDCoordinate StatisticCurveView::drawGraduationAtPosition(KDContext * ctx, float horizontalPosition, float verticalPosition, KDColor color, KDCoordinate halfHeight, KDCoordinate axisThickness) const {
   float verticalOrigin = std::round(floatToPixel(Axis::Vertical, verticalPosition));
   KDCoordinate graduationPosition = std::round(floatToPixel(Axis::Horizontal, horizontalPosition));
   // Graduation
   KDRect graduation = KDRect(graduationPosition,
-                             verticalOrigin - (length - axisThickness) / 2,
-                             1,
-                             length);
+                             verticalOrigin - halfHeight,
+                             axisThickness,
+                             halfHeight * 2 + axisThickness );
   ctx->fillRect(graduation, color);
   return graduationPosition;
 }

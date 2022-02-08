@@ -25,8 +25,12 @@ protected:
 private:
   constexpr static int k_marginsAroundZLabel = 30;
   constexpr static int k_numberOfIntervals = 4;
-  constexpr static KDCoordinate k_intervalThickness = 1;
-  constexpr static KDCoordinate k_mainIntervalBoundHeight = 9;
+
+  constexpr static KDCoordinate k_axisWidth = 1;
+  constexpr static KDCoordinate k_intervalThickness = k_axisWidth;
+  constexpr static KDCoordinate k_mainIntervalThickness = 2;
+  constexpr static KDCoordinate k_intervalBoundHalfHeight = 4;
+  constexpr static KDCoordinate k_graduationHalfHeight = (k_labelGraduationLength - k_axisWidth) / 2;
 
   static int IntervalMainThresholdIndex(float mainThreshold);
   static float NextThreshold(float threshold, bool up);
@@ -42,7 +46,7 @@ private:
   void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, Poincare::Layout symbol) const;
   void drawZLabelAndZGraduation(KDContext * ctx, float x) const;
   void drawIntervalLabelAndGraduation(KDContext * ctx) const;
-  KDCoordinate drawGraduationAtPosition(KDContext * ctx, float horizontalPosition, float verticalPosition = 0.0f, KDColor color = KDColorBlack, KDCoordinate length = k_labelGraduationLength, KDCoordinate axisThickness = 2) const;
+  KDCoordinate drawGraduationAtPosition(KDContext * ctx, float horizontalPosition, float verticalPosition = 0.0f, KDColor color = KDColorBlack, KDCoordinate halfHeight = k_graduationHalfHeight, KDCoordinate axisThickness = k_axisWidth) const;
 
   void convertFloatToText(float value, char * buffer, int bufferSize) const;
 

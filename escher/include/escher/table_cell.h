@@ -72,7 +72,7 @@ private:
                             const View * labelView,
                             const View * sublabelView,
                             KDCoordinate accessoryWidth);
-  static void setFrameIfViewExists(View * v, KDRect rect, bool force);
+  static KDRect setFrameIfViewExists(View * v, KDRect rect, bool force);
 };
 }
 #endif

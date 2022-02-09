@@ -149,9 +149,9 @@ void TableCell::layoutSubviews(bool force) {
   }
 
   // Set frames
-  setFrameIfViewExists(label, labelRect, force);
-  setFrameIfViewExists(subLabel, subLabelRect, force);
-  setFrameIfViewExists(accessory, accessoryRect, force);
+  labelRect = setFrameIfViewExists(label, labelRect, force);
+  subLabelRect = setFrameIfViewExists(subLabel, subLabelRect, force);
+  accessoryRect = setFrameIfViewExists(accessory, accessoryRect, force);
   // Assert no subview intersects
   assert(subviewsCanOverlap() || (!labelRect.intersects(subLabelRect) && !subLabelRect.intersects(accessoryRect) && !accessoryRect.intersects(labelRect)));
 }
@@ -195,10 +195,12 @@ void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
 
-void TableCell::setFrameIfViewExists(View * v, KDRect rect, bool force) {
+KDRect TableCell::setFrameIfViewExists(View * v, KDRect rect, bool force) {
   if (v) {
     v->setFrame(rect, force);
+    return rect;
   }
+  return KDRectZero;
 }
 
 }

@@ -60,15 +60,18 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 /* Return true if a and b are approximately equal,
  * according to threshold and reference parameters */
 template <typename T>
-bool inline roughly_equal(T a, T b, T threshold = Poincare::Float<T>::Epsilon(), bool acceptNAN = false) {
-  if (std::isnan(a) || std::isnan(b)) {
-    return acceptNAN && std::isnan(a) && std::isnan(b);
+bool inline roughly_equal(T observed, T expected, T threshold = Poincare::Float<T>::Epsilon(), bool acceptNAN = false) {
+  if (std::isnan(observed) || std::isnan(expected)) {
+    return acceptNAN && std::isnan(observed) && std::isnan(expected);
   }
-  T max = std::max(std::fabs(a), std::fabs(b));
+  T max = std::max(std::fabs(observed), std::fabs(expected));
   if (max == INFINITY) {
-    return a == b;
+    return observed == expected;
   }
-  T relerr = max == 0.0 ? 0.0 : std::fabs(a - b) / max;
+  T relerr = max;
+  if (expected != 0.0) {
+    relerr = std::fabs(observed - expected) / max;
+  }
   return relerr <= threshold;
 }
 

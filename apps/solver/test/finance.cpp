@@ -5,10 +5,9 @@
 
 using namespace Solver;
 
-constexpr double k_precision = 1e-3;
-constexpr double k_reference = FLT_EPSILON;
+constexpr double k_precision = 5e-3;
 
-void assert_interest_solves(const double * expectedValues, bool booleanParam, InterestData * data, double reference = k_reference) {
+void assert_interest_solves(const double * expectedValues, bool booleanParam, InterestData * data) {
   // Set all parameters
   data->m_booleanParam = booleanParam;
   for (uint8_t paramIndex = 0; paramIndex < data->numberOfDoubleValues(); paramIndex++) {
@@ -26,7 +25,7 @@ void assert_interest_solves(const double * expectedValues, bool booleanParam, In
     // Compute and check unknown parameter's value
     double expectedValue = expectedValues[paramIndex];
 
-    quiz_assert(IsApproximatelyEqual(data->computeUnknownValue(), expectedValue, k_precision, reference));
+    assert_roughly_equal(data->computeUnknownValue(), expectedValue, k_precision, false);
   }
 }
 
@@ -68,7 +67,7 @@ QUIZ_CASE(equation_finance_compound_interest) {
       12.0        // CY
     };
     bool paymentIsAtBegining = false;
-    assert_interest_solves(values, paymentIsAtBegining, &data, 10.0);
+    assert_interest_solves(values, paymentIsAtBegining, &data);
   }
   {
     const double values[CompoundInterestData::k_numberOfDoubleValues] = {
@@ -81,7 +80,7 @@ QUIZ_CASE(equation_finance_compound_interest) {
       4.0         // CY
     };
     bool paymentIsAtBegining = false;
-    assert_interest_solves(values, paymentIsAtBegining, &data, 10.0);
+    assert_interest_solves(values, paymentIsAtBegining, &data);
   }
   {
     const double values[CompoundInterestData::k_numberOfDoubleValues] = {
@@ -94,7 +93,7 @@ QUIZ_CASE(equation_finance_compound_interest) {
       4.0         // CY
     };
     bool paymentIsAtBegining = false;
-    assert_interest_solves(values, paymentIsAtBegining, &data, 0.1);
+    assert_interest_solves(values, paymentIsAtBegining, &data);
   }
   {
     const double values[CompoundInterestData::k_numberOfDoubleValues] = {
@@ -107,7 +106,7 @@ QUIZ_CASE(equation_finance_compound_interest) {
       4.0         // CY
     };
     bool paymentIsAtBegining = false;
-    assert_interest_solves(values, paymentIsAtBegining, &data, 1.0);
+    assert_interest_solves(values, paymentIsAtBegining, &data);
   }
   {
     const double values[CompoundInterestData::k_numberOfDoubleValues] = {
@@ -120,7 +119,7 @@ QUIZ_CASE(equation_finance_compound_interest) {
       1.0         // CY
     };
     bool paymentIsAtBegining = true;
-    assert_interest_solves(values, paymentIsAtBegining, &data, 1.0);
+    assert_interest_solves(values, paymentIsAtBegining, &data);
   }
   {
     const double values[CompoundInterestData::k_numberOfDoubleValues] = {
@@ -133,6 +132,6 @@ QUIZ_CASE(equation_finance_compound_interest) {
       4.0         // CY
     };
     bool paymentIsAtBegining = false;
-    assert_interest_solves(values, paymentIsAtBegining, &data, 1.0);
+    assert_interest_solves(values, paymentIsAtBegining, &data);
   }
 }

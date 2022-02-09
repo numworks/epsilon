@@ -34,6 +34,7 @@ protected:
     {}
     Escher::View * labelView() const override { return const_cast<Escher::ExpressionView *>(&m_expressionView); }
     Escher::View * accessoryView() const override { return const_cast<Escher::ChevronView *>(&m_chevronView); }
+    bool subviewsCanOverlap() const override { return true; }
     void setHighlighted(bool highlight) override;
     void setLayout(Poincare::Layout layout);
   private:

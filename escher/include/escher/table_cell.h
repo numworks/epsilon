@@ -62,6 +62,8 @@ protected:
   virtual bool shouldAlignSublabelRight() const { return true; }
   virtual KDCoordinate accessoryMinimalWidthOverridden() const { return -1; }
   virtual bool shouldHideSublabel() { return false; }
+  // This method is only used to assert that no subview overlaps after layouting
+  virtual bool subviewsCanOverlap() const { return false; }
 
   bool singleRowMode() const;
 

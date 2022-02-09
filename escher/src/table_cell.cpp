@@ -153,7 +153,7 @@ void TableCell::layoutSubviews(bool force) {
   setFrameIfViewExists(subLabel, subLabelRect, force);
   setFrameIfViewExists(accessory, accessoryRect, force);
   // Assert no subview intersects
-  assert(!labelRect.intersects(subLabelRect) && !subLabelRect.intersects(accessoryRect) && !accessoryRect.intersects(labelRect));
+  assert(subviewsCanOverlap() || (!labelRect.intersects(subLabelRect) && !subLabelRect.intersects(accessoryRect) && !accessoryRect.intersects(labelRect)));
 }
 
 bool TableCell::singleRowMode() const {

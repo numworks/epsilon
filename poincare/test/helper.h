@@ -1,3 +1,6 @@
+#ifndef POINCARE_HELPER_H
+#define POINCARE_HELPER_H
+
 #include <algorithm>
 #include <cmath>
 #include <poincare/expression_node.h>
@@ -95,3 +98,5 @@ void assert_layout_serialize_to(Poincare::Layout layout, const char * serializat
 // Expression layouting
 
 void assert_expression_layouts_as(Poincare::Expression expression, Poincare::Layout layout);
+
+#endif

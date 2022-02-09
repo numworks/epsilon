@@ -18,7 +18,7 @@ public:
     WhiteUniform,
     GrayGradation
   };
-  StackViewController(Responder * parentResponder, ViewController * rootViewController);
+  StackViewController(Responder * parentResponder, ViewController * rootViewController, Style style = Style::GrayGradation, int styleStep = -1);
 
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc, Style style = Style::WhiteUniform, int styleStep = -1);
@@ -41,11 +41,7 @@ public:
 private:
   class Frame {
   public:
-    Frame(ViewController * viewController = nullptr, KDColor textColor = Palette::GrayDarkMiddle, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GrayBright) :
-      m_viewController(viewController),
-      m_textColor(textColor),
-      m_backgroundColor(backgroundColor),
-      m_separatorColor(separatorColor) {}
+    Frame(ViewController * viewController = nullptr, Style style = Style::WhiteUniform, int styleStep = -1, uint8_t numberOfChildren = 0);
     ViewController * viewController() { return m_viewController; }
     KDColor textColor() { return m_textColor; }
     KDColor backgroundColor() { return m_backgroundColor; }

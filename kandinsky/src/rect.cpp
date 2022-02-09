@@ -27,7 +27,8 @@ bool KDRect::intersects(const KDRect & other) const {
       other.right() >= left() &&
       other.left() <= right() &&
       other.top() <= bottom() &&
-      other.bottom() >= top()
+      other.bottom() >= top() &&
+      !other.isEmpty() && !isEmpty()
       );
 }
 
@@ -174,5 +175,5 @@ KDRect KDRect::movedTo(KDPoint p) const {
 }
 
 bool KDRect::isEmpty() const {
-  return (width() == 0 || height() == 0); //TODO <= 0
+  return (width() <= 0 || height() <= 0);
 }

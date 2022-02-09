@@ -164,10 +164,9 @@ const char * StackViewController::ControllerView::className() const {
 }
 #endif
 
-StackViewController::StackViewController(Responder * parentResponder,
-                                         ViewController * rootViewController) :
+StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController, Style style, int styleStep) :
     ViewController(parentResponder), m_view(), m_numberOfChildren(0), m_isVisible(false) {
-  pushModel(Frame(rootViewController, KDColorWhite, Palette::PopUpTitleBackground, Palette::PurpleDark));
+  pushModel(Frame(rootViewController, style, styleStep, m_numberOfChildren));
   rootViewController->setParentResponder(this);
 }
 
@@ -183,24 +182,31 @@ ViewController * StackViewController::topViewController() {
   return m_childrenFrame[m_numberOfChildren - 1].viewController();
 }
 
-void StackViewController::push(ViewController * vc, Style style, int styleStep) {
-  assert(m_numberOfChildren < k_MaxNumberOfStacks);
-  KDColor textColor, backgroundColor, separatorColor;
+StackViewController::Frame::Frame(ViewController * viewController, Style style, int styleStep, uint8_t numberOfChildren) :
+    m_viewController(viewController) {
   if (style == Style::WhiteUniform) {
-    textColor = Palette::GrayDarkMiddle;
-    backgroundColor = KDColorWhite;
-    separatorColor = Palette::GrayBright;
+    m_textColor = Palette::GrayDarkMiddle;
+    m_backgroundColor = KDColorWhite;
+    m_separatorColor = Palette::GrayBright;
   } else {
     assert(style == Style::GrayGradation);
-    assert(m_numberOfChildren > 0);
-    constexpr KDColor k_grayGradationColors[] = { Palette::PurpleBright, Palette::GrayDark, Palette::GrayDarkMiddle };
-    styleStep = styleStep < 0 ? m_numberOfChildren - 1 : styleStep;
-    textColor = KDColorWhite;
-    assert(styleStep < sizeof(k_grayGradationColors)/sizeof(KDColor));
-    backgroundColor = k_grayGradationColors[styleStep];
-    separatorColor = k_grayGradationColors[styleStep];
+    m_textColor = KDColorWhite;
+    if (numberOfChildren == 0 && styleStep < 0) {
+      m_backgroundColor = Palette::PopUpTitleBackground;
+      m_separatorColor = Palette::PurpleDark;
+    } else {
+      constexpr KDColor k_grayGradationColors[] = { Palette::PurpleBright, Palette::GrayDark, Palette::GrayDarkMiddle};
+      styleStep = styleStep < 0 ? numberOfChildren - 1 : styleStep;
+      assert(styleStep >= 0 && styleStep < sizeof(k_grayGradationColors)/sizeof(KDColor));
+      m_backgroundColor = k_grayGradationColors[styleStep];
+      m_separatorColor = k_grayGradationColors[styleStep];
+    }
   }
-  Frame frame = Frame(vc, textColor, backgroundColor, separatorColor);
+}
+
+void StackViewController::push(ViewController * vc, Style style, int styleStep) {
+  assert(m_numberOfChildren < k_MaxNumberOfStacks);
+  Frame frame = Frame(vc, style, styleStep, m_numberOfChildren);
   /* Add the frame to the model */
   pushModel(frame);
   frame.viewController()->initView();

@@ -52,6 +52,9 @@
 // Support for async/await/async for/async with
 #define MICROPY_PY_ASYNC_AWAIT (0)
 
+// Support for literal string interpolation, f-strings (see PEP 498, Python 3.6+)
+#define MICROPY_PY_FSTRINGS (1)
+
 // Whether to support bytearray object
 #define MICROPY_PY_BUILTINS_BYTEARRAY (1)
 

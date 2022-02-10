@@ -22,7 +22,7 @@ public:
 
   T pop() {
     assert(m_depth > 0);
-    return m_stack[m_depth-- - 1];
+    return m_stack[--m_depth];
   }
 
   int depth() { return m_depth; }

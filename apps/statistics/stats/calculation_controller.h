@@ -5,13 +5,13 @@
 #include <escher/button_row_controller.h>
 #include <poincare/print_float.h>
 #include <poincare/preferences.h>
-#include "store.h"
+#include "../store.h"
 #include "calculation_selectable_table_view.h"
-#include "../shared/hideable_even_odd_cell.h"
-#include "../shared/prefaced_table_view.h"
-#include "../shared/separator_even_odd_buffer_text_cell.h"
-#include "../shared/store_title_cell.h"
-#include "../shared/tab_table_controller.h"
+#include <apps/shared/hideable_even_odd_cell.h>
+#include <apps/shared/prefaced_table_view.h>
+#include <apps/shared/separator_even_odd_buffer_text_cell.h>
+#include <apps/shared/store_title_cell.h>
+#include <apps/shared/tab_table_controller.h>
 
 namespace Statistics {
 

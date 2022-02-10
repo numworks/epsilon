@@ -1,8 +1,8 @@
 #ifndef STATISTICS_BOX_RANGE_H
 #define STATISTICS_BOX_RANGE_H
 
-#include "../shared/curve_view_range.h"
-#include "store.h"
+#include <apps/shared/curve_view_range.h>
+#include "../store.h"
 
 namespace Statistics {
 

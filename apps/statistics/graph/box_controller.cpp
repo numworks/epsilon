@@ -1,6 +1,6 @@
 #include "box_controller.h"
-#include "app.h"
-#include "../shared/poincare_helpers.h"
+#include "../app.h"
+#include <apps/shared/poincare_helpers.h>
 
 using namespace Poincare;
 using namespace Shared;

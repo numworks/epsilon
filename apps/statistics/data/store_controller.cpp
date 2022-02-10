@@ -1,8 +1,8 @@
 #include "store_controller.h"
 #include "statistics_context.h"
-#include "app.h"
-#include "../apps_container.h"
-#include "../constant.h"
+#include "../app.h"
+#include <apps/apps_container.h>
+#include <apps/constant.h>
 #include <assert.h>
 #include <float.h>
 #include <cmath>

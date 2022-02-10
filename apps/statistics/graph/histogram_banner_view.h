@@ -3,7 +3,7 @@
 
 #include <escher/buffer_text_view.h>
 #include <escher/message_text_view.h>
-#include "../shared/banner_view.h"
+#include <apps/shared/banner_view.h>
 #include <apps/i18n.h>
 
 namespace Statistics {

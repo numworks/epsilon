@@ -1,7 +1,7 @@
 #ifndef STATISTICS_STATISTICS_CONTEXT_H
 #define STATISTICS_STATISTICS_CONTEXT_H
 
-#include "../shared/store_context.h"
+#include <apps/shared/store_context.h>
 
 namespace Statistics {
 

@@ -1,7 +1,7 @@
 #ifndef STATISTICS_MULTIPLE_HISTOGRAMS_VIEW_H
 #define STATISTICS_MULTIPLE_HISTOGRAMS_VIEW_H
 
-#include "store.h"
+#include "../store.h"
 #include "histogram_view.h"
 #include "histogram_banner_view.h"
 #include "histogram_parameter_controller.h"

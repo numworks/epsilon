@@ -32,13 +32,9 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
 protected:
-  class StackState : public StackElement {
+  class StackState {
   public:
     StackState(int selectedRow = -1, KDCoordinate verticalScroll = 0) : m_selectedRow(selectedRow), m_verticalScroll(verticalScroll) {}
-    // Stack element
-    bool isNull() const override { return m_selectedRow == -1; }
-    void reset() override { m_selectedRow = -1; }
-    // Getters
     int selectedRow() const { return m_selectedRow; }
     KDCoordinate verticalScroll() const { return m_verticalScroll; }
   private:

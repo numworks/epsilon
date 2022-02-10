@@ -154,7 +154,6 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
 }
 
 bool NestedMenuController::returnToPreviousMenu() {
-  assert(stackDepth() > 0);
   resetMemoization();
   int previousDepth = stackDepth();
   NestedMenuController::StackState state = m_stack.pop();

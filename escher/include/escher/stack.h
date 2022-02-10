@@ -3,7 +3,7 @@
 
 namespace Escher {
 
-// All implementation are in header to avoid having to specify templates
+// All implementations are in header to avoid having to specify templates
 
 template<typename T, int N>
 class Stack {

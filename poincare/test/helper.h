@@ -1,5 +1,5 @@
-#ifndef POINCARE_HELPER_H
-#define POINCARE_HELPER_H
+#ifndef POINCARE_TEST_HELPER_H
+#define POINCARE_TEST_HELPER_H
 
 #include <algorithm>
 #include <cmath>

@@ -2,17 +2,24 @@
 #include <quiz.h>
 
 #include <poincare/test/helper.h>
-#include "probability/models/data.h"
-#include "probability/models/statistic/goodness_statistic.h"
-#include "probability/models/statistic/homogeneity_statistic.h"
-#include "probability/models/statistic/one_mean_t_statistic.h"
-#include "probability/models/statistic/one_mean_z_statistic.h"
-#include "probability/models/statistic/one_proportion_statistic.h"
-#include "probability/models/statistic/pooled_two_means_statistic.h"
+#include "probability/models/models_buffer.h"
+#include "probability/models/statistic/goodness_test.h"
+#include "probability/models/statistic/homogeneity_test.h"
+#include "probability/models/statistic/one_mean_t_interval.h"
+#include "probability/models/statistic/one_mean_t_test.h"
+#include "probability/models/statistic/one_mean_z_interval.h"
+#include "probability/models/statistic/one_mean_z_test.h"
+#include "probability/models/statistic/one_proportion_z_interval.h"
+#include "probability/models/statistic/one_proportion_z_test.h"
+#include "probability/models/statistic/pooled_two_means_t_interval.h"
+#include "probability/models/statistic/pooled_two_means_t_test.h"
 #include "probability/models/statistic/statistic.h"
-#include "probability/models/statistic/two_means_t_statistic.h"
-#include "probability/models/statistic/two_means_z_statistic.h"
-#include "probability/models/statistic/two_proportions_statistic.h"
+#include "probability/models/statistic/two_means_t_interval.h"
+#include "probability/models/statistic/two_means_t_test.h"
+#include "probability/models/statistic/two_means_z_interval.h"
+#include "probability/models/statistic/two_means_z_test.h"
+#include "probability/models/statistic/two_proportions_z_interval.h"
+#include "probability/models/statistic/two_proportions_z_test.h"
 
 using namespace Probability;
 
@@ -43,54 +50,45 @@ struct StatisticTestCase {
 
 double tolerance() { return 1E11 * DBL_EPSILON; }
 
-void inputValues(Statistic * stat, StatisticTestCase & test) {
-  quiz_assert(stat->hasDegreeOfFreedom() == test.m_hasDegreeOfFreedom);
+void inputValues(Statistic * stat, StatisticTestCase & testCase, double initialThreshold, double threshold) {
+  stat->initThreshold();
+  assert_roughly_equal<double>(stat->threshold(), initialThreshold, tolerance());
+  stat->setThreshold(threshold);
+  assert_roughly_equal<double>(stat->threshold(), threshold, tolerance());
 
-  stat->initThreshold(Data::SubApp::Tests);
-  assert_roughly_equal<double>(stat->threshold(), 0.05, tolerance());  // Significance level
-  stat->setThreshold(test.m_significanceLevel);
-  assert_roughly_equal<double>(stat->threshold(), test.m_significanceLevel, tolerance());
-
-  stat->hypothesisParams()->setFirstParam(test.m_firstHypothesisParam);
-  stat->hypothesisParams()->setComparisonOperator(test.m_op);
-
-  for (int i = 0; i < test.m_numberOfInputs; i++) {
-    stat->setParamAtIndex(i, test.m_inputs[i]);
-    quiz_assert((stat->paramAtIndex(i) && test.m_inputs[i]) ||
-                (stat->paramAtIndex(i) == test.m_inputs[i]));
+  for (int i = 0; i < testCase.m_numberOfInputs; i++) {
+    stat->setParameterAtIndex(testCase.m_inputs[i], i);
+    quiz_assert((stat->parameterAtIndex(i) && testCase.m_inputs[i]) ||
+                (stat->parameterAtIndex(i) == testCase.m_inputs[i]));
   }
 }
 
-void runTest(Statistic * stat, StatisticTestCase & test) {
-  stat->computeTest();
+void testTest(Test * test, StatisticTestCase & testCase) {
+  inputValues(test, testCase, 0.05, testCase.m_significanceLevel);
+  test->hypothesisParams()->setFirstParam(testCase.m_firstHypothesisParam);
+  test->hypothesisParams()->setComparisonOperator(testCase.m_op);
 
-  quiz_assert(stat->numberOfParameters() == test.m_numberOfParameters);
-  quiz_assert(stat->canRejectNull() == test.m_testPassed);
-  assert_roughly_equal<double>(stat->testCriticalValue(), test.m_testCriticalValue, tolerance());
-  assert_roughly_equal<double>(stat->pValue(), test.m_pValue, tolerance());
-  if (stat->hasDegreeOfFreedom()) {
-    assert_roughly_equal(stat->degreeOfFreedom(), test.m_degreesOfFreedom, tolerance());
+  test->compute();
+
+  quiz_assert(test->numberOfParameters() == testCase.m_numberOfParameters);
+  quiz_assert(test->canRejectNull() == testCase.m_testPassed);
+  assert_roughly_equal<double>(test->testCriticalValue(), testCase.m_testCriticalValue, tolerance());
+  assert_roughly_equal<double>(test->pValue(), testCase.m_pValue, tolerance());
+  quiz_assert(test->hasDegreeOfFreedom() == testCase.m_hasDegreeOfFreedom);
+  if (test->hasDegreeOfFreedom()) {
+    assert_roughly_equal(test->degreeOfFreedom(), testCase.m_degreesOfFreedom, tolerance());
   }
 }
 
-void testStatistic(Statistic * stat, StatisticTestCase & test) {
-  inputValues(stat, test);
+void testInterval(Interval * interval, StatisticTestCase & testCase) {
+  inputValues(interval, testCase, 0.95, testCase.m_confidenceLevel);
 
-  // Test
-  runTest(stat, test);
+  interval->compute();
 
-  // Confidence interval
-  stat->initThreshold(Data::SubApp::Intervals);
-  assert_roughly_equal<double>(stat->threshold(), 0.95, tolerance());  // Confidence level
-  stat->setThreshold(test.m_confidenceLevel);
-  assert_roughly_equal<double>(stat->threshold(), test.m_confidenceLevel, tolerance());
-
-  stat->computeInterval();
-
-  assert_roughly_equal<double>(stat->estimate(), test.m_estimate, tolerance());
-  assert_roughly_equal<double>(stat->intervalCriticalValue(), test.m_intervalCriticalValue, tolerance());
-  assert_roughly_equal<double>(stat->standardError(), test.m_standardError, tolerance());
-  assert_roughly_equal<double>(stat->marginOfError(), test.m_marginOfError, tolerance());
+  assert_roughly_equal<double>(interval->estimate(), testCase.m_estimate, tolerance());
+  assert_roughly_equal<double>(interval->intervalCriticalValue(), testCase.m_intervalCriticalValue, tolerance());
+  assert_roughly_equal<double>(interval->standardError(), testCase.m_standardError, tolerance());
+  assert_roughly_equal<double>(interval->marginOfError(), testCase.m_marginOfError, tolerance());
 }
 
 QUIZ_CASE(probability_one_proportion_statistic) {
@@ -129,9 +127,11 @@ QUIZ_CASE(probability_one_proportion_statistic) {
   tests[1].m_standardError = 0.0366606079;
   tests[1].m_marginOfError = 0.0944314748;
 
-  OneProportionStatistic stat;
+  OneProportionZTest test;
+  OneProportionZInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    testStatistic(&stat, tests[i]);
+    testTest(&test, tests[i]);
+    testInterval(&interval, tests[i]);
   }
 }
 
@@ -175,9 +175,11 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
   tests[1].m_standardError = 1.5811388493;
   tests[1].m_marginOfError = 5.1384425163;
 
-  OneMeanTStatistic stat;
+  OneMeanTTest test;
+  OneMeanTInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    testStatistic(&stat, tests[i]);
+    testTest(&test, tests[i]);
+    testInterval(&interval, tests[i]);
   }
 }
 
@@ -187,8 +189,8 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   tests[0].m_op = HypothesisParams::ComparisonOperator::Lower;
   tests[0].m_numberOfInputs = 3;
   tests[0].m_inputs[0] = 127.8;
-  tests[0].m_inputs[1] = 50;
-  tests[0].m_inputs[2] = 3.2;
+  tests[0].m_inputs[1] = 3.2;
+  tests[0].m_inputs[2] = 50;
   tests[0].m_significanceLevel = 0.05;
   tests[0].m_confidenceLevel = 0.95;
   tests[0].m_numberOfParameters = 4;
@@ -205,8 +207,8 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   tests[1].m_op = HypothesisParams::ComparisonOperator::Different;
   tests[1].m_numberOfInputs = 3;
   tests[1].m_inputs[0] = 2.3;
-  tests[1].m_inputs[1] = 1000;
-  tests[1].m_inputs[2] = 14;
+  tests[1].m_inputs[1] = 14;
+  tests[1].m_inputs[2] = 1000;
   tests[1].m_significanceLevel = 0.01;
   tests[1].m_confidenceLevel = 0.99;
   tests[1].m_numberOfParameters = 4;
@@ -219,9 +221,11 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   tests[1].m_standardError = 0.4427188933;
   tests[1].m_marginOfError = 1.1403683424;
 
-  OneMeanZStatistic stat;
+  OneMeanZTest test;
+  OneMeanZInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    testStatistic(&stat, tests[i]);
+    testTest(&test, tests[i]);
+    testInterval(&interval, tests[i]);
   }
 }
 
@@ -265,9 +269,11 @@ QUIZ_CASE(probability_two_proportions_statistic) {
   tests[1].m_standardError = 0.0719472468;
   tests[1].m_marginOfError = 0.1853238344;
 
-  TwoProportionsStatistic stat;
+  TwoProportionsZTest test;
+  TwoProportionsZInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    testStatistic(&stat, tests[i]);
+    testTest(&test, tests[i]);
+    testInterval(&interval, tests[i]);
   }
 }
 
@@ -277,11 +283,11 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   tests[0].m_op = HypothesisParams::ComparisonOperator::Higher;
   tests[0].m_numberOfInputs = 6;
   tests[0].m_inputs[0] = 20;
-  tests[0].m_inputs[1] = 2;
-  tests[0].m_inputs[2] = 50;
+  tests[0].m_inputs[1] = 50;
+  tests[0].m_inputs[2] = 2;
   tests[0].m_inputs[3] = 24;
-  tests[0].m_inputs[4] = 18;
-  tests[0].m_inputs[5] = 60;
+  tests[0].m_inputs[4] = 60;
+  tests[0].m_inputs[5] = 18;
   tests[0].m_significanceLevel = 0.05;
   tests[0].m_confidenceLevel = 0.95;
   tests[0].m_numberOfParameters = 7;
@@ -299,11 +305,11 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   tests[1].m_op = HypothesisParams::ComparisonOperator::Different;
   tests[1].m_numberOfInputs = 6;
   tests[1].m_inputs[0] = 4.2;
-  tests[1].m_inputs[1] = 46;
-  tests[1].m_inputs[2] = 1000;
+  tests[1].m_inputs[1] = 1000;
+  tests[1].m_inputs[2] = 46;
   tests[1].m_inputs[3] = 18.3;
-  tests[1].m_inputs[4] = 18;
-  tests[1].m_inputs[5] = 60;
+  tests[1].m_inputs[4] = 60;
+  tests[1].m_inputs[5] = 18;
   tests[1].m_significanceLevel = 0.01;
   tests[1].m_confidenceLevel = 0.99;
   tests[1].m_numberOfParameters = 7;
@@ -317,9 +323,11 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   tests[1].m_standardError = 2.7415323257;
   tests[1].m_marginOfError = 7.1826281548;
 
-  TwoMeansTStatistic stat;
+  TwoMeansTTest test;
+  TwoMeansTInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    testStatistic(&stat, tests[i]);
+    testTest(&test, tests[i]);
+    testInterval(&interval, tests[i]);
   }
 }
 
@@ -329,11 +337,11 @@ QUIZ_CASE(probability_pooled_t_test) {
   tests[0].m_op = HypothesisParams::ComparisonOperator::Higher;
   tests[0].m_numberOfInputs = 6;
   tests[0].m_inputs[0] = 213.4;
-  tests[0].m_inputs[1] = 14;
-  tests[0].m_inputs[2] = 234;
+  tests[0].m_inputs[1] = 234;
+  tests[0].m_inputs[2] = 14;
   tests[0].m_inputs[3] = 213.5;
-  tests[0].m_inputs[4] = 135;
-  tests[0].m_inputs[5] = 64;
+  tests[0].m_inputs[4] = 64;
+  tests[0].m_inputs[5] = 135;
   tests[0].m_significanceLevel = 0.02;
   tests[0].m_confidenceLevel = 0.876;
   tests[0].m_numberOfParameters = 7;
@@ -351,11 +359,11 @@ QUIZ_CASE(probability_pooled_t_test) {
   tests[1].m_op = HypothesisParams::ComparisonOperator::Higher;
   tests[1].m_numberOfInputs = 6;
   tests[1].m_inputs[0] = 1.23;
-  tests[1].m_inputs[1] = 1.23;
-  tests[1].m_inputs[2] = 12;
+  tests[1].m_inputs[1] = 12;
+  tests[1].m_inputs[2] = 1.23;
   tests[1].m_inputs[3] = 0.2;
-  tests[1].m_inputs[4] = 0.12;
-  tests[1].m_inputs[5] = 12;
+  tests[1].m_inputs[4] = 12;
+  tests[1].m_inputs[5] = 0.12;
   tests[1].m_significanceLevel = 0.1;
   tests[1].m_confidenceLevel = 0.9;
   tests[1].m_numberOfParameters = 7;
@@ -369,14 +377,15 @@ QUIZ_CASE(probability_pooled_t_test) {
   tests[1].m_standardError = 0.3567562103;
   tests[1].m_marginOfError = 0.6126018763;
 
-  PooledTwoMeansStatistic stat;
+  PooledTwoMeansTTest test;
+  PooledTwoMeansTInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    testStatistic(&stat, tests[i]);
+    testTest(&test, tests[i]);
+    testInterval(&interval, tests[i]);
   }
 }
 
 QUIZ_CASE(probability_two_means_z_statistic) {
-  TwoMeansZStatistic stat;
   StatisticTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.;
   tests[0].m_op = HypothesisParams::ComparisonOperator::Higher;
@@ -420,16 +429,19 @@ QUIZ_CASE(probability_two_means_z_statistic) {
   tests[1].m_standardError = 98.9949569702;
   tests[1].m_marginOfError = 254.9941253662;
 
+  TwoMeansZTest test;
+  TwoMeansZInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    testStatistic(&stat, tests[i]);
+    testTest(&test, tests[i]);
+    testInterval(&interval, tests[i]);
   }
 }
 
-QUIZ_CASE(probability_goodness_statistic) {
-  GoodnessStatistic stat;
+#if 0
+
+QUIZ_CASE(probability_goodness_test) {
+  GoodnessTest stat;
   StatisticTestCase tests[1];
-  bool isDegreeOfFreedomOverridden = false;
-  int overriddenDegreeOfFreedom = 3;
   tests[0].m_op = HypothesisParams::ComparisonOperator::Higher;
   tests[0].m_numberOfInputs = 8;
   tests[0].m_inputs[0] = 1;
@@ -444,23 +456,28 @@ QUIZ_CASE(probability_goodness_statistic) {
   tests[0].m_confidenceLevel = 0.9;
   tests[0].m_numberOfParameters = stat.maxNumberOfRows() * 2 + 1;
   tests[0].m_hasDegreeOfFreedom = true;
-  tests[0].m_degreesOfFreedom = overriddenDegreeOfFreedom;
+  tests[0].m_degreesOfFreedom = 3;
   tests[0].m_testPassed = false;
   tests[0].m_testCriticalValue = 2.0833332539;
   tests[0].m_pValue = 0.5552918911;
+
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    inputValues(&stat, tests[i]);
     stat.recomputeData();
+    // Initialize values before calling computeDegreesOfFreedom
+    inputValues(test, tests[i], 0.05, testCase.m_significanceLevel);
     /* Degree of freedom is either overridden or computed as the user inputs
      * values in the UI table. It must be set here to replicate this. */
-    int degreeOfFreedom = isDegreeOfFreedomOverridden ? overriddenDegreeOfFreedom : stat.computeDegreesOfFreedom();
-    stat.setDegreeOfFreedom(degreeOfFreedom);
-    runTest(&stat, tests[i]);
+    stat.setDegreeOfFreedom(stat.computeDegreesOfFreedom());
+    testTest(&stat, tests[i]);
+    // Simulate
+    stat.setDegreeOfFreedom(5);
+    tests[i].m_pValue = 0.837503;
+    testTest(&stat, tests[i]);
   }
 }
 
-QUIZ_CASE(probability_goodness_statistic_overridden_degree_of_freedom) {
-  GoodnessStatistic stat;
+QUIZ_Cv ASE(probability_goodness_statistic_overridden_degree_of_freedom) {
+  GoodnessTest stat;
   StatisticTestCase tests[1];
   bool isDegreeOfFreedomOverridden = true;
   int overriddenDegreeOfFreedom = 5;
@@ -483,22 +500,23 @@ QUIZ_CASE(probability_goodness_statistic_overridden_degree_of_freedom) {
   tests[0].m_testCriticalValue = 2.0833332539;
   tests[0].m_pValue = 0.837503;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    inputValues(&stat, tests[i]);
     stat.recomputeData();
-    /* Degree of freedom is either overridden or computed as the user inputs
-     * values in the UI table. It must be set here to replicate this. */
+    * Degree of freedom is either overridden or computed as the user inputs
+     * values in the UI table. It must be set here to replicate this.
     int degreeOfFreedom = isDegreeOfFreedomOverridden ? overriddenDegreeOfFreedom : stat.computeDegreesOfFreedom();
     stat.setDegreeOfFreedom(degreeOfFreedom);
-    runTest(&stat, tests[i]);
+    testTest(&stat, tests[i]);
   }
-}
+}*/
 
-QUIZ_CASE(probability_homogeneity_statistic) {
+#endif
+
+QUIZ_CASE(probability_homogeneity_test) {
   // clang-format off
   StatisticTestCase tests[1];
   tests[0].m_op = HypothesisParams::ComparisonOperator::Higher;
-  tests[0].m_numberOfInputs = HomogeneityStatistic::k_maxNumberOfColumns *
-                          HomogeneityStatistic::k_maxNumberOfRows;
+  tests[0].m_numberOfInputs = HomogeneityTest::k_maxNumberOfColumns *
+                          HomogeneityTest::k_maxNumberOfRows;
   /*{1,   2,   4,   NAN, NAN, NAN, NAN, NAN, NAN,
      2,   5,   5,   NAN, NAN, NAN, NAN, NAN, NAN,
      4,   3,   2,   NAN, NAN, NAN, NAN, NAN, NAN,
@@ -523,14 +541,14 @@ QUIZ_CASE(probability_homogeneity_statistic) {
   tests[0].m_significanceLevel = 0.03;
   tests[0].m_confidenceLevel = 0.9;
   tests[0].m_numberOfParameters =
-          HomogeneityStatistic::k_maxNumberOfColumns * HomogeneityStatistic::k_maxNumberOfRows + 1;
+          HomogeneityTest::k_maxNumberOfColumns * HomogeneityTest::k_maxNumberOfRows + 1;
   tests[0].m_hasDegreeOfFreedom = true;
   tests[0].m_degreesOfFreedom = 4;
   tests[0].m_testPassed = false;
   tests[0].m_testCriticalValue = 3.5017316341;
   tests[0].m_pValue = 0.4776151180;
-  double expectedValues[2][HomogeneityStatistic::k_maxNumberOfColumns *
-                          HomogeneityStatistic::k_maxNumberOfRows] = {
+  double expectedValues[2][HomogeneityTest::k_maxNumberOfColumns *
+                          HomogeneityTest::k_maxNumberOfRows] = {
       {1.75,  2.5,     2.75,   NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
        3.0,   4.2857,  4.714,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
        2.25,  3.214,   3.536,  NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
@@ -541,17 +559,16 @@ QUIZ_CASE(probability_homogeneity_statistic) {
        NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN,
        NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN}};
   // clang-format on
-  HomogeneityStatistic stat;
+  HomogeneityTest test;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    inputValues(&stat, tests[i]);
-    stat.recomputeData();
-    runTest(&stat, tests[i]);
+    test.recomputeData();
+    testTest(&test, tests[i]);
     // Check expected values
     for (int j = 0;
-         j < HomogeneityStatistic::k_maxNumberOfColumns * HomogeneityStatistic::k_maxNumberOfRows;
+         j < HomogeneityTest::k_maxNumberOfColumns * HomogeneityTest::k_maxNumberOfRows;
          j++) {
-      double expected = stat.expectedValueAtLocation(j / HomogeneityStatistic::k_maxNumberOfColumns,
-                                                    j % HomogeneityStatistic::k_maxNumberOfColumns);
+      double expected = test.expectedValueAtLocation(j / HomogeneityTest::k_maxNumberOfColumns,
+                                                    j % HomogeneityTest::k_maxNumberOfColumns);
       double real = expectedValues[i][j];
       assert_roughly_equal(real, expected, 1E-4, true);
     }

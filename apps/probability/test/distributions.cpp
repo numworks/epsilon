@@ -6,15 +6,15 @@
 #include <cmath>
 
 #include <poincare/test/helper.h>
-#include "probability/models/distribution/binomial_distribution.h"
-#include "probability/models/distribution/chi_squared_distribution.h"
-#include "probability/models/distribution/exponential_distribution.h"
-#include "probability/models/distribution/fisher_distribution.h"
-#include "probability/models/distribution/geometric_distribution.h"
-#include "probability/models/distribution/normal_distribution.h"
-#include "probability/models/distribution/poisson_distribution.h"
-#include "probability/models/distribution/student_distribution.h"
-#include "probability/models/distribution/uniform_distribution.h"
+#include "probability/models/probability/distribution/binomial_distribution.h"
+#include "probability/models/probability/distribution/chi_squared_distribution.h"
+#include "probability/models/probability/distribution/exponential_distribution.h"
+#include "probability/models/probability/distribution/fisher_distribution.h"
+#include "probability/models/probability/distribution/geometric_distribution.h"
+#include "probability/models/probability/distribution/normal_distribution.h"
+#include "probability/models/probability/distribution/poisson_distribution.h"
+#include "probability/models/probability/distribution/student_distribution.h"
+#include "probability/models/probability/distribution/uniform_distribution.h"
 
 void assert_cumulative_distributive_function_direct_and_inverse_is(Probability::Distribution * distribution, double x, double result) {
   double r = distribution->cumulativeDistributiveFunctionAtAbscissa(x);
@@ -255,3 +255,4 @@ QUIZ_CASE(probability_fisher_distribution) {
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 1.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 1.0, 2.0, 0.19555555555555555);
 }
+

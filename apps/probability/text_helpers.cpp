@@ -15,7 +15,7 @@
 using namespace Poincare;
 
 namespace Probability {
-
+/*
 const char * testToTextSymbol(Data::Test t) {
   switch (t) {
     case Data::Test::OneProp:
@@ -93,7 +93,7 @@ I18n::Message graphTitleFormatForTest(Data::Test test, Data::TestType type, Data
       }
   }
 }
-
+*/
 int defaultConvertFloatToText(double value, char buffer[], int bufferSize) {
   return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
       value,

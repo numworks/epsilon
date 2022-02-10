@@ -366,6 +366,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_energyRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_energyRepresentatives + 1);
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_powerRepresentatives);
+  assert_parsed_expression_simplify_to("_hp", "1×_hp");
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_electricChargeRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_electricPotentialRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_electricCapacitanceRepresentatives);

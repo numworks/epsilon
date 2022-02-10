@@ -298,7 +298,7 @@ public:
   public:
     constexpr static PowerRepresentative Default() { return PowerRepresentative(nullptr, nullptr, NAN, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -3, .distance = 2, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override { return 2; }
     const Representative * representativesOfSameDimension() const override;
   private:
     using Representative::Representative;

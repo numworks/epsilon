@@ -1,5 +1,5 @@
 #include "calculation_controller.h"
-#include "../shared/poincare_helpers.h"
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/preferences.h>
 #include <apps/i18n.h>
 #include <assert.h>

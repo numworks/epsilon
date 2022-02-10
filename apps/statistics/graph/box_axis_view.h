@@ -2,9 +2,9 @@
 #define STATISTICS_BOX_AXIS_VIEW_H
 
 #include "box_range.h"
-#include "store.h"
-#include "../shared/labeled_curve_view.h"
-#include "../constant.h"
+#include "../store.h"
+#include <apps/shared/labeled_curve_view.h>
+#include <apps/constant.h>
 #include <poincare/print_float.h>
 
 namespace Statistics {

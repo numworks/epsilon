@@ -1,7 +1,7 @@
 #include "store_parameter_controller.h"
 #include "store_controller.h"
-#include "store.h"
-#include "../shared/store_controller.h"
+#include "../store.h"
+#include <apps/shared/store_controller.h>
 
 namespace Statistics {
 

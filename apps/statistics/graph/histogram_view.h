@@ -2,9 +2,9 @@
 #define STATISTICS_HISTOGRAM_VIEW_H
 
 #include <poincare/print_float.h>
-#include "store.h"
-#include "../constant.h"
-#include "../shared/labeled_curve_view.h"
+#include "../store.h"
+#include <apps/constant.h>
+#include <apps/shared/labeled_curve_view.h>
 
 namespace Statistics {
 

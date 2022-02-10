@@ -1,10 +1,10 @@
 #ifndef STATISTICS_STORE_CONTROLLER_H
 #define STATISTICS_STORE_CONTROLLER_H
 
-#include "store.h"
+#include "../store.h"
 #include "store_parameter_controller.h"
 #include "statistics_context.h"
-#include "../shared/store_controller.h"
+#include <apps/shared/store_controller.h>
 
 namespace Statistics {
 

@@ -1,9 +1,9 @@
 #ifndef STATISTICS_MULTIPLE_DATA_VIEW_H
 #define STATISTICS_MULTIPLE_DATA_VIEW_H
 
-#include "store.h"
-#include "../shared/banner_view.h"
-#include "../shared/curve_view.h"
+#include "../store.h"
+#include <apps/shared/banner_view.h>
+#include <apps/shared/curve_view.h>
 
 namespace Statistics {
 

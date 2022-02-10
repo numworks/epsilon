@@ -8,6 +8,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/metric.h>
 #include <escher/container.h>
+#include <escher/stack.h>
 #include <ion.h>
 
 namespace Escher {
@@ -31,32 +32,25 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
 protected:
-  class Stack {
+  class StackState : public StackElement {
   public:
-    class State {
-    public:
-      State(int selectedRow = -1, KDCoordinate verticalScroll = 0) : m_selectedRow(selectedRow), m_verticalScroll(verticalScroll) {}
-      bool isNull() const { return m_selectedRow == -1; }
-      int selectedRow() const { return m_selectedRow; }
-      KDCoordinate verticalScroll() const { return m_verticalScroll; }
-    private:
-      int m_selectedRow;
-      KDCoordinate m_verticalScroll;
-    };
-    void push(State state);
-    const State * stateAtIndex(int index) const { return &m_statesStack[index]; }
-    State pop();
-    int depth() const;
-    void resetStack();
+    StackState(int selectedRow = -1, KDCoordinate verticalScroll = 0) : m_selectedRow(selectedRow), m_verticalScroll(verticalScroll) {}
+    // Stack element
+    bool isNull() const override { return m_selectedRow == -1; }
+    void reset() override { m_selectedRow = -1; }
+    // Getters
+    int selectedRow() const { return m_selectedRow; }
+    KDCoordinate verticalScroll() const { return m_verticalScroll; }
   private:
-    // A state is needed for all StackView children but the first
-    constexpr static int k_maxModelTreeDepth = StackViewController::k_maxNumberOfChildren-1;
-    State m_statesStack[k_maxModelTreeDepth];
+    int m_selectedRow;
+    KDCoordinate m_verticalScroll;
   };
 
+  // A state is needed for all StackView children but the first
+  constexpr static int k_maxModelTreeDepth = StackViewController::k_maxNumberOfChildren-1;
   static constexpr int k_leafCellType = 0;
   static constexpr int k_nodeCellType = 1;
-  int stackDepth() const { return m_stack.depth(); }
+  int stackDepth() { return m_stack.depth(); }
   virtual bool selectSubMenu(int selectedRow);
   virtual bool returnToPreviousMenu();
   virtual bool returnToRootMenu();
@@ -66,7 +60,7 @@ protected:
   virtual HighlightCell * nodeCellAtIndex(int index) = 0;
   virtual I18n::Message subTitle() = 0;
   SelectableTableView m_selectableTableView;
-  const Stack * stack() const { return &m_stack; }
+  Stack<StackState, k_maxModelTreeDepth> * stack() { return &m_stack; }
   virtual int controlChecksum() const { return 0; }
 
 private:
@@ -103,13 +97,13 @@ private:
     I18n::Message m_title;
   };
 
-  Stack::State currentState() const { return Stack::State(selectedRow(), m_selectableTableView.contentOffset().y()); }
-  void loadState(Stack::State state);
+  StackState currentState() const { return StackState(selectedRow(), m_selectableTableView.contentOffset().y()); }
+  void loadState(StackState state);
   BreadcrumbController m_breadcrumbController;
   ListController m_listController;
   InputEventHandler * m_sender;
-  Stack m_stack;
-  Stack::State m_lastState;
+  Stack<StackState, k_maxModelTreeDepth> m_stack;
+  StackState m_lastState;
   int m_savedChecksum;
   static constexpr int k_nestedMenuStackDepth = 1;
 };

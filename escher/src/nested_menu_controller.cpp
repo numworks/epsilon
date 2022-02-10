@@ -60,38 +60,6 @@ void NestedMenuController::BreadcrumbController::updateTitle() {
   m_titleBuffer[charIndex] = 0;
 }
 
-/* Stack */
-
-void NestedMenuController::Stack::push(NestedMenuController::Stack::State state) {
-  int stackDepth = depth();
-  assert(stackDepth < k_maxModelTreeDepth && m_statesStack[stackDepth].isNull());
-  m_statesStack[stackDepth] = state;
-}
-
-NestedMenuController::Stack::State NestedMenuController::Stack::pop() {
-  int stackDepth = depth();
-  if (stackDepth == 0) {
-    return State();
-  }
-  NestedMenuController::Stack::State state = m_statesStack[stackDepth-1];
-  m_statesStack[stackDepth-1] = State();
-  return state;
-}
-
-int NestedMenuController::Stack::depth() const {
-  int depth = 0;
-  for (int i = 0; i < k_maxModelTreeDepth; i++) {
-    depth += (!m_statesStack[i].isNull());
-  }
-  return depth;
-}
-
-void NestedMenuController::Stack::resetStack() {
-  for (int i = 0; i < k_maxModelTreeDepth; i++) {
-    m_statesStack[i] = State();
-  }
-}
-
 /* List Controller */
 
 void NestedMenuController::ListController::didBecomeFirstResponder() {
@@ -170,7 +138,7 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
 bool NestedMenuController::selectSubMenu(int selectedRow) {
   resetMemoization();
   int previousDepth = stackDepth();
-  m_stack.push(Stack::State(selectedRow, m_selectableTableView.contentOffset().y()));
+  m_stack.push(StackState(selectedRow, m_selectableTableView.contentOffset().y()));
 
   /* Unless breadcrumb wasn't visible (depth 0), we need to pop it first to push
    * it again, in order to force title refresh. */
@@ -189,7 +157,7 @@ bool NestedMenuController::returnToPreviousMenu() {
   assert(stackDepth() > 0);
   resetMemoization();
   int previousDepth = stackDepth();
-  NestedMenuController::Stack::State state = m_stack.pop();
+  NestedMenuController::StackState state = m_stack.pop();
 
   /* Unless breadcrumb is no longer visible (depth 1), we need to pop it first,
    * to push it again in order to force title refresh. */
@@ -218,7 +186,7 @@ bool NestedMenuController::returnToRootMenu() {
   return true;
 }
 
-void NestedMenuController::loadState(NestedMenuController::Stack::State state) {
+void NestedMenuController::loadState(NestedMenuController::StackState state) {
   bool isStateValid = state.selectedRow() < numberOfRows();
   m_listController.setFirstSelectedRow(isStateValid ? state.selectedRow() : 0);
   KDPoint scroll = m_selectableTableView.contentOffset();

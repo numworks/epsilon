@@ -591,7 +591,10 @@ public:
     EnergyRepresentative("eV", "1.602176634ᴇ-19", 1.602176634e-19, Prefixable::All, Prefixable::LongScale),
   };
   typedef UnitNode::PowerRepresentative PowerRepresentative;
-  static constexpr const PowerRepresentative k_powerRepresentatives[] = { PowerRepresentative("W", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  static constexpr const PowerRepresentative k_powerRepresentatives[] = {
+      PowerRepresentative("W", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale),
+      PowerRepresentative("hp", DEFINE_TWICE(735.49875), Prefixable::All, Prefixable::LongScale),
+};
   typedef UnitNode::ElectricChargeRepresentative ElectricChargeRepresentative;
   static constexpr const ElectricChargeRepresentative k_electricChargeRepresentatives[] = { ElectricChargeRepresentative("C", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricPotentialRepresentative ElectricPotentialRepresentative;
@@ -672,6 +675,8 @@ public:
   static_assert(strings_equal(k_energyRepresentatives[k_electronVoltRepresentativeIndex].m_rootSymbol, "eV"), "Index for the Electron Volt Representative is incorrect.");
   static constexpr int k_wattRepresentativeIndex = 0;
   static_assert(strings_equal(k_powerRepresentatives[k_wattRepresentativeIndex].m_rootSymbol, "W"), "Index for the Watt Representative is incorrect.");
+  static constexpr int k_horsePowerRepresentativeIndex = 1;
+  static_assert(strings_equal(k_powerRepresentatives[k_horsePowerRepresentativeIndex].m_rootSymbol, "hp"), "Index for the Horsepower Representative is incorrect.");
   static constexpr int k_hectareRepresentativeIndex = 0;
   static_assert(strings_equal(k_surfaceRepresentatives[k_hectareRepresentativeIndex].m_rootSymbol, "ha"), "Index for the Hectare Representative is incorrect.");
   static constexpr int k_acreRepresentativeIndex = 1;

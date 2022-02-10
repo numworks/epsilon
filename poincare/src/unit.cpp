@@ -61,6 +61,7 @@ constexpr const int
   Unit::k_jouleRepresentativeIndex,
   Unit::k_electronVoltRepresentativeIndex,
   Unit::k_wattRepresentativeIndex,
+  Unit::k_horsePowerRepresentativeIndex,
   Unit::k_hectareRepresentativeIndex,
   Unit::k_acreRepresentativeIndex,
   Unit::k_literRepresentativeIndex,

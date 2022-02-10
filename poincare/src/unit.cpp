@@ -559,6 +559,17 @@ int UnitNode::EnergyRepresentative::setAdditionalExpressions(double value, Expre
   return index;
 }
 
+int UnitNode::PowerRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+  assert(availableLength >= 2);
+  int index = 0;
+  /* 1. Convert into Watts
+   * As W is just a shorthand for _kg_m^2_s^-3, the value is used as is. */
+  const Representative * watt = PowerRepresentative::Default().representativesOfSameDimension() + Unit::k_wattRepresentativeIndex;
+  const Prefix * wattPrefix = watt->findBestPrefix(value, 1.);
+  dest[index++] = Multiplication::Builder(Float<double>::Builder(value * std::pow(10., -wattPrefix->exponent())), Unit::Builder(watt, wattPrefix));
+  return index;
+}
+
 const UnitNode::Representative * UnitNode::SurfaceRepresentative::standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const {
   *prefix = Prefix::EmptyPrefix();
   return representativesOfSameDimension() + (reductionContext.unitFormat() == Preferences::UnitFormat::Metric ? Unit::k_hectareRepresentativeIndex : Unit::k_acreRepresentativeIndex);

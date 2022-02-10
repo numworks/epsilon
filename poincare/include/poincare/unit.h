@@ -285,7 +285,7 @@ public:
   public:
     constexpr static EnergyRepresentative Default() { return EnergyRepresentative(nullptr, nullptr, NAN, Prefixable::None, Prefixable::None); }
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -2, .distance = 2, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
-    int numberOfRepresentatives() const override { return 2; }
+    int numberOfRepresentatives() const override { return 3; }
     const Representative * representativesOfSameDimension() const override;
     bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
@@ -300,6 +300,8 @@ public:
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = -3, .distance = 2, .mass = 1, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 2; }
     const Representative * representativesOfSameDimension() const override;
+    bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
+    int setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const override;
   private:
     using Representative::Representative;
   };
@@ -589,6 +591,7 @@ public:
   static constexpr const EnergyRepresentative k_energyRepresentatives[] = {
     EnergyRepresentative("J", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale),
     EnergyRepresentative("eV", "1.602176634ᴇ-19", 1.602176634e-19, Prefixable::All, Prefixable::LongScale),
+    EnergyRepresentative("cal", DEFINE_TWICE(4.184), Prefixable::All, Prefixable::LongScale),
   };
   typedef UnitNode::PowerRepresentative PowerRepresentative;
   static constexpr const PowerRepresentative k_powerRepresentatives[] = {
@@ -673,10 +676,12 @@ public:
   static_assert(strings_equal(k_energyRepresentatives[k_jouleRepresentativeIndex].m_rootSymbol, "J"), "Index for the Joule Representative is incorrect.");
   static constexpr int k_electronVoltRepresentativeIndex = 1;
   static_assert(strings_equal(k_energyRepresentatives[k_electronVoltRepresentativeIndex].m_rootSymbol, "eV"), "Index for the Electron Volt Representative is incorrect.");
+  static constexpr int k_calorieRepresentativeIndex = 2;
+  static_assert(strings_equal(k_energyRepresentatives[k_calorieRepresentativeIndex].m_rootSymbol, "cal"), "Index for the Calorie Representative is incorrect.");
   static constexpr int k_wattRepresentativeIndex = 0;
   static_assert(strings_equal(k_powerRepresentatives[k_wattRepresentativeIndex].m_rootSymbol, "W"), "Index for the Watt Representative is incorrect.");
   static constexpr int k_horsePowerRepresentativeIndex = 1;
-  static_assert(strings_equal(k_powerRepresentatives[k_horsePowerRepresentativeIndex].m_rootSymbol, "hp"), "Index for the Horsepower Representative is incorrect.");
+  static_assert(strings_equal(k_powerRepresentatives[k_horsePowerRepresentativeIndex].m_rootSymbol, "hp"), "Index for the Horse power Representative is incorrect.");
   static constexpr int k_hectareRepresentativeIndex = 0;
   static_assert(strings_equal(k_surfaceRepresentatives[k_hectareRepresentativeIndex].m_rootSymbol, "ha"), "Index for the Hectare Representative is incorrect.");
   static constexpr int k_acreRepresentativeIndex = 1;

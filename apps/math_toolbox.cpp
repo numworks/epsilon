@@ -252,10 +252,15 @@ constexpr ToolboxMessageTree forceAndPressureChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitPressureMenu, unitPressureChildren),
 };
 
-constexpr ToolboxMessageTree unitEnergyJouleChildren[] = {
+constexpr ToolboxMessageTree unitEnergyChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleMilliSymbol, I18n::Message::UnitEnergyJouleMilli),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleSymbol, I18n::Message::UnitEnergyJoule),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyJouleKiloSymbol, I18n::Message::UnitEnergyJouleKilo),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMilliSymbol, I18n::Message::UnitEnergyElectronVoltMilli),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltSymbol, I18n::Message::UnitEnergyElectronVolt),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltKiloSymbol, I18n::Message::UnitEnergyElectronVoltKilo),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMegaSymbol, I18n::Message::UnitEnergyElectronVoltMega),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyCalorieSymbol, I18n::Message::UnitEnergyCalorie),
 };
 
 constexpr ToolboxMessageTree unitPowerChildren[] = {
@@ -268,17 +273,9 @@ constexpr ToolboxMessageTree unitPowerChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitPowerHorsePowerSymbol, I18n::Message::UnitPowerHorsePower),
 };
 
-constexpr ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMilliSymbol, I18n::Message::UnitEnergyElectronVoltMilli),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltSymbol, I18n::Message::UnitEnergyElectronVolt),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltKiloSymbol, I18n::Message::UnitEnergyElectronVoltKilo),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMegaSymbol, I18n::Message::UnitEnergyElectronVoltMega),
-};
-
 constexpr ToolboxMessageTree energyAndPowerChildren[] = {
-  ToolboxMessageTree::Node(I18n::Message::UnitEnergyJouleMenu, unitEnergyJouleChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitEnergyMenu, unitEnergyChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitPowerMenu, unitPowerChildren),
-  ToolboxMessageTree::Node(I18n::Message::UnitEnergyEletronVoltMenu, unitEnergyElectronVoltChildren),
 };
 
 constexpr ToolboxMessageTree unitTemperatureKelvin = ToolboxMessageTree::Leaf(I18n::Message::UnitTemperatureKelvinSymbol, I18n::Message::UnitTemperatureKelvin);

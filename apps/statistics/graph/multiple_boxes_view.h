@@ -1,7 +1,7 @@
 #ifndef STATISTICS_MULTIPLE_BOXES_VIEW_H
 #define STATISTICS_MULTIPLE_BOXES_VIEW_H
 
-#include "store.h"
+#include "../store.h"
 #include "box_axis_view.h"
 #include "box_banner_view.h"
 #include "box_view.h"

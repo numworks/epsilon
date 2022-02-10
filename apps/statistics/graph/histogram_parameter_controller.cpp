@@ -1,5 +1,5 @@
 #include "histogram_parameter_controller.h"
-#include "app.h"
+#include "../app.h"
 #include <algorithm>
 #include <assert.h>
 #include <cmath>

@@ -2,7 +2,7 @@
 #define STATISTICS_HISTOGRAM_CONTROLLER_H
 
 #include <escher/button_row_controller.h>
-#include "store.h"
+#include "../store.h"
 #include "multiple_data_view_controller.h"
 #include "multiple_histograms_view.h"
 

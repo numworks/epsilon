@@ -1,7 +1,7 @@
 #ifndef STATISTICS_STORE_PARAMETER_CONTROLLER_H
 #define STATISTICS_STORE_PARAMETER_CONTROLLER_H
 
-#include "../shared/store_parameter_controller.h"
+#include <apps/shared/store_parameter_controller.h>
 
 namespace Statistics {
 

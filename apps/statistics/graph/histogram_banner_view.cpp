@@ -1,5 +1,5 @@
 #include "histogram_banner_view.h"
-#include "../constant.h"
+#include <apps/constant.h>
 #include <assert.h>
 
 using namespace Escher;

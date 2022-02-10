@@ -1,8 +1,8 @@
 #ifndef STATISTICS_STORE_H
 #define STATISTICS_STORE_H
 
-#include "../shared/memoized_curve_view_range.h"
-#include "../shared/double_pair_store.h"
+#include <apps/shared/memoized_curve_view_range.h>
+#include <apps/shared/double_pair_store.h>
 
 namespace Statistics {
 

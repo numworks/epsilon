@@ -3,7 +3,7 @@
 
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/view_controller.h>
-#include "store.h"
+#include "../store.h"
 #include "multiple_data_view.h"
 
 namespace Statistics {

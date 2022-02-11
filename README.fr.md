@@ -271,7 +271,7 @@ pour compiler les binpacks que vous pouvez distribuer et flasher depuis le [Ti-p
 ```bash
 make clean
 make OMEGA_USERNAME="{Votre nom, maximum 15 caractères}" -j4
-``
+```
 
 Maintenant, lancez soit:
 

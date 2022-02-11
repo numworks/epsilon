@@ -166,7 +166,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     char buffer[bufferSize];
     // FIXME: Leo has not decided yet if we should use the prefered mode instead of always using
     // scientific mode
-    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(m_calculation->parameterAtIndex(i - 1), buffer, bufferSize, Poincare::Preferences::LargeNumberOfSignificantDigits, Poincare::Preferences::PrintFloatMode::Decimal);
+    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(m_calculation->parameterAtIndex(i - 1), buffer, bufferSize, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, Poincare::Preferences::PrintFloatMode::Decimal);
     field->setText(buffer);
   }
 }

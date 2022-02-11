@@ -15,13 +15,14 @@ static_assert(k_MaxNumberOfStacks < 8, "Bit mask representation relies on less t
 class StackViewController : public ViewController {
 public:
   enum class Style {
-    WhiteUniform,
-    GrayGradation
+    GrayGradation,
+    PurpleWhite,
+    WhiteUniform
   };
-  StackViewController(Responder * parentResponder, ViewController * rootViewController, Style style = Style::GrayGradation, int styleStep = -1);
+  StackViewController(Responder * parentResponder, ViewController * rootViewController, Style style);
 
   /* Push creates a new StackView and adds it */
-  void push(ViewController * vc, Style style = Style::WhiteUniform, int styleStep = -1);
+  void push(ViewController * vc);
   void pop();
   void popUntilDepth(int depth, bool shouldSetupTopViewController);
 
@@ -39,29 +40,14 @@ public:
   }
   static constexpr uint8_t k_maxNumberOfChildren = k_MaxNumberOfStacks;
 private:
-  class Frame {
-  public:
-    Frame(ViewController * viewController = nullptr, Style style = Style::WhiteUniform, int styleStep = -1, uint8_t numberOfChildren = 0);
-    ViewController * viewController() { return m_viewController; }
-    KDColor textColor() { return m_textColor; }
-    KDColor backgroundColor() { return m_backgroundColor; }
-    KDColor separatorColor() { return m_separatorColor; }
-  private:
-    ViewController * m_viewController;
-    KDColor m_textColor;
-    KDColor m_backgroundColor;
-    KDColor m_separatorColor;
-  };
   class ControllerView : public View {
   public:
-    ControllerView();
-    void setHeadersDisplayMask(ViewController::TitlesDisplay mode) { m_headersDisplayMask = static_cast<uint8_t>(mode); }
+    ControllerView(Style style);
     int8_t numberOfStacks() const { return m_numberOfStacks; }
     void setContentView(View * view);
     void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
-    void pushStack(Frame frame);
-    void popStack();
-    bool shouldDisplayHeaderAtIndex(int i) const;
+    void pushStack(ViewController * controller);
+    void resetStack() { m_numberOfStacks = 0; }
   protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -79,21 +65,24 @@ private:
     StackView m_stackViews[k_MaxNumberOfStacks];
     SolidColorView m_borderView;
     View * m_contentView;
+    Style m_style;
     int8_t m_numberOfStacks;
-    /* Represents the stacks to display, _starting from the end_.
-     * m_headersDisplayMask = 0b11111011   ->  shouldn't display m_stackViews[m_numberOfStacks - 1 - 2]. */
-    uint8_t m_headersDisplayMask;
+    // TODO: enum class? Some combination can't exist?
     bool m_headersOverlapHeaders;
     bool m_headersOverlapContent;
   };
   ControllerView m_view;
-  void pushModel(Frame frame);
+  void pushModel(ViewController * vc);
   void setupActiveView();
   void setupActiveViewController();
-  bool shouldStoreHeaderOnStack(ViewController * vc);
-  Frame m_childrenFrame[k_maxNumberOfChildren];
+  bool shouldStoreHeaderOnStack(ViewController * vc, int index);
+  void updateStack(ViewController::TitlesDisplay titleDisplay);
+  ViewController * m_childrenController[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   bool m_isVisible;
+  /* Represents the stacks to display, _starting from the end_.
+   * m_headersDisplayMask = 0b11111011   ->  shouldn't display m_stackViews[m_numberOfStacks - 1 - 2]. */
+  uint8_t m_headersDisplayMask;
 };
 
 }

@@ -80,7 +80,7 @@ App::App(Snapshot * snapshot) :
                      snapshot->data()->statistic(),
                      snapshot->data()->distribution(),
                      snapshot->data()->calculation()),
-    m_stackViewController(&m_modalViewController, &m_menuController),
+    m_stackViewController(&m_modalViewController, &m_menuController, StackViewController::Style::GrayGradation),
     m_bufferDestructor(nullptr)
 {
 }

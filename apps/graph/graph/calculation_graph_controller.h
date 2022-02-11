@@ -21,7 +21,7 @@ protected:
   float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
   BannerView * bannerView() override { return m_bannerView; }
   void reloadBannerView() override;
-  int numberOfSignificantDigits() const override { return Poincare::Preferences::LargeNumberOfSignificantDigits; }
+  int numberOfSignificantDigits() const override { return Poincare::Preferences::VeryLargeNumberOfSignificantDigits; }
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);
   ContinuousFunctionStore * functionStore() const;
   virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) = 0;

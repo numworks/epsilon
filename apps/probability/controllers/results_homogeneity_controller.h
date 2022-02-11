@@ -20,7 +20,7 @@ public:
                                HomogeneityStatistic * statistic,
                                ResultsController * resultsController);
   ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTitle;
+    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   const char * title() override { return nullptr; }
   View * view() override { return &m_contentView; }

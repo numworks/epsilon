@@ -57,7 +57,7 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
   StackViewController * stack = (StackViewController *)parentResponder();
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     setDistributionAccordingToIndex(selectedRow());
-    stack->push(m_parametersController, Escher::StackViewController::Style::GrayGradation, 0);
+    stack->push(m_parametersController);
     return true;
   } else if (event == Ion::Events::Left) {
     stack->pop();

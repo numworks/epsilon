@@ -54,7 +54,7 @@ bool Probability::ResultsHomogeneityController::handleEvent(Ion::Events::Event e
 
 bool Probability::ResultsHomogeneityController::ButtonAction(void * c, void * s) {
   ResultsHomogeneityController * controller = static_cast<ResultsHomogeneityController *>(c);
-  controller->stackOpenPage(controller->m_resultsController, 1);
+  controller->stackOpenPage(controller->m_resultsController);
   return true;
 }
 

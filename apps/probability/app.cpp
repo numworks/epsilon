@@ -99,125 +99,125 @@ void App::didBecomeActive(Window * windows) {
     case Data::Page::Menu:
       break;
     case Data::Page::Distribution:
-      m_menuController.stackOpenPage(&m_distributionController, 0);
+      m_menuController.stackOpenPage(&m_distributionController);
       break;
     case Data::Page::Parameters:
-      m_menuController.stackOpenPage(&m_distributionController, 0);
-      m_distributionController.stackOpenPage(&m_parameterController, 0);
+      m_menuController.stackOpenPage(&m_distributionController);
+      m_distributionController.stackOpenPage(&m_parameterController);
       break;
     case Data::Page::ProbaGraph:
-      m_menuController.stackOpenPage(&m_distributionController, 0);
-      m_distributionController.stackOpenPage(&m_parameterController, 0);
-      m_parameterController.stackOpenPage(&m_calculationController, 1);
+      m_menuController.stackOpenPage(&m_distributionController);
+      m_distributionController.stackOpenPage(&m_parameterController);
+      m_parameterController.stackOpenPage(&m_calculationController);
       break;
     case Data::Page::Test:
-      m_menuController.stackOpenPage(&m_testController, 0);
+      m_menuController.stackOpenPage(&m_testController);
       break;
     case Data::Page::Type:
-      m_menuController.stackOpenPage(&m_testController, 0);
-      m_testController.stackOpenPage(&m_typeController, 0);
+      m_menuController.stackOpenPage(&m_testController);
+      m_testController.stackOpenPage(&m_typeController);
       break;
     case Data::Page::Hypothesis:
-      m_menuController.stackOpenPage(&m_testController, 0);
+      m_menuController.stackOpenPage(&m_testController);
       if (!Data::isProportion(test)) {
-        m_testController.stackOpenPage(&m_typeController, 0);
-        m_typeController.stackOpenPage(&m_hypothesisController, 0);
+        m_testController.stackOpenPage(&m_typeController);
+        m_typeController.stackOpenPage(&m_hypothesisController);
       } else {
-        m_testController.stackOpenPage(&m_hypothesisController, 0);
+        m_testController.stackOpenPage(&m_hypothesisController);
       }
       break;
     case Data::Page::Categorical:
-      m_menuController.stackOpenPage(&m_testController, 0);
-      m_testController.stackOpenPage(&m_categoricalTypeController, 0);
+      m_menuController.stackOpenPage(&m_testController);
+      m_testController.stackOpenPage(&m_categoricalTypeController);
       break;
     case Data::Page::Input:
-      m_menuController.stackOpenPage(&m_testController, 0);
+      m_menuController.stackOpenPage(&m_testController);
       if (subapp == Data::SubApp::Tests) {
-        m_testController.stackOpenPage(&m_hypothesisController, 0);
-        m_hypothesisController.stackOpenPage(&m_inputController, 1);
+        m_testController.stackOpenPage(&m_hypothesisController);
+        m_hypothesisController.stackOpenPage(&m_inputController);
       } else {
-        m_testController.stackOpenPage(&m_inputController, 0);
+        m_testController.stackOpenPage(&m_inputController);
       }
       break;
     case Data::Page::InputGoodness:
-      m_menuController.stackOpenPage(&m_testController, 0);
-      m_testController.stackOpenPage(&m_categoricalTypeController, 0);
-      m_categoricalTypeController.stackOpenPage(&m_inputGoodnessController, 0);
+      m_menuController.stackOpenPage(&m_testController);
+      m_testController.stackOpenPage(&m_categoricalTypeController);
+      m_categoricalTypeController.stackOpenPage(&m_inputGoodnessController);
       break;
     case Data::Page::InputHomogeneity:
-      m_menuController.stackOpenPage(&m_testController, 0);
-      m_testController.stackOpenPage(&m_categoricalTypeController, 0);
-      m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController, 0);
+      m_menuController.stackOpenPage(&m_testController);
+      m_testController.stackOpenPage(&m_categoricalTypeController);
+      m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController);
       break;
     case Data::Page::ResultsHomogeneity:
-      m_menuController.stackOpenPage(&m_testController, 0);
-      m_testController.stackOpenPage(&m_categoricalTypeController, 0);
-      m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController, 0);
-      m_inputHomogeneityController.stackOpenPage(&m_homogeneityResultsController, 0);
+      m_menuController.stackOpenPage(&m_testController);
+      m_testController.stackOpenPage(&m_categoricalTypeController);
+      m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController);
+      m_inputHomogeneityController.stackOpenPage(&m_homogeneityResultsController);
       break;
     case Data::Page::Results:
-      m_menuController.stackOpenPage(&m_testController, 0);
+      m_menuController.stackOpenPage(&m_testController);
       if (test == Data::Test::Categorical) {
-        m_testController.stackOpenPage(&m_categoricalTypeController, 0);
+        m_testController.stackOpenPage(&m_categoricalTypeController);
         if (categoricalType == Data::CategoricalType::Goodness) {
-          m_categoricalTypeController.stackOpenPage(&m_inputGoodnessController, 0);
-          m_inputGoodnessController.stackOpenPage(&m_resultsController, 0);
+          m_categoricalTypeController.stackOpenPage(&m_inputGoodnessController);
+          m_inputGoodnessController.stackOpenPage(&m_resultsController);
         } else {
-          m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController, 0);
-          m_inputHomogeneityController.stackOpenPage(&m_homogeneityResultsController, 0);
-          m_homogeneityResultsController.stackOpenPage(&m_resultsController, 1);
+          m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController);
+          m_inputHomogeneityController.stackOpenPage(&m_homogeneityResultsController);
+          m_homogeneityResultsController.stackOpenPage(&m_resultsController);
         }
       } else if (subapp == Data::SubApp::Intervals) {
         if (Data::isProportion(test)) {
-          m_testController.stackOpenPage(&m_inputController, 0);
+          m_testController.stackOpenPage(&m_inputController);
         } else {
-          m_testController.stackOpenPage(&m_typeController, 0);
-          m_typeController.stackOpenPage(&m_inputController, 0);
+          m_testController.stackOpenPage(&m_typeController);
+          m_typeController.stackOpenPage(&m_inputController);
         }
-        m_inputController.stackOpenPage(&m_resultsController, 1);
+        m_inputController.stackOpenPage(&m_resultsController);
       } else {
         if (Data::isProportion(test)) {
-          m_testController.stackOpenPage(&m_hypothesisController, 0);
+          m_testController.stackOpenPage(&m_hypothesisController);
         } else {
-          m_testController.stackOpenPage(&m_typeController, 0);
-          m_typeController.stackOpenPage(&m_hypothesisController, 0);
+          m_testController.stackOpenPage(&m_typeController);
+          m_typeController.stackOpenPage(&m_hypothesisController);
         }
-        m_hypothesisController.stackOpenPage(&m_inputController, 1);
-        m_inputController.stackOpenPage(&m_resultsController, 1);
+        m_hypothesisController.stackOpenPage(&m_inputController);
+        m_inputController.stackOpenPage(&m_resultsController);
       }
       break;
     case Data::Page::Graph:
-      m_menuController.stackOpenPage(&m_testController, 0);
+      m_menuController.stackOpenPage(&m_testController);
       if (test == Data::Test::Categorical) {
-        m_testController.stackOpenPage(&m_categoricalTypeController, 0);
+        m_testController.stackOpenPage(&m_categoricalTypeController);
         if (categoricalType == Data::CategoricalType::Goodness) {
-          m_categoricalTypeController.stackOpenPage(&m_inputGoodnessController, 0);
-          m_inputGoodnessController.stackOpenPage(&m_resultsController, 0);
+          m_categoricalTypeController.stackOpenPage(&m_inputGoodnessController);
+          m_inputGoodnessController.stackOpenPage(&m_resultsController);
         } else {
-          m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController, 0);
-          m_inputHomogeneityController.stackOpenPage(&m_homogeneityResultsController, 0);
-          m_homogeneityResultsController.stackOpenPage(&m_resultsController, 1);
+          m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController);
+          m_inputHomogeneityController.stackOpenPage(&m_homogeneityResultsController);
+          m_homogeneityResultsController.stackOpenPage(&m_resultsController);
         }
       } else if (subapp == Data::SubApp::Intervals) {
         if (Data::isProportion(test)) {
-          m_testController.stackOpenPage(&m_inputController, 0);
+          m_testController.stackOpenPage(&m_inputController);
         } else {
-          m_testController.stackOpenPage(&m_typeController, 0);
-          m_typeController.stackOpenPage(&m_inputController, 0);
+          m_testController.stackOpenPage(&m_typeController);
+          m_typeController.stackOpenPage(&m_inputController);
         }
-        m_inputController.stackOpenPage(&m_resultsController, 1);
+        m_inputController.stackOpenPage(&m_resultsController);
       } else {
         if (Data::isProportion(test)) {
-          m_testController.stackOpenPage(&m_hypothesisController, 0);
+          m_testController.stackOpenPage(&m_hypothesisController);
         } else {
-          m_testController.stackOpenPage(&m_typeController, 0);
-          m_typeController.stackOpenPage(&m_hypothesisController, 0);
+          m_testController.stackOpenPage(&m_typeController);
+          m_typeController.stackOpenPage(&m_hypothesisController);
         }
-        m_hypothesisController.stackOpenPage(&m_inputController, 1);
-        m_inputController.stackOpenPage(&m_resultsController, 1);
+        m_hypothesisController.stackOpenPage(&m_inputController);
+        m_inputController.stackOpenPage(&m_resultsController);
       }
       assert(!(subapp == Data::SubApp::Tests && ExamModeConfiguration::testsGraphResultsAreForbidden()));
-      m_resultsController.stackOpenPage(&m_statisticGraphController, (test == Data::Test::Categorical ? 1 : 2));
+      m_resultsController.stackOpenPage(&m_statisticGraphController);
       break;
   }
   Escher::App::didBecomeActive(windows);

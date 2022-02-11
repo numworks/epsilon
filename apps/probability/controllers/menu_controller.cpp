@@ -74,7 +74,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     if (controller == m_testController) {
       m_testController->selectRow(0);
     }
-    stackOpenPage(controller, 0);
+    stackOpenPage(controller);
     return true;
   }
   return false;

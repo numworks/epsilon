@@ -127,7 +127,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
       m_categoricalController->selectRow(0);
     }
 
-    stackOpenPage(controller, 0);
+    stackOpenPage(controller);
     return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);

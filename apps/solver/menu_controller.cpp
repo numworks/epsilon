@@ -46,7 +46,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(controller != nullptr);
-    stackOpenPage(controller, 0);
+    stackOpenPage(controller);
     return true;
   }
   return false;

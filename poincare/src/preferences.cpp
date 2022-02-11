@@ -6,6 +6,7 @@ namespace Poincare {
 
 constexpr int Preferences::DefaultNumberOfPrintedSignificantDigits;
 constexpr int Preferences::VeryLargeNumberOfSignificantDigits;
+constexpr int Preferences::LargeNumberOfSignificantDigits;
 constexpr int Preferences::MediumNumberOfSignificantDigits;
 constexpr int Preferences::ShortNumberOfSignificantDigits;
 constexpr int Preferences::VeryShortNumberOfSignificantDigits;

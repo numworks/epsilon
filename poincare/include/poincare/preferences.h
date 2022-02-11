@@ -9,6 +9,7 @@ class Preferences final {
 public:
   constexpr static int DefaultNumberOfPrintedSignificantDigits = 10;
   constexpr static int VeryLargeNumberOfSignificantDigits = 7;
+  constexpr static int LargeNumberOfSignificantDigits = 6;
   constexpr static int MediumNumberOfSignificantDigits = 5;
   constexpr static int ShortNumberOfSignificantDigits = 4;
   constexpr static int VeryShortNumberOfSignificantDigits = 3;

@@ -48,6 +48,7 @@ public:
     DisplayLastTitle = 0b00000001,
     DisplayLastTwoTitles = 0b00000011,
     DisplayLastThreeTitles = 0b00000111,
+    DisplayLastFourTitles = 0b00001111,
     DisplayLastAndThirdToLast = 0b00000101,
     DisplayNoTitle = 0b00000000
   };

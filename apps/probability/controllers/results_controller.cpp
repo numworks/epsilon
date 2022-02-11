@@ -36,10 +36,10 @@ void ResultsController::didBecomeFirstResponder() {
 }
 
 ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
-  if (App::app()->categoricalType() == Data::CategoricalType::Unset) {
+  if (App::app()->subapp() == Data::SubApp::Intervals || App::app()->categoricalType() == Data::CategoricalType::Goodness) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
-  return ViewController::TitlesDisplay::DisplayLastTitle;
+  return ViewController::TitlesDisplay::DisplayLastThreeTitles;
 }
 
 const char * Probability::ResultsController::title() {

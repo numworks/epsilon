@@ -53,7 +53,7 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
                                      App::app()->testType(),
                                      App::app()->categoricalType());
     }
-    stackOpenPage(view, 0);
+    stackOpenPage(view);
     return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);

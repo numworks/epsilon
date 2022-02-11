@@ -147,7 +147,7 @@ bool ParametersController::textFieldDidFinishEditing(TextField * textField,
 }
 
 void ParametersController::buttonAction() {
-  stackOpenPage(m_calculationController, 1);
+  stackOpenPage(m_calculationController);
 }
 
 }  // namespace Probability

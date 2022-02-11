@@ -40,7 +40,7 @@ private:
   Escher::HighlightCell * reusableParameterCell(int i, int type) override;
   double parameterAtIndex(int index) override { return m_data->getValue(interestParamaterAtIndex(index)); }
   bool setParameterAtIndex(int parameterIndex, double f) override;
-  void buttonAction() override { stackOpenPage(m_financeResultController, 1); }
+  void buttonAction() override { stackOpenPage(m_financeResultController); }
 
   // Dropdown cell is right after all double parameters but the unknown one
   int indexOfDropdown() const { return m_data->numberOfDoubleValues() - 1; }

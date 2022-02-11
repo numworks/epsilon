@@ -32,7 +32,7 @@ void ViewController::viewWillAppear() {
 #endif
 }
 
-void ViewController::stackOpenPage(ViewController * nextPage, int styleStep) {
+void ViewController::stackOpenPage(ViewController * nextPage) {
   StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
   assert(stackViewControllerResponder != nullptr);
   stackViewControllerResponder->push(nextPage);

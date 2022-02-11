@@ -98,7 +98,7 @@ void InputController::buttonAction() {
   } else {
     m_statistic->computeInterval();
   }
-  stackOpenPage(m_resultsController, 1);
+  stackOpenPage(m_resultsController);
 }
 
 void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {

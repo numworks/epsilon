@@ -72,7 +72,7 @@ bool Probability::ResultsController::ButtonAction(void * c, void * s) {
     App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
     return false;
   }
-  controller->stackOpenPage(controller->m_statisticGraphController, (App::app()->test() == Data::Test::Categorical ? 1 : 2));
+  controller->stackOpenPage(controller->m_statisticGraphController);
   return true;
 }
 

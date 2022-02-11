@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <kandinsky/font.h>
 #include <poincare/print.h>
+#include <poincare/preferences.h>
 
 #include "probability/text_helpers.h"
 
@@ -21,11 +22,11 @@ void IntervalConclusionView::setInterval(double center, double marginOfError) {
 
   defaultConvertFloatToText(center, bufferCenter, bufferSize);
   defaultConvertFloatToText(marginOfError, buffermarginOfError, bufferSize);
-
+  // Use the same precision as in StatisticCurveView::drawInterval
   Poincare::Print::customPrintf(m_buffer, k_maxNumberOfChar, "%s\n%*.*ed ± %*.*ed",
            I18n::translate(I18n::Message::ConfidenceInterval),
-           center, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-           marginOfError, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+           center, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::LargeNumberOfSignificantDigits,
+           marginOfError, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::LargeNumberOfSignificantDigits);
 }
 
 }  // namespace Probability

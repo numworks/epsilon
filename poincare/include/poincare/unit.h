@@ -591,7 +591,7 @@ public:
   static constexpr const EnergyRepresentative k_energyRepresentatives[] = {
     EnergyRepresentative("J", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale),
     EnergyRepresentative("eV", "1.602176634ᴇ-19", 1.602176634e-19, Prefixable::All, Prefixable::LongScale),
-    EnergyRepresentative("cal", DEFINE_TWICE(4.184), Prefixable::None, Prefixable::None),
+    EnergyRepresentative("cal", DEFINE_TWICE(4.184), Prefixable::All, Prefixable::None),
   };
   typedef UnitNode::PowerRepresentative PowerRepresentative;
   static constexpr const PowerRepresentative k_powerRepresentatives[] = {

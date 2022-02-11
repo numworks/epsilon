@@ -261,6 +261,7 @@ constexpr ToolboxMessageTree unitEnergyChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltKiloSymbol, I18n::Message::UnitEnergyElectronVoltKilo),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMegaSymbol, I18n::Message::UnitEnergyElectronVoltMega),
   ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyCalorieSymbol, I18n::Message::UnitEnergyCalorie),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyCalorieKiloSymbol, I18n::Message::UnitEnergyCalorieKilo),
 };
 
 constexpr ToolboxMessageTree unitPowerChildren[] = {

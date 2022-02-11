@@ -35,7 +35,7 @@ void ViewController::viewWillAppear() {
 void ViewController::stackOpenPage(ViewController * nextPage, int styleStep) {
   StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
   assert(stackViewControllerResponder != nullptr);
-  stackViewControllerResponder->push(nextPage, StackViewController::Style::GrayGradation, styleStep);
+  stackViewControllerResponder->push(nextPage);
 }
 
 bool ViewController::popFromStackViewControllerOnLeftEvent(Ion::Events::Event event) {

@@ -21,7 +21,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
     return true;
   }, this), KDFont::LargeFont, Palette::PurpleBright),
   m_modelsParameterController(this, equationStore, this),
-  m_modelsStackController(nullptr, &m_modelsParameterController)
+  m_modelsStackController(nullptr, &m_modelsParameterController, StackViewController::Style::PurpleWhite)
 {
   m_addNewModel.setAlignment(0.3f, KDContext::k_alignCenter); // (EquationListView::k_braceTotalWidth+k_expressionMargin) / (Ion::Display::Width-m_addNewModel.text().size()) = (30+5)/(320-200)
   for (int i = 0; i < k_maxNumberOfRows; i++) {
@@ -190,7 +190,7 @@ void ListController::resolveEquations() {
       case EquationStore::Error::RequireApproximateSolution:
       {
         reinterpret_cast<IntervalController *>(App::app()->intervalController())->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
-        stackController()->push(App::app()->intervalController(), StackViewController::Style::GrayGradation);
+        stackController()->push(App::app()->intervalController());
         return;
       }
       default:
@@ -198,7 +198,7 @@ void ListController::resolveEquations() {
         assert(e == EquationStore::Error::NoError);
         StackViewController * stack = stackController();
         reinterpret_cast<IntervalController *>(App::app()->intervalController())->setShouldReplaceFuncionsButNotSymbols(resultWithoutUserDefinedSymbols);
-        stack->push(App::app()->solutionsControllerStack(), StackViewController::Style::GrayGradation);
+        stack->push(App::app()->solutionsControllerStack());
       }
     }
   } else {

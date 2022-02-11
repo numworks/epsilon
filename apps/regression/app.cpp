@@ -58,10 +58,10 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->store(), snapshot->cursor(), snapshot->rangeVersion(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex()),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
-  m_graphStackViewController(&m_tabViewController, &m_graphHeader),
+  m_graphStackViewController(&m_tabViewController, &m_graphHeader, Escher::StackViewController::Style::WhiteUniform),
   m_storeController(&m_storeHeader, this, snapshot->store(), &m_storeHeader, parentContext),
   m_storeHeader(&m_storeStackViewController, &m_storeController, &m_storeController),
-  m_storeStackViewController(&m_tabViewController, &m_storeHeader),
+  m_storeStackViewController(&m_tabViewController, &m_storeHeader, Escher::StackViewController::Style::WhiteUniform),
   m_tabViewController(&m_modalViewController, snapshot, &m_storeStackViewController, &m_graphStackViewController, &m_calculationHeader),
   m_regressionController(nullptr, snapshot->store())
 {

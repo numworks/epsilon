@@ -19,7 +19,7 @@ ListController::ListController(Responder * parentResponder, ButtonRowController 
   m_selectableTableView(this, this, this, this),
   m_parameterController(this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, this),
   m_modelsParameterController(this, nullptr, this),
-  m_modelsStackController(nullptr, &m_modelsParameterController),
+  m_modelsStackController(nullptr, &m_modelsParameterController, StackViewController::Style::PurpleWhite),
   m_functionToolbox(),
   m_parameterColumnSelected(false)
 {

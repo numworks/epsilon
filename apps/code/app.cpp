@@ -79,7 +79,7 @@ App::App(Snapshot * snapshot) :
       ),
   m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray, ButtonRowController::Size::Large),
   m_menuController(&m_listFooter, this, snapshot->scriptStore(), &m_listFooter),
-  m_codeStackViewController(&m_modalViewController, &m_listFooter),
+  m_codeStackViewController(&m_modalViewController, &m_listFooter, Escher::StackViewController::Style::WhiteUniform),
   m_variableBoxController(snapshot->scriptStore())
 {
   Clipboard::sharedClipboard()->enterPython();

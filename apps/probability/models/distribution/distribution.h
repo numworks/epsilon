@@ -41,7 +41,7 @@ public:
   constexpr static int k_maxNumberOfOperations = 1000000;
   virtual double defaultComputedValue() const { return 0.0f; }
 protected:
-  static_assert(Poincare::Preferences::LargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to LargeNumberOfSignificantDigits");
+  static_assert(Poincare::Preferences::VeryLargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to VeryLargeNumberOfSignificantDigits");
   constexpr static double k_maxProbability = 0.9999995;
   constexpr static float k_displayTopMarginRatio = 0.05f;
   constexpr static float k_displayLeftMarginRatio = 0.05f;

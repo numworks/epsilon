@@ -99,7 +99,7 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   double abscissa = intervalAtColumn(column)->element(row-1); // Subtract the title row from row to get the element index
   Shared::ExpiringPointer<Shared::Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(column));
   Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
-  Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, k_valuesCellBufferSize, Preferences::LargeNumberOfSignificantDigits);
+  Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, k_valuesCellBufferSize, Preferences::VeryLargeNumberOfSignificantDigits);
 }
 
 // Parameters controllers getter

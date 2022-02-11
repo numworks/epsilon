@@ -102,7 +102,7 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
         value,
         buffer,
         bufferSize,
-        Poincare::Preferences::LargeNumberOfSignificantDigits,
+        Poincare::Preferences::VeryLargeNumberOfSignificantDigits,
         Poincare::Preferences::PrintFloatMode::Decimal);
 
     messageCell->setLayout(message);

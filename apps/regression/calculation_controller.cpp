@@ -175,7 +175,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
 
   // Calculation cell
-  const int numberSignificantDigits = Preferences::LargeNumberOfSignificantDigits;
+  const int numberSignificantDigits = Preferences::VeryLargeNumberOfSignificantDigits;
   if (i > 0 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
     ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn, &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
     double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0, false);

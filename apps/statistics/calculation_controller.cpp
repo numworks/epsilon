@@ -106,7 +106,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     int seriesIndex = m_store->indexOfKthNonEmptySeries(i-2);
     double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
     EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
-    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+    constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);

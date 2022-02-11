@@ -65,7 +65,7 @@ void SimpleFloatParameterController<T>::willDisplayCellForIndex(HighlightCell * 
   if (isCellEditing(cell, index)) {
     return;
   }
-  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+  constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
   constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
   PoincareHelpers::ConvertFloatToTextWithDisplayMode<T>(parameterAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);

@@ -21,7 +21,7 @@ void FinanceResultController::didBecomeFirstResponder() {
   cellAtIndex(0)->setMessage(m_data->labelForParameter(m_data->getUnknown()));
   cellAtIndex(0)->setSubLabelMessage(m_data->sublabelForParameter(m_data->getUnknown()));
   double value = m_data->computeUnknownValue();
-  constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
+  constexpr int precision = Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
   constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
   Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);

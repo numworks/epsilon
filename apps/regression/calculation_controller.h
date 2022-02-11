@@ -70,8 +70,8 @@ private:
    * implementations) must be accounted for here.
    * TODO: change 7 for KDFont::SmallFont->glyphSize().width()
    * Calculation width should at least be able to hold to numbers with
-   * LargeNumberOfSignificantDigits and contains two even odd cells. */
-  static constexpr KDCoordinate k_minCalculationCellWidth = 2*(7*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits)+2*Escher::EvenOddCell::k_horizontalMargin)+Escher::EvenOddCell::k_separatorWidth;
+   * VeryLargeNumberOfSignificantDigits and contains two even odd cells. */
+  static constexpr KDCoordinate k_minCalculationCellWidth = 2*(7*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+2*Escher::EvenOddCell::k_horizontalMargin)+Escher::EvenOddCell::k_separatorWidth;
   // To hold _y=a·x^3+b·x^2+c·x+d_
   static constexpr KDCoordinate k_cubicCalculationCellWidth = maxCoordinate(7*21+2*Escher::EvenOddCell::k_horizontalMargin+Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
   // To hold _y=a·x^4+b·x^3+c·x^2+d·x+e_

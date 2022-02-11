@@ -82,7 +82,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
         max = m_tempInteractiveRange.yMax();
       }
     }
-    constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+    constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
     constexpr int bufferSize = 2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
     char buffer[bufferSize];
     if (isAuto) {

@@ -48,7 +48,7 @@ void RightIntegralCalculation::compute(int indexKnownElement) {
   } else {
     if (m_distribution->authorizedValueAtIndex(m_lowerBound, 0)) {
       double currentResult = m_distribution->rightIntegralFromAbscissa(m_lowerBound);
-      if (std::fabs(currentResult - m_result) < std::pow(10.0, - Poincare::Preferences::LargeNumberOfSignificantDigits)) {
+      if (std::fabs(currentResult - m_result) < std::pow(10.0, - Poincare::Preferences::VeryLargeNumberOfSignificantDigits)) {
         m_result = currentResult;
         return;
       }

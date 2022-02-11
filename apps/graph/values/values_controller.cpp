@@ -302,11 +302,11 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   if (isParametric) {
     assert(numberOfChar < k_valuesCellBufferSize-1);
     buffer[numberOfChar++] = '(';
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationX, buffer+numberOfChar, k_valuesCellBufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationX, buffer+numberOfChar, k_valuesCellBufferSize - numberOfChar, Preferences::VeryLargeNumberOfSignificantDigits);
     assert(numberOfChar < k_valuesCellBufferSize-1);
     buffer[numberOfChar++] = ';';
   }
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationY, buffer+numberOfChar, k_valuesCellBufferSize - numberOfChar, Preferences::LargeNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationY, buffer+numberOfChar, k_valuesCellBufferSize - numberOfChar, Preferences::VeryLargeNumberOfSignificantDigits);
   if (isParametric) {
     assert(numberOfChar+1 < k_valuesCellBufferSize-1);
     buffer[numberOfChar++] = ')';

@@ -50,7 +50,7 @@ void BatteryTestController::viewWillAppear() {
 }
 
 void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryCharging) {
-  constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
+  constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
   constexpr int sizeForPrecision = PrintFloat::charSizeForFloatsWithPrecision(precision);
   constexpr size_t bufferLevelSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;
   char bufferLevel[bufferLevelSize];

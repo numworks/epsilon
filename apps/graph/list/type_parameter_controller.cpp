@@ -66,7 +66,7 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       myCell->setAccessoryText(I18n::translate(detailsDescription(index - 1)));
       myCell->setSubLabelMessage(I18n::Message::Default);
     } else {
-      constexpr int precision = Poincare::Preferences::LargeNumberOfSignificantDigits;
+      constexpr int precision = Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
       constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
       char buffer[bufferSize];
       Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);

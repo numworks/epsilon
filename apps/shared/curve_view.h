@@ -46,7 +46,7 @@ protected:
   // Drawing methods
   constexpr static KDCoordinate k_labelMargin = 4;
   constexpr static KDCoordinate k_labelGraduationLength = 6;
-  constexpr static int k_numberSignificantDigits = 6;
+  constexpr static int k_numberSignificantDigits = Poincare::Preferences::LargeNumberOfSignificantDigits;
   constexpr static int k_bigNumberSignificantDigits = Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
   constexpr static int k_labelBufferMaxSize = 1 + k_bigNumberSignificantDigits + 1 + Poincare::PrintFloat::k_specialECodePointByteLength + 1 + 3 + 1; // '-' + significant digits + '.' + "E" + '-' + 3 digits + null-terminating char
   constexpr static int k_labelBufferMaxGlyphLength = 1 + k_bigNumberSignificantDigits + 3 + 3; // '-' + significant digits + ".E-" + 3 digits

@@ -52,9 +52,9 @@ App::App(Snapshot * snapshot) :
 void App::didBecomeActive(Escher::Window * windows) {
   // If subApp is known, directly open the subApp controller
   if (snapshot()->subApp() == Snapshot::SubApp::Equation) {
-    m_menuController.stackOpenPage(&m_listController, 0);
+    m_menuController.stackOpenPage(&m_listController);
   } else if (snapshot()->subApp() == Snapshot::SubApp::Finance) {
-    m_menuController.stackOpenPage(&m_financeMenuController, 0);
+    m_menuController.stackOpenPage(&m_financeMenuController);
   }
   Escher::App::didBecomeActive(windows);
 }

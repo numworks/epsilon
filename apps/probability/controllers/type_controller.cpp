@@ -82,7 +82,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
                                      Data::CategoricalType::Unset);
     }
     *m_globalTestType = t;
-    stackOpenPage(view, 0);
+    stackOpenPage(view);
     return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);

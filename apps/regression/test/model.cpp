@@ -34,20 +34,20 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
   RegressionContext context(&store, &globalContext);
 
   double precision = 1e-2;
-  // When trueCoefficients = 0, a FLT_EPSILON reference ensures the coefficient is close enough to 0.
-  double reference = FLT_EPSILON;
+  // When expected value is null, expect a stronger precision
+  double nullExpectedPrecision = 1e-9;
 
   // Compute and compare the coefficients
   double * coefficients = store.coefficientsForSeries(series, &context);
   int numberOfCoefs = store.modelForSeries(series)->numberOfCoefficients();
   for (int i = 0; i < numberOfCoefs; i++) {
-    quiz_assert(roughly_equal_with_reference(coefficients[i], trueCoefficients[i], precision, reference));
+    quiz_assert(roughly_equal_with_precision_for_null_expected(coefficients[i], trueCoefficients[i], precision, nullExpectedPrecision));
   }
 
   // Compute and check r2 value and sign
   double r2 = store.determinationCoefficientForSeries(series, &globalContext);
   quiz_assert(r2 <= 1.0 && (r2 >= 0.0 || modelType == Model::Type::Proportional));
-  quiz_assert(roughly_equal_with_reference(r2, trueR2, precision, reference));
+  quiz_assert(roughly_equal_with_precision_for_null_expected(r2, trueR2, precision, nullExpectedPrecision));
 }
 
 QUIZ_CASE(linear_regression) {
@@ -306,19 +306,12 @@ void assert_column_calculations_is(double * xi, int numberOfPoints, double trueM
   quiz_assert(variance >= 0.0);
 
   double precision = 1e-3;
-  // When the expected value is 0, the expected coefficient must be negligible against reference.
-  // The least likely value to be null is trueSquaredSum
-  double reference = trueSquaredSum;
-
-  quiz_assert(roughly_equal_with_reference(variance, trueVariance, precision, reference));
-  quiz_assert(roughly_equal_with_reference(squaredSum, trueSquaredSum, precision, reference));
-
-  // adapt the reference
-  reference = std::sqrt(trueSquaredSum);
-
-  quiz_assert(roughly_equal_with_reference(mean, trueMean, precision, reference));
-  quiz_assert(roughly_equal_with_reference(sum, trueSum, precision, reference));
-  quiz_assert(roughly_equal_with_reference(standardDeviation, trueStandardDeviation, precision, reference));
+  // Observed should be exactly 0 if expected value is null.
+  quiz_assert(roughly_equal_with_precision_for_null_expected(variance, trueVariance, precision, 0.0));
+  quiz_assert(roughly_equal_with_precision_for_null_expected(squaredSum, trueSquaredSum, precision, 0.0));
+  quiz_assert(roughly_equal_with_precision_for_null_expected(mean, trueMean, precision, 0.0));
+  quiz_assert(roughly_equal_with_precision_for_null_expected(sum, trueSum, precision, 0.0));
+  quiz_assert(roughly_equal_with_precision_for_null_expected(standardDeviation, trueStandardDeviation, precision, 0.0));
 }
 
 QUIZ_CASE(column_calculation) {
@@ -354,18 +347,13 @@ void assert_regression_calculations_is(double * xi, double * yi, int numberOfPoi
   double covariance = store.covariance(series);
   double productSum = store.columnProductSum(series);
 
-  // trueProductSum and trueCovariance are using each other as reference
-  // By construction, they often have a close value with a numberOfPoints factor
-  quiz_assert(roughly_equal_with_reference(covariance, trueCovariance, precision, trueProductSum / numberOfPoints));
-  quiz_assert(roughly_equal_with_reference(productSum, trueProductSum, precision, trueCovariance * numberOfPoints));
-
-  // When trueR = 0, a DBL_EPSILON reference ensures that the only accepted errors are due to double approximations
-  // sqrt is used because the R is computed from sqrt(V1*V0)
-  double reference = 100.0 * std::sqrt(DBL_EPSILON);
+  // NOTE : A raisonable nullExpectedPrecision for future tests
+  quiz_assert(roughly_equal_with_precision_for_null_expected(covariance, trueCovariance, precision, 0.0));
+  quiz_assert(roughly_equal_with_precision_for_null_expected(productSum, trueProductSum, precision, 0.0));
 
   double r = store.correlationCoefficient(series);
   quiz_assert(r >= 0.0);
-  quiz_assert(roughly_equal_with_reference(r, trueR, precision, reference));
+  quiz_assert(roughly_equal_with_precision_for_null_expected(r, trueR, precision, 0.0));
 }
 
 QUIZ_CASE(regression_calculation) {

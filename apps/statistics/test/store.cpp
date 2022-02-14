@@ -12,10 +12,9 @@ using namespace Poincare;
 
 namespace Statistics {
 
-void assert_value_approximately_equal_to(double d1, double d2, double precision, double reference) {
-  quiz_assert((std::isnan(d1) && std::isnan(d2))
-      || (std::isinf(d1) && std::isinf(d2) && d1 * d2 > 0.0 /*same sign*/)
-      || roughly_equal_with_reference(d1, d2, precision, reference));
+void assert_value_approximately_equal_to(double d1, double d2, double precision, double nullExpectedPrecision) {
+  quiz_assert((std::isinf(d1) && std::isinf(d2) && d1 * d2 > 0.0 /*same sign*/)
+      || roughly_equal_with_precision_for_null_expected(d1, d2, precision, nullExpectedPrecision, true));
 }
 
 /* SublistMethod is the method for computing quartiles used in most
@@ -76,18 +75,16 @@ void assert_data_statictics_equal_to(
   quiz_assert(squaredValueSum >= 0.0);
 
   // Compare the statistics
-  double reference = trueSquaredValueSum;
-  assert_value_approximately_equal_to(variance, trueVariance, precision, reference);
-  assert_value_approximately_equal_to(squaredValueSum, trueSquaredValueSum, precision, reference);
-
-  reference = std::sqrt(trueSquaredValueSum);
-  assert_value_approximately_equal_to(trueStandardDeviation * trueStandardDeviation, trueVariance, precision, reference);
-  assert_value_approximately_equal_to(sumOfOccurrences, trueSumOfOccurrences, precision, reference);
-  assert_value_approximately_equal_to(mean, trueMean, precision, reference);
-  assert_value_approximately_equal_to(standardDeviation, trueStandardDeviation, precision, reference);
-  assert_value_approximately_equal_to(sampleStandardDeviation, trueSampleStandardDeviation, precision, reference);
-  assert_value_approximately_equal_to(median, trueMedian, precision, reference);
-  assert_value_approximately_equal_to(sum, trueSum, precision, reference);
+  double nullExpectedPrecision = 1e-10;
+  assert_value_approximately_equal_to(variance, trueVariance, precision, nullExpectedPrecision);
+  assert_value_approximately_equal_to(squaredValueSum, trueSquaredValueSum, precision, nullExpectedPrecision);
+  assert_value_approximately_equal_to(trueStandardDeviation * trueStandardDeviation, trueVariance, precision, nullExpectedPrecision);
+  assert_value_approximately_equal_to(sumOfOccurrences, trueSumOfOccurrences, precision, nullExpectedPrecision);
+  assert_value_approximately_equal_to(mean, trueMean, precision, nullExpectedPrecision);
+  assert_value_approximately_equal_to(standardDeviation, trueStandardDeviation, precision, nullExpectedPrecision);
+  assert_value_approximately_equal_to(sampleStandardDeviation, trueSampleStandardDeviation, precision, nullExpectedPrecision);
+  assert_value_approximately_equal_to(median, trueMedian, precision, nullExpectedPrecision);
+  assert_value_approximately_equal_to(sum, trueSum, precision, nullExpectedPrecision);
 
   // Perfect match
   assert_value_approximately_equal_to(maxValue, trueMaxValue, 0.0, 0.0);
@@ -104,8 +101,8 @@ void assert_data_statictics_equal_to(
     quartileRange = store.quartileRange(seriesIndex);
     quiz_assert(quartileRange >= 0.0);
     shouldUseFrequencyMethod = GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::CumulatedFrequency;
-    assert_value_approximately_equal_to(store.firstQuartile(seriesIndex), shouldUseFrequencyMethod ? trueFirstQuartileFrequencyMethod : trueFirstQuartileSublistMethod, precision, reference);
-    assert_value_approximately_equal_to(store.thirdQuartile(seriesIndex), shouldUseFrequencyMethod ? trueThirdQuartileFrequencyMethod : trueThirdQuartileSublistMethod, precision, reference);
+    assert_value_approximately_equal_to(store.firstQuartile(seriesIndex), shouldUseFrequencyMethod ? trueFirstQuartileFrequencyMethod : trueFirstQuartileSublistMethod, precision, nullExpectedPrecision);
+    assert_value_approximately_equal_to(store.thirdQuartile(seriesIndex), shouldUseFrequencyMethod ? trueThirdQuartileFrequencyMethod : trueThirdQuartileSublistMethod, precision, nullExpectedPrecision);
     assert_value_approximately_equal_to(quartileRange, shouldUseFrequencyMethod ? trueQuartileRangeFrequencyMethod : trueQuartileRangeSublistMethod, 0.0, 0.0);
   }
 }

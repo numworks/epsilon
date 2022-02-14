@@ -57,8 +57,8 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 
 // Approximation
 
-/* Return true if a and b are approximately equal,
- * according to threshold and reference parameters */
+/* Return true if observed and expected are approximately equal, according to
+ * threshold and acceptNAN parameters. */
 template <typename T>
 bool inline roughly_equal(T observed, T expected, T threshold = Poincare::Float<T>::Epsilon(), bool acceptNAN = false) {
   if (std::isnan(observed) || std::isnan(expected)) {
@@ -76,12 +76,16 @@ bool inline roughly_equal(T observed, T expected, T threshold = Poincare::Float<
 }
 
 template <typename T>
-void inline assert_roughly_equal(T a, T b, T threshold = Poincare::Float<T>::Epsilon(), bool acceptNAN = false) {
-  quiz_assert(roughly_equal<T>(a, b, threshold, acceptNAN));
+void inline assert_roughly_equal(T observed, T expected, T threshold = Poincare::Float<T>::Epsilon(), bool acceptNAN = false) {
+  quiz_assert(roughly_equal<T>(observed, expected, threshold, acceptNAN));
 }
 
-inline bool roughly_equal_with_reference(double observedValue, double expectedValue, double precision, double reference) {
-  return roughly_equal(observedValue, expectedValue, precision) || std::fabs(observedValue / reference) <= precision;
+// Same as roughly_equal, with a different precision when expected is null
+inline bool roughly_equal_with_precision_for_null_expected(double observed, double expected, double precision, double nullExpectedPrecision, bool acceptNAN = false) {
+  if (expected == 0.0) {
+    return std::fabs(observed) <= nullExpectedPrecision;
+  }
+  return roughly_equal(observed, expected, precision, acceptNAN);
 }
 
 template<typename T>

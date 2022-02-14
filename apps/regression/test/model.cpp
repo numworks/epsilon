@@ -167,13 +167,22 @@ QUIZ_CASE(exponential_regression3) {
   double coefficients[] = {-1, -1};
   double r2 = 0.9999999999999992;
   assert_regression_is(x, y, 11, Model::Type::Exponential, coefficients, r2);
+}
 
-  // TODO : This data produce a wrong fit currently
-  // double x2[] = {1.0, 2.0, 3.0, 4.0};
-  // double y2[] = {2.0, 3.0, 4.0, 1.0};
-  // double coefficients2[] = {2.905, -0.0606857};
-  // double r22 = 0.838388;
-  // assert_regression_is(x2, y2, 4, Model::Type::Exponential, coefficients2, r22);
+QUIZ_CASE(exponential_regression4) {
+  double x[] = {1.0, 2.0, 3.0, 4.0};
+  double y[] = {2.0, 3.0, 4.0, 1.0};
+  double coefficients[] = {2.905, -0.0606857};
+  double r2 = 0.03032936518;
+  assert_regression_is(x, y, 4, Model::Type::Exponential, coefficients, r2);
+}
+
+QUIZ_CASE(exponential_regression5) {
+  double x[] = {1, 1, 2, 2};
+  double y[] = {1, 2, 2, 1};
+  double coefficients[] = {1.5, 0.0};
+  double r2 = 0.0;
+  assert_regression_is(x, y, 4, Model::Type::Exponential, coefficients, r2);
 }
 
 QUIZ_CASE(power_regression) {

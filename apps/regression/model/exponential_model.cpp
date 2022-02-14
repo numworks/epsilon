@@ -46,12 +46,16 @@ double ExponentialModel::levelSet(double * modelCoefficients, double xMin, doubl
   return log(y/a)/b;
 }
 
-void ExponentialModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
-  /* By the change of variable z=ln(y), the equation y=a*exp(b*x) becomes
-   * z=c*x+d with c=b and d=ln(a). Although that change of variable does not
-   * preserve the regression error function, it turns an exponential regression
-   * problem into a linear one and we consider that the solution of the latter
-   * is good enough for our purpose.
+void ExponentialModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
+  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series));
+  /* We try a better initialization than the default value. We hope that this
+   * will improve the gradient descent to find correct coefficients.
+   *
+   * By the change of variable z=ln(y), the equation y=a*exp(b*x) becomes
+   * z=c*x+d with c=b and d=ln(a). That change of variable does not preserve the
+   * regression error function, so it isn't the best regression.
+   * However, it turns this exponential regression problem into a linear one,
+   * for which the solution is set of initial coefficients for a fit.
    * That being said, one should check that the y values are all positive. (If
    * the y values are all negative, one may replace each of them by its
    * opposite. In the case where y values happen to be zero or of opposite
@@ -66,7 +70,7 @@ void ExponentialModel::fit(Store * store, int series, double * modelCoefficients
     const double x = store->get(series, 0, p);
     const double z = store->get(series, 1, p) * sign;
     if (z <= 0) {
-      return Model::fit(store, series, modelCoefficients, context);
+      return Model::specializedInitCoefficientsForFit(modelCoefficients, defaultValue, store, series);
     }
     const double y = log(z);
     sumOfX += x;

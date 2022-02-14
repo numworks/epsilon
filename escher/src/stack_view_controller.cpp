@@ -148,7 +148,7 @@ StackViewController::StackViewController(Responder * parentResponder, ViewContro
     m_isVisible(false),
     m_headersDisplayMask(~0)
 {
-  pushModel(rootViewController);
+  m_childrenController[m_numberOfChildren++] = rootViewController;
   rootViewController->setParentResponder(this);
 }
 
@@ -256,6 +256,7 @@ void StackViewController::initView() {
 }
 
 void StackViewController::viewWillAppear() {
+  Container::activeApp()->willOpenPage(topViewController());
   /* Load the visible controller view */
   setupActiveView();
   m_isVisible = true;
@@ -267,6 +268,7 @@ void StackViewController::viewDidDisappear() {
     vc->viewDidDisappear();
   }
   m_isVisible = false;
+  Container::activeApp()->didExitPage(vc);
 }
 
 bool StackViewController::shouldStoreHeaderOnStack(ViewController * vc, int index) {

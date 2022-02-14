@@ -120,7 +120,7 @@ ParameterRepresentation TwoMeansTStatistic::paramRepresentationAtIndex(int i) co
 bool TwoMeansTStatistic::validateInputs() {
   // TODO: factorize with TwoMeansZStatistic
   assert(s1() >= 0.0f && s2() >= 0.0f);
-  return s1() >= FLT_MIN || s2() >= FLT_MIN;
+  return (computeDegreesOfFreedom(s1(), n1(), s2(), n2()) > 0) && (s1() >= FLT_MIN || s2() >= FLT_MIN);
 }
 
 double TwoMeansTStatistic::_xEstimate(double meanSample1, double meanSample2) {

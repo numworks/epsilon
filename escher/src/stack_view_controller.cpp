@@ -185,6 +185,7 @@ void StackViewController::pop() {
   setupActiveViewController();
   vc->setParentResponder(nullptr);
   vc->viewDidDisappear();
+  Container::activeApp()->didExitPage(vc);
 }
 
 void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewController) {
@@ -212,6 +213,7 @@ void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewContro
 }
 
 void StackViewController::pushModel(ViewController * controller) {
+  Container::activeApp()->willOpenPage(controller);
   m_childrenController[m_numberOfChildren++] = controller;
 }
 

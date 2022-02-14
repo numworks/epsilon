@@ -34,8 +34,8 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
   RegressionContext context(&store, &globalContext);
 
   double precision = 1e-2;
-  // When trueCoefficients = 0, a DBL_EPSILON reference ensures that the only accepted errors are due to double approximations
-  double reference = 1e6 * DBL_EPSILON;
+  // When trueCoefficients = 0, a FLT_EPSILON reference ensures the coefficient is close enough to 0.
+  double reference = FLT_EPSILON;
 
   // Compute and compare the coefficients
   double * coefficients = store.coefficientsForSeries(series, &context);

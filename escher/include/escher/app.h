@@ -62,6 +62,8 @@ public:
   virtual void didBecomeActive(Window * window);
   virtual void willBecomeInactive();
   View * modalView();
+  virtual void willOpenPage(ViewController * controller) {}
+  virtual void didExitPage(ViewController * controller) {}
   virtual int numberOfTimers() { return 0; }
   virtual Timer * timerAtIndex(int i) { assert(false); return nullptr; }
   virtual Poincare::Context * localContext() { return nullptr; }

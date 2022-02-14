@@ -4,9 +4,9 @@
 
 #ifndef DEVICE
 #include <stdio.h>
-#include <dirent.h> 
+#include <dirent.h>
 #include <sys/stat.h>
-#endif 
+#endif
 
 namespace Reader
 {
@@ -49,12 +49,10 @@ void stringNCopy(char* dest, int max, const char* src, int len) {
 int filesWithExtension(const char* extension, External::Archive::File* files, int filesSize) {
   size_t nbTotalFiles = External::Archive::numberOfFiles();
   int nbFiles = 0;
-  for(size_t i=0; i < nbTotalFiles; ++i)
-  {
+  for(size_t i=0; i < nbTotalFiles; ++i) {
     External::Archive::File file;
     External::Archive::fileAtIndex(i, file);
-    if(stringEndsWith(file.name, ".txt"))
-    {
+    if(stringEndsWith(file.name, extension)) {
       files[nbFiles] = file;
       nbFiles++;
       if(nbFiles == filesSize)
@@ -65,28 +63,28 @@ int filesWithExtension(const char* extension, External::Archive::File* files, in
 }
 #else
 
-static void fillFileData(External::Archive::File& file) {  
+static void fillFileData(External::Archive::File& file) {
   file.data = nullptr;
-  file.dataLength = 0;   
+  file.dataLength = 0;
 
   struct stat info;
   if (stat(file.name, &info) != 0) {
     return;
-  }   
-  
+  }
+
   unsigned char* content = new unsigned char[info.st_size];
   if (content == NULL) {
     return;
-  }   
+  }
   FILE *fp = fopen(file.name, "rb");
   if (fp == NULL) {
     return ;
   }
-  
-  fread(content, info.st_size, 1, fp);    
+
+  fread(content, info.st_size, 1, fp);
   fclose(fp);
   file.data = content;
-  file.dataLength = info.st_size;      
+  file.dataLength = info.st_size;
 }
 
 int filesWithExtension(const char* extension, External::Archive::File* files, int filesSize) {

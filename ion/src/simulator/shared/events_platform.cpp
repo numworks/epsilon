@@ -114,23 +114,23 @@ static constexpr Event sEventForASCIICharAbove32[95] = {
 };
 
 static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
+  /* We remove the shift, otherwise it might stay activated when it
+   * shouldn't. For instance on a French keyboard, to input "1", we first
+   * press "Shift" (which activates the Shift modifier on the calculator),
+   * then we press "&", transformed by eventFromSDLTextInputEvent into the
+   * text "1". If we do not remove the Shift here, it would still be
+   * pressed afterwards. */
+  Events::removeShift();
   if (strlen(event.text) == 1) {
     char character = event.text[0];
     if (character >= 32 && character < 127) {
-      /* We remove the shift, otherwise it might stay activated when it
-       * shouldn't. For instance on a French keyboard, to input "1", we first
-       * press "Shift" (which activates the Shift modifier on the calculator),
-       * then we press "&", transformed by eventFromSDLTextInputEvent into the
-       * text "1". If we do not remove the Shift here, it would still be
-       * pressed afterwards. */
-      Events::removeShift();
+
       Event res = sEventForASCIICharAbove32[character-32];
       if (res != None) {
         return res;
       }
     }
   }
-  Ion::Events::removeShift();
   strlcpy(sharedExternalTextBuffer(), event.text, sharedExternalTextBufferSize);
   return ExternalText;
 }

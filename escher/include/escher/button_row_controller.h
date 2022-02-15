@@ -53,7 +53,6 @@ private:
     bool setSelectedButton(int selectedButton);
     int selectedButton() const { return m_selectedButton; }
     ViewController * mainViewController() const { return m_mainViewController; }
-    ButtonRowDelegate * buttonRowDelegate() const { return m_delegate; }
   private:
     constexpr static KDCoordinate k_plainStyleHeight = 20;
     constexpr static KDCoordinate k_embossedStyleHeightSmall = 36;

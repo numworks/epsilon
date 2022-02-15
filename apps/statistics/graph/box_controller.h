@@ -8,18 +8,25 @@
 
 namespace Statistics {
 
-class BoxController : public MultipleDataViewController, public Escher::ButtonRowDelegate {
+class BoxController : public MultipleDataViewController {
 public:
-  BoxController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Store * store, BoxView::Quantile * selectedQuantile, int * selectedSeriesIndex);
+  BoxController(Escher::Responder * parentResponder,
+                Escher::ButtonRowController * header,
+                Escher::Responder * tabController,
+                Escher::StackViewController * stackViewController,
+                Escher::ViewController * typeViewController,
+                Store * store,
+                BoxView::Quantile * selectedQuantile,
+                int * selectedSeriesIndex);
 
+  // MultipleDataViewController
   MultipleDataView * multipleDataView() override { return &m_view; }
   bool moveSelectionHorizontally(int deltaIndex) override;
 
   // ViewController
-  const char * title() override;
+  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayNoTitle; }
   TELEMETRY_ID("Box");
 private:
-  Escher::Responder * tabController() const override;
   void reloadBannerView() override;
   MultipleBoxesView m_view;
 };

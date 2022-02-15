@@ -15,6 +15,7 @@ public:
   const char * title() override;
   int numberOfRows() const override { return 1+k_numberOfCells; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastTitle; }
 private:
   constexpr static int k_numberOfCells = 2;
   double extractParameterAtIndex(int index);

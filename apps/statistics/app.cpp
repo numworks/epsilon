@@ -24,6 +24,7 @@ App::Snapshot::Snapshot() :
   m_storeVersion(0),
   m_barVersion(0),
   m_rangeVersion(0),
+  m_selectedGraphViewIndex(0),
   m_selectedHistogramSeriesIndex(-1),
   m_selectedHistogramBarIndex(0),
   m_selectedBoxSeriesIndex(-1),
@@ -40,6 +41,7 @@ void App::Snapshot::reset() {
   m_storeVersion = 0;
   m_barVersion = 0;
   m_rangeVersion = 0;
+  m_selectedGraphViewIndex = 0;
   m_selectedHistogramBarIndex = 0;
   m_selectedBoxQuantile = BoxView::Quantile::Min;
   setActiveTab(0);
@@ -56,18 +58,25 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
-  m_boxController(&m_boxAlternateEmptyViewController, &m_boxHeader, snapshot->store(), snapshot->selectedBoxQuantile(), snapshot->selectedBoxSeriesIndex()),
-  m_boxAlternateEmptyViewController(&m_boxHeader, &m_boxController, &m_boxController),
-  m_boxHeader(&m_tabViewController, &m_boxAlternateEmptyViewController, &m_boxController),
-  m_histogramController(&m_histogramAlternateEmptyViewController, this, &m_histogramHeader, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion(), snapshot->selectedHistogramBarIndex(), snapshot->selectedHistogramSeriesIndex()),
-  m_histogramAlternateEmptyViewController(&m_histogramHeader, &m_histogramController, &m_histogramController),
-  m_histogramHeader(&m_histogramStackViewController, &m_histogramAlternateEmptyViewController, &m_histogramController),
-  m_histogramStackViewController(&m_tabViewController, &m_histogramHeader, Escher::StackViewController::Style::WhiteUniform),
+  m_boxController(&m_boxHeader, &m_boxHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->selectedBoxQuantile(), snapshot->selectedBoxSeriesIndex()),
+  m_boxHeader(&m_graphController, &m_boxController, &m_boxController),
+  m_histogramController(&m_histogramHeader, this, &m_histogramHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion(), snapshot->selectedHistogramBarIndex(), snapshot->selectedHistogramSeriesIndex()),
+  m_histogramHeader(&m_graphController, &m_histogramController, &m_histogramController),
+  m_graphTypeController(&m_graphMenuStackViewController, &m_tabViewController, &m_graphMenuStackViewController, &m_histogramHeader, &m_boxHeader, snapshot->store(), snapshot->selectedGraphViewIndex()),
+  m_graphController(&m_graphMenuStackViewController, &m_graphTypeController, I18n::translate(I18n::Message::GraphTab)),
+  m_graphMenuStackViewController(&m_graphMenuAlternateEmptyViewController, &m_graphController, Escher::StackViewController::Style::WhiteUniform),
+  m_graphMenuAlternateEmptyViewController(&m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController),
   m_storeController(&m_storeStackViewController, this, snapshot->store(), &m_storeHeader, parentContext),
   m_storeStackViewController(&m_storeHeader, &m_storeController, Escher::StackViewController::Style::WhiteUniform),
   m_storeHeader(&m_tabViewController, &m_storeStackViewController, &m_storeController),
-  m_tabViewController(&m_modalViewController, snapshot, &m_storeHeader, &m_histogramStackViewController, &m_boxHeader, &m_calculationHeader)
+  m_tabViewController(&m_modalViewController, snapshot, &m_storeHeader, &m_graphMenuAlternateEmptyViewController, &m_calculationHeader)
 {
+}
+
+void App::didBecomeActive(Escher::Window * windows) {
+  // TODO : Only push after reset or when data is deleted
+  m_graphMenuStackViewController.push(&m_graphTypeController);
+  Escher::App::didBecomeActive(windows);
 }
 
 }

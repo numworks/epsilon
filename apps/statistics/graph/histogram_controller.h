@@ -8,20 +8,31 @@
 
 namespace Statistics {
 
-class HistogramController : public MultipleDataViewController, public Escher::ButtonRowDelegate {
+class HistogramController : public MultipleDataViewController {
 
 public:
-  HistogramController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Store * store, uint32_t * m_storeVersion, uint32_t * m_barVersion, uint32_t * m_rangeVersion, int * m_selectedBarIndex, int * selectedSeriesIndex);
+  HistogramController(Escher::Responder * parentResponder,
+                      Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+                      Escher::ButtonRowController * header,
+                      Escher::Responder * tabController,
+                      Escher::StackViewController * stackViewController,
+                      Escher::ViewController * typeViewController,
+                      Store * store,
+                      uint32_t * m_storeVersion,
+                      uint32_t * m_barVersion,
+                      uint32_t * m_rangeVersion,
+                      int * m_selectedBarIndex,
+                      int * selectedSeriesIndex);
 
   HistogramParameterController * histogramParameterController() { return &m_histogramParameterController; }
   void setCurrentDrawnSeries(int series);
-  Escher::StackViewController * stackController();
 
-  int numberOfButtons(Escher::ButtonRowController::Position position) const override { return isEmpty() ? 0 : 1; }
+  // ButtonRowDelegate
+  int numberOfButtons(Escher::ButtonRowController::Position position) const override { return GraphButtonRowDelegate::numberOfButtons(position) + 1; }
   Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   // ViewController
-  const char * title() override;
+  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayNoTitle; }
   void viewWillAppear() override;
   MultipleDataView * multipleDataView() override { return &m_view; }
   TELEMETRY_ID("Histogram");
@@ -36,7 +47,6 @@ private:
   constexpr static int k_maxLegendLength = 13;
   constexpr static int k_maxNumberOfCharacters = 30;
   void highlightSelection() override;
-  Escher::Responder * tabController() const override;
   void reloadBannerView() override;
   void preinitXRangeParameters(double * xMin, double * xMax = nullptr);
   void initRangeParameters();

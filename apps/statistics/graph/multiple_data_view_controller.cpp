@@ -8,24 +8,14 @@ using namespace Escher;
 
 namespace Statistics {
 
-MultipleDataViewController::MultipleDataViewController(Responder * parentResponder, Store * store, int * selectedBarIndex, int * selectedSeriesIndex) :
-  ViewController(parentResponder),
-  m_store(store),
-  m_selectedSeriesIndex(selectedSeriesIndex),
-  m_selectedBarIndex(selectedBarIndex)
-{
-}
-
-bool MultipleDataViewController::isEmpty() const {
-  return !m_store->hasValidSeries();
-}
-
-I18n::Message MultipleDataViewController::emptyMessage() {
-  return I18n::Message::NoDataToPlot;
-}
-
-Responder * MultipleDataViewController::defaultController() {
-  return tabController();
+MultipleDataViewController::MultipleDataViewController(Responder * parentResponder, Escher::Responder * tabController, Escher::ButtonRowController * header, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, int * selectedBarIndex, int * selectedSeriesIndex) :
+    ViewController(parentResponder),
+    GraphButtonRowDelegate(header, stackViewController, this, typeViewController),
+    m_tabController(tabController),
+    m_store(store),
+    m_selectedSeriesIndex(selectedSeriesIndex),
+    m_selectedBarIndex(selectedBarIndex) {
+  assert(numberOfButtons(Escher::ButtonRowController::Position::Top) > 0);
 }
 
 void MultipleDataViewController::viewWillAppear() {
@@ -33,11 +23,28 @@ void MultipleDataViewController::viewWillAppear() {
   if (*m_selectedSeriesIndex < 0 || m_store->sumOfOccurrences(*m_selectedSeriesIndex) == 0) {
     *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(0);
   }
+  header()->setSelectedButton(-1);
   reloadBannerView();
   multipleDataView()->reload();
 }
 
 bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
+  if (header()->selectedButton() >= 0) {
+    if (event == Ion::Events::Up) {
+      header()->setSelectedButton(-1);
+      Container::activeApp()->setFirstResponder(tabController());
+      return true;
+    }
+    if (event == Ion::Events::Down) {
+      header()->setSelectedButton(-1);
+      multipleDataView()->setDisplayBanner(true);
+      multipleDataView()->selectDataView(*m_selectedSeriesIndex);
+      highlightSelection();
+      reloadBannerView();
+      return true;
+    }
+    return false;
+  }
   assert(*m_selectedSeriesIndex >= 0);
   if (event == Ion::Events::Down) {
     int currentSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(*m_selectedSeriesIndex);
@@ -62,7 +69,9 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
       multipleDataView()->selectDataView(*m_selectedSeriesIndex);
       highlightSelection();
     } else {
-      Container::activeApp()->setFirstResponder(tabController());
+      multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
+      multipleDataView()->setDisplayBanner(false);
+      header()->setSelectedButton(0);
     }
     reloadBannerView();
     multipleDataView()->reload();

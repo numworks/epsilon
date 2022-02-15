@@ -15,9 +15,8 @@ using namespace Escher;
 
 namespace Statistics {
 
-HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex, int * selectedSeriesIndex) :
-  MultipleDataViewController(parentResponder, store, selectedBarIndex, selectedSeriesIndex),
-  ButtonRowDelegate(header, nullptr),
+HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex, int * selectedSeriesIndex) :
+  MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store, selectedBarIndex, selectedSeriesIndex),
   m_view(this, store),
   m_storeVersion(storeVersion),
   m_barVersion(barVersion),
@@ -44,43 +43,12 @@ void HistogramController::setCurrentDrawnSeries(int series) {
   m_view.dataViewAtIndex(series)->CurveView::reload();
 }
 
-StackViewController * HistogramController::stackController() {
-  StackViewController * stack = (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
-  return stack;
-}
-
 Button * HistogramController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  assert(index == 0);
-  return const_cast<Button *>(&m_parameterButton);
-}
-
-const char * HistogramController::title() {
-  return I18n::translate(I18n::Message::HistogramTab);
+  return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position) : const_cast<Button *>(&m_parameterButton);
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
-  if (header()->selectedButton() == 0) {
-    if (event == Ion::Events::Down) {
-      header()->setSelectedButton(-1);
-      multipleDataView()->setDisplayBanner(true);
-      multipleDataView()->selectDataView(selectedSeriesIndex());
-      highlightSelection();
-      reloadBannerView();
-      return true;
-    }
-    if (event == Ion::Events::Up) {
-      Container::activeApp()->setFirstResponder(tabController());
-      return true;
-    }
-    return false;
-  }
-  if (selectedSeriesIndex() == 0 && event == Ion::Events::Up) {
-    multipleDataView()->deselectDataView(selectedSeriesIndex());
-    multipleDataView()->setDisplayBanner(false);
-    header()->setSelectedButton(0);
-    return true;
-  }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Toolbox) {
     stackController()->push(histogramParameterController());
     return true;
   }
@@ -131,7 +99,7 @@ void HistogramController::didEnterResponderChain(Responder * firstResponder) {
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
-    if (header()->selectedButton() == 0) {
+    if (header()->selectedButton() >= 0) {
       header()->setSelectedButton(-1);
       return;
     }
@@ -147,10 +115,6 @@ void HistogramController::highlightSelection() {
   if (m_store->scrollToSelectedBarIndex(selectedSeriesIndex(), *m_selectedBarIndex)) {
     multipleDataView()->reload();
   }
-}
-
-Responder * HistogramController::tabController() const {
-  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
 void HistogramController::reloadBannerView() {

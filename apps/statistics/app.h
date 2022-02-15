@@ -2,11 +2,13 @@
 #define STAT_APP_H
 
 #include <escher/alternate_empty_view_controller.h>
+#include <escher/alternate_view_controller.h>
 #include <escher/tab_view_data_source.h>
 #include <escher/tab_view_controller.h>
 #include <apps/shared/text_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 #include "graph/box_controller.h"
+#include "graph/graph_type_controller.h"
 #include "stats/calculation_controller.h"
 #include "graph/histogram_controller.h"
 #include "data/store_controller.h"
@@ -32,6 +34,7 @@ public:
     uint32_t * storeVersion() { return &m_storeVersion; }
     uint32_t * barVersion() { return &m_barVersion; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
+    int * selectedGraphViewIndex() { return &m_selectedGraphViewIndex; }
     int * selectedHistogramSeriesIndex() { return &m_selectedHistogramSeriesIndex; }
     int * selectedHistogramBarIndex() { return &m_selectedHistogramBarIndex; }
     int * selectedBoxSeriesIndex() { return &m_selectedBoxSeriesIndex; }
@@ -41,6 +44,7 @@ public:
     uint32_t m_storeVersion;
     uint32_t  m_barVersion;
     uint32_t m_rangeVersion;
+    int m_selectedGraphViewIndex;
     int m_selectedHistogramSeriesIndex;
     int m_selectedHistogramBarIndex;
     int m_selectedBoxSeriesIndex;
@@ -49,16 +53,18 @@ public:
   TELEMETRY_ID("Statistics");
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
+  void didBecomeActive(Escher::Window * window) override;
   CalculationController m_calculationController;
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   Escher::ButtonRowController m_calculationHeader; // Needed for upper margin only
   BoxController m_boxController;
-  Escher::AlternateEmptyViewController m_boxAlternateEmptyViewController;
   Escher::ButtonRowController m_boxHeader;
   HistogramController m_histogramController;
-  Escher::AlternateEmptyViewController m_histogramAlternateEmptyViewController;
   Escher::ButtonRowController m_histogramHeader;
-  Escher::StackViewController m_histogramStackViewController;
+  GraphTypeController m_graphTypeController;
+  Escher::AlternateViewController m_graphController;
+  Escher::StackViewController m_graphMenuStackViewController;
+  Escher::AlternateEmptyViewController m_graphMenuAlternateEmptyViewController;
   StoreController m_storeController;
   Escher::StackViewController m_storeStackViewController;
   Escher::ButtonRowController m_storeHeader; // Needed for upper margin only

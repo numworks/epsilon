@@ -8,9 +8,8 @@ using namespace Escher;
 
 namespace Statistics {
 
-BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Store * store, BoxView::Quantile * selectedQuantile, int * selectedSeriesIndex) :
-  MultipleDataViewController(parentResponder, store, (int *)(selectedQuantile), selectedSeriesIndex),
-  ButtonRowDelegate(header, nullptr),
+BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, BoxView::Quantile * selectedQuantile, int * selectedSeriesIndex) :
+  MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store, (int *)(selectedQuantile), selectedSeriesIndex),
   m_view(store, selectedQuantile)
 {
 }
@@ -23,14 +22,6 @@ bool BoxController::moveSelectionHorizontally(int deltaIndex) {
     return true;
   }
   return false;
-}
-
-const char * BoxController::title() {
-  return I18n::translate(I18n::Message::BoxTab);
-}
-
-Responder * BoxController::tabController() const {
-  return (parentResponder()->parentResponder()->parentResponder());
 }
 
 void BoxController::reloadBannerView() {

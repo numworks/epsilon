@@ -56,16 +56,9 @@ function Calculator(emModule) {
       var key = this.getAttribute('data-key');
       keyHandler(key);
       /* Always prevent default action of event.
-       * First, this will prevent the browser from delaying that event. Indeed
-       * the browser would otherwise try to see if that event could have any
-       * other meaning (e.g. a click) and might delay it as a result.
-       * Second, this prevents touch events to be handled twice. Indeed, for
-       * backward compatibility reasons, mobile browsers usually create a fake
-       * mouse event after each real touch event. This allows desktop websites
-       * to work unmodified on mobile devices. But here we are explicitly
-       * handling both touch and mouse events. We therefore need to disable
-       * the default action of touch events, otherwise the handler would get
-       * called twice. */
+       * This will prevent the browser from delaying that event. Indeed the
+       * browser would otherwise try to see if that event could have any other
+       * meaning (e.g. a click) and might delay it as a result.*/
       ev.preventDefault();
     };
   }
@@ -73,18 +66,9 @@ function Calculator(emModule) {
   var upHandler = eventHandler(emModule._IonSimulatorKeyboardKeyUp);
 
   calculatorElement.querySelectorAll('span').forEach(function(span){
-    /* We decide to hook both to touch and mouse events
-     * On most mobile browsers, mouse events are generated if addition to touch
-     * events, so this could seem pointless. But those mouse events are not
-     * generated in real time: instead, they are buffered and eventually fired
-     * in a very rapid sequence. This prevents Epsilon from generating an event
-     * since this quick sequence will trigger the debouncer. */
-    ['touchstart', 'mousedown'].forEach(function(type){
-      span.addEventListener(type, downHandler);
-    });
-    ['touchend', 'mouseup'].forEach(function(type){
-      span.addEventListener(type, upHandler);
-    });
+    /* We use pointer events to handle both touch and mouse events */
+    span.addEventListener('pointerdown', downHandler);
+    span.addEventListener('pointerup', upHandler);
   });
 }
 

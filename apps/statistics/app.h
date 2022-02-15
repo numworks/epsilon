@@ -51,7 +51,7 @@ private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   CalculationController m_calculationController;
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;
-  Escher::ButtonRowController m_calculationHeader;
+  Escher::ButtonRowController m_calculationHeader; // Needed for upper margin only
   BoxController m_boxController;
   Escher::AlternateEmptyViewController m_boxAlternateEmptyViewController;
   Escher::ButtonRowController m_boxHeader;
@@ -60,8 +60,8 @@ private:
   Escher::ButtonRowController m_histogramHeader;
   Escher::StackViewController m_histogramStackViewController;
   StoreController m_storeController;
-  Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
   Escher::StackViewController m_storeStackViewController;
+  Escher::ButtonRowController m_storeHeader; // Needed for upper margin only
   Escher::TabViewController m_tabViewController;
 };
 

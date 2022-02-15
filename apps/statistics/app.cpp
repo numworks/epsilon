@@ -63,10 +63,10 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_histogramAlternateEmptyViewController(&m_histogramHeader, &m_histogramController, &m_histogramController),
   m_histogramHeader(&m_histogramStackViewController, &m_histogramAlternateEmptyViewController, &m_histogramController),
   m_histogramStackViewController(&m_tabViewController, &m_histogramHeader, Escher::StackViewController::Style::WhiteUniform),
-  m_storeController(&m_storeHeader, this, snapshot->store(), &m_storeHeader, parentContext),
-  m_storeHeader(&m_storeStackViewController, &m_storeController, &m_storeController),
-  m_storeStackViewController(&m_tabViewController, &m_storeHeader, Escher::StackViewController::Style::WhiteUniform),
-  m_tabViewController(&m_modalViewController, snapshot, &m_storeStackViewController, &m_histogramStackViewController, &m_boxHeader, &m_calculationHeader)
+  m_storeController(&m_storeStackViewController, this, snapshot->store(), &m_storeHeader, parentContext),
+  m_storeStackViewController(&m_storeHeader, &m_storeController, Escher::StackViewController::Style::WhiteUniform),
+  m_storeHeader(&m_tabViewController, &m_storeStackViewController, &m_storeController),
+  m_tabViewController(&m_modalViewController, snapshot, &m_storeHeader, &m_histogramStackViewController, &m_boxHeader, &m_calculationHeader)
 {
 }
 

@@ -2,6 +2,7 @@ SFLAGS += -Iescher/include
 
 escher_src += $(addprefix escher/src/,\
   alternate_empty_view_controller.cpp \
+  alternate_view_controller.cpp \
   app.cpp \
   bank_view_controller.cpp \
   bordered.cpp \

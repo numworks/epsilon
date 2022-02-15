@@ -4,20 +4,24 @@
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/view_controller.h>
 #include "../store.h"
+#include "graph_button_row_delegate.h"
 #include "multiple_data_view.h"
 
 namespace Statistics {
 
-class MultipleDataViewController : public Escher::ViewController, public Escher::AlternateEmptyViewDefaultDelegate {
+class MultipleDataViewController : public Escher::ViewController, public GraphButtonRowDelegate {
 
 public:
-  MultipleDataViewController(Escher::Responder * parentResponder, Store * store, int * m_selectedBarIndex, int * selectedSeriesIndex);
+  MultipleDataViewController(Escher::Responder * parentResponder,
+                             Escher::Responder * tabController,
+                             Escher::ButtonRowController * header,
+                             Escher::StackViewController * stackViewController,
+                             Escher::ViewController * typeViewController,
+                             Store * store,
+                             int * m_selectedBarIndex,
+                             int * selectedSeriesIndex);
   virtual MultipleDataView * multipleDataView() = 0;
   int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
-  // AlternateEmptyViewDefaultDelegate
-  bool isEmpty() const override;
-  I18n::Message emptyMessage() override;
-  Escher::Responder * defaultController() override;
 
   // ViewController
   ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::NeverDisplayOwnTitle; }
@@ -30,9 +34,11 @@ public:
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 protected:
   virtual void highlightSelection() {}
-  virtual Escher::Responder * tabController() const = 0;
+  Escher::Responder * tabController() { return m_tabController; }
   virtual void reloadBannerView() = 0;
   virtual bool moveSelectionHorizontally(int deltaIndex) = 0;
+
+  Escher::Responder * m_tabController;
   Store * m_store;
   int * m_selectedSeriesIndex;
   int * m_selectedBarIndex;

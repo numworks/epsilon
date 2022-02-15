@@ -35,7 +35,8 @@ protected:
 /*
  * This Class is useful to create a SelectableListViewController of
  * the same type of cells with a constant number of rows that all have their own
- * reusable cell.
+ * reusable cell. The number of displayable cells should always be greater or
+ * equal to the number of rows.
  */
 template <typename Cell, int NumberOfCells, typename DataSource>
 class SelectableCellListPage : public SelectableListViewController<DataSource> {
@@ -43,7 +44,7 @@ class SelectableCellListPage : public SelectableListViewController<DataSource> {
     !std::is_same<DataSource, SimpleListViewDataSource>::value,
     "A SelectableCellListPage shouldn't use SimpleListViewDataSource as datasource because reusable cells are already handled here. Use a RegularListViewDataSource instead."
   );
-  static_assert(NumberOfCells < 8, "There should'nt be a need for more than 8 reusable cells.");
+  static_assert(NumberOfCells <= 5, "There should'nt be a need for more than 5 reusable cells.");
 public:
   SelectableCellListPage(Responder * parent, SelectableTableViewDelegate * tableDelegate = nullptr) : SelectableListViewController<DataSource>(parent, tableDelegate) {}
   Cell * cellAtIndex(int i) { assert(i >= 0 && i < NumberOfCells); return &m_cells[i]; }

@@ -41,11 +41,15 @@ public:
   void deleteCalculationAtIndex(int i);
   void deleteAll();
   int remainingBufferSize() const { assert(m_calculationAreaEnd >= m_buffer); return m_bufferSize - (m_calculationAreaEnd - m_buffer) - m_numberOfCalculations*sizeof(Calculation*); }
-  int numberOfCalculations() const { return m_numberOfCalculations; }
+  int numberOfCalculations() const { return m_numberOfCalculations - (m_trashIndex != -1); }
   Poincare::Expression ansExpression(Poincare::Context * context);
   int bufferSize() { return m_bufferSize; }
+  void reinsertTrash() { m_trashIndex = -1; }
 
 private:
+  void emptyTrash();
+  Shared::ExpiringPointer<Calculation> realCalculationAtIndex(int i);
+  void realDeleteCalculationAtIndex(int i);
 
   class CalculationIterator {
   public:
@@ -70,6 +74,7 @@ private:
   int m_bufferSize;
   const char * m_calculationAreaEnd;
   int m_numberOfCalculations;
+  int m_trashIndex;
 
   size_t deleteOldestCalculation();
   char * addressOfPointerToCalculationOfIndex(int i) {return m_buffer + m_bufferSize - (m_numberOfCalculations - i)*sizeof(Calculation *);}

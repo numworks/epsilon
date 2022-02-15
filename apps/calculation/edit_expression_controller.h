@@ -31,6 +31,7 @@ public:
   void insertTextBody(const char * text);
   void restoreInput();
   void memoizeInput();
+  bool handleEvent(Ion::Events::Event event) override;
 
   /* TextFieldDelegate */
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;

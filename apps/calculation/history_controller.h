@@ -35,6 +35,7 @@ public:
   int typeAtLocation(int i, int j) override;
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1) override;
   void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
+  void reinsertTrash() { m_calculationStore->reinsertTrash(); }
 private:
   int storeIndex(int i) { return numberOfRows() - i - 1; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);

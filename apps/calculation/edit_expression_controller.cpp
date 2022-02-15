@@ -68,6 +68,15 @@ void EditExpressionController::memoizeInput() {
   *m_cacheBufferInformation = m_contentView.expressionField()->moveCursorAndDumpContent(m_cacheBuffer, k_cacheBufferSize);
 }
 
+bool EditExpressionController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::ShiftBack) {
+    m_historyController->reinsertTrash();
+    m_historyController->reload();
+    return true;
+  }
+  return false;
+}
+
 void EditExpressionController::viewWillAppear() {
   m_historyController->viewWillAppear();
 }

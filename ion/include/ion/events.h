@@ -142,6 +142,7 @@ constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::Right);
 constexpr Event ShiftUp    = Event::ShiftKey(Keyboard::Key::Up);
 constexpr Event ShiftDown  = Event::ShiftKey(Keyboard::Key::Down);
 constexpr Event ShiftOK    = Event::ShiftKey(Keyboard::Key::OK);
+constexpr Event ShiftBack  = Event::ShiftKey(Keyboard::Key::Back);
 
 constexpr Event AlphaLock = Event::ShiftKey(Keyboard::Key::Alpha);
 constexpr Event Cut = Event::ShiftKey(Keyboard::Key::XNT);

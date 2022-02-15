@@ -16,7 +16,7 @@ const EventData s_dataForEvent[4 * Event::PageSize] = {
   T("1"), T("2"), T("3"), T("+"), T("-"), U(),
   T("0"), T("."), T("ᴇ"), TL(), TL(), U(),
 // Shift
-  TL(), TL(), TL(), TL(), TL(), U(),
+  TL(), TL(), TL(), TL(), TL(), TL(),
   TL(), U(), U(), U(), U(), U(),
   U(), U(), TL(), TL(), TL(), TL(),
   T("["), T("]"), T("{"), T("}"), T("_"), T("→"),
@@ -61,7 +61,7 @@ const char * const s_nameForEvent[255] = {
   "One", "Two", "Three", "Plus", "Minus", nullptr,
   "Zero", "Dot", "EE", "Ans", "EXE", nullptr,
   //Shift,
-  "ShiftLeft", "ShiftUp", "ShiftDown", "ShiftRight", "ShiftOK", nullptr,
+  "ShiftLeft", "ShiftUp", "ShiftDown", "ShiftRight", "ShiftOK", "ShiftBack",
   "ShiftHome", nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, "AlphaLock", "Cut", "Copy", "Paste", "Clear",
   "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Underscore", "Sto",

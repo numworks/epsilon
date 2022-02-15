@@ -198,15 +198,13 @@ void ButtonRowController::setMessageOfButtonAtIndex(I18n::Message message, int i
 
 bool ButtonRowController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
-    if (m_contentView.selectedButton() == 0) {
-    } else {
+    if (m_contentView.selectedButton() != 0) {
       setSelectedButton(m_contentView.selectedButton() - 1);
     }
     return true;
   }
   if (event == Ion::Events::Right) {
-    if (m_contentView.selectedButton() == - 1) {
-    } else {
+    if (m_contentView.selectedButton() != -1) {
       setSelectedButton(m_contentView.selectedButton() + 1);
     }
     return true;
@@ -223,7 +221,7 @@ void ButtonRowController::initView() {
 
 void ButtonRowController::viewWillAppear() {
   /* We need to layout subviews at first appearance because the number of
-   * buttons might have changed between 2 appearences. */
+   * buttons might have changed between 2 appearances. */
   m_contentView.layoutSubviews();
   m_contentView.mainViewController()->viewWillAppear();
 }

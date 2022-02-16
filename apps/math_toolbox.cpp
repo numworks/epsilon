@@ -99,6 +99,11 @@ constexpr ToolboxMessageTree timeAndFrequencyChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitFrequencyMenu, unitFrequencyHertzChildren),
 };
 
+constexpr ToolboxMessageTree speedChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitSpeedMeterPerSecondSymbol, I18n::Message::UnitSpeedMeterPerSecond),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitSpeedKilometerPerHourSymbol, I18n::Message::UnitSpeedKilometerPerHour)
+};
+
 constexpr ToolboxMessageTree unitVolumeLiterMilli = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterMilliSymbol, I18n::Message::UnitVolumeLiterMilli);
 constexpr ToolboxMessageTree unitVolumeLiterCenti = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterCentiSymbol, I18n::Message::UnitVolumeLiterCenti);
 constexpr ToolboxMessageTree unitVolumeLiterDeci = ToolboxMessageTree::Leaf(I18n::Message::UnitVolumeLiterDeciSymbol, I18n::Message::UnitVolumeLiterDeci);
@@ -322,6 +327,7 @@ constexpr ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitConversionCommandWithArg, I18n::Message::UnitConversion, false, I18n::Message::UnitConversionCommand),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceFork, true),
   ToolboxMessageTree::Node(I18n::Message::UnitTimeAndFrequencyMenu, timeAndFrequencyChildren),
+  ToolboxMessageTree::Node(I18n::Message::UnitSpeedMenu, speedChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitVolumeAndAreaMenu, volumeAndSurfaceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassFork, true),
   ToolboxMessageTree::Node(I18n::Message::UnitElectricityMenu, electricityChildren),

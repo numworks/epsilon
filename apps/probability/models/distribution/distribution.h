@@ -4,6 +4,7 @@
 #include <apps/shared/memoized_curve_view_range.h>
 #include <apps/i18n.h>
 #include <poincare/preferences.h>
+#include <cmath>
 
 namespace Probability {
 
@@ -31,6 +32,7 @@ public:
   virtual I18n::Message parameterNameAtIndex(int index) = 0;
   virtual I18n::Message parameterDefinitionAtIndex(int index) = 0;
   virtual void setParameterAtIndex(double f, int index) = 0;
+  virtual double meanAbscissa() { return NAN; } //must be implemented by all symetrical and continouous distributions.
   virtual float evaluateAtAbscissa(float x) const = 0;
   virtual bool authorizedValueAtIndex(double x, int index) const;
   virtual double cumulativeDistributiveFunctionAtAbscissa(double x) const;

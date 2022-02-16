@@ -44,10 +44,12 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
     quiz_assert(roughly_equal(coefficients[i], trueCoefficients[i], precision, false, nullExpectedPrecision));
   }
 
-  // Compute and check r2 value and sign
-  double r2 = store.determinationCoefficientForSeries(series, &globalContext);
-  quiz_assert(r2 <= 1.0 && (r2 >= 0.0 || modelType == Model::Type::Proportional));
-  quiz_assert(roughly_equal(r2, trueR2, precision, false, nullExpectedPrecision));
+  if (modelType != Model::Type::Proportional && modelType != Model::Type::Median) {
+    // Compute and check r2 value and sign
+    double r2 = store.determinationCoefficientForSeries(series, &globalContext);
+    quiz_assert(r2 <= 1.0 && r2 >= 0.0);
+    quiz_assert(roughly_equal(r2, trueR2, precision, false, nullExpectedPrecision));
+  }
 }
 
 QUIZ_CASE(linear_regression) {

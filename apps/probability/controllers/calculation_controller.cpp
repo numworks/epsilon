@@ -153,7 +153,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     CalculationCell * myCell = static_cast<CalculationCell *>(cell);
     myCell->messageTextView()->setMessage(m_calculation->legendForParameterAtIndex(i - 1));
     bool calculationCellIsResponder = true;
-    if (((!m_distribution->isSymetrical() || !m_distribution->isContinuous()) && i == 3) ||
+    if (((!m_distribution->isSymmetrical() || !m_distribution->isContinuous()) && i == 3) ||
         (m_calculation->type() == Calculation::Type::Discrete && i == 2)) {
       calculationCellIsResponder = false;
     }

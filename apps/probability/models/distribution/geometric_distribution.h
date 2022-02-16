@@ -15,7 +15,7 @@ public:
   I18n::Message title() override { return I18n::Message::GeometricDistribution; }
   Type type() const override { return Type::Geometric; }
   bool isContinuous() const override { return false; }
-  bool isSymetrical() const override { return false; }
+  bool isSymmetrical() const override { return false; }
   I18n::Message parameterNameAtIndex(int index) override {
     assert(index == 0);
     return I18n::Message::P;

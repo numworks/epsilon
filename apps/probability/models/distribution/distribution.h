@@ -26,13 +26,13 @@ public:
   virtual I18n::Message title() = 0;
   virtual Type type() const = 0;
   virtual bool isContinuous() const = 0;
-  virtual bool isSymetrical() const = 0;
+  virtual bool isSymmetrical() const = 0;
   virtual int numberOfParameter() = 0;
   virtual double parameterValueAtIndex(int index) = 0;
   virtual I18n::Message parameterNameAtIndex(int index) = 0;
   virtual I18n::Message parameterDefinitionAtIndex(int index) = 0;
   virtual void setParameterAtIndex(double f, int index) = 0;
-  virtual double meanAbscissa() { return NAN; } //must be implemented by all symetrical and continouous distributions.
+  virtual double meanAbscissa() { return NAN; } //must be implemented by all symmetrical and continouous distributions.
   virtual float evaluateAtAbscissa(float x) const = 0;
   virtual bool authorizedValueAtIndex(double x, int index) const;
   virtual double cumulativeDistributiveFunctionAtAbscissa(double x) const;

@@ -12,7 +12,7 @@ public:
   I18n::Message title() override { return I18n::Message::ExponentialDistribution; }
   Type type() const override { return Type::Exponential; }
   bool isContinuous() const override { return true; }
-  bool isSymetrical() const override { return false; }
+  bool isSymmetrical() const override { return false; }
   I18n::Message parameterNameAtIndex(int index) override {
     assert(index == 0);
     return I18n::Message::Lambda;

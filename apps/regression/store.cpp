@@ -316,7 +316,9 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
    * With proportional regression or badly fitted models, R2 can technically be
    * negative. R2<0 means that the regression is less effective than a
    * constant set to the series average. It should not happen with regression
-   * models that can fit a constant observation. */
+   * models that can fit a constant observation. 
+   * R2 is not important for the median model.
+   * */
   // Residual sum of squares
   double ssr = 0;
   // Total sum of squares

@@ -56,7 +56,7 @@ void FiniteIntegralCalculation::compute(int indexKnownElement) {
     return;
   }
   if (indexKnownElement == 2) {
-    assert(m_distribution->type() == Distribution::Type::Normal);
+    assert(m_distribution->isContinuous() && m_distribution->isSymetrical());
     double p = (1.0+m_result)/2.0;
     m_upperBound = ((NormalDistribution *)m_distribution)->cumulativeDistributiveInverseForProbability(&p);
     m_lowerBound = 2.0*m_distribution->parameterValueAtIndex(0)-m_upperBound;

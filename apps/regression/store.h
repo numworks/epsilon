@@ -12,6 +12,7 @@
 #include "model/quadratic_model.h"
 #include "model/quartic_model.h"
 #include "model/trigonometric_model.h"
+#include "model/median_model.h"
 #include "../shared/interactive_curve_view_range.h"
 #include "../shared/double_pair_store.h"
 #include <escher/responder.h>
@@ -71,6 +72,8 @@ public:
   double xValueForYValue(int series, double y, Poincare::Context * globalContext);
   double correlationCoefficient(int series) const; // R
 
+  void sortIndexByColumn(int series, int column, int * sortedIndex, int startIndex, int endIndex) const;
+
   // To speed up computation during drawings, float is returned.
   float maxValueOfColumn(int series, int i) const;
   float minValueOfColumn(int series, int i) const;
@@ -90,6 +93,7 @@ private:
   PowerModel m_powerModel;
   TrigonometricModel m_trigonometricModel;
   LogisticModel m_logisticModel;
+  MedianModel m_medianModel;
   double m_regressionCoefficients[k_numberOfSeries][Model::k_maxNumberOfCoefficients];
   double m_determinationCoefficient[k_numberOfSeries];
   bool m_regressionChanged[k_numberOfSeries];

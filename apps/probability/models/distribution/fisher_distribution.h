@@ -11,6 +11,7 @@ public:
   I18n::Message title() override { return I18n::Message::FisherDistribution; }
   Type type() const override { return Type::Fisher; }
   bool isContinuous() const override { return true; }
+  bool isSymetrical() const override { return false; }
   I18n::Message parameterNameAtIndex(int index) override;
   I18n::Message parameterDefinitionAtIndex(int index) override;
   float evaluateAtAbscissa(float x) const override;

@@ -202,6 +202,31 @@ QUIZ_CASE(power_regression) {
   // assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r22);
 }
 
+/* TODO : Uncomment this when tests supporting NaN are implemented (16/02/22)
+ * QUIZ_CASE(median_regression0) {
+  double x[] = {3.0, 3.0, 3.0};
+  double y[] = {4.0, 3.0, 2.0};
+  double coefficients[] = {NAN, NAN};
+  double r2 = 0.0;
+  assert_regression_is(x, y, 3, Model::Type::Median, coefficients, r2);
+}*/
+
+QUIZ_CASE(median_regression1) {
+  double x[] = {1.0, 2.0, 3.0};
+  double y[] = {4.0, 3.0, 2.0};
+  double coefficients[] = {-1.0, 5.0};
+  double r2 = 0.0;
+  assert_regression_is(x, y, 3, Model::Type::Median, coefficients, r2);
+}
+
+QUIZ_CASE(median_regression2) {
+  double x[] = {9.0, 7.0, 5.0, 11.0, 31.0, 19.0, 15.0, 25.0, 1.0, 23.0};
+  double y[] = {11.0, 734.0, 3.0, 15.0, 55555.0, 31.0, 23.0, 43.0, -5.0, 39.0};
+  double coefficients[] = {2.0, -7.0};
+  double r2 = 0.0;
+  assert_regression_is(x, y, 10, Model::Type::Median, coefficients, r2);
+}
+
 void assert_trigonometric_regression_is(double * xi, double * yi, int numberOfPoints, double * trueCoefficients, double trueR2, Poincare::Preferences::AngleUnit trueCoeffcientsUnit) {
   // Test the trigonometric regression at all angle units
   const Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();

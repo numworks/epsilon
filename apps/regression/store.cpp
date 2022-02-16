@@ -11,7 +11,7 @@ using namespace Shared;
 
 namespace Regression {
 
-static_assert(Model::k_numberOfModels == 10, "Number of models changed, Regression::Store() needs to adapt");
+static_assert(Model::k_numberOfModels == 11, "Number of models changed, Regression::Store() needs to adapt");
 static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regression::Store() needs to adapt (m_seriesChecksum)");
 
 Store::Store() :
@@ -292,6 +292,23 @@ double Store::correlationCoefficient(int series) const {
   return (v0 == 0.0 || v1 == 0.0) ? 1.0 : covariance(series) / std::sqrt(v0 * v1);
 }
 
+void Store::sortIndexByColumn(int series, int column, int * sortedIndex, int startIndex, int endIndex) const {
+  assert(startIndex < endIndex);
+  //Following lines is an insertion-sort algorithm which has the advantage of being in-place and efficient when already sorted.
+  int i = startIndex + 1;
+  while (i < endIndex) {
+    double x = get(series, column, sortedIndex[i]);
+    int xIndex = sortedIndex[i];
+    int j = i - 1;
+    while (j >= startIndex && get(series, column, sortedIndex[j]) > x){
+      sortedIndex[j+1] = sortedIndex[j];
+      j = j - 1;
+    }
+    sortedIndex[j+1] = xIndex;
+    i = i + 1;
+  }
+}
+
 double Store::computeDeterminationCoefficient(int series, Poincare::Context * globalContext) {
   /* Computes and returns the determination coefficient (R2) of the regression.
    * For linear regressions, it is equal to the square of the correlation
@@ -332,7 +349,7 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
 }
 
 Model * Store::regressionModel(int index) {
-  Model * models[Model::k_numberOfModels] = {&m_linearModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel};
+  Model * models[Model::k_numberOfModels] = {&m_linearModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel, &m_medianModel};
   return models[index];
 }
 

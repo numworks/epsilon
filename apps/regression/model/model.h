@@ -23,9 +23,10 @@ public:
     Exponential   = 6,
     Power         = 7,
     Trigonometric = 8,
-    Logistic      = 9
+    Logistic      = 9,
+    Median        = 10
   };
-  static constexpr int k_numberOfModels = 10;
+  static constexpr int k_numberOfModels = 11;
   static constexpr int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients
   virtual ~Model() = default;
   virtual Poincare::Layout layout() = 0;

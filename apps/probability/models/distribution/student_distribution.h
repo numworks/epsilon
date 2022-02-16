@@ -21,6 +21,7 @@ public:
     assert(index == 0);
     return I18n::Message::DegreesOfFreedomDefinition;
   }
+  double meanAbscissa() override { return 0; }
   float evaluateAtAbscissa(float x) const override;
   bool authorizedValueAtIndex(double x, int index) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;

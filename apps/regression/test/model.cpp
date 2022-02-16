@@ -203,7 +203,8 @@ QUIZ_CASE(power_regression) {
 }
 
 /* TODO : Uncomment this when tests supporting NaN are implemented (16/02/22)
- * QUIZ_CASE(median_regression0) {
+ * This is in french because Awk reads comments and understands English, but not my beautiful language.
+ * un_cas_de_quizz(median_regression0) {
   double x[] = {3.0, 3.0, 3.0};
   double y[] = {4.0, 3.0, 2.0};
   double coefficients[] = {NAN, NAN};

@@ -40,7 +40,7 @@ public:
     return res;
   }
 
-  int length() {
+  int length() const {
     if (m_start == N) {
       assert(m_end == N);
       return 0;

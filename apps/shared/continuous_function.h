@@ -116,7 +116,7 @@ public:
   // Return true if the ContinuousFunction is active
   bool isActive() const override { return Function::isActive() && !IsPlotTypeInactive(plotType()); };
 
-  /* ExpressionModel */
+  /* ExpressionModelHandle */
 
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
   void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) const override;

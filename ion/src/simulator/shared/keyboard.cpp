@@ -40,7 +40,6 @@ constexpr static KeySDLKeyPair sKeyPairs[] = {
   KeySDLKeyPair(Key::EXE,       SDL_SCANCODE_RETURN),
   KeySDLKeyPair(Key::Back,      SDL_SCANCODE_ESCAPE),
   KeySDLKeyPair(Key::Toolbox,   SDL_SCANCODE_TAB),
-  KeySDLKeyPair(Key::Power,     SDL_SCANCODE_GRAVE)
 };
 
 constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs)/sizeof(KeySDLKeyPair);

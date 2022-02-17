@@ -6,7 +6,6 @@
 #include <escher/message_table_cell.h>
 #include <apps/i18n.h>
 #include "double_pair_store.h"
-#include "pop_up_controller.h"
 
 namespace Shared {
 
@@ -37,7 +36,6 @@ protected:
 private:
   void popFromStackView();
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
-  void deleteColumn();
   void sortColumn();
 
   constexpr static int k_indexOfSortValues = 0;
@@ -46,7 +44,6 @@ private:
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_sortCellType = 1;
 
-  PopUpController m_confirmPopUpController;
   Escher::MessageTableCell m_cells[k_totalNumberOfCell-1];
   Escher::MessageTableCellWithMessage m_sortCell;
   StoreController * m_storeController;

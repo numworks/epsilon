@@ -43,14 +43,13 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
 #else
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 1)) {
 #endif
-    IntervalParameterController * intervalParameterController = FunctionApp::app()->valuesController()->intervalParameterController();
+    ValuesController * valuesController = FunctionApp::app()->valuesController();
     switch (selectedRow()) {
       case 0:
       {
-        Interval * interval = intervalParameterController->interval();
-        interval->clear();
-        StackViewController * stack = ((StackViewController *)parentResponder());
+        StackViewController * stack = static_cast<StackViewController *>(parentResponder());
         stack->pop();
+        valuesController->tryToDeleteColumn();
         return true;
       }
 #if COPY_COLUMN
@@ -63,6 +62,7 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
 #endif
       {
         StackViewController * stack = ((StackViewController *)parentResponder());
+        IntervalParameterController * intervalParameterController = valuesController->intervalParameterController();
         intervalParameterController->setTitle(I18n::Message::IntervalSet);
         stack->push(intervalParameterController);
         return true;

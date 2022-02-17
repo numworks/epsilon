@@ -5,6 +5,7 @@
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
 #include "regular_table_view_data_source.h"
+#include "pop_up_controller.h"
 
 namespace Shared {
 
@@ -19,10 +20,13 @@ public:
   KDCoordinate rowHeight(int j) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
+  void tryToDeleteColumn();
+
 protected:
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
   static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
+
 private:
   virtual void didChangeCell(int column, int row) {}
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
@@ -30,6 +34,9 @@ private:
   virtual double dataAtLocation(int columnIndex, int rowIndex) = 0;
   virtual int numberOfElementsInColumn(int columnIndex) const = 0;
   virtual int maxNumberOfElements() const = 0;
+  virtual void deleteColumn() = 0;
+
+  PopUpController m_confirmPopUpController;
 };
 
 }

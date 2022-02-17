@@ -27,7 +27,7 @@ public:
 
   void computeInterval() override { OneMean::ComputeTInterval(this); }
 
-  const char * estimateSymbol() override { return OneMean::EstimateSymbol(); }
+  const char * estimateSymbol() const override { return OneMean::EstimateSymbol(); }
   Poincare::Layout testCriticalValueSymbol() override { return DistributionT::TestCriticalValueSymbol(); }
 
   // Distribution: t

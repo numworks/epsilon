@@ -34,6 +34,7 @@ public:
   I18n::Message tPooledDistributionName() const override { return I18n::Message::ZInterval; }
   I18n::Message zDistributionName() const override { return I18n::Message::PooledTInterval; }
   void setGraphTitle(char * buffer, size_t bufferSize) const override;
+  void setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const override;
 
   void compute() override;
 
@@ -42,7 +43,7 @@ public:
   I18n::Message thresholdName() const override { return I18n::Message::ConfidenceLevel; }
   I18n::Message thresholdDescription() const override { return I18n::Message::Default; }
 
-  virtual const char * estimateSymbol() = 0;
+  virtual const char * estimateSymbol() const = 0;
   virtual Poincare::Layout estimateLayout() { return m_estimateLayout; }
   virtual I18n::Message estimateDescription() { return I18n::Message::Default; }
   /* The estimate is the center of the confidence interval,

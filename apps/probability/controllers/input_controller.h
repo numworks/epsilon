@@ -34,7 +34,7 @@ public:
   constexpr static int k_numberOfReusableCells =
       Ion::Display::Height / Escher::TableCell::k_minimalLargeFontCellHeight + 2;
 protected:
-  double parameterAtIndex(int i) override { return m_statistic->paramAtIndex(i); }
+  double parameterAtIndex(int i) override { return m_statistic->parameterAtIndex(i); }
   bool isCellEditing(Escher::HighlightCell * cell, int index) override;
   void setTextInCell(Escher::HighlightCell * cell, const char * text, int index) override;
 

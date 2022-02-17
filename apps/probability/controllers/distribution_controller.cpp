@@ -14,16 +14,16 @@
 #include "../images/student_icon.h"
 #include "../images/uniform_icon.h"
 #include "probability/app.h"
-#include "probability/models/data.h"
-#include "probability/models/distribution/binomial_distribution.h"
-#include "probability/models/distribution/chi_squared_distribution.h"
-#include "probability/models/distribution/exponential_distribution.h"
-#include "probability/models/distribution/fisher_distribution.h"
-#include "probability/models/distribution/geometric_distribution.h"
-#include "probability/models/distribution/normal_distribution.h"
-#include "probability/models/distribution/poisson_distribution.h"
-#include "probability/models/distribution/student_distribution.h"
-#include "probability/models/distribution/uniform_distribution.h"
+#include "probability/models/models_buffer.h"
+#include "probability/models/probability/distribution/binomial_distribution.h"
+#include "probability/models/probability/distribution/chi_squared_distribution.h"
+#include "probability/models/probability/distribution/exponential_distribution.h"
+#include "probability/models/probability/distribution/fisher_distribution.h"
+#include "probability/models/probability/distribution/geometric_distribution.h"
+#include "probability/models/probability/distribution/normal_distribution.h"
+#include "probability/models/probability/distribution/poisson_distribution.h"
+#include "probability/models/probability/distribution/student_distribution.h"
+#include "probability/models/probability/distribution/uniform_distribution.h"
 
 using namespace Escher;
 
@@ -44,7 +44,6 @@ void Probability::DistributionController::viewWillAppear() {
 }
 
 void Probability::DistributionController::didBecomeFirstResponder() {
-  App::app()->setPage(Data::Page::Distribution);
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
@@ -107,38 +106,7 @@ void Probability::DistributionController::setDistributionAccordingToIndex(int in
   if ((int)m_distribution->type() == index) {
     return;
   }
-  m_distribution->~Distribution();
-  switch (index) {
-    case 0:
-      new (m_distribution) BinomialDistribution();
-      break;
-    case 1:
-      new (m_distribution) UniformDistribution();
-      break;
-    case 2:
-      new (m_distribution) ExponentialDistribution();
-      break;
-    case 3:
-      new (m_distribution) NormalDistribution();
-      break;
-    case 4:
-      new (m_distribution) ChiSquaredDistribution();
-      break;
-    case 5:
-      new (m_distribution) StudentDistribution();
-      break;
-    case 6:
-      new (m_distribution) GeometricDistribution();
-      break;
-    case 7:
-      new (m_distribution) PoissonDistribution();
-      break;
-    case 8:
-      new (m_distribution) FisherDistribution();
-      break;
-    default:
-      return;
-  }
+  Distribution::Initialize(m_distribution, static_cast<Distribution::Type>(index));
   m_parametersController->reinitCalculation();
 }
 

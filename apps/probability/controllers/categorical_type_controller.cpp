@@ -11,13 +11,11 @@ using namespace Probability;
 
 CategoricalTypeController::CategoricalTypeController(
     Escher::StackViewController * parent,
-    Chi2Statistic * statistic,
-    Data::CategoricalType * globalCategoricalType,
+    Chi2Test * statistic,
     InputGoodnessController * inputGoodnessController,
     InputHomogeneityController * inputHomogeneityController) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells>(parent),
       m_statistic(statistic),
-      m_globalCategoricalType(globalCategoricalType),
       m_inputGoodnessController(inputGoodnessController),
       m_inputHomogeneityController(inputHomogeneityController) {
   selectRow(0);  // Select first row by default
@@ -26,34 +24,28 @@ CategoricalTypeController::CategoricalTypeController(
 }
 
 void CategoricalTypeController::didBecomeFirstResponder() {
-  Probability::App::app()->setPage(Data::Page::Categorical);
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    Escher::ViewController * view = nullptr;
-    Data::CategoricalType type;
+    Escher::ViewController * controller = nullptr;
+    CategoricalType type;
     switch (selectedRow()) {
       case k_indexOfGoodnessCell:
-        view = m_inputGoodnessController;
-        type = Data::CategoricalType::Goodness;
+        controller = m_inputGoodnessController;
+        type = CategoricalType::GoodnessOfFit;
         break;
       case k_indexOfHomogeneityCell:
-        view = m_inputHomogeneityController;
-        type = Data::CategoricalType::Homogeneity;
+        controller = m_inputHomogeneityController;
+        type = CategoricalType::Homogeneity;
         break;
     }
-    assert(view != nullptr);
-    if (type != App::app()->categoricalType()) {
-      *m_globalCategoricalType = type;
-      Statistic::initializeStatistic(m_statistic,
-                                     App::app()->subapp(),
-                                     App::app()->test(),
-                                     App::app()->testType(),
-                                     App::app()->categoricalType());
+    assert(controller != nullptr);
+    if (type != m_statistic->categoricalType()) {
+      m_statistic->initializeCategoricalType(type);
     }
-    stackOpenPage(view);
+    stackOpenPage(controller);
     return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);

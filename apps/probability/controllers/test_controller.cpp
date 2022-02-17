@@ -19,18 +19,12 @@ TestController::TestController(Escher::StackViewController * parentResponder,
                                TypeController * typeController,
                                CategoricalTypeController * categoricalController,
                                InputController * inputController,
-                               Data::Test * globalTest,
-                               Data::TestType * globalTestType,
-                               Data::CategoricalType * globalCategoricalType,
                                Statistic * statistic) :
-      Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells>(parentResponder),
+      Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType>(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
       m_inputController(inputController),
       m_categoricalController(categoricalController),
-      m_globalTest(globalTest),
-      m_globalTestType(globalTestType),
-      m_globalCategoricalType(globalCategoricalType),
       m_statistic(statistic) {
   // Create cells
   cellAtIndex(k_indexOfOneProp)->setMessage(I18n::Message::TestOneProp);
@@ -42,25 +36,19 @@ TestController::TestController(Escher::StackViewController * parentResponder,
 }
 
 const char * TestController::title() {
-  I18n::Message title = App::app()->subapp() == Data::SubApp::Tests
-                            ? I18n::Message::Tests
-                            : I18n::Message::IntervalDescr;
-  return I18n::translate(title);
+  return I18n::translate(m_statistic->statisticTitle());
 }
 
 void Probability::TestController::viewWillAppear() {
-  Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells>::viewWillAppear();
+  Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType>::viewWillAppear();
   // Create cells whose legends vary
-  I18n::Message zMessage = App::app()->subapp() == Data::SubApp::Tests ? I18n::Message::ZTest : I18n::Message::ZInterval;
-  I18n::Message tOrZMessage = App::app()->subapp() == Data::SubApp::Tests ? I18n::Message::TOrZTest : I18n::Message::TOrZInterval;
-  cellAtIndex(k_indexOfOneProp)->setSubtitle(zMessage);
-  cellAtIndex(k_indexOfOneMean)->setSubtitle(tOrZMessage);
-  cellAtIndex(k_indexOfTwoProps)->setSubtitle(zMessage);
-  cellAtIndex(k_indexOfTwoMeans)->setSubtitle(tOrZMessage);
+  cellAtIndex(k_indexOfOneProp)->setSubtitle(m_statistic->zStatisticMessage());
+  cellAtIndex(k_indexOfOneMean)->setSubtitle(m_statistic->tOrZStatisticMessage());
+  cellAtIndex(k_indexOfTwoProps)->setSubtitle(m_statistic->zStatisticMessage());
+  cellAtIndex(k_indexOfTwoMeans)->setSubtitle(m_statistic->tOrZStatisticMessage());
 }
 
 void TestController::didBecomeFirstResponder() {
-  Probability::App::app()->setPage(Data::Page::Test);
   if (selectedRow() == -1 || selectedRow() >= numberOfRows()) {
     selectRow(0);
   }
@@ -71,62 +59,42 @@ void TestController::didBecomeFirstResponder() {
 
 bool TestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    Data::SubApp subapp = App::app()->subapp();
-    Escher::ViewController * controller = nullptr;
-    Data::Test test;
+    Escher::SelectableListViewController * controller = nullptr;
+    SignificanceTestType testType;
     switch (selectedRow()) {
       case k_indexOfOneProp:
-        test = Data::Test::OneProp;
-        if (subapp == Data::SubApp::Tests) {
+        testType = SignificanceTestType::OneProportion;
+        controller = m_inputController;
+        if (m_statistic->hasHypothesisParameters()) {
           controller = m_hypothesisController;
-        } else {
-          controller = m_inputController;
         }
         break;
       case k_indexOfTwoProps:
-        test = Data::Test::TwoProps;
-        if (subapp == Data::SubApp::Tests) {
+        testType = SignificanceTestType::TwoProportions;
+        controller = m_inputController;
+        if (m_statistic->hasHypothesisParameters()) {
           controller = m_hypothesisController;
-        } else {
-          controller = m_inputController;
         }
         break;
       case k_indexOfOneMean:
-        test = Data::Test::OneMean;
+        testType = SignificanceTestType::OneMean;
         controller = m_typeController;
         break;
       case k_indexOfTwoMeans:
-        test = Data::Test::TwoMeans;
+        testType = SignificanceTestType::TwoMeans;
         controller = m_typeController;
         break;
       case k_indexOfCategorical:
-        test = Data::Test::Categorical;
+        testType = SignificanceTestType::Categorical;
         controller = m_categoricalController;
         break;
     }
     assert(controller != nullptr);
-    if (test != App::app()->test()) {
-      if (Data::isProportion(test)) {
-        *m_globalTestType = Data::TestType::ZTest;
-        Statistic::initializeStatistic(m_statistic,
-                                       App::app()->subapp(),
-                                       test,
-                                       Data::TestType::ZTest,
-                                       Data::CategoricalType::Unset);
-      } else {
-        *m_globalTestType = Data::TestType::Unset;
-      }
-      *m_globalCategoricalType = Data::CategoricalType::Unset;
+#warning Add poorman's RTTI to avoid resetting
+    if (testType != m_statistic->significanceTestType()) {
+      m_statistic->initializeSignificanceTest(testType);
+      controller->selectRow(0);
     }
-
-    *m_globalTest = test;
-
-    if (controller == m_typeController) {
-      m_typeController->selectRow(0);
-    } else if (controller == m_categoricalController) {
-      m_categoricalController->selectRow(0);
-    }
-
     stackOpenPage(controller);
     return true;
   }
@@ -134,6 +102,5 @@ bool TestController::handleEvent(Ion::Events::Event event) {
 }
 
 int TestController::numberOfRows() const {
-  // Don't show Categorical cell for Interval
-  return Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfTestCells>::numberOfRows() - (App::app()->subapp() == Data::SubApp::Intervals);
+  return m_statistic->numberOfSignificancesTestTypes();
 }

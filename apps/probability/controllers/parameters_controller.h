@@ -1,8 +1,8 @@
 #ifndef PROBABILITY_CONTROLLERS_PARAMETERS_CONTROLLER_H
 #define PROBABILITY_CONTROLLERS_PARAMETERS_CONTROLLER_H
 
-#include <escher/message_table_cell_with_editable_text_with_message.h>
-#include "probability/models/distribution/distribution.h"
+#include "probability/gui/expression_cell_with_editable_text_with_message.h"
+#include "probability/models/probability/distribution/distribution.h"
 #include <apps/shared/float_parameter_controller.h>
 #include "calculation_controller.h"
 
@@ -16,7 +16,6 @@ public:
   Escher::View * view() override { return &m_contentView; }
   bool handleEvent(Ion::Events::Event event) override;
   void reinitCalculation();
-  void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   TELEMETRY_ID("Parameters");
   int numberOfRows() const override;
@@ -28,6 +27,9 @@ private:
   void buttonAction() override;
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
+  bool isCellEditing(Escher::HighlightCell * cell, int index) override;
+  void setTextInCell(Escher::HighlightCell * cell, const char * text, int index) override;
+
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
   class ContentView : public Escher::View {
   public:
@@ -45,7 +47,7 @@ private:
   };
   constexpr static int k_maxNumberOfCells = 2;
   ContentView m_contentView;
-  Escher::MessageTableCellWithEditableTextWithMessage m_menuListCell[k_maxNumberOfCells];
+  ExpressionCellWithEditableTextWithMessage m_menuListCell[k_maxNumberOfCells];
   Distribution * m_distribution;
   CalculationController * m_calculationController;
 };

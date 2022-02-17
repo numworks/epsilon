@@ -19,19 +19,11 @@ using namespace Probability;
 MenuController::MenuController(Escher::StackViewController * parentResponder,
                                DistributionController * distributionController,
                                TestController * testController,
-                               Data::Test * globalTest,
-                               Data::TestType * globalTestType,
-                               Statistic * globalStatistic,
-                               Distribution * globalDistribution,
-                               Calculation * globalCalculation) :
+                               Inference * inference) :
       Escher::SelectableCellListPage<Escher::SubappCell, k_numberOfCells>(parentResponder),
       m_distributionController(distributionController),
       m_testController(testController),
-      m_globalTest(globalTest),
-      m_globalTestType(globalTestType),
-      m_globalStatistic(globalStatistic),
-      m_globalDistribution(globalDistribution),
-      m_globalCalculation(globalCalculation),
+      m_inference(inference),
       m_contentView(&m_selectableTableView) {
   selectRow(0);
   cellAtIndex(k_indexOfProbability)->setMessages(I18n::Message::ProbaApp, I18n::Message::ProbaDescr);
@@ -43,59 +35,36 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
 }
 
 void MenuController::didBecomeFirstResponder() {
-  Probability::App::app()->setPage(Data::Page::Menu);
+#warning Neeeded?
   m_selectableTableView.reloadData(true);
 }
 
 bool MenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    Data::SubApp subapp;
-    ViewController * controller = nullptr;
+    Inference::SubApp subapp;
+    Escher::SelectableListViewController * controller = nullptr;
     switch (selectedRow()) {
       case k_indexOfProbability:
-        subapp = Data::SubApp::Probability;
+        subapp = Inference::SubApp::Probability;
         controller = m_distributionController;
         break;
       case k_indexOfTest:
-        subapp = Data::SubApp::Tests;
+        subapp = Inference::SubApp::Test;
         controller = m_testController;
         break;
       case k_indexOfInterval:
-        subapp = Data::SubApp::Intervals;
+        subapp = Inference::SubApp::Interval;
         controller = m_testController;
         break;
     }
     assert(controller != nullptr);
-    if (subapp != App::app()->subapp()) {
-      tidyData(App::app()->subapp());
-      App::app()->setSubapp(subapp);
-      initData(subapp);
-    }
-    if (controller == m_testController) {
-      m_testController->selectRow(0);
+    if (m_inference->subApp() != subapp) {
+      Inference::Initialize(m_inference, subapp);
+      // Reinit row
+      controller->selectRow(0);
     }
     stackOpenPage(controller);
     return true;
   }
   return false;
-}
-
-void Probability::MenuController::tidyData(Data::SubApp subapp) {
-  if (subapp == Data::SubApp::Probability) {
-    m_globalDistribution->~Distribution();
-    m_globalCalculation->~Calculation();
-  } else if (subapp == Data::SubApp::Tests || subapp == Data::SubApp::Intervals) {
-    m_globalStatistic->~Statistic();
-  }
-}
-
-void Probability::MenuController::initData(Data::SubApp subapp) {
-  if (subapp == Data::SubApp::Probability) {
-    new (m_globalDistribution) BinomialDistribution();
-    new (m_globalCalculation) LeftIntegralCalculation(m_globalDistribution);
-  } else if (subapp == Data::SubApp::Tests || subapp == Data::SubApp::Intervals) {
-    new (m_globalStatistic) OneProportionStatistic();
-    *m_globalTest = Data::Test::Unset;
-    *m_globalTestType = Data::TestType::Unset;
-  }
 }

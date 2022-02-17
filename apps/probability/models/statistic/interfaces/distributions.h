@@ -41,7 +41,6 @@ public:
 
 class DistributionChi2 : public DistributionInterface {
 public:
-  static I18n::Message GraphTitleFormat() { return I18n::Message::StatisticGraphControllerTestTitleFormatChi2Test; }
   static Poincare::Layout TestCriticalValueSymbol();
   static float CanonicalDensityFunction(float x, double degreesOfFreedom);
   static double CumulativeNormalizedDistributionFunction(double x, double degreesOfFreedom);

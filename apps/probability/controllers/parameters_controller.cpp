@@ -82,11 +82,6 @@ void ParametersController::reinitCalculation() {
   m_calculationController->reinitCalculation();
 }
 
-void ParametersController::didBecomeFirstResponder() {
-  App::app()->setPage(Data::Page::Parameters);
-  FloatParameterController::didBecomeFirstResponder();
-}
-
 void ParametersController::viewWillAppear() {
   resetMemoization();
   m_contentView.layoutSubviews();
@@ -94,7 +89,7 @@ void ParametersController::viewWillAppear() {
 }
 
 int ParametersController::numberOfRows() const {
-  return 1 + m_distribution->numberOfParameter();
+  return 1 + m_distribution->numberOfParameters();
 }
 
 void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -104,11 +99,19 @@ void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int ind
     }
     return;
   }
-  MessageTableCellWithEditableTextWithMessage * myCell =
-      static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
-  myCell->setMessage(m_distribution->parameterNameAtIndex(index));
+  ExpressionCellWithEditableTextWithMessage * myCell =
+      static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
+  myCell->setLayout(m_distribution->parameterSymbolAtIndex(index));
   myCell->setSubLabelMessage(m_distribution->parameterDefinitionAtIndex(index));
   FloatParameterController::willDisplayCellForIndex(cell, index);
+}
+
+bool Probability::ParametersController::isCellEditing(Escher::HighlightCell * cell, int index) {
+  return static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)->textField()->isEditing();
+}
+
+void Probability::ParametersController::setTextInCell(Escher::HighlightCell * cell, const char * text, int index) {
+  static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)->textField()->setText(text);
 }
 
 HighlightCell * ParametersController::reusableParameterCell(int index, int type) {
@@ -118,15 +121,15 @@ HighlightCell * ParametersController::reusableParameterCell(int index, int type)
 }
 
 int ParametersController::reusableParameterCellCount(int type) {
-  return m_distribution->numberOfParameter();
+  return m_distribution->numberOfParameters();
 }
 
-double ParametersController::parameterAtIndex(int index) const {
-  return m_distribution->parameterValueAtIndex(index);
+double ParametersController::parameterAtIndex(int index) {
+  return m_distribution->parameterAtIndex(index);
 }
 
 bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
-  if (!m_distribution->authorizedValueAtIndex(f, parameterIndex)) {
+  if (!m_distribution->authorizedParameterAtIndex(f, parameterIndex)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }

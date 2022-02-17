@@ -8,7 +8,7 @@ InputHomogeneityController::InputHomogeneityController(
     StackViewController * parent,
     ResultsHomogeneityController * homogeneityResultsController,
     InputEventHandlerDelegate * inputEventHandlerDelegate,
-    HomogeneityStatistic * statistic) :
+    HomogeneityTest * statistic) :
       InputCategoricalController(parent,
                                  homogeneityResultsController,
                                  statistic,
@@ -19,9 +19,4 @@ InputHomogeneityController::InputHomogeneityController(
                         this),
       m_contentView(this, Escher::Invocation(&InputCategoricalController::ButtonAction, this), nullptr, inputEventHandlerDelegate, this) {
   m_contentView.setTableView(&m_tableController);
-}
-
-void Probability::InputHomogeneityController::didBecomeFirstResponder() {
-  App::app()->setPage(Data::Page::InputHomogeneity);
-  InputCategoricalController::didBecomeFirstResponder();
 }

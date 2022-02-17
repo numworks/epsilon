@@ -57,6 +57,7 @@ public:
   virtual I18n::Message tPooledDistributionName() const = 0;
   virtual I18n::Message zDistributionName() const = 0;
   virtual void setGraphTitle(char * buffer, size_t bufferSize) const = 0;
+  virtual void setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const {}
 
   /* Instantiate correct Statistic based on SignificanceTestType, DistributionType and CategoricalType. */
   virtual SignificanceTestType significanceTestType() const = 0;
@@ -83,7 +84,7 @@ public:
   virtual int numberOfResults() const = 0;
   virtual void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) = 0;
   bool hasDegreeOfFreedom() const { return !std::isnan(m_degreesOfFreedom); }
-  double degreeOfFreedom() { return m_degreesOfFreedom; }
+  double degreeOfFreedom() const { return m_degreesOfFreedom; }
 
   // Computation
   virtual void compute() = 0;

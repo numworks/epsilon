@@ -3,7 +3,7 @@
 #include <apps/shared/text_field_delegate_app.h>
 #include <apps/exam_mode_configuration.h>
 
-#include "models/statistic/homogeneity_statistic.h"
+#include "models/statistic/homogeneity_test.h"
 #include "probability_icon.h"
 
 namespace Probability {
@@ -14,215 +14,83 @@ const Escher::Image * App::Descriptor::icon() const {
 
 App::App(Snapshot * snapshot) :
     TextFieldDelegateApp(snapshot, &m_stackViewController),
-    m_statisticGraphController(&m_stackViewController, snapshot->data()->statistic()),
+    m_testGraphController(&m_stackViewController, static_cast<Test *>(snapshot->statistic())),
+    m_intervalGraphController(&m_stackViewController, static_cast<Interval *>(snapshot->statistic())),
     m_homogeneityResultsController(
         &m_stackViewController,
-        static_cast<HomogeneityStatistic *>(snapshot->data()->statistic()),
+        static_cast<HomogeneityTest *>(snapshot->statistic()),
         &m_resultsController),
     m_inputHomogeneityController(
         &m_stackViewController,
         &m_homogeneityResultsController,
         this,
-        static_cast<HomogeneityStatistic *>(snapshot->data()->statistic())),
+        static_cast<HomogeneityTest *>(snapshot->statistic())),
     m_inputGoodnessController(&m_stackViewController,
                               &m_resultsController,
-                              static_cast<GoodnessStatistic *>(snapshot->data()->statistic()),
+                              static_cast<GoodnessTest *>(snapshot->statistic()),
                               this),
     m_resultsController(&m_stackViewController,
-                        snapshot->data()->statistic(),
-                        &m_statisticGraphController,
+                        snapshot->statistic(),
+                        &m_testGraphController,
+                        &m_intervalGraphController,
                         this,
                         this),
     m_inputController(&m_stackViewController,
                       &m_resultsController,
-                      snapshot->data()->statistic(),
+                      snapshot->statistic(),
                       this),
     m_typeController(&m_stackViewController,
                      &m_hypothesisController,
                      &m_inputController,
-                     snapshot->data()->testPointer(),
-                     snapshot->data()->testTypePointer(),
-                     snapshot->data()->statistic()),
+                     snapshot->statistic()),
     m_categoricalTypeController(&m_stackViewController,
-                                static_cast<Chi2Statistic *>(snapshot->data()->statistic()),
-                                snapshot->data()->categoricalTypePointer(),
+                                static_cast<Chi2Test *>(snapshot->statistic()),
                                 &m_inputGoodnessController,
                                 &m_inputHomogeneityController),
     m_hypothesisController(&m_stackViewController,
                            &m_inputController,
                            this,
-                           snapshot->data()->statistic()),
+                           static_cast<Test *>(snapshot->statistic())),
     m_calculationController(&m_stackViewController,
                             this,
-                            snapshot->data()->distribution(),
-                            snapshot->data()->calculation()),
+                            snapshot->distribution(),
+                            snapshot->calculation()),
     m_parameterController(&m_stackViewController,
                           this,
-                          snapshot->data()->distribution(),
+                          snapshot->distribution(),
                           &m_calculationController),
     m_distributionController(&m_stackViewController,
-                             snapshot->data()->distribution(),
+                             snapshot->distribution(),
                              &m_parameterController),
     m_testController(&m_stackViewController,
                      &m_hypothesisController,
                      &m_typeController,
                      &m_categoricalTypeController,
                      &m_inputController,
-                     snapshot->data()->testPointer(),
-                     snapshot->data()->testTypePointer(),
-                     snapshot->data()->categoricalTypePointer(),
-                     snapshot->data()->statistic()),
+                     snapshot->statistic()),
     m_menuController(&m_stackViewController,
                      &m_distributionController,
                      &m_testController,
-                     snapshot->data()->testPointer(),
-                     snapshot->data()->testTypePointer(),
-                     snapshot->data()->statistic(),
-                     snapshot->data()->distribution(),
-                     snapshot->data()->calculation()),
+                     snapshot->inference()),
     m_stackViewController(&m_modalViewController, &m_menuController, StackViewController::Style::GrayGradation),
     m_bufferDestructor(nullptr)
 {
 }
 
 void App::didBecomeActive(Window * windows) {
-  // Reopen correct page
-  // TODO delegate decisions to controllers somehow
-  Data::Page page = snapshot()->navigation()->page();
-  Data::SubApp subapp = snapshot()->navigation()->subapp();
-  Data::Test test = snapshot()->data()->test();
-  Data::TestType type = snapshot()->data()->testType();
-  Data::CategoricalType categoricalType = snapshot()->data()->categoricalType();
-
-  initTableSelections(page, subapp, test, type, categoricalType);
-  switch (page) {
-    case Data::Page::Menu:
-      break;
-    case Data::Page::Distribution:
-      m_menuController.stackOpenPage(&m_distributionController);
-      break;
-    case Data::Page::Parameters:
-      m_menuController.stackOpenPage(&m_distributionController);
-      m_distributionController.stackOpenPage(&m_parameterController);
-      break;
-    case Data::Page::ProbaGraph:
-      m_menuController.stackOpenPage(&m_distributionController);
-      m_distributionController.stackOpenPage(&m_parameterController);
-      m_parameterController.stackOpenPage(&m_calculationController);
-      break;
-    case Data::Page::Test:
-      m_menuController.stackOpenPage(&m_testController);
-      break;
-    case Data::Page::Type:
-      m_menuController.stackOpenPage(&m_testController);
-      m_testController.stackOpenPage(&m_typeController);
-      break;
-    case Data::Page::Hypothesis:
-      m_menuController.stackOpenPage(&m_testController);
-      if (!Data::isProportion(test)) {
-        m_testController.stackOpenPage(&m_typeController);
-        m_typeController.stackOpenPage(&m_hypothesisController);
-      } else {
-        m_testController.stackOpenPage(&m_hypothesisController);
-      }
-      break;
-    case Data::Page::Categorical:
-      m_menuController.stackOpenPage(&m_testController);
-      m_testController.stackOpenPage(&m_categoricalTypeController);
-      break;
-    case Data::Page::Input:
-      m_menuController.stackOpenPage(&m_testController);
-      if (subapp == Data::SubApp::Tests) {
-        m_testController.stackOpenPage(&m_hypothesisController);
-        m_hypothesisController.stackOpenPage(&m_inputController);
-      } else {
-        m_testController.stackOpenPage(&m_inputController);
-      }
-      break;
-    case Data::Page::InputGoodness:
-      m_menuController.stackOpenPage(&m_testController);
-      m_testController.stackOpenPage(&m_categoricalTypeController);
-      m_categoricalTypeController.stackOpenPage(&m_inputGoodnessController);
-      break;
-    case Data::Page::InputHomogeneity:
-      m_menuController.stackOpenPage(&m_testController);
-      m_testController.stackOpenPage(&m_categoricalTypeController);
-      m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController);
-      break;
-    case Data::Page::ResultsHomogeneity:
-      m_menuController.stackOpenPage(&m_testController);
-      m_testController.stackOpenPage(&m_categoricalTypeController);
-      m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController);
-      m_inputHomogeneityController.stackOpenPage(&m_homogeneityResultsController);
-      break;
-    case Data::Page::Results:
-      m_menuController.stackOpenPage(&m_testController);
-      if (test == Data::Test::Categorical) {
-        m_testController.stackOpenPage(&m_categoricalTypeController);
-        if (categoricalType == Data::CategoricalType::Goodness) {
-          m_categoricalTypeController.stackOpenPage(&m_inputGoodnessController);
-          m_inputGoodnessController.stackOpenPage(&m_resultsController);
-        } else {
-          m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController);
-          m_inputHomogeneityController.stackOpenPage(&m_homogeneityResultsController);
-          m_homogeneityResultsController.stackOpenPage(&m_resultsController);
-        }
-      } else if (subapp == Data::SubApp::Intervals) {
-        if (Data::isProportion(test)) {
-          m_testController.stackOpenPage(&m_inputController);
-        } else {
-          m_testController.stackOpenPage(&m_typeController);
-          m_typeController.stackOpenPage(&m_inputController);
-        }
-        m_inputController.stackOpenPage(&m_resultsController);
-      } else {
-        if (Data::isProportion(test)) {
-          m_testController.stackOpenPage(&m_hypothesisController);
-        } else {
-          m_testController.stackOpenPage(&m_typeController);
-          m_typeController.stackOpenPage(&m_hypothesisController);
-        }
-        m_hypothesisController.stackOpenPage(&m_inputController);
-        m_inputController.stackOpenPage(&m_resultsController);
-      }
-      break;
-    case Data::Page::Graph:
-      m_menuController.stackOpenPage(&m_testController);
-      if (test == Data::Test::Categorical) {
-        m_testController.stackOpenPage(&m_categoricalTypeController);
-        if (categoricalType == Data::CategoricalType::Goodness) {
-          m_categoricalTypeController.stackOpenPage(&m_inputGoodnessController);
-          m_inputGoodnessController.stackOpenPage(&m_resultsController);
-        } else {
-          m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController);
-          m_inputHomogeneityController.stackOpenPage(&m_homogeneityResultsController);
-          m_homogeneityResultsController.stackOpenPage(&m_resultsController);
-        }
-      } else if (subapp == Data::SubApp::Intervals) {
-        if (Data::isProportion(test)) {
-          m_testController.stackOpenPage(&m_inputController);
-        } else {
-          m_testController.stackOpenPage(&m_typeController);
-          m_typeController.stackOpenPage(&m_inputController);
-        }
-        m_inputController.stackOpenPage(&m_resultsController);
-      } else {
-        if (Data::isProportion(test)) {
-          m_testController.stackOpenPage(&m_hypothesisController);
-        } else {
-          m_testController.stackOpenPage(&m_typeController);
-          m_typeController.stackOpenPage(&m_hypothesisController);
-        }
-        m_hypothesisController.stackOpenPage(&m_inputController);
-        m_inputController.stackOpenPage(&m_resultsController);
-      }
-      assert(!(subapp == Data::SubApp::Tests && ExamModeConfiguration::testsGraphResultsAreForbidden()));
-      m_resultsController.stackOpenPage(&m_statisticGraphController);
-      break;
+  Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> * queue = snapshot()->pageQueue();
+  int queueLength = queue->length();
+  Escher::ViewController * currentController = &m_menuController;
+  for (int i = 0; i < queueLength; i++) {
+    /* The queue is refilled dynamically when "stackOpenPage"ing which prevents
+     * from popping until the queue is empty. */
+    Escher::ViewController * controller = queue->queuePop();
+    currentController->stackOpenPage(controller);
   }
   Escher::App::didBecomeActive(windows);
 }
 
+#if 0
 void App::initTableSelections(Data::Page page,
                               Data::SubApp subapp,
                               Data::Test test,
@@ -294,6 +162,16 @@ void App::initTableSelections(Data::Page page,
     }
   }
 }
+#endif
+
+void App::willOpenPage(ViewController * controller) {
+  snapshot()->pageQueue()->push(controller);
+}
+
+void App::didExitPage(ViewController * controller) {
+  ViewController * c = snapshot()->pageQueue()->stackPop();
+  assert(c == controller);
+}
 
 void App::cleanBuffer(DynamicCellsDataSourceDestructor * destructor) {
   assert(destructor);
@@ -308,26 +186,12 @@ const App::Descriptor * App::Snapshot::descriptor() const {
   return &s_descriptor;
 }
 
-App::Snapshot::~Snapshot() {
-  Data::SubApp subApp = navigation()->subapp();
-  if (subApp == Data::SubApp::Probability) {
-    m_data.distribution()->~Distribution();
-    m_data.calculation()->~Calculation();
-  } else if (subApp == Data::SubApp::Tests || subApp == Data::SubApp::Intervals) {
-    m_data.statistic()->~Statistic();
-  }
-}
-
 void App::Snapshot::tidy() {
-  Data::SubApp subApp = navigation()->subapp();
-  if (subApp == Data::SubApp::Tests || subApp == Data::SubApp::Intervals) {
-    m_data.statistic()->tidy();
-  }
+  inference()->tidy();
 }
 
 void App::Snapshot::reset() {
-  navigation()->setSubapp(Data::SubApp::Unset);
-  navigation()->setPage(Data::Page::Menu);
+  m_pageQueue.reset();
 }
 
 }  // namespace Probability

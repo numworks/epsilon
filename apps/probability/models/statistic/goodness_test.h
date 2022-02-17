@@ -11,10 +11,13 @@ public:
   CategoricalType categoricalType() const override { return CategoricalType::GoodnessOfFit; }
   I18n::Message title() const override { return I18n::Message::InputGoodnessControllerTitle; }
   int numberOfStatisticParameters() const override { return k_maxNumberOfRows * k_maxNumberOfColumns; }
+  void setGraphTitle(char * buffer, size_t bufferSize) const override;
+  void setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const override;
 
   // Inference
   bool validateInputs() override;
   // Statistic
+  int numberOfResults() const override { return 2; }
   void computeTest() override;
 
   // Chi2Test

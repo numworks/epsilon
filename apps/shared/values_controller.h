@@ -134,6 +134,8 @@ private:
   virtual Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) = 0;
   virtual ViewController * functionParameterController() = 0;
 
+  void deleteColumn() override;
+
   ValuesParameterController m_abscissaParameterController;
 };
 

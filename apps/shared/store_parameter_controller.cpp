@@ -14,14 +14,6 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   SelectableListViewController(parentResponder),
   m_store(store),
   m_series(0),
-  m_confirmPopUpController(
-    Invocation([](void * context, void * parent){
-      StoreParameterController * param = static_cast<StoreParameterController *>(context);
-      param->deleteColumn();
-      return true;
-    }, this),
-    {I18n::Message::ConfirmDeleteColumn1, I18n::Message::ConfirmDeleteColumn2}
-  ),
   m_cells{I18n::Message::FillWithFormula, I18n::Message::ClearColumn},
   m_sortCell(I18n::Message::SortCellLabel),
   m_storeController(storeController),
@@ -55,12 +47,12 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::OK && event != Ion::Events::EXE) {
     return false;
   }
+  popFromStackView();
   switch (selectedRow()) {
     case k_indexOfRemoveColumn:
     {
-      // Display confirmation popup before removing column
-      m_confirmPopUpController.presentModally();
-      return true;
+      m_storeController->tryToDeleteColumn();
+      break;
     }
     case k_indexOfFillFormula:
     {
@@ -74,7 +66,6 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     }
   }
   assert(selectedRow() >= 0 && selectedRow() < k_totalNumberOfCell);
-  popFromStackView();
   return true;
 }
 
@@ -98,16 +89,6 @@ KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
     cell = reusableCell(0, k_defaultCellType);
   }
   return heightForCellAtIndex(cell, index);
-}
-
-void StoreParameterController::deleteColumn() {
-  if (m_xColumnSelected) {
-    m_store->deleteAllPairsOfSeries(m_series);
-  } else {
-    m_store->resetColumn(m_series, 1);
-  }
-  Container::activeApp()->dismissModalViewController();
-  popFromStackView();
 }
 
 void StoreParameterController::popFromStackView() {

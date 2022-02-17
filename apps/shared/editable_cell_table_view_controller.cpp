@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <escher/even_odd_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
+#include <escher/stack_view_controller.h>
 #include <cmath>
 #include <algorithm>
 
@@ -13,9 +14,18 @@ using namespace Poincare;
 namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder) :
-  TabTableController(parentResponder)
-{
-}
+  TabTableController(parentResponder),
+  m_confirmPopUpController(
+    Invocation([](void * context, void * parent){
+      EditableCellTableViewController * param = static_cast<EditableCellTableViewController *>(context);
+      param->deleteColumn();
+      Container::activeApp()->dismissModalViewController();
+      param->selectableTableView()->reloadData();
+      return true;
+    }, this),
+    {I18n::Message::ConfirmDeleteColumn1, I18n::Message::ConfirmDeleteColumn2}
+  )
+{ }
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
@@ -117,6 +127,10 @@ void EditableCellTableViewController::viewWillAppear() {
     selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
     selectCellAtLocation(selColumn, selRow);
   }
+}
+
+void EditableCellTableViewController::tryToDeleteColumn() {
+  m_confirmPopUpController.presentModally();
 }
 
 }

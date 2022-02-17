@@ -56,12 +56,12 @@ ParameterRepresentation FisherDistribution::paramRepresentationAtIndex(int i) co
   switch (i) {
     case ParamsOrder::D1:
     {
-      Poincare::Layout d1 = Poincare::LayoutHelper::String("d1");
+      Poincare::Layout d1 = Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::D1));
       return ParameterRepresentation{d1, I18n::Message::D1FisherDefinition};
     }
     case ParamsOrder::D2:
     {
-      Poincare::Layout d2 = Poincare::LayoutHelper::String("d2");
+      Poincare::Layout d2 = Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::D2));
       return ParameterRepresentation{d2, I18n::Message::D2FisherDefinition};
     }
     default:

@@ -10,6 +10,8 @@ namespace Probability {
 class TwoProportionsZInterval : public Interval {
 friend class TwoProportions;
 public:
+  SignificanceTestType significanceTestType() const override { return SignificanceTestType::TwoProportions; }
+  DistributionType distributionType() const override { return DistributionType::Z; }
   I18n::Message title() const override { return TwoProportions::Title(); }
   // Significance Test: TwoProportions
   void initParameters() override { TwoProportions::InitIntervalParameters(this); }

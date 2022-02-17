@@ -8,6 +8,7 @@ namespace Probability {
 class GoodnessTest final : public Chi2Test {
 public:
   GoodnessTest();
+  CategoricalType categoricalType() const override { return CategoricalType::GoodnessOfFit; }
   I18n::Message title() const override { return I18n::Message::InputGoodnessControllerTitle; }
   int numberOfStatisticParameters() const override { return k_maxNumberOfRows * k_maxNumberOfColumns; }
 

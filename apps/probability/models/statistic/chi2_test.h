@@ -10,17 +10,15 @@
 
 namespace Probability {
 
-enum class CategoricalType {
-  Homogeneity,
-  GoodnessOfFit
-};
-
 class Chi2Test : public Test {
 public:
   Chi2Test();
 
+  SignificanceTestType significanceTestType() const override { return SignificanceTestType::Categorical; }
+  DistributionType distributionType() const override { return DistributionType::Chi2; }
   void initializeCategoricalType(CategoricalType type);
 
+  I18n::Message graphTitleFormat() const override { return DistributionChi2::GraphTitleFormat(); }
   Poincare::Layout testCriticalValueSymbol() override {
     return DistributionChi2::TestCriticalValueSymbol();
   }

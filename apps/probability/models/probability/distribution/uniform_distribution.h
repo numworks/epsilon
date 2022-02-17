@@ -10,6 +10,7 @@ public:
   UniformDistribution() : TwoParameterDistribution(-1.0, 1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::UniformDistribution; }
   Type type() const override { return Type::Uniform; }
+  const char * parameterNameAtIndex(int index) const override { return index == 0 ? "a" : "b"; }
   bool isContinuous() const override { return true; }
   bool isSymmetrical() const override { return true; }
   double meanAbscissa() override { return (m_parameters[0] + m_parameters[1]) / 2.0; }

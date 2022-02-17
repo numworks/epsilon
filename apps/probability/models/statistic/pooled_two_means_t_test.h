@@ -9,6 +9,7 @@ namespace Probability {
 
 class PooledTwoMeansTTest : public TwoMeansTTest {
 public:
+  DistributionType distributionType() const override { return DistributionType::TPooled; }
   I18n::Message title() const override { return PooledTwoMeans::Title(); }
   void computeTest() override { PooledTwoMeans::ComputeTest(this); }
 };

@@ -1,7 +1,6 @@
 #ifndef PROBABILITY_MODELS_STATISTIC_TEST_H
 #define PROBABILITY_MODELS_STATISTIC_TEST_H
 
-#include "hypothesis_params.h"
 #include "statistic.h"
 
 namespace Probability {
@@ -18,16 +17,29 @@ public:
     Statistic(),
     m_testCriticalValue(NAN),
     m_pValue(NAN) {}
+  SubApp subApp() const override { return SubApp::Test; }
 
   void initializeSignificanceTest(SignificanceTestType type) override;
+  I18n::Message statisticTitle() const override { return I18n::Message::Tests; }
+  I18n::Message statisticBasicTitle() const override { return I18n::Message::Test; }
+  I18n::Message zStatisticMessage() const override { return I18n::Message::ZTest; }
+  I18n::Message tOrZStatisticMessage() const override { return I18n::Message::TOrZTest; }
+  I18n::Message tDistributionName() const override { return I18n::Message::TTest; }
+  I18n::Message tPooledDistributionName() const override { return I18n::Message::ZTest; }
+  I18n::Message zDistributionName() const override { return I18n::Message::PooledTTest; }
+  void setGraphTitle(char * buffer, size_t bufferSize) const override;
+
   void compute() override;
 
   // Evaluation
   float evaluateAtAbscissa(float x) const override { return canonicalDensityFunction(x); }
   void initThreshold() override { m_threshold = 0.05; }
+  I18n::Message thresholdName() const override { return I18n::Message::GreekAlpha; }
+  I18n::Message thresholdDescription() const override { return I18n::Message::SignificanceLevel; }
 
   // Input
-  HypothesisParams * hypothesisParams() { return &m_hypothesisParams; }
+bool hasHypothesisParameters() const override { return true; }
+  HypothesisParams * hypothesisParams() override { return &m_hypothesisParams; }
   virtual bool isValidH0(double h0) { return true; }
 
   // Test statistic
@@ -41,18 +53,25 @@ public:
    * of landing is inferior to a given significance level. */
   bool canRejectNull();
 
+  // Output
+  int numberOfResults() const override { return 2 + hasDegreeOfFreedom(); }
+  void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) override;
+
   // Range
   constexpr static float k_displayWidthToSTDRatio = 5.f;
 
 protected:
   float computeXMin() const override { return -k_displayWidthToSTDRatio; }
   float computeXMax() const override { return k_displayWidthToSTDRatio; }
+  virtual I18n::Message graphTitleFormat() const = 0;
   virtual void computeTest() = 0;
   // Hypothesis chosen
   HypothesisParams m_hypothesisParams;
   // Cached values
   double m_testCriticalValue;
   double m_pValue;
+private:
+  enum ResultOrder { Z, PValue, TestDegree };
 };
 
 }  // namespace Probability

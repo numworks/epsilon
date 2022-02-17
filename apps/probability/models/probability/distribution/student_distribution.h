@@ -4,6 +4,7 @@
 #include "one_parameter_distribution.h"
 #include <float.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/layout_helper.h>
 
 namespace Probability {
 
@@ -12,6 +13,7 @@ public:
   StudentDistribution() : OneParameterDistribution(1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::StudentDistribution; }
   Type type() const override { return Type::Student; }
+  const char * parameterNameAtIndex(int index) const override { return "k"; }
   bool isContinuous() const override { return true; }
   bool isSymmetrical() const override { return true; }
   double meanAbscissa() override { return 0.0; }
@@ -21,7 +23,7 @@ public:
   double cumulativeDistributiveInverseForProbability(double * distribution) override;
 private:
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {
-    return ParameterRepresentation{Poincare::CodePointLayout::Builder('k'), I18n::Message::DegreesOfFreedomDefinition};
+    return ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::DegreesOfFreedomDefinition};
   }
   float computeXMin() const override;
   float computeXMax() const override;

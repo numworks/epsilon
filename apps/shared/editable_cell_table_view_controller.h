@@ -22,6 +22,8 @@ public:
   void didBecomeFirstResponder() override;
   void tryToDeleteColumn();
 
+  virtual bool handleEvent(Ion::Events::Event event) override;
+
 protected:
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
@@ -35,6 +37,7 @@ private:
   virtual int numberOfElementsInColumn(int columnIndex) const = 0;
   virtual int maxNumberOfElements() const = 0;
   virtual void deleteColumn() = 0;
+  virtual bool isColumnDeletable(int columnIndex) { return true; }
 
   PopUpController m_confirmPopUpController;
 };

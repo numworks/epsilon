@@ -170,6 +170,9 @@ const char * StoreController::title() {
 }
 
 bool StoreController::handleEvent(Ion::Events::Event event) {
+  if (EditableCellTableViewController::handleEvent(event)) {
+    return true;
+  }
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
     assert(selectedRow() == -1);

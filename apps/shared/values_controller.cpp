@@ -68,6 +68,9 @@ void ValuesController::viewDidDisappear() {
 // Responder
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
+  if (EditableCellTableViewController::handleEvent(event)) {
+    return true;
+  }
   if (event == Ion::Events::Down) {
     if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
@@ -359,7 +362,7 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
 }
 
 void ValuesController::deleteColumn() {
-   intervalParameterController()->interval()->clear();
+   intervalAtColumn(selectedColumn())->clear();
 }
 
 }

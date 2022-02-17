@@ -135,6 +135,7 @@ private:
   virtual ViewController * functionParameterController() = 0;
 
   void deleteColumn() override;
+  bool isColumnDeletable(int columnIndex) override { return columnIndex == 0;}
 
   ValuesParameterController m_abscissaParameterController;
 };

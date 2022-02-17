@@ -17,6 +17,43 @@ namespace Ion {
 namespace Events {
 
 static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
+  SDL_Scancode scancode = event.keysym.scancode;
+  SDL_Keycode sym = event.keysym.sym;
+  Uint16 mod = event.keysym.mod;
+
+  /* Handle Dead keys https://en.wikipedia.org/wiki/Dead_key
+   * Dead keys are painful to handle because they don't really match our model.
+   * For example, we want to act immediatly when the user inputs a '^'. And as
+   * an extra annoyance, dead key support is inconsistent across SDL platforms
+   * and even across browsers in Emscripten. We therefore have to resort to
+   * hackish solutions.
+   * First, we need to detect that a dead key has been pressed. They happen to
+   * trigger a situation where we have a SDL_KEYDOWN event but we don't have a
+   * corresponding SDL_TEXTINPUT event. Note that this is also the case for
+   * modifier keys, F1-12 keys, arrows, etc... */
+  if (SDL_HasEvent(SDL_TEXTINPUT) == SDL_FALSE && mod == KMOD_NONE) {
+    /* At this point we *might* be handling a dead key. */
+    /* If we're handling a dead key, we need to flush the text input buffer,
+     * otherwise this dead key will affect the next key press. */
+    SDL_StopTextInput();
+    SDL_StartTextInput();
+    /* We now need to figure out which dead key has been pressed. This, of
+     * course, will be super hackish since SDL doesn't have any built-in support
+     * for those keys and we don't have any text data to match against. */
+    if (scancode == SDL_SCANCODE_GRAVE && sym == SDLK_BACKQUOTE && mod == KMOD_NONE) {
+      // Caret key (^) on French Azerty keyboard running Firefox under macOS
+      return Power;
+    }
+    if (scancode == SDL_SCANCODE_LEFTBRACKET && sym == SDLK_LEFTBRACKET && mod == KMOD_NONE) {
+      // Caret key (^) key on French Azerty keyboard running Chrome or Safari under macOS
+      return Power;
+    }
+    if (scancode == SDL_SCANCODE_LEFTBRACKET && sym == SDLK_CARET && mod == KMOD_NONE) {
+      // Caret key (^) key on French Azerty keyboard running native macOS
+      return Power;
+    }
+  }
+
   if (event.keysym.mod & (KMOD_CTRL|KMOD_GUI)) {
     switch (event.keysym.sym) {
       case SDLK_x:
@@ -100,7 +137,7 @@ static constexpr Event sEventForASCIICharAbove32[95] = {
   None, UpperA, UpperB, UpperC, UpperD, UpperE, UpperF, UpperG,
   UpperH, UpperI, UpperJ, UpperK, UpperL, UpperM, UpperN, UpperO,
   UpperP, UpperQ, UpperR, UpperS, UpperT, UpperU, UpperV, UpperW,
-  UpperX, UpperY, UpperZ, LeftBracket, None, RightBracket, Power, Underscore,
+  UpperX, UpperY, UpperZ, LeftBracket, None, RightBracket, None, Underscore,
   None, LowerA, LowerB, LowerC, LowerD, LowerE, LowerF, LowerG,
   LowerH, LowerI, LowerJ, LowerK, LowerL, LowerM, LowerN, LowerO,
   LowerP, LowerQ, LowerR, LowerS, LowerT, LowerU, LowerV, LowerW,

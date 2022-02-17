@@ -11,7 +11,6 @@ using namespace Shared;
 
 namespace Regression {
 
-static_assert(Model::k_numberOfModels == 11, "Number of models changed, Regression::Store() needs to adapt");
 static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regression::Store() needs to adapt (m_seriesChecksum)");
 
 Store::Store() :
@@ -292,9 +291,9 @@ double Store::correlationCoefficient(int series) const {
   return (v0 == 0.0 || v1 == 0.0) ? 1.0 : covariance(series) / std::sqrt(v0 * v1);
 }
 
-void Store::sortIndexByColumn(int series, int column, int * sortedIndex, int startIndex, int endIndex) const {
+void Store::sortIndexByColumn(int * sortedIndex, int series, int column, int startIndex, int endIndex) const {
   assert(startIndex < endIndex);
-  //Following lines is an insertion-sort algorithm which has the advantage of being in-place and efficient when already sorted.
+  // Following lines is an insertion-sort algorithm which has the advantage of being in-place and efficient when already sorted.
   int i = startIndex + 1;
   while (i < endIndex) {
     double x = get(series, column, sortedIndex[i]);
@@ -316,8 +315,9 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
    * With proportional regression or badly fitted models, R2 can technically be
    * negative. R2<0 means that the regression is less effective than a
    * constant set to the series average. It should not happen with regression
-   * models that can fit a constant observation. 
-   * R2 is not important for the median model.
+   * models that can fit a constant observation.
+   * The median-median model can as well be badly fitted.
+   * We still keep the possibility of computing R2 for these models thought.
    * */
   // Residual sum of squares
   double ssr = 0;
@@ -352,6 +352,7 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
 
 Model * Store::regressionModel(int index) {
   Model * models[Model::k_numberOfModels] = {&m_linearModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel, &m_medianModel};
+  static_assert(sizeof(models) / sizeof(Model *) == Model::k_numberOfModels, "Inconsistency between the number of models in the store and the real number.");
   return models[index];
 }
 

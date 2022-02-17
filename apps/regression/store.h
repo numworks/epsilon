@@ -72,7 +72,7 @@ public:
   double xValueForYValue(int series, double y, Poincare::Context * globalContext);
   double correlationCoefficient(int series) const; // R
 
-  void sortIndexByColumn(int series, int column, int * sortedIndex, int startIndex, int endIndex) const;
+  void sortIndexByColumn(int * sortedIndex, int series, int column, int startIndex, int endIndex) const;
 
   // To speed up computation during drawings, float is returned.
   float maxValueOfColumn(int series, int i) const;

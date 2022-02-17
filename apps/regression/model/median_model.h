@@ -17,8 +17,7 @@ public:
   int numberOfCoefficients() const override { return 2; }
 
 private:
-  double getMedianValue(Store * store, int series, int * sortedIndex, int column, int groupSize, int offset);
-
+  double getMedianValue(Store * store, int * sortedIndex, int series, int column, int startIndex, int endIndex);
 };
 
 }

@@ -1,4 +1,5 @@
 #include "text_field_delegate_app.h"
+#include "continuous_function.h"
 #include <apps/apps_container.h>
 #include <apps/constant.h>
 #include <apps/shared/poincare_helpers.h>
@@ -13,6 +14,10 @@ namespace Shared {
 
 Context * TextFieldDelegateApp::localContext() {
   return AppsContainer::sharedAppsContainer()->globalContext();
+}
+
+CodePoint TextFieldDelegateApp::XNT() {
+  return ContinuousFunction::k_cartesianSymbol;
 }
 
 bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
@@ -68,7 +73,7 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder
     if (XNTIndex > 0) {
       // Cycle through XNT CodePoints, starting from default code point position
       constexpr size_t k_numberOfCodePoints = 4;
-      constexpr CodePoint XNTCodePoints[k_numberOfCodePoints] = {'x', 'n', 't', UCodePointGreekSmallLetterTheta};
+      constexpr CodePoint XNTCodePoints[k_numberOfCodePoints] = {ContinuousFunction::k_cartesianSymbol, 'n', ContinuousFunction::k_parametricSymbol, ContinuousFunction::k_polarSymbol};
       for (size_t i = 0; i < k_numberOfCodePoints; i++) {
         if (XNTCodePoints[i] == defaultXNT) {
           break;

@@ -27,6 +27,10 @@ namespace Shared {
 
 constexpr char ContinuousFunction::k_unknownName[2];
 constexpr char ContinuousFunction::k_ordinateName[2];
+constexpr CodePoint ContinuousFunction::k_cartesianSymbol;
+constexpr CodePoint ContinuousFunction::k_parametricSymbol;
+constexpr CodePoint ContinuousFunction::k_polarSymbol;
+constexpr CodePoint ContinuousFunction::k_unnamedExpressionSymbol;
 
 /* ContinuousFunction - Public */
 
@@ -133,11 +137,11 @@ I18n::Message ContinuousFunction::plotTypeMessage() {
 CodePoint ContinuousFunction::symbol() const {
   switch (symbolType()) {
   case SymbolType::T:
-    return 't';
+    return k_parametricSymbol;
   case SymbolType::Theta:
-    return UCodePointGreekSmallLetterTheta;
+    return k_polarSymbol;
   default:
-    return 'x';
+    return k_cartesianSymbol;
   }
 }
 
@@ -182,7 +186,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
    * ExpressionModelHandle::setContent implementation to avoid calling symbol()
    * and any unnecessary plot type update at this point. See comment in
    * ContinuousFunction::Model::buildExpressionFromText. */
-  Ion::Storage::Record::ErrorStatus error = editableModel()->setContent(this, c, context, 'x');
+  Ion::Storage::Record::ErrorStatus error = editableModel()->setContent(this, c, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     udpateModel(context);
     error = m_model.renameRecordIfNeeded(this, c, context, symbol());
@@ -657,11 +661,10 @@ bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equatio
     return false;
   }
   Expression functionSymbol = e.childAtIndex(0);
-  return (functionSymbol.isIdenticalTo(Symbol::Builder('x'))
-          || (equationType == ExpressionNode::Type::Equal
-              && (functionSymbol.isIdenticalTo(
-                      Symbol::Builder(UCodePointGreekSmallLetterTheta))
-                  || functionSymbol.isIdenticalTo(Symbol::Builder('t')))));
+  return functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_cartesianSymbol))
+         || (equationType == ExpressionNode::Type::Equal
+             && (functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_polarSymbol))
+                 || functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol))));
 }
 
 Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
@@ -696,12 +699,12 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
             && record->fullName()[functionNameLength] == Ion::Storage::k_dotChar)) {
       Expression functionSymbol = leftExpression.childAtIndex(0);
       // Set the model's plot type.
-      if (functionSymbol.isIdenticalTo(Symbol::Builder('t'))) {
+      if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
         computedPlotType = PlotType::Parametric;
-      } else if (functionSymbol.isIdenticalTo(Symbol::Builder('x'))) {
+      } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
         computedPlotType = PlotType::Cartesian;
       } else {
-        assert((functionSymbol.isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))));
+        assert((functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))));
         computedPlotType = PlotType::Polar;
       }
       result = result.childAtIndex(1);
@@ -792,8 +795,8 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
 Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const char * c, CodePoint symbol, Poincare::Context * context) const {
   /* The symbol parameter is discarded in this implementation. Either there is a
    * valid named left expression and the symbol will be extracted, either the
-   * symbol should be 'x', the default symbol used in unnamed expressions. */
-  assert(symbol == 'x');
+   * symbol should be the default symbol used in unnamed expressions. */
+  assert(symbol == k_unnamedExpressionSymbol);
   Expression noContextExpression;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
@@ -810,13 +813,13 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
       // Extract the CodePoint function's symbol. We know it is either x, t or θ
       assert(functionSymbol.type() == ExpressionNode::Type::Symbol);
       // Override the symbol so that it can be replaced in the right expression
-      if (functionSymbol.isIdenticalTo(Symbol::Builder('x'))) {
-        symbol = 'x';
-      } else if (functionSymbol.isIdenticalTo(Symbol::Builder('t'))) {
-        symbol = 't';
+      if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
+        symbol = k_cartesianSymbol;
+      } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
+        symbol = k_parametricSymbol;
       } else {
-        assert((functionSymbol.isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))));
-        symbol = UCodePointGreekSmallLetterTheta;
+        assert((functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))));
+        symbol = k_polarSymbol;
       }
     } else {
       // Fall back on default ExpressionModel::buildExpressionFromText behavior

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/print.h>
 #include <poincare/vertical_offset_layout.h>
 
 #include <new>
@@ -15,6 +16,11 @@
 #include "two_proportions_z_test.h"
 
 namespace Probability {
+
+void Test::setGraphTitle(char * buffer, size_t bufferSize) const {
+  const char * format = I18n::translate(graphTitleFormat());
+  Poincare::Print::customPrintf(buffer, bufferSize, format, testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+}
 
 void Test::initializeSignificanceTest(SignificanceTestType testType) {
   this->~Test();
@@ -49,6 +55,26 @@ void Test::compute() {
 bool Test::canRejectNull() {
   assert(m_threshold >= 0 && m_threshold <= 1);
   return pValue() <= m_threshold;
+}
+
+void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) {
+  switch (index) {
+    case ResultOrder::Z:
+      *value = testCriticalValue();
+      *message = testCriticalValueSymbol();
+      *subMessage = I18n::Message::TestStatistic;
+      break;
+    case ResultOrder::PValue:
+      *value = pValue();
+      *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::PValue));
+      break;
+    case ResultOrder::TestDegree:
+      *value = degreeOfFreedom();
+      *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
+      break;
+    default:
+      assert(false);
+  }
 }
 
 }  // namespace Probability

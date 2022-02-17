@@ -1,6 +1,7 @@
 #include "binomial_distribution.h"
 #include <poincare/binomial_distribution.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/layout_helper.h>
 #include <assert.h>
 #include <cmath>
 
@@ -44,12 +45,12 @@ ParameterRepresentation BinomialDistribution::paramRepresentationAtIndex(int i) 
   switch (i) {
     case ParamsOrder::N:
     {
-      Poincare::Layout n = Poincare::CodePointLayout::Builder('n');
+      Poincare::Layout n = Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::N));
       return ParameterRepresentation{n, I18n::Message::RepetitionNumber};
     }
     case ParamsOrder::P:
     {
-      Poincare::Layout p = Poincare::CodePointLayout::Builder('p');
+      Poincare::Layout p = Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::P));
       return ParameterRepresentation{p, I18n::Message::SuccessProbability};
     }
     default:

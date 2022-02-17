@@ -13,7 +13,7 @@ public:
   I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;
-  double upperBound() override { return m_upperBound; }
+  double upperBound() const override { return m_upperBound; }
 private:
   void compute(int indexKnownElement) override;
   double m_upperBound;

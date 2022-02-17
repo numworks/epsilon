@@ -10,6 +10,7 @@ public:
   NormalDistribution() : TwoParameterDistribution(0.0, 1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::NormalDistribution; }
   Type type() const override { return Type::Normal; }
+  const char * parameterNameAtIndex(int index) const override { return index == 0 ? "μ" : "σ"; }
   bool isContinuous() const override { return true; }
   bool isSymmetrical() const override { return true; }
   double meanAbscissa() override { return m_parameters[0]; }

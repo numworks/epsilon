@@ -9,8 +9,13 @@ namespace Probability {
 
 class OneMeanZInterval : public Interval {
 public:
+  SignificanceTestType significanceTestType() const override { return SignificanceTestType::OneMean; }
+  DistributionType distributionType() const override { return DistributionType::Z; }
   I18n::Message title() const override { return OneMean::ZTitle(); }
   // Significance Test: OneMean
+  int numberOfAvailableDistributions() const override { return OneMean::NumberOfAvailableDistributions(); }
+  I18n::Message distributionTitle() const override { return OneMean::DistributionTitle(); }
+  I18n::Message distributionDescription() const override { return OneMean::IntervalDistributionDescription(); }
   void initParameters() override { OneMean::InitZIntervalParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override { return OneMean::ZAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {

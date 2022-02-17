@@ -49,9 +49,8 @@ public:
   DistributionBuffer& operator=(const DistributionBuffer& other) = delete;
   DistributionBuffer& operator=(DistributionBuffer&& other) = delete;
 
-  Distribution * distribution() {
-    return reinterpret_cast<Distribution *>(this);
-  }
+  Distribution * distribution() { return reinterpret_cast<Distribution *>(this); }
+
 private:
   BinomialDistribution m_binomialDistribution;
   UniformDistribution m_uniformDistribution;
@@ -113,9 +112,7 @@ public:
   StatisticBuffer& operator=(const StatisticBuffer& other) = delete;
   StatisticBuffer& operator=(StatisticBuffer&& other) = delete;
 
-  Statistic * statistic() {
-    return reinterpret_cast<Statistic *>(this);
-  }
+  Statistic * statistic() { return reinterpret_cast<Statistic *>(this); }
 private:
   OneMeanTInterval m_oneMeanTInterval;
   OneMeanTTest m_oneMeanTTest;

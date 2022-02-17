@@ -11,9 +11,16 @@ class TwoMeansTTest : public Test {
 friend class TwoMeans;
 public:
   void initializeDistribution(DistributionType distribution) override;
+  SignificanceTestType significanceTestType() const override { return SignificanceTestType::TwoMeans; }
+  DistributionType distributionType() const override { return DistributionType::T; }
   I18n::Message title() const override { return TwoMeans::TTitle(); }
+  I18n::Message graphTitleFormat() const override { return DistributionT::GraphTitleFormat(); }
 
   // Significance Test: TwoMeans
+  int numberOfAvailableDistributions() const override { return TwoMeans::NumberOfAvailableDistributions(); }
+  I18n::Message distributionTitle() const override { return TwoMeans::DistributionTitle(); }
+  I18n::Message distributionDescription() const override { return TwoMeans::TestDistributionDescription(); }
+  const char * hypothesisSymbol() override { return TwoMeans::HypothesisSymbol(); }
   void initParameters() override { TwoMeans::InitTestParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override { return TwoMeans::TAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {

@@ -10,8 +10,12 @@ namespace Probability {
 class TwoMeansZInterval : public Interval {
 friend class TwoMeans;
 public:
+  SignificanceTestType significanceTestType() const override { return SignificanceTestType::TwoMeans; }
+  DistributionType distributionType() const override { return DistributionType::Z; }
   I18n::Message title() const override { return TwoMeans::ZTitle(); }
   // Significance Test: TwoMeans
+  int numberOfAvailableDistributions() const override { return TwoMeans::NumberOfAvailableDistributions(); }
+  I18n::Message distributionDescription() const override { return TwoMeans::IntervalDistributionDescription(); }
   void initParameters() override { TwoMeans::InitIntervalParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override { return TwoMeans::ZAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {

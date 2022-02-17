@@ -3,6 +3,7 @@
 
 #include "one_parameter_distribution.h"
 #include <poincare/code_point_layout.h>
+#include <poincare/layout_helper.h>
 
 namespace Probability {
 
@@ -15,6 +16,7 @@ public:
   GeometricDistribution() : OneParameterDistribution(0.5) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::GeometricDistribution; }
   Type type() const override { return Type::Geometric; }
+  const char * parameterNameAtIndex(int index) const override { return "p"; }
   bool isContinuous() const override { return false; }
   bool isSymmetrical() const override { return false; }
   float evaluateAtAbscissa(float x) const override {
@@ -24,7 +26,7 @@ public:
   double defaultComputedValue() const override { return 1.0; }
 private:
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {
-    return ParameterRepresentation{Poincare::CodePointLayout::Builder('p'), I18n::Message::SuccessProbability};
+    return ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::SuccessProbability};
   }
   double evaluateAtDiscreteAbscissa(int k) const override {
     return templatedApproximateAtAbscissa<double>(static_cast<double>(k));

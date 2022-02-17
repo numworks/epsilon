@@ -8,8 +8,10 @@ namespace Probability {
 class Distribution : public Inference {
 public:
   using Inference::Inference;
+  SubApp subApp() const override { return SubApp::Probability; }
 
   enum class Type : uint8_t{
+    // Order matters (displayed order)
     Binomial,
     Uniform,
     Exponential,
@@ -29,6 +31,7 @@ public:
 
   // Parameters
   void setParameterAtIndex(double f, int index) override;
+  virtual const char * parameterNameAtIndex(int index) const = 0;
 
   // Evaluation
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;

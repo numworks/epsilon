@@ -25,8 +25,8 @@ public:
   virtual I18n::Message legendForParameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(double f, int index) = 0;
   virtual double parameterAtIndex(int index) = 0;
-  virtual double lowerBound();
-  virtual double upperBound();
+  virtual double lowerBound() const;
+  virtual double upperBound() const;
 protected:
   virtual void compute(int indexKnownElement) = 0;
   Distribution * m_distribution;

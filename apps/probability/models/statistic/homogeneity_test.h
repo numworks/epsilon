@@ -12,6 +12,7 @@ public:
   constexpr static int k_maxNumberOfRows = 9;
 
   HomogeneityTest();
+  CategoricalType categoricalType() const override { return CategoricalType::Homogeneity; }
   I18n::Message title() const override { return I18n::Message::InputHomogeneityControllerTitle; }
 
   // Statistic

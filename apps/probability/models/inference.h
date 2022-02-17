@@ -25,8 +25,12 @@ public:
     Test,
     Interval
   };
+  virtual void tidy() {}
   virtual I18n::Message title() const = 0;
   static void Initialize(Inference * inference, SubApp subApp);
+  /* This poor man's RTTI is required only to avoid reinitializing the model
+   * everytime we enter a subapp. */
+  virtual SubApp subApp() const = 0;
 
   // Input parameters
   virtual int numberOfParameters() = 0;

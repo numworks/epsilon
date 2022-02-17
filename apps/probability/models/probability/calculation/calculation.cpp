@@ -27,11 +27,11 @@ void Calculation::Initialize(Calculation * calculation, Type type, Distribution 
   }
 }
 
-double Calculation::lowerBound() {
+double Calculation::lowerBound() const {
   return -INFINITY;
 }
 
-double Calculation::upperBound() {
+double Calculation::upperBound() const {
   return INFINITY;
 }
 

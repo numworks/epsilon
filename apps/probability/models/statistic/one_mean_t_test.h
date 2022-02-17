@@ -9,10 +9,17 @@ namespace Probability {
 
 class OneMeanTTest : public Test {
 public:
+  SignificanceTestType significanceTestType() const override { return SignificanceTestType::OneMean; }
+  DistributionType distributionType() const override { return DistributionType::T; }
   void initializeDistribution(DistributionType distribution) override;
   I18n::Message title() const override { return OneMean::TTitle(); }
+  I18n::Message graphTitleFormat() const override { return DistributionT::GraphTitleFormat(); }
 
   // Significance Test: OneMean
+  int numberOfAvailableDistributions() const override { return OneMean::NumberOfAvailableDistributions(); }
+  I18n::Message distributionTitle() const override { return OneMean::DistributionTitle(); }
+  I18n::Message distributionDescription() const override { return OneMean::TestDistributionDescription(); }
+  const char * hypothesisSymbol() override { return OneMean::HypothesisSymbol(); }
   void initParameters() override { OneMean::InitTestParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override { return OneMean::TAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {

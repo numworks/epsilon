@@ -4,6 +4,7 @@
 #include <cmath>
 #include <float.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/layout_helper.h>
 
 namespace Probability {
 
@@ -68,12 +69,12 @@ ParameterRepresentation UniformDistribution::paramRepresentationAtIndex(int i) c
   switch (i) {
     case ParamsOrder::A:
     {
-      Poincare::Layout a = Poincare::CodePointLayout::Builder('a');
+      Poincare::Layout a = Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::A));
       return ParameterRepresentation{a, I18n::Message::IntervalADescr};
     }
     case ParamsOrder::B:
     {
-      Poincare::Layout b = Poincare::CodePointLayout::Builder('b');
+      Poincare::Layout b =  Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::B));
       return ParameterRepresentation{b, I18n::Message::IntervalBDescr};
     }
     default:

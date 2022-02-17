@@ -2,6 +2,7 @@
 #define PROBABILITY_MODELS_STATISTIC_STATISTIC_H
 
 #include <probability/models/inference.h>
+#include "hypothesis_params.h"
 
 namespace Probability {
 
@@ -14,7 +15,8 @@ enum class SignificanceTestType {
   TwoMeans,
   OneProportion,
   TwoProportions,
-  Categorical
+  Categorical,
+  NumberOfSignificanceTestTypes
 };
 
 enum class DistributionType {
@@ -24,22 +26,44 @@ enum class DistributionType {
   Chi2
 };
 
+enum class CategoricalType {
+  Homogeneity,
+  GoodnessOfFit
+};
+
 class Statistic : public Inference {
 friend class DistributionInterface;
 public:
+  constexpr static int k_numberOfSignificanceTestType = 5;
+  static_assert(k_numberOfSignificanceTestType == static_cast<int>(SignificanceTestType::NumberOfSignificanceTestTypes), "k_numberOfSignificanceTestType doesn't agree with SignificanceTestType::NumberOfSignificanceTestTypes");
+
   Statistic() :
     m_threshold(-1),
     m_degreesOfFreedom(NAN) {}
 
-  enum class Type {
-    Probability,
-    Tests,
-    Intervals
-  };
+  virtual int numberOfSignificancesTestTypes() const { return k_numberOfSignificanceTestType; }
+  virtual int numberOfAvailableDistributions() const { return 1; }
+
+  virtual I18n::Message statisticTitle() const = 0;
+  virtual I18n::Message statisticBasicTitle() const = 0;
+  virtual I18n::Message zStatisticMessage() const = 0;
+  virtual I18n::Message tOrZStatisticMessage() const = 0;
+  virtual I18n::Message distributionTitle() const { return I18n::Message::Default; }
+  virtual I18n::Message distributionDescription() const { return I18n::Message::Default; }
+  virtual bool hasHypothesisParameters() const { return false; }
+  virtual HypothesisParams * hypothesisParams() { assert(false); return nullptr; }
+  virtual const char * hypothesisSymbol() { assert(false); return nullptr; }
+  virtual I18n::Message tDistributionName() const = 0;
+  virtual I18n::Message tPooledDistributionName() const = 0;
+  virtual I18n::Message zDistributionName() const = 0;
+  virtual void setGraphTitle(char * buffer, size_t bufferSize) const = 0;
 
   /* Instantiate correct Statistic based on SignificanceTestType, DistributionType and CategoricalType. */
+  virtual SignificanceTestType significanceTestType() const = 0;
   virtual void initializeSignificanceTest(SignificanceTestType testType) = 0;
+  virtual DistributionType distributionType() const = 0;
   virtual void initializeDistribution(DistributionType distribution) { assert(false); }
+  virtual CategoricalType categoricalType() const { assert(false); return CategoricalType::Homogeneity; }
   virtual void initParameters() = 0;
 
   // Input
@@ -51,10 +75,14 @@ public:
 
   int indexOfThreshold() const{ return numberOfStatisticParameters(); }
   virtual void initThreshold() = 0;
+  virtual I18n::Message thresholdName() const = 0;
+  virtual I18n::Message thresholdDescription() const = 0;
   virtual Poincare::Layout testCriticalValueSymbol() = 0;
 
   // Outputs
-  bool hasDegreeOfFreedom() { return !std::isnan(m_degreesOfFreedom); }
+  virtual int numberOfResults() const = 0;
+  virtual void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) = 0;
+  bool hasDegreeOfFreedom() const { return !std::isnan(m_degreesOfFreedom); }
   double degreeOfFreedom() { return m_degreesOfFreedom; }
 
   // Computation

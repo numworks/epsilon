@@ -13,8 +13,8 @@ public:
   I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;
-  double lowerBound() override { return m_abscissa; }
-  double upperBound() override { return m_abscissa; }
+  double lowerBound() const override { return m_abscissa; }
+  double upperBound() const override { return m_abscissa; }
 private:
   void compute(int indexKnownElement) override;
   double m_abscissa;

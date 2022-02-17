@@ -10,8 +10,16 @@ namespace Probability {
 class TwoMeansZTest : public Test {
 friend class TwoMeans;
 public:
+  SignificanceTestType significanceTestType() const override { return SignificanceTestType::TwoMeans; }
+  DistributionType distributionType() const override { return DistributionType::Z; }
   I18n::Message title() const override { return TwoMeans::ZTitle(); }
+  I18n::Message graphTitleFormat() const override { return DistributionZ::GraphTitleFormat(); }
+
   // Significance Test: TwoMeans
+  int numberOfAvailableDistributions() const override { return TwoMeans::NumberOfAvailableDistributions(); }
+  I18n::Message distributionTitle() const override { return TwoMeans::DistributionTitle(); }
+  I18n::Message distributionDescription() const override { return TwoMeans::TestDistributionDescription(); }
+  const char * hypothesisSymbol() override { return TwoMeans::HypothesisSymbol(); }
   void initParameters() override { TwoMeans::InitTestParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override { return TwoMeans::ZAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {

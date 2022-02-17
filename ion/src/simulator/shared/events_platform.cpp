@@ -17,12 +17,6 @@ namespace Ion {
 namespace Events {
 
 static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
-  /* If an event is detected, we want to remove the Shift modifier to mimic the
-   * device behaviour. If no event was detected, we restore the previous
-   * ShiftAlphaStatus. */
-  ShiftAlphaStatus previousShiftAlphaStatus = shiftAlphaStatus();
-  removeShift();
-
   if (event.keysym.mod & (KMOD_CTRL|KMOD_GUI)) {
     switch (event.keysym.sym) {
       case SDLK_x:
@@ -95,8 +89,6 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
     case SDLK_BACKSPACE:
       return Backspace;
   }
-  // No event was detected, restore the previous ShiftAlphaStatus.
-  setShiftAlphaStatus(previousShiftAlphaStatus);
   return None;
 }
 
@@ -116,13 +108,6 @@ static constexpr Event sEventForASCIICharAbove32[95] = {
 };
 
 static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
-  /* We remove the shift, otherwise it might stay activated when it
-   * shouldn't. For instance on a French keyboard, to input "1", we first
-   * press "Shift" (which activates the Shift modifier on the calculator),
-   * then we press "&", transformed by eventFromSDLTextInputEvent into the
-   * text "1". If we do not remove the Shift here, it would still be
-   * pressed afterwards. */
-  Events::removeShift();
   if (strlen(event.text) == 1) {
     char character = event.text[0];
     if (character >= 32 && character < 127) {
@@ -155,6 +140,18 @@ Event getPlatformEvent() {
       }
       result = eventFromSDLKeyboardEvent(event.key);
       break;
+    }
+    if (event.type == SDL_KEYUP) {
+      if (event.key.keysym.scancode == SDL_SCANCODE_RSHIFT ||
+          event.key.keysym.scancode == SDL_SCANCODE_LSHIFT) {
+        result = Shift;
+      /* Emitting a Shift event is unfortunately not enough to toggle the
+       * modifiers status. Indeed, on the device, this is done in the
+       * updateModifiersFromEvent function that's called from sharedGetEvent,
+       * but we're past this point. So we need to enforce it. */
+        Events::removeShift();
+        break;
+      }
     }
     if (event.type == SDL_TEXTINPUT) {
       result = eventFromSDLTextInputEvent(event.text);

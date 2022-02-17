@@ -131,12 +131,6 @@ I18n::Message ContinuousFunction::plotTypeMessage() {
 }
 
 CodePoint ContinuousFunction::symbol() const {
-  if (m_model.plotType() == PlotType::Unknown) {
-    /* Symbol can handle Unknown plot type without having to update it because
-     * ExpressionModelHandle::setContent needs a continuous function's symbol
-     * before having set the content. */
-    return 'x';
-  }
   switch (symbolType()) {
   case SymbolType::T:
     return 't';
@@ -184,7 +178,11 @@ int ContinuousFunction::printValue(double cursorT, double cursorX, double cursor
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Context * context) {
   setCache(nullptr);
-  Ion::Storage::Record::ErrorStatus error = ExpressionModelHandle::setContent(c, context);
+  /* About to set the content, the symbol does not matter here yet. We don't use
+   * ExpressionModelHandle::setContent implementation to avoid calling symbol()
+   * and any unnecessary plot type update at this point. See comment in
+   * ContinuousFunction::Model::buildExpressionFromText. */
+  Ion::Storage::Record::ErrorStatus error = editableModel()->setContent(this, c, context, 'x');
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     udpateModel(context);
     error = m_model.renameRecordIfNeeded(this, c, context, symbol());
@@ -266,7 +264,8 @@ Conic ContinuousFunction::getConicParameters(Context * context) const {
 }
 
 void ContinuousFunction::udpateModel(Context * context) {
-  bool previousAlongXStatus = isAlongX();
+  // Do not call isAlongX() if model has already been resetted
+  bool previousAlongXStatus = (m_model.plotType() == PlotType::Unknown) || isAlongX();
   setCache(nullptr);
   // Reset model's plot type. expressionEquation() will update plotType
   m_model.resetPlotType();
@@ -702,6 +701,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
       } else if (functionSymbol.isIdenticalTo(Symbol::Builder('x'))) {
         computedPlotType = PlotType::Cartesian;
       } else {
+        assert((functionSymbol.isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta))));
         computedPlotType = PlotType::Polar;
       }
       result = result.childAtIndex(1);
@@ -790,6 +790,10 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
 }
 
 Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const char * c, CodePoint symbol, Poincare::Context * context) const {
+  /* The symbol parameter is discarded in this implementation. Either there is a
+   * valid named left expression and the symbol will be extracted, either the
+   * symbol should be 'x', the default symbol used in unnamed expressions. */
+  assert(symbol == 'x');
   Expression noContextExpression;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {

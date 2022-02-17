@@ -37,8 +37,6 @@ public:
   TypeController(StackViewController * parent,
                  HypothesisController * hypothesisController,
                  InputController * intervalInputController,
-                 Data::Test * globalTest,
-                 Data::TestType * globalTestType,
                  Statistic * statistic);
   View * view() override { return &m_contentView; }
   const char * title() override;
@@ -54,15 +52,11 @@ public:
 
   constexpr static int k_indexOfTTest = 0;
   constexpr static int k_indexOfPooledTest = 1;
-  constexpr static int k_indexOfZTest = 2;
-  constexpr static int k_indexOfDescription = 3;
 
 private:
-  int indexFromListIndex(int i) const;
-  int listIndexFromIndex(int i) const;
-  I18n::Message messageForTest(Data::SubApp subapp, Data::Test t) const;
-
   constexpr static int k_numberOfRows = 3;
+
+  int indexOfZTest() const { return numberOfRows() - 1; }
 
   HypothesisController * m_hypothesisController;
   InputController * m_inputController;
@@ -74,7 +68,6 @@ private:
   constexpr static int k_titleBufferSize = sizeof("intervalle pour une moyenne à deux échantillons");
   char m_titleBuffer[k_titleBufferSize];
 
-  Data::TestType * m_globalTestType;
   Statistic * m_statistic;
 };
 

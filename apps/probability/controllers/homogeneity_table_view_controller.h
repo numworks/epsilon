@@ -4,7 +4,7 @@
 #include "probability/abstract/input_homogeneity_data_source.h"
 #include "probability/abstract/table_view_controller.h"
 #include "probability/gui/selectable_table_view_with_background.h"
-#include "probability/models/statistic/homogeneity_statistic.h"
+#include "probability/models/statistic/homogeneity_test.h"
 
 namespace Probability {
 
@@ -13,7 +13,7 @@ namespace Probability {
 class HomogeneityTableViewController : public TableViewController, DynamicCellsDataSourceDelegate<EvenOddEditableTextCell>, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> {
 public:
   HomogeneityTableViewController(Escher::Responder * parent,
-                                 HomogeneityStatistic * statistic,
+                                 HomogeneityTest * statistic,
                                  DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate,
                                  Escher::SelectableTableViewDelegate * tableDelegate);
 
@@ -37,7 +37,7 @@ private:
   Escher::SelectableTableViewDataSource m_selectionDataSource;
   InputHomogeneityDataSource m_tableData;
   SelectableTableViewWithBackground m_table;
-  HomogeneityStatistic * m_statistic;
+  HomogeneityTest * m_statistic;
 };
 
 }  // namespace Probability

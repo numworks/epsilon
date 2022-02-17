@@ -5,7 +5,7 @@ namespace Probability {
 
 HomogeneityTableViewController::HomogeneityTableViewController(
     Escher::Responder * parent,
-    HomogeneityStatistic * statistic,
+    HomogeneityTest * statistic,
     DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate,
     Escher::SelectableTableViewDelegate * tableDelegate) :
       TableViewController(parent),
@@ -51,7 +51,7 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
     return false;
   }
   int row = m_table.selectedRow(), column = m_table.selectedColumn();
-  if (!m_statistic->isValidParameterAtPosition(row, column, p)) {
+  if (!m_statistic->authorizedParameterAtPosition(row, column, p)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }

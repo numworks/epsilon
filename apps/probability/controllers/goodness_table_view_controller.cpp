@@ -7,7 +7,7 @@ namespace Probability {
 
 GoodnessTableViewController::GoodnessTableViewController(
     Escher::Responder * parent,
-    GoodnessStatistic * statistic,
+    GoodnessTest * statistic,
     DynamicSizeTableViewDataSourceDelegate * delegate,
     Escher::SelectableTableViewDelegate * scrollDelegate,
     InputGoodnessView * inputGoodnessView) :
@@ -35,7 +35,7 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
   }
   int selectedColumn = m_inputTableView.selectedColumn();
   int selectedRow = m_inputTableView.selectedRow();
-  if (!m_statistic->isValidParameterAtPosition(selectedRow - 1, selectedColumn, p)) {
+  if (!m_statistic->authorizedParameterAtPosition(selectedRow - 1, selectedColumn, p)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }

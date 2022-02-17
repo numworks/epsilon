@@ -18,7 +18,6 @@ public:
   DistributionType distributionType() const override { return DistributionType::Chi2; }
   void initializeCategoricalType(CategoricalType type);
 
-  I18n::Message graphTitleFormat() const override { return DistributionChi2::GraphTitleFormat(); }
   Poincare::Layout testCriticalValueSymbol() override {
     return DistributionChi2::TestCriticalValueSymbol();
   }
@@ -36,8 +35,10 @@ public:
 
   // Matrix special functions
   virtual void setParameterAtPosition(int row, int column, double value) = 0;
+  void setParameterAtIndex(double p, int index) override;  // Hidden
   virtual double parameterAtPosition(int row, int column) const = 0;
   virtual bool authorizedParameterAtPosition(int row, int column, double p) const = 0;
+  bool authorizedParameterAtIndex(double p, int i) const override;
   /* Delete parameter at location, return true if the deleted param was the last
    * non-deleted value of its row or column. */
   virtual bool deleteParameterAtPosition(int row, int column) = 0;
@@ -48,8 +49,6 @@ public:
   constexpr static float k_undefinedValue = NAN;
 
 protected:
-  bool authorizedParameterAtIndex(double p, int i) const override;
-  void setParameterAtIndex(double p, int index) override;  // Hidden
   using Test::parameterAtIndex;  // Hidden
 
   // Instanciate unused abstract classs

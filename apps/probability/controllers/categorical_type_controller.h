@@ -8,7 +8,7 @@
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
 
-#include "probability/models/statistic/chi2_statistic.h"
+#include "probability/models/statistic/chi2_test.h"
 
 namespace Probability {
 
@@ -21,8 +21,7 @@ class CategoricalTypeController : public Escher::SelectableCellListPage<Escher::
                                                                 k_numberOfCategoricalCells> {
 public:
   CategoricalTypeController(Escher::StackViewController * parent,
-                            Chi2Statistic * statistic,
-                            Data::CategoricalType * globalCategoricalType,
+                            Chi2Test * statistic,
                             InputGoodnessController * inputGoodnessController,
                             InputHomogeneityController * inputHomogeneityController);
   ViewController::TitlesDisplay titlesDisplay() override {
@@ -38,8 +37,7 @@ public:
   constexpr static int k_indexOfHomogeneityCell = 1;
 
 private:
-  Chi2Statistic * m_statistic;
-  Data::CategoricalType * m_globalCategoricalType;
+  Chi2Test * m_statistic;
   InputGoodnessController * m_inputGoodnessController;
   InputHomogeneityController * m_inputHomogeneityController;
 };

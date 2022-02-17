@@ -4,7 +4,7 @@
 #include <escher/list_view_data_source.h>
 
 #include <escher/highlight_image_cell.h>
-#include "probability/models/distribution/distribution.h"
+#include "probability/models/probability/distribution/distribution.h"
 
 namespace Probability {
 

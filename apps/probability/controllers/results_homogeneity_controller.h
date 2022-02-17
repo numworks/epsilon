@@ -7,7 +7,7 @@
 #include <escher/view_controller.h>
 #include "probability/gui/results_homogeneity_view.h"
 #include "probability/gui/selectable_table_view_with_background.h"
-#include "probability/models/statistic/homogeneity_statistic.h"
+#include "probability/models/statistic/homogeneity_test.h"
 #include "results_controller.h"
 
 namespace Probability {
@@ -17,7 +17,7 @@ class ResultsHomogeneityController : public Escher::ViewController,
                                      public DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> {
 public:
   ResultsHomogeneityController(StackViewController * stackViewController,
-                               HomogeneityStatistic * statistic,
+                               HomogeneityTest * statistic,
                                ResultsController * resultsController);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;

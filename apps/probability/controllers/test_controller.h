@@ -15,19 +15,13 @@ class CategoricalTypeController;
 class TypeController;
 class InputController;
 
-constexpr static int k_numberOfTestCells = 5;
-
-class TestController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
-                                                     k_numberOfTestCells> {
+class TestController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType> {
 public:
   TestController(Escher::StackViewController * parentResponder,
                  HypothesisController * hypothesisController,
                  TypeController * typeController,
                  CategoricalTypeController * categoricalController,
                  InputController * inputController,
-                 Data::Test * globalTest,
-                 Data::TestType * globalTestType,
-                 Data::CategoricalType * globalCategoricalType,
                  Statistic * statistic);
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
@@ -46,9 +40,6 @@ private:
   TypeController * m_typeController;
   InputController * m_inputController;
   CategoricalTypeController * m_categoricalController;
-  Data::Test * m_globalTest;
-  Data::TestType * m_globalTestType;
-  Data::CategoricalType * m_globalCategoricalType;
   Statistic * m_statistic;
 };
 

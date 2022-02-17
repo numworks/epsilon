@@ -10,9 +10,10 @@
 #include <escher/table_view_with_top_and_bottom_views.h>
 #include <escher/view_controller.h>
 
-#include "probability/models/results_data_source.h"
+#include "probability/abstract/results_data_source.h"
 #include "probability/models/statistic/statistic.h"
-#include "statistic_graph_controller.h"
+#include "interval_graph_controller.h"
+#include "test_graph_controller.h"
 
 namespace Probability {
 
@@ -22,7 +23,8 @@ class ResultsController : public Escher::ViewController,
 public:
   ResultsController(Escher::StackViewController * parent,
                     Statistic * statistic,
-                    StatisticGraphController * statisticGraphController,
+                    TestGraphController * testGraphController,
+                    IntervalGraphController * intervalGraphController,
                     Escher::InputEventHandlerDelegate * handler,
                     Escher::TextFieldDelegate * textFieldDelegate);
   ViewController::TitlesDisplay titlesDisplay() override;
@@ -42,7 +44,8 @@ protected:
   ResultsDataSource m_resultsDataSource;
   Statistic * m_statistic;
 
-  StatisticGraphController * m_statisticGraphController;
+  TestGraphController * m_testGraphController;
+  IntervalGraphController * m_intervalGraphController;
   constexpr static int k_titleBufferSize = 50;
   char m_titleBuffer[k_titleBufferSize];
 };

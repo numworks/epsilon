@@ -10,7 +10,7 @@ namespace Probability {
 InputCategoricalController::InputCategoricalController(
     StackViewController * parent,
     Escher::ViewController * resultsController,
-    Chi2Statistic * statistic,
+    Chi2Test * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
       Escher::ViewController(parent),
       m_statistic(statistic),
@@ -41,7 +41,7 @@ void InputCategoricalController::didEnterResponderChain(Responder * previousResp
 void InputCategoricalController::didBecomeFirstResponder() {
   if (m_statistic->threshold() == -1) {
     // Init significance cell
-    m_statistic->initThreshold(App::app()->subapp());
+    m_statistic->initThreshold();
   }
   contentView()->updateSignificanceCell(m_statistic);
   Escher::Container::activeApp()->setFirstResponder(contentView());
@@ -57,7 +57,7 @@ bool InputCategoricalController::ButtonAction(void * c, void * s) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
     return false;
   }
-  controller->m_statistic->computeTest();
+  controller->m_statistic->compute();
   controller->stackOpenPage(controller->m_resultsController);
   return true;
 }
@@ -83,11 +83,11 @@ void InputCategoricalController::tableViewDidChangeSelectionAndDidScroll(
 }
 
 bool InputCategoricalController::handleEditedValue(int i, double p, TextField * textField, Ion::Events::Event event, int indexIdUp, int indexOtherwise) {
-  if (!m_statistic->isValidParamAtIndex(i, p)) {
-      App::app()->displayWarning(I18n::Message::ForbiddenValue);
-      return false;
+  if (!m_statistic->authorizedParameterAtIndex(p, i)) {
+    App::app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
   }
-  m_statistic->setParamAtIndex(i, p);
+  m_statistic->setParameterAtIndex(i, p);
   contentView()->setTextFieldText(p, textField);
   contentView()->selectViewAtIndex(event == Ion::Events::Up ? indexIdUp : indexOtherwise);
   return true;

@@ -1,5 +1,6 @@
 #include "goodness_test.h"
 #include <float.h>
+#include <poincare/print.h>
 #include <probability/models/statistic/interfaces/significance_tests.h>
 
 namespace Probability {
@@ -8,6 +9,22 @@ GoodnessTest::GoodnessTest() {
   for (int i = 0; i < k_maxNumberOfRows * k_maxNumberOfColumns; i++) {
     m_input[i] = k_undefinedValue;
   }
+}
+
+void GoodnessTest::setGraphTitle(char * buffer, size_t bufferSize) const {
+  const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormatGoodnessTest);
+  Poincare::Print::customPrintf(buffer, bufferSize, format,
+      degreeOfFreedom(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+      threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+      testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+      pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+}
+
+void GoodnessTest::setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const {
+  Poincare::Print::customPrintf(buffer, bufferSize, "df=%*.*ed %s=%*.*ed",
+      degreeOfFreedom(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+      I18n::translate(I18n::Message::GreekAlpha),
+      threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
 void GoodnessTest::computeTest() {

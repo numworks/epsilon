@@ -15,7 +15,8 @@ using namespace Probability;
 
 ResultsController::ResultsController(Escher::StackViewController * parent,
                                      Statistic * statistic,
-                                     StatisticGraphController * statisticGraphController,
+                                     TestGraphController * testGraphController,
+                                     IntervalGraphController * intervalGraphController,
                                      Escher::InputEventHandlerDelegate * handler,
                                      Escher::TextFieldDelegate * textFieldDelegate) :
       Escher::ViewController(parent),
@@ -24,11 +25,11 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
       m_contentView(&m_tableView, &m_resultsDataSource, &m_title),
       m_resultsDataSource(&m_tableView, statistic, Escher::Invocation(&ResultsController::ButtonAction, this), this),
       m_statistic(statistic),
-      m_statisticGraphController(statisticGraphController) {
+      m_testGraphController(testGraphController),
+      m_intervalGraphController(intervalGraphController) {
 }
 
 void ResultsController::didBecomeFirstResponder() {
-  Probability::App::app()->setPage(Data::Page::Results);
   selectCellAtLocation(0, 0);
   Escher::Container::activeApp()->setFirstResponder(&m_tableView);
   m_resultsDataSource.resetMemoization();
@@ -36,38 +37,20 @@ void ResultsController::didBecomeFirstResponder() {
 }
 
 ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
-  if (App::app()->subapp() == Data::SubApp::Intervals || App::app()->categoricalType() == Data::CategoricalType::Goodness) {
-    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
+  if (m_statistic->subApp() == Inference::SubApp::Interval || (m_statistic->significanceTestType() == SignificanceTestType::Categorical && m_statistic->categoricalType() == CategoricalType::GoodnessOfFit)) {
+    return ViewController::TitlesDisplay::DisplayLastThreeTitles;
   }
-  return ViewController::TitlesDisplay::DisplayLastThreeTitles;
+  return ViewController::TitlesDisplay::DisplayLastTwoTitles;
 }
 
 const char * Probability::ResultsController::title() {
-  if (App::app()->subapp() == Data::SubApp::Intervals) {
-    const char * confidence = I18n::translate(I18n::Message::Confidence);
-    if (App::app()->page() == Data::Page::Graph) {
-      const char * estimateSymbol = m_statistic->estimateSymbol();
-      Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%*.*ed %s=%*.*ed",
-          estimateSymbol,
-          m_statistic->estimate(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-          confidence,
-          m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
-    } else {
-      Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%*.*ed",
-          confidence,
-          m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
-    }
-    return m_titleBuffer;
+  m_titleBuffer[0] = 0;
+  StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
+  m_statistic->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), stackViewControllerResponder->topViewController() != this);
+  if (m_titleBuffer[0] == 0) {
+    return nullptr;
   }
-  if (App::app()->categoricalType() == Data::CategoricalType::Goodness) {
-    Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%*.*ed %s=%*.*ed",
-        m_statistic->degreeOfFreedomSymbol(),
-        m_statistic->degreeOfFreedom(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-        I18n::translate(I18n::Message::GreekAlpha),
-        m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
-    return m_titleBuffer;
-  }
-  return nullptr;
+  return m_titleBuffer;
 }
 
 bool Probability::ResultsController::ButtonAction(void * c, void * s) {
@@ -76,11 +59,17 @@ bool Probability::ResultsController::ButtonAction(void * c, void * s) {
     App::app()->displayWarning(I18n::Message::InvalidValues);
     return false;
   }
-  if (ExamModeConfiguration::testsGraphResultsAreForbidden() && App::app()->subapp() == Data::SubApp::Tests) {
+  if (ExamModeConfiguration::testsGraphResultsAreForbidden() && controller->m_statistic->subApp() == Inference::SubApp::Test) {
     App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
     return false;
   }
-  controller->stackOpenPage(controller->m_statisticGraphController);
+  Escher::ViewController * graph;
+  if (controller->m_statistic->subApp() == Inference::SubApp::Test) {
+    graph = controller->m_testGraphController;
+  } else {
+    graph = controller->m_intervalGraphController;
+  }
+  controller->stackOpenPage(graph);
   return true;
 }
 

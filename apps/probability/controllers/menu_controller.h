@@ -10,7 +10,7 @@
 #include "probability/controllers/test_controller.h"
 #include <escher/centering_view.h>
 #include <escher/subapp_cell.h>
-#include "probability/models/data.h"
+#include "probability/models/models_buffer.h"
 
 namespace Probability {
 
@@ -22,11 +22,7 @@ public:
   MenuController(Escher::StackViewController * parentResponder,
                  DistributionController * distributionController,
                  TestController * testController,
-                 Data::Test * globalTest,
-                 Data::TestType * globalTestType,
-                 Statistic * globalStatistic,
-                 Distribution * globalDistribution,
-                 Calculation * globalCalculation);
+                 Inference * inference);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::View * view() override { return &m_contentView; }
@@ -36,16 +32,10 @@ public:
   constexpr static int k_indexOfInterval = 2;
 
 private:
-  void initData(Data::SubApp subapp);
-  void tidyData(Data::SubApp subapp);
   DistributionController * m_distributionController;
   TestController * m_testController;
 
-  Data::Test * m_globalTest;
-  Data::TestType * m_globalTestType;
-  Statistic * m_globalStatistic;
-  Distribution * m_globalDistribution;
-  Calculation * m_globalCalculation;
+  Inference * m_inference;
 
   Escher::CenteringView m_contentView;
 };

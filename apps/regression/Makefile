@@ -8,6 +8,7 @@ app_regression_test_src += $(addprefix apps/regression/,\
 )
 
 app_regression_test_src += $(addprefix apps/regression/model/,\
+  affine_model.cpp \
   cubic_model.cpp \
   exponential_model.cpp \
   linear_model.cpp \

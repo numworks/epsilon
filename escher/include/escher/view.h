@@ -37,10 +37,6 @@ class View {
   friend class Shared::RoundCursorView;
 public:
   View() : m_frame(KDRectZero), m_superview(nullptr), m_dirtyRect(KDRectZero) {}
-  View(View&& other) = default;
-  View(const View& other) = delete;
-  View& operator=(const View& other) = delete;
-  View& operator=(View&& other) = delete;
 
   void resetSuperview() {
     m_superview = nullptr;

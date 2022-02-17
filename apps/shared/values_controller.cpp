@@ -358,4 +358,8 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
   return memoizedBufferAtIndex((valuesJ-m_firstMemoizedRow)*nbOfMemoizedColumns + (valuesI-m_firstMemoizedColumn));
 }
 
+void ValuesController::deleteColumn() {
+   intervalParameterController()->interval()->clear();
+}
+
 }

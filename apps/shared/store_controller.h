@@ -90,6 +90,8 @@ private:
   int maxNumberOfElements() const override {
     return DoublePairStore::k_maxNumberOfPairs;
   };
+  void deleteColumn() override;
+
   ContentView m_contentView;
 };
 

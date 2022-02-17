@@ -55,6 +55,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   expression_cell_with_editable_text_with_message.cpp \
   input_goodness_table_view.cpp \
   interval_conclusion_view.cpp \
+  interval_curve_view.cpp \
   legend_view.cpp \
   message_table_cell_with_separator.cpp \
   results_homogeneity_view.cpp \
@@ -62,6 +63,7 @@ app_probability_src += $(addprefix apps/probability/gui/,\
   statistic_curve_view.cpp \
   statistic_graph_view.cpp \
   test_conclusion_view.cpp \
+  test_curve_view.cpp \
 )
 
 app_probability_src += $(addprefix apps/probability/controllers/,\
@@ -74,12 +76,13 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
   input_controller.cpp \
   input_goodness_controller.cpp \
   input_homogeneity_controller.cpp \
+  interval_graph_controller.cpp \
   menu_controller.cpp \
   parameters_controller.cpp \
   results_controller.cpp \
   results_homogeneity_controller.cpp \
-  statistic_graph_controller.cpp \
   test_controller.cpp \
+  test_graph_controller.cpp \
   type_controller.cpp \
 )
 

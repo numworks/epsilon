@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include "probability/constants.h"
-#include "probability/models/statistic/goodness_statistic.h"
+#include "probability/models/statistic/goodness_test.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {
@@ -12,7 +12,7 @@ constexpr int InputGoodnessTableView::k_minimumNumberOfRows;
 
 InputGoodnessTableView::InputGoodnessTableView(
     Escher::Responder * parentResponder,
-    GoodnessStatistic * statistic,
+    GoodnessTest * statistic,
     Escher::TextFieldDelegate * textFieldDelegate,
     DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell> * dynamicCellsDataSourceDelegate,
     DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSource,

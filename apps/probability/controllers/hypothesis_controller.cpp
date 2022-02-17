@@ -21,14 +21,14 @@ using namespace Probability;
 HypothesisController::HypothesisController(Escher::StackViewController * parent,
                                            InputController * inputController,
                                            InputEventHandlerDelegate * handler,
-                                           Statistic * statistic) :
+                                           Test * test) :
       Escher::SelectableListViewController(parent),
       m_inputController(inputController),
-      m_operatorDataSource(statistic->hypothesisParams()),
+      m_operatorDataSource(test),
       m_h0(&m_selectableTableView, handler, this),
       m_ha(&m_selectableTableView, &m_operatorDataSource, this),
       m_next(&m_selectableTableView, I18n::Message::Next, Escher::Invocation(&HypothesisController::ButtonAction, this)),
-      m_statistic(statistic) {
+      m_test(test) {
   Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder('H', KDFont::LargeFont),
       Poincare::VerticalOffsetLayout::Builder(
@@ -46,10 +46,9 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
 }
 
 const char * Probability::HypothesisController::title() {
-  I18n::Message format = titleFormatForTest(App::app()->test(), App::app()->testType());
   Poincare::Print::customPrintf(m_titleBuffer,
            sizeof(m_titleBuffer),
-           I18n::translate(format),
+           I18n::translate(m_test->title()),
            I18n::translate(I18n::Message::Test));
   return m_titleBuffer;
 }
@@ -80,12 +79,12 @@ bool Probability::HypothesisController::textFieldDidFinishEditing(Escher::TextFi
       text,
       AppsContainer::sharedAppsContainer()->globalContext());
   // Check
-  if (std::isnan(h0) || !m_statistic->isValidH0(h0)) {
+  if (std::isnan(h0) || !m_test->isValidH0(h0)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
 
-  m_statistic->hypothesisParams()->setFirstParam(h0);
+  m_test->hypothesisParams()->setFirstParam(h0);
   loadHypothesisParam();
   m_selectableTableView.selectCellAtLocation(0, k_indexOfHa);
   return true;
@@ -112,11 +111,11 @@ void Probability::HypothesisController::onDropdownSelected(int selectedRow) {
     default:
       assert(false);
   }
-  m_statistic->hypothesisParams()->setComparisonOperator(op);
+  m_test->hypothesisParams()->setComparisonOperator(op);
 }
 
 const char * Probability::HypothesisController::symbolPrefix() {
-  return testToTextSymbol(App::app()->test());
+  return m_test->hypothesisSymbol();
 }
 
 HighlightCell * HypothesisController::reusableCell(int i, int type) {
@@ -132,10 +131,9 @@ HighlightCell * HypothesisController::reusableCell(int i, int type) {
 }
 
 void HypothesisController::didBecomeFirstResponder() {
-  App::app()->setPage(Data::Page::Hypothesis);
   selectCellAtLocation(0, 0);
   m_ha.dropdown()->selectRow(
-      static_cast<int>(m_statistic->hypothesisParams()->comparisonOperator()));
+      static_cast<int>(m_test->hypothesisParams()->comparisonOperator()));
   m_ha.dropdown()->init();
   loadHypothesisParam();
   resetMemoization();
@@ -151,7 +149,7 @@ bool HypothesisController::ButtonAction(void * c, void * s) {
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
-  Poincare::Print::customPrintf(buffer, bufferSize, "%s=%*.*ed", symbolPrefix(), m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+  Poincare::Print::customPrintf(buffer, bufferSize, "%s=%*.*ed", symbolPrefix(), m_test->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   m_h0.setAccessoryText(buffer);
   m_ha.reload();
   resetMemoization();

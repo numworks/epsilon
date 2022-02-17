@@ -3,9 +3,7 @@
 
 #include <escher/expression_view.h>
 #include <escher/message_text_view.h>
-
 #include <escher/horizontal_or_vertical_layout.h>
-#include "probability/models/statistic/statistic.h"
 
 namespace Probability {
 
@@ -13,9 +11,9 @@ namespace Probability {
  * and a matching icon. */
 class TestConclusionView : public Escher::View {
 public:
-  TestConclusionView(Statistic * statistic);
+  TestConclusionView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void reload();
+  void generateConclusionTexts(bool isTestSuccessfull);
 
 private:
   constexpr static int k_marginLeft = 20;
@@ -24,9 +22,7 @@ private:
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override;
   void layoutSubviews(bool force) override;
-  void generateConclusionTexts(bool isTestSuccessfull);
 
-  Statistic * m_statistic;
   Escher::ExpressionView m_textView1;
   Escher::MessageTextView m_textView2;
 };

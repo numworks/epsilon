@@ -7,7 +7,7 @@
 #include <shared/parameter_text_field_delegate.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
-#include "probability/models/statistic/chi2_statistic.h"
+#include "probability/models/statistic/chi2_test.h"
 
 namespace Probability {
 
@@ -19,7 +19,7 @@ class InputCategoricalController : public Escher::ViewController,
 public:
   InputCategoricalController(Escher::StackViewController * parent,
                              Escher::ViewController * resultsController,
-                             Chi2Statistic * statistic,
+                             Chi2Test * statistic,
                              Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   virtual TableViewController * tableViewController() = 0;
@@ -53,7 +53,7 @@ protected:
   bool handleEditedValue(int i, double p, Escher::TextField * textField, Ion::Events::Event event, int indexIdUp, int indexOtherwise);
   virtual InputCategoricalView * contentView() = 0;
 
-  Chi2Statistic * m_statistic;
+  Chi2Test * m_statistic;
   Escher::ViewController * m_resultsController;
 };
 

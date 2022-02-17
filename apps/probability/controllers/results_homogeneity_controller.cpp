@@ -13,7 +13,7 @@ using namespace Probability;
 
 ResultsHomogeneityController::ResultsHomogeneityController(
     StackViewController * stackViewController,
-    HomogeneityStatistic * statistic,
+    HomogeneityTest * statistic,
     ResultsController * resultsController) :
       Escher::ViewController(stackViewController),
       m_resultsController(resultsController),
@@ -31,7 +31,6 @@ ResultsHomogeneityController::ResultsHomogeneityController(
 }
 
 void ResultsHomogeneityController::didBecomeFirstResponder() {
-  Probability::App::app()->setPage(Data::Page::ResultsHomogeneity);
   Escher::Container::activeApp()->setFirstResponder(&m_table);
   if (m_table.selectedRow() < 0) {
     m_table.selectCellAtLocation(1, 1);

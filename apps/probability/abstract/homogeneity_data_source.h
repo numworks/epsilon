@@ -10,7 +10,7 @@
 #include "probability/abstract/dynamic_cells_data_source.h"
 #include "probability/gui/bordered_table_view_data_source.h"
 #include "probability/gui/solid_color_cell.h"
-#include "probability/models/statistic/homogeneity_statistic.h"
+#include "probability/models/statistic/homogeneity_test.h"
 
 using namespace Escher;
 
@@ -41,8 +41,8 @@ public:
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_rowHeight = 20;
 
-  constexpr static int k_maxNumberOfColumns = HomogeneityStatistic::k_maxNumberOfColumns;
-  constexpr static int k_maxNumberOfRows = HomogeneityStatistic::k_maxNumberOfRows;
+  constexpr static int k_maxNumberOfColumns = HomogeneityTest::k_maxNumberOfColumns;
+  constexpr static int k_maxNumberOfRows = HomogeneityTest::k_maxNumberOfRows;
   constexpr static int k_numberOfReusableRows = (Ion::Display::Height -
                                                  Escher::Metric::TitleBarHeight -
                                                  Escher::Metric::StackTitleHeight) /

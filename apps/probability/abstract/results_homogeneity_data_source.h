@@ -19,7 +19,7 @@ private:
  * position. */
 class ResultsHomogeneityDataSource : public HomogeneityTableDataSourceWithTotals, DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells> {
 public:
-  ResultsHomogeneityDataSource(HomogeneityStatistic * statistic, Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicDataSourceDelegate);
+  ResultsHomogeneityDataSource(HomogeneityTest * statistic, Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicDataSourceDelegate);
 private:
   int innerNumberOfRows() const override { return m_statistic->numberOfResultRows() + 1; }
   int innerNumberOfColumns() const override { return m_statistic->numberOfResultColumns() + 1; }
@@ -30,7 +30,7 @@ private:
   void createCells() override;
   void destroyCells() override;
 
-  HomogeneityStatistic * m_statistic;
+  HomogeneityTest * m_statistic;
 };
 
 }  // namespace Probability

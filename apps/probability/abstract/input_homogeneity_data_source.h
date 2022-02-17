@@ -8,7 +8,7 @@
 #include "probability/abstract/dynamic_cells_data_source.h"
 #include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
-#include "probability/models/statistic/homogeneity_statistic.h"
+#include "probability/models/statistic/homogeneity_test.h"
 
 namespace Probability {
 
@@ -16,7 +16,7 @@ using namespace Escher;
 
 class InputHomogeneityDataSource : public HomogeneityTableDataSource, public DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>, public DynamicSizeTableViewDataSource {
 public:
-  InputHomogeneityDataSource(Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicOuterTableViewDataSourceDelegate, DynamicCellsDataSourceDelegate<EvenOddEditableTextCell> * dynamicInnerTableViewDataSourceDelegate, DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate, HomogeneityStatistic * statistic);
+  InputHomogeneityDataSource(Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicOuterTableViewDataSourceDelegate, DynamicCellsDataSourceDelegate<EvenOddEditableTextCell> * dynamicInnerTableViewDataSourceDelegate, DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate, HomogeneityTest * statistic);
 
   // DynamicSizeTableViewDataSource
   bool recomputeDimensions();
@@ -37,7 +37,7 @@ private:
   int m_numberOfRows;
   int m_numberOfColumns;
 
-  HomogeneityStatistic * m_statistic;
+  HomogeneityTest * m_statistic;
 };
 
 }  // namespace Probability

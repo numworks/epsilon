@@ -23,7 +23,7 @@ public:
     Interval::setParameterAtIndex(p, index);
   }
   void computeInterval() override { TwoMeans::ComputeZInterval(this); }
-  const char * estimateSymbol() override { return TwoMeans::EstimateSymbol(); }
+  const char * estimateSymbol() const override { return TwoMeans::EstimateSymbol(); }
   Poincare::Layout estimateLayout() override { return TwoMeans::EstimateLayout(&m_estimateLayout); }
   Poincare::Layout testCriticalValueSymbol() override { return DistributionZ::TestCriticalValueSymbol(); }
   I18n::Message estimateDescription() override { return TwoMeans::EstimateDescription(); };

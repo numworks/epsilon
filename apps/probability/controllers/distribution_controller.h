@@ -7,7 +7,7 @@
 
 #include "parameters_controller.h"
 #include "probability/gui/distribution_cell.h"
-#include "probability/models/distribution/distribution.h"
+#include "probability/models/probability/distribution/distribution.h"
 
 namespace Probability {
 

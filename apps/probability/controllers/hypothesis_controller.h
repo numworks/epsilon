@@ -26,7 +26,7 @@ public:
   HypothesisController(Escher::StackViewController * parent,
                        InputController * inputController,
                        InputEventHandlerDelegate * handler,
-                       Statistic * statistic);
+                       Test * test);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   };
@@ -68,7 +68,7 @@ private:
 
   static constexpr int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   char m_titleBuffer[k_titleBufferSize];
-  Statistic * m_statistic;
+  Test * m_test;
 };
 
 }  // namespace Probability

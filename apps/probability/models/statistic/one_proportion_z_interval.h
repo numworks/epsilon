@@ -23,7 +23,7 @@ public:
 
   void computeInterval() override { OneProportion::ComputeInterval(this); }
 
-  const char * estimateSymbol() override { return OneProportion::EstimateSymbol(); }
+  const char * estimateSymbol() const override { return OneProportion::EstimateSymbol(); }
   Poincare::Layout testCriticalValueSymbol() override { return DistributionZ::TestCriticalValueSymbol(); }
   Poincare::Layout estimateLayout() override { return OneProportion::EstimateLayout(&m_estimateLayout); }
   I18n::Message estimateDescription() override { return OneProportion::EstimateDescription(); };

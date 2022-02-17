@@ -5,7 +5,7 @@
 #include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/table_view_controller.h"
 #include "probability/gui/input_goodness_table_view.h"
-#include "probability/models/statistic/goodness_statistic.h"
+#include "probability/models/statistic/goodness_test.h"
 
 namespace Probability {
 
@@ -13,7 +13,7 @@ namespace Probability {
 class GoodnessTableViewController : public TableViewController, public DynamicCellsDataSourceDelegate<EvenOddEditableTextCell> {
 public:
   GoodnessTableViewController(Escher::Responder * parent,
-                              GoodnessStatistic * statistic,
+                              GoodnessTest * statistic,
                               DynamicSizeTableViewDataSourceDelegate * delegate,
                               Escher::SelectableTableViewDelegate * scrollDelegate,
                               InputGoodnessView * inputGoodnessView);
@@ -34,7 +34,7 @@ public:
 
 private:
   void deleteSelectedValue();
-  GoodnessStatistic * m_statistic;
+  GoodnessTest * m_statistic;
   InputGoodnessView * m_inputGoodnessView;
   InputGoodnessTableView m_inputTableView;
 };

@@ -10,7 +10,7 @@ namespace Probability {
 constexpr int InputHomogeneityDataSource::k_initialNumberOfRows;
 constexpr int InputHomogeneityDataSource::k_initialNumberOfColumns;
 
-InputHomogeneityDataSource::InputHomogeneityDataSource(Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicOuterTableViewDataSourceDelegate, DynamicCellsDataSourceDelegate<EvenOddEditableTextCell> * dynamicInnerTableViewDataSourceDelegate, DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate, HomogeneityStatistic * statistic) :
+InputHomogeneityDataSource::InputHomogeneityDataSource(Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicOuterTableViewDataSourceDelegate, DynamicCellsDataSourceDelegate<EvenOddEditableTextCell> * dynamicInnerTableViewDataSourceDelegate, DynamicSizeTableViewDataSourceDelegate * dataSourceDelegate, HomogeneityTest * statistic) :
   HomogeneityTableDataSource(tableDelegate, dynamicOuterTableViewDataSourceDelegate),
   DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>(dynamicInnerTableViewDataSourceDelegate),
   DynamicSizeTableViewDataSource(dataSourceDelegate),
@@ -37,7 +37,7 @@ void InputHomogeneityDataSource::destroyCells() {
 // TODO: factorize with InputGoodnessTableView
 bool InputHomogeneityDataSource::recomputeDimensions() {
   // Return true if size changed
-  HomogeneityStatistic::Index2D dimensions = m_statistic->computeDimensions();
+  HomogeneityTest::Index2D dimensions = m_statistic->computeDimensions();
   bool displayLastEmptyRow = dimensions.row < m_statistic->maxNumberOfRows();
   bool displayLastEmptyColumn = dimensions.col < m_statistic->maxNumberOfColumns();
   int newNumberOfRows = std::max(k_initialNumberOfRows, dimensions.row + displayLastEmptyRow);

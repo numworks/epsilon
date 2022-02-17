@@ -6,6 +6,7 @@
 #include <escher/app.h>
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
+#include <ion/ring_buffer.h>
 
 #include "abstract/dynamic_cells_data_source.h"
 #include "controllers/categorical_type_controller.h"
@@ -14,14 +15,15 @@
 #include "controllers/input_controller.h"
 #include "controllers/input_goodness_controller.h"
 #include "controllers/input_homogeneity_controller.h"
+#include "controllers/interval_graph_controller.h"
 #include "controllers/menu_controller.h"
 #include "controllers/parameters_controller.h"
 #include "controllers/results_controller.h"
 #include "controllers/results_homogeneity_controller.h"
-#include "controllers/statistic_graph_controller.h"
+#include "controllers/test_graph_controller.h"
 #include "controllers/test_controller.h"
 #include "controllers/type_controller.h"
-#include "models/data.h"
+#include "models/models_buffer.h"
 
 namespace Probability {
 
@@ -41,32 +43,32 @@ public:
     App * unpack(Escher::Container * container) override {
       return new (container->currentAppBuffer()) App(this);
     };
-    ~Snapshot();
     const Descriptor * descriptor() const override;
     void tidy() override;
     void reset() override;
-    Data::AppNavigation * navigation() { return &m_navigation; }
+
+    Inference * inference() { return m_modelBuffer.inference(); }
+    Distribution * distribution() { return m_modelBuffer.distribution(); }
+    Calculation * calculation() { return m_modelBuffer.calculation(); }
+    Statistic * statistic() { return m_modelBuffer.statistic(); }
+
+    Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> * pageQueue() { return &m_pageQueue; }
 
   private:
     friend App;
-    Data::DataProxy * data() { return &m_data; }
-    Data::AppNavigation m_navigation;
-    Data::DataProxy m_data;
+    // TODO: optimize size of Stack
+    Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> m_pageQueue;
+    ModelBuffer m_modelBuffer;
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
   void didBecomeActive(Window * window) override;
 
-  // Data access
-  Data::Page page() { return snapshot()->navigation()->page(); }
-  void setPage(Data::Page p) { snapshot()->navigation()->setPage(p); }
-  Data::SubApp subapp() { return snapshot()->navigation()->subapp(); }
-  void setSubapp(Data::SubApp subapp) { return snapshot()->navigation()->setSubapp(subapp); }
-  Data::Test test() { return snapshot()->data()->test(); }
-  Data::TestType testType() { return snapshot()->data()->testType(); }
-  Data::CategoricalType categoricalType() { return snapshot()->data()->categoricalType(); }
+  // Navigation
+  void willOpenPage(ViewController * controller) override;
+  void didExitPage(ViewController * controller) override;
 
-  // Buffer API
+  // Cells buffer API
   void * buffer(size_t offset = 0) { return m_buffer + offset; }
   void cleanBuffer(DynamicCellsDataSourceDestructor * destructor);
 
@@ -83,15 +85,11 @@ public:
 
 private:
   App(Snapshot *);
-  void initTableSelections(Data::Page page,
-                           Data::SubApp subapp,
-                           Data::Test test,
-                           Data::TestType type,
-                           Data::CategoricalType categoricalType);
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
   // Controllers
-  StatisticGraphController m_statisticGraphController;
+  TestGraphController m_testGraphController;
+  IntervalGraphController m_intervalGraphController;
   ResultsHomogeneityController m_homogeneityResultsController;
   InputHomogeneityController m_inputHomogeneityController;
   InputGoodnessController m_inputGoodnessController;

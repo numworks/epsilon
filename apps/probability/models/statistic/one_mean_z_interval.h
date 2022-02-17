@@ -23,7 +23,7 @@ public:
     Interval::setParameterAtIndex(p, index);
   }
   void computeInterval() override { OneMean::ComputeZInterval(this); }
-  const char * estimateSymbol() override { return OneMean::EstimateSymbol(); }
+  const char * estimateSymbol() const override { return OneMean::EstimateSymbol(); }
   Poincare::Layout testCriticalValueSymbol() override { return DistributionZ::TestCriticalValueSymbol(); }
 
   // Distribution: z

@@ -13,7 +13,7 @@
 
 namespace Probability {
 
-TestConclusionView::TestConclusionView(Statistic * statistic) : m_statistic(statistic) {
+TestConclusionView::TestConclusionView() {
   m_textView1.setBackgroundColor(Escher::Palette::WallScreen);
   m_textView1.setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
   m_textView2.setBackgroundColor(Escher::Palette::WallScreen);
@@ -25,11 +25,6 @@ void TestConclusionView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate topOffset = (m_frame.height() - textsSize.height()) / 2;
   ctx->fillRect(KDRect(0, 0, bounds().width(), topOffset), Escher::Palette::WallScreen);
   ctx->fillRect(KDRect(0, bounds().height() - topOffset, bounds().width(), topOffset), Escher::Palette::WallScreen);
-}
-
-void TestConclusionView::reload() {
-  generateConclusionTexts(m_statistic->canRejectNull());
-  markRectAsDirty(bounds());
 }
 
 KDSize TestConclusionView::minimalSizeForOptimalDisplay() const {
@@ -74,6 +69,7 @@ void TestConclusionView::generateConclusionTexts(bool isTestSuccessfull) {
   }
   m_textView1.setLayout(layout);
   m_textView2.setMessage(message);
+  layoutSubviews(false);
 }
 
 }  // namespace Probability

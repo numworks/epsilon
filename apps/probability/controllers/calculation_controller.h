@@ -10,8 +10,8 @@
 #include <escher/dropdown_view.h>
 #include <escher/view_controller.h>
 #include <escher/stack_view_controller.h>
-#include "probability/models/calculation/calculation.h"
-#include "probability/models/distribution/distribution.h"
+#include "probability/models/probability/calculation/calculation.h"
+#include "probability/models/probability/distribution/distribution.h"
 #include "probability/text_helpers.h"
 
 namespace Probability {

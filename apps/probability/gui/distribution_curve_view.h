@@ -4,21 +4,19 @@
 #include <apps/shared/curve_view.h>
 #include <poincare/coordinate_2D.h>
 
-#include "probability/models/calculation/calculation.h"
-#include "probability/models/distribution/distribution.h"
+#include "probability/models/probability/calculation/calculation.h"
+#include "probability/models/probability/distribution/distribution.h"
 
 namespace Probability {
 
 class DistributionCurveView : public Shared::CurveView {
  public:
-  DistributionCurveView(Distribution * distribution, Calculation * calculation)
-      : CurveView(distribution, nullptr, nullptr, nullptr),
-        m_labels{},
-        m_distribution(distribution),
-        m_calculation(calculation) {
-    assert(distribution != nullptr);
-    assert(calculation != nullptr);
-  }
+  DistributionCurveView(Distribution * distribution, Calculation * calculation) : CurveView(distribution, nullptr, nullptr, nullptr),
+      m_labels{},
+      m_distribution(distribution),
+      m_calculation(calculation) {
+        assert(distribution != nullptr);
+      }
 
   void reload(bool resetInterrupted = false, bool force = false) override;
   void drawRect(KDContext * ctx, KDRect rect) const override;

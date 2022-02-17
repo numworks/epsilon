@@ -24,7 +24,7 @@ void HomogeneityTableDataSourceWithTotals::willDisplayCellAtLocation(Escher::Hig
   }
 }
 
-ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityStatistic * statistic, Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicDataSourceDelegate) :
+ResultsHomogeneityDataSource::ResultsHomogeneityDataSource(HomogeneityTest * statistic, Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicDataSourceDelegate) :
   HomogeneityTableDataSourceWithTotals(tableDelegate, dynamicDataSourceDelegate),
   DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>(dynamicDataSourceDelegate),
   m_statistic(statistic)

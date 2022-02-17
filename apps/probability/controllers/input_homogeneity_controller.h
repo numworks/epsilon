@@ -4,7 +4,7 @@
 #include "homogeneity_table_view_controller.h"
 #include "probability/abstract/input_categorical_controller.h"
 #include "probability/abstract/input_homogeneity_view.h"
-#include "probability/models/statistic/homogeneity_statistic.h"
+#include "probability/models/statistic/homogeneity_test.h"
 #include "results_homogeneity_controller.h"
 
 namespace Probability {
@@ -14,11 +14,9 @@ public:
   InputHomogeneityController(StackViewController * parent,
                              ResultsHomogeneityController * homogeneityResultsController,
                              InputEventHandlerDelegate * inputEventHandlerDelegate,
-                             HomogeneityStatistic * statistic);
+                             HomogeneityTest * statistic);
 
   const char * title() override { return I18n::translate(I18n::Message::InputHomogeneityControllerTitle); }
-
-  void didBecomeFirstResponder() override;
 
   TableViewController * tableViewController() override { return &m_tableController; }
 

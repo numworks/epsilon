@@ -14,6 +14,7 @@ public:
   HomogeneityTest();
   CategoricalType categoricalType() const override { return CategoricalType::Homogeneity; }
   I18n::Message title() const override { return I18n::Message::InputHomogeneityControllerTitle; }
+  void setGraphTitle(char * buffer, size_t bufferSize) const override;
 
   // Statistic
   bool validateInputs() override;

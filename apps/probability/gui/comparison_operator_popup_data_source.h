@@ -5,14 +5,13 @@
 
 #include <escher/buffer_text_highlight_cell.h>
 #include "probability/constants.h"
-#include "probability/models/hypothesis_params.h"
+#include "probability/models/statistic/test.h"
 
 namespace Probability {
 
 class ComparisonOperatorPopupDataSource : public Escher::ListViewDataSource {
 public:
-  ComparisonOperatorPopupDataSource(HypothesisParams * hypothesisParams) :
-        m_hypothesisParams(hypothesisParams) {}
+  ComparisonOperatorPopupDataSource(Test * test) : m_test(test) {}
   int numberOfRows() const override { return k_numberOfOperators; }
   KDCoordinate rowHeight(int r) override {
     assert(false); /* Not needed because DropdownPopupController takes care of it */
@@ -28,7 +27,7 @@ private:
                                           1 /* \0 */;
   constexpr static int k_numberOfOperators = 3;
   Escher::BufferTextHighlightCell m_cells[k_numberOfOperators];
-  HypothesisParams * m_hypothesisParams;
+  Test * m_test;
 };
 
 }  // namespace Probability

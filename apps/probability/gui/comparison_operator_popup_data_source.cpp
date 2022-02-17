@@ -7,13 +7,13 @@ namespace Probability {
 
 void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   BufferTextHighlightCell * bufferCell = static_cast<BufferTextHighlightCell *>(cell);
-  const char * symbol = testToTextSymbol(App::app()->test());
+  const char * symbol = m_test->hypothesisSymbol();
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
   Poincare::Print::customPrintf(buffer, bufferSize, "%s%s%*.*ed",
       symbol,
       HypothesisParams::strForComparisonOp(static_cast<HypothesisParams::ComparisonOperator>(index)),
-      m_hypothesisParams->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+      m_test->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   bufferCell->setText(buffer);
 }
 

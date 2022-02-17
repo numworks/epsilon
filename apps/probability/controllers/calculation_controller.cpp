@@ -11,11 +11,6 @@
 #include "../images/calculation1_icon.h"
 #include "probability/app.h"
 #include "probability/constants.h"
-#include "probability/models/calculation/discrete_calculation.h"
-#include "probability/models/calculation/finite_integral_calculation.h"
-#include "probability/models/calculation/left_integral_calculation.h"
-#include "probability/models/calculation/right_integral_calculation.h"
-#include "probability/models/data.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -79,7 +74,6 @@ void CalculationController::reinitCalculation() {
 }
 
 void CalculationController::didBecomeFirstResponder() {
-  Probability::App::app()->setPage(Data::Page::ProbaGraph);
   updateTitle();
   reloadDistributionCurveView();
   m_dropdown.init();
@@ -236,23 +230,7 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
   if ((int)m_calculation->type() == index && !forceReinitialisation) {
     return;
   }
-  m_calculation->~Calculation();
-  switch (index) {
-    case 0:
-      new (m_calculation) LeftIntegralCalculation(m_distribution);
-      return;
-    case 1:
-      new (m_calculation) FiniteIntegralCalculation(m_distribution);
-      return;
-    case 2:
-      new (m_calculation) RightIntegralCalculation(m_distribution);
-      return;
-    case 3:
-      new (m_calculation) DiscreteCalculation(m_distribution);
-      return;
-    default:
-      return;
-  }
+  Calculation::Initialize(m_calculation, static_cast<Calculation::Type>(index), m_distribution);
 }
 
 void CalculationController::onDropdownSelected(int selectedRow) {
@@ -269,10 +247,10 @@ bool CalculationController::popupDidReceiveEvent(Ion::Events::Event event, Respo
 
 void CalculationController::updateTitle() {
   int currentChar = 0;
-  for (int index = 0; index < m_distribution->numberOfParameter(); index++) {
+  for (int index = 0; index < m_distribution->numberOfParameters(); index++) {
     currentChar += Poincare::Print::customPrintf(m_titleBuffer + currentChar, k_titleBufferSize - currentChar, "%s = %*.*ed ",
-        I18n::translate(m_distribution->parameterNameAtIndex(index)),
-        m_distribution->parameterValueAtIndex(index), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+        m_distribution->parameterNameAtIndex(index),
+        m_distribution->parameterAtIndex(index), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   }
 }
 

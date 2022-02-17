@@ -63,7 +63,7 @@ bool hasHypothesisParameters() const override { return true; }
 protected:
   float computeXMin() const override { return -k_displayWidthToSTDRatio; }
   float computeXMax() const override { return k_displayWidthToSTDRatio; }
-  virtual I18n::Message graphTitleFormat() const = 0;
+  virtual I18n::Message graphTitleFormat() const { return I18n::Message::Default; }
   virtual void computeTest() = 0;
   // Hypothesis chosen
   HypothesisParams m_hypothesisParams;

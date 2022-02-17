@@ -6,7 +6,7 @@
 #include "goodness_table_view_controller.h"
 #include "probability/abstract/input_categorical_controller.h"
 #include "probability/abstract/input_goodness_view.h"
-#include "probability/models/statistic/goodness_statistic.h"
+#include "probability/models/statistic/goodness_test.h"
 #include "results_controller.h"
 
 using namespace Escher;
@@ -17,7 +17,7 @@ class InputGoodnessController : public InputCategoricalController {
 public:
   InputGoodnessController(StackViewController * parent,
                           ResultsController * resultsController,
-                          GoodnessStatistic * statistic,
+                          GoodnessTest * statistic,
                           InputEventHandlerDelegate * inputEventHandlerDelegate);
   const char * title() override {
     return I18n::translate(I18n::Message::InputGoodnessControllerTitle);
@@ -25,7 +25,6 @@ public:
   bool textFieldDidFinishEditing(Escher::TextField * textField,
                                 const char * text,
                                 Ion::Events::Event event) override;
-
   void didBecomeFirstResponder() override;
 
   TableViewController * tableViewController() override { return &m_tableController; }

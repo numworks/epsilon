@@ -9,7 +9,7 @@ using namespace Probability;
 InputGoodnessController::InputGoodnessController(
     StackViewController * parent,
     ResultsController * resultsController,
-    GoodnessStatistic * statistic,
+    GoodnessTest * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
       InputCategoricalController(parent, resultsController, statistic, inputEventHandlerDelegate),
       m_tableController(&m_contentView,
@@ -40,7 +40,6 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
 }
 
 void Probability::InputGoodnessController::didBecomeFirstResponder() {
-  Probability::App::app()->setPage(Data::Page::InputGoodness);
   m_contentView.updateDegreeOfFreedomCell(m_statistic->degreeOfFreedom());
   InputCategoricalController::didBecomeFirstResponder();
 }

@@ -1,6 +1,7 @@
 #include "homogeneity_test.h"
 #include <assert.h>
 #include <float.h>
+#include <poincare/print.h>
 #include <probability/models/statistic/interfaces/significance_tests.h>
 
 namespace Probability {
@@ -10,6 +11,13 @@ HomogeneityTest::HomogeneityTest() {
     m_input[i] = k_undefinedValue;
     m_expectedValues[i] = k_undefinedValue;
   }
+}
+
+void HomogeneityTest::setGraphTitle(char * buffer, size_t bufferSize) const {
+  const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormatHomogeneityTest);
+  Poincare::Print::customPrintf(buffer, bufferSize, format,
+          testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
 void HomogeneityTest::setParameterAtPosition(int row, int column, double value) {

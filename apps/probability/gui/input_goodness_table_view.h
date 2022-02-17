@@ -12,7 +12,7 @@
 #include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/homogeneity_data_source.h"
 #include "probability/gui/selectable_table_view_with_background.h"
-#include "probability/models/statistic/goodness_statistic.h"
+#include "probability/models/statistic/goodness_test.h"
 
 namespace Probability {
 
@@ -23,7 +23,7 @@ class InputGoodnessTableView : public SelectableTableViewWithBackground,
                                public DynamicSizeTableViewDataSource {
 public:
   InputGoodnessTableView(Escher::Responder * parentResponder,
-                         GoodnessStatistic * statistic,
+                         GoodnessTest * statistic,
                          Escher::TextFieldDelegate * textFieldDelegate,
                          DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell> * dynamicCellsDataSourceDelegate,
                          DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate = nullptr,
@@ -60,7 +60,7 @@ private:
 
   int m_numberOfRows;
 
-  GoodnessStatistic * m_statistic;
+  GoodnessTest * m_statistic;
 
   Escher::EvenOddMessageTextCell m_header[k_numberOfColumns];
 

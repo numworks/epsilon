@@ -35,12 +35,12 @@ void InputController::initCell(ExpressionCellWithEditableTextWithMessage, void *
 }
 
 const char * InputController::title() {
-  if (App::app()->subapp() == Data::SubApp::Tests) {
+  if (m_statistic->hasHypothesisParameters()) {
     // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams> α=<threshold>
-    const char * symbol = testToTextSymbol(App::app()->test());
-    const char * op = HypothesisParams::strForComparisonOp(
-        m_statistic->hypothesisParams()->comparisonOperator());
-    if (App::app()->page() == Data::Page::Results || App::app()->page() == Data::Page::Graph) {
+    const char * symbol = m_statistic->hypothesisSymbol();
+    const char * op = HypothesisParams::strForComparisonOp(m_statistic->hypothesisParams()->comparisonOperator());
+    StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
+    if (stackViewControllerResponder->topViewController() != this) {
       Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",
           symbol,
           m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
@@ -57,15 +57,14 @@ const char * InputController::title() {
           m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     }
   } else {
-    I18n::Message format = titleFormatForTest(App::app()->test(), App::app()->testType());
-    Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(format),
+    Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(m_statistic->title()),
            I18n::translate(I18n::Message::Interval));
   }
   return m_titleBuffer;
 }
 
 ViewController::TitlesDisplay InputController::titlesDisplay() {
-  if (App::app()->subapp() == Data::SubApp::Tests) {
+  if (m_statistic->hasHypothesisParameters()) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   return ViewController::TitlesDisplay::DisplayLastTitle;
@@ -80,10 +79,9 @@ int InputController::typeAtIndex(int i) {
 
 void InputController::didBecomeFirstResponder() {
   if (m_statistic->threshold() == -1) {
-    m_statistic->initThreshold(App::app()->subapp());
+    m_statistic->initThreshold();
     m_selectableTableView.reloadCellAtLocation(0, m_statistic->indexOfThreshold());
   }
-  App::app()->setPage(Data::Page::Input);
   selectCellAtLocation(0, 0);
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
@@ -93,11 +91,7 @@ void InputController::buttonAction() {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
     return;
   }
-  if (App::app()->subapp() == Data::SubApp::Tests) {
-    m_statistic->computeTest();
-  } else {
-    m_statistic->computeInterval();
-  }
+  m_statistic->compute();
   stackOpenPage(m_resultsController);
 }
 
@@ -105,19 +99,13 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
   if (index < m_statistic->indexOfThreshold()) {
     ExpressionCellWithEditableTextWithMessage * mCell =
         static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
-    mCell->setLayout(m_statistic->paramSymbolAtIndex(index));
-    mCell->setSubLabelMessage(m_statistic->paramDescriptionAtIndex(index));
+    mCell->setLayout(m_statistic->parameterSymbolAtIndex(index));
+    mCell->setSubLabelMessage(m_statistic->parameterDefinitionAtIndex(index));
   } else if (index == m_statistic->indexOfThreshold()) {
-    MessageTableCellWithSeparator * thresholdCell = static_cast<MessageTableCellWithSeparator *>(
-        cell);
+    MessageTableCellWithSeparator * thresholdCell = static_cast<MessageTableCellWithSeparator *>(cell);
     I18n::Message name, description;
-    if (App::app()->subapp() == Data::SubApp::Tests) {
-      name = I18n::Message::GreekAlpha;
-      description = I18n::Message::SignificanceLevel;
-    } else {
-      name = I18n::Message::ConfidenceLevel;
-      description = I18n::Message::Default;
-    }
+    name = m_statistic->thresholdName();
+    description = m_statistic->thresholdDescription();
     thresholdCell->innerCell()->setMessage(name);
     thresholdCell->innerCell()->setSubLabelMessage(description);
   }
@@ -134,7 +122,8 @@ Escher::HighlightCell * InputController::reusableParameterCell(int index, int ty
 }
 
 bool Probability::InputController::handleEvent(Ion::Events::Event event) {
-  return (App::app()->subapp() == Data::SubApp::Intervals) && popFromStackViewControllerOnLeftEvent(event);
+  // If the previous controller was the hypothesis controller, the pop on Left event is unable.
+  return !m_statistic->hasHypothesisParameters() && popFromStackViewControllerOnLeftEvent(event);
 }
 
 bool Probability::InputController::isCellEditing(Escher::HighlightCell * cell, int index) {
@@ -158,11 +147,11 @@ void Probability::InputController::setTextInCell(Escher::HighlightCell * cell,
 }
 
 bool Probability::InputController::setParameterAtIndex(int parameterIndex, double f) {
-  if (!m_statistic->isValidParamAtIndex(parameterIndex, f)) {
+  if (!m_statistic->authorizedParameterAtIndex(parameterIndex, f)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_statistic->setParamAtIndex(parameterIndex, f);
+  m_statistic->setParameterAtIndex(parameterIndex, f);
   return true;
 }
 

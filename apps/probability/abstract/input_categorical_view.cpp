@@ -99,7 +99,7 @@ void Probability::InputCategoricalView::selectViewAtIndex(int index) {
   setResponderForSelectedRow();
 }
 
-void Probability::InputCategoricalView::updateSignificanceCell(Chi2Statistic * statistic) {
+void Probability::InputCategoricalView::updateSignificanceCell(Chi2Test * statistic) {
   setTextFieldText(statistic->threshold(), m_significanceCell.textField());
 }
 

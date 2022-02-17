@@ -24,6 +24,21 @@ void Interval::setGraphTitle(char * buffer, size_t bufferSize) const {
   Poincare::Print::customPrintf(buffer, bufferSize, format, marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
+void Interval::setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const {
+  const char * confidence = I18n::translate(I18n::Message::Confidence);
+  if (resultIsTopPage) {
+    Poincare::Print::customPrintf(buffer, bufferSize, "%s=%*.*ed %s=%*.*ed",
+        estimateSymbol(),
+        estimate(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+        confidence,
+        threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+  } else {
+    Poincare::Print::customPrintf(buffer, bufferSize, "%s=%*.*ed",
+        confidence,
+        threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+  }
+}
+
 void Interval::initializeSignificanceTest(SignificanceTestType t) {
   this->~Interval();
   switch (t) {

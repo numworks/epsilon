@@ -28,8 +28,9 @@ public:
   T stackPop() {
     assert(length() > 0);
     m_end = (m_end + N - 1) % N;
+    T res = m_stack[m_end];
     resetIfEmpy();
-    return m_stack[m_end];
+    return res;
   }
 
   T queuePop() {

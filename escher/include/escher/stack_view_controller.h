@@ -4,6 +4,7 @@
 #include <escher/view_controller.h>
 #include <escher/stack_view.h>
 #include <escher/palette.h>
+#include <escher/ring_buffer.h>
 #include <escher/solid_color_view.h>
 #include <stdint.h>
 
@@ -43,11 +44,11 @@ private:
   class ControllerView : public View {
   public:
     ControllerView(Style style);
-    int8_t numberOfStacks() const { return m_numberOfStacks; }
+    int8_t numberOfStacks() const { return m_stackViews.length(); }
     void setContentView(View * view);
     void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
     void pushStack(ViewController * controller);
-    void resetStack() { m_numberOfStacks = 0; }
+    void resetStack() { m_stackViews.reset(); }
   protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -62,11 +63,10 @@ private:
     // Returns the index in m_stackViews for a given display index
     int stackHeaderIndex(int displayIndex);
 
-    StackView m_stackViews[k_MaxNumberOfStacks];
+    RingBuffer<StackView, k_MaxNumberOfStacks> m_stackViews;
     SolidColorView m_borderView;
     View * m_contentView;
     Style m_style;
-    int8_t m_numberOfStacks;
     // TODO: enum class? Some combination can't exist?
     bool m_headersOverlapHeaders;
     bool m_headersOverlapContent;
@@ -81,7 +81,7 @@ private:
   uint8_t m_numberOfChildren;
   bool m_isVisible;
   /* Represents the stacks to display, _starting from the end_.
-   * m_headersDisplayMask = 0b11111011   ->  shouldn't display m_stackViews[m_numberOfStacks - 1 - 2]. */
+   * m_headersDisplayMask = 0b11111011   ->  shouldn't display m_stackViews[numberOfStacks - 1 - 2]. */
   uint8_t m_headersDisplayMask;
 };
 

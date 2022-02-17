@@ -36,8 +36,10 @@ void setShiftAlphaStatus(ShiftAlphaStatus s) {
   sShiftAlphaStatus = s;
 }
 
-void updateModifiersFromEvent(Event e) {
+void updateModifiersFromEvent(Event e, Keyboard::State state) {
   assert(e.isKeyboardEvent());
+  bool shiftKeyDown = state.keyDown(Keyboard::Key::Shift);
+  bool alphaKeyDown = state.keyDown(Keyboard::Key::Alpha);
   switch (sShiftAlphaStatus) {
     case ShiftAlphaStatus::Default:
       if (e == Shift) {
@@ -52,7 +54,9 @@ void updateModifiersFromEvent(Event e) {
       } else if (e == Alpha) {
         sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
       } else {
-        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        if (!shiftKeyDown) {
+          sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        }
       }
       break;
     case ShiftAlphaStatus::Alpha:
@@ -61,7 +65,9 @@ void updateModifiersFromEvent(Event e) {
       } else if (e == Alpha) {
         sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
       } else {
-        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        if (!alphaKeyDown) {
+          sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        }
       }
       break;
     case ShiftAlphaStatus::ShiftAlpha:
@@ -70,7 +76,15 @@ void updateModifiersFromEvent(Event e) {
       } else if (e == Alpha) {
         sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
       } else {
-        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        if (!shiftKeyDown && !alphaKeyDown) {
+          sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        } else if (!shiftKeyDown) {
+          sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
+        } else if (!alphaKeyDown) {
+          sShiftAlphaStatus = ShiftAlphaStatus::Shift;
+        } else {
+          // Do nothing, both shift and alpha keys are down
+        }
       }
       break;
     case ShiftAlphaStatus::AlphaLock:

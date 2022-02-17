@@ -108,10 +108,10 @@ Event sharedGetEvent(int * timeout) {
          * to resort to using a builtin function. */
         Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
         didPressNewKey();
-        sLastEventShift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
-        sLastEventAlpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
+        sLastEventShift = isShiftActive();
+        sLastEventAlpha = isAlphaActive();
         Event event(key, sLastEventShift, sLastEventAlpha, lock);
-        updateModifiersFromEvent(event);
+        updateModifiersFromEvent(event, state);
         (event == sLastEvent) ? incrementRepetition() : resetRepetition();
         sLastEvent = event;
         sLastKeyboardState = state;

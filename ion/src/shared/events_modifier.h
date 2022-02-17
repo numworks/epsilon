@@ -10,7 +10,7 @@ void removeShift();
 bool isShiftActive();
 bool isAlphaActive();
 bool isLockActive();
-void updateModifiersFromEvent(Event e);
+void updateModifiersFromEvent(Event e, Keyboard::State state);
 int longPressFactor();
 void resetLongPress();
 void resetRepetition();

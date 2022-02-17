@@ -156,7 +156,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
 bool NestedMenuController::returnToPreviousMenu() {
   resetMemoization();
   int previousDepth = stackDepth();
-  NestedMenuController::StackState state = m_stack.pop();
+  NestedMenuController::StackState state = m_stack.stackPop();
 
   /* Unless breadcrumb is no longer visible (depth 1), we need to pop it first,
    * to push it again in order to force title refresh. */
@@ -176,7 +176,7 @@ bool NestedMenuController::returnToRootMenu() {
   resetMemoization();
   if (stackDepth() > 0) {
     // Reset breadcrumb and stack
-    m_stack.resetStack();
+    m_stack.reset();
     m_breadcrumbController.resetTitle();
     StackViewController::pop();
   }

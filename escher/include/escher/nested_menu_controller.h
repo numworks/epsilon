@@ -8,7 +8,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/metric.h>
 #include <escher/container.h>
-#include <escher/stack.h>
+#include <escher/ring_buffer.h>
 #include <ion.h>
 
 namespace Escher {
@@ -46,7 +46,7 @@ protected:
   constexpr static int k_maxModelTreeDepth = StackViewController::k_maxNumberOfChildren-1;
   static constexpr int k_leafCellType = 0;
   static constexpr int k_nodeCellType = 1;
-  int stackDepth() { return m_stack.depth(); }
+  int stackDepth() { return m_stack.length(); }
   virtual bool selectSubMenu(int selectedRow);
   virtual bool returnToPreviousMenu();
   virtual bool returnToRootMenu();
@@ -56,7 +56,7 @@ protected:
   virtual HighlightCell * nodeCellAtIndex(int index) = 0;
   virtual I18n::Message subTitle() = 0;
   SelectableTableView m_selectableTableView;
-  Stack<StackState, k_maxModelTreeDepth> * stack() { return &m_stack; }
+  RingBuffer<StackState, k_maxModelTreeDepth> * stack() { return &m_stack; }
   virtual int controlChecksum() const { return 0; }
 
 private:
@@ -98,7 +98,7 @@ private:
   BreadcrumbController m_breadcrumbController;
   ListController m_listController;
   InputEventHandler * m_sender;
-  Stack<StackState, k_maxModelTreeDepth> m_stack;
+  RingBuffer<StackState, k_maxModelTreeDepth> m_stack;
   StackState m_lastState;
   int m_savedChecksum;
   static constexpr int k_nestedMenuStackDepth = 1;

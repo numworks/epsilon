@@ -22,6 +22,14 @@ private:
   SDL_Scancode m_SDLKey;
 };
 
+/* The sKeyPairs list indicates which keys on the host are bound to the
+ * simulated calculator's own keyboard.
+ * The state of those keys will be visible in Ion::Keyboard::state(), and as a
+ * result will emit events from Ion::Events::sharedGetEvent.
+ * It looks like a great idea, but in many scenarios that 1:1 mapping is not the
+ * best solution. For example, you may not want to emit a Clear event following
+ * a Shift-Backspace on the host. */
+
 constexpr static KeySDLKeyPair sKeyPairs[] = {
   KeySDLKeyPair(Key::Down,      SDL_SCANCODE_DOWN),
   KeySDLKeyPair(Key::Up,        SDL_SCANCODE_UP),
@@ -32,7 +40,6 @@ constexpr static KeySDLKeyPair sKeyPairs[] = {
   KeySDLKeyPair(Key::EXE,       SDL_SCANCODE_RETURN),
   KeySDLKeyPair(Key::Back,      SDL_SCANCODE_ESCAPE),
   KeySDLKeyPair(Key::Toolbox,   SDL_SCANCODE_TAB),
-  KeySDLKeyPair(Key::Backspace, SDL_SCANCODE_BACKSPACE),
   KeySDLKeyPair(Key::Power,     SDL_SCANCODE_GRAVE)
 };
 

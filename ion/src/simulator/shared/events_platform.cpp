@@ -92,6 +92,8 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
   switch(event.keysym.sym) {
     case SDLK_AC_BACK:
       return Termination;
+    case SDLK_BACKSPACE:
+      return Backspace;
   }
   // No event was detected, restore the previous ShiftAlphaStatus.
   setShiftAlphaStatus(previousShiftAlphaStatus);

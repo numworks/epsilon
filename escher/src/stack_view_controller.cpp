@@ -256,7 +256,6 @@ void StackViewController::initView() {
 }
 
 void StackViewController::viewWillAppear() {
-  Container::activeApp()->willOpenPage(topViewController());
   /* Load the visible controller view */
   setupActiveView();
   m_isVisible = true;
@@ -268,7 +267,6 @@ void StackViewController::viewDidDisappear() {
     vc->viewDidDisappear();
   }
   m_isVisible = false;
-  Container::activeApp()->didExitPage(vc);
 }
 
 bool StackViewController::shouldStoreHeaderOnStack(ViewController * vc, int index) {

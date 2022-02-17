@@ -81,10 +81,10 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
     assert(symbol.type() == ExpressionNode::Type::Function && symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
     Expression childSymbol = symbol.childAtIndex(0);
     finalExpression = finalExpression.replaceSymbolWithExpression(static_cast<const Symbol &>(childSymbol), Symbol::Builder(UCodePointUnknown));
-    if (!(childSymbol.isIdenticalTo(Symbol::Builder('x')) || childSymbol.isIdenticalTo(Symbol::Builder('t')) || childSymbol.isIdenticalTo(Symbol::Builder(UCodePointGreekSmallLetterTheta)))) {
-      // Unsupported symbol. Fall back to 'x'
+    if (!(childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) || childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol)) || childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_polarSymbol)))) {
+      // Unsupported symbol. Fall back to the default cartesain function symbol
       Expression symbolInX = symbol.clone();
-      symbolInX.replaceChildAtIndexInPlace(0, Symbol::Builder('x'));
+      symbolInX.replaceChildAtIndexInPlace(0, Symbol::Builder(ContinuousFunction::k_cartesianSymbol));
       setExpressionForFunction(finalExpression, static_cast<const SymbolAbstract&>(symbolInX), record);
     } else {
       setExpressionForFunction(finalExpression, symbol, record);

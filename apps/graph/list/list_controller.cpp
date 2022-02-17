@@ -91,7 +91,7 @@ bool ListController::layoutRepresentsAnEquation(Poincare::Layout l) const {
 bool ListController::layoutRepresentsPolarFunction(Poincare::Layout l) const {
   Poincare::Layout match = l.recursivelyMatches(
     [](Poincare::Layout layout) {
-      return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == UCodePointGreekSmallLetterTheta;
+      return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == ContinuousFunction::k_polarSymbol;
     });
   return !match.isUninitialized();
 }
@@ -104,7 +104,7 @@ bool ListController::completeEquation(InputEventHandler * equationField, bool po
     constexpr size_t k_bufferSize = Shared::ContinuousFunction::k_maxDefaultNameSize + sizeof("(θ)=") - 1;
     char buffer[k_bufferSize];
     // If layout represents a polar function, use θ as symbol
-    CodePoint symbol = polarFunction ? UCodePointGreekSmallLetterTheta : static_cast<CodePoint>('x');
+    CodePoint symbol = polarFunction ? ContinuousFunction::k_polarSymbol : ContinuousFunction::k_cartesianSymbol;
     // Insert "f(x)=", with f the default function name and x the symbol
     fillWithDefaultFunctionEquation(buffer, k_bufferSize, &m_modelsParameterController, symbol);
     return equationField->handleEventWithText(buffer);
@@ -113,7 +113,7 @@ bool ListController::completeEquation(InputEventHandler * equationField, bool po
   constexpr size_t k_bufferSize = Poincare::SymbolAbstract::k_maxNameSize + sizeof("(x)≥") - 1;
   static_assert(sizeof("(x)≥") >= sizeof("(θ)="), "k_bufferSize should fit both situations.");
   // (θ)≥ would not fit, but inequations on polar are not handled.
-  assert(f->symbol() != UCodePointGreekSmallLetterTheta || f->equationSymbol() == '=');
+  assert(f->symbol() != ContinuousFunction::k_polarSymbol || f->equationSymbol() == '=');
   char buffer[k_bufferSize];
   int nameLength = f->nameWithArgument(buffer, k_bufferSize);
   nameLength += UTF8Decoder::CodePointToChars(f->equationSymbol(), buffer + nameLength, k_bufferSize - nameLength);
@@ -152,7 +152,7 @@ bool ListController::textRepresentsAnEquation(const char * text) const {
 }
 
 bool ListController::textRepresentsPolarFunction(const char * text) const {
-  return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, UCodePointGreekSmallLetterTheta), UCodePointGreekSmallLetterTheta);
+  return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, ContinuousFunction::k_polarSymbol), ContinuousFunction::k_polarSymbol);
 }
 
 // TODO: factorize with solver

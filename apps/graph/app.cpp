@@ -76,7 +76,7 @@ CodePoint App::XNT() {
     Ion::Storage::Record record = functionStore()->recordAtIndex(selectedFunctionIndex);
     return functionStore()->modelForRecord(record)->symbol();
   }
-  return 'x';
+  return ContinuousFunction::k_cartesianSymbol;
 }
 
 NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {

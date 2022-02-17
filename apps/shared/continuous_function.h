@@ -132,7 +132,7 @@ public:
   // If the ContinuousFunction should be considered active in table
   bool isActiveInTable() const;
   // If the ContinuousFunction has x for unknown symbol
-  bool isAlongX() const { return symbol() == 'x'; }
+  bool isAlongX() const { return symbol() == ContinuousFunction::k_cartesianSymbol; }
   // If the ContinuousFunction is a conic
   bool isConic() const;
   // If the ContinuousFunction is made of vertical lines
@@ -227,9 +227,13 @@ public:
   void setCache(ContinuousFunctionCache * v) { m_cache = v; }
   void didBecomeInactive() override { m_cache = nullptr; }
   static constexpr char k_unnamedRecordFirstChar = '?';
+  static constexpr CodePoint k_cartesianSymbol = 'x';
+  static constexpr CodePoint k_parametricSymbol = 't';
+  static constexpr CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
 private:
   static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
   static constexpr char k_ordinateName[2] = "y";
+  static constexpr CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
   static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   // Units are not handled in the graph app. The default unit does not matters
   static constexpr Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;

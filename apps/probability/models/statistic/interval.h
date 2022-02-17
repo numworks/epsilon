@@ -20,13 +20,27 @@ public:
     m_SE(NAN), // Initialize to make sure m_SE != 0 by default and test-statistics are graphable.
     m_marginOfError(NAN) {}
   virtual ~Interval();
+  SubApp subApp() const override { return SubApp::Interval; }
 
   void initializeSignificanceTest(SignificanceTestType type) override;
-  void tidy();
+  void tidy() override;
+  I18n::Message statisticTitle() const override { return I18n::Message::IntervalDescr; }
+  I18n::Message statisticBasicTitle() const override { return I18n::Message::Interval; }
+  // Don't show Categorical cell for Interval
+  int numberOfSignificancesTestTypes() const override { return k_numberOfSignificanceTestType - 1; }
+  I18n::Message zStatisticMessage() const override { return I18n::Message::ZInterval; }
+  I18n::Message tOrZStatisticMessage() const override { return I18n::Message::TOrZInterval; }
+  I18n::Message tDistributionName() const override { return I18n::Message::TInterval; }
+  I18n::Message tPooledDistributionName() const override { return I18n::Message::ZInterval; }
+  I18n::Message zDistributionName() const override { return I18n::Message::PooledTInterval; }
+  void setGraphTitle(char * buffer, size_t bufferSize) const override;
+
   void compute() override;
 
   float evaluateAtAbscissa(float x) const override { return canonicalDensityFunction((x - estimate()) / standardError()); }
   void initThreshold() override { m_threshold = 0.95; }
+  I18n::Message thresholdName() const override { return I18n::Message::ConfidenceLevel; }
+  I18n::Message thresholdDescription() const override { return I18n::Message::Default; }
 
   virtual const char * estimateSymbol() = 0;
   virtual Poincare::Layout estimateLayout() { return m_estimateLayout; }
@@ -43,6 +57,10 @@ public:
   double standardError() const { return m_SE; };
   /* Returns the half-width of the confidence interval. */
   double marginOfError() const { return m_marginOfError; };
+
+  // Output
+  int numberOfResults() const override { return 3 + hasDegreeOfFreedom() + !m_estimateLayout.isUninitialized(); }
+  void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) override;
 
   // CurveViewRange
   bool isGraphable() const override;
@@ -67,6 +85,7 @@ protected:
   double m_SE;
   double m_marginOfError;
 private:
+  enum ResultOrder { Estimate, Critical, SE, ME, IntervalDegree };
   float largestMarginOfError();
 };
 

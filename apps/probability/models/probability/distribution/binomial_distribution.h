@@ -10,6 +10,7 @@ public:
   BinomialDistribution() : TwoParameterDistribution(20.0, 0.5) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::BinomialDistribution; }
   Type type() const override { return Type::Binomial; }
+  const char * parameterNameAtIndex(int index) const override { return index == 0 ? "n" : "p"; }
   bool isContinuous() const override { return false; }
   bool isSymmetrical() const override { return true; }
   float evaluateAtAbscissa(float x) const override;

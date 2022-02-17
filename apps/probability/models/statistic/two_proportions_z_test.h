@@ -10,8 +10,13 @@ namespace Probability {
 class TwoProportionsZTest : public Test {
 friend class TwoProportions;
 public:
+  SignificanceTestType significanceTestType() const override { return SignificanceTestType::TwoProportions; }
+  DistributionType distributionType() const override { return DistributionType::Z; }
   I18n::Message title() const override { return TwoProportions::Title(); }
+  I18n::Message graphTitleFormat() const override { return DistributionZ::GraphTitleFormat(); }
+
   // Significance Test: TwoProportions
+  const char * hypothesisSymbol() override { return TwoProportions::HypothesisSymbol(); }
   void initParameters() override { TwoProportions::InitTestParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override { return TwoProportions::AuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {

@@ -11,6 +11,7 @@ public:
   PoissonDistribution() : OneParameterDistribution(4.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::PoissonDistribution; }
   Type type() const override { return Type::Poisson; }
+  const char * parameterNameAtIndex(int index) const override { return "λ"; }
   bool isContinuous() const override { return false; }
   bool isSymmetrical() const override { return true; }
   float evaluateAtAbscissa(float x) const override {
@@ -19,7 +20,7 @@ public:
   bool authorizedParameterAtIndex(double x, int index) const override;
 private:
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {
-    return ParameterRepresentation{Poincare::LayoutHelper::String("λ"), I18n::Message::LambdaPoissonDefinition};
+    return ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::LambdaPoissonDefinition};
   }
   float computeXMax() const override;
   float computeYMax() const override;

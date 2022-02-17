@@ -16,13 +16,18 @@ class OneMean : public SignificanceTest {
 public:
   enum ParamsOrder { x, s, n };
 
+  // Description
   static I18n::Message ZTitle() { return I18n::Message::HypothesisControllerTitleOneMeanZ; }
   static I18n::Message TTitle() { return I18n::Message::HypothesisControllerTitleOneMeanT; }
+  static I18n::Message DistributionTitle() { return I18n::Message::TypeControllerTitleOne; }
+  static I18n::Message TestDistributionDescription() { return I18n::Message::OneMeanTestDescr; }
+  static I18n::Message IntervalDistributionDescription() { return I18n::Message::OneMeanIntervalDescr; }
 
-  // Description
+  static const char * HypothesisSymbol() { return "μ"; }
   static const char * EstimateSymbol() { return "x̅"; };
 
   // Parameters
+  static int NumberOfAvailableDistributions() { return 2; }
   static void InitTestParameters(Test * test);
   static void InitTIntervalParameters(Interval * interval);
   static void InitZIntervalParameters(Interval * interval);
@@ -52,9 +57,10 @@ class OneProportion : public SignificanceTest {
 public:
   enum ParamsOrder { x, n };
 
+  // Description
   static I18n::Message Title() { return I18n::Message::HypothesisControllerTitleOneProp; }
 
-  // Description
+  static const char * HypothesisSymbol() { return "p"; }
   static const char * EstimateSymbol() { return "p̂"; };
   static Poincare::Layout EstimateLayout(Poincare::Layout * layout);
   static I18n::Message EstimateDescription() { return I18n::Message::SampleProportion; };
@@ -88,8 +94,13 @@ public:
 
   static I18n::Message ZTitle() { return I18n::Message::HypothesisControllerTitleTwoMeansZ; }
   static I18n::Message TTitle() { return I18n::Message::HypothesisControllerTitleTwoMeansT; }
+  static I18n::Message DistributionTitle() { return I18n::Message::TypeControllerTitleTwo; }
+  static I18n::Message TestDistributionDescription() { return I18n::Message::TwoMeanTestDescr; }
+  static I18n::Message IntervalDistributionDescription() { return I18n::Message::TwoMeanIntervalDescr; }
 
   // Description
+  static int NumberOfAvailableDistributions() { return 2; }
+  static const char * HypothesisSymbol() { return "μ1-μ2"; }
   static const char * EstimateSymbol() { return "x̅1-x̅2"; };
   static Poincare::Layout EstimateLayout(Poincare::Layout * layout);
   static I18n::Message EstimateDescription() { return I18n::Message::SampleTwoMeans; };
@@ -143,6 +154,7 @@ public:
   static I18n::Message Title() { return I18n::Message::HypothesisControllerTitleTwoProps; }
 
   // Description
+  static const char * HypothesisSymbol() { return "p1-p2"; }
   static const char * EstimateSymbol() { return "p̂1-p̂2"; };
   static Poincare::Layout EstimateLayout(Poincare::Layout * layout);
   static I18n::Message EstimateDescription() { return I18n::Message::SampleTwoProportions; };

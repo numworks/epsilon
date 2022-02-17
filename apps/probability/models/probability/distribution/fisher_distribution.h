@@ -10,6 +10,7 @@ public:
   FisherDistribution() : TwoParameterDistribution(1.0, 1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::FisherDistribution; }
   Type type() const override { return Type::Fisher; }
+  const char * parameterNameAtIndex(int index) const override { return index == 0 ? "d1" : "d2"; }
   bool isContinuous() const override { return true; }
   bool isSymmetrical() const override { return false; }
   float evaluateAtAbscissa(float x) const override;

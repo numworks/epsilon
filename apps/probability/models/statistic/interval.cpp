@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/print.h>
 #include <poincare/vertical_offset_layout.h>
 
 #include <new>
@@ -16,6 +17,11 @@ namespace Probability {
 
 Interval::~Interval() {
   tidy();
+}
+
+void Interval::setGraphTitle(char * buffer, size_t bufferSize) const {
+  const char * format = I18n::translate(I18n::Message::StatisticGraphControllerIntervalTitleFormat);
+  Poincare::Print::customPrintf(buffer, bufferSize, format, marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
 void Interval::initializeSignificanceTest(SignificanceTestType t) {
@@ -125,6 +131,39 @@ int Interval::MainDisplayedIntervalThresholdIndex(float mainThreshold) {
     }
   }
   return k_numberOfDisplayedIntervals - 1;
+}
+
+void Interval::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) {
+  // Estimate cell is not displayed -> shift i
+  index += m_estimateLayout.isUninitialized();
+  switch (index) {
+    case ResultOrder::Estimate:
+      *value = estimate();
+      *message = estimateLayout();
+      *subMessage = estimateDescription();
+      break;
+    case ResultOrder::Critical:
+      *value = intervalCriticalValue();
+      *message = intervalCriticalValueSymbol();
+      *subMessage = I18n::Message::CriticalValue;
+      break;
+    case ResultOrder::SE:
+      *value = standardError();
+      *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::SE));
+      *subMessage = I18n::Message::StandardError;
+      break;
+    case ResultOrder::ME:
+      *value = marginOfError();
+      *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::ME));
+      *subMessage = I18n::Message::MarginOfError;
+      break;
+    case ResultOrder::IntervalDegree:
+      *value = degreeOfFreedom();
+      *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
+      break;
+    default:
+      assert(false);
+  }
 }
 
 }  // namespace Probability

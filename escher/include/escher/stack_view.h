@@ -9,12 +9,9 @@ namespace Escher {
 
 class StackView : public View, public Bordered {
 public:
-  StackView();
+  StackView(ViewController * controller = nullptr, KDColor textColor = KDColorBlack, KDColor = KDColorBlack, KDColor separatorColor = KDColorBlack);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setNamedController(ViewController * controller);
-  void setTextColor(KDColor textColor);
-  void setBackgroundColor(KDColor backgroundColor);
-  void setSeparatorColor(KDColor separatorColor);
+
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;

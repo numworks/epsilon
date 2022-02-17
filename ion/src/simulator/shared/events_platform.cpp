@@ -54,8 +54,8 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
     }
   }
 
-  if (event.keysym.mod & (KMOD_CTRL|KMOD_GUI)) {
-    switch (event.keysym.sym) {
+  if (mod & (KMOD_CTRL|KMOD_GUI)) {
+    switch (sym) {
       case SDLK_x:
         return Cut;
       case SDLK_c:
@@ -72,9 +72,9 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
 #endif
     }
   }
-  if (event.keysym.mod & KMOD_ALT) {
-    if (event.keysym.mod & KMOD_SHIFT) {
-      switch (event.keysym.sym) {
+  if (mod & KMOD_ALT) {
+    if (mod & KMOD_SHIFT) {
+      switch (sym) {
         case SDLK_s:
           return Arcsine;
         case SDLK_c:
@@ -89,7 +89,7 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
           return BatteryCharging;
       }
     }
-    switch (event.keysym.sym) {
+    switch (sym) {
       case SDLK_v:
         return Var;
       case SDLK_x:
@@ -120,7 +120,7 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
         return Ans;
     }
   }
-  switch(event.keysym.sym) {
+  switch(sym) {
     case SDLK_AC_BACK:
       return Termination;
     case SDLK_BACKSPACE:
@@ -148,7 +148,6 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
   if (strlen(event.text) == 1) {
     char character = event.text[0];
     if (character >= 32 && character < 127) {
-
       Event res = sEventForASCIICharAbove32[character-32];
       if (res != None) {
         return res;

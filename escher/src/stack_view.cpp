@@ -6,29 +6,13 @@ extern "C" {
 
 namespace Escher {
 
-StackView::StackView() :
+StackView::StackView(ViewController * controller, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
   View(),
-  m_controller(nullptr)
+  m_textColor(textColor),
+  m_backgroundColor(backgroundColor),
+  m_separatorColor(separatorColor),
+  m_controller(controller)
 {
-}
-
-void StackView::setTextColor(KDColor textColor) {
-  m_textColor = textColor;
-  markRectAsDirty(bounds());
-}
-
-void StackView::setBackgroundColor(KDColor backgroundColor) {
-  m_backgroundColor = backgroundColor;
-  markRectAsDirty(bounds());
-}
-
-void StackView::setSeparatorColor(KDColor separatorColor) {
-  m_separatorColor = separatorColor;
-  markRectAsDirty(bounds());
-}
-
-void StackView::setNamedController(ViewController * controller) {
-  m_controller = controller;
   markRectAsDirty(bounds());
 }
 

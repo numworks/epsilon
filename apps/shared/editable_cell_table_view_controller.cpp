@@ -130,7 +130,17 @@ void EditableCellTableViewController::viewWillAppear() {
 }
 
 void EditableCellTableViewController::tryToDeleteColumn() {
-  m_confirmPopUpController.presentModally();
+  if (numberOfElementsInColumn(selectedColumn()) > 0 && isColumnDeletable(selectedColumn())) {
+    m_confirmPopUpController.presentModally();
+   }
+}
+
+bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Backspace && selectedRow() == 0) {
+    tryToDeleteColumn();
+    return true;
+  }
+  return false;
 }
 
 }

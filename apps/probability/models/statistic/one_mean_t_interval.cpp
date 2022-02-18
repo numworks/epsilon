@@ -3,9 +3,12 @@
 
 namespace Probability {
 
-void OneMeanTInterval::initializeDistribution(DistributionType distribution) {
+bool OneMeanTInterval::initializeDistribution(DistributionType distributionType) {
+  if (Statistic::initializeDistribution(distributionType)) {
+    return false;
+  }
   this->~OneMeanTInterval();
-  switch (distribution) {
+  switch (distributionType) {
     case DistributionType::T:
       new (this) OneMeanTInterval();
       break;
@@ -17,6 +20,7 @@ void OneMeanTInterval::initializeDistribution(DistributionType distribution) {
       break;
   }
   initParameters();
+  return true;
 }
 
 }

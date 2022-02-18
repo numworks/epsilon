@@ -3,9 +3,12 @@
 
 namespace Probability {
 
-void OneMeanTTest::initializeDistribution(DistributionType distribution) {
+bool OneMeanTTest::initializeDistribution(DistributionType distributionType) {
+  if (Statistic::initializeDistribution(distributionType)) {
+    return false;
+  }
   this->~OneMeanTTest();
-  switch (distribution) {
+  switch (distributionType) {
     case DistributionType::T:
       new (this) OneMeanTTest();
       break;
@@ -17,6 +20,7 @@ void OneMeanTTest::initializeDistribution(DistributionType distribution) {
       break;
   }
   initParameters();
+  return true;
 }
 
 }

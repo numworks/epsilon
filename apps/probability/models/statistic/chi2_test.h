@@ -16,7 +16,7 @@ public:
 
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::Categorical; }
   DistributionType distributionType() const override { return DistributionType::Chi2; }
-  void initializeCategoricalType(CategoricalType type);
+  bool initializeCategoricalType(CategoricalType type);
 
   Poincare::Layout testCriticalValueSymbol() override {
     return DistributionChi2::TestCriticalValueSymbol();

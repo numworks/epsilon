@@ -4,9 +4,12 @@
 
 namespace Probability {
 
-void TwoMeansTInterval::initializeDistribution(DistributionType distribution) {
+bool TwoMeansTInterval::initializeDistribution(DistributionType distributionType) {
+  if (Statistic::initializeDistribution(distributionType)) {
+    return false;
+  }
   this->~TwoMeansTInterval();
-  switch (distribution) {
+  switch (distributionType) {
     case DistributionType::T:
       new (this) TwoMeansTInterval();
       break;
@@ -21,6 +24,7 @@ void TwoMeansTInterval::initializeDistribution(DistributionType distribution) {
       break;
   }
   initParameters();
+  return true;
 }
 
 }

@@ -10,18 +10,22 @@ Chi2Test::Chi2Test() : Test() {
   m_hypothesisParams.setComparisonOperator(HypothesisParams::ComparisonOperator::Higher);  // Always higher
 }
 
-void Chi2Test::initializeCategoricalType(CategoricalType type) {
+bool Chi2Test::initializeCategoricalType(CategoricalType type) {
+  if (type == categoricalType()) {
+    return false;
+  }
   this->~Chi2Test();
   switch (type) {
     case CategoricalType::Homogeneity:
       new (this) HomogeneityTest();
-      return;
+      break;
     case CategoricalType::GoodnessOfFit:
       new (this) GoodnessTest();
-      return;
+      break;
     default:
       assert(false);
   }
+  return true;
 }
 
 double Chi2Test::computeChi2() {

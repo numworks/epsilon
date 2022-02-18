@@ -27,7 +27,7 @@ public:
     Poisson,
     Fisher
   };
-  static void Initialize(Distribution * distribution, Type type);
+  static bool Initialize(Distribution * distribution, Type type);
   virtual Type type() const = 0;
 
   virtual bool isContinuous() const = 0;

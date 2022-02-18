@@ -11,7 +11,7 @@ class OneMeanTInterval : public Interval {
 public:
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::OneMean; }
   DistributionType distributionType() const override { return DistributionType::T; }
-  void initializeDistribution(DistributionType distribution) override;
+  bool initializeDistribution(DistributionType distribution) override;
   I18n::Message title() const override { return OneMean::TTitle(); }
 
   // Significance Test: One Mean

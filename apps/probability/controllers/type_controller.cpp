@@ -65,9 +65,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
       controller = m_hypothesisController;
     }
     assert(controller != nullptr);
-    if (type != m_statistic->distributionType()) {
-      m_statistic->initializeDistribution(type);
-    }
+    m_statistic->initializeDistribution(type);
     stackOpenPage(controller);
     return true;
   }

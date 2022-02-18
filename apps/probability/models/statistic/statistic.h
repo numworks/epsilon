@@ -61,9 +61,9 @@ public:
 
   /* Instantiate correct Statistic based on SignificanceTestType, DistributionType and CategoricalType. */
   virtual SignificanceTestType significanceTestType() const = 0;
-  virtual void initializeSignificanceTest(SignificanceTestType testType) = 0;
+  virtual bool initializeSignificanceTest(SignificanceTestType testType);
   virtual DistributionType distributionType() const = 0;
-  virtual void initializeDistribution(DistributionType distribution) { assert(false); }
+  virtual bool initializeDistribution(DistributionType distribution);
   virtual CategoricalType categoricalType() const { assert(false); return CategoricalType::Homogeneity; }
   virtual void initParameters() = 0;
 

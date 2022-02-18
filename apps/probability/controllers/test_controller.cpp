@@ -90,9 +90,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(controller != nullptr);
-#warning Add poorman's RTTI to avoid resetting
-    if (testType != m_statistic->significanceTestType()) {
-      m_statistic->initializeSignificanceTest(testType);
+    if (m_statistic->initializeSignificanceTest(testType)) {
       controller->selectRow(0);
     }
     stackOpenPage(controller);

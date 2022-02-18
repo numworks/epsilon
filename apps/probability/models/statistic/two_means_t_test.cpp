@@ -4,9 +4,12 @@
 
 namespace Probability {
 
-void TwoMeansTTest::initializeDistribution(DistributionType distribution) {
+bool TwoMeansTTest::initializeDistribution(DistributionType distributionType) {
+  if (Statistic::initializeDistribution(distributionType)) {
+    return false;
+  }
   this->~TwoMeansTTest();
-  switch (distribution) {
+  switch (distributionType) {
     case DistributionType::T:
       new (this) TwoMeansTTest();
       break;
@@ -21,6 +24,7 @@ void TwoMeansTTest::initializeDistribution(DistributionType distribution) {
       break;
   }
   initParameters();
+  return true;
 }
 
 }

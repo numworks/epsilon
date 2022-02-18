@@ -17,7 +17,7 @@ public:
     RightIntegral,
     Discrete,
   };
-  static void Initialize(Calculation * calculation, Type type, Distribution * distribution);
+  static bool Initialize(Calculation * calculation, Type type, Distribution * distribution, bool forceReinitialization);
 
   Calculation(Distribution * distribution) : m_distribution(distribution) {
     assert(distribution != nullptr);

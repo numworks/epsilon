@@ -56,7 +56,7 @@ double MedianModel::getMedianValue(Store * store, int * sortedIndex, int series,
   if ((endIndex - startIndex) % 2 == 1) {
     return store->get(series, column, sortedIndex[startIndex + (endIndex - startIndex) / 2]);
   } else {
-    return (store->get(series, column, sortedIndex[startIndex + (endIndex - startIndex) / 2]) + (store->get(series, column, sortedIndex[startIndex + (endIndex - startIndex) / 2 - 1])))/ 2;
+    return (store->get(series, column, sortedIndex[startIndex + (endIndex - startIndex) / 2]) + store->get(series, column, sortedIndex[startIndex + (endIndex - startIndex) / 2 - 1]))/ 2;
   }
 }
 

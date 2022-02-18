@@ -316,9 +316,12 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
    * negative. R2<0 means that the regression is less effective than a
    * constant set to the series average. It should not happen with regression
    * models that can fit a constant observation.
-   * The median-median model can as well be badly fitted.
-   * We still keep the possibility of computing R2 for these models thought.
+   * R2 does not need to be computed if model is median-median, so we avoid computation.
+   * If needed, it could be computed though.
    * */
+  if (m_regressionTypes[series] == Model::Type::Median) {
+    return 0.0;
+  }
   // Residual sum of squares
   double ssr = 0;
   // Total sum of squares

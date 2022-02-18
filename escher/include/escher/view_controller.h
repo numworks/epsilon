@@ -62,7 +62,7 @@ public:
   virtual TitlesDisplay titlesDisplay() { return TitlesDisplay::DisplayAllTitles; }
   /* Use these two functions only if the controller is in a stack hierarchy */
   // Pushes the given controller onto the parent StackViewController responder
-  void stackOpenPage(ViewController * nextPage);
+  virtual void stackOpenPage(ViewController * nextPage);
   // Pop the parent StackViewController responder on a Left event
   bool popFromStackViewControllerOnLeftEvent(Ion::Events::Event event);
 protected:

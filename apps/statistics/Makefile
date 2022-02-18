@@ -14,6 +14,11 @@ app_statistics_src = $(addprefix apps/statistics/,\
   graph/box_controller.cpp \
   graph/box_range.cpp \
   graph/box_view.cpp \
+  graph/frequency_banner_view.cpp \
+  graph/frequency_controller.cpp \
+  graph/frequency_curve_view.cpp \
+  graph/frequency_range.cpp \
+  graph/frequency_view.cpp \
   graph/graph_type_controller.cpp \
   graph/graph_view_model.cpp \
   graph/histogram_banner_view.cpp \

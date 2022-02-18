@@ -8,10 +8,11 @@
 #include <apps/shared/text_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 #include "graph/box_controller.h"
+#include "graph/frequency_controller.h"
+#include "graph/histogram_controller.h"
 #include "graph/graph_type_controller.h"
 #include "graph/graph_view_model.h"
 #include "stats/calculation_controller.h"
-#include "graph/histogram_controller.h"
 #include "data/store_controller.h"
 #include "store.h"
 
@@ -65,6 +66,8 @@ private:
   CalculationController m_calculationController;
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   Escher::ButtonRowController m_calculationHeader; // Needed for upper margin only
+  FrequencyController m_frequencyController;
+  Escher::ButtonRowController m_frequencyHeader;
   BoxController m_boxController;
   Escher::ButtonRowController m_boxHeader;
   HistogramController m_histogramController;

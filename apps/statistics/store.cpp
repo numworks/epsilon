@@ -292,6 +292,35 @@ double Store::sortedElementAtCumulatedPopulation(int series, double population, 
   return m_data[series][0][sortedElementIndex];
 }
 
+void Store::sortIndex(int series, int * sortedIndex, int startIndex, int endIndex) const {
+  assert(startIndex < endIndex);
+  // Following lines is an insertion-sort algorithm which has the advantage of being in-place and efficient when already sorted.
+  int i = startIndex + 1;
+  while (i < endIndex) {
+    double x = m_data[series][0][sortedIndex[i]];
+    int xIndex = sortedIndex[i];
+    int j = i - 1;
+    while (j >= startIndex && m_data[series][0][sortedIndex[j]] > x){
+      sortedIndex[j+1] = sortedIndex[j];
+      j = j - 1;
+    }
+    sortedIndex[j+1] = xIndex;
+    i = i + 1;
+  }
+}
+
+double Store::cumulatedFrequencyAtSortedIndex(int series, int * sortedIndex, int index) const {
+  double cumulatedOccurrences = 0.0;
+  double otherOccurrences = 0.0;
+  // Recompute sumOfOccurrences() here to save some calls.
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int i = 0; i < numberOfPairs; i++) {
+    (i <= index ? cumulatedOccurrences : otherOccurrences) += m_data[series][1][sortedIndex[i]];
+  }
+  assert(otherOccurrences + cumulatedOccurrences == sumOfOccurrences(series));
+  return 100.0*cumulatedOccurrences/(otherOccurrences + cumulatedOccurrences);
+}
+
 int Store::minIndex(double * bufferValues, int bufferLength) const {
   int index = 0;
   for (int i = 1; i < bufferLength; i++) {

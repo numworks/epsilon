@@ -51,6 +51,11 @@ public:
   constexpr static int k_bottomMargin = 20;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 
+  // TODO : Factorize with upcoming changes in regression
+  // TODO : Add tests
+  void sortIndex(int series, int * sortedIndex, int startIndex, int endIndex) const;
+  double cumulatedFrequencyAtSortedIndex(int series, int * sortedIndex, int index) const;
+
   // DoublePairStore
   void memoizeValidSeries(int series) override;
   bool deleteValueAtIndex(int series, int i, int j) override;

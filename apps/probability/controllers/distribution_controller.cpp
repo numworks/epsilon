@@ -38,12 +38,12 @@ DistributionController::DistributionController(Escher::StackViewController * par
   assert(m_distribution != nullptr);
 }
 
-void Probability::DistributionController::viewWillAppear() {
+void DistributionController::viewWillAppear() {
   ViewController::viewWillAppear();
   selectRow((int)m_distribution->type());
 }
 
-void Probability::DistributionController::didBecomeFirstResponder() {
+void DistributionController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
@@ -52,7 +52,7 @@ void Probability::DistributionController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool Probability::DistributionController::handleEvent(Ion::Events::Event event) {
+bool DistributionController::handleEvent(Ion::Events::Event event) {
   StackViewController * stack = (StackViewController *)parentResponder();
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     setDistributionAccordingToIndex(selectedRow());
@@ -65,12 +65,12 @@ bool Probability::DistributionController::handleEvent(Ion::Events::Event event) 
   return false;
 }
 
-KDCoordinate Probability::DistributionController::nonMemoizedRowHeight(int j) {
+KDCoordinate DistributionController::nonMemoizedRowHeight(int j) {
   DistributionCell tempCell;
   return heightForCellAtIndex(&tempCell, j);
 }
 
-HighlightCell * Probability::DistributionController::reusableCell(int index, int type) {
+HighlightCell * DistributionController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < reusableCellCount(type));
   return &m_cells[index];
@@ -86,7 +86,7 @@ constexpr I18n::Message sMessages[] = {I18n::Message::Binomial,
                                        I18n::Message::Poisson,
                                        I18n::Message::Fisher};
 
-void Probability::DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   DistributionCell * myCell = static_cast<DistributionCell *>(cell);
   myCell->setLabel(sMessages[index]);
   const Image * images[k_totalNumberOfModels] = {ImageStore::BinomialIcon,
@@ -102,7 +102,7 @@ void Probability::DistributionController::willDisplayCellForIndex(HighlightCell 
   myCell->reloadCell();
 }
 
-void Probability::DistributionController::setDistributionAccordingToIndex(int index) {
+void DistributionController::setDistributionAccordingToIndex(int index) {
   if (Distribution::Initialize(m_distribution, static_cast<Distribution::Type>(index))) {
     m_parametersController->reinitCalculation();
   }

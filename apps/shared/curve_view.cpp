@@ -197,7 +197,7 @@ void CurveView::computeLabels(Axis axis) {
   int axisLabelsCount = numberOfLabels(axis);
   for (int i = 0; i < axisLabelsCount; i++) {
     float labelValue = labelValueAtIndex(axis, i);
-    /* Label cannot hold more than k_labelBufferMaxGlyphLength characters to prevent
+    /* Label cannot hold more than labelMaxGlyphLength characters to prevent
      * them from overprinting one another.*/
     int labelMaxGlyphLength = labelMaxGlyphLengthSize();
     if (axis == Axis::Horizontal) {
@@ -210,17 +210,18 @@ void CurveView::computeLabels(Axis axis) {
       labelValue = 0.0f;
     }
 
-    /* Label cannot hold more than k_labelBufferSize characters to prevent them
-     * from overprinting one another. */
-
     char * labelBuffer = label(axis, i);
-    PrintFloat::ConvertFloatToText<float>(
+
+    int glyphLength = PrintFloat::ConvertFloatToText<float>(
         labelValue,
         labelBuffer,
         k_labelBufferMaxSize,
         labelMaxGlyphLength,
         k_numberSignificantDigits,
-        Preferences::PrintFloatMode::Decimal);
+        Preferences::PrintFloatMode::Decimal).GlyphLength;
+
+    // Some implementations may need to append a suffix to the label
+    appendLabelSuffix(axis, labelBuffer, k_labelBufferMaxSize, glyphLength, labelMaxGlyphLength);
 
     if (axis == Axis::Horizontal) {
       if (labelBuffer[0] == 0) {
@@ -1185,13 +1186,15 @@ void CurveView::computeHorizontalExtremaLabels(bool increaseNumberOfSignificantD
   int minMax[] = {firstLabel, lastLabel};
   for (int i : minMax) {
     // Compute the minimal and maximal label
-    PrintFloat::ConvertFloatToText<float>(
+    int glyphLength = PrintFloat::ConvertFloatToText<float>(
         labelValueAtIndex(axis, i),
         label(axis, i),
         k_labelBufferMaxSize,
         labelMaxGlyphLengthSize(),
         increaseNumberOfSignificantDigits ? k_bigNumberSignificantDigits : k_numberSignificantDigits,
-        Preferences::PrintFloatMode::Decimal);
+        Preferences::PrintFloatMode::Decimal).GlyphLength;
+    // Some implementations may need to append a suffix to the label
+    appendLabelSuffix(axis, label(axis, i), k_labelBufferMaxSize, glyphLength, labelMaxGlyphLengthSize());
   }
 }
 

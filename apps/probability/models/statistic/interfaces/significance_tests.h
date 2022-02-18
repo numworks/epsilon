@@ -108,7 +108,7 @@ public:
   static I18n::Message IntervalDistributionDescription() { return I18n::Message::TwoMeanIntervalDescr; }
 
   // Description
-  static int NumberOfAvailableDistributions() { return 2; }
+  static int NumberOfAvailableDistributions() { return 3; }
   static const char * HypothesisSymbol() { return "μ1-μ2"; }
   static const char * EstimateSymbol() { return "x̅1-x̅2"; };
   static Poincare::Layout EstimateLayout(Poincare::Layout * layout);

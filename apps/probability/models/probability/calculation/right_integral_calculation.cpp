@@ -1,4 +1,5 @@
 #include "right_integral_calculation.h"
+#include "probability/models/probability/distribution/distribution.h"
 #include <poincare/preferences.h>
 #include <cmath>
 #include <assert.h>
@@ -8,9 +9,7 @@ namespace Probability {
 RightIntegralCalculation::RightIntegralCalculation(Distribution * distribution) :
   Calculation(distribution),
   m_lowerBound(distribution->defaultComputedValue())
-{
-  compute(0);
-}
+{}
 
 I18n::Message RightIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);

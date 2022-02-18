@@ -11,10 +11,10 @@ class OneMeanTInterval : public Interval {
 public:
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::OneMean; }
   DistributionType distributionType() const override { return DistributionType::T; }
-  bool initializeDistribution(DistributionType distribution) override;
   I18n::Message title() const override { return OneMean::TTitle(); }
 
   // Significance Test: One Mean
+  bool initializeDistribution(DistributionType distributionType) override { return OneMean::IntervalInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return OneMean::NumberOfAvailableDistributions(); }
   I18n::Message distributionTitle() const override { return OneMean::DistributionTitle(); }
   I18n::Message distributionDescription() const override { return OneMean::IntervalDistributionDescription(); }

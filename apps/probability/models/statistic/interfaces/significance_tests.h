@@ -10,11 +10,16 @@ class SignificanceTest {
 public:
   static double ComputePValue(Test * t);
   static bool ValidThreshold(double p);
+  static bool InitializeDistribution(Statistic * statistic, DistributionType type);
 };
 
 class OneMean : public SignificanceTest {
 public:
   enum ParamsOrder { x, s, n };
+
+  // Initialization
+  static bool TestInitializeDistribution(Statistic * statistic, DistributionType distributionType);
+  static bool IntervalInitializeDistribution(Statistic * statistic, DistributionType distributionType);
 
   // Description
   static I18n::Message ZTitle() { return I18n::Message::HypothesisControllerTitleOneMeanZ; }
@@ -91,6 +96,10 @@ private:
 class TwoMeans : public SignificanceTest {
 public:
   enum ParamsOrder { x1, n1, s1, x2, n2, s2 };
+
+  // Initialization
+  static bool TestInitializeDistribution(Statistic * statistic, DistributionType distributionType);
+  static bool IntervalInitializeDistribution(Statistic * statistic, DistributionType distributionType);
 
   static I18n::Message ZTitle() { return I18n::Message::HypothesisControllerTitleTwoMeansZ; }
   static I18n::Message TTitle() { return I18n::Message::HypothesisControllerTitleTwoMeansT; }

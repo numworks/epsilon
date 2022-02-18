@@ -13,6 +13,7 @@ public:
   DistributionType distributionType() const override { return DistributionType::Z; }
   I18n::Message title() const override { return OneMean::ZTitle(); }
   // Significance Test: OneMean
+  bool initializeDistribution(DistributionType distributionType) override { return OneMean::IntervalInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return OneMean::NumberOfAvailableDistributions(); }
   I18n::Message distributionTitle() const override { return OneMean::DistributionTitle(); }
   I18n::Message distributionDescription() const override { return OneMean::IntervalDistributionDescription(); }

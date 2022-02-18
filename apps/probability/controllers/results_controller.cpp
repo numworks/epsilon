@@ -38,9 +38,9 @@ void ResultsController::didBecomeFirstResponder() {
 
 ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
   if (m_statistic->subApp() == Inference::SubApp::Interval || (m_statistic->significanceTestType() == SignificanceTestType::Categorical && m_statistic->categoricalType() == CategoricalType::GoodnessOfFit)) {
-    return ViewController::TitlesDisplay::DisplayLastThreeTitles;
+    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
-  return ViewController::TitlesDisplay::DisplayLastTwoTitles;
+  return ViewController::TitlesDisplay::DisplayLastThreeTitles;
 }
 
 const char * Probability::ResultsController::title() {

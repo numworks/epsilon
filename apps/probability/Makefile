@@ -23,7 +23,7 @@ app_probability_src = $(addprefix apps/probability/,\
 
 app_probability_test_src += apps/probability/text_helpers.cpp
 
-app_probability_src += $(addprefix apps/probability/models/probability/calculation/,\
+app_probability_test_src += $(addprefix apps/probability/models/probability/calculation/,\
   calculation.cpp \
   discrete_calculation.cpp \
   left_integral_calculation.cpp \

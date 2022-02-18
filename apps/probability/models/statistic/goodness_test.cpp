@@ -79,12 +79,12 @@ double GoodnessTest::parameterAtPosition(int row, int column) const {
   return parameterAtIndex(locationToTableIndex(row, column));
 }
 
-void GoodnessTest::setParameterAtPosition(int row, int column, double p) {
-  setParameterAtIndex(locationToTableIndex(row, column), p);
+void GoodnessTest::setParameterAtPosition(double p, int row, int column) {
+  setParameterAtIndex(p, locationToTableIndex(row, column));
 }
 
-bool GoodnessTest::authorizedParameterAtPosition(int row, int column, double p) const {
-  return authorizedParameterAtIndex(locationToTableIndex(row, column), p);
+bool GoodnessTest::authorizedParameterAtPosition(double p, int row, int column) const {
+  return authorizedParameterAtIndex(p, locationToTableIndex(row, column));
 }
 
 bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
@@ -101,7 +101,7 @@ bool GoodnessTest::deleteParameterAtPosition(int row, int column) {
     // Param is already deleted
     return false;
   }
-  setParameterAtPosition(row, column, k_undefinedValue);
+  setParameterAtPosition(k_undefinedValue, row, column);
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
     if (i != column && !std::isnan(parameterAtPosition(row, i))) {
       // There is another non deleted value in this row

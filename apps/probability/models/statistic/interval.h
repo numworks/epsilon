@@ -28,11 +28,12 @@ public:
   I18n::Message statisticBasicTitle() const override { return I18n::Message::Interval; }
   // Don't show Categorical cell for Interval
   int numberOfSignificancesTestTypes() const override { return k_numberOfSignificanceTestType - 1; }
+  // TODO: factorize with tests!
   I18n::Message zStatisticMessage() const override { return I18n::Message::ZInterval; }
   I18n::Message tOrZStatisticMessage() const override { return I18n::Message::TOrZInterval; }
   I18n::Message tDistributionName() const override { return I18n::Message::TInterval; }
-  I18n::Message tPooledDistributionName() const override { return I18n::Message::ZInterval; }
-  I18n::Message zDistributionName() const override { return I18n::Message::PooledTInterval; }
+  I18n::Message tPooledDistributionName() const override { return I18n::Message::PooledTInterval; }
+  I18n::Message zDistributionName() const override { return I18n::Message::ZInterval; }
   void setGraphTitle(char * buffer, size_t bufferSize) const override;
   void setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const override;
 

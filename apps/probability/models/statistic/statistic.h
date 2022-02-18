@@ -11,10 +11,11 @@ namespace Probability {
  */
 
 enum class SignificanceTestType {
-  OneMean,
-  TwoMeans,
+  // Order matter for cells order
   OneProportion,
+  OneMean,
   TwoProportions,
+  TwoMeans,
   Categorical,
   NumberOfSignificanceTestTypes
 };
@@ -27,8 +28,9 @@ enum class DistributionType {
 };
 
 enum class CategoricalType {
-  Homogeneity,
-  GoodnessOfFit
+  // Order matter for cells order
+  GoodnessOfFit,
+  Homogeneity
 };
 
 class Statistic : public Inference {

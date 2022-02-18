@@ -62,9 +62,6 @@ private:
   FisherDistribution m_fisherDistribution;
 };
 
-
-#warning Test on emscripten for alignment
-
 union StatisticBuffer {
 public:
   StatisticBuffer() {
@@ -97,8 +94,6 @@ private:
   GoodnessTest m_goodnessTest;
   HomogeneityTest m_homogeneityTest;
 };
-
-#warning Test on emscripten for alignment
 
 union ModelBuffer {
 public:

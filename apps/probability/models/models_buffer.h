@@ -37,7 +37,10 @@ namespace Probability {
 
 union DistributionBuffer {
 public:
-  DistributionBuffer() { new (&m_binomialDistribution) BinomialDistribution(); }
+  DistributionBuffer() {
+    new (&m_binomialDistribution) BinomialDistribution();
+    distribution()->calculation()->compute(0);
+  }
   ~DistributionBuffer() { distribution()->~Distribution(); }
   // Rule of 5
   DistributionBuffer(const DistributionBuffer& other) = delete;
@@ -64,7 +67,10 @@ private:
 
 union StatisticBuffer {
 public:
-  StatisticBuffer() { new (&m_oneMeanTInterval) OneMeanTInterval(); }
+  StatisticBuffer() {
+    new (&m_oneMeanTInterval) OneMeanTInterval();
+    statistic()->initParameters();
+  }
   ~StatisticBuffer() { statistic()->~Statistic(); }
   // Rule of 5
   StatisticBuffer(const StatisticBuffer& other) = delete;

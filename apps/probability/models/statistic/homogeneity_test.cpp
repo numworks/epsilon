@@ -20,9 +20,9 @@ void HomogeneityTest::setGraphTitle(char * buffer, size_t bufferSize) const {
           pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-void HomogeneityTest::setParameterAtPosition(int row, int column, double value) {
+void HomogeneityTest::setParameterAtPosition(double p, int row, int column) {
   assert(index2DToIndex(row, column) < indexOfThreshold());
-  setParameterAtIndex(index2DToIndex(row, column), value);
+  setParameterAtIndex(p, index2DToIndex(row, column));
 }
 
 double HomogeneityTest::parameterAtPosition(int row, int column) const {
@@ -37,8 +37,8 @@ bool HomogeneityTest::authorizedParameterAtIndex(double p, int i) const {
   return Chi2Test::authorizedParameterAtIndex(i, p);
 }
 
-bool HomogeneityTest::authorizedParameterAtPosition(int row, int column, double p) const {
-  return authorizedParameterAtIndex(index2DToIndex(row, column), p);
+bool HomogeneityTest::authorizedParameterAtPosition(double p, int row, int column) const {
+  return authorizedParameterAtIndex(p, index2DToIndex(row, column));
 }
 
 bool HomogeneityTest::deleteParameterAtPosition(int row, int column) {
@@ -46,7 +46,7 @@ bool HomogeneityTest::deleteParameterAtPosition(int row, int column) {
     // Param is already deleted
     return false;
   }
-  setParameterAtPosition(row, column, k_undefinedValue);
+  setParameterAtPosition(k_undefinedValue, row, column);
   bool shouldDeleteRow = true;
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
     if (i != column && !std::isnan(parameterAtPosition(row, i))) {
@@ -185,8 +185,8 @@ void HomogeneityTest::recomputeData() {
       if (i != j) {
         // Copy row from i to j
         for (int col = 0; col < dimensions.col; col++) {
-          setParameterAtPosition(j, col, parameterAtPosition(i, col));
-          setParameterAtPosition(i, col, k_undefinedValue);
+          setParameterAtPosition(parameterAtPosition(i, col), j, col);
+          setParameterAtPosition(k_undefinedValue, i, col);
         }
       }
       j++;
@@ -207,8 +207,8 @@ void HomogeneityTest::recomputeData() {
     if (!colIsEmpty) {
       if (i != j) {
         for (int row = 0; row < dimensions.row; row++) {
-          setParameterAtPosition(row, j, parameterAtPosition(row, i));
-          setParameterAtPosition(row, i, k_undefinedValue);
+          setParameterAtPosition(parameterAtPosition(row, i), row, j);
+          setParameterAtPosition(k_undefinedValue, row, i);
         }
       }
       j++;

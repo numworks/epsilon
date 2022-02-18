@@ -10,6 +10,7 @@ namespace Probability {
 class Distribution;
 
 class Calculation {
+friend union DistributionBuffer;
 public:
   enum class Type : uint8_t{
     LeftIntegral,

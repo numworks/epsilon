@@ -36,19 +36,17 @@ DistributionController::DistributionController(Escher::StackViewController * par
       m_distribution(distribution),
       m_parametersController(parametersController) {
   assert(m_distribution != nullptr);
+
+  // Init selection
+  selectRow(0);
 }
 
-void DistributionController::viewWillAppear() {
-  ViewController::viewWillAppear();
-  selectRow((int)m_distribution->type());
+void DistributionController::stackOpenPage(Escher::ViewController * nextPage) {
+  selectRow(static_cast<int>(m_distribution->type()));
+  ViewController::stackOpenPage(nextPage);
 }
 
 void DistributionController::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
-  }
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 

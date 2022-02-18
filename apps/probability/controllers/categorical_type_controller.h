@@ -30,6 +30,7 @@ public:
   const char * title() override {
     return I18n::translate(I18n::Message::CategoricalTypeControllerTitle);
   }
+  void stackOpenPage(Escher::ViewController * nextPage) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 

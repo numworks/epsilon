@@ -34,8 +34,12 @@ MenuController::MenuController(Escher::StackViewController * parentResponder,
   cellAtIndex(k_indexOfInterval)->setImage(ImageStore::ConfidenceInterval);
 }
 
+void MenuController::stackOpenPage(Escher::ViewController * nextPage) {
+  selectRow(static_cast<int>(m_inference->subApp()));
+  ViewController::stackOpenPage(nextPage);
+}
+
 void MenuController::didBecomeFirstResponder() {
-#warning Neeeded?
   m_selectableTableView.reloadData(true);
 }
 
@@ -58,10 +62,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(controller != nullptr);
-    if (Inference::Initialize(m_inference, subapp)) {
-      // Reinit row
-      controller->selectRow(0);
-    }
+    Inference::Initialize(m_inference, subapp);
     stackOpenPage(controller);
     return true;
   }

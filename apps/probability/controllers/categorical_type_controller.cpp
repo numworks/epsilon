@@ -21,6 +21,14 @@ CategoricalTypeController::CategoricalTypeController(
   selectRow(0);  // Select first row by default
   cellAtIndex(k_indexOfGoodnessCell)->setMessage(I18n::Message::GoodnessOfFit);
   cellAtIndex(k_indexOfHomogeneityCell)->setMessage(I18n::Message::Homogeneity);
+
+  // Init selection
+  selectRow(0);
+}
+
+void CategoricalTypeController::stackOpenPage(Escher::ViewController * nextPage) {
+  selectRow(static_cast<int>(m_statistic->categoricalType()));
+  ViewController::stackOpenPage(nextPage);
 }
 
 void CategoricalTypeController::didBecomeFirstResponder() {

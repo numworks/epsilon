@@ -19,9 +19,9 @@ public:
   const char * title() override {
     return I18n::translate(I18n::Message::DistributionControllerTitle);
   }
+  void stackOpenPage(Escher::ViewController * nextPage) override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void viewWillAppear() override;
   TELEMETRY_ID("Distribution");
   int numberOfRows() const override { return k_totalNumberOfModels; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

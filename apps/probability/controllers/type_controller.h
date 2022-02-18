@@ -43,6 +43,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
+  void stackOpenPage(Escher::ViewController * nextPage) override;
   void didBecomeFirstResponder() override;
   // ListViewDataSource
   int numberOfRows() const override;

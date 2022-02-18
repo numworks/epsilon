@@ -32,6 +32,7 @@ __ZN3Ion6Events5EventC2ENS_8Keyboard3KeyEbb \
 __ZN3Ion6Events8getEventEPi \
 __ZN3Ion6Events14sharedGetEventEPi \
 __ZN3Ion6Events16popKeyboardStateEv \
+__ZN3Ion6Events24waitForInterruptingEventEiPi \
 __ZN3Ion8Keyboard8popStateEv \
 __ZN3Ion6EventsL16sleepWithTimeoutEiPi \
 __ZN3Ion6Timing6msleepEj \
@@ -110,6 +111,7 @@ _mp_import_name \
 _mp_parse_compile_execute \
 _get_clipboard_text \
 _set_clipboard_text \
+_SDL_Delay \
 __ZN3Ion9Clipboard24fetchFromSystemClipboardEPcm \
 __ZN3Ion9Clipboard21sendToSystemClipboardEPKc \
 __ZN3Ion9Clipboard4readEPcm \

@@ -22,7 +22,10 @@ void Test::setGraphTitle(char * buffer, size_t bufferSize) const {
   Poincare::Print::customPrintf(buffer, bufferSize, format, testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-void Test::initializeSignificanceTest(SignificanceTestType testType) {
+bool Test::initializeSignificanceTest(SignificanceTestType testType) {
+  if (!Statistic::initializeSignificanceTest(testType)) {
+    return false;
+  }
   this->~Test();
   switch (testType) {
     case SignificanceTestType::OneMean:
@@ -45,6 +48,7 @@ void Test::initializeSignificanceTest(SignificanceTestType testType) {
       break;
   }
   initParameters();
+  return true;
 }
 
 void Test::compute() {

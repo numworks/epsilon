@@ -8,24 +8,30 @@
 
 namespace Probability {
 
-void Calculation::Initialize(Calculation * calculation, Type type, Distribution * distribution) {
-  calculation->~Calculation();
-  switch (type) {
-    case Type::LeftIntegral:
-      new (calculation) LeftIntegralCalculation(distribution);
-      return;
-    case Type::FiniteIntegral:
-      new (calculation) FiniteIntegralCalculation(distribution);
-      return;
-    case Type::RightIntegral:
-      new (calculation) RightIntegralCalculation(distribution);
-      return;
-    case Type::Discrete:
-      new (calculation) DiscreteCalculation(distribution);
-      return;
-    default:
-      return;
+bool Calculation::Initialize(Calculation * calculation, Type type, Distribution * distribution, bool forceReinitialisation) {
+  bool changedType = false;
+  if (calculation->type() != type || forceReinitialisation) {
+    changedType = true;
+    calculation->~Calculation();
+    switch (type) {
+      case Type::LeftIntegral:
+        new (calculation) LeftIntegralCalculation(distribution);
+        break;
+      case Type::FiniteIntegral:
+        new (calculation) FiniteIntegralCalculation(distribution);
+        break;
+      case Type::RightIntegral:
+        new (calculation) RightIntegralCalculation(distribution);
+        break;
+      case Type::Discrete:
+        new (calculation) DiscreteCalculation(distribution);
+        break;
+      default:
+        assert(false);
+    }
   }
+  calculation->compute(0);
+  return changedType;
 }
 
 double Calculation::lowerBound() const {

@@ -10,7 +10,7 @@ namespace Probability {
 class TwoMeansTTest : public Test {
 friend class TwoMeans;
 public:
-  void initializeDistribution(DistributionType distribution) override;
+  bool initializeDistribution(DistributionType distribution) override;
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::TwoMeans; }
   DistributionType distributionType() const override { return DistributionType::T; }
   I18n::Message title() const override { return TwoMeans::TTitle(); }

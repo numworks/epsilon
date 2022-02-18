@@ -39,9 +39,12 @@ void Interval::setResultTitle(char * buffer, size_t bufferSize, bool resultIsTop
   }
 }
 
-void Interval::initializeSignificanceTest(SignificanceTestType t) {
+bool Interval::initializeSignificanceTest(SignificanceTestType testType) {
+  if (!Statistic::initializeSignificanceTest(testType)) {
+    return false;
+  }
   this->~Interval();
-  switch (t) {
+  switch (testType) {
     case SignificanceTestType::OneMean:
       new (this) OneMeanTInterval();
       break;
@@ -59,6 +62,7 @@ void Interval::initializeSignificanceTest(SignificanceTestType t) {
       break;
   }
   initParameters();
+  return true;
 }
 
 void Interval::tidy() {

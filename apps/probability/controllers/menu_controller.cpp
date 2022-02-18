@@ -58,8 +58,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(controller != nullptr);
-    if (m_inference->subApp() != subapp) {
-      Inference::Initialize(m_inference, subapp);
+    if (Inference::Initialize(m_inference, subapp)) {
       // Reinit row
       controller->selectRow(0);
     }

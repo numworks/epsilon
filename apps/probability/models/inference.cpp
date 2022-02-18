@@ -8,21 +8,25 @@ namespace Probability {
 Inference::Inference() : Shared::MemoizedCurveViewRange() {
 }
 
-void Inference::Initialize(Inference * inference, SubApp subApp) {
+bool Inference::Initialize(Inference * inference, SubApp subApp) {
+  if (inference->subApp() == subApp) {
+    return false;
+  }
   inference->~Inference();
   switch (subApp) {
     case SubApp::Probability:
       new (inference) BinomialDistribution();
-      return;
+      break;
     case SubApp::Test:
       new (inference) OneMeanTTest();
-      return;
+      break;
     case SubApp::Interval:
       new (inference) OneMeanTInterval();
-      return;
+      break;
     default:
       assert(false);
   }
+  return true;
 }
 
 void Inference::computeCurveViewRange() {

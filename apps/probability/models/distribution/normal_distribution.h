@@ -14,7 +14,7 @@ public:
   bool isSymmetrical() const override { return true; }
   I18n::Message parameterNameAtIndex(int index) override;
   I18n::Message parameterDefinitionAtIndex(int index) override;
-  double meanAbscissa() override { return parameterValueAtIndex(0); }
+  double meanAbscissa() override { return m_parameter1; }
   float evaluateAtAbscissa(float x) const override;
   bool authorizedValueAtIndex(double x, int index) const override;
   void setParameterAtIndex(double f, int index) override;

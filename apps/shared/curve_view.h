@@ -135,6 +135,7 @@ private:
   virtual char * label(Axis axis, int index) const { return nullptr; }
   virtual size_t labelMaxGlyphLengthSize() const { return k_labelBufferMaxGlyphLength; }
   virtual bool shouldDrawLabelAtPosition(float labelValue) const { return true; }
+  virtual void appendLabelSuffix(Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) {}
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */

@@ -86,6 +86,7 @@ void App::didBecomeActive(Window * windows) {
      * from popping until the queue is empty. */
     Escher::ViewController * controller = queue->queuePop();
     currentController->stackOpenPage(controller);
+    currentController = controller;
   }
   Escher::App::didBecomeActive(windows);
 }

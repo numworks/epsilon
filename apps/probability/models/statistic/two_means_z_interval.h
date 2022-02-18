@@ -14,6 +14,7 @@ public:
   DistributionType distributionType() const override { return DistributionType::Z; }
   I18n::Message title() const override { return TwoMeans::ZTitle(); }
   // Significance Test: TwoMeans
+  bool initializeDistribution(DistributionType distributionType) override { return TwoMeans::IntervalInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return TwoMeans::NumberOfAvailableDistributions(); }
   I18n::Message distributionDescription() const override { return TwoMeans::IntervalDistributionDescription(); }
   void initParameters() override { TwoMeans::InitIntervalParameters(this); }

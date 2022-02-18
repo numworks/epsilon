@@ -15,6 +15,7 @@ public:
   I18n::Message graphTitleFormat() const override { return DistributionZ::GraphTitleFormat(); }
 
   // Significance Test: OneMean
+  bool initializeDistribution(DistributionType distributionType) override { return OneMean::TestInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return OneMean::NumberOfAvailableDistributions(); }
   I18n::Message distributionTitle() const override { return OneMean::DistributionTitle(); }
   const char * hypothesisSymbol() override { return OneMean::HypothesisSymbol(); }

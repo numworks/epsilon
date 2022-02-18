@@ -10,12 +10,12 @@ namespace Probability {
 class TwoMeansTInterval : public Interval {
 friend class TwoMeans;
 public:
-  bool initializeDistribution(DistributionType distribution) override;
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::TwoMeans; }
   DistributionType distributionType() const override { return DistributionType::T; }
   I18n::Message title() const override { return TwoMeans::TTitle(); }
 
   // Significance Test: TwoMeans Mean
+  bool initializeDistribution(DistributionType distributionType) override { return TwoMeans::IntervalInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return TwoMeans::NumberOfAvailableDistributions(); }
   I18n::Message distributionTitle() const override { return TwoMeans::DistributionTitle(); }
   I18n::Message distributionDescription() const override { return TwoMeans::IntervalDistributionDescription(); }

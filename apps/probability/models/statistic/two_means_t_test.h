@@ -10,13 +10,13 @@ namespace Probability {
 class TwoMeansTTest : public Test {
 friend class TwoMeans;
 public:
-  bool initializeDistribution(DistributionType distribution) override;
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::TwoMeans; }
   DistributionType distributionType() const override { return DistributionType::T; }
   I18n::Message title() const override { return TwoMeans::TTitle(); }
   I18n::Message graphTitleFormat() const override { return DistributionT::GraphTitleFormat(); }
 
   // Significance Test: TwoMeans
+  bool initializeDistribution(DistributionType distributionType) override { return TwoMeans::TestInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return TwoMeans::NumberOfAvailableDistributions(); }
   I18n::Message distributionTitle() const override { return TwoMeans::DistributionTitle(); }
   I18n::Message distributionDescription() const override { return TwoMeans::TestDistributionDescription(); }

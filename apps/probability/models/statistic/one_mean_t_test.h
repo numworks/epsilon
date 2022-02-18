@@ -11,11 +11,11 @@ class OneMeanTTest : public Test {
 public:
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::OneMean; }
   DistributionType distributionType() const override { return DistributionType::T; }
-  bool initializeDistribution(DistributionType distribution) override;
   I18n::Message title() const override { return OneMean::TTitle(); }
   I18n::Message graphTitleFormat() const override { return DistributionT::GraphTitleFormat(); }
 
   // Significance Test: OneMean
+  bool initializeDistribution(DistributionType distributionType) override { return OneMean::TestInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return OneMean::NumberOfAvailableDistributions(); }
   I18n::Message distributionTitle() const override { return OneMean::DistributionTitle(); }
   I18n::Message distributionDescription() const override { return OneMean::TestDistributionDescription(); }

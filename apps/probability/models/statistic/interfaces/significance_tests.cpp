@@ -3,6 +3,16 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/combined_code_points_layout.h>
 #include <poincare/vertical_offset_layout.h>
+#include <probability/models/statistic/one_mean_t_interval.h>
+#include <probability/models/statistic/one_mean_t_test.h>
+#include <probability/models/statistic/one_mean_z_interval.h>
+#include <probability/models/statistic/one_mean_z_test.h>
+#include <probability/models/statistic/pooled_two_means_t_interval.h>
+#include <probability/models/statistic/pooled_two_means_t_test.h>
+#include <probability/models/statistic/two_means_t_interval.h>
+#include <probability/models/statistic/two_means_t_test.h>
+#include <probability/models/statistic/two_means_z_interval.h>
+#include <probability/models/statistic/two_means_z_test.h>
 
 using namespace Poincare;
 
@@ -30,7 +40,55 @@ bool SignificanceTest::ValidThreshold(double p) {
   return p >= 0.0 && p <= 1.0;
 }
 
+bool SignificanceTest::InitializeDistribution(Statistic * statistic, DistributionType type) {
+  if (type == statistic->distributionType()) {
+    statistic->initParameters();
+    return false;
+  }
+  return true;
+}
+
 /* OneMean */
+
+bool OneMean::TestInitializeDistribution(Statistic * statistic, DistributionType distributionType) {
+  if (!SignificanceTest::InitializeDistribution(statistic, distributionType)) {
+    return false;
+  }
+  statistic->~Statistic();
+  switch (distributionType) {
+    case DistributionType::T:
+      new (statistic) OneMeanTTest();
+      break;
+    case DistributionType::Z:
+      new (statistic) OneMeanZTest();
+      break;
+    default:
+      assert(false);
+      break;
+  }
+  statistic->initParameters();
+  return true;
+}
+
+bool OneMean::IntervalInitializeDistribution(Statistic * statistic, DistributionType distributionType) {
+  if (!SignificanceTest::InitializeDistribution(statistic, distributionType)) {
+    return false;
+  }
+  statistic->~Statistic();
+  switch (distributionType) {
+    case DistributionType::T:
+      new (statistic) OneMeanTInterval();
+      break;
+    case DistributionType::Z:
+      new (statistic) OneMeanZInterval();
+      break;
+    default:
+      assert(false);
+      break;
+  }
+  statistic->initParameters();
+  return true;
+}
 
 void OneMean::InitTestParameters(Test * t) {
   double * params = t->parametersArray();
@@ -217,6 +275,52 @@ double OneProportion::ComputeStandardError(double pEstimate, double n) {
 }
 
 /* TwoMeans */
+
+bool TwoMeans::TestInitializeDistribution(Statistic * statistic, DistributionType distributionType) {
+  if (!SignificanceTest::InitializeDistribution(statistic, distributionType)) {
+    return false;
+  }
+  statistic->~Statistic();
+  switch (distributionType) {
+    case DistributionType::T:
+      new (statistic) TwoMeansTTest();
+      break;
+    case DistributionType::TPooled:
+      new (statistic) PooledTwoMeansTTest();
+      break;
+    case DistributionType::Z:
+      new (statistic) TwoMeansZTest();
+      break;
+    default:
+      assert(false);
+      break;
+  }
+  statistic->initParameters();
+  return true;
+}
+
+bool TwoMeans::IntervalInitializeDistribution(Statistic * statistic, DistributionType distributionType) {
+  if (!SignificanceTest::InitializeDistribution(statistic, distributionType)) {
+    return false;
+  }
+  statistic->~Statistic();
+  switch (distributionType) {
+    case DistributionType::T:
+      new (statistic) TwoMeansTInterval();
+      break;
+    case DistributionType::TPooled:
+      new (statistic) PooledTwoMeansTInterval();
+      break;
+    case DistributionType::Z:
+      new (statistic) TwoMeansZInterval();
+      break;
+    default:
+      assert(false);
+      break;
+  }
+  statistic->initParameters();
+  return true;
+}
 
 Poincare::Layout TwoMeans::EstimateLayout(Poincare::Layout * layout) {
   if (layout->isUninitialized()) {

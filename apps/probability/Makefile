@@ -38,11 +38,7 @@ app_probability_test_src += $(addprefix apps/probability/models/statistic/,\
   goodness_test.cpp \
   homogeneity_test.cpp \
   interval.cpp \
-  one_mean_t_interval.cpp \
-  one_mean_t_test.cpp \
   statistic.cpp \
-  two_means_t_test.cpp \
-  two_means_t_interval.cpp \
   test.cpp \
 )
 

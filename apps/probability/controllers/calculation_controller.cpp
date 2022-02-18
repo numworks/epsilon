@@ -227,10 +227,7 @@ void CalculationController::reload() {
 }
 
 void CalculationController::setCalculationAccordingToIndex(int index, bool forceReinitialisation) {
-  if ((int)m_calculation->type() == index && !forceReinitialisation) {
-    return;
-  }
-  Calculation::Initialize(m_calculation, static_cast<Calculation::Type>(index), m_distribution);
+  Calculation::Initialize(m_calculation, static_cast<Calculation::Type>(index), m_distribution, forceReinitialisation);
 }
 
 void CalculationController::onDropdownSelected(int selectedRow) {

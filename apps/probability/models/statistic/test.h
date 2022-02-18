@@ -19,7 +19,7 @@ public:
     m_pValue(NAN) {}
   SubApp subApp() const override { return SubApp::Test; }
 
-  void initializeSignificanceTest(SignificanceTestType type) override;
+  bool initializeSignificanceTest(SignificanceTestType type) override;
   I18n::Message statisticTitle() const override { return I18n::Message::Tests; }
   I18n::Message statisticBasicTitle() const override { return I18n::Message::Test; }
   I18n::Message zStatisticMessage() const override { return I18n::Message::ZTest; }

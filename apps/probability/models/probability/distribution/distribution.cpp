@@ -14,7 +14,10 @@
 
 namespace Probability {
 
-void Distribution::Initialize(Distribution * distribution, Type type) {
+bool Distribution::Initialize(Distribution * distribution, Type type) {
+  if (distribution->type() == type) {
+    return false;
+  }
   distribution->~Distribution();
   switch (type) {
     case Type::Binomial:
@@ -46,8 +49,8 @@ void Distribution::Initialize(Distribution * distribution, Type type) {
       break;
     default:
       assert(false);
-      return;
   }
+  return true;
 }
 
 void Distribution::setParameterAtIndex(double f, int index) {

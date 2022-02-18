@@ -103,11 +103,9 @@ void Probability::DistributionController::willDisplayCellForIndex(HighlightCell 
 }
 
 void Probability::DistributionController::setDistributionAccordingToIndex(int index) {
-  if ((int)m_distribution->type() == index) {
-    return;
+  if (Distribution::Initialize(m_distribution, static_cast<Distribution::Type>(index))) {
+    m_parametersController->reinitCalculation();
   }
-  Distribution::Initialize(m_distribution, static_cast<Distribution::Type>(index));
-  m_parametersController->reinitCalculation();
 }
 
 }  // namespace Probability

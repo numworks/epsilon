@@ -22,7 +22,7 @@ public:
   virtual ~Interval();
   SubApp subApp() const override { return SubApp::Interval; }
 
-  void initializeSignificanceTest(SignificanceTestType type) override;
+  bool initializeSignificanceTest(SignificanceTestType type) override;
   void tidy() override;
   I18n::Message statisticTitle() const override { return I18n::Message::IntervalDescr; }
   I18n::Message statisticBasicTitle() const override { return I18n::Message::Interval; }

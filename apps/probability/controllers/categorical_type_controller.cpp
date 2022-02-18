@@ -42,9 +42,7 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(controller != nullptr);
-    if (type != m_statistic->categoricalType()) {
-      m_statistic->initializeCategoricalType(type);
-    }
+    m_statistic->initializeCategoricalType(type);
     stackOpenPage(controller);
     return true;
   }

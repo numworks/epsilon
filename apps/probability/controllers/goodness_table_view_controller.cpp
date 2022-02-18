@@ -35,12 +35,12 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
   }
   int selectedColumn = m_inputTableView.selectedColumn();
   int selectedRow = m_inputTableView.selectedRow();
-  if (!m_statistic->authorizedParameterAtPosition(selectedRow - 1, selectedColumn, p)) {
+  if (!m_statistic->authorizedParameterAtPosition(p, selectedRow - 1, selectedColumn)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   int previousDegreeOfFreedom = m_statistic->computeDegreesOfFreedom();
-  m_statistic->setParameterAtPosition(selectedRow - 1, selectedColumn, p);
+  m_statistic->setParameterAtPosition(p, selectedRow - 1, selectedColumn);
   if (m_inputTableView.selectedRow() == m_inputTableView.numberOfRows() - 1 &&
       m_inputTableView.numberOfRows() <= m_statistic->maxNumberOfRows()) {
     m_inputTableView.recomputeNumberOfRows();

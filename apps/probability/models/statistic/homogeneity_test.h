@@ -22,9 +22,9 @@ public:
   void computeTest() override;
 
   // Chi2Test
-  void setParameterAtPosition(int row, int column, double value) override;
+  void setParameterAtPosition(double value, int row, int column) override;
   double parameterAtPosition(int row, int column) const override;
-  bool authorizedParameterAtPosition(int row, int column, double p) const override;
+  bool authorizedParameterAtPosition(double p, int row, int column) const override;
   bool deleteParameterAtPosition(int row, int column) override;
   void recomputeData() override;
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; };

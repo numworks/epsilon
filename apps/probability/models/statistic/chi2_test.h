@@ -34,10 +34,10 @@ public:
   int indexOfDegreeOfFreedom() const { return indexOfThreshold() + 1; }
 
   // Matrix special functions
-  virtual void setParameterAtPosition(int row, int column, double value) = 0;
+  virtual void setParameterAtPosition(double value, int row, int column) = 0;
   void setParameterAtIndex(double p, int index) override;  // Hidden
   virtual double parameterAtPosition(int row, int column) const = 0;
-  virtual bool authorizedParameterAtPosition(int row, int column, double p) const = 0;
+  virtual bool authorizedParameterAtPosition(double p, int row, int column) const = 0;
   bool authorizedParameterAtIndex(double p, int i) const override;
   /* Delete parameter at location, return true if the deleted param was the last
    * non-deleted value of its row or column. */

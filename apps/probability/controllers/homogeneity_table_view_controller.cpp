@@ -51,11 +51,11 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
     return false;
   }
   int row = m_table.selectedRow(), column = m_table.selectedColumn();
-  if (!m_statistic->authorizedParameterAtPosition(row, column, p)) {
+  if (!m_statistic->authorizedParameterAtPosition(p, row, column)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_statistic->setParameterAtPosition(row - 1, column - 1, p);
+  m_statistic->setParameterAtPosition(p, row - 1, column - 1);
 
   m_table.deselectTable();
   // Add row or column

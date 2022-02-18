@@ -16,6 +16,7 @@ public:
   I18n::Message graphTitleFormat() const override { return DistributionZ::GraphTitleFormat(); }
 
   // Significance Test: TwoMeans
+  bool initializeDistribution(DistributionType distributionType) override { return TwoMeans::TestInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return TwoMeans::NumberOfAvailableDistributions(); }
   I18n::Message distributionTitle() const override { return TwoMeans::DistributionTitle(); }
   I18n::Message distributionDescription() const override { return TwoMeans::TestDistributionDescription(); }

@@ -1,4 +1,5 @@
 #include "left_integral_calculation.h"
+#include "probability/models/probability/distribution/distribution.h"
 #include <poincare/preferences.h>
 #include <cmath>
 #include <assert.h>
@@ -8,9 +9,7 @@ namespace Probability {
 LeftIntegralCalculation::LeftIntegralCalculation(Distribution * distribution) :
   Calculation(distribution),
   m_upperBound(distribution->defaultComputedValue())
-{
-  compute(0);
-}
+{}
 
 I18n::Message LeftIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);

@@ -1,4 +1,5 @@
 #include "discrete_calculation.h"
+#include "probability/models/probability/distribution/distribution.h"
 
 #include <assert.h>
 #include <cmath>
@@ -8,9 +9,7 @@ namespace Probability {
 DiscreteCalculation::DiscreteCalculation(Distribution * distribution) :
   Calculation(distribution),
   m_abscissa(distribution->defaultComputedValue())
-{
-  compute(0);
-}
+{}
 
 I18n::Message DiscreteCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);

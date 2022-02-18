@@ -33,13 +33,21 @@ TestController::TestController(Escher::StackViewController * parentResponder,
   cellAtIndex(k_indexOfTwoMeans)->setMessage(I18n::Message::TestTwoMeans);
   cellAtIndex(k_indexOfCategorical)->setMessage(I18n::Message::TestCategorical);
   cellAtIndex(k_indexOfCategorical)->setSubtitle(I18n::Message::X2Test);
+
+  // Init selection
+  selectRow(0);
 }
 
 const char * TestController::title() {
   return I18n::translate(m_statistic->statisticTitle());
 }
 
-void Probability::TestController::viewWillAppear() {
+void TestController::stackOpenPage(Escher::ViewController * nextPage) {
+  selectRow(static_cast<int>(m_statistic->significanceTestType()));
+  ViewController::stackOpenPage(nextPage);
+}
+
+void TestController::viewWillAppear() {
   Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType>::viewWillAppear();
   // Create cells whose legends vary
   cellAtIndex(k_indexOfOneProp)->setSubtitle(m_statistic->zStatisticMessage());
@@ -49,9 +57,6 @@ void Probability::TestController::viewWillAppear() {
 }
 
 void TestController::didBecomeFirstResponder() {
-  if (selectedRow() == -1 || selectedRow() >= numberOfRows()) {
-    selectRow(0);
-  }
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
   resetMemoization();
   m_selectableTableView.reloadData();

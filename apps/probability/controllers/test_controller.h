@@ -23,6 +23,7 @@ public:
                  CategoricalTypeController * categoricalController,
                  InputController * inputController,
                  Statistic * statistic);
+  void stackOpenPage(Escher::ViewController * nextPage) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;

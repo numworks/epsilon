@@ -36,13 +36,13 @@ TypeController::TypeController(StackViewController * parent,
   m_description.setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
   m_description.setFont(KDFont::SmallFont);
   m_selectableTableView.setBottomMargin(0);
+
+  // Init selection
+  selectRow(0);
 }
 
 void TypeController::didBecomeFirstResponder() {
   m_description.setMessage(m_statistic->distributionDescription());
-  if (selectedRow() == -1) {
-    selectRow(0);
-  }
   resetMemoization();
   m_selectableTableView.reloadData(true);
   m_contentView.layoutSubviews();
@@ -91,12 +91,29 @@ const char * TypeController::title() {
   return m_titleBuffer;
 }
 
+void TypeController::stackOpenPage(Escher::ViewController * nextPage) {
+  switch (m_statistic->distributionType()) {
+    case DistributionType::T:
+      selectRow(k_indexOfTTest);
+      break;
+    case DistributionType::TPooled:
+      selectRow(k_indexOfPooledTest);
+      break;
+    case DistributionType::Z:
+      selectRow(indexOfZTest());
+      break;
+    default:
+      assert(false);
+  }
+  ViewController::stackOpenPage(nextPage);
+}
+
 int Probability::TypeController::numberOfRows() const {
   return m_statistic->numberOfAvailableDistributions();
 }
 
 void Probability::TypeController::willDisplayCellForIndex(Escher::HighlightCell * cell, int i) {
-  assert(i <= k_indexOfPooledTest);
+  assert(i <= indexOfZTest());
   I18n::Message message, submessage;
   if (i == k_indexOfTTest) {
     message = m_statistic->tDistributionName();

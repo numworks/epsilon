@@ -1,10 +1,13 @@
 #ifndef PROBABILITY_MODELS_CALCULATION_CALCULATION_H
 #define PROBABILITY_MODELS_CALCULATION_CALCULATION_H
 
-#include "probability/models/probability/distribution/distribution.h"
+#include <apps/i18n.h>
+#include <assert.h>
 #include <stdint.h>
 
 namespace Probability {
+
+class Distribution;
 
 class Calculation {
 public:

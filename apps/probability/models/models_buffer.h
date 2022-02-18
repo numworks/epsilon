@@ -3,10 +3,6 @@
 
 #include <new>
 
-#include "probability/calculation/discrete_calculation.h"
-#include "probability/calculation/finite_integral_calculation.h"
-#include "probability/calculation/left_integral_calculation.h"
-#include "probability/calculation/right_integral_calculation.h"
 #include "probability/distribution/binomial_distribution.h"
 #include "probability/distribution/chi_squared_distribution.h"
 #include "probability/distribution/exponential_distribution.h"
@@ -63,44 +59,8 @@ private:
   FisherDistribution m_fisherDistribution;
 };
 
-union CalculationBuffer {
-public:
-  CalculationBuffer(Distribution * distribution) { new (&m_discreteCalculation) DiscreteCalculation(distribution); }
-  ~CalculationBuffer() { calculation()->~Calculation(); }
-  // Rule of 5
-  CalculationBuffer(const CalculationBuffer& other) = delete;
-  CalculationBuffer(CalculationBuffer&& other) = delete;
-  CalculationBuffer& operator=(const CalculationBuffer& other) = delete;
-  CalculationBuffer& operator=(CalculationBuffer&& other) = delete;
-
-  Calculation * calculation() {
-    return reinterpret_cast<Calculation *>(this);
-  }
-private:
-  DiscreteCalculation m_discreteCalculation;
-  FiniteIntegralCalculation m_finiteIntegralCalculation;
-  LeftIntegralCalculation m_leftIntegralCalculation;
-  RightIntegralCalculation m_rightIntegralCalculation;
-};
 
 #warning Test on emscripten for alignment
-
-class ProbabilityBuffer {
-public:
-  ProbabilityBuffer() :
-    m_distributionBuffer(),
-    m_calculationBuffer(distribution()) {}
-  Distribution * distribution() {
-    return m_distributionBuffer.distribution();
-  }
-  Calculation * calculation() {
-    return m_calculationBuffer.calculation();
-  }
-
-private:
-  DistributionBuffer m_distributionBuffer;
-  CalculationBuffer m_calculationBuffer;
-};
 
 union StatisticBuffer {
 public:
@@ -136,15 +96,15 @@ private:
 
 union ModelBuffer {
 public:
-  ModelBuffer() { new (&m_probabilityBuffer) ProbabilityBuffer(); }
+  ModelBuffer() { new (&m_distributionBuffer) DistributionBuffer(); }
   ~ModelBuffer() { inference()->~Inference(); }
   Inference * inference() { return reinterpret_cast<Inference *>(this); }
-  Distribution * distribution() { return m_probabilityBuffer.distribution(); }
-  Calculation * calculation() { return m_probabilityBuffer.calculation(); }
+  Distribution * distribution() { return m_distributionBuffer.distribution(); }
+  Calculation * calculation() { return distribution()->calculation(); }
   Statistic * statistic() { return m_statisticBuffer.statistic(); }
 
 private:
-  ProbabilityBuffer m_probabilityBuffer;
+  DistributionBuffer m_distributionBuffer;
   StatisticBuffer m_statisticBuffer;
 };
 

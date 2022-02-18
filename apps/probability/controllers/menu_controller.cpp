@@ -62,7 +62,9 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(controller != nullptr);
-    Inference::Initialize(m_inference, subapp);
+    if (Inference::Initialize(m_inference, subapp)) {
+      controller->selectRow(0);
+    }
     stackOpenPage(controller);
     return true;
   }

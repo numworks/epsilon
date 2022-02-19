@@ -469,6 +469,21 @@ constexpr ToolboxMessageTree decimalNumbersChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::RoundCommandWithArg, I18n::Message::Rounding),
 };
 
+constexpr ToolboxMessageTree specialCharsChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UpperAlpha, I18n::Message::UpperAlphaCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::LowerAlpha, I18n::Message::LowerAlphaCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::UpperBeta, I18n::Message::UpperBetaCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::LowerBeta, I18n::Message::LowerBetaCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::UpperGamma, I18n::Message::UpperGammaCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::LowerGamma, I18n::Message::LowerGammaCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::UpperDelta, I18n::Message::UpperDeltaCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::LowerDelta, I18n::Message::LowerDeltaCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::UpperEpsilon, I18n::Message::UpperEpsilonCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::LowerEpsilon, I18n::Message::LowerEpsilonCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::UpperOmega, I18n::Message::UpperOmegaCommandWithArg),
+  ToolboxMessageTree::Leaf(I18n::Message::LowerOmega, I18n::Message::LowerOmegaCommandWithArg)
+};
+
 #if LIST_ARE_DEFINED
 constexpr ToolboxMessageTree listsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::SortCommandWithArg, I18n::Message::Sort),
@@ -491,6 +506,7 @@ constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
   ToolboxMessageTree::Node(I18n::Message::Trigonometry, trigonometryChildren),
   ToolboxMessageTree::Node(I18n::Message::DecimalNumbers, decimalNumbersChildren),
+  ToolboxMessageTree::Node(I18n::Message::SpecialChars, specialCharsChildren),
 #if LIST_ARE_DEFINED
   ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),
 #endif

@@ -125,7 +125,10 @@ public:
 
   // Used by Python OS module
   int numberOfRecords();
-  Record recordAtIndex(int index);
+  Record recordAtIndex(int index); // Unlike realRecordAtIndex, this ignore trash
+
+  // Trash
+  void reinsertTrash(const char * extension);
 
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
@@ -140,6 +143,7 @@ private:
   Record::Data valueOfRecord(const Record record);
   Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
   void destroyRecord(const Record record);
+  void realDestroyRecord(const Record record);
 
   /* Getters on address in buffer */
   char * pointerOfRecord(const Record record) const;
@@ -147,12 +151,18 @@ private:
   const char * fullNameOfRecordStarting(char * start) const;
   const void * valueOfRecordStarting(char * start) const;
 
+  /* Trash */
+  void emptyTrash();
+  Storage::Record realRecordAtIndex(int index);
+  int realNumberOfRecords();
+
   /* Overriders */
   size_t overrideSizeAtPosition(char * position, record_size_t size);
   size_t overrideFullNameAtPosition(char * position, const char * fullName);
   size_t overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, const char * extension);
   size_t overrideValueAtPosition(char * position, const void * data, record_size_t size);
 
+  size_t realAvailableSize();
   bool isFullNameTaken(const char * fullName, const Record * recordToExclude = nullptr);
   bool isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude = nullptr);
   bool isNameOfRecordTaken(Record r, const Record * recordToExclude);
@@ -182,6 +192,7 @@ private:
 
   uint32_t m_magicHeader;
   char m_buffer[k_storageSize];
+  Record m_trashRecord;
   uint32_t m_magicFooter;
   StorageDelegate * m_delegate;
   mutable Record m_lastRecordRetrieved;

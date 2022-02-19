@@ -25,6 +25,8 @@ public:
   Toolbox * toolboxForInputEventHandler(InputEventHandler * handler) override;
   void selectPreviousNewSequenceCell();
   void editExpression(int sequenceDefinitionIndex, Ion::Events::Event event);
+protected:
+  virtual const char * recordExtension() const override { return Ion::Storage::seqExtension; }
 private:
   static constexpr KDCoordinate k_expressionCellVerticalMargin = 3;
   bool editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition);

@@ -23,7 +23,6 @@ public:
    * not defined. We thus have to keep both methods. */
   virtual bool isDefined();
   virtual bool isEmpty();
-  virtual bool shouldBeClearedBeforeRemove() { return !isEmpty(); }
   /* tidy is responsible to tidy the whole model whereas tidyExpressionModel
    * tidies only the members associated with the ExpressionModel. In
    * ExpressionModel, tidy and tidyExpressionModel trigger the same

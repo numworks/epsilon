@@ -200,6 +200,11 @@ bool FunctionListController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
+  if (event == Ion::Events::ShiftBack) {
+    Ion::Storage::sharedStorage()->reinsertTrash(recordExtension());
+    selectableTableView()->reloadData();
+    return true;
+  }
   return false;
 }
 

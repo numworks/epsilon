@@ -8,9 +8,6 @@ namespace Solver {
 class Equation : public Shared::ExpressionModelHandle {
 public:
   Equation(Ion::Storage::Record record = Record()) : ExpressionModelHandle(record) {}
-  bool shouldBeClearedBeforeRemove() override {
-    return false;
-  }
   Poincare::Expression standardForm(Poincare::Context * context, bool replaceFunctionsButNotSymbols, Poincare::ExpressionNode::ReductionTarget reductionTarget) const { return m_model.standardForm(this, context, replaceFunctionsButNotSymbols, reductionTarget); }
   bool containsIComplex(Poincare::Context * context) const;
 

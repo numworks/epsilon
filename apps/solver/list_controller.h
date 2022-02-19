@@ -9,6 +9,7 @@
 #include "equation_list_view.h"
 #include "equation_models_parameter_controller.h"
 #include <apps/i18n.h>
+#include <ion/storage.h>
 
 namespace Solver {
 
@@ -45,6 +46,8 @@ public:
   bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
   /* Specific to Solver */
   void resolveEquations();
+protected:
+  virtual const char * recordExtension() const override { return Ion::Storage::eqExtension; }
 private:
   constexpr static int k_maxNumberOfRows = 5; // Ion::Display::Height / Metric::StoreRowHeight = 4.8;
   SelectableTableView * selectableTableView() override;

@@ -180,6 +180,7 @@ size_t CalculationStore::deleteOldestCalculation() {
 
 // Delete all calculations
 void CalculationStore::deleteAll() {
+  m_trashIndex = -1;
   m_calculationAreaEnd = m_buffer;
   m_numberOfCalculations = 0;
 }

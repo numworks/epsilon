@@ -97,6 +97,14 @@ void Storage::log() {
 #endif
 
 size_t Storage::availableSize() {
+  if (m_trashRecord != NULL) {
+    return realAvailableSize() + sizeof(record_size_t) + m_trashRecord.value().size;
+  } else {
+    return realAvailableSize();
+  }
+}
+
+size_t Storage::realAvailableSize() {
   /* TODO maybe do: availableSize(char ** endBuffer) to get the endBuffer if it
    * is needed after calling availableSize */
   assert(k_storageSize >= (endBuffer() - m_buffer) + sizeof(record_size_t));
@@ -106,7 +114,7 @@ size_t Storage::availableSize() {
 size_t Storage::putAvailableSpaceAtEndOfRecord(Storage::Record r) {
   char * p = pointerOfRecord(r);
   size_t previousRecordSize = sizeOfRecordStarting(p);
-  size_t availableStorageSize = availableSize();
+  size_t availableStorageSize = realAvailableSize();
   char * nextRecord = p + previousRecordSize;
   memmove(nextRecord + availableStorageSize,
       nextRecord,
@@ -146,6 +154,7 @@ Storage::Record::ErrorStatus Storage::notifyFullnessToDelegate() const {
 }
 
 Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * fullName, const void * data, size_t size) {
+  emptyTrash();
   size_t recordSize = sizeOfRecordWithFullName(fullName, size);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
    return notifyFullnessToDelegate();
@@ -172,6 +181,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * full
 }
 
 Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size) {
+  emptyTrash();
   size_t recordSize = sizeOfRecordWithBaseNameAndExtension(baseName, extension, size);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
    return notifyFullnessToDelegate();
@@ -202,7 +212,7 @@ int Storage::numberOfRecordsWithExtension(const char * extension) {
   size_t extensionLength = strlen(extension);
   for (char * p : *this) {
     const char * name = fullNameOfRecordStarting(p);
-    if (FullNameHasExtension(name, extension, extensionLength)) {
+    if (FullNameHasExtension(name, extension, extensionLength) && Record(name) != m_trashRecord) {
       count++;
     }
   }
@@ -210,6 +220,10 @@ int Storage::numberOfRecordsWithExtension(const char * extension) {
 }
 
 int Storage::numberOfRecords() {
+  return realNumberOfRecords() - (m_trashRecord == NULL ? 0 : 1);
+}
+
+int Storage::realNumberOfRecords() {
   int count = 0;
   for (char * p : *this) {
     const char * name = fullNameOfRecordStarting(p);
@@ -218,7 +232,7 @@ int Storage::numberOfRecords() {
   return count;
 }
 
-Storage::Record Storage::recordAtIndex(int index) {
+Storage::Record Storage::realRecordAtIndex(int index) {
   int currentIndex = -1;
   const char * name = nullptr;
   char * recordAddress = nullptr;
@@ -240,6 +254,40 @@ Storage::Record Storage::recordAtIndex(int index) {
   return Record(name);
 }
 
+
+Storage::Record Storage::recordAtIndex(int index) {
+  int currentIndex = -1;
+  const char * name = nullptr;
+  char * recordAddress = nullptr;
+  for (char * p : *this) {
+    const char * currentName = fullNameOfRecordStarting(p);
+    Record r = Record(currentName);
+    if (r == m_trashRecord) {
+      continue;
+    }
+    currentIndex++;
+    if (currentIndex == index) {
+      recordAddress = p;
+      name = currentName;
+      break;
+    }
+  }
+  if (name == nullptr) {
+    return Record();
+  }
+  Record r = Record(name);
+  m_lastRecordRetrieved = r;
+  m_lastRecordRetrievedPointer = recordAddress;
+  return Record(name);
+}
+
+void Storage::emptyTrash() {
+  if (m_trashRecord != NULL) {
+    realDestroyRecord(m_trashRecord);
+    m_trashRecord = NULL;
+  }
+}
+
 Storage::Record Storage::recordWithExtensionAtIndex(const char * extension, int index) {
   int currentIndex = -1;
   const char * name = nullptr;
@@ -247,13 +295,13 @@ Storage::Record Storage::recordWithExtensionAtIndex(const char * extension, int 
   char * recordAddress = nullptr;
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
-    if (FullNameHasExtension(currentName, extension, extensionLength)) {
+    if (FullNameHasExtension(currentName, extension, extensionLength) && Record(currentName) != m_trashRecord) {
       currentIndex++;
-    }
-    if (currentIndex == index) {
-      recordAddress = p;
-      name = currentName;
-      break;
+      if (currentIndex == index) {
+        recordAddress = p;
+        name = currentName;
+        break;
+      }
     }
   }
   if (name == nullptr) {
@@ -328,7 +376,8 @@ Storage::Storage() :
   m_magicFooter(Magic),
   m_delegate(nullptr),
   m_lastRecordRetrieved(nullptr),
-  m_lastRecordRetrievedPointer(nullptr)
+  m_lastRecordRetrievedPointer(nullptr),
+  m_trashRecord(NULL)
 {
   assert(m_magicHeader == Magic);
   assert(m_magicFooter == Magic);
@@ -430,7 +479,24 @@ Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Da
   return Record::ErrorStatus::RecordDoesNotExist;
 }
 
+
+void Storage::reinsertTrash(const char * extension) {
+  if (m_trashRecord != NULL) {
+    char * p = pointerOfRecord(m_trashRecord);
+    const char * fullName = fullNameOfRecordStarting(p);
+    if (FullNameHasExtension(fullName, extension, strlen(extension))) {
+      m_trashRecord = NULL;
+    }
+  }
+}
+
+
 void Storage::destroyRecord(Record record) {
+  emptyTrash();
+  m_trashRecord = record;
+}
+
+void Storage::realDestroyRecord(Record record) {
   if (record.isNull()) {
     return;
   }
@@ -520,7 +586,7 @@ bool Storage::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
     if (recordToExclude && s == *recordToExclude) {
       continue;
     }
-    if (s == r) {
+    if (s == r && s != m_trashRecord) {
       return true;
     }
   }
@@ -576,8 +642,11 @@ size_t Storage::sizeOfRecordWithFullName(const char * fullName, size_t dataSize)
 }
 
 bool Storage::slideBuffer(char * position, int delta) {
-  if (delta > (int)availableSize()) {
-    return false;
+  if (delta > (int)realAvailableSize()) {
+    emptyTrash();
+    if (delta > (int)realAvailableSize()) {
+      return false;
+    }
   }
   memmove(position+delta, position, endBuffer()+sizeof(record_size_t)-position);
   return true;
@@ -587,7 +656,7 @@ Storage::Record Storage::privateRecordAndExtensionOfRecordBaseNamedWithExtension
   size_t nameLength = baseNameLength < 0 ? strlen(baseName) : baseNameLength;
   {
     const char * lastRetrievedRecordFullName = fullNameOfRecordStarting(m_lastRecordRetrievedPointer);
-    if (m_lastRecordRetrievedPointer != nullptr && strncmp(baseName, lastRetrievedRecordFullName, nameLength) == 0) {
+    if (m_lastRecordRetrievedPointer != nullptr && strncmp(baseName, lastRetrievedRecordFullName, nameLength) == 0 && Record(lastRetrievedRecordFullName) == m_trashRecord) {
       for (size_t i = 0; i < numberOfExtensions; i++) {
         if (strcmp(lastRetrievedRecordFullName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
           assert(UTF8Helper::CodePointIs(lastRetrievedRecordFullName + nameLength, '.'));
@@ -602,6 +671,9 @@ Storage::Record Storage::privateRecordAndExtensionOfRecordBaseNamedWithExtension
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
     if (strncmp(baseName, currentName, nameLength) == 0) {
+      if (Record(currentName) == m_trashRecord) {
+        continue;
+      }
       for (size_t i = 0; i < numberOfExtensions; i++) {
         if (strcmp(currentName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
           assert(UTF8Helper::CodePointIs(currentName + nameLength, '.'));

@@ -90,6 +90,11 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     footer()->setSelectedButton(0);
     return true;
   }
+  if (event == Ion::Events::ShiftBack) {
+    Ion::Storage::sharedStorage()->reinsertTrash("py");
+    m_selectableTableView.reloadData();
+    return true;
+  }
   if (event == Ion::Events::Up) {
     if (footer()->selectedButton() == 0) {
       footer()->setSelectedButton(-1);

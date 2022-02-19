@@ -11,6 +11,7 @@ class ExpressionModelListController : public ViewController, public SelectableTa
 public:
   ExpressionModelListController(Responder * parentResponder, I18n::Message text);
 protected:
+  virtual const char * recordExtension() const = 0;
   static constexpr KDCoordinate k_expressionMargin = 5;
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;

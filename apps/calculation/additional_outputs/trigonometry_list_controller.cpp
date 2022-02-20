@@ -10,12 +10,13 @@ namespace Calculation {
 constexpr char TrigonometryListController::k_symbol[];
 
 void TrigonometryListController::setExpression(Poincare::Expression e) {
-  assert(e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine);
+  assert(e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine || e.type() == ExpressionNode::Type::Tangent);
   IllustratedListController::setExpression(e.childAtIndex(0));
 
   VariableContext context = illustratedListContext();
 
   // Fill calculation store
+  m_calculationStore.push("tan(θ)", &context, CalculationHeight);
   m_calculationStore.push("sin(θ)", &context, CalculationHeight);
   m_calculationStore.push("cos(θ)", &context, CalculationHeight);
   m_calculationStore.push("θ", &context, CalculationHeight);

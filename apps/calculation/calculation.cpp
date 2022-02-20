@@ -261,7 +261,7 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
    * - > input: 2cos(2) - cos(2)
    *   > output: cos(2)
    */
-  if (i.isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit()) || o.isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit())) {
+  if (Trigonometry::isDirectTrigonometryFunction(i) || Trigonometry::isDirectTrigonometryFunction(o)) {
     return AdditionalInformationType::Trigonometry;
   }
   if (o.hasUnit()) {

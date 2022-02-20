@@ -68,7 +68,7 @@ protected:
       KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1, int areaIndex = -1) const;
   void drawSegment(KDContext * ctx, KDRect rect,
     float x, float y, float u, float v,
-    KDColor color, bool thick = true
+    KDColor color, bool thick = true, bool dashedCurve = false, int stampNumber = 0
   ) const;
   enum class Size : uint8_t {
     Tiny,

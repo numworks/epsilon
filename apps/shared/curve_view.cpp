@@ -494,12 +494,12 @@ void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Ax
   }
 }
 
-void CurveView::drawSegment(KDContext * ctx, KDRect rect, float x, float y, float u, float v, KDColor color, bool thick) const {
+void CurveView::drawSegment(KDContext * ctx, KDRect rect, float x, float y, float u, float v, KDColor color, bool thick, bool dashedCurve, int stampNumber) const {
   float pxf = floatToPixel(Axis::Horizontal, x);
   float pyf = floatToPixel(Axis::Vertical, y);
   float puf = floatToPixel(Axis::Horizontal, u);
   float pvf = floatToPixel(Axis::Vertical, v);
-  straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick);
+  straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color, thick, dashedCurve, stampNumber);
 }
 
 void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size) const {

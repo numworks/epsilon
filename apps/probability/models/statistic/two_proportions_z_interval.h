@@ -25,7 +25,7 @@ public:
 
   const char * estimateSymbol() const override { return TwoProportions::EstimateSymbol(); }
   Poincare::Layout estimateLayout() override { return TwoProportions::EstimateLayout(&m_estimateLayout); }
-  Poincare::Layout testCriticalValueSymbol() override { return DistributionZ::TestCriticalValueSymbol(); }
+  Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionZ::TestCriticalValueSymbol(font); }
   I18n::Message estimateDescription() override { return TwoProportions::EstimateDescription(); };
 
   // Distribution: z

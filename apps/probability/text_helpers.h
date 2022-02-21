@@ -14,8 +14,6 @@ Poincare::Layout XOneMinusXTwoLayout();
 
 Poincare::HorizontalLayout codePointSubscriptCodePointLayout(CodePoint base, CodePoint subscript);
 
-Poincare::Layout setSmallFont(Poincare::Layout layout);
-
 }  // namespace Probability
 
 #endif /* PROBABILITY_TEXT_HELPERS_H */

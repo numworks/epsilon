@@ -30,11 +30,4 @@ Poincare::Layout XOneMinusXTwoLayout() {
   return std::move(res);
 }
 
-Poincare::HorizontalLayout codePointSubscriptCodePointLayout(CodePoint base, CodePoint subscript) {
-  return HorizontalLayout::Builder(
-      CodePointLayout::Builder(base),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder(subscript, KDFont::LargeFont),
-                                    VerticalOffsetLayoutNode::Position::Subscript));
-}
-
 }  // namespace Probability

@@ -134,4 +134,10 @@ Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
   return std::move(resultLayout);
 }
 
+HorizontalLayout LayoutHelper::CodePointSubscriptCodePointLayout(CodePoint base, CodePoint subscript) {
+  return HorizontalLayout::Builder(
+      CodePointLayout::Builder(base),
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder(subscript, KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript));
+}
+
 }

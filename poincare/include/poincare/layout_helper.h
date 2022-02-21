@@ -18,6 +18,7 @@ namespace LayoutHelper {
   Layout StringLayoutOfSerialization(const Expression & expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits);
   Layout CodePointString(const CodePoint * buffer, int bufferLen, const KDFont * font = KDFont::LargeFont);
   Layout Logarithm(Layout argument, Layout index);
+  HorizontalLayout CodePointSubscriptCodePointLayout(CodePoint base, CodePoint subscript);
 };
 
 }

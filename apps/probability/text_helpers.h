@@ -13,8 +13,6 @@ inline int defaultConvertFloatToText(double value, char buffer[], int bufferSize
 
 Poincare::Layout XOneMinusXTwoLayout();
 
-Poincare::HorizontalLayout codePointSubscriptCodePointLayout(CodePoint base, CodePoint subscript);
-
 }  // namespace Probability
 
 #endif /* PROBABILITY_TEXT_HELPERS_H */

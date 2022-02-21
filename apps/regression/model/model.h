@@ -28,7 +28,6 @@ public:
   };
   static constexpr int k_numberOfModels = 11;
   static constexpr int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients
-  virtual ~Model() = default;
   virtual Poincare::Layout layout() = 0;
   // Reinitialize m_layout to empty the pool
   void tidy();

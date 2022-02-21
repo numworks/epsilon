@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <stdint.h>
+#include <new>
 
 namespace Probability {
 

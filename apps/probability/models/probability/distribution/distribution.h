@@ -6,6 +6,7 @@
 #include "probability/models/probability/calculation/finite_integral_calculation.h"
 #include "probability/models/probability/calculation/left_integral_calculation.h"
 #include "probability/models/probability/calculation/right_integral_calculation.h"
+#include <new>
 
 namespace Probability {
 

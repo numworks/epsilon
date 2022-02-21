@@ -11,4 +11,6 @@ inline void * operator new[](size_t size, void * ptr) noexcept {
   return ptr;
 }
 
+inline void operator delete(void* ptr, size_t size) noexcept {}
+
 #endif

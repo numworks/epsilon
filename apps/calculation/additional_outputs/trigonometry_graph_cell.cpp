@@ -36,7 +36,7 @@ void TrigonometryGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw labels
   drawLabel(ctx, rect, 0.0f, sin, "sin(θ)", Palette::Red, cos >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
   drawLabel(ctx, rect, cos, 0.0f, "cos(θ)", Palette::Red, CurveView::RelativePosition::None, sin >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After);
-  drawLabel(ctx, rect, sec, sin, "tan(θ)", Palette::Red, CurveView::RelativePosition::None, sin >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After);
+  drawLabel(ctx, rect, cos+(0.4*(cos/abs(cos))), sin+(0.4*(sin/abs(sin))), "tan(θ)", Palette::Red, CurveView::RelativePosition::None, sin >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After);
 }
 
 }

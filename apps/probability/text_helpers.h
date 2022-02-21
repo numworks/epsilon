@@ -4,11 +4,12 @@
 #include <apps/i18n.h>
 #include <ion/unicode/code_point.h>
 #include <poincare/horizontal_layout.h>
+#include "shared/poincare_helpers.h"
 #include <stddef.h>
 
 namespace Probability {
 
-int defaultConvertFloatToText(double value, char buffer[], int bufferSize);
+inline int defaultConvertFloatToText(double value, char buffer[], int bufferSize) { return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(value, buffer, bufferSize, Poincare::Preferences::ShortNumberOfSignificantDigits, Poincare::Preferences::PrintFloatMode::Decimal); }
 
 Poincare::Layout XOneMinusXTwoLayout();
 

@@ -17,7 +17,7 @@ public:
   AlternateViewController(Responder * parentResponder, AlternateViewDelegate * delegate, const char * title);
   View * view() override { return &m_contentView; }
   const char * title() override { return m_title; }
-  ViewController::TitlesDisplay titlesDisplay() override { return m_contentView.mainViewController()->titlesDisplay(); }
+  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayNoTitle; }
   void didBecomeFirstResponder() override;
   void initView() override { m_contentView.mainViewController()->initView(); }
   void viewWillAppear() override;

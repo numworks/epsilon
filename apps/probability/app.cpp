@@ -98,6 +98,7 @@ void App::willOpenPage(ViewController * controller) {
 void App::didExitPage(ViewController * controller) {
   ViewController * c = snapshot()->pageQueue()->stackPop();
   assert(c == controller);
+  (void)c;
 }
 
 void App::cleanBuffer(DynamicCellsDataSourceDestructor * destructor) {

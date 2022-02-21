@@ -47,14 +47,4 @@ Poincare::HorizontalLayout codePointSubscriptCodePointLayout(CodePoint base, Cod
                                     VerticalOffsetLayoutNode::Position::Subscript));
 }
 
-Poincare::Layout setSmallFont(Poincare::Layout layout) {
-  if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout) {
-    static_cast<Poincare::CodePointLayout *>(&layout)->setFont(KDFont::SmallFont);
-  }
-  for (int i = 0; i < layout.numberOfChildren(); i++) {
-    setSmallFont(layout.childAtIndex(i));
-  }
-  return layout;
-}
-
 }  // namespace Probability

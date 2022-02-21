@@ -15,8 +15,8 @@ public:
 
 class DistributionT : public DistributionInterface {
 public:
-  static Poincare::Layout TestCriticalValueSymbol() {
-    return Poincare::LayoutHelper::String("t");
+  static Poincare::Layout TestCriticalValueSymbol(const KDFont * font) {
+    return Poincare::LayoutHelper::String("t", -1, font);
   }
   static I18n::Message GraphTitleFormat() { return I18n::Message::StatisticGraphControllerTestTitleFormatTTest; }
   static float CanonicalDensityFunction(float x, double degreesOfFreedom);
@@ -28,8 +28,8 @@ public:
 
 class DistributionZ : public DistributionInterface {
 public:
-  static Poincare::Layout TestCriticalValueSymbol() {
-    return Poincare::LayoutHelper::String("z");
+  static Poincare::Layout TestCriticalValueSymbol(const KDFont * font) {
+    return Poincare::LayoutHelper::String("z", -1, font);
   }
   static I18n::Message GraphTitleFormat() { return I18n::Message::StatisticGraphControllerTestTitleFormatZtest; }
   static float CanonicalDensityFunction(float x, double degreesOfFreedom);
@@ -41,7 +41,7 @@ public:
 
 class DistributionChi2 : public DistributionInterface {
 public:
-  static Poincare::Layout TestCriticalValueSymbol();
+  static Poincare::Layout TestCriticalValueSymbol(const KDFont * font);
   static float CanonicalDensityFunction(float x, double degreesOfFreedom);
   static double CumulativeNormalizedDistributionFunction(double x, double degreesOfFreedom);
   static double CumulativeNormalizedInverseDistributionFunction(double proba, double degreesOfFreedom);

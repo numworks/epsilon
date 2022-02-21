@@ -62,7 +62,7 @@ const char * ListController::title() {
 
 // Fills buffer with a default function equation, such as "f(x)="
 void ListController::fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint symbol) const {
-  int length = modelsParameterController->defaultName(buffer, bufferSize);
+  size_t length = modelsParameterController->defaultName(buffer, bufferSize);
   assert(bufferSize > length);
   buffer[length++] = '(';
   length += UTF8Decoder::CodePointToChars(symbol, buffer + length, bufferSize - length);
@@ -115,7 +115,7 @@ bool ListController::completeEquation(InputEventHandler * equationField, bool po
   // (θ)≥ would not fit, but inequations on polar are not handled.
   assert(f->symbol() != ContinuousFunction::k_polarSymbol || f->equationSymbol() == '=');
   char buffer[k_bufferSize];
-  int nameLength = f->nameWithArgument(buffer, k_bufferSize);
+  size_t nameLength = f->nameWithArgument(buffer, k_bufferSize);
   nameLength += UTF8Decoder::CodePointToChars(f->equationSymbol(), buffer + nameLength, k_bufferSize - nameLength);
   assert(nameLength < k_bufferSize);
   buffer[nameLength] = 0;

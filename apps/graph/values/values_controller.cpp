@@ -260,7 +260,7 @@ int ValuesController::numberOfValuesColumns() {
 }
 
 ContinuousFunction::SymbolType ValuesController::symbolTypeAtColumn(int * i) const {
-  int symbolTypeIndex = 0;
+  size_t symbolTypeIndex = 0;
   while (*i >= numberOfColumnsForSymbolType(symbolTypeIndex)) {
     *i -= numberOfColumnsForSymbolType(symbolTypeIndex++);
     assert(symbolTypeIndex < k_maxNumberOfSymbolTypes);
@@ -277,7 +277,7 @@ int ValuesController::valuesColumnForAbsoluteColumn(int column) {
 int ValuesController::absoluteColumnForValuesColumn(int column) {
   int abscissaColumns = 0;
   int valuesColumns = 0;
-  int symbolTypeIndex = 0;
+  size_t symbolTypeIndex = 0;
   do {
     assert(symbolTypeIndex < k_maxNumberOfSymbolTypes);
     const int numberOfValuesColumnsForType = m_numberOfValuesColumnsForType[symbolTypeIndex++];

@@ -12,7 +12,7 @@ constexpr int ScriptNodeCell::k_maxNumberOfCharsInLabel;
 void ScriptNodeCell::setScriptNode(ScriptNode * node) {
   /* Use a temporary buffer to crop label name, as strlen(node->name()) may be
    * greater than node->nameLength() */
-  const int labelLength = std::min(node->nameLength(), k_maxNumberOfCharsInLabel);
+  const size_t labelLength = std::min(node->nameLength(), k_maxNumberOfCharsInLabel);
   char temp_buffer[k_maxNumberOfCharsInLabel + 1];
   assert(strlen(node->name()) >= labelLength);
   memcpy(temp_buffer, node->name(), labelLength);

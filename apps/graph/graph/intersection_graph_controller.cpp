@@ -26,7 +26,7 @@ void IntersectionGraphController::reloadBannerView() {
   const char * legend = "=";
   // 'f(x)=g(x)=', keep 2 chars for '='
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(m_record);
-  int numberOfChar = f->nameWithArgument(buffer, bufferSize - 2 * strlen(legend));
+  size_t numberOfChar = f->nameWithArgument(buffer, bufferSize - 2 * strlen(legend));
   assert(numberOfChar < bufferSize);
   numberOfChar += Poincare::Print::customPrintf(buffer + numberOfChar, bufferSize - numberOfChar, legend);
   // keep 1 char for '=';

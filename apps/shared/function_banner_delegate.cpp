@@ -9,7 +9,7 @@ namespace Shared {
 void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   char buffer[k_textBufferSize];
-  int numberOfChar = 0;
+  size_t numberOfChar = 0;
   numberOfChar += UTF8Decoder::CodePointToChars(function->symbol(), buffer+numberOfChar, k_textBufferSize-numberOfChar-1);
   assert(numberOfChar <= k_textBufferSize);
   strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);

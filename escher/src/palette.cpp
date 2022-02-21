@@ -37,7 +37,7 @@ constexpr KDColor Palette::DataColor[];
 constexpr KDColor Palette::DataColorLight[];
 
 KDColor Palette::nextDataColor(int * colorIndex) {
-  size_t nbOfColors = numberOfDataColors();
+  int nbOfColors = numberOfDataColors();
   assert(*colorIndex < nbOfColors);
   KDColor c = DataColor[*colorIndex];
   *colorIndex = (*colorIndex + 1) % nbOfColors;

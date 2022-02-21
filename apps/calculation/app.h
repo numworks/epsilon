@@ -6,6 +6,7 @@
 #include "history_controller.h"
 #include "../shared/text_field_delegate_app.h"
 #include "../shared/shared_app.h"
+#include <new>
 
 namespace Calculation {
 

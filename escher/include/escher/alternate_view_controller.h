@@ -15,25 +15,15 @@ public:
 class AlternateViewController : public ViewController {
 public:
   AlternateViewController(Responder * parentResponder, AlternateViewDelegate * delegate, const char * title);
-  View * view() override { return &m_contentView; }
+  View * view() override { return m_delegate->activeViewController()->view(); }
   const char * title() override { return m_title; }
   ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayNoTitle; }
   void didBecomeFirstResponder() override;
-  void initView() override { m_contentView.mainViewController()->initView(); }
+  void initView() override { m_delegate->activeViewController()->initView(); }
   void viewWillAppear() override;
-  void viewDidDisappear() override { m_contentView.mainViewController()->viewDidDisappear(); }
+  void viewDidDisappear() override { m_delegate->activeViewController()->viewDidDisappear(); }
 private:
-  class ContentView : public View {
-  public:
-    ContentView(AlternateViewDelegate * delegate) : m_delegate(delegate) {}
-    ViewController * mainViewController() const { return m_delegate->activeViewController(); }
-    void layoutSubviews(bool force = false) override { mainViewController()->view()->setFrame(bounds(), force); }
-  private:
-    int numberOfSubviews() const override { return 1; }
-    View * subviewAtIndex(int index) override { return mainViewController()->view(); }
-    AlternateViewDelegate * m_delegate;
-  };
-  ContentView m_contentView;
+  AlternateViewDelegate * m_delegate;
   const char * m_title;
 };
 

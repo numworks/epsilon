@@ -1,5 +1,6 @@
 #include "store.h"
 #include <apps/global_preferences.h>
+#include <poincare/normal_distribution.h>
 #include <assert.h>
 #include <float.h>
 #include <cmath>
@@ -319,6 +320,13 @@ double Store::cumulatedFrequencyAtSortedIndex(int series, int * sortedIndex, int
   }
   assert(otherOccurrences + cumulatedOccurrences == sumOfOccurrences(series));
   return 100.0*cumulatedOccurrences/(otherOccurrences + cumulatedOccurrences);
+}
+
+double Store::zScoreAtSortedIndex(int series, int * sortedIndex, int index) const {
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  assert(numberOfPairs > 0);
+  float plottingPosition = (static_cast<float>(index)+0.5f)/static_cast<float>(numberOfPairs);
+  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(plottingPosition, 0.0f, 1.0f);
 }
 
 int Store::minIndex(double * bufferValues, int bufferLength) const {

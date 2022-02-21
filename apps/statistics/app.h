@@ -12,6 +12,7 @@
 #include "graph/histogram_controller.h"
 #include "graph/graph_type_controller.h"
 #include "graph/graph_view_model.h"
+#include "graph/normal_probability_controller.h"
 #include "stats/calculation_controller.h"
 #include "data/store_controller.h"
 #include "store.h"
@@ -66,6 +67,8 @@ private:
   CalculationController m_calculationController;
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   Escher::ButtonRowController m_calculationHeader; // Needed for upper margin only
+  NormalProbabilityController m_normalProbabilityController;
+  Escher::ButtonRowController m_normalProbabilityHeader;
   FrequencyController m_frequencyController;
   Escher::ButtonRowController m_frequencyHeader;
   BoxController m_boxController;

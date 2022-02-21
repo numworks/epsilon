@@ -30,7 +30,7 @@ public:
 
   const char * estimateSymbol() const override { return TwoMeans::EstimateSymbol(); }
   Poincare::Layout estimateLayout() override { return TwoMeans::EstimateLayout(&m_estimateLayout); }
-  Poincare::Layout testCriticalValueSymbol() override { return DistributionT::TestCriticalValueSymbol(); }
+  Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionT::TestCriticalValueSymbol(font); }
   I18n::Message estimateDescription() override { return TwoMeans::EstimateDescription(); };
   // Distribution: t
   float canonicalDensityFunction(float x) const override { return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom); }

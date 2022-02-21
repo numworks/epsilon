@@ -18,8 +18,8 @@ public:
   DistributionType distributionType() const override { return DistributionType::Chi2; }
   bool initializeCategoricalType(CategoricalType type);
 
-  Poincare::Layout testCriticalValueSymbol() override {
-    return DistributionChi2::TestCriticalValueSymbol();
+  Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override {
+    return DistributionChi2::TestCriticalValueSymbol(font);
   }
 
   float canonicalDensityFunction(float x) const override {

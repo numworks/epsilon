@@ -29,6 +29,11 @@ app_statistics_src = $(addprefix apps/statistics/,\
   graph/multiple_data_view.cpp \
   graph/multiple_data_view_controller.cpp \
   graph/multiple_histograms_view.cpp \
+  graph/normal_probability_banner_view.cpp \
+  graph/normal_probability_controller.cpp \
+  graph/normal_probability_curve_view.cpp \
+  graph/normal_probability_range.cpp \
+  graph/normal_probability_view.cpp \
   data/statistics_context.cpp \
   data/store_controller.cpp \
   data/store_parameter_controller.cpp \

@@ -55,6 +55,7 @@ public:
   // TODO : Add tests
   void sortIndex(int series, int * sortedIndex, int startIndex, int endIndex) const;
   double cumulatedFrequencyAtSortedIndex(int series, int * sortedIndex, int index) const;
+  double zScoreAtSortedIndex(int series, int * sortedIndex, int index) const;
 
   // DoublePairStore
   void memoizeValidSeries(int series) override;

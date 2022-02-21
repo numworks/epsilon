@@ -237,7 +237,7 @@ Shared::ExpiringPointer<Calculation> CalculationStore::emptyStoreAndPushUndef(Co
 
 // Recompute memoized pointers to the calculations after index i
 void CalculationStore::recomputeMemoizedPointersAfterCalculationIndex(int index) {
-  assert(index < numberOfCalculations());
+  assert(index < m_numberOfCalculations);
   // Clear pointer and recompute new ones
   Calculation * c = realCalculationAtIndex(index).pointer();
   Calculation * nextCalc;

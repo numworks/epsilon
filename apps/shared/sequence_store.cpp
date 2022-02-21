@@ -11,9 +11,9 @@ namespace Shared {
 
 constexpr const char * SequenceStore::k_sequenceNames[MaxNumberOfSequences];
 
-const char * SequenceStore::firstAvailableName(int * nameIndex) {
+const char * SequenceStore::firstAvailableName(size_t * nameIndex) {
   // Choose available name
-  int currentNameIndex = 0;
+  size_t currentNameIndex = 0;
   while (currentNameIndex < MaxNumberOfSequences) {
     const char * name = k_sequenceNames[currentNameIndex];
     if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::seqExtension).isNull()) {
@@ -29,7 +29,7 @@ const char * SequenceStore::firstAvailableName(int * nameIndex) {
 
 Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
   // Choose available name
-  int nameIndex;
+  size_t nameIndex;
   const char * name = firstAvailableName(&nameIndex);
   assert(name);
   // Choose the corresponding color

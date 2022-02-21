@@ -17,14 +17,14 @@ size_t numberOfBitsInType() {
 }
 
 template <typename T>
-bool bitAtIndex(T mask, int i) {
+bool bitAtIndex(T mask, size_t i) {
   assert(i >= 0 && i < numberOfBitsInType<T>());
   return (mask >> i) & 1U;
 }
 
 template <typename T>
-void setBitAtIndex(T & mask, int i, bool b) {
-  assert(i >= 0 && i < numberOfBitsInType<T>());
+void setBitAtIndex(T & mask, size_t i, bool b) {
+  assert(i < numberOfBitsInType<T>());
   constexpr static T one = 1;
   if (b) {
     mask |= (one << i);

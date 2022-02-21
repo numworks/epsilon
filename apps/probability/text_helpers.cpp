@@ -10,20 +10,10 @@
 #include <string.h>
 
 #include "poincare/preferences.h"
-#include "shared/poincare_helpers.h"
 
 using namespace Poincare;
 
 namespace Probability {
-
-int defaultConvertFloatToText(double value, char buffer[], int bufferSize) {
-  return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
-      value,
-      buffer,
-      bufferSize,
-      Poincare::Preferences::ShortNumberOfSignificantDigits,
-      Poincare::Preferences::PrintFloatMode::Decimal);
-}
 
 Poincare::Layout XOneMinusXTwoLayout() {
   HorizontalLayout x1 = HorizontalLayout::Builder(

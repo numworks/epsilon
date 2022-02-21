@@ -21,7 +21,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(ctx, rect);
   simpleDrawBothAxesLabels(ctx, rect);
   Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
-  for (int series = 0; series < Store::k_numberOfSeries; series++) {
+  for (size_t series = 0; series < Store::k_numberOfSeries; series++) {
     if (!m_store->seriesIsEmpty(series)) {
       assert(series < Palette::numberOfDataColors());
       KDColor color = Palette::DataColor[series];

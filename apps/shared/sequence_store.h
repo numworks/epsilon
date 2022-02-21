@@ -24,7 +24,7 @@ public:
 
 
   static int sequenceIndexForName(char name);
-  static const char * firstAvailableName(int * nameIndex = nullptr);
+  static const char * firstAvailableName(size_t * nameIndex = nullptr);
   static constexpr const char * k_sequenceNames[MaxNumberOfSequences] = {
     "u", "v", "w"
   };

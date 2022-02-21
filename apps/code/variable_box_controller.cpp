@@ -319,14 +319,14 @@ size_t VariableBoxController::nodesCountForOrigin(uint8_t origin) const {
 
 ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
   assert(index >= 0 && index < numberOfRows());
-  assert(index < m_nodesCount);
+  assert(index < static_cast<int>(m_nodesCount));
   assert(m_nodesCount <= k_maxScriptNodesCount);
   assert(m_originsCount <= k_maxOrigins);
   return m_scriptNodes + index;
 }
 
 int VariableBoxController::typeAndOriginAtLocation(int i, uint8_t * resultOrigin, int * cumulatedOriginsCount) const {
-  assert(i < m_nodesCount + (m_displaySubtitles ? m_originsCount : 0));
+  assert(i < static_cast<int>(m_nodesCount + (m_displaySubtitles ? m_originsCount : 0)));
   int cellIndex = 0;
   int originsCount = 0;
   for (uint8_t origin = 0; origin < m_originsCount; ++origin) {

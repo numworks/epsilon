@@ -53,7 +53,7 @@ const char * FinanceResultController::title() {
   uint8_t doubleParameters = m_data->numberOfDoubleValues();
   uint8_t unknownParam = m_data->getUnknown();
   bool unknownParamIsLast = (unknownParam == doubleParameters - 1);
-  int length = 0;
+  size_t length = 0;
   for (uint8_t param = 0; param < doubleParameters; param++) {
     if (param == unknownParam) {
       // The unknown parameter isn't displayed

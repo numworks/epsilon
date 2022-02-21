@@ -53,13 +53,13 @@ public:
   uint32_t storeChecksumForSeries(int series) const;
 
   // Colors
-  static KDColor colorOfSeriesAtIndex(int i) {
-    assert(i >= 0 && i < k_numberOfSeries);
+  static KDColor colorOfSeriesAtIndex(size_t i) {
+    assert(i < k_numberOfSeries);
     assert(i < Escher::Palette::numberOfDataColors());
     return Escher::Palette::DataColor[i];
   }
-  static KDColor colorLightOfSeriesAtIndex(int i) {
-    assert(i >= 0 && i < k_numberOfSeries);
+  static KDColor colorLightOfSeriesAtIndex(size_t i) {
+    assert(i < k_numberOfSeries);
     assert(i < Escher::Palette::numberOfLightDataColors());
     return Escher::Palette::DataColorLight[i];
   }

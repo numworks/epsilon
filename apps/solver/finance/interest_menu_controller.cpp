@@ -15,7 +15,7 @@ InterestMenuController::InterestMenuController(Escher::StackViewController * par
 }
 
 void InterestMenuController::didBecomeFirstResponder() {
-  for (size_t i = 0; i < numberOfRows(); i++) {
+  for (int i = 0; i < numberOfRows(); i++) {
     cellAtIndex(i)->setMessage(m_data->labelForParameter(paramaterAtIndex(i)));
     cellAtIndex(i)->setSubtitle(m_data->sublabelForParameter(paramaterAtIndex(i)));
   }

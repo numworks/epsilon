@@ -474,7 +474,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
      * by the null terminating char. */
     int copySizeWithNullTerminatingZero = std::min(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
     assert(copySizeWithNullTerminatingZero >= 0);
-    assert(copySizeWithNullTerminatingZero <= k_maxImportCommandSize - currentChar);
+    assert(copySizeWithNullTerminatingZero <= static_cast<int>(k_maxImportCommandSize - currentChar));
     strlcpy(command+currentChar, scriptName, copySizeWithNullTerminatingZero);
     currentChar += copySizeWithNullTerminatingZero-1;
 

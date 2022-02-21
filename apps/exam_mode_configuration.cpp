@@ -53,17 +53,17 @@ bool ExamModeConfiguration::testModeAvailable() {
                 == CountryPreferences::AvailableExamModes::All;
 }
 
-Preferences::ExamMode ExamModeConfiguration::examModeAtIndex(int index) {
+Preferences::ExamMode ExamModeConfiguration::examModeAtIndex(size_t index) {
   if (GlobalPreferences::sharedGlobalPreferences()->availableExamModes() == CountryPreferences::AvailableExamModes::PortugueseOnly) {
     assert(index == 0);
     return Preferences::ExamMode::Portuguese;
   }
   Preferences::ExamMode examModes[] = {Preferences::ExamMode::Standard, Preferences::ExamMode::Dutch, Preferences::ExamMode::Portuguese, Preferences::ExamMode::IBTest};
-  assert(index >= 0 && index < sizeof(examModes)/sizeof(Preferences::ExamMode));
+  assert(index < sizeof(examModes)/sizeof(Preferences::ExamMode));
   return examModes[index];
 }
 
-I18n::Message ExamModeConfiguration::examModeActivationMessage(int index) {
+I18n::Message ExamModeConfiguration::examModeActivationMessage(size_t index) {
   Preferences::ExamMode examMode = Preferences::sharedPreferences()->examMode();
   /* If the country has all exam mode, we specify which one will be reactivated.
    * The country might still have been updated by the user after activation. */

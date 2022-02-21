@@ -10,7 +10,7 @@ T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context) {
   constexpr size_t bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   char buffer[bufferSize];
   // Get displayed value
-  int numberOfChar = ConvertFloatToText<T>(t, buffer, bufferSize, precision);
+  size_t numberOfChar = ConvertFloatToText<T>(t, buffer, bufferSize, precision);
   assert(numberOfChar <= bufferSize);
   // Silence compiler warnings for assert
   (void) numberOfChar;

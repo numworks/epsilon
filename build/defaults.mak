@@ -8,7 +8,7 @@ SFLAGS += -DESCHER_LOG_EVENTS_BINARY=$(ESCHER_LOG_EVENTS_BINARY)
 SFLAGS += -DESCHER_LOG_EVENTS_NAME=$(ESCHER_LOG_EVENTS_NAME)
 
 # Language-specific flags
-CFLAGS = -std=c99
+CFLAGS = -std=c11
 CXXFLAGS = -std=c++17 -fno-exceptions -fno-rtti -fno-threadsafe-statics
 
 # Flags - Optimizations

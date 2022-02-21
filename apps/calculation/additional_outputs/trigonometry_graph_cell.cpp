@@ -27,7 +27,7 @@ void TrigonometryGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw dashed segment to indicate sine, cosine, tangent and secant
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, cos, 0.0f, sin, Palette::Red, 1, 3);
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, sin, 0.0f, cos, Palette::Red, 1, 3);
-  drawSegment(ctx, rect, cos, sin, sec, 0.0f, Palette::Red, false, true);
+  //drawSegment(ctx, rect, cos, sin, sec, 0.0f, Palette::Red, false, true);
   // Draw angle position on the circle
   drawDot(ctx, rect, cos, sin, Palette::Red, Size::Large);
   // Draw graduations
@@ -36,7 +36,6 @@ void TrigonometryGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw labels
   drawLabel(ctx, rect, 0.0f, sin, "sin(θ)", Palette::Red, cos >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
   drawLabel(ctx, rect, cos, 0.0f, "cos(θ)", Palette::Red, CurveView::RelativePosition::None, sin >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After);
-  drawLabel(ctx, rect, cos+(0.4*(cos/abs(cos))), sin+(0.4*(sin/abs(sin))), "tan(θ)", Palette::Red, CurveView::RelativePosition::None, sin >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After);
 }
 
 }

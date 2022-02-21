@@ -6,18 +6,19 @@ namespace Escher {
 
 /* AlternateViewController */
 
-AlternateViewController::AlternateViewController(Responder * parentResponder, AlternateViewDelegate * delegate, const char * title) :
+AlternateViewController::AlternateViewController(Responder * parentResponder, AlternateViewDelegate * delegate, ViewController ** viewControllers, const char * title) :
   ViewController(parentResponder),
   m_delegate(delegate),
+  m_viewControllers(viewControllers),
   m_title(title)
 {}
 
 void AlternateViewController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(m_delegate->activeViewController());
+  Container::activeApp()->setFirstResponder(activeViewController());
 }
 
 void AlternateViewController::viewWillAppear() {
-  m_delegate->activeViewController()->viewWillAppear();
+  activeViewController()->viewWillAppear();
 }
 
 }

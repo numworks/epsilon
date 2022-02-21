@@ -16,7 +16,7 @@
 
 namespace Statistics {
 
-class App : public Shared::TextFieldDelegateApp {
+class App : public Shared::TextFieldDelegateApp, Escher::AlternateViewDelegate {
 public:
   class Descriptor : public Escher::App::Descriptor {
   public:
@@ -53,6 +53,8 @@ public:
   TELEMETRY_ID("Statistics");
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
+  int activeViewControllerIndex() const override;
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   void didBecomeActive(Escher::Window * window) override;
   CalculationController m_calculationController;
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;
@@ -62,6 +64,7 @@ private:
   HistogramController m_histogramController;
   Escher::ButtonRowController m_histogramHeader;
   GraphTypeController m_graphTypeController;
+  Escher::ViewController * m_graphControllerViews[4];
   Escher::AlternateViewController m_graphController;
   Escher::StackViewController m_graphMenuStackViewController;
   Escher::AlternateEmptyViewController m_graphMenuAlternateEmptyViewController;

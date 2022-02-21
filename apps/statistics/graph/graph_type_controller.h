@@ -1,33 +1,24 @@
 #ifndef STATISTICS_GRAPH_TYPE_CONTROLLER_H
 #define STATISTICS_GRAPH_TYPE_CONTROLLER_H
 
-#include <escher/alternate_view_controller.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/transparent_image_with_message_cell.h>
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
-#include <escher/view_controller.h>
 #include <apps/i18n.h>
 #include "../store.h"
 
 namespace Statistics {
 
 constexpr int k_numberOfCells = 4;
-
-// GraphTypeController handles GraphController's displayed views
-class GraphTypeController : public Escher::AlternateViewDelegate, public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableCellListPage<Escher::TransparentImageWithMessageCell, k_numberOfCells, Escher::RegularListViewDataSource> {
+class GraphTypeController : public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableCellListPage<Escher::TransparentImageWithMessageCell, k_numberOfCells, Escher::RegularListViewDataSource> {
 public:
   GraphTypeController(Escher::Responder * parentResponder,
                  Escher::Responder * tabController,
                  Escher::StackViewController * stackView,
-                 Escher::ViewController * histogramViewController,
-                 Escher::ViewController * boxViewController,
                  Store * store,
                  int * selectedGraphViewIndex);
-
-  // AlternateViewDelegate
-  Escher::ViewController * activeViewController() override;
 
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override { return !m_store->hasValidSeries(); }
@@ -48,8 +39,6 @@ private:
 
   Escher::Responder * m_tabController;
   Escher::StackViewController * m_stackView;
-  Escher::ViewController * m_histogramViewController;
-  Escher::ViewController * m_boxViewController;
   Store * m_store;
   int * m_selectedGraphViewIndex;
 };

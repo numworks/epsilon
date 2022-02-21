@@ -11,15 +11,11 @@ using namespace Statistics;
 GraphTypeController::GraphTypeController(Escher::Responder * parentResponder,
                                Escher::Responder * tabController,
                                Escher::StackViewController * stackView,
-                               Escher::ViewController * histogramViewController,
-                               Escher::ViewController * boxViewController,
                                Store * store,
                                int * selectedGraphViewIndex) :
     Escher::SelectableCellListPage<Escher::TransparentImageWithMessageCell, k_numberOfCells, Escher::RegularListViewDataSource>(parentResponder),
     m_tabController(tabController),
     m_stackView(stackView),
-    m_histogramViewController(histogramViewController),
-    m_boxViewController(boxViewController),
     m_store(store),
     m_selectedGraphViewIndex(selectedGraphViewIndex) {
   selectRow(*selectedGraphViewIndex);
@@ -32,18 +28,6 @@ GraphTypeController::GraphTypeController(Escher::Responder * parentResponder,
   cellAtIndex(k_indexOfCumulative)->setImage(ImageStore::CumulativeIcon);
   cellAtIndex(k_indexOfNormal)->setMessage(I18n::Message::NormalProbabilityPlot);
   cellAtIndex(k_indexOfNormal)->setImage(ImageStore::StatisticsNormalIcon);
-}
-
-Escher::ViewController * GraphTypeController::activeViewController() {
-  switch (*m_selectedGraphViewIndex) {
-  case k_indexOfHistogram:
-    return m_histogramViewController;
-  case k_indexOfBox:
-    return m_boxViewController;
-  default:
-    // TODO : Implement the other two controllers
-    return nullptr;
-  }
 }
 
 void GraphTypeController::didBecomeFirstResponder() {

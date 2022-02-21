@@ -403,11 +403,11 @@ ParameterRepresentation TwoMeans::ParameterRepresentationAtIndex(int i) {
       return ParameterRepresentation{x1, I18n::Message::Sample1Mean};
     }
     case ParamsOrder::n1: {
-      Poincare::HorizontalLayout n1 = codePointSubscriptCodePointLayout('n', '1');
+      Poincare::HorizontalLayout n1 = LayoutHelper::CodePointSubscriptCodePointLayout('n', '1');
       return ParameterRepresentation{n1, I18n::Message::Sample1Size};
     }
     case ParamsOrder::s1: {
-      Poincare::HorizontalLayout sigma1 = codePointSubscriptCodePointLayout(
+      Poincare::HorizontalLayout sigma1 = LayoutHelper::CodePointSubscriptCodePointLayout(
           CodePoint(UCodePointGreekSmallLetterSigma),
           '1');
       return ParameterRepresentation{sigma1, I18n::Message::Population1Std};
@@ -420,12 +420,12 @@ ParameterRepresentation TwoMeans::ParameterRepresentationAtIndex(int i) {
       return ParameterRepresentation{x2, I18n::Message::Sample2Mean};
     }
     case ParamsOrder::n2: {
-      Poincare::HorizontalLayout n2 = codePointSubscriptCodePointLayout('n', '2');
+      Poincare::HorizontalLayout n2 = LayoutHelper::CodePointSubscriptCodePointLayout('n', '2');
       ;
       return ParameterRepresentation{n2, I18n::Message::Sample1Size};
     }
     case ParamsOrder::s2: {
-      Poincare::HorizontalLayout sigma2 = codePointSubscriptCodePointLayout(
+      Poincare::HorizontalLayout sigma2 = LayoutHelper::CodePointSubscriptCodePointLayout(
           CodePoint(UCodePointGreekSmallLetterSigma),
           '2');
       return ParameterRepresentation{sigma2, I18n::Message::Population2Std};

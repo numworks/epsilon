@@ -92,7 +92,7 @@ bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
     // Expected value should not be null
     return false;
   }
-  return Chi2Test::authorizedParameterAtIndex(i, p);
+  return Chi2Test::authorizedParameterAtIndex(p, i);
 }
 
 // TODO : factorize with HomogeneityTest

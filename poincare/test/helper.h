@@ -68,16 +68,13 @@ bool inline roughly_equal(T observed, T expected, T threshold = Poincare::Float<
   if (max == INFINITY) {
     return observed == expected;
   }
-  T relerr = max;
   if (expected != 0.0) {
-    relerr = std::fabs(observed - expected) / max;
-  } else {
-    if (std::isnan(nullExpectedThreshold)) {
-      nullExpectedThreshold = threshold;
-    }
-    return relerr <= nullExpectedThreshold;
+    return std::fabs((observed - expected) / expected) <= threshold;
   }
-  return relerr <= threshold;
+  if (std::isnan(nullExpectedThreshold)) {
+    nullExpectedThreshold = threshold;
+  }
+  return max <= nullExpectedThreshold;
 }
 
 template <typename T>

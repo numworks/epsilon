@@ -4,29 +4,29 @@
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/selectable_list_view_controller.h>
+#include "column_parameter_controller.h"
 #include "interval_parameter_controller.h"
 
 namespace Shared {
-class ValuesParameterController : public Escher::SelectableListViewController {
+
+class ValuesController;
+
+class ValuesParameterController : public ColumnParameterController {
 public:
-  ValuesParameterController(Escher::Responder * parentResponder);
-  const char * title() override;
-  void setPageTitle(I18n::Message pageTitle) { m_pageTitle = pageTitle; }
+  ValuesParameterController(Escher::Responder * parentResponder, ValuesController * valuesController);
+  int numberOfRows() const override { return k_totalNumberOfCell; }
   bool handleEvent(Ion::Events::Event event) override;
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  void didBecomeFirstResponder() override;
-  int numberOfRows() const override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
 private:
-#if COPY_COLUMN
-  constexpr static int k_totalNumberOfCell = 3;
-  Escher::MessageTableCellWithChevron m_copyColumn;
-#else
+  EditableCellTableViewController * editableCellTableViewController() override;
   constexpr static int k_totalNumberOfCell = 2;
-#endif
-  I18n::Message m_pageTitle;
-  Escher::MessageTableCell m_deleteColumn;
+  constexpr static int k_indexOfClearColumn = 0;
+  constexpr static int k_indexOfSetInterval = k_indexOfClearColumn + 1;
+
+  Escher::MessageTableCell m_clearColumn;
   Escher::MessageTableCellWithChevron m_setInterval;
+
+  ValuesController * m_valuesController;
 };
 
 }

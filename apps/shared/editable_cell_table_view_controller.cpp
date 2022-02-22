@@ -1,4 +1,5 @@
 #include "editable_cell_table_view_controller.h"
+#include "column_parameter_controller.h"
 #include "../shared/poincare_helpers.h"
 #include "../constant.h"
 #include <assert.h>
@@ -129,16 +130,27 @@ void EditableCellTableViewController::viewWillAppear() {
   }
 }
 
-void EditableCellTableViewController::tryToDeleteColumn() {
+void EditableCellTableViewController::tryToDeleteColumn(I18n::Message warningMessage1, I18n::Message warningMessage2) {
   if (numberOfElementsInColumn(selectedColumn()) > 0 && isColumnDeletable(selectedColumn())) {
+    m_confirmPopUpController.setContentMessage(0, warningMessage1);
+    m_confirmPopUpController.setContentMessage(1, warningMessage2);
     m_confirmPopUpController.presentModally();
    }
 }
 
 bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace && selectedRow() == 0) {
-    tryToDeleteColumn();
+    tryToDeleteColumn(I18n::Message::ConfirmDeleteColumn1, I18n::Message::ConfirmDeleteColumn2);
     return true;
+  }
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
+    StackViewController * stack = reinterpret_cast<StackViewController *>(parentResponder()->parentResponder());
+    ColumnParameterController * columnParam = columnParameterController();
+    if (columnParam != nullptr) {
+      columnParam->initializeColumnParameters(); // Always initialize before pushing
+      columnParam->selectRow(0);
+      stack->push(columnParam);
+    }
   }
   return false;
 }

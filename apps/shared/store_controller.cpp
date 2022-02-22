@@ -54,11 +54,23 @@ KDRect StoreController::ContentView::formulaFrame() const {
   return KDRect(0, bounds().height() - k_formulaInputHeight, bounds().width(), m_displayFormulaInputView ? k_formulaInputHeight : 0);
 }
 
+void StoreController::setFormulaLabel() {
+  char name[Shared::k_lengthOfColumnName];
+  fillColumnName(selectedColumn(), name);
+  int i = 0;
+  while (name[i] != 0 && i < Shared::k_lengthOfColumnName - 1) {
+     i++;
+  }
+  name[i] = '=';
+  static_cast<ContentView *>(view())->formulaInputView()->setBufferText(name);
+}
+
 StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_editableCells{},
   m_store(store),
+  m_titleCells{},
   m_contentView(m_store, this, this, this, inputEventHandlerDelegate, this)
 {
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
@@ -127,7 +139,7 @@ HighlightCell * StoreController::reusableCell(int index, int type) {
   switch (type) {
     case k_titleCellType:
       assert(index < k_numberOfTitleCells);
-      return titleCells(index);
+      return &m_titleCells[index];
     case k_editableCellType:
       assert(index < k_maxNumberOfEditableCells);
       return &m_editableCells[index];
@@ -146,11 +158,6 @@ int StoreController::typeAtLocation(int i, int j) {
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  // Handle the separator
-  if (typeAtLocation(i, j) == k_editableCellType) {
-    bool shouldHaveLeftSeparator = i > 0 && ( i % DoublePairStore::k_numberOfColumnsPerSeries == 0);
-    static_cast<StoreCell *>(cell)->setSeparatorLeft(shouldHaveLeftSeparator);
-  }
   // Handle hidden cells
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
   if (j > numberOfElementsInCol + 1) {
@@ -159,8 +166,19 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     myCell->setHide(true);
     return;
   }
+  bool shouldHaveLeftSeparator = i > 0 && ( i % DoublePairStore::k_numberOfColumnsPerSeries == 0);
   if (typeAtLocation(i, j) == k_editableCellType) {
-    static_cast<StoreCell *>(cell)->setHide(false);
+    Shared::StoreCell * myCell = static_cast<StoreCell *>(cell);
+    myCell->setHide(false);
+    myCell->setSeparatorLeft(shouldHaveLeftSeparator);
+
+  }
+  if (typeAtLocation(i, j) == k_titleCellType) {
+    Shared::StoreTitleCell * myTitleCell = static_cast<Shared::StoreTitleCell *>(cell);
+    int seriesIndex = seriesAtColumn(i);
+    myTitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
+    fillColumnName(i, const_cast<char *>(myTitleCell->text()));
+    myTitleCell->setSeparatorLeft(shouldHaveLeftSeparator);
   }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
 }
@@ -181,13 +199,6 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   }
   assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
   int series = seriesAtColumn(selectedColumn());
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
-    storeParameterController()->selectXColumn(selectedColumn()%DoublePairStore::k_numberOfColumnsPerSeries == 0);
-    storeParameterController()->selectSeries(series);
-    StackViewController * stack = reinterpret_cast<StackViewController *>(parentResponder()->parentResponder());
-    stack->push(storeParameterController());
-    return true;
-  }
   if (event == Ion::Events::Backspace) {
     if (selectedRow() == 0 || selectedRow() > numberOfElementsInColumn(selectedColumn())) {
       return false;
@@ -278,6 +289,33 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   }
   selectableTableView()->reloadData();
   return true;
+}
+
+void StoreController::sortColumn() {
+  static Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
+    // Swap X and Y values
+    double * dataX = static_cast<double*>(context);
+    double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
+    double tempX = dataX[i];
+    double tempY = dataY[i];
+    dataX[i] = dataX[j];
+    dataY[i] = dataY[j];
+    dataX[j] = tempX;
+    dataY[j] = tempY;
+  };
+  static Poincare::Helpers::Compare compareX = [](int a, int b, void * context, int numberOfElements)->bool{
+    double * dataX = static_cast<double*>(context);
+    return dataX[a] > dataX[b];
+  };
+  static Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
+    double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
+    return dataY[a] > dataY[b];
+  };
+
+  int indexOfFirstCell = selectedSeries() * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
+  double * seriesContext = &(m_store->data()[indexOfFirstCell]);
+  Poincare::Helpers::Sort(swapRows, (selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries == 0) ? compareX : compareY, seriesContext, m_store->numberOfPairsOfSeries(selectedSeries()));
+
 }
 
 void StoreController::deleteColumn() {

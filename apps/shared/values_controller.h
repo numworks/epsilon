@@ -47,6 +47,8 @@ public:
 
   virtual IntervalParameterController * intervalParameterController() = 0;
 
+  void fillColumnName(int columnIndex, char * buffer) override { buffer[0] = 'x';}
+
 protected:
   // The cellWidth is increased by 10 pixels to avoid displaying more than 4 columns on the screen (and thus decrease the number of memoized cell)
   static constexpr KDCoordinate k_cellWidth = (Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)) * 7 + 2*Escher::Metric::SmallCellMargin+10; // KDFont::SmallFont->glyphSize().width() = 7, we add 10 to avoid displaying more that 4 columns and decr
@@ -90,6 +92,9 @@ protected:
   void resetMemoization();
   virtual char * memoizedBufferAtIndex(int i) = 0;
   virtual int numberOfMemoizedColumn() = 0;
+
+  virtual ColumnParameterController * columnParameterController() override { return &m_abscissaParameterController; }
+
 private:
   // Specialization depending on the abscissa names (x, n, t...)
   virtual void setStartEndMessages(Shared::IntervalParameterController * controller, int column) = 0;
@@ -138,6 +143,7 @@ private:
   bool isColumnDeletable(int columnIndex) override { return columnIndex == 0;}
 
   ValuesParameterController m_abscissaParameterController;
+
 };
 
 }

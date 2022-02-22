@@ -174,13 +174,18 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
 
   }
   if (typeAtLocation(i, j) == k_titleCellType) {
-    Shared::StoreTitleCell * myTitleCell = static_cast<Shared::StoreTitleCell *>(cell);
+    StoreTitleCell * myTitleCell = static_cast<StoreTitleCell *>(cell);
     int seriesIndex = seriesAtColumn(i);
     myTitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
-    fillColumnName(i, const_cast<char *>(myTitleCell->text()));
+    fillTitleCell(myTitleCell, i);
     myTitleCell->setSeparatorLeft(shouldHaveLeftSeparator);
   }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
+}
+
+void StoreController::fillTitleCell(StoreTitleCell * titleCell, int columnIndex) {
+  // Default : put column name in titleCell
+  fillColumnName(columnIndex, const_cast<char *>(titleCell->text()));
 }
 
 const char * StoreController::title() {

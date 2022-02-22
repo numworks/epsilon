@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <float.h>
 #include <cmath>
+#include <poincare/print.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -44,6 +45,21 @@ void StoreController::fillColumnName(int columnIndex, char * buffer) {
   for (int i = 2; i < Shared::k_lengthOfColumnName; i++) {
     buffer[i] = 0;
   }
+}
+
+void StoreController::fillTitleCell(Shared::StoreTitleCell * titleCell, int columnIndex) {
+  char columnName[Shared::k_lengthOfColumnName];
+  fillColumnName(columnIndex, columnName);
+  char * title = const_cast<char *>(titleCell->text());
+  I18n::Message titleType;
+  if (columnIndex % 2 == 1) {
+    titleType = I18n::Message::Frequencies;
+  } else {
+    titleType = I18n::Message::Values;
+  }
+  Poincare::Print::customPrintf(title, 50, I18n::translate(titleType), columnName);
+  // TODO : the buffer size shouldn't be 50 but special characters take more buffer space than the displayed title.
+  // The max characters displayed in the cell are 15 but the portuguese words take more buffer space.
 
 }
 

@@ -16,8 +16,8 @@ class ColumnParameterController : public Escher::SelectableListViewController {
 public:
   ColumnParameterController(Escher::Responder * parentResponder);
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   const char * title() override ;
-
   virtual void initializeColumnParameters();
 protected:
   static constexpr int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7

@@ -147,11 +147,11 @@ void Probability::InputController::setTextInCell(Escher::HighlightCell * cell,
 }
 
 bool Probability::InputController::setParameterAtIndex(int parameterIndex, double f) {
-  if (!m_statistic->authorizedParameterAtIndex(parameterIndex, f)) {
+  if (!m_statistic->authorizedParameterAtIndex(f, parameterIndex)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_statistic->setParameterAtIndex(parameterIndex, f);
+  m_statistic->setParameterAtIndex(f, parameterIndex);
   return true;
 }
 

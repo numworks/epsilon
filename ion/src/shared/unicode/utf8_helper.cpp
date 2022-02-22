@@ -15,7 +15,7 @@ int CountOccurrences(const char * s, CodePoint c) {
      * We can do a classic char search. */
     const char * i = s;
     while (*i != 0) {
-      if (*i == c) {
+      if (*i == c.getChar()) {
         count++;
       }
       i++;
@@ -37,7 +37,7 @@ int CountOccurrences(const char * s, CodePoint c) {
 const char * CodePointSearch(const char * s, CodePoint c, const char * stoppingPosition) {
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
     const char * result = s;
-    while (*result != 0 && *result != c && (stoppingPosition == nullptr || result != stoppingPosition)) {
+    while (*result != 0 && *result != c.getChar() && (stoppingPosition == nullptr || result != stoppingPosition)) {
       result++;
     }
     return result;
@@ -70,7 +70,7 @@ const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, con
     /* The code points are one char long, so they are equal to their char
      * translations. We can do a classic char search. */
     const char * codePointPointer = goingLeft ? initialPosition - 1 : s;
-    while ((goingLeft ?codePointPointer > s : *codePointPointer != 0) && *codePointPointer == c) {
+    while ((goingLeft ?codePointPointer > s : *codePointPointer != 0) && *codePointPointer == c.getChar()) {
       codePointPointer += goingLeft ? -1 : 1;
     }
     return codePointPointer;
@@ -264,8 +264,8 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
      * translations. We can do a classic char search. */
     if (goingRight) {
       const char * i = s;
-      while (*i != stoppingCodePoint && *i != 0 && i != stoppingPosition) {
-        if (*i == c) {
+      while (*i != stoppingCodePoint.getChar() && *i != 0 && i != stoppingPosition) {
+        if (*i == c.getChar()) {
           actionCodePoint(i - s, contextPointer, contextInt1, contextInt2);
         } else {
           // FIXME we are stopping at every char, not every code point -> it does not make any bug for now
@@ -276,8 +276,8 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
       return i;
     }
     const char * i = initialPosition - 1;
-    while (i >= s && *i != stoppingCodePoint && i != stoppingPosition) {
-      if (*i == c) {
+    while (i >= s && *i != stoppingCodePoint.getChar() && i != stoppingPosition) {
+      if (*i == c.getChar()) {
         actionCodePoint(i - s, contextPointer, contextInt1, contextInt2);
       } else {
         actionOtherCodePoint(i - s, contextPointer, contextInt1, contextInt2);
@@ -343,14 +343,14 @@ CodePoint CodePointAtLocation(const char * location) {
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c) {
   assert(location > buffer);
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
-    return *(location -1) == c;
+    return *(location -1) == c.getChar();
   }
   return PreviousCodePoint(buffer, location) == c;
 }
 
 bool CodePointIs(const char * location, CodePoint c) {
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
-    return *(location) == c;
+    return *(location) == c.getChar();
   }
   return CodePointAtLocation(location) == c;
 }

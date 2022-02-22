@@ -28,6 +28,7 @@ ion_src += $(addprefix ion/src/shared/, \
   keyboard_queue.cpp \
   stack_position.cpp \
   storage.cpp \
+  unicode/code_point.cpp\
   unicode/utf8_decoder.cpp\
   unicode/utf8_helper.cpp\
 )
@@ -64,6 +65,7 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
   decompress.cpp:+consoledisplay \
   stack_position.cpp \
   storage.cpp \
+  unicode/code_point.cpp\
   unicode/utf8_decoder.cpp\
   unicode/utf8_helper.cpp\
 )

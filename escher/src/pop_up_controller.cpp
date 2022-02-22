@@ -30,6 +30,10 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void PopUpController::setContentMessage(int index, I18n::Message message) {
+  m_contentView.setMessage(index, message);
+}
+
 PopUpController::ContentView::ContentView(Responder * parentResponder, int numberOfLines, Invocation okInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
   Responder(parentResponder),
   m_cancelButton(

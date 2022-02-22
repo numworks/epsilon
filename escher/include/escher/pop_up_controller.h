@@ -20,6 +20,7 @@ public:
   View * view() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  void setContentMessage(int index, I18n::Message message);
 protected:
   class ContentView : public View, public Responder {
   public:

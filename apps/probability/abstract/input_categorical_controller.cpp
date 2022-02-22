@@ -87,7 +87,7 @@ bool InputCategoricalController::handleEditedValue(int i, double p, TextField * 
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_statistic->setParameterAtIndex(i, p);
+  m_statistic->setParameterAtIndex(p, i);
   contentView()->setTextFieldText(p, textField);
   contentView()->selectViewAtIndex(event == Ion::Events::Up ? indexIdUp : indexOtherwise);
   return true;

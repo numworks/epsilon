@@ -34,7 +34,7 @@ bool HomogeneityTest::authorizedParameterAtIndex(double p, int i) const {
     // Frequencies should be >= 0
     return false;
   }
-  return Chi2Test::authorizedParameterAtIndex(i, p);
+  return Chi2Test::authorizedParameterAtIndex(p, i);
 }
 
 bool HomogeneityTest::authorizedParameterAtPosition(double p, int row, int column) const {

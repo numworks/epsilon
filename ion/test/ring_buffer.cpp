@@ -8,7 +8,7 @@ constexpr int k_ringSize = 6;
 
 void assert_ring_buffer_is(RingBuffer<int, k_ringSize> & ringBuffer, int * state, size_t stateLength) {
   quiz_assert(ringBuffer.length() == stateLength);
-  for (int i = 0; i < stateLength; i++) {
+  for (size_t i = 0; i < stateLength; i++) {
     quiz_assert(*ringBuffer.elementAtIndex(i) == state[i]);
   }
 }

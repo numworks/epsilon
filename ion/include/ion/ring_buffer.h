@@ -41,7 +41,7 @@ public:
     return res;
   }
 
-  int length() const {
+  size_t length() const {
     if (isEmpty()) {
       return 0;
     }

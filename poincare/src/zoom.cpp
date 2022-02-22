@@ -2,6 +2,7 @@
 #include <poincare/helpers.h>
 #include <float.h>
 #include <algorithm>
+#include <limits.h>
 #include <stddef.h>
 
 namespace Poincare {
@@ -286,7 +287,7 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
    * dealing with linear functions. */
   float yRange = yxRatio * xRange;
   int j = 1;
-  int bestIndex = 0, bestBreadth = 0, bestDistanceToCenter;
+  int bestIndex = 0, bestBreadth = 0, bestDistanceToCenter = INT_MAX;
   for (int i = 0; i < sampleSize; i++) {
     if (sampleSize - i < bestBreadth) {
       break;

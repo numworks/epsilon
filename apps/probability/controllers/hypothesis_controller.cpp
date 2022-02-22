@@ -105,11 +105,10 @@ void Probability::HypothesisController::onDropdownSelected(int selectedRow) {
     case 1:
       op = HypothesisParams::ComparisonOperator::Different;
       break;
-    case 2:
+    default:
+      assert(selectedRow == 2);
       op = HypothesisParams::ComparisonOperator::Higher;
       break;
-    default:
-      assert(false);
   }
   m_test->hypothesisParams()->setComparisonOperator(op);
 }

@@ -54,11 +54,9 @@ bool Interval::initializeSignificanceTest(SignificanceTestType testType) {
     case SignificanceTestType::OneProportion:
       new (this) OneProportionZInterval();
       break;
-    case SignificanceTestType::TwoProportions:
-      new (this) TwoProportionsZInterval();
-      break;
     default:
-      assert(false);
+      assert(testType == SignificanceTestType::TwoProportions);
+      new (this) TwoProportionsZInterval();
       break;
   }
   initParameters();
@@ -171,13 +169,12 @@ void Interval::resultAtIndex(int index, double * value, Poincare::Layout * messa
       *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::ME));
       *subMessage = I18n::Message::MarginOfError;
       break;
-    case ResultOrder::IntervalDegree:
+    default:
+      assert(index == ResultOrder::IntervalDegree);
       *value = degreeOfFreedom();
       *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
       *subMessage = I18n::Message::Default;
       break;
-    default:
-      assert(false);
   }
 }
 

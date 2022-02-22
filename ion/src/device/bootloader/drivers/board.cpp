@@ -345,12 +345,20 @@ void shutdownClocks(bool keepLEDAwake) {
   RCC.AHB2ENR()->set(0); // Reset value
 
   // AHB3 bus
-  RCC.AHB3ENR()->set(0); // Reset value
+  class RCC::AHB3ENR ahb3enr(0); // Reset value
+  // Required by external flash
+  ahb3enr.setQSPIEN(true);
+  RCC.AHB3ENR()->set(ahb3enr); // Reset value
 
   // APB1
   class RCC::APB1ENR apb1enr(0); // Reset value
   // AHB1 bus
   class RCC::AHB1ENR ahb1enr(0x00100000); // Reset value
+  // GPIO B, C, D, E are used the by external flash
+  ahb1enr.setGPIOBEN(true);
+  ahb1enr.setGPIOCEN(true);
+  ahb1enr.setGPIODEN(true);
+  ahb1enr.setGPIOEEN(true);
   if (keepLEDAwake) {
     apb1enr.setTIM3EN(true);
     ahb1enr.setGPIOBEN(true);

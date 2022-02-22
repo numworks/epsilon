@@ -1,6 +1,8 @@
 #include <drivers/board.h>
 #include <drivers/power.h>
 #include <drivers/keyboard.h>
+#include <drivers/reset.h>
+#include <drivers/trampoline.h>
 #include <drivers/wakeup.h>
 #include <regs/regs.h>
 
@@ -54,6 +56,30 @@ void standbyConfiguration() {
 #endif
 
   CORTEX.SCR()->setSLEEPDEEP(true); // Allow Cortex-M7 deepsleep state
+}
+
+void __attribute__((noinline)) internalFlashSuspend(bool isLEDActive) {
+  // Shutdown all clocks (except the ones used by LED if active and the one used by the flash)
+  Device::Board::shutdownClocks(isLEDActive);
+
+  Device::Power::enterLowPowerMode();
+
+  /* A hardware event triggered a wake up, we determine if the device should
+   * wake up. We wake up when:
+   * - only the power key was down
+   * - the unplugged device was plugged
+   * - the battery stopped charging */
+  Device::Board::initClocks();
+}
+
+void __attribute__((noinline)) internalFlashStandby() {
+  Device::Board::shutdownClocks();
+  Device::Power::enterLowPowerMode();
+  Device::Reset::coreWhilePlugged();
+}
+
+void enterLowPowerMode() {
+  reinterpret_cast<void(*)(void)>(Ion::Device::Trampoline::address(Ion::Device::Trampoline::Suspend))();
 }
 
 }

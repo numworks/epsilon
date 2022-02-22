@@ -73,15 +73,9 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
 }
 
 Escher::View * TypeView::subviewAtIndex(int i) {
-  switch (i) {
-    case 0:
-      return m_list;
-    case 1:
-      return m_description;
-    default:
-      assert(false);
-      return nullptr;
-  }
+  Escher::View * views[] = {m_list, m_description};
+  assert(i >= 0 && i < sizeof(views)/sizeof(Escher::View *));
+  return views[i];
 }
 
 const char * TypeController::title() {
@@ -99,11 +93,10 @@ void TypeController::stackOpenPage(Escher::ViewController * nextPage) {
     case DistributionType::TPooled:
       selectRow(k_indexOfPooledTest);
       break;
-    case DistributionType::Z:
+    default:
+      assert(m_statistic->distributionType() == DistributionType::Z);
       selectRow(indexOfZTest());
       break;
-    default:
-      assert(false);
   }
   ViewController::stackOpenPage(nextPage);
 }

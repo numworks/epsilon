@@ -17,6 +17,11 @@ void ColumnParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
+void ColumnParameterController::viewWillAppear() {
+  resetMemoization();
+  m_selectableTableView.reloadData();
+}
+
 const char * ColumnParameterController::title() {
   return m_titleBuffer;
 }

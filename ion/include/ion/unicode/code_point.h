@@ -8,6 +8,7 @@ public:
   constexpr static int MaxCodePointCharLength = sizeof(uint32_t) / sizeof(char);
   constexpr CodePoint(uint32_t c) : m_code(c) {}
   constexpr operator uint32_t() const { return m_code; }
+  char getChar() const;
 
   bool isBinaryDigit() const {
     return '0' <= m_code && m_code <= '1';

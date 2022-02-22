@@ -1,5 +1,5 @@
-#ifndef ESCHER_TRANSPARENT_IMAGE_WITH_MESSAGE_CELL_H
-#define ESCHER_TRANSPARENT_IMAGE_WITH_MESSAGE_CELL_H
+#ifndef ESCHER_TRANSPARENT_IMAGE_CELL_WITH_MESSAGE_H
+#define ESCHER_TRANSPARENT_IMAGE_CELL_WITH_MESSAGE_H
 
 #include <escher/message_text_view.h>
 #include <escher/transparent_image_view.h>
@@ -8,9 +8,9 @@
 
 namespace Escher {
 
-class TransparentImageWithMessageCell : public TableCell {
+class TransparentImageCellWithMessage : public TableCell {
 public:
-  TransparentImageWithMessageCell();
+  TransparentImageCellWithMessage();
   const View * labelView() const override { return &m_icon; }
   const View * subLabelView() const override { return &m_messageTextView; }
   void setHighlighted(bool highlight) override;

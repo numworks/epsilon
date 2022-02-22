@@ -24,7 +24,7 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   m_numberOfColumnsNeedUpdate(true),
   m_firstMemoizedColumn(INT_MAX),
   m_firstMemoizedRow(INT_MAX),
-  m_abscissaParameterController(this)
+  m_abscissaParameterController(this, this)
 {
 }
 
@@ -109,7 +109,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
     ViewController * parameterController = nullptr;
     if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
-      m_abscissaParameterController.setPageTitle(valuesParameterMessageAtColumn(selectedColumn()));
+      //m_abscissaParameterController.setPageTitle(valuesParameterMessageAtColumn(selectedColumn()));
       intervalParameterController()->setInterval(intervalAtColumn(selectedColumn()));
       setStartEndMessages(intervalParameterController(), selectedColumn());
       parameterController = &m_abscissaParameterController;

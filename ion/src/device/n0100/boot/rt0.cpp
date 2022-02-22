@@ -1,11 +1,11 @@
-#include "isr.h"
 #include <stdint.h>
 #include <string.h>
 #include <ion.h>
-#include "../drivers/board.h"
-#include "../drivers/rtc.h"
-#include "../drivers/reset.h"
-#include "../drivers/timing.h"
+#include <boot/isr.h>
+#include <drivers/board.h>
+#include <drivers/rtc.h>
+#include <drivers/reset.h>
+#include <drivers/timing.h>
 
 typedef void (*cxx_constructor)();
 

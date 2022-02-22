@@ -16,18 +16,15 @@ $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ex
 
 .PHONY: %.two_binaries
 %.two_binaries: %.elf
-	@echo "Building an internal and an external binary for     $<"
-	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external -j .exam_mode_buffer $< $(basename $<).external.bin
-	$(Q) $(OBJCOPY) -O binary -R .text.external -R .rodata.external -R .exam_mode_buffer $< $(basename $<).internal.bin
-	@echo "Padding $(basename $<).external.bin and $(basename $<).internal.bin"
+	@echo "Building an external binary for     $<"
+	$(Q) $(OBJCOPY) -O binary $< $(basename $<).external.bin
+	@echo "Padding $(basename $<).external.bin"
 	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).external.bin
-	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).internal.bin
 
 .PHONY: binpack
-binpack: $(BUILD_DIR)/flasher.light.bin $(BUILD_DIR)/epsilon.onboarding.two_binaries
+binpack: $(BUILD_DIR)/epsilon.onboarding.two_binaries
 	rm -rf $(BUILD_DIR)/binpack
 	mkdir -p $(BUILD_DIR)/binpack
-	cp $(BUILD_DIR)/flasher.light.bin $(BUILD_DIR)/binpack
-	cp $(BUILD_DIR)/epsilon.onboarding.internal.bin $(BUILD_DIR)/epsilon.onboarding.external.bin $(BUILD_DIR)/binpack
-	cd $(BUILD_DIR) && for binary in flasher.light.bin epsilon.onboarding.internal.bin epsilon.onboarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
+	cp $(BUILD_DIR)/epsilon.onboarding.external.bin $(BUILD_DIR)/binpack
+	cd $(BUILD_DIR) && for binary in epsilon.onboarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd $(BUILD_DIR) && tar cvfz binpack-$(MODEL)-`git rev-parse HEAD | head -c 7`.tgz binpack/*

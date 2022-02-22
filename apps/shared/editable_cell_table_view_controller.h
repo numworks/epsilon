@@ -2,6 +2,7 @@
 #define SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 
 #include <poincare/preferences.h>
+#include "column_parameter_controller.h"
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
 #include "regular_table_view_data_source.h"
@@ -20,14 +21,17 @@ public:
   KDCoordinate rowHeight(int j) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  void tryToDeleteColumn();
+  void tryToDeleteColumn(I18n::Message warningMessage1 = I18n::Message::ConfirmDeleteColumn1, I18n::Message warningMessage2 = I18n::Message::ConfirmDeleteColumn2);
 
   virtual bool handleEvent(Ion::Events::Event event) override;
+  virtual void fillColumnName(int columnIndex, char * buffer) = 0;
 
 protected:
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
   static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
+
+  virtual ColumnParameterController * columnParameterController() = 0;
 
 private:
   virtual void didChangeCell(int column, int row) {}

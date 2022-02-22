@@ -3,69 +3,52 @@
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/stack_view_controller.h>
 #include <escher/container.h>
-#include <poincare/helpers.h>
 #include "store_controller.h"
 
 using namespace Escher;
 
 namespace Shared {
 
-StoreParameterController::StoreParameterController(Responder * parentResponder, DoublePairStore * store, StoreController * storeController) :
-  SelectableListViewController(parentResponder),
-  m_store(store),
-  m_series(0),
-  m_cells{I18n::Message::FillWithFormula, I18n::Message::ClearColumn},
-  m_sortCell(I18n::Message::SortCellLabel),
+StoreParameterController::StoreParameterController(Responder * parentResponder, StoreController * storeController) :
+  ColumnParameterController(parentResponder),
   m_storeController(storeController),
-  m_xColumnSelected(true)
+  m_sortCell(I18n::Message::SortCellLabel),
+  m_fillFormula(I18n::Message::FillWithFormula),
+  m_clearColumn(I18n::Message::ClearColumn)
 { }
 
-void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  assert(index >= 0 && index < k_totalNumberOfCell);
-  if (index == k_indexOfSortValues) {
-    assert(cell == &m_sortCell);
-    m_sortCell.setSubLabelMessage(sortMessage());
-  }
-  ListViewDataSource::willDisplayCellForIndex(cell, index);
-}
-
-const char * StoreParameterController::title() {
-  return I18n::translate(I18n::Message::ColumnOptions);
-}
-
-void StoreParameterController::viewWillAppear() {
-  resetMemoization();
-  m_selectableTableView.reloadData();
-}
-
-void StoreParameterController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+void StoreParameterController::initializeColumnParameters() {
+  ColumnParameterController::initializeColumnParameters();
+  m_sortCell.setSubLabelMessage(sortMessage());
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::OK && event != Ion::Events::EXE) {
     return false;
   }
-  popFromStackView();
   switch (selectedRow()) {
-    case k_indexOfRemoveColumn:
+    case k_indexOfClearColumn:
     {
+      stackView()->pop();
       m_storeController->tryToDeleteColumn();
       break;
     }
     case k_indexOfFillFormula:
     {
       m_storeController->displayFormulaInput();
+      stackView()->pop();
       break;
     }
-    case k_indexOfSortValues:
+    case k_indexOfSortCell:
     {
-      sortColumn();
+      m_storeController->sortColumn();
+      stackView()->pop();
       break;
     }
+    default :
+      assert(false);
+      return false;
   }
-  assert(selectedRow() >= 0 && selectedRow() < k_totalNumberOfCell);
   return true;
 }
 
@@ -75,14 +58,21 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
     return &m_sortCell;
   }
   assert(type == k_defaultCellType);
-  return &m_cells[index];
+  if (index == k_indexOfFillFormula - 1) {
+    return &m_fillFormula;
+  }
+  if (index == k_indexOfClearColumn - 1) {
+    return &m_clearColumn;
+  }
+  assert(false);
+  return nullptr;
 }
 
 KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
   /* We just need to find a cell of the right type
    * heightForCellAtIndex will do the rest */
   Escher::HighlightCell * cell;
-  if (index == k_indexOfSortValues) {
+  if (index == k_indexOfSortCell) {
     cell = &m_sortCell;
   } else {
     assert(typeAtIndex(index) == k_defaultCellType);
@@ -91,36 +81,8 @@ KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
   return heightForCellAtIndex(cell, index);
 }
 
-void StoreParameterController::popFromStackView() {
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  stack->pop();
-}
-
-void StoreParameterController::sortColumn() {
-  static Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
-    // Swap X and Y values
-    double * dataX = static_cast<double*>(context);
-    double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
-    double tempX = dataX[i];
-    double tempY = dataY[i];
-    dataX[i] = dataX[j];
-    dataY[i] = dataY[j];
-    dataX[j] = tempX;
-    dataY[j] = tempY;
-  };
-  static Poincare::Helpers::Compare compareX = [](int a, int b, void * context, int numberOfElements)->bool{
-    double * dataX = static_cast<double*>(context);
-    return dataX[a] > dataX[b];
-  };
-  static Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
-    double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
-    return dataY[a] > dataY[b];
-  };
-
-  int indexOfSeries = m_series * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
-  double * seriesContext = &(m_store->data()[indexOfSeries]);
-  Poincare::Helpers::Sort(swapRows, m_xColumnSelected ? compareX : compareY, seriesContext, m_store->numberOfPairsOfSeries(m_series));
-
+EditableCellTableViewController * StoreParameterController::editableCellTableViewController() {
+  return m_storeController;
 }
 
 }

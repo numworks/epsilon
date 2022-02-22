@@ -9,6 +9,7 @@
 #include "store_context.h"
 #include "store_parameter_controller.h"
 #include "store_selectable_table_view.h"
+#include "store_title_cell.h"
 
 namespace Shared {
 
@@ -20,7 +21,7 @@ public:
 
   virtual StoreContext * storeContext() = 0;
   void displayFormulaInput();
-  virtual void setFormulaLabel() = 0;
+  void setFormulaLabel();
   virtual bool fillColumnWithFormula(Poincare::Expression formula) = 0;
 
   // TextFieldDelegate
@@ -44,6 +45,9 @@ public:
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+
+  void sortColumn();
+  int selectedSeries() { return seriesAtColumn(selectedColumn()); }
 
 protected:
   static constexpr KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * 7 + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness; // KDFont::SmallFont->glyphSize().width() = 7
@@ -75,24 +79,22 @@ protected:
   Escher::Responder * tabController() const override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  virtual Escher::HighlightCell * titleCells(int index) = 0;
   int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
   bool privateFillColumnWithFormula(Poincare::Expression formula, Poincare::ExpressionNode::isVariableTest isVariable);
-  virtual StoreParameterController * storeParameterController() = 0;
+
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
+
 private:
-  Escher::SelectableTableView * selectableTableView() override {
-    return m_contentView.dataView();
-  }
+  Escher::SelectableTableView * selectableTableView() override { return m_contentView.dataView(); }
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
-  int maxNumberOfElements() const override {
-    return DoublePairStore::k_maxNumberOfPairs;
-  };
+  int maxNumberOfElements() const override { return DoublePairStore::k_maxNumberOfPairs; }
   void deleteColumn() override;
 
+  StoreTitleCell m_titleCells[k_numberOfTitleCells];
   ContentView m_contentView;
+
 };
 
 }

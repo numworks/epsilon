@@ -15,6 +15,7 @@ app_statistics_src = $(addprefix apps/statistics/,\
   graph/box_range.cpp \
   graph/box_view.cpp \
   graph/graph_type_controller.cpp \
+  graph/graph_view_model.cpp \
   graph/histogram_banner_view.cpp \
   graph/histogram_controller.cpp \
   graph/histogram_parameter_controller.cpp \
@@ -39,7 +40,7 @@ tests_src += $(addprefix apps/statistics/test/,\
 
 $(eval $(call depends_on_image,apps/statistics/app.cpp,apps/statistics/stat_icon.png))
 
-$(eval $(call depends_on_transparent_image,apps/statistics/graph/graph_type_controller.cpp,$(addprefix apps/statistics/,\
+$(eval $(call depends_on_transparent_image,apps/statistics/graph/graph_view_model.cpp,$(addprefix apps/statistics/,\
   box_icon.png \
   histogram_icon.png \
   cumulative_icon.png \

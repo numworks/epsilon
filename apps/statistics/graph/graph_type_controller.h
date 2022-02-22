@@ -7,6 +7,7 @@
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
 #include <apps/i18n.h>
+#include "graph_view_model.h"
 #include "../store.h"
 
 namespace Statistics {
@@ -18,7 +19,7 @@ public:
                  Escher::Responder * tabController,
                  Escher::StackViewController * stackView,
                  Store * store,
-                 int * selectedGraphViewIndex);
+                 GraphViewModel * graphViewModel);
 
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override { return !m_store->hasValidSeries(); }
@@ -32,15 +33,10 @@ public:
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayLastTitle; }
 
 private:
-  constexpr static int k_indexOfHistogram = 0;
-  constexpr static int k_indexOfBox = 1;
-  constexpr static int k_indexOfCumulative = 2;
-  constexpr static int k_indexOfNormal = 3;
-
   Escher::Responder * m_tabController;
   Escher::StackViewController * m_stackView;
   Store * m_store;
-  int * m_selectedGraphViewIndex;
+  GraphViewModel * m_graphViewModel;
 };
 
 }  // namespace Statistics

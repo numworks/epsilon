@@ -24,7 +24,6 @@ App::Snapshot::Snapshot() :
   m_storeVersion(0),
   m_barVersion(0),
   m_rangeVersion(0),
-  m_selectedGraphViewIndex(0),
   m_selectedHistogramSeriesIndex(-1),
   m_selectedHistogramBarIndex(0),
   m_selectedBoxSeriesIndex(-1),
@@ -41,7 +40,7 @@ void App::Snapshot::reset() {
   m_storeVersion = 0;
   m_barVersion = 0;
   m_rangeVersion = 0;
-  m_selectedGraphViewIndex = 0;
+  m_graphViewModel.selectGraphView(GraphViewModel::GraphView::Histogram);
   m_selectedHistogramBarIndex = 0;
   m_selectedBoxQuantile = BoxView::Quantile::Min;
   setActiveTab(0);
@@ -62,7 +61,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_boxHeader(&m_graphController, &m_boxController, &m_boxController),
   m_histogramController(&m_histogramHeader, this, &m_histogramHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion(), snapshot->selectedHistogramBarIndex(), snapshot->selectedHistogramSeriesIndex()),
   m_histogramHeader(&m_graphController, &m_histogramController, &m_histogramController),
-  m_graphTypeController(&m_graphMenuStackViewController, &m_tabViewController, &m_graphMenuStackViewController, snapshot->store(), snapshot->selectedGraphViewIndex()),
+  m_graphTypeController(&m_graphMenuStackViewController, &m_tabViewController, &m_graphMenuStackViewController, snapshot->store(), snapshot->graphViewModel()),
   m_graphController(&m_graphMenuStackViewController, this, m_graphControllerViews, I18n::translate(I18n::Message::GraphTab)),
   m_graphMenuStackViewController(&m_graphMenuAlternateEmptyViewController, &m_graphController, Escher::StackViewController::Style::WhiteUniform),
   m_graphMenuAlternateEmptyViewController(&m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController),
@@ -71,13 +70,15 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_storeHeader(&m_tabViewController, &m_storeStackViewController, &m_storeController),
   m_tabViewController(&m_modalViewController, snapshot, &m_storeHeader, &m_graphMenuAlternateEmptyViewController, &m_calculationHeader)
 {
-  m_graphControllerViews[0] = &m_histogramHeader;
-  m_graphControllerViews[1] = &m_boxHeader;
+  m_graphControllerViews[GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Histogram)] = &m_histogramHeader;
+  m_graphControllerViews[GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Box)] = &m_boxHeader;
+  // TODO : Add other controllers
+  m_graphControllerViews[GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Frequency)] = nullptr;
+  m_graphControllerViews[GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::NormalProbability)] = nullptr;
 }
 
 int App::activeViewControllerIndex() const {
-  assert(*snapshot()->selectedGraphViewIndex() >= 0 && *snapshot()->selectedGraphViewIndex() < 4);
-  return *snapshot()->selectedGraphViewIndex();
+  return GraphViewModel::IndexOfGraphView(snapshot()->graphViewModel()->selectedGraphView());
 }
 
 void App::didBecomeActive(Escher::Window * windows) {

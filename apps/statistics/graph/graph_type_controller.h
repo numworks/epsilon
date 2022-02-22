@@ -2,7 +2,7 @@
 #define STATISTICS_GRAPH_TYPE_CONTROLLER_H
 
 #include <escher/selectable_list_view_controller.h>
-#include <escher/transparent_image_with_message_cell.h>
+#include <escher/transparent_image_cell_with_message.h>
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
@@ -13,7 +13,7 @@
 namespace Statistics {
 
 constexpr int k_numberOfCells = 4;
-class GraphTypeController : public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableCellListPage<Escher::TransparentImageWithMessageCell, k_numberOfCells, Escher::RegularListViewDataSource> {
+class GraphTypeController : public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableCellListPage<Escher::TransparentImageCellWithMessage, k_numberOfCells, Escher::RegularListViewDataSource> {
 public:
   GraphTypeController(Escher::Responder * parentResponder,
                  Escher::Responder * tabController,

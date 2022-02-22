@@ -9,7 +9,7 @@ GraphTypeController::GraphTypeController(Escher::Responder * parentResponder,
                                Escher::StackViewController * stackView,
                                Store * store,
                                GraphViewModel * graphViewModel) :
-    Escher::SelectableCellListPage<Escher::TransparentImageWithMessageCell, k_numberOfCells, Escher::RegularListViewDataSource>(parentResponder),
+    Escher::SelectableCellListPage<Escher::TransparentImageCellWithMessage, k_numberOfCells, Escher::RegularListViewDataSource>(parentResponder),
     m_tabController(tabController),
     m_stackView(stackView),
     m_store(store),

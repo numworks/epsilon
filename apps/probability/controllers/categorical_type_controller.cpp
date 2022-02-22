@@ -44,7 +44,8 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
         controller = m_inputGoodnessController;
         type = CategoricalType::GoodnessOfFit;
         break;
-      case k_indexOfHomogeneityCell:
+      default:
+        assert(selectedRow() == k_indexOfHomogeneityCell);
         controller = m_inputHomogeneityController;
         type = CategoricalType::Homogeneity;
         break;

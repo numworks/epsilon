@@ -89,7 +89,8 @@ bool TestController::handleEvent(Ion::Events::Event event) {
         testType = SignificanceTestType::TwoMeans;
         controller = m_typeController;
         break;
-      case k_indexOfCategorical:
+      default:
+        assert(selectedRow() == k_indexOfCategorical);
         testType = SignificanceTestType::Categorical;
         controller = m_categoricalController;
         break;

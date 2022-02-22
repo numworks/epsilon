@@ -9,14 +9,14 @@ static uint32_t crc32Helper(const uint8_t * data, size_t length, bool wordAccess
   size_t byteLength = (wordAccess ? length * uint32ByteLength : length);
   size_t wordLength = byteLength / uint32ByteLength;
 
-  for (int i = 0; i < wordLength; i++) {
+  for (size_t i = 0; i < wordLength; i++) {
     // FIXME: Assumes little-endian byte order!
     for (int j = uint32ByteLength-1; j >= 0; j--) {
       // scan byte by byte to avoid alignment issue when building for emscripten platform
       crc = crc32EatByte(crc, data[i*uint32ByteLength+j]);
     }
   }
-  for (int i = wordLength * uint32ByteLength; i < byteLength; i++) {
+  for (size_t i = wordLength * uint32ByteLength; i < byteLength; i++) {
     crc = crc32EatByte(crc, data[i]);
   }
   return crc;

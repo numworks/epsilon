@@ -115,11 +115,16 @@ SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
         format = AssetFormat::JPG;
       } else {
         assert(strcmp(pngExtension, identifier + strlen(identifier) - strlen(pngExtension)) == 0);
+        (void)pngExtension; // Silent warning
         format = AssetFormat::PNG;
       }
       assetStart = resources_addresses[i].start();
       assertSize = resources_addresses[i].end() - resources_addresses[i].start();
       break;
+    }
+    if (i == sizeof(resources_addresses)/sizeof(resources_addresses[0]) - 1) {
+      assert(false);
+      return nullptr;
     }
   }
   assert(assetStart);

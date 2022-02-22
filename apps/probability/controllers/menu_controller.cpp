@@ -56,7 +56,8 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
         subapp = Inference::SubApp::Test;
         controller = m_testController;
         break;
-      case k_indexOfInterval:
+      default:
+        assert(selectedRow() == k_indexOfInterval);
         subapp = Inference::SubApp::Interval;
         controller = m_testController;
         break;

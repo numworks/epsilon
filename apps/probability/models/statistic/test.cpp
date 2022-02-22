@@ -40,11 +40,9 @@ bool Test::initializeSignificanceTest(SignificanceTestType testType) {
     case SignificanceTestType::TwoProportions:
       new (this) TwoProportionsZTest();
       break;
-    case SignificanceTestType::Categorical:
-      new (this) GoodnessTest();
-      break;
     default:
-      assert(false);
+      assert(testType == SignificanceTestType::Categorical);
+      new (this) GoodnessTest();
       break;
   }
   initParameters();
@@ -68,13 +66,11 @@ void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, 
       *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::PValue));
       *subMessage = I18n::Message::Default;
       break;
-    case ResultOrder::TestDegree:
+    default:
+      assert(index == ResultOrder::TestDegree);
       *value = degreeOfFreedom();
       *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
       *subMessage = I18n::Message::Default;
-      break;
-    default:
-      assert(false);
   }
 }
 

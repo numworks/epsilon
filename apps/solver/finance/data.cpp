@@ -75,7 +75,7 @@ double SimpleInterestData::computeUnknownValue() const {
    *      n = n' * 360 (or 365 depending on year convention)
    */
   double year = m_booleanParam ? 360.0 : 365.0;
-  double I = getValue(static_cast<uint8_t>(Parameter::I));
+  double I = getValue(static_cast<uint8_t>(Parameter::Int));
   double rPct = getValue(static_cast<uint8_t>(Parameter::rPct));
   double P = getValue(static_cast<uint8_t>(Parameter::P));
   double n = getValue(static_cast<uint8_t>(Parameter::n));
@@ -91,7 +91,7 @@ double SimpleInterestData::computeUnknownValue() const {
       result = -I * 100.0 * year / (rPct * n);
       break;
     default:
-      assert(m_unknown == static_cast<uint8_t>(Parameter::I));
+      assert(m_unknown == static_cast<uint8_t>(Parameter::Int));
       result = -rPct * n * P / (100.0 * year);
   }
   if (!std::isfinite(result)) {

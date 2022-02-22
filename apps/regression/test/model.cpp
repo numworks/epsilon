@@ -41,13 +41,13 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
   double * coefficients = store.coefficientsForSeries(series, &context);
   int numberOfCoefs = store.modelForSeries(series)->numberOfCoefficients();
   for (int i = 0; i < numberOfCoefs; i++) {
-    quiz_assert(roughly_equal_with_precision_for_null_expected(coefficients[i], trueCoefficients[i], precision, nullExpectedPrecision));
+    quiz_assert(roughly_equal(coefficients[i], trueCoefficients[i], precision, false, nullExpectedPrecision));
   }
 
   // Compute and check r2 value and sign
   double r2 = store.determinationCoefficientForSeries(series, &globalContext);
   quiz_assert(r2 <= 1.0 && (r2 >= 0.0 || modelType == Model::Type::Proportional));
-  quiz_assert(roughly_equal_with_precision_for_null_expected(r2, trueR2, precision, nullExpectedPrecision));
+  quiz_assert(roughly_equal(r2, trueR2, precision, false, nullExpectedPrecision));
 }
 
 QUIZ_CASE(linear_regression) {
@@ -307,11 +307,11 @@ void assert_column_calculations_is(double * xi, int numberOfPoints, double trueM
 
   double precision = 1e-3;
   // Observed should be exactly 0 if expected value is null.
-  quiz_assert(roughly_equal_with_precision_for_null_expected(variance, trueVariance, precision, 0.0));
-  quiz_assert(roughly_equal_with_precision_for_null_expected(squaredSum, trueSquaredSum, precision, 0.0));
-  quiz_assert(roughly_equal_with_precision_for_null_expected(mean, trueMean, precision, 0.0));
-  quiz_assert(roughly_equal_with_precision_for_null_expected(sum, trueSum, precision, 0.0));
-  quiz_assert(roughly_equal_with_precision_for_null_expected(standardDeviation, trueStandardDeviation, precision, 0.0));
+  quiz_assert(roughly_equal(variance, trueVariance, precision, false, 0.0));
+  quiz_assert(roughly_equal(squaredSum, trueSquaredSum, precision, false, 0.0));
+  quiz_assert(roughly_equal(mean, trueMean, precision, false, 0.0));
+  quiz_assert(roughly_equal(sum, trueSum, precision, false, 0.0));
+  quiz_assert(roughly_equal(standardDeviation, trueStandardDeviation, precision, false, 0.0));
 }
 
 QUIZ_CASE(column_calculation) {
@@ -348,12 +348,12 @@ void assert_regression_calculations_is(double * xi, double * yi, int numberOfPoi
   double productSum = store.columnProductSum(series);
 
   // NOTE : A raisonable nullExpectedPrecision for future tests
-  quiz_assert(roughly_equal_with_precision_for_null_expected(covariance, trueCovariance, precision, 0.0));
-  quiz_assert(roughly_equal_with_precision_for_null_expected(productSum, trueProductSum, precision, 0.0));
+  quiz_assert(roughly_equal(covariance, trueCovariance, precision, false, 0.0));
+  quiz_assert(roughly_equal(productSum, trueProductSum, precision, false, 0.0));
 
   double r = store.correlationCoefficient(series);
   quiz_assert(r >= 0.0);
-  quiz_assert(roughly_equal_with_precision_for_null_expected(r, trueR, precision, 0.0));
+  quiz_assert(roughly_equal(r, trueR, precision, false, 0.0));
 }
 
 QUIZ_CASE(regression_calculation) {

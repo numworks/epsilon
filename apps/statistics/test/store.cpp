@@ -14,7 +14,7 @@ namespace Statistics {
 
 void assert_value_approximately_equal_to(double d1, double d2, double precision, double nullExpectedPrecision) {
   quiz_assert((std::isinf(d1) && std::isinf(d2) && d1 * d2 > 0.0 /*same sign*/)
-      || roughly_equal_with_precision_for_null_expected(d1, d2, precision, nullExpectedPrecision, true));
+      || roughly_equal(d1, d2, precision, true, nullExpectedPrecision));
 }
 
 /* SublistMethod is the method for computing quartiles used in most

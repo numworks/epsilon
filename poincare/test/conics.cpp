@@ -19,7 +19,7 @@ void quiz_assert_undefined(const char * expression) {
 
 void quiz_assert_conic_parameter_is(double observed, double expected) {
   // Observed should be exactly 0 if expected is null.
-  quiz_assert(roughly_equal_with_precision_for_null_expected(observed, expected, 1e-5, 0));
+  quiz_assert(roughly_equal(observed, expected, 1e-5, false, 0.0));
 }
 
 void quiz_assert_circle(const char * expression,

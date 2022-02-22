@@ -589,6 +589,23 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       return e;
     }
   }
+  if (indexType == ExpressionNode::Type::Multiplication) { // Looking for x^(y*log(z,x))
+    int indexChildren = index.numberOfChildren();
+    Multiplication multiplicationIndex = static_cast<Multiplication &>(index);
+    for (int i = 0; i < indexChildren; i++) {
+      Expression child = index.childAtIndex(i);
+      if (isLogarithmOfSameBase(child)) {
+        Expression e = child.childAtIndex(0);
+        if (e.sign(context) == ExpressionNode::Sign::Positive) {
+          multiplicationIndex.removeChildAtIndexInPlace(i);
+          // multiplicationIndex.squashUnaryHierarchyInPlace(); // if the multiplication had only 2 children
+          Power result = Power::Builder(e, multiplicationIndex);
+          replaceWithInPlace(result);
+          return result.deepReduce(reductionContext);
+        }
+      }
+    }
+  }
 
   /* Step 5
    * Handle complex numbers. */

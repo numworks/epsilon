@@ -72,8 +72,8 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder
     int XNTIndex = Ion::Events::repetitionFactor();
     if (XNTIndex > 0) {
       // Cycle through XNT CodePoints, starting from default code point position
-      constexpr size_t k_numberOfCodePoints = 4;
-      constexpr CodePoint XNTCodePoints[k_numberOfCodePoints] = {ContinuousFunction::k_cartesianSymbol, 'n', ContinuousFunction::k_parametricSymbol, ContinuousFunction::k_polarSymbol};
+      constexpr CodePoint XNTCodePoints[] = {ContinuousFunction::k_cartesianSymbol, 'n', ContinuousFunction::k_parametricSymbol, ContinuousFunction::k_polarSymbol};
+      constexpr size_t k_numberOfCodePoints = sizeof(XNTCodePoints)/sizeof(CodePoint);
       for (size_t i = 0; i < k_numberOfCodePoints; i++) {
         if (XNTCodePoints[i] == defaultXNT) {
           break;

@@ -24,7 +24,7 @@ void setRegressionPoints(Regression::Store * store, int series, int numberOfPoin
   }
 }
 
-void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::Type modelType, double * trueCoefficients, double trueR2) {
+void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::Type modelType, double * trueCoefficients, double trueR2, bool acceptNAN = false) {
   int series = 0;
   Regression::Store store;
 
@@ -41,7 +41,7 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
   double * coefficients = store.coefficientsForSeries(series, &context);
   int numberOfCoefs = store.modelForSeries(series)->numberOfCoefficients();
   for (int i = 0; i < numberOfCoefs; i++) {
-    quiz_assert(roughly_equal(coefficients[i], trueCoefficients[i], precision, false, nullExpectedPrecision));
+    quiz_assert(roughly_equal(coefficients[i], trueCoefficients[i], precision, acceptNAN, nullExpectedPrecision));
   }
 
   if (modelType != Model::Type::Proportional && modelType != Model::Type::Median) {
@@ -202,15 +202,13 @@ QUIZ_CASE(power_regression) {
   // assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r22);
 }
 
-/* TODO : Uncomment this when tests supporting NaN are implemented (16/02/22)
- * This is in french because Awk reads comments and understands English, but not my beautiful language.
- * un_cas_de_quizz(median_regression0) {
+QUIZ_CASE(median_regression0) {
   double x[] = {3.0, 3.0, 3.0};
   double y[] = {4.0, 3.0, 2.0};
   double coefficients[] = {NAN, NAN};
   double r2 = 0.0;
-  assert_regression_is(x, y, 3, Model::Type::Median, coefficients, r2);
-}*/
+  assert_regression_is(x, y, 3, Model::Type::Median, coefficients, r2, true);
+}
 
 QUIZ_CASE(median_regression1) {
   double x[] = {1.0, 2.0, 3.0};

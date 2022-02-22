@@ -319,6 +319,8 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
    * R2 does not need to be computed if model is median-median, so we avoid computation.
    * If needed, it could be computed though.
    * */
+  /* TODO: try to assert(m_regressionTypes[series] != Model::Type::Median)
+   * once the r is not displayed anymore */
   if (m_regressionTypes[series] == Model::Type::Median) {
     return 0.0;
   }

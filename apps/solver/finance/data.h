@@ -59,7 +59,7 @@ private:
     n = 0,
     rPct,
     P,
-    I,
+    Int,
     YearConvention  // Is not a double parameter and can't be unknown
   };
 public:

@@ -1,10 +1,6 @@
 #include "graph_type_controller.h"
 #include <apps/i18n.h>
 #include <assert.h>
-#include "../box_icon.h"
-#include "../histogram_icon.h"
-#include "../cumulative_icon.h"
-#include "../statistics_normal_icon.h"
 
 using namespace Statistics;
 
@@ -12,26 +8,22 @@ GraphTypeController::GraphTypeController(Escher::Responder * parentResponder,
                                Escher::Responder * tabController,
                                Escher::StackViewController * stackView,
                                Store * store,
-                               int * selectedGraphViewIndex) :
+                               GraphViewModel * graphViewModel) :
     Escher::SelectableCellListPage<Escher::TransparentImageWithMessageCell, k_numberOfCells, Escher::RegularListViewDataSource>(parentResponder),
     m_tabController(tabController),
     m_stackView(stackView),
     m_store(store),
-    m_selectedGraphViewIndex(selectedGraphViewIndex) {
-  selectRow(*selectedGraphViewIndex);
-  // TODO : Translate texts
-  cellAtIndex(k_indexOfHistogram)->setMessage(I18n::Message::Histogram);
-  cellAtIndex(k_indexOfHistogram)->setImage(ImageStore::HistogramIcon);
-  cellAtIndex(k_indexOfBox)->setMessage(I18n::Message::BoxAndWhiskers);
-  cellAtIndex(k_indexOfBox)->setImage(ImageStore::BoxIcon);
-  cellAtIndex(k_indexOfCumulative)->setMessage(I18n::Message::CumulativeFrequency);
-  cellAtIndex(k_indexOfCumulative)->setImage(ImageStore::CumulativeIcon);
-  cellAtIndex(k_indexOfNormal)->setMessage(I18n::Message::NormalProbabilityPlot);
-  cellAtIndex(k_indexOfNormal)->setImage(ImageStore::StatisticsNormalIcon);
+    m_graphViewModel(graphViewModel) {
+  selectRow(GraphViewModel::IndexOfGraphView(m_graphViewModel->selectedGraphView()));
+  for (uint8_t i = 0; i < GraphViewModel::k_numberOfGraphViews; i++) {
+    GraphViewModel::GraphView graphView = GraphViewModel::GraphViewAtIndex(i);
+    cellAtIndex(i)->setMessage(GraphViewModel::MessageForGraphView(graphView));
+    cellAtIndex(i)->setImage(GraphViewModel::ImageForGraphView(graphView));
+  }
 }
 
 void GraphTypeController::didBecomeFirstResponder() {
-  selectRow(*m_selectedGraphViewIndex);
+  selectRow(GraphViewModel::IndexOfGraphView(m_graphViewModel->selectedGraphView()));
   m_selectableTableView.reloadData(true);
 }
 
@@ -41,7 +33,7 @@ bool GraphTypeController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    *m_selectedGraphViewIndex = selectedRow();
+    m_graphViewModel->selectGraphView(GraphViewModel::GraphViewAtIndex(selectedRow()));
     m_stackView->pop();
     return true;
   }

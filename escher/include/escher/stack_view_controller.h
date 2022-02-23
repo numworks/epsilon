@@ -4,8 +4,8 @@
 #include <escher/view_controller.h>
 #include <escher/stack_view.h>
 #include <escher/palette.h>
-#include <escher/ring_buffer.h>
 #include <escher/solid_color_view.h>
+#include <ion/ring_buffer.h>
 #include <stdint.h>
 
 namespace Escher {
@@ -63,7 +63,7 @@ private:
     // Returns the index in m_stackViews for a given display index
     int stackHeaderIndex(int displayIndex);
 
-    RingBuffer<StackView, k_MaxNumberOfStacks> m_stackViews;
+    Ion::RingBuffer<StackView, k_MaxNumberOfStacks> m_stackViews;
     SolidColorView m_borderView;
     View * m_contentView;
     Style m_style;

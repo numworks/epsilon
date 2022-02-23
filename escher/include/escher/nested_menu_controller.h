@@ -8,7 +8,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/metric.h>
 #include <escher/container.h>
-#include <escher/ring_buffer.h>
+#include <ion/ring_buffer.h>
 #include <ion.h>
 
 namespace Escher {
@@ -56,7 +56,7 @@ protected:
   virtual HighlightCell * nodeCellAtIndex(int index) = 0;
   virtual I18n::Message subTitle() = 0;
   SelectableTableView m_selectableTableView;
-  RingBuffer<StackState, k_maxModelTreeDepth> * stack() { return &m_stack; }
+  Ion::RingBuffer<StackState, k_maxModelTreeDepth> * stack() { return &m_stack; }
   virtual int controlChecksum() const { return 0; }
 
 private:
@@ -98,7 +98,7 @@ private:
   BreadcrumbController m_breadcrumbController;
   ListController m_listController;
   InputEventHandler * m_sender;
-  RingBuffer<StackState, k_maxModelTreeDepth> m_stack;
+  Ion::RingBuffer<StackState, k_maxModelTreeDepth> m_stack;
   StackState m_lastState;
   int m_savedChecksum;
   static constexpr int k_nestedMenuStackDepth = 1;

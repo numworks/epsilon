@@ -42,25 +42,26 @@ KDCoordinate ValuesController::columnWidth(int i) {
   return k_cellWidth;
 }
 
-void ValuesController::fillColumnName(int columnIndex, char * buffer) {
-  if (typeAtLocation(columnIndex, 0) ==  k_functionTitleCellType) { //This is a layout so it can't be handle as char*.
-    for( int i = 0; i < Shared::k_lengthOfColumnName; i++) {
-      buffer[i] = 0;
-    }
-    return;
+int ValuesController::fillColumnName(int columnIndex, char * buffer) {
+  if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
+    /* The column names U_n, V_n, etc. are implemented as layout for now (see setTitleCellText of this file)
+    * Since there is no column parameters for these column, the fillColumnName is not yet implemented.
+    */
+    assert(false);
+    return -1;
   }
-  Shared::ValuesController::fillColumnName(columnIndex, buffer);
+  return Shared::ValuesController::fillColumnName(columnIndex, buffer);
 }
 
 
-void ValuesController::fillTitleCellText(HighlightCell * cell, int columnIndex) {
+void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
     Shared::SequenceTitleCell * myCell = static_cast<Shared::SequenceTitleCell *>(cell);
     Shared::Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
     myCell->setLayout(sequence->nameLayout());
     return;
   }
-  Shared::ValuesController::fillTitleCellText(cell, columnIndex);
+  Shared::ValuesController::setTitleCellText(cell, columnIndex);
 }
 
 // AlternateEmptyViewDelegate
@@ -103,12 +104,6 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   Shared::ExpiringPointer<Shared::Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(column));
   Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
   Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, k_valuesCellBufferSize, Preferences::VeryLargeNumberOfSignificantDigits);
-}
-
-// Parameters controllers getter
-
-Shared::ColumnParameterController * ValuesController::functionParameterController() {
-  return nullptr;
 }
 
 }

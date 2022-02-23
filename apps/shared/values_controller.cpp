@@ -215,10 +215,9 @@ Responder * ValuesController::defaultController() {
 
 ColumnParameterController * ValuesController::columnParameterController() {
   if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
-    return  &m_abscissaParameterController;
-  } else {
-    return functionParameterController();
+    return &m_abscissaParameterController;
   }
+  return functionParameterController();
 }
 
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
@@ -355,18 +354,16 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
   return memoizedBufferAtIndex((valuesJ-m_firstMemoizedRow)*nbOfMemoizedColumns + (valuesI-m_firstMemoizedColumn));
 }
 
-void ValuesController::deleteColumn() {
+void ValuesController::clearSelectedColumn() {
    intervalAtColumn(selectedColumn())->clear();
 }
 
-void ValuesController::fillColumnName(int columnIndex, char * buffer) {
-  if (typeAtLocation(columnIndex, 0) ==  k_abscissaTitleCellType) {
-    fillColumnNameWithMessage(buffer, valuesParameterMessageAtColumn(columnIndex));
-    return;
-  }
+int ValuesController::fillColumnName(int columnIndex, char * buffer) {
+  assert(typeAtLocation(columnIndex, 0) ==  k_abscissaTitleCellType);
+  return fillColumnNameWithMessage(buffer, valuesParameterMessageAtColumn(columnIndex));
 }
 
-void ValuesController::fillTitleCellText(HighlightCell * cell, int columnIndex) {
+void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   if (typeAtLocation(columnIndex,0) == k_abscissaTitleCellType) {
     EvenOddMessageTextCell * myTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
     myTitleCell->setMessage(valuesParameterMessageAtColumn(columnIndex));

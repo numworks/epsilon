@@ -13,8 +13,8 @@ public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
   Shared::StoreContext * storeContext() override { return &m_regressionContext; }
   bool fillColumnWithFormula(Poincare::Expression formula) override;
-  Model * model() { return static_cast<Store *>(m_store)->modelForSeries(selectedSeries()); }
-  void fillColumnName(int columnIndex, char * buffer) override;
+  Model * selectedModel() { return static_cast<Store *>(m_store)->modelForSeries(selectedSeries()); }
+  int fillColumnName(int columnIndex, char * buffer) override;
 
 private:
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }

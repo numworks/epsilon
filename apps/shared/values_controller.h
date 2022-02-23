@@ -93,8 +93,8 @@ protected:
 
   ColumnParameterController * columnParameterController() override;
 
-  void fillColumnName(int columnIndex, char * buffer) override;
-  void fillTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
+  int fillColumnName(int columnIndex, char * buffer) override;
+  void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
 
 private:
@@ -141,8 +141,8 @@ private:
   virtual Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) = 0;
   virtual ColumnParameterController * functionParameterController() = 0;
 
-  void deleteColumn() override;
-  bool isColumnDeletable(int columnIndex) override { return typeAtLocation(columnIndex, 0) == k_abscissaTitleCellType; }
+  void clearSelectedColumn() override;
+  bool isColumnClearable(int columnIndex) override { return typeAtLocation(columnIndex, 0) == k_abscissaTitleCellType; }
 
   ValuesParameterController m_abscissaParameterController;
 

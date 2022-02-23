@@ -38,10 +38,19 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   return Shared::StoreParameterController::reusableCell(index, type);
 }
 
+int StoreParameterController::reusableCellCount(int type) {
+  return type == k_regressionCellType ? 1 : Shared::StoreParameterController::reusableCellCount(type);
+}
+
+int StoreParameterController::typeAtIndex(int index) {
+  return index == k_indexOfRegressionCell ? k_regressionCellType : Shared::StoreParameterController::typeAtIndex(index);
+}
+
+
 void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   if (index == k_indexOfRegressionCell) {
     assert(cell == &m_changeRegressionCell);
-    m_changeRegressionCell.setLayout(static_cast<StoreController *>(m_storeController)->model()->layout());
+    m_changeRegressionCell.setLayout(static_cast<StoreController *>(m_storeController)->selectedModel()->layout());
     return;
   }
   assert(cell != &m_changeRegressionCell);

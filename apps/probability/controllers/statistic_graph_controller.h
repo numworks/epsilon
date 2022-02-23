@@ -19,8 +19,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
 private:
-  constexpr static int k_titleBufferSize = sizeof("z= p-value=") +
-                                           Constants::k_shortFloatNumberOfChars * 2;
+  constexpr static int k_titleBufferSize = sizeof("df= α= z= p-value=") +
+                                           Constants::k_shortFloatNumberOfChars * 4;
   char m_titleBuffer[k_titleBufferSize];
   StatisticGraphView m_graphView;
   StatisticViewRange m_range;

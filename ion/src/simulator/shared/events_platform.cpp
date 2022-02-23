@@ -41,7 +41,7 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
      * course, will be super hackish since SDL doesn't have any built-in support
      * for those keys and we don't have any text data to match against. */
     if (scancode == SDL_SCANCODE_GRAVE && sym == SDLK_BACKQUOTE && mod == KMOD_NONE) {
-      // Caret key (^) on French Azerty keyboard running Firefox under macOS
+      // Caret key (^) on French Azerty keyboard running Firefox under macOS/Windows
       return Power;
     }
     if (scancode == SDL_SCANCODE_LEFTBRACKET && sym == SDLK_LEFTBRACKET && mod == KMOD_NONE) {
@@ -50,6 +50,10 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
     }
     if (scancode == SDL_SCANCODE_LEFTBRACKET && sym == SDLK_CARET && mod == KMOD_NONE) {
       // Caret key (^) key on French Azerty keyboard running native macOS
+      return Power;
+    }
+    if (scancode == SDL_SCANCODE_RIGHTBRACKET && sym == SDLK_RIGHTBRACKET && mod == KMOD_NONE) {
+      // Caret key (^) key on French Azerty keyboard running Chrome or Edge under windows
       return Power;
     }
   }

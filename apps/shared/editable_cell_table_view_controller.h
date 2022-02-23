@@ -2,6 +2,7 @@
 #define SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 
 #include <poincare/preferences.h>
+#include <escher/stack_view_controller.h>
 #include "column_parameter_controller.h"
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
@@ -21,21 +22,21 @@ public:
   KDCoordinate rowHeight(int j) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  void tryToDeleteColumn(I18n::Message warningMessage1 = I18n::Message::ConfirmDeleteColumn1, I18n::Message warningMessage2 = I18n::Message::ConfirmDeleteColumn2);
+  void presentClearSelectedColumnPopupIfClearable(I18n::Message warningMessage1 = I18n::Message::ConfirmDeleteColumn1, I18n::Message warningMessage2 = I18n::Message::ConfirmDeleteColumn2);
 
   virtual bool handleEvent(Ion::Events::Event event) override;
-  virtual void fillColumnName(int columnIndex, char * buffer) = 0;
+  virtual int fillColumnName(int columnIndex, char * buffer) = 0;
 
 protected:
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
   static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 
-  void fillColumnNameWithMessage(char * buffer, I18n::Message message);
+  int fillColumnNameWithMessage(char * buffer, I18n::Message message);
   virtual ColumnParameterController * columnParameterController() = 0;
   virtual Escher::StackViewController * stackController() const = 0;
 
-  virtual void fillTitleCellText(Escher::HighlightCell * cell, int columnIndex) = 0;
+  virtual void setTitleCellText(Escher::HighlightCell * cell, int columnIndex) = 0;
   virtual void setTitleCellStyle(Escher::HighlightCell * cell, int columnIndex) = 0;
 
 private:
@@ -45,8 +46,8 @@ private:
   virtual double dataAtLocation(int columnIndex, int rowIndex) = 0;
   virtual int numberOfElementsInColumn(int columnIndex) const = 0;
   virtual int maxNumberOfElements() const = 0;
-  virtual void deleteColumn() = 0;
-  virtual bool isColumnDeletable(int columnIndex) { return true; }
+  virtual void clearSelectedColumn() = 0;
+  virtual bool isColumnClearable(int columnIndex) { return true; }
 
   PopUpController m_confirmPopUpController;
 };

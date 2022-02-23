@@ -46,7 +46,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
-  void sortColumn();
+  void sortSelectedColumn();
   int selectedSeries() { return seriesAtColumn(selectedColumn()); }
 
 protected:
@@ -82,7 +82,7 @@ protected:
   double dataAtLocation(int columnIndex, int rowIndex) override;
   int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
   bool privateFillColumnWithFormula(Poincare::Expression formula, Poincare::ExpressionNode::isVariableTest isVariable);
-  void fillTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
+  void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
@@ -92,7 +92,7 @@ private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
   int maxNumberOfElements() const override { return DoublePairStore::k_maxNumberOfPairs; }
-  void deleteColumn() override;
+  void clearSelectedColumn() override;
 
   StoreTitleCell m_titleCells[k_numberOfTitleCells];
   ContentView m_contentView;

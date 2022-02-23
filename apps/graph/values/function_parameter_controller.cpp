@@ -21,20 +21,13 @@ Shared::EditableCellTableViewController * FunctionParameterController::editableC
 
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    switch (selectedRow()) {
-      case 0:
-      {
-        bool isDisplayingDerivative = function()->displayDerivative();
-        function()->setDisplayDerivative(!isDisplayingDerivative);
-        m_valuesController->selectCellAtLocation(isDisplayingDerivative ?  m_valuesController->selectedColumn() :  m_valuesController->selectedColumn() + 1, m_valuesController->selectedRow());
-        resetMemoization();
-        m_selectableTableView.reloadData();
-        return true;
-      }
-      default:
-        assert(false);
-        return false;
-    }
+    assert(selectedRow() == 0);
+    bool isDisplayingDerivative = function()->displayDerivative();
+    function()->setDisplayDerivative(!isDisplayingDerivative);
+    m_valuesController->selectCellAtLocation(isDisplayingDerivative ? m_valuesController->selectedColumn() : m_valuesController->selectedColumn() + 1, m_valuesController->selectedRow());
+    resetMemoization();
+    m_selectableTableView.reloadData();
+    return true;
   }
   return false;
 }
@@ -44,10 +37,8 @@ int FunctionParameterController::numberOfRows() const {
 };
 
 HighlightCell * FunctionParameterController::reusableCell(int index, int type) {
-  assert(index >= 0);
-  assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_displayDerivativeColumn};
-  return cells[index];
+  assert(index == 0);
+  return &m_displayDerivativeColumn;
 }
 
 void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

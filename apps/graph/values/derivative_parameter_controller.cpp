@@ -43,10 +43,8 @@ int DerivativeParameterController::numberOfRows() const {
 };
 
 HighlightCell * DerivativeParameterController::reusableCell(int index, int type) {
-  assert(index >= 0);
-  assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_hideColumn};
-  return cells[index];
+  assert(index == 0);
+  return &m_hideColumn;
 }
 
 ContinuousFunctionStore * DerivativeParameterController::functionStore() {

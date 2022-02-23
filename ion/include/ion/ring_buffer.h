@@ -46,7 +46,10 @@ public:
       assert(m_end == N);
       return 0;
     }
-    return m_start < m_end ? m_end - m_start : m_end + N - m_start; }
+    return m_start < m_end ? m_end - m_start : m_end + N - m_start;
+  }
+
+  bool isEmpty() const { return m_start == N && m_end == N; }
 
   void reset() { m_start = N; m_end = N; }
 

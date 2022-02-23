@@ -4,7 +4,7 @@ PLATFORM ?= device
 DEBUG ?= 0
 DEVELOPMENT ?= 0
 
-EPSILON_VERSION ?= 17.1.1
+EPSILON_VERSION ?= 18.0.1
 EXTERNAL_APPS_API_LEVEL ?= 0
 EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings
 ifeq ($(MODEL),n0100)

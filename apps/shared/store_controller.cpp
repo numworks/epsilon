@@ -222,7 +222,7 @@ void StoreController::didBecomeFirstResponder() {
 }
 
 StackViewController * StoreController::stackController() const {
-  return (StackViewController *)(parentResponder()->parentResponder());
+  return static_cast<StackViewController *>(parentResponder()->parentResponder());
 }
 
 Responder * StoreController::tabController() const {
@@ -239,7 +239,7 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
 }
 
 double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
-  return m_store->get(seriesAtColumn(columnIndex), columnIndex%DoublePairStore::k_numberOfColumnsPerSeries, rowIndex-1);
+  return m_store->get(seriesAtColumn(columnIndex), columnIndex % DoublePairStore::k_numberOfColumnsPerSeries, rowIndex-1);
 }
 
 int StoreController::numberOfElementsInColumn(int columnIndex) const {

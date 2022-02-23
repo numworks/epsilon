@@ -21,19 +21,11 @@ Shared::EditableCellTableViewController * DerivativeParameterController::editabl
 
 bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    switch (selectedRow()) {
-      case 0:
-      {
-        m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()-1, m_valuesController->selectedRow());
-        functionStore()->modelForRecord(m_record)->setDisplayDerivative(false);
-        StackViewController * stack = (StackViewController *)(parentResponder());
-        stack->pop();
-        return true;
-      }
-      default:
-        assert(false);
-        return false;
-    }
+    assert(selectedRow() == 0);
+    m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()-1, m_valuesController->selectedRow());
+    functionStore()->modelForRecord(m_record)->setDisplayDerivative(false);
+    StackViewController * stack = (StackViewController *)(parentResponder());
+    stack->pop();
   }
   return false;
 }

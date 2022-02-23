@@ -15,6 +15,7 @@ public:
   int fillColumnName(int columnIndex, char * buffer) override;
 
 private:
+  constexpr static int k_columnTitleSize = 50;
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;

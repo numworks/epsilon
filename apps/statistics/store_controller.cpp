@@ -51,9 +51,9 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   StoreTitleCell * myTitleCell = static_cast<StoreTitleCell *>(cell);
   char columnName[Shared::ColumnParameterController::k_maxSizeOfColumnName];
   fillColumnName(columnIndex, columnName);
-  char columnTitle[50]; // 50 is an ad-hoc value. A title cell can contain max 15 glyphs but the glyph can take more space than 1 byte in memory.
+  char columnTitle[k_columnTitleSize]; // 50 is an ad-hoc value. A title cell can contain max 15 glyphs but the glyph can take more space than 1 byte in memory.
   I18n::Message titleType = columnIndex % 2 == 1 ? I18n::Message::Frequencies : I18n::Message::Values;
-  Poincare::Print::customPrintf(columnTitle, 50, I18n::translate(titleType), columnName);
+  Poincare::Print::customPrintf(columnTitle, k_columnTitleSize, I18n::translate(titleType), columnName);
   myTitleCell->setText(columnTitle);
 }
 

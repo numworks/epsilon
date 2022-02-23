@@ -299,7 +299,6 @@ template CommonLogarithm TreeHandle::FixedArityBuilder<CommonLogarithm, Logarith
 template ComplexArgument TreeHandle::FixedArityBuilder<ComplexArgument, ComplexArgumentNode>(const Tuple &);
 template ComplexCartesian TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>(const Tuple &);
 template CondensedSumLayout TreeHandle::FixedArityBuilder<CondensedSumLayout, CondensedSumLayoutNode>(const Tuple &);
-template ConfidenceInterval TreeHandle::FixedArityBuilder<ConfidenceInterval, ConfidenceIntervalNode>(const Tuple &);
 template Conjugate TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>(const Tuple &);
 template ConjugateLayout TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>(const Tuple &);
 template Cosecant TreeHandle::FixedArityBuilder<Cosecant, CosecantNode>(const Tuple &);
@@ -360,7 +359,6 @@ template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tu
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
 template PermuteCoefficient TreeHandle::FixedArityBuilder<PermuteCoefficient, PermuteCoefficientNode>(const Tuple &);
 template Power TreeHandle::FixedArityBuilder<Power, PowerNode>(const Tuple &);
-template PredictionInterval TreeHandle::FixedArityBuilder<PredictionInterval, PredictionIntervalNode>(const Tuple &);
 template Product TreeHandle::FixedArityBuilder<Product, ProductNode>(const Tuple &);
 template ProductLayout TreeHandle::FixedArityBuilder<ProductLayout, ProductLayoutNode>(const Tuple &);
 template Randint TreeHandle::FixedArityBuilder<Randint, RandintNode>(const Tuple &);
@@ -371,7 +369,6 @@ template RightSquareBracketLayout TreeHandle::FixedArityBuilder<RightSquareBrack
 template Round TreeHandle::FixedArityBuilder<Round, RoundNode>(const Tuple &);
 template Secant TreeHandle::FixedArityBuilder<Secant, SecantNode>(const Tuple &);
 template SignFunction TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>(const Tuple &);
-template SimplePredictionInterval TreeHandle::FixedArityBuilder<SimplePredictionInterval, SimplePredictionIntervalNode>(const Tuple &);
 template Sine TreeHandle::FixedArityBuilder<Sine, SineNode>(const Tuple &);
 template SquareRoot TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>(const Tuple &);
 template Store TreeHandle::FixedArityBuilder<Store, StoreNode>(const Tuple &);

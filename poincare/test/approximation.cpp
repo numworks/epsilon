@@ -438,9 +438,6 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
   assert_expression_approximates_to<double>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
 
-  assert_expression_approximates_to<float>("confidence(0.1, 100)", "[[0,0.2]]");
-  assert_expression_approximates_to<double>("confidence(0.1, 100)", "[[0,0.2]]");
-
   assert_expression_approximates_to<float>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
   assert_expression_approximates_to<double>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
 
@@ -455,12 +452,6 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2916666666667,-0.083333333333333,0.375][1.0833333333333,0.16666666666667,-0.25][0.041666666666667,-0.083333333333333,0.041666666666667]]");
   assert_expression_approximates_to<float>("inverse([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "[[-0.0118-0.0455×𝐢,-0.5-0.727×𝐢,0.318+0.489×𝐢][0.0409+0.00364×𝐢,0.04-0.0218×𝐢,-0.0255+9.1ᴇ-4×𝐢][0.00334-0.00182×𝐢,0.361+0.535×𝐢,-0.13-0.358×𝐢]]", Degree, MetricUnitFormat, Cartesian, 3); // inverse is not precise enough to display 7 significative digits
   assert_expression_approximates_to<double>("inverse([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "[[-0.0118289353958-0.0454959053685×𝐢,-0.500454959054-0.727024567789×𝐢,0.31847133758+0.488626023658×𝐢][0.0409463148317+0.00363967242948×𝐢,0.0400363967243-0.0218380345769×𝐢,-0.0254777070064+9.0991810737ᴇ-4×𝐢][0.00333636639369-0.00181983621474×𝐢,0.36093418259+0.534728541098×𝐢,-0.130118289354-0.357597816197×𝐢]]", Degree, MetricUnitFormat, Cartesian, 12); // FIXME: inverse is not precise enough to display 14 significative digits
-
-  assert_expression_approximates_to<float>("prediction(0.1, 100)", "[[0,0.2]]");
-  assert_expression_approximates_to<double>("prediction(0.1, 100)", "[[0,0.2]]");
-
-  assert_expression_approximates_to<float>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
-  assert_expression_approximates_to<double>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
 
   assert_expression_approximates_to<float>("product(2+k×𝐢,k, 1, 5)", "-100-540×𝐢");
   assert_expression_approximates_to<double>("product(2+o×𝐢,o, 1, 5)", "-100-540×𝐢");

@@ -69,7 +69,6 @@ poincare_src += $(addprefix poincare/src/,\
   complex.cpp \
   complex_argument.cpp \
   complex_cartesian.cpp \
-  confidence_interval.cpp \
   conic.cpp \
   conjugate.cpp \
   constant.cpp \
@@ -136,7 +135,6 @@ poincare_src += $(addprefix poincare/src/,\
   permute_coefficient.cpp \
   polynomial.cpp \
   power.cpp \
-  prediction_interval.cpp \
   preferences.cpp \
   print.cpp \
   print_float.cpp \

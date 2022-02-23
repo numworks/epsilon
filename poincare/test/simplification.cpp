@@ -146,7 +146,6 @@ QUIZ_CASE(poincare_simplification_addition) {
   assert_parsed_expression_simplify_to("[[1,2+𝐢][3,4][5,6]]+[[1,2+𝐢][3,4][5,6]]", "[[2,4+2×𝐢][6,8][10,12]]");
   assert_parsed_expression_simplify_to("3+[[1,2][3,4]]", "undef");
   assert_parsed_expression_simplify_to("[[1][3][5]]+[[1,2+𝐢][3,4][5,6]]", "undef");
-  assert_parsed_expression_simplify_to("[[1,3]]+confidence(π/4, 6)+[[2,3]]", "[[3,6]]+confidence(π/4,6)");
 }
 
 QUIZ_CASE(poincare_simplification_multiplication) {
@@ -201,7 +200,6 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("12^(1/4)×(π/6)×(12×π)^(1/4)", "\u0012√(3)×π^\u00125/4\u0013\u0013/3");
   assert_parsed_expression_simplify_to("[[1,2+𝐢][3,4][5,6]]×[[1,2+𝐢,3,4][5,6+𝐢,7,8]]", "[[11+5×𝐢,13+9×𝐢,17+7×𝐢,20+8×𝐢][23,30+7×𝐢,37,44][35,46+11×𝐢,57,68]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]×[[1,3][5,6]]×[[2,3][4,6]]", "[[82,123][178,267]]");
-  assert_parsed_expression_simplify_to("π×confidence(π/5,3)[[1,2]]", "π×confidence(π/5,3)×[[1,2]]");
   assert_parsed_expression_simplify_to("0*[[1,0][0,1]]^500", "0×[[1,0][0,1]]^500");
   assert_parsed_expression_simplify_to("x^5/x^3", "x^2");
   assert_parsed_expression_simplify_to("x^5*x^3", "x^8");
@@ -498,8 +496,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("binompdf(2,_s,3)", "undef");
   assert_parsed_expression_simplify_to("binompdf(2,3,_s)", "undef");
   assert_parsed_expression_simplify_to("ceiling(_s)", "undef");
-  assert_parsed_expression_simplify_to("confidence(_s,2)", "undef");
-  assert_parsed_expression_simplify_to("confidence(.5,_s)", "undef");
   assert_parsed_expression_simplify_to("conj(_s)", "undef");
   assert_parsed_expression_simplify_to("cos(_s)", "undef");
   assert_parsed_expression_simplify_to("cosh(_s)", "undef");
@@ -547,10 +543,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("normpdf(2,3,_s)", "undef");
   assert_parsed_expression_simplify_to("permute(_s,2)", "undef");
   assert_parsed_expression_simplify_to("permute(2,_s)", "undef");
-  assert_parsed_expression_simplify_to("prediction(_s,2)", "undef");
-  assert_parsed_expression_simplify_to("prediction(.5,_s)", "undef");
-  assert_parsed_expression_simplify_to("prediction95(_s,2)", "undef");
-  assert_parsed_expression_simplify_to("prediction95(.5,_s)", "undef");
   assert_parsed_expression_simplify_to("product(_s,x,0,1)", "undef");
   assert_parsed_expression_simplify_to("product(1,x,_s,1)", "undef");
   assert_parsed_expression_simplify_to("product(1,x,0,_s)", "undef");
@@ -1190,12 +1182,6 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("norm([[1][2][3]])", "√(14)");
   assert_parsed_expression_simplify_to("norm([[1,𝐢+1,π,-5]])", "√(π^2+28)");
 
-  // Expressions with unreduced matrix
-  assert_reduce("confidence(cos(2)/25,3)→a");
-  // Check that matrices are not permuted in multiplication
-  assert_parsed_expression_simplify_to("cos(3a)*abs(transpose(a))", "cos(3×confidence(cos(2)/25,3))×abs(transpose(confidence(cos(2)/25,3)))");
-  assert_parsed_expression_simplify_to("abs(transpose(a))*cos(3a)", "abs(transpose(confidence(cos(2)/25,3)))×cos(3×confidence(cos(2)/25,3))");
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_functions_of_matrices) {
@@ -1211,12 +1197,6 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
   assert_parsed_expression_simplify_to("binomial([[0,180]],[[1]])", Undefined::Name());
   assert_parsed_expression_simplify_to("ceil([[0.3,180]])", "[[1,180]]");
   assert_parsed_expression_simplify_to("arg([[1,1+𝐢]])", "[[0,π/4]]");
-  assert_parsed_expression_simplify_to("confidence([[0,180]],1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("confidence(1,[[0,180]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("confidence([[0,180]],[[1]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("confidence(1/3, 25)", "[[2/15,8/15]]");
-  assert_parsed_expression_simplify_to("confidence(45, 25)", Undefined::Name());
-  assert_parsed_expression_simplify_to("confidence(1/3, -34)", Undefined::Name());
   assert_parsed_expression_simplify_to("conj([[1,1+𝐢]])", "[[1,1-𝐢]]");
   assert_parsed_expression_simplify_to("cos([[π/3,0][π/7,π/2]])", "[[1/2,1][cos(π/7),0]]");
   assert_parsed_expression_simplify_to("cos([[0,π]])", "[[1,-1]]");
@@ -1263,13 +1243,6 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
   assert_parsed_expression_simplify_to("-[[1/√(2),1/2,3][2,1,-3]]", "[[-√(2)/2,-1/2,-3][-2,-1,3]]");
   assert_parsed_expression_simplify_to("permute([[2,3]],5)", Undefined::Name());
   assert_parsed_expression_simplify_to("permute(5,[[2,3]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("prediction([[2,3]],5)", Undefined::Name());
-  assert_parsed_expression_simplify_to("prediction(5,[[2,3]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("prediction95([[2,3]],5)", Undefined::Name());
-  assert_parsed_expression_simplify_to("prediction95(5,[[2,3]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("prediction95(1/3, 25)", "[[\u0012-49×√(2)+125\u0013/375,\u001249×√(2)+125\u0013/375]]");
-  assert_parsed_expression_simplify_to("prediction95(45, 25)", Undefined::Name());
-  assert_parsed_expression_simplify_to("prediction95(1/3, -34)", Undefined::Name());
   assert_parsed_expression_simplify_to("product(1,x,[[0,180]],1)", Undefined::Name());
   assert_parsed_expression_simplify_to("product(1,x,1,[[0,180]])", Undefined::Name());
   assert_parsed_expression_simplify_to("randint([[2,3]],5)", Undefined::Name());
@@ -1435,8 +1408,6 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("binomial(10, 4)", "210", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("arg(-2)", "π", User, Radian, MetricUnitFormat, Cartesian);
-  // TODO: confidence is not simplified yet
-  //assert_parsed_expression_simplify_to("confidence(-2,-3)", "confidence(-2)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("conj(-2)", "-2", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("conj(-2+2×𝐢+𝐢)", "-2-3×𝐢", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("cos(12)", "cos(12)", User, Radian, MetricUnitFormat, Cartesian);
@@ -1461,8 +1432,6 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("root(2,𝐢+1)", "√(2)×cos(\u001290×ln(2)\u0013/π)-√(2)×sin(\u001290×ln(2)\u0013/π)×𝐢", User, Degree, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("root(2,𝐢+1)", "√(2)×cos(ln(2)/2)-√(2)×sin(ln(2)/2)×𝐢", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("permute(10, 4)", "5040", User, Radian, MetricUnitFormat, Cartesian);
-  // TODO: prediction is not simplified yet
-  //assert_parsed_expression_simplify_to("prediction(-2,-3)", "prediction(-2)", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("randint(2,2)", "2", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("random()", "random()", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("re(x)", "re(x)", User, Radian, MetricUnitFormat, Cartesian);

@@ -23,10 +23,18 @@ ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {
 
 const char * StatisticGraphController::title() {
   if (App::app()->subapp() == Data::SubApp::Tests) {
-    const char * format = I18n::translate(graphTitleFormatForTest(App::app()->test(), App::app()->testType()));
-    Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), format,
-        m_statistic->testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-        m_statistic->pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+    const char * format = I18n::translate(graphTitleFormatForTest(App::app()->test(), App::app()->testType(), App::app()->categoricalType()));
+    if (App::app()->categoricalType() == Data::CategoricalType::Goodness) {
+      Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), format,
+          m_statistic->degreeOfFreedom(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          m_statistic->testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          m_statistic->pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+    } else {
+      Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), format,
+          m_statistic->testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          m_statistic->pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+    }
   } else {
     const char * format = I18n::translate(I18n::Message::StatisticGraphControllerIntervalTitleFormat);
     Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), format,

@@ -579,10 +579,10 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * log(x^y, x) is handled by the parent logarithm, but x^log(y,x) is handled
    * here. */
   Expression p = parent();
-  if (!p.isUninitialized() && p.indexOfChild(*this) == 0 && isLogarithmOfSameBase(p)) {
+  if (!p.isUninitialized() && p.indexOfChild(*this) == 0 && isLogarithmOfSameBase(p)) { // Avoid expanding e^(π+2) in ln(e^(π+2))
     return *this;
   }
-  if (isLogarithmOfSameBase(index)) {
+  if (isLogarithmOfSameBase(index)) { // Looking for x^(log(y,x))
     Expression e = index.childAtIndex(0);
     if (e.sign(context) == ExpressionNode::Sign::Positive) {
       replaceWithInPlace(e);

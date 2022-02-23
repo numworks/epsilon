@@ -14,7 +14,6 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/binom_pdf.h>
 #include <poincare/complex_argument.h>
-#include <poincare/confidence_interval.h>
 #include <poincare/conjugate.h>
 #include <poincare/context.h>
 #include <poincare/constant.h>
@@ -75,7 +74,6 @@
 #include <poincare/parenthesis.h>
 #include <poincare/permute_coefficient.h>
 #include <poincare/power.h>
-#include <poincare/prediction_interval.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/product.h>

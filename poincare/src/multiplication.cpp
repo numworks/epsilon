@@ -709,8 +709,8 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
       multiplicationChildIndex--;
     }
     /* Distribute the remaining multiplication children on the matrix children,
-     * if there are no other matrices (such as a non reduced confidence
-     * interval). */
+     * if there are no other matrices.
+     */
 
     if (multiplicationChildIndex >= 0) {
       if (childAtIndex(multiplicationChildIndex).deepIsMatrix(context)) {

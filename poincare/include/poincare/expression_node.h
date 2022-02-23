@@ -121,14 +121,12 @@ public:
     // - Complexes
     ComplexCartesian,
     // - Any kind of matrices :
-    ConfidenceInterval,
     MatrixDimension,
     MatrixIdentity,
     MatrixInverse,
     MatrixTranspose,
     MatrixRowEchelonForm,
     MatrixReducedRowEchelonForm,
-    PredictionInterval,
     VectorCross,
     Matrix,
 

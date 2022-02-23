@@ -134,9 +134,7 @@ QUIZ_CASE(poincare_properties_is_approximate) {
 QUIZ_CASE(poincare_properties_is_matrix) {
   Shared::GlobalContext context;
   assert_expression_has_property("[[1,2][3,4]]", &context, Expression::IsMatrix);
-  assert_expression_has_property("confidence(0.2,3)*2", &context, Expression::IsMatrix);
   assert_expression_has_property("dim([[1,2][3,4]])/3", &context, Expression::IsMatrix);
-  assert_expression_has_property("prediction(0.3,10)", &context, Expression::IsMatrix);
   assert_expression_has_property("[[1,2][3,4]]^(-1)", &context, Expression::IsMatrix);
   assert_expression_has_property("inverse([[1,2][3,4]])", &context, Expression::IsMatrix);
   assert_expression_has_property("3*identity(4)", &context, Expression::IsMatrix);
@@ -164,9 +162,6 @@ QUIZ_CASE(poincare_properties_deep_is_matrix) {
   assert_expression_is_not_deep_matrix("sign([[1,2][3,4]])");
   assert_expression_is_not_deep_matrix("3");
   assert_expression_is_deep_matrix("2*dim(2)");
-  assert_expression_is_deep_matrix("log(confidence(0.2,20))");
-  assert_expression_is_deep_matrix("confidence(0.2,20)^2");
-  assert_expression_is_deep_matrix("cos(confidence(0.2,20))");
 }
 
 QUIZ_CASE(poincare_properties_is_infinity) {
@@ -334,7 +329,6 @@ QUIZ_CASE(poincare_properties_is_real) {
   assert_expression_is_real("1×23×3×root(2,3)");
   assert_expression_is_not_real("1×23×3×root(2,3)×3×𝐢");
   assert_expression_is_not_real("1×23×3×[[1,2]]");
-  assert_expression_is_not_real("1×23×3×abs(confidence(cos(5)/25,3))");
   assert_expression_is_real("π");
   assert_expression_is_not_real("nonreal");
   assert_expression_is_not_real("undef");
@@ -357,7 +351,6 @@ void assert_reduced_expression_polynomial_degree(const char * expression, int de
 QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("x+1", 1);
   assert_reduced_expression_polynomial_degree("cos(2)+1", 0);
-  assert_reduced_expression_polynomial_degree("confidence(0.2,10)+1", -1);
   assert_reduced_expression_polynomial_degree("diff(3×x+x,x,2)", 0);
   assert_reduced_expression_polynomial_degree("diff(3×x+x,x,x)", 0);
   assert_reduced_expression_polynomial_degree("diff(3×x+x,x,x)", 0, "a");
@@ -369,7 +362,6 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("(x^2+2)×(x+1)", 3);
   assert_reduced_expression_polynomial_degree("-(x+1)", 1);
   assert_reduced_expression_polynomial_degree("(x^2+2)^(3)", 6);
-  assert_reduced_expression_polynomial_degree("prediction(0.2,10)+1", -1);
   assert_reduced_expression_polynomial_degree("2-x-x^3", 3);
   assert_reduced_expression_polynomial_degree("π×x", 1);
   assert_reduced_expression_polynomial_degree("√(-1)×x", -1, "x", Real);

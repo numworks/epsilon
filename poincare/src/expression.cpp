@@ -162,9 +162,7 @@ bool Expression::IsNAry(const Expression e, Context * context) {
 
 bool Expression::IsMatrix(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Matrix
-    || e.type() == ExpressionNode::Type::ConfidenceInterval
     || e.type() == ExpressionNode::Type::MatrixDimension
-    || e.type() == ExpressionNode::Type::PredictionInterval
     || e.type() == ExpressionNode::Type::MatrixInverse
     || e.type() == ExpressionNode::Type::MatrixIdentity
     || e.type() == ExpressionNode::Type::MatrixTranspose

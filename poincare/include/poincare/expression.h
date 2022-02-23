@@ -39,7 +39,6 @@ class Expression : public TreeHandle {
   friend class ComplexArgument;
   friend class ComplexCartesian;
   friend class ComplexHelper;
-  friend class ConfidenceInterval;
   friend class Conjugate;
   friend class Constant;
   friend class Cosecant;
@@ -93,7 +92,6 @@ class Expression : public TreeHandle {
   friend class PermuteCoefficient;
   friend class Power;
   friend class PowerNode;
-  friend class PredictionInterval;
   friend class Product;
   friend class Randint;
   friend class RealPart;

@@ -68,10 +68,18 @@ I18n::Message titleFormatForTest(Data::Test test, Data::TestType type) {
 }
 
 // TODO: virtualize!!
-I18n::Message graphTitleFormatForTest(Data::Test test, Data::TestType type) {
+I18n::Message graphTitleFormatForTest(Data::Test test, Data::TestType type, Data::CategoricalType categoricalType) {
   switch (test) {
     case Data::Test::Categorical:
-      return I18n::Message::StatisticGraphControllerTestTitleFormatChi2Test;
+      switch (categoricalType) {
+        case Data::CategoricalType::Goodness:
+          return I18n::Message::StatisticGraphControllerTestTitleFormatGoodnessTest;
+        case Data::CategoricalType::Homogeneity:
+          return I18n::Message::StatisticGraphControllerTestTitleFormatHomogeneityTest;
+        default:
+          assert(false);
+          return I18n::Message::Default;
+      }
     default:
       switch (type) {
         case Data::TestType::ZTest:

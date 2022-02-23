@@ -12,7 +12,7 @@ namespace Probability {
 
 const char * testToTextSymbol(Data::Test t);
 I18n::Message titleFormatForTest(Data::Test test, Data::TestType type);
-I18n::Message graphTitleFormatForTest(Data::Test test, Data::TestType type);
+I18n::Message graphTitleFormatForTest(Data::Test test, Data::TestType type, Data::CategoricalType categoricalType);
 
 int defaultConvertFloatToText(double value, char buffer[], int bufferSize);
 

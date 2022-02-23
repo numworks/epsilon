@@ -96,8 +96,8 @@ private:
    * it to be the relative column index within the sub table. */
 
   //Column name and title cells
-  void fillColumnName(int columnIndex, char * buffer) override;
-  void fillTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
+  int fillColumnName(int columnIndex, char * buffer) override;
+  void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
 
   // Cells & View

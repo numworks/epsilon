@@ -30,7 +30,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     case k_indexOfClearColumn:
     {
       stackView()->pop();
-      m_storeController->tryToDeleteColumn();
+      m_storeController->presentClearSelectedColumnPopupIfClearable();
       break;
     }
     case k_indexOfFillFormula:
@@ -41,7 +41,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     }
     case k_indexOfSortCell:
     {
-      m_storeController->sortColumn();
+      m_storeController->sortSelectedColumn();
       stackView()->pop();
       break;
     }

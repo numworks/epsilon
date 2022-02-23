@@ -100,41 +100,41 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
 }
 
-void ValuesController::fillColumnName(int columnIndex, char * buffer) {
-  if (typeAtLocation(columnIndex, 0) ==  k_functionTitleCellType) {
+int ValuesController::fillColumnName(int columnIndex, char * buffer) {
+  if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
     const size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
     bool isDerivative = false;
     Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
     Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
     if (isDerivative) {
-      function->derivativeNameWithArgument(buffer, bufferNameSize);
+      return function->derivativeNameWithArgument(buffer, bufferNameSize);
     } else {
       if (function->isNamed()) {
-        function->nameWithArgument(buffer, bufferNameSize);
+        return function->nameWithArgument(buffer, bufferNameSize);
       } else {
-        PoincareHelpers::Serialize(function->originalEquation(&record), buffer, bufferNameSize, Preferences::VeryShortNumberOfSignificantDigits);
+        int size = PoincareHelpers::Serialize(function->originalEquation(&record), buffer, bufferNameSize, Preferences::VeryShortNumberOfSignificantDigits);
         // Serialization may have introduced system parentheses.
         SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer, bufferNameSize - 1);
+        return size;
       }
     }
-    return;
   }
-  Shared::ValuesController::fillColumnName(columnIndex, buffer);
+  return Shared::ValuesController::fillColumnName(columnIndex, buffer);
 }
 
-void ValuesController::fillTitleCellText(HighlightCell * cell, int columnIndex) {
+void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
     BufferFunctionTitleCell * myTitleCell = static_cast<BufferFunctionTitleCell *>(cell);
     fillColumnName(columnIndex, const_cast<char *>(myTitleCell->text()));
     return;
   }
-  Shared::ValuesController::fillTitleCellText(cell, columnIndex);
+  Shared::ValuesController::setTitleCellText(cell, columnIndex);
 }
 
 void ValuesController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
-  if (columnIndex > 0 &&typeAtLocation(columnIndex, 0)  == k_abscissaTitleCellType) {
+  if (typeAtLocation(columnIndex, 0)  == k_abscissaTitleCellType) {
     AbscissaTitleCell * myCell = static_cast<AbscissaTitleCell *>(cell);
-    myCell->setSeparatorLeft(true);
+    myCell->setSeparatorLeft(columnIndex > 0);
     return;
   }
   Shared::ValuesController::setTitleCellStyle(cell, columnIndex);

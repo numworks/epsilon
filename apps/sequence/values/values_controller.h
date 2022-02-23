@@ -60,7 +60,7 @@ private:
 
 
   // Parameters controllers getter
-  Shared::ColumnParameterController * functionParameterController() override;
+  Shared::ColumnParameterController * functionParameterController() override { return nullptr; }
 
   // Cells & view
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
@@ -83,8 +83,8 @@ private:
     return &m_floatCells[j];
   }
 
-  void fillColumnName(int columnIndex, char * buffer) override;
-  void fillTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
+  int fillColumnName(int columnIndex, char * buffer) override;
+  void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
 
   Escher::SelectableTableView m_selectableTableView;
   Shared::SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];

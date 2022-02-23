@@ -20,7 +20,7 @@ EditableCellTableViewController::EditableCellTableViewController(Responder * par
   m_confirmPopUpController(
     Invocation([](void * context, void * parent){
       EditableCellTableViewController * param = static_cast<EditableCellTableViewController *>(context);
-      param->deleteColumn();
+      param->clearSelectedColumn();
       Container::activeApp()->dismissModalViewController();
       param->selectableTableView()->reloadData();
       return true;
@@ -85,7 +85,7 @@ KDCoordinate EditableCellTableViewController::rowHeight(int j) {
 
 void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Preferences::PrintFloatMode floatDisplayMode) {
   if (j == 0) {
-    fillTitleCellText(cell, i);
+    setTitleCellText(cell, i);
     setTitleCellStyle(cell, i);
     return;
   }
@@ -136,8 +136,8 @@ void EditableCellTableViewController::viewWillAppear() {
   }
 }
 
-void EditableCellTableViewController::tryToDeleteColumn(I18n::Message warningMessage1, I18n::Message warningMessage2) {
-  if (numberOfElementsInColumn(selectedColumn()) > 0 && isColumnDeletable(selectedColumn())) {
+void EditableCellTableViewController::presentClearSelectedColumnPopupIfClearable(I18n::Message warningMessage1, I18n::Message warningMessage2) {
+  if (numberOfElementsInColumn(selectedColumn()) > 0 && isColumnClearable(selectedColumn())) {
     m_confirmPopUpController.setContentMessage(0, warningMessage1);
     m_confirmPopUpController.setContentMessage(1, warningMessage2);
     m_confirmPopUpController.presentModally();
@@ -146,14 +146,14 @@ void EditableCellTableViewController::tryToDeleteColumn(I18n::Message warningMes
 
 bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Backspace && selectedRow() == 0) || event == Ion::Events::Clear) {
-    tryToDeleteColumn(I18n::Message::ConfirmDeleteColumn1, I18n::Message::ConfirmDeleteColumn2);
+    presentClearSelectedColumnPopupIfClearable(I18n::Message::ConfirmDeleteColumn1, I18n::Message::ConfirmDeleteColumn2);
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
      ColumnParameterController * columnParam = columnParameterController();
     if (columnParam != nullptr) {
       columnParam->initializeColumnParameters(); // Always initialize before pushing
-      columnParam->selectRow(0);
+      columnParam->selectRow(0); // Reset here because we want to stay on the same row if we come from a submenu
       stackController()->push(columnParam);
     }
     return true;
@@ -161,8 +161,8 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void EditableCellTableViewController::fillColumnNameWithMessage(char * buffer, I18n::Message message) {
-  Poincare::Print::customPrintf(buffer, k_lengthOfColumnName, I18n::translate(message));
+int EditableCellTableViewController::fillColumnNameWithMessage(char * buffer, I18n::Message message) {
+  return Poincare::Print::customPrintf(buffer, ColumnParameterController::k_maxSizeOfColumnName, I18n::translate(message));
 }
 
 }

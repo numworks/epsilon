@@ -21,14 +21,13 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
   return privateFillColumnWithFormula(formula, Symbol::isRegressionSymbol);
 }
 
-void StoreController::fillColumnName(int columnIndex, char * buffer) {
+int StoreController::fillColumnName(int columnIndex, char * buffer) {
   int series = columnIndex / Store::k_numberOfColumnsPerSeries;
   int isXColumn = columnIndex % Store::k_numberOfColumnsPerSeries == 0;
   buffer[0] = isXColumn ? 'X' : 'Y';
   buffer[1] = static_cast<char>('1' + series);
-  for( int i = 2; i < Shared::k_lengthOfColumnName; i++) {
-    buffer[i] = 0;
-  }
+  buffer[2] = 0;
+  return 2;
 }
 
 }

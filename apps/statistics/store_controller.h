@@ -12,12 +12,12 @@ public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
   Shared::StoreContext * storeContext() override { return &m_statisticsContext; }
   bool fillColumnWithFormula(Poincare::Expression formula) override;
-  void fillColumnName(int columnIndex, char * buffer) override;
+  int fillColumnName(int columnIndex, char * buffer) override;
 
 private:
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
-  void fillTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
+  void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   Store * m_store;
   StatisticsContext m_statisticsContext;
   Shared::StoreParameterController m_storeParameterController;

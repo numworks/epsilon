@@ -37,32 +37,24 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
   return Shared::StoreController::setDataAtLocation(floatBody, columnIndex, rowIndex);
 }
 
-void StoreController::fillColumnName(int columnIndex, char * buffer) {
+int StoreController::fillColumnName(int columnIndex, char * buffer) {
   int series = columnIndex / Store::k_numberOfColumnsPerSeries;
   int isValueColumn = columnIndex % Store::k_numberOfColumnsPerSeries == 0;
   buffer[0] = isValueColumn ? 'V' : 'N';
   buffer[1] = static_cast<char>('1' + series);
-  for (int i = 2; i < Shared::k_lengthOfColumnName; i++) {
-    buffer[i] = 0;
-  }
+  buffer[2] = 0;
+  return 2;
 }
 
-void StoreController::fillTitleCellText(HighlightCell * cell, int columnIndex) {
+void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   assert(typeAtLocation(columnIndex, 0) == k_titleCellType);
   StoreTitleCell * myTitleCell = static_cast<StoreTitleCell *>(cell);
-  char columnName[Shared::k_lengthOfColumnName];
+  char columnName[Shared::ColumnParameterController::k_maxSizeOfColumnName];
   fillColumnName(columnIndex, columnName);
-  char * title = const_cast<char *>(myTitleCell->text());
-  I18n::Message titleType;
-  if (columnIndex % 2 == 1) {
-    titleType = I18n::Message::Frequencies;
-  } else {
-    titleType = I18n::Message::Values;
-  }
-  Poincare::Print::customPrintf(title, 50, I18n::translate(titleType), columnName);
-  // TODO : the buffer size shouldn't be 50 but special characters take more buffer space than the displayed title.
-  // The max characters displayed in the cell are 15 but the portuguese words take more buffer space.
-
+  char columnTitle[50]; // 50 is an ad-hoc value. A title cell can contain max 15 glyphs but the glyph can take more space than 1 byte in memory.
+  I18n::Message titleType = columnIndex % 2 == 1 ? I18n::Message::Frequencies : I18n::Message::Values;
+  Poincare::Print::customPrintf(columnTitle, 50, I18n::translate(titleType), columnName);
+  myTitleCell->setText(columnTitle);
 }
 
 }

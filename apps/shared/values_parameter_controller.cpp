@@ -21,7 +21,7 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
       case k_indexOfClearColumn:
       {
         stackView()->pop();
-        m_valuesController->tryToDeleteColumn();
+        m_valuesController->presentClearSelectedColumnPopupIfClearable();
         return true;
       }
       case k_indexOfSetInterval:

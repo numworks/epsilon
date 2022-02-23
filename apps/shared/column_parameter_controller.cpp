@@ -8,11 +8,6 @@ using namespace Escher;
 
 namespace Shared {
 
-ColumnParameterController::ColumnParameterController(Responder * parentResponder) :
-  SelectableListViewController(parentResponder),
-  m_columnIndex(-1)
-{ }
-
 void ColumnParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
@@ -20,10 +15,6 @@ void ColumnParameterController::didBecomeFirstResponder() {
 void ColumnParameterController::viewWillAppear() {
   resetMemoization();
   m_selectableTableView.reloadData();
-}
-
-const char * ColumnParameterController::title() {
-  return m_titleBuffer;
 }
 
 void ColumnParameterController::initializeColumnParameters() {

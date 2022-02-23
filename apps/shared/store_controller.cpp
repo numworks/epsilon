@@ -69,13 +69,12 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
 }
 
 void StoreController::setFormulaLabel() {
-  char name[Shared::k_lengthOfColumnName];
-  fillColumnName(selectedColumn(), name);
-  int i = 0;
-  while (name[i] != 0 && i < Shared::k_lengthOfColumnName - 1) {
-     i++;
+  char name[Shared::ColumnParameterController::k_maxSizeOfColumnName];
+  int filledLength = fillColumnName(selectedColumn(), name);
+  if (filledLength < Shared::ColumnParameterController::k_maxSizeOfColumnName - 1) {
+    name[filledLength] = '=';
+    name[filledLength+1] = 0;
   }
-  name[i] = '=';
   static_cast<ContentView *>(view())->formulaInputView()->setBufferText(name);
 }
 
@@ -174,7 +173,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
 }
 
-void StoreController::fillTitleCellText(HighlightCell * cell, int columnIndex) {
+void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   // Default : put column name in titleCell
   StoreTitleCell * myTitleCell = static_cast<StoreTitleCell *>(cell);
   fillColumnName(columnIndex, const_cast<char *>(myTitleCell->text()));
@@ -299,7 +298,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   return true;
 }
 
-void StoreController::sortColumn() {
+void StoreController::sortSelectedColumn() {
   static Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
     // Swap X and Y values
     double * dataX = static_cast<double*>(context);
@@ -326,9 +325,9 @@ void StoreController::sortColumn() {
 
 }
 
-void StoreController::deleteColumn() {
+void StoreController::clearSelectedColumn() {
   int series = seriesAtColumn(selectedColumn());
-  int column = selectedColumn()%DoublePairStore::k_numberOfColumnsPerSeries;
+  int column = selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries;
   if (column == 0) {
     m_store->deleteAllPairsOfSeries(series);
   } else {

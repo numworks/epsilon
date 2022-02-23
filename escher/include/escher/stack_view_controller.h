@@ -5,6 +5,7 @@
 #include <escher/stack_view.h>
 #include <escher/palette.h>
 #include <escher/solid_color_view.h>
+#include <ion/ring_buffer.h>
 #include <stdint.h>
 
 namespace Escher {

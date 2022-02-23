@@ -43,13 +43,10 @@ KDCoordinate ValuesController::columnWidth(int i) {
 }
 
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {
-  if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
-    /* The column names U_n, V_n, etc. are implemented as layout for now (see setTitleCellText of this file)
-    * Since there is no column parameters for these column, the fillColumnName is not yet implemented.
-    */
-    assert(false);
-    return -1;
-  }
+  /* The column names U_n, V_n, etc. are implemented as layout for now (see setTitleCellText of this file)
+   * Since there is no column parameters for these column, the fillColumnName is not yet implemented.
+   */
+  assert(typeAtLocation(columnIndex, 0) != k_functionTitleCellType);
   return Shared::ValuesController::fillColumnName(columnIndex, buffer);
 }
 

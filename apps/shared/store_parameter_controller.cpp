@@ -61,11 +61,8 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   if (index == k_indexOfFillFormula - 1) {
     return &m_fillFormula;
   }
-  if (index == k_indexOfClearColumn - 1) {
-    return &m_clearColumn;
-  }
-  assert(false);
-  return nullptr;
+  assert(index == k_indexOfClearColumn - 1);
+  return &m_clearColumn;
 }
 
 KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {

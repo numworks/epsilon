@@ -13,6 +13,7 @@ public:
   // Statistic
   void computeTest() override;
   bool validateInputs() override;
+  bool hasDegreeOfFreedom() override { return false; };
 
   // Chi2Statistic
   void setParameterAtPosition(int row, int column, double p) override;

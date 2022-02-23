@@ -1,9 +1,9 @@
-#ifndef ESCHER_RING_BUFFER_H
-#define ESCHER_RING_BUFFER_H
+#ifndef ION_RING_BUFFER_H
+#define ION_RING_BUFFER_H
 
 #include <assert.h>
 
-namespace Escher {
+namespace Ion {
 
 // All implementations are in header to avoid having to specify templates
 

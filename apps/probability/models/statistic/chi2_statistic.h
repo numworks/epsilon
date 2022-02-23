@@ -13,7 +13,6 @@ class Chi2Statistic : public CachedStatistic {
 public:
   Chi2Statistic();
   Poincare::Layout testCriticalValueSymbol() override;
-  bool hasDegreeOfFreedom() override { return true; }
   double degreeOfFreedom() override { return m_degreesOfFreedom; }
 
   float canonicalDensityFunction(float x) const override;

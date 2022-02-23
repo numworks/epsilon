@@ -76,12 +76,14 @@ protected:
     bool m_displayFormulaInputView;
   };
 
+  Escher::StackViewController * stackController() const override;
   Escher::Responder * tabController() const override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
   int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
   bool privateFillColumnWithFormula(Poincare::Expression formula, Poincare::ExpressionNode::isVariableTest isVariable);
-  virtual void fillTitleCell(StoreTitleCell * titleCell, int columnIndex);
+  void fillTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
+  void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
 

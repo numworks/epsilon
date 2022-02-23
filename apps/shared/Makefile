@@ -94,7 +94,6 @@ app_shared_src = $(addprefix apps/shared/,\
   text_field_delegate_app.cpp \
   text_field_with_extension.cpp \
   values_controller.cpp \
-  values_function_parameter_controller.cpp \
   values_parameter_controller.cpp \
   vertical_cursor_view.cpp \
   xy_banner_view.cpp\

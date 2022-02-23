@@ -17,7 +17,7 @@ public:
 private:
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
-  void fillTitleCell(Shared::StoreTitleCell * titleCell, int columnIndex) override;
+  void fillTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   Store * m_store;
   StatisticsContext m_statisticsContext;
   Shared::StoreParameterController m_storeParameterController;

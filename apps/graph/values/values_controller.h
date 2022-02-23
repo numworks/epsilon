@@ -90,10 +90,15 @@ private:
   void fillMemoizedBuffer(int i, int j, int index) override;
 
   // Parameter controllers
-  Escher::ViewController * functionParameterController() override;
+  Shared::ColumnParameterController * functionParameterController() override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
   /* The paramater i should be the column index and symbolTypeAtColumn changes
    * it to be the relative column index within the sub table. */
+
+  //Column name and title cells
+  void fillColumnName(int columnIndex, char * buffer) override;
+  void fillTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
+  void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
 
   // Cells & View
   Shared::Hideable * hideableCellFromType(Escher::HighlightCell * cell, int type);

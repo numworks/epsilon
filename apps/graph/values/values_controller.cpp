@@ -76,7 +76,6 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     StoreCell * storeCell = static_cast<StoreCell *>(cell);
     storeCell->setSeparatorLeft(i > 0);
   }
-
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
   if (j > numberOfElementsInCol + 1) {
     if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
@@ -90,7 +89,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
       hideableCellFromType(cell, typeAtLoc)->setHide(false);
     }
   }
-  if (j == numberOfElementsInCol+1) {
+  if (j == numberOfElementsInCol + 1) {
     static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
     if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
       hideableCellFromType(cell, typeAtLoc)->reinit();
@@ -99,36 +98,46 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
 
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
+}
 
-  if (typeAtLoc == k_abscissaTitleCellType) {
-    AbscissaTitleCell * myTitleCell = static_cast<AbscissaTitleCell *>(cell);
-    myTitleCell->setMessage(valuesParameterMessageAtColumn(i));
-    myTitleCell->setSeparatorLeft(i > 0);
-    return;
-  }
-  if (typeAtLoc == k_functionTitleCellType) {
-    Shared::BufferFunctionTitleCell * myFunctionCell = static_cast<Shared::BufferFunctionTitleCell *>(cell);
+void ValuesController::fillColumnName(int columnIndex, char * buffer) {
+  if (typeAtLocation(columnIndex, 0) ==  k_functionTitleCellType) {
     const size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
-    char bufferName[bufferNameSize];
     bool isDerivative = false;
-    Ion::Storage::Record record = recordAtColumn(i, &isDerivative);
+    Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
     Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
-    myFunctionCell->setHorizontalAlignment(KDContext::k_alignCenter);
     if (isDerivative) {
-      function->derivativeNameWithArgument(bufferName, bufferNameSize);
+      function->derivativeNameWithArgument(buffer, bufferNameSize);
     } else {
       if (function->isNamed()) {
-        function->nameWithArgument(bufferName, bufferNameSize);
+        function->nameWithArgument(buffer, bufferNameSize);
       } else {
-        PoincareHelpers::Serialize(function->originalEquation(&record), bufferName, bufferNameSize, Preferences::VeryShortNumberOfSignificantDigits);
+        PoincareHelpers::Serialize(function->originalEquation(&record), buffer, bufferNameSize, Preferences::VeryShortNumberOfSignificantDigits);
         // Serialization may have introduced system parentheses.
-        SerializationHelper::ReplaceSystemParenthesesByUserParentheses(bufferName, bufferNameSize-1);
+        SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer, bufferNameSize - 1);
       }
     }
-    myFunctionCell->setText(bufferName);
-    myFunctionCell->setColor(function->color());
     return;
   }
+  Shared::ValuesController::fillColumnName(columnIndex, buffer);
+}
+
+void ValuesController::fillTitleCellText(HighlightCell * cell, int columnIndex) {
+  if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
+    BufferFunctionTitleCell * myTitleCell = static_cast<BufferFunctionTitleCell *>(cell);
+    fillColumnName(columnIndex, const_cast<char *>(myTitleCell->text()));
+    return;
+  }
+  Shared::ValuesController::fillTitleCellText(cell, columnIndex);
+}
+
+void ValuesController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
+  if (columnIndex > 0 &&typeAtLocation(columnIndex, 0)  == k_abscissaTitleCellType) {
+    AbscissaTitleCell * myCell = static_cast<AbscissaTitleCell *>(cell);
+    myCell->setSeparatorLeft(true);
+    return;
+  }
+  Shared::ValuesController::setTitleCellStyle(cell, columnIndex);
 }
 
 int ValuesController::typeAtLocation(int i, int j) {
@@ -316,7 +325,7 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
 
 // Parameter controllers
 
-ViewController * ValuesController::functionParameterController() {
+ColumnParameterController * ValuesController::functionParameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
   if (!functionStore()->modelForRecord(record)->isAlongX()) {

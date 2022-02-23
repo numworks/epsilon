@@ -31,7 +31,12 @@ protected:
   static constexpr KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
   static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 
+  void fillColumnNameWithMessage(char * buffer, I18n::Message message);
   virtual ColumnParameterController * columnParameterController() = 0;
+  virtual Escher::StackViewController * stackController() const = 0;
+
+  virtual void fillTitleCellText(Escher::HighlightCell * cell, int columnIndex) = 0;
+  virtual void setTitleCellStyle(Escher::HighlightCell * cell, int columnIndex) = 0;
 
 private:
   virtual void didChangeCell(int column, int row) {}

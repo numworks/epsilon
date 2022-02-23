@@ -598,10 +598,10 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         Expression e = child.childAtIndex(0);
         if (e.sign(context) == ExpressionNode::Sign::Positive) {
           multiplicationIndex.removeChildAtIndexInPlace(i);
-          // multiplicationIndex.squashUnaryHierarchyInPlace(); // if the multiplication had only 2 children
           Power result = Power::Builder(e, multiplicationIndex);
+          multiplicationIndex.shallowReduce(reductionContext);
           replaceWithInPlace(result);
-          return result.deepReduce(reductionContext);
+          return result.shallowReduce(reductionContext);
         }
       }
     }

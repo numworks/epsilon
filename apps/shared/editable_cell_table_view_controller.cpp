@@ -145,7 +145,7 @@ void EditableCellTableViewController::tryToDeleteColumn(I18n::Message warningMes
 }
 
 bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Backspace && selectedRow() == 0) {
+  if ((event == Ion::Events::Backspace && selectedRow() == 0) || event == Ion::Events::Clear) {
     tryToDeleteColumn(I18n::Message::ConfirmDeleteColumn1, I18n::Message::ConfirmDeleteColumn2);
     return true;
   }

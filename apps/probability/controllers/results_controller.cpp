@@ -36,7 +36,7 @@ void ResultsController::didBecomeFirstResponder() {
 }
 
 ViewController::TitlesDisplay Probability::ResultsController::titlesDisplay() {
-  if (App::app()->categoricalType() == Data::CategoricalType::Unset) {
+  if (App::app()->categoricalType() != Data::CategoricalType::Homogeneity) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   return ViewController::TitlesDisplay::DisplayLastTitle;
@@ -57,6 +57,14 @@ const char * Probability::ResultsController::title() {
           confidence,
           m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     }
+    return m_titleBuffer;
+  }
+  if (App::app()->categoricalType() == Data::CategoricalType::Goodness) {
+    Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), "%s=%*.*ed %s=%*.*ed",
+        m_statistic->degreeOfFreedomSymbol(),
+        m_statistic->degreeOfFreedom(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+        I18n::translate(I18n::Message::GreekAlpha),
+        m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     return m_titleBuffer;
   }
   return nullptr;

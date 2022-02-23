@@ -15,6 +15,9 @@ StatisticGraphController::StatisticGraphController(StackViewController * stack,
 }
 
 ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {
+  if (App::app()->categoricalType() == Data::CategoricalType::Goodness) {
+    return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
+  }
   bool isCategoricalGraph = App::app()->subapp() == Data::SubApp::Tests &&
                             App::app()->test() == Data::Test::Categorical;
   return isCategoricalGraph ? ViewController::TitlesDisplay::DisplayLastTwoTitles

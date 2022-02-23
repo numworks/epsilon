@@ -77,7 +77,7 @@ bool InputCategoricalController::ButtonAction(void * c, void * s) {
     return false;
   }
   controller->m_statistic->computeTest();
-  controller->stackOpenPage(controller->m_resultsController, 0);
+  controller->stackOpenPage(controller->m_resultsController, 1);
   return true;
 }
 

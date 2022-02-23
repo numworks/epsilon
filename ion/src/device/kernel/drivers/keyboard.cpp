@@ -19,7 +19,7 @@ State popState() {
   if (Queue::sharedQueue()->isEmpty()) {
     return State(-1);
   }
-  return Queue::sharedQueue()->pop();
+  return Queue::sharedQueue()->queuePop();
 }
 
 using namespace Regs;

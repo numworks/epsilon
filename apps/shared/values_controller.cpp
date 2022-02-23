@@ -1,5 +1,6 @@
 #include "values_controller.h"
 #include "function_app.h"
+#include "separable.h"
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <limits.h>
@@ -25,8 +26,7 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   m_firstMemoizedColumn(INT_MAX),
   m_firstMemoizedRow(INT_MAX),
   m_abscissaParameterController(this, this)
-{
-}
+{}
 
 void ValuesController::setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate) {
   selectableTableView()->setVerticalCellOverlap(0);
@@ -80,7 +80,6 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
-
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
@@ -92,7 +91,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace && selectedRow() > 0 &&
-      selectedRow() <= numberOfElementsInColumn(selectedColumn())) {
+    selectedRow() <= numberOfElementsInColumn(selectedColumn())) {
     int row = selectedRow();
     int column = selectedColumn();
     intervalAtColumn(column)->deleteElementAtIndex(row-1);
@@ -105,21 +104,6 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   }
   if (selectedRow() == -1) {
     return header()->handleEvent(event);
-  }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
-    ViewController * parameterController = nullptr;
-    if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
-      //m_abscissaParameterController.setPageTitle(valuesParameterMessageAtColumn(selectedColumn()));
-      intervalParameterController()->setInterval(intervalAtColumn(selectedColumn()));
-      setStartEndMessages(intervalParameterController(), selectedColumn());
-      parameterController = &m_abscissaParameterController;
-    } else {
-      parameterController = functionParameterController();
-    }
-    if (parameterController) {
-      stackController()->push(parameterController);
-    }
-    return true;
   }
   return false;
 }
@@ -155,14 +139,16 @@ int ValuesController::numberOfColumns() const {
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
+  int typeAtLoc = typeAtLocation(i,j);
   // The cell is not a title cell and not editable
-  if (typeAtLocation(i,j) == k_notEditableValueCellType) {
+  if (typeAtLoc == k_notEditableValueCellType) {
     // Special case: last row
     if (j == numberOfElementsInColumn(i) + 1) {
       static_cast<EvenOddBufferTextCell *>(cell)->setText("");
     } else {
       static_cast<EvenOddBufferTextCell *>(cell)->setText(memoizedBufferForCell(i, j));
     }
+    return;
   }
 }
 
@@ -226,6 +212,14 @@ Responder * ValuesController::defaultController() {
 }
 
 // EditableCellTableViewController
+
+ColumnParameterController * ValuesController::columnParameterController() {
+  if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
+    return  &m_abscissaParameterController;
+  } else {
+    return functionParameterController();
+  }
+}
 
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   intervalAtColumn(columnIndex)->setElement(rowIndex-1, floatBody);
@@ -363,6 +357,35 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
 
 void ValuesController::deleteColumn() {
    intervalAtColumn(selectedColumn())->clear();
+}
+
+void ValuesController::fillColumnName(int columnIndex, char * buffer) {
+  if (typeAtLocation(columnIndex, 0) ==  k_abscissaTitleCellType) {
+    fillColumnNameWithMessage(buffer, valuesParameterMessageAtColumn(columnIndex));
+    return;
+  }
+}
+
+void ValuesController::fillTitleCellText(HighlightCell * cell, int columnIndex) {
+  if (typeAtLocation(columnIndex,0) == k_abscissaTitleCellType) {
+    EvenOddMessageTextCell * myTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
+    myTitleCell->setMessage(valuesParameterMessageAtColumn(columnIndex));
+    return;
+  }
+}
+
+void ValuesController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
+  if (typeAtLocation(columnIndex,0) == k_functionTitleCellType ) {
+    FunctionTitleCell * myCell = static_cast<FunctionTitleCell *>(cell);
+    Shared::Function * function = functionStore()->modelForRecord(recordAtColumn(columnIndex)).pointer();
+    myCell->setColor(function->color());
+    return;
+  }
+}
+
+void ValuesController::initializeInterval() {
+  intervalParameterController()->setInterval(intervalAtColumn(selectedColumn()));
+  setStartEndMessages(intervalParameterController(), selectedColumn());
 }
 
 }

@@ -54,17 +54,6 @@ KDRect StoreController::ContentView::formulaFrame() const {
   return KDRect(0, bounds().height() - k_formulaInputHeight, bounds().width(), m_displayFormulaInputView ? k_formulaInputHeight : 0);
 }
 
-void StoreController::setFormulaLabel() {
-  char name[Shared::k_lengthOfColumnName];
-  fillColumnName(selectedColumn(), name);
-  int i = 0;
-  while (name[i] != 0 && i < Shared::k_lengthOfColumnName - 1) {
-     i++;
-  }
-  name[i] = '=';
-  static_cast<ContentView *>(view())->formulaInputView()->setBufferText(name);
-}
-
 StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
@@ -77,6 +66,17 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
     m_editableCells[i].setParentResponder(m_contentView.dataView());
     m_editableCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
   }
+}
+
+void StoreController::setFormulaLabel() {
+  char name[Shared::k_lengthOfColumnName];
+  fillColumnName(selectedColumn(), name);
+  int i = 0;
+  while (name[i] != 0 && i < Shared::k_lengthOfColumnName - 1) {
+     i++;
+  }
+  name[i] = '=';
+  static_cast<ContentView *>(view())->formulaInputView()->setBufferText(name);
 }
 
 void StoreController::displayFormulaInput() {
@@ -166,26 +166,25 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     myCell->setHide(true);
     return;
   }
-  bool shouldHaveLeftSeparator = i > 0 && ( i % DoublePairStore::k_numberOfColumnsPerSeries == 0);
   if (typeAtLocation(i, j) == k_editableCellType) {
     Shared::StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->setHide(false);
-    myCell->setSeparatorLeft(shouldHaveLeftSeparator);
-
-  }
-  if (typeAtLocation(i, j) == k_titleCellType) {
-    StoreTitleCell * myTitleCell = static_cast<StoreTitleCell *>(cell);
-    int seriesIndex = seriesAtColumn(i);
-    myTitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
-    fillTitleCell(myTitleCell, i);
-    myTitleCell->setSeparatorLeft(shouldHaveLeftSeparator);
+    myCell->setSeparatorLeft(i > 0 && ( i % DoublePairStore::k_numberOfColumnsPerSeries == 0));
   }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
 }
 
-void StoreController::fillTitleCell(StoreTitleCell * titleCell, int columnIndex) {
+void StoreController::fillTitleCellText(HighlightCell * cell, int columnIndex) {
   // Default : put column name in titleCell
-  fillColumnName(columnIndex, const_cast<char *>(titleCell->text()));
+  StoreTitleCell * myTitleCell = static_cast<StoreTitleCell *>(cell);
+  fillColumnName(columnIndex, const_cast<char *>(myTitleCell->text()));
+}
+
+void StoreController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
+  int seriesIndex = seriesAtColumn(columnIndex);
+  Shared::StoreTitleCell * myCell = static_cast<Shared::StoreTitleCell *>(cell);
+  myCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
+  myCell->setSeparatorLeft(columnIndex > 0 && ( columnIndex % DoublePairStore::k_numberOfColumnsPerSeries == 0));
 }
 
 const char * StoreController::title() {
@@ -221,6 +220,10 @@ void StoreController::didBecomeFirstResponder() {
   }
   EditableCellTableViewController::didBecomeFirstResponder();
   Container::activeApp()->setFirstResponder(&m_contentView);
+}
+
+StackViewController * StoreController::stackController() const {
+  return (StackViewController *)(parentResponder()->parentResponder());
 }
 
 Responder * StoreController::tabController() const {

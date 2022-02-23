@@ -47,10 +47,12 @@ void StoreController::fillColumnName(int columnIndex, char * buffer) {
   }
 }
 
-void StoreController::fillTitleCell(Shared::StoreTitleCell * titleCell, int columnIndex) {
+void StoreController::fillTitleCellText(HighlightCell * cell, int columnIndex) {
+  assert(typeAtLocation(columnIndex, 0) == k_titleCellType);
+  StoreTitleCell * myTitleCell = static_cast<StoreTitleCell *>(cell);
   char columnName[Shared::k_lengthOfColumnName];
   fillColumnName(columnIndex, columnName);
-  char * title = const_cast<char *>(titleCell->text());
+  char * title = const_cast<char *>(myTitleCell->text());
   I18n::Message titleType;
   if (columnIndex % 2 == 1) {
     titleType = I18n::Message::Frequencies;

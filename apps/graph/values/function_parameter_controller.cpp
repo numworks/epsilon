@@ -9,10 +9,14 @@ using namespace Escher;
 namespace Graph {
 
 FunctionParameterController::FunctionParameterController(ValuesController * valuesController) :
-  ValuesFunctionParameterController(),
+  ColumnParameterController(valuesController),
   m_displayDerivativeColumn(I18n::Message::DerivativeFunctionColumn),
-  m_valuesController(valuesController)
-{
+  m_valuesController(valuesController),
+  m_record()
+{ }
+
+Shared::EditableCellTableViewController * FunctionParameterController::editableCellTableViewController() {
+  return m_valuesController;
 }
 
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
@@ -22,16 +26,11 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
       {
         bool isDisplayingDerivative = function()->displayDerivative();
         function()->setDisplayDerivative(!isDisplayingDerivative);
-        m_valuesController->selectCellAtLocation(isDisplayingDerivative ? m_selectedFunctionColumn : m_selectedFunctionColumn + 1, m_valuesController->selectedRow());
+        m_valuesController->selectCellAtLocation(isDisplayingDerivative ?  m_valuesController->selectedColumn() :  m_valuesController->selectedColumn() + 1, m_valuesController->selectedRow());
         resetMemoization();
         m_selectableTableView.reloadData();
         return true;
       }
-#if COPY_COLUMN
-    case 1:
-    /* TODO: implement function copy column */
-      return true;
-#endif
       default:
         assert(false);
         return false;
@@ -47,17 +46,8 @@ int FunctionParameterController::numberOfRows() const {
 HighlightCell * FunctionParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-#if COPY_COLUMN
-  HighlightCell * cells[] = {&m_displayDerivativeColumn, &m_copyColumn};
-#else
   HighlightCell * cells[] = {&m_displayDerivativeColumn};
-#endif
   return cells[index];
-}
-
-void FunctionParameterController::viewWillAppear() {
-  ValuesFunctionParameterController::viewWillAppear();
-  m_selectedFunctionColumn = m_valuesController->selectedColumn();
 }
 
 void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

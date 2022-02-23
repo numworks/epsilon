@@ -8,7 +8,7 @@
 
 namespace Shared {
 
-static constexpr int k_lengthOfColumnName = 4;
+static constexpr int k_lengthOfColumnName = 15;
 
 class EditableCellTableViewController;
 

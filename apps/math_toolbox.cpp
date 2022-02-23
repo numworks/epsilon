@@ -377,30 +377,10 @@ constexpr ToolboxMessageTree randomChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::RandintCommandWithArg, I18n::Message::RandomInteger),
 };
 
-constexpr ToolboxMessageTree predictionChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::Prediction95CommandWithArg, I18n::Message::Prediction95),
-  ToolboxMessageTree::Leaf(I18n::Message::PredictionCommandWithArg, I18n::Message::Prediction),
-  ToolboxMessageTree::Leaf(I18n::Message::ConfidenceCommandWithArg, I18n::Message::ConfidenceInterval)
-};
-
-constexpr ToolboxMessageTree probabilityChildrenForMetricToolbox[] = {
+constexpr ToolboxMessageTree probabilityChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::Combinatorics, combinatoricsChildren),
   ToolboxMessageTree::Node(I18n::Message::Distributions, probabilityLawsChildren),
   ToolboxMessageTree::Node(I18n::Message::Random, randomChildren),
-  ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren),
-};
-
-/* Prediction functions aren't visible for US country, which is the only country
- * with imperial units for now. */
-constexpr ToolboxMessageTree probabilityChildrenForImperialToolbox[] = {
-  ToolboxMessageTree::Node(I18n::Message::Combinatorics, combinatoricsChildren),
-  ToolboxMessageTree::Node(I18n::Message::Distributions, probabilityLawsChildren),
-  ToolboxMessageTree::Node(I18n::Message::Random, randomChildren),
-};
-
-constexpr ToolboxMessageTree probabilityChildrenFork[] = {
-  ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildrenForMetricToolbox),
-  ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildrenForImperialToolbox),
 };
 
 constexpr ToolboxMessageTree matricesChildren[] = {
@@ -480,7 +460,7 @@ constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
   ToolboxMessageTree::Node(I18n::Message::Calculus, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
-  ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildrenFork, true),
+  ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitAndConstant, unitChildren),
   ToolboxMessageTree::Node(I18n::Message::MatricesAndVectors, matricesVectorsChildren),
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),

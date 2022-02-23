@@ -392,7 +392,6 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("atanh(1)", HyperbolicArcTangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("binomial(2,1)", BinomialCoefficient::Builder(BasedInteger::Builder(2),BasedInteger::Builder(1)));
   assert_parsed_expression_is("ceil(1)", Ceiling::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("confidence(1,2)", ConfidenceInterval::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("cross(1,1)", VectorCross::Builder(BasedInteger::Builder(1),BasedInteger::Builder(1)));
   assert_text_not_parsable("diff(1,2,3)");
   assert_text_not_parsable("diff(0,_s,0)");
@@ -424,9 +423,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("log(1,2)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("log{2}(1)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("permute(2,1)", PermuteCoefficient::Builder(BasedInteger::Builder(2),BasedInteger::Builder(1)));
-  assert_parsed_expression_is("prediction95(1,2)", PredictionInterval::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("norm(1)", VectorNorm::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("prediction(1,2)", SimplePredictionInterval::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("product(1,n,2,3)", Product::Builder(BasedInteger::Builder(1),Symbol::Builder("n",1),BasedInteger::Builder(2),BasedInteger::Builder(3)));
   assert_text_not_parsable("product(1,2,3,4)");
   assert_text_not_parsable("product(1,_s,3,4)");

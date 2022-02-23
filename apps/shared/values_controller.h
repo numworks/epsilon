@@ -8,7 +8,6 @@
 #include "editable_cell_table_view_controller.h"
 #include "interval.h"
 #include "values_parameter_controller.h"
-#include "values_function_parameter_controller.h"
 #include "interval_parameter_controller.h"
 #include <apps/i18n.h>
 #include <escher/even_odd_buffer_text_cell.h>
@@ -46,8 +45,7 @@ public:
   Escher::Responder * defaultController() override;
 
   virtual IntervalParameterController * intervalParameterController() = 0;
-
-  void fillColumnName(int columnIndex, char * buffer) override { buffer[0] = 'x';}
+  void initializeInterval();
 
 protected:
   // The cellWidth is increased by 10 pixels to avoid displaying more than 4 columns on the screen (and thus decrease the number of memoized cell)
@@ -67,7 +65,7 @@ protected:
   void setupSelectableTableViewAndCells(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   // Parent controller getters
-  Escher::StackViewController * stackController() const;
+  Escher::StackViewController * stackController() const override;
   Responder * tabController() const override;
 
   // Model getters
@@ -93,7 +91,11 @@ protected:
   virtual char * memoizedBufferAtIndex(int i) = 0;
   virtual int numberOfMemoizedColumn() = 0;
 
-  virtual ColumnParameterController * columnParameterController() override { return &m_abscissaParameterController; }
+  ColumnParameterController * columnParameterController() override;
+
+  void fillColumnName(int columnIndex, char * buffer) override;
+  void fillTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
+  void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
 
 private:
   // Specialization depending on the abscissa names (x, n, t...)
@@ -137,7 +139,7 @@ private:
   virtual Escher::EvenOddEditableTextCell * abscissaCells(int j) = 0;
   virtual int abscissaTitleCellsCount() const = 0;
   virtual Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) = 0;
-  virtual ViewController * functionParameterController() = 0;
+  virtual ColumnParameterController * functionParameterController() = 0;
 
   void deleteColumn() override;
   bool isColumnDeletable(int columnIndex) override { return columnIndex == 0;}

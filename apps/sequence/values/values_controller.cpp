@@ -17,9 +17,6 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   m_floatCells{},
   m_abscissaTitleCell(),
   m_abscissaCells{},
-#if COPY_COLUMN
-  m_sequenceParameterController('n'),
-#endif
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
@@ -45,19 +42,25 @@ KDCoordinate ValuesController::columnWidth(int i) {
   return k_cellWidth;
 }
 
-void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
-  if (typeAtLocation(i,j) == k_abscissaTitleCellType) {
-    EvenOddMessageTextCell * mytitleCell = static_cast<EvenOddMessageTextCell *>(cell);
-    mytitleCell->setMessage(I18n::Message::N);
+void ValuesController::fillColumnName(int columnIndex, char * buffer) {
+  if (typeAtLocation(columnIndex, 0) ==  k_functionTitleCellType) { //This is a layout so it can't be handle as char*.
+    for( int i = 0; i < Shared::k_lengthOfColumnName; i++) {
+      buffer[i] = 0;
+    }
     return;
   }
-  if (typeAtLocation(i,j) == k_functionTitleCellType) {
+  Shared::ValuesController::fillColumnName(columnIndex, buffer);
+}
+
+
+void ValuesController::fillTitleCellText(HighlightCell * cell, int columnIndex) {
+  if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
     Shared::SequenceTitleCell * myCell = static_cast<Shared::SequenceTitleCell *>(cell);
-    Shared::Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(i));
+    Shared::Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
     myCell->setLayout(sequence->nameLayout());
-    myCell->setColor(sequence->color());
+    return;
   }
+  Shared::ValuesController::fillTitleCellText(cell, columnIndex);
 }
 
 // AlternateEmptyViewDelegate
@@ -74,7 +77,7 @@ void ValuesController::setDefaultStartEndMessages() {
 }
 
 I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
-  return I18n::Message::NColumn;
+  return I18n::Message::N;
 }
 
 // EditableCellViewController
@@ -104,13 +107,8 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
 
 // Parameters controllers getter
 
-ViewController * ValuesController::functionParameterController() {
-#if COPY_COLUMN
-  m_sequenceParameterController.setRecord(recordAtColumn(selectedColumn()));
-  return &m_sequenceParameterController;
-#else
+Shared::ColumnParameterController * ValuesController::functionParameterController() {
   return nullptr;
-#endif
 }
 
 }

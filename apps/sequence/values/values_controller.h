@@ -14,7 +14,6 @@ public:
 
   // TableViewDataSource
   KDCoordinate columnWidth(int i) override;
-  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   // ButtonRowDelegate
   Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
@@ -61,7 +60,7 @@ private:
 
 
   // Parameters controllers getter
-  Escher::ViewController * functionParameterController() override;
+  Shared::ColumnParameterController * functionParameterController() override;
 
   // Cells & view
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
@@ -84,14 +83,15 @@ private:
     return &m_floatCells[j];
   }
 
+  void fillColumnName(int columnIndex, char * buffer) override;
+  void fillTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
+
   Escher::SelectableTableView m_selectableTableView;
   Shared::SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
   Escher::EvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
   Escher::EvenOddMessageTextCell m_abscissaTitleCell;
   Escher::EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];
-#if COPY_COLUMN
-  Shared::ValuesFunctionParameterController m_sequenceParameterController;
-#endif
+
   IntervalParameterController m_intervalParameterController;
   Escher::Button m_setIntervalButton;
   mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];

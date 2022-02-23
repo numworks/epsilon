@@ -8,6 +8,7 @@
 #include <escher/stack_view_controller.h>
 #include <cmath>
 #include <algorithm>
+#include <poincare/print.h>
 
 using namespace Escher;
 using namespace Poincare;
@@ -83,6 +84,11 @@ KDCoordinate EditableCellTableViewController::rowHeight(int j) {
 }
 
 void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Preferences::PrintFloatMode floatDisplayMode) {
+  if (j == 0) {
+    fillTitleCellText(cell, i);
+    setTitleCellStyle(cell, i);
+    return;
+  }
   /* If the cell is editable, make sure it is not being edited.
    * Otherwise, the cell background is white whichever it is an odd or even cell
    * and we do not want to redraw the cell twice (in the even/odd color and
@@ -144,15 +150,19 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
-    StackViewController * stack = reinterpret_cast<StackViewController *>(parentResponder()->parentResponder());
-    ColumnParameterController * columnParam = columnParameterController();
+     ColumnParameterController * columnParam = columnParameterController();
     if (columnParam != nullptr) {
       columnParam->initializeColumnParameters(); // Always initialize before pushing
       columnParam->selectRow(0);
-      stack->push(columnParam);
+      stackController()->push(columnParam);
     }
+    return true;
   }
   return false;
+}
+
+void EditableCellTableViewController::fillColumnNameWithMessage(char * buffer, I18n::Message message) {
+  Poincare::Print::customPrintf(buffer, k_lengthOfColumnName, I18n::translate(message));
 }
 
 }

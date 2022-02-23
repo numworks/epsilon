@@ -15,7 +15,10 @@ StatisticGraphController::StatisticGraphController(StackViewController * stack,
 }
 
 ViewController::TitlesDisplay StatisticGraphController::titlesDisplay() {
-  if (App::app()->subapp() == Data::SubApp::Intervals || App::app()->categoricalType() == Data::CategoricalType::Goodness) {
+  if (App::app()->categoricalType() == Data::CategoricalType::Goodness) {
+    return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
+  }
+  if (App::app()->subapp() == Data::SubApp::Intervals) {
     return ViewController::TitlesDisplay::DisplayLastThreeTitles;
   }
   return ViewController::TitlesDisplay::DisplayLastFourTitles;

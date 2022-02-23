@@ -62,6 +62,7 @@ public:
   /* The p-value is the probability of obtaining a results at least
    * as extreme as what was observed with the sample */
   virtual double pValue() const = 0;
+  const char * degreeOfFreedomSymbol() { return "df"; }
   virtual bool hasDegreeOfFreedom() = 0;
   virtual double degreeOfFreedom() { return -1; }
   /* Returns the value above/below (depending on the operator) which the probability

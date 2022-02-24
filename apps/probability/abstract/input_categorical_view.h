@@ -26,14 +26,15 @@ public:
                        Escher::Invocation invocation,
                        TableViewController * tableViewController,
                        Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-                       Escher::TextFieldDelegate * textFieldDelegate);
+                       Escher::TextFieldDelegate * textFieldDelegate,
+                       View * contentView);
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
   using Escher::ScrollView::layoutSubviews;  // Made public
   KDSize contentSize() const override {
     return KDSize(maxContentWidthDisplayableWithoutScrolling(),
-                  m_contentView.minimalSizeForOptimalDisplay().height());
+                  constContentView()->minimalSizeForOptimalDisplay().height());
   }
 
   // Responder
@@ -50,53 +51,34 @@ public:
 
   constexpr static int k_indexOfTable = 0;
   constexpr static int k_indexOfInnerLayout = 1;
-  constexpr static int k_indexOfSignificance = 1;
-  constexpr static int k_indexOfSpacer = 2;
-  constexpr static int k_indexOfNext = 3;
 
-private:
-  /* Layout a Table, a cell and a button separated by spacers. */
+  virtual int indexOfSignificance() = 0;
+  virtual int indexOfSpacer() = 0;
+  virtual int indexOfNext() = 0;
+
+protected:
   class ContentView : public Escher::VerticalLayout {
   public:
-    ContentView(Escher::SelectableTableView * dataInputTableView,
-                Escher::MessageTableCellWithEditableTextWithMessage * significanceCell,
-                Escher::Button * next);
+    ContentView(Escher::SelectableTableView * dataInputTableView) : m_dataInputTableView(dataInputTableView) {}
     int numberOfSubviews() const override { return 2 /* Table + InnerVerticalLayout */; }
     Escher::View * subviewAtIndex(int i) override;
     void setTableView(Escher::SelectableTableView * tableView) { m_dataInputTableView = tableView; }
 
-  private:
-    /* Layout cell and button with side margins */
-    class InnerVerticalLayout : public Escher::VerticalLayout {
-    public:
-      InnerVerticalLayout(Escher::MessageTableCellWithEditableTextWithMessage * significanceCell,
-                          Escher::Button * next) :
-            VerticalLayout(Escher::Palette::WallScreenDark),
-            m_significanceCell(significanceCell),
-            m_next(next) {
-        setSecondaryDirectionMargin(Escher::Metric::CommonMargin);
-      };
-      Escher::View * subviewAtIndex(int i) override;
-      int numberOfSubviews() const override { return 2; }
-
-    private:
-      Escher::MessageTableCellWithEditableTextWithMessage * m_significanceCell;
-      Escher::Button * m_next;
-    };
-
+  protected:
+    virtual Escher::View * innerView() = 0;
     Escher::SelectableTableView * m_dataInputTableView;
-    InnerVerticalLayout m_innerView;
   };
 
   constexpr static int k_marginVertical = 5;
-  Responder * responderForRow(int row);
+  virtual Responder * responderForRow(int row);
   void setResponderForSelectedRow();
-  void highlightCorrectView();
+  virtual void highlightCorrectView() = 0;
+  virtual ContentView * contentView() = 0;
+  virtual ContentView * constContentView() const = 0;
 
   TableViewController * m_tableViewController;
   Escher::MessageTableCellWithEditableTextWithMessage m_significanceCell;
   Shared::ButtonWithSeparator m_next;
-  ContentView m_contentView;
 
   Escher::SelectableTableViewDataSource m_viewSelection;
   Escher::ScrollViewDataSource m_scrollDataSource;

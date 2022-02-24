@@ -9,9 +9,11 @@ GoodnessTableViewController::GoodnessTableViewController(
     Escher::Responder * parent,
     GoodnessStatistic * statistic,
     DynamicSizeTableViewDataSourceDelegate * delegate,
-    Escher::SelectableTableViewDelegate * scrollDelegate) :
+    Escher::SelectableTableViewDelegate * scrollDelegate,
+    InputGoodnessView * inputGoodnessView) :
       TableViewController(parent),
       m_statistic(statistic),
+      m_inputGoodnessView(inputGoodnessView),
       m_inputTableView(this, statistic, this, this, delegate, scrollDelegate) {
 }
 
@@ -37,10 +39,16 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
+  int previousDegreeOfFreedom = m_statistic->computeDegreesOfFreedom();
   m_statistic->setParameterAtPosition(selectedRow - 1, selectedColumn, p);
   if (m_inputTableView.selectedRow() == m_inputTableView.numberOfRows() - 1 &&
       m_inputTableView.numberOfRows() <= m_statistic->maxNumberOfRows()) {
     m_inputTableView.recomputeNumberOfRows();
+  }
+  int newDegreeOfFreedom = m_statistic->computeDegreesOfFreedom();
+  if (previousDegreeOfFreedom != newDegreeOfFreedom) {
+    m_statistic->setDegreeOfFreedom(newDegreeOfFreedom);
+    m_inputGoodnessView->reloadDegreeOfFreedomCell(newDegreeOfFreedom);
   }
 
   m_inputTableView.reloadCellAtLocation(selectedColumn, selectedRow);
@@ -77,6 +85,10 @@ void GoodnessTableViewController::deleteSelectedValue() {
        * moved up multiple cells, m_inputTableView should be reloaded. */
       tableView()->reloadData(false);
     }
+    // Number of non-empty rows changed, update degree of freedom.
+    int newDegreeOfFreedom = m_statistic->computeDegreesOfFreedom();
+    m_statistic->setDegreeOfFreedom(newDegreeOfFreedom);
+    m_inputGoodnessView->reloadDegreeOfFreedomCell(newDegreeOfFreedom);
     tableView()->selectCellAtClippedLocation(col, row, false);
   }
 }
@@ -87,6 +99,17 @@ void GoodnessTableViewController::initCell(EvenOddEditableTextCell, void * cell,
   c->editableTextCell()->textField()->setDelegates(Probability::App::app(), this);
   c->setEven((index / 2) % 2 == 1);
   c->setFont(KDFont::SmallFont);
+}
+
+void GoodnessTableViewController::recomputeDimensions() {
+  // Update degree of freedom if Number of non-empty rows changed
+  int previousDegreeOfFreedom = m_statistic->computeDegreesOfFreedom();
+  m_inputTableView.recomputeNumberOfRows();
+  int newDegreeOfFreedom = m_statistic->computeDegreesOfFreedom();
+  if (previousDegreeOfFreedom != newDegreeOfFreedom) {
+    m_statistic->setDegreeOfFreedom(newDegreeOfFreedom);
+    m_inputGoodnessView->reloadDegreeOfFreedomCell(newDegreeOfFreedom);
+  }
 }
 
 }  // namespace Probability

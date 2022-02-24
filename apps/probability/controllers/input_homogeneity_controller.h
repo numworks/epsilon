@@ -3,6 +3,7 @@
 
 #include "homogeneity_table_view_controller.h"
 #include "probability/abstract/input_categorical_controller.h"
+#include "probability/abstract/input_homogeneity_view.h"
 #include "probability/models/statistic/homogeneity_statistic.h"
 #include "results_homogeneity_controller.h"
 
@@ -24,7 +25,7 @@ public:
 private:
   InputCategoricalView * contentView() override { return &m_contentView; }
   HomogeneityTableViewController m_tableController;
-  InputCategoricalView m_contentView;
+  InputHomogeneityView m_contentView;
 };
 
 }  // namespace Probability

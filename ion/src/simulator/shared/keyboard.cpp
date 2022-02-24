@@ -3,11 +3,11 @@
 #include "window.h"
 
 #include <ion/keyboard.h>
+#include <ion/src/shared/keyboard.h>
+#include <ion/src/shared/keyboard_queue.h>
 #include <SDL.h>
 
 using namespace Ion::Keyboard;
-
-static State sKeyboardState;
 
 class KeySDLKeyPair {
 public:
@@ -48,11 +48,12 @@ namespace Ion {
 namespace Keyboard {
 
 State scan() {
-  State state = sKeyboardState;
+  State state(0);
 
   if (Simulator::Window::isHeadless()) {
     return state;
   }
+
   // We need to tell SDL to get new state from the host OS
   SDL_PumpEvents();
 
@@ -79,17 +80,8 @@ State scan() {
     }
   }
 
+  keyboardWasScanned(state);
   return state;
-}
-
-State popState() {
-  static State oldState = State(0);
-  State newState = scan();
-  if (oldState == newState) {
-    return State(-1);
-  }
-  oldState = newState;
-  return newState;
 }
 
 }
@@ -100,11 +92,11 @@ namespace Simulator {
 namespace Keyboard {
 
 void keyDown(Ion::Keyboard::Key k) {
-  sKeyboardState.setKey(k);
+  Queue::sharedQueue()->push(State(k));
 }
 
 void keyUp(Ion::Keyboard::Key k) {
-  sKeyboardState.clearKey(k);
+  Queue::sharedQueue()->push(State(-1));
 }
 
 bool scanHandlesSDLKey(SDL_Scancode key) {

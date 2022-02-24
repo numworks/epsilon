@@ -5,6 +5,8 @@
 #include <ion/timing.h>
 #include <ion/src/shared/events.h>
 #include <ion/src/shared/events_modifier.h>
+#include <ion/src/shared/keyboard.h>
+#include <ion/src/shared/keyboard_queue.h>
 #include <assert.h>
 #include <algorithm>
 #include <layout_events.h>
@@ -34,6 +36,10 @@ bool handlePreemption(bool) {
   return false;
 }
 
+void setPendingKeyboardStateIfPreemtive(Keyboard::State state) {}
+
+void resetPendingKeyboardState() {}
+
 /* getPlatformEvent defined in ./events_platform.cpp */
 
 void didPressNewKey() {
@@ -45,6 +51,7 @@ Keyboard::State popKeyboardState() {
 }
 
 bool waitForInterruptingEvent(int maximumDelay, int * timeout) {
+  Keyboard::scan();
   /* As pressing keys on the simulator does not generate interruptions, we need
    * to poll the keyboard more regularly than on the device. */
   constexpr int simulatorDelay = 10;
@@ -56,7 +63,7 @@ bool waitForInterruptingEvent(int maximumDelay, int * timeout) {
     Timing::msleep(maximumDelay);
     *timeout -= maximumDelay;
   }
-  return false;
+  return !Keyboard::Queue::sharedQueue()->isEmpty();
 }
 
 // ion/include/ion/events.h

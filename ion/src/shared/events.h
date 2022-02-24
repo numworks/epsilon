@@ -12,7 +12,12 @@ size_t sharedCopyText(uint8_t eventId, char * buffer, size_t bufferSize);
 bool sharedIsDefined(uint8_t eventId);
 
 /* Platform specific functions */
+
 bool handlePreemption(bool stalling);
+void setPendingKeyboardStateIfPreemtive(Keyboard::State s);
+void resetPendingKeyboardState();
+void resetKeyboardState();
+
 Event getPlatformEvent();
 void didPressNewKey();
 Keyboard::State popKeyboardState();

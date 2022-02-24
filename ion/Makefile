@@ -34,6 +34,15 @@ ion_src += $(addprefix ion/src/shared/, \
 
 # TODO EMILIE: tidy makefiles: these following should go in ion/src/device/Makefile?
 
+ion_device_bench_src += $(addprefix ion/src/shared/, \
+  console_line.cpp \
+  decompress.cpp \
+  unicode/utf8_decoder.cpp \
+  unicode/utf8_helper.cpp \
+  )
+
+ion_device_bench_src += ion/src/external/lz4/lz4.c
+
 ion_device_kernel_src += $(addprefix ion/src/shared/, \
   crc32_eat_byte.cpp \
   decompress.cpp \
@@ -58,6 +67,8 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
   unicode/utf8_decoder.cpp\
   unicode/utf8_helper.cpp\
 )
+
+ion_device_bench_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
 ion_device_kernel_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
 ifeq ($(ESCHER_LOG_EVENTS_NAME),1)
 ion_device_userland_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp

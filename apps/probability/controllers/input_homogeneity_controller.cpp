@@ -16,7 +16,8 @@ InputHomogeneityController::InputHomogeneityController(
       m_tableController(&m_contentView,
                         statistic,
                         &m_contentView,
-                        this) {
+                        this),
+      m_contentView(this, Escher::Invocation(&InputCategoricalController::ButtonAction, this), nullptr, inputEventHandlerDelegate, this) {
   m_contentView.setTableView(&m_tableController);
 }
 

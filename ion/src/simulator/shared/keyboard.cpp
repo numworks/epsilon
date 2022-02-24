@@ -96,7 +96,7 @@ void keyDown(Ion::Keyboard::Key k) {
 }
 
 void keyUp(Ion::Keyboard::Key k) {
-  Queue::sharedQueue()->push(State(-1));
+  Queue::sharedQueue()->push(State(0));
 }
 
 bool scanHandlesSDLKey(SDL_Scancode key) {

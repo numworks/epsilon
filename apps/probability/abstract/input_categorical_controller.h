@@ -38,7 +38,7 @@ public:
   static bool ButtonAction(void * c, void * s);
 
   // ViewController
-  Escher::View * view() override { return &m_contentView; }
+  Escher::View * view() override { return contentView(); }
   Escher::ViewController::TitlesDisplay titlesDisplay() override {
     return Escher::ViewController::TitlesDisplay::DisplayLastTitle;
   }
@@ -50,9 +50,10 @@ public:
                                                bool withinTemporarySelection) override;
 
 protected:
+  virtual InputCategoricalView * contentView() = 0;
+
   Chi2Statistic * m_statistic;
   Escher::ViewController * m_resultsController;
-  InputCategoricalView m_contentView;
 };
 
 }  // namespace Probability

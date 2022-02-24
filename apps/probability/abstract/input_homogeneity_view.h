@@ -7,7 +7,6 @@ namespace Probability {
 
 /* This view contains a pointer to a TableView, an EditableCell and a Button,
  * laid out vertically, and is able to move selection between them.
- * Meant for InputHomogeneityController and InputHomogeneityController.
  */
 class InputHomogeneityView : public InputCategoricalView {
 public:

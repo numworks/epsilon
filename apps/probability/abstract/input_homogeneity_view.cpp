@@ -9,12 +9,10 @@ Escher::View * InputHomogeneityView::HomogeneityContentView::InnerVerticalLayout
   switch (i) {
     case 0:
       return m_significanceCell;
-      break;
-    case 1:
+    default:
+      assert(i==2);
       return m_next;
   }
-  assert(false);
-  return nullptr;
 }
 
 Probability::InputHomogeneityView::HomogeneityContentView::HomogeneityContentView(

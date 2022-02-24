@@ -24,6 +24,8 @@ ion_src += $(addprefix ion/src/shared/, \
   decompress.cpp \
   events.cpp \
   events_modifier.cpp \
+  keyboard.cpp \
+  keyboard_queue.cpp \
   stack_position.cpp \
   storage.cpp \
   unicode/utf8_decoder.cpp\
@@ -37,6 +39,8 @@ ion_device_kernel_src += $(addprefix ion/src/shared/, \
   decompress.cpp \
   events.cpp \
   events_modifier.cpp \
+  keyboard.cpp \
+  keyboard_queue.cpp \
 )
 
 ion_device_kernel_src += ion/src/external/lz4/lz4.c

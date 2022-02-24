@@ -1,6 +1,14 @@
 #include "keyboard_init.h"
 
 namespace Ion {
+namespace Keyboard {
+
+void keyboardWasScanned(State) {}
+
+}
+}
+
+namespace Ion {
 namespace Device {
 namespace Keyboard {
 
@@ -11,8 +19,6 @@ void init() {
 void shutdown() {
   shutdownGPIO();
 }
-
-void keyboardWasScanned(State) {}
 
 void stopPollTimer() {}
 

@@ -4,6 +4,7 @@
 #include <drivers/display.h>
 #include <drivers/usb_privileged.h>
 #include <ion/keyboard.h>
+#include <ion/src/shared/keyboard_queue.h>
 #include <ion/src/shared/events.h>
 #include <ion/src/shared/events_modifier.h>
 #include <ion/usb.h>
@@ -11,7 +12,6 @@
 #include <kernel/drivers/circuit_breaker.h>
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
-#include <kernel/drivers/keyboard_queue.h>
 #include <kernel/drivers/power.h>
 #include <kernel/drivers/timing.h>
 #include <algorithm>
@@ -24,9 +24,6 @@ namespace Events {
 
 // ion/src/shared/events.h
 
-extern Keyboard::State sLastKeyboardState;
-extern Keyboard::State sCurrentKeyboardState;
-extern uint64_t sKeysSeenUp;
 Keyboard::State sPreemtiveState(0);
 bool sStalling = false;
 
@@ -135,6 +132,16 @@ bool waitForInterruptingEvent(int maximumDelay, int * timeout) {
   Device::Board::setClockStandardFrequency();
   *timeout = std::max(0, *timeout - elapsedTime);
   return eventOccurred;
+}
+
+void resetPendingKeyboardState() {
+  sPreemtiveState = Ion::Keyboard::State(0);
+}
+
+void setPendingKeyboardStateIfPreemtive(Keyboard::State state) {
+  if (state.keyDown(Ion::Keyboard::Key::Home) || state.keyDown(Ion::Keyboard::Key::Back) || state.keyDown(Ion::Keyboard::Key::OnOff)) {
+    sPreemtiveState = state;
+  }
 }
 
 // ion/include/ion/events.h
@@ -333,22 +340,6 @@ void stall() {
     // TODO: stalling when no User/System checkpoint is set could lead to checkout the home
     // TODO: should we shutdown any interruption here to be sure to complete our drawing
     // TODO: draw a hourglass or spinning circle?
-  }
-}
-
-void resetKeyboardState() {
-  Ion::Events::sKeysSeenUp = -1;
-  /* Set the keyboard state of reference to -1 to prevent event repetition. */
-  Ion::Events::sLastKeyboardState = -1;
-}
-
-void resetPendingKeyboardState() {
-  Ion::Events::sPreemtiveState = Ion::Keyboard::State(0);
-}
-
-void setPendingKeyboardStateIfPreemtive(Ion::Keyboard::State state) {
-  if (state.keyDown(Ion::Keyboard::Key::Home) || state.keyDown(Ion::Keyboard::Key::Back) || state.keyDown(Ion::Keyboard::Key::OnOff)) {
-    Ion::Events::sPreemtiveState = state;
   }
 }
 

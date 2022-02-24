@@ -2,7 +2,7 @@
 #include <drivers/reset.h>
 #include <drivers/wakeup.h>
 #include <kernel/drivers/board.h>
-#include <kernel/drivers/keyboard_queue.h>
+#include <ion/src/shared/keyboard_queue.h>
 
 namespace Ion {
 namespace Device {

@@ -1,11 +1,11 @@
 #include <drivers/reset.h>
 #include <ion/src/shared/events.h>
+#include <ion/src/shared/keyboard_queue.h>
 #include <ion/usb.h>
 #include <kernel/drivers/authentication.h>
 #include <kernel/drivers/board.h>
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
-#include <kernel/drivers/keyboard_queue.h>
 #include <kernel/drivers/led.h>
 #include <kernel/drivers/power.h>
 #include <kernel/warning_display.h>
@@ -138,7 +138,7 @@ void waitUntilOnOffKeyReleased() {
   }
   /* Special case: Power::suspend waits for the release of the OnOff key. We
    * update sKeysSeenUp accordingly. */
-  Events::resetKeyboardState();
+  Ion::Events::resetKeyboardState();
 }
 
 }

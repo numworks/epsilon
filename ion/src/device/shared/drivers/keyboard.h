@@ -18,7 +18,6 @@ bool shutdownExtendedInterruptions();
 void stopPollTimer();
 
 State scan();
-void keyboardWasScanned(State state);
 
 inline void setRowState(uint16_t rowState) {
   // TODO: Assert pin numbers are sequentials and dynamically find 9 and 0

@@ -41,6 +41,7 @@
  *  means the corresponding key is pressed.
  */
 
+#include <ion/src/shared/keyboard.h>
 #include <shared/drivers/keyboard.h>
 
 namespace Ion {

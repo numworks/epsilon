@@ -1,8 +1,8 @@
 #include <drivers/cache.h>
 #include <drivers/circuit_breaker.h>
 #include <drivers/config/clocks.h>
-#include <drivers/keyboard_queue.h>
 #include <kernel/boot/isr.h>
+#include <ion/src/shared/keyboard_queue.h>
 #include <regs/regs.h>
 #include <assert.h>
 #include <setjmp.h>

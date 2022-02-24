@@ -1,9 +1,8 @@
-#include <drivers/keyboard.h>
-#include <drivers/keyboard_queue.h>
-#include <drivers/events.h>
+#include "keyboard_queue.h"
+#include "keyboard.h"
+#include "events.h"
 
 namespace Ion {
-namespace Device {
 namespace Keyboard {
 
 Queue * Queue::sharedQueue() {
@@ -20,6 +19,5 @@ void Queue::flush(bool resetPending) {
   }
 }
 
-}
 }
 }

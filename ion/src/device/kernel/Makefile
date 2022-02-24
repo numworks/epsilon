@@ -9,7 +9,6 @@ ion_device_kernel_src = $(addprefix ion/src/device/kernel/, \
   drivers/events.cpp \
   drivers/kernel_header.cpp \
   drivers/keyboard.cpp \
-  drivers/keyboard_queue.cpp \
   drivers/led.cpp \
   drivers/wakeup.cpp \
   drivers/persisting_bytes.cpp \

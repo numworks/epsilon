@@ -15,13 +15,11 @@ void initInterruptions();
 void shutdownInterruptions();
 void debounce();
 void poll();
-void resetMemoizedState();
 void handleInterruption();
-
-State popState();
 
 /* SVC handlers return basic types to make it easy for external apps to
  * interface with. */
+
 uint64_t scanSVC();
 uint64_t popStateSVC();
 

@@ -1,7 +1,7 @@
 #include <drivers/config/clocks.h>
 #include <kernel/drivers/events.h>
 #include <kernel/drivers/keyboard.h>
-#include <kernel/drivers/keyboard_queue.h>
+#include <ion/src/shared/keyboard_queue.h>
 
 namespace Ion {
 namespace Device {
@@ -16,10 +16,10 @@ uint64_t scanSVC() {
 }
 
 State popState() {
-  if (Queue::sharedQueue()->isEmpty()) {
+  if (Ion::Keyboard::Queue::sharedQueue()->isEmpty()) {
     return State(-1);
   }
-  return Queue::sharedQueue()->queuePop();
+  return Ion::Keyboard::Queue::sharedQueue()->queuePop();
 }
 
 using namespace Regs;
@@ -108,8 +108,6 @@ void debounce() {
   k_debounceTimer.stop();
 }
 
-State sState(0);
-
 /* Keystroke detection uses the EXTI line, which interrupts the execution
  * whenever a rising edge appears on a column. However, if a key is held down,
  * pressing another key in the same column will not produce an edge and the
@@ -125,22 +123,6 @@ void poll() {
   if (state.keyDown(Key::Shift) || state.keyDown(Key::Alpha) ) {
     k_pollTimer.launch();
   }
-}
-
-void keyboardWasScanned(State state) {
-  /* OnOff, Home and Back are the only keyboard keys which are preemptive.
-   * The states are pushed on a queue and popped one at a time.
-   * If the device is stalling, we do not queue the event to avoid a delayed
-   * reaction. */
-  if (state != sState) {
-    Events::setPendingKeyboardStateIfPreemtive(state);
-    Queue::sharedQueue()->push(state);
-    sState = state;
-  }
-}
-
-void resetMemoizedState() {
-  sState = 0;
 }
 
 void handleInterruption() {

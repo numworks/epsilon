@@ -1,11 +1,11 @@
 #include "warning_display.h"
 #include <drivers/events.h>
 #include <drivers/keyboard.h>
-#include <drivers/keyboard_queue.h>
 #include <drivers/display.h>
 #include <ion/display.h>
 #include <kandinsky/font.h>
 #include <kandinsky/rect.h>
+#include <ion/src/shared/keyboard_queue.h>
 #include <string.h>
 
 namespace Ion {

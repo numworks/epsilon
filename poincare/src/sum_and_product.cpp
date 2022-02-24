@@ -2,6 +2,10 @@
 #include <poincare/decimal.h>
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
+#include <poincare/integer_variable_context.h>
+#include <poincare/sum.h>
+#include <poincare/product.h>
+#include <poincare/symbol.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -54,6 +58,36 @@ Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext appro
     }
   }
   return result;
+}
+
+Expression SumAndProductNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  return SumAndProduct(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
+}
+
+Expression SumAndProduct::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  int nbChildren = numberOfChildren();
+  for (int i = 1; i < nbChildren; i++) {
+    Expression c = childAtIndex(i).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
+    if (c.isUninitialized()) {
+      return Expression();
+    }
+  }
+
+  Symbol symbol = childAtIndex(1).convert<Symbol>();
+  IntegerVariableContext newContext = IntegerVariableContext(symbol.name(), context);
+  Expression c = childAtIndex(0).deepReplaceReplaceableSymbols(&newContext, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
+  if (c.isUninitialized()) {
+    return Expression();
+  }
+
+  return *this;
+}
+
+void SumAndProductNode::deepReduceChildren(ReductionContext reductionContext) {
+  SymbolNode * symbol = static_cast<SymbolNode *>(childAtIndex(1));
+  IntegerVariableContext newContext = IntegerVariableContext(symbol->name(), reductionContext.context());
+  reductionContext.setContext(&newContext);
+  ExpressionNode::deepReduceChildren(reductionContext);
 }
 
 Expression SumAndProduct::shallowReduce(Context * context) {

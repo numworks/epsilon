@@ -133,7 +133,7 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
 Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
   {
     // Replace replaceable symbols in child
-    Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly ,parameteredAncestorsCount);
+    Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
     if (self.isUninitialized()) { // if the child is circularly defined, escape
       return self;
     }

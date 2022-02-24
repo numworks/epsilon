@@ -16,7 +16,8 @@ public:
     None,
     Function,
     Sequence,
-    Symbol
+    Symbol,
+    Integer // Used to simplify sequences
   };
   virtual SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) = 0;
   virtual const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) = 0;

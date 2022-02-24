@@ -18,6 +18,7 @@ public:
 #endif
 
   Type type() const override { return Type::Sequence; }
+  virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) override;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted, bool ignoreParentheses) const override;
 
@@ -46,6 +47,7 @@ public:
   static Sequence Builder(const char * name, size_t length, Expression child = Expression());
 
   // Simplification
+  Expression replacedByDefinitionIfPossible(Context * reductionContext);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);

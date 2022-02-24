@@ -9,6 +9,10 @@
 #include <poincare/parenthesis.h>
 #include <poincare/complex.h>
 #include <apps/shared/sequence.h>
+#include <poincare/context.h>
+#include <poincare/rational.h>
+#include <poincare/undefined.h>
+#include <ion/storage.h>
 
 namespace Poincare {
 
@@ -106,19 +110,94 @@ Expression Sequence::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
 }
 
 Expression Sequence::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Expression e = Expression::defaultShallowReduce();
-  e = e.defaultHandleUnitsInChildren();
-  if (e.isUndefined()) {
-    return e;
-  }
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
-  return *this;
+
+  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol) {
+    return *this;
+  }
+
+  Expression result = replacedByDefinitionIfPossible(reductionContext.context());
+  result = Expression::ExpressionWithoutSymbols(result, reductionContext.context());
+
+  if (result.isUninitialized()) {
+    return *this;
+  }
+
+  replaceWithInPlace(result);
+
+  // We simplify the expression entered by the user
+  return result.deepReduce(reductionContext);
+}
+
+Expression SequenceNode::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  return Sequence(this).deepReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
 }
 
 Expression Sequence::deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) {
+  {
+    // Replace replaceable symbols in child
+    Expression self = defaultReplaceReplaceableSymbols(context, didReplace, replaceFunctionsOnly, parameteredAncestorsCount);
+    if (self.isUninitialized()) { // if the child is circularly defined, escape
+      return self;
+    }
+    assert(*this == self);
+  }
+  Expression e = replacedByDefinitionIfPossible(context);
+  if (e.isUninitialized()) {
+    return *this;
+  }
+  // If the function contains itself, return undefined
+  if (e.hasExpression([](Expression e, const void * context) {
+          if (e.type() != ExpressionNode::Type::Sequence) {
+            return false;
+          }
+          return strcmp(static_cast<Sequence&>(e).name(), reinterpret_cast<const char *>(context)) == 0;
+        }, reinterpret_cast<const void *>(name())))
+  {
+    return Expression();
+  }
+  replaceWithInPlace(e);
+  *didReplace = true;
+  return e;
   return *this;
+}
+
+Expression Sequence::replacedByDefinitionIfPossible(Context * context) {
+  // We try to replace the sequence by his definition ONLY if the index is an integer
+  bool canBeReplacedByExpression = false;
+
+  if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
+    const char * symbolName = (childAtIndex(0).convert<SymbolAbstract>()).name();
+    if (context->expressionTypeForIdentifier(symbolName, strlen(symbolName)) == Context::SymbolAbstractType::Integer) {
+      canBeReplacedByExpression = true;
+    }
+  } else if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
+    Rational r = childAtIndex(0).convert<Rational>();
+    if (r.isInteger()) {
+      canBeReplacedByExpression = true;
+    }
+  }
+
+  if (!canBeReplacedByExpression) {
+    return Expression();
+  }
+
+  Ion::Storage::Record r = Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name(), Ion::Storage::seqExtension);
+
+  if (r.isNull()) {
+    return Expression();
+  }
+
+  Shared::Sequence seq(r);
+
+  if (seq.type() != Shared::Sequence::Type::Explicit) {
+    return Expression();
+  }
+
+  Expression result = seq.expressionClone();
+  return result.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), childAtIndex(0));
 }
 
 }

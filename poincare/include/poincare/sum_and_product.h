@@ -10,6 +10,8 @@ namespace Poincare {
 class SumAndProductNode : public ParameteredExpressionNode {
 public:
   int numberOfChildren() const override { return 4; }
+  virtual void deepReduceChildren(ReductionContext reductionContext) override;
+  virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount) override;
 private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   virtual Layout createSumAndProductLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const = 0;
@@ -28,6 +30,7 @@ private:
 class SumAndProduct : public Expression {
 public:
   SumAndProduct(const SumAndProductNode * n) : Expression(n) {}
+  Expression deepReplaceReplaceableSymbols(Context * context, bool * didReplace, bool replaceFunctionsOnly, int parameteredAncestorsCount);
   Expression shallowReduce(Context * context);
 };
 

@@ -28,7 +28,7 @@ public:
   static constexpr char funcExtension[] = "func";
   static constexpr char seqExtension[] = "seq";
 
-  class Record {
+    class Record {
     /* A Record is identified by the CRC32 on its fullName because:
      * - A record is identified by its fullName, which is unique
      * - We cannot keep the address pointing to the fullName because if another

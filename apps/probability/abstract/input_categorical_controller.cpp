@@ -14,8 +14,7 @@ InputCategoricalController::InputCategoricalController(
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
       Escher::ViewController(parent),
       m_statistic(statistic),
-      m_resultsController(resultsController),
-      m_contentView(this, Escher::Invocation(&InputCategoricalController::ButtonAction, this), nullptr, inputEventHandlerDelegate, this) {
+      m_resultsController(resultsController) {
 }
 
 bool InputCategoricalController::textFieldShouldFinishEditing(TextField * textField,
@@ -43,9 +42,9 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
   defaultConvertFloatToText(p, buffer, bufferSize);
   textField->setText(buffer);
   if (event == Ion::Events::Up) {
-    m_contentView.selectViewAtIndex(InputCategoricalView::k_indexOfTable);
+    contentView()->selectViewAtIndex(InputCategoricalView::k_indexOfTable);
   } else {
-    m_contentView.selectViewAtIndex(InputCategoricalView::k_indexOfNext);
+    contentView()->selectViewAtIndex(InputCategoricalView::k_indexOfNext);
   }
   return true;
 }
@@ -62,8 +61,8 @@ void InputCategoricalController::didBecomeFirstResponder() {
   constexpr int bufferSize = Constants::k_shortBufferSize;
   char buffer[bufferSize];
   defaultConvertFloatToText(m_statistic->threshold(), buffer, bufferSize);
-  m_contentView.setSignificanceCellText(buffer);
-  Escher::Container::activeApp()->setFirstResponder(&m_contentView);
+  contentView()->setSignificanceCellText(buffer);
+  Escher::Container::activeApp()->setFirstResponder(contentView());
 }
 
 bool InputCategoricalController::handleEvent(Ion::Events::Event event) {
@@ -89,7 +88,7 @@ void InputCategoricalController::tableViewDidChangeSelectionAndDidScroll(
   int row = tableViewController()->selectableTableView()->selectedRow();
   int col = tableViewController()->selectableTableView()->selectedColumn();
   if (!withinTemporarySelection && previousSelectedCellY != row) {
-    // Make m_contentView scroll to cell
+    // Make contentView scroll to cell
     KDRect cellFrame = KDRect(
         0,  // We'll scroll only vertically
         tableViewController()->tableViewDataSource()->cumulatedHeightFromIndex(row) +
@@ -97,7 +96,7 @@ void InputCategoricalController::tableViewDidChangeSelectionAndDidScroll(
         tableViewController()->selectableTableView()->columnWidth(col),
         tableViewController()->tableViewDataSource()->rowHeight(row));
 
-    m_contentView.scrollToContentRect(cellFrame);
+    contentView()->scrollToContentRect(cellFrame);
   }
 }
 

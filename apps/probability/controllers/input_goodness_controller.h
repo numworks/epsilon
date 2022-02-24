@@ -27,7 +27,9 @@ public:
   TableViewController * tableViewController() override { return &m_tableController; }
 
 private:
+  InputCategoricalView * contentView() override { return &m_contentView; }
   GoodnessTableViewController m_tableController;
+  InputCategoricalView m_contentView;
 };
 
 }  // namespace Probability

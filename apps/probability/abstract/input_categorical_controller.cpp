@@ -44,7 +44,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
   if (event == Ion::Events::Up) {
     contentView()->selectViewAtIndex(InputCategoricalView::k_indexOfTable);
   } else {
-    contentView()->selectViewAtIndex(InputCategoricalView::k_indexOfNext);
+    contentView()->selectViewAtIndex(contentView()->indexOfNext());
   }
   return true;
 }

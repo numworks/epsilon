@@ -104,6 +104,8 @@ app_probability_src +=  $(addprefix apps/probability/abstract/,\
   homogeneity_data_source.cpp \
   input_categorical_controller.cpp \
   input_categorical_view.cpp \
+  input_goodness_view.cpp \
+  input_homogeneity_view.cpp \
   input_homogeneity_data_source.cpp \
   results_homogeneity_data_source.cpp \
   table_view_controller.cpp \

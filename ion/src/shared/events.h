@@ -20,7 +20,6 @@ void resetKeyboardState();
 
 Event getPlatformEvent();
 void didPressNewKey();
-Keyboard::State popKeyboardState();
 bool waitForInterruptingEvent(int maximumDelay, int * timeout);
 
 }

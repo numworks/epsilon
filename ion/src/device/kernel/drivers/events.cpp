@@ -108,10 +108,6 @@ Ion::Events::Event getPlatformEvent() {
 
 void didPressNewKey() {}
 
-Keyboard::State popKeyboardState() {
-  return Ion::Device::Keyboard::popState();
-}
-
 bool waitForInterruptingEvent(int maximumDelay, int * timeout) {
   int startTime = Timing::millis();
   int elapsedTime = 0;

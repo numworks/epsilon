@@ -15,13 +15,6 @@ uint64_t scanSVC() {
   return static_cast<uint64_t>(scan());
 }
 
-State popState() {
-  if (Ion::Keyboard::Queue::sharedQueue()->isEmpty()) {
-    return State(-1);
-  }
-  return Ion::Keyboard::Queue::sharedQueue()->queuePop();
-}
-
 using namespace Regs;
 
 static constexpr int k_debouncingDelay = 10;

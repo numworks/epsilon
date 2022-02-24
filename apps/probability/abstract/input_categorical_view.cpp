@@ -91,7 +91,7 @@ bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
 }
 
 Escher::Responder * InputCategoricalView::responderForRow(int row) {
-  switch (m_viewSelection.selectedRow()) {
+  switch (row) {
     case k_indexOfTable:
       return m_tableViewController;
     case k_indexOfSignificance:

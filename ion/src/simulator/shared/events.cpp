@@ -46,10 +46,6 @@ void didPressNewKey() {
   Simulator::Haptics::rumble();
 }
 
-Keyboard::State popKeyboardState() {
-  return Keyboard::popState();
-}
-
 bool waitForInterruptingEvent(int maximumDelay, int * timeout) {
   Keyboard::scan();
   /* As pressing keys on the simulator does not generate interruptions, we need

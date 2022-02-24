@@ -99,7 +99,7 @@ Event sharedGetEvent(int * timeout) {
     bool lock = isLockActive();
     uint64_t keysSeenTransitionningFromUpToDown;
     Keyboard::State state;
-    while ((state = popKeyboardState()) != Keyboard::State(-1)) {
+    while ((state = Keyboard::popState()) != Keyboard::State(-1)) {
       sCurrentKeyboardState = state;
       keysSeenTransitionningFromUpToDown = state & sKeysSeenUp;
       sKeysSeenUp = ~state;

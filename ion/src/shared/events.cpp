@@ -71,6 +71,12 @@ bool sLastEventShift = false;
 bool sLastEventAlpha = false;
 bool sEventIsRepeating = false;
 
+void resetKeyboardState() {
+  sKeysSeenUp = -1;
+  /* Set the keyboard state of reference to -1 to prevent event repetition. */
+  sLastKeyboardState = -1;
+}
+
 Event sharedGetEvent(int * timeout) {
   constexpr int delayBeforeRepeat = 200;
   constexpr int delayBetweenRepeat = 50;

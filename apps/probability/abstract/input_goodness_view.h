@@ -5,9 +5,8 @@
 
 namespace Probability {
 
-/* This view contains a pointer to a TableView, an EditableCell and a Button,
+/* This view contains a pointer to a TableView, two EditableCells and a Button,
  * laid out vertically, and is able to move selection between them.
- * Meant for InputGoodnessController and InputHomogeneityController.
  */
 class InputGoodnessView : public InputCategoricalView {
 public:
@@ -30,7 +29,7 @@ public:
   int indexOfNext() override { return k_indexOfNext; }
 
 private:
-  /* Layout a Table, a cell and a button separated by spacers. */
+  /* Layout a Table, two cells and a button separated by spacers. */
   class GoodnessContentView : public InputCategoricalView::ContentView {
   public:
     GoodnessContentView(Escher::SelectableTableView * dataInputTableView,
@@ -49,7 +48,7 @@ private:
             m_degreeOfFreedomCell(degreeOfFreedomCell),
             m_significanceCell(significanceCell),
             m_next(next) {
-        // TODO Hugo : Fix the margin between the two cells.
+        // TODO : Fix the margin between these two cells.
         setSecondaryDirectionMargin(Escher::Metric::CommonMargin);
       };
       Escher::View * subviewAtIndex(int i) override;

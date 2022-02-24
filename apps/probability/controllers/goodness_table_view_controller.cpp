@@ -101,6 +101,7 @@ void GoodnessTableViewController::initCell(EvenOddEditableTextCell, void * cell,
   c->setFont(KDFont::SmallFont);
 }
 
+// TODO : Factorize the update of DegreeOfFreedom when size changes.
 void GoodnessTableViewController::recomputeDimensions() {
   // Update degree of freedom if Number of non-empty rows changed
   int previousDegreeOfFreedom = m_statistic->computeDegreesOfFreedom();

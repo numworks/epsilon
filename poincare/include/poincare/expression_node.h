@@ -162,7 +162,10 @@ public:
     NonNull = 0,
     Null = 1,
   };
-
+  enum class IntegerStatus {
+    Unknown = -1,
+    Integer = 1,
+  };
   class ComputationContext {
   public:
     ComputationContext(
@@ -233,6 +236,7 @@ public:
 
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
+  virtual IntegerStatus integerStatus(Context * context) const { return IntegerStatus::Unknown; }
   virtual bool isNumber() const { return false; }
   virtual bool isRandom() const { return false; }
   virtual bool isParameteredExpression() const { return false; }

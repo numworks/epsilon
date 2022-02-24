@@ -42,6 +42,16 @@ ExpressionNode::Sign MultiplicationNode::sign(Context * context) const {
   return (Sign)sign;
 }
 
+ExpressionNode::IntegerStatus MultiplicationNode::integerStatus(Context * context) const {
+  int nbOfChildren = numberOfChildren();
+  for (int i = 0; i < nbOfChildren; i++) {
+    if (childAtIndex(i)->integerStatus(context) != IntegerStatus::Integer) {
+      return IntegerStatus::Unknown;
+    }
+  }
+  return IntegerStatus::Integer;
+}
+
 int MultiplicationNode::polynomialDegree(Context * context, const char * symbolName) const {
   int degree = 0;
   for (ExpressionNode * c : children()) {

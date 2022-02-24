@@ -152,6 +152,7 @@ public:
   bool isOfType(ExpressionNode::Type * types, int length) const { return node()->isOfType(types, length); }
   ExpressionNode::Sign sign(Context * context) const { return node()->sign(context); }
   ExpressionNode::NullStatus nullStatus(Context * context) const { return node()->nullStatus(context); }
+  ExpressionNode::IntegerStatus integerStatus(Context * context) const { return node()->integerStatus(context); }
   bool isStrictly(ExpressionNode::Sign s, Context * context) const { return s == node()->sign(context) && node()->nullStatus(context) == ExpressionNode::NullStatus::NonNull;  }
   bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined ||  node()->type() == ExpressionNode::Type::Unreal; }
   bool isNumber() const { return node()->isNumber(); }

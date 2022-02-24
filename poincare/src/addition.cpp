@@ -57,6 +57,16 @@ bool AdditionNode::derivate(ReductionContext reductionContext, Expression symbol
 
 // Addition
 
+ExpressionNode::IntegerStatus AdditionNode::integerStatus(Context * context) const {
+  int nbOfChildren = numberOfChildren();
+  for (int i = 0; i < nbOfChildren; i++) {
+    if (childAtIndex(i)->integerStatus(context) != IntegerStatus::Integer) {
+      return IntegerStatus::Unknown;
+    }
+  }
+  return IntegerStatus::Integer;
+}
+
 const Number Addition::NumeralFactor(const Expression & e) {
   if (e.type() == ExpressionNode::Type::Multiplication && e.childAtIndex(0).isNumber()) {
     Number result = e.childAtIndex(0).convert<Number>();

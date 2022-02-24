@@ -21,6 +21,7 @@ public:
 
   // Expression Properties
   Type type() const override { return Type::Symbol; }
+  virtual IntegerStatus integerStatus(Context * context) const { return context->expressionTypeForIdentifier(m_name, strlen(m_name)) == Context::SymbolAbstractType::Integer ? IntegerStatus::Integer : IntegerStatus::Unknown; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;

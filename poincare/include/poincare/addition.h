@@ -24,6 +24,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Addition; }
+  virtual ExpressionNode::IntegerStatus integerStatus(Context * context) const override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[], ExpressionNode::SymbolicComputation symbolicComputation) const override;
 

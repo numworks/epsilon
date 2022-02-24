@@ -166,21 +166,8 @@ Expression Sequence::deepReplaceReplaceableSymbols(Context * context, bool * did
 
 Expression Sequence::replacedByDefinitionIfPossible(Context * context) {
   // We try to replace the sequence by his definition ONLY if the index is an integer
-  bool canBeReplacedByExpression = false;
 
-  if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
-    const char * symbolName = (childAtIndex(0).convert<SymbolAbstract>()).name();
-    if (context->expressionTypeForIdentifier(symbolName, strlen(symbolName)) == Context::SymbolAbstractType::Integer) {
-      canBeReplacedByExpression = true;
-    }
-  } else if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-    Rational r = childAtIndex(0).convert<Rational>();
-    if (r.isInteger()) {
-      canBeReplacedByExpression = true;
-    }
-  }
-
-  if (!canBeReplacedByExpression) {
+  if (childAtIndex(0).integerStatus(context) != ExpressionNode::IntegerStatus::Integer) {
     return Expression();
   }
 

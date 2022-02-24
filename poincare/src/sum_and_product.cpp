@@ -45,12 +45,6 @@ Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext appro
     }
     nContext.setApproximationForVariable<T>((T)i);
     Expression child = Expression(childAtIndex(0)).clone();
-    if (child.type() == ExpressionNode::Type::Sequence) {
-      /* Since we cannot get the expression of a sequence term like we would for
-      * a function, we replace its potential abstract rank by the value it should
-      * have. We can then evaluate its value */
-      child.childAtIndex(0).replaceSymbolWithExpression(symbol, Float<T>::Builder(i));
-    }
     approximationContext.setContext(&nContext);
     result = evaluateWithNextTerm(T(), result, child.node()->approximate(T(), approximationContext), approximationContext.complexFormat());
     if (result.isUndefined()) {

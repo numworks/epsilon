@@ -111,7 +111,6 @@ _mp_import_name \
 _mp_parse_compile_execute \
 _get_clipboard_text \
 _set_clipboard_text \
-_SDL_Delay \
 __ZN3Ion9Clipboard24fetchFromSystemClipboardEPcm \
 __ZN3Ion9Clipboard21sendToSystemClipboardEPKc \
 __ZN3Ion9Clipboard4readEPcm \

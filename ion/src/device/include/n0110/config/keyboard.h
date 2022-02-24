@@ -1,6 +1,7 @@
 #ifndef ION_DEVICE_N0110_SHARED_DRIVERS_CONFIG_KEYBOARD_H
 #define ION_DEVICE_N0110_SHARED_DRIVERS_CONFIG_KEYBOARD_H
 
+#include <config/clocks.h>
 #include <regs/regs.h>
 
 /*  Pin | Role              | Mode
@@ -69,7 +70,8 @@ inline uint64_t ValidKeys(uint64_t state) {
 }
 
 constexpr int DebouncingDelay = 10;
-constexpr int PollDelay = 200;
+constexpr int PollDelay = Clocks::Config::AHBLowFrequencyPrescaler * 100;
+
 
 }
 }

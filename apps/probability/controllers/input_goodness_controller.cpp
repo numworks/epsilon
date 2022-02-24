@@ -21,6 +21,7 @@ InputGoodnessController::InputGoodnessController(
   m_contentView.setTableView(&m_tableController);
 }
 
+// TODO : Factorize with InputCategoricalController::textFieldDidFinishEditing
 bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
                                                            const char * text,
                                                            Ion::Events::Event event) {
@@ -31,7 +32,7 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
   }
   if (selectedView == InputGoodnessView::k_indexOfDegreeOfFreedom) {
     // Parse and check degrees of freedom
-    // TODO Hugo : Use !m_statistic->isValidParamAtIndex(???, p)
+    // TODO : Implement this validity check in Probability::Chi2Statistic
     if (p != std::round(p) || p < 1.0) {
       App::app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;

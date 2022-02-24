@@ -10,7 +10,6 @@ GoodnessStatistic::GoodnessStatistic() {
 }
 
 void GoodnessStatistic::computeTest() {
-  m_degreesOfFreedom = computeDegreesOfFreedom();
   m_testCriticalValue = computeChi2();
   m_pValue = computePValue(m_testCriticalValue, m_hypothesisParams.comparisonOperator());
 }
@@ -46,7 +45,7 @@ int GoodnessStatistic::computeNumberOfRows() {
 }
 
 bool GoodnessStatistic::validateInputs() {
-  if (computeDegreesOfFreedom() <= 0) {
+  if (numberOfValuePairs() <= 1) {
     return false;
   }
   int n = computeNumberOfRows();

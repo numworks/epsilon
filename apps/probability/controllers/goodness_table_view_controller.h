@@ -1,6 +1,7 @@
 #ifndef PROBABILITY_CONTROLLERS_GOODNESS_TABLE_VIEW_CONTROLLER_H
 #define PROBABILITY_CONTROLLERS_GOODNESS_TABLE_VIEW_CONTROLLER_H
 
+#include "probability/abstract/input_goodness_view.h"
 #include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/table_view_controller.h"
 #include "probability/gui/input_goodness_table_view.h"
@@ -14,7 +15,8 @@ public:
   GoodnessTableViewController(Escher::Responder * parent,
                               GoodnessStatistic * statistic,
                               DynamicSizeTableViewDataSourceDelegate * delegate,
-                              Escher::SelectableTableViewDelegate * scrollDelegate);
+                              Escher::SelectableTableViewDelegate * scrollDelegate,
+                              InputGoodnessView * inputGoodnessView);
 
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField,
@@ -27,12 +29,13 @@ public:
 
   void initCell(EvenOddEditableTextCell, void * cell, int index) override;
   // TODO factorize with HomogeneityTableViewController in TableViewController
-  void recomputeDimensions() override { m_inputTableView.recomputeNumberOfRows(); }
+  void recomputeDimensions() override;
   Escher::SelectableTableView * tableView() override { return &m_inputTableView; }
 
 private:
   void deleteSelectedValue();
   GoodnessStatistic * m_statistic;
+  InputGoodnessView * m_inputGoodnessView;
   InputGoodnessTableView m_inputTableView;
 };
 

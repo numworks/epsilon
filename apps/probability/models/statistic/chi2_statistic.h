@@ -14,6 +14,7 @@ public:
   Chi2Statistic();
   Poincare::Layout testCriticalValueSymbol() override;
   double degreeOfFreedom() override { return m_degreesOfFreedom; }
+  virtual void setDegreeOfFreedom(double degreeOfFreedom) { assert(false); };
 
   float canonicalDensityFunction(float x) const override;
   double cumulativeNormalizedDistributionFunction(double x) const override;

@@ -6,34 +6,13 @@
 
 using namespace Probability;
 
-Escher::View * InputCategoricalView::ContentView::InnerVerticalLayout::subviewAtIndex(int i) {
-  switch (i) {
-    case 0:
-      return m_significanceCell;
-      break;
-    case 1:
-      return m_next;
-  }
-  assert(false);
-  return nullptr;
-}
-
-Probability::InputCategoricalView::ContentView::ContentView(
-    Escher::SelectableTableView * dataInputTableView,
-    Escher::MessageTableCellWithEditableTextWithMessage * significanceCell,
-    Escher::Button * next) :
-      m_dataInputTableView(dataInputTableView), m_innerView(significanceCell, next) {
-  significanceCell->setMessage(I18n::Message::GreekAlpha);
-  significanceCell->setSubLabelMessage(I18n::Message::SignificanceLevel);
-}
-
 Escher::View * InputCategoricalView::ContentView::subviewAtIndex(int i) {
   switch (i) {
     case k_indexOfTable:
       return m_dataInputTableView;
       break;
     case k_indexOfInnerLayout:
-      return &m_innerView;
+      return innerView();
       break;
   }
   assert(false);
@@ -44,18 +23,16 @@ InputCategoricalView::InputCategoricalView(Responder * parentResponder,
                                            Escher::Invocation invocation,
                                            TableViewController * tableViewController,
                                            Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                           Escher::TextFieldDelegate * textFieldDelegate) :
-      Escher::ScrollView(&m_contentView, &m_scrollDataSource),
+                                           Escher::TextFieldDelegate * textFieldDelegate,
+                                           View * contentView) :
+      Escher::ScrollView(contentView, &m_scrollDataSource),
       Responder(parentResponder),
       m_tableViewController(tableViewController),
       m_significanceCell(this, inputEventHandlerDelegate, textFieldDelegate),
       m_next(this,
              I18n::Message::Next,
              invocation,
-             Escher::Palette::WallScreenDark),
-      m_contentView(tableViewController ? tableViewController->selectableTableView() : nullptr,
-                    &m_significanceCell,
-                    &m_next) {
+             Escher::Palette::WallScreenDark) {
   setTopMargin(Escher::Metric::CommonTopMargin);
   setBottomMargin(Escher::Metric::CommonBottomMargin);
   setBackgroundColor(Escher::Palette::WallScreenDark);
@@ -74,13 +51,13 @@ bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
   // Move selection between views
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     if (event == Ion::Events::Up && m_viewSelection.selectedRow() > 0) {
-      int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer + 1);
+      int jump = 1 + (m_viewSelection.selectedRow() == indexOfSpacer() + 1);
       m_viewSelection.selectRow(m_viewSelection.selectedRow() - jump);
       highlightCorrectView();
       setResponderForSelectedRow();
     }
-    if (event == Ion::Events::Down && m_viewSelection.selectedRow() < k_indexOfNext) {
-      int jump = 1 + (m_viewSelection.selectedRow() == k_indexOfSpacer - 1);
+    if (event == Ion::Events::Down && m_viewSelection.selectedRow() < indexOfNext()) {
+      int jump = 1 + (m_viewSelection.selectedRow() == indexOfSpacer() - 1);
       m_viewSelection.selectRow(m_viewSelection.selectedRow() + jump);
       highlightCorrectView();
       setResponderForSelectedRow();
@@ -91,47 +68,24 @@ bool InputCategoricalView::handleEvent(Ion::Events::Event event) {
 }
 
 Escher::Responder * InputCategoricalView::responderForRow(int row) {
-  switch (row) {
-    case k_indexOfTable:
-      return m_tableViewController;
-    case k_indexOfSignificance:
-      return &m_significanceCell;
-    case k_indexOfNext:
-      return &m_next;
+  if (row == k_indexOfTable) {
+    return m_tableViewController;
   }
-  assert(false);
-  return nullptr;
+  if (row == indexOfSignificance()) {
+    return &m_significanceCell;
+  }
+  assert(row == indexOfNext());
+  return &m_next;
 }
 
 void InputCategoricalView::setResponderForSelectedRow() {
   Escher::Container::activeApp()->setFirstResponder(responderForRow(m_viewSelection.selectedRow()));
 }
 
-void InputCategoricalView::highlightCorrectView() {
-  if (m_viewSelection.selectedRow() != k_indexOfTable) {
-    Escher::HighlightCell * view;
-    if (m_viewSelection.selectedRow() == k_indexOfSignificance) {
-      view = &m_significanceCell;
-      if (m_next.isHighlighted()) {
-        m_next.setHighlighted(false);
-      }
-    } else {
-      view = &m_next;
-      m_significanceCell.setHighlighted(false);
-    }
-    view->setHighlighted(true);
-    KDPoint offset = m_contentView.pointFromPointInView(view, view->bounds().bottomRight());
-    scrollToContentPoint(offset);
-  } else {
-    m_significanceCell.setHighlighted(false);
-  }
-}
-
 KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {
   // Pass expected size to VerticalLayout to propagate to TableCells
-  ContentView * contentView = const_cast<ContentView *>(&m_contentView);
-  if (contentView->bounds().width() <= 0) {
-    contentView->setSize(KDSize(bounds().width(), contentView->bounds().height()));
+  if (constContentView()->bounds().width() <= 0) {
+    constContentView()->setSize(KDSize(bounds().width(), constContentView()->bounds().height()));
   }
   KDSize requiredSize = ScrollView::minimalSizeForOptimalDisplay();
   return KDSize(bounds().width() + leftMargin() + rightMargin(), requiredSize.height());
@@ -150,7 +104,7 @@ void Probability::InputCategoricalView::setSignificanceCellText(const char * tex
 void Probability::InputCategoricalView::setTableView(TableViewController * tableViewController) {
   m_tableViewController = tableViewController;
   Escher::SelectableTableView * tableView = tableViewController->selectableTableView();
-  m_contentView.setTableView(tableView);
+  contentView()->setTableView(tableView);
   tableView->setMargins(0, Escher::Metric::CommonRightMargin, k_marginVertical, Escher::Metric::CommonLeftMargin);
   tableView->setBackgroundColor(Escher::Palette::WallScreenDark);
   tableView->setDecoratorType(Escher::ScrollView::Decorator::Type::None);

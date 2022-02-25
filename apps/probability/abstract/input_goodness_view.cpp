@@ -49,6 +49,7 @@ Escher::Responder * InputGoodnessView::responderForRow(int row) {
 }
 
 void InputGoodnessView::highlightCorrectView() {
+  // TODO: We shouldn't have to re-implement this behaviour.
   if (m_viewSelection.selectedRow() != k_indexOfTable) {
     Escher::HighlightCell * view;
     if (m_viewSelection.selectedRow() == k_indexOfDegreeOfFreedom) {

@@ -30,6 +30,14 @@ bool Chi2Statistic::isValidParamAtIndex(int i, double p) {
   return Statistic::isValidParamAtIndex(i, p);
 }
 
+void Chi2Statistic::setParamAtIndex(int i, double p) {
+  if (i == indexOfDegreeOfFreedom()) {
+    m_degreesOfFreedom = p;
+  } else {
+    return Statistic::setParamAtIndex(i, p);
+  }
+}
+
 float Chi2Statistic::canonicalDensityFunction(float x) const {
   assert(m_degreesOfFreedom > 0);
   return Chi2Law::EvaluateAtAbscissa(x, static_cast<float>(m_degreesOfFreedom));

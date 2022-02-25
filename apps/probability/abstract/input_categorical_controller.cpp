@@ -35,7 +35,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_statistic->setThreshold(p);
+  m_statistic->setParamAtIndex(m_statistic->indexOfThreshold(), p);
   contentView()->setTextFieldText(p, textField);
   if (event == Ion::Events::Up) {
     contentView()->selectViewAtIndex(InputCategoricalView::k_indexOfTable);

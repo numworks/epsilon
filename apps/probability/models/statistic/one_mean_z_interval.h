@@ -35,7 +35,7 @@ public:
 private:
   // Significance Test::OneMean
   int numberOfStatisticParameters() const override { return OneMean::NumberOfParameters(); }
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneMean::ParameterRepresentationAtIndex(i); }
+  ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneMean::ZParameterRepresentationAtIndex(i); }
   double * parametersArray() override { return m_params; }
   // Distribution: z
   float computeYMax() const override { return DistributionZ::YMax(m_degreesOfFreedom); }

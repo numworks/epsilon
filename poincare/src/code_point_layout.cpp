@@ -5,6 +5,18 @@
 
 namespace Poincare {
 
+ // Draw the pixels of the middle dot symbols to make it thinner than font
+ // Should be modified if font is modified.
+void CodePointLayoutNode::FillDotBuffer(KDColor * colors, int length) {
+  assert(length >= k_dotWidth * k_defaultFont->glyphSize().height());
+  for (int i = 0 ; i < k_dotWidth ; i ++) {
+    for (int j = 0 ; j < k_defaultFont->glyphSize().height() ; j++) {
+      colors[i+k_dotWidth*j] = KDColorWhite;
+    }
+  }
+  colors[k_dotWidth / 2 + k_dotWidth * (k_defaultFont->glyphSize().height() / 2 - 1)] = KDColorBlack;
+}
+
 // LayoutNode
 void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Right) {
@@ -110,7 +122,11 @@ KDSize CodePointLayoutNode::computeSize() {
     totalHorizontalMargin += Escher::Metric::ThousandsSeparatorWidth;
   }
   KDSize glyph = m_font->glyphSize();
-  return KDSize(glyph.width() + totalHorizontalMargin, glyph.height());
+  KDCoordinate width = glyph.width();
+  if (m_codePoint == UCodePointMultiplicationSign && m_font == k_defaultFont) {
+    width = k_dotWidth;
+  }
+  return KDSize(width + totalHorizontalMargin, glyph.height());
 }
 
 KDCoordinate CodePointLayoutNode::computeBaseline() {
@@ -118,12 +134,22 @@ KDCoordinate CodePointLayoutNode::computeBaseline() {
 }
 
 void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  constexpr int bufferSize = sizeof(CodePoint)/sizeof(char) + 1; // Null-terminating char
-  char buffer[bufferSize];
-  SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
   if (m_displayType == DisplayType::Operator || m_displayType == DisplayType::Implicit) {
     p = p.translatedBy(KDPoint(Escher::Metric::OperatorHorizontalMargin, 0));
   }
+  if (m_codePoint == UCodePointMultiplicationSign && m_font == k_defaultFont) {
+    int width = k_dotWidth;
+    int height = m_font->glyphSize().height();
+    KDColor dotColors[width * height];
+    FillDotBuffer(dotColors, width * height);
+    ctx->fillRectWithPixels(
+        KDRect(p, KDSize(width, height)),
+        dotColors, dotColors);
+    return;
+  }
+  constexpr int bufferSize = sizeof(CodePoint)/sizeof(char) + 1; // Null-terminating char
+  char buffer[bufferSize];
+  SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
   ctx->drawString(buffer, p, m_font, expressionColor, backgroundColor);
 }
 

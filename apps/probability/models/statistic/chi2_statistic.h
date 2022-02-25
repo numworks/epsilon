@@ -15,7 +15,6 @@ public:
   Poincare::Layout testCriticalValueSymbol() override;
   bool hasDegreeOfFreedom() override { return true; }
   double degreeOfFreedom() override { return m_degreesOfFreedom; }
-  virtual void setDegreeOfFreedom(double degreeOfFreedom) { assert(false); };
 
   float canonicalDensityFunction(float x) const override;
   double cumulativeNormalizedDistributionFunction(double x) const override;
@@ -30,6 +29,7 @@ public:
   virtual void recomputeData() = 0;
   virtual int maxNumberOfColumns() const = 0;
   virtual int maxNumberOfRows() const = 0;
+  virtual void setDegreeOfFreedom(double degreeOfFreedom) { assert(false); };
 
   void computeInterval() override {}
 

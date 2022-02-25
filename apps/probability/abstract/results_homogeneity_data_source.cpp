@@ -57,7 +57,7 @@ void ResultsHomogeneityDataSource::willDisplayInnerCellAtLocation(Escher::Highli
   } else {
     value = m_statistic->expectedValueAtLocation(j, i);
   }
-
+  // TODO: Factorize with InputCategoricalView::setTextFieldText
   constexpr int bufferSize = Constants::k_shortBufferSize;
   char buffer[bufferSize];
   defaultConvertFloatToText(value, buffer, bufferSize);

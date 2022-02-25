@@ -8,8 +8,10 @@
 #include <ion/events.h>
 
 #include <escher/invocation.h>
+#include <escher/text_field.h>
 #include "probability/abstract/dynamic_size_table_view_data_source.h"
 #include "probability/abstract/table_view_controller.h"
+#include "../models/statistic/chi2_statistic.h"
 #include <escher/horizontal_or_vertical_layout.h>
 
 namespace Probability {
@@ -43,8 +45,9 @@ public:
 
   int selectedView() { return m_viewSelection.selectedRow(); }
   void selectViewAtIndex(int index);
-  void setSignificanceCellText(const char * text);
+  void updateSignificanceCell(Chi2Statistic * statistic);
   void setTableView(TableViewController * tableViewController);
+  void setTextFieldText(double value, Escher::TextField * textField);
 
   // DynamicSizeTableViewDataSourceDelegate
   void tableViewDataSourceDidChangeSize() override;

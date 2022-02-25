@@ -39,10 +39,7 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
     }
     m_statistic->setDegreeOfFreedom(p);
     // Reparse text
-    constexpr int bufferSize = Constants::k_shortBufferSize;
-    char buffer[bufferSize];
-    defaultConvertFloatToText(p, buffer, bufferSize);
-    textField->setText(buffer);
+    contentView()->setTextFieldText(p, textField);
     if (event == Ion::Events::Up) {
       contentView()->selectViewAtIndex(InputGoodnessView::k_indexOfTable);
     } else {
@@ -57,10 +54,7 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
     }
     m_statistic->setThreshold(p);
     // Reparse text
-    constexpr int bufferSize = Constants::k_shortBufferSize;
-    char buffer[bufferSize];
-    defaultConvertFloatToText(p, buffer, bufferSize);
-    textField->setText(buffer);
+    contentView()->setTextFieldText(p, textField);
     if (event == Ion::Events::Up) {
       contentView()->selectViewAtIndex(InputGoodnessView::k_indexOfDegreeOfFreedom);
     } else {

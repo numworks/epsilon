@@ -3,6 +3,8 @@
 #include <escher/invocation.h>
 #include "probability/abstract/table_view_controller.h"
 #include <escher/horizontal_or_vertical_layout.h>
+#include "probability/text_helpers.h"
+#include "probability/constants.h"
 
 using namespace Probability;
 
@@ -97,8 +99,8 @@ void Probability::InputCategoricalView::selectViewAtIndex(int index) {
   setResponderForSelectedRow();
 }
 
-void Probability::InputCategoricalView::setSignificanceCellText(const char * text) {
-  m_significanceCell.textField()->setText(text);
+void Probability::InputCategoricalView::updateSignificanceCell(Chi2Statistic * statistic) {
+  setTextFieldText(statistic->threshold(), m_significanceCell.textField());
 }
 
 void Probability::InputCategoricalView::setTableView(TableViewController * tableViewController) {
@@ -108,6 +110,19 @@ void Probability::InputCategoricalView::setTableView(TableViewController * table
   tableView->setMargins(0, Escher::Metric::CommonRightMargin, k_marginVertical, Escher::Metric::CommonLeftMargin);
   tableView->setBackgroundColor(Escher::Palette::WallScreenDark);
   tableView->setDecoratorType(Escher::ScrollView::Decorator::Type::None);
+}
+
+void Probability::InputCategoricalView::setTextFieldText(double value, Escher::TextField * textField) {
+  if (std::isnan(value) || value < 0) {
+    /* Alpha and DegreeOfFreedom cannot be negative. However, DegreeOfFreedom
+     * can be computed to a negative when there are no rows.
+     * In that case, the degreeOfFreedom cell should display nothing. */
+    return textField->setText("");
+  }
+  constexpr int bufferSize = Constants::k_shortBufferSize;
+  char buffer[bufferSize];
+  defaultConvertFloatToText(value, buffer, bufferSize);
+  return textField->setText(buffer);
 }
 
 void Probability::InputCategoricalView::tableViewDataSourceDidChangeSize() {

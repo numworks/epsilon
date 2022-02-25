@@ -58,6 +58,7 @@ void Probability::InputHomogeneityDataSource::willDisplayInnerCellAtLocation(Esc
   if (std::isnan(p)) {
     myCell->editableTextCell()->textField()->setText("");
   } else {
+    // TODO: Factorize with InputCategoricalView::setTextFieldText
     constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
     defaultConvertFloatToText(p, buffer, bufferSize);

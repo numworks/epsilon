@@ -50,6 +50,7 @@ public:
                                                bool withinTemporarySelection) override;
 
 protected:
+  bool handleEditedValue(int i, double p, Escher::TextField * textField, Ion::Events::Event event, int indexIdUp, int indexOtherwise);
   virtual InputCategoricalView * contentView() = 0;
 
   Chi2Statistic * m_statistic;

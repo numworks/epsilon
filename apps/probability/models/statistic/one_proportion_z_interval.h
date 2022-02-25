@@ -36,8 +36,8 @@ public:
 private:
   // Significance Test: OneProportion
   bool validateInputs() override { return OneProportion::ValidateInputs(m_params); }
-  int numberOfStatisticParameters() const override { return OneMean::NumberOfParameters(); }
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneMean::ParameterRepresentationAtIndex(i); }
+  int numberOfStatisticParameters() const override { return OneProportion::NumberOfParameters(); }
+  ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneProportion::ParameterRepresentationAtIndex(i); }
   double * parametersArray() override { return m_params; }
 
     // Distribution: z

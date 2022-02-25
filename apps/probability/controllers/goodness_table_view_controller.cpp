@@ -48,7 +48,7 @@ bool GoodnessTableViewController::textFieldDidFinishEditing(Escher::TextField * 
   int newDegreeOfFreedom = m_statistic->computeDegreesOfFreedom();
   if (previousDegreeOfFreedom != newDegreeOfFreedom) {
     m_statistic->setDegreeOfFreedom(newDegreeOfFreedom);
-    m_inputGoodnessView->reloadDegreeOfFreedomCell(newDegreeOfFreedom);
+    m_inputGoodnessView->updateDegreeOfFreedomCell(m_statistic);
   }
 
   m_inputTableView.reloadCellAtLocation(selectedColumn, selectedRow);
@@ -88,7 +88,7 @@ void GoodnessTableViewController::deleteSelectedValue() {
     // Number of non-empty rows changed, update degree of freedom.
     int newDegreeOfFreedom = m_statistic->computeDegreesOfFreedom();
     m_statistic->setDegreeOfFreedom(newDegreeOfFreedom);
-    m_inputGoodnessView->reloadDegreeOfFreedomCell(newDegreeOfFreedom);
+    m_inputGoodnessView->updateDegreeOfFreedomCell(m_statistic);
     tableView()->selectCellAtClippedLocation(col, row, false);
   }
 }
@@ -109,7 +109,7 @@ void GoodnessTableViewController::recomputeDimensions() {
   int newDegreeOfFreedom = m_statistic->computeDegreesOfFreedom();
   if (previousDegreeOfFreedom != newDegreeOfFreedom) {
     m_statistic->setDegreeOfFreedom(newDegreeOfFreedom);
-    m_inputGoodnessView->reloadDegreeOfFreedomCell(newDegreeOfFreedom);
+    m_inputGoodnessView->updateDegreeOfFreedomCell(m_statistic);
   }
 }
 

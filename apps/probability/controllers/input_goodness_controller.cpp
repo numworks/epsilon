@@ -72,14 +72,6 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
 
 void Probability::InputGoodnessController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::InputGoodness);
-  constexpr int bufferSize = Constants::k_shortBufferSize;
-  char buffer[bufferSize];
-  int degreeOfFreedom = m_statistic->degreeOfFreedom();
-  if (degreeOfFreedom >= 0) {
-    defaultConvertFloatToText(degreeOfFreedom, buffer, bufferSize);
-  } else {
-    buffer[0] = 0;
-  }
-  m_contentView.setDegreeOfFreedomCellText(buffer);
+  m_contentView.updateDegreeOfFreedomCell(m_statistic);
   InputCategoricalController::didBecomeFirstResponder();
 }

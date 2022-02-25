@@ -79,17 +79,16 @@ void InputGoodnessView::highlightCorrectView() {
   }
 }
 
-void Probability::InputGoodnessView::setDegreeOfFreedomCellText(const char * text) {
-  m_degreeOfFreedomCell.textField()->setText(text);
-}
-
-void Probability::InputGoodnessView::reloadDegreeOfFreedomCell(int degreeOfFreedom) {
+// Update the degree of freedom cell according to the statistic
+void Probability::InputGoodnessView::updateDegreeOfFreedomCell(Chi2Statistic * statistic) {
+  int degreeOfFreedom = statistic->degreeOfFreedom();
   constexpr int bufferSize = Constants::k_shortBufferSize;
   char buffer[bufferSize];
-  buffer[0] = 0;
   if (degreeOfFreedom >= 0) {
     defaultConvertFloatToText(degreeOfFreedom, buffer, bufferSize);
+  } else {
+    buffer[0] = 0;
   }
-  setDegreeOfFreedomCellText(buffer);
+  m_degreeOfFreedomCell.textField()->setText(buffer);
   layoutSubviews();
 }

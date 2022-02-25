@@ -32,8 +32,7 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
   }
   if (selectedView == InputGoodnessView::k_indexOfDegreeOfFreedom) {
     // Parse and check degrees of freedom
-    // TODO : Implement this validity check in Probability::Chi2Statistic
-    if (p != std::round(p) || p < 1.0) {
+    if (!m_statistic->isValidParamAtIndex(m_statistic->indexOfDegreeOfFreedom(), p)) {
       App::app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
@@ -53,7 +52,6 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
       return false;
     }
     m_statistic->setThreshold(p);
-    // Reparse text
     contentView()->setTextFieldText(p, textField);
     if (event == Ion::Events::Up) {
       contentView()->selectViewAtIndex(InputGoodnessView::k_indexOfDegreeOfFreedom);

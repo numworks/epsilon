@@ -15,6 +15,8 @@ public:
   Poincare::Layout testCriticalValueSymbol() override;
   bool hasDegreeOfFreedom() override { return true; }
   double degreeOfFreedom() override { return m_degreesOfFreedom; }
+  int indexOfDegreeOfFreedom() { return indexOfThreshold() + 1; }
+  bool isValidParamAtIndex(int i, double p) override;
 
   float canonicalDensityFunction(float x) const override;
   double cumulativeNormalizedDistributionFunction(double x) const override;

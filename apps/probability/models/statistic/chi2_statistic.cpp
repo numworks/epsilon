@@ -23,6 +23,13 @@ Poincare::Layout Chi2Statistic::testCriticalValueSymbol() {
           Poincare::VerticalOffsetLayoutNode::Position::Superscript));
 }
 
+bool Chi2Statistic::isValidParamAtIndex(int i, double p) {
+  if (i == indexOfDegreeOfFreedom()) {
+    return p == std::round(p) && p >= 1.0;
+  }
+  return Statistic::isValidParamAtIndex(i, p);
+}
+
 float Chi2Statistic::canonicalDensityFunction(float x) const {
   assert(m_degreesOfFreedom > 0);
   return Chi2Law::EvaluateAtAbscissa(x, static_cast<float>(m_degreesOfFreedom));

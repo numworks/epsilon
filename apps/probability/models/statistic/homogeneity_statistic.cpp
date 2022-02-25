@@ -203,7 +203,7 @@ void HomogeneityStatistic::recomputeData() {
 }
 
 bool HomogeneityStatistic::isValidParamAtIndex(int i, double p) {
-  if (p < 0.0) {
+  if (i < numberOfValuePairs() && p < 0.0) {
     // Frequencies should be >= 0
     return false;
   }

@@ -36,7 +36,7 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
       App::app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    m_statistic->setDegreeOfFreedom(p);
+    m_statistic->setParamAtIndex(m_statistic->indexOfDegreeOfFreedom(), p);
     // Reparse text
     contentView()->setTextFieldText(p, textField);
     if (event == Ion::Events::Up) {
@@ -51,7 +51,7 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
       App::app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    m_statistic->setThreshold(p);
+    m_statistic->setParamAtIndex(m_statistic->indexOfThreshold(), p);
     contentView()->setTextFieldText(p, textField);
     if (event == Ion::Events::Up) {
       contentView()->selectViewAtIndex(InputGoodnessView::k_indexOfDegreeOfFreedom);

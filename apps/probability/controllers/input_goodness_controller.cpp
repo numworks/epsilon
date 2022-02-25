@@ -32,34 +32,11 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
   }
   if (selectedView == InputGoodnessView::k_indexOfDegreeOfFreedom) {
     // Parse and check degrees of freedom
-    if (!m_statistic->isValidParamAtIndex(m_statistic->indexOfDegreeOfFreedom(), p)) {
-      App::app()->displayWarning(I18n::Message::ForbiddenValue);
-      return false;
-    }
-    m_statistic->setParamAtIndex(m_statistic->indexOfDegreeOfFreedom(), p);
-    // Reparse text
-    contentView()->setTextFieldText(p, textField);
-    if (event == Ion::Events::Up) {
-      contentView()->selectViewAtIndex(InputGoodnessView::k_indexOfTable);
-    } else {
-      contentView()->selectViewAtIndex(InputGoodnessView::k_indexOfSignificance);
-    }
-  } else {
-    assert(selectedView == InputGoodnessView::k_indexOfSignificance);
-    // Parse and check significance level
-    if (!m_statistic->isValidParamAtIndex(m_statistic->indexOfThreshold(), p)) {
-      App::app()->displayWarning(I18n::Message::ForbiddenValue);
-      return false;
-    }
-    m_statistic->setParamAtIndex(m_statistic->indexOfThreshold(), p);
-    contentView()->setTextFieldText(p, textField);
-    if (event == Ion::Events::Up) {
-      contentView()->selectViewAtIndex(InputGoodnessView::k_indexOfDegreeOfFreedom);
-    } else {
-      contentView()->selectViewAtIndex(InputGoodnessView::k_indexOfNext);
-    }
+    return handleEditedValue(m_statistic->indexOfDegreeOfFreedom(), p, textField, event, InputGoodnessView::k_indexOfTable, InputGoodnessView::k_indexOfSignificance);
   }
-  return true;
+  assert(selectedView == InputGoodnessView::k_indexOfSignificance);
+  // Parse and check significance level
+  return handleEditedValue(m_statistic->indexOfThreshold(), p, textField, event, InputGoodnessView::k_indexOfDegreeOfFreedom, InputGoodnessView::k_indexOfNext);
 }
 
 void Probability::InputGoodnessController::didBecomeFirstResponder() {

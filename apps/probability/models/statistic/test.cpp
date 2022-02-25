@@ -71,10 +71,12 @@ void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, 
     case ResultOrder::PValue:
       *value = pValue();
       *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::PValue));
+      *subMessage = I18n::Message::Default;
       break;
     case ResultOrder::TestDegree:
       *value = degreeOfFreedom();
       *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
+      *subMessage = I18n::Message::Default;
       break;
     default:
       assert(false);

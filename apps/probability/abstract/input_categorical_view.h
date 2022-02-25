@@ -16,6 +16,10 @@
 
 namespace Probability {
 
+/* TODO: Factorize the ContentView implementation and its derived classes
+ *       with TableView to avoid having to re-implement methods such as
+ *       highlightCorrectView and to solve the overlapping border issues. */
+
 /* This view contains a pointer to a TableView, an EditableCell and a Button,
  * laid out vertically, and is able to move selection between them.
  * Meant for InputGoodnessController and InputHomogeneityController.

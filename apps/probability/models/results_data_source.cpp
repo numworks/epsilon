@@ -25,7 +25,8 @@ ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
 int ResultsDataSource::numberOfRows() const {
   Data::SubApp subapp = App::app()->subapp();
   int index = subapp == Data::SubApp::Tests ? 2 : 3;
-  index += m_statistic->hasDegreeOfFreedom();
+  // Do not display degreeOfFreedom in Goodness test results.
+  index += (m_statistic->hasDegreeOfFreedom() && App::app()->categoricalType() != Data::CategoricalType::Goodness);
   index += subapp == Data::SubApp::Intervals &&
            !m_statistic->estimateLayout().isUninitialized();  // Add estimate cell
   return index + 1 /* button */;

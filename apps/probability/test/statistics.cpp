@@ -449,6 +449,8 @@ QUIZ_CASE(probability_goodness_statistic) {
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     inputValues(&stat, tests[i]);
     stat.recomputeData();
+    // Degree of freedom is computed as the user inputs the UI. Compute it here
+    stat.setDegreeOfFreedom(stat.computeDegreesOfFreedom());
     runTest(&stat, tests[i]);
   }
 }

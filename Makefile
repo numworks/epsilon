@@ -114,6 +114,7 @@ include poincare/Makefile
 include python/Makefile
 include escher/Makefile
 # Executable Makefiles
+include bootloader/Makefile
 include apps/Makefile
 include build/struct_layout/Makefile
 include build/scenario/Makefile

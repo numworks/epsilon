@@ -1,9 +1,26 @@
-HANDY_TARGETS += test.external_flash.write test.external_flash.read
 
-$(BUILD_DIR)/test.external_flash.%.$(EXE): LDSCRIPT = ion/test/device/n0110/external_flash_tests.ld
-test_external_flash_src = $(ion_src) $(liba_src) $(libaxx_src) $(kandinsky_src) $(poincare_src) $(ion_device_dfu_relogated_src) $(runner_src)
-$(BUILD_DIR)/test.external_flash.read.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_read_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_read_src))
-$(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_write_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_write_src))
+epsilon_flavors_bootloader = $(foreach floavor,$(epsilon_flavors),$(floavor).A $(floavor).B)
+
+define rule_for_epsilon_flavor_bootloader
+$$(BUILD_DIR)/epsilon.$(1).A.$$(EXE): $$(call flavored_object_for,$$(epsilon_src),$(1))
+$$(BUILD_DIR)/epsilon.$(1).A.$$(EXE): LDSCRIPT = ion/src/device/bootloader/bootloader.A.ld
+$$(BUILD_DIR)/epsilon.$(1).B.$$(EXE): $$(call flavored_object_for,$$(epsilon_src),$(1))
+$$(BUILD_DIR)/epsilon.$(1).B.$$(EXE): LDSCRIPT = ion/src/device/bootloader/bootloader.B.ld
+endef
+
+$(BUILD_DIR)/epsilon.A.$(EXE): $(call flavored_object_for,$(epsilon_src))
+$(BUILD_DIR)/epsilon.A.$(EXE): LDSCRIPT = ion/src/device/bootloader/bootloader.A.ld
+
+$(BUILD_DIR)/epsilon.B.$(EXE): $(call flavored_object_for,$(epsilon_src))
+$(BUILD_DIR)/epsilon.B.$(EXE): LDSCRIPT = ion/src/device/bootloader/bootloader.B.ld
+
+
+$(foreach flavor,$(epsilon_flavors),$(eval $(call rule_for_epsilon_flavor_bootloader,$(flavor))))
+
+
+HANDY_TARGETS = $(foreach flavor,$(epsilon_flavors_bootloader),epsilon.$(flavor))
+HANDY_TARGETS += epsilon.A epsilon.B
+
 
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu
@@ -22,9 +39,9 @@ $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ex
 	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).external.bin
 
 .PHONY: binpack
-binpack: $(BUILD_DIR)/epsilon.onboarding.two_binaries
+binpack: $(BUILD_DIR)/epsilon.onboarding.A.two_binaries $(BUILD_DIR)/epsilon.onboarding.B.two_binaries
 	rm -rf $(BUILD_DIR)/binpack
 	mkdir -p $(BUILD_DIR)/binpack
-	cp $(BUILD_DIR)/epsilon.onboarding.external.bin $(BUILD_DIR)/binpack
-	cd $(BUILD_DIR) && for binary in epsilon.onboarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
+	cp $(BUILD_DIR)/epsilon.onboarding.A.external.bin $(BUILD_DIR)/epsilon.onboarding.B.external.bin $(BUILD_DIR)/binpack
+	cd $(BUILD_DIR) && for binary in epsilon.onboarding.A.external.bin epsilon.onboarding.B.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd $(BUILD_DIR) && tar cvfz binpack-$(MODEL)-`git rev-parse HEAD | head -c 7`.tgz binpack/*

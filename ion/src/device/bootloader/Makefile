@@ -17,7 +17,3 @@ ion_device_src += $(addprefix ion/src/device/bootloader/boot/, \
 ion_device_src += $(addprefix ion/src/device/bootloader/, \
   platform_info.cpp \
 )
-
-SLOT ?= A
-
-LDSCRIPT ?= ion/src/device/bootloader/bootloader.$(SLOT).ld

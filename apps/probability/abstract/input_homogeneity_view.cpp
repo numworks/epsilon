@@ -10,7 +10,7 @@ Escher::View * InputHomogeneityView::HomogeneityContentView::InnerVerticalLayout
     case 0:
       return m_significanceCell;
     default:
-      assert(i==2);
+      assert(i == 1);
       return m_next;
   }
 }

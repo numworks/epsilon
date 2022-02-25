@@ -2,7 +2,6 @@
 #define PROBABILITY_ABSTRACT_INPUT_GOODNESS_VIEW_H
 
 #include "input_categorical_view.h"
-#include "../models/statistic/chi2_statistic.h"
 
 namespace Probability {
 

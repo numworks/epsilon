@@ -42,14 +42,16 @@ public:
   }
 
   int length() const {
-    if (m_start == N) {
-      assert(m_end == N);
+    if (isEmpty()) {
       return 0;
     }
     return m_start < m_end ? m_end - m_start : m_end + N - m_start;
   }
 
-  bool isEmpty() const { return m_start == N && m_end == N; }
+  bool isEmpty() const {
+    assert((m_start == N) == (m_end == N));
+    return m_start == N;
+  }
 
   void reset() { m_start = N; m_end = N; }
 

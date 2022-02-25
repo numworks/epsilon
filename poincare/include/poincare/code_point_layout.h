@@ -15,7 +15,7 @@ class CodePointLayoutNode : public LayoutNode {
 public:
   static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
   static constexpr const int k_dotWidth = 5;
-  static void FillDotBuffer(KDColor * colors, int length);
+  static void FillDotBuffer(KDColor * buffer, int length, KDColor expressionColor, KDColor backgroundColor);
 
   CodePointLayoutNode(CodePoint c = UCodePointNull, const KDFont * font = k_defaultFont) :
     LayoutNode(),

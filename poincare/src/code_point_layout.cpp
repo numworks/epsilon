@@ -7,14 +7,14 @@ namespace Poincare {
 
  // Draw the pixels of the middle dot symbols to make it thinner than font
  // Should be modified if font is modified.
-void CodePointLayoutNode::FillDotBuffer(KDColor * colors, int length) {
+void CodePointLayoutNode::FillDotBuffer(KDColor * buffer, int length, KDColor expressionColor, KDColor backgroundColor) {
   assert(length >= k_dotWidth * k_defaultFont->glyphSize().height());
   for (int i = 0 ; i < k_dotWidth ; i ++) {
     for (int j = 0 ; j < k_defaultFont->glyphSize().height() ; j++) {
-      colors[i+k_dotWidth*j] = KDColorWhite;
+      buffer[i+k_dotWidth*j] = backgroundColor;
     }
   }
-  colors[k_dotWidth / 2 + k_dotWidth * (k_defaultFont->glyphSize().height() / 2 - 1)] = KDColorBlack;
+  buffer[k_dotWidth / 2 + k_dotWidth * (k_defaultFont->glyphSize().height() / 2 - 1)] = expressionColor;
 }
 
 // LayoutNode
@@ -123,7 +123,7 @@ KDSize CodePointLayoutNode::computeSize() {
   }
   KDSize glyph = m_font->glyphSize();
   KDCoordinate width = glyph.width();
-  if (m_codePoint == UCodePointMultiplicationSign && m_font == k_defaultFont) {
+  if (m_codePoint == UCodePointMiddleDot && m_font == k_defaultFont) {
     width = k_dotWidth;
   }
   return KDSize(width + totalHorizontalMargin, glyph.height());
@@ -137,14 +137,14 @@ void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionC
   if (m_displayType == DisplayType::Operator || m_displayType == DisplayType::Implicit) {
     p = p.translatedBy(KDPoint(Escher::Metric::OperatorHorizontalMargin, 0));
   }
-  if (m_codePoint == UCodePointMultiplicationSign && m_font == k_defaultFont) {
+  if (m_codePoint == UCodePointMiddleDot && m_font == k_defaultFont) {
     int width = k_dotWidth;
     int height = m_font->glyphSize().height();
-    KDColor dotColors[width * height];
-    FillDotBuffer(dotColors, width * height);
+    KDColor dotPixels[width * height];
+    FillDotBuffer(dotPixels, width * height, expressionColor, backgroundColor);
     ctx->fillRectWithPixels(
         KDRect(p, KDSize(width, height)),
-        dotColors, dotColors);
+        dotPixels, dotPixels);
     return;
   }
   constexpr int bufferSize = sizeof(CodePoint)/sizeof(char) + 1; // Null-terminating char

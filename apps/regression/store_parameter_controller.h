@@ -23,7 +23,6 @@ protected:
   int numberOfCells() const override { return Shared::StoreParameterController::k_numberOfCells + 1; }
 
 private:
-  virtual I18n::Message sortMessage() override { return I18n::Message::SortValues; } // TODO : put this in storeParameterController of statistics when created.
   constexpr static int k_indexOfRegressionCell = Shared::StoreParameterController::k_numberOfCells;
   static constexpr int k_regressionCellType = 2;
 

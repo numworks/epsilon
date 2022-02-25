@@ -18,7 +18,7 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   const char * title() override { return m_titleBuffer; };
-  virtual void initializeColumnParameters();
+  virtual void initializeColumnParameters(); // Always initialize parent class before initiliazing child.
 protected:
   static constexpr int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   virtual EditableCellTableViewController * editableCellTableViewController() = 0;

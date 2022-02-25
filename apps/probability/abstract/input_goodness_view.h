@@ -2,6 +2,7 @@
 #define PROBABILITY_ABSTRACT_INPUT_GOODNESS_VIEW_H
 
 #include "input_categorical_view.h"
+#include "../models/statistic/chi2_statistic.h"
 
 namespace Probability {
 
@@ -16,8 +17,7 @@ public:
                     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                     Escher::TextFieldDelegate * textFieldDelegate);
 
-  void setDegreeOfFreedomCellText(const char * text);
-  void reloadDegreeOfFreedomCell(int degreeOfFreedom);
+  void updateDegreeOfFreedomCell(Chi2Statistic * statistic);
 
   constexpr static int k_indexOfDegreeOfFreedom = 1;
   constexpr static int k_indexOfSignificance = 2;

@@ -1,6 +1,4 @@
 #include "input_goodness_view.h"
-#include "probability/text_helpers.h"
-#include "probability/constants.h"
 
 
 using namespace Probability;
@@ -81,14 +79,5 @@ void InputGoodnessView::highlightCorrectView() {
 
 // Update the degree of freedom cell according to the statistic
 void Probability::InputGoodnessView::updateDegreeOfFreedomCell(Chi2Statistic * statistic) {
-  int degreeOfFreedom = statistic->degreeOfFreedom();
-  constexpr int bufferSize = Constants::k_shortBufferSize;
-  char buffer[bufferSize];
-  if (degreeOfFreedom >= 0) {
-    defaultConvertFloatToText(degreeOfFreedom, buffer, bufferSize);
-  } else {
-    buffer[0] = 0;
-  }
-  m_degreeOfFreedomCell.textField()->setText(buffer);
-  layoutSubviews();
+  setTextFieldText(static_cast<double>(statistic->degreeOfFreedom()), m_degreeOfFreedomCell.textField());
 }

@@ -70,7 +70,7 @@ bool GoodnessStatistic::isValidParameterAtPosition(int row, int column, double p
 }
 
 bool GoodnessStatistic::isValidParamAtIndex(int i, double p) {
-  if (i % k_maxNumberOfColumns == 1 && std::fabs(p) < DBL_MIN) {
+  if (i < numberOfStatisticParameters() && i % k_maxNumberOfColumns == 1 && std::fabs(p) < DBL_MIN) {
     // Expected value should not be null
     return false;
   }

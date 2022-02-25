@@ -25,10 +25,12 @@ Statistic::~Statistic() {
 }
 
 double Statistic::paramAtIndex(int i) {
+  assert(i <= indexOfThreshold() && indexOfThreshold() == numberOfStatisticParameters());
   return i == indexOfThreshold() ? m_threshold : paramArray()[i];
 }
 
 bool Statistic::isValidParamAtIndex(int i, double p) {
+  assert(i <= indexOfThreshold() && indexOfThreshold() == numberOfStatisticParameters());
   if (i == indexOfThreshold()) {
     return p >= 0.0 && p <= 1.0;
   }
@@ -36,6 +38,7 @@ bool Statistic::isValidParamAtIndex(int i, double p) {
 }
 
 void Statistic::setParamAtIndex(int i, double p) {
+  assert(i <= indexOfThreshold() && indexOfThreshold() == numberOfStatisticParameters());
   if (i == indexOfThreshold()) {
     m_threshold = p;
   } else {

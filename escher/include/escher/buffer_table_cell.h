@@ -1,6 +1,7 @@
 #ifndef ESCHER_BUFFER_TABLE_CELL_H
 #define ESCHER_BUFFER_TABLE_CELL_H
 
+#include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
 #include <escher/table_cell.h>
 #include <escher/metric.h>
@@ -17,6 +18,7 @@ public:
   const View * labelView() const override { return &m_labelView; }
   void setHighlighted(bool highlight) override { assert(!highlight); }
   void setLabelText(const char * textBody);
+  void setMessageAndStringAsLabelText(I18n::Message message, const char * string = "");
   void appendText(const char * textBody);
   // Overriding TableCell row Height
   void layoutSubviews(bool force = false) override;

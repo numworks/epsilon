@@ -16,7 +16,7 @@ public:
   StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return numberOfCells(); }
-  Escher::HighlightCell * reusableCell(int index, int type) override@;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int index) override;
 
   int reusableCellCount(int type) override { return type == k_defaultCellType ? 2 : 1; }

@@ -1,5 +1,6 @@
 #include <escher/buffer_table_cell.h>
 #include <escher/palette.h>
+#include <apps/i18n.h>
 #include <assert.h>
 
 namespace Escher {
@@ -22,6 +23,10 @@ void BufferTableCell::setLabelText(const char * textBody) {
   assert(textBody);
   m_labelView.setText(textBody);
   layoutSubviews();
+}
+
+void BufferTableCell::setMessageAndStringAsLabelText(I18n::Message message, const char * string) {
+  m_labelView.setMessageAndStringAsText(message, string);
 }
 
 void BufferTableCell::appendText(const char * textBody) {

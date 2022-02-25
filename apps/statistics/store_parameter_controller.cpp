@@ -4,7 +4,7 @@ namespace Statistics {
 
 void StoreParameterController::intializeColumnParameters() {
   Shared::StoreParameterController::initializeColumnParameters();
-  m_clearColumn.setMessage(I18n::Message::)
+  m_clearColumn.setMessage(I18n::Message::ClearColumn);
 }
 
 }

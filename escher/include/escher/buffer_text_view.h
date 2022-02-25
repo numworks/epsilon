@@ -1,6 +1,7 @@
 #ifndef ESCHER_BUFFER_TEXT_VIEW_H
 #define ESCHER_BUFFER_TEXT_VIEW_H
 
+#include <apps/i18n.h>
 #include <escher/text_view.h>
 
 namespace Escher {
@@ -15,6 +16,7 @@ public:
                  KDColor backgroundColor = KDColorWhite,
                  size_t maxDisplayedTextLength = k_maxNumberOfChar - 1);
   void setText(const char * text) override;
+  void setMessageAndStringAsText(I18n::Message message, const char * string = "");
   const char * text() const override;
   void appendText(const char * text);
 

@@ -14,6 +14,9 @@ namespace Poincare {
 class CodePointLayoutNode : public LayoutNode {
 public:
   static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
+  static constexpr const int k_dotWidth = 5;
+  static void FillDotBuffer(KDColor * colors, int length);
+
   CodePointLayoutNode(CodePoint c = UCodePointNull, const KDFont * font = k_defaultFont) :
     LayoutNode(),
     m_font(font),

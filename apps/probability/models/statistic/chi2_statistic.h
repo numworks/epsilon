@@ -17,6 +17,7 @@ public:
   double degreeOfFreedom() override { return m_degreesOfFreedom; }
   int indexOfDegreeOfFreedom() { return indexOfThreshold() + 1; }
   bool isValidParamAtIndex(int i, double p) override;
+  void setParamAtIndex(int i, double p) override;
 
   float canonicalDensityFunction(float x) const override;
   double cumulativeNormalizedDistributionFunction(double x) const override;
@@ -31,7 +32,6 @@ public:
   virtual void recomputeData() = 0;
   virtual int maxNumberOfColumns() const = 0;
   virtual int maxNumberOfRows() const = 0;
-  virtual void setDegreeOfFreedom(double degreeOfFreedom) { assert(false); };
 
   void computeInterval() override {}
 

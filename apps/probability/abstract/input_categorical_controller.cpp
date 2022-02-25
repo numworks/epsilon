@@ -31,18 +31,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
   if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false)) {
     return false;
   }
-  if (!m_statistic->isValidParamAtIndex(m_statistic->indexOfThreshold(), p)) {
-    App::app()->displayWarning(I18n::Message::ForbiddenValue);
-    return false;
-  }
-  m_statistic->setParamAtIndex(m_statistic->indexOfThreshold(), p);
-  contentView()->setTextFieldText(p, textField);
-  if (event == Ion::Events::Up) {
-    contentView()->selectViewAtIndex(InputCategoricalView::k_indexOfTable);
-  } else {
-    contentView()->selectViewAtIndex(contentView()->indexOfNext());
-  }
-  return true;
+  return handleEditedValue(m_statistic->indexOfThreshold(), p, textField, event, InputCategoricalView::k_indexOfTable, contentView()->indexOfNext());
 }
 
 void InputCategoricalController::didEnterResponderChain(Responder * previousResponder) {
@@ -92,5 +81,17 @@ void InputCategoricalController::tableViewDidChangeSelectionAndDidScroll(
     contentView()->scrollToContentRect(cellFrame);
   }
 }
+
+bool InputCategoricalController::handleEditedValue(int i, double p, TextField * textField, Ion::Events::Event event, int indexIdUp, int indexOtherwise) {
+  if (!m_statistic->isValidParamAtIndex(i, p)) {
+      App::app()->displayWarning(I18n::Message::ForbiddenValue);
+      return false;
+  }
+  m_statistic->setParamAtIndex(i, p);
+  contentView()->setTextFieldText(p, textField);
+  contentView()->selectViewAtIndex(event == Ion::Events::Up ? indexIdUp : indexOtherwise);
+  return true;
+}
+
 
 }  // namespace Probability

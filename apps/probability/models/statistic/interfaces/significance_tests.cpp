@@ -433,7 +433,7 @@ ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int i) {
     case ParamsOrder::n2: {
       Poincare::HorizontalLayout n2 = LayoutHelper::CodePointSubscriptCodePointLayout('n', '2');
       ;
-      return ParameterRepresentation{n2, I18n::Message::Sample1Size};
+      return ParameterRepresentation{n2, I18n::Message::Sample2Size};
     }
     case ParamsOrder::s2: {
       Poincare::HorizontalLayout sigma2 = LayoutHelper::CodePointSubscriptCodePointLayout(

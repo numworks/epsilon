@@ -48,9 +48,6 @@ public:
       m_bitField |= (uint64_t)1 << (uint8_t)k;
     }
   }
-  void clearKey(Key k) {
-    m_bitField &= ~((uint64_t)1 << (uint8_t)k);
-  }
 private:
   uint64_t m_bitField;
 };

@@ -11,20 +11,18 @@ namespace Shared {
 
 class StoreController;
 
-//TODO : There is a specific StoreParameterController in Regression but we will also need one in Statistics.// Currently, the statistics StoreController implements the Shared StoreParameterController.
-
 class StoreParameterController : public ColumnParameterController {
 public:
   StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return numberOfCells(); }
-  Escher::HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override@;
   KDCoordinate nonMemoizedRowHeight(int index) override;
 
   int reusableCellCount(int type) override { return type == k_defaultCellType ? 2 : 1; }
   int typeAtIndex(int index) override { return index == k_indexOfSortCell ? k_sortCellType : k_defaultCellType; }
 
-  void initializeColumnParameters() override;
+  virtual void initializeColumnParameters() override;
 protected:
   constexpr static int k_numberOfCells = 3;
   virtual int numberOfCells() const { return k_numberOfCells; }
@@ -32,7 +30,7 @@ protected:
 
 private:
   EditableCellTableViewController * editableCellTableViewController() override;
-  virtual I18n::Message sortMessage() { return (m_columnIndex % 2 == 0) ? I18n::Message::SortValues : I18n::Message::SortSizes; }
+  virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
   constexpr static int k_indexOfSortCell = 0;
   constexpr static int k_indexOfFillFormula = k_indexOfSortCell + 1;
   constexpr static int k_indexOfClearColumn = k_indexOfFillFormula + 1;

@@ -161,7 +161,7 @@ void App::didBecomeActive(Window * windows) {
         m_testController.stackOpenPage(&m_categoricalTypeController, 0);
         if (categoricalType == Data::CategoricalType::Goodness) {
           m_categoricalTypeController.stackOpenPage(&m_inputGoodnessController, 0);
-          m_inputGoodnessController.stackOpenPage(&m_resultsController, 0);
+          m_inputGoodnessController.stackOpenPage(&m_resultsController, 1);
         } else {
           m_categoricalTypeController.stackOpenPage(&m_inputHomogeneityController, 0);
           m_inputHomogeneityController.stackOpenPage(&m_homogeneityResultsController, 0);

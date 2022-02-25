@@ -16,7 +16,7 @@ public:
                     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                     Escher::TextFieldDelegate * textFieldDelegate);
 
-  void updateDegreeOfFreedomCell(Chi2Statistic * statistic);
+  void updateDegreeOfFreedomCell(int degreeOfFreedom);
 
   constexpr static int k_indexOfDegreeOfFreedom = 1;
   constexpr static int k_indexOfSignificance = 2;

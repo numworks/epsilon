@@ -79,6 +79,6 @@ void InputGoodnessView::highlightCorrectView() {
 }
 
 // Update the degree of freedom cell according to the statistic
-void Probability::InputGoodnessView::updateDegreeOfFreedomCell(Chi2Statistic * statistic) {
-  setTextFieldText(static_cast<double>(statistic->degreeOfFreedom()), m_degreeOfFreedomCell.textField());
+void Probability::InputGoodnessView::updateDegreeOfFreedomCell(int degreeOfFreedom) {
+  setTextFieldText(static_cast<double>(degreeOfFreedom), m_degreeOfFreedomCell.textField());
 }

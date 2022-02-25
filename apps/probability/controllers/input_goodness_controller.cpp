@@ -41,6 +41,6 @@ bool InputGoodnessController::textFieldDidFinishEditing(TextField * textField,
 
 void Probability::InputGoodnessController::didBecomeFirstResponder() {
   Probability::App::app()->setPage(Data::Page::InputGoodness);
-  m_contentView.updateDegreeOfFreedomCell(m_statistic);
+  m_contentView.updateDegreeOfFreedomCell(m_statistic->degreeOfFreedom());
   InputCategoricalController::didBecomeFirstResponder();
 }

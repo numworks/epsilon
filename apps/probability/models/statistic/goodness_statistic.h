@@ -15,7 +15,6 @@ public:
   bool validateInputs() override;
 
   // Chi2Statistic
-  void setDegreeOfFreedom(double degreeOfFreedom) override { m_degreesOfFreedom = degreeOfFreedom; }
   void setParameterAtPosition(int row, int column, double p) override;
   double parameterAtPosition(int row, int column) override;
   bool isValidParameterAtPosition(int row, int column, double p) override;
@@ -23,9 +22,13 @@ public:
   void recomputeData() override;
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; };
   int maxNumberOfRows() const override { return k_maxNumberOfRows; };
+  void setDegreeOfFreedom(double degreeOfFreedom) override { m_degreesOfFreedom = degreeOfFreedom; }
 
-  int computeNumberOfRows();
+  /* Return the DegreesOfFreedom computed from the numberOfValuesPairs. Actual
+   * statistic's degree of freedom may differ because it can be overridden by
+   * the user. */
   int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
+  int computeNumberOfRows();
 private:
   constexpr static int k_maxNumberOfRows = 10;
   constexpr static int k_maxNumberOfColumns = 2;

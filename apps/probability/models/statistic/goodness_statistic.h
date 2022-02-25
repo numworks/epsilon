@@ -13,7 +13,6 @@ public:
   // Statistic
   void computeTest() override;
   bool validateInputs() override;
-  bool hasDegreeOfFreedom() override { return false; };
 
   // Chi2Statistic
   void setDegreeOfFreedom(double degreeOfFreedom) override { m_degreesOfFreedom = degreeOfFreedom; }

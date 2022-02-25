@@ -146,7 +146,7 @@ double OneMean::ProcessParamaterForIndex(double p, int index) {
   return p;
 }
 
-ParameterRepresentation OneMean::ParameterRepresentationAtIndex(int i) {
+ParameterRepresentation OneMean::ZParameterRepresentationAtIndex(int i) {
   switch (i) {
     case ParamsOrder::x:
     {
@@ -155,8 +155,8 @@ ParameterRepresentation OneMean::ParameterRepresentationAtIndex(int i) {
     }
     case ParamsOrder::s:
     {
-      Poincare::Layout s = CodePointLayout::Builder('s');
-      return ParameterRepresentation{s, I18n::Message::SampleSTD};
+      Layout sigma = CodePointLayout::Builder(CodePoint(UCodePointGreekSmallLetterSigma));
+      return ParameterRepresentation{sigma, I18n::Message::PopulationStd};
     }
     case ParamsOrder::n:
     {
@@ -166,6 +166,17 @@ ParameterRepresentation OneMean::ParameterRepresentationAtIndex(int i) {
   }
   assert(false);
   return ParameterRepresentation{};
+}
+
+ParameterRepresentation OneMean::TParameterRepresentationAtIndex(int i) {
+  switch (i) {
+    case ParamsOrder::s: {
+      Poincare::Layout s = CodePointLayout::Builder('s');
+      return ParameterRepresentation{s, I18n::Message::SampleSTD};
+    }
+    default:
+      return OneMean::ZParameterRepresentationAtIndex(i);
+  }
 }
 
 void OneMean::ComputeZTest(Test * t) {
@@ -393,7 +404,7 @@ bool TwoMeans::TValidateInputs(double * params) {
   return (ComputeDegreesOfFreedom(S1(params), N1(params), S2(params), N2(params)) > 0) && ZValidateInputs(params);
 }
 
-ParameterRepresentation TwoMeans::ParameterRepresentationAtIndex(int i) {
+ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int i) {
   switch (i) {
     case ParamsOrder::x1: {
       Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
@@ -433,6 +444,21 @@ ParameterRepresentation TwoMeans::ParameterRepresentationAtIndex(int i) {
   }
   assert(false);
   return ParameterRepresentation{};
+}
+
+ParameterRepresentation TwoMeans::TParameterRepresentationAtIndex(int i) {
+  switch (i) {
+    case ParamsOrder::s1: {
+      Poincare::HorizontalLayout s1 = LayoutHelper::CodePointSubscriptCodePointLayout('s', '1');
+      return ParameterRepresentation{s1, I18n::Message::Sample1Std};
+    }
+    case ParamsOrder::s2: {
+      Poincare::HorizontalLayout s2 = LayoutHelper::CodePointSubscriptCodePointLayout('s', '2');
+      return ParameterRepresentation{s2, I18n::Message::Sample2Std};
+    }
+    default:
+      return ZParameterRepresentationAtIndex(i);
+  }
 }
 
 void TwoMeans::ComputeZTest(Test * t) {

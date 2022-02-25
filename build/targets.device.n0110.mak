@@ -6,7 +6,7 @@ $(BUILD_DIR)/test.external_flash.read.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_ext
 $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_write_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_write_src))
 
 
-$(BUILD_DIR)/bootloader.$(EXE): $(call flavored_object_for,$(bootloader_src))
+$(BUILD_DIR)/bootloader.$(EXE): $(call flavored_object_for,$(bootloader_src),usbxip)
 $(BUILD_DIR)/bootloader.$(EXE): LDSCRIPT = ion/test/device/n0110/external_flash_tests.ld
 
 .PHONY: %_flash

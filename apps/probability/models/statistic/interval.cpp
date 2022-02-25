@@ -179,6 +179,7 @@ void Interval::resultAtIndex(int index, double * value, Poincare::Layout * messa
     case ResultOrder::IntervalDegree:
       *value = degreeOfFreedom();
       *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
+      *subMessage = I18n::Message::Default;
       break;
     default:
       assert(false);

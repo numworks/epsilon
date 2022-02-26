@@ -106,7 +106,20 @@ void initMPU() {
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
-  // 2.3 Enable MPU
+  /* 2.3 Empty sector
+   * We have to override the sectors configured by the bootloader. */
+  while(sector < 8) {
+    MPU.RNR()->setREGION(sector++);
+    MPU.RBAR()->setADDR(0);
+    MPU.RASR()->setENABLE(0);
+  }
+
+  /* We assert that all sectors have been initialized. Otherwise, the bootloader
+   * configuration is still active on the last sectors when their configuration
+   * should be reset. */
+  assert(sector == 8);
+
+  // 2.4 Enable MPU
   MPU.CTRL()->setPRIVDEFENA(true);
   MPU.CTRL()->setENABLE(true);
 

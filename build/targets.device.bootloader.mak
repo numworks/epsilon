@@ -34,7 +34,7 @@ HANDY_TARGETS += epsilon.A epsilon.B
 .PHONY: %.two_binaries
 %.two_binaries: %.elf
 	@echo "Building an external binary for     $<"
-	$(Q) $(OBJCOPY) -O binary $< $(basename $<).external.bin
+	$(Q) $(OBJCOPY) -O binary -R .slot_info $< $(basename $<).external.bin
 	@echo "Padding $(basename $<).external.bin"
 	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).external.bin
 

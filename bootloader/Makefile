@@ -4,6 +4,7 @@ bootloader_src += $(addprefix bootloader/,\
   slot.cpp \
   interface.cpp \
   jump_to_firmware.s \
+  trampoline.cpp \
 )
 
 bootloader_images = $(addprefix bootloader/, \

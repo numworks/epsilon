@@ -6,6 +6,7 @@ MEMORY {
 }
 
 STACK_SIZE = 32K;
+TRAMPOLINES_OFFSET = 0xE000;
 
 SECTIONS {
   .isr_vector_table ORIGIN(INTERNAL_FLASH) : {
@@ -68,6 +69,11 @@ SECTIONS {
     *(.data.*)
     _data_section_end_ram = .;
   } >SRAM AT> INTERNAL_FLASH
+
+  .trampolines_table : {
+    . = ORIGIN(INTERNAL_FLASH) + TRAMPOLINES_OFFSET;
+    KEEP(*(.trampolines_table));
+  } > INTERNAL_FLASH
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

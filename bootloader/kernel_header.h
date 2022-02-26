@@ -1,11 +1,11 @@
-#ifndef BOOTLOADER_SLOT
-#define BOOTLOADER_SLOT
+#ifndef BOOTLOADER_KERNEL_HEADER_H
+#define BOOTLOADER_KERNEL_HEADER_H
 
 #include <stdint.h>
 
 namespace Bootloader {
 
-class Slot {
+class KernelHeader {
 public:
   const char * version() const;
   const char * patchLevel() const;
@@ -13,7 +13,7 @@ public:
   [[ noreturn ]] void boot() const;
 
 private:
-  Slot();
+  KernelHeader();
   constexpr static uint32_t Magic = 0xDEC00DF0;
   const uint32_t m_unknown;
   const uint32_t m_signature;
@@ -25,8 +25,8 @@ private:
   const void(*m_startPointer)();
 };
 
-extern const Slot* s_slotA;
-extern const Slot* s_slotB;
+extern const KernelHeader* s_kernelHeaderA;
+extern const KernelHeader* s_kernelHeaderB;
 
 }
 

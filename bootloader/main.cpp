@@ -1,6 +1,6 @@
 
 #include <ion.h>
-#include <bootloader/slot.h>
+#include <bootloader/kernel_header.h>
 #include <assert.h>
 #include <ion/src/device/shared/drivers/board.h>
 
@@ -25,5 +25,5 @@ void ion_main(int argc, const char * const argv[]) {
   }
 
   Ion::Device::Board::bootloaderMPU();
-  Bootloader::s_slotA->boot();
+  Bootloader::s_kernelHeaderA->boot();
 }

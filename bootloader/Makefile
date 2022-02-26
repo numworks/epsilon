@@ -1,8 +1,10 @@
 
 bootloader_src += $(addprefix bootloader/,\
+  boot.cpp \
   main.cpp \
   kernel_header.cpp \
   userland_header.cpp \
+  slot.cpp \
   interface.cpp \
   jump_to_firmware.s \
   trampoline.cpp \

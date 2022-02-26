@@ -10,7 +10,9 @@ public:
   const char * version() const;
   const char * patchLevel() const;
   const bool isValid() const;
-  [[ noreturn ]] void boot() const;
+
+  const uint32_t* stackPointer() const;
+  const void(*startPointer() const)();
 
 private:
   KernelHeader();
@@ -24,9 +26,6 @@ private:
   const uint32_t* m_stackPointer;
   const void(*m_startPointer)();
 };
-
-extern const KernelHeader* s_kernelHeaderA;
-extern const KernelHeader* s_kernelHeaderB;
 
 }
 

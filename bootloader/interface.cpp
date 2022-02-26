@@ -2,7 +2,9 @@
 #include <assert.h>
 #include <ion.h>
 
-#include "interface.h"
+#include <bootloader/interface.h>
+#include <bootloader/slot.h>
+#include <bootloader/boot.h>
 
 #include "computer.h"
 #include "cable.h"
@@ -42,6 +44,36 @@ void Interface::draw() {
   KDContext * ctx = KDIonContext::sharedContext();
   drawImage(ctx, ImageStore::Computer, 70);
   drawImage(ctx, ImageStore::Cable, 172);
+
+  ctx->drawString("Slot A:", KDPoint(0, 0),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+  ctx->drawString("Slot B:", KDPoint(0, 13), KDFont::SmallFont, KDColorWhite, KDColorBlack);
+  ctx->drawString("Current:", KDPoint(0, 26),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+
+  if (Boot::mode() == BootMode::SlotA) {
+    ctx->drawString("Slot A", KDPoint(63, 26),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+  } else if (Boot::mode() == BootMode::SlotB) {
+    ctx->drawString("Slot B", KDPoint(63, 26),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+  }
+
+  Slot slots[2] = {Slot::A(), Slot::B()};
+
+  for(uint8_t i = 0; i < 2; i++) {
+    Slot slot = slots[i];
+
+    if (slot.kernelHeader()->isValid() && slot.userlandHeader()->isValid()) {
+      if (slot.userlandHeader()->isOmega()) {
+        ctx->drawString("Omega", KDPoint(56, i*13),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+        ctx->drawString(slot.userlandHeader()->omegaVersion(), KDPoint(112, i*13),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+      } else {
+        ctx->drawString("Epsilon", KDPoint(56, i*13),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+        ctx->drawString(slot.userlandHeader()->version(), KDPoint(112, i*13),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+      }
+      ctx->drawString(slot.kernelHeader()->patchLevel(), KDPoint(168, i*13),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+    } else {
+      ctx->drawString("Invalid", KDPoint(56, i*13),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+    }
+  }
+
 }
 
 }

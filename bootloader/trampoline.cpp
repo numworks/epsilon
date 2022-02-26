@@ -3,7 +3,7 @@
 #include <ion/src/device/shared/drivers/flash.h>
 #include <ion/src/device/n0110/drivers/power.h>
 
-#include "trampoline.h"
+#include <bootloader/trampoline.h>
 
 namespace Bootloader {
 

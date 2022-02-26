@@ -12,6 +12,7 @@ public:
   const char * version() const;
   const bool isValid() const;
   const bool isOmega() const;
+  const char * omegaVersion() const;
 
 private:
   UserlandHeader();

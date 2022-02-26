@@ -17,4 +17,9 @@ const bool UserlandHeader::isOmega() const {
   return m_ohm_header == OmegaMagic && m_ohm_footer == OmegaMagic;
 }
 
+
+const char * UserlandHeader::omegaVersion() const {
+  return m_omegaVersion;
+}
+
 }

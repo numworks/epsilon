@@ -24,6 +24,28 @@ namespace Board {
 
 using namespace Regs;
 
+void bootloaderMPU() {
+  // 1. Disable the MPU
+  // 1.1 Memory barrier
+  Cache::dmb();
+
+  // 1.3 Disable the MPU and clear the control register
+  MPU.CTRL()->setENABLE(false);
+
+  MPU.RNR()->setREGION(7);
+  MPU.RBAR()->setADDR(0x90000000);
+  MPU.RASR()->setXN(false);
+  MPU.RASR()->setENABLE(true);
+
+  // 2.3 Enable MPU
+  MPU.CTRL()->setENABLE(true);
+
+  // 3. Data/instruction synchronisation barriers to ensure that the new MPU configuration is used by subsequent instructions.
+  Cache::disable();
+  Cache::dsb();
+  Cache::isb();
+}
+
 void initMPU() {
   // 1. Disable the MPU
   // 1.1 Memory barrier

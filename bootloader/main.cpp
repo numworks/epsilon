@@ -2,6 +2,7 @@
 #include <ion.h>
 #include <bootloader/slot.h>
 #include <assert.h>
+#include <ion/src/device/shared/drivers/board.h>
 
 #include "interface.h"
 
@@ -23,10 +24,6 @@ void ion_main(int argc, const char * const argv[]) {
     }
   }
 
-  /*
-  KDContext * ctx = KDIonContext::sharedContext();
-  ctx->drawString(Bootloader::s_slotA->version(), KDPoint(0, 20));
-
-  */
+  Ion::Device::Board::bootloaderMPU();
   Bootloader::s_slotA->boot();
 }

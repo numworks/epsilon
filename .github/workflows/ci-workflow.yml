@@ -125,6 +125,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
+      - run: make -j2 bootloader.dfu
       - run: make MODEL=bootloader -j2 epsilon.A.dfu epsilon.B.dfu
       - run: make MODEL=bootloader -j2 epsilon.onboarding.A.dfu epsilon.onboarding.B.dfu
       - run: make MODEL=bootloader -j2 epsilon.onboarding.update.A.dfu epsilon.onboarding.update.B.dfu

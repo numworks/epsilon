@@ -371,7 +371,7 @@ void MassErase() {
 
 void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
   asm("cpsid if");
-  reinterpret_cast<void(*)(uint8_t*, const uint8_t*, size_t)>(Ion::Device::Trampoline::address(Ion::Device::Trampoline::ExternalFlashWriteMemory))(destination + ExternalFlash::Config::StartAddress, source, length);
+  reinterpret_cast<void(*)(uint8_t*, const uint8_t*, size_t)>(Ion::Device::Trampoline::address(Ion::Device::Trampoline::ExternalFlashWriteMemory))(destination, source, length);
   asm("cpsie if");
 }
 

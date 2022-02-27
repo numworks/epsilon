@@ -471,6 +471,7 @@ void __attribute__((noinline)) WriteMemory(uint8_t * destination, const uint8_t 
   if (Config::NumberOfSectors == 0) {
     return;
   }
+  destination -= ExternalFlash::Config::StartAddress;
   unset_memory_mapped_mode();
   /* Each 256-byte page of the external flash memory (contained in a previously erased area)
    * may be programmed in burst mode with a single Page Program instruction.

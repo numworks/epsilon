@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include <ion/src/device/shared/drivers/flash.h>
+#include <ion/src/device/shared/drivers/external_flash.h>
 #include <ion/src/device/n0110/drivers/power.h>
 
 #include <bootloader/trampoline.h>
@@ -16,8 +16,8 @@ void* Trampolines[TRAMPOLINES_COUNT]
   __attribute__((used))
  = {
   (void*) Bootloader::suspend, // Suspend
-  (void*) Ion::Device::Flash::EraseSector, // External erase
-  (void*) Ion::Device::Flash::WriteMemory, // External write
+  (void*) Ion::Device::ExternalFlash::EraseSector, // External erase
+  (void*) Ion::Device::ExternalFlash::WriteMemory, // External write
   (void*) memcmp,
   (void*) memcpy,
   (void*) memmove,

@@ -4,6 +4,7 @@
 #include <ion/src/device/n0110/drivers/power.h>
 
 #include <bootloader/trampoline.h>
+#include <bootloader/boot.h>
 
 namespace Bootloader {
 
@@ -28,6 +29,14 @@ void* Trampolines[TRAMPOLINES_COUNT]
   (void*) strlcpy,
   (void*) strlen,
   (void*) strncmp
+};
+
+void* CustomTrampolines[CUSTOM_TRAMPOLINES_COUNT]
+  __attribute__((section(".custom_trampolines_table")))
+  __attribute__((used))
+ = {
+  (void*) Bootloader::Boot::mode,
+  (void*) Bootloader::Boot::setMode
 };
 
 }

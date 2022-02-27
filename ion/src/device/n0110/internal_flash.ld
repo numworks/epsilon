@@ -7,6 +7,7 @@ MEMORY {
 
 STACK_SIZE = 32K;
 TRAMPOLINES_OFFSET = 0xE000;
+CUSTOM_TRAMPOLINES_OFFSET = 64K - 64;
 FLASH_SECOND_SECTOR_OFFSET = 16K;
 FLASH_SECOND_SECTOR_SIZE = 16K;
 
@@ -83,6 +84,11 @@ SECTIONS {
   .trampolines_table : {
     . = ORIGIN(INTERNAL_FLASH) + TRAMPOLINES_OFFSET;
     KEEP(*(.trampolines_table));
+  } > INTERNAL_FLASH
+
+  .custom_trampolines_table : {
+    . = ORIGIN(INTERNAL_FLASH) + CUSTOM_TRAMPOLINES_OFFSET;
+    KEEP(*(.custom_trampolines_table));
   } > INTERNAL_FLASH
 
   .bss : {

@@ -1,4 +1,5 @@
-#include "../shared/store_parameter_controller.h"
+#include "store_parameter_controller.h"
+#include "store.h"
 
 namespace Statistics {
 
@@ -9,13 +10,13 @@ void StoreParameterController::initializeColumnParameters() {
       m_clearColumn.setSimpleCustomLabelText(I18n::Message::ResetFrequencies);
   } else {
     int series = m_columnIndex / Store::k_numberOfColumnsPerSeries;
-    const char tableName[6];
-    const char tableIndex = static_cast<char>('1' + series);
+    char tableName[6];
+    char tableIndex = static_cast<char>('1' + series);
     tableName[0] = 'V';
     tableName[1] = tableIndex;
     tableName[2] = '/';
     tableName[3] = 'N';
     tableName[4] = tableIndex;
-    m_clearColumn.setSimpleCustomLabelText(I18n::Message::ClearTable, tableName);
+    m_clearColumn.setSimpleCustomLabelText(I18n::Message::ClearTable, const_cast<const char *>(tableName));
   }
 }}

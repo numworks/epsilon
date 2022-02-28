@@ -19,8 +19,8 @@ class Boot {
 public:
   static BootMode mode();
   static void setMode(BootMode mode);
-  [[ noreturn ]] static void boot();
-  [[ norteurn ]] static void bootloader();
+  __attribute__ ((noreturn)) static void boot();
+  __attribute__ ((noreturn)) static void bootloader();
 };
 
 }

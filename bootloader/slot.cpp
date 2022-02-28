@@ -1,4 +1,5 @@
 #include <bootloader/slot.h>
+#include <ion/src/device/shared/drivers/board.h>
 
 extern "C" void jump_to_firmware(const uint32_t* stackPtr, const void(*startPtr)(void));
 
@@ -21,6 +22,10 @@ const UserlandHeader* Slot::userlandHeader() const {
 }
 
 [[ noreturn ]] void Slot::boot() const {
+  // Configure the MPU for the booted firmware
+  Ion::Device::Board::bootloaderMPU();
+
+  // Jump
   jump_to_firmware(kernelHeader()->stackPointer(), kernelHeader()->startPointer());
   for(;;);
 }

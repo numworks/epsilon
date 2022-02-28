@@ -26,8 +26,8 @@
           </div>
         </div>
       </div>
-      <div class="col-fullscreen calculator-mirror">
-        <canvas width="320" height="240"></canvas>
+      <div class="col-fullscreen">
+        <canvas class="calculator-mirror" width="320" height="240"></canvas>
       </div>
     </div>
     <script src="epsilon.js"></script>

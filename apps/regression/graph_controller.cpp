@@ -49,7 +49,7 @@ void GraphController::viewWillAppear() {
   /* At this point, some series might have been removed from the model. We need
    * to reinitialize the selected series index if the current selection is
    * either null (right after construction) or refering a removed series. */
-  if (*m_selectedSeriesIndex < 0 || m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
+  if (*m_selectedSeriesIndex < 0 || !m_store->seriesIsValid(*m_selectedSeriesIndex)) {
     *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
   }
 
@@ -89,7 +89,7 @@ void GraphController::computeXRange(float xMinLimit, float xMaxLimit, float * xM
   *xMin = FLT_MAX;
   *xMax = -FLT_MAX;
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
-    if (!m_store->seriesIsEmpty(series)) {
+    if (m_store->seriesIsValid(series)) {
       Poincare::Zoom::CombineRanges(m_store->minValueOfColumn(series, 0), m_store->maxValueOfColumn(series, 0), *xMin, *xMax, xMin, xMax);
     }
   }
@@ -295,7 +295,7 @@ void GraphController::initCursorParameters() {
 }
 
 bool GraphController::cursorMatchesModel() {
-  if (m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
+  if (!m_store->seriesIsValid(*m_selectedSeriesIndex)) {
     return false;
   }
   Coordinate2D<double> xy;
@@ -400,7 +400,7 @@ int GraphController::selectedCurveRelativePosition() const {
     return -1;
   }
   for (int i = 0; i < *m_selectedSeriesIndex; i++) {
-    if (m_store->seriesIsEmpty(i)) {
+    if (!m_store->seriesIsValid(i)) {
       res--;
     }
   }
@@ -408,7 +408,7 @@ int GraphController::selectedCurveRelativePosition() const {
 }
 
 bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const {
-  return InteractiveCurveViewController::closestCurveIndexIsSuitable(newIndex, currentIndex, newSubIndex, currentSubIndex) && !m_store->seriesIsEmpty(newIndex);
+  return InteractiveCurveViewController::closestCurveIndexIsSuitable(newIndex, currentIndex, newSubIndex, currentSubIndex) && m_store->seriesIsValid(newIndex);
 }
 
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double x, Poincare::Context * context, int subCurveIndex) const {

@@ -92,7 +92,6 @@ private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
   int maxNumberOfElements() const override { return DoublePairStore::k_maxNumberOfPairs; }
-  void clearSelectedColumn() override;
 
   StoreTitleCell m_titleCells[k_numberOfTitleCells];
   ContentView m_contentView;

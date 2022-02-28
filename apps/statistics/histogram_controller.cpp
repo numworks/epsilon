@@ -217,7 +217,7 @@ void HistogramController::preinitXRangeParameters(double * xMin, double * xMax) 
   double minValue = DBL_MAX;
   double maxValue = -DBL_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
-    if (!m_store->seriesIsEmpty(i)) {
+    if (m_store->seriesIsValid(i)) {
       minValue = std::min<double>(minValue, m_store->minValue(i));
       maxValue = std::max<double>(maxValue, m_store->maxValue(i));
     }

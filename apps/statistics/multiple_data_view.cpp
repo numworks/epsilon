@@ -21,7 +21,7 @@ void MultipleDataView::reload() {
 int MultipleDataView::indexOfSubviewAtSeries(int series) {
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (!m_store->seriesIsEmpty(i)) {
+    if (m_store->seriesIsValid(i)) {
      if (i == series) {
         return displayedSubviewIndex;
      }
@@ -55,7 +55,7 @@ View * MultipleDataView::subviewAtIndex(int index) {
   int seriesIndex = 0;
   int nonEmptySeriesIndex = -1;
   while (seriesIndex < Store::k_numberOfSeries) {
-    if (!m_store->seriesIsEmpty(seriesIndex)) {
+    if (m_store->seriesIsValid(seriesIndex)) {
       nonEmptySeriesIndex++;
       if (nonEmptySeriesIndex == index) {
         return dataViewAtIndex(seriesIndex);
@@ -81,7 +81,7 @@ void MultipleDataView::layoutDataSubviews(bool force) {
   KDCoordinate subviewHeight = (bounds().height() - bannerHeight)/numberDataSubviews + 1; // +1 to make sure that all pixel rows are drawn
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (!m_store->seriesIsEmpty(i)) {
+    if (m_store->seriesIsValid(i)) {
       CurveView * dataView = dataViewAtIndex(i);
       KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), subviewHeight);
       dataView->setFrame(frame, force);

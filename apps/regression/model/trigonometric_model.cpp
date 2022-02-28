@@ -65,7 +65,7 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
 }
 
 void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
-  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series));
+  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsValid(series));
   /* We try a better initialization than the default value. We hope that this
    * will improve the gradient descent to find correct coefficients.
    *

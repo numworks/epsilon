@@ -48,7 +48,7 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
   double nextY = INFINITY;
   int selectedDot = -1;
   for (int series = 0; series < k_numberOfSeries; series++) {
-    if (seriesIsEmpty(series) || (currentDot >= 0 && currentSeries == series)) {
+    if (!seriesIsValid(series) || (currentDot >= 0 && currentSeries == series)) {
       /* If the currentDot is valid, the next series should not be the current
        * series */
       continue;
@@ -137,15 +137,15 @@ int Store::nextDot(int series, int direction, int dot) {
 
 /* Series */
 
-bool Store::seriesIsEmpty(int series) const {
-  return numberOfPairsOfSeries(series) < 2;
+bool Store::seriesIsValid(int series) const {
+  return Shared::DoublePairStore::seriesIsValid(series) && numberOfPairsOfSeries(series) >= 2;
 }
 
 /* Calculations */
 
 void Store::updateCoefficients(int series, Poincare::Context * globalContext) {
   assert(series >= 0 && series <= k_numberOfSeries);
-  assert(!seriesIsEmpty(series));
+  assert(seriesIsValid(series));
   uint32_t storeChecksumSeries = storeChecksumForSeries(series);
   Poincare::Preferences::AngleUnit currentAngleUnit = Poincare::Preferences::sharedPreferences()->angleUnit();
   if (m_angleUnit != currentAngleUnit) {

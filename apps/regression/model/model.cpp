@@ -46,7 +46,7 @@ bool Model::dataSuitableForFit(Store * store, int series) const {
   if (!store->seriesNumberOfAbscissaeGreaterOrEqualTo(series, numberOfCoefficients())) {
     return false;
   }
-  return !store->seriesIsEmpty(series);
+  return store->seriesIsValid(series);
 }
 
 void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {
@@ -205,7 +205,7 @@ int Model::solveLinearSystem(double * solutions, double * coefficients, double *
 }
 
 void Model::initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store, int series) const {
-  assert(forceDefaultValue || (store != nullptr && series >= 0 && series < Store::k_numberOfSeries && !store->seriesIsEmpty(series)));
+  assert(forceDefaultValue || (store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsValid(series)));
   if (forceDefaultValue) {
     Model::specializedInitCoefficientsForFit(modelCoefficients, defaultValue);
   } else {

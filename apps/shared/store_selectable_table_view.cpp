@@ -35,9 +35,9 @@ bool StoreSelectableTableView::selectNonHiddenCellAtClippedLocation(int i, int j
     i = dataSource()->numberOfColumns() - 1;
   }
   int seriesIndex = i / DoublePairStore::k_numberOfColumnsPerSeries;
-  int numberOfPairsOfCurrentSeries = m_store->numberOfPairsOfSeries(seriesIndex);
-  if (j > 1 + numberOfPairsOfCurrentSeries) {
-    j = 1 + numberOfPairsOfCurrentSeries;
+  int numberOfValuesOfCurrentColumn = m_store->numberOfValuesOfColumn(seriesIndex, i);
+  if (j > 1 + numberOfValuesOfCurrentColumn) {
+    j = 1 + numberOfValuesOfCurrentColumn;
   }
   // if negative, j will be clipped in selectCellAtClippedLocation
   return selectCellAtClippedLocation(i, j);

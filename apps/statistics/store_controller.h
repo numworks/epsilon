@@ -20,6 +20,7 @@ private:
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
+  void clearSelectedColumn() override;
   Store * m_store;
   StatisticsContext m_statisticsContext;
   StoreParameterController m_storeParameterController;

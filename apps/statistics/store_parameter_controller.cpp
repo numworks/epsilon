@@ -2,9 +2,20 @@
 
 namespace Statistics {
 
-void StoreParameterController::intializeColumnParameters() {
+void StoreParameterController::initializeColumnParameters() {
   Shared::StoreParameterController::initializeColumnParameters();
-  m_clearColumn.setMessage(I18n::Message::ClearColumn);
-}
-
-}
+  // Initialize clear column message
+  if (m_columnIndex % Store::k_numberOfColumnsPerSeries == 1) {
+      m_clearColumn.setMessageAndStringAsLabelText(I18n::Message::ResetFrequencies);
+  } else {
+    int series = m_columnIndex / Store::k_numberOfColumnsPerSeries;
+    const char tableName[6];
+    const char tableIndex = static_cast<char>('1' + series);
+    tableName[0] = 'V';
+    tableName[1] = tableIndex;
+    tableName[2] = '/';
+    tableName[3] = 'N';
+    tableName[4] = tableIndex;
+    m_clearColumn.setMessageAndStringAsLabelText(I18n::Message::ClearTable, tableName);
+  }
+}}

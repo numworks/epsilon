@@ -69,11 +69,6 @@ void Interval::tidy() {
   m_estimateLayout = Poincare::Layout();
 }
 
-void Interval::compute() {
-  computeInterval();
-  computeCurveViewRange();
-}
-
 Poincare::Layout Interval::intervalCriticalValueSymbol() {
   return Poincare::HorizontalLayout::Builder(
       testCriticalValueSymbol(),
@@ -108,11 +103,11 @@ float Interval::largestMarginOfError() {
   double previousThreshold = threshold();
   float intervalTemp = DisplayedIntervalThresholdAtIndex(previousThreshold, k_numberOfDisplayedIntervals - 1);
   m_threshold = intervalTemp;
-  computeInterval();
+  compute();
   double error = marginOfError();
   // Restore the statistic
   setThreshold(previousThreshold);
-  computeInterval();
+  compute();
   return error;
 }
 

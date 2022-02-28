@@ -27,7 +27,7 @@ void GoodnessTest::setResultTitle(char * buffer, size_t bufferSize, bool resultI
       threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-void GoodnessTest::computeTest() {
+void GoodnessTest::compute() {
   m_testCriticalValue = computeChi2();
   m_pValue = SignificanceTest::ComputePValue(this);
 }

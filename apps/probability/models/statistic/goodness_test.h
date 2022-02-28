@@ -18,7 +18,7 @@ public:
   bool validateInputs() override;
   // Statistic
   int numberOfResults() const override { return 2; }
-  void computeTest() override;
+  void compute() override;
 
   // Chi2Test
   void setParameterAtPosition(double p, int row, int column) override;

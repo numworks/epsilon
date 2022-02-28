@@ -25,6 +25,7 @@ const char * TestGraphController::title() {
 
 void TestGraphController::didBecomeFirstResponder() {
   m_conclusionView.generateConclusionTexts(m_test->canRejectNull());
+  m_test->computeCurveViewRange();
   m_graphView.reload();
 }
 

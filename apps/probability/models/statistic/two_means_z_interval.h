@@ -23,7 +23,7 @@ public:
     p = TwoMeans::ProcessParamaterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);
   }
-  void computeInterval() override { TwoMeans::ComputeZInterval(this); }
+  void compute() override { TwoMeans::ComputeZInterval(this); }
   const char * estimateSymbol() const override { return TwoMeans::EstimateSymbol(); }
   Poincare::Layout estimateLayout() const override { return TwoMeans::EstimateLayout(&m_estimateLayout); }
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionZ::TestCriticalValueSymbol(font); }

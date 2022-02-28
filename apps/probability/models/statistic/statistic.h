@@ -90,6 +90,7 @@ public:
 
   // Computation
   virtual void compute() = 0;
+  using Inference::computeCurveViewRange;
 
   // CurveViewRange
   virtual bool isGraphable() const { return true; }

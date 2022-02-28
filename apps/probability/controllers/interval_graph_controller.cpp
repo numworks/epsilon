@@ -22,6 +22,7 @@ const char * IntervalGraphController::title() {
 
 void IntervalGraphController::didBecomeFirstResponder() {
   m_conclusionView.setInterval(m_interval->estimate(), m_interval->marginOfError());
+  m_interval->computeCurveViewRange();
   m_graphView.reload();
 }
 

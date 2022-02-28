@@ -23,7 +23,7 @@ public:
   int reusableCellCount(int type) override { return type == k_defaultCellType ? 2 : 1; }
   int typeAtIndex(int index) override { return index == k_indexOfSortCell ? k_sortCellType : k_defaultCellType; }
 
-  virtual void initializeColumnParameters() override;
+  void initializeColumnParameters() override;
 protected:
   constexpr static int k_numberOfCells = 3;
   virtual int numberOfCells() const { return k_numberOfCells; }

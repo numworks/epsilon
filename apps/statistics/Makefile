@@ -24,6 +24,7 @@ app_statistics_src = $(addprefix apps/statistics/,\
   multiple_histograms_view.cpp \
   statistics_context.cpp \
   store_controller.cpp \
+  store_parameter_controller.cpp \
 )
 
 app_statistics_src += $(app_statistics_test_src)

@@ -12,7 +12,7 @@ public:
   using Shared::StoreParameterController::StoreParameterController;
   void initializeColumnParameters() override;
 private:
- I18n::Message sortMessage() {
+ I18n::Message sortMessage() override {
    return (m_columnIndex % 2 == 0) ? I18n::Message::SortValues : I18n::Message::SortSizes;
  }
 };

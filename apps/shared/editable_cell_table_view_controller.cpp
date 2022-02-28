@@ -25,7 +25,7 @@ EditableCellTableViewController::EditableCellTableViewController(Responder * par
       param->selectableTableView()->reloadData();
       return true;
     }, this),
-    {I18n::Message::ConfirmDeleteColumn1, I18n::Message::ConfirmDeleteColumn2}
+    {I18n::Message::ClearColumnConfirmation1, I18n::Message::ClearColumnConfirmation2}
   )
 { }
 
@@ -146,7 +146,7 @@ void EditableCellTableViewController::presentClearSelectedColumnPopupIfClearable
 
 bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Backspace && selectedRow() == 0) || event == Ion::Events::Clear) {
-    presentClearSelectedColumnPopupIfClearable(I18n::Message::ConfirmDeleteColumn1, I18n::Message::ConfirmDeleteColumn2);
+    presentClearSelectedColumnPopupIfClearable(I18n::Message::ClearColumnConfirmation1, I18n::Message::ClearColumnConfirmation2);
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {

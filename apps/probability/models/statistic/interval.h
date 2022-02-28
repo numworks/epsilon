@@ -45,7 +45,7 @@ public:
   I18n::Message thresholdDescription() const override { return I18n::Message::Default; }
 
   virtual const char * estimateSymbol() const = 0;
-  virtual Poincare::Layout estimateLayout() { return m_estimateLayout; }
+  virtual Poincare::Layout estimateLayout() const { return m_estimateLayout; }
   virtual I18n::Message estimateDescription() { return I18n::Message::Default; }
   /* The estimate is the center of the confidence interval,
    * and estimates the parameter of interest. */
@@ -81,7 +81,7 @@ protected:
   double computeIntervalCriticalValue();
   virtual void computeInterval() = 0;
 
-  Poincare::Layout m_estimateLayout;
+  mutable Poincare::Layout m_estimateLayout;
   double m_estimate;
   double m_zCritical;
   double m_SE;

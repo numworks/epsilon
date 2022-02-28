@@ -1,6 +1,7 @@
 #include <bootloader/boot.h>
 #include <bootloader/slot.h>
 #include <ion.h>
+#include <ion/src/device/shared/drivers/reset.h>
 #include <bootloader/interface.h>
 
 #include <assert.h>
@@ -57,11 +58,24 @@ __attribute__((noreturn)) void Boot::boot() {
 }
 
 __attribute__ ((noreturn)) void Boot::bootloader() {
-  Bootloader::Interface::draw();
   for(;;) {
+    // Draw the interfaces and infos
+    Bootloader::Interface::draw();
+
+    // Enable USB
     Ion::USB::enable();
-    while (!Ion::USB::isEnumerated());
-    Ion::USB::DFU(false);
+
+    // Wait for the device to be enumerated
+    do {
+      // If we pressed back while waiting, reset.
+      uint64_t scan = Ion::Keyboard::scan();
+      if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Back)) {
+        Ion::Device::Reset::core();
+      }
+    } while (!Ion::USB::isEnumerated());
+
+    // Launch the DFU stack, allowing to press Back to quit and reset
+    Ion::USB::DFU(true);
   }
 }
 

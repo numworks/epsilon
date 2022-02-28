@@ -62,7 +62,7 @@ def css(layout):
       css_rect_declarations(rect, background)
     )
   css += css_rule(
-    '.calculator-mirror canvas',
+    'canvas.calculator-mirror',
     css_declaration('image-rendering', '-moz-crisp-edges'),
     css_declaration('image-rendering', 'pixelated'),
     css_declaration('-ms-interpolation-mode', 'nearest-neighbor')

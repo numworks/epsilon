@@ -85,9 +85,21 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   const char * eventText = event.text();
   if (eventText && eventText[0] >= '1' && eventText[0] <= '9' && eventText[1] == 0) { // Handle keys from 1 to 9
     int appIndex = eventText[0]-'1';
-    m_view.selectableTableView()->selectCellAtLocation(appIndex % k_numberOfColumns, appIndex/k_numberOfColumns);
+    int i = appIndex % k_numberOfColumns;
+    int j = appIndex / k_numberOfColumns;
+#define SELECT_THEN_SWITCH 1
+#if SELECT_THEN_SWITCH
+    if (i == m_view.selectableTableView()->selectedColumn() && j == m_view.selectableTableView()->selectedRow()) {
+      // We were already on the selected app
+      switchToSelectedApp();
+      return true;
+    }
+    return m_view.selectableTableView()->selectCellAtLocation(i, j);
+#else
+    m_view.selectableTableView()->selectCellAtLocation(i, j);
     switchToSelectedApp();
     return true;
+#endif
   }
 
   return false;

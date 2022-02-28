@@ -24,7 +24,7 @@ public:
   void computeInterval() override { TwoProportions::ComputeInterval(this); }
 
   const char * estimateSymbol() const override { return TwoProportions::EstimateSymbol(); }
-  Poincare::Layout estimateLayout() override { return TwoProportions::EstimateLayout(&m_estimateLayout); }
+  Poincare::Layout estimateLayout() const override { return TwoProportions::EstimateLayout(&m_estimateLayout); }
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionZ::TestCriticalValueSymbol(font); }
   I18n::Message estimateDescription() override { return TwoProportions::EstimateDescription(); };
 

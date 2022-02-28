@@ -2,11 +2,11 @@
 #define CODE_VARIABLE_BOX_CONTROLLER_H
 
 #include <apps/alternate_empty_nested_menu_controller.h>
-#include <escher/buffer_table_cell.h>
 #include <escher/toolbox_message_tree.h>
 #include "script_node.h"
 #include "script_node_cell.h"
 #include "script_store.h"
+#include "subtitle_cell.h"
 #include "variable_box_empty_controller.h"
 
 namespace Code {
@@ -42,7 +42,7 @@ public:
 
 private:
   constexpr static size_t k_maxNumberOfDisplayedItems = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / Escher::TableCell::k_minimalSmallFontCellHeight + 2; // +2 if the cells are cropped on top and at the bottom
-  constexpr static size_t k_maxNumberOfDisplayedSubtitles = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / (Escher::BufferTableCell::k_subtitleRowHeight + Escher::TableCell::k_minimalSmallFontCellHeight) + 2; // Subtitles are at least followed by one item row
+  constexpr static size_t k_maxNumberOfDisplayedSubtitles = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin) / (SubtitleCell::k_subtitleRowHeight + Escher::TableCell::k_minimalSmallFontCellHeight) + 2; // Subtitles are at least followed by one item row
   constexpr static size_t k_totalBuiltinNodesCount = 107;
   constexpr static size_t k_maxOtherScriptNodesCount = 32; // Chosen without particular reasons
   constexpr static size_t k_maxScriptNodesCount = k_maxOtherScriptNodesCount + k_totalBuiltinNodesCount + k_maxOtherScriptNodesCount; // CurrentScriptOrigin + BuiltinsOrigin + ImportedOrigin
@@ -97,7 +97,7 @@ private:
   VariableBoxEmptyController m_variableBoxEmptyController;
   ScriptNode m_scriptNodes[k_maxScriptNodesCount];
   ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedItems];
-  Escher::BufferTableCell m_subtitleCells[k_maxNumberOfDisplayedSubtitles];
+  SubtitleCell m_subtitleCells[k_maxNumberOfDisplayedSubtitles];
   ScriptStore * m_scriptStore;
   size_t m_nodesCount; // Number of nodes
   uint8_t m_originsCount; // Number of origins

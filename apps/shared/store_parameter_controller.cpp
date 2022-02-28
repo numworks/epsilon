@@ -16,7 +16,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_sortCell(I18n::Message::SortCellLabel),
   m_fillFormula(I18n::Message::FillWithFormula)
 {
-  m_clearColumn.setMessageAndStringAsLabelText(I18n::Message::ClearColumn);
+  m_clearColumn.setSimpleCustomLabelText(I18n::Message::ClearColumn);
 }
 
 void StoreParameterController::initializeColumnParameters() {

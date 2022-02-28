@@ -333,9 +333,11 @@ private:
     // Reset m_plotType to Unknown type
     void resetPlotType() const { m_plotType = PlotType::Unknown; }
     // Update m_plotType depending on the equation
-    void updatePlotType(const Poincare::Expression equation, Poincare::Context * context) const;
+    void updatePlotType(const Ion::Storage::Record * record, const Poincare::Expression equation, Poincare::Context * context) const;
     // If equation has a NonNull coeff. Can also compute last coeff sign.
     static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign);
+    // If equation should be allowed when implicit plots are forbidden.
+    static bool IsExplicitEquation(const Poincare::Expression equation, CodePoint symbol);
   private:
     // Return address of the record's expression
     void * expressionAddress(const Ion::Storage::Record * record) const override;

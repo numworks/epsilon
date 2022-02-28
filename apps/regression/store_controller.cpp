@@ -30,4 +30,10 @@ int StoreController::fillColumnName(int columnIndex, char * buffer) {
   return 2;
 }
 
+void StoreController::clearSelectedColumn() {
+  int series = seriesAtColumn(selectedColumn());
+  int column = selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries;
+  m_store->deleteColumn(series, column);
+}
+
 }

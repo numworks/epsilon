@@ -85,8 +85,8 @@ bool Store::isEmpty() const {
   return numberOfNonEmptySeries() == 0;
 }
 
-bool Store::seriesIsEmpty(int series) const {
-  return m_seriesEmpty[series];
+bool Store::seriesIsValid(int series) const {
+  return !m_seriesEmpty[series];
 }
 
 bool Store::frequenciesAreInteger(int series) const {

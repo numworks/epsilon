@@ -30,6 +30,7 @@ constexpr char ContinuousFunction::k_ordinateName[2];
 constexpr CodePoint ContinuousFunction::k_cartesianSymbol;
 constexpr CodePoint ContinuousFunction::k_parametricSymbol;
 constexpr CodePoint ContinuousFunction::k_polarSymbol;
+constexpr CodePoint ContinuousFunction::k_ordinateSymbol;
 constexpr CodePoint ContinuousFunction::k_unnamedExpressionSymbol;
 
 /* ContinuousFunction - Public */
@@ -717,7 +718,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
      * symbols nested in function, which is not a supported behavior anyway.
      * TODO: Make a consistent behavior calculation/additional_outputs using a
      *       VariableContext to temporary disable y's predefinition. */
-    result = result.replaceSymbolWithExpression(Symbol::Builder(k_ordinateName[0]), Symbol::Builder(UCodePointTemporaryUnknown));
+    result = result.replaceSymbolWithExpression(Symbol::Builder(k_ordinateSymbol), Symbol::Builder(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
   result = Expression::ExpressionWithoutSymbols(result, context);
@@ -732,7 +733,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
 
   assert(!result.isUninitialized());
   if (isUnnamedFunction) {
-    result = result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateName[0]));
+    result = result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateSymbol));
   }
 
   if (plotType() == PlotType::Unknown) {

@@ -6,6 +6,12 @@ $$(BUILD_DIR)/epsilon.$(1).A.$$(EXE): $$(call flavored_object_for,$$(epsilon_src
 $$(BUILD_DIR)/epsilon.$(1).A.$$(EXE): LDSCRIPT = ion/src/device/bootloader/bootloader.A.ld
 $$(BUILD_DIR)/epsilon.$(1).B.$$(EXE): $$(call flavored_object_for,$$(epsilon_src),$(1))
 $$(BUILD_DIR)/epsilon.$(1).B.$$(EXE): LDSCRIPT = ion/src/device/bootloader/bootloader.B.ld
+$$(BUILD_DIR)/epsilon.$(1).bin: $$(BUILD_DIR)/epsilon.$(1).A.bin $$(BUILD_DIR)/epsilon.$(1).B.bin
+	@echo "COMBINE $$@"
+	$(Q) cat $$(BUILD_DIR)/epsilon.$(1).A.bin >> $$(BUILD_DIR)/epsilon.$(1).bin
+	$(Q) truncate -s 4MiB $$(BUILD_DIR)/epsilon.$(1).bin
+	$(Q) cat $$(BUILD_DIR)/epsilon.$(1).B.bin >> $$(BUILD_DIR)/epsilon.$(1).bin
+	$(Q) truncate -s 8MiB $$(BUILD_DIR)/epsilon.$(1).bin
 endef
 
 $(BUILD_DIR)/epsilon.A.$(EXE): $(call flavored_object_for,$(epsilon_src))
@@ -14,6 +20,7 @@ $(BUILD_DIR)/epsilon.A.$(EXE): LDSCRIPT = ion/src/device/bootloader/bootloader.A
 $(BUILD_DIR)/epsilon.B.$(EXE): $(call flavored_object_for,$(epsilon_src))
 $(BUILD_DIR)/epsilon.B.$(EXE): LDSCRIPT = ion/src/device/bootloader/bootloader.B.ld
 
+$(BUILD_DIR)/epsilon.bin: $(BUILD_DIR)/epsilon.A.bin $(BUILD_DIR)/epsilon.B.bin
 
 $(foreach flavor,$(epsilon_flavors),$(eval $(call rule_for_epsilon_flavor_bootloader,$(flavor))))
 
@@ -31,17 +38,10 @@ HANDY_TARGETS += epsilon.A epsilon.B
 	$(Q) until $(PYTHON) build/device/dfu.py -l | grep -E "0483:a291|0483:df11" > /dev/null 2>&1; do sleep 2;done
 	$(Q) $(PYTHON) build/device/dfu.py -u $(word 1,$^)
 
-.PHONY: %.two_binaries
-%.two_binaries: %.elf
-	@echo "Building an external binary for     $<"
-	$(Q) $(OBJCOPY) -O binary -R .slot_info $< $(basename $<).external.bin
-	@echo "Padding $(basename $<).external.bin"
-	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).external.bin
-
 .PHONY: binpack
-binpack: $(BUILD_DIR)/epsilon.onboarding.A.two_binaries $(BUILD_DIR)/epsilon.onboarding.B.two_binaries
+binpack: $(BUILD_DIR)/epsilon.onboarding.bin
 	rm -rf $(BUILD_DIR)/binpack
 	mkdir -p $(BUILD_DIR)/binpack
-	cp $(BUILD_DIR)/epsilon.onboarding.A.external.bin $(BUILD_DIR)/epsilon.onboarding.B.external.bin $(BUILD_DIR)/binpack
-	cd $(BUILD_DIR) && for binary in epsilon.onboarding.A.external.bin epsilon.onboarding.B.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
+	cp $(BUILD_DIR)/epsilon.onboarding.bin $(BUILD_DIR)/binpack
+	cd $(BUILD_DIR) && for binary in epsilon.onboarding.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd $(BUILD_DIR) && tar cvfz binpack-$(MODEL)-`git rev-parse HEAD | head -c 7`.tgz binpack/*

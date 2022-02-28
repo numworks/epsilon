@@ -649,7 +649,7 @@ Expression ContinuousFunction::Model::expressionClone(const Ion::Storage::Record
 
 Expression ContinuousFunction::Model::originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const {
   Expression unknownSymbolEquation = ExpressionModel::expressionClone(record);
-  if (unknownSymbolEquation.isUninitialized()) {
+  if (unknownSymbolEquation.isUninitialized() || symbol == UCodePointUnknown) {
     return unknownSymbolEquation;
   }
   return unknownSymbolEquation.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
@@ -740,7 +740,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
     m_plotType = computedPlotType;
     m_equationType = computedEquationType;
     // Use the computed equation to update the plot type.
-    updatePlotType(result, context);
+    updatePlotType(record, result, context);
   }
   assert(!result.isUninitialized());
   return result;
@@ -848,7 +848,7 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(char * treePoolCursor) co
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }
 
-void ContinuousFunction::Model::updatePlotType(const Expression equation, Context * context) const {
+void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * record, const Expression equation, Context * context) const {
   // Named functions : PlotType has been updated when parsing the equation
   PlotType modelPlotType = plotType();
 
@@ -962,15 +962,19 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
    *
    * Other cases should have been escaped above.
    */
+  if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
+    // No need to replace any symbols in originalEquation().
+    Expression inputEquation = originalEquation(record, UCodePointUnknown);
+    CodePoint symbol = (yDeg == 0) ? UCodePointUnknown : k_ordinateSymbol;
+    if (!IsExplicitEquation(inputEquation, symbol)) {
+      m_plotType = PlotType::Disabled;
+      return;
+    }
+  }
+
   if (yDeg == 0) {
-    if (xDeg == 1) {
-      m_plotType = PlotType::VerticalLine;
-      return;
-    }
-    if (xDeg == 2) {
-      m_plotType = ExamModeConfiguration::implicitPlotsAreForbidden() ? PlotType::Disabled : PlotType::VerticalLines;
-      return;
-    }
+    m_plotType = xDeg == 1 ? PlotType::VerticalLine : PlotType::VerticalLines;
+    return;
   }
 
   if (yDeg == 1 && xDeg == 0) {
@@ -984,15 +988,10 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
     return;
   }
 
-  if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
-    if (yDeg == 2 || ySign == ExpressionNode::Sign::Unknown) {
-      // Equation with y^2 or such as y*x=1 are disabled.
-      m_plotType = PlotType::Disabled;
-      return;
-    }
-    // Deliberately ignore conics (such as y=x^2) to hide details.
-  } else if (yDeg >= 1 && xDeg >= 1 && xDeg <= 2) {
-    // Try to identify a conic. For instance, x*y=1 as an hyperbola
+  if (yDeg >= 1 && xDeg >= 1 && xDeg <= 2 && !ExamModeConfiguration::implicitPlotsAreForbidden()) {
+    /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
+     * details. Otherwise, try to identify a conic.
+     * For instance, x*y=1 as an hyperbola. */
     Conic equationConic = Conic(equation, context, k_unknownName);
     Conic::Type ctype = equationConic.getConicType();
     if (ctype == Conic::Type::Hyperbola) {
@@ -1061,6 +1060,19 @@ bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation
     }
   }
   return false;
+}
+
+bool ContinuousFunction::Model::IsExplicitEquation(const Expression equation, CodePoint symbol) {
+  /* An equation is explicit if it is a comparison between the given symbol and
+   * something that does not depend on it. For example, using 'y' symbol :
+   * y=1+x is explicit but y+1=x or y=x+2*y are implicit. */
+  return ComparisonOperator::IsComparisonOperatorType(equation.type())
+         && equation.childAtIndex(0).isIdenticalTo(Symbol::Builder(symbol))
+         && !equation.childAtIndex(1).hasExpression(
+             [](const Expression e, const void * context) {
+               const CodePoint * symbol = static_cast<const CodePoint *>(context);
+               return e.isIdenticalTo(Symbol::Builder(*symbol));
+             }, static_cast<const void *>(&symbol));
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {

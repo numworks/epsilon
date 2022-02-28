@@ -29,7 +29,7 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
   if (std::fabs(floatBody) > FLT_MAX) {
     return false;
   }
-  if (columnIndex % Store::k_numberOfColumnsPerSeries == 1) {
+  if (RelativeColumnIndex(columnIndex) == 1) {
     if (floatBody < 0) {
       return false;
     }
@@ -39,7 +39,7 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
 
 int StoreController::fillColumnName(int columnIndex, char * buffer) {
   int series = columnIndex / Store::k_numberOfColumnsPerSeries;
-  int isValueColumn = columnIndex % Store::k_numberOfColumnsPerSeries == 0;
+  int isValueColumn = RelativeColumnIndex(columnIndex) == 0;
   buffer[0] = isValueColumn ? 'V' : 'N';
   buffer[1] = static_cast<char>('1' + series);
   buffer[2] = 0;
@@ -59,7 +59,7 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
 
 void StoreController::clearSelectedColumn() {
   int series = seriesAtColumn(selectedColumn());
-  int column = selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries;
+  int column = RelativeColumnIndex(selectedColumn());
   if (column == 0) {
     m_store->deleteAllPairsOfSeries(series);
   } else {

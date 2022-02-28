@@ -67,25 +67,7 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    AppsContainer * container = AppsContainer::sharedAppsContainer();
-    int appIndex = selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1;
-    Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences()->examMode();
-    if (appIndex < container->numberOfBuiltinApps()) {
-      ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex));
-      if (ExamModeConfiguration::appIsForbidden(selectedSnapshot->descriptor()->name())) {
-        App::app()->displayWarning(ExamModeConfiguration::forbiddenAppMessage(examMode, 0), ExamModeConfiguration::forbiddenAppMessage(examMode, 1));
-      } else {
-        container->switchToBuiltinApp(selectedSnapshot);
-      }
-    } else {
-      if (examMode != Poincare::Preferences::ExamMode::Off) {
-        App::app()->displayWarning(ExamModeConfiguration::forbiddenAppMessage(examMode, 0), ExamModeConfiguration::forbiddenAppMessage(examMode, 1));
-      } else {
-        m_view.reload();
-        Ion::ExternalApps::App a = container->externalAppAtIndex(appIndex - container->numberOfBuiltinApps());
-        container->switchToExternalApp(a);
-      }
-    }
+    switchToSelectedApp();
     return true;
   }
 
@@ -196,6 +178,28 @@ void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t
 
 SelectableTableViewDataSource * Controller::selectionDataSource() const {
   return App::app()->snapshot();
+}
+
+void Controller::switchToSelectedApp() {
+  AppsContainer * container = AppsContainer::sharedAppsContainer();
+  int appIndex = selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1;
+  Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences()->examMode();
+  if (appIndex < container->numberOfBuiltinApps()) {
+    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex));
+    if (ExamModeConfiguration::appIsForbidden(selectedSnapshot->descriptor()->name())) {
+      App::app()->displayWarning(ExamModeConfiguration::forbiddenAppMessage(examMode, 0), ExamModeConfiguration::forbiddenAppMessage(examMode, 1));
+    } else {
+      container->switchToBuiltinApp(selectedSnapshot);
+    }
+  } else {
+    if (examMode != Poincare::Preferences::ExamMode::Off) {
+      App::app()->displayWarning(ExamModeConfiguration::forbiddenAppMessage(examMode, 0), ExamModeConfiguration::forbiddenAppMessage(examMode, 1));
+    } else {
+      m_view.reload();
+      Ion::ExternalApps::App a = container->externalAppAtIndex(appIndex - container->numberOfBuiltinApps());
+      container->switchToExternalApp(a);
+    }
+  }
 }
 
 }

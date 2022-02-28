@@ -32,6 +32,7 @@ public:
 private:
   int numberOfIcons() const;
   Escher::SelectableTableViewDataSource * selectionDataSource() const;
+  void switchToSelectedApp();
   class ContentView : public Escher::View {
   public:
     ContentView(Controller * controller, Escher::SelectableTableViewDataSource * selectionDataSource);

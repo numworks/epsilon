@@ -61,7 +61,7 @@ public:
   double marginOfError() const { return m_marginOfError; };
 
   // Output
-  int numberOfResults() const override { return 3 + hasDegreeOfFreedom() + !m_estimateLayout.isUninitialized(); }
+  int numberOfResults() const override { return 3 + hasDegreeOfFreedom() + !estimateLayout().isUninitialized(); }
   void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) override;
 
   // CurveViewRange

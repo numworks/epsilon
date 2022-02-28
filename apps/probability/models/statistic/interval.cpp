@@ -154,7 +154,7 @@ int Interval::MainDisplayedIntervalThresholdIndex(float mainThreshold) {
 
 void Interval::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) {
   // Estimate cell is not displayed -> shift i
-  index += m_estimateLayout.isUninitialized();
+  index += estimateLayout().isUninitialized();
   switch (index) {
     case ResultOrder::Estimate:
       *value = estimate();

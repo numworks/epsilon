@@ -82,6 +82,14 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns() - 1, selectionDataSource()->selectedRow() - 1);
   }
 
+  const char * eventText = event.text();
+  if (eventText && eventText[0] >= '1' && eventText[0] <= '9' && eventText[1] == 0) { // Handle keys from 1 to 9
+    int appIndex = eventText[0]-'1';
+    m_view.selectableTableView()->selectCellAtLocation(appIndex % k_numberOfColumns, appIndex/k_numberOfColumns);
+    switchToSelectedApp();
+    return true;
+  }
+
   return false;
 }
 

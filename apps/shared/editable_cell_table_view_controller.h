@@ -22,7 +22,7 @@ public:
   KDCoordinate rowHeight(int j) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  void presentClearSelectedColumnPopupIfClearable(I18n::Message warningMessage1 = I18n::Message::ConfirmDeleteColumn1, I18n::Message warningMessage2 = I18n::Message::ConfirmDeleteColumn2);
+  void presentClearSelectedColumnPopupIfClearable(I18n::Message warningMessage1 = I18n::Message::ClearColumnConfirmation1, I18n::Message warningMessage2 = I18n::Message::ClearColumnConfirmation2);
 
   virtual bool handleEvent(Ion::Events::Event event) override;
   virtual int fillColumnName(int columnIndex, char * buffer) = 0;

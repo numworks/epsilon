@@ -34,7 +34,7 @@ void MultipleBoxesView::layoutDataSubviews(bool force) {
   KDCoordinate subviewHeight = (bounds().height() - bannerHeight - k_axisViewHeight)/numberOfDataSubviews;
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (!m_store->seriesIsEmpty(i)) {
+    if (m_store->seriesIsValid(i)) {
       KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), subviewHeight);
       dataViewAtIndex(i)->setFrame(frame, force);
       displayedSubviewIndex++;

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <ion.h>
+#include <algorithm>
 
 namespace Shared {
 
@@ -11,42 +12,68 @@ void DoublePairStore::set(double f, int series, int i, int j) {
   if (j >= k_maxNumberOfPairs) {
     return;
   }
+  assert(j <= std::max(m_numberOfValues[series][0], m_numberOfValues[series][1]));
+  int otherI = i == 0 ? 1 : 0;
   m_data[series][i][j] = f;
-  if (j >= m_numberOfPairs[series]) {
-    int otherI = i == 0 ? 1 : 0;
-    m_data[series][otherI][j] = defaultValue(series, otherI, j);
-    m_numberOfPairs[series]++;
+  if (j == m_numberOfValues[series][i]) {
+    m_numberOfValues[series][i]++;
+  }
+  if (j >= m_numberOfValues[series][otherI]) {
+    for (int k = m_numberOfValues[series][otherI] ; k <= j ; k++) {
+      m_data[series][otherI][j] = defaultValue(series, otherI, j);
+      m_numberOfValues[series][otherI]++;
+    }
   }
 }
 
 int DoublePairStore::numberOfPairs() const {
   int result = 0;
   for (int i = 0; i < k_numberOfSeries; i++) {
-    result += m_numberOfPairs[i];
+    if (seriesIsValid(i)) {
+      result += m_numberOfValues[i][0];
+    }
   }
   return result;
 }
 
+int DoublePairStore::numberOfPairsOfSeries(int series) const {
+  assert(series >= 0 && series < k_numberOfSeries);
+  return std::min(m_numberOfValues[series][0], m_numberOfValues[series][1]);
+}
+
+void DoublePairStore::deleteColumn(int series, int column) {
+  /* We reset all values to 0 to ensure the correctness of the checksum.*/
+  for (int k = 0 ; k < m_numberOfValues[series][column] ; k++) {
+    m_data[series][column][k] = 0;
+  }
+  m_numberOfValues[series][column] = 0;
+}
+
 void DoublePairStore::deletePairOfSeriesAtIndex(int series, int j) {
-  m_numberOfPairs[series]--;
-  for (int k = j; k < m_numberOfPairs[series]; k++) {
+   for (int k = j; k < m_numberOfValues[series][0] - 1; k++) {
     m_data[series][0][k] = m_data[series][0][k+1];
+  }
+
+  for (int k = j; k < m_numberOfValues[series][1] - 1; k++) {
     m_data[series][1][k] = m_data[series][1][k+1];
   }
+
   /* We reset the values of the empty row to ensure the correctness of the
    * checksum. */
-  m_data[series][0][m_numberOfPairs[series]] = 0;
-  m_data[series][1][m_numberOfPairs[series]] = 0;
+  if (j < m_numberOfValues[series][0]) {
+     m_numberOfValues[series][0]--;
+     m_data[series][0][m_numberOfValues[series][0]] = 0;
+  }
+  if (j < m_numberOfValues[series][1]) {
+     m_numberOfValues[series][1]--;
+     m_data[series][1][m_numberOfValues[series][1]] = 0;
+  }
 }
 
 void DoublePairStore::deleteAllPairsOfSeries(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
-  /* We reset all values to 0 to ensure the correctness of the checksum.*/
-  for (int k = 0; k < m_numberOfPairs[series]; k++) {
-    m_data[series][0][k] = 0;
-    m_data[series][1][k] = 0;
-  }
-  m_numberOfPairs[series] = 0;
+  deleteColumn(series, 0);
+  deleteColumn(series, 1);
 }
 
 void DoublePairStore::deleteAllPairs() {
@@ -58,14 +85,14 @@ void DoublePairStore::deleteAllPairs() {
 void DoublePairStore::resetColumn(int series, int i) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
-  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+  for (int k = 0; k < m_numberOfValues[series][i]; k++) {
     m_data[series][i][k] = defaultValue(series, i, k);
   }
 }
 
 bool DoublePairStore::isEmpty() const {
   for (int i = 0; i < k_numberOfSeries; i++) {
-    if (!seriesIsEmpty(i)) {
+    if (seriesIsValid(i)) {
       return false;
     }
   }
@@ -75,7 +102,7 @@ bool DoublePairStore::isEmpty() const {
 int DoublePairStore::numberOfNonEmptySeries() const {
   int nonEmptySeriesCount = 0;
   for (int i = 0; i< k_numberOfSeries; i++) {
-    if (!seriesIsEmpty(i)) {
+    if (seriesIsValid(i)) {
       nonEmptySeriesCount++;
     }
   }
@@ -87,7 +114,7 @@ int DoublePairStore::indexOfKthNonEmptySeries(int k) const {
   assert(k >= 0 && k < numberOfNonEmptySeries());
   int nonEmptySeriesCount = 0;
   for (int i = 0; i < k_numberOfSeries; i++) {
-    if (!seriesIsEmpty(i)) {
+    if (seriesIsValid(i)) {
       if (nonEmptySeriesCount == k) {
         return i;
       }
@@ -102,7 +129,7 @@ double DoublePairStore::sumOfColumn(int series, int i, bool lnOfSeries) const {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
   double result = 0;
-  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+  for (int k = 0; k < m_numberOfValues[series][i]; k++) {
     result += lnOfSeries ? log(m_data[series][i][k]) : m_data[series][i][k];
   }
   return result;
@@ -111,7 +138,7 @@ double DoublePairStore::sumOfColumn(int series, int i, bool lnOfSeries) const {
 bool DoublePairStore::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const {
   assert(series >= 0 && series < k_numberOfSeries);
   int count = 0;
-  for (int j = 0; j < m_numberOfPairs[series]; j++) {
+  for (int j = 0; j < m_numberOfValues[series][0]; j++) {
     if (count >= i) {
       return true;
     }
@@ -147,7 +174,7 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
    * We cannot simply put "empty" values to 0 and compute the checksum of the
    * whole data, because adding or removing (0, 0) "real" data pairs would not
    * change the checksum. */
-  size_t dataLengthInBytesPerDataColumn = m_numberOfPairs[series]*sizeof(double);
+  size_t dataLengthInBytesPerDataColumn = std::min(m_numberOfValues[series][0], m_numberOfValues[series][1])*sizeof(double);
   assert((dataLengthInBytesPerDataColumn & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
   uint32_t checkSumPerColumn[k_numberOfColumnsPerSeries];
   for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {

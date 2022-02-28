@@ -181,9 +181,10 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
 
 void StoreController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
   int seriesIndex = seriesAtColumn(columnIndex);
+  int realColumnIndex = columnIndex % DoublePairStore::k_numberOfColumnsPerSeries;
   Shared::StoreTitleCell * myCell = static_cast<Shared::StoreTitleCell *>(cell);
-  myCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
-  myCell->setSeparatorLeft(columnIndex > 0 && ( columnIndex % DoublePairStore::k_numberOfColumnsPerSeries == 0));
+  myCell->setColor(m_store->numberOfValuesOfColumn(seriesIndex, realColumnIndex) == 0 ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
+  myCell->setSeparatorLeft(columnIndex > 0 && ( realColumnIndex == 0));
 }
 
 const char * StoreController::title() {
@@ -243,11 +244,12 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
 }
 
 int StoreController::numberOfElementsInColumn(int columnIndex) const {
-  return m_store->numberOfPairsOfSeries(seriesAtColumn(columnIndex));
+  return m_store->numberOfValuesOfColumn(seriesAtColumn(columnIndex), columnIndex % DoublePairStore::k_numberOfColumnsPerSeries);
 }
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
-  int currentColumn = selectedColumn();
+  int currentColumn = selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries;
+  int otherColumn = currentColumn == 0 ? 1 : 0;
   // Fetch the series used in the formula to compute the size of the filled in series
   constexpr static int k_maxSizeOfStoreSymbols = 3; // "V1", "N1", "X1", "Y1"
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
@@ -264,14 +266,14 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     int series = (int)(seriesName[1] - '0') - 1;
     assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
     if (numberOfValuesToCompute == -1) {
-      numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
+      numberOfValuesToCompute = m_store->numberOfValuesOfColumn(series, otherColumn);
     } else {
-      numberOfValuesToCompute = std::min(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
+      numberOfValuesToCompute = std::min(numberOfValuesToCompute, m_store->numberOfValuesOfColumn(series, otherColumn));
     }
     index++;
   }
   if (numberOfValuesToCompute == -1) {
-    numberOfValuesToCompute = numberOfElementsInColumn(selectedColumn());
+    numberOfValuesToCompute = m_store->numberOfValuesOfColumn(seriesAtColumn(selectedColumn()), otherColumn);
   }
 
   StoreContext * store = storeContext();
@@ -321,18 +323,7 @@ void StoreController::sortSelectedColumn() {
 
   int indexOfFirstCell = selectedSeries() * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
   double * seriesContext = &(m_store->data()[indexOfFirstCell]);
-  Poincare::Helpers::Sort(swapRows, (selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries == 0) ? compareX : compareY, seriesContext, m_store->numberOfPairsOfSeries(selectedSeries()));
-
-}
-
-void StoreController::clearSelectedColumn() {
-  int series = seriesAtColumn(selectedColumn());
-  int column = selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries;
-  if (column == 0) {
-    m_store->deleteAllPairsOfSeries(series);
-  } else {
-    m_store->resetColumn(series, column);
-  }
+  Poincare::Helpers::Sort(swapRows, (selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries == 0) ? compareX : compareY, seriesContext, m_store->numberOfValuesOfColumn(selectedSeries(), selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries));
 
 }
 

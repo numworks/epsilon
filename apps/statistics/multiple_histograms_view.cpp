@@ -34,7 +34,7 @@ void MultipleHistogramsView::layoutSubviews(bool force) {
   assert(m_store->numberOfNonEmptySeries() > 0);
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (!m_store->seriesIsEmpty(i)) {
+    if (m_store->seriesIsValid(i)) {
       displayedSubviewIndex++;
     }
   }

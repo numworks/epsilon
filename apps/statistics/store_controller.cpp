@@ -57,4 +57,15 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   myTitleCell->setText(columnTitle);
 }
 
+void StoreController::clearSelectedColumn() {
+  int series = seriesAtColumn(selectedColumn());
+  int column = selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries;
+  if (column == 0) {
+    m_store->deleteAllPairsOfSeries(series);
+  } else {
+    m_store->resetColumn(series, column);
+  }
+
+}
+
 }

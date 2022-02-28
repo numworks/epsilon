@@ -18,6 +18,7 @@ public:
 
 private:
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
+  void clearSelectedColumn() override;
   RegressionContext m_regressionContext;
   StoreParameterController m_storeParameterController;
 

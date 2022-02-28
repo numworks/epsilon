@@ -168,7 +168,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   if (typeAtLocation(i, j) == k_editableCellType) {
     Shared::StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->setHide(false);
-    myCell->setSeparatorLeft(i > 0 && ( i % DoublePairStore::k_numberOfColumnsPerSeries == 0));
+    myCell->setSeparatorLeft(i > 0 && ( RelativeColumnIndex(i) == 0));
   }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
 }
@@ -235,20 +235,20 @@ bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  m_store->set(floatBody, seriesAtColumn(columnIndex), columnIndex%DoublePairStore::k_numberOfColumnsPerSeries, rowIndex-1);
+  m_store->set(floatBody, seriesAtColumn(columnIndex), RelativeColumnIndex(columnIndex), rowIndex-1);
   return true;
 }
 
 double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
-  return m_store->get(seriesAtColumn(columnIndex), columnIndex % DoublePairStore::k_numberOfColumnsPerSeries, rowIndex-1);
+  return m_store->get(seriesAtColumn(columnIndex), RelativeColumnIndex(columnIndex), rowIndex-1);
 }
 
 int StoreController::numberOfElementsInColumn(int columnIndex) const {
-  return m_store->numberOfValuesOfColumn(seriesAtColumn(columnIndex), columnIndex % DoublePairStore::k_numberOfColumnsPerSeries);
+  return m_store->numberOfValuesOfColumn(seriesAtColumn(columnIndex), RelativeColumnIndex(columnIndex));
 }
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
-  int currentColumn = selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries;
+  int currentColumn = RelativeColumnIndex(selectedColumn());
   int otherColumn = currentColumn == 0 ? 1 : 0;
   // Fetch the series used in the formula to compute the size of the filled in series
   constexpr static int k_maxSizeOfStoreSymbols = 3; // "V1", "N1", "X1", "Y1"
@@ -323,7 +323,7 @@ void StoreController::sortSelectedColumn() {
 
   int indexOfFirstCell = selectedSeries() * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
   double * seriesContext = &(m_store->data()[indexOfFirstCell]);
-  Poincare::Helpers::Sort(swapRows, (selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries == 0) ? compareX : compareY, seriesContext, m_store->numberOfValuesOfColumn(selectedSeries(), selectedColumn() % DoublePairStore::k_numberOfColumnsPerSeries));
+  Poincare::Helpers::Sort(swapRows, (RelativeColumnIndex(selectedColumn()) == 0) ? compareX : compareY, seriesContext, m_store->numberOfValuesOfColumn(selectedSeries(), RelativeColumnIndex(selectedColumn())));
 
 }
 

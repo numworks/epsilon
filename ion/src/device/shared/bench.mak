@@ -1,5 +1,5 @@
 ion_device_bench_src += $(addprefix ion/src/device/shared/boot/, \
-  isr.c \
+  isr.c:+flash \
   rt0.cpp \
   rt0_start.cpp:+flash \
 )

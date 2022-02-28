@@ -9,6 +9,7 @@ extern "C" {
 
 void start();
 void abort();
+void bus_fault_handler();
 
 #ifdef __cplusplus
 }

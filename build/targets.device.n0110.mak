@@ -5,7 +5,8 @@ test_external_flash_src = $(ion_src) $(liba_src) $(libaxx_src) $(kandinsky_src) 
 $(BUILD_DIR)/test.external_flash.read.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_read_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_read_src))
 $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_write_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_write_src))
 
-
+.PHONY: bootloader
+bootloader: $(BUILD_DIR)/bootloader.bin
 $(BUILD_DIR)/bootloader.$(EXE): $(call flavored_object_for,$(bootloader_src),usbxip)
 $(BUILD_DIR)/bootloader.$(EXE): LDSCRIPT = ion/src/device/n0110/internal_flash.ld
 

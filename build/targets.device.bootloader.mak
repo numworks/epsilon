@@ -21,6 +21,11 @@ $(BUILD_DIR)/epsilon.B.$(EXE): $(call flavored_object_for,$(epsilon_src))
 $(BUILD_DIR)/epsilon.B.$(EXE): LDSCRIPT = ion/src/device/bootloader/bootloader.B.ld
 
 $(BUILD_DIR)/epsilon.bin: $(BUILD_DIR)/epsilon.A.bin $(BUILD_DIR)/epsilon.B.bin
+	@echo "COMBINE $@"
+	$(Q) cat $(BUILD_DIR)/epsilon.A.bin >> $(BUILD_DIR)/epsilon.bin
+	$(Q) truncate -s 4MiB $(BUILD_DIR)/epsilon.bin
+	$(Q) cat $(BUILD_DIR)/epsilon.B.bin >> $(BUILD_DIR)/epsilon.bin
+	$(Q) truncate -s 8MiB $(BUILD_DIR)/epsilon.bin
 
 $(foreach flavor,$(epsilon_flavors),$(eval $(call rule_for_epsilon_flavor_bootloader,$(flavor))))
 
@@ -28,6 +33,9 @@ $(foreach flavor,$(epsilon_flavors),$(eval $(call rule_for_epsilon_flavor_bootlo
 HANDY_TARGETS = $(foreach flavor,$(epsilon_flavors_bootloader),epsilon.$(flavor))
 HANDY_TARGETS += epsilon.A epsilon.B
 
+.PHONY: epsilon
+epsilon: $(BUILD_DIR)/epsilon.onboarding.bin
+.DEFAULT_GOAL := epsilon
 
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu

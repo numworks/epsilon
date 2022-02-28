@@ -43,6 +43,8 @@ private:
   static constexpr const char * k_models[k_numberOfModels] = {
     "", "f(x)=x", "x+y+1=0", "x+y≤0", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)"
   };
+  static constexpr const char * k_implicitModelWhenForbidden = "y=x-1";
+  static constexpr const char * k_inequationModelWhenForbidden = "y≤x";
   constexpr static size_t k_maxSizeOfNamedModel = 26;
   // Expression cells
   constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;
@@ -52,6 +54,8 @@ private:
   Escher::StackViewController * stackController() const;
   // Some models may be hidden. return the model index from a visible row index
   int getModelIndex(int row) const;
+  // Some models may become forbidden and have an alternate form.
+  const char * modelAtIndex(int index) const;
   Escher::MessageTableCell m_emptyModelCell;
   Escher::ExpressionTableCellWithMessage m_modelCells[k_numberOfExpressionCells];
   Poincare::Layout m_layouts[k_numberOfExpressionCells];

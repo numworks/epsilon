@@ -16,6 +16,8 @@ using namespace Escher;
 namespace Graph {
 
 constexpr const char * FunctionModelsParameterController::k_models[k_numberOfModels];
+constexpr const char * FunctionModelsParameterController::k_implicitModelWhenForbidden;
+constexpr const char * FunctionModelsParameterController::k_inequationModelWhenForbidden;
 constexpr I18n::Message FunctionModelsParameterController::k_modelDescriptions[k_numberOfExpressionCells];
 
 FunctionModelsParameterController::FunctionModelsParameterController(Responder * parentResponder, void * functionStore, ListController * listController) :
@@ -28,7 +30,7 @@ FunctionModelsParameterController::FunctionModelsParameterController(Responder *
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
-    Poincare::Expression e = Expression::Parse(k_models[i+1], nullptr); // No context needed
+    Poincare::Expression e = Expression::Parse(modelAtIndex(i+1), nullptr); // No context needed
     m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits);
     m_modelCells[i].setParentResponder(&m_selectableTableView);
   }
@@ -79,18 +81,18 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     int modelIndex = getModelIndex(selectedRow());
-    assert(modelIndex >= 0 && modelIndex < k_numberOfModels);
+    const char * model = modelAtIndex(modelIndex);
     bool success;
     if (modelIndex != k_indexOfCartesianModel && modelIndex != k_indexOfParametricModel && modelIndex != k_indexOfPolarModel) {
-      success = m_listController->editSelectedRecordWithText(k_models[modelIndex]);
+      success = m_listController->editSelectedRecordWithText(model);
     } else {
       /* Model starts with a named function. If that name is already taken, use
        * another one. */
       char buffer[k_maxSizeOfNamedModel];
       int functionNameLength = defaultName(buffer, k_maxSizeOfNamedModel);
       size_t constantNameLength = 1; // 'f', no null-terminating char
-      assert(strlen(k_models[modelIndex] + constantNameLength) + functionNameLength < k_maxSizeOfNamedModel);
-      strlcpy(buffer + functionNameLength, k_models[modelIndex] + constantNameLength, k_maxSizeOfNamedModel - functionNameLength);
+      assert(strlen(model + constantNameLength) + functionNameLength < k_maxSizeOfNamedModel);
+      strlcpy(buffer + functionNameLength, model + constantNameLength, k_maxSizeOfNamedModel - functionNameLength);
       success = m_listController->editSelectedRecordWithText(buffer);
     }
     assert(success);
@@ -162,6 +164,19 @@ int FunctionModelsParameterController::getModelIndex(int row) const {
   }
   row += ExamModeConfiguration::implicitPlotsAreForbidden();
   return row;
+}
+
+const char * FunctionModelsParameterController::modelAtIndex(int index) const {
+  assert(index >=0 && index < k_numberOfModels);
+  if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
+    if (index == k_indexOfImplicitModel) {
+      return k_implicitModelWhenForbidden;
+    }
+    if (index == k_indexOfInequationModel) {
+      return k_inequationModelWhenForbidden;
+    }
+  }
+  return k_models[index];
 }
 
 }

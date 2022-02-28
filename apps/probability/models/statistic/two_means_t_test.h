@@ -28,7 +28,7 @@ public:
     Test::setParameterAtIndex(p, index);
   }
 
-  void computeTest() override { TwoMeans::ComputeTTest(this); }
+  void compute() override { TwoMeans::ComputeTTest(this); }
 
   // Distribution: t
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionT::TestCriticalValueSymbol(font); }

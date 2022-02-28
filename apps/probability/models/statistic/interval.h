@@ -37,8 +37,6 @@ public:
   void setGraphTitle(char * buffer, size_t bufferSize) const override;
   void setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const override;
 
-  void compute() override;
-
   float evaluateAtAbscissa(float x) const override { return canonicalDensityFunction((x - estimate()) / standardError()); }
   void initThreshold() override { m_threshold = 0.95; }
   I18n::Message thresholdName() const override { return I18n::Message::ConfidenceLevel; }
@@ -79,7 +77,6 @@ protected:
   float computeXMax() const override;
 
   double computeIntervalCriticalValue();
-  virtual void computeInterval() = 0;
 
   mutable Poincare::Layout m_estimateLayout;
   double m_estimate;

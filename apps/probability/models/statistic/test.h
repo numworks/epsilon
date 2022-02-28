@@ -30,8 +30,6 @@ public:
   I18n::Message zDistributionName() const override { return I18n::Message::ZTest; }
   void setGraphTitle(char * buffer, size_t bufferSize) const override;
 
-  void compute() override;
-
   // Evaluation
   float evaluateAtAbscissa(float x) const override { return canonicalDensityFunction(x); }
   void initThreshold() override { m_threshold = 0.05; }
@@ -65,7 +63,6 @@ protected:
   float computeXMin() const override { return -k_displayWidthToSTDRatio; }
   float computeXMax() const override { return k_displayWidthToSTDRatio; }
   virtual I18n::Message graphTitleFormat() const { return I18n::Message::Default; }
-  virtual void computeTest() = 0;
   // Hypothesis chosen
   HypothesisParams m_hypothesisParams;
   // Cached values

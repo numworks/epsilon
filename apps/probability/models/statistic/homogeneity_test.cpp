@@ -69,7 +69,7 @@ bool HomogeneityTest::deleteParameterAtPosition(int row, int column) {
   return shouldDeleteCol;
 }
 
-void HomogeneityTest::computeTest() {
+void HomogeneityTest::compute() {
   Index2D max = computeDimensions();
   m_numberOfResultRows = max.row;
   m_numberOfResultColumns = max.col;

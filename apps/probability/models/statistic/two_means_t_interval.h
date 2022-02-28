@@ -26,7 +26,7 @@ public:
     Interval::setParameterAtIndex(p, index);
   }
 
-  void computeInterval() override { TwoMeans::ComputeTInterval(this); }
+  void compute() override { TwoMeans::ComputeTInterval(this); }
 
   const char * estimateSymbol() const override { return TwoMeans::EstimateSymbol(); }
   Poincare::Layout estimateLayout() const override { return TwoMeans::EstimateLayout(&m_estimateLayout); }

@@ -9,7 +9,7 @@ class PooledTwoMeansTInterval : public TwoMeansTInterval {
 public:
   DistributionType distributionType() const override { return DistributionType::TPooled; }
   I18n::Message title() const override { return PooledTwoMeans::Title(); }
-  void computeInterval() override { PooledTwoMeans::ComputeInterval(this); }
+  void compute() override { PooledTwoMeans::ComputeInterval(this); }
 };
 
 }  // namespace Probability

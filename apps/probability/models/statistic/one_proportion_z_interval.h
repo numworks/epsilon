@@ -21,7 +21,7 @@ public:
     Interval::setParameterAtIndex(p, index);
   }
 
-  void computeInterval() override { OneProportion::ComputeInterval(this); }
+  void compute() override { OneProportion::ComputeInterval(this); }
 
   const char * estimateSymbol() const override { return OneProportion::EstimateSymbol(); }
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionZ::TestCriticalValueSymbol(font); }

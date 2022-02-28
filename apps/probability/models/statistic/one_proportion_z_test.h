@@ -25,7 +25,7 @@ public:
   }
   bool isValidH0(double h0) override { return OneProportion::ValidH0(h0); }
 
-  void computeTest() override { OneProportion::ComputeTest(this); }
+  void compute() override { OneProportion::ComputeTest(this); }
 
   // Distribution: z
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionZ::TestCriticalValueSymbol(font); }

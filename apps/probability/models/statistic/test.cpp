@@ -51,11 +51,6 @@ bool Test::initializeSignificanceTest(SignificanceTestType testType) {
   return true;
 }
 
-void Test::compute() {
-  computeTest();
-  computeCurveViewRange();
-}
-
 bool Test::canRejectNull() {
   assert(m_threshold >= 0 && m_threshold <= 1);
   return pValue() <= m_threshold;

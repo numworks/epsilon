@@ -19,7 +19,7 @@ public:
   // Statistic
   bool validateInputs() override;
   // Test
-  void computeTest() override;
+  void compute() override;
 
   // Chi2Test
   void setParameterAtPosition(double value, int row, int column) override;

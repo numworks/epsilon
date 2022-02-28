@@ -21,7 +21,7 @@ public:
     Interval::setParameterAtIndex(p, index);
   }
 
-  void computeInterval() override { TwoProportions::ComputeInterval(this); }
+  void compute() override { TwoProportions::ComputeInterval(this); }
 
   const char * estimateSymbol() const override { return TwoProportions::EstimateSymbol(); }
   Poincare::Layout estimateLayout() const override { return TwoProportions::EstimateLayout(&m_estimateLayout); }

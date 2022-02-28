@@ -1,11 +1,11 @@
 #include "variable_box_controller.h"
 #include "python_toolbox.h"
 #include "script.h"
+#include "subtitle_cell.h"
 #include "app.h"
 #include "../shared/toolbox_helpers.h"
 #include <apps/i18n.h>
 #include <assert.h>
-#include <escher/buffer_text_view.h>
 #include <escher/palette.h>
 #include <ion/unicode/utf8_helper.h>
 #include <string.h>
@@ -73,7 +73,7 @@ KDCoordinate VariableBoxController::nonMemoizedRowHeight(int index) {
     ScriptNodeCell tempCell;
     return heightForCellAtIndex(&tempCell, index);
   }
-  BufferTableCell tempCell;
+  SubtitleCell tempCell;
   return heightForCellAtIndex(&tempCell, index);
 }
 
@@ -120,7 +120,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   assert(cellType == k_subtitleCellType);
   assert(cellOrigin < m_originsCount);
   assert(m_rowsPerOrigins[cellOrigin] > 0);
-  BufferTableCell * myCell = static_cast<BufferTableCell *>(cell);
+  SubtitleCell * myCell = static_cast<SubtitleCell *>(cell);
   const char * moduleName = m_originsName[cellOrigin];
   I18n::Message prefix = I18n::Message::Default;
   I18n::Message suffix = I18n::Message::Default;

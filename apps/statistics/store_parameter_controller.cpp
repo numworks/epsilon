@@ -6,7 +6,7 @@ void StoreParameterController::initializeColumnParameters() {
   Shared::StoreParameterController::initializeColumnParameters();
   // Initialize clear column message
   if (m_columnIndex % Store::k_numberOfColumnsPerSeries == 1) {
-      m_clearColumn.setMessageAndStringAsLabelText(I18n::Message::ResetFrequencies);
+      m_clearColumn.setSimpleCustomLabelText(I18n::Message::ResetFrequencies);
   } else {
     int series = m_columnIndex / Store::k_numberOfColumnsPerSeries;
     const char tableName[6];
@@ -16,6 +16,6 @@ void StoreParameterController::initializeColumnParameters() {
     tableName[2] = '/';
     tableName[3] = 'N';
     tableName[4] = tableIndex;
-    m_clearColumn.setMessageAndStringAsLabelText(I18n::Message::ClearTable, tableName);
+    m_clearColumn.setSimpleCustomLabelText(I18n::Message::ClearTable, tableName);
   }
 }}

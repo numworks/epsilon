@@ -71,7 +71,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     int appIndex = selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1;
     Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences()->examMode();
     if (appIndex < container->numberOfBuiltinApps()) {
-      ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1));
+      ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex));
       if (ExamModeConfiguration::appIsForbidden(selectedSnapshot->descriptor()->name())) {
         App::app()->displayWarning(ExamModeConfiguration::forbiddenAppMessage(examMode, 0), ExamModeConfiguration::forbiddenAppMessage(examMode, 1));
       } else {

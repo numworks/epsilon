@@ -5,18 +5,6 @@
 
 namespace Poincare {
 
- // Draw the pixels of the middle dot symbols to make it thinner than font
- // Should be modified if font is modified.
-void CodePointLayoutNode::FillDotBuffer(KDColor * buffer, int length, KDColor expressionColor, KDColor backgroundColor) {
-  assert(length >= k_dotWidth * k_defaultFont->glyphSize().height());
-  for (int i = 0 ; i < k_dotWidth ; i ++) {
-    for (int j = 0 ; j < k_defaultFont->glyphSize().height() ; j++) {
-      buffer[i+k_dotWidth*j] = backgroundColor;
-    }
-  }
-  buffer[k_dotWidth / 2 + k_dotWidth * (k_defaultFont->glyphSize().height() / 2 - 1)] = expressionColor;
-}
-
 // LayoutNode
 void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Right) {
@@ -123,8 +111,10 @@ KDSize CodePointLayoutNode::computeSize() {
   }
   KDSize glyph = m_font->glyphSize();
   KDCoordinate width = glyph.width();
+
+  // Handle the case of the middle dot which is thinner than the other glyphs
   if (m_codePoint == UCodePointMiddleDot && m_font == k_defaultFont) {
-    width = k_dotWidth;
+    width = k_middleDotWidth;
   }
   return KDSize(width + totalHorizontalMargin, glyph.height());
 }
@@ -137,16 +127,24 @@ void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionC
   if (m_displayType == DisplayType::Operator || m_displayType == DisplayType::Implicit) {
     p = p.translatedBy(KDPoint(Escher::Metric::OperatorHorizontalMargin, 0));
   }
+
+  // Handle the case of the middle dot which has to be drawn by hand since it is thinner than the other glyphs.
   if (m_codePoint == UCodePointMiddleDot && m_font == k_defaultFont) {
-    int width = k_dotWidth;
+    int width = k_middleDotWidth;
     int height = m_font->glyphSize().height();
-    KDColor dotPixels[width * height];
-    FillDotBuffer(dotPixels, width * height, expressionColor, backgroundColor);
+    int size = width * height;
+    KDColor middleDotPixels[size];
+    for (int i = 0 ; i < size ; i ++) {
+      middleDotPixels[i] = backgroundColor;
+    }
+    middleDotPixels[width / 2 + width * (height / 2 - 1)] = expressionColor;
     ctx->fillRectWithPixels(
         KDRect(p, KDSize(width, height)),
-        dotPixels, dotPixels);
+        middleDotPixels, middleDotPixels);
     return;
   }
+
+  // General case
   constexpr int bufferSize = sizeof(CodePoint)/sizeof(char) + 1; // Null-terminating char
   char buffer[bufferSize];
   SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);

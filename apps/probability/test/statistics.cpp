@@ -437,8 +437,6 @@ QUIZ_CASE(probability_two_means_z_statistic) {
   }
 }
 
-#if 0
-
 QUIZ_CASE(probability_goodness_test) {
   GoodnessTest stat;
   StatisticTestCase tests[1];
@@ -464,52 +462,18 @@ QUIZ_CASE(probability_goodness_test) {
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     stat.recomputeData();
     // Initialize values before calling computeDegreesOfFreedom
-    inputValues(test, tests[i], 0.05, testCase.m_significanceLevel);
+    inputValues(&stat, tests[i], 0.05, tests[i].m_significanceLevel);
     /* Degree of freedom is either overridden or computed as the user inputs
      * values in the UI table. It must be set here to replicate this. */
     stat.setDegreeOfFreedom(stat.computeDegreesOfFreedom());
     testTest(&stat, tests[i]);
-    // Simulate
-    stat.setDegreeOfFreedom(5);
+    // Simulate user-input degree of freedom
+    tests[i].m_degreesOfFreedom = 5;
+    stat.setDegreeOfFreedom(tests[i].m_degreesOfFreedom);
     tests[i].m_pValue = 0.837503;
     testTest(&stat, tests[i]);
   }
 }
-
-QUIZ_Cv ASE(probability_goodness_statistic_overridden_degree_of_freedom) {
-  GoodnessTest stat;
-  StatisticTestCase tests[1];
-  bool isDegreeOfFreedomOverridden = true;
-  int overriddenDegreeOfFreedom = 5;
-  tests[0].m_op = HypothesisParams::ComparisonOperator::Higher;
-  tests[0].m_numberOfInputs = 8;
-  tests[0].m_inputs[0] = 1;
-  tests[0].m_inputs[1] = 2;
-  tests[0].m_inputs[2] = 2;
-  tests[0].m_inputs[3] = 1;
-  tests[0].m_inputs[4] = 3;
-  tests[0].m_inputs[5] = 4;
-  tests[0].m_inputs[6] = 4;
-  tests[0].m_inputs[7] = 3;
-  tests[0].m_significanceLevel = 0.03;
-  tests[0].m_confidenceLevel = 0.9;
-  tests[0].m_numberOfParameters = stat.maxNumberOfRows() * 2 + 1;
-  tests[0].m_hasDegreeOfFreedom = true;
-  tests[0].m_degreesOfFreedom = overriddenDegreeOfFreedom;
-  tests[0].m_testPassed = false;
-  tests[0].m_testCriticalValue = 2.0833332539;
-  tests[0].m_pValue = 0.837503;
-  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
-    stat.recomputeData();
-    * Degree of freedom is either overridden or computed as the user inputs
-     * values in the UI table. It must be set here to replicate this.
-    int degreeOfFreedom = isDegreeOfFreedomOverridden ? overriddenDegreeOfFreedom : stat.computeDegreesOfFreedom();
-    stat.setDegreeOfFreedom(degreeOfFreedom);
-    testTest(&stat, tests[i]);
-  }
-}*/
-
-#endif
 
 QUIZ_CASE(probability_homogeneity_test) {
   // clang-format off

@@ -21,7 +21,6 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 
 void StoreParameterController::initializeColumnParameters() {
   ColumnParameterController::initializeColumnParameters(); // Always initialize parent class before initiliazing child.
-
   m_sortCell.setSubLabelMessage(sortMessage());
 }
 

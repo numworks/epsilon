@@ -2,6 +2,7 @@
 #define STATISTICS_STORE_CONTROLLER_H
 
 #include "store.h"
+#include "store_parameter_controller.h"
 #include "statistics_context.h"
 #include "../shared/store_controller.h"
 
@@ -21,7 +22,7 @@ private:
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   Store * m_store;
   StatisticsContext m_statisticsContext;
-  Shared::StoreParameterController m_storeParameterController;
+  StoreParameterController m_storeParameterController;
 };
 
 }

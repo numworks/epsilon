@@ -4,6 +4,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_message.h>
 #include <escher/message_table_cell.h>
+#include <escher/buffer_table_cell.h>
 #include <apps/i18n.h>
 #include "column_parameter_controller.h"
 
@@ -28,6 +29,7 @@ protected:
   virtual int numberOfCells() const { return k_numberOfCells; }
   StoreController * m_storeController;
 
+  Escher::BufferTableCell m_clearColumn;
 private:
   EditableCellTableViewController * editableCellTableViewController() override;
   virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
@@ -39,7 +41,6 @@ private:
 
   Escher::MessageTableCellWithMessage m_sortCell;
   Escher::MessageTableCell m_fillFormula;
-  Escher::MessageTableCell m_clearColumn;
 
 };
 

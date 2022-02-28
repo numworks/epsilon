@@ -12,10 +12,12 @@ namespace Shared {
 StoreParameterController::StoreParameterController(Responder * parentResponder, StoreController * storeController) :
   ColumnParameterController(parentResponder),
   m_storeController(storeController),
+  m_clearColumn(),
   m_sortCell(I18n::Message::SortCellLabel),
-  m_fillFormula(I18n::Message::FillWithFormula),
-  m_clearColumn(I18n::Message::ClearColumn)
-{ }
+  m_fillFormula(I18n::Message::FillWithFormula)
+{
+  m_clearColumn.setMessageAndStringAsLabelText(I18n::Message::ClearColumn);
+}
 
 void StoreParameterController::initializeColumnParameters() {
   ColumnParameterController::initializeColumnParameters(); // Always initialize parent class before initiliazing child.

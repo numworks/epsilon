@@ -14,8 +14,6 @@ namespace Poincare {
 class CodePointLayoutNode : public LayoutNode {
 public:
   static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
-  static constexpr const int k_dotWidth = 5;
-  static void FillDotBuffer(KDColor * buffer, int length, KDColor expressionColor, KDColor backgroundColor);
 
   CodePointLayoutNode(CodePoint c = UCodePointNull, const KDFont * font = k_defaultFont) :
     LayoutNode(),
@@ -83,6 +81,7 @@ protected:
   CodePoint m_codePoint;
   DisplayType m_displayType;
 private:
+  static constexpr const int k_middleDotWidth = 5;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   bool isMultiplicationCodePoint() const;
 };

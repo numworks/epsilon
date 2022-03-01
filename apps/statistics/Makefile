@@ -31,6 +31,7 @@ app_statistics_src = $(addprefix apps/statistics/,\
   graph/normal_probability_curve_view.cpp \
   graph/normal_probability_view.cpp \
   graph/plot_banner_view.cpp \
+  graph/plot_curve_view.cpp \
   graph/plot_range.cpp \
   data/statistics_context.cpp \
   data/store_controller.cpp \

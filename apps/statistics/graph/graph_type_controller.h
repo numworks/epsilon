@@ -34,7 +34,7 @@ public:
 
 private:
   Escher::Responder * m_tabController;
-  Escher::StackViewController * m_stackView;
+  Escher::StackViewController * m_stackViewController;
   Store * m_store;
   GraphViewModel * m_graphViewModel;
 };

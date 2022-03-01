@@ -3,6 +3,8 @@
 
 #include <escher/button.h>
 #include <escher/invocation.h>
+#include <escher/buffer_text_view.h>
+#include <escher/message_text_view.h>
 #include <escher/view_controller.h>
 #include <escher/i18n.h>
 
@@ -16,14 +18,13 @@ public:
 
 class PopUpViewDelegate {
 public:
+  constexpr static int k_maxNumberOfLines = 4;
   PopUpViewDelegate(int numberOfLines) : m_numberOfLines(numberOfLines) {
     assert(m_numberOfLines <= k_maxNumberOfLines && m_numberOfLines >= 0);
   }
-  TextView * textViewAtIndex() = 0;
-  void layoutSubview(bool force, int width) = 0;
+  virtual TextView * textViewAtIndex(int i) = 0;
   int numberOfLines() { return m_numberOfLines; }
 protected:
-  constexpr static int k_maxNumberOfLines = 4;
   const int m_numberOfLines;
 };
 
@@ -60,23 +61,22 @@ protected:
 class MessagePopUpController : public PopUpController, public PopUpViewDelegate {
 public:
   MessagePopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage);
-  TextView * textViewAtIndex() override { return m_messageTextViews[i]; }
-  void layoutSubviews(bool force) override;
+  TextView * textViewAtIndex(int i) override { return &m_messageTextViews[i]; }
   void setContentMessage(int index, I18n::Message message);
 private:
   MessageTextView m_messageTextViews[k_maxNumberOfLines];
-}
+};
 
 class BufferPopUpController : public PopUpController, public PopUpViewDelegate {
 public:
-  MessagePopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage);
-  TextView * textViewAtIndex() override { return m_messageTextViews[i]; }
-  void layoutSubviews(bool force) override;
-  void setContentText(int index, I18n::Message message);
-  void setSimpleCustomContentText(int index, I18n::Message message, const char * string);
+  BufferPopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage);
+  TextView * textViewAtIndex(int i) override { return &m_bufferTextViews[i]; }
+  void setContentText(int index, const char * text);
+  void setSimpleCustomContentText(int index, I18n::Message message, const char * string = "");
 private:
   BufferTextView m_bufferTextViews[k_maxNumberOfLines];
-}
+};
 
+}
 
 #endif

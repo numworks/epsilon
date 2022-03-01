@@ -1,30 +1,18 @@
 #ifndef STATISTICS_FREQUENCY_CURVE_VIEW_H
 #define STATISTICS_FREQUENCY_CURVE_VIEW_H
 
-#include <apps/shared/labeled_curve_view.h>
-#include <apps/shared/cursor_view.h>
-#include <apps/shared/curve_view_cursor.h>
-#include "../store.h"
-
+#include "plot_curve_view.h"
 namespace Statistics {
 
-class FrequencyCurveView : public Shared::LabeledCurveView {
+class FrequencyCurveView : public PlotCurveView {
 public:
-  FrequencyCurveView(Shared::CurveViewRange * curveViewRange,
-                     Shared::CurveViewCursor * curveViewCursor,
-                     Shared::CursorView * cursorView,
-                     Store * store);
-  void moveCursorTo(int i, int series);
-  void drawSeriesCumulatedFrequencyCurve(KDContext * ctx, KDRect rect, int series) const;
-
+  using PlotCurveView::PlotCurveView;
   // Shared::LabeledCurveView
   // Append '%' to vertical axis labels.
   void appendLabelSuffix(Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) override;
-
-  // Escher::View
-  void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  Store * m_store;
+  bool connectPoints() const override { return true; }
+  double valueAtIndex(int series, int * sortedIndex, int i) const override { return m_store->cumulatedFrequencyAtSortedIndex(series, sortedIndex, i); }
 };
 
 }  // namespace Statistics

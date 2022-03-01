@@ -16,35 +16,25 @@ PlotCurveView::PlotCurveView(Shared::CurveViewRange * curveViewRange,
 
 void PlotCurveView::moveCursorTo(int i, int series) {
   // TODO : Add continuous curve scrolling
-  // TODO : Factorize sortedIndex part
   int sortedIndex[Store::k_maxNumberOfPairs];
-  int numberOfPairs = m_store->numberOfPairsOfSeries(series);
-  for (int i = 0; i < numberOfPairs; i++) {
-    sortedIndex[i] = i;
-  }
-  m_store->sortIndex(series, sortedIndex, 0, numberOfPairs);
+  m_store->buildSortedIndex(series, sortedIndex);
   // Compute coordinates
-  double x = m_store->get(series, 0, sortedIndex[i]);
-  double y = valueAtIndex(series, sortedIndex, i);
+  double x = valueAtIndex(series, sortedIndex, i);
+  double y = resultAtIndex(series, sortedIndex, i);
   m_curveViewCursor->moveTo(x, x, y);
   reload();
 }
 
 void PlotCurveView::drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const {
-  // TODO : Factorize sortedIndex part
   int sortedIndex[Store::k_maxNumberOfPairs];
-  int numberOfPairs = m_store->numberOfPairsOfSeries(series);
-  for (int i = 0; i < numberOfPairs; i++) {
-    sortedIndex[i] = i;
-  }
-  m_store->sortIndex(series, sortedIndex, 0, numberOfPairs);
-
+  m_store->buildSortedIndex(series, sortedIndex);
+  int numberOfPairs = totalValues(series, sortedIndex);
   // Draw and connect each points
   KDColor color = Store::colorLightOfSeriesAtIndex(series);
   double previousX, previousY;
   for (size_t i = 0; i < numberOfPairs; i++) {
-    double x = m_store->get(series, 0, sortedIndex[i]);
-    double y = valueAtIndex(series, sortedIndex, i);
+    double x = valueAtIndex(series, sortedIndex, i);
+    double y = resultAtIndex(series, sortedIndex, i);
     Shared::CurveView::drawDot(ctx, rect, x, y, color);
     if (connectPoints() && i > 0) {
       Shared::CurveView::drawSegment(ctx, rect, x, y, previousX, previousY, color);

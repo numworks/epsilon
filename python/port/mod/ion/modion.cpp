@@ -69,8 +69,8 @@ const static key2mp keyMapping[] =
     { Ion::Keyboard::Key::Seven, MP_ROM_QSTR(MP_QSTR_7) },
     { Ion::Keyboard::Key::Eight, MP_ROM_QSTR(MP_QSTR_8) },
     { Ion::Keyboard::Key::Nine, MP_ROM_QSTR(MP_QSTR_9) },
-    { Ion::Keyboard::Key::RightParenthesis, MP_ROM_QSTR(MP_QSTR__paren_open_) },
-    { Ion::Keyboard::Key::LeftParenthesis, MP_ROM_QSTR(MP_QSTR__paren_close_) },
+    { Ion::Keyboard::Key::LeftParenthesis, MP_ROM_QSTR(MP_QSTR__paren_open_) },
+    { Ion::Keyboard::Key::RightParenthesis, MP_ROM_QSTR(MP_QSTR__paren_close_) },
 
     { Ion::Keyboard::Key::Four, MP_ROM_QSTR(MP_QSTR_4) },
     { Ion::Keyboard::Key::Five, MP_ROM_QSTR(MP_QSTR_5) },

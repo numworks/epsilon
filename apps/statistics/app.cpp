@@ -77,10 +77,6 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_graphControllerViews[GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::NormalProbability)] = nullptr;
 }
 
-int App::activeViewControllerIndex() const {
-  return GraphViewModel::IndexOfGraphView(snapshot()->graphViewModel()->selectedGraphView());
-}
-
 void App::didBecomeActive(Escher::Window * windows) {
   // TODO : Only push after reset or when data is deleted
   m_graphMenuStackViewController.push(&m_graphTypeController);

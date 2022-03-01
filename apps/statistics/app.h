@@ -70,7 +70,6 @@ private:
   HistogramController m_histogramController;
   Escher::ButtonRowController m_histogramHeader;
   GraphTypeController m_graphTypeController;
-  Escher::ViewController * m_graphControllerViews[GraphViewModel::k_numberOfGraphViews];
   Escher::AlternateViewController m_graphController;
   Escher::StackViewController m_graphMenuStackViewController;
   Escher::AlternateEmptyViewController m_graphMenuAlternateEmptyViewController;

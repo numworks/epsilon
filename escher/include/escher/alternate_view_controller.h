@@ -4,6 +4,7 @@
 #include <escher/i18n.h>
 #include <escher/view_controller.h>
 #include <escher/responder.h>
+#include <initializer_list>
 
 namespace Escher {
 
@@ -16,7 +17,7 @@ public:
 
 class AlternateViewController : public ViewController {
 public:
-  AlternateViewController(Responder * parentResponder, AlternateViewDelegate * delegate, ViewController ** viewControllers);
+  AlternateViewController(Responder * parentResponder, AlternateViewDelegate * delegate, std::initializer_list<ViewController *> viewControllers);
   ViewController * activeViewController() { return m_viewControllers[m_delegate->activeViewControllerIndex()]; }
   View * view() override { return activeViewController()->view(); }
   const char * title() override { return m_delegate->alternateViewTitle(); }
@@ -26,8 +27,9 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override { activeViewController()->viewDidDisappear(); }
 private:
+  static constexpr size_t k_maxNumberOfViewController = 4;
   AlternateViewDelegate * m_delegate;
-  ViewController ** m_viewControllers;
+  ViewController * m_viewControllers[k_maxNumberOfViewController];
 };
 
 

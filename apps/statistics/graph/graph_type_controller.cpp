@@ -11,7 +11,7 @@ GraphTypeController::GraphTypeController(Escher::Responder * parentResponder,
                                GraphViewModel * graphViewModel) :
     Escher::SelectableCellListPage<Escher::TransparentImageCellWithMessage, k_numberOfCells, Escher::RegularListViewDataSource>(parentResponder),
     m_tabController(tabController),
-    m_stackView(stackView),
+    m_stackViewController(stackView),
     m_store(store),
     m_graphViewModel(graphViewModel) {
   selectRow(GraphViewModel::IndexOfGraphView(m_graphViewModel->selectedGraphView()));
@@ -34,7 +34,7 @@ bool GraphTypeController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     m_graphViewModel->selectGraphView(GraphViewModel::GraphViewAtIndex(selectedRow()));
-    m_stackView->pop();
+    m_stackViewController->pop();
     return true;
   }
   return false;

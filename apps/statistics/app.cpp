@@ -62,7 +62,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_histogramController(&m_histogramHeader, this, &m_histogramHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion(), snapshot->selectedHistogramBarIndex(), snapshot->selectedHistogramSeriesIndex()),
   m_histogramHeader(&m_graphController, &m_histogramController, &m_histogramController),
   m_graphTypeController(&m_graphMenuStackViewController, &m_tabViewController, &m_graphMenuStackViewController, snapshot->store(), snapshot->graphViewModel()),
-  m_graphController(&m_graphMenuStackViewController, this, m_graphControllerViews),
+  m_graphController(&m_graphMenuStackViewController, this, {&m_histogramHeader, &m_boxHeader}),
   m_graphMenuStackViewController(&m_graphMenuAlternateEmptyViewController, &m_graphController, Escher::StackViewController::Style::WhiteUniform),
   m_graphMenuAlternateEmptyViewController(&m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController),
   m_storeController(&m_storeStackViewController, this, snapshot->store(), &m_storeHeader, parentContext),
@@ -70,11 +70,9 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_storeHeader(&m_tabViewController, &m_storeStackViewController, &m_storeController),
   m_tabViewController(&m_modalViewController, snapshot, &m_storeHeader, &m_graphMenuAlternateEmptyViewController, &m_calculationHeader)
 {
-  m_graphControllerViews[GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Histogram)] = &m_histogramHeader;
-  m_graphControllerViews[GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Box)] = &m_boxHeader;
-  // TODO : Add other controllers
-  m_graphControllerViews[GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Frequency)] = nullptr;
-  m_graphControllerViews[GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::NormalProbability)] = nullptr;
+  // Order used in m_graphController constructor
+  assert(GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Histogram) == 0);
+  assert(GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Box) == 1);
 }
 
 void App::didBecomeActive(Escher::Window * windows) {

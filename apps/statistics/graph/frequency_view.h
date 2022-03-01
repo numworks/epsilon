@@ -10,10 +10,10 @@ namespace Statistics {
 class FrequencyView : public PlotView {
 public:
   FrequencyView(Store * store);
+  PlotCurveView * plotCurveView() override { return &m_curveView; }
 
 private:
   void computeYBounds(float * yMin, float *yMax) override;
-  PlotCurveView * plotCurveView() override { return &m_curveView; }
 
   FrequencyCurveView m_curveView;
 };

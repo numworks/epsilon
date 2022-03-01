@@ -10,10 +10,10 @@ namespace Statistics {
 class NormalProbabilityView : public PlotView {
 public:
   NormalProbabilityView(Store * store);
+  PlotCurveView * plotCurveView() override { return &m_curveView; }
 
 private:
   void computeYBounds(float * yMin, float *yMax) override;
-  PlotCurveView * plotCurveView() override { return &m_curveView; }
 
   NormalProbabilityCurveView m_curveView;
 };

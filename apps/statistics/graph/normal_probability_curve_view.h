@@ -7,9 +7,8 @@ namespace Statistics {
 class NormalProbabilityCurveView : public PlotCurveView {
 public:
   using PlotCurveView::PlotCurveView;
-  void drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const override;
-private:
   double valueAtIndex(int series, int * sortedIndex, int i) const override { return m_store->zScoreAtSortedIndex(series, sortedIndex, i); }
+  void drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const override;
 };
 
 }  // namespace Statistics

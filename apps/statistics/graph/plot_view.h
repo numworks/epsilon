@@ -21,6 +21,7 @@ namespace Statistics {
 class PlotView : public MultipleDataView {
 public:
   PlotView(Store * store) : MultipleDataView(store) {}
+  virtual PlotCurveView * plotCurveView() = 0;
 
   // MultipleDataView
   int numberOfSubviews() const override { return 2; } // CurveView and Banner
@@ -35,7 +36,6 @@ public:
 protected:
   void layoutDataSubviews(bool force) override;
   virtual void computeYBounds(float * yMin, float *yMax) = 0;
-  virtual PlotCurveView * plotCurveView() = 0;
 
   PlotRange m_graphRange;
   Shared::CurveViewCursor m_cursor;

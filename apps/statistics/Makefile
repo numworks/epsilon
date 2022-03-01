@@ -14,7 +14,6 @@ app_statistics_src = $(addprefix apps/statistics/,\
   graph/box_controller.cpp \
   graph/box_range.cpp \
   graph/box_view.cpp \
-  graph/frequency_controller.cpp \
   graph/frequency_curve_view.cpp \
   graph/frequency_view.cpp \
   graph/graph_type_controller.cpp \
@@ -27,10 +26,10 @@ app_statistics_src = $(addprefix apps/statistics/,\
   graph/multiple_data_view.cpp \
   graph/multiple_data_view_controller.cpp \
   graph/multiple_histograms_view.cpp \
-  graph/normal_probability_controller.cpp \
   graph/normal_probability_curve_view.cpp \
   graph/normal_probability_view.cpp \
   graph/plot_banner_view.cpp \
+  graph/plot_controller.cpp \
   graph/plot_curve_view.cpp \
   graph/plot_range.cpp \
   graph/plot_view.cpp \

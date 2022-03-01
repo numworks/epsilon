@@ -15,13 +15,13 @@ public:
                 Shared::CursorView * cursorView,
                 Store * store);
   void moveCursorTo(int i, int series);
+  virtual double valueAtIndex(int series, int * sortedIndex, int i) const = 0;
   virtual void drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const;
 
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   virtual bool connectPoints() const { return false; }
-  virtual double valueAtIndex(int series, int * sortedIndex, int i) const = 0;
 
   Store * m_store;
 };

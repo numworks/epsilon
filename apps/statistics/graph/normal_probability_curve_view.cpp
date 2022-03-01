@@ -8,6 +8,7 @@ namespace Statistics {
 void NormalProbabilityCurveView::drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const {
   PlotCurveView::drawSeriesCurve(ctx, rect, series);
 
+  // TODO : Add these colors somewhere else
   // Brighter colors for the curves
   constexpr KDColor k_curveColors[Store::k_numberOfSeries] = {
       KDColor::RGB888(255, 204, 204),   // #FFCCCC

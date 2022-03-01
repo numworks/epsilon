@@ -323,6 +323,8 @@ double Store::cumulatedFrequencyAtSortedIndex(int series, int * sortedIndex, int
 }
 
 double Store::zScoreAtSortedIndex(int series, int * sortedIndex, int index) const {
+  /* TODO : sortedIndex may not be needed, depending on how duplicate values are
+   * handled. */
   int numberOfPairs = numberOfPairsOfSeries(series);
   assert(numberOfPairs > 0);
   float plottingPosition = (static_cast<float>(index)+0.5f)/static_cast<float>(numberOfPairs);

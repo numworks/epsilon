@@ -18,7 +18,7 @@ Escher::View * FrequencyView::subviewAtIndex(int index) {
 }
 
 void FrequencyView::reload() {
-  m_graphRange.calibrate(m_curveView.bounds().width(), m_curveView.bounds().height(), m_store->minValueForAllSeries(), m_store->maxValueForAllSeries());
+  m_graphRange.calibrate(m_curveView.bounds().width(), m_curveView.bounds().height(), m_store->minValueForAllSeries(), m_store->maxValueForAllSeries(), 0.0f, 100.0f);
   layoutSubviews();
   m_curveView.reload();
 }

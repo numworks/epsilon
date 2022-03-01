@@ -56,6 +56,7 @@ public:
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   int activeViewControllerIndex() const override { return GraphViewModel::IndexOfGraphView(snapshot()->graphViewModel()->selectedGraphView()); }
+  const char * alternateViewTitle() override { return I18n::translate(I18n::Message::GraphTab); }
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   void didBecomeActive(Escher::Window * window) override;
   CalculationController m_calculationController;

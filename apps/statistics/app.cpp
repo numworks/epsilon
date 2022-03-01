@@ -62,7 +62,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_histogramController(&m_histogramHeader, this, &m_histogramHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion(), snapshot->selectedHistogramBarIndex(), snapshot->selectedHistogramSeriesIndex()),
   m_histogramHeader(&m_graphController, &m_histogramController, &m_histogramController),
   m_graphTypeController(&m_graphMenuStackViewController, &m_tabViewController, &m_graphMenuStackViewController, snapshot->store(), snapshot->graphViewModel()),
-  m_graphController(&m_graphMenuStackViewController, this, m_graphControllerViews, I18n::translate(I18n::Message::GraphTab)),
+  m_graphController(&m_graphMenuStackViewController, this, m_graphControllerViews),
   m_graphMenuStackViewController(&m_graphMenuAlternateEmptyViewController, &m_graphController, Escher::StackViewController::Style::WhiteUniform),
   m_graphMenuAlternateEmptyViewController(&m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController),
   m_storeController(&m_storeStackViewController, this, snapshot->store(), &m_storeHeader, parentContext),

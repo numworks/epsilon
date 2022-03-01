@@ -38,6 +38,7 @@ ion_src += $(addprefix ion/src/shared/, \
 ion_device_bench_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   decompress.cpp \
+  unicode/code_point.cpp\
   unicode/utf8_decoder.cpp \
   unicode/utf8_helper.cpp \
   )

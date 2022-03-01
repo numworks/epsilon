@@ -46,7 +46,7 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
 void ExamPopUpController::setTargetExamMode(Poincare::Preferences::ExamMode mode) {
   m_targetExamMode = mode;
   for (int i = 0; i < k_numberOfLines; i++) {
-    m_contentView.setMessage(i, ExamModeConfiguration::examModeActivationWarningMessage(mode, i));
+    setContentMessage(i, ExamModeConfiguration::examModeActivationWarningMessage(mode, i));
   }
 }
 

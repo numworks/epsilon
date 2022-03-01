@@ -27,8 +27,6 @@ public:
   MultipleDataView * multipleDataView() override { return plotView(); }
   bool moveSelectionHorizontally(int deltaIndex) override;
 
-  // ViewController
-  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayNoTitle; }
 protected:
   // TODO : Handle a multiline banner to allow a greater precision
   constexpr static int k_numberOfSignificantDigits = Poincare::Preferences::VeryShortNumberOfSignificantDigits;

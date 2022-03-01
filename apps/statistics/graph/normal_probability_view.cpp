@@ -18,7 +18,7 @@ void NormalProbabilityView::computeYBounds(float * yMin, float *yMax) {
   }
   // Normal probability curve is bounded by the biggest series
   /* TODO : Factorize with zScoreAtSortedIndex or
-   * NormalProbabilityCurveView::valueAtIndex */
+   * NormalProbabilityCurveView::resultAtIndex */
   float yBound = Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(0.5f/maxNumberOfPairs, 0.0f, 1.0f);
   assert(yBound <= 0.0f);
   *yMin = yBound;

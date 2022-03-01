@@ -51,11 +51,18 @@ public:
   constexpr static int k_bottomMargin = 20;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 
-  // TODO : Factorize with upcoming changes in regression
-  // TODO : Add tests
-  void sortIndex(int series, int * sortedIndex, int startIndex, int endIndex) const;
-  double cumulatedFrequencyAtSortedIndex(int series, int * sortedIndex, int index) const;
-  double zScoreAtSortedIndex(int series, int * sortedIndex, int index) const;
+  /* TODO : Add tests
+   *        Specialize methods for CumulatedFrequency and NormalProbabilityPlot
+   */
+  int totalCumulatedFrequencyValues(int series, int * sortedIndex) const { return numberOfPairsOfSeries(series); }
+  double cumulatedFrequencyValueAtIndex(int series, int * sortedIndex, int i) const { return get(series, 0, sortedIndex[i]); }
+  double cumulatedFrequencyResultAtIndex(int series, int * sortedIndex, int i) const;
+
+  int totalNormalProbabilityValues(int series, int * sortedIndex) const { return numberOfPairsOfSeries(series); }
+  double normalProbabilityValueAtIndex(int series, int * sortedIndex, int i) const { return get(series, 0, sortedIndex[i]); }
+  double normalProbabilityResultAtIndex(int series, int * sortedIndex, int i) const;
+  // Sort values indexes in sortedIndex.
+  void buildSortedIndex(int series, int * sortedIndex) const;
 
   // DoublePairStore
   void memoizeValidSeries(int series) override;

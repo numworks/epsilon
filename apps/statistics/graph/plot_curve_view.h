@@ -15,7 +15,9 @@ public:
                 Shared::CursorView * cursorView,
                 Store * store);
   void moveCursorTo(int i, int series);
+  virtual int totalValues(int series, int * sortedIndex) const = 0;
   virtual double valueAtIndex(int series, int * sortedIndex, int i) const = 0;
+  virtual double resultAtIndex(int series, int * sortedIndex, int i) const = 0;
   virtual void drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const;
 
   // Escher::View

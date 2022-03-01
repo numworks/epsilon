@@ -293,41 +293,50 @@ double Store::sortedElementAtCumulatedPopulation(int series, double population, 
   return m_data[series][0][sortedElementIndex];
 }
 
-void Store::sortIndex(int series, int * sortedIndex, int startIndex, int endIndex) const {
-  assert(startIndex < endIndex);
-  // Following lines is an insertion-sort algorithm which has the advantage of being in-place and efficient when already sorted.
-  int i = startIndex + 1;
-  while (i < endIndex) {
-    double x = m_data[series][0][sortedIndex[i]];
+void Store::buildSortedIndex(int series, int * sortedIndex) const {
+  // TODO : Factorize with Regression::Store::sortIndexByColumn
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int i = 0; i < numberOfPairs; i++) {
+    sortedIndex[i] = i;
+  }
+  /* Following lines is an insertion-sort algorithm which has the advantage of
+   * being in-place and efficient when already sorted. */
+  int i = 1;
+  while (i < numberOfPairs) {
     int xIndex = sortedIndex[i];
+    double x = m_data[series][0][xIndex];
     int j = i - 1;
-    while (j >= startIndex && m_data[series][0][sortedIndex[j]] > x){
+    while (j >= 0 && m_data[series][0][sortedIndex[j]] > x) {
       sortedIndex[j+1] = sortedIndex[j];
-      j = j - 1;
+      j--;
     }
     sortedIndex[j+1] = xIndex;
-    i = i + 1;
+    i++;
   }
 }
 
-double Store::cumulatedFrequencyAtSortedIndex(int series, int * sortedIndex, int index) const {
+double Store::cumulatedFrequencyResultAtIndex(int series, int * sortedIndex, int i) const {
+  /* TODO : Aggregate all duplicate values, sum their frequencies. Do not ignore
+   *        values with a null frequency. */
   double cumulatedOccurrences = 0.0;
   double otherOccurrences = 0.0;
   // Recompute sumOfOccurrences() here to save some calls.
   int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int i = 0; i < numberOfPairs; i++) {
-    (i <= index ? cumulatedOccurrences : otherOccurrences) += m_data[series][1][sortedIndex[i]];
+  for (int j = 0; j < numberOfPairs; j++) {
+    (j <= i ? cumulatedOccurrences : otherOccurrences) += m_data[series][1][sortedIndex[j]];
   }
   assert(otherOccurrences + cumulatedOccurrences == sumOfOccurrences(series));
   return 100.0*cumulatedOccurrences/(otherOccurrences + cumulatedOccurrences);
 }
 
-double Store::zScoreAtSortedIndex(int series, int * sortedIndex, int index) const {
-  /* TODO : sortedIndex may not be needed, depending on how duplicate values are
-   * handled. */
+double Store::normalProbabilityResultAtIndex(int series, int * sortedIndex, int i) const {
+  /* TODO : Ensure frequenciesAreInteger(), scatter all >1 frequencies into
+   *        mutiple values, ensure the total number does not exceed
+   *        k_maxNumberOfPairs, and ignore values with a null frequency.
+   *        sortedIndex may not be needed. */
   int numberOfPairs = numberOfPairsOfSeries(series);
   assert(numberOfPairs > 0);
-  float plottingPosition = (static_cast<float>(index)+0.5f)/static_cast<float>(numberOfPairs);
+  float plottingPosition = (static_cast<float>(i)+0.5f)/static_cast<float>(numberOfPairs);
   return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(plottingPosition, 0.0f, 1.0f);
 }
 

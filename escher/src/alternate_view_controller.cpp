@@ -10,7 +10,7 @@ AlternateViewController::AlternateViewController(Responder * parentResponder, Al
   ViewController(parentResponder),
   m_delegate(delegate)
 {
-  assert(viewControllers.size() < k_maxNumberOfViewController);
+  assert(viewControllers.size() <= k_maxNumberOfViewController);
   size_t index = 0;
   for (ViewController * viewController : viewControllers) {
     m_viewControllers[index++] = viewController;

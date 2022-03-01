@@ -15,7 +15,7 @@ include build/helpers.mk
 ifeq (${MODEL},n0110)
   apps_list = ${EPSILON_APPS}
 else
-  ifeq (${MODEL},n0110)
+  ifeq (${MODEL},bootloader)
     apps_list = ${EPSILON_APPS}
   else
     apps_list = $(foreach i, ${EPSILON_APPS}, $(if $(filter external, $(i)),,$(i)))

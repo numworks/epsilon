@@ -23,8 +23,6 @@ public:
   MultipleDataView * multipleDataView() override { return &m_view; }
   bool moveSelectionHorizontally(int deltaIndex) override;
 
-  // ViewController
-  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayNoTitle; }
   TELEMETRY_ID("Box");
 private:
   void reloadBannerView() override;

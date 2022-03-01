@@ -33,6 +33,7 @@ app_statistics_src = $(addprefix apps/statistics/,\
   graph/plot_banner_view.cpp \
   graph/plot_curve_view.cpp \
   graph/plot_range.cpp \
+  graph/plot_view.cpp \
   data/statistics_context.cpp \
   data/store_controller.cpp \
   data/store_parameter_controller.cpp \

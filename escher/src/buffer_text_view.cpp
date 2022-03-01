@@ -25,10 +25,8 @@ void BufferTextView::setText(const char * text) {
   markRectAsDirty(bounds());
 }
 
-// This method only combine a message and 1 string because it is the most common case.
-// It could be rewritten to take a va_list to combine a message with more strings.
 void BufferTextView::setSimpleCustomText(I18n::Message message, const char * string) {
-  char tempBuffer[m_maxDisplayedTextLength + 1];
+  char tempBuffer[k_maxNumberOfChar];
   Poincare::Print::customPrintf(tempBuffer, m_maxDisplayedTextLength + 1, I18n::translate(message), string);
   setText(tempBuffer);
 }

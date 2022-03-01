@@ -68,7 +68,7 @@ void NormalProbabilityController::reloadBannerView() {
   double normalProbability = m_store->zScoreAtSortedIndex(series, sortedIndex, *m_selectedBarIndex);
   Poincare::Print::customPrintf(buffer, k_maxNumberOfCharacters, "%s : %*.*ed",
     I18n::translate(I18n::Message::StatisticsNormalProbabilityZScore), normalProbability, displayMode, k_numberOfSignificantDigits);
-  m_view.bannerView()->normalProbability()->setText(buffer);
+  m_view.bannerView()->result()->setText(buffer);
 
   m_view.bannerView()->reload();
 }

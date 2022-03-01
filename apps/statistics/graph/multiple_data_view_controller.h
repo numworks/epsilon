@@ -24,7 +24,6 @@ public:
   int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
 
   // ViewController
-  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::NeverDisplayOwnTitle; }
   Escher::View * view() override { return multipleDataView(); }
   void viewWillAppear() override;
 

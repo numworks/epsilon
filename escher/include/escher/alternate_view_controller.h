@@ -11,6 +11,7 @@ class AlternateViewDelegate {
 public:
   virtual int activeViewControllerIndex() const = 0;
   virtual const char * alternateViewTitle() = 0;
+  virtual ViewController::TitlesDisplay alternateViewTitlesDisplay() = 0;
 };
 
 class AlternateViewController : public ViewController {
@@ -19,7 +20,7 @@ public:
   ViewController * activeViewController() { return m_viewControllers[m_delegate->activeViewControllerIndex()]; }
   View * view() override { return activeViewController()->view(); }
   const char * title() override { return m_delegate->alternateViewTitle(); }
-  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayNoTitle; }
+  ViewController::TitlesDisplay titlesDisplay() override { return m_delegate->alternateViewTitlesDisplay(); }
   void didBecomeFirstResponder() override;
   void initView() override { activeViewController()->initView(); }
   void viewWillAppear() override;

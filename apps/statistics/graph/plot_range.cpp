@@ -1,8 +1,8 @@
-#include "normal_probability_range.h"
+#include "plot_range.h"
 
 namespace Statistics {
 
-void NormalProbabilityRange::calibrate(KDCoordinate width, KDCoordinate height, float seriesXMin, float seriesXMax, float yMin, float yMax) {
+void PlotRange::calibrate(KDCoordinate width, KDCoordinate height, float seriesXMin, float seriesXMax, float yMin, float yMax) {
   /* <                    width                          >
    * <   k_margin   >                     <   k_margin   >
    * ----------------|-------------------|----------------

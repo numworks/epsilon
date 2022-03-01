@@ -6,7 +6,7 @@
 #include <escher/view.h>
 #include "plot_banner_view.h"
 #include "normal_probability_curve_view.h"
-#include "normal_probability_range.h"
+#include "plot_range.h"
 #include "multiple_data_view.h"
 #include "../store.h"
 
@@ -36,7 +36,7 @@ private:
   void layoutDataSubviews(bool force) override;
 
   NormalProbabilityCurveView m_curveView;
-  NormalProbabilityRange m_graphRange;
+  PlotRange m_graphRange;
   Shared::CurveViewCursor m_cursor;
   PlotBannerView m_bannerView;
   Shared::CursorView m_cursorView;

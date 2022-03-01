@@ -68,7 +68,7 @@ void FrequencyController::reloadBannerView() {
   double frequency = m_store->cumulatedFrequencyAtSortedIndex(series, sortedIndex, *m_selectedBarIndex);
   Poincare::Print::customPrintf(buffer, k_maxNumberOfCharacters, "%s : %*.*ed%%",
     I18n::translate(I18n::Message::StatisticsFrequencyFcc), frequency, displayMode, k_numberOfSignificantDigits);
-  m_view.bannerView()->frequency()->setText(buffer);
+  m_view.bannerView()->result()->setText(buffer);
 
   m_view.bannerView()->reload();
 }

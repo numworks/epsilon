@@ -4,7 +4,7 @@
 #include <apps/shared/curve_view.h>
 #include <apps/shared/curve_view_cursor.h>
 #include <escher/view.h>
-#include "frequency_banner_view.h"
+#include "plot_banner_view.h"
 #include "frequency_curve_view.h"
 #include "frequency_range.h"
 #include "multiple_data_view.h"
@@ -28,7 +28,7 @@ public:
   // All series are displayed in the same curve view
   Shared::CurveView * dataViewAtIndex(int index) override { return &m_curveView; }
   int seriesOfSubviewAtIndex(int index) override { return index; }
-  FrequencyBannerView * bannerView() override { return &m_bannerView; }
+  PlotBannerView * bannerView() override { return &m_bannerView; }
   void moveCursorTo(int i, int series) { m_curveView.moveCursorTo(i, series); }
   void reload() override;
 
@@ -38,7 +38,7 @@ private:
   FrequencyCurveView m_curveView;
   FrequencyRange m_graphRange;
   Shared::CurveViewCursor m_cursor;
-  FrequencyBannerView m_bannerView;
+  PlotBannerView m_bannerView;
   Shared::CursorView m_cursorView;
 };
 

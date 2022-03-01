@@ -1,5 +1,5 @@
-#ifndef STATISTICS_NORMAL_PROBABILITY_BANNER_VIEW_H
-#define STATISTICS_NORMAL_PROBABILITY_BANNER_VIEW_H
+#ifndef STATISTICS_PLOT_BANNER_VIEW_H
+#define STATISTICS_PLOT_BANNER_VIEW_H
 
 #include <apps/shared/banner_view.h>
 #include <escher/buffer_text_view.h>
@@ -7,21 +7,21 @@
 
 namespace Statistics {
 
-class NormalProbabilityBannerView : public Shared::BannerView {
+class PlotBannerView : public Shared::BannerView {
 public:
-  NormalProbabilityBannerView();
+  PlotBannerView();
   Escher::BufferTextView * seriesName() { return &m_seriesName; }
   Escher::BufferTextView * value() { return &m_value; }
-  Escher::BufferTextView * normalProbability() { return &m_normalProbability; }
+  Escher::BufferTextView * result() { return &m_result; }
 private:
   static constexpr int k_numberOfSubviews = 3;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   Escher::View * subviewAtIndex(int index) override;
   Escher::BufferTextView m_seriesName;
   Escher::BufferTextView m_value;
-  Escher::BufferTextView m_normalProbability;
+  Escher::BufferTextView m_result;
 };
 
 }  // namespace Statistics
 
-#endif /* STATISTICS_NORMAL_PROBABILITY_BANNER_VIEW_H */
+#endif /* STATISTICS_PLOT_BANNER_VIEW_H */

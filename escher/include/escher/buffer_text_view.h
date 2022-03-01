@@ -16,7 +16,12 @@ public:
                  KDColor backgroundColor = KDColorWhite,
                  size_t maxDisplayedTextLength = k_maxNumberOfChar - 1);
   void setText(const char * text) override;
+
+  /* This method only combine a message and 1 string because it is the most common case.
+  * TODO : It should be rewritten to take a va_list to combine a message with more strings.
+  */
   void setSimpleCustomText(I18n::Message message, const char * string = "");
+
   const char * text() const override;
   void appendText(const char * text);
   KDSize minimalSizeForOptimalDisplay() const override;

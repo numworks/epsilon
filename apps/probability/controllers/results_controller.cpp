@@ -47,7 +47,7 @@ const char * Probability::ResultsController::title() {
   m_titleBuffer[0] = 0;
   StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
   m_statistic->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), stackViewControllerResponder->topViewController() != this);
-  if (m_titleBuffer[0] == 0) {
+  if (m_titleBuffer[0] == 0) {
     return nullptr;
   }
   return m_titleBuffer;

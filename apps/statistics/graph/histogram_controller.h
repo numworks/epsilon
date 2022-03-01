@@ -32,7 +32,6 @@ public:
   Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   // ViewController
-  ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayNoTitle; }
   void viewWillAppear() override;
   MultipleDataView * multipleDataView() override { return &m_view; }
   TELEMETRY_ID("Histogram");

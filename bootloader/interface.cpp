@@ -42,6 +42,7 @@ void Interface::drawImage(KDContext* ctx, const Image* image, int offset) {
 
 void Interface::draw() {
   KDContext * ctx = KDIonContext::sharedContext();
+  ctx->fillRect(KDRect(0,0,320,240), KDColorBlack);
   drawImage(ctx, ImageStore::Computer, 70);
   drawImage(ctx, ImageStore::Cable, 172);
 
@@ -61,7 +62,10 @@ void Interface::draw() {
     Slot slot = slots[i];
 
     if (slot.kernelHeader()->isValid() && slot.userlandHeader()->isValid()) {
-      if (slot.userlandHeader()->isOmega()) {
+      if (slot.userlandHeader()->isOmega() && slot.userlandHeader()->isUpsilon()) {
+        ctx->drawString("Upsilon", KDPoint(56, i*13),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+        ctx->drawString(slot.userlandHeader()->upsilonVersion(), KDPoint(112, i*13),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
+      } else if (slot.userlandHeader()->isOmega()) {
         ctx->drawString("Omega", KDPoint(56, i*13),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
         ctx->drawString(slot.userlandHeader()->omegaVersion(), KDPoint(112, i*13),  KDFont::SmallFont, KDColorWhite, KDColorBlack);
       } else {

@@ -13,11 +13,14 @@ public:
   const bool isValid() const;
   const bool isOmega() const;
   const char * omegaVersion() const;
+  const bool isUpsilon() const;
+  const char * upsilonVersion() const;
 
 private:
   UserlandHeader();
   constexpr static uint32_t Magic = 0xDEC0EDFE;
   constexpr static uint32_t OmegaMagic = 0xEFBEADDE;
+  constexpr static uint32_t UpsilonMagic = 0x55707369;
   uint32_t m_header;
   const char m_expectedEpsilonVersion[8];
   void * m_storageAddressRAM;
@@ -33,6 +36,10 @@ private:
   const char m_omegaVersion[16];
   const volatile char m_username[16];
   uint32_t m_ohm_footer;
+  uint32_t m_ups_header;
+  const char m_UpsilonVersion[16];
+  uint32_t m_osType;
+  uint32_t m_ups_footer;
 };
 
 extern const UserlandHeader* s_userlandHeaderA;

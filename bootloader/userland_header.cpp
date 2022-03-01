@@ -22,4 +22,12 @@ const char * UserlandHeader::omegaVersion() const {
   return m_omegaVersion;
 }
 
+const bool UserlandHeader::isUpsilon() const {
+  return m_ups_header == UpsilonMagic && m_ups_footer == UpsilonMagic;
+}
+
+const char * UserlandHeader::upsilonVersion() const {
+  return m_UpsilonVersion;
+}
+
 }

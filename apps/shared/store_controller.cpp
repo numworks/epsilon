@@ -320,7 +320,7 @@ void StoreController::sortSelectedColumn() {
     double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
     return dataY[a] > dataY[b];
   };
-
+  m_store->makeColumnsEqualLength(selectedSeries());
   int indexOfFirstCell = selectedSeries() * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
   double * seriesContext = &(m_store->data()[indexOfFirstCell]);
   Poincare::Helpers::Sort(swapRows, (RelativeColumnIndex(selectedColumn()) == 0) ? compareX : compareY, seriesContext, m_store->numberOfValuesOfColumn(selectedSeries(), RelativeColumnIndex(selectedColumn())));

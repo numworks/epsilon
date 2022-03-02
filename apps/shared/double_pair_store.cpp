@@ -90,6 +90,16 @@ void DoublePairStore::resetColumn(int series, int i) {
   }
 }
 
+void DoublePairStore::makeColumnsEqualLength(int series) {
+  assert(series >= 0 && series < k_numberOfSeries);
+  int longerColumn = m_numberOfValues[series][0] <= m_numberOfValues[series][1] ? 1 : 0;
+  int shorterColumn = longerColumn == 0 ? 1 : 0;
+  for (int i = m_numberOfValues[series][shorterColumn] ; i < m_numberOfValues[series][longerColumn] ; i++) {
+    set(0.0, series, shorterColumn, i);
+  }
+}
+
+
 bool DoublePairStore::isEmpty() const {
   for (int i = 0; i < k_numberOfSeries; i++) {
     if (seriesIsValid(i)) {

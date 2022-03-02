@@ -25,4 +25,9 @@ void NormalProbabilityView::computeYBounds(float * yMin, float *yMax) {
   *yMax = -yBound;
 }
 
+void NormalProbabilityView::computeXBounds(float * xMin, float *xMax) {
+  *xMin = m_store->minValueForAllSeries(false);
+  *xMax = m_store->maxValueForAllSeries(false);
+}
+
 }

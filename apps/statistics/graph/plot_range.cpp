@@ -16,6 +16,14 @@ void PlotRange::calibrate(KDCoordinate width, KDCoordinate height, float seriesX
   float xSideOffset = xRange * static_cast<float>(k_margin) / static_cast<float>(width - 2*k_margin);
   float ySideOffset = yRange * static_cast<float>(k_margin) / static_cast<float>(height - 2*k_margin);
 
+  // Offset may be null because of equal bounds. Use it or 1.0f by default.
+  if (xSideOffset == 0.0f) {
+    xSideOffset = seriesXMin != 0.0f ? std::fabs(seriesXMin) : 1.0f;
+  }
+  if (ySideOffset == 0.0f) {
+    ySideOffset = yMin != 0.0f ? std::fabs(yMin) : 1.0f;
+  }
+
   MemoizedCurveViewRange::protectedSetXMin(seriesXMin - xSideOffset, INFINITY, INFINITY, false);
   MemoizedCurveViewRange::protectedSetXMax(seriesXMax + xSideOffset);
   MemoizedCurveViewRange::protectedSetYMin(yMin - ySideOffset, INFINITY, INFINITY, false);

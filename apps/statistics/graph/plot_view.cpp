@@ -12,9 +12,10 @@ Escher::View * PlotView::subviewAtIndex(int index) {
 }
 
 void PlotView::reload() {
-  float yMin, yMax;
+  float yMin, yMax, xMin, xMax;
   computeYBounds(&yMin, &yMax);
-  m_graphRange.calibrate(plotCurveView()->bounds().width(), plotCurveView()->bounds().height(), m_store->minValueForAllSeries(), m_store->maxValueForAllSeries(), yMin, yMax);
+  computeXBounds(&xMin, &xMax);
+  m_graphRange.calibrate(plotCurveView()->bounds().width(), plotCurveView()->bounds().height(), xMin, xMax, yMin, yMax);
   layoutSubviews();
   plotCurveView()->reload();
 }

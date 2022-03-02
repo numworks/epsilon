@@ -14,6 +14,7 @@ public:
 
 private:
   void computeYBounds(float * yMin, float *yMax) override;
+  void computeXBounds(float * xMin, float *xMax) override;
 
   NormalProbabilityCurveView m_curveView;
 };

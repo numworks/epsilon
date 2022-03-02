@@ -15,4 +15,9 @@ void FrequencyView::computeYBounds(float * yMin, float *yMax) {
   *yMax = 100.0f;
 }
 
+void FrequencyView::computeXBounds(float * xMin, float *xMax) {
+  *xMin = m_store->minValueForAllSeries(true);
+  *xMax = m_store->maxValueForAllSeries(true);
+}
+
 }

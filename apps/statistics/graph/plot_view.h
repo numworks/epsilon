@@ -36,6 +36,7 @@ public:
 protected:
   void layoutDataSubviews(bool force) override;
   virtual void computeYBounds(float * yMin, float *yMax) = 0;
+  virtual void computeXBounds(float * xMin, float *xMax) = 0;
 
   PlotRange m_graphRange;
   Shared::CurveViewCursor m_cursor;

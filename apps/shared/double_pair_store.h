@@ -38,6 +38,7 @@ public:
   void deleteColumn(int series, int column);
   void deleteAllPairs();
   void resetColumn(int series, int i);
+  void makeColumnsEqualLength(int series);
 
   // Series
   // isEmpy, numberOfNonEmptySeries and indexOfKthNonEmptySeries treat non valid series as empty

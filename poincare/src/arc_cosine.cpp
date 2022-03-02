@@ -1,8 +1,14 @@
 #include <poincare/arc_cosine.h>
 #include <poincare/complex.h>
+#include <poincare/derivative.h>
+#include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/square_root.h>
+#include <poincare/subtraction.h>
 #include <cmath>
 
 namespace Poincare {
@@ -21,6 +27,14 @@ int ArcCosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 
 Expression ArcCosineNode::shallowReduce(ReductionContext reductionContext) {
   return ArcCosine(this).shallowReduce(reductionContext);
+}
+
+bool ArcCosineNode::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return ArcCosine(this).derivate(reductionContext, symbol, symbolValue);
+}
+
+Expression ArcCosineNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+  return ArcCosine(this).unaryFunctionDifferential(reductionContext);
 }
 
 template<typename T>
@@ -57,6 +71,19 @@ Expression ArcCosine::shallowReduce(ExpressionNode::ReductionContext reductionCo
     }
   }
   return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
+}
+
+bool ArcCosine::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  float childEvaluation = childAtIndex(0).approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
+  if (childEvaluation > 1.0 || childEvaluation < -1.0) {
+    return false;
+  }
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
+  return true;
+}
+
+Expression ArcCosine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+  return Division::Builder(Rational::Builder(-1), SquareRoot::Builder(Subtraction::Builder(Rational::Builder(1), Power::Builder(childAtIndex(0).clone(), Rational::Builder(2)))));
 }
 
 }

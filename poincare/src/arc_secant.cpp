@@ -43,5 +43,4 @@ Expression ArcSecant::shallowReduce(ExpressionNode::ReductionContext reductionCo
   return Trigonometry::shallowReduceInverseAdvancedFunction(*this, reductionContext);
 }
 
-
 }

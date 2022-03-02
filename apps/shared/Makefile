@@ -65,7 +65,6 @@ app_shared_src = $(addprefix apps/shared/,\
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
   poincare_helpers.cpp \
-  pop_up_controller.cpp \
   prefaced_table_view.cpp \
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \

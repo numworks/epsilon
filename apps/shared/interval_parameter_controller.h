@@ -3,9 +3,9 @@
 
 #include <assert.h>
 #include <escher/message_table_cell_with_editable_text.h>
+#include <escher/pop_up_controller.h>
 #include "interval.h"
 #include "float_parameter_controller.h"
-#include "pop_up_controller.h"
 
 namespace Shared {
 
@@ -34,7 +34,7 @@ private:
   I18n::Message m_title;
   I18n::Message m_startMessage;
   I18n::Message m_endMessage;
-  PopUpController m_confirmPopUpController;
+  Escher::MessagePopUpController m_confirmPopUpController;
 };
 
 }

@@ -1,11 +1,11 @@
 #ifndef APPS_EXAM_POP_UP_CONTROLLER_H
 #define APPS_EXAM_POP_UP_CONTROLLER_H
 
-#include "shared/pop_up_controller.h"
+#include <escher/pop_up_controller.h>
 #include "exam_pop_up_controller_delegate.h"
 #include <poincare/preferences.h>
 
-class ExamPopUpController : public Shared::PopUpController {
+class ExamPopUpController : public Escher::MessagePopUpController {
 public:
   ExamPopUpController(ExamPopUpControllerDelegate * delegate);
   void setTargetExamMode(Poincare::Preferences::ExamMode mode);

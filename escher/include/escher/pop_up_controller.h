@@ -35,6 +35,7 @@ public:
   View * view() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  void presentModally();
 protected:
   class ContentView : public View, public Responder {
   public:
@@ -61,6 +62,8 @@ protected:
 class MessagePopUpController : public PopUpController, public PopUpViewDelegate {
 public:
   MessagePopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage);
+  // Constructor with default warning, ok and cancel messages :
+  MessagePopUpController(Escher::Invocation OkInvocation, std::initializer_list<I18n::Message> messages = {I18n::Message::ConfirmDiscard1, I18n::Message::ConfirmDiscard2});
   TextView * textViewAtIndex(int i) override { return &m_messageTextViews[i]; }
   void setContentMessage(int index, I18n::Message message);
 private:
@@ -70,6 +73,8 @@ private:
 class BufferPopUpController : public PopUpController, public PopUpViewDelegate {
 public:
   BufferPopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage);
+  // Constructor with default warning, ok and cancel messages :
+  BufferPopUpController(Escher::Invocation OkInvocation, int numberOfLines);
   TextView * textViewAtIndex(int i) override { return &m_bufferTextViews[i]; }
   void setContentText(int index, const char * text);
   void setSimpleCustomContentText(int index, I18n::Message message, const char * string = "");

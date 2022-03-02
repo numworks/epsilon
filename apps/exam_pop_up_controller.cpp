@@ -7,7 +7,7 @@
 using namespace Escher;
 
 ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate) :
-  Shared::PopUpController(
+  MessagePopUpController(
     Invocation(
       [](void * context, void * sender) {
         ExamPopUpController * controller = (ExamPopUpController *)context;
@@ -61,5 +61,5 @@ bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
     Container::activeApp()->dismissModalViewController();
     return false;
   }
-  return Shared::PopUpController::handleEvent(event);
+  return PopUpController::handleEvent(event);
 }

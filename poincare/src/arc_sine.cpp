@@ -1,8 +1,14 @@
 #include <poincare/arc_sine.h>
 #include <poincare/complex.h>
+#include <poincare/derivative.h>
+#include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/square_root.h>
+#include <poincare/subtraction.h>
 #include <cmath>
 
 namespace Poincare {
@@ -25,6 +31,14 @@ int ArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 
 Expression ArcSineNode::shallowReduce(ReductionContext reductionContext) {
   return ArcSine(this).shallowReduce(reductionContext);
+}
+
+bool ArcSineNode::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return ArcSine(this).derivate(reductionContext, symbol, symbolValue);
+}
+
+Expression ArcSineNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+  return ArcSine(this).unaryFunctionDifferential(reductionContext);
 }
 
 template<typename T>
@@ -65,5 +79,19 @@ Expression ArcSine::shallowReduce(ExpressionNode::ReductionContext reductionCont
   }
   return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }
+
+bool ArcSine::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  float childEvaluation = childAtIndex(0).approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
+  if (childEvaluation > 1.0 || childEvaluation < -1.0) {
+    return false;
+  }
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
+  return true;
+}
+
+Expression ArcSine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+  return Division::Builder(Rational::Builder(1), SquareRoot::Builder(Subtraction::Builder(Rational::Builder(1), Power::Builder(childAtIndex(0).clone(), Rational::Builder(2)))));
+}
+
 
 }

@@ -3,7 +3,7 @@
 
 #include "float_parameter_controller.h"
 #include "interactive_curve_view_range.h"
-#include <escher/pop_up_controller.h>
+#include "pop_up_controller.h"
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/message_table_cell_with_switch.h>
 
@@ -11,7 +11,7 @@ namespace Shared {
 
 class SingleRangeController : public FloatParameterController<float> {
 public:
-  SingleRangeController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveCurveViewRange, Escher::MessagePopUpController * confirmPopUpController);
+  SingleRangeController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveCurveViewRange, MessagePopUpController * confirmPopUpController);
 
   const char * title() override { return I18n::translate(m_editXRange ? I18n::Message::ValuesOfX : I18n::Message::ValuesOfY); }
   void viewWillAppear() override;
@@ -54,7 +54,7 @@ private:
   Escher::MessageTableCellWithSwitch m_autoCell;
   LockableEditableCell m_boundsCells[k_numberOfTextCells];
   InteractiveCurveViewRange * m_range;
-  Escher::MessagePopUpController * m_confirmPopUpController;
+  Shared::MessagePopUpController * m_confirmPopUpController;
   Range1D m_rangeParam;
   // m_secondaryRangeParam is only used when activating xAuto while yAuto is on.
   Range1D m_secondaryRangeParam;

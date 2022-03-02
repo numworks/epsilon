@@ -5,7 +5,7 @@
 #include "cell_with_separator.h"
 #include "interactive_curve_view_range.h"
 #include "single_range_controller.h"
-#include <escher/pop_up_controller.h>
+#include "pop_up_controller.h"
 #include <escher/message_table_cell_with_chevron_and_buffer.h>
 #include <escher/unequal_view.h>
 
@@ -65,7 +65,7 @@ private:
   NormalizeCell m_normalizeCell;
   Escher::MessageTableCellWithChevronAndBuffer m_rangeCells[k_numberOfRangeCells];
   ButtonWithSeparator m_okButton;
-  Escher::MessagePopUpController m_confirmPopUpController;
+  Shared::MessagePopUpController m_confirmPopUpController;
   SingleRangeController m_singleRangeController;
 };
 

@@ -111,13 +111,6 @@ MessagePopUpController::MessagePopUpController(int numberOfLines, Invocation OkI
     m_messageTextViews{}
 { }
 
-MessagePopUpController::MessagePopUpController(Escher::Invocation OkInvocation, std::initializer_list<I18n::Message> messages) :
-  MessagePopUpController(messages.size(), OkInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel) {
-  int index = 0;
-  for (I18n::Message message : messages) {
-    setContentMessage(index++, message);
-  }
-}
 
 void MessagePopUpController::setContentMessage(int index, I18n::Message message) {
   assert(index >=0 && index < m_numberOfLines);
@@ -129,10 +122,6 @@ BufferPopUpController::BufferPopUpController(int numberOfLines, Invocation OkInv
     PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, this),
     PopUpViewDelegate(numberOfLines),
     m_bufferTextViews{}
-{ }
-
-BufferPopUpController::BufferPopUpController(Escher::Invocation OkInvocation, int numberOfLines) :
-  BufferPopUpController(numberOfLines, OkInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel)
 { }
 
 void BufferPopUpController::setContentText(int index, const char * text) {

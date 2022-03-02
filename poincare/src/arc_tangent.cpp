@@ -1,8 +1,14 @@
 #include <poincare/arc_tangent.h>
+#include <poincare/addition.h>
 #include <poincare/complex.h>
+#include <poincare/derivative.h>
+#include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/square_root.h>
 #include <cmath>
 
 namespace Poincare {
@@ -52,6 +58,14 @@ Expression ArcTangentNode::shallowReduce(ReductionContext reductionContext) {
   return ArcTangent(this).shallowReduce(reductionContext);
 }
 
+bool ArcTangentNode::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return ArcTangent(this).derivate(reductionContext, symbol, symbolValue);
+}
+
+Expression ArcTangentNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+  return ArcTangent(this).unaryFunctionDifferential(reductionContext);
+}
+
 Expression ArcTangent::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
   return defaultOddFunctionSetSign(s, reductionContext);
 }
@@ -64,6 +78,15 @@ Expression ArcTangent::shallowReduce(ExpressionNode::ReductionContext reductionC
     }
   }
   return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
+}
+
+bool ArcTangent::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
+  return true;
+}
+
+Expression ArcTangent::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+  return Division::Builder(Rational::Builder(1), Addition::Builder(Rational::Builder(1), Power::Builder(childAtIndex(0).clone(), Rational::Builder(2))));
 }
 
 }

@@ -10,6 +10,7 @@ class EditableCellTableViewController;
 
 class ColumnParameterController : public Escher::SelectableListViewController {
 public:
+  static constexpr int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   ColumnParameterController(Escher::Responder * parentResponder) :
     SelectableListViewController(parentResponder),
     m_columnIndex(-1)
@@ -20,7 +21,6 @@ public:
   const char * title() override { return m_titleBuffer; };
   virtual void initializeColumnParameters(); // Always initialize parent class before initiliazing child.
 protected:
-  static constexpr int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   virtual EditableCellTableViewController * editableCellTableViewController() = 0;
   Escher::StackViewController * stackView();
   int m_columnIndex;

@@ -29,10 +29,14 @@ public:
 
   // Calculation
   double sumOfOccurrences(int series) const;
-  double maxValueForAllSeries() const;
-  double minValueForAllSeries() const;
-  double maxValue(int series) const;
-  double minValue(int series) const;
+  // If ignoreFrequency is true, values with a null frequency are accounted for
+  double maxValueForAllSeries(bool ignoreFrequency = false) const;
+  double minValueForAllSeries(bool ignoreFrequency = false) const;
+  double maxValue(int series, bool ignoreFrequency) const;
+  double minValue(int series, bool ignoreFrequency) const;
+  // Overloading minValue and maxValue so they can be casted as CalculPointer
+  double maxValue(int series) const { return maxValue(series, false); }
+  double minValue(int series) const { return minValue(series, false); }
   double range(int series) const;
   double mean(int series) const;
   double variance(int series) const;

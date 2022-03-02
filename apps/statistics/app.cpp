@@ -69,10 +69,10 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_graphController(&m_graphMenuStackViewController, this, {&m_histogramHeader, &m_boxHeader, &m_frequencyHeader, &m_normalProbabilityHeader}),
   m_graphMenuStackViewController(&m_graphMenuAlternateEmptyViewController, &m_graphController, Escher::StackViewController::Style::WhiteUniform),
   m_graphMenuAlternateEmptyViewController(&m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController),
-  m_storeController(&m_storeStackViewController, this, snapshot->store(), &m_storeHeader, parentContext),
-  m_storeStackViewController(&m_storeHeader, &m_storeController, Escher::StackViewController::Style::WhiteUniform),
-  m_storeHeader(&m_tabViewController, &m_storeStackViewController, &m_storeController),
-  m_tabViewController(&m_modalViewController, snapshot, &m_storeHeader, &m_graphMenuAlternateEmptyViewController, &m_calculationHeader)
+  m_storeController(&m_storeHeader, this, snapshot->store(), &m_storeHeader, parentContext),
+  m_storeHeader(&m_storeStackViewController, &m_storeController, &m_storeController),
+  m_storeStackViewController(&m_tabViewController, &m_storeHeader, Escher::StackViewController::Style::WhiteUniform),
+  m_tabViewController(&m_modalViewController, snapshot, &m_storeStackViewController, &m_graphMenuAlternateEmptyViewController, &m_calculationHeader)
 {
   // Order used in m_graphController constructor
   assert(GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Histogram) == 0);

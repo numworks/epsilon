@@ -12,17 +12,20 @@ NormalProbabilityView::NormalProbabilityView(Store * store) :
 }
 
 void NormalProbabilityView::computeYBounds(float * yMin, float *yMax) {
-  int maxNumberOfPairs = 0;
+  int biggestSeries = 0;
+  int maxTotal = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    maxNumberOfPairs = std::max(maxNumberOfPairs, m_store->numberOfPairsOfSeries(i));
+    int total = m_store->totalNormalProbabilityValues(i);
+    if (total > maxTotal) {
+      biggestSeries = i;
+      maxTotal = total;
+    }
   }
   // Normal probability curve is bounded by the biggest series
-  /* TODO : Factorize with zScoreAtSortedIndex or
-   * NormalProbabilityCurveView::resultAtIndex */
-  float yBound = Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(0.5f/maxNumberOfPairs, 0.0f, 1.0f);
-  assert(yBound <= 0.0f);
-  *yMin = yBound;
-  *yMax = -yBound;
+  *yMin = m_store->normalProbabilityResultAtIndex(biggestSeries, 0);
+  assert(*yMin <= 0.0);
+  // The other bound is the opposite with Normal probability curve.
+  *yMax = -*yMin;
 }
 
 void NormalProbabilityView::computeXBounds(float * xMin, float *xMax) {

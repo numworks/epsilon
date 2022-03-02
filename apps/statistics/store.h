@@ -55,16 +55,25 @@ public:
   constexpr static int k_bottomMargin = 20;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 
-  /* TODO : Add tests
-   *        Specialize methods for CumulatedFrequency and NormalProbabilityPlot
-   */
-  int totalCumulatedFrequencyValues(int series, int * sortedIndex) const { return numberOfPairsOfSeries(series); }
-  double cumulatedFrequencyValueAtIndex(int series, int * sortedIndex, int i) const { return get(series, 0, sortedIndex[i]); }
+  // TODO : Add tests for these methods
+  /* Cumulated frequencies graphs:
+   * Distinct values are aggregated and their frequency summed. */
+  // Return number of distinct values
+  int totalCumulatedFrequencyValues(int series, int * sortedIndex) const;
+  // Return the i-th distinct sorted value
+  double cumulatedFrequencyValueAtIndex(int series, int * sortedIndex, int i) const;
+  // Return the cumulated frequency of the i-th distinct sorted value
   double cumulatedFrequencyResultAtIndex(int series, int * sortedIndex, int i) const;
 
-  int totalNormalProbabilityValues(int series, int * sortedIndex) const { return numberOfPairsOfSeries(series); }
-  double normalProbabilityValueAtIndex(int series, int * sortedIndex, int i) const { return get(series, 0, sortedIndex[i]); }
-  double normalProbabilityResultAtIndex(int series, int * sortedIndex, int i) const;
+  /* Normal probability graphs:
+   * Values are scattered into elements of frequency 1. */
+  // Return the sumOfOccurrences, all frequencies must be integers
+  int totalNormalProbabilityValues(int series) const;
+  // Return the sorted element at cumulated population i+1
+  double normalProbabilityValueAtIndex(int series, int * sortedIndex, int i) const;
+  // Return the z-score of the i-th sorted element
+  double normalProbabilityResultAtIndex(int series, int i) const;
+
   // Sort values indexes in sortedIndex.
   void buildSortedIndex(int series, int * sortedIndex) const;
 

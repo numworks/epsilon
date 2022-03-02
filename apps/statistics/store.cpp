@@ -100,11 +100,11 @@ double Store::sumOfOccurrences(int series) const {
   return sumOfColumn(series, 1);
 }
 
-double Store::maxValueForAllSeries() const {
+double Store::maxValueForAllSeries(bool ignoreFrequency) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
-  double result = maxValue(0);
+  double result = maxValue(0, ignoreFrequency);
   for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
-    double maxCurrentSeries = maxValue(i);
+    double maxCurrentSeries = maxValue(i, ignoreFrequency);
     if (result < maxCurrentSeries) {
       result = maxCurrentSeries;
     }
@@ -112,11 +112,11 @@ double Store::maxValueForAllSeries() const {
   return result;
 }
 
-double Store::minValueForAllSeries() const {
+double Store::minValueForAllSeries(bool ignoreFrequency) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
-  double result = minValue(0);
+  double result = minValue(0, ignoreFrequency);
   for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
-    double minCurrentSeries = minValue(i);
+    double minCurrentSeries = minValue(i, ignoreFrequency);
     if (result > minCurrentSeries) {
       result = minCurrentSeries;
     }
@@ -124,22 +124,22 @@ double Store::minValueForAllSeries() const {
   return result;
 }
 
-double Store::maxValue(int series) const {
+double Store::maxValue(int series, bool ignoreFrequency) const {
   double max = -DBL_MAX;
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    if (m_data[series][0][k] > max && m_data[series][1][k] > 0) {
+    if (m_data[series][0][k] > max && (ignoreFrequency || m_data[series][1][k]) > 0) {
       max = m_data[series][0][k];
     }
   }
   return max;
 }
 
-double Store::minValue(int series) const {
+double Store::minValue(int series, bool ignoreFrequency) const {
   double min = DBL_MAX;
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    if (m_data[series][0][k] < min && m_data[series][1][k] > 0) {
+    if (m_data[series][0][k] < min && (ignoreFrequency || m_data[series][1][k] > 0)) {
       min = m_data[series][0][k];
     }
   }

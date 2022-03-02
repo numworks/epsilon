@@ -1,4 +1,5 @@
 #include "store_parameter_controller.h"
+#include "store_controller.h"
 #include "store.h"
 #include "../shared/store_controller.h"
 
@@ -12,12 +13,7 @@ void StoreParameterController::initializeColumnParameters() {
   } else {
     int series = m_columnIndex / Store::k_numberOfColumnsPerSeries;
     char tableName[6];
-    char tableIndex = static_cast<char>('1' + series);
-    tableName[0] = 'V';
-    tableName[1] = tableIndex;
-    tableName[2] = '/';
-    tableName[3] = 'N';
-    tableName[4] = tableIndex;
+    StoreController::FillTableName(series, tableName, 6);
     m_clearColumn.setSimpleCustomLabelText(I18n::Message::ClearTable, const_cast<const char *>(tableName));
   }
 }

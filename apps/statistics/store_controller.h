@@ -10,6 +10,7 @@ namespace Statistics {
 
 class StoreController : public Shared::StoreController {
 public:
+  static void FillTableName(int series, char * buffer, int size);
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
   Shared::StoreContext * storeContext() override { return &m_statisticsContext; }
   bool fillColumnWithFormula(Poincare::Expression formula) override;
@@ -21,6 +22,8 @@ private:
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void clearSelectedColumn() override;
+  void setClearPopUpContent() override;
+
   Store * m_store;
   StatisticsContext m_statisticsContext;
   StoreParameterController m_storeParameterController;

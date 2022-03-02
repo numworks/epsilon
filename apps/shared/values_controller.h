@@ -142,6 +142,7 @@ private:
   virtual ColumnParameterController * functionParameterController() = 0;
 
   void clearSelectedColumn() override;
+  void setClearPopUpContent() override;
   bool isColumnClearable(int columnIndex) override { return typeAtLocation(columnIndex, 0) == k_abscissaTitleCellType; }
 
   ValuesParameterController m_abscissaParameterController;

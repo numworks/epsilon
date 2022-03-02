@@ -6,6 +6,7 @@
 #include <cmath>
 #include <string.h>
 #include <ion.h>
+#include <limits.h>
 
 using namespace Shared;
 
@@ -315,29 +316,82 @@ void Store::buildSortedIndex(int series, int * sortedIndex) const {
   }
 }
 
-double Store::cumulatedFrequencyResultAtIndex(int series, int * sortedIndex, int i) const {
-  /* TODO : Aggregate all duplicate values, sum their frequencies. Do not ignore
-   *        values with a null frequency. */
-  double cumulatedOccurrences = 0.0;
-  double otherOccurrences = 0.0;
-  // Recompute sumOfOccurrences() here to save some calls.
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int j = 0; j < numberOfPairs; j++) {
-    (j <= i ? cumulatedOccurrences : otherOccurrences) += m_data[series][1][sortedIndex[j]];
+int Store::totalCumulatedFrequencyValues(int series, int * sortedIndex) const {
+  int distinctValues = 0;
+  double x;
+  for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
+    double nextX = get(series, 0, sortedIndex[j]);
+    if (j == 0 || x != nextX) {
+      distinctValues++;
+      x = nextX;
+    }
   }
-  assert(otherOccurrences + cumulatedOccurrences == sumOfOccurrences(series));
-  return 100.0*cumulatedOccurrences/(otherOccurrences + cumulatedOccurrences);
+  return distinctValues;
 }
 
-double Store::normalProbabilityResultAtIndex(int series, int * sortedIndex, int i) const {
-  /* TODO : Ensure frequenciesAreInteger(), scatter all >1 frequencies into
-   *        mutiple values, ensure the total number does not exceed
-   *        k_maxNumberOfPairs, and ignore values with a null frequency.
-   *        sortedIndex may not be needed. */
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  assert(numberOfPairs > 0);
-  float plottingPosition = (static_cast<float>(i)+0.5f)/static_cast<float>(numberOfPairs);
-  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<float>(plottingPosition, 0.0f, 1.0f);
+double Store::cumulatedFrequencyValueAtIndex(int series, int * sortedIndex, int i) const {
+  int distinctValues = 0;
+  double x;
+  for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
+    double nextX = get(series, 0, sortedIndex[j]);
+    if (j == 0 || x != nextX) {
+      distinctValues++;
+      x = nextX;
+    }
+    if (i == distinctValues - 1) {
+      // Found the i-th distinct value
+      return x;
+    }
+  }
+  assert(false);
+  return NAN;
+}
+
+double Store::cumulatedFrequencyResultAtIndex(int series, int * sortedIndex, int i) const {
+  double cumulatedOccurrences = 0.0, otherOccurrences = 0.0;
+  double value = cumulatedFrequencyValueAtIndex(series, sortedIndex, i);
+  // Recompute sumOfOccurrences() here to save some computation.
+  for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
+    double x = get(series, 0, sortedIndex[j]);
+    (x <= value ? cumulatedOccurrences : otherOccurrences) += get(series, 1, sortedIndex[j]);
+  }
+  assert(cumulatedOccurrences + otherOccurrences == sumOfOccurrences(series));
+  return 100.0*cumulatedOccurrences/(cumulatedOccurrences + otherOccurrences);
+}
+
+int Store::totalNormalProbabilityValues(int series) const {
+  assert(frequenciesAreInteger(series));
+  return static_cast<int>(std::round(sumOfOccurrences(series)));
+}
+
+double Store::normalProbabilityValueAtIndex(int series, int * sortedIndex, int i) const {
+  /* We could get rid of sortedIndex here by returning
+   * sortedElementAtCumulatedPopulation(series, i + 1). However, this would sort
+   * the series at each call. */
+  // TODO : Handle situations where frequencies overflow or aren't integers
+  assert(frequenciesAreInteger(series));
+  int population = 0;
+  for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
+    double frequency = std::round(get(series, 1, sortedIndex[j]));
+    assert(frequency < static_cast<double>(INT_MAX));
+    int frequencyInt = static_cast<int>(frequency);
+    assert(frequencyInt < INT_MAX - population);
+    population += frequencyInt;
+    if (population > i) {
+      assert(get(series, 0, sortedIndex[j]) == sortedElementAtCumulatedPopulation(series, i + 1));
+      return get(series, 0, sortedIndex[j]);
+    }
+  }
+  assert(false);
+  return NAN;
+}
+
+double Store::normalProbabilityResultAtIndex(int series, int i) const {
+  int total = totalNormalProbabilityValues(series);
+  assert(total > 0);
+  // invnorm((i-0.5)/total,0,1)
+  double plottingPosition = (static_cast<double>(i)+0.5f)/static_cast<double>(total);
+  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<double>(plottingPosition, 0.0, 1.0);
 }
 
 int Store::minIndex(double * bufferValues, int bufferLength) const {

@@ -25,7 +25,13 @@ PlotController::PlotController(Escher::Responder * parentResponder,
 bool PlotController::moveSelectionHorizontally(int deltaIndex) {
   int series = selectedSeriesIndex();
   assert(series >= 0);
-  int nextIndex = SanitizeIndex(*m_selectedBarIndex + deltaIndex, m_store->numberOfPairsOfSeries(series));
+  /* TODO : Avoid having to sort the index here by memoizing sortedIndex or
+   * totalValues. At the very least, building the sorted index is unecessary
+   * on NormalProbabilityControllers. */
+  int sortedIndex[Store::k_maxNumberOfPairs];
+  m_store->buildSortedIndex(series, sortedIndex);
+
+  int nextIndex = SanitizeIndex(*m_selectedBarIndex + deltaIndex, plotView()->plotCurveView()->totalValues(series, sortedIndex));
   if (nextIndex != *m_selectedBarIndex) {
     *m_selectedBarIndex = nextIndex;
     plotView()->moveCursorTo(nextIndex, series);

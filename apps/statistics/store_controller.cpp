@@ -72,15 +72,16 @@ void StoreController::setClearPopUpContent() {
   assert(column == 0 || column == 1);
   int series = seriesAtColumn(selectedColumn());
   if (column == 0) {
-    char tableName[6];
-    FillTableName(series, tableName, 6);
+    char tableName[7];
+    FillTableName(series, tableName, 7);
+    tableName[5] = ' '; // We have to add this space here because we use the same message for deleting the table in Graph and Sequence.
     m_confirmPopUpController.setSimpleCustomContentText(0, I18n::Message::ClearTableConfirmation1, tableName);
-    m_confirmPopUpController.setSimpleCustomContentText(1, I18n::Message::ClearTableConfirmation2);
+    m_confirmPopUpController.setSimpleCustomContentText(1, I18n::Message::ClearTableConfirmation2, tableName);
   } else {
     char columnNameBuffer[Shared::ColumnParameterController::k_titleBufferSize];
     fillColumnName(selectedColumn(), columnNameBuffer);
     m_confirmPopUpController.setSimpleCustomContentText(0, I18n::Message::ResetFreqConfirmation1, columnNameBuffer);
-    m_confirmPopUpController.setSimpleCustomContentText(1, I18n::Message::ResetFreqConfirmation2);
+    m_confirmPopUpController.setSimpleCustomContentText(1, I18n::Message::ResetFreqConfirmation2, columnNameBuffer);
   }
 }
 
@@ -92,6 +93,7 @@ void StoreController::FillTableName(int series, char * buffer, int size) {
   buffer[2] = '/';
   buffer[3] = 'N';
   buffer[4] = tableIndex;
+  buffer[size - 1] = 0;
 }
 
 }

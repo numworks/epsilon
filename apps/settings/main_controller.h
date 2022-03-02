@@ -2,8 +2,8 @@
 #define SETTINGS_MAIN_CONTROLLER_H
 
 #include <apps/shared/button_with_separator.h>
+#include <apps/shared/pop_up_controller.h>
 #include <escher/selectable_list_view_controller.h>
-#include <escher/pop_up_controller.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_switch.h>
 #include "message_table_cell_with_gauge_with_separator.h"
@@ -73,7 +73,7 @@ private:
   PressToTestController m_pressToTestController;
   TestModeController m_testModeController;
   AboutController m_aboutController;
-  Escher::MessagePopUpController m_resetController;
+  Shared::MessagePopUpController m_resetController;
 };
 
 }

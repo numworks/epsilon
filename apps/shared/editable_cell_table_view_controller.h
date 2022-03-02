@@ -2,9 +2,9 @@
 #define SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 
 #include <poincare/preferences.h>
-#include <escher/pop_up_controller.h>
 #include <escher/stack_view_controller.h>
 #include "column_parameter_controller.h"
+#include "pop_up_controller.h"
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
 #include "regular_table_view_data_source.h"
@@ -38,7 +38,7 @@ protected:
   virtual void setTitleCellText(Escher::HighlightCell * cell, int columnIndex) = 0;
   virtual void setTitleCellStyle(Escher::HighlightCell * cell, int columnIndex) = 0;
 
-  Escher::BufferPopUpController m_confirmPopUpController;
+  Shared::BufferPopUpController m_confirmPopUpController;
 private:
   virtual void didChangeCell(int column, int row) {}
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;

@@ -80,8 +80,8 @@ private:
   Escher::StackViewController m_graphMenuStackViewController;
   Escher::AlternateEmptyViewController m_graphMenuAlternateEmptyViewController;
   StoreController m_storeController;
+  Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
   Escher::StackViewController m_storeStackViewController;
-  Escher::ButtonRowController m_storeHeader; // Needed for upper margin only
   Escher::TabViewController m_tabViewController;
 };
 

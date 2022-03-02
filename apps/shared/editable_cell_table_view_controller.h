@@ -2,12 +2,12 @@
 #define SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 
 #include <poincare/preferences.h>
+#include <escher/pop_up_controller.h>
 #include <escher/stack_view_controller.h>
 #include "column_parameter_controller.h"
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
 #include "regular_table_view_data_source.h"
-#include "pop_up_controller.h"
 
 namespace Shared {
 
@@ -49,7 +49,7 @@ private:
   virtual void clearSelectedColumn() = 0;
   virtual bool isColumnClearable(int columnIndex) { return true; }
 
-  PopUpController m_confirmPopUpController;
+  Escher::MessagePopUpController m_confirmPopUpController;
 };
 
 }

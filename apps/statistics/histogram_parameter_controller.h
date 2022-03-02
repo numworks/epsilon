@@ -2,8 +2,8 @@
 #define STATISTICS_HISTOGRAM_PARAMETER_CONTROLLER_H
 
 #include <escher/message_table_cell_with_editable_text_with_message.h>
+#include <escher/pop_up_controller.h>
 #include "../shared/float_parameter_controller.h"
-#include "../shared/pop_up_controller.h"
 #include "store.h"
 
 namespace Statistics {
@@ -27,7 +27,7 @@ private:
   void buttonAction() override;
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfCells];
   Store * m_store;
-  Shared::PopUpController m_confirmPopUpController;
+  Escher::MessagePopUpController m_confirmPopUpController;
   // Temporary parameters
   double m_tempBarWidth;
   double m_tempFirstDrawnBarAbscissa;

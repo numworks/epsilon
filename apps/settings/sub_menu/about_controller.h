@@ -1,9 +1,9 @@
 #ifndef SETTINGS_ABOUT_CONTROLLER_H
 #define SETTINGS_ABOUT_CONTROLLER_H
 
+#include <escher/pop_up_controller.h>
 #include <escher/message_table_cell_with_buffer.h>
 #include "generic_sub_controller.h"
-#include "../../shared/pop_up_controller.h"
 
 namespace Settings {
 
@@ -18,7 +18,7 @@ public:
 private:
   constexpr static int k_totalNumberOfCell = 3;
   Escher::MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
-  Shared::PopUpController m_hardwareTestPopUpController;
+  Escher::MessagePopUpController m_hardwareTestPopUpController;
 };
 
 }

@@ -7,7 +7,7 @@ namespace Shared {
 
 // SingleRangeController
 
-SingleRangeController::SingleRangeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange, PopUpController * confirmPopUpController) :
+SingleRangeController::SingleRangeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange, MessagePopUpController * confirmPopUpController) :
   FloatParameterController<float>(parentResponder),
   m_autoCell(I18n::Message::DefaultSetting),
   m_boundsCells{},

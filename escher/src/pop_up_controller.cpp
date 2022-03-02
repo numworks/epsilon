@@ -1,4 +1,5 @@
 #include <escher/pop_up_controller.h>
+#include <escher/metric.h>
 #include <escher/container.h>
 #include <assert.h>
 
@@ -28,6 +29,10 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+void PopUpController::presentModally() {
+  Escher::Container::activeApp()->displayModalViewController(this, 0.f, 0.f, Escher::Metric::PopUpTopMargin, Escher::Metric::PopUpRightMargin, Escher::Metric::PopUpBottomMargin, Escher::Metric::PopUpLeftMargin);
 }
 
 
@@ -100,11 +105,19 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
 }
 
 // MessagePopUpController
-MessagePopUpController::MessagePopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage):
+MessagePopUpController::MessagePopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
     PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, this),
     PopUpViewDelegate(numberOfLines),
     m_messageTextViews{}
 { }
+
+MessagePopUpController::MessagePopUpController(Escher::Invocation OkInvocation, std::initializer_list<I18n::Message> messages) :
+  MessagePopUpController(messages.size(), OkInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel) {
+  int index = 0;
+  for (I18n::Message message : messages) {
+    setContentMessage(index++, message);
+  }
+}
 
 void MessagePopUpController::setContentMessage(int index, I18n::Message message) {
   assert(index >=0 && index < m_numberOfLines);
@@ -112,10 +125,14 @@ void MessagePopUpController::setContentMessage(int index, I18n::Message message)
 }
 
 // BufferPopUpController
-BufferPopUpController::BufferPopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage):
+BufferPopUpController::BufferPopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
     PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, this),
     PopUpViewDelegate(numberOfLines),
     m_bufferTextViews{}
+{ }
+
+BufferPopUpController::BufferPopUpController(Escher::Invocation OkInvocation, int numberOfLines) :
+  BufferPopUpController(numberOfLines, OkInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel)
 { }
 
 void BufferPopUpController::setContentText(int index, const char * text) {

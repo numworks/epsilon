@@ -1,10 +1,16 @@
 #include <poincare/arc_tangent.h>
+#include <poincare/arc_tangent.h>
+#include <poincare/addition.h>
 #include <poincare/complex.h>
-#include <poincare/arc_cotangent.h>
+#include <poincare/derivative.h>
+#include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
+#include <poincare/square_root.h>
 #include <poincare/trigonometry.h>
-
 #include <cmath>
 
 namespace Poincare {
@@ -42,6 +48,5 @@ Expression ArcCotangent::shallowReduce(ExpressionNode::ReductionContext reductio
   }
   return Trigonometry::shallowReduceInverseAdvancedFunction(*this, reductionContext);
 }
-
 
 }

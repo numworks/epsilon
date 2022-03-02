@@ -452,23 +452,28 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, Expressio
 
 Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isInverseAdvancedTrigonometryFunction(e));
-  // Step 0. Replace with equivalent inverse function on inverse (^-1) argument
-  Power p = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));
   Expression result;
-  switch (e.type()) {
+  Expression child;
+  if (e.type() == ExpressionNode::Type::ArcCotangent) {
+    // acot(x) = pi/2 - atan(x)
+    child = ArcTangent::Builder(e.childAtIndex(0));
+    result = Subtraction::Builder(Multiplication::Builder(Rational::Builder(1, 2), Constant::Builder("π")), child);
+  } else {
+    // Replace with equivalent inverse function on inverse (^-1) argument
+    child = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));
+    switch (e.type()) {
     case ExpressionNode::Type::ArcSecant:
-      result = ArcCosine::Builder(p);
+      result = ArcCosine::Builder(child);
       break;
     case ExpressionNode::Type::ArcCosecant:
-      result = ArcSine::Builder(p);
+      result = ArcSine::Builder(child);
       break;
     default:
-      assert(e.type() == ExpressionNode::Type::ArcCotangent);
-      result = ArcTangent::Builder(p);
-      break;
+      assert(false);
+    }
   }
+  child.shallowReduce(reductionContext);
   e.replaceWithInPlace(result);
-  p.shallowReduce(reductionContext);
   return result.shallowReduce(reductionContext);
 }
 

@@ -30,6 +30,7 @@ private:
   Expression shallowReduce(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::Map<float>(this, approximationContext, computeOnComplex<float>);

@@ -65,7 +65,33 @@ void StoreController::clearSelectedColumn() {
   } else {
     m_store->resetColumn(series, column);
   }
+}
 
+void StoreController::setClearPopUpContent() {
+  int column = RelativeColumnIndex(selectedColumn());
+  assert(column == 0 || column == 1);
+  int series = seriesAtColumn(selectedColumn());
+  if (column == 0) {
+    char tableName[6];
+    FillTableName(series, tableName, 6);
+    m_confirmPopUpController.setSimpleCustomContentText(0, I18n::Message::ClearTableConfirmation1, tableName);
+    m_confirmPopUpController.setSimpleCustomContentText(1, I18n::Message::ClearTableConfirmation2);
+  } else {
+    char columnNameBuffer[Shared::ColumnParameterController::k_titleBufferSize];
+    fillColumnName(selectedColumn(), columnNameBuffer);
+    m_confirmPopUpController.setSimpleCustomContentText(0, I18n::Message::ResetFreqConfirmation1, columnNameBuffer);
+    m_confirmPopUpController.setSimpleCustomContentText(1, I18n::Message::ResetFreqConfirmation2);
+  }
+}
+
+void StoreController::FillTableName(int series, char * buffer, int size) {
+  assert(size >= 6);
+  char tableIndex = static_cast<char>('1' + series);
+  buffer[0] = 'V';
+  buffer[1] = tableIndex;
+  buffer[2] = '/';
+  buffer[3] = 'N';
+  buffer[4] = tableIndex;
 }
 
 }

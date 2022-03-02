@@ -25,9 +25,8 @@ EditableCellTableViewController::EditableCellTableViewController(Responder * par
       param->selectableTableView()->reloadData();
       return true;
     }, this),
-    {I18n::Message::ClearColumnConfirmation1, I18n::Message::ClearColumnConfirmation2}
-  )
-{ }
+    2)
+  { }
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
@@ -136,10 +135,9 @@ void EditableCellTableViewController::viewWillAppear() {
   }
 }
 
-void EditableCellTableViewController::presentClearSelectedColumnPopupIfClearable(I18n::Message warningMessage1, I18n::Message warningMessage2) {
+void EditableCellTableViewController::presentClearSelectedColumnPopupIfClearable() {
   if (numberOfElementsInColumn(selectedColumn()) > 0 && isColumnClearable(selectedColumn())) {
-    m_confirmPopUpController.setContentMessage(0, warningMessage1);
-    m_confirmPopUpController.setContentMessage(1, warningMessage2);
+    setClearPopUpContent();
     m_confirmPopUpController.presentModally();
    }
 }
@@ -163,6 +161,13 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
 
 int EditableCellTableViewController::fillColumnNameWithMessage(char * buffer, I18n::Message message) {
   return Poincare::Print::customPrintf(buffer, ColumnParameterController::k_maxSizeOfColumnName, I18n::translate(message));
+}
+
+void EditableCellTableViewController::setClearPopUpContent() {
+  char columnNameBuffer[ColumnParameterController::k_titleBufferSize];
+  fillColumnName(selectedColumn(), columnNameBuffer);
+  m_confirmPopUpController.setSimpleCustomContentText(0, I18n::Message::ClearColumnConfirmation1, columnNameBuffer);
+  m_confirmPopUpController.setSimpleCustomContentText(1, I18n::Message::ClearColumnConfirmation2);
 }
 
 }

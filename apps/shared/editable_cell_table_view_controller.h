@@ -22,7 +22,7 @@ public:
   KDCoordinate rowHeight(int j) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  void presentClearSelectedColumnPopupIfClearable(I18n::Message warningMessage1 = I18n::Message::ClearColumnConfirmation1, I18n::Message warningMessage2 = I18n::Message::ClearColumnConfirmation2);
+  void presentClearSelectedColumnPopupIfClearable();
 
   virtual bool handleEvent(Ion::Events::Event event) override;
   virtual int fillColumnName(int columnIndex, char * buffer) = 0;
@@ -35,10 +35,10 @@ protected:
   int fillColumnNameWithMessage(char * buffer, I18n::Message message);
   virtual ColumnParameterController * columnParameterController() = 0;
   virtual Escher::StackViewController * stackController() const = 0;
-
   virtual void setTitleCellText(Escher::HighlightCell * cell, int columnIndex) = 0;
   virtual void setTitleCellStyle(Escher::HighlightCell * cell, int columnIndex) = 0;
 
+  Escher::BufferPopUpController m_confirmPopUpController;
 private:
   virtual void didChangeCell(int column, int row) {}
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
@@ -47,9 +47,8 @@ private:
   virtual int numberOfElementsInColumn(int columnIndex) const = 0;
   virtual int maxNumberOfElements() const = 0;
   virtual void clearSelectedColumn() = 0;
+  virtual void setClearPopUpContent();
   virtual bool isColumnClearable(int columnIndex) { return true; }
-
-  Escher::MessagePopUpController m_confirmPopUpController;
 };
 
 }

@@ -1,5 +1,5 @@
-#include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
+#include <escher/i18n.h>
 #include <string.h>
 #include <poincare/print.h>
 #include <assert.h>

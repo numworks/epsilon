@@ -3,11 +3,11 @@
 
 #include <escher/message_table_cell_with_expression.h>
 #include <escher/message_table_cell_with_editable_text.h>
-#include <escher/pop_up_controller.h>
 #include <ion/storage.h>
 #include "../../shared/continuous_function.h"
 #include "../../shared/expiring_pointer.h"
 #include "../../shared/float_parameter_controller.h"
+#include "../../shared/pop_up_controller.h"
 #include "../../shared/range_1D.h"
 
 namespace Graph {
@@ -46,7 +46,7 @@ private:
   Escher::MessageTableCellWithEditableText m_domainCells[k_totalNumberOfCell];
   Ion::Storage::Record m_record;
   Shared::Range1D m_tempDomain;
-  Escher::MessagePopUpController m_confirmPopUpController;
+  Shared::MessagePopUpController m_confirmPopUpController;
 };
 
 }

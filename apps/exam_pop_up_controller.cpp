@@ -7,7 +7,7 @@
 using namespace Escher;
 
 ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate) :
-  MessagePopUpController(
+  Shared::MessagePopUpController(
     Invocation(
       [](void * context, void * sender) {
         ExamPopUpController * controller = (ExamPopUpController *)context;

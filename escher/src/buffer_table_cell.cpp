@@ -1,6 +1,6 @@
 #include <escher/buffer_table_cell.h>
+#include <escher/i18n.h>
 #include <escher/palette.h>
-#include <apps/i18n.h>
 #include <assert.h>
 
 namespace Escher {

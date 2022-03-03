@@ -24,7 +24,6 @@ public:
   NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
 
-
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -41,6 +40,8 @@ private:
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::Map<double>(this, approximationContext, computeOnComplex<double>);
   }
+  // Derivation
+  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
 };
 
 class SignFunction final : public Expression {
@@ -51,6 +52,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sign", 1, &UntypedBuilderOneChild<SignFunction>);
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
 };
 
 }

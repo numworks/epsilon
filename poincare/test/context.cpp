@@ -26,7 +26,7 @@ QUIZ_CASE(poincare_context_store_overwrite) {
 
 QUIZ_CASE(poincare_context_store_do_not_overwrite) {
   assert_parsed_expression_simplify_to("-1→g(x)", "-1");
-  assert_parsed_expression_simplify_to("1+g(x)→f(x)", "g(x)+1");
+  assert_parsed_expression_simplify_to("1+g(x)→f(x)", "1+g(x)");
   assert_expression_approximates_to<double>("f(1)", "0");
   assert_parsed_expression_simplify_to("2→g", Undefined::Name());
   assert_expression_approximates_to<double>("g(4)", "-1");
@@ -43,7 +43,7 @@ QUIZ_CASE(poincare_context_user_variable_simple) {
   assert_parsed_expression_simplify_to("Adadas", "3");
 
   // Fill f1
-  assert_parsed_expression_simplify_to("1+x→f1(x)", "x+1");
+  assert_parsed_expression_simplify_to("1+x→f1(x)", "1+x");
   assert_parsed_expression_simplify_to("f1(4)", "5");
   assert_parsed_expression_simplify_to("f1(Adadas)", "4");
 

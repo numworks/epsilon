@@ -31,8 +31,8 @@ void BufferTableCell::setLabelText(const char * textBody) {
   layoutSubviews();
 }
 
-void BufferTableCell::setSimpleCustomLabelText(I18n::Message message, const char * string) {
-  m_labelView.setSimpleCustomText(message, string);
+void BufferTableCell::setMessageWithPlaceholder(I18n::Message message, const char * string) {
+  m_labelView.setMessageWithPlaceholder(message, string);
 }
 
 void BufferTableCell::appendText(const char * textBody) {

@@ -129,9 +129,9 @@ void BufferPopUpController::setContentText(int index, const char * text) {
   m_bufferTextViews[index].setText(text);
 }
 
-void BufferPopUpController::setSimpleCustomContentText(int index, I18n::Message message, const char * string) {
+void BufferPopUpController::setMessageWithPlaceholder(int index, I18n::Message message, const char * string) {
   assert(index >=0 && index < m_numberOfLines);
-  m_bufferTextViews[index].setSimpleCustomText(message, string);
+  m_bufferTextViews[index].setMessageWithPlaceholder(message, string);
 }
 
 }

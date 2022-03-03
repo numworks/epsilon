@@ -1,4 +1,5 @@
 #include "store_selectable_table_view.h"
+#include "store_controller.h"
 
 using namespace Escher;
 
@@ -35,7 +36,7 @@ bool StoreSelectableTableView::selectNonHiddenCellAtClippedLocation(int i, int j
     i = dataSource()->numberOfColumns() - 1;
   }
   int seriesIndex = i / DoublePairStore::k_numberOfColumnsPerSeries;
-  int columnIndex = i % DoublePairStore::k_numberOfColumnsPerSeries;
+  int columnIndex = StoreController::RelativeColumnIndex(i);
   int numberOfValuesOfCurrentColumn = m_store->numberOfValuesOfColumn(seriesIndex, columnIndex);
   if (j > 1 + numberOfValuesOfCurrentColumn) {
     j = 1 + numberOfValuesOfCurrentColumn;

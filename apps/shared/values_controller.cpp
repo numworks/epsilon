@@ -359,8 +359,8 @@ void ValuesController::clearSelectedColumn() {
 }
 
 void ValuesController::setClearPopUpContent() {
-  m_confirmPopUpController.setSimpleCustomContentText(0, I18n::Message::ClearTableConfirmation1);
-  m_confirmPopUpController.setSimpleCustomContentText(1, I18n::Message::ClearTableConfirmation2);
+  m_confirmPopUpController.setMessageWithPlaceholder(0, I18n::Message::ClearTableConfirmation1);
+  m_confirmPopUpController.setMessageWithPlaceholder(1, I18n::Message::ClearTableConfirmation2);
 }
 
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {

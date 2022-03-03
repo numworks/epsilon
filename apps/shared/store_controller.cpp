@@ -181,7 +181,7 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
 
 void StoreController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
   int seriesIndex = seriesAtColumn(columnIndex);
-  int realColumnIndex = columnIndex % DoublePairStore::k_numberOfColumnsPerSeries;
+  int realColumnIndex = RelativeColumnIndex(columnIndex);
   Shared::StoreTitleCell * myCell = static_cast<Shared::StoreTitleCell *>(cell);
   myCell->setColor(m_store->numberOfValuesOfColumn(seriesIndex, realColumnIndex) == 0 ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
   myCell->setSeparatorLeft(columnIndex > 0 && ( realColumnIndex == 0));

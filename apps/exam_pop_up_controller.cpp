@@ -61,5 +61,5 @@ bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
     Container::activeApp()->dismissModalViewController();
     return false;
   }
-  return PopUpController::handleEvent(event);
+  return MessagePopUpController::handleEvent(event);
 }

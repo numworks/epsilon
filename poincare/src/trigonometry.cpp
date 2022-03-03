@@ -452,30 +452,24 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, Expressio
 
 Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isInverseAdvancedTrigonometryFunction(e));
+  // Step 0. Replace with equivalent inverse function on inverse (^-1) argument
+  Power p = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));
   Expression result;
-  Expression child;
-  if (e.type() == ExpressionNode::Type::ArcCotangent) {
-    // acot(x) = pi/2 - atan(x) in rad. offset creates the pi/2 and converts it if not in rad.
-    child = ArcTangent::Builder(e.childAtIndex(0));
-    Expression offset = Multiplication::Builder(Power::Builder(Trigonometry::UnitConversionFactor(reductionContext.angleUnit(), Preferences::AngleUnit::Radian), Rational::Builder(-1)), Rational::Builder(1, 2), Constant::Builder("π"));
-    result = Subtraction::Builder(offset, child);
-    offset.deepReduce(reductionContext);
-  } else {
-    // Replace with equivalent inverse function on inverse (^-1) argument
-    child = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));
-    switch (e.type()) {
+  switch (e.type()) {
     case ExpressionNode::Type::ArcSecant:
-      result = ArcCosine::Builder(child);
+      result = ArcCosine::Builder(p);
       break;
     case ExpressionNode::Type::ArcCosecant:
-      result = ArcSine::Builder(child);
+      result = ArcSine::Builder(p);
       break;
     default:
-      assert(false);
-    }
+      // TODO : This will return undef when child = 0, but acot(0) should  return pi/2.
+      assert(e.type() == ExpressionNode::Type::ArcCotangent);
+      result = ArcTangent::Builder(p);
+      break;
   }
-  child.shallowReduce(reductionContext);
   e.replaceWithInPlace(result);
+  p.shallowReduce(reductionContext);
   return result.shallowReduce(reductionContext);
 }
 

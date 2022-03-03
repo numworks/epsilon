@@ -16,7 +16,6 @@ public:
 
 private:
   // Simplification
-  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override {}
   LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::MoreLetters; };
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

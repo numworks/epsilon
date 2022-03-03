@@ -70,14 +70,24 @@ void PlotController::reloadBannerView() {
 
   // Display selected value
   double value = valueAtIndex(series, *m_selectedBarIndex);
-  Poincare::Print::customPrintf(buffer, k_maxNumberOfCharacters, "%s : %*.*ed",
-    I18n::translate(I18n::Message::StatisticsValue), value, displayMode, k_numberOfSignificantDigits);
+  Poincare::Print::customPrintf(
+    buffer,
+    k_maxNumberOfCharacters,
+    "%s%s%*.*ed",
+    I18n::translate(I18n::Message::StatisticsValue),
+    I18n::translate(I18n::Message::StatisticsColonConvention),
+    value, displayMode, k_numberOfSignificantDigits);
   m_bannerView.value()->setText(buffer);
 
-  // Display cumulated frequency
-  double frequency = resultAtIndex(series, *m_selectedBarIndex);
-  Poincare::Print::customPrintf(buffer, k_maxNumberOfCharacters, resultMessageTemplate(),
-    I18n::translate(resultMessage()), frequency, displayMode, k_numberOfSignificantDigits);
+  // Display result value
+  value = resultAtIndex(series, *m_selectedBarIndex);
+  Poincare::Print::customPrintf(
+    buffer,
+    k_maxNumberOfCharacters,
+    resultMessageTemplate(),
+    I18n::translate(resultMessage()),
+    I18n::translate(I18n::Message::StatisticsColonConvention),
+    value, displayMode, k_numberOfSignificantDigits);
   m_bannerView.result()->setText(buffer);
 
   m_bannerView.reload();

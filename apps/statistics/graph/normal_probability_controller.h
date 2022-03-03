@@ -18,7 +18,7 @@ public:
 
   TELEMETRY_ID("NormalProbability");
 private:
-  const char * resultMessageTemplate() const override { return "%s : %*.*ed"; }
+  const char * resultMessageTemplate() const override { return "%s%s%*.*ed"; }
   I18n::Message resultMessage() const override { return I18n::Message::StatisticsNormalProbabilityZScore; }
 };
 

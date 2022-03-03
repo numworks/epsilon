@@ -9,12 +9,12 @@ void StoreParameterController::initializeColumnParameters() {
   Shared::StoreParameterController::initializeColumnParameters();
   // Initialize clear column message
   if (Shared::StoreController::RelativeColumnIndex(m_columnIndex) == 1) {
-      m_clearColumn.setSimpleCustomLabelText(I18n::Message::ResetFrequencies);
+      m_clearColumn.setMessageWithPlaceholder(I18n::Message::ResetFrequencies);
   } else {
     int series = m_columnIndex / Store::k_numberOfColumnsPerSeries;
     char tableName[6];
     StoreController::FillTableName(series, tableName, 6);
-    m_clearColumn.setSimpleCustomLabelText(I18n::Message::ClearTable, const_cast<const char *>(tableName));
+    m_clearColumn.setMessageWithPlaceholder(I18n::Message::ClearTable, tableName);
   }
 }
 

@@ -44,7 +44,7 @@ int DoublePairStore::numberOfPairsOfSeries(int series) const {
 void DoublePairStore::deleteColumn(int series, int column) {
   /* We reset all values to 0 to ensure the correctness of the checksum.*/
   for (int k = 0 ; k < m_numberOfValues[series][column] ; k++) {
-    m_data[series][column][k] = 0;
+    m_data[series][column][k] = 0.0;
   }
   m_numberOfValues[series][column] = 0;
 }

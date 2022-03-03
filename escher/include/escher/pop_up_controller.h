@@ -73,7 +73,7 @@ public:
   BufferPopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage);
   TextView * textViewAtIndex(int i) override { return &m_bufferTextViews[i]; }
   void setContentText(int index, const char * text);
-  void setSimpleCustomContentText(int index, I18n::Message message, const char * string = "");
+  void setMessageWithPlaceholder(int index, I18n::Message message, const char * string = "");
 private:
   BufferTextView m_bufferTextViews[k_maxNumberOfLines];
 };

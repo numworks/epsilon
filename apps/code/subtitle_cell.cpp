@@ -7,15 +7,8 @@ namespace Code {
 constexpr KDColor SubtitleCell::k_backgroundColor;
 constexpr KDColor SubtitleCell::k_textColor;
 
-SubtitleCell::SubtitleCell() :
-    BufferTableCell(KDFont::SmallFont,
-                KDContext::k_alignLeft,
-                KDContext::k_alignCenter,
-                k_textColor,
-                k_backgroundColor,
-                k_maxNumberOfCharsInBuffer)
-{
-}
+SubtitleCell::SubtitleCell() : BufferTableCell(KDFont::SmallFont, KDContext::k_alignLeft, KDContext::k_alignCenter, k_textColor, k_backgroundColor, k_maxNumberOfCharsInBuffer)
+{}
 
 void SubtitleCell::layoutSubviews(bool force)  {
   KDCoordinate width = bounds().width();

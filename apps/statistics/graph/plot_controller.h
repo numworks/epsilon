@@ -27,7 +27,7 @@ public:
   virtual void computeXBounds(float * xMin, float *xMax) const = 0;
   virtual bool connectPoints() const { return false; }
   virtual void appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {}
-  virtual bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v, KDColor * color) const { return false; }
+  virtual bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const { return false; }
 };
 
 class PlotController : public MultipleDataViewController, public PlotControllerDelegate{

@@ -22,7 +22,7 @@ void PlotCurveView::drawSeriesCurve(KDContext * ctx, KDRect rect, int series) co
   m_store->buildSortedIndex(series, sortedIndex);
   int numberOfPairs = m_plotControllerDelegate->totalValues(series, sortedIndex);
   // Draw and connect each points
-  KDColor color = Store::colorLightOfSeriesAtIndex(series);
+  KDColor color = Store::colorOfSeriesAtIndex(series);
   double previousX, previousY;
   for (size_t i = 0; i < numberOfPairs; i++) {
     double x = m_plotControllerDelegate->valueAtIndex(series, sortedIndex, i);
@@ -35,7 +35,9 @@ void PlotCurveView::drawSeriesCurve(KDContext * ctx, KDRect rect, int series) co
     previousY = y;
   }
   float x, y, u, v;
-  if (m_plotControllerDelegate->drawSeriesZScoreLine(series, &x, &y, &u, &v, &color)) {
+  if (m_plotControllerDelegate->drawSeriesZScoreLine(series, &x, &y, &u, &v)) {
+    // Using brighter colors for the lines
+    color = Store::colorLightOfSeriesAtIndex(series);
     Shared::CurveView::drawSegment(ctx, rect, x, y, u, v, color);
   }
 }

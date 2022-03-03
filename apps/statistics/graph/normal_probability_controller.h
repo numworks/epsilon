@@ -14,7 +14,7 @@ public:
   double resultAtIndex(int series, int * sortedIndex, int i) const override { return m_store->normalProbabilityResultAtIndex(series, i); }
   void computeYBounds(float * yMin, float *yMax) const override;
   void computeXBounds(float * xMin, float *xMax) const override;
-  bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v, KDColor * color) const override;
+  bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const override;
 
   TELEMETRY_ID("NormalProbability");
 private:

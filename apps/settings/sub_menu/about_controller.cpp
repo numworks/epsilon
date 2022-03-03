@@ -112,11 +112,21 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       if(childLabel == I18n::Message::Battery){
         MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
         char batteryLevel[5];
-        if(strchr(myCell->accessoryText(), '%') == NULL){
-          int batteryLen = Poincare::Integer((int) ((Ion::Battery::voltage() - 3.6) * 166)).serialize(batteryLevel, 5);
-          batteryLevel[batteryLen] = '%';
-          batteryLevel[batteryLen+1] = '\0';
-        }else{
+        if(strchr(myCell->accessoryText(), '%') == NULL) {
+          float voltage = (Ion::Battery::voltage() - 3.6) * 166;
+          if(voltage < 0.0) {
+            myCell->setAccessoryText("1%"); // We cheat...
+            return true;
+          } else if (voltage >= 100.0) {
+            myCell->setAccessoryText("100%");
+            return true;
+          } else {
+            int batteryLen = Poincare::Integer((int) voltage).serialize(batteryLevel, 5);
+            batteryLevel[batteryLen] = '%';
+            batteryLevel[batteryLen+1] = '\0';
+          }
+        }
+        else {
           int batteryLen = Poincare::Number::FloatNumber(Ion::Battery::voltage()).serialize(batteryLevel, 5, Poincare::Preferences::PrintFloatMode::Decimal, 3);
           batteryLevel[batteryLen] = 'V';
           batteryLevel[batteryLen+1] = '\0';

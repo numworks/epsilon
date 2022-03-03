@@ -55,7 +55,6 @@ public:
   constexpr static int k_bottomMargin = 20;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 
-  // TODO : Add tests for these methods
   /* Cumulated frequencies graphs:
    * Distinct values are aggregated and their frequency summed. */
   // Return number of distinct values

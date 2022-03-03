@@ -152,12 +152,12 @@ def parse_files(files):
                 if is_commented_line(line):
                     continue
                 name,definition = split_line(line)
+                if name in data[locale]:
+                    sys.stderr.write("Error: Redefinition of message \"" + name + "\" in " + locale + "\n")
+                    sys.exit(-1)
                 if locale == "universal":
                     if name in messages:
                         sys.stderr.write("Error: Redefinition of message \"" + name + "\" as universal\n")
-                        sys.exit(-1)
-                    if name in universal_messages:
-                        sys.stderr.write("Error: Redefinition of universal message \"" + name + "\"\n")
                         sys.exit(-1)
                     universal_messages.add(name)
                 else:

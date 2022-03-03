@@ -19,27 +19,30 @@ namespace Config {
  */
 
 // Bootloader
-constexpr static uint32_t BootloaderSize = InternalFlash::Config::TotalSize; // 1MiB
-constexpr static uint32_t STBootloaderAddress = 0x1FF00000;
-constexpr static uint32_t AXIMInterface = InternalFlash::Config::StartAddress;
-constexpr static uint32_t BootloaderStartAddress = AXIMInterface;
-constexpr static uint32_t BootloaderSectionSize = InternalFlash::Config::TotalSize / InternalFlash::Config::NumberOfSectors;
-constexpr static uint32_t BootloaderTrampolineSize = 0x400; // 1k
-constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::TotalSize - BootloaderTrampolineSize;
+constexpr uint32_t BootloaderSize = InternalFlash::Config::TotalSize; // 512KiB
+constexpr uint32_t STBootloaderAddress = 0x1FF00000;
+constexpr uint32_t AXIMInterface = InternalFlash::Config::StartAddress;
+constexpr uint32_t BootloaderStartAddress = AXIMInterface;
+constexpr uint32_t BootloaderSectionSize = InternalFlash::Config::TotalSize / InternalFlash::Config::NumberOfSectors;
+constexpr uint32_t BootloaderTrampolineSize = 0x400; // 1k
+constexpr uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::TotalSize - BootloaderTrampolineSize;
 static_assert(BootloaderTrampolineAddress + BootloaderTrampolineSize == InternalFlash::Config::EndAddress, "Bootloader auxiliary section (pseudo-OTP + trampoline) are ill-mapped.");
 
 // Slots
-constexpr static uint32_t SlotAStartAddress = ExternalFlash::Config::StartAddress;
-constexpr static uint32_t SlotBStartAddress = ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+constexpr uint32_t SlotAStartAddress = ExternalFlash::Config::StartAddress;
+constexpr uint32_t SlotBStartAddress = ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
 
 // Kernel
-constexpr static uint32_t KernelSize = 0x10000; // 64kiB
+constexpr uint32_t KernelSize = 0x10000; // 64kiB
 
 // Userland
-constexpr static uint32_t UserlandOffset = KernelSize;
+constexpr uint32_t UserlandOffset = KernelSize;
 
 // External apps
-constexpr static uint32_t ExternalAppsSectorUnit = 0x10000;
+constexpr uint32_t ExternalAppsSectorUnit = 0x10000;
+
+// MPU
+constexpr int NumberOfMPUSectors = 8;
 
 }
 }

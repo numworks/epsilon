@@ -43,7 +43,13 @@ void assert_data_statictics_equal_to(
     double trueQuartileRangeFrequencyMethod,
     double trueMedian,
     double trueSum,
-    double trueSquaredValueSum) {
+    double trueSquaredValueSum,
+    double trueCumulatedFrequencyValues[],
+    double trueCumulatedFrequencyResults[],
+    int totalCumulatedFrequency,
+    double trueNormalProbabilityValues[],
+    double trueNormalProbabilityResults[],
+    int totalNormalProbability) {
   Store store;
   int seriesIndex = 0;
 
@@ -105,6 +111,31 @@ void assert_data_statictics_equal_to(
     assert_value_approximately_equal_to(store.thirdQuartile(seriesIndex), shouldUseFrequencyMethod ? trueThirdQuartileFrequencyMethod : trueThirdQuartileSublistMethod, precision, nullExpectedPrecision);
     assert_value_approximately_equal_to(quartileRange, shouldUseFrequencyMethod ? trueQuartileRangeFrequencyMethod : trueQuartileRangeSublistMethod, 0.0, 0.0);
   }
+
+  // Compute the sorted indexes.
+  int sortedIndex[Store::k_maxNumberOfPairs];
+  store.buildSortedIndex(seriesIndex, sortedIndex);
+  // Assert it is effectively sorted
+  double previousValue;
+  for (int i = 0; i < numberOfData; i++) {
+    double nextValue = v[sortedIndex[i]];
+    quiz_assert(i == 0 || nextValue >= previousValue);
+    previousValue = nextValue;
+  }
+
+  // Compare the cumulated frequency data points
+  quiz_assert(store.totalCumulatedFrequencyValues(seriesIndex, sortedIndex) == totalCumulatedFrequency);
+  for (int i = 0; i < totalCumulatedFrequency; i++) {
+    assert_value_approximately_equal_to(trueCumulatedFrequencyValues[i], store.cumulatedFrequencyValueAtIndex(seriesIndex, sortedIndex, i), precision, nullExpectedPrecision);
+    assert_value_approximately_equal_to(trueCumulatedFrequencyResults[i], store.cumulatedFrequencyResultAtIndex(seriesIndex, sortedIndex, i), precision, nullExpectedPrecision);
+  }
+
+  // Compare the cumulated frequency data points
+  quiz_assert(store.totalNormalProbabilityValues(seriesIndex) == totalNormalProbability);
+  for (int i = 0; i < totalNormalProbability; i++) {
+    assert_value_approximately_equal_to(trueNormalProbabilityValues[i], store.normalProbabilityValueAtIndex(seriesIndex, sortedIndex, i), precision, nullExpectedPrecision);
+    assert_value_approximately_equal_to(trueNormalProbabilityResults[i], store.normalProbabilityResultAtIndex(seriesIndex, i), precision, nullExpectedPrecision);
+  }
 }
 
 QUIZ_CASE(data_statistics) {
@@ -115,6 +146,12 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength1 = 4;
   double v1[listLength1] = {1.0, 2.0, 3.0, 4.0};
   double n1[listLength1] = {1.0, 1.0, 1.0, 1.0};
+  constexpr int totalCumulatedFrequency1 = listLength1;
+  double trueCumulatedFrequencyValues1[totalCumulatedFrequency1] = {1.0, 2.0, 3.0, 4.0};
+  double trueCumulatedFrequencyResults1[totalCumulatedFrequency1] = {25.0, 50.0, 75.0, 100.0};
+  constexpr int totalNormalProbability1 = listLength1;
+  double trueNormalProbabilityValues1[totalNormalProbability1] = {1.0, 2.0, 3.0, 4.0};
+  double trueNormalProbabilityResults1[totalNormalProbability1] = {-1.150, -0.3186, 0.3186, 1.150};
   assert_data_statictics_equal_to(
       v1,
       n1,
@@ -135,7 +172,13 @@ QUIZ_CASE(data_statistics) {
       /* quartileRangeFrequencyMethod */ 2.0,
       /* median */ 2.5,
       /* sum */ 10.0,
-      /* squaredValueSum */ 30.0);
+      /* squaredValueSum */ 30.0,
+      trueCumulatedFrequencyValues1,
+      trueCumulatedFrequencyResults1,
+      totalCumulatedFrequency1,
+      trueNormalProbabilityValues1,
+      trueNormalProbabilityResults1,
+      totalNormalProbability1);
 
 
   /* 1 2 3 4 5 6 7 8 9 10 11
@@ -144,6 +187,12 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength2 = 11;
   double v2[listLength2] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
   double n2[listLength2] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+  constexpr int totalCumulatedFrequency2 = listLength2;
+  double trueCumulatedFrequencyValues2[totalCumulatedFrequency2] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
+  double trueCumulatedFrequencyResults2[totalCumulatedFrequency2] = {9.090, 18.18, 27.27, 36.36, 45.45, 54.54, 63.63, 72.72, 81.81, 90.90, 100.0};
+  constexpr int totalNormalProbability2 = listLength2;
+  double trueNormalProbabilityValues2[totalNormalProbability2] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
+  double trueNormalProbabilityResults2[totalNormalProbability2] = {-1.691, -1.097, -0.7479, -0.4728, -0.2299, 0.0, 0.2299, 0.4728, 0.7479, 1.097, 1.691};
   assert_data_statictics_equal_to(
       v2,
       n2,
@@ -164,7 +213,13 @@ QUIZ_CASE(data_statistics) {
       /* quartileRangeFrequencyMethod */ 6.0,
       /* median */ 6.0,
       /* sum */ 66.0,
-      /* squaredValueSum */ 506.0);
+      /* squaredValueSum */ 506.0,
+      trueCumulatedFrequencyValues2,
+      trueCumulatedFrequencyResults2,
+      totalCumulatedFrequency2,
+      trueNormalProbabilityValues2,
+      trueNormalProbabilityResults2,
+      totalNormalProbability2);
 
   /* 1 2 3 4 5 6 7 8 9 10 11 12
    * 1 1 1 1 1 1 1 1 1  1  1  1 */
@@ -172,6 +227,12 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength3 = 12;
   double v3[listLength3] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
   double n3[listLength3] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+  constexpr int totalCumulatedFrequency3 = listLength3;
+  double trueCumulatedFrequencyValues3[totalCumulatedFrequency3] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
+  double trueCumulatedFrequencyResults3[totalCumulatedFrequency3] = {8.333, 16.67, 25.00, 33.33, 41.67, 50.00, 58.33, 66.67, 75.00, 83.33, 91.67, 100.0};
+  constexpr int totalNormalProbability3 = listLength3;
+  double trueNormalProbabilityValues3[totalNormalProbability3] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
+  double trueNormalProbabilityResults3[totalNormalProbability3] = {-1.732, -1.150, -0.8122, -0.5485, -0.3186, -0.1046, 0.1046, 0.3186, 0.5485, 0.8122, 1.150, 1.732};
   assert_data_statictics_equal_to(
       v3,
       n3,
@@ -192,7 +253,13 @@ QUIZ_CASE(data_statistics) {
       /* quartileRangeFrequencyMethod */ 6.0,
       /* median */ 6.5,
       /* sum */ 78.0,
-      /* squaredValueSum */ 650.0);
+      /* squaredValueSum */ 650.0,
+      trueCumulatedFrequencyValues3,
+      trueCumulatedFrequencyResults3,
+      totalCumulatedFrequency3,
+      trueNormalProbabilityValues3,
+      trueNormalProbabilityResults3,
+      totalNormalProbability3);
 
   /*   1    2   3      5     10
    * 0.2 0.05 0.3 0.0001 0.4499 */
@@ -200,6 +267,12 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength4 = 5;
   double v4[listLength4] = {1.0, 2.0, 3.0, 5.0, 10.0};
   double n4[listLength4] = {0.2, 0.05, 0.3, 0.0001, 0.4499};
+  constexpr int totalCumulatedFrequency4 = listLength4;
+  double trueCumulatedFrequencyValues4[totalCumulatedFrequency4] = {1.0, 2.0, 3.0, 5.0, 10.0};
+  double trueCumulatedFrequencyResults4[totalCumulatedFrequency4] = {20.0, 25.0, 55.0, 55.01, 100.0};
+  constexpr int totalNormalProbability4 = 0;
+  double trueNormalProbabilityValues4[totalNormalProbability4] = {};
+  double trueNormalProbabilityResults4[totalNormalProbability4] = {};
   assert_data_statictics_equal_to(
       v4,
       n4,
@@ -220,7 +293,13 @@ QUIZ_CASE(data_statistics) {
       /* quartileRangeFrequencyMethod */ 8.0,
       /* median */ 3.0,
       /* sum */ 5.6995,
-      /* squaredValueSum */ 48.0925);
+      /* squaredValueSum */ 48.0925,
+      trueCumulatedFrequencyValues4,
+      trueCumulatedFrequencyResults4,
+      totalCumulatedFrequency4,
+      trueNormalProbabilityValues4,
+      trueNormalProbabilityResults4,
+      totalNormalProbability4);
 
   /*   1      -2   3   5  10
    * 0.4 0.00005 0.9 0.4 0.5 */
@@ -228,6 +307,12 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength5 = 5;
   double v5[listLength5] = {1.0, -2.0, 3.0, 5.0, 10.0};
   double n5[listLength5] = {0.4, 0.00005, 0.9, 0.4, 0.5};
+  constexpr int totalCumulatedFrequency5 = listLength5;
+  double trueCumulatedFrequencyValues5[totalCumulatedFrequency5] = {-2.0, 1.0, 3.0, 5.0, 10.0};
+  double trueCumulatedFrequencyResults5[totalCumulatedFrequency5] = {0.002273, 18.18, 59.09, 77.27, 100.0};
+  constexpr int totalNormalProbability5 = 0;
+  double trueNormalProbabilityValues5[totalNormalProbability5] = {};
+  double trueNormalProbabilityResults5[totalNormalProbability5] = {};
   assert_data_statictics_equal_to(
       v5,
       n5,
@@ -248,7 +333,13 @@ QUIZ_CASE(data_statistics) {
       /* quartileRangeFrequencyMethod */ 2.0,
       /* median */ 3.0,
       /* sum */ 10.1,
-      /* squaredValueSum */ 68.500);
+      /* squaredValueSum */ 68.500,
+      trueCumulatedFrequencyValues5,
+      trueCumulatedFrequencyResults5,
+      totalCumulatedFrequency5,
+      trueNormalProbabilityValues5,
+      trueNormalProbabilityResults5,
+      totalNormalProbability5);
 
   /* -7 -10 12 5 -2
    *  4   5  3 1  9 */
@@ -256,6 +347,12 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength6 = 6;
   double v6[listLength6] = {-7.0, -10.0, 1.0, 2.0, 5.0, -2.0};
   double n6[listLength6] = {4.0, 5.0, 3.0, 0.5, 1.0, 9.0};
+  constexpr int totalCumulatedFrequency6 = listLength6;
+  double trueCumulatedFrequencyValues6[totalCumulatedFrequency6] = {-10.0, -7.0, -2.0, 1.0, 2.0, 5.0};
+  double trueCumulatedFrequencyResults6[totalCumulatedFrequency6] = {22.22, 40.00, 80.00, 93.33, 95.56, 100.0};
+  constexpr int totalNormalProbability6 = 0;
+  double trueNormalProbabilityValues6[totalNormalProbability6] = {};
+  double trueNormalProbabilityResults6[totalNormalProbability6] = {};
   assert_data_statictics_equal_to(
       v6,
       n6,
@@ -276,7 +373,13 @@ QUIZ_CASE(data_statistics) {
       /* quartileRangeFrequencyMethod */ 5.0,
       /* median */ -2.0,
       /* sum */ -87.0,
-      /* squaredValueSum */ 762.0);
+      /* squaredValueSum */ 762.0,
+      trueCumulatedFrequencyValues6,
+      trueCumulatedFrequencyResults6,
+      totalCumulatedFrequency6,
+      trueNormalProbabilityValues6,
+      trueNormalProbabilityResults6,
+      totalNormalProbability6);
 
   /* 1 1 1 10 3 -1 3
    * 1 1 1  0 0  0 1 */
@@ -284,6 +387,12 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength7 = 7;
   double v7[listLength7] = {1.0, 1.0, 1.0, 10.0, 3.0, -1.0, 3.0};
   double n7[listLength7] = {1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0};
+  constexpr int totalCumulatedFrequency7 = 4;
+  double trueCumulatedFrequencyValues7[totalCumulatedFrequency7] = {-1.0, 1.0, 3.0, 10.0};
+  double trueCumulatedFrequencyResults7[totalCumulatedFrequency7] = {0.0, 75.0, 100.0, 100.0};
+  constexpr int totalNormalProbability7 = 4;
+  double trueNormalProbabilityValues7[totalNormalProbability7] = {1.0, 1.0, 1.0, 3.0};
+  double trueNormalProbabilityResults7[totalNormalProbability7] = {-1.150, -0.3186, 0.3186, 1.150};
   assert_data_statictics_equal_to(
       v7,
       n7,
@@ -304,7 +413,13 @@ QUIZ_CASE(data_statistics) {
       /* quartileRangeFrequencyMethod */ 0.0,
       /* median */ 1.0,
       /* sum */ 6.0,
-      /* squaredValueSum */ 12.0);
+      /* squaredValueSum */ 12.0,
+      trueCumulatedFrequencyValues7,
+      trueCumulatedFrequencyResults7,
+      totalCumulatedFrequency7,
+      trueNormalProbabilityValues7,
+      trueNormalProbabilityResults7,
+      totalNormalProbability7);
 
   /* 1 2 3 4
    * 0 1 0 1 */
@@ -312,6 +427,12 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength8 = 4;
   double v8[listLength8] = {1.0, 2.0, 3.0, 4.0};
   double n8[listLength8] = {0.0, 1.0, 0.0, 1.0};
+  constexpr int totalCumulatedFrequency8 = listLength8;
+  double trueCumulatedFrequencyValues8[totalCumulatedFrequency8] = {1.0, 2.0, 3.0, 4.0};
+  double trueCumulatedFrequencyResults8[totalCumulatedFrequency8] = {0.0, 50.0, 50.0, 100.0};
+  constexpr int totalNormalProbability8 = 2;
+  double trueNormalProbabilityValues8[totalNormalProbability8] = {2.0, 4.0};
+  double trueNormalProbabilityResults8[totalNormalProbability8] = {-0.6745, 0.6745};
   assert_data_statictics_equal_to(
       v8,
       n8,
@@ -332,14 +453,26 @@ QUIZ_CASE(data_statistics) {
       /* quartileRangeFrequencyMethod */ 2.0,
       /* median */ 3.0,
       /* sum */ 6.0,
-      /* squaredValueSum */ 20.0);
+      /* squaredValueSum */ 20.0,
+      trueCumulatedFrequencyValues8,
+      trueCumulatedFrequencyResults8,
+      totalCumulatedFrequency8,
+      trueNormalProbabilityValues8,
+      trueNormalProbabilityResults8,
+      totalNormalProbability8);
 
   /* -996.85840734641
    * 9 */
 
   constexpr int listLength9 = 1;
   double v9[listLength9] = {-996.85840734641};
-  double n9[listLength9] = {9};
+  double n9[listLength9] = {9.0};
+  constexpr int totalCumulatedFrequency9 = listLength9;
+  double trueCumulatedFrequencyValues9[totalCumulatedFrequency9] = {-996.85840734641};
+  double trueCumulatedFrequencyResults9[totalCumulatedFrequency9] = {100.0};
+  constexpr int totalNormalProbability9 = 9;
+  double trueNormalProbabilityValues9[totalNormalProbability9] = {-996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641};
+  double trueNormalProbabilityResults9[totalNormalProbability9] = {-1.593, -0.9674, -0.5895, -0.2822, 0.0, 0.2822, 0.5895, 0.9674, 1.593};
   assert_data_statictics_equal_to(
       v9,
       n9,
@@ -360,7 +493,13 @@ QUIZ_CASE(data_statistics) {
       /* quartileRangeFrequencyMethod */ 0.0,
       /* median */ -996.85840734641,
       /* sum */ -8971.72566611769,
-      /* squaredValueSum */ 8943540.158675);
+      /* squaredValueSum */ 8943540.158675,
+      trueCumulatedFrequencyValues9,
+      trueCumulatedFrequencyResults9,
+      totalCumulatedFrequency9,
+      trueNormalProbabilityValues9,
+      trueNormalProbabilityResults9,
+      totalNormalProbability9);
 }
 
 }

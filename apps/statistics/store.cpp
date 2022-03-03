@@ -360,7 +360,9 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int * sortedIndex, int
 }
 
 int Store::totalNormalProbabilityValues(int series) const {
-  assert(frequenciesAreInteger(series));
+  if (!frequenciesAreInteger(series)) {
+    return 0;
+  }
   return static_cast<int>(std::round(sumOfOccurrences(series)));
 }
 

@@ -95,7 +95,8 @@ void DoublePairStore::makeColumnsEqualLength(int series) {
   int longerColumn = m_numberOfValues[series][0] <= m_numberOfValues[series][1] ? 1 : 0;
   int shorterColumn = longerColumn == 0 ? 1 : 0;
   for (int i = m_numberOfValues[series][shorterColumn] ; i < m_numberOfValues[series][longerColumn] ; i++) {
-    set(0.0, series, shorterColumn, i);
+    m_data[series][shorterColumn][i] = 0.0;
+    m_numberOfValues[series][shorterColumn]++;
   }
 }
 

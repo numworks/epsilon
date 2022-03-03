@@ -354,6 +354,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
   }
 
   // Step 3. Look for an expression of type "atan(1/x), return sign(x)*π/2-atan(x)
+  // NOTE : I'm not sure that involving sign(x) really simplifies the function. This is only useful in the case of tan(x)+tan(1/x). This reduction should maybe be done in the addition reduction.
   if (e.type() == ExpressionNode::Type::ArcTangent && e.childAtIndex(0).type() == ExpressionNode::Type::Power && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
     Expression x = e.childAtIndex(0).childAtIndex(0);
     /* This equality is not true if x = 0. We apply it under certain conditions:

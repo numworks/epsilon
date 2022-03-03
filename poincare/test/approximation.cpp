@@ -958,9 +958,12 @@ QUIZ_CASE(poincare_approximation_store) {
   assert_expression_approximates_to_scalar<float>("1+42→A", 43.0f);
   assert_expression_approximates_to_scalar<double>("0.123+𝐢→B", NAN);
 
+  assert_expression_simplifies_and_approximates_to("abs([[0]]×π)→f(x)", "[[0]]");
+
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("A.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("B.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_approximation_store_matrix) {

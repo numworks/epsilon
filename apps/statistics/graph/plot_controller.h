@@ -9,6 +9,7 @@
 #include "../store.h"
 #include "multiple_data_view_controller.h"
 #include "plot_view.h"
+#include <algorithm>
 
 namespace Statistics {
 

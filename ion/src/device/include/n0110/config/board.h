@@ -19,30 +19,33 @@ namespace Config {
  */
 
 // Bootloader
-constexpr static uint32_t BootloaderSize = InternalFlash::Config::TotalSize; // 64kB
-constexpr static uint32_t STBootloaderAddress = 0x00100000;
-constexpr static uint32_t ITCMInterface = 0x00200000;
-constexpr static uint32_t AXIMInterface = 0x08000000;
-constexpr static uint32_t BootloaderStartAddress = ITCMInterface;
-constexpr static uint32_t BootloaderSectionSize = InternalFlash::Config::TotalSize / InternalFlash::Config::NumberOfSectors;
+constexpr uint32_t BootloaderSize = InternalFlash::Config::TotalSize; // 64kB
+constexpr uint32_t STBootloaderAddress = 0x00100000;
+constexpr uint32_t ITCMInterface = 0x00200000;
+constexpr uint32_t AXIMInterface = 0x08000000;
+constexpr uint32_t BootloaderStartAddress = ITCMInterface;
+constexpr uint32_t BootloaderSectionSize = InternalFlash::Config::TotalSize / InternalFlash::Config::NumberOfSectors;
 /* Trampoline could be smaller, but its size and position cannot be changed.
  * Otherwise, newer kernels would become would lose compatibility with older
  * bootloaders. */
-constexpr static uint32_t BootloaderTrampolineSize = 0x2000; // 8k
-constexpr static uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::NumberOfSectors * BootloaderSectionSize - BootloaderTrampolineSize;
+constexpr uint32_t BootloaderTrampolineSize = 0x2000; // 8k
+constexpr uint32_t BootloaderTrampolineAddress = BootloaderStartAddress + InternalFlash::Config::NumberOfSectors * BootloaderSectionSize - BootloaderTrampolineSize;
 
 // Slots
-constexpr static uint32_t SlotAStartAddress = ExternalFlash::Config::StartAddress;
-constexpr static uint32_t SlotBStartAddress = ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
+constexpr uint32_t SlotAStartAddress = ExternalFlash::Config::StartAddress;
+constexpr uint32_t SlotBStartAddress = ExternalFlash::Config::StartAddress + ExternalFlash::Config::TotalSize/2;
 
 // Kernel
-constexpr static uint32_t KernelSize = 0x10000; // 64kB
+constexpr uint32_t KernelSize = 0x10000; // 64kB
 
 // Userland
-constexpr static uint32_t UserlandOffset = KernelSize;
+constexpr uint32_t UserlandOffset = KernelSize;
 
 // External apps
-constexpr static uint32_t ExternalAppsSectorUnit = 0x10000;
+constexpr uint32_t ExternalAppsSectorUnit = 0x10000;
+
+// MPU
+constexpr int NumberOfMPUSectors = 8;
 
 }
 }

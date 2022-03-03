@@ -2,6 +2,7 @@
 #include <apps/shared/curve_view.h>
 #include <algorithm>
 #include <assert.h>
+#include <string.h>
 
 namespace Statistics {
 

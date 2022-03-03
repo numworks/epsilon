@@ -25,7 +25,7 @@ void BufferTextView::setText(const char * text) {
   markRectAsDirty(bounds());
 }
 
-void BufferTextView::setSimpleCustomText(I18n::Message message, const char * string) {
+void BufferTextView::setMessageWithPlaceholder(I18n::Message message, const char * string) {
   char tempBuffer[k_maxNumberOfChar];
   Poincare::Print::customPrintf(tempBuffer, m_maxDisplayedTextLength + 1, I18n::translate(message), string);
   setText(tempBuffer);

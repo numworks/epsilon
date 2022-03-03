@@ -20,7 +20,7 @@ public:
   /* This method only combine a message and 1 string because it is the most common case.
   * TODO : It should be rewritten to take a va_list to combine a message with more strings.
   */
-  void setSimpleCustomText(I18n::Message message, const char * string = "");
+  void setMessageWithPlaceholder(I18n::Message message, const char * string = "");
 
   const char * text() const override;
   void appendText(const char * text);

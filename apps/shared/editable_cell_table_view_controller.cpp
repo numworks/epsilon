@@ -166,8 +166,8 @@ int EditableCellTableViewController::fillColumnNameWithMessage(char * buffer, I1
 void EditableCellTableViewController::setClearPopUpContent() {
   char columnNameBuffer[ColumnParameterController::k_titleBufferSize];
   fillColumnName(selectedColumn(), columnNameBuffer);
-  m_confirmPopUpController.setSimpleCustomContentText(0, I18n::Message::ClearColumnConfirmation1, columnNameBuffer);
-  m_confirmPopUpController.setSimpleCustomContentText(1, I18n::Message::ClearColumnConfirmation2, columnNameBuffer);
+  m_confirmPopUpController.setMessageWithPlaceholder(0, I18n::Message::ClearColumnConfirmation1, columnNameBuffer);
+  m_confirmPopUpController.setMessageWithPlaceholder(1, I18n::Message::ClearColumnConfirmation2, columnNameBuffer);
 }
 
 }

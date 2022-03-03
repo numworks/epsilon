@@ -1,5 +1,7 @@
 #include <poincare/sign_function.h>
+#include <poincare/symbol_abstract.h>
 #include <poincare/complex_cartesian.h>
+#include <poincare/float.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -7,7 +9,7 @@
 #include <poincare/undefined.h>
 #include <ion.h>
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 #include <utility>
 
 namespace Poincare {
@@ -34,6 +36,10 @@ int SignFunctionNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 
 Expression SignFunctionNode::shallowReduce(ReductionContext reductionContext) {
   return SignFunction(this).shallowReduce(reductionContext);
+}
+
+bool SignFunctionNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  return SignFunction(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 template<typename T>
@@ -97,6 +103,22 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
   }
   replaceWithInPlace(resultSign);
   return std::move(resultSign);
+}
+
+bool SignFunction::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+  /* This function derivate is equal to 0 everywhere but in 0 where it's not defined.
+   * We approximate it's child to know if it is equal to 0
+   * The approximation of the child might not be precise that's why it is compared with espilon.
+   * This derivative is used in the derivative of acot(x)
+  */
+  Expression child = childAtIndex(0).clone();
+  child = child.replaceSymbolWithExpression(*const_cast<const SymbolAbstract*>(static_cast<SymbolAbstract*>(&symbol)), symbolValue);
+  float childValue = child.approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  if (std::fabs(childValue) < Float<float>::EpsilonLax()) {
+    return false;
+  }
+  replaceWithInPlace(Rational::Builder(0));
+  return true;
 }
 
 }

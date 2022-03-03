@@ -2,7 +2,6 @@
 #include <poincare/complex.h>
 #include <poincare/conjugate.h>
 #include <poincare/derivative.h>
-#include <poincare/division.h>
 #include <poincare/layout_helper.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -87,7 +86,29 @@ bool ArcSine::derivate(ExpressionNode::ReductionContext reductionContext, Expres
 }
 
 Expression ArcSine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
-  return Conjugate::Builder(Division::Builder(Rational::Builder(1), SquareRoot::Builder(Subtraction::Builder(Rational::Builder(1), Power::Builder(childAtIndex(0).clone(), Rational::Builder(2))))));
+  return Conjugate::Builder(
+      Multiplication::Builder(
+        Power::Builder(
+          Trigonometry::UnitConversionFactor(
+            reductionContext.angleUnit(),
+            Preferences::AngleUnit::Radian
+            ),
+          Rational::Builder(-1)
+          ),
+        Power::Builder(
+          SquareRoot::Builder(
+            Subtraction::Builder(
+              Rational::Builder(1),
+              Power::Builder(
+                childAtIndex(0).clone(),
+                Rational::Builder(2)
+                )
+              )
+            ),
+          Rational::Builder(-1)
+          )
+        )
+      );
 }
 
 

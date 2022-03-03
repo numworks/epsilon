@@ -2,7 +2,6 @@
 #include <poincare/addition.h>
 #include <poincare/complex.h>
 #include <poincare/derivative.h>
-#include <poincare/division.h>
 #include <poincare/layout_helper.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -86,7 +85,25 @@ bool ArcTangent::derivate(ExpressionNode::ReductionContext reductionContext, Exp
 }
 
 Expression ArcTangent::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
-  return Division::Builder(Rational::Builder(1), Addition::Builder(Rational::Builder(1), Power::Builder(childAtIndex(0).clone(), Rational::Builder(2))));
+  return Multiplication::Builder(
+      Power::Builder(
+        Trigonometry::UnitConversionFactor(
+          reductionContext.angleUnit(),
+          Preferences::AngleUnit::Radian
+          ),
+        Rational::Builder(-1)
+        ),
+      Power::Builder(
+        Addition::Builder(
+          Rational::Builder(1),
+          Power::Builder(
+            childAtIndex(0).clone(),
+            Rational::Builder(2)
+            )
+          ),
+        Rational::Builder(-1)
+        )
+      );
 }
 
 }

@@ -2,8 +2,8 @@
 #include <poincare/complex.h>
 #include <poincare/conjugate.h>
 #include <poincare/derivative.h>
-#include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -80,7 +80,30 @@ bool ArcCosine::derivate(ExpressionNode::ReductionContext reductionContext, Expr
 }
 
 Expression ArcCosine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
-  return Conjugate::Builder(Division::Builder(Rational::Builder(-1), SquareRoot::Builder(Subtraction::Builder(Rational::Builder(1), Power::Builder(childAtIndex(0).clone(), Rational::Builder(2))))));
+  return Conjugate::Builder(
+      Multiplication::Builder(
+        Rational::Builder(-1),
+        Power::Builder(
+          Trigonometry::UnitConversionFactor(
+            reductionContext.angleUnit(),
+            Preferences::AngleUnit::Radian
+            ),
+          Rational::Builder(-1)
+          ),
+        Power::Builder(
+          SquareRoot::Builder(
+            Subtraction::Builder(
+              Rational::Builder(1),
+              Power::Builder(
+                childAtIndex(0).clone(),
+                Rational::Builder(2)
+                )
+              )
+            ),
+            Rational::Builder(-1)
+          )
+        )
+      );
 }
 
 }

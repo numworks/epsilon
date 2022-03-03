@@ -455,9 +455,11 @@ Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, Ex
   Expression result;
   Expression child;
   if (e.type() == ExpressionNode::Type::ArcCotangent) {
-    // acot(x) = pi/2 - atan(x)
+    // acot(x) = pi/2 - atan(x) in rad. offset creates the pi/2 and converts it if not in rad.
     child = ArcTangent::Builder(e.childAtIndex(0));
-    result = Subtraction::Builder(Multiplication::Builder(Rational::Builder(1, 2), Constant::Builder("π")), child);
+    Expression offset = Multiplication::Builder(Power::Builder(Trigonometry::UnitConversionFactor(reductionContext.angleUnit(), Preferences::AngleUnit::Radian), Rational::Builder(-1)), Rational::Builder(1, 2), Constant::Builder("π"));
+    result = Subtraction::Builder(offset, child);
+    offset.deepReduce(reductionContext);
   } else {
     // Replace with equivalent inverse function on inverse (^-1) argument
     child = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));

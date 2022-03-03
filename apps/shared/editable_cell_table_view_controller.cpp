@@ -84,19 +84,19 @@ KDCoordinate EditableCellTableViewController::rowHeight(int j) {
 }
 
 void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Preferences::PrintFloatMode floatDisplayMode) {
+  static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
   if (j == 0) {
     setTitleCellText(cell, i);
     setTitleCellStyle(cell, i);
     return;
   }
-  /* If the cell is editable, make sure it is not being edited.
-   * Otherwise, the cell background is white whichever it is an odd or even cell
-   * and we do not want to redraw the cell twice (in the even/odd color and
-   * then in white) to avoid screen blinking. */
-  static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
   // The cell is editable
   if (cellAtLocationIsEditable(i, j)) {
     EvenOddEditableTextCell * myEditableValueCell = static_cast<EvenOddEditableTextCell *>(cell);
+    /* Cell should not be in edition mode. Otherwise, the cell background is
+     * white whichever it is an odd or even cell and we do not want to redraw
+     * the cell twice (in the even/odd color and then in white) to avoid screen
+     * blinking. */
     assert(!myEditableValueCell->editableTextCell()->textField()->isEditing());
     const int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(Preferences::VeryLargeNumberOfSignificantDigits);
     char buffer[bufferSize];

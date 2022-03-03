@@ -685,7 +685,7 @@ void Expression::cloneAndSimplifyAndApproximate(Expression * simplifiedExpressio
   ExpressionNode::ReductionContext reductionContext = userReductionContext;
   bool reduceFailure = false;
   Expression e = cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
-  if (reduceFailure) {
+  if (reduceFailure || (type() == ExpressionNode::Type::Store && !static_cast<const Store *>(this)->isTrulyReducedInShallowReduce())) {
     // We can't beautify unreduced expression
     *simplifiedExpression = e;
     if (approximateExpression) {

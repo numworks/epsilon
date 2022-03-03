@@ -44,6 +44,7 @@ public:
   const Expression value() const {
     return childAtIndex(0);
   }
+  bool isTrulyReducedInShallowReduce() const { return symbol().type() == ExpressionNode::Type::Symbol; }
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

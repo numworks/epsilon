@@ -216,7 +216,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   assertCalculationIs("3→a", DisplayOutput::ApproximateOnly, EqualSign::Equal, "3", "3", "3", &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  assertCalculationIs("3+x→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "x+3", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("3+x→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "3+x", nullptr, nullptr, &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   assertCalculationIs("1+1+random()", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("1+1+round(1.343,2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "3.34", "3.34", &globalContext, &store);
@@ -271,7 +271,7 @@ QUIZ_CASE(calculation_symbolic_computation) {
   // 0 - General cases
   assertMainCalculationOutputIs("x+x+1+3+√(π)",        "undef", &globalContext, &store);
   assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("1+x→f(x)",            "x+1",   &globalContext, &store);
+  assertMainCalculationOutputIs("1+x→f(x)",            "1+x",   &globalContext, &store);
   assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
   assertMainCalculationOutputIs("f(2)",                "3",     &globalContext, &store);
   assertMainCalculationOutputIs("2→x",                 "2",     &globalContext, &store);

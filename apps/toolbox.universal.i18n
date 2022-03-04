@@ -1,4 +1,4 @@
-UnitDistanceParsec= "Parsec"
+UnitDistanceParsec = "Parsec"
 UnitTemperatureKelvin = "Kelvin"
 UnitTemperatureCelsius = "Celsius"
 UnitTemperatureFahrenheit = "Fahrenheit"

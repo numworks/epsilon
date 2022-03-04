@@ -33,10 +33,10 @@ void DoublePairStore::deleteValueAtIndex(int series, int i, int j) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(j >= 0 && j < m_numberOfPairs[series]);
   int otherI = i == 0 ? 1 : 0;
-  if (std::isnan(m_data[series][otherI][j])) {
+  if (std::isnan(m_data[series][otherI][j]) || std::isnan(m_data[series][i][j])) {
     deletePairOfSeriesAtIndex(series, j);
   } else {
-    m_data[series][i][j] = defaultValue(series, i, j);
+    m_data[series][i][j] = std::nan("");
   }
 }
 
@@ -187,7 +187,7 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
 
 double DoublePairStore::defaultValue(int series, int i, int j) const {
   assert(series >= 0 && series < k_numberOfSeries);
-  return std::nan("");
+  return 0.0;
 }
 
 }

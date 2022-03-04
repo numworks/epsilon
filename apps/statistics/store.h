@@ -52,7 +52,7 @@ public:
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 
   // DoublePairStore
-  bool seriesIsValid(int series) const override;
+  void memoizeValidSeries(int series) override;
   void deleteValueAtIndex(int series, int i, int j) override;
 
 private:

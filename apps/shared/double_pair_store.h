@@ -15,37 +15,36 @@ public:
   constexpr static int k_maxNumberOfPairs = 100;
   DoublePairStore() :
     m_data{},
-    m_numberOfValues{}
+    m_numberOfPairs{}
   {}
   // Delete the implicit copy constructor: the object is heavy
   DoublePairStore(const DoublePairStore&) = delete;
 
   // Get and set data
   double get(int series, int i, int j) const {
-    assert(j < m_numberOfValues[series][i]);
+    assert(j <  m_numberOfPairs[series]);
     return m_data[series][i][j];
   }
   virtual void set(double f, int series, int i, int j);
 
   // Counts
   int numberOfPairs() const;
-  int numberOfPairsOfSeries(int series) const;
-  int numberOfValuesOfColumn(int series, int column) { return m_numberOfValues[series][column]; }
+  int numberOfPairsOfSeries(int series) const {
+    assert(series >= 0 && series < k_numberOfSeries);
+    return m_numberOfPairs[series];
+  }
 
   // Delete and reset
+  virtual void deleteValueAtIndex(int series, int i, int j);
   virtual void deletePairOfSeriesAtIndex(int series, int j);
-  virtual void deleteAllPairsOfSeries(int series);
-  void deleteColumn(int series, int column);
-  void deleteAllPairs();
   void resetColumn(int series, int i);
-  void makeColumnsEqualLength(int series);
+  virtual void deleteAllPairsOfSeries(int series);
+  void deleteAllPairs();
 
   // Series
   // isEmpy, numberOfNonEmptySeries and indexOfKthNonEmptySeries treat non valid series as empty
   virtual bool isEmpty() const;
-  virtual bool seriesIsValid(int series) const {
-    return m_numberOfValues[series][0] == m_numberOfValues[series][1] && m_numberOfValues[series][0] > 0;
-  }
+  virtual bool seriesIsValid(int series) const;
   virtual int numberOfNonEmptySeries() const;
   int indexOfKthNonEmptySeries(int k) const;
 
@@ -71,7 +70,7 @@ protected:
   virtual double defaultValue(int series, int i, int j) const;
   double m_data[k_numberOfSeries][k_numberOfColumnsPerSeries][k_maxNumberOfPairs];
 private:
-  int m_numberOfValues[k_numberOfSeries][k_numberOfColumnsPerSeries];
+  int m_numberOfPairs[k_numberOfSeries];
 };
 
 }

@@ -99,10 +99,8 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
     assert(!myEditableValueCell->editableTextCell()->textField()->isEditing());
     const int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(Preferences::VeryLargeNumberOfSignificantDigits);
     char buffer[bufferSize];
-    // Special case 1: last row
-    if (j == numberOfElementsInColumn(i) + 1) {
-      /* Display an empty line only if there is enough space for a new element in
-       * data */
+    // Special case 1: last row and NaN
+    if (j == numberOfElementsInColumn(i) + 1 || std::isnan(dataAtLocation(i, j))) {
       buffer[0] = 0;
     } else {
       PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(dataAtLocation(i, j), buffer, bufferSize, Preferences::VeryLargeNumberOfSignificantDigits, floatDisplayMode);

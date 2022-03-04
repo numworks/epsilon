@@ -30,15 +30,17 @@ int DoublePairStore::numberOfPairs() const {
   return result;
 }
 
-void DoublePairStore::deleteValueAtIndex(int series, int i, int j) {
+bool DoublePairStore::deleteValueAtIndex(int series, int i, int j) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(j >= 0 && j < m_numberOfPairs[series]);
   int otherI = i == 0 ? 1 : 0;
   if (std::isnan(m_data[series][otherI][j])) {
     deletePairOfSeriesAtIndex(series, j);
+    return true;
   } else {
     m_data[series][i][j] = std::nan("");
     memoizeValidSeries(series);
+    return false;
   }
 }
 
@@ -77,7 +79,9 @@ void DoublePairStore::resetColumn(int series, int i) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
-    deleteValueAtIndex(series, i, k);
+    if(deleteValueAtIndex(series, i, k)) {
+      k--;
+    }
   }
   memoizeValidSeries(series);
 }

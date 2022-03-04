@@ -53,7 +53,7 @@ public:
 
   // DoublePairStore
   void memoizeValidSeries(int series) override;
-  void deleteValueAtIndex(int series, int i, int j) override;
+  bool deleteValueAtIndex(int series, int i, int j) override;
 
 private:
   double defaultValue(int series, int i, int j) const override;

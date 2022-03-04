@@ -183,7 +183,7 @@ void StoreController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
   int seriesIndex = seriesAtColumn(columnIndex);
   int realColumnIndex = RelativeColumnIndex(columnIndex);
   Shared::StoreTitleCell * myCell = static_cast<Shared::StoreTitleCell *>(cell);
-  myCell->setColor(m_store->seriesIsValid(seriesIndex) == 0 ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
+  myCell->setColor(!m_store->seriesIsValid(seriesIndex) ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
   myCell->setSeparatorLeft(columnIndex > 0 && ( realColumnIndex == 0));
 }
 
@@ -313,13 +313,12 @@ void StoreController::sortSelectedColumn() {
   };
   static Poincare::Helpers::Compare compareX = [](int a, int b, void * context, int numberOfElements)->bool{
     double * dataX = static_cast<double*>(context);
-    return dataX[a] > dataX[b] || (std::isnan(dataX[a]) && !std::isnan(dataX[b]));
+    return dataX[a] > dataX[b] || std::isnan(dataX[a]);
   };
   static Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
     double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
-    return dataY[a] > dataY[b] || (std::isnan(dataY[a]) && !std::isnan(dataY[b]));
+    return dataY[a] > dataY[b] || std::isnan(dataY[a]);
   };
-  // m_store->makeColumnsEqualLength(selectedSeries());
   int indexOfFirstCell = selectedSeries() * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
   double * seriesContext = &(m_store->data()[indexOfFirstCell]);
   Poincare::Helpers::Sort(swapRows, (RelativeColumnIndex(selectedColumn()) == 0) ? compareX : compareY, seriesContext, m_store->numberOfPairsOfSeries(selectedSeries()));

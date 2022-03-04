@@ -56,6 +56,7 @@ public:
 
   // DoublePairStore
   void set(double f, int series, int i, int j) override;
+  void deleteValueAtIndex(int series, int i, int j) override;
   void deletePairOfSeriesAtIndex(int series, int j) override;
   void deleteAllPairsOfSeries(int series) override;
 

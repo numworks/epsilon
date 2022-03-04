@@ -86,7 +86,10 @@ bool Store::isEmpty() const {
 }
 
 bool Store::seriesIsValid(int series) const {
-  return !m_seriesEmpty[series];
+  if (Shared::DoublePairStore::seriesIsValid(series)) {
+    return !m_seriesEmpty[series];
+  }
+  return false;
 }
 
 bool Store::frequenciesAreInteger(int series) const {
@@ -250,6 +253,10 @@ void Store::set(double f, int series, int i, int j) {
   updateNonEmptySeriesCount();
 }
 
+void Store::deleteValueAtIndex(int series, int i, int j) {
+  deletePairOfSeriesAtIndex(series, j);
+}
+
 void Store::deletePairOfSeriesAtIndex(int series, int j) {
   DoublePairStore::deletePairOfSeriesAtIndex(series, j);
   m_seriesEmpty[series] = sumOfOccurrences(series) == 0;
@@ -275,7 +282,7 @@ void Store::updateNonEmptySeriesCount() {
 /* Private methods */
 
 double Store::defaultValue(int series, int i, int j) const {
-  return i == 0 ? DoublePairStore::defaultValue(series, i, j) : 1.0;
+  return (i == 0 && j > 1) ? 2*m_data[series][i][j-1]-m_data[series][i][j-2] : 1.0;
 }
 
 double Store::sumOfValuesBetween(int series, double x1, double x2) const {

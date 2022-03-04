@@ -183,7 +183,7 @@ void StoreController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
   int seriesIndex = seriesAtColumn(columnIndex);
   int realColumnIndex = RelativeColumnIndex(columnIndex);
   Shared::StoreTitleCell * myCell = static_cast<Shared::StoreTitleCell *>(cell);
-  myCell->setColor(m_store->numberOfValuesOfColumn(seriesIndex, realColumnIndex) == 0 ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
+  myCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
   myCell->setSeparatorLeft(columnIndex > 0 && ( realColumnIndex == 0));
 }
 
@@ -207,7 +207,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == 0 || selectedRow() > numberOfElementsInColumn(selectedColumn())) {
       return false;
     }
-    m_store->deletePairOfSeriesAtIndex(series, selectedRow()-1);
+    m_store->deleteValueAtIndex(series, RelativeColumnIndex(selectedColumn()), selectedRow()-1);
     selectableTableView()->reloadData();
     return true;
   }
@@ -244,12 +244,11 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
 }
 
 int StoreController::numberOfElementsInColumn(int columnIndex) const {
-  return m_store->numberOfValuesOfColumn(seriesAtColumn(columnIndex), RelativeColumnIndex(columnIndex));
+  return m_store->numberOfPairsOfSeries(seriesAtColumn(columnIndex));
 }
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
   int currentColumn = RelativeColumnIndex(selectedColumn());
-  int otherColumn = currentColumn == 0 ? 1 : 0;
   // Fetch the series used in the formula to compute the size of the filled in series
   constexpr static int k_maxSizeOfStoreSymbols = 3; // "V1", "N1", "X1", "Y1"
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
@@ -266,14 +265,14 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     int series = (int)(seriesName[1] - '0') - 1;
     assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
     if (numberOfValuesToCompute == -1) {
-      numberOfValuesToCompute = m_store->numberOfValuesOfColumn(series, otherColumn);
+      numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
     } else {
-      numberOfValuesToCompute = std::min(numberOfValuesToCompute, m_store->numberOfValuesOfColumn(series, otherColumn));
+      numberOfValuesToCompute = std::min(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
     }
     index++;
   }
   if (numberOfValuesToCompute == -1) {
-    numberOfValuesToCompute = m_store->numberOfValuesOfColumn(seriesAtColumn(selectedColumn()), otherColumn);
+    numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedSeries());
   }
 
   StoreContext * store = storeContext();
@@ -320,10 +319,10 @@ void StoreController::sortSelectedColumn() {
     double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
     return dataY[a] > dataY[b];
   };
-  m_store->makeColumnsEqualLength(selectedSeries());
+  // m_store->makeColumnsEqualLength(selectedSeries());
   int indexOfFirstCell = selectedSeries() * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
   double * seriesContext = &(m_store->data()[indexOfFirstCell]);
-  Poincare::Helpers::Sort(swapRows, (RelativeColumnIndex(selectedColumn()) == 0) ? compareX : compareY, seriesContext, m_store->numberOfValuesOfColumn(selectedSeries(), RelativeColumnIndex(selectedColumn())));
+  Poincare::Helpers::Sort(swapRows, (RelativeColumnIndex(selectedColumn()) == 0) ? compareX : compareY, seriesContext, m_store->numberOfPairsOfSeries(selectedSeries()));
 
 }
 

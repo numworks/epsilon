@@ -52,7 +52,7 @@ public:
   }
 
   // Series
-  bool seriesIsValid(int series) const override;
+  void memoizeValidSeries(int series) override;
 
   // Calculation
   void updateCoefficients(int series, Poincare::Context * globalContext);

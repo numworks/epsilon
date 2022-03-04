@@ -79,9 +79,9 @@ bool Store::scrollToSelectedBarIndex(int series, int index) {
   return false;
 }
 
-bool Store::seriesIsValid(int series) const {
+void Store::memoizeValidSeries(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
-  return numberOfPairsOfSeries(series) > 0 && sumOfOccurrences(series) > 0;
+  m_validSeries[series] = numberOfPairsOfSeries(series) > 0 && sumOfOccurrences(series) > 0;
 }
 
 bool Store::frequenciesAreInteger(int series) const {

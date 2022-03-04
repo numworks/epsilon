@@ -25,10 +25,7 @@ public:
   void setHistogramXMax(float f, bool updateGridUnit) { protectedSetXMax(f, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, updateGridUnit); }
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);
-  bool isEmpty() const override;
-  bool seriesIsValid(int series) const override;
   bool frequenciesAreInteger(int series) const;
-  int numberOfNonEmptySeries() const override;
 
   // Calculation
   double sumOfOccurrences(int series) const;
@@ -55,12 +52,8 @@ public:
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 
   // DoublePairStore
-  void set(double f, int series, int i, int j) override;
+  bool seriesIsValid(int series) const override;
   void deleteValueAtIndex(int series, int i, int j) override;
-  void deletePairOfSeriesAtIndex(int series, int j) override;
-  void deleteAllPairsOfSeries(int series) override;
-
-  void updateNonEmptySeriesCount();
 
 private:
   double defaultValue(int series, int i, int j) const override;
@@ -71,8 +64,6 @@ private:
   // Histogram bars
   double m_barWidth;
   double m_firstDrawnBarAbscissa;
-  bool m_seriesEmpty[k_numberOfSeries];
-  int m_numberOfNonEmptySeries;
 };
 
 typedef double (Store::*CalculPointer)(int) const;

@@ -43,7 +43,7 @@ void MultipleDataView::deselectDataView(int index) {
 }
 
 int MultipleDataView::numberOfSubviews() const {
-  int result = m_store->numberOfNonEmptySeries();
+  int result = m_store->numberOfValidSeries();
   assert(result <= Store::k_numberOfSeries);
   return result + 1; // +1 for the banner view
 }
@@ -75,7 +75,7 @@ void MultipleDataView::layoutSubviews(bool force) {
 }
 
 void MultipleDataView::layoutDataSubviews(bool force) {
-  int numberDataSubviews = m_store->numberOfNonEmptySeries();
+  int numberDataSubviews = m_store->numberOfValidSeries();
   assert(numberDataSubviews > 0);
   KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
   KDCoordinate subviewHeight = (bounds().height() - bannerHeight)/numberDataSubviews + 1; // +1 to make sure that all pixel rows are drawn

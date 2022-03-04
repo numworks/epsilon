@@ -37,19 +37,14 @@ void PlotController::viewWillAppear() {
 bool PlotController::moveSelectionHorizontally(int deltaIndex) {
   int series = selectedSeriesIndex();
   assert(series >= 0);
-  /* TODO : Avoid having to sort the index here by memoizing sortedIndex or
-   * totalValues. At the very least, building the sorted index is unecessary
-   * on NormalProbabilityControllers. */
-  int sortedIndex[Store::k_maxNumberOfPairs];
-  m_store->buildSortedIndex(series, sortedIndex);
 
-  int nextIndex = SanitizeIndex(*m_selectedBarIndex + deltaIndex, totalValues(series, sortedIndex));
+  int nextIndex = SanitizeIndex(*m_selectedBarIndex + deltaIndex, totalValues(series));
   if (nextIndex != *m_selectedBarIndex) {
     *m_selectedBarIndex = nextIndex;
     // TODO : Add continuous curve scrolling
     // Compute coordinates
-    double x = valueAtIndex(series, sortedIndex, nextIndex);
-    double y = resultAtIndex(series, sortedIndex, nextIndex);
+    double x = valueAtIndex(series, nextIndex);
+    double y = resultAtIndex(series, nextIndex);
     m_cursor.moveTo(x, x, y);
     m_curveView.reload();
     reloadBannerView();
@@ -63,10 +58,8 @@ void PlotController::reloadBannerView() {
   if (series < 0) {
     return;
   }
-  int sortedIndex[Store::k_maxNumberOfPairs];
-  m_store->buildSortedIndex(series, sortedIndex);
 
-  *m_selectedBarIndex = SanitizeIndex(*m_selectedBarIndex, totalValues(series, sortedIndex));
+  *m_selectedBarIndex = SanitizeIndex(*m_selectedBarIndex, totalValues(series));
 
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
   char buffer[k_maxNumberOfCharacters] = "";
@@ -76,13 +69,13 @@ void PlotController::reloadBannerView() {
   m_bannerView.seriesName()->setText(buffer);
 
   // Display selected value
-  double value = valueAtIndex(series, sortedIndex, *m_selectedBarIndex);
+  double value = valueAtIndex(series, *m_selectedBarIndex);
   Poincare::Print::customPrintf(buffer, k_maxNumberOfCharacters, "%s : %*.*ed",
     I18n::translate(I18n::Message::StatisticsValue), value, displayMode, k_numberOfSignificantDigits);
   m_bannerView.value()->setText(buffer);
 
   // Display cumulated frequency
-  double frequency = resultAtIndex(series, sortedIndex, *m_selectedBarIndex);
+  double frequency = resultAtIndex(series, *m_selectedBarIndex);
   Poincare::Print::customPrintf(buffer, k_maxNumberOfCharacters, resultMessageTemplate(),
     I18n::translate(resultMessage()), frequency, displayMode, k_numberOfSignificantDigits);
   m_bannerView.result()->setText(buffer);

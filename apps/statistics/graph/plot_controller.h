@@ -20,9 +20,9 @@ namespace Statistics {
 
 class PlotControllerDelegate {
 public:
-  virtual int totalValues(int series, int * sortedIndex) const = 0;
-  virtual double valueAtIndex(int series, int * sortedIndex, int i) const = 0;
-  virtual double resultAtIndex(int series, int * sortedIndex, int i) const = 0;
+  virtual int totalValues(int series) const = 0;
+  virtual double valueAtIndex(int series, int i) const = 0;
+  virtual double resultAtIndex(int series, int i) const = 0;
   virtual void computeYBounds(float * yMin, float *yMax) const = 0;
   virtual void computeXBounds(float * xMin, float *xMax) const = 0;
   virtual bool connectPoints() const { return false; }

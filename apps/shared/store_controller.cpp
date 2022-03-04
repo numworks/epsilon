@@ -313,11 +313,11 @@ void StoreController::sortSelectedColumn() {
   };
   static Poincare::Helpers::Compare compareX = [](int a, int b, void * context, int numberOfElements)->bool{
     double * dataX = static_cast<double*>(context);
-    return dataX[a] > dataX[b];
+    return dataX[a] > dataX[b] || (std::isnan(dataX[a]) && !std::isnan(dataX[b]));
   };
   static Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
     double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
-    return dataY[a] > dataY[b];
+    return dataY[a] > dataY[b] || (std::isnan(dataY[a]) && !std::isnan(dataY[b]));
   };
   // m_store->makeColumnsEqualLength(selectedSeries());
   int indexOfFirstCell = selectedSeries() * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;

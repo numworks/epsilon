@@ -38,6 +38,7 @@ public:
   // Delete and reset
   virtual bool deleteValueAtIndex(int series, int i, int j); // Return True if the pair was deleted.
   void deletePairOfSeriesAtIndex(int series, int j);
+  void deleteColumn(int series, int i);
   void resetColumn(int series, int i);
   void deleteAllPairsOfSeries(int series);
   void deleteAllPairs();

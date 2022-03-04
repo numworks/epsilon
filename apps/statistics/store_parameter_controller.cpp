@@ -13,7 +13,7 @@ void StoreParameterController::initializeColumnParameters() {
   } else {
     int series = m_columnIndex / Store::k_numberOfColumnsPerSeries;
     char tableName[StoreController::k_tableNameSize];
-    StoreController::FillTableName(series, tableName);
+    StoreController::FillSeriesName(series, tableName);
     m_clearColumn.setMessageWithPlaceholder(I18n::Message::ClearTable, tableName);
   }
 }

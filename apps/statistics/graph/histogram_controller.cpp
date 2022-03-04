@@ -22,7 +22,7 @@ HistogramController::HistogramController(Responder * parentResponder, InputEvent
   m_barVersion(barVersion),
   m_rangeVersion(rangeVersion),
   m_histogramParameterController(nullptr, inputEventHandlerDelegate, store),
-  m_parameterButton(this, I18n::Message::HistogramSet, Invocation([](void * context, void * sender) {
+  m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation([](void * context, void * sender) {
     HistogramController * histogramController = static_cast<HistogramController * >(context);
     histogramController->stackController()->push(histogramController->histogramParameterController());
     return true;

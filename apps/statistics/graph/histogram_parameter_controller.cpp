@@ -32,7 +32,7 @@ void HistogramParameterController::viewWillAppear() {
 }
 
 const char * HistogramParameterController::title() {
-  return I18n::translate(I18n::Message::HistogramSet);
+  return I18n::translate(I18n::Message::StatisticsGraphSettings);
 }
 
 void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

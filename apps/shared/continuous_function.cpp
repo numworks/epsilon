@@ -30,7 +30,7 @@ constexpr char ContinuousFunction::k_ordinateName[2];
 constexpr CodePoint ContinuousFunction::k_cartesianSymbol;
 constexpr CodePoint ContinuousFunction::k_parametricSymbol;
 constexpr CodePoint ContinuousFunction::k_polarSymbol;
-constexpr CodePoint ContinuousFunction::k_ordinateSymbol;
+constexpr CodePoint ContinuousFunction::k_ordinateCodePoint;
 constexpr CodePoint ContinuousFunction::k_unnamedExpressionSymbol;
 
 /* ContinuousFunction - Public */
@@ -723,7 +723,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
      * symbols nested in function, which is not a supported behavior anyway.
      * TODO: Make a consistent behavior calculation/additional_outputs using a
      *       VariableContext to temporary disable y's predefinition. */
-    result = result.replaceSymbolWithExpression(Symbol::Builder(k_ordinateSymbol), Symbol::Builder(UCodePointTemporaryUnknown));
+    result = result.replaceSymbolWithExpression(Symbol::Builder(k_ordinateCodePoint), Symbol::Builder(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
   PoincareHelpers::CloneAndReduce(
@@ -732,7 +732,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
           ReplaceAllDefinedSymbolsWithDefinition);
 
   if (isUnnamedFunction) {
-    result = result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateSymbol));
+    result = result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateCodePoint));
   }
 
   if (plotType() == PlotType::Unknown) {
@@ -962,7 +962,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
   if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
     // No need to replace any symbols in originalEquation().
     Expression inputEquation = originalEquation(record, UCodePointUnknown);
-    CodePoint symbol = (yDeg == 0) ? UCodePointUnknown : k_ordinateSymbol;
+    CodePoint symbol = (yDeg == 0) ? UCodePointUnknown : k_ordinateCodePoint;
     if (!IsExplicitEquation(inputEquation, symbol)) {
       m_plotType = PlotType::Disabled;
       return;
@@ -1061,8 +1061,8 @@ bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation
 
 bool ContinuousFunction::Model::IsExplicitEquation(const Expression equation, CodePoint symbol) {
   /* An equation is explicit if it is a comparison between the given symbol and
-   * something that does not depend on it. For example, using 'y' symbol :
-   * y=1+x is explicit but y+1=x or y=x+2*y are implicit. */
+   * something that does not depend on it. For example, using 'y' symbol:
+   * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
   return ComparisonOperator::IsComparisonOperatorType(equation.type())
          && equation.childAtIndex(0).isIdenticalTo(Symbol::Builder(symbol))
          && !equation.childAtIndex(1).hasExpression(

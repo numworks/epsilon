@@ -16,31 +16,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-Function::NameNotCompliantError Function::BaseNameCompliant(const char * baseName) {
-  assert(baseName[0] != 0);
-
-  UTF8Decoder decoder(baseName);
-  CodePoint c = decoder.nextCodePoint();
-  if (c.isDecimalDigit()) {
-    return NameNotCompliantError::NameCannotStartWithNumber;
-  } else if (c == '_') {
-    return NameNotCompliantError::NameCannotStartWithUnderscore;
-  }
-
-  while (c != UCodePointNull) {
-    // TODO Factor this piece of code with similar one in the Parser
-    if (!(c.isDecimalDigit() || c.isLatinLetter() || c == '_')) {
-      return NameNotCompliantError::CharacterNotAllowed;
-    }
-    c = decoder.nextCodePoint();
-  }
-
-  if (Parser::IsReservedName(baseName, strlen(baseName))) {
-    return NameNotCompliantError::ReservedName;
-  }
-  return NameNotCompliantError::None;
-}
-
 bool Function::isActive() const {
   return recordData()->isActive();
 }

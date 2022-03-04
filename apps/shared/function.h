@@ -14,15 +14,6 @@ namespace Shared {
 
 class Function : public ExpressionModelHandle {
 public:
-  enum class NameNotCompliantError {
-    None = 0,
-    CharacterNotAllowed,
-    NameCannotStartWithNumber,
-    NameCannotStartWithUnderscore,
-    ReservedName
-  };
-  static NameNotCompliantError BaseNameCompliant(const char * baseName);
-
   /* Possible arguments: n, x, t, θ
    * The CodePoint θ is two char long. */
   constexpr static int k_parenthesedArgumentCodePointLength = 3;

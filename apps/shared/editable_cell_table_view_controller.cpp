@@ -58,7 +58,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     selectableTableView()->handleEvent(event);
   }
   didChangeCell(column, previousRow);
-  // Reload title cells
+  // Reload title cells that could change color if series changed validity
   for (int i = 0; i < numberOfColumns(); i++) {
       selectableTableView()->reloadCellAtLocation(i, 0);
   }

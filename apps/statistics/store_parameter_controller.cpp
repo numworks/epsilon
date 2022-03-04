@@ -12,8 +12,8 @@ void StoreParameterController::initializeColumnParameters() {
       m_clearColumn.setMessageWithPlaceholder(I18n::Message::ResetFrequencies);
   } else {
     int series = m_columnIndex / Store::k_numberOfColumnsPerSeries;
-    char tableName[6];
-    StoreController::FillTableName(series, tableName, 6);
+    char tableName[StoreController::k_tableNameSize];
+    StoreController::FillTableName(series, tableName);
     m_clearColumn.setMessageWithPlaceholder(I18n::Message::ClearTable, tableName);
   }
 }

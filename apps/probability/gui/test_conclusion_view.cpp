@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "../images/test_success.h"
-#include "probability/helpers.h"
 
 namespace Probability {
 

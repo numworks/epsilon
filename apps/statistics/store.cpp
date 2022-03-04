@@ -235,8 +235,9 @@ double Store::squaredOffsettedValueSum(int series, double offset) const {
   return result;
 }
 
-void Store::deleteValueAtIndex(int series, int i, int j) {
+bool Store::deleteValueAtIndex(int series, int i, int j) {
   deletePairOfSeriesAtIndex(series, j);
+  return true;
 }
 
 /* Private methods */

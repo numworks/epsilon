@@ -28,7 +28,7 @@ int MultipleBoxesView::seriesOfSubviewAtIndex(int index) {
 }
 
 void MultipleBoxesView::layoutDataSubviews(bool force) {
-  int numberOfDataSubviews = m_store->numberOfNonEmptySeries();
+  int numberOfDataSubviews = m_store->numberOfValidSeries();
   assert(numberOfDataSubviews > 0);
   KDCoordinate bannerHeight = bannerFrame().height();
   KDCoordinate subviewHeight = (bounds().height() - bannerHeight - k_axisViewHeight)/numberOfDataSubviews;

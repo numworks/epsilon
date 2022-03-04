@@ -16,9 +16,7 @@ Store::Store() :
   MemoizedCurveViewRange(),
   DoublePairStore(),
   m_barWidth(1.0),
-  m_firstDrawnBarAbscissa(0.0),
-  m_seriesEmpty{true, true, true},
-  m_numberOfNonEmptySeries(0)
+  m_firstDrawnBarAbscissa(0.0)
 {
 }
 
@@ -81,15 +79,9 @@ bool Store::scrollToSelectedBarIndex(int series, int index) {
   return false;
 }
 
-bool Store::isEmpty() const {
-  return numberOfNonEmptySeries() == 0;
-}
-
 bool Store::seriesIsValid(int series) const {
-  if (Shared::DoublePairStore::seriesIsValid(series)) {
-    return !m_seriesEmpty[series];
-  }
-  return false;
+  assert(series >= 0 && series < k_numberOfSeries);
+  return numberOfPairsOfSeries(series) > 0 && sumOfOccurrences(series) > 0;
 }
 
 bool Store::frequenciesAreInteger(int series) const {
@@ -99,10 +91,6 @@ bool Store::frequenciesAreInteger(int series) const {
     }
   }
   return true;
-}
-
-int Store::numberOfNonEmptySeries() const {
-  return m_numberOfNonEmptySeries;
 }
 
 /* Calculation */
@@ -247,36 +235,8 @@ double Store::squaredOffsettedValueSum(int series, double offset) const {
   return result;
 }
 
-void Store::set(double f, int series, int i, int j) {
-  DoublePairStore::set(f, series, i, j);
-  m_seriesEmpty[series] = sumOfOccurrences(series) == 0;
-  updateNonEmptySeriesCount();
-}
-
 void Store::deleteValueAtIndex(int series, int i, int j) {
   deletePairOfSeriesAtIndex(series, j);
-}
-
-void Store::deletePairOfSeriesAtIndex(int series, int j) {
-  DoublePairStore::deletePairOfSeriesAtIndex(series, j);
-  m_seriesEmpty[series] = sumOfOccurrences(series) == 0;
-  updateNonEmptySeriesCount();
-}
-
-void Store::deleteAllPairsOfSeries(int series) {
-  DoublePairStore::deleteAllPairsOfSeries(series);
-  m_seriesEmpty[series] = true;
-  updateNonEmptySeriesCount();
-}
-
-void Store::updateNonEmptySeriesCount() {
-  int nonEmptySeriesCount = 0;
-  for (int i = 0; i< k_numberOfSeries; i++) {
-    if (!m_seriesEmpty[i]) {
-      nonEmptySeriesCount++;
-    }
-  }
-  m_numberOfNonEmptySeries = nonEmptySeriesCount;
 }
 
 /* Private methods */

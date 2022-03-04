@@ -25,7 +25,7 @@ public:
     assert(j <  m_numberOfPairs[series]);
     return m_data[series][i][j];
   }
-  virtual void set(double f, int series, int i, int j);
+  void set(double f, int series, int i, int j);
 
   // Counts
   int numberOfPairs() const;
@@ -36,17 +36,16 @@ public:
 
   // Delete and reset
   virtual void deleteValueAtIndex(int series, int i, int j);
-  virtual void deletePairOfSeriesAtIndex(int series, int j);
+  void deletePairOfSeriesAtIndex(int series, int j);
   void resetColumn(int series, int i);
-  virtual void deleteAllPairsOfSeries(int series);
+  void deleteAllPairsOfSeries(int series);
   void deleteAllPairs();
 
   // Series
-  // isEmpy, numberOfNonEmptySeries and indexOfKthNonEmptySeries treat non valid series as empty
-  virtual bool isEmpty() const;
+  bool hasValidSeries() const;
   virtual bool seriesIsValid(int series) const;
-  virtual int numberOfNonEmptySeries() const;
-  int indexOfKthNonEmptySeries(int k) const;
+  int numberOfValidSeries() const;
+  int indexOfKthValidSeries(int k) const;
 
   // Calculations
   double sumOfColumn(int series, int i, bool lnOfSeries = false) const;

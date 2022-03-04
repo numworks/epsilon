@@ -17,7 +17,7 @@ MultipleDataViewController::MultipleDataViewController(Responder * parentRespond
 }
 
 bool MultipleDataViewController::isEmpty() const {
-  return m_store->isEmpty();
+  return !m_store->hasValidSeries();
 }
 
 I18n::Message MultipleDataViewController::emptyMessage() {
@@ -41,7 +41,7 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
   assert(*m_selectedSeriesIndex >= 0);
   if (event == Ion::Events::Down) {
     int currentSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(*m_selectedSeriesIndex);
-    if (currentSelectedSubview < m_store->numberOfNonEmptySeries() - 1) {
+    if (currentSelectedSubview < m_store->numberOfValidSeries() - 1) {
       multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
       *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(currentSelectedSubview+1);
       *m_selectedBarIndex = MultipleDataView::k_defaultSelectedBar;

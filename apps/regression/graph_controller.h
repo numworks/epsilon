@@ -40,7 +40,7 @@ private:
   public:
     SeriesSelectionController(GraphController * graphController) : Shared::CurveSelectionController(graphController) {}
     const char * title() override { return I18n::translate(I18n::Message::Regression); }
-    int numberOfRows() const override { return graphController()->m_store->numberOfNonEmptySeries(); }
+    int numberOfRows() const override { return graphController()->m_store->numberOfValidSeries(); }
     KDCoordinate rowHeight(int j) override;
     CurveSelectionCell * reusableCell(int index, int type) override { assert(index >= 0 && index < Store::k_numberOfSeries); return m_cells + index; }
     int reusableCellCount(int type) override { return Store::k_numberOfSeries; }

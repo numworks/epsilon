@@ -12,7 +12,6 @@
 #include "probability/distribution/poisson_distribution.h"
 #include "probability/distribution/student_distribution.h"
 #include "probability/distribution/uniform_distribution.h"
-#include "probability/helpers.h"
 #include "statistic/goodness_test.h"
 #include "statistic/homogeneity_test.h"
 #include "statistic/hypothesis_params.h"

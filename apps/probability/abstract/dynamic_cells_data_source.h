@@ -3,7 +3,6 @@
 
 #include <escher/highlight_cell.h>
 #include <escher/selectable_table_view.h>
-#include "probability/helpers.h"
 
 namespace Probability {
 

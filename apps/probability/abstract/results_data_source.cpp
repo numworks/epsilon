@@ -7,7 +7,6 @@
 
 #include "probability/app.h"
 #include "probability/constants.h"
-#include "probability/helpers.h"
 
 namespace Probability {
 

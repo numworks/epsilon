@@ -104,7 +104,6 @@ i18n_files += $(call i18n_with_universal_for,probability/translations/base)
 tests_src += $(addprefix apps/probability/test/,\
   distributions.cpp\
   statistics.cpp \
-  data.cpp \
 )
 
 # Allow #include "probability/..."

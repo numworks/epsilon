@@ -90,7 +90,6 @@ private:
   void countDistinctValuesUntil(int series, int i, double * value, int * distinctValues) const;
   double sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement = false) const;
   double sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement = false) const;
-  int minIndex(double * bufferValues, int bufferLength) const;
   // Return the value index from its sorted index (a 0 sorted index is the min)
   size_t valueIndexAtSortedIndex(int series, int i) const;
   // Sort and memoize values indexes in increasing order.

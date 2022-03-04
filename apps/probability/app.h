@@ -72,14 +72,13 @@ public:
   void * buffer(size_t offset = 0) { return m_buffer + offset; }
   void cleanBuffer(DynamicCellsDataSourceDestructor * destructor);
 
-  static constexpr int k_dynamicCellsSizes[] = {
-    sizeof(ExpressionCellWithBufferWithMessage) * k_maxNumberOfExpressionCellsWithBufferWithMessage,
-    sizeof(ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage,
-    sizeof(EvenOddBufferTextCell) * (k_homogeneityTableNumberOfReusableHeaderCells + k_homogeneityTableNumberOfReusableInnerCells),
-    sizeof(EvenOddEditableTextCell) * k_homogeneityTableNumberOfReusableInnerCells + sizeof(EvenOddBufferTextCell) * k_homogeneityTableNumberOfReusableHeaderCells,
-    sizeof(EvenOddEditableTextCell) * k_inputGoodnessTableNumberOfReusableCells
-  };
-  static constexpr int k_bufferSize = arrayMax(k_dynamicCellsSizes);
+  static constexpr int k_bufferSize = std::max({
+      sizeof(ExpressionCellWithBufferWithMessage) * k_maxNumberOfExpressionCellsWithBufferWithMessage,
+      sizeof(ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage,
+      sizeof(EvenOddBufferTextCell) * (k_homogeneityTableNumberOfReusableHeaderCells + k_homogeneityTableNumberOfReusableInnerCells),
+      sizeof(EvenOddEditableTextCell) * k_homogeneityTableNumberOfReusableInnerCells + sizeof(EvenOddBufferTextCell) * k_homogeneityTableNumberOfReusableHeaderCells,
+      sizeof(EvenOddEditableTextCell) * k_inputGoodnessTableNumberOfReusableCells
+    });
 
   TELEMETRY_ID("Probability");
 

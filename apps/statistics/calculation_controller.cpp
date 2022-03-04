@@ -43,7 +43,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
 // AlternateEmptyViewDefaultDelegate
 
 bool CalculationController::isEmpty() const {
-  return m_store->isEmpty();
+  return !m_store->hasValidSeries();
 }
 
 I18n::Message CalculationController::emptyMessage() {
@@ -57,7 +57,7 @@ Responder * CalculationController::defaultController() {
 // TableViewDataSource
 
 int CalculationController::numberOfColumns() const {
-  return 2 + m_store->numberOfNonEmptySeries();
+  return 2 + m_store->numberOfValidSeries();
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -67,7 +67,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   int type = typeAtLocation(i, j);
   if (type == k_seriesTitleCellType) {
     // Display a series title cell
-    int seriesNumber = m_store->indexOfKthNonEmptySeries(i-2);
+    int seriesNumber = m_store->indexOfKthValidSeries(i-2);
     char titleBuffer[] = {'V', static_cast<char>('1'+seriesNumber), '/', 'N', static_cast<char>('1'+seriesNumber), 0};
     StoreTitleCell * storeTitleCell = static_cast<StoreTitleCell *>(cell);
     storeTitleCell->setText(titleBuffer);
@@ -103,7 +103,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
       &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
       &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
-    int seriesIndex = m_store->indexOfKthNonEmptySeries(i-2);
+    int seriesIndex = m_store->indexOfKthValidSeries(i-2);
     double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
     EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
     constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;

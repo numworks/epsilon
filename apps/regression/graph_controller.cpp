@@ -35,7 +35,7 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
 }
 
 bool GraphController::isEmpty() const {
-  return m_store->isEmpty();
+  return !m_store->hasValidSeries();
 }
 
 I18n::Message GraphController::emptyMessage() {
@@ -50,7 +50,7 @@ void GraphController::viewWillAppear() {
    * to reinitialize the selected series index if the current selection is
    * either null (right after construction) or refering a removed series. */
   if (*m_selectedSeriesIndex < 0 || !m_store->seriesIsValid(*m_selectedSeriesIndex)) {
-    *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
+    *m_selectedSeriesIndex = m_store->indexOfKthValidSeries(0);
   }
 
   /* Both the GraphController and the Store hold the Model::Type of each
@@ -130,7 +130,7 @@ KDCoordinate GraphController::SeriesSelectionController::rowHeight(int j) {
 
 void GraphController::SeriesSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   char name[] = "X?/Y?";
-  int j = graphController()->m_store->indexOfKthNonEmptySeries(index);
+  int j = graphController()->m_store->indexOfKthValidSeries(index);
   name[1] = name[4] = '1' + j;
   static_cast<CurveSelectionCell *>(cell)->setLayout(LayoutHelper::String(name, sizeof(name) / sizeof(char)));
 }
@@ -276,7 +276,7 @@ CurveView * GraphController::curveView() {
 }
 
 bool GraphController::openMenuForCurveAtIndex(int index) {
-  int activeIndex = m_store->indexOfKthNonEmptySeries(index);
+  int activeIndex = m_store->indexOfKthValidSeries(index);
   if (*m_selectedSeriesIndex != activeIndex) {
     *m_selectedSeriesIndex = activeIndex;
     Coordinate2D<double> xy = xyValues(activeIndex, m_cursor->t(), textFieldDelegateApp()->localContext());

@@ -102,7 +102,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
 }
 
 bool CalculationController::isEmpty() const {
-  return m_store->isEmpty();
+  return !m_store->hasValidSeries();
 }
 
 I18n::Message CalculationController::emptyMessage() {
@@ -119,7 +119,7 @@ int CalculationController::numberOfRows() const {
 }
 
 int CalculationController::numberOfColumns() const {
-  return 1 + m_store->numberOfNonEmptySeries();
+  return 1 + m_store->numberOfValidSeries();
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -159,7 +159,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
 
-  size_t seriesNumber = m_store->indexOfKthNonEmptySeries(i - 1);
+  size_t seriesNumber = m_store->indexOfKthValidSeries(i - 1);
   assert(seriesNumber < DoublePairStore::k_numberOfSeries);
 
   // Coordinate and series title
@@ -280,7 +280,7 @@ KDCoordinate CalculationController::columnWidth(int i) {
   if (i == 0) {
     return k_titleCalculationCellWidth;
   }
-  Model::Type currentType = m_store->seriesRegressionType(m_store->indexOfKthNonEmptySeries(i-1));
+  Model::Type currentType = m_store->seriesRegressionType(m_store->indexOfKthValidSeries(i-1));
   if (currentType == Model::Type::Quartic) {
     return k_quarticCalculationCellWidth;
   }
@@ -371,9 +371,9 @@ Responder * CalculationController::tabController() const {
 }
 
 bool CalculationController::hasLinearRegression() const {
-  int numberOfDefinedSeries = m_store->numberOfNonEmptySeries();
+  int numberOfDefinedSeries = m_store->numberOfValidSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
-    if (m_store->seriesRegressionType(m_store->indexOfKthNonEmptySeries(i)) == Model::Type::Linear) {
+    if (m_store->seriesRegressionType(m_store->indexOfKthValidSeries(i)) == Model::Type::Linear) {
       return true;
     }
   }
@@ -382,9 +382,9 @@ bool CalculationController::hasLinearRegression() const {
 
 int CalculationController::maxNumberOfCoefficients() const {
   int maxNumberCoefficients = 0;
-  int numberOfDefinedSeries = m_store->numberOfNonEmptySeries();
+  int numberOfDefinedSeries = m_store->numberOfValidSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
-    int currentNumberOfCoefs = m_store->modelForSeries(m_store->indexOfKthNonEmptySeries(i))->numberOfCoefficients();
+    int currentNumberOfCoefs = m_store->modelForSeries(m_store->indexOfKthValidSeries(i))->numberOfCoefficients();
     maxNumberCoefficients = std::max(maxNumberCoefficients, currentNumberOfCoefs);
   }
   return maxNumberCoefficients;

@@ -15,6 +15,7 @@ public:
   constexpr static int k_maxNumberOfPairs = 100;
   DoublePairStore() :
     m_data{},
+    m_validSeries{false, false, false},
     m_numberOfPairs{}
   {}
   // Delete the implicit copy constructor: the object is heavy
@@ -43,7 +44,8 @@ public:
 
   // Series
   bool hasValidSeries() const;
-  virtual bool seriesIsValid(int series) const;
+  bool seriesIsValid(int series) const;
+  virtual void memoizeValidSeries(int series);
   int numberOfValidSeries() const;
   int indexOfKthValidSeries(int k) const;
 
@@ -68,6 +70,7 @@ public:
 protected:
   virtual double defaultValue(int series, int i, int j) const;
   double m_data[k_numberOfSeries][k_numberOfColumnsPerSeries][k_maxNumberOfPairs];
+  bool m_validSeries[k_numberOfSeries];
 private:
   int m_numberOfPairs[k_numberOfSeries];
 };

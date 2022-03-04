@@ -19,6 +19,7 @@ void DoublePairStore::set(double f, int series, int i, int j) {
     m_data[series][otherI][j] = defaultValue(series, otherI, j);
     m_numberOfPairs[series]++;
   }
+  memoizeValidSeries(series);
 }
 
 int DoublePairStore::numberOfPairs() const {
@@ -33,10 +34,11 @@ void DoublePairStore::deleteValueAtIndex(int series, int i, int j) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(j >= 0 && j < m_numberOfPairs[series]);
   int otherI = i == 0 ? 1 : 0;
-  if (std::isnan(m_data[series][otherI][j]) || std::isnan(m_data[series][i][j])) {
+  if (std::isnan(m_data[series][otherI][j])) {
     deletePairOfSeriesAtIndex(series, j);
   } else {
     m_data[series][i][j] = std::nan("");
+    memoizeValidSeries(series);
   }
 }
 
@@ -50,6 +52,7 @@ void DoublePairStore::deletePairOfSeriesAtIndex(int series, int j) {
    * checksum. */
   m_data[series][0][m_numberOfPairs[series]] = 0;
   m_data[series][1][m_numberOfPairs[series]] = 0;
+  memoizeValidSeries(series);
 }
 
 void DoublePairStore::deleteAllPairsOfSeries(int series) {
@@ -60,7 +63,8 @@ void DoublePairStore::deleteAllPairsOfSeries(int series) {
       m_data[series][i][k] = 0.0;
     }
   }
-   m_numberOfPairs[series] = 0;
+  m_numberOfPairs[series] = 0;
+  m_validSeries[series] = false;
 }
 
 void DoublePairStore::deleteAllPairs() {
@@ -75,6 +79,7 @@ void DoublePairStore::resetColumn(int series, int i) {
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
     deleteValueAtIndex(series, i, k);
   }
+  memoizeValidSeries(series);
 }
 
 bool DoublePairStore::hasValidSeries() const {
@@ -87,18 +92,24 @@ bool DoublePairStore::hasValidSeries() const {
 }
 
 bool DoublePairStore::seriesIsValid(int series) const {
+  return m_validSeries[series];
+}
+
+void DoublePairStore::memoizeValidSeries(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (m_numberOfPairs[series] == 0) {
-    return false;
+    m_validSeries[series] = false;
+    return;
   }
   for (int i = 0 ; i < k_numberOfColumnsPerSeries ; i++) {
     for (int j = 0 ; j < m_numberOfPairs[series] ; j ++) {
       if (std::isnan(m_data[series][i][j])) {
-        return false;
+        m_validSeries[series] = false;
+        return;
       }
     }
   }
-  return true;
+  m_validSeries[series] = true;
 }
 
 int DoublePairStore::numberOfValidSeries() const {

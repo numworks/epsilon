@@ -58,6 +58,11 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     selectableTableView()->handleEvent(event);
   }
   didChangeCell(column, previousRow);
+  // Reload title cells
+  for (int i = 0; i < numberOfColumns(); i++) {
+      selectableTableView()->reloadCellAtLocation(i, 0);
+  }
+  // Reload other cells
   if (previousNumberOfElementsInColumn != numberOfElementsInColumn(column)) {
     // Reload the whole table, if a value was appended.
     selectableTableView()->reloadData();

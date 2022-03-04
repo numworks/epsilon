@@ -19,7 +19,6 @@ public:
   }
   int reusableCellCount(int type) override { return k_numberOfImages; }
   Escher::HighlightImageCell * reusableCell(int i, int type) override { return &m_imageCells[i]; }
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   constexpr static int k_numberOfImages = 4;
 

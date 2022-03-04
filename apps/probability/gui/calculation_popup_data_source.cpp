@@ -10,22 +10,19 @@ namespace Probability {
 CalculationPopupDataSource::CalculationPopupDataSource(Distribution * distribution) :
   m_distribution(distribution)
 {
-  // Initialize width to default
-  m_imageCells[0].setImage(ImageStore::Calculation1Icon);
-}
-
-int CalculationPopupDataSource::numberOfRows() const {
-  return k_numberOfImages - m_distribution->isContinuous();
-}
-
-void CalculationPopupDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  Escher::HighlightImageCell * myCell = static_cast<Escher::HighlightImageCell *>(cell);
+  /* We can init the image of all cells because there is a bijection of the
+   * displayable cells and the source cells. */
   const Escher::Image * images[k_numberOfImages] = {ImageStore::Calculation1Icon,
                                                     ImageStore::Calculation2Icon,
                                                     ImageStore::Calculation3Icon,
                                                     ImageStore::Calculation4Icon};
-  myCell->setImage(images[index]);
-  myCell->setHighlighted(myCell->isHighlighted());
+  for (int i = 0; i < k_numberOfImages; i++) {
+    m_imageCells[i].setImage(images[i]);
+  }
+}
+
+int CalculationPopupDataSource::numberOfRows() const {
+  return k_numberOfImages - m_distribution->isContinuous();
 }
 
 }  // namespace Probability

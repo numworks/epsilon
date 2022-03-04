@@ -8,12 +8,12 @@ namespace std {
 template<class T>
 class initializer_list {
 public:
-  initializer_list() noexcept : m_begin(nullptr), m_size(0) {}
-  size_t size() const noexcept { return m_size; }
-  const T * begin() const noexcept { return m_begin; }
-  const T * end() const noexcept { return m_begin + m_size; }
+  constexpr initializer_list() noexcept : m_begin(nullptr), m_size(0) {}
+  constexpr size_t size() const noexcept { return m_size; }
+  constexpr const T * begin() const noexcept { return m_begin; }
+  constexpr const T * end() const noexcept { return m_begin + m_size; }
 private:
-  initializer_list(const T * begin, size_t size) noexcept
+  constexpr initializer_list(const T * begin, size_t size) noexcept
     : m_begin(begin),
     m_size(size)
     {}
@@ -22,12 +22,12 @@ private:
 };
 
 template<class T>
-inline const T * begin(initializer_list<T> il) noexcept {
+inline constexpr const T * begin(initializer_list<T> il) noexcept {
   return il.begin();
 }
 
 template<class T>
-inline const T * end(initializer_list<T> il) noexcept {
+inline constexpr const T * end(initializer_list<T> il) noexcept {
   return il.end();
 }
 

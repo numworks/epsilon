@@ -73,7 +73,7 @@ void StoreController::setClearPopUpContent() {
   int series = seriesAtColumn(selectedColumn());
   if (column == 0) {
     char tableName[k_tableNameSize];
-    FillTableName(series, tableName, true);
+    FillSeriesName(series, tableName, true);
     m_confirmPopUpController.setMessageWithPlaceholder(0, I18n::Message::ClearTableConfirmation1, tableName);
     m_confirmPopUpController.setMessageWithPlaceholder(1, I18n::Message::ClearTableConfirmation2, tableName);
   } else {
@@ -84,14 +84,12 @@ void StoreController::setClearPopUpContent() {
   }
 }
 
-void StoreController::FillTableName(int series, char * buffer, bool withFinalSpace) {
+void StoreController::FillSeriesName(int series, char * buffer, bool withFinalSpace) {
    /* We have to add a space in some cases because we use this table name in the message for
     * deleting the table in Graph and Sequence, but the table name is empty in Sequence.
     */
   char tableIndex = static_cast<char>('1' + series);
-  strlcpy(buffer, k_tableName, k_tableNameSize);
-  buffer[1] = tableIndex;
-  buffer[4] = tableIndex;
+  Poincare::Print::customPrintf(buffer, k_tableNameSize, k_tableName, tableIndex, tableIndex);
   if (!withFinalSpace) {
     buffer[5] = 0;
   }

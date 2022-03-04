@@ -10,9 +10,9 @@ namespace Statistics {
 
 class StoreController : public Shared::StoreController {
 public:
-  constexpr static char k_tableName[] = "V?/N? ";
+  constexpr static char k_tableName[] = "V%c/N%c ";
   constexpr static size_t k_tableNameSize = sizeof(k_tableName);
-  static void FillTableName(int series, char * buffer, bool withFinalSpace = false);
+  static void FillSeriesName(int series, char * buffer, bool withFinalSpace = false);
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
   Shared::StoreContext * storeContext() override { return &m_statisticsContext; }
   bool fillColumnWithFormula(Poincare::Expression formula) override;

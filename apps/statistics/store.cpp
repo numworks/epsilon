@@ -18,7 +18,9 @@ Store::Store() :
   MemoizedCurveViewRange(),
   DoublePairStore(),
   m_barWidth(1.0),
-  m_firstDrawnBarAbscissa(0.0)
+  m_firstDrawnBarAbscissa(0.0),
+  m_sortedIndex{},
+  m_sortedIndexValid{false, false, false}
 {
 }
 
@@ -237,10 +239,31 @@ double Store::squaredOffsettedValueSum(int series, double offset) const {
   return result;
 }
 
+void Store::set(double f, int series, int i, int j) {
+  m_sortedIndexValid[series] = false;
+  DoublePairStore::set(f, series, i, j);
+}
+
 bool Store::deleteValueAtIndex(int series, int i, int j) {
   deletePairOfSeriesAtIndex(series, j);
   return true;
 }
+
+void Store::deletePairOfSeriesAtIndex(int series, int i) {
+  m_sortedIndexValid[series] = false;
+  DoublePairStore::deletePairOfSeriesAtIndex(series, i);
+}
+
+void Store::resetColumn(int series, int i) {
+  m_sortedIndexValid[series] = false;
+  DoublePairStore::resetColumn(series, i);
+}
+
+void Store::deleteAllPairsOfSeries(int series) {
+  m_sortedIndexValid[series] = false;
+  DoublePairStore::deleteAllPairsOfSeries(series);
+}
+
 
 /* Private methods */
 
@@ -294,33 +317,11 @@ double Store::sortedElementAtCumulatedPopulation(int series, double population, 
   return m_data[series][0][sortedElementIndex];
 }
 
-void Store::buildSortedIndex(int series, int * sortedIndex) const {
-  // TODO : Factorize with Regression::Store::sortIndexByColumn
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int i = 0; i < numberOfPairs; i++) {
-    sortedIndex[i] = i;
-  }
-  /* Following lines is an insertion-sort algorithm which has the advantage of
-   * being in-place and efficient when already sorted. */
-  int i = 1;
-  while (i < numberOfPairs) {
-    int xIndex = sortedIndex[i];
-    double x = m_data[series][0][xIndex];
-    int j = i - 1;
-    while (j >= 0 && m_data[series][0][sortedIndex[j]] > x) {
-      sortedIndex[j+1] = sortedIndex[j];
-      j--;
-    }
-    sortedIndex[j+1] = xIndex;
-    i++;
-  }
-}
-
-void Store::countDistinctValuesUntil(int series, int * sortedIndex, int i, double * value, int * distinctValues) const {
+void Store::countDistinctValuesUntil(int series, int i, double * value, int * distinctValues) const {
   *distinctValues = 0;
   *value = NAN;
   for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
-    double nextX = get(series, 0, sortedIndex[j]);
+    double nextX = get(series, 0, valueIndexAtSortedIndex(series, j));
     if (j == 0 || *value != nextX) {
       (*distinctValues)++;
       *value = nextX;
@@ -333,27 +334,27 @@ void Store::countDistinctValuesUntil(int series, int * sortedIndex, int i, doubl
   assert(i == -1);
 }
 
-int Store::totalCumulatedFrequencyValues(int series, int * sortedIndex) const {
+int Store::totalCumulatedFrequencyValues(int series) const {
   double value;
   int distinctValues;
-  countDistinctValuesUntil(series, sortedIndex, -1, &value, &distinctValues);
+  countDistinctValuesUntil(series, -1, &value, &distinctValues);
   return distinctValues;
 }
 
-double Store::cumulatedFrequencyValueAtIndex(int series, int * sortedIndex, int i) const {
+double Store::cumulatedFrequencyValueAtIndex(int series, int i) const {
   double value;
   int distinctValues;
-  countDistinctValuesUntil(series, sortedIndex, i, &value, &distinctValues);
+  countDistinctValuesUntil(series, i, &value, &distinctValues);
   return value;
 }
 
-double Store::cumulatedFrequencyResultAtIndex(int series, int * sortedIndex, int i) const {
+double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
   double cumulatedOccurrences = 0.0, otherOccurrences = 0.0;
-  double value = cumulatedFrequencyValueAtIndex(series, sortedIndex, i);
+  double value = cumulatedFrequencyValueAtIndex(series, i);
   // Recompute sumOfOccurrences() here to save some computation.
   for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
-    double x = get(series, 0, sortedIndex[j]);
-    (x <= value ? cumulatedOccurrences : otherOccurrences) += get(series, 1, sortedIndex[j]);
+    double x = get(series, 0, valueIndexAtSortedIndex(series, j));
+    (x <= value ? cumulatedOccurrences : otherOccurrences) += get(series, 1, valueIndexAtSortedIndex(series, j));
   }
   assert(cumulatedOccurrences + otherOccurrences == sumOfOccurrences(series));
   return 100.0 * cumulatedOccurrences / (cumulatedOccurrences + otherOccurrences);
@@ -366,7 +367,7 @@ int Store::totalNormalProbabilityValues(int series) const {
   return static_cast<int>(std::round(sumOfOccurrences(series)));
 }
 
-double Store::normalProbabilityValueAtIndex(int series, int * sortedIndex, int i) const {
+double Store::normalProbabilityValueAtIndex(int series, int i) const {
   /* We could get rid of sortedIndex here by returning
    * sortedElementAtCumulatedPopulation(series, i + 1). However, this would sort
    * the series at each call. */
@@ -374,14 +375,14 @@ double Store::normalProbabilityValueAtIndex(int series, int * sortedIndex, int i
   assert(frequenciesAreInteger(series));
   int population = 0;
   for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
-    double frequency = std::round(get(series, 1, sortedIndex[j]));
+    double frequency = std::round(get(series, 1, valueIndexAtSortedIndex(series, j)));
     assert(frequency < static_cast<double>(INT_MAX));
     int frequencyInt = static_cast<int>(frequency);
     assert(frequencyInt < INT_MAX - population);
     population += frequencyInt;
     if (population > i) {
-      assert(get(series, 0, sortedIndex[j]) == sortedElementAtCumulatedPopulation(series, i + 1));
-      return get(series, 0, sortedIndex[j]);
+      assert(get(series, 0, valueIndexAtSortedIndex(series, j)) == sortedElementAtCumulatedPopulation(series, i + 1));
+      return get(series, 0, valueIndexAtSortedIndex(series, j));
     }
   }
   assert(false);
@@ -404,6 +405,39 @@ int Store::minIndex(double * bufferValues, int bufferLength) const {
     }
   }
   return index;
+}
+
+size_t Store::valueIndexAtSortedIndex(int series, int i) const {
+  assert(i >= 0 && i <= numberOfPairsOfSeries(series));
+  buildSortedIndex(series);
+  return m_sortedIndex[series][i];
+}
+
+void Store::buildSortedIndex(int series) const {
+  // Index is already built
+  if (m_sortedIndexValid[series]) {
+    return;
+  }
+  // TODO : Factorize with Regression::Store::sortIndexByColumn
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int i = 0; i < numberOfPairs; i++) {
+    m_sortedIndex[series][i] = i;
+  }
+  /* Following lines is an insertion-sort algorithm which has the advantage of
+   * being in-place and efficient when already sorted. */
+  int i = 1;
+  while (i < numberOfPairs) {
+    int xIndex = m_sortedIndex[series][i];
+    double x = m_data[series][0][xIndex];
+    int j = i - 1;
+    while (j >= 0 && m_data[series][0][m_sortedIndex[series][j]] > x) {
+      m_sortedIndex[series][j+1] = m_sortedIndex[series][j];
+      j--;
+    }
+    m_sortedIndex[series][j+1] = xIndex;
+    i++;
+  }
+  m_sortedIndexValid[series] = true;
 }
 
 }

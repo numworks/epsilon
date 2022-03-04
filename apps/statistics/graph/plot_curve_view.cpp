@@ -18,15 +18,13 @@ PlotCurveView::PlotCurveView(Shared::CurveViewRange * curveViewRange,
 }
 
 void PlotCurveView::drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const {
-  int sortedIndex[Store::k_maxNumberOfPairs];
-  m_store->buildSortedIndex(series, sortedIndex);
-  int numberOfPairs = m_plotControllerDelegate->totalValues(series, sortedIndex);
+  int numberOfPairs = m_plotControllerDelegate->totalValues(series);
   // Draw and connect each points
   KDColor color = Store::colorOfSeriesAtIndex(series);
   double previousX, previousY;
   for (size_t i = 0; i < numberOfPairs; i++) {
-    double x = m_plotControllerDelegate->valueAtIndex(series, sortedIndex, i);
-    double y = m_plotControllerDelegate->resultAtIndex(series, sortedIndex, i);
+    double x = m_plotControllerDelegate->valueAtIndex(series, i);
+    double y = m_plotControllerDelegate->resultAtIndex(series, i);
     Shared::CurveView::drawDot(ctx, rect, x, y, color);
     if (m_plotControllerDelegate->connectPoints() && i > 0) {
       Shared::CurveView::drawSegment(ctx, rect, x, y, previousX, previousY, color);

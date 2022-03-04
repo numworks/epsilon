@@ -9,9 +9,9 @@ class NormalProbabilityController : public PlotController {
 public:
   using PlotController::PlotController;
   // PlotControllerDelegate
-  int totalValues(int series, int * sortedIndex) const override { return m_store->totalNormalProbabilityValues(series); }
-  double valueAtIndex(int series, int * sortedIndex, int i) const override { return m_store->normalProbabilityValueAtIndex(series, sortedIndex, i); }
-  double resultAtIndex(int series, int * sortedIndex, int i) const override { return m_store->normalProbabilityResultAtIndex(series, i); }
+  int totalValues(int series) const override { return m_store->totalNormalProbabilityValues(series); }
+  double valueAtIndex(int series, int i) const override { return m_store->normalProbabilityValueAtIndex(series, i); }
+  double resultAtIndex(int series, int i) const override { return m_store->normalProbabilityResultAtIndex(series, i); }
   void computeYBounds(float * yMin, float *yMax) const override;
   void computeXBounds(float * xMin, float *xMax) const override;
   bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const override;

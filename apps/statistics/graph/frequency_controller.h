@@ -10,9 +10,9 @@ public:
   using PlotController::PlotController;
 
   // PlotControllerDelegate
-  int totalValues(int series, int * sortedIndex) const override { return m_store->totalCumulatedFrequencyValues(series, sortedIndex); }
-  double valueAtIndex(int series, int * sortedIndex, int i) const override { return m_store->cumulatedFrequencyValueAtIndex(series, sortedIndex, i); }
-  double resultAtIndex(int series, int * sortedIndex, int i) const override { return m_store->cumulatedFrequencyResultAtIndex(series, sortedIndex, i); }
+  int totalValues(int series) const override { return m_store->totalCumulatedFrequencyValues(series); }
+  double valueAtIndex(int series, int i) const override { return m_store->cumulatedFrequencyValueAtIndex(series, i); }
+  double resultAtIndex(int series, int i) const override { return m_store->cumulatedFrequencyResultAtIndex(series, i); }
   void computeYBounds(float * yMin, float *yMax) const override;
   void computeXBounds(float * xMin, float *xMax) const override;
   bool connectPoints() const override { return true; }

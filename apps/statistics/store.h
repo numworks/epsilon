@@ -3,6 +3,7 @@
 
 #include <apps/shared/memoized_curve_view_range.h>
 #include <apps/shared/double_pair_store.h>
+#include <stddef.h>
 
 namespace Statistics {
 
@@ -58,40 +59,49 @@ public:
   /* Cumulated frequencies graphs:
    * Distinct values are aggregated and their frequency summed. */
   // Return number of distinct values
-  int totalCumulatedFrequencyValues(int series, int * sortedIndex) const;
+  int totalCumulatedFrequencyValues(int series) const;
   // Return the i-th distinct sorted value
-  double cumulatedFrequencyValueAtIndex(int series, int * sortedIndex, int i) const;
+  double cumulatedFrequencyValueAtIndex(int series, int i) const;
   // Return the cumulated frequency of the i-th distinct sorted value
-  double cumulatedFrequencyResultAtIndex(int series, int * sortedIndex, int i) const;
+  double cumulatedFrequencyResultAtIndex(int series, int i) const;
 
   /* Normal probability graphs:
    * Values are scattered into elements of frequency 1. */
   // Return the sumOfOccurrences, all frequencies must be integers
   int totalNormalProbabilityValues(int series) const;
   // Return the sorted element at cumulated population i+1
-  double normalProbabilityValueAtIndex(int series, int * sortedIndex, int i) const;
+  double normalProbabilityValueAtIndex(int series, int i) const;
   // Return the z-score of the i-th sorted element
   double normalProbabilityResultAtIndex(int series, int i) const;
 
-  // Sort values indexes in sortedIndex.
-  void buildSortedIndex(int series, int * sortedIndex) const;
-
   // DoublePairStore
+  void set(double f, int series, int i, int j) override;
   void memoizeValidSeries(int series) override;
   bool deleteValueAtIndex(int series, int i, int j) override;
+  void deletePairOfSeriesAtIndex(int series, int j) override;
+  void resetColumn(int series, int i) override;
+  void deleteAllPairsOfSeries(int series) override;
 
 private:
   double defaultValue(int series, int i, int j) const override;
   double sumOfValuesBetween(int series, double x1, double x2) const;
   /* Find the i-th distinct value (if i is -1, browse the entire series).
    * Retrieve the i-th value and the number distinct values encountered. */
-  void countDistinctValuesUntil(int series, int * sortedIndex, int i, double * value, int * distinctValues) const;
+  void countDistinctValuesUntil(int series, int i, double * value, int * distinctValues) const;
   double sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement = false) const;
   double sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement = false) const;
   int minIndex(double * bufferValues, int bufferLength) const;
+  // Return the value index from its sorted index (a 0 sorted index is the min)
+  size_t valueIndexAtSortedIndex(int series, int i) const;
+  // Sort and memoize values indexes in increasing order.
+  void buildSortedIndex(int series) const;
   // Histogram bars
   double m_barWidth;
   double m_firstDrawnBarAbscissa;
+  // Sorted value indexes are memoized to save computation
+  static_assert(k_maxNumberOfPairs <= SIZE_MAX, "k_maxNumberOfPairs is too large.");
+  mutable size_t m_sortedIndex[k_numberOfSeries][k_maxNumberOfPairs];
+  mutable bool m_sortedIndexValid[k_numberOfSeries];
 };
 
 typedef double (Store::*CalculPointer)(int) const;

@@ -233,7 +233,7 @@ public:
 private:
   static constexpr char k_unknownName[2] = {UCodePointUnknown, 0};
   static constexpr char k_ordinateName[2] = "y";
-  static constexpr CodePoint k_ordinateSymbol = k_ordinateName[0];
+  static constexpr CodePoint k_ordinateCodePoint = k_ordinateName[0];
   static constexpr CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
   static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   // Units are not handled in the graph app. The default unit does not matters

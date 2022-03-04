@@ -10,8 +10,52 @@ namespace Statistics {
 
 BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, BoxView::Quantile * selectedQuantile, int * selectedSeriesIndex) :
   MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store, (int *)(selectedQuantile), selectedSeriesIndex),
-  m_view(store, selectedQuantile)
+  m_view(store, selectedQuantile),
+  m_boxParameterController(nullptr, store),
+  m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation([](void * context, void * sender) {
+    BoxController * boxController = static_cast<BoxController * >(context);
+    boxController->stackController()->push(boxController->boxParameterController());
+    return true;
+  }, this), KDFont::SmallFont)
 {
+}
+
+Button * BoxController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+  return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position) : const_cast<Button *>(&m_parameterButton);
+}
+
+bool BoxController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Toolbox) {
+    stackController()->push(boxParameterController());
+    return true;
+  }
+  return MultipleDataViewController::handleEvent(event);
+}
+
+void BoxController::viewWillAppear() {
+  if (header()->selectedButton() >= 0) {
+    header()->setSelectedButton(-1);
+  }
+  MultipleDataViewController::viewWillAppear();
+}
+
+void BoxController::didEnterResponderChain(Responder * firstResponder) {
+  assert(selectedSeriesIndex() >= 0);
+  if (!multipleDataView()->dataViewAtIndex(selectedSeriesIndex())->isMainViewSelected()) {
+    header()->setSelectedButton(0);
+  }
+}
+
+void BoxController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == tabController()) {
+    assert(tabController() != nullptr);
+    if (header()->selectedButton() >= 0) {
+      header()->setSelectedButton(-1);
+      return;
+    }
+    assert(selectedSeriesIndex() >= 0);
+  }
+  MultipleDataViewController::willExitResponderChain(nextFirstResponder);
 }
 
 bool BoxController::moveSelectionHorizontally(int deltaIndex) {

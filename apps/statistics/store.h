@@ -25,6 +25,8 @@ public:
   double numberOfBars(int series) const;
   void setHistogramXMin(float f, bool updateGridUnit) { protectedSetXMin(f, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, updateGridUnit); }
   void setHistogramXMax(float f, bool updateGridUnit) { protectedSetXMax(f, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, updateGridUnit); }
+  bool displayOutliers() const { return m_displayOutliers; }
+  void setDisplayOutliers(bool displayOutliers) { m_displayOutliers = displayOutliers; }
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);
   bool frequenciesAreInteger(int series) const;
@@ -103,6 +105,7 @@ private:
   static_assert(k_maxNumberOfPairs <= SIZE_MAX, "k_maxNumberOfPairs is too large.");
   mutable size_t * m_sortedIndex;
   mutable bool m_sortedIndexValid[k_numberOfSeries];
+  bool m_displayOutliers;
 };
 
 typedef double (Store::*CalculPointer)(int) const;

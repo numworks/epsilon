@@ -128,25 +128,29 @@ double Store::minValueForAllSeries(bool ignoreFrequency) const {
 }
 
 double Store::maxValue(int series, bool ignoreFrequency) const {
-  double max = -DBL_MAX;
   int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int k = 0; k < numberOfPairs; k++) {
-    if (m_data[series][0][k] > max && (ignoreFrequency || m_data[series][1][k]) > 0) {
-      max = m_data[series][0][k];
+  for (int k = numberOfPairs - 1; k >= 0; k--) {
+    // Unless frequencies are ignored, look for the last non null value.
+    int sortedIndex = valueIndexAtSortedIndex(series, k);
+    if (ignoreFrequency || get(series, 1, sortedIndex) > 0) {
+      return get(series, 0, sortedIndex);
     }
   }
-  return max;
+  assert(false);
+  return NAN;
 }
 
 double Store::minValue(int series, bool ignoreFrequency) const {
-  double min = DBL_MAX;
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    if (m_data[series][0][k] < min && (ignoreFrequency || m_data[series][1][k] > 0)) {
-      min = m_data[series][0][k];
+    // Unless frequencies are ignored, look for the first non null value.
+    int sortedIndex = valueIndexAtSortedIndex(series, k);
+    if (ignoreFrequency || get(series, 1, sortedIndex) > 0) {
+      return get(series, 0, sortedIndex);
     }
   }
-  return min;
+  assert(false);
+  return NAN;
 }
 
 double Store::range(int series) const {
@@ -275,8 +279,13 @@ double Store::sumOfValuesBetween(int series, double x1, double x2) const {
   double result = 0;
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    if (m_data[series][0][k] < x2 && x1 <= m_data[series][0][k]) {
-      result += m_data[series][1][k];
+    int sortedIndex = valueIndexAtSortedIndex(series, k);
+    double value = get(series, 0, sortedIndex);
+    if (value > x2) {
+      break;
+    }
+    if (value >= x1) {
+      result += get(series, 1, sortedIndex);
     }
   }
   return result;
@@ -288,33 +297,31 @@ double Store::sortedElementAtCumulatedFrequency(int series, double k, bool creat
 }
 
 double Store::sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement) const {
-  // TODO: use another algorithm (ex quickselect) to avoid quadratic complexity
+  // Find the element after which cumulated population exceeds the population.
   int numberOfPairs = numberOfPairsOfSeries(series);
-  double bufferValues[k_maxNumberOfPairs];
-  memcpy(bufferValues, m_data[series][0], numberOfPairs*sizeof(double));
-  int sortedElementIndex = 0;
-  double cumulatedNumberOfElements = 0.0;
-  while (cumulatedNumberOfElements < population-DBL_EPSILON) {
-    sortedElementIndex = minIndex(bufferValues, numberOfPairs);
-    bufferValues[sortedElementIndex] = DBL_MAX;
-    cumulatedNumberOfElements += m_data[series][1][sortedElementIndex];
+  int elementSortedIndex;
+  double cumulatedPopulation = 0.0;
+  for (int k = 0; k < numberOfPairs; k++) {
+    elementSortedIndex = k;
+    cumulatedPopulation += get(series, 1, valueIndexAtSortedIndex(series, k));
+    if (cumulatedPopulation >= population-DBL_EPSILON) {
+      break;
+    }
   }
 
-  if (createMiddleElement && std::fabs(cumulatedNumberOfElements - population) < DBL_EPSILON) {
-    /* There is an element of cumulated frequency k, so the result is the mean
-     * between this element and the next element (in terms of cumulated
+  if (createMiddleElement && std::fabs(cumulatedPopulation - population) < DBL_EPSILON) {
+    /* There is an element of cumulated frequency population, so the result is
+     * the mean between this element and the next element (in terms of cumulated
      * frequency) that has a non-null frequency. */
-    int nextElementIndex = minIndex(bufferValues, numberOfPairs);
-    while (m_data[series][1][nextElementIndex] == 0 && bufferValues[nextElementIndex] != DBL_MAX) {
-      bufferValues[nextElementIndex] = DBL_MAX;
-      nextElementIndex = minIndex(bufferValues, numberOfPairs);
-    }
-    if (bufferValues[nextElementIndex] != DBL_MAX) {
-      return (m_data[series][0][sortedElementIndex] + m_data[series][0][nextElementIndex]) / 2.0;
+    for (int k = elementSortedIndex + 1; k < numberOfPairs; k++) {
+      int nextElementSortedIndex = valueIndexAtSortedIndex(series, k);
+      if (get(series, 1, nextElementSortedIndex) > 0.0) {
+        return (get(series, 0, valueIndexAtSortedIndex(series, elementSortedIndex)) + get(series, 0, nextElementSortedIndex)) / 2.0;
+      }
     }
   }
 
-  return m_data[series][0][sortedElementIndex];
+  return get(series, 0, valueIndexAtSortedIndex(series, elementSortedIndex));
 }
 
 void Store::countDistinctValuesUntil(int series, int i, double * value, int * distinctValues) const {
@@ -368,25 +375,8 @@ int Store::totalNormalProbabilityValues(int series) const {
 }
 
 double Store::normalProbabilityValueAtIndex(int series, int i) const {
-  /* We could get rid of sortedIndex here by returning
-   * sortedElementAtCumulatedPopulation(series, i + 1). However, this would sort
-   * the series at each call. */
-  // TODO : Handle situations where frequencies overflow or aren't integers
   assert(frequenciesAreInteger(series));
-  int population = 0;
-  for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
-    double frequency = std::round(get(series, 1, valueIndexAtSortedIndex(series, j)));
-    assert(frequency < static_cast<double>(INT_MAX));
-    int frequencyInt = static_cast<int>(frequency);
-    assert(frequencyInt < INT_MAX - population);
-    population += frequencyInt;
-    if (population > i) {
-      assert(get(series, 0, valueIndexAtSortedIndex(series, j)) == sortedElementAtCumulatedPopulation(series, i + 1));
-      return get(series, 0, valueIndexAtSortedIndex(series, j));
-    }
-  }
-  assert(false);
-  return NAN;
+  return sortedElementAtCumulatedPopulation(series, i + 1, false);
 }
 
 double Store::normalProbabilityResultAtIndex(int series, int i) const {
@@ -397,18 +387,8 @@ double Store::normalProbabilityResultAtIndex(int series, int i) const {
   return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<double>(plottingPosition, 0.0, 1.0);
 }
 
-int Store::minIndex(double * bufferValues, int bufferLength) const {
-  int index = 0;
-  for (int i = 1; i < bufferLength; i++) {
-    if (bufferValues[index] > bufferValues[i]) {
-      index = i;
-    }
-  }
-  return index;
-}
-
 size_t Store::valueIndexAtSortedIndex(int series, int i) const {
-  assert(i >= 0 && i <= numberOfPairsOfSeries(series));
+  assert(i >= 0 && i < numberOfPairsOfSeries(series));
   buildSortedIndex(series);
   return m_sortedIndex[series][i];
 }

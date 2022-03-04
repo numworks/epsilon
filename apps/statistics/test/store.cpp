@@ -112,28 +112,17 @@ void assert_data_statictics_equal_to(
     assert_value_approximately_equal_to(quartileRange, shouldUseFrequencyMethod ? trueQuartileRangeFrequencyMethod : trueQuartileRangeSublistMethod, 0.0, 0.0);
   }
 
-  // Compute the sorted indexes.
-  int sortedIndex[Store::k_maxNumberOfPairs];
-  store.buildSortedIndex(seriesIndex, sortedIndex);
-  // Assert it is effectively sorted
-  double previousValue;
-  for (int i = 0; i < numberOfData; i++) {
-    double nextValue = v[sortedIndex[i]];
-    quiz_assert(i == 0 || nextValue >= previousValue);
-    previousValue = nextValue;
-  }
-
   // Compare the cumulated frequency data points
-  quiz_assert(store.totalCumulatedFrequencyValues(seriesIndex, sortedIndex) == totalCumulatedFrequency);
+  quiz_assert(store.totalCumulatedFrequencyValues(seriesIndex) == totalCumulatedFrequency);
   for (int i = 0; i < totalCumulatedFrequency; i++) {
-    assert_value_approximately_equal_to(trueCumulatedFrequencyValues[i], store.cumulatedFrequencyValueAtIndex(seriesIndex, sortedIndex, i), precision, nullExpectedPrecision);
-    assert_value_approximately_equal_to(trueCumulatedFrequencyResults[i], store.cumulatedFrequencyResultAtIndex(seriesIndex, sortedIndex, i), precision, nullExpectedPrecision);
+    assert_value_approximately_equal_to(trueCumulatedFrequencyValues[i], store.cumulatedFrequencyValueAtIndex(seriesIndex, i), precision, nullExpectedPrecision);
+    assert_value_approximately_equal_to(trueCumulatedFrequencyResults[i], store.cumulatedFrequencyResultAtIndex(seriesIndex, i), precision, nullExpectedPrecision);
   }
 
   // Compare the cumulated frequency data points
   quiz_assert(store.totalNormalProbabilityValues(seriesIndex) == totalNormalProbability);
   for (int i = 0; i < totalNormalProbability; i++) {
-    assert_value_approximately_equal_to(trueNormalProbabilityValues[i], store.normalProbabilityValueAtIndex(seriesIndex, sortedIndex, i), precision, nullExpectedPrecision);
+    assert_value_approximately_equal_to(trueNormalProbabilityValues[i], store.normalProbabilityValueAtIndex(seriesIndex, i), precision, nullExpectedPrecision);
     assert_value_approximately_equal_to(trueNormalProbabilityResults[i], store.normalProbabilityResultAtIndex(seriesIndex, i), precision, nullExpectedPrecision);
   }
 }

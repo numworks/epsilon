@@ -275,7 +275,8 @@ void HistogramController::initYRangeParameters(int series) {
 }
 
 void HistogramController::initBarParameters() {
-  assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
+  int series = selectedSeriesIndex();
+  assert(series >= 0 && m_store->sumOfOccurrences(series) > 0);
   double xMin;
   double xMax;
   preinitXRangeParameters(&xMin, &xMax);
@@ -289,11 +290,12 @@ void HistogramController::initBarParameters() {
   if (barWidth <= 0.0) {
     barWidth = 1.0;
   } else {
-    // Truncate the bar width, as we convert from float to double
+    // Ceil the bar width, as we convert from float to double
     const double precision = 7; // TODO factorize? This is an experimental value, the same as in Expression;;Epsilon<float>()
     const double logBarWidth = IEEE754<double>::exponentBase10(barWidth);
-    barWidth = ((int)(barWidth * std::pow(10.0, precision - logBarWidth))) * std::pow(10.0, -precision + logBarWidth);
+    barWidth = std::ceil(barWidth * std::pow(10.0, precision - logBarWidth)) * std::pow(10.0, -precision + logBarWidth);
   }
+  assert(barWidth > 0.0 && std::ceil((m_store->maxValue(series) - std::min(m_store->minValue(series), xMin)) / barWidth) <= Store::k_maxNumberOfBars);
   m_store->setBarWidth(barWidth);
 }
 

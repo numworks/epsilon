@@ -5,6 +5,9 @@
 
 #include "models/statistic/homogeneity_test.h"
 #include "probability_icon.h"
+#include "images/confidence_interval.h"
+#include "images/probability.h"
+#include "images/significance_test.h"
 
 namespace Probability {
 
@@ -68,10 +71,13 @@ App::App(Snapshot * snapshot) :
                      &m_categoricalTypeController,
                      &m_inputController,
                      snapshot->statistic()),
-    m_menuController(&m_stackViewController,
-                     &m_distributionController,
-                     &m_testController,
-                     snapshot->inference()),
+    m_menuController(
+        &m_stackViewController,
+        {&m_distributionController, &m_testController, &m_testController},
+        {{I18n::Message::ProbaApp, I18n::Message::ProbaDescr}, {I18n::Message::Tests, I18n::Message::TestDescr}, {I18n::Message::Intervals, I18n::Message::IntervalDescr}},
+        {ImageStore::Probability, ImageStore::SignificanceTest, ImageStore::ConfidenceInterval},
+        this
+      ),
     m_stackViewController(&m_modalViewController, &m_menuController, StackViewController::Style::GrayGradation),
     m_bufferDestructor(nullptr)
 {
@@ -107,6 +113,16 @@ void App::cleanBuffer(DynamicCellsDataSourceDestructor * destructor) {
     m_bufferDestructor->destroyCells();
   }
   m_bufferDestructor = destructor;
+}
+
+void App::selectSubApp(int subAppIndex) {
+  if (subAppIndex < 0) {
+    return;
+  }
+  if (Inference::Initialize(snapshot()->inference(), static_cast<Inference::SubApp>(subAppIndex))) {
+    m_distributionController.selectRow(0);
+    m_testController.selectRow(0);
+  }
 }
 
 const App::Descriptor * App::Snapshot::descriptor() const {

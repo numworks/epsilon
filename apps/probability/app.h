@@ -1,6 +1,7 @@
 #ifndef PROBABILITY_APP_H
 #define PROBABILITY_APP_H
 
+#include <apps/shared/menu_controller.h>
 #include <apps/shared/shared_app.h>
 #include <apps/shared/text_field_delegate_app.h>
 #include <escher/app.h>
@@ -16,7 +17,6 @@
 #include "controllers/input_goodness_controller.h"
 #include "controllers/input_homogeneity_controller.h"
 #include "controllers/interval_graph_controller.h"
-#include "controllers/menu_controller.h"
 #include "controllers/parameters_controller.h"
 #include "controllers/results_controller.h"
 #include "controllers/results_homogeneity_controller.h"
@@ -27,7 +27,7 @@
 
 namespace Probability {
 
-class App : public Shared::TextFieldDelegateApp {
+class App : public Shared::TextFieldDelegateApp, public Shared::MenuControllerDelegate {
 public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {
@@ -53,7 +53,6 @@ public:
     Statistic * statistic() { return m_modelBuffer.statistic(); }
 
     Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> * pageQueue() { return &m_pageQueue; }
-
   private:
     friend App;
     // TODO: optimize size of Stack
@@ -82,7 +81,12 @@ public:
 
   TELEMETRY_ID("Probability");
 
-private:
+  // Shared::MenuControllerDelegate
+  void selectSubApp(int subAppIndex) override;
+  int selectedSubApp() const override { return static_cast<int>(snapshot()->inference()->subApp()); }
+  int numberOfSubApps() const override { return static_cast<int>(Inference::SubApp::NumberOfSubApps); }
+
+      private:
   App(Snapshot *);
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
@@ -101,7 +105,7 @@ private:
   ParametersController m_parameterController;
   DistributionController m_distributionController;
   TestController m_testController;
-  MenuController m_menuController;
+  Shared::MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
   /* Buffer used for allocating table cells to avoid duplicating required
    * space for these memory-needy tables. */

@@ -9,7 +9,6 @@ app_solver_test_src = $(addprefix apps/solver/,\
 
 app_solver_src = $(addprefix apps/solver/,\
   app.cpp \
-  menu_controller.cpp \
   equations/equation_list_view.cpp \
   equations/equation_models_parameter_controller.cpp \
   equations/interval_controller.cpp \

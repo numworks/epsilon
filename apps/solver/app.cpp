@@ -2,6 +2,8 @@
 #include <apps/i18n.h>
 #include "solver_icon.h"
 #include <poincare/comparison_operator.h>
+#include "equations_icon.h"
+#include "finance_icon.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -44,16 +46,22 @@ App::App(Snapshot * snapshot) :
   m_interestController(&m_stackViewController, &m_inputViewController, &m_financeResultController, m_financeData.interestData()),
   m_interestMenuController(&m_stackViewController, &m_interestController, m_financeData.interestData()),
   m_financeMenuController(&m_stackViewController, &m_interestMenuController, m_financeData.interestData()),
-  m_menuController(&m_stackViewController, &m_listFooter, &m_financeMenuController),
+  m_menuController(
+      &m_stackViewController,
+      {&m_listFooter, &m_financeMenuController},
+      {{I18n::Message::EquationsSubAppTitle, I18n::Message::EquationsSubAppDescription}, {I18n::Message::FinanceSubAppTitle, I18n::Message::FinanceSubAppDescription}},
+      {ImageStore::EquationsIcon, ImageStore::FinanceIcon},
+      snapshot
+    ),
   m_stackViewController(&m_inputViewController, &m_menuController, StackViewController::Style::GrayGradation),
   m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController)
 {}
 
 void App::didBecomeActive(Escher::Window * windows) {
-  // If subApp is known, directly open the subApp controller
-  if (snapshot()->subApp() == Snapshot::SubApp::Equation) {
+  // If selectedSubApp is known, directly open the selectedSubApp controller
+  if (snapshot()->selectedSubApp() == static_cast<int>(Snapshot::SubApp::Equation)) {
     m_menuController.stackOpenPage(&m_listFooter);
-  } else if (snapshot()->subApp() == Snapshot::SubApp::Finance) {
+  } else if (snapshot()->selectedSubApp() == static_cast<int>(Snapshot::SubApp::Finance)) {
     m_menuController.stackOpenPage(&m_financeMenuController);
   }
   Escher::App::didBecomeActive(windows);

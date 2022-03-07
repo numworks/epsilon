@@ -75,18 +75,6 @@ bool GoodnessTest::validateInputs() {
   return true;
 }
 
-double GoodnessTest::parameterAtPosition(int row, int column) const {
-  return parameterAtIndex(locationToTableIndex(row, column));
-}
-
-void GoodnessTest::setParameterAtPosition(double p, int row, int column) {
-  setParameterAtIndex(p, locationToTableIndex(row, column));
-}
-
-bool GoodnessTest::authorizedParameterAtPosition(double p, int row, int column) const {
-  return authorizedParameterAtIndex(p, locationToTableIndex(row, column));
-}
-
 bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
   if (i < numberOfStatisticParameters() && i % k_maxNumberOfColumns == 1 && std::fabs(p) < DBL_MIN) {
     // Expected value should not be null
@@ -95,45 +83,24 @@ bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
   return Chi2Test::authorizedParameterAtIndex(p, i);
 }
 
-// TODO : factorize with HomogeneityTest
-bool GoodnessTest::deleteParameterAtPosition(int row, int column) {
-  if (std::isnan(parameterAtPosition(row, column))) {
-    // Param is already deleted
-    return false;
-  }
-  setParameterAtPosition(k_undefinedValue, row, column);
-  for (int i = 0; i < k_maxNumberOfColumns; i++) {
-    if (i != column && !std::isnan(parameterAtPosition(row, i))) {
-      // There is another non deleted value in this row
-      return false;
-    }
-  }
-  return true;
-}
-
 int GoodnessTest::numberOfValuePairs() const {
   return computeNumberOfRows();
 }
 
-int GoodnessTest::locationToTableIndex(int row, int column) const {
-  assert((column >= 0 && column < k_maxNumberOfColumns) && (row >= 0 && row < k_maxNumberOfRows));
-  return k_maxNumberOfColumns * row + column;
-}
-
 double GoodnessTest::expectedValue(int index) const {
-  return m_input[locationToTableIndex(index, 1)];
+  return m_input[Index2DToIndex(index, 1)];
 }
 
 double GoodnessTest::observedValue(int index) const {
-  return m_input[locationToTableIndex(index, 0)];
+  return m_input[Index2DToIndex(index, 0)];
 }
 
 void GoodnessTest::setExpectedValue(int index, double value) {
-  parametersArray()[locationToTableIndex(index, 1)] = value;
+  parametersArray()[Index2DToIndex(index, 1)] = value;
 }
 
 void GoodnessTest::setObservedValue(int index, double value) {
-  parametersArray()[locationToTableIndex(index, 0)] = value;
+  parametersArray()[Index2DToIndex(index, 0)] = value;
 }
 
 }  // namespace Probability

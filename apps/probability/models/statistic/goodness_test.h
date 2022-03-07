@@ -21,10 +21,6 @@ public:
   void compute() override;
 
   // Chi2Test
-  void setParameterAtPosition(double p, int row, int column) override;
-  double parameterAtPosition(int row, int column) const override;
-  bool authorizedParameterAtPosition(double p, int row, int column) const override;
-  bool deleteParameterAtPosition(int row, int column) override;
   void recomputeData() override;
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; };
   int maxNumberOfRows() const override { return k_maxNumberOfRows; };
@@ -50,7 +46,6 @@ private:
   double * parametersArray() override { return m_input; }
   void setExpectedValue(int index, double value);
   void setObservedValue(int index, double value);
-  int locationToTableIndex(int row, int column) const;
 
   double m_input[k_maxNumberOfRows * k_maxNumberOfColumns];
 };

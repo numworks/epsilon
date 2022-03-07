@@ -3,13 +3,13 @@
 
 #include <apps/i18n.h>
 #include "../shared/expression_field_delegate_app.h"
+#include "../shared/menu_controller.h"
 #include "../shared/shared_app.h"
 #include "equations/equation_store.h"
 #include "finance/data.h"
 #include "equations/list_controller.h"
 #include "equations/interval_controller.h"
 #include "equations/solutions_controller.h"
-#include "menu_controller.h"
 #include "finance/finance_menu_controller.h"
 #include "finance/interest_controller.h"
 #include "finance/interest_menu_controller.h"
@@ -28,13 +28,14 @@ public:
   };
 
   // Snapshot
-  class Snapshot : public Shared::SharedApp::Snapshot {
+  class Snapshot : public Shared::SharedApp::Snapshot, public Shared::MenuControllerDelegate {
   public:
     // Subapp
     enum class SubApp {
-      Equation,
-      Finance,
-      Unknown
+      Unknown = -1,
+      Equation = 0,
+      Finance = 1,
+      NumberOfSubApps
     };
     Snapshot() : m_activeSubapp(SubApp::Unknown), m_equationStore() {};
     App * unpack(Escher::Container * container) override {
@@ -44,8 +45,10 @@ public:
     void reset() override;
     EquationStore * equationStore() { return &m_equationStore; }
     void storageDidChangeForRecord(const Ion::Storage::Record record) override;
-    void setSubApp(SubApp subapp) { m_activeSubapp = subapp; }
-    SubApp subApp() const { return m_activeSubapp; }
+    // Shared::MenuControllerDelegate
+    void selectSubApp(int subAppIndex) override { m_activeSubapp = static_cast<SubApp>(subAppIndex); }
+    int selectedSubApp() const override { return static_cast<int>(m_activeSubapp); }
+  virtual int numberOfSubApps() const override { return static_cast<int>(SubApp::NumberOfSubApps); }
   private:
     void tidy() override;
     SubApp m_activeSubapp;
@@ -79,7 +82,7 @@ private:
   InterestController m_interestController;
   InterestMenuController m_interestMenuController;
   FinanceMenuController m_financeMenuController;
-  MenuController m_menuController;
+  Shared::MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;
 };

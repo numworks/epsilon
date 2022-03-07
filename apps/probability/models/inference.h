@@ -23,7 +23,8 @@ public:
   enum class SubApp {
     Probability,
     Test,
-    Interval
+    Interval,
+    NumberOfSubApps
   };
   virtual void tidy() {}
   virtual I18n::Message title() const = 0;

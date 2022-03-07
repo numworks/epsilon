@@ -61,6 +61,7 @@ app_shared_src = $(addprefix apps/shared/,\
   layout_field_delegate.cpp \
   list_parameter_controller.cpp \
   localization_controller.cpp \
+  menu_controller.cpp \
   message_view.cpp \
   ok_view.cpp \
   parameter_text_field_delegate.cpp \

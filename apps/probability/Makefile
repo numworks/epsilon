@@ -73,7 +73,6 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
   input_goodness_controller.cpp \
   input_homogeneity_controller.cpp \
   interval_graph_controller.cpp \
-  menu_controller.cpp \
   parameters_controller.cpp \
   results_controller.cpp \
   results_homogeneity_controller.cpp \

@@ -34,14 +34,14 @@ public:
   int indexOfDegreeOfFreedom() const { return indexOfThreshold() + 1; }
 
   // Matrix special functions
-  virtual void setParameterAtPosition(double value, int row, int column) = 0;
-  void setParameterAtIndex(double p, int index) override;  // Hidden
-  virtual double parameterAtPosition(int row, int column) const = 0;
-  virtual bool authorizedParameterAtPosition(double p, int row, int column) const = 0;
+  void setParameterAtPosition(double value, int row, int column);
+  void setParameterAtIndex(double p, int index) override;
+  double parameterAtPosition(int row, int column) const;
+  bool authorizedParameterAtPosition(double p, int row, int column) const;
   bool authorizedParameterAtIndex(double p, int i) const override;
   /* Delete parameter at location, return true if the deleted param was the last
    * non-deleted value of its row or column. */
-  virtual bool deleteParameterAtPosition(int row, int column) = 0;
+  virtual bool deleteParameterAtPosition(int row, int column);
   virtual void recomputeData() = 0;
   virtual int maxNumberOfColumns() const = 0;
   virtual int maxNumberOfRows() const = 0;
@@ -62,6 +62,14 @@ protected:
   virtual double observedValue(int index) const = 0;
   virtual int numberOfValuePairs() const = 0;
   double computeChi2();
+
+  struct Index2D {
+    int row;
+    int col;
+  };
+  Index2D IndexToIndex2D(int index);
+  int Index2DToIndex(Index2D indexes) const;
+  int Index2DToIndex(int row, int column) const;
 
 private:
   float computeXMin() const override { return DistributionChi2::XMin(m_degreesOfFreedom); }

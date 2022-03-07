@@ -20,15 +20,6 @@ void HomogeneityTest::setGraphTitle(char * buffer, size_t bufferSize) const {
           pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-void HomogeneityTest::setParameterAtPosition(double p, int row, int column) {
-  assert(index2DToIndex(row, column) < indexOfThreshold());
-  setParameterAtIndex(p, index2DToIndex(row, column));
-}
-
-double HomogeneityTest::parameterAtPosition(int row, int column) const {
-  return parameterAtIndex(index2DToIndex(row, column));
-}
-
 bool HomogeneityTest::authorizedParameterAtIndex(double p, int i) const {
   if (i < numberOfValuePairs() && p < 0.0) {
     // Frequencies should be >= 0
@@ -37,36 +28,17 @@ bool HomogeneityTest::authorizedParameterAtIndex(double p, int i) const {
   return Chi2Test::authorizedParameterAtIndex(p, i);
 }
 
-bool HomogeneityTest::authorizedParameterAtPosition(double p, int row, int column) const {
-  return authorizedParameterAtIndex(p, index2DToIndex(row, column));
-}
-
 bool HomogeneityTest::deleteParameterAtPosition(int row, int column) {
-  if (std::isnan(parameterAtPosition(row, column))) {
-    // Param is already deleted
-    return false;
-  }
-  setParameterAtPosition(k_undefinedValue, row, column);
-  bool shouldDeleteRow = true;
-  for (int i = 0; i < k_maxNumberOfColumns; i++) {
-    if (i != column && !std::isnan(parameterAtPosition(row, i))) {
-      // There is another non deleted value in this row
-      shouldDeleteRow = false;
-      break;
-    }
-  }
-  if (shouldDeleteRow) {
+  if (Chi2Test::deleteParameterAtPosition(row, column)) {
     return true;
   }
-  bool shouldDeleteCol = true;
   for (int j = 0; j < k_maxNumberOfRows; j++) {
     if (j != row && !std::isnan(parameterAtPosition(j, column))) {
       // There is another non deleted value in this column
-      shouldDeleteCol = false;
-      break;
+      return false;
     }
   }
-  return shouldDeleteCol;
+  return true;
 }
 
 void HomogeneityTest::compute() {
@@ -80,7 +52,7 @@ void HomogeneityTest::compute() {
 }
 
 double HomogeneityTest::expectedValueAtLocation(int row, int column) {
-  return m_expectedValues[index2DToIndex(row, column)];
+  return m_expectedValues[Index2DToIndex(row, column)];
 }
 
 double HomogeneityTest::observedValue(int resultsIndex) const {
@@ -118,19 +90,6 @@ int HomogeneityTest::numberOfValuePairs() const {
   return max.row * max.col;
 }
 
-HomogeneityTest::Index2D HomogeneityTest::indexToIndex2D(int index) {
-  return HomogeneityTest::Index2D{.row = index / k_maxNumberOfColumns,
-                                       .col = index % k_maxNumberOfColumns};
-}
-
-int HomogeneityTest::index2DToIndex(Index2D indexes) const {
-  return index2DToIndex(indexes.row, indexes.col);
-}
-
-int HomogeneityTest::index2DToIndex(int row, int column) const {
-  return column + row * k_maxNumberOfColumns;
-}
-
 HomogeneityTest::Index2D HomogeneityTest::resultsIndexToIndex2D(int resultsIndex) const {
   assert(m_numberOfResultColumns > 0);
   return HomogeneityTest::Index2D{.row = resultsIndex / m_numberOfResultColumns,
@@ -138,7 +97,7 @@ HomogeneityTest::Index2D HomogeneityTest::resultsIndexToIndex2D(int resultsIndex
 }
 
 int HomogeneityTest::resultsIndexToArrayIndex(int resultsIndex) const {
-  return index2DToIndex(resultsIndexToIndex2D(resultsIndex));
+  return Index2DToIndex(resultsIndexToIndex2D(resultsIndex));
 }
 
 void HomogeneityTest::computeExpectedValues(Index2D max) {
@@ -146,7 +105,7 @@ void HomogeneityTest::computeExpectedValues(Index2D max) {
   m_total = 0;
   for (int row = 0; row < max.row; row++) {
     for (int col = 0; col < max.col; col++) {
-      // int index = index2DToIndex(row, col);
+      // int index = Index2DToIndex(row, col);
       if (row == 0) {
         m_columnTotals[col] = 0;
       }
@@ -162,7 +121,7 @@ void HomogeneityTest::computeExpectedValues(Index2D max) {
   // Then fill array
   for (int row = 0; row < max.row; row++) {
     for (int col = 0; col < max.col; col++) {
-      int index = index2DToIndex(row, col);
+      int index = Index2DToIndex(row, col);
       // Note : Divide before multiplying to avoid some cases of double overflow
       m_expectedValues[index] = (m_rowTotals[row] / m_total) * m_columnTotals[col];
     }

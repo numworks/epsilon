@@ -22,9 +22,6 @@ public:
   void compute() override;
 
   // Chi2Test
-  void setParameterAtPosition(double value, int row, int column) override;
-  double parameterAtPosition(int row, int column) const override;
-  bool authorizedParameterAtPosition(double p, int row, int column) const override;
   bool deleteParameterAtPosition(int row, int column) override;
   void recomputeData() override;
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; };
@@ -42,14 +39,14 @@ public:
   double rowTotal(int row) { return m_rowTotals[row]; }
   double columnTotal(int column) { return m_columnTotals[column]; }
 
-  struct Index2D {
-    int row;
-    int col;
-  };
+  using Chi2Test::Index2D; // Make public
   Index2D computeDimensions() const;
 
 private:
   bool authorizedParameterAtIndex(double p, int i) const override;
+  Index2D resultsIndexToIndex2D(int resultsIndex) const;
+  int resultsIndexToArrayIndex(int resultsIndex) const;
+
   // Chi2Test
   double expectedValue(int resultsIndex) const override;
   double observedValue(int resultsIndex) const override;
@@ -59,12 +56,6 @@ private:
   double expectedValueAtPosition(Index2D index);
   int computeDegreesOfFreedom(Index2D max);
   double * parametersArray() override { return m_input; }
-  // TODO: factorize in Chi2Test
-  Index2D indexToIndex2D(int index);
-  int index2DToIndex(Index2D indexes) const;
-  int index2DToIndex(int row, int column) const;
-  Index2D resultsIndexToIndex2D(int resultsIndex) const;
-  int resultsIndexToArrayIndex(int resultsIndex) const;
   void computeExpectedValues(Index2D max);
 
   double m_input[k_maxNumberOfColumns * k_maxNumberOfRows];

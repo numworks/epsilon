@@ -112,6 +112,7 @@ FunctionStore * FunctionGraphController::functionStore() const {
 void FunctionGraphController::initCursorParameters() {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   const int activeFunctionsCount = functionStore()->numberOfActiveFunctions();
+  assert(activeFunctionsCount > 0);
   int functionIndex = 0;
   Coordinate2D<double> xy;
   double t;

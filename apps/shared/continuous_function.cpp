@@ -101,7 +101,7 @@ ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
   }
 }
 
-I18n::Message ContinuousFunction::plotTypeMessage() {
+I18n::Message ContinuousFunction::plotTypeMessage() const {
   PlotType type = plotType();
   if (!IsPlotTypeInactive(type) && equationType() != ExpressionNode::Type::Equal) {
     // Whichever the plot type, InequationType describes the function

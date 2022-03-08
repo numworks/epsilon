@@ -91,7 +91,7 @@ public:
   // If a plotType is equivalent to an hyperbola
   static bool IsPlotTypeHyperbola(PlotType type) { return type == PlotType::CartesianHyperbola || type == PlotType::Hyperbola; }
   // Return message describing function's PlotType
-  I18n::Message plotTypeMessage();
+  I18n::Message plotTypeMessage() const;
   // Return the type of area to draw
   AreaType areaType() const;
   // Return the equation's symbol

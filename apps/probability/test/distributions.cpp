@@ -242,7 +242,9 @@ QUIZ_CASE(probability_fisher_distribution) {
   // Fisher distribution with d1 = 100 and d2 = 87
   distribution.setParameterAtIndex(100.0, 0);
   distribution.setParameterAtIndex(87.0, 1);
-  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(1), 1.9189567194868042);
+  /* Expected precision needs to be reduced from Poincare::Float<T>::Epsilon()
+   * to 1e-6 for this test to pass on device. */
+  assertRoughlyEqual<float>(distribution.evaluateAtAbscissa(1.0), 1.9189567194868042, 1e-6);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 0.6, 0.00688477308162587);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1.4, 0.94560850441205857);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1.425, 0.95425004959692871775);

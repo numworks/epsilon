@@ -4,7 +4,6 @@ namespace Probability {
 
 bool Statistic::initializeSignificanceTest(SignificanceTestType testType) {
   if (testType == significanceTestType()) {
-    initParameters();
     return false;
   }
   return true;
@@ -12,7 +11,6 @@ bool Statistic::initializeSignificanceTest(SignificanceTestType testType) {
 
 bool Statistic::initializeDistribution(DistributionType type) {
   if (type == distributionType()) {
-    initParameters();
     return false;
   }
   return true;

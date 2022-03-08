@@ -37,7 +37,6 @@ public:
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
-  using Escher::ScrollView::layoutSubviews;  // Made public
   KDSize contentSize() const override {
     return KDSize(maxContentWidthDisplayableWithoutScrolling(),
                   constContentView()->minimalSizeForOptimalDisplay().height());

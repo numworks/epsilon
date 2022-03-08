@@ -42,7 +42,6 @@ bool SignificanceTest::ValidThreshold(double p) {
 
 bool SignificanceTest::InitializeDistribution(Statistic * statistic, DistributionType type) {
   if (type == statistic->distributionType()) {
-    statistic->initParameters();
     return false;
   }
   return true;

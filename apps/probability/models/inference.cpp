@@ -13,18 +13,22 @@ bool Inference::Initialize(Inference * inference, SubApp subApp) {
     return false;
   }
   inference->~Inference();
+  Statistic * s = nullptr;
   switch (subApp) {
     case SubApp::Probability:
       new (inference) BinomialDistribution();
       break;
     case SubApp::Test:
-      new (inference) OneMeanTTest();
+      s = new (inference) OneMeanTTest();
       break;
     case SubApp::Interval:
-      new (inference) OneMeanTInterval();
+      s = new (inference) OneMeanTInterval();
       break;
     default:
       assert(false);
+  }
+  if (s) {
+    s->initParameters();
   }
   return true;
 }

@@ -668,11 +668,6 @@ bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equatio
 }
 
 Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
-  // See comment on isCircularlyDefined in ExpressionModel::expressionReduced.
-  if (record->fullName() != nullptr && record->fullName()[0] != k_unnamedRecordFirstChar && isCircularlyDefined(record, context)) {
-    m_plotType = PlotType::Undefined;
-    return Undefined::Builder();
-  }
   Expression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
     m_plotType = PlotType::Undefined;
@@ -725,11 +720,17 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
     result = result.replaceSymbolWithExpression(Symbol::Builder(k_ordinateName[0]), Symbol::Builder(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
+  result = Expression::ExpressionWithoutSymbols(result, context);
+  if (result.isUninitialized()) {
+    // result was Circularly defined, make it Undefined for the next steps.
+    result = Undefined::Builder();
+  }
   PoincareHelpers::CloneAndReduce(
       &result, context, ExpressionNode::ReductionTarget::SystemForAnalysis,
       ExpressionNode::SymbolicComputation::
           ReplaceAllDefinedSymbolsWithDefinition);
 
+  assert(!result.isUninitialized());
   if (isUnnamedFunction) {
     result = result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateName[0]));
   }
@@ -740,6 +741,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
     // Use the computed equation to update the plot type.
     updatePlotType(result, context);
   }
+  assert(!result.isUninitialized());
   return result;
 }
 
@@ -849,6 +851,7 @@ void ContinuousFunction::Model::updatePlotType(const Expression equation, Contex
   // Named functions : PlotType has been updated when parsing the equation
   PlotType modelPlotType = plotType();
 
+  assert(!equation.isUninitialized());
   if (equation.type() == ExpressionNode::Type::Undefined) {
     // Equation is undefined, preserve symbol.
     switch (modelPlotType) {

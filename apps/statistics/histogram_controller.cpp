@@ -282,20 +282,19 @@ void HistogramController::initBarParameters() {
   preinitXRangeParameters(&xMin, &xMax);
   m_store->setFirstDrawnBarAbscissa(xMin);
   double barWidth = m_store->xGridUnit();
-  if ((xMax - xMin)/barWidth > Store::k_maxNumberOfBars) {
-    /* xMax may exceed m_store->xMax() because of graph range limitations,
-     * increase barWidth to ensure less than Store::k_maxNumberOfBars bars. */
-    barWidth = std::ceil((xMax - xMin)/Store::k_maxNumberOfBars);
-  }
   if (barWidth <= 0.0) {
     barWidth = 1.0;
   } else {
-    // Ceil the bar width, as we convert from float to double
+    // Round the bar width, as we convert from float to double
     const double precision = 7; // TODO factorize? This is an experimental value, the same as in Expression;;Epsilon<float>()
     const double logBarWidth = IEEE754<double>::exponentBase10(barWidth);
-    barWidth = std::ceil(barWidth * std::pow(10.0, precision - logBarWidth)) * std::pow(10.0, -precision + logBarWidth);
+    const double truncateFactor = std::pow(10.0, precision - logBarWidth);
+    barWidth = std::round(barWidth * truncateFactor) / truncateFactor;
   }
-  assert(barWidth > 0.0 && std::ceil((m_store->maxValue(series) - std::min(m_store->minValue(series), xMin)) / barWidth) <= Store::k_maxNumberOfBars);
+  if (std::ceil((xMax - xMin) / barWidth) > Store::k_maxNumberOfBars) {
+    barWidth = (xMax - xMin) / (Store::k_maxNumberOfBars - 1);
+  }
+  assert(barWidth > 0.0 && std::ceil((xMax - xMin) / barWidth) <= Store::k_maxNumberOfBars);
   m_store->setBarWidth(barWidth);
 }
 

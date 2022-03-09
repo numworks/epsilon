@@ -113,7 +113,7 @@ int MemoizedListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
 
 KDCoordinate MemoizedListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int index) {
   // A non-null implementation of cellWidth is required to compute cell height.
-  assert(cellWidth() != 0);
+  assert(cell->bounds().width() != 0);
   // Set cell's frame width
   cell->setSize(KDSize(cellWidth(), cell->bounds().height()));
   // Setup cell as if it was to be displayed

@@ -65,7 +65,7 @@ bool DistributionController::handleEvent(Ion::Events::Event event) {
 
 KDCoordinate DistributionController::nonMemoizedRowHeight(int j) {
   DistributionCell tempCell;
-  return heightForCellAtIndex(&tempCell, j);
+  return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
 HighlightCell * DistributionController::reusableCell(int index, int type) {

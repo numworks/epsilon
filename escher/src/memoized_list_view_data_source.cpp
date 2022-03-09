@@ -111,6 +111,12 @@ int MemoizedListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return 0;
 }
 
+KDCoordinate MemoizedListViewDataSource::heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index) {
+  // Warning: this copy the size of a random cell of the table
+  cell->setSize(reusableCell(0, typeAtIndex(index))->bounds().size());
+  return heightForCellAtIndex(cell, index);
+}
+
 KDCoordinate MemoizedListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int index) {
   // A non-null implementation of cellWidth is required to compute cell height.
   assert(cell->bounds().width() != 0);

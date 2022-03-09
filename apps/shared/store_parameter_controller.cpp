@@ -69,7 +69,7 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
 
 KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
   /* We just need to find a cell of the right type
-   * heightForCellAtIndex will do the rest */
+   * heightForCellAtIndexWithWidthInit will do the rest */
   Escher::HighlightCell * cell;
   if (index == k_indexOfSortCell) {
     cell = &m_sortCell;

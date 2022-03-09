@@ -67,7 +67,7 @@ KDCoordinate IllustratedListController::nonMemoizedRowHeight(int j) {
     return 0;
   }
   ScrollableThreeExpressionsCell tempCell;
-  return heightForCellAtIndex(&tempCell, j);
+  return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
 void IllustratedListController::willDisplayCellForIndex(HighlightCell * cell, int index) {

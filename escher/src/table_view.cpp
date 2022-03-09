@@ -50,6 +50,7 @@ void TableView::layoutSubviews(bool force) {
    * FIXME:
    * Finally, this solution is not optimal at all since
    * layoutSubviews is called twice over m_contentView. */
+  dataSource()->initCellWidth(this);
   m_contentView.layoutSubviews(force);
   ScrollView::layoutSubviews(force);
 }

@@ -143,10 +143,10 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
 KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   if (m_currentPage == Page::RootMenu) {
     MessageTableCellWithMessage tempCell;
-    return heightForCellAtIndex(&tempCell, index);
+    return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   ExpressionTableCellWithExpression tempCell;
-  return heightForCellAtIndex(&tempCell, index);
+  return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
 int MathVariableBoxController::typeAtIndex(int index) {

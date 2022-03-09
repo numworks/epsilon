@@ -138,7 +138,7 @@ int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Pr
     while (j >= i && matrixChild(i,j).nullStatus(context) == ExpressionNode::NullStatus::Null) {
       j--;
     }
-    if (j == i-1) {
+    if (j <= i-1) {
       rank--;
     } else {
       break;

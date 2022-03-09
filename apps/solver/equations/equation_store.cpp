@@ -173,6 +173,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool
 
 EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols) {
   m_userVariablesUsed = !replaceFunctionsButNotSymbols;
+  ExpressionNode::SymbolicComputation symbolicComputation = replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
 
   // Step 1. Get unknown and user-defined variables
   m_variables[0][0] = 0;
@@ -204,7 +205,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
       simplifiedExpressions[i] = eq->standardForm(context, replaceFunctionsButNotSymbols, ExpressionNode::ReductionTarget::SystemForAnalysis);
     }
     const Expression e = simplifiedExpressions[i];
-    if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined || e.recursivelyMatches(Expression::IsMatrix, context, replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition)) {
+    if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined || e.recursivelyMatches(Expression::IsMatrix, context, symbolicComputation)) {
       return Error::EquationUndefined;
     }
     if (e.type() == ExpressionNode::Type::Nonreal) {
@@ -227,17 +228,19 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
   EquationStore::Error error;
 
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
-  Preferences * preferences = Preferences::sharedPreferences();
-
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
+  const int definedModels = numberOfDefinedModels();
+  assert(definedModels <= k_maxNumberOfEquations);
   {
     /* Create matrix coefficients and vector constants as:
      *   coefficients * (x y z ...) = constants */
     Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables];
     Expression constants[k_maxNumberOfEquations];
-    for (int i = 0; i < numberOfDefinedModels(); i++) {
-      isLinear = isLinear && simplifiedExpressions[i].getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context, updatedComplexFormat(context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+    for (int i = 0; i < definedModels; i++) {
+      isLinear = isLinear && simplifiedExpressions[i].getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context, updatedComplexFormat(context), angleUnit, unitFormat, symbolicComputation);
       if (!isLinear) {
-        if (numberOfDefinedModels() > 1 || numberOfVariables > 1) {
+        if (definedModels > 1 || numberOfVariables > 1) {
           return Error::NonLinearSystem;
         } else {
           break;
@@ -254,19 +257,9 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
 
   if (!isLinear) {
     // Step 3. Polynomial & Monovariable?
-    assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
+    assert(numberOfVariables == 1 && definedModels == 1);
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    m_degree = simplifiedExpressions[0]
-      .getPolynomialReducedCoefficients(
-          m_variables[0],
-          polynomialCoefficients,
-          context,
-          updatedComplexFormat(context),
-          preferences->angleUnit(),
-          GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
-          replaceFunctionsButNotSymbols ?
-            ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions :
-            ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+    m_degree = simplifiedExpressions[0].getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, context, updatedComplexFormat(context), angleUnit, unitFormat, symbolicComputation);
     if (m_degree == 2 || m_degree == 3) {
       // Polynomial degree <= 3
       m_type = Type::PolynomialMonovariable;
@@ -310,7 +303,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
        * approximate solutions. */
       m_exactSolutionIdentity[solutionIndex] = ExamModeConfiguration::exactExpressionIsForbidden(exactSolutions[i]) || strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
-        m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
+        m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), angleUnit, GlobalPreferences::sharedGlobalPreferences()->unitFormat());
       }
       solutionIndex++;
     }

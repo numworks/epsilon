@@ -197,18 +197,18 @@ bool containsVariables(const Expression e, char * variables, int maxVariableSize
 bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Expression coefficients[], Expression constant[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const {
   assert(!recursivelyMatches(IsMatrix, context, symbolicComputation));
   // variables is in fact of type char[k_maxNumberOfVariables][maxVariableSize]
-  int index = 0;
-  while (variables[index*maxVariableSize] != 0) {
-    int degree = polynomialDegree(context, &variables[index*maxVariableSize]);
+  int numberOfVariables = 0;
+  while (numberOfVariables < k_maxNumberOfVariables && variables[numberOfVariables*maxVariableSize] != 0) {
+    int degree = polynomialDegree(context, &variables[numberOfVariables*maxVariableSize]);
     if (degree > 1 || degree < 0) {
       return false;
     }
-    index++;
+    numberOfVariables++;
   }
   Expression equation = *this;
-  index = 0;
   Expression polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
-  while (variables[index*maxVariableSize] != 0) {
+  for (size_t index = 0; index < numberOfVariables; index++) {
+    assert(variables[index*maxVariableSize] != 0);
     int degree = equation.getPolynomialReducedCoefficients(&variables[index*maxVariableSize], polynomialCoefficients, context, complexFormat, angleUnit, unitFormat, symbolicComputation);
     switch (degree) {
       case 0:
@@ -228,14 +228,13 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
      * The equation supposed to be linear in all variables, so we can look for
      * the coefficients linked to the other variables in a_0. */
     equation = polynomialCoefficients[0];
-    index++;
   }
   constant[0] = Opposite::Builder(equation).cloneAndReduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
   /* The expression can be linear on all coefficients taken one by one but
    * non-linear (ex: xy = 2). We delete the results and return false if one of
    * the coefficients contains a variable. */
   bool isMultivariablePolynomial = containsVariables(constant[0], variables, maxVariableSize);
-  for (int i = 0; i < index; i++) {
+  for (int i = 0; i < numberOfVariables; i++) {
     if (isMultivariablePolynomial) {
       break;
     }

@@ -2,6 +2,7 @@
 #include "clipboard_helper.h"
 #include <ion.h>
 #include <string.h>
+#include "window.h"
 
 namespace Ion {
 namespace Clipboard {
@@ -9,12 +10,20 @@ namespace Clipboard {
 uint32_t localClipboardVersion;
 
 void write(const char * text) {
+  if (Simulator::Window::isHeadless()) {
+    // Do not use system clipboard when headless
+    return;
+  }
   /* FIXME : Handle the error if need be. */
   sendToSystemClipboard(text);
   localClipboardVersion = crc32Byte(reinterpret_cast<const uint8_t *>(text), strlen(text));
 }
 
 const char * read() {
+  if (Simulator::Window::isHeadless()) {
+    // Do not use system clipboard when headless
+    return nullptr;
+  }
   /* The buffer size is chosen to be around the size of a typical large
    * python script, allowing the user to insert most scripts into the
    * simulator using the paste feature. */

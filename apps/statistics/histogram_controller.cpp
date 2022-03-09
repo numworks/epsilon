@@ -292,6 +292,7 @@ void HistogramController::initBarParameters() {
     barWidth = std::round(barWidth * truncateFactor) / truncateFactor;
   }
   if (std::ceil((xMax - xMin) / barWidth) > Store::k_maxNumberOfBars) {
+    // Use k_maxNumberOfBars - 1 for extra margin in case of a loss of precision
     barWidth = (xMax - xMin) / (Store::k_maxNumberOfBars - 1);
   }
   assert(barWidth > 0.0 && std::ceil((xMax - xMin) / barWidth) <= Store::k_maxNumberOfBars);

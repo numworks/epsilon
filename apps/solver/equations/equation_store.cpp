@@ -221,42 +221,38 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
 
   // Step 2. Linear System?
 
-  /* Create matrix coefficients and vector constants as:
-   *   coefficients * (x y z ...) = constants */
-  Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables];
-  Expression constants[k_maxNumberOfEquations];
-  bool isLinear = true; // Invalid the linear system if one equation is non-linear
-  Preferences * preferences = Preferences::sharedPreferences();
-  for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && simplifiedExpressions[i].getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context, updatedComplexFormat(context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
-    if (!isLinear) {
-    // TODO: should we clean pool allocated memory if the system is not linear
-#if 0
-      for (int j = 0; j < i; j++) {
-        for (int k = 0; k < numberOfVariables; k++) {
-          coefficients[j][k] = Expression();
-        }
-        constants[j] = Expression();
-      }
-#endif
-      if (numberOfDefinedModels() > 1 || numberOfVariables > 1) {
-        return Error::NonLinearSystem;
-      } else {
-        break;
-      }
-    }
-  }
-
   // Initialize result
   Expression exactSolutions[k_maxNumberOfExactSolutions];
   Expression exactSolutionsApproximations[k_maxNumberOfExactSolutions];
   EquationStore::Error error;
 
-  if (isLinear) {
-    m_degree = 1;
-    m_type = Type::LinearSystem;
-    error = resolveLinearSystem(exactSolutions, exactSolutionsApproximations, coefficients, constants, context);
-  } else {
+  bool isLinear = true; // Invalid the linear system if one equation is non-linear
+  Preferences * preferences = Preferences::sharedPreferences();
+
+  {
+    /* Create matrix coefficients and vector constants as:
+     *   coefficients * (x y z ...) = constants */
+    Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables];
+    Expression constants[k_maxNumberOfEquations];
+    for (int i = 0; i < numberOfDefinedModels(); i++) {
+      isLinear = isLinear && simplifiedExpressions[i].getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context, updatedComplexFormat(context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+      if (!isLinear) {
+        if (numberOfDefinedModels() > 1 || numberOfVariables > 1) {
+          return Error::NonLinearSystem;
+        } else {
+          break;
+        }
+      }
+    }
+    if (isLinear) {
+      m_degree = 1;
+      m_type = Type::LinearSystem;
+      error = resolveLinearSystem(exactSolutions, exactSolutionsApproximations, coefficients, constants, context);
+    }
+    // Clean coefficients and constants from pool allocated memory
+  }
+
+  if (!isLinear) {
     // Step 3. Polynomial & Monovariable?
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];

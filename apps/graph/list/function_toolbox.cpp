@@ -36,6 +36,13 @@ int FunctionToolbox::numberOfRows() const {
   return MathToolbox::numberOfRows() + addedCellsAtRoot();
 }
 
+int FunctionToolbox::reusableCellCount(int type) {
+  if (type == k_addedCellType) {
+    return k_numberOfAddedCells;
+  }
+  return MathToolbox::reusableCellCount(type);
+}
+
 HighlightCell * FunctionToolbox::reusableCell(int index, int type) {
   assert(type <= k_addedCellType);
   assert(index >= 0);

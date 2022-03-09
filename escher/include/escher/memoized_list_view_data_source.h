@@ -17,17 +17,21 @@ public:
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int index) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  /* reusableCellCount have a default implementation for specific simple
+   * lists. Most implementations should override them.*/
+  int reusableCellCount(int type) override { return numberOfRows(); }
 
-  KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index);
   virtual void resetMemoization(bool force = true);
 
+protected:
   // Non memoized.
   virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int index) { return ListViewDataSource::cumulatedHeightFromIndex(index); }
   virtual int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) { return ListViewDataSource::indexFromCumulatedHeight(offsetY); }
-  /* nonMemoizedRowHeight and reusableCellCount have a default implementation
-   * for specific simple lists. Most implementations should override them.*/
+  /* nonMemoizedRowHeight have a default implementation for specific simple
+   * lists. Most implementations should override them.*/
   virtual KDCoordinate nonMemoizedRowHeight(int index);
-  int reusableCellCount(int type) override { return numberOfRows(); }
+  KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index);
+
 private:
   /* In practice, no menus display more than 7 cells at the time. Reducing this
    * value might reduce binary size at the cost of performances. */

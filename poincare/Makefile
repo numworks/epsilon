@@ -206,6 +206,7 @@ tests_src += $(addprefix poincare/test/,\
   layout_cursor.cpp\
   layout_serialization.cpp\
   layout_to_expression.cpp\
+  matrix.cpp\
   parsing.cpp\
   polynomial.cpp\
   print.cpp\

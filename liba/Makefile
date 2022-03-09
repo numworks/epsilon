@@ -154,6 +154,7 @@ $(call object_for,$(addprefix liba/src/external/openbsd/,e_expf.c s_expm1f.c e_c
 tests_src += $(addprefix liba/test/, \
   aeabi.c \
   double.c \
+  float.c \
   ieee754.c \
   long.c \
   math.c \

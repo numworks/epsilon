@@ -9,7 +9,7 @@ namespace Settings {
 
 KDCoordinate TestModeController::nonMemoizedRowHeight(int j) {
   Escher::MessageTableCellWithChevron tempCell;
-  return heightForCellAtIndex(&tempCell, j);
+  return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
 HighlightCell * TestModeController::reusableCell(int index, int type) {

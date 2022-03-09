@@ -131,7 +131,7 @@ KDCoordinate MainController::nonMemoizedRowHeight(int index) {
       return heightForCellAtIndex(&m_resetButton, index);
     default:
       MessageTableCellWithChevronAndMessage tempCell;
-      return heightForCellAtIndex(&tempCell, index);
+      return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
 }
 

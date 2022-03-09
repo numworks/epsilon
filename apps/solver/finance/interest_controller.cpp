@@ -77,7 +77,7 @@ KDCoordinate InterestController::nonMemoizedRowHeight(int j) {
   int type = typeAtIndex(j);
   if (type == k_inputCellType) {
     Escher::MessageTableCellWithEditableTextWithMessage tempCell;
-    return heightForCellAtIndex(&tempCell, j);
+    return heightForCellAtIndexWithWidthInit(&tempCell, j);
   } else if (type == k_dropdownCellType) {
     return heightForCellAtIndex(&m_dropdownCell, j);
   }

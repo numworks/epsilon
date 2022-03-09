@@ -48,7 +48,7 @@ KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
   PressToTestSwitch tempCell;
   // tempCell needs a width so that we can compute its height.
   tempCell.setSize(KDSize(cellWidth(), tempCell.bounds().height()));
-  return heightForCellAtIndex(&tempCell, j);
+  return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
 void PressToTestController::setParamAtIndex(int index, bool value) {

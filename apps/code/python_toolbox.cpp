@@ -523,7 +523,7 @@ int PythonToolbox::maxNumberOfDisplayedRows() {
 KDCoordinate PythonToolbox::nonMemoizedRowHeight(int index) {
   if (m_messageTreeModel->childAtIndex(index)->numberOfChildren() == 0) {
     MessageTableCellWithMessage tempCell;
-    return heightForCellAtIndex(&tempCell, index);
+    return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   return Escher::Toolbox::nonMemoizedRowHeight(index);
 }

@@ -30,6 +30,8 @@ protected:
   /* nonMemoizedRowHeight have a default implementation for specific simple
    * lists. Most implementations should override them.*/
   virtual KDCoordinate nonMemoizedRowHeight(int index);
+  // Used to easily override  nonMemoizedRowHeight
+  KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index);
   KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index);
 
 private:

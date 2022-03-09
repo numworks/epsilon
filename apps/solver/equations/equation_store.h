@@ -95,9 +95,9 @@ private:
 
   Error privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols);
   Error resolveLinearSystem(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression constants[k_maxNumberOfEquations], Poincare::Context * context);
-  Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], Poincare::Context * context);
+  Error oneDimensionalPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], Poincare::Context * context);
   void tidySolution(char * treePoolCursor);
-  bool isExplictlyComplex(Poincare::Context * context);
+  bool isExplicitlyComplex(Poincare::Context * context);
   Poincare::Preferences::ComplexFormat updatedComplexFormat(Poincare::Context * context);
 
   mutable Equation m_equations[k_maxNumberOfEquations];

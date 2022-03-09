@@ -37,17 +37,16 @@ CodePoint UTF8Decoder::nextCodePoint() {
 
 CodePoint UTF8Decoder::previousCodePoint() {
   assert(m_stringPosition > m_string);
-  if (leading_ones(*(m_stringPosition - 1)) == 0) {
+  m_stringPosition--;
+  int leadingOnes = leading_ones(*m_stringPosition);
+  if (leadingOnes == 0) {
     // The current code point is one char long
-    m_stringPosition--;
     return *m_stringPosition;
   }
   // The current code point spans over multiple chars
+  assert(leadingOnes == 1);
   uint32_t result = 0;
   int i = 0;
-  int leadingOnes = 1;
-  m_stringPosition--;
-  assert(leading_ones(*m_stringPosition) == 1);
   while (leadingOnes == 1) {
     assert(m_stringPosition > m_string);
     result += (*m_stringPosition & 0x3F) << (6 * i);

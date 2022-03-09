@@ -148,7 +148,8 @@ void HomogeneityStatistic::computeExpectedValues(Index2D max) {
   for (int row = 0; row < max.row; row++) {
     for (int col = 0; col < max.col; col++) {
       int index = index2DToIndex(row, col);
-      m_expectedValues[index] = m_rowTotals[row] * m_columnTotals[col] / m_total;
+      // Note : Divide before multiplying to avoid some cases of double overflow
+      m_expectedValues[index] = (m_rowTotals[row] / m_total) * m_columnTotals[col];
     }
   }
 }

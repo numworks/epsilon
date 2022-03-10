@@ -60,11 +60,11 @@ Probability::ResultsHomogeneityView::ResultsHomogeneityView(Responder * parent,
 }
 
 KDSize Probability::ResultsHomogeneityView::minimalSizeForOptimalDisplay() const {
-  // Pass expected size to VerticalLayout to propagate to TableCells
+  /* SelectableTableView must be given a width, so that it can percole it to its
+   * cells. The cells might need their widths to know their heights. */
   // TODO factorize with InputCategoricalView ..?
   ContentView * contentView = const_cast<ContentView *>(&m_contentView);
-  if (contentView->bounds().width() <= 0)
-    contentView->setSize(KDSize(bounds().width(), contentView->bounds().height()));
+  contentView->tableView()->initWidth(bounds().width());
   KDSize requiredSize = ScrollView::minimalSizeForOptimalDisplay();
   return KDSize(bounds().width(), requiredSize.height());
 }

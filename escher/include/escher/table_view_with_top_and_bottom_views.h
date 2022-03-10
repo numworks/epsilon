@@ -52,6 +52,7 @@ private:
     /* View */
     int numberOfSubviews() const override { return (m_topView != nullptr) + 1 + (m_bottomView != nullptr); }
     View * subviewAtIndex(int i) override;
+    TableView * tableView() { return m_table; }
   private:
     constexpr static KDCoordinate k_emptyViewMargin = Escher::Metric::CommonMargin;
     constexpr static KDCoordinate k_margin = Metric::TableSeparatorThickness;

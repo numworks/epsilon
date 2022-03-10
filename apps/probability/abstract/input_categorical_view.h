@@ -69,9 +69,10 @@ protected:
     int numberOfSubviews() const override { return 2 /* Table + InnerVerticalLayout */; }
     Escher::View * subviewAtIndex(int i) override;
     void setTableView(Escher::SelectableTableView * tableView) { m_dataInputTableView = tableView; }
+    Escher::TableView * tableView() { return m_dataInputTableView; }
+    virtual Escher::VerticalLayout * innerView() = 0;
 
   protected:
-    virtual Escher::View * innerView() = 0;
     Escher::SelectableTableView * m_dataInputTableView;
   };
 

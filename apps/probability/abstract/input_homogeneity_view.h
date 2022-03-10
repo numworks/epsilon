@@ -49,7 +49,7 @@ private:
       Escher::MessageTableCellWithEditableTextWithMessage * m_significanceCell;
       Escher::Button * m_next;
     };
-    Escher::View * innerView() override { return &m_innerView; }
+    Escher::VerticalLayout * innerView() override { return &m_innerView; }
 
     InnerVerticalLayout m_innerView;
   };

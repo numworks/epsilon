@@ -85,10 +85,12 @@ void InputCategoricalView::setResponderForSelectedRow() {
 }
 
 KDSize Probability::InputCategoricalView::minimalSizeForOptimalDisplay() const {
-  // Pass expected size to VerticalLayout to propagate to TableCells
-  if (constContentView()->bounds().width() <= 0) {
-    constContentView()->setSize(KDSize(bounds().width(), constContentView()->bounds().height()));
-  }
+  /* SelectableTableView must be given a width, so that it can percole it to its
+   * cells. The cells might need their widths to know their heights. */
+  constContentView()->tableView()->initWidth(bounds().width());
+  /* SelectableTableView must be given a width, so that it can percole it to its
+   * cells. The cells might need their widths to know their heights. */
+  constContentView()->innerView()->initWidth(bounds().width());
   KDSize requiredSize = ScrollView::minimalSizeForOptimalDisplay();
   return KDSize(bounds().width() + leftMargin() + rightMargin(), requiredSize.height());
 }

@@ -9,6 +9,7 @@ namespace Board {
 
 void init();
 
+void bootloaderMPU();
 void initFPU();
 void initClocks();
 void shutdownClocks(bool keepLEDAwake = false);

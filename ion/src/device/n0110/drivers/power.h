@@ -8,6 +8,7 @@ namespace Device {
 namespace Power {
 
 void standbyConfiguration();
+void internalFlashSuspend(bool isLEDActive);
 
 }
 }

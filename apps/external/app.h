@@ -29,7 +29,7 @@ private:
   MainController m_mainController;
   StackViewController m_stackViewController;
   Window * m_window;
-  static constexpr int k_externalHeapSize = 100000;
+  static constexpr int k_externalHeapSize = 99000;
   char m_externalHeap[k_externalHeapSize];
 };
 

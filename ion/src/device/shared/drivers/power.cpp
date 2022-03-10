@@ -100,31 +100,6 @@ namespace Power {
 // Public Power methods
 using namespace Device::Regs;
 
-void __attribute__((noinline)) internalFlashSuspend(bool isLEDActive) {
-  // Shutdown the external flash
-  Device::ExternalFlash::shutdown();
-  // Shutdown all clocks (except the ones used by LED if active)
-  Device::Board::shutdownClocks(isLEDActive);
-
-  Device::Power::enterLowPowerMode();
-
-  /* A hardware event triggered a wake up, we determine if the device should
-   * wake up. We wake up when:
-   * - only the power key was down
-   * - the unplugged device was plugged
-   * - the battery stopped charging */
-  Device::Board::initClocks();
-  // Init external flash
-  Device::ExternalFlash::init();
-}
-
-void __attribute__((noinline)) internalFlashStandby() {
-  Device::ExternalFlash::shutdown();
-  Device::Board::shutdownClocks();
-  Device::Power::enterLowPowerMode();
-  Device::Reset::coreWhilePlugged();
-}
-
 void stopConfiguration() {
   PWR.CR()->setMRUDS(true); // Main regulator in Low Voltage and Flash memory in Deep Sleep mode when the device is in Stop mode
   PWR.CR()->setLPUDS(true); // Low-power regulator in under-drive mode if LPDS bit is set and Flash memory in power-down when the device is in Stop under-drive mode
@@ -161,18 +136,6 @@ void waitUntilOnOffKeyReleased() {
     isPowerDown = scan.keyDown(Keyboard::Key::OnOff);
   }
   Timing::msleep(100);
-}
-
-void enterLowPowerMode() {
-  /* To enter sleep, we need to issue a WFE instruction, which waits for the
-   * event flag to be set and then clears it. However, the event flag might
-   * already be on. So the safest way to make sure we actually wait for a new
-   * event is to force the event flag to on (SEV instruction), use a first WFE
-   * to clear it, and then a second WFE to wait for a _new_ event. */
-  asm("sev");
-  asm("wfe");
-  asm("nop");
-  asm("wfe");
 }
 
 }

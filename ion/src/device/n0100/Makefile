@@ -7,4 +7,12 @@ ion_device_src += $(addprefix ion/src/device/n0100/drivers/, \
   usb.cpp \
 )
 
+ion_device_src += $(addprefix ion/src/device/n0100/boot/, \
+  rt0.cpp \
+)
+
+ion_device_src += $(addprefix ion/src/device/n0100/, \
+  platform_info.cpp \
+)
+
 LDSCRIPT ?= ion/src/device/n0100/flash.ld

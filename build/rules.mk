@@ -32,13 +32,13 @@ $(eval $(call rule_for, \
 
 $(eval $(call rule_for, \
   OBJCOPY, %.hex, %.elf, \
-  $$(OBJCOPY) -O ihex $$< $$@, \
+  $$(OBJCOPY) -R .slot_info -O ihex $$< $$@, \
   local \
 ))
 
 $(eval $(call rule_for, \
   OBJCOPY, %.bin, %.elf, \
-  $$(OBJCOPY) -O binary $$< $$@, \
+  $$(OBJCOPY) -R .slot_info -O binary $$< $$@, \
   local \
 ))
 

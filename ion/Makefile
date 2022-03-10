@@ -22,7 +22,7 @@ include ion/src/shared/tools/Makefile
 # char test[4]= "ab"; is valid and should initialize test to 'a','b',0,0).
 # Older versions of GCC are not conformant so we resort to an initializer list.
 initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
-$(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))" -DOMEGA_VERSION="$(call initializer_list,$(OMEGA_VERSION))" -DOMEGA_USERNAME="$(call initializer_list,$(OMEGA_USERNAME))" 
+$(call object_for,ion/src/simulator/platform_info.cpp ion/src/device/n0100/platform_info.cpp ion/src/device/n0110/platform_info.cpp ion/src/device/bootloader/platform_info.cpp ion/src/simulator/shared/platform_info.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))" -DOMEGA_VERSION="$(call initializer_list,$(OMEGA_VERSION))" -DOMEGA_USERNAME="$(call initializer_list,$(OMEGA_USERNAME))" 
 
 ion_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
@@ -31,7 +31,6 @@ ion_src += $(addprefix ion/src/shared/, \
   events.cpp \
   events_keyboard.cpp \
   events_modifier.cpp \
-  platform_info.cpp \
   rtc.cpp \
   stack_position.cpp \
   storage.cpp \

@@ -1,11 +1,15 @@
 /* Same as flash.ld but everything is linked in internal flash */
 
 MEMORY {
-  INTERNAL_FLASH (rx) : ORIGIN = 0x00200000, LENGTH = 64K
+  INTERNAL_FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 64K
   SRAM (rw)  : ORIGIN = 0x20000000, LENGTH = 256K
 }
 
 STACK_SIZE = 32K;
+TRAMPOLINES_OFFSET = 0xE000;
+CUSTOM_TRAMPOLINES_OFFSET = 64K - 64;
+FLASH_SECOND_SECTOR_OFFSET = 16K;
+FLASH_SECOND_SECTOR_SIZE = 16K;
 
 SECTIONS {
   .isr_vector_table ORIGIN(INTERNAL_FLASH) : {
@@ -29,6 +33,20 @@ SECTIONS {
     KEEP(*(.header))
   } >INTERNAL_FLASH
 
+  .rodata : {
+    . = ALIGN(4);
+    *(.rodata)
+    *(.rodata.*)
+  } >INTERNAL_FLASH
+
+  .exam_mode_buffer ORIGIN(INTERNAL_FLASH) + FLASH_SECOND_SECTOR_OFFSET : {
+    _exam_mode_buffer_start = .;
+    KEEP(*(.exam_mode_buffer))
+    /* Note: We don't increment "." here, we set it. */
+    . = ORIGIN(INTERNAL_FLASH) + FLASH_SECOND_SECTOR_OFFSET + FLASH_SECOND_SECTOR_SIZE;
+    _exam_mode_buffer_end = .;
+  } >INTERNAL_FLASH
+
   .text : {
     . = ALIGN(4);
     *(.text)
@@ -40,12 +58,6 @@ SECTIONS {
     _init_array_start = .;
     KEEP (*(.init_array*))
     _init_array_end = .;
-  } >INTERNAL_FLASH
-
-  .rodata : {
-    . = ALIGN(4);
-    *(.rodata)
-    *(.rodata.*)
   } >INTERNAL_FLASH
 
   .data : {
@@ -68,6 +80,16 @@ SECTIONS {
     *(.data.*)
     _data_section_end_ram = .;
   } >SRAM AT> INTERNAL_FLASH
+
+  .trampolines_table : {
+    . = ORIGIN(INTERNAL_FLASH) + TRAMPOLINES_OFFSET;
+    KEEP(*(.trampolines_table));
+  } > INTERNAL_FLASH
+
+  .custom_trampolines_table : {
+    . = ORIGIN(INTERNAL_FLASH) + CUSTOM_TRAMPOLINES_OFFSET;
+    KEEP(*(.custom_trampolines_table));
+  } > INTERNAL_FLASH
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

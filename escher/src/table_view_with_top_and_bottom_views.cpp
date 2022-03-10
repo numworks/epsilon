@@ -11,13 +11,9 @@ void TableViewWithTopAndBottomViews::reload() {
 }
 
 void TableViewWithTopAndBottomViews::layoutSubviews(bool force) {
-  /* Content view must be given a width, so that it can give its
-   * SelectableTableView a width and compute it height. */
-  if (m_contentView.bounds().isEmpty()) {
-    m_contentView.setFrame(KDRect(KDPointZero, KDSize(visibleContentRect().width(), 0)), force);
-  } else {
-    assert(m_contentView.bounds().width() == visibleContentRect().width());
-  }
+  /* SelectableTableView must be given a width, so that it can percole it to its
+   * cells. The cells might need their widths to know their heights. */
+  m_contentView.tableView()->initWidth(visibleContentRect().width());
   ScrollView::layoutSubviews(force);
 }
 
@@ -31,7 +27,7 @@ void TableViewWithTopAndBottomViews::tableViewDidChangeSelectionAndDidScroll(
   if (row >= 0 && col >= 0) {
     KDRect cellFrame = KDRect(m_tableDataSource->cumulatedWidthFromIndex(col),
                               m_contentView.tableOrigin() + m_tableDataSource->cumulatedHeightFromIndex(row),
-                              m_tableDataSource->columnWidth(col),
+                              m_tableDataSource->columnWidth(col) ? m_tableDataSource->columnWidth(col) : visibleContentRect().width(),
                               m_tableDataSource->rowHeight(row));
     /* Include the message in the first or last row cells to force scrolling
      * enough to display it */

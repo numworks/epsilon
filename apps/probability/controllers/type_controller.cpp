@@ -13,7 +13,11 @@
 namespace Probability {
 
 void TypeView::layoutSubviews(bool force) {
-  m_list->setFrame(KDRect(KDPointZero, m_frame.width(), 0), false);
+  /* SelectableTableView must be given a width before computing height.
+   * We force a default non-null height to force to layoutSubviews which gives
+   * the cells their width (otherwise, code is by-passed when the KDRect is
+   * empty). */
+  m_list->initWidth(m_frame.width());
   KDSize listSize = m_list->minimalSizeForOptimalDisplay();
   m_list->setFrame(KDRect(KDPointZero, listSize), force);
   m_description->setFrame(

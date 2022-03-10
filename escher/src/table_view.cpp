@@ -34,6 +34,13 @@ const char * TableView::className() const {
 }
 #endif
 
+void TableView::initWidth(KDCoordinate width) {
+  if (bounds().width() <= 0) {
+    setSize(KDSize(width, 0));
+    dataSource()->initCellWidth(this);
+  }
+}
+
 void TableView::layoutSubviews(bool force) {
   /* On the one hand, ScrollView::layoutSubviews()
    * calls setFrame(...) over m_contentView,

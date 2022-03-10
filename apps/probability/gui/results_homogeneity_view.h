@@ -40,6 +40,7 @@ private:
                 Escher::Invocation invocation);
     int numberOfSubviews() const override { return 3; }
     Escher::View * subviewAtIndex(int i) override;
+    Escher::TableView * tableView() { return m_table; }
     Escher::Button * button() { return &m_next; }
     KDPoint tableOrigin();
     KDPoint buttonOrigin();

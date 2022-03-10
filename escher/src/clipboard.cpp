@@ -2,6 +2,7 @@
 #include <escher/text_field.h>
 #include <ion/clipboard.h>
 #include <algorithm>
+#include <ion/unicode/utf8_decoder.h>
 
 namespace Escher {
 
@@ -12,7 +13,18 @@ Clipboard * Clipboard::sharedClipboard() {
 }
 
 void Clipboard::store(const char * storedText, int length) {
-  strlcpy(m_textBuffer, storedText, length == -1 ? TextField::maxBufferSize() : std::min(TextField::maxBufferSize(), length + 1));
+  int maxSize = TextField::maxBufferSize();
+  if (length == -1 || length + 1 > maxSize) {
+    // Make sure the text isn't truncated in the middle of a code point.
+    length = std::min(maxSize - 1, static_cast<int>(strlen(storedText)));
+    /* length can't be greater than strlen(storedText) to prevent any out of
+     * array bound access. */
+    while (UTF8Decoder::IsInTheMiddleOfACodePoint(storedText[length])) {
+      length--;
+    }
+  }
+  assert(length >= 0 && !UTF8Decoder::IsInTheMiddleOfACodePoint(storedText[length]));
+  strlcpy(m_textBuffer, storedText, length + 1);
   Ion::Clipboard::write(m_textBuffer);
 }
 

@@ -125,7 +125,7 @@ void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
     // The visible rect is too small to display 'rect'
     if (rect.top() >= visibleRect.top()) {
       // We scroll to display the top part of rect
-      br = KDPoint(br.x(), rect.top() + visibleRect.height());
+      br = KDPoint(br.x(), rect.top() + visibleRect.height() - 1);
     } else {
       // We scroll to display the bottom part of rect
       tl = KDPoint(tl.x(), rect.bottom() - visibleRect.height());
@@ -135,7 +135,7 @@ void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
     // The visible rect is too small to display 'rect'
     if (rect.left() >= visibleRect.left()) {
       // We scroll to display the left part of rect
-      br = KDPoint(rect.left() + visibleRect.width(), br.y());
+      br = KDPoint(rect.left() + visibleRect.width() - 1, br.y());
     } else {
       // We scroll to display the right part of rect
       tl = KDPoint(rect.right() - visibleRect.width(), tl.y());

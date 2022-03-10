@@ -75,7 +75,7 @@ void InputCategoricalController::tableViewDidChangeSelectionAndDidScroll(
         0,  // We'll scroll only vertically
         tableViewController()->tableViewDataSource()->cumulatedHeightFromIndex(row) +
             tableViewController()->selectableTableView()->topMargin(),
-        tableViewController()->selectableTableView()->columnWidth(col),
+        tableViewController()->tableViewDataSource()->columnWidth(col),
         tableViewController()->tableViewDataSource()->rowHeight(row));
 
     contentView()->scrollToContentRect(cellFrame);

@@ -80,29 +80,24 @@ bool ArcCosine::derivate(ExpressionNode::ReductionContext reductionContext, Expr
 }
 
 Expression ArcCosine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
-  return Conjugate::Builder(
+  return Power::Builder(
       Multiplication::Builder(
         Rational::Builder(-1),
-        Power::Builder(
-          Trigonometry::UnitConversionFactor(
-            reductionContext.angleUnit(),
-            Preferences::AngleUnit::Radian
-            ),
-          Rational::Builder(-1)
+        Trigonometry::UnitConversionFactor(
+          reductionContext.angleUnit(),
+          Preferences::AngleUnit::Radian
           ),
-        Power::Builder(
-          SquareRoot::Builder(
-            Subtraction::Builder(
-              Rational::Builder(1),
-              Power::Builder(
-                childAtIndex(0).clone(),
-                Rational::Builder(2)
-                )
+        SquareRoot::Builder(
+          Subtraction::Builder(
+            Rational::Builder(1),
+            Power::Builder(
+              childAtIndex(0).clone(),
+              Rational::Builder(2)
               )
-            ),
-            Rational::Builder(-1)
+            )
           )
-        )
+        ),
+      Rational::Builder(-1)
       );
 }
 

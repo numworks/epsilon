@@ -106,9 +106,11 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
 }
 
 bool SignFunction::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  /* This function derivate is equal to 0 everywhere but in 0 where it's not defined.
+  /* This function derivate is equal to 0 everywhere but in 0 where
+   * it's not defined.
    * We approximate it's child to know if it is equal to 0
-   * The approximation of the child might not be precise that's why it is compared with espilon.
+   * The approximation of the child might not be precise that's why it is
+   * compared with EpsilonLax.
    * This derivative is used in the derivative of acot(x)
   */
   Expression child = childAtIndex(0).clone();

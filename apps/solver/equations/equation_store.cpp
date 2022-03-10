@@ -230,17 +230,17 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
-  const int definedModels = numberOfDefinedModels();
-  assert(definedModels <= k_maxNumberOfEquations);
+  const int nbOfDefinedModels = numberOfDefinedModels();
+  assert(nbOfDefinedModels <= k_maxNumberOfEquations);
   {
     /* Create matrix coefficients and vector constants as:
      *   coefficients * (x y z ...) = constants */
     Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables];
     Expression constants[k_maxNumberOfEquations];
-    for (int i = 0; i < definedModels; i++) {
+    for (int i = 0; i < nbOfDefinedModels; i++) {
       isLinear = isLinear && simplifiedExpressions[i].getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], context, updatedComplexFormat(context), angleUnit, unitFormat, symbolicComputation);
       if (!isLinear) {
-        if (definedModels > 1 || numberOfVariables > 1) {
+        if (nbOfDefinedModels > 1 || numberOfVariables > 1) {
           return Error::NonLinearSystem;
         } else {
           break;
@@ -257,7 +257,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
 
   if (!isLinear) {
     // Step 3. Polynomial & Monovariable?
-    assert(numberOfVariables == 1 && definedModels == 1);
+    assert(numberOfVariables == 1 && nbOfDefinedModels == 1);
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
     m_degree = simplifiedExpressions[0].getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, context, updatedComplexFormat(context), angleUnit, unitFormat, symbolicComputation);
     if (m_degree == 2 || m_degree == 3) {

@@ -41,7 +41,6 @@ public:
 
   int numberOfRows() const override { return (mode() == Mode::Country) ? I18n::NumberOfCountries : I18n::NumberOfLanguages; }
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  KDCoordinate cellWidth() override { return m_contentView.selectableTableView()->columnWidth(0); }
   Escher::HighlightCell * reusableCell(int index, int type) override { return &m_cells[index]; }
 
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

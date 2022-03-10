@@ -44,8 +44,8 @@ public:
   void setPosition(const char * position);
   static size_t CharSizeOfCodePoint(CodePoint c);
   static size_t CodePointToChars(CodePoint c, char * buffer, size_t bufferLength); // No null-terminating char
-private:
   static bool IsInTheMiddleOfACodePoint(uint8_t value);
+private:
   const char * const m_string;
   const char * m_stringPosition;
 };

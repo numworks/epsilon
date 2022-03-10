@@ -85,24 +85,21 @@ bool ArcTangent::derivate(ExpressionNode::ReductionContext reductionContext, Exp
 }
 
 Expression ArcTangent::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
-  return Multiplication::Builder(
-      Power::Builder(
+  return Power::Builder(
+      Multiplication::Builder(
         Trigonometry::UnitConversionFactor(
           reductionContext.angleUnit(),
           Preferences::AngleUnit::Radian
           ),
-        Rational::Builder(-1)
-        ),
-      Power::Builder(
         Addition::Builder(
           Rational::Builder(1),
           Power::Builder(
             childAtIndex(0).clone(),
             Rational::Builder(2)
             )
-          ),
-        Rational::Builder(-1)
-        )
+          )
+        ),
+      Rational::Builder(-1)
       );
 }
 

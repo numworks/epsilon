@@ -93,6 +93,7 @@ private:
   static Expression CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext); // Returns e^(i*pi*r)
   static bool RationalExponentShouldNotBeReduced(const Rational & b, const Rational & r);
   bool isLogarithmOfSameBase(Expression e) const;
+  Expression reduceLogarithmInIndex(ExpressionNode::ReductionContext reductionContext, Expression e) const;
   bool isNthRootOfUnity() const;
 
   // Unit

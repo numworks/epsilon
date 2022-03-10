@@ -26,7 +26,6 @@ public:
   void viewDidDisappear() override;
 
   // MemoizedListViewDataSource
-  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
   HighlightCell * reusableCell(int index, int type) override;
 
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;

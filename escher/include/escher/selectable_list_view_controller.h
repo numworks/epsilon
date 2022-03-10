@@ -18,8 +18,6 @@ public:
   {}
   /* ViewController */
   View * view() override { return &m_selectableTableView; }
-  /* MemoizedListViewDataSource */
-  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
 protected:
   SelectableTableView m_selectableTableView;
 };

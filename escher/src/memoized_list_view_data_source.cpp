@@ -118,10 +118,8 @@ KDCoordinate MemoizedListViewDataSource::heightForCellAtIndexWithWidthInit(Highl
 }
 
 KDCoordinate MemoizedListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int index) {
-  // A non-null implementation of cellWidth is required to compute cell height.
+  // Some cells have to know their width to be able to compute their required height
   assert(cell->bounds().width() != 0);
-  // Set cell's frame width
-  cell->setSize(KDSize(cellWidth(), cell->bounds().height()));
   // Setup cell as if it was to be displayed
   willDisplayCellForIndex(cell, index);
   // Return cell's height

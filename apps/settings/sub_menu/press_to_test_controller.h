@@ -29,7 +29,6 @@ public:
   Poincare::Preferences::PressToTestParams getPressToTestParams();
   void viewDidDisappear() override;
   Escher::View * view() override { return &m_view; }
-  KDCoordinate cellWidth() override { return m_selectableTableView.columnWidth(0); }
 private:
   /* Cell type */
   static constexpr int k_switchCellType = 0;

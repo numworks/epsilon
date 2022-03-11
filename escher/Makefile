@@ -40,6 +40,7 @@ escher_src += $(addprefix escher/src/,\
   input_view_controller.cpp \
   key_view.cpp \
   layout_field.cpp \
+  list_view_data_source.cpp \
   memoized_list_view_data_source.cpp \
   message_table_cell.cpp \
   message_table_cell_with_buffer.cpp \

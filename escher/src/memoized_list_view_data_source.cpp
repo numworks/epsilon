@@ -111,21 +111,6 @@ int MemoizedListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return 0;
 }
 
-KDCoordinate MemoizedListViewDataSource::heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index) {
-  // Warning: this copy the size of a random cell of the table
-  cell->setSize(reusableCell(0, typeAtIndex(index))->bounds().size());
-  return heightForCellAtIndex(cell, index);
-}
-
-KDCoordinate MemoizedListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int index) {
-  // Some cells have to know their width to be able to compute their required height
-  assert(cell->bounds().width() != 0);
-  // Setup cell as if it was to be displayed
-  willDisplayCellForIndex(cell, index);
-  // Return cell's height
-  return cell->minimalSizeForOptimalDisplay().height();
-}
-
 void MemoizedListViewDataSource::resetMemoization(bool force) {
   if (!force && m_memoizationLockedLevel > 0) {
     return;
@@ -146,32 +131,6 @@ void MemoizedListViewDataSource::resetMemoization(bool force) {
   for (int i = 0; i < k_memoizedCellsCount; i++) {
     m_memoizedCellHeight[i] = k_resetMemoizedValue;
   }
-}
-
-KDCoordinate MemoizedListViewDataSource::nonMemoizedRowHeight(int j) {
-  /* Overridden nonMemoizedRowHeight implementations boils down to instantiating
-   * a temporary cell on which returning heightForCellAtIndex. As temporary cell
-   * must be instantiated in the type expected in willDisplayCellAtIndex(),
-   * which is unknown here, we cannot factorize this logic. However, when cells
-   * are stored as reusable, there is no need for temporary cells, and behavior
-   * can be factorized as follows. */
-  assert(j < numberOfRows());
-  /* Row number (in nonMemoizedRowHeight() and typeAtIndex()) is usually
-   * different from cell index (in reusableCell()).
-   * This default implementation can be used in very specific situations : */
-  int type = typeAtIndex(j);
-  // 1 - Cells of this type must be stored as reusable cells.
-  assert(reusableCellCount(type) > 0);
-  // 2 - To ensure row number and cell index are equivalent, either :
-  assert(
-    // All rows are reusable cells of the same type
-    numberOfRows() == reusableCellCount(type) ||
-    // First rows are of this type (row number = cell index)
-    type == typeAtIndex(0) ||
-    // Row number does not matter in this reusableCell() implementation.
-    reusableCell(j, type) == reusableCell(0, type)
-  );
-  return heightForCellAtIndex(reusableCell(j, type), j);
 }
 
 int MemoizedListViewDataSource::getMemoizedIndex(int index) {

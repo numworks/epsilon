@@ -80,7 +80,6 @@ app_shared_src = $(addprefix apps/shared/,\
   sequence_store.cpp\
   sequence_title_cell.cpp \
   shared_app.cpp \
-  simple_float_parameter_controller.cpp \
   simple_interactive_curve_view_controller.cpp \
   single_range_controller.cpp \
   store_cell.cpp \

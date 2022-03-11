@@ -57,8 +57,8 @@ QUIZ_CASE(poincare_derivative_formal) {
 
 }
 
-void assert_reduces_for_approximation(const char * expression, const char * result, Preferences::AngleUnit angleUnit = Radian) {
-  assert_parsed_expression_simplify_to(expression, result, SystemForApproximation, angleUnit, MetricUnitFormat, Real, ReplaceAllSymbolsWithDefinitionsOrUndefined);
+void assert_reduces_for_approximation(const char * expression, const char * result, Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Real) {
+  assert_parsed_expression_simplify_to(expression, result, SystemForApproximation, angleUnit, MetricUnitFormat, complexFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined);
 }
 
 QUIZ_CASE(poincare_derivative_reduced_approximation) {
@@ -73,6 +73,7 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(abs(x),x,-2.34)", "-1");
   assert_reduces_for_approximation("diff(abs(x),x,0)", Undefined::Name());
 
+  assert_reduces_for_approximation("diff(√(x),x,-1)", "-𝐢/2", Radian, Cartesian);
   assert_reduces_for_approximation("diff(1/x,x,-2)", "-1/4");
   assert_reduces_for_approximation("diff(x^3+5*x^2,x,0)", "0");
   assert_reduces_for_approximation("diff(5^(sin(x)),x,3)", "5^sin(3)×cos(3)×ln(5)");

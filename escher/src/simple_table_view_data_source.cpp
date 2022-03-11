@@ -7,23 +7,23 @@ extern "C" {
 
 namespace Escher {
 
-KDCoordinate SimpleTableViewDataSource::columnWidth(int i) {
+KDCoordinate RegularTableViewDataSource::columnWidth(int i) {
   return cellWidth();
 }
 
-KDCoordinate SimpleTableViewDataSource::rowHeight(int j) {
+KDCoordinate RegularTableViewDataSource::rowHeight(int j) {
   return cellHeight();
 }
 
-KDCoordinate SimpleTableViewDataSource::cumulatedWidthFromIndex(int i) {
+KDCoordinate RegularTableViewDataSource::cumulatedWidthFromIndex(int i) {
   return cellWidth() * i;
 }
 
-KDCoordinate SimpleTableViewDataSource::cumulatedHeightFromIndex(int j) {
+KDCoordinate RegularTableViewDataSource::cumulatedHeightFromIndex(int j) {
   return cellHeight() * j;
 }
 
-int SimpleTableViewDataSource::indexFromCumulatedWidth(KDCoordinate offsetX) {
+int RegularTableViewDataSource::indexFromCumulatedWidth(KDCoordinate offsetX) {
   KDCoordinate width = cellWidth();
   if (width == 0) {
     return 0;
@@ -31,7 +31,7 @@ int SimpleTableViewDataSource::indexFromCumulatedWidth(KDCoordinate offsetX) {
   return (offsetX - 1) / width;
 }
 
-int SimpleTableViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
+int RegularTableViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   KDCoordinate height = cellHeight();
   if (height == 0) {
     return 0;

@@ -6,7 +6,7 @@
 
 namespace Escher {
 
-class SimpleTableViewDataSource : public TableViewDataSource {
+class RegularTableViewDataSource : public TableViewDataSource {
 public:
   virtual KDCoordinate cellHeight() = 0;
   virtual KDCoordinate cellWidth() = 0;
@@ -16,6 +16,10 @@ public:
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+};
+
+class SimpleTableViewDataSource : public RegularTableViewDataSource {
+public:
   virtual HighlightCell * reusableCell(int index) = 0;
   virtual int reusableCellCount() const = 0;
   HighlightCell * reusableCell(int index, int type) override;

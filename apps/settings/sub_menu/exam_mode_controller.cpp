@@ -57,7 +57,6 @@ int ExamModeController::reusableCellCount(int type) {
 }
 
 void ExamModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(ExamModeConfiguration::examModeActivationMessage(index));
 }

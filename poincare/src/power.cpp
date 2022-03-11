@@ -1169,10 +1169,8 @@ Expression Power::PowerRationalRational(Rational base, Rational index, Expressio
         }
       }
     } else {
-      /* On complex numbers, we pick the first root (-1)^(a/b) = e^(i*pi*a/b)
-       * We set the sign of index to positive to get the principal root. */
+      // On complex numbers, we pick the first root (-1)^(a/b) = e^(i*pi*a/b)
       Rational indexClone = index.clone().convert<Rational>();
-      indexClone.setSign(ExpressionNode::Sign::Positive);
       Expression exp = CreateComplexExponent(indexClone, reductionContext);
       res.addChildAtIndexInPlace(exp, res.numberOfChildren(), res.numberOfChildren());
       exp.shallowReduce(reductionContext);

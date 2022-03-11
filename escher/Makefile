@@ -70,6 +70,7 @@ escher_src += $(addprefix escher/src/,\
   scrollable_expression_view.cpp \
   scrollable_view.cpp \
   selectable_table_view.cpp \
+  simple_list_view_data_source.cpp \
   simple_table_view_data_source.cpp \
   solid_color_view.cpp \
   stack_view.cpp \

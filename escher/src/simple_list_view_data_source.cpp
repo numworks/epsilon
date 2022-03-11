@@ -2,11 +2,11 @@
 
 namespace Escher {
 
-KDCoordinate SimpleListViewDataSource::cumulatedHeightFromIndex(int j) {
+KDCoordinate RegularListViewDataSource::cumulatedHeightFromIndex(int j) {
   return cellHeight() * j;
 }
 
-int SimpleListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
+int RegularListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   KDCoordinate height = cellHeight();
   if (height == 0) {
     return 0;

@@ -51,7 +51,7 @@ bool HomogeneityTableViewController::textFieldDidFinishEditing(Escher::TextField
     return false;
   }
   int row = m_table.selectedRow(), column = m_table.selectedColumn();
-  if (!m_statistic->authorizedParameterAtPosition(p, row, column)) {
+  if (!m_statistic->authorizedParameterAtPosition(p, row - 1, column - 1)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }

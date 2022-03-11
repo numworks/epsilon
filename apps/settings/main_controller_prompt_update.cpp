@@ -13,7 +13,7 @@ constexpr MessageTree s_modelMenu[] =
     MessageTree(I18n::Message::FontSizes, s_modelFontChildren),
     MessageTree(I18n::Message::Language),
     MessageTree(I18n::Message::Country),
-    MessageTree(I18n::Message::ExamMode, s_modelExamChildren),
+    MessageTree(I18n::Message::ExamMode),
     MessageTree(I18n::Message::PressToTest),
     MessageTree(I18n::Message::TestMode, s_modelTestModeMenu),
     MessageTree(I18n::Message::UpdatePopUp),

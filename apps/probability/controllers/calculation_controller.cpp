@@ -71,7 +71,6 @@ CalculationController::CalculationController(Escher::StackViewController * paren
     m_calculationCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,
                                                                         this);
   }
-  m_dropdown.selectRow(static_cast<int>(m_calculation->type()));
 }
 
 void CalculationController::reinitCalculation() {
@@ -96,6 +95,7 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 void CalculationController::viewWillAppear() {
+  m_dropdown.selectRow(static_cast<int>(m_calculation->type()));
   ViewController::viewWillAppear();
   selectCellAtLocation(1, 0);
 }

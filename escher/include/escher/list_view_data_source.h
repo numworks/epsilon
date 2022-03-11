@@ -9,14 +9,7 @@ namespace Escher {
 
 class ListViewDataSource : public TableViewDataSource {
 public:
-  void initCellWidth(TableView * view) override {
-    for (int row = 0; row < numberOfRows(); row++) {
-      int type = typeAtIndex(row);
-      for (int i = 0; i < reusableCellCount(type); i++) {
-        reusableCell(i, type)->setSize(KDSize(view->bounds().width() - view->rightMargin() - view->leftMargin(), 0));
-      }
-    }
-  }
+  void initCellWidth(TableView * view) override;
   // ListViewDataSource has only one column
   int numberOfColumns() const override { return 1; }
   int indexFromCumulatedWidth(KDCoordinate offsetX) override { return 0; }
@@ -31,6 +24,13 @@ public:
 
   virtual int typeAtIndex(int index) { return 0; }
   int typeAtLocation(int i, int j) override { assert(i==0); return typeAtIndex(j); }
+  /* cellHeight have a default implementation for specific simple
+   * lists. Most implementations should override them.*/
+  virtual KDCoordinate rowHeight(int index) override;
+  // Used to easily override  nonMemoizedRowHeight
+  KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index);
+protected:
+  KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index);
 };
 
 }

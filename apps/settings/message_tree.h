@@ -19,7 +19,7 @@ public:
     m_children(children)
   {}
 
-  const MessageTree * childAtIndex(int index) const override { return &m_children[index]; }
+  const MessageTree * childAtIndex(int index) const override { assert(index < m_numberOfChildren); return &m_children[index]; }
 
 private:
   const MessageTree * m_children;

@@ -31,7 +31,7 @@ public:
 private:
   constexpr static int k_numberOfTextCells = 2;
   constexpr static int k_autoCellType = 2;
-  static_assert(k_autoCellType != SimpleFloatParameterController<float>::k_parameterCellType && k_autoCellType != FloatParameterController<float>::k_buttonCellType, "k_autoCellType value already taken.");
+  static_assert(k_autoCellType != FloatParameterController<float>::k_parameterCellType && k_autoCellType != FloatParameterController<float>::k_buttonCellType, "k_autoCellType value already taken.");
 
   class LockableEditableCell : public Escher::MessageTableCellWithEditableText {
   public:

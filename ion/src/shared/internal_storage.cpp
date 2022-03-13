@@ -2,9 +2,9 @@
 #include <string.h>
 #include <assert.h>
 #include <new>
-#include "storage.h"
+#include <ion/internal_storage.h>
 #if ION_STORAGE_LOG
-#include<iostream>
+#include <iostream>
 #endif
 
 namespace Ion {

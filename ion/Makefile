@@ -31,6 +31,7 @@ ion_src += $(addprefix ion/src/shared/, \
   events.cpp \
   events_keyboard.cpp \
   events_modifier.cpp \
+  internal_storage.cpp \
   platform_info.cpp \
   rtc.cpp \
   stack_position.cpp \

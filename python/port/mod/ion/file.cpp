@@ -725,12 +725,12 @@ STATIC mp_obj_t file_write(mp_obj_t o_in, mp_obj_t o_s) {
 
     size_t previous_size = file->record.value().size;
     
-    // Claim avaliable space.
-    size_t avaliable_size = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(file->record);
+    // Claim available space.
+    size_t available_size = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(file->record);
     
     // Check if there is enough space left
-    if (file->position + len > avaliable_size) {
-        Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, avaliable_size - previous_size);
+    if (file->position + len > available_size) {
+        Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, available_size - previous_size);
         mp_raise_OSError(28);
     }
     
@@ -974,12 +974,12 @@ STATIC mp_obj_t file_truncate(size_t n_args, const mp_obj_t* args) {
     
     size_t previous_size = file->record.value().size;
 
-    // Claim avaliable space.
-    size_t avaliable_size = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(file->record);
+    // Claim available space.
+    size_t available_size = Ion::Storage::sharedStorage()->putAvailableSpaceAtEndOfRecord(file->record);
     
     // Check if there is enough space left
-    if (new_end > avaliable_size) {
-        Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, avaliable_size - previous_size);
+    if (new_end > available_size) {
+        Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(file->record, available_size - previous_size);
         mp_raise_OSError(28);
     }
     

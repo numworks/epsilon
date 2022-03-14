@@ -44,6 +44,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   assert(numberOfExpressions < k_maxNumberOfRows - 1);
   expressions[numberOfExpressions] = m_expression;
   Shared::PoincareHelpers::CloneAndSimplify(&expressions[numberOfExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
+  Expression siExpression = expressions[numberOfExpressions];
   numberOfExpressions++;
 
   /* 3. Get rid of duplicates
@@ -87,10 +88,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   m_numberOfExpressionCells = numberOfExpressions;
 
   // 4. Add unit comparison
-  m_referenceValues[0] = UnitComparison::UpperReferenceValue(m_expression, &expressions[numberOfExpressions], m_comparisonTextBuffer[0]);
-  numberOfExpressions++;
-  m_referenceValues[1] = UnitComparison::LowerReferenceValue(m_expression, &expressions[numberOfExpressions], m_comparisonTextBuffer[1]);
-  numberOfExpressions++;
+  numberOfExpressions += UnitComparison::SetUpperAndLowerReferenceValues(siExpression,  m_referenceValues, &expressions[numberOfExpressions], m_comparisonTextBuffer);
 
   // Memoize layouts
   for (size_t i = 0; i < k_maxNumberOfRows; i++) {
@@ -118,7 +116,7 @@ void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessag
   } else {
     messageInCell = referenceValue->title1;
   }
-  bufferCell->setMessageWithPlaceholder(messageInCell, m_comparisonTextBuffer[index]);
+  bufferCell->setMessageWithPlaceholder(messageInCell, &m_comparisonTextBuffer[index * UnitComparison::k_sizeOfUnitComparisonBuffer]);
 }
 
 }

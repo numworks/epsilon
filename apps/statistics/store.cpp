@@ -356,7 +356,7 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int * sortedIndex, int
     (x <= value ? cumulatedOccurrences : otherOccurrences) += get(series, 1, sortedIndex[j]);
   }
   assert(cumulatedOccurrences + otherOccurrences == sumOfOccurrences(series));
-  return 100.0*cumulatedOccurrences/(cumulatedOccurrences + otherOccurrences);
+  return 100.0 * cumulatedOccurrences / (cumulatedOccurrences + otherOccurrences);
 }
 
 int Store::totalNormalProbabilityValues(int series) const {
@@ -392,7 +392,7 @@ double Store::normalProbabilityResultAtIndex(int series, int i) const {
   int total = totalNormalProbabilityValues(series);
   assert(total > 0);
   // invnorm((i-0.5)/total,0,1)
-  double plottingPosition = (static_cast<double>(i)+0.5f)/static_cast<double>(total);
+  double plottingPosition = (static_cast<double>(i) + 0.5f) / static_cast<double>(total);
   return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<double>(plottingPosition, 0.0, 1.0);
 }
 

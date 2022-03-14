@@ -1,3 +1,6 @@
+ComputerWeightTitle1 = "%s d'un PC"
+ComputerWeightTitle2 = "%s PC"
+ComputerWeightSubtitle = "Un ordinateur pèse environ 3 kg"
 UnitTimeSecondSymbol = "_s"
 UnitTimeSecondMilliSymbol = "_ms"
 UnitTimeSecondMicroSymbol = "_μs"

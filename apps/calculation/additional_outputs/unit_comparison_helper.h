@@ -16,13 +16,16 @@ typedef struct {
   I18n::Message title1;
   I18n::Message title2;
   I18n::Message subtitle;
-  const Unit::Representative * unitRepresentative;
-  float value;
+  double value;
   int8_t exponantOfTen;
 } ReferenceValue;
 
-const ReferenceValue * UpperReferenceValue(Poincare::Expression e, Expression * comparisonExpression, char * comparisonTextBuffer);
-const ReferenceValue * LowerReferenceValue(Poincare::Expression e, Expression * comparisonExpression, char * comparisonTextBuffer);
+int SetUpperAndLowerReferenceValues(Poincare::Expression e, const ReferenceValue ** referenceValues, Expression * expressions, char * textBuffer);
+
+bool AreSameRootSymbol(const char * s1, const char * s2);
+double EvaluateReferenceValueAtIndex(const ReferenceValue * const* table, int index);
+void FillRatioBuffer(char * textBuffer, double ratio);
+
 
 }
 

@@ -1,3 +1,6 @@
+HumanWeightTitle1 = "%s d'un être humain"
+HumanWeightTitle2 = "%s fois un être humain"
+HumanWeightSubtitle = "Un Homme pèse en moyenne 65 kg"
 ComputerWeightTitle1 = "%s d'un PC"
 ComputerWeightTitle2 = "%s PC"
 ComputerWeightSubtitle = "Un ordinateur pèse environ 3 kg"

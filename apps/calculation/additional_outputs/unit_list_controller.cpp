@@ -1,4 +1,5 @@
 #include "unit_list_controller.h"
+#include "unit_comparison_helper.h"
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"
 #include <poincare/unit_convert.h>
@@ -13,7 +14,7 @@ using namespace Shared;
 namespace Calculation {
 
 void UnitListController::setExpression(Poincare::Expression e) {
-  ExpressionsListController::setExpression(e);
+  BuffersAndExpressionsListController::setExpression(e);
   assert(!m_expression.isUninitialized());
   static_assert(k_maxNumberOfRows >= 3, "k_maxNumberOfRows must be greater than 3");
 
@@ -81,6 +82,16 @@ void UnitListController::setExpression(Poincare::Expression e) {
       currentExpressionIndex++;
     }
   }
+
+  // Memoize number of expression cells
+  m_numberOfExpressionCells = numberOfExpressions;
+
+  // 4. Add unit comparison
+  m_referenceValues[0] = UnitComparison::UpperReferenceValue(m_expression, &expressions[numberOfExpressions], m_comparisonTextBuffer[0]);
+  numberOfExpressions++;
+  m_referenceValues[1] = UnitComparison::LowerReferenceValue(m_expression, &expressions[numberOfExpressions], m_comparisonTextBuffer[1]);
+  numberOfExpressions++;
+
   // Memoize layouts
   for (size_t i = 0; i < k_maxNumberOfRows; i++) {
     if (!expressions[i].isUninitialized()) {
@@ -90,7 +101,24 @@ void UnitListController::setExpression(Poincare::Expression e) {
 }
 
 I18n::Message UnitListController::messageAtIndex(int index) {
+  if (typeAtIndex(index) == k_bufferCellType) {
+      return m_referenceValues[index - m_numberOfExpressionCells]->subtitle;
+  }
   return (I18n::Message)0;
+}
+
+void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessage * bufferCell, int index) {
+  const ReferenceValue * referenceValue = m_referenceValues[index];
+  if (referenceValue == nullptr) {
+    return;
+  }
+  I18n::Message messageInCell;
+  if (index == 0) {
+    messageInCell = referenceValue->title2;
+  } else {
+    messageInCell = referenceValue->title1;
+  }
+  bufferCell->setMessageWithPlaceholder(messageInCell, m_comparisonTextBuffer[index]);
 }
 
 }

@@ -4,6 +4,7 @@ app_headers += apps/calculation/app.h
 app_calculation_test_src += $(addprefix apps/calculation/,\
   calculation.cpp \
   calculation_store.cpp \
+  additional_outputs/unit_comparison_helper.cpp \
 )
 
 app_calculation_src = $(addprefix apps/calculation/,\
@@ -22,7 +23,6 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/trigonometry_graph_cell.cpp \
   additional_outputs/trigonometry_list_controller.cpp \
   additional_outputs/trigonometry_model.cpp \
-  additional_outputs/unit_comparison_helper.cpp \
   additional_outputs/unit_list_controller.cpp \
   app.cpp \
   edit_expression_controller.cpp \

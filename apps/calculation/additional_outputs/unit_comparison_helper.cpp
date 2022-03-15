@@ -74,7 +74,7 @@ int SetUpperAndLowerReferenceValues(double inputValue, Expression unit, const Re
   PoincareHelpers::Serialize(unit, unitBuffer, k_sizeOfUnitBuffer);
   int unitIndex = 0;
   while (unitIndex < k_numberOfReferenceTables) {
-    if (std::strncmp(unitBuffer, k_referenceUnits[unitIndex].SIUnit, k_sizeOfUnitBuffer) == 0) {
+    if (strncmp(unitBuffer, k_referenceUnits[unitIndex].SIUnit, k_sizeOfUnitBuffer) == 0) {
       valuesOfSameUnit = k_referenceTables[unitIndex];
       break;
     }

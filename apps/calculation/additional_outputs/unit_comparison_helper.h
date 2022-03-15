@@ -8,24 +8,20 @@ namespace Calculation {
 
 namespace UnitComparison {
 
-using namespace Poincare;
-
 constexpr static int k_sizeOfUnitComparisonBuffer = 5;
+constexpr static int k_sizeOfUnitBuffer = 30;
+constexpr static int k_numberOfSignicativeNumbers = 2;
 
 typedef struct {
   I18n::Message title1;
   I18n::Message title2;
   I18n::Message subtitle;
   double value;
-  int8_t exponantOfTen;
 } ReferenceValue;
 
-int SetUpperAndLowerReferenceValues(Poincare::Expression e, const ReferenceValue ** referenceValues, Expression * expressions, char * textBuffer);
+int SetUpperAndLowerReferenceValues(double inputValue, Poincare::Expression unit, const ReferenceValue ** referenceValues, Poincare::Expression * comparisonExpressions, bool saveComparison = true);
 
-bool AreSameRootSymbol(const char * s1, const char * s2);
-double EvaluateReferenceValueAtIndex(const ReferenceValue * const* table, int index);
-void FillRatioBuffer(char * textBuffer, double ratio);
-
+void FillRatioBuffer(double ratio, char * textBuffer);
 
 }
 

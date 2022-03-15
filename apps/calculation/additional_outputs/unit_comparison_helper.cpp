@@ -8,71 +8,54 @@
 #include <poincare/unit.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Calculation {
 
 namespace UnitComparison {
 
-constexpr static ReferenceValue k_empty_value = {
-  (I18n::Message)0,
-  (I18n::Message)0,
-  (I18n::Message)0,
-  0,
-  0
+constexpr static const ReferenceValue k_massReferences[] = {
+  ReferenceValue({I18n::Message::ComputerWeightTitle1, I18n::Message::ComputerWeightTitle2, I18n::Message::ComputerWeightSubtitle, 3.0}),
+  ReferenceValue({I18n::Message::HumanWeightTitle1, I18n::Message::HumanWeightTitle2, I18n::Message::HumanWeightSubtitle, 65.0}),
+  ReferenceValue({(I18n::Message)0, (I18n::Message)0, (I18n::Message)0, 0})
 };
 
-constexpr static ReferenceValue k_computer_weight = {
-  I18n::Message::ComputerWeightTitle1,
-  I18n::Message::ComputerWeightTitle2,
-  I18n::Message::ComputerWeightSubtitle,
-  3.0,
-  0
+constexpr static const ReferenceValue k_powerReferences[] = {
+  ReferenceValue({I18n::Message::ComputerWeightTitle1, I18n::Message::ComputerWeightTitle2, I18n::Message::ComputerWeightSubtitle, 100.0}),
+  ReferenceValue({I18n::Message::HumanWeightTitle1, I18n::Message::HumanWeightTitle2, I18n::Message::HumanWeightSubtitle, 1500.0}),
+  ReferenceValue({(I18n::Message)0, (I18n::Message)0, (I18n::Message)0, 0})
 };
 
-constexpr static ReferenceValue k_human_weight = {
-  I18n::Message::HumanWeightTitle1,
-  I18n::Message::HumanWeightTitle2,
-  I18n::Message::HumanWeightSubtitle,
-  6.5,
-  1
-};
 
-constexpr static const char * k_mass_rootSymbol = "g";
-constexpr static const ReferenceValue * k_mass_references[] = {&k_computer_weight, &k_human_weight, &k_empty_value};
+constexpr static const int k_numberOfReferencesTables = 2;
+constexpr static const char * k_referenceSIUnits[] = {"_kg", "_kg×_m^2×_s^\U00000012-3\U00000013"};
+constexpr static const char * k_referenceDisplayedUnits[] = {"_kg", "_W"};
+constexpr static const ReferenceValue * k_referenceTables[] = {k_massReferences, k_powerReferences};
 
-int SetUpperAndLowerReferenceValues(Poincare::Expression e, const ReferenceValue ** referenceValues, Expression * expressions, char * textBuffer) {
-  assert(e.type() == ExpressionNode::Type::Multiplication);
-
-  // 1. Store value of input
-  Expression firstChild = e.childAtIndex(0);
-  double inputValue = static_cast<Float<double> &>(firstChild).value();
-
-  // 2. Find table of corresponding unit.
-  const ReferenceValue * const* valuesOfSameUnit = nullptr;
-  Expression unitExpression;
-  if (e.numberOfChildren() == 2) {
-    unitExpression = e.childAtIndex(1);
-  } else {
-    Expression unitExpression = e.clone();
-    // TODO
-    // unitExpression.removeChildAtIndexInPlace(0);
-  }
-  if (unitExpression.type() == ExpressionNode::Type::Unit) {
-    const char * rootSymbol = static_cast<Unit &>(unitExpression).representative()->rootSymbol();
-    if (AreSameRootSymbol(rootSymbol, k_mass_rootSymbol)) {
-      valuesOfSameUnit = k_mass_references;
+int SetUpperAndLowerReferenceValues(double inputValue, Expression unit, const ReferenceValue ** referenceValues, Expression * comparisonExpressions, bool saveComparison) {
+  // 1. Find table of corresponding unit.
+  const ReferenceValue * valuesOfSameUnit = nullptr;
+  char unitBuffer[k_sizeOfUnitBuffer];
+  PoincareHelpers::Serialize(unit, unitBuffer, k_sizeOfUnitBuffer);
+  int unitIndex = 0;
+  while (unitIndex < k_numberOfReferencesTables) {
+    if (std::strncmp(unitBuffer, k_referenceSIUnits[unitIndex], k_sizeOfUnitBuffer) == 0) {
+      valuesOfSameUnit = k_referenceTables[unitIndex];
+      break;
     }
-   }
+    unitIndex++;
+  }
   if (valuesOfSameUnit == nullptr) {
     return 0;
   }
 
-  // 3. Iterate through table to find upper and lower values
+
+  // 2. Iterate through table to find upper and lower values indexes
   int index = 0;
   int upperIndex = -1;
   int lowerIndex = -1;
-  while(valuesOfSameUnit[index]->value != 0) {
-    if (EvaluateReferenceValueAtIndex(valuesOfSameUnit, index) >= inputValue) {
+  while(valuesOfSameUnit[index].value != 0) {
+    if (valuesOfSameUnit[index].value >= inputValue) {
       upperIndex = index;
       lowerIndex = index - 1;
       break;
@@ -83,60 +66,28 @@ int SetUpperAndLowerReferenceValues(Poincare::Expression e, const ReferenceValue
     lowerIndex = index - 1;
   }
 
-  // 4. Find ratio for upper and lower values, then build results
+  // 3. Find ratios and save them if needed
+  int indexes[] = {lowerIndex, upperIndex};
+  double ratios[] = {0.0, 0.0};
   int nReturn = 0;
-  if (lowerIndex != -1) {
-    double lowerRatio = inputValue/EvaluateReferenceValueAtIndex(valuesOfSameUnit, lowerIndex);
-    if (lowerRatio < 100) {
-       // Reference value
-      *(referenceValues + nReturn) = valuesOfSameUnit[lowerIndex];
-
-      // Expression to print when user inputs EXE
-      *(expressions + nReturn) = Multiplication::Builder(Float<double>::Builder(lowerRatio), Float<double>::Builder(EvaluateReferenceValueAtIndex(valuesOfSameUnit, lowerIndex)), unitExpression.clone());
-      // TODO : Remove this
-      // unitExpression.shallowReduce(ReductionContext(App::app()->localContext(), Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit(),  Poincare::Preferences::sharedPreferences()->unitFormat(), Poincare::ExpressionNode::ReductionTarget::SystemForApproximation));
-
-      // Text to print in menu
-      FillRatioBuffer(&textBuffer[nReturn * k_sizeOfUnitComparisonBuffer], lowerRatio);
-
-      nReturn++;
+  for (int i = 0; i < 2; i++) {
+    if (indexes[i] != -1) {
+      ratios[i] = inputValue / valuesOfSameUnit[indexes[i]].value;
+      if (ratios[i] < 100 && ratios[i] >= 0.01) {
+        if (saveComparison) {
+          *(referenceValues + nReturn) = &valuesOfSameUnit[indexes[i]];
+          Expression newUnit = Poincare::Expression::Parse(k_referenceDisplayedUnits[unitIndex], App::app()->localContext());
+          *(comparisonExpressions + nReturn) = Multiplication::Builder(Float<double>::Builder(ratios[i]), Float<double>::Builder(valuesOfSameUnit[indexes[i]].value), newUnit);
+        }
+        nReturn ++;
+      }
     }
   }
-  if (upperIndex != -1) {
-    double upperRatio = inputValue/EvaluateReferenceValueAtIndex(valuesOfSameUnit, upperIndex);
-    if (upperRatio >= 0.01) {
-       // Reference value
-      *(referenceValues + nReturn)= valuesOfSameUnit[upperIndex];
 
-      // Expression to print when user inputs EXE
-      *(expressions + nReturn) = Multiplication::Builder(Float<double>::Builder(upperRatio), Float<double>::Builder(EvaluateReferenceValueAtIndex(valuesOfSameUnit, upperIndex)), unitExpression.clone());
-      //unitExpression.shallowReduce(ReductionContext(App::app()->localContext(), Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit(),  Poincare::Preferences::sharedPreferences()->unitFormat(), Poincare::ExpressionNode::ReductionTarget::SystemForApproximation));
-
-      // Text to print in menu
-      FillRatioBuffer(&textBuffer[nReturn * k_sizeOfUnitComparisonBuffer], upperRatio);
-
-      nReturn++;
-    }
-  }
   return nReturn;
 }
 
-bool AreSameRootSymbol(const char * s1, const char * s2) {
-  int i = 0;
-  while (s1[i] != 0 && s2[i] !=0) {
-    if (s1[i] != s2[i]) {
-      return false;
-    }
-    i++;
-  }
-  return s1[i] == 0 && s2[i] ==0;
-}
-
-double EvaluateReferenceValueAtIndex(const ReferenceValue * const* table, int index) {
-  return table[index]->value * std::pow(10.0, table[index]->exponantOfTen);
-}
-
-void FillRatioBuffer(char * textBuffer, double ratio) {
+void FillRatioBuffer(double ratio, char * textBuffer) {
   assert(ratio < 100 && ratio >= 0.01);
   int bufferIndex = 0;
   bool withPercentage = false;
@@ -150,8 +101,7 @@ void FillRatioBuffer(char * textBuffer, double ratio) {
     textBuffer[2] = '0';
     bufferIndex = 3;
   } else {
-    Poincare::PrintFloat::TextLengths l = PrintFloat::ConvertFloatToText<double>(ratio, textBuffer, 4, 4, 2, Preferences::PrintFloatMode::Decimal);
-    bufferIndex = l.CharLength;
+    bufferIndex = PoincareHelpers::ConvertFloatToText<double>(ratio, textBuffer, k_sizeOfUnitComparisonBuffer - 1, k_numberOfSignicativeNumbers);
   }
   if (withPercentage) {
     textBuffer[bufferIndex] = '%';
@@ -159,7 +109,6 @@ void FillRatioBuffer(char * textBuffer, double ratio) {
     textBuffer[bufferIndex] = 0;
   }
 }
-
 
 }
 

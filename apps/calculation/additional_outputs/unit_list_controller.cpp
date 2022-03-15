@@ -23,6 +23,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   for (size_t i = 0; i < k_maxNumberOfRows; i++) {
     expressions[i] = Expression();
   }
+  m_comparisonValue = 0.0;
 
   /* 1. First rows: miscellaneous classic units for some dimensions, in both
    * metric and imperial units. */
@@ -88,7 +89,14 @@ void UnitListController::setExpression(Poincare::Expression e) {
   m_numberOfExpressionCells = numberOfExpressions;
 
   // 4. Add unit comparison
-  numberOfExpressions += UnitComparison::SetUpperAndLowerReferenceValues(siExpression,  m_referenceValues, &expressions[numberOfExpressions], m_comparisonTextBuffer);
+    // 4.1. Extract value and unit of SI expression
+  assert(siExpression.hasUnit());
+  Expression clone = siExpression.clone();
+  Expression unit;
+  PoincareHelpers::ReduceAndRemoveUnit(&clone, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
+  m_comparisonValue = PoincareHelpers::ApproximateToScalar<double>(clone, App::app()->localContext());
+    // 4.2. Set upper and lower reference values
+  numberOfExpressions += UnitComparison::SetUpperAndLowerReferenceValues(m_comparisonValue, unit, m_referenceValues, &expressions[numberOfExpressions]);
 
   // Memoize layouts
   for (size_t i = 0; i < k_maxNumberOfRows; i++) {
@@ -106,17 +114,20 @@ I18n::Message UnitListController::messageAtIndex(int index) {
 }
 
 void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessage * bufferCell, int index) {
-  const ReferenceValue * referenceValue = m_referenceValues[index];
-  if (referenceValue == nullptr) {
+  const UnitComparison::ReferenceValue * referenceValue = m_referenceValues[index];
+  if (referenceValue == nullptr || m_comparisonValue == 0.0) {
     return;
   }
   I18n::Message messageInCell;
-  if (index == 0) {
+  char floatToTextBuffer[UnitComparison::k_sizeOfUnitComparisonBuffer];
+  double ratio = m_comparisonValue / referenceValue->value;
+  UnitComparison::FillRatioBuffer(ratio, floatToTextBuffer);
+  if (ratio > 1) {
     messageInCell = referenceValue->title2;
   } else {
     messageInCell = referenceValue->title1;
   }
-  bufferCell->setMessageWithPlaceholder(messageInCell, &m_comparisonTextBuffer[index * UnitComparison::k_sizeOfUnitComparisonBuffer]);
+  bufferCell->setMessageWithPlaceholder(messageInCell, floatToTextBuffer);
 }
 
 }

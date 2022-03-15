@@ -6,8 +6,6 @@
 
 namespace Calculation {
 
-using namespace UnitComparison;
-
 class UnitListController : public BuffersAndExpressionsListController {
 public:
   UnitListController(EditExpressionController * editExpressionController) :
@@ -22,8 +20,8 @@ private:
   void fillBufferCellAtIndex(Escher::BufferTableCellWithMessage * bufferCell, int index) override;
   // Memoized reference values.
   // At index 0 is upper bound reference value, at index 1 is lower bound
-  const ReferenceValue * m_referenceValues[k_maxNumberOfBufferCells];
-  char m_comparisonTextBuffer[k_maxNumberOfBufferCells*k_sizeOfUnitComparisonBuffer];
+  const UnitComparison::ReferenceValue * m_referenceValues[k_maxNumberOfBufferCells];
+  double m_comparisonValue;
 };
 
 }

@@ -268,7 +268,13 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
     Expression unit;
     PoincareHelpers::ReduceAndRemoveUnit(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
     double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
-    return (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())) ? AdditionalInformationType::Unit : AdditionalInformationType::None;
+    if (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())) {
+      return AdditionalInformationType::Unit;
+    }
+    if (UnitComparison::SetUpperAndLowerReferenceValues(value, unit, nullptr, nullptr, false) > 0) {
+      return AdditionalInformationType::Unit;
+    }
+    return AdditionalInformationType::None;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
     return AdditionalInformationType::Integer;

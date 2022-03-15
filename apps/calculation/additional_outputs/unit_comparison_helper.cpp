@@ -32,7 +32,7 @@ constexpr static const char * k_referenceSIUnits[] = {"_kg", "_kg×_m^2×_s^\U00
 constexpr static const char * k_referenceDisplayedUnits[] = {"_kg", "_W"};
 constexpr static const ReferenceValue * k_referenceTables[] = {k_massReferences, k_powerReferences};
 
-int SetUpperAndLowerReferenceValues(double inputValue, Expression unit, const ReferenceValue ** referenceValues, Expression * comparisonExpressions, bool saveComparison) {
+int SetUpperAndLowerReferenceValues(double inputValue, Expression unit, const ReferenceValue ** referenceValues, int * returnUnitIndex, bool saveComparison) {
   // 1. Find table of corresponding unit.
   const ReferenceValue * valuesOfSameUnit = nullptr;
   char unitBuffer[k_sizeOfUnitBuffer];
@@ -76,12 +76,14 @@ int SetUpperAndLowerReferenceValues(double inputValue, Expression unit, const Re
       if (ratios[i] < 100 && ratios[i] >= 0.01) {
         if (saveComparison) {
           *(referenceValues + nReturn) = &valuesOfSameUnit[indexes[i]];
-          Expression newUnit = Poincare::Expression::Parse(k_referenceDisplayedUnits[unitIndex], App::app()->localContext());
-          *(comparisonExpressions + nReturn) = Multiplication::Builder(Float<double>::Builder(ratios[i]), Float<double>::Builder(valuesOfSameUnit[indexes[i]].value), newUnit);
         }
         nReturn ++;
       }
     }
+  }
+
+  if (saveComparison) {
+    *returnUnitIndex = unitIndex;
   }
 
   return nReturn;
@@ -108,6 +110,12 @@ void FillRatioBuffer(double ratio, char * textBuffer) {
     bufferIndex++;
     textBuffer[bufferIndex] = 0;
   }
+}
+
+Expression GetComparisonExpression(double value, const ReferenceValue * referenceValue, int unitIndex) {
+  double ratio = value / referenceValue->value;
+  Expression unit = Poincare::Expression::Parse(k_referenceDisplayedUnits[unitIndex], App::app()->localContext());
+  return Multiplication::Builder(Float<double>::Builder(ratio), Float<double>::Builder(referenceValue->value), unit);
 }
 
 }

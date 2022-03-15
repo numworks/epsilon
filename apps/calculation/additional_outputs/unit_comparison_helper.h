@@ -13,6 +13,11 @@ constexpr static int k_sizeOfUnitBuffer = 30;
 constexpr static int k_numberOfSignicativeNumbers = 2;
 
 typedef struct {
+  const char * SIUnit;
+  const char * displayedUnit;
+} ReferenceUnit;
+
+typedef struct {
   I18n::Message title1;
   I18n::Message title2;
   I18n::Message subtitle;

@@ -54,6 +54,7 @@ void onOnOffKeyDown() {
    * zero (because it's connected to the open-drain output. In other words,
    * we're waiting for a falling edge. */
   EXTI.FTSR()->set(columnPin, true);
+  EXTI.RTSR()->set(columnPin, false);
 }
 
 }

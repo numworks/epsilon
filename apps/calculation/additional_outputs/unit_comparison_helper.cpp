@@ -27,9 +27,11 @@ constexpr static const ReferenceValue k_powerReferences[] = {
 };
 
 
-constexpr static const int k_numberOfReferencesTables = 2;
-constexpr static const char * k_referenceSIUnits[] = {"_kg", "_kg×_m^2×_s^\U00000012-3\U00000013"};
-constexpr static const char * k_referenceDisplayedUnits[] = {"_kg", "_W"};
+constexpr static const int k_numberOfReferenceTables = 2;
+constexpr static ReferenceUnit k_referenceUnits[] = {
+  ReferenceUnit({"_kg", "_kg"}),
+  ReferenceUnit({"_kg×_m^2×_s^\U00000012-3\U00000013", "_W"})
+};
 constexpr static const ReferenceValue * k_referenceTables[] = {k_massReferences, k_powerReferences};
 
 int SetUpperAndLowerReferenceValues(double inputValue, Expression unit, const ReferenceValue ** referenceValues, int * returnUnitIndex, bool saveComparison) {
@@ -38,8 +40,8 @@ int SetUpperAndLowerReferenceValues(double inputValue, Expression unit, const Re
   char unitBuffer[k_sizeOfUnitBuffer];
   PoincareHelpers::Serialize(unit, unitBuffer, k_sizeOfUnitBuffer);
   int unitIndex = 0;
-  while (unitIndex < k_numberOfReferencesTables) {
-    if (std::strncmp(unitBuffer, k_referenceSIUnits[unitIndex], k_sizeOfUnitBuffer) == 0) {
+  while (unitIndex < k_numberOfReferenceTables) {
+    if (std::strncmp(unitBuffer, k_referenceUnits[unitIndex].SIUnit, k_sizeOfUnitBuffer) == 0) {
       valuesOfSameUnit = k_referenceTables[unitIndex];
       break;
     }
@@ -113,8 +115,10 @@ void FillRatioBuffer(double ratio, char * textBuffer) {
 }
 
 Expression GetComparisonExpression(double value, const ReferenceValue * referenceValue, int unitIndex) {
+  assert(unitIndex < k_numberOfReferenceTables);
+  void * ptr = reinterpret_cast<void *>(referenceValue);
   double ratio = value / referenceValue->value;
-  Expression unit = Poincare::Expression::Parse(k_referenceDisplayedUnits[unitIndex], App::app()->localContext());
+  Expression unit = Poincare::Expression::Parse(k_referenceUnits[unitIndex].displayedUnit, App::app()->localContext());
   return Multiplication::Builder(Float<double>::Builder(ratio), Float<double>::Builder(referenceValue->value), unit);
 }
 

@@ -29,7 +29,7 @@ public:
 private:
   constexpr static int k_expressionCellType = 0;
   constexpr static int k_bufferCellType = 1;
-  constexpr static int k_maxNumberOfExpressionCells = 3;
+  constexpr static int k_maxNumberOfExpressionCells = 5;
   constexpr static int k_maxNumberOfBufferCells = 2;
 
   I18n::Message messageAtIndex(int index);

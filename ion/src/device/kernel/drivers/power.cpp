@@ -96,7 +96,9 @@ void suspend(bool checkIfOnOffKeyReleased) {
 
     // Check plugging state
     USB::initGPIO();
-    if (scan == OnlyOnOffKeyDown || (!plugged && Ion::USB::isPlugged())) {
+    /* Only check that no other keys are pressed in case the OnOff key has been
+     * relased since the wake up event. */
+    if ((scan & ~OnlyOnOffKeyDown) == Ion::Keyboard::State(0) || (!plugged && Ion::USB::isPlugged())) {
       // Wake up
       break;
     } else {

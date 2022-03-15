@@ -19,10 +19,11 @@ typedef struct {
   double value;
 } ReferenceValue;
 
-int SetUpperAndLowerReferenceValues(double inputValue, Poincare::Expression unit, const ReferenceValue ** referenceValues, Poincare::Expression * comparisonExpressions, bool saveComparison = true);
+int SetUpperAndLowerReferenceValues(double inputValue, Poincare::Expression unit, const ReferenceValue ** referenceValues, int * returnUnitIndex, bool saveComparison = true);
 
 void FillRatioBuffer(double ratio, char * textBuffer);
 
+Poincare::Expression GetComparisonExpression(double value, const ReferenceValue * referenceValue, int unitIndex);
 }
 
 }

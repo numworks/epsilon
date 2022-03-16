@@ -80,7 +80,7 @@ KDSize BinomialCoefficientLayoutNode::computeSize() {
   KDSize coefficientsSize = KDSize(
       std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()),
       knHeight());
-  KDCoordinate width = coefficientsSize.width() + 2*ParenthesisLayoutNode::ParenthesisWidth();
+  KDCoordinate width = coefficientsSize.width() + 2*ParenthesisLayoutNode::k_parenthesisWidth;
   return KDSize(width, coefficientsSize.height());
 }
 
@@ -89,7 +89,7 @@ KDCoordinate BinomialCoefficientLayoutNode::computeBaseline() {
 }
 
 KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode * child) {
-  KDCoordinate horizontalCenter = ParenthesisLayoutNode::ParenthesisWidth() + std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width())/2;
+  KDCoordinate horizontalCenter = ParenthesisLayoutNode::k_parenthesisWidth + std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width())/2;
   if (child == nLayout()) {
     return KDPoint(horizontalCenter - nLayout()->layoutSize().width()/2, 0);
   }
@@ -100,7 +100,7 @@ KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode * child) {
 void BinomialCoefficientLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Render the parentheses.
   KDCoordinate childHeight = knHeight();
-  KDCoordinate rightParenthesisPointX = std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()) + LeftParenthesisLayoutNode::ParenthesisWidth();
+  KDCoordinate rightParenthesisPointX = std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()) + LeftParenthesisLayoutNode::k_parenthesisWidth;
   LeftParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p, expressionColor, backgroundColor);
   RightParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor, backgroundColor);
 }

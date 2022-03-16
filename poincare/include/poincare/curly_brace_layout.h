@@ -9,17 +9,17 @@ namespace Poincare {
 class CurlyBraceLayoutNode : public BraceLayoutNode {
 public:
   // Dimensions
-  static constexpr KDCoordinate k_curveHeight = 6;
-  static constexpr KDCoordinate k_curveWidth = 5;
-  static constexpr KDCoordinate k_centerHeight = 3;
-  static constexpr KDCoordinate k_centerWidth = 3;
-  static constexpr KDCoordinate k_barWidth = 1;
+  constexpr static KDCoordinate k_curveHeight = 6;
+  constexpr static KDCoordinate k_curveWidth = 5;
+  constexpr static KDCoordinate k_centerHeight = 3;
+  constexpr static KDCoordinate k_centerWidth = 3;
+  constexpr static KDCoordinate k_barWidth = 1;
   // Margins
-  static constexpr KDCoordinate k_horizontalExternalMargin = 1;
-  static constexpr KDCoordinate k_horizontalInternalMargin = 1;
-  static constexpr KDCoordinate k_verticalInternalMargin = 4;
+  constexpr static KDCoordinate k_horizontalExternalMargin = 1;
+  constexpr static KDCoordinate k_horizontalInternalMargin = 1;
+  constexpr static KDCoordinate k_verticalInternalMargin = 4;
 
-  static constexpr KDCoordinate CurlyBraceWidth() { return k_horizontalExternalMargin + (k_centerWidth + k_curveWidth - k_barWidth) + k_horizontalInternalMargin; }
+  constexpr static KDCoordinate k_curlyBraceWidth = k_horizontalExternalMargin + (k_centerWidth + k_curveWidth - k_barWidth) + k_horizontalInternalMargin;
 
   using BraceLayoutNode::BraceLayoutNode;
   size_t size() const override { return sizeof(CurlyBraceLayoutNode); }
@@ -34,7 +34,7 @@ protected:
   static KDCoordinate ChildHeightGivenLayoutHeight(KDCoordinate layoutHeight) { return layoutHeight - k_verticalInternalMargin; }
   static void RenderWithChildHeight(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
 
-  KDSize computeSize() override { return KDSize(CurlyBraceWidth(), HeightGivenChildHeight(childHeight())); }
+  KDSize computeSize() override { return KDSize(k_curlyBraceWidth, HeightGivenChildHeight(childHeight())); }
 };
 
 class LeftCurlyBraceLayoutNode final : public CurlyBraceLayoutNode {

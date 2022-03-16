@@ -196,14 +196,14 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 KDSize MatrixLayoutNode::computeSize() {
   KDSize sizeWithoutBrackets = gridSize();
   KDSize sizeWithBrackets = KDSize(
-      sizeWithoutBrackets.width() + 2 * SquareBracketLayoutNode::BracketWidth(),
+      sizeWithoutBrackets.width() + 2 * SquareBracketLayoutNode::k_squareBracketWidth,
       sizeWithoutBrackets.height() + 2 * SquareBracketLayoutNode::k_lineThickness);
   return sizeWithBrackets;
 }
 
 KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l) {
   assert(indexOfChild(l) >= 0);
-  return GridLayoutNode::positionOfChild(l).translatedBy(KDPoint(KDPoint(SquareBracketLayoutNode::BracketWidth(), SquareBracketLayoutNode::k_lineThickness)));
+  return GridLayoutNode::positionOfChild(l).translatedBy(KDPoint(KDPoint(SquareBracketLayoutNode::k_squareBracketWidth, SquareBracketLayoutNode::k_lineThickness)));
 }
 
 void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {

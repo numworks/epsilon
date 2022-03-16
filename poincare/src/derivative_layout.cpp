@@ -145,12 +145,12 @@ KDPoint DerivativeLayoutNode::positionOfChild(LayoutNode * child) {
   }
   if (child == derivandLayout()) {
     return KDPoint(
-        positionOfVariableInFractionSlot().x() + variableLayout()->layoutSize().width() + Escher::Metric::FractionAndConjugateHorizontalMargin + Escher::Metric::FractionAndConjugateHorizontalOverflow + ParenthesisLayoutNode::ParenthesisWidth(),
+        positionOfVariableInFractionSlot().x() + variableLayout()->layoutSize().width() + Escher::Metric::FractionAndConjugateHorizontalMargin + Escher::Metric::FractionAndConjugateHorizontalOverflow + ParenthesisLayoutNode::k_parenthesisWidth,
         baseline() - derivandLayout()->baseline());
   }
   assert(child == abscissaLayout());
   return KDPoint(
-      positionOfChild(derivandLayout()).x() + derivandLayout()->layoutSize().width() + ParenthesisLayoutNode::ParenthesisWidth() + 2 * k_barHorizontalMargin + k_barWidth + variableLayout()->layoutSize().width() + KDFont::LargeFont->stringSize("=").width(),
+      positionOfChild(derivandLayout()).x() + derivandLayout()->layoutSize().width() + ParenthesisLayoutNode::k_parenthesisWidth + 2 * k_barHorizontalMargin + k_barWidth + variableLayout()->layoutSize().width() + KDFont::LargeFont->stringSize("=").width(),
       abscissaBaseline() - abscissaLayout()->baseline());
 }
 
@@ -180,7 +180,7 @@ KDCoordinate DerivativeLayoutNode::fractionBarWidth() {
 }
 
 KDCoordinate DerivativeLayoutNode::parenthesesWidth() {
-  return 2 * ParenthesisLayoutNode::ParenthesisWidth() + derivandLayout()->layoutSize().width();
+  return 2 * ParenthesisLayoutNode::k_parenthesisWidth + derivandLayout()->layoutSize().width();
 }
 
 void DerivativeLayoutNode::setVariableSlot(bool fractionSlot, bool * shouldRecomputeLayout) {
@@ -212,11 +212,11 @@ void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expression
   KDPoint leftParenthesisPosition(xOffset + barWidth + Escher::Metric::FractionAndConjugateHorizontalMargin, p.y() + baseline() - derivandLayout()->baseline() - ParenthesisLayoutNode::k_verticalMargin / 2);
   LeftParenthesisLayoutNode::RenderWithChildHeight(derivandSize.height(), ctx, leftParenthesisPosition, expressionColor, backgroundColor);
 
-  KDPoint rightParenthesisPosition(leftParenthesisPosition.x() + ParenthesisLayoutNode::ParenthesisWidth() + derivandSize.width(), leftParenthesisPosition.y());
+  KDPoint rightParenthesisPosition(leftParenthesisPosition.x() + ParenthesisLayoutNode::k_parenthesisWidth + derivandSize.width(), leftParenthesisPosition.y());
   RightParenthesisLayoutNode::RenderWithChildHeight(derivandSize.height(), ctx, rightParenthesisPosition, expressionColor, backgroundColor);
 
   // ...|x=
-  KDRect verticalBar(rightParenthesisPosition.x() + ParenthesisLayoutNode::ParenthesisWidth() + k_barHorizontalMargin, p.y(), k_barWidth, abscissaBaseline() - variableLayout()->baseline() + variableSize.height());
+  KDRect verticalBar(rightParenthesisPosition.x() + ParenthesisLayoutNode::k_parenthesisWidth + k_barHorizontalMargin, p.y(), k_barWidth, abscissaBaseline() - variableLayout()->baseline() + variableSize.height());
   ctx->fillRect(verticalBar, expressionColor);
 
   KDPoint variableAssignmentPosition(verticalBar.x() + k_barWidth + k_barHorizontalMargin, p.y() + abscissaBaseline() - variableLayout()->baseline());

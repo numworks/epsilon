@@ -69,6 +69,8 @@ KDCoordinate BracketLayoutNode::computeBaseline() {
   int increment = IsLeftBracket(type()) ? 1 : -1;
   for (int i = idxInParent + increment; i >= 0 && i < numberOfSiblings; i+=increment) {
     LayoutNode * sibling = parentLayout->childAtIndex(i);
+    /* Nested parentheses and curly braces are treated as the same layout for
+     * computing baseline and size. */
     if (IsSquareBracket(type()) == IsSquareBracket(sibling->type())) {
       if ((IsLeftBracket(type()) && IsLeftBracket(sibling->type()))
           || (IsRightBracket(type()) && IsRightBracket(sibling->type())))
@@ -131,6 +133,8 @@ KDCoordinate BracketLayoutNode::computeChildHeight() {
   int increment = IsLeftBracket(type()) ? 1 : -1;
   for (int i = idxInParent + increment; i >= 0 && i < numberOfSiblings; i+= increment) {
     LayoutNode * sibling = parentLayout->childAtIndex(i);
+    /* Nested parentheses and curly braces are treated as the same layout for
+     * computing baseline and size. */
     if (IsSquareBracket(type()) == IsSquareBracket(sibling->type())) {
       if ((IsLeftBracket(type()) && IsLeftBracket(sibling->type()))
           || (IsRightBracket(type()) && IsRightBracket(sibling->type())))

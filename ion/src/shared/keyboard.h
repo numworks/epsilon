@@ -6,6 +6,7 @@
 namespace Ion {
 namespace Keyboard {
 
+void willPopState(); // Callback only implemented on simulator, to refresh the window
 void resetMemoizedState();
 void keyboardWasScanned(State state);
 

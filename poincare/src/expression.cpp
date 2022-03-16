@@ -965,7 +965,35 @@ Expression Expression::distributeOverLists(ExpressionNode::ReductionContext redu
     return replaceWithUndefinedInPlace();
   }
   assert(listLength >= 0);
-  return node()->distributeOverLists(reductionContext, listLength);
+
+  /* We want to transform f({a,b},c) into {f(a,c),f(b,c)} */
+  int n = numberOfChildren();
+  List children = List::Builder();
+  for (int i = 0; i < n; i++) {
+    children.addChildAtIndexInPlace(childAtIndex(i), i, i);
+  }
+  assert(children.numberOfChildren() == n);
+  /* We moved all of our children into another expression. Now, by cloning
+   * 'this', we get an empty expression with the right type, to be inserted
+   * into the result list. */
+
+  List result = List::Builder();
+  for (int listIndex = 0; listIndex < listLength; listIndex++) {
+    Expression element = clone();
+    for (int childIndex = 0; childIndex < n; childIndex++) {
+      Expression child = children.childAtIndex(childIndex);
+      if (child.type() == ExpressionNode::Type::List) {
+        assert(child.numberOfChildren() == listLength);
+        element.replaceChildAtIndexInPlace(childIndex, child.childAtIndex(listIndex));
+      } else {
+        element.replaceChildAtIndexInPlace(childIndex, child.clone());
+      }
+    }
+    result.addChildAtIndexInPlace(element, listIndex, listIndex);
+    element.shallowReduce(reductionContext);
+  }
+  replaceWithInPlace(result);
+  return std::move(result);
 }
 
 Expression Expression::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {

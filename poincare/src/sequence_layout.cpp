@@ -176,7 +176,7 @@ KDSize SequenceLayoutNode::computeSize() {
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDSize argumentSize = argumentLayout()->layoutSize();
   KDSize argumentSizeWithParentheses = KDSize(
-    argumentSize.width() + 2*ParenthesisLayoutNode::ParenthesisWidth(),
+    argumentSize.width() + 2*ParenthesisLayoutNode::k_parenthesisWidth,
     ParenthesisLayoutNode::HeightGivenChildHeight(argumentSize.height()));
   KDSize result = KDSize(
     std::max(std::max(k_symbolWidth, totalLowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
@@ -204,7 +204,7 @@ KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {
     x = std::max(std::max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSizeWithVariableEquals().width()-upperBoundSize.width())/2);
     y = baseline() - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
   } else if (l == argumentLayout()) {
-    x = std::max(std::max(k_symbolWidth, lowerBoundSizeWithVariableEquals().width()), upperBoundSize.width())+k_argumentWidthMargin+ParenthesisLayoutNode::ParenthesisWidth();
+    x = std::max(std::max(k_symbolWidth, lowerBoundSizeWithVariableEquals().width()), upperBoundSize.width())+k_argumentWidthMargin+ParenthesisLayoutNode::k_parenthesisWidth;
     y = baseline() - argumentLayout()->baseline();
   } else {
     assert(false);
@@ -263,7 +263,7 @@ void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   KDPoint argumentPosition = positionOfChild(argumentLayout());
 
   KDPoint leftParenthesisPoint = p.translatedBy(KDPoint(
-      argumentPosition.x() - ParenthesisLayoutNode::ParenthesisWidth(),
+      argumentPosition.x() - ParenthesisLayoutNode::k_parenthesisWidth,
       argumentPosition.y() + argumentLayout()->layoutSize().height() - argumentWithParenthesesHeight));
   LeftParenthesisLayoutNode::RenderWithChildHeight(argumentWithParenthesesHeight, ctx, leftParenthesisPoint, expressionColor, backgroundColor);
 

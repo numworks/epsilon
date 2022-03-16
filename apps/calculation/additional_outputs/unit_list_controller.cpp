@@ -210,7 +210,7 @@ void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessag
   assert(referenceValue != nullptr);
   I18n::Message messageInCell;
   char floatToTextBuffer[UnitComparison::k_sizeOfUnitComparisonBuffer];
-  double ratio = m_SIValue / referenceValue->value;
+  double ratio = m_SIValue / static_cast<double>(referenceValue->value);
   UnitComparison::FillRatioBuffer(ratio, floatToTextBuffer, UnitComparison::k_sizeOfUnitComparisonBuffer);
   if (ratio > 1) {
     messageInCell = referenceValue->title2;

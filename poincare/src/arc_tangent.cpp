@@ -57,7 +57,7 @@ Expression ArcTangentNode::shallowReduce(ReductionContext reductionContext) {
   return ArcTangent(this).shallowReduce(reductionContext);
 }
 
-bool ArcTangentNode::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool ArcTangentNode::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return ArcTangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -79,7 +79,7 @@ Expression ArcTangent::shallowReduce(ExpressionNode::ReductionContext reductionC
   return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }
 
-bool ArcTangent::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool ArcTangent::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }

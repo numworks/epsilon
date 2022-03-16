@@ -65,7 +65,7 @@ public:
   LayoutShape leftLayoutShape() const override { return LayoutShape::OneLetter; };
 
   /* Derivation */
-  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
 private:
   int rankOfConstant() const { return constantInfo().comparisonRank(); }
   size_t nodeSize() const override { return sizeof(ConstantNode); }
@@ -92,7 +92,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
 
   static constexpr ConstantNode::ConstantInfo k_constants[] = {
     ConstantNode::ConstantInfo("𝐢", 0),

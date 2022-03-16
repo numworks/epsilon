@@ -7,7 +7,7 @@
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/nonreal.h>
-#include <poincare/nonreal.h>
+#include <poincare/symbol.h>
 #include <ion.h>
 #include <cmath>
 #include <algorithm>
@@ -83,7 +83,7 @@ Expression ConstantNode::shallowReduce(ReductionContext reductionContext) {
   return Constant(this).shallowReduce(reductionContext);
 }
 
-bool ConstantNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool ConstantNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Constant(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -141,7 +141,7 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result;
 }
 
-bool Constant::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Constant::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   ConstantNode::ConstantInfo info = constantInfo();
   if (info.unit() == nullptr && !std::isnan(info.value())) {
     replaceWithInPlace(Rational::Builder(0));

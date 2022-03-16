@@ -1,6 +1,7 @@
 #include <poincare/undefined.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
+#include <poincare/symbol.h>
 #include <algorithm>
 
 extern "C" {
@@ -21,6 +22,10 @@ Expression UndefinedNode::setSign(Sign s, ExpressionNode::ReductionContext reduc
 
 Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::String(Undefined::Name(), Undefined::NameSize()-1);
+}
+
+bool UndefinedNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+  return true;
 }
 
 int UndefinedNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

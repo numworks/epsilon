@@ -11,6 +11,7 @@
 #include <poincare/subtraction.h>
 #include <poincare/constant.h>
 #include <poincare/undefined.h>
+#include <poincare/symbol.h>
 #include <poincare/simplification_helper.h>
 
 namespace Poincare {
@@ -112,7 +113,7 @@ Expression ExpressionNode::shallowBeautify(ReductionContext * reductionContext) 
   return Expression(this).defaultShallowBeautify();
 }
 
-bool ExpressionNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool ExpressionNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Expression(this).defaultDidDerivate();
 }
 

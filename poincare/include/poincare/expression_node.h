@@ -312,7 +312,7 @@ public:
    * We should uniformize this behaviour and use pointers in other methods using
    * the reduction context. */
   /*!*/ virtual Expression shallowBeautify(ReductionContext * reductionContext);
-  /*!*/ virtual bool derivate(ReductionContext, Expression symbol, Expression symbolValue);
+  /*!*/ virtual bool derivate(ReductionContext, Symbol symbol, Expression symbolValue);
   virtual Expression unaryFunctionDifferential(ReductionContext reductionContext);
   /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(ExpressionNode::ReductionContext reductionContext) const;

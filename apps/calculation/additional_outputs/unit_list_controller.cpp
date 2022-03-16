@@ -29,10 +29,10 @@ void UnitListController::didEnterResponderChain(Responder * previousFirstRespond
 }
 
 int UnitListController::reusableCellCount(int type) {
-  assert(type == k_expressionCellType || type == k_bufferCellType);
   if (type == k_expressionCellType) {
     return m_numberOfExpressionCells;
   }
+  assert(type == k_bufferCellType);
   return m_numberOfBufferCells;
 }
 
@@ -41,11 +41,9 @@ void UnitListController::viewDidDisappear() {
   // Reset layout and cell memoization to avoid taking extra space in the pool
   for (int i = 0; i < k_maxNumberOfExpressionCells; i++) {
     m_expressionCells[i].setLayout(Layout());
-    m_expressionCells[i].setHighlighted(false);
     m_layouts[i] = Layout();
   }
   for (int i = 0; i < k_maxNumberOfBufferCells; i++) {
-    m_bufferCells[i].setHighlighted(false);
     m_referenceValues[i] = nullptr;
   }
   m_expression = Expression();
@@ -54,10 +52,10 @@ void UnitListController::viewDidDisappear() {
 }
 
 HighlightCell * UnitListController::reusableCell(int index, int type) {
-  assert(type == k_expressionCellType || type == k_bufferCellType);
   if (type == k_expressionCellType) {
     return &m_expressionCells[index];
   }
+  assert(type == k_bufferCellType);
   return &m_bufferCells[index];
 }
 
@@ -93,8 +91,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
 
   // I. Handle expression cells
 
-  /* 0. Initialize expressions and layouts
-   */
+  // 0. Initialize expressions and layouts
   Poincare::Expression expressions[k_maxNumberOfExpressionCells];
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
     m_layouts[i] = Layout();
@@ -121,7 +118,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);
   expressions[numberOfExpressions] = m_expression;
   Shared::PoincareHelpers::CloneAndSimplify(&expressions[numberOfExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
-  Expression siExpression = expressions[numberOfExpressions]; // Remember of later
+  Expression siExpression = expressions[numberOfExpressions]; // Remember for later (part II)
   numberOfExpressions++;
 
   /* 3. Get rid of duplicates
@@ -212,7 +209,7 @@ void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessag
   char floatToTextBuffer[UnitComparison::k_sizeOfUnitComparisonBuffer];
   double ratio = m_SIValue / static_cast<double>(referenceValue->value);
   UnitComparison::FillRatioBuffer(ratio, floatToTextBuffer, UnitComparison::k_sizeOfUnitComparisonBuffer);
-  if (ratio > 1) {
+  if (ratio > 1.0) {
     messageInCell = referenceValue->title2;
   } else {
     messageInCell = referenceValue->title1;

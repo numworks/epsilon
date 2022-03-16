@@ -1,6 +1,7 @@
 #include "plot_controller.h"
 #include <poincare/print.h>
 #include <poincare/preferences.h>
+#include "../data/store_controller.h"
 
 namespace Statistics {
 
@@ -55,8 +56,7 @@ void PlotController::reloadBannerView() {
   char buffer[k_maxNumberOfCharacters] = "";
 
   // Display series name
-  char seriesChar = '0' + series + 1;
-  Poincare::Print::customPrintf(buffer, k_maxNumberOfCharacters, "V%c/N%c", seriesChar, seriesChar);
+  StoreController::FillSeriesName(series, buffer, false);
   plotView()->bannerView()->seriesName()->setText(buffer);
 
   // Display selected value

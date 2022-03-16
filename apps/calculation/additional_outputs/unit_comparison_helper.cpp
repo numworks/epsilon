@@ -200,77 +200,73 @@ constexpr static ReferenceUnit k_referenceUnits[] = {
   ReferenceUnit({"_kg", "_kg"}), // Mass
   ReferenceUnit({"_m^2", "_m^2"}), // Area
   ReferenceUnit({"_m^3", "_m^3"}), // Volume
-  ReferenceUnit({"_kg×_m^2×_s^\U00000012-3\U00000013", "_W"}), // Power
-  ReferenceUnit({"_m×_s^\U00000012-1\U00000013", "_m×_s^\U00000012-1\U00000013"}), // Velocity
-  ReferenceUnit({"_kg×_m^\U00000012-1\U00000013×_s^\U00000012-2\U00000013", "_Pa"}) // Pressure
+  ReferenceUnit({"_kg×_m^2×_s^\u0012-3\u0013", "_W"}), // Power
+  ReferenceUnit({"_m×_s^\u0012-1\u0013", "_m×_s^\u0012-1\u0013"}), // Velocity
+  ReferenceUnit({"_kg×_m^\u0012-1\u0013^\u0012-2\u0013", "_Pa"}) // Pressure
 };
 constexpr static const ReferenceValue * k_referenceTables[] = {k_lengthReferences, k_timeReferences, k_massReferences, k_areaReferences, k_volumeReferences, k_powerReferences, k_velocityReferences, k_pressureReferences};
 
 static_assert(sizeof(k_referenceUnits) / sizeof(ReferenceUnit) == k_numberOfReferenceTables, "Wrong number of reference tables or missing reference unit");
 static_assert(sizeof(k_referenceTables) / sizeof(ReferenceValue *) == k_numberOfReferenceTables, "Wrong number of reference tables or missing reference table");
 
-int SetUpperAndLowerReferenceValues(double inputValue, Expression unit, const ReferenceValue ** referenceValues, int * returnUnitIndex, bool saveComparison) {
+int FindUpperAndLowerReferenceValues(double inputValue, Expression unit, const ReferenceValue ** referenceValues, int * returnReferenceTableIndex) {
   // 1. Find table of corresponding unit.
-  const ReferenceValue * valuesOfSameUnit = nullptr;
+  const ReferenceValue * referenceTable = nullptr;
   char unitBuffer[k_sizeOfUnitBuffer];
   PoincareHelpers::Serialize(unit, unitBuffer, k_sizeOfUnitBuffer);
-  int unitIndex = 0;
-  while (unitIndex < k_numberOfReferenceTables) {
-    if (strncmp(unitBuffer, k_referenceUnits[unitIndex].SIUnit, k_sizeOfUnitBuffer) == 0) {
-      valuesOfSameUnit = k_referenceTables[unitIndex];
+  int referenceTableIndex = 0;
+  while (referenceTableIndex < k_numberOfReferenceTables) {
+    if (strncmp(unitBuffer, k_referenceUnits[referenceTableIndex].SIUnit, k_sizeOfUnitBuffer) == 0) {
+      referenceTable = k_referenceTables[referenceTableIndex];
       break;
     }
-    unitIndex++;
+    referenceTableIndex++;
   }
-  if (valuesOfSameUnit == nullptr) {
+  if (referenceTable == nullptr) {
     return 0;
   }
 
 
   // 2. Iterate through table to find upper and lower values indexes
-  int index = 0;
+  int referenceIndex = 0;
   int upperIndex = -1;
-  int lowerIndex = -1;
-  while(valuesOfSameUnit[index].value != 0) {
-    if (valuesOfSameUnit[index].value >= inputValue) {
-      upperIndex = index;
-      lowerIndex = index - 1;
+  while(referenceTable[referenceIndex].value != 0) {
+    if (referenceTable[referenceIndex].value >= inputValue) {
+      upperIndex = referenceIndex;
       break;
     }
-    index ++;
+    referenceIndex ++;
   }
-  if (upperIndex < 0) {
-    lowerIndex = index - 1;
-  }
+  int lowerIndex = upperIndex < 0 ? referenceIndex - 1 : upperIndex - 1;
 
   // 3. Find ratios and save them if needed
   int indexes[] = {lowerIndex, upperIndex};
   double ratios[] = {0.0, 0.0};
-  int nReturn = 0;
+  int numberOfReferenceFound = 0;
   for (int i = 0; i < 2; i++) {
     if (indexes[i] != -1) {
-      ratios[i] = inputValue / valuesOfSameUnit[indexes[i]].value;
-      if (ratios[i] < 100 && ratios[i] >= 0.01) {
-        if (saveComparison) {
-          *(referenceValues + nReturn) = &valuesOfSameUnit[indexes[i]];
+      ratios[i] = inputValue / referenceTable[indexes[i]].value;
+      if (ratios[i] < 100.0 && ratios[i] >= 0.01) {
+        if (referenceValues != nullptr) {
+          referenceValues[numberOfReferenceFound] = &referenceTable[indexes[i]];
         }
-        nReturn ++;
+        numberOfReferenceFound++;
       }
     }
   }
 
-  if (saveComparison) {
-    *returnUnitIndex = unitIndex;
+  if (returnReferenceTableIndex != nullptr) {
+    *returnReferenceTableIndex = referenceTableIndex;
   }
 
-  return nReturn;
+  return numberOfReferenceFound;
 }
 
 void FillRatioBuffer(double ratio, char * textBuffer) {
-  assert(ratio < 100 && ratio >= 0.01);
+  assert(ratio < 100.0 && ratio >= 0.01);
   int bufferIndex = 0;
   bool withPercentage = false;
-  if (ratio <= 1) {
+  if (ratio <= 1.0) {
     ratio = 100.0*ratio;
     withPercentage = true;
   }
@@ -289,7 +285,7 @@ void FillRatioBuffer(double ratio, char * textBuffer) {
   }
 }
 
-Expression GetComparisonExpression(double value, const ReferenceValue * referenceValue, int unitIndex) {
+Expression BuildComparisonExpression(double value, const ReferenceValue * referenceValue, int unitIndex) {
   assert(unitIndex < k_numberOfReferenceTables);
   double ratio = value / referenceValue->value;
   Expression unit = Poincare::Expression::Parse(k_referenceUnits[unitIndex].displayedUnit, App::app()->localContext());

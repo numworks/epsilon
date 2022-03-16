@@ -38,11 +38,11 @@ private:
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;
 
   Poincare::Expression m_expression;
-  mutable int m_numberOfExpressionCells;
-  mutable int m_numberOfBufferCells;
+  int m_numberOfExpressionCells;
+  int m_numberOfBufferCells;
   Escher::ExpressionTableCellWithMessage m_expressionCells[k_maxNumberOfExpressionCells];
   Escher::BufferTableCellWithMessage m_bufferCells[k_maxNumberOfBufferCells];
-  mutable Poincare::Layout m_layouts[k_maxNumberOfExpressionCells];
+  Poincare::Layout m_layouts[k_maxNumberOfExpressionCells];
   const UnitComparison::ReferenceValue * m_referenceValues[k_maxNumberOfBufferCells];
   double m_SIValue;
   int m_unitIndexForComparison;

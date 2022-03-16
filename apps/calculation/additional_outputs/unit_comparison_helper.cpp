@@ -202,7 +202,7 @@ constexpr static ReferenceUnit k_referenceUnits[] = {
   ReferenceUnit({"_m^3", "_m^3"}), // Volume
   ReferenceUnit({"_kg×_m^2×_s^\u0012-3\u0013", "_W"}), // Power
   ReferenceUnit({"_m×_s^\u0012-1\u0013", "_m×_s^\u0012-1\u0013"}), // Velocity
-  ReferenceUnit({"_kg×_m^\u0012-1\u0013^\u0012-2\u0013", "_Pa"}) // Pressure
+  ReferenceUnit({"_kg×_m^\u0012-1\u0013×_s^\u0012-2\u0013", "_Pa"}) // Pressure
 };
 constexpr static const ReferenceValue * k_referenceTables[] = {k_lengthReferences, k_timeReferences, k_massReferences, k_areaReferences, k_volumeReferences, k_powerReferences, k_velocityReferences, k_pressureReferences};
 

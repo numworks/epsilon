@@ -285,10 +285,6 @@ bool PowerNode::derivate(ReductionContext reductionContext, Symbol symbol, Expre
   return Power(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression PowerNode::distributeOverLists(ReductionContext reductionContext, int listLength) {
-  return Power(this).specializedDistributeOverLists(reductionContext, listLength);
-}
-
 // Evaluation
 template<typename T> MatrixComplex<T> PowerNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
   return MatrixComplex<T>::Undefined();
@@ -1139,29 +1135,6 @@ bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Symbol s
   Addition result = Addition::Builder(derivedFromBase, derivedFromExponent);
   replaceWithInPlace(result);
   return true;
-}
-
-Expression Power::specializedDistributeOverLists(ExpressionNode::ReductionContext reductionContext, int listLength) {
-  List result = List::Builder();
-  for (int listIndex = 0; listIndex < listLength; listIndex++) {
-    assert(numberOfChildren() == 2);
-    Expression operands[2];
-    for (int i = 0; i < 2; i++) {
-      Expression child = childAtIndex(i);
-      if (child.type() == ExpressionNode::Type::List) {
-        assert(child.numberOfChildren() == listLength);
-        operands[i] = child.childAtIndex(listIndex);
-      } else {
-        operands[i] = child.clone();
-      }
-    }
-    Power element = Power::Builder(operands[0], operands[1]);
-    result.addChildAtIndexInPlace(element, listIndex, listIndex);
-    element.shallowReduce(reductionContext);
-  }
-  assert(result.numberOfChildren() == listLength);
-  replaceWithInPlace(result);
-  return std::move(result);
 }
 
 // Private

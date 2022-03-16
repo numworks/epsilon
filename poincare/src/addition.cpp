@@ -52,10 +52,6 @@ Expression AdditionNode::shallowBeautify(ReductionContext * reductionContext) {
   return Addition(this).shallowBeautify(reductionContext);
 }
 
-Expression AdditionNode::distributeOverLists(ReductionContext reductionContext, int listLength) {
-  return Addition(this).specializedDistributeOverLists(reductionContext, listLength);
-}
-
 // Derivation
 bool AdditionNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Addition(this).derivate(reductionContext, symbol, symbolValue);
@@ -523,29 +519,6 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Express
 
   // Step 5: Reduce the multiplication (in case the new rational factor is zero)
   m.shallowReduce(reductionContext);
-}
-
-Expression Addition::specializedDistributeOverLists(ExpressionNode::ReductionContext reductionContext, int listLength) {
-  List result = List::Builder();
-  int numberOfTerms = numberOfChildren();
-  for (int listIndex = 0; listIndex < listLength; listIndex++) {
-    Addition element = Addition::Builder();
-    for (int sumIndex = 0; sumIndex < numberOfTerms; sumIndex++) {
-      Expression child = childAtIndex(sumIndex);
-      if (child.type() == ExpressionNode::Type::List) {
-        assert(child.numberOfChildren() == listLength);
-        element.addChildAtIndexInPlace(child.childAtIndex(listIndex), sumIndex, sumIndex);
-      } else {
-        element.addChildAtIndexInPlace(child.clone(), sumIndex, sumIndex);
-      }
-    }
-    assert(element.numberOfChildren() == numberOfTerms);
-    result.addChildAtIndexInPlace(element, listIndex, listIndex);
-    element.shallowReduce(reductionContext);
-  }
-  assert(result.numberOfChildren() == listLength);
-  replaceWithInPlace(result);
-  return std::move(result);
 }
 
 template Complex<float> Poincare::AdditionNode::compute<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);

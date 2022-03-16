@@ -34,7 +34,7 @@ Expression SineNode::shallowReduce(ReductionContext reductionContext) {
   return Sine(this).shallowReduce(reductionContext);
 }
 
-bool SineNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool SineNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Sine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -52,7 +52,7 @@ Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext
   return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }
 
-bool Sine::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Sine::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }

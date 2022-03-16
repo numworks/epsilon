@@ -1,6 +1,7 @@
 #include <poincare/infinity.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
+#include <poincare/symbol.h>
 
 extern "C" {
 #include <math.h>
@@ -31,7 +32,7 @@ template<typename T> Evaluation<T> InfinityNode::templatedApproximate() const {
   return Complex<T>::Builder(m_negative ? -INFINITY : INFINITY);
 }
 
-bool InfinityNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool InfinityNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Infinity(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -49,7 +50,7 @@ Expression Infinity::setSign(ExpressionNode::Sign s) {
   return result;
 }
 
-bool Infinity::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Infinity::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   replaceWithUndefinedInPlace();
   return true;
 }

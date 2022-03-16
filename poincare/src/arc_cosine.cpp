@@ -30,7 +30,7 @@ Expression ArcCosineNode::shallowReduce(ReductionContext reductionContext) {
   return ArcCosine(this).shallowReduce(reductionContext);
 }
 
-bool ArcCosineNode::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool ArcCosineNode::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return ArcCosine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -74,7 +74,7 @@ Expression ArcCosine::shallowReduce(ExpressionNode::ReductionContext reductionCo
   return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }
 
-bool ArcCosine::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool ArcCosine::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }

@@ -414,8 +414,8 @@ protected:
   /* This method is used for the reduction of Derivative expressions.
    * It returns whether the instance is differentiable, and differentiates it if
    * able. */
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) { return node()->derivate(reductionContext, symbol, symbolValue); }
-  void derivateChildAtIndexInPlace(int index, ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
+  void derivateChildAtIndexInPlace(int index, ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) { return node()->unaryFunctionDifferential(reductionContext); }
 
 private:

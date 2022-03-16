@@ -1,6 +1,7 @@
 #include <poincare/dependency.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/symbol_abstract.h>
+#include <poincare/symbol.h>
 
 namespace Poincare {
 
@@ -10,6 +11,10 @@ constexpr Expression::FunctionHelper Dependency::s_functionHelper;
 
 Expression DependencyNode::shallowReduce(ReductionContext reductionContext) {
   return Dependency(this).shallowReduce(reductionContext);
+}
+
+bool DependencyNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+  assert(false); return false;
 }
 
 int DependencyNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

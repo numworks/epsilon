@@ -209,7 +209,7 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   return result.deepReduce(reductionContext);
 }
 
-void Derivative::DerivateUnaryFunction(Expression function, Expression symbol, Expression symbolValue, ExpressionNode::ReductionContext reductionContext) {
+void Derivative::DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, ExpressionNode::ReductionContext reductionContext) {
   Expression df = function.unaryFunctionDifferential(reductionContext);
   Expression g = function.childAtIndex(0);
   Expression dg = g.derivate(reductionContext, symbol, symbolValue) ? function.childAtIndex(0) : Derivative::Builder(function.childAtIndex(0), symbol.clone().convert<Symbol>(), symbolValue.clone());

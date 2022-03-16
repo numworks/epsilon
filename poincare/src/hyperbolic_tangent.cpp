@@ -22,7 +22,7 @@ Complex<T> HyperbolicTangentNode::computeOnComplex(const std::complex<T> c, Pref
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::tanh(c), c));
 }
 
-bool HyperbolicTangentNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool HyperbolicTangentNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return HyperbolicTangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -30,7 +30,7 @@ Expression HyperbolicTangentNode::unaryFunctionDifferential(ReductionContext red
   return HyperbolicTangent(this).unaryFunctionDifferential(reductionContext);
 }
 
-bool HyperbolicTangent::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool HyperbolicTangent::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }

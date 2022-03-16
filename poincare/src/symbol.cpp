@@ -91,7 +91,7 @@ ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
   return LayoutShape::MoreLetters;
 }
 
-bool SymbolNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool SymbolNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Symbol(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -205,8 +205,8 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
   return result;
 }
 
-bool Symbol::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
-  replaceWithInPlace(Rational::Builder(strcmp(name(), symbol.convert<Symbol>().name()) == 0));
+bool Symbol::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+  replaceWithInPlace(Rational::Builder(strcmp(name(), symbol.name()) == 0));
   return true;
 }
 

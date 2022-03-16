@@ -1,5 +1,6 @@
 #include <poincare/nonreal.h>
 #include <poincare/layout_helper.h>
+#include <poincare/symbol.h>
 #include <algorithm>
 
 extern "C" {
@@ -11,6 +12,10 @@ namespace Poincare {
 
 Layout NonrealNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::String(Nonreal::Name(), Nonreal::NameSize()-1);
+}
+
+bool NonrealNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+  return true;
 }
 
 int NonrealNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

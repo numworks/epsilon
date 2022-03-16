@@ -52,7 +52,7 @@ Expression AdditionNode::shallowBeautify(ReductionContext * reductionContext) {
 }
 
 // Derivation
-bool AdditionNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool AdditionNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Addition(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -339,7 +339,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result;
 }
 
-bool Addition::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Addition::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   for (int i = 0; i < numberOfChildren(); i++) {
     derivateChildAtIndexInPlace(i, reductionContext, symbol, symbolValue);
   }

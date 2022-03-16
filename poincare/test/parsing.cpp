@@ -396,6 +396,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("f((1))", Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder( Parenthesis::Builder(BasedInteger::Builder(1)))));
   assert_text_not_parsable("_a");
   assert_text_not_parsable("abcdefgh");
+  assert_text_not_parsable("f(1,2,3)");
 
   // User-defined functions
   assert_parsed_expression_is("1→f(x)", Store::Builder(BasedInteger::Builder(1), Function::Builder("f", 1, Symbol::Builder("x",1))));

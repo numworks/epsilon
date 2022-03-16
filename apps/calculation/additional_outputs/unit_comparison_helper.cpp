@@ -262,7 +262,8 @@ int FindUpperAndLowerReferenceValues(double inputValue, Expression unit, const R
   return numberOfReferenceFound;
 }
 
-void FillRatioBuffer(double ratio, char * textBuffer) {
+void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize) {
+  assert(bufferSize <= k_sizeOfUnitComparisonBuffer);
   assert(ratio < 100.0 && ratio >= 0.01);
   int bufferIndex = 0;
   bool withPercentage = false;
@@ -270,14 +271,7 @@ void FillRatioBuffer(double ratio, char * textBuffer) {
     ratio = 100.0*ratio;
     withPercentage = true;
   }
-  if (ratio >= 99.5) {
-    textBuffer[0] = '1';
-    textBuffer[1] = '0';
-    textBuffer[2] = '0';
-    bufferIndex = 3;
-  } else {
-    bufferIndex = PoincareHelpers::ConvertFloatToText<double>(ratio, textBuffer, k_sizeOfUnitComparisonBuffer - 1, k_numberOfSignicativeNumbers);
-  }
+  bufferIndex = PoincareHelpers::ConvertFloatToText<double>(ratio, textBuffer, bufferSize - 1, ratio >= 99.5 ? k_numberOfSignicativeDigits + 1 : k_numberOfSignicativeDigits); // Ternary operator handles the 100% case
   if (withPercentage) {
     textBuffer[bufferIndex] = '%';
     bufferIndex++;

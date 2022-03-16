@@ -10,7 +10,7 @@ namespace UnitComparison {
 
 constexpr static int k_sizeOfUnitComparisonBuffer = 5;
 constexpr static int k_sizeOfUnitBuffer = 30;
-constexpr static int k_numberOfSignicativeNumbers = 2;
+constexpr static int k_numberOfSignicativeDigits = 2;
 
 typedef struct {
   const char * SIUnit;
@@ -26,7 +26,7 @@ typedef struct {
 
 int FindUpperAndLowerReferenceValues(double inputValue, Poincare::Expression unit, const ReferenceValue ** referenceValues, int * returnUnitIndex);
 
-void FillRatioBuffer(double ratio, char * textBuffer);
+void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize);
 
 Poincare::Expression BuildComparisonExpression(double value, const ReferenceValue * referenceValue, int unitIndex);
 }

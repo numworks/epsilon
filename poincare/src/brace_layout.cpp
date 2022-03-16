@@ -4,14 +4,14 @@ namespace Poincare {
 
 bool BraceLayoutNode::isCollapsable(int * numberOfOpenBraces, bool goingLeft) const {
   if (goingLeft == IsRightBracket(type())) {
-    /* This parenthesis is an opening parenthesis. */
+    /* This brace is an opening brace. */
     *numberOfOpenBraces = *numberOfOpenBraces + 1;
     return true;
   }
 
-  /* This parenthesis is a closing parenthesis. We do not want to absorb it if
-   * there is no corresponding opening parenthesis, as the absorber should be
-   * enclosed by this parenthesis. */
+  /* This brace is a closing brace. We do not want to absorb it if
+   * there is no corresponding opening brace, as the absorber should be
+   * enclosed by this brace. */
   assert((goingLeft && IsLeftBracket(type())) || (!goingLeft && IsRightBracket(type())));
   if (*numberOfOpenBraces == 0) {
     return false;

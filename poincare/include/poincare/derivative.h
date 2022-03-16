@@ -54,7 +54,7 @@ public:
   static Expression UntypedBuilder(Expression children);
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
   static constexpr char k_defaultXNTChar = 'x';
-  static void DerivateUnaryFunction(Expression function, Expression symbol, Expression symbolValue, ExpressionNode::ReductionContext reductionContext);
+  static void DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, ExpressionNode::ReductionContext reductionContext);
 
   Expression shallowReduce(ExpressionNode::ReductionContext context);
 };

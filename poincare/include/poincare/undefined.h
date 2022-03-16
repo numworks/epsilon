@@ -31,7 +31,7 @@ public:
 
   /* Derivation
    * Unlike Numbers that derivate to 0, Undefined derivates to Undefined. */
-  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { return true; }
+  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

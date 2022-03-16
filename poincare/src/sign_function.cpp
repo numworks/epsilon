@@ -6,6 +6,7 @@
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <ion.h>
 #include <assert.h>
@@ -38,7 +39,7 @@ Expression SignFunctionNode::shallowReduce(ReductionContext reductionContext) {
   return SignFunction(this).shallowReduce(reductionContext);
 }
 
-bool SignFunctionNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool SignFunctionNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return SignFunction(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -105,7 +106,7 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
   return std::move(resultSign);
 }
 
-bool SignFunction::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool SignFunction::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   /* This function derivate is equal to 0 everywhere but in 0 where
    * it's not defined.
    * We approximate it's child to know if it is equal to 0
@@ -114,7 +115,7 @@ bool SignFunction::derivate(ExpressionNode::ReductionContext reductionContext, E
    * This derivative is used in the derivative of acot(x)
   */
   Expression child = childAtIndex(0).clone();
-  child = child.replaceSymbolWithExpression(*const_cast<const SymbolAbstract*>(static_cast<SymbolAbstract*>(&symbol)), symbolValue);
+  child = child.replaceSymbolWithExpression(symbol, symbolValue);
   float childValue = child.approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
   if (std::fabs(childValue) < Float<float>::EpsilonLax()) {
     return false;

@@ -72,7 +72,7 @@ Expression LogarithmNode<2>::shallowReduce(ExpressionNode::ReductionContext redu
 }
 
 template <>
-bool LogarithmNode<2>::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool LogarithmNode<2>::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Logarithm(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -84,7 +84,7 @@ Expression LogarithmNode<2>::unaryFunctionDifferential(ReductionContext reductio
 /* Those two methods will not be called, as CommonLogarithm disappears in
  * reduction */
 template <>
-bool LogarithmNode<1>::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool LogarithmNode<1>::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   assert(false);
   return false;
 }
@@ -341,11 +341,11 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base
   return i;
 }
 
-bool Logarithm::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Logarithm::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   /* We do nothing if the base is a function of the derivation variable, as the
    * log is then not an unary function anymore.
    * TODO : Check whether we want to deal with the case log(..., f(x)). */
-  if (childAtIndex(1).polynomialDegree(reductionContext.context(), symbol.convert<Symbol>().name()) != 0) {
+  if (childAtIndex(1).polynomialDegree(reductionContext.context(), symbol.name()) != 0) {
     return false;
   }
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);

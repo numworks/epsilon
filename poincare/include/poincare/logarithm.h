@@ -33,7 +33,7 @@ public:
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   // Derivation
-  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
   Expression unaryFunctionDifferential(ReductionContext reductionContext) override;
   // Evaluation
   template<typename U> static Complex<U> computeOnComplex(const std::complex<U> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
@@ -58,7 +58,7 @@ public:
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
 
 private:

@@ -21,7 +21,7 @@ Complex<T> HyperbolicSineNode::computeOnComplex(const std::complex<T> c, Prefere
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::sinh(c), c));
 }
 
-bool HyperbolicSineNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool HyperbolicSineNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return HyperbolicSine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -29,7 +29,7 @@ Expression HyperbolicSineNode::unaryFunctionDifferential(ReductionContext reduct
   return HyperbolicSine(this).unaryFunctionDifferential(reductionContext);
 }
 
-bool HyperbolicSine::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool HyperbolicSine::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }

@@ -32,7 +32,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override { assert(false); return false; }
+  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
 
 private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;

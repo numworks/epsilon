@@ -243,7 +243,7 @@ Expression MultiplicationNode::denominator(ReductionContext reductionContext) co
   return Multiplication(this).denominator(reductionContext);
 }
 
-bool MultiplicationNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool MultiplicationNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Multiplication(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -604,7 +604,7 @@ Expression Multiplication::denominator(ExpressionNode::ReductionContext reductio
   return denom;
 }
 
-bool Multiplication::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Multiplication::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   Addition resultingAddition = Addition::Builder();
   int numberOfTerms = numberOfChildren();
   assert (numberOfTerms > 0);

@@ -49,7 +49,7 @@ Expression TangentNode::shallowReduce(ReductionContext reductionContext) {
   return Tangent(this).shallowReduce(reductionContext);
 }
 
-bool TangentNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool TangentNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Tangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -78,7 +78,7 @@ Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionCont
   return newExpression;
 }
 
-bool Tangent::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool Tangent::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }

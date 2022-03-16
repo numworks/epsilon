@@ -41,7 +41,7 @@ private:
     return ApproximationHelper::Map<double>(this, approximationContext, computeOnComplex<double>);
   }
   // Derivation
-  bool derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) override;
+  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
 };
 
 class SignFunction final : public Expression {
@@ -52,7 +52,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sign", 1, &UntypedBuilderOneChild<SignFunction>);
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue);
+  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
 };
 
 }

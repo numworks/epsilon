@@ -30,7 +30,7 @@ Expression AbsoluteValueNode::shallowReduce(ReductionContext reductionContext) {
   return AbsoluteValue(this).shallowReduce(reductionContext);
 }
 
-bool AbsoluteValueNode::derivate(ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool AbsoluteValueNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return AbsoluteValue(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -119,7 +119,7 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
 }
 
 // Derivate of |f(x)| is f'(x)*sg(x) (and undef in 0) = f'(x)*(f(x)/|f(x)|)
-bool AbsoluteValue::derivate(ExpressionNode::ReductionContext reductionContext, Expression symbol, Expression symbolValue) {
+bool AbsoluteValue::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   Expression f = childAtIndex(0);
   Multiplication result = Multiplication::Builder();
   result.addChildAtIndexInPlace(Derivative::Builder(f.clone(),

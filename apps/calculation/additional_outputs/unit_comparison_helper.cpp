@@ -206,6 +206,9 @@ constexpr static ReferenceUnit k_referenceUnits[] = {
 };
 constexpr static const ReferenceValue * k_referenceTables[] = {k_lengthReferences, k_timeReferences, k_massReferences, k_areaReferences, k_volumeReferences, k_powerReferences, k_velocityReferences, k_pressureReferences};
 
+static_assert(sizeof(k_referenceUnits) / sizeof(ReferenceUnit) == k_numberOfReferenceTables, "Wrong number of reference tables or missing reference unit");
+static_assert(sizeof(k_referenceTables) / sizeof(ReferenceValue *) == k_numberOfReferenceTables, "Wrong number of reference tables or missing reference table");
+
 int SetUpperAndLowerReferenceValues(double inputValue, Expression unit, const ReferenceValue ** referenceValues, int * returnUnitIndex, bool saveComparison) {
   // 1. Find table of corresponding unit.
   const ReferenceValue * valuesOfSameUnit = nullptr;

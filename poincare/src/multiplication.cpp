@@ -244,10 +244,6 @@ Expression MultiplicationNode::denominator(ReductionContext reductionContext) co
   return Multiplication(this).denominator(reductionContext);
 }
 
-Expression MultiplicationNode::distributeOverLists(ReductionContext reductionContext, int listLength) {
-  return Multiplication(this).specializedDistributeOverLists(reductionContext, listLength);
-}
-
 bool MultiplicationNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Multiplication(this).derivate(reductionContext, symbol, symbolValue);
 }
@@ -1293,29 +1289,6 @@ void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & de
   if (numberOfFactorsInDenominator) {
     denominator = mDenominator.squashUnaryHierarchyInPlace();
   }
-}
-
-Expression Multiplication::specializedDistributeOverLists(ExpressionNode::ReductionContext reductionContext, int listLength) {
-  List result = List::Builder();
-  int nunmberOfFactors = numberOfChildren();
-  for (int listIndex = 0; listIndex < listLength; listIndex++) {
-    Multiplication element = Multiplication::Builder();
-    for (int sumIndex = 0; sumIndex < nunmberOfFactors; sumIndex++) {
-      Expression child = childAtIndex(sumIndex);
-      if (child.type() == ExpressionNode::Type::List) {
-        assert(child.numberOfChildren() == listLength);
-        element.addChildAtIndexInPlace(child.childAtIndex(listIndex), sumIndex, sumIndex);
-      } else {
-        element.addChildAtIndexInPlace(child.clone(), sumIndex, sumIndex);
-      }
-    }
-    assert(element.numberOfChildren() == nunmberOfFactors);
-    result.addChildAtIndexInPlace(element, listIndex, listIndex);
-    element.shallowReduce(reductionContext);
-  }
-  assert(result.numberOfChildren() == listLength);
-  replaceWithInPlace(result);
-  return std::move(result);
 }
 
 const Expression Multiplication::Base(const Expression e) {

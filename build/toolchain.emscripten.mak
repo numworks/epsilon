@@ -64,6 +64,7 @@ __ZN6Turtle5rightEd \
 __ZN6Turtle6circleEld \
 __ZN6Turtle7forwardEd \
 __ZN6Turtle8backwardEd \
+__ZN6Escher19StackViewController15setupActiveViewEv \
 __ZN6Escher7RunLoop3runEv \
 __ZN6Escher7RunLoop4stepEv \
 __ZN6Escher7RunLoop8runWhileEPFbPvES1_ \

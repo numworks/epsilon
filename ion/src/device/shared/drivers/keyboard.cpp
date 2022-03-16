@@ -45,6 +45,11 @@
 #include <shared/drivers/keyboard.h>
 
 namespace Ion {
+
+namespace Keyboard {
+ void willPopState() {}
+}
+
 namespace Device {
 namespace Keyboard {
 

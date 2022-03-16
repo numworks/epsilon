@@ -46,8 +46,7 @@ KDCoordinate BracketLayoutNode::computeBaseline() {
   assert(parentLayout != nullptr);
   int idxInParent = parentLayout->indexOfChild(this);
   int numberOfSiblings = parentLayout->numberOfChildren();
-  if ((IsLeftBracket(type()) && (idxInParent == numberOfSiblings - 1
-                            || (idxInParent < numberOfSiblings - 1 && parentLayout->childAtIndex(idxInParent + 1)->type() == Type::VerticalOffsetLayout)))
+  if ((IsLeftBracket(type()) && (idxInParent == numberOfSiblings - 1 || (idxInParent < numberOfSiblings - 1 && parentLayout->childAtIndex(idxInParent + 1)->type() == Type::VerticalOffsetLayout)))
    || (IsRightBracket(type()) && idxInParent == 0))
   {
     /* The bracket does not have siblings on its open direction, or it is a left

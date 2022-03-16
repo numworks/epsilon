@@ -21,7 +21,7 @@ typedef struct {
   I18n::Message title1;
   I18n::Message title2;
   I18n::Message subtitle;
-  double value;
+  float value;
 } ReferenceValue;
 
 int FindUpperAndLowerReferenceValues(double inputValue, Poincare::Expression unit, const ReferenceValue ** referenceValues, int * returnUnitIndex);

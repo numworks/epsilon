@@ -245,7 +245,7 @@ int FindUpperAndLowerReferenceValues(double inputValue, Expression unit, const R
   int numberOfReferenceFound = 0;
   for (int i = 0; i < 2; i++) {
     if (indexes[i] != -1) {
-      ratios[i] = inputValue / referenceTable[indexes[i]].value;
+      ratios[i] = inputValue / static_cast<double>(referenceTable[indexes[i]].value);
       if (ratios[i] < 100.0 && ratios[i] >= 0.01) {
         if (referenceValues != nullptr) {
           referenceValues[numberOfReferenceFound] = &referenceTable[indexes[i]];
@@ -271,7 +271,11 @@ void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize) {
     ratio = 100.0*ratio;
     withPercentage = true;
   }
-  bufferIndex = PoincareHelpers::ConvertFloatToText<double>(ratio, textBuffer, bufferSize - 1, ratio >= 99.5 ? k_numberOfSignicativeDigits + 1 : k_numberOfSignicativeDigits); // Ternary operator handles the 100% case
+  if (ratio >= 99.5) {
+    bufferIndex = PoincareHelpers::ConvertFloatToText<double>(100.0, textBuffer, bufferSize - 1, k_numberOfSignicativeDigits + 1);
+  } else {
+    bufferIndex = PoincareHelpers::ConvertFloatToText<double>(ratio, textBuffer, bufferSize - 1, k_numberOfSignicativeDigits);
+  }
   if (withPercentage) {
     textBuffer[bufferIndex] = '%';
     bufferIndex++;
@@ -281,9 +285,9 @@ void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize) {
 
 Expression BuildComparisonExpression(double value, const ReferenceValue * referenceValue, int unitIndex) {
   assert(unitIndex < k_numberOfReferenceTables);
-  double ratio = value / referenceValue->value;
+  double ratio = value / static_cast<double>(referenceValue->value);
   Expression unit = Poincare::Expression::Parse(k_referenceUnits[unitIndex].displayedUnit, App::app()->localContext());
-  return Multiplication::Builder(Float<double>::Builder(ratio), Float<double>::Builder(referenceValue->value), unit);
+  return Multiplication::Builder(Float<double>::Builder(ratio), Float<float>::Builder(referenceValue->value), unit);
 }
 
 }

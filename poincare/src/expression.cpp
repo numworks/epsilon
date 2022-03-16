@@ -166,28 +166,6 @@ int Expression::lengthOfListChildren() const {
   return lastLength;
 }
 
-bool Expression::reducesToList(Context * context) const {
-  ExpressionNode::Type t = type();
-  const char * name;
-  switch (t) {
-  case ExpressionNode::Type::List:
-  case ExpressionNode::Type::ListSlice:
-    return true;
-  case ExpressionNode::Type::Symbol:
-    name = static_cast<const Symbol &>(*this).name();
-    return context->expressionTypeForIdentifier(name, strlen(name)) == Context::SymbolAbstractType::List;
-  case ExpressionNode::Type::Addition:
-  case ExpressionNode::Type::Multiplication:
-  case ExpressionNode::Type::Power:
-  case ExpressionNode::Type::Opposite:
-  case ExpressionNode::Type::Subtraction:
-  case ExpressionNode::Type::Division:
-    return lengthOfListChildren() >= 0;
-  default:
-    return false;
-  }
-}
-
 bool Expression::IsApproximate(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || e.type() == ExpressionNode::Type::Double;
 }

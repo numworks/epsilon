@@ -41,10 +41,12 @@ void UnitListController::viewDidDisappear() {
   // Reset layout and cell memoization to avoid taking extra space in the pool
   for (int i = 0; i < k_maxNumberOfExpressionCells; i++) {
     m_expressionCells[i].setLayout(Layout());
+    m_expressionCells[i].setHighlighted(false);
     m_layouts[i] = Layout();
   }
   for (int i = 0; i < k_maxNumberOfBufferCells; i++) {
     m_referenceValues[i] = nullptr;
+    m_bufferCells[i].setHighlighted(false);
   }
   m_expression = Expression();
   m_numberOfExpressionCells = 0;

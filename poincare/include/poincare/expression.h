@@ -173,8 +173,22 @@ public:
   bool isBasedIntegerCappedBy(const char * integerString) const;
   bool isDivisionOfIntegers() const;
   bool hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+
+  /* recursivelyMatches will test each node recursively with the function
+   * provided as argument. If the result is Yes, it will stop searching and
+   * return true. If the result is Maybe, it will continue searching for a Yes
+   * in the children. If an expression is tested as No, its children will not
+   * be tested and the result will be false. */
+  enum class RecursiveSearchResult {
+    Yes,
+    Maybe,
+    No,
+  };
+  typedef RecursiveSearchResult (*ExpressionTernaryTest)(const Expression e, Context * context, void * auxiliary);
+  bool recursivelyMatches(ExpressionTernaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const;
   typedef bool (*ExpressionTest)(const Expression e, Context * context);
   bool recursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+
   typedef bool (*ExpressionTypeTest)(const Expression e, const void * context);
   // The test should be able to handle uninitialized expressions.
   bool hasExpression(ExpressionTypeTest test, const void * context) const;

@@ -50,7 +50,7 @@ public:
   void addDependency(Expression newDependency);
   /* Store the dependecies in m and replace the dependency node with the true expression. */
   void extractDependencies(Matrix m);
-  bool dependencyRecursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols); }
+  bool dependencyRecursivelyMatches(ExpressionTernaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols, auxiliary); }
 
   // Parser utils
   static Expression UntypedBuilder(Expression children);

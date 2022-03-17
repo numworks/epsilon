@@ -2,37 +2,24 @@
 #define STATISTICS_NORMAL_PROBABILITY_CONTROLLER_H
 
 #include "plot_controller.h"
-#include "normal_probability_view.h"
 
 namespace Statistics {
 
 class NormalProbabilityController : public PlotController {
 public:
-  NormalProbabilityController(Escher::Responder * parentResponder,
-                              Escher::ButtonRowController * header,
-                              Escher::Responder * tabController,
-                              Escher::StackViewController * stackViewController,
-                              Escher::ViewController * typeViewController,
-                              Store * store,
-                              int * selectedPointIndex,
-                              int * selectedSeriesIndex) :
-      PlotController(parentResponder,
-                     header,
-                     tabController,
-                     stackViewController,
-                     typeViewController,
-                     store,
-                     selectedPointIndex,
-                     selectedSeriesIndex),
-      m_view(store) {}
+  using PlotController::PlotController;
+  // PlotControllerDelegate
+  int totalValues(int series, int * sortedIndex) const override { return m_store->totalNormalProbabilityValues(series); }
+  double valueAtIndex(int series, int * sortedIndex, int i) const override { return m_store->normalProbabilityValueAtIndex(series, sortedIndex, i); }
+  double resultAtIndex(int series, int * sortedIndex, int i) const override { return m_store->normalProbabilityResultAtIndex(series, i); }
+  void computeYBounds(float * yMin, float *yMax) const override;
+  void computeXBounds(float * xMin, float *xMax) const override;
+  bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v, KDColor * color) const override;
 
   TELEMETRY_ID("NormalProbability");
 private:
-  PlotView * plotView() override { return &m_view; }
   const char * resultMessageTemplate() const override { return "%s : %*.*ed"; }
   I18n::Message resultMessage() const override { return I18n::Message::StatisticsNormalProbabilityZScore; }
-
-  NormalProbabilityView m_view;
 };
 
 }  // namespace Statistics

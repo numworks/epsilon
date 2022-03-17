@@ -13,10 +13,6 @@ Escher::View * PlotView::subviewAtIndex(int index) {
 }
 
 void PlotView::reload() {
-  float yMin, yMax, xMin, xMax;
-  m_plotControllerDelegate->computeYBounds(&yMin, &yMax);
-  m_plotControllerDelegate->computeXBounds(&xMin, &xMax);
-  m_graphRange->calibrate(m_plotCurveView->bounds().width(), m_plotCurveView->bounds().height(), xMin, xMax, yMin, yMax);
   layoutSubviews();
   m_plotCurveView->reload();
 }

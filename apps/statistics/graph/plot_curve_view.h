@@ -8,24 +8,25 @@
 
 namespace Statistics {
 
+class PlotControllerDelegate;
+
 class PlotCurveView : public Shared::LabeledCurveView {
 public:
   PlotCurveView(Shared::CurveViewRange * curveViewRange,
                 Shared::CurveViewCursor * curveViewCursor,
                 Shared::CursorView * cursorView,
-                Store * store);
-  void moveCursorTo(int i, int series);
-  virtual int totalValues(int series, int * sortedIndex) const = 0;
-  virtual double valueAtIndex(int series, int * sortedIndex, int i) const = 0;
-  virtual double resultAtIndex(int series, int * sortedIndex, int i) const = 0;
-  virtual void drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const;
+                Store * store,
+                PlotControllerDelegate * plotControllerDelegate);
+  void drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const;
 
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const override;
-protected:
-  virtual bool connectPoints() const { return false; }
 
+  // Shared::LabeledCurveView
+  void appendLabelSuffix(Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) override;
+protected:
   Store * m_store;
+  PlotControllerDelegate * m_plotControllerDelegate;
 };
 
 }  // namespace Statistics

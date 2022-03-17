@@ -20,7 +20,10 @@ PlotController::PlotController(Escher::Responder * parentResponder,
                                typeViewController,
                                store,
                                selectedPointIndex,
-                               selectedSeriesIndex) {
+                               selectedSeriesIndex),
+    m_view(store, &m_curveView, &m_graphRange, &m_bannerView, this),
+    // No bannerView given to the curve view because the display is handled here
+    m_curveView(&m_graphRange, &m_cursor, &m_cursorView, store, this)  {
 }
 
 bool PlotController::moveSelectionHorizontally(int deltaIndex) {
@@ -32,10 +35,15 @@ bool PlotController::moveSelectionHorizontally(int deltaIndex) {
   int sortedIndex[Store::k_maxNumberOfPairs];
   m_store->buildSortedIndex(series, sortedIndex);
 
-  int nextIndex = SanitizeIndex(*m_selectedBarIndex + deltaIndex, plotView()->plotCurveView()->totalValues(series, sortedIndex));
+  int nextIndex = SanitizeIndex(*m_selectedBarIndex + deltaIndex, totalValues(series, sortedIndex));
   if (nextIndex != *m_selectedBarIndex) {
     *m_selectedBarIndex = nextIndex;
-    plotView()->moveCursorTo(nextIndex, series);
+    // TODO : Add continuous curve scrolling
+    // Compute coordinates
+    double x = valueAtIndex(series, sortedIndex, nextIndex);
+    double y = resultAtIndex(series, sortedIndex, nextIndex);
+    m_cursor.moveTo(x, x, y);
+    m_curveView.reload();
     reloadBannerView();
     return true;
   }
@@ -50,28 +58,28 @@ void PlotController::reloadBannerView() {
   int sortedIndex[Store::k_maxNumberOfPairs];
   m_store->buildSortedIndex(series, sortedIndex);
 
-  *m_selectedBarIndex = SanitizeIndex(*m_selectedBarIndex, plotView()->plotCurveView()->totalValues(series, sortedIndex));
+  *m_selectedBarIndex = SanitizeIndex(*m_selectedBarIndex, totalValues(series, sortedIndex));
 
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
   char buffer[k_maxNumberOfCharacters] = "";
 
   // Display series name
   StoreController::FillSeriesName(series, buffer, false);
-  plotView()->bannerView()->seriesName()->setText(buffer);
+  m_bannerView.seriesName()->setText(buffer);
 
   // Display selected value
-  double value = plotView()->plotCurveView()->valueAtIndex(series, sortedIndex, *m_selectedBarIndex);
+  double value = valueAtIndex(series, sortedIndex, *m_selectedBarIndex);
   Poincare::Print::customPrintf(buffer, k_maxNumberOfCharacters, "%s : %*.*ed",
     I18n::translate(I18n::Message::StatisticsValue), value, displayMode, k_numberOfSignificantDigits);
-  plotView()->bannerView()->value()->setText(buffer);
+  m_bannerView.value()->setText(buffer);
 
   // Display cumulated frequency
-  double frequency = plotView()->plotCurveView()->resultAtIndex(series, sortedIndex, *m_selectedBarIndex);
+  double frequency = resultAtIndex(series, sortedIndex, *m_selectedBarIndex);
   Poincare::Print::customPrintf(buffer, k_maxNumberOfCharacters, resultMessageTemplate(),
     I18n::translate(resultMessage()), frequency, displayMode, k_numberOfSignificantDigits);
-  plotView()->bannerView()->result()->setText(buffer);
+  m_bannerView.result()->setText(buffer);
 
-  plotView()->bannerView()->reload();
+  m_bannerView.reload();
 }
 
 }

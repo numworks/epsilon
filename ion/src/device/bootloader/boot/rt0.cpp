@@ -1,39 +1,35 @@
-#include <drivers/battery.h>
-#include <drivers/cache.h>
-#include <drivers/external_flash.h>
-#include <drivers/led.h>
-#include <drivers/power.h>
-#include <drivers/reset.h>
-#include <drivers/usb.h>
-#include <drivers/wakeup.h>
+#include <stdint.h>
+#include <string.h>
 #include <ion.h>
-#include <ion/battery.h>
-#include <ion/led.h>
-#include <ion/rtc.h>
-#include <ion/usb.h>
+#include <boot/isr.h>
+#include <drivers/board.h>
+#include <drivers/rtc.h>
+#include <drivers/reset.h>
+#include <drivers/timing.h>
+#include <drivers/power.h>
+#include <drivers/wakeup.h>
+#include <drivers/battery.h>
+#include <drivers/usb.h>
+#include <drivers/led.h>
 #include <kandinsky.h>
 #include <regs/config/pwr.h>
 #include <regs/config/rcc.h>
 #include <regs/regs.h>
-#include <stdint.h>
-#include <string.h>
-
-#include "../drivers/board.h"
-#include "../drivers/reset.h"
-#include "../drivers/rtc.h"
-#include "../drivers/timing.h"
-#include "isr.h"
 
 typedef void (*cxx_constructor)();
 
 extern "C" {
-extern char _data_section_start_flash;
-extern char _data_section_start_ram;
-extern char _data_section_end_ram;
-extern char _bss_section_start_ram;
-extern char _bss_section_end_ram;
-extern cxx_constructor _init_array_start;
-extern cxx_constructor _init_array_end;
+  extern char _data_section_start_flash;
+  extern char _data_section_start_ram;
+  extern char _data_section_end_ram;
+  extern char _bss_section_start_ram;
+  extern char _bss_section_end_ram;
+  extern cxx_constructor _init_array_start;
+  extern cxx_constructor _init_array_end;
+
+  extern char _isr_vector_table_start_flash;
+  extern char _isr_vector_table_start_ram;
+  extern char _isr_vector_table_end_ram;
 }
 
 /* In order to ensure that this method is execute from the external flash, we
@@ -46,6 +42,7 @@ static void __attribute__((noinline)) external_flash_start() {
    * after the Power-On Self-Test if there is one or before switching to the
    * home app otherwise. */
   Ion::Device::Board::initPeripherals(false);
+
   return ion_main(0, nullptr);
 }
 
@@ -143,7 +140,6 @@ void __attribute__((noinline)) abort_core(const char * text) {
       abort_sleeping();
       abort_screen(text);
     }
-
     Ion::USB::enable();
     Ion::Battery::Charge previous_state = Ion::Battery::level();
     while (!Ion::USB::isEnumerated()) {
@@ -159,7 +155,6 @@ void __attribute__((noinline)) abort_core(const char * text) {
           counting = -1;
         }
         counting++;
-
       } else {
         if (previous_state == Ion::Battery::Charge::LOW) {
           previous_state = Ion::Battery::level();
@@ -213,6 +208,7 @@ void __attribute__((noinline)) bf_abort() {
   abort_screen("BUSFAULT");
   abort_core("BUSFAULT");
 }
+
 void __attribute__((noinline)) uf_abort() {
   abort_init();
   abort_screen("USAGEFAULT");
@@ -227,6 +223,10 @@ void __attribute__((noinline)) start() {
   /* This is where execution starts after reset.
    * Many things are not initialized yet so the code here has to pay attention. */
 
+  /* Initialize the FPU as early as possible.
+   * For example, static C++ objects are very likely to manipulate float values */
+  Ion::Device::Board::initFPU();
+
   /* Copy data section to RAM
    * The data section is R/W but its initialization value matters. It's stored
    * in Flash, but linked as if it were in RAM. Now's our opportunity to copy
@@ -240,10 +240,6 @@ void __attribute__((noinline)) start() {
   size_t bssSectionLength = (&_bss_section_end_ram - &_bss_section_start_ram);
   memset(&_bss_section_start_ram, 0, bssSectionLength);
 
-  /* Initialize the FPU as early as possible.
-   * For example, static C++ objects are very likely to manipulate float values */
-  Ion::Device::Board::initFPU();
-
   /* Call static C++ object constructors
    * The C++ compiler creates an initialization function for each static object.
    * The linker then stores the address of each of those functions consecutively
@@ -252,7 +248,7 @@ void __attribute__((noinline)) start() {
    * call the pointed function. */
 #define SUPPORT_CPP_GLOBAL_CONSTRUCTORS 0
 #if SUPPORT_CPP_GLOBAL_CONSTRUCTORS
-  for (cxx_constructor* c = &_init_array_start; c < &_init_array_end; c++) {
+  for (cxx_constructor * c = &_init_array_start; c<&_init_array_end; c++) {
     (*c)();
   }
 #else
@@ -263,6 +259,12 @@ void __attribute__((noinline)) start() {
     abort();
   }
 #endif
+
+  /* Copy isr_vector_table section to RAM
+   * The isr table must be within the memory mapped by the microcontroller (it
+   * can't live in the external flash). */
+  size_t isrSectionLength = (&_isr_vector_table_end_ram - &_isr_vector_table_start_ram);
+  memcpy(&_isr_vector_table_start_ram, &_isr_vector_table_start_flash, isrSectionLength);
 
   Ion::Device::Board::init();
 

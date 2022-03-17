@@ -405,7 +405,7 @@ int SectorAtAddress(uint32_t address) {
   i = address >> NumberOfAddressBitsIn32KbyteBlock;
   if (i >= 1) {
     i = Config::NumberOf4KSectors + i - 1;
-    assert(i >= 0 && i <= Config::NumberOf32KSectors);
+    assert(i >= Config::NumberOf4KSectors && i <= Config::NumberOf4KSectors + Config::NumberOf32KSectors);
     return i;
   }
   i = address >> NumberOfAddressBitsIn4KbyteBlock;
@@ -471,6 +471,7 @@ void __attribute__((noinline)) WriteMemory(uint8_t * destination, const uint8_t 
   if (Config::NumberOfSectors == 0) {
     return;
   }
+  destination -= ExternalFlash::Config::StartAddress;
   unset_memory_mapped_mode();
   /* Each 256-byte page of the external flash memory (contained in a previously erased area)
    * may be programmed in burst mode with a single Page Program instruction.

@@ -94,8 +94,8 @@ kandinsky_src += $(addprefix kandinsky/fonts/, \
   SmallFont.ttf \
 )
 
-simple_kandinsky_src = $(kandinsky_src)
 default_kandinsky_src = $(kandinsky_src)
+simple_kandinsky_src = $(kandinsky_src)
 
 $(eval $(call raster_font,SmallFont,SmallFontSimple,0,12,7,14))
 $(eval $(call raster_font,LargeFont,LargeFontSimple,0,16,10,18))

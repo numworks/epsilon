@@ -25,6 +25,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   keyboard.cpp \
   layout.cpp \
   main.cpp \
+  platform_info.cpp \
   random.cpp \
   timing.cpp \
   window.cpp \

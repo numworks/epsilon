@@ -41,5 +41,8 @@
     "apps/probability/images/normal_icon.png" : "probability/normal_icon.png",
     "apps/probability/images/poisson_icon.png" : "probability/poisson_icon.png",
     "apps/probability/images/student_icon.png" : "probability/student_icon.png",
-    "apps/probability/images/uniform_icon.png" : "probability/uniform_icon.png"
+    "apps/probability/images/uniform_icon.png" : "probability/uniform_icon.png",
+
+    "bootloader/cable.png": "bootloader/cable.png",
+    "bootloader/computer.png": "bootloader/computer.png"
 }

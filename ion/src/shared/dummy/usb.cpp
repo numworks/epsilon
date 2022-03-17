@@ -1,4 +1,4 @@
-#include <ion/usb.h>
+#include <ion.h>
 
 namespace Ion {
 namespace USB {
@@ -24,4 +24,8 @@ void disable() {
 }
 
 }
+}
+
+void Ion::updateSlotInfo() {
+
 }

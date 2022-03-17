@@ -35,52 +35,54 @@ public:
     m_storageAddress(storageAddress),
     m_storageSize(Ion::Storage::k_storageSize),
     m_footer(Magic),
-    m_ohm_header(OmegaMagic),
-    m_OmegaVersion{OMEGA_VERSION},
+    m_omegaMagicHeader(OmegaMagic),
+    m_omegaVersion{OMEGA_VERSION},
 #ifdef OMEGA_USERNAME
     m_username{OMEGA_USERNAME},
 #else
     m_username{"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"},
 #endif
-    m_ohm_footer(OmegaMagic),
-    m_ups_header(UpsilonMagic),
-    m_UpsilonVersion{UPSILON_VERSION},
+    m_omegaMagicFooter(OmegaMagic),
+    m_upsilonMagicHeader(UpsilonMagic),
+    m_upsilonVersion{UPSILON_VERSION},
     m_osType(OSType),
-    m_ups_footer(UpsilonMagic) { }
+    m_upsilonMagicFooter(UpsilonMagic) { }
   const char * version() const {
     assert(m_storageAddress != nullptr);
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
-    assert(m_ohm_header == OmegaMagic);
-    assert(m_ohm_footer == OmegaMagic);
+    assert(m_omegaMagicHeader == OmegaMagic);
+    assert(m_omegaMagicFooter == OmegaMagic);
     return m_version;
   }
-  const char * UpsilonVersion() const {
+  const char * upsilonVersion() const {
     assert(m_storageAddress != nullptr);
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
-    assert(m_ohm_header == OmegaMagic);
-    assert(m_ohm_footer == OmegaMagic);
-    return m_UpsilonVersion;
-  }  
-  const char * OmegaVersion() const {
+    assert(m_omegaMagicHeader == OmegaMagic);
+    assert(m_omegaMagicFooter == OmegaMagic);
+    assert(m_upsilonMagicHeader == UpsilonMagic);
+    assert(m_upsilonMagicFooter == UpsilonMagic);
+    return m_upsilonVersion;
+  }
+  const char * omegaVersion() const {
     assert(m_storageAddress != nullptr);
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
-    assert(m_ohm_header == OmegaMagic);
-    assert(m_ohm_footer == OmegaMagic);
-    return m_OmegaVersion;
+    assert(m_omegaMagicHeader == OmegaMagic);
+    assert(m_omegaMagicFooter == OmegaMagic);
+    return m_omegaVersion;
   }
   const volatile char * username() const volatile {
     assert(m_storageAddress != nullptr);
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
-    assert(m_ohm_header == OmegaMagic);
-    assert(m_ohm_footer == OmegaMagic);
+    assert(m_omegaMagicHeader == OmegaMagic);
+    assert(m_omegaMagicFooter == OmegaMagic);
     return m_username;
   }
   const char * patchLevel() const {
@@ -88,8 +90,8 @@ public:
     assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
-    assert(m_ohm_header == OmegaMagic);
-    assert(m_ohm_footer == OmegaMagic);
+    assert(m_omegaMagicHeader == OmegaMagic);
+    assert(m_omegaMagicFooter == OmegaMagic);
     return m_patchLevel;
   }
 private:
@@ -103,14 +105,14 @@ private:
   void * m_storageAddress;
   size_t m_storageSize;
   uint32_t m_footer;
-  uint32_t m_ohm_header;
-  const char m_OmegaVersion[16];
+  uint32_t m_omegaMagicHeader;
+  const char m_omegaVersion[16];
   const volatile char m_username[16];
-  uint32_t m_ohm_footer;
-  uint32_t m_ups_header;
-  const char m_UpsilonVersion[16];
+  uint32_t m_omegaMagicFooter;
+  uint32_t m_upsilonMagicHeader;
+  const char m_upsilonVersion[16];
   uint32_t m_osType;
-  uint32_t m_ups_footer;
+  uint32_t m_upsilonMagicFooter;
 
 };
 
@@ -120,12 +122,12 @@ const char * Ion::softwareVersion() {
   return platform_infos.version();
 }
 
-const char * Ion::UpsilonVersion() {
-  return platform_infos.UpsilonVersion();
+const char * Ion::upsilonVersion() {
+  return platform_infos.upsilonVersion();
 }
 
-const char * Ion::OmegaVersion() {
-  return platform_infos.OmegaVersion();
+const char * Ion::omegaVersion() {
+  return platform_infos.omegaVersion();
 }
 
 const volatile char * Ion::username() {
@@ -134,4 +136,8 @@ const volatile char * Ion::username() {
 
 const char * Ion::patchLevel() {
   return platform_infos.patchLevel();
+}
+
+void Ion::updateSlotInfo() {
+
 }

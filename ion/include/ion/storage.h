@@ -17,7 +17,7 @@ class Storage {
 public:
   typedef uint16_t record_size_t;
 
-  constexpr static size_t k_storageSize = 64000;
+  constexpr static size_t k_storageSize = 61000;
   static_assert(UINT16_MAX >= k_storageSize, "record_size_t not big enough");
 
   static Storage * sharedStorage();

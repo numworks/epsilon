@@ -1,3 +1,4 @@
+#include <ion.h>
 #include <ion/usb.h>
 #include <string.h>
 #include <assert.h>
@@ -14,6 +15,7 @@ namespace USB {
 typedef void (*PollFunctionPointer)(bool exitWithKeyboard, bool unlocked, int level);
 
 void DFU(bool exitWithKeyboard, bool unlocked, int level) {
+  Ion::updateSlotInfo();
 
   /* DFU transfers can serve two purposes:
    *  - Transfering RAM data between the machine and a host, e.g. Python scripts

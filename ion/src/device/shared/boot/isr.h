@@ -8,7 +8,6 @@ extern "C" {
 void bf_abort();
 void uf_abort();
 void nmi_abort();
-// Here and below, we are doing operations on the abort handler, not the opposite
 void abort_init();
 void abort_core(const char *);
 void abort_screen(const char *);

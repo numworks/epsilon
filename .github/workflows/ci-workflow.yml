@@ -153,6 +153,25 @@ jobs:
         with:
           name: epsilon-binpack-n0110.tgz
           path: output/release/device/n0110/binpack-n0110.tgz
+  bootloader:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - uses: numworks/setup-arm-toolchain@2020-q2
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - run: make -j2 bootloader.dfu
+      - run: make MODEL=bootloader -j2 epsilon.A.dfu epsilon.B.dfu
+      - run: make MODEL=bootloader -j2 epsilon.onboarding.A.dfu epsilon.onboarding.B.dfu
+      - run: make MODEL=bootloader -j2 epsilon.onboarding.update.A.dfu epsilon.onboarding.update.B.dfu
+      - run: make MODEL=bootloader -j2 epsilon.onboarding.beta.A.dfu epsilon.onboarding.beta.B.dfu
+      - run: make -j2 binpack
+      - run: cp output/release/device/bootloader/binpack-bootloader-`git rev-parse HEAD | head -c 7`.tgz output/release/device/bootloader/binpack-bootloader.tgz
+      - uses: actions/upload-artifact@master
+        with:
+          name: epsilon-binpack-bootloader.tgz
+          path: output/release/device/bootloader/binpack-bootloader.tgz
   windows:
     runs-on: windows-latest
     defaults:

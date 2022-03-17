@@ -296,6 +296,7 @@ void DFUInterface::writeOnMemory() {
             leaveDFUAndReset(false);
             return;
           }
+          m_largeBuffer[k_externalMagicAddress + i] = 0;
         }
       }
       // We only check the first packet because there is some predictable data in there,

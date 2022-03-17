@@ -11,15 +11,16 @@ if len(sys.argv) > 1:
         print("Error: File not found!")
         sys.exit(-1)
     file = open(ext_path, "r+b")
-    first_packet = bytearray(file.read(2048))
-    for b in first_packet:
-        if b != 255:
+    file.read(MAGIK_POS)
+    packet = bytearray(file.read(4))
+    for b in packet:
+        if b != 0:
             print("Error: Invalid file! (maybe already patched?)")
             sys.exit(-1)
     
     for i in range(4):
-        first_packet[MAGIK_POS + i] = MAGIK_CODE[i]
+        packet[i] = MAGIK_CODE[i]
 
-    file.seek(0)
-    file.write(first_packet)
+    file.seek(MAGIK_POS)
+    file.write(packet)
     print("External bin Patched!")

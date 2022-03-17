@@ -78,16 +78,20 @@ bool Expression::isRationalOne() const {
   return type() == ExpressionNode::Type::Rational && convert<const Rational>().isOne();
 }
 
-bool Expression::recursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {
-  if (test(*this, context)) {
+bool Expression::recursivelyMatches(ExpressionTernaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols, void * auxiliary) const {
+  RecursiveSearchResult testResult = test(*this, context, auxiliary);
+  if (testResult == RecursiveSearchResult::Yes) {
     return true;
+  } else if (testResult == RecursiveSearchResult::No) {
+    return false;
   }
+  assert(testResult == RecursiveSearchResult::Maybe);
 
   // Handle dependencies, symbols and functions
   ExpressionNode::Type t = type();
   if (t == ExpressionNode::Type::Dependency) {
     Expression e = *this;
-    return static_cast<Dependency &>(e).dependencyRecursivelyMatches(test, context, replaceSymbols);
+    return static_cast<Dependency &>(e).dependencyRecursivelyMatches(test, context, replaceSymbols, auxiliary);
   }
   if (t == ExpressionNode::Type::Symbol || t == ExpressionNode::Type::Function) {
     assert(replaceSymbols == ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
@@ -102,16 +106,24 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context * context, Expr
     }
     assert(replaceSymbols == ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
         || t == ExpressionNode::Type::Function);
-      return SymbolAbstract::matches(convert<const SymbolAbstract>(), test, context);
+      return SymbolAbstract::matches(convert<const SymbolAbstract>(), test, context, auxiliary);
   }
 
   const int childrenCount = this->numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
-    if (childAtIndex(i).recursivelyMatches(test, context, replaceSymbols)) {
+    if (childAtIndex(i).recursivelyMatches(test, context, replaceSymbols, auxiliary)) {
       return true;
     }
   }
   return false;
+}
+
+bool Expression::recursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {
+  ExpressionTernaryTest ternary = [](const Expression e, Context * context, void * auxiliary) {
+    ExpressionTest * trueTest = static_cast<ExpressionTest *>(auxiliary);
+    return (*trueTest)(e, context) ? RecursiveSearchResult::Yes : RecursiveSearchResult::Maybe;
+  };
+  return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
 
 bool Expression::hasExpression(ExpressionTypeTest test, const void * context) const {

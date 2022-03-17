@@ -72,7 +72,7 @@ public:
   const char * name() const { return node()->name(); }
   bool hasSameNameAs(const SymbolAbstract & other) const;
   static size_t TruncateExtension(char * dst, const char * src, size_t len);
-  static bool matches(const SymbolAbstract & symbol, ExpressionTest test, Context * context);
+  static bool matches(const SymbolAbstract & symbol, ExpressionTernaryTest test, Context * context, void * auxiliary = nullptr);
   constexpr static size_t k_maxNameSize = 8;
 protected:
   SymbolAbstract(const SymbolAbstractNode * node) : Expression(node) {}

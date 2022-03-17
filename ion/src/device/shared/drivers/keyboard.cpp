@@ -47,7 +47,13 @@
 namespace Ion {
 
 namespace Keyboard {
- void willPopState() {}
+
+State scanForInterruptionAndPopState() {
+  /* There is no need to manually scan to get the interruptions, as they are
+   * done in hardware. We only need to do it on simulators. */
+  return popState();
+}
+
 }
 
 namespace Device {

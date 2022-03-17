@@ -57,7 +57,7 @@ bool micropython_port_interrupt_if_needed() {
   bool interruption = false;
   while (state != Ion::Keyboard::State(-1)) {
     interruption = state.keyDown(interruptKey) ? true : interruption;
-    state = Ion::Keyboard::popState();
+    state = Ion::Keyboard::scanForInterruptionAndPopState();
   };
 
   if (interruption) {

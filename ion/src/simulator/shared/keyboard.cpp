@@ -47,9 +47,10 @@ constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs)/sizeof(KeySDLKeyPair);
 namespace Ion {
 namespace Keyboard {
 
-void willPopState() {
-  // Grab this opportunity to refresh the display if needed
-  Simulator::Window::refresh();
+State scanForInterruptionAndPopState() {
+  // We get eventual user interruptions via the simulator keyboard
+  scan();
+  return popState();
 }
 
 State scan() {
@@ -64,6 +65,9 @@ State scan() {
 
   // Notify callbacks in case we need to do something
   Simulator::Keyboard::didScan();
+
+  // Grab this opportunity to refresh the display if needed
+  Simulator::Window::refresh();
 
 #if !EPSILON_SDL_SCREEN_ONLY
   // Register a key for the mouse, if any

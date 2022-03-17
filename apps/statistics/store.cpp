@@ -241,6 +241,12 @@ double Store::squaredOffsettedValueSum(int series, double offset) const {
   return result;
 }
 
+// TODO : Factorize it with buildSortedIndex
+void Store::sortColumn(int series, int column) {
+  m_sortedIndexValid[series] = false;
+  DoublePairStore::sortColumn(series, column);
+}
+
 void Store::set(double f, int series, int i, int j) {
   m_sortedIndexValid[series] = false;
   DoublePairStore::set(f, series, i, j);

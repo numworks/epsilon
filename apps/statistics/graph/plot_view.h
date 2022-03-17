@@ -12,8 +12,6 @@
 
 namespace Statistics {
 
-class PlotControllerDelegate;
-
 /* TODO : Add an intermediary class between MultipleDataView and View, as well
  *        as between MultipleDataViewController and ViewController +
  *        GraphButtonRowDelegate to avoid having to completely re-implement
@@ -22,12 +20,11 @@ class PlotControllerDelegate;
  *        passed down. */
 class PlotView : public MultipleDataView {
 public:
-  PlotView(Store * store, PlotCurveView * plotCurveView, PlotRange * graphRange, PlotBannerView * bannerView, PlotControllerDelegate * plotControllerDelegate) :
+  PlotView(Store * store, PlotCurveView * plotCurveView, PlotRange * graphRange, PlotBannerView * bannerView) :
     MultipleDataView(store),
     m_plotCurveView(plotCurveView),
     m_graphRange(graphRange),
-    m_bannerView(bannerView),
-    m_plotControllerDelegate(plotControllerDelegate) {
+    m_bannerView(bannerView) {
   }
 
   // MultipleDataView
@@ -45,7 +42,6 @@ protected:
   PlotCurveView * m_plotCurveView;
   PlotRange * m_graphRange;
   PlotBannerView * m_bannerView;
-  PlotControllerDelegate * m_plotControllerDelegate;
 };
 
 }  // namespace Statistics

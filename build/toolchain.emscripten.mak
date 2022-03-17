@@ -37,6 +37,7 @@ __ZN3Ion8Keyboard8popStateEv \
 __ZN3Ion6EventsL16sleepWithTimeoutEiPi \
 __ZN3Ion6Timing6msleepEj \
 __ZN3Ion8Keyboard4scanEv \
+__ZN3Ion8Keyboard30scanForInterruptionAndPopStateEv \
 __ZN3Ion9Simulator8Keyboard7didScanEv \
 __ZN4Code14MenuController21openConsoleWithScriptENS_6ScriptE \
 __ZN4Code14MenuController23didBecomeFirstResponderEv \

@@ -128,6 +128,7 @@ bool OneMean::TAuthorizedParameterAtIndex(int i, double p) {
     case ParamsOrder::n:
       return p >= 2.0;
     case ParamsOrder::x:
+      return true; // Mean values can be negative
     case ParamsOrder::s:
       return p > 0.0;
       break;

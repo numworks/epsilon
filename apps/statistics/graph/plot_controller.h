@@ -42,6 +42,7 @@ public:
                  int * selectedSeriesIndex);
 
   // MultipleDataViewController
+  void viewWillAppear() override;
   MultipleDataView * multipleDataView() override { return &m_view; }
   bool moveSelectionHorizontally(int deltaIndex) override;
 

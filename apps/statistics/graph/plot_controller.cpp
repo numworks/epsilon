@@ -21,9 +21,17 @@ PlotController::PlotController(Escher::Responder * parentResponder,
                                store,
                                selectedPointIndex,
                                selectedSeriesIndex),
-    m_view(store, &m_curveView, &m_graphRange, &m_bannerView, this),
+    m_view(store, &m_curveView, &m_graphRange, &m_bannerView),
     // No bannerView given to the curve view because the display is handled here
     m_curveView(&m_graphRange, &m_cursor, &m_cursorView, store, this)  {
+}
+
+void PlotController::viewWillAppear() {
+  MultipleDataViewController::viewWillAppear();
+  float yMin, yMax, xMin, xMax;
+  computeYBounds(&yMin, &yMax);
+  computeXBounds(&xMin, &xMax);
+  m_graphRange.calibrate(m_curveView.bounds().width(), m_curveView.bounds().height(), xMin, xMax, yMin, yMax);
 }
 
 bool PlotController::moveSelectionHorizontally(int deltaIndex) {

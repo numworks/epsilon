@@ -169,9 +169,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   }
   // Delete any record with same name (as it is going to be overriden)
   previousRecord.destroy();
-  Expression reducedExpression = expression.clone();
-  PoincareHelpers::CloneAndReduce(&reducedExpression, context, ExpressionNode::ReductionTarget::User);
-  const char * extension = reducedExpression.type() == ExpressionNode::Type::List ? Ion::Storage::lisExtension : Ion::Storage::expExtension;
+  const char * extension = expression.deepIsList(context) ? Ion::Storage::lisExtension : Ion::Storage::expExtension;
   return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), extension, expression.addressInPool(), expression.size());
 }
 

@@ -7,7 +7,6 @@ namespace Ion {
 namespace Keyboard {
 
 State popState() {
-  willPopState();
   if (Queue::sharedQueue()->isEmpty()) {
     return State(-1);
   }

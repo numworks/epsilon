@@ -1824,10 +1824,10 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("l1(2,3)", "{4,9}");
   assert_parsed_expression_simplify_to("l1(1,3)", "{1,4,9}");
   assert_parsed_expression_simplify_to("l1(2,2)", "{4}");
-  assert_parsed_expression_simplify_to("l1(0,2)", Undefined::Name());
-  assert_parsed_expression_simplify_to("l1(1,5)", Undefined::Name());
-  assert_parsed_expression_simplify_to("l1(3,2)", Undefined::Name());
-  assert_parsed_expression_simplify_to("l2(1,2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("l1(0,2)", "{1,4}");
+  assert_parsed_expression_simplify_to("l1(1,5)", "{1,4,9}");
+  assert_parsed_expression_simplify_to("l1(3,2)", "{}");
+  assert_parsed_expression_simplify_to("l2(1,2)", "{}");
   Ion::Storage::sharedStorage()->recordNamed("l1.lis").destroy();
   Ion::Storage::sharedStorage()->recordNamed("l2.lis").destroy();
 }

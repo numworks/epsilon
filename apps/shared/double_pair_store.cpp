@@ -1,4 +1,5 @@
 #include "double_pair_store.h"
+#include <apps/shared/poincare_helpers.h>
 #include <cmath>
 #include <assert.h>
 #include <stddef.h>
@@ -149,6 +150,32 @@ int DoublePairStore::indexOfKthValidSeries(int k) const {
   }
   assert(false);
   return 0;
+}
+
+// TODO : Factorize this with Regression::Store::sortIndexByColumn and statistics::Store::buildSortedIndex
+void DoublePairStore::sortColumn(int series, int column) {
+  static Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
+    // Swap X and Y values
+    double * dataX = static_cast<double*>(context);
+    double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
+    double tempX = dataX[i];
+    double tempY = dataY[i];
+    dataX[i] = dataX[j];
+    dataY[i] = dataY[j];
+    dataX[j] = tempX;
+    dataY[j] = tempY;
+  };
+  static Poincare::Helpers::Compare compareX = [](int a, int b, void * context, int numberOfElements)->bool{
+    double * dataX = static_cast<double*>(context);
+    return dataX[a] > dataX[b] || std::isnan(dataX[a]);
+  };
+  static Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
+    double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
+    return dataY[a] > dataY[b] || std::isnan(dataY[a]);
+  };
+  int indexOfFirstCell = series * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
+  double * seriesContext = &(data()[indexOfFirstCell]);
+  Poincare::Helpers::Sort(swapRows, (column == 0) ? compareX : compareY, seriesContext, numberOfPairsOfSeries(series));
 }
 
 double DoublePairStore::sumOfColumn(int series, int i, bool lnOfSeries) const {

@@ -51,6 +51,7 @@ public:
   int indexOfKthValidSeries(int k) const;
 
   // Calculations
+  void sortColumn(int series, int column);
   double sumOfColumn(int series, int i, bool lnOfSeries = false) const;
   bool seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const;
   uint32_t storeChecksum() const;

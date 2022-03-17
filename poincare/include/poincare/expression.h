@@ -194,6 +194,8 @@ public:
   bool hasExpression(ExpressionTypeTest test, const void * context) const;
   // WARNING: this method must be called on reduced (sorted) expressions
   bool deepIsMatrix(Context * context) const;
+  /* Unlike deepIsMatrix, deepIsList can be called on unreduced expressions. */
+  bool deepIsList(Context * context) const;
   /* Returns:
    * - a number >= 0 if all the lists have the same size,
    * - -1 if there are no lists in the children

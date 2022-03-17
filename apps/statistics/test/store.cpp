@@ -23,7 +23,7 @@ void assert_value_approximately_equal_to(double d1, double d2, double precision,
  * FrequencyMethod is the method used in France and Italy, which defines the
  * quartiles as the 25th and 75th percentile, in terms of cumulated
  * frequencies. */
-void assert_data_statictics_equal_to(
+void assert_data_statistics_equal_to(
     double v[],
     double n[],
     int numberOfData,
@@ -141,7 +141,7 @@ QUIZ_CASE(data_statistics) {
   constexpr int totalNormalProbability1 = listLength1;
   double trueNormalProbabilityValues1[totalNormalProbability1] = {1.0, 2.0, 3.0, 4.0};
   double trueNormalProbabilityResults1[totalNormalProbability1] = {-1.150, -0.3186, 0.3186, 1.150};
-  assert_data_statictics_equal_to(
+  assert_data_statistics_equal_to(
       v1,
       n1,
       listLength1,
@@ -182,7 +182,7 @@ QUIZ_CASE(data_statistics) {
   constexpr int totalNormalProbability2 = listLength2;
   double trueNormalProbabilityValues2[totalNormalProbability2] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
   double trueNormalProbabilityResults2[totalNormalProbability2] = {-1.691, -1.097, -0.7479, -0.4728, -0.2299, 0.0, 0.2299, 0.4728, 0.7479, 1.097, 1.691};
-  assert_data_statictics_equal_to(
+  assert_data_statistics_equal_to(
       v2,
       n2,
       listLength2,
@@ -222,7 +222,7 @@ QUIZ_CASE(data_statistics) {
   constexpr int totalNormalProbability3 = listLength3;
   double trueNormalProbabilityValues3[totalNormalProbability3] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
   double trueNormalProbabilityResults3[totalNormalProbability3] = {-1.732, -1.150, -0.8122, -0.5485, -0.3186, -0.1046, 0.1046, 0.3186, 0.5485, 0.8122, 1.150, 1.732};
-  assert_data_statictics_equal_to(
+  assert_data_statistics_equal_to(
       v3,
       n3,
       listLength3,
@@ -262,7 +262,7 @@ QUIZ_CASE(data_statistics) {
   constexpr int totalNormalProbability4 = 0;
   double trueNormalProbabilityValues4[totalNormalProbability4] = {};
   double trueNormalProbabilityResults4[totalNormalProbability4] = {};
-  assert_data_statictics_equal_to(
+  assert_data_statistics_equal_to(
       v4,
       n4,
       listLength4,
@@ -302,7 +302,7 @@ QUIZ_CASE(data_statistics) {
   constexpr int totalNormalProbability5 = 0;
   double trueNormalProbabilityValues5[totalNormalProbability5] = {};
   double trueNormalProbabilityResults5[totalNormalProbability5] = {};
-  assert_data_statictics_equal_to(
+  assert_data_statistics_equal_to(
       v5,
       n5,
       listLength5,
@@ -342,7 +342,7 @@ QUIZ_CASE(data_statistics) {
   constexpr int totalNormalProbability6 = 0;
   double trueNormalProbabilityValues6[totalNormalProbability6] = {};
   double trueNormalProbabilityResults6[totalNormalProbability6] = {};
-  assert_data_statictics_equal_to(
+  assert_data_statistics_equal_to(
       v6,
       n6,
       listLength6,
@@ -382,7 +382,7 @@ QUIZ_CASE(data_statistics) {
   constexpr int totalNormalProbability7 = 4;
   double trueNormalProbabilityValues7[totalNormalProbability7] = {1.0, 1.0, 1.0, 3.0};
   double trueNormalProbabilityResults7[totalNormalProbability7] = {-1.150, -0.3186, 0.3186, 1.150};
-  assert_data_statictics_equal_to(
+  assert_data_statistics_equal_to(
       v7,
       n7,
       listLength7,
@@ -422,7 +422,7 @@ QUIZ_CASE(data_statistics) {
   constexpr int totalNormalProbability8 = 2;
   double trueNormalProbabilityValues8[totalNormalProbability8] = {2.0, 4.0};
   double trueNormalProbabilityResults8[totalNormalProbability8] = {-0.6745, 0.6745};
-  assert_data_statictics_equal_to(
+  assert_data_statistics_equal_to(
       v8,
       n8,
       listLength8,
@@ -462,7 +462,7 @@ QUIZ_CASE(data_statistics) {
   constexpr int totalNormalProbability9 = 9;
   double trueNormalProbabilityValues9[totalNormalProbability9] = {-996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641, -996.85840734641};
   double trueNormalProbabilityResults9[totalNormalProbability9] = {-1.593, -0.9674, -0.5895, -0.2822, 0.0, 0.2822, 0.5895, 0.9674, 1.593};
-  assert_data_statictics_equal_to(
+  assert_data_statistics_equal_to(
       v9,
       n9,
       listLength9,
@@ -489,6 +489,55 @@ QUIZ_CASE(data_statistics) {
       trueNormalProbabilityValues9,
       trueNormalProbabilityResults9,
       totalNormalProbability9);
+}
+
+void assert_data_statistics_multiple_series_equal_to(
+    double v1[],
+    double n1[],
+    int numberOfData1,
+    double v2[],
+    double n2[],
+    int numberOfData2,
+    double v3[],
+    double n3[],
+    int numberOfData3,
+    double maxValue,
+    double minValue,
+    double maxValueIgnoringFrequency,
+    double minValueIgnoringFrequency) {
+  Store store;
+
+  // Set the data in the store
+  for (int i = 0; i < numberOfData1; i++) {
+    store.set(v1[i], 0, 0, i);
+    store.set(n1[i], 0, 1, i);
+  }
+  for (int i = 0; i < numberOfData2; i++) {
+    store.set(v2[i], 1, 0, i);
+    store.set(n2[i], 1, 1, i);
+  }
+  for (int i = 0; i < numberOfData3; i++) {
+    store.set(v3[i], 2, 0, i);
+    store.set(n3[i], 2, 1, i);
+  }
+
+  quiz_assert(maxValue == store.maxValueForAllSeries(false));
+  quiz_assert(maxValueIgnoringFrequency = store.maxValueForAllSeries(true));
+  quiz_assert(minValue == store.minValueForAllSeries(false));
+  quiz_assert(minValueIgnoringFrequency = store.minValueForAllSeries(true));
+}
+
+QUIZ_CASE(data_statistics_multiple_series) {
+  constexpr int listLength1 = 4;
+  double v1[listLength1] = {-12.0, 3.0, -0.001, 4000.0};
+  double n1[listLength1] = {0.0, 0.0, 1.0, 1.0};
+  constexpr int listLength2 = 0;
+  double v2[listLength2] = {};
+  double n2[listLength2] = {};
+  constexpr int listLength3 = 5;
+  double v3[listLength3] = {1.0, 1.0, 5000.0, 5000.0, 7.0};
+  double n3[listLength3] = {1.0, 2.0, 1.0, 0.0, 0.43};
+  assert_data_statistics_multiple_series_equal_to(v1, n1, listLength1, v2, n2, listLength2, v3, n3, listLength3, 5000.0, -0.001, 5000.0, -12.0);
 }
 
 }

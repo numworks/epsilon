@@ -136,8 +136,7 @@ double Store::maxValue(int series, bool ignoreFrequency) const {
       return get(series, 0, sortedIndex);
     }
   }
-  assert(false);
-  return NAN;
+  return DBL_MIN;
 }
 
 double Store::minValue(int series, bool ignoreFrequency) const {
@@ -149,8 +148,7 @@ double Store::minValue(int series, bool ignoreFrequency) const {
       return get(series, 0, sortedIndex);
     }
   }
-  assert(false);
-  return NAN;
+  return DBL_MAX;
 }
 
 double Store::range(int series) const {

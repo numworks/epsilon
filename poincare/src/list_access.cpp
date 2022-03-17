@@ -111,13 +111,18 @@ Expression ListSlice::shallowReduce(ExpressionNode::ReductionContext reductionCo
 
   int firstIndex = firstIntegerIndex.extractedInt() - 1;
   int lastIndex = lastIntegerIndex.extractedInt() - 1;
-  if (firstIndex < 0 || lastIndex < firstIndex || listNumberOfChildren <= lastIndex) {
-    return replaceWithUndefinedInPlace();
-  }
-
   List typedList = static_cast<List &>(listChild);
+
+  if (lastIndex < -1) {
+    lastIndex = -1;
+  }
   for (int i = listNumberOfChildren - 1; i > lastIndex; i--) {
     typedList.removeChildAtIndexInPlace(i);
+  }
+
+  listNumberOfChildren = typedList.numberOfChildren();
+  if (firstIndex > listNumberOfChildren) {
+    firstIndex = listNumberOfChildren;
   }
   for (int i = firstIndex - 1; i >= 0; i--) {
     typedList.removeChildAtIndexInPlace(i);

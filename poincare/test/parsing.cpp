@@ -403,7 +403,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("1→ab12AB_(x)", Store::Builder(BasedInteger::Builder(1), Function::Builder("ab12AB_", 7, Symbol::Builder("x",1))));
 
   // Reserved symbols
-  assert_parsed_expression_is("ans", Symbol::Builder("ans", 3));
+  assert_parsed_expression_is("Ans", Symbol::Builder("Ans", 3));
   assert_parsed_expression_is("𝐢", Constant::Builder("𝐢"));
   assert_parsed_expression_is("π", Constant::Builder("π"));
   assert_parsed_expression_is("ℯ", Constant::Builder("ℯ"));
@@ -517,7 +517,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_text_not_parsable(".1.2");
   assert_text_not_parsable("1 2");
   assert_parsed_expression_is("1x", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)));
-  assert_parsed_expression_is("1ans", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("ans", 3)));
+  assert_parsed_expression_is("1Ans", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("Ans", 3)));
   assert_parsed_expression_is("x1", Symbol::Builder("x1", 2));
   // Fallback from binary number
   assert_parsed_expression_is("0b2", Multiplication::Builder(BasedInteger::Builder(0), Symbol::Builder("b2", 2)));

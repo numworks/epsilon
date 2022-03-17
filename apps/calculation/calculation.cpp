@@ -68,7 +68,7 @@ Expression Calculation::approximateOutput(Context * context, NumberOfSignificant
    * Poincare::Unit approximates to undef, thus it must not be approximated
    * anymore.
    * We have to keep two serializations of the approximation outputs:
-   * - one with the maximal significant digits, to be used by 'ans' or when
+   * - one with the maximal significant digits, to be used by 'Ans' or when
    *   handling 'OK' event on the approximation output.
    * - one with the displayed number of significant digits that we parse to
    *   create the displayed layout. If we used the other serialization to

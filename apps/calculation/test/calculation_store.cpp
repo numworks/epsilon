@@ -122,7 +122,7 @@ QUIZ_CASE(calculation_store) {
 
 void assertAnsIs(const char * input, const char * expectedAnsInputText, Context * context, CalculationStore * store) {
   store->push(input, context, dummyHeight);
-  store->push("ans", context, dummyHeight);
+  store->push("Ans", context, dummyHeight);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store->calculationAtIndex(0);
   quiz_assert(strcmp(lastCalculation->inputText(), expectedAnsInputText) == 0);
 }

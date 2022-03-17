@@ -177,6 +177,37 @@ bool Expression::deepIsMatrix(Context * context) const {
   return false;
 }
 
+bool Expression::deepIsList(Context * context) const {
+  return recursivelyMatches([](const Expression e, Context * context, void *) {
+      switch (e.type()) {
+      /* These expressions are always lists. */
+      case ExpressionNode::Type::List:
+      case ExpressionNode::Type::ListElement:
+      case ExpressionNode::Type::ListSlice:
+      case ExpressionNode::Type::ListSort:
+      return RecursiveSearchResult::Yes;
+
+      /* These expressions have a list as argument but are never lists, we
+       * must stop the search. */
+      case ExpressionNode::Type::Dimension:
+      case ExpressionNode::Type::ListMaximum:
+      case ExpressionNode::Type::ListMean:
+      case ExpressionNode::Type::ListMedian:
+      case ExpressionNode::Type::ListMinimum:
+      case ExpressionNode::Type::ListProduct:
+      case ExpressionNode::Type::ListSampleStandardDeviation:
+      case ExpressionNode::Type::ListStandardDeviation:
+      case ExpressionNode::Type::ListSum:
+      case ExpressionNode::Type::ListVariance:
+      return RecursiveSearchResult::No;
+
+      /* Other expressions may be lists if their children are lists. */
+      default:
+      return RecursiveSearchResult::Maybe;
+      }
+  }, context);
+}
+
 int Expression::lengthOfListChildren() const {
   int lastLength = k_noList;
   int n = numberOfChildren();
@@ -207,8 +238,8 @@ bool Expression::IsNAry(const Expression e, Context * context) {
 
 bool Expression::IsMatrix(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Matrix
-    /* FIXME 'Dimension' is not a matrix when its child is a list. */
-    || e.type() == ExpressionNode::Type::Dimension
+    /* A Dimension is a matrix unless its child is a list. */
+    || (e.type() == ExpressionNode::Type::Dimension && !e.childAtIndex(0).deepIsList(context))
     || e.type() == ExpressionNode::Type::MatrixInverse
     || e.type() == ExpressionNode::Type::MatrixIdentity
     || e.type() == ExpressionNode::Type::MatrixTranspose

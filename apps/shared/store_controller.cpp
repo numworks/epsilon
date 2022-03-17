@@ -297,29 +297,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
 }
 
 void StoreController::sortSelectedColumn() {
-  static Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
-    // Swap X and Y values
-    double * dataX = static_cast<double*>(context);
-    double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
-    double tempX = dataX[i];
-    double tempY = dataY[i];
-    dataX[i] = dataX[j];
-    dataY[i] = dataY[j];
-    dataX[j] = tempX;
-    dataY[j] = tempY;
-  };
-  static Poincare::Helpers::Compare compareX = [](int a, int b, void * context, int numberOfElements)->bool{
-    double * dataX = static_cast<double*>(context);
-    return dataX[a] > dataX[b] || std::isnan(dataX[a]);
-  };
-  static Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
-    double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
-    return dataY[a] > dataY[b] || std::isnan(dataY[a]);
-  };
-  int indexOfFirstCell = selectedSeries() * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
-  double * seriesContext = &(m_store->data()[indexOfFirstCell]);
-  Poincare::Helpers::Sort(swapRows, (RelativeColumnIndex(selectedColumn()) == 0) ? compareX : compareY, seriesContext, m_store->numberOfPairsOfSeries(selectedSeries()));
-
+  m_store->sortColumn(selectedSeries(), RelativeColumnIndex(selectedColumn()));
 }
 
 }

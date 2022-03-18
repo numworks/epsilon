@@ -188,7 +188,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
   assert(step == Step::Result || functionLayout.isUninitialized());
   constexpr int sigmaLength = 2;
   const CodePoint sigma[sigmaLength] = {' ', m_sumSymbol};
-  Poincare::Layout sumLayout = LayoutHelper::CodePointString(sigma, sigmaLength);
+  Poincare::Layout sumLayout = LayoutHelper::CodePointsToLayout(sigma, sigmaLength);
   if (step != Step::FirstParameter) {
     char buffer[k_valuesBufferSize];
     Layout endLayout;

@@ -4,6 +4,7 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/right_parenthesis_layout.h>
+#include <poincare/string_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <assert.h>
@@ -74,10 +75,20 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
   return std::move(result);
 }
 
-Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
+Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font, bool editable) {
   if (bufferLen < 0) {
     bufferLen = strlen(buffer);
   }
+  return editable ? StringToCodePointLayouts(buffer, bufferLen, font) : StringToStringLayout(buffer, bufferLen, font);
+}
+
+Layout LayoutHelper::StringLayoutOfSerialization(const Expression & expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) {
+  int length = expression.serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  assert(length < bufferSize);
+  return LayoutHelper::String(buffer, length);
+}
+
+Layout LayoutHelper::StringToCodePointLayouts(const char * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   UTF8Decoder decoder(buffer);
@@ -108,11 +119,11 @@ Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * f
   return resultLayout.squashUnaryHierarchyInPlace();
 }
 
-Layout LayoutHelper::StringLayoutOfSerialization(const Expression & expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) {
-  int length = expression.serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
-  assert(length < bufferSize);
-  return LayoutHelper::String(buffer, length);
+Layout LayoutHelper::StringToStringLayout(const char * buffer, int bufferLen, const KDFont * font) {
+  assert(bufferLen > 0);
+  return StringLayout::Builder(buffer, bufferLen + 1);
 }
+
 
 Layout LayoutHelper::CodePointString(const CodePoint * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);

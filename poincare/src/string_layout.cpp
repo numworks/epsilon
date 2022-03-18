@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-StringLayoutNode::StringLayoutNode(char * string, int stringSize) {
+StringLayoutNode::StringLayoutNode(const char * string, int stringSize) {
   m_stringLength = strlcpy(m_string, string, stringSize);
 }
 
@@ -32,12 +32,10 @@ KDCoordinate StringLayoutNode::computeBaseline() {
 }
 
 void StringLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  int bufferSize = m_stringLength + 1;
-  char buffer[bufferSize];
-  ctx->drawString(buffer, p, font(), expressionColor, backgroundColor);
+  ctx->drawString(m_string, p, font(), expressionColor, backgroundColor);
 }
 
-StringLayout StringLayout::Builder(char * string, int stringSize) {
+StringLayout StringLayout::Builder(const char * string, int stringSize) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(StringLayoutNode) + sizeof(char) * stringSize);
   StringLayoutNode * node = new (bufferNode) StringLayoutNode(string, stringSize);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

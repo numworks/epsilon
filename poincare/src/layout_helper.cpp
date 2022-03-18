@@ -23,7 +23,7 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
     if (i > 0) {
       /* Handle the operator */
       if (operatorLength > 0) {
-        Layout operatorLayout = String(operatorName, operatorLength);
+        Layout operatorLayout = StringToCodePointLayouts(operatorName, operatorLength, KDFont::LargeFont);
         assert(operatorLayout.type() == LayoutNode::Type::CodePointLayout);
         CodePointLayoutNode * codePointNode = static_cast<CodePointLayoutNode *>(operatorLayout.node());
         codePointNode->setDisplayType(CodePointLayoutNode::DisplayType::Operator);
@@ -79,7 +79,7 @@ Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * f
   if (bufferLen < 0) {
     bufferLen = strlen(buffer);
   }
-  return editable ? StringToCodePointLayouts(buffer, bufferLen, font) : StringToStringLayout(buffer, bufferLen, font);
+  return editable || bufferLen <= 2 ? StringToCodePointLayouts(buffer, bufferLen, font) : StringToStringLayout(buffer, bufferLen, font);
 }
 
 Layout LayoutHelper::StringLayoutOfSerialization(const Expression & expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) {
@@ -138,6 +138,9 @@ Layout LayoutHelper::CodePointString(const CodePoint * buffer, int bufferLen, co
 
 Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
   Layout logLayout = String("log", 3);
+  if (logLayout.type() != LayoutNode::Type::HorizontalLayout) {
+    logLayout = HorizontalLayout::Builder(logLayout);
+  }
   HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::Position::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);

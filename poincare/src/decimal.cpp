@@ -124,7 +124,7 @@ Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
   Layout res = LayoutHelper::String(buffer, numberOfChars);
-  int dotIndex = m_negative;
+  /*int dotIndex = m_negative;
   int n = res.numberOfChildren();
   while(dotIndex < n) {
     assert(res.childAtIndex(dotIndex).type() == LayoutNode::Type::CodePointLayout);
@@ -134,7 +134,7 @@ Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
     }
     dotIndex++;
   }
-  CodePointLayout::DistributeThousandDisplayType(res, m_negative, dotIndex);
+  CodePointLayout::DistributeThousandDisplayType(res, m_negative, dotIndex);*/
   return res;
 }
 

@@ -94,6 +94,8 @@ public:
   void replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle = false);
   // Collapse
   void collapseSiblings(LayoutCursor * cursor);
+  // Replace strings with codepoints
+  Layout makeEditable() { return node()->makeEditable(); }
 protected:
   // Add
   void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor);

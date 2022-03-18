@@ -1,5 +1,5 @@
-#ifndef GRAPH_LIST_TYPE_PARAMATER_CONTROLLER_H
-#define GRAPH_LIST_TYPE_PARAMATER_CONTROLLER_H
+#ifndef GRAPH_LIST_DETAILS_PARAMATER_CONTROLLER_H
+#define GRAPH_LIST_DETAILS_PARAMATER_CONTROLLER_H
 
 #include <escher/view_controller.h>
 #include <escher/selectable_list_view_controller.h>
@@ -12,9 +12,11 @@
 
 namespace Graph {
 
-class TypeParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
+#warning TODO rename in DetailsParameterController
+
+class DetailsParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
-  TypeParameterController(Escher::Responder * parentResponder);
+  DetailsParameterController(Escher::Responder * parentResponder);
 
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

@@ -4,7 +4,7 @@
 #include <apps/shared/list_parameter_controller.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_chevron_and_buffer.h>
-#include "type_parameter_controller.h"
+#include "details_parameter_controller.h"
 #include "domain_parameter_controller.h"
 
 namespace Graph {
@@ -19,18 +19,18 @@ public:
   // MemoizedListViewDataSource
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  // Shared cells + m_typeCell + m_functionDomain
+  // Shared cells + m_detailsCell + m_functionDomain
   int numberOfRows() const override { return displayDetails() + displayDomain() + Shared::ListParameterController::numberOfRows(); }
   int typeAtIndex(int index) override;
 private:
-  constexpr static int k_typeCellType = k_numberOfSharedCells;
-  constexpr static int k_domainCellType = k_typeCellType + 1;
+  constexpr static int k_detailsCellType = k_numberOfSharedCells;
+  constexpr static int k_domainCellType = k_detailsCellType + 1;
   bool handleEnterOnRow(int rowIndex) override;
-  bool displayDetails() const { return m_typeParameterController.detailsNumberOfSections() > 0; }
+  bool displayDetails() const { return m_detailsParameterController.detailsNumberOfSections() > 0; }
   bool displayDomain() const { return m_domainParameterController.isVisible() > 0; }
-  Escher::MessageTableCellWithChevronAndMessage m_typeCell;
+  Escher::MessageTableCellWithChevronAndMessage m_detailsCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomain;
-  TypeParameterController m_typeParameterController;
+  DetailsParameterController m_detailsParameterController;
   DomainParameterController m_domainParameterController;
 };
 

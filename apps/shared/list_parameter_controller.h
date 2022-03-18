@@ -9,7 +9,7 @@
 
 namespace Shared {
 
-class ListParameterController : public Escher::SelectableListViewController {
+class ListParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::SelectableTableViewDelegate * tableDelegate = nullptr);
 

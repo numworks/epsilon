@@ -54,30 +54,10 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-HighlightCell * StoreParameterController::reusableCell(int index, int type) {
-  assert(index >= 0);
-  if (type == k_sortCellType) {
-    return &m_sortCell;
-  }
-  assert(type == k_defaultCellType);
-  if (index == k_indexOfFillFormula - 1) {
-    return &m_fillFormula;
-  }
-  assert(index == k_indexOfClearColumn - 1);
-  return &m_clearColumn;
-}
-
-KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
-  /* We just need to find a cell of the right type
-   * heightForCellAtIndexWithWidthInit will do the rest */
-  Escher::HighlightCell * cell;
-  if (index == k_indexOfSortCell) {
-    cell = &m_sortCell;
-  } else {
-    assert(typeAtIndex(index) == k_defaultCellType);
-    cell = reusableCell(0, k_defaultCellType);
-  }
-  return heightForCellAtIndex(cell, index);
+HighlightCell * StoreParameterController::reusableCell(int index) {
+  assert(index >= 0 && index < numberOfCells());
+  HighlightCell * cells[] = {&m_sortCell, &m_fillFormula, &m_clearColumn};
+  return cells[index];
 }
 
 EditableCellTableViewController * StoreParameterController::editableCellTableViewController() {

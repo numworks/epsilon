@@ -22,7 +22,6 @@ void IntervalParameterSelectorController::viewDidDisappear() {
    * it appears: the number of rows might change according to the plot type. */
   m_selectableTableView.deselectTable(false);
   m_selectableTableView.setFrame(KDRectZero, false);
-  resetMemoization();
 }
 
 void IntervalParameterSelectorController::didBecomeFirstResponder() {
@@ -59,18 +58,9 @@ int IntervalParameterSelectorController::numberOfRows() const {
   return rowCount;
 }
 
-KDCoordinate IntervalParameterSelectorController::nonMemoizedRowHeight(int j) {
-  MessageTableCellWithChevron tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, j);
-}
-
-HighlightCell * IntervalParameterSelectorController::reusableCell(int index, int type) {
-  assert(0 <= index && index < reusableCellCount(type));
+HighlightCell * IntervalParameterSelectorController::reusableCell(int index) {
+  assert(0 <= index && index < reusableCellCount());
   return m_intervalParameterCell + index;
-}
-
-int IntervalParameterSelectorController::reusableCellCount(int type) {
-  return k_numberOfSymbolTypes;
 }
 
 void IntervalParameterSelectorController::willDisplayCellForIndex(HighlightCell * cell, int index) {

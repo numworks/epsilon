@@ -23,29 +23,14 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   }
   return Shared::StoreParameterController::handleEvent(event);
 }
-KDCoordinate StoreParameterController::nonMemoizedRowHeight(int index) {
-  if (typeAtIndex(index) == k_regressionCellType) {
-    return heightForCellAtIndex(&m_changeRegressionCell, index);
-  }
-  return Shared::StoreParameterController::nonMemoizedRowHeight(index);
-}
 
-HighlightCell * StoreParameterController::reusableCell(int index, int type) {
-  assert(index >= 0);
-  if (type == k_regressionCellType) {
+HighlightCell * StoreParameterController::reusableCell(int index) {
+  assert(index >= 0 && index < numberOfCells());
+  if (index == k_indexOfRegressionCell) {
     return &m_changeRegressionCell;
   }
-  return Shared::StoreParameterController::reusableCell(index, type);
+  return Shared::StoreParameterController::reusableCell(index);
 }
-
-int StoreParameterController::reusableCellCount(int type) {
-  return type == k_regressionCellType ? 1 : Shared::StoreParameterController::reusableCellCount(type);
-}
-
-int StoreParameterController::typeAtIndex(int index) {
-  return index == k_indexOfRegressionCell ? k_regressionCellType : Shared::StoreParameterController::typeAtIndex(index);
-}
-
 
 void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   if (index == k_indexOfRegressionCell) {

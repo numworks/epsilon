@@ -25,7 +25,6 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
     bool isDisplayingDerivative = function()->displayDerivative();
     function()->setDisplayDerivative(!isDisplayingDerivative);
     m_valuesController->selectCellAtLocation(isDisplayingDerivative ? m_valuesController->selectedColumn() : m_valuesController->selectedColumn() + 1, m_valuesController->selectedRow());
-    resetMemoization();
     m_selectableTableView.reloadData();
     return true;
   }
@@ -36,7 +35,7 @@ int FunctionParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * FunctionParameterController::reusableCell(int index, int type) {
+HighlightCell * FunctionParameterController::reusableCell(int index) {
   assert(index == 0);
   return &m_displayDerivativeColumn;
 }

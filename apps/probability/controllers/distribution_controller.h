@@ -11,7 +11,7 @@
 
 namespace Probability {
 
-class DistributionController : public Escher::SelectableListViewController {
+class DistributionController : public Escher::SelectableListViewController<Escher::SimpleListViewDataSource> {
 public:
   DistributionController(Escher::StackViewController * parentResponder,
                          Distribution * distribution,
@@ -25,12 +25,8 @@ public:
   TELEMETRY_ID("Distribution");
   int numberOfRows() const override { return k_totalNumberOfModels; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
-  Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override {
-    assert(type == 0);
-    return k_numberOfCells;
-  }
+  Escher::HighlightCell * reusableCell(int index) override;
+  int reusableCellCount() const override { return k_numberOfCells; }
 
 private:
   void setDistributionAccordingToIndex(int index);

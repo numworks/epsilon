@@ -14,7 +14,7 @@ CategoricalTypeController::CategoricalTypeController(
     Chi2Test * statistic,
     InputGoodnessController * inputGoodnessController,
     InputHomogeneityController * inputHomogeneityController) :
-      Escher::SelectableCellListPage<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells>(parent),
+      Escher::SelectableCellListPage<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells, Escher::RegularListViewDataSource>(parent),
       m_statistic(statistic),
       m_inputGoodnessController(inputGoodnessController),
       m_inputHomogeneityController(inputHomogeneityController) {

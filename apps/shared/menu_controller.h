@@ -19,7 +19,7 @@ public:
   virtual int numberOfSubApps() const = 0;
 };
 
-class MenuController : public Escher::SelectableCellListPage<Escher::SubappCell, k_maxNumberOfCells> {
+class MenuController : public Escher::SelectableCellListPage<Escher::SubappCell, k_maxNumberOfCells, Escher::MemoizedListViewDataSource> {
 public:
   MenuController(Escher::StackViewController * parentResponder, std::initializer_list<Escher::ViewController *> controllers, std::initializer_list<std::initializer_list<I18n::Message>> messages, std::initializer_list<const Escher::Image *> images, MenuControllerDelegate * delegate);
   void stackOpenPage(Escher::ViewController * nextPage) override;

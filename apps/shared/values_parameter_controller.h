@@ -16,7 +16,8 @@ public:
   ValuesParameterController(Escher::Responder * parentResponder, ValuesController * valuesController);
   int numberOfRows() const override { return k_totalNumberOfCell; }
   bool handleEvent(Ion::Events::Event event) override;
-  Escher::HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount() const override { return k_totalNumberOfCell; }
+  Escher::HighlightCell * reusableCell(int index) override;
   void initializeColumnParameters() override;
 private:
   EditableCellTableViewController * editableCellTableViewController() override;

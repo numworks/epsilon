@@ -45,12 +45,12 @@ void ValuesParameterController::initializeColumnParameters() {
 }
 
 
-EditableCellTableViewController * ValuesParameterController::editableCellTableViewController() { 
+EditableCellTableViewController * ValuesParameterController::editableCellTableViewController() {
   return m_valuesController;
 }
 
 
-HighlightCell * ValuesParameterController::reusableCell(int index, int type) {
+HighlightCell * ValuesParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   static_assert(k_totalNumberOfCell == 2, "Shared::ValuesParameterController::reusableCell is deprecated.");

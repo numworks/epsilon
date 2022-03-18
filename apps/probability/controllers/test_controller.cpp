@@ -20,7 +20,7 @@ TestController::TestController(Escher::StackViewController * parentResponder,
                                CategoricalTypeController * categoricalController,
                                InputController * inputController,
                                Statistic * statistic) :
-      Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType>(parentResponder),
+      Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType, Escher::MemoizedListViewDataSource>(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
       m_inputController(inputController),
@@ -48,7 +48,7 @@ void TestController::stackOpenPage(Escher::ViewController * nextPage) {
 }
 
 void TestController::viewWillAppear() {
-  Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType>::viewWillAppear();
+  Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType, Escher::MemoizedListViewDataSource>::viewWillAppear();
   // Create cells whose legends vary
   cellAtIndex(k_indexOfOneProp)->setSubtitle(m_statistic->zStatisticMessage());
   cellAtIndex(k_indexOfOneMean)->setSubtitle(m_statistic->tOrZStatisticMessage());
@@ -64,7 +64,7 @@ void TestController::didBecomeFirstResponder() {
 
 bool TestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    Escher::SelectableListViewController * controller = nullptr;
+    Escher::SelectableViewController * controller = nullptr;
     SignificanceTestType testType;
     switch (selectedRow()) {
       case k_indexOfOneProp:

@@ -27,7 +27,7 @@ extern const MessageTree s_modelTestModeMenu[2];
 extern const MessageTree s_modelAboutChildren[3];
 extern const MessageTree s_model;
 
-class MainController : public Escher::SelectableListViewController {
+class MainController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   MainController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   bool handleEvent(Ion::Events::Event event) override;

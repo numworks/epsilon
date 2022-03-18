@@ -30,7 +30,6 @@ const char * CalculationParameterController::title() {
 
 void CalculationParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  resetMemoization();
   m_selectableTableView.reloadData();
 }
 
@@ -76,14 +75,6 @@ int CalculationParameterController::numberOfRows() const {
   // Inverse row + [optional intersection row] + all other rows (max, min zeros, tangent, integral)
   return 1 + shouldDisplayIntersection() + k_totalNumberOfReusableCells - 1;
 };
-
-KDCoordinate CalculationParameterController::nonMemoizedRowHeight(int index) {
-  if (typeAtIndex(index) == k_preImageCellType) {
-    return heightForCellAtIndex(&m_preimageCell, index);
-  }
-  MessageTableCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, index);
-}
 
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
   assert(index >= 0);

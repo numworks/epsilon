@@ -32,7 +32,7 @@ namespace Probability {
 DistributionController::DistributionController(Escher::StackViewController * parentResponder,
                                                Distribution * distribution,
                                                ParametersController * parametersController) :
-      Escher::SelectableListViewController(parentResponder),
+      Escher::SelectableListViewController<Escher::SimpleListViewDataSource>(parentResponder),
       m_distribution(distribution),
       m_parametersController(parametersController) {
   assert(m_distribution != nullptr);
@@ -63,14 +63,9 @@ bool DistributionController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-KDCoordinate DistributionController::nonMemoizedRowHeight(int j) {
-  DistributionCell tempCell;
-  return heightForCellAtIndexWithWidthInit(&tempCell, j);
-}
-
-HighlightCell * DistributionController::reusableCell(int index, int type) {
+HighlightCell * DistributionController::reusableCell(int index) {
   assert(index >= 0);
-  assert(index < reusableCellCount(type));
+  assert(index < reusableCellCount());
   return &m_cells[index];
 }
 

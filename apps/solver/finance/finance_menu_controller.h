@@ -13,8 +13,7 @@ namespace Solver {
 
 constexpr int k_numberOfFinanceCells = 2;
 
-class FinanceMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage,
-                                                     k_numberOfFinanceCells> {
+class FinanceMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells, Escher::RegularListViewDataSource> {
 public:
   FinanceMenuController(Escher::StackViewController * parentResponder,
                     InterestMenuController * interestMenuController,

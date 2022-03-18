@@ -7,7 +7,7 @@
 
 namespace Settings {
 
-class GenericSubController : public Escher::SelectableListViewController {
+class GenericSubController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   GenericSubController(Escher::Responder * parentResponder);
   const char * title() override;

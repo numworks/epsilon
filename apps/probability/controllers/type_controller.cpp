@@ -30,7 +30,7 @@ TypeController::TypeController(StackViewController * parent,
                                HypothesisController * hypothesisController,
                                InputController * inputController,
                                Statistic * statistic) :
-      Escher::SelectableListViewController(parent),
+      Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(parent),
       m_hypothesisController(hypothesisController),
       m_inputController(inputController),
       m_contentView(&m_selectableTableView, &m_description),

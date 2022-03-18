@@ -5,7 +5,6 @@
 
 namespace Escher {
 
-
 class RegularListViewDataSource : public ListViewDataSource {
 public:
   virtual KDCoordinate cellHeight() { return ListViewDataSource::rowHeight(0); }

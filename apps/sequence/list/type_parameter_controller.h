@@ -14,7 +14,7 @@ class ListController;
 
 constexpr int k_numberOfCells = 3;
 
-class TypeParameterController : public Escher::SelectableCellListPage<Escher::ExpressionTableCellWithMessage, k_numberOfCells> {
+class TypeParameterController : public Escher::SelectableCellListPage<Escher::ExpressionTableCellWithMessage, k_numberOfCells, Escher::RegularListViewDataSource> {
 public:
   TypeParameterController(Escher::Responder * parentResponder, ListController * list,
     KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,

@@ -74,6 +74,10 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_storeStackViewController(&m_tabViewController, &m_storeHeader, Escher::StackViewController::Style::WhiteUniform),
   m_tabViewController(&m_modalViewController, snapshot, &m_storeStackViewController, &m_graphMenuAlternateEmptyViewController, &m_calculationHeader)
 {
+  /* Set the store's sorted index buffer. It is stored in the app to reduce
+   * snapshot's size. */
+  snapshot->store()->setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
+
   // Order used in m_graphController constructor
   assert(GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Histogram) == 0);
   assert(GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Box) == 1);

@@ -19,9 +19,14 @@ Store::Store() :
   DoublePairStore(),
   m_barWidth(1.0),
   m_firstDrawnBarAbscissa(0.0),
-  m_sortedIndex{},
+  m_sortedIndex(nullptr),
   m_sortedIndexValid{false, false, false}
 {
+}
+
+void Store::setSortedIndex(size_t * buffer, size_t bufferSize) {
+  assert(k_numberOfSeries * k_maxNumberOfPairs <= bufferSize);
+  m_sortedIndex = buffer;
 }
 
 uint32_t Store::barChecksum() const {
@@ -392,9 +397,9 @@ double Store::normalProbabilityResultAtIndex(int series, int i) const {
 }
 
 size_t Store::valueIndexAtSortedIndex(int series, int i) const {
-  assert(i >= 0 && i < numberOfPairsOfSeries(series));
+  assert(m_sortedIndex && i >= 0 && i < numberOfPairsOfSeries(series));
   buildSortedIndex(series);
-  return m_sortedIndex[series][i];
+  return m_sortedIndex[series * k_maxNumberOfPairs + i];
 }
 
 void Store::buildSortedIndex(int series) const {
@@ -405,20 +410,20 @@ void Store::buildSortedIndex(int series) const {
   // TODO : Factorize with Regression::Store::sortIndexByColumn
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int i = 0; i < numberOfPairs; i++) {
-    m_sortedIndex[series][i] = i;
+    m_sortedIndex[series * k_maxNumberOfPairs + i] = i;
   }
   /* Following lines is an insertion-sort algorithm which has the advantage of
    * being in-place and efficient when already sorted. */
   int i = 1;
   while (i < numberOfPairs) {
-    int xIndex = m_sortedIndex[series][i];
+    int xIndex = m_sortedIndex[series * k_maxNumberOfPairs + i];
     double x = m_data[series][0][xIndex];
     int j = i - 1;
-    while (j >= 0 && m_data[series][0][m_sortedIndex[series][j]] > x) {
-      m_sortedIndex[series][j+1] = m_sortedIndex[series][j];
+    while (j >= 0 && m_data[series][0][m_sortedIndex[series * k_maxNumberOfPairs + j]] > x) {
+      m_sortedIndex[series * k_maxNumberOfPairs + j + 1] = m_sortedIndex[series * k_maxNumberOfPairs + j];
       j--;
     }
-    m_sortedIndex[series][j+1] = xIndex;
+    m_sortedIndex[series * k_maxNumberOfPairs + j + 1] = xIndex;
     i++;
   }
   m_sortedIndexValid[series] = true;

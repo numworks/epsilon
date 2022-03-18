@@ -26,6 +26,7 @@ bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
     functionStore()->modelForRecord(m_record)->setDisplayDerivative(false);
     StackViewController * stack = (StackViewController *)(parentResponder());
     stack->pop();
+    return true;
   }
   return false;
 }

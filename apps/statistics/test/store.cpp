@@ -12,6 +12,8 @@ using namespace Poincare;
 
 namespace Statistics {
 
+constexpr size_t k_sortedIndexBufferSize = Shared::DoublePairStore::k_numberOfSeries * Shared::DoublePairStore::k_maxNumberOfPairs;
+
 void assert_value_approximately_equal_to(double d1, double d2, double precision, double nullExpectedPrecision) {
   quiz_assert((std::isinf(d1) && std::isinf(d2) && d1 * d2 > 0.0 /*same sign*/)
       || roughly_equal(d1, d2, precision, true, nullExpectedPrecision));
@@ -51,6 +53,8 @@ void assert_data_statistics_equal_to(
     double trueNormalProbabilityResults[],
     int totalNormalProbability) {
   Store store;
+  size_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
+  store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
 
   // Set the data in the store
@@ -506,6 +510,8 @@ void assert_data_statistics_multiple_series_equal_to(
     double maxValueIgnoringFrequency,
     double minValueIgnoringFrequency) {
   Store store;
+  size_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
+  store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
 
   // Set the data in the store
   for (int i = 0; i < numberOfData1; i++) {

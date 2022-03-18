@@ -56,6 +56,8 @@ public:
   };
   TELEMETRY_ID("Statistics");
 private:
+  constexpr static size_t k_sortedIndexBufferSize = Shared::DoublePairStore::k_numberOfSeries * Shared::DoublePairStore::k_maxNumberOfPairs;
+
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   int activeViewControllerIndex() const override { return GraphViewModel::IndexOfGraphView(snapshot()->graphViewModel()->selectedGraphView()); }
   /* Alternate view title is used for the graph tab title, but shouldn't be
@@ -83,6 +85,7 @@ private:
   Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
   Escher::StackViewController m_storeStackViewController;
   Escher::TabViewController m_tabViewController;
+  size_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
 };
 
 }

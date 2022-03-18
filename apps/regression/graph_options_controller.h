@@ -12,7 +12,7 @@ namespace Regression {
 
 class GraphController;
 
-class GraphOptionsController : public Escher::SelectableListViewController {
+class GraphOptionsController : public Escher::SelectableListViewController<Escher::RegularListViewDataSource> {
 public:
   GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   const char * title() override;

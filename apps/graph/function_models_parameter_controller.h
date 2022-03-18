@@ -11,7 +11,7 @@ namespace Graph {
 
 class ListController;
 
-class FunctionModelsParameterController : public Escher::SelectableListViewController {
+class FunctionModelsParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   FunctionModelsParameterController(Escher::Responder * parentResponder, void * functionStore, ListController * listController);
   const char * title() override;

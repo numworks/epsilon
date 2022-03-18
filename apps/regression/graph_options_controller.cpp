@@ -30,7 +30,6 @@ void GraphOptionsController::didBecomeFirstResponder() {
 }
 
 void GraphOptionsController::viewWillAppear() {
-  resetMemoization();
   m_selectableTableView.reloadData();
 }
 

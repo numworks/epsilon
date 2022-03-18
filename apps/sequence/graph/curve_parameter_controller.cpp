@@ -43,7 +43,7 @@ int CurveParameterController::numberOfRows() const {
   return k_totalNumberOfCells;
 };
 
-HighlightCell * CurveParameterController::reusableCell(int index, int type) {
+HighlightCell * CurveParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCells);
   HighlightCell * cells[k_totalNumberOfCells] = {&m_sumCell, &m_goToCell};

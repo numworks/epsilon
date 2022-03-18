@@ -15,7 +15,7 @@ namespace Sequence {
 
 TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
-  SelectableCellListPage<ExpressionTableCellWithMessage, k_numberOfCells>(parentResponder),
+  SelectableCellListPage<ExpressionTableCellWithMessage, k_numberOfCells, Escher::RegularListViewDataSource>(parentResponder),
   m_layouts{},
   m_record(),
   m_listController(list)
@@ -39,7 +39,6 @@ const char * TypeParameterController::title() {
 
 void TypeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  resetMemoization();
   m_selectableTableView.reloadData();
 }
 

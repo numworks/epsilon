@@ -8,7 +8,7 @@ namespace Shared {
 
 class EditableCellTableViewController;
 
-class ColumnParameterController : public Escher::SelectableListViewController {
+class ColumnParameterController : public Escher::SelectableListViewController<Escher::SimpleListViewDataSource> {
 public:
   static constexpr int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
   ColumnParameterController(Escher::Responder * parentResponder) :

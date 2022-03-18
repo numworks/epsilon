@@ -8,7 +8,7 @@
 
 namespace Graph {
 
-class IntervalParameterSelectorController : public Escher::SelectableListViewController {
+class IntervalParameterSelectorController : public Escher::SelectableListViewController<Escher::SimpleListViewDataSource> {
 public:
   IntervalParameterSelectorController();
   const char * title() override;
@@ -16,9 +16,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
-  int reusableCellCount(int type) override;
-  Escher::HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount() const override { return k_numberOfSymbolTypes; }
+  Escher::HighlightCell * reusableCell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::ContinuousFunction::SymbolType symbolType);
 private:

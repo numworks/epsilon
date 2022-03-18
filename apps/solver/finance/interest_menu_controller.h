@@ -15,7 +15,7 @@ namespace Solver {
 
 constexpr int k_numberOfInterestCells = InterestData::k_maxNumberOfUnknowns;
 
-class InterestMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells> {
+class InterestMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells, Escher::RegularListViewDataSource> {
 public:
   InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController, InterestData * data);
   void didBecomeFirstResponder() override;

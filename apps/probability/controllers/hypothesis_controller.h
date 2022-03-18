@@ -19,7 +19,7 @@ using namespace Escher;
 
 namespace Probability {
 
-class HypothesisController : public Escher::SelectableListViewController,
+class HypothesisController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>,
                              public Escher::TextFieldDelegate,
                              public Escher::DropdownCallback {
 public:

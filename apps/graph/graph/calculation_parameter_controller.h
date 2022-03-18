@@ -15,7 +15,7 @@
 
 namespace Graph {
 
-class CalculationParameterController : public Escher::SelectableListViewController {
+class CalculationParameterController : public Escher::SelectableListViewController<Escher::RegularListViewDataSource> {
 public:
   CalculationParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor);
   const char * title() override;
@@ -24,7 +24,6 @@ public:
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("CalculationParameter");
   int numberOfRows() const override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
 
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

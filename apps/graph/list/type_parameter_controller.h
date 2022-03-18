@@ -12,7 +12,7 @@
 
 namespace Graph {
 
-class TypeParameterController : public Escher::SelectableListViewController {
+class TypeParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   TypeParameterController(Escher::Responder * parentResponder);
 

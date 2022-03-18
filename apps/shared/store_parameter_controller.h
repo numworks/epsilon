@@ -17,12 +17,8 @@ public:
   StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return numberOfCells(); }
-  Escher::HighlightCell * reusableCell(int index, int type) override;
-  KDCoordinate nonMemoizedRowHeight(int index) override;
-
-  int reusableCellCount(int type) override { return type == k_defaultCellType ? 2 : 1; }
-  int typeAtIndex(int index) override { return index == k_indexOfSortCell ? k_sortCellType : k_defaultCellType; }
-
+  Escher::HighlightCell * reusableCell(int index) override;
+  int reusableCellCount() const override { return numberOfCells(); }
   void initializeColumnParameters() override;
 protected:
   constexpr static int k_numberOfCells = 3;
@@ -36,8 +32,6 @@ private:
   constexpr static int k_indexOfSortCell = 0;
   constexpr static int k_indexOfFillFormula = k_indexOfSortCell + 1;
   constexpr static int k_indexOfClearColumn = k_indexOfFillFormula + 1;
-  constexpr static int k_defaultCellType = 0;
-  constexpr static int k_sortCellType = 1;
 
   Escher::MessageTableCellWithMessage m_sortCell;
   Escher::MessageTableCell m_fillFormula;

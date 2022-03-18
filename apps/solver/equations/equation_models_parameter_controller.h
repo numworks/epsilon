@@ -11,7 +11,7 @@ namespace Solver {
 
 class ListController;
 
-class EquationModelsParameterController : public Escher::SelectableListViewController {
+class EquationModelsParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   EquationModelsParameterController(Escher::Responder * parentResponder, EquationStore * equationStore, ListController * listController);
   const char * title() override;

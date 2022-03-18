@@ -51,7 +51,6 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       case 2:
       {
         m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
-        resetMemoization();
         m_selectableTableView.reloadData();
         return true;
       }
@@ -67,15 +66,14 @@ int CurveParameterController::numberOfRows() const {
   return 1 + (shouldDisplayCalculationAndDerivative() ? 2 : 0);
 };
 
-HighlightCell * CurveParameterController::reusableCell(int index, int type) {
-  assert(0 <= index && index < reusableCellCount(type));
+HighlightCell * CurveParameterController::reusableCell(int index) {
+  assert(0 <= index && index < reusableCellCount());
   HighlightCell * cells[] = {&m_calculationCell, &m_goToCell, &m_derivativeCell};
   return cells[cellIndex(index)];
 }
 
 void CurveParameterController::viewWillAppear() {
   Shared::FunctionCurveParameterController::viewWillAppear();
-  resetMemoization();
   m_selectableTableView.reloadData();
 }
 

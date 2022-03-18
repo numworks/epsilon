@@ -12,7 +12,7 @@
 using namespace Shared;
 
 MenuController::MenuController(Escher::StackViewController * parentResponder, std::initializer_list<Escher::ViewController *> controllers, std::initializer_list<std::initializer_list<I18n::Message>> messages, std::initializer_list<const Escher::Image *> images, MenuControllerDelegate * delegate) :
-  Escher::SelectableCellListPage<Escher::SubappCell, k_maxNumberOfCells>(parentResponder),
+  Escher::SelectableCellListPage<Escher::SubappCell, k_maxNumberOfCells, Escher::MemoizedListViewDataSource>(parentResponder),
   m_delegate(delegate),
   m_contentView(&m_selectableTableView)
 {

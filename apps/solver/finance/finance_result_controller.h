@@ -14,8 +14,7 @@ namespace Solver {
 
 constexpr int k_numberOfResultCells = 1;
 
-class FinanceResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer,
-                                                     k_numberOfResultCells> {
+class FinanceResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource> {
 public:
   FinanceResultController(Escher::StackViewController * parentResponder, InterestData * data);
 

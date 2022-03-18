@@ -43,9 +43,4 @@ bool FunctionCurveParameterController::handleGotoSelection() {
   return true;
 }
 
-KDCoordinate FunctionCurveParameterController::nonMemoizedRowHeight(int j) {
-  Escher::HighlightCell * cell = reusableCell(j, typeAtLocation(0, j));
-  return heightForCellAtIndex(cell, j);
-}
-
 }

@@ -32,7 +32,7 @@ private:
   MessageTextView * m_description;
 };
 
-class TypeController : public Escher::SelectableListViewController {
+class TypeController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   TypeController(StackViewController * parent,
                  HypothesisController * hypothesisController,

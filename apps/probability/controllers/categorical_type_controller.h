@@ -17,8 +17,7 @@ class InputHomogeneityController;
 
 constexpr static int k_numberOfCategoricalCells = 2;
 
-class CategoricalTypeController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevron,
-                                                                k_numberOfCategoricalCells> {
+class CategoricalTypeController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevron, k_numberOfCategoricalCells, Escher::RegularListViewDataSource> {
 public:
   CategoricalTypeController(Escher::StackViewController * parent,
                             Chi2Test * statistic,

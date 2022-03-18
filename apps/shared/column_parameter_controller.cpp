@@ -13,7 +13,6 @@ void ColumnParameterController::didBecomeFirstResponder() {
 }
 
 void ColumnParameterController::viewWillAppear() {
-  resetMemoization();
   m_selectableTableView.reloadData();
 }
 

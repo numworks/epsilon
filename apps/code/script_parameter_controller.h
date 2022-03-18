@@ -13,7 +13,7 @@ namespace Code {
 
 class MenuController;
 
-class ScriptParameterController : public Escher::SelectableListViewController {
+class ScriptParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   ScriptParameterController(Escher::Responder * parentResponder, I18n::Message title, MenuController * menuController);
   void setScript(Script script);

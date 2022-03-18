@@ -15,7 +15,7 @@ class CategoricalTypeController;
 class TypeController;
 class InputController;
 
-class TestController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType> {
+class TestController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType, Escher::MemoizedListViewDataSource> {
 public:
   TestController(Escher::StackViewController * parentResponder,
                  HypothesisController * hypothesisController,

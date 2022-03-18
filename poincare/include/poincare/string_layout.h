@@ -9,7 +9,7 @@ class StringLayoutNode : public LayoutNode {
 public:
   static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
 
-  StringLayoutNode(char * string, int stringSize);
+  StringLayoutNode(const char * string, int stringSize);
 
   Type type() const override { return Type::StringLayout; }
 
@@ -30,7 +30,7 @@ public:
     stream << "StringLayout";
   }
   virtual void logAttributes(std::ostream & stream) const override {
-    stream << " String=\"" << m_string << "\"";
+    stream << " String length=\"" << m_stringLength <<"\" String=\"" << m_string << "\"";
   }
 #endif
 
@@ -53,7 +53,7 @@ public:
   static void DistributeThousandDisplayType(Layout l, int start, int stop);
 
   StringLayout(const StringLayoutNode * n) : Layout(n) {}
-  static StringLayout Builder(char * string , int stringSize);
+  static StringLayout Builder(const char * string , int stringSize);
   int stringLength() const { return const_cast<StringLayout *>(this)->node()->stringLength(); }
   const char * string() const { return const_cast<StringLayout *>(this)->node()->string(); }
   const KDFont * font() const { return const_cast<StringLayout *>(this)->node()->font(); }

@@ -144,6 +144,15 @@ bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool for
   return true;
 }
 
+Layout LayoutNode::makeEditable() {
+  int i = 0;
+  while (i < numberOfChildren()) {
+    childAtIndex(i)->makeEditable();
+    i++;
+  }
+  return Layout(this);
+}
+
 // Other
 bool LayoutNode::canBeOmittedMultiplicationLeftFactor() const {
   /* WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when

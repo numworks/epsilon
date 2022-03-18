@@ -1,4 +1,5 @@
 #include <poincare/string_layout.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -6,12 +7,16 @@ StringLayoutNode::StringLayoutNode(const char * string, int stringSize) {
   m_stringLength = strlcpy(m_string, string, stringSize);
 }
 
+Layout StringLayoutNode::makeEditable() {
+  return StringLayout(this).makeEditable();
+}
+
 int StringLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return strlcpy(buffer, m_string, bufferSize);
 }
 
 size_t StringLayoutNode::size() const {
-  return sizeof(StringLayoutNode) + sizeof(char) * m_stringLength;
+  return sizeof(StringLayoutNode) + sizeof(char) * (m_stringLength + 1);
 }
 
 bool StringLayoutNode::protectedIsIdenticalTo(Layout l) {
@@ -42,6 +47,10 @@ StringLayout StringLayout::Builder(const char * string, int stringSize) {
   return static_cast<StringLayout &>(h);
 }
 
+Layout StringLayout::makeEditable() {
+  Layout editableLayout = LayoutHelper::StringToCodePointLayouts(string(), stringLength(), font());
+  replaceWithInPlace(editableLayout);
+  return editableLayout;
 }
 
-
+}

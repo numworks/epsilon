@@ -85,7 +85,7 @@ KDCoordinate LocalizationController::ContentView::layoutWarningSubview(bool forc
 
 KDCoordinate LocalizationController::ContentView::layoutTableSubview(bool force, KDCoordinate verticalOrigin) {
   // SelectableTableView must be given a width before computing height.
-  m_selectableTableView.setFrame(KDRect(0, verticalOrigin, bounds().width(), m_selectableTableView.bounds().height()), force);
+  m_selectableTableView.initWidth(bounds().width());
   KDCoordinate tableHeight = std::min<KDCoordinate>(
       bounds().height() - verticalOrigin,
       m_selectableTableView.minimalSizeForOptimalDisplay().height());

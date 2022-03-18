@@ -30,16 +30,18 @@ public:
   virtual bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const { return false; }
 };
 
-class PlotController : public MultipleDataViewController, public PlotControllerDelegate{
+class PlotController : public MultipleDataViewController, public PlotControllerDelegate {
 public:
-  PlotController(Escher::Responder * parentResponder,
-                 Escher::ButtonRowController * header,
-                 Escher::Responder * tabController,
-                 Escher::StackViewController * stackViewController,
-                 Escher::ViewController * typeViewController,
-                 Store * store,
-                 int * selectedPointIndex,
-                 int * selectedSeriesIndex);
+  PlotController(
+    Escher::Responder * parentResponder,
+    Escher::ButtonRowController * header,
+    Escher::Responder * tabController,
+    Escher::StackViewController * stackViewController,
+    Escher::ViewController * typeViewController,
+    Store * store,
+    int * selectedPointIndex,
+    int * selectedSeriesIndex
+  );
 
   // MultipleDataViewController
   void viewWillAppear() override;

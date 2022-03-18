@@ -16,8 +16,8 @@ namespace Statistics {
  *        as between MultipleDataViewController and ViewController +
  *        GraphButtonRowDelegate to avoid having to completely re-implement
  *        MultipleDataView's methods.
- *        Move some logic in the controller so the store doesn't need to be
- *        passed down. */
+ *        PlotView should disappear since Shared::CurveView has all the tools
+ *        to handle a banner and a range. */
 class PlotView : public MultipleDataView {
 public:
   PlotView(Store * store, PlotCurveView * plotCurveView, PlotRange * graphRange, PlotBannerView * bannerView) :

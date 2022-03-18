@@ -1,4 +1,4 @@
-#include "type_parameter_controller.h"
+#include "details_parameter_controller.h"
 #include <apps/exam_mode_configuration.h>
 #include <poincare/layout_helper.h>
 #include <poincare/expression.h>
@@ -11,17 +11,17 @@ using namespace Escher;
 
 namespace Graph {
 
-TypeParameterController::TypeParameterController(Responder * parentResponder) :
+DetailsParameterController::DetailsParameterController(Responder * parentResponder) :
   SelectableListViewController(parentResponder),
   m_record()
 {
 }
 
-void TypeParameterController::didBecomeFirstResponder() {
+void DetailsParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool TypeParameterController::handleEvent(Ion::Events::Event event) {
+bool DetailsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     return true;
   }
@@ -32,11 +32,11 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-const char * TypeParameterController::title() {
+const char * DetailsParameterController::title() {
   return I18n::translate(I18n::Message::Details);
 }
 
-void TypeParameterController::viewWillAppear() {
+void DetailsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   assert(!m_record.isNull());
   selectCellAtLocation(0, 0);
@@ -44,12 +44,12 @@ void TypeParameterController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-KDCoordinate TypeParameterController::nonMemoizedRowHeight(int j) {
+KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int j) {
   MessageTableCellWithMessageWithBuffer tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
-void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void DetailsParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < k_numberOfDataPoints);
   MessageTableCellWithMessageWithBuffer * myCell = static_cast<MessageTableCellWithMessageWithBuffer *>(cell);
   if (index == 0) {
@@ -76,12 +76,12 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
 }
 
-MessageTableCellWithMessageWithBuffer * TypeParameterController::reusableCell(int index, int type) {
+MessageTableCellWithMessageWithBuffer * DetailsParameterController::reusableCell(int index, int type) {
   assert(0 <= index && index < reusableCellCount(type));
   return &m_cells[index];
 }
 
-void TypeParameterController::setRecord(Ion::Storage::Record record) {
+void DetailsParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   if (!m_record.isNull()) {
     Shared::ExpiringPointer<Shared::ContinuousFunction> f = function();
@@ -96,7 +96,7 @@ void TypeParameterController::setRecord(Ion::Storage::Record record) {
   }
 }
 
-int TypeParameterController::detailsNumberOfSections() const {
+int DetailsParameterController::detailsNumberOfSections() const {
   if (m_record.isNull()) {
     return 0;
   }
@@ -118,13 +118,13 @@ int TypeParameterController::detailsNumberOfSections() const {
   }
 }
 
-Shared::ExpiringPointer<Shared::ContinuousFunction> TypeParameterController::function() const {
+Shared::ExpiringPointer<Shared::ContinuousFunction> DetailsParameterController::function() const {
   assert(!m_record.isNull());
   App * myApp = App::app();
   return myApp->functionStore()->modelForRecord(m_record);
 }
 
-I18n::Message TypeParameterController::detailsTitle(int i) const {
+I18n::Message DetailsParameterController::detailsTitle(int i) const {
   assert(i < detailsNumberOfSections());
   switch (function()->plotType()) {
     case Shared::ContinuousFunction::PlotType::Line: {
@@ -178,7 +178,7 @@ I18n::Message TypeParameterController::detailsTitle(int i) const {
   }
 }
 
-I18n::Message TypeParameterController::detailsDescription(int i) const {
+I18n::Message DetailsParameterController::detailsDescription(int i) const {
   assert(i < detailsNumberOfSections());
   switch (function()->plotType()) {
     case Shared::ContinuousFunction::PlotType::Line: {
@@ -232,14 +232,14 @@ I18n::Message TypeParameterController::detailsDescription(int i) const {
   }
 }
 
-void TypeParameterController::setLineDetailsValues(double slope, double intercept) {
+void DetailsParameterController::setLineDetailsValues(double slope, double intercept) {
   assert(function()->plotType() == Shared::ContinuousFunction::PlotType::Line);
   m_detailValues[0] = NAN;
   m_detailValues[1] = slope;
   m_detailValues[2] = intercept;
 }
 
-void TypeParameterController::setConicDetailsValues(Poincare::Conic conic) {
+void DetailsParameterController::setConicDetailsValues(Poincare::Conic conic) {
   Shared::ContinuousFunction::PlotType type = function()->plotType();
   double cx, cy;
   if (Shared::ContinuousFunction::IsPlotTypeParabola(function()->plotType())) {
@@ -278,7 +278,7 @@ void TypeParameterController::setConicDetailsValues(Poincare::Conic conic) {
   return;
 }
 
-StackViewController * TypeParameterController::stackController() const {
+StackViewController * DetailsParameterController::stackController() const {
   return static_cast<StackViewController *>(parentResponder());
 }
 

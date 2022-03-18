@@ -316,35 +316,35 @@ void Store::buildSortedIndex(int series, int * sortedIndex) const {
   }
 }
 
-int Store::totalCumulatedFrequencyValues(int series, int * sortedIndex) const {
-  int distinctValues = 0;
-  double x;
+void Store::countDistinctValuesUntil(int series, int * sortedIndex, int i, double * value, int * distinctValues) const {
+  *distinctValues = 0;
+  *value = NAN;
   for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
     double nextX = get(series, 0, sortedIndex[j]);
-    if (j == 0 || x != nextX) {
-      distinctValues++;
-      x = nextX;
+    if (j == 0 || *value != nextX) {
+      (*distinctValues)++;
+      *value = nextX;
+    }
+    if (i == (*distinctValues) - 1) {
+      // Found the i-th distinct value
+      return;
     }
   }
+  assert(i == -1);
+}
+
+int Store::totalCumulatedFrequencyValues(int series, int * sortedIndex) const {
+  double value;
+  int distinctValues;
+  countDistinctValuesUntil(series, sortedIndex, -1, &value, &distinctValues);
   return distinctValues;
 }
 
 double Store::cumulatedFrequencyValueAtIndex(int series, int * sortedIndex, int i) const {
-  int distinctValues = 0;
-  double x;
-  for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
-    double nextX = get(series, 0, sortedIndex[j]);
-    if (j == 0 || x != nextX) {
-      distinctValues++;
-      x = nextX;
-    }
-    if (i == distinctValues - 1) {
-      // Found the i-th distinct value
-      return x;
-    }
-  }
-  assert(false);
-  return NAN;
+  double value;
+  int distinctValues;
+  countDistinctValuesUntil(series, sortedIndex, i, &value, &distinctValues);
+  return value;
 }
 
 double Store::cumulatedFrequencyResultAtIndex(int series, int * sortedIndex, int i) const {

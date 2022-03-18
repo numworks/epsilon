@@ -48,7 +48,7 @@ StringLayout StringLayout::Builder(const char * string, int stringSize) {
 }
 
 Layout StringLayout::makeEditable() {
-  Layout editableLayout = LayoutHelper::StringToCodePointLayouts(string(), stringLength(), font());
+  Layout editableLayout = LayoutHelper::StringToCodePointsLayout(string(), stringLength(), font());
   replaceWithInPlace(editableLayout);
   return editableLayout;
 }

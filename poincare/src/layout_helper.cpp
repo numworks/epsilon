@@ -23,7 +23,7 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
     if (i > 0) {
       /* Handle the operator */
       if (operatorLength > 0) {
-        Layout operatorLayout = StringToCodePointLayouts(operatorName, operatorLength, KDFont::LargeFont);
+        Layout operatorLayout = String(operatorName, operatorLength);
         assert(operatorLayout.type() == LayoutNode::Type::CodePointLayout);
         CodePointLayoutNode * codePointNode = static_cast<CodePointLayoutNode *>(operatorLayout.node());
         codePointNode->setDisplayType(CodePointLayoutNode::DisplayType::Operator);
@@ -75,11 +75,11 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
   return std::move(result);
 }
 
-Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font, bool editable) {
+Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
   if (bufferLen < 0) {
     bufferLen = strlen(buffer);
   }
-  return editable || bufferLen <= 2 ? StringToCodePointLayouts(buffer, bufferLen, font) : StringToStringLayout(buffer, bufferLen, font);
+  return  bufferLen <= 2 ? StringToCodePointsLayout(buffer, bufferLen, font) : StringToStringLayout(buffer, bufferLen, font);
 }
 
 Layout LayoutHelper::StringLayoutOfSerialization(const Expression & expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) {
@@ -88,7 +88,7 @@ Layout LayoutHelper::StringLayoutOfSerialization(const Expression & expression, 
   return LayoutHelper::String(buffer, length);
 }
 
-Layout LayoutHelper::StringToCodePointLayouts(const char * buffer, int bufferLen, const KDFont * font) {
+Layout LayoutHelper::StringToCodePointsLayout(const char * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   UTF8Decoder decoder(buffer);
@@ -124,8 +124,7 @@ Layout LayoutHelper::StringToStringLayout(const char * buffer, int bufferLen, co
   return StringLayout::Builder(buffer, bufferLen + 1);
 }
 
-
-Layout LayoutHelper::CodePointString(const CodePoint * buffer, int bufferLen, const KDFont * font) {
+Layout LayoutHelper::CodePointsToLayout(const CodePoint * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   for (int i = 0; i < bufferLen; i++) {

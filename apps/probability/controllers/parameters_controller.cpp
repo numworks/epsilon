@@ -39,10 +39,7 @@ View * ParametersController::ContentView::subviewAtIndex(int index) {
 void ParametersController::ContentView::layoutSubviews(bool force) {
   KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height() + k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
-  /* SelectableTableView must be given a width before computing height.
-   * We force a default non-null height to force to layoutSubviews which gives
-   * the cells their width (otherwise, code is by-passed when the KDRect is
-   * empty). */
+  /* SelectableTableView must be given a width before computing height. */
   m_selectableTableView->initWidth(bounds().width());
   KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), tableHeight), force);

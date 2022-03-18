@@ -330,7 +330,7 @@ void LayoutField::clearLayout() {
 void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  const_cast<ExpressionView *>(m_contentView.expressionView())->setLayout(newLayout);
+  const_cast<ExpressionView *>(m_contentView.expressionView())->setLayout(newLayout.makeEditable());
   putCursorRightOfLayout();
   reload(previousSize);
 }
@@ -727,10 +727,9 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   if (layoutR.isUninitialized()) {
     return;
   }
-
+  layoutR = layoutR.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
   Poincare::LayoutCursor * cursor = m_contentView.cursor();
-
   // Handle empty layouts
   cursor->showEmptyLayoutIfNeeded();
 

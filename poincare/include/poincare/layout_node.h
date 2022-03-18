@@ -145,6 +145,8 @@ public:
   virtual bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force);
   virtual void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
 
+  virtual Layout makeEditable();
+
 protected:
   virtual bool protectedIsIdenticalTo(Layout l);
 

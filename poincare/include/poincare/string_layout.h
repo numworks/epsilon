@@ -19,8 +19,10 @@ public:
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override { assert(false); }
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override { assert(false); }
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override  { assert(false); }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+
+  Layout makeEditable() override;
 
   // TreeNode
   size_t size() const override;
@@ -30,7 +32,7 @@ public:
     stream << "StringLayout";
   }
   virtual void logAttributes(std::ostream & stream) const override {
-    stream << " String length=\"" << m_stringLength <<"\" String=\"" << m_string << "\"";
+    stream << " stringLength=\"" << m_stringLength <<"\" string=\"" << m_string << "\"";
   }
 #endif
 
@@ -57,6 +59,7 @@ public:
   int stringLength() const { return const_cast<StringLayout *>(this)->node()->stringLength(); }
   const char * string() const { return const_cast<StringLayout *>(this)->node()->string(); }
   const KDFont * font() const { return const_cast<StringLayout *>(this)->node()->font(); }
+  Layout makeEditable();
 
 private:
   using Layout::node;

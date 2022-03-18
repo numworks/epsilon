@@ -23,11 +23,11 @@ app_graph_src = $(addprefix apps/graph/,\
   graph/root_graph_controller.cpp \
   graph/tangent_graph_controller.cpp \
   list/function_cell.cpp \
+  list/details_parameter_controller.cpp \
   list/domain_parameter_controller.cpp \
   list/function_toolbox.cpp \
   list/list_controller.cpp \
   list/list_parameter_controller.cpp \
-  list/type_parameter_controller.cpp \
   values/abscissa_title_cell.cpp \
   values/derivative_parameter_controller.cpp \
   values/function_parameter_controller.cpp \

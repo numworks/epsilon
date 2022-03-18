@@ -11,6 +11,7 @@ class Store : public Shared::MemoizedCurveViewRange, public Shared::DoublePairSt
 friend class BoxRange;
 public:
   Store();
+  void setSortedIndex(size_t * buffer, size_t bufferSize);
   uint32_t barChecksum() const;
   // Histogram bars
   double barWidth() const { return m_barWidth; }
@@ -100,7 +101,7 @@ private:
   double m_firstDrawnBarAbscissa;
   // Sorted value indexes are memoized to save computation
   static_assert(k_maxNumberOfPairs <= SIZE_MAX, "k_maxNumberOfPairs is too large.");
-  mutable size_t m_sortedIndex[k_numberOfSeries][k_maxNumberOfPairs];
+  mutable size_t * m_sortedIndex;
   mutable bool m_sortedIndexValid[k_numberOfSeries];
 };
 

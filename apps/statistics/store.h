@@ -83,6 +83,9 @@ public:
 private:
   double defaultValue(int series, int i, int j) const override;
   double sumOfValuesBetween(int series, double x1, double x2) const;
+  /* Find the i-th distinct value (if i is -1, browse the entire series).
+   * Retrieve the i-th value and the number distinct values encountered. */
+  void countDistinctValuesUntil(int series, int * sortedIndex, int i, double * value, int * distinctValues) const;
   double sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement = false) const;
   double sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement = false) const;
   int minIndex(double * bufferValues, int bufferLength) const;

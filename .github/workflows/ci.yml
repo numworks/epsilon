@@ -116,10 +116,10 @@ jobs:
       - run: make PLATFORM=simulator TARGET=web test.js
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
-        if: ${{ github.repository != 'numworks/epsilon-internal' }}
         with:
           name: epsilon-web.zip
           path: output/release/simulator/web/epsilon.zip
+          retention-days: 7
   linux:
     runs-on: ubuntu-latest
     steps:

@@ -46,6 +46,7 @@ public:
     RightParenthesisLayout,
     RightSquareBracketLayout,
     SumLayout,
+    StringLayout,
     VectorNormLayout,
     VerticalOffsetLayout
   };

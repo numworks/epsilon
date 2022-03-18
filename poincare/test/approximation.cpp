@@ -1109,6 +1109,19 @@ QUIZ_CASE(poincare_approximation_mix) {
   //assert_expression_simplifies_approximates_to<float>("1.0092^(50)×ln(3/2)", "6.4093734888993ᴇ-1"); TODO does not work
 }
 
+QUIZ_CASE(poincare_approximation_lists_functions) {
+  assert_expression_approximates_to_scalar<double>("mean({5,8,7,4,12})", 7.2);
+  assert_expression_approximates_to_scalar<double>("stddev({1,2,3,4,5,6})", 1.707825127659933);
+  assert_expression_approximates_to_scalar<double>("med({1,6,3,5,2})", 3.);
+  assert_expression_approximates_to_scalar<double>("med({1,6,3,4,5,2})", 3.5);
+  assert_expression_approximates_to_scalar<double>("var({1,2,3,4,5,6})", 2.916666667);
+  assert_expression_approximates_to_scalar<double>("samplestddev({1,2,3,4,5,6})", 1.870828693);
+  assert_expression_approximates_to_scalar<double>("dim({1,2,3})", 3.);
+  assert_expression_approximates_to_scalar<double>("min({1,2,3})", 1.);
+  assert_expression_approximates_to_scalar<double>("max({1,2,3})", 3.);
+  assert_expression_approximates_to_scalar<double>("sum({1,2,3})", 6.);
+  assert_expression_approximates_to_scalar<double>("product({1,4,9})", 36.);
+}
 
 template void assert_expression_approximates_to_scalar(const char * expression, float approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
 template void assert_expression_approximates_to_scalar(const char * expression, double approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);

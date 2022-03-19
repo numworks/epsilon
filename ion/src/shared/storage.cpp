@@ -14,8 +14,14 @@ Storage * Storage::sharedStorage() {
 }
 
 size_t Storage::availableSize() {
-  if (m_trashRecord != NULL) {
-    return InternalStorage::availableSize() + sizeof(record_size_t) + m_trashRecord.value().size;
+  if (m_trashRecord != Record()) {
+    int bufferSize = 0;
+    for (char * p : *this) {
+      if (Record(fullNameOfRecordStarting(p)) != m_trashRecord) {
+        bufferSize += sizeOfRecordStarting(p);
+      }
+    }
+    return k_storageSize-bufferSize-sizeof(record_size_t);
   } else {
     return InternalStorage::availableSize();
   }

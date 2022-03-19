@@ -8,6 +8,8 @@ namespace Code {
 
 class EditorView : public Responder, public View, public ScrollViewDelegate {
 public:
+  static constexpr char k_eol = '\n';
+
   EditorView(Responder * parentResponder, App * pythonDelegate);
   PythonTextArea::AutocompletionType autocompletionType(const char ** autocompletionBeginning, const char ** autocompletionEnd) const { return m_textArea.autocompletionType(nullptr, autocompletionBeginning, autocompletionEnd); }
   bool isAutocompleting() const;
@@ -29,6 +31,7 @@ public:
   void unloadSyntaxHighlighter() { m_textArea.unloadSyntaxHighlighter(); };
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
+  void redrawSubviews();
 private:
   int numberOfSubviews() const override { return 2; }
   View * subviewAtIndex(int index) override;
@@ -36,15 +39,24 @@ private:
 
   class GutterView : public View {
   public:
-    GutterView(const KDFont * font) : View(), m_font(font), m_offset(0) {}
+    GutterView(const KDFont * font) : View(), m_font(font), m_offset(0), m_digits(3), m_previousDigits(0) {}
+
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setOffset(KDCoordinate offset);
-    KDSize minimalSizeForOptimalDisplay() const override;
+
+    KDSize widthComputed();
+    void loadMaxDigits();
+    bool isEditorReloadNeeded();
+
+    static int getDigits(int value);
+
   private:
     static constexpr KDCoordinate k_margin = 2;
-    static constexpr int k_lineNumberCharLength = 3;
+
     const KDFont * m_font;
     KDCoordinate m_offset;
+    int m_digits;
+    int m_previousDigits;
   };
 
   PythonTextArea m_textArea;

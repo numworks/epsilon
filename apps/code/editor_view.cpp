@@ -8,6 +8,8 @@ namespace Code {
 
 /* EditorView */
 
+constexpr char Code::EditorView::k_eol;
+
 EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
   Responder(parentResponder),
   View(),
@@ -27,6 +29,9 @@ void EditorView::resetSelection() {
 
 void EditorView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
   m_gutterView.setOffset(scrollViewDataSource->offset().y());
+  if (m_gutterView.isEditorReloadNeeded()) {
+    redrawSubviews();
+  }
 }
 
 View * EditorView::subviewAtIndex(int index) {
@@ -43,7 +48,7 @@ void EditorView::didBecomeFirstResponder() {
 
 void EditorView::layoutSubviews(bool force) {
   m_gutterView.setOffset(0);
-  KDCoordinate gutterWidth = m_gutterView.minimalSizeForOptimalDisplay().width();
+  KDCoordinate gutterWidth = m_gutterView.widthComputed().width();
   m_gutterView.setFrame(KDRect(0, 0, gutterWidth, bounds().height()), force);
 
   m_textArea.setFrame(KDRect(
@@ -52,6 +57,19 @@ void EditorView::layoutSubviews(bool force) {
         bounds().width()-gutterWidth,
         bounds().height()),
       force);
+  m_gutterView.loadMaxDigits();
+}
+
+void EditorView::redrawSubviews() {
+  KDCoordinate gutterWidth = m_gutterView.widthComputed().width();
+  m_gutterView.setFrame(KDRect(0, 0, gutterWidth, bounds().height()), true);
+  m_textArea.setFrame(KDRect(
+        gutterWidth,
+        0,
+        bounds().width()-gutterWidth,
+        bounds().height()),
+      true);
+  markRectAsDirty(bounds());
 }
 
 /* EditorView::GutterView */
@@ -67,28 +85,33 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate firstLine = m_offset / glyphSize.height();
   KDCoordinate firstLinePixelOffset = m_offset - firstLine * glyphSize.height();
 
-  char lineNumber[k_lineNumberCharLength];
+  char lineNumber[m_digits];
   int numberOfLines = bounds().height() / glyphSize.height() + 1;
   for (int i=0; i<numberOfLines; i++) {
-    // Only the first two digits are displayed
-    int lineNumberValue = (i + firstLine + 1) % 100;
+    int lineNumberValue = (i + firstLine + 1);
     Poincare::Integer line(lineNumberValue);
-    if (firstLine < 10 || lineNumberValue >= 10) {
-      line.serialize(lineNumber, k_lineNumberCharLength);
-    } else {
-      // Add a leading "0"
-      lineNumber[0] = '0';
-      line.serialize(lineNumber + 1, k_lineNumberCharLength - 1);
+
+    int lineDigits = getDigits(lineNumberValue);
+
+    for (int j=0; j < (m_digits - lineDigits - 1); j++) {
+      lineNumber[j] = '0';
     }
-    KDCoordinate leftPadding = (2 - strlen(lineNumber)) * glyphSize.width();
+
+    line.serialize(lineNumber + (m_digits-lineDigits - 1), lineDigits + 1);
+
+    KDCoordinate leftPadding = (m_digits - strlen(lineNumber) - 1) * glyphSize.width();
     ctx->drawString(
-      lineNumber,
-      KDPoint(k_margin + leftPadding, i*glyphSize.height() - firstLinePixelOffset),
-      m_font,
-      textColor,
-      backgroundColor
+            lineNumber,
+            KDPoint(k_margin + leftPadding, i*glyphSize.height() - firstLinePixelOffset),
+            m_font,
+            textColor,
+            backgroundColor
     );
   }
+}
+
+void EditorView::GutterView::loadMaxDigits() {
+  m_digits = getDigits((bounds().height() / m_font->glyphSize().height() + 1) + (m_offset / m_font->glyphSize().height())) + 1;
 }
 
 void EditorView::GutterView::setOffset(KDCoordinate offset) {
@@ -96,13 +119,23 @@ void EditorView::GutterView::setOffset(KDCoordinate offset) {
     return;
   }
   m_offset = offset;
+  m_previousDigits = m_digits;
+  loadMaxDigits();
   markRectAsDirty(bounds());
 }
 
+KDSize EditorView::GutterView::widthComputed() {
+  return KDSize(2 * k_margin + (m_digits - 1) * m_font->glyphSize().width(), 0);
+}
 
-KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {
-  int numberOfChars = 2; // TODO: Could be computed
-  return KDSize(2 * k_margin + numberOfChars * m_font->glyphSize().width(), 0);
+int EditorView::GutterView::getDigits(int value) {
+  int digits = 0;
+  while (value >= pow(10, digits)) {digits++;}
+  return digits;
+}
+
+bool EditorView::GutterView::isEditorReloadNeeded() {
+  return m_previousDigits != m_digits;
 }
 
 }

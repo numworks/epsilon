@@ -8,8 +8,6 @@ namespace Code {
 
 class EditorView : public Responder, public View, public ScrollViewDelegate {
 public:
-  static constexpr char k_eol = '\n';
-
   EditorView(Responder * parentResponder, App * pythonDelegate);
   PythonTextArea::AutocompletionType autocompletionType(const char ** autocompletionBeginning, const char ** autocompletionEnd) const { return m_textArea.autocompletionType(nullptr, autocompletionBeginning, autocompletionEnd); }
   bool isAutocompleting() const;
@@ -31,7 +29,7 @@ public:
   void unloadSyntaxHighlighter() { m_textArea.unloadSyntaxHighlighter(); };
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
-  void redrawSubviews();
+  void internalLayoutSubviews(bool force);
 private:
   int numberOfSubviews() const override { return 2; }
   View * subviewAtIndex(int index) override;
@@ -39,24 +37,21 @@ private:
 
   class GutterView : public View {
   public:
-    GutterView(const KDFont * font) : View(), m_font(font), m_offset(0), m_digits(3), m_previousDigits(0) {}
+    GutterView(const KDFont * font) : View(), m_font(font), m_offset(0), m_numberOfDigits(2) {}
 
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    void setOffset(KDCoordinate offset);
+    bool setOffsetAndNeedResize(KDCoordinate offset); // Return true if the gutter view need to be resized
 
-    KDSize widthComputed();
-    void loadMaxDigits();
-    bool isEditorReloadNeeded();
-
-    static int getDigits(int value);
+    int computeWidth();
+    int computeMaxNumberOfDigits();
+    static int computeNumberOfDigitsFor(int value);
 
   private:
     static constexpr KDCoordinate k_margin = 2;
 
     const KDFont * m_font;
     KDCoordinate m_offset;
-    int m_digits;
-    int m_previousDigits;
+    int m_numberOfDigits;
   };
 
   PythonTextArea m_textArea;

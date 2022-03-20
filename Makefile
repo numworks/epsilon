@@ -214,3 +214,8 @@ run: compile
 translations:
 	@echo "TRANSLATIONS"
 	$(Q) ${PYTHON} build/utilities/translate.py
+
+.PHONY: translations_clean
+translations_clean:
+	@echo "TRANSLATIONS CLEAN"
+	$(Q) ${PYTHON} build/utilities/translations_clean.py

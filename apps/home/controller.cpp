@@ -89,19 +89,12 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     int appIndex = eventText[0] - '1';
     int i = appIndex % k_numberOfColumns;
     int j = appIndex / k_numberOfColumns;
-#define SELECT_THEN_SWITCH 1
-#if SELECT_THEN_SWITCH
     if (i == m_view.selectableTableView()->selectedColumn() && j == m_view.selectableTableView()->selectedRow()) {
       // We were already on the selected app
       switchToSelectedApp();
       return true;
     }
     return m_view.selectableTableView()->selectCellAtLocation(i, j);
-#else
-    m_view.selectableTableView()->selectCellAtLocation(i, j);
-    switchToSelectedApp();
-    return true;
-#endif
   }
 
   return false;

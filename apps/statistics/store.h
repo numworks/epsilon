@@ -25,6 +25,7 @@ public:
   double numberOfBars(int series) const;
   void setHistogramXMin(float f, bool updateGridUnit) { protectedSetXMin(f, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, updateGridUnit); }
   void setHistogramXMax(float f, bool updateGridUnit) { protectedSetXMax(f, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, updateGridUnit); }
+  // Box plot
   bool displayOutliers() const { return m_displayOutliers; }
   void setDisplayOutliers(bool displayOutliers) { m_displayOutliers = displayOutliers; }
   // return true if the window has scrolled
@@ -50,6 +51,14 @@ public:
   double thirdQuartile(int series) const;
   double quartileRange(int series) const;
   double median(int series) const;
+  double lowerWhisker(int series) const;
+  double upperWhisker(int series) const;
+  double lowerFence(int series) const;
+  double upperFence(int series) const;
+  int numberOfLowerOutliers(int series) const;
+  int numberOfUpperOutliers(int series) const;
+  double lowerOutlierAtIndex(int series, int index) const;
+  double upperOutlierAtIndex(int series, int index) const;
   double sum(int series) const;
   double squaredValueSum(int series) const;
   double squaredOffsettedValueSum(int series, double offset) const;
@@ -89,11 +98,15 @@ public:
 private:
   double defaultValue(int series, int i, int j) const override;
   double sumOfValuesBetween(int series, double x1, double x2) const;
-  /* Find the i-th distinct value (if i is -1, browse the entire series).
-   * Retrieve the i-th value and the number distinct values encountered. */
-  void countDistinctValuesUntil(int series, int i, double * value, int * distinctValues) const;
+  /* Find the i-th distinct value (if i is -1, browse the entire series) from
+   * start to end (ordered by value).
+   * Retrieve the i-th value and the number distinct values encountered.
+   * If not ignoreFrequency, discard values with null frequency. */
+  void countDistinctValues(int series, int start, int end, int i, bool ignoreFrequency, double * value, int * distinctValues) const;
   double sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement = false) const;
   double sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement = false) const;
+  size_t lowerWhiskerSortedIndex(int series) const;
+  size_t upperWhiskerSortedIndex(int series) const;
   // Return the value index from its sorted index (a 0 sorted index is the min)
   size_t valueIndexAtSortedIndex(int series, int i) const;
   // Sort and memoize values indexes in increasing order.

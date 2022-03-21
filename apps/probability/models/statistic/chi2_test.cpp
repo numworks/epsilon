@@ -80,7 +80,7 @@ bool Chi2Test::deleteParameterAtPosition(int row, int column) {
   return true;
 }
 
-Chi2Test::Index2D Chi2Test::IndexToIndex2D(int index) {
+Chi2Test::Index2D Chi2Test::IndexToIndex2D(int index) const {
   return Chi2Test::Index2D{
       .row = index / maxNumberOfColumns(),
       .col = index % maxNumberOfColumns()

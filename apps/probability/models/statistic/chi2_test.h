@@ -67,7 +67,7 @@ protected:
     int row;
     int col;
   };
-  Index2D IndexToIndex2D(int index);
+  Index2D IndexToIndex2D(int index) const;
   int Index2DToIndex(Index2D indexes) const;
   int Index2DToIndex(int row, int column) const;
 

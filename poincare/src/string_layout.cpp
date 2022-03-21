@@ -1,11 +1,17 @@
 #include <poincare/string_layout.h>
+#include <algorithm>
+#include <ion/unicode/utf8_helper.h>
 #include <poincare/layout_helper.h>
 
 namespace Poincare {
 
-StringLayoutNode::StringLayoutNode(const char * string, int stringSize) {
-  m_stringLength = strlcpy(m_string, string, stringSize);
-}
+StringLayoutNode::StringLayoutNode(const char * string, int stringSize, const KDFont * font) :
+  LayoutNode(),
+  m_font(font),
+  m_displayType(CodePointLayoutNode::DisplayType::None)
+  {
+    m_stringLength = strlcpy(m_string, string, stringSize);
+  }
 
 Layout StringLayoutNode::makeEditable() {
   return StringLayout(this).makeEditable();
@@ -28,21 +34,22 @@ bool StringLayoutNode::protectedIsIdenticalTo(Layout l) {
 // Sizing and positioning
 KDSize StringLayoutNode::computeSize() {
   KDCoordinate totalHorizontalMargin = 0;
-  KDSize glyph = font()->glyphSize();
-  return KDSize(m_stringLength * glyph.width() + totalHorizontalMargin, glyph.height());
+  KDSize glyph = m_font->glyphSize();
+
+  return KDSize(UTF8Helper::StringGlyphLength(m_string) * glyph.width() + totalHorizontalMargin, glyph.height());
 }
 
 KDCoordinate StringLayoutNode::computeBaseline() {
-  return font()->glyphSize().height()/2;
+  return m_font->glyphSize().height() / 2;
 }
 
 void StringLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  ctx->drawString(m_string, p, font(), expressionColor, backgroundColor);
+  ctx->drawString(m_string, p, m_font, expressionColor, backgroundColor);
 }
 
-StringLayout StringLayout::Builder(const char * string, int stringSize) {
+StringLayout StringLayout::Builder(const char * string, int stringSize, const KDFont * font) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(StringLayoutNode) + sizeof(char) * stringSize);
-  StringLayoutNode * node = new (bufferNode) StringLayoutNode(string, stringSize);
+  StringLayoutNode * node = new (bufferNode) StringLayoutNode(string, stringSize, font);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<StringLayout &>(h);
 }

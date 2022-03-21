@@ -2,6 +2,7 @@
 #define POINCARE_STRING_LAYOUT_NODE_H
 
 #include <poincare/layout.h>
+#include <poincare/code_point_layout.h>
 
 namespace Poincare {
 
@@ -9,13 +10,13 @@ class StringLayoutNode : public LayoutNode {
 public:
   static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
 
-  StringLayoutNode(const char * string, int stringSize);
+  StringLayoutNode(const char * string, int stringSize, const KDFont * font = k_defaultFont);
 
   Type type() const override { return Type::StringLayout; }
 
   int stringLength() const { return m_stringLength; }
   const char * string() const { return m_string; }
-  const KDFont * font() const { return KDFont::LargeFont; }
+  const KDFont * font() const { return m_font; }
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override { assert(false); }
@@ -47,6 +48,8 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
   int m_stringLength;
+  const KDFont * m_font;
+  CodePointLayoutNode::DisplayType m_displayType;
   char m_string[0];
 };
 
@@ -55,7 +58,7 @@ public:
   static void DistributeThousandDisplayType(Layout l, int start, int stop);
 
   StringLayout(const StringLayoutNode * n) : Layout(n) {}
-  static StringLayout Builder(const char * string , int stringSize);
+  static StringLayout Builder(const char * string , int stringSize, const KDFont * font = StringLayoutNode::k_defaultFont);
   int stringLength() const { return const_cast<StringLayout *>(this)->node()->stringLength(); }
   const char * string() const { return const_cast<StringLayout *>(this)->node()->string(); }
   const KDFont * font() const { return const_cast<StringLayout *>(this)->node()->font(); }

@@ -1,5 +1,5 @@
 #include "float_parameter_controller.h"
-#include "../shared/poincare_helpers.h"
+#include "poincare_helpers.h"
 #include <escher/message_table_cell_with_editable_text.h>
 #include <poincare/preferences.h>
 #include <assert.h>

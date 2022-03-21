@@ -11,7 +11,7 @@ namespace Regression {
 Layout LogarithmicModel::layout() {
   if (m_layout.isUninitialized()) {
     const char * s = "a+b·ln(X)";
-    m_layout = LayoutHelper::String(s, strlen(s), k_layoutFont);
+    m_layout = LayoutHelper::StringToCodePointsLayout(s, strlen(s), k_layoutFont);
   }
   return m_layout;
 }

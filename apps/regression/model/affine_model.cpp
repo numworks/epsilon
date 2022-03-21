@@ -11,7 +11,7 @@ namespace Regression {
 Layout AffineModel::layout() {
   if (m_layout.isUninitialized()) {
     static constexpr const char * s = "a·X+b";
-    m_layout = LayoutHelper::String(s, strlen(s), k_layoutFont);
+    m_layout = LayoutHelper::StringToCodePointsLayout(s, strlen(s), k_layoutFont);
   }
   return m_layout;
 }

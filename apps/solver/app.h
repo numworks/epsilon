@@ -48,7 +48,7 @@ public:
     // Shared::MenuControllerDelegate
     void selectSubApp(int subAppIndex) override { m_activeSubapp = static_cast<SubApp>(subAppIndex); }
     int selectedSubApp() const override { return static_cast<int>(m_activeSubapp); }
-  virtual int numberOfSubApps() const override { return static_cast<int>(SubApp::NumberOfSubApps); }
+    int numberOfSubApps() const override { return static_cast<int>(SubApp::NumberOfSubApps); }
   private:
     void tidy() override;
     SubApp m_activeSubapp;

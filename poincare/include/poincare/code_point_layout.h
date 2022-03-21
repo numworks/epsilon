@@ -91,7 +91,7 @@ public:
   static void DistributeThousandDisplayType(Layout l, int start, int stop);
 
   CodePointLayout(const CodePointLayoutNode * n) : Layout(n) {}
-  static CodePointLayout Builder(CodePoint c, const KDFont * font = KDFont::LargeFont);
+  static CodePointLayout Builder(CodePoint c, const KDFont * font = CodePointLayoutNode::k_defaultFont);
   const KDFont * font() const { return const_cast<CodePointLayout *>(this)->node()->font(); }
   CodePoint codePoint() const { return const_cast<CodePointLayout *>(this)->node()->codePoint(); }
   void setFont(const KDFont * font) { node()->setFont(font); }

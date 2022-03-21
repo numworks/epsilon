@@ -132,9 +132,7 @@ double Conic::roundIfNeglectable(double value, double target, double amplitude) 
 }
 
 void Conic::roundCoefficientsIfNeglectable() {
-  double amplitude = std::max(
-      std::max(std::max(std::fabs(m_a), std::fabs(m_b)), std::fabs(m_c)),
-      std::max(std::max(std::fabs(m_d), std::fabs(m_e)), std::fabs(m_f)));
+  double amplitude = std::max({std::fabs(m_a), std::fabs(m_b), std::fabs(m_c), std::fabs(m_d), std::fabs(m_e), std::fabs(m_f)});
   m_a = roundIfNeglectable(m_a, 0.0, amplitude);
   m_b = roundIfNeglectable(m_b, 0.0, amplitude);
   m_c = roundIfNeglectable(m_c, 0.0, amplitude);
@@ -187,7 +185,7 @@ void Conic::rotateConic() {
   double c = m_c;
   double d = m_d;
   double e = m_e;
-  double amplitude = std::max(std::fabs(a), std::max(std::fabs(b), std::fabs(c)));
+  double amplitude = std::max({std::fabs(a), std::fabs(b), std::fabs(c)});
   // If B is non null and A = C, the first rotation must be of π/4
   double r = (b == 0.0 ? 0.0
                        : -((a == c) ? M_PI / 4 : std::atan(b / (a - c)) / 2.0));
@@ -267,7 +265,7 @@ void Conic::centerConic() {
   // A and C remain unchanged
   m_d = roundIfNeglectable(d - 2*a*h, 0.0, std::max(std::fabs(d), std::fabs(2*a*h)));
   m_e = roundIfNeglectable(e - 2*c*k, 0.0, std::max(std::fabs(e), std::fabs(2*c*k)));
-  double fAmplitude = std::max(std::max(std::max(std::fabs(f), std::fabs(a*h*h)), std::max(std::fabs(c*k*k), std::fabs(d*h))), std::fabs(e*k));
+  double fAmplitude = std::max({std::fabs(f), std::fabs(a*h*h), std::fabs(c*k*k), std::fabs(d*h), std::fabs(e*k)});
   m_f = roundIfNeglectable(f + a*h*h + c*k*k - d*h - e*k, 0.0, fAmplitude);
   // Update center (taking previous rotation into account)
   assert(!std::isnan(m_r));

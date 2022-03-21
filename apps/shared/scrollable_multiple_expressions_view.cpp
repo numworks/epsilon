@@ -121,7 +121,7 @@ KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::baseline(KD
     *rightBaseline = rightViewBaseline;
   }
 
-  return std::max(std::max(leftViewBaseline, centerViewBaseline), rightViewBaseline);
+  return std::max({leftViewBaseline, centerViewBaseline, rightViewBaseline});
 }
 
 void AbstractScrollableMultipleExpressionsView::ContentCell::subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {

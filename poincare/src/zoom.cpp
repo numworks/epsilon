@@ -459,7 +459,7 @@ bool Zoom::DoesNotOverestimatePrecision(float dx, float y1, float y2, float y3) 
   /* The float type looses precision surprisingly fast, and cannot confidently
    * hold more than 6.6 digits of precision. Results more precise than that are
    * too noisy to be be of any value. */
-  float yMin = std::min(y1, std::min(y2, y3));
+  float yMin = std::min({y1, y2, y3});
   float yMax = std::max(y1, std::max(y2, y3));
   constexpr float maxPrecision = 2.f * FLT_EPSILON;
   return (yMax - yMin) / std::fabs(dx) > maxPrecision;

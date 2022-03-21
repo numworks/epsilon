@@ -168,7 +168,7 @@ KDSize SequenceLayoutNode::lowerBoundSizeWithVariableEquals() {
   KDSize equalSize = k_font->stringSize(k_equal);
   return KDSize(
       variableSize.width() + equalSize.width() + lowerBoundSize.width(),
-      subscriptBaseline() + std::max(std::max(variableSize.height() - variableLayout()->baseline(), lowerBoundSize.height() - lowerBoundLayout()->baseline()), equalSize.height()/2));
+      subscriptBaseline() + std::max({variableSize.height() - variableLayout()->baseline(), lowerBoundSize.height() - lowerBoundLayout()->baseline(), equalSize.height()/2}));
 }
 
 KDSize SequenceLayoutNode::computeSize() {
@@ -179,7 +179,7 @@ KDSize SequenceLayoutNode::computeSize() {
     argumentSize.width() + 2*ParenthesisLayoutNode::k_parenthesisWidth,
     ParenthesisLayoutNode::HeightGivenChildHeight(argumentSize.height()));
   KDSize result = KDSize(
-    std::max(std::max(k_symbolWidth, totalLowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
+    std::max({k_symbolWidth, totalLowerBoundSize.width(), upperBoundSize.width()})+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
     baseline() + std::max(k_symbolHeight/2+k_boundHeightMargin+totalLowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline()));
   return result;
 }
@@ -201,10 +201,10 @@ KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {
     x = completeLowerBoundX() + equalSize.width() + variableSize.width();
     y = baseline() + k_symbolHeight/2 + k_boundHeightMargin + subscriptBaseline() - lowerBoundLayout()->baseline();
   } else if (l == upperBoundLayout()) {
-    x = std::max(std::max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSizeWithVariableEquals().width()-upperBoundSize.width())/2);
+    x = std::max({0, (k_symbolWidth-upperBoundSize.width())/2, (lowerBoundSizeWithVariableEquals().width()-upperBoundSize.width())/2});
     y = baseline() - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
   } else if (l == argumentLayout()) {
-    x = std::max(std::max(k_symbolWidth, lowerBoundSizeWithVariableEquals().width()), upperBoundSize.width())+k_argumentWidthMargin+ParenthesisLayoutNode::k_parenthesisWidth;
+    x = std::max({k_symbolWidth, lowerBoundSizeWithVariableEquals().width(), upperBoundSize.width()})+k_argumentWidthMargin+ParenthesisLayoutNode::k_parenthesisWidth;
     y = baseline() - argumentLayout()->baseline();
   } else {
     assert(false);
@@ -275,8 +275,8 @@ void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
 
 KDCoordinate SequenceLayoutNode::completeLowerBoundX() {
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
- return std::max(std::max(0, (k_symbolWidth-lowerBoundSizeWithVariableEquals().width())/2),
-          (upperBoundSize.width()-lowerBoundSizeWithVariableEquals().width())/2);
+ return std::max({0, (k_symbolWidth-lowerBoundSizeWithVariableEquals().width())/2,
+          (upperBoundSize.width()-lowerBoundSizeWithVariableEquals().width())/2});
 }
 
 KDCoordinate SequenceLayoutNode::subscriptBaseline() {

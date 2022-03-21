@@ -38,8 +38,8 @@ double Chi2Test::computeChi2() {
 }
 
 void Chi2Test::setParameterAtPosition(double p, int row, int column) {
-  assert(Index2DToIndex(row, column) < indexOfThreshold());
-  setParameterAtIndex(p, Index2DToIndex(row, column));
+  assert(index2DToIndex(row, column) < indexOfThreshold());
+  setParameterAtIndex(p, index2DToIndex(row, column));
 }
 
 void Chi2Test::setParameterAtIndex(double p, int i) {
@@ -51,11 +51,11 @@ void Chi2Test::setParameterAtIndex(double p, int i) {
 }
 
 double Chi2Test::parameterAtPosition(int row, int column) const {
-  return parameterAtIndex(Index2DToIndex(row, column));
+  return parameterAtIndex(index2DToIndex(row, column));
 }
 
 bool Chi2Test::authorizedParameterAtPosition(double p, int row, int column) const {
-  return authorizedParameterAtIndex(p, Index2DToIndex(row, column));
+  return authorizedParameterAtIndex(p, index2DToIndex(row, column));
 }
 
 bool Chi2Test::authorizedParameterAtIndex(double p, int i) const {
@@ -80,18 +80,18 @@ bool Chi2Test::deleteParameterAtPosition(int row, int column) {
   return true;
 }
 
-Chi2Test::Index2D Chi2Test::IndexToIndex2D(int index) const {
+Chi2Test::Index2D Chi2Test::indexToIndex2D(int index) const {
   return Chi2Test::Index2D{
       .row = index / maxNumberOfColumns(),
       .col = index % maxNumberOfColumns()
     };
 }
 
-int Chi2Test::Index2DToIndex(Index2D indexes) const {
-  return Index2DToIndex(indexes.row, indexes.col);
+int Chi2Test::index2DToIndex(Index2D indexes) const {
+  return index2DToIndex(indexes.row, indexes.col);
 }
 
-int Chi2Test::Index2DToIndex(int row, int column) const {
+int Chi2Test::index2DToIndex(int row, int column) const {
   return column + row * maxNumberOfColumns();
 }
 

@@ -2,20 +2,6 @@
 
 namespace Probability {
 
-bool Statistic::initializeSignificanceTest(SignificanceTestType testType) {
-  if (testType == significanceTestType()) {
-    return false;
-  }
-  return true;
-}
-
-bool Statistic::initializeDistribution(DistributionType type) {
-  if (type == distributionType()) {
-    return false;
-  }
-  return true;
-}
-
 double Statistic::parameterAtIndex(int i) const {
   assert(i <= indexOfThreshold() && indexOfThreshold() == numberOfStatisticParameters());
   return i == indexOfThreshold() ? m_threshold : const_cast<Statistic *>(this)->parametersArray()[i];

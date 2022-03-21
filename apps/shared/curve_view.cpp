@@ -775,8 +775,8 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
     float t4 = PolarThetaFromCoordinates(rectLeft, rectDown, angleUnit);
     /* The area between tMin and tMax (modulo π) is the only area where
      * something needs to be plotted. */
-    tMin = std::min(std::min(t1,t2),std::min(t3,t4));
-    tMax = std::max(std::max(t1,t2),std::max(t3,t4));
+    tMin = std::min({t1, t2, t3, t4});
+    tMax = std::max({t1, t2, t3, t4});
   } else {
     /* PolarThetaFromCoordinates yields coordinates between -π and π. When rect
      * is overlapping the negative abscissa (at this point, the origin cannot be

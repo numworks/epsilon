@@ -67,9 +67,9 @@ protected:
     int row;
     int col;
   };
-  Index2D IndexToIndex2D(int index) const;
-  int Index2DToIndex(Index2D indexes) const;
-  int Index2DToIndex(int row, int column) const;
+  Index2D indexToIndex2D(int index) const;
+  int index2DToIndex(Index2D indexes) const;
+  int index2DToIndex(int row, int column) const;
 
 private:
   float computeXMin() const override { return DistributionChi2::XMin(m_degreesOfFreedom); }

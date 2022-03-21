@@ -224,6 +224,58 @@ double Store::median(int series) const {
   return sortedElementAtCumulatedFrequency(series, 1.0/2.0, true);
 }
 
+double Store::lowerWhisker(int series) const {
+  return get(series, 0, valueIndexAtSortedIndex(series, lowerWhiskerSortedIndex(series)));
+}
+
+double Store::upperWhisker(int series) const {
+  return get(series, 0, valueIndexAtSortedIndex(series, upperWhiskerSortedIndex(series)));
+}
+
+double Store::lowerFence(int series) const {
+  return firstQuartile(series) - 1.5 * quartileRange(series);
+}
+
+double Store::upperFence(int series) const {
+  return thirdQuartile(series) + 1.5 * quartileRange(series);
+}
+
+int Store::numberOfLowerOutliers(int series) const {
+  if (!m_displayOutliers) {
+    return 0;
+  }
+  double value;
+  int distinctValues;
+  countDistinctValues(series, 0, lowerWhiskerSortedIndex(series), -1, false, &value, &distinctValues);
+  return distinctValues;
+}
+
+int Store::numberOfUpperOutliers(int series) const {
+  if (!m_displayOutliers) {
+    return 0;
+  }
+  double value;
+  int distinctValues;
+  countDistinctValues(series, upperWhiskerSortedIndex(series), numberOfPairsOfSeries(series), -1, false, &value, &distinctValues);
+  return distinctValues;
+}
+
+double Store::lowerOutlierAtIndex(int series, int index) const {
+  assert(m_displayOutliers && index < numberOfLowerOutliers(series));
+  double value;
+  int distinctValues;
+  countDistinctValues(series, 0, lowerWhiskerSortedIndex(series), index, false, &value, &distinctValues);
+  return value;
+}
+
+double Store::upperOutlierAtIndex(int series, int index) const {
+  assert(m_displayOutliers && index < numberOfUpperOutliers(series));
+  double value;
+  int distinctValues;
+  countDistinctValues(series, upperWhiskerSortedIndex(series) + 1, numberOfPairsOfSeries(series), index, false, &value, &distinctValues);
+  return value;
+}
+
 double Store::sum(int series) const {
   double result = 0;
   int numberOfPairs = numberOfPairsOfSeries(series);
@@ -334,18 +386,47 @@ double Store::sortedElementAtCumulatedPopulation(int series, double population, 
   return get(series, 0, valueIndexAtSortedIndex(series, elementSortedIndex));
 }
 
-void Store::countDistinctValuesUntil(int series, int i, double * value, int * distinctValues) const {
+size_t Store::lowerWhiskerSortedIndex(int series) const {
+  double lowFence = lowerFence(series);
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
+    int valueIndex = valueIndexAtSortedIndex(series, k);
+    if ((!m_displayOutliers || get(series, 0, valueIndex) >= lowFence) && get(series, 1, valueIndex) > 0) {
+      return k;
+    }
+  }
+  assert(false);
+  return numberOfPairs;
+}
+
+size_t Store::upperWhiskerSortedIndex(int series) const {
+  double uppFence = upperFence(series);
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = numberOfPairs - 1; k >= 0; k--) {
+    int valueIndex = valueIndexAtSortedIndex(series, k);
+    if ((!m_displayOutliers || get(series, 0, valueIndex) <= uppFence) && get(series, 1, valueIndex) > 0) {
+      return k;
+    }
+  }
+  assert(false);
+  return numberOfPairs;
+}
+
+void Store::countDistinctValues(int series, int start, int end, int i, bool ignoreFrequency, double * value, int * distinctValues) const {
   *distinctValues = 0;
   *value = NAN;
-  for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
-    double nextX = get(series, 0, valueIndexAtSortedIndex(series, j));
-    if (j == 0 || *value != nextX) {
-      (*distinctValues)++;
-      *value = nextX;
-    }
-    if (i == (*distinctValues) - 1) {
-      // Found the i-th distinct value
-      return;
+  for (size_t j = start; j < end; j++) {
+    int valueIndex = valueIndexAtSortedIndex(series, j);
+    if (ignoreFrequency || get(series, 1, valueIndex) > 0) {
+      double nextX = get(series, 0, valueIndexAtSortedIndex(series, j));
+      if (j == start || *value != nextX) {
+        (*distinctValues)++;
+        *value = nextX;
+      }
+      if (i == (*distinctValues) - 1) {
+        // Found the i-th distinct value
+        return;
+      }
     }
   }
   assert(i == -1);
@@ -354,14 +435,14 @@ void Store::countDistinctValuesUntil(int series, int i, double * value, int * di
 int Store::totalCumulatedFrequencyValues(int series) const {
   double value;
   int distinctValues;
-  countDistinctValuesUntil(series, -1, &value, &distinctValues);
+  countDistinctValues(series, 0, numberOfPairsOfSeries(series), -1, true, &value, &distinctValues);
   return distinctValues;
 }
 
 double Store::cumulatedFrequencyValueAtIndex(int series, int i) const {
   double value;
   int distinctValues;
-  countDistinctValuesUntil(series, i, &value, &distinctValues);
+  countDistinctValues(series, 0, numberOfPairsOfSeries(series), i, true, &value, &distinctValues);
   return value;
 }
 

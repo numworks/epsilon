@@ -248,7 +248,6 @@ int StoreController::numberOfElementsInColumn(int columnIndex) const {
 }
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
-  int currentColumn = RelativeColumnIndex(selectedColumn());
   // Fetch the series used in the formula to compute the size of the filled in series
   constexpr static int k_maxSizeOfStoreSymbols = 3; // "V1", "N1", "X1", "Y1"
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
@@ -293,7 +292,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   for (int j = 0; j < numberOfValuesToCompute; j++) {
     store->setSeriesPairIndex(j);
     double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, store);
-    setDataAtLocation(evaluation, currentColumn, j + 1);
+    setDataAtLocation(evaluation, selectedColumn(), j + 1);
   }
   selectableTableView()->reloadData();
   return true;

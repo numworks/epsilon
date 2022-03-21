@@ -52,7 +52,7 @@ void HomogeneityTest::compute() {
 }
 
 double HomogeneityTest::expectedValueAtLocation(int row, int column) {
-  return m_expectedValues[Index2DToIndex(row, column)];
+  return m_expectedValues[index2DToIndex(row, column)];
 }
 
 double HomogeneityTest::observedValue(int resultsIndex) const {
@@ -97,7 +97,7 @@ HomogeneityTest::Index2D HomogeneityTest::resultsIndexToIndex2D(int resultsIndex
 }
 
 int HomogeneityTest::resultsIndexToArrayIndex(int resultsIndex) const {
-  return Index2DToIndex(resultsIndexToIndex2D(resultsIndex));
+  return index2DToIndex(resultsIndexToIndex2D(resultsIndex));
 }
 
 void HomogeneityTest::computeExpectedValues(Index2D max) {
@@ -105,7 +105,7 @@ void HomogeneityTest::computeExpectedValues(Index2D max) {
   m_total = 0;
   for (int row = 0; row < max.row; row++) {
     for (int col = 0; col < max.col; col++) {
-      // int index = Index2DToIndex(row, col);
+      // int index = index2DToIndex(row, col);
       if (row == 0) {
         m_columnTotals[col] = 0;
       }
@@ -121,7 +121,7 @@ void HomogeneityTest::computeExpectedValues(Index2D max) {
   // Then fill array
   for (int row = 0; row < max.row; row++) {
     for (int col = 0; col < max.col; col++) {
-      int index = Index2DToIndex(row, col);
+      int index = index2DToIndex(row, col);
       // Note : Divide before multiplying to avoid some cases of double overflow
       m_expectedValues[index] = (m_rowTotals[row] / m_total) * m_columnTotals[col];
     }

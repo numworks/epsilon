@@ -88,19 +88,19 @@ int GoodnessTest::numberOfValuePairs() const {
 }
 
 double GoodnessTest::expectedValue(int index) const {
-  return m_input[Index2DToIndex(index, 1)];
+  return m_input[index2DToIndex(index, 1)];
 }
 
 double GoodnessTest::observedValue(int index) const {
-  return m_input[Index2DToIndex(index, 0)];
+  return m_input[index2DToIndex(index, 0)];
 }
 
 void GoodnessTest::setExpectedValue(int index, double value) {
-  parametersArray()[Index2DToIndex(index, 1)] = value;
+  parametersArray()[index2DToIndex(index, 1)] = value;
 }
 
 void GoodnessTest::setObservedValue(int index, double value) {
-  parametersArray()[Index2DToIndex(index, 0)] = value;
+  parametersArray()[index2DToIndex(index, 0)] = value;
 }
 
 }  // namespace Probability

@@ -12,8 +12,6 @@
 
 namespace Graph {
 
-#warning TODO rename in DetailsParameterController
-
 class DetailsParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   DetailsParameterController(Escher::Responder * parentResponder);

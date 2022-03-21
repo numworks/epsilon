@@ -86,7 +86,7 @@ public:
   int selectedSubApp() const override { return static_cast<int>(snapshot()->inference()->subApp()); }
   int numberOfSubApps() const override { return static_cast<int>(Inference::SubApp::NumberOfSubApps); }
 
-      private:
+private:
   App(Snapshot *);
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 

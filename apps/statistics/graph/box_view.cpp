@@ -92,11 +92,11 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 KDCoordinate BoxView::boxLowerBoundPixel() const {
-  return bounds().height() / 2 - k_boxHeight / 2;
+  return bounds().height() / 2 - boxHeight() / 2;
 }
 
 KDCoordinate BoxView::boxUpperBoundPixel() const {
-  return bounds().height() / 2 + k_boxHeight / 2;
+  return bounds().height() / 2 + boxHeight() / 2;
 }
 
 

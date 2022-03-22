@@ -9,8 +9,12 @@ namespace Poincare {
 Layout ComparisonOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(CodePointLayout::Builder(comparisonCodePoint()), result.numberOfChildren(), result.numberOfChildren(), nullptr);
-  result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
+  Layout operatorLayout = CodePointLayout::Builder(comparisonCodePoint());
+  operatorLayout.setMargin(true);
+  result.addChildAtIndex(operatorLayout, result.numberOfChildren(), result.numberOfChildren(), nullptr);
+  Layout secondChildLayout = childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  secondChildLayout.setMargin(true);
+  result.addOrMergeChildAtIndex(secondChildLayout, result.numberOfChildren(), false);
   return std::move(result);
 }
 

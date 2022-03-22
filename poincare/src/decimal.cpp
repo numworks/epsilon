@@ -6,6 +6,7 @@
 #include <poincare/undefined.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/string_layout.h>
 #include <poincare/ieee754.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
@@ -124,6 +125,9 @@ Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
   Layout res = LayoutHelper::String(buffer, numberOfChars);
+  if (res.type() == LayoutNode::Type::StringLayout) {
+    static_cast<StringLayoutNode *>(res.node())->setThousandSeparator(true);
+  }
   /*int dotIndex = m_negative;
   int n = res.numberOfChildren();
   while(dotIndex < n) {

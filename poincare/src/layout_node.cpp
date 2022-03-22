@@ -1,3 +1,4 @@
+#include <escher/metric.h>
 #include <poincare/layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_cursor.h>
@@ -49,12 +50,13 @@ KDPoint LayoutNode::absoluteOrigin() {
     }
     m_positioned = true;
   }
-  return m_frame.origin();
+  return m_frame.origin().translatedBy(KDPoint(leftMargin(), 0));;
 }
 
 KDSize LayoutNode::layoutSize() {
   if (!m_sized) {
-    m_frame.setSize(computeSize());
+    KDSize size = computeSize();
+    m_frame.setSize(KDSize(size.width() + leftMargin(), size.height()));
     m_sized = true;
   }
   return m_frame.size();

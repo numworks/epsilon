@@ -2,21 +2,18 @@
 #define POINCARE_STRING_LAYOUT_NODE_H
 
 #include <poincare/layout.h>
-#include <poincare/code_point_layout.h>
+#include <poincare/string_format.h>
 
 namespace Poincare {
 
-class StringLayoutNode : public LayoutNode {
+class StringLayoutNode : public LayoutNode, public StringFormat {
 public:
-  static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
-
-  StringLayoutNode(const char * string, int stringSize, const KDFont * font = k_defaultFont);
+  StringLayoutNode(const char * string, int stringSize, const KDFont * font = StringFormat::k_defaultFont);
 
   Type type() const override { return Type::StringLayout; }
 
   int stringLength() const { return m_stringLength; }
   const char * string() const { return m_string; }
-  const KDFont * font() const { return m_font; }
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override { assert(false); }
@@ -24,6 +21,8 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   Layout makeEditable() override;
+  int computeNextThousandSeparator(int startIndex = 0);
+  void setThousandSeparator(bool separator) { m_thousandSeparator = separator; }
 
   // TreeNode
   size_t size() const override;
@@ -48,8 +47,7 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
   int m_stringLength;
-  const KDFont * m_font;
-  CodePointLayoutNode::DisplayType m_displayType;
+  bool m_thousandSeparator;
   char m_string[0];
 };
 

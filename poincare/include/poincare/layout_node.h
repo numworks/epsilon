@@ -5,6 +5,7 @@
 #include <kandinsky/context.h>
 #include <kandinsky/point.h>
 #include <kandinsky/size.h>
+#include <escher/metric.h>
 #include <poincare/tree_node.h>
 
 namespace Poincare {
@@ -54,11 +55,12 @@ public:
   // Constructor
   LayoutNode() :
     TreeNode(),
-    m_baseline(0),
     m_frame(KDRectZero),
+    m_baseline(0),
     m_baselined(false),
     m_positioned(false),
-    m_sized(false)
+    m_sized(false),
+    m_margin(false)
   {
   }
 
@@ -73,6 +75,8 @@ public:
   KDPoint absoluteOrigin();
   KDSize layoutSize();
   KDCoordinate baseline();
+  void setMargin(bool hasMargin) { m_margin = hasMargin; }
+  int leftMargin() { return m_margin ? Escher::Metric::OperatorHorizontalMargin : 0; }
   //TODO: invalid cache when tempering with hierarchy
   virtual void invalidAllSizesPositionsAndBaselines();
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override { assert(false); return 0; }
@@ -165,11 +169,14 @@ protected:
   /* m_baseline is the signed vertical distance from the top of the layout to
    * the fraction bar of an hypothetical fraction sibling layout. If the top of
    * the layout is under that bar, the baseline is negative. */
-  KDCoordinate m_baseline;
   KDRect m_frame;
-  bool m_baselined; // TODO Do not use so much space for 3 bools
+  KDCoordinate m_baseline;
+  // These bools are aligned on 1 byte. They could be squashed into one uint8.
+  bool m_baselined;
   bool m_positioned;
   bool m_sized;
+  bool m_margin;
+
 private:
   void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection);
   void scoreCursorInDescendantsVertically (

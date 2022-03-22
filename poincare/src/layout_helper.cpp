@@ -7,6 +7,7 @@
 #include <poincare/string_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <assert.h>
 #include <utility>
 
@@ -25,22 +26,11 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
       if (operatorLength > 0) {
         Layout operatorLayout = String(operatorName, operatorLength);
         assert(operatorLayout.type() == LayoutNode::Type::CodePointLayout);
-        CodePointLayoutNode * codePointNode = static_cast<CodePointLayoutNode *>(operatorLayout.node());
-        codePointNode->setDisplayType(CodePointLayoutNode::DisplayType::Operator);
+        operatorLayout.node()->setMargin(true);
         result.addOrMergeChildAtIndex(operatorLayout, result.numberOfChildren(), true);
-      } else {
-        CodePointLayoutNode * implicitFactorNode = nullptr;
-        if (childLayout.type() == LayoutNode::Type::CodePointLayout) {
-          implicitFactorNode = static_cast<CodePointLayoutNode *>(childLayout.node());
-        } else if (childLayout.type() == LayoutNode::Type::HorizontalLayout && childLayout.childAtIndex(0).type() == LayoutNode::Type::CodePointLayout) {
-          implicitFactorNode = static_cast<CodePointLayoutNode *>(childLayout.childAtIndex(0).node());
-        }
-        if (implicitFactorNode) {
-          implicitFactorNode->setDisplayType(CodePointLayoutNode::DisplayType::Implicit);
-        }
       }
+      childLayout.node()->setMargin(true);
     }
-
     result.addOrMergeChildAtIndex(childLayout, result.numberOfChildren(), true);
   }
   return std::move(result);
@@ -121,6 +111,8 @@ Layout LayoutHelper::StringToCodePointsLayout(const char * buffer, int bufferLen
 
 Layout LayoutHelper::StringToStringLayout(const char * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
+  // MiddleDot MUST be handled as code point.
+  assert(!UTF8Helper::HasCodePoint(buffer,UCodePointMiddleDot));
   return StringLayout::Builder(buffer, bufferLen + 1, font);
 }
 

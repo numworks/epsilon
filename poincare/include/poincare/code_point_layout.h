@@ -5,21 +5,19 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/string_format.h>
 
 namespace Poincare {
 
 /* TODO: Make several code point classes depending on codepoint size?
  * (m_codePoint sometimes fits in a char, no need for a whole CodePoint */
 
-class CodePointLayoutNode : public LayoutNode {
+class CodePointLayoutNode : public LayoutNode, public StringFormat {
 public:
-  static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
-
-  CodePointLayoutNode(CodePoint c = UCodePointNull, const KDFont * font = k_defaultFont) :
+  CodePointLayoutNode(CodePoint c = UCodePointNull, const KDFont * font = StringFormat::k_defaultFont) :
     LayoutNode(),
-    m_font(font),
-    m_codePoint(c),
-    m_displayType(DisplayType::None)
+    StringFormat(font),
+    m_codePoint(c)
   {}
 
   // Layout
@@ -27,7 +25,6 @@ public:
 
   // CodePointLayout
   CodePoint codePoint() const { return m_codePoint; }
-  const KDFont * font() const { return m_font; }
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
@@ -51,22 +48,6 @@ public:
     stream << " CodePoint=\"" << buffer << "\"";
   }
 #endif
-
-  enum class DisplayType : uint8_t {
-    None,
-    /* Add a thin margin to the right of the code point. Used to separate
-     * groups of three digits. */
-    Thousand,
-    /* Add a thick margin before the code point, to separate two factors. */
-    Implicit,
-    /* Add a thick margin on each side of the code point. */
-    Operator
-  };
-
-  DisplayType displayType() const { return m_displayType; }
-  void setDisplayType(DisplayType type) { m_displayType = type; }
-  void setFont(const KDFont * font) { m_font = font; }
-
 protected:
   // LayoutNode
   KDSize computeSize() override;
@@ -76,10 +57,8 @@ protected:
     return KDPointZero;
   }
   bool protectedIsIdenticalTo(Layout l) override;
-
-  const KDFont * m_font;
   CodePoint m_codePoint;
-  DisplayType m_displayType;
+
 private:
   static constexpr const int k_middleDotWidth = 5;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
@@ -88,10 +67,8 @@ private:
 
 class CodePointLayout : public Layout {
 public:
-  static void DistributeThousandDisplayType(Layout l, int start, int stop);
-
   CodePointLayout(const CodePointLayoutNode * n) : Layout(n) {}
-  static CodePointLayout Builder(CodePoint c, const KDFont * font = CodePointLayoutNode::k_defaultFont);
+  static CodePointLayout Builder(CodePoint c, const KDFont * font = StringFormat::k_defaultFont);
   const KDFont * font() const { return const_cast<CodePointLayout *>(this)->node()->font(); }
   CodePoint codePoint() const { return const_cast<CodePointLayout *>(this)->node()->codePoint(); }
   void setFont(const KDFont * font) { node()->setFont(font); }

@@ -27,6 +27,7 @@
 #include <poincare/right_square_bracket_layout.h>
 #include <poincare/square_bracket_layout.h>
 #include <poincare/sum_layout.h>
+#include <poincare/string_layout.h>
 #include <poincare/vector_norm_layout.h>
 #include <poincare/vertical_offset_layout.h>
 

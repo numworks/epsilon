@@ -30,12 +30,7 @@ QUIZ_CASE(poincare_layout_cursor_computation) {
 
   // random()
   HorizontalLayout hl = HorizontalLayout::Builder();
-  hl.addChildAtIndex(CodePointLayout::Builder('r'), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(CodePointLayout::Builder('a'), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(CodePointLayout::Builder('n'), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(CodePointLayout::Builder('d'), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(CodePointLayout::Builder('o'), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(CodePointLayout::Builder('m'), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
+  hl.addChildAtIndex(StringLayout::Builder("random"), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
   hl.addChildAtIndex(LeftParenthesisLayout::Builder(), hl.numberOfChildren(), hl.numberOfChildren(), nullptr);
   hl.addChildAtIndex(RightParenthesisLayout::Builder(), hl.numberOfChildren(), hl.numberOfChildren(), nullptr);
   l = hl;
@@ -44,14 +39,12 @@ QUIZ_CASE(poincare_layout_cursor_computation) {
 
   // cos(\x11)
   hl = HorizontalLayout::Builder();
-  hl.addChildAtIndex(CodePointLayout::Builder('c'), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(CodePointLayout::Builder('o'), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(CodePointLayout::Builder('s'), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
+  hl.addChildAtIndex(StringLayout::Builder("cos"), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
   hl.addChildAtIndex(LeftParenthesisLayout::Builder(), hl.numberOfChildren(), hl.numberOfChildren(), nullptr);
   hl.addChildAtIndex(RightParenthesisLayout::Builder(), hl.numberOfChildren(), hl.numberOfChildren(), nullptr);
   l = hl;
   e = Cosine::Builder(EmptyExpression::Builder());
-  assert_inserted_layout_points_to(l, &e, l.childAtIndex(3));
+  assert_inserted_layout_points_to(l, &e, l.childAtIndex(1));
 
   // •^•
   l = HorizontalLayout::Builder(
@@ -86,8 +79,8 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
   {
     HorizontalLayout layout = HorizontalLayout::Builder(
         FractionLayout::Builder(
-          LayoutHelper::String("12", 2),
-          LayoutHelper::String("34", 2)
+          LayoutHelper::StringToCodePointsLayout("12", 2),
+          LayoutHelper::StringToCodePointsLayout("34", 2)
           )
         );
     LayoutCursor cursor(layout.childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left);

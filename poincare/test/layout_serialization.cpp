@@ -52,7 +52,7 @@ QUIZ_CASE(poincare_layout_serialization) {
   assert_layout_serialize_to(
       FractionLayout::Builder(
         CodePointLayout::Builder('1'),
-        LayoutHelper::String("2+3", 3)),
+        LayoutHelper::StringToCodePointsLayout("2+3", 3)),
       "\u0012\u00121\u0013/\u00122+3\u0013\u0013");
 
   // GridPairLayout -> Tested by MatrixLayout
@@ -140,7 +140,7 @@ QUIZ_CASE(poincare_layout_serialization) {
   // SumLayout
   assert_layout_serialize_to(
       SumLayout::Builder(
-        LayoutHelper::String("1+1", 3),
+        LayoutHelper::StringToCodePointsLayout("1+1", 3),
         CodePointLayout::Builder('x'),
         CodePointLayout::Builder('2'),
         CodePointLayout::Builder('3')),
@@ -152,7 +152,7 @@ QUIZ_CASE(poincare_layout_serialization) {
       HorizontalLayout::Builder(
         CodePointLayout::Builder('2'),
         VerticalOffsetLayout::Builder(
-          LayoutHelper::String("x+5", 3),
+          LayoutHelper::StringToCodePointsLayout("x+5", 3),
           VerticalOffsetLayoutNode::Position::Superscript)),
       "2^\x12x+5\x13");
 }

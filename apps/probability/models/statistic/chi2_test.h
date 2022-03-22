@@ -46,6 +46,12 @@ public:
   virtual int maxNumberOfColumns() const = 0;
   virtual int maxNumberOfRows() const = 0;
 
+  struct Index2D {
+    int row;
+    int col;
+  };
+  virtual Index2D computeDimensions() const;
+
   constexpr static float k_undefinedValue = NAN;
 
 protected:
@@ -63,10 +69,6 @@ protected:
   virtual int numberOfValuePairs() const = 0;
   double computeChi2();
 
-  struct Index2D {
-    int row;
-    int col;
-  };
   Index2D indexToIndex2D(int index) const;
   int index2DToIndex(Index2D indexes) const;
   int index2DToIndex(int row, int column) const;

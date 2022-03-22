@@ -26,6 +26,7 @@ app_settings_src = $(addprefix apps/settings/,\
 	sub_menu/math_options_controller.cpp \
   sub_menu/selectable_view_with_messages.cpp \
   sub_menu/usb_protection_controller.cpp \
+  sub_menu/brightness_controller.cpp\
 )
 
 SFLAGS += -DOMEGA_STATE="$(OMEGA_STATE)"

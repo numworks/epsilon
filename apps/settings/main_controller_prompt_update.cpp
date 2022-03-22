@@ -8,14 +8,14 @@ using namespace Shared;
 
 constexpr SettingsMessageTree s_modelMenu[] =
   {SettingsMessageTree(I18n::Message::MathOptions, s_modelMathOptionsChildren),
-    SettingsMessageTree(I18n::Message::Brightness),
+    SettingsMessageTree(I18n::Message::BrightnessSettings, s_brightnessChildren),
     SettingsMessageTree(I18n::Message::DateTime, s_modelDateTimeChildren),
     SettingsMessageTree(I18n::Message::Language),
     SettingsMessageTree(I18n::Message::Country),
     SettingsMessageTree(I18n::Message::ExamMode, ExamModeConfiguration::s_modelExamChildren),
 #ifdef HAS_CODE
     SettingsMessageTree(I18n::Message::CodeApp, s_codeChildren),
-#endif    
+#endif
     SettingsMessageTree(I18n::Message::UpdatePopUp),
     SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren),
     SettingsMessageTree(I18n::Message::UsbSetting, s_usbProtectionChildren),

@@ -16,6 +16,9 @@ bool Timer::tick() {
   return false;
 }
 
-void Timer::reset() {
+void Timer::reset(uint32_t NewPeriod) {
+  if(NewPeriod != -1){
+    m_period = NewPeriod;
+  }
   m_numberOfTicksBeforeFire = m_period;
 }

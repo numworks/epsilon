@@ -560,7 +560,7 @@ bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Con
 
 static bool hasStringWithThousandSeparator(Layout l) {
   if (l.type() == LayoutNode::Type::StringLayout) {
-    return static_cast<StringLayoutNode *>(l.node())->computeNextThousandSeparator() >= 0;
+    return static_cast<StringLayoutNode *>(l.node())->numberOfThousandsSeparators() > 0;
   }
   int n = l.numberOfChildren();
   for (int i = 0; i < n; i++) {

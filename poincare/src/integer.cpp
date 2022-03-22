@@ -310,7 +310,7 @@ Layout Integer::createLayout(Base base) const {
   }
   Layout res = LayoutHelper::String(buffer, numberOfChars);
   if (base == Base::Decimal && res.type() == LayoutNode::Type::StringLayout) {
-    static_cast<StringLayoutNode *>(res.node())->setThousandSeparator(true);
+    static_cast<StringLayoutNode *>(res.node())->setDecimalOrInteger(true);
   }
   return res;
 }

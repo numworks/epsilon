@@ -72,7 +72,7 @@ protected:
   ) const;
   enum class Size : uint8_t {
     Tiny,
-    Small,
+    Medium,
     Large
   };
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Tiny) const;

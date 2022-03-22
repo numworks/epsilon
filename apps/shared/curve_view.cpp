@@ -511,9 +511,9 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
       diameter = Dots::TinyDotDiameter;
       mask = (const uint8_t *)Dots::TinyDotMask;
       break;
-    case Size::Small:
-      diameter = Dots::SmallDotDiameter;
-      mask = (const uint8_t *)Dots::SmallDotMask;
+    case Size::Medium:
+      diameter = Dots::MediumDotDiameter;
+      mask = (const uint8_t *)Dots::MediumDotMask;
       break;
     default:
       assert(size == Size::Large);

@@ -26,10 +26,10 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
       if (operatorLength > 0) {
         Layout operatorLayout = String(operatorName, operatorLength);
         assert(operatorLayout.type() == LayoutNode::Type::CodePointLayout);
-        operatorLayout.node()->setMargin(true);
+        operatorLayout.setMargin(true);
         result.addOrMergeChildAtIndex(operatorLayout, result.numberOfChildren(), true);
       }
-      childLayout.node()->setMargin(true);
+      childLayout.setMargin(true);
     }
     result.addOrMergeChildAtIndex(childLayout, result.numberOfChildren(), true);
   }

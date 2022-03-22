@@ -21,8 +21,8 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   Layout makeEditable() override;
-  int computeNextThousandSeparator(int startIndex = 0);
-  void setThousandSeparator(bool separator) { m_thousandSeparator = separator; }
+  int numberOfThousandsSeparators();
+  void setDecimalOrInteger(bool b) { m_decimalOrInteger = b; }
 
   // TreeNode
   size_t size() const override;
@@ -37,6 +37,9 @@ public:
 #endif
 
 private:
+  // We only display thousands separator if there is more than 4 digits (12 345 but 1234)
+  constexpr static int k_minDigitsForThousandSeparator = 5;
+
   bool protectedIsIdenticalTo(Layout l) override;
   KDSize computeSize() override;
   KDCoordinate computeBaseline() override;
@@ -44,10 +47,12 @@ private:
     assert(false);
     return KDPointZero;
   }
+  int firstNonDigitIndex();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
   int m_stringLength;
-  bool m_thousandSeparator;
+  // We use this to know if we need to compute thousands separator margins.
+  bool m_decimalOrInteger;
   char m_string[0];
 };
 

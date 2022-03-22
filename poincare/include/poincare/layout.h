@@ -68,6 +68,7 @@ public:
     assert(correspondingExpression != nullptr);
     return Layout(node()->layoutToPointWhenInserting(correspondingExpression));
   }
+  void setMargin(bool hasMargin) { node()->setMargin(hasMargin); }
 
   // Cursor
   LayoutCursor cursor() const;

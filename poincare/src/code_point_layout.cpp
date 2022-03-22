@@ -1,7 +1,6 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <escher/metric.h>
 
 namespace Poincare {
 
@@ -101,47 +100,34 @@ bool CodePointLayoutNode::canBeOmittedMultiplicationRightFactor() const {
 
 // Sizing and positioning
 KDSize CodePointLayoutNode::computeSize() {
-  KDCoordinate totalHorizontalMargin = 0;
-  if (m_displayType == DisplayType::Implicit) {
-    totalHorizontalMargin += Escher::Metric::OperatorHorizontalMargin;
-  } else if (m_displayType == DisplayType::Operator) {
-    totalHorizontalMargin += 2 * Escher::Metric::OperatorHorizontalMargin;
-  } else if (m_displayType == DisplayType::Thousand) {
-    totalHorizontalMargin += Escher::Metric::ThousandsSeparatorWidth;
-  }
-  KDSize glyph = m_font->glyphSize();
+  KDSize glyph = font()->glyphSize();
   KDCoordinate width = glyph.width();
 
   // Handle the case of the middle dot which is thinner than the other glyphs
   if (m_codePoint == UCodePointMiddleDot) {
     width = k_middleDotWidth;
   }
-  return KDSize(width + totalHorizontalMargin, glyph.height());
+  return KDSize(width, glyph.height());
 }
 
 KDCoordinate CodePointLayoutNode::computeBaseline() {
-  return m_font->glyphSize().height()/2;
+  return font()->glyphSize().height()/2;
 }
 
 void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  if (m_displayType == DisplayType::Operator || m_displayType == DisplayType::Implicit) {
-    p = p.translatedBy(KDPoint(Escher::Metric::OperatorHorizontalMargin, 0));
-  }
-
   // Handle the case of the middle dot which has to be drawn by hand since it is thinner than the other glyphs.
   if (m_codePoint == UCodePointMiddleDot) {
     int width = k_middleDotWidth;
-    int height = m_font->glyphSize().height();
+    int height = font()->glyphSize().height();
     ctx->fillRect(KDRect(p, width, height), backgroundColor);
     ctx->fillRect(KDRect(p.translatedBy(KDPoint(width / 2, height / 2 - 1)), 1, 1), expressionColor);
     return;
   }
-
   // General case
   constexpr int bufferSize = sizeof(CodePoint)/sizeof(char) + 1; // Null-terminating char
   char buffer[bufferSize];
   SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
-  ctx->drawString(buffer, p, m_font, expressionColor, backgroundColor);
+  ctx->drawString(buffer, p, font(), expressionColor, backgroundColor);
 }
 
 bool CodePointLayoutNode::isMultiplicationCodePoint() const {
@@ -154,19 +140,6 @@ bool CodePointLayoutNode::protectedIsIdenticalTo(Layout l) {
   assert(l.type() == Type::CodePointLayout || l.type() == Type::CombinedCodePointsLayout);
   CodePointLayout & cpl = static_cast<CodePointLayout &>(l);
   return codePoint() == cpl.codePoint() && font() == cpl.font();
-}
-
-void CodePointLayout::DistributeThousandDisplayType(Layout l, int start, int stop) {
-  if (l.type() != LayoutNode::Type::HorizontalLayout
-   || stop - start < 5) {
-    /* Do not add a separator to a number with less than five digits.
-     * i.e. : 12 345 but 1234 */
-    return;
-  }
-  for (int i = stop - 4; i >= start; i -= 3) {
-    assert(l.childAtIndex(i).type() == LayoutNode::Type::CodePointLayout);
-    static_cast<CodePointLayoutNode *>(l.childAtIndex(i).node())->setDisplayType(CodePointLayoutNode::DisplayType::Thousand);
-  }
 }
 
 CodePointLayout CodePointLayout::Builder(CodePoint c, const KDFont * font) {

@@ -8,6 +8,7 @@
 #include <poincare/matrix.h>
 #include <poincare/opposite.h>
 #include <poincare/rational.h>
+#include <poincare/string_layout.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
@@ -557,39 +558,36 @@ bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Con
 
 /* Layout Helper */
 
-static bool hasCodePointWithDisplayType(Layout l, CodePointLayoutNode::DisplayType type) {
-  if (l.type() == LayoutNode::Type::CodePointLayout) {
-    return static_cast<CodePointLayoutNode *>(l.node())->displayType() == type;
+static bool hasStringWithThousandSeparator(Layout l) {
+  if (l.type() == LayoutNode::Type::StringLayout) {
+    return static_cast<StringLayoutNode *>(l.node())->computeNextThousandSeparator() >= 0;
   }
   int n = l.numberOfChildren();
   for (int i = 0; i < n; i++) {
-    if (hasCodePointWithDisplayType(l.childAtIndex(i), type)) {
+    if (hasStringWithThousandSeparator(l.childAtIndex(i))) {
       return true;
     }
   }
   return false;
 }
 
-static void stripDisplayTypeFromCodePoints(Layout l) {
-  if (l.type() == LayoutNode::Type::CodePointLayout) {
-    static_cast<CodePointLayoutNode *>(l.node())->setDisplayType(CodePointLayoutNode::DisplayType::None);
-  } else {
-    int n = l.numberOfChildren();
-    for (int i = 0; i < n; i++) {
-      stripDisplayTypeFromCodePoints(l.childAtIndex(i));
-    }
+static void stripMargin(Layout l) {
+  l.node()->setMargin(false);
+  int n = l.numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    stripMargin(l.childAtIndex(i));
   }
 }
 
-Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool stripCodePointStyle, bool nested) const {
+Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool stripMarginStyle, bool nested) const {
   if (isUninitialized()) {
     return Layout();
   }
   Layout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
   assert(!l.isUninitialized());
-  if (stripCodePointStyle
-   || !(nested || hasCodePointWithDisplayType(l, CodePointLayoutNode::DisplayType::Thousand))) {
-    stripDisplayTypeFromCodePoints(l);
+  if (stripMarginStyle
+   || !(nested || hasStringWithThousandSeparator(l))) {
+    stripMargin(l);
   }
   return l;
 }

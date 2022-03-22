@@ -246,7 +246,7 @@ public:
   static bool ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat);
 
   /* Layout Helper */
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool stripCodePointsStyle = false, bool nested = false) const;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool stripMarginStyle = false, bool nested = false) const;
   /* TODO:
    * - change signature to
    *   size_t serialize(char * buffer, size_t bufferSize...)

@@ -487,7 +487,8 @@ void HorizontalLayout::addChildAtIndex(Layout l, int index, int currentNumberOfC
 
 void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
   int newIndex = index;
-
+  bool margin = h.node()->leftMargin() > 0;
+  bool firstAddedChild = true;
   // Remove h if it is a child
   int indexOfh = indexOfChild(h);
   if (indexOfh >= 0) {
@@ -540,6 +541,10 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
         || (i < h.numberOfChildren()-1 && h.childAtIndex(i+1).mustHaveLeftSibling()))
     {
       addChildAtIndexInPlace(h.childAtIndex(i), newIndex, numberOfChildren());
+      if (firstAddedChild) {
+        childAtIndex(newIndex).node()->setMargin(margin);
+      }
+      firstAddedChild = false;
       newIndex++;
     }
   }

@@ -12,6 +12,7 @@
 #include <poincare/equal.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
+#include <poincare/string_layout.h>
 #include <poincare/subtraction.h>
 #include <cmath>
 #include <utility>
@@ -308,8 +309,8 @@ Layout Integer::createLayout(Base base) const {
     return CodePointLayout::Builder(decoder.nextCodePoint());
   }
   Layout res = LayoutHelper::String(buffer, numberOfChars);
-  if (base == Base::Decimal) {
-    CodePointLayout::DistributeThousandDisplayType(res, 0, res.numberOfChildren());
+  if (base == Base::Decimal && res.type() == LayoutNode::Type::StringLayout) {
+    static_cast<StringLayoutNode *>(res.node())->setThousandSeparator(true);
   }
   return res;
 }

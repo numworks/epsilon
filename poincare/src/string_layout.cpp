@@ -7,8 +7,8 @@ namespace Poincare {
 
 StringLayoutNode::StringLayoutNode(const char * string, int stringSize, const KDFont * font) :
   LayoutNode(),
-  m_font(font),
-  m_displayType(CodePointLayoutNode::DisplayType::None)
+  StringFormat(font),
+  m_thousandSeparator(false)
   {
     m_stringLength = strlcpy(m_string, string, stringSize);
   }
@@ -16,6 +16,11 @@ StringLayoutNode::StringLayoutNode(const char * string, int stringSize, const KD
 Layout StringLayoutNode::makeEditable() {
   return StringLayout(this).makeEditable();
 }
+
+int StringLayoutNode::computeNextThousandSeparator(int startIndex) {
+  return 0; // TODO
+}
+
 
 int StringLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return strlcpy(buffer, m_string, bufferSize);
@@ -33,18 +38,16 @@ bool StringLayoutNode::protectedIsIdenticalTo(Layout l) {
 
 // Sizing and positioning
 KDSize StringLayoutNode::computeSize() {
-  KDCoordinate totalHorizontalMargin = 0;
-  KDSize glyph = m_font->glyphSize();
-
-  return KDSize(UTF8Helper::StringGlyphLength(m_string) * glyph.width() + totalHorizontalMargin, glyph.height());
+  KDSize glyph = font()->glyphSize();
+  return KDSize(UTF8Helper::StringGlyphLength(m_string) * glyph.width(), glyph.height());
 }
 
 KDCoordinate StringLayoutNode::computeBaseline() {
-  return m_font->glyphSize().height() / 2;
+  return font()->glyphSize().height() / 2;
 }
 
 void StringLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  ctx->drawString(m_string, p, m_font, expressionColor, backgroundColor);
+  ctx->drawString(m_string, p, font(), expressionColor, backgroundColor);
 }
 
 StringLayout StringLayout::Builder(const char * string, int stringSize, const KDFont * font) {

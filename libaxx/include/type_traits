@@ -1,6 +1,9 @@
 #ifndef LIBAXX_TYPE_TRAITS
 #define LIBAXX_TYPE_TRAITS
 
+#include "external/libcxx/include/__config"
+#include "external/libcxx/include/type_traits"
+
 namespace std {
 
 template <class T> struct remove_reference {typedef T type;};

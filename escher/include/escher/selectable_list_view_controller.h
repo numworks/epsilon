@@ -8,6 +8,7 @@
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/simple_list_view_data_source.h>
 #include <escher/view_controller.h>
+#include <type_traits>
 
 namespace Escher {
 
@@ -38,6 +39,10 @@ protected:
  */
 template <typename Cell, int NumberOfCells, typename DataSource>
 class SelectableCellListPage : public SelectableListViewController<DataSource> {
+  static_assert(
+    !std::is_same<DataSource, SimpleListViewDataSource>::value,
+    "A SelectableCellListPage shouldn't use SimpleListViewDataSource as datasource because reusable cells are already handled here. Use a RegularListViewDataSource instead."
+  );
   static_assert(NumberOfCells < 8, "There should'nt be a need for more than 8 reusable cells.");
 public:
   SelectableCellListPage(Responder * parent, SelectableTableViewDelegate * tableDelegate = nullptr) : SelectableListViewController<DataSource>(parent, tableDelegate) {}

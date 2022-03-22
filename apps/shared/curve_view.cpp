@@ -526,7 +526,11 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
   }
   KDCoordinate px = std::round(floatToPixel(Axis::Horizontal, x));
   KDCoordinate py = std::round(floatToPixel(Axis::Vertical, y));
-  KDRect dotRect(px - diameter/2, py - diameter/2, diameter, diameter);
+  /* If circle has an even diameter, out of the four center pixels, the bottom
+   * left one will be placed at (x, y) */
+  px -= (diameter-1)/2;
+  py -= diameter/2;
+  KDRect dotRect(px, py, diameter, diameter);
   if (!rect.intersects(dotRect)) {
     return;
   }

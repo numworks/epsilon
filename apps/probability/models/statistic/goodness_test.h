@@ -30,7 +30,7 @@ public:
    * statistic's degree of freedom may differ because it can be overridden by
    * the user. */
   int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
-  int computeNumberOfRows() const;
+  Index2D computeDimensions() const override;
 private:
   constexpr static int k_maxNumberOfRows = 10;
   constexpr static int k_maxNumberOfColumns = 2;

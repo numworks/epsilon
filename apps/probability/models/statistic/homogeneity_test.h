@@ -39,10 +39,6 @@ public:
   double rowTotal(int row) { return m_rowTotals[row]; }
   double columnTotal(int column) { return m_columnTotals[column]; }
 
-  // Index2D class needs to be public for HomogeneityTest
-  using Chi2Test::Index2D;
-  Index2D computeDimensions() const;
-
 private:
   bool authorizedParameterAtIndex(double p, int i) const override;
   Index2D resultsIndexToIndex2D(int resultsIndex) const;

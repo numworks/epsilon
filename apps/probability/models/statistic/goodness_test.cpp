@@ -53,20 +53,16 @@ void GoodnessTest::recomputeData() {
   }
 }
 
-int GoodnessTest::computeNumberOfRows() const {
-  // Compute number of rows based on undefined flag
-  int i = k_maxNumberOfRows - 1;
-  while (i >= 0 && std::isnan(expectedValue(i)) && std::isnan(observedValue(i))) {
-    i--;
-  }
-  return i + 1;
+Chi2Test::Index2D GoodnessTest::computeDimensions() const {
+  Index2D dim = Chi2Test::computeDimensions();
+  return Index2D{.row = dim.row, 2};
 }
 
 bool GoodnessTest::validateInputs() {
   if (numberOfValuePairs() <= 1) {
     return false;
   }
-  int n = computeNumberOfRows();
+  int n = computeDimensions().row;
   for (int row = 0; row < n; row++) {
     if (std::isnan(expectedValue(row)) || std::isnan(observedValue(row))) {
       return false;
@@ -84,7 +80,7 @@ bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
 }
 
 int GoodnessTest::numberOfValuePairs() const {
-  return computeNumberOfRows();
+  return computeDimensions().row;
 }
 
 double GoodnessTest::expectedValue(int index) const {

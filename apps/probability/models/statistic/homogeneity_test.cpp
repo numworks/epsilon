@@ -67,24 +67,6 @@ int HomogeneityTest::computeDegreesOfFreedom(Index2D max) {
   return (max.row - 1) * (max.col - 1);
 }
 
-HomogeneityTest::Index2D HomogeneityTest::computeDimensions() const {
-  int maxCol = -1, maxRow = -1;
-  for (int row = 0; row < k_maxNumberOfRows; row++) {
-    for (int col = 0; col < k_maxNumberOfColumns; col++) {
-      double p = parameterAtPosition(row, col);
-      if (!std::isnan(p)) {
-        if (row >= maxRow) {
-          maxRow = row;
-        }
-        if (col >= maxCol) {
-          maxCol = col;
-        }
-      }
-    }
-  }
-  return Index2D{.row = maxRow + 1, .col = maxCol + 1};
-}
-
 int HomogeneityTest::numberOfValuePairs() const {
   Index2D max = computeDimensions();
   return max.row * max.col;

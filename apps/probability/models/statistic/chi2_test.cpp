@@ -28,6 +28,24 @@ bool Chi2Test::initializeCategoricalType(CategoricalType type) {
   return true;
 }
 
+Chi2Test::Index2D Chi2Test::computeDimensions() const {
+  int maxCol = -1, maxRow = -1;
+  for (int row = 0; row < maxNumberOfRows(); row++) {
+    for (int col = 0; col < maxNumberOfColumns(); col++) {
+      double p = parameterAtPosition(row, col);
+      if (!std::isnan(p)) {
+        if (row >= maxRow) {
+          maxRow = row;
+        }
+        if (col >= maxCol) {
+          maxCol = col;
+        }
+      }
+    }
+  }
+  return Index2D{.row = maxRow + 1, .col = maxCol + 1};
+}
+
 double Chi2Test::computeChi2() {
   double z = 0;
   int n = numberOfValuePairs();

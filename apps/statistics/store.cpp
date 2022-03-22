@@ -256,7 +256,7 @@ int Store::numberOfUpperOutliers(int series) const {
   }
   double value;
   int distinctValues;
-  countDistinctValues(series, upperWhiskerSortedIndex(series), numberOfPairsOfSeries(series), -1, false, &value, &distinctValues);
+  countDistinctValues(series, upperWhiskerSortedIndex(series) + 1, numberOfPairsOfSeries(series), -1, false, &value, &distinctValues);
   return distinctValues;
 }
 

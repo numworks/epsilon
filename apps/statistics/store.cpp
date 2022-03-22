@@ -21,7 +21,7 @@ Store::Store() :
   m_firstDrawnBarAbscissa(0.0),
   m_sortedIndex(nullptr),
   m_sortedIndexValid{false, false, false},
-  m_displayOutliers(false) // TODO : This initial value depends on the country
+  m_displayOutliers(GlobalPreferences::sharedGlobalPreferences()->outliersStatus() == CountryPreferences::OutliersStatus::Displayed)
 {
 }
 

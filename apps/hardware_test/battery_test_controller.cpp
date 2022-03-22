@@ -65,9 +65,9 @@ void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryC
 
 BatteryTestController::ContentView::ContentView() :
   SolidColorView(KDColorWhite),
-  m_batteryStateView(KDFont::LargeFont),
-  m_batteryLevelView(KDFont::SmallFont),
-  m_batteryChargingView(KDFont::SmallFont)
+  m_batteryStateView(KDFont::LargeFont, KDContext::k_alignCenter, KDContext::k_alignCenter),
+  m_batteryLevelView(KDFont::SmallFont, KDContext::k_alignCenter, KDContext::k_alignCenter),
+  m_batteryChargingView(KDFont::SmallFont, KDContext::k_alignCenter, KDContext::k_alignCenter)
 {
 }
 

@@ -74,7 +74,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
    * 12|34+5 -> "Divide" -> --- + 5
    *                        |34
    * */
-  Layout layout = LayoutHelper::String("1234+5", 6);
+  Layout layout = LayoutHelper::StringToCodePointsLayout("1234+5", 6);
   LayoutCursor cursor(layout.childAtIndex(2), LayoutCursor::Position::Left);
   cursor.addFractionLayoutAndCollapseSiblings();
   assert_layout_serialize_to(layout, "\u0012\u001212\u0013/\u001234\u0013\u0013+5");
@@ -101,7 +101,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
    *                                     2
    * */
 
-  Layout l2 = LayoutHelper::String("sin(x)cos(x)2", 13);
+  Layout l2 = LayoutHelper::StringToCodePointsLayout("sin(x)cos(x)2", 13);
   LayoutCursor c2(l2.childAtIndex(12), LayoutCursor::Position::Left);
   c2.addFractionLayoutAndCollapseSiblings();
   assert_layout_serialize_to(l2, "\u0012\u0012sin(x)cos(x)\u0013/\u00122\u0013\u0013");
@@ -113,7 +113,7 @@ QUIZ_CASE(poincare_layout_power) {
    * 12| -> "Square" -> 12 |
    *
    * */
-  Layout l1 = LayoutHelper::String("12", 2);
+  Layout l1 = LayoutHelper::StringToCodePointsLayout("12", 2);
   LayoutCursor c1(l1.childAtIndex(1), LayoutCursor::Position::Right);
   c1.addEmptySquarePowerLayout();
   assert_layout_serialize_to(l1, "12^\u00122\u0013");

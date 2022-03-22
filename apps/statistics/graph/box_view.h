@@ -32,8 +32,11 @@ public:
   // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  static constexpr KDCoordinate k_boxHeight = 40;
   static constexpr KDCoordinate k_quantileBarWidth = 2;
+  static constexpr KDCoordinate k_twoBoxesHeight = 40;
+  static constexpr KDCoordinate k_threeBoxesHeight = 27;
+
+  KDCoordinate boxHeight() const { return m_store->numberOfValidSeries() > 2 ? k_threeBoxesHeight: k_twoBoxesHeight; }
   KDCoordinate boxLowerBoundPixel() const;
   KDCoordinate boxUpperBoundPixel() const;
   Store * m_store;

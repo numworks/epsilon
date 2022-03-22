@@ -54,7 +54,7 @@ LEDTestController::ContentView::ContentView() :
   SolidColorView(KDColorWhite),
   m_ledColorIndicatorView(KDColorBlack),
   m_ledColorOutlineView(KDColorBlack),
-  m_ledView(KDFont::LargeFont),
+  m_ledView(KDFont::LargeFont, KDContext::k_alignCenter, KDContext::k_alignCenter),
   m_arrowView()
 {
   m_ledView.setText("LED");

@@ -72,6 +72,7 @@ protected:
   ) const;
   enum class Size : uint8_t {
     Tiny,
+    Small,
     Medium,
     Large
   };

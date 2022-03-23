@@ -81,13 +81,14 @@ Number Number::DecimalNumber(T f) {
   return Decimal::Builder(f);
 }
 
-Number Number::FloatNumber(double d) {
-  if (std::isnan(d)) {
+template <typename T>
+Number Number::FloatNumber(T f) {
+  if (std::isnan(f)) {
     return Undefined::Builder();
-  } else if (std::isinf(d)) {
-    return Infinity::Builder(d < 0.0);
+  } else if (std::isinf(f)) {
+    return Infinity::Builder(f < (T)0.0);
   } else {
-    return Float<double>::Builder(d);
+    return Float<T>::Builder(f);
   }
 }
 
@@ -152,4 +153,6 @@ bool Number::derivate(ExpressionNode::ReductionContext reductionContext, Symbol 
 
 template Number Number::DecimalNumber<float>(float);
 template Number Number::DecimalNumber<double>(double);
+template Number Number::FloatNumber<float>(float);
+template Number Number::FloatNumber<double>(double);
 }

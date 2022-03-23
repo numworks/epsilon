@@ -38,7 +38,7 @@ public:
   /* Return either a Decimal or an Infinity or an Undefined. */
   template <typename T> static Number DecimalNumber(T f);
   /* Return either a Float or an Infinity or an Undefined */
-  static Number FloatNumber(double f);
+  template <typename T> static Number FloatNumber(T f);
   /* This set of Functions return either a Rational or a Float
    * or Infinity in case of overflow. Decimal are not taken into
    * account as it is not an internal node - it will always be turned into a

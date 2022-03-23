@@ -13,12 +13,11 @@ BoxView::BoxView(Store * store, int series, Shared::BannerView * bannerView, Qua
   m_store(store),
   m_boxRange(BoxRange(store)),
   m_series(series),
-  m_selectedQuantile(selectedQuantile),
-  m_selectedHistogramColor(color),
-  m_selectedHistogramLightColor(lightColor)
+  m_selectedQuantile(selectedQuantile)
 {
 }
 
+// TODO: Remove Quantile and adapt it
 bool BoxView::selectQuantile(int selectedQuantile) {
   if (selectedQuantile < 0 || selectedQuantile > 4) {
     return false;
@@ -33,62 +32,152 @@ bool BoxView::selectQuantile(int selectedQuantile) {
 
 void BoxView::reloadQuantile() {
   CurveView::reload();
-  KDCoordinate minY = boxLowerBoundPixel();
-  KDCoordinate maxY = boxUpperBoundPixel();
-  CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile, &Store::maxValue};
-  double calculation = (m_store->*calculationMethods[(int)*m_selectedQuantile])(m_series);
-  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation));
-  KDRect dirtyRect = KDRect(minX, minY, k_quantileBarWidth, maxY - minY);
+  KDCoordinate minY = calculationLowerBoundPixel();
+  KDCoordinate maxY = calculationUpperBoundPixel();
+  float calculation = calculationAtIndex((int)*m_selectedQuantile);
+  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation)) - k_leftMargin;
+  KDCoordinate width = k_leftMargin + k_rightMargin;
+  KDRect dirtyRect = KDRect(minX, minY, width, maxY - minY);
   markRectAsDirty(dirtyRect);
 }
 
 void BoxView::reload(bool resetInterrupted, bool force) {
   CurveView::reload(resetInterrupted, force);
-  KDCoordinate minY = boxLowerBoundPixel();
-  KDCoordinate maxY = boxUpperBoundPixel();
-  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series)));
-  KDCoordinate maxX = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series)));
-  KDRect dirtyRect = KDRect(minX, minY, maxX - minX + k_quantileBarWidth, maxY - minY);
+  KDCoordinate minY = calculationLowerBoundPixel();
+  KDCoordinate maxY = calculationUpperBoundPixel();
+  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series))) - k_leftMargin;
+  KDCoordinate maxX = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series))) + k_rightMargin;
+  KDRect dirtyRect = KDRect(minX, minY, maxX - minX, maxY - minY);
   markRectAsDirty(dirtyRect);
 }
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
 
+  KDColor color = isMainViewSelected() ? DoublePairStore::colorLightOfSeriesAtIndex(m_series) : Palette::GrayBright;
   KDCoordinate lowBoundPixel = boxLowerBoundPixel();
   KDCoordinate upBoundPixel = boxUpperBoundPixel();
-  float lowBound = pixelToFloat(Axis::Vertical, upBoundPixel);
-  float upBound = pixelToFloat(Axis::Vertical, lowBoundPixel);
-  double minVal = m_store->minValue(m_series);
+
+  // Draw the main box
   double firstQuart = m_store->firstQuartile(m_series);
   double thirdQuart = m_store->thirdQuartile(m_series);
-  double maxVal = m_store->maxValue(m_series);
-
-  KDColor boxColor = isMainViewSelected() ? m_selectedHistogramLightColor : Palette::GrayWhite;
-  // Draw the main box
   KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, firstQuart));
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
-  ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,
-    upBoundPixel-lowBoundPixel), boxColor);
+  ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels, upBoundPixel-lowBoundPixel), color);
 
-  // Draw the horizontal lines linking the box to the extreme bounds
-  KDColor horizontalColor = isMainViewSelected() ? m_selectedHistogramColor : Palette::GrayDark;
+  // Draw the horizontal lines linking the box to the whiskers
+  float lowBound = pixelToFloat(Axis::Vertical, upBoundPixel);
+  float upBound = pixelToFloat(Axis::Vertical, lowBoundPixel);
   float segmentOrd = (lowBound + upBound)/ 2.0f;
-  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, minVal, firstQuart, horizontalColor);
-  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, maxVal, horizontalColor);
+  double lowerWhisker = m_store->lowerWhisker(m_series);
+  double upperWhisker = m_store->upperWhisker(m_series);
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, lowerWhisker, firstQuart, color);
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, upperWhisker, color);
 
-  double calculations[5] = {minVal, firstQuart, m_store->median(m_series), thirdQuart, maxVal};
-  /* We then draw all the vertical lines of the box and then recolor the
-   * the selected quantile (if there is one). As two quantiles can have the same
-   * value, we cannot choose line colors and then color only once the vertical
-   * lines. This solution could hide the highlighted line by coloring the next
-   * quantile if it has the same value. */
-  for (int k = 0; k < 5; k++) {
-    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GrayMiddle, k_quantileBarWidth);
+  // Draw each calculations
+  int numberOfLowerOutliers = m_store->numberOfLowerOutliers(m_series);
+  // Draw unselected calculations
+  for (size_t i = 0; i < numberOfCalculation(); i++) {
+    KDColor calculationColor = k_unfocusedColor;
+    if (isMainViewSelected()) {
+      if (i == (int)*m_selectedQuantile) {
+        continue;
+      }
+      calculationColor = DoublePairStore::colorOfSeriesAtIndex(m_series);
+    }
+    float calculation = calculationAtIndex(i);
+    if (i >= numberOfLowerOutliers && i < numberOfLowerOutliers + k_numberOfNonOutlierCalculations) {
+      drawBar(ctx, rect, calculation, lowBound, upBound, calculationColor, false);
+    } else {
+      drawOutlier(ctx, rect, calculation, segmentOrd, calculationColor, false);
+    }
   }
+  // Draw the selected calculation afterward, preventing it being overwritten.
   if (isMainViewSelected()) {
-    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, k_quantileBarWidth);
+    int selectedCalculation = (int)*m_selectedQuantile;
+    assert(selectedCalculation >= 0 && selectedCalculation < numberOfCalculation());
+    float calculation = calculationAtIndex(selectedCalculation);
+    if (selectedCalculation >= numberOfLowerOutliers && selectedCalculation < numberOfLowerOutliers + k_numberOfNonOutlierCalculations) {
+      drawBar(ctx, rect, calculation, lowBound, upBound, k_selectedColor, true);
+    } else {
+      drawOutlier(ctx, rect, calculation, segmentOrd, k_selectedColor, true);
+    }
   }
+}
+
+// TODO: Move this logic in a controller
+float BoxView::calculationAtIndex(int i) const {
+  if (i < 0) {
+    return m_store->minValue(m_series);
+  }
+  int numberOfLowerOutliers = m_store->numberOfLowerOutliers(m_series);
+  if (i < numberOfLowerOutliers) {
+    return m_store->lowerOutlierAtIndex(m_series, i);
+  }
+  if (i == numberOfLowerOutliers) {
+    return m_store->lowerWhisker(m_series);
+  }
+  if (i == numberOfLowerOutliers + 1) {
+    return m_store->firstQuartile(m_series);
+  }
+  if (i == numberOfLowerOutliers + 2) {
+    return m_store->median(m_series);
+  }
+  if (i == numberOfLowerOutliers + 3) {
+    return m_store->thirdQuartile(m_series);
+  }
+  if (i == numberOfLowerOutliers + 4) {
+    return m_store->upperWhisker(m_series);
+  }
+  int numberOfUpperOutliers = m_store->numberOfUpperOutliers(m_series);
+  if (i < numberOfLowerOutliers + k_numberOfNonOutlierCalculations + numberOfUpperOutliers) {
+    return m_store->upperOutlierAtIndex(m_series, i - numberOfLowerOutliers - k_numberOfNonOutlierCalculations);
+  }
+  return m_store->maxValue(m_series);
+}
+
+int BoxView::numberOfCalculation() const {
+  // Outliers + Lower/Upper Whisker + First/Third Quartile + Median
+  return m_store->numberOfLowerOutliers(m_series) + k_numberOfNonOutlierCalculations + m_store->numberOfUpperOutliers(m_series);
+}
+
+void BoxView::drawBar(KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound, KDColor color, bool isSelected) const {
+  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculation, lowBound, upBound, color, k_quantileBarWidth);
+  if (isSelected) {
+    lowBound = pixelToFloat(Axis::Vertical, boxUpperBoundPixel() + k_chevronMargin - 1);
+    upBound = pixelToFloat(Axis::Vertical, boxLowerBoundPixel() - k_chevronMargin);
+    drawChevronSelection(ctx, rect, calculation, lowBound, upBound);
+  }
+}
+
+void BoxView::drawOutlier(KDContext * ctx, KDRect rect, float calculation, float segmentOrd, KDColor color, bool isSelected) const {
+  drawDot(ctx, rect, calculation, segmentOrd, color, k_outlierDotSize);
+  if (isSelected) {
+    KDCoordinate segmentOrdPixel = floatToPixel(Axis::Vertical, segmentOrd);
+    float lowBound = pixelToFloat(Axis::Vertical, segmentOrdPixel + (k_outlierSize + 1)/2 + k_chevronMargin - 1);
+    float upBound = pixelToFloat(Axis::Vertical, segmentOrdPixel - k_outlierSize/2 - k_chevronMargin);
+    drawChevronSelection(ctx, rect, calculation, lowBound, upBound);
+  }
+}
+
+void BoxView::drawChevronSelection(KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound) const {
+  drawChevron(ctx, rect, calculation, lowBound, k_selectedColor, true);
+  drawChevron(ctx, rect, calculation, upBound, k_selectedColor, false);
+}
+
+void BoxView::drawChevron(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool up) const {
+  // Place the chevron so that it points two pixels, the left one being (x, y).
+  KDCoordinate px = std::round(floatToPixel(Axis::Horizontal, x));
+  KDCoordinate py = std::round(floatToPixel(Axis::Vertical, y));
+  px += 1 - Chevrons::k_chevronWidth/2;
+  py += (up ? 1 : -Chevrons::k_chevronHeight);
+  KDRect dotRect(px, py, Chevrons::k_chevronWidth, Chevrons::k_chevronHeight);
+  if (!rect.intersects(dotRect)) {
+    return;
+  }
+  KDColor workingBuffer[Chevrons::k_chevronHeight*Chevrons::k_chevronWidth];
+  const uint8_t * mask = (const uint8_t *)(up ? Chevrons::UpChevronMask : Chevrons::DownChevronMask);
+  ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
 }
 
 KDCoordinate BoxView::boxLowerBoundPixel() const {
@@ -96,8 +185,16 @@ KDCoordinate BoxView::boxLowerBoundPixel() const {
 }
 
 KDCoordinate BoxView::boxUpperBoundPixel() const {
-  return bounds().height() / 2 + boxHeight() / 2;
+  // Ceil boxHeight to handle odd boxHeight
+  return bounds().height() / 2 + (boxHeight() + 1) / 2;
 }
 
+KDCoordinate BoxView::calculationLowerBoundPixel() const {
+  return boxLowerBoundPixel() - k_verticalMargin;
+}
+
+KDCoordinate BoxView::calculationUpperBoundPixel() const {
+  return boxUpperBoundPixel() + k_verticalMargin;
+}
 
 }

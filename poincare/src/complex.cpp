@@ -59,8 +59,8 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
     tb = this->imag();
   }
   return Expression::CreateComplexExpression(
-      Number::DecimalNumber<T>(std::fabs(ra)), // TODO: Maybe use Number::FloatNumber instead to speed up 'complexToExpression'
-      Number::DecimalNumber<T>(std::fabs(tb)),
+      Number::FloatNumber<T>(std::fabs(ra)), // TODO: Maybe use Number::FloatNumber instead to speed up 'complexToExpression'
+      Number::FloatNumber<T>(std::fabs(tb)),
       complexFormat,
       (std::isnan(this->real()) || std::isnan(this->imag())),
       ra == (T)0.0, std::fabs(ra) == (T)1.0, tb == (T)0.0, std::fabs(tb) == (T)1.0, ra < (T)0.0, tb < (T)0.0

@@ -466,7 +466,7 @@ Expression Decimal::shallowReduce() {
   }
   Expression result;
   if (numerator.isOverflow() || denominator.isOverflow()) {
-    result = Number::FloatNumber(node()->signedMantissa().template approximate<double>()*std::pow(10.0, (double)exp));
+    result = Number::FloatNumber(node()->signedMantissa().template approximate<double>()*std::pow(10.0, (double)(exp - numberOfDigits + 1)));
   } else {
     result = Rational::Builder(numerator, denominator);
   }

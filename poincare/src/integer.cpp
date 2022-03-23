@@ -299,8 +299,11 @@ int Integer::serializeInBinaryBase(char * buffer, int bufferSize, int bitsPerDig
 // Layout
 
 Layout Integer::createLayout(Base base) const {
-  char buffer[k_maxNumberOfDigitsBase10];
-  int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10, base);
+  // We take +2 for size to handle the case of the number being between
+  // 10^k_maxNumberOfDigitsBase10 and (2^32)^k_maxNumberOfDigits
+  constexpr int bufferSize = k_maxNumberOfDigitsBase10 + 2;
+  char buffer[bufferSize];
+  int numberOfChars = serialize(buffer, bufferSize, base);
   assert(numberOfChars >= 1);
   if (static_cast<int>(UTF8Decoder::CharSizeOfCodePoint(buffer[0])) == numberOfChars) {
     UTF8Decoder decoder = UTF8Decoder(buffer);

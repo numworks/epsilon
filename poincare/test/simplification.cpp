@@ -68,6 +68,7 @@ QUIZ_CASE(poincare_simplification_rational) {
   assert_parsed_expression_simplify_to("π^0", "1");
   assert_parsed_expression_simplify_to("A^0", "1");
   assert_parsed_expression_simplify_to("(-3)^0", "1");
+  assert_parsed_expression_simplify_to("2ᴇ200/2ᴇ200", "1");
 }
 
 QUIZ_CASE(poincare_simplification_infinity) {

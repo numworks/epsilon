@@ -186,7 +186,8 @@ void Endpoint0::flushTxFifo() {
   OTG.DIEPCTL0()->setSNAK(true);
 
   // Wait for core to respond
-  while (!OTG.DIEPINT(0)->getINEPNE()) {
+  // TODO: understand why !OTG.GOTGINT()->getSEDET() is required since verion 16
+  while (!OTG.DIEPINT(0)->getINEPNE() && !OTG.GOTGINT()->getSEDET()) {
   }
 
   // Get the Tx FIFO number

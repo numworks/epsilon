@@ -26,22 +26,25 @@ QUIZ_CASE(poincare_simplification_decimal) {
 }
 
 QUIZ_CASE(poincare_simplification_rational) {
-  // 1/MaxIntegerString()
-  char buffer[400] = "1/";
-  strlcpy(buffer+2, MaxIntegerString(), 400-2);
-  assert_parsed_expression_simplify_to(buffer, buffer);
+  // 1/MaxParsedIntegerString()
+  char bufferMax[32] = "1/";
+  strlcpy(bufferMax+2, MaxParsedIntegerString(), 30);
+  assert_parsed_expression_simplify_to(bufferMax, bufferMax);
   // 1/OverflowedIntegerString()
-  strlcpy(buffer+2, BigOverflowedIntegerString(), 400-2);
-  assert_parsed_expression_simplify_to(buffer, "0");
-  // MaxIntegerString()
-  assert_parsed_expression_simplify_to(MaxIntegerString(), MaxIntegerString());
+  char bufferInf[400] = "1/";
+  strlcpy(bufferInf+2, BigOverflowedIntegerString(), 400-2);
+  assert_parsed_expression_simplify_to(bufferInf, "0");
+  // MaxParsedIntegerString()
+  assert_parsed_expression_simplify_to(MaxParsedIntegerString(), MaxParsedIntegerString());
   // OverflowedIntegerString()
+  assert_parsed_expression_simplify_to(OverflowedIntegerString(), "1.7976931348623ᴇ308");
   assert_parsed_expression_simplify_to(BigOverflowedIntegerString(), Infinity::Name());
-  assert_parsed_expression_simplify_to(BigOverflowedIntegerString(), Infinity::Name());
+  // ApproximatedParsedIntegerString()
+  assert_parsed_expression_simplify_to(ApproximatedParsedIntegerString(),"1ᴇ30");
   // -OverflowedIntegerString()
-  buffer[0] = '-';
-  strlcpy(buffer+1, BigOverflowedIntegerString(), 400-1);
-  assert_parsed_expression_simplify_to(buffer, "-inf");
+  bufferInf[0] = '-';
+  strlcpy(bufferInf+1, BigOverflowedIntegerString(), 400-1);
+  assert_parsed_expression_simplify_to(bufferInf, "-inf");
 
   assert_parsed_expression_simplify_to("-1/3", "-1/3");
   assert_parsed_expression_simplify_to("22355/45325", "4471/9065");
@@ -663,10 +666,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("ℯ^ln(π)", "π");
   assert_parsed_expression_simplify_to("10^log(1.23)", "123/100");
   assert_parsed_expression_simplify_to("2^log(3,2)", "3");
-  /* This does not reduce but should not as the integer is above
-   * k_maxNumberOfPrimeFactors and thus it prime decomposition might overflow
-   * 32 factors. */
-  assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "root(1881676377434183981909562699940347954480361860897069,3)");
+  assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "1.2345678912346ᴇ17");
   /* This does not reduce but should not as the prime decomposition involves
    * factors above k_maxNumberOfPrimeFactors. */
   assert_parsed_expression_simplify_to("1002101470343^(1/3)", "root(1002101470343,3)");
@@ -744,7 +744,7 @@ QUIZ_CASE(poincare_simplification_logarithm) {
   assert_parsed_expression_simplify_to("log(10^24)", "24");
   assert_parsed_expression_simplify_to("log((23π)^4,23π)", "4");
   assert_parsed_expression_simplify_to("log(10^(2+π))", "π+2");
-  assert_parsed_expression_simplify_to("ln(1881676377434183981909562699940347954480361860897069)", "ln(1881676377434183981909562699940347954480361860897069)");
+  assert_parsed_expression_simplify_to("ln(1881676377434183981909562699940347954480361860897069)", "ln(1.8816763774342ᴇ51)");
   /* log(1002101470343) does no reduce to 3×log(10007) because it involves
    * prime factors above k_biggestPrimeFactor */
   assert_parsed_expression_simplify_to("log(1002101470343)", "log(1002101470343)");
@@ -1178,7 +1178,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("ref([[3,11][5,7]])", "[[1,7/5][0,1]]");
   assert_parsed_expression_simplify_to("ref([[2,5][2,7]])", "[[1,5/2][0,1]]");
   assert_parsed_expression_simplify_to("ref([[3,12][-4,1]])", "[[1,-1/4][0,1]]");
-  assert_parsed_expression_simplify_to("ref([[0,1][1ᴇ-100,1]])", "[[1,10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[0,1][1ᴇ-100,1]])", "[[1,1ᴇ100][0,1]]");
 
   // Cross product
   assert_parsed_expression_simplify_to("cross([[0][1/√(2)][0]],[[0][0][1]])", "[[√(2)/2][0][0]]");

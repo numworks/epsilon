@@ -154,15 +154,14 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
 
   // Parse integer
   assert_parsed_expression_is("123456789012345678765434567", BasedInteger::Builder("123456789012345678765434567"));
-  assert_parsed_expression_is(MaxIntegerString(), BasedInteger::Builder(MaxIntegerString()));
+  assert_parsed_expression_is(MaxParsedIntegerString(), BasedInteger::Builder(MaxParsedIntegerString()));
 
   // Parsed Based integer
   assert_parsed_expression_is("0b1011", BasedInteger::Builder("1011", 4, Integer::Base::Binary));
   assert_parsed_expression_is("0x12AC", BasedInteger::Builder("12AC", 4, Integer::Base::Hexadecimal));
 
   // Integer parsed in Decimal because they overflow Integer
-  assert_parsed_expression_is(OverflowedIntegerString(), Decimal::Builder(Integer("17976931348623"), 308));
-  assert_parsed_expression_is("179769313486235590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137216", Decimal::Builder(Integer("17976931348624"), 308));
+  assert_parsed_expression_is(ApproximatedParsedIntegerString(), Decimal::Builder(Integer("1"), 30));
 
   // Infinity
   assert_parsed_expression_is("23ᴇ1000", Infinity::Builder(false));

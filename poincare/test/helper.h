@@ -11,6 +11,8 @@
 const char * MaxIntegerString(); // (2^32)^k_maxNumberOfDigits-1
 const char * OverflowedIntegerString(); // (2^32)^k_maxNumberOfDigits
 const char * BigOverflowedIntegerString(); // OverflowedIntegerString with a 2 on first digit
+const char * MaxParsedIntegerString();
+const char * ApproximatedParsedIntegerString();
 
 constexpr Poincare::ExpressionNode::ReductionTarget SystemForApproximation = Poincare::ExpressionNode::ReductionTarget::SystemForApproximation;
 constexpr Poincare::ExpressionNode::ReductionTarget SystemForAnalysis = Poincare::ExpressionNode::ReductionTarget::SystemForAnalysis;

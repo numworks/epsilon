@@ -12,15 +12,13 @@ class BoxBannerView : public Shared::BannerView {
 public:
   BoxBannerView();
   Escher::BufferTextView * seriesName() { return &m_seriesName; }
-  Escher::MessageTextView * calculationName() { return &m_calculationName; }
-  Escher::BufferTextView * calculationValue() { return &m_calculationValue; }
+  Escher::BufferTextView * calculationValue() { return &m_calculationBuffer; }
 private:
-  static constexpr int k_numberOfSubviews = 3;
+  static constexpr int k_numberOfSubviews = 2;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   Escher::View * subviewAtIndex(int index) override;
   Escher::BufferTextView m_seriesName;
-  Escher::MessageTextView m_calculationName;
-  Escher::BufferTextView m_calculationValue;
+  Escher::BufferTextView m_calculationBuffer;
 };
 
 }

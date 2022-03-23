@@ -1,6 +1,6 @@
 #include "box_controller.h"
 #include "../app.h"
-#include <apps/shared/poincare_helpers.h>
+#include <poincare/print.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -74,26 +74,24 @@ void BoxController::reloadBannerView() {
     return;
   }
 
+  // With 7 = KDFont::SmallFont->glyphSize().width()
+  constexpr static int k_bufferSize = Ion::Display::Width / 7 - (int)sizeof("V1/N1") + 2;
+  char buffer[k_bufferSize] = "";
+
+  // Display series name
+  StoreController::FillSeriesName(series, buffer, false);
+  m_view.bannerView()->seriesName()->setText(buffer);
+
+  // Display calculation
   int selectedBoxCalculation = (int)m_view.dataViewAtIndex(series)->selectedBoxCalculation();
-
-  // Set series name
-  char seriesChar = '0' + series + 1;
-  char bufferName[] = {' ', 'V', seriesChar, '/', 'N', seriesChar, 0};
-  m_view.bannerView()->seriesName()->setText(bufferName);
-
-  // Set calculation name
-  m_view.bannerView()->calculationName()->setMessage(m_store->boxPlotCalculationMessageAtIndex(series, selectedBoxCalculation));
-
-  // Set calculation result
-  assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
-  int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
-  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits) + 1;
-  char buffer[bufferSize];
-  double calculation = m_store->boxPlotCalculationAtIndex(series, selectedBoxCalculation);
-  int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);
-  buffer[numberOfChar++] = ' ';
-  assert(numberOfChar <= bufferSize - 1);
-  buffer[numberOfChar] = 0;
+  double value = m_store->boxPlotCalculationAtIndex(series, selectedBoxCalculation);
+  Poincare::Print::customPrintf(
+    buffer,
+    k_bufferSize,
+    "%s%s%*.*ed",
+    I18n::translate(m_store->boxPlotCalculationMessageAtIndex(series, selectedBoxCalculation)),
+    I18n::translate(I18n::Message::StatisticsColonConvention),
+    value, Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   m_view.bannerView()->calculationValue()->setText(buffer);
 
   m_view.bannerView()->reload();

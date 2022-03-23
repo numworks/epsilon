@@ -24,38 +24,18 @@ const char * ListParameterController::title() {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   bool hasAdditionalRow = hasInitialRankRow();
-#if FUNCTION_COLOR_CHOICE
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 1)) {
-#else
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0)) {
-#endif
     int selectedRowIndex = selectedRow();
-#if FUNCTION_COLOR_CHOICE
     if (selectedRowIndex == 0) {
-      return handleEnterOnRow(selectedRowIndex);
-    }
-    if (selectedRowIndex == 1) {
-#else
-    if (selectedRowIndex == 0) {
-#endif
       StackViewController * stack = (StackViewController *)(parentResponder());
       m_typeParameterController.setRecord(m_record);
       stack->push(&m_typeParameterController);
       return true;
     }
-#if FUNCTION_COLOR_CHOICE
-    if (selectedRowIndex == 2+hasAdditionalRow) {
-
-#else
-    if (selectedRowIndex == 1+hasAdditionalRow) {
-#endif
+    if (selectedRowIndex == 1+hasAdditionalRow || selectedRowIndex == 2+hasAdditionalRow) {
       return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
     }
-#if FUNCTION_COLOR_CHOICE
     if (selectedRowIndex == 3+hasAdditionalRow) {
-#else
-    if (selectedRowIndex == 2+hasAdditionalRow) {
-#endif
       App::app()->localContext()->resetCache();
       return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
     }

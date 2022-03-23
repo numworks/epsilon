@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "function_store.h"
+#include "color_parameter_controller.h"
 #include <apps/i18n.h>
 
 namespace Shared {
@@ -31,22 +32,17 @@ public:
 protected:
   virtual bool handleEnterOnRow(int rowIndex);
   virtual int totalNumberOfCells() const {
-#if FUNCTION_COLOR_CHOICE
     return 3;
-#else
-    return 2;
-#endif
   }
   FunctionStore * functionStore();
   ExpiringPointer<Function> function();
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
-#if FUNCTION_COLOR_CHOICE
-  MessageTableCellWithChevron m_colorCell;
-#endif
+  MessageTableCellWithChevronAndMessage m_colorCell;
   MessageTableCellWithSwitch m_enableCell;
   MessageTableCell m_deleteCell;
+  ColorParameterController m_colorParameterController;
 };
 
 }

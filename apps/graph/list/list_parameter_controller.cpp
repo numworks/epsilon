@@ -41,7 +41,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Right) {
     int selectedR = selectedRow();
-    if (selectedR == 0 || selectedR == 1) {
+    if (selectedR == 0 || selectedR == 1 || selectedR == 3) {
       // Go in the submenu
       return handleEnterOnRow(selectedR);
     }

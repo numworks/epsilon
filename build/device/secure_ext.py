@@ -5,7 +5,6 @@ MAGIK_CODE = [0x32, 0x30, 0x30, 0x36]
 MAGIK_POS = 0x44F
 
 if len(sys.argv) > 1:
-    print("Patching external bin...")
     ext_path = os.path.join(os.getcwd(), sys.argv[1])
     if not os.path.isfile(ext_path):
         print("Error: File not found!")
@@ -23,4 +22,4 @@ if len(sys.argv) > 1:
 
     file.seek(MAGIK_POS)
     file.write(packet)
-    print("External bin Patched!")
+    print("External bin patched!")

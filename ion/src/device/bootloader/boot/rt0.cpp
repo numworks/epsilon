@@ -225,8 +225,6 @@ void __attribute__((noinline)) start() {
 
   /* Initialize the FPU as early as possible.
    * For example, static C++ objects are very likely to manipulate float values */
-  Ion::Device::Board::initFPU();
-
   /* Copy data section to RAM
    * The data section is R/W but its initialization value matters. It's stored
    * in Flash, but linked as if it were in RAM. Now's our opportunity to copy

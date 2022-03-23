@@ -35,6 +35,7 @@ HANDY_TARGETS += epsilon.A epsilon.B
 
 .PHONY: epsilon
 epsilon: $(BUILD_DIR)/epsilon.onboarding.bin
+	$(PYTHON) build/device/secure_ext.py $(BUILD_DIR)/epsilon.onboarding.bin
 .DEFAULT_GOAL := epsilon
 
 .PHONY: %_flash

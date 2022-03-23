@@ -79,7 +79,7 @@ void __attribute__((noinline)) internalFlashStandby() {
 }
 
 void enterLowPowerMode() {
-  reinterpret_cast<void(*)(void)>(Ion::Device::Trampoline::address(Ion::Device::Trampoline::Suspend))();
+  (*reinterpret_cast<void(**)(void)>(Ion::Device::Trampoline::address(Ion::Device::Trampoline::Suspend)))();
 }
 
 }

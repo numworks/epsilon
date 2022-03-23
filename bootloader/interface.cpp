@@ -15,7 +15,6 @@ void Interface::drawImage(KDContext* ctx, const Image* image, int offset) {
   const uint8_t* data;
   size_t size;
   size_t pixelBufferSize;
-
   if (image != nullptr) {
     data = image->compressedPixelData();
     size = image->compressedPixelDataSize();

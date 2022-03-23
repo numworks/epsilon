@@ -136,7 +136,6 @@ public:
   SlotInfo() :
     m_header(Magic),
     m_footer(Magic) {}
-
   void update() {
     m_header = Magic;
     m_kernelHeaderAddress = &k_kernelHeader;

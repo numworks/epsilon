@@ -34,7 +34,7 @@ endif
 ifeq (${MODEL}, n0110)
   apps_list = ${EPSILON_APPS}
 else
-  ifeq (${MODEL}, bootloader)
+  ifeq (${MODEL},bootloader)
     apps_list = ${EPSILON_APPS}
   else
     apps_list = $(foreach i, ${EPSILON_APPS}, $(if $(filter external, $(i)),,$(i)))

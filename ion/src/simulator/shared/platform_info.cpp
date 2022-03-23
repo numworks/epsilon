@@ -36,7 +36,7 @@ public:
     m_storageSize(Ion::Storage::k_storageSize),
     m_footer(Magic),
     m_omegaMagicHeader(OmegaMagic),
-    m_OmegaVersion{OMEGA_VERSION},
+    m_omegaVersion{OMEGA_VERSION},
 #ifdef OMEGA_USERNAME
     m_username{OMEGA_USERNAME},
 #else
@@ -44,7 +44,7 @@ public:
 #endif
     m_omegaMagicFooter(OmegaMagic),
     m_upsilonMagicHeader(UpsilonMagic),
-    m_UpsilonVersion{UPSILON_VERSION},
+    m_upsilonVersion{UPSILON_VERSION},
     m_osType(OSType),
     m_upsilonMagicFooter(UpsilonMagic) { }
   const char * version() const {
@@ -63,7 +63,9 @@ public:
     assert(m_footer == Magic);
     assert(m_omegaMagicHeader == OmegaMagic);
     assert(m_omegaMagicFooter == OmegaMagic);
-    return m_UpsilonVersion;
+    assert(m_upsilonMagicHeader == UpsilonMagic);
+    assert(m_upsilonMagicFooter == UpsilonMagic);
+    return m_upsilonVersion;
   }
   const char * omegaVersion() const {
     assert(m_storageAddress != nullptr);
@@ -72,7 +74,7 @@ public:
     assert(m_footer == Magic);
     assert(m_omegaMagicHeader == OmegaMagic);
     assert(m_omegaMagicFooter == OmegaMagic);
-    return m_OmegaVersion;
+    return m_omegaVersion;
   }
   const volatile char * username() const volatile {
     assert(m_storageAddress != nullptr);
@@ -104,11 +106,11 @@ private:
   size_t m_storageSize;
   uint32_t m_footer;
   uint32_t m_omegaMagicHeader;
-  const char m_OmegaVersion[16];
+  const char m_omegaVersion[16];
   const volatile char m_username[16];
   uint32_t m_omegaMagicFooter;
   uint32_t m_upsilonMagicHeader;
-  const char m_UpsilonVersion[16];
+  const char m_upsilonVersion[16];
   uint32_t m_osType;
   uint32_t m_upsilonMagicFooter;
 

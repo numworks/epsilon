@@ -41,6 +41,25 @@ void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {
     brightnessLevel = brightnessLevel < 0 ? 0 : brightnessLevel;
     brightnessLevel = brightnessLevel > Ion::Backlight::MaxBrightness ? Ion::Backlight::MaxBrightness : brightnessLevel;
     m_brightnessLevel = brightnessLevel;
-    Ion::Backlight::setBrightness(m_brightnessLevel);
   }
+}
+
+void GlobalPreferences::setIdleBeforeSuspendSeconds(int idleBeforeSuspendSeconds) {
+  if (m_idleBeforeSuspendSeconds != idleBeforeSuspendSeconds) {
+    idleBeforeSuspendSeconds = idleBeforeSuspendSeconds < 5 ? 5 : idleBeforeSuspendSeconds;
+    idleBeforeSuspendSeconds = idleBeforeSuspendSeconds > 7200 ? 7200 : idleBeforeSuspendSeconds;
+    m_idleBeforeSuspendSeconds = idleBeforeSuspendSeconds;
+  }
+}
+
+void GlobalPreferences::setIdleBeforeDimmingSeconds(int idleBeforeDimmingSeconds) {
+  if (m_idleBeforeDimmingSeconds != idleBeforeDimmingSeconds) {
+    idleBeforeDimmingSeconds = idleBeforeDimmingSeconds < 3 ? 3 : idleBeforeDimmingSeconds;
+    idleBeforeDimmingSeconds = idleBeforeDimmingSeconds > 1200 ? 1200 : idleBeforeDimmingSeconds;
+    m_idleBeforeDimmingSeconds = idleBeforeDimmingSeconds;
+  }
+}
+
+void GlobalPreferences::setBrightnessShortcut(int brightnessShortcut){
+  m_brightnessShortcut = brightnessShortcut;
 }

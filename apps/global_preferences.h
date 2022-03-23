@@ -45,6 +45,12 @@ public:
   const KDFont * font() const { return m_font; }
   void setFont(const KDFont * font) { m_font = font; }
   constexpr static int NumberOfBrightnessStates = 15;
+  int idleBeforeSuspendSeconds() const { return m_idleBeforeSuspendSeconds; }
+  void setIdleBeforeSuspendSeconds(int m_idleBeforeSuspendSeconds);
+  int idleBeforeDimmingSeconds() const { return m_idleBeforeDimmingSeconds; }
+  void setIdleBeforeDimmingSeconds(int m_idleBeforeDimmingSeconds);
+  int brightnessShortcut() const { return m_brightnessShortcut; }
+  void setBrightnessShortcut(int m_BrightnessShortcut);
 private:
   static_assert(I18n::NumberOfLanguages > 0, "I18n::NumberOfLanguages is not superior to 0"); // There should already have been an error when processing an empty EPSILON_I18N flag
   static_assert(I18n::NumberOfCountries > 0, "I18n::NumberOfCountries is not superior to 0"); // There should already have been an error when processing an empty EPSILON_COUNTRIES flag
@@ -60,6 +66,9 @@ private:
     m_syntaxhighlighting(true),
     m_cursorSaving(true),
     m_brightnessLevel(Ion::Backlight::MaxBrightness),
+    m_idleBeforeSuspendSeconds(55),
+    m_idleBeforeDimmingSeconds(45),
+    m_brightnessShortcut(4),
     m_font(KDFont::LargeFont) {}
   I18n::Language m_language;
   I18n::Country m_country;
@@ -74,6 +83,9 @@ private:
   bool m_syntaxhighlighting;
   bool m_cursorSaving;
   int m_brightnessLevel;
+  int m_idleBeforeSuspendSeconds;
+  int m_idleBeforeDimmingSeconds;
+  int m_brightnessShortcut;
   const KDFont * m_font;
 };
 

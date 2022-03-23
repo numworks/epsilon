@@ -26,7 +26,9 @@ void EditorView::resetSelection() {
 }
 
 void EditorView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
-  m_gutterView.setOffset(scrollViewDataSource->offset().y());
+  if (m_gutterView.setOffsetAndNeedResize(scrollViewDataSource->offset().y())) {
+    internalLayoutSubviews(true);
+  }
 }
 
 View * EditorView::subviewAtIndex(int index) {
@@ -42,8 +44,12 @@ void EditorView::didBecomeFirstResponder() {
 }
 
 void EditorView::layoutSubviews(bool force) {
-  m_gutterView.setOffset(0);
-  KDCoordinate gutterWidth = m_gutterView.minimalSizeForOptimalDisplay().width();
+  m_gutterView.setOffsetAndNeedResize(0); // Whatever the return is, we layout the editor view
+  internalLayoutSubviews(force);
+}
+
+void EditorView::internalLayoutSubviews(bool force) {
+  KDCoordinate gutterWidth = m_gutterView.computeWidth();
   m_gutterView.setFrame(KDRect(0, 0, gutterWidth, bounds().height()), force);
 
   m_textArea.setFrame(KDRect(
@@ -67,23 +73,23 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate firstLine = m_offset / glyphSize.height();
   KDCoordinate firstLinePixelOffset = m_offset - firstLine * glyphSize.height();
 
-  char lineNumber[k_lineNumberCharLength];
+  char lineNumberBuffer[m_numberOfDigits + 1];
   int numberOfLines = bounds().height() / glyphSize.height() + 1;
   for (int i=0; i<numberOfLines; i++) {
-    // Only the first two digits are displayed
-    int lineNumberValue = (i + firstLine + 1) % 100;
+    int lineNumberValue = (i + firstLine + 1);
     Poincare::Integer line(lineNumberValue);
-    if (firstLine < 10 || lineNumberValue >= 10) {
-      line.serialize(lineNumber, k_lineNumberCharLength);
-    } else {
-      // Add a leading "0"
-      lineNumber[0] = '0';
-      line.serialize(lineNumber + 1, k_lineNumberCharLength - 1);
+
+    int lineDigits = computeNumberOfDigitsFor(lineNumberValue);
+
+    for (int j=0; j < m_numberOfDigits - lineDigits; j++) {
+      lineNumberBuffer[j] = ' ';
     }
-    KDCoordinate leftPadding = (2 - strlen(lineNumber)) * glyphSize.width();
+
+    line.serialize(lineNumberBuffer + (m_numberOfDigits - lineDigits), m_numberOfDigits + 1);
+
     ctx->drawString(
-      lineNumber,
-      KDPoint(k_margin + leftPadding, i*glyphSize.height() - firstLinePixelOffset),
+      lineNumberBuffer,
+      KDPoint(k_margin, i*glyphSize.height() - firstLinePixelOffset),
       m_font,
       textColor,
       backgroundColor
@@ -91,18 +97,36 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
-void EditorView::GutterView::setOffset(KDCoordinate offset) {
+bool EditorView::GutterView::setOffsetAndNeedResize(KDCoordinate offset) {
   if (m_offset == offset) {
-    return;
+    return false;
   }
   m_offset = offset;
+
+  int numberOfDigits = computeMaxNumberOfDigits();
+  if (numberOfDigits != m_numberOfDigits) {
+    m_numberOfDigits = numberOfDigits;
+    return true;
+  }
+
   markRectAsDirty(bounds());
+  return false;
 }
 
+int EditorView::GutterView::computeWidth() {
+  return 2 * k_margin + (m_numberOfDigits) * m_font->glyphSize().width();
+}
 
-KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {
-  int numberOfChars = 2; // TODO: Could be computed
-  return KDSize(2 * k_margin + numberOfChars * m_font->glyphSize().width(), 0);
+int EditorView::GutterView::computeMaxNumberOfDigits() {
+  return computeNumberOfDigitsFor((bounds().height() / m_font->glyphSize().height() + 1) + (m_offset / m_font->glyphSize().height()));
+}
+
+int EditorView::GutterView::computeNumberOfDigitsFor(int value) {
+  int digits = 1;
+  while (value >= pow(10, digits)) {
+    digits++;
+  }
+  return digits;
 }
 
 }

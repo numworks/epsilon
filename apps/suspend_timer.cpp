@@ -2,7 +2,7 @@
 #include "apps_container.h"
 
 SuspendTimer::SuspendTimer() :
-  Timer(k_idleBeforeSuspendDuration/Timer::TickDuration)
+  Timer(GlobalPreferences::sharedGlobalPreferences()->idleBeforeSuspendSeconds()*1000/Timer::TickDuration)
 {
 }
 

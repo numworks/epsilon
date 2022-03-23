@@ -5,40 +5,42 @@ namespace Reader {
 
   // List of available Symbols
   static constexpr char const * k_SymbolsCommands[] = {
-    "times", "div", "forall", "partial", "exists", "pm", "approx", "infty", "neq", "equiv", "leq", "geq", 
-    "leftarrow", "uparrow", "rightarrow", "downarrow", "leftrightarrow", "updownarrow", "Leftarrow", "Uparrow", "Rightarrow", "Downarrow",
-    "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda", 
+    "times", "div", "forall", "partial", "exists", "pm", "approx", "infty", "neq", "equiv", "leq", "geq",
+    "leftarrow", "uparrow", "rightarrow", "downarrow","leftrightarrow", "updownarrow", "Leftarrow", "Uparrow", "Rightarrow", "Downarrow",
+    "nwarrow", "nearrow", "swarrow", "searrow", "in", "cdot", "cdots", "ldots",
+    "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda",
     "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon", "Phi", "Chi", "Psi","Omega",
-    "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", 
+    "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda",
     "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega",
     "sim",
   };
 
   // List of the available Symbol's CodePoints in the same order of the Symbol's list
   static constexpr uint32_t const k_SymbolsCodePoints[] = {
-    0xd7, 0xf7, 0x2200, 0x2202, 0x2203, 0xb1, 0x2248, 0x221e, 0x2260, 0x2261, 0x2264, 0x2265, 
-    0x2190, 0x2191, 0x2192, 0x2193, 0x2194, 0x2195, 0x21d0, 0x21d1, 0x21d2, 0x21d3, 
-    0x391, 0x392, 0x393, 0x394, 0x395, 0x396, 0x397, 0x398, 0x399, 0x39a, 0x39b, 
-    0x39c, 0x39d, 0x39e, 0x39f, 0x3a0, 0x3a1, 0x3a3, 0x3a4, 0x3a5, 0x3a6, 0x3a7, 0x3a8, 0x3a9, 
-    0x3b1, 0x3b2, 0x3b3, 0x3b4, 0x3b5, 0x3b6, 0x3b7, 0x3b8, 0x3b9, 0x3ba, 0x3bb, 
+    0xd7, 0xf7, 0x2200, 0x2202, 0x2203, 0xb1, 0x2248, 0x221e, 0x2260, 0x2261, 0x2264, 0x2265,
+    0x2190, 0x2191, 0x2192, 0x2193, 0x2194, 0x2195, 0x21d0, 0x21d1, 0x21d2, 0x21d3,
+    0x2196, 0x2197, 0x2198, 0x2199, 0x454, 0xb7, 0x2505, 0x2026,
+    0x391, 0x392, 0x393, 0x394, 0x395, 0x396, 0x397, 0x398, 0x399, 0x39a, 0x39b,
+    0x39c, 0x39d, 0x39e, 0x39f, 0x3a0, 0x3a1, 0x3a3, 0x3a4, 0x3a5, 0x3a6, 0x3a7, 0x3a8, 0x3a9,
+    0x3b1, 0x3b2, 0x3b3, 0x3b4, 0x3b5, 0x3b6, 0x3b7, 0x3b8, 0x3b9, 0x3ba, 0x3bb,
     0x3bc, 0x3bd, 0x3be, 0x3bf, 0x3c0, 0x3c1, 0x3c3, 0x3c4, 0x3c5, 0x3c6, 0x3c7, 0x3c8, 0x3c9,
     0x7e,
   };
-  
+
   // List of available Function Commands that don't require a specific handling
   static constexpr char const * k_FunctionCommands[] = {
-    "arccos", "arcsin", "arctan", "arg", "cos", "cosh", "cot", "coth", 
-    "csc", "deg", "det", "dim", "exp", "gcd", "hom", "inf", 
-    "ker", "lg", "lim", "liminf", "limsup", "ln", "log", "max", 
+    "arccos", "arcsin", "arctan", "arg", "cos", "cosh", "cot", "coth",
+    "csc", "deg", "det", "dim", "exp", "gcd", "hom", "inf",
+    "ker", "lg", "lim", "liminf", "limsup", "ln", "log", "max",
     "min", "Pr", "sec", "sin", "sinh", "sup", "tan", "tanh"
   };
 
-TexParser::TexParser(const char * text, const char * endOfText) : 
-  m_text(text), 
+TexParser::TexParser(const char * text, const char * endOfText) :
+  m_text(text),
   m_endOfText(endOfText),
   m_hasError(false)
 {
-    
+
 }
 
 Layout TexParser::getLayout() {
@@ -78,7 +80,7 @@ Layout TexParser::popBlock() {
 Layout TexParser::popText(char stop) {
   HorizontalLayout layout = HorizontalLayout::Builder();
   const char * start = m_text;
-  
+
   while (m_text < m_endOfText && *m_text != stop) {
     switch (*m_text) {
       // TODO: Factorize this code
@@ -121,7 +123,7 @@ Layout TexParser::popText(char stop) {
   if (start != m_text) {
     layout.addOrMergeChildAtIndex(LayoutHelper::String(start, m_text - start), layout.numberOfChildren(), false);
   }
-  
+
   m_text ++;
 
   if (layout.numberOfChildren() == 1) {
@@ -149,7 +151,7 @@ Layout TexParser::popCommand() {
     if (isCommandEnded(*(m_text + strlen(k_fracCommand)))) {
       m_text += strlen(k_fracCommand);
       return popFracCommand();
-    } 
+    }
   }
   if (strncmp(k_leftCommand, m_text, strlen(k_leftCommand)) == 0) {
     if (isCommandEnded(*(m_text + strlen(k_leftCommand)))) {
@@ -199,20 +201,20 @@ Layout TexParser::popCommand() {
         return LayoutHelper::String(k_FunctionCommands[i], strlen(k_FunctionCommands[i]));
       }
     }
-  }	
+  }
 
-  m_hasError = true; 
+  m_hasError = true;
   return EmptyLayout::Builder();
 }
 
 // Expressions
 Layout TexParser::popCeilCommand() {
-  Layout ceil = popBlock(); 
+  Layout ceil = popBlock();
   return CeilingLayout::Builder(ceil);
 }
 
 Layout TexParser::popFloorCommand() {
-  Layout floor = popBlock(); 
+  Layout floor = popBlock();
   return FloorLayout::Builder(floor);
 }
 
@@ -255,7 +257,7 @@ Layout TexParser::popSpaceCommand() {
 Layout TexParser::popOverrightarrowCommand() {
   return VectorLayout::Builder(popBlock());
 }
-  
+
 Layout TexParser::popSymbolCommand(int SymbolIndex) {
   uint32_t codePoint = k_SymbolsCodePoints[SymbolIndex];
   return CodePointLayout::Builder(codePoint);

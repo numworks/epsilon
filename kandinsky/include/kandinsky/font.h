@@ -61,7 +61,7 @@ public:
     CodePoint m_codePoint;
     GlyphIndex m_glyphIndex;
   };
-  static constexpr GlyphIndex IndexForReplacementCharacterCodePoint = 190;
+  static constexpr GlyphIndex IndexForReplacementCharacterCodePoint = 197;
   GlyphIndex indexForCodePoint(CodePoint c) const;
 
   void setGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;

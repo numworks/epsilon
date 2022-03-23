@@ -324,7 +324,9 @@ uint32_t ExtendedCodePoints[] = {
   0x3c7,   // χ // GREEK SMALL LETTER KHI
   0x3c8,   // ψ // GREEK SMALL LETTER PSI
   0x3c9,   // ω // GREEK SMALL LETTER OMEGA
+  0x454,   // є // CYRILLIC SMALL LETTER UKRAINIAN LE
   0x1d07,  // ᴇ // LATIN LETTER SMALL CAPITAL E
+  0x2026,  // … // HORIZONTAL ELLIPSIS
   0x212f,  // ℯ // SCRIPT SMALL E
   0x2190,  // ← // BACKWARD ARROW (leftarrow)
   0x2191,  // ↑ // TOP ARROW (uparrow)
@@ -332,6 +334,10 @@ uint32_t ExtendedCodePoints[] = {
   0x2193,  // ↓ // BOTTOM ARROW (downarrow)
   0x2194,  // ↔ // BACKWARD FORWARD ARROW (leftrightarrow)
   0x2195,  // ↕ // TOP BOTTOM ARROW (updownarrow)
+  0x2196,  // ↖ // NORDWEST ARROW (nwarrow)
+  0x2197,  // ↗ // NORDEST ARROW (nearrow)
+  0x2198,  // ↘ // SOUTHWEST ARROW (swarrow)
+  0x2199,  // ↙ // SOUTHEST ARROW (searrow)
   0x21d0,  // ⇐ // DOUBLE BACKWARD ARROW (Leftarrow)
   0x21d1,  // ⇑ // DOUBLE TOP ARROW (Uparrow)
   0x21d2,  // ⇒ // DOUBLE FORWARD ARROW (Rightarrow)
@@ -348,6 +354,7 @@ uint32_t ExtendedCodePoints[] = {
   0x2261,  // ≡ // IS CONGRUENT TO
   0x2264,  // ≤ // LESS-THAN OR EQUAL TO
   0x2265,  // ≥ // GREATER-THAN OR EQUAL TO
+  0x2505,  // ┅ // BOX DRAWING EQU HEAVY DASH HORIZONTAL
   0xFFFD,  // � // REPLACEMENT CHARACTER
   0x1d422, // 𝐢 // MATHEMATICAL BOLD SMALL I"
 };

@@ -36,6 +36,7 @@ public:
   bool isActive() const;
   KDColor color() const;
   void setActive(bool active);
+  void setColor(KDColor color);
 
   // Definition Interval
   virtual bool shouldClipTRangeToXRange() const { return true; } // Returns true if the function will not be displayed if t is outside x range.
@@ -76,6 +77,7 @@ protected:
     KDColor color() const {
       return KDColor::RGB16(m_color);
     }
+    void setColor(KDColor color) { m_color = color; }
     bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
   private:

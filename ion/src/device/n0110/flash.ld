@@ -236,6 +236,8 @@ SECTIONS {
     . = ALIGN(4);
     *(.rodata._ZN3Ion6Device13ExternalFlash*)
     /* 'start' dependencies */
+    *(.rodata._ZN3Ion6Device8Keyboard6ConfigL10ColumnGPIOE*)
+    *(.rodata._ZN3Ion6Device8Keyboard6ConfigL7RowGPIOE*)
     *(.rodata._ZN3Ion6Device4RegsL5GPIOAE)
     *(.rodata._ZN3Ion6Device4RegsL5GPIOBE)
     *(.rodata._ZN3Ion6Device3LED6ConfigL7RGBPinsE)

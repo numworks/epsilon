@@ -29,6 +29,7 @@ public:
   void unloadSyntaxHighlighter() { m_textArea.unloadSyntaxHighlighter(); };
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
+  void internalLayoutSubviews(bool force);
 private:
   int numberOfSubviews() const override { return 2; }
   View * subviewAtIndex(int index) override;
@@ -36,15 +37,21 @@ private:
 
   class GutterView : public View {
   public:
-    GutterView(const KDFont * font) : View(), m_font(font), m_offset(0) {}
+    GutterView(const KDFont * font) : View(), m_font(font), m_offset(0), m_numberOfDigits(2) {}
+
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    void setOffset(KDCoordinate offset);
-    KDSize minimalSizeForOptimalDisplay() const override;
+    bool setOffsetAndNeedResize(KDCoordinate offset); // Return true if the gutter view need to be resized
+
+    int computeWidth();
+    int computeMaxNumberOfDigits();
+    static int computeNumberOfDigitsFor(int value);
+
   private:
     static constexpr KDCoordinate k_margin = 2;
-    static constexpr int k_lineNumberCharLength = 3;
+
     const KDFont * m_font;
     KDCoordinate m_offset;
+    int m_numberOfDigits;
   };
 
   PythonTextArea m_textArea;

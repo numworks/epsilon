@@ -173,7 +173,7 @@ void CalculationStore::realDeleteCalculationAtIndex(int i) {
 // Delete the oldest calculation in the store and returns the amount of space freed by the operation
 size_t CalculationStore::deleteOldestCalculation() {
   char * oldBufferEnd = (char *) m_calculationAreaEnd;
-  deleteCalculationAtIndex(numberOfCalculations()-1);
+  realDeleteCalculationAtIndex(numberOfCalculations()-1);
   char * newBufferEnd = (char *) m_calculationAreaEnd;
   return oldBufferEnd - newBufferEnd;
 }

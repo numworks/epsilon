@@ -365,6 +365,12 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
   bool incrementExponentAfterRoundingUp = true;
   // Cap the length of the integralPart
   integralPartLength = integralPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits : integralPartLength;
+  // Special case for ??00000000000
+  if (fractionalPartLength == 0) {
+    while (UTF8Helper::CodePointIs(&integralPart[integralPartLength - 1], '0')) {
+      integralPartLength--;
+    }
+  }
   Integer numerator(integralPart, integralPartLength, false);
   assert(!numerator.isOverflow());
   // Special case for 0.??? : get rid of useless 0s in front of the integralPartLength
@@ -458,6 +464,10 @@ Expression Decimal::shallowReduce() {
     denominator = Integer::Power(Integer(10), Integer(numberOfDigits-1-exp));
   }
   Expression result;
+  /* We do not want to handle rationals that are too big and slow down the calculator
+  * At the moment we handle Decimals as Rationals but a better way of doing it
+  * would be to convert them into int*10^exp when the rational is too big.
+  */
   if (numerator.isNotParsable() || denominator.isNotParsable()) {
     result = Number::FloatNumber(node()->signedMantissa().template approximate<double>()*std::pow(10.0, (double)(exp - numberOfDigits + 1)));
   } else {

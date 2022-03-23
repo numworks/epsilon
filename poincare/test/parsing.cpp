@@ -404,6 +404,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
 
   // Reserved symbols
   assert_parsed_expression_is("Ans", Symbol::Builder("Ans", 3));
+  assert_parsed_expression_is("ans", Symbol::Builder("Ans", 3));
   assert_parsed_expression_is("𝐢", Constant::Builder("𝐢"));
   assert_parsed_expression_is("π", Constant::Builder("π"));
   assert_parsed_expression_is("ℯ", Constant::Builder("ℯ"));

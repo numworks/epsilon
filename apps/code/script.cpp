@@ -1,9 +1,6 @@
 #include "script.h"
 #include "script_store.h"
 
-#if APP_SCRIPT_LOG
-#include <iostream>
-#endif
 namespace Code {
 
 static inline void intToText(int i, char * buffer, int bufferSize) {
@@ -72,18 +69,6 @@ uint8_t * StatusFromData(Script::Data d) {
   return const_cast<uint8_t *>(static_cast<const uint8_t *>(d.buffer));
 }
 
-uint16_t * Script::CursorPosition() {
-  assert(!isNull());
-  Data d = value();
-  return (uint16_t *)(StatusFromData(d) + StatusSize());
-}
-void Script::setCursorPosition(uint16_t position) {
-  assert(!isNull());
-  Data d = value();
-  *CursorPosition() = position;
-  setValue(d);
-}
-
 bool Script::autoImportationStatus() const {
   return getStatutBit(k_autoImportationStatusMask);
 }
@@ -97,7 +82,7 @@ void Script::toggleAutoimportationStatus() {
 
 const char * Script::content() const {
   Data d = value();
-  return ((const char *)d.buffer) + StatusSize() + CursorPositionSize();
+  return ((const char *)d.buffer) + StatusSize();
 }
 
 bool Script::fetchedFromConsole() const {

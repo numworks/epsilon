@@ -51,7 +51,7 @@ private:
    * be able to store a Script with default name and its extension, the
    * importation status (1 char), the cursor (2 char), the default content "from math import *\n"
    * (20 char) and 10 char of free space. */
-  static constexpr int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::record_size_t)+Script::k_defaultScriptNameMaxSize+k_scriptExtensionLength+1+20+10+2;
+  static constexpr int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::record_size_t)+Script::k_defaultScriptNameMaxSize+k_scriptExtensionLength+1+20+10;
 };
 
 }

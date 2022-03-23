@@ -77,7 +77,6 @@ void EditorController::viewDidDisappear() {
 }
 
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
-  m_script.setCursorPosition(textArea->cursorLocation() - m_script.content());
   if (App::app()->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
@@ -163,7 +162,7 @@ void EditorController::cleanStorageEmptySpace() {
   Ion::Storage::Record::Data scriptValue = m_script.value();
   Ion::Storage::sharedStorage()->getAvailableSpaceFromEndOfRecord(
       m_script,
-      scriptValue.size - Script::StatusSize() - Script::CursorPositionSize() - (strlen(m_script.content()) + 1)); // TODO optimize number of script fetches
+      scriptValue.size - Script::StatusSize() - (strlen(m_script.content()) + 1)); // TODO optimize number of script fetches
 }
 
 

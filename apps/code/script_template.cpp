@@ -2,7 +2,7 @@
 
 namespace Code {
 
-constexpr ScriptTemplate emptyScriptTemplate(".py", "\x01" "\x00\x00" R"(from math import *
+constexpr ScriptTemplate emptyScriptTemplate(".py", "\x01" R"(from math import *
 )");
 
 

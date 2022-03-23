@@ -50,7 +50,7 @@ public:
     int row;
     int col;
   };
-  virtual Index2D computeDimensions() const;
+  Index2D computeDimensions() const;
 
   constexpr static float k_undefinedValue = NAN;
 
@@ -68,6 +68,7 @@ protected:
   virtual double observedValue(int index) const = 0;
   virtual int numberOfValuePairs() const = 0;
   double computeChi2();
+  virtual Index2D initialDimensions() const = 0;
 
   Index2D indexToIndex2D(int index) const;
   int index2DToIndex(Index2D indexes) const;

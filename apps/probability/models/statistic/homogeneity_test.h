@@ -54,6 +54,7 @@ private:
   int computeDegreesOfFreedom(Index2D max);
   double * parametersArray() override { return m_input; }
   void computeExpectedValues(Index2D max);
+  Index2D initialDimensions() const override { return Index2D{.row = 2, .col = 2}; }
 
   double m_input[k_maxNumberOfColumns * k_maxNumberOfRows];
   double m_expectedValues[k_maxNumberOfColumns * k_maxNumberOfRows];

@@ -53,11 +53,6 @@ void GoodnessTest::recomputeData() {
   }
 }
 
-Chi2Test::Index2D GoodnessTest::computeDimensions() const {
-  Index2D dim = Chi2Test::computeDimensions();
-  return Index2D{.row = dim.row, 2};
-}
-
 bool GoodnessTest::validateInputs() {
   if (numberOfValuePairs() <= 1) {
     return false;

@@ -73,6 +73,8 @@ void Device::poll() {
     /* After a USB reset, the host talks to the device by sending messages to
      * address 0; */
     setAddress(0);
+    // Flush the FIFOs
+    m_ep0.reset();
     m_ep0.setup();
     /* In setup(), we should set the MPSIZ field in OTG_DIEPCTL0 to the maximum
      * packet size depending on the enumeration speed (found in OTG_DSTS). We

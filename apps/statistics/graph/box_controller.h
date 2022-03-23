@@ -17,7 +17,7 @@ public:
                 Escher::StackViewController * stackViewController,
                 Escher::ViewController * typeViewController,
                 Store * store,
-                BoxView::Quantile * selectedQuantile,
+                int * selectedBoxCalculation,
                 int * selectedSeriesIndex);
 
   BoxParameterController * boxParameterController() { return &m_boxParameterController; }

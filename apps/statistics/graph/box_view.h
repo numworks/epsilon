@@ -15,18 +15,9 @@ class BoxController;
 
 class BoxView : public Shared::CurveView {
 public:
-  // TODO: Remove Quantile, and handle an integer, as there may be many outliers
-  enum class Quantile : int {
-    None = -1,
-    Min = 0,
-    FirstQuartile = 1,
-    Median = 2,
-    ThirdQuartile = 3,
-    Max = 4
-  };
-  BoxView(Store * store, int series, Quantile * selectedQuantile);
-  Quantile selectedQuantile() const { return *m_selectedQuantile; }
-  bool selectQuantile(int selectedQuantile);
+  BoxView(Store * store, int series, int * selectedBoxCalculation);
+  int selectedBoxCalculation() const { return *m_selectedBoxCalculation; }
+  bool selectQuantile(int selectedBoxCalculation);
   int series() const { return m_series; }
   void reloadQuantile();
 
@@ -81,7 +72,7 @@ private:
   Store * m_store;
   BoxRange m_boxRange;
   int m_series;
-  Quantile * m_selectedQuantile;
+  int * m_selectedBoxCalculation;
 };
 
 }

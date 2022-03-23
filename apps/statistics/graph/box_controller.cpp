@@ -8,9 +8,9 @@ using namespace Escher;
 
 namespace Statistics {
 
-BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, BoxView::Quantile * selectedQuantile, int * selectedSeriesIndex) :
-  MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store, (int *)(selectedQuantile), selectedSeriesIndex),
-  m_view(store, selectedQuantile),
+BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, int * selectedBoxCalculation, int * selectedSeriesIndex) :
+  MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store, (int *)(selectedBoxCalculation), selectedSeriesIndex),
+  m_view(store, selectedBoxCalculation),
   m_boxParameterController(nullptr, store),
   m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation([](void * context, void * sender) {
     BoxController * boxController = static_cast<BoxController * >(context);
@@ -59,8 +59,8 @@ void BoxController::willExitResponderChain(Responder * nextFirstResponder) {
 }
 
 bool BoxController::moveSelectionHorizontally(int deltaIndex) {
-  int selectedQuantile = (int)m_view.dataViewAtIndex(selectedSeriesIndex())->selectedQuantile();
-  int nextSelectedQuantile = selectedQuantile + deltaIndex;
+  int selectedBoxCalculation = (int)m_view.dataViewAtIndex(selectedSeriesIndex())->selectedBoxCalculation();
+  int nextSelectedQuantile = selectedBoxCalculation + deltaIndex;
   if (m_view.dataViewAtIndex(selectedSeriesIndex())->selectQuantile(nextSelectedQuantile)) {
     reloadBannerView();
     return true;
@@ -73,7 +73,7 @@ void BoxController::reloadBannerView() {
     return;
   }
 
-  int selectedQuantile = (int)m_view.dataViewAtIndex(selectedSeriesIndex())->selectedQuantile();
+  int selectedBoxCalculation = (int)m_view.dataViewAtIndex(selectedSeriesIndex())->selectedBoxCalculation();
 
   // Set series name
   char seriesChar = '0' + selectedSeriesIndex() + 1;
@@ -82,7 +82,7 @@ void BoxController::reloadBannerView() {
 
   // Set calculation name
   I18n::Message calculationName[5] = {I18n::Message::Minimum, I18n::Message::FirstQuartile, I18n::Message::Median, I18n::Message::ThirdQuartile, I18n::Message::Maximum};
-  m_view.bannerView()->calculationName()->setMessage(calculationName[selectedQuantile]);
+  m_view.bannerView()->calculationName()->setMessage(calculationName[selectedBoxCalculation]);
 
   // Set calculation result
   assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
@@ -91,7 +91,7 @@ void BoxController::reloadBannerView() {
   char buffer[bufferSize];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
-  double calculation = (m_store->*calculationMethods[selectedQuantile])(selectedSeriesIndex());
+  double calculation = (m_store->*calculationMethods[selectedBoxCalculation])(selectedSeriesIndex());
   int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);
   buffer[numberOfChar++] = ' ';
   assert(numberOfChar <= bufferSize - 1);

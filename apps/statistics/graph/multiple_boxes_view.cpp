@@ -6,11 +6,11 @@ using namespace Escher;
 
 namespace Statistics {
 
-MultipleBoxesView::MultipleBoxesView(Store * store, BoxView::Quantile * selectedQuantile) :
+MultipleBoxesView::MultipleBoxesView(Store * store, int * selectedBoxCalculation) :
   MultipleDataView(store),
-  m_boxView1(store, 0, selectedQuantile),
-  m_boxView2(store, 1, selectedQuantile),
-  m_boxView3(store, 2, selectedQuantile),
+  m_boxView1(store, 0, selectedBoxCalculation),
+  m_boxView2(store, 1, selectedBoxCalculation),
+  m_boxView3(store, 2, selectedBoxCalculation),
   m_axisView(store)
 {
 }

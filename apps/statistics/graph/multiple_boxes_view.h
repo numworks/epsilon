@@ -13,7 +13,7 @@ class BoxController;
 
 class MultipleBoxesView : public MultipleDataView {
 public:
-  MultipleBoxesView(Store * store, BoxView::Quantile * selectedQuantile);
+  MultipleBoxesView(Store * store, int * selectedBoxCalculation);
   // MultipleDataView
   int seriesOfSubviewAtIndex(int index) override;
   BoxBannerView * bannerView() override { return &m_bannerView; }

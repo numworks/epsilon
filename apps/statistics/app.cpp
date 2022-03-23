@@ -27,7 +27,7 @@ App::Snapshot::Snapshot() :
   m_selectedHistogramSeriesIndex(-1),
   m_selectedHistogramBarIndex(0),
   m_selectedBoxSeriesIndex(-1),
-  m_selectedBoxQuantile(BoxView::Quantile::Min)
+  m_selectedBoxCalculation(0)
 {
 }
 
@@ -42,7 +42,7 @@ void App::Snapshot::reset() {
   m_rangeVersion = 0;
   m_graphViewModel.selectGraphView(GraphViewModel::GraphView::Histogram);
   m_selectedHistogramBarIndex = 0;
-  m_selectedBoxQuantile = BoxView::Quantile::Min;
+  m_selectedBoxCalculation = 0;
   setActiveTab(0);
 }
 
@@ -61,7 +61,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_normalProbabilityHeader(&m_graphController, &m_normalProbabilityController, &m_normalProbabilityController),
   m_frequencyController(&m_frequencyHeader, &m_frequencyHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->selectedHistogramBarIndex(), snapshot->selectedBoxSeriesIndex()),
   m_frequencyHeader(&m_graphController, &m_frequencyController, &m_frequencyController),
-  m_boxController(&m_boxHeader, &m_boxHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->selectedBoxQuantile(), snapshot->selectedBoxSeriesIndex()),
+  m_boxController(&m_boxHeader, &m_boxHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->selectedBoxCalculation(), snapshot->selectedBoxSeriesIndex()),
   m_boxHeader(&m_graphController, &m_boxController, &m_boxController),
   m_histogramController(&m_histogramHeader, this, &m_histogramHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion(), snapshot->selectedHistogramBarIndex(), snapshot->selectedHistogramSeriesIndex()),
   m_histogramHeader(&m_graphController, &m_histogramController, &m_histogramController),

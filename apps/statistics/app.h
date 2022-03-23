@@ -41,7 +41,7 @@ public:
     int * selectedHistogramSeriesIndex() { return &m_selectedHistogramSeriesIndex; }
     int * selectedHistogramBarIndex() { return &m_selectedHistogramBarIndex; }
     int * selectedBoxSeriesIndex() { return &m_selectedBoxSeriesIndex; }
-    BoxView::Quantile * selectedBoxQuantile() { return &m_selectedBoxQuantile; }
+    int * selectedBoxCalculation() { return &m_selectedBoxCalculation; }
   private:
     Store m_store;
     uint32_t m_storeVersion;
@@ -52,7 +52,7 @@ public:
     int m_selectedHistogramSeriesIndex;
     int m_selectedHistogramBarIndex;
     int m_selectedBoxSeriesIndex;
-    BoxView::Quantile m_selectedBoxQuantile;
+    int m_selectedBoxCalculation;
   };
   TELEMETRY_ID("Statistics");
 private:

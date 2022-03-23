@@ -8,23 +8,23 @@ using namespace Escher;
 
 namespace Statistics {
 
-BoxView::BoxView(Store * store, int series, Quantile * selectedQuantile) :
+BoxView::BoxView(Store * store, int series, int * selectedBoxCalculation) :
   CurveView(&m_boxRange, nullptr, nullptr, nullptr),
   m_store(store),
   m_boxRange(BoxRange(store)),
   m_series(series),
-  m_selectedQuantile(selectedQuantile)
+  m_selectedBoxCalculation(selectedBoxCalculation)
 {
 }
 
-// TODO: Remove Quantile and adapt it
-bool BoxView::selectQuantile(int selectedQuantile) {
-  if (selectedQuantile < 0 || selectedQuantile > 4) {
+// TODO: Handle and use selectedBoxCalculation beyond 4
+bool BoxView::selectQuantile(int selectedBoxCalculation) {
+  if (selectedBoxCalculation < 0 || selectedBoxCalculation > 4) {
     return false;
   }
-  if ((int)*m_selectedQuantile != selectedQuantile) {
+  if (*m_selectedBoxCalculation != selectedBoxCalculation) {
     reloadQuantile();
-    *m_selectedQuantile = (Quantile)selectedQuantile;
+    *m_selectedBoxCalculation = selectedBoxCalculation;
     reloadQuantile();
   }
   return true;
@@ -34,7 +34,7 @@ void BoxView::reloadQuantile() {
   CurveView::reload();
   KDCoordinate minY = calculationLowerBoundPixel();
   KDCoordinate maxY = calculationUpperBoundPixel();
-  float calculation = calculationAtIndex((int)*m_selectedQuantile);
+  float calculation = calculationAtIndex(*m_selectedBoxCalculation);
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation)) - k_leftMargin;
   KDCoordinate width = k_leftMargin + k_rightMargin;
   KDRect dirtyRect = KDRect(minX, minY, width, maxY - minY);
@@ -80,7 +80,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   for (size_t i = 0; i < numberOfCalculation(); i++) {
     KDColor calculationColor = k_unfocusedColor;
     if (isMainViewSelected()) {
-      if (i == (int)*m_selectedQuantile) {
+      if (i == *m_selectedBoxCalculation) {
         continue;
       }
       calculationColor = DoublePairStore::colorOfSeriesAtIndex(m_series);
@@ -94,7 +94,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   }
   // Draw the selected calculation afterward, preventing it being overwritten.
   if (isMainViewSelected()) {
-    int selectedCalculation = (int)*m_selectedQuantile;
+    int selectedCalculation = *m_selectedBoxCalculation;
     assert(selectedCalculation >= 0 && selectedCalculation < numberOfCalculation());
     float calculation = calculationAtIndex(selectedCalculation);
     if (selectedCalculation >= numberOfLowerOutliers && selectedCalculation < numberOfLowerOutliers + k_numberOfNonOutlierCalculations) {

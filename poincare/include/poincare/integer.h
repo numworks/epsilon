@@ -116,6 +116,15 @@ public:
    * overflow, or when we want to have one more digit than usual to compute a
    * big division. */
   bool isOverflow() const { return m_identifier == TreeNode::OverflowIdentifier; }
+  /* If the user input is larger than 10^k_MaxNumberOfParsedDigitsBase10,
+   * it is converted to decimal which is then converted to float when reduced.
+   * This is to avoid computations that takes to much time, when pressing Ans
+   * for example.
+   * Nonetheless, an Integer bigger than 1O^k_MaxNumberOfParsedDigitsBase10 can
+   * be created during any Poincare computation (evaluation, reduction, solving
+   * of equations, etc.)
+   */
+  bool isNotParsable() const { return isOverflow() || NumberOfBase10DigitsWithoutSign(*this) > k_maxNumberOfParsedDigitsBase10; }
   static int NumberOfBase10DigitsWithoutSign(const Integer & i);
   bool isOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && !m_negative); };
   bool isTwo() const { return (numberOfDigits() == 1 && digit(0) == 2 && !m_negative); };
@@ -155,6 +164,7 @@ public:
   constexpr static int k_maxNumberOfDigits = 32;
 private:
   constexpr static int k_maxNumberOfDigitsBase10 = 309; // 1E308 < (2^32)^k_maxNumberOfDigits < 1E309
+  constexpr static int k_maxNumberOfParsedDigitsBase10 = 30; // the screen is 30 digits large.
   constexpr static int k_maxExtractableInteger = INT_MAX;
 
   // Constructors

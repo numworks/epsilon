@@ -43,7 +43,11 @@ Chi2Test::Index2D Chi2Test::computeDimensions() const {
       }
     }
   }
-  return Index2D{.row = maxRow + 1, .col = maxCol + 1};
+  Chi2Test::Index2D dim = Index2D{.row =  maxRow + 1, .col = maxCol + 1};
+  bool displayLastEmptyRow = dim.row < maxNumberOfRows();
+  bool displayLastEmptyColumn = dim.col < maxNumberOfColumns();
+  Chi2Test::Index2D initialDim = initialDimensions();
+  return Index2D{.row = std::max(initialDim.row, dim.row + displayLastEmptyRow), .col = std::max(initialDim.col, dim.col + displayLastEmptyColumn)};
 }
 
 double Chi2Test::computeChi2() {

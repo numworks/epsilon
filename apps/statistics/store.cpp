@@ -70,6 +70,51 @@ double Store::numberOfBars(int series) const {
   return std::ceil((maxValue(series) - firstBarAbscissa)/m_barWidth)+1;
 }
 
+I18n::Message Store::boxPlotCalculationMessageAtIndex(int series, int index) const {
+  if (index == 0) {
+    return I18n::Message::Minimum;
+  }
+  int nbOfLowerOutliers = numberOfLowerOutliers(series);
+  int nbOfUpperOutliers = numberOfUpperOutliers(series);
+  if (index == nbOfLowerOutliers + k_numberOfQuantiles + nbOfUpperOutliers - 1) {
+    // Handle maximum here to override UpperWhisker and Outlier messages
+    return I18n::Message::Maximum;
+  }
+  if (index >= nbOfLowerOutliers && index < nbOfLowerOutliers + k_numberOfQuantiles) {
+    return k_quantilesName[index - nbOfLowerOutliers];
+  }
+  assert(index < nbOfLowerOutliers + k_numberOfQuantiles + nbOfUpperOutliers);
+  return I18n::Message::StatisticsBoxOutlier;
+}
+
+double Store::boxPlotCalculationAtIndex(int series, int index) const {
+  assert(index >= 0);
+  if (index == 0) {
+    return minValue(series);
+  }
+  int nbOfLowerOutliers = numberOfLowerOutliers(series);
+  if (index < nbOfLowerOutliers) {
+    return lowerOutlierAtIndex(series, index);
+  }
+  index -= nbOfLowerOutliers;
+  if (index < k_numberOfQuantiles) {
+    return (this->*k_quantileCalculation[index])(series);
+  }
+  index -= k_numberOfQuantiles;
+  assert(index >= 0 && index < numberOfUpperOutliers(series));
+  return upperOutlierAtIndex(series, index);
+}
+
+bool Store::boxPlotCalculationIsOutlier(int series, int index) const {
+  int nbOfLowerOutliers = numberOfLowerOutliers(series);
+  return index < nbOfLowerOutliers || index >= nbOfLowerOutliers + k_numberOfQuantiles;
+}
+
+int Store::numberOfBoxPlotCalculations(int series) const {
+  // Outliers + Lower/Upper Whisker + First/Third Quartile + Median
+  return numberOfLowerOutliers(series) + k_numberOfQuantiles + numberOfUpperOutliers(series);
+}
+
 bool Store::scrollToSelectedBarIndex(int series, int index) {
   float startSelectedBar = startOfBarAtIndex(series, index);
   float windowRange = xMax() - xMin();

@@ -27,9 +27,6 @@ public:
   /* View */
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  /* Calculations */
-  // Lower/Upper Whisker + First/Third Quartile + Median
-  static constexpr int k_numberOfNonOutlierCalculations = 5;
   /* Colors */
   static constexpr KDColor k_selectedColor = Escher::Palette::YellowDark;
   static constexpr KDColor k_unfocusedColor = Escher::Palette::GrayMiddle;
@@ -52,9 +49,6 @@ private:
   static constexpr KDCoordinate k_rightMargin = k_biggestCalculationWidth/2 + 1;
   static constexpr KDCoordinate k_verticalMargin = k_chevronMargin + Chevrons::k_chevronHeight;
 
-  /* Calculations */
-  float calculationAtIndex(int i) const;
-  int numberOfCalculation() const;
   /* Draw */
   void drawBar(KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound, KDColor color, bool isSelected) const;
   void drawOutlier(KDContext * ctx, KDRect rect, float calculation, float segmentOrd, KDColor color, bool isSelected) const;

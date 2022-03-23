@@ -1,6 +1,7 @@
 #ifndef STATISTICS_STORE_H
 #define STATISTICS_STORE_H
 
+#include <apps/i18n.h>
 #include <apps/shared/memoized_curve_view_range.h>
 #include <apps/shared/double_pair_store.h>
 #include <stddef.h>
@@ -28,6 +29,10 @@ public:
   // Box plot
   bool displayOutliers() const { return m_displayOutliers; }
   void setDisplayOutliers(bool displayOutliers) { m_displayOutliers = displayOutliers; }
+  I18n::Message boxPlotCalculationMessageAtIndex(int series, int index) const;
+  double boxPlotCalculationAtIndex(int series, int index) const;
+  bool boxPlotCalculationIsOutlier(int series, int index) const;
+  int numberOfBoxPlotCalculations(int series) const;
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);
   bool frequenciesAreInteger(int series) const;
@@ -95,7 +100,24 @@ public:
   void resetColumn(int series, int i) override;
   void deleteAllPairsOfSeries(int series) override;
 
+  typedef double (Store::*CalculPointer)(int) const;
 private:
+  constexpr static int k_numberOfQuantiles = 5;
+  constexpr static I18n::Message k_quantilesName[k_numberOfQuantiles] = {
+    I18n::Message::StatisticsBoxLowerWhisker,
+    I18n::Message::FirstQuartile,
+    I18n::Message::Median,
+    I18n::Message::ThirdQuartile,
+    I18n::Message::StatisticsBoxUpperWhisker
+  };
+  constexpr static CalculPointer k_quantileCalculation[k_numberOfQuantiles] = {
+    &Store::lowerWhisker,
+    &Store::firstQuartile,
+    &Store::median,
+    &Store::thirdQuartile,
+    &Store::upperWhisker
+  };
+
   double defaultValue(int series, int i, int j) const override;
   double sumOfValuesBetween(int series, double x1, double x2) const;
   /* Find the i-th distinct value (if i is -1, browse the entire series) from
@@ -120,8 +142,6 @@ private:
   mutable bool m_sortedIndexValid[k_numberOfSeries];
   bool m_displayOutliers;
 };
-
-typedef double (Store::*CalculPointer)(int) const;
 
 }
 

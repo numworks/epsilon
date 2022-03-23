@@ -96,7 +96,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
   if (type == k_calculationCellType) {
     // Display a calculation cell
-    CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
+    Store::CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
       &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
       &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
     int seriesIndex = m_store->indexOfKthValidSeries(i-2);

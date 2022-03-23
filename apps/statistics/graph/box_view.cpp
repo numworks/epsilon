@@ -17,9 +17,8 @@ BoxView::BoxView(Store * store, int series, int * selectedBoxCalculation) :
 {
 }
 
-// TODO: Handle and use selectedBoxCalculation beyond 4
 bool BoxView::selectCalculation(int selectedBoxCalculation) {
-  if (selectedBoxCalculation < 0 || selectedBoxCalculation > 4) {
+  if (selectedBoxCalculation < 0 || selectedBoxCalculation >= m_store->numberOfBoxPlotCalculations(m_series)) {
     return false;
   }
   if (*m_selectedBoxCalculation != selectedBoxCalculation) {
@@ -34,7 +33,7 @@ void BoxView::reloadCalculation() {
   CurveView::reload();
   KDCoordinate minY = calculationLowerBoundPixel();
   KDCoordinate maxY = calculationUpperBoundPixel();
-  float calculation = calculationAtIndex(*m_selectedBoxCalculation);
+  float calculation = m_store->boxPlotCalculationAtIndex(m_series, *m_selectedBoxCalculation);
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation)) - k_leftMargin;
   KDCoordinate width = k_leftMargin + k_rightMargin;
   KDRect dirtyRect = KDRect(minX, minY, width, maxY - minY);
@@ -74,10 +73,8 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, lowerWhisker, firstQuart, color);
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, upperWhisker, color);
 
-  // Draw each calculations
-  int numberOfLowerOutliers = m_store->numberOfLowerOutliers(m_series);
-  // Draw unselected calculations
-  for (size_t i = 0; i < numberOfCalculation(); i++) {
+  // Draw each unselected calculations
+  for (size_t i = 0; i < m_store->numberOfBoxPlotCalculations(m_series); i++) {
     KDColor calculationColor = k_unfocusedColor;
     if (isMainViewSelected()) {
       if (i == *m_selectedBoxCalculation) {
@@ -85,60 +82,24 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
       }
       calculationColor = DoublePairStore::colorOfSeriesAtIndex(m_series);
     }
-    float calculation = calculationAtIndex(i);
-    if (i >= numberOfLowerOutliers && i < numberOfLowerOutliers + k_numberOfNonOutlierCalculations) {
-      drawBar(ctx, rect, calculation, lowBound, upBound, calculationColor, false);
-    } else {
+    float calculation = m_store->boxPlotCalculationAtIndex(m_series, i);
+    if (m_store->boxPlotCalculationIsOutlier(m_series, i)) {
       drawOutlier(ctx, rect, calculation, segmentOrd, calculationColor, false);
+    } else {
+      drawBar(ctx, rect, calculation, lowBound, upBound, calculationColor, false);
     }
   }
   // Draw the selected calculation afterward, preventing it being overwritten.
   if (isMainViewSelected()) {
     int selectedCalculation = *m_selectedBoxCalculation;
-    assert(selectedCalculation >= 0 && selectedCalculation < numberOfCalculation());
-    float calculation = calculationAtIndex(selectedCalculation);
-    if (selectedCalculation >= numberOfLowerOutliers && selectedCalculation < numberOfLowerOutliers + k_numberOfNonOutlierCalculations) {
-      drawBar(ctx, rect, calculation, lowBound, upBound, k_selectedColor, true);
-    } else {
+    assert(selectedCalculation >= 0 && selectedCalculation < m_store->numberOfBoxPlotCalculations(m_series));
+    float calculation = m_store->boxPlotCalculationAtIndex(m_series, selectedCalculation);
+    if (m_store->boxPlotCalculationIsOutlier(m_series, selectedCalculation)) {
       drawOutlier(ctx, rect, calculation, segmentOrd, k_selectedColor, true);
+    } else {
+      drawBar(ctx, rect, calculation, lowBound, upBound, k_selectedColor, true);
     }
   }
-}
-
-// TODO: Move this logic in a controller
-float BoxView::calculationAtIndex(int i) const {
-  if (i < 0) {
-    return m_store->minValue(m_series);
-  }
-  int numberOfLowerOutliers = m_store->numberOfLowerOutliers(m_series);
-  if (i < numberOfLowerOutliers) {
-    return m_store->lowerOutlierAtIndex(m_series, i);
-  }
-  if (i == numberOfLowerOutliers) {
-    return m_store->lowerWhisker(m_series);
-  }
-  if (i == numberOfLowerOutliers + 1) {
-    return m_store->firstQuartile(m_series);
-  }
-  if (i == numberOfLowerOutliers + 2) {
-    return m_store->median(m_series);
-  }
-  if (i == numberOfLowerOutliers + 3) {
-    return m_store->thirdQuartile(m_series);
-  }
-  if (i == numberOfLowerOutliers + 4) {
-    return m_store->upperWhisker(m_series);
-  }
-  int numberOfUpperOutliers = m_store->numberOfUpperOutliers(m_series);
-  if (i < numberOfLowerOutliers + k_numberOfNonOutlierCalculations + numberOfUpperOutliers) {
-    return m_store->upperOutlierAtIndex(m_series, i - numberOfLowerOutliers - k_numberOfNonOutlierCalculations);
-  }
-  return m_store->maxValue(m_series);
-}
-
-int BoxView::numberOfCalculation() const {
-  // Outliers + Lower/Upper Whisker + First/Third Quartile + Median
-  return m_store->numberOfLowerOutliers(m_series) + k_numberOfNonOutlierCalculations + m_store->numberOfUpperOutliers(m_series);
 }
 
 void BoxView::drawBar(KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound, KDColor color, bool isSelected) const {

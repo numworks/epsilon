@@ -69,29 +69,27 @@ bool BoxController::moveSelectionHorizontally(int deltaIndex) {
 }
 
 void BoxController::reloadBannerView() {
-  if (selectedSeriesIndex() < 0) {
+  int series = selectedSeriesIndex();
+  if (series < 0) {
     return;
   }
 
-  int selectedBoxCalculation = (int)m_view.dataViewAtIndex(selectedSeriesIndex())->selectedBoxCalculation();
+  int selectedBoxCalculation = (int)m_view.dataViewAtIndex(series)->selectedBoxCalculation();
 
   // Set series name
-  char seriesChar = '0' + selectedSeriesIndex() + 1;
+  char seriesChar = '0' + series + 1;
   char bufferName[] = {' ', 'V', seriesChar, '/', 'N', seriesChar, 0};
   m_view.bannerView()->seriesName()->setText(bufferName);
 
   // Set calculation name
-  I18n::Message calculationName[5] = {I18n::Message::Minimum, I18n::Message::FirstQuartile, I18n::Message::Median, I18n::Message::ThirdQuartile, I18n::Message::Maximum};
-  m_view.bannerView()->calculationName()->setMessage(calculationName[selectedBoxCalculation]);
+  m_view.bannerView()->calculationName()->setMessage(m_store->boxPlotCalculationMessageAtIndex(series, selectedBoxCalculation));
 
   // Set calculation result
   assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
   int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
   constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits) + 1;
   char buffer[bufferSize];
-  CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
-    &Store::maxValue};
-  double calculation = (m_store->*calculationMethods[selectedBoxCalculation])(selectedSeriesIndex());
+  double calculation = m_store->boxPlotCalculationAtIndex(series, selectedBoxCalculation);
   int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, precision);
   buffer[numberOfChar++] = ' ';
   assert(numberOfChar <= bufferSize - 1);

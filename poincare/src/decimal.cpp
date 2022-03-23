@@ -458,7 +458,7 @@ Expression Decimal::shallowReduce() {
     denominator = Integer::Power(Integer(10), Integer(numberOfDigits-1-exp));
   }
   Expression result;
-  if (numerator.isOverflow() || denominator.isOverflow()) {
+  if (numerator.isNotParsable() || denominator.isNotParsable()) {
     result = Number::FloatNumber(node()->signedMantissa().template approximate<double>()*std::pow(10.0, (double)(exp - numberOfDigits + 1)));
   } else {
     result = Rational::Builder(numerator, denominator);

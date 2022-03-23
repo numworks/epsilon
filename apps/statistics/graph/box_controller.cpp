@@ -60,8 +60,8 @@ void BoxController::willExitResponderChain(Responder * nextFirstResponder) {
 
 bool BoxController::moveSelectionHorizontally(int deltaIndex) {
   int selectedBoxCalculation = (int)m_view.dataViewAtIndex(selectedSeriesIndex())->selectedBoxCalculation();
-  int nextSelectedQuantile = selectedBoxCalculation + deltaIndex;
-  if (m_view.dataViewAtIndex(selectedSeriesIndex())->selectQuantile(nextSelectedQuantile)) {
+  int nextSelectedCalculation = selectedBoxCalculation + deltaIndex;
+  if (m_view.dataViewAtIndex(selectedSeriesIndex())->selectCalculation(nextSelectedCalculation)) {
     reloadBannerView();
     return true;
   }

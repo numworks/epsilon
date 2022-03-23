@@ -18,19 +18,19 @@ BoxView::BoxView(Store * store, int series, int * selectedBoxCalculation) :
 }
 
 // TODO: Handle and use selectedBoxCalculation beyond 4
-bool BoxView::selectQuantile(int selectedBoxCalculation) {
+bool BoxView::selectCalculation(int selectedBoxCalculation) {
   if (selectedBoxCalculation < 0 || selectedBoxCalculation > 4) {
     return false;
   }
   if (*m_selectedBoxCalculation != selectedBoxCalculation) {
-    reloadQuantile();
+    reloadCalculation();
     *m_selectedBoxCalculation = selectedBoxCalculation;
-    reloadQuantile();
+    reloadCalculation();
   }
   return true;
 }
 
-void BoxView::reloadQuantile() {
+void BoxView::reloadCalculation() {
   CurveView::reload();
   KDCoordinate minY = calculationLowerBoundPixel();
   KDCoordinate maxY = calculationUpperBoundPixel();

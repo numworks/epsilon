@@ -108,7 +108,7 @@ Layout Calculation::createExactOutputLayout(bool * couldNotCreateExactLayout) {
   if (ExceptionRun(ecp)) {
     Expression e = exactOutput();
     if (!e.isUninitialized()) {
-      return PoincareHelpers::CreateLayout(e);
+      return e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
     }
   }
   *couldNotCreateExactLayout = true;

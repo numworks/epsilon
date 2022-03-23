@@ -8,8 +8,8 @@ using namespace Escher;
 
 namespace Statistics {
 
-BoxView::BoxView(Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color, KDColor lightColor) :
-  CurveView(&m_boxRange, nullptr, bannerView, nullptr),
+BoxView::BoxView(Store * store, int series, Quantile * selectedQuantile) :
+  CurveView(&m_boxRange, nullptr, nullptr, nullptr),
   m_store(store),
   m_boxRange(BoxRange(store)),
   m_series(series),

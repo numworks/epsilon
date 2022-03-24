@@ -34,7 +34,7 @@ public:
 protected:
   virtual void highlightSelection() {}
   Escher::Responder * tabController() { return m_tabController; }
-  virtual void reloadBannerView() = 0;
+  virtual bool reloadBannerView() = 0;
   virtual bool moveSelectionHorizontally(int deltaIndex) = 0;
 
   Escher::Responder * m_tabController;

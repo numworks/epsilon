@@ -46,7 +46,7 @@ private:
   constexpr static int k_maxLegendLength = 13;
   constexpr static int k_maxNumberOfCharacters = 30;
   void highlightSelection() override;
-  void reloadBannerView() override;
+  bool reloadBannerView() override;
   void preinitXRangeParameters(double * xMin, double * xMax = nullptr);
   void initRangeParameters();
   void initYRangeParameters(int series);

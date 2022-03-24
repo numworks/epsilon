@@ -40,7 +40,7 @@ public:
 
   TELEMETRY_ID("Box");
 private:
-  void reloadBannerView() override;
+  bool reloadBannerView() override;
   MultipleBoxesView m_view;
   BoxParameterController m_boxParameterController;
   Escher::Button m_parameterButton;

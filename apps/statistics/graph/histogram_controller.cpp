@@ -117,10 +117,11 @@ void HistogramController::highlightSelection() {
   }
 }
 
-void HistogramController::reloadBannerView() {
+bool HistogramController::reloadBannerView() {
   if (selectedSeriesIndex() < 0) {
-    return;
+    return false;
   }
+  KDCoordinate previousHeight = m_view.bannerView()->minimalSizeForOptimalDisplay().height();
   int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
   constexpr size_t bufferSize = k_maxNumberOfCharacters + 2 * PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
   char buffer[bufferSize] = "";
@@ -146,6 +147,7 @@ void HistogramController::reloadBannerView() {
   m_view.bannerView()->frequencyView()->setText(buffer);
 
   m_view.bannerView()->reload();
+  return previousHeight != m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 }
 
 bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
@@ -162,10 +164,6 @@ bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
   {
     *m_selectedBarIndex = newSelectedBarIndex;
     m_view.dataViewAtIndex(selectedSeriesIndex())->setHighlight(m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex), m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex));
-    /* Reload the view even if it did not scroll because the banner height
-     * might have changed. */
-    reloadBannerView();
-    multipleDataView()->reload();
     return true;
   }
   return false;

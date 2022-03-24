@@ -14,7 +14,8 @@ namespace Calculation {
 
 namespace UnitComparison {
 
-// If you add new reference value, they always need to be sorted in increasing order.
+// If you add new reference values, they always need to be
+// sorted in increasing order.
 
 constexpr static const ReferenceValue k_lengthReferences[] = {
   ReferenceValue({I18n::Message::AtomNucleusDiameterTitle1, I18n::Message::AtomNucleusDiameterTitle2, I18n::Message::AtomNucleusDiameterSubtitle, 1e-15}),
@@ -40,8 +41,7 @@ constexpr static const ReferenceValue k_lengthReferences[] = {
   ReferenceValue({I18n::Message::SaturnDistanceTitle1, I18n::Message::SaturnDistanceTitle2, I18n::Message::SaturnDistanceSubtitle, 1400000000000.0}),
   ReferenceValue({I18n::Message::SolarSystemRadiusTitle1, I18n::Message::SolarSystemRadiusTitle2, I18n::Message::SolarSystemRadiusSubtitle, 36000000000000.0}),
   ReferenceValue({I18n::Message::SiriusDistanceTitle1, I18n::Message::SiriusDistanceTitle2, I18n::Message::SiriusDistanceSubtitle, 8e+16}),
-  ReferenceValue({I18n::Message::MilkyWayDiameterTitle1, I18n::Message::MilkyWayDiameterTitle2, I18n::Message::MilkyWayDiameterSubtitle, 9e+20}),
-  ReferenceValue({(I18n::Message)0, (I18n::Message)0, (I18n::Message)0, 0})
+  ReferenceValue({I18n::Message::MilkyWayDiameterTitle1, I18n::Message::MilkyWayDiameterTitle2, I18n::Message::MilkyWayDiameterSubtitle, 9e+20})
 };
 
 constexpr static const ReferenceValue k_massReferences[] = {
@@ -76,8 +76,7 @@ constexpr static const ReferenceValue k_massReferences[] = {
   ReferenceValue({I18n::Message::UranusWeightTitle1, I18n::Message::UranusWeightTitle2, I18n::Message::UranusWeightSubtitle, 8.68e+25}),
   ReferenceValue({I18n::Message::SaturnWeightTitle1, I18n::Message::SaturnWeightTitle2, I18n::Message::SaturnWeightSubtitle, 5.68e+26}),
   ReferenceValue({I18n::Message::JupiterWeightTitle1, I18n::Message::JupiterWeightTitle2, I18n::Message::JupiterWeightSubtitle, 1.9e+27}),
-  ReferenceValue({I18n::Message::SunWeightTitle1, I18n::Message::SunWeightTitle2, I18n::Message::SunWeightSubtitle, 1.99e+30}),
-  ReferenceValue({(I18n::Message)0, (I18n::Message)0, (I18n::Message)0, 0})
+  ReferenceValue({I18n::Message::SunWeightTitle1, I18n::Message::SunWeightTitle2, I18n::Message::SunWeightSubtitle, 1.99e+30})
 };
 
 constexpr static const ReferenceValue k_pressureReferences[] = {
@@ -89,8 +88,7 @@ constexpr static const ReferenceValue k_pressureReferences[] = {
   ReferenceValue({I18n::Message::ScubaTankPressureTitle1, I18n::Message::ScubaTankPressureTitle2, I18n::Message::ScubaTankPressureSubtitle, 20000000.0}),
   ReferenceValue({I18n::Message::MarianaTrenchPressureTitle1, I18n::Message::MarianaTrenchPressureTitle2, I18n::Message::MarianaTrenchPressureSubtitle, 100000000.0}),
   ReferenceValue({I18n::Message::EarthCorePressureTitle1, I18n::Message::EarthCorePressureTitle2, I18n::Message::EarthCorePressureSubtitle, 360000000000.0}),
-  ReferenceValue({I18n::Message::SunCorePressureTitle1, I18n::Message::SunCorePressureTitle2, I18n::Message::SunCorePressureSubtitle, 2.5e+16}),
-  ReferenceValue({(I18n::Message)0, (I18n::Message)0, (I18n::Message)0, 0})
+  ReferenceValue({I18n::Message::SunCorePressureTitle1, I18n::Message::SunCorePressureTitle2, I18n::Message::SunCorePressureSubtitle, 2.5e+16})
 };
 
 constexpr static const ReferenceValue k_powerReferences[] = {
@@ -101,8 +99,7 @@ constexpr static const ReferenceValue k_powerReferences[] = {
   ReferenceValue({I18n::Message::CameraFlashPowerTitle1, I18n::Message::CameraFlashPowerTitle2, I18n::Message::CameraFlashPowerSubtitle, 12000.0}),
   ReferenceValue({I18n::Message::TruckPowerTitle1, I18n::Message::TruckPowerTitle2, I18n::Message::TruckPowerSubtitle, 300000.0}),
   ReferenceValue({I18n::Message::WindTurbinePowerTitle1, I18n::Message::WindTurbinePowerTitle2, I18n::Message::WindTurbinePowerSubtitle, 2000000.0}),
-  ReferenceValue({I18n::Message::QuennMaryPowerTitle1, I18n::Message::QuennMaryPowerTitle2, I18n::Message::QuennMaryPowerSubtitle, 120000000.0}),
-  ReferenceValue({(I18n::Message)0, (I18n::Message)0, (I18n::Message)0, 0})
+  ReferenceValue({I18n::Message::QuennMaryPowerTitle1, I18n::Message::QuennMaryPowerTitle2, I18n::Message::QuennMaryPowerSubtitle, 120000000.0})
 };
 
 constexpr static const ReferenceValue k_areaReferences[] = {
@@ -130,8 +127,7 @@ constexpr static const ReferenceValue k_areaReferences[] = {
   ReferenceValue({I18n::Message::EarthAreaTitle1, I18n::Message::EarthAreaTitle2, I18n::Message::EarthAreaSubtitle, 510000000000000.0}),
   ReferenceValue({I18n::Message::NeptuneAreaTitle1, I18n::Message::NeptuneAreaTitle2, I18n::Message::NeptuneAreaSubtitle, 7620000000000000.0}),
   ReferenceValue({I18n::Message::SaturnAreaTitle1, I18n::Message::SaturnAreaTitle2, I18n::Message::SaturnAreaSubtitle, 4.26e+16}),
-  ReferenceValue({I18n::Message::SunAreaTitle1, I18n::Message::SunAreaTitle2, I18n::Message::SunAreaSubtitle, 6.08e+18}),
-  ReferenceValue({(I18n::Message)0, (I18n::Message)0, (I18n::Message)0, 0})
+  ReferenceValue({I18n::Message::SunAreaTitle1, I18n::Message::SunAreaTitle2, I18n::Message::SunAreaSubtitle, 6.08e+18})
 };
 
 constexpr static const ReferenceValue k_timeReferences[] = {
@@ -148,8 +144,7 @@ constexpr static const ReferenceValue k_timeReferences[] = {
   ReferenceValue({I18n::Message::HomoSapiensAgeTitle1, I18n::Message::HomoSapiensAgeTitle2, I18n::Message::HomoSapiensAgeSubtitle, 9470000000000.0}),
   ReferenceValue({I18n::Message::LucyAgeTitle1, I18n::Message::LucyAgeTitle2, I18n::Message::LucyAgeSubtitle, 101000000000000.0}),
   ReferenceValue({I18n::Message::DinosaursAgeTitle1, I18n::Message::DinosaursAgeTitle2, I18n::Message::DinosaursAgeSubtitle, 2050000000000000.0}),
-  ReferenceValue({I18n::Message::UniverseAgeTitle1, I18n::Message::UniverseAgeTitle2, I18n::Message::UniverseAgeSubtitle, 4.42e+17}),
-  ReferenceValue({(I18n::Message)0, (I18n::Message)0, (I18n::Message)0, 0})
+  ReferenceValue({I18n::Message::UniverseAgeTitle1, I18n::Message::UniverseAgeTitle2, I18n::Message::UniverseAgeSubtitle, 4.42e+17})
 };
 
 constexpr static const ReferenceValue k_velocityReferences[] = {
@@ -159,8 +154,7 @@ constexpr static const ReferenceValue k_velocityReferences[] = {
   ReferenceValue({I18n::Message::SoundSpeedTitle1, I18n::Message::SoundSpeedTitle2, I18n::Message::SoundSpeedSubtitle, 340.0}),
   ReferenceValue({I18n::Message::SatelliteSpeedTitle1, I18n::Message::SatelliteSpeedTitle2, I18n::Message::SatelliteSpeedSubtitle, 7800.0}),
   ReferenceValue({I18n::Message::EarthRevolutionSpeedTitle1, I18n::Message::EarthRevolutionSpeedTitle2, I18n::Message::EarthRevolutionSpeedSubtitle, 30000.0}),
-  ReferenceValue({I18n::Message::LightSpeedTitle1, I18n::Message::LightSpeedTitle2, I18n::Message::LightSpeedSubtitle, 300000000.0}),
-  ReferenceValue({(I18n::Message)0, (I18n::Message)0, (I18n::Message)0, 0})
+  ReferenceValue({I18n::Message::LightSpeedTitle1, I18n::Message::LightSpeedTitle2, I18n::Message::LightSpeedSubtitle, 300000000.0})
 };
 
 constexpr static const ReferenceValue k_volumeReferences[] = {
@@ -189,25 +183,22 @@ constexpr static const ReferenceValue k_volumeReferences[] = {
   ReferenceValue({I18n::Message::MoonVolumeTitle1, I18n::Message::MoonVolumeTitle2, I18n::Message::MoonVolumeSubtitle, 2.2e+19}),
   ReferenceValue({I18n::Message::EarthVolumeTitle1, I18n::Message::EarthVolumeTitle2, I18n::Message::EarthVolumeSubtitle, 1.08e+21}),
   ReferenceValue({I18n::Message::JupiterVolumeTitle1, I18n::Message::JupiterVolumeTitle2, I18n::Message::JupiterVolumeSubtitle, 1.43e+24}),
-  ReferenceValue({I18n::Message::SunVolumeTitle1, I18n::Message::SunVolumeTitle2, I18n::Message::SunVolumeSubtitle, 1.41e+27}),
-  ReferenceValue({(I18n::Message)0, (I18n::Message)0, (I18n::Message)0, 0})
+  ReferenceValue({I18n::Message::SunVolumeTitle1, I18n::Message::SunVolumeTitle2, I18n::Message::SunVolumeSubtitle, 1.41e+27})
 };
 
 constexpr static const int k_numberOfReferenceTables = 8;
-constexpr static ReferenceUnit k_referenceUnits[] = {
-  ReferenceUnit({"_m", "_m"}), // Length
-  ReferenceUnit({"_s", "_s"}), // Time
-  ReferenceUnit({"_kg", "_kg"}), // Mass
-  ReferenceUnit({"_m^2", "_m^2"}), // Area
-  ReferenceUnit({"_m^3", "_m^3"}), // Volume
-  ReferenceUnit({"_kg×_m^2×_s^\u0012-3\u0013", "_W"}), // Power
-  ReferenceUnit({"_m×_s^\u0012-1\u0013", "_m×_s^\u0012-1\u0013"}), // Velocity
-  ReferenceUnit({"_kg×_m^\u0012-1\u0013×_s^\u0012-2\u0013", "_Pa"}) // Pressure
+constexpr static const struct { ReferenceUnit unit; const ReferenceValue * referenceTable; size_t tableLength;} k_referenceTables[] = {
+  {ReferenceUnit({"_m", "_m"}), k_lengthReferences, sizeof(k_lengthReferences)/sizeof(ReferenceValue)},
+  {ReferenceUnit({"_s", "_s"}), k_timeReferences, sizeof(k_timeReferences)/sizeof(ReferenceValue)},
+  {ReferenceUnit({"_kg", "_kg"}), k_massReferences, sizeof(k_massReferences)/sizeof(ReferenceValue)},
+  {ReferenceUnit({"_m^2", "_m^2"}), k_areaReferences, sizeof(k_areaReferences)/sizeof(ReferenceValue)},
+  {ReferenceUnit({"_m^3", "_m^3"}), k_volumeReferences, sizeof(k_volumeReferences)/sizeof(ReferenceValue)},
+  {ReferenceUnit({"_kg×_m^2×_s^\u0012-3\u0013", "_W"}), k_powerReferences, sizeof(k_powerReferences)/sizeof(ReferenceValue)},
+  {ReferenceUnit({"_m×_s^\u0012-1\u0013", "_m×_s^\u0012-1\u0013"}), k_velocityReferences, sizeof(k_velocityReferences)/sizeof(ReferenceValue)},
+  {ReferenceUnit({"_kg×_m^\u0012-1\u0013×_s^\u0012-2\u0013", "_Pa"}), k_pressureReferences, sizeof(k_pressureReferences)/sizeof(ReferenceValue)}
 };
-constexpr static const ReferenceValue * k_referenceTables[] = {k_lengthReferences, k_timeReferences, k_massReferences, k_areaReferences, k_volumeReferences, k_powerReferences, k_velocityReferences, k_pressureReferences};
 
-static_assert(sizeof(k_referenceUnits) / sizeof(ReferenceUnit) == k_numberOfReferenceTables, "Wrong number of reference tables or missing reference unit");
-static_assert(sizeof(k_referenceTables) / sizeof(ReferenceValue *) == k_numberOfReferenceTables, "Wrong number of reference tables or missing reference table");
+static_assert(sizeof(k_referenceTables) / (sizeof(ReferenceValue *) + sizeof(ReferenceUnit) + sizeof(size_t)) == k_numberOfReferenceTables, "Wrong number of reference tables or missing reference table");
 
 int FindUpperAndLowerReferenceValues(double inputValue, Expression unit, const ReferenceValue ** referenceValues, int * returnReferenceTableIndex) {
   // 1. Find table of corresponding unit.
@@ -216,8 +207,8 @@ int FindUpperAndLowerReferenceValues(double inputValue, Expression unit, const R
   PoincareHelpers::Serialize(unit, unitBuffer, k_sizeOfUnitBuffer);
   int referenceTableIndex = 0;
   while (referenceTableIndex < k_numberOfReferenceTables) {
-    if (strncmp(unitBuffer, k_referenceUnits[referenceTableIndex].SIUnit, k_sizeOfUnitBuffer) == 0) {
-      referenceTable = k_referenceTables[referenceTableIndex];
+    if (strncmp(unitBuffer, k_referenceTables[referenceTableIndex].unit.SIUnit, k_sizeOfUnitBuffer) == 0) {
+      referenceTable = k_referenceTables[referenceTableIndex].referenceTable;
       break;
     }
     referenceTableIndex++;
@@ -228,29 +219,29 @@ int FindUpperAndLowerReferenceValues(double inputValue, Expression unit, const R
 
 
   // 2. Iterate through table to find upper and lower values indexes
-  int referenceIndex = 0;
+  int referenceIndex;
   int upperIndex = -1;
-  while(referenceTable[referenceIndex].value != 0) {
+  for (referenceIndex = 0; referenceIndex < k_referenceTables[referenceTableIndex].tableLength; referenceIndex++) {
+    assert(referenceIndex == 0 || referenceTable[referenceIndex].value > referenceTable[referenceIndex - 1].value); // This checks if table is sorted (in case of value wrongly added to table).
     if (referenceTable[referenceIndex].value >= inputValue) {
       upperIndex = referenceIndex;
       break;
     }
-    referenceIndex ++;
   }
   int lowerIndex = upperIndex < 0 ? referenceIndex - 1 : upperIndex - 1;
 
   // 3. Find ratios and save them if needed
   int indexes[] = {lowerIndex, upperIndex};
   double ratios[] = {0.0, 0.0};
-  int numberOfReferenceFound = 0;
+  int numberOfReferencesFound = 0;
   for (int i = 0; i < 2; i++) {
     if (indexes[i] != -1) {
       ratios[i] = inputValue / static_cast<double>(referenceTable[indexes[i]].value);
       if (ratios[i] < 100.0 && ratios[i] >= 0.01) {
         if (referenceValues != nullptr) {
-          referenceValues[numberOfReferenceFound] = &referenceTable[indexes[i]];
+          referenceValues[numberOfReferencesFound] = &referenceTable[indexes[i]];
         }
-        numberOfReferenceFound++;
+        numberOfReferencesFound++;
       }
     }
   }
@@ -259,11 +250,15 @@ int FindUpperAndLowerReferenceValues(double inputValue, Expression unit, const R
     *returnReferenceTableIndex = referenceTableIndex;
   }
 
-  return numberOfReferenceFound;
+  return numberOfReferencesFound;
+}
+
+bool ShouldDisplayUnitComparison(double inputValue, Poincare::Expression unit) {
+  return FindUpperAndLowerReferenceValues(inputValue, unit, nullptr, nullptr) > 0;
 }
 
 void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize) {
-  assert(bufferSize <= k_sizeOfUnitComparisonBuffer);
+  assert(bufferSize <= k_sizeOfUnitComparisonBuffer && bufferSize > 0);
   assert(ratio < 100.0 && ratio >= 0.01);
   int bufferIndex = 0;
   bool withPercentage = false;
@@ -277,16 +272,17 @@ void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize) {
     bufferIndex = PoincareHelpers::ConvertFloatToText<double>(ratio, textBuffer, bufferSize - 1, k_numberOfSignicativeDigits);
   }
   if (withPercentage) {
+    assert(bufferIndex < bufferSize - 1);
     textBuffer[bufferIndex] = '%';
     bufferIndex++;
     textBuffer[bufferIndex] = 0;
   }
 }
 
-Expression BuildComparisonExpression(double value, const ReferenceValue * referenceValue, int unitIndex) {
-  assert(unitIndex < k_numberOfReferenceTables);
+Expression BuildComparisonExpression(double value, const ReferenceValue * referenceValue, int tableIndex) {
+  assert(tableIndex < k_numberOfReferenceTables);
   double ratio = value / static_cast<double>(referenceValue->value);
-  Expression unit = Poincare::Expression::Parse(k_referenceUnits[unitIndex].displayedUnit, App::app()->localContext());
+  Expression unit = Poincare::Expression::Parse(k_referenceTables[tableIndex].unit.displayedUnit, App::app()->localContext());
   return Multiplication::Builder(Float<double>::Builder(ratio), Float<float>::Builder(referenceValue->value), unit);
 }
 

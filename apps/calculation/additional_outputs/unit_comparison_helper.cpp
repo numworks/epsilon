@@ -266,15 +266,23 @@ void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize) {
   assert(ratio < 100.0 && ratio >= 0.01);
   int bufferIndex = 0;
   bool withPercentage = false;
-  if (ratio <= 1.0) {
+  // Turn all ratios below 1.05 into %
+  if (ratio < k_maxPercentageRatioDisplay) {
     ratio = 100.0*ratio;
     withPercentage = true;
   }
+  int significativeDigits = k_numberOfSignicativeDigits;
+  // Handle the case 99.5% to 105%
   if (ratio >= 99.5) {
-    bufferIndex = PoincareHelpers::ConvertFloatToText<double>(100.0, textBuffer, bufferSize - 1, k_numberOfSignicativeDigits + 1);
-  } else {
-    bufferIndex = PoincareHelpers::ConvertFloatToText<double>(ratio, textBuffer, bufferSize - 1, k_numberOfSignicativeDigits);
+     significativeDigits++;
+    /* This is to avoid displaying 99.6% which we
+     * don't want and exceeds the buffer. */
+    if (ratio < 100) {
+      ratio = 100;
+    }
   }
+  bufferIndex = PoincareHelpers::ConvertFloatToText<double>(ratio, textBuffer, bufferSize - 1, significativeDigits);
+  // Add % at the end
   if (withPercentage) {
     assert(bufferIndex < bufferSize - 1);
     textBuffer[bufferIndex] = '%';

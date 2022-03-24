@@ -15,6 +15,7 @@ namespace UnitComparison {
 constexpr static int k_sizeOfUnitComparisonBuffer = 5;
 constexpr static int k_sizeOfUnitBuffer = 30;
 constexpr static int k_numberOfSignicativeDigits = 2;
+constexpr static float k_maxPercentageRatioDisplay = 1.05;
 
 typedef struct {
   const char * SIUnit;

@@ -207,10 +207,10 @@ void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessag
   char floatToTextBuffer[UnitComparison::k_sizeOfUnitComparisonBuffer];
   double ratio = m_SIValue / static_cast<double>(referenceValue->value);
   UnitComparison::FillRatioBuffer(ratio, floatToTextBuffer, UnitComparison::k_sizeOfUnitComparisonBuffer);
-  if (ratio > 1.0) {
-    messageInCell = referenceValue->title2;
-  } else {
+  if (ratio < UnitComparison::k_maxPercentageRatioDisplay) {
     messageInCell = referenceValue->title1;
+  } else {
+    messageInCell = referenceValue->title2;
   }
   bufferCell->setMessageWithPlaceholder(messageInCell, floatToTextBuffer);
 }

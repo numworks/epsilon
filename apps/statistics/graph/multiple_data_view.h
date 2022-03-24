@@ -31,6 +31,7 @@ public:
   int numberOfSubviews() const override;
 protected:
   virtual Shared::BannerView * bannerView() = 0;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
   virtual void layoutDataSubviews(bool force);
   Escher::View * subviewAtIndex(int index) override;
@@ -39,7 +40,6 @@ protected:
   Store * m_store;
 private:
   void layoutBanner(bool force);
-  void drawRect(KDContext * ctx, KDRect rect) const override;
   bool m_displayBanner;
 };
 

@@ -58,5 +58,10 @@ View *  MultipleBoxesView::subviewAtIndex(int index) {
   return MultipleDataView::subviewAtIndex(index);
 }
 
+void MultipleBoxesView::drawRect(KDContext * ctx, KDRect rect) const {
+  KDCoordinate bannerHeight = bannerFrame().height();
+  ctx->fillRect(KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight - k_axisViewHeight), KDColorWhite);
+  MultipleDataView::drawRect(ctx, rect);
+}
 
 }

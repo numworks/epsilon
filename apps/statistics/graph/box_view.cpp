@@ -51,8 +51,6 @@ void BoxView::reload(bool resetInterrupted, bool force) {
 }
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
-
   KDColor color = isMainViewSelected() ? DoublePairStore::colorLightOfSeriesAtIndex(m_series) : Palette::GrayBright;
   KDCoordinate lowBoundPixel = boxLowerBoundPixel();
   KDCoordinate upBoundPixel = boxUpperBoundPixel();

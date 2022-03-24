@@ -47,6 +47,13 @@ void MultipleBoxesView::reload() {
   m_axisView.reload();
 }
 
+bool MultipleBoxesView::moveSelectionHorizontally(int series, int deltaIndex) {
+  assert(deltaIndex != 0);
+  BoxView * view = dataViewAtIndex(series);
+  int selectedBoxCalculation = view->selectedBoxCalculation();
+  return view->selectCalculation(selectedBoxCalculation + deltaIndex);
+}
+
 int MultipleBoxesView::numberOfSubviews() const {
   return MultipleDataView::numberOfSubviews() + 1; // +1 for the axis view
 }

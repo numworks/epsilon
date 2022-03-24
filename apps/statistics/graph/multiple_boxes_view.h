@@ -20,6 +20,7 @@ public:
   BoxView * dataViewAtIndex(int index) override;
   void layoutDataSubviews(bool force) override;
   void reload() override;
+  bool moveSelectionHorizontally(int series, int deltaIndex);
 
   // View
   int numberOfSubviews() const override;

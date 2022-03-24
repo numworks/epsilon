@@ -30,7 +30,7 @@ typedef struct {
 
 int FindUpperAndLowerReferenceValues(double inputValue, Poincare::Expression unit, const ReferenceValue ** referenceValues, int * returnUnitIndex);
 bool ShouldDisplayUnitComparison(double inputValue, Poincare::Expression unit);
-void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize = k_sizeOfUnitComparisonBuffer);
+void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize);
 Poincare::Expression BuildComparisonExpression(double value, const ReferenceValue * referenceValue, int tableIndex);
 }
 

@@ -28,7 +28,7 @@ typedef struct {
   float value;
 } ReferenceValue;
 
-int FindUpperAndLowerReferenceValues(double inputValue, Poincare::Expression unit, const ReferenceValue ** referenceValues, int * returnUnitIndex);
+int FindUpperAndLowerReferenceValues(double inputValue, Poincare::Expression orderedSIUnit, const ReferenceValue ** referenceValues, int * returnUnitIndex);
 bool ShouldDisplayUnitComparison(double inputValue, Poincare::Expression unit);
 void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize);
 Poincare::Expression BuildComparisonExpression(double value, const ReferenceValue * referenceValue, int tableIndex);

@@ -57,7 +57,7 @@ protected:
   }
 
   // MultipleDataViewController
-  void reloadBannerView() override;
+  bool reloadBannerView() override;
   virtual const char * resultMessageTemplate() const = 0;
   virtual I18n::Message resultMessage() const = 0;
 

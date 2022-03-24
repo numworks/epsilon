@@ -47,17 +47,17 @@ bool PlotController::moveSelectionHorizontally(int deltaIndex) {
     double y = resultAtIndex(series, nextIndex);
     m_cursor.moveTo(x, x, y);
     m_curveView.reload();
-    reloadBannerView();
     return true;
   }
   return false;
 }
 
-void PlotController::reloadBannerView() {
+bool PlotController::reloadBannerView() {
   int series = selectedSeriesIndex();
   if (series < 0) {
-    return;
+    return false;
   }
+  KDCoordinate previousHeight = m_bannerView.minimalSizeForOptimalDisplay().height();
 
   *m_selectedBarIndex = SanitizeIndex(*m_selectedBarIndex, totalValues(series));
 
@@ -91,6 +91,7 @@ void PlotController::reloadBannerView() {
   m_bannerView.result()->setText(buffer);
 
   m_bannerView.reload();
+  return previousHeight != m_bannerView.minimalSizeForOptimalDisplay().height();
 }
 
 }

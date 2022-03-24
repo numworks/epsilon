@@ -38,15 +38,13 @@ int UnitListController::reusableCellCount(int type) {
 
 void UnitListController::viewDidDisappear() {
   ListController::viewDidDisappear();
-  // Reset layout and cell memoization to avoid taking extra space in the pool
+  // Reset layout and expression to avoid taking extra space in the pool
   for (int i = 0; i < k_maxNumberOfExpressionCells; i++) {
     m_expressionCells[i].setLayout(Layout());
-    m_expressionCells[i].setHighlighted(false);
     m_layouts[i] = Layout();
   }
   for (int i = 0; i < k_maxNumberOfBufferCells; i++) {
     m_referenceValues[i] = nullptr;
-    m_bufferCells[i].setHighlighted(false);
   }
   m_expression = Expression();
   m_numberOfExpressionCells = 0;
@@ -71,6 +69,7 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int index) {
 }
 
 void UnitListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  cell->setHighlighted(false);
   if (typeAtIndex(index) == k_expressionCellType) {
     ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
     myCell->setLayout(layoutAtIndex(index));
@@ -92,7 +91,6 @@ void UnitListController::setExpression(Poincare::Expression e) {
   m_expression = e;
 
   // I. Handle expression cells
-
   // 0. Initialize expressions and layouts
   Poincare::Expression expressions[k_maxNumberOfExpressionCells];
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
@@ -171,9 +169,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   }
 
   // II. Handle buffer cells
-
-  /* 0. Initialize reference values
-   */
+  // 0. Initialize reference values
   for (size_t i = 0; i < k_maxNumberOfBufferCells; i++) {
     m_referenceValues[i] = nullptr;
   }
@@ -185,7 +181,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   PoincareHelpers::ReduceAndRemoveUnit(&clone, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
   m_SIValue = PoincareHelpers::ApproximateToScalar<double>(clone, App::app()->localContext());
     // 2. Set upper and lower reference values
-  m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(m_SIValue, unit, m_referenceValues, &m_unitIndexForComparison);
+  m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(m_SIValue, unit, m_referenceValues, &m_tableIndexForComparison);
 
   }
 
@@ -210,7 +206,7 @@ void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessag
   I18n::Message messageInCell;
   char floatToTextBuffer[UnitComparison::k_sizeOfUnitComparisonBuffer];
   double ratio = m_SIValue / static_cast<double>(referenceValue->value);
-  UnitComparison::FillRatioBuffer(ratio, floatToTextBuffer, UnitComparison::k_sizeOfUnitComparisonBuffer);
+  UnitComparison::FillRatioBuffer(ratio, floatToTextBuffer);
   if (ratio > 1.0) {
     messageInCell = referenceValue->title2;
   } else {
@@ -226,7 +222,7 @@ int UnitListController::textAtIndex(char * buffer, size_t bufferSize, int index)
   }
   index = index - m_numberOfExpressionCells;
   assert(index < m_numberOfBufferCells);
-  return UnitComparison::BuildComparisonExpression(m_SIValue, m_referenceValues[index], m_unitIndexForComparison).serialize(buffer, bufferSize);
+  return UnitComparison::BuildComparisonExpression(m_SIValue, m_referenceValues[index], m_tableIndexForComparison).serialize(buffer, bufferSize);
 }
 
 }

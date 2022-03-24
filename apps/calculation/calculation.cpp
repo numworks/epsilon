@@ -269,7 +269,7 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
     PoincareHelpers::ReduceAndRemoveUnit(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
     double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
     if (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())
-        || UnitComparison::FindUpperAndLowerReferenceValues(value, unit, nullptr, nullptr) > 0) {
+        || UnitComparison::ShouldDisplayUnitComparison(value, unit)) {
       return AdditionalInformationType::Unit;
     }
     return AdditionalInformationType::None;

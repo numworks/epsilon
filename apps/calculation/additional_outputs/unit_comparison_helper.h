@@ -8,8 +8,9 @@ namespace Calculation {
 
 namespace UnitComparison {
 
-// If you add new reference values (in .cpp), they always need to be
-// sorted in increasing order.
+/* If you add new reference values (in .cpp), they always need to be
+ * sorted in increasing order.
+ */
 
 constexpr static int k_sizeOfUnitComparisonBuffer = 5;
 constexpr static int k_sizeOfUnitBuffer = 30;

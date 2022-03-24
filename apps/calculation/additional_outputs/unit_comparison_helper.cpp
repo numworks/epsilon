@@ -14,8 +14,9 @@ namespace Calculation {
 
 namespace UnitComparison {
 
-// If you add new reference values, they always need to be
-// sorted in increasing order.
+/* If you add new reference values, they always need to be
+ *  sorted in increasing order.
+ */
 
 constexpr static const ReferenceValue k_lengthReferences[] = {
   ReferenceValue({I18n::Message::AtomNucleusDiameterTitle1, I18n::Message::AtomNucleusDiameterTitle2, I18n::Message::AtomNucleusDiameterSubtitle, 1e-15}),

@@ -45,7 +45,7 @@ private:
   Poincare::Layout m_layouts[k_maxNumberOfExpressionCells];
   const UnitComparison::ReferenceValue * m_referenceValues[k_maxNumberOfBufferCells];
   double m_SIValue;
-  int m_unitIndexForComparison;
+  int m_tableIndexForComparison;
 };
 
 }

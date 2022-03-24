@@ -201,11 +201,14 @@ constexpr static const struct { ReferenceUnit unit; const ReferenceValue * refer
 
 static_assert(sizeof(k_referenceTables) / (sizeof(ReferenceValue *) + sizeof(ReferenceUnit) + sizeof(size_t)) == k_numberOfReferenceTables, "Wrong number of reference tables or missing reference table");
 
-int FindUpperAndLowerReferenceValues(double inputValue, Expression unit, const ReferenceValue ** referenceValues, int * returnReferenceTableIndex) {
-  // 1. Find table of corresponding unit.
+int FindUpperAndLowerReferenceValues(double inputValue, Expression orderedSIUnit, const ReferenceValue ** referenceValues, int * returnReferenceTableIndex) {
+  /* 1. Find table of corresponding unit.
+   * WARNING : if you call this method with a unit that is not an SI unit,
+   * in right order, the comparison won't work.
+   * Units you can use are listed in k_referenceTables.*/
   const ReferenceValue * referenceTable = nullptr;
   char unitBuffer[k_sizeOfUnitBuffer];
-  PoincareHelpers::Serialize(unit, unitBuffer, k_sizeOfUnitBuffer);
+  PoincareHelpers::Serialize(orderedSIUnit, unitBuffer, k_sizeOfUnitBuffer);
   int referenceTableIndex = 0;
   while (referenceTableIndex < k_numberOfReferenceTables) {
     if (strncmp(unitBuffer, k_referenceTables[referenceTableIndex].unit.SIUnit, k_sizeOfUnitBuffer) == 0) {

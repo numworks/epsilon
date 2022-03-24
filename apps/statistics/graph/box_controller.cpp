@@ -61,18 +61,16 @@ void BoxController::willExitResponderChain(Responder * nextFirstResponder) {
 bool BoxController::moveSelectionHorizontally(int deltaIndex) {
   int selectedBoxCalculation = (int)m_view.dataViewAtIndex(selectedSeriesIndex())->selectedBoxCalculation();
   int nextSelectedCalculation = selectedBoxCalculation + deltaIndex;
-  if (m_view.dataViewAtIndex(selectedSeriesIndex())->selectCalculation(nextSelectedCalculation)) {
-    reloadBannerView();
-    return true;
-  }
-  return false;
+  return m_view.dataViewAtIndex(selectedSeriesIndex())->selectCalculation(nextSelectedCalculation);
 }
 
-void BoxController::reloadBannerView() {
+bool BoxController::reloadBannerView() {
   int series = selectedSeriesIndex();
   if (series < 0) {
-    return;
+    return false;
   }
+
+  KDCoordinate previousHeight = m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 
   // With 7 = KDFont::SmallFont->glyphSize().width()
   constexpr static int k_bufferSize = Ion::Display::Width / 7 - (int)sizeof("V1/N1") + 2;
@@ -95,6 +93,7 @@ void BoxController::reloadBannerView() {
   m_view.bannerView()->calculationValue()->setText(buffer);
 
   m_view.bannerView()->reload();
+  return previousHeight != m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 }
 
 }

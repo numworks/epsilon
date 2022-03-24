@@ -54,8 +54,9 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
       *m_selectedBarIndex = MultipleDataView::k_defaultSelectedBar;
       multipleDataView()->selectDataView(*m_selectedSeriesIndex);
       highlightSelection();
-      reloadBannerView();
-      multipleDataView()->reload();
+      if (reloadBannerView()) {
+        multipleDataView()->reload();
+      }
       return true;
     }
     return false;
@@ -73,13 +74,16 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
       multipleDataView()->setDisplayBanner(false);
       header()->setSelectedButton(0);
     }
-    reloadBannerView();
-    multipleDataView()->reload();
+    if (reloadBannerView()) {
+      multipleDataView()->reload();
+    }
     return true;
   }
   if (*m_selectedSeriesIndex >= 0 && (event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = event == Ion::Events::Left ? -1 : 1;
-    moveSelectionHorizontally(direction);
+    if (moveSelectionHorizontally(direction) && reloadBannerView()) {
+      multipleDataView()->reload();
+    }
     return true;
   }
   return false;

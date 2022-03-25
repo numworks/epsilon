@@ -138,7 +138,6 @@ def format_html_table(grouped_sections, grouped_files, file_section_sizes, show_
 parser = argparse.ArgumentParser(description='Compute binary size metrics')
 parser.add_argument('files', type=str, nargs='+', help='an ELF file')
 parser.add_argument('--sections', type=str, nargs='+', help='Section (prefix) to list')
-parser.add_argument('--escape', action='store_true', help='Escape the output')
 parser.add_argument('--summarize', action=argparse.BooleanOptionalAction, help='Show a summarized version')
 
 args = parser.parse_args()
@@ -155,9 +154,4 @@ for _,files in grouped_files:
       for section in sections:
         file_section_sizes[file][section] = section_size(file, section)
 
-table = format_html_table(grouped_sections, grouped_files, file_section_sizes, args.summarize)
-
-if args.escape:
-  print(urllib.parse.quote(table, safe='| :*+'))
-else:
-  print(table)
+print(format_html_table(grouped_sections, grouped_files, file_section_sizes, args.summarize))

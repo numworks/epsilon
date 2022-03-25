@@ -52,7 +52,8 @@ KDRect BoxView::boxRect() const {
 }
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
-  assert(bounds().height() == BoxFrameHeight(m_store->numberOfValidSeries()));
+  int numberOfSeries = m_store->numberOfValidSeries();
+  assert(bounds().height() == BoxFrameHeight(numberOfSeries));
   KDColor color = isMainViewSelected() ? DoublePairStore::colorLightOfSeriesAtIndex(m_series) : Palette::GrayBright;
 
   // Draw the main box
@@ -60,12 +61,13 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   double thirdQuart = m_store->thirdQuartile(m_series);
   KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, firstQuart));
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
-  ctx->fillRect(KDRect(firstQuartilePixels, k_verticalMargin, thirdQuartilePixels - firstQuartilePixels, BoxHeight(m_store->numberOfValidSeries())), color);
+  ctx->fillRect(KDRect(firstQuartilePixels, k_verticalMargin, thirdQuartilePixels - firstQuartilePixels, BoxHeight(numberOfSeries)), color);
 
   // Draw the horizontal lines linking the box to the whiskers
-  float lowBound = pixelToFloat(Axis::Vertical, k_verticalMargin + BoxHeight(m_store->numberOfValidSeries()));
+  float lowBound = pixelToFloat(Axis::Vertical, k_verticalMargin + BoxHeight(numberOfSeries));
   float upBound = pixelToFloat(Axis::Vertical, k_verticalMargin);
-  float segmentOrd = (lowBound + upBound)/ 2.0f;
+  // Compute the middle from the pixels instead of the floats for better precision
+  float segmentOrd = pixelToFloat(Axis::Vertical, (k_verticalMargin + BoxHeight(numberOfSeries) + k_verticalMargin) / 2);
   double lowerWhisker = m_store->lowerWhisker(m_series);
   double upperWhisker = m_store->upperWhisker(m_series);
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, lowerWhisker, firstQuart, color);

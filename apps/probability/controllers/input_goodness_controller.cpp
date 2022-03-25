@@ -6,7 +6,10 @@ InputGoodnessController::InputGoodnessController(StackViewController * parent, E
   InputCategoricalController(parent, resultsController, statistic, inputEventHandlerDelegate),
   m_degreeOfFreedomCell(&m_selectableTableView, inputEventHandlerDelegate, this),
   m_goodnessTableCell(&m_selectableTableView, this, this, statistic)
-{}
+{
+  m_degreeOfFreedomCell.setMessage(I18n::Message::DegreesOfFreedom);
+  m_degreeOfFreedomCell.setSubLabelMessage(I18n::Message::Default);
+}
 
 void InputGoodnessController::updateDegreeOfFreedomCell() {
   PrintValueInTextHolder(m_statistic->degreeOfFreedom(), m_significanceCell.textField(), true, true);

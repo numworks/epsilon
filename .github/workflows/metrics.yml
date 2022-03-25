@@ -7,6 +7,8 @@ jobs:
   binary-size:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:
+      - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
+      - run: pip3 install lz4 pypng stringcase pyelftools
       - name: Install ARM toolchain
         uses: numworks/setup-arm-toolchain@latest
       - name: Checkout PR base
@@ -27,10 +29,16 @@ jobs:
         run: make -C head MODEL=n0100 kernel.elf && make -C head MODEL=n0100 userland.elf
       - name: Build head for N0110
         run: make -C head kernel.A.elf && make -C head userland.A.elf
-      - name: Retrieve binary size analysis
-        id: binary_size
-        run: echo "::set-output name=n0100kernel::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0100/kernel/kernel.elf head/output/release/device/n0100/kernel/kernel.elf --labels Base Head --sections .text .rodata .bss .data --escape)" && echo "::set-output name=n0100userland::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0100/userland/userland.elf head/output/release/device/n0100/userland/userland.elf --labels Base Head --sections .text .rodata .bss .data --escape)" && echo "::set-output name=n0110kernel::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/kernel/kernel.A.elf --labels Base Head --sections .text .rodata .bss .data --escape)" && echo "::set-output name=n0110userland::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/userland/userland.A.elf head/output/release/device/n0110/userland/userland.A.elf --labels Base Head --sections .text .rodata .bss .data --escape)"
-      - name: Add comment for N100
+      - name: Binary size summary
+        id: binary_size_summary
+        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections @Flash .text .rodata @RAM .bss .data --summarize --escape)"
+      - name: Binary size N0100
+        id: binary_size_n0100
+        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0100/kernel/kernel.elf base/output/release/device/n0100/userland/userland.elf @Head head/output/release/device/n0100/kernel/kernel.elf head/output/release/device/n0100/userland/userland.elf --sections .text .rodata .bss .data --escape)"
+      - name: Binary size N0110
+        id: binary_size_n0110
+        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections .text .rodata .bss .data --escape)"
+      - name: Add comment
         uses: actions/github-script@v3.0.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -39,16 +47,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body: `# Binary size for N0100 firmware\n### Kernel\n${{ steps.binary_size.outputs.n0100kernel }}\n### Userland\n${{ steps.binary_size.outputs.n0100userland }}`,
-            });
-      - name: Add comment for N110
-        uses: actions/github-script@v3.0.0
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body: `# Binary size for N0110 firmware\n### Kernel\n${{ steps.binary_size.outputs.n0110kernel }}\n### Userland\n${{ steps.binary_size.outputs.n0110userland }}`,
+              body: `# Binary size analysis\n\n${{ steps.binary_size_summary.outputs.table }}\n<details>\n<summary>Full details</summary>\n\n## N0100\n\n${{ steps.binary_size_n0100.outputs.table }}\n\n## N0110\n\n${{ steps.binary_size_n0110.outputs.table }}</details>`,
             });

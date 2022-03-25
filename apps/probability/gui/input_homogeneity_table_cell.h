@@ -11,6 +11,9 @@ class InputHomogeneityTableCell : public EditableCategoricalTableCell, public Ho
 public:
   InputHomogeneityTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, HomogeneityTest * test);
 
+  // Responder
+  void didBecomeFirstResponder() override;
+
   // EditableCategoricalTableCell
   CategoricalTableViewDataSource * tableViewDataSource() override { return this; }
 

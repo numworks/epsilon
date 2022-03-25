@@ -11,6 +11,9 @@ class ResultHomogeneityTableCell : public CategoricalTableCell, public Homogenei
 public:
   ResultHomogeneityTableCell(Escher::Responder * parentResponder, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, HomogeneityTest * test);
 
+  // Responder
+  void didBecomeFirstResponder() override;
+
   // EditableCategoricalTableCell
   CategoricalTableViewDataSource * tableViewDataSource() override { return this; }
 

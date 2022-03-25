@@ -11,6 +11,13 @@ ResultHomogeneityTableCell::ResultHomogeneityTableCell(Escher::Responder * paren
 {
 }
 
+void ResultHomogeneityTableCell::didBecomeFirstResponder() {
+  if (selectedRow() < 0) {
+    selectColumn(1);
+  }
+  CategoricalTableCell::didBecomeFirstResponder();
+}
+
 void ResultHomogeneityTableCell::willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
   if ((column == 0 && row == innerNumberOfRows()) ||
       (row == 0 && column == innerNumberOfColumns())) {

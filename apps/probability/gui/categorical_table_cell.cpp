@@ -108,6 +108,9 @@ bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::TextField *
   }
   m_selectableTableView.reloadCellAtLocation(column, row);
   m_selectableTableView.selectCellAtClippedLocation(column, row);
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    event = Ion::Events::Down;
+  }
   m_selectableTableView.handleEvent(event);
   return true;
 }

@@ -54,7 +54,7 @@ KDRect BoxView::boxRect() const {
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   int numberOfSeries = m_store->numberOfValidSeries();
   assert(bounds().height() == BoxFrameHeight(numberOfSeries));
-  KDColor color = isMainViewSelected() ? DoublePairStore::colorLightOfSeriesAtIndex(m_series) : Palette::GrayBright;
+  KDColor color = isMainViewSelected() ? DoublePairStore::colorLightOfSeriesAtIndex(m_series) : Palette::GrayWhite;
 
   // Draw the main box
   double firstQuart = m_store->firstQuartile(m_series);

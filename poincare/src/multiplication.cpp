@@ -766,11 +766,11 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
          * to problems one day.*/
       }
 
-      if (shouldFactorizeBase && reductionContext.target() != ExpressionNode::ReductionTarget::User) {
-        /* (x^a)*(x^b)->x^(a+b) is not generally true: x*x^-1 is undefined in 0
-         * This rule is not true if one of the terms can divide by zero.
-         * In that case, cancel terms combination.
-         * With a User reduction exponents are combined anyway. */
+      if (shouldFactorizeBase) {
+        /* (x^a)*(x^b)->x^(a+b) is not generally true. For example :
+         * - x*x^-1 is undefined in 0
+         * - x^(1/2)*x^(1/2) is not equal to x if in real mode
+         * We handle theses cases here. */
         shouldFactorizeBase = TermsCanSafelyCombineExponents(oi, oi1, reductionContext);
       }
 
@@ -1185,6 +1185,12 @@ bool Multiplication::TermsHaveIdenticalExponent(const Expression & e1, const Exp
   return e1.type() == ExpressionNode::Type::Power && e2.type() == ExpressionNode::Type::Power && (e1.childAtIndex(1).isIdenticalTo(e2.childAtIndex(1)));
 }
 
+
+/* TODO : This should be replaced with dependencies.
+   * We escape this when the target is User, otherwise (pi*x^3+x^2)/x^5 would
+   * not be simplified to (pi*x+1)/x^3 since x^-2*x^2 can't be simplified when x=0.
+   * But if we just add a dependency we could remove all this function
+   * */
 bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const Expression & e2, ExpressionNode::ReductionContext reductionContext) {
   /* Combining exponents on terms of same base (x^a)*(x^b)->x^(a+b) is safe if :
    *  x cannot be null
@@ -1213,6 +1219,10 @@ bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const
         || static_cast<Rational &>(exponent1).integerDenominator().isEven()
         || static_cast<Rational &>(exponent2).integerDenominator().isEven())) {
     return false;
+  }
+
+  if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
+     return true;
   }
 
   if (baseSign != ExpressionNode::Sign::Unknown && baseNullStatus == ExpressionNode::NullStatus::NonNull) {

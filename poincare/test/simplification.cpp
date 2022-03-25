@@ -638,6 +638,12 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("ℯ^ln(√(3))", "√(3)");
   assert_parsed_expression_simplify_to("π^log(√(3),π)", "√(3)");
   assert_parsed_expression_simplify_to("10^log(π)", "π");
+  assert_parsed_expression_simplify_to("10^log(4)", "4");
+  assert_parsed_expression_simplify_to("10^(3*log(4))", "64");
+  assert_parsed_expression_simplify_to("10^(log(12)+log(10))", "120");
+  assert_parsed_expression_simplify_to("10^(3*log(5)+log(4))", "500");
+  assert_parsed_expression_simplify_to("10^(3+log(4))", "4000");
+  assert_parsed_expression_simplify_to("10^(3+2*log(4))", "16000");
   assert_parsed_expression_simplify_to("ℯ^ln(65)", "65");
   assert_parsed_expression_simplify_to("ℯ^(2ln(3))", "9");
   assert_parsed_expression_simplify_to("ℯ^ln(πℯ)", "π×ℯ");

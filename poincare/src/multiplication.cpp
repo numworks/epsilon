@@ -755,6 +755,15 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
          *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
          *  - 2^(1/2)*2^(3/2) we want to combine. */
         shouldFactorizeBase = oi.type() == ExpressionNode::Type::Power && oi1.type() == ExpressionNode::Type::Power;
+        /* WARNING : The terms should NOT combine if :
+         * - The base is negative
+         * AND We are in real mode
+         * AND one of the exponent has an even denominator.
+         * Ex : (-1)^(1/2)*(-1)^(1/2) != -1 (nonreal)
+         *
+         * We currently never encouter this case because (-1)^(1/2)
+         * is reduced into i before arriving here, but these could lead
+         * to problems one day.*/
       }
 
       if (shouldFactorizeBase && reductionContext.target() != ExpressionNode::ReductionTarget::User) {
@@ -1178,24 +1187,38 @@ bool Multiplication::TermsHaveIdenticalExponent(const Expression & e1, const Exp
 
 bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const Expression & e2, ExpressionNode::ReductionContext reductionContext) {
   /* Combining exponents on terms of same base (x^a)*(x^b)->x^(a+b) is safe if :
-   *  - x cannot be null
-   *  - a and b are strictly positive
-   *  - a+b is negative or null
+   *  x cannot be null
+   *  OR a and b are strictly positive
+   *  OR a+b is negative or null
    * Otherwise, although one of the term should be undefined with x=0, x^(a+b)
-   * would yield 0 instead of being undefined. */
+   * would yield 0 instead of being undefined.
+   * In real mode, we cannot combine if :
+   * x can be negative
+   * AND
+   * (a or b is not rational
+   *   OR a or b has an even denominator) */
   assert(TermsHaveIdenticalBase(e1,e2));
 
   Expression base = Base(e1);
   ExpressionNode::Sign baseSign = base.sign(reductionContext.context());
   ExpressionNode::NullStatus baseNullStatus = base.nullStatus(reductionContext.context());
 
+  Expression exponent1 = CreateExponent(e1);
+  Expression exponent2 = CreateExponent(e2);
+
+  if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real
+      && baseSign != ExpressionNode::Sign::Positive
+      && (exponent1.type() != ExpressionNode::Type::Rational
+        || exponent2.type() != ExpressionNode::Type::Rational
+        || static_cast<Rational &>(exponent1).integerDenominator().isEven()
+        || static_cast<Rational &>(exponent2).integerDenominator().isEven())) {
+    return false;
+  }
+
   if (baseSign != ExpressionNode::Sign::Unknown && baseNullStatus == ExpressionNode::NullStatus::NonNull) {
     // x cannot be null
     return true;
   }
-
-  Expression exponent1 = CreateExponent(e1);
-  Expression exponent2 = CreateExponent(e2);
 
   if (exponent1.isStrictly(ExpressionNode::Sign::Positive, reductionContext.context())
     && exponent2.isStrictly(ExpressionNode::Sign::Positive, reductionContext.context())) {

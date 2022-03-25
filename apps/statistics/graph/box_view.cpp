@@ -37,14 +37,21 @@ KDRect BoxView::selectedCalculationRect() const {
   return KDRect(minX, minY, width, maxY - minY).translatedBy(m_frame.origin());
 }
 
+KDRect BoxView::reloadRect() {
+  return boxRect().translatedBy(m_frame.origin());
+}
+
 void BoxView::reload(bool resetInterrupted, bool force) {
   CurveView::reload(resetInterrupted, force);
+  markRectAsDirty(boxRect());
+}
+
+KDRect BoxView::boxRect() const {
   KDCoordinate minY = calculationLowerBoundPixel();
   KDCoordinate maxY = calculationUpperBoundPixel();
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series))) - k_leftMargin;
   KDCoordinate maxX = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series))) + k_rightMargin;
-  KDRect dirtyRect = KDRect(minX, minY, maxX - minX, maxY - minY);
-  markRectAsDirty(dirtyRect);
+  return KDRect(minX, minY, maxX - minX, maxY - minY);
 }
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {

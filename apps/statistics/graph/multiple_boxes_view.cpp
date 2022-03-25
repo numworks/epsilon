@@ -76,4 +76,9 @@ void MultipleBoxesView::drawRect(KDContext * ctx, KDRect rect) const {
   MultipleDataView::drawRect(ctx, rect);
 }
 
+void MultipleBoxesView::changeDataViewSelection(int index, bool select) {
+  dataViewAtIndex(index)->selectMainView(select);
+  markRectAsDirty(dataViewAtIndex(index)->reloadRect());
+}
+
 }

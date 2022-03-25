@@ -29,6 +29,7 @@ public:
 private:
   static constexpr KDCoordinate k_axisViewHeight = 21;
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  void changeDataViewSelection(int index, bool select) override;
   BoxView m_boxView1;
   BoxView m_boxView2;
   BoxView m_boxView3;

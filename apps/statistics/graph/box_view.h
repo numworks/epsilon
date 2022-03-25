@@ -23,6 +23,7 @@ public:
   KDRect selectedCalculationRect() const;
 
   /* CurveView */
+  KDRect reloadRect();
   void reload(bool resetInterrupted = false, bool force = false) override;
 
   /* View */
@@ -56,6 +57,7 @@ private:
   void drawChevronSelection(KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound) const;
   void drawChevron(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool up) const;
   /* Box bounds */
+  KDRect boxRect() const;
   // TODO: MultipleDataView does not allow enough space to layout boxes as intended
   KDCoordinate boxHeight() const { return m_store->numberOfValidSeries() > 2 ? k_threeBoxesHeight: k_twoBoxesHeight; }
   KDCoordinate boxLowerBoundPixel() const;

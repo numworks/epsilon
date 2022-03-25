@@ -1,52 +1,29 @@
 #ifndef PROBABILITY_CONTROLLERS_RESULTS_HOMOGENEITY_CONTROLLER_H
 #define PROBABILITY_CONTROLLERS_RESULTS_HOMOGENEITY_CONTROLLER_H
 
-#include "probability/abstract/chained_selectable_table_view_delegate.h"
-#include "probability/abstract/homogeneity_data_source.h"
-#include "probability/abstract/results_homogeneity_data_source.h"
-#include <escher/view_controller.h>
-#include "probability/gui/results_homogeneity_view.h"
-#include "probability/gui/selectable_table_view_with_background.h"
-#include "probability/models/statistic/homogeneity_test.h"
-#include "results_controller.h"
+#include "probability/abstract/categorical_controller.h"
+#include "probability/gui/result_homogeneity_table_cell.h"
 
 namespace Probability {
 
-class ResultsHomogeneityController : public Escher::ViewController,
-                                     public Escher::SelectableTableViewDelegate,
-                                     public DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> {
+class ResultsHomogeneityController : public CategoricalController {
 public:
-  ResultsHomogeneityController(StackViewController * stackViewController,
-                               HomogeneityTest * statistic,
-                               ResultsController * resultsController);
+  ResultsHomogeneityController(StackViewController * parent, Escher::ViewController * nextController, HomogeneityTest * statistic);
+
+  // ViewController
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
-  const char * title() override { return nullptr; }
-  View * view() override { return &m_contentView; }
-  void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
 
-  static bool ButtonAction(void * c, void * s);
-
-  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t,
-                                               int previousSelectedCellX,
-                                               int previousSelectedCellY,
-                                               bool withinTemporarySelection = false) override;
-
-  void initCell(EvenOddBufferTextCell, void * cell, int index) override;
-  Escher::SelectableTableView * tableView() override { return &m_table; }
+  // SelectableTableViewDelegate
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override { m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX, previousSelectedCellY); }
 
 private:
-  void selectCorrectView();
-  void scrollToCorrectLocation();
+  constexpr static int k_topMargin = 5;
 
-  ResultsController * m_resultsController;
-  ResultsHomogeneityView m_contentView;
-  ResultsHomogeneityDataSource m_tableData;
+  CategoricalTableCell * categoricalTableCell() override { return &m_resultHomogeneityTable; }
 
-  SelectableTableViewWithBackground m_table;
-  bool m_isTableSelected;
+  ResultHomogeneityTableCell m_resultHomogeneityTable;
 };
 
 }  // namespace Probability

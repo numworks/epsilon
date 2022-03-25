@@ -21,13 +21,13 @@ App::App(Snapshot * snapshot) :
     m_intervalGraphController(&m_stackViewController, static_cast<Interval *>(snapshot->statistic())),
     m_homogeneityResultsController(
         &m_stackViewController,
-        static_cast<HomogeneityTest *>(snapshot->statistic()),
-        &m_resultsController),
+        &m_resultsController,
+        static_cast<HomogeneityTest *>(snapshot->statistic())),
     m_inputHomogeneityController(
         &m_stackViewController,
         &m_homogeneityResultsController,
-        this,
-        static_cast<HomogeneityTest *>(snapshot->statistic())),
+        static_cast<HomogeneityTest *>(snapshot->statistic()),
+        this),
     m_inputGoodnessController(&m_stackViewController,
                               &m_resultsController,
                               static_cast<GoodnessTest *>(snapshot->statistic()),

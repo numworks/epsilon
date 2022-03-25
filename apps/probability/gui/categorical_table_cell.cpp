@@ -107,8 +107,8 @@ bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::TextField *
     recomputeDimensions(m_statistic);
   }
   m_selectableTableView.reloadCellAtLocation(column, row);
-  m_selectableTableView.handleEvent(event);
   m_selectableTableView.selectCellAtClippedLocation(column, row);
+  m_selectableTableView.handleEvent(event);
   return true;
 }
 

@@ -299,9 +299,7 @@ int Integer::serializeInBinaryBase(char * buffer, int bufferSize, int bitsPerDig
 // Layout
 
 Layout Integer::createLayout(Base base) const {
-  // We take +2 for size to handle the case of the number being between
-  // 10^k_maxNumberOfDigitsBase10 and (2^32)^k_maxNumberOfDigits
-  constexpr int bufferSize = k_maxNumberOfDigitsBase10 + 2;
+  constexpr int bufferSize = k_maxNumberOfDigitsBase10 + 1;
   char buffer[bufferSize];
   int numberOfChars = serialize(buffer, bufferSize, base);
   assert(numberOfChars >= 1);

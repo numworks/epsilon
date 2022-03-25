@@ -92,7 +92,7 @@ def format_html_table(grouped_sections, grouped_files, file_section_sizes, show_
         for _,sections in grouped_sections:
           for section in sections:
             size = file_section_sizes[file][section]
-            output += f'<td>{format_bytes(size)}</td>'
+            output += f'<td align="right">{format_bytes(size)}</td>'
             current_sizes.append(size)
         output += '</tr>'
     else:
@@ -106,7 +106,7 @@ def format_html_table(grouped_sections, grouped_files, file_section_sizes, show_
           for file in files:
             section_size += file_section_sizes[file][section]
           current_sizes.append(section_size)
-          output += f'<td>{format_bytes(section_size)}</td>'
+          output += f'<td align="right">{format_bytes(section_size)}</td>'
       output += '</tr>'
       if group_index == 0:
         reference_sizes = current_sizes
@@ -114,7 +114,7 @@ def format_html_table(grouped_sections, grouped_files, file_section_sizes, show_
         output += '<tr>'
         output += f'<td colspan="{show_file_groups+show_file_detail}"></td>'
         for index,size in enumerate(current_sizes):
-          output += f'<td>{format_bytes(size-reference_sizes[index], force_sign=True)}</td>'
+          output += f'<td align="right">{format_bytes(size-reference_sizes[index], force_sign=True)}</td>'
         output += '</tr>'
       if show_group_size_diff and group_index > 0:
         output += '<tr>'

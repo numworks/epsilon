@@ -18,7 +18,7 @@ void InputGoodnessController::didBecomeFirstResponder() {
 }
 
 HighlightCell * InputGoodnessController::reusableCell(int index, int type) {
-  if (index == k_indexOfDegreeOfFreedom) {
+  if (type == k_indexOfDegreeOfFreedom) {
     return &m_goodnessTableCell;
   } else {
     return InputCategoricalController::reusableCell(index, type);

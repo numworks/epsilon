@@ -70,9 +70,9 @@ Escher::HighlightCell * DynamicCellsDataSource<T,N>::cell(int i) {
   return &m_cells[i];
 }
 
-static_assert(k_homogeneityTableNumberOfReusableHeaderCells == HomogeneityTableDataSource::k_numberOfReusableColumns + HomogeneityTableDataSource::k_numberOfReusableRows, "k_homogeneityTableNumberOfReusableHeaderCells should be updated with HomogeneityTableDataSource::k_numberOfReusableColumns and HomogeneityTableDataSource::k_numberOfReusableRows");
+static_assert(k_homogeneityTableNumberOfReusableHeaderCells == HomogeneityTableDataSource::k_numberOfReusableColumns + HomogeneityTableDataSource::k_maxNumberOfReusableRows, "k_homogeneityTableNumberOfReusableHeaderCells should be updated with HomogeneityTableDataSource::k_numberOfReusableColumns and HomogeneityTableDataSource::k_maxNumberOfReusableRows");
 static_assert(k_homogeneityTableNumberOfReusableInnerCells == HomogeneityTableDataSource::k_numberOfReusableCells, "k_homogeneityTableNumberOfReusableHeaderCells should be updated with HomogeneityTableDataSource::k_numberOfReusableCells");
-static_assert(k_inputGoodnessTableNumberOfReusableCells == InputGoodnessTableView::k_numberOfReusableCells, "k_inputGoodnessTableNumberOfReusableCells should be updated with InputGoodnessTableView::k_numberOfReusableCells");
+static_assert(k_inputGoodnessTableNumberOfReusableCells == GoodnessTableCell::k_numberOfReusableCells, "k_inputGoodnessTableNumberOfReusableCells should be updated with GoodnessTableCell::k_numberOfReusableCells");
 static_assert(k_inputControllerNumberOfReusableCells == InputController::k_numberOfReusableCells, "k_inputControllerNumberOfReusableCells should be updated with InputController::k_numberOfReusableCells");
 static_assert(k_resultDataSourceNumberOfReusableCells == ResultsDataSource::k_numberOfReusableCells, "k_resultDataSourceNumberOfReusableCells should be updated with ResultsDataSource::k_numberOfReusableCells");
 template class DynamicCellsDataSource<Escher::EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>;

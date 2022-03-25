@@ -1,23 +1,27 @@
 #include "homogeneity_data_source.h"
 
-#include <apps/i18n.h>
+#include <escher/even_odd_editable_text_cell.h>
 #include <poincare/print.h>
 #include <string.h>
 
-using namespace Probability;
+namespace Probability {
 
-HomogeneityTableDataSource::HomogeneityTableDataSource(Escher::SelectableTableViewDelegate * tableDelegate, DynamicCellsDataSourceDelegate<EvenOddBufferTextCell> * dynamicDataSourceDelegate) :
-  DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>(dynamicDataSourceDelegate),
-  ChainedSelectableTableViewDelegate(tableDelegate),
+HomogeneityTableDataSource::HomogeneityTableDataSource() :
+  DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>(this),
   m_headerPrefix(I18n::Message::Group),
-  m_topLeftCell(Escher::Palette::WallScreenDark) {
+  m_topLeftCell(Escher::Palette::WallScreenDark)
+{
+}
+
+void HomogeneityTableDataSource::initCell(EvenOddBufferTextCell, void * cell, int index) {
+  static_cast<EvenOddBufferTextCell *>(cell)->setFont(KDFont::SmallFont);
 }
 
 int HomogeneityTableDataSource::reusableCellCount(int type) {
   if (type == k_typeOfTopLeftCell) {
     return 1;
   } else if (type == k_typeOfHeaderCells) {
-    return k_numberOfReusableRows + k_numberOfReusableColumns;
+    return k_maxNumberOfReusableRows + k_numberOfReusableColumns;
   }
   return k_numberOfReusableCells;
 }
@@ -39,10 +43,10 @@ int HomogeneityTableDataSource::typeAtLocation(int i, int j) {
   if (i== 0 || j == 0) {
     return k_typeOfHeaderCells;
   }
-  return k_typeInnerCells;
+  return k_typeOfInnerCells;
 }
 
-void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
+void HomogeneityTableDataSource::willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
   if (row == 0 && column == 0) {
     return;  // Top left
   }
@@ -74,21 +78,17 @@ void Probability::HomogeneityTableDataSource::willDisplayCellAtLocation(Escher::
     }
     // TODO : Color the last max column or row gray if it is empty
     myCell->setTextColor(textColor);
-  }
-
-  else {
+  } else {
     willDisplayInnerCellAtLocation(cell, column - 1, row - 1);
   }
 }
 
-void Probability::HomogeneityTableDataSource::tableViewDidChangeSelection(
-    SelectableTableView * t,
-    int previousSelectedCellX,
-    int previousSelectedCellY,
-    bool withinTemporarySelection) {
+void HomogeneityTableDataSource::unselectTopLeftCell(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   // Prevent top left selection
   if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
     t->selectRow(previousSelectedCellY);
     t->selectColumn(previousSelectedCellX);
   }
+}
+
 }

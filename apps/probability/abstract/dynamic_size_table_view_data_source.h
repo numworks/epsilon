@@ -16,18 +16,22 @@ public:
  * changes to potentially relay out. */
 class DynamicSizeTableViewDataSource {
 public:
-  DynamicSizeTableViewDataSource(DynamicSizeTableViewDataSourceDelegate * delegate = nullptr) :
-      m_dynamicDatSourceDelegate(delegate) {}
-  void registerDelegate(DynamicSizeTableViewDataSourceDelegate * delegate) {
-    m_dynamicDatSourceDelegate = delegate;
-  }
+  DynamicSizeTableViewDataSource(DynamicSizeTableViewDataSourceDelegate * delegate) : m_dynamicDatSourceDelegate(delegate) {}
 
 protected:
-  void didChangeSize() {
-    if (m_dynamicDatSourceDelegate) {
-      m_dynamicDatSourceDelegate->tableViewDataSourceDidChangeSize();
+  bool didChangeSize(int numberOfRows, int numberOfColumns) {
+    if (m_numberOfRows == numberOfRows && m_numberOfColumns == numberOfColumns) {
+      return false;
     }
+    m_numberOfRows = numberOfRows;
+    m_numberOfColumns = numberOfColumns;
+    assert(m_dynamicDatSourceDelegate);
+    m_dynamicDatSourceDelegate->tableViewDataSourceDidChangeSize();
+    return true;
   }
+
+  int m_numberOfRows;
+  int m_numberOfColumns;
 
 private:
   DynamicSizeTableViewDataSourceDelegate * m_dynamicDatSourceDelegate;

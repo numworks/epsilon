@@ -45,17 +45,18 @@ app_probability_test_src += $(addprefix apps/probability/models/statistic/,\
 app_probability_src += $(addprefix apps/probability/gui/,\
   calculation_cell.cpp \
   calculation_popup_data_source.cpp \
+  categorical_table_cell.cpp \
   comparison_operator_popup_data_source.cpp \
   distribution_cell.cpp \
   distribution_curve_view.cpp \
   expression_cell_with_editable_text_with_message.cpp \
-  input_goodness_table_view.cpp \
+  goodness_table_cell.cpp \
+  input_homogeneity_table_cell.cpp \
   interval_conclusion_view.cpp \
   interval_curve_view.cpp \
   legend_view.cpp \
   message_table_cell_with_separator.cpp \
-  results_homogeneity_view.cpp \
-  selectable_table_view_with_background.cpp \
+  result_homogeneity_table_cell.cpp \
   statistic_curve_view.cpp \
   statistic_graph_view.cpp \
   test_conclusion_view.cpp \
@@ -66,8 +67,6 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
   calculation_controller.cpp \
   categorical_type_controller.cpp \
   distribution_controller.cpp \
-  goodness_table_view_controller.cpp \
-  homogeneity_table_view_controller.cpp \
   hypothesis_controller.cpp \
   input_controller.cpp \
   input_goodness_controller.cpp \
@@ -82,16 +81,10 @@ app_probability_src += $(addprefix apps/probability/controllers/,\
 )
 
 app_probability_src +=  $(addprefix apps/probability/abstract/,\
+  categorical_controller.cpp \
   dynamic_cells_data_source.cpp \
   homogeneity_data_source.cpp \
-  input_categorical_controller.cpp \
-  input_categorical_view.cpp \
-  input_goodness_view.cpp \
-  input_homogeneity_view.cpp \
-  input_homogeneity_data_source.cpp \
   results_data_source.cpp \
-  results_homogeneity_data_source.cpp \
-  table_view_controller.cpp \
 )
 
 

@@ -1,13 +1,8 @@
 #ifndef PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H
 #define PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H
 
-#include <escher/stack_view_controller.h>
-
-#include "goodness_table_view_controller.h"
-#include "probability/abstract/input_categorical_controller.h"
-#include "probability/abstract/input_goodness_view.h"
-#include "probability/models/statistic/goodness_test.h"
-#include "results_controller.h"
+#include "probability/abstract/categorical_controller.h"
+#include "probability/gui/goodness_table_cell.h"
 
 using namespace Escher;
 
@@ -15,24 +10,28 @@ namespace Probability {
 
 class InputGoodnessController : public InputCategoricalController {
 public:
-  InputGoodnessController(StackViewController * parent,
-                          ResultsController * resultsController,
-                          GoodnessTest * statistic,
-                          InputEventHandlerDelegate * inputEventHandlerDelegate);
-  const char * title() override {
-    return I18n::translate(I18n::Message::InputGoodnessControllerTitle);
-  }
-  bool textFieldDidFinishEditing(Escher::TextField * textField,
-                                const char * text,
-                                Ion::Events::Event event) override;
+  InputGoodnessController(StackViewController * parent, Escher::ViewController * resultsController, GoodnessTest * statistic, InputEventHandlerDelegate * inputEventHandlerDelegate);
+
+  void updateDegreeOfFreedomCell();
+
+  // Responder
   void didBecomeFirstResponder() override;
 
-  TableViewController * tableViewController() override { return &m_tableController; }
+  // ViewController
+  const char * title() override { return I18n::translate(I18n::Message::InputGoodnessControllerTitle); }
+
+  // ListViewDataSource
+  virtual Escher::HighlightCell * reusableCell(int index, int type) override;
 
 private:
-  InputCategoricalView * contentView() override { return &m_contentView; }
-  GoodnessTableViewController m_tableController;
-  InputGoodnessView m_contentView;
+  constexpr static int k_indexOfDegreeOfFreedom = 1;
+
+  EditableCategoricalTableCell * categoricalTableCell() override { return &m_goodnessTableCell; }
+  int indexOfSignificanceCell() const override { return k_indexOfDegreeOfFreedom + 1; }
+  int indexOfEditedParameterAtIndex(int index) const override;
+
+  Escher::MessageTableCellWithEditableTextWithMessage m_degreeOfFreedomCell;
+  GoodnessTableCell m_goodnessTableCell;
 };
 
 }  // namespace Probability

@@ -31,9 +31,9 @@ public:
    * the user. */
   int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
 
+  constexpr static int k_maxNumberOfColumns = 2;
 private:
   constexpr static int k_maxNumberOfRows = 10;
-  constexpr static int k_maxNumberOfColumns = 2;
 
   // Statistic
   bool authorizedParameterAtIndex(double p, int i) const override;

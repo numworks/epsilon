@@ -1,40 +1,16 @@
 #!/usr/bin/env python3
 
+from elftools.elf.elffile import ELFFile
+from elftools.elf.sections import SymbolTableSection
+from elftools.elf.constants import SH_FLAGS
 import argparse
 import os
 import re
-import subprocess
 import urllib.parse
 
-# ELF analysis
-
-def loadable_sections(elf_file):
-  objdump_section_headers_pattern = re.compile("^\s+\d+\s+(\.[\w\.]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([0-9a-f]+)", flags=re.MULTILINE)
-  objdump_output = subprocess.check_output(["arm-none-eabi-objdump", "-h", "-w", elf_file]).decode('utf-8')
-  sections = []
-  for (name, size, vma, lma, offset) in re.findall(objdump_section_headers_pattern, objdump_output):
-    int_size = int(size,16)
-    if (int_size > 0):
-      sections.append({'name': name, 'size': int_size, 'vma': int(vma,16), 'lma': int(lma,16), 'offset':int(offset,16)})
-  return sections
-
-
-# Data filtering
-
-def row_for_elf(elf, requested_section_prefixes):
-  sections = loadable_sections(elf)
-  result = {}
-  for prefix in requested_section_prefixes:
-    for s in sections:
-      section_name = s['name']
-      if s['name'].startswith(prefix):
-        if not prefix in result:
-          result[prefix] = 0
-        result[prefix] += s['size']
-  return result
-
-
-# String formatting
+# binary_size.py \
+#        --sections @Flash .text .rodata @RAM .bss .data
+#        @Base foo_a.elf foo_b.elf @Head bar_a.elf bar_b.elf
 
 def iso_separate(string):
   space = ' ' # We may want to use a thin non-breaking space as thousands separator
@@ -49,89 +25,139 @@ def format_bytes(value, force_sign=False):
   number_format += '_} bytes'
   return iso_separate(number_format.format(value))
 
-def format_percentage(value):
-  if value is None:
-    return ''
-  return iso_separate("{:+.1f} %".format(100*value))
+# Convert a flat list '@foo', 'bar', 'baz', '@faa', 'boo' into a nested list
+# [['foo', ['bar', 'baz']], ['faa', ['boo']]]. We use it to pass dict-like data
+# on the command line.
+def named_groups(tagged_list):
+  groups = []
+  current_group_name = None
+  current_group = []
+  for item in tagged_list:
+    if item.startswith('@'):
+      if current_group:
+        groups.append([current_group_name, current_group])
+      current_group_name = item[1:]
+      current_group = []
+      continue
+    current_group.append(item)
+  groups.append([current_group_name, current_group])
+  return groups
 
+def section_size(file, section_name):
+  elffile = ELFFile(open(file, 'rb'))
+  for section in elffile.iter_sections():
+    if section.name == section_name:
+      return section.data_size
+  return None
 
-# Markdown
+def format_html_table(grouped_sections, grouped_files, file_section_sizes, show_file_detail):
+  output = ""
+  output += '<table>'
 
-def emphasize(string):
-  if string:
-    return '_' + string + '_'
-  else:
-    return ''
+  show_section_groups = (len(grouped_sections) > 1)
+  show_file_groups = (len(grouped_files) > 1)
+  show_file_detail = not show_file_detail
+  show_group_size_diff = True
+  show_section_size_diff = False
 
-def strong(string):
-  if string:
-    return '**' + string + '**'
-  else:
-    return ''
+  if show_section_groups:
+    # Header title row (e.g. "Flash", "RAM")
+    output += '<tr>'
+    output += f'<td rowspan="2" colspan="{show_section_groups + show_file_detail}"></td>'
+    for title,sections in grouped_sections:
+      output += f'<th colspan="{len(sections)}" align="left">{title}</th>'
+    output += '</tr>'
 
+  # Header sections row (e.g. ".text", ".rodata")
+  output += '<tr>'
+  if not show_section_groups:
+    if show_file_groups or show_file_detail:
+      output += f'<td colspan="{show_file_groups + show_file_detail}"></td>'
+  for title,sections in grouped_sections:
+    for section in sections:
+      output += f'<td>{section}</td>'
+  output += '</tr>'
 
-# Deltas
+  reference_sizes = None
+  for group_index,group in enumerate(grouped_files):
+    title, files = group
+    if show_file_detail:
+      for i,file in enumerate(files):
+        output += '<tr>'
+        current_sizes = []
+        if i == 0 and show_file_groups:
+          output += f'<td rowspan="{len(files)}">{title}</td>'
+        if show_file_detail:
+          output += f'<td>{os.path.basename(file)}</td>'
+        for _,sections in grouped_sections:
+          for section in sections:
+            size = file_section_sizes[file][section]
+            output += f'<td>{format_bytes(size)}</td>'
+            current_sizes.append(size)
+        output += '</tr>'
+    else:
+      output += '<tr>'
+      current_sizes = []
+      if show_file_groups:
+        output += f'<td>{title}</td>'
+      for _,sections in grouped_sections:
+        for section in sections:
+          section_size = 0
+          for file in files:
+            section_size += file_section_sizes[file][section]
+          current_sizes.append(section_size)
+          output += f'<td>{format_bytes(section_size)}</td>'
+      output += '</tr>'
+      if group_index == 0:
+        reference_sizes = current_sizes
+      if show_section_size_diff and group_index > 0:
+        output += '<tr>'
+        output += f'<td colspan="{show_file_groups+show_file_detail}"></td>'
+        for index,size in enumerate(current_sizes):
+          output += f'<td>{format_bytes(size-reference_sizes[index], force_sign=True)}</td>'
+        output += '</tr>'
+      if show_group_size_diff and group_index > 0:
+        output += '<tr>'
+        output += f'<td colspan="{show_file_groups+show_file_detail}"></td>'
+        section_index_start = 0
+        for _,sections in grouped_sections:
+          total_reference_size = 0
+          total_size = 0
+          for i in range(len(sections)):
+            total_reference_size += reference_sizes[section_index_start+i]
+            total_size += current_sizes[section_index_start+i]
+          section_index_start += len(sections)
+          output += f'<th colspan="{len(sections)}" align="left">{format_bytes(total_size-total_reference_size, force_sign=True)}</th>'
+        output += '</tr>'
 
-def absolute_delta(x,y):
-  if x is None or y is None:
-    return None
-  return x-y
-
-def ratio_delta(x,y):
-  if x is None or y is None:
-    return None
-  return (x-y)/y
-
-
-# Table formatting
-
-def format_row(row, header=False):
-  result = '|'
-  if header:
-    result += strong(header)
-  result += '|'
-  for v in row:
-    result += v
-    result += '|'
-  result += '\n'
-  return result
-
-def format_table(table):
-  base = table[0]['values']
-  listed_sections = base.keys()
-  result = ''
-  result += format_row(listed_sections)
-  result += '|-|' + '-:|'*len(listed_sections) + '\n'
-  for i,row in enumerate(table):
-    v = row['values']
-    result += format_row((format_bytes(v.get(s)) for s in listed_sections), header=row['label'])
-    if i != 0:
-      result += format_row(emphasize(format_bytes(absolute_delta(v.get(s), base.get(s)), force_sign=True)) for s in listed_sections)
-      result += format_row(emphasize(format_percentage(ratio_delta(v.get(s), base.get(s)))) for s in listed_sections)
-  return result
-
+  output += '</table>'
+  return output
 
 # Argument parsing
 
 parser = argparse.ArgumentParser(description='Compute binary size metrics')
 parser.add_argument('files', type=str, nargs='+', help='an ELF file')
-parser.add_argument('--labels', type=str, nargs='+', help='label for ELF file')
 parser.add_argument('--sections', type=str, nargs='+', help='Section (prefix) to list')
 parser.add_argument('--escape', action='store_true', help='Escape the output')
+parser.add_argument('--summarize', action=argparse.BooleanOptionalAction, help='Show a summarized version')
+
 args = parser.parse_args()
 
+grouped_sections = named_groups(args.sections)
+grouped_files = named_groups(args.files)
 
-# Execution
+# For each file, compute the size of each section
+file_section_sizes = {}
+for _,files in grouped_files:
+  for file in files:
+    file_section_sizes.setdefault(file, {})
+    for _,sections in grouped_sections:
+      for section in sections:
+        file_section_sizes[file][section] = section_size(file, section)
 
-table = []
-for i,filename in enumerate(args.files):
-  label = os.path.basename(filename)
-  if args.labels and i < len(args.labels):
-    label = args.labels[i]
-  table.append({'label': label, 'values': row_for_elf(filename, args.sections)})
-formatted_table = format_table(table)
+table = format_html_table(grouped_sections, grouped_files, file_section_sizes, args.summarize)
 
 if args.escape:
-  print(urllib.parse.quote(formatted_table, safe='| :*+'))
+  print(urllib.parse.quote(table, safe='| :*+'))
 else:
-  print(formatted_table)
+  print(table)

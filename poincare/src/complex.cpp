@@ -59,7 +59,7 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
     tb = this->imag();
   }
   return Expression::CreateComplexExpression(
-      Number::FloatNumber<T>(std::fabs(ra)), // TODO: Maybe use Number::FloatNumber instead to speed up 'complexToExpression'
+      Number::FloatNumber<T>(std::fabs(ra)),
       Number::FloatNumber<T>(std::fabs(tb)),
       complexFormat,
       (std::isnan(this->real()) || std::isnan(this->imag())),

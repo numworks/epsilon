@@ -16,7 +16,7 @@ T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T sigma) {
     return NAN;
   }
   const float xMinusMuOverVar = (x - mu)/sigma;
-  return ((T)1.0)/(std::fabs(sigma) * (T)M_SQRT_2PI) * std::exp(-((T)0.5) * xMinusMuOverVar * xMinusMuOverVar);
+  return (static_cast<T>(1.0))/(std::fabs(sigma) * static_cast<T>(M_SQRT_2PI)) * std::exp(-(static_cast<T>(0.5)) * xMinusMuOverVar * xMinusMuOverVar);
 }
 
 template<typename T>
@@ -39,7 +39,7 @@ template<typename T>
 bool NormalDistribution::MuAndSigmaAreOK(T mu, T sigma) {
   return !std::isnan(mu) && !std::isnan(sigma)
     && !std::isinf(mu) && !std::isinf(sigma)
-    && sigma > (T)0.0;
+    && sigma > static_cast<T>(0.0);
 }
 
 bool NormalDistribution::ExpressionMuAndVarAreOK(bool * result, const Expression & mu, const Expression & var, Context * context) {
@@ -90,33 +90,33 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(T a
     return NAN;
   }
   if (std::isinf(abscissa)) {
-    return abscissa > (T)0.0 ? (T)1.0 : (T)0.0;
+    return abscissa > static_cast<T>(0.0) ? static_cast<T>(1.0) : static_cast<T>(0.0);
   }
-  if (abscissa == (T)0.0) {
-    return (T)0.5;
+  if (abscissa == static_cast<T>(0.0)) {
+    return static_cast<T>(0.5);
   }
-  if (abscissa < (T)0.0) {
-    return ((T)1.0) - StandardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
+  if (abscissa < static_cast<T>(0.0)) {
+    return (static_cast<T>(1.0)) - StandardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
   }
-  return ((T)0.5) + ((T)0.5) * std::erf(abscissa/(T)M_SQRT2);
+  return (static_cast<T>(0.5)) + (static_cast<T>(0.5)) * std::erf(abscissa/static_cast<T>(M_SQRT2));
 }
 
 template<typename T>
 T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(T probability) {
-  if (probability > (T)1.0 || probability < (T)0.0 || std::isnan(probability) || std::isinf(probability)) {
+  if (probability > static_cast<T>(1.0) || probability < static_cast<T>(0.0) || std::isnan(probability) || std::isinf(probability)) {
     return NAN;
   }
   constexpr T precision = Float<T>::Epsilon();
-  if (((T)1.0) - probability < precision) {
+  if ((static_cast<T>(1.0)) - probability < precision) {
     return INFINITY;
   }
   if (probability < precision) {
     return -INFINITY;
   }
-  if (probability < (T)0.5) {
-    return -StandardNormalCumulativeDistributiveInverseForProbability(((T)1.0)-probability);
+  if (probability < static_cast<T>(0.5)) {
+    return -StandardNormalCumulativeDistributiveInverseForProbability((static_cast<T>(1.0))-probability);
   }
-  return (T)M_SQRT2 * erfInv(((T)2.0) * probability - (T)1.0);
+  return static_cast<T>(M_SQRT2) * erfInv((static_cast<T>(2.0)) * probability - static_cast<T>(1.0));
 }
 
 template float NormalDistribution::EvaluateAtAbscissa<float>(float, float, float);

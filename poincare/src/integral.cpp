@@ -130,8 +130,8 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
   T fv1[10];
   T fv2[10];
 
-  T center = (T)0.5 * (a+b);
-  T halfLength = (T)0.5 * (b-a);
+  T center = static_cast<T>(0.5) * (a+b);
+  T halfLength = static_cast<T>(0.5) * (b-a);
   T absHalfLength = std::fabs(halfLength);
 
   DetailedResult<T> errorResult;
@@ -165,7 +165,7 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
     absKronrodIntegral += wKronrod[j] * (std::fabs(fval1) + std::fabs(fval2));
   }
 
-  T halfKronrodIntegral = (T)0.5 * kronrodIntegral;
+  T halfKronrodIntegral = static_cast<T>(0.5) * kronrodIntegral;
   T kronrodIntegralDifference = wKronrod[10] * std::fabs(fCenter - halfKronrodIntegral);
   for (int j = 0; j < 10; j++) {
     kronrodIntegralDifference += wKronrod[j] * (std::fabs(fv1[j] - halfKronrodIntegral) + std::fabs(fv2[j] - halfKronrodIntegral));
@@ -175,10 +175,10 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
   kronrodIntegralDifference = kronrodIntegralDifference * absHalfLength;
   T absError = std::fabs((kronrodIntegral - gaussIntegral) * halfLength);
   if (kronrodIntegralDifference != 0 && absError != 0) {
-    T errorCoefficient = std::pow((T)(200*absError/kronrodIntegralDifference), (T)1.5);
+    T errorCoefficient = std::pow(static_cast<T>(200*absError/kronrodIntegralDifference), static_cast<T>(1.5));
     absError = 1 > errorCoefficient ? kronrodIntegralDifference * errorCoefficient : kronrodIntegralDifference;
   }
-  if (absKronrodIntegral > max/((T)50.0 * epsilon)) {
+  if (absKronrodIntegral > max/(static_cast<T>(50.0) * epsilon)) {
     T minError = epsilon * 50 * absKronrodIntegral;
     absError = absError > minError ? absError : minError;
   }

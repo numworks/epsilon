@@ -76,7 +76,7 @@ Number Number::DecimalNumber(T f) {
     return Undefined::Builder();
   }
   if (std::isinf(f)) {
-    return Infinity::Builder(f < (T)0.0);
+    return Infinity::Builder(f < static_cast<T>(0.0));
   }
   return Decimal::Builder(f);
 }
@@ -86,7 +86,7 @@ Number Number::FloatNumber(T f) {
   if (std::isnan(f)) {
     return Undefined::Builder();
   } else if (std::isinf(f)) {
-    return Infinity::Builder(f < (T)0.0);
+    return Infinity::Builder(f < static_cast<T>(0.0));
   } else {
     return Float<T>::Builder(f);
   }

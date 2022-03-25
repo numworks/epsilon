@@ -34,7 +34,7 @@ Evaluation<T> NormCDF2Node::templatedApproximate(ApproximationContext approximat
     return Complex<T>::Undefined();
   }
   if (b <= a) {
-    return Complex<T>::Builder((T)0.0);
+    return Complex<T>::Builder(static_cast<T>(0.0));
   }
   return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(b, mu, sigma) - NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, sigma));
 }

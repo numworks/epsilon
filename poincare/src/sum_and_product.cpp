@@ -38,9 +38,9 @@ Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext appro
   }
   SymbolNode * symbol = static_cast<SymbolNode *>(childAtIndex(1));
   VariableContext nContext = VariableContext(symbol->name(), approximationContext.context());
-  Evaluation<T> result = Complex<T>::Builder((T)emptySumAndProductValue());
+  Evaluation<T> result = Complex<T>::Builder(static_cast<T>(emptySumAndProductValue()));
   for (int i = (int)start; i <= (int)end; i++) {
-    nContext.setApproximationForVariable<T>((T)i);
+    nContext.setApproximationForVariable<T>(static_cast<T>(i));
     Expression child = Expression(childAtIndex(0)).clone();
     if (child.type() == ExpressionNode::Type::Sequence) {
       /* Since we cannot get the expression of a sequence term like we would for

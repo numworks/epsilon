@@ -11,10 +11,10 @@ template <typename T> T StudentDistribution::EvaluateAtAbscissa(T x, T k) {
 
 template <typename T> T StudentDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
   if (x == 0.0) {
-    return (T)0.5;
+    return static_cast<T>(0.5);
   }
   if (std::isinf(x)) {
-    return x > 0 ? (T)1.0 : (T)0.0;
+    return x > 0 ? static_cast<T>(1.0) : static_cast<T>(0.0);
   }
   /* TODO There are some computation errors, where the probability falsly jumps to 1.
    * k = 0.001 and P(x < 42000000) (for 41000000 it is around 0.5)
@@ -26,7 +26,7 @@ template <typename T> T StudentDistribution::CumulativeDistributiveFunctionAtAbs
 
 template <typename T> T StudentDistribution::CumulativeDistributiveInverseForProbability(T probability, T k) {
   if (probability == 0.5) {
-    return (T)0.0;
+    return static_cast<T>(0.0);
   } else if (probability > 1.0 - DBL_EPSILON) {
     return INFINITY;
   } else if (probability < DBL_EPSILON) {

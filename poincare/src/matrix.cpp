@@ -186,7 +186,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   // Check inversibility
   for (int i = 0; i < dim; i++) {
     T cell = operands[i*2*dim+i];
-    if (!std::isfinite(std::abs(cell)) || std::abs(cell - (T)1.0) > Float<float>::EpsilonLax()) {
+    if (!std::isfinite(std::abs(cell)) || std::abs(cell - static_cast<T>(1.0)) > Float<float>::EpsilonLax()) {
       return -2;
     }
   }
@@ -330,7 +330,7 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
       // No non-null coefficient in this column, skip
       k++;
       // Update determinant: det *= 0
-      if (determinant) { *determinant *= (T)0.0; }
+      if (determinant) { *determinant *= static_cast<T>(0.0); }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
@@ -341,7 +341,7 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
           array[h*numberOfColumns+col] = temp;
         }
         // Update determinant: det *= -1
-        if (determinant) { *determinant *= (T)-1.0; }
+        if (determinant) { *determinant *= static_cast<T>(-1.0); }
       }
       // Set to 1 array[h][k] by linear combination
       T divisor = array[h*numberOfColumns+k];

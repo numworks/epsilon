@@ -235,7 +235,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
    * small), mantissa is now inf. We handle this case by using logarithm
    * function. */
   if (std::isnan(mantissa) || std::isinf(mantissa)) {
-    mantissa = std::round(std::pow(10, std::log10(std::fabs(f))+(T)(numberOfSignificantDigits -1 - exponentInBase10)));
+    mantissa = std::round(std::pow(10, std::log10(std::fabs(f))+static_cast<T>(numberOfSignificantDigits -1 - exponentInBase10)));
     mantissa = std::copysign(mantissa, static_cast<double>(f));
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
@@ -258,7 +258,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
 
   // Correct the number of digits in mantissa after rounding
   if (IEEE754<T>::exponentBase10(mantissa) >= numberOfSignificantDigits) {
-    mantissa = mantissa / (T)10.0;
+    mantissa = mantissa / static_cast<T>(10.0);
   }
 
   // Number of chars for the mantissa
@@ -368,7 +368,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
   /* Part IV: Exponent */
 
   int exponent = mode == Preferences::PrintFloatMode::Engineering ? exponentForEngineeringNotation : exponentInBase10;
-  int numberOfCharExponent = exponent != 0 ? IEEE754<T>::exponentBase10((T)exponent) + 1 : 0;
+  int numberOfCharExponent = exponent != 0 ? IEEE754<T>::exponentBase10(static_cast<T>(exponent)) + 1 : 0;
   if (exponent < 0) {
     // If the exponent is < 0, we need a additional char for the sign
     numberOfCharExponent++;

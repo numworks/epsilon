@@ -54,7 +54,7 @@ Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences:
   }
   T result = 1;
   for (int i = 1; i <= (int)n; i++) {
-    result *= (T)i;
+    result *= static_cast<T>(i);
     if (std::isinf(result)) {
       return Complex<T>::Builder(result);
     }

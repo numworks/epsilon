@@ -62,7 +62,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
   do {
     T currentError;
     T currentResult = riddersApproximation(approximationContext, evaluationArgument, h, &currentError);
-    h /= (T)10.0;
+    h /= static_cast<T>(10.0);
     if (std::isnan(currentError) || currentError > error) {
       continue;
     }
@@ -78,8 +78,8 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
     return Complex<T>::RealUndefined();
   }
   // Round and amplify error to a power of 10
-  T roundedError = (T)100.0 * std::pow((T)10, IEEE754<T>::exponentBase10(error));
-  if (error == (T)0.0 || std::round(result/roundedError) == result/roundedError) {
+  T roundedError = static_cast<T>(100.0) * std::pow(static_cast<T>(10.0), IEEE754<T>::exponentBase10(error));
+  if (error == static_cast<T>(0.0) || std::round(result/roundedError) == result/roundedError) {
     // Return result if error is negligible
     return Complex<T>::Builder(result);
   }

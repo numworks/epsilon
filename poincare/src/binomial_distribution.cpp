@@ -16,27 +16,27 @@ T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
   constexpr T precision = Float<T>::Epsilon();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
-  bool pIsOne = !pIsZero && std::abs(p - (T)1.0) < precision;
+  bool pIsOne = !pIsZero && std::abs(p - static_cast<T>(1.0)) < precision;
   if (nIsZero) {
     if (pIsZero || pIsOne) {
       return NAN;
     }
     if (std::floor(x) == 0) {
-      return (T)1;
+      return static_cast<T>(1.0);
     }
-    return (T)0;
+    return static_cast<T>(0.0);
   }
   if (pIsOne) {
-    return (T)(floor(x) == n ? 1 : 0);
+    return static_cast<T>(floor(x) == n ? 1.0 : 0.0);
   }
   if (pIsZero) {
-    return (T)(floor(x) == 0.0 ? 1 : 0);
+    return static_cast<T>(floor(x) == 0 ? 1.0 : 0.0);
   }
   if (x > n) {
-    return(T)0;
+    return static_cast<T>(0.0);
   }
-  T lResult = std::lgamma(n+(T)1.0) - std::lgamma(std::floor(x)+(T)1.0) - std::lgamma(n - std::floor(x)+(T)1.0) +
-    std::floor(x)*std::log(p) + (n-std::floor(x))*std::log((T)(1.0)-p);
+  T lResult = std::lgamma(n+static_cast<T>(1.0)) - std::lgamma(std::floor(x)+static_cast<T>(1.0)) - std::lgamma(n - std::floor(x)+static_cast<T>(1.0)) +
+    std::floor(x)*std::log(p) + (n-std::floor(x))*std::log(static_cast<T>(1.0)-p);
   return std::exp(lResult);
 }
 
@@ -45,11 +45,11 @@ T BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T n, T p) 
   if (!ParametersAreOK(n, p) || std::isnan(x) || std::isinf(x)) {
     return NAN;
   }
-  if (x < (T)0.0) {
-    return (T)0.0;
+  if (x < static_cast<T>(0.0)) {
+    return static_cast<T>(0.0);
   }
   if (x >= n) {
-    return (T)1.0;
+    return static_cast<T>(1.0);
   }
   T floorX = std::floor(x);
   return RegularizedIncompleteBetaFunction(n-floorX, floorX+1.0, 1.0-p);
@@ -57,7 +57,7 @@ T BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T n, T p) 
 
 template<typename T>
 T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probability, T n, T p) {
-  if (!ParametersAreOK(n, p) || std::isnan(probability) || std::isinf(probability) || probability < (T)0.0 || probability > (T)1.0) {
+  if (!ParametersAreOK(n, p) || std::isnan(probability) || std::isinf(probability) || probability < static_cast<T>(0.0) || probability > static_cast<T>(1.0)) {
     return NAN;
   }
   if (!ParametersAreOK(n, p)) {
@@ -66,7 +66,7 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probabilit
   constexpr T precision = Float<T>::Epsilon();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
-  bool pIsOne = !pIsZero && std::abs(p - (T)1.0) < precision;
+  bool pIsOne = !pIsZero && std::abs(p - static_cast<T>(1.0)) < precision;
   if (nIsZero && (pIsZero || pIsOne)) {
     return NAN;
   }
@@ -76,7 +76,7 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probabilit
     }
     return NAN;
   }
-  if (std::abs(probability - (T)1.0) < precision) {
+  if (std::abs(probability - static_cast<T>(1.0)) < precision) {
     return n;
   }
   T proba = probability;
@@ -95,8 +95,8 @@ template<typename T>
 bool BinomialDistribution::ParametersAreOK(T n, T p) {
   return !std::isnan(n) && !std::isnan(p)
     && !std::isinf(n) && !std::isinf(p)
-    && (n == (int)n) && (n >= (T)0)
-    && (p >= (T)0) && (p <= (T)1);
+    && (n == static_cast<int>(n)) && (n >= static_cast<T>(0.0))
+    && (p >= static_cast<T>(0.0)) && (p <= static_cast<T>(1.0));
 }
 
 bool BinomialDistribution::ExpressionParametersAreOK(bool * result, const Expression & n, const Expression & p, Context * context) {

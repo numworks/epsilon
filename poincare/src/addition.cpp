@@ -16,6 +16,20 @@
 
 namespace Poincare {
 
+ExpressionNode::Sign AdditionNode::sign(Context * context) const {
+  if (numberOfChildren() < 1) {
+    return Sign::Unknown;
+  }
+  // If all children have same sign, addition has this sign too.
+  ExpressionNode::Sign additionSign = childAtIndex(0)->sign(context);
+  for (int i = 1; i < numberOfChildren(); i++) {
+    if (childAtIndex(i)->sign(context) != additionSign) {
+      return Sign::Unknown;
+    }
+  }
+  return additionSign;
+}
+
 int AdditionNode::polynomialDegree(Context * context, const char * symbolName) const {
   int degree = 0;
   for (ExpressionNode * e : children()) {

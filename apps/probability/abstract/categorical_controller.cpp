@@ -58,10 +58,10 @@ void CategoricalController::tableViewDidChangeSelectionAndDidScroll(
 }
 
 HighlightCell * CategoricalController::reusableCell(int index, int type) {
-  if (index == k_indexOfTableCell) {
+  if (type == k_indexOfTableCell) {
     return categoricalTableCell();
   } else {
-    assert(index == indexOfNextCell());
+    assert(type == indexOfNextCell());
     return &m_next;
   }
 }
@@ -121,7 +121,7 @@ void InputCategoricalController::tableViewDataSourceDidChangeSize() {
 }
 
 HighlightCell * InputCategoricalController::reusableCell(int index, int type) {
-  if (index == indexOfSignificanceCell()) {
+  if (type == indexOfSignificanceCell()) {
     return &m_significanceCell;
   } else {
     return CategoricalController::reusableCell(index, type);

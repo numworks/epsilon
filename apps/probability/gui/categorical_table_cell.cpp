@@ -75,7 +75,7 @@ EditableCategoricalTableCell::EditableCategoricalTableCell(Escher::Responder * p
   DynamicSizeTableViewDataSource(dynamicSizeTableViewDelegate),
   m_statistic(chi2Test)
 {
-  m_selectableTableView.setMargins(0, Escher::Metric::CommonRightMargin, k_marginVertical, Escher::Metric::CommonLeftMargin);
+  m_selectableTableView.setMargins(0, 0, k_marginVertical, 0);
 }
 
 bool EditableCategoricalTableCell::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {

@@ -31,13 +31,13 @@ jobs:
         run: make -C head kernel.A.elf && make -C head userland.A.elf
       - name: Binary size summary
         id: binary_size_summary
-        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections @Flash .text .rodata @RAM .bss .data --summarize --escape)"
+        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections @Flash .text .rodata @RAM .bss .data --summarize)"
       - name: Binary size N0100
         id: binary_size_n0100
-        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0100/kernel/kernel.elf base/output/release/device/n0100/userland/userland.elf @Head head/output/release/device/n0100/kernel/kernel.elf head/output/release/device/n0100/userland/userland.elf --sections .text .rodata .bss .data --escape)"
+        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0100/kernel/kernel.elf base/output/release/device/n0100/userland/userland.elf @Head head/output/release/device/n0100/kernel/kernel.elf head/output/release/device/n0100/userland/userland.elf --sections .text .rodata .bss .data)"
       - name: Binary size N0110
         id: binary_size_n0110
-        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections .text .rodata .bss .data --escape)"
+        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections .text .rodata .bss .data)"
       - name: Add comment
         uses: actions/github-script@v3.0.0
         with:

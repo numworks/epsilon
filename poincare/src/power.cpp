@@ -722,8 +722,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   /* Step 8
-   * Handle the case of base and index being a number */
-  if (base.isNumber() && index.isNumber()) {
+   * Handle the case of base being a number */
+  if (base.isNumber()) {
    /* Step 8.1
    * Handle the simple case of r^s, whith r and s rational. */
     if (baseType == ExpressionNode::Type::Rational) {
@@ -737,7 +737,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   /* Step 8.2
    * Other cases */
-    Expression e = Number::Power(static_cast<Number &>(base), static_cast<Number &>(index));
+    Expression e = Number::Power(static_cast<Number &>(base), rationalIndex);
     if (e.isUninitialized()) {
       return *this;
     }

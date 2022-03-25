@@ -17,9 +17,15 @@ class CategoricalTableCell : public Escher::HighlightCell, public Escher::Respon
 public:
   CategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate);
 
+  // Responder
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
+
+  // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
+
+  // HighlightCell
+  Responder * responder() override { return this; }
 
   Escher::SelectableTableView * selectableTableView() { return &m_selectableTableView; }
   virtual CategoricalTableViewDataSource * tableViewDataSource() = 0;

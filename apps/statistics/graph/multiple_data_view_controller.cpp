@@ -46,17 +46,10 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   assert(*m_selectedSeriesIndex >= 0);
-  if (event == Ion::Events::Down || event == Ion::Events::Up) {
-    int direction = event == Ion::Events::Down ? -1 : 1;
-    if (moveSelectionVertically(direction)) {
-      if (reloadBannerView()) {
-        multipleDataView()->reload();
-      }
-      return true;
-    }
-  } else if (event == Ion::Events::Left || event == Ion::Events::Right) {
-    int direction = event == Ion::Events::Left ? -1 : 1;
-    if (moveSelectionHorizontally(direction)) {
+  bool isVerticalEvent = (event == Ion::Events::Down || event == Ion::Events::Up);
+  if ((isVerticalEvent || event == Ion::Events::Left || event == Ion::Events::Right)) {
+    int direction = (event == Ion::Events::Down || event == Ion::Events::Left) ? -1 : 1;
+    if (isVerticalEvent ? moveSelectionVertically(direction) : moveSelectionHorizontally(direction)) {
       if (reloadBannerView()) {
         multipleDataView()->reload();
       }

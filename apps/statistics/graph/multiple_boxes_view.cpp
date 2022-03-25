@@ -51,6 +51,7 @@ bool MultipleBoxesView::moveSelectionHorizontally(int series, int deltaIndex) {
   assert(deltaIndex != 0);
   BoxView * view = dataViewAtIndex(series);
   if (view->canIncrementSelectedCalculation(deltaIndex)) {
+    // Mark rect as dirty in parent's view to also redraw the background
     markRectAsDirty(view->selectedCalculationRect());
     view->incrementSelectedCalculation(deltaIndex);
     markRectAsDirty(view->selectedCalculationRect());
@@ -72,12 +73,15 @@ View *  MultipleBoxesView::subviewAtIndex(int index) {
 
 void MultipleBoxesView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate bannerHeight = bannerFrame().height();
+  /* Background is filled here instead of in each subviews because the boxes
+   * layout can overlap, and should not draw over this each others. */
   ctx->fillRect(KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight - k_axisViewHeight), KDColorWhite);
   MultipleDataView::drawRect(ctx, rect);
 }
 
 void MultipleBoxesView::changeDataViewSelection(int index, bool select) {
   dataViewAtIndex(index)->selectMainView(select);
+  // Mark rect as dirty in parent's view to also redraw the background
   markRectAsDirty(dataViewAtIndex(index)->reloadRect());
 }
 

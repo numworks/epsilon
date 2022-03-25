@@ -23,7 +23,6 @@ bool BoxView::canIncrementSelectedCalculation(int deltaIndex) const {
 }
 
 void BoxView::incrementSelectedCalculation(int deltaIndex) {
-  assert(deltaIndex != 0);
   assert(canIncrementSelectedCalculation(deltaIndex));
   *m_selectedBoxCalculation += deltaIndex;
 }
@@ -34,10 +33,12 @@ KDRect BoxView::selectedCalculationRect() const {
   float calculation = m_store->boxPlotCalculationAtIndex(m_series, *m_selectedBoxCalculation);
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation)) - k_leftMargin;
   KDCoordinate width = k_leftMargin + k_rightMargin;
+  // Transpose the rect into parent's view coordinates
   return KDRect(minX, minY, width, maxY - minY).translatedBy(m_frame.origin());
 }
 
 KDRect BoxView::reloadRect() {
+  // Transpose the rect into parent's view coordinates
   return boxRect().translatedBy(m_frame.origin());
 }
 

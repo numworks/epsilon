@@ -592,15 +592,14 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   if (!p.isUninitialized() && p.indexOfChild(*this) == 0 && isLogarithmOfSameBase(p)) { // Avoid expanding e^(π+2) in ln(e^(π+2))
     return *this;
   }
-  Expression testLogIndex = reduceLogarithmInIndex(reductionContext, index);
-  if (isLogarithmOfSameBase(testLogIndex)) { // Looking for x^(log(y,x))
-    Expression e = testLogIndex.childAtIndex(0);
-    if (e.sign(context) == ExpressionNode::Sign::Positive) {
-      replaceWithInPlace(e);
-      return e;
-    }
+
+  Expression newIndex = ReduceLogarithmLinearCombination(reductionContext, index, base);
+  if (isLogarithmOfSameBase(newIndex)) {
+    Expression newSelf = newIndex.childAtIndex(0);
+    replaceWithInPlace(newSelf);
+    return newSelf;
   }
-    /* Step 5
+  /* Step 5
    * Handle complex numbers. */
   bool baseIsReal = base.isReal(context);
   bool baseIsCartesian = baseType == ExpressionNode::Type::ComplexCartesian;
@@ -693,6 +692,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Expression thisRef = *this;
     replaceWithInPlace(m);
     m.addChildAtIndexInPlace(thisRef, 1, 1);
+    thisRef.shallowReduce(reductionContext);
     return m.shallowReduce(reductionContext);
   }
 
@@ -1300,17 +1300,20 @@ Expression Power::PowerIntegerRational(Integer base, Rational index, ExpressionN
 }
 
 bool Power::isLogarithmOfSameBase(Expression e) const {
-  if (e.isUninitialized()) {
+  return IsLogarithmOfBase(e, childAtIndex(0));
+}
+
+bool Power::IsLogarithmOfBase(const Expression e, const Expression base) {
+   if (e.isUninitialized()) {
     return false;
   }
-  Expression base = childAtIndex(0);
   if (e.type() == ExpressionNode::Type::Logarithm) {
     /* Because e is a logarthim, we simplified e.childAtIndex(1) before
      * e.childAtIndex(0), so e.childAtIndex(1) can be compared to base even if
      * e is our parent. */
     if (e.numberOfChildren() == 1) {
       return base.type() == ExpressionNode::Type::Rational
-          && static_cast<Rational &>(base).isTen();
+          && static_cast<const Rational &>(base).isTen();
     } else {
       assert(e.numberOfChildren() == 2);
       return base.isIdenticalTo(e.childAtIndex(1));
@@ -1318,28 +1321,33 @@ bool Power::isLogarithmOfSameBase(Expression e) const {
   }
   return e.type() == ExpressionNode::Type::NaperianLogarithm
     && base.type() == ExpressionNode::Type::ConstantMaths
-    && static_cast<Constant &>(base).isConstant("ℯ");
+    && static_cast<const Constant &>(base).isConstant("ℯ");
 }
 
 /* This function turns the expression of type "a1*log(b1)+a2*log(b2)+..." into "log(b1^a1*b2^a2)"
  * to reduce it when it's the index of a power of the same base.
  * This could be put into Multiplication and/or Addition if we want to always do this with logs.
  * */
-Expression Power::reduceLogarithmInIndex(ExpressionNode::ReductionContext reductionContext, Expression e) const {
+Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionContext reductionContext, Expression linearCombination, const Expression baseOfLogarithmToReduce) {
   Context * context = reductionContext.context();
-  if (e.isUninitialized()) {
-    return e;
+  if (linearCombination.isUninitialized()) {
+    return Expression();
   }
-  Expression base = childAtIndex(0).clone();
-  if (e.type() == ExpressionNode::Type::Multiplication) { // Handle x*log(y) -> log(y^x)
-    Multiplication multiplication = static_cast<Multiplication &>(e);
+  Expression base = baseOfLogarithmToReduce.clone();
+  if (linearCombination.type() == ExpressionNode::Type::Multiplication) { // Handle x*log(y) -> log(y^x)
+    Multiplication multiplication = static_cast<Multiplication &>(linearCombination);
     int nChildren = multiplication.numberOfChildren();
+    if (nChildren < 1) {
+      return linearCombination;
+    }
     for (int i = 0; i < nChildren; i++) {
       Expression child = multiplication.childAtIndex(i);
-      if (isLogarithmOfSameBase(child)) {
-        Expression inLog = child.childAtIndex(0);
-        if (inLog.sign(context) == ExpressionNode::Sign::Positive) {
-          Power power = Power::Builder(inLog, multiplication);
+      if (IsLogarithmOfBase(child, base)) {
+        Expression insideLogarithm = child.childAtIndex(0);
+        if (insideLogarithm.sign(context) == ExpressionNode::Sign::Positive) {
+          Power power = Power::Builder(insideLogarithm, child);
+          multiplication.replaceWithInPlace(power);
+          power.replaceChildAtIndexInPlace(1, multiplication);
           multiplication.removeChildAtIndexInPlace(i);
           multiplication.shallowReduce(reductionContext);
           Logarithm result = Logarithm::Builder(power, base);
@@ -1348,17 +1356,18 @@ Expression Power::reduceLogarithmInIndex(ExpressionNode::ReductionContext reduct
         }
       }
     }
-  }
-  else if (e.type() == ExpressionNode::Type::Addition) { // Handle log(x) + log(y) -> log(x*y)
-    Expression clone = e.clone();
+  } else if (linearCombination.type() == ExpressionNode::Type::Addition) { // Handle log(x) + log(y) -> log(x*y)
+    Expression clone = linearCombination.clone();
     Addition addition = static_cast<Addition &>(clone);
     int nChildren = addition.numberOfChildren();
-     // Reduce terms of the addition.
-     // For example if the addition is (log(x) + log(y)) + a*log(b), turn it into log(x*y) + log(b^a)
+     /* Reduce terms of the addition.
+      * For example if the addition is (log(x) + log(y)) + a*log(b), turn it into log(x*y) + log(b^a) */
     for (int i = 0; i < nChildren; i++) {
       Expression child = addition.childAtIndex(i);
-      Expression newChild = reduceLogarithmInIndex(reductionContext, child);
-      addition.replaceChildInPlace(addition.childAtIndex(i), newChild);
+      Expression newChild = ReduceLogarithmLinearCombination(reductionContext, child, base);
+      if (IsLogarithmOfBase(newChild, base)) {
+         addition.replaceChildInPlace(addition.childAtIndex(i), newChild);
+      }
     }
     if (nChildren <= 1) {
       return addition.childAtIndex(0);
@@ -1366,24 +1375,26 @@ Expression Power::reduceLogarithmInIndex(ExpressionNode::ReductionContext reduct
     bool hasOnlyLogarithmChildren = true;
     for (int i = 0; i < nChildren; i++) {
       Expression child = addition.childAtIndex(i);
-      if (!isLogarithmOfSameBase(child)) {
+      if (!IsLogarithmOfBase(child, base)) {
         hasOnlyLogarithmChildren = false;
         break;
       }
     }
     if (hasOnlyLogarithmChildren) {
-      Expression firstLog = addition.childAtIndex(0);
+      Expression firstLogarithm = addition.childAtIndex(0);
+      Expression insideLogarithm = Expression();
       for (int i = 1; i < nChildren; i++) {
-        Multiplication inLog = Multiplication::Builder(firstLog.childAtIndex(0), addition.childAtIndex(i).childAtIndex(0));
-        firstLog.replaceChildInPlace(firstLog.childAtIndex(0), inLog);
-        inLog.shallowReduce(reductionContext);
+        insideLogarithm = Multiplication::Builder(firstLogarithm.childAtIndex(0), addition.childAtIndex(i).childAtIndex(0));
+        firstLogarithm.replaceChildInPlace(firstLogarithm.childAtIndex(0), insideLogarithm);
+        insideLogarithm.shallowReduce(reductionContext);
       }
-      if (firstLog.childAtIndex(0).sign(context) == ExpressionNode::Sign::Positive) {
-        return firstLog;
+      if (firstLogarithm.childAtIndex(0).sign(context) == ExpressionNode::Sign::Positive) {
+        linearCombination.replaceWithInPlace(firstLogarithm);
+        return firstLogarithm;
       }
     }
   }
-  return e;
+  return linearCombination;
 }
 
 bool Power::isNthRootOfUnity() const {

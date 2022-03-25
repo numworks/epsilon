@@ -36,6 +36,7 @@ protected:
   Escher::Responder * tabController() { return m_tabController; }
   virtual bool reloadBannerView() = 0;
   virtual bool moveSelectionHorizontally(int deltaIndex) = 0;
+  virtual bool moveSelectionVertically(int deltaIndex);
 
   Escher::Responder * m_tabController;
   Store * m_store;

@@ -46,39 +46,14 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   assert(*m_selectedSeriesIndex >= 0);
-  if (event == Ion::Events::Down) {
-    int currentSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(*m_selectedSeriesIndex);
-    if (currentSelectedSubview < m_store->numberOfValidSeries() - 1) {
-      multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
-      *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(currentSelectedSubview+1);
-      *m_selectedBarIndex = MultipleDataView::k_defaultSelectedBar;
-      multipleDataView()->selectDataView(*m_selectedSeriesIndex);
-      highlightSelection();
+  if (event == Ion::Events::Down || event == Ion::Events::Up) {
+    int direction = event == Ion::Events::Down ? -1 : 1;
+    if (moveSelectionVertically(direction)) {
       if (reloadBannerView()) {
         multipleDataView()->reload();
       }
       return true;
     }
-    return false;
-  }
-  if (event == Ion::Events::Up) {
-    int currentSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(*m_selectedSeriesIndex);
-    if (currentSelectedSubview > 0) {
-      multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
-      *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(currentSelectedSubview-1);
-      *m_selectedBarIndex = MultipleDataView::k_defaultSelectedBar;
-      multipleDataView()->selectDataView(*m_selectedSeriesIndex);
-      highlightSelection();
-    } else {
-      multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
-      multipleDataView()->setDisplayBanner(false);
-      header()->setSelectedButton(0);
-    }
-    if (reloadBannerView()) {
-      multipleDataView()->reload();
-    }
-    return true;
-  }
   if (*m_selectedSeriesIndex >= 0 && (event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = event == Ion::Events::Left ? -1 : 1;
     if (moveSelectionHorizontally(direction) && reloadBannerView()) {
@@ -103,6 +78,24 @@ void MultipleDataViewController::willExitResponderChain(Responder * nextFirstRes
     multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
     multipleDataView()->setDisplayBanner(false);
   }
+}
+
+bool MultipleDataViewController::moveSelectionVertically(int direction) {
+  int nextSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(*m_selectedSeriesIndex) - direction;
+  if (nextSelectedSubview >= m_store->numberOfValidSeries()) {
+    return false;
+  }
+  multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
+  if (nextSelectedSubview < 0) {
+    multipleDataView()->setDisplayBanner(false);
+    header()->setSelectedButton(0);
+  } else {
+    *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(nextSelectedSubview);
+    *m_selectedBarIndex = MultipleDataView::k_defaultSelectedBar;
+    multipleDataView()->selectDataView(*m_selectedSeriesIndex);
+    highlightSelection();
+  }
+  return true;
 }
 
 }

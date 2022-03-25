@@ -2,6 +2,7 @@
 #include "goodness_test.h"
 #include "homogeneity_test.h"
 
+#include <algorithm>
 #include <cmath>
 
 namespace Probability {

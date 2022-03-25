@@ -18,7 +18,7 @@ template<typename T>
 Complex<T> CotangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> denominator = SineNode::computeOnComplex<T>(c, complexFormat, angleUnit).stdComplex();
   std::complex<T> numerator = CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit).stdComplex();
-  if (denominator == (T)0.0) {
+  if (denominator == static_cast<T>(0.0)) {
     return Complex<T>::Undefined();
   }
   return Complex<T>::Builder(numerator / denominator);

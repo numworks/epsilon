@@ -309,7 +309,7 @@ template<typename T> T DecimalNode::templatedApproximate() const {
   Integer m = signedMantissa();
   T f = m.approximate<T>();
   int numberOfDigits = Integer::NumberOfBase10DigitsWithoutSign(m);
-  return f*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1));
+  return f*std::pow(static_cast<T>(10.0), static_cast<T>(m_exponent-numberOfDigits+1));
 }
 
 int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {

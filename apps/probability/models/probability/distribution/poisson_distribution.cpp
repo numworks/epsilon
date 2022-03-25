@@ -20,7 +20,7 @@ T PoissonDistribution::templatedApproximateAtAbscissa(T x) const {
   if (x < 0) {
     return NAN;
   }
-  T lResult = -(T)m_parameter + std::floor(x) * std::log((T)m_parameter) - std::lgamma(std::floor(x) + 1);
+  T lResult = -static_cast<T>(m_parameter) + std::floor(x) * std::log(static_cast<T>(m_parameter)) - std::lgamma(std::floor(x) + 1);
   return std::exp(lResult);
 }
 

@@ -324,7 +324,7 @@ T Integer::approximate() const {
      * area), the issue is that when the mantissa is 0, a "shadow bit" is
      * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
      */
-    return (T)0.0;
+    return static_cast<T>(0.0);
   }
   assert(sizeof(T) == 4 || sizeof(T) == 8);
   /* We're generating an IEEE 754 compliant float(double).

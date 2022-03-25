@@ -51,10 +51,10 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Approximati
   if (std::isnan(a) || std::isnan(b) || std::isinf(a) || std::isinf(b)
       || a > b
       || a != (int)a || b != (int)b
-      || (Float<T>::EpsilonLax()*(b+(T)1.0-a) > (T)1.0)) {
+      || (Float<T>::EpsilonLax()*(b+static_cast<T>(1.0)-a) > static_cast<T>(1.0))) {
     return Complex<T>::RealUndefined();
   }
-  T result = std::floor(Random::random<T>()*(b+(T)1.0-a)+a);
+  T result = std::floor(Random::random<T>()*(b+static_cast<T>(1.0)-a)+a);
   return Complex<T>::Builder(result);
 }
 

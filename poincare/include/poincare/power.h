@@ -92,8 +92,9 @@ private:
   static Expression PowerIntegerRational(Integer base, Rational index, ExpressionNode::ReductionContext reductionContext);
   static Expression CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext); // Returns e^(i*pi*r)
   static bool RationalExponentShouldNotBeReduced(const Rational & b, const Rational & r);
+  static bool IsLogarithmOfBase(const Expression e, const Expression base);
+  static Expression ReduceLogarithmLinearCombination(ExpressionNode::ReductionContext reductionContext, Expression linearCombination, const Expression baseOfLogarithmToReduce);
   bool isLogarithmOfSameBase(Expression e) const;
-  Expression reduceLogarithmInIndex(ExpressionNode::ReductionContext reductionContext, Expression e) const;
   bool isNthRootOfUnity() const;
 
   // Unit

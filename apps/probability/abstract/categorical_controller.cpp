@@ -77,7 +77,10 @@ InputCategoricalController::InputCategoricalController(
       CategoricalController(parent, nextController, Invocation(&InputCategoricalController::ButtonAction, this)),
       m_statistic(statistic),
       m_significanceCell(&m_selectableTableView, inputEventHandlerDelegate, this)
-{}
+{
+  m_significanceCell.setMessage(I18n::Message::GreekAlpha);
+  m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
+}
 
 bool InputCategoricalController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Up || event == Ion::Events::Down;

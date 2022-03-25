@@ -234,6 +234,8 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("2^x×2^(-x)", "1", SystemForAnalysis);
   assert_parsed_expression_simplify_to("y^x×y^(-x)", "y^0", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x/√(x)", "x/√(x)", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "x",SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "√(x)×√(x)", User, Radian, MetricUnitFormat, Real);
 }
 
 QUIZ_CASE(poincare_simplification_constants) {

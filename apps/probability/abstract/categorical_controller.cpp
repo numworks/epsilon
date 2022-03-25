@@ -23,6 +23,9 @@ CategoricalController::CategoricalController(
 }
 
 void CategoricalController::didBecomeFirstResponder() {
+  if (selectedRow() < 0) {
+    selectRow(0);
+  }
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 

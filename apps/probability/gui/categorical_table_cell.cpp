@@ -16,8 +16,8 @@ CategoricalTableCell::CategoricalTableCell(Escher::Responder * parentResponder, 
 }
 
 void CategoricalTableCell::didBecomeFirstResponder() {
-  if (selectableTableView()->selectedRow() < 0) {
-    selectableTableView()->selectRow(1);
+  if (selectedRow() < 0) {
+    selectRow(1);
   }
   Escher::Container::activeApp()->setFirstResponder(selectableTableView());
 }

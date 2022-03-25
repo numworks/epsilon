@@ -116,13 +116,10 @@ Number Number::Multiplication(const Number & i, const Number & j) {
 
 Number Number::Power(const Number & i, const Number & j) {
   return BinaryOperation(i, j,
-      // Special case for Rational^Rational: we escape to Float if the index is not an Integer
+      // Rational ^ Rational should not be handled here, but in Power::shallowReduce
       [](const Rational & i, const Rational & j) {
-        if (!j.isInteger()) {
-          // We return an overflown result to reach the escape case Float+Float
-          return Rational::Builder(Integer::Overflow(false));
-        }
-        return Rational::IntegerPower(i, j.signedIntegerNumerator());
+        assert(false);
+        return Rational::Builder(Integer::Overflow(false));
       },
       [](double a, double b) {
         return std::pow(a, b);

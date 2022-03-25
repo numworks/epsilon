@@ -21,6 +21,10 @@ public:
   bool canIncrementSelectedCalculation(int deltaIndex) const;
   void incrementSelectedCalculation(int deltaIndex);
   KDRect selectedCalculationRect() const;
+  // Box dimension used to layout BoxViews in MultipleBoxesView
+  constexpr static KDCoordinate BoxHeight(int numberOfValideSeries) { return numberOfValideSeries > 2 ? k_threeBoxesHeight: k_twoBoxesHeight; }
+  constexpr static KDCoordinate BoxVerticalMargin() { return k_verticalMargin; }
+  constexpr static KDCoordinate BoxFrameHeight(int numberOfValideSeries) { return k_verticalMargin + BoxHeight(numberOfValideSeries) + k_verticalMargin; }
 
   /* CurveView */
   KDRect reloadRect();
@@ -32,13 +36,14 @@ private:
   /* Colors */
   constexpr static KDColor k_selectedColor = Escher::Palette::YellowDark;
   constexpr static KDColor k_unfocusedColor = Escher::Palette::GrayMiddle;
-  /* Outlier size */
-  constexpr static Shared::CurveView::Size k_outlierDotSize = Shared::CurveView::Size::Small;
-  constexpr static KDCoordinate k_outlierSize = Shared::Dots::SmallDotDiameter;
   /* Box and quantile dimensions */
   constexpr static KDCoordinate k_twoBoxesHeight = 40;
   constexpr static KDCoordinate k_threeBoxesHeight = 27;
   constexpr static KDCoordinate k_quantileBarWidth = 2;
+  /* Outlier size */
+  constexpr static Shared::CurveView::Size k_outlierDotSize = Shared::CurveView::Size::Small;
+  constexpr static KDCoordinate k_outlierSize = Shared::Dots::SmallDotDiameter;
+  static_assert(k_outlierSize <= std::max(k_twoBoxesHeight, k_threeBoxesHeight), "Outliers are not expected to be taller than the box.");
   /* Margins to properly reload rects */
   constexpr static KDCoordinate k_chevronMargin = 2;
   // A calculation may be a quantile or an outlier. It has chevrons if selected.
@@ -58,13 +63,6 @@ private:
   void drawChevron(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool up) const;
   /* Box bounds */
   KDRect boxRect() const;
-  // TODO: MultipleDataView does not allow enough space to layout boxes as intended
-  KDCoordinate boxHeight() const { return m_store->numberOfValidSeries() > 2 ? k_threeBoxesHeight: k_twoBoxesHeight; }
-  KDCoordinate boxLowerBoundPixel() const;
-  KDCoordinate boxUpperBoundPixel() const;
-  // Account for vertical margin, to handle chevron on selected calculations
-  KDCoordinate calculationLowerBoundPixel() const;
-  KDCoordinate calculationUpperBoundPixel() const;
 
   Store * m_store;
   BoxRange m_boxRange;

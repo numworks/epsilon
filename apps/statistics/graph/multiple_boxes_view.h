@@ -27,7 +27,10 @@ public:
   Escher::View * subviewAtIndex(int index) override;
 
 private:
+  constexpr static KDCoordinate TopToFirstBoxMargin(int numberOfSeries) { return numberOfSeries == 1 ? 48 : 14; }
+  constexpr static KDCoordinate BoxToBoxMargin(int numberOfSeries) { return numberOfSeries == 3 ? 12 : 24; }
   static constexpr KDCoordinate k_axisViewHeight = 21;
+
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void changeDataViewSelection(int index, bool select) override;
   BoxView m_boxView1;

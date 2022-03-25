@@ -50,8 +50,13 @@ void MultipleBoxesView::reload() {
 bool MultipleBoxesView::moveSelectionHorizontally(int series, int deltaIndex) {
   assert(deltaIndex != 0);
   BoxView * view = dataViewAtIndex(series);
-  int selectedBoxCalculation = view->selectedBoxCalculation();
-  return view->selectCalculation(selectedBoxCalculation + deltaIndex);
+  if (view->canIncrementSelectedCalculation(deltaIndex)) {
+    markRectAsDirty(view->selectedCalculationRect());
+    view->incrementSelectedCalculation(deltaIndex);
+    markRectAsDirty(view->selectedCalculationRect());
+    return true;
+  }
+  return false;
 }
 
 int MultipleBoxesView::numberOfSubviews() const {

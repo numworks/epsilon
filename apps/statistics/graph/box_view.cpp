@@ -17,27 +17,24 @@ BoxView::BoxView(Store * store, int series, int * selectedBoxCalculation) :
 {
 }
 
-bool BoxView::selectCalculation(int selectedBoxCalculation) {
-  if (selectedBoxCalculation < 0 || selectedBoxCalculation >= m_store->numberOfBoxPlotCalculations(m_series)) {
-    return false;
-  }
-  if (*m_selectedBoxCalculation != selectedBoxCalculation) {
-    reloadCalculation();
-    *m_selectedBoxCalculation = selectedBoxCalculation;
-    reloadCalculation();
-  }
-  return true;
+bool BoxView::canIncrementSelectedCalculation(int deltaIndex) const {
+  assert(deltaIndex != 0);
+  return *m_selectedBoxCalculation + deltaIndex >= 0 && *m_selectedBoxCalculation + deltaIndex < m_store->numberOfBoxPlotCalculations(m_series);
 }
 
-void BoxView::reloadCalculation() {
-  CurveView::reload();
+void BoxView::incrementSelectedCalculation(int deltaIndex) {
+  assert(deltaIndex != 0);
+  assert(canIncrementSelectedCalculation(deltaIndex));
+  *m_selectedBoxCalculation += deltaIndex;
+}
+
+KDRect BoxView::selectedCalculationRect() const {
   KDCoordinate minY = calculationLowerBoundPixel();
   KDCoordinate maxY = calculationUpperBoundPixel();
   float calculation = m_store->boxPlotCalculationAtIndex(m_series, *m_selectedBoxCalculation);
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation)) - k_leftMargin;
   KDCoordinate width = k_leftMargin + k_rightMargin;
-  KDRect dirtyRect = KDRect(minX, minY, width, maxY - minY);
-  markRectAsDirty(dirtyRect);
+  return KDRect(minX, minY, width, maxY - minY).translatedBy(m_frame.origin());
 }
 
 void BoxView::reload(bool resetInterrupted, bool force) {

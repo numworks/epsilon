@@ -16,10 +16,11 @@ class BoxController;
 class BoxView : public Shared::CurveView {
 public:
   BoxView(Store * store, int series, int * selectedBoxCalculation);
-  int selectedBoxCalculation() const { return *m_selectedBoxCalculation; }
-  bool selectCalculation(int selectedBoxCalculation);
   int series() const { return m_series; }
-  void reloadCalculation();
+  int selectedBoxCalculation() const { return *m_selectedBoxCalculation; }
+  bool canIncrementSelectedCalculation(int deltaIndex) const;
+  void incrementSelectedCalculation(int deltaIndex);
+  KDRect selectedCalculationRect() const;
 
   /* CurveView */
   void reload(bool resetInterrupted = false, bool force = false) override;

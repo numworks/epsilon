@@ -13,6 +13,7 @@ MultipleBoxesView::MultipleBoxesView(Store * store, int * selectedBoxCalculation
   m_boxView3(store, 2, selectedBoxCalculation),
   m_axisView(store)
 {
+  static_assert(MultipleBoxesView::BoxToBoxMargin(2) >= BoxView::BoxVerticalMargin() && MultipleBoxesView::BoxToBoxMargin(3) >= BoxView::BoxVerticalMargin(), "BoxToBoxMargin() should be bigger than BoxVerticalMargin().");
 }
 
 BoxView *  MultipleBoxesView::dataViewAtIndex(int index) {
@@ -30,16 +31,20 @@ void MultipleBoxesView::layoutDataSubviews(bool force) {
   int numberOfDataSubviews = m_store->numberOfValidSeries();
   assert(numberOfDataSubviews > 0);
   KDCoordinate bannerHeight = bannerFrame().height();
-  KDCoordinate subviewHeight = (bounds().height() - bannerHeight - k_axisViewHeight)/numberOfDataSubviews;
-  int displayedSubviewIndex = 0;
+  KDCoordinate boxYPosition = TopToFirstBoxMargin(numberOfDataSubviews);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (m_store->seriesIsValid(i)) {
-      KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), subviewHeight);
+      // Add vertical margins to box layout. Boxes layouts may overlap.
+      KDRect frame = KDRect(0, boxYPosition - BoxView::BoxVerticalMargin(), bounds().width(), BoxView::BoxFrameHeight(numberOfDataSubviews));
       dataViewAtIndex(i)->setFrame(frame, force);
-      displayedSubviewIndex++;
+      boxYPosition += BoxView::BoxHeight(numberOfDataSubviews) + BoxToBoxMargin(numberOfDataSubviews);
     }
   }
-  m_axisView.setFrame(KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), bounds().height() - bannerHeight - displayedSubviewIndex*subviewHeight), force);
+  // Remove BoxToBoxMargin on last box
+  boxYPosition -= BoxToBoxMargin(numberOfDataSubviews);
+  assert(bounds().height() >= boxYPosition + k_axisViewHeight + bannerHeight);
+  // Layout the axis right above the banner
+  m_axisView.setFrame(KDRect(0, bounds().height() - bannerHeight - k_axisViewHeight, bounds().width(), k_axisViewHeight), force);
 }
 
 void MultipleBoxesView::reload() {

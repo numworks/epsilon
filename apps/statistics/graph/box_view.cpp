@@ -28,13 +28,11 @@ void BoxView::incrementSelectedCalculation(int deltaIndex) {
 }
 
 KDRect BoxView::selectedCalculationRect() const {
-  KDCoordinate minY = calculationLowerBoundPixel();
-  KDCoordinate maxY = calculationUpperBoundPixel();
   float calculation = m_store->boxPlotCalculationAtIndex(m_series, *m_selectedBoxCalculation);
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation)) - k_leftMargin;
   KDCoordinate width = k_leftMargin + k_rightMargin;
   // Transpose the rect into parent's view coordinates
-  return KDRect(minX, minY, width, maxY - minY).translatedBy(m_frame.origin());
+  return KDRect(minX, 0, width, BoxFrameHeight(m_store->numberOfValidSeries())).translatedBy(m_frame.origin());
 }
 
 KDRect BoxView::reloadRect() {
@@ -48,28 +46,25 @@ void BoxView::reload(bool resetInterrupted, bool force) {
 }
 
 KDRect BoxView::boxRect() const {
-  KDCoordinate minY = calculationLowerBoundPixel();
-  KDCoordinate maxY = calculationUpperBoundPixel();
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series))) - k_leftMargin;
   KDCoordinate maxX = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series))) + k_rightMargin;
-  return KDRect(minX, minY, maxX - minX, maxY - minY);
+  return KDRect(minX, 0, maxX - minX, BoxFrameHeight(m_store->numberOfValidSeries()));
 }
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
+  assert(bounds().height() == BoxFrameHeight(m_store->numberOfValidSeries()));
   KDColor color = isMainViewSelected() ? DoublePairStore::colorLightOfSeriesAtIndex(m_series) : Palette::GrayBright;
-  KDCoordinate lowBoundPixel = boxLowerBoundPixel();
-  KDCoordinate upBoundPixel = boxUpperBoundPixel();
 
   // Draw the main box
   double firstQuart = m_store->firstQuartile(m_series);
   double thirdQuart = m_store->thirdQuartile(m_series);
   KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, firstQuart));
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
-  ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels, upBoundPixel-lowBoundPixel), color);
+  ctx->fillRect(KDRect(firstQuartilePixels, k_verticalMargin, thirdQuartilePixels - firstQuartilePixels, BoxHeight(m_store->numberOfValidSeries())), color);
 
   // Draw the horizontal lines linking the box to the whiskers
-  float lowBound = pixelToFloat(Axis::Vertical, upBoundPixel);
-  float upBound = pixelToFloat(Axis::Vertical, lowBoundPixel);
+  float lowBound = pixelToFloat(Axis::Vertical, k_verticalMargin + BoxHeight(m_store->numberOfValidSeries()));
+  float upBound = pixelToFloat(Axis::Vertical, k_verticalMargin);
   float segmentOrd = (lowBound + upBound)/ 2.0f;
   double lowerWhisker = m_store->lowerWhisker(m_series);
   double upperWhisker = m_store->upperWhisker(m_series);
@@ -108,8 +103,8 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
 void BoxView::drawBar(KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound, KDColor color, bool isSelected) const {
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculation, lowBound, upBound, color, k_quantileBarWidth);
   if (isSelected) {
-    lowBound = pixelToFloat(Axis::Vertical, boxUpperBoundPixel() + k_chevronMargin - 1);
-    upBound = pixelToFloat(Axis::Vertical, boxLowerBoundPixel() - k_chevronMargin);
+    lowBound = pixelToFloat(Axis::Vertical, k_verticalMargin + BoxHeight(m_store->numberOfValidSeries()) + k_chevronMargin - 1);
+    upBound = pixelToFloat(Axis::Vertical, k_verticalMargin - k_chevronMargin);
     drawChevronSelection(ctx, rect, calculation, lowBound, upBound);
   }
 }
@@ -142,23 +137,6 @@ void BoxView::drawChevron(KDContext * ctx, KDRect rect, float x, float y, KDColo
   KDColor workingBuffer[Chevrons::k_chevronHeight*Chevrons::k_chevronWidth];
   const uint8_t * mask = (const uint8_t *)(up ? Chevrons::UpChevronMask : Chevrons::DownChevronMask);
   ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
-}
-
-KDCoordinate BoxView::boxLowerBoundPixel() const {
-  return bounds().height() / 2 - boxHeight() / 2;
-}
-
-KDCoordinate BoxView::boxUpperBoundPixel() const {
-  // Ceil boxHeight to handle odd boxHeight
-  return bounds().height() / 2 + (boxHeight() + 1) / 2;
-}
-
-KDCoordinate BoxView::calculationLowerBoundPixel() const {
-  return boxLowerBoundPixel() - k_verticalMargin;
-}
-
-KDCoordinate BoxView::calculationUpperBoundPixel() const {
-  return boxUpperBoundPixel() + k_verticalMargin;
 }
 
 }

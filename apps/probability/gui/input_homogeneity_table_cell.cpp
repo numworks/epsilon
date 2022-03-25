@@ -10,6 +10,13 @@ InputHomogeneityTableCell::InputHomogeneityTableCell(Escher::Responder * parentR
 {
 }
 
+void InputHomogeneityTableCell::didBecomeFirstResponder() {
+  if (selectedRow() < 0) {
+    selectColumn(1);
+  }
+  EditableCategoricalTableCell::didBecomeFirstResponder();
+}
+
 void InputHomogeneityTableCell::willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
   willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, column, row, m_statistic);

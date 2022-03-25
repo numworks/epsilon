@@ -693,6 +693,11 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("(-1)^(1/2)", "i");
   assert_parsed_expression_simplify_to("(-1)^(-1/2)", "-i");
   assert_parsed_expression_simplify_to("(-1)^(1/3)", "1/2+√(3)/2×i");
+  assert_parsed_expression_simplify_to("(x^2)^3", "x^6", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("(x^2)^3", "x^6", User, Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("(x^(2/3))^3", "x^2", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("(x^(3/4))^4", "(x^\u00123/4\u0013)^4", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("(x^(3/4))^4", "x^3", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("√(-x)", "√(-x)");
   assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("√(-3)^2", "nonreal", User, Radian, MetricUnitFormat, Real);

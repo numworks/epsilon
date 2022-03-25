@@ -802,18 +802,19 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   /* Step 11
    * Merge with the base if it is a power: (a^b)^c -> a^(b*c)
    * This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
-   * This rule is true if:
-   * - a > 0
-   * - c is an integer
+   * This rule is true if a > 0
+   * OR c is integer
    *
-   * Warning 1: in real mode only c integer is not enough:
+   * Note 1: in real mode only c integer is not enough:
    * ex: ((-2)^(1/2))^2 = nonreal != -2
-   * We escape that case by returning 'nonreal' if the a^b is complex.
+   * We have to add the condition that b is rational and has an odd denominator
+   * So in real mode the condition becomes :
+   * a > 0 OR (c is integer AND b has odd denominator)
    *
-   * Warning 2: If we did not apply this rule on expressions of the form
-   * (a^b)^(-1), we would end up in infinite loop when factorizing an addition
-   * on the same denominator.
-   * For ex:
+   * Note 2: We also apply if c = -1/
+   * If we did not apply this rule on expressions of the form (a^b)^(-1),
+   * we would end up in infinite loop when factorizing an addition on the same
+   * denominator. For ex:
    * 1+[tan(2)^1/2]^(-1) --> (tan(2)^1/2+tan(2)^1/2*[tan(2)^1/2]^(-1))/tan(2)^1/2
    *                     --> tan(2)+tan(2)*[tan(2)^1/2]^(-1)/tan(2)
    *                     --> tan(2)^(3/2)+tan(2)^(3/2)*[tan(2)^1/2]^(-1)/tan(2)^3/2
@@ -821,33 +822,27 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * Indeed, we have to apply the rule (a^b)^c -> a^(b*c) as soon as c is -1. */
   if (baseType == ExpressionNode::Type::Power) {
     Expression a = base.childAtIndex(0);
-    bool apply = rationalIndex.isMinusOne()
+    Expression b = base.childAtIndex(1);
+    /* For (a^b)^c, apply the rule :
+     * if c = -1
+     * OR a > 0
+     * OR (c is integer
+     *   AND (format is complex
+     *      OR b has odd denominator)) */
+    if (rationalIndex.isMinusOne()
       || a.sign(context) == ExpressionNode::Sign::Positive
-      || a.approximateToScalar<float>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true) > 0.f;
-    if (!apply && rationalIndex.isInteger()) {
-      if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
-        Expression approximation = base.approximate<float>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true);
-        if (approximation.type() == ExpressionNode::Type::Nonreal) {
-          replaceWithInPlace(approximation);
-          return approximation;
-        }
-        /* The inner power is undefined, it can be 'x^(1/2)' for instance. We
-         * don't want to simplify this as it could be nonreal with x = -2 but
-         * also real with x = 2.
-         * Testing if the approximation is real is a dirty trick to filter out
-         * variables but not units. */
-        apply = approximation.type() != ExpressionNode::Type::Undefined || a.isReal(context);
-      } else {
-        apply = true;
-      }
-    }
-    if (apply) {
+      || a.approximateToScalar<double>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true) > Float<double>::EpsilonLax()
+      || (rationalIndex.isInteger()
+        && (!(reductionContext.complexFormat() == Preferences::ComplexFormat::Real)
+          || (b.type() == ExpressionNode::Type::Rational && !static_cast<Rational &>(b).integerDenominator().isEven()))))
+    {
       Multiplication m = Multiplication::Builder(base.childAtIndex(1), index);
       replaceChildAtIndexInPlace(0, base.childAtIndex(0));
       replaceChildAtIndexInPlace(1, m);
       m.shallowReduce(reductionContext);
       return shallowReduce(reductionContext);
     }
+    return *this;
   }
 
   /* Step 12

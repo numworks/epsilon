@@ -30,9 +30,6 @@ public:
   MultipleDataView * multipleDataView() override { return &m_view; }
   bool moveSelectionHorizontally(int deltaIndex) override;
 
-  // ViewController
-  void viewWillAppear() override;
-
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder * firstResponder) override;

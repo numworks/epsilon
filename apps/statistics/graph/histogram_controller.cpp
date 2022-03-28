@@ -56,9 +56,6 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistogramController::viewWillAppear() {
-  if (header()->selectedButton() >= 0) {
-    header()->setSelectedButton(-1);
-  }
   MultipleDataViewController::viewWillAppear();
 
   multipleDataView()->setDisplayBanner(true);

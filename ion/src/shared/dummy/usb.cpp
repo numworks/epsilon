@@ -26,7 +26,3 @@ void disable() {
 
 }
 }
-
-void Ion::updateSlotInfo() {
-
-}

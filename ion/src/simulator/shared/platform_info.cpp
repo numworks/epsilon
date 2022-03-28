@@ -137,7 +137,3 @@ const volatile char * Ion::username() {
 const char * Ion::patchLevel() {
   return platform_infos.patchLevel();
 }
-
-void Ion::updateSlotInfo() {
-
-}

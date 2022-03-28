@@ -6,6 +6,7 @@ namespace Statistics {
 void FrequencyController::viewWillAppear() {
   PlotController::viewWillAppear();
   // Setup the adequate cursor
+  // TODO : Set it up before reloading curve view, but after sanitizing series
   if (m_continuousCursor) {
     m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeriesIndex()));
   }

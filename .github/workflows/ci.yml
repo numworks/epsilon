@@ -31,7 +31,12 @@ jobs:
       - run: pip3 install lz4 pypng stringcase
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v2
-      - run: make MODEL=n0100 epsilon.dfu epsilon.onboarding.beta.dfu epsilon.onboarding.update.dfu test.dfu
+      - run: make MODEL=n0100 FIRMWARE_COMPONENT=kernel kernel.elf
+      - run: make MODEL=n0100 FIRMWARE_COMPONENT=userland userland.elf userland.onboarding.beta.elf userland.onboarding.update.elf userland.test.elf
+      - run: make MODEL=n0100 epsilon.dfu
+      - run: make MODEL=n0100 epsilon.onboarding.beta.dfu
+      - run: make MODEL=n0100 epsilon.onboarding.update.dfu
+      - run: make MODEL=n0100 test.dfu
       - uses: actions/upload-artifact@master
         if: ${{ github.repository != 'numworks/epsilon-internal' }}
         with:

@@ -32,13 +32,6 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
   return MultipleDataViewController::handleEvent(event);
 }
 
-void BoxController::viewWillAppear() {
-  if (header()->selectedButton() >= 0) {
-    header()->setSelectedButton(-1);
-  }
-  MultipleDataViewController::viewWillAppear();
-}
-
 void BoxController::didEnterResponderChain(Responder * firstResponder) {
   assert(selectedSeriesIndex() >= 0);
   if (!multipleDataView()->dataViewAtIndex(selectedSeriesIndex())->isMainViewSelected()) {

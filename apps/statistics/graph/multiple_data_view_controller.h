@@ -25,13 +25,14 @@ public:
 
   // ViewController
   Escher::View * view() override { return multipleDataView(); }
-  void viewWillAppear() override;
+  void viewWillAppear() final override;
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 protected:
+  virtual void viewWillAppearBeforeReload() {}
   virtual void highlightSelection() {}
   Escher::Responder * tabController() { return m_tabController; }
   virtual bool reloadBannerView() = 0;

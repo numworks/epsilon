@@ -26,14 +26,12 @@ PlotController::PlotController(Escher::Responder * parentResponder,
     m_curveView(&m_graphRange, &m_cursor, &m_cursorView, store, this)  {
 }
 
-void PlotController::viewWillAppear() {
-  MultipleDataViewController::viewWillAppear();
+void PlotController::viewWillAppearBeforeReload() {
   float yMin, yMax, xMin, xMax;
   computeYBounds(&yMin, &yMax);
   computeXBounds(&xMin, &xMax);
   m_graphRange.calibrate(m_curveView.bounds().width(), m_curveView.bounds().height(), xMin, xMax, yMin, yMax);
   // Sanitize m_selectedBarIndex and cursor's position
-  // TODO : Sanitize it before reloading, but after sanitizing series
   int series = selectedSeriesIndex();
   *m_selectedBarIndex = SanitizeIndex(*m_selectedBarIndex, totalValues(series));
   double x = valueAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);

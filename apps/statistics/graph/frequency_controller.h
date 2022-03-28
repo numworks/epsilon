@@ -11,7 +11,6 @@ public:
   using PlotController::PlotController;
 
   // PlotControllerDelegate
-  void viewWillAppear() override;
   int totalValues(int series) const override { return m_store->totalCumulatedFrequencyValues(series); }
   double valueAtIndex(int series, int i) const override { return m_store->cumulatedFrequencyValueAtIndex(series, i); }
   double resultAtIndex(int series, int i) const override { return m_store->cumulatedFrequencyResultAtIndex(series, i); }
@@ -29,6 +28,7 @@ private:
   const char * resultMessageTemplate() const override { return "%s%s%*.*ed%%"; }
   I18n::Message resultMessage() const override { return I18n::Message::StatisticsFrequencyFcc; }
   // MultipleDataViewController
+  void viewWillAppearBeforeReload() override;
   bool moveSelectionHorizontally(int deltaIndex) override;
   bool moveSelectionVertically(int deltaIndex) override;
 

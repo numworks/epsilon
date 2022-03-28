@@ -44,7 +44,6 @@ public:
   );
 
   // MultipleDataViewController
-  void viewWillAppear() override;
   MultipleDataView * multipleDataView() override { return &m_view; }
   bool moveSelectionHorizontally(int deltaIndex) override;
 
@@ -57,6 +56,7 @@ protected:
   }
 
   // MultipleDataViewController
+  void viewWillAppearBeforeReload() override;
   bool reloadBannerView() override;
   virtual const char * resultMessageTemplate() const = 0;
   virtual I18n::Message resultMessage() const = 0;

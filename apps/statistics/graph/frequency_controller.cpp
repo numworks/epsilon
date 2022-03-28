@@ -3,14 +3,13 @@
 
 namespace Statistics {
 
-void FrequencyController::viewWillAppear() {
-  PlotController::viewWillAppear();
-  // Setup the adequate cursor
-  // TODO : Set it up before reloading curve view, but after sanitizing series
+void FrequencyController::viewWillAppearBeforeReload() {
+  // Setup the adequate cursor before reloading the curve view
   if (m_continuousCursor) {
     m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeriesIndex()));
   }
   m_curveView.setCursorView(m_continuousCursor ? &m_roundCursorView : &m_cursorView);
+  PlotController::viewWillAppearBeforeReload();
 }
 
 void FrequencyController::computeYBounds(float * yMin, float *yMax) const {

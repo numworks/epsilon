@@ -55,9 +55,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
   return MultipleDataViewController::handleEvent(event);
 }
 
-void HistogramController::viewWillAppear() {
-  MultipleDataViewController::viewWillAppear();
-
+void HistogramController::viewWillAppearBeforeReload() {
   multipleDataView()->setDisplayBanner(true);
   multipleDataView()->selectDataView(selectedSeriesIndex());
   highlightSelection();
@@ -81,8 +79,6 @@ void HistogramController::viewWillAppear() {
   if (*m_rangeVersion != rangeChecksum) {
     *m_rangeVersion = rangeChecksum;
     initBarSelection();
-    reloadBannerView();
-    multipleDataView()->reload();
   }
 }
 

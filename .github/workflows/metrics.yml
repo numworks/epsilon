@@ -31,7 +31,7 @@ jobs:
         run: make -C head kernel.A.elf && make -C head userland.A.elf
       - name: Binary size summary
         id: binary_size_summary
-        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections @Flash .text .rodata @RAM .bss .data --summarize)"
+        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)"
       - name: Binary size N0100
         id: binary_size_n0100
         run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0100/kernel/kernel.elf base/output/release/device/n0100/userland/userland.elf @Head head/output/release/device/n0100/kernel/kernel.elf head/output/release/device/n0100/userland/userland.elf --sections .text .rodata .bss .data)"

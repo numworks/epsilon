@@ -23,6 +23,12 @@ QUIZ_CASE(poincare_simplification_decimal) {
   assert_parsed_expression_simplify_to("0000.000000ᴇ-2", "0");
   assert_parsed_expression_simplify_to(".000000", "0");
   assert_parsed_expression_simplify_to("0000", "0");
+  // Big decimals are handled as m*10^e
+  assert_parsed_expression_simplify_to("1ᴇ1000", "10^1000");
+  assert_parsed_expression_simplify_to("-1ᴇ1000", "-10^1000");
+  assert_parsed_expression_simplify_to("1ᴇ-1000", "1/10^1000");
+  assert_parsed_expression_simplify_to("45.678ᴇ200", "45678×10^197");
+  assert_parsed_expression_simplify_to("-45.678ᴇ200", "-45678×10^197");
 }
 
 QUIZ_CASE(poincare_simplification_rational) {
@@ -41,7 +47,7 @@ QUIZ_CASE(poincare_simplification_rational) {
   // MaxParsedIntegerString()
   assert_parsed_expression_simplify_to(MaxParsedIntegerString(), MaxParsedIntegerString());
   // OverflowedIntegerString()
-  assert_parsed_expression_simplify_to(OverflowedIntegerString(), "1.7976931348623ᴇ308");
+  assert_parsed_expression_simplify_to(OverflowedIntegerString(), Infinity::Name());
   assert_parsed_expression_simplify_to(BigOverflowedIntegerString(), Infinity::Name());
   // ApproximatedParsedIntegerString()
   assert_parsed_expression_simplify_to(ApproximatedParsedIntegerString(),"1ᴇ30");
@@ -87,10 +93,10 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("0×inf", Undefined::Name());
   assert_parsed_expression_simplify_to("0×inf×π", Undefined::Name());
   assert_parsed_expression_simplify_to("3×inf/inf", "undef");
-  assert_parsed_expression_simplify_to("1ᴇ1000", "inf");
-  assert_parsed_expression_simplify_to("-1ᴇ1000", "-inf");
-  assert_parsed_expression_simplify_to("-1ᴇ-1000", "0");
-  assert_parsed_expression_simplify_to("1ᴇ-1000", "0");
+  assert_parsed_expression_simplify_to("1ᴇ1001", "inf");
+  assert_parsed_expression_simplify_to("-1ᴇ1001", "-inf");
+  assert_parsed_expression_simplify_to("-1ᴇ-1001", "0");
+  assert_parsed_expression_simplify_to("1ᴇ-1001", "0");
   //assert_parsed_expression_simplify_to("1×10^1000", "inf");
 
   assert_parsed_expression_simplify_to("inf^0", "undef");
@@ -1183,7 +1189,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("ref([[3,11][5,7]])", "[[1,7/5][0,1]]");
   assert_parsed_expression_simplify_to("ref([[2,5][2,7]])", "[[1,5/2][0,1]]");
   assert_parsed_expression_simplify_to("ref([[3,12][-4,1]])", "[[1,-1/4][0,1]]");
-  assert_parsed_expression_simplify_to("ref([[0,1][1ᴇ-100,1]])", "[[1,1ᴇ100][0,1]]");
+  assert_parsed_expression_simplify_to("ref([[0,1][1ᴇ-100,1]])", "[[1,10^100][0,1]]");
 
   // Cross product
   assert_parsed_expression_simplify_to("cross([[0][1/√(2)][0]],[[0][0][1]])", "[[√(2)/2][0][0]]");

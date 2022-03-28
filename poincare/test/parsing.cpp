@@ -161,7 +161,7 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
   assert_parsed_expression_is("0x12AC", BasedInteger::Builder("12AC", 4, Integer::Base::Hexadecimal));
 
   // Integer parsed in Decimal because they overflow Integer
-  assert_parsed_expression_is(ApproximatedParsedIntegerString(), Decimal::Builder(Integer("1"), 30));
+  assert_parsed_expression_is(ApproximatedParsedIntegerString(), Float<double>::Builder(1.0e30));
 
   // Infinity
   assert_parsed_expression_is("23ᴇ1000", Infinity::Builder(false));

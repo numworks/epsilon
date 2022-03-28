@@ -48,7 +48,6 @@ bool PlotController::moveSelectionHorizontally(int deltaIndex) {
   int nextIndex = SanitizeIndex(*m_selectedBarIndex + deltaIndex, totalValues(series));
   if (nextIndex != *m_selectedBarIndex) {
     *m_selectedBarIndex = nextIndex;
-    // TODO : Add continuous curve scrolling
     // Compute coordinates
     double x = valueAtIndex(series, nextIndex);
     double y = resultAtIndex(series, nextIndex);

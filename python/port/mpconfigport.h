@@ -115,6 +115,9 @@
 // Whether to support rounding of integers (incl bignum); eg round(123,-1)=120
 #define MICROPY_PY_BUILTINS_ROUND_INT (1)
 
+// Wheter to support all the special methods for custom classes
+#define MICROPY_PY_ALL_SPECIAL_METHODS (1)
+
 // Function to seed URANDOM with on init
 #define MICROPY_PY_URANDOM_SEED_INIT_FUNC micropython_port_random()
 

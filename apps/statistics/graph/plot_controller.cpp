@@ -69,25 +69,23 @@ bool PlotController::reloadBannerView() {
   m_bannerView.seriesName()->setText(buffer);
 
   // Display selected value
-  double value = valueAtIndex(series, *m_selectedBarIndex);
   Poincare::Print::customPrintf(
     buffer,
     k_maxNumberOfCharacters,
     "%s%s%*.*ed",
     I18n::translate(I18n::Message::StatisticsValue),
     I18n::translate(I18n::Message::StatisticsColonConvention),
-    value, displayMode, k_numberOfSignificantDigits);
+    m_cursor.x(), displayMode, k_numberOfSignificantDigits);
   m_bannerView.value()->setText(buffer);
 
   // Display result value
-  value = resultAtIndex(series, *m_selectedBarIndex);
   Poincare::Print::customPrintf(
     buffer,
     k_maxNumberOfCharacters,
     resultMessageTemplate(),
     I18n::translate(resultMessage()),
     I18n::translate(I18n::Message::StatisticsColonConvention),
-    value, displayMode, k_numberOfSignificantDigits);
+    m_cursor.y(), displayMode, k_numberOfSignificantDigits);
   m_bannerView.result()->setText(buffer);
 
   m_bannerView.reload();

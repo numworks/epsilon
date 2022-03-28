@@ -32,7 +32,6 @@ public:
   Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   // ViewController
-  void viewWillAppear() override;
   MultipleDataView * multipleDataView() override { return &m_view; }
   TELEMETRY_ID("Histogram");
 
@@ -45,6 +44,7 @@ private:
   constexpr static int k_maxIntervalLegendLength = 33;
   constexpr static int k_maxLegendLength = 13;
   constexpr static int k_maxNumberOfCharacters = 30;
+  void viewWillAppearBeforeReload() override;
   void highlightSelection() override;
   bool reloadBannerView() override;
   void preinitXRangeParameters(double * xMin, double * xMax = nullptr);

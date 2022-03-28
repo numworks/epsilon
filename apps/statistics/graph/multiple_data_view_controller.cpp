@@ -24,6 +24,11 @@ void MultipleDataViewController::viewWillAppear() {
   if (*m_selectedSeriesIndex < 0 || m_store->sumOfOccurrences(*m_selectedSeriesIndex) == 0) {
     *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(0);
   }
+
+  /* Call children's viewWillAppear implementation after sanitizing selected
+   * series index and before reloading banner and multipleDataView */
+  viewWillAppearBeforeReload();
+
   header()->setSelectedButton(-1);
   reloadBannerView();
   multipleDataView()->reload();

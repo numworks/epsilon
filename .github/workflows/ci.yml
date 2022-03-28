@@ -31,10 +31,7 @@ jobs:
       - run: pip3 install lz4 pypng stringcase
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v2
-      - run: make MODEL=n0100 epsilon.dfu
-      - run: make MODEL=n0100 epsilon.onboarding.beta.dfu
-      - run: make MODEL=n0100 epsilon.onboarding.update.dfu
-      - run: make MODEL=n0100 test.dfu
+      - run: make MODEL=n0100 epsilon.dfu epsilon.onboarding.beta.dfu epsilon.onboarding.update.dfu test.dfu
       - uses: actions/upload-artifact@master
         if: ${{ github.repository != 'numworks/epsilon-internal' }}
         with:
@@ -47,14 +44,8 @@ jobs:
       - run: pip3 install lz4 pypng stringcase
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v2
-      - run: make MODEL=n0110 kernel.A.elf
-      - run: make MODEL=n0110 userland.A.elf
-      - run: make MODEL=n0110 userland.onboarding.beta.A.elf
-      - run: make MODEL=n0110 userland.onboarding.update.A.elf
-      - run: make MODEL=n0110 userland.test.A.elf
-      - run: make MODEL=n0110 kernel.B.elf
-      - run: make MODEL=n0110 userland.B.elf
-      - run: make MODEL=n0110 userland.test.B.elf
+      - run: make MODEL=n0110 kernel.A.elf kernel.B.elf
+      - run: make MODEL=n0110 userland.A.elf userland.B.elf userland.test.A.elf userland.test.B.elf userland.onboarding.beta.A.elf userland.onboarding.update.A.elf
       - run: make MODEL=n0110 flasher.dfu
       - run: make MODEL=n0110 bench.ram.dfu
       - uses: actions/upload-artifact@master
@@ -69,14 +60,8 @@ jobs:
       - run: pip3 install lz4 pypng stringcase
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v2
-      - run: make MODEL=n0120 kernel.A.elf
-      - run: make MODEL=n0120 userland.A.elf
-      - run: make MODEL=n0120 userland.onboarding.beta.A.elf
-      - run: make MODEL=n0120 userland.onboarding.update.A.elf
-      - run: make MODEL=n0120 userland.test.A.elf
-      - run: make MODEL=n0120 kernel.B.elf
-      - run: make MODEL=n0120 userland.B.elf
-      - run: make MODEL=n0120 userland.test.B.elf
+      - run: make MODEL=n0110 kernel.A.elf kernel.B.elf
+      - run: make MODEL=n0120 userland.A.elf userland.B.elf userland.test.A.elf userland.test.B.elf userland.onboarding.beta.A.elf userland.onboarding.update.A.elf
       - run: make MODEL=n0120 flasher.dfu
       - run: make MODEL=n0120 bench.ram.dfu
       - uses: actions/upload-artifact@master
@@ -111,9 +96,7 @@ jobs:
           sdk: 1.39.16-fastcomp
       - run: pip3 install lz4 pypng stringcase
       - uses: actions/checkout@v2
-      - run: make PLATFORM=simulator TARGET=web
-      - run: make PLATFORM=simulator TARGET=web epsilon.zip
-      - run: make PLATFORM=simulator TARGET=web test.js
+      - run: make PLATFORM=simulator TARGET=web epsilon.zip test.js
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
         with:
@@ -126,9 +109,7 @@ jobs:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4 pypng stringcase
       - uses: actions/checkout@v2
-      - run: make PLATFORM=simulator
-      - run: make PLATFORM=simulator epsilon.bin
-      - run: make PLATFORM=simulator test.bin
+      - run: make PLATFORM=simulator epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
         if: ${{ github.repository != 'numworks/epsilon-internal' }}

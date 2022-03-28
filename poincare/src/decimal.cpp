@@ -5,6 +5,8 @@
 #include <poincare/infinity.h>
 #include <poincare/undefined.h>
 #include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
+#include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/string_layout.h>
 #include <poincare/ieee754.h>
@@ -114,7 +116,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool asce
 }
 
 Expression DecimalNode::shallowReduce(ReductionContext reductionContext) {
-  return Decimal(this).shallowReduce();
+  return Decimal(this).shallowReduce(reductionContext);
 }
 
 Expression DecimalNode::shallowBeautify(ReductionContext * reductionContext) {
@@ -447,29 +449,21 @@ Expression Decimal::setSign(ExpressionNode::Sign s) {
   return std::move(result);
 }
 
-Expression Decimal::shallowReduce() {
+Expression Decimal::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   int exp = node()->exponent();
-  Integer numerator = node()->signedMantissa();
-  /* To avoid uselessly big numerator and denominator, we get rid of useless 0s
-   * ending the mantissa before reducing to Rational. */
-  removeZeroAtTheEnd(&numerator);
-  int numberOfDigits = Integer::NumberOfBase10DigitsWithoutSign(numerator);
-  Integer denominator(1);
-  if (exp >= numberOfDigits-1) {
-    numerator = Integer::Multiplication(numerator, Integer::Power(Integer(10), Integer(exp-numberOfDigits+1)));
-  } else {
-    denominator = Integer::Power(Integer(10), Integer(numberOfDigits-1-exp));
-  }
+  Integer mantissa = node()->signedMantissa();
+  /* To avoid uselessly big numbers, we get rid of useless 0s
+   * ending the mantissa before reducing. */
+  removeZeroAtTheEnd(&mantissa);
+  int numberOfDigits = Integer::NumberOfBase10DigitsWithoutSign(mantissa);
   Expression result;
-  /* We do not want to handle rationals that are too big and slow down the calculator
-  * At the moment we handle Decimals as Rationals but a better way of doing it
-  * would be to convert them into int*10^exp when the rational is too big.
-  */
-  if (numerator.isNotParsable() || denominator.isNotParsable()) {
-    result = Number::FloatNumber(node()->signedMantissa().template approximate<double>()*std::pow(10.0, (double)(exp - numberOfDigits + 1)));
-  } else {
-    result = Rational::Builder(numerator, denominator);
-  }
+  result = Multiplication::Builder(
+      Rational::Builder(mantissa),
+      Power::Builder(
+        Rational::Builder(Integer(10)),
+        Rational::Builder(Integer(exp - numberOfDigits + 1))
+        ).shallowReduce(reductionContext)
+      ).shallowReduce(reductionContext);
   replaceWithInPlace(result);
   return result;
 }

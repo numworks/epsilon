@@ -169,7 +169,7 @@ public:
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const = 0;
   virtual void logAttributes(std::ostream & stream) const {}
-  void log(std::ostream & stream, bool recursive = true, int indent = 0);
+  void log(std::ostream & stream, bool recursive = true, int indent = 0, bool verbose = true);
 #endif
 
   static bool IsValidIdentifier(uint16_t id) { return id < NoNodeIdentifier; }

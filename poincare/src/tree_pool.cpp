@@ -89,10 +89,10 @@ void TreePool::flatLog(std::ostream & stream) {
   stream << std::endl;
 }
 
-void TreePool::treeLog(std::ostream & stream) {
+void TreePool::treeLog(std::ostream & stream, bool verbose) {
   stream << "<TreePool format=\"tree\" size=\"" << (int)(m_cursor-buffer()) << "\">";
   for (TreeNode * node : roots()) {
-    node->log(stream, true);
+    node->log(stream, true, 1, verbose);
   }
   stream << "</TreePool>";
   stream << std::endl;

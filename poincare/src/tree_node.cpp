@@ -148,22 +148,38 @@ TreeNode * TreeNode::lastDescendant() const {
 // Protected
 
 #if POINCARE_TREE_LOG
-void TreeNode::log(std::ostream & stream, bool recursive) {
+void TreeNode::log(std::ostream & stream, bool recursive, int indent) {
+  stream << "\n";
+  for (int i = 0; i < indent; ++i) {
+    stream << "  ";
+  }
   stream << "<";
   logNodeName(stream);
   stream << " id=\"" << m_identifier << "\"";
   stream << " refCount=\"" << (int16_t)m_referenceCounter << "\"";
   stream << " size=\"" << size() << "\"";
   logAttributes(stream);
-  stream << ">";
+  bool closed = false;
   if (recursive) {
     for (TreeNode * child : directChildren()) {
-      child->log(stream, recursive);
+      if (!closed) {
+        stream << ">";
+        closed = true;
+      }
+      child->log(stream, recursive, indent+1);
     }
   }
-  stream << "</";
-  logNodeName(stream);
-  stream << ">";
+  if (closed) {
+    stream << "\n";
+    for (int i = 0; i < indent; ++i) {
+      stream << "  ";
+    }
+    stream << "</";
+    logNodeName(stream);
+    stream << ">";
+  } else {
+    stream << "/>";
+  }
 }
 #endif
 

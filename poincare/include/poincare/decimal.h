@@ -108,7 +108,7 @@ private:
   static Decimal Builder(size_t size, const Integer & m, int e);
   Expression setSign(ExpressionNode::Sign s);
   // Simplification
-  Expression shallowReduce();
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
 };
 

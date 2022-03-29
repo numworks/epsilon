@@ -62,7 +62,7 @@ private:
   int activeViewControllerIndex() const override { return GraphViewModel::IndexOfGraphView(snapshot()->graphViewModel()->selectedGraphView()); }
   /* Alternate view title is used for the graph tab title, but shouldn't be
    * visible elsewhere. */
-  const char * alternateViewTitle() override { return I18n::translate(I18n::Message::GraphTab); }
+  const char * alternateViewTitle() override { return I18n::translate(I18n::Message::StatisticsGraphTab); }
   Escher::ViewController::TitlesDisplay alternateViewTitlesDisplay() override { return Escher::ViewController::TitlesDisplay::NeverDisplayOwnTitle; }
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   void didBecomeActive(Escher::Window * window) override;

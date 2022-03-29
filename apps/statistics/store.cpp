@@ -388,7 +388,7 @@ double Store::sumOfValuesBetween(int series, double x1, double x2) const {
   for (int k = 0; k < numberOfPairs; k++) {
     int sortedIndex = valueIndexAtSortedIndex(series, k);
     double value = get(series, 0, sortedIndex);
-    if (value > x2) {
+    if (value >= x2) {
       break;
     }
     if (value >= x1) {

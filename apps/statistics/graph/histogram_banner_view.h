@@ -11,24 +11,19 @@ namespace Statistics {
 class HistogramBannerView : public Shared::BannerView {
 public:
   HistogramBannerView();
-  Escher::BufferTextView * intervalView() { return &m_intervalView; }
-  Escher::BufferTextView * sizeView() { return &m_sizeView; }
-  Escher::BufferTextView * frequencyView() { return &m_frequencyView; }
+  Escher::BufferTextView * seriesName() { return &m_seriesName; }
+  Escher::BufferTextView * intervalView() { return &m_intervalBuffer; }
+  Escher::BufferTextView * frequencyView() { return &m_frequencyBuffer; }
+  Escher::BufferTextView * relativeFrequencyView() { return &m_relativeFrequencyBuffer; }
 private:
-  static constexpr int k_numberOfSubviews = 3;
+  static constexpr int k_numberOfSubviews = 4;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   Escher::View * subviewAtIndex(int index) override;
-  bool lineBreakBeforeSubview(Escher::View * subview) const override;
 
-  Escher::MessageTextView m_intervalLegendView;
-  Escher::BufferTextView m_intervalView;
-  BannerView::LabelledView m_labelledIntervalView;
-  Escher::MessageTextView m_sizeLegendView;
-  Escher::BufferTextView m_sizeView;
-  BannerView::LabelledView m_labelledSizeView;
-  Escher::MessageTextView m_frequencyLegendView;
-  Escher::BufferTextView m_frequencyView;
-  BannerView::LabelledView m_labelledFrequencyView;
+  Escher::BufferTextView m_seriesName;
+  Escher::BufferTextView m_intervalBuffer;
+  Escher::BufferTextView m_frequencyBuffer;
+  Escher::BufferTextView m_relativeFrequencyBuffer;
 };
 
 }

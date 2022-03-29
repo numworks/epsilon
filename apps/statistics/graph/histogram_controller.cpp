@@ -111,33 +111,57 @@ void HistogramController::highlightSelection() {
 }
 
 bool HistogramController::reloadBannerView() {
-  if (selectedSeriesIndex() < 0) {
+  int series = selectedSeriesIndex();
+  if (series < 0) {
     return false;
   }
-  KDCoordinate previousHeight = m_view.bannerView()->minimalSizeForOptimalDisplay().height();
-  int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
-  constexpr size_t bufferSize = k_maxNumberOfCharacters + 2 * PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
-  char buffer[bufferSize] = "";
 
-  // Add Interval Data
-  double lowerBound = m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-  double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-  /* The word Interval is just a bit too long to display two numbers with a sign and maximal precision after it. */
-  int intervalPrecision = std::min(precision, Poincare::PrintFloat::k_numberOfStoredSignificantDigits - 2);
-  Poincare::Print::customPrintf(buffer, bufferSize, " [%*.*ed;%*.*ed[",
-      lowerBound, Poincare::Preferences::sharedPreferences()->displayMode(), intervalPrecision,  // Add lower bound
-      upperBound, Poincare::Preferences::sharedPreferences()->displayMode(), intervalPrecision); // Add upper bound
+  KDCoordinate previousHeight = m_view.bannerView()->minimalSizeForOptimalDisplay().height();
+
+  int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
+  Poincare::Preferences::PrintFloatMode printMode = Poincare::Preferences::sharedPreferences()->displayMode();
+  // With 7 = KDFont::SmallFont->glyphSize().width()
+  constexpr static int k_bufferSize = 1 + Ion::Display::Width / 7;
+  char buffer[k_bufferSize] = "";
+
+  // Display series name
+  StoreController::FillSeriesName(series, buffer, false);
+  m_view.bannerView()->seriesName()->setText(buffer);
+
+  // Display interval
+  double lowerBound = m_store->startOfBarAtIndex(series, *m_selectedBarIndex);
+  double upperBound = m_store->endOfBarAtIndex(series, *m_selectedBarIndex);
+  Poincare::Print::customPrintf(
+    buffer,
+    k_bufferSize,
+    "%s%s[%*.*ed;%*.*ed[",
+    I18n::translate(I18n::Message::Interval),
+    I18n::translate(I18n::Message::StatisticsColonConvention),
+    lowerBound, printMode, precision,
+    upperBound, printMode, precision);
   m_view.bannerView()->intervalView()->setText(buffer);
 
-  // Add Size Data
-  double size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-  Poincare::Print::customPrintf(buffer, bufferSize, " %*.*ed", size, Poincare::Preferences::sharedPreferences()->displayMode(), intervalPrecision);
-  m_view.bannerView()->sizeView()->setText(buffer);
-
-  // Add Frequency Data
-  double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
-  Poincare::Print::customPrintf(buffer, bufferSize, " %*.*ed", frequency, Poincare::Preferences::sharedPreferences()->displayMode(), intervalPrecision);
+  // Display frequency
+  double size = m_store->heightOfBarAtIndex(series, *m_selectedBarIndex);
+  Poincare::Print::customPrintf(
+    buffer,
+    k_bufferSize,
+    "%s%s%*.*ed",
+    I18n::translate(I18n::Message::Frequency),
+    I18n::translate(I18n::Message::StatisticsColonConvention),
+    size, printMode, precision);
   m_view.bannerView()->frequencyView()->setText(buffer);
+
+  // Display relative frequency
+  double relativeFrequency = size/m_store->sumOfOccurrences(series);
+  Poincare::Print::customPrintf(
+    buffer,
+    k_bufferSize,
+    "%s%s%*.*ed",
+    I18n::translate(I18n::Message::RelativeFrequency),
+    I18n::translate(I18n::Message::StatisticsColonConvention),
+    relativeFrequency, printMode, precision);
+  m_view.bannerView()->relativeFrequencyView()->setText(buffer);
 
   m_view.bannerView()->reload();
   return previousHeight != m_view.bannerView()->minimalSizeForOptimalDisplay().height();

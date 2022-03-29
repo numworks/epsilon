@@ -184,7 +184,7 @@ void StackViewController::pop() {
   setupActiveViewController();
   vc->setParentResponder(nullptr);
   vc->viewDidDisappear();
-  Container::activeApp()->didExitPage(vc);
+  didExitPage(vc);
 }
 
 void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewController) {
@@ -212,7 +212,7 @@ void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewContro
 }
 
 void StackViewController::pushModel(ViewController * controller) {
-  Container::activeApp()->willOpenPage(controller);
+  willOpenPage(controller);
   m_childrenController[m_numberOfChildren++] = controller;
 }
 
@@ -289,6 +289,14 @@ void StackViewController::updateStack(ViewController::TitlesDisplay titleDisplay
       m_view.pushStack(m_childrenController[i]);
     }
   }
+}
+
+void StackViewController::didExitPage(ViewController * controller) const {
+  Container::activeApp()->didExitPage(controller);
+}
+
+void StackViewController::willOpenPage(ViewController * controller) const {
+  Container::activeApp()->willOpenPage(controller);
 }
 
 }  // namespace Escher

@@ -77,6 +77,8 @@ private:
   void setupActiveViewController();
   bool shouldStoreHeaderOnStack(ViewController * vc, int index);
   void updateStack(ViewController::TitlesDisplay titleDisplay);
+  virtual void didExitPage(ViewController * controller) const;
+  virtual void willOpenPage(ViewController * controller) const;
   ViewController * m_childrenController[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   bool m_isVisible;

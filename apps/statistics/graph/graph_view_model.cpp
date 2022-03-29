@@ -8,7 +8,6 @@
 using namespace Statistics;
 
 I18n::Message GraphViewModel::MessageForGraphView(GraphView graphView) {
-  // TODO : Translate texts
   constexpr I18n::Message k_messages[k_numberOfGraphViews] = {
   I18n::Message::Histogram,
   I18n::Message::BoxAndWhiskers,

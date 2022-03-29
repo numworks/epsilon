@@ -35,7 +35,7 @@ tests_src += $(addprefix apps/solver/test/,\
 
 $(eval $(call depends_on_image,apps/solver/app.cpp,apps/solver/solver_icon.png))
 
-$(eval $(call depends_on_transparent_image,apps/solver/menu_controller.cpp,$(addprefix apps/solver/,\
+$(eval $(call depends_on_transparent_image,apps/solver/app.cpp,$(addprefix apps/solver/,\
   equations_icon.png \
   finance_icon.png \
 )))

@@ -113,7 +113,7 @@ $(call object_for,$(sources)): SFLAGS += -Iapps
 
 $(eval $(call depends_on_image,apps/probability/app.cpp,apps/probability/probability_icon.png))
 
-$(eval $(call depends_on_transparent_image,apps/probability/controllers/menu_controller.cpp,$(addprefix apps/probability/images/,\
+$(eval $(call depends_on_transparent_image,apps/probability/app.cpp,$(addprefix apps/probability/images/,\
   probability.png \
   confidence_interval.png \
   significance_test.png \

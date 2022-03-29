@@ -64,10 +64,11 @@ bool PlotController::reloadBannerView() {
   }
   KDCoordinate previousHeight = m_bannerView.minimalSizeForOptimalDisplay().height();
 
-  *m_selectedBarIndex = SanitizeIndex(*m_selectedBarIndex, totalValues(series));
-
+  int precision = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
-  char buffer[k_maxNumberOfCharacters] = "";
+  // With 7 = KDFont::SmallFont->glyphSize().width()
+  constexpr static int k_bufferSize = 1 + Ion::Display::Width / 7;
+  char buffer[k_bufferSize] = "";
 
   // Display series name
   StoreController::FillSeriesName(series, buffer, false);
@@ -76,21 +77,21 @@ bool PlotController::reloadBannerView() {
   // Display selected value
   Poincare::Print::customPrintf(
     buffer,
-    k_maxNumberOfCharacters,
+    k_bufferSize,
     "%s%s%*.*ed",
     I18n::translate(I18n::Message::StatisticsValue),
     I18n::translate(I18n::Message::StatisticsColonConvention),
-    m_cursor.x(), displayMode, k_numberOfSignificantDigits);
+    m_cursor.x(), displayMode, precision);
   m_bannerView.value()->setText(buffer);
 
   // Display result value
   Poincare::Print::customPrintf(
     buffer,
-    k_maxNumberOfCharacters,
+    k_bufferSize,
     resultMessageTemplate(),
     I18n::translate(resultMessage()),
     I18n::translate(I18n::Message::StatisticsColonConvention),
-    m_cursor.y(), displayMode, k_numberOfSignificantDigits);
+    m_cursor.y(), displayMode, precision);
   m_bannerView.result()->setText(buffer);
 
   m_bannerView.reload();

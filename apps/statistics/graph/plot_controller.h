@@ -48,9 +48,6 @@ public:
   bool moveSelectionHorizontally(int deltaIndex) override;
 
 protected:
-  // TODO : Handle a multiline banner to allow a greater precision, update k_maxNumberOfCharacters
-  constexpr static int k_numberOfSignificantDigits = Poincare::Preferences::VeryShortNumberOfSignificantDigits;
-  constexpr static int k_maxNumberOfCharacters = 40;
   static int SanitizeIndex(int index, int numberOfPairs) {
     return std::max(0, std::min(index, numberOfPairs - 1));
   }

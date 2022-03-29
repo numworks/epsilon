@@ -60,11 +60,12 @@ bool BoxController::reloadBannerView() {
   if (series < 0) {
     return false;
   }
-
   KDCoordinate previousHeight = m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 
-  // With 7 = KDFont::SmallFont->glyphSize().width()
-  constexpr static int k_bufferSize = Ion::Display::Width / 7 - (int)sizeof("V1/N1") + 2;
+  int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
+  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
+  // With 7 = KDFont::SmallFont->glyphSize().width(), should fit in one line
+  constexpr static int k_bufferSize = 1 + Ion::Display::Width / 7 - (int)sizeof("V1/N1");
   char buffer[k_bufferSize] = "";
 
   // Display series name
@@ -80,7 +81,7 @@ bool BoxController::reloadBannerView() {
     "%s%s%*.*ed",
     I18n::translate(m_store->boxPlotCalculationMessageAtIndex(series, selectedBoxCalculation)),
     I18n::translate(I18n::Message::StatisticsColonConvention),
-    value, Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits
+    value, displayMode, precision
   );
   m_view.bannerView()->calculationValue()->setText(buffer);
 

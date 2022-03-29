@@ -94,6 +94,9 @@ private:
 
   StackState currentState() const { return StackState(selectedRow(), m_selectableTableView.contentOffset().y()); }
   void loadState(StackState state);
+  // NestedMenuController implementations will not interact with the app pages
+  void didExitPage(ViewController * controller) const override {}
+  void willOpenPage(ViewController * controller) const override {}
   BreadcrumbController m_breadcrumbController;
   ListController m_listController;
   InputEventHandler * m_sender;

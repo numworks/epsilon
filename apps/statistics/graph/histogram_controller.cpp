@@ -115,11 +115,10 @@ bool HistogramController::reloadBannerView() {
   if (series < 0) {
     return false;
   }
-
   KDCoordinate previousHeight = m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 
   int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
-  Poincare::Preferences::PrintFloatMode printMode = Poincare::Preferences::sharedPreferences()->displayMode();
+  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
   // With 7 = KDFont::SmallFont->glyphSize().width()
   constexpr static int k_bufferSize = 1 + Ion::Display::Width / 7;
   char buffer[k_bufferSize] = "";
@@ -137,8 +136,8 @@ bool HistogramController::reloadBannerView() {
     "%s%s[%*.*ed;%*.*ed[",
     I18n::translate(I18n::Message::Interval),
     I18n::translate(I18n::Message::StatisticsColonConvention),
-    lowerBound, printMode, precision,
-    upperBound, printMode, precision);
+    lowerBound, displayMode, precision,
+    upperBound, displayMode, precision);
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Display frequency
@@ -149,7 +148,7 @@ bool HistogramController::reloadBannerView() {
     "%s%s%*.*ed",
     I18n::translate(I18n::Message::Frequency),
     I18n::translate(I18n::Message::StatisticsColonConvention),
-    size, printMode, precision);
+    size, displayMode, precision);
   m_view.bannerView()->frequencyView()->setText(buffer);
 
   // Display relative frequency
@@ -160,7 +159,7 @@ bool HistogramController::reloadBannerView() {
     "%s%s%*.*ed",
     I18n::translate(I18n::Message::RelativeFrequency),
     I18n::translate(I18n::Message::StatisticsColonConvention),
-    relativeFrequency, printMode, precision);
+    relativeFrequency, displayMode, precision);
   m_view.bannerView()->relativeFrequencyView()->setText(buffer);
 
   m_view.bannerView()->reload();

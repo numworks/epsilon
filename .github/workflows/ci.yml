@@ -109,7 +109,7 @@ jobs:
           path: output/release/simulator/web/epsilon.zip
           retention-days: 7
   linux:
-    runs-on: ubuntu-latest
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4 pypng stringcase

@@ -25,6 +25,9 @@ public:
   virtual double resultAtIndex(int series, int i) const = 0;
   virtual void computeYBounds(float * yMin, float *yMax) const = 0;
   virtual void computeXBounds(float * xMin, float *xMax) const = 0;
+  virtual KDCoordinate horizontalMargin() const = 0;
+  virtual KDCoordinate bottomMargin() const = 0;
+  virtual KDCoordinate topMargin() const = 0;
   virtual bool connectPoints() const { return false; }
   virtual void appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {}
   virtual bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const { return false; }
@@ -48,6 +51,9 @@ public:
   bool moveSelectionHorizontally(int deltaIndex) override;
 
 protected:
+  constexpr static KDCoordinate smallMargin = 10;
+  constexpr static KDCoordinate mediumMargin = 20;
+  constexpr static KDCoordinate largeMargin = 30;
   static int SanitizeIndex(int index, int numberOfPairs) {
     return std::max(0, std::min(index, numberOfPairs - 1));
   }

@@ -14,6 +14,10 @@ public:
   double resultAtIndex(int series, int i) const override { return m_store->normalProbabilityResultAtIndex(series, i); }
   void computeYBounds(float * yMin, float *yMax) const override;
   void computeXBounds(float * xMin, float *xMax) const override;
+  // Horizontal labels will always be in the middle
+  KDCoordinate horizontalMargin() const override { return mediumMargin; }
+  KDCoordinate bottomMargin() const override { return smallMargin; }
+  KDCoordinate topMargin() const override { return smallMargin; }
   bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const override;
 
   TELEMETRY_ID("NormalProbability");

@@ -16,6 +16,10 @@ public:
   double resultAtIndex(int series, int i) const override { return m_store->cumulatedFrequencyResultAtIndex(series, i); }
   void computeYBounds(float * yMin, float *yMax) const override;
   void computeXBounds(float * xMin, float *xMax) const override;
+  // Horizontal labels will always be in bottom, vertical labels are wider
+  KDCoordinate horizontalMargin() const override { return largeMargin; }
+  KDCoordinate bottomMargin() const override { return mediumMargin; }
+  KDCoordinate topMargin() const override { return smallMargin; }
   bool connectPoints() const override { return true; }
   // Append '%' to vertical axis labels.
   void appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const override;

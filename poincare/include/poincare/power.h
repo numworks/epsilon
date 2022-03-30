@@ -30,6 +30,7 @@ public:
   NullStatus nullStatus(Context * context) const override;
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
+  double degreeForSortingAddition(bool symbolsOnly) const override;
   Expression removeUnit(Expression * unit) override;
 
   int polynomialDegree(Context * context, const char * symbolName) const override;

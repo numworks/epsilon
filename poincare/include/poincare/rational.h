@@ -118,8 +118,6 @@ public:
 private:
   static Rational Builder(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative);
 
-  RationalNode * node() { return static_cast<RationalNode *>(Number::node()); }
-
   /* Simplification */
   Expression shallowBeautify();
   Expression denominator() const;

@@ -270,7 +270,9 @@ public:
   typedef bool (*isVariableTest)(const char * c, Poincare::Context * context);
   virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const;
   bool isOfType(Type * types, int length) const;
-
+  /* This has a special behaviour for Multiplication, Power and Symbol.
+   * See Addition::shallowBeautify - step 1. for more info. */
+  virtual double degreeForSortingAddition(bool symbolsOnly) const { return symbolsOnly ? 0. : 1.; }
   virtual Expression removeUnit(Expression * unit); // Only reduced nodes should answer
 
   /* Simplification */

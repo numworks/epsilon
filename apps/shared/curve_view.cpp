@@ -181,12 +181,12 @@ float CurveView::gridUnit(Axis axis) const {
 }
 
 int CurveView::numberOfLabels(Axis axis) const {
-  float labelStep = 2.0f * gridUnit(axis);
-  if (labelStep <= 0.0f) {
+  float step = labelStep(axis);
+  if (step <= 0.0f) {
     return 0;
   }
-  float minLabel = std::ceil(min(axis)/labelStep);
-  float maxLabel = std::floor(max(axis)/labelStep);
+  float minLabel = std::ceil(min(axis)/step);
+  float maxLabel = std::floor(max(axis)/step);
   int numberOfLabels = maxLabel - minLabel + 1;
   assert(numberOfLabels <= (axis == Axis::Horizontal ? k_maxNumberOfXLabels : k_maxNumberOfYLabels));
   return numberOfLabels;
@@ -328,9 +328,9 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
    * close to the screen edge to write them. We must thus draw the graduations
    * separately from the labels. */
 
-  float labelStep = 2.0f * gridUnit(axis);
-  int minLabelPixelPosition = std::round(floatToPixel(axis, labelStep * std::ceil(min(axis)/labelStep)));
-  int maxLabelPixelPosition = std::round(floatToPixel(axis, labelStep * std::floor(max(axis)/labelStep)));
+  float step = labelStep(axis);
+  int minLabelPixelPosition = std::round(floatToPixel(axis, step * std::ceil(min(axis)/step)));
+  int maxLabelPixelPosition = std::round(floatToPixel(axis, step * std::floor(max(axis)/step)));
 
   // Draw the graduations
 
@@ -1206,8 +1206,8 @@ void CurveView::computeHorizontalExtremaLabels(bool increaseNumberOfSignificantD
 
 float CurveView::labelValueAtIndex(Axis axis, int i) const {
   assert(i >= 0 && i < numberOfLabels(axis));
-  float labelStep = 2.0f * gridUnit(axis);
-  return labelStep*(std::ceil(min(axis)/labelStep)+i);
+  float step = labelStep(axis);
+  return step*(std::ceil(min(axis)/step)+i);
 }
 
 bool CurveView::bannerIsVisible() const {

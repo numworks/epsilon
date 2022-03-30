@@ -8,6 +8,11 @@ void FrequencyController::viewWillAppearBeforeReload() {
   if (m_continuousCursor) {
     m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeriesIndex()));
   }
+  #ifdef GRAPH_CURSOR_SPEEDUP
+  if (m_continuousCursor) {
+    m_roundCursorView.resetMemoization();
+  }
+  #endif
   m_curveView.setCursorView(m_continuousCursor ? &m_roundCursorView : &m_cursorView);
   PlotController::viewWillAppearBeforeReload();
 }
@@ -109,13 +114,15 @@ bool FrequencyController::moveSelectionVertically(int direction) {
   return true;
 }
 
-// TODO : Fix a bug where the previous cursor would not properly dirty itself.
 void FrequencyController::switchCursor(bool seriesChanged) {
   int series = selectedSeriesIndex();
   m_continuousCursor = !m_continuousCursor;
   if (m_continuousCursor) {
     m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(series));
   }
+  #ifdef GRAPH_CURSOR_SPEEDUP
+  m_roundCursorView.resetMemoization();
+  #endif
   m_curveView.setCursorView(m_continuousCursor ? &m_roundCursorView : &m_cursorView);
   if (!m_continuousCursor || seriesChanged) {
     // Cursor must be repositionned

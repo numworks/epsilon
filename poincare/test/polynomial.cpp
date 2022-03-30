@@ -39,13 +39,13 @@ QUIZ_CASE(poincare_polynomial_roots_quadratic) {
   assert_roots_of_polynomial_are("1/3×x^2+2/3×x-5", {"-5", "3"}, "64/9", Real);
   assert_roots_of_polynomial_are("i/5×(x-3)^2", {"3"}, "0", Cartesian);
   assert_roots_of_polynomial_are("(x-2/3)(x+0.2)", {"-1/5", "2/3"}, "169/225", Real);
-  assert_roots_of_polynomial_are("√(2)(x-√(3))(x-√(5))", {"√(3)", "√(5)"}, "-4×√(15)+16", Real);
+  assert_roots_of_polynomial_are("√(2)(x-√(3))(x-√(5))", {"√(3)", "√(5)"}, "16-4×√(15)", Real);
 
   // ComplexRoots
   assert_roots_of_polynomial_are("x^2+1", {""}, "-4", Real);
   assert_roots_of_polynomial_are("x^2+1", {"-i", "i"}, "-4", Cartesian);
   assert_roots_of_polynomial_are("2i×(x-3i)^2", {"3×i"}, "0", Cartesian);
-  assert_roots_of_polynomial_are("x^2+x+1-i^(2/30)", {"-√(4×cos(π/30)+4×i×sin(π/30)-3)/2-1/2", "√(4×cos(π/30)+4×i×sin(π/30)-3)/2-1/2"}, "4×cos(π/30)-3+4×sin(π/30)×i", Cartesian);
+  assert_roots_of_polynomial_are("x^2+x+1-i^(2/30)", {"-1/2-√(4×cos(π/30)+4×i×sin(π/30)-3)/2", "-1/2+√(4×cos(π/30)+4×i×sin(π/30)-3)/2"}, "4×cos(π/30)-3+4×sin(π/30)×i", Cartesian);
 }
 
 QUIZ_CASE(poincare_polynomial_roots_cubic) {
@@ -58,16 +58,16 @@ QUIZ_CASE(poincare_polynomial_roots_cubic) {
   assert_roots_of_polynomial_are("x^3-13-i", {"-1.228595+2.007539×i", "-1.124282-2.067764×i", "2.352877+6.022476ᴇ-2×i"}, "-4536-702×i", Cartesian);
   assert_roots_of_polynomial_are("2x^3-e^(2iπ/7)", {"7.937005ᴇ-1×e^2.393594×i", "7.937005ᴇ-1×e^-1.795196×i", "7.937005ᴇ-1×e^2.991993ᴇ-1×i"}, "1.08ᴇ2×e^-1.346397×i", Polar);
   assert_roots_of_polynomial_are("x^3-e^(2iπ/7)-1", {"1.216877×e^2.243995×i", "1.216877×e^-1.944795×i", "1.216877×e^1.495997ᴇ-1×i"}, "8.766845ᴇ1×e^-2.243995×i", Polar);
-  assert_roots_of_polynomial_are("(x-√(3)/2)(x^2-x+6/4)", {"√(3)/2"}, "\u0012180×√(3)-465\u0013/16", Real);
-  assert_roots_of_polynomial_are("(x-√(3)/2)(x^2-x+6/4)", {"√(3)/2", "1/2-√(5)/2×i", "1/2+√(5)/2×i"}, "\u0012180×√(3)-465\u0013/16", Cartesian);
+  assert_roots_of_polynomial_are("(x-√(3)/2)(x^2-x+6/4)", {"√(3)/2"}, "\u0012-465+180×√(3)\u0013/16", Real);
+  assert_roots_of_polynomial_are("(x-√(3)/2)(x^2-x+6/4)", {"√(3)/2", "1/2-√(5)/2×i", "1/2+√(5)/2×i"}, "\u0012-465+180×√(3)\u0013/16", Cartesian);
   assert_roots_of_polynomial_are("(x-1)(x-2)(x-3)", {"1", "2", "3"}, "4", Real);
   assert_roots_of_polynomial_are("x^3-(2+i)×x^2-2×i×x-2+4×i", {"-1-i", "1+i", "2+i"}, "-96+40×i", Cartesian);
   assert_roots_of_polynomial_are("x^3+3×x^2+3×x+0.7", {"-3.30567ᴇ-1", "-1.334716-5.797459ᴇ-1×i", "-1.334716+5.797459ᴇ-1×i"}, "-243/100", Cartesian);
   assert_roots_of_polynomial_are("x^3+3×x^2+3×x+0.7", {"-3.30567ᴇ-1"}, "-243/100", Real);
   assert_roots_of_polynomial_are("(x-4.231)^3", {"4231/1000"}, "0", Real);
   assert_roots_of_polynomial_are("(x-7/3)(x-π)(x-log(3))", {"log(3)", "7/3", "π"}, "1.598007ᴇ1", Real);
-  assert_roots_of_polynomial_are("(x-2i+1)(x+3i-1)(x-i+2)", { "-2+1×i", "-1+2×i", "1-3×i"}, "-1288-666×i", Cartesian);
+  assert_roots_of_polynomial_are("(x-2i+1)(x+3i-1)(x-i+2)", {"-2+1×i", "-1+2×i", "1-3×i"}, "-1288-666×i", Cartesian);
   assert_roots_of_polynomial_are("x^3+x^2+x-39999999", {"3.416612ᴇ2", "-1.713306ᴇ2-2.961771ᴇ2×i", "-1.713306ᴇ2+2.961771ᴇ2×i"}, "-43199998400000016", Cartesian);
-  assert_roots_of_polynomial_are("(x-π)(x^2+x+1-i^(2/30))", {"π", "-√(4×cos(π/30)+4×i×sin(π/30)-3)/2-1/2", "√(4×cos(π/30)+4×i×sin(π/30)-3)/2-1/2"}, "1.668482ᴇ2+6.817647ᴇ1×i", Cartesian);
+  assert_roots_of_polynomial_are("(x-π)(x^2+x+1-i^(2/30))", {"π", "-1/2-√(4×cos(π/30)+4×i×sin(π/30)-3)/2", "-1/2+√(4×cos(π/30)+4×i×sin(π/30)-3)/2"}, "1.668482ᴇ2+6.817647ᴇ1×i", Cartesian);
   assert_roots_of_polynomial_are("x^3+x^2+x+1-80*π*200000", {"3.687201ᴇ2", "-1.8486ᴇ2-3.196107ᴇ2×i", "-1.8486ᴇ2+3.196107ᴇ2×i"}, "-6912000000000000×π^2+640000000×π-16", Cartesian);
 }

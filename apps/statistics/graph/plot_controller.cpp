@@ -30,7 +30,7 @@ void PlotController::viewWillAppearBeforeReload() {
   float yMin, yMax, xMin, xMax;
   computeYBounds(&yMin, &yMax);
   computeXBounds(&xMin, &xMax);
-  m_graphRange.calibrate(m_curveView.bounds().width(), m_curveView.bounds().height(), xMin, xMax, yMin, yMax);
+  m_graphRange.calibrate(m_curveView.bounds().width(), m_curveView.bounds().height(), horizontalMargin(), bottomMargin(), topMargin(), xMin, xMax, yMin, yMax);
   // Sanitize m_selectedBarIndex and cursor's position
   int series = selectedSeriesIndex();
   *m_selectedBarIndex = SanitizeIndex(*m_selectedBarIndex, totalValues(series));

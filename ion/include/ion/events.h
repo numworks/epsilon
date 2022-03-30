@@ -47,6 +47,7 @@ enum class ShiftAlphaStatus : uint8_t {
   ShiftAlpha,
   AlphaLock,
   ShiftAlphaLock,
+  NumberOfStatus
 };
 
 Event getEvent(int * timeout);

@@ -33,6 +33,9 @@ bool isLockActive() {
 }
 
 void setShiftAlphaStatus(ShiftAlphaStatus s) {
+  if (static_cast<uint8_t>(s) >= static_cast<uint8_t>(ShiftAlphaStatus::NumberOfStatus)) {
+    return;
+  }
   sShiftAlphaStatus = s;
 }
 
@@ -101,6 +104,8 @@ void updateModifiersFromEvent(Event e, Keyboard::State state) {
         sShiftAlphaStatus = ShiftAlphaStatus::Default;
       }
       break;
+    default:
+      assert(false);
   }
 }
 

@@ -21,11 +21,12 @@ constexpr static size_t SignatureSize = 64;
 // Kernel RAM
 constexpr static uint32_t KernelSRAMDataBSSLength = 0xC00; // 3k
 constexpr static uint32_t KernelStackLength = 0x400; // 1K
-constexpr static uint32_t KernelRAMAddress = SRAMAddress + SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
+constexpr static uint32_t KernelSRAMLength = KernelStackLength + KernelSRAMDataBSSLength;
+constexpr static uint32_t KernelRAMAddress = SRAMAddress + SRAMLength - KernelSRAMLength;
 
 // Userland RAm
 constexpr static uint32_t UserlandSRAMAddress = SRAMAddress;
-constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMDataBSSLength - KernelStackLength;
+constexpr static uint32_t UserlandSRAMLength = SRAMLength - KernelSRAMLength;
 constexpr static uint32_t UserlandStackLength = 0x8000; // 32K
 
 // Programs executed in RAM

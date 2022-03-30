@@ -32,6 +32,8 @@ bool ShiftAlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
       case Ion::Events::ShiftAlphaStatus::Default:
         m_shiftAlphaView.setMessage(I18n::Message::Default);
         break;
+      default:
+        assert(false);
     }
     markRectAsDirty(bounds());
     return true;
@@ -57,8 +59,10 @@ int ShiftAlphaLockView::numberOfSubviews() const {
       return 2;
     case Ion::Events::ShiftAlphaStatus::Default:
       return 0;
+    default:
+      assert(false);
+      return 0;
   }
-  return 0;
 }
 
 View * ShiftAlphaLockView::subviewAtIndex(int index) {

@@ -171,7 +171,7 @@ constexpr Event DoubleParenthesis = Event::ShiftKey(Keyboard::Key::LeftParenthes
 
 constexpr Event ShiftZero = Event::ShiftKey(Keyboard::Key::Zero);
 constexpr Event ShiftDot = Event::ShiftKey(Keyboard::Key::Dot);
-constexpr Event ShiftEE = Event::PlainKey(Keyboard::Key::EE);
+constexpr Event ShiftEE = Event::ShiftKey(Keyboard::Key::EE);
 
 constexpr Event ShiftOne = Event::ShiftKey(Keyboard::Key::One);
 constexpr Event ShiftTwo = Event::ShiftKey(Keyboard::Key::Two);

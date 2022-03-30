@@ -210,7 +210,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("[[1,2,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("[[1,x,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "undef", "undef", &globalContext, &store);
   assertCalculationIs("28^7", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("3+√(2)→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "√(2)+3", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("3+√(2)→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "3+√(2)", nullptr, nullptr, &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   assertCalculationIs("3+2→a", DisplayOutput::ApproximateOnly, EqualSign::Equal, "5", "5", "5", &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
@@ -276,7 +276,7 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("f(2)",                "3",     &globalContext, &store);
   assertMainCalculationOutputIs("2→x",                 "2",     &globalContext, &store);
   assertMainCalculationOutputIs("f(x)",                "3",     &globalContext, &store);
-  assertMainCalculationOutputIs("x+x+1+3+√(π)",        "√(π)+8",&globalContext, &store);
+  assertMainCalculationOutputIs("x+x+1+3+√(π)",        "8+√(π)",&globalContext, &store);
   // Destroy records
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();

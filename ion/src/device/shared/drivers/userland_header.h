@@ -1,6 +1,7 @@
 #ifndef ION_DEVICE_SHARED_USERLAND_HEADER_H
 #define ION_DEVICE_SHARED_USERLAND_HEADER_H
 
+#include "kernel_header.h"
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -12,29 +13,24 @@ namespace Device {
 class UserlandHeader {
 public:
   constexpr UserlandHeader();
-  bool isValid() const {
-    if (m_storageAddressRAM == nullptr
-      || m_storageSizeRAM == 0
-      || m_externalAppsFlashStart == nullptr
-      || m_externalAppsFlashEnd == nullptr
-      || m_externalAppsRAMStart == nullptr
-      || m_externalAppsRAMEnd == nullptr
-      || m_header != Magic
-      || m_footer != Magic) {
+  static bool ValidAddress(uint32_t address) {
+    UserlandHeader * info = reinterpret_cast<UserlandHeader *>(address);
+    if (info->m_storageAddressRAM == nullptr
+      || info->m_storageSizeRAM == 0
+      || info->m_externalAppsFlashStart == nullptr
+      || info->m_externalAppsFlashEnd == nullptr
+      || info->m_externalAppsRAMStart == nullptr
+      || info->m_externalAppsRAMEnd == nullptr
+      || info->m_header != Magic
+      || info->m_footer != Magic) {
       return false;
     }
     return true;
   }
-  const char * expectedEpsilonVersion() const {
-    assert(m_storageAddressRAM != nullptr);
-    assert(m_storageSizeRAM != 0);
-    assert(m_externalAppsFlashStart != nullptr);
-    assert(m_externalAppsFlashEnd != nullptr);
-    assert(m_externalAppsRAMStart != nullptr);
-    assert(m_externalAppsRAMEnd != nullptr);
-    assert(m_header == Magic);
-    assert(m_footer == Magic);
-    return m_expectedEpsilonVersion;
+  static void ExtractExpectedEpsilonVersion(uint32_t address, char buffer[KernelHeader::k_epsilonVersionSize]) {
+    assert(ValidAddress(address));
+    UserlandHeader * info = reinterpret_cast<UserlandHeader *>(address);
+    strlcpy(buffer, info->m_expectedEpsilonVersion, KernelHeader::k_epsilonVersionSize);
   }
   void * externalAppsAddressFlash() const {
     return m_externalAppsFlashStart;

@@ -30,6 +30,12 @@ void Store::setSortedIndex(size_t * buffer, size_t bufferSize) {
   m_sortedIndex = buffer;
 }
 
+void Store::invalidateSortedIndexes() {
+  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
+    m_sortedIndexValid[i] = false;
+  }
+}
+
 uint32_t Store::barChecksum() const {
   double data[2] = {m_barWidth, m_firstDrawnBarAbscissa};
   size_t dataLengthInBytes = 2*sizeof(double);

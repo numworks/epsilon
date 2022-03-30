@@ -13,6 +13,7 @@ friend class BoxRange;
 public:
   Store();
   void setSortedIndex(size_t * buffer, size_t bufferSize);
+  void invalidateSortedIndexes();
   uint32_t barChecksum() const;
   // Histogram bars
   double barWidth() const { return m_barWidth; }

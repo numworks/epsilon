@@ -18,7 +18,7 @@ public:
     I18n::Message::ColorGreen,
     I18n::Message::ColorYellow,
     I18n::Message::ColorPurple,
-    I18n::Message::ColorBlue,
+    I18n::Message::ColorCyan,
     I18n::Message::ColorPink,
     I18n::Message::ColorOrange
   };

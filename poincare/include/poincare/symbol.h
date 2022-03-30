@@ -27,6 +27,7 @@ public:
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
+  double degreeForSortingAddition(bool symbolsOnly) const override { return 1.; }
   /* getUnit returns Undefined, because the symbol would have
    * already been replaced if it should have been.*/
 

@@ -103,25 +103,64 @@ int Addition::getPolynomialCoefficients(Context * context, const char * symbolNa
 }
 
 Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
-  /* Beautifying AdditionNode essentially consists in adding Subtractions if
-   * needed.
-   * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
-   * "a+(-r)*b" into "a-r*b" where r is a positive Rational.
-   * Note: the process will slightly differ if the negative product occurs on
-   * the first term: we want to turn "Addition(Multiplication(-1,b))" into
-   * "Opposite(b)".
-   * Last but not least, special care must be taken when iterating over children
-   * since we may remove some during the process. */
+  /* Step 1 : Sort children in decreasing order of degree.
+   * 1+x+x^3+y^2+x*y+sqrt(x) --> x^3+y^2+x*y+x+1+sqrt(x)
+   * sqrt(2)+1 = 1+sqrt(2)
+   *
+   * First we consider the degree of symbols so that deg(x^2) > deg(x) > deg(1)
+   * and deg(x*y) = deg(x^2). An expression without symbols has a degree of 0.
+   * An expression which has an exponent that is not a number has a degree
+   * of NAN (like x^y). It is put at the beginning of the addition.
+   *
+   * Second, if two terms of the addition have the same symbol degree,
+   * we consider their "absolute" degree, which is the exponent of their
+   * right-most term.
+   * So deg(3*sqrt(2)) = 0.5, deg(1) = 0, deg(pi^3) = 3
+   *
+   * Third if two terms still have the same degre, we compare their bases.
+   *
+   * WARNING : This algorithm is not the cleanest possible but is a good
+   * compromise between efficiency and exhaustivity.
+   * It covers the main cases which are numbers (such as 2+3*sqrt(2))
+   * and polynomials like (x + y + 1)^3 which will be sorted as :
+   * x^3 + y^3 + 3*x*y^2 + 3*x^2*y + 3*x^2 + 3*y^2 + 6*x*y + 3*x + 3*y + 1
+   *
+   * What it does not handle, is expressions like x^sqrt(2) or x^pi,
+   * since it does not approximate exponents that are not Numbers in Poincare.
+   * These terms will just be put at the beginning of the addition.
+   *
+   * It also supposes that all terms are developped, so if we want to keep
+   * factorized terms after the reduction, this won't work for sorting
+   * additions like (x+1)^5 + x^2 + 1 (the degree of (x+1)^5 is not computed
+   * yet in its factorized form, but it could be easily implemented if needed).
+   * */
 
-  /* Sort children in decreasing order:
-   * 1+x+x^2 --> x^2+x+1
-   * 1+R(2) --> R(2)+1 */
   sortChildrenInPlace(
       [](const ExpressionNode * e1, const ExpressionNode * e2) {
+        /* Repeat twice, once for symbol degree, once for any degree */
+        for (int sortBySymbolDegree = 1; sortBySymbolDegree >= 0; sortBySymbolDegree--) {
+          double e1Degree = e1->degreeForSortingAddition(static_cast<bool>(sortBySymbolDegree));
+          double e2Degree = e2->degreeForSortingAddition(static_cast<bool>(sortBySymbolDegree));
+          if (!std::isnan(e2Degree) && (std::isnan(e1Degree) || e1Degree > e2Degree)) {
+            return -1;
+          }
+          if (!std::isnan(e1Degree) && (std::isnan(e2Degree) || e2Degree > e1Degree)) {
+            return 1;
+          }
+        }
+        // If they have same degree, sort children in decreasing order of base.
         return ExpressionNode::SimplificationOrder(e1, e2, false);
       },
       reductionContext->context());
 
+   /* Step 2 : Add Subtractions if needed
+   * We want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
+   * "a+(-r)*b" into "a-r*b" where r is a positive Rational.
+   * Note: the process will slightly differ if the negative product occurs on
+   * the first term: we want to turn "Addition(Multiplication(-1,b))" into
+   * "Opposite(b)".
+   * Special care must be taken when iterating over children since we may
+   * remove some during the process. */
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     // Try to make the child i positive if any negative numeral factor is found

@@ -71,6 +71,32 @@ Expression MultiplicationNode::removeUnit(Expression * unit) {
   return Multiplication(this).removeUnit(unit);
 }
 
+double MultiplicationNode::degreeForSortingAddition(bool symbolsOnly) const {
+  /* If we consider the symbol degree, the degree of a multiplication is
+   * the sum of the degrees of its terms :
+   * 3*(x^2)*y -> deg = 0+2+1 = 3.
+   *
+   * If we consider the degree of any term, the degree of a multiplication is
+   * the degree of the most-right term :
+   * 4*sqrt(2) -> deg = 0.5.
+   *
+   * This is to ensure that deg(5) > deg(5*sqrt(3)) and deg(x^4) > deg(x*y^3)
+   * */
+  if (symbolsOnly) {
+    double degree = 0.;
+    for (ExpressionNode * c : children()) {
+      degree += c->degreeForSortingAddition(symbolsOnly);
+    }
+    return degree;
+  } else {
+    if (numberOfChildren() > 0) {
+      return childAtIndex(numberOfChildren() - 1)->degreeForSortingAddition(symbolsOnly);
+    }
+  }
+  return NAN;
+}
+
+
 template<typename T> Complex<T> MultiplicationNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
   if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {

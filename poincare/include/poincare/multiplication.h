@@ -26,6 +26,7 @@ public:
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
   Expression removeUnit(Expression * unit) override;
+  double degreeForSortingAddition(bool symbolsOnly) const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);

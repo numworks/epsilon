@@ -147,6 +147,25 @@ bool PowerNode::childAtIndexNeedsUserParentheses(const Expression & child, int c
   return false;
 }
 
+double PowerNode::degreeForSortingAddition(bool symbolsOnly) const {
+  if (numberOfChildren() <= 1) {
+    return NAN;
+  }
+  double baseDegree = childAtIndex(0)->degreeForSortingAddition(symbolsOnly);
+  if (baseDegree == 0.) {
+    /* We escape here so that even if the exponent is not a number,
+     * the degree is still computed to 0.
+     * It is useful for 2^ln(3) for example, which has a symbol degree
+     * of 0 even if the exponent is not a number.*/
+    return 0.;
+  }
+  if (childAtIndex(1)->isNumber()) {
+    return static_cast<NumberNode *>(childAtIndex(1))->doubleApproximation() * baseDegree;
+  }
+  return NAN;
+}
+
+
 // Private
 
 template<typename T>

@@ -1,5 +1,6 @@
 #include "frequency_controller.h"
 #include <assert.h>
+#include <poincare/ieee754.h>
 
 namespace Statistics {
 
@@ -80,16 +81,46 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   // Find the first index of value strictly above x.
   int nextIndex = getNextIndex(series, totValues, index + 1, 1, &x);
 
+  if (x == m_cursor.x()) {
+    // Cursor did not move
+    return false;
+  }
+
   // Set the selected index
   *m_selectedBarIndex = index = SanitizeIndex(nextIndex - 1, totValues);
   assert(index != nextIndex);
 
-  // Compute the cursor's position on the segment between the tow indexes
   double xIndex = valueAtIndex(series, index);
-  double yIndex = resultAtIndex(series, index);
   double xNextIndex = valueAtIndex(series, nextIndex);
+
+  double precision = std::abs(step/2);
+
+  // Round cursor's position to closest interesting value
+  if (std::abs(x - xIndex) < precision) {
+    x = xIndex;
+  } else if (std::abs(x - xNextIndex) < precision) {
+    x = xNextIndex;
+    // Update index values
+    nextIndex = SanitizeIndex(nextIndex + 1, totValues);
+    index = SanitizeIndex(nextIndex - 1, totValues);
+    xIndex = valueAtIndex(series, index);
+    xNextIndex = valueAtIndex(series, nextIndex);
+  } else if (std::abs(x) < precision) {
+    x = 0.0;
+  } else {
+    assert(precision >= m_curveView.pixelWidth());
+    double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(m_curveView.pixelWidth()) - 1.0);
+    x = magnitude * std::round(x / magnitude);
+  }
+
+  assert(x >= xIndex && x <= xNextIndex && nextIndex >= index && nextIndex - index <= 1);
+
+  double yIndex = resultAtIndex(series, index);
   double yNextIndex = resultAtIndex(series, nextIndex);
+
+  // Compute the cursor's position on the segment between the two indexes
   double y = yIndex + (yNextIndex - yIndex) * ((x - xIndex) / (xNextIndex - xIndex));
+
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
   return true;

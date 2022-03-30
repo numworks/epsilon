@@ -55,10 +55,11 @@ public:
     assert(m_footer == Magic);
     return m_patchLevel;
   }
+  static constexpr size_t k_epsilonVersionSize = 8;
 private:
   constexpr static uint32_t Magic = 0xDEC00DF0;
   uint32_t m_header;
-  const char m_epsilonVersion[8];
+  const char m_epsilonVersion[k_epsilonVersionSize];
   const char m_patchLevel[8];
   uint32_t m_footer;
 };

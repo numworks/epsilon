@@ -467,7 +467,7 @@ void Store::countDistinctValues(int series, int start, int end, int i, bool hand
   assert(start >= 0 && end <= numberOfPairsOfSeries(series) && start <= end);
   *distinctValues = 0;
   *value = NAN;
-  for (size_t j = start; j < end; j++) {
+  for (int j = start; j < end; j++) {
     int valueIndex = valueIndexAtSortedIndex(series, j);
     if (handleNullFrequencies || get(series, 1, valueIndex) > 0) {
       double nextX = get(series, 0, valueIndexAtSortedIndex(series, j));
@@ -502,7 +502,7 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
   double cumulatedOccurrences = 0.0, otherOccurrences = 0.0;
   double value = cumulatedFrequencyValueAtIndex(series, i);
   // Recompute sumOfOccurrences() here to save some computation.
-  for (size_t j = 0; j < numberOfPairsOfSeries(series); j++) {
+  for (int j = 0; j < numberOfPairsOfSeries(series); j++) {
     double x = get(series, 0, valueIndexAtSortedIndex(series, j));
     (x <= value ? cumulatedOccurrences : otherOccurrences) += get(series, 1, valueIndexAtSortedIndex(series, j));
   }

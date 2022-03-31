@@ -93,19 +93,19 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   double xIndex = valueAtIndex(series, index);
   double xNextIndex = valueAtIndex(series, nextIndex);
 
-  double precision = std::abs(step/2);
+  double precision = std::fabs(step/2);
 
   // Round cursor's position to closest interesting value
-  if (std::abs(x - xIndex) < precision) {
+  if (std::fabs(x - xIndex) < precision) {
     x = xIndex;
-  } else if (std::abs(x - xNextIndex) < precision) {
+  } else if (std::fabs(x - xNextIndex) < precision) {
     x = xNextIndex;
     // Update index values
     nextIndex = SanitizeIndex(nextIndex + 1, totValues);
     index = SanitizeIndex(nextIndex - 1, totValues);
     xIndex = valueAtIndex(series, index);
     xNextIndex = valueAtIndex(series, nextIndex);
-  } else if (std::abs(x) < precision) {
+  } else if (std::fabs(x) < precision) {
     x = 0.0;
   } else {
     assert(precision >= m_curveView.pixelWidth());

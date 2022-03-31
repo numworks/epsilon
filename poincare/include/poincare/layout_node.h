@@ -40,6 +40,7 @@ public:
     LeftCurlyBraceLayout,
     LeftParenthesisLayout,
     LeftSquareBracketLayout,
+    ListSequenceLayout,
     MatrixLayout,
     NthRootLayout,
     ProductLayout,

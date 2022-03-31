@@ -93,6 +93,7 @@ public:
     InvNorm,
     LeastCommonMultiple,
     List,
+    ListSequence,
     ListElement,
     ListMaximum,
     ListMean,

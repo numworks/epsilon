@@ -22,6 +22,7 @@ Store::Store() :
   m_firstDrawnBarAbscissa(0.0),
   m_sortedIndex(nullptr),
   m_sortedIndexValid{false, false, false},
+  m_memoizedMaxNumberOfModes(0),
   m_displayOutliers(GlobalPreferences::sharedGlobalPreferences()->outliersStatus() == CountryPreferences::OutlierDefaultVisibility::Displayed)
 {
 }
@@ -359,12 +360,16 @@ int Store::numberOfModes(int series) const {
 }
 
 int Store::totalNumberOfModes() const {
+  if (m_memoizedMaxNumberOfModes > 0) {
+    return m_memoizedMaxNumberOfModes;
+  }
   int maxNumberOfModes = 0;
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
     if (seriesIsValid(i)) {
       maxNumberOfModes = std::max(maxNumberOfModes, numberOfModes(i));
     }
   }
+  m_memoizedMaxNumberOfModes = maxNumberOfModes;
   return maxNumberOfModes;
 }
 
@@ -431,6 +436,7 @@ void Store::sortColumn(int series, int column) {
 
 void Store::set(double f, int series, int i, int j) {
   m_sortedIndexValid[series] = false;
+  m_memoizedMaxNumberOfModes = 0;
   DoublePairStore::set(f, series, i, j);
 }
 
@@ -441,16 +447,19 @@ bool Store::deleteValueAtIndex(int series, int i, int j) {
 
 void Store::deletePairOfSeriesAtIndex(int series, int i) {
   m_sortedIndexValid[series] = false;
+  m_memoizedMaxNumberOfModes = 0;
   DoublePairStore::deletePairOfSeriesAtIndex(series, i);
 }
 
 void Store::resetColumn(int series, int i) {
   m_sortedIndexValid[series] = false;
+  m_memoizedMaxNumberOfModes = 0;
   DoublePairStore::resetColumn(series, i);
 }
 
 void Store::deleteAllPairsOfSeries(int series) {
   m_sortedIndexValid[series] = false;
+  m_memoizedMaxNumberOfModes = 0;
   DoublePairStore::deleteAllPairsOfSeries(series);
 }
 

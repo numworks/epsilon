@@ -22,7 +22,7 @@ void PlotCurveView::drawSeriesCurve(KDContext * ctx, KDRect rect, int series) co
   // Draw and connect each points
   KDColor color = Store::colorOfSeriesAtIndex(series);
   double previousX, previousY;
-  for (size_t i = 0; i < numberOfPairs; i++) {
+  for (int i = 0; i < numberOfPairs; i++) {
     double x = m_plotControllerDelegate->valueAtIndex(series, i);
     double y = m_plotControllerDelegate->resultAtIndex(series, i);
     Shared::CurveView::drawDot(ctx, rect, x, y, color);

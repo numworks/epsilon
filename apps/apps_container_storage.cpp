@@ -49,5 +49,7 @@ int AppsContainerStorage::appIndexFromSnapshot(App::Snapshot * snapshot) {
       return i;
     }
   }
+  // Achievement unlock : how did you get here ?
+  assert(false);
   return NULL;
 }

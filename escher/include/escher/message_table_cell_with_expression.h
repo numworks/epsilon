@@ -6,7 +6,7 @@
 
 class MessageTableCellWithExpression : public MessageTableCell {
 public:
-  MessageTableCellWithExpression(I18n::Message message = (I18n::Message)0, const KDFont * font = KDFont::SmallFont);
+  MessageTableCellWithExpression(I18n::Message message = (I18n::Message)0, const KDFont * font = KDFont::LargeFont);
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);

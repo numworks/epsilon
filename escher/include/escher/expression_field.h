@@ -42,6 +42,9 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
+protected:
+  TextField m_textField;
+  LayoutField m_layoutField;
 private:
   static constexpr int k_textFieldBufferSize = TextField::maxBufferSize();
   static constexpr KDCoordinate k_minimalHeight = 37;
@@ -51,8 +54,6 @@ private:
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   KDCoordinate inputViewHeight() const;
   KDCoordinate m_inputViewMemoizedHeight;
-  TextField m_textField;
-  LayoutField m_layoutField;
 };
 
 }

@@ -1,6 +1,7 @@
 #include "calculation_controller.h"
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 #include <apps/i18n.h>
 #include <assert.h>
 
@@ -29,6 +30,10 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_calculationTitleCells[i].setMessageFont(KDFont::SmallFont);
     m_calculationSymbolCells[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
     m_calculationSymbolCells[i].setMessageFont(KDFont::SmallFont);
+    m_calculationModeTitleCells[i].setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
+    m_calculationModeTitleCells[i].setFont(KDFont::SmallFont);
+    m_calculationModeSymbolCells[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
+    m_calculationModeSymbolCells[i].setFont(KDFont::SmallFont);
   }
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
     m_hideableCell[0].setHide(true);
@@ -70,9 +75,26 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     storeTitleCell->setColor(DoublePairStore::colorOfSeriesAtIndex(seriesNumber));
     return;
   }
+  if (type == k_calculationModeTitleCellType || type == k_calculationModeSymbolCellType) {
+    assert((i == 0 && type == k_calculationModeTitleCellType) || (i == 1 && type == k_calculationModeSymbolCellType));
+    // Mode title and symbol cells have an index value
+    const char * pattern = (i == 0 ? "%s %i" : "%s%i");
+    I18n::Message message = (i == 0 ? I18n::Message::Mode : I18n::Message::ModeSymbol);
+    int index = j - k_fixedNumberOfRows + 2;
+    assert(j >= 1);
+    // The NL "Modus 100" is the longest possible text here.
+    constexpr static int bufferSize = sizeof("Modus 100") / sizeof(char);
+    char buffer[bufferSize];
+    Poincare::Print::customPrintf(buffer, bufferSize, pattern, I18n::translate(message), index);
+    EvenOddBufferTextCell * bufferCell = static_cast<EvenOddBufferTextCell *>(cell);
+    bufferCell->setTextColor(i == 1 ? Palette::GrayDark : KDColorBlack);
+    bufferCell->setText(buffer);
+    return;
+  }
   if (type == k_calculationTitleCellType || type == k_calculationSymbolCellType) {
+    assert(j >= 1 && ((i == 0 && type == k_calculationTitleCellType) || (i == 1 && type == k_calculationSymbolCellType)));
     // Display a calculation title or symbol
-    I18n::Message titles[k_totalNumberOfRows][k_numberOfHeaderColumns] = {
+    I18n::Message titles[k_fixedNumberOfRows - 1][k_numberOfHeaderColumns] = {
       { I18n::Message::TotalFrequency, I18n::Message::TotalFrequencySymbol },
       { I18n::Message::Minimum, I18n::Message::MinimumSymbol },
       { I18n::Message::Maximum, I18n::Message::MaximumSymbol },
@@ -87,21 +109,43 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       { I18n::Message::SumValues, I18n::Message::SumValuesSymbol },
       { I18n::Message::SumSquareValues, I18n::Message::SumSquareValuesSymbol },
       { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol },
+      { I18n::Message::ModeFrequency, I18n::Message::ModeFrequencySymbol },
     };
-    assert((i == 0 && type == k_calculationTitleCellType) || (i == 1 && type == k_calculationSymbolCellType));
+    I18n::Message message;
+    if (j - 1 < (k_fixedNumberOfRows - 1) - 1) {
+      message = titles[j-1][i];
+    } else {
+      // ModeFrequency is the message on the last row.
+      assert(j == numberOfRows() - 1);
+      message = titles[(k_fixedNumberOfRows - 1) - 1][i];
+    }
     EvenOddMessageTextCell * calcTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
-    KDColor color = i == 1 ? Palette::GrayDark : KDColorBlack;
-    calcTitleCell->setMessage(titles[j-1][i], color);
+    calcTitleCell->setMessage(message, (i == 1 ? Palette::GrayDark : KDColorBlack));
     return;
   }
   if (type == k_calculationCellType) {
     // Display a calculation cell
-    Store::CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
+    Store::CalculPointer calculationMethods[k_fixedNumberOfRows - 2] = {&Store::sumOfOccurrences, &Store::minValue,
       &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
       &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
     int seriesIndex = m_store->indexOfKthValidSeries(i-2);
-    double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
+    double calculation;
     EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
+    if (j - 1 < (k_fixedNumberOfRows - 2)) {
+      calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
+    } else {
+      if (j == numberOfRows() - 1) {
+        calculation = m_store->modeFrequency(seriesIndex);
+      } else {
+        int modeIndex = j - k_fixedNumberOfRows + 1;
+        if (modeIndex < m_store->numberOfModes(seriesIndex)) {
+          calculation = m_store->modeAtIndex(seriesIndex, modeIndex);
+        } else {
+          calculationCell->setText("-");
+          return;
+        }
+      }
+    }
     constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
@@ -115,7 +159,11 @@ KDCoordinate CalculationController::columnWidth(int i) {
     return k_calculationTitleCellWidth;
   }
   if (i == 1) {
-    return k_calculationSymbolCellWidth;
+    int numberOfModes = m_store->totalNumberOfModes();
+    static_assert(Store::k_maxNumberOfPairs < 1000, "numberOfChars must be updated");
+    // Mod1, Mod10 and Mod100
+    int numberOfChars = (numberOfModes < 10 ? 4 : (numberOfModes < 100) ? 5 : 6);
+    return CalculationSymbolCellWidth(numberOfChars);
   }
   return k_calculationCellWidth;
 }
@@ -139,6 +187,12 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
   if (type == k_calculationSymbolCellType) {
     return &m_calculationSymbolCells[index];
   }
+  if (type == k_calculationModeTitleCellType) {
+    return &m_calculationModeTitleCells[index];
+  }
+  if (type == k_calculationModeSymbolCellType) {
+    return &m_calculationModeSymbolCells[index];
+  }
   if (type == k_seriesTitleCellType) {
     return &m_seriesTitleCells[index];
   }
@@ -156,6 +210,12 @@ int CalculationController::reusableCellCount(int type) {
   if (type == k_calculationSymbolCellType) {
     return k_numberOfCalculationTitleCells;
   }
+  if (type == k_calculationModeTitleCellType) {
+    return k_numberOfCalculationTitleCells;
+  }
+  if (type == k_calculationModeSymbolCellType) {
+    return k_numberOfCalculationTitleCells;
+  }
   if (type == k_seriesTitleCellType) {
     return k_numberOfSeriesTitleCells;
   }
@@ -169,11 +229,12 @@ int CalculationController::typeAtLocation(int i, int j) {
   if (i <= 1 && j == 0) {
     return k_hideableCellType;
   }
-  if (i == 0) {
-    return k_calculationTitleCellType;
-  }
-  if (i == 1) {
-    return k_calculationSymbolCellType;
+  if (i <= 1) {
+    assert(j > 0);
+    if (j < k_fixedNumberOfRows - 1 || j == numberOfRows() - 1) {
+      return i == 0 ? k_calculationTitleCellType : k_calculationSymbolCellType;
+    }
+    return i == 0 ? k_calculationModeTitleCellType : k_calculationModeSymbolCellType;
   }
   if (j == 0) {
     return k_seriesTitleCellType;

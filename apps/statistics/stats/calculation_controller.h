@@ -26,7 +26,7 @@ public:
   Escher::Responder * defaultController() override;
 
   // TableViewDataSource
-  int numberOfRows() const override { return k_totalNumberOfRows; }
+  int numberOfRows() const override { return k_fixedNumberOfRows + m_store->totalNumberOfModes(); }
   int numberOfColumns() const override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
@@ -50,7 +50,7 @@ public:
   KDCoordinate prefaceMargin(Escher::TableView * preface) override;
 
 private:
-  static constexpr int k_totalNumberOfRows = 15;
+  static constexpr int k_fixedNumberOfRows = 16;
   static constexpr int k_maxNumberOfDisplayableRows = 11;
   static constexpr int k_numberOfCalculationCells = 3 * k_maxNumberOfDisplayableRows;
   static constexpr int k_numberOfSeriesTitleCells = 3;
@@ -59,14 +59,16 @@ private:
 
   static constexpr int k_calculationTitleCellType = 0;
   static constexpr int k_calculationSymbolCellType = 1;
-  static constexpr int k_calculationCellType = 2;
-  static constexpr int k_seriesTitleCellType = 3;
-  static constexpr int k_hideableCellType = 4;
+  static constexpr int k_calculationModeTitleCellType = 2;
+  static constexpr int k_calculationModeSymbolCellType = 3;
+  static constexpr int k_calculationCellType = 4;
+  static constexpr int k_seriesTitleCellType = 5;
+  static constexpr int k_hideableCellType = 6;
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_calculationTitleCellWidth = 161;
-  /* FIXME: 7 in k_calculationSymbolCellWidth and k_calculationCellWidth stands
+  /* FIXME: 7 in CalculationSymbolCellWidth and k_calculationCellWidth stands
    * for KDFont::SmallFont->glyphSize().width(). */
-  static constexpr KDCoordinate k_calculationSymbolCellWidth = 3 * 7 + 2 * Escher::Metric::CellVerticalElementMargin;
+  static constexpr KDCoordinate CalculationSymbolCellWidth(int maxChars) { return maxChars * 7 + 2 * Escher::Metric::CellVerticalElementMargin; }
   /* Margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here, along with the separator
    * width from SeparatorEvenOddBufferTextCell. */
@@ -81,6 +83,8 @@ private:
   Shared::StoreTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];
   Escher::EvenOddMessageTextCell m_calculationTitleCells[k_numberOfCalculationTitleCells];
   Escher::EvenOddMessageTextCell m_calculationSymbolCells[k_numberOfCalculationTitleCells];
+  Escher::EvenOddBufferTextCell m_calculationModeTitleCells[k_numberOfCalculationTitleCells];
+  Escher::EvenOddBufferTextCell m_calculationModeSymbolCells[k_numberOfCalculationTitleCells];
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
   Shared::HideableEvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   Store * m_store;

@@ -65,7 +65,7 @@ void EditorController::viewWillAppear() {
   ViewController::viewWillAppear();
   m_editorView.loadSyntaxHighlighter();
   if(GlobalPreferences::sharedGlobalPreferences()->cursorSaving()) {
-    m_editorView.setCursorLocation(m_script.content() + *m_script.CursorPosition());
+    m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
   } else {
     m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
   }

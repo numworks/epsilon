@@ -149,6 +149,9 @@ private:
   static_assert(k_maxNumberOfPairs <= SIZE_MAX, "k_maxNumberOfPairs is too large.");
   mutable size_t * m_sortedIndex;
   mutable bool m_sortedIndexValid[k_numberOfSeries];
+  /* Memoizing the max number of modes because the CalculationControllers needs
+   * it in numberOfRows(), which is used a lot. */
+  mutable int m_memoizedMaxNumberOfModes;
   bool m_displayOutliers;
 };
 

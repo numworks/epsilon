@@ -13,6 +13,8 @@ public:
   }
 protected:
   bool handleEvent(Ion::Events::Event event) override;
+private:
+  bool fieldContainsSingleMinusSymbol() const;
 };
 
 }

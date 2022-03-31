@@ -349,6 +349,8 @@ template ListMinimum TreeHandle::FixedArityBuilder<ListMinimum, ListMinimumNode>
 template ListProduct TreeHandle::FixedArityBuilder<ListProduct, ListProductNode>(const Tuple &);
 template ListSampleStandardDeviation TreeHandle::FixedArityBuilder<ListSampleStandardDeviation, ListSampleStandardDeviationNode>(const Tuple &);
 template ListSlice TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(const Tuple &);
+template ListSequence TreeHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(const Tuple &);
+template ListSequenceLayout TreeHandle::FixedArityBuilder<ListSequenceLayout, ListSequenceLayoutNode>(const Tuple &);
 template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(const Tuple &);
 template ListStandardDeviation TreeHandle::FixedArityBuilder<ListStandardDeviation, ListStandardDeviationNode>(const Tuple &);
 template ListSum TreeHandle::FixedArityBuilder<ListSum, ListSumNode>(const Tuple &);

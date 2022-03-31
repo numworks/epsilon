@@ -62,6 +62,7 @@
 #include <poincare/list_minimum.h>
 #include <poincare/list_product.h>
 #include <poincare/list_sample_standard_deviation.h>
+#include <poincare/list_sequence.h>
 #include <poincare/list_sort.h>
 #include <poincare/list_standard_deviation.h>
 #include <poincare/list_sum.h>

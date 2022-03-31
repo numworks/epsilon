@@ -2,6 +2,7 @@
 #include <apps/global_preferences.h>
 #include <poincare/normal_distribution.h>
 #include <assert.h>
+#include <algorithm>
 #include <float.h>
 #include <cmath>
 #include <string.h>
@@ -355,6 +356,16 @@ int Store::numberOfModes(int series) const {
   int modesTotal;
   computeModes(series, -1, &modeFreq, &modesTotal);
   return modesTotal;
+}
+
+int Store::totalNumberOfModes() const {
+  int maxNumberOfModes = 0;
+  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
+    if (seriesIsValid(i)) {
+      maxNumberOfModes = std::max(maxNumberOfModes, numberOfModes(i));
+    }
+  }
+  return maxNumberOfModes;
 }
 
 double Store::modeAtIndex(int series, int index) const {

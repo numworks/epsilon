@@ -69,6 +69,7 @@ public:
   double squaredValueSum(int series) const;
   double squaredOffsettedValueSum(int series, double offset) const;
   int numberOfModes(int series) const;
+  int totalNumberOfModes() const;
   double modeAtIndex(int series, int index) const;
   double modeFrequency(int series) const;
 

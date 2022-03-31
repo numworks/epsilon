@@ -253,8 +253,7 @@ void HistogramController::initYRangeParameters(int series) {
 }
 
 void HistogramController::initBarParameters() {
-  int series = selectedSeriesIndex();
-  assert(series >= 0 && m_store->sumOfOccurrences(series) > 0);
+  assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
   double xMin;
   double xMax;
   preinitXRangeParameters(&xMin, &xMax);

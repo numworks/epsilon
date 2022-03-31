@@ -68,6 +68,10 @@ public:
   double sum(int series) const;
   double squaredValueSum(int series) const;
   double squaredOffsettedValueSum(int series, double offset) const;
+  int numberOfModes(int series) const;
+  double modeAtIndex(int series, int index) const;
+  double modeFrequency(int series) const;
+
   constexpr static double k_maxNumberOfBars = 10000.0;
   constexpr static float k_displayTopMarginRatio = 0.1f;
   constexpr static float k_displayRightMarginRatio = 0.04f;
@@ -126,6 +130,9 @@ private:
    * Retrieve the i-th value and the number distinct values encountered.
    * If not handleNullFrequencies, ignore values with null frequency. */
   void countDistinctValues(int series, int start, int end, int i, bool handleNullFrequencies, double * value, int * distinctValues) const;
+  /* Find the i-th mode (ordered by value). Also retrieve the total number of
+   * modes and the mode frequency. */
+  double computeModes(int series, int i, double * modeFreq, int * modesTotal) const;
   double sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement = false) const;
   double sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement = false) const;
   size_t lowerWhiskerSortedIndex(int series) const;

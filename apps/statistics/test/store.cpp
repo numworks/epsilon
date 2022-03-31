@@ -38,7 +38,10 @@ void assert_data_statistics_equal_to(
     double trueStandardDeviation,
     double trueSampleStandardDeviation,
     double trueSum,
-    double trueSquaredValueSum
+    double trueSquaredValueSum,
+    int trueNumberOfModes,
+    double trueModes[],
+    double trueModeFrequency
   ) {
   Store store;
   size_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
@@ -77,6 +80,14 @@ void assert_data_statistics_equal_to(
 
   // Perfect match
   assert_value_approximately_equal_to(range, trueRange, 0.0, 0.0);
+
+  // Compare the modes
+  int numberOfModes = store.numberOfModes(seriesIndex);
+  quiz_assert(numberOfModes == trueNumberOfModes);
+  assert_value_approximately_equal_to(store.modeFrequency(seriesIndex), trueModeFrequency, precision, nullExpectedPrecision);
+  for (int i = 0; i < numberOfModes; i++) {
+    assert_value_approximately_equal_to(store.modeAtIndex(seriesIndex, i), trueModes[i], 0.0, 0.0);
+  }
 }
 
 // Compare the cumulated frequency data points
@@ -221,6 +232,8 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength1 = 4;
   double v1[listLength1] = {1.0, 2.0, 3.0, 4.0};
   double n1[listLength1] = {1.0, 1.0, 1.0, 1.0};
+  constexpr int numberOfModes1 = 4;
+  double modes1[numberOfModes1] = {1.0, 2.0, 3.0, 4.0};
   assert_data_statistics_equal_to(
       v1,
       n1,
@@ -232,7 +245,10 @@ QUIZ_CASE(data_statistics) {
       /* standardDeviation */ 1.118,
       /* sampleStandardDeviation */ 1.291,
       /* sum */ 10.0,
-      /* squaredValueSum */ 30.0);
+      /* squaredValueSum */ 30.0,
+      numberOfModes1,
+      modes1,
+      /* modesFrequency */ 1.0);
 
   constexpr int totalCumulatedFrequency1 = listLength1;
   double trueCumulatedFrequencyValues1[totalCumulatedFrequency1] = {1.0, 2.0, 3.0, 4.0};
@@ -297,6 +313,8 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength2 = 11;
   double v2[listLength2] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
   double n2[listLength2] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+  constexpr int numberOfModes2 = 11;
+  double modes2[numberOfModes2] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
   assert_data_statistics_equal_to(
       v2,
       n2,
@@ -308,7 +326,10 @@ QUIZ_CASE(data_statistics) {
       /* standardDeviation */ 3.1623,
       /* sampleStandardDeviation */ 3.3166,
       /* sum */ 66.0,
-      /* squaredValueSum */ 506.0);
+      /* squaredValueSum */ 506.0,
+      numberOfModes2,
+      modes2,
+      /* modesFrequency */ 1.0);
 
   constexpr int totalCumulatedFrequency2 = listLength2;
   double trueCumulatedFrequencyValues2[totalCumulatedFrequency2] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
@@ -372,6 +393,8 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength3 = 12;
   double v3[listLength3] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
   double n3[listLength3] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+  constexpr int numberOfModes3 = 12;
+  double modes3[numberOfModes3] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
   assert_data_statistics_equal_to(
       v3,
       n3,
@@ -383,7 +406,10 @@ QUIZ_CASE(data_statistics) {
       /* standardDeviation */ 3.4521,
       /* sampleStandardDeviation */ 3.6056,
       /* sum */ 78.0,
-      /* squaredValueSum */ 650.0);
+      /* squaredValueSum */ 650.0,
+      numberOfModes3,
+      modes3,
+      /* modesFrequency */ 1.0);
 
   constexpr int totalCumulatedFrequency3 = listLength3;
   double trueCumulatedFrequencyValues3[totalCumulatedFrequency3] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
@@ -447,6 +473,8 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength4 = 5;
   double v4[listLength4] = {1.0, 2.0, 3.0, 5.0, 10.0};
   double n4[listLength4] = {0.2, 0.05, 0.3, 0.0001, 0.4499};
+  constexpr int numberOfModes4 = 1;
+  double modes4[numberOfModes4] = {10.0};
   assert_data_statistics_equal_to(
       v4,
       n4,
@@ -458,7 +486,10 @@ QUIZ_CASE(data_statistics) {
       /* standardDeviation */ 3.9507,
       /* sampleStandardDeviation */ INFINITY,
       /* sum */ 5.6995,
-      /* squaredValueSum */ 48.0925);
+      /* squaredValueSum */ 48.0925,
+      numberOfModes4,
+      modes4,
+      /* modesFrequency */ 0.4499);
 
   constexpr int totalCumulatedFrequency4 = listLength4;
   double trueCumulatedFrequencyValues4[totalCumulatedFrequency4] = {1.0, 2.0, 3.0, 5.0, 10.0};
@@ -522,6 +553,8 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength5 = 5;
   double v5[listLength5] = {1.0, -2.0, 3.0, 5.0, 10.0};
   double n5[listLength5] = {0.4, 0.00005, 0.9, 0.4, 0.5};
+  constexpr int numberOfModes5 = 1;
+  double modes5[numberOfModes5] = {3.0};
   assert_data_statistics_equal_to(
       v5,
       n5,
@@ -533,7 +566,10 @@ QUIZ_CASE(data_statistics) {
       /* standardDeviation */ 3.1719,
       /* sampleStandardDeviation */ 4.2947,
       /* sum */ 10.1,
-      /* squaredValueSum */ 68.500);
+      /* squaredValueSum */ 68.500,
+      numberOfModes5,
+      modes5,
+      /* modesFrequency */ 0.9);
 
   constexpr int totalCumulatedFrequency5 = listLength5;
   double trueCumulatedFrequencyValues5[totalCumulatedFrequency5] = {-2.0, 1.0, 3.0, 5.0, 10.0};
@@ -597,6 +633,8 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength6 = 6;
   double v6[listLength6] = {-7.0, -10.0, 1.0, 2.0, 5.0, -2.0};
   double n6[listLength6] = {4.0, 5.0, 3.0, 0.5, 1.0, 9.0};
+  constexpr int numberOfModes6 = 1;
+  double modes6[numberOfModes6] = {-2.0};
   assert_data_statistics_equal_to(
       v6,
       n6,
@@ -608,7 +646,10 @@ QUIZ_CASE(data_statistics) {
       /* standardDeviation */ 4.3492,
       /* sampleStandardDeviation */ 4.4492,
       /* sum */ -87.0,
-      /* squaredValueSum */ 762.0);
+      /* squaredValueSum */ 762.0,
+      numberOfModes6,
+      modes6,
+      /* modesFrequency */ 9.0);
 
   constexpr int totalCumulatedFrequency6 = listLength6;
   double trueCumulatedFrequencyValues6[totalCumulatedFrequency6] = {-10.0, -7.0, -2.0, 1.0, 2.0, 5.0};
@@ -672,6 +713,8 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength7 = 7;
   double v7[listLength7] = {1.0, 1.0, 1.0, 10.0, 3.0, -1.0, 3.0};
   double n7[listLength7] = {1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0};
+  constexpr int numberOfModes7 = 1;
+  double modes7[numberOfModes7] = {1.0};
   assert_data_statistics_equal_to(
       v7,
       n7,
@@ -683,7 +726,10 @@ QUIZ_CASE(data_statistics) {
       /* standardDeviation */ 0.866,
       /* sampleStandardDeviation */ 1.0,
       /* sum */ 6.0,
-      /* squaredValueSum */ 12.0);
+      /* squaredValueSum */ 12.0,
+      numberOfModes7,
+      modes7,
+      /* modesFrequency */ 3.0);
 
   constexpr int totalCumulatedFrequency7 = 4;
   double trueCumulatedFrequencyValues7[totalCumulatedFrequency7] = {-1.0, 1.0, 3.0, 10.0};
@@ -751,6 +797,8 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength8 = 4;
   double v8[listLength8] = {1.0, 2.0, 3.0, 4.0};
   double n8[listLength8] = {0.0, 1.0, 0.0, 1.0};
+  constexpr int numberOfModes8 = 2;
+  double modes8[numberOfModes8] = {2.0, 4.0};
   assert_data_statistics_equal_to(
       v8,
       n8,
@@ -762,7 +810,10 @@ QUIZ_CASE(data_statistics) {
       /* standardDeviation */ 1.0,
       /* sampleStandardDeviation */ 1.414,
       /* sum */ 6.0,
-      /* squaredValueSum */ 20.0);
+      /* squaredValueSum */ 20.0,
+      numberOfModes8,
+      modes8,
+      /* modesFrequency */ 1.0);
 
   constexpr int totalCumulatedFrequency8 = listLength8;
   double trueCumulatedFrequencyValues8[totalCumulatedFrequency8] = {1.0, 2.0, 3.0, 4.0};
@@ -826,6 +877,8 @@ QUIZ_CASE(data_statistics) {
   constexpr int listLength9 = 1;
   double v9[listLength9] = {-996.85840734641};
   double n9[listLength9] = {9.0};
+  constexpr int numberOfModes9 = 1;
+  double modes9[numberOfModes9] = {-996.85840734641};
   assert_data_statistics_equal_to(
       v9,
       n9,
@@ -837,7 +890,10 @@ QUIZ_CASE(data_statistics) {
       /* standardDeviation */ 0.0,
       /* sampleStandardDeviation */ 0.0,
       /* sum */ -8971.72566611769,
-      /* squaredValueSum */ 8943540.158675);
+      /* squaredValueSum */ 8943540.158675,
+      numberOfModes9,
+      modes9,
+      /* modesFrequency */ 9.0);
 
   constexpr int totalCumulatedFrequency9 = listLength9;
   double trueCumulatedFrequencyValues9[totalCumulatedFrequency9] = {-996.85840734641};

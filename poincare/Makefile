@@ -21,6 +21,7 @@ poincare_src += $(addprefix poincare/src/,\
   layout_node.cpp \
   left_parenthesis_layout.cpp \
   left_square_bracket_layout.cpp \
+  list_sequence_layout.cpp \
   matrix_layout.cpp \
   nth_root_layout.cpp \
   product_layout.cpp \
@@ -123,6 +124,7 @@ poincare_src += $(addprefix poincare/src/,\
   list_sum.cpp \
   list_standard_deviation.cpp \
   list_variance.cpp \
+  list_sequence.cpp \
   logarithm.cpp \
   matrix.cpp \
   matrix_complex.cpp \

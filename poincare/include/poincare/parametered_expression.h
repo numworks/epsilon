@@ -5,9 +5,10 @@
 
 namespace Poincare {
 
-/* Parametered expressions are Integral, Derivative, Sum and Product. Their
- * child at index 0 is parametered, and the child at index 1 is the parameter
- * symbol. */
+/* Parametered expressions are Integral, Derivative, Sum, Product and
+ * List Sequence. Their child at index 0 is parametered, and the child
+ * at index 1 is the parameter symbol.
+ * */
 
 class ParameteredExpressionNode : public ExpressionNode {
 public:

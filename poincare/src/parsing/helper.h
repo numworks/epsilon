@@ -78,6 +78,7 @@ private:
     &Logarithm::s_functionHelper,
     &ListMaximum::s_functionHelper,
     &ListMean::s_functionHelper,
+    &ListMedian::s_functionHelper,
     &ListMinimum::s_functionHelper,
     &VectorNorm::s_functionHelper,
     &NormCDF::s_functionHelper,
@@ -91,12 +92,13 @@ private:
     &Random::s_functionHelper,
     &RealPart::s_functionHelper,
     &MatrixRowEchelonForm::s_functionHelper,
-    &ListSampleStandardDeviation::s_functionHelper,
     &DivisionRemainder::s_functionHelper,
     &NthRoot::s_functionHelper,
     &Round::s_functionHelper,
     &MatrixReducedRowEchelonForm::s_functionHelper,
+    &ListSampleStandardDeviation::s_functionHelper,
     &Secant::s_functionHelper,
+    &ListSequence::s_functionHelper,
     &SignFunction::s_functionHelper,
     &Sine::s_functionHelper,
     &HyperbolicSine::s_functionHelper,
@@ -109,7 +111,7 @@ private:
     &MatrixTrace::s_functionHelper,
     &MatrixTranspose::s_functionHelper,
     &ListVariance::s_functionHelper,
-    &SquareRoot::s_functionHelper
+    &SquareRoot::s_functionHelper,
   };
 
 constexpr static const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));

@@ -25,6 +25,7 @@ class LayoutCursor final {
   friend class NthRootLayoutNode;
   friend class SequenceLayoutNode;
   friend class VerticalOffsetLayoutNode;
+  friend class ListSequenceLayoutNode;
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 

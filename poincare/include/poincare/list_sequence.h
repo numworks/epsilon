@@ -2,6 +2,7 @@
 #define POINCARE_LIST_SEQUENCE_H
 
 #include <poincare/parametered_expression.h>
+#include <poincare/complex.h>
 #include <poincare/symbol.h>
 
 namespace Poincare {
@@ -19,13 +20,19 @@ public:
    // Properties
   Type type() const override { return Type::ListSequence; }
 
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return Complex<float>::Builder(1.0); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override  { return Complex<double>::Builder(1.0); }
-  LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
-
 private:
+  // Simplification
+  Expression shallowReduce(ReductionContext reductionContext) override;
+
+  // Evaluation
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const { return Complex<T>::Undefined(); }
+
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
 };
@@ -37,6 +44,8 @@ public:
   static Expression UntypedBuilder(Expression children);
   constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sequence", 3, &UntypedBuilder);
   constexpr static char k_defaultXNTChar = 'k';
+
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
 };
 

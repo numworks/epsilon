@@ -12,7 +12,6 @@ namespace Shared {
 class FunctionStore : public ExpressionModelStore {
 public:
   FunctionStore() : ExpressionModelStore() {}
-  uint32_t storeChecksum();
   int numberOfActiveFunctions() const {
     return numberOfModelsSatisfyingTest(&isFunctionActive, nullptr);
   }

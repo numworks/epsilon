@@ -45,7 +45,6 @@ Expression ListNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T> Evaluation<T> ListNode::templatedApproximate(ApproximationContext approximationContext) const {
-  /* TODO */
   return Complex<T>::Undefined();
 }
 

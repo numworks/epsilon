@@ -16,9 +16,7 @@ public:
                 Escher::Responder * tabController,
                 Escher::StackViewController * stackViewController,
                 Escher::ViewController * typeViewController,
-                Store * store,
-                int * selectedBoxCalculation,
-                int * selectedSeriesIndex);
+                Store * store);
 
   BoxParameterController * boxParameterController() { return &m_boxParameterController; }
 

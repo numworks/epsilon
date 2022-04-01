@@ -42,9 +42,7 @@ public:
     Escher::Responder * tabController,
     Escher::StackViewController * stackViewController,
     Escher::ViewController * typeViewController,
-    Store * store,
-    int * selectedPointIndex,
-    int * selectedSeriesIndex
+    Store * store
   );
 
   // MultipleDataViewController

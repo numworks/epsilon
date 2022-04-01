@@ -38,10 +38,6 @@ public:
     uint32_t * barVersion() { return &m_barVersion; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
     GraphViewModel * graphViewModel() { return &m_graphViewModel; }
-    int * selectedHistogramSeriesIndex() { return &m_selectedHistogramSeriesIndex; }
-    int * selectedHistogramBarIndex() { return &m_selectedHistogramBarIndex; }
-    int * selectedBoxSeriesIndex() { return &m_selectedBoxSeriesIndex; }
-    int * selectedBoxCalculation() { return &m_selectedBoxCalculation; }
   private:
     Store m_store;
     uint32_t m_storeVersion;
@@ -49,10 +45,6 @@ public:
     uint32_t m_rangeVersion;
     // TODO : Store more data in m_graphViewModel
     GraphViewModel m_graphViewModel;
-    int m_selectedHistogramSeriesIndex;
-    int m_selectedHistogramBarIndex;
-    int m_selectedBoxSeriesIndex;
-    int m_selectedBoxCalculation;
   };
   TELEMETRY_ID("Statistics");
 private:

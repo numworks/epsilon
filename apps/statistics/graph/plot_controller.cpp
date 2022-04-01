@@ -10,17 +10,13 @@ PlotController::PlotController(Escher::Responder * parentResponder,
                                Escher::Responder * tabController,
                                Escher::StackViewController * stackViewController,
                                Escher::ViewController * typeViewController,
-                               Store * store,
-                               int * selectedPointIndex,
-                               int * selectedSeriesIndex) :
+                               Store * store) :
     MultipleDataViewController(parentResponder,
                                tabController,
                                header,
                                stackViewController,
                                typeViewController,
-                               store,
-                               selectedPointIndex,
-                               selectedSeriesIndex),
+                               store),
     m_view(store, &m_curveView, &m_graphRange, &m_bannerView),
     // No bannerView given to the curve view because the display is handled here
     m_curveView(&m_graphRange, &m_cursor, &m_cursorView, store, this)  {
@@ -33,9 +29,9 @@ void PlotController::viewWillAppearBeforeReload() {
   m_graphRange.calibrate(m_curveView.bounds().width(), m_curveView.bounds().height(), horizontalMargin(), bottomMargin(), topMargin(), xMin, xMax, yMin, yMax);
   // Sanitize m_selectedBarIndex and cursor's position
   int series = selectedSeriesIndex();
-  *m_selectedBarIndex = SanitizeIndex(*m_selectedBarIndex, totalValues(series));
-  double x = valueAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-  double y = resultAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
+  m_selectedIndex = SanitizeIndex(m_selectedIndex, totalValues(series));
+  double x = valueAtIndex(selectedSeriesIndex(), m_selectedIndex);
+  double y = resultAtIndex(selectedSeriesIndex(), m_selectedIndex);
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
 }
@@ -44,9 +40,9 @@ bool PlotController::moveSelectionHorizontally(int deltaIndex) {
   int series = selectedSeriesIndex();
   assert(series >= 0);
 
-  int nextIndex = SanitizeIndex(*m_selectedBarIndex + deltaIndex, totalValues(series));
-  if (nextIndex != *m_selectedBarIndex) {
-    *m_selectedBarIndex = nextIndex;
+  int nextIndex = SanitizeIndex(m_selectedIndex + deltaIndex, totalValues(series));
+  if (nextIndex != m_selectedIndex) {
+    m_selectedIndex = nextIndex;
     // Compute coordinates
     double x = valueAtIndex(series, nextIndex);
     double y = resultAtIndex(series, nextIndex);

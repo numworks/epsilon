@@ -1338,7 +1338,8 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
     return Expression();
   }
   if (linearCombination.type() == ExpressionNode::Type::Multiplication) { // Handle x*log(y) -> log(y^x)
-    Multiplication multiplication = static_cast<Multiplication &>(linearCombination);
+    Expression clone = linearCombination.clone();
+    Multiplication multiplication = static_cast<Multiplication &>(clone);
     int nChildren = multiplication.numberOfChildren();
     assert(nChildren >= 1);
     for (int i = 0; i < nChildren; i++) {
@@ -1354,6 +1355,7 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
           multiplication.shallowReduce(reductionContext);
           Logarithm result = Logarithm::Builder(power, baseClone);
           power.shallowReduce(reductionContext);
+          linearCombination.replaceWithInPlace(result);
           return std::move(result);
         }
       }
@@ -1366,7 +1368,7 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
      /* Reduce terms of the addition.
       * For example if the addition is (log(x) + log(y)) + a*log(b), turn it into log(x*y) + log(b^a) */
     for (int i = 0; i < nChildren; i++) {
-      Expression newChild = ReduceLogarithmLinearCombination(reductionContext, addition.childAtIndex(i), base);
+      ReduceLogarithmLinearCombination(reductionContext, addition.childAtIndex(i), base);
     }
     bool hasOnlyLogarithmChildren = true;
     for (int i = 0; i < nChildren; i++) {

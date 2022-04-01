@@ -1891,7 +1891,6 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("l2(1,2)", "{}");
   Ion::Storage::sharedStorage()->recordNamed("l1.lis").destroy();
   Ion::Storage::sharedStorage()->recordNamed("l2.lis").destroy();
-
   // Functions on lists
   // List length
   assert_parsed_expression_simplify_to("dim({})", "0");
@@ -1939,4 +1938,10 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("med({1})", "1");
   assert_parsed_expression_simplify_to("med({4,2,3,1,6})", "3");
   assert_parsed_expression_simplify_to("med({1,6,3,4,5,2})", "7/2");
+  // List sequences
+  assert_parsed_expression_simplify_to("sequence(1,k,1)", "{1}");
+  assert_parsed_expression_simplify_to("sequence(k,k,10)", "{1,2,3,4,5,6,7,8,9,10}");
+  assert_parsed_expression_simplify_to("sequence(1/(n-3),n,5)", "{-1/2,-1,undef,1,1/2}");
+  assert_parsed_expression_simplify_to("sequence({k-1,k+1},k,3)", "{{0,2},{1,3},{2,4}}");
+  assert_parsed_expression_simplify_to("sequence(x^2,x,3)", "{1,4,9}");
 }

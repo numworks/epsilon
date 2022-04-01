@@ -1328,7 +1328,9 @@ bool Power::IsLogarithmOfBase(const Expression e, const Expression base) {
 /* This function turns the expression of type "a1*log(b1)+a2*log(b2)+..." into "log(b1^a1*b2^a2)"
  * to reduce it when it's the index of a power of the same base.
  * Only call this function onto reduced expressions.
- * This could be put into Multiplication and/or Addition if we want to always do this with logs.
+ * This could be put into Multiplication and/or Addition if we want to always do this with logs,
+ * but if so, it needs a rework since for now, this reduces "log(a)+log(b)" into "log(a*b)"
+ * but does nothing to "log(a)+log(b)+anything_that_is_not_a_log"
  * */
 Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionContext reductionContext, Expression linearCombination, const Expression base) {
   Context * context = reductionContext.context();
@@ -1360,17 +1362,11 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
     Expression clone = linearCombination.clone();
     Addition addition = static_cast<Addition &>(clone);
     int nChildren = addition.numberOfChildren();
+    assert(nChildren > 1);
      /* Reduce terms of the addition.
       * For example if the addition is (log(x) + log(y)) + a*log(b), turn it into log(x*y) + log(b^a) */
     for (int i = 0; i < nChildren; i++) {
-      Expression child = addition.childAtIndex(i);
-      Expression newChild = ReduceLogarithmLinearCombination(reductionContext, child, base);
-      if (IsLogarithmOfBase(newChild, base)) {
-         addition.replaceChildInPlace(addition.childAtIndex(i), newChild);
-      }
-    }
-    if (nChildren <= 1) {
-      return addition.childAtIndex(0);
+      Expression newChild = ReduceLogarithmLinearCombination(reductionContext, addition.childAtIndex(i), base);
     }
     bool hasOnlyLogarithmChildren = true;
     for (int i = 0; i < nChildren; i++) {
@@ -1382,12 +1378,12 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
     }
     if (hasOnlyLogarithmChildren) {
       Expression firstLogarithm = addition.childAtIndex(0);
-      Expression insideLogarithm = Expression();
+      Multiplication insideLogarithm = Multiplication::Builder(firstLogarithm.childAtIndex(0));
       for (int i = 1; i < nChildren; i++) {
-        insideLogarithm = Multiplication::Builder(firstLogarithm.childAtIndex(0), addition.childAtIndex(i).childAtIndex(0));
-        firstLogarithm.replaceChildInPlace(firstLogarithm.childAtIndex(0), insideLogarithm);
-        insideLogarithm.shallowReduce(reductionContext);
+        insideLogarithm.addChildAtIndexInPlace(addition.childAtIndex(i).childAtIndex(0), i, i);
       }
+      firstLogarithm.replaceChildInPlace(firstLogarithm.childAtIndex(0), insideLogarithm);
+      insideLogarithm.shallowReduce(reductionContext);
       if (firstLogarithm.childAtIndex(0).sign(context) == ExpressionNode::Sign::Positive) {
         linearCombination.replaceWithInPlace(firstLogarithm);
         return firstLogarithm;

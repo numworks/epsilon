@@ -44,7 +44,7 @@ void MultipleHistogramsView::changeDataViewSelection(int index, bool select) {
   dataViewAtIndex(index)->setDisplayLabels(select);
   if (select == false) {
     // Set the hightlight to default selected bar to prevent blinking
-    dataViewAtIndex(index)->setHighlight(m_store->startOfBarAtIndex(index, k_defaultSelectedBar), m_store->endOfBarAtIndex(index, k_defaultSelectedBar));
+    dataViewAtIndex(index)->setHighlight(m_store->startOfBarAtIndex(index, k_defaultSelectedIndex), m_store->endOfBarAtIndex(index, k_defaultSelectedIndex));
   }
 }
 

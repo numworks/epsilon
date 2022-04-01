@@ -8,9 +8,9 @@ using namespace Escher;
 
 namespace Statistics {
 
-BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, int * selectedBoxCalculation, int * selectedSeriesIndex) :
-  MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store, (int *)(selectedBoxCalculation), selectedSeriesIndex),
-  m_view(store, selectedBoxCalculation),
+BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
+  MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
+  m_view(store, &m_selectedIndex),
   m_boxParameterController(nullptr, store),
   m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation([](void * context, void * sender) {
     BoxController * boxController = static_cast<BoxController * >(context);

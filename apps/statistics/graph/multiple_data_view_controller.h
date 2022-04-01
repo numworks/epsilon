@@ -17,11 +17,9 @@ public:
                              Escher::ButtonRowController * header,
                              Escher::StackViewController * stackViewController,
                              Escher::ViewController * typeViewController,
-                             Store * store,
-                             int * m_selectedBarIndex,
-                             int * selectedSeriesIndex);
+                             Store * store);
   virtual MultipleDataView * multipleDataView() = 0;
-  int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
+  int selectedSeriesIndex() const { return m_selectedSeriesIndex; }
 
   // ViewController
   Escher::View * view() override { return multipleDataView(); }
@@ -32,6 +30,7 @@ public:
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 protected:
+  void sanitizeSeriesIndex();
   virtual void viewWillAppearBeforeReload() {}
   virtual void highlightSelection() {}
   Escher::Responder * tabController() { return m_tabController; }
@@ -41,8 +40,8 @@ protected:
 
   Escher::Responder * m_tabController;
   Store * m_store;
-  int * m_selectedSeriesIndex;
-  int * m_selectedBarIndex;
+  int m_selectedSeriesIndex;
+  int m_selectedIndex;
 };
 
 }

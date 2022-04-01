@@ -17,10 +17,6 @@ AlternateViewController::AlternateViewController(Responder * parentResponder, Al
   }
 }
 
-void AlternateViewController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(activeViewController());
-}
-
 void AlternateViewController::viewWillAppear() {
   activeViewController()->viewWillAppear();
 }

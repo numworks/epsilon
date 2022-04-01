@@ -33,6 +33,7 @@ bool GraphTypeController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+    m_store->graphViewHasBeenSelected();
     m_graphViewModel->selectGraphView(GraphViewModel::GraphViewAtIndex(selectedRow()));
     m_stackViewController->pop();
     return true;

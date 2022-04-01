@@ -76,7 +76,7 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   double x = m_cursor.x() + step;
 
   // Find an index of value under x.
-  int index = getNextIndex(series, totValues, *m_selectedBarIndex, -1, &x);
+  int index = getNextIndex(series, totValues, m_selectedIndex, -1, &x);
 
   // Find the first index of value strictly above x.
   int nextIndex = getNextIndex(series, totValues, index + 1, 1, &x);
@@ -87,7 +87,7 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   }
 
   // Set the selected index
-  *m_selectedBarIndex = index = SanitizeIndex(nextIndex - 1, totValues);
+  m_selectedIndex = index = SanitizeIndex(nextIndex - 1, totValues);
   assert(index != nextIndex);
 
   double xIndex = valueAtIndex(series, index);
@@ -159,8 +159,8 @@ void FrequencyController::switchCursor(bool seriesChanged) {
   m_curveView.setCursorView(m_continuousCursor ? &m_roundCursorView : &m_cursorView);
   if (!m_continuousCursor || seriesChanged) {
     // Cursor must be repositionned
-    double x = valueAtIndex(series, *m_selectedBarIndex);
-    double y = resultAtIndex(series, *m_selectedBarIndex);
+    double x = valueAtIndex(series, m_selectedIndex);
+    double y = resultAtIndex(series, m_selectedIndex);
     m_cursor.moveTo(x, x, y);
     m_curveView.reload();
   }

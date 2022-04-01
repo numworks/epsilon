@@ -20,9 +20,7 @@ public:
                       Store * store,
                       uint32_t * m_storeVersion,
                       uint32_t * m_barVersion,
-                      uint32_t * m_rangeVersion,
-                      int * m_selectedBarIndex,
-                      int * selectedSeriesIndex);
+                      uint32_t * m_rangeVersion);
 
   HistogramParameterController * histogramParameterController() { return &m_histogramParameterController; }
   void setCurrentDrawnSeries(int series);

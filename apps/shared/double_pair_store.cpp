@@ -106,6 +106,7 @@ bool DoublePairStore::hasValidSeries() const {
 }
 
 bool DoublePairStore::seriesIsValid(int series) const {
+  assert(series >= 0 && series < k_numberOfSeries);
   return m_validSeries[series];
 }
 

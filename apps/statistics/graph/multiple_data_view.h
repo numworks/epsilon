@@ -9,7 +9,7 @@ namespace Statistics {
 
 class MultipleDataView : public Escher::View {
 public:
-  static constexpr int k_defaultSelectedBar = 0;
+  static constexpr int k_defaultSelectedIndex = 0;
   MultipleDataView(Store * store) :
     m_store(store),
     m_displayBanner(false)

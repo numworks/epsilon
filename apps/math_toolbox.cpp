@@ -444,15 +444,29 @@ constexpr ToolboxMessageTree decimalNumbersChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::RoundCommandWithArg, I18n::Message::Rounding),
 };
 
-#if LIST_ARE_DEFINED
-constexpr ToolboxMessageTree listsChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::SortCommandWithArg, I18n::Message::Sort),
-  ToolboxMessageTree::Leaf(I18n::Message::InvSortCommandWithArg, I18n::Message::InvSort),
-  ToolboxMessageTree::Leaf(I18n::Message::MaxCommandWithArg, I18n::Message::Maximum),
-  ToolboxMessageTree::Leaf(I18n::Message::MinCommandWithArg, I18n::Message::Minimum),
-  ToolboxMessageTree::Leaf(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension)
+constexpr ToolboxMessageTree listsStatsChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::ListMeanCommandWithArg, I18n::Message::Mean),
+  ToolboxMessageTree::Leaf(I18n::Message::ListStandardDevCommandWithArg, I18n::Message::StandardDeviation),
+  ToolboxMessageTree::Leaf(I18n::Message::ListMedianCommandWithArg, I18n::Message::Median),
+  ToolboxMessageTree::Leaf(I18n::Message::ListVarianceCommandWithArg, I18n::Message::Deviation),
+  ToolboxMessageTree::Leaf(I18n::Message::ListSampleStandardDevCommandWithArg, I18n::Message::SampleSTD)
 };
-#endif
+
+constexpr ToolboxMessageTree listsToolsChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::ListLengthCommandWithArg, I18n::Message::Empty),
+  ToolboxMessageTree::Leaf(I18n::Message::ListMinCommandWithArg, I18n::Message::Minimum),
+  ToolboxMessageTree::Leaf(I18n::Message::ListMaxCommandWithArg, I18n::Message::Maximum),
+  ToolboxMessageTree::Leaf(I18n::Message::ListSortCommandWithArg, I18n::Message::SortValues),
+  ToolboxMessageTree::Leaf(I18n::Message::ListSumCommandWithArg, I18n::Message::Empty),
+  ToolboxMessageTree::Leaf(I18n::Message::ListProductCommandWithArg, I18n::Message::Empty)
+};
+
+constexpr ToolboxMessageTree listsChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::ListCommandWithArg, I18n::Message::Empty, false, I18n::Message::ListCommand),
+  ToolboxMessageTree::Leaf(I18n::Message::ListSequenceCommandWithArg, I18n::Message::Empty, false, I18n::Message::ListSequenceCommand),
+  ToolboxMessageTree::Node(I18n::Message::StatTab, listsStatsChildren),
+  ToolboxMessageTree::Node(I18n::Message::Empty, listsToolsChildren)
+};
 
 constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
@@ -463,12 +477,10 @@ constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitAndConstant, unitChildren),
   ToolboxMessageTree::Node(I18n::Message::MatricesAndVectors, matricesVectorsChildren),
+  ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
   ToolboxMessageTree::Node(I18n::Message::Trigonometry, trigonometryChildren),
-  ToolboxMessageTree::Node(I18n::Message::DecimalNumbers, decimalNumbersChildren),
-#if LIST_ARE_DEFINED
-  ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),
-#endif
+  ToolboxMessageTree::Node(I18n::Message::DecimalNumbers, decimalNumbersChildren)
 };
 
 constexpr ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);

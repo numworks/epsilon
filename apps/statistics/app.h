@@ -64,6 +64,7 @@ private:
    * visible elsewhere. */
   const char * alternateViewTitle() override { return I18n::translate(I18n::Message::StatisticsGraphTab); }
   Escher::ViewController::TitlesDisplay alternateViewTitlesDisplay() override { return Escher::ViewController::TitlesDisplay::NeverDisplayOwnTitle; }
+  void activeViewDidBecomeFirstResponder(Escher::ViewController * activeViewController) override;
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   void didBecomeActive(Escher::Window * window) override;
   CalculationController m_calculationController;

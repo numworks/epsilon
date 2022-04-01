@@ -14,6 +14,8 @@ public:
   Store();
   void setSortedIndex(size_t * buffer, size_t bufferSize);
   void invalidateSortedIndexes();
+  bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
+  void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
   uint32_t barChecksum() const;
   // Histogram bars
   double barWidth() const { return m_barWidth; }
@@ -152,6 +154,7 @@ private:
   /* Memoizing the max number of modes because the CalculationControllers needs
    * it in numberOfRows(), which is used a lot. */
   mutable int m_memoizedMaxNumberOfModes;
+  bool m_graphViewInvalidated;
   bool m_displayOutliers;
 };
 

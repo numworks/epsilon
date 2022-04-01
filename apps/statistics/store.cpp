@@ -23,6 +23,7 @@ Store::Store() :
   m_sortedIndex(nullptr),
   m_sortedIndexValid{false, false, false},
   m_memoizedMaxNumberOfModes(0),
+  m_graphViewInvalidated(true),
   m_displayOutliers(GlobalPreferences::sharedGlobalPreferences()->outliersStatus() == CountryPreferences::OutlierDefaultVisibility::Displayed)
 {
 }
@@ -144,7 +145,10 @@ bool Store::scrollToSelectedBarIndex(int series, int index) {
 
 void Store::memoizeValidSeries(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
-  m_validSeries[series] = numberOfPairsOfSeries(series) > 0 && sumOfOccurrences(series) > 0;
+  bool isSeriesValid = numberOfPairsOfSeries(series) > 0 && sumOfOccurrences(series) > 0;
+  // Reset the graph view any time one of the series gets invalidated
+  m_graphViewInvalidated |= (m_validSeries[series] && !isSeriesValid);
+  m_validSeries[series] = isSeriesValid;
 }
 
 bool Store::frequenciesAreInteger(int series) const {

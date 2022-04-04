@@ -410,17 +410,23 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_expression_has_variables("x+y+z+2×t", variableBuffer2, 4);
   const char * variableBuffer3[] = {"a","x","y","k","A", ""};
   assert_expression_has_variables("a+x^2+2×y+k!×A", variableBuffer3, 5);
+  assert_reduce("x→BABA");
+  assert_reduce("y→abab");
   const char * variableBuffer4[] = {"BABA","abab", ""};
   assert_expression_has_variables("BABA+abab", variableBuffer4, 2);
+  assert_reduce("z→BBBBBB");
   const char * variableBuffer5[] = {"BBBBBB", ""};
   assert_expression_has_variables("BBBBBB", variableBuffer5, 1);
   const char * variableBuffer6[] = {""};
   assert_expression_has_variables("a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
   assert_expression_has_variables("a+b+c+d+e+f+g", variableBuffer6, -1);
   // f: x → 1+πx+x^2+toto
-  assert_reduce("1+π×x+x^2+toto→f(x)");
-  const char * variableBuffer7[] = {"tata","toto", ""};
-  assert_expression_has_variables("f(tata)", variableBuffer7, 2);
+  assert_reduce("1+π×x+x^2+\"toto\"→f(x)");
+  const char * variableBuffer7[] = {"\"tata\"","\"toto\"", ""};
+  assert_expression_has_variables("f(\"tata\")", variableBuffer7, 2);
+  Ion::Storage::sharedStorage()->recordNamed("BABA.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("abab.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("BBBBBB.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 
   const char * variableBuffer8[] = {"y", ""};
@@ -430,11 +436,12 @@ QUIZ_CASE(poincare_properties_get_variables) {
 
   const char * variableBuffer10[] = {"c", "z", "a", "b", ""};
   assert_expression_has_variables("int(c×x×z, x, a, b)", variableBuffer10, 4);
-  const char * variableBuffer11[] = {"box", "y", "z", "a", ""};
-  assert_expression_has_variables("box+y×int(z,x,a,0)", variableBuffer11, 4);
+  const char * variableBuffer11[] = {"\"box\"", "y", "z", "a", ""};
+  assert_expression_has_variables("\"box\"+y×int(z,x,a,0)", variableBuffer11, 4);
 
   // f: x → 0
   assert_reduce("0→f(x)");
+  assert_reduce("x→var");
   const char * variableBuffer12[] = {"var", ""};
   assert_expression_has_variables("f(var)", variableBuffer12, 1);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
@@ -476,6 +483,7 @@ QUIZ_CASE(poincare_properties_get_variables) {
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("var.exp").destroy();
 }
 
 void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = MetricUnitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition) {

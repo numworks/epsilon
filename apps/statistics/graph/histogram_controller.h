@@ -5,6 +5,7 @@
 #include "../store.h"
 #include "multiple_data_view_controller.h"
 #include "multiple_histograms_view.h"
+#include "histogram_range.h"
 
 namespace Statistics {
 
@@ -51,6 +52,7 @@ private:
   // return true if the window has scrolled
   bool moveSelectionHorizontally(int deltaIndex) override;
   MultipleHistogramsView m_view;
+  HistogramRange m_histogramRange;
   uint32_t * m_storeVersion;
   HistogramParameterController m_histogramParameterController;
   Escher::Button m_parameterButton;

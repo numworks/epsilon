@@ -15,7 +15,6 @@ namespace Statistics {
 static_assert(Store::k_numberOfSeries == 3, "The constructor of Statistics::Store should be changed");
 
 Store::Store() :
-  MemoizedCurveViewRange(),
   DoublePairStore(),
   m_barWidth(1.0),
   m_firstDrawnBarAbscissa(0.0),
@@ -114,25 +113,6 @@ bool Store::boxPlotCalculationIsOutlier(int series, int index) const {
 int Store::numberOfBoxPlotCalculations(int series) const {
   // Outliers + Lower/Upper Whisker + First/Third Quartile + Median
   return numberOfLowerOutliers(series) + k_numberOfQuantiles + numberOfUpperOutliers(series);
-}
-
-bool Store::scrollToSelectedBarIndex(int series, int index) {
-  float startSelectedBar = startOfBarAtIndex(series, index);
-  float windowRange = xMax() - xMin();
-  float range = windowRange/(1+k_displayLeftMarginRatio+k_displayRightMarginRatio);
-  if (xMin() + k_displayLeftMarginRatio*range > startSelectedBar) {
-    // Only update the grid unit when setting xMax
-    setHistogramXMin(startSelectedBar - k_displayLeftMarginRatio*range, false);
-    setHistogramXMax(xMin() + windowRange, true);
-    return true;
-  }
-  float endSelectedBar = endOfBarAtIndex(series, index);
-  if (endSelectedBar > xMax() - k_displayRightMarginRatio*range) {
-    setHistogramXMax(endSelectedBar + k_displayRightMarginRatio*range, false);
-    setHistogramXMin(xMax() - windowRange, true);
-    return true;
-  }
-  return false;
 }
 
 void Store::memoizeValidSeries(int series) {

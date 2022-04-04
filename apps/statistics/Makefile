@@ -22,6 +22,7 @@ app_statistics_src = $(addprefix apps/statistics/,\
   graph/histogram_banner_view.cpp \
   graph/histogram_controller.cpp \
   graph/histogram_parameter_controller.cpp \
+  graph/histogram_range.cpp \
   graph/histogram_view.cpp \
   graph/multiple_boxes_view.cpp \
   graph/multiple_data_view.cpp \

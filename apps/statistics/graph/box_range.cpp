@@ -1,4 +1,5 @@
 #include "box_range.h"
+#include <apps/shared/range_1D.h>
 
 namespace Statistics {
 

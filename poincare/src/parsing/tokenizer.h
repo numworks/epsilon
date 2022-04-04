@@ -28,6 +28,7 @@ private:
   size_t popHexadecimalDigits();
   size_t popUnitOrConstant();
   Token popIdentifier();
+  size_t popForcedCustomIdentifier();
   Token popNumber();
   Token::Type stringTokenType(const char * string, size_t length);
   Context * m_context;

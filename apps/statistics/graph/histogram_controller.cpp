@@ -204,7 +204,7 @@ void HistogramController::preinitXRangeParameters(double * xMin, double * xMax) 
 }
 
 void HistogramController::initRangeParameters() {
-  assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
+  assert(m_store->seriesIsValid(selectedSeriesIndex()));
   double barWidth = m_store->barWidth();
   double xMin;
   preinitXRangeParameters(&xMin);
@@ -220,7 +220,7 @@ void HistogramController::initRangeParameters() {
 }
 
 void HistogramController::initYRangeParameters(int series) {
-  assert(series >= 0 && m_store->sumOfOccurrences(series) > 0);
+  assert(m_store->seriesIsValid(series));
   float yMax = -FLT_MAX;
   for (int index = 0; index < m_store->numberOfBars(series); index++) {
     float size = m_store->heightOfBarAtIndex(series, index);
@@ -247,7 +247,7 @@ void HistogramController::initYRangeParameters(int series) {
 }
 
 void HistogramController::initBarParameters() {
-  assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
+  assert(m_store->seriesIsValid(selectedSeriesIndex()));
   double xMin;
   double xMax;
   preinitXRangeParameters(&xMin, &xMax);

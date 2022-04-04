@@ -24,7 +24,7 @@ public:
   double heightOfBarAtValue(int series, double value) const;
   double startOfBarAtIndex(int series, int index) const;
   double endOfBarAtIndex(int series, int index) const;
-  double numberOfBars(int series) const;
+  int numberOfBars(int series) const;
   // Box plot
   bool displayOutliers() const { return m_displayOutliers; }
   void setDisplayOutliers(bool displayOutliers) { m_displayOutliers = displayOutliers; }

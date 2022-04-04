@@ -119,8 +119,8 @@ QUIZ_CASE(equation_solve) {
   assert_solves_numerically_to("sin(x)=0", 0, 10000, {0, 180, 360, 540, 720, 900, 1080, 1260, 1440, 1620});
 
   // Long variable names
-  assert_solves_to("2abcde+3=4", "abcde=1/2");
-  assert_solves_to({"Big1+Big2=0", "3Big1+Big2=-5"}, {"Big1=-5/2", "Big2=5/2"});
+  assert_solves_to("2\"abcde\"+3=4", "\"abcde\"=1/2");
+  assert_solves_to({"\"Big1\"+\"Big2\"=0", "3\"Big1\"+\"Big2\"=-5"}, {"\"Big1\"=-5/2", "\"Big2\"=5/2"});
 
   // conj(x)*x+1 = 0
   assert_solves_to_error("conj(x)*x+1=0", RequireApproximateSolution);

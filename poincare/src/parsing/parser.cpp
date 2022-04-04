@@ -1,4 +1,6 @@
 #include "parser.h"
+#include "parsing_helper.h"
+#include "tokenizer.h"
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/comparison_operator.h>
 #include <utility>
@@ -6,8 +8,6 @@
 #include <stdlib.h>
 
 namespace Poincare {
-
-constexpr const Expression::FunctionHelper * Parser::s_reservedFunctions[];
 
 Expression Parser::parse() {
   Expression result = parseUntil(Token::EndOfStream);
@@ -19,40 +19,11 @@ Expression Parser::parse() {
 }
 
 bool Parser::IsReservedName(const char * name, size_t nameLength) {
-  return GetReservedFunction(name, nameLength) != nullptr
-    || IsSpecialIdentifierName(name, nameLength);
+  return ParsingHelper::GetReservedFunction(name, nameLength) != nullptr
+    || ParsingHelper::IsSpecialIdentifierName(name, nameLength);
 }
 
 // Private
-
-const Expression::FunctionHelper * const * Parser::GetReservedFunction(const char * name, size_t nameLength) {
-  const Expression::FunctionHelper * const * reservedFunction = s_reservedFunctions;
-  while (reservedFunction < s_reservedFunctionsUpperBound) {
-    int nameDifference = Token::CompareNonNullTerminatedName(name, nameLength, (**reservedFunction).name());
-    if (nameDifference == 0) {
-      return reservedFunction;
-    }
-    if (nameDifference < 0) {
-      break;
-    }
-    reservedFunction++;
-  }
-  return nullptr;
-}
-
-bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
-  // TODO Avoid special cases if possible
-  return (
-    Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ans)     == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ansLowerCase) == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, Infinity::Name())  == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, Undefined::Name()) == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, Nonreal::Name())    == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "u")               == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "v")               == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "w")               == 0
-  );
-}
 
 Expression Parser::parseUntil(Token::Type stoppingType) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
@@ -87,7 +58,9 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseNumber,          // Token::BinaryNumber
     &Parser::parseNumber,          // Token::HexadecimalNumber
     &Parser::parseUnit,            // Token::Unit
-    &Parser::parseIdentifier,      // Token::Identifier
+    &Parser::parseReservedFunction,// Token::ReservedFunction
+    &Parser::parseSpecialIdentifier, // Token::SpecialIdentifier
+    &Parser::parseCustomIdentifier, // Token::CustomIdentifier
     &Parser::parseUnexpected       // Token::Undefined
   };
   Expression leftHandSide;
@@ -133,16 +106,18 @@ bool Parser::nextTokenHasPrecedenceOver(Token::Type stoppingType) {
 
 void Parser::isThereImplicitMultiplication() {
   /* This function is called at the end of
-   * parseNumber, parseIdentifier, parseUnit, parseFactorial, parseMatrix,
-   * parseLeftParenthesis in order to check whether it should be followed by a
-   * Token::ImplicitTimes.
+   * parseNumber, parseSpecialIdentifier, parseReservedFunction, parseUnit,
+   * parseFactorial, parseMatrix, parseLeftParenthesis, parseCustomIdentifier
+   * in order to check whether it should be followed by a Token::ImplicitTimes.
    * In that case, m_pendingImplicitMultiplication is set to true,
    * so that popToken, popTokenIfType, nextTokenHasPrecedenceOver can handle implicit multiplication. */
   m_pendingImplicitMultiplication = (
     m_nextToken.is(Token::Number) ||
     m_nextToken.is(Token::Constant) ||
     m_nextToken.is(Token::Unit) ||
-    m_nextToken.is(Token::Identifier) ||
+    m_nextToken.is(Token::ReservedFunction) ||
+    m_nextToken.is(Token::SpecialIdentifier) ||
+    m_nextToken.is(Token::CustomIdentifier) ||
     m_nextToken.is(Token::LeftParenthesis) ||
     m_nextToken.is(Token::LeftSystemParenthesis) ||
     m_nextToken.is(Token::LeftBracket) ||
@@ -163,7 +138,7 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
    // No implicit multiplication between two numbers
   if (m_nextToken.isNumber()
        // No implicit multiplication between a hexadecimal number and an identifer (avoid parsing 0x2abch as 0x2ABC*h)
-      || (m_currentToken.is(Token::Type::HexadecimalNumber) && m_nextToken.is(Token::Type::Identifier))) {
+      || (m_currentToken.is(Token::Type::HexadecimalNumber) && (m_nextToken.is(Token::Type::CustomIdentifier) || m_nextToken.is(Token::Type::SpecialIdentifier) || m_nextToken.is(Token::Type::ReservedFunction)))) {
     m_status = Status::Error;
     return;
   }
@@ -381,9 +356,16 @@ void Parser::parseUnit(Expression & leftHandSide, Token::Type stoppingType) {
   isThereImplicitMultiplication();
 }
 
-void Parser::parseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper) {
-  const char * name = (**functionHelper).name();
+void Parser::parseReservedFunction(Expression & leftHandSide, Token::Type stoppingType) {
+  assert(leftHandSide.isUninitialized());
+  const Expression::FunctionHelper * const * functionHelper = ParsingHelper::GetReservedFunction(m_currentToken.text(), m_currentToken.length());
+  assert(functionHelper != nullptr);
+  privateParseReservedFunction(leftHandSide, functionHelper);
+  isThereImplicitMultiplication();
+}
 
+void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper) {
+  const char * name = (**functionHelper).name();
   if (strcmp(name, "log") == 0 && popTokenIfType(Token::LeftBrace)) {
     // Special case for the log function (e.g. "log{2}(8)")
     Expression base = parseUntil(Token::RightBrace);
@@ -412,7 +394,7 @@ void Parser::parseReservedFunction(Expression & leftHandSide, const Expression::
   if ((**functionHelper).numberOfChildren() >= 0) {
     while (numberOfParameters > (**functionHelper).numberOfChildren()) {
       functionHelper++;
-      if (!(functionHelper < s_reservedFunctionsUpperBound && strcmp(name, (**functionHelper).name()) == 0)) {
+      if (!(functionHelper < ParsingHelper::ReservedFunctionsUpperBound() && strcmp(name, (**functionHelper).name()) == 0)) {
         m_status = Status::Error; // Too many parameters provided.
         return;
       }
@@ -445,7 +427,8 @@ void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::
   }
 }
 
-void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
+void Parser::parseSpecialIdentifier(Expression & leftHandSide, Token::Type stoppingType) {
+  assert(leftHandSide.isUninitialized());
   if (m_currentToken.compareTo(Symbol::k_ans) == 0 || m_currentToken.compareTo(Symbol::k_ansLowerCase) == 0) {
     leftHandSide = Symbol::Ans();
   } else if (m_currentToken.compareTo(Infinity::Name()) == 0) {
@@ -463,9 +446,18 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
      * not need to pass a code point to parseSequence. */
     parseSequence(leftHandSide, m_currentToken.text(), Token::LeftParenthesis, Token::RightParenthesis, Token::LeftBrace, Token::RightBrace);
   }
+  isThereImplicitMultiplication();
 }
 
-void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length) {
+void Parser::parseCustomIdentifier(Expression & leftHandSide, Token::Type stoppingType) {
+  assert(leftHandSide.isUninitialized());
+  const char * name = m_currentToken.text();
+  size_t length = m_currentToken.length();
+  privateParseCustomIdentifier(leftHandSide, name, length);
+  isThereImplicitMultiplication();
+}
+
+void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length) {
   if (length >= SymbolAbstract::k_maxNameSize) {
     m_status = Status::Error; // Identifier name too long.
     return;
@@ -527,19 +519,6 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
     return;
   }
   leftHandSide = result;
-}
-
-void Parser::parseIdentifier(Expression & leftHandSide, Token::Type stoppingType) {
-  assert(leftHandSide.isUninitialized());
-  const Expression::FunctionHelper * const * functionHelper = GetReservedFunction(m_currentToken.text(), m_currentToken.length());
-  if (functionHelper != nullptr) {
-    parseReservedFunction(leftHandSide, functionHelper);
-  } else if (IsSpecialIdentifierName(m_currentToken.text(), m_currentToken.length())) {
-    parseSpecialIdentifier(leftHandSide);
-  } else {
-    parseCustomIdentifier(leftHandSide, m_currentToken.text(), m_currentToken.length());
-  }
-  isThereImplicitMultiplication();
 }
 
 Expression Parser::parseFunctionParameters() {

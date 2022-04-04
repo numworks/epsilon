@@ -1,4 +1,6 @@
 #include "tokenizer.h"
+#include "parsing_helper.h"
+#include "parser.h"
 #include <poincare/based_integer.h>
 #include <poincare/constant.h>
 #include <poincare/number.h>
@@ -36,17 +38,90 @@ size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
   return length;
 }
 
-size_t Tokenizer::popIdentifier(CodePoint additionalAcceptedCodePoint) {
-  /* TODO handle combined code points? For now combining code points will
-   * trigger a syntax error.
-   * This method is used to parse any identifier, reserved or custom, or even
-   * unit symbols.
-   * Exceptionally π is always parsed separately so that the user may for
-   * instance input '2πx' without any danger.
-   */
-  return popWhile([](CodePoint c, CodePoint context) {
-      return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || (c != UCodePointNull && c == context) || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
-      }, additionalAcceptedCodePoint);
+bool Tokenizer::DefaultPopTest(const CodePoint c, const CodePoint context) {
+  return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || (c != UCodePointNull && c == context) || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+}
+
+/* Identifiers can be ReservedFunctions, SpecialIdentifiers or CustomIdentifiers
+ * When tokenizing a string, the tokenizer will tokenize depending on the context.
+ * foobar(x) will be tokenized as f*o*o*b*a*r*(x) default, but if foo is defined
+ * as a variable and bar as a function in the context, it will be parsed as
+ * foo*bar(x).
+ * */
+Token Tokenizer::popIdentifier() {
+  m_decoder.previousCodePoint();
+  const char * start = m_decoder.stringPosition();
+  Token result(Token::Undefined);
+  size_t totalStringLen =  popWhile(DefaultPopTest, '_');
+  size_t currentStringLen = totalStringLen;
+  while (true) {
+    UTF8Decoder tempDecoder(start);
+    size_t offset = 0;
+    Token::Type tokenType = stringTokenType(start, currentStringLen);
+    CodePoint currentCodePoint(0);
+    while (tokenType == Token::Undefined && offset < currentStringLen) {
+      currentCodePoint = tempDecoder.nextCodePoint();
+      offset += UTF8Decoder::CharSizeOfCodePoint(currentCodePoint);
+      tokenType = stringTokenType(start + offset, currentStringLen - offset);
+    }
+    if (offset >= currentStringLen) {
+      assert(offset == currentStringLen);
+      offset -= UTF8Decoder::CharSizeOfCodePoint(currentCodePoint);
+    }
+    if (offset == 0) {
+      /* If we did not find any known identifier, the first char of the string
+       * is treated as a CustomIdentifier (xy --> x*y) */
+      if (tokenType == Token::Undefined) {
+        tokenType = Token::CustomIdentifier;
+      }
+      result.setType(tokenType);
+      result.setString(start, currentStringLen);
+      // Rewind the decoder to the end of the tokenized string
+      while (currentStringLen < totalStringLen) {
+        CodePoint previousCodePoint = m_decoder.previousCodePoint();
+        currentStringLen += UTF8Decoder::CharSizeOfCodePoint(previousCodePoint);
+      }
+      break;
+    }
+    currentStringLen = offset;
+  }
+  return result;
+}
+
+/* This method determines wether a string is a reserved function name,
+ * a special identifier name or a custom identifier name.
+ *
+ * WARNING : You should only parse with nullptr if the string is a serialized
+ * expression !
+ * If the context is nullptr, we assume that the string is a
+ * serialized expression and that any string is a customIdentifier.
+ * This is to ensure that already parsed Expressions that have been
+ * then serialized are correctly reparsed even without a context.
+ *
+ * Example : xy(5) will be tokenized as x*y*(5) if the context exists
+ * but doesn't contain any variable.
+ * It will be then serialized as "x×y×(5)" so when it is parsed again,
+ * the tokenize doesn't need a context to see that it is not a function.
+ * On the other hand, if a function is stored in ab, ab(5) will be
+ * tokenized as ab(5), and ther serialized as "ab(5)".
+ * When it is parsed again without any context, the tokenizer must not
+ * turn "ab(5)" into "a*b*(5)".
+ * */
+Token::Type Tokenizer::stringTokenType(const char * string, size_t length) {
+  if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
+    return Token::ReservedFunction;
+  }
+  if (ParsingHelper::IsSpecialIdentifierName(string, length)) {
+    return Token::SpecialIdentifier;
+  }
+  if (m_definingCustomIdentifier || m_context == nullptr || m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
+    return Token::CustomIdentifier;
+  }
+  return Token::Undefined;
+}
+
+size_t Tokenizer::popUnitOrConstant() {
+  return popWhile(DefaultPopTest, UCodePointDegreeSign);
 }
 
 size_t Tokenizer::popDigits() {
@@ -123,7 +198,7 @@ Token Tokenizer::popToken() {
   while (canPopCodePoint(' ')) {}
 
   /* Save for later use (since m_decoder.stringPosition() is altered by
-   * popNumber, popIdentifier). */
+   * popNumber, popUnitAndConstant, popIdentifier). */
   const char * start = m_decoder.stringPosition();
 
   /* If the next code point is the start of a number, we do not want to pop it
@@ -150,13 +225,9 @@ Token Tokenizer::popToken() {
      * TODO The Context of the Parser might be used to decide whether a symbol
      * as 'A' should be parsed as a custom identifier, if 'A' already exists in
      * the context, or as a unit if not.
-     *
-     * Besides unit symbols may contain Greek letters as μ and Ω. Since there
-     * is no particular reason to parse unit symbols differently from any other
-     * reserved or custom identifier, popIdentifier is called in both cases.
      */
     Token result(Token::Unit);
-    result.setString(start + 1, popIdentifier(UCodePointDegreeSign)); // + 1 for the underscore
+    result.setString(start + 1, popUnitOrConstant()); // + 1 for the underscore
     if (Constant::IsConstant(result.text(), result.length())) {
       result.setType(Token::Constant);
     }
@@ -166,8 +237,7 @@ Token Tokenizer::popToken() {
       c.isGreekCapitalLetter() ||
       c.isGreekSmallLetter()) // Greek small letter pi is matched earlier
   {
-    Token result(Token::Identifier);
-    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c) + popIdentifier('_')); // We already popped 1 code point
+    Token result = popIdentifier();
     return result;
   }
   if ('(' <= c && c <= '/') {
@@ -240,7 +310,7 @@ Token Tokenizer::popToken() {
     return Token(Token::RightBrace);
   }
   if (c == UCodePointSquareRoot) {
-    Token result(Token::Identifier);
+    Token result(Token::ReservedFunction);
     result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));
     return result;
   }
@@ -248,6 +318,7 @@ Token Tokenizer::popToken() {
     return Token(Token::Empty);
   }
   if (c == UCodePointRightwardsArrow) {
+    m_definingCustomIdentifier = true;
     return Token(Token::RightwardsArrow);
   }
   if (c == 0) {

@@ -14,20 +14,25 @@ namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text) : m_decoder(text) {}
+  Tokenizer(const char * text, Context * context) : m_context(context), m_decoder(text), m_definingCustomIdentifier(false) {}
   Token popToken();
+
 private:
   typedef bool (*PopTest)(CodePoint c, CodePoint context);
+  static bool DefaultPopTest(const CodePoint c, const CodePoint context);
   const CodePoint nextCodePoint(PopTest popTest, CodePoint context = UCodePointNull, bool * testResult = nullptr);
   bool canPopCodePoint(const CodePoint c);
   size_t popWhile(PopTest popTest, CodePoint context = UCodePointNull);
   size_t popDigits();
   size_t popBinaryDigits();
   size_t popHexadecimalDigits();
-  size_t popIdentifier(CodePoint additionalAcceptedCodePoint);
+  size_t popUnitOrConstant();
+  Token popIdentifier();
   Token popNumber();
-
+  Token::Type stringTokenType(const char * string, size_t length);
+  Context * m_context;
   UTF8Decoder m_decoder;
+  bool m_definingCustomIdentifier;
 };
 
 }

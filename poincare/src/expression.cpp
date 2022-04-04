@@ -1,21 +1,14 @@
 #include <poincare/expression.h>
+#include <poincare_expressions.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/expression_node.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/ghost.h>
-#include <poincare/list.h>
-#include <poincare/matrix.h>
-#include <poincare/opposite.h>
-#include <poincare/rational.h>
-#include <poincare/string_layout.h>
-#include <poincare/symbol.h>
-#include <poincare/undefined.h>
 #include <poincare/variable_context.h>
 #include <ion.h>
 #include <ion/unicode/utf8_helper.h>
 #include <cmath>
-#include <float.h>
 #include <utility>
 
 #include "parsing/parser.h"

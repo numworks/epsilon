@@ -46,7 +46,7 @@ class Undefined final : public Number {
 public:
   Undefined(const UndefinedNode * n) : Number(n) {}
   static Undefined Builder() { return TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(); }
-  static const char * Name() {
+  constexpr static const char * Name() {
     return "undef";
   }
   static constexpr int NameSize() {

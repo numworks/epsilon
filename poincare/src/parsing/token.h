@@ -55,7 +55,9 @@ public:
     BinaryNumber,
     HexadecimalNumber,
     Unit,
-    Identifier,
+    ReservedFunction,
+    SpecialIdentifier,
+    CustomIdentifier,
     Undefined
   };
 

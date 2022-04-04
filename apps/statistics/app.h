@@ -39,7 +39,6 @@ public:
   private:
     Store m_store;
     uint32_t m_storeVersion;
-    // TODO : Store more data in m_graphViewModel
     GraphViewModel m_graphViewModel;
   };
   TELEMETRY_ID("Statistics");

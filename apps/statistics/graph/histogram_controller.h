@@ -48,7 +48,7 @@ private:
   void initRangeParameters();
   void initYRangeParameters(int series);
   void initBarParameters();
-  void initBarSelection();
+  void sanitizeSelectedIndex();
   // return true if the window has scrolled
   bool moveSelectionHorizontally(int deltaIndex) override;
   MultipleHistogramsView m_view;

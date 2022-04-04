@@ -17,7 +17,8 @@ namespace Statistics {
 
 HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, uint32_t * storeVersion) :
   MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
-  m_view(this, store),
+  m_view(this, store, &m_histogramRange),
+  m_histogramRange(store),
   m_storeVersion(storeVersion),
   m_histogramParameterController(nullptr, inputEventHandlerDelegate, store),
   m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation([](void * context, void * sender) {
@@ -92,7 +93,7 @@ void HistogramController::highlightSelection() {
   HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.dataViewAtIndex(series));
   selectedHistogramView->setHighlight(m_store->startOfBarAtIndex(series, m_selectedIndex), m_store->endOfBarAtIndex(series, m_selectedIndex));
   // if the selectedBar was outside of range, we need to scroll
-  if (m_store->scrollToSelectedBarIndex(series, m_selectedIndex)) {
+  if (m_histogramRange.scrollToSelectedBarIndex(series, m_selectedIndex)) {
     multipleDataView()->reload();
   }
 }
@@ -189,8 +190,8 @@ void HistogramController::preinitXRangeParameters(double * xMin, double * xMax) 
   if (xMax != nullptr) {
     *xMax = maxValue;
   }
-  m_store->setHistogramXMin(minValue, false);
-  m_store->setHistogramXMax(maxValue, true);
+  m_histogramRange.setHistogramXMin(minValue, false);
+  m_histogramRange.setHistogramXMax(maxValue, true);
 }
 
 void HistogramController::initRangeParameters() {
@@ -198,13 +199,13 @@ void HistogramController::initRangeParameters() {
   double barWidth = m_store->barWidth();
   double xMin;
   preinitXRangeParameters(&xMin);
-  double xMax = m_store->xMax() + barWidth;
+  double xMax = m_histogramRange.xMax() + barWidth;
   /* if a bar is represented by less than one pixel, we cap xMax */
   if ((xMax - xMin)/barWidth > k_maxNumberOfBarsPerWindow) {
     xMax = xMin + k_maxNumberOfBarsPerWindow*barWidth;
   }
-  m_store->setHistogramXMin(xMin - Store::k_displayLeftMarginRatio*(xMax-xMin), false);
-  m_store->setHistogramXMax(xMax + Store::k_displayRightMarginRatio*(xMax-xMin), true);
+  m_histogramRange.setHistogramXMin(xMin - HistogramRange::k_displayLeftMarginRatio*(xMax-xMin), false);
+  m_histogramRange.setHistogramXMax(xMax + HistogramRange::k_displayRightMarginRatio*(xMax-xMin), true);
 
   initYRangeParameters(selectedSeriesIndex());
 }
@@ -220,7 +221,7 @@ void HistogramController::initYRangeParameters(int series) {
   }
   yMax = yMax/m_store->sumOfOccurrences(series);
   yMax = yMax < 0 ? 1 : yMax;
-  m_store->setYMax(yMax*(1.0f+Store::k_displayTopMarginRatio));
+  m_histogramRange.setYMax(yMax*(1.0f+HistogramRange::k_displayTopMarginRatio));
 
   /* Compute YMin:
    *    ratioFloatPixel*(0-yMin) = k_bottomMargin
@@ -233,7 +234,7 @@ void HistogramController::initYRangeParameters(int series) {
    *    yMin = -k_bottomMargin/ratioFloatPixel = yMax*k_bottomMargin/(k_bottomMargin - viewHeight)
    * */
 
-  m_store->setYMin(m_store->yMax()*(float)Store::k_bottomMargin/((float)Store::k_bottomMargin - m_view.dataViewAtIndex(series)->bounds().height()));
+  m_histogramRange.setYMin(m_histogramRange.yMax()*(float)HistogramRange::k_bottomMargin/((float)HistogramRange::k_bottomMargin - m_view.dataViewAtIndex(series)->bounds().height()));
 }
 
 void HistogramController::initBarParameters() {
@@ -242,7 +243,7 @@ void HistogramController::initBarParameters() {
   double xMax;
   preinitXRangeParameters(&xMin, &xMax);
   m_store->setFirstDrawnBarAbscissa(xMin);
-  double barWidth = m_store->xGridUnit();
+  double barWidth = m_histogramRange.xGridUnit();
   if (barWidth <= 0.0) {
     barWidth = 1.0;
   } else {
@@ -252,11 +253,11 @@ void HistogramController::initBarParameters() {
     const double truncateFactor = std::pow(10.0, precision - logBarWidth);
     barWidth = std::round(barWidth * truncateFactor) / truncateFactor;
   }
-  if (std::ceil((xMax - xMin) / barWidth) > Store::k_maxNumberOfBars) {
+  if (std::ceil((xMax - xMin) / barWidth) > HistogramRange::k_maxNumberOfBars) {
     // Use k_maxNumberOfBars - 1 for extra margin in case of a loss of precision
-    barWidth = (xMax - xMin) / (Store::k_maxNumberOfBars - 1);
+    barWidth = (xMax - xMin) / (HistogramRange::k_maxNumberOfBars - 1);
   }
-  assert(barWidth > 0.0 && std::ceil((xMax - xMin) / barWidth) <= Store::k_maxNumberOfBars);
+  assert(barWidth > 0.0 && std::ceil((xMax - xMin) / barWidth) <= HistogramRange::k_maxNumberOfBars);
   m_store->setBarWidth(barWidth);
 }
 
@@ -273,7 +274,7 @@ void HistogramController::sanitizeSelectedIndex() {
     m_selectedIndex++;
   }
   assert(m_selectedIndex < numberOfBars);
-  m_store->scrollToSelectedBarIndex(series, m_selectedIndex);
+  m_histogramRange.scrollToSelectedBarIndex(series, m_selectedIndex);
 }
 
 }

@@ -2,13 +2,12 @@
 #define STATISTICS_STORE_H
 
 #include <apps/i18n.h>
-#include <apps/shared/memoized_curve_view_range.h>
 #include <apps/shared/double_pair_store.h>
 #include <stddef.h>
 
 namespace Statistics {
 
-class Store : public Shared::MemoizedCurveViewRange, public Shared::DoublePairStore {
+class Store : public Shared::DoublePairStore {
 friend class BoxRange;
 public:
   Store();
@@ -26,8 +25,6 @@ public:
   double startOfBarAtIndex(int series, int index) const;
   double endOfBarAtIndex(int series, int index) const;
   double numberOfBars(int series) const;
-  void setHistogramXMin(float f, bool updateGridUnit) { protectedSetXMin(f, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, updateGridUnit); }
-  void setHistogramXMax(float f, bool updateGridUnit) { protectedSetXMax(f, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, updateGridUnit); }
   // Box plot
   bool displayOutliers() const { return m_displayOutliers; }
   void setDisplayOutliers(bool displayOutliers) { m_displayOutliers = displayOutliers; }
@@ -35,8 +32,6 @@ public:
   double boxPlotCalculationAtIndex(int series, int index) const;
   bool boxPlotCalculationIsOutlier(int series, int index) const;
   int numberOfBoxPlotCalculations(int series) const;
-  // return true if the window has scrolled
-  bool scrollToSelectedBarIndex(int series, int index);
   bool frequenciesAreInteger(int series) const;
 
   // Calculation
@@ -73,12 +68,6 @@ public:
   int totalNumberOfModes() const;
   double modeAtIndex(int series, int index) const;
   double modeFrequency(int series) const;
-
-  constexpr static double k_maxNumberOfBars = 10000.0;
-  constexpr static float k_displayTopMarginRatio = 0.1f;
-  constexpr static float k_displayRightMarginRatio = 0.04f;
-  constexpr static int k_bottomMargin = 20;
-  constexpr static float k_displayLeftMarginRatio = 0.04f;
 
   /* Cumulated frequencies graphs:
    * Distinct values are aggregated and their frequency summed. */

@@ -48,11 +48,25 @@ double Store::heightOfBarAtIndex(int series, int index) const {
   return sumOfValuesBetween(series, startOfBarAtIndex(series, index), endOfBarAtIndex(series, index));
 }
 
-double Store::heightOfBarAtValue(int series, double value) const {
-  double width = barWidth();
+float Store::maxHeightOfBar(int series) const {
+  assert(seriesIsValid(series));
+  float maxHeight = -FLT_MAX;
+  double endOfBar = startOfBarAtIndex(series, 0);
+  for (int i = 0; i < numberOfBars(series); i++) {
+    // Reuse previous endOfBarAtIndex result
+    double startOfBar = endOfBar;
+    endOfBar = endOfBarAtIndex(series, i);
+    maxHeight = std::max(maxHeight, static_cast<float>(sumOfValuesBetween(series, startOfBar, endOfBar)));
+  }
+  assert(maxHeight > 0.0f);
+  return maxHeight;
+}
+
+float Store::heightOfBarAtValue(int series, float value) const {
+  float width = barWidth();
   int barNumber = std::floor((value - m_firstDrawnBarAbscissa)/width);
-  double lowerBound = m_firstDrawnBarAbscissa + ((double)barNumber)*width;
-  double upperBound = m_firstDrawnBarAbscissa + ((double)(barNumber+1))*width;
+  float lowerBound = m_firstDrawnBarAbscissa + static_cast<float>(barNumber) * width;
+  float upperBound = m_firstDrawnBarAbscissa + static_cast<float>(barNumber + 1) * width;
   return sumOfValuesBetween(series, lowerBound, upperBound);
 }
 

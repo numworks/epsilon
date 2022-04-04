@@ -1,5 +1,4 @@
 #include "histogram_view.h"
-#include "histogram_controller.h"
 #include <assert.h>
 #include <cmath>
 
@@ -7,9 +6,8 @@ using namespace Shared;
 
 namespace Statistics {
 
-HistogramView::HistogramView(HistogramController * controller, Store * store, int series, Shared::CurveViewRange * curveViewRange, KDColor selectedHistogramColor, KDColor notSelectedHistogramColor, KDColor selectedBarColor) :
+HistogramView::HistogramView(Store * store, int series, Shared::CurveViewRange * curveViewRange, KDColor selectedHistogramColor, KDColor notSelectedHistogramColor, KDColor selectedBarColor) :
   HorizontallyLabeledCurveView(curveViewRange, nullptr, nullptr, nullptr),
-  m_controller(controller),
   m_store(store),
   m_highlightedBarStart(NAN),
   m_highlightedBarEnd(NAN),
@@ -38,13 +36,12 @@ void HistogramView::reloadSelectedBar() {
 }
 
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
-  m_controller->setCurrentDrawnSeries(m_series);
   ctx->fillRect(rect, KDColorWhite);
   drawAxis(ctx, rect, Axis::Horizontal);
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, !m_displayLabels);
-  /* We memoize the total size to avoid recomputing it in double precision at
-   * every call to EvaluateHistogramAtAbscissa() */
-  float totalSize = m_store->sumOfOccurrences(m_series);
+  /* We memoize the maximal bar size to avoid recomputing it at every call to
+   * EvaluateHistogramAtAbscissa() */
+  float totalSize = m_store->maxHeightOfBar(m_series);
   float context[] = {totalSize, static_cast<float>(m_series)};
   if (isMainViewSelected()) {
     drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, m_selectedHistogramColor, m_selectedBarColor, m_highlightedBarStart, m_highlightedBarEnd);
@@ -66,7 +63,7 @@ float HistogramView::EvaluateHistogramAtAbscissa(float abscissa, void * model, v
   Store * store = (Store *)model;
   float totalSize = ((float *)context)[0];
   int series = ((float *)context)[1];
-  return store->heightOfBarAtValue(series, abscissa)/(totalSize);
+  return store->heightOfBarAtValue(series, abscissa) / totalSize;
 }
 
 }

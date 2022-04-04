@@ -22,7 +22,6 @@ public:
                       uint32_t * m_storeVersion);
 
   HistogramParameterController * histogramParameterController() { return &m_histogramParameterController; }
-  void setCurrentDrawnSeries(int series);
 
   // ButtonRowDelegate
   int numberOfButtons(Escher::ButtonRowController::Position position) const override { return GraphButtonRowDelegate::numberOfButtons(position) + 1; }

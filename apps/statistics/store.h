@@ -21,7 +21,8 @@ public:
   double firstDrawnBarAbscissa() const { return m_firstDrawnBarAbscissa; }
   void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa) { m_firstDrawnBarAbscissa = firstDrawnBarAbscissa;}
   double heightOfBarAtIndex(int series, int index) const;
-  double heightOfBarAtValue(int series, double value) const;
+  float maxHeightOfBar(int series) const;
+  float heightOfBarAtValue(int series, float value) const;
   double startOfBarAtIndex(int series, int index) const;
   double endOfBarAtIndex(int series, int index) const;
   int numberOfBars(int series) const;

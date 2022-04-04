@@ -15,11 +15,10 @@ using namespace Escher;
 
 namespace Statistics {
 
-HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, uint32_t * storeVersion, uint32_t * barVersion) :
+HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, uint32_t * storeVersion) :
   MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
   m_view(this, store),
   m_storeVersion(storeVersion),
-  m_barVersion(barVersion),
   m_histogramParameterController(nullptr, inputEventHandlerDelegate, store),
   m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation([](void * context, void * sender) {
     HistogramController * histogramController = static_cast<HistogramController * >(context);
@@ -60,22 +59,13 @@ void HistogramController::viewWillAppearBeforeReload() {
   highlightSelection();
 
   uint32_t storeChecksum = m_store->storeChecksum();
-  bool rangeParamsHaveBeenInitiated = false;
   if (*m_storeVersion != storeChecksum) {
     *m_storeVersion = storeChecksum;
     initBarParameters();
-    initRangeParameters();
-    sanitizeSelectedIndex();
-    rangeParamsHaveBeenInitiated = true;
   }
-  uint32_t barChecksum = m_store->barChecksum();
-  if (*m_barVersion != barChecksum) {
-    *m_barVersion = barChecksum;
-    if (!rangeParamsHaveBeenInitiated) {
-      initRangeParameters();
-      sanitizeSelectedIndex();
-    }
-  }
+
+  initRangeParameters();
+  sanitizeSelectedIndex();
 }
 
 void HistogramController::didEnterResponderChain(Responder * firstResponder) {

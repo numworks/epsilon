@@ -16,7 +16,6 @@ public:
   void invalidateSortedIndexes();
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
-  uint32_t barChecksum() const;
   // Histogram bars
   double barWidth() const { return m_barWidth; }
   void setBarWidth(double barWidth);

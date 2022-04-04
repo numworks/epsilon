@@ -120,6 +120,10 @@ Token::Type Tokenizer::stringTokenType(const char * string, size_t length) {
   return Token::Undefined;
 }
 
+size_t Tokenizer::popForcedCustomIdentifier() {
+  return popWhile(DefaultPopTest, '_');
+}
+
 size_t Tokenizer::popUnitOrConstant() {
   return popWhile(DefaultPopTest, UCodePointDegreeSign);
 }
@@ -233,12 +237,21 @@ Token Tokenizer::popToken() {
     }
     return result;
   }
+  if (c == '"') {
+    Token result(Token::CustomIdentifier);
+    result.setString(start, popForcedCustomIdentifier() + 2);
+    if (m_decoder.stringPosition()[0] != '"') {
+      return Token(Token::Undefined);
+    }
+    m_decoder.nextCodePoint();
+    return result;
+  }
+
   if (c.isLatinLetter() ||
       c.isGreekCapitalLetter() ||
       c.isGreekSmallLetter()) // Greek small letter pi is matched earlier
   {
-    Token result = popIdentifier();
-    return result;
+   return popIdentifier();
   }
   if ('(' <= c && c <= '/') {
     /* Those code points form a contiguous range in the utf-8 code points set,

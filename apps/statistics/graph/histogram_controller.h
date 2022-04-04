@@ -18,8 +18,7 @@ public:
                       Escher::StackViewController * stackViewController,
                       Escher::ViewController * typeViewController,
                       Store * store,
-                      uint32_t * m_storeVersion,
-                      uint32_t * m_barVersion);
+                      uint32_t * m_storeVersion);
 
   HistogramParameterController * histogramParameterController() { return &m_histogramParameterController; }
   void setCurrentDrawnSeries(int series);
@@ -53,7 +52,6 @@ private:
   bool moveSelectionHorizontally(int deltaIndex) override;
   MultipleHistogramsView m_view;
   uint32_t * m_storeVersion;
-  uint32_t * m_barVersion;
   HistogramParameterController m_histogramParameterController;
   Escher::Button m_parameterButton;
 };

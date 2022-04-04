@@ -65,9 +65,9 @@ double Store::endOfBarAtIndex(int series, int index) const {
   return startOfBarAtIndex(series, index+1);
 }
 
-double Store::numberOfBars(int series) const {
+int Store::numberOfBars(int series) const {
   double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue(series)- m_firstDrawnBarAbscissa)/m_barWidth);
-  return std::ceil((maxValue(series) - firstBarAbscissa)/m_barWidth)+1;
+  return static_cast<int>(std::ceil((maxValue(series) - firstBarAbscissa)/m_barWidth)+1);
 }
 
 I18n::Message Store::boxPlotCalculationMessageAtIndex(int series, int index) const {

@@ -7,8 +7,8 @@ using namespace Shared;
 
 namespace Statistics {
 
-HistogramView::HistogramView(HistogramController * controller, Store * store, int series, Shared::BannerView * bannerView, KDColor selectedHistogramColor, KDColor notSelectedHistogramColor, KDColor selectedBarColor) :
-  HorizontallyLabeledCurveView(store, nullptr, bannerView, nullptr),
+HistogramView::HistogramView(HistogramController * controller, Store * store, int series, KDColor selectedHistogramColor, KDColor notSelectedHistogramColor, KDColor selectedBarColor) :
+  HorizontallyLabeledCurveView(store, nullptr, nullptr, nullptr),
   m_controller(controller),
   m_store(store),
   m_highlightedBarStart(NAN),

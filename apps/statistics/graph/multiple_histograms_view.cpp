@@ -1,15 +1,13 @@
 #include "multiple_histograms_view.h"
 #include <assert.h>
 
-using namespace Shared;
-
 namespace Statistics {
 
 MultipleHistogramsView::MultipleHistogramsView(HistogramController * controller, Store * store) :
   MultipleDataView(store),
-  m_histogramView1(controller, store, 0, nullptr, DoublePairStore::colorOfSeriesAtIndex(0)),
-  m_histogramView2(controller, store, 1, nullptr, DoublePairStore::colorOfSeriesAtIndex(1)),
-  m_histogramView3(controller, store, 2, nullptr, DoublePairStore::colorOfSeriesAtIndex(2))
+  m_histogramView1(controller, store, 0, Shared::DoublePairStore::colorOfSeriesAtIndex(0)),
+  m_histogramView2(controller, store, 1, Shared::DoublePairStore::colorOfSeriesAtIndex(1)),
+  m_histogramView3(controller, store, 2, Shared::DoublePairStore::colorOfSeriesAtIndex(2))
 {
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     HistogramView * histView = dataViewAtIndex(i);

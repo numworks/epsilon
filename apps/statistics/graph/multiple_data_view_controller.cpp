@@ -65,17 +65,25 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
 
 void MultipleDataViewController::didEnterResponderChain(Responder * firstResponder) {
   assert(m_store->seriesIsValid(m_selectedSeriesIndex));
-  multipleDataView()->setDisplayBanner(true);
-  multipleDataView()->selectDataView(m_selectedSeriesIndex);
-  highlightSelection();
+  if (!multipleDataView()->dataViewAtIndex(m_selectedSeriesIndex)->isMainViewSelected()) {
+    header()->setSelectedButton(0);
+  } else {
+    multipleDataView()->setDisplayBanner(true);
+    multipleDataView()->selectDataView(m_selectedSeriesIndex);
+    highlightSelection();
+  }
 }
 
 void MultipleDataViewController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
-    assert(m_selectedSeriesIndex >= 0);
-    multipleDataView()->deselectDataView(m_selectedSeriesIndex);
-    multipleDataView()->setDisplayBanner(false);
+    if (header()->selectedButton() >= 0) {
+      header()->setSelectedButton(-1);
+    } else {
+      assert(m_selectedSeriesIndex >= 0);
+      multipleDataView()->deselectDataView(m_selectedSeriesIndex);
+      multipleDataView()->setDisplayBanner(false);
+    }
   }
 }
 

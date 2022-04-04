@@ -32,25 +32,6 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
   return MultipleDataViewController::handleEvent(event);
 }
 
-void BoxController::didEnterResponderChain(Responder * firstResponder) {
-  assert(selectedSeriesIndex() >= 0);
-  if (!multipleDataView()->dataViewAtIndex(selectedSeriesIndex())->isMainViewSelected()) {
-    header()->setSelectedButton(0);
-  }
-}
-
-void BoxController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
-    assert(tabController() != nullptr);
-    if (header()->selectedButton() >= 0) {
-      header()->setSelectedButton(-1);
-      return;
-    }
-    assert(selectedSeriesIndex() >= 0);
-  }
-  MultipleDataViewController::willExitResponderChain(nextFirstResponder);
-}
-
 bool BoxController::moveSelectionHorizontally(int deltaIndex) {
   return m_view.moveSelectionHorizontally(selectedSeriesIndex(), deltaIndex);
 }

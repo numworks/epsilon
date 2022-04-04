@@ -11,7 +11,7 @@ namespace Statistics {
 
 class MultipleHistogramsView : public MultipleDataView {
 public:
-  MultipleHistogramsView(HistogramController * controller, Store * store, Shared::CurveViewRange * curveViewRange);
+  MultipleHistogramsView(Store * store, Shared::CurveViewRange * curveViewRange);
   // MultipleDataView
   int seriesOfSubviewAtIndex(int index) override;
   HistogramBannerView * bannerView() override { return &m_bannerView; }

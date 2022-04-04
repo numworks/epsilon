@@ -17,7 +17,7 @@ namespace Statistics {
 
 HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, uint32_t * storeVersion) :
   MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
-  m_view(this, store, &m_histogramRange),
+  m_view(store, &m_histogramRange),
   m_histogramRange(store),
   m_storeVersion(storeVersion),
   m_histogramParameterController(nullptr, inputEventHandlerDelegate, store),
@@ -27,19 +27,6 @@ HistogramController::HistogramController(Responder * parentResponder, InputEvent
     return true;
   }, this), KDFont::SmallFont)
 {
-}
-
-void HistogramController::setCurrentDrawnSeries(int series) {
-  initYRangeParameters(series);
-  /* The histogram's CurveView range has been updated along the Vertical axis.
-   * To call drawLabelsAndGraduations (in HistogramView::drawRect()), the
-   * CurveView must be reloaded so that labels and their values match the new
-   * range.
-   * In this situation, we update CurveView's Vertical axis, and draw horizontal
-   * labels, which are independent. To avoid having to call CurveView::reload(),
-   * axis could be taken into account when checking if labels are up to date,
-   * instead of using rangeChecksum(), which mixes all axis. */
-  m_view.dataViewAtIndex(series)->CurveView::reload();
 }
 
 Button * HistogramController::buttonAtIndex(int index, ButtonRowController::Position position) const {
@@ -212,29 +199,24 @@ void HistogramController::initRangeParameters() {
 
 void HistogramController::initYRangeParameters(int series) {
   assert(m_store->seriesIsValid(series));
-  float yMax = -FLT_MAX;
-  for (int index = 0; index < m_store->numberOfBars(series); index++) {
-    float size = m_store->heightOfBarAtIndex(series, index);
-    if (size > yMax) {
-      yMax = size;
-    }
-  }
-  yMax = yMax/m_store->sumOfOccurrences(series);
-  yMax = yMax < 0 ? 1 : yMax;
-  m_histogramRange.setYMax(yMax*(1.0f+HistogramRange::k_displayTopMarginRatio));
+  /* Height of drawn bar are relative to the maximal bar of the series, so all
+   * displayed series need the same range of [0,1]. */
+  m_histogramRange.setYMax(1.0f+HistogramRange::k_displayTopMarginRatio);
 
   /* Compute YMin:
-   *    ratioFloatPixel*(0-yMin) = k_bottomMargin
+   *    ratioFloatPixel*(0-yMin) = bottomMargin
    *    ratioFloatPixel*(yMax-yMin) = viewHeight
    *
-   *    -ratioFloatPixel*yMin = k_bottomMargin
+   *    -ratioFloatPixel*yMin = bottomMargin
    *    ratioFloatPixel*yMax-ratioFloatPixel*yMin = viewHeight
    *
-   *    ratioFloatPixel = (viewHeight - k_bottomMargin)/yMax
-   *    yMin = -k_bottomMargin/ratioFloatPixel = yMax*k_bottomMargin/(k_bottomMargin - viewHeight)
+   *    ratioFloatPixel = (viewHeight - bottomMargin)/yMax
+   *    yMin = -bottomMargin/ratioFloatPixel = yMax*bottomMargin/(bottomMargin - viewHeight)
    * */
-
-  m_histogramRange.setYMin(m_histogramRange.yMax()*(float)HistogramRange::k_bottomMargin/((float)HistogramRange::k_bottomMargin - m_view.dataViewAtIndex(series)->bounds().height()));
+  float bottomMargin = static_cast<float>(HistogramRange::k_bottomMargin);
+  // viewHeight should be equal for each valid series
+  float viewHeight = static_cast<float>(m_view.dataViewAtIndex(series)->bounds().height());
+  m_histogramRange.setYMin(m_histogramRange.yMax() * bottomMargin / (bottomMargin - viewHeight));
 }
 
 void HistogramController::initBarParameters() {

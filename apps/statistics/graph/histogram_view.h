@@ -12,7 +12,7 @@ class HistogramController;
 
 class HistogramView : public Shared::HorizontallyLabeledCurveView {
 public:
-  HistogramView(HistogramController * controller, Store * store, int series, Shared::BannerView * bannerView, KDColor selectedHistogramColor = Escher::Palette::Select, KDColor notSelectedHistogramColor = Escher::Palette::GrayMiddle, KDColor selectedBarColor = Escher::Palette::YellowDark);
+  HistogramView(HistogramController * controller, Store * store, int series, KDColor selectedHistogramColor = Escher::Palette::Select, KDColor notSelectedHistogramColor = Escher::Palette::GrayMiddle, KDColor selectedBarColor = Escher::Palette::YellowDark);
   int series() const { return m_series; }
   void reload(bool resetInterrupted = false, bool force = false) override;
   void reloadSelectedBar();

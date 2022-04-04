@@ -65,7 +65,7 @@ void HistogramController::viewWillAppearBeforeReload() {
     *m_storeVersion = storeChecksum;
     initBarParameters();
     initRangeParameters();
-    initBarSelection();
+    sanitizeSelectedIndex();
     rangeParamsHaveBeenInitiated = true;
   }
   uint32_t barChecksum = m_store->barChecksum();
@@ -73,7 +73,7 @@ void HistogramController::viewWillAppearBeforeReload() {
     *m_barVersion = barChecksum;
     if (!rangeParamsHaveBeenInitiated) {
       initRangeParameters();
-      initBarSelection();
+      sanitizeSelectedIndex();
     }
   }
 }
@@ -272,21 +272,20 @@ void HistogramController::initBarParameters() {
   m_store->setBarWidth(barWidth);
 }
 
-void HistogramController::initBarSelection() {
-  assert(selectedSeriesIndex() >= 0 && m_store->sumOfOccurrences(selectedSeriesIndex()) > 0);
+void HistogramController::sanitizeSelectedIndex() {
+  int series = selectedSeriesIndex();
+  assert(m_store->seriesIsValid(series));
+  if (m_store->heightOfBarAtIndex(series, m_selectedIndex) != 0) {
+    return;
+  }
+  // Select the first visible bar
   m_selectedIndex = 0;
-  while ((m_store->heightOfBarAtIndex(selectedSeriesIndex(), m_selectedIndex) == 0 ||
-      m_store->startOfBarAtIndex(selectedSeriesIndex(), m_selectedIndex) < m_store->firstDrawnBarAbscissa()) && m_selectedIndex < m_store->numberOfBars(selectedSeriesIndex())) {
-    m_selectedIndex = m_selectedIndex+1;
+  int numberOfBars = m_store->numberOfBars(series);
+  while (m_store->heightOfBarAtIndex(series, m_selectedIndex) == 0 && m_selectedIndex < numberOfBars) {
+    m_selectedIndex++;
   }
-  if (m_selectedIndex >= m_store->numberOfBars(selectedSeriesIndex())) {
-    /* No bar is after m_firstDrawnBarAbscissa, so we select the first bar */
-    m_selectedIndex = 0;
-    while (m_store->heightOfBarAtIndex(selectedSeriesIndex(), m_selectedIndex) == 0 && m_selectedIndex < m_store->numberOfBars(selectedSeriesIndex())) {
-      m_selectedIndex = m_selectedIndex+1;
-    }
-  }
-  m_store->scrollToSelectedBarIndex(selectedSeriesIndex(), m_selectedIndex);
+  assert(m_selectedIndex < numberOfBars);
+  m_store->scrollToSelectedBarIndex(series, m_selectedIndex);
 }
 
 }

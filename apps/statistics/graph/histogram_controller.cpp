@@ -98,10 +98,11 @@ void HistogramController::willExitResponderChain(Responder * nextFirstResponder)
 }
 
 void HistogramController::highlightSelection() {
-  HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.dataViewAtIndex(selectedSeriesIndex()));
-  selectedHistogramView->setHighlight(m_store->startOfBarAtIndex(selectedSeriesIndex(), m_selectedIndex), m_store->endOfBarAtIndex(selectedSeriesIndex(), m_selectedIndex));
+  int series = selectedSeriesIndex();
+  HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.dataViewAtIndex(series));
+  selectedHistogramView->setHighlight(m_store->startOfBarAtIndex(series, m_selectedIndex), m_store->endOfBarAtIndex(series, m_selectedIndex));
   // if the selectedBar was outside of range, we need to scroll
-  if (m_store->scrollToSelectedBarIndex(selectedSeriesIndex(), m_selectedIndex)) {
+  if (m_store->scrollToSelectedBarIndex(series, m_selectedIndex)) {
     multipleDataView()->reload();
   }
 }
@@ -163,19 +164,16 @@ bool HistogramController::reloadBannerView() {
 }
 
 bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
+  int series = selectedSeriesIndex();
+  int numberOfBars = m_store->numberOfBars(series);
   int newSelectedBarIndex = m_selectedIndex;
   do {
-    newSelectedBarIndex+=deltaIndex;
-  } while (m_store->heightOfBarAtIndex(selectedSeriesIndex(), newSelectedBarIndex) == 0
-      && newSelectedBarIndex >= 0
-      && newSelectedBarIndex < m_store->numberOfBars(selectedSeriesIndex()));
+    newSelectedBarIndex += deltaIndex;
+  } while (m_store->heightOfBarAtIndex(series, newSelectedBarIndex) == 0 && newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars);
 
-  if (newSelectedBarIndex >= 0
-      && newSelectedBarIndex < m_store->numberOfBars(selectedSeriesIndex())
-      && m_selectedIndex != newSelectedBarIndex)
-  {
+  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars && m_selectedIndex != newSelectedBarIndex) {
     m_selectedIndex = newSelectedBarIndex;
-    m_view.dataViewAtIndex(selectedSeriesIndex())->setHighlight(m_store->startOfBarAtIndex(selectedSeriesIndex(), m_selectedIndex), m_store->endOfBarAtIndex(selectedSeriesIndex(), m_selectedIndex));
+    m_view.dataViewAtIndex(series)->setHighlight(m_store->startOfBarAtIndex(series, m_selectedIndex), m_store->endOfBarAtIndex(series, m_selectedIndex));
     return true;
   }
   return false;

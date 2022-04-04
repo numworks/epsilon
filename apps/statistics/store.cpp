@@ -66,7 +66,7 @@ double Store::heightOfBarAtValue(int series, double value) const {
 }
 
 double Store::startOfBarAtIndex(int series, int index) const {
-  double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue(series)- m_firstDrawnBarAbscissa)/m_barWidth);
+  double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue(series) - m_firstDrawnBarAbscissa)/m_barWidth);
   return firstBarAbscissa + index * m_barWidth;
 }
 

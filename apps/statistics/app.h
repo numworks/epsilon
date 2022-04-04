@@ -36,13 +36,11 @@ public:
     Store * store() { return &m_store; }
     uint32_t * storeVersion() { return &m_storeVersion; }
     uint32_t * barVersion() { return &m_barVersion; }
-    uint32_t * rangeVersion() { return &m_rangeVersion; }
     GraphViewModel * graphViewModel() { return &m_graphViewModel; }
   private:
     Store m_store;
     uint32_t m_storeVersion;
-    uint32_t  m_barVersion;
-    uint32_t m_rangeVersion;
+    uint32_t m_barVersion;
     // TODO : Store more data in m_graphViewModel
     GraphViewModel m_graphViewModel;
   };

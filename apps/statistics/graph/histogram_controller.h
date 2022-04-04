@@ -19,8 +19,7 @@ public:
                       Escher::ViewController * typeViewController,
                       Store * store,
                       uint32_t * m_storeVersion,
-                      uint32_t * m_barVersion,
-                      uint32_t * m_rangeVersion);
+                      uint32_t * m_barVersion);
 
   HistogramParameterController * histogramParameterController() { return &m_histogramParameterController; }
   void setCurrentDrawnSeries(int series);
@@ -55,7 +54,6 @@ private:
   MultipleHistogramsView m_view;
   uint32_t * m_storeVersion;
   uint32_t * m_barVersion;
-  uint32_t * m_rangeVersion;
   HistogramParameterController m_histogramParameterController;
   Escher::Button m_parameterButton;
 };

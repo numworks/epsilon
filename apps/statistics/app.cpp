@@ -22,8 +22,7 @@ const Image * App::Descriptor::icon() const {
 
 App::Snapshot::Snapshot() :
   m_storeVersion(0),
-  m_barVersion(0),
-  m_rangeVersion(0)
+  m_barVersion(0)
 {
 }
 
@@ -35,7 +34,6 @@ void App::Snapshot::reset() {
   m_store.deleteAllPairs();
   m_storeVersion = 0;
   m_barVersion = 0;
-  m_rangeVersion = 0;
   m_graphViewModel.selectGraphView(GraphViewModel::GraphView::Histogram);
   setActiveTab(0);
 }
@@ -57,7 +55,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_frequencyHeader(&m_graphController, &m_frequencyController, &m_frequencyController),
   m_boxController(&m_boxHeader, &m_boxHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store()),
   m_boxHeader(&m_graphController, &m_boxController, &m_boxController),
-  m_histogramController(&m_histogramHeader, this, &m_histogramHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion()),
+  m_histogramController(&m_histogramHeader, this, &m_histogramHeader, &m_tabViewController, &m_graphMenuStackViewController, &m_graphTypeController, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion()),
   m_histogramHeader(&m_graphController, &m_histogramController, &m_histogramController),
   m_graphTypeController(&m_graphMenuStackViewController, &m_tabViewController, &m_graphMenuStackViewController, snapshot->store(), snapshot->graphViewModel()),
   m_graphController(&m_graphMenuStackViewController, this, {&m_histogramHeader, &m_boxHeader, &m_frequencyHeader, &m_normalProbabilityHeader}),

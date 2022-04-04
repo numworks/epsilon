@@ -30,8 +30,6 @@ public:
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void didEnterResponderChain(Responder * firstResponder) override;
-  void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 
   TELEMETRY_ID("Box");
 private:

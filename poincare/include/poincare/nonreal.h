@@ -45,7 +45,7 @@ class Nonreal final : public Number {
 public:
   static Nonreal Builder() { return TreeHandle::FixedArityBuilder<Nonreal, NonrealNode>(); }
   Nonreal() = delete;
-  static const char * Name() {
+  constexpr static const char * Name() {
     return "nonreal";
   }
   static int NameSize() {

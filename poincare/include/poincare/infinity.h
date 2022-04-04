@@ -55,7 +55,7 @@ public:
   Infinity(InfinityNode * n) : Number(n) {}
   static Infinity Builder(bool negative);
   Expression setSign(ExpressionNode::Sign s);
-  static const char * Name() {
+  constexpr static const char * Name() {
     return "inf";
   }
   static int NameSize() {

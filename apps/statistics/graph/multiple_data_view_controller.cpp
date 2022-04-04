@@ -40,6 +40,7 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
     }
     if (event == Ion::Events::Down) {
       header()->setSelectedButton(-1);
+      Container::activeApp()->setFirstResponder(this);
       multipleDataView()->setDisplayBanner(true);
       multipleDataView()->selectDataView(m_selectedSeriesIndex);
       highlightSelection();

@@ -15,12 +15,11 @@ using namespace Escher;
 
 namespace Statistics {
 
-HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion) :
+HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, uint32_t * storeVersion, uint32_t * barVersion) :
   MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
   m_view(this, store),
   m_storeVersion(storeVersion),
   m_barVersion(barVersion),
-  m_rangeVersion(rangeVersion),
   m_histogramParameterController(nullptr, inputEventHandlerDelegate, store),
   m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation([](void * context, void * sender) {
     HistogramController * histogramController = static_cast<HistogramController * >(context);
@@ -61,24 +60,21 @@ void HistogramController::viewWillAppearBeforeReload() {
   highlightSelection();
 
   uint32_t storeChecksum = m_store->storeChecksum();
-  bool initedRangeParameters = false;
+  bool rangeParamsHaveBeenInitiated = false;
   if (*m_storeVersion != storeChecksum) {
     *m_storeVersion = storeChecksum;
     initBarParameters();
     initRangeParameters();
-    initedRangeParameters = true;
+    initBarSelection();
+    rangeParamsHaveBeenInitiated = true;
   }
   uint32_t barChecksum = m_store->barChecksum();
   if (*m_barVersion != barChecksum) {
     *m_barVersion = barChecksum;
-    if (!initedRangeParameters) {
+    if (!rangeParamsHaveBeenInitiated) {
       initRangeParameters();
+      initBarSelection();
     }
-  }
-  uint32_t rangeChecksum = m_store->rangeChecksum();
-  if (*m_rangeVersion != rangeChecksum) {
-    *m_rangeVersion = rangeChecksum;
-    initBarSelection();
   }
 }
 

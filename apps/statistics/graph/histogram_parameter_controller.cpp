@@ -96,7 +96,7 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
     const double min = std::min(m_store->minValue(i), nextFirstDrawnBarAbscissa);
     double numberOfBars = std::ceil((m_store->maxValue(i) - min)/nextBarWidth);
-    if (numberOfBars > Store::k_maxNumberOfBars) {
+    if (numberOfBars > HistogramRange::k_maxNumberOfBars) {
       // Assert the current temporary values were valid in the first place
       assert(nextBarWidth != m_tempBarWidth || nextFirstDrawnBarAbscissa != m_tempFirstDrawnBarAbscissa);
       Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);

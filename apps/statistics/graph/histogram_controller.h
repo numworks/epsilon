@@ -33,8 +33,6 @@ public:
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void didEnterResponderChain(Responder * firstResponder) override;
-  void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
   constexpr static int k_maxIntervalLegendLength = 33;

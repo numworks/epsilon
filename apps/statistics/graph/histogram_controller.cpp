@@ -56,25 +56,6 @@ void HistogramController::viewWillAppearBeforeReload() {
   sanitizeSelectedIndex();
 }
 
-void HistogramController::didEnterResponderChain(Responder * firstResponder) {
-  assert(selectedSeriesIndex() >= 0);
-  if (!multipleDataView()->dataViewAtIndex(selectedSeriesIndex())->isMainViewSelected()) {
-    header()->setSelectedButton(0);
-  }
-}
-
-void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
-    assert(tabController() != nullptr);
-    if (header()->selectedButton() >= 0) {
-      header()->setSelectedButton(-1);
-      return;
-    }
-    assert(selectedSeriesIndex() >= 0);
-  }
-  MultipleDataViewController::willExitResponderChain(nextFirstResponder);
-}
-
 void HistogramController::highlightSelection() {
   int series = selectedSeriesIndex();
   HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.dataViewAtIndex(series));

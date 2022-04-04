@@ -21,7 +21,6 @@ void BoxParameterController::willDisplayCellForIndex(HighlightCell * cell, int i
 }
 
 bool BoxParameterController::handleEvent(Ion::Events::Event event) {
-  // TODO : Improve navigation, handle UP and DOWN event from tab controller
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_store->setDisplayOutliers(!m_store->displayOutliers());
     cellAtIndex(0)->setState(m_store->displayOutliers());

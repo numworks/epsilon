@@ -1,4 +1,5 @@
 #include <poincare/init.h>
+#include <poincare_expressions.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/src/parsing/parser.h>
 #include <apps/shared/global_context.h>
@@ -8,7 +9,7 @@
 using namespace Poincare;
 
 void assert_tokenizes_as(const Token::Type * tokenTypes, const char * string) {
-  Tokenizer tokenizer(string);
+  Tokenizer tokenizer(string, nullptr);
   while (true) {
     Token token = tokenizer.popToken();
     quiz_assert_print_if_failure(token.type() == *tokenTypes, string);
@@ -35,7 +36,7 @@ void assert_tokenizes_as_constant(const char * string) {
 }
 
 void assert_tokenizes_as_undefined_token(const char * string) {
-  Tokenizer tokenizer(string);
+  Tokenizer tokenizer(string, nullptr);
   while (true) {
     Token token = tokenizer.popToken();
     if (token.type() == Token::Undefined) {
@@ -385,12 +386,8 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   // User-defined symbols
   assert_parsed_expression_is("a", Symbol::Builder("a", 1));
   assert_parsed_expression_is("x", Symbol::Builder("x", 1));
-  assert_parsed_expression_is("toot", Symbol::Builder("toot", 4));
-  assert_parsed_expression_is("toto_", Symbol::Builder("toto_", 5));
-  assert_parsed_expression_is("t_toto", Symbol::Builder("t_toto", 6));
-  assert_parsed_expression_is("tot12", Symbol::Builder("tot12", 5));
-  assert_parsed_expression_is("TOto", Symbol::Builder("TOto", 4));
-  assert_parsed_expression_is("TO12_Or", Symbol::Builder("TO12_Or", 7));
+  assert_parsed_expression_is("\"toot\"", Symbol::Builder("\"toot\"", 6));
+  assert_parsed_expression_is("\"tot12\"", Symbol::Builder("\"tot12\"", 7));
   assert_parsed_expression_is("f(f)", Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder(Symbol::Builder("f", 1))));
   assert_parsed_expression_is("f((1))", Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder( Parenthesis::Builder(BasedInteger::Builder(1)))));
   assert_text_not_parsable("_a");
@@ -518,10 +515,9 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_text_not_parsable("1 2");
   assert_parsed_expression_is("1x", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)));
   assert_parsed_expression_is("1Ans", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("Ans", 3)));
-  assert_parsed_expression_is("x1", Symbol::Builder("x1", 2));
   // Fallback from binary number
-  assert_parsed_expression_is("0b2", Multiplication::Builder(BasedInteger::Builder(0), Symbol::Builder("b2", 2)));
-  assert_parsed_expression_is("0xG", Multiplication::Builder(BasedInteger::Builder(0), Symbol::Builder("xG", 2)));
+  assert_parsed_expression_is("0b2", Multiplication::Builder(BasedInteger::Builder(0),Multiplication::Builder(Symbol::Builder("b", 1),BasedInteger::Builder(2))));
+  assert_parsed_expression_is("0xG", Multiplication::Builder(BasedInteger::Builder(0),Multiplication::Builder(Symbol::Builder("x", 1),Symbol::Builder("G", 1))));
   assert_parsed_expression_is("1x+2", Addition::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)),BasedInteger::Builder(2)));
   assert_parsed_expression_is("1π", Multiplication::Builder(BasedInteger::Builder(1),Constant::Builder("π")));
   assert_parsed_expression_is("1x-2", Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)),BasedInteger::Builder(2)));

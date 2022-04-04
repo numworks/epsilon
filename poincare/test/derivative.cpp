@@ -114,7 +114,7 @@ void assert_approximate_to(const char * expression, const char * result, Prefere
 
 QUIZ_CASE(poincare_derivative_approximation) {
   assert_approximate_to("diff(2×x, x, 2)", "2");
-  assert_approximate_to("diff(2×TO^2, TO, 7)", "28");
+  assert_approximate_to("diff(2×\"TO\"^2, \"TO\", 7)", "28");
   assert_approximate_to("diff(ln(x),x,1)", "1");
   assert_approximate_to("diff(ln(x),x,2.2)", "0.455");
   assert_approximate_to("diff(ln(x),x,0)", Undefined::Name());

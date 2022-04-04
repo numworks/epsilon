@@ -510,7 +510,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("binompdf(_s,2,3)", "undef");
   assert_parsed_expression_simplify_to("binompdf(2,_s,3)", "undef");
   assert_parsed_expression_simplify_to("binompdf(2,3,_s)", "undef");
-  assert_parsed_expression_simplify_to("ceiling(_s)", "undef");
   assert_parsed_expression_simplify_to("conj(_s)", "undef");
   assert_parsed_expression_simplify_to("cos(_s)", "undef");
   assert_parsed_expression_simplify_to("cosh(_s)", "undef");
@@ -1306,6 +1305,34 @@ QUIZ_CASE(poincare_simplification_store_matrix) {
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+}
+
+QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
+  assert_parsed_expression_simplify_to("abc", "a×b×c");
+  assert_parsed_expression_simplify_to("\"abc\"", "\"abc\"");
+  assert_parsed_expression_simplify_to("2→a", "2");
+  assert_parsed_expression_simplify_to("5→bc", "5");
+  assert_parsed_expression_simplify_to("abc", "10"); // a*bc
+  assert_parsed_expression_simplify_to("aa", "4");
+  assert_parsed_expression_simplify_to("10→aa", "10");
+  assert_parsed_expression_simplify_to("aa", "10");
+  assert_parsed_expression_simplify_to("aaa", "20"); // Parsed to a*aa
+  assert_parsed_expression_simplify_to("aaaaa", "200"); // Parsed to a*aa*aa
+  assert_parsed_expression_simplify_to("acos(b)", "acos(b)");
+  assert_parsed_expression_simplify_to("aacos(b)", "2×acos(b)");
+  assert_parsed_expression_simplify_to("t→bar(t)", "t");
+  assert_parsed_expression_simplify_to("8→foo", "8");
+  assert_parsed_expression_simplify_to("foobar(t)", "dep\u0014(8×t,[[t]])");
+  assert_parsed_expression_simplify_to("t^2→foobar(t)", "t^2");
+  assert_parsed_expression_simplify_to("foobar(t)", "dep\u0014(t^2,[[t]])");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("bc.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("aa.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("bar.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("foo.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("foobar.func").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_unit_convert) {

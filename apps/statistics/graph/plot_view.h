@@ -12,16 +12,13 @@
 
 namespace Statistics {
 
-/* TODO : Add an intermediary class between MultipleDataView and View, as well
- *        as between MultipleDataViewController and ViewController +
- *        GraphButtonRowDelegate to avoid having to completely re-implement
- *        MultipleDataView's methods.
+/* TODO : Improve the  intermediary class DataViewController and DataView
  *        PlotView should disappear since Shared::CurveView has all the tools
  *        to handle a banner and a range. */
-class PlotView : public MultipleDataView {
+class PlotView : public DataView {
 public:
   PlotView(Store * store, PlotCurveView * plotCurveView, PlotRange * graphRange, PlotBannerView * bannerView) :
-    MultipleDataView(store),
+    DataView(store),
     m_plotCurveView(plotCurveView),
     m_graphRange(graphRange),
     m_bannerView(bannerView) {
@@ -31,10 +28,12 @@ public:
   int numberOfSubviews() const override { return 2; } // CurveView and Banner
   Escher::View * subviewAtIndex(int index) override;
   // All series are displayed in the same curve view
-  Shared::CurveView * dataViewAtIndex(int index) override { return m_plotCurveView; }
-  int seriesOfSubviewAtIndex(int index) override { return m_store->indexOfKthValidSeries(index); }
+  Shared::CurveView * curveViewForSeries(int series) override { return m_plotCurveView; }
   PlotBannerView * bannerView() override { return m_bannerView; }
   void reload() override;
+  // TODO : selectDataView and deselectDataView might be unnecessary
+  void selectDataView(int index) override;
+  void deselectDataView(int index) override;
 
 protected:
   void layoutDataSubviews(bool force) override;

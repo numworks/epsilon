@@ -9,7 +9,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 #include "../store.h"
-#include "multiple_data_view_controller.h"
+#include "data_view_controller.h"
 #include "plot_curve_view.h"
 #include "plot_banner_view.h"
 #include "plot_range.h"
@@ -34,7 +34,7 @@ public:
   virtual bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const { return false; }
 };
 
-class PlotController : public MultipleDataViewController, public PlotControllerDelegate {
+class PlotController : public DataViewController, public PlotControllerDelegate {
 public:
   PlotController(
     Escher::Responder * parentResponder,
@@ -45,8 +45,8 @@ public:
     Store * store
   );
 
-  // MultipleDataViewController
-  MultipleDataView * multipleDataView() override { return &m_view; }
+  // DataViewController
+  DataView * dataView() override { return &m_view; }
   bool moveSelectionHorizontally(int deltaIndex) override;
 
 protected:
@@ -57,7 +57,7 @@ protected:
     return std::max(0, std::min(index, numberOfPairs - 1));
   }
 
-  // MultipleDataViewController
+  // DataViewController
   void viewWillAppearBeforeReload() override;
   bool reloadBannerView() override;
   virtual const char * resultMessageTemplate() const = 0;

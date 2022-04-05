@@ -11,12 +11,7 @@ PlotController::PlotController(Escher::Responder * parentResponder,
                                Escher::StackViewController * stackViewController,
                                Escher::ViewController * typeViewController,
                                Store * store) :
-    MultipleDataViewController(parentResponder,
-                               tabController,
-                               header,
-                               stackViewController,
-                               typeViewController,
-                               store),
+    DataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
     m_view(store, &m_curveView, &m_graphRange, &m_bannerView),
     // No bannerView given to the curve view because the display is handled here
     m_curveView(&m_graphRange, &m_cursor, &m_cursorView, store, this)  {

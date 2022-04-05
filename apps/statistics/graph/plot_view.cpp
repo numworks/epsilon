@@ -17,6 +17,16 @@ void PlotView::reload() {
   m_plotCurveView->reload();
 }
 
+void PlotView::selectDataView(int index) {
+  m_plotCurveView->selectMainView(true);
+  m_plotCurveView->reload();
+}
+
+void PlotView::deselectDataView(int index) {
+  m_plotCurveView->selectMainView(false);
+  m_plotCurveView->reload();
+}
+
 void PlotView::layoutDataSubviews(bool force) {
   KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
   KDCoordinate subviewHeight = (bounds().height() - bannerHeight) + 1; // +1 to make sure that all pixel rows are drawn

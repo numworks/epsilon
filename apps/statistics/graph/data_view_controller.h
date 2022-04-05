@@ -35,7 +35,8 @@ protected:
   virtual bool reloadBannerView() = 0;
   virtual bool moveSelectionHorizontally(int deltaIndex) = 0;
   virtual bool moveSelectionVertically(int deltaIndex);
-  virtual void highlightSelection() {} // TODO : remove it ?
+  // Overriden with histograms only to highlight and scroll to the selected bar
+  virtual void highlightSelection() {}
 
   Store * m_store;
   int m_selectedSeries;

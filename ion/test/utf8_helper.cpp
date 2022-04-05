@@ -309,7 +309,7 @@ QUIZ_CASE(ion_utf8_code_point_at_glyph_offset) {
   quiz_assert(UTF8Helper::CodePointAtGlyphOffset(s, 0) == s);
   quiz_assert(UTF8Helper::CodePointAtGlyphOffset(s, 1) == s+1);
   quiz_assert(UTF8Helper::CodePointAtGlyphOffset(s, 2) == s+2);
-  s = "a∑∫𝐢ty";
+  s = "a∑∫ity";
   quiz_assert(UTF8Helper::CodePointAtGlyphOffset(s, 4) == s + strlen(s) - 2);
 }
 
@@ -318,7 +318,7 @@ QUIZ_CASE(ion_utf8_glyph_offset_at_code_point) {
   quiz_assert(UTF8Helper::GlyphOffsetAtCodePoint(s, s) == 0);
   quiz_assert(UTF8Helper::GlyphOffsetAtCodePoint(s, s+1) == 1);
   quiz_assert(UTF8Helper::GlyphOffsetAtCodePoint(s, s+2) == 2);
-  s = "a∑∫𝐢ty";
+  s = "a∑∫ity";
   quiz_assert(UTF8Helper::GlyphOffsetAtCodePoint(s, s + strlen(s) - 2) == 4);
 }
 
@@ -329,7 +329,7 @@ void assert_string_glyph_length_is(const char * string, int maxSize, size_t resu
 QUIZ_CASE(ion_utf8_helper_string_glyph_length) {
   assert_string_glyph_length_is("123", -1, 3);
   assert_string_glyph_length_is("1ᴇ3", -1, 3);
-  assert_string_glyph_length_is("∑∫𝐢", -1, 3);
+  assert_string_glyph_length_is("∑∫i", -1, 3);
   assert_string_glyph_length_is("123", 2, 2);
   uint8_t testString[] = {'a', 'b', 'c', 0b11111111, 0b11111111, 0}; // Malformed utf-8 string
   assert_string_glyph_length_is((const char *)testString, 3, 3);

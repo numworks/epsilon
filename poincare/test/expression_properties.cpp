@@ -246,7 +246,7 @@ QUIZ_CASE(poincare_properties_sign) {
   assert_reduced_expression_sign("random()", Positive);
   assert_reduced_expression_sign("42/3", Positive);
   assert_reduced_expression_sign("-23/32", Negative);
-  assert_reduced_expression_sign("𝐢", Unknown);
+  assert_reduced_expression_sign("i", Unknown);
   assert_reduced_expression_sign("-π", Negative);
   assert_reduced_expression_sign("π", Positive);
   assert_reduced_expression_sign("e", Positive);
@@ -313,21 +313,21 @@ void assert_expression_is_not_real(const char * expression) {
 
 QUIZ_CASE(poincare_properties_is_real) {
   assert_expression_is_real("atan(4)");
-  assert_expression_is_not_real("atan(𝐢)");
+  assert_expression_is_not_real("atan(i)");
   assert_expression_is_real("conj(4)");
-  assert_expression_is_not_real("conj(𝐢)");
+  assert_expression_is_not_real("conj(i)");
   assert_expression_is_real("sin(4)");
-  assert_expression_is_not_real("sin(𝐢)");
+  assert_expression_is_not_real("sin(i)");
   assert_expression_is_real("quo(2,3+a)");
   assert_expression_is_real("sign(2)");
   assert_expression_is_real("abs(2)");
   assert_expression_is_not_real("abs([[1,2]])");
   assert_expression_is_real("ceil(2)");
   assert_expression_is_not_real("ceil([[1,2]])");
-  assert_expression_is_not_real("1+2+3+3×𝐢");
+  assert_expression_is_not_real("1+2+3+3×i");
   assert_expression_is_real("1+2+3+root(2,3)");
   assert_expression_is_real("1×23×3×root(2,3)");
-  assert_expression_is_not_real("1×23×3×root(2,3)×3×𝐢");
+  assert_expression_is_not_real("1×23×3×root(2,3)×3×i");
   assert_expression_is_not_real("1×23×3×[[1,2]]");
   assert_expression_is_real("π");
   assert_expression_is_not_real("nonreal");
@@ -335,8 +335,8 @@ QUIZ_CASE(poincare_properties_is_real) {
   assert_expression_is_real("2.3");
   assert_expression_is_real("2^3.4");
   assert_expression_is_real("(-2)^(-3)");
-  assert_expression_is_not_real("𝐢^3.4");
-  assert_expression_is_not_real("2^(3.4𝐢)");
+  assert_expression_is_not_real("i^3.4");
+  assert_expression_is_not_real("2^(3.4i)");
   assert_expression_is_not_real("(-2)^0.4");
 }
 
@@ -516,7 +516,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   assert_reduce("1+π×x+x^2→f(x)");
   const char * coefficient4[] = {"1", "π", "1", 0}; //x^2+π×x+1
   assert_reduced_expression_has_polynomial_coefficient("f(x)", "x", coefficient4);
-  const char * coefficient5[] = {"0", "𝐢", 0}; //√(-1)x
+  const char * coefficient5[] = {"0", "i", 0}; //√(-1)x
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x", coefficient5);
   const char * coefficient6[] = {0}; //√(-1)x
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x", coefficient6, Real);

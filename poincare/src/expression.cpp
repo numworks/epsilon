@@ -490,7 +490,7 @@ void Expression::SetEncounteredComplex(bool encounterComplex) {
 }
 
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput) {
-  if (complexFormat == Preferences::ComplexFormat::Real && UTF8Helper::HasCodePoint(textInput, UCodePointMathematicalBoldSmallI)) {
+  if (complexFormat == Preferences::ComplexFormat::Real && UTF8Helper::HasCodePoint(textInput, 'i')) {
     return Preferences::ComplexFormat::Cartesian;
   }
   return complexFormat;
@@ -507,7 +507,7 @@ bool Expression::hasComplexI(Context * context) const {
   return recursivelyMatches(
       [](const Expression e, Context * context) {
         return e.type() == ExpressionNode::Type::ConstantMaths
-               && static_cast<const Constant &>(e).isConstant("𝐢");
+               && static_cast<const Constant &>(e).isConstant("i");
       },
       context);
 }
@@ -1050,9 +1050,9 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       }
       if (!isZeroTb) {
         if (isOneTb) {
-          imag = Constant::Builder("𝐢");
+          imag = Constant::Builder("i");
         } else {
-          imag = Multiplication::Builder(tb, Constant::Builder("𝐢"));
+          imag = Multiplication::Builder(tb, Constant::Builder("i"));
           imag.shallowAddMissingParenthesis();
         }
       }
@@ -1090,9 +1090,9 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       if (!isZeroRa && !isZeroTb) {
         Expression arg;
         if (isOneTb) {
-          arg = Constant::Builder("𝐢");
+          arg = Constant::Builder("i");
         } else {
-          arg = Multiplication::Builder(tb, Constant::Builder("𝐢"));
+          arg = Multiplication::Builder(tb, Constant::Builder("i"));
         }
         if (isNegativeTb) {
           arg = Opposite::Builder(arg);

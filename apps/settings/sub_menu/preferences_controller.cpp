@@ -91,13 +91,13 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       return CodePointLayout::Builder('x', k_layoutFont);
     case I18n::Message::Cartesian:
     {
-      const char * text = "a+𝐢b";
+      const char * text = "a+ib";
       return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
     case I18n::Message::Polar:
     {
       const char * base = "re";
-      const char * superscript = "𝐢θ";
+      const char * superscript = "iθ";
       return HorizontalLayout::Builder(
           LayoutHelper::String(base, strlen(base), k_layoutFont),
           VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, strlen(superscript), k_layoutFont), VerticalOffsetLayoutNode::Position::Superscript)

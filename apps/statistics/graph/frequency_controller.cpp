@@ -7,7 +7,7 @@ namespace Statistics {
 void FrequencyController::viewWillAppearBeforeReload() {
   // Setup the adequate cursor before reloading the curve view
   if (m_continuousCursor) {
-    m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeriesIndex()));
+    m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
   }
   #ifdef GRAPH_CURSOR_SPEEDUP
   if (m_continuousCursor) {
@@ -65,9 +65,8 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   if (!m_continuousCursor) {
     return PlotController::moveSelectionHorizontally(deltaIndex);
   }
-  int series = selectedSeriesIndex();
-  assert(series >= 0);
-  int totValues = totalValues(series);
+  assert(m_selectedSeries >= 0);
+  int totValues = totalValues(m_selectedSeries);
   if (totValues <= 1) {
     return false;
   }
@@ -76,10 +75,10 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   double x = m_cursor.x() + step;
 
   // Find an index of value under x.
-  int index = getNextIndex(series, totValues, m_selectedIndex, -1, &x);
+  int index = getNextIndex(m_selectedSeries, totValues, m_selectedIndex, -1, &x);
 
   // Find the first index of value strictly above x.
-  int nextIndex = getNextIndex(series, totValues, index + 1, 1, &x);
+  int nextIndex = getNextIndex(m_selectedSeries, totValues, index + 1, 1, &x);
 
   if (x == m_cursor.x()) {
     // Cursor did not move
@@ -90,8 +89,8 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   m_selectedIndex = index = SanitizeIndex(nextIndex - 1, totValues);
   assert(index != nextIndex);
 
-  double xIndex = valueAtIndex(series, index);
-  double xNextIndex = valueAtIndex(series, nextIndex);
+  double xIndex = valueAtIndex(m_selectedSeries, index);
+  double xNextIndex = valueAtIndex(m_selectedSeries, nextIndex);
 
   double precision = std::fabs(step / 2.0);
 
@@ -103,8 +102,8 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
     // Update index values
     nextIndex = SanitizeIndex(nextIndex + 1, totValues);
     index = SanitizeIndex(nextIndex - 1, totValues);
-    xIndex = valueAtIndex(series, index);
-    xNextIndex = valueAtIndex(series, nextIndex);
+    xIndex = valueAtIndex(m_selectedSeries, index);
+    xNextIndex = valueAtIndex(m_selectedSeries, nextIndex);
   } else if (std::fabs(x) < precision) {
     // Round the cursor to 0 if it is close to it
     x = 0.0;
@@ -117,8 +116,8 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
 
   assert(x >= xIndex && x <= xNextIndex && nextIndex >= index && nextIndex - index <= 1);
 
-  double yIndex = resultAtIndex(series, index);
-  double yNextIndex = resultAtIndex(series, nextIndex);
+  double yIndex = resultAtIndex(m_selectedSeries, index);
+  double yNextIndex = resultAtIndex(m_selectedSeries, nextIndex);
 
   // Compute the cursor's position on the segment between the two indexes
   double y = yIndex + (yNextIndex - yIndex) * ((x - xIndex) / (xNextIndex - xIndex));
@@ -134,9 +133,9 @@ bool FrequencyController::moveSelectionVertically(int direction) {
    * - Continuous cursor isn't selected, and selection is going up
    * */
   if (m_continuousCursor == (direction == 1)) {
-    int previousSeries = selectedSeriesIndex();
+    int previousSeries = m_selectedSeries;
     bool result = PlotController::moveSelectionVertically(direction);
-    if (result && previousSeries != selectedSeriesIndex()) {
+    if (result && previousSeries != m_selectedSeries) {
       // Cursor has been moved into another curve, cursor must be switched
       switchCursor(true);
     }
@@ -148,10 +147,9 @@ bool FrequencyController::moveSelectionVertically(int direction) {
 }
 
 void FrequencyController::switchCursor(bool seriesChanged) {
-  int series = selectedSeriesIndex();
   m_continuousCursor = !m_continuousCursor;
   if (m_continuousCursor) {
-    m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(series));
+    m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
   }
   #ifdef GRAPH_CURSOR_SPEEDUP
   m_roundCursorView.resetMemoization();
@@ -159,8 +157,8 @@ void FrequencyController::switchCursor(bool seriesChanged) {
   m_curveView.setCursorView(m_continuousCursor ? &m_roundCursorView : &m_cursorView);
   if (!m_continuousCursor || seriesChanged) {
     // Cursor must be repositionned
-    double x = valueAtIndex(series, m_selectedIndex);
-    double y = resultAtIndex(series, m_selectedIndex);
+    double x = valueAtIndex(m_selectedSeries, m_selectedIndex);
+    double y = resultAtIndex(m_selectedSeries, m_selectedIndex);
     m_cursor.moveTo(x, x, y);
     m_curveView.reload();
   }

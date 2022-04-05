@@ -33,12 +33,11 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
 }
 
 bool BoxController::moveSelectionHorizontally(int deltaIndex) {
-  return m_view.moveSelectionHorizontally(selectedSeriesIndex(), deltaIndex);
+  return m_view.moveSelectionHorizontally(m_selectedSeries, deltaIndex);
 }
 
 bool BoxController::reloadBannerView() {
-  int series = selectedSeriesIndex();
-  if (series < 0) {
+  if (m_selectedSeries < 0) {
     return false;
   }
   KDCoordinate previousHeight = m_view.bannerView()->minimalSizeForOptimalDisplay().height();
@@ -50,17 +49,17 @@ bool BoxController::reloadBannerView() {
   char buffer[k_bufferSize] = "";
 
   // Display series name
-  StoreController::FillSeriesName(series, buffer, false);
+  StoreController::FillSeriesName(m_selectedSeries, buffer, false);
   m_view.bannerView()->seriesName()->setText(buffer);
 
   // Display calculation
-  int selectedBoxCalculation = m_view.dataViewAtIndex(series)->selectedBoxCalculation();
-  double value = m_store->boxPlotCalculationAtIndex(series, selectedBoxCalculation);
+  int selectedBoxCalculation = m_view.dataViewAtIndex(m_selectedSeries)->selectedBoxCalculation();
+  double value = m_store->boxPlotCalculationAtIndex(m_selectedSeries, selectedBoxCalculation);
   Poincare::Print::customPrintf(
     buffer,
     k_bufferSize,
     "%s%s%*.*ed",
-    I18n::translate(m_store->boxPlotCalculationMessageAtIndex(series, selectedBoxCalculation)),
+    I18n::translate(m_store->boxPlotCalculationMessageAtIndex(m_selectedSeries, selectedBoxCalculation)),
     I18n::translate(I18n::Message::StatisticsColonConvention),
     value, displayMode, precision
   );

@@ -19,7 +19,6 @@ public:
                              Escher::ViewController * typeViewController,
                              Store * store);
   virtual MultipleDataView * multipleDataView() = 0;
-  int selectedSeriesIndex() const { return m_selectedSeriesIndex; }
 
   // ViewController
   Escher::View * view() override { return multipleDataView(); }
@@ -40,7 +39,7 @@ protected:
 
   Escher::Responder * m_tabController;
   Store * m_store;
-  int m_selectedSeriesIndex;
+  int m_selectedSeries;
   int m_selectedIndex;
 };
 

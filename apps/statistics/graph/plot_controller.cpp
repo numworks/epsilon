@@ -28,24 +28,21 @@ void PlotController::viewWillAppearBeforeReload() {
   computeXBounds(&xMin, &xMax);
   m_graphRange.calibrate(m_curveView.bounds().width(), m_curveView.bounds().height(), horizontalMargin(), bottomMargin(), topMargin(), xMin, xMax, yMin, yMax);
   // Sanitize m_selectedBarIndex and cursor's position
-  int series = selectedSeriesIndex();
-  m_selectedIndex = SanitizeIndex(m_selectedIndex, totalValues(series));
-  double x = valueAtIndex(selectedSeriesIndex(), m_selectedIndex);
-  double y = resultAtIndex(selectedSeriesIndex(), m_selectedIndex);
+  m_selectedIndex = SanitizeIndex(m_selectedIndex, totalValues(m_selectedSeries));
+  double x = valueAtIndex(m_selectedSeries, m_selectedIndex);
+  double y = resultAtIndex(m_selectedSeries, m_selectedIndex);
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
 }
 
 bool PlotController::moveSelectionHorizontally(int deltaIndex) {
-  int series = selectedSeriesIndex();
-  assert(series >= 0);
-
-  int nextIndex = SanitizeIndex(m_selectedIndex + deltaIndex, totalValues(series));
+  assert(m_selectedSeries >= 0);
+  int nextIndex = SanitizeIndex(m_selectedIndex + deltaIndex, totalValues(m_selectedSeries));
   if (nextIndex != m_selectedIndex) {
     m_selectedIndex = nextIndex;
     // Compute coordinates
-    double x = valueAtIndex(series, nextIndex);
-    double y = resultAtIndex(series, nextIndex);
+    double x = valueAtIndex(m_selectedSeries, nextIndex);
+    double y = resultAtIndex(m_selectedSeries, nextIndex);
     m_cursor.moveTo(x, x, y);
     m_curveView.reload();
     return true;
@@ -54,8 +51,7 @@ bool PlotController::moveSelectionHorizontally(int deltaIndex) {
 }
 
 bool PlotController::reloadBannerView() {
-  int series = selectedSeriesIndex();
-  if (series < 0) {
+  if (m_selectedSeries < 0) {
     return false;
   }
   KDCoordinate previousHeight = m_bannerView.minimalSizeForOptimalDisplay().height();
@@ -67,7 +63,7 @@ bool PlotController::reloadBannerView() {
   char buffer[k_bufferSize] = "";
 
   // Display series name
-  StoreController::FillSeriesName(series, buffer, false);
+  StoreController::FillSeriesName(m_selectedSeries, buffer, false);
   m_bannerView.seriesName()->setText(buffer);
 
   // Display selected value

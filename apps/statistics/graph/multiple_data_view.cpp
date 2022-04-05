@@ -6,11 +6,6 @@ using namespace Escher;
 
 namespace Statistics {
 
-void MultipleDataView::setDisplayBanner(bool display) {
-  m_displayBanner = display;
-  layoutBanner(false);
-}
-
 void MultipleDataView::reload() {
   layoutSubviews();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
@@ -51,13 +46,6 @@ View * MultipleDataView::subviewAtIndex(int index) {
   return nullptr;
 }
 
-void MultipleDataView::layoutSubviews(bool force) {
-  // We need to set the banner width first, so its height can be computed
-  bannerView()->setFrame(KDRect(0, 0, bounds().width(), 0), force);
-  layoutDataSubviews(force);
-  layoutBanner(force);
-}
-
 void MultipleDataView::layoutDataSubviews(bool force) {
   int numberDataSubviews = m_store->numberOfValidSeries();
   assert(numberDataSubviews > 0);
@@ -77,28 +65,6 @@ void MultipleDataView::layoutDataSubviews(bool force) {
 void MultipleDataView::changeDataViewSelection(int index, bool select) {
   dataViewAtIndex(index)->selectMainView(select);
   dataViewAtIndex(index)->reload();
-}
-
-KDRect MultipleDataView::bannerFrame() const {
-  KDCoordinate bannerHeight = const_cast<MultipleDataView *>(this)->bannerView()->minimalSizeForOptimalDisplay().height();
-  KDRect frame = KDRect(0, bounds().height() - bannerHeight, bounds().width(), bannerHeight);
-  return frame;
-}
-
-void MultipleDataView::layoutBanner(bool force) {
-  KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
-  if (m_displayBanner) {
-    bannerView()->setFrame(bannerFrame(), force);
-  } else {
-    KDRect frame = KDRect(0, bounds().height() - bannerHeight, bounds().width(), 0);
-    bannerView()->setFrame(frame, force);
-  }
-}
-
-void MultipleDataView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (!m_displayBanner) {
-    ctx->fillRect(bannerFrame(), KDColorWhite);
-  }
 }
 
 }

@@ -523,7 +523,7 @@ QUIZ_CASE(calculation_complex_format) {
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
-  assertCalculationIs("1+𝐢", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1+𝐢", "1+𝐢", &globalContext, &store);
+  assertCalculationIs("1+i", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1+i", "1+i", &globalContext, &store);
   assertCalculationIs("√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "nonreal", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "nonreal", "nonreal", &globalContext, &store);
   assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "nonreal", "nonreal", &globalContext, &store);
@@ -532,22 +532,22 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "nonreal", "nonreal", &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
-  assertCalculationIs("1+𝐢", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1+𝐢", "1+𝐢", &globalContext, &store);
-  assertCalculationIs("√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "𝐢", "𝐢", &globalContext, &store);
+  assertCalculationIs("1+i", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1+i", "1+i", &globalContext, &store);
+  assertCalculationIs("√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "i", "i", &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "ln(-2)", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "-1", "-1", &globalContext, &store);
-  assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1+√(3)×𝐢", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "-2+2×√(3)×𝐢", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "root(8,4)/2+root(8,4)/2×𝐢", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1+√(3)×i", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "-2+2×√(3)×i", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "root(8,4)/2+root(8,4)/2×i", nullptr, nullptr, &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Polar);
-  assertCalculationIs("1+𝐢", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "√(2)×e^\u0012π/4×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "e^\u0012π/2×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("1+i", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "√(2)×e^\u0012π/4×i\u0013", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "e^\u0012π/2×i\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "ln(-2)", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, "e^\u00123.141592654×𝐢\u0013", "e^\u00123.1415926535898×𝐢\u0013", &globalContext, &store);
-  assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "2×e^\u0012π/3×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "4×e^\u0012\u00122×π\u0013/3×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "root(2,4)×e^\u0012π/4×𝐢\u0013", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, "e^\u00123.141592654×i\u0013", "e^\u00123.1415926535898×i\u0013", &globalContext, &store);
+  assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "2×e^\u0012π/3×i\u0013", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "4×e^\u0012\u00122×π\u0013/3×i\u0013", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "root(2,4)×e^\u0012π/4×i\u0013", nullptr, nullptr, &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
 }
@@ -561,13 +561,13 @@ QUIZ_CASE(calculation_involving_sequence) {
   Ion::Storage::Record record = seqStore->recordAtIndex(seqStore->numberOfModels()-1);
   Shared::Sequence * u = seqStore->modelForRecord(record);
   u->setType(Shared::Sequence::Type::Explicit);
-  err = u->setContent("𝐢", &globalContext);
+  err = u->setContent("i", &globalContext);
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void) err; // Silence compilation warning.
 
   CalculationStore calcStore(calculationBuffer,calculationBufferSize);
 
-  assertMainCalculationOutputIs("√(𝐢×u(0))×√(6)", "undef", &globalContext, &calcStore);
+  assertMainCalculationOutputIs("√(i×u(0))×√(6)", "undef", &globalContext, &calcStore);
   seqStore->removeAll();
   seqStore->tidyDownstreamPoolFrom();
 }

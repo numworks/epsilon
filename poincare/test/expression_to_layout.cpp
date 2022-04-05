@@ -93,8 +93,8 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(SquareRoot::Builder(Rational::Builder(2)), Rational::Builder(2)), "√\u00122\u0013×2");
   // 2π
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Constant::Builder("π")), "2π");
-  // π·𝐢
-  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Constant::Builder("π"), Constant::Builder("𝐢")), "π·𝐢");
+  // π·i
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Constant::Builder("π"), Constant::Builder("i")), "π·i");
   // conj(2)√(2)
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Conjugate::Builder(Rational::Builder(2)), SquareRoot::Builder(Rational::Builder(2))), "conj\u00122\u0013√\u00122\u0013");
   //√(2)a!

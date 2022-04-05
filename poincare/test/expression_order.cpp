@@ -27,9 +27,9 @@ void assert_greater(Expression e1, Expression e2) {
 QUIZ_CASE(poincare_expression_order_constant) {
   assert_greater(Constant::Builder("c"), Constant::Builder("e"));
   assert_greater(Constant::Builder("G"), Constant::Builder("π"));
-  assert_greater(Constant::Builder("π"), Constant::Builder("𝐢"));
+  assert_greater(Constant::Builder("π"), Constant::Builder("i"));
   assert_greater(Constant::Builder("e"), Constant::Builder("π"));
-  assert_greater(Constant::Builder("e"), Constant::Builder("𝐢"));
+  assert_greater(Constant::Builder("e"), Constant::Builder("i"));
 }
 
 QUIZ_CASE(poincare_expression_order_decimal) {
@@ -120,7 +120,7 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
   {
     // pi + i + e -> e + pi + i
     Expression pi = Constant::Builder("π");
-    Expression i = Constant::Builder("𝐢");
+    Expression i = Constant::Builder("i");
     Expression e = Constant::Builder("e");
     Expression e1 = Addition::Builder({pi.clone(), i.clone(), e.clone()});
     Expression e2 = Addition::Builder({e, pi, i});
@@ -216,11 +216,11 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
   }
 
   {
-    // ∑Matrix + 𝐢  -> 𝐢 + ∑Matrix
+    // ∑Matrix + i  -> i + ∑Matrix
     Expression childMatrix = Matrix::Builder();
     static_cast<Matrix &>(childMatrix).addChildAtIndexInPlace(Rational::Builder(0), 0, 0);
     Expression child1 = Sum::Builder(childMatrix, Symbol::Builder('n'), Rational::Builder(0), Rational::Builder(0));
-    Expression child2 = Symbol::Builder(UCodePointMathematicalBoldSmallI);
+    Expression child2 = Symbol::Builder('i');
     Expression e1 = Addition::Builder(child1.clone(), child2.clone());
     Expression e2 = Addition::Builder(child2, child1);
     assert_multiplication_or_addition_is_ordered_as(e1, e2);

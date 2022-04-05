@@ -2,9 +2,22 @@
 
 namespace Statistics {
 
+void DataView::selectViewForSeries(int series) {
+  changeDataViewSeriesSelection(series, true);
+}
+
+void DataView::deselectViewForSeries(int series) {
+  changeDataViewSeriesSelection(series, false);
+}
+
 void DataView::setDisplayBanner(bool display) {
   m_displayBanner = display;
   layoutBanner(false);
+}
+
+void DataView::changeDataViewSeriesSelection(int series, bool select) {
+  curveViewForSeries(series)->selectMainView(select);
+  curveViewForSeries(series)->reload();
 }
 
 KDRect DataView::bannerFrame() const {

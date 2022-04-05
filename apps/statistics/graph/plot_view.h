@@ -31,8 +31,6 @@ public:
   Shared::CurveView * curveViewForSeries(int series) override { return m_plotCurveView; }
   PlotBannerView * bannerView() override { return m_bannerView; }
   void reload() override;
-  void selectViewForSeries(int series) override;
-  void deselectViewForSeries(int series) override;
 
 protected:
   void layoutDataSubviews(bool force) override;

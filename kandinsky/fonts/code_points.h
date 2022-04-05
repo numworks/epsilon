@@ -146,7 +146,6 @@ uint32_t CodePoints[] = {
   0x3c3,   // σ // GREEK SMALL LETTER SIGMA
   0x3C7,   // χ // GREEK SMALL LETTER CHI
   0x1d07,  // ᴇ // LATIN LETTER SMALL CAPITAL E
- // 0x212f,  // ℯ // SCRIPT SMALL E
   0x2192,  // → // RIGHTWARDS ARROW
   0x2211,  // ∑ // N-ARY SUMMATION
   0x221a,  // √ // SQUARE ROOT
@@ -155,7 +154,6 @@ uint32_t CodePoints[] = {
   0x2264,  // ≤ // LESS-THAN OR EQUAL TO
   0x2265,  // ≥ // GREATER-THAN OR EQUAL TO
   0xFFFD,  // � // REPLACEMENT CHARACTER
- // 0x1D422, // 𝐢 // MATHEMATICAL BOLD SMALL I"
 };
 
 const int NumberOfCodePoints = sizeof(CodePoints)/sizeof(CodePoints[0]);

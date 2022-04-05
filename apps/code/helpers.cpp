@@ -12,6 +12,9 @@ const char * PythonTextForEvent(Ion::Events::Event event) {
   if (event == Ion::Events::XNT) {
     return "x";
   }
+  if (event == Ion::Events::Imaginary) {
+    return "1j";
+  }
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
   Ion::Events::copyText(static_cast<uint8_t>(event), buffer, Ion::Events::EventData::k_maxDataSize);
   if (buffer[0] == 0) {

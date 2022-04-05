@@ -32,7 +32,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
   if (header()->selectedButton() >= 0) {
     if (event == Ion::Events::Up) {
       header()->setSelectedButton(-1);
-      Escher::Container::activeApp()->setFirstResponder(tabController());
+      Escher::Container::activeApp()->setFirstResponder(m_tabController);
       return true;
     }
     if (event == Ion::Events::Down) {
@@ -72,8 +72,8 @@ void DataViewController::didEnterResponderChain(Responder * firstResponder) {
 }
 
 void DataViewController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
-    assert(tabController() != nullptr);
+  if (nextFirstResponder == m_tabController) {
+    assert(m_tabController != nullptr);
     if (header()->selectedButton() >= 0) {
       header()->setSelectedButton(-1);
     } else {

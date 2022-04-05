@@ -31,7 +31,6 @@ public:
 
 protected:
   void sanitizeSeriesIndex();
-  Escher::Responder * tabController() { return m_tabController; } // TODO : remove it
   virtual void viewWillAppearBeforeReload() {}
   virtual bool reloadBannerView() = 0;
   virtual bool moveSelectionHorizontally(int deltaIndex) = 0;
@@ -47,6 +46,5 @@ private:
 };
 
 }
-
 
 #endif

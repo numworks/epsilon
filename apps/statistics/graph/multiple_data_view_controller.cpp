@@ -13,7 +13,7 @@ MultipleDataViewController::MultipleDataViewController(Responder * parentRespond
     GraphButtonRowDelegate(header, stackViewController, this, typeViewController),
     m_tabController(tabController),
     m_store(store),
-    m_selectedSeriesIndex(-1),
+    m_selectedSeries(-1),
     m_selectedIndex(MultipleDataView::k_defaultSelectedIndex) {
   assert(numberOfButtons(Escher::ButtonRowController::Position::Top) > 0);
 }
@@ -42,14 +42,14 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
       header()->setSelectedButton(-1);
       Container::activeApp()->setFirstResponder(this);
       multipleDataView()->setDisplayBanner(true);
-      multipleDataView()->selectDataView(m_selectedSeriesIndex);
+      multipleDataView()->selectDataView(m_selectedSeries);
       highlightSelection();
       reloadBannerView();
       return true;
     }
     return false;
   }
-  assert(m_selectedSeriesIndex >= 0);
+  assert(m_selectedSeries >= 0);
   bool isVerticalEvent = (event == Ion::Events::Down || event == Ion::Events::Up);
   if ((isVerticalEvent || event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = (event == Ion::Events::Up || event == Ion::Events::Left) ? -1 : 1;
@@ -64,12 +64,12 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void MultipleDataViewController::didEnterResponderChain(Responder * firstResponder) {
-  assert(m_store->seriesIsValid(m_selectedSeriesIndex));
-  if (!multipleDataView()->dataViewAtIndex(m_selectedSeriesIndex)->isMainViewSelected()) {
+  assert(m_store->seriesIsValid(m_selectedSeries));
+  if (!multipleDataView()->dataViewAtIndex(m_selectedSeries)->isMainViewSelected()) {
     header()->setSelectedButton(0);
   } else {
     multipleDataView()->setDisplayBanner(true);
-    multipleDataView()->selectDataView(m_selectedSeriesIndex);
+    multipleDataView()->selectDataView(m_selectedSeries);
     highlightSelection();
   }
 }
@@ -80,19 +80,19 @@ void MultipleDataViewController::willExitResponderChain(Responder * nextFirstRes
     if (header()->selectedButton() >= 0) {
       header()->setSelectedButton(-1);
     } else {
-      assert(m_selectedSeriesIndex >= 0);
-      multipleDataView()->deselectDataView(m_selectedSeriesIndex);
+      assert(m_selectedSeries >= 0);
+      multipleDataView()->deselectDataView(m_selectedSeries);
       multipleDataView()->setDisplayBanner(false);
     }
   }
 }
 
 void MultipleDataViewController::sanitizeSeriesIndex() {
-  // Sanitize m_selectedSeriesIndex
-  if (m_selectedSeriesIndex < 0 || !m_store->seriesIsValid(m_selectedSeriesIndex)) {
+  // Sanitize m_selectedSeries
+  if (m_selectedSeries < 0 || !m_store->seriesIsValid(m_selectedSeries)) {
     for (int series = 0; series < Store::k_numberOfSeries; series++) {
       if (m_store->seriesIsValid(series)) {
-        m_selectedSeriesIndex = series;
+        m_selectedSeries = series;
         return;
       }
     }
@@ -101,18 +101,18 @@ void MultipleDataViewController::sanitizeSeriesIndex() {
 }
 
 bool MultipleDataViewController::moveSelectionVertically(int direction) {
-  int nextSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(m_selectedSeriesIndex) + direction;
+  int nextSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(m_selectedSeries) + direction;
   if (nextSelectedSubview >= m_store->numberOfValidSeries()) {
     return false;
   }
-  multipleDataView()->deselectDataView(m_selectedSeriesIndex);
+  multipleDataView()->deselectDataView(m_selectedSeries);
   if (nextSelectedSubview < 0) {
     multipleDataView()->setDisplayBanner(false);
     header()->setSelectedButton(0);
   } else {
-    m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(nextSelectedSubview);
+    m_selectedSeries = multipleDataView()->seriesOfSubviewAtIndex(nextSelectedSubview);
     m_selectedIndex = MultipleDataView::k_defaultSelectedIndex;
-    multipleDataView()->selectDataView(m_selectedSeriesIndex);
+    multipleDataView()->selectDataView(m_selectedSeries);
     highlightSelection();
   }
   return true;

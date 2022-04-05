@@ -37,6 +37,15 @@ void Store::invalidateSortedIndexes() {
   }
 }
 
+int Store::validSeriesIndex(int series) const {
+  assert(seriesIsValid(series));
+  int index = 0;
+  for (int i = 0; i < series; i++) {
+    index += seriesIsValid(i);
+  }
+  return index;
+}
+
 /* Histogram bars */
 
 void Store::setBarWidth(double barWidth) {

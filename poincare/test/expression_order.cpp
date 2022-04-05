@@ -25,11 +25,11 @@ void assert_greater(Expression e1, Expression e2) {
 }
 
 QUIZ_CASE(poincare_expression_order_constant) {
-  assert_greater(Constant::Builder("c"), Constant::Builder("ℯ"));
+  assert_greater(Constant::Builder("c"), Constant::Builder("e"));
   assert_greater(Constant::Builder("G"), Constant::Builder("π"));
   assert_greater(Constant::Builder("π"), Constant::Builder("𝐢"));
-  assert_greater(Constant::Builder("ℯ"), Constant::Builder("π"));
-  assert_greater(Constant::Builder("ℯ"), Constant::Builder("𝐢"));
+  assert_greater(Constant::Builder("e"), Constant::Builder("π"));
+  assert_greater(Constant::Builder("e"), Constant::Builder("𝐢"));
 }
 
 QUIZ_CASE(poincare_expression_order_decimal) {
@@ -121,7 +121,7 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
     // pi + i + e -> e + pi + i
     Expression pi = Constant::Builder("π");
     Expression i = Constant::Builder("𝐢");
-    Expression e = Constant::Builder("ℯ");
+    Expression e = Constant::Builder("e");
     Expression e1 = Addition::Builder({pi.clone(), i.clone(), e.clone()});
     Expression e2 = Addition::Builder({e, pi, i});
     assert_multiplication_or_addition_is_ordered_as(e1, e2);

@@ -24,7 +24,7 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(√(x),x,x)", "dep\u0014(1/\u00122×√(x)\u0013,[[√(x)]])");
   assert_reduces_to_formal_expression("diff(1/x,x,x)", "dep\u0014(-1/x^2,[[1/x]])");
 
-  assert_reduces_to_formal_expression("diff(ℯ^x,x,x)", "dep\u0014(ℯ^\u0012x\u0013,[[ℯ^\U00000012x\U00000013]])");
+  assert_reduces_to_formal_expression("diff(e^x,x,x)", "dep\u0014(e^\u0012x\u0013,[[e^\U00000012x\U00000013]])");
   assert_reduces_to_formal_expression("diff(2^x,x,x)", "dep\u0014(2^x×ln(2),[[2^x]])");
   assert_reduces_to_formal_expression("diff(ln(x),x,x)", "dep\u0014(1/x,[[ln(x)]])");
   assert_reduces_to_formal_expression("diff(log(x),x,x)", "dep\u0014(1/\u0012x×ln(5)+x×ln(2)\u0013,[[log(x)]])");

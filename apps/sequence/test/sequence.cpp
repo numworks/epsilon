@@ -449,7 +449,7 @@ QUIZ_CASE(sequence_evaluation) {
   definitions[1] = "2*v(0)";
   definitions[2] = "2^(u(0))";
   check_sequences_defined_by(results34, types, definitions, conditions1, conditions2);
-  definitions[0] = "ℯ^(u(0))";
+  definitions[0] = "e^(u(0))";
   definitions[1] = "√(v(0))";
   definitions[2] = "log(u(0))";
   check_sequences_defined_by(results34, types, definitions, conditions1, conditions2);

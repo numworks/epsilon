@@ -215,7 +215,7 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_parsed_expression_is("2--2+-1", Addition::Builder(Subtraction::Builder(BasedInteger::Builder(2),Opposite::Builder(BasedInteger::Builder(2))),Opposite::Builder(BasedInteger::Builder(1))));
   assert_parsed_expression_is("2--2×-1", Subtraction::Builder(BasedInteger::Builder(2),Opposite::Builder(Multiplication::Builder(BasedInteger::Builder(2),Opposite::Builder(BasedInteger::Builder(1))))));
   assert_parsed_expression_is("-1^2", Opposite::Builder(Power::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2))));
-  assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("ℯ"),Parenthesis::Builder(BasedInteger::Builder(3)))));
+  assert_parsed_expression_is("2e^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("e"),Parenthesis::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_is("2/-3/-4", Division::Builder(Division::Builder(BasedInteger::Builder(2),Opposite::Builder(BasedInteger::Builder(3))),Opposite::Builder(BasedInteger::Builder(4))));
   assert_parsed_expression_is("1×2-3×4", Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)),Multiplication::Builder(BasedInteger::Builder(3),BasedInteger::Builder(4))));
   assert_parsed_expression_is("-1×2", Opposite::Builder(Multiplication::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2))));
@@ -403,7 +403,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("ans", Symbol::Builder("Ans", 3));
   assert_parsed_expression_is("𝐢", Constant::Builder("𝐢"));
   assert_parsed_expression_is("π", Constant::Builder("π"));
-  assert_parsed_expression_is("ℯ", Constant::Builder("ℯ"));
+  assert_parsed_expression_is("e", Constant::Builder("e"));
   assert_parsed_expression_is(Infinity::Name(), Infinity::Builder(false));
   assert_parsed_expression_is(Undefined::Name(), Undefined::Builder());
 
@@ -545,7 +545,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("sin(1)2", Multiplication::Builder(Sine::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(2)));
   assert_parsed_expression_is("1cos(2)", Multiplication::Builder(BasedInteger::Builder(1),Cosine::Builder(BasedInteger::Builder(2))));
   assert_parsed_expression_is("1!2", Multiplication::Builder(Factorial::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(2)));
-  assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("ℯ"),Parenthesis::Builder(BasedInteger::Builder(3)))));
+  assert_parsed_expression_is("2e^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("e"),Parenthesis::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_is("\u00122^3\u00133", Multiplication::Builder(Power::Builder(BasedInteger::Builder(2),BasedInteger::Builder(3)), BasedInteger::Builder(3)));
   Expression m1[] = {BasedInteger::Builder(1)}; Matrix M1 = BuildMatrix(1,1,m1);
   Expression m2[] = {BasedInteger::Builder(2)}; Matrix M2 = BuildMatrix(1,1,m2);

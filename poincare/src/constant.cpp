@@ -24,7 +24,7 @@ ConstantNode::ConstantNode(const char * newName, int length) : SymbolAbstractNod
 
 ExpressionNode::Sign ConstantNode::sign(Context * context) const {
   ConstantInfo info = constantInfo();
-  if (isConstant("π", info) || isConstant("ℯ", info)) {
+  if (isConstant("π", info) || isConstant("e", info)) {
     return Sign::Positive;
   }
   return Sign::Unknown;
@@ -37,7 +37,7 @@ Expression ConstantNode::setSign(Sign s, ReductionContext reductionContext) {
 
 bool ConstantNode::isReal() const {
   ConstantInfo info = constantInfo();
-  return isConstant("π", info) || isConstant("ℯ", info);
+  return isConstant("π", info) || isConstant("e", info);
 }
 
 int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
@@ -110,7 +110,7 @@ bool Constant::IsConstant(const char * name, size_t length) {
 
 Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   ConstantNode::ConstantInfo info = constantInfo();
-  if (isConstant("ℯ", info) || isConstant("π", info)) {
+  if (isConstant("e", info) || isConstant("π", info)) {
     return *this;
   }
   Expression result;

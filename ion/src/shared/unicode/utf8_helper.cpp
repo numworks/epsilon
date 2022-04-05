@@ -186,7 +186,7 @@ void TryAndReplacePatternsInStringByPatterns(char * text, int textMaxLength, con
        * events and TextPair("√", "sqrt") for the copy paste, we store just the
        * first and register it as "function". Therefore we can decide to remove
        * the (\x11) part or not depending on the application. This process is
-       * repeated for all 4 function keys usable in python (√, ℯ, ln, log)*/
+       * repeated for all 4 function keys usable in python (√, e, ln, log)*/
       if (p.removeParenthesesExtension()) {
         firstStringLength -= lengthOfParenthesisExtension;
         secondStringLength -= lengthOfParenthesisExtension;

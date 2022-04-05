@@ -166,7 +166,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
   }
 
   if (Poincare::Preferences::sharedPreferences()->basedLogarithmIsForbidden()) {
-    if (!((base.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant&>(base).isConstant("ℯ")) ||
+    if (!((base.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant&>(base).isConstant("e")) ||
           (base.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(base).isTen()))) {
       return replaceWithUndefinedInPlace();
     }
@@ -209,7 +209,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
       }
       replaceWithInPlace(c);
       return c;
-    } else if (base.type() == ExpressionNode::Type::ConstantMaths && (static_cast<Constant &>(base).isConstant("ℯ") || static_cast<Constant &>(base).isConstant("π"))) {
+    } else if (base.type() == ExpressionNode::Type::ConstantMaths && (static_cast<Constant &>(base).isConstant("e") || static_cast<Constant &>(base).isConstant("π"))) {
       replaceWithInPlace(c);
       return c;
     }
@@ -395,7 +395,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Expre
 
 Expression Logarithm::shallowBeautify() {
   assert(numberOfChildren() == 2);
-  Constant e = Constant::Builder("ℯ");
+  Constant e = Constant::Builder("e");
   if (childAtIndex(1).isIdenticalTo(e)) {
     NaperianLogarithm np = NaperianLogarithm::Builder(childAtIndex(0));
     replaceWithInPlace(np);

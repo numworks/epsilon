@@ -243,7 +243,7 @@ QUIZ_CASE(poincare_function_root) {
     constexpr int numberOfRoots = 1;
     Coordinate2D<double> roots[numberOfRoots] = {
       Coordinate2D<double>(NAN, 0.0)};
-    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "ℯ^a", nullptr, "a", -1000.0, -800);
+    assert_points_of_interest_are(PointOfInterestType::Root, numberOfRoots, roots, "e^a", nullptr, "a", -1000.0, -800);
   }
   {
     constexpr int numberOfRoots = 1;

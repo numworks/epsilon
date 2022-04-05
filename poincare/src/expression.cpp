@@ -1098,7 +1098,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
           arg = Opposite::Builder(arg);
         }
         arg.shallowAddMissingParenthesis();
-        exp = Power::Builder(Constant::Builder("ℯ"), arg);
+        exp = Power::Builder(Constant::Builder("e"), arg);
         exp.shallowAddMissingParenthesis();
       }
       if (exp.isUninitialized()) {

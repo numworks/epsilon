@@ -103,8 +103,8 @@ QUIZ_CASE(equation_solve) {
   assert_solves_numerically_to("1/cos(x)=0", 0, 10000, {});
   assert_solves_numerically_to("√(y)=0", -900, 1000, {0}, "y");
   assert_solves_numerically_to("√(y+1)=0", -900, 1000, {-1}, "y");
-  assert_solves_numerically_to("ℯ^x=0", -1000, 1000, {});
-  assert_solves_numerically_to("ℯ^x/1000=0", -1000, 1000, {});
+  assert_solves_numerically_to("e^x=0", -1000, 1000, {});
+  assert_solves_numerically_to("e^x/1000=0", -1000, 1000, {});
   assert_solves_numerically_to("(x-1)/(2×(x-2)^2)=20.8", -10, 10, {1.856511, 2.167528});
   assert_solves_numerically_to("8x^4-22x^2+15=0", -10, 10, {-1.224745, -1.118034, 1.118034, 1.224745});
   assert_solves_numerically_to("(3x)^3/(0.1-3x)^3=10^(-8)", -10, 10, {0.000071660});
@@ -168,11 +168,11 @@ QUIZ_CASE(equation_solve_complex_cartesian) {
 
 QUIZ_CASE(equation_solve_complex_polar) {
   set_complex_format(Polar);
-  assert_solves_to("x+𝐢=0", "x=ℯ^(-(π/2)𝐢)");
-  assert_solves_to("x+√(-1)=0", "x=ℯ^(-(π/2)𝐢)");
-  assert_solves_to("x^2+x+1=0", {"x=ℯ^(-(2π/3)𝐢)", "x=ℯ^((2π/3)𝐢)", "delta=3ℯ^(π𝐢)"});
-  assert_solves_to("x^2-√(-1)=0", {"x=ℯ^(-(3π/4)𝐢)", "x=ℯ^((π/4)𝐢)", "delta=4ℯ^((π/2)𝐢)"});
-  assert_solves_to("root(-8,3)*x+3=0", "x=3/2×ℯ^((2π/3)𝐢)");
+  assert_solves_to("x+𝐢=0", "x=e^(-(π/2)𝐢)");
+  assert_solves_to("x+√(-1)=0", "x=e^(-(π/2)𝐢)");
+  assert_solves_to("x^2+x+1=0", {"x=e^(-(2π/3)𝐢)", "x=e^((2π/3)𝐢)", "delta=3e^(π𝐢)"});
+  assert_solves_to("x^2-√(-1)=0", {"x=e^(-(3π/4)𝐢)", "x=e^((π/4)𝐢)", "delta=4e^((π/2)𝐢)"});
+  assert_solves_to("root(-8,3)*x+3=0", "x=3/2×e^((2π/3)𝐢)");
   reset_complex_format();
 }
 

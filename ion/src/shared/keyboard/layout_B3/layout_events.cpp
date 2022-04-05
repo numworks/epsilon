@@ -14,7 +14,7 @@ const EventData s_dataForEvent[4 * Event::PageSize] = {
   TL(), TL(), TL(), TL(), TL(), TL(),
   TL(), U(), TL(), U(),  U(),  U(),
   TL(), TL(), TL(), TL(), TL(), TL(),
-  T("e^(\x11)"), T("ln(\x11)"),  T("log(\x11)"), T("𝐢"), T(","), T("^"),
+  T("e^(\x11)"), T("ln(\x11)"),  T("log(\x11)"), T("i"), T(","), T("^"),
   T("sin(\x11)"), T("cos(\x11)"), T("tan(\x11)"), T("π"), T("√(\x11)"), T("^2"),
   T("7"), T("8"), T("9"), T("("), T(")"), U(),
   T("4"), T("5"), T("6"), T("×"), T("/"), U(),

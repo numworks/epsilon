@@ -88,7 +88,7 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(abs(x),x,-2.34)", "-1");
   assert_reduces_for_approximation("diff(abs(x),x,0)", Undefined::Name());
 
-  assert_reduces_for_approximation("diff(√(x),x,-1)", "-𝐢/2", Radian, Cartesian);
+  assert_reduces_for_approximation("diff(√(x),x,-1)", "-i/2", Radian, Cartesian);
 
   assert_reduces_for_approximation("diff(asin(x),x,1)", Undefined::Name());
   assert_reduces_for_approximation("diff(asin(x),x,-1)", Undefined::Name());

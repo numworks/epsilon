@@ -401,7 +401,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   // Reserved symbols
   assert_parsed_expression_is("Ans", Symbol::Builder("Ans", 3));
   assert_parsed_expression_is("ans", Symbol::Builder("Ans", 3));
-  assert_parsed_expression_is("𝐢", Constant::Builder("𝐢"));
+  assert_parsed_expression_is("i", Constant::Builder("i"));
   assert_parsed_expression_is("π", Constant::Builder("π"));
   assert_parsed_expression_is("e", Constant::Builder("e"));
   assert_parsed_expression_is(Infinity::Name(), Infinity::Builder(false));
@@ -561,7 +561,7 @@ QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {
   assert_parsed_expression_with_user_parentheses_is("1--2", Subtraction::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2)))));
   assert_parsed_expression_with_user_parentheses_is("1+conj(-2)", Addition::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(2))))));
   assert_parsed_expression_with_user_parentheses_is("1-conj(-2)", Subtraction::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(2))))));
-  assert_parsed_expression_with_user_parentheses_is("3conj(1+𝐢)", Multiplication::Builder(BasedInteger::Builder(3), Parenthesis::Builder(Conjugate::Builder(Addition::Builder(BasedInteger::Builder(1), Constant::Builder("𝐢"))))));
+  assert_parsed_expression_with_user_parentheses_is("3conj(1+i)", Multiplication::Builder(BasedInteger::Builder(3), Parenthesis::Builder(Conjugate::Builder(Addition::Builder(BasedInteger::Builder(1), Constant::Builder("i"))))));
   assert_parsed_expression_with_user_parentheses_is("2×-3", Multiplication::Builder(BasedInteger::Builder(2), Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_with_user_parentheses_is("2×-3", Multiplication::Builder(BasedInteger::Builder(2), Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_with_user_parentheses_is("--2", Opposite::Builder(Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2)))));

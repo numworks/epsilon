@@ -77,9 +77,9 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("x*y^2>1", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("2-y^2>log(x)", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("x*y^2=x", ContinuousFunction::PlotType::Unhandled);
-    assert_check_function_properties("y=𝐢*x+1", ContinuousFunction::PlotType::Unhandled);
+    assert_check_function_properties("y=i*x+1", ContinuousFunction::PlotType::Unhandled);
     // TODO : Handle this function
-    assert_check_function_properties("y=im(𝐢*x+1)", ContinuousFunction::PlotType::Unhandled);
+    assert_check_function_properties("y=im(i*x+1)", ContinuousFunction::PlotType::Unhandled);
   }
   // Restore an Off exam mode.
   Poincare::Preferences::sharedPreferences()->setPressToTestParams(Preferences::PressToTestParams({0}));

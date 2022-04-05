@@ -154,7 +154,7 @@ QUIZ_CASE(graph_ranges_several_functions) {
     assert_best_range_is(definitions, types, -1.63235319, 2.13235331, -0.800000011, 1.20000005);
   }
   {
-    const char * definitions[] = {"f(x)=e^(𝐢×x)", "g(t)=[[re(f(t))][im(f(t))]]"};
+    const char * definitions[] = {"f(x)=e^(i×x)", "g(t)=[[re(f(t))][im(f(t))]]"};
     ContinuousFunction::PlotType types[] = {Cartesian, Parametric};
     assert_best_range_is(definitions, types, -2.44705892, 2.44705892, -1.4, 1.2);
   }

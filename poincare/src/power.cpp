@@ -732,9 +732,9 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   /* Step 9
-   * Depending on the target, the constant 𝐢 is not always reduced to a
+   * Depending on the target, the constant i is not always reduced to a
    * cartesian, but its rational power can be simplified nonetheless. */
-  if (baseType == ExpressionNode::Type::ConstantMaths && static_cast<Constant &>(base).isConstant("𝐢")) {
+  if (baseType == ExpressionNode::Type::ConstantMaths && static_cast<Constant &>(base).isConstant("i")) {
     Expression result;
     Integer numerator = rationalIndex.signedIntegerNumerator();
     Integer four(4);
@@ -752,7 +752,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Integer denominator = rationalIndex.integerDenominator();
     Power p = Power::Builder(result, Rational::Builder(one, denominator));
     replaceWithInPlace(p);
-    if (result.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant &>(result).isConstant("𝐢")) {
+    if (result.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant &>(result).isConstant("i")) {
       // Don't shallowReduce to avoid infinite loop
       return std::move(p);
     } else {
@@ -1426,7 +1426,7 @@ bool Power::isNthRootOfUnity() const {
   const Expression i = index.childAtIndex(n - 2);
   const Expression pi = index.childAtIndex(n - 1);
   if (i.type() != ExpressionNode::Type::ConstantMaths
-      || !static_cast<const Constant &>(i).isConstant("𝐢")
+      || !static_cast<const Constant &>(i).isConstant("i")
       || pi.type() != ExpressionNode::Type::ConstantMaths
       || !static_cast<const Constant &>(pi).isConstant("π"))
   {
@@ -1438,7 +1438,7 @@ bool Power::isNthRootOfUnity() const {
 Expression Power::CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext) {
   // Returns e^(i*pi*r)
   const Constant exp = Constant::Builder("e");
-  Constant iComplex = Constant::Builder("𝐢");
+  Constant iComplex = Constant::Builder("i");
   const Constant pi = Constant::Builder("π");
   Multiplication mExp = Multiplication::Builder(iComplex, pi, r.clone());
   iComplex.shallowReduce(reductionContext);
@@ -1446,7 +1446,7 @@ Expression Power::CreateComplexExponent(const Expression & r, ExpressionNode::Re
   mExp.shallowReduce(reductionContext);
   return std::move(p);
 #if 0
-  const Constant iComplex = Constant::Builder("𝐢");
+  const Constant iComplex = Constant::Builder("i");
   const Constant pi = Constant::Builder("π");
   Expression op = Multiplication::Builder(pi, r).shallowReduce(reductionContext, false);
   Cosine cos = Cosine(op).shallowReduce(reductionContext, false);;

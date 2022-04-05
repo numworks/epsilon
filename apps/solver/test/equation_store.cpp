@@ -16,7 +16,7 @@ QUIZ_CASE(equation_solve) {
   assert_solves_to_infinite_solutions("x-x=0");
 
   assert_solves_to("2x+3=4", "x=1/2");
-  assert_solves_to("3×x^2-4x+4=2", {"x=2/3-(√(2)/3)𝐢", "x=2/3+(√(2)/3)𝐢", "delta=-8"});
+  assert_solves_to("3×x^2-4x+4=2", {"x=2/3-(√(2)/3)i", "x=2/3+(√(2)/3)i", "delta=-8"});
   assert_solves_to("2×x^2-4×x+4=3", {"x=(-√(2)+2)/2", "x=(√(2)+2)/2", "delta=8"});
   assert_solves_to("2×x^2-4×x+2=0", {"x=1", "delta=0"});
   assert_solves_to(
@@ -31,10 +31,10 @@ QUIZ_CASE(equation_solve) {
   assert_solves_to("(x-√(2))(x-√(3))=0", {"x=√(2)", "x=√(3)", "delta=-2×√(6)+5"});
   assert_solves_to("(x-π)(x-ln(2))=0", {"x=ln(2)", "x=π", "delta=ln(2)^2-2×π×ln(2)+π^2"});
 
-  assert_solves_to("x^3-4x^2+6x-24=0", {"x=4", "x=-√(6)×𝐢", "x=√(6)×𝐢", "delta=-11616"});
-  assert_solves_to("x^3+x^2+1=0", {"x=-1.465571232", "x=0.2327856159-0.7925519925×𝐢", "x=0.2327856159+0.7925519925×𝐢", "delta=-31"});
+  assert_solves_to("x^3-4x^2+6x-24=0", {"x=4", "x=-√(6)×i", "x=√(6)×i", "delta=-11616"});
+  assert_solves_to("x^3+x^2+1=0", {"x=-1.465571232", "x=0.2327856159-0.7925519925×i", "x=0.2327856159+0.7925519925×i", "delta=-31"});
   assert_solves_to("x^3-3x-2=0", {"x=-1", "x=2", "delta=0"});
-  assert_solves_to("x^3+x+1=0", {"x=-0.6823278038", "x=0.3411639019-1.1615414×𝐢", "x=0.3411639019+1.1615414×𝐢", "delta=-31"});
+  assert_solves_to("x^3+x+1=0", {"x=-0.6823278038", "x=0.3411639019-1.1615414×i", "x=0.3411639019+1.1615414×i", "delta=-31"});
   assert_solves_to("x^3+x^2=10^200", {"delta=-27×10^400+4×10^200"});
 
   // Linear System
@@ -133,7 +133,7 @@ QUIZ_CASE(equation_solve) {
 
 QUIZ_CASE(equation_solve_complex_real) {
   set_complex_format(Real);
-  assert_solves_to("x+𝐢=0", "x=-𝐢"); // We still want complex solutions if the input has some complex value
+  assert_solves_to("x+i=0", "x=-i"); // We still want complex solutions if the input has some complex value
   assert_solves_to_error("x+√(-1)=0", EquationNonreal);
   assert_solves_to("x^2+x+1=0", {"delta=-3"});
   assert_solves_to_error("x^2-√(-1)=0", EquationNonreal);
@@ -144,35 +144,35 @@ QUIZ_CASE(equation_solve_complex_real) {
   assert_solves_to("(h-1)*(h-2)=0", {"h=1", "h=2", "delta=1"});
   set("h", "1");
   assert_solves_to("h^2=-1", {"delta=-4"}); // No real solutions
-  set("h", "𝐢+1");
+  set("h", "i+1");
   assert_solves_to("h^2=-1", {"delta=-4"}); // No real solutions
   //  - We still want complex solutions if the input has some complex value
   set("h", "1");
-  assert_solves_to("(h-𝐢)^2=0", {"h=𝐢", "delta=0"}); // Complex solutions
-  set("h", "𝐢+1");
-  assert_solves_to("(h-𝐢)^2=0", {"h=𝐢", "delta=0"}); // Complex solutions
+  assert_solves_to("(h-i)^2=0", {"h=i", "delta=0"}); // Complex solutions
+  set("h", "i+1");
+  assert_solves_to("(h-i)^2=0", {"h=i", "delta=0"}); // Complex solutions
   unset("h");
   reset_complex_format();
 }
 
 QUIZ_CASE(equation_solve_complex_cartesian) {
   set_complex_format(Cartesian);
-  assert_solves_to("x+𝐢=0", "x=-𝐢");
-  assert_solves_to("x+√(-1)=0", "x=-𝐢");
-  assert_solves_to({"x^2+x+1=0"}, {"x=-1/2-((√(3))/2)𝐢", "x=-1/2+((√(3))/2)𝐢", "delta=-3"});
-  assert_solves_to("x^2-√(-1)=0", {"x=-√(2)/2-(√(2)/2)𝐢", "x=√(2)/2+(√(2)/2)𝐢", "delta=4𝐢"});
+  assert_solves_to("x+i=0", "x=-i");
+  assert_solves_to("x+√(-1)=0", "x=-i");
+  assert_solves_to({"x^2+x+1=0"}, {"x=-1/2-((√(3))/2)i", "x=-1/2+((√(3))/2)i", "delta=-3"});
+  assert_solves_to("x^2-√(-1)=0", {"x=-√(2)/2-(√(2)/2)i", "x=√(2)/2+(√(2)/2)i", "delta=4i"});
   assert_solves_to("x+√(-1)×√(-1)=0", "x=1");
-  assert_solves_to("root(-8,3)*x+3=0", "x=-3/4+(3√(3)/4)*𝐢");
+  assert_solves_to("root(-8,3)*x+3=0", "x=-3/4+(3√(3)/4)*i");
   reset_complex_format();
 }
 
 QUIZ_CASE(equation_solve_complex_polar) {
   set_complex_format(Polar);
-  assert_solves_to("x+𝐢=0", "x=e^(-(π/2)𝐢)");
-  assert_solves_to("x+√(-1)=0", "x=e^(-(π/2)𝐢)");
-  assert_solves_to("x^2+x+1=0", {"x=e^(-(2π/3)𝐢)", "x=e^((2π/3)𝐢)", "delta=3e^(π𝐢)"});
-  assert_solves_to("x^2-√(-1)=0", {"x=e^(-(3π/4)𝐢)", "x=e^((π/4)𝐢)", "delta=4e^((π/2)𝐢)"});
-  assert_solves_to("root(-8,3)*x+3=0", "x=3/2×e^((2π/3)𝐢)");
+  assert_solves_to("x+i=0", "x=e^(-(π/2)i)");
+  assert_solves_to("x+√(-1)=0", "x=e^(-(π/2)i)");
+  assert_solves_to("x^2+x+1=0", {"x=e^(-(2π/3)i)", "x=e^((2π/3)i)", "delta=3e^(πi)"});
+  assert_solves_to("x^2-√(-1)=0", {"x=e^(-(3π/4)i)", "x=e^((π/4)i)", "delta=4e^((π/2)i)"});
+  assert_solves_to("root(-8,3)*x+3=0", "x=3/2×e^((2π/3)i)");
   reset_complex_format();
 }
 

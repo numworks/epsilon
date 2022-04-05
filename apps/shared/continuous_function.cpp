@@ -925,7 +925,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
   if (!HasNonNullCoefficients(equation, symbolName, context, &ySign)
       || equation.hasComplexI(context)) {
     // The equation must have at least one nonNull coefficient.
-    // TODO : Accept equations such as y=re(𝐢)
+    // TODO : Accept equations such as y=re(i)
     m_plotType = PlotType::Unhandled;
     return;
   }

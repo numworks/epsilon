@@ -75,6 +75,6 @@ static constexpr CodePoint UCodePointIntegral                 = 0x222b;  // ∫
 static constexpr CodePoint UCodePointInferiorEqual            = 0x2264;  // ≤
 static constexpr CodePoint UCodePointSuperiorEqual            = 0x2265;  // ≥
 static constexpr CodePoint UCodePointReplacement              = 0xFFFD;  // �
-static constexpr CodePoint UCodePointMathematicalBoldSmallI   = 0x1d422; // 𝐢
+// static constexpr CodePoint UCodePointMathematicalBoldSmallI   = 0x1d422; // 𝐢
 
 #endif

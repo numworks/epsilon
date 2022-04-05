@@ -95,7 +95,7 @@ public:
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
 
   static constexpr ConstantNode::ConstantInfo k_constants[] = {
-    ConstantNode::ConstantInfo("𝐢", 0),
+    ConstantNode::ConstantInfo("i", 0),
     ConstantNode::ConstantInfo("π", 1, M_PI),
     ConstantNode::ConstantInfo("e", 2, M_E),
     ConstantNode::ConstantInfo("_c", 3, 299792458.0, "_m/_s"),

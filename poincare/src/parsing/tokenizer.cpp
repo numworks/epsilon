@@ -251,8 +251,7 @@ Token Tokenizer::popToken() {
   if (!nextCodePointIsNeitherDotNorDigit) {
     return popNumber();
   }
-  if (c == UCodePointGreekSmallLetterPi ||
-      c == UCodePointMathematicalBoldSmallI)
+  if (c == UCodePointGreekSmallLetterPi)
   {
     Token result(Token::Constant);
     result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));

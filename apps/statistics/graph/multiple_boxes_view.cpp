@@ -16,15 +16,10 @@ MultipleBoxesView::MultipleBoxesView(Store * store, int * selectedBoxCalculation
   static_assert(MultipleBoxesView::BoxToBoxMargin(2) >= BoxView::BoxVerticalMargin() && MultipleBoxesView::BoxToBoxMargin(3) >= BoxView::BoxVerticalMargin(), "BoxToBoxMargin() should be bigger than BoxVerticalMargin().");
 }
 
-BoxView *  MultipleBoxesView::dataViewAtIndex(int index) {
-  assert(index >= 0 && index < 3);
+BoxView *  MultipleBoxesView::dataViewForSeries(int series) {
+  assert(series >= 0 && series < Shared::DoublePairStore::k_numberOfSeries);
   BoxView * views[] = {&m_boxView1, &m_boxView2, &m_boxView3};
-  return views[index];
-}
-
-int MultipleBoxesView::seriesOfSubviewAtIndex(int index) {
-  assert(index >= 0 && index < numberOfSubviews() - 1);
-  return static_cast<BoxView *>(subviewAtIndex(index))->series();
+  return views[series];
 }
 
 void MultipleBoxesView::layoutDataSubviews(bool force) {
@@ -36,7 +31,7 @@ void MultipleBoxesView::layoutDataSubviews(bool force) {
     if (m_store->seriesIsValid(i)) {
       // Add vertical margins to box layout. Boxes layouts may overlap.
       KDRect frame = KDRect(0, boxYPosition - BoxView::BoxVerticalMargin(), bounds().width(), BoxView::BoxFrameHeight(numberOfDataSubviews));
-      dataViewAtIndex(i)->setFrame(frame, force);
+      dataViewForSeries(i)->setFrame(frame, force);
       boxYPosition += BoxView::BoxHeight(numberOfDataSubviews) + BoxToBoxMargin(numberOfDataSubviews);
     }
   }
@@ -54,7 +49,7 @@ void MultipleBoxesView::reload() {
 
 bool MultipleBoxesView::moveSelectionHorizontally(int series, int deltaIndex) {
   assert(deltaIndex != 0);
-  BoxView * view = dataViewAtIndex(series);
+  BoxView * view = dataViewForSeries(series);
   if (view->canIncrementSelectedCalculation(deltaIndex)) {
     // Mark rect as dirty in parent's view to also redraw the background
     markRectAsDirty(view->selectedCalculationRect());
@@ -84,10 +79,10 @@ void MultipleBoxesView::drawRect(KDContext * ctx, KDRect rect) const {
   MultipleDataView::drawRect(ctx, rect);
 }
 
-void MultipleBoxesView::changeDataViewSelection(int index, bool select) {
-  dataViewAtIndex(index)->selectMainView(select);
+void MultipleBoxesView::changeDataViewSeriesSelection(int series, bool select) {
+  dataViewForSeries(series)->selectMainView(select);
   // Mark rect as dirty in parent's view to also redraw the background
-  markRectAsDirty(dataViewAtIndex(index)->rectToReload());
+  markRectAsDirty(dataViewForSeries(series)->rectToReload());
 }
 
 }

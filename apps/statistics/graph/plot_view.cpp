@@ -17,12 +17,12 @@ void PlotView::reload() {
   m_plotCurveView->reload();
 }
 
-void PlotView::selectDataView(int index) {
+void PlotView::selectViewForSeries(int series) {
   m_plotCurveView->selectMainView(true);
   m_plotCurveView->reload();
 }
 
-void PlotView::deselectDataView(int index) {
+void PlotView::deselectViewForSeries(int series) {
   m_plotCurveView->selectMainView(false);
   m_plotCurveView->reload();
 }

@@ -10,12 +10,12 @@ namespace Statistics {
 class MultipleDataView : public DataView {
 public:
   using DataView::DataView;
-  virtual Shared::CurveView * dataViewAtIndex(int index) = 0;
+  virtual Shared::CurveView * dataViewForSeries(int series) = 0;
 
   // DataView
-  void selectDataView(int index) override;
-  void deselectDataView(int index) override;
-  Shared::CurveView * curveViewForSeries(int series) override { return dataViewAtIndex(validSeriesIndex(series)); };
+  void selectViewForSeries(int series) override;
+  void deselectViewForSeries(int series) override;
+  Shared::CurveView * curveViewForSeries(int series) override { return dataViewForSeries(series); };
 
   // Display
   void reload() override;
@@ -25,7 +25,7 @@ public:
 protected:
   void layoutDataSubviews(bool force) override;
   Escher::View * subviewAtIndex(int index) override;
-  virtual void changeDataViewSelection(int index, bool select);
+  virtual void changeDataViewSeriesSelection(int series, bool select);
 };
 
 }

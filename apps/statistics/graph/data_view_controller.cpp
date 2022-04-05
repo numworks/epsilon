@@ -39,7 +39,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
       header()->setSelectedButton(-1);
       Escher::Container::activeApp()->setFirstResponder(this);
       dataView()->setDisplayBanner(true);
-      dataView()->selectDataView(m_selectedSeries);
+      dataView()->selectViewForSeries(m_selectedSeries);
       highlightSelection();
       reloadBannerView();
       return true;
@@ -66,7 +66,7 @@ void DataViewController::didEnterResponderChain(Responder * firstResponder) {
     header()->setSelectedButton(0);
   } else {
     dataView()->setDisplayBanner(true);
-    dataView()->selectDataView(m_selectedSeries);
+    dataView()->selectViewForSeries(m_selectedSeries);
     highlightSelection();
   }
 }
@@ -78,7 +78,7 @@ void DataViewController::willExitResponderChain(Responder * nextFirstResponder) 
       header()->setSelectedButton(-1);
     } else {
       assert(m_selectedSeries >= 0);
-      dataView()->deselectDataView(m_selectedSeries);
+      dataView()->deselectViewForSeries(m_selectedSeries);
       dataView()->setDisplayBanner(false);
     }
   }
@@ -102,14 +102,14 @@ bool DataViewController::moveSelectionVertically(int direction) {
   if (nextSelectedSubview >= m_store->numberOfValidSeries()) {
     return false;
   }
-  dataView()->deselectDataView(m_selectedSeries);
+  dataView()->deselectViewForSeries(m_selectedSeries);
   if (nextSelectedSubview < 0) {
     dataView()->setDisplayBanner(false);
     header()->setSelectedButton(0);
   } else {
     m_selectedSeries = dataView()->seriesOfSubviewAtIndex(nextSelectedSubview);
     m_selectedIndex = DataView::k_defaultSelectedIndex;
-    dataView()->selectDataView(m_selectedSeries);
+    dataView()->selectViewForSeries(m_selectedSeries);
     highlightSelection();
   }
   return true;

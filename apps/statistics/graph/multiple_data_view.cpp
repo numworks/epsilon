@@ -9,16 +9,16 @@ namespace Statistics {
 void MultipleDataView::reload() {
   layoutSubviews();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    dataViewAtIndex(i)->reload();
+    dataViewForSeries(i)->reload();
   }
 }
 
-void MultipleDataView::selectDataView(int index) {
-  changeDataViewSelection(index, true);
+void MultipleDataView::selectViewForSeries(int series) {
+  changeDataViewSeriesSelection(series, true);
 }
 
-void MultipleDataView::deselectDataView(int index) {
-  changeDataViewSelection(index, false);
+void MultipleDataView::deselectViewForSeries(int series) {
+  changeDataViewSeriesSelection(series, false);
 }
 
 int MultipleDataView::numberOfSubviews() const {
@@ -31,19 +31,7 @@ View * MultipleDataView::subviewAtIndex(int index) {
   if (index == MultipleDataView::numberOfSubviews() -1) {
     return bannerView();
   }
-  int seriesIndex = 0;
-  int nonEmptySeriesIndex = -1;
-  while (seriesIndex < Store::k_numberOfSeries) {
-    if (m_store->seriesIsValid(seriesIndex)) {
-      nonEmptySeriesIndex++;
-      if (nonEmptySeriesIndex == index) {
-        return dataViewAtIndex(seriesIndex);
-      }
-    }
-    seriesIndex++;
-  }
-  assert(false);
-  return nullptr;
+  return dataViewForSeries(seriesOfSubviewAtIndex(index));
 }
 
 void MultipleDataView::layoutDataSubviews(bool force) {
@@ -54,7 +42,7 @@ void MultipleDataView::layoutDataSubviews(bool force) {
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (m_store->seriesIsValid(i)) {
-      CurveView * dataView = dataViewAtIndex(i);
+      CurveView * dataView = dataViewForSeries(i);
       KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), subviewHeight);
       dataView->setFrame(frame, force);
       displayedSubviewIndex++;
@@ -62,9 +50,9 @@ void MultipleDataView::layoutDataSubviews(bool force) {
   }
 }
 
-void MultipleDataView::changeDataViewSelection(int index, bool select) {
-  dataViewAtIndex(index)->selectMainView(select);
-  dataViewAtIndex(index)->reload();
+void MultipleDataView::changeDataViewSeriesSelection(int series, bool select) {
+  dataViewForSeries(series)->selectMainView(select);
+  dataViewForSeries(series)->reload();
 }
 
 }

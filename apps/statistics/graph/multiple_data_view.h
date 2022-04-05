@@ -13,8 +13,6 @@ public:
   virtual Shared::CurveView * dataViewForSeries(int series) = 0;
 
   // DataView
-  void selectViewForSeries(int series) override;
-  void deselectViewForSeries(int series) override;
   Shared::CurveView * curveViewForSeries(int series) override { return dataViewForSeries(series); };
 
   // Display
@@ -25,7 +23,6 @@ public:
 protected:
   void layoutDataSubviews(bool force) override;
   Escher::View * subviewAtIndex(int index) override;
-  virtual void changeDataViewSeriesSelection(int series, bool select);
 };
 
 }

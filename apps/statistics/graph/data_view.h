@@ -15,8 +15,8 @@ public:
   DataView(Store * store) : m_store(store), m_displayBanner(false) {}
   virtual Shared::CurveView * curveViewForSeries(int series) = 0;
   virtual void reload() = 0;
-  virtual void selectViewForSeries(int series) = 0;
-  virtual void deselectViewForSeries(int series) = 0;
+  void selectViewForSeries(int series);
+  void deselectViewForSeries(int series);
 
   // Index/series
   int seriesOfSubviewAtIndex(int index) { return m_store->indexOfKthValidSeries(index); }
@@ -26,6 +26,7 @@ public:
   void setDisplayBanner(bool display);
 
 protected:
+  virtual void changeDataViewSeriesSelection(int series, bool select);
   KDRect bannerFrame() const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;

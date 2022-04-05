@@ -65,7 +65,7 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
 
 void MultipleDataViewController::didEnterResponderChain(Responder * firstResponder) {
   assert(m_store->seriesIsValid(m_selectedSeries));
-  if (!multipleDataView()->dataViewAtIndex(m_selectedSeries)->isMainViewSelected()) {
+  if (!multipleDataView()->dataViewAtIndex(multipleDataView()->indexOfSubviewAtSeries(m_selectedSeries))->isMainViewSelected()) {
     header()->setSelectedButton(0);
   } else {
     multipleDataView()->setDisplayBanner(true);

@@ -62,7 +62,7 @@ Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 template<typename T>
 Evaluation<T> ConstantNode::templatedApproximate() const {
   ConstantInfo info = constantInfo();
-  if (isConstant("𝐢", info)) {
+  if (isConstant("i", info)) {
     return Complex<T>::Builder(0.0, 1.0);
   }
   if (info.unit() == nullptr) {
@@ -114,7 +114,7 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return *this;
   }
   Expression result;
-  if (isConstant("𝐢", info)) {
+  if (isConstant("i", info)) {
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       result = Nonreal::Builder();
     } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {

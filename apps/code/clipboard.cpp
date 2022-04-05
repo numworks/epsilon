@@ -67,7 +67,6 @@ const UTF8Helper::TextPair * Clipboard::PythonTextPairs() {
     UTF8Helper::TextPair("log(\x11)", "log10(\x11)", true),
     UTF8Helper::TextPair("ln(\x11)", "log(\x11)", true),
     UTF8Helper::TextPair("ᴇ", "e", false, ShouldReplaceLetterE),
-    UTF8Helper::TextPair("𝐢", "1j"),
     /* Since TextPairs are also used to pair events, we need to keep both ^2
      * and ^ to get the desired behavior in python when using power or square
      * key. */

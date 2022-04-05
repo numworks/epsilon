@@ -15,9 +15,8 @@ class MultipleBoxesView : public MultipleDataView {
 public:
   MultipleBoxesView(Store * store, int * selectedBoxCalculation);
   // MultipleDataView
-  int seriesOfSubviewAtIndex(int index) override;
   BoxBannerView * bannerView() override { return &m_bannerView; }
-  BoxView * dataViewAtIndex(int index) override;
+  BoxView * dataViewForSeries(int series) override;
   void layoutDataSubviews(bool force) override;
   void reload() override;
   bool moveSelectionHorizontally(int series, int deltaIndex);
@@ -32,7 +31,7 @@ private:
   static constexpr KDCoordinate k_axisViewHeight = 21;
 
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void changeDataViewSelection(int index, bool select) override;
+  void changeDataViewSeriesSelection(int series, bool select) override;
   BoxView m_boxView1;
   BoxView m_boxView2;
   BoxView m_boxView3;

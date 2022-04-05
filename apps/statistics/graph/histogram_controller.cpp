@@ -43,7 +43,7 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 
 void HistogramController::viewWillAppearBeforeReload() {
   multipleDataView()->setDisplayBanner(true);
-  multipleDataView()->selectDataView(m_selectedSeries);
+  multipleDataView()->selectViewForSeries(m_selectedSeries);
   highlightSelection();
 
   uint32_t storeChecksum = m_store->storeChecksum();
@@ -57,7 +57,7 @@ void HistogramController::viewWillAppearBeforeReload() {
 }
 
 void HistogramController::highlightSelection() {
-  HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.dataViewAtIndex(m_selectedSeries));
+  HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.dataViewForSeries(m_selectedSeries));
   selectedHistogramView->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, m_selectedIndex), m_store->endOfBarAtIndex(m_selectedSeries, m_selectedIndex));
   // if the selectedBar was outside of range, we need to scroll
   if (m_histogramRange.scrollToSelectedBarIndex(m_selectedSeries, m_selectedIndex)) {
@@ -129,7 +129,7 @@ bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
 
   if (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars && m_selectedIndex != newSelectedBarIndex) {
     m_selectedIndex = newSelectedBarIndex;
-    m_view.dataViewAtIndex(m_selectedSeries)->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, m_selectedIndex), m_store->endOfBarAtIndex(m_selectedSeries, m_selectedIndex));
+    m_view.dataViewForSeries(m_selectedSeries)->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, m_selectedIndex), m_store->endOfBarAtIndex(m_selectedSeries, m_selectedIndex));
     return true;
   }
   return false;
@@ -193,7 +193,7 @@ void HistogramController::initYRangeParameters(int series) {
    * */
   float bottomMargin = static_cast<float>(HistogramRange::k_bottomMargin);
   // viewHeight should be equal for each valid series
-  float viewHeight = static_cast<float>(m_view.dataViewAtIndex(series)->bounds().height());
+  float viewHeight = static_cast<float>(m_view.dataViewForSeries(series)->bounds().height());
   m_histogramRange.setYMin(m_histogramRange.yMax() * bottomMargin / (bottomMargin - viewHeight));
 }
 

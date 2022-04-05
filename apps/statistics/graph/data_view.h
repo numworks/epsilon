@@ -15,11 +15,11 @@ public:
   DataView(Store * store) : m_store(store), m_displayBanner(false) {}
   virtual Shared::CurveView * curveViewForSeries(int series) = 0;
   virtual void reload() = 0;
-  virtual void selectDataView(int index) = 0;
-  virtual void deselectDataView(int index) = 0;
+  virtual void selectViewForSeries(int series) = 0;
+  virtual void deselectViewForSeries(int series) = 0;
 
   // Index/series
-  virtual int seriesOfSubviewAtIndex(int index) { return m_store->indexOfKthValidSeries(index); }
+  int seriesOfSubviewAtIndex(int index) { return m_store->indexOfKthValidSeries(index); }
   int validSeriesIndex(int series) { return m_store->validSeriesIndex(series); }
 
   // Display

@@ -13,12 +13,11 @@ class MultipleHistogramsView : public MultipleDataView {
 public:
   MultipleHistogramsView(Store * store, Shared::CurveViewRange * curveViewRange);
   // MultipleDataView
-  int seriesOfSubviewAtIndex(int index) override;
   HistogramBannerView * bannerView() override { return &m_bannerView; }
-  HistogramView * dataViewAtIndex(int index) override;
+  HistogramView * dataViewForSeries(int series) override;
 private:
   void layoutSubviews(bool force = false) override;
-  void changeDataViewSelection(int index, bool select) override;
+  void changeDataViewSeriesSelection(int series, bool select) override;
   HistogramView m_histogramView1;
   HistogramView m_histogramView2;
   HistogramView m_histogramView3;

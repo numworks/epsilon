@@ -493,11 +493,11 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
   // 2e^3
   l = HorizontalLayout::Builder(
       CodePointLayout::Builder('2'),
-      CodePointLayout::Builder(UCodePointScriptSmallE),
+      CodePointLayout::Builder('e'),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('3'),
         VerticalOffsetLayoutNode::Position::Superscript));
-  e = Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("ℯ"), BasedInteger::Builder(3)));
+  e = Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("e"), BasedInteger::Builder(3)));
   assert_parsed_layout_is(l, e);
 
   // x|2|

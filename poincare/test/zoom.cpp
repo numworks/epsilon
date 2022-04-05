@@ -61,7 +61,7 @@ QUIZ_CASE(poincare_zoom_interesting_ranges) {
   assert_interesting_range_is("x^2", -10, 10, 0, 0);
   assert_interesting_range_is("-(x^3)", -10, 10, 0, 0);
   assert_interesting_range_is("10×x^4", -10, 10, 0, 0);
-  assert_interesting_range_is("ℯ^(-x)", FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
+  assert_interesting_range_is("e^(-x)", FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
   assert_interesting_range_is("√(x^2+1)-x", FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
   assert_interesting_range_is("x-21", 9.37962341, 29.3796234, 0, 0);
   assert_interesting_range_is("-11x+100", -1.07708645, 18.9229126, 0, 0);
@@ -87,7 +87,7 @@ QUIZ_CASE(poincare_zoom_interesting_ranges) {
   // TODO : Fix Interesting ranges for x^x
   // assert_interesting_range_is("x^x", -0.674223423, 2.92163467, 0.692200601, 0.692200601);
   assert_interesting_range_is("x^x", -9.63138771, 4.98867226, 0.692200601, 0.692200601);
-  assert_interesting_range_is("(ℯ^x-1)/(ℯ^x+1)", -3.2989521, 3.2989521, 0, 0);
+  assert_interesting_range_is("(e^x-1)/(e^x+1)", -3.2989521, 3.2989521, 0, 0);
 }
 
 
@@ -107,7 +107,7 @@ QUIZ_CASE(poincare_zoom_refined_range) {
   assert_refined_range_is("x^2", -10, 10, 0, 36.5035477);
   assert_refined_range_is("-(x^3)", -10, 10, -133.769241, 133.769241);
   assert_refined_range_is("10×x^4", -10, 10, 0, 4902.04102);
-  assert_refined_range_is("ℯ^(-x)", -10, 10, 0, 2.71828127);
+  assert_refined_range_is("e^(-x)", -10, 10, 0, 2.71828127);
   assert_refined_range_is("x-21", 19.1269588, 21.9576702, -1.48373008, 0.92183876);
   assert_refined_range_is("-11x+100", 8.80657959, 10.1099186, -8.44783878, 2.94615173);
   assert_refined_range_is("x^2-1", -8.63486099, 8.63486099, -0.988053143, 26.5802021);
@@ -126,7 +126,7 @@ QUIZ_CASE(poincare_zoom_refined_range) {
   assert_refined_range_is("x×sin(x)", -14.4815292, 14.4815292, -7.37234354, 7.37234354);
   assert_refined_range_is("x×ln(x)", -0.314885706, 1.36450469, -0.367870897, 0.396377981);
   assert_refined_range_is("x!", -10, 10, FLT_MAX, -FLT_MAX);
-  assert_refined_range_is("xℯ^(1/x)", -1.29999995, 2.4000001, -0.564221799, 5.58451653);
+  assert_refined_range_is("xe^(1/x)", -1.29999995, 2.4000001, -0.564221799, 5.58451653);
 }
 
 void assert_orthonormal_range_is(const char * definition, float xMin, float xMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
@@ -145,8 +145,8 @@ QUIZ_CASE(poincare_zoom_range_with_ratio) {
   assert_orthonormal_range_is("x", -10, 10, -4.36069489, 4.48648167);
   assert_orthonormal_range_is("x^2", -10, 10, -0.0527148247, 8.7944622);
   assert_orthonormal_range_is("x^3", -10, 10, -3.91881895, 4.9283576);
-  assert_orthonormal_range_is("ℯ^x", -10, 10, -0.439413071, 8.40776348);
-  assert_orthonormal_range_is("ℯ^x+4", -10, 10, 3.56058741, 12.4077644);
+  assert_orthonormal_range_is("e^x", -10, 10, -0.439413071, 8.40776348);
+  assert_orthonormal_range_is("e^x+4", -10, 10, 3.56058741, 12.4077644);
 }
 
 void assert_full_range_is(const char * definition, float xMin, float xMax, float targetYMin, float targetYMax, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
@@ -166,7 +166,7 @@ QUIZ_CASE(poincare_zoom_full_range) {
   assert_full_range_is("x-3", -10, 10, -13, 7);
   assert_full_range_is("-6x", -10, 10, -60, 60);
   assert_full_range_is("x^2", -10, 10, 0, 100);
-  assert_full_range_is("ℯ^x", -10, 10, 0.0000453999419, 22026.459);
+  assert_full_range_is("e^x", -10, 10, 0.0000453999419, 22026.459);
   assert_full_range_is("sin(x)", -3600, 3600, -1, 1, Degree);
   assert_full_range_is("acos(x)", -10, 10, 0, 3.1415925);
 }

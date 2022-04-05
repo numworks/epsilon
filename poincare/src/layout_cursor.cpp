@@ -118,7 +118,7 @@ LayoutCursor LayoutCursor::selectAtDirection(Direction direction, bool * shouldR
 void LayoutCursor::addEmptyExponentialLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CodePointLayout::Builder(UCodePointScriptSmallE),
+      CodePointLayout::Builder('e'),
       VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Position::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;

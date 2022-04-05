@@ -102,11 +102,11 @@ QUIZ_CASE(graph_ranges_single_function) {
   assert_best_cartesian_range_is("f(x)=tan(x)", -900, 900, -3.5, 3.10000014, Gradian);
   assert_best_cartesian_range_is("f(x)=tan(x-100)", -1100, 1100, -3.9000001, 3.4000001, Gradian);
 
-  assert_best_cartesian_range_is("f(x)=ℯ^x", -10, 10, -1.71249962, 8.91249943);
-  assert_best_cartesian_range_is("f(x)=ℯ^x+4", -10, 10, 2.28750038, 12.9124994);
-  assert_best_cartesian_range_is("f(x)=ℯ^(-x)", -10, 10, -1.71249962, 8.91249943);
-  assert_best_cartesian_range_is("f(x)=(1-x)ℯ^(1/(1-x))", -1.62682521, 2.726825, -3, 5.0999999);
-  assert_best_cartesian_range_is("f(x)=(ℯ^x-1)/(ℯ^x+1)", -3.7, 3.7, -2.115625, 1.815625);
+  assert_best_cartesian_range_is("f(x)=e^x", -10, 10, -1.71249962, 8.91249943);
+  assert_best_cartesian_range_is("f(x)=e^x+4", -10, 10, 2.28750038, 12.9124994);
+  assert_best_cartesian_range_is("f(x)=e^(-x)", -10, 10, -1.71249962, 8.91249943);
+  assert_best_cartesian_range_is("f(x)=(1-x)e^(1/(1-x))", -1.62682521, 2.726825, -3, 5.0999999);
+  assert_best_cartesian_range_is("f(x)=(e^x-1)/(e^x+1)", -3.7, 3.7, -2.115625, 1.815625);
 
   assert_best_cartesian_range_is("f(x)=ln(x)", -1.9, 6.8, -2.36093712, 2.26093721);
   assert_best_cartesian_range_is("f(x)=log(x)", -0.9, 3.1, -1.5125, 0.6125);
@@ -139,7 +139,7 @@ QUIZ_CASE(graph_ranges_single_function) {
 
 QUIZ_CASE(graph_ranges_several_functions) {
   {
-    const char * definitions[] = {"f(x)=ℯ^x", "g(x)=ln(x)"};
+    const char * definitions[] = {"f(x)=e^x", "g(x)=ln(x)"};
     ContinuousFunction::PlotType types[] = {Cartesian, Cartesian};
     assert_best_range_is(definitions, types, -1.9, 6.8, -8, 35);
   }
@@ -154,7 +154,7 @@ QUIZ_CASE(graph_ranges_several_functions) {
     assert_best_range_is(definitions, types, -1.63235319, 2.13235331, -0.800000011, 1.20000005);
   }
   {
-    const char * definitions[] = {"f(x)=ℯ^(𝐢×x)", "g(t)=[[re(f(t))][im(f(t))]]"};
+    const char * definitions[] = {"f(x)=e^(𝐢×x)", "g(t)=[[re(f(t))][im(f(t))]]"};
     ContinuousFunction::PlotType types[] = {Cartesian, Parametric};
     assert_best_range_is(definitions, types, -2.44705892, 2.44705892, -1.4, 1.2);
   }

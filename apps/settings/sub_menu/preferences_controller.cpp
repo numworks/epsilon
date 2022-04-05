@@ -96,7 +96,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
     }
     case I18n::Message::Polar:
     {
-      const char * base = "rℯ";
+      const char * base = "re";
       const char * superscript = "𝐢θ";
       return HorizontalLayout::Builder(
           LayoutHelper::String(base, strlen(base), k_layoutFont),

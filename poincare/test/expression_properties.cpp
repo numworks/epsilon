@@ -249,7 +249,7 @@ QUIZ_CASE(poincare_properties_sign) {
   assert_reduced_expression_sign("𝐢", Unknown);
   assert_reduced_expression_sign("-π", Negative);
   assert_reduced_expression_sign("π", Positive);
-  assert_reduced_expression_sign("ℯ", Positive);
+  assert_reduced_expression_sign("e", Positive);
   assert_reduced_expression_sign("0", Positive);
   assert_reduced_expression_sign("cos(π/2)", Positive);
   assert_reduced_expression_sign("cos(90)", Positive, Cartesian, Degree);

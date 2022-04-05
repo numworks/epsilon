@@ -98,19 +98,19 @@ public:
     ConstantNode::ConstantInfo("𝐢", 0),
     ConstantNode::ConstantInfo("π", 1, M_PI),
     ConstantNode::ConstantInfo("ℯ", 2, M_E),
-    ConstantNode::ConstantInfo("c", 3, 299792458.0, "_m/_s"),
-    ConstantNode::ConstantInfo("e", 3, 1.602176634e-19, "_C"),
-    ConstantNode::ConstantInfo("G", 3, 6.67430e-11, "_m^3*_kg^-1*_s^-2"),
-    ConstantNode::ConstantInfo("g0", 3, 9.80665, "_m/_s^2"),
-    ConstantNode::ConstantInfo("k", 3, 1.380649e-23, "_J/_K"),
-    ConstantNode::ConstantInfo("ke", 3, 8.9875517923e9, "_N*_m^2/_C^2"),
-    ConstantNode::ConstantInfo("me", 3, 9.1093837015e-31, "_kg"),
-    ConstantNode::ConstantInfo("mn", 3, 1.67492749804e-27, "_kg"),
-    ConstantNode::ConstantInfo("mp", 3, 1.67262192369e-27, "_kg"),
-    ConstantNode::ConstantInfo("Na", 3, 6.02214076e23, "_mol^-1"),
-    ConstantNode::ConstantInfo("R", 3, 8.31446261815324, "_J*_mol^-1*_K^-1"),
-    ConstantNode::ConstantInfo("ε0", 3, 8.8541878128e-12, "_F/_m"),
-    ConstantNode::ConstantInfo("μ0", 3, 1.25663706212e-6, "_N*_A^-2")
+    ConstantNode::ConstantInfo("_c", 3, 299792458.0, "_m/_s"),
+    ConstantNode::ConstantInfo("_e", 3, 1.602176634e-19, "_C"),
+    ConstantNode::ConstantInfo("_G", 3, 6.67430e-11, "_m^3*_kg^-1*_s^-2"),
+    ConstantNode::ConstantInfo("_g0", 3, 9.80665, "_m/_s^2"),
+    ConstantNode::ConstantInfo("_k", 3, 1.380649e-23, "_J/_K"),
+    ConstantNode::ConstantInfo("_ke", 3, 8.9875517923e9, "_N*_m^2/_C^2"),
+    ConstantNode::ConstantInfo("_me", 3, 9.1093837015e-31, "_kg"),
+    ConstantNode::ConstantInfo("_mn", 3, 1.67492749804e-27, "_kg"),
+    ConstantNode::ConstantInfo("_mp", 3, 1.67262192369e-27, "_kg"),
+    ConstantNode::ConstantInfo("_Na", 3, 6.02214076e23, "_mol^-1"),
+    ConstantNode::ConstantInfo("_R", 3, 8.31446261815324, "_J*_mol^-1*_K^-1"),
+    ConstantNode::ConstantInfo("_ε0", 3, 8.8541878128e-12, "_F/_m"),
+    ConstantNode::ConstantInfo("_μ0", 3, 1.25663706212e-6, "_N*_A^-2")
   };
 
 private:

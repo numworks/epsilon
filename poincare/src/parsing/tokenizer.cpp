@@ -142,11 +142,14 @@ Token Tokenizer::popIdentifier() {
  * turn "ab(5)" into "a*b*(5)".
  * */
 Token::Type Tokenizer::stringTokenType(const char * string, size_t length) {
-  if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
-    return Token::ReservedFunction;
-  }
   if (ParsingHelper::IsSpecialIdentifierName(string, length)) {
     return Token::SpecialIdentifier;
+  }
+  if (Constant::IsConstant(string, length)) {
+    return Token::Constant;
+  }
+  if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
+    return Token::ReservedFunction;
   }
   if (m_encounteredRightwardsArrow || m_context == nullptr || m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
     return Token::CustomIdentifier;
@@ -265,9 +268,14 @@ Token Tokenizer::popToken() {
      * the context, or as a unit if not.
      */
     Token result(Token::Unit);
-    result.setString(start + 1, popUnitOrConstant()); // + 1 for the underscore
-    if (Constant::IsConstant(result.text(), result.length())) {
+    size_t tokenLength = popUnitOrConstant() + 1;
+    if (Constant::IsConstant(start, tokenLength)) {
+      // If it's a constant, keep '_' at the beginning.
       result.setType(Token::Constant);
+      result.setString(start, tokenLength);
+    } else {
+      // If it's an unit, remove '_' at the beginning.
+      result.setString(start + 1, tokenLength - 1);
     }
     return result;
   }

@@ -50,15 +50,7 @@ int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
 
 int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(bufferSize >= 0);
-  ConstantInfo info = constantInfo();
-  int underscoreLength = 0;
-  if (info.unit() != nullptr) {
-    // Precede with underscore
-    underscoreLength = std::min<int>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
-    buffer += underscoreLength;
-    bufferSize -= underscoreLength;
-  }
-  return underscoreLength + SymbolAbstractNode::serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  return SymbolAbstractNode::serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

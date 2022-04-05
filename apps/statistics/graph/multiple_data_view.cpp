@@ -18,22 +18,6 @@ void MultipleDataView::reload() {
   }
 }
 
-int MultipleDataView::indexOfSubviewAtSeries(int series) {
-  int displayedSubviewIndex = 0;
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (m_store->seriesIsValid(i)) {
-     if (i == series) {
-        return displayedSubviewIndex;
-     }
-     displayedSubviewIndex++;
-    } else if (i == series) {
-      return -1;
-    }
-  }
-  assert(false);
-  return -1;
-}
-
 void MultipleDataView::selectDataView(int index) {
   changeDataViewSelection(index, true);
 }

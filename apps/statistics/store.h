@@ -15,6 +15,7 @@ public:
   void invalidateSortedIndexes();
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
+  int validSeriesIndex(int series) const;
   // Histogram bars
   double barWidth() const { return m_barWidth; }
   void setBarWidth(double barWidth);

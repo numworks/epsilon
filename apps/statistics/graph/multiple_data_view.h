@@ -20,7 +20,7 @@ public:
   virtual Shared::CurveView * dataViewAtIndex(int index) = 0;
 
   // Index/series
-  int indexOfSubviewAtSeries(int series);
+  int indexOfSubviewAtSeries(int series) { return m_store->validSeriesIndex(series); }
   virtual int seriesOfSubviewAtIndex(int index) = 0;
 
   // Display

@@ -32,7 +32,7 @@ public:
   Escher::View * subviewAtIndex(int index) override;
   // All series are displayed in the same curve view
   Shared::CurveView * dataViewAtIndex(int index) override { return m_plotCurveView; }
-  int seriesOfSubviewAtIndex(int index) override { return index; }
+  int seriesOfSubviewAtIndex(int index) override { return m_store->indexOfKthValidSeries(index); }
   PlotBannerView * bannerView() override { return m_bannerView; }
   void reload() override;
 

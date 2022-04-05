@@ -1337,7 +1337,8 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
   if (linearCombination.isUninitialized()) {
     return Expression();
   }
-  if (linearCombination.type() == ExpressionNode::Type::Multiplication) { // Handle x*log(y) -> log(y^x)
+  // Handle x*log(y) -> log(y^x)
+  if (linearCombination.type() == ExpressionNode::Type::Multiplication) {
     Expression clone = linearCombination.clone();
     Multiplication multiplication = static_cast<Multiplication &>(clone);
     int nChildren = multiplication.numberOfChildren();
@@ -1347,12 +1348,19 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
       if (IsLogarithmOfBase(child, base)) {
         Expression insideLogarithm = child.childAtIndex(0);
         if (insideLogarithm.sign(context) == ExpressionNode::Sign::Positive) {
+          /* Follow the steps with an example: We want to turn 4*ln(3)
+           * into ln(3^4).
+           * Here, child = ln(3) and insideLogarithm = 3 */
           Expression baseClone = base.clone();
-          Power power = Power::Builder(insideLogarithm, child);
-          multiplication.replaceWithInPlace(power);
-          power.replaceChildAtIndexInPlace(1, multiplication);
+          /* power = insideLogarithm ^ multiplication
+           * so power = 3 ^ (4 * ln(ghost)) */
+          Power power = Power::Builder(insideLogarithm, multiplication);
+          /* Remove the logarithm from multiplication,
+           * so power = 3 ^ (4 * ghost) */
           multiplication.removeChildAtIndexInPlace(i);
+          /* Reduce multiplication so power = 3 ^ 4 */
           multiplication.shallowReduce(reductionContext);
+          /* Create a log with same base so result = ln(3^4) */
           Logarithm result = Logarithm::Builder(power, baseClone);
           power.shallowReduce(reductionContext);
           linearCombination.replaceWithInPlace(result);
@@ -1360,7 +1368,8 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
         }
       }
     }
-  } else if (linearCombination.type() == ExpressionNode::Type::Addition) { // Handle log(x) + log(y) -> log(x*y)
+  // Handle log(x) + log(y) -> log(x*y)
+  } else if (linearCombination.type() == ExpressionNode::Type::Addition) {
     Expression clone = linearCombination.clone();
     Addition addition = static_cast<Addition &>(clone);
     int nChildren = addition.numberOfChildren();
@@ -1379,12 +1388,18 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
       }
     }
     if (hasOnlyLogarithmChildren) {
+      /* Follow the steps with an example : We want to turn ln(5)+ln(6)+ln(7)
+       * into ln(5*6*7).
+       * firstLogarithm = ln(5) */
       Expression firstLogarithm = addition.childAtIndex(0);
+      /* insideLogarithm = 5 * nothing */
       Multiplication insideLogarithm = Multiplication::Builder(firstLogarithm.childAtIndex(0));
       for (int i = 1; i < nChildren; i++) {
         insideLogarithm.addChildAtIndexInPlace(addition.childAtIndex(i).childAtIndex(0), i, i);
       }
+      // Now insideLogarithm = 5 * 6 * 7
       firstLogarithm.replaceChildInPlace(firstLogarithm.childAtIndex(0), insideLogarithm);
+      // firstLogarithm = ln(5*6*7)
       insideLogarithm.shallowReduce(reductionContext);
       if (firstLogarithm.childAtIndex(0).sign(context) == ExpressionNode::Sign::Positive) {
         linearCombination.replaceWithInPlace(firstLogarithm);

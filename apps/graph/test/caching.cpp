@@ -114,7 +114,7 @@ QUIZ_CASE(graph_caching) {
   assert_cache_stays_valid(Cartesian, "f(x)=sin(x^2)");
   assert_cache_stays_valid(Cartesian, "f(x)=1/x");
   assert_cache_stays_valid(Cartesian, "f(x)=1/x", -5e-5f, 5e-5f);
-  assert_cache_stays_valid(Cartesian, "f(x)=-ℯ^x");
+  assert_cache_stays_valid(Cartesian, "f(x)=-e^x");
 
   assert_cache_stays_valid(Polar, "f(θ)=1", 0.f, 360.f);
   assert_cache_stays_valid(Polar, "f(θ)=θ", 0.f, 360.f);

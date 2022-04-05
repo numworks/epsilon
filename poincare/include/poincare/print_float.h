@@ -14,7 +14,7 @@ class PrintFloat {
 public:
   constexpr static int k_floatNumberOfSignificantDigits = 7;
   constexpr static int k_numberOfStoredSignificantDigits = 14;
-  // ᴇ and ℯ are 3 bytes long
+  // ᴇ is 3 bytes long
   constexpr static int k_specialECodePointByteLength = 3;
   /* We here define the glyph length and the buffer size to write the longest
    * float possible.

@@ -252,8 +252,7 @@ Token Tokenizer::popToken() {
     return popNumber();
   }
   if (c == UCodePointGreekSmallLetterPi ||
-      c == UCodePointMathematicalBoldSmallI ||
-      c == UCodePointScriptSmallE)
+      c == UCodePointMathematicalBoldSmallI)
   {
     Token result(Token::Constant);
     result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));

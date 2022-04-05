@@ -362,7 +362,7 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, ExpressionNod
   rclone.shallowReduce(reductionContext);
   Expression thmuld = Multiplication::Builder(Rational::Builder(-1), thclone, d.clone());
   thclone.shallowReduce(reductionContext);
-  Expression exp = Power::Builder(Constant::Builder("ℯ"), thmuld);
+  Expression exp = Power::Builder(Constant::Builder("e"), thmuld);
   thmuld.shallowReduce(reductionContext);
   Multiplication norm = Multiplication::Builder(rpowc, exp);
   rpowc.shallowReduce(reductionContext);

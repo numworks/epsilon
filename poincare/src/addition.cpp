@@ -454,7 +454,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
    * by now, and if we checked again for symbols we might find "parameter"
    * symbols disconnected from the parametered expression (which is no longer a
    * parent here), which would be replaced with undef.
-   * Example: int((ℯ^(-x))-x^(0.5), x, 0, 3), when creating the common
+   * Example: int((e^(-x))-x^(0.5), x, 0, 3), when creating the common
    * denominator for the integrand. */
   ExpressionNode::SymbolicComputation previousSymbolicComputation = reductionContext.symbolicComputation();
   reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);

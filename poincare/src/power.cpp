@@ -233,7 +233,7 @@ Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 // Serialize
 
 bool PowerNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
-  if (childAtIndex(0)->type() == Type::ConstantMaths && static_cast<const ConstantNode *>(childAtIndex(0))->isConstant("ℯ") && indexOfChild(child) == 1) {
+  if (childAtIndex(0)->type() == Type::ConstantMaths && static_cast<const ConstantNode *>(childAtIndex(0))->isConstant("e") && indexOfChild(child) == 1) {
     return static_cast<const ExpressionNode *>(child)->type() != Type::Parenthesis;
   }
   if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
@@ -1322,7 +1322,7 @@ bool Power::IsLogarithmOfBase(const Expression e, const Expression base) {
   }
   return e.type() == ExpressionNode::Type::NaperianLogarithm
     && base.type() == ExpressionNode::Type::ConstantMaths
-    && static_cast<const Constant &>(base).isConstant("ℯ");
+    && static_cast<const Constant &>(base).isConstant("e");
 }
 
 /* This function turns the expression of type "a1*log(b1)+a2*log(b2)+..." into "log(b1^a1*b2^a2)"
@@ -1419,7 +1419,7 @@ bool Power::isNthRootOfUnity() const {
   if (base.type() != ExpressionNode::Type::ConstantMaths
       || index.type() != ExpressionNode::Type::Multiplication
       || n < 2 || n > 3
-      || !static_cast<Constant &>(base).isConstant("ℯ"))
+      || !static_cast<Constant &>(base).isConstant("e"))
   {
     return false;
   }
@@ -1437,7 +1437,7 @@ bool Power::isNthRootOfUnity() const {
 
 Expression Power::CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext) {
   // Returns e^(i*pi*r)
-  const Constant exp = Constant::Builder("ℯ");
+  const Constant exp = Constant::Builder("e");
   Constant iComplex = Constant::Builder("𝐢");
   const Constant pi = Constant::Builder("π");
   Multiplication mExp = Multiplication::Builder(iComplex, pi, r.clone());

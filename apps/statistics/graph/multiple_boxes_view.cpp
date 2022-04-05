@@ -80,7 +80,7 @@ void MultipleBoxesView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void MultipleBoxesView::changeDataViewSeriesSelection(int series, bool select) {
-  dataViewForSeries(series)->selectMainView(select);
+  MultipleDataView::changeDataViewSeriesSelection(series, select);
   // Mark rect as dirty in parent's view to also redraw the background
   markRectAsDirty(dataViewForSeries(series)->rectToReload());
 }

@@ -13,14 +13,6 @@ void MultipleDataView::reload() {
   }
 }
 
-void MultipleDataView::selectViewForSeries(int series) {
-  changeDataViewSeriesSelection(series, true);
-}
-
-void MultipleDataView::deselectViewForSeries(int series) {
-  changeDataViewSeriesSelection(series, false);
-}
-
 int MultipleDataView::numberOfSubviews() const {
   int result = m_store->numberOfValidSeries();
   assert(result <= Store::k_numberOfSeries);
@@ -48,11 +40,6 @@ void MultipleDataView::layoutDataSubviews(bool force) {
       displayedSubviewIndex++;
     }
   }
-}
-
-void MultipleDataView::changeDataViewSeriesSelection(int series, bool select) {
-  dataViewForSeries(series)->selectMainView(select);
-  dataViewForSeries(series)->reload();
 }
 
 }

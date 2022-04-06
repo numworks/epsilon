@@ -12,7 +12,7 @@ class DoublePairStore {
 public:
   constexpr static int k_numberOfSeries = 3;
   constexpr static int k_numberOfColumnsPerSeries = 2;
-  constexpr static int k_maxNumberOfPairs = 100;
+  constexpr static uint8_t k_maxNumberOfPairs = 100;
   DoublePairStore() :
     m_data{},
     m_validSeries{false, false, false},
@@ -23,15 +23,15 @@ public:
 
   // Get and set data
   double get(int series, int i, int j) const {
-    assert(j <  m_numberOfPairs[series]);
+    assert(j < m_numberOfPairs[series]);
     return m_data[series][i][j];
   }
   virtual void set(double f, int series, int i, int j);
 
   // Counts
   int numberOfPairs() const;
-  int numberOfPairsOfSeries(int series) const {
-    assert(series >= 0 && series < k_numberOfSeries);
+  uint8_t numberOfPairsOfSeries(int series) const {
+    assert(series >= 0 && series < k_numberOfSeries && m_numberOfPairs[series] <= k_maxNumberOfPairs);
     return m_numberOfPairs[series];
   }
 
@@ -52,6 +52,7 @@ public:
 
   // Calculations
   virtual void sortColumn(int series, int column);
+  void sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const;
   double sumOfColumn(int series, int i, bool lnOfSeries = false) const;
   bool seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const;
   uint32_t storeChecksum() const;
@@ -74,7 +75,8 @@ protected:
   double m_data[k_numberOfSeries][k_numberOfColumnsPerSeries][k_maxNumberOfPairs];
   bool m_validSeries[k_numberOfSeries];
 private:
-  int m_numberOfPairs[k_numberOfSeries];
+  static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
+  uint8_t m_numberOfPairs[k_numberOfSeries];
 };
 
 }

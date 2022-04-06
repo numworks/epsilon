@@ -10,7 +10,7 @@ public:
   void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override;
 
 private:
-  double getMedianValue(Store * store, int * sortedIndex, int series, int column, int startIndex, int endIndex);
+  double getMedianValue(Store * store, uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex);
 };
 
 }

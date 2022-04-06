@@ -73,7 +73,7 @@ private:
   Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
   Escher::StackViewController m_storeStackViewController;
   Escher::TabViewController m_tabViewController;
-  size_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
+  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
 };
 
 }

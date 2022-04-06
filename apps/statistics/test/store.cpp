@@ -44,7 +44,7 @@ void assert_data_statistics_equal_to(
     double trueModeFrequency
   ) {
   Store store;
-  size_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
+  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
   store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
@@ -100,7 +100,7 @@ void assert_data_cumulated_frequency(
     int totalCumulatedFrequency
   ) {
   Store store;
-  size_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
+  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
   store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
@@ -125,7 +125,7 @@ void assert_data_normal_probability(
     int totalNormalProbability
   ) {
   Store store;
-  size_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
+  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
   store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
@@ -162,7 +162,7 @@ void assert_data_box_plot(
     bool shouldUseFrequencyMethod
   ) {
   Store store;
-  size_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
+  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
   store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
@@ -967,7 +967,7 @@ void assert_data_statistics_multiple_series_equal_to(
     double maxValueIgnoringFrequency,
     double minValueIgnoringFrequency) {
   Store store;
-  size_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
+  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
   store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
 
   // Set the data in the store

@@ -11,7 +11,7 @@ class Store : public Shared::DoublePairStore {
 friend class BoxRange;
 public:
   Store();
-  void setSortedIndex(size_t * buffer, size_t bufferSize);
+  void setSortedIndex(uint8_t * buffer, size_t bufferSize);
   void invalidateSortedIndexes();
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
@@ -128,18 +128,18 @@ private:
   double computeModes(int series, int i, double * modeFreq, int * modesTotal) const;
   double sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement = false) const;
   double sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement = false) const;
-  size_t lowerWhiskerSortedIndex(int series) const;
-  size_t upperWhiskerSortedIndex(int series) const;
+  uint8_t lowerWhiskerSortedIndex(int series) const;
+  uint8_t upperWhiskerSortedIndex(int series) const;
   // Return the value index from its sorted index (a 0 sorted index is the min)
-  size_t valueIndexAtSortedIndex(int series, int i) const;
+  uint8_t valueIndexAtSortedIndex(int series, int i) const;
   // Sort and memoize values indexes in increasing order.
   void buildSortedIndex(int series) const;
   // Histogram bars
   double m_barWidth;
   double m_firstDrawnBarAbscissa;
   // Sorted value indexes are memoized to save computation
-  static_assert(k_maxNumberOfPairs <= SIZE_MAX, "k_maxNumberOfPairs is too large.");
-  mutable size_t * m_sortedIndex;
+  static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
+  mutable uint8_t * m_sortedIndex;
   mutable bool m_sortedIndexValid[k_numberOfSeries];
   /* Memoizing the max number of modes because the CalculationControllers needs
    * it in numberOfRows(), which is used a lot. */

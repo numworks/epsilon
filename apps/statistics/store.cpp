@@ -26,7 +26,7 @@ Store::Store() :
 {
 }
 
-void Store::setSortedIndex(size_t * buffer, size_t bufferSize) {
+void Store::setSortedIndex(uint8_t * buffer, size_t bufferSize) {
   assert(k_numberOfSeries * k_maxNumberOfPairs <= bufferSize);
   m_sortedIndex = buffer;
 }
@@ -428,7 +428,6 @@ double Store::computeModes(int series, int i, double * modeFreq, int * modesTota
   return ithValue;
 }
 
-// TODO : Factorize it with buildSortedIndex
 void Store::sortColumn(int series, int column) {
   m_sortedIndexValid[series] = false;
   DoublePairStore::sortColumn(series, column);
@@ -519,7 +518,7 @@ double Store::sortedElementAtCumulatedPopulation(int series, double population, 
   return get(series, 0, valueIndexAtSortedIndex(series, elementSortedIndex));
 }
 
-size_t Store::lowerWhiskerSortedIndex(int series) const {
+uint8_t Store::lowerWhiskerSortedIndex(int series) const {
   double lowFence = lowerFence(series);
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
@@ -532,7 +531,7 @@ size_t Store::lowerWhiskerSortedIndex(int series) const {
   return numberOfPairs;
 }
 
-size_t Store::upperWhiskerSortedIndex(int series) const {
+uint8_t Store::upperWhiskerSortedIndex(int series) const {
   double uppFence = upperFence(series);
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = numberOfPairs - 1; k >= 0; k--) {
@@ -613,7 +612,7 @@ double Store::normalProbabilityResultAtIndex(int series, int i) const {
   return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<double>(plottingPosition, 0.0, 1.0);
 }
 
-size_t Store::valueIndexAtSortedIndex(int series, int i) const {
+uint8_t Store::valueIndexAtSortedIndex(int series, int i) const {
   assert(m_sortedIndex && i >= 0 && i < numberOfPairsOfSeries(series));
   buildSortedIndex(series);
   return m_sortedIndex[series * k_maxNumberOfPairs + i];
@@ -624,25 +623,11 @@ void Store::buildSortedIndex(int series) const {
   if (m_sortedIndexValid[series]) {
     return;
   }
-  // TODO : Factorize with Regression::Store::sortIndexByColumn
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int i = 0; i < numberOfPairs; i++) {
+  uint8_t numberOfPairs = numberOfPairsOfSeries(series);
+  for (uint8_t i = 0; i < numberOfPairs; i++) {
     m_sortedIndex[series * k_maxNumberOfPairs + i] = i;
   }
-  /* Following lines is an insertion-sort algorithm which has the advantage of
-   * being in-place and efficient when already sorted. */
-  int i = 1;
-  while (i < numberOfPairs) {
-    int xIndex = m_sortedIndex[series * k_maxNumberOfPairs + i];
-    double x = m_data[series][0][xIndex];
-    int j = i - 1;
-    while (j >= 0 && m_data[series][0][m_sortedIndex[series * k_maxNumberOfPairs + j]] > x) {
-      m_sortedIndex[series * k_maxNumberOfPairs + j + 1] = m_sortedIndex[series * k_maxNumberOfPairs + j];
-      j--;
-    }
-    m_sortedIndex[series * k_maxNumberOfPairs + j + 1] = xIndex;
-    i++;
-  }
+  sortIndexByColumn(m_sortedIndex + series * k_maxNumberOfPairs, series, 0, 0, numberOfPairs);
   m_sortedIndexValid[series] = true;
 }
 

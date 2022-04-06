@@ -18,6 +18,7 @@ void DoublePairStore::set(double f, int series, int i, int j) {
   if (j >= m_numberOfPairs[series]) {
     int otherI = i == 0 ? 1 : 0;
     m_data[series][otherI][j] = defaultValue(series, otherI, j);
+    assert(m_numberOfPairs[series] < UINT8_MAX);
     m_numberOfPairs[series]++;
   }
   memoizeValidSeries(series);
@@ -153,7 +154,7 @@ int DoublePairStore::indexOfKthValidSeries(int k) const {
   return 0;
 }
 
-// TODO : Factorize this with Regression::Store::sortIndexByColumn and statistics::Store::buildSortedIndex
+// TODO : Factorize this with sortIndexByColumn
 void DoublePairStore::sortColumn(int series, int column) {
   static Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
     // Swap X and Y values
@@ -177,6 +178,24 @@ void DoublePairStore::sortColumn(int series, int column) {
   int indexOfFirstCell = series * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
   double * seriesContext = &(data()[indexOfFirstCell]);
   Poincare::Helpers::Sort(swapRows, (column == 0) ? compareX : compareY, seriesContext, numberOfPairsOfSeries(series));
+}
+
+void DoublePairStore::sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const {
+  assert(startIndex < endIndex);
+  /* Following lines is an insertion-sort algorithm which has the advantage of
+   * being in-place and efficient when already sorted. */
+  int i = startIndex + 1;
+  while (i < endIndex) {
+    double x = get(series, column, sortedIndex[i]);
+    uint8_t xIndex = sortedIndex[i];
+    int j = i - 1;
+    while (j >= startIndex && get(series, column, sortedIndex[j]) > x){
+      sortedIndex[j+1] = sortedIndex[j];
+      j--;
+    }
+    sortedIndex[j+1] = xIndex;
+    i++;
+  }
 }
 
 double DoublePairStore::sumOfColumn(int series, int i, bool lnOfSeries) const {

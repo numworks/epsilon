@@ -264,7 +264,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     if (numberOfValuesToCompute == -1) {
       numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
     } else {
-      numberOfValuesToCompute = std::min(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
+      numberOfValuesToCompute = std::min(numberOfValuesToCompute, static_cast<int>(m_store->numberOfPairsOfSeries(series)));
     }
     index++;
   }

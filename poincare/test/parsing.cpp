@@ -332,14 +332,7 @@ QUIZ_CASE(poincare_parse_lists) {
 
 QUIZ_CASE(poincare_parsing_constants) {
   for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    if (info.unit() == nullptr) {
-      assert_tokenizes_as_constant(info.name());
-    } else {
-      constexpr int k_bufferSize = 10;
-      char buffer[k_bufferSize] = "_";
-      strlcpy(buffer + 1, info.name(), k_bufferSize - 1);
-      assert_tokenizes_as_constant(buffer);
-    }
+    assert_tokenizes_as_constant(info.name());
   }
 }
 
@@ -499,7 +492,6 @@ QUIZ_CASE(poincare_parsing_identifiers) {
 
 QUIZ_CASE(poincare_parsing_parse_store) {
   assert_parsed_expression_is("1→a", Store::Builder(BasedInteger::Builder(1),Symbol::Builder("a",1)));
-  assert_parsed_expression_is("1→e", Store::Builder(BasedInteger::Builder(1),Symbol::Builder("e",1)));
   assert_parsed_expression_is("1→f(x)", Store::Builder(BasedInteger::Builder(1),Function::Builder("f",1,Symbol::Builder("x",1))));
   assert_parsed_expression_is("x→f(x)", Store::Builder(Symbol::Builder("x",1),Function::Builder("f",1,Symbol::Builder("x",1))));
   assert_parsed_expression_is("n→f(x)", Store::Builder(Symbol::Builder("n",1),Function::Builder("f",1,Symbol::Builder("x",1))));

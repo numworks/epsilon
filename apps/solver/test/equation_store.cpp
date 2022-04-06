@@ -10,6 +10,8 @@ QUIZ_CASE(equation_solve) {
   assert_solves_to_error("x×(x^2×int(1/t,t,0,1)+1)=0", EquationUndefined);
 
   assert_solves_to_no_solution("2=0");
+  assert_solves_to_no_solution("e=1");
+  assert_solves_to_no_solution("i=5");
   assert_solves_to_no_solution("x-x+2=0");
 
   assert_solves_to_infinite_solutions("0=0");
@@ -82,7 +84,7 @@ QUIZ_CASE(equation_solve) {
   assert_solves_to_infinite_solutions({
     "b=0",
     "D=0",
-    "e=0",
+    "c=0",
     "x+y+z+t=0"
   });
   unset("x");
@@ -92,7 +94,7 @@ QUIZ_CASE(equation_solve) {
   set("g", "0");
   assert_solves_to_no_solution({
     "a=a+1",
-    "a+b+c+d+e+f+g=0"
+    "a+b+c+d+f+g+h=0"
   });
   unset("g");
 
@@ -240,14 +242,14 @@ QUIZ_CASE(equation_and_symbolic_computation) {
 
   assert_solves_to({"c+d=5", "c-d=1"}, {"c=3", "d=2"});
 
-  set("e", "8_g");
-  assert_solves_to({"e+1=0"}, {"e=-1"});
+  set("j", "8_g");
+  assert_solves_to({"j+1=0"}, {"j=-1"});
 
   unset("a");
   unset("b");
   unset("c");
   unset("d");
-  unset("e");
+  unset("j");
   unset("f");
   unset("g");
   unset("h");
@@ -267,4 +269,5 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   set("x", "1");
   assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution);
   unset("x");
+
 }

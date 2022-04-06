@@ -522,8 +522,8 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");
   assert_expression_approximates_to<double>("int(int(x×x,x,0,x),x,0,4)", "21.333333333333");
 
-  assert_expression_approximates_to<float>("int(1+cos(e),e, 0, 180)", "180");
-  assert_expression_approximates_to<double>("int(1+cos(e),e, 0, 180)", "180");
+  assert_expression_approximates_to<float>("int(1+cos(a),a, 0, 180)", "180");
+  assert_expression_approximates_to<double>("int(1+cos(a),a, 0, 180)", "180");
 
   assert_expression_approximation_is_bounded("random()", 0.0f, 1.0f);
   assert_expression_approximation_is_bounded("random()", 0.0, 1.0);

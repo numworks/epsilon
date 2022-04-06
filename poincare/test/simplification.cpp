@@ -133,7 +133,7 @@ QUIZ_CASE(poincare_simplification_addition) {
   assert_parsed_expression_simplify_to("1/x^2+3", "\u00123×x^2+1\u0013/x^2", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("1+x", "x+1");
   assert_parsed_expression_simplify_to("1/2+1/3+1/4+1/5+1/6+1/7", "223/140");
-  assert_parsed_expression_simplify_to("1+x+4-i-2x", "-i-x+5");
+  assert_parsed_expression_simplify_to("1+x+4-y-2x", "-x-y+5");
   assert_parsed_expression_simplify_to("2+1", "3");
   assert_parsed_expression_simplify_to("1+2", "3");
   assert_parsed_expression_simplify_to("1+2+3+4+5+6+7", "28");

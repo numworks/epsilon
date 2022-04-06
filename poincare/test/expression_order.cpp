@@ -25,8 +25,8 @@ void assert_greater(Expression e1, Expression e2) {
 }
 
 QUIZ_CASE(poincare_expression_order_constant) {
-  assert_greater(Constant::Builder("c"), Constant::Builder("e"));
-  assert_greater(Constant::Builder("G"), Constant::Builder("π"));
+  assert_greater(Constant::Builder("_c"), Constant::Builder("e"));
+  assert_greater(Constant::Builder("_G"), Constant::Builder("π"));
   assert_greater(Constant::Builder("π"), Constant::Builder("i"));
   assert_greater(Constant::Builder("e"), Constant::Builder("π"));
   assert_greater(Constant::Builder("e"), Constant::Builder("i"));

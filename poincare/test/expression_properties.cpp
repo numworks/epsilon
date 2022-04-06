@@ -418,8 +418,8 @@ QUIZ_CASE(poincare_properties_get_variables) {
   const char * variableBuffer5[] = {"BBBBBB", ""};
   assert_expression_has_variables("BBBBBB", variableBuffer5, 1);
   const char * variableBuffer6[] = {""};
-  assert_expression_has_variables("a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
-  assert_expression_has_variables("a+b+c+d+e+f+g", variableBuffer6, -1);
+  assert_expression_has_variables("a+b+c+d+f+g+h+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
+  assert_expression_has_variables("a+b+c+d+f+g+h", variableBuffer6, -1);
   // f: x → 1+πx+x^2+toto
   assert_reduce("1+π×x+x^2+\"toto\"→f(x)");
   const char * variableBuffer7[] = {"\"tata\"","\"toto\"", ""};
@@ -431,8 +431,8 @@ QUIZ_CASE(poincare_properties_get_variables) {
 
   const char * variableBuffer8[] = {"y", ""};
   assert_expression_has_variables("diff(3x,x,0)y-2", variableBuffer8, 1);
-  const char * variableBuffer9[] = {"a", "b", "c", "d", "e", "f"};
-  assert_expression_has_variables("a+b+c+d+e+f", variableBuffer9, 6);
+  const char * variableBuffer9[] = {"a", "b", "c", "d", "g", "f"};
+  assert_expression_has_variables("a+b+c+d+g+f", variableBuffer9, 6);
 
   const char * variableBuffer10[] = {"c", "z", "a", "b", ""};
   assert_expression_has_variables("int(c×x×z, x, a, b)", variableBuffer10, 4);

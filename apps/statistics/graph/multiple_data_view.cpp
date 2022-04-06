@@ -6,6 +6,14 @@ using namespace Escher;
 
 namespace Statistics {
 
+KDCoordinate MultipleDataView::subviewHeight() {
+  int numberDataSubviews = m_store->numberOfValidSeries();
+  assert(numberDataSubviews > 0);
+  KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
+  // +1 to make sure that all pixel rows are drawn
+  return (bounds().height() - bannerHeight)/numberDataSubviews + 1;
+}
+
 void MultipleDataView::reload() {
   layoutSubviews();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
@@ -27,15 +35,12 @@ View * MultipleDataView::subviewAtIndex(int index) {
 }
 
 void MultipleDataView::layoutDataSubviews(bool force) {
-  int numberDataSubviews = m_store->numberOfValidSeries();
-  assert(numberDataSubviews > 0);
-  KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
-  KDCoordinate subviewHeight = (bounds().height() - bannerHeight)/numberDataSubviews + 1; // +1 to make sure that all pixel rows are drawn
+  KDCoordinate subHeight = subviewHeight();
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (m_store->seriesIsValid(i)) {
       CurveView * dataView = dataViewForSeries(i);
-      KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), subviewHeight);
+      KDRect frame = KDRect(0, displayedSubviewIndex * subHeight, bounds().width(), subHeight);
       dataView->setFrame(frame, force);
       displayedSubviewIndex++;
     }

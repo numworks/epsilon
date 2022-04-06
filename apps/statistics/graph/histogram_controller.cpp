@@ -192,8 +192,7 @@ void HistogramController::initYRangeParameters(int series) {
    *    yMin = -bottomMargin/ratioFloatPixel = yMax*bottomMargin/(bottomMargin - viewHeight)
    * */
   float bottomMargin = static_cast<float>(HistogramRange::k_bottomMargin);
-  // viewHeight should be equal for each valid series
-  float viewHeight = static_cast<float>(m_view.dataViewForSeries(series)->bounds().height());
+  float viewHeight = static_cast<float>(m_view.subviewHeight());
   m_histogramRange.setYMin(m_histogramRange.yMax() * bottomMargin / (bottomMargin - viewHeight));
 }
 

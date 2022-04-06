@@ -8,15 +8,15 @@ using namespace Poincare;
 namespace Regression {
 
 void MedianModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
-  int numberOfDots = store->numberOfPairsOfSeries(series);
+  uint8_t numberOfDots = store->numberOfPairsOfSeries(series);
   if (numberOfDots < 3) {
     modelCoefficients[0] = NAN;
     modelCoefficients[1] = NAN;
     return;
   }
 
-  int sortedIndex[Store::k_maxNumberOfPairs];
-  for (int i = 0; i < numberOfDots; i++) {
+  uint8_t sortedIndex[Store::k_maxNumberOfPairs];
+  for (uint8_t i = 0; i < numberOfDots; i++) {
     sortedIndex[i] = i;
   }
   store->sortIndexByColumn(sortedIndex, series, 0, 0, numberOfDots);
@@ -51,7 +51,7 @@ void MedianModel::fit(Store * store, int series, double * modelCoefficients, Poi
   modelCoefficients[1] = ((leftPoint[1] - a * leftPoint[0]) + (middlePoint[1] - a * middlePoint[0]) + (rightPoint[1] - a * rightPoint[0])) / 3;
 }
 
-double MedianModel::getMedianValue(Store * store, int * sortedIndex, int series, int column, int startIndex, int endIndex) {
+double MedianModel::getMedianValue(Store * store, uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) {
   assert(endIndex != startIndex);
   if ((endIndex - startIndex) % 2 == 1) {
     return store->get(series, column, sortedIndex[startIndex + (endIndex - startIndex) / 2]);

@@ -295,23 +295,6 @@ double Store::correlationCoefficient(int series) const {
   return (v0 == 0.0 || v1 == 0.0) ? 1.0 : covariance(series) / std::sqrt(v0 * v1);
 }
 
-void Store::sortIndexByColumn(int * sortedIndex, int series, int column, int startIndex, int endIndex) const {
-  assert(startIndex < endIndex);
-  // Following lines is an insertion-sort algorithm which has the advantage of being in-place and efficient when already sorted.
-  int i = startIndex + 1;
-  while (i < endIndex) {
-    double x = get(series, column, sortedIndex[i]);
-    int xIndex = sortedIndex[i];
-    int j = i - 1;
-    while (j >= startIndex && get(series, column, sortedIndex[j]) > x){
-      sortedIndex[j+1] = sortedIndex[j];
-      j = j - 1;
-    }
-    sortedIndex[j+1] = xIndex;
-    i = i + 1;
-  }
-}
-
 double Store::computeDeterminationCoefficient(int series, Poincare::Context * globalContext) {
   /* Computes and returns the determination coefficient (R2) of the regression.
    * For linear regressions, it is equal to the square of the correlation

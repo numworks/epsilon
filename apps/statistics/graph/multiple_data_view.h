@@ -11,6 +11,7 @@ class MultipleDataView : public DataView {
 public:
   using DataView::DataView;
   virtual Shared::CurveView * dataViewForSeries(int series) = 0;
+  KDCoordinate subviewHeight();
 
   // DataView
   Shared::CurveView * curveViewForSeries(int series) override { return dataViewForSeries(series); };

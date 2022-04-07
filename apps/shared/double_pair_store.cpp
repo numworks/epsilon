@@ -1,5 +1,5 @@
 #include "double_pair_store.h"
-#include <apps/shared/poincare_helpers.h>
+#include <poincare/helpers.h>
 #include <cmath>
 #include <assert.h>
 #include <stddef.h>
@@ -154,7 +154,6 @@ int DoublePairStore::indexOfKthValidSeries(int k) const {
   return 0;
 }
 
-// TODO : Factorize this with sortIndexByColumn
 void DoublePairStore::sortColumn(int series, int column) {
   static Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
     // Swap X and Y values
@@ -169,11 +168,11 @@ void DoublePairStore::sortColumn(int series, int column) {
   };
   static Poincare::Helpers::Compare compareX = [](int a, int b, void * context, int numberOfElements)->bool{
     double * dataX = static_cast<double*>(context);
-    return dataX[a] > dataX[b] || std::isnan(dataX[a]);
+    return dataX[a] >= dataX[b] || std::isnan(dataX[a]);
   };
   static Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
     double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
-    return dataY[a] > dataY[b] || std::isnan(dataY[a]);
+    return dataY[a] >= dataY[b] || std::isnan(dataY[a]);
   };
   int indexOfFirstCell = series * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
   double * seriesContext = &(data()[indexOfFirstCell]);

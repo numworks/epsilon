@@ -16,8 +16,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           path: base
-      - name: Build base for N0100
-        run: make -C base MODEL=n0100 kernel.elf && make -C base MODEL=n0100 userland.elf
       - name: Build base for N0110
         run: make -C base kernel.A.elf && make -C base userland.A.elf
       - name: Checkout PR head
@@ -25,16 +23,11 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           path: head
-      - name: Build head for N0100
-        run: make -C head MODEL=n0100 kernel.elf && make -C head MODEL=n0100 userland.elf
       - name: Build head for N0110
         run: make -C head kernel.A.elf && make -C head userland.A.elf
       - name: Binary size summary
         id: binary_size_summary
         run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)"
-      - name: Binary size N0100
-        id: binary_size_n0100
-        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0100/kernel/kernel.elf base/output/release/device/n0100/userland/userland.elf @Head head/output/release/device/n0100/kernel/kernel.elf head/output/release/device/n0100/userland/userland.elf --sections .text .rodata .bss .data)"
       - name: Binary size N0110
         id: binary_size_n0110
         run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections .text .rodata .bss .data)"
@@ -47,5 +40,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body: `# Binary size analysis\n\n${{ steps.binary_size_summary.outputs.table }}\n<details>\n<summary>Full details</summary>\n\n## N0100\n\n${{ steps.binary_size_n0100.outputs.table }}\n\n## N0110\n\n${{ steps.binary_size_n0110.outputs.table }}</details>`,
+              body: `# Binary size analysis\n\n${{ steps.binary_size_summary.outputs.table }}\n<details>\n<summary>Full details</summary>\n\n## N0110\n\n${{ steps.binary_size_n0110.outputs.table }}</details>`,
             });

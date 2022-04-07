@@ -42,7 +42,7 @@ class USBData {
     static const char * buildStringDescriptor(StringHeader header, uint32_t startAddress, uint32_t size);
 
     static const USBData DEFAULT();
-    static const USBData BLUPDATE();
+    static const USBData BOOTLOADER_UPDATE();
     static USBData Recovery(uint32_t startAddress, uint32_t size);
 
   private:

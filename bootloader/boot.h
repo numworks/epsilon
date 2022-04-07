@@ -24,7 +24,7 @@ public:
   static void bootloader();
   static void aboutMenu();
   static void installerMenu();
-  static void blupdate();
+  static void bootloaderUpdate();
   static void bootSlot(Bootloader::Slot slot);
   static void lockInternal();
 };

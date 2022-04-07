@@ -21,7 +21,7 @@ public:
   static void drawCrash(const char * error);
   static void drawRecovery();
   static void drawInstallerSelection();
-  static void drawBLUpdate();
+  static void drawBootloaderUpdate();
   static void drawEpsilonAdvertisement();
 
 };

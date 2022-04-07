@@ -98,7 +98,7 @@ void Boot::installerMenu() {
       continue;
     } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Two)) {
       scan = Ion::Keyboard::State(Ion::Keyboard::Key::Back);
-      blupdate();
+      bootloaderUpdate();
       continue;
     } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::OnOff)) {
       Ion::Power::standby(); // Force a core reset to exit
@@ -127,11 +127,11 @@ void Boot::aboutMenu() {
 
 }
 
-void Boot::blupdate() {
-  USBData data = USBData::BLUPDATE();
+void Boot::bootloaderUpdate() {
+  USBData data = USBData::BOOTLOADER_UPDATE();
   
   for (;;) {
-    Bootloader::Interface::drawBLUpdate();
+    Bootloader::Interface::drawBootloaderUpdate();
     Ion::USB::enable();
     do {
       uint64_t scan = Ion::Keyboard::scan();

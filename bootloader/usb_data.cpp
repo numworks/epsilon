@@ -30,7 +30,7 @@ const Bootloader::USBData Bootloader::USBData::DEFAULT() {
     return USBData("@Flash/0x90000000/08*004Kg,01*032Kg,63*064Kg,64*064Kg", Messages::upsilonBootloader, DFUData());
 }
 
-const Bootloader::USBData Bootloader::USBData::BLUPDATE() {
+const Bootloader::USBData Bootloader::USBData::BOOTLOADER_UPDATE() {
     return USBData("@Flash/0x08000000/04*016Kg", Messages::bootloaderUpdate, DFUData(true, false));
 }
 

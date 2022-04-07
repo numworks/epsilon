@@ -2,6 +2,7 @@
 #define BOOTLOADER_BOOT_H
 
 #include <stdint.h>
+#include <bootloader/slot.h>
 
 namespace Bootloader {
 
@@ -20,7 +21,12 @@ public:
   static BootMode mode();
   static void setMode(BootMode mode);
   __attribute__ ((noreturn)) static void boot();
-  __attribute__ ((noreturn)) static void bootloader();
+  static void bootloader();
+  static void aboutMenu();
+  static void installerMenu();
+  static void blupdate();
+  static void bootSlot(Bootloader::Slot slot);
+  static void lockInternal();
 };
 
 }

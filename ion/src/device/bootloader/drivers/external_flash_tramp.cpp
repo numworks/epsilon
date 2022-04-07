@@ -378,6 +378,13 @@ void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
 void EraseSector(int i) {
   asm("cpsid if");
   (*reinterpret_cast<void(**)(int)>(Ion::Device::Trampoline::address(Ion::Device::Trampoline::ExternalFlashEraseSector)))(i);
+  asm("cpsie if");
+}
+
+void LockSlotA() {
+}
+
+void LockSlotB() {
 }
 
 }

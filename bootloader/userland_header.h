@@ -15,6 +15,8 @@ public:
   const char * omegaVersion() const;
   const bool isUpsilon() const;
   const char * upsilonVersion() const;
+  const void * storageAddress() const;
+  const size_t storageSize() const;
 
 private:
   UserlandHeader();
@@ -32,14 +34,14 @@ private:
   uint32_t m_externalAppsRAMStart;
   uint32_t m_externalAppsRAMEnd;
   uint32_t m_footer;
-  uint32_t m_omegaMagicHeader;
+  uint32_t m_ohm_header;
   const char m_omegaVersion[16];
   const volatile char m_username[16];
-  uint32_t m_omegaMagicFooter;
-  uint32_t m_upsilonMagicHeader;
+  uint32_t m_ohm_footer;
+  uint32_t m_ups_header;
   const char m_UpsilonVersion[16];
   uint32_t m_osType;
-  uint32_t m_upsilonMagicFooter;
+  uint32_t m_ups_footer;
 };
 
 extern const UserlandHeader* s_userlandHeaderA;

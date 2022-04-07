@@ -14,7 +14,7 @@ const bool UserlandHeader::isValid() const {
 }
 
 const bool UserlandHeader::isOmega() const {
-  return m_omegaMagicHeader == OmegaMagic && m_omegaMagicFooter == OmegaMagic;
+  return m_ohm_header == OmegaMagic && m_ohm_footer == OmegaMagic;
 }
 
 
@@ -23,11 +23,19 @@ const char * UserlandHeader::omegaVersion() const {
 }
 
 const bool UserlandHeader::isUpsilon() const {
-  return m_upsilonMagicHeader == UpsilonMagic && m_upsilonMagicFooter == UpsilonMagic;
+  return m_ups_header == UpsilonMagic && m_ups_footer == UpsilonMagic;
 }
 
 const char * UserlandHeader::upsilonVersion() const {
   return m_UpsilonVersion;
+}
+
+const void * UserlandHeader::storageAddress() const {
+  return m_storageAddressRAM;
+}
+
+const size_t UserlandHeader::storageSize() const {
+  return m_storageSizeRAM;
 }
 
 }

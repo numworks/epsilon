@@ -89,10 +89,15 @@ public:
   public:
     using Register8::Register8;
     REGS_BOOL_FIELD_R(BUSY, 0);
+    REGS_BOOL_FIELD(BP, 2);
+    REGS_BOOL_FIELD(BP1, 3);
+    REGS_BOOL_FIELD(BP2, 4);
+    REGS_BOOL_FIELD(TB, 5);
   };
   class StatusRegister2 : public Register8 {
   public:
     using Register8::Register8;
+    REGS_BOOL_FIELD(SRP1, 0); 
     REGS_BOOL_FIELD(QE, 1);
   };
 };
@@ -426,6 +431,46 @@ void unlockFlash() {
   uint8_t registers[] = {statusRegister1.get(), statusRegister2.get()};
   send_write_command(Command::WriteStatusRegister, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(registers), sizeof(registers), sOperatingModes101);
   wait();
+}
+
+void LockSlotA() {
+  unset_memory_mapped_mode();
+  unlockFlash();
+  send_command(Command::WriteEnable);
+  wait();
+  ExternalFlashStatusRegister::StatusRegister1 statusRegister1(0);
+  ExternalFlashStatusRegister::StatusRegister2 statusRegister2(0);
+  ExternalFlashStatusRegister::StatusRegister2 currentStatusRegister2(0);
+  send_read_command(Command::ReadStatusRegister2, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&currentStatusRegister2), sizeof(currentStatusRegister2));
+  statusRegister2.setQE(currentStatusRegister2.getQE());
+  statusRegister2.setSRP1(true);
+  statusRegister1.setTB(true);
+  statusRegister1.setBP2(true);
+  statusRegister1.setBP1(true);
+  uint8_t registers[] = {statusRegister1.get(), statusRegister2.get()};
+  send_write_command(Command::WriteStatusRegister, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(registers), sizeof(registers), sOperatingModes101);
+  wait();
+  set_as_memory_mapped();
+}
+
+void LockSlotB() {
+  unset_memory_mapped_mode();
+  unlockFlash();
+  send_command(Command::WriteEnable);
+  wait();
+  ExternalFlashStatusRegister::StatusRegister1 statusRegister1(0);
+  ExternalFlashStatusRegister::StatusRegister2 statusRegister2(0);
+  ExternalFlashStatusRegister::StatusRegister2 currentStatusRegister2(0);
+  send_read_command(Command::ReadStatusRegister2, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&currentStatusRegister2), sizeof(currentStatusRegister2));
+  statusRegister2.setQE(currentStatusRegister2.getQE());
+  statusRegister2.setSRP1(true);
+  statusRegister1.setTB(false);
+  statusRegister1.setBP2(true);
+  statusRegister1.setBP1(true);
+  uint8_t registers[] = {statusRegister1.get(), statusRegister2.get()};
+  send_write_command(Command::WriteStatusRegister, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(registers), sizeof(registers), sOperatingModes101);
+  wait();
+  set_as_memory_mapped();
 }
 
 void MassErase() {

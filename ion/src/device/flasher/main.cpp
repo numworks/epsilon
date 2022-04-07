@@ -11,6 +11,6 @@ void ion_main(int argc, const char * const argv[]) {
     Ion::USB::enable();
     while (!Ion::USB::isEnumerated()) {
     }
-    Ion::USB::DFU(false, false, 0);
+    Ion::USB::DFU(false);
   }
 }

@@ -1,5 +1,6 @@
 
 bootloader_src += $(addprefix bootloader/,\
+  slot_exam_mode.cpp \
   boot.cpp \
   main.cpp \
   kernel_header.cpp \
@@ -8,14 +9,15 @@ bootloader_src += $(addprefix bootloader/,\
   interface.cpp \
   jump_to_firmware.s \
   trampoline.cpp \
-  usb_desc.cpp \
+  recovery.cpp \
+  usb_data.cpp \
+  itoa.cpp \
 )
 
 bootloader_images = $(addprefix bootloader/, \
-  cable.png \
   computer.png \
 )
 
-bootloader_src += $(filter-out ion/src/device/shared/drivers/usb_desc.cpp,$(ion_src)) $(simple_kandinsky_src) $(liba_src) $(libaxx_src) $(bootloader_images)
+bootloader_src += $(ion_src) $(simple_kandinsky_src) $(liba_src) $(libaxx_src) $(bootloader_images)
 
 $(eval $(call depends_on_image,bootloader/interface.cpp,$(bootloader_images)))

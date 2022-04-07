@@ -36,6 +36,7 @@ void* CustomTrampolines[CUSTOM_TRAMPOLINES_COUNT]
   __attribute__((used))
  = {
   (void*) Bootloader::Boot::mode,
+  // This function doesn't do anything ...
   (void*) Bootloader::Boot::setMode
 };
 

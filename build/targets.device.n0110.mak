@@ -1,14 +1,14 @@
 HANDY_TARGETS += test.external_flash.write test.external_flash.read bootloader
 
 $(BUILD_DIR)/test.external_flash.%.$(EXE): LDSCRIPT = ion/test/device/n0110/external_flash_tests.ld
-test_external_flash_src = $(ion_src) $(liba_src) $(libaxx_src) $(default_kandinsky_src) $(poincare_src) $(ion_device_dfu_relegated_src) $(runner_src)
+test_external_flash_src = $(ion_src) $(liba_src) $(libaxx_src) $(default_kandinsky_src) $(poincare_src) $(ion_device_dfu_relogated_src) $(runner_src)
 $(BUILD_DIR)/test.external_flash.read.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_read_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_read_src))
 $(BUILD_DIR)/test.external_flash.write.$(EXE): $(BUILD_DIR)/quiz/src/test_ion_external_flash_write_symbols.o $(call object_for,$(test_external_flash_src) $(test_ion_external_flash_write_src))
 
 .PHONY: bootloader
 bootloader: $(BUILD_DIR)/bootloader.bin
 $(BUILD_DIR)/bootloader.$(EXE): $(call flavored_object_for,$(bootloader_src),usbxip)
-$(BUILD_DIR)/bootloader.$(EXE): LDSCRIPT = ion/src/device/n0110/internal_flash.ld
+$(BUILD_DIR)/bootloader.$(EXE): LDSCRIPT = ion/src/device/bootloader/internal_flash.ld
 
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu
@@ -36,4 +36,3 @@ binpack: $(BUILD_DIR)/flasher.light.bin $(BUILD_DIR)/epsilon.onboarding.two_bina
 	cp $(BUILD_DIR)/epsilon.onboarding.internal.bin $(BUILD_DIR)/epsilon.onboarding.external.bin $(BUILD_DIR)/binpack
 	cd $(BUILD_DIR) && for binary in flasher.light.bin epsilon.onboarding.internal.bin epsilon.onboarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd $(BUILD_DIR) && tar cvfz binpack-$(MODEL)-`git rev-parse HEAD | head -c 7`.tgz binpack/*
-	$(PYTHON) build/device/secure_ext.py $(BUILD_DIR)/epsilon.onboarding.external.bin

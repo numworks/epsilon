@@ -3,6 +3,8 @@ import os
 
 MAGIK_CODE = [0x32, 0x30, 0x30, 0x36]
 MAGIK_POS = 0x44F
+# Disable Script
+sys.exit(0)
 
 if len(sys.argv) > 1:
     ext_path = os.path.join(os.getcwd(), sys.argv[1])

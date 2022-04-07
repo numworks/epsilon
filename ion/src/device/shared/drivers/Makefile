@@ -25,6 +25,5 @@ ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
   swd.cpp \
   timing.cpp \
   usb.cpp \
-  usb_desc.cpp \
   wakeup.cpp \
 )

@@ -10,6 +10,7 @@ public:
   const char * version() const;
   const char * patchLevel() const;
   const bool isValid() const;
+  const bool isNewVersion() const;
 
   const uint32_t* stackPointer() const;
   const void(*startPointer() const)();

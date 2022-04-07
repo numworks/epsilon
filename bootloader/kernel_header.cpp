@@ -22,4 +22,18 @@ const void(*KernelHeader::startPointer() const)() {
   return m_startPointer;
 }
 
+const bool KernelHeader::isNewVersion() const {
+  int sum = 0;
+  for (int i = 0; i < 2; i++) {
+    sum += m_version[i] * (5 - i);
+  }
+  char newVersion[] = "16";
+  int min = 0;
+  for (int i = 0; i < 2; i++) {
+    min += newVersion[i] * (5 - i);
+  }
+  return sum >= min;
+}
+
+
 }

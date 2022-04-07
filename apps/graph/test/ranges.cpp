@@ -108,23 +108,23 @@ QUIZ_CASE(graph_ranges_single_function) {
   assert_best_cartesian_range_is("f(x)=(1-x)ℯ^(1/(1-x))", -1.62682521, 2.726825, -3, 5.0999999);
   assert_best_cartesian_range_is("f(x)=(ℯ^x-1)/(ℯ^x+1)", -3.7, 3.7, -2.115625, 1.815625);
 
-  assert_best_cartesian_range_is("f(x)=ln(x)", -1.89999998, 6.80000019, -2.81093717, 1.81093717);
-  assert_best_cartesian_range_is("f(x)=log(x)", -0.900000036, 3.10000014, -1.21249986, 0.912499905);
+  assert_best_cartesian_range_is("f(x)=ln(x)", -1.9, 6.8, -2.36093712, 2.26093721);
+  assert_best_cartesian_range_is("f(x)=log(x)", -0.9, 3.1, -1.5125, 0.6125);
 
   assert_best_cartesian_range_is("f(x)=√(x)", -3, 9, -1.83749962, 4.53749943);
-  assert_best_cartesian_range_is("f(x)=√(x-1)", -2, 10, -1.83749962, 4.53749943);
+  assert_best_cartesian_range_is("f(x)=√(x-1)", -2, 10, -1.8875, 4.4875);
   assert_best_cartesian_range_is("f(x)=√(x^2+1)-x", -10, 10, -1.26249981, 9.36249924);
   assert_best_cartesian_range_is("f(x)=root(x,3)", -0.8, 2.9, -0.332812428, 1.63281238);
   assert_best_cartesian_range_is("f(x)=root(x^3+1,3)-x", -2, 2.29999995, -0.392187476, 1.89218748);
   assert_best_cartesian_range_is("f(x)=x^x", -0.9, 3.1, -1.3, 7.7);
   // TODO : Fix ranges for (x-1)^(x-1) with any complex format
-  assert_best_cartesian_range_is("f(x)=(x-1)^(x-1)", -72.5212, 43.5212, -190000, 350000);
+  assert_best_cartesian_range_is("f(x)=(x-1)^(x-1)", -66.4319, 37.4319458, -23.0888424, 32.0888443);
 
   // Ranges with Real complex format
   Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Real);
   assert_best_cartesian_range_is("f(x)=root(x,3)", -3.7, 3.7, -2.1156249, 1.81562483);
   // TODO : Fix ranges for x^x with real complex format
-  assert_best_cartesian_range_is("f(x)=x^x", -19.1054859, 14.1054859, -60, 120);
+  assert_best_cartesian_range_is("f(x)=x^x", -11, 6, -1.71562457, 7.31562424);
 
   // Vertical line
   {
@@ -141,7 +141,7 @@ QUIZ_CASE(graph_ranges_several_functions) {
   {
     const char * definitions[] = {"f(x)=ℯ^x", "g(x)=ln(x)"};
     ContinuousFunction::PlotType types[] = {Cartesian, Cartesian};
-    assert_best_range_is(definitions, types, -1.9, 6.8, -9, 35);
+    assert_best_range_is(definitions, types, -1.9, 6.8, -8, 35);
   }
   {
     const char * definitions[] = {"f(x)=x/2+2", "g(x)=-x+5"};

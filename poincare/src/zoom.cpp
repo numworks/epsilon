@@ -268,7 +268,8 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
       },
       [](int i, int j, void * ctx, int size) {
         float * array = static_cast<float *>(ctx);
-        return array[i] >= array[j];
+        // NaN are expected at the end of the list
+        return array[i] >= array[j] || std::isnan(array[i]);
       },
       sample,
       sampleSize);
@@ -286,17 +287,22 @@ void Zoom::RangeWithRatioForDisplay(ValueAtAbscissa evaluation, float yxRatio, f
    * the criteria distanceFromCenter, which makes the window symmetrical when
    * dealing with linear functions. */
   float yRange = yxRatio * xRange;
+  // Ignore the NAN samples
+  int firstNanIndex = sampleSize;
+  while (firstNanIndex > 0 && std::isnan(sample[firstNanIndex-1])) {
+    firstNanIndex--;
+  }
   int j = 1;
   int bestIndex = 0, bestBreadth = 0, bestDistanceToCenter = INT_MAX;
-  for (int i = 0; i < sampleSize; i++) {
-    if (sampleSize - i < bestBreadth) {
+  for (int i = 0; i < firstNanIndex; i++) {
+    if (firstNanIndex - i < bestBreadth) {
       break;
     }
-    while (j < sampleSize && sample[j] < sample[i] + yRange) {
+    while (j < firstNanIndex && sample[j] < sample[i] + yRange) {
       j++;
     }
     int breadth = j - i;
-    int distanceToCenter = std::fabs(static_cast<float>(i + j - sampleSize));
+    int distanceToCenter = std::fabs(static_cast<float>(i + j - firstNanIndex));
     if (sample[i] <= yMinForced
      && sample[i] + yRange >= yMaxForced
      && (breadth > bestBreadth || (breadth == bestBreadth && distanceToCenter <= bestDistanceToCenter)))

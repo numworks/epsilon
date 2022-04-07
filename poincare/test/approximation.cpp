@@ -1120,7 +1120,7 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
   assert_expression_approximates_to_scalar<double>("min({1,2,3})", 1.);
   assert_expression_approximates_to_scalar<double>("max({1,2,3})", 3.);
   assert_expression_approximates_to_scalar<double>("sum({1,2,3})", 6.);
-  assert_expression_approximates_to_scalar<double>("product({1,4,9})", 36.);
+  assert_expression_approximates_to_scalar<double>("prod({1,4,9})", 36.);
 }
 
 template void assert_expression_approximates_to_scalar(const char * expression, float approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);

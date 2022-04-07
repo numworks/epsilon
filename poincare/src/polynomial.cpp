@@ -98,11 +98,24 @@ static bool rootSmallerThan(const Expression * root1, const Expression * root2, 
   }
   float r1 = root1->approximateToScalar<float>(context, complexFormat, angleUnit);
   float r2 = root2->approximateToScalar<float>(context, complexFormat, angleUnit);
-  if (std::isfinite(r2)) {
-    return std::isfinite(r1) && r1 <= r2;
+
+  if (!std::isnan(r1) || !std::isnan(r2)) {
+    // std::isnan(r1) => (r1 <= r2) is false
+    return std::isnan(r2) || r1 <= r2;
   }
-  return std::isfinite(r1)
-      || ImaginaryPart::Builder(root1->clone()).approximateToScalar<float>(context, complexFormat, angleUnit) <= ImaginaryPart::Builder(root2->clone()).approximateToScalar<float>(context, complexFormat, angleUnit);
+
+  // r1 and r2 aren't finite, compare the real part
+  float rr1 = RealPart::Builder(root1->clone()).approximateToScalar<float>(context, complexFormat, angleUnit);
+  float rr2 = RealPart::Builder(root2->clone()).approximateToScalar<float>(context, complexFormat, angleUnit);
+
+  if (rr1 != rr2) {
+    return rr1 <= rr2;
+  }
+
+  // Compare the imaginary part
+  float ir1 = ImaginaryPart::Builder(root1->clone()).approximateToScalar<float>(context, complexFormat, angleUnit);
+  float ir2 = ImaginaryPart::Builder(root2->clone()).approximateToScalar<float>(context, complexFormat, angleUnit);
+  return ir1 <= ir2;
 }
 
 int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, Expression d, Expression * root1, Expression * root2, Expression * root3, Expression * delta, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool * approximateSolutions) {

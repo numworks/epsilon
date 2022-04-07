@@ -24,24 +24,6 @@ jobs:
         with:
           name: epsilon-android.apk
           path: output/release/simulator/android/epsilon.apk
-  n0100:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
-    steps:
-      - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
-      - run: pip3 install lz4 pypng stringcase
-      - uses: numworks/setup-arm-toolchain@latest
-      - uses: actions/checkout@v2
-      - run: make MODEL=n0100 FIRMWARE_COMPONENT=kernel kernel.elf
-      - run: make MODEL=n0100 FIRMWARE_COMPONENT=userland userland.elf userland.onboarding.beta.elf userland.onboarding.update.elf userland.test.elf
-      - run: make MODEL=n0100 epsilon.dfu
-      - run: make MODEL=n0100 epsilon.onboarding.beta.dfu
-      - run: make MODEL=n0100 epsilon.onboarding.update.dfu
-      - run: make MODEL=n0100 test.dfu
-      - uses: actions/upload-artifact@master
-        if: ${{ github.repository != 'numworks/epsilon-internal' }}
-        with:
-          name: epsilon-n0100.dfu
-          path: output/release/device/n0100/epsilon.dfu
   n0110:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:

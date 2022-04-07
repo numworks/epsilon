@@ -146,8 +146,8 @@ void Store::memoizeValidSeries(int series) {
   m_validSeries[series] = isSeriesValid;
 }
 
-bool Store::frequenciesAreInteger(int series) const {
-  for (const double freq : m_data[series][1]) {
+bool Store::columnIsIntegersOnly(int series, int column) const {
+  for (const double freq : m_data[series][column]) {
     if (std::fabs(freq - std::round(freq)) > DBL_EPSILON) {
       return false;
     }
@@ -253,7 +253,7 @@ double Store::sampleStandardDeviation(int series) const {
  * the more general definition if non-integral frequencies are found.
  * */
 double Store::firstQuartile(int series) const {
-  if (GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::CumulatedFrequency || !frequenciesAreInteger(series)) {
+  if (GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::CumulatedFrequency || !columnIsIntegersOnly(series, 1)) {
     return sortedElementAtCumulatedFrequency(series, 1.0/4.0);
   }
   assert(GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::MedianOfSublist);
@@ -261,7 +261,7 @@ double Store::firstQuartile(int series) const {
 }
 
 double Store::thirdQuartile(int series) const {
-  if (GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::CumulatedFrequency || !frequenciesAreInteger(series)) {
+  if (GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::CumulatedFrequency || !columnIsIntegersOnly(series, 1)) {
     return sortedElementAtCumulatedFrequency(series, 3.0/4.0);
   }
   assert(GlobalPreferences::sharedGlobalPreferences()->methodForQuartiles() == CountryPreferences::MethodForQuartiles::MedianOfSublist);
@@ -593,14 +593,14 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
 }
 
 int Store::totalNormalProbabilityValues(int series) const {
-  if (!frequenciesAreInteger(series)) {
+  if (!columnIsIntegersOnly(series, 1)) {
     return 0;
   }
   return static_cast<int>(std::round(sumOfOccurrences(series)));
 }
 
 double Store::normalProbabilityValueAtIndex(int series, int i) const {
-  assert(frequenciesAreInteger(series));
+  assert(columnIsIntegersOnly(series, 1));
   return sortedElementAtCumulatedPopulation(series, i + 1, false);
 }
 

@@ -34,7 +34,7 @@ public:
   double boxPlotCalculationAtIndex(int series, int index) const;
   bool boxPlotCalculationIsOutlier(int series, int index) const;
   int numberOfBoxPlotCalculations(int series) const;
-  bool frequenciesAreInteger(int series) const;
+  bool columnIsIntegersOnly(int series, int column) const;
 
   // Calculation
   double sumOfOccurrences(int series) const;

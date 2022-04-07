@@ -256,7 +256,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
     if (isMultivariablePolynomial) {
       break;
     }
-    isMultivariablePolynomial |= containsVariables(coefficients[i], variables, maxVariableSize);
+    isMultivariablePolynomial = containsVariables(coefficients[i], variables, maxVariableSize);
   }
   return !isMultivariablePolynomial;
 }

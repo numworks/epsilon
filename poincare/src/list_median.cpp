@@ -69,11 +69,11 @@ static void numberOfElementsLesserAndGreater(float x, const List list, int * les
 
 void ListMedian::approximationHelper(int * index1, int * index2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   *index1 = *index2 = -1;
-  int n = numberOfChildren();
-  int k = n / 2;
   assert(childAtIndex(0).type() == ExpressionNode::Type::List);
   Expression child = childAtIndex(0);
   List listChild = static_cast<List &>(child);
+  int n = listChild.numberOfChildren();
+  int k = n / 2;
 
   float upperBound = FLT_MAX;
   float lowerBound = -FLT_MAX;

@@ -452,20 +452,20 @@ constexpr ToolboxMessageTree listsStatsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ListSampleStandardDevCommandWithArg, I18n::Message::SampleSTD)
 };
 
-constexpr ToolboxMessageTree listsToolsChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::ListLengthCommandWithArg, I18n::Message::Empty),
+constexpr ToolboxMessageTree listsOperationsChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::ListLengthCommandWithArg, I18n::Message::ListLength),
   ToolboxMessageTree::Leaf(I18n::Message::ListMinCommandWithArg, I18n::Message::Minimum),
   ToolboxMessageTree::Leaf(I18n::Message::ListMaxCommandWithArg, I18n::Message::Maximum),
-  ToolboxMessageTree::Leaf(I18n::Message::ListSortCommandWithArg, I18n::Message::SortValues),
-  ToolboxMessageTree::Leaf(I18n::Message::ListSumCommandWithArg, I18n::Message::Empty),
-  ToolboxMessageTree::Leaf(I18n::Message::ListProductCommandWithArg, I18n::Message::Empty)
+  ToolboxMessageTree::Leaf(I18n::Message::ListSortCommandWithArg, I18n::Message::AscendingSorting),
+  ToolboxMessageTree::Leaf(I18n::Message::ListSumCommandWithArg, I18n::Message::SumOfElements),
+  ToolboxMessageTree::Leaf(I18n::Message::ListProductCommandWithArg, I18n::Message::ProductOfElements)
 };
 
 constexpr ToolboxMessageTree listsChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::ListCommandWithArg, I18n::Message::Empty, false, I18n::Message::ListCommand),
-  ToolboxMessageTree::Leaf(I18n::Message::ListSequenceCommandWithArg, I18n::Message::Empty, false, I18n::Message::ListSequenceCommand),
+  ToolboxMessageTree::Leaf(I18n::Message::ListCommandWithArg, I18n::Message::NewList, false, I18n::Message::ListCommand),
+  ToolboxMessageTree::Leaf(I18n::Message::ListSequenceCommandWithArg, I18n::Message::ListSequenceDescription, false, I18n::Message::ListSequenceCommand),
   ToolboxMessageTree::Node(I18n::Message::StatTab, listsStatsChildren),
-  ToolboxMessageTree::Node(I18n::Message::Empty, listsToolsChildren)
+  ToolboxMessageTree::Node(I18n::Message::Operations, listsOperationsChildren)
 };
 
 constexpr ToolboxMessageTree menu[] = {

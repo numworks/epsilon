@@ -334,11 +334,11 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     bool simplificationFailed = root1->type() == ExpressionNode::Type::Undefined;
     if (root2->isUninitialized() || root2->type() != ExpressionNode::Type::Undefined) {
       *root2 = root2->cloneAndSimplify(reductionContext);
-      simplificationFailed |=root2->type() == ExpressionNode::Type::Undefined;
+      simplificationFailed = simplificationFailed || root2->type() == ExpressionNode::Type::Undefined;
     }
     if (root3->isUninitialized() || root3->type() != ExpressionNode::Type::Undefined) {
       *root3 = root3->cloneAndSimplify(reductionContext);
-      simplificationFailed |= root3->type() == ExpressionNode::Type::Undefined;
+      simplificationFailed = simplificationFailed || root3->type() == ExpressionNode::Type::Undefined;
     }
     if (simplificationFailed) {
       // Simplification has been interrupted, recompute approximated roots.

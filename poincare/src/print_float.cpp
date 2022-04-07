@@ -145,7 +145,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToText(T f, char * buffer, int b
   TextLengths requiredLengths;
   if (!forceScientific) {
     requiredLengths = ConvertFloatToTextPrivate(f, buffer, bufferSize, glyphLength, numberOfSignificantDigits, mode);
-    forceScientific |= mode == Preferences::PrintFloatMode::Decimal && (requiredLengths.CharLength > bufferSize - 1 || requiredLengths.GlyphLength > glyphLength);
+    forceScientific = (mode == Preferences::PrintFloatMode::Decimal && (requiredLengths.CharLength > bufferSize - 1 || requiredLengths.GlyphLength > glyphLength));
   }
   if (forceScientific) {
   /* If the required buffer size overflows the buffer size, we force the display

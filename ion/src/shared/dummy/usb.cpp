@@ -15,7 +15,7 @@ bool isEnumerated() {
 void clearEnumerationInterrupt() {
 }
 
-void DFU(bool, bool, int) {
+void DFU(bool, void*) {
 }
 
 void enable() {

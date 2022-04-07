@@ -13,7 +13,7 @@ bool Ion::USB::isEnumerated() {
 void Ion::USB::clearEnumerationInterrupt() {
 }
 
-void Ion::USB::DFU(bool, bool, int) {
+void Ion::USB::DFU(bool, void *) {
 }
 
 void Ion::USB::enable() {

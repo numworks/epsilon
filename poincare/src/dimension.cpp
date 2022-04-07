@@ -28,6 +28,9 @@ int DimensionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 
 template<typename T>
 Evaluation<T> DimensionNode::templatedApproximate(ApproximationContext approximationContext) const {
+  if (childAtIndex(0)->type() == ExpressionNode::Type::List) {
+    return Complex<T>::Builder(childAtIndex(0)->numberOfChildren());
+  }
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   std::complex<T> operands[2];
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {

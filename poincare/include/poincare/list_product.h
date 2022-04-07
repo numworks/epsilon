@@ -31,7 +31,7 @@ private:
 
 class ListProduct : public Expression {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("product", 1, &UntypedBuilderOneChild<ListProduct>);
+  static constexpr FunctionHelper s_functionHelper = FunctionHelper("prod", 1, &UntypedBuilderOneChild<ListProduct>);
 
   ListProduct(const ListProductNode * n) : Expression(n) {}
   static ListProduct Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListProduct, ListProductNode>({list}); }

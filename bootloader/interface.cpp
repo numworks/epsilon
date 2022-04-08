@@ -90,12 +90,19 @@ void Interface::drawMenu() {
       x += strlen(converted) * smallSize.width();
       // Draw the slot version
       ctx->drawString(slot.userlandHeader()->version(), KDPoint(x, y), KDFont::SmallFont, KDColorBlack, KDColorWhite);
-      // Increment the x position
-      x += strlen(slot.userlandHeader()->version()) * smallSize.width() + smallSize.width() * 2;
-      // Draw the slot commit
-      ctx->drawString(slot.kernelHeader()->patchLevel(), KDPoint(x, y), KDFont::SmallFont, KDColorBlack, KDColorWhite);
-      // Increment the x position
-      x += strlen(slot.kernelHeader()->patchLevel()) * smallSize.width() + smallSize.width();
+
+      // Get if the commit (patchLevel) isn't empty
+      if (slot.kernelHeader()->patchLevel()[0] != '\0') {
+        // Increment the x position
+        x += strlen(slot.userlandHeader()->version()) * smallSize.width() + smallSize.width() * 2;
+        // Draw the slot commit
+        ctx->drawString(slot.kernelHeader()->patchLevel(), KDPoint(x, y), KDFont::SmallFont, KDColorBlack, KDColorWhite);
+        // Increment the x position
+        x += strlen(slot.kernelHeader()->patchLevel()) * smallSize.width() + smallSize.width();
+      } else {
+        // Increment the x position
+        x += strlen(slot.userlandHeader()->version()) * smallSize.width() + smallSize.width();
+      }
 
       const char * OSName = "";
       const char * OSVersion = "";
@@ -283,7 +290,7 @@ void Interface::drawInstallerSelection() {
   ctx->drawString(Messages::installerText3, KDPoint(initPos, y), KDFont::SmallFont, KDColorBlack, KDColorWhite);
 }
 
-void Interface::drawBootloaderUpdate() {
+void Interface::drawBLUpdate() {
   Interface::drawHeader();
   KDContext * ctx = KDIonContext::sharedContext();
   int y = ImageStore::Computer->height() + (KDFont::LargeFont->glyphSize().height() + 10) + (KDFont::SmallFont->glyphSize().height() + 10);

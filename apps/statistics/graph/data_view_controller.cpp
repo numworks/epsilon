@@ -98,7 +98,7 @@ void DataViewController::sanitizeSeriesIndex() {
 }
 
 bool DataViewController::moveSelectionVertically(int direction) {
-  int nextSelectedSubview = dataView()->validSeriesIndex(m_selectedSeries) + direction;
+  int nextSelectedSubview = m_store->validSeriesIndex(m_selectedSeries) + direction;
   if (nextSelectedSubview >= m_store->numberOfValidSeries()) {
     return false;
   }
@@ -107,7 +107,7 @@ bool DataViewController::moveSelectionVertically(int direction) {
     dataView()->setDisplayBanner(false);
     header()->setSelectedButton(0);
   } else {
-    m_selectedSeries = dataView()->seriesOfSubviewAtIndex(nextSelectedSubview);
+    m_selectedSeries = m_store->indexOfKthValidSeries(nextSelectedSubview);
     m_selectedIndex = DataView::k_defaultSelectedIndex;
     dataView()->selectViewForSeries(m_selectedSeries);
     highlightSelection();

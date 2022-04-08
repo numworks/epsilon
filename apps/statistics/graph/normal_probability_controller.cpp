@@ -1,29 +1,30 @@
 #include "normal_probability_controller.h"
 #include <assert.h>
+#include <algorithm>
 
 namespace Statistics {
 
 int NormalProbabilityController::totalValues(int series) const {
   double totalNormalProbabilityValues = m_store->totalNormalProbabilityValues(series);
-  assert(totalNormalProbabilityValues <= INT_MAX);
-  /* TODO : Set lower than INT_MAX maximum, handle it as well as non-integers
-   * frequencies. */
+  if (totalNormalProbabilityValues > k_maxTotalValues) {
+    return 0;
+  }
   return static_cast<int>(totalNormalProbabilityValues);
 }
 
 void NormalProbabilityController::computeYBounds(float * yMin, float *yMax) const {
   int biggestSeries = 0;
-  double maxTotal = 0.0;
+  int maxTotal = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    double total = m_store->totalNormalProbabilityValues(i);
+    int total = totalValues(i);
     if (total > maxTotal) {
       biggestSeries = i;
       maxTotal = total;
     }
   }
   // Normal probability curve is bounded by the biggest series
-  *yMin = m_store->normalProbabilityResultAtIndex(biggestSeries, 0);
-  assert(*yMin <= 0.0);
+  *yMin = maxTotal > 0 ? m_store->normalProbabilityResultAtIndex(biggestSeries, 0) : 0.0f;
+  assert(*yMin <= 0.0f);
   // The other bound is the opposite with Normal probability curve.
   *yMax = -*yMin;
 }

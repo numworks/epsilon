@@ -12,7 +12,7 @@ public:
 
   Type type() const override { return Type::StringLayout; }
 
-  int stringLength() const { return m_stringLength; }
+  int stringLength() const { return strlen(m_string); }
   const char * string() const { return m_string; }
 
   // LayoutNode
@@ -32,7 +32,7 @@ public:
     stream << "StringLayout";
   }
   virtual void logAttributes(std::ostream & stream) const override {
-    stream << " stringLength=\"" << m_stringLength <<"\" string=\"" << m_string << "\"";
+    stream <<" string=\"" << m_string << "\"";
   }
 #endif
 
@@ -50,7 +50,6 @@ private:
   int firstNonDigitIndex();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
-  int m_stringLength;
   // We use this to know if we need to compute thousands separator margins.
   bool m_decimalOrInteger;
   char m_string[0];
@@ -61,7 +60,7 @@ public:
   static void DistributeThousandDisplayType(Layout l, int start, int stop);
 
   StringLayout(const StringLayoutNode * n) : Layout(n) {}
-  static StringLayout Builder(const char * string , int stringSize = -1, const KDFont * font = StringLayoutNode::k_defaultFont);
+  static StringLayout Builder(const char * string, int stringSize = -1, const KDFont * font = StringLayoutNode::k_defaultFont);
   int stringLength() const { return const_cast<StringLayout *>(this)->node()->stringLength(); }
   const char * string() const { return const_cast<StringLayout *>(this)->node()->string(); }
   const KDFont * font() const { return const_cast<StringLayout *>(this)->node()->font(); }

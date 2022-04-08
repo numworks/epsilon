@@ -69,7 +69,7 @@ Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * f
   if (bufferLen < 0) {
     bufferLen = strlen(buffer);
   }
-  return  UTF8Helper::StringGlyphLength(buffer) <= 1 ? StringToCodePointsLayout(buffer, bufferLen, font) : StringToStringLayout(buffer, bufferLen, font);
+  return UTF8Helper::StringGlyphLength(buffer) <= 1 ? StringToCodePointsLayout(buffer, bufferLen, font) : StringToStringLayout(buffer, bufferLen, font);
 }
 
 Layout LayoutHelper::StringLayoutOfSerialization(const Expression & expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) {

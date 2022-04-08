@@ -8,6 +8,10 @@ namespace Statistics {
 class NormalProbabilityController : public PlotController {
 public:
   using PlotController::PlotController;
+  // AlternateEmptyViewDefaultDelegate
+  /* NormalProbabilityController is the only DataView overriding seriesIsValid.
+   * To optimize the other DataViews, emptiness is only actually checked here.*/
+  bool isEmpty() const override { return numberOfValidSeries() == 0; }
   // PlotControllerDelegate
   bool handleNullFrequencies() const override { return false; }
   int totalValues(int series) const override;

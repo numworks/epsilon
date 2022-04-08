@@ -58,6 +58,9 @@ private:
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   Escher::ButtonRowController m_calculationHeader; // Needed for upper margin only
   NormalProbabilityController m_normalProbabilityController;
+  /* NormalProbabilityController is the only DataView overriding series validity
+   * It may be empty when other graph views are not */
+  Escher::AlternateEmptyViewController m_normalProbabilityAlternateEmptyViewController;
   Escher::ButtonRowController m_normalProbabilityHeader;
   FrequencyController m_frequencyController;
   Escher::ButtonRowController m_frequencyHeader;

@@ -29,13 +29,14 @@ void DataViewController::viewWillAppear() {
 }
 
 bool DataViewController::handleEvent(Ion::Events::Event event) {
-  if (header()->selectedButton() >= 0) {
-    if (event == Ion::Events::Up) {
+  int selectedButton = header()->selectedButton();
+  if (selectedButton >= 0) {
+    if (event == Ion::Events::Up || event == Ion::Events::Back) {
       header()->setSelectedButton(-1);
       Escher::Container::activeApp()->setFirstResponder(m_tabController);
       return true;
     }
-    if (event == Ion::Events::Down) {
+    if (event == Ion::Events::Down && !isEmpty()) {
       header()->setSelectedButton(-1);
       Escher::Container::activeApp()->setFirstResponder(this);
       dataView()->setDisplayBanner(true);
@@ -44,9 +45,9 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
       reloadBannerView();
       return true;
     }
-    return false;
+    return buttonAtIndex(selectedButton, Escher::ButtonRowController::Position::Top)->handleEvent(event);
   }
-  assert(m_selectedSeries >= 0);
+  assert(m_selectedSeries >= 0 && !isEmpty());
   bool isVerticalEvent = (event == Ion::Events::Down || event == Ion::Events::Up);
   if ((isVerticalEvent || event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = (event == Ion::Events::Up || event == Ion::Events::Left) ? -1 : 1;
@@ -61,10 +62,10 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void DataViewController::didEnterResponderChain(Responder * firstResponder) {
-  assert(seriesIsValid(m_selectedSeries));
-  if (!dataView()->curveViewForSeries(m_selectedSeries)->isMainViewSelected()) {
+  if (isEmpty() || !dataView()->curveViewForSeries(m_selectedSeries)->isMainViewSelected()) {
     header()->setSelectedButton(0);
   } else {
+    assert(seriesIsValid(m_selectedSeries));
     dataView()->setDisplayBanner(true);
     dataView()->selectViewForSeries(m_selectedSeries);
     highlightSelection();
@@ -76,7 +77,7 @@ void DataViewController::willExitResponderChain(Responder * nextFirstResponder) 
     assert(m_tabController != nullptr);
     if (header()->selectedButton() >= 0) {
       header()->setSelectedButton(-1);
-    } else {
+    } else if (!isEmpty()) {
       assert(m_selectedSeries >= 0);
       dataView()->deselectViewForSeries(m_selectedSeries);
       dataView()->setDisplayBanner(false);
@@ -117,7 +118,6 @@ int DataViewController::indexOfKthValidSeries(int k) const {
 }
 
 void DataViewController::sanitizeSeriesIndex() {
-  // TODO : Handle numberOfValidSeries() == 0
   // Sanitize m_selectedSeries
   if (m_selectedSeries < 0 || !seriesIsValid(m_selectedSeries)) {
     for (int series = 0; series < Store::k_numberOfSeries; series++) {

@@ -15,7 +15,7 @@ $(1): $$(call flavored_object_for, \
 	leaveuserland consoledisplay $(patsubst $(BUILD_DIR)/userland%.$(EXE), $(subst test,,$(subst ., ,%)),$(1)))
 endef
 
-$(foreach target,$(userland_targets),$(eval $(call rule_for_flavored_userland,$(MODEL) $(target))))
+$(foreach target,$(userland_targets),$(eval $(call rule_for_flavored_userland,$(MODEL) $(target) $(THIRD_PARTY_FLAVOR))))
 
 $(userland_targets): LDFLAGS += $(USERLAND_LDFLAGS)
 

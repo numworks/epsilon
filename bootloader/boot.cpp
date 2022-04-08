@@ -26,8 +26,8 @@ void Boot::bootSlot(Bootloader::Slot s) {
     // We are trying to boot epsilon, so we check the version and show an advertisement if needed
     const char * version = s.userlandHeader()->version();
     const char * min = "18.2.4";
-    int vsum = Bootloader::Utility::versionSum(version, strlen(version));
-    int minsum = Bootloader::Utility::versionSum(min, strlen(min));
+    int vsum = Utility::versionSum(version, strlen(version));
+    int minsum = Utility::versionSum(min, strlen(min));
     if (vsum >= minsum) {
       Interface::drawEpsilonAdvertisement();
       uint64_t scan = 0;

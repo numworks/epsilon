@@ -24,9 +24,9 @@ const void(*KernelHeader::startPointer() const)() {
 }
 
 const bool KernelHeader::isAboveVersion16 () const {
-  int sum = Bootloader::Utility::versionSum(m_version, 2);
+  int sum = Utility::versionSum(m_version, 2);
   char newVersion[] = "16";
-  int min = Bootloader::Utility::versionSum(newVersion, 2);
+  int min = Utility::versionSum(newVersion, 2);
   return sum >= min;
 }
 

@@ -11,11 +11,11 @@ public:
   using PlotController::PlotController;
 
   // PlotControllerDelegate
+  bool handleNullFrequencies() const override { return true; }
   int totalValues(int series) const override { return m_store->totalCumulatedFrequencyValues(series); }
   double valueAtIndex(int series, int i) const override { return m_store->cumulatedFrequencyValueAtIndex(series, i); }
   double resultAtIndex(int series, int i) const override { return m_store->cumulatedFrequencyResultAtIndex(series, i); }
   void computeYBounds(float * yMin, float *yMax) const override;
-  void computeXBounds(float * xMin, float *xMax) const override;
   // Horizontal labels will always be in bottom, vertical labels are wider
   KDCoordinate horizontalMargin() const override { return k_largeMargin; }
   KDCoordinate bottomMargin() const override { return k_mediumMargin; }

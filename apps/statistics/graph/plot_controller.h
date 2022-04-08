@@ -20,11 +20,11 @@ namespace Statistics {
 
 class PlotControllerDelegate {
 public:
+  virtual bool handleNullFrequencies() const = 0;
   virtual int totalValues(int series) const = 0;
   virtual double valueAtIndex(int series, int i) const = 0;
   virtual double resultAtIndex(int series, int i) const = 0;
   virtual void computeYBounds(float * yMin, float *yMax) const = 0;
-  virtual void computeXBounds(float * xMin, float *xMax) const = 0;
   virtual KDCoordinate horizontalMargin() const = 0;
   virtual KDCoordinate bottomMargin() const = 0;
   virtual KDCoordinate topMargin() const = 0;
@@ -69,6 +69,9 @@ protected:
   Shared::CursorView m_cursorView;
   PlotView m_view;
   PlotCurveView m_curveView;
+
+private:
+  void computeXBounds(float * xMin, float *xMax) const;
 };
 
 }  // namespace Statistics

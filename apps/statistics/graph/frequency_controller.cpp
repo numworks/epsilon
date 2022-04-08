@@ -24,11 +24,6 @@ void FrequencyController::computeYBounds(float * yMin, float *yMax) const {
   *yMax = 100.0f;
 }
 
-void FrequencyController::computeXBounds(float * xMin, float *xMax) const {
-  *xMin = m_store->minValueForAllSeries(true);
-  *xMax = m_store->maxValueForAllSeries(true);
-}
-
 void FrequencyController::appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {
   if (axis == Shared::CurveView::Axis::Horizontal) {
     return;

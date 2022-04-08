@@ -9,11 +9,11 @@ class NormalProbabilityController : public PlotController {
 public:
   using PlotController::PlotController;
   // PlotControllerDelegate
+  bool handleNullFrequencies() const override { return false; }
   int totalValues(int series) const override;
   double valueAtIndex(int series, int i) const override { return m_store->normalProbabilityValueAtIndex(series, i); }
   double resultAtIndex(int series, int i) const override { return m_store->normalProbabilityResultAtIndex(series, i); }
   void computeYBounds(float * yMin, float *yMax) const override;
-  void computeXBounds(float * xMin, float *xMax) const override;
   // Horizontal labels will always be in the middle
   KDCoordinate horizontalMargin() const override { return k_mediumMargin; }
   KDCoordinate bottomMargin() const override { return k_smallMargin; }

@@ -31,7 +31,7 @@ View * MultipleDataView::subviewAtIndex(int index) {
   if (index == MultipleDataView::numberOfSubviews() -1) {
     return bannerView();
   }
-  return curveViewForSeries(seriesOfSubviewAtIndex(index));
+  return curveViewForSeries(m_store->indexOfKthValidSeries(index));
 }
 
 void MultipleDataView::layoutDataSubviews(bool force) {

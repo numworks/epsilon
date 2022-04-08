@@ -14,7 +14,7 @@ PlotController::PlotController(Escher::Responder * parentResponder,
     DataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
     m_view(store, &m_curveView, &m_graphRange, &m_bannerView),
     // No bannerView given to the curve view because the display is handled here
-    m_curveView(&m_graphRange, &m_cursor, &m_cursorView, store, this)  {
+    m_curveView(&m_graphRange, &m_cursor, &m_cursorView, this)  {
 }
 
 void PlotController::viewWillAppearBeforeReload() {
@@ -86,8 +86,16 @@ bool PlotController::reloadBannerView() {
 }
 
 void PlotController::computeXBounds(float * xMin, float *xMax) const {
-  *xMin = m_store->minValueForAllSeries(handleNullFrequencies());
-  *xMax = m_store->maxValueForAllSeries(handleNullFrequencies());
+  /* Re-implementation of Store methods minValueForAllSeries and
+   * maxValueForAllSeries as seriesIsValid may have been overriden. */
+  *xMin = FLT_MAX;
+  *xMax = FLT_MIN;
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    if (seriesIsValid(i)) {
+      *xMin = std::min(*xMin, static_cast<float>(m_store->minValue(i, handleNullFrequencies())));
+      *xMax = std::max(*xMax, static_cast<float>(m_store->maxValue(i, handleNullFrequencies())));
+    }
+  }
 }
 
 }

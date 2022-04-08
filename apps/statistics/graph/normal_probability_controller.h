@@ -25,6 +25,8 @@ private:
   constexpr static int k_maxTotalValues = Store::k_maxNumberOfPairs;
   static_assert(k_maxTotalValues <= INT_MAX, "maxTotalValues is too large.");
 
+  // Hide series having invalid total values.
+  bool seriesIsValid(int series) const override { return m_store->seriesIsValid(series) && totalValues(series) > 0; }
   const char * resultMessageTemplate() const override { return "%s%s%*.*ed"; }
   I18n::Message resultMessage() const override { return I18n::Message::StatisticsNormalProbabilityZScore; }
 };

@@ -20,6 +20,7 @@ namespace Statistics {
 
 class PlotControllerDelegate {
 public:
+  virtual bool delegateSeriesIsValid(int series) const = 0;
   virtual bool handleNullFrequencies() const = 0;
   virtual int totalValues(int series) const = 0;
   virtual double valueAtIndex(int series, int i) const = 0;
@@ -48,6 +49,9 @@ public:
   // DataViewController
   DataView * dataView() override { return &m_view; }
   bool moveSelectionHorizontally(int deltaIndex) override;
+
+  // PlotControllerDelegate
+  bool delegateSeriesIsValid(int series) const override final { return seriesIsValid(series); }
 
 protected:
   constexpr static KDCoordinate k_smallMargin = 10;

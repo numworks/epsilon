@@ -9,11 +9,9 @@ namespace Statistics {
 PlotCurveView::PlotCurveView(Shared::CurveViewRange * curveViewRange,
                              Shared::CurveViewCursor * curveViewCursor,
                              Shared::CursorView * cursorView,
-                             Store * store,
                              PlotControllerDelegate * plotControllerDelegate) :
     // No banners to display
     Shared::LabeledCurveView(curveViewRange, curveViewCursor, nullptr, cursorView, false),
-    m_store(store),
     m_plotControllerDelegate(plotControllerDelegate) {
 }
 
@@ -46,7 +44,7 @@ void PlotCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(ctx, rect);
   simpleDrawBothAxesLabels(ctx, rect);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (m_store->seriesIsValid(i)) {
+    if (m_plotControllerDelegate->delegateSeriesIsValid(i)) {
       drawSeriesCurve(ctx, rect, i);
     }
   }

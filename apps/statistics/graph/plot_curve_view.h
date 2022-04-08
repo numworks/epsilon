@@ -15,7 +15,6 @@ public:
   PlotCurveView(Shared::CurveViewRange * curveViewRange,
                 Shared::CurveViewCursor * curveViewCursor,
                 Shared::CursorView * cursorView,
-                Store * store,
                 PlotControllerDelegate * plotControllerDelegate);
   void drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const;
 
@@ -27,7 +26,6 @@ public:
 private:
   float labelStepFactor(Axis axis) const override;
 
-  Store * m_store;
   PlotControllerDelegate * m_plotControllerDelegate;
 };
 

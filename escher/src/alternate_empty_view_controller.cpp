@@ -63,7 +63,7 @@ ViewController::TitlesDisplay AlternateEmptyViewController::titlesDisplay() {
 bool AlternateEmptyViewController::handleEvent(Ion::Events::Event event) {
   if (m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
     if (event != Ion::Events::Home && event != Ion::Events::OnOff && event != Ion::Events::USBEnumeration) {
-      m_contentView.alternateEmptyViewDelegate()->defaultController()->handleEvent(Ion::Events::Back);
+      m_contentView.alternateEmptyViewDelegate()->defaultController()->handleEvent(event);
       return true;
     }
     return false;
@@ -74,6 +74,8 @@ bool AlternateEmptyViewController::handleEvent(Ion::Events::Event event) {
 void AlternateEmptyViewController::didBecomeFirstResponder() {
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
     Container::activeApp()->setFirstResponder(m_contentView.mainViewController());
+  } else {
+    Container::activeApp()->setFirstResponder(m_contentView.alternateEmptyViewDelegate()->defaultController());
   }
 }
 

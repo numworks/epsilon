@@ -68,4 +68,11 @@ Expression ListVariance::shallowReduce(ExpressionNode::ReductionContext reductio
   return s.shallowReduce(reductionContext);
 }
 
+template Evaluation<float> ListVarianceNode::VarianceOfListNode<float>(ListNode * list, ApproximationContext approximationContext);
+template Evaluation<double> ListVarianceNode::VarianceOfListNode<double>(ListNode * list, ApproximationContext approximationContext);
+
+template Evaluation<float> ListVarianceNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListVarianceNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+
+
 }

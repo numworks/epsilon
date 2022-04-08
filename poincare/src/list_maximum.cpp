@@ -44,4 +44,7 @@ Expression ListMaximum::shallowReduce(ExpressionNode::ReductionContext reduction
   return result;
 }
 
+template Evaluation<float> ListMaximumNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListMaximumNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+
 }

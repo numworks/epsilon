@@ -83,4 +83,9 @@ Expression ListMinimum::shallowReduce(ExpressionNode::ReductionContext reduction
   return result;
 }
 
+template Evaluation<float> ListMinimumNode::ExtremumOfListNode<float>(ListNode * list, ApproximationContext approximationContext, bool minimum);
+template Evaluation<double> ListMinimumNode::ExtremumOfListNode<double>(ListNode * list, ApproximationContext approximationContext, bool minimum);
+template Evaluation<float> ListMinimumNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListMinimumNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+
 }

@@ -148,9 +148,9 @@ TreeNode * TreeNode::lastDescendant() const {
 // Protected
 
 #if POINCARE_TREE_LOG
-void TreeNode::log(std::ostream & stream, bool recursive, int indent, bool verbose) {
+void TreeNode::log(std::ostream & stream, bool recursive, int indentation, bool verbose) {
   stream << "\n";
-  for (int i = 0; i < indent; ++i) {
+  for (int i = 0; i < indentation; ++i) {
     stream << "  ";
   }
   stream << "<";
@@ -161,19 +161,19 @@ void TreeNode::log(std::ostream & stream, bool recursive, int indent, bool verbo
     stream << " size=\"" << size() << "\"";
   }
   logAttributes(stream);
-  bool closed = false;
+  bool tagIsClosed = false;
   if (recursive) {
     for (TreeNode * child : directChildren()) {
-      if (!closed) {
+      if (!tagIsClosed) {
         stream << ">";
-        closed = true;
+        tagIsClosed = true;
       }
-      child->log(stream, recursive, indent+1, verbose);
+      child->log(stream, recursive, indentation + 1, verbose);
     }
   }
-  if (closed) {
+  if (tagIsClosed) {
     stream << "\n";
-    for (int i = 0; i < indent; ++i) {
+    for (int i = 0; i < indentation; ++i) {
       stream << "  ";
     }
     stream << "</";

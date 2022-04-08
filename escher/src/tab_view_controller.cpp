@@ -122,11 +122,11 @@ void TabViewController::setActiveTab(int8_t i) {
     m_children[i]->viewWillAppear();
     m_view.m_tabView.setActiveIndex(i);
   }
-  Container::activeApp()->setFirstResponder(activeVC);
   if (i  != m_dataSource->activeTab()) {
     m_children[m_dataSource->activeTab()]->viewDidDisappear();
     m_dataSource->setActiveTab(i);
   }
+  Container::activeApp()->setFirstResponder(activeVC);
 }
 
 void TabViewController::setSelectedTab(int8_t i) {

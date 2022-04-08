@@ -1,5 +1,5 @@
 /* DFU transfers can serve two purposes:
- *  - Transfering RAM data between the machine and the host, e.g. Python scripts
+ *  - Transferring RAM data between the machine and the host, e.g. Python scripts
  *  - Upgrading the flash memory to perform a software update
  *
  * The second case raises a huge issue: code cannot be executed from memory that

@@ -211,7 +211,7 @@ void DFUInterface::eraseMemoryIfNeeded() {
 
   willErase();
 
-  Bootloader::DFUData * config = getDfuConfig();
+  Bootloader::ProtectionState * config = getDfuConfig();
 
   if (config != nullptr) {
     // More simple to read
@@ -242,7 +242,7 @@ void DFUInterface::writeOnMemory() {
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
   } else if (Flash::SectorAtAddress(m_writeAddress) >= 0) {
 
-    Bootloader::DFUData * config = getDfuConfig();
+    Bootloader::ProtectionState * config = getDfuConfig();
 
     if (config != nullptr) {
       if (m_writeAddress >= 0x08000000 && m_writeAddress <= 0x08010000 && !m_dfuData.isProtectedInternal()) {
@@ -306,7 +306,7 @@ void DFUInterface::leaveDFUAndReset() {
 }
 
 void DFUInterface::copyDfuData() {
-  m_dfuData = Bootloader::DFUData(!m_dfuConfig->isProtectedInternal(), !m_dfuConfig->isProtectedExternal());
+  m_dfuData = Bootloader::ProtectionState(!m_dfuConfig->isProtectedInternal(), !m_dfuConfig->isProtectedExternal());
 }
 
 }

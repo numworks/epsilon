@@ -7,6 +7,7 @@
 #include <bootloader/recovery.h>
 #include <bootloader/usb_data.h>
 #include <ion/src/device/shared/drivers/flash.h>
+#include <bootloader/utility.h>
 
 #include <assert.h>
 
@@ -25,14 +26,8 @@ void Boot::bootSlot(Bootloader::Slot s) {
     // We are trying to boot epsilon, so we check the version and show an advertisement if needed
     const char * version = s.userlandHeader()->version();
     const char * min = "18.2.4";
-    int vsum = 0;
-    for (int i = 0; i < strlen(version); i++) {
-      vsum += version[i] * (100-i*15);
-    }
-    int minsum = 0;
-    for (int i = 0; i < strlen(min); i++) {
-      minsum += min[i] * (100-i*15);
-    }
+    int vsum = Bootloader::Utility::versionSum(version, strlen(version));
+    int minsum = Bootloader::Utility::versionSum(min, strlen(min));
     if (vsum >= minsum) {
       Interface::drawEpsilonAdvertisement();
       uint64_t scan = 0;

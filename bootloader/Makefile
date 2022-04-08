@@ -12,6 +12,7 @@ bootloader_src += $(addprefix bootloader/,\
   recovery.cpp \
   usb_data.cpp \
   itoa.cpp \
+  utility.cpp \
 )
 
 bootloader_images = $(addprefix bootloader/, \

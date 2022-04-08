@@ -20,7 +20,7 @@ __attribute__ ((noreturn)) void ion_main(int argc, const char * const argv[]) {
   bool isSlotA = Bootloader::Slot::A().kernelHeader()->isValid();
 
   if (isSlotA) {
-    Bootloader::ExamMode::ExamMode SlotAExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotAExamMode(Bootloader::Slot::A().kernelHeader()->isNewVersion());
+    Bootloader::ExamMode::ExamMode SlotAExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotAExamMode(Bootloader::Slot::A().kernelHeader()->isAboveVersion16());
     if (SlotAExamMode != Bootloader::ExamMode::ExamMode::Off && SlotAExamMode != Bootloader::ExamMode::ExamMode::Unknown) {
       // We boot the slot in exam_mode
       Bootloader::Slot::A().boot();
@@ -30,7 +30,7 @@ __attribute__ ((noreturn)) void ion_main(int argc, const char * const argv[]) {
   bool isSlotB = Bootloader::Slot::B().kernelHeader()->isValid();
 
   if (isSlotB) {
-    Bootloader::ExamMode::ExamMode SlotBExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotBExamMode(Bootloader::Slot::B().kernelHeader()->isNewVersion());
+    Bootloader::ExamMode::ExamMode SlotBExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotBExamMode(Bootloader::Slot::B().kernelHeader()->isAboveVersion16());
     if (SlotBExamMode != Bootloader::ExamMode::ExamMode::Off && SlotBExamMode != Bootloader::ExamMode::ExamMode::Unknown && isSlotB) {
       // We boot the slot in exam_mode
       Bootloader::Slot::B().boot();

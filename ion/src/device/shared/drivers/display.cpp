@@ -51,7 +51,7 @@ bool waitForVBlank() {
   uint64_t startTime = Timing::millis();
   uint64_t timeout = startTime + timeoutDelta;
 
-  /* If current time is big enough, currentTime + timeout wraps aroud the
+  /* If current time is big enough, currentTime + timeout wraps around the
    * uint64_t. We need to take this into account when computing the terminating
    * event.
    *

@@ -1,7 +1,7 @@
 #include <bootloader/usb_data.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <bootloader/itoa.h>
+#include <bootloader/utility.h>
 #include <stdlib.h>
 #include <string.h>
 #include <bootloader/messages.h>
@@ -27,13 +27,13 @@ const char * Bootloader::USBData::buildStringDescriptor(StringHeader header, uin
 }
 
 const Bootloader::USBData Bootloader::USBData::DEFAULT() {
-    return USBData("@Flash/0x90000000/08*004Kg,01*032Kg,63*064Kg,64*064Kg", Messages::upsilonBootloader, DFUData());
+    return USBData("@Flash/0x90000000/08*004Kg,01*032Kg,63*064Kg,64*064Kg", Messages::upsilonBootloader, ProtectionState());
 }
 
 const Bootloader::USBData Bootloader::USBData::BOOTLOADER_UPDATE() {
-    return USBData("@Flash/0x08000000/04*016Kg", Messages::bootloaderUpdate, DFUData(true, false));
+    return USBData("@Flash/0x08000000/04*016Kg", Messages::bootloaderUpdate, ProtectionState(true, false));
 }
 
 Bootloader::USBData Bootloader::USBData::Recovery(uint32_t startAddress, uint32_t size) {
-    return USBData(buildStringDescriptor(StringHeader::SRAM(), startAddress, size), Messages::upsilonRecovery, DFUData(false, false));
+    return USBData(buildStringDescriptor(StringHeader::SRAM(), startAddress, size), Messages::upsilonRecovery, ProtectionState(false, false));
 }

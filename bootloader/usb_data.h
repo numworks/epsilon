@@ -6,9 +6,9 @@
 
 namespace Bootloader {
 
-class DFUData {
+class ProtectionState {
   public:
-    DFUData(bool unlockInternal = false, bool unlockExternal = true) : m_protectInternal(!unlockInternal), m_protectExternal(!unlockExternal) {};
+    ProtectionState(bool unlockInternal = false, bool unlockExternal = true) : m_protectInternal(!unlockInternal), m_protectExternal(!unlockExternal) {};
 
     bool isProtectedInternal() const { return m_protectInternal; }
     bool isProtectedExternal() const { return m_protectExternal; }
@@ -33,11 +33,11 @@ class USBData {
         const char * m_string;
     };
 
-    USBData(const char * desc, const char * name, DFUData data = DFUData()) : m_stringDescriptor(desc), m_name(name), m_data(&data) {};
+    USBData(const char * desc, const char * name, ProtectionState data = ProtectionState()) : m_stringDescriptor(desc), m_name(name), m_data(&data) {};
 
     const char * stringDescriptor() const { return m_stringDescriptor; }
     const char * getName() const { return m_name; }
-    DFUData * getData() const { return m_data; }
+    ProtectionState * getData() const { return m_data; }
 
     static const char * buildStringDescriptor(StringHeader header, uint32_t startAddress, uint32_t size);
 
@@ -48,7 +48,7 @@ class USBData {
   private:
     const char * m_stringDescriptor;
     const char * m_name;
-    DFUData * m_data;
+    ProtectionState * m_data;
 
 };
 }

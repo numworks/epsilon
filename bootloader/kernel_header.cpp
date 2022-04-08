@@ -1,4 +1,5 @@
 #include <bootloader/kernel_header.h>
+#include <bootloader/utility.h>
 
 namespace Bootloader {
 
@@ -22,16 +23,10 @@ const void(*KernelHeader::startPointer() const)() {
   return m_startPointer;
 }
 
-const bool KernelHeader::isNewVersion() const {
-  int sum = 0;
-  for (int i = 0; i < 2; i++) {
-    sum += m_version[i] * (5 - i);
-  }
+const bool KernelHeader::isAboveVersion16 () const {
+  int sum = Bootloader::Utility::versionSum(m_version, 2);
   char newVersion[] = "16";
-  int min = 0;
-  for (int i = 0; i < 2; i++) {
-    min += newVersion[i] * (5 - i);
-  }
+  int min = Bootloader::Utility::versionSum(newVersion, 2);
   return sum >= min;
 }
 

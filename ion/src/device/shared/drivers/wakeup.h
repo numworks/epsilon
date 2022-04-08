@@ -8,7 +8,7 @@ namespace Device {
 namespace WakeUp {
 
 /* All wakeup functions can be called together without overwriting the same
- * register. All togethed, they will set SYSCFG and EXTi registers as follow:
+ * register. All together, they will set SYSCFG and EXTi registers as follow:
  *
  * GPIO Pin Number|EXTI_EMR|EXTI_FTSR|EXTI_RTSR|EXTICR1|EXTICR2|EXTICR3| Wake up
  * ---------------+--------+---------+---------+-------+-------+-------+-------------------------

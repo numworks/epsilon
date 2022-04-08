@@ -49,7 +49,7 @@ void jump(uint32_t jumpIsrVectorAddress) {
   // Disable cache before reset
   Ion::Device::Cache::disable();
 
-  /* Shutdown all clocks and periherals to mimic a hardware reset. */
+  /* Shutdown all clocks and peripherals to mimic a hardware reset. */
   Board::shutdownPeripherals();
   internalFlashJump(jumpIsrVectorAddress);
 

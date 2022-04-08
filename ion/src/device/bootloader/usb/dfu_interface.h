@@ -40,8 +40,8 @@ public:
   void wholeDataSentCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
   bool isErasingAndWriting() const { return m_isErasingAndWriting; }
 
-  void setDfuConfig(Bootloader::DFUData * data) { m_dfuConfig = data; copyDfuData(); }
-  Bootloader::DFUData * getDfuConfig() const { return m_dfuConfig; }
+  void setDfuConfig(Bootloader::ProtectionState * data) { m_dfuConfig = data; copyDfuData(); }
+  Bootloader::ProtectionState * getDfuConfig() const { return m_dfuConfig; }
 
 protected:
   void setActiveInterfaceAlternative(uint8_t interfaceAlternativeIndex) override {
@@ -180,9 +180,9 @@ private:
   uint32_t m_writeAddress;
   uint8_t m_bInterfaceAlternateSetting;
   bool m_isErasingAndWriting;
-  Bootloader::DFUData * m_dfuConfig;
+  Bootloader::ProtectionState * m_dfuConfig;
   uint32_t m_eraseAddress;
-  Bootloader::DFUData m_dfuData;
+  Bootloader::ProtectionState m_dfuData;
 };
 
 }

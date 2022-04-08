@@ -21,7 +21,7 @@ StringLayoutNode::StringLayoutNode(const char * string, int stringSize, const KD
   StringFormat(font),
   m_decimalOrInteger(false)
   {
-    m_stringLength = strlcpy(m_string, string, stringSize);
+    strlcpy(m_string, string, stringSize);
   }
 
 Layout StringLayoutNode::makeEditable() {
@@ -33,13 +33,13 @@ int StringLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 size_t StringLayoutNode::size() const {
-  return sizeof(StringLayoutNode) + sizeof(char) * (m_stringLength + 1);
+  return sizeof(StringLayoutNode) + sizeof(char) * (stringLength() + 1);
 }
 
 bool StringLayoutNode::protectedIsIdenticalTo(Layout l) {
   assert(l.type() == Type::StringLayout);
   StringLayout & sl = static_cast<StringLayout &>(l);
-  return strncmp(m_string, sl.string(), std::max(m_stringLength + 1, sl.stringLength() + 1)) == 0;
+  return strncmp(m_string, sl.string(), std::max(stringLength() + 1, sl.stringLength() + 1)) == 0;
 }
 
 // Sizing and positioning
@@ -93,7 +93,7 @@ int StringLayoutNode::firstNonDigitIndex() {
     return -1;
   }
   int nonDigitIndex = m_string[0] == '-';
-  while (nonDigitIndex < m_stringLength) {
+  while (nonDigitIndex < stringLength()) {
     if (!('0' <= m_string[nonDigitIndex] && '9' >=  m_string[nonDigitIndex])) {
       break;
     }
@@ -103,7 +103,7 @@ int StringLayoutNode::firstNonDigitIndex() {
 }
 
 StringLayout StringLayout::Builder(const char * string, int stringSize, const KDFont * font) {
-  if (stringSize < 0) {
+  if (stringSize < 1) {
     stringSize = strlen(string) + 1;
   }
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(StringLayoutNode) + sizeof(char) * stringSize);

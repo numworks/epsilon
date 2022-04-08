@@ -24,6 +24,10 @@ public:
   static const Slot B();
   static const Slot Khi();
 
+  static bool isFullyValid(const Slot& slot) {
+    return slot.kernelHeader()->isValid() && slot.userlandHeader()->isValid();
+  }
+
 private:
   const KernelHeader* m_kernelHeader;
   const UserlandHeader* m_userlandHeader;

@@ -45,6 +45,7 @@ public:
   constexpr static const char * epsilonWarningText5 = "EXE - Yes";
   constexpr static const char * epsilonWarningText6 = "BACK - No";
   constexpr static const char * bootloaderVersion = "Version 1.0.0 - FREEDOM";
+  constexpr static const char * aboutMenuTitle = "About";
 
   //USB NAMES
   

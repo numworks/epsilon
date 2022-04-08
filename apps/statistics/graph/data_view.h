@@ -18,10 +18,6 @@ public:
   void selectViewForSeries(int series);
   void deselectViewForSeries(int series);
 
-  // Index/series
-  int seriesOfSubviewAtIndex(int index) { return m_store->indexOfKthValidSeries(index); }
-  int validSeriesIndex(int series) { return m_store->validSeriesIndex(series); }
-
   // Display
   void setDisplayBanner(bool display);
 

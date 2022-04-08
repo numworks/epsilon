@@ -10,8 +10,7 @@ void swap(char *x, char *y) {
 }
  
 // Function to reverse `buffer[i…j]`
-char* reverse(char *buffer, int i, int j)
-{
+char* reverse(char *buffer, int i, int j) {
     while (i < j) {
         swap(&buffer[i++], &buffer[j--]);
     }
@@ -20,8 +19,7 @@ char* reverse(char *buffer, int i, int j)
 }
  
 // Iterative function to implement `itoa()` function in C
-char* Bootloader::Utility::itoa(int value, char* buffer, int base)
-{
+char* Bootloader::Utility::itoa(int value, char* buffer, int base) {
     // invalid input
     if (base < 2 || base > 32) {
         return buffer;
@@ -31,8 +29,7 @@ char* Bootloader::Utility::itoa(int value, char* buffer, int base)
     int n = abs(value);
  
     int i = 0;
-    while (n)
-    {
+    while (n) {
         int r = n % base;
  
         if (r >= 10) {

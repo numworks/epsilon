@@ -10,7 +10,7 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/drivers/, \
   clipboard.cpp \
   console_display.cpp:+consoledisplay \
   console_dummy.cpp:-consoledisplay \
-  external_apps.cpp:-n0100 \
+  external_apps.cpp:+allow3rdparty \
   reset.cpp \
   reset_n0100.cpp:+n0100 \
   serial_number.cpp \
@@ -20,7 +20,7 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/drivers/, \
 )
 
 ion_device_userland_src += $(addprefix ion/src/shared/dummy/, \
-  external_apps.cpp:+n0100 \
+  external_apps.cpp:-allow3rdparty \
 )
 
 ion_device_userland_svc_src += $(addprefix ion/src/device/userland/drivers/, \

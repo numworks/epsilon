@@ -9,7 +9,7 @@ class NormalProbabilityController : public PlotController {
 public:
   using PlotController::PlotController;
   // PlotControllerDelegate
-  int totalValues(int series) const override { return m_store->totalNormalProbabilityValues(series); }
+  int totalValues(int series) const override;
   double valueAtIndex(int series, int i) const override { return m_store->normalProbabilityValueAtIndex(series, i); }
   double resultAtIndex(int series, int i) const override { return m_store->normalProbabilityResultAtIndex(series, i); }
   void computeYBounds(float * yMin, float *yMax) const override;

@@ -129,6 +129,13 @@ const char * StartOfPrintableWord(const char * word, const char * start) {
   if (word == start) {
     return word;
   }
+  // Go to start of code point with some code points dark magic
+  if (!(*word & 0x80 == 0)) {
+    word--;
+    while (!(*word & 0x80 && *word & 0x40)) {
+      word--;
+    }
+  }
   UTF8Decoder decoder(start, word);
   CodePoint codePoint = decoder.previousCodePoint();
   const char * result = word;

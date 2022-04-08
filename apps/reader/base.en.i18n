@@ -1,3 +1,5 @@
 ReaderApp = "Reader"
 ReaderAppCapital = "READER"
 NoFileToDisplay = "No file to display"
+FileError1 = "Error while reading file"
+FileError2 = "Please check its syntax"

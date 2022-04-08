@@ -5,7 +5,7 @@ import os
 import re
 import sys
 import argparse
-
+from typing import Dict, List
 # Deep translator import
 try:
     from deep_translator import GoogleTranslator
@@ -64,14 +64,14 @@ def translate(text: str, output_language: str, input_language: str = 'auto')\
     return translator.translate(text)
 
 
-def get_all_files_in_directory(directory: str) -> list[str]:
+def get_all_files_in_directory(directory: str) -> List[str]:
     """Get all files in the given directory recursively.
 
     Args:
         directory (str): The directory
 
     Returns:
-        List[str]: The list of files in the directory
+        Liststr]: The list of files in the directory
 
     """
     # Initialize the list of files
@@ -92,7 +92,7 @@ def get_all_files_in_directory(directory: str) -> list[str]:
     return files
 
 
-def get_i18n_files(directory: str = '.') -> dict[str, list[str]]:
+def get_i18n_files(directory: str = '.') -> Dict[str, List[str]]:
     """Get the list of i18n files in the given directory.
 
     Args:
@@ -100,13 +100,13 @@ def get_i18n_files(directory: str = '.') -> dict[str, list[str]]:
                                    Defaults to '.'.
 
     Returns:
-        dict[list[str]]: The list of i18n files in a dictionary of languages.
+        Dict[List[str]]: The list of i18n files in a dictionary of languages.
 
     """
     # Get all files in the directory recursively
     files = get_all_files_in_directory(directory)
     # Initialize the dictionary
-    i18n_files_language: dict[str, list[str]] = {}
+    i18n_files_language: Dict[str, List[str]] = {}
     # Iterate over all files in the directory
     for i in files:
         # If the file is an i18n file
@@ -125,21 +125,21 @@ def get_i18n_files(directory: str = '.') -> dict[str, list[str]]:
     return i18n_files_language
 
 
-def need_to_be_translated(keys: dict[str, list[list[str]]])\
-                          -> dict[str, list[list[str]]]:
+def need_to_be_translated(keys: Dict[str, List[List[str]]])\
+                          -> Dict[str, List[List[str]]]:
     """Return the key that needs to be translated by locale.
 
     Args:
-        keys (dict[str, list[str]]): The keys of the i18n files
+        keys (Dict[str, List[str]]): The keys of the i18n files
 
     Returns:
-        dict[str, list[str]]: The keys that needs to be translated,
+        Dict[str, List[str]]: The keys that needs to be translated,
                               sorted by locale
 
     """
     # Initialize the list of keys
-    keys_list: list[list[str]] = []
-    keys_to_translate: dict[str, list[list[str]]] = {}
+    keys_list: List[List[str]] = []
+    keys_to_translate: Dict[str, List[List[str]]] = {}
     # Iterate over all locales
     for value_ in keys.values():
         # Iterate on keys of the locale
@@ -151,14 +151,14 @@ def need_to_be_translated(keys: dict[str, list[list[str]]])\
             keys_list.append(key)
     for locale, value in keys.items():
         # Initialize the list of keys in the locale
-        keys_in_locale: list[str] = [i[0] for i in value]
+        keys_in_locale: List[str] = [i[0] for i in value]
         # Get the keys of keys that need to be translated
-        keys_to_translate_in_locale: list[list[str]] = [
+        keys_to_translate_in_locale: List[List[str]] = [
             key for key in keys_list if key[0] not in keys_in_locale
         ]
         # Remove duplicates from the list
         # Initialize the deduplicated list
-        keys_to_translate_in_locale_deduplicated: list[list[str]] = []
+        keys_to_translate_in_locale_deduplicated: List[List[str]] = []
         # Iterate over the duplicated list
         for item in keys_to_translate_in_locale:
             # If the key is not in the deduplicated list, add it
@@ -170,14 +170,14 @@ def need_to_be_translated(keys: dict[str, list[list[str]]])\
     return keys_to_translate
 
 
-def get_keys_in_file(filename: str) -> list[list[str]]:
+def get_keys_in_file(filename: str) -> List[List[str]]:
     """Return a list of keys in the file.
 
     Args:
         filename (str): The name of the file to read
 
     Returns:
-        list[str]: The keys in the file
+        List[str]: The keys in the file
 
     """
     # Initialize the list of keys in the file
@@ -211,19 +211,19 @@ def get_keys_in_file(filename: str) -> list[list[str]]:
     return keys
 
 
-def list_keys(i18n_files: dict[str, list[str]]) -> dict[str, list[list[str]]]:
+def list_keys(i18n_files: Dict[str, List[str]]) -> Dict[str, List[List[str]]]:
     """List all keys in the i18n files.
 
     Args:
-        i18n_files (dict[str, list[str]]): I18n files list
+        i18n_files (Dict[str, List[str]]): I18n files list
 
     Returns:
-        dict[str, list[str]]: The dictionnary of keys in the i18n files by
+        Dict[str, List[str]]: The dictionnary of keys in the i18n files by
                               locale.
 
     """
     # Initialize the list of keys in the i18n files
-    keys_dict: dict[str, list[list[str]]] = {}
+    keys_dict: Dict[str, List[List[str]]] = {}
     # Iterate on the locales
     for locale in i18n_files:
         # Initialize the dictionary for the locale
@@ -294,22 +294,22 @@ def get_value_from_key(key_to_find: str, filename_generic: str, locale: str)\
     return ""
 
 
-def translate_missing_keys(keys_to_translate: dict[str, list[list[str]]],
-                           input_language: str) -> dict[str, list[list[str]]]:
+def translate_missing_keys(keys_to_translate: Dict[str, List[List[str]]],
+                           input_language: str) -> Dict[str, List[List[str]]]:
     """Get a dictionary of file with the keys and translations to add.
 
     Args:
-        keys_to_translate (dict[str, list[list[str]]]): The list of keys to
+        keys_to_translate (Dict[str, List[List[str]]]): The list of keys to
                                                         translate
         input_language (str): The language to get the text that will be
                               translated
 
     Returns:
-        dict[str, list[str]]: The dictionary of files with translations
+        Dict[str, List[str]]: The dictionary of files with translations
 
     """
     # Initialize the dictionary of translations
-    output: dict[str, list[list[str]]] = {}
+    output: Dict[str, List[List[str]]] = {}
     # Initialize the variable to store the number of translated keys
     keys_translated: int = 0
     # Iterate over the locales of the dictionary of untranslated keys
@@ -373,11 +373,11 @@ def translate_missing_keys(keys_to_translate: dict[str, list[list[str]]],
     return output
 
 
-def save_translations(missing_keys_translation: dict[str, list[list[str]]]):
+def save_translations(missing_keys_translation: Dict[str, List[List[str]]]):
     """Save the translations.
 
     Args:
-        missing_keys_translation (dict[str, list[list[str]]]): The dictionary
+        missing_keys_translation (Dict[str, List[List[str]]]): The dictionary
                                                                of translations
 
     """

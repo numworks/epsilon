@@ -1,6 +1,6 @@
 # LaTeX Parser
 
-In the reader app, you can read a txt file. You can also read a txt file with LaTeX expression inside of it.
+In the reader app, you can read a txt file. You can also read a .urt file with LaTeX expression inside of it.
 
 All the symbols you can use are listed here :
 

@@ -475,6 +475,20 @@ const char * EndOfWord(const char * word) {
   return result;
 }
 
+const char * EndOfWord(const char * word, const char * end) {
+  UTF8Decoder decoder(word);
+  CodePoint codePoint = decoder.nextCodePoint();
+  const char * result = word;
+  while (!CodePointIsEndOfWord(codePoint)) {
+    result = decoder.stringPosition();
+    if (result >= end) {
+      break;
+    }
+    codePoint = decoder.nextCodePoint();
+  }
+  return result;
+}
+
 void countGlyphsInLine(const char * text, int * before, int * after, const char * beforeLocation, const char *afterLocation) {
   UTF8Helper::CodePointAction countGlyph = [](int, void * glyphCount, int, int) {
     int * castedCount = (int *) glyphCount;

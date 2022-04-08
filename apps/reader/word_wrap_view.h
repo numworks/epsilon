@@ -12,9 +12,11 @@ struct BookSave {
   KDColor color;
 };
 
+class ReadBookController;
+
 class WordWrapTextView : public PointerTextView {
 public:
-  WordWrapTextView();
+  WordWrapTextView(ReadBookController * readBookController);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setText(const char*, int length, bool isRichTextFile);
   void nextPage();
@@ -42,6 +44,7 @@ private:
    */
   int m_lastPagesOffsets[k_lastOffsetsBufferSize];
   int m_lastPagesOffsetsIndex;
+  ReadBookController * m_readBookController;
 };
 
 }

@@ -16,6 +16,7 @@ public:
   void viewDidDisappear() override;
   void savePosition() const;
   void loadPosition();
+  void throwError();
 private:
   WordWrapTextView m_readerView;
   const External::Archive::File* m_file;

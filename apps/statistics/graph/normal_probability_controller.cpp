@@ -28,11 +28,6 @@ void NormalProbabilityController::computeYBounds(float * yMin, float *yMax) cons
   *yMax = -*yMin;
 }
 
-void NormalProbabilityController::computeXBounds(float * xMin, float *xMax) const {
-  *xMin = m_store->minValueForAllSeries(false);
-  *xMax = m_store->maxValueForAllSeries(false);
-}
-
 bool NormalProbabilityController::drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const {
   // Plot the y=(x-mean(X)/sigma(X)) line
   float mean = m_store->mean(series);

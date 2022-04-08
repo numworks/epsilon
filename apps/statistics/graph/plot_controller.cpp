@@ -85,4 +85,9 @@ bool PlotController::reloadBannerView() {
   return previousHeight != m_bannerView.minimalSizeForOptimalDisplay().height();
 }
 
+void PlotController::computeXBounds(float * xMin, float *xMax) const {
+  *xMin = m_store->minValueForAllSeries(handleNullFrequencies());
+  *xMax = m_store->maxValueForAllSeries(handleNullFrequencies());
+}
+
 }

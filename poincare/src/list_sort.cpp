@@ -62,4 +62,7 @@ Expression ListSort::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return child;
 }
 
+template Evaluation<float> ListSortNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListSortNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+
 }

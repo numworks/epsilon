@@ -53,4 +53,7 @@ Expression ListProduct::shallowReduce(ExpressionNode::ReductionContext reduction
   return product.shallowReduce(reductionContext);
 }
 
+template Evaluation<float> ListProductNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListProductNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+
 }

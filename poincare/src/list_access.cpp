@@ -133,9 +133,9 @@ Expression ListSlice::shallowReduce(ExpressionNode::ReductionContext reductionCo
   return std::move(typedList);
 }
 
-template Evaluation<float> ListAccessNode<1>::templatedApproximate(ApproximationContext approximationContext) const;
-template Evaluation<float> ListAccessNode<2>::templatedApproximate(ApproximationContext approximationContext) const;
-template Evaluation<double> ListAccessNode<1>::templatedApproximate(ApproximationContext approximationContext) const;
-template Evaluation<double> ListAccessNode<2>::templatedApproximate(ApproximationContext approximationContext) const;
+template Evaluation<float> ListAccessNode<1>::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListAccessNode<2>::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListAccessNode<1>::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListAccessNode<2>::templatedApproximate<double>(ApproximationContext approximationContext) const;
 
 }

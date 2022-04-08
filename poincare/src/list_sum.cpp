@@ -56,4 +56,7 @@ Expression ListSum::shallowReduce(ExpressionNode::ReductionContext reductionCont
   return sum.shallowReduce(reductionContext);
 }
 
+template Evaluation<float> ListSumNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListSumNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+
 }

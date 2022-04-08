@@ -50,4 +50,8 @@ Expression ListMean::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result.shallowReduce(reductionContext);
 }
 
+template Evaluation<float> ListMeanNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListMeanNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+
+
 }

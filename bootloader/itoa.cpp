@@ -30,8 +30,7 @@ char* Bootloader::Utility::itoa(int value, char* buffer, int base)
     int n = abs(value);
  
     int i = 0;
-    while (n)
-    {
+    while (n) {
         int r = n % base;
  
         if (r >= 10) {

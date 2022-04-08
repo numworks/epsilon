@@ -144,4 +144,7 @@ Expression ListMedian::shallowReduce(ExpressionNode::ReductionContext reductionC
   }
 }
 
+template Evaluation<float> ListMedianNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListMedianNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+
 }

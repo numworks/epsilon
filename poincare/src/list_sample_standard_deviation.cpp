@@ -57,4 +57,7 @@ Expression ListSampleStandardDeviation::shallowReduce(ExpressionNode::ReductionC
   return sqrt.shallowReduce(reductionContext);
 }
 
+template Evaluation<float> ListSampleStandardDeviationNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListSampleStandardDeviationNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+
 }

@@ -10,8 +10,7 @@ void swap(char *x, char *y) {
 }
  
 // Function to reverse `buffer[i…j]`
-char* reverse(char *buffer, int i, int j)
-{
+char* reverse(char *buffer, int i, int j) {
     while (i < j) {
         swap(&buffer[i++], &buffer[j--]);
     }

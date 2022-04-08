@@ -3,11 +3,19 @@
 
 namespace Statistics {
 
+int NormalProbabilityController::totalValues(int series) const {
+  double totalNormalProbabilityValues = m_store->totalNormalProbabilityValues(series);
+  assert(totalNormalProbabilityValues <= INT_MAX);
+  /* TODO : Set lower than INT_MAX maximum, handle it as well as non-integers
+   * frequencies. */
+  return static_cast<int>(totalNormalProbabilityValues);
+}
+
 void NormalProbabilityController::computeYBounds(float * yMin, float *yMax) const {
   int biggestSeries = 0;
-  int maxTotal = 0;
+  double maxTotal = 0.0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    int total = m_store->totalNormalProbabilityValues(i);
+    double total = m_store->totalNormalProbabilityValues(i);
     if (total > maxTotal) {
       biggestSeries = i;
       maxTotal = total;

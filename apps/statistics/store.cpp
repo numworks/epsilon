@@ -592,11 +592,14 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
   return 100.0 * cumulatedOccurrences / (cumulatedOccurrences + otherOccurrences);
 }
 
-int Store::totalNormalProbabilityValues(int series) const {
+double Store::totalNormalProbabilityValues(int series) const {
+  // totalNormalProbabilityValues can overflow int
   if (!columnIsIntegersOnly(series, 1)) {
     return 0;
   }
-  return static_cast<int>(std::round(sumOfOccurrences(series)));
+  double result = sumOfOccurrences(series);
+  assert(result == std::round(result));
+  return result;
 }
 
 double Store::normalProbabilityValueAtIndex(int series, int i) const {
@@ -605,10 +608,10 @@ double Store::normalProbabilityValueAtIndex(int series, int i) const {
 }
 
 double Store::normalProbabilityResultAtIndex(int series, int i) const {
-  int total = totalNormalProbabilityValues(series);
-  assert(total > 0);
+  double total = totalNormalProbabilityValues(series);
+  assert(i >= 0 && static_cast<double>(i) < total);
   // invnorm((i-0.5)/total,0,1)
-  double plottingPosition = (static_cast<double>(i) + 0.5f) / static_cast<double>(total);
+  double plottingPosition = (static_cast<double>(i) + 0.5) / total;
   return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<double>(plottingPosition, 0.0, 1.0);
 }
 

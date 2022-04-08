@@ -6,7 +6,6 @@ namespace Bootloader {
 class Messages {
 public:
   // TODO: Remove it when this fork will be updated
-  #define UPSILON_VERSION "1.0.0-dev"
   #ifdef UPSILON_VERSION
   constexpr static const char * mainTitle = "Upsilon Calculator";
   #elif defined OMEGA_VERSION

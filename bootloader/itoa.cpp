@@ -19,8 +19,7 @@ char* reverse(char *buffer, int i, int j) {
 }
  
 // Iterative function to implement `itoa()` function in C
-char* Bootloader::Utility::itoa(int value, char* buffer, int base)
-{
+char* Bootloader::Utility::itoa(int value, char* buffer, int base) {
     // invalid input
     if (base < 2 || base > 32) {
         return buffer;

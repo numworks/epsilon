@@ -33,7 +33,7 @@ bool slotB_submenu() {
 }
 
 bool installer_submenu() {
-
+  return false;
 }
 
 bool about_submenu() {

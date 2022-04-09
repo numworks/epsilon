@@ -54,9 +54,9 @@ const char * Bootloader::HomeMenu::slotB_text() {
 }
 
 void Bootloader::HomeMenu::setup() {
-    m_colomns[0] = Colomn(slotA_text(), Ion::Keyboard::Key::One, k_large_font, 10, false, &slotA_submenu);
-    m_colomns[1] = Colomn(slotKhi_text(), Ion::Keyboard::Key::Two, k_large_font, 10, false, &slotKhi_submenu);
-    m_colomns[2] = Colomn(slotB_text(), Ion::Keyboard::Key::Three, k_large_font, 10, false, &slotB_submenu);
-    m_colomns[3] = Colomn("4- installer", Ion::Keyboard::Key::Four, k_large_font, 10, false, &installer_submenu);
-    m_colomns[4] = Colomn("5- about", Ion::Keyboard::Key::Five, k_large_font, 10, false, &about_submenu);
+    m_colomns[0] = Colomn(slotA_text(), Ion::Keyboard::Key::One, k_small_font, 30, false, &slotA_submenu);
+    m_colomns[1] = Colomn(slotKhi_text(), Ion::Keyboard::Key::Two, k_small_font, 30, false, &slotKhi_submenu);
+    m_colomns[2] = Colomn(slotB_text(), Ion::Keyboard::Key::Three, k_small_font, 30, false, &slotB_submenu);
+    m_colomns[3] = Colomn("4- installer", Ion::Keyboard::Key::Four, k_small_font, 30, false, &installer_submenu);
+    m_colomns[4] = Colomn("5- about", Ion::Keyboard::Key::Five, k_small_font, 30, false, &about_submenu);
 }

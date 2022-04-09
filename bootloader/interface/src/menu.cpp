@@ -4,13 +4,15 @@
 #include <kandinsky/context.h>
 #include <string.h>
 
-#include "computer.h"
+#include <bootloader/computer.h>
+
+const Ion::Keyboard::Key Bootloader::Menu::k_breaking_keys[];
 
 void Bootloader::Menu::setup() {
   // Here we add the colomns to the menu.
 }
 
-void Bootloader::Menu::open() {
+void Bootloader::Menu::open(bool noreturn) {
   showMenu();
 
   uint64_t scan = 0;
@@ -19,16 +21,19 @@ void Bootloader::Menu::open() {
   while(!exit) {
     scan = Ion::Keyboard::scan();
     exit = !handleKey(scan);
+    if (noreturn) {
+      exit = false;
+    }
   }
 }
 
 int Bootloader::Menu::calculateCenterX(const char * text, int fontWidth) {
-  return (k_screen.width() - fontWidth * strlen(text)) / 2;
+  return (getScreen().width() - fontWidth * strlen(text)) / 2;
 }
 
 void Bootloader::Menu::showMenu() {
   KDContext * ctx = KDIonContext::sharedContext();
-  ctx->fillRect(k_screen, m_background);
+  ctx->fillRect(getScreen(), m_background);
   Interface::drawImage(ctx, ImageStore::Computer, 25);
   int y = ImageStore::Computer->height() + 25 + 10;
   int x = calculateCenterX(m_title, largeFontWidth());
@@ -45,7 +50,7 @@ void Bootloader::Menu::showMenu() {
   }
 
   if (m_bottom != nullptr) {
-    y = k_screen.height() - smallFontHeight() - 10;
+    y = getScreen().height() - smallFontHeight() - 10;
     x = calculateCenterX(m_bottom, smallFontWidth());
     ctx->drawString(m_bottom, KDPoint(x, y), k_small_font, m_foreground, m_background);
   }
@@ -57,7 +62,7 @@ bool Bootloader::Menu::handleKey(uint64_t key) {
       return false;
     }
   }
-  if (key == Ion::Keyboard::State(Ion::Keyboard::Key::Power)) { 
+  if (key == Ion::Keyboard::State(Ion::Keyboard::Key::OnOff)) { 
     Ion::Power::standby();
     return false;
   }
@@ -65,7 +70,9 @@ bool Bootloader::Menu::handleKey(uint64_t key) {
     if (colomn.isNull() || !colomn.isClickable()) {
       continue;
     } else {
-      colomn.didHandledEvent(key);
+      if (colomn.didHandledEvent(key)) {
+        redraw();
+      }
     }
   }
   return true;

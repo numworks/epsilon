@@ -2,6 +2,7 @@
 #define BOOTLOADER_KERNEL_HEADER_H
 
 #include <stdint.h>
+#include <bootloader/utility.h>
 
 namespace Bootloader {
 

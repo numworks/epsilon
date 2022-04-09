@@ -290,7 +290,7 @@ void Interface::drawInstallerSelection() {
   ctx->drawString(Messages::installerText3, KDPoint(initPos, y), KDFont::SmallFont, KDColorBlack, KDColorWhite);
 }
 
-void Interface::drawBLUpdate() {
+void Interface::drawBootloaderUpdate() {
   Interface::drawHeader();
   KDContext * ctx = KDIonContext::sharedContext();
   int y = ImageStore::Computer->height() + (KDFont::LargeFont->glyphSize().height() + 10) + (KDFont::SmallFont->glyphSize().height() + 10);

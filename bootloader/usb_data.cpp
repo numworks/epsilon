@@ -13,13 +13,13 @@ static char data[255];
 
 const char * Bootloader::USBData::buildStringDescriptor(StringHeader header, uint32_t startAddress, uint32_t size) {
     strlcpy(data, header.getString(), sizeof(data));
-    Utility::itoa((int32_t)startAddress, &data[strlen(header.getString())], 16);
+    Bootloader::Utility::itoa((int32_t)startAddress, &data[strlen(header.getString())], 16);
     data[strlen(header.getString()) + 8] = '/';
     data[strlen(header.getString()) + 8 + 1] = '0';
     data[strlen(header.getString()) + 8 + 2] = '1';
     data[strlen(header.getString()) + 8 + 3] = '*';
     data[strlen(header.getString()) + 8 + 4] = '0';
-    Utility::itoa((int32_t)size/1024, &data[strlen(header.getString()) + 8 + 5], 10);
+    Bootloader::Utility::itoa((int32_t)size/1024, &data[strlen(header.getString()) + 8 + 5], 10);
     data[strlen(header.getString()) + 8 + 5 + 2] = 'K';
     data[strlen(header.getString()) + 8 + 5 + 2 + 1] = 'g';
     data[strlen(header.getString()) + 8 + 5 + 2 + 2] = '\0';

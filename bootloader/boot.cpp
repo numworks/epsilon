@@ -8,6 +8,7 @@
 #include <bootloader/usb_data.h>
 #include <ion/src/device/shared/drivers/flash.h>
 #include <bootloader/utility.h>
+#include <bootloader/interface/menus/home/home.h>
 
 #include <assert.h>
 
@@ -51,31 +52,9 @@ void Boot::bootSlot(Bootloader::Slot s) {
 __attribute__((noreturn)) void Boot::boot() {
   assert(mode() != BootMode::Unknown);
 
-  bool isSlotA = Slot::A().kernelHeader()->isValid();
-  bool isSlotB = Slot::B().kernelHeader()->isValid();
-  bool isSlotKhi = Slot::Khi().kernelHeader()->isValid();
-
-  Interface::drawMenu();
-
   while (true) {
-    uint64_t scan = Ion::Keyboard::scan();
-    if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::One) && isSlotA) {
-      Boot::bootSlot(Slot::A());
-    } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Two) && isSlotKhi) {
-      Boot::bootSlot(Slot::Khi());
-    } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Three) && isSlotB) {
-      Boot::bootSlot(Slot::B());
-    } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Four)) {
-      installerMenu();
-    } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Five)) {
-      aboutMenu();
-    }
-    // else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Six)) {
-    //   Ion::Device::Reset::core();
-    // }
-     else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::OnOff)) {
-      Ion::Power::standby(); // Force a core reset to exit
-    }
+    HomeMenu menu = HomeMenu();
+    menu.open(true);
   }
 
   // Achievement unlocked: How Did We Get Here?

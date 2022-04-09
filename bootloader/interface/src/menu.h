@@ -46,20 +46,21 @@ namespace Bootloader {
           bool (*m_callback)();
       };
 
-      void open();
+      void open(bool noreturn = false);
       void redraw() { showMenu(); };
 
       static int calculateCenterX(const char * text, int fontWidth);
 
       static constexpr const KDFont * k_small_font = KDFont::SmallFont;
       static constexpr const KDFont * k_large_font = KDFont::LargeFont;
+      
+      static const KDRect getScreen() { return KDRect(0, 0, 320, 240); };
 
     private:
       static const int k_max_colomns = 5;
       static const int k_colomns_margin = 5;
 
       static constexpr Ion::Keyboard::Key k_breaking_keys[] = {Ion::Keyboard::Key::Back, Ion::Keyboard::Key::Home};
-      static constexpr KDRect k_screen = KDRect(0, 0, 320, 240);
 
       int smallFontHeight() const { return k_small_font->glyphSize().height(); };
       int largeFontHeight() const { return k_large_font->glyphSize().height(); };

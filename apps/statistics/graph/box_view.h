@@ -57,6 +57,7 @@ private:
   constexpr static KDCoordinate k_verticalMargin = k_chevronMargin + Chevrons::k_chevronHeight;
 
   /* Draw */
+  void drawCalculation(KDContext * ctx, KDRect rect, int selectedCalculation, float lowBound, float upBound, float segmentOrd, KDColor color, bool isSelected) const;
   void drawBar(KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound, KDColor color, bool isSelected) const;
   void drawOutlier(KDContext * ctx, KDRect rect, float calculation, float segmentOrd, KDColor color, bool isSelected) const;
   void drawChevronSelection(KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound) const;

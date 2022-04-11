@@ -18,7 +18,7 @@ public:
     CumulatedFrequency
   };
 
-  enum class OutliersStatus : uint8_t {
+  enum class OutlierDefaultVisibility : uint8_t {
     Displayed,
     Hidden
   };
@@ -36,7 +36,7 @@ public:
     D
   };
 
-  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutliersStatus outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol) :
+  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol) :
     m_availableExamModes(availableExamModes),
     m_methodForQuartiles(methodForQuartiles),
     m_outliersStatus(outliersStatus),
@@ -47,7 +47,7 @@ public:
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
   constexpr MethodForQuartiles methodForQuartiles() const { return m_methodForQuartiles; }
-  constexpr OutliersStatus outliersStatus() const { return m_outliersStatus; }
+  constexpr OutlierDefaultVisibility outliersStatus() const { return m_outliersStatus; }
   constexpr Poincare::Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
   constexpr HomeAppsLayout homeAppsLayout() const { return m_homeAppsLayout; }
   constexpr const char * discriminantSymbol() const { return m_discriminantSymbol == DiscriminantSymbol::Delta ? "Δ" : "D"; }
@@ -55,7 +55,7 @@ public:
 private:
   const AvailableExamModes m_availableExamModes;
   const MethodForQuartiles m_methodForQuartiles;
-  const OutliersStatus m_outliersStatus;
+  const OutlierDefaultVisibility m_outliersStatus;
   const Poincare::Preferences::UnitFormat m_unitFormat;
   const HomeAppsLayout m_homeAppsLayout;
   const DiscriminantSymbol m_discriminantSymbol;

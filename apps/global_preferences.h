@@ -14,7 +14,7 @@ public:
   void setCountry(I18n::Country country) { m_country = country; }
   CountryPreferences::AvailableExamModes availableExamModes() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].availableExamModes(); }
   CountryPreferences::MethodForQuartiles methodForQuartiles() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].methodForQuartiles(); }
-  CountryPreferences::OutliersStatus outliersStatus() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].outliersStatus(); }
+  CountryPreferences::OutlierDefaultVisibility outliersStatus() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].outliersStatus(); }
   Poincare::Preferences::UnitFormat unitFormat() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].unitFormat(); }
   CountryPreferences::HomeAppsLayout homeAppsLayout() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].homeAppsLayout(); }
   const char * discriminantSymbol() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].discriminantSymbol(); }

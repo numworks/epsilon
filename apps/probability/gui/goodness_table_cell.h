@@ -21,7 +21,7 @@ public:
   CategoricalTableViewDataSource * tableViewDataSource() override { return this; }
 
   // DataSource
-  int numberOfRows() const override { return m_numberOfRows; };
+  int numberOfRows() const override { return m_numberOfRows + 1; } // Add header
   int numberOfColumns() const override { return m_numberOfColumns; }
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int i, int type) override;

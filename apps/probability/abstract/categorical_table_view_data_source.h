@@ -15,7 +15,7 @@ public:
   template <typename TextHolder> void willDisplayValueCellAtLocation(TextHolder * textHolder, Escher::EvenOddCell * evenOddCell, int column, int row, Chi2Test * test) {
     double p = test->parameterAtPosition(row, column);
     PrintValueInTextHolder(p, textHolder);
-    evenOddCell->setEven(row % 2 == 0);
+    evenOddCell->setEven(row % 2 == 1);
   }
   KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 

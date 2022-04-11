@@ -216,15 +216,17 @@ void HistogramController::initBarParameters() {
     // Use k_maxNumberOfBars - 1 for extra margin in case of a loss of precision
     barWidth = (xMax - xMin) / (HistogramRange::k_maxNumberOfBars - 1);
   }
-  bool allValuesAreIntegers = true;
-  for (int i = 0; i < Store::k_numberOfSeries; i ++) {
-    if (allValuesAreIntegers && m_store->seriesIsValid(i)) {
-      allValuesAreIntegers = m_store->columnIsIntegersOnly(i, 0);
+  if (barWidth != std::ceil(barWidth)) {
+    bool allValuesAreIntegers = true;
+    for (int i = 0; i < Store::k_numberOfSeries; i ++) {
+      if (allValuesAreIntegers && m_store->seriesIsValid(i)) {
+        allValuesAreIntegers = m_store->columnIsIntegersOnly(i, 0);
+      }
     }
-  }
-  if (allValuesAreIntegers) {
-    // Ceil the barWidth if all values are integers
-    barWidth = std::ceil(barWidth);
+    if (allValuesAreIntegers) {
+      // With integer values, the histogram is better with an integer bar width
+      barWidth = std::ceil(barWidth);
+    }
   }
   assert(barWidth > 0.0 && std::ceil((xMax - xMin) / barWidth) <= HistogramRange::k_maxNumberOfBars);
   m_store->setBarWidth(barWidth);

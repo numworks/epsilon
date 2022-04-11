@@ -12,7 +12,7 @@ InputGoodnessController::InputGoodnessController(StackViewController * parent, E
 }
 
 void InputGoodnessController::updateDegreeOfFreedomCell() {
-  PrintValueInTextHolder(m_statistic->degreeOfFreedom(), m_significanceCell.textField(), true, true);
+  PrintValueInTextHolder(m_statistic->degreeOfFreedom(), m_degreeOfFreedomCell.textField(), true, true);
 }
 
 void InputGoodnessController::didBecomeFirstResponder() {

@@ -78,8 +78,8 @@ View *  MultipleBoxesView::subviewAtIndex(int index) {
 
 void MultipleBoxesView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate bannerHeight = bannerFrame().height();
-  /* Background is filled here instead of in each subviews because the boxes
-   * layout can overlap, and should not draw over this each others. */
+  /* Boxes may have overlapping layouts. To prevent them from drawing over each
+   * others, the background is filled here. */
   ctx->fillRect(KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight - k_axisViewHeight), KDColorWhite);
   MultipleDataView::drawRect(ctx, rect);
 }

@@ -14,7 +14,7 @@ GoodnessTableCell::GoodnessTableCell(Responder * parentResponder, DynamicSizeTab
   m_header[1].setMessage(I18n::Message::Expected);
   for (int i = 0; i < GoodnessTest::k_maxNumberOfColumns; i++) {
     m_header[i].setEven(true);
-    m_header[0].setMessageFont(KDFont::SmallFont);
+    m_header[i].setMessageFont(KDFont::SmallFont);
   }
 }
 
@@ -52,7 +52,7 @@ void GoodnessTableCell::willDisplayCellAtLocation(Escher::HighlightCell * cell, 
     return;
   }
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
-  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, j - 1, i, m_statistic);
+  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, i, j - 1, m_statistic);
 }
 
 bool GoodnessTableCell::recomputeDimensions(Chi2Test * s) {

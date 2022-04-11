@@ -22,7 +22,7 @@ void InputGoodnessController::didBecomeFirstResponder() {
 
 HighlightCell * InputGoodnessController::reusableCell(int index, int type) {
   if (type == k_indexOfDegreeOfFreedom) {
-    return &m_goodnessTableCell;
+    return &m_degreeOfFreedomCell;
   } else {
     return InputCategoricalController::reusableCell(index, type);
   }

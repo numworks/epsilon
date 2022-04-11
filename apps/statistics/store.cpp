@@ -403,6 +403,7 @@ double Store::computeModes(int series, int i, double * modeFreq, int * modesTota
       // Iterating one last time to process the last value
       value = valueFrequency = NAN;
     }
+    // currentValue != value returns true if currentValue or value is NAN
     if (currentValue != value) {
       // A new value has been found
       if (currentValueFrequency > *modeFreq) {
@@ -553,7 +554,8 @@ void Store::countDistinctValues(int series, int start, int end, int i, bool hand
     int valueIndex = valueIndexAtSortedIndex(series, j);
     if (handleNullFrequencies || get(series, 1, valueIndex) > 0) {
       double nextX = get(series, 0, valueIndexAtSortedIndex(series, j));
-      if (j == start || *value != nextX) {
+      // *value != nextX returns true if *value is NAN
+      if (*value != nextX) {
         (*distinctValues)++;
         *value = nextX;
       }

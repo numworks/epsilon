@@ -27,7 +27,7 @@ public:
   constexpr static KDCoordinate BoxFrameHeight(int numberOfValideSeries) { return k_verticalMargin + BoxHeight(numberOfValideSeries) + k_verticalMargin; }
 
   /* CurveView */
-  KDRect reloadRect();
+  KDRect rectToReload();
   void reload(bool resetInterrupted = false, bool force = false) override;
 
   /* View */

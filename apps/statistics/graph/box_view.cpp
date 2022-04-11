@@ -64,14 +64,15 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(firstQuartilePixels, k_verticalMargin, thirdQuartilePixels - firstQuartilePixels, BoxHeight(numberOfSeries)), color);
 
   // Draw the horizontal lines linking the box to the whiskers
-  float lowBound = pixelToFloat(Axis::Vertical, k_verticalMargin + BoxHeight(numberOfSeries));
-  float upBound = pixelToFloat(Axis::Vertical, k_verticalMargin);
-  // Compute the middle from the pixels instead of the floats for better precision
+  // Compute the middle from the pixels for a better precision
   float segmentOrd = pixelToFloat(Axis::Vertical, (k_verticalMargin + BoxHeight(numberOfSeries) + k_verticalMargin) / 2);
   double lowerWhisker = m_store->lowerWhisker(m_series);
   double upperWhisker = m_store->upperWhisker(m_series);
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, lowerWhisker, firstQuart, color);
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, upperWhisker, color);
+
+  float lowBound = pixelToFloat(Axis::Vertical, k_verticalMargin + BoxHeight(numberOfSeries));
+  float upBound = pixelToFloat(Axis::Vertical, k_verticalMargin);
 
   // Draw each unselected calculations
   for (size_t i = 0; i < m_store->numberOfBoxPlotCalculations(m_series); i++) {
@@ -82,23 +83,21 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
       }
       calculationColor = DoublePairStore::colorOfSeriesAtIndex(m_series);
     }
-    float calculation = m_store->boxPlotCalculationAtIndex(m_series, i);
-    if (m_store->boxPlotCalculationIsOutlier(m_series, i)) {
-      drawOutlier(ctx, rect, calculation, segmentOrd, calculationColor, false);
-    } else {
-      drawBar(ctx, rect, calculation, lowBound, upBound, calculationColor, false);
-    }
+    drawCalculation(ctx, rect, i, lowBound, upBound, segmentOrd, calculationColor, false);
   }
   // Draw the selected calculation afterward, preventing it being overwritten.
   if (isMainViewSelected()) {
-    int selectedCalculation = *m_selectedBoxCalculation;
-    assert(selectedCalculation >= 0 && selectedCalculation < m_store->numberOfBoxPlotCalculations(m_series));
-    float calculation = m_store->boxPlotCalculationAtIndex(m_series, selectedCalculation);
-    if (m_store->boxPlotCalculationIsOutlier(m_series, selectedCalculation)) {
-      drawOutlier(ctx, rect, calculation, segmentOrd, k_selectedColor, true);
-    } else {
-      drawBar(ctx, rect, calculation, lowBound, upBound, k_selectedColor, true);
-    }
+    drawCalculation(ctx, rect, *m_selectedBoxCalculation, lowBound, upBound, segmentOrd, k_selectedColor, true);
+  }
+}
+
+void BoxView::drawCalculation(KDContext * ctx, KDRect rect, int selectedCalculation, float lowBound, float upBound, float segmentOrd, KDColor color, bool isSelected) const {
+  assert(selectedCalculation >= 0 && selectedCalculation < m_store->numberOfBoxPlotCalculations(m_series));
+  float calculation = m_store->boxPlotCalculationAtIndex(m_series, selectedCalculation);
+  if (m_store->boxPlotCalculationIsOutlier(m_series, selectedCalculation)) {
+    drawOutlier(ctx, rect, calculation, segmentOrd, color, isSelected);
+  } else {
+    drawBar(ctx, rect, calculation, lowBound, upBound, color, isSelected);
   }
 }
 

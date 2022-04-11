@@ -2,6 +2,7 @@
 #define STATISTICS_NORMAL_PROBABILITY_CONTROLLER_H
 
 #include "plot_controller.h"
+#include <limits.h>
 
 namespace Statistics {
 

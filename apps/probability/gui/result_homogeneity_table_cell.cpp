@@ -43,7 +43,7 @@ void ResultHomogeneityTableCell::willDisplayInnerCellAtLocation(Escher::Highligh
     value = m_statistic->expectedValueAtLocation(row, column);
   }
   PrintValueInTextHolder(value, myCell);
-  myCell->setEven(row % 2 == 0);
+  myCell->setEven(row % 2 == 1);
 }
 
 void ResultHomogeneityTableCell::createCells() {

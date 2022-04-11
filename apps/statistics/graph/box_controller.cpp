@@ -79,7 +79,7 @@ bool BoxController::reloadBannerView() {
   m_view.bannerView()->seriesName()->setText(buffer);
 
   // Display calculation
-  int selectedBoxCalculation = (int)m_view.dataViewAtIndex(series)->selectedBoxCalculation();
+  int selectedBoxCalculation = m_view.dataViewAtIndex(series)->selectedBoxCalculation();
   double value = m_store->boxPlotCalculationAtIndex(series, selectedBoxCalculation);
   Poincare::Print::customPrintf(
     buffer,
@@ -87,7 +87,8 @@ bool BoxController::reloadBannerView() {
     "%s%s%*.*ed",
     I18n::translate(m_store->boxPlotCalculationMessageAtIndex(series, selectedBoxCalculation)),
     I18n::translate(I18n::Message::StatisticsColonConvention),
-    value, Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+    value, Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits
+  );
   m_view.bannerView()->calculationValue()->setText(buffer);
 
   m_view.bannerView()->reload();

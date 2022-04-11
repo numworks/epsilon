@@ -37,7 +37,7 @@ public:
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
   MathVariableBoxController * variableBoxController();
-  void didSuspend(bool checkIfOnOffKeyReleased = false);
+  void didSuspend();
   bool dispatchEvent(Ion::Events::Event event) override;
   void switchToBuiltinApp(Escher::App::Snapshot * snapshot) override;
   void switchToExternalApp(Ion::ExternalApps::App app);
@@ -50,6 +50,7 @@ public:
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PromptController * promptController();
   void redrawWindow();
+  void startDFU();
   void activateExamMode(Poincare::Preferences::ExamMode examMode);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
@@ -70,7 +71,9 @@ private:
   static const I18n::Message k_promptMessages[];
   static const KDColor k_promptColors[];
   static const int k_promptNumberOfMessages;
+  bool m_restartDFU;
   bool m_firstUSBEnumeration;
+  Escher::App::Snapshot * m_previousSnapshot;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
   Shared::GlobalContext m_globalContext;

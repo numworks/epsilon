@@ -458,6 +458,7 @@ size_t Store::upperWhiskerSortedIndex(int series) const {
 }
 
 void Store::countDistinctValues(int series, int start, int end, int i, bool ignoreFrequency, double * value, int * distinctValues) const {
+  assert(start >= 0 && end <= numberOfPairsOfSeries(series) && start <= end);
   *distinctValues = 0;
   *value = NAN;
   for (size_t j = start; j < end; j++) {

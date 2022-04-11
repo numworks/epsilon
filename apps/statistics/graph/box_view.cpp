@@ -35,7 +35,7 @@ KDRect BoxView::selectedCalculationRect() const {
   return KDRect(minX, 0, width, BoxFrameHeight(m_store->numberOfValidSeries())).translatedBy(m_frame.origin());
 }
 
-KDRect BoxView::reloadRect() {
+KDRect BoxView::rectToReload() {
   // Transpose the rect into parent's view coordinates
   return boxRect().translatedBy(m_frame.origin());
 }

@@ -39,11 +39,11 @@ public:
 
   // Calculation
   double sumOfOccurrences(int series) const;
-  // If ignoreFrequency is true, values with a null frequency are accounted for
-  double maxValueForAllSeries(bool ignoreFrequency = false) const;
-  double minValueForAllSeries(bool ignoreFrequency = false) const;
-  double maxValue(int series, bool ignoreFrequency) const;
-  double minValue(int series, bool ignoreFrequency) const;
+  // If handleNullFrequencies, values with a null frequency are accounted for
+  double maxValueForAllSeries(bool handleNullFrequencies = false) const;
+  double minValueForAllSeries(bool handleNullFrequencies = false) const;
+  double maxValue(int series, bool handleNullFrequencies) const;
+  double minValue(int series, bool handleNullFrequencies) const;
   // Overloading minValue and maxValue so they can be casted as CalculPointer
   double maxValue(int series) const { return maxValue(series, false); }
   double minValue(int series) const { return minValue(series, false); }
@@ -123,8 +123,8 @@ private:
   /* Find the i-th distinct value (if i is -1, browse the entire series) from
    * start to end (ordered by value).
    * Retrieve the i-th value and the number distinct values encountered.
-   * If not ignoreFrequency, discard values with null frequency. */
-  void countDistinctValues(int series, int start, int end, int i, bool ignoreFrequency, double * value, int * distinctValues) const;
+   * If not handleNullFrequencies, ignore values with null frequency. */
+  void countDistinctValues(int series, int start, int end, int i, bool handleNullFrequencies, double * value, int * distinctValues) const;
   double sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement = false) const;
   double sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement = false) const;
   size_t lowerWhiskerSortedIndex(int series) const;

@@ -1,4 +1,4 @@
-CountryCode,CountryPreferences::AvailableExamModes,CountryPreferences::MethodForQuartiles,CountryPreferences::OutliersStatus,Poincare::Preferences::UnitFormat,CountryPreferences::HomeAppsLayout,CountryPreferences::DiscriminantSymbol
+CountryCode,CountryPreferences::AvailableExamModes,CountryPreferences::MethodForQuartiles,CountryPreferences::OutlierDefaultVisibility,Poincare::Preferences::UnitFormat,CountryPreferences::HomeAppsLayout,CountryPreferences::DiscriminantSymbol
 WW,All,MedianOfSublist,Hidden,Metric,Default,Delta
 CA,StandardOnly,MedianOfSublist,Hidden,Metric,Default,Delta
 DE,StandardOnly,MedianOfSublist,Hidden,Metric,Default,D

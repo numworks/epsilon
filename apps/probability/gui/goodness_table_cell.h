@@ -15,7 +15,7 @@ class InputGoodnessController;
 
 class GoodnessTableCell : public EditableCategoricalTableCell, public CategoricalTableViewDataSource, public DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells> {
 public:
-  GoodnessTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, GoodnessTest * test);
+  GoodnessTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, GoodnessTest * test, InputGoodnessController * inputGoodnessController);
 
   // EditableCategoricalTableCell
   CategoricalTableViewDataSource * tableViewDataSource() override { return this; }

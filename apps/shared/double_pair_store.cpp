@@ -185,17 +185,17 @@ void DoublePairStore::sortIndexByColumn(uint8_t * sortedIndex, int series, int c
   Poincare::Helpers::Sort(
       [](int i, int j, void * ctx, int n) { // Swap method
         void ** pack = reinterpret_cast<void **>(ctx);
-        uint8_t * sortedIndex = reinterpret_cast<uint8_t *>(reinterpret_cast<void *>(pack[1]));
+        uint8_t * sortedIndex = reinterpret_cast<uint8_t *>(pack[1]);
         uint8_t t = sortedIndex[i];
         sortedIndex[i] = sortedIndex[j];
         sortedIndex[j] = t;
       },
       [](int i, int j, void * ctx, int n) { // Comparison method
         void ** pack = reinterpret_cast<void **>(ctx);
-        const DoublePairStore * store = reinterpret_cast<const DoublePairStore *>(reinterpret_cast<void *>(pack[0]));
-        uint8_t * sortedIndex = reinterpret_cast<uint8_t *>(reinterpret_cast<void *>(pack[1]));
-        int series = *reinterpret_cast<int *>(reinterpret_cast<void *>(pack[2]));
-        int column = *reinterpret_cast<int *>(reinterpret_cast<void *>(pack[3]));
+        const DoublePairStore * store = reinterpret_cast<const DoublePairStore *>(pack[0]);
+        uint8_t * sortedIndex = reinterpret_cast<uint8_t *>(pack[1]);
+        int series = *reinterpret_cast<int *>(pack[2]);
+        int column = *reinterpret_cast<int *>(pack[3]);
         return store->get(series, column, sortedIndex[i]) >= store->get(series, column, sortedIndex[j]);
       }, pack, endIndex - startIndex);
 }

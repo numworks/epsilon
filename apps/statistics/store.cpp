@@ -154,11 +154,11 @@ double Store::sumOfOccurrences(int series) const {
   return sumOfColumn(series, 1);
 }
 
-double Store::maxValueForAllSeries(bool ignoreFrequency) const {
+double Store::maxValueForAllSeries(bool handleNullFrequencies) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
-  double result = maxValue(0, ignoreFrequency);
+  double result = maxValue(0, handleNullFrequencies);
   for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
-    double maxCurrentSeries = maxValue(i, ignoreFrequency);
+    double maxCurrentSeries = maxValue(i, handleNullFrequencies);
     if (result < maxCurrentSeries) {
       result = maxCurrentSeries;
     }
@@ -166,11 +166,11 @@ double Store::maxValueForAllSeries(bool ignoreFrequency) const {
   return result;
 }
 
-double Store::minValueForAllSeries(bool ignoreFrequency) const {
+double Store::minValueForAllSeries(bool handleNullFrequencies) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
-  double result = minValue(0, ignoreFrequency);
+  double result = minValue(0, handleNullFrequencies);
   for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
-    double minCurrentSeries = minValue(i, ignoreFrequency);
+    double minCurrentSeries = minValue(i, handleNullFrequencies);
     if (result > minCurrentSeries) {
       result = minCurrentSeries;
     }
@@ -178,24 +178,24 @@ double Store::minValueForAllSeries(bool ignoreFrequency) const {
   return result;
 }
 
-double Store::maxValue(int series, bool ignoreFrequency) const {
+double Store::maxValue(int series, bool handleNullFrequencies) const {
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = numberOfPairs - 1; k >= 0; k--) {
-    // Unless frequencies are ignored, look for the last non null value.
+    // Unless handleNullFrequencies is true, look for the last non null value.
     int sortedIndex = valueIndexAtSortedIndex(series, k);
-    if (ignoreFrequency || get(series, 1, sortedIndex) > 0) {
+    if (handleNullFrequencies || get(series, 1, sortedIndex) > 0) {
       return get(series, 0, sortedIndex);
     }
   }
   return DBL_MIN;
 }
 
-double Store::minValue(int series, bool ignoreFrequency) const {
+double Store::minValue(int series, bool handleNullFrequencies) const {
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    // Unless frequencies are ignored, look for the first non null value.
+    // Unless handleNullFrequencies is true, look for the first non null value.
     int sortedIndex = valueIndexAtSortedIndex(series, k);
-    if (ignoreFrequency || get(series, 1, sortedIndex) > 0) {
+    if (handleNullFrequencies || get(series, 1, sortedIndex) > 0) {
       return get(series, 0, sortedIndex);
     }
   }
@@ -457,13 +457,13 @@ size_t Store::upperWhiskerSortedIndex(int series) const {
   return numberOfPairs;
 }
 
-void Store::countDistinctValues(int series, int start, int end, int i, bool ignoreFrequency, double * value, int * distinctValues) const {
+void Store::countDistinctValues(int series, int start, int end, int i, bool handleNullFrequencies, double * value, int * distinctValues) const {
   assert(start >= 0 && end <= numberOfPairsOfSeries(series) && start <= end);
   *distinctValues = 0;
   *value = NAN;
   for (size_t j = start; j < end; j++) {
     int valueIndex = valueIndexAtSortedIndex(series, j);
-    if (ignoreFrequency || get(series, 1, valueIndex) > 0) {
+    if (handleNullFrequencies || get(series, 1, valueIndex) > 0) {
       double nextX = get(series, 0, valueIndexAtSortedIndex(series, j));
       if (j == start || *value != nextX) {
         (*distinctValues)++;

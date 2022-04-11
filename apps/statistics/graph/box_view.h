@@ -23,8 +23,8 @@ public:
   KDRect selectedCalculationRect() const;
   // Box dimension used to layout BoxViews in MultipleBoxesView
   constexpr static KDCoordinate BoxHeight(int numberOfValideSeries) { return numberOfValideSeries > 2 ? k_threeBoxesHeight: k_twoBoxesHeight; }
-  constexpr static KDCoordinate BoxVerticalMargin() { return k_verticalMargin; }
-  constexpr static KDCoordinate BoxFrameHeight(int numberOfValideSeries) { return k_verticalMargin + BoxHeight(numberOfValideSeries) + k_verticalMargin; }
+  constexpr static KDCoordinate BoxVerticalMargin() { return k_verticalSideSize; }
+  constexpr static KDCoordinate BoxFrameHeight(int numberOfValideSeries) { return k_verticalSideSize + BoxHeight(numberOfValideSeries) + k_verticalSideSize; }
 
   /* CurveView */
   KDRect rectToReload();
@@ -48,13 +48,12 @@ private:
   constexpr static KDCoordinate k_chevronMargin = 2;
   // A calculation may be a quantile or an outlier. It has chevrons if selected.
   constexpr static KDCoordinate k_biggestCalculationWidth = std::max({k_quantileBarWidth, Chevrons::k_chevronWidth, k_outlierSize});
-  // Object placed at:              V        V
-  // Object size in pixels:       12345    123456
-  // Right pixels to be dirtied:  ##       ##
-  // Left pixels to be dirtied:     ###      ####
-  constexpr static KDCoordinate k_leftMargin = (k_biggestCalculationWidth - 1)/2;
-  constexpr static KDCoordinate k_rightMargin = k_biggestCalculationWidth/2 + 1;
-  constexpr static KDCoordinate k_verticalMargin = k_chevronMargin + Chevrons::k_chevronHeight;
+  // Object and its center:       --o-- (5)   --o--- (6)
+  // Right pixels to be dirtied:  ##    (2)   ##     (2)
+  // Left pixels to be dirtied:     ### (3)     #### (4)
+  constexpr static KDCoordinate k_leftSideSize = (k_biggestCalculationWidth - 1)/2;
+  constexpr static KDCoordinate k_rightSideSize = k_biggestCalculationWidth/2 + 1;
+  constexpr static KDCoordinate k_verticalSideSize = k_chevronMargin + Chevrons::k_chevronHeight;
 
   /* Draw */
   void drawCalculation(KDContext * ctx, KDRect rect, int selectedCalculation, float lowBound, float upBound, float segmentOrd, KDColor color, bool isSelected) const;

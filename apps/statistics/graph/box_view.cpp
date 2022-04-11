@@ -29,8 +29,8 @@ void BoxView::incrementSelectedCalculation(int deltaIndex) {
 
 KDRect BoxView::selectedCalculationRect() const {
   float calculation = m_store->boxPlotCalculationAtIndex(m_series, *m_selectedBoxCalculation);
-  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation)) - k_leftMargin;
-  KDCoordinate width = k_leftMargin + k_rightMargin;
+  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation)) - k_leftSideSize;
+  KDCoordinate width = k_leftSideSize + k_rightSideSize;
   // Transpose the rect into parent's view coordinates
   return KDRect(minX, 0, width, BoxFrameHeight(m_store->numberOfValidSeries())).translatedBy(m_frame.origin());
 }
@@ -46,8 +46,8 @@ void BoxView::reload(bool resetInterrupted, bool force) {
 }
 
 KDRect BoxView::boxRect() const {
-  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series))) - k_leftMargin;
-  KDCoordinate maxX = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series))) + k_rightMargin;
+  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series))) - k_leftSideSize;
+  KDCoordinate maxX = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series))) + k_rightSideSize;
   return KDRect(minX, 0, maxX - minX, BoxFrameHeight(m_store->numberOfValidSeries()));
 }
 
@@ -61,18 +61,18 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   double thirdQuart = m_store->thirdQuartile(m_series);
   KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, firstQuart));
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
-  ctx->fillRect(KDRect(firstQuartilePixels, k_verticalMargin, thirdQuartilePixels - firstQuartilePixels, BoxHeight(numberOfSeries)), color);
+  ctx->fillRect(KDRect(firstQuartilePixels, k_verticalSideSize, thirdQuartilePixels - firstQuartilePixels, BoxHeight(numberOfSeries)), color);
 
   // Draw the horizontal lines linking the box to the whiskers
   // Compute the middle from the pixels for a better precision
-  float segmentOrd = pixelToFloat(Axis::Vertical, (k_verticalMargin + BoxHeight(numberOfSeries) + k_verticalMargin) / 2);
+  float segmentOrd = pixelToFloat(Axis::Vertical, (k_verticalSideSize + BoxHeight(numberOfSeries) + k_verticalSideSize) / 2);
   double lowerWhisker = m_store->lowerWhisker(m_series);
   double upperWhisker = m_store->upperWhisker(m_series);
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, lowerWhisker, firstQuart, color);
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, upperWhisker, color);
 
-  float lowBound = pixelToFloat(Axis::Vertical, k_verticalMargin + BoxHeight(numberOfSeries));
-  float upBound = pixelToFloat(Axis::Vertical, k_verticalMargin);
+  float lowBound = pixelToFloat(Axis::Vertical, k_verticalSideSize + BoxHeight(numberOfSeries));
+  float upBound = pixelToFloat(Axis::Vertical, k_verticalSideSize);
 
   // Draw each unselected calculations
   for (size_t i = 0; i < m_store->numberOfBoxPlotCalculations(m_series); i++) {
@@ -104,8 +104,8 @@ void BoxView::drawCalculation(KDContext * ctx, KDRect rect, int selectedCalculat
 void BoxView::drawBar(KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound, KDColor color, bool isSelected) const {
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculation, lowBound, upBound, color, k_quantileBarWidth);
   if (isSelected) {
-    lowBound = pixelToFloat(Axis::Vertical, k_verticalMargin + BoxHeight(m_store->numberOfValidSeries()) + k_chevronMargin - 1);
-    upBound = pixelToFloat(Axis::Vertical, k_verticalMargin - k_chevronMargin);
+    lowBound = pixelToFloat(Axis::Vertical, k_verticalSideSize + BoxHeight(m_store->numberOfValidSeries()) + k_chevronMargin - 1);
+    upBound = pixelToFloat(Axis::Vertical, k_verticalSideSize - k_chevronMargin);
     drawChevronSelection(ctx, rect, calculation, lowBound, upBound);
   }
 }

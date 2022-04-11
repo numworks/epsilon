@@ -524,12 +524,10 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
       diameter = Dots::LargeDotDiameter;
       mask = (const uint8_t *)Dots::LargeDotMask;
   }
-  KDCoordinate px = std::round(floatToPixel(Axis::Horizontal, x));
-  KDCoordinate py = std::round(floatToPixel(Axis::Vertical, y));
   /* If circle has an even diameter, out of the four center pixels, the bottom
    * left one will be placed at (x, y) */
-  px -= (diameter-1)/2;
-  py -= diameter/2;
+  KDCoordinate px = std::round(floatToPixel(Axis::Horizontal, x)) - (diameter-1)/2;
+  KDCoordinate py = std::round(floatToPixel(Axis::Vertical, y)) - diameter/2;
   KDRect dotRect(px, py, diameter, diameter);
   if (!rect.intersects(dotRect)) {
     return;

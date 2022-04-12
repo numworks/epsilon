@@ -6,6 +6,8 @@ HANDY_TARGETS += kernel.A kernel.B
 SFLAGS += -fstack-protector-strong
 
 kernel_obj = $(call flavored_object_for,$(kernel_src),$(MODEL) $(THIRD_PARTY_FLAVOR))
+kernel_obj += $(BUILD_DIR)/bootloader.o
+
 $(BUILD_DIR)/kernel.A.$(EXE): $(kernel_obj)
 $(BUILD_DIR)/kernel.B.$(EXE): $(kernel_obj)
 $(BUILD_DIR)/kernel.%.$(EXE): LDFLAGS += $(KERNEL_LDFLAGS)

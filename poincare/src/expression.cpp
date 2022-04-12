@@ -5,6 +5,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/ghost.h>
+#include <poincare/string_layout.h>
 #include <poincare/variable_context.h>
 #include <ion.h>
 #include <ion/unicode/utf8_helper.h>

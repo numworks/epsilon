@@ -24,8 +24,8 @@ public:
 
   // Shared::LabeledCurveView
   void appendLabelSuffix(Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) override;
-protected:
-  float labelStep(Axis axis) const override;
+private:
+  float labelStepFactor(Axis axis) const override;
 
   Store * m_store;
   PlotControllerDelegate * m_plotControllerDelegate;

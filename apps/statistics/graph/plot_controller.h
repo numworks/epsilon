@@ -30,7 +30,7 @@ public:
   virtual KDCoordinate topMargin() const = 0;
   virtual bool connectPoints() const { return false; }
   virtual void appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {}
-  virtual float labelStepMultiplicator(Shared::CurveView::Axis axis) const { return 1.0f; }
+  virtual float labelStepMultiplicator(Shared::CurveView::Axis axis) const { return 2.0f; }
   virtual bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const { return false; }
 };
 

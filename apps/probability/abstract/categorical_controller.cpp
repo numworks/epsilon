@@ -47,8 +47,6 @@ void CategoricalController::tableViewDidChangeSelectionAndDidScroll(
   int row = categoricalTableCell()->selectableTableView()->selectedRow();
   int col = categoricalTableCell()->selectableTableView()->selectedColumn();
   if (!withinTemporarySelection && previousSelectedCellY != row) {
-    // Force redrawing the borders between table cells
-    categoricalTableCell()->reloadCell();
     // Make contentView scroll to cell
     KDRect cellFrame = KDRect(
         0,  // We'll scroll only vertically

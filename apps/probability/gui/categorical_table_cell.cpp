@@ -13,6 +13,7 @@ CategoricalTableCell::CategoricalTableCell(Escher::Responder * parentResponder, 
 {
   m_selectableTableView.setBackgroundColor(Escher::Palette::WallScreenDark);
   m_selectableTableView.setDecoratorType(Escher::ScrollView::Decorator::Type::None);
+  setScrollViewDelegate(this);
 }
 
 void CategoricalTableCell::didBecomeFirstResponder() {
@@ -66,6 +67,11 @@ void CategoricalTableCell::drawRect(KDContext * ctx, KDRect rect) const {
 
 void CategoricalTableCell::layoutSubviews(bool force) {
   m_selectableTableView.setFrame(bounds(), force);
+}
+
+void CategoricalTableCell::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
+  // Force redrawing the borders between table cells
+  reloadCell();
 }
 
 /* EditableCategoricalTableCell */

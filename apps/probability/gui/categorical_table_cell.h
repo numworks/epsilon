@@ -13,7 +13,7 @@
 
 namespace Probability {
 
-class CategoricalTableCell : public Escher::HighlightCell, public Escher::Responder, public Escher::SelectableTableViewDataSource {
+class CategoricalTableCell : public Escher::HighlightCell, public Escher::Responder, public Escher::SelectableTableViewDataSource, Escher::ScrollViewDelegate {
 public:
   CategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate);
 
@@ -26,6 +26,9 @@ public:
 
   // HighlightCell
   Responder * responder() override { return this; }
+
+  // ScrollViewDelegate
+  void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
 
   Escher::SelectableTableView * selectableTableView() { return &m_selectableTableView; }
   virtual CategoricalTableViewDataSource * tableViewDataSource() = 0;

@@ -103,7 +103,7 @@ bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::TextField *
   m_selectableTableView.deselectTable();
   // Add row or column
   if ((row == tableViewDataSource()->numberOfRows() - 1 && relativeRowIndex(tableViewDataSource()->numberOfRows()) < m_statistic->maxNumberOfRows()) ||
-      (column == tableViewDataSource()->numberOfColumns() && relativeColumnIndex(tableViewDataSource()->numberOfColumns() < m_statistic->maxNumberOfColumns()))) {
+      (column == tableViewDataSource()->numberOfColumns() - 1 && relativeColumnIndex(tableViewDataSource()->numberOfColumns()) < m_statistic->maxNumberOfColumns())) {
     recomputeDimensions(m_statistic);
   }
   m_selectableTableView.reloadCellAtLocation(column, row);

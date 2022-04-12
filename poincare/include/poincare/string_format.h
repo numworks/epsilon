@@ -18,6 +18,8 @@ public:
   void setFont(const KDFont * font) { font == KDFont::LargeFont ? m_font = StringFont::LargeFont : m_font = StringFont::SmallFont; }
 
 private:
+  /* We use an enum to optimize space.
+   * KDFont are pointers which takes up more space than uint8_t. */
   enum class StringFont : uint8_t {
     SmallFont,
     LargeFont

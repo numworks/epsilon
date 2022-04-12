@@ -30,7 +30,6 @@ public:
 
   Layout makeEditable() override;
   int numberOfThousandsSeparators();
-  void setDecimalOrInteger(bool b) { m_decimalOrInteger = b; }
 
   // TreeNode
   size_t size() const override;
@@ -58,8 +57,6 @@ private:
   int firstNonDigitIndex();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
-  // We use this to know if we need to compute thousands separator margins.
-  bool m_decimalOrInteger;
   char m_string[0];
 };
 

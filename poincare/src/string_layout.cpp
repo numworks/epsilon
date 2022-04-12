@@ -8,8 +8,7 @@ namespace Poincare {
 
 StringLayoutNode::StringLayoutNode(const char * string, int stringSize, const KDFont * font) :
   LayoutNode(),
-  StringFormat(font),
-  m_decimalOrInteger(false)
+  StringFormat(font)
   {
     strlcpy(m_string, string, stringSize);
   }
@@ -67,9 +66,6 @@ void StringLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColo
 }
 
 int StringLayoutNode::numberOfThousandsSeparators() {
-  if (!m_decimalOrInteger) {
-    return 0;
-  }
   int nonDigitIndex = firstNonDigitIndex();
   bool isNegative = m_string[0] == '-';
   if (nonDigitIndex - isNegative < k_minDigitsForThousandSeparator) {
@@ -79,9 +75,6 @@ int StringLayoutNode::numberOfThousandsSeparators() {
 }
 
 int StringLayoutNode::firstNonDigitIndex() {
-  if (!m_decimalOrInteger) {
-    return -1;
-  }
   int nonDigitIndex = m_string[0] == '-';
   while (nonDigitIndex < stringLength()) {
     if (!('0' <= m_string[nonDigitIndex] && '9' >=  m_string[nonDigitIndex])) {

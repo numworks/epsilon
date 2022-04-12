@@ -125,9 +125,6 @@ Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
   Layout res = LayoutHelper::String(buffer, numberOfChars);
-  if (res.type() == LayoutNode::Type::StringLayout) {
-    static_cast<StringLayoutNode *>(res.node())->setDecimalOrInteger(true);
-  }
   return res;
 }
 

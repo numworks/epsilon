@@ -52,7 +52,7 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
       if (i.isOverflow()) {
          return Infinity::Builder(false);
       }
-      return Float<double>::Builder(i.approximate<double>());
+      return Number::FloatNumber(i.approximate<double>());
     } else {
       return BasedInteger::Builder(i, Integer::Base::Decimal);
     }

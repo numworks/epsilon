@@ -36,7 +36,7 @@ constexpr uint32_t SlotBStartAddress = ExternalFlash::Config::StartAddress + Ext
 constexpr uint32_t KernelSize = 0x10000; // 64kiB
 
 // Userland
-constexpr uint32_t UserlandOffset = KernelSize;
+constexpr uint32_t UserlandOffset = KernelSize + BootloaderSize;
 
 // External apps
 constexpr uint32_t ExternalAppsSectorUnit = 0x10000;

@@ -4,16 +4,6 @@
 #include <escher/metric.h>
 #include <poincare/layout_helper.h>
 
-/* Following expressions: Numbers, symbols (like cos), units and some other
- * expressions like "undefined", will be layouted into StringLayout.
- * if they have more than 1 codepoint.
- * This is to optimize the pool memory. When a StringLayout is inserted into
- * an input field (LayoutField in Escher), it is made editable, which means
- * that it is turned into CodePointsLayout for the user to be able to edit it
- * and move cursor.
- * /!\ CURSOR CANNOT BE MOVED INSIDE A STRINGLAYOUT /!\
-*/
-
 namespace Poincare {
 
 StringLayoutNode::StringLayoutNode(const char * string, int stringSize, const KDFont * font) :

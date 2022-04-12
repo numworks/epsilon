@@ -4,6 +4,14 @@
 #include <poincare/layout.h>
 #include <poincare/string_format.h>
 
+/* Following expressions: Numbers, symbols (like cos), units and some other
+ * expressions like "undefined", will be layouted into StringLayout.
+ * if they have more than 1 codepoint. This is to optimize the pool memory.
+ * When a StringLayout is inserted into an input field (LayoutField in Escher),
+ * it is made editable, which means that it is turned into CodePointsLayout
+ * for the user to be able to edit it and move cursor.
+ * /!\ CURSOR CANNOT BE MOVED INSIDE A STRINGLAYOUT /!\ */
+
 namespace Poincare {
 
 class StringLayoutNode : public LayoutNode, public StringFormat {
@@ -17,7 +25,7 @@ public:
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override { assert(false); }
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override  { assert(false); }
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override { assert(false); }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   Layout makeEditable() override;

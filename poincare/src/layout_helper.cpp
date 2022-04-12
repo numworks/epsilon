@@ -111,8 +111,10 @@ Layout LayoutHelper::StringToCodePointsLayout(const char * buffer, int bufferLen
 
 Layout LayoutHelper::StringToStringLayout(const char * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
-  // MiddleDot MUST be handled as code point.
-  assert(!UTF8Helper::HasCodePoint(buffer,UCodePointMiddleDot));
+  /* MiddleDot MUST be handled as code point.
+   * If you hit this assertion, use the method 'StringToCodePointsLayout'
+   * to turn your string into an haroizontal layout filled with code points.*/
+  assert(!UTF8Helper::HasCodePoint(buffer, UCodePointMiddleDot));
   return StringLayout::Builder(buffer, bufferLen + 1, font);
 }
 
@@ -129,10 +131,8 @@ Layout LayoutHelper::CodePointsToLayout(const CodePoint * buffer, int bufferLen,
 
 Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
   Layout logLayout = String("log", 3);
-  if (logLayout.type() != LayoutNode::Type::HorizontalLayout) {
-    logLayout = HorizontalLayout::Builder(logLayout);
-  }
-  HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
+  assert(logLayout.type() != LayoutNode::Type::HorizontalLayout);
+  HorizontalLayout resultLayout = HorizontalLayout::Builder(logLayout);
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::Position::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren(), true);

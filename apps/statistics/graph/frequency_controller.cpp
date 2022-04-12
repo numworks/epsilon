@@ -93,7 +93,7 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   double xIndex = valueAtIndex(series, index);
   double xNextIndex = valueAtIndex(series, nextIndex);
 
-  double precision = std::fabs(step/2);
+  double precision = std::fabs(step / 2.0);
 
   // Round cursor's position to closest interesting value
   if (std::fabs(x - xIndex) < precision) {
@@ -106,8 +106,10 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
     xIndex = valueAtIndex(series, index);
     xNextIndex = valueAtIndex(series, nextIndex);
   } else if (std::fabs(x) < precision) {
+    // Round the cursor to 0 if it is close to it
     x = 0.0;
   } else {
+    // Simplify the cursor's position while staying at the same pixel.
     assert(precision >= m_curveView.pixelWidth());
     double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(m_curveView.pixelWidth()) - 1.0);
     x = magnitude * std::round(x / magnitude);

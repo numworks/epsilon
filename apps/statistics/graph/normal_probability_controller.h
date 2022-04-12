@@ -15,9 +15,9 @@ public:
   void computeYBounds(float * yMin, float *yMax) const override;
   void computeXBounds(float * xMin, float *xMax) const override;
   // Horizontal labels will always be in the middle
-  KDCoordinate horizontalMargin() const override { return mediumMargin; }
-  KDCoordinate bottomMargin() const override { return smallMargin; }
-  KDCoordinate topMargin() const override { return smallMargin; }
+  KDCoordinate horizontalMargin() const override { return k_mediumMargin; }
+  KDCoordinate bottomMargin() const override { return k_smallMargin; }
+  KDCoordinate topMargin() const override { return k_smallMargin; }
   bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const override;
 
   TELEMETRY_ID("NormalProbability");

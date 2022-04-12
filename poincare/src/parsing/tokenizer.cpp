@@ -154,7 +154,7 @@ Token::Type Tokenizer::stringTokenType(const char * string, size_t length) {
   if (ParsingHelper::IsSpecialIdentifierName(string, length)) {
     return Token::SpecialIdentifier;
   }
-  if (m_definingCustomIdentifier || m_context == nullptr || m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
+  if (m_encounteredRightwardsArrow || m_context == nullptr || m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;
@@ -372,7 +372,7 @@ Token Tokenizer::popToken() {
     return Token(Token::Empty);
   }
   if (c == UCodePointRightwardsArrow) {
-    m_definingCustomIdentifier = true;
+    m_encounteredRightwardsArrow = true;
     return Token(Token::RightwardsArrow);
   }
   if (c == 0) {

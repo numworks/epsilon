@@ -25,6 +25,9 @@ private:
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
 
   void switchCursor(bool seriesChanged);
+  // Get the closest index strictly above (direction>0) or below (direction<0) x
+  int getNextIndex(int series, int totValues, int startIndex, int direction, double * x) const;
+  // PlotController
   const char * resultMessageTemplate() const override { return "%s%s%*.*ed%%"; }
   I18n::Message resultMessage() const override { return I18n::Message::StatisticsFrequencyFcc; }
   // MultipleDataViewController

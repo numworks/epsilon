@@ -38,6 +38,23 @@ void FrequencyController::appendLabelSuffix(Shared::CurveView::Axis axis, char *
   labelBuffer[length+1] = 0;
 }
 
+int FrequencyController::getNextIndex(int series, int totValues, int startIndex, int direction, double * x) const {
+  assert(direction != 0);
+  int index = SanitizeIndex(startIndex, totValues);
+  /* If directions is > 0, find the first index of value strictly above x
+   * Otherwise, find the first index of value equal or under x */
+  while ((direction > 0) == (*x >= valueAtIndex(series, index))) {
+    int nextIndex = SanitizeIndex(index + direction, totValues);
+    if (nextIndex == index) {
+      // Minimum reached, cap cursor's position.
+      *x = valueAtIndex(series, index);
+      break;
+    }
+    index = nextIndex;
+  }
+  return index;
+}
+
 bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   if (!m_continuousCursor) {
     return PlotController::moveSelectionHorizontally(deltaIndex);
@@ -53,32 +70,14 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   double x = m_cursor.x() + step;
 
   // Find an index of value under x.
-  int index = *m_selectedBarIndex;
-  while (x < valueAtIndex(series, index)) {
-    int previousIndex = SanitizeIndex(index - 1, totValues);
-    if (previousIndex == index) {
-      // Minimum reached, cap cursor's position.
-      x = valueAtIndex(series, index);
-      break;
-    }
-    index = previousIndex;
-  }
+  int index = getNextIndex(series, totValues, *m_selectedBarIndex, -1, &x);
 
   // Find the first index of value strictly above x.
-  int nextIndex = SanitizeIndex(index + 1, totValues);
-  while (x >= valueAtIndex(series, nextIndex)) {
-    int nextNextIndex = SanitizeIndex(nextIndex + 1, totValues);
-    if (nextNextIndex == nextIndex) {
-      // Maximum reached, cap cursor's position.
-      x = valueAtIndex(series, nextIndex);
-      break;
-    }
-    nextIndex = nextNextIndex;
-  }
+  int nextIndex = getNextIndex(series, totValues, index + 1, 1, &x);
 
   // Set the selected index
-  index = SanitizeIndex(nextIndex - 1, totValues);
-  *m_selectedBarIndex = index;
+  *m_selectedBarIndex = index = SanitizeIndex(nextIndex - 1, totValues);
+  assert(index != nextIndex);
 
   // Compute the cursor's position on the segment between the tow indexes
   double xIndex = valueAtIndex(series, index);
@@ -92,16 +91,20 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
 }
 
 bool FrequencyController::moveSelectionVertically(int direction) {
-  // When going down, we first use the discreet cursor, then the continuous one
+  /* Move selection to another curve (or to tab headers) when :
+   * - Continuous cursor is selected, and selection is going down (direction==1)
+   * - Continuous cursor isn't selected, and selection is going up
+   * */
   if (m_continuousCursor == (direction == 1)) {
     int previousSeries = selectedSeriesIndex();
     bool result = PlotController::moveSelectionVertically(direction);
     if (result && previousSeries != selectedSeriesIndex()) {
-      // Cursor has been moved into another curve
+      // Cursor has been moved into another curve, cursor must be switched
       switchCursor(true);
     }
     return result;
   }
+  // Otherwise, just switch to the other cursor.
   switchCursor(false);
   return true;
 }

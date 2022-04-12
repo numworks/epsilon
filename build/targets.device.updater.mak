@@ -13,9 +13,5 @@ $(BUILD_DIR)/payload.elf: $(BUILD_DIR)/bootloader.o
 $(BUILD_DIR)/payload.elf: LDSCRIPT = ion/src/device/epsilon-bootloader/updater/flash/payload.ld
 $(BUILD_DIR)/payload.elf: LDDEPS += $(LDSCRIPT)
 
-$(BUILD_DIR)/bootloader.o:
-	$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 DEVELOPMENT=0 bootloader.bin
-	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata $(subst $(FIRMWARE_COMPONENT),bootloader,$(BUILD_DIR))/bootloader.bin $@
-
 $(BUILD_DIR)/updater.dfu: $(BUILD_DIR)/updater.elf $(BUILD_DIR)/payload.elf
 	$(PYTHON) build/device/elf2dfu.py -i $^ -o $@

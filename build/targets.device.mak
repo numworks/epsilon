@@ -61,3 +61,8 @@ openocd:
 
 $(BUILD_DIR)/%.$(EXE): LDDEPS += ion/src/$(PLATFORM)/shared/flash/$(MODEL)/config_flash.ld ion/src/$(PLATFORM)/shared/flash/$(MODEL)/config_sram.ld
 $(BUILD_DIR)/%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared/flash -Lion/src/$(PLATFORM)/shared/flash/$(MODEL)
+
+$(BUILD_DIR)/bootloader.o:
+	$(MAKE) FIRMWARE_COMPONENT=bootloader bootloader.bin
+	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.bootloader $(subst $(FIRMWARE_COMPONENT),bootloader,$(BUILD_DIR))/bootloader.bin $@
+

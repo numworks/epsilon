@@ -51,11 +51,10 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
 private:
-  constexpr static int k_maxNumberOfDisplayableRows = 11;
+  constexpr static int k_maxNumberOfDisplayableRows = 9;
   constexpr static int k_totalNumberOfDoubleBufferRows = 5;
-  constexpr static int k_maxNumberOfSingleBufferRows = 11;
   constexpr static int k_numberOfDoubleCalculationCells = Store::k_numberOfSeries * k_totalNumberOfDoubleBufferRows;
-  constexpr static int k_numberOfCalculationCells = Store::k_numberOfSeries * k_maxNumberOfSingleBufferRows;
+  constexpr static int k_numberOfCalculationCells = Store::k_numberOfSeries * k_maxNumberOfDisplayableRows;
   constexpr static int k_standardCalculationTitleCellType = 0;
   constexpr static int k_r2CellType = 1;
   constexpr static int k_columnTitleCellType = 2;

@@ -47,7 +47,7 @@ public:
 
 #if POINCARE_TREE_LOG
   void flatLog(std::ostream & stream);
-  void treeLog(std::ostream & stream, bool verbose);
+  void treeLog(std::ostream & stream, bool verbose = true);
   __attribute__((__used__)) void log() { treeLog(std::cout, false); }
   __attribute__((__used__)) void verboseLog() { treeLog(std::cout, true); }
 #endif

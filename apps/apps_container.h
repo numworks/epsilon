@@ -50,7 +50,7 @@ public:
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PromptController * promptController();
   void redrawWindow();
-  void startDFU();
+  bool startDFU();
   void activateExamMode(Poincare::Preferences::ExamMode examMode);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
@@ -72,8 +72,6 @@ private:
   static const KDColor k_promptColors[];
   static const int k_promptNumberOfMessages;
   bool m_firstUSBEnumeration;
-  bool m_DFUWasInterruptedBySuspend;
-  Escher::App::Snapshot * m_activeSnapshotBeforeDFU;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
   Shared::GlobalContext m_globalContext;

@@ -7,11 +7,12 @@
 namespace Ion {
 namespace USB {
 
-void DFU() {
+Events::Event DFU() {
   // Configure the kernel to avoid interrupting DFU protocole except on Back key
   Device::USB::willExecuteDFU();
-  Device::USB::Calculator::PollAndReset();
+  Events::Event abortReason = Device::USB::Calculator::PollAndReset();
   Device::USB::didExecuteDFU();
+  return abortReason;
 }
 
 }

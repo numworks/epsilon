@@ -5,6 +5,7 @@
 #include <shared/drivers/userland_header.h>
 #include <drivers/ram_layout.h>
 #include <regs/regs.h>
+#include <ion/events.h>
 
 namespace Ion {
 namespace Device {
@@ -58,7 +59,7 @@ void shutdownOTG();
 
 void willExecuteDFU();
 void didExecuteDFU();
-bool shouldInterruptDFU();
+Ion::Events::Event shouldInterruptDFU();
 const char * stringDescriptor();
 SlotInfo * slotInfo();
 

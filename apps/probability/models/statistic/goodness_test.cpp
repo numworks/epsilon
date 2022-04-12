@@ -57,7 +57,7 @@ bool GoodnessTest::validateInputs() {
   if (numberOfValuePairs() <= 1) {
     return false;
   }
-  int n = computeDimensions().row;
+  int n = computeInnerDimensions().row;
   for (int row = 0; row < n; row++) {
     if (std::isnan(expectedValue(row)) || std::isnan(observedValue(row))) {
       return false;
@@ -75,7 +75,7 @@ bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
 }
 
 int GoodnessTest::numberOfValuePairs() const {
-  return computeDimensions().row;
+  return computeInnerDimensions().row;
 }
 
 double GoodnessTest::expectedValue(int index) const {

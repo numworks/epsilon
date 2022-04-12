@@ -42,7 +42,7 @@ bool HomogeneityTest::deleteParameterAtPosition(int row, int column) {
 }
 
 void HomogeneityTest::compute() {
-  Index2D max = computeDimensions();
+  Index2D max = computeInnerDimensions();
   m_numberOfResultRows = max.row;
   m_numberOfResultColumns = max.col;
   computeExpectedValues(max);
@@ -68,7 +68,7 @@ int HomogeneityTest::computeDegreesOfFreedom(Index2D max) {
 }
 
 int HomogeneityTest::numberOfValuePairs() const {
-  Index2D max = computeDimensions();
+  Index2D max = computeInnerDimensions();
   return max.row * max.col;
 }
 
@@ -112,7 +112,7 @@ void HomogeneityTest::computeExpectedValues(Index2D max) {
 
 void HomogeneityTest::recomputeData() {
   // Remove empty rows / columns
-  Index2D dimensions = computeDimensions();
+  Index2D dimensions = computeInnerDimensions();
   // Start with rows
   int i = 0, j = 0;
   while (i < dimensions.row) {
@@ -160,7 +160,7 @@ void HomogeneityTest::recomputeData() {
 }
 
 bool HomogeneityTest::validateInputs() {
-  Index2D max = computeDimensions();
+  Index2D max = computeInnerDimensions();
   if (max.col <= 1 || max.row <= 1) {
     return false;
   }

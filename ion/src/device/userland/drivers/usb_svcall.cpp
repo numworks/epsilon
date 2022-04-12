@@ -1,4 +1,5 @@
 #include <ion/usb.h>
+#include <ion/events.h>
 #include <ion/authentication.h>
 #include <drivers/svcall.h>
 #include <drivers/board.h>
@@ -18,7 +19,7 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-bool SVC_ATTRIBUTES shouldInterruptDFU() {
+Events::Event SVC_ATTRIBUTES shouldInterruptDFU() {
   SVC_RETURNING_R0(SVC_USB_SHOULD_INTERRUPT, bool)
 }
 

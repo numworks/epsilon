@@ -17,9 +17,9 @@ public:
   void computeYBounds(float * yMin, float *yMax) const override;
   void computeXBounds(float * xMin, float *xMax) const override;
   // Horizontal labels will always be in bottom, vertical labels are wider
-  KDCoordinate horizontalMargin() const override { return largeMargin; }
-  KDCoordinate bottomMargin() const override { return mediumMargin; }
-  KDCoordinate topMargin() const override { return smallMargin; }
+  KDCoordinate horizontalMargin() const override { return k_largeMargin; }
+  KDCoordinate bottomMargin() const override { return k_mediumMargin; }
+  KDCoordinate topMargin() const override { return k_smallMargin; }
   bool connectPoints() const override { return true; }
   // Append '%' to vertical axis labels.
   void appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const override;

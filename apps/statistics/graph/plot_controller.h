@@ -52,9 +52,9 @@ public:
   bool moveSelectionHorizontally(int deltaIndex) override;
 
 protected:
-  constexpr static KDCoordinate smallMargin = 10;
-  constexpr static KDCoordinate mediumMargin = 20;
-  constexpr static KDCoordinate largeMargin = 30;
+  constexpr static KDCoordinate k_smallMargin = 10;
+  constexpr static KDCoordinate k_mediumMargin = 20;
+  constexpr static KDCoordinate k_largeMargin = 30;
   static int SanitizeIndex(int index, int numberOfPairs) {
     return std::max(0, std::min(index, numberOfPairs - 1));
   }

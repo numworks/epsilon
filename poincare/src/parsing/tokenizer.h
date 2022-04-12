@@ -14,7 +14,7 @@ namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text, Context * context) : m_context(context), m_decoder(text), m_definingCustomIdentifier(false) {}
+  Tokenizer(const char * text, Context * context) : m_context(context), m_decoder(text), m_encounteredRightwardsArrow(false) {}
   Token popToken();
 
 private:
@@ -33,7 +33,10 @@ private:
   Token::Type stringTokenType(const char * string, size_t length);
   Context * m_context;
   UTF8Decoder m_decoder;
-  bool m_definingCustomIdentifier;
+  /* We need this bool to ensure that we can set multiplie-chars variable in
+   * the storage. 5->abc should NOT be parsed as 5->a*b*c
+   * */
+  bool m_encounteredRightwardsArrow;
 };
 
 }

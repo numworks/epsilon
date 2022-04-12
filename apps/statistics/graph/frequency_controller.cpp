@@ -93,7 +93,7 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
 
 bool FrequencyController::moveSelectionVertically(int direction) {
   // When going down, we first use the discreet cursor, then the continuous one
-  if (m_continuousCursor == (direction == -1)) {
+  if (m_continuousCursor == (direction == 1)) {
     int previousSeries = selectedSeriesIndex();
     bool result = PlotController::moveSelectionVertically(direction);
     if (result && previousSeries != selectedSeriesIndex()) {

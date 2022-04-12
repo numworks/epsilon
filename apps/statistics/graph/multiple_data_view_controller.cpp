@@ -54,7 +54,7 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
   assert(*m_selectedSeriesIndex >= 0);
   bool isVerticalEvent = (event == Ion::Events::Down || event == Ion::Events::Up);
   if ((isVerticalEvent || event == Ion::Events::Left || event == Ion::Events::Right)) {
-    int direction = (event == Ion::Events::Down || event == Ion::Events::Left) ? -1 : 1;
+    int direction = (event == Ion::Events::Up || event == Ion::Events::Left) ? -1 : 1;
     if (isVerticalEvent ? moveSelectionVertically(direction) : moveSelectionHorizontally(direction)) {
       if (reloadBannerView()) {
         multipleDataView()->reload();
@@ -82,7 +82,7 @@ void MultipleDataViewController::willExitResponderChain(Responder * nextFirstRes
 }
 
 bool MultipleDataViewController::moveSelectionVertically(int direction) {
-  int nextSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(*m_selectedSeriesIndex) - direction;
+  int nextSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(*m_selectedSeriesIndex) + direction;
   if (nextSelectedSubview >= m_store->numberOfValidSeries()) {
     return false;
   }

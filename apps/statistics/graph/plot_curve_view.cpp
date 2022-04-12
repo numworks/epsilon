@@ -56,8 +56,8 @@ void PlotCurveView::appendLabelSuffix(Axis axis, char * labelBuffer, int maxSize
   m_plotControllerDelegate->appendLabelSuffix(axis, labelBuffer, maxSize, glyphLength, maxGlyphLength);
 }
 
-float PlotCurveView::labelStep(Axis axis) const {
-  return CurveView::labelStep(axis) * m_plotControllerDelegate->labelStepMultiplicator(axis);
+float PlotCurveView::labelStepFactor(Axis axis) const {
+  return m_plotControllerDelegate->labelStepMultiplicator(axis);
 }
 
 }

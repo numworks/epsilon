@@ -24,7 +24,7 @@ public:
   // Append '%' to vertical axis labels.
   void appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const override;
   // A 0.5 ratio ensures the vertical labels are 0, 20, 40, 60, 80 and 100%
-  float labelStepMultiplicator(Shared::CurveView::Axis axis) const override { return axis == Shared::CurveView::Axis::Vertical ? 0.5f : 1.0f; }
+  float labelStepMultiplicator(Shared::CurveView::Axis axis) const override { return axis == Shared::CurveView::Axis::Vertical ? 1.0f : 2.0f; }
 
   TELEMETRY_ID("Frequency");
 private:

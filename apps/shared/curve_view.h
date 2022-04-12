@@ -122,7 +122,8 @@ protected:
   void drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false, bool fixCoordinate = false, KDCoordinate fixedCoordinate = 0, KDColor backgroundColor = KDColorWhite) const;
   // returns the coordinates where should be drawn the label knowing the coordinates of its graduation and its relative position
   KDPoint positionLabel(KDCoordinate xPosition, KDCoordinate yPosition, KDSize labelSize, RelativePosition horizontalPosition, RelativePosition verticalPosition) const;
-  virtual float labelStep(Axis axis) const { return 2.0f * gridUnit(axis); }
+  float labelStep(Axis axis) const { return labelStepFactor(axis) * gridUnit(axis); }
+  virtual float labelStepFactor(Axis axis) const { return 2.0f; }
 
   Escher::View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;

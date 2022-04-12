@@ -85,6 +85,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
 
 void App::didBecomeActive(Escher::Window * windows) {
   // TODO : Only push after reset or when data is deleted
+  // Sorted indexes are not kept in the snapshot, they have been invalidated.
   snapshot()->store()->invalidateSortedIndexes();
   m_graphMenuStackViewController.push(&m_graphTypeController);
   Escher::App::didBecomeActive(windows);

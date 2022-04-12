@@ -344,9 +344,10 @@ Expression Expression::shallowReduceUsingApproximation(ExpressionNode::Reduction
    * be exactly represented in IEEE754, approx is the exact result (no
    * precision were loss). */
   if (!std::isnan(approx) && std::fabs(approx) <= k_largestExactIEEE754Integer) {
-    Expression result = Decimal::Builder(approx).shallowReduce(reductionContext);
-    assert(result.type() == ExpressionNode::Type::Rational);
+    Expression result = Decimal::Builder(approx);
     replaceWithInPlace(result);
+    result = result.shallowReduce(reductionContext);
+    assert(result.type() == ExpressionNode::Type::Rational);
     return result;
   }
   return *this;

@@ -456,16 +456,15 @@ Expression Decimal::shallowReduce(ExpressionNode::ReductionContext reductionCont
    * ending the mantissa before reducing. */
   removeZeroAtTheEnd(&mantissa);
   int numberOfDigits = Integer::NumberOfBase10DigitsWithoutSign(mantissa);
-  Expression result;
-  result = Multiplication::Builder(
+  Expression result = Multiplication::Builder(
       Rational::Builder(mantissa),
       Power::Builder(
         Rational::Builder(Integer(10)),
         Rational::Builder(Integer(exp - numberOfDigits + 1))
-        ).shallowReduce(reductionContext)
-      ).shallowReduce(reductionContext);
+      )
+  );
   replaceWithInPlace(result);
-  return result;
+  return result.deepReduce(reductionContext);
 }
 
 Expression Decimal::shallowBeautify() {

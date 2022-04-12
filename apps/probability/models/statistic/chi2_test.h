@@ -64,6 +64,7 @@ protected:
   }
 
   // Chi2 specific
+  Index2D computeInnerDimensions() const;
   virtual double expectedValue(int index) const = 0;
   virtual double observedValue(int index) const = 0;
   virtual int numberOfValuePairs() const = 0;

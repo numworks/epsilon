@@ -27,12 +27,16 @@ QUIZ_CASE(poincare_simplification_decimal) {
 
 QUIZ_CASE(poincare_simplification_rational) {
   // 1/MaxParsedIntegerString()
-  char bufferMax[32] = "1/";
-  strlcpy(bufferMax+2, MaxParsedIntegerString(), 30);
+  constexpr static size_t k_bufferSizeOfMax = 32;
+  char bufferMax[k_bufferSizeOfMax] = "1/";
+  size_t bufferLengthOfMax = strlen(bufferMax);
+  strlcpy(bufferMax + bufferLengthOfMax, MaxParsedIntegerString(), k_bufferSizeOfMax - bufferLengthOfMax);
   assert_parsed_expression_simplify_to(bufferMax, bufferMax);
   // 1/OverflowedIntegerString()
-  char bufferInf[400] = "1/";
-  strlcpy(bufferInf+2, BigOverflowedIntegerString(), 400-2);
+  constexpr static size_t k_bufferSizeOfInf = 400;
+  char bufferInf[k_bufferSizeOfInf] = "1/";
+  size_t bufferLengthOfInf = strlen(bufferInf);
+  strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(), k_bufferSizeOfInf - bufferLengthOfInf);
   assert_parsed_expression_simplify_to(bufferInf, "0");
   // MaxParsedIntegerString()
   assert_parsed_expression_simplify_to(MaxParsedIntegerString(), MaxParsedIntegerString());
@@ -43,7 +47,8 @@ QUIZ_CASE(poincare_simplification_rational) {
   assert_parsed_expression_simplify_to(ApproximatedParsedIntegerString(),"1ᴇ30");
   // -OverflowedIntegerString()
   bufferInf[0] = '-';
-  strlcpy(bufferInf+1, BigOverflowedIntegerString(), 400-1);
+  bufferLengthOfInf = 1;
+  strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(), k_bufferSizeOfInf - bufferLengthOfInf);
   assert_parsed_expression_simplify_to(bufferInf, "-inf");
 
   assert_parsed_expression_simplify_to("-1/3", "-1/3");

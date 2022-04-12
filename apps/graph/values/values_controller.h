@@ -49,7 +49,8 @@ private:
   static constexpr KDCoordinate k_parametricCellWidth = (2*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3) * 7 + 2*Escher::Metric::SmallCellMargin; // The largest cell is holding "(-1.234567E-123;-1.234567E-123)" and KDFont::SmallFont->glyphSize().width() = 7
   static constexpr size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
   static constexpr int k_maxNumberOfDisplayableFunctions = 4;
-  static constexpr int k_maxNumberOfDisplayableAbscissaCells = k_maxNumberOfSymbolTypes * k_maxNumberOfDisplayableRows;
+  static constexpr int k_maxNumberOfDisplayableSymbolTypes = 2;
+  static constexpr int k_maxNumberOfDisplayableAbscissaCells = k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
   static constexpr int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableFunctions * k_maxNumberOfDisplayableRows;
 
   // Values controller
@@ -106,7 +107,7 @@ private:
   Escher::EvenOddBufferTextCell * floatCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableAbscissaCells; }
   Escher::EvenOddEditableTextCell * abscissaCells(int j) override { assert (j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells); return &m_abscissaCells[j]; }
-  int abscissaTitleCellsCount() const override { return k_maxNumberOfSymbolTypes; }
+  int abscissaTitleCellsCount() const override { return k_maxNumberOfDisplayableSymbolTypes; }
   Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 
@@ -126,7 +127,7 @@ private:
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
   Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
-  AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfSymbolTypes];
+  AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
   FunctionParameterController m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;

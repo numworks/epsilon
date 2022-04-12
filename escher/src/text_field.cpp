@@ -420,13 +420,17 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
   // Step 1 : Identify the function the cursor is in
   UTF8Decoder functionDecoder(text, locationOfCursor);
   const char * location = functionDecoder.stringPosition();
+  CodePoint c = UCodePointUnknown;
+  // Analyze glyphs on the left of the cursor
+  if (location > text) {
+    c = functionDecoder.previousCodePoint();
+    location = functionDecoder.stringPosition();
+  }
   int functionLevel = 0;
   int cursorLevel = 0;
   bool cursorInVariableField = false;
   bool functionFound = false;
   while (location > text && !functionFound) {
-    CodePoint c = functionDecoder.previousCodePoint();
-    location = functionDecoder.stringPosition();
     switch (c) {
       case '(':
         // Check if we are skipping to the next matching '('.
@@ -474,6 +478,8 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
         functionLevel ++;
         break;
     }
+    c = functionDecoder.previousCodePoint();
+    location = functionDecoder.stringPosition();
   }
   // Step 2 : Handle intermediary cases
   if (!functionFound || cursorInVariableField) {
@@ -486,7 +492,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
   // Parsing text from cursor's location
   UTF8Decoder varDecoder(text, locationOfCursor);
   // Initialize c to any non null code point
-  CodePoint c = UCodePointUnknown;
+  c = UCodePointUnknown;
   // Parse text rightward until next ',' at cursorLevel 0
   while (c != UCodePointNull && cursorLevel >= 0 && !variableFound) {
     c = varDecoder.nextCodePoint();

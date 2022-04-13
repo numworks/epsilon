@@ -85,7 +85,7 @@ EditableCategoricalTableCell::EditableCategoricalTableCell(Escher::Responder * p
   m_statistic(chi2Test)
 {
   m_selectableTableView.setTopMargin(0);
-  m_selectableTableView.setBottomMargin(k_marginVertical);
+  m_selectableTableView.setBottomMargin(k_bottomMargin);
 }
 
 bool EditableCategoricalTableCell::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {

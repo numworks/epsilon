@@ -34,7 +34,7 @@ public:
   virtual CategoricalTableViewDataSource * tableViewDataSource() = 0;
 
 protected:
-  constexpr static int k_marginVertical = 5;
+  constexpr static int k_bottomMargin = 5;
 
   Escher::SelectableTableView m_selectableTableView;
 

@@ -14,6 +14,9 @@ public:
   // Responder
   void didBecomeFirstResponder() override;
 
+  // View
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+
   // EditableCategoricalTableCell
   CategoricalTableViewDataSource * tableViewDataSource() override { return this; }
 

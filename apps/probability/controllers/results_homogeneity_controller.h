@@ -10,6 +10,9 @@ class ResultsHomogeneityController : public CategoricalController {
 public:
   ResultsHomogeneityController(StackViewController * parent, Escher::ViewController * nextController, HomogeneityTest * statistic);
 
+  // Responder
+  void didBecomeFirstResponder() override;
+
   // ViewController
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
@@ -19,7 +22,7 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override { m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX, previousSelectedCellY); }
 
 private:
-  constexpr static int k_topMargin = 5;
+  constexpr static int k_topMargin = 19;
 
   CategoricalTableCell * categoricalTableCell() override { return &m_resultHomogeneityTable; }
 

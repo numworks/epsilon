@@ -1,5 +1,5 @@
 #include "tokenizer.h"
-#include "parsing_helper.h"
+#include "helper.h"
 #include "parser.h"
 #include <poincare/based_integer.h>
 #include <poincare/constant.h>

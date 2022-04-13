@@ -74,10 +74,11 @@ InputCategoricalController::InputCategoricalController(
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
       CategoricalController(parent, nextController, Invocation(&InputCategoricalController::ButtonAction, this)),
       m_statistic(statistic),
-      m_significanceCell(&m_selectableTableView, inputEventHandlerDelegate, this)
+      m_innerSignificanceCell(&m_selectableTableView, inputEventHandlerDelegate, this),
+      m_significanceCell(&m_innerSignificanceCell)
 {
-  m_significanceCell.setMessage(I18n::Message::GreekAlpha);
-  m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
+  m_innerSignificanceCell.setMessage(I18n::Message::GreekAlpha);
+  m_innerSignificanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
 
 bool InputCategoricalController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
@@ -102,7 +103,7 @@ void InputCategoricalController::didBecomeFirstResponder() {
     // Init significance cell
     m_statistic->initThreshold();
   }
-  PrintValueInTextHolder(m_statistic->threshold(), m_significanceCell.textField(), true, true);
+  PrintValueInTextHolder(m_statistic->threshold(), m_innerSignificanceCell.textField(), true, true);
   CategoricalController::didBecomeFirstResponder();
 }
 

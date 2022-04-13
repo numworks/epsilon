@@ -15,7 +15,7 @@ namespace USB {
 
 typedef void (*PollFunctionPointer)();
 
-void DFU() {
+Events::Event DFU() {
   /* DFU transfers can serve two purposes:
    *  - Transfering RAM data between the machine and a host, e.g. Python scripts
    *  - Upgrading the flash memory to perform a software update
@@ -43,7 +43,7 @@ void DFU() {
   char * stackPointer = &foo;
   if (dfu_bootloader_ram_start + dfu_bootloader_size > stackPointer) {
     // There is not enough room on the stack to copy the DFU bootloader.
-    return;
+    return Events::None;
   }
 
   /* 3- Copy the DFU bootloader from Flash to RAM. */
@@ -81,6 +81,8 @@ void DFU() {
 
   /* 5- That's all. The DFU bootloader on the stack is now dead code that will
    * be overwritten when the stack grows. */
+
+  return Events::None;
 }
 
 }

@@ -1,3 +1,4 @@
+#include <ion/events.h>
 #include <ion/usb.h>
 #include <drivers/usb.h>
 #include <kernel/drivers/keyboard.h>
@@ -17,8 +18,8 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-bool shouldInterruptDFU() {
-  return Keyboard::columnIsActive(Keyboard::columnForKey(Ion::Keyboard::Key::Back));
+Events::Event shouldInterruptDFU() {
+  return Keyboard::columnIsActive(Keyboard::columnForKey(Keyboard::Key::Back)) ? Events::Back : Events::None;
 }
 
 const char * stringDescriptor() {

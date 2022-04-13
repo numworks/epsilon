@@ -20,7 +20,7 @@ namespace Device {
 namespace USB {
 
 Events::Event SVC_ATTRIBUTES shouldInterruptDFU() {
-  SVC_RETURNING_R0(SVC_USB_SHOULD_INTERRUPT, bool)
+  SVC_RETURNING_R0(SVC_USB_SHOULD_INTERRUPT, Events::Event)
 }
 
 const char * stringDescriptor() {

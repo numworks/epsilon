@@ -44,10 +44,12 @@ void CategoricalTableCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDPoint offset = KDPoint(m_selectableTableView.leftMargin(), m_selectableTableView.topMargin()).translatedBy(m_selectableTableView.contentOffset().opposite());
   TableViewDataSource * data = const_cast<CategoricalTableCell *>(this)->tableViewDataSource();
 
+  KDCoordinate width = bounds().width();
+  KDCoordinate height = bounds().height();
   for (int row = 0; row < data->numberOfRows() - 1; row++) {
     KDRect horizontalBorder = KDRect(0,
         data->cumulatedHeightFromIndex(row) + data->rowHeight(row),
-                                     bounds().width(),
+                                     width,
                                      data->cumulatedHeightFromIndex(row + 1) -
                                          data->cumulatedHeightFromIndex(row) -
                                          data->rowHeight(row));
@@ -60,7 +62,7 @@ void CategoricalTableCell::drawRect(KDContext * ctx, KDRect rect) const {
                                    data->cumulatedWidthFromIndex(column + 1) -
                                        data->cumulatedWidthFromIndex(column) -
                                        data->columnWidth(column),
-                                   bounds().height());
+                                   height - Metric::CellSeparatorThickness);
     ctx->fillRect(verticalBorder.translatedBy(offset), m_selectableTableView.backgroundColor());
   }
 }

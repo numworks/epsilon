@@ -22,8 +22,6 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override { m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX, previousSelectedCellY); }
 
 private:
-  constexpr static int k_topMargin = 19;
-
   CategoricalTableCell * categoricalTableCell() override { return &m_resultHomogeneityTable; }
 
   ResultHomogeneityTableCell m_resultHomogeneityTable;

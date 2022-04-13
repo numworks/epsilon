@@ -7,8 +7,15 @@ namespace Probability {
 ResultHomogeneityTableCell::ResultHomogeneityTableCell(Escher::Responder * parentResponder, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, HomogeneityTest * test) :
   CategoricalTableCell(parentResponder, this, selectableTableViewDelegate),
   DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>(this),
-  m_statistic(test)
+  m_statistic(test),
+  m_title(KDFont::SmallFont,
+      I18n::Message::HomogeneityResultsTitle,
+      KDContext::k_alignCenter,
+      KDContext::k_alignCenter,
+      Escher::Palette::GrayVeryDark,
+      Escher::Palette::WallScreenDark)
 {
+  m_selectableTableView.setTopMargin(k_tableTopMarginIncludingTitle);
   m_selectableTableView.setBottomMargin(Metric::CellSeparatorThickness);
 }
 
@@ -65,6 +72,17 @@ void ResultHomogeneityTableCell::createCells() {
 void ResultHomogeneityTableCell::destroyCells() {
   DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>::destroyCells();
   DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
+}
+
+Escher::View * ResultHomogeneityTableCell::subviewAtIndex(int i) {
+  Escher::View * views[] = {&m_selectableTableView, &m_title};
+  return views[i];
+}
+
+void ResultHomogeneityTableCell::layoutSubviews(bool force) {
+  KDSize titleSize = m_title.minimalSizeForOptimalDisplay();
+  m_title.setFrame(KDRect(0, k_titleMargin, bounds().width(), titleSize.height()), force);
+  CategoricalTableCell::layoutSubviews(force);
 }
 
 }  // namespace Probability

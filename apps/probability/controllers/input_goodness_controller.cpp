@@ -4,15 +4,16 @@ namespace Probability {
 
 InputGoodnessController::InputGoodnessController(StackViewController * parent, Escher::ViewController * resultsController, GoodnessTest * statistic, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   InputCategoricalController(parent, resultsController, statistic, inputEventHandlerDelegate),
-  m_degreeOfFreedomCell(&m_selectableTableView, inputEventHandlerDelegate, this),
+  m_innerDegreeOfFreedomCell(&m_selectableTableView, inputEventHandlerDelegate, this),
+  m_degreeOfFreedomCell(&m_innerDegreeOfFreedomCell),
   m_goodnessTableCell(&m_selectableTableView, this, this, statistic, this)
 {
-  m_degreeOfFreedomCell.setMessage(I18n::Message::DegreesOfFreedom);
-  m_degreeOfFreedomCell.setSubLabelMessage(I18n::Message::Default);
+  m_innerDegreeOfFreedomCell.setMessage(I18n::Message::DegreesOfFreedom);
+  m_innerDegreeOfFreedomCell.setSubLabelMessage(I18n::Message::Default);
 }
 
 void InputGoodnessController::updateDegreeOfFreedomCell() {
-  PrintValueInTextHolder(m_statistic->degreeOfFreedom(), m_degreeOfFreedomCell.textField(), true, true);
+  PrintValueInTextHolder(m_statistic->degreeOfFreedom(), m_innerDegreeOfFreedomCell.textField(), true, true);
 }
 
 void InputGoodnessController::didBecomeFirstResponder() {

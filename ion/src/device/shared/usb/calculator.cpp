@@ -20,7 +20,7 @@ Events::Event Calculator::PollAndReset() {
     c.poll();
   }
 
-  if (stopDfu != Events:: None) {
+  if (stopDfu != Events::None) {
     return stopDfu;
   }
   if (!c.isSoftDisconnected()) {

@@ -77,50 +77,45 @@ Token Tokenizer::popIdentifier() {
   m_decoder.previousCodePoint();
   const char * start = m_decoder.stringPosition();
   Token result(Token::Undefined);
-  size_t totalStringLen = popWhile(ShouldAddCodePointToIdentifier, '_');
-  size_t currentStringLen = totalStringLen;
-  // We want to pop the left-most identifier of the string.
+  size_t currentStringLen = popWhile(ShouldAddCodePointToIdentifier, '_');
+  // You want to pop the left-most identifier of the string.
   while (currentStringLen > 0) {
+    const char * currentStringEnd = start + currentStringLen;
     UTF8Decoder tempDecoder(start);
-    size_t offset = 0;
-    Token::Type tokenType = stringTokenType(start, currentStringLen);
-    CodePoint currentCodePoint(0);
-    /* Find the right-most identifier by trying to parse 'abcd' (offset = 0),
-     * then 'bcd' (offset = 1), then 'cd' (offset = 2) and then 'd'
-     * (offset = 3), until you find a defined identifier. */
-    while (tokenType == Token::Undefined && offset < currentStringLen) {
-      currentCodePoint = tempDecoder.nextCodePoint();
-      offset += UTF8Decoder::CharSizeOfCodePoint(currentCodePoint);
-      tokenType = stringTokenType(start + offset, currentStringLen - offset);
+    const char * tokenStart = start;
+    const char * nextTokenStart = start;
+    Token::Type tokenType = Token::Undefined;
+    /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
+     * then 'cd' and then 'd' until you find a defined identifier. */
+    while (tokenType == Token::Undefined && nextTokenStart < currentStringEnd) {
+      tokenStart = nextTokenStart;
+      tokenType = stringTokenType(tokenStart, currentStringEnd - tokenStart);
+      tempDecoder.nextCodePoint();
+      nextTokenStart = tempDecoder.stringPosition();
     }
-    if (offset >= currentStringLen) {
-      /* If you reach the end of the string without finding an identifier,
-       * just rewind the offset before the last codePoint, and consider the
-       * last char to be the right-most identifier. */
-      assert(offset == currentStringLen);
-      offset -= UTF8Decoder::CharSizeOfCodePoint(currentCodePoint);
-    }
-    if (offset == 0) {
-      /* At this point if the offset is zero, it means that the right-most
-       * identifier is also the left-most one, which is the identifier we want
-       * to pop. */
+    if (tokenStart == start) {
+      /* If you reach this point, it means that the right-most identifier is
+       * also the left-most one, which is the identifier you want to pop.
+       * */
       if (tokenType == Token::Undefined) {
         tokenType = Token::CustomIdentifier;
       }
-      result.setType(tokenType);
+      Token result(tokenType);
       result.setString(start, currentStringLen);
       // Set the decoder to the end of the popped identifier.
       m_decoder.setPosition(start + currentStringLen);
+      return result;
     }
     /* If the left-most identifier was not yet found, reparse the string
      * without the right-most identifier you found.
      * So if you found 'd' at the right of 'abcd', restart with 'abc'.
-     * If the left-most identifier was found, offset = 0, so currentStringLen
-     * will be set to 0 and the loop will end.
-     * We ensure termination because offset < currentStringLen */
-    currentStringLen = offset;
+     * */
+    size_t newStringLen = tokenStart - start;
+    assert(newStringLen < currentStringLen);
+    currentStringLen = newStringLen;
   }
-  return result;
+  assert(false);
+  return Token(Token::Undefined);
 }
 
 /* This method determines wether a string is a reserved function name,

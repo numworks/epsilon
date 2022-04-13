@@ -8,7 +8,7 @@ ResultsHomogeneityController::ResultsHomogeneityController(StackViewController *
   CategoricalController(parent, resultsController, Invocation(&CategoricalController::ButtonAction, this)),
   m_resultHomogeneityTable(&m_selectableTableView, this, statistic)
 {
-  m_selectableTableView.setTopMargin(k_topMargin);
+  m_selectableTableView.setTopMargin(0);
 }
 
 void ResultsHomogeneityController::didBecomeFirstResponder() {

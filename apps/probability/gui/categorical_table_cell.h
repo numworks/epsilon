@@ -36,13 +36,14 @@ public:
 protected:
   constexpr static int k_bottomMargin = 5;
 
+  void layoutSubviews(bool force = false) override;
+
   Escher::SelectableTableView m_selectableTableView;
 
 private:
   int numberOfSubviews() const override { return 1; }
   Escher::View * subviewAtIndex(int i) override { return &m_selectableTableView; }
   KDSize minimalSizeForOptimalDisplay() const override { return m_selectableTableView.minimalSizeForOptimalDisplay(); }
-  void layoutSubviews(bool force = false) override;
 };
 
 class EditableCategoricalTableCell : public CategoricalTableCell, public Shared::TextFieldDelegate, public DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell>, public DynamicSizeTableViewDataSource {

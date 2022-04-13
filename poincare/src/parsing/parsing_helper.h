@@ -18,12 +18,14 @@ public:
 
 private:
   constexpr static const char * s_specialIdentifierNames[] = {
+    /* This MUST be ordered according to name otherwise IsSpecialIdentifier
+     * won't work properly. */
     Symbol::k_ans,
     Symbol::k_ansLowerCase,
     Infinity::Name(),
-    Undefined::Name(),
     Nonreal::Name(),
     "u",
+    Undefined::Name(),
     "v",
     "w"
   };
@@ -31,7 +33,9 @@ private:
 
    // The array of reserved functions' helpers
   static constexpr const Expression::FunctionHelper * s_reservedFunctions[] = {
-    // Ordered according to name and numberOfChildren
+    /* This MUST be ordered according to name, and then by numberOfChildren
+     * otherwise GetReservedFunction won't work properly.
+     * (name = s_functionHelper.name()) */
     &AbsoluteValue::s_functionHelper,
     &ArcCosine::s_functionHelper,
     &HyperbolicArcCosine::s_functionHelper,

@@ -20,8 +20,12 @@ const Expression::FunctionHelper * const * ParsingHelper::GetReservedFunction(co
 
 bool ParsingHelper::IsSpecialIdentifierName(const char * name, size_t nameLength) {
   for (int i = 0; i < k_numberOfSpecialIdentifiers; i++) {
-    if (Token::CompareNonNullTerminatedName(name, nameLength, s_specialIdentifierNames[i]) == 0) {
+    int nameDifference = Token::CompareNonNullTerminatedName(name, nameLength, s_specialIdentifierNames[i]);
+    if (nameDifference == 0) {
       return true;
+    }
+    if (nameDifference < 0) {
+      break;
     }
   }
   return false;

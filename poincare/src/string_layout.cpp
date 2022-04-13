@@ -98,6 +98,18 @@ StringLayout StringLayout::Builder(const char * string, int stringSize, const KD
 Layout StringLayout::makeEditable() {
   Layout editableLayout = LayoutHelper::StringToCodePointsLayout(string(), stringLength(), font());
   replaceWithInPlace(editableLayout);
+  Layout myParent = editableLayout.parent();
+  /* editableLayout can be an HorizontalLayout, so it needs to be merged with
+   * parent if it is also an HorizontalLayout. */
+  if (editableLayout.type() == LayoutNode::Type::HorizontalLayout
+    && !myParent.isUninitialized()
+    && myParent.type() == LayoutNode::Type::HorizontalLayout) {
+    HorizontalLayout horizontalParent = static_cast<HorizontalLayout &>(myParent);
+    HorizontalLayout horizontalEditableLayout = static_cast<HorizontalLayout &>(editableLayout);
+    int index = horizontalParent.indexOfChild(horizontalEditableLayout);
+    horizontalParent.mergeChildrenAtIndex(horizontalEditableLayout, index, true);
+    return horizontalParent.childAtIndex(index);
+  }
   return editableLayout;
 }
 

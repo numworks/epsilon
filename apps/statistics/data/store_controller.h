@@ -13,7 +13,11 @@ public:
   constexpr static char k_tableName[] = "V%c/N%c ";
   constexpr static size_t k_tableNameSize = sizeof(k_tableName);
   static void FillSeriesName(int series, char * buffer, bool withFinalSpace = false);
+
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
+  bool displayCumulatedFrequenciesForSeries(int series) const { return m_displayCumulatedFrequencies[series]; }
+  void setDisplayCumulatedFrequenciesForSeries(int series, bool state) { m_displayCumulatedFrequencies[series] = state; }
+
   Shared::StoreContext * storeContext() override { return &m_statisticsContext; }
   bool fillColumnWithFormula(Poincare::Expression formula) override;
   int fillColumnName(int columnIndex, char * buffer) override;
@@ -29,6 +33,7 @@ private:
   Store * m_store;
   StatisticsContext m_statisticsContext;
   StoreParameterController m_storeParameterController;
+  bool m_displayCumulatedFrequencies[Store::k_numberOfSeries];
 };
 
 }

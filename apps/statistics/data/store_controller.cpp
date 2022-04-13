@@ -19,8 +19,9 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
   Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
   m_store(store),
   m_statisticsContext(m_store, parentContext),
-  m_storeParameterController(this, this)
-  { }
+  m_storeParameterController(this, this),
+  m_displayCumulatedFrequencies{false, false, false}
+{}
 
 bool StoreController::fillColumnWithFormula(Expression formula) {
   return privateFillColumnWithFormula(formula, Symbol::isSeriesSymbol);

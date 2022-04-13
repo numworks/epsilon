@@ -55,9 +55,7 @@ bool ExpressionField::isEditing() const {
 
 const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
-    /* Don't serialize with any context to avoid adding symbols in the text. We
-     * don't want to turn f(x) into f*(x) if f is not a defined function. */
-    m_layoutField.layout().serializeParsedExpression(m_textField.draftTextBuffer(), k_textFieldBufferSize, nullptr);
+    m_layoutField.layout().serializeForParsing(m_textField.draftTextBuffer(), k_textFieldBufferSize);
   }
   return m_textField.draftTextBuffer();
 }

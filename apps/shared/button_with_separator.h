@@ -11,19 +11,22 @@ public:
   ButtonWithSeparator(Responder * parentResponder,
                       I18n::Message textBody,
                       Escher::Invocation invocation,
-                      KDColor backgroundColor = Escher::Palette::WallScreen);
+                      KDColor backgroundColor = Escher::Palette::WallScreen,
+                      KDCoordinate horizontalMargins = 0);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
   KDColor backgroundColor() const { return m_backgroundColor; }
   void setBackgroundColor(const KDColor backgroundColor) { m_backgroundColor = backgroundColor; }
 
-private:
-  constexpr static KDCoordinate k_margin = Escher::Metric::CommonMenuMargin;
+protected:
   constexpr static KDCoordinate k_lineThickness = Escher::Metric::CellSeparatorThickness;
+  constexpr static KDCoordinate k_margin = Escher::Metric::CommonMenuMargin;
+private:
   void layoutSubviews(bool force = false) override;
 
   KDColor m_backgroundColor;
+  KDCoordinate m_horizontalMargins;
 };
 
 }  // namespace Shared

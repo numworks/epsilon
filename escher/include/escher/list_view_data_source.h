@@ -27,7 +27,7 @@ public:
   /* cellHeight have a default implementation for specific simple
    * lists. Most implementations should override them.*/
   virtual KDCoordinate rowHeight(int index) override;
-  // Used to easily override  nonMemoizedRowHeight
+  // Used to easily override nonMemoizedRowHeight
   KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index);
 protected:
   KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index);

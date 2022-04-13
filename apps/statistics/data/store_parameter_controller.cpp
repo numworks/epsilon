@@ -8,7 +8,7 @@ namespace Statistics {
 void StoreParameterController::initializeColumnParameters() {
   Shared::StoreParameterController::initializeColumnParameters();
   // Initialize clear column message
-  if (Shared::StoreController::RelativeColumnIndex(m_columnIndex) == 1) {
+  if (m_storeController->relativeColumnIndex(m_columnIndex) == 1) {
       m_clearColumn.setMessageWithPlaceholder(I18n::Message::ResetFrequencies);
   } else {
     int series = m_columnIndex / Store::k_numberOfColumnsPerSeries;

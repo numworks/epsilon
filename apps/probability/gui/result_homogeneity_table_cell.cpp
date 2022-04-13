@@ -9,6 +9,7 @@ ResultHomogeneityTableCell::ResultHomogeneityTableCell(Escher::Responder * paren
   DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>(this),
   m_statistic(test)
 {
+  m_selectableTableView.setBottomMargin(Metric::CellSeparatorThickness);
 }
 
 void ResultHomogeneityTableCell::didBecomeFirstResponder() {
@@ -16,6 +17,12 @@ void ResultHomogeneityTableCell::didBecomeFirstResponder() {
     selectColumn(1);
   }
   CategoricalTableCell::didBecomeFirstResponder();
+}
+
+void ResultHomogeneityTableCell::drawRect(KDContext * ctx, KDRect rect) const {
+  CategoricalTableCell::drawRect(ctx, rect);
+  // Draw over the next cell border to hide it
+  ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness, bounds().width(), Metric::CellSeparatorThickness), m_selectableTableView.backgroundColor());
 }
 
 void ResultHomogeneityTableCell::willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) {

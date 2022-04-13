@@ -31,6 +31,7 @@ void ResultHomogeneityTableCell::willDisplayCellAtLocation(Escher::HighlightCell
     // Override to display "Total" instead
     Escher::EvenOddBufferTextCell * myCell = static_cast<Escher::EvenOddBufferTextCell *>(cell);
     myCell->setText(I18n::translate(I18n::Message::Total));
+    myCell->setEven(row % 2 == 0);
   } else {
     HomogeneityTableDataSource::willDisplayCellAtLocation(cell, column, row);
   }

@@ -7,6 +7,8 @@
 
 namespace Escher {
 
+// TODO: make an AbstractHighlightCell without any member variable
+
 class HighlightCell : public View {
 public:
   HighlightCell();

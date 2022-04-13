@@ -6,7 +6,10 @@ void ListViewDataSource::initCellWidth(TableView * view) {
   for (int row = 0; row < numberOfRows(); row++) {
     int type = typeAtIndex(row);
     for (int i = 0; i < reusableCellCount(type); i++) {
-      reusableCell(i, type)->setSize(KDSize(view->bounds().width() - view->rightMargin() - view->leftMargin(), 0));
+      /* Some cells need a width to compute their height, so we need to set
+       * width. We also provide a default height because if we set the frame of
+       * a cell to a empty-area rectangle, the subviews aren't layouted. */
+      reusableCell(i, type)->setSize(KDSize(view->bounds().width() - view->rightMargin() - view->leftMargin(), view->bounds().width() - view->topMargin() - view->bottomMargin()));
     }
   }
 }

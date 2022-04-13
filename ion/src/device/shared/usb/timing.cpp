@@ -14,6 +14,13 @@ void msleep(uint32_t ms) {
   }
 }
 
+void usleep(uint32_t us) {
+ for (volatile uint32_t i=0; i < Device::Timing::Config::LoopsPerMicrosecond*us; i++) {
+    __asm volatile("nop");
+  }
+}
+
+
 }
 }
 

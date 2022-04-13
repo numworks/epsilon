@@ -18,10 +18,6 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-Events::Event shouldInterruptDFU() {
-  return Keyboard::columnIsActive(Keyboard::columnForKey(Keyboard::Key::Back)) ? Events::Back : Events::None;
-}
-
 const char * stringDescriptor() {
   return Config::InterfaceFlashStringDescriptor;
 }

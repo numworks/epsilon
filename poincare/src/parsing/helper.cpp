@@ -1,4 +1,4 @@
-#include "parsing_helper.h"
+#include "helper.h"
 #include "token.h"
 
 namespace Poincare {

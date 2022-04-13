@@ -66,7 +66,8 @@ void CategoricalTableCell::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void CategoricalTableCell::layoutSubviews(bool force) {
-  m_selectableTableView.setFrame(bounds(), force);
+  // We let an empty border as it will be drawn by the next cell (thanks to the cell overlap)
+  m_selectableTableView.setFrame(KDRect(0, 0, bounds().width(), bounds().height() - Metric::CellSeparatorThickness), force);
 }
 
 void CategoricalTableCell::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
@@ -81,7 +82,8 @@ EditableCategoricalTableCell::EditableCategoricalTableCell(Escher::Responder * p
   DynamicSizeTableViewDataSource(dynamicSizeTableViewDelegate),
   m_statistic(chi2Test)
 {
-  m_selectableTableView.setMargins(0, 0, k_marginVertical, 0);
+  m_selectableTableView.setTopMargin(0);
+  m_selectableTableView.setBottomMargin(k_marginVertical);
 }
 
 bool EditableCategoricalTableCell::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {

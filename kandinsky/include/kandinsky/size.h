@@ -12,6 +12,10 @@ public:
   bool operator==(const KDSize &other) const {
     return m_width == other.width() && m_height == other.height();
   }
+  KDSize operator+(const KDSize &other) const {
+    return KDSize(m_width + other.width(), m_height + other.height());
+  }
+
 private:
   KDCoordinate m_width;
   KDCoordinate m_height;

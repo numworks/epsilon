@@ -27,6 +27,9 @@ public:
   Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
 
 private:
+  constexpr static KDCoordinate k_tableTopMarginIncludingTitle = 24;
+  constexpr static KDCoordinate k_titleMargin = 5;
+
   // HomogeneityTableViewDataSource
   int innerNumberOfRows() const override { return m_statistic->numberOfResultRows() + 1; }
   int innerNumberOfColumns() const override { return m_statistic->numberOfResultColumns() + 1; }
@@ -37,7 +40,13 @@ private:
   void createCells() override;
   void destroyCells() override;
 
+  // View
+  int numberOfSubviews() const override { return 2; }
+  Escher::View * subviewAtIndex(int i) override;
+  void layoutSubviews(bool force = false) override;
+
   HomogeneityTest * m_statistic;
+  Escher::MessageTextView m_title;
 };
 
 }  // namespace Probability

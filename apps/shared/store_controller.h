@@ -15,8 +15,6 @@ namespace Shared {
 
 class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate  {
 public:
-  static int RelativeColumnIndex(int columnIndex) { return columnIndex % DoublePairStore::k_numberOfColumnsPerSeries; }
-
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header);
   Escher::View * view() override { return &m_contentView; }
   TELEMETRY_ID("Store");
@@ -25,6 +23,7 @@ public:
   void displayFormulaInput();
   void setFormulaLabel();
   virtual bool fillColumnWithFormula(Poincare::Expression formula) = 0;
+  int relativeColumnIndex(int columnIndex) { return columnIndex % DoublePairStore::k_numberOfColumnsPerSeries; }
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;

@@ -30,7 +30,7 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
   if (floatBody < -Shared::Range1D::k_lowerMaxFloat || floatBody > Shared::Range1D::k_upperMaxFloat) {
     return false;
   }
-  if (RelativeColumnIndex(columnIndex) == 1) {
+  if (relativeColumnIndex(columnIndex) == 1) {
     if (floatBody < 0) {
       return false;
     }
@@ -40,7 +40,7 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
 
 int StoreController::fillColumnName(int columnIndex, char * buffer) {
   int series = columnIndex / Store::k_numberOfColumnsPerSeries;
-  int isValueColumn = RelativeColumnIndex(columnIndex) == 0;
+  int isValueColumn = relativeColumnIndex(columnIndex) == 0;
   buffer[0] = isValueColumn ? 'V' : 'N';
   buffer[1] = static_cast<char>('1' + series);
   buffer[2] = 0;
@@ -60,7 +60,7 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
 
 void StoreController::clearSelectedColumn() {
   int series = seriesAtColumn(selectedColumn());
-  int column = RelativeColumnIndex(selectedColumn());
+  int column = relativeColumnIndex(selectedColumn());
   if (column == 0) {
     m_store->deleteAllPairsOfSeries(series);
   } else {
@@ -69,7 +69,7 @@ void StoreController::clearSelectedColumn() {
 }
 
 void StoreController::setClearPopUpContent() {
-  int column = RelativeColumnIndex(selectedColumn());
+  int column = relativeColumnIndex(selectedColumn());
   assert(column == 0 || column == 1);
   int series = seriesAtColumn(selectedColumn());
   if (column == 0) {

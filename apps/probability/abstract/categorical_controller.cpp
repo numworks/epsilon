@@ -143,8 +143,10 @@ bool InputCategoricalController::handleEditedValue(int i, double p, TextField * 
    * can be computed to a negative when there are no rows.
    * In that case, the degreeOfFreedom cell should display nothing. */
   PrintValueInTextHolder(p, textField, true, true);
-  int row = selectedRow();
-  selectRow(event == Ion::Events::Up ? row - 1 : row + 1);
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    event = Ion::Events::Down;
+  }
+  m_selectableTableView.handleEvent(event);
   return true;
 }
 

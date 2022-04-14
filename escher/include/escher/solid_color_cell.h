@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GUI_SOLID_COLOR_CELL_H
-#define PROBABILITY_GUI_SOLID_COLOR_CELL_H
+#ifndef ESCHER_SOLID_COLOR_CELL_H
+#define ESCHER_SOLID_COLOR_CELL_H
 
 #include <escher/highlight_cell.h>
 #include <kandinsky/color.h>
@@ -8,9 +8,10 @@
 
 using namespace Escher;
 
-namespace Probability {
+namespace Escher {
 
 /* Simple HighlightCell with a solid color. */
+
 class SolidColorCell : public HighlightCell {
  public:
   SolidColorCell(KDColor color) : HighlightCell(), m_color(color){};

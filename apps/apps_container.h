@@ -50,7 +50,6 @@ public:
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PromptController * promptController();
   void redrawWindow();
-  bool startDFU();
   void activateExamMode(Poincare::Preferences::ExamMode examMode);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
@@ -63,6 +62,7 @@ private:
   Escher::Window * window() override;
   int numberOfContainerTimers() override;
   Escher::Timer * containerTimerAtIndex(int i) override;
+  bool startDFU();
   bool processEvent(Ion::Events::Event event);
   void resetShiftAlphaStatus();
   bool updateAlphaLock();

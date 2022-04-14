@@ -12,7 +12,6 @@ EquationListView::EquationListView(ListController * listController) :
   View(),
   m_braceStyle(BraceStyle::None),
   m_listView(this, listController, listController, listController),
-  m_braceView(),
   m_scrollBraceView(&m_braceView, this)
 {
   m_listView.setMargins(0);

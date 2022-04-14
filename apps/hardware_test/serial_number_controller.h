@@ -8,7 +8,7 @@ namespace HardwareTest {
 
 class SerialNumberController : public Escher::ViewController {
 public:
-  SerialNumberController(Escher::Responder * parentResponder);
+  using Escher::ViewController::ViewController;
   Escher::View * view() override { return &m_barCodeView; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;

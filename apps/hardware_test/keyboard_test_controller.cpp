@@ -7,12 +7,6 @@ using namespace Escher;
 
 namespace HardwareTest {
 
-KeyboardTestController::KeyboardTestController(Responder * parentResponder) :
-  ViewController(parentResponder),
-  m_keyboardView()
-{
-}
-
 View * KeyboardTestController::view() {
   return &m_keyboardView;
 }

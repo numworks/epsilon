@@ -19,7 +19,6 @@ public:
   LayoutField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate = nullptr) :
     ScrollableView(parentResponder, &m_contentView, this),
     EditableField(inputEventHandlerDelegate),
-    m_contentView(),
     m_insertionCursorEvent(Ion::Events::None),
     m_delegate(delegate)
   {}

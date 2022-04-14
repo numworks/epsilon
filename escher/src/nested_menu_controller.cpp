@@ -76,7 +76,6 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
   m_breadcrumbController(this, &m_selectableTableView),
   m_listController(this, &m_selectableTableView, title),
   m_sender(nullptr),
-  m_stack(),
   m_lastState(0),
   m_savedChecksum(0)
 {

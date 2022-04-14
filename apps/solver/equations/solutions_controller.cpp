@@ -104,8 +104,6 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   ViewController(parentResponder),
   m_equationStore(equationStore),
   m_deltaCell(KDContext::k_alignCenter, KDContext::k_alignCenter),
-  m_delta2Layout(),
-  m_delta3Layout(),
   m_contentView(this)
 {
   const char * delta = GlobalPreferences::sharedGlobalPreferences()->discriminantSymbol();

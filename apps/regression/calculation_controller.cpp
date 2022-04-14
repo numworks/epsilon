@@ -18,8 +18,6 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   TabTableController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_selectableTableView(this, this, this, this),
-  m_r2TitleCell(),
-  m_hideableCell(),
   m_store(store)
 {
   m_r2Layout = HorizontalLayout::Builder(CodePointLayout::Builder('r', KDFont::SmallFont), VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript));

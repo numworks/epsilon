@@ -22,7 +22,7 @@ public:
   };
   class Snapshot : public Shared::FunctionApp::Snapshot {
   public:
-    Snapshot();
+    using Shared::FunctionApp::Snapshot::Snapshot;
     App * unpack(Escher::Container * container) override;
     void reset() override;
     const Descriptor * descriptor() const override;

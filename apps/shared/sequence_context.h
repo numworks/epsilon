@@ -57,8 +57,6 @@ class SequenceContext : public Poincare::ContextWithParent {
 public:
   SequenceContext(Poincare::Context * parentContext, SequenceStore * sequenceStore) :
     ContextWithParent(parentContext),
-    m_floatSequenceContext(),
-    m_doubleSequenceContext(),
     m_sequenceStore(sequenceStore) {}
   /* expressionForSymbolAbstract & setExpressionForSymbolAbstractName directly call the parent
    * context respective methods. Indeed, special chars like n, u(n), u(n+1),

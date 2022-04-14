@@ -53,7 +53,6 @@ KDSize WarningController::ContentView::minimalSizeForOptimalDisplay() const  {
 
 WarningController::WarningController(Responder * parentResponder, I18n::Message warningMessage1, I18n::Message warningMessage2) :
   ViewController(parentResponder),
-  m_contentView(),
   m_warningMessage1(warningMessage1),
   m_exitOnOKBackEXE(false)
 {

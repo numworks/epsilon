@@ -5,7 +5,6 @@ namespace Settings {
 
 PressToTestSwitch::PressToTestSwitch(I18n::Message message) :
     Escher::MessageTableCellWithMessageWithSwitch(message),
-    m_accessoryView(),
     m_displayImage(false) {
   m_accessoryView.setImage(ImageStore::PressToTestSuccess);
   m_accessoryView.setBackgroundColor(KDColorWhite);

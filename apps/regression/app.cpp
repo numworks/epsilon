@@ -21,8 +21,6 @@ const Image * App::Descriptor::icon() const {
 }
 
 App::Snapshot::Snapshot() :
-  m_store(),
-  m_cursor(),
   m_graphSelectedDotIndex(-1),
   m_rangeVersion(0),
   m_selectedSeriesIndex(-1)

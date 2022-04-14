@@ -15,12 +15,6 @@ using namespace Escher;
 
 namespace HardwareTest {
 
-BatteryTestController::BatteryTestController(Responder * parentResponder) :
-  ViewController(parentResponder),
-  m_view()
-{
-}
-
 View * BatteryTestController::view() {
   return &m_view;
 }

@@ -44,7 +44,6 @@ escher_src += $(addprefix escher/src/,\
   memoized_list_view_data_source.cpp \
   message_table_cell.cpp \
   message_table_cell_with_buffer.cpp \
-  message_table_cell_with_chevron.cpp \
   message_table_cell_with_chevron_and_buffer.cpp \
   message_table_cell_with_chevron_and_message.cpp \
   message_table_cell_with_chevron_and_expression.cpp \

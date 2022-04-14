@@ -19,7 +19,6 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   m_excessWidth(0),
   m_excessHeight(0),
   m_innerView(this),
-  m_decorators(),
   m_backgroundColor(Palette::WallScreen)
 {
   assert(m_dataSource != nullptr);

@@ -85,12 +85,7 @@ bool AppsContainer::startDFU() {
   // Update LED when exiting DFU mode
   Ion::LED::updateColorWithPlugAndCharge();
 
-  if (abortReason == Ion::Events::OnOff) {
-    Ion::Power::suspend(true);
-    return true;
-  }
-  // Back or home key pressed, leaving USB app
-  return false;
+  return abortReason == Ion::Events::OnOff;
 }
 
 void AppsContainer::didSuspend() {
@@ -154,8 +149,10 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
         updateBatteryState();
         switchToBuiltinApp(usbConnectedAppSnapshot());
         while (startDFU()) {
+          Ion::Power::suspend(true);
           didSuspend();
         };
+        // Back or home key pressed, leaving USB app
         switchToBuiltinApp(activeSnapshot);
 
       }

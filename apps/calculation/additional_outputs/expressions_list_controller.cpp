@@ -9,8 +9,7 @@ namespace Calculation {
 /* Expressions list controller */
 
 ExpressionsListController::ExpressionsListController(EditExpressionController * editExpressionController) :
-  ListController(editExpressionController),
-  m_cells{}
+  ListController(editExpressionController)
 {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_cells[i].setParentResponder(m_listController.selectableTableView());

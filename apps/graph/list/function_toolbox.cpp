@@ -11,8 +11,7 @@ using namespace Escher;
 namespace Graph {
 
 FunctionToolbox::FunctionToolbox() :
-  MathToolbox(),
-  m_addedCellLayout{}
+  MathToolbox()
 {
   const CodePoint codepoints[k_numberOfAddedCells] = {UCodePointInferiorEqual, UCodePointSuperiorEqual};
   for (int i = 0; i < k_numberOfAddedCells; i++) {

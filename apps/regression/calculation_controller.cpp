@@ -18,11 +18,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   TabTableController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_selectableTableView(this, this, this, this),
-  m_titleCells{},
   m_r2TitleCell(),
-  m_columnTitleCells{},
-  m_doubleCalculationCells{},
-  m_calculationCells{},
   m_hideableCell(),
   m_store(store)
 {

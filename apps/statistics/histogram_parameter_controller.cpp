@@ -11,7 +11,6 @@ namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store) :
   FloatParameterController<double>(parentResponder),
-  m_cells{},
   m_store(store),
   m_confirmPopUpController(Invocation([](void * context, void * sender) {
     Container::activeApp()->dismissModalViewController();

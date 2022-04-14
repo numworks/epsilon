@@ -16,8 +16,6 @@ ListController::ListController(Responder * parentResponder, Escher::InputEventHa
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddSequence),
   m_selectableTableView(this, this, this, this),
   m_emptyCell(),
-  m_sequenceTitleCells{},
-  m_expressionCells{},
   m_parameterController(inputEventHandlerDelegate, this),
   m_typeParameterController(this, this),
   m_typeStackController(nullptr, &m_typeParameterController, StackViewController::Style::PurpleWhite),

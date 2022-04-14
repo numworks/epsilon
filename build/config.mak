@@ -6,7 +6,7 @@ DEVELOPMENT ?= 0
 
 EPSILON_VERSION ?= 18.0.1
 EXTERNAL_APPS_API_LEVEL ?= 0
-EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings
+EPSILON_APPS ?= calculation graph code statistics inference solver sequence regression settings
 ifeq ($(MODEL),n0100)
 EPSILON_I18N ?= en fr
 else

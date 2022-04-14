@@ -14,6 +14,7 @@ namespace Ion {
  * A record's fullName is baseName.extension. */
 
 class StorageDelegate;
+class RecordNameHelper;
 
 class Storage {
 public:
@@ -25,11 +26,11 @@ public:
   static Storage * sharedStorage();
   constexpr static char k_dotChar = '.';
 
-  static constexpr char eqExtension[] = "eq";
-  static constexpr char expExtension[] = "exp";
-  static constexpr char funcExtension[] = "func";
-  static constexpr char lisExtension[] = "lis";
-  static constexpr char seqExtension[] = "seq";
+  constexpr static char eqExtension[] = "eq";
+  constexpr static char expExtension[] = "exp";
+  constexpr static char funcExtension[] = "func";
+  constexpr static char lisExtension[] = "lis";
+  constexpr static char seqExtension[] = "seq";
 
   class Record {
     /* A Record is identified by the CRC32 on its fullName because:
@@ -105,6 +106,9 @@ public:
   void notifyChangeToDelegate(const Record r = Record()) const;
   Record::ErrorStatus notifyFullnessToDelegate() const;
 
+  // Record name helper
+  void setRecordNameHelper(RecordNameHelper * helper) { m_recordNameHelper = helper; }
+
   // Record counters
   int numberOfRecordsWithExtension(const char * extension) {
     return numberOfRecordsWithFilter(extension, ExtensionOnlyFilter);
@@ -177,8 +181,8 @@ private:
   size_t overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, int basenameLength, const char * extension, int extensionLength);
   size_t overrideValueAtPosition(char * position, const void * data, record_size_t size);
 
-  bool isFullNameTaken(const char * fullName, const Record * recordToExclude = nullptr);
-  bool isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude = nullptr);
+  bool isFullNameTakenOrReserved(const char * fullName, const Record * recordToExclude = nullptr);
+  bool isBaseNameWithExtensionTakenOrReserved(const char * baseName, const char * extension, Record * recordToExclude = nullptr);
   bool isNameOfRecordTaken(Record r, const Record * recordToExclude);
   static bool FullNameCompliant(const char * name);
   char * endBuffer();
@@ -209,6 +213,7 @@ private:
   char m_buffer[k_storageSize];
   uint32_t m_magicFooter;
   StorageDelegate * m_delegate;
+  RecordNameHelper * m_recordNameHelper;
   mutable Record m_lastRecordRetrieved;
   mutable char * m_lastRecordRetrievedPointer;
 };
@@ -220,11 +225,18 @@ private:
  * storage invalidity, but profiling showed that this slows down the execution
  * (for example when scrolling the functions list).
  * We thus decided to notify a delegate when the storage changes. */
-
 class StorageDelegate {
 public:
   virtual void storageDidChangeForRecord(const Storage::Record record) = 0;
   virtual void storageIsFull() = 0;
+};
+
+/* This helper is used by the storage to know if it can override a record with
+ * a new one. It is pure virtual so that it is defined in Apps and not in Ion.
+ * It contains only "static" functions */
+class RecordNameHelper {
+public:
+   virtual bool isNameReservedForAnotherExtension(const char * name, const char * extension) = 0;
 };
 
 // emscripten read and writes must be aligned.

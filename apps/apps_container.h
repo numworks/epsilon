@@ -15,6 +15,7 @@
 #include "suspend_timer.h"
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
+#include "shared/record_name_helper.h"
 #include "on_boarding/prompt_controller.h"
 #include <escher/container.h>
 #include <poincare/preferences.h>
@@ -86,6 +87,7 @@ private:
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;
   USB::App::Snapshot m_usbConnectedSnapshot;
+  Shared::RecordNameHelper m_recordNameHelper;
 };
 
 #endif

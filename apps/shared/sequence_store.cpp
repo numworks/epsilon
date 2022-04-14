@@ -9,8 +9,6 @@ using namespace Escher;
 
 namespace Shared {
 
-constexpr const char * SequenceStore::k_sequenceNames[MaxNumberOfSequences];
-
 const char * SequenceStore::firstAvailableName(size_t * nameIndex) {
   // Choose available name
   size_t currentNameIndex = 0;

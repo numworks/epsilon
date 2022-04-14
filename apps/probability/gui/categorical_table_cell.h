@@ -25,6 +25,8 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
   // HighlightCell
+  // Avoid reloading the whole table when
+  void reloadCell() override {}
   Responder * responder() override { return this; }
 
   // ScrollViewDelegate

@@ -3,10 +3,10 @@
 
 #include <apps/i18n.h>
 #include <escher/even_odd_buffer_text_cell.h>
+#include <escher/solid_color_cell.h>
 
 #include "probability/abstract/categorical_table_view_data_source.h"
 #include "probability/abstract/dynamic_cells_data_source.h"
-#include "probability/gui/solid_color_cell.h"
 #include "probability/models/statistic/homogeneity_test.h"
 
 
@@ -54,7 +54,7 @@ private:
 
 
   I18n::Message m_headerPrefix;
-  SolidColorCell m_topLeftCell;
+  Escher::SolidColorCell m_topLeftCell;
 };
 
 }  // namespace Probability

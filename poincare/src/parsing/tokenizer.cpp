@@ -118,7 +118,7 @@ Token Tokenizer::popIdentifier() {
   return Token(Token::Undefined);
 }
 
-/* This method determines wether a string is a reserved function name,
+/* This method determines whether a string is a reserved function name,
  * a special identifier name or a custom identifier name.
  *
  * WARNING : You should only parse with nullptr if the string is a serialized

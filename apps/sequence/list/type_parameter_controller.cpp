@@ -16,7 +16,6 @@ namespace Sequence {
 TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   SelectableCellListPage<ExpressionTableCellWithMessage, k_numberOfCells, Escher::RegularListViewDataSource>(parentResponder),
-  m_layouts{},
   m_record(),
   m_listController(list)
 {

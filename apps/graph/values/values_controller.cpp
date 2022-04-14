@@ -17,10 +17,6 @@ namespace Graph {
 ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header),
   m_selectableTableView(this),
-  m_functionTitleCells{},
-  m_floatCells{},
-  m_abscissaTitleCells{},
-  m_abscissaCells{},
   m_functionParameterController(this),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),

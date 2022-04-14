@@ -13,7 +13,6 @@ namespace Sequence {
 
 SequenceToolbox::SequenceToolbox() :
   MathToolbox(),
-  m_addedCellLayout{},
   m_numberOfAddedCells(0)
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {

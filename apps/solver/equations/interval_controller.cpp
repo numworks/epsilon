@@ -48,7 +48,6 @@ void IntervalController::ContentView::layoutSubviews(bool force) {
 IntervalController::IntervalController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore) :
   FloatParameterController<double>(parentResponder),
   m_contentView(&m_selectableTableView),
-  m_intervalCell{},
   m_equationStore(equationStore),
   m_shouldReplaceFunctionsButNotSymbols(false)
 {

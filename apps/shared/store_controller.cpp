@@ -57,9 +57,7 @@ KDRect StoreController::ContentView::formulaFrame() const {
 StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  m_editableCells{},
   m_store(store),
-  m_titleCells{},
   m_contentView(m_store, this, this, this, inputEventHandlerDelegate, this)
 {
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {

@@ -53,7 +53,6 @@ ParametersController::ParametersController(Escher::StackViewController * parentR
                                            CalculationController * calculationController) :
       FloatParameterController<double>(parentResponder),
       m_contentView(&m_selectableTableView),
-      m_menuListCell{},
       m_distribution(distribution),
       m_calculationController(calculationController) {
   assert(m_distribution != nullptr);

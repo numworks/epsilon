@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <poincare/integer.h>
 #include <new>
+#include <ion/unicode/utf8_helper.h>
 #if ION_STORAGE_LOG
 #include<iostream>
 #endif
@@ -174,7 +175,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * full
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
    return notifyFullnessToDelegate();
   }
-  if (isFullNameTaken(fullName)) {
+  if (isFullNameTakenOrReserved(fullName)) {
     return Record::ErrorStatus::NameTaken;
   }
   // Find the end of data
@@ -202,7 +203,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * bas
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
    return notifyFullnessToDelegate();
   }
-  if (isBaseNameWithExtensionTaken(baseName, extension)) {
+  if (isBaseNameWithExtensionTakenOrReserved(baseName, extension)) {
     return Record::ErrorStatus::NameTaken;
   }
   // Find the end of data
@@ -351,7 +352,7 @@ Storage::Record::ErrorStatus Storage::setFullNameOfRecord(Record * record, const
 
 Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record * record, const char * baseName, int baseNameLength, const char * extension, int extensionLength) {
   Record newRecord = Record(baseName, baseNameLength, extension, extensionLength);
-  if (isNameOfRecordTaken(newRecord, record)) {
+  if ((m_recordNameHelper != nullptr && m_recordNameHelper->isNameReservedForAnotherExtension(baseName, extension)) || isNameOfRecordTaken(newRecord, record)) {
     return Record::ErrorStatus::NameTaken;
   }
   size_t nameSize = baseNameLength + 1 + extensionLength + 1;
@@ -481,12 +482,19 @@ size_t Storage::overrideValueAtPosition(char * position, const void * data, reco
   return size;
 }
 
-bool Storage::isFullNameTaken(const char * fullName, const Record * recordToExclude) {
+bool Storage::isFullNameTakenOrReserved(const char * fullName, const Record * recordToExclude) {
+  const char * extension = UTF8Helper::CodePointSearch(fullName, '.') + 1;
+  if (m_recordNameHelper != nullptr && m_recordNameHelper->isNameReservedForAnotherExtension(fullName, extension)) {
+    return true;
+  }
   Record r = Record(fullName);
   return isNameOfRecordTaken(r, recordToExclude);
 }
 
-bool Storage::isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude) {
+bool Storage::isBaseNameWithExtensionTakenOrReserved(const char * baseName, const char * extension, Record * recordToExclude) {
+  if (m_recordNameHelper != nullptr && m_recordNameHelper->isNameReservedForAnotherExtension(baseName, extension)) {
+    return true;
+  }
   Record r = Record(baseName, extension);
   return isNameOfRecordTaken(r, recordToExclude);
 }

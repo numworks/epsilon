@@ -8,7 +8,7 @@
 namespace Shared {
 
 constexpr static int MaxRecurrenceDepth = 2;
-static constexpr int MaxNumberOfSequences = 3;
+constexpr static int MaxNumberOfSequences = 3;
 
 class SequenceStore;
 class SequenceContext;

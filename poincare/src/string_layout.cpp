@@ -97,19 +97,16 @@ StringLayout StringLayout::Builder(const char * string, int stringSize, const KD
 
 Layout StringLayout::makeEditable() {
   Layout editableLayout = LayoutHelper::StringToCodePointsLayout(string(), stringLength(), font());
-  replaceWithInPlace(editableLayout);
-  Layout myParent = editableLayout.parent();
+  Layout myParent = this->parent();
   /* editableLayout can be an HorizontalLayout, so it needs to be merged with
    * parent if it is also an HorizontalLayout. */
-  if (editableLayout.type() == LayoutNode::Type::HorizontalLayout
-    && !myParent.isUninitialized()
-    && myParent.type() == LayoutNode::Type::HorizontalLayout) {
-    HorizontalLayout horizontalParent = static_cast<HorizontalLayout &>(myParent);
-    HorizontalLayout horizontalEditableLayout = static_cast<HorizontalLayout &>(editableLayout);
-    int index = horizontalParent.indexOfChild(horizontalEditableLayout);
-    horizontalParent.mergeChildrenAtIndex(horizontalEditableLayout, index, true);
-    return horizontalParent.childAtIndex(index);
+  if (!myParent.isUninitialized() && myParent.type() == LayoutNode::Type::HorizontalLayout) {
+    int index = myParent.indexOfChild(*this);
+    static_cast<HorizontalLayout &>(myParent).removeChild(*this, nullptr);
+    static_cast<HorizontalLayout &>(myParent).addOrMergeChildAtIndex(editableLayout, index, true);
+    return myParent.childAtIndex(index);
   }
+  replaceWithInPlace(editableLayout);
   return editableLayout;
 }
 

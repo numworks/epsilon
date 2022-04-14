@@ -23,6 +23,11 @@ void ResultHomogeneityTableCell::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectColumn(1);
   }
+  // The number of data might have changed
+  if (selectedRow() >= numberOfRows() || selectedColumn() >= numberOfColumns()) {
+    selectRow(1);
+    selectColumn(1);
+  }
   CategoricalTableCell::didBecomeFirstResponder();
 }
 

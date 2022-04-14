@@ -15,7 +15,7 @@ ResultHomogeneityTableCell::ResultHomogeneityTableCell(Escher::Responder * paren
       Escher::Palette::GrayVeryDark,
       Escher::Palette::WallScreenDark)
 {
-  m_selectableTableView.setTopMargin(k_tableTopMarginIncludingTitle);
+  m_selectableTableView.setTopMargin(0);
   m_selectableTableView.setBottomMargin(Metric::CellSeparatorThickness);
 }
 
@@ -80,9 +80,12 @@ Escher::View * ResultHomogeneityTableCell::subviewAtIndex(int i) {
 }
 
 void ResultHomogeneityTableCell::layoutSubviews(bool force) {
-  KDSize titleSize = m_title.minimalSizeForOptimalDisplay();
-  m_title.setFrame(KDRect(0, k_titleMargin, bounds().width(), titleSize.height()), force);
-  CategoricalTableCell::layoutSubviews(force);
+  m_title.setFrame(KDRect(0, 0, bounds().width(), k_titleHeight), force);
+  m_selectableTableView.setFrame(KDRect(0, k_titleHeight, bounds().width(), bounds().height() - k_titleHeight - Metric::CellSeparatorThickness), force);
+}
+
+KDSize ResultHomogeneityTableCell::minimalSizeForOptimalDisplay() const {
+  return m_selectableTableView.minimalSizeForOptimalDisplay() + KDSize(0, k_titleHeight);
 }
 
 }  // namespace Probability

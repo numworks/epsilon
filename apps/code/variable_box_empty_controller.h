@@ -7,10 +7,7 @@ namespace Code {
 
 class VariableBoxEmptyController : public Escher::ModalViewEmptyController {
 public:
-  VariableBoxEmptyController() :
-    Escher::ModalViewEmptyController(),
-    m_view()
-  {}
+  using Escher::ModalViewEmptyController::ModalViewEmptyController;
   // View Controller
   Escher::View * view() override { return &m_view; }
 private:

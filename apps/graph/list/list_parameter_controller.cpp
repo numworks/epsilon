@@ -14,7 +14,6 @@ namespace Graph {
 
 ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) :
   Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
-  m_detailsCell(),
   m_detailsParameterController(this),
   m_domainParameterController(nullptr, inputEventHandlerDelegate)
 {

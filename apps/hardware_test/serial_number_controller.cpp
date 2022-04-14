@@ -5,12 +5,6 @@ using namespace Escher;
 
 namespace HardwareTest {
 
-SerialNumberController::SerialNumberController(Responder * parentResponder) :
-  ViewController(parentResponder),
-  m_barCodeView()
-{
-}
-
 void SerialNumberController::viewWillAppear() {
   m_barCodeView.setData(Ion::serialNumber());
 }

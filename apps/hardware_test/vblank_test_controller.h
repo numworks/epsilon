@@ -10,10 +10,7 @@ namespace HardwareTest {
 
 class VBlankTestController : public Escher::ViewController {
 public:
-  VBlankTestController(Escher::Responder * parentResponder) :
-    Escher::ViewController(parentResponder),
-    m_view()
-  {}
+  using Escher::ViewController::ViewController;
   Escher::View * view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;

@@ -14,7 +14,6 @@ friend class PooledTwoMeans;
 friend class TwoProportions;
 public:
   Interval() :
-    m_estimateLayout(),
     m_estimate(NAN),
     m_zCritical(NAN),
     m_SE(NAN), // Initialize to make sure m_SE != 0 by default and test-statistics are graphable.

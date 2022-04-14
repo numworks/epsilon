@@ -9,8 +9,7 @@ MultipleHistogramsView::MultipleHistogramsView(HistogramController * controller,
   MultipleDataView(store),
   m_histogramView1(controller, store, 0, nullptr, DoublePairStore::colorOfSeriesAtIndex(0)),
   m_histogramView2(controller, store, 1, nullptr, DoublePairStore::colorOfSeriesAtIndex(1)),
-  m_histogramView3(controller, store, 2, nullptr, DoublePairStore::colorOfSeriesAtIndex(2)),
-  m_bannerView()
+  m_histogramView3(controller, store, 2, nullptr, DoublePairStore::colorOfSeriesAtIndex(2))
 {
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     HistogramView * histView = dataViewAtIndex(i);

@@ -20,8 +20,6 @@ using namespace Poincare;
 namespace Shared {
 
 ExpressionModel::ExpressionModel() :
-  m_expression(),
-  m_layout(),
   m_circular(-1)
 {
 }

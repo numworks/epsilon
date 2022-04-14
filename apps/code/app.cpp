@@ -21,11 +21,10 @@ const Image * App::Descriptor::icon() const {
   return ImageStore::CodeIcon;
 }
 
-App::Snapshot::Snapshot() :
+App::Snapshot::Snapshot()
 #if EPSILON_GETOPT
-  m_lockOnConsole(false),
+  : m_lockOnConsole(false)
 #endif
-  m_scriptStore()
 {
 }
 

@@ -8,7 +8,7 @@ namespace HardwareTest {
 
 class KeyboardView : public Escher::View {
 public:
-  KeyboardView() : m_keyboardModel() {}
+  using Escher::View::View;
   int testedKeyIndex() const { return m_keyboardModel.testedKeyIndex(); }
   void setTestedKeyIndex(int i);
   void drawRect(KDContext * ctx, KDRect rect) const override;

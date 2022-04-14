@@ -12,8 +12,7 @@ using namespace Escher;
 namespace Graph {
 
 DetailsParameterController::DetailsParameterController(Responder * parentResponder) :
-  SelectableListViewController(parentResponder),
-  m_record()
+  SelectableListViewController(parentResponder)
 {
 }
 

@@ -37,7 +37,7 @@ public:
       Finance = 1,
       NumberOfSubApps
     };
-    Snapshot() : m_activeSubapp(SubApp::Unknown), m_equationStore() {};
+    Snapshot() : m_activeSubapp(SubApp::Unknown) {};
     App * unpack(Escher::Container * container) override {
       return new (container->currentAppBuffer()) App(this);
     };

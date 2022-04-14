@@ -74,7 +74,7 @@ void CategoricalTableCell::layoutSubviews(bool force) {
 
 void CategoricalTableCell::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
   // Force redrawing the borders between table cells
-  reloadCell();
+  HighlightCell::reloadCell();
 }
 
 /* EditableCategoricalTableCell */

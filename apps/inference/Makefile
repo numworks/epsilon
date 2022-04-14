@@ -91,7 +91,7 @@ app_inference_src +=  $(addprefix apps/inference/abstract/,\
 app_inference_src += $(app_inference_test_src)
 apps_src += $(app_inference_src)
 
-i18n_files += $(call i18n_with_universal_for,inference/translations/base)
+i18n_files += $(call i18n_with_universal_for,inference/i18n/base)
 
 tests_src += $(addprefix apps/inference/test/,\
   distributions.cpp\

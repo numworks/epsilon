@@ -74,7 +74,6 @@ bool Tokenizer::ShouldAddCodePointToIdentifier(const CodePoint c, const CodePoin
  * trigger a syntax error.
  * */
 Token Tokenizer::popIdentifier() {
-  m_decoder.previousCodePoint();
   const char * start = m_decoder.stringPosition();
   Token result(Token::Undefined);
   size_t currentStringLen = popWhile(ShouldAddCodePointToIdentifier, '_');
@@ -287,6 +286,8 @@ Token Tokenizer::popToken() {
       c.isGreekCapitalLetter() ||
       c.isGreekSmallLetter()) // Greek small letter pi is matched earlier
   {
+    // Decoder is one CodePoint ahead of the beginning of the identifier string
+    m_decoder.previousCodePoint();
     return popIdentifier();
   }
   if ('(' <= c && c <= '/') {

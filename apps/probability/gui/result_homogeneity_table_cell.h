@@ -27,8 +27,7 @@ public:
   Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
 
 private:
-  constexpr static KDCoordinate k_tableTopMarginIncludingTitle = 24;
-  constexpr static KDCoordinate k_titleMargin = 5;
+  constexpr static KDCoordinate k_titleHeight = 24;
 
   // HomogeneityTableViewDataSource
   int innerNumberOfRows() const override { return m_statistic->numberOfResultRows() + 1; }
@@ -44,6 +43,7 @@ private:
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int i) override;
   void layoutSubviews(bool force = false) override;
+  KDSize minimalSizeForOptimalDisplay() const override;
 
   HomogeneityTest * m_statistic;
   Escher::MessageTextView m_title;

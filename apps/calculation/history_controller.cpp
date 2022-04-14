@@ -13,7 +13,6 @@ namespace Calculation {
 HistoryController::HistoryController(EditExpressionController * editExpressionController, CalculationStore * calculationStore) :
   ViewController(editExpressionController),
   m_selectableTableView(this, this, this, this),
-  m_calculationHistory{},
   m_calculationStore(calculationStore),
   m_complexController(editExpressionController),
   m_integerController(editExpressionController),

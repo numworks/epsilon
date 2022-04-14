@@ -10,7 +10,6 @@ namespace Graph {
 
 DomainParameterController::DomainParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) :
   FloatParameterController<float>(parentResponder),
-  m_domainCells{},
   m_record(),
   m_tempDomain(),
   m_confirmPopUpController(Invocation([](void * context, void * sender) {

@@ -23,7 +23,6 @@ constexpr I18n::Message FunctionModelsParameterController::k_modelDescriptions[k
 FunctionModelsParameterController::FunctionModelsParameterController(Responder * parentResponder, void * functionStore, ListController * listController) :
   SelectableListViewController(parentResponder),
   m_emptyModelCell(I18n::Message::Empty),
-  m_layouts{},
   m_functionStore(functionStore),
   m_listController(listController)
 {

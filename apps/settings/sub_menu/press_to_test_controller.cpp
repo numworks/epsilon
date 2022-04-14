@@ -16,7 +16,6 @@ PressToTestController::PressToTestController(Responder * parentResponder) :
   m_topMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
   m_bottomMessageView(KDFont::SmallFont, I18n::Message::ToDeactivatePressToTest1, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen),
   m_view(&m_selectableTableView, this, &m_topMessageView, &m_bottomMessageView),
-  m_switchCells{},
   m_tempPressToTestParams{},
   m_activateButton{&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {
     AppsContainer::sharedAppsContainer()->displayExamModePopUp(Preferences::ExamMode::PressToTest, static_cast<PressToTestController *>(context)->getPressToTestParams());

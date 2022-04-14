@@ -13,8 +13,7 @@ namespace Settings {
 
 ExamModeController::ExamModeController(Responder * parentResponder) :
   GenericSubController(parentResponder),
-  m_contentView(&m_selectableTableView),
-  m_cell{}
+  m_contentView(&m_selectableTableView)
 {
 }
 

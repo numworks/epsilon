@@ -26,8 +26,6 @@ namespace Solver {
 
 EquationStore::EquationStore() :
   ExpressionModelStore(),
-  m_exactSolutionExactLayouts{},
-  m_exactSolutionApproximateLayouts{},
   m_degree(-1),
   m_numberOfSolutions(0),
   m_numberOfUserVariables(0),

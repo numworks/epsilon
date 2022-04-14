@@ -12,8 +12,7 @@ namespace Calculation {
 
 IllustratedListController::IllustratedListController(EditExpressionController * editExpressionController) :
   ListController(editExpressionController, this),
-  m_calculationStore(m_calculationStoreBuffer, k_calculationStoreBufferSize),
-  m_additionalCalculationCells{}
+  m_calculationStore(m_calculationStoreBuffer, k_calculationStoreBufferSize)
 {
   for (int i = 0; i < k_maxNumberOfAdditionalCalculations; i++) {
     m_additionalCalculationCells[i].setParentResponder(m_listController.selectableTableView());

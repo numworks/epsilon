@@ -12,7 +12,6 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
   SelectableListViewController(parentResponder),
   m_interactiveRange(interactiveRange),
   m_tempInteractiveRange(*interactiveRange),
-  m_rangeCells{},
   m_okButton(&m_selectableTableView, I18n::Message::Ok, Invocation([](void * context, void * sender) {
     RangeParameterController * parameterController = static_cast<RangeParameterController *>(context);
     parameterController->buttonAction();

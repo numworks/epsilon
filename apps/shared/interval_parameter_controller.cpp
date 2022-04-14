@@ -12,7 +12,6 @@ Interval::IntervalParameters * IntervalParameterController::SharedTempIntervalPa
 IntervalParameterController::IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   FloatParameterController<double>(parentResponder),
   m_interval(nullptr),
-  m_intervalCells{},
   m_title(I18n::Message::IntervalSet),
   m_startMessage(I18n::Message::XStart),
   m_endMessage(I18n::Message::XEnd),

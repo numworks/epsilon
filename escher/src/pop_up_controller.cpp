@@ -107,8 +107,7 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
 // MessagePopUpController
 MessagePopUpController::MessagePopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
     PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, this),
-    PopUpViewDelegate(numberOfLines),
-    m_messageTextViews{}
+    PopUpViewDelegate(numberOfLines)
 { }
 
 
@@ -120,8 +119,7 @@ void MessagePopUpController::setContentMessage(int index, I18n::Message message)
 // BufferPopUpController
 BufferPopUpController::BufferPopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
     PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, this),
-    PopUpViewDelegate(numberOfLines),
-    m_bufferTextViews{}
+    PopUpViewDelegate(numberOfLines)
 { }
 
 void BufferPopUpController::setContentText(int index, const char * text) {

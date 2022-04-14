@@ -15,7 +15,6 @@ constexpr const char * EquationModelsParameterController::k_models[k_numberOfMod
 EquationModelsParameterController::EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore, ListController * listController) :
   SelectableListViewController(parentResponder),
   m_emptyModelCell(I18n::Message::Empty),
-  m_layouts{},
   m_equationStore(equationStore),
   m_listController(listController)
 {

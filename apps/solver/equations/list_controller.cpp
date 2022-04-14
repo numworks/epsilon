@@ -14,7 +14,6 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
   ExpressionModelListController(parentResponder, I18n::Message::AddEquation),
   ButtonRowDelegate(nullptr, footer),
   m_equationListView(this),
-  m_expressionCells{},
   m_resolveButton(this, equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     list->resolveEquations();

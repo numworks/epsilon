@@ -11,8 +11,7 @@ namespace Graph {
 FunctionParameterController::FunctionParameterController(ValuesController * valuesController) :
   ColumnParameterController(valuesController),
   m_displayDerivativeColumn(I18n::Message::DerivativeFunctionColumn),
-  m_valuesController(valuesController),
-  m_record()
+  m_valuesController(valuesController)
 { }
 
 Shared::EditableCellTableViewController * FunctionParameterController::editableCellTableViewController() {

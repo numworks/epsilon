@@ -10,8 +10,7 @@ using namespace Escher;
 namespace Shared {
 
 FunctionGoToParameterController::FunctionGoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
-  GoToParameterController(parentResponder, inputEventHandlerDelegate, graphRange, cursor),
-  m_record()
+  GoToParameterController(parentResponder, inputEventHandlerDelegate, graphRange, cursor)
 {
 }
 

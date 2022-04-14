@@ -17,11 +17,9 @@ namespace Shared {
 SumGraphController::SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol) :
   SimpleInteractiveCurveViewController(parentResponder, cursor),
   m_step(Step::FirstParameter),
-  m_record(),
   m_graphRange(range),
   m_graphView(graphView),
-  m_legendView(this, inputEventHandlerDelegate, sumSymbol),
-  m_cursorView()
+  m_legendView(this, inputEventHandlerDelegate, sumSymbol)
 {
 }
 

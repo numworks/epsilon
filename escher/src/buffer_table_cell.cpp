@@ -7,7 +7,6 @@ namespace Escher {
 
 BufferTableCell::BufferTableCell():
   TableCell(),
-  m_labelView(),
   m_backgroundColor(KDColorWhite)
 {
 }

@@ -20,7 +20,6 @@ ListController::ListController(Responder * parentResponder, ButtonRowController 
   m_parameterController(this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, this),
   m_modelsParameterController(this, nullptr, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, StackViewController::Style::PurpleWhite),
-  m_functionToolbox(),
   m_parameterColumnSelected(false)
 {
   m_selectableTableView.setMargins(0);

@@ -15,7 +15,6 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   ButtonRowDelegate(header, nullptr),
   m_selectableTableView(this, this, this),
   m_tableView(1, this, &m_selectableTableView, this),
-  m_hideableCell(),
   m_store(store)
 {
   m_tableView.setCellOverlap(0, 0);

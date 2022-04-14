@@ -13,8 +13,7 @@ class LCDTimingTestController : public Escher::ViewController {
 public:
   LCDTimingTestController(Escher::Responder * parentResponder) :
     Escher::ViewController(parentResponder),
-    m_testSuccessful(false),
-    m_view()
+    m_testSuccessful(false)
   {}
   Escher::View * view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;

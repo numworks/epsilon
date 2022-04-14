@@ -11,7 +11,6 @@ constexpr KDColor LEDTestController::k_LEDColors[k_numberOfColors];
 
 LEDTestController::LEDTestController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_view(),
   m_LEDColorIndex(0)
 {
 }
@@ -54,8 +53,7 @@ LEDTestController::ContentView::ContentView() :
   SolidColorView(KDColorWhite),
   m_ledColorIndicatorView(KDColorBlack),
   m_ledColorOutlineView(KDColorBlack),
-  m_ledView(KDFont::LargeFont, KDContext::k_alignCenter, KDContext::k_alignCenter),
-  m_arrowView()
+  m_ledView(KDFont::LargeFont, KDContext::k_alignCenter, KDContext::k_alignCenter)
 {
   m_ledView.setText("LED");
 }

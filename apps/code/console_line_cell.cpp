@@ -29,8 +29,7 @@ KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::minimalSizeF
 }
 
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder * parentResponder) :
-  ScrollableView(parentResponder, &m_consoleLineView, this),
-  m_consoleLineView()
+  ScrollableView(parentResponder, &m_consoleLineView, this)
 {
 }
 
@@ -39,8 +38,7 @@ ConsoleLineCell::ConsoleLineCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_promptView(GlobalPreferences::sharedGlobalPreferences()->font(),
                I18n::Message::ConsolePrompt, KDContext::k_alignLeft, KDContext::k_alignCenter),
-  m_scrollableView(this),
-  m_line()
+  m_scrollableView(this)
 {
 }
 

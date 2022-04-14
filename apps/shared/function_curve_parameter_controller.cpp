@@ -8,8 +8,7 @@ namespace Shared {
 
 FunctionCurveParameterController::FunctionCurveParameterController() :
   SelectableListViewController(nullptr),
-  m_goToCell(I18n::Message::Goto),
-  m_record()
+  m_goToCell(I18n::Message::Goto)
 {
 }
 

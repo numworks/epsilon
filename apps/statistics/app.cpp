@@ -21,7 +21,6 @@ const Image * App::Descriptor::icon() const {
 }
 
 App::Snapshot::Snapshot() :
-  m_store(),
   m_storeVersion(0),
   m_barVersion(0),
   m_rangeVersion(0),

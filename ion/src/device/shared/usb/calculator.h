@@ -100,7 +100,6 @@ public:
         m_bosDescriptor.BLength() + m_webUSBPlatformDescriptor.BLength(), // wTotalLength
         1,      // bNumDeviceCapabilities
         &m_webUSBPlatformDescriptor),
-    m_languageStringDescriptor(),
     m_manufacturerStringDescriptor("NumWorks"),
     m_productStringDescriptor("NumWorks Calculator"),
     m_serialNumberStringDescriptor(serialNumber),

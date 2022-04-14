@@ -14,7 +14,7 @@ namespace Calculation {
 class ScrollableThreeExpressionsView : public Shared::AbstractScrollableMultipleExpressionsView {
 public:
   static constexpr KDCoordinate k_margin = Escher::Metric::CommonSmallMargin;
-  ScrollableThreeExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell), m_contentCell() {
+  ScrollableThreeExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell) {
     setMargins(k_margin, k_margin, k_margin, k_margin); // Left Right margins are already added by TableCell
     setBackgroundColor(KDColorWhite);
   }
@@ -26,7 +26,7 @@ public:
 private:
   class ContentCell : public Shared::AbstractScrollableMultipleExpressionsView::ContentCell {
   public:
-    ContentCell() : m_leftExpressionView() {}
+    using Shared::AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell;
     KDColor backgroundColor() const override { return KDColorWhite; }
     void setEven(bool even) override { return; }
     Escher::ExpressionView * leftExpressionView() const override { return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView); }

@@ -306,8 +306,7 @@ private:
         ExpressionModel(),
         m_numberOfSubCurves(0),
         m_equationType(Poincare::ExpressionNode::Type::Equal),
-        m_plotType(PlotType::Unknown),
-        m_expressionDerivate() {}
+        m_plotType(PlotType::Unknown) {}
     // Return the expression to plot.
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
     // Return the expression of the named function (right side of the equal)

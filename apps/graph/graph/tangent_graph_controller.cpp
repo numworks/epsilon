@@ -15,8 +15,7 @@ TangentGraphController::TangentGraphController(Responder * parentResponder, Grap
   SimpleInteractiveCurveViewController(parentResponder, cursor),
   m_graphView(graphView),
   m_bannerView(bannerView),
-  m_graphRange(curveViewRange),
-  m_record()
+  m_graphRange(curveViewRange)
 {
 }
 

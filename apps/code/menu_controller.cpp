@@ -15,7 +15,6 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
   ViewController(parentResponder),
   ButtonRowDelegate(nullptr, footer),
   m_scriptStore(scriptStore),
-  m_addNewScriptCell(),
   m_consoleButton(this, I18n::Message::Console, Invocation([](void * context, void * sender) {
         MenuController * menu = (MenuController *)context;
         menu->consoleController()->setAutoImport(true);

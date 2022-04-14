@@ -6,8 +6,6 @@
 namespace Shared {
 
 MemoizedCurveViewRange::MemoizedCurveViewRange() :
-  m_xRange(),
-  m_yRange(),
   m_xGridUnit(2.0f),
   m_yGridUnit(2.0f)
 {

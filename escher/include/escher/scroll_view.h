@@ -52,7 +52,7 @@ public:
 
   class BarDecorator : public Decorator {
   public:
-    BarDecorator() : m_verticalBar(), m_horizontalBar() {}
+    using Decorator::Decorator;
     void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) override { m_verticalBar.setMargins(top, bottom); }
     int numberOfIndicators() const override { return 2; }
     View * indicatorAtIndex(int index) override;

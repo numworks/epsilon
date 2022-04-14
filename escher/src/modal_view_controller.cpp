@@ -102,7 +102,6 @@ void ModalViewController::ContentView::reload() {
 
 ModalViewController::ModalViewController(Responder * parentResponder, ViewController * child) :
   ViewController(parentResponder),
-  m_contentView(),
   m_previousResponder(child),
   m_currentModalViewController(nullptr),
   m_regularViewController(child)

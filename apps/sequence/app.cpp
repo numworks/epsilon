@@ -21,12 +21,6 @@ const Image * App::Descriptor::icon() const {
   return ImageStore::SequenceIcon;
 }
 
-App::Snapshot::Snapshot() :
-  Shared::FunctionApp::Snapshot::Snapshot(),
-  m_graphRange()
-{
-}
-
 App * App::Snapshot::unpack(Container * container) {
   return new (container->currentAppBuffer()) App(this);
 }

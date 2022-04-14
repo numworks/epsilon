@@ -11,7 +11,6 @@ namespace OnBoarding {
 LogoController::LogoController() :
   ViewController(nullptr),
   Timer(10),
-  m_logoView(),
   m_previousLEDColor(KDColorBlack),
   m_didPerformTests(false)
 {

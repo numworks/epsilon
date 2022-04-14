@@ -7,8 +7,7 @@
 class MathVariableBoxEmptyController : public Escher::ModalViewEmptyController {
 public:
   MathVariableBoxEmptyController() :
-    ModalViewEmptyController(),
-    m_view()
+    ModalViewEmptyController()
   {}
   enum class Type {
     None = 0,

@@ -8,7 +8,7 @@ namespace Escher {
 
 class MessageTableCellWithMessageWithSwitch : public MessageTableCellWithMessage {
 public:
-  MessageTableCellWithMessageWithSwitch(I18n::Message message = (I18n::Message)0) : MessageTableCellWithMessage(message), m_accessoryView() {}
+  using MessageTableCellWithMessage::MessageTableCellWithMessage;
   const View * accessoryView() const override { return &m_accessoryView; }
   void setState(bool state) { m_accessoryView.setState(state); }
 protected:

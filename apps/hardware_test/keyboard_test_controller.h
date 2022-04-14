@@ -8,7 +8,7 @@ namespace HardwareTest {
 
 class KeyboardTestController : public Escher::ViewController {
 public:
-  KeyboardTestController(Escher::Responder * parentResponder);
+  using Escher::ViewController::ViewController;
   Escher::View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;

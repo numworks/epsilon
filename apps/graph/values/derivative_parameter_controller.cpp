@@ -10,7 +10,6 @@ namespace Graph {
 DerivativeParameterController::DerivativeParameterController(ValuesController * valuesController) :
   ColumnParameterController(valuesController),
   m_hideColumn(I18n::Message::HideDerivativeColumn),
-  m_record(),
   m_valuesController(valuesController)
 {
 }

@@ -31,7 +31,6 @@ public:
     m_transferBufferLength(0),
     m_receivedPacketSize(0),
     m_zeroLengthPacketNeeded(false),
-    m_request(),
     m_requestRecipients{device, interface},
     m_state(State::Idle),
     m_largeBuffer{0}

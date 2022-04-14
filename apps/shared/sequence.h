@@ -121,7 +121,7 @@ private:
 
   class SequenceModel : public Shared::ExpressionModel {
   public:
-    SequenceModel() : Shared::ExpressionModel(), m_name() {}
+    using Shared::ExpressionModel::ExpressionModel;
     Poincare::Layout name(Sequence * sequence);
     void tidyDownstreamPoolFrom(char * treePoolCursor) const override;
     void tidyName(char * treePoolCursor = nullptr) const;

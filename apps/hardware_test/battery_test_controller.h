@@ -9,7 +9,7 @@ namespace HardwareTest {
 
 class BatteryTestController : public Escher::ViewController {
 public:
-  BatteryTestController(Escher::Responder * parentResponder);
+  using Escher::ViewController::ViewController;
   Escher::View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;

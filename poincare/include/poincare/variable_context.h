@@ -10,8 +10,7 @@ class VariableContext : public ContextWithParent {
 public:
   VariableContext(const char * name, Context * parentContext) :
     ContextWithParent(parentContext),
-    m_name(name),
-    m_value()
+    m_name(name)
   {}
   template<typename T>
   void setApproximationForVariable(T value);

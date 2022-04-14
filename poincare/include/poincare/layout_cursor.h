@@ -41,7 +41,6 @@ public:
   };
 
   LayoutCursor() :
-    m_layout(),
     m_position(Position::Right)
   {}
 

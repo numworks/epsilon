@@ -23,19 +23,8 @@ AppsContainer * AppsContainer::sharedAppsContainer() {
 AppsContainer::AppsContainer() :
   Container(),
   m_firstUSBEnumeration(true),
-  m_window(),
-  m_emptyBatteryWindow(),
-  m_globalContext(),
-  m_variableBoxController(),
   m_examPopUpController(this),
-  m_promptController(k_promptMessages, k_promptColors, k_promptNumberOfMessages),
-  m_batteryTimer(),
-  m_suspendTimer(),
-  m_backlightDimmingTimer(),
-  m_homeSnapshot(),
-  m_onBoardingSnapshot(),
-  m_hardwareTestSnapshot(),
-  m_usbConnectedSnapshot()
+  m_promptController(k_promptMessages, k_promptColors, k_promptNumberOfMessages)
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
   Ion::Storage::sharedStorage()->setDelegate(this);

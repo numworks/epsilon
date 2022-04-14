@@ -9,7 +9,6 @@ namespace Shared {
 FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
   LabeledCurveView(graphRange, cursor, bannerView, cursorView),
-  m_selectedRecord(),
   m_highlightedStart(NAN),
   m_highlightedEnd(NAN),
   m_shouldColorHighlighted(false),

@@ -12,7 +12,6 @@ namespace Graph {
 CalculationParameterController::CalculationParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
   SelectableListViewController(parentResponder),
   m_preimageCell(I18n::Message::Preimage),
-  m_record(),
   m_preimageParameterController(nullptr, inputEventHandlerDelegate, range, cursor, &m_preimageGraphController),
   m_preimageGraphController(nullptr, graphView, bannerView, range, cursor),
   m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),

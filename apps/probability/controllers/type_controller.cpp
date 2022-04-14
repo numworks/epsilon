@@ -22,7 +22,6 @@ void TypeView::layoutSubviews(bool force) {
       force);
 }
 
-#warning: change name
 TypeController::TypeController(StackViewController * parent,
                                HypothesisController * hypothesisController,
                                InputController * inputController,

@@ -96,7 +96,7 @@ jobs:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4 pypng stringcase
       - uses: actions/checkout@v2
-      - run: make PLATFORM=simulator epsilon.bin test.bin
+      - run: make PLATFORM=simulator ASAN=1 epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
         if: ${{ github.repository != 'numworks/epsilon-internal' }}

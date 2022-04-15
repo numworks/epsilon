@@ -139,7 +139,7 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(Preference
       I18n::Message warnings[] = {I18n::Message::ActivePortugueseExamModeMessage1, I18n::Message::ActivePortugueseExamModeMessage2, I18n::Message::ActivePortugueseExamModeMessage3, I18n::Message::Default};
       return warnings[line];
     } else {
-      I18n::Message warnings[] = {I18n::Message::ActiveExamModeWithResetMessage1, I18n::Message::ActiveExamModeWithResetMessage2, I18n::Message::ActiveExamModeWithResetMessage3, I18n::Message::ActiveDutchExamModeWithResetMessage4};
+      I18n::Message warnings[] = {I18n::Message::ActiveExamModeWithResetMessage1, I18n::Message::ActiveExamModeWithResetMessage2, I18n::Message::ActiveExamModeWithResetMessage3, I18n::Message::ActiveExamModeWithResetMessage4};
       return warnings[line];
     }
   }

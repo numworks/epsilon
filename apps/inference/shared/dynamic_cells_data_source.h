@@ -41,8 +41,8 @@ public:
   virtual Escher::SelectableTableView * tableView() = 0;
 };
 
-constexpr int k_homogeneityTableNumberOfReusableHeaderCells = 6 + 12; // static assertion in implementation
-constexpr int k_homogeneityTableNumberOfReusableInnerCells = 72; // static assertion in implementation
+constexpr int k_homogeneityTableNumberOfReusableHeaderCells = 5 + 9; // static assertion in implementation
+constexpr int k_homogeneityTableNumberOfReusableInnerCells = 45; // static assertion in implementation
 constexpr int k_inputGoodnessTableNumberOfReusableCells = 24; // static assertion in implementation
 constexpr int k_inputControllerNumberOfReusableCells = 8;
 constexpr int k_maxNumberOfExpressionCellsWithEditableTextWithMessage = k_inputControllerNumberOfReusableCells;

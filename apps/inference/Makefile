@@ -42,51 +42,59 @@ app_inference_test_src += $(addprefix apps/inference/models/statistic/,\
   test.cpp \
 )
 
-app_inference_src += $(addprefix apps/inference/gui/,\
+app_inference_src += $(addprefix apps/inference/probability/,\
   calculation_cell.cpp \
+  calculation_controller.cpp \
   calculation_popup_data_source.cpp \
-  categorical_table_cell.cpp \
-  comparison_operator_popup_data_source.cpp \
   distribution_cell.cpp \
+  distribution_controller.cpp \
   distribution_curve_view.cpp \
-  expression_cell_with_editable_text_with_message.cpp \
-  goodness_table_cell.cpp \
-  input_homogeneity_table_cell.cpp \
-  interval_conclusion_view.cpp \
-  interval_curve_view.cpp \
-  legend_view.cpp \
-  message_table_cell_with_separator.cpp \
-  result_homogeneity_table_cell.cpp \
-  statistic_curve_view.cpp \
-  statistic_graph_view.cpp \
-  test_conclusion_view.cpp \
-  test_curve_view.cpp \
+  parameters_controller.cpp \
 )
 
-app_inference_src += $(addprefix apps/inference/controllers/,\
-  calculation_controller.cpp \
+app_inference_src += $(addprefix apps/inference/shared/,\
+  dynamic_cells_data_source.cpp \
+  expression_cell_with_editable_text_with_message.cpp \
+)
+
+app_inference_src += $(addprefix apps/inference/statistic/chi_square_test/,\
+  categorical_controller.cpp \
+  categorical_table_cell.cpp \
   categorical_type_controller.cpp \
-  distribution_controller.cpp \
-  hypothesis_controller.cpp \
-  input_controller.cpp \
+  goodness_table_cell.cpp \
+  homogeneity_data_source.cpp \
   input_goodness_controller.cpp \
   input_homogeneity_controller.cpp \
-  interval_graph_controller.cpp \
-  parameters_controller.cpp \
-  results_controller.cpp \
+  input_homogeneity_table_cell.cpp \
+  result_homogeneity_table_cell.cpp \
   results_homogeneity_controller.cpp \
-  test_controller.cpp \
+)
+
+app_inference_src += $(addprefix apps/inference/statistic/interval/,\
+  interval_conclusion_view.cpp \
+  interval_curve_view.cpp \
+  interval_graph_controller.cpp \
+)
+
+app_inference_src += $(addprefix apps/inference/statistic/test/,\
+  hypothesis_controller.cpp \
+  test_conclusion_view.cpp \
+  test_curve_view.cpp \
   test_graph_controller.cpp \
+)
+
+app_inference_src += $(addprefix apps/inference/statistic/,\
+  comparison_operator_popup_data_source.cpp \
+  input_controller.cpp \
+  legend_view.cpp \
+  message_table_cell_with_separator.cpp \
+  results_controller.cpp \
+  results_data_source.cpp \
+  statistic_curve_view.cpp \
+  statistic_graph_view.cpp \
+  test_controller.cpp \
   type_controller.cpp \
 )
-
-app_inference_src +=  $(addprefix apps/inference/abstract/,\
-  categorical_controller.cpp \
-  dynamic_cells_data_source.cpp \
-  homogeneity_data_source.cpp \
-  results_data_source.cpp \
-)
-
 
 app_inference_src += $(app_inference_test_src)
 apps_src += $(app_inference_src)
@@ -112,7 +120,7 @@ $(eval $(call depends_on_transparent_image,apps/inference/app.cpp,$(addprefix ap
   significance_test.png \
 )))
 
-$(eval $(call depends_on_transparent_image,apps/inference/controllers/distribution_controller.cpp,$(addprefix apps/inference/images/,\
+$(eval $(call depends_on_transparent_image,apps/inference/probability/distribution_controller.cpp,$(addprefix apps/inference/images/,\
   binomial_icon.png \
   chi_squared_icon.png \
   exponential_icon.png \
@@ -124,14 +132,14 @@ $(eval $(call depends_on_transparent_image,apps/inference/controllers/distributi
   uniform_icon.png \
 )))
 
-$(eval $(call depends_on_transparent_image,apps/inference/controllers/calculation_controller.cpp \
- apps/inference/gui/calculation_popup_data_source.cpp,$(addprefix apps/inference/images/,\
+$(eval $(call depends_on_transparent_image,apps/inference/probability/calculation_controller.cpp \
+ apps/inference/probability/calculation_popup_data_source.cpp,$(addprefix apps/inference/images/,\
   calculation1_icon.png \
   calculation2_icon.png \
   calculation3_icon.png \
   calculation4_icon.png \
 )))
 
-$(eval $(call depends_on_transparent_image,apps/inference/gui/test_conclusion_view.cpp,$(addprefix apps/inference/images/,\
+$(eval $(call depends_on_transparent_image,apps/inference/statistic/test/test_conclusion_view.cpp,$(addprefix apps/inference/images/,\
   test_success.png \
 )))

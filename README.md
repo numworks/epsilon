@@ -31,7 +31,7 @@ Upsilon is a fork of Omega, an user-made OS that runs on the Numworks calculator
 
 ### Installer
 
-Go to the [Upsilon website](https://lolocomotive.github.io/Upsilon-website) to the "Install" section.
+Go to the [Upsilon website](https://getupsilon.web.app/) to the "Install" section.
 If your calculator is recognized, contains a version of Epsilon lower than 16 and your browser accepts WebUSB, the page will suggest you to install Upsilon.
 Do not disconnect your calculator until the installation is complete.
 

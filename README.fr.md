@@ -26,7 +26,7 @@ Upsilon est un fork d'Omega, un fork d'Epsilon, l'OS de Numworks tournant sur le
 ## Installation
 
 ### Site web
-Rendez-vous sur le [site d'Upsilon](https://lolocomotive.github.io/Upsilon-website) à la section "Installer".
+Rendez-vous sur le [site d'Upsilon](https://getupsilon.web.app/) à la section "Installer".
 Si votre calculatrice est reconnue, qu'elle contient une version d'Epsilon inférieure à 16 et que votre navigateur accepte WebUSB, la page vous proposera d'installer Upsilon.  
 Ne débranchez votre calculatrice qu'une fois l'installation terminée.
 

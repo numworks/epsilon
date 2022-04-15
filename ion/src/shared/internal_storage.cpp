@@ -112,11 +112,138 @@ void InternalStorage::log() {
 }
 #endif
 
-size_t InternalStorage::availableSize() {
-  /* TODO maybe do: availableSize(char ** endBuffer) to get the endBuffer if it
-   * is needed after calling availableSize */
-  assert(k_storageSize >= (endBuffer() - m_buffer) + sizeof(record_size_t));
-  return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
+InternalStorage::MetadataRowHeader * InternalStorage::metadataForRecord(Record r) {
+  MetadataRowHeader * header = m_metadataMapHeader->firstRow;
+  for (int i = 0; i < m_metadataMapHeader->numberOfRows; i++) {
+    if (header->fullNameCRC32 == r.fullNameCRC32()) {
+      return header;
+    }
+    header = header->nextRow;
+  }
+
+  return nullptr;
+}
+
+void InternalStorage::removeMetadataForRecord(Record r) {
+  if (r.isNull()) {
+    return;
+  }
+
+  MetadataRowHeader ** rowPointer = &m_metadataMapHeader->firstRow;
+  MetadataRowHeader * headerToRemove = nullptr;
+  size_t headerToRemoveSize = 0;  // We compute it now as it will be more difficult later
+  for (int i = 0; i < m_metadataMapHeader->numberOfRows; i++) {
+    if ((*rowPointer)->fullNameCRC32 == r.fullNameCRC32()) {
+      headerToRemove = *rowPointer;
+      headerToRemoveSize = headerToRemove->size();
+      if ((*rowPointer)->nextRow != nullptr) {
+        *rowPointer = (MetadataRowHeader *) ((char *) (*rowPointer)->nextRow + headerToRemove->size());
+      } else {
+        *rowPointer = nullptr;
+      }
+      break;
+    }
+
+    rowPointer = &(*rowPointer)->nextRow;
+  }
+
+  if (headerToRemove == nullptr) {
+    return;
+  }
+
+  MetadataRowHeader * header = headerToRemove->nextRow;
+  if (header != nullptr) {
+    while (header->nextRow) {
+      MetadataRowHeader * nextRow = header->nextRow;
+      header->nextRow = (MetadataRowHeader *) ((char *) header->nextRow +headerToRemoveSize);
+      header = nextRow;
+    }
+  }
+
+  char * startOfMetadataMap = m_metadataMapHeader->startOfMetadataMap();
+  uint8_t sizeToMove = (char *) headerToRemove - startOfMetadataMap;
+
+  memmove(startOfMetadataMap + headerToRemoveSize, startOfMetadataMap, sizeToMove);
+  m_metadataMapHeader->numberOfRows--;
+  m_metadataMapHeader->metadataMapSize -= headerToRemoveSize;
+}
+
+bool InternalStorage::setMetadataForRecord(Record r, int size, const void * metadata) {
+  int neededSize = 0;
+  char * endBufferPointer = nullptr;
+  MetadataRowHeader * headerToUpdate = nullptr;
+  MetadataRowHeader ** headerToUpdatePointer = nullptr;
+  int headerToUpdateIndex = -1;
+
+  // We find the metadata row header for this record
+  MetadataRowHeader ** headerPointer = &m_metadataMapHeader->firstRow;
+  for (int i = 0; i < m_metadataMapHeader->numberOfRows; i++) {
+    if ((*headerPointer)->fullNameCRC32 == r.fullNameCRC32()) {
+      neededSize = size - (*headerPointer)->metadataSize;
+      headerToUpdate = (*headerPointer);
+      headerToUpdatePointer = headerPointer;
+      headerToUpdateIndex = i;
+      if (neededSize > 0 && neededSize > availableSize(&endBufferPointer)) {
+        return false;
+      }
+      break;
+    }
+
+    headerPointer = &((*headerPointer)->nextRow);
+  }
+
+  char * startOfMetadataMap = m_metadataMapHeader->startOfMetadataMap(); // Me must compute it now because it may change
+
+  if (headerToUpdate == nullptr) { // If we didn't find a header, we need to create one
+    if (size != 0) {
+      uint8_t newRowSize = sizeof(MetadataRowHeader) + size;
+
+      if (endBufferPointer < m_buffer + k_storageSize - m_metadataMapHeader->metadataMapSize - newRowSize) {
+        m_metadataMapHeader->numberOfRows++;
+        m_metadataMapHeader->metadataMapSize += newRowSize;
+        headerToUpdate = (MetadataRowHeader *) ((char *) startOfMetadataMap - newRowSize);
+        headerToUpdate->fullNameCRC32 = r.fullNameCRC32();
+        headerToUpdate->nextRow = nullptr;
+
+        if (m_metadataMapHeader->numberOfRows == 0) {
+          m_metadataMapHeader->firstRow = headerToUpdate;
+        } else {
+          ((MetadataRowHeader *) startOfMetadataMap)->nextRow = headerToUpdate;
+        }
+
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  if (neededSize != 0) { // If we must move some data to make or fill empty space
+    m_metadataMapHeader->metadataMapSize += neededSize;
+    memmove(startOfMetadataMap - neededSize, startOfMetadataMap, (char *) headerToUpdate + sizeof(MetadataRowHeader) - startOfMetadataMap);
+
+    headerToUpdate = (MetadataRowHeader *) ((char *) headerToUpdate - neededSize);
+    MetadataRowHeader ** headerAfterPointer = headerToUpdatePointer; // Now we update each header below the one we just updated
+    for (int i = headerToUpdateIndex; i < m_metadataMapHeader->numberOfRows; i++) {
+      (*headerAfterPointer) = (MetadataRowHeader *) ((char *) (*headerAfterPointer) - neededSize);
+      headerAfterPointer = &((*headerAfterPointer)->nextRow);
+    }
+  }
+
+  headerToUpdate->metadataSize = size;
+  memcpy(headerToUpdate->data(), metadata, size);
+
+  return true;
+}
+
+size_t InternalStorage::availableSize(char ** endBufferReturn) {
+  char * endBufferPointer = endBuffer();
+  if (endBufferReturn) {
+    *endBufferReturn = endBufferPointer;
+  }
+  assert(k_storageSize >= (endBufferPointer - m_buffer) + sizeof(record_size_t) + m_metadataMapHeader->metadataMapSize);
+  return k_storageSize-(endBufferPointer-m_buffer)-sizeof(record_size_t) - m_metadataMapHeader->metadataMapSize;
 }
 
 size_t InternalStorage::putAvailableSpaceAtEndOfRecord(InternalStorage::Record r) {
@@ -126,7 +253,7 @@ size_t InternalStorage::putAvailableSpaceAtEndOfRecord(InternalStorage::Record r
   char * nextRecord = p + previousRecordSize;
   memmove(nextRecord + availableStorageSize,
       nextRecord,
-      (m_buffer + k_storageSize - availableStorageSize) - nextRecord);
+      (m_buffer + k_storageSize - m_metadataMapHeader->metadataMapSize - availableStorageSize) - nextRecord);
   size_t newRecordSize = previousRecordSize + availableStorageSize;
   overrideSizeAtPosition(p, (record_size_t)newRecordSize);
   return newRecordSize;
@@ -348,6 +475,12 @@ InternalStorage::InternalStorage() :
   assert(m_magicFooter == Magic);
   // Set the size of the first record to 0
   overrideSizeAtPosition(m_buffer, 0);
+
+  // Set the metadata  map header at the end of the buffer
+  m_metadataMapHeader = (MetadataMapHeader*) (m_buffer + k_storageSize - sizeof(MetadataMapHeader));
+  m_metadataMapHeader->numberOfRows = 0;
+  m_metadataMapHeader->firstRow = nullptr;
+  m_metadataMapHeader->metadataMapSize = sizeof(MetadataMapHeader);
 }
 
 // PRIVATE
@@ -381,6 +514,11 @@ InternalStorage::Record::ErrorStatus InternalStorage::setFullNameOfRecord(const 
     notifyChangeToDelegate(record);
     m_lastRecordRetrieved = record;
     m_lastRecordRetrievedPointer = p;
+    // Update metadata map
+    MetadataRowHeader * row = metadataForRecord(record);
+    if (row != nullptr) {
+      row->fullNameCRC32 = Record(fullName).fullNameCRC32();
+    }
     return Record::ErrorStatus::None;
   }
   return Record::ErrorStatus::RecordDoesNotExist;
@@ -452,6 +590,8 @@ void InternalStorage::destroyRecord(Record record) {
   }
   char * p = pointerOfRecord(record);
   if (p != nullptr) {
+    // Erase metadata
+    InternalStorage::removeMetadataForRecord(record);
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     slideBuffer(p+previousRecordSize, -previousRecordSize);
     notifyChangeToDelegate();

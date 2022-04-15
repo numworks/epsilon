@@ -65,13 +65,19 @@ void EditorController::viewWillAppear() {
   ViewController::viewWillAppear();
   m_editorView.loadSyntaxHighlighter();
   if(GlobalPreferences::sharedGlobalPreferences()->cursorSaving()) {
-    m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
+    int offset = m_script.cursorOffset();
+    if (offset != -1) {
+      m_editorView.setCursorLocation(m_editorView.text() + offset);
+    } else {
+      m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
+    }
   } else {
     m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
   }
 }
 
 void EditorController::viewDidDisappear() {
+  m_script.setCursorOffset(m_editorView.cursorLocation() - m_script.content());
   m_editorView.resetSelection();
   m_menuController->scriptContentEditionDidFinish();
 }

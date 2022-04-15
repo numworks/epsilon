@@ -64,6 +64,7 @@ public:
       return m_fullNameCRC32 == 0;
     }
     const char * fullName() const;
+    uint32_t fullNameCRC32() const { return m_fullNameCRC32; }
     ErrorStatus setBaseNameWithExtension(const char * baseName, const char * extension);
     ErrorStatus setName(const char * fullName);
     Data value() const;
@@ -74,11 +75,19 @@ public:
     uint32_t m_fullNameCRC32;
   };
 
+  struct MetadataRowHeader { // In fact, it's a struct with a method to get data
+  public:
+    char * data() const { return (char *) this + sizeof(MetadataRowHeader); }
+    uint32_t size() const { return sizeof(MetadataRowHeader) + metadataSize; }
+    uint32_t fullNameCRC32;
+    uint32_t metadataSize; // To fullfill alignment
+    MetadataRowHeader * nextRow;
+  };
 #if ION_STORAGE_LOG
   void log();
 #endif
 
-  size_t availableSize();
+  size_t availableSize(char ** endBufferReturn = nullptr);
   size_t putAvailableSpaceAtEndOfRecord(Record r);
   void getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableSpace);
   uint32_t checksum();
@@ -114,6 +123,11 @@ public:
   // Used by Python OS module
   int numberOfRecords();
   Record recordAtIndex(int index);
+
+  // Metadata
+  MetadataRowHeader * metadataForRecord(Record r);
+  bool setMetadataForRecord(Record r, int size, const void * metadata);
+  void removeMetadataForRecord(Record r);
 protected:
   InternalStorage();
   /* Getters on address in buffer */
@@ -122,6 +136,13 @@ protected:
   const char * fullNameOfRecordStarting(char * start) const;
   const void * valueOfRecordStarting(char * start) const;
   void destroyRecord(const Record record);
+
+  struct MetadataMapHeader {
+    char * startOfMetadataMap() { return (char *) this - metadataMapSize + sizeof(MetadataMapHeader); }
+    uint8_t metadataMapSize;
+    uint8_t numberOfRows;
+    MetadataRowHeader * firstRow;
+  };
 
   class RecordIterator {
   public:
@@ -142,6 +163,7 @@ protected:
 
   mutable Record m_lastRecordRetrieved;
   mutable char * m_lastRecordRetrievedPointer;
+  MetadataMapHeader * m_metadataMapHeader;
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);

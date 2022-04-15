@@ -366,7 +366,7 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
   integralPartLength = integralPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits : integralPartLength;
   // Special case for ??00000000000
   if (fractionalPartLength == 0) {
-    while (UTF8Helper::CodePointIs(&integralPart[integralPartLength - 1], '0')) {
+    while (integralPartLength > 1 && UTF8Helper::CodePointIs(&integralPart[integralPartLength - 1], '0')) {
       integralPartLength--;
     }
   }

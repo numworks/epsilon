@@ -74,6 +74,8 @@ bool fileAtIndex(size_t index, File &entry) {
       entry.data = reinterpret_cast<const uint8_t*>(tar) + sizeof(TarHeader);
       entry.dataLength = size;
       entry.isExecutable = (tar->mode[4] & 0x01) == 1;
+      // TODO: Handle the trash
+      entry.readable = true;
 
       return true;
     } else {
@@ -115,7 +117,7 @@ int indexFromName(const char *name) {
   File entry;
 
   for (int i = 0; fileAtIndex(i, entry); i++) {
-    if (strcmp(name, entry.name) == 0) {
+    if (entry.readable && strcmp(name, entry.name) == 0) {
       return i;
     }
   }
@@ -144,6 +146,7 @@ bool executableAtIndex(size_t index, File &entry) {
         entry.data = dummy.data;
         entry.dataLength = dummy.dataLength;
         entry.isExecutable = dummy.isExecutable;
+        entry.readable = dummy.readable;
         return true;
       }
       final_count++;
@@ -177,6 +180,7 @@ bool fileAtIndex(size_t index, File &entry) {
   entry.data = NULL;
   entry.dataLength = 0;
   entry.isExecutable = true;
+  entry.readable = true;
   return true;
 }
 

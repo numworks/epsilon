@@ -9,7 +9,6 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
-void init();
 void initFPU();
 void initMPU();
 void initSystemClocks();

@@ -39,7 +39,6 @@ Events::Event DFU() {
   assert(&_process_stack_end == (void *)(Device::Board::Config::UserlandSRAMAddress + Device::Board::Config::UserlandSRAMLength - Device::Board::Config::UserlandStackLength));
 
   /* 2- Verify there is enough free space on the stack to copy the DFU code. */
-  Events::Event abortReason;
   char foo;
   char * stackPointer = &foo;
   if (dfu_bootloader_ram_start + dfu_bootloader_size > stackPointer) {
@@ -75,7 +74,7 @@ Events::Event DFU() {
    *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
    */
 
-  abortReason = dfu_bootloader_entry();
+  Events::Event abortReason abortReason = dfu_bootloader_entry();
 
   Device::USB::didExecuteDFU();
 

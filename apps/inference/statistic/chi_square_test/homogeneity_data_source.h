@@ -1,6 +1,7 @@
 #ifndef PROBABILITY_ABSTRACT_HOMOGENEITY_DATA_SOURCE_H
 #define PROBABILITY_ABSTRACT_HOMOGENEITY_DATA_SOURCE_H
 
+#include <algorithm>
 #include <apps/i18n.h>
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/solid_color_cell.h>
@@ -34,9 +35,10 @@ public:
   // SelectableTableViewDelegate
   void unselectTopLeftCell(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY);
 
-  constexpr static int k_columnWidth = 80;
-  constexpr static int k_numberOfReusableColumns = Ion::Display::Width /k_columnWidth + 2;
-  constexpr static int k_numberOfReusableCells = k_maxNumberOfReusableRows * k_numberOfReusableColumns;
+  constexpr static int k_columnWidth = 82;
+  constexpr static int k_numberOfReusableColumns = std::min(Ion::Display::Width /k_columnWidth + 2, HomogeneityTest::k_maxNumberOfColumns); // 5
+  constexpr static int k_maxNumberOfReusableRows = std::min(CategoricalTableViewDataSource::k_maxNumberOfReusableRows, HomogeneityTest::k_maxNumberOfRows); // 9
+  constexpr static int k_numberOfReusableCells = k_maxNumberOfReusableRows * k_numberOfReusableColumns; // 5 * 9
 
 protected:
   virtual int innerNumberOfRows() const = 0;

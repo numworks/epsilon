@@ -2,9 +2,9 @@
 
 namespace Code {
 
-  class toolboxIonKeys : public ViewController {
+  class ToolboxIonKeys : public ViewController {
     public :
-      toolboxIonKeys();
+      ToolboxIonKeys();
       View * view() override;
       bool handleEvent(Ion::Events::Event e) override;
       void setSender(InputEventHandler * sender) { m_sender = sender; }

@@ -21,6 +21,7 @@ public:
 protected:
   KDCoordinate rowHeight(int j) override;
   bool selectLeaf(int selectedRow, bool quitToolbox) override;
+  bool selectSubMenu(int selectedRow) override;
   MessageTableCellWithMessage * leafCellAtIndex(int index) override;
   MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
@@ -34,7 +35,7 @@ private:
   void scrollToAndSelectChild(int i);
   MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
   MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
-  toolboxIonKeys m_ionKeys;
+  ToolboxIonKeys m_ionKeys;
 };
 
 }

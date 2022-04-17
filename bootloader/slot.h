@@ -5,6 +5,7 @@
 
 #include "kernel_header.h"
 #include "userland_header.h"
+#include "slot_exam_mode.h"
 
 namespace Bootloader {
 

@@ -45,6 +45,19 @@ __attribute__((noreturn)) void Boot::boot() {
     setMode(BootMode::SlotA);
     Slot::A().boot();
   } else {
+    
+    Bootloader::ExamMode::ExamMode SlotAExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotAExamMode(!Bootloader::Slot::A().userlandHeader()->isOmega());
+    if (SlotAExamMode != Bootloader::ExamMode::ExamMode::Off && SlotAExamMode != Bootloader::ExamMode::ExamMode::Unknown) {
+      // We boot the slot in exam_mode
+      Bootloader::Slot::A().boot();
+    }
+
+    Bootloader::ExamMode::ExamMode SlotBExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotBExamMode(!Bootloader::Slot::B().userlandHeader()->isOmega());
+    if (SlotBExamMode != Bootloader::ExamMode::ExamMode::Off && SlotBExamMode != Bootloader::ExamMode::ExamMode::Unknown) {
+      // We boot the slot in exam_mode
+      Bootloader::Slot::B().boot();
+    }
+
     // Both valid, boot the selected one
     if (mode() == BootMode::SlotA) {
       Slot::A().boot();

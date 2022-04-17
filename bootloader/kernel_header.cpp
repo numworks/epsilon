@@ -1,4 +1,5 @@
 #include <bootloader/kernel_header.h>
+#include <bootloader/utility.h>
 
 namespace Bootloader {
 
@@ -20,6 +21,13 @@ const uint32_t* KernelHeader::stackPointer() const {
 
 const void(*KernelHeader::startPointer() const)() {
   return m_startPointer;
+}
+
+const bool KernelHeader::isAboveVersion16() const {
+  int sum = Utility::versionSum(m_version, 2);
+  char newVersion[] = "16";
+  int min = Utility::versionSum(newVersion, 2);
+  return sum >= min;
 }
 
 }

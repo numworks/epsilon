@@ -4,6 +4,8 @@
 #include <ion/storage.h>
 #include "double_pair_store.h"
 #include "sequence_store.h"
+#include "../regression/store.h"
+#include "../statistics/store.h"
 
 namespace Shared {
 
@@ -15,17 +17,12 @@ public:
     size_t prefixRepetitions;
   } ReservedExtension;
 
-  constexpr static const char * const * sequencesReservedNames = SequenceStore::k_sequenceNames;
-  constexpr static const char * regressionListsNamePrefixes[] = {"X", "Y"};
-  constexpr static const char * statisticsListsNamePrefixes[] = {"V", "N"};
-  constexpr static size_t k_numberOfSeriesInApps = DoublePairStore::k_numberOfSeries;
-
-  constexpr static ReservedExtension reservedExtensions[] = {
-    {sequencesReservedNames, Ion::Storage::seqExtension, 0},
-    {regressionListsNamePrefixes, Ion::Storage::lisExtension, k_numberOfSeriesInApps},
-    {statisticsListsNamePrefixes, Ion::Storage::lisExtension, k_numberOfSeriesInApps}
+  constexpr static ReservedExtension k_reservedExtensions[] = {
+    {SequenceStore::k_sequenceNames, Ion::Storage::seqExtension, 0},
+    {Regression::Store::k_columnNames, Ion::Storage::lisExtension, DoublePairStore::k_numberOfSeries},
+    {Statistics::Store::k_columnNames, Ion::Storage::lisExtension, DoublePairStore::k_numberOfSeries}
   };
-  constexpr static size_t k_reservedExtensionsLength = sizeof(reservedExtensions) / sizeof(ReservedExtension);
+  constexpr static size_t k_reservedExtensionsLength = sizeof(k_reservedExtensions) / sizeof(ReservedExtension);
 
   bool isNameReservedForAnotherExtension(const char * name, const char * extension) override;
 

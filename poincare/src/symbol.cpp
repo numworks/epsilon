@@ -123,22 +123,6 @@ Symbol Symbol::Builder(CodePoint name) {
   return Symbol::Builder(buffer, codePointLength);
 }
 
-bool Symbol::isSeriesSymbol(const char * c, Poincare::Context * context) {
-  // [NV][1-3]
-  if (c[2] == 0 && (c[0] == 'N' || c[0] == 'V') && c[1] >= '1' && c[1] <= '3') {
-    return true;
-  }
-  return false;
-}
-
-bool Symbol::isRegressionSymbol(const char * c, Poincare::Context * context) {
-  // [XY][1-3]
-  if (c[2] == 0 && (c[0] == 'X' || c[0] == 'Y') && c[1] >= '1' && c[1] <= '3') {
-    return true;
-  }
-  return false;
-}
-
 Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   ExpressionNode::SymbolicComputation symbolicComputation = reductionContext.symbolicComputation();
   if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions

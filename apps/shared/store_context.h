@@ -21,11 +21,6 @@ public:
   Poincare::Context::SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
 
 private:
-  constexpr static int k_lengthOfStoreSymbols = 2;
-
-  virtual bool isSymbol(const char * name) const = 0;
-  virtual int getSymbolColumn(const char * name) const = 0;
-
   Shared::DoublePairStore * m_store;
   int m_seriesPairIndex;
 };

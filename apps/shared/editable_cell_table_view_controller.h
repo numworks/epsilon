@@ -3,7 +3,6 @@
 
 #include <poincare/preferences.h>
 #include <escher/stack_view_controller.h>
-#include "column_parameter_controller.h"
 #include "pop_up_controller.h"
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
@@ -11,8 +10,12 @@
 
 namespace Shared {
 
+class ColumnParameterController;
+
 class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource, public TextFieldDelegate {
 public:
+  // this is an ad hoc value. Most of the time, colum_name are very short like "X1", "n" or "f(x)"
+  constexpr static int k_maxSizeOfColumnName = 16;
   EditableCellTableViewController(Responder * parentResponder);
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;

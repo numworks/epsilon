@@ -14,7 +14,6 @@ public:
   Shared::StoreContext * storeContext() override { return &m_regressionContext; }
   bool fillColumnWithFormula(Poincare::Expression formula) override;
   Model * selectedModel() { return static_cast<Store *>(m_store)->modelForSeries(selectedSeries()); }
-  int fillColumnName(int columnIndex, char * buffer) override;
 
 private:
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }

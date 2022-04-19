@@ -19,6 +19,9 @@ public:
   Escher::View * view() override { return &m_contentView; }
   TELEMETRY_ID("Store");
 
+  // EditableCellViewController
+  virtual int fillColumnName(int columnIndex, char * buffer) override { return m_store->fillColumnName(m_store->seriesAtColumn(columnIndex), m_store->relativeColumnIndex(columnIndex), buffer); }
+
   virtual StoreContext * storeContext() = 0;
   void displayFormulaInput();
   void setFormulaLabel();

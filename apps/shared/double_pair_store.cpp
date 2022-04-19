@@ -8,6 +8,34 @@
 
 namespace Shared {
 
+int DoublePairStore::fillColumnName(int series, int columnIndex, char * buffer) {
+  assert(series >= 0 && series < k_numberOfSeries);
+  assert(columnIndex >= 0 && columnIndex < k_numberOfColumnsPerSeries);
+  buffer[0] = columnNamePrefix(columnIndex);
+  buffer[1] = static_cast<char>('1' + series);
+  buffer[2] = 0;
+  return 3;
+}
+
+bool DoublePairStore::isColumnName(const char * name, int nameLen, int * returnSeries, int * returnColumn) {
+  if (nameLen != 2) {
+    return false;
+  }
+  for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
+    if (name[0] == columnNamePrefix(i) && name[1] >= '1' && name[1] < '1' + k_numberOfSeries) {
+      if (returnSeries != nullptr) {
+        *returnSeries = name[1] - '1';
+      }
+      if (returnColumn != nullptr) {
+        *returnColumn = i;
+      }
+      return true;
+    }
+  }
+  return false;
+}
+
+
 void DoublePairStore::set(double f, int series, int i, int j) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (j >= k_maxNumberOfPairs) {

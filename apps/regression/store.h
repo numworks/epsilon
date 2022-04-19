@@ -22,7 +22,16 @@ namespace Regression {
 
 class Store : public Shared::InteractiveCurveViewRange, public Shared::DoublePairStore {
 public:
+  constexpr static const char * k_columnNames[] = {"X", "Y"}; // Must be 1 char long.
+  static_assert(sizeof(k_columnNames) / sizeof(char *) == Shared::DoublePairStore::k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Regression.");
   Store();
+
+  // DoublePairStore
+  char columnNamePrefix(int column) override {
+    assert(column >= 0 && column < DoublePairStore::k_numberOfColumnsPerSeries);
+    assert(strlen(k_columnNames[column]) == 1);
+    return k_columnNames[column][0];
+  }
 
   void reset();
   // Clean pool

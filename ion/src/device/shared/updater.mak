@@ -18,6 +18,9 @@ ion_device_updater_src += $(addprefix ion/src/device/shared/drivers/, \
   flash_unprivileged.cpp \
   internal_flash.cpp \
   internal_flash_otp_dual_slots.cpp \
+  option_bytes.cpp \
+  option_bytes_n0110.cpp:+n0110 \
+  option_bytes_n0120.cpp:+n0120 \
   reset.cpp \
   swd.cpp \
   timing.cpp \

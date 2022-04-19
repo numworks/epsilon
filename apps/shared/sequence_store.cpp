@@ -12,7 +12,7 @@ namespace Shared {
 const char * SequenceStore::firstAvailableName(size_t * nameIndex) {
   // Choose available name
   size_t currentNameIndex = 0;
-  while (currentNameIndex < MaxNumberOfSequences) {
+  while (currentNameIndex < k_maxNumberOfSequences) {
     const char * name = k_sequenceNames[currentNameIndex];
     if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::seqExtension).isNull()) {
       if (nameIndex) {
@@ -39,7 +39,7 @@ Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
 }
 
 int SequenceStore::sequenceIndexForName(char name) {
-  for (int i = 0; i < MaxNumberOfSequences; i++) {
+  for (int i = 0; i < k_maxNumberOfSequences; i++) {
     if (k_sequenceNames[i][0] == name) {
       return i;
     }

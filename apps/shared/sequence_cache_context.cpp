@@ -68,7 +68,7 @@ template<typename T>
 int SequenceCacheContext<T>::nameIndexForSymbol(const Poincare::Symbol & symbol) {
   assert(symbol.name()[0] >= 'u' && symbol.name()[0] <= 'w'); //  [u|v|w]
   char name = symbol.name()[0];
-  assert(name >= SequenceStore::k_sequenceNames[0][0] && name <= SequenceStore::k_sequenceNames[MaxNumberOfSequences-1][0]); // u, v or w
+  assert(name >= SequenceStore::k_sequenceNames[0][0] && name <= SequenceStore::k_sequenceNames[SequenceStore::k_maxNumberOfSequences-1][0]); // u, v or w
   return name - 'u';
 }
 

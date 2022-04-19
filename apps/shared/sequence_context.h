@@ -4,14 +4,11 @@
 #include <poincare/context_with_parent.h>
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
+#include "sequence_store.h"
 
 namespace Shared {
 
-constexpr static int MaxRecurrenceDepth = 2;
-constexpr static int MaxNumberOfSequences = 3;
-
-class SequenceStore;
-class SequenceContext;
+class Sequence;
 
 template<typename T>
 class TemplatedSequenceContext {
@@ -46,11 +43,11 @@ private:
    * This cache is therefore used for independent steps of sequences
    */
   int m_commonRank;
-  T m_commonRankValues[MaxNumberOfSequences][MaxRecurrenceDepth+1];
+  T m_commonRankValues[SequenceStore::k_maxNumberOfSequences][SequenceStore::k_maxRecurrenceDepth+1];
 
   // Used for fixed computations
-  int m_independentRanks[MaxNumberOfSequences];
-  T m_independentRankValues[MaxNumberOfSequences][MaxRecurrenceDepth+1];
+  int m_independentRanks[SequenceStore::k_maxNumberOfSequences];
+  T m_independentRankValues[SequenceStore::k_maxNumberOfSequences][SequenceStore::k_maxRecurrenceDepth+1];
 };
 
 class SequenceContext : public Poincare::ContextWithParent {

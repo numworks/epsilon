@@ -2,7 +2,6 @@
 #define APPS_SHARED_SEQUENCE_H
 
 #include "../shared/function.h"
-#include "sequence_context.h"
 #include <assert.h>
 
 #if __EMSCRIPTEN__
@@ -14,6 +13,8 @@ namespace Shared {
 /* WARNING: after calling setType, setInitialRank, setContent, setFirstInitialConditionContent
  * or setSecondInitialConditionContent, the sequence context needs to
  * invalidate the cache because the sequences evaluations might have changed. */
+
+class SequenceContext;
 
 class Sequence : public Shared::Function {
 friend class SequenceStore;
@@ -62,10 +63,10 @@ public:
   bool isEmpty() override;
   // Approximation
   Poincare::Coordinate2D<float> evaluateXYAtParameter(float x, Poincare::Context * context, int subCurveIndex = 0) const override {
-    return Poincare::Coordinate2D<float>(x, templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
+    return Poincare::Coordinate2D<float>(x, templatedApproximateAtAbscissa(x, reinterpret_cast<SequenceContext *>(context)));
   }
   Poincare::Coordinate2D<double> evaluateXYAtParameter(double x, Poincare::Context * context, int subCurveIndex = 0) const override {
-    return Poincare::Coordinate2D<double>(x,templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context)));
+    return Poincare::Coordinate2D<double>(x,templatedApproximateAtAbscissa(x, reinterpret_cast<SequenceContext *>(context)));
   }
   template<typename T> T approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIndex = -1) const;
   template<typename T> T valueAtRank(int n, SequenceContext * sqctx);

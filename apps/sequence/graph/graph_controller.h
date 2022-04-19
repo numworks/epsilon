@@ -25,11 +25,11 @@ private:
   class SequenceSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
   public:
     SequenceSelectionController(GraphController * graphController) : Shared::FunctionGraphController::FunctionSelectionController(graphController) {}
-    CurveSelectionCell * reusableCell(int index, int type) override { assert(index >= 0 && index < Shared::MaxNumberOfSequences); return m_cells + index; }
-    int reusableCellCount(int type) override { return Shared::MaxNumberOfSequences; }
+    CurveSelectionCell * reusableCell(int index, int type) override { assert(index >= 0 && index < Shared::SequenceStore::k_maxNumberOfSequences); return m_cells + index; }
+    int reusableCellCount(int type) override { return Shared::SequenceStore::k_maxNumberOfSequences; }
   private:
     Poincare::Layout nameLayoutAtIndex(int j) const override;
-    CurveSelectionCell m_cells[Shared::MaxNumberOfSequences];
+    CurveSelectionCell m_cells[Shared::SequenceStore::k_maxNumberOfSequences];
   };
 
   Shared::XYBannerView * bannerView() override { return &m_bannerView; }

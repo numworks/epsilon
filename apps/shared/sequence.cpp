@@ -164,7 +164,7 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
   if (sqctx->independentSequenceRank<T>(sequenceIndex) > n || sqctx->independentSequenceRank<T>(sequenceIndex) < 0) {
     // Reset cache indexes and cache values
     sqctx->setIndependentSequenceRank<T>(-1, sequenceIndex);
-    for (int i = 0 ; i < MaxRecurrenceDepth+1; i++) {
+    for (int i = 0 ; i < SequenceStore::k_maxRecurrenceDepth+1; i++) {
       sqctx->setIndependentSequenceValue<T>(NAN, sequenceIndex, i);
     }
   }
@@ -189,7 +189,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
 
   SequenceCacheContext<T> ctx = SequenceCacheContext<T>(sqctx, sequenceIndex);
   // Hold values u(n), u(n-1), u(n-2), v(n), v(n-1), v(n-2)...
-  T values[MaxNumberOfSequences][MaxRecurrenceDepth+1];
+  T values[SequenceStore::k_maxNumberOfSequences][SequenceStore::k_maxRecurrenceDepth+1];
 
   /* In case we step only one sequence to the next step, the data stored in
    * values is not necessarily u(n), u(n-1).... Indeed, since the indexes are
@@ -198,25 +198,25 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
    * be wrong if they relay on a symbol such as u(n). To prevent this, we align
    * all the values around the index of the sequence we are stepping. */
   int independentRank = sqctx->independentSequenceRank<T>(sequenceIndex);
-  for (int i = 0; i < MaxNumberOfSequences; i++) {
+  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     if (sequenceIndex != -1 && sqctx->independentSequenceRank<T>(i) != independentRank) {
       int offset = independentRank - sqctx->independentSequenceRank<T>(i);
       if (offset != 0) {
-        for (int j = MaxRecurrenceDepth; j >= 0; j--) {
-            values[i][j] = j-offset < 0 || j-offset > MaxRecurrenceDepth ? NAN : sqctx->independentSequenceValue<T>(i, j-offset);
+        for (int j = SequenceStore::k_maxRecurrenceDepth; j >= 0; j--) {
+            values[i][j] = j-offset < 0 || j-offset > SequenceStore::k_maxRecurrenceDepth ? NAN : sqctx->independentSequenceValue<T>(i, j-offset);
         }
       }
     } else {
-      for (int j = 0; j < MaxRecurrenceDepth+1; j++) {
+      for (int j = 0; j < SequenceStore::k_maxRecurrenceDepth+1; j++) {
         values[i][j] = sequenceIndex != -1 ? sqctx->independentSequenceValue<T>(i, j) : sqctx->valueOfCommonRankSequenceAtPreviousRank<T>(i, j);
       }
     }
   }
   // Hold symbols u(n), u(n+1), v(n), v(n+1), w(n), w(n+1)
-  Poincare::Symbol symbols[MaxNumberOfSequences][MaxRecurrenceDepth];
-  char name[MaxRecurrenceDepth][7] = {"0(n)","0(n+1)"};
-  for (int i = 0; i < MaxNumberOfSequences; i++) {
-    for (int j = 0; j < MaxRecurrenceDepth; j++) {
+  Poincare::Symbol symbols[SequenceStore::k_maxNumberOfSequences][SequenceStore::k_maxRecurrenceDepth];
+  char name[SequenceStore::k_maxRecurrenceDepth][7] = {"0(n)","0(n+1)"};
+  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+    for (int j = 0; j < SequenceStore::k_maxRecurrenceDepth; j++) {
       name[j][0] = SequenceStore::k_sequenceNames[i][0];
       symbols[i][j] = Symbol::Builder(name[j], strlen(name[j]));
     }
@@ -224,7 +224,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
   switch (type()) {
     case Type::Explicit:
     {
-      for (int i = 0; i < MaxNumberOfSequences; i++) {
+      for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
         // Set in context u(n) = u(n) for all sequences
         ctx.setValueForSymbol(values[i][0], symbols[i][0]);
       }
@@ -235,7 +235,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
       if (n == initialRank()) {
         return PoincareHelpers::ApproximateWithValueForSymbol(firstInitialConditionExpressionReduced(sqctx), unknownN, static_cast<T>(NAN), &ctx);
       }
-      for (int i = 0; i < MaxNumberOfSequences; i++) {
+      for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
         // Set in context u(n) = u(n-1) and u(n+1) = u(n) for all sequences
         ctx.setValueForSymbol(values[i][0], symbols[i][1]);
         ctx.setValueForSymbol(values[i][1], symbols[i][0]);
@@ -250,7 +250,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
       if (n == initialRank()+1) {
         return PoincareHelpers::ApproximateWithValueForSymbol(secondInitialConditionExpressionReduced(sqctx), unknownN, static_cast<T>(NAN), &ctx);
       }
-      for (int i = 0; i < MaxNumberOfSequences; i++) {
+      for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
         // Set in context u(n) = u(n-2) and u(n+1) = u(n-1) for all sequences
         ctx.setValueForSymbol(values[i][1], symbols[i][1]);
         ctx.setValueForSymbol(values[i][2], symbols[i][0]);

@@ -1,6 +1,7 @@
 #include "global_context.h"
 #include "continuous_function.h"
 #include "sequence.h"
+#include "sequence_context.h"
 #include "poincare_helpers.h"
 #include <poincare/rational.h>
 #include <poincare/equal.h>

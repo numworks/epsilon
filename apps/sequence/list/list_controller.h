@@ -52,7 +52,7 @@ private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
   static constexpr KDCoordinate k_functionTitleSumOfMargins = 25;
   static constexpr KDCoordinate k_expressionCellVerticalMargin = 3;
-  static constexpr int k_maxNumberOfRows = 3*Shared::MaxNumberOfSequences;
+  static constexpr int k_maxNumberOfRows = 3*Shared::SequenceStore::k_maxNumberOfSequences;
   void computeTitlesColumnWidth(bool forceMax = false);
   void resetMemoizationForIndex(int index) override;
   void shiftMemoization(bool newCellIsUnder) override;

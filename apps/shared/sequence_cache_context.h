@@ -17,7 +17,7 @@ public:
 private:
   int nameIndexForSymbol(const Poincare::Symbol & symbol);
   int rankIndexForSymbol(const Poincare::Symbol & symbol);
-  T m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
+  T m_values[SequenceStore::k_maxNumberOfSequences][SequenceStore::k_maxRecurrenceDepth];
   SequenceContext * m_sequenceContext;
   int m_forbiddenSequenceIndex;
 };

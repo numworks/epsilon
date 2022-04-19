@@ -25,11 +25,13 @@ public:
 
   static int sequenceIndexForName(char name);
   static const char * firstAvailableName(size_t * nameIndex = nullptr);
-  static constexpr const char * k_sequenceNames[] = {"u", "v", "w"};
-  Sequence sequenceAtIndex(int i) { assert(i < MaxNumberOfSequences && i >= 0); return m_sequences[i]; }
+  constexpr static const char * k_sequenceNames[] = {"u", "v", "w"};
+  constexpr static int k_maxNumberOfSequences = 3;
+  constexpr static int k_maxRecurrenceDepth = 2;
+  Sequence sequenceAtIndex(int i) { assert(i < SequenceStore::k_maxNumberOfSequences && i >= 0); return m_sequences[i]; }
 
 private:
-  int maxNumberOfMemoizedModels() const override { return MaxNumberOfSequences; }
+  int maxNumberOfMemoizedModels() const override { return SequenceStore::k_maxNumberOfSequences; }
   const char * modelExtension() const override { return Ion::Storage::seqExtension; }
   /* We don't use model memoization for two reasons:
    * - the number of Sequence is capped so we keep enough Sequences to store them all.
@@ -42,7 +44,7 @@ private:
    * memoized model at cacheIndex. */
   Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
   Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
-  mutable Sequence m_sequences[MaxNumberOfSequences];
+  mutable Sequence m_sequences[k_maxNumberOfSequences];
 };
 
 }

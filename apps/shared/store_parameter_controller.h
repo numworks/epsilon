@@ -26,6 +26,7 @@ protected:
   StoreController * m_storeController;
 
   Escher::BufferTableCell m_clearColumn;
+  Escher::MessageTableCell m_fillFormula;
 private:
   EditableCellTableViewController * editableCellTableViewController() override;
   virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
@@ -34,8 +35,6 @@ private:
   constexpr static int k_indexOfClearColumn = k_indexOfFillFormula + 1;
 
   Escher::MessageTableCellWithMessage m_sortCell;
-  Escher::MessageTableCell m_fillFormula;
-
 };
 
 }

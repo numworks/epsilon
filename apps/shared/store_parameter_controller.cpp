@@ -12,8 +12,8 @@ namespace Shared {
 StoreParameterController::StoreParameterController(Responder * parentResponder, StoreController * storeController) :
   ColumnParameterController(parentResponder),
   m_storeController(storeController),
-  m_sortCell(I18n::Message::SortCellLabel),
-  m_fillFormula(I18n::Message::FillWithFormula)
+  m_fillFormula(I18n::Message::FillWithFormula),
+  m_sortCell(I18n::Message::SortCellLabel)
 {
   m_clearColumn.setMessageWithPlaceholder(I18n::Message::ClearColumn);
 }

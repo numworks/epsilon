@@ -70,6 +70,7 @@ public:
   int totalNumberOfModes() const;
   double modeAtIndex(int series, int index) const;
   double modeFrequency(int series) const;
+  double sumOfValuesBetween(int series, double x1, double x2, bool strictUpperBound = true) const;
 
   /* Cumulated frequencies graphs:
    * Distinct values are aggregated and their frequency summed. */
@@ -121,7 +122,6 @@ private:
   };
 
   double defaultValue(int series, int i, int j) const override;
-  double sumOfValuesBetween(int series, double x1, double x2) const;
   /* Find the i-th distinct value (if i is -1, browse the entire series) from
    * start to end (ordered by value).
    * Retrieve the i-th value and the number distinct values encountered.

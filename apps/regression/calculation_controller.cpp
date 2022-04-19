@@ -1,6 +1,7 @@
 #include "calculation_controller.h"
 #include "../apps_container.h"
 #include "../exam_mode_configuration.h"
+#include "../shared/editable_cell_table_view_controller.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
@@ -115,9 +116,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   // Coordinate and series title
   if (j == 0 && i > 0) {
     ColumnTitleCell * myCell = static_cast<ColumnTitleCell *>(cell);
-    char buffer[] = {'X', static_cast<char>('1' + seriesNumber), 0};
+    char buffer[Shared::EditableCellTableViewController::k_maxSizeOfColumnName];
+    m_store->fillColumnName(seriesNumber, 0, buffer);
     myCell->setFirstText(buffer);
-    buffer[0] = 'Y';
+    m_store->fillColumnName(seriesNumber, 1, buffer);
     myCell->setSecondText(buffer);
     assert(seriesNumber < Palette::numberOfDataColors());
     myCell->setColor(Palette::DataColor[seriesNumber]);

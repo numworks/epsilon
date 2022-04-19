@@ -67,9 +67,9 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
 }
 
 void StoreController::setFormulaLabel() {
-  char name[Shared::ColumnParameterController::k_maxSizeOfColumnName];
+  char name[Shared::EditableCellTableViewController::k_maxSizeOfColumnName];
   int filledLength = fillColumnName(selectedColumn(), name);
-  if (filledLength < Shared::ColumnParameterController::k_maxSizeOfColumnName - 1) {
+  if (filledLength < Shared::EditableCellTableViewController::k_maxSizeOfColumnName - 1) {
     name[filledLength] = '=';
     name[filledLength+1] = 0;
   }
@@ -269,7 +269,7 @@ void StoreController::reloadSeriesVisibleCells(int series, int relativeColumn) {
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
   // Fetch the series used in the formula to compute the size of the filled in series
-  constexpr static int k_maxSizeOfStoreSymbols = 3; // "V1", "N1", "X1", "Y1"
+  constexpr static int k_maxSizeOfStoreSymbols = DoublePairStore::k_lenOfColumnNames + 1;
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
   variables[0][0] = 0;
   AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
@@ -279,9 +279,8 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   int numberOfValuesToCompute = -1;
   int index = 0;
   while (variables[index][0] != 0) {
-    const char * seriesName = variables[index];
-    assert(strlen(seriesName) == 2);
-    int series = (int)(seriesName[1] - '0') - 1;
+    int series;
+    m_store->isColumnName(variables[index], DoublePairStore::k_lenOfColumnNames, &series);
     assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
     if (numberOfValuesToCompute == -1) {
       numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);

@@ -4,13 +4,17 @@
 #include <apps/i18n.h>
 #include <apps/shared/double_pair_store.h>
 #include <stddef.h>
+#include <string.h>
 
 namespace Statistics {
 
 class Store : public Shared::DoublePairStore {
 friend class BoxRange;
 public:
+  constexpr static const char * k_columnNames[] = {"V", "N"}; // Must be 1 char long
+  static_assert(sizeof(k_columnNames) / sizeof(char *) == Shared::DoublePairStore::k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Statistics.");
   Store();
+
   void setSortedIndex(uint8_t * buffer, size_t bufferSize);
   void invalidateSortedIndexes();
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
@@ -20,6 +24,14 @@ public:
   void setDisplayCumulatedFrequenciesForSeries(int series, bool state) { m_displayCumulatedFrequencies[series] = state; }
   int seriesAtColumn(int column) const override { return computeRelativeColumnAndSeries(&column); }
   int relativeColumnIndex(int columnIndex) const override;
+
+  // DoublePairStore
+  char columnNamePrefix(int column) override {
+    assert(column >= 0 && column < DoublePairStore::k_numberOfColumnsPerSeries);
+    assert(strlen(k_columnNames[column]) == 1);
+    return k_columnNames[column][0];
+  }
+
   // Histogram bars
   double barWidth() const { return m_barWidth; }
   void setBarWidth(double barWidth);

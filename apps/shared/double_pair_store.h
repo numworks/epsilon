@@ -10,6 +10,7 @@ namespace Shared {
 
 class DoublePairStore {
 public:
+  constexpr static int k_lenOfColumnNames = 2; // 1 char for prefix, 1 char for index
   constexpr static int k_numberOfSeries = 3;
   constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static uint8_t k_maxNumberOfPairs = 100;
@@ -20,6 +21,11 @@ public:
   {}
   // Delete the implicit copy constructor: the object is heavy
   DoublePairStore(const DoublePairStore&) = delete;
+
+  // Column name
+  virtual char columnNamePrefix(int column) = 0;
+  int fillColumnName(int series, int column, char * buffer); // Fills 3 chars in the buffer (2 chars for name + null terminate)
+  bool isColumnName(const char * name, int nameLen, int * returnSeries = nullptr, int * returnColumn = nullptr);
 
   // Get and set data
   double get(int series, int i, int j) const {

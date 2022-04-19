@@ -4,8 +4,8 @@ namespace Shared {
 
 bool RecordNameHelper::isNameReservedForAnotherExtension(const char * name, const char * extension) {
   for (int i = 0 ; i < k_reservedExtensionsLength ; i++) {
-    ReservedExtension reservedExtension = reservedExtensions[i];
-    size_t reservedPrefixesLen = sizeof(reservedExtension.namePrefixes) / sizeof(const char *);
+    ReservedExtension reservedExtension = k_reservedExtensions[i];
+    size_t reservedPrefixesLen = sizeof(reservedExtension.namePrefixes) / sizeof(char *);
     for (int j = 0 ; j < reservedPrefixesLen ; j++) {
       int charIndex = 0;
       // For each reserved name, check if the record has the same base name.

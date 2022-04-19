@@ -18,16 +18,7 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
   { }
 
 bool StoreController::fillColumnWithFormula(Expression formula) {
-  return privateFillColumnWithFormula(formula, Symbol::isRegressionSymbol);
-}
-
-int StoreController::fillColumnName(int columnIndex, char * buffer) {
-  int series = columnIndex / Store::k_numberOfColumnsPerSeries;
-  int isXColumn = columnIndex % Store::k_numberOfColumnsPerSeries == 0;
-  buffer[0] = isXColumn ? 'X' : 'Y';
-  buffer[1] = static_cast<char>('1' + series);
-  buffer[2] = 0;
-  return 2;
+  return privateFillColumnWithFormula(formula, RegressionContext::IsSymbol);
 }
 
 void StoreController::clearSelectedColumn() {

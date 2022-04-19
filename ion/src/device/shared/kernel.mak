@@ -31,6 +31,9 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   internal_flash_otp_dual_slots.cpp:-n0100 \
   keyboard.cpp \
   led.cpp \
+  option_bytes.cpp \
+  option_bytes_n0110.cpp:+n0110 \
+  option_bytes_n0120.cpp:+n0120 \
   power_stm32f.cpp:-n0120 \
   power_stm32h.cpp:+n0120 \
   power_standby_n0110.cpp:+n0110 \

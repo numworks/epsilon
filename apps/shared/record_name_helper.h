@@ -15,12 +15,13 @@ public:
     const char * const * namePrefixes;
     const char * extension;
     size_t prefixRepetitions;
+    size_t numberOfElements;
   } ReservedExtension;
 
   constexpr static ReservedExtension k_reservedExtensions[] = {
-    {SequenceStore::k_sequenceNames, Ion::Storage::seqExtension, 0},
-    {Regression::Store::k_columnNames, Ion::Storage::lisExtension, DoublePairStore::k_numberOfSeries},
-    {Statistics::Store::k_columnNames, Ion::Storage::lisExtension, DoublePairStore::k_numberOfSeries}
+    {SequenceStore::k_sequenceNames, Ion::Storage::seqExtension, 0, sizeof(SequenceStore::k_sequenceNames) / sizeof(char *)},
+    {Regression::Store::k_columnNames, Ion::Storage::lisExtension, DoublePairStore::k_numberOfSeries, sizeof(Regression::Store::k_columnNames) / sizeof(char *)},
+    {Statistics::Store::k_columnNames, Ion::Storage::lisExtension, DoublePairStore::k_numberOfSeries, sizeof(Statistics::Store::k_columnNames) / sizeof(char *)}
   };
   constexpr static size_t k_reservedExtensionsLength = sizeof(k_reservedExtensions) / sizeof(ReservedExtension);
 

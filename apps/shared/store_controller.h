@@ -23,8 +23,9 @@ public:
   void displayFormulaInput();
   void setFormulaLabel();
   virtual bool fillColumnWithFormula(Poincare::Expression formula) = 0;
-  int relativeColumnIndex(int columnIndex) { return columnIndex % DoublePairStore::k_numberOfColumnsPerSeries; }
-  int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
+  virtual int relativeColumnIndex(int columnIndex) const { return columnIndex % DoublePairStore::k_numberOfColumnsPerSeries; }
+  virtual int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
+  virtual void sortSelectedColumn();
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
@@ -48,13 +49,14 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
-  void sortSelectedColumn();
   int selectedSeries() { return seriesAtColumn(selectedColumn()); }
 
 protected:
   static constexpr KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * 7 + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness; // KDFont::SmallFont->glyphSize().width() = 7
 
-  constexpr static int k_maxNumberOfEditableCells = (Ion::Display::Width/k_cellWidth+2) * ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight)/k_cellHeight+2);
+  constexpr static int k_maxNumberOfDisplayableRows = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight)/k_cellHeight + 2;
+  constexpr static int k_maxNumberOfDisplayableColumns = Ion::Display::Width/k_cellWidth + 2;
+  constexpr static int k_maxNumberOfEditableCells = k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableColumns;
   constexpr static int k_numberOfTitleCells = 4;
   static constexpr int k_titleCellType = 0;
   static constexpr int k_editableCellType = 1;
@@ -85,13 +87,14 @@ protected:
   bool privateFillColumnWithFormula(Poincare::Expression formula, Poincare::ExpressionNode::isVariableTest isVariable);
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
+  int numberOfElementsInColumn(int columnIndex) const override;
+  Escher::SelectableTableView * selectableTableView() override { return m_contentView.dataView(); }
+
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
 
 private:
-  Escher::SelectableTableView * selectableTableView() override { return m_contentView.dataView(); }
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
-  int numberOfElementsInColumn(int columnIndex) const override;
   int maxNumberOfElements() const override { return DoublePairStore::k_maxNumberOfPairs; }
 
   StoreTitleCell m_titleCells[k_numberOfTitleCells];

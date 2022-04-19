@@ -155,6 +155,7 @@ int DoublePairStore::indexOfKthValidSeries(int k, ValidSeries validSeries) const
 }
 
 void DoublePairStore::sortColumn(int series, int column) {
+  assert(column == 0 || column == 1);
   static Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
     // Swap X and Y values
     double * dataX = static_cast<double*>(context);

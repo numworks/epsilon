@@ -21,7 +21,7 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
 {}
 
 bool StoreController::fillColumnWithFormula(Expression formula) {
-  return privateFillColumnWithFormula(formula, Symbol::isSeriesSymbol);
+  return privateFillColumnWithFormula(formula, StatisticsContext::IsSymbol);
 }
 
 void StoreController::sortSelectedColumn() {
@@ -36,12 +36,7 @@ int StoreController::fillColumnName(int columnIndex, char * buffer) {
     buffer[0] = 0;
     return 0;
   }
-  int series = m_store->seriesAtColumn(columnIndex);
-  int isValueColumn = m_store->relativeColumnIndex(columnIndex) == 0;
-  buffer[0] = isValueColumn ? 'V' : 'N';
-  buffer[1] = static_cast<char>('1' + series);
-  buffer[2] = 0;
-  return 2;
+  return Shared::StoreController::fillColumnName(columnIndex, buffer);
 }
 
 int StoreController::numberOfColumns() const {
@@ -116,7 +111,7 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   if (isCumulatedFrequencyColumn(columnIndex)) {
     myTitleCell->setText(I18n::translate(I18n::Message::CumulatedFrequencyColumnName));
   } else {
-    char columnName[Shared::ColumnParameterController::k_maxSizeOfColumnName];
+    char columnName[Shared::EditableCellTableViewController::k_maxSizeOfColumnName];
     fillColumnName(columnIndex, columnName);
     char columnTitle[k_columnTitleSize]; // 50 is an ad-hoc value. A title cell can contain max 15 glyphs but the glyph can take more space than 1 byte in memory.
     I18n::Message titleType = m_store->relativeColumnIndex(columnIndex) % 2 == 1 ? I18n::Message::Frequencies : I18n::Message::Values;

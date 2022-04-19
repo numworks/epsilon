@@ -21,8 +21,6 @@ public:
   Shared::StoreContext * storeContext() override { return &m_statisticsContext; }
   bool fillColumnWithFormula(Poincare::Expression formula) override;
   void sortSelectedColumn() override;
-
-  /* EditableCellTableViewController */
   int fillColumnName(int columnIndex, char * buffer) override;
 
   // TableViewDataSource

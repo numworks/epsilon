@@ -3,6 +3,7 @@
 
 #include <poincare/context.h>
 #include <poincare/symbol.h>
+#include "store.h"
 #include "../shared/store_context.h"
 
 namespace Regression {
@@ -10,10 +11,8 @@ namespace Regression {
 class RegressionContext : public Shared::StoreContext {
 public:
   using Shared::StoreContext::StoreContext;
-
-private:
-  bool isSymbol(const char * name) const override { return Poincare::Symbol::isRegressionSymbol(name, nullptr); }
-  int getSymbolColumn(const char * name) const override { return name[0] == 'Y'; }
+  // This is still very dirty but will be fixed in later commits, when Lists will be implemented
+  static bool IsSymbol(const char * c, Poincare::Context * ctx = nullptr) { return (c[2] == 0 && (c[0] == Regression::Store::k_columnNames[0][0] || c[0] == Regression::Store::k_columnNames[1][0]) && c[1] >= '1' && c[1] <= '3'); }
 };
 
 }

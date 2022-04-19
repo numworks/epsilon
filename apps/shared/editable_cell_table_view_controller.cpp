@@ -155,7 +155,7 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
 }
 
 int EditableCellTableViewController::fillColumnNameWithMessage(char * buffer, I18n::Message message) {
-  return Poincare::Print::customPrintf(buffer, ColumnParameterController::k_maxSizeOfColumnName, I18n::translate(message));
+  return Poincare::Print::customPrintf(buffer, k_maxSizeOfColumnName, I18n::translate(message));
 }
 
 void EditableCellTableViewController::setClearPopUpContent() {

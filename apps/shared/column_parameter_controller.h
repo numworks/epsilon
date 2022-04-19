@@ -3,10 +3,9 @@
 
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
+#include "editable_cell_table_view_controller.h"
 
 namespace Shared {
-
-class EditableCellTableViewController;
 
 class ColumnParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
@@ -15,7 +14,6 @@ public:
     SelectableListViewController(parentResponder),
     m_columnIndex(-1)
   {}
-  static constexpr int k_maxSizeOfColumnName = 16; // this is an ad hoc value. Most of the time, colum_name are very short like "X1", "n" or "f(x)"
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   const char * title() override { return m_titleBuffer; };
@@ -24,7 +22,7 @@ protected:
   virtual EditableCellTableViewController * editableCellTableViewController() = 0;
   Escher::StackViewController * stackView();
   int m_columnIndex;
-  char m_columnNameBuffer[k_maxSizeOfColumnName];
+  char m_columnNameBuffer[EditableCellTableViewController::k_maxSizeOfColumnName];
   char m_titleBuffer[k_titleBufferSize];
 
 };

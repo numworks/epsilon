@@ -30,7 +30,11 @@ public:
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 
 protected:
-  // Some DataViewController implementations may have a stricter condition
+  /* Some DataViewController implementations may have a stricter condition.
+   * To simplify the code, views and ranges of controllers using this default
+   * implementation directly use Shared::DoublePairStore::DefaultValidSeries.
+   * They should be updated accordingly if their controllers override this
+   * method. */
   virtual Shared::DoublePairStore::ValidSeries validSerieMethod() const { return Shared::DoublePairStore::DefaultValidSeries; };
   void sanitizeSeriesIndex();
   virtual void viewWillAppearBeforeReload() {}

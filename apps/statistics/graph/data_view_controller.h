@@ -30,14 +30,8 @@ public:
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 
 protected:
-  /* These three methods are re-implementation of the DoublePairStore methods,
-   * using DataViewController::seriesIsValid instead of Store::seriesIsValid */
-  int numberOfValidSeries() const;
-  int validSeriesIndex(int series) const;
-  int indexOfKthValidSeries(int series) const;
-  virtual bool seriesIsValid(int series) const = 0;
-
-  bool hasValidSeries() const { return numberOfValidSeries() != 0; }
+  // Some DataViewController implementations may have a stricter condition
+  virtual Shared::DoublePairStore::ValidSeries validSerieMethod() const { return Shared::DoublePairStore::DefaultValidSeries; };
   void sanitizeSeriesIndex();
   virtual void viewWillAppearBeforeReload() {}
   virtual bool reloadBannerView() = 0;

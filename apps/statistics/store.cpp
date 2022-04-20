@@ -37,11 +37,11 @@ void Store::invalidateSortedIndexes() {
   }
 }
 
-int Store::validSeriesIndex(int series) const {
-  assert(seriesIsValid(series));
+int Store::validSeriesIndex(int series, ValidSeries validSeries) const {
+  assert(validSeries(this, series));
   int index = 0;
   for (int i = 0; i < series; i++) {
-    index += seriesIsValid(i);
+    index += validSeries(this, i);
   }
   return index;
 }
@@ -161,25 +161,29 @@ double Store::sumOfOccurrences(int series) const {
   return sumOfColumn(series, 1);
 }
 
-double Store::maxValueForAllSeries(bool handleNullFrequencies) const {
+double Store::maxValueForAllSeries(bool handleNullFrequencies, ValidSeries validSeries) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
-  double result = maxValue(0, handleNullFrequencies);
-  for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
-    double maxCurrentSeries = maxValue(i, handleNullFrequencies);
-    if (result < maxCurrentSeries) {
-      result = maxCurrentSeries;
+  double result = DBL_MIN;
+  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
+    if (validSeries(this, i)) {
+      double maxCurrentSeries = maxValue(i, handleNullFrequencies);
+      if (result < maxCurrentSeries) {
+        result = maxCurrentSeries;
+      }
     }
   }
   return result;
 }
 
-double Store::minValueForAllSeries(bool handleNullFrequencies) const {
+double Store::minValueForAllSeries(bool handleNullFrequencies, ValidSeries validSeries) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
-  double result = minValue(0, handleNullFrequencies);
-  for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
-    double minCurrentSeries = minValue(i, handleNullFrequencies);
-    if (result > minCurrentSeries) {
-      result = minCurrentSeries;
+  double result = DBL_MAX;
+  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
+    if (validSeries(this, i)) {
+      double minCurrentSeries = minValue(i, handleNullFrequencies);
+      if (result > minCurrentSeries) {
+        result = minCurrentSeries;
+      }
     }
   }
   return result;

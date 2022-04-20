@@ -97,9 +97,9 @@ void DoublePairStore::resetColumn(int series, int i) {
   memoizeValidSeries(series);
 }
 
-bool DoublePairStore::hasValidSeries() const {
+bool DoublePairStore::hasValidSeries(ValidSeries validSeries) const {
   for (int i = 0; i < k_numberOfSeries; i++) {
-    if (seriesIsValid(i)) {
+    if (validSeries(this, i)) {
       return true;
     }
   }
@@ -128,10 +128,10 @@ void DoublePairStore::memoizeValidSeries(int series) {
   m_validSeries[series] = true;
 }
 
-int DoublePairStore::numberOfValidSeries() const {
+int DoublePairStore::numberOfValidSeries(ValidSeries validSeries) const {
   int nonEmptySeriesCount = 0;
   for (int i = 0; i< k_numberOfSeries; i++) {
-    if (seriesIsValid(i)) {
+    if (validSeries(this, i)) {
       nonEmptySeriesCount++;
     }
   }
@@ -139,11 +139,11 @@ int DoublePairStore::numberOfValidSeries() const {
 }
 
 
-int DoublePairStore::indexOfKthValidSeries(int k) const {
+int DoublePairStore::indexOfKthValidSeries(int k, ValidSeries validSeries) const {
   assert(k >= 0 && k < numberOfValidSeries());
   int validSeriesCount = 0;
   for (int i = 0; i < k_numberOfSeries; i++) {
-    if (seriesIsValid(i)) {
+    if (validSeries(this, i)) {
       if (validSeriesCount == k) {
         return i;
       }

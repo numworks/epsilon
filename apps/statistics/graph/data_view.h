@@ -12,7 +12,7 @@ class DataView : public Escher::View {
 public:
   static constexpr int k_defaultSelectedIndex = 0;
 
-  DataView(Store * store) : m_store(store), m_displayBanner(false) {}
+  DataView() : m_displayBanner(false) {}
   virtual Shared::CurveView * curveViewForSeries(int series) = 0;
   virtual void reload() = 0;
   void selectViewForSeries(int series);
@@ -29,8 +29,6 @@ protected:
   virtual void layoutDataSubviews(bool force) = 0;
   virtual Shared::BannerView * bannerView() = 0;
   void layoutBanner(bool force);
-
-  Store * m_store;
 
 private:
   bool m_displayBanner;

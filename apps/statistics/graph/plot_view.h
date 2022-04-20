@@ -18,14 +18,14 @@ namespace Statistics {
  */
 class PlotView : public DataView {
 public:
-  PlotView(Store * store, PlotCurveView * plotCurveView, PlotRange * graphRange, PlotBannerView * bannerView) :
-    DataView(store),
+  PlotView(PlotCurveView * plotCurveView, PlotRange * graphRange, PlotBannerView * bannerView) :
+    DataView(),
     m_plotCurveView(plotCurveView),
     m_graphRange(graphRange),
     m_bannerView(bannerView) {
   }
 
-  // MultipleDataView
+  // DataView
   int numberOfSubviews() const override { return 2; } // CurveView and Banner
   Escher::View * subviewAtIndex(int index) override;
   // All series are displayed in the same curve view

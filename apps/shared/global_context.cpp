@@ -162,15 +162,9 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord, Context * context) {
-  if (!previousRecord.isNull() && Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
-    /* A function can overwrite a variable, but a variable cannot be created if
-     * it has the same name as an existing function. */
-    // TODO Pop up "Name taken for a function"
-    return Ion::Storage::Record::ErrorStatus::NameTaken;
-  }
-  // Delete any record with same name (as it is going to be overriden)
-  previousRecord.destroy();
-  const char * extension = expression.deepIsList(context) ? Ion::Storage::lisExtension : Ion::Storage::expExtension;
+  Expression reducedExpression = expression.clone();
+  PoincareHelpers::CloneAndReduce(&reducedExpression, context, ExpressionNode::ReductionTarget::User);
+  const char * extension = reducedExpression.type() == ExpressionNode::Type::List ? Ion::Storage::lisExtension : Ion::Storage::expExtension;
   return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), extension, expression.addressInPool(), expression.size());
 }
 
@@ -178,8 +172,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const 
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
-    // The previous record was not a function. Destroy it and create the new record.
-    previousRecord.destroy();
+    // The previous record was not a function. Create a new model.
     ContinuousFunction newModel = ContinuousFunction::NewModel(&error, symbol.name());
     if (error != Ion::Storage::Record::ErrorStatus::None) {
       return error;

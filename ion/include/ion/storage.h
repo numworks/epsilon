@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
+#include "unicode/utf8_helper.h"
 
 namespace Ion {
 
@@ -69,6 +70,9 @@ public:
     }
     const char * fullName() const {
       return Storage::sharedStorage()->fullNameOfRecord(*this);
+    }
+    const char * extension() const {
+      return UTF8Helper::CodePointSearch(fullName(), '.') + 1;
     }
     Data value() const {
       return Storage::sharedStorage()->valueOfRecord(*this);
@@ -144,6 +148,12 @@ public:
   void destroyRecordWithBaseNameAndExtension(const char * baseName, const char * extension);
   void destroyRecordsWithExtension(const char * extension);
 
+  /* Destroy a record with same baseName and a competing extension
+   * Return false if there is a competing record but it can't be destroyed
+   * since it has precedence on its base name.
+  * (See RecordNameHelper) */
+  bool destroyCompetingRecord(const char * baseName, const char * extension, int baseNameLength = -1, Record * excludedRecord = nullptr);
+
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
@@ -181,8 +191,8 @@ private:
   size_t overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, int basenameLength, const char * extension, int extensionLength);
   size_t overrideValueAtPosition(char * position, const void * data, record_size_t size);
 
-  bool isFullNameTakenOrReserved(const char * fullName, const Record * recordToExclude = nullptr);
-  bool isBaseNameWithExtensionTakenOrReserved(const char * baseName, const char * extension, Record * recordToExclude = nullptr);
+  bool isFullNameTaken(const char * fullName, const Record * recordToExclude = nullptr);
+  bool isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude = nullptr);
   bool isNameOfRecordTaken(Record r, const Record * recordToExclude);
   static bool FullNameCompliant(const char * name);
   char * endBuffer();
@@ -233,10 +243,18 @@ public:
 
 /* This helper is used by the storage to know if it can override a record with
  * a new one. It is pure virtual so that it is defined in Apps and not in Ion.
- * It contains only "static" functions */
+ * It contains only "static" functions.
+ * See Apps::Shared::RecordNameHelper */
 class RecordNameHelper {
 public:
-   virtual bool isNameReservedForAnotherExtension(const char * name, const char * extension) = 0;
+  enum class OverrideStatus {
+    Forbidden = 0,
+    Allowed,
+    CanCoexist
+  };
+  virtual const char * const * competingExtensions() = 0;
+  virtual int numberOfCompetingExtensions() = 0;
+  virtual OverrideStatus shouldRecordBeOverridenWithNewExtension(Storage::Record previousRecord, const char * newExtension) = 0;
 };
 
 // emscripten read and writes must be aligned.

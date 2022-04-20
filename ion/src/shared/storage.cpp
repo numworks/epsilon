@@ -175,7 +175,12 @@ Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * full
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
    return notifyFullnessToDelegate();
   }
-  if (isFullNameTakenOrReserved(fullName)) {
+  const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
+  int basenameLength = dotChar - fullName;
+  if (!destroyCompetingRecord(fullName, dotChar + 1, basenameLength)) {
+    return Record::ErrorStatus::NameTaken;
+  }
+  if (isFullNameTaken(fullName)) {
     return Record::ErrorStatus::NameTaken;
   }
   // Find the end of data
@@ -203,7 +208,10 @@ Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * bas
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
    return notifyFullnessToDelegate();
   }
-  if (isBaseNameWithExtensionTakenOrReserved(baseName, extension)) {
+  if (!destroyCompetingRecord(baseName, extension)) {
+    return Record::ErrorStatus::NameTaken;
+  }
+  if (isBaseNameWithExtensionTaken(baseName, extension)) {
     return Record::ErrorStatus::NameTaken;
   }
   // Find the end of data
@@ -316,6 +324,30 @@ void Storage::destroyRecordsWithExtension(const char * extension) {
   }
 }
 
+bool Storage::destroyCompetingRecord(const char * baseName, const char * extension, int baseNameLength, Record * excludedRecord) {
+  if (m_recordNameHelper == nullptr) {
+    return true;
+  }
+  baseNameLength = baseNameLength < 0 ? strlen(baseName) : baseNameLength;
+  Record competingRecord = privateRecordAndExtensionOfRecordBaseNamedWithExtensions(baseName, m_recordNameHelper->competingExtensions(), m_recordNameHelper->numberOfCompetingExtensions(), nullptr, baseNameLength);
+  if (competingRecord.isNull() || (excludedRecord != nullptr && *excludedRecord == competingRecord)) {
+    return true;
+  }
+  if (strcmp(extension, competingRecord.extension()) == 0) {
+    competingRecord.destroy();
+    return true;
+  }
+  RecordNameHelper::OverrideStatus result = m_recordNameHelper->shouldRecordBeOverridenWithNewExtension(competingRecord, extension);
+  if (result == RecordNameHelper::OverrideStatus::Forbidden) {
+    return false;
+  }
+  if (result == RecordNameHelper::OverrideStatus::Allowed) {
+    competingRecord.destroy();
+  }
+  return true;
+}
+
+
 // PRIVATE
 
 Storage::Storage() :
@@ -323,6 +355,7 @@ Storage::Storage() :
   m_buffer(),
   m_magicFooter(Magic),
   m_delegate(nullptr),
+  m_recordNameHelper(nullptr),
   m_lastRecordRetrieved(nullptr),
   m_lastRecordRetrievedPointer(nullptr)
 {
@@ -352,11 +385,12 @@ Storage::Record::ErrorStatus Storage::setFullNameOfRecord(Record * record, const
 
 Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record * record, const char * baseName, int baseNameLength, const char * extension, int extensionLength) {
   Record newRecord = Record(baseName, baseNameLength, extension, extensionLength);
-  if ((m_recordNameHelper != nullptr && m_recordNameHelper->isNameReservedForAnotherExtension(baseName, extension)) || isNameOfRecordTaken(newRecord, record)) {
+  Record oldRecord = *record;
+  if (isNameOfRecordTaken(newRecord, record) || !destroyCompetingRecord(baseName, extension, baseNameLength, record)) {
     return Record::ErrorStatus::NameTaken;
   }
   size_t nameSize = baseNameLength + 1 + extensionLength + 1;
-  char * p = pointerOfRecord(*record);
+  char * p = pointerOfRecord(oldRecord);
   if (p != nullptr) {
     size_t previousNameSize = strlen(fullNameOfRecordStarting(p))+1;
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
@@ -482,19 +516,12 @@ size_t Storage::overrideValueAtPosition(char * position, const void * data, reco
   return size;
 }
 
-bool Storage::isFullNameTakenOrReserved(const char * fullName, const Record * recordToExclude) {
-  const char * extension = UTF8Helper::CodePointSearch(fullName, '.') + 1;
-  if (m_recordNameHelper != nullptr && m_recordNameHelper->isNameReservedForAnotherExtension(fullName, extension)) {
-    return true;
-  }
+bool Storage::isFullNameTaken(const char * fullName, const Record * recordToExclude) {
   Record r = Record(fullName);
   return isNameOfRecordTaken(r, recordToExclude);
 }
 
-bool Storage::isBaseNameWithExtensionTakenOrReserved(const char * baseName, const char * extension, Record * recordToExclude) {
-  if (m_recordNameHelper != nullptr && m_recordNameHelper->isNameReservedForAnotherExtension(baseName, extension)) {
-    return true;
-  }
+bool Storage::isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude) {
   Record r = Record(baseName, extension);
   return isNameOfRecordTaken(r, recordToExclude);
 }

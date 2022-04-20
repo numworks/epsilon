@@ -25,7 +25,7 @@ Button * BoxController::buttonAtIndex(int index, ButtonRowController::Position p
 }
 
 bool BoxController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::Toolbox) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Toolbox) {
     stackController()->push(boxParameterController());
     return true;
   }

@@ -34,7 +34,7 @@ Button * HistogramController::buttonAtIndex(int index, ButtonRowController::Posi
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::Toolbox) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Toolbox) {
     stackController()->push(histogramParameterController());
     return true;
   }

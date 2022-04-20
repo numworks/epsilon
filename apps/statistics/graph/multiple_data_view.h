@@ -9,7 +9,7 @@ namespace Statistics {
 
 class MultipleDataView : public DataView {
 public:
-  using DataView::DataView;
+  MultipleDataView(Store * store) : DataView(), m_store(store) {}
   KDCoordinate subviewHeight();
 
   // Display
@@ -20,6 +20,8 @@ public:
 protected:
   void layoutDataSubviews(bool force) override;
   Escher::View * subviewAtIndex(int index) override;
+
+  Store * m_store;
 };
 
 }

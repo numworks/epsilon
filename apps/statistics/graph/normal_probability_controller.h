@@ -18,7 +18,7 @@ public:
 
   // PlotControllerDelegate
   bool handleNullFrequencies() const override { return false; }
-  int totalValues(int series) const override;
+  int totalValues(int series) const override { return m_store->totalNormalProbabilityValues(series); }
   double valueAtIndex(int series, int i) const override { return m_store->normalProbabilityValueAtIndex(series, i); }
   double resultAtIndex(int series, int i) const override { return m_store->normalProbabilityResultAtIndex(series, i); }
   void computeYBounds(float * yMin, float *yMax) const override;
@@ -30,9 +30,6 @@ public:
 
   TELEMETRY_ID("NormalProbability");
 private:
-  constexpr static int k_maxTotalValues = Store::k_maxNumberOfPairs;
-  static_assert(k_maxTotalValues <= INT_MAX, "maxTotalValues is too large.");
-
   // Hide series having invalid total values.
   bool seriesIsValid(int series) const override { return m_store->seriesIsValid(series) && totalValues(series) > 0; }
   const char * resultMessageTemplate() const override { return "%s%s%*.*ed"; }

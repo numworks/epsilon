@@ -32,7 +32,7 @@ KDRect BoxView::selectedCalculationRect() const {
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation)) - k_leftSideSize;
   KDCoordinate width = k_leftSideSize + k_rightSideSize;
   // Transpose the rect into parent's view coordinates
-  return KDRect(minX, 0, width, BoxFrameHeight(m_store->numberOfValidSeries())).translatedBy(m_frame.origin());
+  return KDRect(minX, 0, width, BoxFrameHeight(m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultValidSeries))).translatedBy(m_frame.origin());
 }
 
 KDRect BoxView::rectToReload() {
@@ -48,11 +48,11 @@ void BoxView::reload(bool resetInterrupted, bool force) {
 KDRect BoxView::boxRect() const {
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series))) - k_leftSideSize;
   KDCoordinate maxX = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series))) + k_rightSideSize;
-  return KDRect(minX, 0, maxX - minX, BoxFrameHeight(m_store->numberOfValidSeries()));
+  return KDRect(minX, 0, maxX - minX, BoxFrameHeight(m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultValidSeries)));
 }
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
-  int numberOfSeries = m_store->numberOfValidSeries();
+  int numberOfSeries = m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultValidSeries);
   assert(bounds().height() == BoxFrameHeight(numberOfSeries));
   KDColor color = isMainViewSelected() ? DoublePairStore::colorLightOfSeriesAtIndex(m_series) : Palette::GrayWhite;
 
@@ -104,7 +104,7 @@ void BoxView::drawCalculation(KDContext * ctx, KDRect rect, int selectedCalculat
 void BoxView::drawBar(KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound, KDColor color, bool isSelected) const {
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, calculation, lowBound, upBound, color, k_quantileBarWidth);
   if (isSelected) {
-    lowBound = pixelToFloat(Axis::Vertical, k_verticalSideSize + BoxHeight(m_store->numberOfValidSeries()) + k_chevronMargin - 1);
+    lowBound = pixelToFloat(Axis::Vertical, k_verticalSideSize + BoxHeight(m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultValidSeries)) + k_chevronMargin - 1);
     upBound = pixelToFloat(Axis::Vertical, k_verticalSideSize - k_chevronMargin);
     drawChevronSelection(ctx, rect, calculation, lowBound, upBound);
   }

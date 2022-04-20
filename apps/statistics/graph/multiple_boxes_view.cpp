@@ -23,12 +23,12 @@ BoxView *  MultipleBoxesView::curveViewForSeries(int series) {
 }
 
 void MultipleBoxesView::layoutDataSubviews(bool force) {
-  int numberOfDataSubviews = m_store->numberOfValidSeries();
+  int numberOfDataSubviews = m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultValidSeries);
   assert(numberOfDataSubviews > 0);
   KDCoordinate bannerHeight = bannerFrame().height();
   KDCoordinate boxYPosition = TopToFirstBoxMargin(numberOfDataSubviews);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (m_store->seriesIsValid(i)) {
+    if (Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {
       // Add vertical margins to box layout. Boxes layouts may overlap.
       KDRect frame = KDRect(0, boxYPosition - BoxView::BoxVerticalMargin(), bounds().width(), BoxView::BoxFrameHeight(numberOfDataSubviews));
       curveViewForSeries(i)->setFrame(frame, force);

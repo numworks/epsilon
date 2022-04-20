@@ -2,6 +2,42 @@
 
 namespace Shared {
 
+size_t RecordNameHelper::precedenceScoreOfExtension(const char * extension) {
+  for (int i = 0 ; i < k_numberOfCompetingExtensions ; i++) {
+    if (strcmp(extension, k_competingExtensions[i]) == 0) {
+      return k_competingExtensionsPrecedenceScore[i];
+    }
+  }
+  return -1;
+}
+
+Ion::RecordNameHelper::OverrideStatus RecordNameHelper::shouldRecordBeOverridenWithNewExtension(Ion::Storage::Record previousRecord, const char * newExtension) {
+  if (previousRecord.isNull()) {
+    return Ion::RecordNameHelper::OverrideStatus::Allowed;
+  }
+  int newPrecedenceScore = precedenceScoreOfExtension(newExtension);
+  int previousPrecedenceScore = precedenceScoreOfExtension(previousRecord.extension());
+  // If at least one is not a competing extension, they can coexist.
+  if (newPrecedenceScore == -1 || previousPrecedenceScore == -1) {
+    return Ion::RecordNameHelper::OverrideStatus::CanCoexist;
+  }
+  bool newIsReservedForAnotherExtension = isNameReservedForAnotherExtension(previousRecord.fullName(), newExtension);
+  bool previousIsReservedForAnotherExtension = isNameReservedForAnotherExtension(previousRecord.fullName(), previousRecord.extension());
+  if (newIsReservedForAnotherExtension && !previousIsReservedForAnotherExtension) {
+    // Name is reserved for previousExtension.
+    return Ion::RecordNameHelper::OverrideStatus::Forbidden;
+  }
+  if (!newIsReservedForAnotherExtension && previousIsReservedForAnotherExtension) {
+    // Name is reserved for new extension.
+    return Ion::RecordNameHelper::OverrideStatus::Allowed;
+  }
+  if (newPrecedenceScore > previousPrecedenceScore) {
+    // Previous extension has precedence over new one.
+    return Ion::RecordNameHelper::OverrideStatus::Forbidden;
+  }
+  return  Ion::RecordNameHelper::OverrideStatus::Allowed;
+}
+
 bool RecordNameHelper::isNameReservedForAnotherExtension(const char * name, const char * extension) {
   for (int i = 0 ; i < k_reservedExtensionsLength ; i++) {
     ReservedExtension reservedExtension = k_reservedExtensions[i];

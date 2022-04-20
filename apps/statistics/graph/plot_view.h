@@ -14,7 +14,7 @@ namespace Statistics {
 
 /* PlotView and PlotCurveView could be merged in a single class, but it would
  * create a diamond structure because the merged class should inherit from
- * Shared::LabeledCurveView and public DataView, which inherit booth from View.
+ * Shared::LabeledCurveView and public DataView, which inherit both from View.
  */
 class PlotView : public DataView {
 public:

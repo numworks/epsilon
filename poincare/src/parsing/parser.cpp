@@ -410,19 +410,15 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
   }
 }
 
-void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::Type leftDelimiter1, Token::Type rightDelimiter1, Token::Type leftDelimiter2, Token::Type rightDelimiter2) {
-  bool delimiterTypeIsOne = popTokenIfType(leftDelimiter1);
-  if (!delimiterTypeIsOne && !popTokenIfType(leftDelimiter2)) {
-    m_status = Status::Error; // Left delimiter missing.
+void Parser::parseSequence(Expression & leftHandSide, const char * name, bool delimiterIsBrace) {
+  // The braces or parenthesis have already been popped.
+  Token::Type rightDelimiter = delimiterIsBrace ? Token::RightBrace : Token::RightParenthesis;
+  Expression rank = parseUntil(rightDelimiter);
+  if (m_status != Status::Progress) {
+  } else if (!popTokenIfType(rightDelimiter)) {
+    m_status = Status::Error; // Right delimiter missing
   } else {
-    Token::Type rightDelimiter = delimiterTypeIsOne ? rightDelimiter1 : rightDelimiter2;
-    Expression rank = parseUntil(rightDelimiter);
-    if (m_status != Status::Progress) {
-    } else if (!popTokenIfType(rightDelimiter)) {
-      m_status = Status::Error; // Right delimiter missing
-    } else {
-      leftHandSide = Sequence::Builder(name, 1, rank);
-    }
+    leftHandSide = Sequence::Builder(name, 1, rank);
   }
 }
 
@@ -437,13 +433,7 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide, Token::Type stopp
   } else if (m_currentToken.compareTo(Nonreal::Name()) == 0) {
     leftHandSide = Nonreal::Builder();
   } else {
-    assert(m_currentToken.compareTo("u") == 0
-        || m_currentToken.compareTo("v") == 0
-        || m_currentToken.compareTo("w") == 0);
-    /* Special case for sequences (e.g. "u(n)", "u{n}", ...)
-     * We know that m_currentToken.text()[0] is either 'u', 'v' or 'w', so we do
-     * not need to pass a code point to parseSequence. */
-    parseSequence(leftHandSide, m_currentToken.text(), Token::LeftParenthesis, Token::RightParenthesis, Token::LeftBrace, Token::RightBrace);
+     m_status = Status::Error;
   }
   isThereImplicitMultiplication();
 }
@@ -464,18 +454,34 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
   bool poppedParenthesisIsSystem = false;
 
   /* If m_symbolPlusParenthesesAreFunctions is false, check the context: if the
-   * identifier does not already exist as a function or a list, interpret it as
-   * a symbol, even if there are parentheses afterwards. */
+   * identifier does not already exist as a function, seq or list, interpret it
+   * as a symbol, even if there are parentheses afterwards. */
   Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
   if (m_context != nullptr && !m_symbolPlusParenthesesAreFunctions) {
     idType = m_context->expressionTypeForIdentifier(name, length);
-    if (idType != Context::SymbolAbstractType::Function && idType != Context::SymbolAbstractType::List) {
+    if (idType != Context::SymbolAbstractType::Function && idType != Context::SymbolAbstractType::Sequence && idType != Context::SymbolAbstractType::List) {
       leftHandSide = Symbol::Builder(name, length);
       return;
     }
   }
 
-  /* If the identifier is not followed by parentheses, it is a symbol. */
+  if (!m_symbolPlusParenthesesAreFunctions) {
+    /* If the user is not defining a variable and the identifier is followed
+     * by braces, it's a sequence call. */
+    bool poppedBrace = popTokenIfType(Token::LeftBrace);
+    if (poppedBrace || idType == Context::SymbolAbstractType::Sequence) {
+      /* If the identifier is a sequence but not followed by braces, it can
+       * also be followed by parenthesis. */
+      if (!poppedBrace && !popTokenIfType(Token::LeftParenthesis)) {
+        m_status = Status::Error;
+        return;
+      }
+      parseSequence(leftHandSide, name, poppedBrace);
+      return;
+    }
+  }
+
+  // If the identifier is not followed by parentheses or braces, it is a symbol
   if (!popTokenIfType(Token::LeftParenthesis)) {
     if (!popTokenIfType(Token::LeftSystemParenthesis)) {
       leftHandSide = Symbol::Builder(name, length);

@@ -47,7 +47,31 @@ Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 int SequenceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  int result = SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  /* The Prefix function puts parenthesis.
+   * We want to replace the parenthesis with braces u(n) -> u{n} */
+  int i = 0;
+  while (buffer[i] != 0) {
+      if (buffer[i] == '(') {
+        // Replace the left-most left-parenthesis
+        buffer[i] = '{';
+        break;
+      }
+    i++;
+  }
+  if (buffer[i] == 0) {
+    return result;
+  }
+  int j = strlen(buffer) - 1;
+  while (j > i) {
+    if (buffer[j] == ')') {
+      // Replace the right-most right-parenthesis
+      buffer[j] = '}';
+      break;
+    }
+    j--;
+  }
+  return result;
 }
 
 Expression SequenceNode::shallowReduce(ReductionContext reductionContext) {

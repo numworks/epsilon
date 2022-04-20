@@ -24,10 +24,7 @@ private:
     Symbol::k_ansLowerCase,
     Infinity::Name(),
     Nonreal::Name(),
-    "u",
-    Undefined::Name(),
-    "v",
-    "w"
+    Undefined::Name()
   };
   constexpr static int k_numberOfSpecialIdentifiers = sizeof(s_specialIdentifierNames) / sizeof(const char *);
 

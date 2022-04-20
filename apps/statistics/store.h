@@ -15,7 +15,7 @@ public:
   void invalidateSortedIndexes();
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
-  int validSeriesIndex(int series) const;
+  int validSeriesIndex(int series, ValidSeries = &DefaultValidSeries) const;
   // Histogram bars
   double barWidth() const { return m_barWidth; }
   void setBarWidth(double barWidth);
@@ -39,8 +39,8 @@ public:
   // Calculation
   double sumOfOccurrences(int series) const;
   // If handleNullFrequencies, values with a null frequency are accounted for
-  double maxValueForAllSeries(bool handleNullFrequencies = false) const;
-  double minValueForAllSeries(bool handleNullFrequencies = false) const;
+  double maxValueForAllSeries(bool handleNullFrequencies = false, ValidSeries = &DefaultValidSeries) const;
+  double minValueForAllSeries(bool handleNullFrequencies = false, ValidSeries = &DefaultValidSeries) const;
   double maxValue(int series, bool handleNullFrequencies) const;
   double minValue(int series, bool handleNullFrequencies) const;
   // Overloading minValue and maxValue so they can be casted as CalculPointer

@@ -51,7 +51,7 @@ public:
   bool moveSelectionHorizontally(int deltaIndex) override;
 
   // PlotControllerDelegate
-  bool delegateSeriesIsValid(int series) const override final { return seriesIsValid(series); }
+  bool delegateSeriesIsValid(int series) const override final { return validSerieMethod()(m_store, series); }
 
 protected:
   constexpr static KDCoordinate k_smallMargin = 10;

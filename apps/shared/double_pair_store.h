@@ -43,12 +43,15 @@ public:
   virtual void deleteAllPairsOfSeries(int series);
   void deleteAllPairs();
 
-  // Series
-  bool hasValidSeries() const;
+  // Series validity
   bool seriesIsValid(int series) const;
+  typedef bool (*ValidSeries)(const DoublePairStore *, int);
+  static bool DefaultValidSeries(const DoublePairStore * store, int series) { return store->seriesIsValid(series); }
+  // These methods can be implemented with a different validity method
+  bool hasValidSeries(ValidSeries = &DefaultValidSeries) const;
   virtual void memoizeValidSeries(int series);
-  int numberOfValidSeries() const;
-  int indexOfKthValidSeries(int k) const;
+  int numberOfValidSeries(ValidSeries = &DefaultValidSeries) const;
+  int indexOfKthValidSeries(int k, ValidSeries = &DefaultValidSeries) const;
 
   // Calculations
   virtual void sortColumn(int series, int column);

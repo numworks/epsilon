@@ -36,7 +36,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
       Escher::Container::activeApp()->setFirstResponder(m_tabController);
       return true;
     }
-    if (event == Ion::Events::Down && hasValidSeries()) {
+    if (event == Ion::Events::Down && m_store->hasValidSeries(validSerieMethod())) {
       header()->setSelectedButton(-1);
       Escher::Container::activeApp()->setFirstResponder(this);
       dataView()->setDisplayBanner(true);
@@ -47,7 +47,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
     }
     return buttonAtIndex(selectedButton, Escher::ButtonRowController::Position::Top)->handleEvent(event);
   }
-  assert(m_selectedSeries >= 0 && hasValidSeries());
+  assert(m_selectedSeries >= 0 && m_store->hasValidSeries(validSerieMethod()));
   bool isVerticalEvent = (event == Ion::Events::Down || event == Ion::Events::Up);
   if ((isVerticalEvent || event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = (event == Ion::Events::Up || event == Ion::Events::Left) ? -1 : 1;
@@ -62,10 +62,10 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void DataViewController::didEnterResponderChain(Responder * firstResponder) {
-  if (!hasValidSeries() || !dataView()->curveViewForSeries(m_selectedSeries)->isMainViewSelected()) {
+  if (!m_store->hasValidSeries(validSerieMethod()) || !dataView()->curveViewForSeries(m_selectedSeries)->isMainViewSelected()) {
     header()->setSelectedButton(0);
   } else {
-    assert(seriesIsValid(m_selectedSeries));
+    assert(validSerieMethod()(m_store, m_selectedSeries));
     dataView()->setDisplayBanner(true);
     dataView()->selectViewForSeries(m_selectedSeries);
     highlightSelection();
@@ -77,7 +77,7 @@ void DataViewController::willExitResponderChain(Responder * nextFirstResponder) 
     assert(m_tabController != nullptr);
     if (header()->selectedButton() >= 0) {
       header()->setSelectedButton(-1);
-    } else if (hasValidSeries()) {
+    } else if (m_store->hasValidSeries(validSerieMethod())) {
       assert(m_selectedSeries >= 0);
       dataView()->deselectViewForSeries(m_selectedSeries);
       dataView()->setDisplayBanner(false);
@@ -85,43 +85,11 @@ void DataViewController::willExitResponderChain(Responder * nextFirstResponder) 
   }
 }
 
-int DataViewController::numberOfValidSeries() const {
-  int nonEmptySeriesCount = 0;
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    nonEmptySeriesCount += seriesIsValid(i);
-  }
-  return nonEmptySeriesCount;
-}
-
-int DataViewController::validSeriesIndex(int series) const {
-  assert(seriesIsValid(series));
-  int index = 0;
-  for (int i = 0; i < series; i++) {
-    index += seriesIsValid(i);
-  }
-  return index;
-}
-
-int DataViewController::indexOfKthValidSeries(int k) const {
-  assert(k >= 0 && k < numberOfValidSeries());
-  int validSeriesCount = 0;
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (seriesIsValid(i)) {
-      if (validSeriesCount == k) {
-        return i;
-      }
-      validSeriesCount++;
-    }
-  }
-  assert(false);
-  return 0;
-}
-
 void DataViewController::sanitizeSeriesIndex() {
   // Sanitize m_selectedSeries
-  if (m_selectedSeries < 0 || !seriesIsValid(m_selectedSeries)) {
+  if (m_selectedSeries < 0 || !validSerieMethod()(m_store, m_selectedSeries)) {
     for (int series = 0; series < Store::k_numberOfSeries; series++) {
-      if (seriesIsValid(series)) {
+      if (validSerieMethod()(m_store, series)) {
         m_selectedSeries = series;
         return;
       }
@@ -131,8 +99,8 @@ void DataViewController::sanitizeSeriesIndex() {
 }
 
 bool DataViewController::moveSelectionVertically(int direction) {
-  int nextSelectedSubview = validSeriesIndex(m_selectedSeries) + direction;
-  if (nextSelectedSubview >= numberOfValidSeries()) {
+  int nextSelectedSubview = m_store->validSeriesIndex(m_selectedSeries, validSerieMethod()) + direction;
+  if (nextSelectedSubview >= m_store->numberOfValidSeries(validSerieMethod())) {
     return false;
   }
   dataView()->deselectViewForSeries(m_selectedSeries);
@@ -140,7 +108,7 @@ bool DataViewController::moveSelectionVertically(int direction) {
     dataView()->setDisplayBanner(false);
     header()->setSelectedButton(0);
   } else {
-    m_selectedSeries = indexOfKthValidSeries(nextSelectedSubview);
+    m_selectedSeries = m_store->indexOfKthValidSeries(nextSelectedSubview, validSerieMethod());
     m_selectedIndex = DataView::k_defaultSelectedIndex;
     dataView()->selectViewForSeries(m_selectedSeries);
     highlightSelection();

@@ -86,16 +86,8 @@ bool PlotController::reloadBannerView() {
 }
 
 void PlotController::computeXBounds(float * xMin, float *xMax) const {
-  /* Re-implementation of Store methods minValueForAllSeries and
-   * maxValueForAllSeries as seriesIsValid may have been overriden. */
-  *xMin = FLT_MAX;
-  *xMax = FLT_MIN;
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (seriesIsValid(i)) {
-      *xMin = std::min(*xMin, static_cast<float>(m_store->minValue(i, handleNullFrequencies())));
-      *xMax = std::max(*xMax, static_cast<float>(m_store->maxValue(i, handleNullFrequencies())));
-    }
-  }
+  *xMin = m_store->minValueForAllSeries(handleNullFrequencies(), validSerieMethod());
+  *xMax = m_store->maxValueForAllSeries(handleNullFrequencies(), validSerieMethod());
 }
 
 }

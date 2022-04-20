@@ -22,8 +22,7 @@ void DataView::changeDataViewSeriesSelection(int series, bool select) {
 
 KDRect DataView::bannerFrame() const {
   KDCoordinate bannerHeight = const_cast<DataView *>(this)->bannerView()->minimalSizeForOptimalDisplay().height();
-  KDRect frame = KDRect(0, bounds().height() - bannerHeight, bounds().width(), bannerHeight);
-  return frame;
+  return KDRect(0, bounds().height() - bannerHeight, bounds().width(), bannerHeight);
 }
 
 void DataView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -41,13 +40,7 @@ void DataView::layoutSubviews(bool force) {
 
 
 void DataView::layoutBanner(bool force) {
-  KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
-  if (m_displayBanner) {
-    bannerView()->setFrame(bannerFrame(), force);
-  } else {
-    KDRect frame = KDRect(0, bounds().height() - bannerHeight, bounds().width(), 0);
-    bannerView()->setFrame(frame, force);
-  }
+  bannerView()->setFrame(m_displayBanner ? bannerFrame() : KDRectZero, force);
 }
 
 }

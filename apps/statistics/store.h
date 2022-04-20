@@ -82,8 +82,9 @@ public:
 
   /* Normal probability graphs:
    * Values are scattered into elements of frequency 1. */
-  // Return the sumOfOccurrences, return 0 if any frequency is not an integer
-  double totalNormalProbabilityValues(int series) const;
+  /* Return the sumOfOccurrences, return 0 if it exceeds k_maxNumberOfPairs or
+   * if any frequency is not an integer */
+  int totalNormalProbabilityValues(int series) const;
   // Return the sorted element at cumulated population i+1
   double normalProbabilityValueAtIndex(int series, int i) const;
   // Return the z-score of the i-th sorted element

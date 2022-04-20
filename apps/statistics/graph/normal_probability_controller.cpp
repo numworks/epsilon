@@ -4,14 +4,6 @@
 
 namespace Statistics {
 
-int NormalProbabilityController::totalValues(int series) const {
-  double totalNormalProbabilityValues = m_store->totalNormalProbabilityValues(series);
-  if (totalNormalProbabilityValues > k_maxTotalValues) {
-    return 0;
-  }
-  return static_cast<int>(totalNormalProbabilityValues);
-}
-
 void NormalProbabilityController::computeYBounds(float * yMin, float *yMax) const {
   int biggestSeries = 0;
   int maxTotal = 0;

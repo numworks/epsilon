@@ -23,10 +23,10 @@ HistogramView *  MultipleHistogramsView::curveViewForSeries(int series) {
 
 void MultipleHistogramsView::layoutSubviews(bool force) {
   MultipleDataView::layoutSubviews();
-  assert(m_store->numberOfValidSeries() > 0);
+  assert(m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultValidSeries) > 0);
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (m_store->seriesIsValid(i)) {
+    if (Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {
       displayedSubviewIndex++;
     }
   }

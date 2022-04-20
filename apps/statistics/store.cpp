@@ -592,14 +592,19 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
   return 100.0 * cumulatedOccurrences / (cumulatedOccurrences + otherOccurrences);
 }
 
-double Store::totalNormalProbabilityValues(int series) const {
-  // totalNormalProbabilityValues can overflow int
+int Store::totalNormalProbabilityValues(int series) const {
   if (!columnIsIntegersOnly(series, 1)) {
     return 0;
   }
   double result = sumOfOccurrences(series);
   assert(result == std::round(result));
-  return result;
+  /* Limiting the result to k_maxNumberOfPairs to prevent limitless Normal
+   * Probability plots and int overflows */
+  static_assert(k_maxNumberOfPairs <= INT_MAX, "k_maxNumberOfPairs is too large.");
+  if (result > k_maxNumberOfPairs) {
+    return 0;
+  }
+  return static_cast<int>(result);
 }
 
 double Store::normalProbabilityValueAtIndex(int series, int i) const {
@@ -608,8 +613,8 @@ double Store::normalProbabilityValueAtIndex(int series, int i) const {
 }
 
 double Store::normalProbabilityResultAtIndex(int series, int i) const {
-  double total = totalNormalProbabilityValues(series);
-  assert(i >= 0 && static_cast<double>(i) < total);
+  double total = static_cast<double>(totalNormalProbabilityValues(series));
+  assert(i >= 0 && total > 0 && static_cast<double>(i) < total);
   // invnorm((i-0.5)/total,0,1)
   double plottingPosition = (static_cast<double>(i) + 0.5) / total;
   return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<double>(plottingPosition, 0.0, 1.0);

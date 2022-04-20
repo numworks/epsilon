@@ -1,18 +1,21 @@
 #ifndef STATISTICS_NORMAL_PROBABILITY_CONTROLLER_H
 #define STATISTICS_NORMAL_PROBABILITY_CONTROLLER_H
 
+#include <escher/alternate_empty_view_delegate.h>
 #include "plot_controller.h"
 #include <limits.h>
 
 namespace Statistics {
 
-class NormalProbabilityController : public PlotController {
+class NormalProbabilityController : public PlotController, public Escher::AlternateEmptyViewDefaultDelegate {
 public:
   using PlotController::PlotController;
+
   // AlternateEmptyViewDefaultDelegate
-  /* NormalProbabilityController is the only DataView overriding seriesIsValid.
-   * To optimize the other DataViews, emptiness is only actually checked here.*/
-  bool isEmpty() const override { return numberOfValidSeries() == 0; }
+  bool isEmpty() const override { return !hasValidSeries(); }
+  I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
+  Escher::Responder * defaultController() override { return this; }
+
   // PlotControllerDelegate
   bool handleNullFrequencies() const override { return false; }
   int totalValues(int series) const override;

@@ -1,7 +1,6 @@
 #ifndef STATISTICS_DATA_VIEW_CONTROLLER_H
 #define STATISTICS_DATA_VIEW_CONTROLLER_H
 
-#include <escher/alternate_empty_view_delegate.h>
 #include <escher/view_controller.h>
 #include "graph_button_row_delegate.h"
 #include "data_view.h"
@@ -9,7 +8,7 @@
 
 namespace Statistics {
 
-class DataViewController : public Escher::ViewController, public GraphButtonRowDelegate, public Escher::AlternateEmptyViewDefaultDelegate {
+class DataViewController : public Escher::ViewController, public GraphButtonRowDelegate {
 
 public:
   DataViewController(
@@ -20,11 +19,6 @@ public:
     Escher::ViewController * typeViewController,
     Store * store);
   virtual DataView * dataView() = 0;
-
-  // AlternateEmptyViewDefaultDelegate
-  bool isEmpty() const override { assert(numberOfValidSeries() > 0); return false; }
-  I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
-  Escher::Responder * defaultController() override { return this; }
 
   // ViewController
   Escher::View * view() override { return dataView(); }
@@ -43,6 +37,7 @@ protected:
   int indexOfKthValidSeries(int series) const;
   virtual bool seriesIsValid(int series) const = 0;
 
+  bool hasValidSeries() const { return numberOfValidSeries() != 0; }
   void sanitizeSeriesIndex();
   virtual void viewWillAppearBeforeReload() {}
   virtual bool reloadBannerView() = 0;

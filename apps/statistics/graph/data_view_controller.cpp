@@ -36,7 +36,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
       Escher::Container::activeApp()->setFirstResponder(m_tabController);
       return true;
     }
-    if (event == Ion::Events::Down && !isEmpty()) {
+    if (event == Ion::Events::Down && hasValidSeries()) {
       header()->setSelectedButton(-1);
       Escher::Container::activeApp()->setFirstResponder(this);
       dataView()->setDisplayBanner(true);
@@ -47,7 +47,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
     }
     return buttonAtIndex(selectedButton, Escher::ButtonRowController::Position::Top)->handleEvent(event);
   }
-  assert(m_selectedSeries >= 0 && !isEmpty());
+  assert(m_selectedSeries >= 0 && hasValidSeries());
   bool isVerticalEvent = (event == Ion::Events::Down || event == Ion::Events::Up);
   if ((isVerticalEvent || event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = (event == Ion::Events::Up || event == Ion::Events::Left) ? -1 : 1;
@@ -62,7 +62,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void DataViewController::didEnterResponderChain(Responder * firstResponder) {
-  if (isEmpty() || !dataView()->curveViewForSeries(m_selectedSeries)->isMainViewSelected()) {
+  if (!hasValidSeries() || !dataView()->curveViewForSeries(m_selectedSeries)->isMainViewSelected()) {
     header()->setSelectedButton(0);
   } else {
     assert(seriesIsValid(m_selectedSeries));
@@ -77,7 +77,7 @@ void DataViewController::willExitResponderChain(Responder * nextFirstResponder) 
     assert(m_tabController != nullptr);
     if (header()->selectedButton() >= 0) {
       header()->setSelectedButton(-1);
-    } else if (!isEmpty()) {
+    } else if (hasValidSeries()) {
       assert(m_selectedSeries >= 0);
       dataView()->deselectViewForSeries(m_selectedSeries);
       dataView()->setDisplayBanner(false);

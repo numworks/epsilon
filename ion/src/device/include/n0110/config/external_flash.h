@@ -23,6 +23,7 @@ using namespace Regs;
 constexpr uint32_t StartAddress = 0x90000000;
 constexpr uint32_t EndAddress = 0x90800000;
 constexpr uint32_t TotalSize = EndAddress - StartAddress;
+constexpr uint32_t MaximalSectorSize = 0x10000; // 64kiB
 
 constexpr int NumberOf4KSectors = 8;
 constexpr int NumberOf32KSectors = 1;

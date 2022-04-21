@@ -20,7 +20,7 @@ public:
   I18n::Message distributionTitle() const override { return OneMean::DistributionTitle(); }
   const char * hypothesisSymbol() override { return OneMean::HypothesisSymbol(); }
   void initParameters() override { OneMean::InitTestParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return OneMean::ZAuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && OneMean::ZAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {
     p = OneMean::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);

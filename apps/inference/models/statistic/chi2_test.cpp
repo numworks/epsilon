@@ -1,6 +1,7 @@
 #include "chi2_test.h"
 #include "goodness_test.h"
 #include "homogeneity_test.h"
+#include "interfaces/significance_tests.h"
 
 #include <algorithm>
 #include <cmath>
@@ -86,10 +87,13 @@ bool Chi2Test::authorizedParameterAtPosition(double p, int row, int column) cons
 }
 
 bool Chi2Test::authorizedParameterAtIndex(double p, int i) const {
-  if (i == indexOfDegreeOfFreedom()) {
-    return p == std::round(p) && p >= 1.0;
+  if (i == indexOfDegreeOfFreedom() && (p != std::round(p) || p < 1.0)) {
+    return false;
   }
-  return Statistic::authorizedParameterAtIndex(i, p);
+  if (i == indexOfThreshold() && !SignificanceTest::ValidThreshold(p)) {
+    return false;
+  }
+  return Inference::authorizedParameterAtIndex(p, i);
 }
 
 bool Chi2Test::deleteParameterAtPosition(int row, int column) {

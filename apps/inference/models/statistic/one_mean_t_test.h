@@ -21,7 +21,7 @@ public:
   I18n::Message distributionDescription() const override { return OneMean::TestDistributionDescription(); }
   const char * hypothesisSymbol() override { return OneMean::HypothesisSymbol(); }
   void initParameters() override { OneMean::InitTestParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return OneMean::TAuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && OneMean::TAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {
     p = OneMean::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);

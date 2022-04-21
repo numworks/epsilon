@@ -18,7 +18,7 @@ public:
   I18n::Message distributionTitle() const override { return OneMean::DistributionTitle(); }
   I18n::Message distributionDescription() const override { return OneMean::IntervalDistributionDescription(); }
   void initParameters() override { OneMean::InitZIntervalParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return OneMean::ZAuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && OneMean::ZAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {
     p = OneMean::ProcessParamaterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);

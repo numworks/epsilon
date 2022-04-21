@@ -381,8 +381,7 @@ bool TwoMeans::TAuthorizedParameterAtIndex(int i, double p) {
     case ParamsOrder::s2:
       return p >= 0.0;
     default:
-      assert(false);
-      return false;
+      return true;
   }
 }
 

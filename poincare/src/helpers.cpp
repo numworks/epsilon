@@ -112,5 +112,26 @@ void Sort(Swap swap, Compare compare, void * context, int numberOfElements) {
   }
 }
 
+int ExtremumIndex(Compare compare, void * context, int numberOfElements, bool minimum) {
+  int returnIndex = 0;
+  for (int i = 0; i < numberOfElements; i++) {
+    bool newIsGreater = compare(i, returnIndex, context, numberOfElements);
+    if ((minimum && !newIsGreater) || (!minimum && newIsGreater)) {
+      returnIndex = i;    }
+  }
+  return returnIndex;
 }
+
+bool FloatComparison(float xI, float xJ, bool nanIsGreatest) {
+  if (std::isnan(xI)) {
+    return nanIsGreatest;
+  }
+  if (std::isnan(xJ)) {
+    return !nanIsGreatest;
+  }
+  return xI > xJ;
+}
+
+}
+
 }

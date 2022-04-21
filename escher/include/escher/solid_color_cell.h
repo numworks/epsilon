@@ -21,6 +21,6 @@ class SolidColorCell : public HighlightCell {
   KDColor m_color;
 };
 
-}  // namespace Probability
+}
 
-#endif /* PROBABILITY_GUI_SOLID_COLOR_CELL_H */
+#endif

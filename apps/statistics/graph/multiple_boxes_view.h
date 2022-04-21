@@ -16,7 +16,7 @@ public:
   MultipleBoxesView(Store * store, int * selectedBoxCalculation);
   // MultipleDataView
   BoxBannerView * bannerView() override { return &m_bannerView; }
-  BoxView * dataViewForSeries(int series) override;
+  BoxView * curveViewForSeries(int series) override;
   void layoutDataSubviews(bool force) override;
   void reload() override;
   bool moveSelectionHorizontally(int series, int deltaIndex);

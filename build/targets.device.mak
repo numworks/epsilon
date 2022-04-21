@@ -62,7 +62,9 @@ openocd:
 $(BUILD_DIR)/%.$(EXE): LDDEPS += ion/src/$(PLATFORM)/shared/flash/$(MODEL)/config_flash.ld ion/src/$(PLATFORM)/shared/flash/$(MODEL)/config_sram.ld
 $(BUILD_DIR)/%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared/flash -Lion/src/$(PLATFORM)/shared/flash/$(MODEL)
 
-$(BUILD_DIR)/bootloader.o:
-	$(MAKE) FIRMWARE_COMPONENT=bootloader bootloader.bin
-	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.bootloader $(subst $(FIRMWARE_COMPONENT),bootloader,$(BUILD_DIR))/bootloader.bin $@
-
+$(BUILD_DIR)/bootloader.o $(BUILD_DIR)/trampoline.o &:
+	$(MAKE) FIRMWARE_COMPONENT=bootloader bootloader.elf
+	$(Q) $(OBJCOPY) -O binary -R .trampoline -R .pseudo_otp $(subst $(FIRMWARE_COMPONENT),bootloader,$(BUILD_DIR))/bootloader.elf $(BUILD_DIR)/bootloader.bin
+	$(Q) $(OBJCOPY) -O binary -j .trampoline $(subst $(FIRMWARE_COMPONENT),bootloader,$(BUILD_DIR))/bootloader.elf $(BUILD_DIR)/trampoline.bin
+	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.bootloader $(BUILD_DIR)/bootloader.bin $(BUILD_DIR)/bootloader.o
+	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.trampoline $(BUILD_DIR)/trampoline.bin $(BUILD_DIR)/trampoline.o

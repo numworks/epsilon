@@ -180,7 +180,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   Expression unit;
   PoincareHelpers::ReduceAndRemoveUnit(&clone, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
   m_SIValue = PoincareHelpers::ApproximateToScalar<double>(clone, App::app()->localContext());
-    // 2. Set upper and lower reference values
+  // 2. Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(m_SIValue, unit, m_referenceValues, &m_tableIndexForComparison);
 
   }
@@ -222,7 +222,7 @@ int UnitListController::textAtIndex(char * buffer, size_t bufferSize, int index)
   }
   index = index - m_numberOfExpressionCells;
   assert(index < m_numberOfBufferCells);
-  return UnitComparison::BuildComparisonExpression(m_SIValue, m_referenceValues[index], m_tableIndexForComparison).serialize(buffer, bufferSize);
+  return UnitComparison::BuildComparisonExpression(m_SIValue, m_referenceValues[index], m_tableIndexForComparison).serialize(buffer, bufferSize, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::LargeNumberOfSignificantDigits);
 }
 
 }

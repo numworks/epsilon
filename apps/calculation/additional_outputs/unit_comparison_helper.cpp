@@ -200,7 +200,7 @@ constexpr static const struct { ReferenceUnit unit; const ReferenceValue * refer
 
 static_assert(sizeof(k_referenceTables) / (sizeof(ReferenceValue *) + sizeof(ReferenceUnit) + sizeof(size_t)) == k_numberOfReferenceTables, "Wrong number of reference tables or missing reference table");
 
-int FindUpperAndLowerReferenceValues(double inputValue, Expression orderedSIUnit, const ReferenceValue ** referenceValues, int * returnReferenceTableIndex) {
+int FindUpperAndLowerReferenceValues(double inputValue, Expression orderedSIUnit, const ReferenceValue ** returnReferenceValues, int * returnReferenceTableIndex) {
   /* 1. Find table of corresponding unit.
    * WARNING : if you call this method with a unit that is not an SI unit,
    * in right order, the comparison won't work.
@@ -241,8 +241,8 @@ int FindUpperAndLowerReferenceValues(double inputValue, Expression orderedSIUnit
     if (indexes[i] != -1) {
       ratios[i] = inputValue / static_cast<double>(referenceTable[indexes[i]].value);
       if (ratios[i] < 100.0 && ratios[i] >= 0.01) {
-        if (referenceValues != nullptr) {
-          referenceValues[numberOfReferencesFound] = &referenceTable[indexes[i]];
+        if (returnReferenceValues != nullptr) {
+          returnReferenceValues[numberOfReferencesFound] = &referenceTable[indexes[i]];
         }
         numberOfReferencesFound++;
       }
@@ -294,7 +294,7 @@ Expression BuildComparisonExpression(double value, const ReferenceValue * refere
   assert(tableIndex < k_numberOfReferenceTables);
   double ratio = value / static_cast<double>(referenceValue->value);
   Expression unit = Poincare::Expression::Parse(k_referenceTables[tableIndex].unit.displayedUnit, App::app()->localContext());
-  return Multiplication::Builder(Float<double>::Builder(ratio), Float<float>::Builder(referenceValue->value), unit);
+  return Multiplication::Builder(Float<double>::Builder(ratio), Float<double>::Builder(referenceValue->value), unit);
 }
 
 }

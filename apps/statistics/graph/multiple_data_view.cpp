@@ -17,7 +17,7 @@ KDCoordinate MultipleDataView::subviewHeight() {
 void MultipleDataView::reload() {
   layoutSubviews();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    dataViewForSeries(i)->reload();
+    curveViewForSeries(i)->reload();
   }
 }
 
@@ -31,7 +31,7 @@ View * MultipleDataView::subviewAtIndex(int index) {
   if (index == MultipleDataView::numberOfSubviews() -1) {
     return bannerView();
   }
-  return dataViewForSeries(seriesOfSubviewAtIndex(index));
+  return curveViewForSeries(seriesOfSubviewAtIndex(index));
 }
 
 void MultipleDataView::layoutDataSubviews(bool force) {
@@ -39,9 +39,9 @@ void MultipleDataView::layoutDataSubviews(bool force) {
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (m_store->seriesIsValid(i)) {
-      CurveView * dataView = dataViewForSeries(i);
+      CurveView * curveView = curveViewForSeries(i);
       KDRect frame = KDRect(0, displayedSubviewIndex * subHeight, bounds().width(), subHeight);
-      dataView->setFrame(frame, force);
+      curveView->setFrame(frame, force);
       displayedSubviewIndex++;
     }
   }

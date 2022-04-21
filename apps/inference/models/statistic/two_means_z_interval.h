@@ -18,7 +18,7 @@ public:
   int numberOfAvailableDistributions() const override { return TwoMeans::NumberOfAvailableDistributions(); }
   I18n::Message distributionDescription() const override { return TwoMeans::IntervalDistributionDescription(); }
   void initParameters() override { TwoMeans::InitIntervalParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return TwoMeans::ZAuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && TwoMeans::ZAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {
     p = TwoMeans::ProcessParamaterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);

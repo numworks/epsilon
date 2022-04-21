@@ -15,7 +15,7 @@ public:
   I18n::Message title() const override { return TwoProportions::Title(); }
   // Significance Test: TwoProportions
   void initParameters() override { TwoProportions::InitIntervalParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return TwoProportions::AuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && TwoProportions::AuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {
     p = TwoProportions::ProcessParamaterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);

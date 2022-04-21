@@ -18,7 +18,7 @@ public:
   // Significance Test: OneProportion
   const char * hypothesisSymbol() override { return OneProportion::HypothesisSymbol(); }
   void initParameters() override { OneProportion::InitTestParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return OneProportion::AuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && OneProportion::AuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {
     p = OneProportion::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);

@@ -46,7 +46,6 @@ ifndef ARCH
 
 # This rule allow us to build any executable (%) for a specified ARCH ($1)
 # We depend on a phony target to make sure this rule is always executed
-.PHONY: force_remake
 define rule_for_arch_executable
 .PRECIOUS: $$(BUILD_DIR)/$(1)/%.$$(EXE)
 $$(BUILD_DIR)/$(1)/%.$$(EXE): force_remake

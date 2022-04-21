@@ -4,6 +4,10 @@
 # Define the default recipe
 default:
 
+# Define a phony target with no rule. Targets that depend on it will alwaysr
+# be remade
+.PHONY: force_remake
+
 include build/config.mak
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak

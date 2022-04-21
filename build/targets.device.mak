@@ -62,7 +62,14 @@ openocd:
 $(BUILD_DIR)/%.$(EXE): LDDEPS += ion/src/$(PLATFORM)/shared/flash/$(MODEL)/config_flash.ld ion/src/$(PLATFORM)/shared/flash/$(MODEL)/config_sram.ld
 $(BUILD_DIR)/%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared/flash -Lion/src/$(PLATFORM)/shared/flash/$(MODEL)
 
-$(BUILD_DIR)/bootloader.o $(BUILD_DIR)/trampoline.o &:
+# Generate objects files containing the raw bootloader binary, to be linked
+# into the kernel.
+# FIXME We would like this target to depend on bootloader.elf, built in the
+# bootloader folder, but adding this prerequisite would cause MAKE to attempt
+# to rebuild bootloader.elf with the kernel configuration. As such, we force
+# this rule to always run, knowing that the recursive MAKE will perform the
+# right amount of work.
+$(BUILD_DIR)/bootloader.o $(BUILD_DIR)/trampoline.o &: force_remake
 	$(MAKE) FIRMWARE_COMPONENT=bootloader bootloader.elf
 	$(Q) $(OBJCOPY) -O binary -R .trampoline -R .pseudo_otp $(subst $(FIRMWARE_COMPONENT),bootloader,$(BUILD_DIR))/bootloader.elf $(BUILD_DIR)/bootloader.bin
 	$(Q) $(OBJCOPY) -O binary -j .trampoline $(subst $(FIRMWARE_COMPONENT),bootloader,$(BUILD_DIR))/bootloader.elf $(BUILD_DIR)/trampoline.bin

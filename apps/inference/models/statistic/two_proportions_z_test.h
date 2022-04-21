@@ -18,7 +18,7 @@ public:
   // Significance Test: TwoProportions
   const char * hypothesisSymbol() override { return TwoProportions::HypothesisSymbol(); }
   void initParameters() override { TwoProportions::InitTestParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return TwoProportions::AuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && TwoProportions::AuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {
     p = TwoProportions::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);

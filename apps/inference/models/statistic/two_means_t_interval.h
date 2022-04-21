@@ -20,7 +20,7 @@ public:
   I18n::Message distributionTitle() const override { return TwoMeans::DistributionTitle(); }
   I18n::Message distributionDescription() const override { return TwoMeans::IntervalDistributionDescription(); }
   void initParameters() override { TwoMeans::InitIntervalParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return TwoMeans::TAuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && TwoMeans::TAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {
     p = TwoMeans::ProcessParamaterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);

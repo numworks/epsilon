@@ -35,10 +35,10 @@ Chi2Test::Index2D Chi2Test::computeInnerDimensions() const {
     for (int col = 0; col < maxNumberOfColumns(); col++) {
       double p = parameterAtPosition(row, col);
       if (!std::isnan(p)) {
-        if (row >= maxRow) {
+        if (row > maxRow) {
           maxRow = row;
         }
-        if (col >= maxCol) {
+        if (col > maxCol) {
           maxCol = col;
         }
       }

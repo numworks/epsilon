@@ -20,20 +20,20 @@ namespace Config {
 
 using namespace Regs;
 
-static constexpr uint32_t StartAddress = 0x90000000;
-static constexpr uint32_t EndAddress = 0x90800000;
-static constexpr uint32_t TotalSize = EndAddress - StartAddress;
+constexpr uint32_t StartAddress = 0x90000000;
+constexpr uint32_t EndAddress = 0x90800000;
+constexpr uint32_t TotalSize = EndAddress - StartAddress;
 
-static constexpr int NumberOf4KSectors = 8;
-static constexpr int NumberOf32KSectors = 1;
-static constexpr int NumberOf64KSectors = 128 - 1;
-static constexpr int NumberOfSectors = NumberOf4KSectors + NumberOf32KSectors + NumberOf64KSectors;
+constexpr int NumberOf4KSectors = 8;
+constexpr int NumberOf32KSectors = 1;
+constexpr int NumberOf64KSectors = 128 - 1;
+constexpr int NumberOfSectors = NumberOf4KSectors + NumberOf32KSectors + NumberOf64KSectors;
 
-static constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
-static constexpr uint8_t NumberOfAddressBitsIn32KbyteBlock = 15;
-static constexpr uint8_t NumberOfAddressBitsIn4KbyteBlock = 12;
+constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
+constexpr uint8_t NumberOfAddressBitsIn32KbyteBlock = 15;
+constexpr uint8_t NumberOfAddressBitsIn4KbyteBlock = 12;
 
-static constexpr AFGPIOPin Pins[] = {
+constexpr AFGPIOPin Pins[] = {
   AFGPIOPin(GPIOB, 2,  GPIO::AFR::AlternateFunction::AF9, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast),
   AFGPIOPin(GPIOB, 6,  GPIO::AFR::AlternateFunction::AF10,  GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast),
   AFGPIOPin(GPIOC, 9,  GPIO::AFR::AlternateFunction::AF9, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast),
@@ -42,7 +42,7 @@ static constexpr AFGPIOPin Pins[] = {
   AFGPIOPin(GPIOE, 2,  GPIO::AFR::AlternateFunction::AF9, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Fast),
 };
 
-static constexpr int ClockFrequencyDivisor = 2; // F(QUADSPI) = F(AHB) / ClockFrequencyDivisor
+constexpr int ClockFrequencyDivisor = 2; // F(QUADSPI) = F(AHB) / ClockFrequencyDivisor
 
 typedef QUADSPI::CCR::FunctionalMode QSPI_FunctionalMode;
 typedef QUADSPI::CCR::OperatingMode QSPI_OperatingMode;

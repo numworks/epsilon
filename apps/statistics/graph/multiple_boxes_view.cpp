@@ -16,7 +16,7 @@ MultipleBoxesView::MultipleBoxesView(Store * store, int * selectedBoxCalculation
   static_assert(MultipleBoxesView::BoxToBoxMargin(2) >= BoxView::BoxVerticalMargin() && MultipleBoxesView::BoxToBoxMargin(3) >= BoxView::BoxVerticalMargin(), "BoxToBoxMargin() should be bigger than BoxVerticalMargin().");
 }
 
-BoxView *  MultipleBoxesView::dataViewForSeries(int series) {
+BoxView *  MultipleBoxesView::curveViewForSeries(int series) {
   assert(series >= 0 && series < Shared::DoublePairStore::k_numberOfSeries);
   BoxView * views[] = {&m_boxView1, &m_boxView2, &m_boxView3};
   return views[series];
@@ -31,7 +31,7 @@ void MultipleBoxesView::layoutDataSubviews(bool force) {
     if (m_store->seriesIsValid(i)) {
       // Add vertical margins to box layout. Boxes layouts may overlap.
       KDRect frame = KDRect(0, boxYPosition - BoxView::BoxVerticalMargin(), bounds().width(), BoxView::BoxFrameHeight(numberOfDataSubviews));
-      dataViewForSeries(i)->setFrame(frame, force);
+      curveViewForSeries(i)->setFrame(frame, force);
       boxYPosition += BoxView::BoxHeight(numberOfDataSubviews) + BoxToBoxMargin(numberOfDataSubviews);
     }
   }
@@ -49,7 +49,7 @@ void MultipleBoxesView::reload() {
 
 bool MultipleBoxesView::moveSelectionHorizontally(int series, int deltaIndex) {
   assert(deltaIndex != 0);
-  BoxView * view = dataViewForSeries(series);
+  BoxView * view = curveViewForSeries(series);
   if (view->canIncrementSelectedCalculation(deltaIndex)) {
     // Mark rect as dirty in parent's view to also redraw the background
     markRectAsDirty(view->selectedCalculationRect());
@@ -82,7 +82,7 @@ void MultipleBoxesView::drawRect(KDContext * ctx, KDRect rect) const {
 void MultipleBoxesView::changeDataViewSeriesSelection(int series, bool select) {
   MultipleDataView::changeDataViewSeriesSelection(series, select);
   // Mark rect as dirty in parent's view to also redraw the background
-  markRectAsDirty(dataViewForSeries(series)->rectToReload());
+  markRectAsDirty(curveViewForSeries(series)->rectToReload());
 }
 
 }

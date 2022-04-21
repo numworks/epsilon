@@ -14,7 +14,7 @@ public:
   MultipleHistogramsView(Store * store, Shared::CurveViewRange * curveViewRange);
   // MultipleDataView
   HistogramBannerView * bannerView() override { return &m_bannerView; }
-  HistogramView * dataViewForSeries(int series) override;
+  HistogramView * curveViewForSeries(int series) override;
 private:
   void layoutSubviews(bool force = false) override;
   void changeDataViewSeriesSelection(int series, bool select) override;

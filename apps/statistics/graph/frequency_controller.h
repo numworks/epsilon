@@ -10,16 +10,10 @@ class FrequencyController : public PlotController {
 public:
   using PlotController::PlotController;
 
-  // PlotControllerDelegate
-  bool handleNullFrequencies() const override { return true; }
+  // PlotController
   int totalValues(int series) const override { return m_store->totalCumulatedFrequencyValues(series); }
   double valueAtIndex(int series, int i) const override { return m_store->cumulatedFrequencyValueAtIndex(series, i); }
   double resultAtIndex(int series, int i) const override { return m_store->cumulatedFrequencyResultAtIndex(series, i); }
-  void computeYBounds(float * yMin, float *yMax) const override;
-  // Horizontal labels will always be in bottom, vertical labels are wider
-  KDCoordinate horizontalMargin() const override { return k_largeMargin; }
-  KDCoordinate bottomMargin() const override { return k_mediumMargin; }
-  KDCoordinate topMargin() const override { return k_smallMargin; }
   bool connectPoints() const override { return true; }
   // Append '%' to vertical axis labels.
   void appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const override;
@@ -33,13 +27,19 @@ private:
   void switchCursor(bool seriesChanged);
   // Get the closest index strictly above (direction>0) or below (direction<0) x
   int getNextIndex(int series, int totValues, int startIndex, int direction, double * x) const;
+
   // PlotController
-  const char * resultMessageTemplate() const override { return "%s%s%*.*ed%%"; }
-  I18n::Message resultMessage() const override { return I18n::Message::StatisticsFrequencyFcc; }
-  // DataViewController
   void viewWillAppearBeforeReload() override;
   bool moveSelectionHorizontally(int deltaIndex) override;
   bool moveSelectionVertically(int deltaIndex) override;
+  void computeYBounds(float * yMin, float *yMax) const override;
+  bool handleNullFrequencies() const override { return true; }
+  // Horizontal labels will always be in bottom, vertical labels are wider
+  KDCoordinate horizontalMargin() const override { return k_largeMargin; }
+  KDCoordinate bottomMargin() const override { return k_mediumMargin; }
+  KDCoordinate topMargin() const override { return k_smallMargin; }
+  const char * resultMessageTemplate() const override { return "%s%s%*.*ed%%"; }
+  I18n::Message resultMessage() const override { return I18n::Message::StatisticsFrequencyFcc; }
 
   Shared::RoundCursorView m_roundCursorView;
   bool m_continuousCursor = false;

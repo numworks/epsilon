@@ -18,24 +18,7 @@
 
 namespace Statistics {
 
-class PlotControllerDelegate {
-public:
-  virtual bool delegateSeriesIsValid(int series) const = 0;
-  virtual bool handleNullFrequencies() const = 0;
-  virtual int totalValues(int series) const = 0;
-  virtual double valueAtIndex(int series, int i) const = 0;
-  virtual double resultAtIndex(int series, int i) const = 0;
-  virtual void computeYBounds(float * yMin, float *yMax) const = 0;
-  virtual KDCoordinate horizontalMargin() const = 0;
-  virtual KDCoordinate bottomMargin() const = 0;
-  virtual KDCoordinate topMargin() const = 0;
-  virtual bool connectPoints() const { return false; }
-  virtual void appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {}
-  virtual float labelStepMultiplicator(Shared::CurveView::Axis axis) const { return 2.0f; }
-  virtual bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const { return false; }
-};
-
-class PlotController : public DataViewController, public PlotControllerDelegate {
+class PlotController : public DataViewController {
 public:
   PlotController(
     Escher::Responder * parentResponder,
@@ -45,13 +28,18 @@ public:
     Escher::ViewController * typeViewController,
     Store * store
   );
+  bool seriesIsValid(int series) const { return validSerieMethod()(m_store, series); }
+  virtual int totalValues(int series) const = 0;
+  virtual double valueAtIndex(int series, int i) const = 0;
+  virtual double resultAtIndex(int series, int i) const = 0;
+  virtual bool connectPoints() const { return false; }
+  virtual bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const { return false; }
+  virtual void appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {}
+  virtual float labelStepMultiplicator(Shared::CurveView::Axis axis) const { return 2.0f; }
 
   // DataViewController
   DataView * dataView() override { return &m_view; }
   bool moveSelectionHorizontally(int deltaIndex) override;
-
-  // PlotControllerDelegate
-  bool delegateSeriesIsValid(int series) const override final { return validSerieMethod()(m_store, series); }
 
 protected:
   constexpr static KDCoordinate k_smallMargin = 10;
@@ -64,8 +52,6 @@ protected:
   // DataViewController
   void viewWillAppearBeforeReload() override;
   bool reloadBannerView() override;
-  virtual const char * resultMessageTemplate() const = 0;
-  virtual I18n::Message resultMessage() const = 0;
 
   Shared::CurveViewCursor m_cursor;
   PlotRange m_graphRange;
@@ -76,6 +62,13 @@ protected:
 
 private:
   void computeXBounds(float * xMin, float *xMax) const;
+  virtual void computeYBounds(float * yMin, float *yMax) const = 0;
+  virtual bool handleNullFrequencies() const = 0;
+  virtual KDCoordinate horizontalMargin() const = 0;
+  virtual KDCoordinate bottomMargin() const = 0;
+  virtual KDCoordinate topMargin() const = 0;
+  virtual const char * resultMessageTemplate() const = 0;
+  virtual I18n::Message resultMessage() const = 0;
 };
 
 }  // namespace Statistics

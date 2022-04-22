@@ -25,7 +25,7 @@ void assert_check_function_properties(const char * expression, ContinuousFunctio
 
 QUIZ_CASE(graph_function_plot_type) {
   // Test the plot type under different Press-to-test parameters :
-  Preferences::PressToTestParams pressToTestParams = Preferences::PressToTestParams({0});
+  Preferences::PressToTestParams pressToTestParams = Preferences::k_inactivePressToTest;
   for (size_t config = 0; config < 4; config++) {
     bool noInequations = (config == 1 || config == 3);
     bool noImplicitPlot = (config == 2 || config == 3);
@@ -82,7 +82,7 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("y=im(i*x+1)", ContinuousFunction::PlotType::Unhandled);
   }
   // Restore an Off exam mode.
-  Poincare::Preferences::sharedPreferences()->setPressToTestParams(Preferences::PressToTestParams({0}));
+  Poincare::Preferences::sharedPreferences()->setPressToTestParams(Preferences::k_inactivePressToTest);
   Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Off);
 }
 

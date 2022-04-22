@@ -140,7 +140,7 @@ int Store::numberOfBoxPlotCalculations(int series) const {
 
 void Store::memoizeValidSeries(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
-  bool isSeriesValid = numberOfPairsOfSeries(series) > 0 && sumOfOccurrences(series) > 0;
+  bool isSeriesValid = numberOfPairsOfSeries(series) > 0 && sumOfOccurrences(series) > 0.0;
   // Reset the graph view any time one of the series gets invalidated
   m_graphViewInvalidated = m_graphViewInvalidated || (m_validSeries[series] && !isSeriesValid);
   m_validSeries[series] = isSeriesValid;
@@ -194,7 +194,7 @@ double Store::maxValue(int series, bool handleNullFrequencies) const {
   for (int k = numberOfPairs - 1; k >= 0; k--) {
     // Unless handleNullFrequencies is true, look for the last non null value.
     int sortedIndex = valueIndexAtSortedIndex(series, k);
-    if (handleNullFrequencies || get(series, 1, sortedIndex) > 0) {
+    if (handleNullFrequencies || get(series, 1, sortedIndex) > 0.0) {
       return get(series, 0, sortedIndex);
     }
   }
@@ -206,7 +206,7 @@ double Store::minValue(int series, bool handleNullFrequencies) const {
   for (int k = 0; k < numberOfPairs; k++) {
     // Unless handleNullFrequencies is true, look for the first non null value.
     int sortedIndex = valueIndexAtSortedIndex(series, k);
-    if (handleNullFrequencies || get(series, 1, sortedIndex) > 0) {
+    if (handleNullFrequencies || get(series, 1, sortedIndex) > 0.0) {
       return get(series, 0, sortedIndex);
     }
   }
@@ -527,7 +527,7 @@ uint8_t Store::lowerWhiskerSortedIndex(int series) const {
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
     int valueIndex = valueIndexAtSortedIndex(series, k);
-    if ((!m_displayOutliers || get(series, 0, valueIndex) >= lowFence) && get(series, 1, valueIndex) > 0) {
+    if ((!m_displayOutliers || get(series, 0, valueIndex) >= lowFence) && get(series, 1, valueIndex) > 0.0) {
       return k;
     }
   }
@@ -540,7 +540,7 @@ uint8_t Store::upperWhiskerSortedIndex(int series) const {
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = numberOfPairs - 1; k >= 0; k--) {
     int valueIndex = valueIndexAtSortedIndex(series, k);
-    if ((!m_displayOutliers || get(series, 0, valueIndex) <= uppFence) && get(series, 1, valueIndex) > 0) {
+    if ((!m_displayOutliers || get(series, 0, valueIndex) <= uppFence) && get(series, 1, valueIndex) > 0.0) {
       return k;
     }
   }
@@ -554,7 +554,7 @@ void Store::countDistinctValues(int series, int start, int end, int i, bool hand
   *value = NAN;
   for (int j = start; j < end; j++) {
     int valueIndex = valueIndexAtSortedIndex(series, j);
-    if (handleNullFrequencies || get(series, 1, valueIndex) > 0) {
+    if (handleNullFrequencies || get(series, 1, valueIndex) > 0.0) {
       double nextX = get(series, 0, valueIndexAtSortedIndex(series, j));
       // *value != nextX returns true if *value is NAN
       if (*value != nextX) {
@@ -618,7 +618,7 @@ double Store::normalProbabilityValueAtIndex(int series, int i) const {
 
 double Store::normalProbabilityResultAtIndex(int series, int i) const {
   double total = static_cast<double>(totalNormalProbabilityValues(series));
-  assert(i >= 0 && total > 0 && static_cast<double>(i) < total);
+  assert(i >= 0 && total > 0.0 && static_cast<double>(i) < total);
   // invnorm((i-0.5)/total,0,1)
   double plottingPosition = (static_cast<double>(i) + 0.5) / total;
   return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<double>(plottingPosition, 0.0, 1.0);

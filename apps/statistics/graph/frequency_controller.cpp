@@ -18,12 +18,6 @@ void FrequencyController::viewWillAppearBeforeReload() {
   PlotController::viewWillAppearBeforeReload();
 }
 
-void FrequencyController::computeYBounds(float * yMin, float *yMax) const {
-  // Frequency curve is always bounded between 0 and 100
-  *yMin = 0.0f;
-  *yMax = 100.0f;
-}
-
 void FrequencyController::appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {
   if (axis == Shared::CurveView::Axis::Horizontal) {
     return;
@@ -157,6 +151,12 @@ void FrequencyController::switchCursor(bool seriesChanged) {
     m_cursor.moveTo(x, x, y);
     m_curveView.reload();
   }
+}
+
+void FrequencyController::computeYBounds(float * yMin, float *yMax) const {
+  // Frequency curve is always bounded between 0 and 100
+  *yMin = 0.0f;
+  *yMax = 100.0f;
 }
 
 }  // namespace Statistics

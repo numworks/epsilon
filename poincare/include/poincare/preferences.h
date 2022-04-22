@@ -106,6 +106,7 @@ public:
   bool vectorNormIsForbidden() const;
   bool basedLogarithmIsForbidden() const;
   bool sumIsForbidden() const;
+  bool exactResultsAreForbidden() const;
 private:
   static constexpr int k_pressToTestParamsPersistingByteIndex = 0;
   static constexpr int k_examModePersistingByteIndex = 1;

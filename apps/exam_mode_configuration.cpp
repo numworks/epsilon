@@ -185,7 +185,7 @@ static bool isPrimeFactorization(Expression expression) {
 }
 
 bool ExamModeConfiguration::exactExpressionIsForbidden(Expression e) {
-  if (Preferences::sharedPreferences()->examMode() != Preferences::ExamMode::Dutch) {
+  if (!Preferences::sharedPreferences()->exactResultsAreForbidden()) {
     return false;
   }
   bool isFraction = e.type() == ExpressionNode::Type::Division && e.childAtIndex(0).isNumber() && e.childAtIndex(1).isNumber();

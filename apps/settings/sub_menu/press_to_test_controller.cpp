@@ -70,6 +70,9 @@ void PressToTestController::setParamAtIndex(int index, bool value) {
     case I18n::Message::PressToTestSum:
       m_tempPressToTestParams.m_sumIsForbidden = value;
       break;
+    case I18n::Message::PressToTestExactResults:
+      m_tempPressToTestParams.m_exactResultsAreForbidden = value;
+      break;
     default:
       assert(false);
   }
@@ -91,6 +94,8 @@ bool PressToTestController::getParamAtIndex(int index) {
       return m_tempPressToTestParams.m_basedLogarithmIsForbidden;
     case I18n::Message::PressToTestSum:
       return m_tempPressToTestParams.m_sumIsForbidden;
+    case I18n::Message::PressToTestExactResults:
+      return m_tempPressToTestParams.m_exactResultsAreForbidden;
     default:
       assert(false);
       return false;
@@ -191,7 +196,8 @@ I18n::Message PressToTestController::LabelAtIndex(int i) {
     I18n::Message::PressToTestStatDiagnostics,
     I18n::Message::PressToTestVectors,
     I18n::Message::PressToTestLogBaseA,
-    I18n::Message::PressToTestSum
+    I18n::Message::PressToTestSum,
+    I18n::Message::PressToTestExactResults
   };
   return labels[i];
 }

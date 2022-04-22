@@ -112,4 +112,9 @@ bool Preferences::sumIsForbidden() const {
   return pressToTestParams().m_sumIsForbidden;
 }
 
+bool Preferences::exactResultsAreForbidden() const {
+  assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_exactResultsAreForbidden);
+  return pressToTestParams().m_exactResultsAreForbidden || examMode() == ExamMode::Dutch;
+}
+
 }

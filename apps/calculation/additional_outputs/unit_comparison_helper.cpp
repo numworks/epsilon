@@ -280,7 +280,7 @@ void FillRatioBuffer(double ratio, char * textBuffer, int bufferSize) {
       ratio = 100;
     }
   }
-  bufferIndex = PoincareHelpers::ConvertFloatToText<double>(ratio, textBuffer, bufferSize - 1, significativeDigits);
+  bufferIndex = PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(ratio, textBuffer, bufferSize - 1, significativeDigits, Poincare::Preferences::PrintFloatMode::Decimal);
   // Add % at the end
   if (withPercentage) {
     assert(bufferIndex < bufferSize - 1);

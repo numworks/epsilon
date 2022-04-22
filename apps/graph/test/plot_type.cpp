@@ -32,8 +32,8 @@ QUIZ_CASE(graph_function_plot_type) {
     // Set the Press-to-test mode
     pressToTestParams.m_inequalityGraphingIsForbidden = noInequations;
     pressToTestParams.m_implicitPlotsAreForbidden = noImplicitPlot;
-    Poincare::Preferences::sharedPreferences()->setPressToTestParams(pressToTestParams);
     Poincare::Preferences::sharedPreferences()->setExamMode((noInequations || noImplicitPlot) ? Poincare::Preferences::ExamMode::PressToTest : Poincare::Preferences::ExamMode::Off);
+    Poincare::Preferences::sharedPreferences()->setPressToTestParams(pressToTestParams);
 
     assert_check_function_properties("f(θ)=2", ContinuousFunction::PlotType::Polar);
     assert_check_function_properties("g(t)=[[cos(t)][t]]", ContinuousFunction::PlotType::Parametric);
@@ -82,8 +82,8 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("y=im(i*x+1)", ContinuousFunction::PlotType::Unhandled);
   }
   // Restore an Off exam mode.
-  Poincare::Preferences::sharedPreferences()->setPressToTestParams(Preferences::k_inactivePressToTest);
   Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Off);
+  Poincare::Preferences::sharedPreferences()->setPressToTestParams(Preferences::k_inactivePressToTest);
 }
 
 QUIZ_CASE(graph_function_plot_type_with_predefined_variables) {

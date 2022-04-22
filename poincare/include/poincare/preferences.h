@@ -56,12 +56,15 @@ public:
   static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
   static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
   static_assert(k_numberOfExamModes == static_cast<int>(ExamMode::Undefined), "Preferences::ExamMode::Undefined should be last but the number of exam modes does not match.");
-  /* By default, a 0 PressToTestParams has all parameters set to false. Params
-   * are false if the feature is activated (allowed) and true if forbidden. */
+  static_assert(static_cast<ExamMode>(0xFF) == ExamMode::Unknown, "0xFF persisting bytes must be parsed as Unknown.");
+  /* Params are false if the feature is activated (allowed) and true if
+   * forbidden. */
   typedef union {
     uint8_t m_value;
+    /* Warning: The order of allocation of bit-fields within a unit (high-order
+     * to low-order or low-order to high-order) is implementation-defined. The
+     * alignment of the addressable storage unit is unspecified. */
     struct {
-      bool m_isUnknown: 1;
       bool m_equationSolverIsForbidden: 1;
       bool m_inequalityGraphingIsForbidden: 1;
       bool m_implicitPlotsAreForbidden: 1;
@@ -69,9 +72,11 @@ public:
       bool m_vectorsAreForbidden: 1;
       bool m_basedLogarithmIsForbidden: 1;
       bool m_sumIsForbidden: 1;
+      bool m_exactResultsAreForbidden: 1;
     };
   } PressToTestParams;
   static_assert(sizeof(PressToTestParams) == sizeof(uint8_t), "PressToTestParams can have 8 params at most");
+  /* By default, a PressToTestParams has all parameters set to false. */
   static constexpr PressToTestParams k_inactivePressToTest = PressToTestParams({0});
 
   Preferences();
@@ -102,8 +107,10 @@ public:
   bool basedLogarithmIsForbidden() const;
   bool sumIsForbidden() const;
 private:
-  static constexpr int k_examModePersistingByteIndex = 0;
-  static constexpr int k_pressToTestParamsPersistingByteIndex = 1;
+  static constexpr int k_pressToTestParamsPersistingByteIndex = 0;
+  static constexpr int k_examModePersistingByteIndex = 1;
+
+  void updateExamModeFromPersistingBytesIfNeeded() const;
 
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;

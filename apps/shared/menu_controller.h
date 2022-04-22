@@ -14,7 +14,7 @@ constexpr int k_maxNumberOfCells = 3;
 
 class MenuControllerDelegate {
 public:
-  virtual void selectSubApp(int subAppIndex) = 0;
+  virtual bool selectSubApp(int subAppIndex) = 0;
   virtual int selectedSubApp() const = 0;
   virtual int numberOfSubApps() const = 0;
 };

@@ -115,14 +115,12 @@ void App::cleanBuffer(DynamicCellsDataSourceDestructor * destructor) {
   m_bufferDestructor = destructor;
 }
 
-void App::selectSubApp(int subAppIndex) {
-  if (subAppIndex < 0) {
-    return;
-  }
-  if (Inference::Initialize(snapshot()->inference(), static_cast<Inference::SubApp>(subAppIndex))) {
+bool App::selectSubApp(int subAppIndex) {
+  if (subAppIndex >= 0 && Inference::Initialize(snapshot()->inference(), static_cast<Inference::SubApp>(subAppIndex))) {
     m_distributionController.selectRow(0);
     m_testController.selectRow(0);
   }
+  return true;
 }
 
 const App::Descriptor * App::Snapshot::descriptor() const {

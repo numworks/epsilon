@@ -12,16 +12,6 @@
 
 namespace Inference {
 
-void TypeView::layoutSubviews(bool force) {
-  /* SelectableTableView must be given a width before computing height. */
-  m_list->initWidth(m_frame.width());
-  KDSize listSize = m_list->minimalSizeForOptimalDisplay();
-  m_list->setFrame(KDRect(KDPointZero, listSize), force);
-  m_description->setFrame(
-      KDRect(0, listSize.height(), m_frame.width(), m_frame.height() - listSize.height()),
-      force);
-}
-
 TypeController::TypeController(StackViewController * parent,
                                HypothesisController * hypothesisController,
                                InputController * inputController,
@@ -29,12 +19,7 @@ TypeController::TypeController(StackViewController * parent,
       Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(parent),
       m_hypothesisController(hypothesisController),
       m_inputController(inputController),
-      m_contentView(&m_selectableTableView, &m_description),
       m_statistic(statistic) {
-  m_description.setBackgroundColor(Palette::WallScreen);
-  m_description.setTextColor(Palette::GrayDark);
-  m_description.setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
-  m_description.setFont(KDFont::SmallFont);
   m_selectableTableView.setBottomMargin(0);
 
   // Init selection
@@ -42,10 +27,8 @@ TypeController::TypeController(StackViewController * parent,
 }
 
 void TypeController::didBecomeFirstResponder() {
-  m_description.setMessage(m_statistic->distributionDescription());
   resetMemoization();
   m_selectableTableView.reloadData(true);
-  m_contentView.layoutSubviews();
 }
 
 bool TypeController::handleEvent(Ion::Events::Event event) {
@@ -70,12 +53,6 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);
-}
-
-Escher::View * TypeView::subviewAtIndex(int i) {
-  Escher::View * views[] = {m_list, m_description};
-  assert(i >= 0 && i < sizeof(views)/sizeof(Escher::View *));
-  return views[i];
 }
 
 const char * TypeController::title() {

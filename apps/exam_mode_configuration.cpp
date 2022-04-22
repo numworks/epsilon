@@ -151,7 +151,7 @@ I18n::Message ExamModeConfiguration::forbiddenAppMessage(Preferences::ExamMode m
     return messages[line];
   }
   assert(mode != Preferences::ExamMode::Off);
-  I18n::Message messages[] = {I18n::Message::ForbidenAppInExamMode1, I18n::Message::ForbidenAppInExamMode2};
+  I18n::Message messages[] = {I18n::Message::ForbiddenAppInExamMode1, I18n::Message::ForbiddenAppInExamMode2};
   return messages[line];
 }
 

@@ -1,5 +1,6 @@
 #include <poincare/list_sort.h>
 #include <poincare/layout_helper.h>
+#include <poincare/list_helpers.h>
 #include <poincare/helpers.h>
 #include <poincare/serialization_helper.h>
 
@@ -32,30 +33,19 @@ Expression ListSort::shallowReduce(ExpressionNode::ReductionContext reductionCon
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();
   }
-
-  void * pack[] = { &child, &reductionContext };
+  List list = static_cast<List &>(child);
+  ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
+  void * pack[] = {list.node(), &approximationContext, const_cast<bool *>(&k_nanIsGreatest), &list};
   Helpers::Sort(
       // Swap
       [](int i, int j, void * ctx, int n) {
         void ** p = reinterpret_cast<void **>(ctx);
-        Expression * e = reinterpret_cast<Expression *>(p[0]);
+        Expression * e = reinterpret_cast<Expression *>(p[3]);
         assert(e->numberOfChildren() == n && 0 <= i && 0 <= j && i < n && j < n);
         e->swapChildrenInPlace(i, j);
       },
       // Compare
-      [](int i, int j, void * ctx, int n) {
-        void ** p = reinterpret_cast<void **>(ctx);
-        Expression * e = reinterpret_cast<Expression *>(p[0]);
-        ExpressionNode::ReductionContext * r = reinterpret_cast<ExpressionNode::ReductionContext *>(p[1]);
-        assert(e->numberOfChildren() == n && 0 <= i && 0 <= j && i < n && j < n);
-        Context * context = r->context();
-        Preferences::ComplexFormat complexFormat = r->complexFormat();
-        Preferences::AngleUnit angleUnit = r->angleUnit();
-        Expression cI = e->childAtIndex(i), cJ = e->childAtIndex(j);
-        float xI = cI.approximateToScalar<float>(context, complexFormat, angleUnit, true);
-        float xJ = cJ.approximateToScalar<float>(context, complexFormat, angleUnit, true);
-        return std::isnan(xI) || xI > xJ;
-      },
+      ListHelpers::ListEvaluationComparison,
       pack,
       child.numberOfChildren());
   replaceWithInPlace(child);

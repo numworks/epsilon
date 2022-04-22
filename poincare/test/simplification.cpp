@@ -1909,6 +1909,7 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("sort({1})", "{1}");
   assert_parsed_expression_simplify_to("sort({3,2,1})", "{1,2,3}");
   assert_parsed_expression_simplify_to("sort({3,2,{1,4}})", Undefined::Name());
+  assert_parsed_expression_simplify_to("sort({undef,-1,-2,-inf,inf})", "{-inf,-2,-1,inf,undef}");
   // Mean of a list
   assert_parsed_expression_simplify_to("mean({})", Undefined::Name());
   assert_parsed_expression_simplify_to("mean({1,2,3})", "2");

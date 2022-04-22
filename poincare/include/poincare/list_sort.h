@@ -31,6 +31,7 @@ private:
 
 class ListSort : public Expression {
 public:
+  constexpr static bool k_nanIsGreatest = true;
   static constexpr FunctionHelper s_functionHelper = FunctionHelper("sort", 1, &UntypedBuilderOneChild<ListSort>);
 
   ListSort(const ListSortNode * n) : Expression(n) {}

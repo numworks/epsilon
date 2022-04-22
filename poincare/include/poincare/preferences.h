@@ -72,6 +72,7 @@ public:
     };
   } PressToTestParams;
   static_assert(sizeof(PressToTestParams) == sizeof(uint8_t), "PressToTestParams can have 8 params at most");
+  static constexpr PressToTestParams k_inactivePressToTest = PressToTestParams({0});
 
   Preferences();
   static Preferences * sharedPreferences();

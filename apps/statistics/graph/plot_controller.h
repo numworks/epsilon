@@ -49,8 +49,11 @@ protected:
     return std::max(0, std::min(index, numberOfPairs - 1));
   }
 
+  virtual void moveCursorVertically(bool seriesChanged);
+
   // DataViewController
   void viewWillAppearBeforeReload() override;
+  bool moveSelectionVertically(int deltaIndex) override;
   bool reloadBannerView() override;
 
   Shared::CurveViewCursor m_cursor;

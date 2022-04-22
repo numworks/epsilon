@@ -50,6 +50,18 @@ int FrequencyController::getNextIndex(int series, int totValues, int startIndex,
   return index;
 }
 
+void FrequencyController::moveCursorVertically(bool seriesChanged) {
+  m_continuousCursor = !m_continuousCursor;
+  if (m_continuousCursor) {
+    m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+  }
+  #ifdef GRAPH_CURSOR_SPEEDUP
+  m_roundCursorView.resetMemoization();
+  #endif
+  m_curveView.setCursorView(m_continuousCursor ? &m_roundCursorView : &m_cursorView);
+  PlotController::moveCursorVertically(!m_continuousCursor || seriesChanged);
+}
+
 bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   if (!m_continuousCursor) {
     return PlotController::moveSelectionHorizontally(deltaIndex);
@@ -122,35 +134,11 @@ bool FrequencyController::moveSelectionVertically(int direction) {
    * - Continuous cursor isn't selected, and selection is going up
    * */
   if (m_continuousCursor == (direction == 1)) {
-    int previousSeries = m_selectedSeries;
-    bool result = PlotController::moveSelectionVertically(direction);
-    if (result && previousSeries != m_selectedSeries) {
-      // Cursor has been moved into another curve, cursor must be switched
-      switchCursor(true);
-    }
-    return result;
+    return PlotController::moveSelectionVertically(direction);
   }
   // Otherwise, just switch to the other cursor.
-  switchCursor(false);
+  moveCursorVertically(false);
   return true;
-}
-
-void FrequencyController::switchCursor(bool seriesChanged) {
-  m_continuousCursor = !m_continuousCursor;
-  if (m_continuousCursor) {
-    m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
-  }
-  #ifdef GRAPH_CURSOR_SPEEDUP
-  m_roundCursorView.resetMemoization();
-  #endif
-  m_curveView.setCursorView(m_continuousCursor ? &m_roundCursorView : &m_cursorView);
-  if (!m_continuousCursor || seriesChanged) {
-    // Cursor must be repositionned
-    double x = valueAtIndex(m_selectedSeries, m_selectedIndex);
-    double y = resultAtIndex(m_selectedSeries, m_selectedIndex);
-    m_cursor.moveTo(x, x, y);
-    m_curveView.reload();
-  }
 }
 
 void FrequencyController::computeYBounds(float * yMin, float *yMax) const {

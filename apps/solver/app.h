@@ -17,7 +17,7 @@
 
 namespace Solver {
 
-class App : public Shared::ExpressionFieldDelegateApp {
+class App : public Shared::ExpressionFieldDelegateApp, public Shared::MenuControllerDelegate {
 public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {
@@ -28,7 +28,7 @@ public:
   };
 
   // Snapshot
-  class Snapshot : public Shared::SharedApp::Snapshot, public Shared::MenuControllerDelegate {
+  class Snapshot : public Shared::SharedApp::Snapshot {
   public:
     // Subapp
     enum class SubApp {
@@ -45,19 +45,22 @@ public:
     void reset() override;
     EquationStore * equationStore() { return &m_equationStore; }
     void storageDidChangeForRecord(const Ion::Storage::Record record) override;
-    // Shared::MenuControllerDelegate
-    void selectSubApp(int subAppIndex) override { m_activeSubapp = static_cast<SubApp>(subAppIndex); }
-    int selectedSubApp() const override { return static_cast<int>(m_activeSubapp); }
-    int numberOfSubApps() const override { return static_cast<int>(SubApp::NumberOfSubApps); }
+    void selectSubApp(int subAppIndex) { m_activeSubapp = static_cast<SubApp>(subAppIndex); }
+    int selectedSubApp() const { return static_cast<int>(m_activeSubapp); }
   private:
     void tidy() override;
     SubApp m_activeSubapp;
     EquationStore m_equationStore;
   };
 
+  // Shared::MenuControllerDelegate
+  bool selectSubApp(int subAppIndex) override;
+  int selectedSubApp() const override { return snapshot()->selectedSubApp(); }
+  int numberOfSubApps() const override { return static_cast<int>(Snapshot::SubApp::NumberOfSubApps); }
+
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
   void didBecomeActive(Escher::Window * window) override;
-  Snapshot * snapshot() { return static_cast<Snapshot *>(Escher::App::snapshot()); }
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   EquationStore * equationStore() { return snapshot()->equationStore(); }
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
   Escher::ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }

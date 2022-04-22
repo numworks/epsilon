@@ -178,9 +178,7 @@ KDColor ExamModeConfiguration::examModeColor(Preferences::ExamMode mode) {
 bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
   Preferences::ExamMode mode = Preferences::sharedPreferences()->examMode();
   return (appName == I18n::Message::CodeApp
-          && mode == Preferences::ExamMode::Dutch)
-         || (appName == I18n::Message::SolverApp
-             && Preferences::sharedPreferences()->equationSolverIsForbidden());
+          && mode == Preferences::ExamMode::Dutch);
 }
 
 static bool isPrimeFactorization(Expression expression) {

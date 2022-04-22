@@ -1,7 +1,9 @@
 #include "app.h"
 #include <apps/i18n.h>
+#include <apps/exam_mode_configuration.h>
 #include "solver_icon.h"
 #include <poincare/comparison_operator.h>
+#include <poincare/preferences.h>
 #include "equations_icon.h"
 #include "finance_icon.h"
 
@@ -35,6 +37,15 @@ void App::Snapshot::tidy() {
   m_equationStore.tidyDownstreamPoolFrom();
 }
 
+bool App::selectSubApp(int subAppIndex) {
+  if (Poincare::Preferences::sharedPreferences()->equationSolverIsForbidden() && static_cast<Snapshot::SubApp>(subAppIndex) == Snapshot::SubApp::Equation) {
+    displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
+    return false;
+  }
+  snapshot()->selectSubApp(subAppIndex);
+  return true;
+}
+
 App::App(Snapshot * snapshot) :
   ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
   m_solutionsController(&m_alternateEmptyViewController, snapshot->equationStore()),
@@ -51,7 +62,7 @@ App::App(Snapshot * snapshot) :
       {&m_listFooter, &m_financeMenuController},
       {{I18n::Message::EquationsSubAppTitle, I18n::Message::EquationsSubAppDescription}, {I18n::Message::FinanceSubAppTitle, I18n::Message::FinanceSubAppDescription}},
       {ImageStore::EquationsIcon, ImageStore::FinanceIcon},
-      snapshot
+      this
     ),
   m_stackViewController(&m_inputViewController, &m_menuController, StackViewController::Style::GrayGradation),
   m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController)

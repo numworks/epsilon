@@ -74,24 +74,24 @@ app_inference_src += $(addprefix apps/inference/statistic/interval/,\
   interval_conclusion_view.cpp \
   interval_curve_view.cpp \
   interval_graph_controller.cpp \
+  interval_graph_view.cpp \
 )
 
 app_inference_src += $(addprefix apps/inference/statistic/test/,\
   hypothesis_controller.cpp \
-  test_conclusion_view.cpp \
+  legend_view.cpp \
   test_curve_view.cpp \
   test_graph_controller.cpp \
+  test_graph_view.cpp \
 )
 
 app_inference_src += $(addprefix apps/inference/statistic/,\
   comparison_operator_popup_data_source.cpp \
   input_controller.cpp \
-  legend_view.cpp \
   message_table_cell_with_separator.cpp \
   results_controller.cpp \
   results_data_source.cpp \
   statistic_curve_view.cpp \
-  statistic_graph_view.cpp \
   test_controller.cpp \
   type_controller.cpp \
 )
@@ -138,8 +138,4 @@ $(eval $(call depends_on_transparent_image,apps/inference/probability/calculatio
   calculation2_icon.png \
   calculation3_icon.png \
   calculation4_icon.png \
-)))
-
-$(eval $(call depends_on_transparent_image,apps/inference/statistic/test/test_conclusion_view.cpp,$(addprefix apps/inference/images/,\
-  test_success.png \
 )))

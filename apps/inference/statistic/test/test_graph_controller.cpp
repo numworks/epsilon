@@ -5,8 +5,7 @@ namespace Inference {
 
 TestGraphController::TestGraphController(Escher::StackViewController * stack, Test * test) :
       Escher::ViewController(stack),
-      m_curveView(test),
-      m_graphView(&m_curveView, &m_conclusionView, &m_legendView),
+      m_graphView(test),
       m_test(test) {
 }
 
@@ -24,7 +23,6 @@ const char * TestGraphController::title() {
 }
 
 void TestGraphController::didBecomeFirstResponder() {
-  m_conclusionView.generateConclusionTexts(m_test->canRejectNull());
   m_test->computeCurveViewRange();
   m_graphView.reload();
 }

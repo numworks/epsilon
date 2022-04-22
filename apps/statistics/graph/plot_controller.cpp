@@ -17,6 +17,16 @@ PlotController::PlotController(Escher::Responder * parentResponder,
     m_curveView(&m_graphRange, &m_cursor, &m_cursorView, this)  {
 }
 
+void PlotController::moveCursorVertically(bool seriesChanged) {
+  if (seriesChanged) {
+    // Cursor must be repositionned
+    double x = valueAtIndex(m_selectedSeries, m_selectedIndex);
+    double y = resultAtIndex(m_selectedSeries, m_selectedIndex);
+    m_cursor.moveTo(x, x, y);
+    m_curveView.reload();
+  }
+}
+
 void PlotController::viewWillAppearBeforeReload() {
   float yMin, yMax, xMin, xMax;
   computeYBounds(&yMin, &yMax);
@@ -43,6 +53,16 @@ bool PlotController::moveSelectionHorizontally(int deltaIndex) {
     return true;
   }
   return false;
+}
+
+bool PlotController::moveSelectionVertically(int direction) {
+  int previousSeries = m_selectedSeries;
+  bool result = DataViewController::moveSelectionVertically(direction);
+  if (result && previousSeries != m_selectedSeries) {
+    // Cursor has been moved into another curve, cursor must be switched
+    moveCursorVertically(true);
+  }
+  return result;
 }
 
 bool PlotController::reloadBannerView() {

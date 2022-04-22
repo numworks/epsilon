@@ -84,22 +84,17 @@ int TypeController::numberOfRows() const {
 
 void TypeController::willDisplayCellForIndex(Escher::HighlightCell * cell, int i) {
   assert(i <= indexOfZTest());
-  I18n::Message message, submessage;
+  I18n::Message message;
   if (i == k_indexOfTTest) {
     message = m_statistic->tDistributionName();
-    submessage = I18n::Message::Recommended;
   } else if (i == indexOfZTest()) {
     message = m_statistic->zDistributionName();
-    submessage = I18n::Message::RarelyUsed;
   } else {
     assert(i == k_indexOfPooledTest);
     message = m_statistic->tPooledDistributionName();
-    submessage = I18n::Message::RarelyUsed;
   }
-  Escher::MessageTableCellWithChevronAndMessage * mcell =
-    static_cast<Escher::MessageTableCellWithChevronAndMessage *>(cell);
+  Escher::MessageTableCellWithChevron * mcell = static_cast<Escher::MessageTableCellWithChevron *>(cell);
   mcell->setMessage(message);
-  mcell->setSubtitle(submessage);
 }
 
 

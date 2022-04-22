@@ -18,37 +18,37 @@ Preferences::Preferences() :
   m_complexFormat(Preferences::ComplexFormat::Real),
   m_numberOfSignificantDigits(Preferences::DefaultNumberOfPrintedSignificantDigits),
   m_examMode(ExamMode::Unknown)
-{
-  m_pressToTestParams.m_isUnknown = true;
-}
+{}
 
 Preferences * Preferences::sharedPreferences() {
   static Preferences preferences;
   return &preferences;
 }
 
-Preferences::ExamMode Preferences::examMode() const {
+void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
   if (m_examMode == ExamMode::Unknown) {
     /* Persisting bytes are initialized at 0xFF but we set the first two ones at
-     * 0 in shared_kernel_flash.ld to ensure the exam mode in off position after
-     * flashing. */
+    * 0 in shared_kernel_flash.ld to ensure the exam mode is in off position
+    * after flashing. */
     uint8_t mode = Ion::PersistingBytes::read(k_examModePersistingByteIndex);
     // mode can be cast in ExamMode (Off, Standard, Dutch or Press-to-test)
     assert(mode >= static_cast<uint8_t>(ExamMode::Off) && mode < static_cast<uint8_t>(ExamMode::Undefined));
     m_examMode = static_cast<ExamMode>(mode);
+    assert(m_examMode != ExamMode::Unknown);
+
+    uint8_t params = Ion::PersistingBytes::read(k_pressToTestParamsPersistingByteIndex);
+    assert(m_examMode == ExamMode::PressToTest || params == k_inactivePressToTest.m_value);
+    m_pressToTestParams = PressToTestParams({params});
   }
+}
+
+Preferences::ExamMode Preferences::examMode() const {
+  updateExamModeFromPersistingBytesIfNeeded();
   return m_examMode;
 }
 
 Preferences::PressToTestParams Preferences::pressToTestParams() const {
-  if (m_pressToTestParams.m_isUnknown) {
-    /* Persisting bytes are initialized at 0xFF but we set the first two ones at
-     * 0 in shared_kernel_flash.ld to ensure pressToTestParams are false after
-     * flashing. */
-    PressToTestParams newPressToTestParams = {Ion::PersistingBytes::read(k_pressToTestParamsPersistingByteIndex)};
-    assert(!newPressToTestParams.m_isUnknown);
-    m_pressToTestParams = newPressToTestParams;
-  }
+  updateExamModeFromPersistingBytesIfNeeded();
   return m_pressToTestParams;
 }
 
@@ -63,7 +63,7 @@ void Preferences::setExamMode(ExamMode mode) {
 }
 
 void Preferences::setPressToTestParams(PressToTestParams newPressToTestParams) {
-  assert(!newPressToTestParams.m_isUnknown);
+  assert(m_examMode == ExamMode::PressToTest || newPressToTestParams.m_value == k_inactivePressToTest.m_value);
   PressToTestParams currentPressToTestParams = pressToTestParams();
   if (currentPressToTestParams.m_value == newPressToTestParams.m_value) {
     return;

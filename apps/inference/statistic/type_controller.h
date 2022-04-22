@@ -46,7 +46,7 @@ private:
   HypothesisController * m_hypothesisController;
   InputController * m_inputController;
 
-  MessageTableCellWithChevronAndMessage m_cells[k_numberOfRows];
+  MessageTableCellWithChevron m_cells[k_numberOfRows];
 
   constexpr static int k_titleBufferSize = sizeof("intervalle pour une moyenne à deux échantillons");
   char m_titleBuffer[k_titleBufferSize];

@@ -19,7 +19,6 @@ public:
   bool initializeDistribution(DistributionType distributionType) override { return TwoMeans::TestInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return TwoMeans::NumberOfAvailableDistributions(); }
   I18n::Message distributionTitle() const override { return TwoMeans::DistributionTitle(); }
-  I18n::Message distributionDescription() const override { return TwoMeans::TestDistributionDescription(); }
   const char * hypothesisSymbol() override { return TwoMeans::HypothesisSymbol(); }
   void initParameters() override { TwoMeans::InitTestParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && TwoMeans::TAuthorizedParameterAtIndex(i, p); }

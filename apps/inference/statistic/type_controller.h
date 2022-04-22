@@ -16,29 +16,13 @@ using namespace Escher;
 
 namespace Inference {
 
-/* Simple view to include list and description below */
-class TypeView : public Escher::SolidColorView {
-public:
-  TypeView(SelectableTableView * list, MessageTextView * description) :
-      Escher::SolidColorView(Escher::Palette::WallScreen),
-      m_list(list),
-      m_description(description) {}
-  int numberOfSubviews() const override { return 2; }
-  Escher::View * subviewAtIndex(int i) override;
-  void layoutSubviews(bool force = false) override;
-
-private:
-  SelectableTableView * m_list;
-  MessageTextView * m_description;
-};
-
 class TypeController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   TypeController(StackViewController * parent,
                  HypothesisController * hypothesisController,
                  InputController * intervalInputController,
                  Statistic * statistic);
-  View * view() override { return &m_contentView; }
+  View * view() override { return &m_selectableTableView; }
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
@@ -63,8 +47,6 @@ private:
   InputController * m_inputController;
 
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfRows];
-  TypeView m_contentView;
-  MessageTextView m_description;
 
   constexpr static int k_titleBufferSize = sizeof("intervalle pour une moyenne à deux échantillons");
   char m_titleBuffer[k_titleBufferSize];

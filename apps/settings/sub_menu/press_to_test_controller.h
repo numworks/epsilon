@@ -34,7 +34,7 @@ private:
   static constexpr int k_switchCellType = 0;
   static constexpr int k_buttonCellType = 1;
   /* Switch cells count */
-  static constexpr int k_numberOfSwitchCells = 7;
+  static constexpr int k_numberOfSwitchCells = 8;
   /* TODO : At most 6 switch cells only fit in the screen, but an OrientedLayout
    * currently gives its subviews(such as m_selectableTableView) a frame of
    * minimalSizeForOptimalDisplay size, which contains all cells. */

@@ -100,6 +100,9 @@ public:
   void deleteAllPairsOfSeries(int series) override;
 
   typedef double (Store::*CalculPointer)(int) const;
+  static bool ValidSeriesAndValidTotalNormalProbabilities(const DoublePairStore * store, int series) {
+    return store->seriesIsValid(series) && static_cast<const Store *>(store)->totalNormalProbabilityValues(series) > 0;
+  }
 private:
   constexpr static int k_numberOfQuantiles = 5;
   constexpr static I18n::Message k_quantilesName[k_numberOfQuantiles] = {

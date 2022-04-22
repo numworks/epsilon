@@ -24,11 +24,9 @@ public:
 
   TELEMETRY_ID("NormalProbability");
 private:
-  // Hide series having invalid total values.
-  static bool ValidSerieAndTotal(const Shared::DoublePairStore * store, int series) { return store->seriesIsValid(series) && static_cast<const Store *>(store)->totalNormalProbabilityValues(series) > 0; }
-
   // PlotController
-  Shared::DoublePairStore::ValidSeries validSerieMethod() const override { return &NormalProbabilityController::ValidSerieAndTotal; };
+  // Hide series having invalid total values.
+  Shared::DoublePairStore::ValidSeries validSerieMethod() const override { return Store::ValidSeriesAndValidTotalNormalProbabilities; };
   void computeYBounds(float * yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return false; }
   // Horizontal labels will always be in the middle

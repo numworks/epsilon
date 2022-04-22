@@ -17,7 +17,6 @@ public:
   bool initializeDistribution(DistributionType distributionType) override { return OneMean::IntervalInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return OneMean::NumberOfAvailableDistributions(); }
   I18n::Message distributionTitle() const override { return OneMean::DistributionTitle(); }
-  I18n::Message distributionDescription() const override { return OneMean::IntervalDistributionDescription(); }
   void initParameters() override { OneMean::InitTIntervalParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && OneMean::TAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {

@@ -51,7 +51,6 @@ public:
   virtual I18n::Message zStatisticMessage() const = 0;
   virtual I18n::Message tOrZStatisticMessage() const = 0;
   virtual I18n::Message distributionTitle() const { return I18n::Message::Default; }
-  virtual I18n::Message distributionDescription() const { return I18n::Message::Default; }
   virtual bool hasHypothesisParameters() const { return false; }
   virtual HypothesisParams * hypothesisParams() { assert(false); return nullptr; }
   virtual const char * hypothesisSymbol() { assert(false); return nullptr; }

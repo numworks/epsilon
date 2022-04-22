@@ -25,8 +25,6 @@ public:
   static I18n::Message ZTitle() { return I18n::Message::HypothesisControllerTitleOneMeanZ; }
   static I18n::Message TTitle() { return I18n::Message::HypothesisControllerTitleOneMeanT; }
   static I18n::Message DistributionTitle() { return I18n::Message::TypeControllerTitleOne; }
-  static I18n::Message TestDistributionDescription() { return I18n::Message::OneMeanTestDescr; }
-  static I18n::Message IntervalDistributionDescription() { return I18n::Message::OneMeanIntervalDescr; }
 
   static const char * HypothesisSymbol() { return "μ"; }
   static const char * EstimateSymbol() { return "x̅"; };
@@ -105,8 +103,6 @@ public:
   static I18n::Message ZTitle() { return I18n::Message::HypothesisControllerTitleTwoMeansZ; }
   static I18n::Message TTitle() { return I18n::Message::HypothesisControllerTitleTwoMeansT; }
   static I18n::Message DistributionTitle() { return I18n::Message::TypeControllerTitleTwo; }
-  static I18n::Message TestDistributionDescription() { return I18n::Message::TwoMeanTestDescr; }
-  static I18n::Message IntervalDistributionDescription() { return I18n::Message::TwoMeanIntervalDescr; }
 
   // Description
   static int NumberOfAvailableDistributions() { return 3; }

@@ -3,9 +3,7 @@
 
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
-#include "inference/statistic/interval/interval_conclusion_view.h"
-#include "inference/statistic/interval/interval_curve_view.h"
-#include "inference/statistic/statistic_graph_view.h"
+#include "inference/statistic/interval/interval_graph_view.h"
 #include "inference/constants.h"
 
 namespace Inference {
@@ -22,9 +20,7 @@ public:
 private:
   constexpr static int k_titleBufferSize = sizeof("ME=") + Constants::k_shortFloatNumberOfChars;
   char m_titleBuffer[k_titleBufferSize];
-  IntervalCurveView m_curveView;
-  IntervalConclusionView m_conclusionView;
-  StatisticGraphView m_graphView;
+  IntervalGraphView m_graphView;
   Interval * m_interval;
 };
 

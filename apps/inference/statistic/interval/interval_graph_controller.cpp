@@ -6,8 +6,7 @@ namespace Inference {
 
 IntervalGraphController::IntervalGraphController(Escher::StackViewController * stack, Interval * interval) :
       Escher::ViewController(stack),
-      m_curveView(interval),
-      m_graphView(&m_curveView, &m_conclusionView),
+      m_graphView(interval),
       m_interval(interval) {
 }
 
@@ -21,9 +20,8 @@ const char * IntervalGraphController::title() {
 }
 
 void IntervalGraphController::didBecomeFirstResponder() {
-  m_conclusionView.setInterval(m_interval->estimate(), m_interval->marginOfError());
   m_interval->computeCurveViewRange();
-  m_graphView.reload();
+  m_graphView.reload(m_interval->estimate(), m_interval->marginOfError());
 }
 
 bool IntervalGraphController::handleEvent(Ion::Events::Event event) {

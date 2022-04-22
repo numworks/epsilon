@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GUI_LEGEND_VIEW_H
-#define PROBABILITY_GUI_LEGEND_VIEW_H
+#ifndef INFERENCE_STATISTIC_TEST_LEGEND_VIEW_H
+#define INFERENCE_STATISTIC_TEST_LEGEND_VIEW_H
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
@@ -41,4 +41,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_GUI_LEGEND_VIEW_H */
+#endif /* INFERENCE_STATISTIC_TEST_LEGEND_VIEW_H */

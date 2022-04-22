@@ -3,10 +3,7 @@
 
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
-#include "inference/statistic/legend_view.h"
-#include "inference/statistic/statistic_graph_view.h"
-#include "inference/statistic/test/test_conclusion_view.h"
-#include "inference/statistic/test/test_curve_view.h"
+#include "inference/statistic/test/test_graph_view.h"
 #include "inference/constants.h"
 
 
@@ -23,10 +20,7 @@ public:
 private:
   constexpr static int k_titleBufferSize = sizeof("df= α= z= p-value=") + Constants::k_shortFloatNumberOfChars * 4;
   char m_titleBuffer[k_titleBufferSize];
-  TestCurveView m_curveView;
-  TestConclusionView m_conclusionView;
-  LegendView m_legendView;
-  StatisticGraphView m_graphView;
+  TestGraphView m_graphView;
   Test * m_test;
 };
 

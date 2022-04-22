@@ -8,14 +8,14 @@
 
 namespace Statistics {
 
-class PlotControllerDelegate;
+class PlotController;
 
 class PlotCurveView : public Shared::LabeledCurveView {
 public:
   PlotCurveView(Shared::CurveViewRange * curveViewRange,
                 Shared::CurveViewCursor * curveViewCursor,
                 Shared::CursorView * cursorView,
-                PlotControllerDelegate * plotControllerDelegate);
+                PlotController * plotController);
   void drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const;
 
   // Escher::View
@@ -26,7 +26,7 @@ public:
 private:
   float labelStepFactor(Axis axis) const override;
 
-  PlotControllerDelegate * m_plotControllerDelegate;
+  PlotController * m_plotController;
 };
 
 }  // namespace Statistics

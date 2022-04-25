@@ -50,6 +50,7 @@ public:
   List(const ListNode * n) : Expression(n) {}
   static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
   ListNode * node() { return static_cast<ListNode *>(Expression::node()); }
+  Expression shallowReduce(Context * context);
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;
 };

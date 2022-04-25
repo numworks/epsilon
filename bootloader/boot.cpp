@@ -58,12 +58,12 @@ bool Boot::isKernelPatched(const Slot & s) {
     return true;
   }
 
-  return *(uint32_t *)(origin_isr + sizeof(uint32_t) * 21) == (uint32_t)&_fake_isr_function_start;
+  return *(uint32_t *)(origin_isr + sizeof(uint32_t) * 4) == (uint32_t)&_fake_isr_function_start && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 5) == (uint32_t)&_fake_isr_function_start && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 6) == (uint32_t)&_fake_isr_function_start && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 7) == (uint32_t)&_fake_isr_function_start;
 }
 
 __attribute((section(".fake_isr_function"))) __attribute__((used)) void Boot::flsh_intr() {
   // a simple function
-  while (1) {}
+  
 }
 
 void Boot::patchKernel(const Slot & s) {
@@ -73,10 +73,26 @@ void Boot::patchKernel(const Slot & s) {
   memcpy(data, (void*)0x90000000, 1024*4);
   uint32_t dummy_address = (uint32_t)&_fake_isr_function_start;
   uint8_t * ptr = (uint8_t *)&dummy_address;
-  data[origin_isr + sizeof(uint32_t) * 21] = ptr[0];
-  data[origin_isr + sizeof(uint32_t) * 21 + 1] = ptr[1];
-  data[origin_isr + sizeof(uint32_t) * 21 + 2] = ptr[2];
-  data[origin_isr + sizeof(uint32_t) * 21 + 3] = ptr[3];
+  data[origin_isr + sizeof(uint32_t) * 6] = ptr[0];
+  data[origin_isr + sizeof(uint32_t) * 6 + 1] = ptr[1];
+  data[origin_isr + sizeof(uint32_t) * 6 + 2] = ptr[2];
+  data[origin_isr + sizeof(uint32_t) * 6 + 3] = ptr[3];
+  
+  data[origin_isr + sizeof(uint32_t) * 5] = ptr[0];
+  data[origin_isr + sizeof(uint32_t) * 5 + 1] = ptr[1];
+  data[origin_isr + sizeof(uint32_t) * 5 + 2] = ptr[2];
+  data[origin_isr + sizeof(uint32_t) * 5 + 3] = ptr[3];
+  
+  data[origin_isr + sizeof(uint32_t) * 7] = ptr[0];
+  data[origin_isr + sizeof(uint32_t) * 7 + 1] = ptr[1];
+  data[origin_isr + sizeof(uint32_t) * 7 + 2] = ptr[2];
+  data[origin_isr + sizeof(uint32_t) * 7 + 3] = ptr[3];
+
+  data[origin_isr + sizeof(uint32_t) * 4] = ptr[0];
+  data[origin_isr + sizeof(uint32_t) * 4 + 1] = ptr[1];
+  data[origin_isr + sizeof(uint32_t) * 4 + 2] = ptr[2];
+  data[origin_isr + sizeof(uint32_t) * 4 + 3] = ptr[3];
+
   Ion::Device::ExternalFlash::EraseSector(0);
   Ion::Device::ExternalFlash::WriteMemory((uint8_t*)0x90000000, data, 1024*4);
 }
@@ -86,7 +102,7 @@ void Boot::bootSlot(Bootloader::Slot s) {
   if (!s.userlandHeader()->isOmega() && !s.userlandHeader()->isUpsilon()) {
     // We are trying to boot epsilon, so we check the version and show an advertisement if needed
     const char * version = s.userlandHeader()->version();
-    const char * min = "18.2.0";
+    const char * min = "18.2.4";
     int vsum = Utility::versionSum(version, strlen(version));
     int minsum = Utility::versionSum(min, strlen(min));
     if (vsum >= minsum) {
@@ -100,8 +116,9 @@ void Boot::bootSlot(Bootloader::Slot s) {
 
 void Boot::bootSelectedSlot() {
   lockInternal();
-  enableFlashIntr();
+  // enableFlashIntr();
   config()->setBooting(true);
+  config()->slot()->boot();
   Ion::Device::Flash::EnableInternalSessionLock();
 }
 
@@ -110,11 +127,6 @@ __attribute__((noreturn)) void Boot::boot() {
 
   Boot::config()->clearSlot();
   Boot::config()->setBooting(false);
-
-  if (!Boot::isKernelPatched(Slot::A())) {
-    Boot::patchKernel(Slot::A());
-    Ion::LED::setColor(KDColorRed);
-  }
 
   while (true) {
     HomeMenu menu = HomeMenu();

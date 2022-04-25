@@ -76,10 +76,9 @@ public:
   void setDimensions(int rows, int columns);
   void addChildAtIndexInPlace(Evaluation<T> t, int index, int currentNumberOfChildren);
 private:
-  MatrixComplexNode<T> * node() { return static_cast<MatrixComplexNode<T> *>(Evaluation<T>::node()); }
+  MatrixComplexNode<T> * node() const { return static_cast<MatrixComplexNode<T> *>(Evaluation<T>::node()); }
   void setNumberOfRows(int rows) { node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { node()->setNumberOfColumns(columns); }
-  MatrixComplexNode<T> * node() const { return static_cast<MatrixComplexNode<T> *>(Evaluation<T>::node()); }
 };
 
 }

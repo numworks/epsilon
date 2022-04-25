@@ -1,4 +1,4 @@
-#include <bootloader/slot.h>
+#include <bootloader/slots/slot.h>
 #include <ion/src/device/shared/drivers/board.h>
 #include <ion/src/device/shared/drivers/flash.h>
 #include <bootloader/boot.h>
@@ -36,8 +36,6 @@ const UserlandHeader* Slot::userlandHeader() const {
     // If we are booting from slot B, we need to lock the slot A (and Khi)
     Ion::Device::Flash::LockSlotA();
   }
-
-  Boot::lockInternal();
 
   // Configure the MPU for the booted firmware
   Ion::Device::Board::bootloaderMPU();

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <bootloader/utility.h>
 
 // https://www.techiedelight.com/implement-itoa-function-in-c/
 
@@ -19,7 +18,7 @@ char* reverse(char *buffer, int i, int j) {
 }
  
 // Iterative function to implement `itoa()` function in C
-char* Bootloader::Utility::itoa(int value, char* buffer, int base) {
+char* itoa(int value, char* buffer, int base) {
     // invalid input
     if (base < 2 || base > 32) {
         return buffer;

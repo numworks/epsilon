@@ -4,9 +4,13 @@
 #include <drivers/config/clocks.h>
 #include <drivers/config/internal_flash.h>
 #include <drivers/external_flash.h>
+#include <drivers/timing.h>
 #include <regs/regs.h>
 #include <ion.h>
 
+#include <bootloader/drivers/stm32_drivers.h>
+
+using namespace STM32;
 typedef void(*ISR)(void);
 extern ISR InitialisationVector[];
 
@@ -437,6 +441,20 @@ void lockPCBVersion() {
 
 bool pcbVersionIsLocked() {
   return *reinterpret_cast<const uint8_t *>(InternalFlash::Config::OTPLockAddress(k_pcbVersionOTPIndex)) == 0;
+}
+
+void jumpToInternalBootloader() {
+  asm volatile ("cpsie i" : : : "memory");
+
+  STM32::rcc_deinit();
+  STM32::hal_deinit();
+  STM32::systick_deinit();
+
+  const uint32_t p = (*((uint32_t *) 0x1FF00000));
+  asm volatile ("MSR msp, %0" : : "r" (p) : );
+  void (*SysMemBootJump)(void);
+	SysMemBootJump = (void (*)(void)) (*((uint32_t *) 0x1FF00004));
+	SysMemBootJump();
 }
 
 }

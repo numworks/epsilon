@@ -30,7 +30,7 @@ public:
     m_writeAddress(0),
     m_bInterfaceAlternateSetting(bInterfaceAlternateSetting),
     m_isErasingAndWriting(false),
-    m_dfuConfig(nullptr),
+    m_dfuConfig(),
     m_eraseAddress(0),
     m_dfuData()
   {
@@ -40,8 +40,8 @@ public:
   void wholeDataSentCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
   bool isErasingAndWriting() const { return m_isErasingAndWriting; }
 
-  void setDfuConfig(Bootloader::ProtectionState * data) { m_dfuConfig = data; copyDfuData(); }
-  Bootloader::ProtectionState * getDfuConfig() const { return m_dfuConfig; }
+  void setDfuConfig(Bootloader::ProtectionState data) { m_dfuConfig = data; copyDfuData(); }
+  Bootloader::ProtectionState getDfuConfig() const { return m_dfuConfig; }
 
 protected:
   void setActiveInterfaceAlternative(uint8_t interfaceAlternativeIndex) override {
@@ -180,7 +180,7 @@ private:
   uint32_t m_writeAddress;
   uint8_t m_bInterfaceAlternateSetting;
   bool m_isErasingAndWriting;
-  Bootloader::ProtectionState * m_dfuConfig;
+  Bootloader::ProtectionState m_dfuConfig;
   uint32_t m_eraseAddress;
   Bootloader::ProtectionState m_dfuData;
 };

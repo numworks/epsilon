@@ -33,11 +33,11 @@ class USBData {
         const char * m_string;
     };
 
-    USBData(const char * desc, const char * name, ProtectionState data = ProtectionState()) : m_stringDescriptor(desc), m_name(name), m_data(&data) {};
+    USBData(const char * desc, const char * name, ProtectionState data = ProtectionState()) : m_stringDescriptor(desc), m_name(name), m_data(data) {};
 
     const char * stringDescriptor() const { return m_stringDescriptor; }
     const char * getName() const { return m_name; }
-    ProtectionState * getData() const { return m_data; }
+    ProtectionState getData() const { return m_data; }
 
     static const char * buildStringDescriptor(StringHeader header, uint32_t startAddress, uint32_t size);
 
@@ -48,7 +48,7 @@ class USBData {
   private:
     const char * m_stringDescriptor;
     const char * m_name;
-    ProtectionState * m_data;
+    ProtectionState m_data;
 
 };
 }

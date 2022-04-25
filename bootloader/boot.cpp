@@ -1,18 +1,32 @@
 #include <bootloader/boot.h>
-#include <bootloader/slot.h>
-#include <ion.h>
-#include <ion/src/device/shared/drivers/reset.h>
-#include <bootloader/interface.h>
-#include <ion/src/device/n0110/drivers/power.h>
+#include <bootloader/slots/slot.h>
+#include <bootloader/interface/static/interface.h>
 #include <bootloader/recovery.h>
 #include <bootloader/usb_data.h>
-#include <ion/src/device/shared/drivers/flash.h>
 #include <bootloader/utility.h>
-#include <bootloader/interface/menus/home/home.h>
+#include <bootloader/interface/menus/home.h>
+#include <bootloader/interface/menus/warning.h>
+#include <ion.h>
+#include <ion/src/device/shared/drivers/flash.h>
+#include <ion/src/device/shared/drivers/board.h>
+#include <ion/src/device/shared/drivers/reset.h>
+#include <ion/src/device/shared/drivers/external_flash.h>
+#include <ion/src/device/n0110/drivers/power.h>
 
 #include <assert.h>
 
+using namespace Utility;
+
+extern "C" {
+  extern char _fake_isr_function_start;
+}
+
 namespace Bootloader {
+
+BootConfig * Boot::config() {
+  static BootConfig * bootcfg = new BootConfig();
+  return bootcfg;
+}
 
 BootMode Boot::mode() {
   return BootMode::SlotA;
@@ -22,35 +36,85 @@ void Boot::setMode(BootMode mode) {
   // We dont use the exam mode driver as storage for the boot mode because we need the 16k of storage x)
 }
 
+void Boot::busErr() {
+  if (config()->isBooting()) {
+    config()->slot()->boot();
+  }
+  Bootloader::Recovery::crash_handler("BusFault");
+}
+
+bool Boot::isKernelPatched(const Slot & s) {
+  if (s.userlandHeader()->isOmega()) {
+    // we don't need to patch the kernel
+    return true;
+  }
+
+  // It's an epsilon kernel, so we need to check if it's patched
+
+  uint32_t origin_isr = s.address() + sizeof(Bootloader::KernelHeader) - sizeof(uint32_t) * 3;
+
+  if (*(uint32_t *)(origin_isr + sizeof(uint32_t) * 12) == (uint32_t)0x0) {
+    // fake epsilon
+    return true;
+  }
+
+  return *(uint32_t *)(origin_isr + sizeof(uint32_t) * 21) == (uint32_t)&_fake_isr_function_start;
+}
+
+__attribute((section(".fake_isr_function"))) __attribute__((used)) void Boot::flsh_intr() {
+  // a simple function
+  while (1) {}
+}
+
+void Boot::patchKernel(const Slot & s) {
+  uint32_t origin_isr = s.address() + sizeof(Bootloader::KernelHeader) - sizeof(uint32_t) * 3 - 0x90000000;
+  // we allocate a big buffer to store the first sector
+  uint8_t data[1024*4];
+  memcpy(data, (void*)0x90000000, 1024*4);
+  uint32_t dummy_address = (uint32_t)&_fake_isr_function_start;
+  uint8_t * ptr = (uint8_t *)&dummy_address;
+  data[origin_isr + sizeof(uint32_t) * 21] = ptr[0];
+  data[origin_isr + sizeof(uint32_t) * 21 + 1] = ptr[1];
+  data[origin_isr + sizeof(uint32_t) * 21 + 2] = ptr[2];
+  data[origin_isr + sizeof(uint32_t) * 21 + 3] = ptr[3];
+  Ion::Device::ExternalFlash::EraseSector(0);
+  Ion::Device::ExternalFlash::WriteMemory((uint8_t*)0x90000000, data, 1024*4);
+}
+
 void Boot::bootSlot(Bootloader::Slot s) {
+  config()->setSlot(&s);
   if (!s.userlandHeader()->isOmega() && !s.userlandHeader()->isUpsilon()) {
     // We are trying to boot epsilon, so we check the version and show an advertisement if needed
     const char * version = s.userlandHeader()->version();
-    const char * min = "18.2.4";
+    const char * min = "18.2.0";
     int vsum = Utility::versionSum(version, strlen(version));
     int minsum = Utility::versionSum(min, strlen(min));
     if (vsum >= minsum) {
-      Interface::drawEpsilonAdvertisement();
-      uint64_t scan = 0;
-      while (scan != Ion::Keyboard::State(Ion::Keyboard::Key::Back)) {
-        scan = Ion::Keyboard::scan();
-        if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::EXE) || scan == Ion::Keyboard::State(Ion::Keyboard::Key::OK)) {
-          scan = Ion::Keyboard::State(Ion::Keyboard::Key::Back);
-          s.boot();
-        } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::OnOff)) {
-          Ion::Power::standby(); // Force a core reset to exit
-        }
-      }
-      Interface::drawMenu();
+      WarningMenu menu = WarningMenu();
+      menu.open();
       return;
     }
   }
-  s.boot();
-  Interface::drawMenu();
+  bootSelectedSlot();
+}
+
+void Boot::bootSelectedSlot() {
+  lockInternal();
+  enableFlashIntr();
+  config()->setBooting(true);
+  Ion::Device::Flash::EnableInternalSessionLock();
 }
 
 __attribute__((noreturn)) void Boot::boot() {
   assert(mode() != BootMode::Unknown);
+
+  Boot::config()->clearSlot();
+  Boot::config()->setBooting(false);
+
+  if (!Boot::isKernelPatched(Slot::A())) {
+    Boot::patchKernel(Slot::A());
+    Ion::LED::setColor(KDColorRed);
+  }
 
   while (true) {
     HomeMenu menu = HomeMenu();
@@ -59,67 +123,6 @@ __attribute__((noreturn)) void Boot::boot() {
 
   // Achievement unlocked: How Did We Get Here?
   bootloader();
-}
-
-void Boot::installerMenu() {
-  Interface::drawInstallerSelection();
-  uint64_t scan = 0;
-  while (scan != Ion::Keyboard::State(Ion::Keyboard::Key::Back)) {
-    scan = Ion::Keyboard::scan();
-    if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::One)) {
-      scan = Ion::Keyboard::State(Ion::Keyboard::Key::Back);
-      bootloader();
-      continue;
-    } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Two)) {
-      scan = Ion::Keyboard::State(Ion::Keyboard::Key::Back);
-      bootloaderUpdate();
-      continue;
-    } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::OnOff)) {
-      Ion::Power::standby(); // Force a core reset to exit
-    }
-  }
-
-  Interface::drawMenu();
-}
-
-void Boot::aboutMenu() {
-  // Draw the about menu
-  Interface::drawAbout();
-  // Wait for the user to press OK, EXE or Back button
-  while (true) {
-    uint64_t scan = Ion::Keyboard::scan();
-    if ((scan == Ion::Keyboard::State(Ion::Keyboard::Key::OK)) ||
-        (scan == Ion::Keyboard::State(Ion::Keyboard::Key::EXE)) ||
-        (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Back))) {
-      // Redraw the menu and return
-      Interface::drawMenu();
-      return;
-    }  else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::OnOff)) {
-      Ion::Power::standby(); // Force a core reset to exit
-    }
-  }
-
-}
-
-void Boot::bootloaderUpdate() {
-  USBData data = USBData::BOOTLOADER_UPDATE();
-  
-  for (;;) {
-    Bootloader::Interface::drawBootloaderUpdate();
-    Ion::USB::enable();
-    do {
-      uint64_t scan = Ion::Keyboard::scan();
-      if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Back)) {
-        Ion::USB::disable();
-        Interface::drawMenu();
-        return;
-      } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::OnOff)) {
-        Ion::Power::standby();
-      }
-    } while (!Ion::USB::isEnumerated());
-
-    Ion::USB::DFU(true, &data);
-  }
 }
 
 void Boot::bootloader() {
@@ -138,7 +141,6 @@ void Boot::bootloader() {
       if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Back)) {
         // Disable USB, redraw the menu and return
         Ion::USB::disable();
-        Interface::drawMenu();
         return;
       } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::OnOff)) {
         Ion::Power::standby(); // Force a core reset to exit
@@ -150,6 +152,10 @@ void Boot::bootloader() {
   }
 }
 
+void Boot::jumpToInternalBootloader() {
+  Ion::Device::Board::jumpToInternalBootloader(); 
+}
+
 void Boot::lockInternal() {
   Ion::Device::Flash::DisableInternalProtection();
   Ion::Device::Flash::SetInternalSectorProtection(0, true);
@@ -157,6 +163,10 @@ void Boot::lockInternal() {
   Ion::Device::Flash::SetInternalSectorProtection(2, true);
   Ion::Device::Flash::SetInternalSectorProtection(3, true);
   Ion::Device::Flash::EnableInternalProtection();
+}
+
+void Boot::enableFlashIntr() {
+  Ion::Device::Flash::EnableInternalFlashInterrupt();
 }
 
 }

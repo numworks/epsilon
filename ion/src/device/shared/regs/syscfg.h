@@ -5,6 +5,8 @@
 #include <regs/config/syscfg.h>
 #include "gpio.h"
 
+#define REGS_SYSCFG_CONFIG_F412 1
+
 namespace Ion {
 namespace Device {
 namespace Regs {

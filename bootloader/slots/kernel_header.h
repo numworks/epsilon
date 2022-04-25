@@ -1,5 +1,5 @@
-#ifndef BOOTLOADER_KERNEL_HEADER_H
-#define BOOTLOADER_KERNEL_HEADER_H
+#ifndef BOOTLOADER_SLOTS_KERNEL_HEADER_H
+#define BOOTLOADER_SLOTS_KERNEL_HEADER_H
 
 #include <stdint.h>
 #include <bootloader/utility.h>

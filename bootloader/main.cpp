@@ -3,9 +3,9 @@
 #include <assert.h>
 
 #include <bootloader/boot.h>
-#include <bootloader/interface.h>
-#include <bootloader/slot.h>
-#include <bootloader/slot_exam_mode.h>
+#include <bootloader/interface/static/interface.h>
+#include <bootloader/slots/slot.h>
+#include <bootloader/slots/slot_exam_mode.h>
 #include <bootloader/recovery.h>
 #include <ion/src/device/shared/drivers/flash.h>
 
@@ -17,25 +17,37 @@ __attribute__ ((noreturn)) void ion_main(int argc, const char * const argv[]) {
 
   // We check if there is a slot in exam_mode
 
-  bool isSlotA = Bootloader::Slot::A().kernelHeader()->isValid();
+  bool isSlotA = Bootloader::Slot::isFullyValid(Bootloader::Slot::A());
 
   if (isSlotA) {
-    Bootloader::ExamMode::ExamMode SlotAExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotAExamMode(Bootloader::Slot::A().kernelHeader()->isAboveVersion16());
+    Bootloader::ExamMode::ExamMode SlotAExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotAExamMode(!Bootloader::Slot::A().userlandHeader()->isOmega());
     if (SlotAExamMode != Bootloader::ExamMode::ExamMode::Off && SlotAExamMode != Bootloader::ExamMode::ExamMode::Unknown) {
       // We boot the slot in exam_mode
       Bootloader::Slot::A().boot();
     } 
   }
 
-  bool isSlotB = Bootloader::Slot::B().kernelHeader()->isValid();
+  bool isSlotB = Bootloader::Slot::isFullyValid(Bootloader::Slot::B());
 
   if (isSlotB) {
-    Bootloader::ExamMode::ExamMode SlotBExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotBExamMode(Bootloader::Slot::B().kernelHeader()->isAboveVersion16());
+    Bootloader::ExamMode::ExamMode SlotBExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotBExamMode(!Bootloader::Slot::B().userlandHeader()->isOmega());
     if (SlotBExamMode != Bootloader::ExamMode::ExamMode::Off && SlotBExamMode != Bootloader::ExamMode::ExamMode::Unknown && isSlotB) {
       // We boot the slot in exam_mode
       Bootloader::Slot::B().boot();
     }
     
+  }
+
+  // I have no idea if this will work, but if Pariss did a good job, it should
+
+  bool isKhiSlot = Bootloader::Slot::isFullyValid(Bootloader::Slot::Khi());
+
+  if (isKhiSlot) {
+    Bootloader::ExamMode::ExamMode KhiExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotKhiExamMode();
+    if (KhiExamMode != Bootloader::ExamMode::ExamMode::Off && KhiExamMode != Bootloader::ExamMode::ExamMode::Unknown && isKhiSlot) {
+      // We boot the slot in exam_mode
+      Bootloader::Slot::Khi().boot();
+    }
   }
 
   if (Bootloader::Recovery::has_crashed()) {

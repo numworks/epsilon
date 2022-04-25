@@ -1,4 +1,4 @@
-#include <bootloader/userland_header.h>
+#include <bootloader/slots/userland_header.h>
 
 namespace Bootloader {
 

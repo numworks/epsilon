@@ -45,6 +45,14 @@ SECTIONS {
     _exam_mode_buffer_end = .;
   } >INTERNAL_FLASH
 
+  .fake_isr_function : {
+    . = ALIGN(4);
+    _fake_isr_function_start = .;
+    KEEP(*(.fake_isr_function))
+    KEEP(*(.fake_isr_function.*))
+    _fake_isr_function_end = .;
+  }
+
   .text : {
     . = ALIGN(4);
     *(.text)

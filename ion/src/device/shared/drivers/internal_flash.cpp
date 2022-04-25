@@ -344,6 +344,25 @@ void SetSectorProtection(int i, bool protect) {
   }
 }
 
+void EnableSessionLock() {
+  if (FLASH.OPTCR()->getLOCK()) {
+    // writing bullshit to the lock register to lock it until next core reset
+    FLASH.OPTKEYR()->set(0x00000000);
+    FLASH.OPTKEYR()->set(0xFFFFFFFF);
+  }
+}
+
+void EnableFlashInterrupt() {
+  open();
+  FLASH.CR()->setERRIE(true);
+  wait();
+  FLASH.CR()->setEOPIE(true);
+  wait();
+  FLASH.CR()->setRDERRIE(true);
+  wait();
+  close();
+}
+
 }
 }
 }

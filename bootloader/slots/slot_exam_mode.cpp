@@ -1,4 +1,4 @@
-#include <bootloader/slot_exam_mode.h>
+#include <bootloader/slots/slot_exam_mode.h>
 #include <assert.h>
 #include <ion.h>
 #include <ion/src/device/shared/drivers/flash.h>
@@ -118,6 +118,32 @@ uint8_t * SignificantSlotBExamModeAddress(bool newVersion) {
   
 }
 
+uint8_t * SignificantSlotKhiExamModeAddress() {
+  uint32_t * persitence_start_32 = (uint32_t *)SlotsExamMode::getSlotKhiStartExamAddress();
+  uint32_t * persitence_end_32 = (uint32_t *)SlotsExamMode::getSlotKhiEndExamAddress();
+  
+  assert((persitence_end_32 - persitence_start_32) % 4 == 0);
+  while (persitence_start_32 < persitence_end_32 && *persitence_start_32 == 0x0) {
+    // Scan by groups of 32 bits to reach first non-zero bit
+    persitence_start_32++;
+  }
+  uint8_t * persitence_start_8 = (uint8_t *)persitence_start_32;
+  uint8_t * persitence_end_8 = (uint8_t *)persitence_end_32;
+  while (persitence_start_8 < persitence_end_8 && *persitence_start_8 == 0x0) {
+    // Scan by groups of 8 bits to reach first non-zero bit
+    persitence_start_8++;
+  }
+  if (persitence_start_8 == persitence_end_8
+  // we can't toggle from 0[3] to 2[3] when there is only one 1 bit in the whole sector
+  || (persitence_start_8 + 1 == persitence_end_8 && *persitence_start_8 == 1)) {
+    assert(Ion::Device::Flash::SectorAtAddress(SlotsExamMode::getSlotKhiStartExamAddress()) >= 0);
+    Ion::Device::Flash::EraseSector(Ion::Device::Flash::SectorAtAddress(SlotsExamMode::getSlotKhiStartExamAddress()));
+    return (uint8_t *)SlotsExamMode::getSlotKhiStartExamAddress();
+  }
+
+  return persitence_start_8;
+}
+
 uint8_t SlotsExamMode::FetchSlotAExamMode(bool newVersion) {
   uint8_t * readingAddress = SignificantSlotAExamModeAddress(newVersion);
   if (!newVersion) {
@@ -146,6 +172,15 @@ uint8_t SlotsExamMode::FetchSlotBExamMode(bool newVersion) {
   
 }
 
+uint8_t SlotsExamMode::FetchSlotKhiExamMode() {
+  uint8_t * readingAddress = SignificantSlotKhiExamModeAddress();
+  // Count the number of 0[3] before reading address
+  uint32_t nbOfZerosBefore = ((readingAddress - (uint8_t *)getSlotKhiStartExamAddress()) * numberOfBitsInByte) % 4;
+  // Count the number of 0[3] at reading address
+  size_t numberOfLeading0 = (numberOfBitsInByte - numberOfBitsAfterLeadingZeroes(*readingAddress)) % 4;
+  return (nbOfZerosBefore + numberOfLeading0) % 4;
+}
+
 uint32_t SlotsExamMode::getSlotAStartExamAddress(bool newVersion) {
   return newVersion ? SlotAExamModeBufferStartNewVersions : SlotAExamModeBufferStartOldVersions;
 }
@@ -160,6 +195,14 @@ uint32_t SlotsExamMode::getSlotBStartExamAddress(bool newVersion) {
 
 uint32_t SlotsExamMode::getSlotBEndExamAddress(bool newVersion) {
   return newVersion ? SlotBExamModeBufferEndNewVersions : SlotBExamModeBufferEndOldVersions;
+}
+
+uint32_t SlotsExamMode::getSlotKhiStartExamAddress() {
+  return SlotKhiExamModeBufferStart;
+}
+
+uint32_t SlotsExamMode::getSlotKhiEndExamAddress() {
+  return SlotKhiExamModeBufferEnd;
 }
 
 }

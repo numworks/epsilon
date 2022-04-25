@@ -1,5 +1,5 @@
-#ifndef _BOOTLOADER_INTERFACE_ABOUT_ABOUT_H_
-#define _BOOTLOADER_INTERFACE_ABOUT_ABOUT_H_
+#ifndef _BOOTLOADER_INTERFACE_ABOUT_H_
+#define _BOOTLOADER_INTERFACE_ABOUT_H_
 
 #include <bootloader/interface/src/menu.h>
 
@@ -9,7 +9,7 @@ namespace Bootloader {
       AboutMenu();
     
       void setup() override;
-
+      void post_open() override {};
   };
 }
 

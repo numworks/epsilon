@@ -7,6 +7,7 @@
 #include <drivers/reset.h>
 #include <drivers/timing.h>
 #include <bootloader/recovery.h>
+#include <bootloader/boot.h>
 
 typedef void (*cxx_constructor)();
 
@@ -49,7 +50,7 @@ void __attribute__((noinline)) usage_fault_handler() {
 }
 
 void __attribute__((noinline)) bus_fault_handler() {
-  Bootloader::Recovery::crash_handler("BusFault");
+  Bootloader::Boot::busErr();
 }
 
 /* In order to ensure that this method is execute from the external flash, we

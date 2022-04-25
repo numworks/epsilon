@@ -30,8 +30,14 @@ Evaluation<T> VectorDotNode::templatedApproximate(ApproximationContext approxima
     return Complex<T>::Undefined();
   }
   Evaluation<T> input0 = childAtIndex(0)->approximate(T(), approximationContext);
+  if (input0.type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return Complex<T>::Undefined();
+  }
   Evaluation<T> input1 = childAtIndex(1)->approximate(T(), approximationContext);
-  return Complex<T>::Builder(input0.dot(&input1));
+   if (input1.type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return Complex<T>::Undefined();
+  }
+  return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input0).dot(static_cast<MatrixComplex<T> *>(&input1)));
 }
 
 

@@ -145,34 +145,26 @@ std::complex<T> MatrixComplexNode<T>::norm() const {
 }
 
 template<typename T>
-std::complex<T> MatrixComplexNode<T>::dot(Evaluation<T> * e) const {
-  if (e->type() != EvaluationNode<T>::Type::MatrixComplex) {
-    return std::complex<T>(NAN, NAN);
-  }
-  MatrixComplex<T> * b  = static_cast<MatrixComplex<T>*>(e);
-  if (vectorType() == Array::VectorType::None || vectorType() != b->vectorType() || numberOfChildren() != b->numberOfChildren()) {
+std::complex<T> MatrixComplexNode<T>::dot(MatrixComplex<T> * e) const {
+  if (vectorType() == Array::VectorType::None || vectorType() != e->vectorType() || numberOfChildren() != e->numberOfChildren()) {
     return std::complex<T>(NAN, NAN);
   }
   std::complex<T> sum = 0;
   for (int i = 0; i < numberOfChildren(); i++) {
-    sum += complexAtIndex(i) * b->complexAtIndex(i);
+    sum += complexAtIndex(i) * e->complexAtIndex(i);
   }
   return sum;
 }
 
 template<typename T>
-Evaluation<T> MatrixComplexNode<T>::cross(Evaluation<T> * e) const {
-  if (e->type() != EvaluationNode<T>::Type::MatrixComplex) {
-    return MatrixComplex<T>::Undefined();
-  }
-  MatrixComplex<T> * b  = static_cast<MatrixComplex<T>*>(e);
-  if (vectorType() == Array::VectorType::None || vectorType() != b->vectorType() || numberOfChildren() != 3 || b->numberOfChildren() != 3) {
+Evaluation<T> MatrixComplexNode<T>::cross(MatrixComplex<T> * e) const {
+  if (vectorType() == Array::VectorType::None || vectorType() != e->vectorType() || numberOfChildren() != 3 || e->numberOfChildren() != 3) {
     return MatrixComplex<T>::Undefined();
   }
   std::complex<T> operandsCopy[3];
-  operandsCopy[0] = complexAtIndex(1) * b->complexAtIndex(2) - complexAtIndex(2) * b->complexAtIndex(1);
-  operandsCopy[1] = complexAtIndex(2) * b->complexAtIndex(0) - complexAtIndex(0) * b->complexAtIndex(2);
-  operandsCopy[2] = complexAtIndex(0) * b->complexAtIndex(1) - complexAtIndex(1) * b->complexAtIndex(0);
+  operandsCopy[0] = complexAtIndex(1) * e->complexAtIndex(2) - complexAtIndex(2) * e->complexAtIndex(1);
+  operandsCopy[1] = complexAtIndex(2) * e->complexAtIndex(0) - complexAtIndex(0) * e->complexAtIndex(2);
+  operandsCopy[2] = complexAtIndex(0) * e->complexAtIndex(1) - complexAtIndex(1) * e->complexAtIndex(0);
   return MatrixComplex<T>::Builder(operandsCopy, numberOfRows(), numberOfColumns());
 }
 

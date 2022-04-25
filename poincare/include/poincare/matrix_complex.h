@@ -38,14 +38,16 @@ public:
   typename EvaluationNode<T>::Type type() const override { return EvaluationNode<T>::Type::MatrixComplex; }
   bool isUndefined() const override;
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
-  std::complex<T> trace() const override;
-  std::complex<T> determinant() const override;
+
+  // Matrix related functions
+  std::complex<T> trace() const;
+  std::complex<T> determinant() const;
   MatrixComplex<T> inverse() const;
   MatrixComplex<T> transpose() const;
   MatrixComplex<T> ref(bool reduced) const;
-  std::complex<T> norm() const override;
-  std::complex<T> dot(Evaluation<T> * e) const override;
-  Evaluation<T> cross(Evaluation<T> * e) const override;
+  std::complex<T> norm() const;
+  std::complex<T> dot(MatrixComplex<T> * e) const;
+  Evaluation<T> cross(MatrixComplex<T> * e) const;
 };
 
 template<typename T>
@@ -57,9 +59,14 @@ public:
   static MatrixComplex Builder(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
   static MatrixComplex<T> Undefined();
   static MatrixComplex<T> CreateIdentity(int dim);
+  std::complex<T> trace() const { return node()->trace(); }
+  std::complex<T> determinant() const { return node()->determinant(); }
   MatrixComplex<T> inverse() const { return node()->inverse(); }
   MatrixComplex<T> transpose() const { return node()->transpose(); }
   MatrixComplex<T> ref(bool reduced) const { return node()->ref(reduced); }
+  std::complex<T> norm() const { return node()->norm(); }
+  std::complex<T> dot(MatrixComplex<T> * e) const { return node()->dot(e); }
+  Evaluation<T> cross(MatrixComplex<T> * e) const { return node()->cross(e); }
   std::complex<T> complexAtIndex(int index) const {
     return node()->complexAtIndex(index);
   }

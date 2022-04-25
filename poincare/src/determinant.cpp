@@ -29,7 +29,10 @@ int DeterminantNode::serialize(char * buffer, int bufferSize, Preferences::Print
 template<typename T>
 Evaluation<T> DeterminantNode::templatedApproximate(ApproximationContext approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  return Complex<T>::Builder(input.determinant());
+  if (input.type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return input;
+  }
+  return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).determinant());
 }
 
 Expression DeterminantNode::shallowReduce(ReductionContext reductionContext) {

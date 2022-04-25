@@ -30,10 +30,12 @@ int MatrixTraceNode::serialize(char * buffer, int bufferSize, Preferences::Print
 template<typename T>
 Evaluation<T> MatrixTraceNode::templatedApproximate(ApproximationContext approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  Complex<T> result = Complex<T>::Builder(input.trace());
+  if (input.type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return input;
+  }
+  Complex<T> result = Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).trace());
   return std::move(result);
 }
-
 
 Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {

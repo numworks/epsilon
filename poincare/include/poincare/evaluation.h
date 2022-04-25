@@ -30,11 +30,6 @@ public:
   virtual bool isUndefined() const = 0;
   virtual T toScalar() const { return NAN; }
   virtual Expression complexToExpression(Preferences::ComplexFormat complexFormat) const = 0;
-  virtual std::complex<T> trace() const = 0;
-  virtual std::complex<T> determinant() const = 0;
-  virtual Evaluation<T> cross(Evaluation<T> * e) const = 0;
-  virtual std::complex<T> dot(Evaluation<T> * e) const = 0;
-  virtual std::complex<T> norm() const = 0;
 };
 
 template<typename T>
@@ -65,11 +60,6 @@ public:
   bool isUndefined() const { return node()->isUndefined(); }
   T toScalar() const { return node()->toScalar(); }
   Expression complexToExpression(Preferences::ComplexFormat complexFormat) const;
-  std::complex<T> trace() const { return node()->trace(); }
-  std::complex<T> determinant() const { return node()->determinant(); }
-  Evaluation<T> cross(Evaluation<T> * e) const { return node()->cross(e); }
-  std::complex<T> dot(Evaluation<T> * e) const { return node()->dot(e); }
-  std::complex<T> norm() const { return node()->norm(); }
 
   /* Operations */
   static Evaluation<T> Sum(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat);

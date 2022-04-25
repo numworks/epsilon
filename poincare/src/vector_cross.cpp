@@ -30,10 +30,15 @@ Evaluation<T> VectorCrossNode::templatedApproximate(ApproximationContext approxi
     return Complex<T>::Undefined();
   }
   Evaluation<T> input0 = childAtIndex(0)->approximate(T(), approximationContext);
+  if (input0.type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return Complex<T>::Undefined();
+  }
   Evaluation<T> input1 = childAtIndex(1)->approximate(T(), approximationContext);
-  return input0.cross(&input1);
+  if (input1.type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return Complex<T>::Undefined();
+  }
+  return static_cast<MatrixComplex<T>&>(input0).cross(static_cast<MatrixComplex<T> *>(&input1));
 }
-
 
 Expression VectorCross::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {

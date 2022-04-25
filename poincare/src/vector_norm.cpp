@@ -31,9 +31,11 @@ Evaluation<T> VectorNormNode::templatedApproximate(ApproximationContext approxim
     return Complex<T>::Undefined();
   }
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  return Complex<T>::Builder(input.norm());
+  if (input.type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return Complex<T>::Undefined();
+  }
+  return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).norm());
 }
-
 
 Expression VectorNorm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {

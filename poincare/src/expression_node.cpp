@@ -135,6 +135,24 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
   return false;
 }
 
+bool ExpressionNode::hasMatrixChild(Context * context) const {
+  for (ExpressionNode * c : children()) {
+    if (Expression(c).deepIsMatrix(context)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool ExpressionNode::hasListChild(Context * context) const {
+  for (ExpressionNode * c : children()) {
+    if (Expression(c).deepIsList(context)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 Expression ExpressionNode::removeUnit(Expression * unit) {
   return Expression(this);
 }

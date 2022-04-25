@@ -25,15 +25,6 @@
 
 namespace Poincare {
 
-bool MatrixNode::hasMatrixChild(Context * context) const {
-  for (ExpressionNode * c : children()) {
-    if (Expression(c).deepIsMatrix(context)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 int MatrixNode::polynomialDegree(Context * context, const char * symbolName) const {
   return -1;
 }
@@ -547,7 +538,7 @@ Expression Matrix::shallowReduce(Context * context) {
       return e;
     }
   }
-  if (node()->hasMatrixChild(context)) {
+  if (node()->hasMatrixChild(context) || node()->hasListChild(context)) {
     return replaceWithUndefinedInPlace();
   }
   return *this;

@@ -39,9 +39,7 @@ Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 }
 
 Expression ListNode::shallowReduce(ReductionContext reductionContext) {
-  /* We bypass the reduction to undef in case of undef children, as {undef} and
-   * undef are different objects. */
-  return List(this);
+  return List(this).shallowReduce(reductionContext.context());
 }
 
 template<typename T> Evaluation<T> ListNode::templatedApproximate(ApproximationContext approximationContext) const {
@@ -49,6 +47,16 @@ template<typename T> Evaluation<T> ListNode::templatedApproximate(ApproximationC
 }
 
 // List
+
+Expression List::shallowReduce(Context * context) {
+  // A list can't contain a matrix or a list
+  if (node()->hasMatrixChild(context) || node()->hasListChild(context)) {
+    return replaceWithUndefinedInPlace();
+  }
+  /* We bypass the reduction to undef in case of undef children, as {undef} and
+   * undef are different objects. */
+  return *this;
+}
 
 template Evaluation<float> ListNode::templatedApproximate(ApproximationContext approximationContext) const;
 template Evaluation<double> ListNode::templatedApproximate(ApproximationContext approximationContext) const;

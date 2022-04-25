@@ -10,8 +10,6 @@ class MatrixNode /*final*/ : public Array, public ExpressionNode {
 public:
   MatrixNode() : Array() {}
 
-  bool hasMatrixChild(Context * context) const;
-
   // TreeNode
   size_t size() const override { return sizeof(MatrixNode); }
   int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }

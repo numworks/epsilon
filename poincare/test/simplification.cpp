@@ -1116,6 +1116,10 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
 }
 
 QUIZ_CASE(poincare_simplification_matrix) {
+  //Matrix can't contain matrix or lists
+  assert_parsed_expression_simplify_to("[[[[1,2][3,4]],2][3,4]]", Undefined::Name());
+  assert_parsed_expression_simplify_to("[[{9,8,7},2][3,4]]", Undefined::Name());
+
   // Addition Matrix
   assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", Undefined::Name());
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+1", Undefined::Name());
@@ -1847,6 +1851,9 @@ QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {
 
 QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("{}", "{}");
+  // Lists can't contain matrix or lists
+  assert_parsed_expression_simplify_to("{{1,2},3}", Undefined::Name());
+  assert_parsed_expression_simplify_to("{[[1,2][3,4]],2,3}", Undefined::Name());
   // Inner simplifications
   assert_parsed_expression_simplify_to("{1,2,3}", "{1,2,3}");
   assert_parsed_expression_simplify_to("{1,8/4,27/45}", "{1,2,3/5}");
@@ -1866,7 +1873,6 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("{}^(-1)", "{}");
   assert_parsed_expression_simplify_to("{1,2,3}+1", "{2,3,4}");
   assert_parsed_expression_simplify_to("11/{11,33,55,77}", "{1,1/3,1/5,1/7}");
-  assert_parsed_expression_simplify_to("2×{1,2,3}×[[1,0][0,-1]]", "{[[2,0][0,-2]],[[4,0][0,-4]],[[6,0][0,-6]]}");
   assert_parsed_expression_simplify_to("{1,4,9,16,25}^(1/2)", "{1,2,3,4,5}");
 
   // Access to an element
@@ -1895,20 +1901,17 @@ QUIZ_CASE(poincare_simplification_list) {
   // List length
   assert_parsed_expression_simplify_to("dim({})", "0");
   assert_parsed_expression_simplify_to("dim({1,2,3})", "3");
-  assert_parsed_expression_simplify_to("dim({{1,2,3,4,5}})", "1");
+  assert_parsed_expression_simplify_to("dim({{1,2,3,4,5}})", Undefined::Name());
   // Sum of elements
   assert_parsed_expression_simplify_to("sum({})", "0");
   assert_parsed_expression_simplify_to("sum({1,2,3})", "6");
-  assert_parsed_expression_simplify_to("sum({{1,2,3}, 1, {-1,-2,-3}})", "{1,1,1}");
   // Product of elements
   assert_parsed_expression_simplify_to("prod({})", "1");
   assert_parsed_expression_simplify_to("prod({1,4,9})", "36");
-  assert_parsed_expression_simplify_to("prod({{1,2,3}, 2, {-1,-2,-3}})", "{-2,-8,-18}");
   // Sorting a list
   assert_parsed_expression_simplify_to("sort({})", "{}");
   assert_parsed_expression_simplify_to("sort({1})", "{1}");
   assert_parsed_expression_simplify_to("sort({3,2,1})", "{1,2,3}");
-  assert_parsed_expression_simplify_to("sort({3,2,{1,4}})", Undefined::Name());
   assert_parsed_expression_simplify_to("sort({undef,-1,-2,-inf,inf})", "{-inf,-2,-1,inf,undef}");
   // Mean of a list
   assert_parsed_expression_simplify_to("mean({})", Undefined::Name());
@@ -1922,7 +1925,6 @@ QUIZ_CASE(poincare_simplification_list) {
   // Maximum of a list
   assert_parsed_expression_simplify_to("max({})", Undefined::Name());
   assert_parsed_expression_simplify_to("max({1,2,3})", "3");
-  assert_parsed_expression_simplify_to("max({1,{2,4},3})", Undefined::Name());
   assert_parsed_expression_simplify_to("max({3,undef,-2})", "3");
   assert_parsed_expression_simplify_to("max({3,inf,-2})", "inf");
   // Variance of a list
@@ -1946,6 +1948,5 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("sequence(1,k,1)", "{1}");
   assert_parsed_expression_simplify_to("sequence(k,k,10)", "{1,2,3,4,5,6,7,8,9,10}");
   assert_parsed_expression_simplify_to("sequence(1/(n-3),n,5)", "{-1/2,-1,undef,1,1/2}");
-  assert_parsed_expression_simplify_to("sequence({k-1,k+1},k,3)", "{{0,2},{1,3},{2,4}}");
   assert_parsed_expression_simplify_to("sequence(x^2,x,3)", "{1,4,9}");
 }

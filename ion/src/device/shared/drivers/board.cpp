@@ -91,6 +91,8 @@ void setClockFrequency(Frequency f) {
   }
 }
 
+void jumpToInternalBootloader() {}
+
 }
 }
 }

@@ -434,6 +434,8 @@ bool pcbVersionIsLocked() {
   return *reinterpret_cast<const uint8_t *>(InternalFlash::Config::OTPLockAddress(k_pcbVersionOTPIndex)) == 0;
 }
 
+void jumpToInternalBootloader() {}
+
 }
 }
 }

@@ -92,6 +92,7 @@ class Expression : public TreeHandle {
   friend class Number;
   friend class Opposite;
   friend class ParameteredExpression;
+  friend class ParameteredExpressionNode;
   friend class Parenthesis;
   friend class PermuteCoefficient;
   friend class Power;

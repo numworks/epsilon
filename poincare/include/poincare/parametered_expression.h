@@ -19,6 +19,13 @@ public:
 
   // Expression properties
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
+
+protected:
+  // Evaluation
+  template<typename T> Evaluation<T> approximateFirstChildWithArgument(T x, ApproximationContext approximationContext) const;
+  template<typename T> T firstChildScalarValueForArgument(T x, ApproximationContext approximationContext) const {
+    return approximateFirstChildWithArgument(x, approximationContext).toScalar();
+  }
 };
 
 class ParameteredExpression : public Expression {

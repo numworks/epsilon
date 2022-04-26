@@ -61,16 +61,6 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
   return Complex<T>::Builder(result);
 }
 
-template<typename T>
-T IntegralNode::functionValueAtAbscissa(T x, ApproximationContext approximationContext) const {
-  // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounteredComplex flag
-  assert(childAtIndex(1)->type() == Type::Symbol);
-  VariableContext variableContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), approximationContext.context());
-  variableContext.setApproximationForVariable<T>(x);
-  approximationContext.setContext(&variableContext);
-  return childAtIndex(0)->approximate(T(), approximationContext).toScalar();
-}
-
 #ifdef LAGRANGE_METHOD
 
 template<typename T>
@@ -88,11 +78,11 @@ T IntegralNode::lagrangeGaussQuadrature(T a, T b, ApproximationContext approxima
   T result = 0;
   for (int j = 0; j < 10; j++) {
     T dx = xr * x[j];
-    T evaluationAfterX = functionValueAtAbscissa(xm+dx, approximationContext);
+    T evaluationAfterX = firstChildScalarValueForArgument(xm+dx, approximationContext);
     if (std::isnan(evaluationAfterX)) {
       return NAN;
     }
-    T evaluationBeforeX = functionValueAtAbscissa(xm-dx, approximationContext);
+    T evaluationBeforeX = firstChildScalarValueForArgument(xm-dx, approximationContext);
     if (std::isnan(evaluationBeforeX)) {
       return NAN;
     }
@@ -139,7 +129,7 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
   errorResult.absoluteError = 0;
 
   T gaussIntegral = 0;
-  T fCenter = functionValueAtAbscissa(center, approximationContext);
+  T fCenter = firstChildScalarValueForArgument(center, approximationContext);
   if (std::isnan(fCenter)) {
     return errorResult;
   }
@@ -147,11 +137,11 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
   T absKronrodIntegral = std::fabs(kronrodIntegral);
   for (int j = 0; j < 10; j++) {
     T xDelta = halfLength * x[j];
-    T fval1 = functionValueAtAbscissa(center - xDelta, approximationContext);
+    T fval1 = firstChildScalarValueForArgument(center - xDelta, approximationContext);
     if (std::isnan(fval1)) {
       return errorResult;
     }
-    T fval2 = functionValueAtAbscissa(center + xDelta, approximationContext);
+    T fval2 = firstChildScalarValueForArgument(center + xDelta, approximationContext);
     if (std::isnan(fval2)) {
       return errorResult;
     }

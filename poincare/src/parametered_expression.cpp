@@ -1,5 +1,6 @@
 #include <poincare/parametered_expression.h>
 #include <poincare/symbol.h>
+#include <poincare/variable_context.h>
 #include <string.h>
 #include <assert.h>
 
@@ -46,6 +47,26 @@ int ParameteredExpressionNode::getVariables(Context * context, isVariableTest is
   return nextVariableIndex;
 }
 
+template<typename T>
+Evaluation<T> ParameteredExpressionNode::approximateFirstChildWithArgument(T x, ApproximationContext approximationContext) const {
+  assert(childAtIndex(1)->type() == Type::Symbol);
+  Symbol symbol = Symbol(static_cast<SymbolNode *>(childAtIndex(1)));
+  VariableContext variableContext = VariableContext(symbol.name(), approximationContext.context());
+  variableContext.setApproximationForVariable<T>(x);
+  // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounteredComplex flag
+  approximationContext.setContext(&variableContext);
+  ExpressionNode * child = childAtIndex(0);
+  if (child->type() == ExpressionNode::Type::Sequence) {
+    /* Since we cannot get the expression of a sequence term like we would for
+     * a function, we replace its potential abstract rank by the value it should
+     * have. We can then evaluate its value */
+    Expression temporary = Expression(child).clone();
+    child = temporary.node();
+    child->childAtIndex(0)->replaceSymbolWithExpression(symbol, Float<T>::Builder(x));
+  }
+  return child->approximate(T(), approximationContext);
+}
+
 Expression ParameteredExpression::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   if (symbol.type() != ExpressionNode::Type::Symbol || !parameter().hasSameNameAs(symbol)) {
     // If the symbol is not the parameter, replace normally
@@ -90,5 +111,8 @@ Symbol ParameteredExpression::parameter() {
   assert(e.type() == ExpressionNode::Type::Symbol);
   return static_cast<Symbol&>(e);
 }
+
+template Evaluation<float> ParameteredExpressionNode::approximateFirstChildWithArgument(float x, ApproximationContext approximationContext) const;
+template Evaluation<double> ParameteredExpressionNode::approximateFirstChildWithArgument(double x, ApproximationContext approximationContext) const;
 
 }

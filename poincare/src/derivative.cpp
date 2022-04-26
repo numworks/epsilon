@@ -1,6 +1,7 @@
 #include <poincare/derivative.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative_layout.h>
+#include <poincare/float.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
@@ -49,7 +50,7 @@ template<typename T>
 Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approximationContext) const {
   Evaluation<T> evaluationArgumentInput = childAtIndex(2)->approximate(T(), approximationContext);
   T evaluationArgument = evaluationArgumentInput.toScalar();
-  T functionValue = approximateWithArgument(evaluationArgument, approximationContext);
+  T functionValue = firstChildScalarValueForArgument(evaluationArgument, approximationContext);
   // No complex/matrix version of Derivative
   if (std::isnan(evaluationArgument) || std::isnan(functionValue)) {
     return Complex<T>::RealUndefined();
@@ -93,19 +94,9 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
 }
 
 template<typename T>
-T DerivativeNode::approximateWithArgument(T x, ApproximationContext approximationContext) const {
-  assert(childAtIndex(1)->type() == Type::Symbol);
-  VariableContext variableContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), approximationContext.context());
-  variableContext.setApproximationForVariable<T>(x);
-  // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounteredComplex flag
-  approximationContext.setContext(&variableContext);
-  return childAtIndex(0)->approximate(T(), approximationContext).toScalar();
-}
-
-template<typename T>
 T DerivativeNode::growthRateAroundAbscissa(T x, T h, ApproximationContext approximationContext) const {
-  T expressionPlus = approximateWithArgument(x+h, approximationContext);
-  T expressionMinus = approximateWithArgument(x-h, approximationContext);
+  T expressionPlus = firstChildScalarValueForArgument(x+h, approximationContext);
+  T expressionMinus = firstChildScalarValueForArgument(x-h, approximationContext);
   return (expressionPlus - expressionMinus)/(h+h);
 }
 

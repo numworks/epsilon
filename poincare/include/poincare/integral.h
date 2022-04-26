@@ -47,7 +47,7 @@ private:
   template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, ApproximationContext approximationContext) const;
   template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, ApproximationContext approximationContext) const;
 #endif
-  template<typename T> T functionValueAtAbscissa(T x, ApproximationContext approximationContext) const;
+
 };
 
 class Integral final : public ParameteredExpression {

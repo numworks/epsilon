@@ -3,7 +3,6 @@
 
 #include <poincare/parametered_expression.h>
 #include <poincare/symbol.h>
-#include <poincare/variable_context.h>
 
 namespace Poincare {
 
@@ -37,7 +36,6 @@ private:
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
-  template<typename T> T approximateWithArgument(T x, ApproximationContext approximationContext) const;
   template<typename T> T growthRateAroundAbscissa(T x, T h, ApproximationContext approximationContext) const;
   template<typename T> T riddersApproximation(ApproximationContext approximationContext, T x, T h, T * error) const;
   // TODO: Change coefficients?

@@ -35,15 +35,23 @@ public:
   // Approximation
   virtual Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::MapReduce<float>(
-        this, approximationContext, compute<float>,
-        computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>,
-        computeOnMatrices<float>);
-  }
+      this,
+      approximationContext,
+      compute<float>,
+      computeOnComplexAndMatrix<float>,
+      computeOnMatrixAndComplex<float>,
+      computeOnMatrices<float>
+      );
+   }
   virtual Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
     return ApproximationHelper::MapReduce<double>(
-        this, approximationContext, compute<double>,
-        computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>,
-        computeOnMatrices<double>);
+      this,
+      approximationContext,
+      compute<double>,
+      computeOnComplexAndMatrix<double>,
+      computeOnMatrixAndComplex<double>,
+      computeOnMatrices<double>
+      );
   }
 
   // Layout

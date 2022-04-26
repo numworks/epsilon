@@ -31,10 +31,10 @@ public:
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::Map<float>(this, approximationContext, compute<float>);
+    return ApproximationHelper::Map<float>(this, approximationContext, compute<float>, true);
   }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::Map<double>(this, approximationContext, compute<double>);
+    return ApproximationHelper::Map<double>(this, approximationContext, compute<double>, true);
   }
 
   // Layout

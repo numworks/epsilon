@@ -59,9 +59,7 @@ private:
   Expression denominator(ReductionContext reductionContext) const override;
   bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
   // Evaluation
-  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
-  template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return templatedApproximate<float>(approximationContext);
   }

@@ -2,6 +2,7 @@
 #include <poincare/expression.h>
 #include <poincare/evaluation.h>
 #include <poincare/float.h>
+#include <poincare/list_complex.h>
 #include <poincare/matrix_complex.h>
 #include <cmath>
 #include <float.h>
@@ -78,13 +79,26 @@ template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginar
   return result;
 }
 
-template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexCompute<T> compute) {
+template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexCompute<T> compute, bool mapOnMatrix, bool mapOnList) {
   assert(expression->numberOfChildren() == 1);
   Evaluation<T> input = expression->childAtIndex(0)->approximate(T(), approximationContext);
   if (input.type() == EvaluationNode<T>::Type::Complex) {
     return compute(static_cast<Complex<T> &>(input).stdComplex(), approximationContext.complexFormat(), approximationContext.angleUnit());
+  } else if (input.type() == EvaluationNode<T>::Type::ListComplex) {
+     if (!mapOnList) {
+      return Complex<T>::Undefined();
+    }
+    ListComplex<T> list = static_cast<ListComplex<T> &>(input);
+    ListComplex<T> result = ListComplex<T>::Builder();
+    for (int i = 0; i < list.numberOfChildren(); i++) {
+      result.addChildAtIndexInPlace(compute(list.complexAtIndex(i), approximationContext.complexFormat(), approximationContext.angleUnit()), i, i);
+    }
+    return std::move(result);
   } else {
     assert(input.type() == EvaluationNode<T>::Type::MatrixComplex);
+    if (!mapOnMatrix) {
+      return Complex<T>::Undefined();
+    }
     MatrixComplex<T> m = static_cast<MatrixComplex<T> &>(input);
     MatrixComplex<T> result = MatrixComplex<T>::Builder();
     for (int i = 0; i < m.numberOfChildren(); i++) {
@@ -95,24 +109,60 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   }
 }
 
-template<typename T> Evaluation<T> ApproximationHelper::MapReduce(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexAndComplexReduction<T> computeOnComplexes, ComplexAndMatrixReduction<T> computeOnComplexAndMatrix, MatrixAndComplexReduction<T> computeOnMatrixAndComplex, MatrixAndMatrixReduction<T> computeOnMatrices) {
+template<typename T> Evaluation<T> ApproximationHelper::MapReduce(
+    const ExpressionNode * expression,
+    ExpressionNode::ApproximationContext approximationContext,
+    ComplexAndComplexReduction<T> computeOnComplexes,
+    ComplexAndMatrixReduction<T> computeOnComplexAndMatrix,
+    MatrixAndComplexReduction<T> computeOnMatrixAndComplex,
+    MatrixAndMatrixReduction<T> computeOnMatrices,
+    bool mapOnList
+    ) {
   assert(expression->numberOfChildren() > 0);
   Evaluation<T> result = expression->childAtIndex(0)->approximate(T(), approximationContext);
   for (int i = 1; i < expression->numberOfChildren(); i++) {
     Evaluation<T> intermediateResult;
     Evaluation<T> nextOperandEvaluation = expression->childAtIndex(i)->approximate(T(), approximationContext);
-    if (result.type() == EvaluationNode<T>::Type::Complex && nextOperandEvaluation.type() == EvaluationNode<T>::Type::Complex) {
-      intermediateResult = computeOnComplexes(static_cast<Complex<T> &>(result).stdComplex(), static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex(), approximationContext.complexFormat());
-    } else if (result.type() == EvaluationNode<T>::Type::Complex) {
-      assert(nextOperandEvaluation.type() == EvaluationNode<T>::Type::MatrixComplex);
-      intermediateResult = computeOnComplexAndMatrix(static_cast<Complex<T> &>(result).stdComplex(), static_cast<MatrixComplex<T> &>(nextOperandEvaluation), approximationContext.complexFormat());
-    } else if (nextOperandEvaluation.type() == EvaluationNode<T>::Type::Complex) {
-      assert(result.type() == EvaluationNode<T>::Type::MatrixComplex);
-      intermediateResult = computeOnMatrixAndComplex(static_cast<MatrixComplex<T> &>(result), static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex(), approximationContext.complexFormat());
+    // If element is complex
+    if (result.type() == EvaluationNode<T>::Type::Complex) {
+      if (nextOperandEvaluation.type() == EvaluationNode<T>::Type::Complex) {
+        intermediateResult = computeOnComplexes(static_cast<Complex<T> &>(result).stdComplex(), static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex(), approximationContext.complexFormat());
+      } else if (nextOperandEvaluation.type() == EvaluationNode<T>::Type::ListComplex) {
+        if (!mapOnList) {
+          return Complex<T>::Undefined();
+        }
+        intermediateResult = DistributeComplexOverList<T>(static_cast<Complex<T> &>(result).stdComplex(), static_cast<ListComplex<T> &>(nextOperandEvaluation), approximationContext.complexFormat(), computeOnComplexes, true);
+      } else {
+        assert(nextOperandEvaluation.type() == EvaluationNode<T>::Type::MatrixComplex);
+        intermediateResult = computeOnComplexAndMatrix(static_cast<Complex<T> &>(result).stdComplex(), static_cast<MatrixComplex<T> &>(nextOperandEvaluation), approximationContext.complexFormat());
+      }
+    // If element is list
+    } else if (result.type() == EvaluationNode<T>::Type::ListComplex) {
+      if (!mapOnList) {
+        return Complex<T>::Undefined();
+      }
+      if (nextOperandEvaluation.type() == EvaluationNode<T>::Type::Complex) {
+        intermediateResult = DistributeComplexOverList<T>(static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex(), static_cast<ListComplex<T> &>(result), approximationContext.complexFormat(), computeOnComplexes, false);
+      } else if (nextOperandEvaluation.type() == EvaluationNode<T>::Type::ListComplex) {
+        // Matrices and lists are not compatible
+        intermediateResult = DistributeListOverList<T>(static_cast<ListComplex<T> &>(result), static_cast<ListComplex<T> &>(nextOperandEvaluation), approximationContext.complexFormat(), computeOnComplexes);
+      } else {
+        // Matrices and lists are not compatible
+        assert(nextOperandEvaluation.type() == EvaluationNode<T>::Type::MatrixComplex);
+        return Complex<T>::Undefined();
+      }
+    // If element if matrix
     } else {
-      assert(result.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
-      assert(nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
-      intermediateResult = computeOnMatrices(static_cast<MatrixComplex<T> &>(result), static_cast<MatrixComplex<T> &>(nextOperandEvaluation), approximationContext.complexFormat());
+      assert(result.type() == EvaluationNode<T>::Type::MatrixComplex);
+      if (nextOperandEvaluation.type() == EvaluationNode<T>::Type::Complex) {
+        intermediateResult = computeOnMatrixAndComplex(static_cast<MatrixComplex<T> &>(result), static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex(), approximationContext.complexFormat());
+      } else if (nextOperandEvaluation.type() == EvaluationNode<T>::Type::MatrixComplex) {
+        intermediateResult = computeOnMatrices(static_cast<MatrixComplex<T> &>(result), static_cast<MatrixComplex<T> &>(nextOperandEvaluation), approximationContext.complexFormat());
+      } else {
+        // Matrices and lists are not compatible
+        assert(nextOperandEvaluation.type() == EvaluationNode<T>::Type::ListComplex);
+        return Complex<T>::Undefined();
+      }
     }
     result = intermediateResult;
     if (result.isUndefined()) {
@@ -142,20 +192,42 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnComplexM
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
   return matrix;
 }
+
+template<typename T> ListComplex<T> ApproximationHelper::DistributeComplexOverList(const std::complex<T> c, const ListComplex<T> l, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes, bool complexFirst) {
+  // TODO :
+  return ListComplex<T>::Undefined();
+}
+
+template<typename T> ListComplex<T> ApproximationHelper::DistributeListOverList(const ListComplex<T> l1, const ListComplex<T> l2, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes) {
+  // TODO
+  return ListComplex<T>::Undefined();
+}
+
 template bool Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<float>(float x);
 template bool Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<double>(double x);
+
 template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, ExpressionNode::ApproximationContext);
 template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(Poincare::ExpressionNode const*, bool*, ExpressionNode::ApproximationContext);
+
 template std::complex<float> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<float>(std::complex<float>,std::complex<float>,std::complex<float>,bool);
 template std::complex<double> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<double>(std::complex<double>,std::complex<double>,std::complex<double>,bool);
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<float> compute);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<double> compute);
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<float> computeOnMatrices);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexAndComplexReduction<double> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<double> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<double> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<double> computeOnMatrices);
+
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<float> compute, bool mapOnMatrix, bool mapOnList);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<double> compute, bool mapOnMatrix, bool mapOnList);
+
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<float> computeOnMatrices, bool mapOnList);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexAndComplexReduction<double> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<double> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<double> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<double> computeOnMatrices, bool mapOnList);
+
 template Poincare::MatrixComplex<float> Poincare::ApproximationHelper::ElementWiseOnMatrixComplexAndComplex<float>(const Poincare::MatrixComplex<float>, const std::complex<float>, Poincare::Preferences::ComplexFormat, Poincare::Complex<float> (*)(std::complex<float>, std::complex<float>, Poincare::Preferences::ComplexFormat));
 template Poincare::MatrixComplex<double> Poincare::ApproximationHelper::ElementWiseOnMatrixComplexAndComplex<double>(const Poincare::MatrixComplex<double>, std::complex<double> const, Poincare::Preferences::ComplexFormat, Poincare::Complex<double> (*)(std::complex<double>, std::complex<double>, Poincare::Preferences::ComplexFormat));
+
 template Poincare::MatrixComplex<float> Poincare::ApproximationHelper::ElementWiseOnComplexMatrices<float>(const Poincare::MatrixComplex<float>, const Poincare::MatrixComplex<float>, Poincare::Preferences::ComplexFormat, Poincare::Complex<float> (*)(std::complex<float>, std::complex<float>, Poincare::Preferences::ComplexFormat));
 template Poincare::MatrixComplex<double> Poincare::ApproximationHelper::ElementWiseOnComplexMatrices<double>(const Poincare::MatrixComplex<double>, const Poincare::MatrixComplex<double>, Poincare::Preferences::ComplexFormat, Poincare::Complex<double> (*)(std::complex<double>, std::complex<double>, Poincare::Preferences::ComplexFormat));
 
+template Poincare::ListComplex<float> Poincare::ApproximationHelper::DistributeComplexOverList<float>(const std::complex<float> c, const Poincare::ListComplex<float> l, Poincare::Preferences::ComplexFormat complexFormat, Poincare::ApproximationHelper::ComplexAndComplexReduction<float> computeOnComplexes, bool complexFirst);
+template Poincare::ListComplex<double> Poincare::ApproximationHelper::DistributeComplexOverList<double>(const std::complex<double> c, const Poincare::ListComplex<double> l, Poincare::Preferences::ComplexFormat complexFormat, Poincare::ApproximationHelper::ComplexAndComplexReduction<double> computeOnComplexes, bool complexFirst);
+
+template Poincare::ListComplex<float> Poincare::ApproximationHelper::DistributeListOverList<float>(const Poincare::ListComplex<float> l1, const Poincare::ListComplex<float> l2, Poincare::Preferences::ComplexFormat complexFormat, Poincare::ApproximationHelper::ComplexAndComplexReduction<float> computeOnComplexes);
+template Poincare::ListComplex<double> Poincare::ApproximationHelper::DistributeListOverList<double>(const Poincare::ListComplex<double> l1, const Poincare::ListComplex<double> l2, Poincare::Preferences::ComplexFormat complexFormat, Poincare::ApproximationHelper::ComplexAndComplexReduction<double> computeOnComplexes);
 
 }

@@ -274,12 +274,6 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("abs(3+2i)", "3.605551");
   assert_expression_approximates_to<double>("abs(3+2i)", "3.605551275464");
 
-  assert_expression_approximates_to<float>("abs([[1,-2][3,-4]])", "[[1,2][3,4]]");
-  assert_expression_approximates_to<double>("abs([[1,-2][3,-4]])", "[[1,2][3,4]]");
-
-  assert_expression_approximates_to<float>("abs([[3+2i,3+4i][5+2i,3+2i]])", "[[3.605551,5][5.385165,3.605551]]");
-  assert_expression_approximates_to<double>("abs([[3+2i,3+4i][5+2i,3+2i]])", "[[3.605551275464,5][5.3851648071345,3.605551275464]]");
-
   assert_expression_approximates_to<float>("binomcdf(5.3, 9, 0.7)", "0.270341", Degree, MetricUnitFormat, Cartesian, 6); // FIXME: precision problem
   assert_expression_approximates_to<double>("binomcdf(5.3, 9, 0.7)", "0.270340902", Degree, MetricUnitFormat, Cartesian, 10); //FIXME precision problem
 
@@ -961,6 +955,17 @@ QUIZ_CASE(poincare_approximation_list_sequence) {
   assert_expression_approximates_to<double>("sequence(k/2,k,7)", "{0.5,1,1.5,2,2.5,3,3.5}");
 }
 
+QUIZ_CASE(poincare_approximation_map_on_list) {
+  // We do not map on matrices anymore
+  assert_expression_approximates_to<float>("abs([[1,-2][3,-4]])", Undefined::Name());
+  assert_expression_approximates_to<double>("abs([[1,-2][3,-4]])", Undefined::Name());
+
+  assert_expression_approximates_to<float>("abs({1,-2,3,-4})", "{1,2,3,4}");
+  assert_expression_approximates_to<double>("abs({1,-2,3,-4})", "{1,2,3,4}");
+  assert_expression_approximates_to<float>("abs({3+2i,3+4i,5+2i,3+2i})", "{3.605551,5,5.385165,3.605551}");
+  assert_expression_approximates_to<double>("abs({3+2i,3+4i,5+2i,3+2i})", "{3.605551275464,5,5.3851648071345,3.605551275464}");
+}
+
 QUIZ_CASE(poincare_approximation_store) {
   assert_expression_approximates_to<float>("1+42→A", "43");
   assert_expression_approximates_to<double>("0.123+i→B", "0.123+i");
@@ -968,7 +973,7 @@ QUIZ_CASE(poincare_approximation_store) {
   assert_expression_approximates_to_scalar<float>("1+42→A", 43.0f);
   assert_expression_approximates_to_scalar<double>("0.123+i→B", NAN);
 
-  assert_expression_simplifies_and_approximates_to("abs([[0]]×π)→f(x)", "[[0]]");
+  assert_expression_simplifies_and_approximates_to("abs({0}×π)→f(x)", "{0}");
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("A.exp").destroy();

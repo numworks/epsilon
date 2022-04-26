@@ -29,10 +29,24 @@ public:
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c - d); }
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::MapReduce<float>(this, approximationContext, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+    return ApproximationHelper::MapReduce<float>(
+        this,
+        approximationContext,
+        compute<float>,
+        ApproximationHelper::UndefinedOnComplexAndMatrix<float>,
+        ApproximationHelper::UndefinedOnMatrixAndComplex<float>,
+        computeOnMatrices<float>
+        );
   }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::MapReduce<double>(this, approximationContext, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+    return ApproximationHelper::MapReduce<double>(
+        this,
+        approximationContext,
+        compute<double>,
+        ApproximationHelper::UndefinedOnComplexAndMatrix<double>,
+        ApproximationHelper::UndefinedOnMatrixAndComplex<double>,
+        computeOnMatrices<double>
+        );
   }
 
   /* Layout */
@@ -47,12 +61,6 @@ private:
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); };
   LayoutShape rightLayoutShape() const override { return childAtIndex(1)->rightLayoutShape(); }
   /* Evaluation */
-  template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
-    return MatrixComplex<T>::Undefined();
-  }
-  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
-    return MatrixComplex<T>::Undefined();
-  }
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::ElementWiseOnComplexMatrices(m, n, complexFormat, compute<T>);
   }

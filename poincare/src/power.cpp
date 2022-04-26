@@ -304,10 +304,6 @@ bool PowerNode::derivate(ReductionContext reductionContext, Symbol symbol, Expre
 }
 
 // Evaluation
-template<typename T> MatrixComplex<T> PowerNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
-  return MatrixComplex<T>::Undefined();
-}
-
 template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   if (m.numberOfRows() != m.numberOfColumns()) {
     return MatrixComplex<T>::Undefined();
@@ -331,10 +327,6 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
     result = MultiplicationNode::computeOnMatrices<T>(result, m, complexFormat);
   }
   return result;
-}
-
-template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
-  return MatrixComplex<T>::Undefined();
 }
 
 template<typename T> Evaluation<T> PowerNode::templatedApproximate(ApproximationContext approximationContext) const {
@@ -378,7 +370,14 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Approximation
     }
   }
 defaultApproximation:
-  return ApproximationHelper::MapReduce<T>(this, approximationContext, compute<T>, computeOnComplexAndMatrix<T>, computeOnMatrixAndComplex<T>, computeOnMatrices<T>);
+  return ApproximationHelper::MapReduce<T>(
+      this,
+      approximationContext,
+      compute<T>,
+      ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
+      computeOnMatrixAndComplex<T>,
+      ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
+      );
 }
 
 // Power

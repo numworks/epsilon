@@ -21,7 +21,8 @@ public:
   enum class Type : uint8_t {
     Exception,
     Complex,
-    MatrixComplex
+    MatrixComplex,
+    ListComplex
   };
   EvaluationNode<T> * childAtIndex(int index) const override { return static_cast<EvaluationNode<T> *>(TreeNode::childAtIndex(index)); }
   Direct<EvaluationNode<T> > children() const { return Direct<EvaluationNode<T> >(this); }

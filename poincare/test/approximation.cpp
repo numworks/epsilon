@@ -951,6 +951,11 @@ QUIZ_CASE(poincare_approximation_matrix) {
   assert_expression_approximates_to<double>("[[1,2,3][4,5,6]]", "[[1,2,3][4,5,6]]");
 }
 
+QUIZ_CASE(poincare_approximation_list) {
+  assert_expression_approximates_to<float>("{1,2,3,4,5,6}", "{1,2,3,4,5,6}");
+  assert_expression_approximates_to<double>("{1,2,3,4,5,6}", "{1,2,3,4,5,6}");
+}
+
 QUIZ_CASE(poincare_approximation_store) {
   assert_expression_approximates_to<float>("1+42→A", "43");
   assert_expression_approximates_to<double>("0.123+i→B", "0.123+i");

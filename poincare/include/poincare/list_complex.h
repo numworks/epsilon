@@ -57,6 +57,9 @@ public:
   ListComplex(ListComplexNode<T> * node) : Evaluation<T>(node) {}
   static ListComplex Builder() { return TreeHandle::NAryBuilder<ListComplex<T>, ListComplexNode<T>>(); }
   static ListComplex<T> Undefined();
+  int numberOfChildren() const {
+    return node()->numberOfChildren();
+  }
   std::complex<T> complexAtIndex(int index) const {
     return node()->complexAtIndex(index);
   }

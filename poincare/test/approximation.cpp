@@ -108,6 +108,17 @@ QUIZ_CASE(poincare_approximation_addition) {
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]", "[[2,4][6,8][10,12]]");
   assert_expression_approximates_to<double>("[[1,2+i][3,4][5,6]]+[[1,2+i][3,4][5,6]]", "[[2,4+2×i][6,8][10,12]]");
 
+  assert_expression_approximates_to<float>("{1,2,3}+10", "{11,12,13}");
+  assert_expression_approximates_to<float>("10+{1,2,3}", "{11,12,13}");
+  assert_expression_approximates_to<float>("{1,2,3}+{4,5,6}", "{5,7,9}");
+  assert_expression_approximates_to<float>("{1,2,3}+{4,5}", Undefined::Name());
+  assert_expression_approximates_to<float>("{1,2,3}+[[4,5,6]]", Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}+10", "{11,12,13}");
+  assert_expression_approximates_to<double>("10+{1,2,3}", "{11,12,13}");
+  assert_expression_approximates_to<double>("{1,2,3}+{4,5,6}", "{5,7,9}");
+  assert_expression_approximates_to<double>("{1,2,3}+{4,5}", Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}+[[4,5,6]]", Undefined::Name());
+
   assert_expression_approximates_to_scalar<float>("1+2", 3.0f);
   assert_expression_approximates_to_scalar<double>("i+i", NAN);
   assert_expression_approximates_to_scalar<float>("[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]", NAN);
@@ -122,6 +133,17 @@ QUIZ_CASE(poincare_approximation_multiplication) {
   assert_expression_approximates_to<double>("(3+i)×[[1,2+i][3,4][5,6]]", "[[3+i,5+5×i][9+3×i,12+4×i][15+5×i,18+6×i]]");
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]×[[1,2,3,4][5,6,7,8]]", "[[11,14,17,20][23,30,37,44][35,46,57,68]]");
   assert_expression_approximates_to<double>("[[1,2+i][3,4][5,6]]×[[1,2+i,3,4][5,6+i,7,8]]", "[[11+5×i,13+9×i,17+7×i,20+8×i][23,30+7×i,37,44][35,46+11×i,57,68]]");
+
+  assert_expression_approximates_to<float>("{1,2,3}×10", "{10,20,30}");
+  assert_expression_approximates_to<float>("10×{1,2,3}", "{10,20,30}");
+  assert_expression_approximates_to<float>("{1,2,3}×{4,5,6}", "{4,10,18}");
+  assert_expression_approximates_to<float>("{1,2,3}×{4,5}", Undefined::Name());
+  assert_expression_approximates_to<float>("{1,2,3}×[[4,5,6]]", Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}×10", "{10,20,30}");
+  assert_expression_approximates_to<double>("10×{1,2,3}", "{10,20,30}");
+  assert_expression_approximates_to<double>("{1,2,3}×{4,5,6}", "{4,10,18}");
+  assert_expression_approximates_to<double>("{1,2,3}×{4,5}", Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}×[[4,5,6]]", Undefined::Name());
 
   assert_expression_approximates_to_scalar<float>("1×2", 2.0f);
   assert_expression_approximates_to_scalar<double>("(3+i)×(4+i)", NAN);
@@ -158,6 +180,17 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to<float>("i^(2/3)", "0.5+0.8660254×i");
   assert_expression_approximates_to<double>("i^(2/3)", "0.5+0.86602540378444×i");
 
+  assert_expression_approximates_to<float>("{1,2,3}^2", "{1,4,9}");
+  assert_expression_approximates_to<float>("2^{1,2,3}", "{2,4,8}");
+  assert_expression_approximates_to<float>("{1,2,3}^{1,2,3}", "{1,4,27}");
+  assert_expression_approximates_to<float>("{1,2,3}^{4,5}", Undefined::Name());
+  assert_expression_approximates_to<float>("{1,2,3}^[[4,5,6]]", Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}^2", "{1,4,9}");
+  assert_expression_approximates_to<double>("2^{1,2,3}", "{2,4,8}");
+  assert_expression_approximates_to<double>("{1,2,3}^{1,2,3}", "{1,4,27}");
+  assert_expression_approximates_to<double>("{1,2,3}^{4,5}", Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}^[[4,5,6]]", Undefined::Name());
+
   assert_expression_approximates_to_scalar<float>("2^3", 8.0f);
   assert_expression_approximates_to_scalar<double>("(3+i)^(4+i)", NAN);
   assert_expression_approximates_to_scalar<float>("[[1,2][3,4]]^2", NAN);
@@ -178,6 +211,17 @@ QUIZ_CASE(poincare_approximation_subtraction) {
   assert_expression_approximates_to<double>("3+i-[[1,2+i][3,4][5,6]]", "undef");
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]-[[6,5][4,3][2,1]]", "[[-5,-3][-1,1][3,5]]");
   assert_expression_approximates_to<double>("[[1,2+i][3,4][5,6]]-[[1,2+i][3,4][5,6]]", "[[0,0][0,0][0,0]]");
+
+  assert_expression_approximates_to<float>("{1,2,3}-10", "{-9,-8,-7}");
+  assert_expression_approximates_to<float>("10-{1,2,3}", "{9,8,7}");
+  assert_expression_approximates_to<float>("{1,2,3}-{4,5,6}", "{-3,-3,-3}");
+  assert_expression_approximates_to<float>("{1,2,3}-{4,5}", Undefined::Name());
+  assert_expression_approximates_to<float>("{1,2,3}-[[4,5,6]]", Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}-10", "{-9,-8,-7}");
+  assert_expression_approximates_to<double>("10-{1,2,3}", "{9,8,7}");
+  assert_expression_approximates_to<double>("{1,2,3}-{4,5,6}", "{-3,-3,-3}");
+  assert_expression_approximates_to<double>("{1,2,3}-{4,5}", Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}-[[4,5,6]]", Undefined::Name());
 
   assert_expression_approximates_to_scalar<float>("1-2", -1.0f);
   assert_expression_approximates_to_scalar<double>("(1)-(4+i)", NAN);
@@ -223,6 +267,17 @@ QUIZ_CASE(poincare_approximation_division) {
    *  [-1.1102230246252ᴇ-16+i,-2.2204460492503ᴇ-16-3×i]] on Linux */
   assert_expression_approximates_to<float>("1ᴇ20/(1ᴇ20+1ᴇ20i)", "0.5-0.5×i");
   assert_expression_approximates_to<double>("1ᴇ155/(1ᴇ155+1ᴇ155i)", "0.5-0.5×i");
+
+  assert_expression_approximates_to<float>("{1,2,3}/10", "{0.1,0.2,0.3}");
+  assert_expression_approximates_to<float>("10/{1,2,4}", "{10,5,2.5}");
+  assert_expression_approximates_to<float>("{12,100,1}/{4,2,1}", "{3,50,1}");
+  assert_expression_approximates_to<float>("{1,2,3}/{4,5}", Undefined::Name());
+  assert_expression_approximates_to<float>("{1,2,3}/[[4,5,6]]", Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}/10", "{0.1,0.2,0.3}");
+  assert_expression_approximates_to<double>("10/{1,2,4}", "{10,5,2.5}");
+  assert_expression_approximates_to<double>("{12,100,1}/{4,2,1}", "{3,50,1}");
+  assert_expression_approximates_to<double>("{1,2,3}/{4,5}", Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}/[[4,5,6]]", Undefined::Name());
 
   assert_expression_approximates_to_scalar<float>("1/2", 0.5f);
   assert_expression_approximates_to_scalar<float>("(3+i)/(4+i)", NAN);

@@ -10,9 +10,10 @@ namespace Regression {
 class RegressionContext : public Shared::StoreContext {
 public:
   using Shared::StoreContext::StoreContext;
-  const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override;
+
 private:
   bool isSymbol(const char * name) const override { return Poincare::Symbol::isRegressionSymbol(name, nullptr); }
+  int getSymbolColumn(const char * name) const override { return name[0] == 'Y'; }
 };
 
 }

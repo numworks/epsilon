@@ -82,6 +82,7 @@ app_shared_src = $(addprefix apps/shared/,\
   simple_interactive_curve_view_controller.cpp \
   single_range_controller.cpp \
   store_cell.cpp \
+  store_context.cpp \
   store_controller.cpp \
   store_parameter_controller.cpp \
   store_selectable_table_view.cpp \

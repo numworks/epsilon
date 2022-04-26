@@ -56,6 +56,7 @@
 #include <poincare/least_common_multiple.h>
 #include <poincare/list.h>
 #include <poincare/list_access.h>
+#include <poincare/list_complex.h>
 #include <poincare/list_maximum.h>
 #include <poincare/list_mean.h>
 #include <poincare/list_median.h>

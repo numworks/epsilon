@@ -2,6 +2,7 @@
 #include <poincare/curly_brace_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/list_complex.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
@@ -43,7 +44,11 @@ Expression ListNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T> Evaluation<T> ListNode::templatedApproximate(ApproximationContext approximationContext) const {
-  return Complex<T>::Undefined();
+  ListComplex<T> list = ListComplex<T>::Builder();
+  for (ExpressionNode * c : children()) {
+    list.addChildAtIndexInPlace(c->approximate(T(), approximationContext), list.numberOfChildren(), list.numberOfChildren());
+  }
+  return std::move(list);
 }
 
 // List

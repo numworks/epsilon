@@ -13,13 +13,21 @@ template<typename T>
 class ListComplexNode final : public EvaluationNode<T> {
 public:
   std::complex<T> complexAtIndex(int index) const;
-  int numberOfChildren() const override { return m_numberOfChildren; }
-  void incrementNumberOfChildren(int increment = 1) override { m_numberOfChildren+= increment; }
+  int numberOfChildren() const override {
+    return m_numberOfChildren < 0 ? 0 : m_numberOfChildren;
+  }
+  void incrementNumberOfChildren(int increment = 1) override {
+    assert(!isUndefined());
+    m_numberOfChildren+= increment;
+  }
   void decrementNumberOfChildren(int decrement = 1) override {
-    assert(m_numberOfChildren >= decrement);
+    assert(!isUndefined() && m_numberOfChildren >= decrement);
     m_numberOfChildren-= decrement;
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
+  void setUndefined() {
+    m_numberOfChildren = -1;
+  }
 
   // TreeNode
   size_t size() const override { return sizeof(ListComplexNode<T>); }
@@ -34,12 +42,11 @@ public:
 
   // EvaluationNode
   typename EvaluationNode<T>::Type type() const override { return EvaluationNode<T>::Type::ListComplex; }
-  /* undef lists do not exist (yet), since {undef} is not an undefined list,
-   * but a list of undefined elements. */
-  bool isUndefined() const override { return false; }
+  /* undef list is a list with a negative number of elements. */
+  bool isUndefined() const override { return m_numberOfChildren < 0; }
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
 private:
-  uint16_t m_numberOfChildren;
+  int16_t m_numberOfChildren;
 
 };
 
@@ -49,6 +56,7 @@ class ListComplex final : public Evaluation<T> {
 public:
   ListComplex(ListComplexNode<T> * node) : Evaluation<T>(node) {}
   static ListComplex Builder() { return TreeHandle::NAryBuilder<ListComplex<T>, ListComplexNode<T>>(); }
+  static ListComplex<T> Undefined();
   std::complex<T> complexAtIndex(int index) const {
     return node()->complexAtIndex(index);
   }

@@ -47,8 +47,8 @@ namespace ApproximationHelper {
   template<typename T> MatrixComplex<T> ElementWiseOnMatrixComplexAndComplex(const MatrixComplex<T> n, std::complex<T> c, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes);
   template<typename T> MatrixComplex<T> ElementWiseOnComplexMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes);
 
-template<typename T> ListComplex<T> DistributeComplexOverList(const std::complex<T> c, const ListComplex<T> l, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes, bool complexFirst);
-template<typename T> ListComplex<T> DistributeListOverList(const ListComplex<T> l1, const ListComplex<T> l2, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes);
+  template<typename T> ListComplex<T> DistributeComplexOverList(const std::complex<T> c, const ListComplex<T> l, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes, bool complexFirst);
+  template<typename T> ListComplex<T> DistributeListOverList(const ListComplex<T> l1, const ListComplex<T> l2, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes);
 };
 
 }

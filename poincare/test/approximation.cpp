@@ -956,6 +956,11 @@ QUIZ_CASE(poincare_approximation_list) {
   assert_expression_approximates_to<double>("{1,2,3,4,5,6}", "{1,2,3,4,5,6}");
 }
 
+QUIZ_CASE(poincare_approximation_list_sequence) {
+  assert_expression_approximates_to<float>("sequence(k^2,k,4)", "{1,4,9,16}");
+  assert_expression_approximates_to<double>("sequence(k/2,k,7)", "{0.5,1,1.5,2,2.5,3,3.5}");
+}
+
 QUIZ_CASE(poincare_approximation_store) {
   assert_expression_approximates_to<float>("1+42→A", "43");
   assert_expression_approximates_to<double>("0.123+i→B", "0.123+i");

@@ -30,6 +30,19 @@ int ListSequenceNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListSequence::s_functionHelper.name());
 }
 
+template<typename T>
+Evaluation<T> ListSequenceNode::templatedApproximate(ApproximationContext approximationContext) const {
+  ListComplex<T> list = ListComplex<T>::Builder();
+  T upperBound = childAtIndex(2)->approximate(T(), approximationContext).toScalar();
+    if (std::isnan(upperBound) || upperBound < 1) {
+    return Complex<T>::Undefined();
+  }
+  for (int i = 1; i <= static_cast<int>(upperBound); i++) {
+     list.addChildAtIndexInPlace(approximateFirstChildWithArgument(static_cast<T>(i), approximationContext), list.numberOfChildren(), list.numberOfChildren());
+  }
+  return std::move(list);
+}
+
 Expression ListSequence::UntypedBuilder(Expression children) {
   assert(children.type() == ExpressionNode::Type::Matrix);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {

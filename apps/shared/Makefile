@@ -1,5 +1,5 @@
 app_shared_test_src = $(addprefix apps/shared/,\
-  continuous_function.cpp\
+  continuous_function.cpp \
   continuous_function_cache.cpp \
   curve_selection_controller.cpp \
   curve_view.cpp \
@@ -19,9 +19,9 @@ app_shared_test_src = $(addprefix apps/shared/,\
   memoized_curve_view_range.cpp \
   poincare_helpers.cpp \
   range_1D.cpp \
-  sequence.cpp\
-  sequence_context.cpp\
-  sequence_store.cpp\
+  sequence.cpp \
+  sequence_context.cpp \
+  sequence_store.cpp \
   toolbox_helpers.cpp \
   zoom_and_pan_curve_view_controller.cpp \
   zoom_curve_view_controller.cpp \
@@ -41,7 +41,7 @@ app_shared_src = $(addprefix apps/shared/,\
   float_parameter_controller.cpp \
   function_app.cpp \
   function_banner_delegate.cpp \
-  function_curve_parameter_controller.cpp \
+  function_curve_parameter_controller.cpp \
   function_expression_cell.cpp \
   function_go_to_parameter_controller.cpp \
   function_graph_controller.cpp \
@@ -73,16 +73,15 @@ app_shared_src = $(addprefix apps/shared/,\
   scrollable_two_expressions_cell.cpp \
   separable.cpp \
   separator_even_odd_buffer_text_cell.cpp \
-  sequence.cpp\
+  sequence.cpp \
   sequence_cache_context.cpp \
-  sequence_context.cpp\
-  sequence_store.cpp\
+  sequence_context.cpp \
+  sequence_store.cpp \
   sequence_title_cell.cpp \
   shared_app.cpp \
   simple_interactive_curve_view_controller.cpp \
   single_range_controller.cpp \
   store_cell.cpp \
-  store_context.cpp \
   store_controller.cpp \
   store_parameter_controller.cpp \
   store_selectable_table_view.cpp \
@@ -95,7 +94,7 @@ app_shared_src = $(addprefix apps/shared/,\
   values_controller.cpp \
   values_parameter_controller.cpp \
   vertical_cursor_view.cpp \
-  xy_banner_view.cpp\
+  xy_banner_view.cpp \
 )
 
 app_shared_src += $(app_shared_test_src)
@@ -104,7 +103,7 @@ apps_src += $(app_shared_src)
 # The .cpp files could also be added to app_shared_test_src in their respective makefiles
 #     -> it would then be impossible to run the shared test alone
 app_shared_test_src += $(addprefix apps/graph/,\
-  continuous_function_store.cpp\
+  continuous_function_store.cpp \
 )
 
 app_shared_test_src += $(addprefix apps/shared/,\
@@ -112,6 +111,7 @@ app_shared_test_src += $(addprefix apps/shared/,\
   sequence_cache_context.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
+  store_context.cpp \
 )
 
 tests_src += $(addprefix apps/shared/test/,\

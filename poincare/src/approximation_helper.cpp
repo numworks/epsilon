@@ -194,13 +194,34 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnComplexM
 }
 
 template<typename T> ListComplex<T> ApproximationHelper::DistributeComplexOverList(const std::complex<T> c, const ListComplex<T> l, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes, bool complexFirst) {
-  // TODO :
-  return ListComplex<T>::Undefined();
+  if (l.isUndefined()) {
+    return ListComplex<T>::Undefined();
+  }
+  ListComplex<T> result = ListComplex<T>::Builder();
+  int nChildren = l.numberOfChildren();
+  for (int i = 0; i < nChildren; i++) {
+    std::complex<T> complexAtIndex = l.complexAtIndex(i);
+    Evaluation<T> computedNewComplex;
+    if (complexFirst) {
+      computedNewComplex = computeOnComplexes(c, complexAtIndex, complexFormat);
+    } else {
+      computedNewComplex = computeOnComplexes(complexAtIndex, c, complexFormat);
+    }
+    result.addChildAtIndexInPlace(computedNewComplex, i, i);
+  }
+  return std::move(result);
 }
 
 template<typename T> ListComplex<T> ApproximationHelper::DistributeListOverList(const ListComplex<T> l1, const ListComplex<T> l2, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes) {
-  // TODO
-  return ListComplex<T>::Undefined();
+  if (l1.isUndefined() || l2.isUndefined() || l1.numberOfChildren() != l2.numberOfChildren()) {
+    return ListComplex<T>::Undefined();
+  }
+  ListComplex<T> result = ListComplex<T>::Builder();
+  int nChildren = l1.numberOfChildren();
+  for (int i = 0; i < nChildren; i++) {
+    result.addChildAtIndexInPlace(computeOnComplexes(l1.complexAtIndex(i), l2.complexAtIndex(i), complexFormat), i, i);
+  }
+  return std::move(result);
 }
 
 template bool Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<float>(float x);

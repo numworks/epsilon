@@ -163,7 +163,7 @@ double Store::sumOfOccurrences(int series) const {
 
 double Store::maxValueForAllSeries(bool handleNullFrequencies, ValidSeries validSeries) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
-  double result = DBL_MIN;
+  double result = -DBL_MAX;
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
     if (validSeries(this, i)) {
       double maxCurrentSeries = maxValue(i, handleNullFrequencies);
@@ -198,7 +198,7 @@ double Store::maxValue(int series, bool handleNullFrequencies) const {
       return get(series, 0, sortedIndex);
     }
   }
-  return DBL_MIN;
+  return -DBL_MAX;
 }
 
 double Store::minValue(int series, bool handleNullFrequencies) const {
@@ -391,7 +391,7 @@ double Store::modeFrequency(int series) const {
 
 double Store::computeModes(int series, int i, double * modeFreq, int * modesTotal) const {
   *modesTotal = 0;
-  *modeFreq = DBL_MIN;
+  *modeFreq = 0.0;
   double ithValue = NAN;
   double currentValue = NAN;
   double currentValueFrequency = NAN;

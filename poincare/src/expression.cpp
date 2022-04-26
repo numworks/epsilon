@@ -778,14 +778,7 @@ void Expression::SimplifyAndApproximateList(List input, Expression * simplifiedO
     Expression simplifiedChild, approximateChild;
     Expression * approximateChildAddress = approximateOutput ? &approximateChild : nullptr;
     Expression childI = input.childAtIndex(i);
-    // Lists can be nested, and can contain matrices
-    if (childI.type() == ExpressionNode::Type::List) {
-      SimplifyAndApproximateList(static_cast<List &>(childI), &simplifiedChild, approximateChildAddress, context, complexFormat, angleUnit, reductionContext);
-    } else if (childI.type() == ExpressionNode::Type::Matrix) {
-      SimplifyAndApproximateMatrix(static_cast<Matrix &>(childI), &simplifiedChild, approximateChildAddress, context, complexFormat, angleUnit, reductionContext);
-    } else {
-      childI.beautifyAndApproximateScalar(&simplifiedChild, approximateChildAddress, reductionContext, context, complexFormat, angleUnit);
-    }
+    childI.beautifyAndApproximateScalar(&simplifiedChild, approximateChildAddress, reductionContext, context, complexFormat, angleUnit);
     simplifiedList.addChildAtIndexInPlace(simplifiedChild, i, i);
     if (approximateOutput) {
       assert(!approximateChild.isUninitialized());
@@ -822,8 +815,8 @@ void Expression::cloneAndSimplifyAndApproximate(Expression * simplifiedExpressio
   }
 
   // Step 2: we approximate and beautify the reduced expression
-  /* Case 1: the reduced expression is a matrix: We scan the matrix children to
-   * beautify them with the right complex format. */
+  /* Case 1: the reduced expression is a matrix or a list : We scan the
+   * children to beautify them with the right complex format. */
   if (e.type() == ExpressionNode::Type::Matrix) {
     SimplifyAndApproximateMatrix(static_cast<Matrix &>(e), simplifiedExpression, approximateExpression, context, complexFormat, angleUnit, userReductionContext);
   } else if  (e.type() == ExpressionNode::Type::List) {

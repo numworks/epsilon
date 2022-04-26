@@ -36,20 +36,9 @@ Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext appro
   if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
     return Complex<T>::Undefined();
   }
-  SymbolNode * symbol = static_cast<SymbolNode *>(childAtIndex(1));
-  VariableContext nContext = VariableContext(symbol->name(), approximationContext.context());
   Evaluation<T> result = Complex<T>::Builder(static_cast<T>(emptySumAndProductValue()));
   for (int i = (int)start; i <= (int)end; i++) {
-    nContext.setApproximationForVariable<T>(static_cast<T>(i));
-    Expression child = Expression(childAtIndex(0)).clone();
-    if (child.type() == ExpressionNode::Type::Sequence) {
-      /* Since we cannot get the expression of a sequence term like we would for
-      * a function, we replace its potential abstract rank by the value it should
-      * have. We can then evaluate its value */
-      child.childAtIndex(0).replaceSymbolWithExpression(symbol, Float<T>::Builder(i));
-    }
-    approximationContext.setContext(&nContext);
-    result = evaluateWithNextTerm(T(), result, child.node()->approximate(T(), approximationContext), approximationContext.complexFormat());
+    result = evaluateWithNextTerm(T(), result, approximateFirstChildWithArgument(static_cast<T>(i), approximationContext), approximationContext.complexFormat());
     if (result.isUndefined()) {
       return Complex<T>::Undefined();
     }

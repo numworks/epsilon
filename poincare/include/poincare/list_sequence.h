@@ -3,6 +3,7 @@
 
 #include <poincare/parametered_expression.h>
 #include <poincare/complex.h>
+#include <poincare/list_complex.h>
 #include <poincare/symbol.h>
 
 namespace Poincare {
@@ -27,7 +28,7 @@ private:
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
-  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const { return Complex<T>::Undefined(); }
+  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

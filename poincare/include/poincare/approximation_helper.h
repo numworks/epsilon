@@ -34,6 +34,17 @@ namespace ApproximationHelper {
     return MatrixComplex<T>::Undefined();
   }
 
+  template<typename T> Evaluation<T> Reduce(
+      Evaluation<T> eval1,
+      Evaluation<T> eval2,
+      ExpressionNode::ApproximationContext approximationContext,
+      ComplexAndComplexReduction<T> computeOnComplexes,
+      ComplexAndMatrixReduction<T> computeOnComplexAndMatrix,
+      MatrixAndComplexReduction<T> computeOnMatrixAndComplex,
+      MatrixAndMatrixReduction<T> computeOnMatrices,
+      bool mapOnList = true
+      );
+
   template<typename T> Evaluation<T> MapReduce(
       const ExpressionNode * expression,
       ExpressionNode::ApproximationContext approximationContext,

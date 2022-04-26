@@ -72,11 +72,11 @@ float Store::maxHeightOfBar(int series) const {
 }
 
 float Store::heightOfBarAtValue(int series, float value) const {
-  float width = barWidth();
+  double width = barWidth();
   int barNumber = std::floor((value - m_firstDrawnBarAbscissa)/width);
-  float lowerBound = m_firstDrawnBarAbscissa + static_cast<float>(barNumber) * width;
-  float upperBound = m_firstDrawnBarAbscissa + static_cast<float>(barNumber + 1) * width;
-  return sumOfValuesBetween(series, lowerBound, upperBound);
+  double lowerBound = m_firstDrawnBarAbscissa + static_cast<double>(barNumber) * width;
+  double upperBound = m_firstDrawnBarAbscissa + static_cast<double>(barNumber + 1) * width;
+  return static_cast<float>(sumOfValuesBetween(series, lowerBound, upperBound));
 }
 
 double Store::startOfBarAtIndex(int series, int index) const {

@@ -5,14 +5,7 @@ namespace Bootloader {
 
 class Messages {
 public:
-  // TODO: Remove it when this fork will be updated
-  #ifdef UPSILON_VERSION
   constexpr static const char * mainTitle = "Upsilon Calculator";
-  #elif defined OMEGA_VERSION
-  constexpr static const char * mainTitle = "Omega Calculator";
-  #else
-  constexpr static const char * mainTitle = "NumWorks Calculator";
-  #endif
   
   // home menu
   constexpr static const char * homeTitle = "Select a slot";

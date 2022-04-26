@@ -11,7 +11,7 @@
 
 __attribute__ ((noreturn)) void ion_main(int argc, const char * const argv[]) {
   // Clear the screen
-  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorWhite);
+  Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorBlack);
   // Initialize the backlight
   Ion::Backlight::init();
 

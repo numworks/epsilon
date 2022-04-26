@@ -1,4 +1,3 @@
-
 #include <assert.h>
 #include <ion.h>
 #include <ion/timing.h>

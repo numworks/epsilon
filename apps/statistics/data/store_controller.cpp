@@ -3,6 +3,7 @@
 #include "../app.h"
 #include <apps/apps_container.h>
 #include <apps/constant.h>
+#include <apps/shared/range_1D.h>
 #include <assert.h>
 #include <float.h>
 #include <cmath>
@@ -26,7 +27,7 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  if (std::fabs(floatBody) > FLT_MAX) {
+  if (floatBody < -Shared::Range1D::k_lowerMaxFloat || floatBody > Shared::Range1D::k_upperMaxFloat) {
     return false;
   }
   if (RelativeColumnIndex(columnIndex) == 1) {

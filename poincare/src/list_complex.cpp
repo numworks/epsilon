@@ -48,7 +48,6 @@ ListComplex<T> ListComplex<T>::Undefined() {
   return undefList;
 }
 
-
 template class ListComplexNode<float>;
 template class ListComplexNode<double>;
 

@@ -25,10 +25,12 @@ Evaluation<T> Evaluation<T>::Sum(Evaluation<T> a, Evaluation<T> b, Preferences::
     if (b.type() == EvaluationNode<T>::Type::Complex) {
       return AdditionNode::compute(static_cast<Complex<T> &>(a).stdComplex(), static_cast<Complex<T> &>(b).stdComplex(), complexFormat);
     }
-    return AdditionNode::computeOnComplexAndMatrix(static_cast<Complex<T> &>(a).stdComplex(), static_cast<MatrixComplex<T> &>(b), complexFormat);
+    return MatrixComplex<T>::Undefined();
+    //return AdditionNode::computeOnComplexAndMatrix(static_cast<Complex<T> &>(a).stdComplex(), static_cast<MatrixComplex<T> &>(b), complexFormat);
   }
   if (b.type() == EvaluationNode<T>::Type::Complex) {
-    return AdditionNode::computeOnComplexAndMatrix(static_cast<Complex<T> &>(b).stdComplex(), static_cast<MatrixComplex<T> &>(a), complexFormat);
+    return MatrixComplex<T>::Undefined();
+    //return AdditionNode::computeOnComplexAndMatrix(static_cast<Complex<T> &>(b).stdComplex(), static_cast<MatrixComplex<T> &>(a), complexFormat);
   }
   return AdditionNode::computeOnMatrices(static_cast<MatrixComplex<T> &>(a), static_cast<MatrixComplex<T> &>(b), complexFormat);
 }

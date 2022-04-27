@@ -2,6 +2,7 @@
 #define POINCARE_LIST_HELPERS_H
 
 #include <poincare/list.h>
+#include <poincare/list_complex.h>
 
 namespace Poincare {
 
@@ -18,6 +19,8 @@ public:
   template<typename T> static Evaluation<T> SumOfListNode(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
   template<typename T> static Evaluation<T> ProductOfListNode(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
   template<typename T> static Evaluation<T> SquareSumOfListNode(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+
+  template<typename T> static ListComplex<T> SortListComplex(ListComplex<T> list);
 
 private:
   static int ExtremumOfListNodeIndex(ListNode * listNode, ExpressionNode::ApproximationContext approximationContext, bool minimum);

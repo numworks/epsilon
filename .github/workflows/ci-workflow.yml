@@ -133,7 +133,7 @@ jobs:
       - run: make -j2 flasher.light.dfu
       - run: make -j2 flasher.verbose.dfu
       - run: make -j2 bench.ram.dfu
-      - run: make -j2 bench.flash.dfu
+      # - run: make -j2 bench.flash.dfu
       - run: make -j2 binpack
       - run: cp output/release/device/n0110/binpack-n0110-`git rev-parse HEAD | head -c 7`.tgz output/release/device/n0110/binpack-n0110.tgz
       - id: 'auth'

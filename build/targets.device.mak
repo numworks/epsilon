@@ -48,7 +48,7 @@ $(BUILD_DIR)/flasher.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 $(BUILD_DIR)/flasher.%.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
 
 #TODO Do not build all apps... Put elsewhere?
-bench_src = $(ion_src) $(liba_src) $(default_kandinsky_src) $(poincare_src) $(libaxx_src) $(app_shared_src) $(ion_device_bench_src)
+bench_src = $(ion_src)  $(ion_device_bench_src) $(liba_src) $(simple_kandinsky_src) $(poincare_src) $(libaxx_src) $(app_shared_src)
 $(BUILD_DIR)/bench.ram.$(EXE): $(call flavored_object_for,$(bench_src),consoleuart usbxip)
 $(BUILD_DIR)/bench.ram.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/bench
 $(BUILD_DIR)/bench.ram.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld

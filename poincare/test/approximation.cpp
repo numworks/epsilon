@@ -1179,6 +1179,25 @@ QUIZ_CASE(poincare_approximation_mix) {
   //assert_expression_simplifies_approximates_to<float>("1.0092^(50)×ln(3/2)", "6.4093734888993ᴇ-1"); TODO does not work
 }
 
+QUIZ_CASE(poincare_approximation_lists_access) {
+  assert_expression_approximates_to<double>("{1,2,3,4,5}→L", "{1,2,3,4,5}");
+
+  assert_expression_approximates_to<float>("L(1)", "1");
+  assert_expression_approximates_to<float>("L(0)", Undefined::Name());
+  assert_expression_approximates_to<float>("L(7)", Undefined::Name());
+  assert_expression_approximates_to<double>("L(1)", "1");
+  assert_expression_approximates_to<double>("L(0)", Undefined::Name());
+  assert_expression_approximates_to<double>("L(7)", Undefined::Name());
+
+  assert_expression_approximates_to<float>("L(1,3)", "{1,2,3}");
+  assert_expression_approximates_to<float>("L(1,9)", "{1,2,3,4,5}");
+  assert_expression_approximates_to<float>("L(-5,3)", "{1,2,3}");
+  assert_expression_approximates_to<float>("L(3,1)","{}");
+  assert_expression_approximates_to<float>("L(8,9)","{}");
+
+  Ion::Storage::sharedStorage()->recordNamed("L.lis").destroy();
+}
+
 QUIZ_CASE(poincare_approximation_lists_functions) {
   assert_expression_approximates_to_scalar<double>("mean({5,8,7,4,12})", 7.2);
   assert_expression_approximates_to_scalar<double>("stddev({1,2,3,4,5,6})", 1.707825127659933);

@@ -1199,6 +1199,7 @@ QUIZ_CASE(poincare_approximation_lists_access) {
 }
 
 QUIZ_CASE(poincare_approximation_lists_functions) {
+  assert_expression_approximates_to<double>("sort({5,8,7,undef,-inf})", "{-inf,5,7,8,undef}");
   assert_expression_approximates_to_scalar<double>("mean({5,8,7,4,12})", 7.2);
   assert_expression_approximates_to_scalar<double>("stddev({1,2,3,4,5,6})", 1.707825127659933);
   assert_expression_approximates_to_scalar<double>("med({1,6,3,5,2})", 3.);

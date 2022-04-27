@@ -11,13 +11,10 @@ using namespace Poincare;
 
 namespace Regression {
 
-ExponentialModel::ExponentialModel(bool abxForm) : m_abxForm(abxForm) {
-}
-
 Layout ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
     Layout exponent;
-    if (m_abxForm) {
+    if (m_isAbxForm) {
       exponent = CodePointLayout::Builder('X', k_layoutFont);
     } else {
       exponent = HorizontalLayout::Builder({
@@ -29,7 +26,7 @@ Layout ExponentialModel::layout() {
     m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder(m_abxForm ? 'b' : 'e', k_layoutFont),
+      CodePointLayout::Builder(m_isAbxForm ? 'b' : 'e', k_layoutFont),
       VerticalOffsetLayout::Builder(
         exponent,
         VerticalOffsetLayoutNode::Position::Superscript
@@ -39,22 +36,20 @@ Layout ExponentialModel::layout() {
   return m_layout;
 }
 
+double ExponentialModel::aebxFormatBValue(double * modelCoefficients) const {
+  return m_isAbxForm ? log(modelCoefficients[1]) : modelCoefficients[1];
+}
+
 double ExponentialModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  if (m_abxForm) {
-    b = log(b);
-  }
+  double b = aebxFormatBValue(modelCoefficients);
   // a*e^(bx)
   return a*exp(b*x);
 }
 
 double ExponentialModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
   double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  if (m_abxForm) {
-    b = log(b);
-  }
+  double b = aebxFormatBValue(modelCoefficients);
   if (a == 0 || b == 0 || y/a <= 0) {
     return NAN;
   }
@@ -100,16 +95,13 @@ void ExponentialModel::specializedInitCoefficientsForFit(double * modelCoefficie
   const double variance = meanOfXX - meanOfX * meanOfX;
   const double covariance = meanOfXY - meanOfX * meanOfY;
   const double b = LinearModelHelper::Slope(covariance, variance);
-  modelCoefficients[1] = m_abxForm ? exp(b) : b;
+  modelCoefficients[1] = m_isAbxForm ? exp(b) : b;
   modelCoefficients[0] =
     sign * exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, b));
 }
 
 double ExponentialModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
-  double b = modelCoefficients[1];
-  if (m_abxForm) {
-    b = log(b);
-  }
+  const double b = aebxFormatBValue(modelCoefficients);
   if (derivateCoefficientIndex == 0) {
     // Derivate with respect to a: exp(b*x)
     return exp(b*x);

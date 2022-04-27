@@ -152,7 +152,7 @@ QUIZ_CASE(exponential_regression) {
   double y[] = {-276.842, -299.956, -324.933, -352.0299, -381.314, -413.0775};
   double coefficients[] = {-3.4, 0.8};
   double r2 = 1.0;
-  assert_regression_is(x, y, 6, Model::Type::Exponential, coefficients, r2);
+  assert_regression_is(x, y, 6, Model::Type::ExponentialAebx, coefficients, r2);
 }
 
 QUIZ_CASE(exponential_regression2) {
@@ -160,7 +160,7 @@ QUIZ_CASE(exponential_regression2) {
   double y[] = {3000, 3315.513, 3664.208, 4049.576};
   double coefficients[] = {3000, .1};
   double r2 = 1.0;
-  assert_regression_is(x, y, 4, Model::Type::Exponential, coefficients, r2);
+  assert_regression_is(x, y, 4, Model::Type::ExponentialAebx, coefficients, r2);
 }
 
 QUIZ_CASE(exponential_regression3) {
@@ -168,7 +168,7 @@ QUIZ_CASE(exponential_regression3) {
   double y[] = {-1, -.3678794, -.1353353, -.04978707, -.01831564, -.006737947, -.002478752, -.000911882, -.0003354626, -.0001234098, -.00004539993};
   double coefficients[] = {-1, -1};
   double r2 = 0.9999999999999992;
-  assert_regression_is(x, y, 11, Model::Type::Exponential, coefficients, r2);
+  assert_regression_is(x, y, 11, Model::Type::ExponentialAebx, coefficients, r2);
 }
 
 QUIZ_CASE(exponential_regression4) {
@@ -176,7 +176,7 @@ QUIZ_CASE(exponential_regression4) {
   double y[] = {2.0, 3.0, 4.0, 1.0};
   double coefficients[] = {2.905, -0.0606857};
   double r2 = 0.03032936518;
-  assert_regression_is(x, y, 4, Model::Type::Exponential, coefficients, r2);
+  assert_regression_is(x, y, 4, Model::Type::ExponentialAebx, coefficients, r2);
 }
 
 QUIZ_CASE(exponential_regression5) {
@@ -184,7 +184,7 @@ QUIZ_CASE(exponential_regression5) {
   double y[] = {1, 2, 2, 1};
   double coefficients[] = {1.5, 0.0};
   double r2 = 0.0;
-  assert_regression_is(x, y, 4, Model::Type::Exponential, coefficients, r2);
+  assert_regression_is(x, y, 4, Model::Type::ExponentialAebx, coefficients, r2);
 }
 
 QUIZ_CASE(exponential_abx_regression) {

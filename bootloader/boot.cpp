@@ -37,10 +37,11 @@ void Boot::setMode(BootMode mode) {
 }
 
 void Boot::busError() {
-  // Ion::Device::Flash::DisableInternalProtection();
-  // Ion::Device::Flash::EraseSector(0);
+  Ion::Device::Flash::ClearInternalFlashErrors();
+  asm("mov r12, lr");
   if (config()->isBooting()) {
-    config()->slot()->boot();
+    asm("mov lr, r12");
+    asm("bx lr");
   }
   Bootloader::Recovery::crash_handler("BusFault");
 }
@@ -68,8 +69,6 @@ __attribute((section(".fake_isr_function"))) __attribute__((used)) void Boot::fl
   // a simple function
   Ion::Device::Flash::ClearInternalFlashErrors();
   asm("bx lr");
-  asm("ldr PC, [PC, -0x18]");
-  Ion::LED::setColor(KDColorBlue);
 }
 
 void Boot::patchKernel(const Slot & s) {
@@ -122,10 +121,9 @@ void Boot::bootSlot(Bootloader::Slot s) {
 
 void Boot::bootSelectedSlot() {
   lockInternal();
-  // enableFlashIntr();
   config()->setBooting(true);
+  Ion::Device::Flash::EnableInternalSessionLock();
   config()->slot()->boot();
-  // Ion::Device::Flash::EnableInternalSessionLock();
 }
 
 __attribute__((noreturn)) void Boot::boot() {

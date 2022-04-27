@@ -1,5 +1,6 @@
 #include <poincare/list_sort.h>
 #include <poincare/layout_helper.h>
+#include <poincare/list_complex.h>
 #include <poincare/list_helpers.h>
 #include <poincare/helpers.h>
 #include <poincare/serialization_helper.h>
@@ -25,7 +26,29 @@ Expression ListSortNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T> Evaluation<T> ListSortNode::templatedApproximate(ApproximationContext approximationContext) const {
-  return Complex<T>::Undefined();
+  Evaluation<T> child = childAtIndex(0)->approximate(T(), approximationContext);
+  if (child.type() != EvaluationNode<T>::Type::ListComplex) {
+    return Complex<T>::Undefined();
+  }
+  ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
+  void * ctx = &listChild;
+  Helpers::Sort(
+      // Swap
+      [](int i, int j, void * context, int n) {
+        ListComplex<T> * list = reinterpret_cast<ListComplex<T> *>(context);
+        assert(list->numberOfChildren() == n && 0 <= i && 0 <= j && i < n && j < n);
+        list->swapChildrenInPlace(i, j);
+      },
+      // Compare
+      [](int i, int j, void * context, int numberOfElements) {
+      ListComplex<T> * list = reinterpret_cast<ListComplex<T> *>(context);
+      float xI = list->childAtIndex(i).toScalar();
+      float xJ =  list->childAtIndex(j).toScalar();
+      return Poincare::Helpers::FloatComparison(xI, xJ, ListSort::k_nanIsGreatest);
+      },
+      ctx,
+      listChild.numberOfChildren());
+  return std::move(listChild);
 }
 
 Expression ListSort::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

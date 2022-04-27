@@ -33,25 +33,25 @@ public:
   Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
 
   // Approximation
-  virtual Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::MapReduce<float>(
-      this,
-      approximationContext,
-      compute<float>,
-      computeOnComplexAndMatrix<float>,
-      computeOnMatrixAndComplex<float>,
-      computeOnMatrices<float>
-      );
+  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, ApproximationContext approximationContext) {
+    return ApproximationHelper::Reduce<T>(
+        eval1,
+        eval2,
+        approximationContext,
+        computeOnComplex<T>,
+        computeOnComplexAndMatrix<T>,
+        computeOnMatrixAndComplex<T>,
+        computeOnMatrices<T>
+        );
+  }
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return templatedApproximate<float>(approximationContext);
    }
-  virtual Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::MapReduce<double>(
-      this,
-      approximationContext,
-      compute<double>,
-      computeOnComplexAndMatrix<double>,
-      computeOnMatrixAndComplex<double>,
-      computeOnMatrices<double>
-      );
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return templatedApproximate<double>(approximationContext);
+  }
+  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const {
+    return ApproximationHelper::MapReduce<T>(this, approximationContext, Compute<T>);
   }
 
   // Layout
@@ -65,9 +65,9 @@ public:
 
 private:
   // Approximation
-  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
+    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, computeOnComplex<T>);
   }
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);

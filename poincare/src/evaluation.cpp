@@ -23,7 +23,7 @@ Evaluation<T> Evaluation<T>::Sum(Evaluation<T> a, Evaluation<T> b, Preferences::
   assert(a.type() != EvaluationNode<T>::Type::Exception && b.type() != EvaluationNode<T>::Type::Exception);
   if (a.type() == EvaluationNode<T>::Type::Complex) {
     if (b.type() == EvaluationNode<T>::Type::Complex) {
-      return AdditionNode::compute(static_cast<Complex<T> &>(a).stdComplex(), static_cast<Complex<T> &>(b).stdComplex(), complexFormat);
+      return AdditionNode::computeOnComplex(static_cast<Complex<T> &>(a).stdComplex(), static_cast<Complex<T> &>(b).stdComplex(), complexFormat);
     }
     return MatrixComplex<T>::Undefined();
     //return AdditionNode::computeOnComplexAndMatrix(static_cast<Complex<T> &>(a).stdComplex(), static_cast<MatrixComplex<T> &>(b), complexFormat);
@@ -40,7 +40,7 @@ Evaluation<T> Evaluation<T>::Product(Evaluation<T> a, Evaluation<T> b, Preferenc
   assert(a.type() != EvaluationNode<T>::Type::Exception && b.type() != EvaluationNode<T>::Type::Exception);
   if (a.type() == EvaluationNode<T>::Type::Complex) {
     if (b.type() == EvaluationNode<T>::Type::Complex) {
-      return MultiplicationNode::compute(static_cast<Complex<T> &>(a).stdComplex(), static_cast<Complex<T> &>(b).stdComplex(), complexFormat);
+      return MultiplicationNode::computeOnComplex(static_cast<Complex<T> &>(a).stdComplex(), static_cast<Complex<T> &>(b).stdComplex(), complexFormat);
     }
     return MultiplicationNode::computeOnComplexAndMatrix(static_cast<Complex<T> &>(a).stdComplex(), static_cast<MatrixComplex<T> &>(b), complexFormat);
   }

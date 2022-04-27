@@ -93,8 +93,7 @@ double MultiplicationNode::degreeForSortingAddition(bool symbolsOnly) const {
   return childAtIndex(numberOfChildren() - 1)->degreeForSortingAddition(symbolsOnly);
 }
 
-
-template<typename T> Complex<T> MultiplicationNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
+template<typename T> Complex<T> MultiplicationNode::computeOnComplex(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
   if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
     constexpr T zero = static_cast<T>(0.0);
@@ -1356,8 +1355,16 @@ const Expression Multiplication::Base(const Expression e) {
 
 template MatrixComplex<float> MultiplicationNode::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>, Preferences::ComplexFormat);
 template MatrixComplex<double> MultiplicationNode::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>, Preferences::ComplexFormat);
-template Complex<float> MultiplicationNode::compute<float>(const std::complex<float>, const std::complex<float>, Preferences::ComplexFormat);
-template Complex<double> MultiplicationNode::compute<double>(const std::complex<double>, const std::complex<double>, Preferences::ComplexFormat);
+
+template Complex<float> MultiplicationNode::computeOnComplex<float>(const std::complex<float>, const std::complex<float>, Preferences::ComplexFormat);
+template Complex<double> MultiplicationNode::computeOnComplex<double>(const std::complex<double>, const std::complex<double>, Preferences::ComplexFormat);
+
+template Evaluation<float> Poincare::MultiplicationNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<double> Poincare::MultiplicationNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
+
+template Evaluation<float> Poincare::MultiplicationNode::templatedApproximate<float>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
+template Evaluation<double> Poincare::MultiplicationNode::templatedApproximate<double>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
+
 template void Multiplication::computeOnArrays<double>(double * m, double * n, double * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
 
 }

@@ -124,7 +124,7 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Approx
   if (x.type() == EvaluationNode<U>::Type::Complex && n.type() == EvaluationNode<U>::Type::Complex) {
     std::complex<U> xc = (static_cast<Complex<U>&>(x)).stdComplex();
     std::complex<U> nc = (static_cast<Complex<U>&>(n)).stdComplex();
-    result = DivisionNode::compute<U>(computeOnComplex(xc, approximationContext.complexFormat(), approximationContext.angleUnit()).stdComplex(), computeOnComplex(nc, approximationContext.complexFormat(), approximationContext.angleUnit()).stdComplex(), approximationContext.complexFormat()).stdComplex();
+    result = DivisionNode::computeOnComplex<U>(computeOnComplex(xc, approximationContext.complexFormat(), approximationContext.angleUnit()).stdComplex(), computeOnComplex(nc, approximationContext.complexFormat(), approximationContext.angleUnit()).stdComplex(), approximationContext.complexFormat()).stdComplex();
   }
   return Complex<U>::Builder(result);
 }

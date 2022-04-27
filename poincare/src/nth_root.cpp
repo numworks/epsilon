@@ -54,7 +54,7 @@ Evaluation<T> NthRootNode::templatedApproximate(ApproximationContext approximati
          return std::move(result);
        }
     }
-    result = PowerNode::compute(basec, std::complex<T>(1.0)/(indexc), approximationContext.complexFormat());
+    result = PowerNode::computeOnComplex<T>(basec, std::complex<T>(1.0)/(indexc), approximationContext.complexFormat());
   }
   return std::move(result);
 }

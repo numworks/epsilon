@@ -182,7 +182,7 @@ Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(const std::comple
     std::complex<T> absc = c;
     absc.real(std::fabs(absc.real()));
     // compute |c|^(p/q) which is a real
-    Complex<T> absCPowD = PowerNode::compute(absc, std::complex<T>(p/q), Preferences::ComplexFormat::Real);
+    Complex<T> absCPowD = PowerNode::computeOnComplex<T>(absc, std::complex<T>(p/q), Preferences::ComplexFormat::Real);
     /* As q is odd, c^(p/q) = (sign(c)^(1/q))^p * |c|^(p/q)
      *                      = sign(c)^p         * |c|^(p/q)
      *                      = -|c|^(p/q) iff c < 0 and p odd */
@@ -192,7 +192,7 @@ Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(const std::comple
 }
 
 template<typename T>
-Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
+Complex<T> PowerNode::computeOnComplex(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   std::complex<T> result;
   if (c.imag() == static_cast<T>(0.0) && d.imag() == static_cast<T>(0.0) && c.real() != static_cast<T>(0.0) && (c.real() > static_cast<T>(0.0) || std::round(d.real()) == d.real())) {
     /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
@@ -370,14 +370,7 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Approximation
     }
   }
 defaultApproximation:
-  return ApproximationHelper::MapReduce<T>(
-      this,
-      approximationContext,
-      compute<T>,
-      ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
-      computeOnMatrixAndComplex<T>,
-      ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
-      );
+  return ApproximationHelper::MapReduce<T>(this, approximationContext, Compute<T>);
 }
 
 // Power
@@ -1493,9 +1486,16 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rationa
 }
 
 
-template Complex<float> PowerNode::compute<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
-template Complex<double> PowerNode::compute<double>(std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
+template Complex<float> PowerNode::computeOnComplex<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
+template Complex<double> PowerNode::computeOnComplex<double>(std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
+
 template Complex<double> PowerNode::computeNotPrincipalRealRootOfRationalPow<double>(std::complex<double>, double, double);
 template Complex<float> PowerNode::computeNotPrincipalRealRootOfRationalPow<float>(std::complex<float>, float, float);
+
+template Evaluation<float> Poincare::PowerNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<double> Poincare::PowerNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
+
+template Evaluation<float> Poincare::PowerNode::templatedApproximate<float>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
+template Evaluation<double> Poincare::PowerNode::templatedApproximate<double>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
 
 }

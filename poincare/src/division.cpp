@@ -56,7 +56,7 @@ Expression DivisionNode::shallowReduce(ReductionContext reductionContext) {
   return Division(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
+template<typename T> Complex<T> DivisionNode::computeOnComplex(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   constexpr T zero = static_cast<T>(0.0);
   if (d.real() == zero && d.imag() == zero) {
     return Complex<T>::Undefined();
@@ -117,4 +117,9 @@ Expression Division::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return m.shallowReduce(reductionContext);
 }
 
+template Evaluation<float> Poincare::DivisionNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<double> Poincare::DivisionNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
+
+template Evaluation<float> Poincare::DivisionNode::templatedApproximate<float>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
+template Evaluation<double> Poincare::DivisionNode::templatedApproximate<double>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
 }

@@ -580,9 +580,15 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Express
   m.shallowReduce(reductionContext);
 }
 
-template Complex<float> Poincare::AdditionNode::compute<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
-template Complex<double> Poincare::AdditionNode::compute<double>(std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
+template Complex<float> Poincare::AdditionNode::computeOnComplex<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
+template Complex<double> Poincare::AdditionNode::computeOnComplex<double>(std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
 
-template MatrixComplex<float> AdditionNode::computeOnMatrices<float>(const MatrixComplex<float>,const MatrixComplex<float>, Preferences::ComplexFormat complexFormat);
-template MatrixComplex<double> AdditionNode::computeOnMatrices<double>(const MatrixComplex<double>,const MatrixComplex<double>, Preferences::ComplexFormat complexFormat);
+template MatrixComplex<float> Poincare::AdditionNode::computeOnMatrices<float>(const MatrixComplex<float>,const MatrixComplex<float>, Preferences::ComplexFormat complexFormat);
+template MatrixComplex<double> Poincare::AdditionNode::computeOnMatrices<double>(const MatrixComplex<double>,const MatrixComplex<double>, Preferences::ComplexFormat complexFormat);
+
+template Evaluation<float> Poincare::AdditionNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<double> Poincare::AdditionNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
+
+template Evaluation<float> Poincare::AdditionNode::templatedApproximate<float>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
+template Evaluation<double> Poincare::AdditionNode::templatedApproximate<double>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
 }

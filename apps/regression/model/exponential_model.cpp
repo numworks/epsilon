@@ -11,18 +11,27 @@ using namespace Poincare;
 
 namespace Regression {
 
+ExponentialModel::ExponentialModel(bool abxForm) : m_abxForm(abxForm) {
+}
+
 Layout ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
+    Layout exponent;
+    if (m_abxForm) {
+      exponent = CodePointLayout::Builder('X', k_layoutFont);
+    } else {
+      exponent = HorizontalLayout::Builder({
+        CodePointLayout::Builder('b', k_layoutFont),
+        CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+        CodePointLayout::Builder('X', k_layoutFont)
+        });
+    }
     m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder('e', k_layoutFont),
+      CodePointLayout::Builder(m_abxForm ? 'b' : 'e', k_layoutFont),
       VerticalOffsetLayout::Builder(
-        HorizontalLayout::Builder({
-          CodePointLayout::Builder('b', k_layoutFont),
-          CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-          CodePointLayout::Builder('X', k_layoutFont)
-        }),
+        exponent,
         VerticalOffsetLayoutNode::Position::Superscript
       )
     });
@@ -33,6 +42,9 @@ Layout ExponentialModel::layout() {
 double ExponentialModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
+  if (m_abxForm) {
+    b = log(b);
+  }
   // a*e^(bx)
   return a*exp(b*x);
 }
@@ -40,6 +52,9 @@ double ExponentialModel::evaluate(double * modelCoefficients, double x) const {
 double ExponentialModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
+  if (m_abxForm) {
+    b = log(b);
+  }
   if (a == 0 || b == 0 || y/a <= 0) {
     return NAN;
   }
@@ -84,13 +99,17 @@ void ExponentialModel::specializedInitCoefficientsForFit(double * modelCoefficie
   const double meanOfXY = sumOfXY / numberOfPoints;
   const double variance = meanOfXX - meanOfX * meanOfX;
   const double covariance = meanOfXY - meanOfX * meanOfY;
-  modelCoefficients[1] = LinearModelHelper::Slope(covariance, variance);
+  const double b = LinearModelHelper::Slope(covariance, variance);
+  modelCoefficients[1] = m_abxForm ? exp(b) : b;
   modelCoefficients[0] =
-    sign * exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, modelCoefficients[1]));
+    sign * exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, b));
 }
 
 double ExponentialModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
-  const double b = modelCoefficients[1];
+  double b = m_abxForm ? log(modelCoefficients[1]) : modelCoefficients[1];
+  if (m_abxForm) {
+    b = log(b);
+  }
   if (derivateCoefficientIndex == 0) {
     // Derivate with respect to a: exp(b*x)
     return exp(b*x);

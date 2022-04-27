@@ -3,6 +3,7 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/helpers.h>
 #include <poincare/expression_node.h>
+#include <poincare/list_sort.h>
 #include <poincare/multiplication.h>
 #include <poincare/undefined.h>
 
@@ -98,15 +99,41 @@ template<typename T> Evaluation<T> ListHelpers::SquareSumOfListNode(ListNode * l
       );
  }
 
-template Evaluation<float>  ListHelpers::ExtremumApproximationOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext, bool minimum);
-template Evaluation<double>  ListHelpers::ExtremumApproximationOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext, bool minimum);
+template<typename T> ListComplex<T> ListHelpers::SortListComplex(ListComplex<T> list) {
+  void * ctx = &list;
+  Helpers::Sort(
+      // Swap
+      [](int i, int j, void * context, int n) {
+        ListComplex<T> * list = reinterpret_cast<ListComplex<T> *>(context);
+        assert(list->numberOfChildren() == n && 0 <= i && 0 <= j && i < n && j < n);
+        list->swapChildrenInPlace(i, j);
+      },
+      // Compare
+      [](int i, int j, void * context, int numberOfElements) {
+      ListComplex<T> * list = reinterpret_cast<ListComplex<T> *>(context);
+      float xI = list->childAtIndex(i).toScalar();
+      float xJ =  list->childAtIndex(j).toScalar();
+      return Poincare::Helpers::FloatComparison(xI, xJ, ListSort::k_nanIsGreatest);
+      },
+      ctx,
+      list.numberOfChildren());
+  return list;
+}
 
-template Evaluation<float>  ListHelpers::SumOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
-template Evaluation<double>  ListHelpers::SumOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
 
-template Evaluation<float>  ListHelpers::ProductOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
-template Evaluation<double>  ListHelpers::ProductOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<float> ListHelpers::ExtremumApproximationOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext, bool minimum);
+template Evaluation<double> ListHelpers::ExtremumApproximationOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext, bool minimum);
 
-template Evaluation<float>  ListHelpers::SquareSumOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
-template Evaluation<double>  ListHelpers::SquareSumOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<float> ListHelpers::SumOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<double> ListHelpers::SumOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+
+template Evaluation<float> ListHelpers::ProductOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<double> ListHelpers::ProductOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+
+template Evaluation<float> ListHelpers::SquareSumOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<double> ListHelpers::SquareSumOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+
+template ListComplex<float> ListHelpers::SortListComplex(ListComplex<float> list);
+template ListComplex<double> ListHelpers::SortListComplex(ListComplex<double> list);
+
 }

@@ -567,6 +567,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
   if (e.isUndefined()) {
     return Coordinate2D<T>(NAN, NAN);
   }
+  // TODO : This should maybe be a List instead of a Matrix
   assert(e.type() == ExpressionNode::Type::Matrix);
   assert(static_cast<Matrix&>(e).numberOfRows() == 2);
   assert(static_cast<Matrix&>(e).numberOfColumns() == 1);

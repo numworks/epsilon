@@ -533,7 +533,7 @@ Expression Parser::parseFunctionParameters() {
   }
   Token::Type correspondingRightParenthesis = poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis : Token::Type::RightParenthesis;
   if (popTokenIfType(correspondingRightParenthesis)) {
-    return Matrix::Builder(); // The function has no parameter.
+    return List::Builder(); // The function has no parameter.
   }
   Expression commaSeparatedList = parseCommaSeparatedList();
   if (m_status != Status::Progress) {
@@ -593,7 +593,7 @@ Expression Parser::parseVector() {
 }
 
 Expression Parser::parseCommaSeparatedList() {
-  Matrix commaSeparatedList = Matrix::Builder();
+  List commaSeparatedList = List::Builder();
   int length = 0;
   do {
     Expression item = parseUntil(Token::Comma);
@@ -631,9 +631,9 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
     m_status = Status::Error; //FIXME
     return;
   }
-  List result = List::Builder();
+  Expression result;
   if (!popTokenIfType(Token::RightBrace)) {
-    Expression commaSeparatedList = parseCommaSeparatedList();
+    result = parseCommaSeparatedList();
     if (m_status != Status::Progress) {
       // There has been an error during the parsing of the comma separated list
       return;
@@ -642,10 +642,8 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
       m_status = Status::Error; // Right brace missing.
       return;
     }
-    int numberOfElements = commaSeparatedList.numberOfChildren();
-    for (int i = 0; i < numberOfElements; i++) {
-      result.addChildAtIndexInPlace(commaSeparatedList.childAtIndex(i), i, i);
-    }
+  } else {
+    result = List::Builder();
   }
   leftHandSide = result;
   isThereImplicitMultiplication();

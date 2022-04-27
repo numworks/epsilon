@@ -44,7 +44,7 @@ Evaluation<T> ListSequenceNode::templatedApproximate(ApproximationContext approx
 }
 
 Expression ListSequence::UntypedBuilder(Expression children) {
-  assert(children.type() == ExpressionNode::Type::Matrix);
+  assert(children.type() == ExpressionNode::Type::List);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
     return Expression();

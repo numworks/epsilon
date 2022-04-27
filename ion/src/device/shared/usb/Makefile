@@ -93,3 +93,7 @@ $(BUILD_DIR)/ion/src/device/shared/usb/dfu.o: $(BUILD_DIR)/ion/src/device/shared
 
 ion_device_src += ion/src/device/shared/usb/dfu.cpp:-usbxip
 ion_device_src += ion/src/device/shared/usb/dfu_relocated.cpp:-usbxip
+
+ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
+  usb_desc.cpp \
+)

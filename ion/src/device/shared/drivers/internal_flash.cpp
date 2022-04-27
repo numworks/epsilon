@@ -31,6 +31,87 @@ static void open() {
   FLASH.CR()->setPSIZE(MemoryAccessWidth);
 }
 
+static void open_protection() {
+  if (FLASH.OPTCR()->getLOCK()) {
+    FLASH.OPTKEYR()->set(0x08192A3B);
+    FLASH.OPTKEYR()->set(0x4C5D6E7F);
+  }
+}
+
+static void close_protection() {
+  if(!FLASH.OPTCR()->getLOCK()) {
+    FLASH.OPTCR()->setLOCK(true);
+  }
+}
+
+static void disable_protection_at(int i) {
+  if (!FLASH.OPTCR()->getLOCK()) {
+    switch (i)
+    {
+    case 0:
+      FLASH.OPTCR()->setnWRP0(true);
+      break;
+    case 1:
+      FLASH.OPTCR()->setnWRP1(true);
+      break;
+    case 2:
+      FLASH.OPTCR()->setnWRP2(true);
+      break;
+    case 3:
+      FLASH.OPTCR()->setnWRP3(true);
+      break;
+    case 4:
+      FLASH.OPTCR()->setnWRP4(true);
+      break;
+    case 5:
+      FLASH.OPTCR()->setnWRP5(true);
+      break;
+    case 6:
+      FLASH.OPTCR()->setnWRP6(true);
+      break;
+    case 7:
+      FLASH.OPTCR()->setnWRP7(true);
+      break;
+    default:
+      break;
+    }
+  }
+}
+
+static void enable_protection_at(int i) {
+  if (!FLASH.OPTCR()->getLOCK()) {
+    switch (i)
+    {
+    case 0:
+      FLASH.OPTCR()->setnWRP0(false);
+      break;
+    case 1:
+      FLASH.OPTCR()->setnWRP1(false);
+      break;
+    case 2:
+      FLASH.OPTCR()->setnWRP2(false);
+      break;
+    case 3:
+      FLASH.OPTCR()->setnWRP3(false);
+      break;
+    case 4:
+      FLASH.OPTCR()->setnWRP4(false);
+      break;
+    case 5:
+      FLASH.OPTCR()->setnWRP5(false);
+      break;
+    case 6:
+      FLASH.OPTCR()->setnWRP6(false);
+      break;
+    case 7:
+      FLASH.OPTCR()->setnWRP7(false);
+      break;
+    default:
+      break;
+    }
+  }
+}
+
 static void close() {
   // Clear error flags
   class FLASH::SR sr(0);
@@ -245,6 +326,52 @@ void WriteMemory(uint8_t * destination, uint8_t * source, size_t length) {
   flash_memcpy(destination, source, length);
   FLASH.CR()->setPG(false);
   close();
+}
+
+void EnableProtection() {
+  close_protection();
+}
+
+void DisableProtection() {
+  open_protection();
+}
+
+void SetSectorProtection(int i, bool protect) {
+  if (protect) {
+    enable_protection_at(i);
+  } else {
+    disable_protection_at(i);
+  }
+}
+
+void EnableSessionLock() {
+  if (FLASH.OPTCR()->getLOCK()) {
+    // writing bullshit to the lock register to lock it until next core reset
+    FLASH.OPTKEYR()->set(0x00000000);
+    FLASH.OPTKEYR()->set(0xFFFFFFFF);
+  }
+}
+
+void EnableFlashInterrupt() {
+  open();
+  FLASH.CR()->setERRIE(true);
+  wait();
+  FLASH.CR()->setEOPIE(true);
+  wait();
+  FLASH.CR()->setRDERRIE(true);
+  wait();
+  close();
+}
+
+void ClearErrors() {
+  class FLASH::SR sr(0);
+  // Error flags are cleared by writing 1
+  sr.setERSERR(true);
+  sr.setPGPERR(true);
+  sr.setPGAERR(true);
+  sr.setWRPERR(true);
+  sr.setEOP(true);
+  FLASH.SR()->set(sr);
 }
 
 }

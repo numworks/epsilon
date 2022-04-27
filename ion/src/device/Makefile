@@ -10,7 +10,7 @@ ifeq ($(EPSILON_TELEMETRY),1)
 ion_src += ion/src/shared/telemetry_console.cpp
 endif
 
-ion_device_src += ion/src/shared/collect_registers.cpp
+ion_src += ion/src/shared/collect_registers.cpp
 
 IN_FACTORY ?= 0
 

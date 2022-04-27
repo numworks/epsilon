@@ -15,6 +15,15 @@ void MassErase();
 void EraseSector(int i);
 void WriteMemory(uint8_t * destination, uint8_t * source, size_t length);
 
+void DisableInternalProtection();
+void EnableInternalProtection();
+void SetInternalSectorProtection(int i, bool protect);
+void EnableInternalSessionLock(); // Will cause BUSERR when enabled
+void EnableInternalFlashInterrupt();
+void ClearInternalFlashErrors();
+void LockSlotA();
+void LockSlotB();
+
 }
 }
 }

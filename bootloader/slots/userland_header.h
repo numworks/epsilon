@@ -1,5 +1,5 @@
-#ifndef BOOTLOADER_USERLAND_HEADER_H
-#define BOOTLOADER_USERLAND_HEADER_H
+#ifndef BOOTLOADER_SLOTS_USERLAND_HEADER_H
+#define BOOTLOADER_SLOTS_USERLAND_HEADER_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -15,6 +15,8 @@ public:
   const char * omegaVersion() const;
   const bool isUpsilon() const;
   const char * upsilonVersion() const;
+  const void * storageAddress() const;
+  const size_t storageSize() const;
 
 private:
   UserlandHeader();

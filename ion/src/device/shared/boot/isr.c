@@ -18,11 +18,11 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   = {
   (ISR)&_stack_start, // Stack start
   start, // Reset service routine,
-  nmi_abort, // NMI service routine,
+  0, // NMI service routine,
   abort, // HardFault service routine,
   0, // MemManage service routine,
-  bf_abort, // BusFault service routine,
-  uf_abort, // UsageFault service routine,
+  0, // BusFault service routine,
+  0, // UsageFault service routine,
   0, 0, 0, 0, // Reserved
   0, // SVCall service routine,
   0, // DebugMonitor service routine,

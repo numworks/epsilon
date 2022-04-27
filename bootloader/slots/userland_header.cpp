@@ -1,4 +1,4 @@
-#include <bootloader/userland_header.h>
+#include <bootloader/slots/userland_header.h>
 
 namespace Bootloader {
 
@@ -23,11 +23,19 @@ const char * UserlandHeader::omegaVersion() const {
 }
 
 const bool UserlandHeader::isUpsilon() const {
-  return m_upsilonMagicHeader == UpsilonMagic && m_upsilonMagicFooter == UpsilonMagic;
+  return m_upsilonMagicHeader == UpsilonMagic && m_upsilonMagicHeader == UpsilonMagic;
 }
 
 const char * UserlandHeader::upsilonVersion() const {
   return m_UpsilonVersion;
+}
+
+const void * UserlandHeader::storageAddress() const {
+  return m_storageAddressRAM;
+}
+
+const size_t UserlandHeader::storageSize() const {
+  return m_storageSizeRAM;
 }
 
 }

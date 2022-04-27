@@ -6,15 +6,6 @@
 #include <drivers/rtc.h>
 #include <drivers/reset.h>
 #include <drivers/timing.h>
-#include <drivers/power.h>
-#include <drivers/wakeup.h>
-#include <drivers/battery.h>
-#include <drivers/usb.h>
-#include <drivers/led.h>
-#include <kandinsky.h>
-#include <regs/config/pwr.h>
-#include <regs/config/rcc.h>
-#include <regs/regs.h>
 
 typedef void (*cxx_constructor)();
 
@@ -30,6 +21,15 @@ extern "C" {
   extern char _isr_vector_table_start_flash;
   extern char _isr_vector_table_start_ram;
   extern char _isr_vector_table_end_ram;
+}
+
+void __attribute__((noinline)) abort() {
+#ifdef NDEBUG
+  Ion::Device::Reset::core();
+#else
+  while (1) {
+  }
+#endif
 }
 
 /* In order to ensure that this method is execute from the external flash, we
@@ -68,153 +68,6 @@ static void __attribute__((noinline)) jump_to_external_flash() {
   external_flash_start();
 }
 
-void __attribute__((noinline)) abort_init() {
-  Ion::Device::Board::shutdownPeripherals(true);
-  Ion::Device::Board::initPeripherals(false);
-  Ion::Timing::msleep(100);
-  Ion::Backlight::init();
-  Ion::LED::setColor(KDColorRed);
-  Ion::Backlight::setBrightness(180);
-}
-
-void __attribute__((noinline)) abort_economy() {
-  int brightness = Ion::Backlight::brightness();
-  bool plugged = Ion::USB::isPlugged();
-  while (brightness > 0) {
-    brightness--;
-    Ion::Backlight::setBrightness(brightness);
-    Ion::Timing::msleep(50);
-    if(plugged || (!plugged && Ion::USB::isPlugged())){
-      Ion::Backlight::setBrightness(180);
-      return;
-    }
-  }
-  Ion::Backlight::shutdown();
-  while (1) {
-    Ion::Device::Power::sleepConfiguration();
-    Ion::Device::WakeUp::onUSBPlugging();
-    Ion::Device::WakeUp::onChargingEvent();
-    Ion::Device::Power::internalFlashSuspend(true);
-    if (!plugged && Ion::USB::isPlugged()) {
-      break;
-    }
-    plugged = Ion::USB::isPlugged();
-  };
-  Ion::Device::Board::setStandardFrequency(Ion::Device::Board::Frequency::High);
-  Ion::Backlight::init();
-  Ion::Backlight::setBrightness(180);
-}
-
-void __attribute__((noinline)) abort_sleeping() {
-  if (Ion::Battery::level() != Ion::Battery::Charge::EMPTY) {
-    return;
-  }
-  // we don't use Ion::Power::suspend because we don't want to move the exam buffer into the internal
-  Ion::Device::Board::shutdownPeripherals(true);
-  bool plugged = Ion::USB::isPlugged();
-  while (1) {
-    Ion::Device::Battery::initGPIO();
-    Ion::Device::USB::initGPIO();
-    Ion::Device::LED::init();
-    Ion::Device::Power::sleepConfiguration();
-    Ion::Device::Board::shutdownPeripherals(true);
-    Ion::Device::WakeUp::onUSBPlugging();
-    Ion::Device::WakeUp::onChargingEvent();
-    Ion::Device::Power::internalFlashSuspend(true);
-    Ion::Device::USB::initGPIO();
-    if (!plugged && Ion::USB::isPlugged()) {
-      break;
-    }
-    plugged = Ion::USB::isPlugged();
-  }
-  Ion::Device::Board::setStandardFrequency(Ion::Device::Board::Frequency::High);
-  abort_init();
-}
-
-void __attribute__((noinline)) abort_core(const char * text) {
-  Ion::Timing::msleep(100);
-  int counting;
-  while (true) {
-    counting = 0;
-    if (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
-      abort_sleeping();
-      abort_screen(text);
-    }
-    Ion::USB::enable();
-    Ion::Battery::Charge previous_state = Ion::Battery::level();
-    while (!Ion::USB::isEnumerated()) {
-      if (Ion::Battery::level() == Ion::Battery::Charge::LOW) {
-        if (previous_state != Ion::Battery::Charge::LOW) {
-          previous_state = Ion::Battery::Charge::LOW;
-          counting = 0;
-        }
-        Ion::Timing::msleep(500);
-        if (counting >= 20) {
-          abort_sleeping();
-          abort_screen(text);
-          counting = -1;
-        }
-        counting++;
-      } else {
-        if (previous_state == Ion::Battery::Charge::LOW) {
-          previous_state = Ion::Battery::level();
-          counting = 0;
-        }
-        Ion::Timing::msleep(100);
-        if (counting >= 300) {
-          abort_economy();
-          counting = -1;
-        }
-        counting++;
-      }
-    }
-    Ion::USB::DFU(false, false, 0);
-  }
-}
-
-void __attribute__((noinline)) abort_screen(const char * text){
-  KDRect screen = KDRect(0, 0, Ion::Display::Width, Ion::Display::Height);
-  Ion::Display::pushRectUniform(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), KDColor::RGB24(0xffffff));
-  KDContext* ctx = KDIonContext::sharedContext();
-  ctx->setOrigin(KDPointZero);
-  ctx->setClippingRect(screen);
-  ctx->drawString("UPSILON CRASH", KDPoint(90, 10), KDFont::LargeFont, KDColorRed, KDColor::RGB24(0xffffff));
-  ctx->drawString("An error occurred", KDPoint(10, 30), KDFont::SmallFont, KDColorBlack, KDColor::RGB24(0xffffff));
-  ctx->drawString("If you have some important data, please", KDPoint(10, 45), KDFont::SmallFont, KDColorBlack, KDColor::RGB24(0xffffff));
-  ctx->drawString("use bit.ly/upsiBackup to backup them.", KDPoint(10, 60), KDFont::SmallFont, KDColorBlack, KDColor::RGB24(0xffffff));
-  ctx->drawString("YOU WILL LOSE ALL YOUR DATA", KDPoint(10, 85), KDFont::SmallFont, KDColorBlack, KDColor::RGB24(0xffffff));
-  ctx->drawString("→ You can try to reboot by presssing the", KDPoint(10, 110), KDFont::SmallFont, KDColorBlack, KDColor::RGB24(0xffffff));
-  ctx->drawString("reset button at the back of the calculator", KDPoint(10, 125), KDFont::SmallFont, KDColorBlack, KDColor::RGB24(0xffffff));
-  ctx->drawString("→ If Upsilon keeps crashing, you can connect", KDPoint(10, 140), KDFont::SmallFont, KDColorBlack, KDColor::RGB24(0xffffff));
-  ctx->drawString("the calculator to a computer or a phone", KDPoint(10, 160), KDFont::SmallFont, KDColorBlack, KDColor::RGB24(0xffffff));
-  ctx->drawString("and try to reinstall Upsilon", KDPoint(10, 175), KDFont::SmallFont, KDColorBlack, KDColor::RGB24(0xffffff));
-  ctx->drawString(text, KDPoint(220, 200), KDFont::SmallFont, KDColorRed, KDColor::RGB24(0xffffff));
-}
-
-void __attribute__((noinline)) abort() {
-  abort_init();
-  abort_screen("HARDFAULT");
-  abort_core("HARDFAULT");
-}
-
-void __attribute__((noinline)) nmi_abort() {
-  abort_init();
-  abort_screen("NMIFAULT");
-  abort_core("NMIFAULT");
-}
-
-void __attribute__((noinline)) bf_abort() {
-  abort_init();
-  abort_screen("BUSFAULT");
-  abort_core("BUSFAULT");
-}
-
-void __attribute__((noinline)) uf_abort() {
-  abort_init();
-  abort_screen("USAGEFAULT");
-  abort_core("USAGEFAULT");
-}
-
 /* When 'start' is executed, the external flash is supposed to be shutdown. We
  * thus forbid inlining to prevent executing this code from external flash
  * (just in case 'start' was to be called from the external flash). */
@@ -225,6 +78,8 @@ void __attribute__((noinline)) start() {
 
   /* Initialize the FPU as early as possible.
    * For example, static C++ objects are very likely to manipulate float values */
+  Ion::Device::Board::initFPU();
+
   /* Copy data section to RAM
    * The data section is R/W but its initialization value matters. It's stored
    * in Flash, but linked as if it were in RAM. Now's our opportunity to copy

@@ -50,6 +50,38 @@ void WriteMemory(uint8_t * destination, uint8_t * source, size_t length) {
   }
 }
 
+void DisableInternalProtection() {
+  InternalFlash::DisableProtection();
+}
+
+void EnableInternalProtection() {
+  InternalFlash::EnableProtection();
+}
+
+void SetInternalSectorProtection(int i, bool protect) {
+  InternalFlash::SetSectorProtection(i, protect);
+}
+
+void EnableInternalSessionLock() {
+  InternalFlash::EnableSessionLock();
+}
+
+void EnableInternalFlashInterrupt() {
+  InternalFlash::EnableFlashInterrupt();
+}
+
+void ClearInternalFlashErrors() {
+  InternalFlash::ClearErrors();
+}
+
+void LockSlotA() {
+  ExternalFlash::LockSlotA();
+}
+
+void LockSlotB() {
+  ExternalFlash::LockSlotB();
+}
+
 }
 }
 }

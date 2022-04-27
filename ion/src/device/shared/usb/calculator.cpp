@@ -7,11 +7,11 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-void Calculator::PollAndReset(bool exitWithKeyboard, bool unlock, int level) {
+void Calculator::PollAndReset(bool exitWithKeyboard) {
   char serialNumber[Ion::Device::SerialNumber::Length+1];
   Ion::Device::SerialNumber::copy(serialNumber);
   Calculator c(serialNumber);
-  
+
   /* Leave DFU mode if the Back key is pressed, the calculator unplugged or the
    * USB core soft-disconnected. */
   Ion::Keyboard::Key exitKey = Ion::Keyboard::Key::Back;
@@ -19,10 +19,6 @@ void Calculator::PollAndReset(bool exitWithKeyboard, bool unlock, int level) {
   uint8_t exitKeyColumn = Ion::Device::Keyboard::columnForKey(exitKey);
 
   Ion::Device::Keyboard::activateRow(exitKeyRow);
-  c.m_dfuInterface.setLevel(level);
-  if (unlock) {
-    c.m_dfuInterface.unlockDfu();
-  }
 
   while (!(exitWithKeyboard && !c.isErasingAndWriting() && Ion::Device::Keyboard::columnIsActive(exitKeyColumn)) &&
       Ion::USB::isPlugged() &&

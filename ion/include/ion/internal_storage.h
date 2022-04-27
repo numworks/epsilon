@@ -161,9 +161,6 @@ protected:
   };
   RecordIterator end() const { return RecordIterator(nullptr); }
 
-  mutable Record m_lastRecordRetrieved;
-  mutable char * m_lastRecordRetrievedPointer;
-  MetadataMapHeader * m_metadataMapHeader;
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
@@ -196,6 +193,10 @@ private:
   char m_buffer[k_storageSize];
   uint32_t m_magicFooter;
   StorageDelegate * m_delegate;
+protected:
+  mutable Record m_lastRecordRetrieved;
+  mutable char * m_lastRecordRetrievedPointer;
+  MetadataMapHeader * m_metadataMapHeader;
 };
 
 /* Some apps memoize records and need to be notified when a record might have

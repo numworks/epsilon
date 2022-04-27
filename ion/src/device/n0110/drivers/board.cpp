@@ -51,10 +51,8 @@ void initMPU() {
   // 1.1 Memory barrier
   Cache::dmb();
 
-  // 1.2 Enable fault exceptions
-  CORTEX.SHCRS()->setMEMFAULTENA(true);
-  CORTEX.SHCRS()->setBUSFAULTENA(true);
-  CORTEX.SHCRS()->setUSGFAULTENA(true); 
+  // 1.2 Disable fault exceptions
+  CORTEX.SHCRS()->setMEMFAULTENA(false);
 
   // 1.3 Disable the MPU and clear the control register
   MPU.CTRL()->setENABLE(false);
@@ -435,6 +433,8 @@ void lockPCBVersion() {
 bool pcbVersionIsLocked() {
   return *reinterpret_cast<const uint8_t *>(InternalFlash::Config::OTPLockAddress(k_pcbVersionOTPIndex)) == 0;
 }
+
+void jumpToInternalBootloader() {}
 
 }
 }

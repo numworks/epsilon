@@ -35,6 +35,9 @@ void EraseSector(int i);
 void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length);
 void JDECid(uint8_t * manufacturerID, uint8_t * memoryType, uint8_t * capacityType);
 
+void LockSlotA();
+void LockSlotB();
+
 static constexpr uint8_t NumberOfAddressBitsInChip = 23; // 2^23 Bytes = 8 MBytes
 static constexpr uint32_t FlashAddressSpaceSize = 1 << NumberOfAddressBitsInChip;
 

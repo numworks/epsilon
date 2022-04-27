@@ -24,6 +24,7 @@ liba_src += $(addprefix liba/src/, \
   strlcpy.c \
   strlen.c \
   external/sqlite/mem5.c \
+  itoa.c \
 )
 
 liba_src += $(addprefix liba/src/external/openbsd/, \

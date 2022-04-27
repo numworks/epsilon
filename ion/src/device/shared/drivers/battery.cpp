@@ -4,10 +4,10 @@
 
 /* To measure the battery voltage, we're using the internal ADC. The ADC works
  * by comparing the input voltage to a reference voltage. The only fixed voltage
- * we have around is 2.8V, so that's the one we're using as a reference. However,
+ * we have around is 2.8V, so that's the one we're using as a refrence. However,
  * and ADC can only measure voltage that is lower than the reference voltage. So
  * we need to use a voltage divider before sampling Vbat.
- * To avoid draining the battery, we're using a high-impedance voltage divider,
+ * To avoid draining the battery, we're using an high-impedence voltage divider,
  * so we need to be careful when sampling the ADC. See AN2834 for more info. */
 
 

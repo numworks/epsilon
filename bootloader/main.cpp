@@ -3,6 +3,11 @@
 #include <assert.h>
 
 #include <bootloader/boot.h>
+#include <bootloader/interface/static/interface.h>
+#include <bootloader/slots/slot.h>
+#include <bootloader/slots/slot_exam_mode.h>
+#include <bootloader/recovery.h>
+#include <ion/src/device/shared/drivers/flash.h>
 
 __attribute__ ((noreturn)) void ion_main(int argc, const char * const argv[]) {
   // Clear the screen
@@ -10,32 +15,46 @@ __attribute__ ((noreturn)) void ion_main(int argc, const char * const argv[]) {
   // Initialize the backlight
   Ion::Backlight::init();
 
-  // Set the mode to slot A if undefined
-  if (Bootloader::Boot::mode() == Bootloader::BootMode::Unknown) {
-    Bootloader::Boot::setMode(Bootloader::BootMode::SlotA);
+  // We check if there is a slot in exam_mode
+
+  bool isSlotA = Bootloader::Slot::isFullyValid(Bootloader::Slot::A());
+
+  if (isSlotA) {
+    Bootloader::ExamMode::ExamMode SlotAExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotAExamMode(!Bootloader::Slot::A().userlandHeader()->isOmega());
+    if (SlotAExamMode != Bootloader::ExamMode::ExamMode::Off && SlotAExamMode != Bootloader::ExamMode::ExamMode::Unknown) {
+      // We boot the slot in exam_mode
+      Bootloader::Slot::A().boot();
+    } 
   }
 
-  // Handle rebooting to bootloader
-  if (Bootloader::Boot::mode() == Bootloader::BootMode::SlotABootloader) {
-    Bootloader::Boot::setMode(Bootloader::BootMode::SlotA);
-    Bootloader::Boot::bootloader();
-  } else if (Bootloader::Boot::mode() == Bootloader::BootMode::SlotBBootloader) {
-    Bootloader::Boot::setMode(Bootloader::BootMode::SlotB);
-    Bootloader::Boot::bootloader();
+  bool isSlotB = Bootloader::Slot::isFullyValid(Bootloader::Slot::B());
+
+  if (isSlotB) {
+    Bootloader::ExamMode::ExamMode SlotBExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotBExamMode(!Bootloader::Slot::B().userlandHeader()->isOmega());
+    if (SlotBExamMode != Bootloader::ExamMode::ExamMode::Off && SlotBExamMode != Bootloader::ExamMode::ExamMode::Unknown && isSlotB) {
+      // We boot the slot in exam_mode
+      Bootloader::Slot::B().boot();
+    }
+    
   }
 
-  uint64_t scan = Ion::Keyboard::scan();
+  // I have no idea if this will work, but if Pariss did a good job, it should
 
-  // Reset+4 => Launch bootloader
-  if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Four)) {
-    Bootloader::Boot::bootloader();
-  // Reset+1 => Launch slot A
-  } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::One)) {
-    Bootloader::Boot::setMode(Bootloader::BootMode::SlotA);
-  // Reset+2 => Launch slot B
-  } else if (scan == Ion::Keyboard::State(Ion::Keyboard::Key::Two)) {
-    Bootloader::Boot::setMode(Bootloader::BootMode::SlotB);
+  bool isKhiSlot = Bootloader::Slot::isFullyValid(Bootloader::Slot::Khi());
+
+  if (isKhiSlot) {
+    Bootloader::ExamMode::ExamMode KhiExamMode = (Bootloader::ExamMode::ExamMode)Bootloader::ExamMode::SlotsExamMode::FetchSlotKhiExamMode();
+    if (KhiExamMode != Bootloader::ExamMode::ExamMode::Off && KhiExamMode != Bootloader::ExamMode::ExamMode::Unknown && isKhiSlot) {
+      // We boot the slot in exam_mode
+      Bootloader::Slot::Khi().boot();
+    }
   }
+
+  if (Bootloader::Recovery::hasCrashed()) {
+    Bootloader::Recovery::recoverData();
+  }
+
+  Bootloader::Interface::drawLoading();
 
   // Boot the firmware
   Bootloader::Boot::boot();

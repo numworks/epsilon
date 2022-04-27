@@ -43,6 +43,5 @@
     "apps/probability/images/student_icon.png" : "probability/student_icon.png",
     "apps/probability/images/uniform_icon.png" : "probability/uniform_icon.png",
 
-    "bootloader/cable.png": "bootloader/cable.png",
     "bootloader/computer.png": "bootloader/computer.png"
 }

@@ -28,6 +28,9 @@ public:
   class KEYR : public Register32 {
   };
 
+  class OPTKEYR : public Register32 {
+  };
+
   class CR : public Register32 {
   public:
     enum class PSIZE : uint8_t {
@@ -42,6 +45,9 @@ public:
     REGS_FIELD(SNB, uint8_t, 6, 3);
     REGS_TYPE_FIELD(PSIZE, 9, 8);
     REGS_BOOL_FIELD(STRT, 16);
+    REGS_BOOL_FIELD(EOPIE, 24);
+    REGS_BOOL_FIELD(ERRIE, 25);
+    REGS_BOOL_FIELD(RDERRIE, 26)
     REGS_BOOL_FIELD(LOCK, 31);
   };
 
@@ -56,11 +62,26 @@ public:
     REGS_BOOL_FIELD(EOP, 0);
   };
 
+  class OPTCR : public Register32 {
+  public:
+    REGS_BOOL_FIELD(nWRP0, 16);
+    REGS_BOOL_FIELD(nWRP1, 17);
+    REGS_BOOL_FIELD(nWRP2, 18);
+    REGS_BOOL_FIELD(nWRP3, 19);
+    REGS_BOOL_FIELD(nWRP4, 20);
+    REGS_BOOL_FIELD(nWRP5, 21);
+    REGS_BOOL_FIELD(nWRP6, 22);
+    REGS_BOOL_FIELD(nWRP7, 23);
+    REGS_BOOL_FIELD(LOCK, 0);
+  };
+
   constexpr FLASH() {};
   REGS_REGISTER_AT(ACR, 0x00);
   REGS_REGISTER_AT(KEYR, 0x04);
+  REGS_REGISTER_AT(OPTKEYR, 0x08);
   REGS_REGISTER_AT(SR, 0x0C);
   REGS_REGISTER_AT(CR, 0x10);
+  REGS_REGISTER_AT(OPTCR, 0x14);
 private:
   constexpr uint32_t Base() const {
     return 0x40023C00;

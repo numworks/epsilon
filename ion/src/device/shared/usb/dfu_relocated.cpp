@@ -12,9 +12,9 @@ extern char _dfu_bootloader_flash_end;
 namespace Ion {
 namespace USB {
 
-typedef void (*PollFunctionPointer)(bool exitWithKeyboard, bool unlocked, int level);
+typedef void (*PollFunctionPointer)(bool exitWithKeyboard, void * data);
 
-void DFU(bool exitWithKeyboard, bool unlocked, int level) {
+void DFU(bool exitWithKeyboard, void * data) {
   Ion::updateSlotInfo();
 
   /* DFU transfers can serve two purposes:
@@ -76,7 +76,7 @@ void DFU(bool exitWithKeyboard, bool unlocked, int level) {
    *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
    */
 
-  dfu_bootloader_entry(exitWithKeyboard, unlocked, level);
+  dfu_bootloader_entry(exitWithKeyboard, data);
 
   /* 5- Restore interrupts */
   Device::Timing::init();

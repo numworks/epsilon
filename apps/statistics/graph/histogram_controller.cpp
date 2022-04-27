@@ -42,10 +42,6 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistogramController::viewWillAppearBeforeReload() {
-  multipleDataView()->setDisplayBanner(true);
-  multipleDataView()->selectViewForSeries(m_selectedSeries);
-  highlightSelection();
-
   uint32_t storeChecksum = m_store->storeChecksum();
   if (*m_storeVersion != storeChecksum) {
     *m_storeVersion = storeChecksum;

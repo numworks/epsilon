@@ -18,6 +18,9 @@ DataViewController::DataViewController(Escher::Responder * parentResponder, Esch
 void DataViewController::viewWillAppear() {
   ViewController::viewWillAppear();
   sanitizeSeriesIndex();
+  dataView()->setDisplayBanner(true);
+  dataView()->selectViewForSeries(m_selectedSeries);
+  highlightSelection();
 
   /* Call children's viewWillAppear implementation after sanitizing selected
    * series index and before reloading banner and the dataView */

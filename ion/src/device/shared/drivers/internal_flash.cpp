@@ -363,6 +363,17 @@ void EnableFlashInterrupt() {
   close();
 }
 
+void ClearErrors() {
+  class FLASH::SR sr(0);
+  // Error flags are cleared by writing 1
+  sr.setERSERR(true);
+  sr.setPGPERR(true);
+  sr.setPGAERR(true);
+  sr.setWRPERR(true);
+  sr.setEOP(true);
+  FLASH.SR()->set(sr);
+}
+
 }
 }
 }

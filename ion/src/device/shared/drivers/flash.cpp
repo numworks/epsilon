@@ -70,6 +70,10 @@ void EnableInternalFlashInterrupt() {
   InternalFlash::EnableFlashInterrupt();
 }
 
+void ClearInternalFlashErrors() {
+  InternalFlash::ClearErrors();
+}
+
 void LockSlotA() {
   ExternalFlash::LockSlotA();
 }

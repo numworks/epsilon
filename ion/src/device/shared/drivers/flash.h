@@ -20,6 +20,7 @@ void EnableInternalProtection();
 void SetInternalSectorProtection(int i, bool protect);
 void EnableInternalSessionLock(); // Will cause BUSERR when enabled
 void EnableInternalFlashInterrupt();
+void ClearInternalFlashErrors();
 void LockSlotA();
 void LockSlotB();
 

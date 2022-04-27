@@ -58,12 +58,16 @@ bool Boot::isKernelPatched(const Slot & s) {
     return true;
   }
 
-  return *(uint32_t *)(origin_isr + sizeof(uint32_t) * 4) == (uint32_t)&_fake_isr_function_start && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 5) == (uint32_t)&_fake_isr_function_start && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 6) == (uint32_t)&_fake_isr_function_start && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 7) == (uint32_t)&_fake_isr_function_start;
+  // return *(uint32_t *)(origin_isr + sizeof(uint32_t) * 4) == ((uint32_t)&_fake_isr_function_start) + 1 && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 5) == ((uint32_t)&_fake_isr_function_start) + 1 && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 6) == ((uint32_t)&_fake_isr_function_start) + 1 && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 7) == ((uint32_t)&_fake_isr_function_start) + 1;*(uint32_t *)(origin_isr + sizeof(uint32_t) * 4) == ((uint32_t)&_fake_isr_function_start) + 1 && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 5) == ((uint32_t)&_fake_isr_function_start) + 1 && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 6) == ((uint32_t)&_fake_isr_function_start) + 1 && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 7) == ((uint32_t)&_fake_isr_function_start) + 1;*(uint32_t *)(origin_isr + sizeof(uint32_t) * 4) == ((uint32_t)&_fake_isr_function_start) + 1 && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 5) == ((uint32_t)&_fake_isr_function_start) + 1 && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 6) == ((uint32_t)&_fake_isr_function_start) + 1 && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 7) == ((uint32_t)&_fake_isr_function_start) + 1;
+  return  *(uint32_t *)(origin_isr + sizeof(uint32_t) * 7) == ((uint32_t)&_fake_isr_function_start) + 1;
 }
 
 __attribute((section(".fake_isr_function"))) __attribute__((used)) void Boot::flash_interrupt() {
   // a simple function
-  
+  Ion::Device::Flash::ClearInternalFlashErrors();
+  asm("bx lr");
+  asm("ldr PC, [PC, -0x18]");
+  Ion::LED::setColor(KDColorBlue);
 }
 
 void Boot::patchKernel(const Slot & s) {
@@ -71,27 +75,27 @@ void Boot::patchKernel(const Slot & s) {
   // we allocate a big buffer to store the first sector
   uint8_t data[1024*4];
   memcpy(data, (void*)0x90000000, 1024*4);
-  uint32_t dummy_address = (uint32_t)&_fake_isr_function_start;
+  uint32_t dummy_address = (uint32_t)&_fake_isr_function_start + 1;
   uint8_t * ptr = (uint8_t *)&dummy_address;
-  data[origin_isr + sizeof(uint32_t) * 6] = ptr[0];
+  data[origin_isr + sizeof(uint32_t) * 6] = ptr[0]; // BusFault
   data[origin_isr + sizeof(uint32_t) * 6 + 1] = ptr[1];
   data[origin_isr + sizeof(uint32_t) * 6 + 2] = ptr[2];
   data[origin_isr + sizeof(uint32_t) * 6 + 3] = ptr[3];
   
-  data[origin_isr + sizeof(uint32_t) * 5] = ptr[0];
-  data[origin_isr + sizeof(uint32_t) * 5 + 1] = ptr[1];
-  data[origin_isr + sizeof(uint32_t) * 5 + 2] = ptr[2];
-  data[origin_isr + sizeof(uint32_t) * 5 + 3] = ptr[3];
+  // data[origin_isr + sizeof(uint32_t) * 5] = ptr[0]; // MemManage
+  // data[origin_isr + sizeof(uint32_t) * 5 + 1] = ptr[1];
+  // data[origin_isr + sizeof(uint32_t) * 5 + 2] = ptr[2];
+  // data[origin_isr + sizeof(uint32_t) * 5 + 3] = ptr[3];
   
-  data[origin_isr + sizeof(uint32_t) * 7] = ptr[0];
+  data[origin_isr + sizeof(uint32_t) * 7] = ptr[0]; // UsageFault
   data[origin_isr + sizeof(uint32_t) * 7 + 1] = ptr[1];
   data[origin_isr + sizeof(uint32_t) * 7 + 2] = ptr[2];
   data[origin_isr + sizeof(uint32_t) * 7 + 3] = ptr[3];
 
-  data[origin_isr + sizeof(uint32_t) * 4] = ptr[0];
-  data[origin_isr + sizeof(uint32_t) * 4 + 1] = ptr[1];
-  data[origin_isr + sizeof(uint32_t) * 4 + 2] = ptr[2];
-  data[origin_isr + sizeof(uint32_t) * 4 + 3] = ptr[3];
+  // data[origin_isr + sizeof(uint32_t) * 4] = ptr[0];//hardfault
+  // data[origin_isr + sizeof(uint32_t) * 4 + 1] = ptr[1]; 
+  // data[origin_isr + sizeof(uint32_t) * 4 + 2] = ptr[2];
+  // data[origin_isr + sizeof(uint32_t) * 4 + 3] = ptr[3];
 
   Ion::Device::ExternalFlash::EraseSector(0);
   Ion::Device::ExternalFlash::WriteMemory((uint8_t*)0x90000000, data, 1024*4);
@@ -119,7 +123,7 @@ void Boot::bootSelectedSlot() {
   // enableFlashIntr();
   config()->setBooting(true);
   config()->slot()->boot();
-  Ion::Device::Flash::EnableInternalSessionLock();
+  // Ion::Device::Flash::EnableInternalSessionLock();
 }
 
 __attribute__((noreturn)) void Boot::boot() {

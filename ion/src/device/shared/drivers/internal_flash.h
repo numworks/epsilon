@@ -20,6 +20,7 @@ void DisableProtection();
 void SetSectorProtection(int i, bool protect);
 void EnableSessionLock();
 void EnableFlashInterrupt();
+void ClearErrors();
 
 /* The Device is powered by a 2.8V LDO. This allows us to perform writes to the
  * Flash 32 bits at once. */

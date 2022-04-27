@@ -1,26 +1,26 @@
 #include "../toolbox_ion_keys.h"
 
 namespace Code {
-  toolboxIonKeys::toolboxIonKeys() :
+  ToolboxIonKeys::ToolboxIonKeys() :
   ViewController(nullptr),
   m_view()
   {
   }
 
-  bool toolboxIonKeys::handleEvent(Ion::Events::Event e) {
+  bool ToolboxIonKeys::handleEvent(Ion::Events::Event e) {
     return false;
   }
 
-  toolboxIonKeys::toolboxIonView::toolboxIonView():
+  ToolboxIonKeys::toolboxIonView::toolboxIonView():
     View()
     {
     }
 
-  void toolboxIonKeys::toolboxIonView::drawRect(KDContext * ctx, KDRect rect) const {
+  void ToolboxIonKeys::toolboxIonView::drawRect(KDContext * ctx, KDRect rect) const {
     return;
   }
 
-  View * toolboxIonKeys::view(){
+  View * ToolboxIonKeys::view(){
     return &m_view;
   }
 

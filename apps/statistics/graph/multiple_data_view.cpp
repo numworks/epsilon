@@ -27,6 +27,12 @@ int MultipleDataView::numberOfSubviews() const {
   return result + 1; // +1 for the banner view
 }
 
+void MultipleDataView::drawRect(KDContext * ctx, KDRect rect) const {
+  if (!m_displayBanner) {
+    ctx->fillRect(bannerFrame(), KDColorWhite);
+  }
+}
+
 View * MultipleDataView::subviewAtIndex(int index) {
   if (index == MultipleDataView::numberOfSubviews() -1) {
     return bannerView();

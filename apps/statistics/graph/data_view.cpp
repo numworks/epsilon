@@ -25,19 +25,12 @@ KDRect DataView::bannerFrame() const {
   return KDRect(0, bounds().height() - bannerHeight, bounds().width(), bannerHeight);
 }
 
-void DataView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (!m_displayBanner) {
-    ctx->fillRect(bannerFrame(), KDColorWhite);
-  }
-}
-
 void DataView::layoutSubviews(bool force) {
   // We need to set the banner width first, so its height can be computed
   bannerView()->setFrame(KDRect(0, 0, bounds().width(), 0), force);
   layoutDataSubviews(force);
   layoutBanner(force);
 }
-
 
 void DataView::layoutBanner(bool force) {
   bannerView()->setFrame(m_displayBanner ? bannerFrame() : KDRectZero, force);

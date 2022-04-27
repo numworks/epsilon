@@ -64,6 +64,7 @@ protected:
   PlotCurveView m_curveView;
 
 private:
+  void computeRanges(KDCoordinate bannerHeight);
   void computeXBounds(float * xMin, float *xMax) const;
   virtual void computeYBounds(float * yMin, float *yMax) const = 0;
   virtual bool handleNullFrequencies() const = 0;

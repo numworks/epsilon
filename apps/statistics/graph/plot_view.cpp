@@ -18,10 +18,7 @@ void PlotView::reload() {
 }
 
 void PlotView::layoutDataSubviews(bool force) {
-  KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
-  KDCoordinate subviewHeight = (bounds().height() - bannerHeight) + 1; // +1 to make sure that all pixel rows are drawn
-  KDRect frame = KDRect(0, 0, bounds().width(), subviewHeight);
-  m_plotCurveView->setFrame(frame, force);
+  m_plotCurveView->setFrame(bounds(), force);
 }
 
 }

@@ -24,13 +24,11 @@ public:
 protected:
   virtual void changeDataViewSeriesSelection(int series, bool select);
   KDRect bannerFrame() const;
-  void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
   virtual void layoutDataSubviews(bool force) = 0;
   virtual Shared::BannerView * bannerView() = 0;
   void layoutBanner(bool force);
 
-private:
   bool m_displayBanner;
 };
 

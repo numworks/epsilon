@@ -18,6 +18,7 @@ public:
   // View
   int numberOfSubviews() const override;
 protected:
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutDataSubviews(bool force) override;
   Escher::View * subviewAtIndex(int index) override;
 

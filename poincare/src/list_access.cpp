@@ -1,7 +1,9 @@
 #include <poincare/list_access.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/list.h>
+#include <poincare/list_complex.h>
 #include <poincare/rational.h>
 
 namespace Poincare {
@@ -47,10 +49,54 @@ Expression ListAccessNode<2>::shallowReduce(ReductionContext reductionContext) {
   return ListSlice(this).shallowReduce(reductionContext);
 }
 
-template<int U>
-template<typename T> Evaluation<T> ListAccessNode<U>::templatedApproximate(ApproximationContext approximationContext) const {
-  assert(false);
-  return Complex<T>::Undefined();
+template<>
+template<typename T> Evaluation<T> ListAccessNode<1>::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> child = childAtIndex(ListAccessNode<1>::k_listChildIndex)->approximate(T(), approximationContext);
+  if (child.type() != EvaluationNode<T>::Type::ListComplex) {
+    return Complex<T>::Undefined();
+  }
+  ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
+
+  T indexChild = childAtIndex(0)->approximate(T(), approximationContext).toScalar();
+  if (std::isnan(indexChild) || static_cast<int>(indexChild) != indexChild) {
+    return Complex<T>::Undefined();
+  }
+  int indexInt = static_cast<int>(indexChild);
+  if (indexInt < 1 || indexInt > listChild.numberOfChildren()) {
+    return Complex<T>::Undefined();
+  }
+  return Complex<T>::Builder(listChild.complexAtIndex(indexInt - 1));
+}
+
+template<>
+template<typename T> Evaluation<T> ListAccessNode<2>::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> child = childAtIndex(ListAccessNode<2>::k_listChildIndex)->approximate(T(), approximationContext);
+  if (child.type() != EvaluationNode<T>::Type::ListComplex) {
+    return Complex<T>::Undefined();
+  }
+  ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
+
+  T startIndex = childAtIndex(0)->approximate(T(), approximationContext).toScalar();
+  if (std::isnan(startIndex) || static_cast<int>(startIndex) != startIndex) {
+    return Complex<T>::Undefined();
+  }
+  T endIndex = childAtIndex(1)->approximate(T(), approximationContext).toScalar();
+  if (std::isnan(endIndex) || static_cast<int>(endIndex) != endIndex) {
+    return Complex<T>::Undefined();
+  }
+  int startInt = static_cast<int>(startIndex);
+  int endInt = static_cast<int>(endIndex);
+  ListComplex<T> returnList = ListComplex<T>::Builder();
+  for (int i = startInt - 1; i < endInt; i++) {
+    if (i >= listChild.numberOfChildren()) {
+      break;
+    }
+    if (i < 0) {
+      continue;
+    }
+    returnList.addChildAtIndexInPlace(Complex<T>::Builder(listChild.complexAtIndex(i)), returnList.numberOfChildren(), returnList.numberOfChildren());
+  }
+  return std::move(returnList);
 }
 
 Expression ListElement::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

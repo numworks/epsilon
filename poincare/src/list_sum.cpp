@@ -1,7 +1,7 @@
 #include <poincare/list_sum.h>
 #include <poincare/addition.h>
-#include <poincare/approximation_helper.h>
 #include <poincare/layout_helper.h>
+#include <poincare/list_helpers.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
@@ -24,31 +24,13 @@ Expression ListSumNode::shallowReduce(ReductionContext reductionContext) {
   return ListSum(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListSumNode::SumOfListNode(ListNode * list, ApproximationContext approximationContext) {
-  return ApproximationHelper::MapReduce<T>(
-      list,
-      approximationContext,
-      [] (Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext) {
-      return ApproximationHelper::Reduce<T>(
-          eval1,
-          eval2,
-          approximationContext,
-          AdditionNode::computeOnComplex<T>,
-          ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
-          ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
-          ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
-          );
-      }
-      );
-}
-
 template<typename T> Evaluation<T> ListSumNode::templatedApproximate(ApproximationContext approximationContext) const {
   ExpressionNode * child = childAtIndex(0);
   if (child->type() != ExpressionNode::Type::List) {
     return Complex<T>::Undefined();
   }
 
-  return SumOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
+  return ListHelpers::SumOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
 }
 
 Expression ListSum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

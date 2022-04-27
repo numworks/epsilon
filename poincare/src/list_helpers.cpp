@@ -1,6 +1,9 @@
 #include <poincare/list_helpers.h>
+#include <poincare/addition.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/helpers.h>
 #include <poincare/expression_node.h>
+#include <poincare/multiplication.h>
 #include <poincare/undefined.h>
 
 namespace Poincare {
@@ -39,8 +42,72 @@ int ListHelpers::ExtremumOfListNodeIndex(ListNode * listNode, ExpressionNode::Ap
       minimum);
 }
 
+template<typename T> Evaluation<T> ListHelpers::SumOfListNode(ListNode * list, ExpressionNode::ApproximationContext approximationContext) {
+  return ApproximationHelper::MapReduce<T>(
+      list,
+      approximationContext,
+      [] (Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext) {
+      return ApproximationHelper::Reduce<T>(
+          eval1,
+          eval2,
+          approximationContext,
+          AdditionNode::computeOnComplex<T>,
+          ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
+          ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
+          ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
+          );
+      }
+      );
+}
+
+template<typename T> Evaluation<T> ListHelpers::ProductOfListNode(ListNode * list, ExpressionNode::ApproximationContext approximationContext) {
+  return ApproximationHelper::MapReduce<T>(
+      list,
+      approximationContext,
+      [] (Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext) {
+      return ApproximationHelper::Reduce<T>(
+          eval1,
+          eval2,
+          approximationContext,
+          MultiplicationNode::computeOnComplex<T>,
+          ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
+          ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
+          ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
+          );
+      }
+      );
+}
+
+template<typename T> Evaluation<T> ListHelpers::SquareSumOfListNode(ListNode * list, ExpressionNode::ApproximationContext approximationContext) {
+  return ApproximationHelper::MapReduce<T>(
+      list,
+      approximationContext,
+      [] (Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext) {
+      return ApproximationHelper::Reduce<T>(
+          eval1,
+          eval2,
+          approximationContext,
+          [] (const std::complex<T> c1, const std::complex<T> c2, Preferences::ComplexFormat complexFormat) {
+            return AdditionNode::computeOnComplex(c1, MultiplicationNode::computeOnComplex<T>(c2, c2, complexFormat).stdComplex(), complexFormat);
+          },
+          ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
+          ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
+          ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
+          );
+      }
+      );
+ }
+
+
 template Evaluation<float>  ListHelpers::ExtremumApproximationOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext, bool minimum);
 template Evaluation<double>  ListHelpers::ExtremumApproximationOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext, bool minimum);
 
+template Evaluation<float>  ListHelpers::SumOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<double>  ListHelpers::SumOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
 
+template Evaluation<float>  ListHelpers::ProductOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<double>  ListHelpers::ProductOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+
+template Evaluation<float>  ListHelpers::SquareSumOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<double>  ListHelpers::SquareSumOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
 }

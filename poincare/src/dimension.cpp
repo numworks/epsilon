@@ -1,6 +1,7 @@
 #include <poincare/dimension.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/layout_helper.h>
+#include <poincare/list_complex.h>
 #include <poincare/matrix.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -28,10 +29,10 @@ int DimensionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 
 template<typename T>
 Evaluation<T> DimensionNode::templatedApproximate(ApproximationContext approximationContext) const {
-  if (childAtIndex(0)->type() == ExpressionNode::Type::List) {
-    return Complex<T>::Builder(childAtIndex(0)->numberOfChildren());
-  }
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
+  if (input.type() == EvaluationNode<T>::Type::ListComplex) {
+    return Complex<T>::Builder(std::complex<T>(static_cast<ListComplex<T>&>(input).numberOfChildren()));
+  }
   std::complex<T> operands[2];
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     operands[0] = std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfRows());

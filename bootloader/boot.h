@@ -7,7 +7,7 @@
 namespace Bootloader {
 
 class BootConfig {
-  public:
+public:
     BootConfig() : m_slot(nullptr), m_booting(false) {};
 
     void setSlot(Slot * slot) { m_slot = slot; }
@@ -16,19 +16,19 @@ class BootConfig {
 
     void setBooting(bool booting) { m_booting = booting; }
     bool isBooting() const { return m_booting; }
-  private:
+private:
     Bootloader::Slot * m_slot;
     bool m_booting;
 };
 
 enum BootMode: uint8_t {
-  SlotA = 0,
-  SlotB = 1,
-  // These modes exists so that you can launch the bootloader from a running slot
-  // They mean "Launch bootloader then go back to slot X"
-  SlotABootloader = 2,
-  SlotBBootloader = 3,
-  Unknown
+    SlotA = 0,
+    SlotB = 1,
+    // These modes exists so that you can launch the bootloader from a running slot
+    // They mean "Launch bootloader then go back to slot X"
+    SlotABootloader = 2,
+    SlotBBootloader = 3,
+    Unknown
 };
 
 class Boot {
@@ -51,7 +51,7 @@ public:
 
   static void bootloader();
   static void lockInternal();
-  static void enableFlashIntr();
+  static void EnableInternalFlashInterrupt();
 };
 
 

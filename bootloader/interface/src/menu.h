@@ -12,7 +12,7 @@ namespace Bootloader {
       Menu(KDColor forground, KDColor background, const char * title) : Menu(forground, background, title,  nullptr) {};
       Menu(KDColor forground, KDColor background, const char * title, const char * bottom) : Menu(forground, background, title, bottom, false) {};
       Menu(KDColor forground, KDColor background, const char * title, const char * bottom, bool centerY) :  Menu(forground, background, title, bottom, centerY, k_columns_margin) {};
-      Menu(KDColor forground, KDColor background, const char * title, const char * bottom, bool centerY, int margin) : m_columns(), m_default_columns(), m_slot_columns(), m_background(background), m_title(title), m_foreground(forground), m_bottom(bottom), m_centerY(centerY), m_forced_exit(false), m_margin(margin) {
+      Menu(KDColor forground, KDColor background, const char * title, const char * bottom, bool centerY, int margin) : m_columns(), m_defaultColumns(), m_slotColumns(), m_background(background), m_title(title), m_foreground(forground), m_bottom(bottom), m_centerY(centerY), m_forced_exit(false), m_margin(margin) {
         setup();
       }
       static const int k_columns_margin = 5;
@@ -110,8 +110,8 @@ namespace Bootloader {
     protected:
       ColumnBinder m_columns[k_max_columns];
       // Columns Storage
-      Column m_default_columns[k_max_columns];
-      SlotColumn m_slot_columns[k_max_columns];
+      Column m_defaultColumns[k_max_columns];
+      SlotColumn m_slotColumns[k_max_columns];
       KDColor m_background;
       KDColor m_foreground;
       const char * m_title;

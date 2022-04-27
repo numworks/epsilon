@@ -7,9 +7,9 @@ Bootloader::DfuMenu::DfuMenu(const char * text, const USBData * data) : Menu(KDC
 }
 
 void Bootloader::DfuMenu::setup() {
-  m_default_columns[0] = Column(m_submenuText, k_small_font, 0, true);
+  m_defaultColumns[0] = Column(m_submenuText, k_small_font, 0, true);
 
-  m_columns[0] = ColumnBinder(&m_default_columns[0]);
+  m_columns[0] = ColumnBinder(&m_defaultColumns[0]);
 }
 
 void Bootloader::DfuMenu::postOpen() {

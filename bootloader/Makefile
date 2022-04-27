@@ -46,4 +46,3 @@ bootloader_images = $(addprefix bootloader/, \
 bootloader_src += $(ion_src) $(simple_kandinsky_src) $(liba_src) $(libaxx_src) $(bootloader_images)
 
 $(eval $(call depends_on_image,bootloader/interface/static/interface.cpp,$(bootloader_images)))
-$(eval $(call depends_on_image,bootloader/interface/src/menu.cpp,$(bootloader_images)))

@@ -6,17 +6,17 @@ Bootloader::SlotRecoveryMenu::SlotRecoveryMenu(USBData * usb) : Menu(KDColorBlac
 }
 
 void Bootloader::SlotRecoveryMenu::setup() {
-  m_default_columns[0] = Column(Messages::recoveryMessage1, k_small_font, 0, true);
-  m_default_columns[1] = Column(Messages::recoveryMessage2, k_small_font, 0, true);
-  m_default_columns[2] = Column(Messages::recoveryMessage3, k_small_font, 0, true);
-  m_default_columns[3] = Column(Messages::recoveryMessage4, k_small_font, 0, true);
-  m_default_columns[4] = Column(Messages::recoveryMessage5, k_small_font, 0, true);
+  m_defaultColumns[0] = Column(Messages::recoveryMessage1, k_small_font, 0, true);
+  m_defaultColumns[1] = Column(Messages::recoveryMessage2, k_small_font, 0, true);
+  m_defaultColumns[2] = Column(Messages::recoveryMessage3, k_small_font, 0, true);
+  m_defaultColumns[3] = Column(Messages::recoveryMessage4, k_small_font, 0, true);
+  m_defaultColumns[4] = Column(Messages::recoveryMessage5, k_small_font, 0, true);
   
-  m_columns[0] = ColumnBinder(&m_default_columns[0]);
-  m_columns[1] = ColumnBinder(&m_default_columns[1]);
-  m_columns[2] = ColumnBinder(&m_default_columns[2]);
-  m_columns[3] = ColumnBinder(&m_default_columns[3]);
-  m_columns[4] = ColumnBinder(&m_default_columns[4]);
+  m_columns[0] = ColumnBinder(&m_defaultColumns[0]);
+  m_columns[1] = ColumnBinder(&m_defaultColumns[1]);
+  m_columns[2] = ColumnBinder(&m_defaultColumns[2]);
+  m_columns[3] = ColumnBinder(&m_defaultColumns[3]);
+  m_columns[4] = ColumnBinder(&m_defaultColumns[4]);
 }
 
 void Bootloader::SlotRecoveryMenu::postOpen() {

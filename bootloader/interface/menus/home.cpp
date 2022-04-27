@@ -15,7 +15,7 @@ Bootloader::InstallerMenu * Bootloader::HomeMenu::installerMenu() {
 }
 
 Bootloader::HomeMenu::HomeMenu() : Menu(KDColorBlack, KDColorWhite, Messages::homeTitle, Messages::mainTitle) {
-    setup();
+  setup();
 }
 
 bool slotA_submenu() {
@@ -70,11 +70,11 @@ const char * Bootloader::HomeMenu::getSlotOsText(Slot slot) {
 const char * Bootloader::HomeMenu::getSlotText(Slot slot) {
   if(Slot::isFullyValid(slot)) {
     if (slot.address() == Slot::A().address()) {
-      return Messages::homeSlotASubmenu;
+        return Messages::homeSlotASubmenu;
     } else if (slot.address() == Slot::Khi().address()) {
-      return Messages::homeSlotKhiSubmenu;
+        return Messages::homeSlotKhiSubmenu;
     } else if (slot.address() == Slot::B().address()) {
-      return Messages::homeSlotBSubmenu;
+        return Messages::homeSlotBSubmenu;
     }
   }
   return Messages::invalidSlot;
@@ -93,17 +93,15 @@ void Bootloader::HomeMenu::setup() {
   Slot Khi = Slot::Khi();
   Slot B = Slot::B();
 
-  m_slot_columns[0] = SlotColumn(getSlotText(A), getKernelText(A), getSlotOsText(A), getVersionText(A),  Ion::Keyboard::Key::One, k_small_font, 10, false, &slotA_submenu);
-  m_slot_columns[1] = SlotColumn(getSlotText(Khi), getKernelText(Khi), getSlotOsText(Khi), getVersionText(Khi), Ion::Keyboard::Key::Two, k_small_font, 10, false, &slotKhi_submenu);
-  m_slot_columns[2] = SlotColumn(getSlotText(B), getKernelText(B), getSlotOsText(B), getVersionText(B), Ion::Keyboard::Key::Three, k_small_font, 10, false, &slotB_submenu);
-  m_default_columns[0] = Column(Messages::homeInstallerSubmenu, Ion::Keyboard::Key::Four, k_small_font, 10, false, &installer_submenu);
-  m_default_columns[1] = Column(Messages::homeAboutSubmenu, Ion::Keyboard::Key::Five, k_small_font, 10, false, &about_submenu);
-  
+  m_slotColumns[0] = SlotColumn(getSlotText(A), getKernelText(A), getSlotOsText(A), getVersionText(A),  Ion::Keyboard::Key::One, k_small_font, 10, false, &slotA_submenu);
+  m_slotColumns[1] = SlotColumn(getSlotText(Khi), getKernelText(Khi), getSlotOsText(Khi), getVersionText(Khi), Ion::Keyboard::Key::Two, k_small_font, 10, false, &slotKhi_submenu);
+  m_slotColumns[2] = SlotColumn(getSlotText(B), getKernelText(B), getSlotOsText(B), getVersionText(B), Ion::Keyboard::Key::Three, k_small_font, 10, false, &slotB_submenu);
+  m_defaultColumns[0] = Column(Messages::homeInstallerSubmenu, Ion::Keyboard::Key::Four, k_small_font, 10, false, &installer_submenu);
+  m_defaultColumns[1] = Column(Messages::homeAboutSubmenu, Ion::Keyboard::Key::Five, k_small_font, 10, false, &about_submenu);
 
-  m_columns[0] = ColumnBinder(&m_slot_columns[0]);
-  m_columns[1] = ColumnBinder(&m_slot_columns[1]);
-  m_columns[2] = ColumnBinder(&m_slot_columns[2]);
-  m_columns[3] = ColumnBinder(&m_default_columns[0]);
-  m_columns[4] = ColumnBinder(&m_default_columns[1]);
-
+  m_columns[0] = ColumnBinder(&m_slotColumns[0]);
+  m_columns[1] = ColumnBinder(&m_slotColumns[1]);
+  m_columns[2] = ColumnBinder(&m_slotColumns[2]);
+  m_columns[3] = ColumnBinder(&m_defaultColumns[0]);
+  m_columns[4] = ColumnBinder(&m_defaultColumns[1]);
 }

@@ -62,7 +62,7 @@ void SetInternalSectorProtection(int i, bool protect) {
   InternalFlash::SetSectorProtection(i, protect);
 }
 
-void EnableInternalSessionLock() {
+void LockInternalFlashForSession() {
   InternalFlash::EnableSessionLock();
 }
 

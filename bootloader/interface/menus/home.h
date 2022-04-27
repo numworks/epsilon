@@ -22,7 +22,6 @@ namespace Bootloader {
       const char * getSlotText(Slot slot);
       const char * getKernelText(Slot slot);
       const char * getVersionText(Slot slot);
-      
   };
 }
 

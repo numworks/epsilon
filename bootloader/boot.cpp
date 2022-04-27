@@ -39,7 +39,7 @@ void Boot::setMode(BootMode mode) {
 void Boot::busError() {
   Ion::Device::Flash::ClearInternalFlashErrors();
   asm("mov r12, lr");
-  if (config()->isBooting()) {
+  if (config()->isBooting()) { // Bus error is normal if we are booting, it's triggered when we lock OPTCR
     asm("mov lr, r12");
     asm("bx lr");
   }
@@ -122,7 +122,7 @@ void Boot::bootSlot(Bootloader::Slot s) {
 void Boot::bootSelectedSlot() {
   lockInternal();
   config()->setBooting(true);
-  Ion::Device::Flash::EnableInternalSessionLock();
+  Ion::Device::Flash::LockInternalFlashForSession();
   config()->slot()->boot();
 }
 
@@ -133,8 +133,8 @@ __attribute__((noreturn)) void Boot::boot() {
   Boot::config()->setBooting(false);
 
   while (true) {
-    HomeMenu menu = HomeMenu();
-    menu.open(true);
+      HomeMenu menu = HomeMenu();
+      menu.open(true);
   }
 
   // Achievement unlocked: How Did We Get Here?
@@ -169,7 +169,7 @@ void Boot::bootloader() {
 }
 
 void Boot::jumpToInternalBootloader() {
-  Ion::Device::Board::jumpToInternalBootloader(); 
+  Ion::Device::Board::jumpToInternalBootloader();
 }
 
 void Boot::lockInternal() {
@@ -181,7 +181,7 @@ void Boot::lockInternal() {
   Ion::Device::Flash::EnableInternalProtection();
 }
 
-void Boot::enableFlashIntr() {
+void Boot::EnableInternalFlashInterrupt() {
   Ion::Device::Flash::EnableInternalFlashInterrupt();
 }
 

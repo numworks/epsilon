@@ -22,6 +22,7 @@ static inline void wait() {
 static void open() {
   // Unlock the Flash configuration register if needed
   if (FLASH.CR()->getLOCK()) {
+    // https://www.numworks.com/resources/engineering/hardware/electrical/parts/stm32f730-arm-mcu-reference-manual-1b6e1356.pdf#page=82
     FLASH.KEYR()->set(0x45670123);
     FLASH.KEYR()->set(0xCDEF89AB);
   }
@@ -33,6 +34,7 @@ static void open() {
 
 static void open_protection() {
   if (FLASH.OPTCR()->getLOCK()) {
+    // https://www.numworks.com/resources/engineering/hardware/electrical/parts/stm32f730-arm-mcu-reference-manual-1b6e1356.pdf#page=82
     FLASH.OPTKEYR()->set(0x08192A3B);
     FLASH.OPTKEYR()->set(0x4C5D6E7F);
   }
@@ -347,8 +349,12 @@ void SetSectorProtection(int i, bool protect) {
 void EnableSessionLock() {
   if (FLASH.OPTCR()->getLOCK()) {
     // writing bullshit to the lock register to lock it until next core reset
+    // https://www.numworks.com/resources/engineering/hardware/electrical/parts/stm32f730-arm-mcu-reference-manual-1b6e1356.pdf#page=82
+    // > "In the event of an unsuccessful unlock operation, this bit remains set until the next reset."
     FLASH.OPTKEYR()->set(0x00000000);
     FLASH.OPTKEYR()->set(0xFFFFFFFF);
+
+    // Now, a bus fault error is triggered
   }
 }
 

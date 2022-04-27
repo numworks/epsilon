@@ -164,17 +164,13 @@ template<typename T> Evaluation<T> ApproximationHelper::Reduce(
 template<typename T> Evaluation<T> ApproximationHelper::MapReduce(
     const ExpressionNode * expression,
     ExpressionNode::ApproximationContext approximationContext,
-    ComplexAndComplexReduction<T> computeOnComplexes,
-    ComplexAndMatrixReduction<T> computeOnComplexAndMatrix,
-    MatrixAndComplexReduction<T> computeOnMatrixAndComplex,
-    MatrixAndMatrixReduction<T> computeOnMatrices,
-    bool mapOnList
+    ReductionFunction<T> reductionFunction
     ) {
   assert(expression->numberOfChildren() > 0);
   Evaluation<T> result = expression->childAtIndex(0)->approximate(T(), approximationContext);
   for (int i = 1; i < expression->numberOfChildren(); i++) {
     Evaluation<T> nextOperandEvaluation = expression->childAtIndex(i)->approximate(T(), approximationContext);
-    result = Reduce<T>(result, nextOperandEvaluation, approximationContext, computeOnComplexes, computeOnComplexAndMatrix, computeOnMatrixAndComplex, computeOnMatrices, mapOnList);
+    result = reductionFunction(result, nextOperandEvaluation, approximationContext);
     if (result.isUndefined()) {
       return Complex<T>::Undefined();
     }
@@ -246,8 +242,8 @@ template std::complex<double> Poincare::ApproximationHelper::NeglectRealOrImagin
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<float> compute, bool mapOnMatrix, bool mapOnList);
 template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<double> compute, bool mapOnMatrix, bool mapOnList);
 
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<float> computeOnMatrices, bool mapOnList);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexAndComplexReduction<double> computeOnComplexes, Poincare::ApproximationHelper::ComplexAndMatrixReduction<double> computeOnComplexAndMatrix, Poincare::ApproximationHelper::MatrixAndComplexReduction<double> computeOnMatrixAndComplex, Poincare::ApproximationHelper::MatrixAndMatrixReduction<double> computeOnMatrices, bool mapOnList);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce<float>(const Poincare::ExpressionNode * expression, Poincare::ExpressionNode::ApproximationContext approximationContext, Poincare::ApproximationHelper::ReductionFunction<float> reductionFunction);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce<double>(const Poincare::ExpressionNode * expression, Poincare::ExpressionNode::ApproximationContext approximationContext, Poincare::ApproximationHelper::ReductionFunction<double> reductionFunction);
 
 template Poincare::MatrixComplex<float> Poincare::ApproximationHelper::ElementWiseOnMatrixComplexAndComplex<float>(const Poincare::MatrixComplex<float>, const std::complex<float>, Poincare::Preferences::ComplexFormat, Poincare::Complex<float> (*)(std::complex<float>, std::complex<float>, Poincare::Preferences::ComplexFormat));
 template Poincare::MatrixComplex<double> Poincare::ApproximationHelper::ElementWiseOnMatrixComplexAndComplex<double>(const Poincare::MatrixComplex<double>, std::complex<double> const, Poincare::Preferences::ComplexFormat, Poincare::Complex<double> (*)(std::complex<double>, std::complex<double>, Poincare::Preferences::ComplexFormat));

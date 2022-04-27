@@ -45,14 +45,12 @@ namespace ApproximationHelper {
       bool mapOnList = true
       );
 
+  template <typename T> using ReductionFunction = Evaluation<T>(*)(Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext);
+
   template<typename T> Evaluation<T> MapReduce(
       const ExpressionNode * expression,
       ExpressionNode::ApproximationContext approximationContext,
-      ComplexAndComplexReduction<T> computeOnComplexes,
-      ComplexAndMatrixReduction<T> computeOnComplexAndMatrix,
-      MatrixAndComplexReduction<T> computeOnMatrixAndComplex,
-      MatrixAndMatrixReduction<T> computeOnMatrices,
-      bool mapOnList = true
+      ReductionFunction<T> reductionFunction
       );
 
   template<typename T> MatrixComplex<T> ElementWiseOnMatrixComplexAndComplex(const MatrixComplex<T> n, std::complex<T> c, Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes);

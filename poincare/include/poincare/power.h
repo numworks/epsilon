@@ -37,8 +37,18 @@ public:
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
 
   template<typename T> static Complex<T> computeNotPrincipalRealRootOfRationalPow(const std::complex<T> c, T p, T q);
-  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
-
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
+  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, ApproximationContext approximationContext) {
+    return ApproximationHelper::Reduce<T>(
+        eval1,
+        eval2,
+        approximationContext,
+        computeOnComplex<T>,
+        ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
+        computeOnMatrixAndComplex<T>,
+        ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
+        );
+  }
 private:
   constexpr static int k_maxApproximatePowerMatrix = 1000;
 

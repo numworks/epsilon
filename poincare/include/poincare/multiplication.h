@@ -29,11 +29,21 @@ public:
   double degreeForSortingAddition(bool symbolsOnly) const override;
 
   // Approximation
-  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m, Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
+    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, computeOnComplex<T>);
   }
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
+  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, ApproximationContext approximationContext) {
+    return ApproximationHelper::Reduce<T>(
+        eval1,
+        eval2,
+        approximationContext,
+        computeOnComplex<T>,
+        computeOnComplexAndMatrix<T>,
+        computeOnMatrixAndComplex<T>,
+        computeOnMatrices<T>);
+  }
 
 private:
   // Property
@@ -55,13 +65,16 @@ private:
 
   // Approximation
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
+    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, computeOnComplex<T>);
   }
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::MapReduce<float>(this, approximationContext, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
-  }
+    return templatedApproximate<float>(approximationContext);
+   }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::MapReduce<double>(this, approximationContext, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+    return templatedApproximate<double>(approximationContext);
+  }
+  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const {
+    return ApproximationHelper::MapReduce<T>(this, approximationContext, Compute<T>);
   }
 };
 

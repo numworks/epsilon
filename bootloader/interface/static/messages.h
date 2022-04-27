@@ -7,7 +7,7 @@ class Messages {
 public:
   constexpr static const char * mainTitle = "Upsilon Calculator";
   
-  // home menu
+  // Home menu
   constexpr static const char * homeTitle = "Select a slot";
 
   // Slots OS Type

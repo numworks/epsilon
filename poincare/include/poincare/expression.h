@@ -343,28 +343,28 @@ protected:
   Expression(int nodeIdentifier) : TreeHandle(nodeIdentifier) {}
   template<typename U>
   static Expression UntypedBuilderOneChild(Expression children) {
-    assert(children.type() == ExpressionNode::Type::Matrix);
+    assert(children.type() == ExpressionNode::Type::List);
     return U::Builder(children.childAtIndex(0));
   }
   template<typename U>
   static Expression UntypedBuilderTwoChildren(Expression children) {
-    assert(children.type() == ExpressionNode::Type::Matrix);
+    assert(children.type() == ExpressionNode::Type::List);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1));
   }
   template<typename U>
   static Expression UntypedBuilderThreeChildren(Expression children) {
-    assert(children.type() == ExpressionNode::Type::Matrix);
+    assert(children.type() == ExpressionNode::Type::List);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2));
   }
   template<typename U>
   static Expression UntypedBuilderFourChildren(Expression children) {
-    assert(children.type() == ExpressionNode::Type::Matrix);
+    assert(children.type() == ExpressionNode::Type::List);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3));
   }
   template<typename U>
   static Expression UntypedBuilderMultipleChildren(Expression children) {
     // Only with Expression classes implementing addChildAtIndexInPlace
-    assert(children.type() == ExpressionNode::Type::Matrix);
+    assert(children.type() == ExpressionNode::Type::List);
     int childrenNumber = children.numberOfChildren();
     assert(childrenNumber > 0);
     U expression = U::Builder({children.childAtIndex(0)});

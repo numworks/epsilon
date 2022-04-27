@@ -1,5 +1,5 @@
-#ifndef SIMPLIFICATOIN_HELPER_H
-#define SIMPLIFICATOIN_HELPER_H
+#ifndef SIMPLIFICATION_HELPER_H
+#define SIMPLIFICATION_HELPER_H
 
 #include "expression_node.h"
 #include "expression.h"
@@ -29,4 +29,4 @@ public:
 }
 
 
-#endif /* SIMPLIFICATOIN_HELPER_H */
+#endif

@@ -29,10 +29,7 @@ void PlotController::moveCursorVertically(bool seriesChanged) {
 }
 
 void PlotController::viewWillAppearBeforeReload() {
-  float yMin, yMax, xMin, xMax;
-  computeYBounds(&yMin, &yMax);
-  computeXBounds(&xMin, &xMax);
-  m_graphRange.calibrate(m_curveView.bounds().width(), m_curveView.bounds().height(), horizontalMargin(), bottomMargin(), topMargin(), xMin, xMax, yMin, yMax);
+  computeRanges(m_bannerView.bounds().height());
   // Sanitize m_selectedBarIndex and cursor's position
   m_selectedIndex = SanitizeIndex(m_selectedIndex, totalValues(m_selectedSeries));
   double x = valueAtIndex(m_selectedSeries, m_selectedIndex);
@@ -103,7 +100,19 @@ bool PlotController::reloadBannerView() {
   m_bannerView.result()->setText(buffer);
 
   m_bannerView.reload();
-  return previousHeight != m_bannerView.minimalSizeForOptimalDisplay().height();
+  KDCoordinate newHeight = m_bannerView.minimalSizeForOptimalDisplay().height();
+  if (previousHeight != newHeight) {
+    computeRanges(newHeight);
+    return true;
+  }
+  return false;
+}
+
+void PlotController::computeRanges(KDCoordinate bannerHeight) {
+  float yMin, yMax, xMin, xMax;
+  computeYBounds(&yMin, &yMax);
+  computeXBounds(&xMin, &xMax);
+  m_graphRange.calibrate(m_curveView.bounds().width(), m_curveView.bounds().height(), horizontalMargin(), bottomMargin() + bannerHeight, topMargin(), xMin, xMax, yMin, yMax);
 }
 
 void PlotController::computeXBounds(float * xMin, float *xMax) const {

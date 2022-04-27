@@ -4,6 +4,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/list.h>
 #include <poincare/list_sort.h>
+#include <poincare/multiplication.h>
 #include <poincare/serialization_helper.h>
 #include <float.h>
 
@@ -44,13 +45,13 @@ template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(Approxim
   if (index1 == index2) {
     return child->childAtIndex(index1)->approximate(static_cast<T>(0.), approximationContext);
   }
-  return Evaluation<T>::Product(
-      Evaluation<T>::Sum(
+  return MultiplicationNode::Compute<T>(
+      AdditionNode::Compute<T>(
         child->childAtIndex(index1)->approximate(static_cast<T>(0.), approximationContext),
         child->childAtIndex(index2)->approximate(static_cast<T>(0.), approximationContext),
-        complexFormat),
+        approximationContext),
       Complex<T>::Builder(0.5),
-      complexFormat);
+      approximationContext);
 }
 
 static void numberOfElementsLesserAndGreater(float x, const List list, int * lesser, int * greater, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {

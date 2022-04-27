@@ -1,5 +1,6 @@
 #include <poincare/list_sum.h>
 #include <poincare/addition.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 
@@ -24,12 +25,21 @@ Expression ListSumNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T> Evaluation<T> ListSumNode::SumOfListNode(ListNode * list, ApproximationContext approximationContext) {
-  Evaluation<T> result = Complex<T>::Builder(0);
-  int n = list->numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    result = Evaluation<T>::Sum(result, list->childAtIndex(i)->approximate(static_cast<T>(0), approximationContext), approximationContext.complexFormat());
-  }
-  return result;
+  return ApproximationHelper::MapReduce<T>(
+      list,
+      approximationContext,
+      [] (Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext) {
+      return ApproximationHelper::Reduce<T>(
+          eval1,
+          eval2,
+          approximationContext,
+          AdditionNode::computeOnComplex<T>,
+          ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
+          ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
+          ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
+          );
+      }
+      );
 }
 
 template<typename T> Evaluation<T> ListSumNode::templatedApproximate(ApproximationContext approximationContext) const {

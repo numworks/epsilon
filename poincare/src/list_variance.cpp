@@ -1,6 +1,8 @@
 #include <poincare/list_variance.h>
+#include <poincare/addition.h>
 #include <poincare/layout_helper.h>
 #include <poincare/list_mean.h>
+#include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/subtraction.h>
@@ -27,20 +29,18 @@ Expression ListVarianceNode::shallowReduce(ReductionContext reductionContext) {
 
 template<typename T> Evaluation<T> ListVarianceNode::VarianceOfListNode(ListNode * list, ApproximationContext approximationContext) {
   int n = list->numberOfChildren();
-  Preferences::ComplexFormat complexFormat = approximationContext.complexFormat();
-
   Evaluation<T> m = Complex<T>::Builder(0);
   Evaluation<T> ml2 = Complex<T>::Builder(0);
   for (int i = 0; i < n; i++) {
     Evaluation<T> c = list->childAtIndex(i)->approximate(static_cast<T>(0), approximationContext);
-    m = Evaluation<T>::Sum(m, c,complexFormat);
-    ml2 = Evaluation<T>::Sum(ml2, Evaluation<T>::Product(c, c, complexFormat), complexFormat);
+    m = AdditionNode::Compute<T>(m, c,approximationContext);
+    ml2 = AdditionNode::Compute<T>(ml2, MultiplicationNode::Compute<T>(c, c, approximationContext), approximationContext);
   }
   Complex<T> div = Complex<T>::Builder(static_cast<T>(1)/n);
-  m = Evaluation<T>::Product(m, div, complexFormat);
-  ml2 = Evaluation<T>::Product(ml2, div, complexFormat);
+  m = MultiplicationNode::Compute<T>(m, div, approximationContext);
+  ml2 = MultiplicationNode::Compute<T>(ml2, div, approximationContext);
 
-  return Evaluation<T>::Sum(ml2, Evaluation<T>::Product(Complex<T>::Builder(-1), Evaluation<T>::Product(m, m, complexFormat), complexFormat), complexFormat);
+  return AdditionNode::Compute<T>(ml2, MultiplicationNode::Compute<T>(Complex<T>::Builder(-1), MultiplicationNode::Compute<T>(m, m, approximationContext), approximationContext), approximationContext);
 }
 
 template<typename T> Evaluation<T> ListVarianceNode::templatedApproximate(ApproximationContext approximationContext) const {

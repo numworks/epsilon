@@ -33,11 +33,11 @@ public:
   Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
 
   // Approximation
-  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, ApproximationContext approximationContext) {
+  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::Reduce<T>(
         eval1,
         eval2,
-        approximationContext,
+        complexFormat,
         computeOnComplex<T>,
         computeOnComplexAndMatrix<T>,
         computeOnMatrixAndComplex<T>,

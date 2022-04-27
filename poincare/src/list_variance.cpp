@@ -30,13 +30,14 @@ Expression ListVarianceNode::shallowReduce(ReductionContext reductionContext) {
 
 template<typename T> Evaluation<T> ListVarianceNode::VarianceOfListNode(ListNode * list, ApproximationContext approximationContext) {
   int n = list->numberOfChildren();
+  Preferences::ComplexFormat complexFormat = approximationContext.complexFormat();
   Evaluation<T> m = ListHelpers::SumOfListNode<T>(list, approximationContext);
   Evaluation<T> ml2 = ListHelpers::SquareSumOfListNode<T>(list, approximationContext);
   Complex<T> div = Complex<T>::Builder(static_cast<T>(1)/n);
-  m = MultiplicationNode::Compute<T>(m, div, approximationContext);
-  ml2 = MultiplicationNode::Compute<T>(ml2, div, approximationContext);
+  m = MultiplicationNode::Compute<T>(m, div, complexFormat);
+  ml2 = MultiplicationNode::Compute<T>(ml2, div, complexFormat);
 
-  return AdditionNode::Compute<T>(ml2, MultiplicationNode::Compute<T>(Complex<T>::Builder(-1), MultiplicationNode::Compute<T>(m, m, approximationContext), approximationContext), approximationContext);
+  return AdditionNode::Compute<T>(ml2, MultiplicationNode::Compute<T>(Complex<T>::Builder(-1), MultiplicationNode::Compute<T>(m, m, complexFormat), complexFormat), complexFormat);
 }
 
 template<typename T> Evaluation<T> ListVarianceNode::templatedApproximate(ApproximationContext approximationContext) const {

@@ -1492,8 +1492,8 @@ template Complex<double> PowerNode::computeOnComplex<double>(std::complex<double
 template Complex<double> PowerNode::computeNotPrincipalRealRootOfRationalPow<double>(std::complex<double>, double, double);
 template Complex<float> PowerNode::computeNotPrincipalRealRootOfRationalPow<float>(std::complex<float>, float, float);
 
-template Evaluation<float> Poincare::PowerNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
-template Evaluation<double> Poincare::PowerNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<float> Poincare::PowerNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Preferences::ComplexFormat complexFormat);
+template Evaluation<double> Poincare::PowerNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Preferences::ComplexFormat complexFormat);
 
 template Evaluation<float> Poincare::PowerNode::templatedApproximate<float>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
 template Evaluation<double> Poincare::PowerNode::templatedApproximate<double>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;

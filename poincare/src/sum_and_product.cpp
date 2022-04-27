@@ -38,7 +38,7 @@ Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext appro
   }
   Evaluation<T> result = Complex<T>::Builder(static_cast<T>(emptySumAndProductValue()));
   for (int i = (int)start; i <= (int)end; i++) {
-    result = evaluateWithNextTerm(T(), result, approximateFirstChildWithArgument(static_cast<T>(i), approximationContext), approximationContext);
+    result = evaluateWithNextTerm(T(), result, approximateFirstChildWithArgument(static_cast<T>(i), approximationContext), approximationContext.complexFormat());
     if (result.isUndefined()) {
       return Complex<T>::Undefined();
     }

@@ -37,7 +37,7 @@ namespace ApproximationHelper {
   template<typename T> Evaluation<T> Reduce(
       Evaluation<T> eval1,
       Evaluation<T> eval2,
-      ExpressionNode::ApproximationContext approximationContext,
+      Preferences::ComplexFormat complexFormat,
       ComplexAndComplexReduction<T> computeOnComplexes,
       ComplexAndMatrixReduction<T> computeOnComplexAndMatrix,
       MatrixAndComplexReduction<T> computeOnMatrixAndComplex,
@@ -45,7 +45,7 @@ namespace ApproximationHelper {
       bool mapOnList = true
       );
 
-  template <typename T> using ReductionFunction = Evaluation<T>(*)(Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext);
+  template <typename T> using ReductionFunction = Evaluation<T>(*)(Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat);
 
   template<typename T> Evaluation<T> MapReduce(
       const ExpressionNode * expression,

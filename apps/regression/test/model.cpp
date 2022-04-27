@@ -187,6 +187,14 @@ QUIZ_CASE(exponential_regression5) {
   assert_regression_is(x, y, 4, Model::Type::Exponential, coefficients, r2);
 }
 
+QUIZ_CASE(exponential_abx_regression) {
+  double x[] = {1, 2, 3, 4};
+  double y[] = {2, 4, 8, 16};
+  double coefficients[] = {1, 2};
+  double r2 = 1.0;
+  assert_regression_is(x, y, 4, Model::Type::ExponentialAbx, coefficients, r2);
+}
+
 QUIZ_CASE(power_regression) {
   double x[] = {1.0, 50.0, 34.0, 67.0, 20.0};
   double y[] = {71.860, 2775514, 979755.1, 6116830, 233832.9};

@@ -106,7 +106,7 @@ void ExponentialModel::specializedInitCoefficientsForFit(double * modelCoefficie
 }
 
 double ExponentialModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
-  double b = m_abxForm ? log(modelCoefficients[1]) : modelCoefficients[1];
+  double b = modelCoefficients[1];
   if (m_abxForm) {
     b = log(b);
   }

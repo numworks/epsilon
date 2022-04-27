@@ -62,10 +62,6 @@ public:
   T toScalar() const { return node()->toScalar(); }
   Expression complexToExpression(Preferences::ComplexFormat complexFormat) const;
 
-  /* Operations */
-  static Evaluation<T> Sum(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat);
-  static Evaluation<T> Product(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat);
-
 protected:
   Evaluation(EvaluationNode<T> * n) : TreeHandle(n) {}
 };

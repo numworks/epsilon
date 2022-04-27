@@ -2,6 +2,7 @@
 #define POINCARE_SUM_H
 
 #include <poincare/sum_and_product.h>
+#include <poincare/addition.h>
 
 namespace Poincare {
 
@@ -21,11 +22,16 @@ private:
   float emptySumAndProductValue() const override { return 0.0f; }
   Layout createSumAndProductLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const override {
-    return Evaluation<double>::Sum(a, b, complexFormat);
+
+  // Evaluation
+  Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, ApproximationContext approximationContext) const override {
+    return templatedEvaluateWithNewTerm<double>(a, b, approximationContext);
   }
-  Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat) const override {
-    return Evaluation<float>::Sum(a, b, complexFormat);
+  Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b, ApproximationContext approximationContext) const override {
+    return templatedEvaluateWithNewTerm<float>(a, b, approximationContext);
+  }
+  template<typename T> Evaluation<T> templatedEvaluateWithNewTerm(Evaluation<T> a, Evaluation<T> b, ApproximationContext approximationContext) const {
+    return AdditionNode::Compute<T>(a, b, approximationContext);
   }
 };
 

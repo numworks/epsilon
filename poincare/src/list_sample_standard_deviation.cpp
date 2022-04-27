@@ -1,6 +1,7 @@
 #include <poincare/list_sample_standard_deviation.h>
 #include <poincare/layout_helper.h>
 #include <poincare/list_variance.h>
+#include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/square_root.h>
@@ -33,7 +34,7 @@ template<typename T> Evaluation<T> ListSampleStandardDeviationNode::templatedApp
 
   Evaluation<T> variance = ListVarianceNode::VarianceOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
   int n = child->numberOfChildren();
-  Evaluation<T> unbiased = Evaluation<T>::Product(variance, Complex<T>::Builder(n / (n - static_cast<T>(1))), approximationContext.complexFormat());
+  Evaluation<T> unbiased = MultiplicationNode::Compute<T>(variance, Complex<T>::Builder(n / (n - static_cast<T>(1))), approximationContext);
   if (unbiased.type() != EvaluationNode<T>::Type::Complex) {
     return Complex<T>::Undefined();
   }

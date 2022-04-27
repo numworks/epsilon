@@ -88,6 +88,7 @@ private:
   QuarticModel m_quarticModel;
   LogarithmicModel m_logarithmicModel;
   ExponentialModel m_exponentialModel;
+  ExponentialModel m_exponentialAbxModel;
   PowerModel m_powerModel;
   TrigonometricModel m_trigonometricModel;
   LogisticModel m_logisticModel;

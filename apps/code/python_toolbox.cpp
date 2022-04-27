@@ -783,13 +783,7 @@ bool PythonToolbox::selectSubMenu(int selectedRow) {
     Container::activeApp()->displayModalViewController(static_cast<ViewController*>(&m_ionKeys), 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }
-  m_selectableTableView.deselectTable();
-  m_messageTreeModel = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(selectedRow));
-  if (m_messageTreeModel->isFork()) {
-    assert(m_messageTreeModel->numberOfChildren() < 0);
-    m_messageTreeModel = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(indexAfterFork()));
-  }
-  return NestedMenuController::selectSubMenu(selectedRow);
+  return Toolbox::selectSubMenu(selectedRow);
 }
 
 

@@ -28,7 +28,7 @@ void GraphTypeController::didBecomeFirstResponder() {
 }
 
 bool GraphTypeController::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::Up && selectedRow() == 0) || event == Ion::Events::Back) {
+  if ((event == Ion::Events::Up && selectedRow() == 0) || (event == Ion::Events::Back && m_store->graphViewHasBeenInvalidated())) {
     Escher::Container::activeApp()->setFirstResponder(m_tabController);
     return true;
   }

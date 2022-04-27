@@ -37,6 +37,8 @@ void Boot::setMode(BootMode mode) {
 }
 
 void Boot::busError() {
+  // Ion::Device::Flash::DisableInternalProtection();
+  // Ion::Device::Flash::EraseSector(0);
   if (config()->isBooting()) {
     config()->slot()->boot();
   }

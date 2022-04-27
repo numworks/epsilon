@@ -44,7 +44,7 @@ static void close_protection() {
   }
 }
 
-static void enable_protection_at(int i) {
+static void disable_protection_at(int i) {
   if (!FLASH.OPTCR()->getLOCK()) {
     switch (i)
     {
@@ -78,7 +78,7 @@ static void enable_protection_at(int i) {
   }
 }
 
-static void disable_protection_at(int i) {
+static void enable_protection_at(int i) {
   if (!FLASH.OPTCR()->getLOCK()) {
     switch (i)
     {

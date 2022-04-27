@@ -72,6 +72,8 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   // Order used in m_graphController constructor
   assert(GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Histogram) == 0);
   assert(GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Box) == 1);
+  assert(GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Frequency) == 2);
+  assert(GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::NormalProbability) == 3);
 }
 
 void App::activeViewDidBecomeFirstResponder(Escher::ViewController * activeViewController) {

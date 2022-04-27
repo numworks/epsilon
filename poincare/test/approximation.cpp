@@ -1204,6 +1204,7 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
   assert_expression_approximates_to_scalar<double>("stddev({1,2,3,4,5,6})", 1.707825127659933);
   assert_expression_approximates_to_scalar<double>("med({1,6,3,5,2})", 3.);
   assert_expression_approximates_to_scalar<double>("med({1,6,3,4,5,2})", 3.5);
+  assert_expression_approximates_to_scalar<double>("med({1,undef,6,3,5,undef,2})", 3.);
   assert_expression_approximates_to_scalar<double>("var({1,2,3,4,5,6})", 2.916666666666666);
   assert_expression_approximates_to_scalar<double>("samplestddev({1,2,3,4,5,6})", 1.8708286933869704);
   assert_expression_approximates_to_scalar<double>("dim({1,2,3})", 3.);

@@ -3,6 +3,7 @@
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
 #include <poincare/list.h>
+#include <poincare/list_helpers.h>
 #include <poincare/list_sort.h>
 #include <poincare/multiplication.h>
 #include <poincare/serialization_helper.h>
@@ -29,97 +30,44 @@ Expression ListMedianNode::shallowReduce(ReductionContext reductionContext) {
 }
 
 template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(ApproximationContext approximationContext) const {
-  ExpressionNode * child = childAtIndex(0);
-  int n = child->numberOfChildren();
-  if (child->type() != ExpressionNode::Type::List || n == 0) {
+  Evaluation<T> child = childAtIndex(0)->approximate(T(), approximationContext);
+  if (child.type() != EvaluationNode<T>::Type::ListComplex) {
+    return Complex<T>::Undefined();
+  }
+  ListComplex<T> list = static_cast<ListComplex<T>&>(child);
+  int n = list.numberOfChildren();
+  if (n == 0) {
+    return Complex<T>::Undefined();
+  }
+  list = ListHelpers::SortListComplex(list);
+
+  /* Do not take undef children into account.
+   * This loop relies on the fact that undef are sorted at the
+   * end of the list. If ListSort::k_nanIsGreatest is changed, this
+   * loop also needs to be changed. */
+  int numberOfDefinedElements = 0;
+  for (int i = n - 1 ; i >= 0 ; i--) {
+    std::complex<T> c = list.complexAtIndex(i);
+    if (!std::isnan(c.real()) || !std::isnan(c.imag())) {
+      numberOfDefinedElements = i + 1;
+      break;
+    }
+  }
+
+  if (numberOfDefinedElements == 0) {
     return Complex<T>::Undefined();
   }
 
-  int index1, index2;
-  Preferences::ComplexFormat complexFormat = approximationContext.complexFormat();
-  ListMedian(this).approximationHelper(&index1, &index2, approximationContext.context(), complexFormat, approximationContext.angleUnit());
-  if (index1 < 0 || index2 < 0) {
-    return Complex<T>::Undefined();
-  }
-
-  if (index1 == index2) {
-    return child->childAtIndex(index1)->approximate(static_cast<T>(0.), approximationContext);
-  }
-  return MultiplicationNode::Compute<T>(
-      AdditionNode::Compute<T>(
-        child->childAtIndex(index1)->approximate(static_cast<T>(0.), approximationContext),
-        child->childAtIndex(index2)->approximate(static_cast<T>(0.), approximationContext),
+  if (numberOfDefinedElements % 2 == 1) {
+    return Complex<T>::Builder(list.complexAtIndex(numberOfDefinedElements / 2));
+  } else {
+    return MultiplicationNode::Compute<T>(
+      AdditionNode::computeOnComplex<T>(
+        list.complexAtIndex(numberOfDefinedElements / 2 - 1),
+        list.complexAtIndex(numberOfDefinedElements / 2),
         approximationContext.complexFormat()),
       Complex<T>::Builder(0.5),
       approximationContext.complexFormat());
-}
-
-static void numberOfElementsLesserAndGreater(float x, const List list, int * lesser, int * greater, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  *lesser = *greater = 0;
-  int n = list.numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    float y = list.childAtIndex(i).approximateToScalar<float>(context, complexFormat, angleUnit);
-    if (x < y) {
-      *greater += 1;
-    } else if (y < x) {
-      *lesser += 1;
-    }
-  }
-  assert(*lesser + *greater < n);
-}
-
-void ListMedian::approximationHelper(int * index1, int * index2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  *index1 = *index2 = -1;
-  assert(childAtIndex(0).type() == ExpressionNode::Type::List);
-  Expression child = childAtIndex(0);
-  List listChild = static_cast<List &>(child);
-  int n = listChild.numberOfChildren();
-  int k = n / 2;
-
-  float upperBound = FLT_MAX;
-  float lowerBound = -FLT_MAX;
-  for (int i = 0; i < n; i++) {
-    float x = listChild.childAtIndex(i).approximateToScalar<float>(context, complexFormat, angleUnit);
-    if (x < lowerBound || upperBound < x) {
-      continue;
-    }
-    int lesser, greater;
-    numberOfElementsLesserAndGreater(x, listChild, &lesser, &greater, context, complexFormat, angleUnit);
-
-    if (greater > k) {
-      /* More than half the values are greater than x: the median is greater
-       * than x. */
-      if (x > lowerBound) {
-        lowerBound = x;
-      }
-    } else if (lesser > k) {
-      /* More than half the values are lesser than x: the median is lesser
-       * than x. */
-      if (x < upperBound) {
-        upperBound = x;
-      }
-    } else if (lesser < k && greater < k) {
-      /* There is a group of elements of equal values in the middle of the
-       * series: their value is the median. */
-      *index1 = *index2 = i;
-    } else {
-      if (greater == k) {
-        /* Half the values are greater than x: x is the lower bound of the
-         * median */
-        *index1 = i;
-        lowerBound = x;
-      }
-      if (lesser == k) {
-        /* Half the values are lesser than x: x is the upper bound of the
-         * median */
-        *index2 = i;
-        upperBound = x;
-      }
-    }
-
-    if (*index1 >= 0 && *index2 >= 0) {
-      return;
-    }
   }
 }
 
@@ -130,13 +78,29 @@ Expression ListMedian::shallowReduce(ExpressionNode::ReductionContext reductionC
     return replaceWithUndefinedInPlace();
   }
 
+  /* Do not take undef children into account.
+   * This loop relies on the fact that undef are sorted at the
+   * end of the list. If ListSort::k_nanIsGreatest is changed, this
+   * loop also needs to be changed. */
+  int numberOfDefinedElements = 0;
+  for (int i = n - 1 ; i >= 0 ; i--) {
+    if (!sorted.childAtIndex(i).isUndefined()) {
+      numberOfDefinedElements = i + 1;
+      break;
+    }
+  }
+
+  if (numberOfDefinedElements == 0) {
+    return replaceWithUndefinedInPlace();
+  }
+
   Expression e;
-  if (n % 2 == 1) {
-    Expression e = sorted.childAtIndex(n / 2);
+  if (numberOfDefinedElements % 2 == 1) {
+    Expression e = sorted.childAtIndex(numberOfDefinedElements / 2);
     replaceWithInPlace(e);
     return e;
   } else {
-    Expression a = sorted.childAtIndex(n / 2 - 1), b = sorted.childAtIndex(n / 2);
+    Expression a = sorted.childAtIndex(numberOfDefinedElements / 2 - 1), b = sorted.childAtIndex(numberOfDefinedElements / 2);
     Addition sum = Addition::Builder(a, b);
     Division div = Division::Builder(sum, Rational::Builder(2));
     sum.shallowReduce(reductionContext);

@@ -22,7 +22,7 @@ int ProductNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 }
 
 Expression Product::UntypedBuilder(Expression children) {
-  assert(children.type() == ExpressionNode::Type::Matrix);
+  assert(children.type() == ExpressionNode::Type::List);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
     return Expression();

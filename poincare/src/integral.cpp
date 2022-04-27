@@ -194,7 +194,7 @@ T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Appr
 #endif
 
 Expression Integral::UntypedBuilder(Expression children) {
-  assert(children.type() == ExpressionNode::Type::Matrix);
+  assert(children.type() == ExpressionNode::Type::List);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
     return Expression();

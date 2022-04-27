@@ -39,7 +39,9 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(Approxim
 
 Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   /* If one of the element in the matrix is undefined (nonreal), the whole
-   * matrix will be reduced to Undefined (Nonreal). */
+   * matrix will be reduced to Undefined (Nonreal).
+   * This is the reason why dependencies are better stored as a matrix
+   * than as a list. */
   Expression dependencies = childAtIndex(1);
   if (dependencies.isUndefined()) {
     /* dependencies is either Undefined or Nonreal. */
@@ -120,7 +122,7 @@ void Dependency::extractDependencies(Matrix m) {
 }
 
 Expression Dependency::UntypedBuilder(Expression children) {
-  assert(children.type() == ExpressionNode::Type::Matrix);
+  assert(children.type() == ExpressionNode::Type::List);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Matrix) {
     // Second parameter must be a Matrix.
     return Expression();

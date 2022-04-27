@@ -22,8 +22,8 @@ class Recovery {
   static CrashedSlot getSlotConcerned();
 
   static void crash_handler(const char * error);
-  static void recover_data();
-  static bool has_crashed();
+  static void recoverData();
+  static bool hasCrashed();
 
 };
 };

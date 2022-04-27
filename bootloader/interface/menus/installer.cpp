@@ -20,20 +20,20 @@ Bootloader::InstallerMenu::InstallerMenu() : Menu(KDColorBlack, KDColorWhite, Me
     setup();
 }
 
-bool slots_submenu() {
+bool slotsSubmenu() {
     Bootloader::InstallerMenu::SlotsDFU()->open();
     return true;
 }
 
-bool bootloader_submenu() {
+bool bootloaderSubmenu() {
     Bootloader::InstallerMenu::BootloaderDFU()->open();
     return true;
 }
 
 void Bootloader::InstallerMenu::setup() {
     m_default_columns[0] = Column(Messages::installerText1, k_large_font, 0, true);
-    m_default_columns[1] = Column(Messages::installerSlotsSubmenu, Ion::Keyboard::Key::One, k_small_font, 30, false, &slots_submenu);
-    m_default_columns[2] = Column(Messages::installerBootloaderSubmenu, Ion::Keyboard::Key::Two, k_small_font, 30, false, &bootloader_submenu);
+    m_default_columns[1] = Column(Messages::installerSlotsSubmenu, Ion::Keyboard::Key::One, k_small_font, 30, false, &slotsSubmenu);
+    m_default_columns[2] = Column(Messages::installerBootloaderSubmenu, Ion::Keyboard::Key::Two, k_small_font, 30, false, &bootloaderSubmenu);
 
     m_columns[0] = ColumnBinder(&m_default_columns[0]);
     m_columns[1] = ColumnBinder(&m_default_columns[1]);

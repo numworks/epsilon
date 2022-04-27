@@ -19,7 +19,7 @@ void Bootloader::SlotRecoveryMenu::setup() {
   m_columns[4] = ColumnBinder(&m_default_columns[4]);
 }
 
-void Bootloader::SlotRecoveryMenu::post_open() {
+void Bootloader::SlotRecoveryMenu::postOpen() {
   // We override the open method
   for (;;) {
     Ion::USB::enable();

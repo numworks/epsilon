@@ -50,8 +50,8 @@ __attribute__ ((noreturn)) void ion_main(int argc, const char * const argv[]) {
     }
   }
 
-  if (Bootloader::Recovery::has_crashed()) {
-    Bootloader::Recovery::recover_data();
+  if (Bootloader::Recovery::hasCrashed()) {
+    Bootloader::Recovery::recoverData();
   }
 
   Bootloader::Interface::drawLoading();

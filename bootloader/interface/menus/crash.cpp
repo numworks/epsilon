@@ -14,7 +14,7 @@ void Bootloader::CrashMenu::setup() {
   m_columns[2] = ColumnBinder(&m_default_columns[2]);
 }
 
-void Bootloader::CrashMenu::post_open() {
+void Bootloader::CrashMenu::postOpen() {
   // We override the open method
   for (;;) {
     // Infinite loop

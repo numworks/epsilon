@@ -40,14 +40,14 @@ public:
   static bool isKernelPatched(const Slot & slot);
   static void patchKernel(const Slot & slot);
 
-  static void busErr();
+  static void busError();
 
   __attribute__ ((noreturn)) static void boot();
 
   static void bootSlot(Bootloader::Slot slot);
   static void bootSelectedSlot();
   __attribute__ ((noreturn)) static void jumpToInternalBootloader(); 
-  __attribute((section(".fake_isr_function"))) __attribute__((used)) static void flsh_intr();
+  __attribute((section(".fake_isr_function"))) __attribute__((used)) static void flash_interrupt();
 
   static void bootloader();
   static void lockInternal();

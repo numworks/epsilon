@@ -10,10 +10,10 @@ namespace Bootloader {
       DfuMenu(const char * submenu, const USBData * usbData);
 
       void setup() override;
-      void post_open() override;
+      void postOpen() override;
 
     private:
-      const char * m_submenu_text;
+      const char * m_submenuText;
       const USBData * m_data;
   };
 }

@@ -5,6 +5,12 @@
   Now we include the license of the original code as required.
 */
 
+/**
+ *  THIS CODE COMES FROM THE STM32_HAL LIBRARY (LICENSE ABOVE) AND HAVE BEEN MODIFIED
+ *  WE USE ONLY THE HAL_deinit, RCC_deinit and systick_deninit FUNCTIONS AND ONLY COPIED THE CODE NEEDED.
+ *  WE NEEDED THIS CODE TO BE ABLE TO BOOT THE STM32 BOOTLOADER
+ */
+
 /* 
 This software component is provided to you as part of a software package and
 applicable license terms are in the  Package_license file. If you received this

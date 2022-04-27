@@ -25,7 +25,7 @@ void Bootloader::Recovery::crash_handler(const char *error) {
   menu.open(true);
 }
 
-bool Bootloader::Recovery::has_crashed() {
+bool Bootloader::Recovery::hasCrashed() {
   bool isA = Bootloader::Slot::A().kernelHeader()->isValid() && Bootloader::Slot::A().userlandHeader()->isValid();
   bool isB = Bootloader::Slot::B().kernelHeader()->isValid() && Bootloader::Slot::B().userlandHeader()->isValid();
 
@@ -71,7 +71,7 @@ Bootloader::Recovery::CrashedSlot Bootloader::Recovery::getSlotConcerned() {
   }
 }
 
-void Bootloader::Recovery::recover_data() {
+void Bootloader::Recovery::recoverData() {
   Ion::Device::Board::initPeripherals(false);
   Ion::Display::pushRectUniform(KDRect(0,0,320,240), KDColorWhite);
   Ion::Backlight::init();

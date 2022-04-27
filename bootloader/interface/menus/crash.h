@@ -9,7 +9,7 @@ namespace Bootloader {
       CrashMenu(const char * error);
 
       void setup() override;
-      void post_open() override;
+      void postOpen() override;
 
     private:
       const char * m_error;

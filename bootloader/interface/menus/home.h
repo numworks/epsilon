@@ -4,6 +4,7 @@
 #include <bootloader/interface/src/menu.h>
 #include <bootloader/interface/menus/about.h>
 #include <bootloader/interface/menus/installer.h>
+#include <bootloader/slots/slot.h>
 
 namespace Bootloader {
   class HomeMenu : public Menu {
@@ -11,24 +12,16 @@ namespace Bootloader {
       HomeMenu();
 
       void setup() override;
-      void post_open() override {};
+      void postOpen() override {};
 
       static AboutMenu * aboutMenu();
       static InstallerMenu * installerMenu();
 
     private:
-      const char * slotA_text();
-      const char * slotA_kernel_text();
-      const char * slotA_os_text();
-      const char * slotA_version_text();
-      const char * slotKhi_text();
-      const char * slotKhi_kernel_text();
-      const char * slotKhi_os_text();
-      const char * slotKhi_version_text();
-      const char * slotB_text();   
-      const char * slotB_kernel_text();
-      const char * slotB_os_text();
-      const char * slotB_version_text();
+      const char * getSlotOsText(Slot slot);
+      const char * getSlotText(Slot slot);
+      const char * getKernelText(Slot slot);
+      const char * getVersionText(Slot slot);
       
   };
 }

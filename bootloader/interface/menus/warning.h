@@ -10,7 +10,7 @@ namespace Bootloader {
       WarningMenu();
 
       void setup() override;
-      void post_open() override {};
+      void postOpen() override {};
   };
 }
 

@@ -18,7 +18,7 @@ void Bootloader::Menu::open(bool noreturn) {
   uint64_t scan = 0;
   bool exit = false;
 
-  post_open();
+  postOpen();
   
   while(!exit && !m_forced_exit) {
     scan = Ion::Keyboard::scan();

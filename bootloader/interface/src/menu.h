@@ -18,7 +18,7 @@ namespace Bootloader {
       static const int k_columns_margin = 5;
 
       virtual void setup() = 0;
-      virtual void post_open() = 0;
+      virtual void postOpen() = 0;
 
       enum ColumnType {
         DEFAULT,

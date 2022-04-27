@@ -2,17 +2,17 @@
 #include <bootloader/boot.h>
 #include <ion.h>
 
-Bootloader::DfuMenu::DfuMenu(const char * text, const USBData * data) : Menu(KDColorBlack, KDColorWhite, Messages::dfuTitle, Messages::mainTitle), m_submenu_text(text), m_data(data) {
+Bootloader::DfuMenu::DfuMenu(const char * text, const USBData * data) : Menu(KDColorBlack, KDColorWhite, Messages::dfuTitle, Messages::mainTitle), m_submenuText(text), m_data(data) {
   setup();
 }
 
 void Bootloader::DfuMenu::setup() {
-  m_default_columns[0] = Column(m_submenu_text, k_small_font, 0, true);
+  m_default_columns[0] = Column(m_submenuText, k_small_font, 0, true);
 
   m_columns[0] = ColumnBinder(&m_default_columns[0]);
 }
 
-void Bootloader::DfuMenu::post_open() {
+void Bootloader::DfuMenu::postOpen() {
   // We override the open method
   if (!m_data->getData().isProtectedInternal() && m_data->getData().isProtectedExternal()) {
     // Because we want to flash the internal, we will jump into the stm32 bootloader

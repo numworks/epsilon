@@ -10,7 +10,7 @@ namespace Bootloader {
       SlotRecoveryMenu(USBData * usbData);
 
       void setup() override;
-      void post_open() override;
+      void postOpen() override;
     private:
       const USBData * m_data;
   };

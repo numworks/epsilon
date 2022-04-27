@@ -50,7 +50,7 @@ void __attribute__((noinline)) usage_fault_handler() {
 }
 
 void __attribute__((noinline)) bus_fault_handler() {
-  Bootloader::Boot::busErr();
+  Bootloader::Boot::busError();
 }
 
 /* In order to ensure that this method is execute from the external flash, we

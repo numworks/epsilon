@@ -36,7 +36,7 @@ void Boot::setMode(BootMode mode) {
   // We dont use the exam mode driver as storage for the boot mode because we need the 16k of storage x)
 }
 
-void Boot::busErr() {
+void Boot::busError() {
   if (config()->isBooting()) {
     config()->slot()->boot();
   }
@@ -61,7 +61,7 @@ bool Boot::isKernelPatched(const Slot & s) {
   return *(uint32_t *)(origin_isr + sizeof(uint32_t) * 4) == (uint32_t)&_fake_isr_function_start && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 5) == (uint32_t)&_fake_isr_function_start && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 6) == (uint32_t)&_fake_isr_function_start && *(uint32_t *)(origin_isr + sizeof(uint32_t) * 7) == (uint32_t)&_fake_isr_function_start;
 }
 
-__attribute((section(".fake_isr_function"))) __attribute__((used)) void Boot::flsh_intr() {
+__attribute((section(".fake_isr_function"))) __attribute__((used)) void Boot::flash_interrupt() {
   // a simple function
   
 }
@@ -103,9 +103,9 @@ void Boot::bootSlot(Bootloader::Slot s) {
     // We are trying to boot epsilon, so we check the version and show an advertisement if needed
     const char * version = s.userlandHeader()->version();
     const char * min = "18.2.4";
-    int vsum = Utility::versionSum(version, strlen(version));
-    int minsum = Utility::versionSum(min, strlen(min));
-    if (vsum >= minsum) {
+    int versionSum = Utility::versionSum(version, strlen(version));
+    int minimalVersionTrigger = Utility::versionSum(min, strlen(min));
+    if (versionSum >= minimalVersionTrigger) {
       WarningMenu menu = WarningMenu();
       menu.open();
       return;

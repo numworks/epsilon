@@ -10,7 +10,7 @@ namespace Bootloader {
       InstallerMenu();
 
       void setup() override;
-      void post_open() override {};
+      void postOpen() override {};
 
       static DfuMenu * SlotsDFU();
       static DfuMenu * BootloaderDFU();

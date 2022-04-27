@@ -1,6 +1,7 @@
 #include <poincare/list_variance.h>
 #include <poincare/addition.h>
 #include <poincare/layout_helper.h>
+#include <poincare/list_helpers.h>
 #include <poincare/list_mean.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
@@ -29,13 +30,8 @@ Expression ListVarianceNode::shallowReduce(ReductionContext reductionContext) {
 
 template<typename T> Evaluation<T> ListVarianceNode::VarianceOfListNode(ListNode * list, ApproximationContext approximationContext) {
   int n = list->numberOfChildren();
-  Evaluation<T> m = Complex<T>::Builder(0);
-  Evaluation<T> ml2 = Complex<T>::Builder(0);
-  for (int i = 0; i < n; i++) {
-    Evaluation<T> c = list->childAtIndex(i)->approximate(static_cast<T>(0), approximationContext);
-    m = AdditionNode::Compute<T>(m, c,approximationContext);
-    ml2 = AdditionNode::Compute<T>(ml2, MultiplicationNode::Compute<T>(c, c, approximationContext), approximationContext);
-  }
+  Evaluation<T> m = ListHelpers::SumOfListNode<T>(list, approximationContext);
+  Evaluation<T> ml2 = ListHelpers::SquareSumOfListNode<T>(list, approximationContext);
   Complex<T> div = Complex<T>::Builder(static_cast<T>(1)/n);
   m = MultiplicationNode::Compute<T>(m, div, approximationContext);
   ml2 = MultiplicationNode::Compute<T>(ml2, div, approximationContext);

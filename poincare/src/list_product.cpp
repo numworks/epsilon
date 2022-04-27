@@ -1,5 +1,5 @@
 #include <poincare/list_product.h>
-#include <poincare/approximation_helper.h>
+#include <poincare/list_helpers.h>
 #include <poincare/multiplication.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
@@ -30,21 +30,7 @@ template<typename T> Evaluation<T> ListProductNode::templatedApproximate(Approxi
   if (child->type() != ExpressionNode::Type::List) {
     return Complex<T>::Undefined();
   }
-  return ApproximationHelper::MapReduce<T>(
-      child,
-      approximationContext,
-      [] (Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext) {
-      return ApproximationHelper::Reduce<T>(
-          eval1,
-          eval2,
-          approximationContext,
-          MultiplicationNode::computeOnComplex<T>,
-          ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
-          ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
-          ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
-          );
-      }
-      );
+  return ListHelpers::ProductOfListNode<T>(static_cast<ListNode*>(child), approximationContext);
 }
 
 Expression ListProduct::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

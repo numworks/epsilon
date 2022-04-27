@@ -15,6 +15,10 @@ public:
    * It can also have more than 3 elements, but the first 3 must be these. */
   static bool ListEvaluationComparison(int i, int j, void * context, int numberOfElements);
 
+  template<typename T> static Evaluation<T> SumOfListNode(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+  template<typename T> static Evaluation<T> ProductOfListNode(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+  template<typename T> static Evaluation<T> SquareSumOfListNode(ListNode * list, ExpressionNode::ApproximationContext approximationContext);
+
 private:
   static int ExtremumOfListNodeIndex(ListNode * listNode, ExpressionNode::ApproximationContext approximationContext, bool minimum);
 };

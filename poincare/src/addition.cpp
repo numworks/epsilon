@@ -586,8 +586,8 @@ template Complex<double> Poincare::AdditionNode::computeOnComplex<double>(std::c
 template MatrixComplex<float> Poincare::AdditionNode::computeOnMatrices<float>(const MatrixComplex<float>,const MatrixComplex<float>, Preferences::ComplexFormat complexFormat);
 template MatrixComplex<double> Poincare::AdditionNode::computeOnMatrices<double>(const MatrixComplex<double>,const MatrixComplex<double>, Preferences::ComplexFormat complexFormat);
 
-template Evaluation<float> Poincare::AdditionNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
-template Evaluation<double> Poincare::AdditionNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Poincare::ExpressionNode::ApproximationContext approximationContext);
+template Evaluation<float> Poincare::AdditionNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Preferences::ComplexFormat complexFormat);
+template Evaluation<double> Poincare::AdditionNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Preferences::ComplexFormat complexFormat);
 
 template Evaluation<float> Poincare::AdditionNode::templatedApproximate<float>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
 template Evaluation<double> Poincare::AdditionNode::templatedApproximate<double>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;

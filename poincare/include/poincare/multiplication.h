@@ -34,11 +34,11 @@ public:
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, computeOnComplex<T>);
   }
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
-  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, ApproximationContext approximationContext) {
+  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::Reduce<T>(
         eval1,
         eval2,
-        approximationContext,
+        complexFormat,
         computeOnComplex<T>,
         computeOnComplexAndMatrix<T>,
         computeOnMatrixAndComplex<T>,

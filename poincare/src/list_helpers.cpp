@@ -46,11 +46,11 @@ template<typename T> Evaluation<T> ListHelpers::SumOfListNode(ListNode * list, E
   return ApproximationHelper::MapReduce<T>(
       list,
       approximationContext,
-      [] (Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext) {
+      [] (Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat) {
       return ApproximationHelper::Reduce<T>(
           eval1,
           eval2,
-          approximationContext,
+          complexFormat,
           AdditionNode::computeOnComplex<T>,
           ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
           ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
@@ -64,11 +64,11 @@ template<typename T> Evaluation<T> ListHelpers::ProductOfListNode(ListNode * lis
   return ApproximationHelper::MapReduce<T>(
       list,
       approximationContext,
-      [] (Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext) {
+      [] (Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat) {
       return ApproximationHelper::Reduce<T>(
           eval1,
           eval2,
-          approximationContext,
+          complexFormat,
           MultiplicationNode::computeOnComplex<T>,
           ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
           ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
@@ -82,11 +82,11 @@ template<typename T> Evaluation<T> ListHelpers::SquareSumOfListNode(ListNode * l
   return ApproximationHelper::MapReduce<T>(
       list,
       approximationContext,
-      [] (Evaluation<T> eval1, Evaluation<T> eval2, ExpressionNode::ApproximationContext approximationContext) {
+      [] (Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat) {
       return ApproximationHelper::Reduce<T>(
           eval1,
           eval2,
-          approximationContext,
+          complexFormat,
           [] (const std::complex<T> c1, const std::complex<T> c2, Preferences::ComplexFormat complexFormat) {
             return AdditionNode::computeOnComplex(c1, MultiplicationNode::computeOnComplex<T>(c2, c2, complexFormat).stdComplex(), complexFormat);
           },
@@ -97,7 +97,6 @@ template<typename T> Evaluation<T> ListHelpers::SquareSumOfListNode(ListNode * l
       }
       );
  }
-
 
 template Evaluation<float>  ListHelpers::ExtremumApproximationOfListNode<float>(ListNode * list, ExpressionNode::ApproximationContext approximationContext, bool minimum);
 template Evaluation<double>  ListHelpers::ExtremumApproximationOfListNode<double>(ListNode * list, ExpressionNode::ApproximationContext approximationContext, bool minimum);

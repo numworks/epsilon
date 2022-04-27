@@ -24,14 +24,14 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Evaluation
-  Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, ApproximationContext approximationContext) const override {
-    return templatedEvaluateWithNewTerm<double>(a, b, approximationContext);
+  Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const override {
+    return templatedEvaluateWithNewTerm<double>(a, b, complexFormat);
   }
-  Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b, ApproximationContext approximationContext) const override {
-    return templatedEvaluateWithNewTerm<float>(a, b, approximationContext);
+  Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat) const override {
+    return templatedEvaluateWithNewTerm<float>(a, b, complexFormat);
   }
-  template<typename T> Evaluation<T> templatedEvaluateWithNewTerm(Evaluation<T> a, Evaluation<T> b, ApproximationContext approximationContext) const {
-    return MultiplicationNode::Compute<T>(a, b, approximationContext);
+  template<typename T> Evaluation<T> templatedEvaluateWithNewTerm(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) const {
+    return MultiplicationNode::Compute<T>(a, b, complexFormat);
   }
 };
 

@@ -68,7 +68,7 @@ void DoublePairStore::deleteAllPairsOfSeries(int series) {
     }
   }
   m_numberOfPairs[series] = 0;
-  m_validSeries[series] = false;
+  memoizeValidSeries(series);
 }
 
 void DoublePairStore::deleteAllPairs() {

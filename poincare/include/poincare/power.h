@@ -38,11 +38,11 @@ public:
 
   template<typename T> static Complex<T> computeNotPrincipalRealRootOfRationalPow(const std::complex<T> c, T p, T q);
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
-  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, ApproximationContext approximationContext) {
+  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::Reduce<T>(
         eval1,
         eval2,
-        approximationContext,
+        complexFormat,
         computeOnComplex<T>,
         ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
         computeOnMatrixAndComplex<T>,

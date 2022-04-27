@@ -49,9 +49,9 @@ template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(Approxim
       AdditionNode::Compute<T>(
         child->childAtIndex(index1)->approximate(static_cast<T>(0.), approximationContext),
         child->childAtIndex(index2)->approximate(static_cast<T>(0.), approximationContext),
-        approximationContext),
+        approximationContext.complexFormat()),
       Complex<T>::Builder(0.5),
-      approximationContext);
+      approximationContext.complexFormat());
 }
 
 static void numberOfElementsLesserAndGreater(float x, const List list, int * lesser, int * greater, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {

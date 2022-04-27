@@ -29,11 +29,11 @@ public:
   // Approximation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c - d); }
 
-  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, ApproximationContext approximationContext) {
+  template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::Reduce<T>(
         eval1,
         eval2,
-        approximationContext,
+        complexFormat,
         computeOnComplex<T>,
         ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
         ApproximationHelper::UndefinedOnMatrixAndComplex<T>,

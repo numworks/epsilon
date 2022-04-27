@@ -34,7 +34,7 @@ template<typename T> Evaluation<T> ListSampleStandardDeviationNode::templatedApp
 
   Evaluation<T> variance = ListVarianceNode::VarianceOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
   int n = child->numberOfChildren();
-  Evaluation<T> unbiased = MultiplicationNode::Compute<T>(variance, Complex<T>::Builder(n / (n - static_cast<T>(1))), approximationContext);
+  Evaluation<T> unbiased = MultiplicationNode::Compute<T>(variance, Complex<T>::Builder(n / (n - static_cast<T>(1))), approximationContext.complexFormat());
   if (unbiased.type() != EvaluationNode<T>::Type::Complex) {
     return Complex<T>::Undefined();
   }

@@ -4,7 +4,7 @@
 
 namespace Shared {
 
-CurveViewCursor::CurveViewCursor() : m_t(NAN), m_x(NAN), m_y(NAN) {}
+CurveViewCursor::CurveViewCursor(double maxValue) : m_t(NAN), m_x(NAN), m_y(NAN), m_maxValue(maxValue) {}
 
 void CurveViewCursor::moveTo(double t, double x, double y) {
   assert(!std::isnan(t));
@@ -14,11 +14,11 @@ void CurveViewCursor::moveTo(double t, double x, double y) {
 }
 
 double CurveViewCursor::clipped(double x, bool canBeInfinite) {
-  double maxValue = canBeInfinite ? INFINITY : k_maxFloat;
-  if (x > k_maxFloat) {
+  double maxValue = canBeInfinite ? INFINITY : m_maxValue;
+  if (x > m_maxValue) {
     return maxValue;
   }
-  if (x < -k_maxFloat) {
+  if (x < -m_maxValue) {
     return -maxValue;
   }
   return x;

@@ -3,13 +3,13 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/curve_view.h>
+#include <apps/shared/curve_view_cursor.h>
 #include <escher/button_row_controller.h>
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 #include "../store.h"
 #include "data_view_controller.h"
-#include "plot_cursor.h"
 #include "plot_curve_view.h"
 #include "plot_banner_view.h"
 #include "plot_range.h"
@@ -56,7 +56,7 @@ protected:
   bool moveSelectionVertically(int deltaIndex) override;
   bool reloadBannerView() override;
 
-  PlotCursor m_cursor;
+  Shared::CurveViewCursor m_cursor;
   PlotRange m_graphRange;
   PlotBannerView m_bannerView;
   Shared::CursorView m_cursorView;

@@ -5,18 +5,20 @@ namespace Shared {
 
 class CurveViewCursor {
 public:
-  CurveViewCursor();
+  CurveViewCursor(double maxValue = k_defaultMaxValue);
   double t() const { return m_t; }
   double x() const { return m_x; }
   double y() const { return m_y; }
-  virtual void moveTo(double t, double x, double y);
-protected:
+  void moveTo(double t, double x, double y);
+
+private:
+  constexpr static double k_defaultMaxValue = 1E+8;
+  double clipped(double f, bool canBeInfinite);
+
   double m_t;
   double m_x;
   double m_y;
-private:
-  static double clipped(double f, bool canBeInfinite);
-  constexpr static double k_maxFloat = 1E+8;
+  const double m_maxValue;
 };
 
 }

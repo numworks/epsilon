@@ -27,7 +27,7 @@ public:
   int numberOfRows() const override { return k_numberOfRows; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
-  constexpr static int k_numberOfRows = Model::k_numberOfModels;
+  constexpr static int k_numberOfRows = Model::k_numberOfModels + 1;
   constexpr static int k_numberOfCells = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight - 2*Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
   Escher::MessageTableCellWithExpression m_regressionCells[k_numberOfCells];
   Store * m_store;

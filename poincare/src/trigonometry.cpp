@@ -135,10 +135,16 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
 Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isDirectTrigonometryFunction(e));
 
-  // Step 0. Map on matrix child if possible
+  // Step 0. Map on list child if possible
   {
-    if (e.childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-      return e.mapOnMatrixFirstChild(reductionContext);
+    Expression temp = SimplificationHelper::undefinedOnMatrix(e, reductionContext);
+    if (!temp.isUninitialized()) {
+      return temp;
+    }
+
+    temp = SimplificationHelper::distributeReductionOverLists(e, reductionContext);
+    if (!temp.isUninitialized()) {
+      return temp;
     }
   }
 
@@ -305,10 +311,16 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
 
 Expression Trigonometry::shallowReduceInverseFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isInverseTrigonometryFunction(e));
-  // Step 0. Map on matrix child if possible
+  // Step 0. Map on list child if possible
   {
-    if (e.childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-      return e.mapOnMatrixFirstChild(reductionContext);
+    Expression temp = SimplificationHelper::undefinedOnMatrix(e, reductionContext);
+    if (!temp.isUninitialized()) {
+      return temp;
+    }
+
+    temp = SimplificationHelper::distributeReductionOverLists(e, reductionContext);
+    if (!temp.isUninitialized()) {
+      return temp;
     }
   }
 

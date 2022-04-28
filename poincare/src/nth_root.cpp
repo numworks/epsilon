@@ -1,4 +1,5 @@
 #include <poincare/nth_root.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/addition.h>
 #include <poincare/constant.h>
 #include <poincare/division.h>
@@ -36,29 +37,26 @@ Expression NthRootNode::shallowReduce(ReductionContext reductionContext) {
 
 template<typename T>
 Evaluation<T> NthRootNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> base = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> index = childAtIndex(1)->approximate(T(), approximationContext);
-  Complex<T> result = Complex<T>::Undefined();
-  if (base.type() == EvaluationNode<T>::Type::Complex
-      && index.type() == EvaluationNode<T>::Type::Complex)
-  {
-    std::complex<T> basec = static_cast<Complex<T> &>(base).stdComplex();
-    std::complex<T> indexc = static_cast<Complex<T> &>(index).stdComplex();
-    /* If the complexFormat is Real, we look for nthroot of form root(x,q) with
-     * x real and q integer because they might have a real form which does not
-     * correspond to the principale angle. */
-    if (approximationContext.complexFormat() == Preferences::ComplexFormat::Real && indexc.imag() == 0.0 && std::round(indexc.real()) == indexc.real()) {
-      // root(x, q) with q integer and x real
-      Complex<T> result = PowerNode::computeNotPrincipalRealRootOfRationalPow(basec, static_cast<T>(1.0), indexc.real());
-       if (!result.isUndefined()) {
-         return std::move(result);
-       }
-    }
-    result = PowerNode::computeOnComplex<T>(basec, std::complex<T>(1.0)/(indexc), approximationContext.complexFormat());
-  }
-  return std::move(result);
+  return ApproximationHelper::Map<T>(
+      this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 2);
+        std::complex<T> basec = c[0];
+        std::complex<T> indexc = c[1];
+        /* If the complexFormat is Real, we look for nthroot of form root(x,q) with
+         * x real and q integer because they might have a real form which does not
+         * correspond to the principale angle. */
+        if (complexFormat == Preferences::ComplexFormat::Real && indexc.imag() == 0.0 && std::round(indexc.real()) == indexc.real()) {
+          // root(x, q) with q integer and x real
+          Complex<T> result = PowerNode::computeNotPrincipalRealRootOfRationalPow(basec, static_cast<T>(1.0), indexc.real());
+          if (!result.isUndefined()) {
+            return std::move(result);
+          }
+        }
+        return PowerNode::computeOnComplex<T>(basec, std::complex<T>(1.0)/(indexc), complexFormat);
+      });
 }
-
 
 Expression NthRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
@@ -66,9 +64,14 @@ Expression NthRoot::shallowReduce(ExpressionNode::ReductionContext reductionCont
     if (!e.isUninitialized()) {
       return e;
     }
-  }
-  if (childAtIndex(0).deepIsMatrix(reductionContext.context()) || childAtIndex(1).deepIsMatrix(reductionContext.context())) {
-    return replaceWithUndefinedInPlace();
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   Expression invIndex = Power::Builder(childAtIndex(1), Rational::Builder(-1));
   Power p = Power::Builder(childAtIndex(0), invIndex);

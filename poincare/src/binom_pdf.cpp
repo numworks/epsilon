@@ -20,16 +20,16 @@ int BinomPDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 template<typename T>
 Evaluation<T> BinomPDFNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> xEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> nEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
-  Evaluation<T> pEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
-
-  T x = xEvaluation.toScalar();
-  T n = nEvaluation.toScalar();
-  T p = pEvaluation.toScalar();
-
-  // EvaluateAtAbscissa handles bad n and p values
-  return Complex<T>::Builder(BinomialDistribution::EvaluateAtAbscissa(x, n, p));
+  return ApproximationHelper::Map<T>(this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 3);
+        const T x = c[0].real();
+        const T n = c[1].real();
+        const T p = c[2].real();
+        // EvaluateAtAbscissa handles bad n and p values
+        return Complex<T>::Builder(BinomialDistribution::EvaluateAtAbscissa(x, n, p));
+      });
 }
 
 }

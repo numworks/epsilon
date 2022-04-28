@@ -1,4 +1,5 @@
 #include <poincare/binom_cdf.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/layout_helper.h>
 #include <poincare/binomial_distribution.h>
 #include <poincare/serialization_helper.h>
@@ -20,16 +21,16 @@ int BinomCDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 template<typename T>
 Evaluation<T> BinomCDFNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> xEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> nEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
-  Evaluation<T> pEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
-
-  const T x = xEvaluation.toScalar();
-  const T n = nEvaluation.toScalar();
-  const T p = pEvaluation.toScalar();
-
-  // CumulativeDistributiveFunctionAtAbscissa handles bad mu and var values
-  return Complex<T>::Builder(BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(x, n, p));
+  return ApproximationHelper::Map<T>(this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 3);
+        const T x = c[0].real();
+        const T n = c[1].real();
+        const T p = c[2].real();
+        // CumulativeDistributiveFunctionAtAbscissa handles bad mu and var values
+        return Complex<T>::Builder(BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(x, n, p));
+      });
 }
 
 }

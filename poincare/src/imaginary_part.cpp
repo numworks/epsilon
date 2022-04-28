@@ -30,11 +30,16 @@ Expression ImaginaryPart::shallowReduce(ExpressionNode::ReductionContext reducti
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
   if (c.isReal(reductionContext.context())) {
     Expression result = Rational::Builder(0);
     replaceWithInPlace(result);

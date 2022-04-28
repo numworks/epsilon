@@ -9,6 +9,22 @@
 
 namespace Poincare {
 
+int ListHelpers::LengthOfListChildren(const Expression e) {
+  int lastLength = k_noList;
+  int n = e.numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    if (e.childAtIndex(i).type() == ExpressionNode::Type::List) {
+      int length = e.childAtIndex(i).numberOfChildren();
+      if (lastLength == k_noList) {
+        lastLength = length;
+      } else if (lastLength != length) {
+        return k_mismatchedLists;
+      }
+    }
+  }
+  return lastLength;
+}
+
 template <typename T> Evaluation<T> ListHelpers::ExtremumApproximationOfListNode(ListNode * listNode, ExpressionNode::ApproximationContext approximationContext, bool minimum) {
     if (listNode->numberOfChildren() == 0) {
       return Complex<T>::Undefined();

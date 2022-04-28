@@ -665,7 +665,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
 
   /* Step 3
    * Distribute the multiplication over lists */
-  Expression distributed = distributeOverLists(reductionContext);
+  Expression distributed = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
   if (!distributed.isUninitialized()) {
     return distributed;
   }

@@ -334,7 +334,6 @@ public:
   /*!*/ virtual Expression shallowBeautify(ReductionContext * reductionContext);
   /*!*/ virtual bool derivate(ReductionContext, Symbol symbol, Expression symbolValue);
   virtual Expression unaryFunctionDifferential(ReductionContext reductionContext);
-  /*!*/ virtual Expression distributeOverLists(ReductionContext reductionContext, int listLength);
   /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
   /* LayoutShape is used to check if the multiplication sign can be omitted between two expressions.

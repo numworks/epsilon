@@ -1,7 +1,7 @@
 #include <poincare/simplification_helper.h>
-
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
+#include <poincare/list_helpers.h>
 #include <poincare/parenthesis.h>
 #include <poincare/undefined.h>
 #include <poincare/nonreal.h>
@@ -106,5 +106,52 @@ Expression SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChil
   }
   return res;
 }
+
+Expression SimplificationHelper::undefinedOnMatrix(Expression e, ExpressionNode::ReductionContext reductionContext) {
+  if (e.deepIsMatrix(reductionContext.context())) {
+    return Undefined::Builder();
+  }
+  return Expression();
+}
+
+Expression SimplificationHelper::distributeReductionOverLists(Expression e, ExpressionNode::ReductionContext reductionContext) {
+  int listLength = ListHelpers::LengthOfListChildren(e);
+  if (listLength == ListHelpers::k_noList) {
+    /* No list in children, shallow reduce as usual. */
+    return Expression();
+  } else if (listLength == ListHelpers::k_mismatchedLists) {
+    /* Operators only apply to lists of the same length. */
+    return e.replaceWithUndefinedInPlace();
+  }
+  /* We want to transform f({a,b},c) into {f(a,c),f(b,c)} */
+  int n = e.numberOfChildren();
+  List children = List::Builder();
+  for (int i = 0; i < n; i++) {
+    children.addChildAtIndexInPlace(e.childAtIndex(i), i, i);
+  }
+  assert(children.numberOfChildren() == n);
+  /* We moved all of our children into another expression. Now, by cloning
+   * 'this', we get an empty expression with the right type, to be inserted
+   * into the result list. */
+  List result = List::Builder();
+  for (int listIndex = 0; listIndex < listLength; listIndex++) {
+    Expression element = e.clone();
+    for (int childIndex = 0; childIndex < n; childIndex++) {
+      Expression child = children.childAtIndex(childIndex);
+      if (child.type() == ExpressionNode::Type::List) {
+        assert(child.numberOfChildren() == listLength);
+        element.replaceChildAtIndexInPlace(childIndex, child.childAtIndex(listIndex));
+      } else {
+        element.replaceChildAtIndexInPlace(childIndex, child.clone());
+      }
+    }
+    result.addChildAtIndexInPlace(element, listIndex, listIndex);
+    element.shallowReduce(reductionContext);
+  }
+  e.replaceWithInPlace(result);
+  return std::move(result);
+}
+
+
 
 }

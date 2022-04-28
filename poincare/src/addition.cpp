@@ -226,7 +226,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
 
   /* Step 2
    * Distribute the addition over lists */
-  Expression distributed = distributeOverLists(reductionContext);
+  Expression distributed = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
   if (!distributed.isUninitialized()) {
     return distributed;
   }

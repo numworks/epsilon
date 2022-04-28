@@ -86,11 +86,16 @@ Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionCo
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
     if (!r.isInteger() || r.sign() == ExpressionNode::Sign::Negative) {

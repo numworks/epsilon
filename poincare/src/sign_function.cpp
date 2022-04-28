@@ -64,6 +64,14 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
     // Discard units if any
     Expression unit;
     childAtIndex(0).removeUnit(&unit);

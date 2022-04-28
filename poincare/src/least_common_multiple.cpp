@@ -25,6 +25,7 @@ Expression LeastCommonMultipleNode::shallowBeautify(ReductionContext * reduction
 
 template<typename T>
 Evaluation<T> LeastCommonMultipleNode::templatedApproximate(ApproximationContext approximationContext) const {
+  /* TODO : distribute approx over list with Map */
   return Arithmetic::LCM<T>(*this, approximationContext);
 }
 
@@ -39,6 +40,14 @@ Expression LeastCommonMultiple::shallowBeautify(Context * context) {
 Expression LeastCommonMultiple::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

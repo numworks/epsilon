@@ -256,9 +256,8 @@ QUIZ_CASE(poincare_approximation_division) {
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]/2", "[[0.5,1][1.5,2][2.5,3]]");
   assert_expression_approximates_to<double>("[[1,2+i][3,4][5,6]]/(1+i)", "[[0.5-0.5×i,1.5-0.5×i][1.5-1.5×i,2-2×i][2.5-2.5×i,3-3×i]]");
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]/2", "[[0.5,1][1.5,2][2.5,3]]");
-  assert_expression_approximates_to<double>("[[1,2][3,4]]/[[3,4][6,9]]", "[[-1,0.66666666666667][1,0]]");
-  assert_expression_approximates_to<double>("3/[[3,4][5,6]]", "[[-9,6][7.5,-4.5]]");
-  assert_expression_approximates_to<double>("(3+4i)/[[1,i][3,4]]", "[[4×i,1][-3×i,i]]");
+  assert_expression_approximates_to<double>("[[1,2][3,4]]/[[3,4][6,9]]", Undefined::Name());
+  assert_expression_approximates_to<double>("3/[[3,4][5,6]]", Undefined::Name());
   // assert_expression_approximates_to<double>("(3+4i)/[[3,4][1,i]]", "[[1,4×i][i,-3×i]]");
   /* TODO: this tests fails because of neglectable real or imaginary parts.
    * It currently approximates to

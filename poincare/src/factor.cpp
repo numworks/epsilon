@@ -33,7 +33,7 @@ int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 }
 
 Expression FactorNode::shallowReduce(ReductionContext reductionContext) {
-  return Factor(this).shallowReduce(reductionContext.context());
+  return Factor(this).shallowReduce(reductionContext);
 }
 
 Expression FactorNode::shallowBeautify(ReductionContext * reductionContext) {
@@ -43,6 +43,14 @@ Expression FactorNode::shallowBeautify(ReductionContext * reductionContext) {
 // Add tests :)
 template<typename T>
 Evaluation<T> FactorNode::templatedApproximate(ApproximationContext approximationContext) const {
+  return ApproximationHelper::MapOneChild<T>(this,
+      approximationContext,
+      [] (const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+        if (std::isnan(ComplexNode<T>::ToScalar(c))) {
+          return Complex<T>::Undefined();
+        }
+        return Complex<T>::Builder(c);
+      });
   Evaluation<T> e = childAtIndex(0)->approximate(T(), approximationContext);
   if (std::isnan(e.toScalar())) {
     return Complex<T>::Undefined();
@@ -79,15 +87,20 @@ Expression Factor::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionCont
   return defaultOddFunctionSetSign(s, reductionContext);
 }
 
-Expression Factor::shallowReduce(Context * context) {
+Expression Factor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
       return e;
     }
-  }
-  if (childAtIndex(0).deepIsMatrix(context)) {
-    return replaceWithUndefinedInPlace();
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   return *this;
 }

@@ -6,15 +6,23 @@
 namespace Poincare {
 
 Expression BinomialDistributionFunctionNode::shallowReduce(ReductionContext reductionContext) {
-  return BinomialDistributionFunction(this).shallowReduce(reductionContext.context());
+  return BinomialDistributionFunction(this).shallowReduce(reductionContext);
 }
 
-Expression BinomialDistributionFunction::shallowReduce(Context * context, bool * stopReduction) {
+Expression BinomialDistributionFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
   }
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -25,7 +33,7 @@ Expression BinomialDistributionFunction::shallowReduce(Context * context, bool *
 
   // Check mu and var
   bool nAndPOK = false;
-  bool couldCheckNAndP = BinomialDistribution::ExpressionParametersAreOK(&nAndPOK, n, p, context);
+  bool couldCheckNAndP = BinomialDistribution::ExpressionParametersAreOK(&nAndPOK, n, p, reductionContext.context());
   if (!couldCheckNAndP) {
     return *this;
   }

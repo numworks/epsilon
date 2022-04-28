@@ -1,5 +1,6 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/binomial_coefficient_layout.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -17,7 +18,7 @@ constexpr Expression::FunctionHelper BinomialCoefficient::s_functionHelper;
 int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::s_functionHelper.numberOfChildren(); }
 
 Expression BinomialCoefficientNode::shallowReduce(ReductionContext reductionContext) {
-  return BinomialCoefficient(this).shallowReduce(reductionContext.context());
+  return BinomialCoefficient(this).shallowReduce(reductionContext);
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -31,12 +32,15 @@ int BinomialCoefficientNode::serialize(char * buffer, int bufferSize, Preference
 }
 
 template<typename T>
-Complex<T> BinomialCoefficientNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> nInput = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> kInput = childAtIndex(1)->approximate(T(), approximationContext);
-  T n = nInput.toScalar();
-  T k = kInput.toScalar();
-  return Complex<T>::Builder(compute(k, n));
+Evaluation<T> BinomialCoefficientNode::templatedApproximate(ApproximationContext approximationContext) const {
+  return ApproximationHelper::Map<T>(this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 2);
+        T n = c[0].real();
+        T k = c[1].real();
+        return Complex<T>::Builder(compute(k, n));
+      });
 }
 
 template<typename T>
@@ -64,19 +68,23 @@ T BinomialCoefficientNode::compute(T k, T n) {
 }
 
 
-Expression BinomialCoefficient::shallowReduce(Context * context) {
+Expression BinomialCoefficient::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-
-  if (c0.deepIsMatrix(context) || c1.deepIsMatrix(context)) {
-    return replaceWithUndefinedInPlace();
-  }
 
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
     return *this;
@@ -111,7 +119,9 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
     // Generalized binomial coefficient (n < k)
     if (!n.isNegative()) {
       // When n is an integer and 0 <= n < k, binomial(n,k) is 0.
-      return Rational::Builder(0);
+      Expression res = Rational::Builder(0);
+      replaceWithInPlace(res);
+      return res;
     }
     if (Integer(k_maxNValue).isLowerThan(Integer::Subtraction(k, n))) {
       return *this;

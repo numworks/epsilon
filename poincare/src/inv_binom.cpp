@@ -42,7 +42,7 @@ Evaluation<T> InvBinomNode::templatedApproximate(ApproximationContext approximat
 Expression InvBinom::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     bool stopReduction = false;
-    Expression e = BinomialDistributionFunction::shallowReduce(reductionContext.context(), &stopReduction);
+    Expression e = BinomialDistributionFunction::shallowReduce(reductionContext, &stopReduction);
     if (stopReduction) {
       return e;
     }

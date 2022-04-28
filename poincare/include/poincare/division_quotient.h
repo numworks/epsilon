@@ -50,7 +50,7 @@ public:
 
   // Expression
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
-  Expression shallowReduce(Context * context);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   static Expression Reduce(const Integer & a, const Integer & b);
 };
 

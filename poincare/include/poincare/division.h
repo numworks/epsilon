@@ -39,9 +39,9 @@ public:
         eval2,
         complexFormat,
         computeOnComplex<T>,
-        computeOnComplexAndMatrix<T>,
+        ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
         computeOnMatrixAndComplex<T>,
-        computeOnMatrices<T>
+        ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
         );
   }
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
@@ -69,8 +69,6 @@ private:
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, computeOnComplex<T>);
   }
-  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
-  template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
 };
 
 class Division final : public Expression {

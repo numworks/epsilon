@@ -81,23 +81,7 @@ template<typename T> Complex<T> DivisionNode::computeOnComplex(const std::comple
   return Complex<T>::Builder(c/d);
 }
 
-template<typename T> MatrixComplex<T> DivisionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
-  MatrixComplex<T> inverse = n.inverse();
-  MatrixComplex<T> result = MultiplicationNode::computeOnComplexAndMatrix<T>(c, inverse, complexFormat);
-  return result;
-}
-
-template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
-  if (m.numberOfColumns() != n.numberOfColumns()) {
-    return MatrixComplex<T>::Undefined();
-  }
-  MatrixComplex<T> inverse = n.inverse();
-  MatrixComplex<T> result = MultiplicationNode::computeOnMatrices<T>(m, inverse, complexFormat);
-  return result;
-}
-
 // Division
-
 Expression Division::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);

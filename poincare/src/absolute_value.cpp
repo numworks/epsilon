@@ -40,15 +40,18 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
 
   Expression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
-  if (c.deepIsMatrix(reductionContext.context())) {
-    return *this;
-  }
+
   // |x| = ±x if x is real
   if (c.isReal(reductionContext.context())) {
     double app = c.node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();

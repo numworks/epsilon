@@ -116,11 +116,16 @@ Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionC
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
-  if (c.deepIsMatrix(reductionContext.context())) {
-    return replaceWithUndefinedInPlace();
-  }
   Power p = Power::Builder(c, Rational::Builder(1, 2));
   replaceWithInPlace(p);
   return p.shallowReduce(reductionContext);

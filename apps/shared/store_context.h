@@ -20,7 +20,9 @@ public:
   const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override;
   Poincare::Context::SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
 
-protected:
+private:
+  constexpr static int k_lengthOfStoreSymbols = 2;
+
   virtual bool isSymbol(const char * name) const = 0;
   virtual int getSymbolColumn(const char * name) const = 0;
 

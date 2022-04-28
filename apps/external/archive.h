@@ -14,7 +14,6 @@ struct File {
     const uint8_t *data;
     size_t dataLength;
     bool isExecutable;
-    bool readable;
 };
 
 bool fileAtIndex(size_t index, File &entry);

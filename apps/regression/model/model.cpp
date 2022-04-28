@@ -5,7 +5,7 @@
 #include <poincare/float.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
-#include <math.h>
+#include <cmath>
 
 using namespace Poincare;
 using namespace Shared;

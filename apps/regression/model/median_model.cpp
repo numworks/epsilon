@@ -1,6 +1,6 @@
 #include "median_model.h"
 #include "../store.h"
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 
 using namespace Poincare;

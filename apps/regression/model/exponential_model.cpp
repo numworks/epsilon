@@ -1,7 +1,7 @@
 #include "exponential_model.h"
 #include "../store.h"
 #include "../linear_model_helper.h"
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -37,14 +37,14 @@ Layout ExponentialModel::layout() {
 }
 
 double ExponentialModel::aebxFormatBValue(double * modelCoefficients) const {
-  return m_isAbxForm ? log(modelCoefficients[1]) : modelCoefficients[1];
+  return m_isAbxForm ? std::log(modelCoefficients[1]) : modelCoefficients[1];
 }
 
 double ExponentialModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = aebxFormatBValue(modelCoefficients);
   // a*e^(bx)
-  return a*exp(b*x);
+  return a*std::exp(b*x);
 }
 
 double ExponentialModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
@@ -53,7 +53,7 @@ double ExponentialModel::levelSet(double * modelCoefficients, double xMin, doubl
   if (a == 0 || b == 0 || y/a <= 0) {
     return NAN;
   }
-  return log(y/a)/b;
+  return std::log(y/a)/b;
 }
 
 void ExponentialModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
@@ -82,7 +82,7 @@ void ExponentialModel::specializedInitCoefficientsForFit(double * modelCoefficie
     if (z <= 0) {
       return Model::specializedInitCoefficientsForFit(modelCoefficients, defaultValue, store, series);
     }
-    const double y = log(z);
+    const double y = std::log(z);
     sumOfX += x;
     sumOfY += y;
     sumOfXX += x*x;
@@ -95,21 +95,21 @@ void ExponentialModel::specializedInitCoefficientsForFit(double * modelCoefficie
   const double variance = meanOfXX - meanOfX * meanOfX;
   const double covariance = meanOfXY - meanOfX * meanOfY;
   const double b = LinearModelHelper::Slope(covariance, variance);
-  modelCoefficients[1] = m_isAbxForm ? exp(b) : b;
+  modelCoefficients[1] = m_isAbxForm ? std::exp(b) : b;
   modelCoefficients[0] =
-    sign * exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, b));
+    sign * std::exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, b));
 }
 
 double ExponentialModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   const double b = aebxFormatBValue(modelCoefficients);
   if (derivateCoefficientIndex == 0) {
     // Derivate with respect to a: exp(b*x)
-    return exp(b*x);
+    return std::exp(b*x);
   }
   assert(derivateCoefficientIndex == 1);
   // Derivate with respect to b: a*x*exp(b*x)
   double a = modelCoefficients[0];
-  return a*x*exp(b*x);
+  return a*x*std::exp(b*x);
 }
 
 }

@@ -1,6 +1,6 @@
 #include "cubic_model.h"
 #include "../../shared/poincare_helpers.h"
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>

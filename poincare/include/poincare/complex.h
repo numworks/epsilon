@@ -11,6 +11,7 @@ class Complex;
 template<typename T>
 class ComplexNode final : public EvaluationNode<T>, public std::complex<T> {
 public:
+  static T ToScalar(const std::complex<T> c);
   ComplexNode(std::complex<T> c);
 
   // TreeNode

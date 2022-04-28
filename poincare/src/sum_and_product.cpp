@@ -21,11 +21,12 @@ Layout SumAndProductNode::createLayout(Preferences::PrintFloatMode floatDisplayM
 }
 
 Expression SumAndProductNode::shallowReduce(ReductionContext reductionContext) {
-  return SumAndProduct(this).shallowReduce(reductionContext.context());
+  return SumAndProduct(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
 Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext approximationContext) const {
+  // TODO : Reduction distributes on list but not approx
   if (type() == ExpressionNode::Type::Sum && Poincare::Preferences::sharedPreferences()->sumIsForbidden()) {
     return Complex<T>::Undefined();
   }
@@ -46,18 +47,22 @@ Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext appro
   return result;
 }
 
-Expression SumAndProduct::shallowReduce(Context * context) {
+Expression SumAndProduct::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   if (type() == ExpressionNode::Type::Sum && Poincare::Preferences::sharedPreferences()->sumIsForbidden()) {
-    return replaceWithUndefinedInPlace();
-  }
-  assert(!childAtIndex(1).deepIsMatrix(context));
-  if (childAtIndex(2).deepIsMatrix(context) || childAtIndex(3).deepIsMatrix(context)) {
     return replaceWithUndefinedInPlace();
   }
   return *this;

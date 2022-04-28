@@ -78,7 +78,7 @@ private:
     &Logarithm::s_functionHelper,
     &VectorNorm::s_functionHelper,
     &NormCDF::s_functionHelper,
-    &NormCDF2::s_functionHelper,
+    &NormCDFRange::s_functionHelper,
     &NormPDF::s_functionHelper,
     &PermuteCoefficient::s_functionHelper,
     &Product::s_functionHelper,

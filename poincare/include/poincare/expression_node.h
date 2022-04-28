@@ -99,7 +99,7 @@ public:
     MatrixTrace,
     NaperianLogarithm,
     NormCDF,
-    NormCDF2,
+    NormCDFRange,
     NormPDF,
     NthRoot,
     Opposite,

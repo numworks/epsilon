@@ -356,7 +356,7 @@ template MatrixReducedRowEchelonForm TreeHandle::FixedArityBuilder<MatrixReduced
 template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
 template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(const Tuple &);
 template NormCDF TreeHandle::FixedArityBuilder<NormCDF, NormCDFNode>(const Tuple &);
-template NormCDF2 TreeHandle::FixedArityBuilder<NormCDF2, NormCDF2Node>(const Tuple &);
+template NormCDFRange TreeHandle::FixedArityBuilder<NormCDFRange, NormCDFRangeNode>(const Tuple &);
 template NormPDF TreeHandle::FixedArityBuilder<NormPDF, NormPDFNode>(const Tuple &);
 template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(const Tuple &);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tuple &);

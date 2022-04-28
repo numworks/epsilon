@@ -128,7 +128,7 @@ poincare_src += $(addprefix poincare/src/,\
   n_ary_infix_expression.cpp \
   naperian_logarithm.cpp \
   norm_cdf.cpp \
-  norm_cdf2.cpp \
+  norm_cdf_range.cpp \
   norm_pdf.cpp \
   normal_distribution_function.cpp \
   nth_root.cpp \

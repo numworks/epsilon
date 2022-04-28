@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-// NormalDistributionFunctions are NormCDF, NormCDF2, InvNorm and NormPDF
+// NormalDistributionFunctions are NormCDF, NormCDFRange, InvNorm and NormPDF
 
 class NormalDistributionFunctionNode : public ExpressionNode {
 public:

@@ -1,25 +1,25 @@
-#ifndef POINCARE_NORM_CDF2_H
-#define POINCARE_NORM_CDF2_H
+#ifndef POINCARE_NORM_CDF_RANGE_H
+#define POINCARE_NORM_CDF_RANGE_H
 
 #include <poincare/approximation_helper.h>
 #include <poincare/normal_distribution_function.h>
 
 namespace Poincare {
 
-class NormCDF2Node final : public NormalDistributionFunctionNode  {
+class NormCDFRangeNode final : public NormalDistributionFunctionNode  {
 public:
 
   // TreeNode
-  size_t size() const override { return sizeof(NormCDF2Node); }
+  size_t size() const override { return sizeof(NormCDFRangeNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << "NormCDF2";
+    stream << "NormCDFRange";
   }
 #endif
 
   // Properties
-  Type type() const override { return Type::NormCDF2; }
+  Type type() const override { return Type::NormCDFRange; }
   Sign sign(Context * context) const override { return Sign::Positive; }
   int muIndex() const override { return 2; }
   int varIndex() const override { return 3; }
@@ -35,11 +35,11 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class NormCDF2 final : public NormalDistributionFunction {
+class NormCDFRange final : public NormalDistributionFunction {
 public:
-  NormCDF2(const NormCDF2Node * n) : NormalDistributionFunction(n) {}
-  static NormCDF2 Builder(Expression child0, Expression child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<NormCDF2, NormCDF2Node>({child0, child1, child2, child3}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("normcdf2", 4, &UntypedBuilderFourChildren<NormCDF2>);
+  NormCDFRange(const NormCDFRangeNode * n) : NormalDistributionFunction(n) {}
+  static NormCDFRange Builder(Expression child0, Expression child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<NormCDFRange, NormCDFRangeNode>({child0, child1, child2, child3}); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("normcdfrange", 4, &UntypedBuilderFourChildren<NormCDFRange>);
 };
 
 }

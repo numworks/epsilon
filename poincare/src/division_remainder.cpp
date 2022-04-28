@@ -1,4 +1,5 @@
 #include <poincare/division_remainder.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/division_quotient.h>
 #include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
@@ -23,34 +24,41 @@ int DivisionRemainderNode::serialize(char * buffer, int bufferSize, Preferences:
 }
 
 Expression DivisionRemainderNode::shallowReduce(ReductionContext reductionContext) {
-  return DivisionRemainder(this).shallowReduce(reductionContext.context());
+  return DivisionRemainder(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
 Evaluation<T> DivisionRemainderNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), approximationContext);
-  T f1 = f1Input.toScalar();
-  T f2 = f2Input.toScalar();
-  if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
-    return Complex<T>::RealUndefined();
-  }
-  return Complex<T>::Builder(std::round(f1 - f2 * DivisionQuotient::TemplatedQuotient(f1, f2)));
+   return ApproximationHelper::Map<T>(this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 2);
+        T f1 = ComplexNode<T>::ToScalar(c[0]);
+        T f2 = ComplexNode<T>::ToScalar(c[1]);
+        if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
+          return Complex<T>::RealUndefined();
+          }
+        return Complex<T>::Builder(std::round(f1 - f2 * DivisionQuotient::TemplatedQuotient(f1, f2)));
+      });
 }
 
-
-Expression DivisionRemainder::shallowReduce(Context * context) {
+Expression DivisionRemainder::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-  if (c0.deepIsMatrix(context) || c1.deepIsMatrix(context)) {
-    return replaceWithUndefinedInPlace();
-  }
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.isInteger()) {

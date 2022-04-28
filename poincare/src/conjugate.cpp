@@ -47,15 +47,16 @@ Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionCo
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
-  if (c.isReal(reductionContext.context())) {
-    replaceWithInPlace(c);
-    return c;
-  }
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
     Multiplication m = Multiplication::Builder(Rational::Builder(-1), complexChild.imag());

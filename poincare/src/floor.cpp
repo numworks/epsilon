@@ -41,11 +41,16 @@ Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContex
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = static_cast<Rational &>(c);
     IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());

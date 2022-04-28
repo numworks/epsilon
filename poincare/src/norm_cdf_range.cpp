@@ -20,23 +20,23 @@ int NormCDFRangeNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 
 template<typename T>
 Evaluation<T> NormCDFRangeNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> bEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
-  Evaluation<T> muEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
-  Evaluation<T> sigmaEvaluation = childAtIndex(3)->approximate(T(), approximationContext);
-
-  T a = aEvaluation.toScalar();
-  T b = bEvaluation.toScalar();
-  T mu = muEvaluation.toScalar();
-  T sigma = sigmaEvaluation.toScalar();
-
-  if (std::isnan(a) || std::isnan(b) || !NormalDistribution::MuAndSigmaAreOK(mu,sigma)) {
-    return Complex<T>::Undefined();
-  }
-  if (b <= a) {
-    return Complex<T>::Builder(static_cast<T>(0.0));
-  }
-  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(b, mu, sigma) - NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, sigma));
+  return ApproximationHelper::Map<T>(
+      this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 4);
+        T a = ComplexNode<T>::ToScalar(c[0]);
+        T b = ComplexNode<T>::ToScalar(c[1]);
+        T mu = ComplexNode<T>::ToScalar(c[2]);
+        T sigma = ComplexNode<T>::ToScalar(c[3]);
+        if (std::isnan(a) || std::isnan(b) || !NormalDistribution::MuAndSigmaAreOK(mu,sigma)) {
+          return Complex<T>::Undefined();
+          }
+        if (b <= a) {
+          return Complex<T>::Builder(static_cast<T>(0.0));
+        }
+        return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(b, mu, sigma) - NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, sigma));
+  });
 }
 
 }

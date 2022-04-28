@@ -20,16 +20,17 @@ int NormCDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 
 template<typename T>
 Evaluation<T> NormCDFNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> muEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
-  Evaluation<T> sigmaEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
-
-  const T a = aEvaluation.toScalar();
-  const T mu = muEvaluation.toScalar();
-  const T sigma = sigmaEvaluation.toScalar();
-
-  // CumulativeDistributiveFunctionAtAbscissa handles bad mu and var values
-  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, sigma));
+  return ApproximationHelper::Map<T>(
+      this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 3);
+        T a = ComplexNode<T>::ToScalar(c[0]);
+        T mu = ComplexNode<T>::ToScalar(c[1]);
+        T sigma = ComplexNode<T>::ToScalar(c[2]);
+        // CumulativeDistributiveInverseForProbability handles bad mu and var values
+        return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(a, mu, sigma));
+  });
 }
 
 }

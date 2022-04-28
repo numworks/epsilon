@@ -1014,10 +1014,23 @@ QUIZ_CASE(poincare_approximation_map_on_list) {
   assert_expression_approximates_to<float>("abs([[1,-2][3,-4]])", Undefined::Name());
   assert_expression_approximates_to<double>("abs([[1,-2][3,-4]])", Undefined::Name());
 
-  assert_expression_approximates_to<float>("abs({1,-2,3,-4})", "{1,2,3,4}");
-  assert_expression_approximates_to<double>("abs({1,-2,3,-4})", "{1,2,3,4}");
-  assert_expression_approximates_to<float>("abs({3+2i,3+4i,5+2i,3+2i})", "{3.605551,5,5.385165,3.605551}");
-  assert_expression_approximates_to<double>("abs({3+2i,3+4i,5+2i,3+2i})", "{3.605551275464,5,5.3851648071345,3.605551275464}");
+  // TODO : Implement more tests on lists, with every functions
+  assert_expression_approximates_to<float>("abs({1,-1,2,-3})", "{1,1,2,3}");
+  assert_expression_approximates_to<float>("ceil({0.3,180})", "{1,180}");
+  assert_expression_approximates_to<float>("cos({0,π})", "{1,-1}", Radian);
+  assert_expression_approximates_to<float>("{1,3}!", "{1,6}");
+  assert_expression_approximates_to<float>("{1,2,3,4}!", "{1,2,6,24}");
+  assert_expression_approximates_to<float>("floor({1/√(2),1/2,1,-1.3})", "{0,0,1,-2}");
+  assert_expression_approximates_to<float>("floor({0.3,180})", "{0,180}");
+  assert_expression_approximates_to<float>("frac({0.3,180})", "{0.3,0}");
+  assert_expression_approximates_to<float>("im({1/√(2),1/2,1,-1})", "{0,0,0,0}");
+  assert_expression_approximates_to<float>("im({1,1+i})", "{0,1}");
+  assert_expression_approximates_to<float>("re({1,i})", "{1,0}");
+  assert_expression_approximates_to<float>("round({2.12,3.42}, 1)", "{2.1,3.4}");
+  assert_expression_approximates_to<float>("round(1.23456, {2,3})", "{1.23,1.235}");
+  assert_expression_approximates_to<float>("sin({0,π})", "{0,0}", Radian);
+  assert_expression_approximates_to<float>("{2,3.4}-{0.1,3.1}", "{1.9,0.3}");
+  assert_expression_approximates_to<float>("tan({0,π/4})", "{0,1}", Radian);
 }
 
 QUIZ_CASE(poincare_approximation_store) {

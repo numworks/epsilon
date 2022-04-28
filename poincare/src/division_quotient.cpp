@@ -1,4 +1,5 @@
 #include <poincare/division_quotient.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
@@ -28,7 +29,7 @@ ExpressionNode::Sign DivisionQuotientNode::sign(Context * context) const {
 }
 
 Expression DivisionQuotientNode::shallowReduce(ReductionContext reductionContext) {
-  return DivisionQuotient(this).shallowReduce(reductionContext.context());
+  return DivisionQuotient(this).shallowReduce(reductionContext);
 }
 
 Layout DivisionQuotientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -40,15 +41,19 @@ int DivisionQuotientNode::serialize(char * buffer, int bufferSize, Preferences::
 
 template<typename T>
 Evaluation<T> DivisionQuotientNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), approximationContext);
-  T f1 = f1Input.toScalar();
-  T f2 = f2Input.toScalar();
-  if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
-    return Complex<T>::RealUndefined();
+  return ApproximationHelper::Map<T>(
+      this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 2);
+        T f1 = ComplexNode<T>::ToScalar(c[0]);
+        T f2 = ComplexNode<T>::ToScalar(c[1]);
+        if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
+          return Complex<T>::RealUndefined();
+        }
+        return Complex<T>::Builder(DivisionQuotient::TemplatedQuotient(f1, f2));
+      });
   }
-  return Complex<T>::Builder(DivisionQuotient::TemplatedQuotient(f1, f2));
-}
 
 Expression DivisionQuotient::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
@@ -62,18 +67,23 @@ Expression DivisionQuotient::setSign(ExpressionNode::Sign s, ExpressionNode::Red
   return *this;
 }
 
-Expression DivisionQuotient::shallowReduce(Context * context) {
+Expression DivisionQuotient::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-  if (c0.deepIsMatrix(context) || c1.deepIsMatrix(context)) {
-    return replaceWithUndefinedInPlace();
-  }
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.isInteger()) {

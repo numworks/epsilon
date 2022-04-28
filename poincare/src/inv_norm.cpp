@@ -57,7 +57,7 @@ Expression InvNorm::shallowReduce(ExpressionNode::ReductionContext reductionCont
   }
   {
     bool stopReduction = false;
-    Expression e = NormalDistributionFunction::shallowReduce(reductionContext.context(), &stopReduction);
+    Expression e = NormalDistributionFunction::shallowReduce(reductionContext, &stopReduction);
     if (stopReduction) {
       return e;
     }

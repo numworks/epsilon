@@ -7,15 +7,23 @@
 namespace Poincare {
 
 Expression NormalDistributionFunctionNode::shallowReduce(ReductionContext reductionContext) {
-  return NormalDistributionFunction(this).shallowReduce(reductionContext.context());
+  return NormalDistributionFunction(this).shallowReduce(reductionContext);
 }
 
-Expression NormalDistributionFunction::shallowReduce(Context * context, bool * stopReduction) {
+Expression NormalDistributionFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
   }
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -27,7 +35,7 @@ Expression NormalDistributionFunction::shallowReduce(Context * context, bool * s
       &muAndVarOK,
       childAtIndex(muIndex()),
       childAtIndex(varIndex()),
-      context);
+      reductionContext.context());
   if (!couldCheckMuAndVar) {
     return *this;
   }

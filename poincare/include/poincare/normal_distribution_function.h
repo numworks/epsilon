@@ -21,7 +21,7 @@ private:
 class NormalDistributionFunction : public Expression {
 public:
   NormalDistributionFunction(const NormalDistributionFunctionNode * n) : Expression(n) {}
-  Expression shallowReduce(Context * context, bool * stopReduction = nullptr);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction = nullptr);
 private:
   int muIndex() const { return node()->muIndex(); }
   int varIndex() const { return node()->varIndex(); }

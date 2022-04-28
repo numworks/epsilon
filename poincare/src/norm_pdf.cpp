@@ -20,16 +20,17 @@ int NormPDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 
 template<typename T>
 Evaluation<T> NormPDFNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> xEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> muEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
-  Evaluation<T> sigmaEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
-
-  T x = xEvaluation.toScalar();
-  T mu = muEvaluation.toScalar();
-  T sigma = sigmaEvaluation.toScalar();
-
-  // EvaluateAtAbscissa handles bad mu and var values
-  return Complex<T>::Builder(NormalDistribution::EvaluateAtAbscissa(x, mu, sigma));
+  return ApproximationHelper::Map<T>(
+      this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 3);
+        T x = ComplexNode<T>::ToScalar(c[0]);
+        T mu = ComplexNode<T>::ToScalar(c[1]);
+        T sigma = ComplexNode<T>::ToScalar(c[2]);
+        // CumulativeDistributiveInverseForProbability handles bad mu and var values
+        return Complex<T>::Builder(NormalDistribution::EvaluateAtAbscissa(x, mu, sigma));
+      });
 }
 
 }

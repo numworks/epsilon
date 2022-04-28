@@ -550,10 +550,10 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("normcdf(_s,2,3)", "undef");
   assert_parsed_expression_simplify_to("normcdf(2,_s,3)", "undef");
   assert_parsed_expression_simplify_to("normcdf(2,3,_s)", "undef");
-  assert_parsed_expression_simplify_to("normcdf2(_s,2,3,4)", "undef");
-  assert_parsed_expression_simplify_to("normcdf2(2,_s,3,4)", "undef");
-  assert_parsed_expression_simplify_to("normcdf2(2,3,_s,4)", "undef");
-  assert_parsed_expression_simplify_to("normcdf2(2,3,4,_s)", "undef");
+  assert_parsed_expression_simplify_to("normcdfrange(_s,2,3,4)", "undef");
+  assert_parsed_expression_simplify_to("normcdfrange(2,_s,3,4)", "undef");
+  assert_parsed_expression_simplify_to("normcdfrange(2,3,_s,4)", "undef");
+  assert_parsed_expression_simplify_to("normcdfrange(2,3,4,_s)", "undef");
   assert_parsed_expression_simplify_to("normpdf(_s,2,3)", "undef");
   assert_parsed_expression_simplify_to("normpdf(2,_s,3)", "undef");
   assert_parsed_expression_simplify_to("normpdf(2,3,_s)", "undef");
@@ -1832,7 +1832,7 @@ QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("invnorm(0.5,2,0)", Undefined::Name());
   assert_parsed_expression_simplify_to("invnorm(0.5,2,-1)", Undefined::Name());
   assert_parsed_expression_simplify_to("normcdf(2,0,1)", "normcdf(2,0,1)");
-  assert_parsed_expression_simplify_to("normcdf2(1,2,0,1)", "normcdf2(1,2,0,1)");
+  assert_parsed_expression_simplify_to("normcdfrange(1,2,0,1)", "normcdfrange(1,2,0,1)");
   assert_parsed_expression_simplify_to("normpdf(2,0,1)", "normpdf(2,0,1)");
 }
 

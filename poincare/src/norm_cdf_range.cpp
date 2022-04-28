@@ -1,4 +1,4 @@
-#include <poincare/norm_cdf2.h>
+#include <poincare/norm_cdf_range.h>
 #include <poincare/layout_helper.h>
 #include <poincare/normal_distribution.h>
 #include <poincare/serialization_helper.h>
@@ -6,20 +6,20 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper NormCDF2::s_functionHelper;
+constexpr Expression::FunctionHelper NormCDFRange::s_functionHelper;
 
-int NormCDF2Node::numberOfChildren() const { return NormCDF2::s_functionHelper.numberOfChildren(); }
+int NormCDFRangeNode::numberOfChildren() const { return NormCDFRange::s_functionHelper.numberOfChildren(); }
 
-Layout NormCDF2Node::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(NormCDF2(this), floatDisplayMode, numberOfSignificantDigits, NormCDF2::s_functionHelper.name());
+Layout NormCDFRangeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(NormCDFRange(this), floatDisplayMode, numberOfSignificantDigits, NormCDFRange::s_functionHelper.name());
 }
 
-int NormCDF2Node::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NormCDF2::s_functionHelper.name());
+int NormCDFRangeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NormCDFRange::s_functionHelper.name());
 }
 
 template<typename T>
-Evaluation<T> NormCDF2Node::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> NormCDFRangeNode::templatedApproximate(ApproximationContext approximationContext) const {
   Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> bEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
   Evaluation<T> muEvaluation = childAtIndex(2)->approximate(T(), approximationContext);

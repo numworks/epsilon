@@ -356,7 +356,7 @@ constexpr ToolboxMessageTree combinatoricsChildren[] = {
 
 constexpr ToolboxMessageTree normalDistributionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::NormCDFCommandWithArg, I18n::Message::NormCDF),
-  ToolboxMessageTree::Leaf(I18n::Message::NormCDF2CommandWithArg, I18n::Message::NormCDF2),
+  ToolboxMessageTree::Leaf(I18n::Message::NormCDFRangeCommandWithArg, I18n::Message::NormCDFRange),
   ToolboxMessageTree::Leaf(I18n::Message::InvNormCommandWithArg, I18n::Message::InvNorm),
   ToolboxMessageTree::Leaf(I18n::Message::NormPDFCommandWithArg, I18n::Message::NormPDF)
 };

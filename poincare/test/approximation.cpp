@@ -404,8 +404,8 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("normcdf(-6,0,1)", "0");
   assert_expression_approximates_to<float>("normcdf(6,0,1)", "1");
 
-  assert_expression_approximates_to<float>("normcdf2(0.5, 3.6, 1.3, 3.4)", "0.3436388");
-  assert_expression_approximates_to<double>("normcdf2(0.5, 3.6, 1.3, 3.4)", "0.34363881299147");
+  assert_expression_approximates_to<float>("normcdfrange(0.5, 3.6, 1.3, 3.4)", "0.3436388");
+  assert_expression_approximates_to<double>("normcdfrange(0.5, 3.6, 1.3, 3.4)", "0.34363881299147");
 
   assert_expression_approximates_to<float>("normpdf(1.2, 3.4, 5.6)", "0.06594901");
 

@@ -33,15 +33,19 @@ Expression RoundNode::shallowReduce(ReductionContext reductionContext) {
 
 template<typename T>
 Evaluation<T> RoundNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), approximationContext);
-  T f1 = f1Input.toScalar();
-  T f2 = f2Input.toScalar();
-  if (std::isnan(f2) || f2 != std::round(f2)) {
-    return Complex<T>::RealUndefined();
-  }
-  T err = std::pow(10, std::floor(f2));
-  return Complex<T>::Builder(std::round(f1*err)/err);
+  return ApproximationHelper::Map<T>(
+      this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 2);
+        T f1 = ComplexNode<T>::ToScalar(c[0]);
+        T f2 = ComplexNode<T>::ToScalar(c[1]);
+        if (std::isnan(f2) || f2 != std::round(f2)) {
+          return Complex<T>::RealUndefined();
+          }
+          T err = std::pow(10, std::floor(f2));
+          return Complex<T>::Builder(std::round(f1*err)/err);
+      });
 }
 
 Expression Round::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
@@ -58,12 +62,14 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
     if (!e.isUninitialized()) {
       return e;
     }
-  }
-  if (childAtIndex(1).deepIsMatrix(reductionContext.context())) {
-    return replaceWithUndefinedInPlace();
-  }
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   /* We reduce only round(Rational, Rational). We do not reduce
    * round(Float, Float) which is equivalent to what is done in approximate. */

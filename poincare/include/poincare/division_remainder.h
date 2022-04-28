@@ -47,7 +47,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("rem", 2, &UntypedBuilderTwoChildren<DivisionRemainder>);
 
   // Expression
-  Expression shallowReduce(Context * context);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   static Expression Reduce(const Integer & a, const Integer & b);
 };
 

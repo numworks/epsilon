@@ -36,26 +36,32 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Approximati
   if (inputIsUndefined) {
     *inputIsUndefined = aInput.isUndefined() || bInput.isUndefined();
   }
-  T a = aInput.toScalar();
-  T b = bInput.toScalar();
-  /* randint is undefined if:
-   * - one of the bounds is NAN or INF
-   * - the last bound is lesser than the first one
-   * - one of the input cannot be represented by an integer
-   *   (here we don't test a != std::round(a) because we want the inputs to
-   *   hold all digits so to be representable as an int)
-   * - the range between bounds is too large to be covered by all double between
-   *   0 and 1 - we can't map the integers of the range with all representable
-   *   double numbers from 0 to 1.
-   *  */
-  if (std::isnan(a) || std::isnan(b) || std::isinf(a) || std::isinf(b)
-      || a > b
-      || a != (int)a || b != (int)b
-      || (Float<T>::EpsilonLax()*(b+static_cast<T>(1.0)-a) > static_cast<T>(1.0))) {
-    return Complex<T>::RealUndefined();
-  }
-  T result = std::floor(Random::random<T>()*(b+static_cast<T>(1.0)-a)+a);
-  return Complex<T>::Builder(result);
+  return ApproximationHelper::Map<T>(
+      this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 2);
+        T a = ComplexNode<T>::ToScalar(c[0]);
+        T b = ComplexNode<T>::ToScalar(c[1]);
+        /* randint is undefined if:
+         * - one of the bounds is NAN or INF
+         * - the last bound is lesser than the first one
+         * - one of the input cannot be represented by an integer
+         *   (here we don't test a != std::round(a) because we want the inputs
+         *   to hold all digits so to be representable as an int)
+         * - the range between bounds is too large to be covered by all double
+         *   between 0 and 1 - we can't map the integers of the range with all
+         *   representable double numbers from 0 to 1.
+         *  */
+        if (std::isnan(a) || std::isnan(b) || std::isinf(a) || std::isinf(b)
+            || a > b
+            || a != (int)a || b != (int)b
+            || (Float<T>::EpsilonLax()*(b+static_cast<T>(1.0)-a) > static_cast<T>(1.0))) {
+          return Complex<T>::RealUndefined();
+        }
+        T result = std::floor(Random::random<T>()*(b+static_cast<T>(1.0)-a)+a);
+        return Complex<T>::Builder(result);
+      });
 }
 
 Expression RandintNode::shallowReduce(ReductionContext reductionContext) {
@@ -64,6 +70,14 @@ Expression RandintNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression e = SimplificationHelper::defaultShallowReduce(*this);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+  e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+  e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
   if (!e.isUninitialized()) {
     return e;
   }

@@ -42,12 +42,17 @@ Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionCont
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
 
   Expression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
     IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());

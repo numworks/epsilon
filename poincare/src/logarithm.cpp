@@ -148,11 +148,16 @@ Expression CommonLogarithm::shallowReduce(ExpressionNode::ReductionContext reduc
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
   Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
   replaceWithInPlace(log);
   return log.shallowReduce(reductionContext);
@@ -164,12 +169,16 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   Expression base = childAtIndex(1);
-  if (base.deepIsMatrix(reductionContext.context())) {
-    return replaceWithUndefinedInPlace();
-  }
-
   if (Poincare::Preferences::sharedPreferences()->basedLogarithmIsForbidden()) {
     if (!((base.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant&>(base).isConstant("e")) ||
           (base.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(base).isTen()))) {

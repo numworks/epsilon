@@ -3,6 +3,7 @@
 #include <poincare/evaluation.h>
 #include <poincare/float.h>
 #include <poincare/list_complex.h>
+#include <poincare/list_helpers.h>
 #include <poincare/matrix_complex.h>
 #include <cmath>
 #include <float.h>
@@ -79,34 +80,99 @@ template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginar
   return result;
 }
 
-template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexCompute<T> compute, bool mapOnMatrix, bool mapOnList) {
-  assert(expression->numberOfChildren() == 1);
-  Evaluation<T> input = expression->childAtIndex(0)->approximate(T(), approximationContext);
-  if (input.type() == EvaluationNode<T>::Type::Complex) {
-    return compute(static_cast<Complex<T> &>(input).stdComplex(), approximationContext.complexFormat(), approximationContext.angleUnit());
-  } else if (input.type() == EvaluationNode<T>::Type::ListComplex) {
-     if (!mapOnList) {
-      return Complex<T>::Undefined();
+template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexesCompute<T> compute, bool mapOnMatrix, bool mapOnList, void * context) {
+  if (mapOnMatrix) {
+    Evaluation<T> e = MapOnMatrixFirstChild<T>(expression, approximationContext, compute, context);
+    if (!e.isUndefined()) {
+      return std::move(e);
     }
-    ListComplex<T> list = static_cast<ListComplex<T> &>(input);
-    ListComplex<T> result = ListComplex<T>::Builder();
-    for (int i = 0; i < list.numberOfChildren(); i++) {
-      result.addChildAtIndexInPlace(compute(list.complexAtIndex(i), approximationContext.complexFormat(), approximationContext.angleUnit()), i, i);
-    }
-    return std::move(result);
-  } else {
-    assert(input.type() == EvaluationNode<T>::Type::MatrixComplex);
-    if (!mapOnMatrix) {
-      return Complex<T>::Undefined();
-    }
-    MatrixComplex<T> m = static_cast<MatrixComplex<T> &>(input);
-    MatrixComplex<T> result = MatrixComplex<T>::Builder();
-    for (int i = 0; i < m.numberOfChildren(); i++) {
-      result.addChildAtIndexInPlace(compute(m.complexAtIndex(i), approximationContext.complexFormat(), approximationContext.angleUnit()), i, i);
-    }
-    result.setDimensions(m.numberOfRows(), m.numberOfColumns());
-    return std::move(result);
   }
+
+  Evaluation<T> evaluationArray[k_maxNumberOfParametersForMap];
+  int numberOfParameters = expression->numberOfChildren();
+  if (numberOfParameters == 0) {
+    return Complex<T>::Undefined();
+  }
+  int listLength = ListHelpers::k_noList;
+  for (int i = 0; i < numberOfParameters; i++) {
+    evaluationArray[i] = expression->childAtIndex(i)->approximate(T(), approximationContext);
+    if (evaluationArray[i].type() == EvaluationNode<T>::Type::MatrixComplex) {
+      return Complex<T>::Undefined();
+    }
+    if (evaluationArray[i].type() == EvaluationNode<T>::Type::ListComplex) {
+      if (!mapOnList) {
+        return Complex<T>::Undefined();
+      }
+      int newLength = static_cast<ListComplex<T>&>(evaluationArray[i]).numberOfChildren();
+      if (listLength == ListHelpers::k_noList) {
+        listLength = newLength;
+      } else if (listLength != newLength) {
+        return Complex<T>::Undefined();
+      }
+    }
+  }
+
+  std::complex<T> complexesArray[k_maxNumberOfParametersForMap];
+  if (listLength == ListHelpers::k_noList) {
+    for (int i = 0; i < numberOfParameters; i++) {
+      assert(evaluationArray[i].type() == EvaluationNode<T>::Type::Complex);
+      complexesArray[i] = static_cast<Complex<T>&>(evaluationArray[i]).stdComplex();
+    }
+    return compute(complexesArray, numberOfParameters, approximationContext.complexFormat(), approximationContext.angleUnit(), context);
+  }
+  ListComplex<T> resultList = ListComplex<T>::Builder();
+  for (int k = 0; k < listLength; k++) {
+    for (int i = 0; i < numberOfParameters; i++) {
+      if (evaluationArray[i].type() == EvaluationNode<T>::Type::Complex) {
+        complexesArray[i] = static_cast<Complex<T>&>(evaluationArray[i]).stdComplex();
+      } else {
+        assert(evaluationArray[i].type() == EvaluationNode<T>::Type::ListComplex);
+        complexesArray[i] = static_cast<ListComplex<T>&>(evaluationArray[i]).complexAtIndex(k);
+      }
+    }
+    resultList.addChildAtIndexInPlace(compute(complexesArray, numberOfParameters, approximationContext.complexFormat(), approximationContext.angleUnit(), context), k, k);
+  }
+  return std::move(resultList);
+}
+
+template<typename T> Evaluation<T> ApproximationHelper::MapOneChild(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexCompute<T> compute, bool mapOnMatrix, bool mapOnList) {
+  assert(expression->numberOfChildren() == 1);
+  return Map<T>(expression,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * context) {
+        assert(numberOfComplexes == 1);
+        return reinterpret_cast<ComplexCompute<T>>(context)(c[0], complexFormat, angleUnit);
+      },
+      mapOnMatrix,
+      mapOnList,
+      reinterpret_cast<void *>(compute));
+}
+
+template<typename T> Evaluation<T> ApproximationHelper::MapOnMatrixFirstChild(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexesCompute<T> compute, void * context) {
+  int numberOfParameters = expression->numberOfChildren();
+  if (numberOfParameters == 0) {
+    return Complex<T>::Undefined();
+  }
+  Evaluation<T> firstChild = expression->childAtIndex(0)->approximate(T(), approximationContext);
+  if (firstChild.type() != EvaluationNode<T>::Type::MatrixComplex) {
+    return Complex<T>::Undefined();
+  }
+  MatrixComplex<T> m = static_cast<MatrixComplex<T> &>(firstChild);
+  MatrixComplex<T> result = MatrixComplex<T>::Builder();
+  std::complex<T> complexesArray[k_maxNumberOfParametersForMap];
+  for (int i = 1; i < numberOfParameters; i++) {
+    Evaluation<T> eval =  expression->childAtIndex(i)->approximate(T(), approximationContext);
+    if (eval.type() != EvaluationNode<T>::Type::Complex) {
+      return Complex<T>::Undefined();
+    }
+    complexesArray[i] = static_cast<Complex<T>&>(eval).stdComplex();
+  }
+  for (int k = 0; k < m.numberOfChildren(); k++) {
+    complexesArray[0] = m.complexAtIndex(k);
+    result.addChildAtIndexInPlace(compute(complexesArray, numberOfParameters, approximationContext.complexFormat(), approximationContext.angleUnit(), context), k, k);
+  }
+  result.setDimensions(m.numberOfRows(), m.numberOfColumns());
+  return std::move(result);
 }
 
 template<typename T> Evaluation<T> ApproximationHelper::Reduce(
@@ -239,8 +305,14 @@ template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfP
 template std::complex<float> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<float>(std::complex<float>,std::complex<float>,std::complex<float>,bool);
 template std::complex<double> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<double>(std::complex<double>,std::complex<double>,std::complex<double>,bool);
 
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<float> compute, bool mapOnMatrix, bool mapOnList);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<double> compute, bool mapOnMatrix, bool mapOnList);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexesCompute<float> compute, bool mapOnMatrix, bool mapOnList, void * context);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexesCompute<double> compute, bool mapOnMatrix, bool mapOnList, void * context);
+
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<float> compute, bool mapOnMatrix, bool mapOnList);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<double> compute, bool mapOnMatrix, bool mapOnList);
+
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapOnMatrixFirstChild(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexesCompute<float> compute, void * context);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapOnMatrixFirstChild(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexesCompute<double> compute, void * context);
 
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce<float>(const Poincare::ExpressionNode * expression, Poincare::ExpressionNode::ApproximationContext approximationContext, Poincare::ApproximationHelper::ReductionFunction<float> reductionFunction);
 template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce<double>(const Poincare::ExpressionNode * expression, Poincare::ExpressionNode::ApproximationContext approximationContext, Poincare::ApproximationHelper::ReductionFunction<double> reductionFunction);

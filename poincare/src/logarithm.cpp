@@ -108,7 +108,7 @@ Expression LogarithmNode<2>::shallowBeautify(ReductionContext * reductionContext
 
 template<>
 template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(ApproximationContext approximationContext) const {
-  return ApproximationHelper::Map(this, approximationContext, computeOnComplex<U>);
+  return ApproximationHelper::MapOneChild<U>(this, approximationContext, computeOnComplex<U>);
 }
 
 template<>
@@ -119,14 +119,19 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Approx
       && n.toScalar() != Complex<U>::Builder(M_E).toScalar()) {
     return Complex<U>::Undefined();
   }
-  Evaluation<U> x = childAtIndex(0)->approximate(U(), approximationContext);
-  std::complex<U> result = std::complex<U>(NAN, NAN);
-  if (x.type() == EvaluationNode<U>::Type::Complex && n.type() == EvaluationNode<U>::Type::Complex) {
-    std::complex<U> xc = (static_cast<Complex<U>&>(x)).stdComplex();
-    std::complex<U> nc = (static_cast<Complex<U>&>(n)).stdComplex();
-    result = DivisionNode::computeOnComplex<U>(computeOnComplex(xc, approximationContext.complexFormat(), approximationContext.angleUnit()).stdComplex(), computeOnComplex(nc, approximationContext.complexFormat(), approximationContext.angleUnit()).stdComplex(), approximationContext.complexFormat()).stdComplex();
-  }
-  return Complex<U>::Builder(result);
+  return ApproximationHelper::Map<U>(
+      this,
+      approximationContext,
+      [] (const std::complex<U> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * context) {
+        assert(numberOfComplexes == 2);
+        std::complex<U> x = c[0];
+        std::complex<U> n = c[1];
+        return Complex<U>::Builder(
+            DivisionNode::computeOnComplex<U>(
+              computeOnComplex(x, complexFormat, angleUnit).stdComplex(),
+              computeOnComplex(n, complexFormat, angleUnit).stdComplex(),
+              complexFormat).stdComplex());
+      });
 }
 
 void Logarithm::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {

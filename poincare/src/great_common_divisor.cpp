@@ -26,6 +26,7 @@ Expression GreatCommonDivisorNode::shallowBeautify(ReductionContext * reductionC
 
 template<typename T>
 Evaluation<T> GreatCommonDivisorNode::templatedApproximate(ApproximationContext approximationContext) const {
+  /* TODO : distribute approx over list with Map */
   return Arithmetic::GCD<T>(*this, approximationContext);
 }
 

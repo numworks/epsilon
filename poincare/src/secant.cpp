@@ -40,6 +40,14 @@ Expression Secant::shallowReduce(ExpressionNode::ReductionContext reductionConte
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   return Trigonometry::shallowReduceAdvancedFunction(*this, reductionContext);
 }

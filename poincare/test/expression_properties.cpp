@@ -159,8 +159,8 @@ void assert_expression_is_not_deep_matrix(const char * expression) {
 }
 
 QUIZ_CASE(poincare_properties_deep_is_matrix) {
-  assert_expression_is_not_deep_matrix("diff([[1,2][3,4]],x,2)");
-  assert_expression_is_not_deep_matrix("sign([[1,2][3,4]])");
+  assert_expression_is_not_deep_matrix("trace([[1,2][3,4]])");
+  assert_expression_is_not_deep_matrix("det([[1,2][3,4]])");
   assert_expression_is_not_deep_matrix("3");
   assert_expression_is_deep_matrix("2*dim(2)");
 }

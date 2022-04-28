@@ -471,13 +471,11 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     if (!e.isUninitialized()) {
       return e;
     }
-  }
 
-  /* Step 0
-   * Distribute the power over lists */
-  Expression distributed = distributeOverLists(reductionContext);
-  if (!distributed.isUninitialized()) {
-    return distributed;
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
 
   Context * context = reductionContext.context();

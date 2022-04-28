@@ -15,15 +15,18 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
 
   Expression thisExpression = *this;
   Expression c = childAtIndex(0);
-
-  // Step 0. Map on matrix child if possible
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
 
   // Step 1. Notable values
   if (node()->isNotableValue(c, reductionContext.context())) {

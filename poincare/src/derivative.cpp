@@ -48,6 +48,8 @@ Expression DerivativeNode::shallowReduce(ReductionContext reductionContext) {
 
 template<typename T>
 Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approximationContext) const {
+  /* TODO : Reduction is mapped on list, but not approximation.
+  * Find a smart way of doing it. */
   Evaluation<T> evaluationArgumentInput = childAtIndex(2)->approximate(T(), approximationContext);
   T evaluationArgument = evaluationArgumentInput.toScalar();
   T functionValue = firstChildScalarValueForArgument(evaluationArgument, approximationContext);
@@ -159,13 +161,15 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
-  Context * context = reductionContext.context();
-  assert(!childAtIndex(1).deepIsMatrix(context));
-  if (childAtIndex(0).deepIsMatrix(context) || childAtIndex(2).deepIsMatrix(context)) {
-    return replaceWithUndefinedInPlace();
-  }
-
   Matrix m = Matrix::Builder();
   Expression derivand = childAtIndex(0);
   if (derivand.type() == ExpressionNode::Type::Dependency) {

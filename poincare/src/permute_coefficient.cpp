@@ -1,4 +1,5 @@
 #include <poincare/permute_coefficient.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/undefined.h>
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
@@ -25,44 +26,53 @@ int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences
 }
 
 Expression PermuteCoefficientNode::shallowReduce(ReductionContext reductionContext) {
-  return PermuteCoefficient(this).shallowReduce(reductionContext.context());
+  return PermuteCoefficient(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
 Evaluation<T> PermuteCoefficientNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> nInput = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> kInput = childAtIndex(1)->approximate(T(), approximationContext);
-  T n = nInput.toScalar();
-  T k = kInput.toScalar();
-  if (std::isnan(n) || std::isnan(k) || n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
-    return Complex<T>::RealUndefined();
-  }
-  if (k > n) {
-    return Complex<T>::Builder(0.0);
-  }
-  T result = 1;
-  for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
-    result *= i;
-    if (std::isinf(result) || std::isnan(result)) {
-      return Complex<T>::Builder(result);
-    }
-  }
-  return Complex<T>::Builder(std::round(result));
+  return ApproximationHelper::Map<T>(
+      this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 2);
+        T n = ComplexNode<T>::ToScalar(c[0]);
+        T k = ComplexNode<T>::ToScalar(c[1]);
+        if (std::isnan(n) || std::isnan(k) || n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
+          return Complex<T>::RealUndefined();
+        }
+        if (k > n) {
+          return Complex<T>::Builder(0.0);
+        }
+        T result = 1;
+        for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
+          result *= i;
+          if (std::isinf(result) || std::isnan(result)) {
+            return Complex<T>::Builder(result);
+          }
+        }
+        return Complex<T>::Builder(std::round(result));
+      });
 }
 
 
-Expression PermuteCoefficient::shallowReduce(Context * context) {
+Expression PermuteCoefficient::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-  if (c0.deepIsMatrix(context) || c1.deepIsMatrix(context)) {
-    return replaceWithUndefinedInPlace();
-  }
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.isInteger() || r0.sign() == ExpressionNode::Sign::Negative) {

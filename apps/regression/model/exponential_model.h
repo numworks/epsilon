@@ -17,10 +17,10 @@ public:
 protected:
   void specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const override;
 private:
+  double aebxFormatBValue(double * modelCoefficients) const;
   /* In a*b^x form, modelCoefficients[1] contains the b, and is transformed via
    * log to the b of the normal a*exp(b*x) form */
   bool m_isAbxForm;
-  double aebxFormatBValue(double * modelCoefficients) const;
 };
 
 }

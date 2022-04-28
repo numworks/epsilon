@@ -13,10 +13,13 @@ namespace Regression {
 
 Layout ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
+    Layout base;
     Layout exponent;
     if (m_isAbxForm) {
+      base = CodePointLayout::Builder('b', k_layoutFont),
       exponent = CodePointLayout::Builder('X', k_layoutFont);
     } else {
+      base = CodePointLayout::Builder('e', k_layoutFont),
       exponent = HorizontalLayout::Builder({
         CodePointLayout::Builder('b', k_layoutFont),
         CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
@@ -26,7 +29,7 @@ Layout ExponentialModel::layout() {
     m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder(m_isAbxForm ? 'b' : 'e', k_layoutFont),
+      base,
       VerticalOffsetLayout::Builder(
         exponent,
         VerticalOffsetLayoutNode::Position::Superscript
@@ -94,10 +97,10 @@ void ExponentialModel::specializedInitCoefficientsForFit(double * modelCoefficie
   const double meanOfXY = sumOfXY / numberOfPoints;
   const double variance = meanOfXX - meanOfX * meanOfX;
   const double covariance = meanOfXY - meanOfX * meanOfY;
-  const double b = LinearModelHelper::Slope(covariance, variance);
-  modelCoefficients[1] = m_isAbxForm ? std::exp(b) : b;
+  const double slope = LinearModelHelper::Slope(covariance, variance);
+  modelCoefficients[1] = m_isAbxForm ? std::exp(slope) : slope;
   modelCoefficients[0] =
-    sign * std::exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, b));
+    sign * std::exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, slope));
 }
 
 double ExponentialModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {

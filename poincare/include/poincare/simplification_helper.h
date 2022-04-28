@@ -25,6 +25,9 @@ public:
    * Otherwise returns uninitialized handle. */
   static Expression shallowReduceKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext);
   static Expression shallowReduceUndefinedKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext);
+
+  static Expression undefinedOnMatrix(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Expression distributeReductionOverLists(Expression e, ExpressionNode::ReductionContext reductionContext);
 };
 }
 

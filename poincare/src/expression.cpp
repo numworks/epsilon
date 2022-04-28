@@ -208,22 +208,6 @@ bool Expression::deepIsList(Context * context) const {
   }, context);
 }
 
-int Expression::lengthOfListChildren() const {
-  int lastLength = k_noList;
-  int n = numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    if (childAtIndex(i).type() == ExpressionNode::Type::List) {
-      int length = childAtIndex(i).numberOfChildren();
-      if (lastLength == k_noList) {
-        lastLength = length;
-      } else if (lastLength != length) {
-        return k_mismatchedLists;
-      }
-    }
-  }
-  return lastLength;
-}
-
 bool Expression::IsApproximate(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || e.type() == ExpressionNode::Type::Double;
 }
@@ -981,47 +965,6 @@ Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionCo
   Expression e = shallowBeautify(&reductionContext);
   e.deepBeautifyChildren(reductionContext);
   return e;
-}
-
-Expression Expression::distributeOverLists(ExpressionNode::ReductionContext reductionContext) {
-  int listLength = lengthOfListChildren();
-  if (listLength == Expression::k_noList) {
-    /* No list in children, shallow reduce as usual. */
-    return Expression();
-  } else if (listLength == Expression::k_mismatchedLists) {
-    /* Operators only apply to lists of the same length. */
-    return replaceWithUndefinedInPlace();
-  }
-  assert(listLength >= 0);
-
-  /* We want to transform f({a,b},c) into {f(a,c),f(b,c)} */
-  int n = numberOfChildren();
-  List children = List::Builder();
-  for (int i = 0; i < n; i++) {
-    children.addChildAtIndexInPlace(childAtIndex(i), i, i);
-  }
-  assert(children.numberOfChildren() == n);
-  /* We moved all of our children into another expression. Now, by cloning
-   * 'this', we get an empty expression with the right type, to be inserted
-   * into the result list. */
-
-  List result = List::Builder();
-  for (int listIndex = 0; listIndex < listLength; listIndex++) {
-    Expression element = clone();
-    for (int childIndex = 0; childIndex < n; childIndex++) {
-      Expression child = children.childAtIndex(childIndex);
-      if (child.type() == ExpressionNode::Type::List) {
-        assert(child.numberOfChildren() == listLength);
-        element.replaceChildAtIndexInPlace(childIndex, child.childAtIndex(listIndex));
-      } else {
-        element.replaceChildAtIndexInPlace(childIndex, child.clone());
-      }
-    }
-    result.addChildAtIndexInPlace(element, listIndex, listIndex);
-    element.shallowReduce(reductionContext);
-  }
-  replaceWithInPlace(result);
-  return std::move(result);
 }
 
 Expression Expression::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {

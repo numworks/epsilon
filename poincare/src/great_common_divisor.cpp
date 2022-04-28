@@ -43,6 +43,14 @@ Expression GreatCommonDivisor::shallowReduce(ExpressionNode::ReductionContext re
     if (!e.isUninitialized()) {
       return e;
     }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   assert(numberOfChildren() > 0);
 

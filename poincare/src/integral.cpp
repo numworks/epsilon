@@ -41,11 +41,13 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression IntegralNode::shallowReduce(ReductionContext reductionContext) {
-  return Integral(this).shallowReduce(reductionContext.context());
+  return Integral(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
 Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximationContext) const {
+  /* TODO : Reduction is mapped on list, but not approximation.
+  * Find a smart way of doing it. */
   Evaluation<T> aInput = childAtIndex(2)->approximate(T(), approximationContext);
   Evaluation<T> bInput = childAtIndex(3)->approximate(T(), approximationContext);
   T a = aInput.toScalar();
@@ -202,19 +204,20 @@ Expression Integral::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
-Expression Integral::shallowReduce(Context * context) {
+Expression Integral::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
       return e;
     }
-  }
-  assert(!childAtIndex(1).deepIsMatrix(context));
-  if (childAtIndex(0).deepIsMatrix(context)
-      || childAtIndex(2).deepIsMatrix(context)
-      || childAtIndex(3).deepIsMatrix(context))
-  {
-    return replaceWithUndefinedInPlace();
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   return *this;
 }

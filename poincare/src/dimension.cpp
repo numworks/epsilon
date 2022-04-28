@@ -54,7 +54,9 @@ Expression Dimension::shallowReduce(Context * context) {
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::List) {
-    return Rational::Builder(c.numberOfChildren());
+    Expression result = Rational::Builder(c.numberOfChildren());
+    replaceWithInPlace(result);
+    return result;
   }
   if (c.deepIsMatrix(context) && c.type() != ExpressionNode::Type::Matrix) {
     return *this;

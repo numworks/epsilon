@@ -1,7 +1,7 @@
 #include "logarithmic_model.h"
 #include "../store.h"
 #include <poincare/layout_helper.h>
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 
 using namespace Poincare;
@@ -19,7 +19,7 @@ Layout LogarithmicModel::layout() {
 double LogarithmicModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
-  return a+b*log(x);
+  return a+b*std::log(x);
 }
 
 double LogarithmicModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
@@ -28,14 +28,14 @@ double LogarithmicModel::levelSet(double * modelCoefficients, double xMin, doubl
   if (b == 0) {
     return NAN;
   }
-  return exp((y-a)/b);
+  return std::exp((y-a)/b);
 }
 
 double LogarithmicModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 1) {
     // Derivate with respect to b: ln(x)
     assert(x > 0);
-    return log(x);
+    return std::log(x);
   }
   assert(derivateCoefficientIndex == 0);
   // Derivate with respect to a: 1

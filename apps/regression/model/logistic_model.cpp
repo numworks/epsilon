@@ -1,6 +1,6 @@
 #include "logistic_model.h"
 #include "../store.h"
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/fraction_layout.h>
@@ -40,7 +40,7 @@ double LogisticModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  return c/(1.0+a*exp(-b*x));
+  return c/(1.0+a*std::exp(-b*x));
 }
 
 double LogisticModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
@@ -54,21 +54,21 @@ double LogisticModel::levelSet(double * modelCoefficients, double xMin, double x
   if (lnArgument <= 0) {
     return NAN;
   }
-  return -log(lnArgument)/b;
+  return -std::log(lnArgument)/b;
 }
 
 double LogisticModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double denominator = 1.0 + a * exp(-b * x);
+  double denominator = 1.0 + a * std::exp(-b * x);
   if (derivateCoefficientIndex == 0) {
     // Derivate with respect to a: exp(-b*x)*(-1 * c/(1.0+a*exp(-b*x))^2)
-    return -exp(-b * x) * c / (denominator * denominator);
+    return -std::exp(-b * x) * c / (denominator * denominator);
   }
   if (derivateCoefficientIndex == 1) {
     // Derivate with respect to b: (-x)*a*exp(-b*x)*(-1/(1.0+a*exp(-b*x))^2)
-    return x * a * exp(-b * x) * c / (denominator * denominator);
+    return x * a * std::exp(-b * x) * c / (denominator * denominator);
   }
   assert(derivateCoefficientIndex == 2);
   // Derivate with respect to c: (-x)*a*exp(-b*x)*(-1/(1.0+a*exp(-b*x))^2)

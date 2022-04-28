@@ -35,10 +35,10 @@ private:
     return Complex<T>::Builder(std::imag(c));
   }
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::Map<float>(this, approximationContext, computeOnComplex<float>);
+    return ApproximationHelper::MapOneChild<float>(this, approximationContext, computeOnComplex<float>);
   }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::Map<double>(this, approximationContext, computeOnComplex<double>);
+    return ApproximationHelper::MapOneChild<double>(this, approximationContext, computeOnComplex<double>);
   }
 };
 

@@ -27,19 +27,34 @@ Expression InvNormNode::shallowReduce(ReductionContext reductionContext) {
 
 template<typename T>
 Evaluation<T> InvNormNode::templatedApproximate(ApproximationContext approximationContext) const {
-  Evaluation<T> aEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> muEvaluation = childAtIndex(1)->approximate(T(), approximationContext);
-  Evaluation<T> sigmaEvaluation = childAtIndex(2)->approximate(T(), approximationContext);
-
-  T a = aEvaluation.toScalar();
-  T mu = muEvaluation.toScalar();
-  T sigma = sigmaEvaluation.toScalar();
-
-  // CumulativeDistributiveInverseForProbability handles bad mu and var values
-  return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveInverseForProbability<T>(a, mu, sigma));
+  return ApproximationHelper::Map<T>(
+      this,
+      approximationContext,
+      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+        assert(numberOfComplexes == 3);
+        T a = ComplexNode<T>::ToScalar(c[0]);
+        T mu = ComplexNode<T>::ToScalar(c[1]);
+        T sigma = ComplexNode<T>::ToScalar(c[2]);
+        // CumulativeDistributiveInverseForProbability handles bad mu and var values
+        return Complex<T>::Builder(NormalDistribution::CumulativeDistributiveInverseForProbability<T>(a, mu, sigma));
+      });
 }
 
 Expression InvNorm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+  }
   {
     bool stopReduction = false;
     Expression e = NormalDistributionFunction::shallowReduce(reductionContext.context(), &stopReduction);
@@ -49,12 +64,8 @@ Expression InvNorm::shallowReduce(ExpressionNode::ReductionContext reductionCont
   }
   Expression a = childAtIndex(0);
   Expression mu = childAtIndex(1);
-  Context * context = reductionContext.context();
 
   // Check a
-  if (a.deepIsMatrix(context)) {
-    return replaceWithUndefinedInPlace();
-  }
   if (a.type() != ExpressionNode::Type::Rational) {
     return *this;
   }

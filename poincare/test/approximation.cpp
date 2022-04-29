@@ -565,7 +565,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("sec(200)", "-1", Gradian);
   assert_expression_approximates_to<float>("sec(3×i)", "0.9986307", Degree);
   assert_expression_approximates_to<float>("sec(-3×i)", "0.9986307", Degree);
-  assert_expression_approximates_to<float>("sec(i-4)", "-0.55776+0.491828×i", Radian, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<float>("sec(i-4)", "-0.5577604+0.4918275×i", Radian, MetricUnitFormat, Cartesian, 7);
 
   /* sin: R  ->  R (oscillator)
    *      Ri ->  Ri (odd)

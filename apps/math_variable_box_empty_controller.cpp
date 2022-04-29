@@ -63,6 +63,15 @@ void MathVariableBoxEmptyController::setType(Type type) {
       layout = Poincare::LayoutHelper::String(storeList, strlen(storeList), MathVariableBoxEmptyView::k_font);
       break;
     }
+    case Type::Matrix:
+    {
+      messages[0] = I18n::Message::EmptyExpressionBox0;
+      messages[1] = I18n::Message::EmptyExpressionBox1;
+      messages[2] = I18n::Message::EmptyExpressionBox2;
+      const char * storeExpression = "[[1,2][3,4]]→M";
+      layout = Poincare::LayoutHelper::String(storeExpression, strlen(storeExpression), MathVariableBoxEmptyView::k_font);
+      break;
+    }
     default:
       assert(false);
   }

@@ -15,7 +15,7 @@ namespace Shared {
 class GlobalContext final : public Poincare::Context {
 public:
   static constexpr int k_numberOfExtensions = 4;
-  static constexpr const char * k_extensions[] = {Ion::Storage::expExtension, Ion::Storage::funcExtension, Ion::Storage::lisExtension, Ion::Storage::seqExtension};
+  static constexpr const char * k_extensions[] = {Ion::Storage::expExtension, Ion::Storage::matExtension, Ion::Storage::funcExtension, Ion::Storage::lisExtension, Ion::Storage::seqExtension};
 
   // Storage information
   static bool SymbolAbstractNameIsFree(const char * baseName);

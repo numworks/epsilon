@@ -31,6 +31,7 @@ constexpr char Storage::expExtension[];
 constexpr char Storage::funcExtension[];
 constexpr char Storage::lisExtension[];
 constexpr char Storage::seqExtension[];
+constexpr char Storage::matExtension[];
 
 Storage * Storage::sharedStorage() {
   static Storage * storage = new (staticStorageArea) Storage();

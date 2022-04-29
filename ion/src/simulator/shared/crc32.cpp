@@ -4,6 +4,10 @@
 namespace Ion {
 
 static uint32_t crc32Helper(const uint8_t * data, size_t length, bool wordAccess) {
+  if (length == 0) {
+    return 0;
+  }
+  assert(data != nullptr);
   size_t uint32ByteLength = sizeof(uint32_t)/sizeof(uint8_t);
   uint32_t crc = 0xFFFFFFFF;
   size_t byteLength = (wordAccess ? length * uint32ByteLength : length);

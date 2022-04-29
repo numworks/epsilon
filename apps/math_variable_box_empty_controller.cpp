@@ -67,9 +67,9 @@ void MathVariableBoxEmptyController::setPage(int pageCastedToInt) {
     }
     case MathVariableBoxController::Page::Matrix:
     {
-      messages[0] = I18n::Message::EmptyExpressionBox0;
-      messages[1] = I18n::Message::EmptyExpressionBox1;
-      messages[2] = I18n::Message::EmptyExpressionBox2;
+      messages[0] = I18n::Message::EmptyMatrixBox0;
+      messages[1] = I18n::Message::EmptyMatrixBox1;
+      messages[2] = I18n::Message::EmptyMatrixBox2;
       const char * storeExpression = "[[1,2][3,4]]→M";
       layout = Poincare::LayoutHelper::String(storeExpression, strlen(storeExpression), MathVariableBoxEmptyView::k_font);
       break;

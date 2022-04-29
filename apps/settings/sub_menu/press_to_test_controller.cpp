@@ -190,14 +190,14 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell * cell, int in
 I18n::Message PressToTestController::LabelAtIndex(int i) {
   assert(i >= 0 && i < k_numberOfSwitchCells);
   constexpr I18n::Message labels[k_numberOfSwitchCells] = {
+    I18n::Message::PressToTestExactResults,
     I18n::Message::PressToTestEquationSolver,
     I18n::Message::PressToTestInequalityGraphing,
     I18n::Message::PressToTestImplicitPlots,
     I18n::Message::PressToTestStatDiagnostics,
     I18n::Message::PressToTestVectors,
     I18n::Message::PressToTestLogBaseA,
-    I18n::Message::PressToTestSum,
-    I18n::Message::PressToTestExactResults
+    I18n::Message::PressToTestSum
   };
   return labels[i];
 }

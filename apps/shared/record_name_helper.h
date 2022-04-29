@@ -22,6 +22,7 @@ public:
   constexpr static const char * k_competingExtensions[] = {
     Ion::Storage::expExtension,
     Ion::Storage::lisExtension,
+    Ion::Storage::matExtension,
     Ion::Storage::funcExtension,
     Ion::Storage::seqExtension
   };
@@ -37,6 +38,7 @@ public:
    * So the lowest precendenceScore is the strongest.
    * */
   constexpr static size_t k_competingExtensionsPrecedenceScore[] = {
+    2,
     2,
     2,
     1,

@@ -29,7 +29,8 @@ bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
 const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
   if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))
-   || Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::lisExtension, strlen(Ion::Storage::expExtension)))
+   || Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::lisExtension, strlen(Ion::Storage::lisExtension))
+   || Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::matExtension, strlen(Ion::Storage::matExtension)))
   {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record));
   } else if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
@@ -52,7 +53,7 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const cha
   const char * extension = Ion::Storage::sharedStorage()->extensionOfRecordBaseNamedWithExtensions(identifier, length, k_extensions, k_numberOfExtensions);
   if (extension == nullptr) {
     return Context::SymbolAbstractType::None;
-  } else if (extension == Ion::Storage::expExtension) {
+  } else if (extension == Ion::Storage::expExtension || extension == Ion::Storage::matExtension) {
     return Context::SymbolAbstractType::Symbol;
   } else if (extension == Ion::Storage::funcExtension) {
     return Context::SymbolAbstractType::Function;
@@ -109,7 +110,8 @@ const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstrac
 
 const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r) {
   if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))
-   && !Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::lisExtension, strlen(Ion::Storage::expExtension)))
+   && !Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::lisExtension, strlen(Ion::Storage::lisExtension))
+   && !Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::matExtension, strlen(Ion::Storage::matExtension)))
   {
     return Expression();
   }
@@ -164,7 +166,15 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord, Context * context) {
   Expression reducedExpression = expression.clone();
   PoincareHelpers::CloneAndReduce(&reducedExpression, context, ExpressionNode::ReductionTarget::User);
-  const char * extension = reducedExpression.type() == ExpressionNode::Type::List ? Ion::Storage::lisExtension : Ion::Storage::expExtension;
+  ExpressionNode::Type type = reducedExpression.type();
+  const char * extension;
+  if (type == ExpressionNode::Type::List) {
+    extension = Ion::Storage::lisExtension;
+  } else if (type == ExpressionNode::Type::Matrix) {
+    extension = Ion::Storage::matExtension;
+  } else {
+    extension = Ion::Storage::expExtension;
+  }
   return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), extension, expression.addressInPool(), expression.size());
 }
 

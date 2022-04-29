@@ -169,26 +169,12 @@ MessageTableCellWithChevron * MathVariableBoxController::nodeCellAtIndex(int ind
 }
 
 I18n::Message MathVariableBoxController::subTitle() {
-  switch (m_currentPage) {
-    case Page::Expression:
-      return I18n::Message::Expressions;
-    case Page::Function:
-      return I18n::Message::Functions;
-    case Page::Sequence:
-      return I18n::Message::Sequences;
-    case Page::List:
-      return I18n::Message::Lists;
-    case Page::Matrix:
-      return I18n::Message::Matrices;
-    default:
-      assert(false);
-      return (I18n::Message)0;
-  }
+  return nodeLabelAtIndex(static_cast<int>(m_currentPage) - 1);
 }
 
 MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index) {
-  Page pages[k_numberOfMenuRows] = {Page::Expression, Page::Function, Page::Sequence, Page::List, Page::Matrix};
-  return pages[index];
+  assert(index >= 0 && index < k_numberOfMenuRows);
+  return static_cast<Page>(index + 1);
 }
 
 void MathVariableBoxController::setPage(Page page) {
@@ -249,9 +235,23 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
 }
 
 I18n::Message MathVariableBoxController::nodeLabelAtIndex(int index) {
-  assert(m_currentPage == Page::RootMenu);
-  I18n::Message labels[k_numberOfMenuRows] = {I18n::Message::Expressions, I18n::Message::Functions, I18n::Message::Sequences, I18n::Message::Lists, I18n::Message::Matrices};
-  return labels[index];
+  assert(index >= 0 && index < k_numberOfMenuRows);
+  Page pageAtIndex = static_cast<Page>(index +1);
+  switch (pageAtIndex) {
+    case Page::Expression:
+      return I18n::Message::Expressions;
+    case Page::Function:
+      return I18n::Message::Functions;
+    case Page::Sequence:
+      return I18n::Message::Sequences;
+    case Page::List:
+      return I18n::Message::Lists;
+    case Page::Matrix:
+      return I18n::Message::Matrices;
+    default:
+      assert(false);
+      return (I18n::Message)0;
+  }
 }
 
 Layout MathVariableBoxController::expressionLayoutForRecord(Storage::Record record, int index) {
@@ -313,7 +313,7 @@ Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {
 }
 
 ViewController * MathVariableBoxController::emptyViewController() {
-  m_emptyViewController.setType((MathVariableBoxEmptyController::Type)m_currentPage);
+  m_emptyViewController.setPage(static_cast<int>(m_currentPage));
   return &m_emptyViewController;
 }
 

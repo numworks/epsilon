@@ -101,7 +101,9 @@ public:
     assert(m_omegaMagicFooter == OmegaMagic);
     return m_username;
   }
-
+  const void * storage_address() const {
+    return storageAddress;
+  }
 private:
   constexpr static uint32_t Magic = 0xDEC0EDFE;
   constexpr static uint32_t OmegaMagic = 0xEFBEADDE;
@@ -170,6 +172,10 @@ const char * Ion::softwareVersion() {
 
 const char * Ion::patchLevel() {
   return k_kernelHeader.patchLevel();
+}
+
+const void * Ion::storageAddress() {
+  return k_userlandHeader.storage_address();
 }
 
 SlotInfo * slotInfo() {

@@ -9,10 +9,16 @@
 #include "../apps_container.h"
 #include "../global_preferences.h"
 
+#ifdef DEVICE
+#include <ion/src/device/shared/drivers/reset.h>
+#include <ion/src/device/shared/drivers/board.h>
+#include <ion/src/device/shared/drivers/flash.h>
+#endif
+
 #include <python/port/port.h>
 
 extern "C" {
-  #include <python/port/mphalport.h>
+#include <python/port/mphalport.h>
 }
 
 uint64_t extapp_millis() {
@@ -30,7 +36,7 @@ uint64_t extapp_scanKeyboard() {
 void extapp_pushRect(int16_t x, int16_t y, uint16_t w, uint16_t h, const uint16_t * pixels) {
   KDRect rect(x, y, w, h);
 
-  Ion::Display::pushRect(rect, reinterpret_cast<const KDColor*>(pixels));
+  Ion::Display::pushRect(rect, reinterpret_cast<const KDColor *>(pixels));
 }
 
 void extapp_pushRectUniform(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t color) {
@@ -42,10 +48,10 @@ void extapp_pushRectUniform(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16
 void extapp_pullRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t * pixels) {
   KDRect rect(x, y, w, h);
 
-  Ion::Display::pullRect(rect, (KDColor *) pixels);
+  Ion::Display::pullRect(rect, (KDColor *)pixels);
 }
 
-int16_t extapp_drawTextLarge(const char *text, int16_t x, int16_t y, uint16_t fg, uint16_t bg, bool fake) {
+int16_t extapp_drawTextLarge(const char * text, int16_t x, int16_t y, uint16_t fg, uint16_t bg, bool fake) {
   KDPoint point(x, y);
 
   auto ctx = KDIonContext::sharedContext();
@@ -56,7 +62,7 @@ int16_t extapp_drawTextLarge(const char *text, int16_t x, int16_t y, uint16_t fg
   return point.x();
 }
 
-int16_t extapp_drawTextSmall(const char *text, int16_t x, int16_t y, uint16_t fg, uint16_t bg, bool fake) {
+int16_t extapp_drawTextSmall(const char * text, int16_t x, int16_t y, uint16_t fg, uint16_t bg, bool fake) {
   KDPoint point(x, y);
 
   auto ctx = KDIonContext::sharedContext();
@@ -71,7 +77,7 @@ bool extapp_waitForVBlank() {
   return Ion::Display::waitForVBlank();
 }
 
-void extapp_clipboardStore(const char *text) {
+void extapp_clipboardStore(const char * text) {
   Clipboard::sharedClipboard()->store(text);
 }
 
@@ -79,101 +85,103 @@ const char * extapp_clipboardText() {
   return Clipboard::sharedClipboard()->storedText();
 }
 
+bool match(const char * filename, const char * extension) {
+  return strcmp(filename + strlen(filename) - strlen(extension), extension) == 0;
+}
+
 int extapp_fileListWithExtension(const char ** filenames, int maxrecords, const char * extension, int storage) {
-  if(storage == EXTAPP_RAM_FILE_SYSTEM) {
+  int j = 0;
+  if (storage == EXTAPP_RAM_FILE_SYSTEM || storage == EXTAPP_BOTH_FILE_SYSTEM) {
     int n = Ion::Storage::sharedStorage()->numberOfRecordsWithExtension(extension);
     if (n > maxrecords) {
       n = maxrecords;
     }
-    for(int i = 0; i < n; i++) {
-      filenames[i] = Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(extension, i).fullName();
+    for (; j < n; j++) {
+      filenames[j] = Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(extension, j).fullName();
     }
-    return n;
-  } else if(storage == EXTAPP_FLASH_FILE_SYSTEM) {
-    // TODO: filter by extension
-    int n = External::Archive::numberOfFiles();
-    if (n > maxrecords) {
-      n = maxrecords;
+    if (j == maxrecords) {
+      return j;
     }
-    for(int i = 0; i < n; i++) {
-      External::Archive::File entry;
-      External::Archive::fileAtIndex(i, entry);
-      filenames[i] = entry.name;
-    }
-    return n;
-  } else {
-    return 0;
   }
+  // Don't read external files the exam mode is enabled
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) return j;
+  if (storage == EXTAPP_FLASH_FILE_SYSTEM || storage == EXTAPP_BOTH_FILE_SYSTEM) {
+    int n = External::Archive::numberOfFiles();
+    for (int i = 0; i < n && j < maxrecords; i++) {
+      External::Archive::File entry;
+      // Filter extension
+      if (External::Archive::fileAtIndex(i, entry) && match(entry.name, extension)) {
+        filenames[j] = entry.name;
+        ++j;
+      }
+    }
+  }
+  return j;
 }
 
 bool extapp_fileExists(const char * filename, int storage) {
-  if(storage == EXTAPP_RAM_FILE_SYSTEM) {
-    return !Ion::Storage::sharedStorage()->recordNamed(filename).isNull();
-  } else if(storage == EXTAPP_FLASH_FILE_SYSTEM) {
-    return External::Archive::indexFromName(filename) >= 0;
-  } else {
-    return false;
+  if (storage == EXTAPP_RAM_FILE_SYSTEM || storage == EXTAPP_BOTH_FILE_SYSTEM) {
+    if (!Ion::Storage::sharedStorage()->recordNamed(filename).isNull())
+      return true;
   }
+  if (storage == EXTAPP_FLASH_FILE_SYSTEM || storage == EXTAPP_BOTH_FILE_SYSTEM) {
+    return External::Archive::indexFromName(filename) >= 0;
+  }
+  return false;
 }
 
 bool extapp_fileErase(const char * filename, int storage) {
-  if(storage == EXTAPP_RAM_FILE_SYSTEM) {
+  if (storage == EXTAPP_RAM_FILE_SYSTEM) {
     Ion::Storage::Record record = Ion::Storage::sharedStorage()->recordNamed(filename);
-    if(record.isNull()) {
+    if (record.isNull()) {
       return false;
-    } else {
-      record.destroy();
-      return true;
     }
-  } else {
-    return false;
+    record.destroy();
+    return true;
   }
+  return false;
 }
 
-const char * extapp_fileRead(const char * filename, size_t *len, int storage) {
-  if(storage == EXTAPP_RAM_FILE_SYSTEM) {
+const char * extapp_fileRead(const char * filename, size_t * len, int storage) {
+  if (storage == EXTAPP_RAM_FILE_SYSTEM || storage == EXTAPP_BOTH_FILE_SYSTEM) {
     const Ion::Storage::Record record = Ion::Storage::sharedStorage()->recordNamed(filename);
-    if (record.isNull()) {
-      return NULL;
-    } else {
-      if(len) {
-        *len = record.value().size;
-      }
-      return (const char *) record.value().buffer;
+    if (!record.isNull()){
+      int delta = 0;
+      if (match(filename, ".py") || match(filename, ".xw"))
+        delta++;
+            // skip record type
+      if (len)
+        *len = record.value().size - delta;
+      return (const char *)record.value().buffer + delta;
     }
-  } else if(storage == EXTAPP_FLASH_FILE_SYSTEM) {
+  }
+  if (storage == EXTAPP_FLASH_FILE_SYSTEM || storage == EXTAPP_BOTH_FILE_SYSTEM) {
     int index = External::Archive::indexFromName(filename);
     if (index >= 0) {
       External::Archive::File entry;
       External::Archive::fileAtIndex(index, entry);
-      if(len) {
+      if (len) {
         *len = entry.dataLength;
       }
       return (const char *)entry.data;
-    } else {
-      return NULL;
     }
-  } else {
-    return NULL;
   }
+  return NULL;
 }
 
 bool extapp_fileWrite(const char * filename, const char * content, size_t len, int storage) {
-  if(storage == EXTAPP_RAM_FILE_SYSTEM) {
+  if (storage == EXTAPP_RAM_FILE_SYSTEM) {
     Ion::Storage::Record::ErrorStatus status = Ion::Storage::sharedStorage()->createRecordWithFullName(filename, content, len);
     if (status == Ion::Storage::Record::ErrorStatus::NameTaken) {
       Ion::Storage::Record::Data data;
       data.buffer = content;
       data.size = len;
       return Ion::Storage::sharedStorage()->recordNamed(filename).setValue(data) == Ion::Storage::Record::ErrorStatus::None;
-    } else if (status == Ion::Storage::Record::ErrorStatus::None) {
-      return true;
-    } else {
-      return false;
     }
-  } else {
-    return false;
+    if (status == Ion::Storage::Record::ErrorStatus::None)
+      return true;
   }
+  return false;
 }
 
 static void reloadTitleBar() {
@@ -244,19 +252,42 @@ const int16_t translated_keys[] =
 #define TICKS_PER_MINUTE 11862
 #endif
 
-int extapp_getKey(bool allowSuspend, bool *alphaWasActive) {
+
+int extapp_restoreBackup(int mode) {
+  // Restoring the backup is allowed even if the write protection is enabled, because it may have been writted by Khi.x
+  if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode())
+    return 0;
+  size_t length = 32 * 1024;
+  if (mode == -1) { // restore backup saved when exam mode was set
+    uint8_t * src = (uint8_t *)(0x90800000 - 2 * length);
+    if (src[0] == 0xba && src[1] == 0xdd && src[2] == 0x0b && src[3] == 0xee) {
+      memcpy((uint8_t *)Ion::storageAddress(), src, length);
+      return 1;
+    }
+  }
+  if (mode >= 0 && mode < 16) {
+    uint8_t * src = (uint8_t *)(0x90180000 + mode * length);
+    if (src[0] == 0xba && src[1] == 0xdd && src[2] == 0x0b && src[3] == 0xee) {
+      memcpy((uint8_t *)Ion::storageAddress(), src, length);
+      return 1;
+    }
+  }
+  return 0;
+}
+
+int extapp_getKey(int allowSuspend, bool * alphaWasActive) {
   int key = -1;
   size_t t1 = Ion::Timing::millis();
   for (;;) {
     int timeout = 10000;
-    if(alphaWasActive) {
+    if (alphaWasActive) {
       *alphaWasActive = Ion::Events::isAlphaActive();
     }
     Ion::Events::Event event = Ion::Events::getEvent(&timeout);
     reloadTitleBar();
     if (event == Ion::Events::None) {
       size_t t2 = Ion::Timing::millis();
-      if (t2 - t1 > 2 * TICKS_PER_MINUTE) {
+      if (t2 - t1 > 3 * TICKS_PER_MINUTE) {
         event = Ion::Events::OnOff;
       }
     } else {
@@ -270,10 +301,10 @@ int extapp_getKey(bool allowSuspend, bool *alphaWasActive) {
     }
     if (event.isKeyboardEvent()) {
       key = static_cast<uint8_t>(event);
-      if (key == 17 || key == 4 || key == 5 || key == 52) {
+      if (key == (int)Ion::Keyboard::Key::Backspace || key == (int)Ion::Keyboard::Key::OK || key == (int)Ion::Keyboard::Key::Back || key == (int)Ion::Keyboard::Key::EXE) {
         extapp_resetKeyboard();
       }
-      if (allowSuspend && (key == 7 || key == 8)) { // power
+      if (allowSuspend && key == (int)Ion::Keyboard::Key::OnOff) {
         Ion::Power::suspend(true);
         extapp_pushRectUniform(0, 0, 320, 240, 65535);
         Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
@@ -283,6 +314,45 @@ int extapp_getKey(bool allowSuspend, bool *alphaWasActive) {
     }
   }
   return translated_keys[key];
+}
+
+bool extapp_isKeydown(int key) {
+  Ion::Keyboard::State scan = Ion::Keyboard::scan();
+  return scan.keyDown(Ion::Keyboard::Key(key));
+}
+
+bool extapp_eraseSector(void * ptr) {
+#ifdef DEVICE
+  if (ptr == 0)
+    Ion::Device::Reset::core();
+  // Disable flash writting
+  if (GlobalPreferences::sharedGlobalPreferences()->externalAppWritePermission()) {
+    int i = Ion::Device::Flash::SectorAtAddress((size_t)ptr);
+    if (i < 0)
+      return false;
+    Ion::Device::Flash::EraseSector(i);
+    return true;
+  }
+#endif
+  return false;
+}
+
+bool extapp_writeMemory(unsigned char * dest, const unsigned char * data, size_t length) {
+#ifdef DEVICE
+  // Disable flash writting
+  if (GlobalPreferences::sharedGlobalPreferences()->externalAppWritePermission()) {
+    int n = Ion::Device::Flash::SectorAtAddress((uint32_t)dest);
+    if (n < 0)
+      return false;
+    Ion::Device::Flash::WriteMemory(dest, (unsigned char *)data, length);
+    return true;
+  }
+#endif
+  return false;
+}
+
+bool extapp_inExamMode() {
+  return GlobalPreferences::sharedGlobalPreferences()->isInExamMode();
 }
 
 extern "C" void (* const apiPointers[])(void) = {
@@ -305,5 +375,10 @@ extern "C" void (* const apiPointers[])(void) = {
   (void (*)(void)) extapp_lockAlpha,
   (void (*)(void)) extapp_resetKeyboard,
   (void (*)(void)) extapp_getKey,
+  (void (*)(void)) extapp_isKeydown,
+  (void (*)(void)) extapp_restoreBackup,
+  (void (*)(void)) extapp_eraseSector,
+  (void (*)(void)) extapp_writeMemory,
+  (void (*)(void)) extapp_inExamMode,
   (void (*)(void)) nullptr,
 };

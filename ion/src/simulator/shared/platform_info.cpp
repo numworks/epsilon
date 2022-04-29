@@ -94,6 +94,9 @@ public:
     assert(m_omegaMagicFooter == OmegaMagic);
     return m_patchLevel;
   }
+  const void * storage_address() const {
+    return storageAddress;
+  }
 private:
   constexpr static uint32_t Magic = 0xDEC00DF0;
   constexpr static uint32_t OmegaMagic = 0xEFBEADDE;
@@ -136,4 +139,12 @@ const volatile char * Ion::username() {
 
 const char * Ion::patchLevel() {
   return platform_infos.patchLevel();
+}
+
+void * storage_address(){
+  return storageAddress;
+}
+
+const void * Ion::storageAddress() {
+  return platform_infos.storage_address();
 }

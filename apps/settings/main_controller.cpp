@@ -17,6 +17,7 @@ constexpr SettingsMessageTree s_modelDateTimeChildren[3] = {SettingsMessageTree(
 constexpr SettingsMessageTree s_symbolChildren[4] = {SettingsMessageTree(I18n::Message::SymbolMultiplicationCross),SettingsMessageTree(I18n::Message::SymbolMultiplicationMiddleDot),SettingsMessageTree(I18n::Message::SymbolMultiplicationStar),SettingsMessageTree(I18n::Message::SymbolMultiplicationAutoSymbol)};
 constexpr SettingsMessageTree s_usbProtectionChildren[2] = {SettingsMessageTree(I18n::Message::USBProtection), SettingsMessageTree(I18n::Message::USBProtectionLevel, s_usbProtectionLevelChildren)};
 constexpr SettingsMessageTree s_usbProtectionLevelChildren[3] = {SettingsMessageTree(I18n::Message::USBDefaultLevel), SettingsMessageTree(I18n::Message::USBLowLevel), SettingsMessageTree(I18n::Message::USBParanoidLevel)};
+constexpr SettingsMessageTree s_externalChildren[2] = {SettingsMessageTree(I18n::Message::ExtAppWrite), SettingsMessageTree(I18n::Message::ExtAppEnabled)};
 constexpr SettingsMessageTree s_symbolFunctionChildren[3] = {SettingsMessageTree(I18n::Message::SymbolDefaultFunction), SettingsMessageTree(I18n::Message::SymbolArgDefaultFunction), SettingsMessageTree(I18n::Message::SymbolArgFunction)};
 constexpr SettingsMessageTree s_modelMathOptionsChildren[6] = {SettingsMessageTree(I18n::Message::AngleUnit, s_modelAngleChildren), SettingsMessageTree(I18n::Message::DisplayMode, s_modelFloatDisplayModeChildren), SettingsMessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren), SettingsMessageTree(I18n::Message::SymbolFunction, s_symbolFunctionChildren), SettingsMessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren), SettingsMessageTree(I18n::Message::SymbolMultiplication, s_symbolChildren)};
 constexpr SettingsMessageTree s_brightnessChildren[4] = {SettingsMessageTree(I18n::Message::Brightness), SettingsMessageTree(I18n::Message::IdleTimeBeforeDimming), SettingsMessageTree(I18n::Message::IdleTimeBeforeSuspend), SettingsMessageTree(I18n::Message::BrightnessShortcut)};
@@ -44,7 +45,8 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_examModeController(this),
   m_aboutController(this),
   m_preferencesController(this),
-  m_usbInfoController(this)
+  m_usbInfoController(this),
+  m_externalController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -103,6 +105,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       subController = &m_usbInfoController;
     } else if (title == I18n::Message::CodeApp) {
       subController = &m_codeOptionsController;
+    } else if (title == I18n::Message::ExternalApps) {
+      subController = &m_externalController;
     } else {
       subController = &m_preferencesController;
     }

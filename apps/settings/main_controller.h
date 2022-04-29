@@ -13,6 +13,7 @@
 #include "sub_menu/math_options_controller.h"
 #include "sub_menu/preferences_controller.h"
 #include "sub_menu/usb_protection_controller.h"
+#include "sub_menu/external_controller.h"
 #include "sub_menu/brightness_controller.h"
 
 namespace Settings {
@@ -32,6 +33,7 @@ extern const Shared::SettingsMessageTree s_contributorsChildren[18];
 extern const Shared::SettingsMessageTree s_modelAboutChildren[10];
 extern const Shared::SettingsMessageTree s_usbProtectionChildren[2];
 extern const Shared::SettingsMessageTree s_usbProtectionLevelChildren[3];
+extern const Shared::SettingsMessageTree s_externalChildren[2];
 extern const Shared::SettingsMessageTree s_brightnessChildren[4];
 extern const Shared::SettingsMessageTree s_model;
 
@@ -82,6 +84,7 @@ private:
   AboutController m_aboutController;
   PreferencesController m_preferencesController;
   UsbInfoController m_usbInfoController;
+  ExternalController m_externalController;
 };
 
 }

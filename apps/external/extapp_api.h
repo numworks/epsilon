@@ -18,6 +18,7 @@
 
 #define EXTAPP_RAM_FILE_SYSTEM 0
 #define EXTAPP_FLASH_FILE_SYSTEM 1
+#define EXTAPP_BOTH_FILE_SYSTEM 2
 
 #define SCANCODE_Left ((uint64_t)1 << 0)
 #define SCANCODE_Up ((uint64_t)1 << 1)
@@ -251,6 +252,10 @@ EXTERNC const char * extapp_fileRead(const char * filename, size_t *len, int sto
 EXTERNC bool extapp_fileWrite(const char * filename, const char * content, size_t len, int storage);
 EXTERNC void extapp_lockAlpha();
 EXTERNC void extapp_resetKeyboard();
-EXTERNC int extapp_getKey(bool allowSuspend, bool *alphaWasActive);
+EXTERNC int extapp_getKey(int allowSuspend, bool *alphaWasActive);
+EXTERNC bool extapp_isKeydown(int key);
+EXTERNC int extapp_restoreBackup(int mode); // Keep for compatibility with KhiCAS on Khi
+EXTERNC bool extapp_eraseSector(void * ptr);
+EXTERNC bool extapp_writeMemory(unsigned char * dest,const unsigned char * data,size_t length);
 
 #endif

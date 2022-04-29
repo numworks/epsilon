@@ -334,10 +334,6 @@ bool Storage::destroyCompetingRecord(const char * baseName, const char * extensi
   if (competingRecord.isNull() || (excludedRecord != nullptr && *excludedRecord == competingRecord)) {
     return true;
   }
-  if (strcmp(extension, competingRecord.extension()) == 0) {
-    competingRecord.destroy();
-    return true;
-  }
   RecordNameHelper::OverrideStatus result = m_recordNameHelper->shouldRecordBeOverridenWithNewExtension(competingRecord, extension);
   if (result == RecordNameHelper::OverrideStatus::Forbidden) {
     return false;

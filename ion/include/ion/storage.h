@@ -151,8 +151,10 @@ public:
 
   /* Destroy a record with same baseName and a competing extension
    * Return false if there is a competing record but it can't be destroyed
-   * since it has precedence on its base name.
-  * (See RecordNameHelper) */
+   * since it has precedence on its base name. (See RecordNameHelper)
+   * WARNING : If m_recordNameHelper == nullptr, record won't override
+   * themself when replaced with a record with same name and same extension.
+   * This in maily relevant for tests, where you have to set the helper by hand.*/
   bool destroyCompetingRecord(const char * baseName, const char * extension, int baseNameLength = -1, Record * excludedRecord = nullptr);
 
 private:
@@ -256,6 +258,7 @@ public:
   virtual const char * const * competingExtensions() = 0;
   virtual int numberOfCompetingExtensions() = 0;
   virtual OverrideStatus shouldRecordBeOverridenWithNewExtension(Storage::Record previousRecord, const char * newExtension) = 0;
+  virtual bool competingExtensionsOverrideThemselves() = 0;
 };
 
 // emscripten read and writes must be aligned.

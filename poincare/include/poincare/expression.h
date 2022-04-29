@@ -69,6 +69,7 @@ class Expression : public TreeHandle {
   friend class Integer;
   friend class Integral;
   friend class InvNorm;
+  friend class InvStudent;
   friend class LeastCommonMultiple;
   friend class List;
   friend class ListMean;
@@ -113,6 +114,10 @@ class Expression : public TreeHandle {
   friend class SquareRoot;
   friend class SquareRootNode;
   friend class Store;
+  friend class StudentDistributionFunction;
+  friend class StudentCDF;
+  friend class StudentCDFRange;
+  friend class StudentPDF;
   friend class Subtraction;
   friend class SubtractionNode;
   friend class Superior;

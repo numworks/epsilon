@@ -338,6 +338,7 @@ template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(const Tu
 template IntegralLayout TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(const Tuple &);
 template InvBinom TreeHandle::FixedArityBuilder<InvBinom, InvBinomNode>(const Tuple &);
 template InvNorm TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(const Tuple &);
+template InvStudent TreeHandle::FixedArityBuilder<InvStudent, InvStudentNode>(const Tuple &);
 template LeastCommonMultiple TreeHandle::NAryBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);
 template LeftCurlyBraceLayout TreeHandle::FixedArityBuilder<LeftCurlyBraceLayout, LeftCurlyBraceLayoutNode>(const Tuple &);
 template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayout, LeftParenthesisLayoutNode>(const Tuple &);
@@ -398,6 +399,9 @@ template SignFunction TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNo
 template Sine TreeHandle::FixedArityBuilder<Sine, SineNode>(const Tuple &);
 template SquareRoot TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>(const Tuple &);
 template Store TreeHandle::FixedArityBuilder<Store, StoreNode>(const Tuple &);
+template StudentCDF TreeHandle::FixedArityBuilder<StudentCDF, StudentCDFNode>(const Tuple &);
+template StudentCDFRange TreeHandle::FixedArityBuilder<StudentCDFRange, StudentCDFRangeNode>(const Tuple &);
+template StudentPDF TreeHandle::FixedArityBuilder<StudentPDF, StudentPDFNode>(const Tuple &);
 template Subtraction TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
 template Superior TreeHandle::FixedArityBuilder<Superior, SuperiorNode>(const Tuple &);
 template SuperiorEqual TreeHandle::FixedArityBuilder<SuperiorEqual, SuperiorEqualNode>(const Tuple &);

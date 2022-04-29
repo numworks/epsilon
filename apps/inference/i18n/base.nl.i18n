@@ -84,7 +84,6 @@ StatisticGraphControllerTestTitleFormatGoodnessTest = "df=%*.*ed α=%*.*ed χ2=%
 StatisticGraphControllerTestTitleFormatHomogeneityTest = "χ2=%*.*ed p-waarde=%*.*ed"
 StatisticGraphControllerTestTitleFormatTTest = "t=%*.*ed p-waarde=%*.*ed"
 StatisticGraphControllerTestTitleFormatZtest = "z=%*.*ed p-waarde=%*.*ed"
-StudentDistribution = "Studentverdeling"
 SuccessProbability = "Kans op succes"
 SuccessSample1 = "Succes in steekproef 1"
 SuccessSample2 = "Succes in steekproef 2"

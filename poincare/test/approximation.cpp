@@ -457,6 +457,14 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("normpdf(1.2, 3.4, 5.6)", "0.06594901");
 
+  assert_expression_approximates_to<float>("tcdf(0.5, 2)", "0.6666667");
+  assert_expression_approximates_to<float>("tcdf(1.2, 3.4)", "0.8464878");
+
+  assert_expression_approximates_to<double>("tcdf(1.2, 3.4)", "0.8464877995", Radian, MetricUnitFormat, Cartesian, 10); //FIXME: precision problem
+
+  assert_expression_approximates_to<float>("tpdf(1.2, 3.4)", "0.1706051");
+  assert_expression_approximates_to<double>("tpdf(1.2, 3.4)", "0.17060506917323");
+
   assert_expression_approximates_to<float>("permute(10, 4)", "5040");
   assert_expression_approximates_to<double>("permute(10, 4)", "5040");
 

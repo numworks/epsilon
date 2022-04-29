@@ -38,6 +38,7 @@ void setHighVoltageScaling();
 KernelHeader * kernelHeader();
 UserlandHeader * userlandHeader();
 uint32_t userlandStart();
+uint32_t userlandEnd();
 bool isRunningSlotA();
 
 typedef uint32_t PCBVersion;

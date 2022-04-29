@@ -133,7 +133,7 @@ jobs:
       - run: make -j2 flasher.light.dfu
       - run: make -j2 flasher.verbose.dfu
       - run: make -j2 bench.ram.dfu
-      - run: make -j2 bench.flash.dfu
+      # - run: make -j2 bench.flash.dfu
       - run: make -j2 binpack
       - run: cp output/release/device/n0110/binpack-n0110-`git rev-parse HEAD | head -c 7`.tgz output/release/device/n0110/binpack-n0110.tgz
       - id: 'auth'
@@ -162,9 +162,12 @@ jobs:
           submodules: 'recursive'
       - run: make -j2 bootloader.dfu
       - run: make MODEL=bootloader -j2 epsilon.A.dfu epsilon.B.dfu
-      - run: make MODEL=bootloader -j2 epsilon.onboarding.A.dfu epsilon.onboarding.B.dfu
-      - run: make MODEL=bootloader -j2 epsilon.onboarding.update.A.dfu epsilon.onboarding.update.B.dfu
-      - run: make MODEL=bootloader -j2 epsilon.onboarding.beta.A.dfu epsilon.onboarding.beta.B.dfu
+      - run: make MODEL=bootloader -j2 epsilon.onboarding.A.dfu
+      - run: make MODEL=bootloader -j2 epsilon.onboarding.B.dfu
+      - run: make MODEL=bootloader -j2 epsilon.onboarding.update.A.dfu
+      - run: make MODEL=bootloader -j2 epsilon.onboarding.update.B.dfu
+      - run: make MODEL=bootloader -j2 epsilon.onboarding.beta.A.dfu
+      - run: make MODEL=bootloader -j2 epsilon.onboarding.beta.B.dfu
       - run: make -j2 binpack
       - run: cp output/release/device/bootloader/binpack-bootloader-`git rev-parse HEAD | head -c 7`.tgz output/release/device/bootloader/binpack-bootloader.tgz
       - uses: actions/upload-artifact@master

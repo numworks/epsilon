@@ -15,6 +15,7 @@ public:
     Functions = 2,
     Sequence = 3,
     List = 4,
+    Matrix = 5
   };
   void setType(Type type);
   // View Controller
@@ -23,7 +24,7 @@ public:
 private:
   class MathVariableBoxEmptyView : public Escher::ModalViewEmptyController::ModalViewEmptyView {
   public:
-    constexpr static int k_numberOfMessages = 4;
+    constexpr static int k_numberOfMessages = 5;
     MathVariableBoxEmptyView();
     void setLayout(Poincare::Layout layout);
   private:

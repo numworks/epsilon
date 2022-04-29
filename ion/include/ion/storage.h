@@ -32,6 +32,7 @@ public:
   constexpr static char funcExtension[] = "func";
   constexpr static char lisExtension[] = "lis";
   constexpr static char seqExtension[] = "seq";
+  constexpr static char matExtension[] = "mat";
 
   class Record {
     /* A Record is identified by the CRC32 on its fullName because:

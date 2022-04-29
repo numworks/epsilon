@@ -87,6 +87,8 @@ int MathVariableBoxController::numberOfRows() const {
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::seqExtension);
     case Page::List:
       return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::lisExtension);
+    case Page::Matrix:
+      return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::matExtension);
     default:
       return 0;
   }
@@ -113,7 +115,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
   Layout symbolLayout;
-  if (m_currentPage == Page::Expression || m_currentPage == Page::List) {
+  if (m_currentPage == Page::Expression || m_currentPage == Page::List || m_currentPage == Page::Matrix) {
     static_assert(Shared::Function::k_maxNameWithArgumentSize > Poincare::SymbolAbstract::k_maxNameSize, "Forgot argument's size?");
     symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
@@ -176,6 +178,8 @@ I18n::Message MathVariableBoxController::subTitle() {
       return I18n::Message::Sequences;
     case Page::List:
       return I18n::Message::Lists;
+    case Page::Matrix:
+      return I18n::Message::Matrices;
     default:
       assert(false);
       return (I18n::Message)0;
@@ -183,7 +187,7 @@ I18n::Message MathVariableBoxController::subTitle() {
 }
 
 MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index) {
-  Page pages[k_numberOfMenuRows] = {Page::Expression, Page::Function, Page::Sequence, Page::List};
+  Page pages[k_numberOfMenuRows] = {Page::Expression, Page::Function, Page::Sequence, Page::List, Page::Matrix};
   return pages[index];
 }
 
@@ -246,7 +250,7 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
 
 I18n::Message MathVariableBoxController::nodeLabelAtIndex(int index) {
   assert(m_currentPage == Page::RootMenu);
-  I18n::Message labels[k_numberOfMenuRows] = {I18n::Message::Expressions, I18n::Message::Functions, I18n::Message::Sequences, I18n::Message::Lists};
+  I18n::Message labels[k_numberOfMenuRows] = {I18n::Message::Expressions, I18n::Message::Functions, I18n::Message::Sequences, I18n::Message::Lists, I18n::Message::Matrices};
   return labels[index];
 }
 
@@ -288,6 +292,8 @@ const char * MathVariableBoxController::extension() const {
     return Ion::Storage::expExtension;
   } else if (m_currentPage == Page::List) {
     return Ion::Storage::lisExtension;
+  } else if (m_currentPage == Page::Matrix) {
+    return Ion::Storage::matExtension;
   } else {
     assert(m_currentPage == Page::Sequence);
     return Ion::Storage::seqExtension;

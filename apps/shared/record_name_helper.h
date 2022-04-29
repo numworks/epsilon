@@ -46,6 +46,7 @@ public:
   };
   static_assert(k_numberOfCompetingExtensions == sizeof(k_competingExtensionsPrecedenceScore) / sizeof(char *), "A competing record extension has no precedence score.");
 
+  bool competingExtensionsOverrideThemselves() override { return true; }
   const char * const * competingExtensions() override { return k_competingExtensions; }
   int numberOfCompetingExtensions() override { return k_numberOfCompetingExtensions; }
   size_t precedenceScoreOfExtension(const char * extension);

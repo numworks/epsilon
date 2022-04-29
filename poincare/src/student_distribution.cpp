@@ -1,4 +1,5 @@
 #include <poincare/student_distribution.h>
+#include <poincare/rational.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <cmath>
 #include <float.h>
@@ -55,6 +56,57 @@ template <typename T> T StudentDistribution::CumulativeDistributiveInverseForPro
   return result.x1();
 }
 
+template<typename T>
+bool StudentDistribution::KIsOK(T k) {
+  return !std::isnan(k) && !std::isinf(k)
+   && k > static_cast<T>(DBL_EPSILON) && k <= static_cast<T>(200.0);
+  // We cannot draw the curve for x > 200 (coefficient() is too small)
+}
+
+bool StudentDistribution::ExpressionKIsOK(bool * result, const Expression & k, Context * context) {
+  assert(result != nullptr);
+  if (k.deepIsMatrix(context)) {
+    *result = false;
+    return true;
+  }
+
+  if (k.isUndefined() || Expression::IsInfinity(k, context)) {
+    // TODO : use normal distribution when k = +inf
+    *result = false;
+    return true;
+  }
+  if (!k.isReal(context)) {
+    // We cannot check that k is real
+    return false;
+  }
+
+  {
+    ExpressionNode::Sign s = k.sign(context);
+    if (s == ExpressionNode::Sign::Negative) {
+      *result = false;
+      return true;
+    }
+    // We cannot check that var is positive
+    if (s != ExpressionNode::Sign::Positive) {
+      return false;
+    }
+  }
+
+  if (k.type() != ExpressionNode::Type::Rational) {
+    // We cannot check that var is not null
+    return false;
+  }
+
+  const Rational rationalVar = static_cast<const Rational &>(k);
+  if (rationalVar.isZero()) {
+    *result = false;
+    return true;
+    }
+  *result = true;
+  return true;
+}
+
+
 template <typename T>
 T StudentDistribution::lnCoefficient(T k) {
   return std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) - std::log(std::sqrt(k * M_PI));
@@ -69,5 +121,7 @@ template float StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<flo
 template double StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double);
 template float StudentDistribution::CumulativeDistributiveInverseForProbability<float>(float, float);
 template double StudentDistribution::CumulativeDistributiveInverseForProbability<double>(double, double);
+template bool StudentDistribution::KIsOK(float k);
+template bool StudentDistribution::KIsOK(double k);
 
 }

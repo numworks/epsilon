@@ -54,6 +54,7 @@
 #include <poincare/integral.h>
 #include <poincare/inv_binom.h>
 #include <poincare/inv_norm.h>
+#include <poincare/inv_student.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/list.h>
 #include <poincare/list_access.h>
@@ -103,6 +104,9 @@
 #include <poincare/sine.h>
 #include <poincare/square_root.h>
 #include <poincare/store.h>
+#include <poincare/student_cdf.h>
+#include <poincare/student_cdf_range.h>
+#include <poincare/student_pdf.h>
 #include <poincare/subtraction.h>
 #include <poincare/sum.h>
 #include <poincare/superior.h>

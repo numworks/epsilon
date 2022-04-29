@@ -111,6 +111,7 @@ poincare_src += $(addprefix poincare/src/,\
   integral.cpp \
   inv_binom.cpp \
   inv_norm.cpp \
+  inv_student.cpp \
   layout_helper.cpp \
   least_common_multiple.cpp \
   list.cpp \
@@ -173,6 +174,10 @@ poincare_src += $(addprefix poincare/src/,\
   solver.cpp \
   square_root.cpp \
   store.cpp \
+  student_cdf.cpp \
+  student_cdf_range.cpp \
+  student_pdf.cpp \
+  student_distribution_function.cpp \
   sum_and_product.cpp \
   subtraction.cpp \
   sum.cpp \

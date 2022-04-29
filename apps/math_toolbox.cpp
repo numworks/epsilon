@@ -361,6 +361,13 @@ constexpr ToolboxMessageTree normalDistributionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::NormPDFCommandWithArg, I18n::Message::NormPDF)
 };
 
+constexpr ToolboxMessageTree studentDistributionChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::StudentCDFCommandWithArg, I18n::Message::StudentCDF),
+  ToolboxMessageTree::Leaf(I18n::Message::StudentCDFRangeCommandWithArg, I18n::Message::StudentCDFRange),
+  ToolboxMessageTree::Leaf(I18n::Message::InvStudentCommandWithArg, I18n::Message::InvStudent),
+  ToolboxMessageTree::Leaf(I18n::Message::StudentPDFCommandWithArg, I18n::Message::StudentPDF)
+};
+
 constexpr ToolboxMessageTree binomialDistributionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::BinomialPDFCommandWithArg, I18n::Message::BinomialPDF),
   ToolboxMessageTree::Leaf(I18n::Message::BinomialCDFCommandWithArg, I18n::Message::BinomialCDF),
@@ -369,6 +376,7 @@ constexpr ToolboxMessageTree binomialDistributionChildren[] = {
 
 constexpr ToolboxMessageTree probabilityLawsChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::NormalDistribution, normalDistributionChildren),
+  ToolboxMessageTree::Node(I18n::Message::StudentDistribution, studentDistributionChildren),
   ToolboxMessageTree::Node(I18n::Message::BinomialDistribution, binomialDistributionChildren),
 };
 

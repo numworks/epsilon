@@ -15,6 +15,9 @@ Ion::RecordNameHelper::OverrideStatus RecordNameHelper::shouldRecordBeOverridenW
   if (previousRecord.isNull()) {
     return Ion::RecordNameHelper::OverrideStatus::Allowed;
   }
+  if (strcmp(newExtension, previousRecord.extension()) == 0) {
+    return competingExtensionsOverrideThemselves() ? Ion::RecordNameHelper::OverrideStatus::Allowed : Ion::RecordNameHelper::OverrideStatus::Forbidden;
+  }
   int newPrecedenceScore = precedenceScoreOfExtension(newExtension);
   int previousPrecedenceScore = precedenceScoreOfExtension(previousRecord.extension());
   // If at least one is not a competing extension, they can coexist.

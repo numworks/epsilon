@@ -1,7 +1,6 @@
 #include "affine_model.h"
 #include "../store.h"
 #include <poincare/layout_helper.h>
-#include <cmath>
 #include <assert.h>
 
 using namespace Poincare;

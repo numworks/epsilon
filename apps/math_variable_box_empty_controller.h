@@ -9,22 +9,16 @@ public:
   MathVariableBoxEmptyController() :
     ModalViewEmptyController()
   {}
-  enum class Type {
-    None = 0,
-    Expressions = 1,
-    Functions = 2,
-    Sequence = 3,
-    List = 4,
-    Matrix = 5
-  };
-  void setType(Type type);
+  /* Because of inclusion of this .h into math_variable_box_controller.h,
+  * the page needs to be casted to int before being past to this method. */
+  void setPage(int pageCastedToInt);
   // View Controller
   Escher::View * view() override { return &m_view; }
   void viewDidDisappear() override;
 private:
   class MathVariableBoxEmptyView : public Escher::ModalViewEmptyController::ModalViewEmptyView {
   public:
-    constexpr static int k_numberOfMessages = 5;
+    constexpr static int k_numberOfMessages = 4;
     MathVariableBoxEmptyView();
     void setLayout(Poincare::Layout layout);
   private:

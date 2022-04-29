@@ -1,4 +1,5 @@
 #include "math_variable_box_empty_controller.h"
+#include "math_variable_box_controller.h"
 #include <poincare/layout_helper.h>
 #include <apps/i18n.h>
 #include <assert.h>
@@ -20,7 +21,8 @@ void MathVariableBoxEmptyController::viewDidDisappear() {
   m_view.setLayout(Poincare::Layout());
 }
 
-void MathVariableBoxEmptyController::setType(Type type) {
+void MathVariableBoxEmptyController::setPage(int pageCastedToInt) {
+  MathVariableBoxController::Page page = static_cast<MathVariableBoxController::Page>(pageCastedToInt);
   I18n::Message messages[MathVariableBoxEmptyView::k_numberOfMessages] = {
     I18n::Message::Default,
     I18n::Message::Default,
@@ -28,8 +30,8 @@ void MathVariableBoxEmptyController::setType(Type type) {
     I18n::Message::EnableCharacters
   };
   Poincare::Layout layout;
-  switch (type) {
-    case Type::Expressions:
+  switch (page) {
+    case MathVariableBoxController::Page::Expression:
     {
       messages[0] = I18n::Message::EmptyExpressionBox0;
       messages[1] = I18n::Message::EmptyExpressionBox1;
@@ -38,7 +40,7 @@ void MathVariableBoxEmptyController::setType(Type type) {
       layout = Poincare::LayoutHelper::String(storeExpression, strlen(storeExpression), MathVariableBoxEmptyView::k_font);
       break;
     }
-    case Type::Functions:
+    case MathVariableBoxController::Page::Function:
     {
       messages[0] = I18n::Message::EmptyFunctionBox0;
       messages[1] = I18n::Message::EmptyFunctionBox1;
@@ -47,14 +49,14 @@ void MathVariableBoxEmptyController::setType(Type type) {
       layout = Poincare::LayoutHelper::String(storeFunction, strlen(storeFunction), MathVariableBoxEmptyView::k_font);
       break;
     }
-    case Type::Sequence:
+    case MathVariableBoxController::Page::Sequence:
     {
       messages[0] = I18n::Message::EmptySequenceBox0;
       messages[1] = I18n::Message::EmptySequenceBox1;
       messages[3] = I18n::Message::Default;
       break;
     }
-    case Type::List:
+    case MathVariableBoxController::Page::List:
     {
       messages[0] = I18n::Message::EmptyListBox0;
       messages[1] = I18n::Message::EmptyListBox1;
@@ -63,7 +65,7 @@ void MathVariableBoxEmptyController::setType(Type type) {
       layout = Poincare::LayoutHelper::String(storeList, strlen(storeList), MathVariableBoxEmptyView::k_font);
       break;
     }
-    case Type::Matrix:
+    case MathVariableBoxController::Page::Matrix:
     {
       messages[0] = I18n::Message::EmptyExpressionBox0;
       messages[1] = I18n::Message::EmptyExpressionBox1;

@@ -165,7 +165,7 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord, Context * context) {
   Expression reducedExpression = expression.clone();
-  PoincareHelpers::CloneAndReduce(&reducedExpression, context, ExpressionNode::ReductionTarget::User);
+  PoincareHelpers::CloneAndSimplify(&reducedExpression, context, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   ExpressionNode::Type type = reducedExpression.type();
   const char * extension;
   if (type == ExpressionNode::Type::List) {
@@ -175,7 +175,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   } else {
     extension = Ion::Storage::expExtension;
   }
-  return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), extension, expression.addressInPool(), expression.size());
+  return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), extension, reducedExpression.addressInPool(), reducedExpression.size());
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {

@@ -118,7 +118,7 @@ Expression Sequence::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return *this;
   }
 
-  Expression result = replacedByDefinitionIfPossible(reductionContext.context());
+  Expression result = replacedByDefinitionIfPossible(reductionContext.context()); // We don't need to check if the result is uninitialized
   result = Expression::ExpressionWithoutSymbols(result, reductionContext.context());
 
   if (result.isUninitialized()) {
@@ -184,6 +184,17 @@ Expression Sequence::replacedByDefinitionIfPossible(Context * context) {
   }
 
   Expression result = seq.expressionClone();
+
+  if (result.hasExpression([](Expression e, const void * context) {
+          if (e.type() != ExpressionNode::Type::Sequence) {
+            return false;
+          }
+          return strcmp(static_cast<Sequence&>(e).name(), reinterpret_cast<const char *>(context)) == 0;
+        }, reinterpret_cast<const void *>(name())))
+  {
+    return Expression();
+  }
+
   return result.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), childAtIndex(0));
 }
 

@@ -65,27 +65,41 @@ void WordWrapTextView::richTextPreviousPage() {
   const int charHeight = m_font->glyphSize().height();
 
   const char * endOfWord = text() + m_pageOffset - 1;
+  if (*endOfWord == '\n') {
+    endOfWord --;
+  }
 
-  KDCoordinate baseline = charHeight;
+  KDCoordinate baseline = charHeight / 2;
 
   KDPoint textBottomEndPosition = KDPoint(m_frame.width() - k_margin, m_frame.height() - k_margin);
   KDCoordinate lineHeight = charHeight;
 
   while(endOfWord >= text()) {
     // 1. Skip whitespaces and line jumps
-    while(endOfWord >= text() && (*endOfWord == ' ' || *endOfWord == '\n')) {
-      if(*endOfWord == '\n') {
+    const char * invisiblesCharJumped = endOfWord; // We use this to update endOfWord only if we don't change page
+    bool changePage = false;
+    while(invisiblesCharJumped >= text() && (*invisiblesCharJumped == ' ' || *invisiblesCharJumped == '\n')) {
+      if(*invisiblesCharJumped == '\n') {
         textBottomEndPosition = KDPoint(m_frame.width() - k_margin, textBottomEndPosition.y() - lineHeight);
         lineHeight = charHeight;
+        baseline = charHeight / 2;
         // We check if we must change page
         if (textBottomEndPosition.y() - lineHeight <= k_margin) {
+          // We don't let text on a new line or a space
+          endOfWord ++;
+          changePage = true;
           break;
         }
       } else {
         textBottomEndPosition = KDPoint(textBottomEndPosition.x() - charWidth, textBottomEndPosition.y());
       }
-      endOfWord--;
+      invisiblesCharJumped--;
     }
+
+    if (changePage) {
+      break;
+    }
+    endOfWord = invisiblesCharJumped;
 
     // 3. If word is a color change
     if (*endOfWord == '%' && *(endOfWord - 1) != '\\') {
@@ -146,6 +160,7 @@ void WordWrapTextView::richTextPreviousPage() {
     if (textBottomEndPosition.x() - textSize.width() <= k_margin) {
       textBottomEndPosition = KDPoint(m_frame.width() - k_margin, textBottomEndPosition.y() - lineHeight);
       lineHeight = 0;
+      baseline = charHeight;
       // We will check if we must change page below
     }
     textBottomEndPosition = KDPoint(textBottomEndPosition.x() - textSize.width(), textBottomEndPosition.y());
@@ -604,6 +619,11 @@ BookSave WordWrapTextView::getBookSave() const {
 void WordWrapTextView::setBookSave(BookSave save) {
   m_pageOffset = save.offset;
   m_textColor = save.color;
+  m_lastPagesOffsetsIndex = 0;
+
+  for (int i = 0; i < k_lastOffsetsBufferSize; i++) {
+    m_lastPagesOffsets[i] = -1; // -1 Means : no informations
+  }
 }
 
 bool WordWrapTextView::updateTextColorForward(const char * colorStart) const {

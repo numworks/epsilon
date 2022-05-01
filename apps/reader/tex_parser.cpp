@@ -15,6 +15,8 @@ namespace Reader {
     "sim",
   };
 
+  static constexpr int const k_NumberOfSymbols = sizeof(k_SymbolsCommands) / sizeof(char *);
+
   // List of the available Symbol's CodePoints in the same order of the Symbol's list
   static constexpr uint32_t const k_SymbolsCodePoints[] = {
     0xd7, 0xf7, 0x2200, 0x2202, 0x2203, 0xb1, 0x2248, 0x221e, 0x2260, 0x2261, 0x2264, 0x2265,
@@ -27,13 +29,17 @@ namespace Reader {
     0x7e,
   };
 
+  static_assert(sizeof(k_SymbolsCodePoints) / sizeof(uint32_t) == k_NumberOfSymbols);
+
   // List of available Function Commands that don't require a specific handling
-  static constexpr char const * k_FunctionCommands[] = {
+  static char const * k_FunctionCommands[] = {
     "arccos", "arcsin", "arctan", "arg", "cos", "cosh", "cot", "coth",
     "csc", "deg", "det", "dim", "exp", "gcd", "hom", "inf",
     "ker", "lg", "lim", "liminf", "limsup", "ln", "log", "max",
     "min", "Pr", "sec", "sin", "sinh", "sup", "tan", "tanh"
   };
+
+  static int const k_NumberOfFunctionCommands = sizeof(k_FunctionCommands) / sizeof(char *);
 
 TexParser::TexParser(const char * text, const char * endOfText) :
   m_text(text),

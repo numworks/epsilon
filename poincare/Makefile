@@ -45,6 +45,7 @@ poincare_src += $(addprefix poincare/src/,\
   exception_checkpoint.cpp \
   helpers.cpp \
   normal_distribution.cpp \
+  poisson_distribution.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
   statistics_dataset.cpp\
@@ -152,6 +153,9 @@ poincare_src += $(addprefix poincare/src/,\
   parametered_expression.cpp \
   parenthesis.cpp \
   permute_coefficient.cpp \
+  poisson_cdf.cpp \
+  poisson_distribution_function.cpp \
+  poisson_pdf.cpp \
   polynomial.cpp \
   power.cpp \
   preferences.cpp \

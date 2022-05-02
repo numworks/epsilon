@@ -428,7 +428,7 @@ T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, Valu
 
 template<typename T>
 T Solver::CumulativeDistributiveFunctionForNDefinedFunction(T x, ValueAtAbscissa evaluation, Context * context, const void * auxiliary) {
-  int end = std::round(x);
+  int end = std::floor(x);
   double result = 0.0;
   for (int k = 0; k <=end; k++) {
     result += evaluation(k, context, auxiliary);

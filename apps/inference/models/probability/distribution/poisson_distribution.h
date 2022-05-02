@@ -13,7 +13,7 @@ public:
   Type type() const override { return Type::Poisson; }
   const char * parameterNameAtIndex(int index) const override { return "λ"; }
   bool isContinuous() const override { return false; }
-  bool isSymmetrical() const override { return true; }
+  bool isSymmetrical() const override { return false; }
   float evaluateAtAbscissa(float x) const override {
     return templatedApproximateAtAbscissa<float>(x);
   }

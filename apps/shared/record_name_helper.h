@@ -96,7 +96,7 @@ private:
   /* Returns true if the name is reserved for an other extension than the one
   * given in parameter. Return false if the name is reserved for this extension
   * or not reserved at all. */
-  bool isNameReservedForAnotherExtension(const char * name, const char * extension);
+  bool isNameReservedForAnotherExtension(const char * name, int nameLength, const char * extension);
 };
 
 }

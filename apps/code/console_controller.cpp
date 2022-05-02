@@ -5,6 +5,7 @@
 #include <apps/i18n.h>
 #include <algorithm>
 #include <assert.h>
+#include <ion/storage.h>
 #include <escher/metric.h>
 #include <apps/global_preferences.h>
 #include <apps/apps_container.h>
@@ -463,20 +464,20 @@ void ConsoleController::autoImportScript(Script script, bool force) {
   if (script.autoImportation() || force) {
     // Step 1 - Create the command "from scriptName import *".
 
-    assert(strlen(k_importCommand1) + strlen(script.fullName()) - strlen(ScriptStore::k_scriptExtension) - 1 + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
+    assert(strlen(k_importCommand1) + script.name().baseNameLength + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
     char command[k_maxImportCommandSize];
 
     // Copy "from "
     size_t currentChar = strlcpy(command, k_importCommand1, k_maxImportCommandSize);
-    const char * scriptName = script.fullName();
+    Ion::Storage::Record::Name scriptName = script.name();
 
     /* Copy the script name without the extension ".py". The '.' is overwritten
      * by the null terminating char. */
-    int copySizeWithNullTerminatingZero = std::min(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
+    int copySizeWithNullTerminatingZero = std::min(k_maxImportCommandSize - currentChar, scriptName.baseNameLength + 1);
     assert(copySizeWithNullTerminatingZero >= 0);
     assert(copySizeWithNullTerminatingZero <= static_cast<int>(k_maxImportCommandSize - currentChar));
-    strlcpy(command+currentChar, scriptName, copySizeWithNullTerminatingZero);
-    currentChar += copySizeWithNullTerminatingZero-1;
+    strlcpy(command+currentChar, scriptName.baseName, copySizeWithNullTerminatingZero);
+    currentChar += copySizeWithNullTerminatingZero - 1;
 
     // Copy " import *"
     assert(k_maxImportCommandSize >= currentChar);

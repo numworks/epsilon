@@ -15,17 +15,18 @@ Ion::RecordNameHelper::OverrideStatus RecordNameHelper::shouldRecordBeOverridenW
   if (previousRecord.isNull()) {
     return Ion::RecordNameHelper::OverrideStatus::Allowed;
   }
-  if (strcmp(newExtension, previousRecord.extension()) == 0) {
+  if (previousRecord.hasExtension(newExtension)) {
     return competingExtensionsOverrideThemselves() ? Ion::RecordNameHelper::OverrideStatus::Allowed : Ion::RecordNameHelper::OverrideStatus::Forbidden;
   }
   int newPrecedenceScore = precedenceScoreOfExtension(newExtension);
-  int previousPrecedenceScore = precedenceScoreOfExtension(previousRecord.extension());
+  int previousPrecedenceScore = precedenceScoreOfExtension(previousRecord.name().extension);
   // If at least one is not a competing extension, they can coexist.
   if (newPrecedenceScore == -1 || previousPrecedenceScore == -1) {
     return Ion::RecordNameHelper::OverrideStatus::CanCoexist;
   }
-  bool newIsReservedForAnotherExtension = isNameReservedForAnotherExtension(previousRecord.fullName(), newExtension);
-  bool previousIsReservedForAnotherExtension = isNameReservedForAnotherExtension(previousRecord.fullName(), previousRecord.extension());
+  Ion::Storage::Record::Name previousName = previousRecord.name();
+  bool newIsReservedForAnotherExtension = isNameReservedForAnotherExtension(previousName.baseName, previousName.baseNameLength, newExtension);
+  bool previousIsReservedForAnotherExtension = isNameReservedForAnotherExtension(previousName.baseName, previousName.baseNameLength, previousRecord.name().extension);
   if (newIsReservedForAnotherExtension && !previousIsReservedForAnotherExtension) {
     // Name is reserved for previousExtension.
     return Ion::RecordNameHelper::OverrideStatus::Forbidden;
@@ -41,13 +42,13 @@ Ion::RecordNameHelper::OverrideStatus RecordNameHelper::shouldRecordBeOverridenW
   return  Ion::RecordNameHelper::OverrideStatus::Allowed;
 }
 
-bool RecordNameHelper::isNameReservedForAnotherExtension(const char * name, const char * extension) {
+bool RecordNameHelper::isNameReservedForAnotherExtension(const char * name, int nameLength, const char * extension) {
   for (int i = 0 ; i < k_reservedExtensionsLength ; i++) {
     ReservedExtension reservedExtension = k_reservedExtensions[i];
     for (int j = 0 ; j < reservedExtension.numberOfElements ; j++) {
       int charIndex = 0;
       // For each reserved name, check if the record has the same base name.
-      while (name[charIndex] != '.' && name[charIndex] != 0) {
+      while (charIndex < nameLength) {
         if (name[charIndex] != reservedExtension.namePrefixes[j][charIndex]) {
           break;
         }
@@ -56,9 +57,9 @@ bool RecordNameHelper::isNameReservedForAnotherExtension(const char * name, cons
       bool hasSameBaseName;
       if (reservedExtension.prefixRepetitions > 0) {
         // Check if the last char of the name is the suffix-digit
-        hasSameBaseName =  (name[charIndex + 1] == '.' || name[charIndex + 1] == 0) && reservedExtension.namePrefixes[j][charIndex] == 0 && name[charIndex] >= '1' && name[charIndex] < '1' + reservedExtension.prefixRepetitions;
+        hasSameBaseName = charIndex == nameLength - 1 && charIndex == strlen(reservedExtension.namePrefixes[j]) && name[charIndex] >= '1' && name[charIndex] < '1' + reservedExtension.prefixRepetitions;
       } else {
-        hasSameBaseName = (name[charIndex] == '.' || name[charIndex] == 0) && reservedExtension.namePrefixes[j][charIndex] == 0;
+        hasSameBaseName = charIndex == nameLength && charIndex == strlen(reservedExtension.namePrefixes[j]);
       }
       // If it has the same base name but not the same extension, return true
       if (hasSameBaseName && strcmp(extension, reservedExtension.extension) != 0) {

@@ -692,8 +692,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
     const size_t functionNameLength = strlen(functionName);
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName)
         || (record->fullName()[0] != k_unnamedRecordFirstChar
-            && memcmp(record->fullName(), functionName, functionNameLength) == 0
-            && record->fullName()[functionNameLength] == Ion::Storage::k_dotChar)) {
+            && strncmp(record->name().baseName, functionName, functionNameLength) == 0)) {
       Expression functionSymbol = leftExpression.childAtIndex(0);
       // Set the model's plot type.
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
@@ -769,7 +768,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
 Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record * record, const char * c, Context * context, CodePoint symbol) {
   Expression newExpression = originalEquation(record, symbol);
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
-  if (Ion::Storage::FullNameHasExtension(record->fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
+  if (record->hasExtension(Ion::Storage::funcExtension)) {
     if (!newExpression.isUninitialized()
         && ComparisonOperator::IsComparisonOperatorType(newExpression.type())
         && isValidNamedLeftExpression(newExpression.childAtIndex(0),

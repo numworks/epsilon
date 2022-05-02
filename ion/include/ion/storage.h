@@ -54,8 +54,17 @@ public:
       const void * buffer;
       size_t size;
     };
+    /* Extension is null terminated,
+     * but baseName is not always, so we store its length.
+     */
+    struct Name {
+      const char * baseName;
+      size_t baseNameLength;
+      const char * extension;
+    };
     Record(const char * fullName = nullptr);
     Record(const char * basename, const char * extension);
+    Record(Name name);
     bool operator==(const Record & other) const {
       return m_fullNameCRC32 == other.m_fullNameCRC32;
     }
@@ -69,11 +78,12 @@ public:
     bool isNull() const {
       return m_fullNameCRC32 == 0;
     }
-    const char * fullName() const {
-      return Storage::sharedStorage()->fullNameOfRecord(*this);
+    Name name() const {
+      return Storage::sharedStorage()->nameOfRecord(*this);
     }
-    const char * extension() const {
-      return UTF8Helper::CodePointSearch(fullName(), '.') + 1;
+    const char * fullName() const {
+      // The baseName points towards the start of the fullName
+      return Storage::sharedStorage()->nameOfRecord(*this).baseName;
     }
     Data value() const {
       return Storage::sharedStorage()->valueOfRecord(*this);
@@ -84,16 +94,29 @@ public:
     void destroy() {
       return Storage::sharedStorage()->destroyRecord(*this);
     }
+    bool hasExtension(const char * extension) {
+      const char * thisExtension = name().extension;
+      return thisExtension == nullptr ? false : strcmp(thisExtension, extension) == 0;
+    }
+    // Record::Name
+    static Name CreateRecordNameFromFullName(const char * fullName);
+    static Name CreateRecordNameFromBaseNameAndExtension(const char * baseName, const char * extension);
+    static size_t SizeOfName(Record::Name name);
+    static bool NameIsEmpty(Name name);
+    static Name EmptyName() {
+      return Name({nullptr, 0, nullptr});
+    }
     /* This methods are static to prevent any calling these methods on "this",
      * since these methods might modify in-place the record */
     static Record::ErrorStatus SetBaseNameWithExtension(Record * record, const char * baseName, const char * extension) {
-      return Storage::sharedStorage()->setBaseNameWithExtensionOfRecord(record, baseName, strlen(baseName), extension, strlen(extension));
+      Name name = CreateRecordNameFromBaseNameAndExtension(baseName, extension);
+      return Storage::sharedStorage()->setNameOfRecord(record, name);
     }
-    static Record::ErrorStatus SetName(Record * record, const char * fullName) {
-      return Storage::sharedStorage()->setFullNameOfRecord(record, fullName);
+    static Record::ErrorStatus SetFullName(Record * record, const char * fullName) {
+      Name name = CreateRecordNameFromFullName(fullName);
+      return Storage::sharedStorage()->setNameOfRecord(record, name);
     }
   private:
-    Record(const char * basename, int basenameLength, const char * extension, int extensionLength);
     uint32_t m_fullNameCRC32;
   };
 
@@ -125,11 +148,11 @@ public:
 
   // Record names helper
   int firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId);
-  static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
 
   // Record creation
-  Record::ErrorStatus createRecordWithFullName(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks);
   Record::ErrorStatus createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size);
+  Record::ErrorStatus createRecordWithFullNameAndDataChunks(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks);
+  Record::ErrorStatus createRecordWithDataChunks(Record::Name recordName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks);
 
   // Record getters
   bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
@@ -139,14 +162,18 @@ public:
   Record recordWithExtensionAtIndexStartingWithout(const char nonStartingChar, const char * extension, int index) {
     return recordWithFilterAtIndex(extension, index, FirstCharFilter, &nonStartingChar);
   }
-  Record recordNamed(const char * fullName);
-  Record recordBaseNamedWithExtension(const char * baseName, const char * extension);
+  Record recordNamed(Record::Name name);
+  Record recordNamed(const char * fullName) {
+    return recordNamed(Record::CreateRecordNameFromFullName(fullName));
+  }
+  Record recordBaseNamedWithExtension(const char * baseName, const char * extension) {
+    return recordNamed(Record::CreateRecordNameFromBaseNameAndExtension(baseName, extension));
+  }
   Record recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions);
   const char * extensionOfRecordBaseNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions);
 
   // Record destruction
   void destroyAllRecords();
-  void destroyRecordWithBaseNameAndExtension(const char * baseName, const char * extension);
   void destroyRecordsWithExtension(const char * extension);
 
   /* Destroy a record with same baseName and a competing extension
@@ -155,18 +182,18 @@ public:
    * WARNING : If m_recordNameHelper == nullptr, record won't override
    * themself when replaced with a record with same name and same extension.
    * This in maily relevant for tests, where you have to set the helper by hand.*/
-  bool destroyCompetingRecord(const char * baseName, const char * extension, int baseNameLength = -1, Record * excludedRecord = nullptr);
+  bool destroyCompetingRecord(Record::Name recordName, Record * excludedRecord = nullptr);
 
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
 
-  // Record filter on fullNames
-  typedef bool (*RecordFilter)(const char * name, const void * auxiliary);
-  static bool ExtensionOnlyFilter(const char * name, const void * auxiliary) { return true; };
-  static bool FirstCharFilter(const char * name, const void * auxiliary) {
+  // Record filter on names
+  typedef bool (*RecordFilter)(Record::Name name, const void * auxiliary);
+  static bool ExtensionOnlyFilter(Record::Name name, const void * auxiliary) { return true; };
+  static bool FirstCharFilter(Record::Name name, const void * auxiliary) {
     assert(auxiliary != nullptr);
-    return name[0] != *static_cast<const char *>(auxiliary);
+    return name.baseName[0] != *static_cast<const char *>(auxiliary);
   };
   // Private record counters and getters
   int numberOfRecordsWithFilter(const char * extension, RecordFilter filter, const void * auxiliary = nullptr);
@@ -175,9 +202,8 @@ private:
   Storage();
 
   /* Getters/Setters on recordID */
-  const char * fullNameOfRecord(const Record record);
-  Record::ErrorStatus setFullNameOfRecord(Record * record, const char * fullName);
-  Record::ErrorStatus setBaseNameWithExtensionOfRecord(Record * record, const char * basename, int basenameLength, const char * extension, int extensionLength);
+  Record::Name nameOfRecord(const Record record) const;
+  Record::ErrorStatus setNameOfRecord(Record * record, Record::Name name);
   Record::Data valueOfRecord(const Record record);
   Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
   void destroyRecord(const Record record);
@@ -185,23 +211,18 @@ private:
   /* Getters on address in buffer */
   char * pointerOfRecord(const Record record) const;
   record_size_t sizeOfRecordStarting(char * start) const;
-  const char * fullNameOfRecordStarting(char * start) const;
   const void * valueOfRecordStarting(char * start) const;
+  Record::Name nameOfRecordStarting(char * start) const;
 
   /* Overriders */
   size_t overrideSizeAtPosition(char * position, record_size_t size);
-  size_t overrideFullNameAtPosition(char * position, const char * fullName);
-  size_t overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, int basenameLength, const char * extension, int extensionLength);
+  size_t overrideNameAtPosition(char * position, Record::Name name);
   size_t overrideValueAtPosition(char * position, const void * data, record_size_t size);
 
-  bool isFullNameTaken(const char * fullName, const Record * recordToExclude = nullptr);
-  bool isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude = nullptr);
+  bool isNameTaken(Record::Name name, const Record * recordToExclude = nullptr);
   bool isNameOfRecordTaken(Record r, const Record * recordToExclude);
-  static bool FullNameCompliant(const char * name);
   char * endBuffer();
-  size_t sizeOfBaseNameAndExtension(const char * baseName, const char * extension) const;
-  size_t sizeOfRecordWithBaseNameAndExtension(const char * baseName, const char * extension, size_t size) const;
-  size_t sizeOfRecordWithFullName(const char * fullName, size_t size) const;
+  size_t sizeOfRecordWithName(Record::Name name, size_t dataSize);
   bool slideBuffer(char * position, int delta);
   class RecordIterator {
   public:

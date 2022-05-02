@@ -95,7 +95,7 @@ QUIZ_CASE(ion_storage_invalid_renaming) {
 
   // Rename the record with an invalid name
   const char * fullNameRecord2 = "invalidNameWithoutDot";
-  error = Ion::Storage::Record::SetName(&retrievedRecord, fullNameRecord2);
+  error = Ion::Storage::Record::SetFullName(&retrievedRecord, fullNameRecord2);
   quiz_assert(error == Storage::Record::ErrorStatus::NonCompliantName);
 
   // Destroy it
@@ -124,7 +124,7 @@ QUIZ_CASE(ion_storage_valid_renaming) {
 
   // Rename the record with a valid name
   const char * newFullNameRecord = "testStorage.record2";
-  error = Ion::Storage::Record::SetName(&retrievedRecord, newFullNameRecord);
+  error = Ion::Storage::Record::SetFullName(&retrievedRecord, newFullNameRecord);
   quiz_assert(error == Storage::Record::ErrorStatus::None);
 
   // Retrieve the previous record

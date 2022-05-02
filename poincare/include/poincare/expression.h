@@ -100,6 +100,7 @@ class Expression : public TreeHandle {
   friend class ParameteredExpressionNode;
   friend class Parenthesis;
   friend class PermuteCoefficient;
+  friend class PoissonDistributionFunction;
   friend class Power;
   friend class PowerNode;
   friend class Product;

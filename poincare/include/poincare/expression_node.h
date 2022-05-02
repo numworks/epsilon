@@ -113,6 +113,8 @@ public:
     Opposite,
     Parenthesis,
     PermuteCoefficient,
+    PoissonCDF,
+    PoissonPDF,
     Product,
     Random,
     Randint,

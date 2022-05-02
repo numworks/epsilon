@@ -89,6 +89,8 @@
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/permute_coefficient.h>
+#include <poincare/poisson_cdf.h>
+#include <poincare/poisson_pdf.h>
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>

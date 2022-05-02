@@ -100,7 +100,7 @@ public:
     /* Switch to this descriptor to use dfu-util to write in the SRAM.
      * FIXME Should be an alternate Interface. */
     m_microsoftOSStringDescriptor(k_microsoftOSVendorCode),
-    m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "getomega.dev"),
+    m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "getupsilon.web.app"),
     m_extendedCompatIdDescriptor("WINUSB"),
     m_descriptors{
       &m_deviceDescriptor,             // Type = Device, Index = 0

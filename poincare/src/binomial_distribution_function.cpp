@@ -31,7 +31,7 @@ Expression BinomialDistributionFunction::shallowReduce(ExpressionNode::Reduction
   Expression n = childAtIndex(1);
   Expression p = childAtIndex(2);
 
-  // Check mu and var
+  // Check n and p
   bool nAndPOK = false;
   bool couldCheckNAndP = BinomialDistribution::ExpressionParametersAreOK(&nAndPOK, n, p, reductionContext.context());
   if (!couldCheckNAndP) {

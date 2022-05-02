@@ -42,8 +42,11 @@ T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
 
 template<typename T>
 T BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T n, T p) {
-  if (!ParametersAreOK(n, p) || std::isnan(x) || std::isinf(x)) {
+  if (!ParametersAreOK(n, p) || std::isnan(x)) {
     return NAN;
+  }
+  if (std::isinf(x)) {
+    return x > static_cast<T>(0.0) ? static_cast<T>(1.0) : static_cast<T>(0.0);
   }
   if (x < static_cast<T>(0.0)) {
     return static_cast<T>(0.0);
@@ -58,9 +61,6 @@ T BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T n, T p) 
 template<typename T>
 T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probability, T n, T p) {
   if (!ParametersAreOK(n, p) || std::isnan(probability) || std::isinf(probability) || probability < static_cast<T>(0.0) || probability > static_cast<T>(1.0)) {
-    return NAN;
-  }
-  if (!ParametersAreOK(n, p)) {
     return NAN;
   }
   constexpr T precision = Float<T>::Epsilon();

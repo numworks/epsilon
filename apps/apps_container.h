@@ -28,7 +28,6 @@ public:
   static bool poincareCircuitBreaker();
   virtual int numberOfApps() = 0;
   virtual App::Snapshot * appSnapshotAtIndex(int index) = 0;
-  virtual int appIndexFromSnapshot(App::Snapshot * snapshot) = 0;
   App::Snapshot * initialAppSnapshot();
   App::Snapshot * hardwareTestAppSnapshot();
   App::Snapshot * onBoardingAppSnapshot();
@@ -70,8 +69,6 @@ private:
   static KDColor k_promptFGColors[];
   static KDColor k_promptBGColors[];
   static int k_promptNumberOfMessages;
-  int m_currentAppIndex; // Home isn't included after the second app switching
-  int m_lastAppIndex;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
   Shared::GlobalContext m_globalContext;

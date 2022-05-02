@@ -12,7 +12,6 @@ public:
   AppsContainerStorage();
   int numberOfApps() override;
   App::Snapshot * appSnapshotAtIndex(int index) override;
-  int appIndexFromSnapshot(App::Snapshot * snapshot) override;
   void * currentAppBuffer() override { return &m_apps; };
 private:
   union Apps {

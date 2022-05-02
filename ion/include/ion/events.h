@@ -185,7 +185,6 @@ constexpr Event ShiftSeven = Event::ShiftKey(Keyboard::Key::Seven);
 constexpr Event ShiftEight = Event::ShiftKey(Keyboard::Key::Eight);
 constexpr Event ShiftNine = Event::ShiftKey(Keyboard::Key::Nine);
 
-constexpr Event ShiftAns = Event::ShiftKey(Keyboard::Key::Ans);
 constexpr Event ShiftEXE = Event::ShiftKey(Keyboard::Key::EXE);
 
 // Alpha

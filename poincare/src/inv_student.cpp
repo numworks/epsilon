@@ -46,7 +46,7 @@ Expression InvStudent::shallowReduce(ExpressionNode::ReductionContext reductionC
     }
   }
   Expression a = childAtIndex(0);
-  Expression mu = childAtIndex(1);
+  Expression k = childAtIndex(1);
   Context * context = reductionContext.context();
 
   // Check a
@@ -79,10 +79,11 @@ Expression InvStudent::shallowReduce(ExpressionNode::ReductionContext reductionC
     return result;
   }
 
-  // mu if a == 0.5
+  // 0 if a == 0.5
   if (rationalA.isHalf()) {
-    replaceWithInPlace(mu);
-    return mu;
+    Expression zero = Rational::Builder(0);
+    replaceWithInPlace(zero);
+    return zero;
   }
 
   return *this;

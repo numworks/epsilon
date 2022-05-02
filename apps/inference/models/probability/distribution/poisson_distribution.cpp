@@ -1,5 +1,5 @@
 #include "poisson_distribution.h"
-
+#include <poincare/poisson_distribution.h>
 #include <assert.h>
 #include <cmath>
 
@@ -17,11 +17,7 @@ bool PoissonDistribution::authorizedParameterAtIndex(double x, int index) const 
 
 template<typename T>
 T PoissonDistribution::templatedApproximateAtAbscissa(T x) const {
-  if (x < 0) {
-    return NAN;
-  }
-  T lResult = -static_cast<T>(m_parameter) + std::floor(x) * std::log(static_cast<T>(m_parameter)) - std::lgamma(std::floor(x) + 1);
-  return std::exp(lResult);
+  return Poincare::PoissonDistribution::EvaluateAtAbscissa<T>(x, static_cast<T>(m_parameter));
 }
 
 float PoissonDistribution::computeXMax() const {

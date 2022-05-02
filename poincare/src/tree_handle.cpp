@@ -384,6 +384,8 @@ template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(const Tuple
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tuple &);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
 template PermuteCoefficient TreeHandle::FixedArityBuilder<PermuteCoefficient, PermuteCoefficientNode>(const Tuple &);
+template PoissonCDF TreeHandle::FixedArityBuilder<PoissonCDF, PoissonCDFNode>(const Tuple &);
+template PoissonPDF TreeHandle::FixedArityBuilder<PoissonPDF, PoissonPDFNode>(const Tuple &);
 template Power TreeHandle::FixedArityBuilder<Power, PowerNode>(const Tuple &);
 template Product TreeHandle::FixedArityBuilder<Product, ProductNode>(const Tuple &);
 template ProductLayout TreeHandle::FixedArityBuilder<ProductLayout, ProductLayoutNode>(const Tuple &);

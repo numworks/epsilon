@@ -1810,6 +1810,9 @@ QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("normcdf(2,0,1)", "normcdf(2,0,1)");
   assert_parsed_expression_simplify_to("normcdfrange(1,2,0,1)", "normcdfrange(1,2,0,1)");
   assert_parsed_expression_simplify_to("normpdf(2,0,1)", "normpdf(2,0,1)");
+
+  assert_parsed_expression_simplify_to("invt(0.5,12)", "0");
+  assert_parsed_expression_simplify_to("invt(0.5,0)", "undef");
 }
 
 QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {

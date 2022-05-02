@@ -84,14 +84,14 @@ void Sequence::setType(Type t) {
       break;
     case Type::SingleRecurrence:
     {
-      char ex[5] = "u(n)";
+      char ex[5] = "u{n}";
       ex[0] = fullName()[0];
       error = setContent(ex, nullptr); // No context needed here
       break;
     }
     case Type::DoubleRecurrence:
     {
-      char ex[12] = "u(n+1)+u(n)";
+      char ex[12] = "u{n+1}+u{n}";
       char name = fullName()[0];
       ex[0] = name;
       ex[7] = name;

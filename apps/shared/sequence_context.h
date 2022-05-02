@@ -55,10 +55,14 @@ public:
   SequenceContext(Poincare::Context * parentContext, SequenceStore * sequenceStore) :
     ContextWithParent(parentContext),
     m_sequenceStore(sequenceStore) {}
-  /* expressionForSymbolAbstract & setExpressionForSymbolAbstractName directly call the parent
-   * context respective methods. Indeed, special chars like n, u(n), u(n+1),
-   * v(n), v(n+1) are taken into accound only when evaluating sequences which
-   * is done in another context. */
+  /* u{n}, v{n} and w{n} must be parsed as sequences in the sequence app
+   * so that u{n} can be defined as a function of v{n} without v{n} being
+   * already defined.
+   * So expressionTypForIdentifier returns Type::Sequence for u, v and w,
+   * and calls the parent context in other cases.
+   * The other methods (setExpressionForSymbolAbstract and
+   * expressionForSymbolAbstract) always call the parent context. */
+  Poincare::Context::SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
   template<typename T> T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->valueOfCommonRankSequenceAtPreviousRank(sequenceIndex, rank);
   }

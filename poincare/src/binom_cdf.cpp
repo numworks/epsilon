@@ -28,7 +28,7 @@ Evaluation<T> BinomCDFNode::templatedApproximate(ApproximationContext approximat
         const T x = c[0].real();
         const T n = c[1].real();
         const T p = c[2].real();
-        // CumulativeDistributiveFunctionAtAbscissa handles bad mu and var values
+        // CumulativeDistributiveFunctionAtAbscissa handles bad n and p values
         return Complex<T>::Builder(BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(x, n, p));
       });
 }

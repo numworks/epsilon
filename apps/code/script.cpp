@@ -45,7 +45,7 @@ Script::ErrorStatus Script::Create(const char * name, const char * content) {
   Status status;
   const void * dataChunks[] = {&status, content};
   size_t sizeChunks[] = {sizeof(status), strlen(content)+1};
-  ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithFullName(name, dataChunks, sizeChunks, 2);
+  ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithFullNameAndDataChunks(name, dataChunks, sizeChunks, 2);
   assert(err != ErrorStatus::NonCompliantName);
   return err;
 }

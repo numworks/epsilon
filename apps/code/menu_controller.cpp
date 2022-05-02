@@ -317,7 +317,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     newName = const_cast<const char *>(numberedDefaultName);
   }
   Script script = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow());
-  Script::ErrorStatus error = Script::NameCompliant(newName) ? Ion::Storage::Record::SetName(&script, newName) : Script::ErrorStatus::NonCompliantName;
+  Script::ErrorStatus error = Script::NameCompliant(newName) ? Ion::Storage::Record::SetFullName(&script, newName) : Script::ErrorStatus::NonCompliantName;
   if (error == Script::ErrorStatus::None) {
     updateAddScriptRowDisplay();
     textField->setText(newName);

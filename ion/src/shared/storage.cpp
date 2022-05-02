@@ -26,13 +26,6 @@ namespace Ion {
 
 uintptr_t staticStorageArea[sizeof(Storage)/sizeof(uintptr_t)] = {0};
 
-constexpr char Storage::eqExtension[];
-constexpr char Storage::expExtension[];
-constexpr char Storage::funcExtension[];
-constexpr char Storage::lisExtension[];
-constexpr char Storage::seqExtension[];
-constexpr char Storage::matExtension[];
-
 Storage * Storage::sharedStorage() {
   static Storage * storage = new (staticStorageArea) Storage();
   return storage;
@@ -40,27 +33,51 @@ Storage * Storage::sharedStorage() {
 
 // RECORD
 
-Storage::Record::Record(const char * fullName) {
-  if (fullName == nullptr) {
-    m_fullNameCRC32 = 0;
-    return;
+Storage::Record::Name Storage::Record::CreateRecordNameFromFullName(const char * fullName) {
+  if (fullName == nullptr || strlen(fullName) == 0) {
+    return EmptyName();
   }
   const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
-  // If no extension, return empty record
-  if (*dotChar == 0 || *(dotChar+1) == 0) {
+  if (*dotChar == 0 || *(dotChar + 1) == 0 || *(UTF8Helper::CodePointSearch(dotChar + 1, k_dotChar)) != 0) {
+    // Name not compliant
+    return EmptyName();
+  }
+   return Name({fullName, static_cast<size_t>(dotChar - fullName), dotChar + 1});
+}
+
+Storage::Record::Name Storage::Record::CreateRecordNameFromBaseNameAndExtension(const char * baseName, const char * extension) {
+  return Name({baseName, strlen(baseName), extension});
+}
+
+size_t Storage::Record::SizeOfName(Record::Name name) {
+  // +1 for the dot and +1 for the null terminating char.
+  return name.baseNameLength + 1 + strlen(name.extension) + 1;
+}
+
+bool Storage::Record::NameIsEmpty(Name name) {
+  return name.baseName == nullptr || name.extension == nullptr;
+}
+
+Storage::Record::Record(Storage::Record::Name name) {
+  if (NameIsEmpty(name)) {
     m_fullNameCRC32 = 0;
     return;
   }
-  new (this) Record(fullName, dotChar - fullName, dotChar+1, (fullName + strlen(fullName)) - (dotChar+1));
+  // We compute the CRC32 of the CRC32s of the basename and the extension
+  uint32_t crc32Results[2];
+  crc32Results[0] = Ion::crc32Byte((const uint8_t *)name.baseName, name.baseNameLength);
+  crc32Results[1] = Ion::crc32Byte((const uint8_t *)name.extension, strlen(name.extension));
+  m_fullNameCRC32 = Ion::crc32Word(crc32Results, 2);
+}
+
+Storage::Record::Record(const char * fullName) {
+  Name name = CreateRecordNameFromFullName(fullName);
+  new (this) Record(name);
 }
 
 Storage::Record::Record(const char * baseName, const char * extension) {
-  if (baseName == nullptr) {
-    assert(extension == nullptr);
-    m_fullNameCRC32 = 0;
-    return;
-  }
-  new (this) Record(baseName, strlen(baseName), extension, strlen(extension));
+  Name name = CreateRecordNameFromBaseNameAndExtension(baseName, extension);
+  new (this) Record(name);
 }
 
 
@@ -80,39 +97,12 @@ uint32_t Storage::Record::checksum() {
   return Ion::crc32Word(crc32Results, 2);
 }
 
-int Storage::firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId) {
-  /* With '?' being the prefix, fill buffer with the first available name for
-   * the extension following this pattern : ?1, ?2, ?3, .. ?10, ?11, .. ?99 */
-  int id = 1;
-  while (id <= maxId) {
-    int length = Poincare::Integer(id).serialize(buffer + prefixLength, bufferSize - prefixLength);
-    assert(buffer[prefixLength+length] == 0);
-    if (recordBaseNamedWithExtensions(buffer, extensions, numberOfExtensions).isNull()) {
-      return prefixLength+length;
-    }
-    id++;
-  }
-  assert(false);
-  return prefixLength;
-}
-
-Storage::Record::Record(const char * basename, int basenameLength, const char * extension, int extensionLength) {
-  assert(basename != nullptr);
-  assert(extension != nullptr);
-
-  // We compute the CRC32 of the CRC32s of the basename and the extension
-  uint32_t crc32Results[2];
-  crc32Results[0] = Ion::crc32Byte((const uint8_t *)basename, basenameLength);
-  crc32Results[1] = Ion::crc32Byte((const uint8_t *)extension, extensionLength);
-  m_fullNameCRC32 = Ion::crc32Word(crc32Results, 2);
-}
-
 // STORAGE
 
 #if ION_STORAGE_LOG
 void Storage::log() {
   for (char * p : *this) {
-    const char * currentName = fullNameOfRecordStarting(p);
+    Record::Name currentName = nameOfRecordStarting(p);
     Record(currentName).log();
   }
 }
@@ -167,78 +157,76 @@ Storage::Record::ErrorStatus Storage::notifyFullnessToDelegate() const {
   return Record::ErrorStatus::NotEnoughSpaceAvailable;
 }
 
-Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks) {
+int Storage::firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId) {
+  /* With '?' being the prefix, fill buffer with the first available name for
+   * the extension following this pattern : ?1, ?2, ?3, .. ?10, ?11, .. ?99 */
+  int id = 1;
+  while (id <= maxId) {
+    int length = Poincare::Integer(id).serialize(buffer + prefixLength, bufferSize - prefixLength);
+    assert(buffer[prefixLength+length] == 0);
+    if (recordBaseNamedWithExtensions(buffer, extensions, numberOfExtensions).isNull()) {
+      return prefixLength+length;
+    }
+    id++;
+  }
+  assert(false);
+  return prefixLength;
+}
+
+Storage::Record::ErrorStatus Storage::createRecordWithFullNameAndDataChunks(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks) {
+  Record::Name recordName = Record::CreateRecordNameFromFullName(fullName);
+  return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, numberOfChunks);
+}
+
+Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size) {
+  Record::Name recordName = Record::CreateRecordNameFromBaseNameAndExtension(baseName, extension);
+  const void * dataChunks[] = {data};
+  size_t sizeChunks[] = {size};
+  return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, 1);
+}
+
+Storage::Record::ErrorStatus Storage::createRecordWithDataChunks(Record::Name recordName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks) {
+  if (Record::NameIsEmpty(recordName)) {
+    return Record::ErrorStatus::NonCompliantName;
+  }
   size_t totalSize = 0;
   for (size_t i=0; i<numberOfChunks; i++) {
     totalSize += sizeChunks[i];
   }
-  size_t recordSize = sizeOfRecordWithFullName(fullName, totalSize);
+  size_t recordSize = sizeOfRecordWithName(recordName, totalSize);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
    return notifyFullnessToDelegate();
   }
-  const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
-  int basenameLength = dotChar - fullName;
-  if (!destroyCompetingRecord(fullName, dotChar + 1, basenameLength)) {
+  if (!destroyCompetingRecord(recordName) || isNameTaken(recordName)) {
     return Record::ErrorStatus::NameTaken;
   }
-  if (isFullNameTaken(fullName)) {
-    return Record::ErrorStatus::NameTaken;
-  }
+
   // Find the end of data
   char * newRecordAddress = endBuffer();
   char * newRecord = newRecordAddress;
   // Fill totalSize
   newRecord += overrideSizeAtPosition(newRecord, (record_size_t)recordSize);
   // Fill name
-  newRecord += overrideFullNameAtPosition(newRecord, fullName);
+  newRecord += overrideNameAtPosition(newRecord, recordName);
   // Fill data
   for (size_t i=0; i<numberOfChunks; i++) {
     newRecord += overrideValueAtPosition(newRecord, dataChunks[i], sizeChunks[i]);
   }
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
-  Record r = Record(fullName);
+  Record r = Record(recordName);
   notifyChangeToDelegate(r);
   m_lastRecordRetrieved = r;
   m_lastRecordRetrievedPointer = newRecordAddress;
   return Record::ErrorStatus::None;
 }
 
-Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size) {
-  size_t recordSize = sizeOfRecordWithBaseNameAndExtension(baseName, extension, size);
-  if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
-   return notifyFullnessToDelegate();
-  }
-  if (!destroyCompetingRecord(baseName, extension)) {
-    return Record::ErrorStatus::NameTaken;
-  }
-  if (isBaseNameWithExtensionTaken(baseName, extension)) {
-    return Record::ErrorStatus::NameTaken;
-  }
-  // Find the end of data
-  char * newRecordAddress = endBuffer();
-  char * newRecord = newRecordAddress;
-  // Fill totalSize
-  newRecord += overrideSizeAtPosition(newRecord, (record_size_t)recordSize);
-  // Fill name
-  newRecord += overrideBaseNameWithExtensionAtPosition(newRecord, baseName, strlen(baseName), extension, strlen(extension));
-  // Fill data
-  newRecord += overrideValueAtPosition(newRecord, data, size);
-  // Next Record is null-sized
-  overrideSizeAtPosition(newRecord, 0);
-  Record r = Record(fullNameOfRecordStarting(newRecordAddress));
-  notifyChangeToDelegate(r);
-  m_lastRecordRetrieved = r;
-  m_lastRecordRetrievedPointer = newRecordAddress;
-  return Record::ErrorStatus::None;
-}
 
 int Storage::numberOfRecordsWithFilter(const char * extension, RecordFilter filter, const void * auxiliary) {
   int count = 0;
-  size_t extensionLength = strlen(extension);
   for (char * p : *this) {
-    const char * name = fullNameOfRecordStarting(p);
-    if (filter(name, auxiliary) && FullNameHasExtension(name, extension, extensionLength)) {
+    Record::Name currentName = nameOfRecordStarting(p);
+    if (!Record::NameIsEmpty(currentName) && filter(currentName, auxiliary) && strcmp(currentName.extension, extension) == 0) {
       count++;
     }
   }
@@ -247,12 +235,11 @@ int Storage::numberOfRecordsWithFilter(const char * extension, RecordFilter filt
 
 Storage::Record Storage::recordWithFilterAtIndex(const char * extension, int index, RecordFilter filter, const void * auxiliary) {
   int currentIndex = -1;
-  const char * name = nullptr;
-  size_t extensionLength = strlen(extension);
+  Record::Name name = Record::EmptyName();
   char * recordAddress = nullptr;
   for (char * p : *this) {
-    const char * currentName = fullNameOfRecordStarting(p);
-    if (filter(currentName, auxiliary) && FullNameHasExtension(currentName, extension, extensionLength)) {
+    Record::Name currentName = nameOfRecordStarting(p);
+    if (!Record::NameIsEmpty(currentName) && filter(currentName, auxiliary) &&  strcmp(currentName.extension, extension) == 0) {
       currentIndex++;
     }
     if (currentIndex == index) {
@@ -261,7 +248,7 @@ Storage::Record Storage::recordWithFilterAtIndex(const char * extension, int ind
       break;
     }
   }
-  if (name == nullptr) {
+  if (Record::NameIsEmpty(name)) {
     return Record();
   }
   Record r = Record(name);
@@ -270,21 +257,16 @@ Storage::Record Storage::recordWithFilterAtIndex(const char * extension, int ind
   return Record(name);
 }
 
-Storage::Record Storage::recordNamed(const char * fullName) {
-  if (fullName == nullptr) {
+Storage::Record Storage::recordNamed(Record::Name name) {
+  if (Record::NameIsEmpty(name)) {
     return Record();
   }
-  Record r = Record(fullName);
+  Record r = Record(name);
   char * p = pointerOfRecord(r);
   if (p != nullptr) {
     return r;
   }
   return Record();
-}
-
-Storage::Record Storage::recordBaseNamedWithExtension(const char * baseName, const char * extension) {
-  const char * extensions[1] = {extension};
-  return recordBaseNamedWithExtensions(baseName, extensions, 1);
 }
 
 Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions) {
@@ -302,18 +284,13 @@ void Storage::destroyAllRecords() {
   notifyChangeToDelegate();
 }
 
-void Storage::destroyRecordWithBaseNameAndExtension(const char * baseName, const char * extension) {
-  recordBaseNamedWithExtension(baseName, extension).destroy();
-}
-
 void Storage::destroyRecordsWithExtension(const char * extension) {
-  size_t extensionLength = strlen(extension);
   char * currentRecordStart = (char *)m_buffer;
   bool didChange = false;
   while (currentRecordStart != nullptr && sizeOfRecordStarting(currentRecordStart) != 0) {
-    const char * currentFullName = fullNameOfRecordStarting(currentRecordStart);
-    if (FullNameHasExtension(currentFullName, extension, extensionLength)) {
-      Record currentRecord(currentFullName);
+    Record::Name currentName = nameOfRecordStarting(currentRecordStart);
+    if (!Record::NameIsEmpty(currentName) && strcmp(currentName.extension, extension) == 0) {
+      Record currentRecord(currentName);
       currentRecord.destroy();
       didChange = true;
       continue;
@@ -325,16 +302,15 @@ void Storage::destroyRecordsWithExtension(const char * extension) {
   }
 }
 
-bool Storage::destroyCompetingRecord(const char * baseName, const char * extension, int baseNameLength, Record * excludedRecord) {
+bool Storage::destroyCompetingRecord(Record::Name recordName, Record * excludedRecord) {
   if (m_recordNameHelper == nullptr) {
     return true;
   }
-  baseNameLength = baseNameLength < 0 ? strlen(baseName) : baseNameLength;
-  Record competingRecord = privateRecordAndExtensionOfRecordBaseNamedWithExtensions(baseName, m_recordNameHelper->competingExtensions(), m_recordNameHelper->numberOfCompetingExtensions(), nullptr, baseNameLength);
+  Record competingRecord = privateRecordAndExtensionOfRecordBaseNamedWithExtensions(recordName.baseName, m_recordNameHelper->competingExtensions(), m_recordNameHelper->numberOfCompetingExtensions(), nullptr, recordName.baseNameLength);
   if (competingRecord.isNull() || (excludedRecord != nullptr && *excludedRecord == competingRecord)) {
     return true;
   }
-  RecordNameHelper::OverrideStatus result = m_recordNameHelper->shouldRecordBeOverridenWithNewExtension(competingRecord, extension);
+  RecordNameHelper::OverrideStatus result = m_recordNameHelper->shouldRecordBeOverridenWithNewExtension(competingRecord, recordName.extension);
   if (result == RecordNameHelper::OverrideStatus::Forbidden) {
     return false;
   }
@@ -362,42 +338,35 @@ Storage::Storage() :
   overrideSizeAtPosition(m_buffer, 0);
 }
 
-const char * Storage::fullNameOfRecord(const Record record) {
+Storage::Record::Name Storage::nameOfRecord(const Record record) const {
   char * p = pointerOfRecord(record);
   if (p != nullptr) {
-    return fullNameOfRecordStarting(p);
+    return nameOfRecordStarting(p);
   }
-  return nullptr;
+  return Record::EmptyName();
 }
 
-Storage::Record::ErrorStatus Storage::setFullNameOfRecord(Record * record, const char * fullName) {
-  if (!FullNameCompliant(fullName)) {
+Storage::Record::ErrorStatus Storage::setNameOfRecord(Record * record, Record::Name name) {
+  if (Record::NameIsEmpty(name)) {
     return Record::ErrorStatus::NonCompliantName;
   }
-  const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
-  int basenameLength = dotChar - fullName;
-  const char * extension = fullName + basenameLength + 1;
-  return setBaseNameWithExtensionOfRecord(record, fullName, basenameLength, extension, strlen(extension));
-}
-
-Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record * record, const char * baseName, int baseNameLength, const char * extension, int extensionLength) {
-  Record newRecord = Record(baseName, baseNameLength, extension, extensionLength);
+  Record newRecord = Record(name);
   Record oldRecord = *record;
-  if (isNameOfRecordTaken(newRecord, record) || !destroyCompetingRecord(baseName, extension, baseNameLength, record)) {
+  if (isNameOfRecordTaken(newRecord, record) || !destroyCompetingRecord(name, record)) {
     return Record::ErrorStatus::NameTaken;
   }
-  size_t nameSize = baseNameLength + 1 + extensionLength + 1;
+  size_t nameSize = Record::SizeOfName(name);
   char * p = pointerOfRecord(oldRecord);
   if (p != nullptr) {
-    size_t previousNameSize = strlen(fullNameOfRecordStarting(p))+1;
+    size_t previousNameSize = Record::SizeOfName(nameOfRecordStarting(p));
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     size_t newRecordSize = previousRecordSize-previousNameSize+nameSize;
     if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+sizeof(record_size_t)+previousNameSize, nameSize-previousNameSize)) {
       return notifyFullnessToDelegate();
     }
     overrideSizeAtPosition(p, newRecordSize);
-    char * fullNamePosition = p + sizeof(record_size_t);
-    overrideBaseNameWithExtensionAtPosition(fullNamePosition, baseName, baseNameLength, extension, extensionLength);
+    char * namePosition = p + sizeof(record_size_t);
+    overrideNameAtPosition(namePosition, name);
     // Recompute the CRC32
     *record = newRecord;
     notifyChangeToDelegate(newRecord);
@@ -411,10 +380,10 @@ Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record * 
 Storage::Record::Data Storage::valueOfRecord(const Record record) {
   char * p = pointerOfRecord(record);
   if (p != nullptr) {
-    const char * fullName = fullNameOfRecordStarting(p);
+    Record::Name name = nameOfRecordStarting(p);
     record_size_t size = sizeOfRecordStarting(p);
     const void * value = valueOfRecordStarting(p);
-    return {.buffer = value, .size = size-strlen(fullName)-1-sizeof(record_size_t)};
+    return {.buffer = value, .size = size - Record::SizeOfName(name) - sizeof(record_size_t)};
   }
   return {.buffer= nullptr, .size= 0};
 }
@@ -426,14 +395,14 @@ Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Da
    * routine.*/
   if (p != nullptr) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
-    const char * fullName = fullNameOfRecordStarting(p);
-    size_t newRecordSize = sizeOfRecordWithFullName(fullName, data.size);
+    Record::Name name = nameOfRecordStarting(p);
+    size_t newRecordSize = sizeOfRecordWithName(name, data.size);
     if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+previousRecordSize, newRecordSize-previousRecordSize)) {
       return notifyFullnessToDelegate();
     }
-    record_size_t fullNameSize = strlen(fullName)+1;
+    record_size_t nameSize = Record::SizeOfName(name);
     overrideSizeAtPosition(p, newRecordSize);
-    overrideValueAtPosition(p+sizeof(record_size_t)+fullNameSize, data.buffer, data.size);
+    overrideValueAtPosition(p + sizeof(record_size_t) + nameSize, data.buffer, data.size);
     notifyChangeToDelegate(record);
     m_lastRecordRetrieved = record;
     m_lastRecordRetrievedPointer = p;
@@ -463,7 +432,7 @@ char * Storage::pointerOfRecord(const Record record) const {
     return m_lastRecordRetrievedPointer;
   }
   for (char * p : *this) {
-    Record currentRecord(fullNameOfRecordStarting(p));
+    Record currentRecord(nameOfRecordStarting(p));
     if (record == currentRecord) {
       m_lastRecordRetrieved = record;
       m_lastRecordRetrievedPointer = p;
@@ -474,38 +443,45 @@ char * Storage::pointerOfRecord(const Record record) const {
 }
 
 Storage::record_size_t Storage::sizeOfRecordStarting(char * start) const {
+  if (start == nullptr) {
+    return 0;
+  }
   return StorageHelper::unalignedShort(start);
 }
 
-const char * Storage::fullNameOfRecordStarting(char * start) const {
-  return start+sizeof(record_size_t);
+const void * Storage::valueOfRecordStarting(char * start) const {
+  if (start == nullptr) {
+    return nullptr;
+  }
+  char * currentChar = start + sizeof(record_size_t);
+  size_t fullNameLength = strlen(currentChar);
+  return currentChar + fullNameLength + 1;
 }
 
-const void * Storage::valueOfRecordStarting(char * start) const {
-  char * currentChar = start+sizeof(record_size_t);
-  size_t fullNameLength = strlen(currentChar);
-  return currentChar+fullNameLength+1;
-}
+Storage::Record::Name Storage::nameOfRecordStarting(char * start) const {
+   if (start == nullptr) {
+    return Record::EmptyName();
+   }
+    return Record::CreateRecordNameFromFullName(start + sizeof(record_size_t));
+  }
+
 
 size_t Storage::overrideSizeAtPosition(char * position, record_size_t size) {
   StorageHelper::writeUnalignedShort(size, position);
   return sizeof(record_size_t);
 }
 
-size_t Storage::overrideFullNameAtPosition(char * position, const char * fullName) {
-  return strlcpy(position, fullName, strlen(fullName)+1) + 1;
-}
-
-size_t Storage::overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, int basenameLength, const char * extension, int extensionLength) {
-  memcpy(position, baseName, basenameLength);
-  position += basenameLength;
+size_t Storage::overrideNameAtPosition(char * position, Record::Name name) {
+  memcpy(position, name.baseName, name.baseNameLength);
+  position += name.baseNameLength;
   assert(UTF8Decoder::CharSizeOfCodePoint(k_dotChar) == 1);
   *(position) = k_dotChar;
   position++;
-  memcpy(position, extension, extensionLength);
+  int extensionLength = strlen(name.extension);
+  memcpy(position, name.extension, extensionLength);
   position += extensionLength;
   *(position) = 0;
-  return basenameLength + 1 + extensionLength + 1;
+  return name.baseNameLength + 1 + extensionLength + 1;
 }
 
 size_t Storage::overrideValueAtPosition(char * position, const void * data, record_size_t size) {
@@ -513,13 +489,8 @@ size_t Storage::overrideValueAtPosition(char * position, const void * data, reco
   return size;
 }
 
-bool Storage::isFullNameTaken(const char * fullName, const Record * recordToExclude) {
-  Record r = Record(fullName);
-  return isNameOfRecordTaken(r, recordToExclude);
-}
-
-bool Storage::isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude) {
-  Record r = Record(baseName, extension);
+bool Storage::isNameTaken(Record::Name name, const Record * recordToExclude) {
+  Record r = Record(name);
   return isNameOfRecordTaken(r, recordToExclude);
 }
 
@@ -531,37 +502,11 @@ bool Storage::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
     return true;
   }
   for (char * p : *this) {
-    Record s(fullNameOfRecordStarting(p));
+    Record s(nameOfRecordStarting(p));
     if (recordToExclude && s == *recordToExclude) {
       continue;
     }
     if (s == r) {
-      return true;
-    }
-  }
-  return false;
-}
-
-bool Storage::FullNameCompliant(const char * fullName) {
-  // We check that there is one dot and one dot only.
-  const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
-  if (*dotChar == 0) {
-    return false;
-  }
-  if (*(UTF8Helper::CodePointSearch(dotChar+1, k_dotChar)) == 0) {
-    return true;
-  }
-  return false;
-}
-
-bool Storage::FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength) {
-  if (fullName == nullptr) {
-    return false;
-  }
-  size_t fullNameLength = strlen(fullName);
-  if (fullNameLength > extensionLength) {
-    const char * ext = fullName + fullNameLength - extensionLength;
-    if (UTF8Helper::PreviousCodePointIs(fullName, ext, k_dotChar) && strcmp(ext, extension) == 0) {
       return true;
     }
   }
@@ -576,18 +521,8 @@ char * Storage::endBuffer() {
   return currentBuffer;
 }
 
-size_t Storage::sizeOfBaseNameAndExtension(const char * baseName, const char * extension) const {
-  // +1 for the dot and +1 for the null terminating char
-  return strlen(baseName)+1+strlen(extension)+1;
-}
-
-size_t Storage::sizeOfRecordWithBaseNameAndExtension(const char * baseName, const char * extension, size_t dataSize) const {
-  return sizeOfBaseNameAndExtension(baseName, extension) + dataSize + sizeof(record_size_t);
-}
-
-size_t Storage::sizeOfRecordWithFullName(const char * fullName, size_t dataSize) const {
-  size_t nameSize = strlen(fullName)+1;
-  return nameSize+dataSize+sizeof(record_size_t);
+size_t Storage::sizeOfRecordWithName(Record::Name name, size_t dataSize) {
+  return Record::SizeOfName(name) + dataSize + sizeof(record_size_t);
 }
 
 bool Storage::slideBuffer(char * position, int delta) {
@@ -601,11 +536,10 @@ bool Storage::slideBuffer(char * position, int delta) {
 Storage::Record Storage::privateRecordAndExtensionOfRecordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult, int baseNameLength) {
   size_t nameLength = baseNameLength < 0 ? strlen(baseName) : baseNameLength;
   {
-    const char * lastRetrievedRecordFullName = fullNameOfRecordStarting(m_lastRecordRetrievedPointer);
-    if (m_lastRecordRetrievedPointer != nullptr && strncmp(baseName, lastRetrievedRecordFullName, nameLength) == 0) {
+    Record::Name lastRetrievedRecordName = nameOfRecordStarting(m_lastRecordRetrievedPointer);
+    if (m_lastRecordRetrievedPointer != nullptr && !Record::NameIsEmpty(lastRetrievedRecordName) &&strncmp(baseName, lastRetrievedRecordName.baseName, nameLength) == 0) {
       for (size_t i = 0; i < numberOfExtensions; i++) {
-        if (strcmp(lastRetrievedRecordFullName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
-          assert(UTF8Helper::CodePointIs(lastRetrievedRecordFullName + nameLength, '.'));
+        if (strcmp(lastRetrievedRecordName.extension, extensions[i]) == 0) {
           if (extensionResult != nullptr) {
             *extensionResult = extensions[i];
           }
@@ -615,11 +549,10 @@ Storage::Record Storage::privateRecordAndExtensionOfRecordBaseNamedWithExtension
     }
   }
   for (char * p : *this) {
-    const char * currentName = fullNameOfRecordStarting(p);
-    if (strncmp(baseName, currentName, nameLength) == 0) {
+    Record::Name currentName = nameOfRecordStarting(p);
+    if (!Record::NameIsEmpty(currentName) && strncmp(baseName, currentName.baseName, nameLength) == 0) {
       for (size_t i = 0; i < numberOfExtensions; i++) {
-        if (strcmp(currentName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
-          assert(UTF8Helper::CodePointIs(currentName + nameLength, '.'));
+        if (strcmp(currentName.extension, extensions[i]) == 0) {
           if (extensionResult != nullptr) {
             *extensionResult = extensions[i];
           }

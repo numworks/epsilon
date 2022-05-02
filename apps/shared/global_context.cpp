@@ -28,15 +28,15 @@ bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
 
 const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
-  if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))
-   || Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::lisExtension, strlen(Ion::Storage::lisExtension))
-   || Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::matExtension, strlen(Ion::Storage::matExtension)))
+  if (record.hasExtension(Ion::Storage::expExtension)
+    || record.hasExtension(Ion::Storage::lisExtension)
+    || record.hasExtension(Ion::Storage::matExtension))
   {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record));
-  } else if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
+  } else if (record.hasExtension(Ion::Storage::funcExtension)) {
     return PoincareHelpers::CreateLayout(ExpressionForFunction(Symbol::Builder(ContinuousFunction(record).symbol()), record));
   } else {
-    assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::seqExtension, strlen(Ion::Storage::seqExtension)));
+    assert(record.hasExtension(Ion::Storage::seqExtension));
     return Sequence(record).layout();
   }
 }
@@ -44,7 +44,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
 void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(const char * baseName, const char * extension) {
   for (int i = 0; i < k_numberOfExtensions; i++) {
     if (strcmp(k_extensions[i], extension) != 0) {
-      Ion::Storage::sharedStorage()->destroyRecordWithBaseNameAndExtension(baseName, k_extensions[i]);
+      Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, k_extensions[i]).destroy();
     }
   }
 }
@@ -109,9 +109,9 @@ const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstrac
 }
 
 const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r) {
-  if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))
-   && !Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::lisExtension, strlen(Ion::Storage::lisExtension))
-   && !Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::matExtension, strlen(Ion::Storage::matExtension)))
+  if (!r.hasExtension(Ion::Storage::expExtension)
+    && !r.hasExtension(Ion::Storage::lisExtension)
+    && !r.hasExtension(Ion::Storage::matExtension))
   {
     return Expression();
   }
@@ -121,7 +121,7 @@ const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r
 }
 
 const Expression GlobalContext::ExpressionForFunction(const Expression & parameter, Ion::Storage::Record r) {
-  if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
+  if (!r.hasExtension(Ion::Storage::funcExtension)) {
     return Expression();
   }
   /* An function record value has metadata before the expression. To get the
@@ -134,7 +134,7 @@ const Expression GlobalContext::ExpressionForFunction(const Expression & paramet
 }
 
 const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue) {
-  if (!Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::seqExtension, strlen(Ion::Storage::seqExtension))) {
+  if (!r.hasExtension(Ion::Storage::seqExtension)) {
     return Expression();
   }
   /* An function record value has metadata before the expression. To get the
@@ -181,7 +181,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
-  if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
+  if (!previousRecord.hasExtension(Ion::Storage::funcExtension)) {
     // The previous record was not a function. Create a new model.
     ContinuousFunction newModel = ContinuousFunction::NewModel(&error, symbol.name());
     if (error != Ion::Storage::Record::ErrorStatus::None) {

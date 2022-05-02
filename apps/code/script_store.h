@@ -24,7 +24,7 @@ public:
     return Script(Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(k_scriptExtension, index));
   }
   static Script ScriptNamed(const char * fullName) {
-    return Script(Ion::Storage::sharedStorage()->recordNamed(fullName));
+    return Script(Ion::Storage::sharedStorage()->recordFullyNamed(fullName));
   }
   static Script ScriptBaseNamed(const char * baseName) {
     return Script(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, k_scriptExtension));

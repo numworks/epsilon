@@ -1,6 +1,7 @@
 #include <quiz.h>
 #include "helper.h"
 #include <apps/shared/global_context.h>
+#include <apps/shared/record_name_helper.h>
 
 using namespace Shared;
 
@@ -87,8 +88,11 @@ QUIZ_CASE(graph_function_plot_type) {
 }
 
 QUIZ_CASE(graph_function_plot_type_with_predefined_variables) {
+
     GlobalContext context;
     ContinuousFunctionStore store;
+    Shared::RecordNameHelper recordNameHelper;
+    Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
     // Add a predefined test function
     addFunction("test(x)=1+x", ContinuousFunction::PlotType::Cartesian, &store, &context);
 
@@ -114,6 +118,7 @@ QUIZ_CASE(graph_function_plot_type_with_predefined_variables) {
     Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
     Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
     store.removeAll();
+    Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
 }
 
 }

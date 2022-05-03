@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <apps/shared/global_context.h>
+#include <apps/shared/record_name_helper.h>
 #include <string.h>
 #include <assert.h>
 #include <cmath>
@@ -41,7 +42,7 @@ void check_sequences_defined_by(double result[SequenceStore::k_maxNumberOfSequen
 
   Sequence * seqs[SequenceStore::k_maxNumberOfSequences];
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    seqs[i] = addSequence(store, types[i], definitions[i], conditions1[i], conditions2[i], &globalContext);
+    seqs[i] = addSequence(store, types[i], definitions[i], conditions1[i], conditions2[i], &sequenceContext);
   }
 
   for (int j = 0; j < 10; j++) {
@@ -64,9 +65,9 @@ void check_sum_of_sequence_between_bounds(double result, double start, double en
   SequenceStore * store = globalContext.sequenceStore();
   SequenceContext sequenceContext(&globalContext, store);
 
-  Sequence * seq = addSequence(store, type, definition, condition1, condition2, &globalContext);
+  Sequence * seq = addSequence(store, type, definition, condition1, condition2, &sequenceContext);
 
-  double sum = PoincareHelpers::ApproximateToScalar<double>(seq->sumBetweenBounds(start, end, &sequenceContext), &globalContext);
+  double sum = PoincareHelpers::ApproximateToScalar<double>(seq->sumBetweenBounds(start, end, &sequenceContext), &sequenceContext);
   assert_roughly_equal(sum, result);
 
   store->removeAll();
@@ -74,6 +75,9 @@ void check_sum_of_sequence_between_bounds(double result, double start, double en
 }
 
 QUIZ_CASE(sequence_evaluation) {
+  Shared::RecordNameHelper recordNameHelper;
+  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+
   Sequence::Type types[SequenceStore::k_maxNumberOfSequences] = {Sequence::Type::Explicit, Sequence::Type::Explicit, Sequence::Type::Explicit};
   const char * definitions[SequenceStore::k_maxNumberOfSequences] = {nullptr, nullptr, nullptr};
   const char * conditions1[SequenceStore::k_maxNumberOfSequences] = {nullptr, nullptr, nullptr};
@@ -485,6 +489,8 @@ QUIZ_CASE(sequence_evaluation) {
   conditions1[0] = "0";
   conditions2[0] = "1";
   check_sequences_defined_by(result37, types, definitions, conditions1, conditions2);
+
+  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
 }
 
 QUIZ_CASE(sequence_context) {

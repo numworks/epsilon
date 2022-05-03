@@ -43,6 +43,7 @@ poincare_src += $(addprefix poincare/src/,\
   distribution.cpp \
   erf_inv.cpp \
   exception_checkpoint.cpp \
+  geometric_distribution.cpp \
   helpers.cpp \
   normal_distribution.cpp \
   poisson_distribution.cpp \
@@ -98,6 +99,10 @@ poincare_src += $(addprefix poincare/src/,\
   floor.cpp \
   frac_part.cpp \
   function.cpp \
+  geom_cdf.cpp \
+  geom_cdf_range.cpp \
+  geometric_distribution_function.cpp \
+  geom_pdf.cpp \
   great_common_divisor.cpp \
   hyperbolic_arc_cosine.cpp \
   hyperbolic_arc_sine.cpp \
@@ -111,6 +116,7 @@ poincare_src += $(addprefix poincare/src/,\
   integer.cpp \
   integral.cpp \
   inv_binom.cpp \
+  inv_geom.cpp \
   inv_norm.cpp \
   inv_student.cpp \
   layout_helper.cpp \

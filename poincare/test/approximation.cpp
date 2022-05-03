@@ -382,6 +382,16 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("gcd(30,105,70,42)", "1");
   assert_expression_approximates_to<double>("gcd(30,105,70,42)", "1");
 
+  assert_expression_approximates_to<double>("geompdf(1,1)", "1");
+  assert_expression_approximates_to<double>("geompdf(2,0.5)", "0.25");
+  assert_expression_approximates_to<double>("geompdf(2,1)", "0");
+  assert_expression_approximates_to<double>("geompdf(1,0)", "undef");
+  assert_expression_approximates_to<double>("geomcdf(2,0.5)", "0.75");
+  assert_expression_approximates_to<double>("geomcdfrange(2,3,0.5)", "0.375");
+  assert_expression_approximates_to<double>("geomcdfrange(2,2,0.5)", "0.25");
+  assert_expression_approximates_to<double>("invgeom(1,1)", "1");
+  assert_expression_approximates_to<double>("invgeom(0.825,0.5)", "3");
+
   assert_expression_approximates_to<float>("im(2+3i)", "3");
   assert_expression_approximates_to<double>("im(2+3i)", "3");
 

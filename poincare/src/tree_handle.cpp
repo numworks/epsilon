@@ -322,6 +322,9 @@ template Floor TreeHandle::FixedArityBuilder<Floor, FloorNode>(const Tuple &);
 template FloorLayout TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>(const Tuple &);
 template FracPart TreeHandle::FixedArityBuilder<FracPart, FracPartNode>(const Tuple &);
 template FractionLayout TreeHandle::FixedArityBuilder<FractionLayout, FractionLayoutNode>(const Tuple &);
+template GeomCDF TreeHandle::FixedArityBuilder<GeomCDF, GeomCDFNode>(const Tuple &);
+template GeomCDFRange TreeHandle::FixedArityBuilder<GeomCDFRange, GeomCDFRangeNode>(const Tuple &);
+template GeomPDF TreeHandle::FixedArityBuilder<GeomPDF, GeomPDFNode>(const Tuple &);
 template Ghost TreeHandle::FixedArityBuilder<Ghost, GhostNode>(const Tuple &);
 template GreatCommonDivisor TreeHandle::NAryBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(const Tuple &);
 template HorizontalLayout TreeHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(const Tuple &);
@@ -337,6 +340,7 @@ template ImaginaryPart TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPar
 template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(const Tuple &);
 template IntegralLayout TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(const Tuple &);
 template InvBinom TreeHandle::FixedArityBuilder<InvBinom, InvBinomNode>(const Tuple &);
+template InvGeom TreeHandle::FixedArityBuilder<InvGeom, InvGeomNode>(const Tuple &);
 template InvNorm TreeHandle::FixedArityBuilder<InvNorm, InvNormNode>(const Tuple &);
 template InvStudent TreeHandle::FixedArityBuilder<InvStudent, InvStudentNode>(const Tuple &);
 template LeastCommonMultiple TreeHandle::NAryBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);

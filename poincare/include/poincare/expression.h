@@ -60,6 +60,9 @@ class Expression : public TreeHandle {
   friend class Floor;
   friend class FracPart;
   friend class Function;
+  friend class GeomCDF;
+  friend class GeomCDFRange;
+  friend class GeomPDF;
   friend class GlobalContext;
   friend class GreatCommonDivisor;
   friend class HyperbolicTrigonometricFunction;
@@ -68,6 +71,7 @@ class Expression : public TreeHandle {
   friend class InferiorEqual;
   friend class Integer;
   friend class Integral;
+  friend class InvGeom;
   friend class InvNorm;
   friend class InvStudent;
   friend class LeastCommonMultiple;

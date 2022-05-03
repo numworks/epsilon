@@ -132,7 +132,8 @@ jobs:
       - run: make -j2 epsilon.onboarding.beta.dfu
       - run: make -j2 flasher.light.dfu
       - run: make -j2 flasher.verbose.dfu
-      - run: make -j2 bench.ram.dfu
+      # We  don't need bench as it is used only in factory
+      # - run: make -j2 bench.ram.dfu
       # - run: make -j2 bench.flash.dfu
       - run: make -j2 binpack
       - run: cp output/release/device/n0110/binpack-n0110-`git rev-parse HEAD | head -c 7`.tgz output/release/device/n0110/binpack-n0110.tgz
@@ -168,7 +169,7 @@ jobs:
       - run: make MODEL=bootloader -j2 epsilon.onboarding.update.B.dfu
       - run: make MODEL=bootloader -j2 epsilon.onboarding.beta.A.dfu
       - run: make MODEL=bootloader -j2 epsilon.onboarding.beta.B.dfu
-      - run: make -j2 binpack
+      - run: make MODEL=bootloader -j2 binpack
       - run: cp output/release/device/bootloader/binpack-bootloader-`git rev-parse HEAD | head -c 7`.tgz output/release/device/bootloader/binpack-bootloader.tgz
       - uses: actions/upload-artifact@master
         with:

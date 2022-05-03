@@ -241,7 +241,8 @@ private:
   };
   RecordIterator end() const { return RecordIterator(nullptr); }
 
-  Record privateRecordAndExtensionOfRecordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult = nullptr, int baseNameLength = -1);
+  Record privateRecordBasedNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult = nullptr);
+  bool recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name, const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult);
 
   uint32_t m_magicHeader;
   char m_buffer[k_storageSize];

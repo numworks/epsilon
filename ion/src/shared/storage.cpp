@@ -270,12 +270,12 @@ Storage::Record Storage::recordNamed(Record::Name name) {
 }
 
 Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions) {
-  return privateRecordAndExtensionOfRecordBaseNamedWithExtensions(baseName, extensions, numberOfExtensions);
+  return privateRecordBasedNamedWithExtensions(baseName, strlen(baseName), extensions, numberOfExtensions);
 }
 
 const char * Storage::extensionOfRecordBaseNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions) {
   const char * result = nullptr;
-  privateRecordAndExtensionOfRecordBaseNamedWithExtensions(baseName, extensions, numberOfExtensions, &result, baseNameLength);
+  privateRecordBasedNamedWithExtensions(baseName, baseNameLength, extensions, numberOfExtensions, &result);
   return result;
 }
 
@@ -306,7 +306,7 @@ bool Storage::destroyCompetingRecord(Record::Name recordName, Record * excludedR
   if (m_recordNameHelper == nullptr) {
     return true;
   }
-  Record competingRecord = privateRecordAndExtensionOfRecordBaseNamedWithExtensions(recordName.baseName, m_recordNameHelper->competingExtensions(), m_recordNameHelper->numberOfCompetingExtensions(), nullptr, recordName.baseNameLength);
+  Record competingRecord = privateRecordBasedNamedWithExtensions(recordName.baseName, recordName.baseNameLength, m_recordNameHelper->competingExtensions(), m_recordNameHelper->numberOfCompetingExtensions());
   if (competingRecord.isNull() || (excludedRecord != nullptr && *excludedRecord == competingRecord)) {
     return true;
   }
@@ -533,38 +533,35 @@ bool Storage::slideBuffer(char * position, int delta) {
   return true;
 }
 
-Storage::Record Storage::privateRecordAndExtensionOfRecordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult, int baseNameLength) {
-  size_t nameLength = baseNameLength < 0 ? strlen(baseName) : baseNameLength;
-  {
-    Record::Name lastRetrievedRecordName = nameOfRecordStarting(m_lastRecordRetrievedPointer);
-    if (m_lastRecordRetrievedPointer != nullptr && !Record::NameIsEmpty(lastRetrievedRecordName) &&strncmp(baseName, lastRetrievedRecordName.baseName, nameLength) == 0) {
-      for (size_t i = 0; i < numberOfExtensions; i++) {
-        if (strcmp(lastRetrievedRecordName.extension, extensions[i]) == 0) {
-          if (extensionResult != nullptr) {
-            *extensionResult = extensions[i];
-          }
-          return m_lastRecordRetrieved;
-        }
-      }
-    }
+Storage::Record Storage::privateRecordBasedNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
+  Record::Name lastRetrievedRecordName = nameOfRecordStarting(m_lastRecordRetrievedPointer);
+  if (m_lastRecordRetrievedPointer != nullptr && recordNameHasBaseNameAndOneOfTheseExtensions(lastRetrievedRecordName, baseName, baseNameLength, extensions, numberOfExtensions, extensionResult)) {
+    return m_lastRecordRetrieved;
   }
   for (char * p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
-    if (!Record::NameIsEmpty(currentName) && strncmp(baseName, currentName.baseName, nameLength) == 0) {
-      for (size_t i = 0; i < numberOfExtensions; i++) {
-        if (strcmp(currentName.extension, extensions[i]) == 0) {
-          if (extensionResult != nullptr) {
-            *extensionResult = extensions[i];
-          }
-          return Record(currentName);
-        }
-      }
+    if (recordNameHasBaseNameAndOneOfTheseExtensions(currentName, baseName, baseNameLength, extensions, numberOfExtensions, extensionResult)) {
+      return Record(currentName);
     }
   }
   if (extensionResult != nullptr) {
     *extensionResult = nullptr;
   }
   return Record();
+}
+
+bool Storage::recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name, const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
+  if (!Record::NameIsEmpty(name) && strncmp(baseName, name.baseName, baseNameLength) == 0 && baseNameLength == name.baseNameLength) {
+    for (size_t i = 0; i < numberOfExtensions; i++) {
+      if (strcmp(name.extension, extensions[i]) == 0) {
+        if (extensionResult != nullptr) {
+          *extensionResult = extensions[i];
+        }
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 Storage::RecordIterator & Storage::RecordIterator::operator++() {

@@ -379,11 +379,19 @@ constexpr ToolboxMessageTree poissonDistributionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PoissonCDFCommandWithArg, I18n::Message::PoissonCDF),
 };
 
+constexpr ToolboxMessageTree geometricDistributionChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::GeomPDFCommandWithArg, I18n::Message::GeomPDF),
+  ToolboxMessageTree::Leaf(I18n::Message::GeomCDFCommandWithArg, I18n::Message::GeomCDF),
+  ToolboxMessageTree::Leaf(I18n::Message::GeomCDFRangeCommandWithArg, I18n::Message::GeomCDFRange),
+  ToolboxMessageTree::Leaf(I18n::Message::InvGeomCommandWithArg, I18n::Message::InvGeom)
+};
+
 constexpr ToolboxMessageTree probabilityLawsChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::Normal, normalDistributionChildren),
   ToolboxMessageTree::Node(I18n::Message::Student, studentDistributionChildren),
   ToolboxMessageTree::Node(I18n::Message::Binomial, binomialDistributionChildren),
   ToolboxMessageTree::Node(I18n::Message::Poisson, poissonDistributionChildren),
+  ToolboxMessageTree::Node(I18n::Message::Geometric, geometricDistributionChildren),
 };
 
 constexpr ToolboxMessageTree randomChildren[] = {

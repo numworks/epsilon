@@ -40,6 +40,9 @@
 #include <poincare/frac_part.h>
 #include <poincare/function.h>
 #include <poincare/great_common_divisor.h>
+#include <poincare/geom_cdf.h>
+#include <poincare/geom_cdf_range.h>
+#include <poincare/geom_pdf.h>
 #include <poincare/hyperbolic_arc_cosine.h>
 #include <poincare/hyperbolic_arc_sine.h>
 #include <poincare/hyperbolic_arc_tangent.h>
@@ -53,6 +56,7 @@
 #include <poincare/integer.h>
 #include <poincare/integral.h>
 #include <poincare/inv_binom.h>
+#include <poincare/inv_geom.h>
 #include <poincare/inv_norm.h>
 #include <poincare/inv_student.h>
 #include <poincare/least_common_multiple.h>

@@ -39,8 +39,9 @@ def generate_dfu_file(targets, usb_vid_pid, dfu_file):
   data += struct.pack('<I', crc)
   open(dfu_file, 'wb').write(data)
 
-def bin_file(block):
-  return "firmware" + block['name'] + ".bin"
+def bin_file(elf_file, block):
+  name_without_extension = ".".join(elf_file.split(".")[:-1])
+  return name_without_extension + block['name'] + ".bin"
 
 def print_sections(sections):
   for s in sections:
@@ -63,7 +64,7 @@ def elf2dfu(elf_file, usb_vid_pid, dfu_file, verbose):
   targets = []
   for b in blocks:
     name = b['name']
-    subprocess.call(["arm-none-eabi-objcopy", "-O", "binary"]+[item for sublist in [["-j", s['name']] for s in b['sections']] for item in sublist]+[elf_file, bin_file(b)])
+    subprocess.call(["arm-none-eabi-objcopy", "-O", "binary"]+[item for sublist in [["-j", s['name']] for s in b['sections']] for item in sublist]+[elf_file, bin_file(elf_file, b)])
     address = min([s['lma'] for s in b['sections']])
     # We turn ITCM flash addresses to equivalent AXIM flash addresses because
     # ITCM address cannot be written and are physically equivalent to AXIM flash
@@ -74,16 +75,15 @@ def elf2dfu(elf_file, usb_vid_pid, dfu_file, verbose):
     # (We pad the device binary files because there was a bug in an older
     # version (< 1.8.0) of the dfu code, and it did not upload properly a binary
     # of length non-multiple of 32 bits.
-    # open(bin_file(b), "a").write("\xFF\xFF\xFF\xFF")
-    targets.append({'address': address, 'name': name, 'data': open(bin_file(b), "rb").read()})
+    # open(bin_file(elf_file, b), "a").write("\xFF\xFF\xFF\xFF")
+    targets.append({'address': address, 'name': name, 'data': open(bin_file(elf_file, b), "rb").read()})
   generate_dfu_file([targets], usb_vid_pid, dfu_file)
   for b in blocks:
-    subprocess.call(["rm", bin_file(b)])
+    subprocess.call(["rm", bin_file(elf_file, b)])
 
 parser = argparse.ArgumentParser(description="Convert an ELF file to DfuSe.")
 parser.add_argument('elf_file', help='Input ELF file')
 parser.add_argument('dfu_file', help='Output DfuSe file')
 parser.add_argument('-v', '--verbose', action="store_true", help='Show verbose output')
-
 args = parser.parse_args()
 elf2dfu(args.elf_file, "0x0483:0xa291", args.dfu_file, args.verbose)

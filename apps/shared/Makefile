@@ -120,4 +120,5 @@ app_shared_test_src += $(addprefix apps/shared/,\
 tests_src += $(addprefix apps/shared/test/,\
   function_alignement.cpp \
   interval.cpp \
+  storage_record_names.cpp \
 )

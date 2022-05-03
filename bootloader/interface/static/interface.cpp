@@ -8,7 +8,9 @@
 
 namespace Bootloader {
 
-void Interface::drawImage(KDContext * ctx, const Image * image, int offset) {
+void Interface::drawComputer(KDContext * ctx, int offset) {
+  const Image * image = ImageStore::Computer;
+
   const uint8_t * data;
   size_t size;
   size_t pixelBufferSize;
@@ -37,11 +39,15 @@ void Interface::drawImage(KDContext * ctx, const Image * image, int offset) {
   ctx->fillRectWithPixels(bounds, pixelBuffer, nullptr);
 }
 
+KDCoordinate Interface::computerHeight() {
+  return ImageStore::Computer->height();
+}
+
 void Interface::drawFlasher() {
   KDContext * ctx = KDIonContext::sharedContext();
 
   ctx->fillRect(KDRect(0, 0, 320, 240), KDColorWhite);
-  drawImage(ctx, ImageStore::Computer, 25);
+  drawComputer(ctx, 25);
 
   KDSize fontSize = KDFont::LargeFont->glyphSize();
   int initPos = (320 - fontSize.width() * strlen(Messages::mainTitle)) / 2;
@@ -55,7 +61,7 @@ void Interface::drawFlasher() {
 void Interface::drawLoading() {
   KDContext * ctx = KDIonContext::sharedContext();
   ctx->fillRect(KDRect(0, 0, 320, 240), KDColorWhite);
-  drawImage(ctx, ImageStore::Computer, 25);
+  drawComputer(ctx, 25);
   Ion::Timing::msleep(250);
   KDSize fontSize = KDFont::LargeFont->glyphSize();
   int initPos = (320 - fontSize.width() * strlen(Messages::mainTitle)) / 2;

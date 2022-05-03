@@ -9,7 +9,8 @@ namespace Bootloader {
 class Interface {
 
 public:
-  static void drawImage(KDContext * ctx, const Image * image, int offset);
+  static void drawComputer(KDContext * ctx, int offset);
+  static KDCoordinate computerHeight();
   static void drawLoading();
   static void drawFlasher();
 };

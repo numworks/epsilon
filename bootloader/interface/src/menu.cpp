@@ -4,8 +4,6 @@
 #include <kandinsky/context.h>
 #include <string.h>
 
-#include <bootloader/computer.h>
-
 const Ion::Keyboard::Key Bootloader::Menu::k_breaking_keys[];
 
 void Bootloader::Menu::setup() {
@@ -36,15 +34,15 @@ int Bootloader::Menu::calculateCenterX(const char * text, int fontWidth) {
 void Bootloader::Menu::showMenu() {
   KDContext * ctx = KDIonContext::sharedContext();
   ctx->fillRect(getScreen(), m_background);
-  Interface::drawImage(ctx, ImageStore::Computer, 25);
-  int y = ImageStore::Computer->height() + 25 + 10;
+  Interface::drawComputer(ctx, 25);
+  int y = Interface::computerHeight() + 25 + 10;
   int x = calculateCenterX(m_title, largeFontWidth());
   ctx->drawString(m_title, KDPoint(x, y), k_large_font, m_foreground, m_background);
   y += largeFontHeight() + 10;
 
   //TODO: center the columns if m_centerY is true
 
-  for (ColumnBinder column : m_columns) { 
+  for (ColumnBinder column : m_columns) {
     if (column.isNull()) {
       continue;
     }

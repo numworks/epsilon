@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <apps/shared/global_context.h>
+#include <apps/shared/record_name_helper.h>
 #include <poincare/test/helper.h>
 #include <poincare/preferences.h>
 #include <poincare_expressions.h>
@@ -266,6 +267,8 @@ void assertMainCalculationOutputIs(const char * input, const char * output, Cont
 
 QUIZ_CASE(calculation_symbolic_computation) {
   Shared::GlobalContext globalContext;
+  Shared::RecordNameHelper recordNameHelper;
+  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
   // 0 - General cases
@@ -337,112 +340,8 @@ QUIZ_CASE(calculation_symbolic_computation) {
 
   // With x defined
   assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
-
-  assertMainCalculationOutputIs("y",                   "2",     &globalContext, &store);
-
-  assertMainCalculationOutputIs("int(x+1,x,1,3)",      "6",     &globalContext, &store);
-  assertMainCalculationOutputIs("int(f(x),x,1,3)",     "6",     &globalContext, &store);
-  assertMainCalculationOutputIs("int(y,x,1,3)",        "4",     &globalContext, &store);
-
-  assertMainCalculationOutputIs("sum(x+1,x,0,1)",      "3",     &globalContext, &store);
-  assertMainCalculationOutputIs("sum(f(x),x,0,1)",     "3",     &globalContext, &store);
-  assertMainCalculationOutputIs("sum(y,x,0,1)",        "4",     &globalContext, &store);
-
-  assertMainCalculationOutputIs("product(x+1,x,0,1)",  "2",     &globalContext, &store);
-  assertMainCalculationOutputIs("product(f(x),x,0,1)", "2",     &globalContext, &store);
-  assertMainCalculationOutputIs("product(y,x,0,1)",    "4",     &globalContext, &store);
-
-  assertMainCalculationOutputIs("diff(x+1,x,1)",       "1",     &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(x),x,1)",      "1",     &globalContext, &store);
-  assertMainCalculationOutputIs("diff(y,x,1)",         "0",     &globalContext, &store);
-
-  assertMainCalculationOutputIs("f(y)",                "3",     &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(y),x,1)",      "0",     &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(x)×y,x,1)",    "2",     &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(x×y),x,1)",    "2",     &globalContext, &store);
-  // Destroy records
-  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-
-  // 4 - Nested local variables within variables
-  assertMainCalculationOutputIs("int(x+1,x,1,3)→a",    "6",     &globalContext, &store);
-  assertMainCalculationOutputIs("a",                   "6",     &globalContext, &store);
-  assertMainCalculationOutputIs("a+y→a",               "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("diff(y×a,y,1)",       "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("1→y",                 "1",     &globalContext, &store);
-  assertMainCalculationOutputIs("diff(y×a,y,1)",       "7",     &globalContext, &store);
-  // Destroy records
-  Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-
-  assertMainCalculationOutputIs("2→x",                 "2",     &globalContext, &store);
-  assertMainCalculationOutputIs("diff(x,x,x)→a",       "1",     &globalContext, &store);
-  assertMainCalculationOutputIs("diff(a,x,3)",         "0",     &globalContext, &store);
-  // Destroy records
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
-
-  // 5 - Double nested local variables within variables
-  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
-  assertMainCalculationOutputIs("x→a",                 "1",     &globalContext, &store);
-  assertMainCalculationOutputIs("diff(a,x,x)→b",       "0",     &globalContext, &store);
-  assertMainCalculationOutputIs("b",                   "0",     &globalContext, &store);
-  // Destroy records
-  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
-
-  // 2 - Circularly defined functions
-  //   A - f(x) = g(x) = f(x)
-  assertMainCalculationOutputIs("1→f(x)",              "1",     &globalContext, &store);
-  assertMainCalculationOutputIs("f(x)→g(x)",           "f(x)",  &globalContext, &store);
-  assertMainCalculationOutputIs("g(x)→f(x)",           "g(x)",  &globalContext, &store);
-  // With x undefined
-  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
-  // With x  defined
-  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
-
-  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
-  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
-  //   B - f(x) = g(x) = a = f(x)
-  assertMainCalculationOutputIs("f(x)→a",              "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("a→g(x)",              "a",     &globalContext, &store);
-  // With x undefined
-  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
-  // With x defined
-  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
-
-  assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
-  // Destroy records
-  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
-
-  // 3 - Differences between functions and variables
-  assertMainCalculationOutputIs("x+1→f(x)",            "x+1",   &globalContext, &store);
-  assertMainCalculationOutputIs("x+1→y",               "undef", &globalContext, &store);
-  // With x undefined
   assertMainCalculationOutputIs("y",                   "undef", &globalContext, &store);
-
-  assertMainCalculationOutputIs("int(y,x,1,3)",        "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("sum(y,x,0,1)",        "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("product(y,x,0,1)",    "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("diff(y,x,1)",         "undef", &globalContext, &store);
-
-  assertMainCalculationOutputIs("f(y)",                "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(y),x,1)",      "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(x)×y,x,1)",    "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("diff(f(x×y),x,1)",    "undef", &globalContext, &store);
-
-  // With x defined
-  assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
-
+  assertMainCalculationOutputIs("x+1→y",               "2",     &globalContext, &store);
   assertMainCalculationOutputIs("y",                   "2",     &globalContext, &store);
 
   assertMainCalculationOutputIs("int(x+1,x,1,3)",      "6",     &globalContext, &store);
@@ -473,10 +372,9 @@ QUIZ_CASE(calculation_symbolic_computation) {
   // 4 - Nested local variables within variables
   assertMainCalculationOutputIs("int(x+1,x,1,3)→a",    "6",     &globalContext, &store);
   assertMainCalculationOutputIs("a",                   "6",     &globalContext, &store);
-  assertMainCalculationOutputIs("a+y→a",               "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("diff(y×a,y,1)",       "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("1→y",                 "1",     &globalContext, &store);
+  assertMainCalculationOutputIs("a+1→a",               "7",     &globalContext, &store);
   assertMainCalculationOutputIs("diff(y×a,y,1)",       "7",     &globalContext, &store);
+
   // Destroy records
   Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
@@ -497,6 +395,7 @@ QUIZ_CASE(calculation_symbolic_computation) {
   Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {

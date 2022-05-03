@@ -1054,7 +1054,7 @@ QUIZ_CASE(poincare_approximation_store_matrix) {
   assert_expression_approximates_to_scalar<float>("[[7]]→a", NAN);
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.mat").destroy();
 }
 
 QUIZ_CASE(poincare_approximation_complex_format) {

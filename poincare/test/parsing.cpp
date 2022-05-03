@@ -400,9 +400,6 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is(Infinity::Name(), Infinity::Builder(false));
   assert_parsed_expression_is(Undefined::Name(), Undefined::Builder());
 
-  assert_text_not_parsable("u");
-  assert_text_not_parsable("v");
-
   // Reserved functions
   assert_parsed_expression_is("acos(1)", ArcCosine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("acosh(1)", HyperbolicArcCosine::Builder(BasedInteger::Builder(1)));

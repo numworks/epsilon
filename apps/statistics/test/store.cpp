@@ -985,9 +985,9 @@ void assert_data_statistics_multiple_series_equal_to(
   }
 
   quiz_assert(maxValue == store.maxValueForAllSeries(false));
-  quiz_assert(maxValueIgnoringFrequency = store.maxValueForAllSeries(true));
+  quiz_assert(maxValueIgnoringFrequency == store.maxValueForAllSeries(true));
   quiz_assert(minValue == store.minValueForAllSeries(false));
-  quiz_assert(minValueIgnoringFrequency = store.minValueForAllSeries(true));
+  quiz_assert(minValueIgnoringFrequency == store.minValueForAllSeries(true));
 }
 
 QUIZ_CASE(data_statistics_multiple_series) {

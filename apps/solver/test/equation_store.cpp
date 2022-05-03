@@ -5,7 +5,6 @@ QUIZ_CASE(equation_solve) {
   assert_solves_to_error("x+y+z+a+b+c+d=0", TooManyVariables);
   assert_solves_to_error("x^2+y=0", NonLinearSystem);
   assert_solves_to_error("cos(x)=0", RequireApproximateSolution);
-  assert_solves_to_error("x^2+1=u(0)", EquationUndefined);
   assert_solves_to_error("x^3+x^2+1=int(1/t,t,0,1)", EquationUndefined);
   assert_solves_to_error("x×(x^2×int(1/t,t,0,1)+1)=0", EquationUndefined);
 
@@ -180,21 +179,10 @@ QUIZ_CASE(equation_solve_complex_polar) {
 
 QUIZ_CASE(equation_and_symbolic_computation) {
   set("a", "x");
-  // a is used
-  assert_solves_to({"a=0"}, {"x=0"});
-
-  set("x", "1");
-  // a is ignored
+  // a is undef
   assert_solves_to({"a=0"}, {"a=0"});
 
-  set("a", "x+y");
-  // a and x are used
-  /* FIXME : a is displayed as the only used predefined variable despite having
-   *   x in its definition. */
-  assert_solves_to({"a=0"}, {"y=-1"});
-
   unset("a");
-  unset("x");
 
   assert_solves_to_infinite_solutions("x+a=0");
 

@@ -1,4 +1,5 @@
 #include <apps/shared/global_context.h>
+#include <apps/shared/record_name_helper.h>
 #include <poincare/addition.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -16,15 +17,24 @@ void assert_parsed_expression_approximates_with_value_for_symbol(Expression expr
 }
 
 QUIZ_CASE(poincare_context_store_overwrite) {
+  Shared::RecordNameHelper recordNameHelper;
+  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  assert_parsed_expression_simplify_to("1→g", "1");
   assert_parsed_expression_simplify_to("2→g", "2");
+  assert_expression_approximates_to<double>("g", "2");
   assert_parsed_expression_simplify_to("-1→g(x)", "-1");
+  assert_expression_approximates_to<double>("g", "undef");
   assert_expression_approximates_to<double>("g(4)", "-1");
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
 }
 
 QUIZ_CASE(poincare_context_store_do_not_overwrite) {
+  Shared::RecordNameHelper recordNameHelper;
+  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+
   assert_parsed_expression_simplify_to("-1→g(x)", "-1");
   assert_parsed_expression_simplify_to("1+g(x)→f(x)", "1+g(x)");
   assert_expression_approximates_to<double>("f(1)", "0");
@@ -35,9 +45,13 @@ QUIZ_CASE(poincare_context_store_do_not_overwrite) {
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
 }
 
 QUIZ_CASE(poincare_context_user_variable_simple) {
+  Shared::RecordNameHelper recordNameHelper;
+  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+
   // Fill variable
   assert_parsed_expression_simplify_to("1+2→Adadas", "3");
   assert_parsed_expression_simplify_to("Adadas", "3");
@@ -71,9 +85,11 @@ QUIZ_CASE(poincare_context_user_variable_simple) {
   Ion::Storage::sharedStorage()->recordNamed("f1.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f2.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("fBoth.func").destroy();
+  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_variables) {
+
   assert_reduce("a→b");
   assert_reduce("b→a");
   assert_expression_approximates_to<double>("a", Undefined::Name());
@@ -208,9 +224,6 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
   assert_expression_approximates_to<double>("[[1]]→a", "[[1]]");
   quiz_assert(Symbol::Builder('a').recursivelyMatches(Expression::IsMatrix, &context));
 
-  assert_expression_approximates_to<double>("1.2→b", "1.2");
-  quiz_assert(Symbol::Builder('b').recursivelyMatches(Expression::IsApproximate, &context));
-
   /* [[x]]→f(x) expression contains a matrix, so its simplification is going
    * to be interrupted. We thus rather approximate it instead of simplifying it.
    * TODO: use parse_and_simplify when matrix are simplified. */
@@ -221,7 +234,7 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
   quiz_assert(Function::Builder("g", 1, Rational::Builder(2)).recursivelyMatches(Expression::IsApproximate, &context));
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.mat").destroy();
   Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();

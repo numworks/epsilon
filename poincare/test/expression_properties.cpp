@@ -1,4 +1,5 @@
 #include <apps/shared/global_context.h>
+#include <apps/shared/record_name_helper.h>
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/arc_cosine.h>
@@ -126,9 +127,6 @@ QUIZ_CASE(poincare_properties_is_approximate) {
   assert_expression_has_property("3.4", &context, Expression::IsApproximate);
   assert_expression_has_property("2.3+1", &context, Expression::IsApproximate);
   assert_expression_has_not_property("a", &context, Expression::IsApproximate);
-  assert_reduce("42.3→a");
-  assert_expression_has_property("a", &context, Expression::IsApproximate);
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }
 
 QUIZ_CASE(poincare_properties_is_matrix) {
@@ -367,6 +365,9 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("2-x-x^3", 3);
   assert_reduced_expression_polynomial_degree("π×x", 1);
   assert_reduced_expression_polynomial_degree("√(-1)×x", -1, "x", Real);
+
+  Shared::RecordNameHelper recordNameHelper;
+  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
   // f: y→y^2+πy+1
   assert_reduce("1+π×y+y^2→f(y)");
   assert_reduced_expression_polynomial_degree("f(x)", 2);
@@ -375,16 +376,16 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("f(x)", 2);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
-  // a : y and f : y→ay+πy+1
-  assert_reduce("y→a");
+  // a : undef and f : y→ay+πy+1
+  assert_reduce("undef→a");
   assert_reduce("1+π×y+y×a→f(y)");
-  assert_reduced_expression_polynomial_degree("f(x)", -1); // y is undefined
-  // With y=1
-  assert_reduce("1→y");
+  assert_reduced_expression_polynomial_degree("f(x)", -1); // a is undefined
+  // With a = 1
+  assert_reduce("1→a");
   assert_reduced_expression_polynomial_degree("f(x)", 1);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
+  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
 }
 
 void assert_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {

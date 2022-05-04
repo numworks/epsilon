@@ -162,6 +162,9 @@ QUIZ_CASE(poincare_simplification_addition) {
   assert_parsed_expression_simplify_to("[[1,2+i][3,4][5,6]]+[[1,2+i][3,4][5,6]]", "[[2,4+2×i][6,8][10,12]]");
   assert_parsed_expression_simplify_to("3+[[1,2][3,4]]", "undef");
   assert_parsed_expression_simplify_to("[[1][3][5]]+[[1,2+i][3,4][5,6]]", "undef");
+  // Beautification order
+  assert_parsed_expression_simplify_to("√(2)+4+3×π+√(5)+2×√(5)", "3×π+4+3×√(5)+√(2)");
+  assert_parsed_expression_simplify_to("(√(2)+1+x+y)^3", "x^3+y^3+3×x×y^2+3×x^2×y+3×√(2)×x^2+3×x^2+3×√(2)×y^2+3×y^2+6×√(2)×x×y+6×x×y+6×√(2)×x+9×x+6×√(2)×y+9×y+7+5×√(2)");
 }
 
 QUIZ_CASE(poincare_simplification_multiplication) {

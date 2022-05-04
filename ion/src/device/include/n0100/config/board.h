@@ -29,7 +29,6 @@ constexpr static uint32_t KernelHeaderAddress = KernelStartAddress + INITIALISAT
 constexpr static uint32_t KernelSize = 2*0x4000; // 2*16k
 constexpr static uint32_t PersistingBytesSize = 0x4000; // 16k
 constexpr static uint32_t UserlandStartAddress = KernelStartAddress + KernelSize + PersistingBytesSize;
-constexpr static uint32_t UserlandSize = 0x4000 + 0x10000 + 7*0x20000; // 16k+64k+7*128k
 
 }
 }

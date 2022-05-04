@@ -25,13 +25,10 @@ private:
 
   // Evaluation
   Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const override {
-    return templatedEvaluateWithNewTerm<double>(a, b, complexFormat);
+    return MultiplicationNode::Compute<double>(a, b, complexFormat);
   }
   Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat) const override {
-    return templatedEvaluateWithNewTerm<float>(a, b, complexFormat);
-  }
-  template<typename T> Evaluation<T> templatedEvaluateWithNewTerm(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) const {
-    return MultiplicationNode::Compute<T>(a, b, complexFormat);
+    return MultiplicationNode::Compute<float>(a, b, complexFormat);
   }
 };
 

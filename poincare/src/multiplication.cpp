@@ -1359,12 +1359,6 @@ template MatrixComplex<double> MultiplicationNode::computeOnComplexAndMatrix<dou
 template Complex<float> MultiplicationNode::computeOnComplex<float>(const std::complex<float>, const std::complex<float>, Preferences::ComplexFormat);
 template Complex<double> MultiplicationNode::computeOnComplex<double>(const std::complex<double>, const std::complex<double>, Preferences::ComplexFormat);
 
-template Evaluation<float> Poincare::MultiplicationNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Preferences::ComplexFormat complexFormat);
-template Evaluation<double> Poincare::MultiplicationNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Preferences::ComplexFormat complexFormat);
-
-template Evaluation<float> Poincare::MultiplicationNode::templatedApproximate<float>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
-template Evaluation<double> Poincare::MultiplicationNode::templatedApproximate<double>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
-
 template void Multiplication::computeOnArrays<double>(double * m, double * n, double * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
 
 }

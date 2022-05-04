@@ -101,9 +101,4 @@ Expression Division::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return m.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> Poincare::DivisionNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Preferences::ComplexFormat complexFormat);
-template Evaluation<double> Poincare::DivisionNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Preferences::ComplexFormat complexFormat);
-
-template Evaluation<float> Poincare::DivisionNode::templatedApproximate<float>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
-template Evaluation<double> Poincare::DivisionNode::templatedApproximate<double>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
 }

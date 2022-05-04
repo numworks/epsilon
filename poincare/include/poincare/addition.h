@@ -70,13 +70,10 @@ private:
 
   /* Evaluation */
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
+    return ApproximationHelper::MapReduce<float>(this, approximationContext, Compute<float>);
    }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const {
-    return ApproximationHelper::MapReduce<T>(this, approximationContext, Compute<T>);
+    return ApproximationHelper::MapReduce<double>(this, approximationContext, Compute<double>);
   }
 };
 

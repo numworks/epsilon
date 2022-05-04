@@ -47,7 +47,7 @@ bool ListHelpers::ListEvaluationComparison(int i, int j, void * context, int num
   bool * nanIsGreatest = reinterpret_cast<bool *>(c[2]);
   float xI = list->childAtIndex(i)->approximate(static_cast<float>(0), *approximationContext).toScalar();
   float xJ =  list->childAtIndex(j)->approximate(static_cast<float>(0), *approximationContext).toScalar();
-  return Poincare::Helpers::FloatComparison(xI, xJ, *nanIsGreatest);
+  return Poincare::Helpers::FloatIsGreater(xI, xJ, *nanIsGreatest);
 }
 
 int ListHelpers::ExtremumOfListNodeIndex(ListNode * listNode, ExpressionNode::ApproximationContext approximationContext, bool minimum) {
@@ -129,7 +129,7 @@ template<typename T> ListComplex<T> ListHelpers::SortListComplex(ListComplex<T> 
       ListComplex<T> * list = reinterpret_cast<ListComplex<T> *>(context);
       float xI = list->childAtIndex(i).toScalar();
       float xJ =  list->childAtIndex(j).toScalar();
-      return Poincare::Helpers::FloatComparison(xI, xJ, ListSort::k_nanIsGreatest);
+      return Poincare::Helpers::FloatIsGreater(xI, xJ, ListSort::k_nanIsGreatest);
       },
       ctx,
       list.numberOfChildren());

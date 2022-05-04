@@ -88,12 +88,9 @@ double MultiplicationNode::degreeForSortingAddition(bool symbolsOnly) const {
       degree += c->degreeForSortingAddition(symbolsOnly);
     }
     return degree;
-  } else {
-    if (numberOfChildren() > 0) {
-      return childAtIndex(numberOfChildren() - 1)->degreeForSortingAddition(symbolsOnly);
-    }
   }
-  return NAN;
+  assert(numberOfChildren() > 0);
+  return childAtIndex(numberOfChildren() - 1)->degreeForSortingAddition(symbolsOnly);
 }
 
 

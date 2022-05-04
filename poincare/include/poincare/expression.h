@@ -32,7 +32,6 @@ class Expression : public TreeHandle {
   friend class Arithmetic;
   friend class BasedInteger;
   friend class BinomialCoefficient;
-  friend class BinomialDistributionFunction;
   friend class Ceiling;
   friend class CommonLogarithm;
   friend class ComparisonOperator;
@@ -51,6 +50,7 @@ class Expression : public TreeHandle {
   friend class Derivative;
   friend class Determinant;
   friend class Dimension;
+  friend class DistributionFunction;
   friend class Division;
   friend class DivisionQuotient;
   friend class DivisionRemainder;
@@ -60,9 +60,6 @@ class Expression : public TreeHandle {
   friend class Floor;
   friend class FracPart;
   friend class Function;
-  friend class GeomCDF;
-  friend class GeomCDFRange;
-  friend class GeomPDF;
   friend class GlobalContext;
   friend class GreatCommonDivisor;
   friend class HyperbolicTrigonometricFunction;
@@ -71,9 +68,6 @@ class Expression : public TreeHandle {
   friend class InferiorEqual;
   friend class Integer;
   friend class Integral;
-  friend class InvGeom;
-  friend class InvNorm;
-  friend class InvStudent;
   friend class LeastCommonMultiple;
   friend class List;
   friend class ListMean;
@@ -93,10 +87,6 @@ class Expression : public TreeHandle {
   friend class Multiplication;
   friend class MultiplicationNode;
   friend class NaperianLogarithm;
-  friend class NormalDistributionFunction;
-  friend class NormCDF;
-  friend class NormCDFRange;
-  friend class NormPDF;
   friend class NthRoot;
   friend class Number;
   friend class Opposite;
@@ -104,7 +94,6 @@ class Expression : public TreeHandle {
   friend class ParameteredExpressionNode;
   friend class Parenthesis;
   friend class PermuteCoefficient;
-  friend class PoissonDistributionFunction;
   friend class Power;
   friend class PowerNode;
   friend class Product;
@@ -119,10 +108,6 @@ class Expression : public TreeHandle {
   friend class SquareRoot;
   friend class SquareRootNode;
   friend class Store;
-  friend class StudentDistributionFunction;
-  friend class StudentCDF;
-  friend class StudentCDFRange;
-  friend class StudentPDF;
   friend class Subtraction;
   friend class SubtractionNode;
   friend class Superior;

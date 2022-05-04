@@ -74,6 +74,7 @@ public:
     Dependency,
     Derivative,
     Determinant,
+    DistributionFunction,
     DivisionQuotient,
     DivisionRemainder,
     Factor,

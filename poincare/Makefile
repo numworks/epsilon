@@ -66,10 +66,7 @@ poincare_src += $(addprefix poincare/src/,\
   arithmetic.cpp \
   array.cpp \
   based_integer.cpp \
-  binom_cdf.cpp \
   binomial_coefficient.cpp \
-  binomial_distribution_function.cpp \
-  binom_pdf.cpp \
   ceiling.cpp \
   comparison_operator.cpp \
   complex.cpp \
@@ -86,6 +83,7 @@ poincare_src += $(addprefix poincare/src/,\
   derivative.cpp \
   determinant.cpp \
   dimension.cpp \
+  distribution_function.cpp \
   division.cpp \
   division_quotient.cpp \
   division_remainder.cpp \
@@ -99,10 +97,6 @@ poincare_src += $(addprefix poincare/src/,\
   floor.cpp \
   frac_part.cpp \
   function.cpp \
-  geom_cdf.cpp \
-  geom_cdf_range.cpp \
-  geometric_distribution_function.cpp \
-  geom_pdf.cpp \
   great_common_divisor.cpp \
   hyperbolic_arc_cosine.cpp \
   hyperbolic_arc_sine.cpp \
@@ -115,10 +109,6 @@ poincare_src += $(addprefix poincare/src/,\
   infinity.cpp \
   integer.cpp \
   integral.cpp \
-  inv_binom.cpp \
-  inv_geom.cpp \
-  inv_norm.cpp \
-  inv_student.cpp \
   layout_helper.cpp \
   least_common_multiple.cpp \
   list.cpp \
@@ -149,19 +139,12 @@ poincare_src += $(addprefix poincare/src/,\
   n_ary_expression.cpp \
   n_ary_infix_expression.cpp \
   naperian_logarithm.cpp \
-  norm_cdf.cpp \
-  norm_cdf_range.cpp \
-  norm_pdf.cpp \
-  normal_distribution_function.cpp \
   nth_root.cpp \
   number.cpp \
   opposite.cpp \
   parametered_expression.cpp \
   parenthesis.cpp \
   permute_coefficient.cpp \
-  poisson_cdf.cpp \
-  poisson_distribution_function.cpp \
-  poisson_pdf.cpp \
   polynomial.cpp \
   power.cpp \
   preferences.cpp \
@@ -184,10 +167,6 @@ poincare_src += $(addprefix poincare/src/,\
   solver.cpp \
   square_root.cpp \
   store.cpp \
-  student_cdf.cpp \
-  student_cdf_range.cpp \
-  student_pdf.cpp \
-  student_distribution_function.cpp \
   sum_and_product.cpp \
   subtraction.cpp \
   sum.cpp \

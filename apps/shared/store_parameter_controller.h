@@ -17,8 +17,7 @@ public:
   StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return numberOfCells(); }
-  Escher::HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() const override { return numberOfCells(); }
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   void initializeColumnParameters() override;
 protected:
   constexpr static int k_numberOfCells = 3;

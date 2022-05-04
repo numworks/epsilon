@@ -13,6 +13,8 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 }
 
 void StoreParameterController::initializeColumnParameters() {
+  // Number of cells and cells size may change when switching between columns
+  resetMemoization();
   Shared::StoreParameterController::initializeColumnParameters();
   // Initialize clear column message
   if (m_storeController->relativeColumnIndex(m_columnIndex) == 1) {
@@ -40,12 +42,12 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return Shared::StoreParameterController::handleEvent(event);
 }
 
-Escher::HighlightCell * StoreParameterController::reusableCell(int index) {
+Escher::HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0 && index < numberOfCells());
   if (index == indexOfCumulatedFrequencyCell()) {
     return isCumulatedFrequencyColumnSelected() ? &m_fillFormula : &m_displayCumulatedFrequencyCell;
   }
-  return Shared::StoreParameterController::reusableCell(index);
+  return Shared::StoreParameterController::reusableCell(index, type);
 }
 
 void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {

@@ -45,7 +45,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 }
 
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
-  TextFieldDelegateApp(snapshot, &m_tabViewController),
+  ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
@@ -65,7 +65,8 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_storeController(&m_storeHeader, this, snapshot->store(), &m_storeHeader, parentContext),
   m_storeHeader(&m_storeStackViewController, &m_storeController, &m_storeController),
   m_storeStackViewController(&m_tabViewController, &m_storeHeader, Escher::StackViewController::Style::WhiteUniform),
-  m_tabViewController(&m_modalViewController, snapshot, &m_storeStackViewController, &m_graphMenuAlternateEmptyViewController, &m_calculationHeader)
+  m_tabViewController(&m_inputViewController, snapshot, &m_storeStackViewController, &m_graphMenuAlternateEmptyViewController, &m_calculationHeader),
+  m_inputViewController(&m_modalViewController, &m_tabViewController, &m_storeController, &m_storeController, &m_storeController)
 {
   /* Set the store's sorted index buffer. It is stored in the app to reduce
    * snapshot's size. */

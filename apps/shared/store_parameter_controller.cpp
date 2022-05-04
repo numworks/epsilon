@@ -37,8 +37,8 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     }
     case k_indexOfFillFormula:
     {
-      m_storeController->displayFormulaInput();
       stackView()->pop();
+      m_storeController->displayFormulaInput();
       break;
     }
     default:

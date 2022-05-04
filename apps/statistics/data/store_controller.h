@@ -40,6 +40,8 @@ private:
 
   bool isCumulatedFrequencyColumn(int i) const { return m_store->relativeColumnIndex(i) == k_cumulatedFrequencyRelativeColumnIndex; }
   bool isCumulatedFrequencyCell(int i, int j) const { return j != 0 && isCumulatedFrequencyColumn(i); }
+
+  Escher::InputViewController * inputViewController() override;
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;

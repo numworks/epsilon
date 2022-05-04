@@ -24,9 +24,9 @@ Evaluation<T> BinomPDFNode::templatedApproximate(ApproximationContext approximat
       approximationContext,
       [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
         assert(numberOfComplexes == 3);
-        const T x = c[0].real();
-        const T n = c[1].real();
-        const T p = c[2].real();
+        const T x = ComplexNode<T>::ToScalar(c[0]);
+        const T n = ComplexNode<T>::ToScalar(c[1]);
+        const T p = ComplexNode<T>::ToScalar(c[2]);
         // EvaluateAtAbscissa handles bad n and p values
         return Complex<T>::Builder(BinomialDistribution::EvaluateAtAbscissa(x, n, p));
       });

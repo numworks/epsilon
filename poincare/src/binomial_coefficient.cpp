@@ -37,8 +37,8 @@ Evaluation<T> BinomialCoefficientNode::templatedApproximate(ApproximationContext
       approximationContext,
       [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
         assert(numberOfComplexes == 2);
-        T n = c[0].real();
-        T k = c[1].real();
+        T n = ComplexNode<T>::ToScalar(c[0]);
+        T k = ComplexNode<T>::ToScalar(c[1]);
         return Complex<T>::Builder(compute(k, n));
       });
 }

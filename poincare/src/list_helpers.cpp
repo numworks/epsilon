@@ -105,7 +105,7 @@ template<typename T> Evaluation<T> ListHelpers::SquareSumOfListNode(ListNode * l
           eval2,
           complexFormat,
           [] (const std::complex<T> c1, const std::complex<T> c2, Preferences::ComplexFormat complexFormat) {
-            return AdditionNode::computeOnComplex(c1, MultiplicationNode::computeOnComplex<T>(c2, c2, complexFormat).stdComplex(), complexFormat);
+            return AdditionNode::computeOnComplex(c1, MultiplicationNode::computeOnComplex<T>(c2, c2, complexFormat).complexAtIndex(0), complexFormat);
           },
           ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
           ApproximationHelper::UndefinedOnMatrixAndComplex<T>,

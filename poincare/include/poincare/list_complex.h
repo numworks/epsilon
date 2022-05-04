@@ -12,7 +12,7 @@ class ListComplex;
 template<typename T>
 class ListComplexNode final : public EvaluationNode<T> {
 public:
-  std::complex<T> complexAtIndex(int index) const;
+  std::complex<T> complexAtIndex(int index) const override;
   int numberOfChildren() const override {
     return m_numberOfChildren < 0 ? 0 : m_numberOfChildren;
   }

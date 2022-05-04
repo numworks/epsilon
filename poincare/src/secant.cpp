@@ -15,7 +15,7 @@ int SecantNode::numberOfChildren() const { return Secant::s_functionHelper.numbe
 
 template<typename T>
 Complex<T> SecantNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  std::complex<T> denominator = CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit).stdComplex();
+  std::complex<T> denominator = CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit).complexAtIndex(0);
   if (denominator == static_cast<T>(0.0)) {
     return Complex<T>::Undefined();
   }

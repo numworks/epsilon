@@ -34,7 +34,7 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(ApproximationContext appro
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     inverse = static_cast<MatrixComplex<T>&>(input).inverse();
   } else if (input.type() == EvaluationNode<T>::Type::Complex) {
-    inverse = Complex<T>::Builder(std::complex<T>(1)/(static_cast<Complex<T>&>(input).stdComplex()));
+    inverse = Complex<T>::Builder(std::complex<T>(1)/(input.complexAtIndex(0)));
   }
   if (inverse.isUninitialized()) {
     inverse = Complex<T>::Undefined();

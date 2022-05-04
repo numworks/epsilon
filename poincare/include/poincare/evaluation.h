@@ -29,6 +29,7 @@ public:
   virtual Type type() const = 0;
   virtual ~EvaluationNode() = default;
   virtual bool isUndefined() const = 0;
+  virtual std::complex<T> complexAtIndex(int index) const = 0;
   virtual T toScalar() const { return NAN; }
   virtual Expression complexToExpression(Preferences::ComplexFormat complexFormat) const = 0;
 };
@@ -59,6 +60,7 @@ public:
   Evaluation<T> childAtIndex(int i) const;
   typename Poincare::EvaluationNode<T>::Type type() const { return node()->type(); }
   bool isUndefined() const { return node()->isUndefined(); }
+  std::complex<T> complexAtIndex(int index) const { return node()->complexAtIndex(index); }
   T toScalar() const { return node()->toScalar(); }
   Expression complexToExpression(Preferences::ComplexFormat complexFormat) const;
 

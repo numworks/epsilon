@@ -138,9 +138,9 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductio
   sortChildrenInPlace(
       [](const ExpressionNode * e1, const ExpressionNode * e2) {
         /* Repeat twice, once for symbol degree, once for any degree */
-        for (int sortBySymbolDegree = 1; sortBySymbolDegree >= 0; sortBySymbolDegree--) {
-          double e1Degree = e1->degreeForSortingAddition(static_cast<bool>(sortBySymbolDegree));
-          double e2Degree = e2->degreeForSortingAddition(static_cast<bool>(sortBySymbolDegree));
+        for (bool sortBySymbolDegree : {true, false}) {
+          double e1Degree = e1->degreeForSortingAddition(sortBySymbolDegree);
+          double e2Degree = e2->degreeForSortingAddition(sortBySymbolDegree);
           if (!std::isnan(e2Degree) && (std::isnan(e1Degree) || e1Degree > e2Degree)) {
             return -1;
           }

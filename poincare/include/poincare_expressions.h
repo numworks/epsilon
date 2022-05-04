@@ -10,9 +10,7 @@
 #include <poincare/arc_sine.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/based_integer.h>
-#include <poincare/binom_cdf.h>
 #include <poincare/binomial_coefficient.h>
-#include <poincare/binom_pdf.h>
 #include <poincare/complex_argument.h>
 #include <poincare/conjugate.h>
 #include <poincare/context.h>
@@ -26,6 +24,7 @@
 #include <poincare/derivative.h>
 #include <poincare/determinant.h>
 #include <poincare/dimension.h>
+#include <poincare/distribution_function.h>
 #include <poincare/division.h>
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
@@ -40,9 +39,6 @@
 #include <poincare/frac_part.h>
 #include <poincare/function.h>
 #include <poincare/great_common_divisor.h>
-#include <poincare/geom_cdf.h>
-#include <poincare/geom_cdf_range.h>
-#include <poincare/geom_pdf.h>
 #include <poincare/hyperbolic_arc_cosine.h>
 #include <poincare/hyperbolic_arc_sine.h>
 #include <poincare/hyperbolic_arc_tangent.h>
@@ -55,10 +51,6 @@
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/integral.h>
-#include <poincare/inv_binom.h>
-#include <poincare/inv_geom.h>
-#include <poincare/inv_norm.h>
-#include <poincare/inv_student.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/list.h>
 #include <poincare/list_access.h>
@@ -85,16 +77,11 @@
 #include <poincare/matrix_reduced_row_echelon_form.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
-#include <poincare/norm_cdf.h>
-#include <poincare/norm_cdf_range.h>
-#include <poincare/norm_pdf.h>
 #include <poincare/nth_root.h>
 #include <poincare/number.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/permute_coefficient.h>
-#include <poincare/poisson_cdf.h>
-#include <poincare/poisson_pdf.h>
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
@@ -110,9 +97,6 @@
 #include <poincare/sine.h>
 #include <poincare/square_root.h>
 #include <poincare/store.h>
-#include <poincare/student_cdf.h>
-#include <poincare/student_cdf_range.h>
-#include <poincare/student_pdf.h>
 #include <poincare/subtraction.h>
 #include <poincare/sum.h>
 #include <poincare/superior.h>

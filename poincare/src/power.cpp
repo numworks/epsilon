@@ -148,9 +148,6 @@ bool PowerNode::childAtIndexNeedsUserParentheses(const Expression & child, int c
 }
 
 double PowerNode::degreeForSortingAddition(bool symbolsOnly) const {
-  if (numberOfChildren() <= 1) {
-    return NAN;
-  }
   double baseDegree = childAtIndex(0)->degreeForSortingAddition(symbolsOnly);
   if (baseDegree == 0.) {
     /* We escape here so that even if the exponent is not a number,

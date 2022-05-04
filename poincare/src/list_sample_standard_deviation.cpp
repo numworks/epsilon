@@ -38,8 +38,7 @@ template<typename T> Evaluation<T> ListSampleStandardDeviationNode::templatedApp
   if (unbiased.type() != EvaluationNode<T>::Type::Complex) {
     return Complex<T>::Undefined();
   }
-  Complex<T> v = static_cast<Complex<T> &>(unbiased);
-  return SquareRootNode::computeOnComplex<T>(v.stdComplex(), approximationContext.complexFormat(), approximationContext.angleUnit());
+  return SquareRootNode::computeOnComplex<T>(unbiased.complexAtIndex(0), approximationContext.complexFormat(), approximationContext.angleUnit());
 }
 
 Expression ListSampleStandardDeviation::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

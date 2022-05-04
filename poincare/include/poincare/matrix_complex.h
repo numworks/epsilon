@@ -18,7 +18,7 @@ public:
     EvaluationNode<T>()
   {}
 
-  std::complex<T> complexAtIndex(int index) const;
+  std::complex<T> complexAtIndex(int index) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixComplexNode<T>); }

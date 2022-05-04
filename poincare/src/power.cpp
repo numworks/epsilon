@@ -186,7 +186,7 @@ Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(const std::comple
     /* As q is odd, c^(p/q) = (sign(c)^(1/q))^p * |c|^(p/q)
      *                      = sign(c)^p         * |c|^(p/q)
      *                      = -|c|^(p/q) iff c < 0 and p odd */
-    return c.real() < static_cast<T>(0.0) && std::pow(static_cast<T>(-1.0), p) < static_cast<T>(0.0) ? Complex<T>::Builder(-absCPowD.stdComplex()) : absCPowD;
+    return c.real() < static_cast<T>(0.0) && std::pow(static_cast<T>(-1.0), p) < static_cast<T>(0.0) ? Complex<T>::Builder(-absCPowD.complexAtIndex(0)) : absCPowD;
   }
   return Complex<T>::Undefined();
 }
@@ -318,7 +318,7 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
       return MatrixComplex<T>::Undefined();
     }
     Complex<T> minusC = Complex<T>::Builder(-d);
-    MatrixComplex<T> result = PowerNode::computeOnMatrixAndComplex(inverse, minusC.stdComplex(), complexFormat);
+    MatrixComplex<T> result = PowerNode::computeOnMatrixAndComplex(inverse, minusC.complexAtIndex(0), complexFormat);
     return result;
   }
   MatrixComplex<T> result = MatrixComplex<T>::CreateIdentity(m.numberOfRows());
@@ -338,7 +338,7 @@ template<typename T> Evaluation<T> PowerNode::templatedApproximate(Approximation
     if (base.type() != EvaluationNode<T>::Type::Complex) {
       goto defaultApproximation;
     }
-    std::complex<T> c = static_cast<Complex<T> &>(base).stdComplex();
+    std::complex<T> c = base.complexAtIndex(0);
     T p = NAN;
     T q = NAN;
     // If the power has been reduced, we look for a rational index

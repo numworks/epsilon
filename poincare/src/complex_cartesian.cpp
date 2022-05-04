@@ -48,8 +48,8 @@ Complex<T> ComplexCartesianNode::templatedApproximate(ApproximationContext appro
   Evaluation<T> imagEvalution = childAtIndex(1)->approximate(T(), approximationContext);
   assert(realEvaluation.type() == EvaluationNode<T>::Type::Complex);
   assert(imagEvalution.type() == EvaluationNode<T>::Type::Complex);
-  std::complex<T> a = static_cast<Complex<T> &>(realEvaluation).stdComplex();
-  std::complex<T> b = static_cast<Complex<T> &>(imagEvalution).stdComplex();
+  std::complex<T> a = realEvaluation.complexAtIndex(0);
+  std::complex<T> b = imagEvalution.complexAtIndex(0);
   if ((a.imag() != static_cast<T>(0.0) && !std::isnan(a.imag())) || (b.imag() != static_cast<T>(0.0) && !std::isnan(b.imag()))) {
     /* a and b are supposed to be real (if they are not undefined). However,
      * due to double precision limit, the approximation of the real part or the

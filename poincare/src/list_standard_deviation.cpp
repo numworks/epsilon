@@ -35,8 +35,7 @@ template<typename T> Evaluation<T> ListStandardDeviationNode::templatedApproxima
   if (variance.type() != EvaluationNode<T>::Type::Complex) {
     return Complex<T>::Undefined();
   }
-  Complex<T> v = static_cast<Complex<T> &>(variance);
-  return SquareRootNode::computeOnComplex<T>(v.stdComplex(), approximationContext.complexFormat(), approximationContext.angleUnit());
+  return SquareRootNode::computeOnComplex<T>(variance.complexAtIndex(0), approximationContext.complexFormat(), approximationContext.angleUnit());
 }
 
 Expression ListStandardDeviation::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

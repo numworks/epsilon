@@ -15,7 +15,7 @@ UserlandHeader * userlandHeader() {
 }
 
 uint32_t userlandEnd() {
-  return Config::UserlandStartAddress + Config::UserlandSize;
+  return InternalFlash::Config::EndAddress;
 }
 
 }

@@ -51,11 +51,6 @@ Evaluation<T> FactorNode::templatedApproximate(ApproximationContext approximatio
         }
         return Complex<T>::Builder(c);
       });
-  Evaluation<T> e = childAtIndex(0)->approximate(T(), approximationContext);
-  if (std::isnan(e.toScalar())) {
-    return Complex<T>::Undefined();
-  }
-  return e;
 }
 
 

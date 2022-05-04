@@ -122,7 +122,7 @@ int ExtremumIndex(Compare compare, void * context, int numberOfElements, bool mi
   return returnIndex;
 }
 
-bool FloatComparison(float xI, float xJ, bool nanIsGreatest) {
+bool FloatIsGreater(float xI, float xJ, bool nanIsGreatest) {
   if (std::isnan(xI)) {
     return nanIsGreatest;
   }

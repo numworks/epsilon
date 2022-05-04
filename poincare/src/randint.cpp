@@ -64,34 +64,4 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Approximati
       });
 }
 
-Expression RandintNode::shallowReduce(ReductionContext reductionContext) {
-  return Randint(this).shallowReduce(reductionContext);
-}
-
-Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Expression e = SimplificationHelper::defaultShallowReduce(*this);
-  if (!e.isUninitialized()) {
-    return e;
-  }
-  e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
-  if (!e.isUninitialized()) {
-    return e;
-  }
-  e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
-  if (!e.isUninitialized()) {
-    return e;
-  }
-  bool inputIsUndefined = false;
-  double eval = static_cast<RandintNode *>(node())->templateApproximate<double>(ExpressionNode::ApproximationContext(reductionContext, true), &inputIsUndefined).toScalar();
-  if (inputIsUndefined) {
-    /* The input might be NAN because we are reducing a function's expression
-     * which depends on x. We thus do not want to replace too early with
-     * undefined. */
-    return *this;
-  }
-  Expression result = Number::DecimalNumber(eval);
-  replaceWithInPlace(result);
-  return result.shallowReduce(reductionContext);
-}
-
 }

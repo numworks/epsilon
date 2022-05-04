@@ -35,8 +35,7 @@ private:
     return templateApproximate<double>(approximationContext);
   }
   template <typename T> Evaluation<T> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
-  // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
+
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 };
@@ -47,8 +46,7 @@ public:
   Randint(const RandintNode * n) : Expression(n) {}
   static Randint Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Randint, RandintNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("randint", 2, &UntypedBuilderTwoChildren<Randint>);
-private:
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+
 };
 
 }

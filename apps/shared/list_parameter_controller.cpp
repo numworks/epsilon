@@ -35,7 +35,7 @@ void ListParameterController::viewWillAppear() {
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_enableCell && !m_record.isNull()) {
     assert(typeAtIndex(index) == k_enableCellType);
-    m_enableCell.setState(function()->isActive());
+    m_enableCell.setState(!function()->isActive());
   }
 }
 

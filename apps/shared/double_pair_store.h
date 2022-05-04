@@ -44,6 +44,7 @@ public:
   void deleteAllPairs();
 
   // Series validity
+  void hideSeries(int series) { m_validSeries[series] = false; }
   bool seriesIsValid(int series) const;
   typedef bool (*ValidSeries)(const DoublePairStore *, int);
   static bool DefaultValidSeries(const DoublePairStore * store, int series) { return store->seriesIsValid(series); }

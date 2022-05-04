@@ -13,7 +13,8 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   ColumnParameterController(parentResponder),
   m_storeController(storeController),
   m_fillFormula(I18n::Message::FillWithFormula),
-  m_sortCell(I18n::Message::SortCellLabel)
+  m_sortCell(I18n::Message::SortCellLabel),
+  m_hideCell(I18n::Message::ActivateDeactivate)
 {
   m_clearColumn.setMessageWithPlaceholder(I18n::Message::ClearColumn);
 }
@@ -40,6 +41,12 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       stackView()->pop();
       break;
     }
+    case k_indexOfHideColumn:
+    {
+      m_storeController->switchSelectedColumnHideStatus();
+      m_selectableTableView.reloadData();
+      break;
+    }
     case k_indexOfSortCell:
     {
       m_storeController->sortSelectedColumn();
@@ -55,8 +62,14 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0 && index < numberOfCells());
-  HighlightCell * cells[] = {&m_sortCell, &m_fillFormula, &m_clearColumn};
+  HighlightCell * cells[] = {&m_sortCell, &m_fillFormula, &m_hideCell, &m_clearColumn};
   return cells[index];
+}
+
+void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
+  if (index == k_indexOfHideColumn) {
+    m_hideCell.setState(!m_storeController->selectedSeriesIsValid());
+  }
 }
 
 EditableCellTableViewController * StoreParameterController::editableCellTableViewController() {

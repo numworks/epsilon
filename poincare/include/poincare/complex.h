@@ -14,6 +14,11 @@ public:
   static T ToScalar(const std::complex<T> c);
   ComplexNode(std::complex<T> c);
 
+  std::complex<T> complexAtIndex(int index) const override {
+    assert(index == 0);
+    return *this;
+  }
+
   // TreeNode
   size_t size() const override { return sizeof(ComplexNode<T>); }
   int numberOfChildren() const override { return 0; }
@@ -47,7 +52,6 @@ public:
   static Complex<T> RealUndefined() {
     return Complex<T>::Builder(NAN, 0.0);
   }
-  std::complex<T> stdComplex() { return *node(); }
   T real() { return node()->real(); }
   T imag() { return node()->imag(); }
 private:

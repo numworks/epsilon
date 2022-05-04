@@ -116,7 +116,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   if (listLength == ListHelpers::k_noList) {
     for (int i = 0; i < numberOfParameters; i++) {
       assert(evaluationArray[i].type() == EvaluationNode<T>::Type::Complex);
-      complexesArray[i] = static_cast<Complex<T>&>(evaluationArray[i]).stdComplex();
+      complexesArray[i] = evaluationArray[i].complexAtIndex(0);
     }
     return compute(complexesArray, numberOfParameters, approximationContext.complexFormat(), approximationContext.angleUnit(), context);
   }
@@ -124,10 +124,10 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   for (int k = 0; k < listLength; k++) {
     for (int i = 0; i < numberOfParameters; i++) {
       if (evaluationArray[i].type() == EvaluationNode<T>::Type::Complex) {
-        complexesArray[i] = static_cast<Complex<T>&>(evaluationArray[i]).stdComplex();
+        complexesArray[i] = evaluationArray[i].complexAtIndex(0);
       } else {
         assert(evaluationArray[i].type() == EvaluationNode<T>::Type::ListComplex);
-        complexesArray[i] = static_cast<ListComplex<T>&>(evaluationArray[i]).complexAtIndex(k);
+        complexesArray[i] = evaluationArray[i].complexAtIndex(k);
       }
     }
     resultList.addChildAtIndexInPlace(compute(complexesArray, numberOfParameters, approximationContext.complexFormat(), approximationContext.angleUnit(), context), k, k);
@@ -165,7 +165,7 @@ template<typename T> Evaluation<T> ApproximationHelper::MapOnMatrixFirstChild(co
     if (eval.type() != EvaluationNode<T>::Type::Complex) {
       return Complex<T>::Undefined();
     }
-    complexesArray[i] = static_cast<Complex<T>&>(eval).stdComplex();
+    complexesArray[i] = eval.complexAtIndex(0);
   }
   for (int k = 0; k < m.numberOfChildren(); k++) {
     complexesArray[0] = m.complexAtIndex(k);
@@ -188,15 +188,15 @@ template<typename T> Evaluation<T> ApproximationHelper::Reduce(
   // If element is complex
   if (eval1.type() == EvaluationNode<T>::Type::Complex) {
     if (eval2.type() == EvaluationNode<T>::Type::Complex) {
-       return computeOnComplexes(static_cast<Complex<T> &>(eval1).stdComplex(), static_cast<Complex<T> &>(eval2).stdComplex(), complexFormat);
+       return computeOnComplexes(eval1.complexAtIndex(0), eval2.complexAtIndex(0), complexFormat);
     } else if (eval2.type() == EvaluationNode<T>::Type::ListComplex) {
       if (!mapOnList) {
         return Complex<T>::Undefined();
       }
-      return DistributeComplexOverList<T>(static_cast<Complex<T> &>(eval1).stdComplex(), static_cast<ListComplex<T> &>(eval2), complexFormat, computeOnComplexes, true);
+      return DistributeComplexOverList<T>(eval1.complexAtIndex(0), static_cast<ListComplex<T> &>(eval2), complexFormat, computeOnComplexes, true);
     } else {
       assert(eval2.type() == EvaluationNode<T>::Type::MatrixComplex);
-      return computeOnComplexAndMatrix(static_cast<Complex<T> &>(eval1).stdComplex(), static_cast<MatrixComplex<T> &>(eval2), complexFormat);
+      return computeOnComplexAndMatrix(eval1.complexAtIndex(0), static_cast<MatrixComplex<T> &>(eval2), complexFormat);
     }
   // If element is list
   } else if (eval1.type() == EvaluationNode<T>::Type::ListComplex) {
@@ -204,7 +204,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Reduce(
       return Complex<T>::Undefined();
     }
     if (eval2.type() == EvaluationNode<T>::Type::Complex) {
-       return DistributeComplexOverList<T>(static_cast<Complex<T> &>(eval2).stdComplex(), static_cast<ListComplex<T> &>(eval1), complexFormat, computeOnComplexes, false);
+       return DistributeComplexOverList<T>(eval2.complexAtIndex(0), static_cast<ListComplex<T> &>(eval1), complexFormat, computeOnComplexes, false);
     } else if (eval2.type() == EvaluationNode<T>::Type::ListComplex) {
       return DistributeListOverList<T>(static_cast<ListComplex<T> &>(eval1), static_cast<ListComplex<T> &>(eval2), complexFormat, computeOnComplexes);
     } else {
@@ -216,7 +216,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Reduce(
   } else {
     assert(eval1.type() == EvaluationNode<T>::Type::MatrixComplex);
     if (eval2.type() == EvaluationNode<T>::Type::Complex) {
-       return computeOnMatrixAndComplex(static_cast<MatrixComplex<T> &>(eval1), static_cast<Complex<T> &>(eval2).stdComplex(), complexFormat);
+       return computeOnMatrixAndComplex(static_cast<MatrixComplex<T> &>(eval1), eval2.complexAtIndex(0), complexFormat);
     } else if (eval2.type() == EvaluationNode<T>::Type::MatrixComplex) {
        return computeOnMatrices(static_cast<MatrixComplex<T> &>(eval1), static_cast<MatrixComplex<T> &>(eval2), complexFormat);
     } else {

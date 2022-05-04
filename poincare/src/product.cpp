@@ -30,8 +30,4 @@ Expression Product::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
-template Evaluation<float> ProductNode::templatedEvaluateWithNewTerm<float>(Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat) const;
-template Evaluation<double> ProductNode::templatedEvaluateWithNewTerm<double>(Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const;
-
-
 }

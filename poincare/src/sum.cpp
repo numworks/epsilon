@@ -30,7 +30,4 @@ Expression Sum::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
-template Evaluation<float> SumNode::templatedEvaluateWithNewTerm<float>(Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat) const;
-template Evaluation<double> SumNode::templatedEvaluateWithNewTerm<double>(Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const;
-
 }

@@ -63,10 +63,4 @@ Expression Subtraction::shallowReduce(ExpressionNode::ReductionContext reduction
   return a.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> Poincare::SubtractionNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Preferences::ComplexFormat complexFormat);
-template Evaluation<double> Poincare::AdditionNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Preferences::ComplexFormat complexFormat);
-
-template Evaluation<float> Poincare::SubtractionNode::templatedApproximate<float>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
-template Evaluation<double> Poincare::AdditionNode::templatedApproximate<double>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
-
 }

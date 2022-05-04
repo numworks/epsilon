@@ -117,7 +117,8 @@ int ExtremumIndex(Compare compare, void * context, int numberOfElements, bool mi
   for (int i = 0; i < numberOfElements; i++) {
     bool newIsGreater = compare(i, returnIndex, context, numberOfElements);
     if ((minimum && !newIsGreater) || (!minimum && newIsGreater)) {
-      returnIndex = i;    }
+      returnIndex = i;
+    }
   }
   return returnIndex;
 }

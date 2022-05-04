@@ -1,4 +1,4 @@
-ifneq (,$(filter $(FIRMWARE_COMPONENT),bootloader updater))
+ifeq ($(FIRMWARE_COMPONENT),bootloader)
 include ion/src/$(PLATFORM)/epsilon-bootloader/$(FIRMWARE_COMPONENT)/Makefile
 else
 -include ion/src/$(PLATFORM)/$(FIRMWARE_COMPONENT)/Makefile

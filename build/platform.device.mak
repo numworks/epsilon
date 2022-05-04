@@ -3,6 +3,7 @@ USE_LIBA = 1
 EXE = elf
 
 EPSILON_TELEMETRY ?= 0
+EMBED_EXTRA_DATA ?= 0
 
 # We want to do the following transformations:
 # bootloader[./_][dfu/elf/bin/run] --> bootloader

@@ -173,6 +173,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
         [](const Expression e, Context * c) {
           return e.isOfType({
             ExpressionNode::Type::ConstantPhysics,
+            ExpressionNode::Type::Randint,
             ExpressionNode::Type::Random,
             ExpressionNode::Type::Unit,
             ExpressionNode::Type::Round,

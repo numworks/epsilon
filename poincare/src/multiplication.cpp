@@ -76,8 +76,8 @@ double MultiplicationNode::degreeForSortingAddition(bool symbolsOnly) const {
    * the sum of the degrees of its terms :
    * 3*(x^2)*y -> deg = 0+2+1 = 3.
    *
-   * If we consider the degree of any term, the degree of a multiplication is
-   * the degree of the most-right term :
+   * If we consider the degree of any term, we choose that the degree of a
+   * multiplication is the degree of the most-right term :
    * 4*sqrt(2) -> deg = 0.5.
    *
    * This is to ensure that deg(5) > deg(5*sqrt(3)) and deg(x^4) > deg(x*y^3)

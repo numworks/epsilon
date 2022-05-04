@@ -31,7 +31,7 @@ template<typename T>
 Evaluation<T> DimensionNode::templatedApproximate(ApproximationContext approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   if (input.type() == EvaluationNode<T>::Type::ListComplex) {
-    return Complex<T>::Builder(std::complex<T>(static_cast<ListComplex<T>&>(input).numberOfChildren()));
+    return Complex<T>::Builder(std::complex<T>(input.numberOfChildren()));
   }
   std::complex<T> operands[2];
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {

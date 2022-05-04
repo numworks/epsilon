@@ -103,7 +103,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
       if (!mapOnList) {
         return Complex<T>::Undefined();
       }
-      int newLength = static_cast<ListComplex<T>&>(evaluationArray[i]).numberOfChildren();
+      int newLength = evaluationArray[i].numberOfChildren();
       if (listLength == ListHelpers::k_noList) {
         listLength = newLength;
       } else if (listLength != newLength) {

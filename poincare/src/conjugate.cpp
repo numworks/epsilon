@@ -57,6 +57,10 @@ Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionCo
     }
   }
   Expression c = childAtIndex(0);
+  if (c.isReal(reductionContext.context())) {
+    replaceWithInPlace(c);
+    return c;
+  }
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
     Multiplication m = Multiplication::Builder(Rational::Builder(-1), complexChild.imag());

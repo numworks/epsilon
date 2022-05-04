@@ -53,7 +53,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-HighlightCell * StoreParameterController::reusableCell(int index) {
+HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0 && index < numberOfCells());
   HighlightCell * cells[] = {&m_sortCell, &m_fillFormula, &m_clearColumn};
   return cells[index];

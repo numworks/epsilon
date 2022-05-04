@@ -24,6 +24,7 @@ public:
   void setFormulaLabel();
   virtual bool fillColumnWithFormula(Poincare::Expression formula) = 0;
   virtual void sortSelectedColumn();
+  void switchSelectedColumnHideStatus();
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
@@ -48,6 +49,7 @@ public:
   void didBecomeFirstResponder() override;
 
   int selectedSeries() { return m_store->seriesAtColumn(selectedColumn()); }
+  bool selectedSeriesIsValid() { return m_store->seriesIsValid(selectedSeries()); }
 
 protected:
   static constexpr KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * 7 + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness; // KDFont::SmallFont->glyphSize().width() = 7

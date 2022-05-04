@@ -113,8 +113,7 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductio
    * of NAN (like x^y). It is put at the beginning of the addition.
    *
    * Second, if two terms of the addition have the same symbol degree,
-   * we consider their "absolute" degree, which is the exponent of their
-   * right-most term.
+   * we consider the exponent of their right-most term.
    * So deg(3*sqrt(2)) = 0.5, deg(1) = 0, deg(pi^3) = 3
    *
    * Third if two terms still have the same degre, we compare their bases.
@@ -132,7 +131,14 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductio
    * It also supposes that all terms are developped, so if we want to keep
    * factorized terms after the reduction, this won't work for sorting
    * additions like (x+1)^5 + x^2 + 1 (the degree of (x+1)^5 is not computed
-   * yet in its factorized form, but it could be easily implemented if needed).
+   * yet in its factorized form, but it could be easily implemented if needed,
+   * by implementing "degreeForSortingAddition" on additionNode.).
+   *
+   * The algorithm also does not sort 5*x+sqrt(2)*x as we might expect.
+   * Since the two terms have the same symbol degree, they are sorted by
+   * the degree of their right-most term, which is also equal.
+   * So in the end it uses the simplificationOrder for sorting, which puts
+   * sqrt(2)*x before 5*x. So 5*x+sqrt(2)*x = sqrt(2)*x+5*x
    * */
 
   sortChildrenInPlace(

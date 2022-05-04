@@ -16,11 +16,11 @@ public:
   Model * selectedModel() { return static_cast<Store *>(m_store)->modelForSeries(selectedSeries()); }
 
 private:
+  Escher::InputViewController * inputViewController() override;
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
   void clearSelectedColumn() override;
   RegressionContext m_regressionContext;
   StoreParameterController m_storeParameterController;
-
 };
 
 }

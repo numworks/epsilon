@@ -9,7 +9,7 @@ using namespace Escher;
 
 namespace Statistics {
 
-HistogramParameterController::HistogramParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store) :
+HistogramParameterController::HistogramParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store) :
   FloatParameterController<double>(parentResponder),
   m_store(store),
   m_confirmPopUpController(Invocation([](void * context, void * sender) {

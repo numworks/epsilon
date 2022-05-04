@@ -2,9 +2,11 @@
 #define SHARED_STORE_CONTROLLER_H
 
 #include <escher/button_row_controller.h>
-#include "buffer_text_view_with_text_field.h"
+#include <escher/input_view_controller.h>
 #include "editable_cell_table_view_controller.h"
 #include "double_pair_store.h"
+#include "layout_field_delegate.h"
+#include "input_event_handler_delegate.h"
 #include "store_cell.h"
 #include "store_context.h"
 #include "store_parameter_controller.h"
@@ -13,7 +15,7 @@
 
 namespace Shared {
 
-class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate  {
+class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
 public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header);
   Escher::View * view() override { return &m_contentView; }
@@ -24,16 +26,16 @@ public:
 
   virtual StoreContext * storeContext() = 0;
   void displayFormulaInput();
-  void setFormulaLabel();
   virtual bool fillColumnWithFormula(Poincare::Expression formula) = 0;
   virtual void sortSelectedColumn();
   // Return false if the series can't switch hide status because it's invalid
   bool switchSelectedColumnHideStatus();
 
-  // TextFieldDelegate
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  // LayoutFieldDelegate
+  bool createExpressionForFillingCollumnWithFormula(const char * text);
+
+  //TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
 
   // TableViewDataSource
   int numberOfColumns() const override;
@@ -67,21 +69,15 @@ protected:
 
   class ContentView : public Escher::View , public Escher::Responder {
   public:
-    ContentView(DoublePairStore * store, Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDataSource * selectionDataSource, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
+    ContentView(DoublePairStore * store, Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDataSource * selectionDataSource);
    StoreSelectableTableView * dataView() { return &m_dataView; }
-   BufferTextViewWithTextField * formulaInputView() { return &m_formulaInputView; }
-   void displayFormulaInput(bool display);
   // Responder
   void didBecomeFirstResponder() override;
   private:
-    static constexpr KDCoordinate k_formulaInputHeight = 31;
-    int numberOfSubviews() const override { return 1 + m_displayFormulaInputView; }
+    int numberOfSubviews() const override { return 1; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    KDRect formulaFrame() const;
     StoreSelectableTableView m_dataView;
-    BufferTextViewWithTextField m_formulaInputView;
-    bool m_displayFormulaInputView;
   };
 
   Escher::StackViewController * stackController() const override;
@@ -97,6 +93,9 @@ protected:
 
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
+
+protected:
+  virtual Escher::InputViewController * inputViewController() = 0;
 
 private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;

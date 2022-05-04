@@ -11,7 +11,7 @@ using namespace Escher;
 
 namespace Regression {
 
-StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Context * parentContext) :
+StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Context * parentContext) :
   Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
   m_regressionContext(store, parentContext),
   m_storeParameterController(this, this)
@@ -23,6 +23,10 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
 
 void StoreController::clearSelectedColumn() {
   m_store->deleteColumn(m_store->seriesAtColumn(selectedColumn()), m_store->relativeColumnIndex(selectedColumn()));
+}
+
+InputViewController * StoreController::inputViewController() {
+  return App::app()->inputViewController();
 }
 
 }

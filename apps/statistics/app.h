@@ -5,7 +5,7 @@
 #include <escher/alternate_view_controller.h>
 #include <escher/tab_view_data_source.h>
 #include <escher/tab_view_controller.h>
-#include <apps/shared/text_field_delegate_app.h>
+#include <apps/shared/expression_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 #include "graph/box_controller.h"
 #include "graph/frequency_controller.h"
@@ -19,7 +19,7 @@
 
 namespace Statistics {
 
-class App : public Shared::TextFieldDelegateApp, Escher::AlternateViewDelegate {
+class App : public Shared::ExpressionFieldDelegateApp, Escher::AlternateViewDelegate {
 public:
   class Descriptor : public Escher::App::Descriptor {
   public:
@@ -41,7 +41,11 @@ public:
     uint32_t m_storeVersion;
     GraphViewModel m_graphViewModel;
   };
+  static App * app() {
+    return static_cast<App *>(Escher::Container::activeApp());
+  }
   TELEMETRY_ID("Statistics");
+  Escher::InputViewController * inputViewController() { return &m_inputViewController; }
 private:
   constexpr static size_t k_sortedIndexBufferSize = Shared::DoublePairStore::k_numberOfSeries * Shared::DoublePairStore::k_maxNumberOfPairs;
 
@@ -76,6 +80,7 @@ private:
   Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
   Escher::StackViewController m_storeStackViewController;
   Escher::TabViewController m_tabViewController;
+  Escher::InputViewController m_inputViewController;
   uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
 };
 

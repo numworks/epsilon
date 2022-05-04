@@ -3,7 +3,7 @@
 
 #include <escher/tab_view_controller.h>
 #include <escher/tab_view_data_source.h>
-#include "../shared/text_field_delegate_app.h"
+#include "../shared/expression_field_delegate_app.h"
 #include "calculation_controller.h"
 #include "graph_controller.h"
 #include "regression_controller.h"
@@ -13,7 +13,7 @@
 
 namespace Regression {
 
-class App : public Shared::TextFieldDelegateApp {
+class App : public Shared::ExpressionFieldDelegateApp {
 public:
   class Descriptor : public Escher::App::Descriptor {
   public:
@@ -45,6 +45,7 @@ public:
   }
   TELEMETRY_ID("Regression");
   RegressionController * regressionController() { return &m_regressionController; }
+  Escher::InputViewController * inputViewController() { return &m_inputViewController; }
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   CalculationController m_calculationController;
@@ -59,6 +60,7 @@ private:
   Escher::StackViewController m_storeStackViewController;
   Escher::TabViewController m_tabViewController;
   RegressionController m_regressionController;
+  Escher::InputViewController m_inputViewController;
 };
 
 }

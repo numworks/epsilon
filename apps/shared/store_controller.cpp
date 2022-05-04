@@ -11,54 +11,36 @@ using namespace Escher;
 
 namespace Shared {
 
-StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
+StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource) :
   View(),
   Responder(parentResponder),
-  m_dataView(store, this, dataSource, selectionDataSource),
-  m_formulaInputView(this, inputEventHandlerDelegate, textFieldDelegate),
-  m_displayFormulaInputView(false)
+  m_dataView(store, this, dataSource, selectionDataSource)
 {
   m_dataView.setBackgroundColor(Palette::WallScreenDark);
   m_dataView.setVerticalCellOverlap(0);
   m_dataView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
 }
 
-void StoreController::ContentView::displayFormulaInput(bool display) {
-  if (m_displayFormulaInputView != display) {
-    if (display) {
-      m_formulaInputView.textField()->setText("");
-    }
-    m_displayFormulaInputView = display;
-    layoutSubviews();
-    markRectAsDirty(bounds());
-  }
-}
-
 void StoreController::ContentView::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(m_displayFormulaInputView ? static_cast<Responder *>(&m_formulaInputView) : static_cast<Responder *>(&m_dataView));
+  Container::activeApp()->setFirstResponder(static_cast<Responder *>(&m_dataView));
 }
 
 View * StoreController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
-  View * views[] = {&m_dataView, &m_formulaInputView};
+  View * views[] = {&m_dataView};
   return views[index];
 }
 
 void StoreController::ContentView::layoutSubviews(bool force) {
-  KDRect dataViewFrame(0, 0, bounds().width(), bounds().height() - (m_displayFormulaInputView ? k_formulaInputHeight : 0));
+  KDRect dataViewFrame(0, 0, bounds().width(), bounds().height());
   m_dataView.setFrame(dataViewFrame, force);
-  m_formulaInputView.setFrame(formulaFrame(), force);
 }
 
-KDRect StoreController::ContentView::formulaFrame() const {
-  return KDRect(0, bounds().height() - k_formulaInputHeight, bounds().width(), m_displayFormulaInputView ? k_formulaInputHeight : 0);
-}
-
-StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header) :
+StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_store(store),
-  m_contentView(m_store, this, this, this, inputEventHandlerDelegate, this)
+  m_contentView(m_store, this, this, this)
 {
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i].setParentResponder(m_contentView.dataView());
@@ -66,42 +48,41 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
   }
 }
 
-void StoreController::setFormulaLabel() {
+void StoreController::displayFormulaInput() {
   char name[Shared::EditableCellTableViewController::k_maxSizeOfColumnName];
   int filledLength = fillColumnName(selectedColumn(), name);
   if (filledLength < Shared::EditableCellTableViewController::k_maxSizeOfColumnName - 1) {
     name[filledLength] = '=';
     name[filledLength+1] = 0;
   }
-  static_cast<ContentView *>(view())->formulaInputView()->setBufferText(name);
+  inputViewController()->setTextBody(name);
+  inputViewController()->edit(
+      this,
+      Ion::Events::OK,
+      this,
+      [](void * context, void * sender) {
+        StoreController * thisController = static_cast<StoreController *>(context);
+        InputViewController * thisInputViewController =  static_cast<InputViewController *>(sender);
+        return thisController->createExpressionForFillingCollumnWithFormula(thisInputViewController->textBody());
+      }, [](void * context, void * sender) {
+        return true;
+      });
 }
 
-void StoreController::displayFormulaInput() {
-  setFormulaLabel();
-  m_contentView.displayFormulaInput(true);
-}
-
-bool StoreController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  if (textField == m_contentView.formulaInputView()->textField()) {
-    return event == Ion::Events::OK || event == Ion::Events::EXE;
+bool StoreController::createExpressionForFillingCollumnWithFormula(const char * text) {
+  Expression expression = Expression::Parse(text, storeContext());
+  if (expression.isUninitialized()) {
+    Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
+    return false;
   }
-  return EditableCellTableViewController::textFieldShouldFinishEditing(textField, event);
+  if (fillColumnWithFormula(expression)) {
+    Container::activeApp()->setFirstResponder(&m_contentView);
+    return true;
+  }
+  return false;
 }
 
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  if (textField == m_contentView.formulaInputView()->textField()) {
-    // Handle formula input
-    Expression expression = Expression::Parse(textField->text(), storeContext());
-    if (expression.isUninitialized()) {
-      Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
-      return false;
-    }
-    m_contentView.displayFormulaInput(false);
-    if (fillColumnWithFormula(expression)) {
-      Container::activeApp()->setFirstResponder(&m_contentView);
-    }
-    return true;
-  }
   int series = m_store->seriesAtColumn(selectedColumn());
   bool wasSeriesValid = m_store->seriesIsValid(series);
   bool result = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
@@ -111,16 +92,6 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
   }
   return result;
 }
-
-bool StoreController::textFieldDidAbortEditing(TextField * textField) {
-  if (textField == m_contentView.formulaInputView()->textField()) {
-    m_contentView.displayFormulaInput(false);
-    Container::activeApp()->setFirstResponder(&m_contentView);
-    return true;
-  }
-  return EditableCellTableViewController::textFieldDidAbortEditing(textField);
-}
-
 
 int StoreController::numberOfColumns() const {
   return DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_numberOfSeries;

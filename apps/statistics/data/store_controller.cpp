@@ -1,4 +1,5 @@
 #include "store_controller.h"
+#include "../app.h"
 #include <apps/constant.h>
 #include <apps/shared/range_1D.h>
 #include <apps/shared/poincare_helpers.h>
@@ -13,7 +14,7 @@ using namespace Escher;
 
 namespace Statistics {
 
-StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Context * parentContext) :
+StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Context * parentContext) :
   Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
   m_store(store),
   m_statisticsContext(m_store, parentContext),
@@ -154,6 +155,10 @@ void StoreController::FillSeriesName(int series, char * buffer, bool withFinalSp
   if (!withFinalSpace) {
     buffer[5] = 0;
   }
+}
+
+InputViewController * StoreController::inputViewController() {
+  return Statistics::App::app()->inputViewController();
 }
 
 }

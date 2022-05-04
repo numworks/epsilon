@@ -13,7 +13,7 @@ public:
   StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController);
   void initializeColumnParameters() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Escher::HighlightCell * reusableCell(int index) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int numberOfCells() const override;
 private:

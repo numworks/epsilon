@@ -24,12 +24,12 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return Shared::StoreParameterController::handleEvent(event);
 }
 
-HighlightCell * StoreParameterController::reusableCell(int index) {
+HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0 && index < numberOfCells());
   if (index == k_indexOfRegressionCell) {
     return &m_changeRegressionCell;
   }
-  return Shared::StoreParameterController::reusableCell(index);
+  return Shared::StoreParameterController::reusableCell(index, type);
 }
 
 void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {

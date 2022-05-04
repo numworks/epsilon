@@ -50,7 +50,7 @@ EditableCellTableViewController * ValuesParameterController::editableCellTableVi
 }
 
 
-HighlightCell * ValuesParameterController::reusableCell(int index) {
+HighlightCell * ValuesParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   static_assert(k_totalNumberOfCell == 2, "Shared::ValuesParameterController::reusableCell is deprecated.");

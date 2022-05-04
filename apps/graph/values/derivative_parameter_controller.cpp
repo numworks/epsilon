@@ -34,7 +34,7 @@ int DerivativeParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * DerivativeParameterController::reusableCell(int index) {
+HighlightCell * DerivativeParameterController::reusableCell(int index, int type) {
   assert(index == 0);
   return &m_hideColumn;
 }

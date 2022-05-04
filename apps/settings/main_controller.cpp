@@ -45,7 +45,6 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_examModeController(this),
   m_aboutController(this),
   m_preferencesController(this),
-  m_usbInfoController(this),
   m_externalController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
@@ -101,8 +100,6 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       subController = &m_dateTimeController;
     } else if (title == I18n::Message::MathOptions) {
       subController = &m_mathOptionsController;
-    } else if (title == I18n::Message::UsbSetting) {
-      subController = &m_usbInfoController;
     } else if (title == I18n::Message::CodeApp) {
       subController = &m_codeOptionsController;
     } else if (title == I18n::Message::ExternalApps) {

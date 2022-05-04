@@ -12,7 +12,6 @@
 #include "sub_menu/localization_controller.h"
 #include "sub_menu/math_options_controller.h"
 #include "sub_menu/preferences_controller.h"
-#include "sub_menu/usb_protection_controller.h"
 #include "sub_menu/external_controller.h"
 #include "sub_menu/brightness_controller.h"
 
@@ -83,7 +82,6 @@ private:
   ExamModeController m_examModeController;
   AboutController m_aboutController;
   PreferencesController m_preferencesController;
-  UsbInfoController m_usbInfoController;
   ExternalController m_externalController;
 };
 

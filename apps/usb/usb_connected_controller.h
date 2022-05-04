@@ -16,15 +16,14 @@ private:
     ContentView();
     void drawRect(KDContext * ctx, KDRect rect) const override;
   protected:
-    int numberOfSubviews() const override { return k_numberOfMessages; }
+    int numberOfSubviews() const override { return k_numberOfUSBMessages; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
   private:
     constexpr static KDCoordinate k_titleMargin = 30;
     constexpr static KDCoordinate k_paragraphHeight = 80;
-    constexpr static uint8_t k_numberOfUSBMessages = 9;
-    constexpr static uint8_t k_numberOfMessages = k_numberOfUSBMessages + 1;
-    MessageTextView m_messageTextViews[k_numberOfMessages];
+    constexpr static uint8_t k_numberOfUSBMessages = 8;
+    MessageTextView m_messageTextViews[k_numberOfUSBMessages];
   };
   ContentView m_contentView;
 };

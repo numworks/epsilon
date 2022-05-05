@@ -30,6 +30,12 @@ ExpressionNode::Sign OppositeNode::sign(Context * context) const {
   return ExpressionNode::sign(context);
 }
 
+template<typename T>
+Evaluation<T> OppositeNode::templatedApproximate(ApproximationContext approximationContext) const {
+  Evaluation<T> childEval = childAtIndex(0)->approximate(T(), approximationContext);
+  return MultiplicationNode::Compute(Complex<T>::Builder(-1), childEval, approximationContext.complexFormat());
+}
+
 /* Layout */
 
 bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {

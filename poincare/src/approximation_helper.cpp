@@ -80,13 +80,7 @@ template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginar
   return result;
 }
 
-template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexesCompute<T> compute, bool mapOnMatrix, bool mapOnList, void * context) {
-  if (mapOnMatrix) {
-    Evaluation<T> e = MapOnMatrixFirstChild<T>(expression, approximationContext, compute, context);
-    if (!e.isUndefined()) {
-      return std::move(e);
-    }
-  }
+template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexesCompute<T> compute, bool mapOnList, void * context) {
 
   Evaluation<T> evaluationArray[k_maxNumberOfParametersForMap];
   int numberOfParameters = expression->numberOfChildren();
@@ -135,7 +129,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   return std::move(resultList);
 }
 
-template<typename T> Evaluation<T> ApproximationHelper::MapOneChild(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexCompute<T> compute, bool mapOnMatrix, bool mapOnList) {
+template<typename T> Evaluation<T> ApproximationHelper::MapOneChild(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexCompute<T> compute, bool mapOnList) {
   assert(expression->numberOfChildren() == 1);
   return Map<T>(expression,
       approximationContext,
@@ -143,36 +137,8 @@ template<typename T> Evaluation<T> ApproximationHelper::MapOneChild(const Expres
         assert(numberOfComplexes == 1);
         return reinterpret_cast<ComplexCompute<T>>(context)(c[0], complexFormat, angleUnit);
       },
-      mapOnMatrix,
       mapOnList,
       reinterpret_cast<void *>(compute));
-}
-
-template<typename T> Evaluation<T> ApproximationHelper::MapOnMatrixFirstChild(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexesCompute<T> compute, void * context) {
-  int numberOfParameters = expression->numberOfChildren();
-  if (numberOfParameters == 0) {
-    return Complex<T>::Undefined();
-  }
-  Evaluation<T> firstChild = expression->childAtIndex(0)->approximate(T(), approximationContext);
-  if (firstChild.type() != EvaluationNode<T>::Type::MatrixComplex) {
-    return Complex<T>::Undefined();
-  }
-  MatrixComplex<T> m = static_cast<MatrixComplex<T> &>(firstChild);
-  MatrixComplex<T> result = MatrixComplex<T>::Builder();
-  std::complex<T> complexesArray[k_maxNumberOfParametersForMap];
-  for (int i = 1; i < numberOfParameters; i++) {
-    Evaluation<T> eval =  expression->childAtIndex(i)->approximate(T(), approximationContext);
-    if (eval.type() != EvaluationNode<T>::Type::Complex) {
-      return Complex<T>::Undefined();
-    }
-    complexesArray[i] = eval.complexAtIndex(0);
-  }
-  for (int k = 0; k < m.numberOfChildren(); k++) {
-    complexesArray[0] = m.complexAtIndex(k);
-    result.addChildAtIndexInPlace(compute(complexesArray, numberOfParameters, approximationContext.complexFormat(), approximationContext.angleUnit(), context), k, k);
-  }
-  result.setDimensions(m.numberOfRows(), m.numberOfColumns());
-  return std::move(result);
 }
 
 template<typename T> Evaluation<T> ApproximationHelper::Reduce(
@@ -305,14 +271,11 @@ template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfP
 template std::complex<float> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<float>(std::complex<float>,std::complex<float>,std::complex<float>,bool);
 template std::complex<double> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<double>(std::complex<double>,std::complex<double>,std::complex<double>,bool);
 
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexesCompute<float> compute, bool mapOnMatrix, bool mapOnList, void * context);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexesCompute<double> compute, bool mapOnMatrix, bool mapOnList, void * context);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexesCompute<float> compute, bool mapOnList, void * context);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexesCompute<double> compute, bool mapOnList, void * context);
 
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<float> compute, bool mapOnMatrix, bool mapOnList);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<double> compute, bool mapOnMatrix, bool mapOnList);
-
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapOnMatrixFirstChild(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexesCompute<float> compute, void * context);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapOnMatrixFirstChild(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexesCompute<double> compute, void * context);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<float> compute, bool mapOnList);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, ExpressionNode::ApproximationContext, Poincare::ApproximationHelper::ComplexCompute<double> compute, bool mapOnList);
 
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce<float>(const Poincare::ExpressionNode * expression, Poincare::ExpressionNode::ApproximationContext approximationContext, Poincare::ApproximationHelper::ReductionFunction<float> reductionFunction);
 template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce<double>(const Poincare::ExpressionNode * expression, Poincare::ExpressionNode::ApproximationContext approximationContext, Poincare::ApproximationHelper::ReductionFunction<double> reductionFunction);

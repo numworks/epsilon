@@ -10,9 +10,6 @@ class Opposite;
 
 class OppositeNode /*final*/ : public ExpressionNode {
 public:
-  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>::Builder(-c); }
-
-
   // TreeNode
   size_t size() const override { return sizeof(OppositeNode); }
   int numberOfChildren() const override { return 1; }
@@ -31,11 +28,12 @@ public:
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::MapOneChild<float>(this, approximationContext, compute<float>, true);
+    return templatedApproximate<float>(approximationContext);
   }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
-    return ApproximationHelper::MapOneChild<double>(this, approximationContext, compute<double>, true);
+    return templatedApproximate<double>(approximationContext);
   }
+  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

@@ -61,8 +61,8 @@ Evaluation<T> ParameteredExpressionNode::approximateFirstChildWithArgument(T x, 
      * a function, we replace its potential abstract rank by the value it should
      * have. We can then evaluate its value */
     Expression temporary = Expression(child).clone();
-    child = temporary.node();
-    child->childAtIndex(0)->replaceSymbolWithExpression(symbol, Float<T>::Builder(x));
+    temporary = temporary.node()->replaceSymbolWithExpression(symbol, Float<T>::Builder(x));
+    return temporary.node()->approximate(T(), approximationContext);
   }
   return child->approximate(T(), approximationContext);
 }

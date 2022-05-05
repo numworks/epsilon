@@ -17,12 +17,8 @@ public:
     return m_numberOfChildren < 0 ? 0 : m_numberOfChildren;
   }
   void incrementNumberOfChildren(int increment = 1) override {
-    assert(!isUndefined());
+    assert(!isUndefined() && m_numberOfChildren + increment >= 0);
     m_numberOfChildren+= increment;
-  }
-  void decrementNumberOfChildren(int decrement = 1) override {
-    assert(!isUndefined() && m_numberOfChildren >= decrement);
-    m_numberOfChildren-= decrement;
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
   void setUndefined() {

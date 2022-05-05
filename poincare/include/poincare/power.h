@@ -63,7 +63,7 @@ private:
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
-  LayoutShape rightLayoutShape() const override { return LayoutShape::RightOfPower; }
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
   Expression denominator(ReductionContext reductionContext) const override;

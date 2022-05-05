@@ -158,8 +158,6 @@ Expression MultiplicationNode::setSign(Sign s, ReductionContext reductionContext
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
  * Fraction      |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×     |    •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
- * RightOfPower  |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×     |    •
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
  * Hexa/Binary   |    •    |   •     |    •      |     •       |      •        |  •   |    •    |    •     |    •
  *
  * */
@@ -205,7 +203,6 @@ static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNod
     //case ExpressionNode::LayoutShape::BoundaryPunctuation:
     //case ExpressionNode::LayoutShape::Fraction:
     //case ExpressionNode::LayoutShape::Root:
-    //case ExpressionNode::LayoutShape::RightOfPower:
       switch (right) {
         case ExpressionNode::LayoutShape::Decimal:
         case ExpressionNode::LayoutShape::Integer:

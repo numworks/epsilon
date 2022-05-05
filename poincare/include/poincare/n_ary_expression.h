@@ -11,10 +11,9 @@ public:
 
   //Tree
   int numberOfChildren() const override { return m_numberOfChildren; }
-  void incrementNumberOfChildren(int increment = 1) override { m_numberOfChildren+= increment; }
-  void decrementNumberOfChildren(int decrement = 1) override {
-    assert(m_numberOfChildren >= decrement);
-    m_numberOfChildren-= decrement;
+  void incrementNumberOfChildren(int increment = 1) override {
+    assert(m_numberOfChildren + increment >= 0);
+    m_numberOfChildren+= increment;
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
 

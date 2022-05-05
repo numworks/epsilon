@@ -177,7 +177,7 @@ void TreeHandle::removeChildInPlace(TreeHandle t, int childNumberOfChildren) {
   TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), childNumberOfChildren);
   t.node()->release(childNumberOfChildren);
   t.deleteParentIdentifier();
-  node()->decrementNumberOfChildren();
+  node()->incrementNumberOfChildren(-1);
 }
 
 void TreeHandle::removeChildrenInPlace(int currentNumberOfChildren) {

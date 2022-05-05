@@ -64,7 +64,7 @@ private:
   // Approximation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, computeOnComplex<T>);
+    return ApproximationHelper::ElementWiseOnMatrixAndComplex(m, c, complexFormat, computeOnComplex<T>);
   }
 };
 

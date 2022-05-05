@@ -120,7 +120,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
     setParamAtIndex(row, !getParamAtIndex(row));
     /* Memoization isn't resetted here because changing a switch state does not
      * alter the cell's height. */
-    m_selectableTableView.reloadData();
+    m_selectableTableView.reloadCellAtLocation(selectedColumn(), row);
     return true;
   }
   if (event == Ion::Events::Left) {

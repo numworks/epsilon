@@ -280,11 +280,6 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     return a.shallowReduce(reductionContext);
   }
 
-  // log(m) with m Matrix
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
-
   return *this;
 }
 

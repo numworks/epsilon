@@ -17,12 +17,10 @@ namespace ApproximationHelper {
   template <typename T> std::complex<T> NeglectRealOrImaginaryPartIfNeglectable(std::complex<T> result, std::complex<T> input1, std::complex<T> input2 = 1.0, bool enableNullResult = true);
 
   template <typename T> using ComplexesCompute = Complex<T>(*)(const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * context);
-  template<typename T> Evaluation<T> Map(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexesCompute<T> compute, bool mapOnMatrix = false, bool mapOnList = true, void * context = nullptr);
+  template<typename T> Evaluation<T> Map(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexesCompute<T> compute, bool mapOnList = true, void * context = nullptr);
 
   template <typename T> using ComplexCompute = Complex<T>(*)(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-  template<typename T> Evaluation<T> MapOneChild(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexCompute<T> compute, bool mapOnMatrix = false, bool mapOnList = true);
-
-  template<typename T> Evaluation<T> MapOnMatrixFirstChild(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexesCompute<T> compute, void * context);
+  template<typename T> Evaluation<T> MapOneChild(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexCompute<T> compute, bool mapOnList = true);
 
   template <typename T> using ComplexAndComplexReduction = Complex<T>(*)(const std::complex<T> c1, const std::complex<T> c2, Preferences::ComplexFormat complexFormat);
   template <typename T> using ComplexAndMatrixReduction = MatrixComplex<T>(*)(const std::complex<T> c, const MatrixComplex<T> m, Preferences::ComplexFormat complexFormat);

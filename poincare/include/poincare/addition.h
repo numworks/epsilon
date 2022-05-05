@@ -31,7 +31,7 @@ public:
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c+d); }
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::ElementWiseOnComplexMatrices(m, n, complexFormat, computeOnComplex<T>);
+    return ApproximationHelper::ElementWiseOnMatrices(m, n, complexFormat, computeOnComplex<T>);
   }
   template<typename T> static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::Reduce<T>(

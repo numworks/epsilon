@@ -1,5 +1,6 @@
 #include <poincare/list_complex.h>
 #include <poincare/list.h>
+#include <poincare/list_sort.h>
 #include <poincare/undefined.h>
 
 namespace Poincare {
@@ -46,6 +47,28 @@ ListComplex<T> ListComplex<T>::Undefined() {
   ListComplex<T> undefList = ListComplex<T>::Builder();
   undefList.node()->setUndefined();
   return undefList;
+}
+
+template<typename T>
+ListComplex<T> ListComplex<T>::sort() {
+  void * ctx = this;
+  Helpers::Sort(
+      // Swap
+      [](int i, int j, void * context, int n) {
+        ListComplex<T> * list = reinterpret_cast<ListComplex<T> *>(context);
+        assert(list->numberOfChildren() == n && 0 <= i && 0 <= j && i < n && j < n);
+        list->swapChildrenInPlace(i, j);
+      },
+      // Compare
+      [](int i, int j, void * context, int numberOfElements) {
+      ListComplex<T> * list = reinterpret_cast<ListComplex<T> *>(context);
+      float xI = list->childAtIndex(i).toScalar();
+      float xJ =  list->childAtIndex(j).toScalar();
+      return Helpers::FloatIsGreater(xI, xJ, ListSort::k_nanIsGreatest);
+      },
+      ctx,
+      numberOfChildren());
+  return *this;
 }
 
 template class ListComplexNode<float>;

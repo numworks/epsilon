@@ -1,4 +1,5 @@
 #include <poincare/helpers.h>
+#include <poincare/list.h>
 #include <assert.h>
 #include <cmath>
 
@@ -131,6 +132,16 @@ bool FloatIsGreater(float xI, float xJ, bool nanIsGreatest) {
     return !nanIsGreatest;
   }
   return xI > xJ;
+}
+
+bool ListEvaluationComparisonAtIndex(int i, int j, void * context, int numberOfElements) {
+  void ** c = reinterpret_cast<void **>(context);
+  ListNode * list = reinterpret_cast<ListNode *>(c[0]);
+  ExpressionNode::ApproximationContext * approximationContext = reinterpret_cast<ExpressionNode::ApproximationContext *>(c[1]);
+  bool * nanIsGreatest = reinterpret_cast<bool *>(c[2]);
+  float xI = list->childAtIndex(i)->approximate(static_cast<float>(0), *approximationContext).toScalar();
+  float xJ =  list->childAtIndex(j)->approximate(static_cast<float>(0), *approximationContext).toScalar();
+  return FloatIsGreater(xI, xJ, *nanIsGreatest);
 }
 
 }

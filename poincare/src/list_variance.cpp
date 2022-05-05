@@ -1,7 +1,6 @@
 #include <poincare/list_variance.h>
 #include <poincare/addition.h>
 #include <poincare/layout_helper.h>
-#include <poincare/list_helpers.h>
 #include <poincare/list_mean.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
@@ -28,25 +27,13 @@ Expression ListVarianceNode::shallowReduce(ReductionContext reductionContext) {
   return ListVariance(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListVarianceNode::VarianceOfListNode(ListNode * list, ApproximationContext approximationContext) {
-  int n = list->numberOfChildren();
-  Preferences::ComplexFormat complexFormat = approximationContext.complexFormat();
-  Evaluation<T> m = ListHelpers::SumOfListNode<T>(list, approximationContext);
-  Evaluation<T> ml2 = ListHelpers::SquareSumOfListNode<T>(list, approximationContext);
-  Complex<T> div = Complex<T>::Builder(static_cast<T>(1)/n);
-  m = MultiplicationNode::Compute<T>(m, div, complexFormat);
-  ml2 = MultiplicationNode::Compute<T>(ml2, div, complexFormat);
-
-  return AdditionNode::Compute<T>(ml2, MultiplicationNode::Compute<T>(Complex<T>::Builder(-1), MultiplicationNode::Compute<T>(m, m, complexFormat), complexFormat), complexFormat);
-}
-
 template<typename T> Evaluation<T> ListVarianceNode::templatedApproximate(ApproximationContext approximationContext) const {
   ExpressionNode * child = childAtIndex(0);
   if (child->type() != ExpressionNode::Type::List || child->numberOfChildren() == 0) {
     return Complex<T>::Undefined();
   }
 
-  return VarianceOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
+  return static_cast<ListNode *>(child)->variance<T>(approximationContext);
 }
 
 Expression ListVariance::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
@@ -64,9 +51,6 @@ Expression ListVariance::shallowReduce(ExpressionNode::ReductionContext reductio
   replaceWithInPlace(s);
   return s.shallowReduce(reductionContext);
 }
-
-template Evaluation<float> ListVarianceNode::VarianceOfListNode<float>(ListNode * list, ApproximationContext approximationContext);
-template Evaluation<double> ListVarianceNode::VarianceOfListNode<double>(ListNode * list, ApproximationContext approximationContext);
 
 template Evaluation<float> ListVarianceNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
 template Evaluation<double> ListVarianceNode::templatedApproximate<double>(ApproximationContext approximationContext) const;

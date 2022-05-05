@@ -7,8 +7,6 @@ namespace Poincare {
 
 class ListVarianceNode : public ExpressionNode {
 public:
-  template<typename T> static Evaluation<T> VarianceOfListNode(ListNode * list, ApproximationContext approximationContext);
-
   size_t size() const override { return sizeof(ListVarianceNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

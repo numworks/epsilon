@@ -22,7 +22,6 @@
 #include <poincare/infinity.h>
 #include <poincare/integral.h>
 #include <poincare/least_common_multiple.h>
-#include <poincare/list_helpers.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
@@ -634,13 +633,13 @@ QUIZ_CASE(poincare_expression_additional_results) {
 void assert_list_length_in_children_is(const char * definition, int targetLength) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(definition, &globalContext, false);
-  quiz_assert_print_if_failure(ListHelpers::LengthOfListChildren(e) == targetLength, definition);
+  quiz_assert_print_if_failure(e.lengthOfListChildren() == targetLength, definition);
 }
 
 QUIZ_CASE(poincare_expression_children_list_length) {
-  assert_list_length_in_children_is("1+1", ListHelpers::k_noList);
+  assert_list_length_in_children_is("1+1", Expression::k_noList);
   assert_list_length_in_children_is("1+{}", 0);
   assert_list_length_in_children_is("1*{2,3,4}*5*{6,7,8}", 3);
   assert_list_length_in_children_is("{1,-2,3,-4}^2", 4);
-  assert_list_length_in_children_is("{1,2}+{3,4,5}", ListHelpers::k_mismatchedLists);
+  assert_list_length_in_children_is("{1,2}+{3,4,5}", Expression::k_mismatchedLists);
 }

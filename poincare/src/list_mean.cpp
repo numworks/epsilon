@@ -1,6 +1,5 @@
 #include <poincare/list_mean.h>
 #include <poincare/layout_helper.h>
-#include <poincare/list_helpers.h>
 #include <poincare/list_sum.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
@@ -32,7 +31,7 @@ template<typename T> Evaluation<T> ListMeanNode::templatedApproximate(Approximat
   if (child->type() != ExpressionNode::Type::List || n == 0) {
     return Complex<T>::Undefined();
   }
-  Evaluation<T> sum = ListHelpers::SumOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
+  Evaluation<T> sum = static_cast<ListNode *>(child)->sumOfElements<T>(approximationContext);
   return MultiplicationNode::Compute<T>(sum, Complex<T>::Builder(static_cast<T>(1)/n), approximationContext.complexFormat());
 }
 

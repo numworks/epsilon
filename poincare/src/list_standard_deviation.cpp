@@ -31,7 +31,7 @@ template<typename T> Evaluation<T> ListStandardDeviationNode::templatedApproxima
     return Complex<T>::Undefined();
   }
 
-  Evaluation<T> variance = ListVarianceNode::VarianceOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
+  Evaluation<T> variance = static_cast<ListNode *>(child)->variance<T>(approximationContext);
   if (variance.type() != EvaluationNode<T>::Type::Complex) {
     return Complex<T>::Undefined();
   }

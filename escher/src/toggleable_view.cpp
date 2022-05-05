@@ -4,8 +4,10 @@
 namespace Escher {
 
 void ToggleableView::setState(bool state) {
-  m_state = state;
-  markRectAsDirty(bounds());
+  if (m_state != state) {
+    m_state = state;
+    markRectAsDirty(bounds());
+  }
 }
 
 }

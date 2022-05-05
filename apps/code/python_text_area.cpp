@@ -162,7 +162,7 @@ PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(const char
     const char * tokenEnd;
     _mp_token_kind_t currentTokenKind = lex->tok_kind;
 
-    while (currentTokenKind != MP_TOKEN_NEWLINE && currentTokenKind != MP_TOKEN_END) {
+    while (currentTokenKind != MP_TOKEN_NEWLINE && currentTokenKind != MP_TOKEN_END && currentTokenKind != MP_TOKEN_FSTRING_RAW) {
       tokenStart = firstNonSpace + lex->tok_column - 1;
       tokenEnd = tokenStart + TokenLength(lex, tokenStart);
 
@@ -271,7 +271,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
     const char * tokenFrom = firstNonSpace;
     size_t tokenLength = 0;
     const char * tokenEnd = firstNonSpace;
-    while (lex->tok_kind != MP_TOKEN_NEWLINE && lex->tok_kind != MP_TOKEN_END) {
+    while (lex->tok_kind != MP_TOKEN_NEWLINE && lex->tok_kind != MP_TOKEN_END && lex->tok_kind != MP_TOKEN_FSTRING_RAW) {
       tokenFrom = firstNonSpace + lex->tok_column - 1;
       if (tokenFrom != tokenEnd) {
         // We passed over white spaces, we need to color them

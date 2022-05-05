@@ -1,6 +1,7 @@
 #ifndef ION_DEVICE_N0110_CONFIG_INTERNAL_FLASH_H
 #define ION_DEVICE_N0110_CONFIG_INTERNAL_FLASH_H
 
+#include <config/memory_layout.h>
 #include <shared/drivers/internal_flash.h>
 #include <regs/regs.h>
 
@@ -9,9 +10,6 @@ namespace Device {
 namespace InternalFlash {
 namespace Config {
 
-constexpr uint32_t StartAddress = 0x08000000;
-constexpr uint32_t EndAddress = 0x08010000;
-constexpr uint32_t TotalSize = EndAddress - StartAddress;
 constexpr Regs::MPU::RASR::RegionSize InternalFlashRegionSize = Regs::MPU::RASR::RegionSize::_64KB;
 
 constexpr int NumberOfSectors = 4;

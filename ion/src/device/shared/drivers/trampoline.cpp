@@ -7,7 +7,7 @@ namespace Device {
 namespace Trampoline {
 
 uint32_t addressOfFunction(int index) {
-  return Board::Config::BootloaderTrampolineAddress + sizeof(void *) * index;
+  return Config::TrampolineOrigin + sizeof(void *) * index;
 }
 
 }

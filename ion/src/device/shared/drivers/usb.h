@@ -1,11 +1,11 @@
 #ifndef ION_DEVICE_SHARED_USB_H
 #define ION_DEVICE_SHARED_USB_H
 
-#include <shared/drivers/kernel_header.h>
-#include <shared/drivers/userland_header.h>
-#include <drivers/ram_layout.h>
-#include <regs/regs.h>
+#include <config/memory_layout.h>
+#include <drivers/kernel_header.h>
+#include <drivers/userland_header.h>
 #include <ion/events.h>
+#include <regs/regs.h>
 
 namespace Ion {
 namespace Device {

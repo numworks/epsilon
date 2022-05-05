@@ -85,7 +85,6 @@ public:
   void deleteParentIdentifier() { node()->deleteParentIdentifier(); }
   void deleteParentIdentifierInChildren() { node()->deleteParentIdentifierInChildren(); }
   void incrementNumberOfChildren(int increment = 1) { node()->incrementNumberOfChildren(increment); }
-  void decrementNumberOfChildren(int decrement = 1) { node()->decrementNumberOfChildren(decrement); }
   int numberOfDescendants(bool includeSelf) const { return node()->numberOfDescendants(includeSelf); }
 
   /* Hierarchy operations */

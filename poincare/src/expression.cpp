@@ -951,6 +951,22 @@ Expression Expression::setSign(ExpressionNode::Sign s, ExpressionNode::Reduction
   return node()->setSign(s, reductionContext);
 }
 
+int Expression::lengthOfListChildren() const {
+  int lastLength = k_noList;
+  int n = numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    if (childAtIndex(i).type() == ExpressionNode::Type::List) {
+      int length = childAtIndex(i).numberOfChildren();
+      if (lastLength == k_noList) {
+        lastLength = length;
+      } else if (lastLength != length) {
+        return k_mismatchedLists;
+      }
+    }
+  }
+  return lastLength;
+}
+
 /* Evaluation */
 
 template<typename U>

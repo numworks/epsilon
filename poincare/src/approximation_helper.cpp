@@ -3,7 +3,6 @@
 #include <poincare/evaluation.h>
 #include <poincare/float.h>
 #include <poincare/list_complex.h>
-#include <poincare/list_helpers.h>
 #include <poincare/matrix_complex.h>
 #include <cmath>
 #include <float.h>
@@ -87,7 +86,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   if (numberOfParameters == 0) {
     return Complex<T>::Undefined();
   }
-  int listLength = ListHelpers::k_noList;
+  int listLength = -1;
   for (int i = 0; i < numberOfParameters; i++) {
     evaluationArray[i] = expression->childAtIndex(i)->approximate(T(), approximationContext);
     if (evaluationArray[i].type() == EvaluationNode<T>::Type::MatrixComplex) {
@@ -98,7 +97,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
         return Complex<T>::Undefined();
       }
       int newLength = evaluationArray[i].numberOfChildren();
-      if (listLength == ListHelpers::k_noList) {
+      if (listLength == -1) {
         listLength = newLength;
       } else if (listLength != newLength) {
         return Complex<T>::Undefined();
@@ -107,7 +106,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   }
 
   std::complex<T> complexesArray[k_maxNumberOfParametersForMap];
-  if (listLength == ListHelpers::k_noList) {
+  if (listLength == -1) {
     for (int i = 0; i < numberOfParameters; i++) {
       assert(evaluationArray[i].type() == EvaluationNode<T>::Type::Complex);
       complexesArray[i] = evaluationArray[i].complexAtIndex(0);

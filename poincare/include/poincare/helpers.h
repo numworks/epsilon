@@ -17,6 +17,10 @@ bool Rotate(uint32_t * dst, uint32_t * src, size_t len);
 void Sort(Swap swap, Compare compare, void * context, int numberOfElements);
 int ExtremumIndex(Compare compare, void * context, int numberOfElements, bool minimum);
 bool FloatIsGreater(float xI, float xJ, bool nanIsGreatest);
+
+  /* This is a default *Compare function. Context first three elements must be:
+   * {ListNode *, ApproximationContext *, bool * nanIsGreatest} */
+bool ListEvaluationComparisonAtIndex(int i, int j, void * context, int numberOfElements);
 }
 
 }

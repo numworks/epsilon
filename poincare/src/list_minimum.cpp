@@ -1,6 +1,6 @@
 #include <poincare/list_minimum.h>
+#include <poincare/list.h>
 #include <poincare/layout_helper.h>
-#include <poincare/list_helpers.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 
@@ -29,7 +29,7 @@ template<typename T> Evaluation<T> ListMinimumNode::templatedApproximate(Approxi
   if (child->type() != ExpressionNode::Type::List) {
     return Complex<T>::Undefined();
   }
-  return ListHelpers::ExtremumApproximationOfListNode<T>(static_cast<ListNode *>(child), approximationContext, true);
+  return static_cast<ListNode *>(child)->extremumApproximation<T>(approximationContext, true);
 }
 
 Expression ListMinimum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
@@ -38,7 +38,7 @@ Expression ListMinimum::shallowReduce(ExpressionNode::ReductionContext reduction
     return replaceWithUndefinedInPlace();
   }
 
-  Expression result = ListHelpers::ExtremumOfList(static_cast<List &>(child), reductionContext, true);
+  Expression result = static_cast<List &>(child).extremum(reductionContext, true);
   replaceWithInPlace(result);
   return result;
 }

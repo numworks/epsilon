@@ -1,7 +1,6 @@
 #include <poincare/simplification_helper.h>
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
-#include <poincare/list_helpers.h>
 #include <poincare/parenthesis.h>
 #include <poincare/undefined.h>
 #include <poincare/nonreal.h>
@@ -115,11 +114,11 @@ Expression SimplificationHelper::undefinedOnMatrix(Expression e, ExpressionNode:
 }
 
 Expression SimplificationHelper::distributeReductionOverLists(Expression e, ExpressionNode::ReductionContext reductionContext) {
-  int listLength = ListHelpers::LengthOfListChildren(e);
-  if (listLength == ListHelpers::k_noList) {
+  int listLength = e.lengthOfListChildren();
+  if (listLength == Expression::k_noList) {
     /* No list in children, shallow reduce as usual. */
     return Expression();
-  } else if (listLength == ListHelpers::k_mismatchedLists) {
+  } else if (listLength == Expression::k_mismatchedLists) {
     /* Operators only apply to lists of the same length. */
     return e.replaceWithUndefinedInPlace();
   }
@@ -151,7 +150,5 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, Expr
   e.replaceWithInPlace(result);
   return std::move(result);
 }
-
-
 
 }

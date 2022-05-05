@@ -1,6 +1,31 @@
 #include <poincare/distribution.h>
+#include <poincare/binomial_distribution.h>
+#include <poincare/normal_distribution.h>
+#include <poincare/student_distribution.h>
+#include <poincare/geometric_distribution.h>
+#include <poincare/poisson_distribution.h>
 
 namespace Poincare {
+
+void Distribution::Initialize(Distribution * distribution, Type type) {
+  switch (type) {
+  case Type::Binomial:
+    new (distribution) BinomialDistribution();
+    break;
+  case Type::Normal:
+    new (distribution) NormalDistribution();
+    break;
+  case Type::Student:
+    new (distribution) StudentDistribution();
+    break;
+  case Type::Geometric:
+    new (distribution) GeometricDistribution();
+    break;
+  case Type::Poisson:
+    new (distribution) PoissonDistribution();
+    break;
+  }
+}
 
 template <typename T> void Distribution::findBoundsForBinarySearch(Poincare::Solver::ValueAtAbscissa cumulativeDistributionEvaluation, Poincare::Context * context, const void * auxiliary, T & xmin, T & xmax) {
   /* We'll simply test [0, 10], [10, 100], [100, 1000] ... until we find a working interval, or

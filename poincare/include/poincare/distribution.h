@@ -7,6 +7,29 @@ namespace Poincare {
 
 class Distribution {
 public:
+  enum class Type : uint8_t {
+    Normal,
+    Student,
+    Binomial,
+    Poisson,
+    Geometric,
+  };
+
+  static constexpr int maxNumberOfParameters = 2;
+  static constexpr int numberOfParameters(Type type) {
+    switch (type) {
+    case Type::Student:
+    case Type::Poisson:
+    case Type::Geometric:
+      return 1;
+    case Type::Normal:
+    case Type::Binomial:
+      return 2;
+    }
+  }
+
+  static void Initialize(Distribution * distribution, Type type);
+
   virtual float EvaluateAtAbscissa(float x, const float * parameters) = 0;
   virtual double EvaluateAtAbscissa(double x, const double * parameters) = 0;
 
@@ -16,13 +39,8 @@ public:
   virtual float CumulativeDistributiveInverseForProbability(float x, const float * parameters) = 0;
   virtual double CumulativeDistributiveInverseForProbability(double x, const double * parameters) = 0;
 
-  virtual float CumulativeDistributiveFunctionForRange(float x, float y, const float * parameters) {
-    return CumulativeDistributiveFunctionAtAbscissa(y, parameters) - CumulativeDistributiveFunctionAtAbscissa(x, parameters);
-  };
-
-  virtual double CumulativeDistributiveFunctionForRange(double x, double y, const double * parameters) {
-    return CumulativeDistributiveFunctionAtAbscissa(y, parameters) - CumulativeDistributiveFunctionAtAbscissa(x, parameters);
-  };
+  virtual float CumulativeDistributiveFunctionForRange(float x, float y, const float * parameters) = 0;
+  virtual double CumulativeDistributiveFunctionForRange(double x, double y, const double * parameters) = 0;
 
   virtual bool ParametersAreOK(const float * parameters) = 0;
   virtual bool ParametersAreOK(const double * parameters) = 0;

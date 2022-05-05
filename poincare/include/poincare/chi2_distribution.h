@@ -1,12 +1,12 @@
 #ifndef POINCARE_CHI2_DISTRIBUTION_H
 #define POINCARE_CHI2_DISTRIBUTION_H
 
-#include <poincare/distribution.h>
+#include <poincare/continuous_distribution.h>
 #include <float.h>
 
 namespace Poincare {
 
-class Chi2Distribution final : Distribution {
+class Chi2Distribution final : ContinuousDistribution {
 public:
   template <typename T> static T EvaluateAtAbscissa(T x, T k);
   float EvaluateAtAbscissa(float x, const float * parameters) override { return EvaluateAtAbscissa<float>(x, parameters[0]); }

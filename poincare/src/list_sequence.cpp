@@ -89,7 +89,7 @@ Expression ListSequence::shallowReduce(ExpressionNode::ReductionContext reductio
   }
 
   replaceWithInPlace(finalList);
-  return std::move(finalList);
+  return finalList.shallowReduce(reductionContext.context());
 }
 
 }

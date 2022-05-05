@@ -23,28 +23,6 @@ T PoissonDistribution::EvaluateAtAbscissa(T x, T lambda) {
 }
 
 template<typename T>
-T PoissonDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T lambda) {
-  if (!LambdaIsOK(lambda) || std::isnan(x) || std::isinf(x)) {
-    return NAN;
-  }
-  if (std::isinf(x)) {
-    return x > static_cast<T>(0.0) ? static_cast<T>(1.0) : static_cast<T>(0.0);
-  }
-
-  if (x < static_cast<T>(0.0)) {
-    return static_cast<T>(0.0);
-  }
-  const void * pack[1] = { &lambda };
-  return Solver::CumulativeDistributiveFunctionForNDefinedFunction<T>(x,
-        [](double k, Poincare::Context * context, const void * auxiliary) {
-          const void * const * pack = static_cast<const void * const *>(auxiliary);
-          double lambda = *static_cast<const T *>(pack[0]);
-          return  (double)PoissonDistribution::EvaluateAtAbscissa<T>(k, lambda);
-        },
-        nullptr, pack);
-}
-
-template<typename T>
 T PoissonDistribution::CumulativeDistributiveInverseForProbability(T probability, T lambda) {
   if (!LambdaIsOK(lambda) || std::isnan(probability) || std::isinf(probability) || probability < static_cast<T>(0.0) || probability > static_cast<T>(1.0)) {
     return NAN;
@@ -111,8 +89,6 @@ bool PoissonDistribution::ExpressionLambdaIsOK(bool * result, const Expression &
 
 template float PoissonDistribution::EvaluateAtAbscissa<float>(float, float);
 template double PoissonDistribution::EvaluateAtAbscissa<double>(double, double);
-template float PoissonDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, float);
-template double PoissonDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double);
 template float PoissonDistribution::CumulativeDistributiveInverseForProbability<float>(float, float);
 template double PoissonDistribution::CumulativeDistributiveInverseForProbability<double>(double, double);
 template bool PoissonDistribution::LambdaIsOK(float);

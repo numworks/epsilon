@@ -5,8 +5,13 @@
 
 namespace Poincare {
 
+// More precisely distributions deriving from this should be defined on N
 class DiscreteDistribution : public Distribution {
 public:
+  template<typename T> T CumulativeDistributiveFunctionAtAbscissa(T x, const T * parameters);
+  float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) override { return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters); }
+  double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) override { return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters); }
+
   // The range is inclusive on both ends
   float CumulativeDistributiveFunctionForRange(float x, float y, const float * parameters) override {
     if (y < x) {

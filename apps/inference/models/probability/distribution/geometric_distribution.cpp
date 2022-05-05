@@ -1,5 +1,6 @@
 #include "geometric_distribution.h"
 
+#include <poincare/geometric_distribution.h>
 #include <assert.h>
 #include <cmath>
 
@@ -18,17 +19,7 @@ bool GeometricDistribution::authorizedParameterAtIndex(double x, int index) cons
 
 template<typename T>
 T GeometricDistribution::templatedApproximateAtAbscissa(T k) const {
-  constexpr T castedOne = static_cast<T>(1.0);
-  if (k < castedOne) {
-    return static_cast<T>(0.0);
-  }
-  T p = static_cast<T>(m_parameter);
-  if (p == castedOne) {
-    return k == castedOne ? castedOne : static_cast<T>(0.0);
-  }
-  // The result is p * (1-p)^{k-1}
-  T lResult = (k - castedOne) * std::log(castedOne - p);
-  return p * std::exp(lResult);
+  return Poincare::GeometricDistribution::EvaluateAtAbscissa<T>(k, static_cast<T>(m_parameter));
 }
 
 float GeometricDistribution::computeXMax() const {

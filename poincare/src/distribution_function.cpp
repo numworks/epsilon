@@ -26,6 +26,12 @@ Expression DistributionFunctionNode::shallowReduce(ReductionContext reductionCon
   return DistributionFunction(this).shallowReduce(reductionContext.context());
 }
 
+template<typename T> T callbino(T x, T n, T p) {
+  T (*f)(T, const T *) = &BinomialDistribution::EvaluateAtAbscissa;
+  T par[] = {n, p};
+  return f(x, par);
+}
+
 Expression DistributionFunction::shallowReduce(Context * context, bool * stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
@@ -37,46 +43,37 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
     }
   }
 
-  bool couldCheckParamters;
+  bool couldCheckParameters;
   bool parametersAreOk;
-  int i = numberOfParameters(functionType());
-
+  int childIndex = numberOfParameters(functionType());
+  Expression parameters[2]; // TODO: constexpr to compute the maximum number of the
+                   // parameters
+  for (int i=0; i < numberOfParameters(distributionType()); i++) {
+    parameters[i] = childAtIndex(childIndex++);
+  }
+  BinomialDistribution distributionPlaceholder;
+  Distribution * distribution = &distributionPlaceholder;
   switch (distributionType()) {
+  case DistributionType::Binomial:
+    new (distribution) BinomialDistribution();
+    break;
   case DistributionType::Normal:
-    couldCheckParamters = NormalDistribution::ExpressionMuAndVarAreOK(
-      &parametersAreOk,
-      childAtIndex(i++),
-      childAtIndex(i++),
-      context);
+    new (distribution) NormalDistribution();
     break;
   case DistributionType::Student:
-    couldCheckParamters = StudentDistribution::ExpressionKIsOK(
-      &parametersAreOk,
-      childAtIndex(i++),
-      context);
-    break;
-  case DistributionType::Binomial:
-    couldCheckParamters = BinomialDistribution::ExpressionParametersAreOK(
-      &parametersAreOk,
-      childAtIndex(i++),
-      childAtIndex(i++),
-      context);
-    break;
-  case DistributionType::Poisson:
-    couldCheckParamters = PoissonDistribution::ExpressionLambdaIsOK(
-      &parametersAreOk,
-      childAtIndex(i++),
-      context);
+    new (distribution) StudentDistribution();
     break;
   case DistributionType::Geometric:
-    couldCheckParamters = GeometricDistribution::ExpressionPIsOK(
-      &parametersAreOk,
-      childAtIndex(i++),
-      context);
+    new (distribution) GeometricDistribution();
+    break;
+  case DistributionType::Poisson:
+    new (distribution) PoissonDistribution();
     break;
   }
 
-  if (!couldCheckParamters) {
+  couldCheckParameters = distribution->ExpressionParametersAreOK(&parametersAreOk, parameters, context);
+
+  if (!couldCheckParameters) {
     return *this;
   }
   if (!parametersAreOk) {
@@ -128,21 +125,21 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
 
 template<typename T>
 Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContext approximationContext) const {
-  int i = 0;
+  int childIndex = 0;
   T x, y;
   switch (m_functionType) {
       case FunctionType::CDF:
       case FunctionType::PDF:
       case FunctionType::Inverse:
       {
-        Evaluation<T> xEvaluation = childAtIndex(i++)->approximate(T(), approximationContext);
+        Evaluation<T> xEvaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
         x = xEvaluation.toScalar();
         break;
       }
       case FunctionType::CDFRange:
       {
-        Evaluation<T> xEvaluation = childAtIndex(i++)->approximate(T(), approximationContext);
-        Evaluation<T> yEvaluation = childAtIndex(i++)->approximate(T(), approximationContext);
+        Evaluation<T> xEvaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
+        Evaluation<T> yEvaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
         x = xEvaluation.toScalar();
         y = yEvaluation.toScalar();
         break;
@@ -150,112 +147,50 @@ Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContex
   }
   T result = NAN;
   T castedOne = static_cast<T>(1.0);
+  // Distributions are only vpointers
+  BinomialDistribution distributionPlaceholder;
+  Distribution * distribution = &distributionPlaceholder;
   switch (m_distributionType) {
-      case DistributionType::Normal:
-      {
-        Evaluation<T> muEvaluation = childAtIndex(i++)->approximate(T(), approximationContext);
-        Evaluation<T> sigmaEvaluation = childAtIndex(i++)->approximate(T(), approximationContext);
-        const T mu = muEvaluation.toScalar();
-        const T sigma = sigmaEvaluation.toScalar();
-        switch (m_functionType) {
-          case FunctionType::CDF:
-            result = NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(x, mu, sigma);
-            break;
-          case FunctionType::CDFRange:
-            result = NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(y, mu, sigma) -  NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(x, mu, sigma);
-            break;
-          case FunctionType::PDF:
-            result = NormalDistribution::EvaluateAtAbscissa(x, mu, sigma);
-            break;
-          case FunctionType::Inverse:
-            result = NormalDistribution::CumulativeDistributiveInverseForProbability(x, mu, sigma);
-            break;
-          default:
-            assert(false);
-        }
-        break;
-      }
-      case DistributionType::Student:
-      {
-        Evaluation<T> lambdaEvaluation = childAtIndex(i++)->approximate(T(), approximationContext);
-        const T lambda = lambdaEvaluation.toScalar();
-        switch (m_functionType) {
-          case FunctionType::CDF:
-            result = StudentDistribution::CumulativeDistributiveFunctionAtAbscissa(x, lambda);
-            break;
-          case FunctionType::CDFRange:
-            result = StudentDistribution::CumulativeDistributiveFunctionAtAbscissa(y, lambda) -  StudentDistribution::CumulativeDistributiveFunctionAtAbscissa(x, lambda);
-            break;
-          case FunctionType::PDF:
-            result = StudentDistribution::EvaluateAtAbscissa(x, lambda);
-            break;
-          case FunctionType::Inverse:
-            result = StudentDistribution::CumulativeDistributiveInverseForProbability(x, lambda);
-            break;
-          default:
-            assert(false);
-        }
-        break;
-      }
-      case DistributionType::Binomial:
-      {
-        Evaluation<T> nEvaluation = childAtIndex(i++)->approximate(T(), approximationContext);
-        Evaluation<T> pEvaluation = childAtIndex(i++)->approximate(T(), approximationContext);
-        const T n = nEvaluation.toScalar();
-        const T p = pEvaluation.toScalar();
-        switch (m_functionType) {
-          case FunctionType::CDF:
-            result = BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(x, n, p);
-            break;
-          case FunctionType::PDF:
-            result = BinomialDistribution::EvaluateAtAbscissa(x, n, p);
-            break;
-          case FunctionType::Inverse:
-            result = BinomialDistribution::CumulativeDistributiveInverseForProbability(x, n, p);
-            break;
-          default:
-            assert(false);
-        }
-        break;
-      }
-     case DistributionType::Poisson:
-     {
-        Evaluation<T> lambdaEvaluation = childAtIndex(i++)->approximate(T(), approximationContext);
-        const T lambda = lambdaEvaluation.toScalar();
-        switch (m_functionType) {
-          case FunctionType::CDF:
-            result = PoissonDistribution::CumulativeDistributiveFunctionAtAbscissa(x, lambda);
-            break;
-          case FunctionType::PDF:
-            result = PoissonDistribution::EvaluateAtAbscissa(x, lambda);
-            break;
-          default:
-            assert(false);
-        }
-        break;
-     }
-     case DistributionType::Geometric:
-     {
-        Evaluation<T> pEvaluation = childAtIndex(i++)->approximate(T(), approximationContext);
-        const T p = pEvaluation.toScalar();
-        switch (m_functionType) {
-          case FunctionType::CDF:
-            result = GeometricDistribution::CumulativeDistributiveFunctionAtAbscissa(x, p);
-            break;
-          case FunctionType::CDFRange:
-            result = GeometricDistribution::CumulativeDistributiveFunctionAtAbscissa(y, p) - GeometricDistribution::CumulativeDistributiveFunctionAtAbscissa(x - castedOne, p);
-            break;
-          case FunctionType::PDF:
-            result = GeometricDistribution::EvaluateAtAbscissa(x, p);
-            break;
-          case FunctionType::Inverse:
-            result = GeometricDistribution::CumulativeDistributiveInverseForProbability(x, p);
-            break;
-          default:
-            assert(false);
-        }
-        break;
-     }
+  case DistributionType::Binomial:
+    new (distribution) BinomialDistribution();
+    break;
+  case DistributionType::Normal:
+    new (distribution) NormalDistribution();
+    break;
+  case DistributionType::Student:
+    new (distribution) StudentDistribution();
+    break;
+  case DistributionType::Geometric:
+    new (distribution) GeometricDistribution();
+    break;
+  case DistributionType::Poisson:
+    new (distribution) PoissonDistribution();
+    break;
+  }
+  T parameters[2]; // TODO: constexpr to compute the maximum number of the
+                   // parameters
+  for (int i=0; i < numberOfParameters(m_distributionType); i++) {
+    Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
+    parameters[i] = evaluation.toScalar();
+  }
+  switch (m_functionType) {
+  case FunctionType::PDF:
+    result = distribution->EvaluateAtAbscissa(x, parameters);
+    break;
+  case FunctionType::CDF:
+    result = distribution->CumulativeDistributiveFunctionAtAbscissa(x, parameters);
+    break;
+  case FunctionType::Inverse:
+    result = distribution->CumulativeDistributiveInverseForProbability(x, parameters);
+    break;
+  case FunctionType::CDFRange:
+    // TODO: add a virtual method for this
+    if (m_distributionType == DistributionType::Normal || m_distributionType == DistributionType::Student) {
+      result = distribution->CumulativeDistributiveFunctionAtAbscissa(y, parameters) -  distribution->CumulativeDistributiveFunctionAtAbscissa(x, parameters);
+    } else {
+      result = distribution->CumulativeDistributiveFunctionAtAbscissa(y, parameters) -  distribution->CumulativeDistributiveFunctionAtAbscissa(x - castedOne, parameters);
+    }
+    break;
   }
   return Complex<T>::Builder(result);
 }

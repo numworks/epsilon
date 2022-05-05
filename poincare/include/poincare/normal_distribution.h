@@ -2,22 +2,37 @@
 #define POINCARE_NORMAL_DISTRIBUTION_H
 
 #include <poincare/expression.h>
+#include <poincare/distribution.h>
 #include <poincare/preferences.h>
 
 namespace Poincare {
 
-class NormalDistribution final {
+class NormalDistribution final : public Distribution {
 public:
-  template<typename T> static T EvaluateAtAbscissa(T x, T mu, T sigma);
-  template<typename T> static T CumulativeDistributiveFunctionAtAbscissa(T x, T mu, T sigma);
-  template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, T mu, T sigma);
-  template<typename T> static bool MuAndSigmaAreOK(T mu, T sigma);
-  /* ExpressionMuAndVarAreOK returns true if the expression could be verified.
-   * The result of the verification is *result. */
-  static bool ExpressionMuAndVarAreOK(bool * result, const Expression & mu, const Expression & sigma, Context * context);
+  template<typename T> static T EvaluateAtAbscissa(T x, const T mu, const T sigma);
+  float EvaluateAtAbscissa(float x, const float * parameters) override { return EvaluateAtAbscissa<float>(x, parameters[0], parameters[1]); }
+  double EvaluateAtAbscissa(double x, const double * parameters) override { return EvaluateAtAbscissa<double>(x, parameters[0], parameters[1]); }
+
+  template<typename T> static T CumulativeDistributiveFunctionAtAbscissa(T x, const T mu, const T sigma);
+  float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) override { return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters[0], parameters[1]); }
+  double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) override { return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters[0], parameters[1]); }
+
+  template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, const T mu, const T sigma);
+  float CumulativeDistributiveInverseForProbability(float x, const float * parameters) override { return CumulativeDistributiveInverseForProbability<float>(x, parameters[0], parameters[1]); }
+  double CumulativeDistributiveInverseForProbability(double x, const double * parameters) override { return CumulativeDistributiveInverseForProbability<double>(x, parameters[0], parameters[1]); }
+
+  bool ParametersAreOK(const float * parameters) override { return MuAndSigmaAreOK(parameters[0], parameters[1]); }
+  bool ParametersAreOK(const double * parameters) override { return MuAndSigmaAreOK(parameters[0], parameters[1]); }
+
+  static bool ExpressionMuAndVarAreOK(bool * result, const Expression &mu, const Expression &sigma, Context * context);
+  bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) override { return ExpressionMuAndVarAreOK(result, parameters[0], parameters[1], context); }
+
 private:
+  template<typename T> static T parameterMu(T* parameters) { return parameters[0]; }
+  template<typename T> static T parameterSigma(T* parameters) { return parameters[1]; }
   template<typename T> static T StandardNormalCumulativeDistributiveFunctionAtAbscissa(T abscissa);
   template<typename T> static T StandardNormalCumulativeDistributiveInverseForProbability(T probability);
+  template<typename T> static bool MuAndSigmaAreOK(T mu, T sigma);
 };
 
 }

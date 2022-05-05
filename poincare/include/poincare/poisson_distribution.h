@@ -2,19 +2,34 @@
 #define POINCARE_POISSON_DISTRIBUTION_H
 
 #include <poincare/expression.h>
+#include <poincare/distribution.h>
 #include <poincare/preferences.h>
 
 namespace Poincare {
 
-class PoissonDistribution final {
+class PoissonDistribution final : public Distribution {
 public:
-  template<typename T> static T EvaluateAtAbscissa(T x, T lambda);
-  template<typename T> static T CumulativeDistributiveFunctionAtAbscissa(T x, T lambda);
-  template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, T lambda);
+  template<typename T> static T EvaluateAtAbscissa(T x, const T lambda);
+  float EvaluateAtAbscissa(float x, const float * parameters) override { return EvaluateAtAbscissa<float>(x, parameters[0]); }
+  double EvaluateAtAbscissa(double x, const double * parameters) override { return EvaluateAtAbscissa<double>(x, parameters[0]); }
+
+  template<typename T> static T CumulativeDistributiveFunctionAtAbscissa(T x, const T lambda);
+  float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) override { return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters[0]); }
+  double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) override { return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters[0]); }
+
+  template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, const T lambda);
+  float CumulativeDistributiveInverseForProbability(float x, const float * parameters) override { return CumulativeDistributiveInverseForProbability<float>(x, parameters[0]); }
+  double CumulativeDistributiveInverseForProbability(double x, const double * parameters) override { return CumulativeDistributiveInverseForProbability<double>(x, parameters[0]); }
+
+  bool ParametersAreOK(const float * parameters) override { return LambdaIsOK(parameters[0]); }
+  bool ParametersAreOK(const double * parameters) override { return LambdaIsOK(parameters[0]); }
+
+  static bool ExpressionLambdaIsOK(bool * result, const Expression &lambda, Context * context);
+  bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) override { return ExpressionLambdaIsOK(result, parameters[0], context); }
+
+private:
+  template<typename T> static T parameterLambda(T* parameters) { return parameters[0]; }
   template<typename T> static bool LambdaIsOK(T lambda);
-  /* ExpressionParametersAreOK returns true if the expression could be verified.
-   * The result of the verification is *result. */
-  static bool ExpressionLambdaIsOK(bool * result, const Expression & lambda, Context * context);
 };
 
 }

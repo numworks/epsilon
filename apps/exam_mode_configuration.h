@@ -15,7 +15,7 @@ Poincare::Preferences::ExamMode examModeAtIndex(size_t index);
 I18n::Message examModeActivationMessage(size_t index);
 
 // Settings pop-up
-I18n::Message examModeActivationWarningMessage(Poincare::Preferences::ExamMode mode, int line);
+I18n::Message examModeActivationWarningMessage(Poincare::Preferences::ExamMode mode);
 
 // Exam mode behaviour
 I18n::Message forbiddenAppMessage(Poincare::Preferences::ExamMode mode, int line);

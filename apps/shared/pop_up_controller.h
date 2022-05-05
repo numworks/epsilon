@@ -11,20 +11,17 @@ namespace Shared {
 
 class MessagePopUpController : public Escher::MessagePopUpController {
 public:
-  MessagePopUpController(Escher::Invocation OkInvocation, std::initializer_list<I18n::Message> messages = {I18n::Message::ConfirmDiscard1, I18n::Message::ConfirmDiscard2}) :
-    Escher::MessagePopUpController(messages.size(), OkInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel)
+  MessagePopUpController(Escher::Invocation OkInvocation, I18n::Message message = I18n::Message::ConfirmDiscard) :
+    Escher::MessagePopUpController(OkInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel)
     {
-      int index = 0;
-      for (I18n::Message message : messages) {
-        setContentMessage(index++, message);
-      }
+      setContentMessage(message);
     }
 };
 
 class BufferPopUpController : public Escher::BufferPopUpController {
 public:
-  BufferPopUpController(Escher::Invocation OkInvocation, int numberOfLines) :
-    Escher::BufferPopUpController(numberOfLines, OkInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel)
+  BufferPopUpController(Escher::Invocation OkInvocation) :
+    Escher::BufferPopUpController(OkInvocation, I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel)
     {}
 };
 

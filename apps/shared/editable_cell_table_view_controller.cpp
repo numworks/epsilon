@@ -24,8 +24,7 @@ EditableCellTableViewController::EditableCellTableViewController(Responder * par
       Container::activeApp()->dismissModalViewController();
       param->selectableTableView()->reloadData();
       return true;
-    }, this),
-    2)
+    }, this))
   { }
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
@@ -169,8 +168,7 @@ int EditableCellTableViewController::fillColumnNameWithMessage(char * buffer, I1
 void EditableCellTableViewController::setClearPopUpContent() {
   char columnNameBuffer[ColumnParameterController::k_titleBufferSize];
   fillColumnName(selectedColumn(), columnNameBuffer);
-  m_confirmPopUpController.setMessageWithPlaceholder(0, I18n::Message::ClearColumnConfirmation1, columnNameBuffer);
-  m_confirmPopUpController.setMessageWithPlaceholder(1, I18n::Message::ClearColumnConfirmation2, columnNameBuffer);
+  m_confirmPopUpController.setMessageWithPlaceholder(I18n::Message::ClearColumnConfirmation, columnNameBuffer);
 }
 
 }

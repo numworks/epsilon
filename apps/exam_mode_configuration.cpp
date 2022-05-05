@@ -96,55 +96,42 @@ I18n::Message ExamModeConfiguration::examModeActivationMessage(size_t index) {
   }
 }
 
-I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(Preferences::ExamMode mode, int line) {
-  /* FIXME Streamline this function by merging the message using \n */
+I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(Preferences::ExamMode mode) {
   if (mode == Preferences::ExamMode::Off) {
     if (Preferences::sharedPreferences()->examMode() == Preferences::ExamMode::PressToTest) {
-      I18n::Message warnings[] = {I18n::Message::ExitPressToTestExamMode1, I18n::Message::ExitPressToTestExamMode2, I18n::Message::ExitPressToTestExamMode3, I18n::Message::Default};
-      return warnings[line];
+      return I18n::Message::ExitPressToTestExamMode;
     }
-    I18n::Message warnings[] = {I18n::Message::ExitExamMode1, I18n::Message::ExitExamMode2, I18n::Message::Default, I18n::Message::Default};
-    return warnings[line];
+    return I18n::Message::ExitExamMode;
   } else if (mode == Preferences::ExamMode::Standard) {
     if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
-      I18n::Message warnings[] = {I18n::Message::ActiveExamModeMessage1, I18n::Message::ActiveExamModeMessage2, I18n::Message::ActiveExamModeMessage3, I18n::Message::Default};
-      return warnings[line];
+      return I18n::Message::ActiveExamModeMessage;
     } else {
-      I18n::Message warnings[] = {I18n::Message::ActiveExamModeWithResetMessage1, I18n::Message::ActiveExamModeWithResetMessage2, I18n::Message::ActiveExamModeWithResetMessage3, I18n::Message::ActiveExamModeWithResetMessage4};
-      return warnings[line];
+      return I18n::Message::ActiveExamModeWithResetMessage;
     }
   } else if (mode == Preferences::ExamMode::IBTest) {
     if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
-      I18n::Message warnings[] = {I18n::Message::ActiveIBExamModeMessage1, I18n::Message::ActiveIBExamModeMessage2, I18n::Message::ActiveIBExamModeMessage3, I18n::Message::ActiveIBExamModeMessage4};
-      return warnings[line];
+      return I18n::Message::ActiveIBExamModeMessage;
     } else {
-      I18n::Message warnings[] = {I18n::Message::ActiveIBExamModeWithResetMessage1, I18n::Message::ActiveIBExamModeWithResetMessage2, I18n::Message::ActiveIBExamModeWithResetMessage3, I18n::Message::ActiveIBExamModeWithResetMessage4};
-      return warnings[line];
+      return I18n::Message::ActiveIBExamModeWithResetMessage;
     }
   } else if (mode == Preferences::ExamMode::PressToTest) {
     if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
-      I18n::Message warnings[] = {I18n::Message::ActivePressToTestModeMessage1, I18n::Message::ActivePressToTestModeMessage2, I18n::Message::ActivePressToTestModeMessage3, I18n::Message::Default};
-      return warnings[line];
+      return I18n::Message::ActivePressToTestModeMessage;
     } else {
-      I18n::Message warnings[] = {I18n::Message::ActivePressToTestWithResetMessage1, I18n::Message::ActivePressToTestWithResetMessage2, I18n::Message::ActivePressToTestWithResetMessage3, I18n::Message::ActivePressToTestWithResetMessage4};
-      return warnings[line];
+      return I18n::Message::ActivePressToTestWithResetMessage;
     }
   } else if (mode == Preferences::ExamMode::Dutch) {
     if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
-      I18n::Message warnings[] = {I18n::Message::ActiveDutchExamModeMessage1, I18n::Message::ActiveDutchExamModeMessage2, I18n::Message::ActiveDutchExamModeMessage3, I18n::Message::ActiveDutchExamModeMessage4};
-      return warnings[line];
+      return I18n::Message::ActiveDutchExamModeMessage;
     } else {
-      I18n::Message warnings[] = {I18n::Message::ActiveExamModeWithResetMessage1, I18n::Message::ActiveExamModeWithResetMessage2, I18n::Message::ActiveExamModeWithResetMessage3, I18n::Message::ActiveDutchExamModeWithResetMessage4};
-      return warnings[line];
+      return I18n::Message::ActiveDutchExamModeWithResetMessage;
     }
   } else {
     assert(mode == Preferences::ExamMode::Portuguese);
     if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
-      I18n::Message warnings[] = {I18n::Message::ActivePortugueseExamModeMessage1, I18n::Message::ActivePortugueseExamModeMessage2, I18n::Message::ActivePortugueseExamModeMessage3, I18n::Message::Default};
-      return warnings[line];
+      return I18n::Message::ActivePortugueseExamModeMessage;
     } else {
-      I18n::Message warnings[] = {I18n::Message::ActiveExamModeWithResetMessage1, I18n::Message::ActiveExamModeWithResetMessage2, I18n::Message::ActiveExamModeWithResetMessage3, I18n::Message::ActiveExamModeWithResetMessage4};
-      return warnings[line];
+      return I18n::Message::ActiveExamModeWithResetMessage;
     }
   }
 }

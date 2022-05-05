@@ -92,8 +92,6 @@ public:
     InvBinom,
     InvNorm,
     LeastCommonMultiple,
-    List,
-    ListSequence,
     ListElement,
     ListMaximum,
     ListMean,
@@ -101,8 +99,6 @@ public:
     ListMinimum,
     ListProduct,
     ListSampleStandardDeviation,
-    ListSlice,
-    ListSort,
     ListStandardDeviation,
     ListSum,
     ListVariance,
@@ -134,6 +130,11 @@ public:
     Unit,
     // - Complexes
     ComplexCartesian,
+    // - Any kind of lists :
+    List,
+    ListSequence,
+    ListSort,
+    ListSlice,
     // - Any kind of matrices :
     Dimension,
     MatrixIdentity,

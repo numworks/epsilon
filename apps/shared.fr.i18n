@@ -1,4 +1,4 @@
-ActivateDeactivate = "Activer/Désactiver"
+ActivateDeactivate = "Masquer"
 ActivateExamMode = "Activer le mode examen"
 ActiveExamModeMessage = "Toutes vos données seront\nsupprimées si vous activez\nle mode examen."
 ActiveDutchExamModeMessage = "Toutes vos données seront supprimées\nsi vous activez le mode examen (NL).\nPython sera inaccessible."

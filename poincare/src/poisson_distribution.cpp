@@ -70,7 +70,7 @@ T PoissonDistribution::CumulativeDistributiveInverseForProbability(T probability
 template<typename T>
 bool PoissonDistribution::LambdaIsOK(T lambda) {
   return !std::isnan(lambda) && !std::isinf(lambda)
-    && (lambda == static_cast<int>(lambda)) && (lambda > static_cast<T>(0.0))
+    && (lambda > static_cast<T>(0.0))
     && (lambda <= static_cast<T>(999.0)); // usefull ?
 }
 

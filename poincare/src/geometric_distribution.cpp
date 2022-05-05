@@ -22,30 +22,9 @@ T GeometricDistribution::EvaluateAtAbscissa(T x, T p) {
   if (p == castedOne) {
     return x == castedOne ? castedOne : static_cast<T>(0.0);
   }
+  // The result is p * (1-p)^{k-1}
   T lResult = (std::floor(x) - castedOne) * std::log(castedOne - p);
   return p * std::exp(lResult);
-}
-
-template<typename T>
-T GeometricDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T p) {
-  if (!PIsOK(p) || std::isnan(x) || std::isinf(x)) {
-    return NAN;
-  }
-  if (std::isinf(x)) {
-    return x > static_cast<T>(0.0) ? static_cast<T>(1.0) : static_cast<T>(0.0);
-  }
-
-  if (x < static_cast<T>(0.0)) {
-    return static_cast<T>(0.0);
-  }
-  const void * pack[1] = { &p };
-  return Solver::CumulativeDistributiveFunctionForNDefinedFunction<T>(x,
-        [](double k, Poincare::Context * context, const void * auxiliary) {
-          const void * const * pack = static_cast<const void * const *>(auxiliary);
-          double p = *static_cast<const T *>(pack[0]);
-          return  (double)GeometricDistribution::EvaluateAtAbscissa<T>(k, p);
-        },
-        nullptr, pack);
 }
 
 template<typename T>
@@ -127,8 +106,6 @@ bool GeometricDistribution::ExpressionPIsOK(bool * result, const Expression & p,
 
 template float GeometricDistribution::EvaluateAtAbscissa<float>(float, float);
 template double GeometricDistribution::EvaluateAtAbscissa<double>(double, double);
-template float GeometricDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, float);
-template double GeometricDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double);
 template float GeometricDistribution::CumulativeDistributiveInverseForProbability<float>(float, float);
 template double GeometricDistribution::CumulativeDistributiveInverseForProbability<double>(double, double);
 template bool GeometricDistribution::PIsOK(float);

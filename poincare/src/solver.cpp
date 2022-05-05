@@ -427,9 +427,9 @@ T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, Valu
 }
 
 template<typename T>
-T Solver::CumulativeDistributiveFunctionForNDefinedFunction(T x, ValueAtAbscissa evaluation, Context * context, const void * auxiliary) {
+T Solver::CumulativeDistributiveFunctionForNDefinedFunction(T x, typename SolverHelper<T>::ValueAtAbscissa evaluation, Context * context, const void * auxiliary) {
   int end = std::floor(x);
-  double result = 0.0;
+  T result = 0.0;
   for (int k = 0; k <=end; k++) {
     result += evaluation(k, context, auxiliary);
     /* Avoid too long loop */
@@ -462,7 +462,7 @@ template bool SolverHelper<float>::RootExistsOnInterval(float fa, float fb, floa
 
 template float Solver::CumulativeDistributiveInverseForNDefinedFunction(float *, ValueAtAbscissa, Context *, const void *);
 template double Solver::CumulativeDistributiveInverseForNDefinedFunction(double *, ValueAtAbscissa, Context *, const void *);
-template float Solver::CumulativeDistributiveFunctionForNDefinedFunction(float, ValueAtAbscissa, Context *, const void *);
-template double Solver::CumulativeDistributiveFunctionForNDefinedFunction(double, ValueAtAbscissa, Context *, const void *);
+template float Solver::CumulativeDistributiveFunctionForNDefinedFunction(float, SolverHelper<float>::ValueAtAbscissa, Context *, const void *);
+template double Solver::CumulativeDistributiveFunctionForNDefinedFunction(double, SolverHelper<double>::ValueAtAbscissa, Context *, const void *);
 }
 

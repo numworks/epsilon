@@ -40,6 +40,7 @@ poincare_src += $(addprefix poincare/src/,\
   checkpoint.cpp \
   chi2_distribution.cpp \
   circuit_breaker_checkpoint.cpp \
+  discrete_distribution.cpp \
   distribution.cpp \
   erf_inv.cpp \
   exception_checkpoint.cpp \

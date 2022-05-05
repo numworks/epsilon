@@ -38,11 +38,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
       Ion::Reset::core();
       return true;
       }, this),
-    {
-      I18n::Message::ResetCalculatorWarning1,
-      I18n::Message::ResetCalculatorWarning2,
-      I18n::Message::ResetCalculatorWarning3,
-    }
+      I18n::Message::ResetCalculatorWarning
   )
 {
   // Assert the ExamMode and Press-to-test cells are correctly placed.

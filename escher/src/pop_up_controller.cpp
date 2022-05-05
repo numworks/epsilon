@@ -6,9 +6,10 @@
 namespace Escher {
 
 // PopUpController
-PopUpController::PopUpController(Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage, PopUpViewDelegate * delegate) :
+
+PopUpController::PopUpController(Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage, TextView * detailTextView) :
   ViewController(nullptr),
-  m_contentView(this, OkInvocation, warningMessage, okMessage, cancelMessage, delegate)
+  m_contentView(this, OkInvocation, warningMessage, okMessage, cancelMessage, detailTextView)
 { }
 
 View * PopUpController::view() {
@@ -37,7 +38,8 @@ void PopUpController::presentModally() {
 
 
 // PopUp Content View
-PopUpController::ContentView::ContentView(Responder * parentResponder, Invocation okInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage, PopUpViewDelegate * delegate) :
+
+PopUpController::ContentView::ContentView(Responder * parentResponder, Invocation okInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage, TextView * detailTextView) :
   Responder(parentResponder),
   m_cancelButton(
     this, cancelMessage,
@@ -49,8 +51,9 @@ PopUpController::ContentView::ContentView(Responder * parentResponder, Invocatio
     KDFont::SmallFont),
   m_okButton(this, okMessage, okInvocation, KDFont::SmallFont),
   m_warningTextView(KDFont::SmallFont, warningMessage, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorWhite, KDColorBlack),
-  m_delegate(delegate)
-{ }
+  m_detailTextView(detailTextView)
+{
+}
 
 void PopUpController::ContentView::setSelectedButton(int selectedButton) {
   m_cancelButton.setHighlighted(selectedButton == 0);
@@ -64,72 +67,55 @@ int PopUpController::ContentView::selectedButton() {
 
 int PopUpController::ContentView::numberOfSubviews() const {
   // Text + WarningTextView + CancelButton + OkButton
-  return m_delegate->numberOfLines() + 3;
+  return 4;
 }
 
 View * PopUpController::ContentView::subviewAtIndex(int index) {
-  int totalSubviews = numberOfSubviews();
-  if (index < 0 || index >= totalSubviews) {
-    assert(false);
-    return nullptr;
-  }
-  if (index == 0) {
-    return &m_warningTextView;
-  }
-  if (index == totalSubviews - 2) {
-    return &m_cancelButton;
-  }
-  if (index == totalSubviews - 1) {
-    return &m_okButton;
-  }
-  return m_delegate->textViewAtIndex(index-1);
+  View * views[] = {&m_warningTextView, &m_cancelButton, &m_okButton, m_detailTextView};
+  return views[index];
 }
 
 void PopUpController::ContentView::layoutSubviews(bool force) {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
+  KDCoordinate detailTextHeight = m_detailTextView->minimalSizeForOptimalDisplay().height();
+
   m_warningTextView.setFrame(KDRect(0, k_topMargin, width, textHeight), force);
-  // Offset to center text vertically
-  const int offset = (PopUpViewDelegate::k_maxNumberOfLines - m_delegate->numberOfLines()) / 2;
-  for (int i = 0; i < m_delegate->numberOfLines(); i++) {
-    TextView * textView =  m_delegate->textViewAtIndex(i);
-    textView->setFont(KDFont::SmallFont);
-    textView->setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
-    textView->setBackgroundColor(KDColorBlack);
-    textView->setTextColor(KDColorWhite);
-    textView->setFrame(KDRect(0, k_topMargin + k_paragraphHeight + (i + 1 + offset) * textHeight, width, textHeight), force);
-  }
+  KDCoordinate remainingHeight = (height - k_topMargin - textHeight - k_buttonMargin - k_buttonHeight - detailTextHeight);
+  m_detailTextView->setFrame(KDRect(0, k_topMargin + textHeight + remainingHeight/2, width, detailTextHeight), force);
   m_cancelButton.setFrame(KDRect(k_buttonMargin, height - k_buttonMargin - k_buttonHeight, (width - 3 * k_buttonMargin) / 2, k_buttonHeight), force);
   m_okButton.setFrame(KDRect(2 * k_buttonMargin + (width - 3 * k_buttonMargin) / 2, height - k_buttonMargin - k_buttonHeight, (width - 3 * k_buttonMargin) / 2, k_buttonHeight), force);
+
+  m_detailTextView->setFont(KDFont::SmallFont);
+  m_detailTextView->setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
+  m_detailTextView->setBackgroundColor(KDColorBlack);
+  m_detailTextView->setTextColor(KDColorWhite);
 }
 
 // MessagePopUpController
-MessagePopUpController::MessagePopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
-    PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, this),
-    PopUpViewDelegate(numberOfLines)
+
+MessagePopUpController::MessagePopUpController(Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
+    PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, &m_messageTextView)
 { }
 
 
-void MessagePopUpController::setContentMessage(int index, I18n::Message message) {
-  assert(index >=0 && index < m_numberOfLines);
-  m_messageTextViews[index].setMessage(message);
+void MessagePopUpController::setContentMessage(I18n::Message message) {
+  m_messageTextView.setMessage(message);
 }
 
 // BufferPopUpController
-BufferPopUpController::BufferPopUpController(int numberOfLines, Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
-    PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, this),
-    PopUpViewDelegate(numberOfLines)
+
+BufferPopUpController::BufferPopUpController(Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
+  PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, &m_bufferTextView)
 { }
 
-void BufferPopUpController::setContentText(int index, const char * text) {
-  assert(index >=0 && index < m_numberOfLines);
-  m_bufferTextViews[index].setText(text);
+void BufferPopUpController::setContentText(const char * text) {
+  m_bufferTextView.setText(text);
 }
 
-void BufferPopUpController::setMessageWithPlaceholder(int index, I18n::Message message, const char * string) {
-  assert(index >=0 && index < m_numberOfLines);
-  m_bufferTextViews[index].setMessageWithPlaceholder(message, string);
+void BufferPopUpController::setMessageWithPlaceholder(I18n::Message message, const char * string) {
+  m_bufferTextView.setMessageWithPlaceholder(message, string);
 }
 
 }

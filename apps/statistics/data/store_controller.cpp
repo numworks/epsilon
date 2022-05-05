@@ -75,13 +75,11 @@ void StoreController::setClearPopUpContent() {
   if (column == 0) {
     char tableName[k_tableNameSize];
     FillSeriesName(series, tableName, true);
-    m_confirmPopUpController.setMessageWithPlaceholder(0, I18n::Message::ClearTableConfirmation1, tableName);
-    m_confirmPopUpController.setMessageWithPlaceholder(1, I18n::Message::ClearTableConfirmation2, tableName);
+    m_confirmPopUpController.setMessageWithPlaceholder(I18n::Message::ClearTableConfirmation, tableName);
   } else {
     char columnNameBuffer[Shared::ColumnParameterController::k_titleBufferSize];
     fillColumnName(selectedColumn(), columnNameBuffer);
-    m_confirmPopUpController.setMessageWithPlaceholder(0, I18n::Message::ResetFreqConfirmation1, columnNameBuffer);
-    m_confirmPopUpController.setMessageWithPlaceholder(1, I18n::Message::ResetFreqConfirmation2, columnNameBuffer);
+    m_confirmPopUpController.setMessageWithPlaceholder(I18n::Message::ResetFreqConfirmation, columnNameBuffer);
   }
 }
 

@@ -286,7 +286,6 @@ public:
   // WARNING: this must be called on reduced expressions
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 
-  Expression mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext);
   /* 'ExpressionWithoutSymbols' replaces symbols in place and returns an
    * uninitialized expression if it is circularly defined.
    * SymbolicComputation defines how to handle functions

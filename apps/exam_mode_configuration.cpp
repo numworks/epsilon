@@ -99,6 +99,10 @@ I18n::Message ExamModeConfiguration::examModeActivationMessage(size_t index) {
 I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(Preferences::ExamMode mode, int line) {
   /* FIXME Streamline this function by merging the message using \n */
   if (mode == Preferences::ExamMode::Off) {
+    if (Preferences::sharedPreferences()->examMode() == Preferences::ExamMode::PressToTest) {
+      I18n::Message warnings[] = {I18n::Message::ExitPressToTestExamMode1, I18n::Message::ExitPressToTestExamMode2, I18n::Message::ExitPressToTestExamMode3, I18n::Message::Default};
+      return warnings[line];
+    }
     I18n::Message warnings[] = {I18n::Message::ExitExamMode1, I18n::Message::ExitExamMode2, I18n::Message::Default, I18n::Message::Default};
     return warnings[line];
   } else if (mode == Preferences::ExamMode::Standard) {

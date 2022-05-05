@@ -12,12 +12,17 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
       [](void * context, void * sender) {
         ExamPopUpController * controller = (ExamPopUpController *)context;
         Poincare::Preferences::ExamMode mode = controller->targetExamMode();
+        Poincare::Preferences::ExamMode previousMode = Poincare::Preferences::sharedPreferences()->examMode();
         assert(mode != Poincare::Preferences::ExamMode::Unknown);
         assert(mode == Poincare::Preferences::ExamMode::PressToTest || controller->targetPressToTestParams().m_value == 0);
         Poincare::Preferences::sharedPreferences()->setExamMode(mode);
         Poincare::Preferences::sharedPreferences()->setPressToTestParams(controller->targetPressToTestParams());
         AppsContainer * container = AppsContainer::sharedAppsContainer();
         if (mode == Poincare::Preferences::ExamMode::Off) {
+          if (previousMode == Poincare::Preferences::ExamMode::PressToTest) {
+            Ion::Reset::core();
+            return true;
+          }
           Ion::LED::setColor(KDColorBlack);
           Ion::LED::updateColorWithPlugAndCharge();
         } else {

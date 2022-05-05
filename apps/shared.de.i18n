@@ -1,4 +1,4 @@
-ActivateDeactivate = "Aktivieren/Deaktivieren"
+ActivateDeactivate = "Verbergen"
 ActivateExamMode = "Prüfungsmodus starten"
 ActiveExamModeMessage = "Alle Ihre Daten werden\ngelöscht, wenn Sie den\nPrüfungsmodus einschalten."
 ActiveDutchExamModeMessage = "Alle Daten werden gelöscht, wenn\nSie den Prüfungsmodus (NL)\neinschalten. Python wird nicht\nverfügbar sein."

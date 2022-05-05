@@ -1,4 +1,4 @@
-ActivateDeactivate = "Zet aan/uit"
+ActivateDeactivate = "Verbergen"
 ActivateExamMode = "Activeer de examenstand"
 ActiveExamModeMessage = "Al je gegevens worden\ngewist wanneer je de\nexamenstand activeert."
 ActiveDutchExamModeMessage = "Al je gegevens worden gewist\nwanneer je de Nederlandse\nexamenstand activeert. De\nPython app wordt uitgeschakeld."

@@ -1,4 +1,4 @@
-ActivateDeactivate = "Turn on/off"
+ActivateDeactivate = "Hide"
 ActivateExamMode = "Activate exam mode"
 ActiveExamModeMessage = "All your data will be\ndeleted when you activate\nthe exam mode."
 ActiveDutchExamModeMessage = "All your data will be deleted when\nyou activate the exam mode (NL).\nPython application will be\nunavailable."

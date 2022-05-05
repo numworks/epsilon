@@ -1,8 +1,8 @@
-USERLAND_ORIGIN = USERLAND_VIRTUAL_ORIGIN + EPSILON_OFFSET;
+INCLUDE memory_layout.ld
 
 MEMORY {
-  FLASH_USERLAND (rx) : ORIGIN = USERLAND_ORIGIN, LENGTH = USERLAND_AND_EXTERNAL_APPS_LENGTH
-  SRAM (rw) : ORIGIN = USERLAND_SRAM_ORIGIN, LENGTH = USERLAND_SRAM_LENGTH
+  FLASH_USERLAND (rx) : ORIGIN = UserlandOrigin, LENGTH = UserlandLength
+  SRAM (rw) : ORIGIN = UserlandSRAMOrigin, LENGTH = UserlandSRAMLength
 }
 
 
@@ -95,7 +95,7 @@ SECTIONS {
   .heap : {
     _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
-    . = (ORIGIN(SRAM) + LENGTH(SRAM) - USERLAND_STACK_LENGTH);
+    . = (ORIGIN(SRAM) + LENGTH(SRAM) - UserlandStackLength);
     _external_apps_RAM_end = .;
     _heap_end = .;
   } >SRAM
@@ -103,7 +103,7 @@ SECTIONS {
   .process_stack : {
     . = ALIGN(8);
     _process_stack_end = .;
-    . += (USERLAND_STACK_LENGTH - 8);
+    . += (UserlandStackLength - 8);
     . = ALIGN(8);
     _process_stack_start = .;
   } >SRAM

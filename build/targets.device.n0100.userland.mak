@@ -5,5 +5,4 @@ userland_test_src += $(liba_internal_flash_src)
 
 include build/targets.$(PLATFORM).userland.mak
 
-$(userland_targets): LDSCRIPT = ion/src/$(PLATFORM)/userland/flash/userland_flash.ld
 $(userland_targets): LDDEPS = $(USERLAND_LDDEPS) $(LDSCRIPT)

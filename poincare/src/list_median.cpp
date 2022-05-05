@@ -28,6 +28,8 @@ Expression ListMedianNode::shallowReduce(ReductionContext reductionContext) {
   return ListMedian(this).shallowReduce(reductionContext);
 }
 
+/* TODO: This algorithm is duplicated with shallowReduce. Maybe factorize with
+* with lambda functions ? We are not sure if it's worth it.*/
 template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(ApproximationContext approximationContext) const {
   Evaluation<T> child = childAtIndex(0)->approximate(T(), approximationContext);
   if (child.type() != EvaluationNode<T>::Type::ListComplex) {
@@ -44,6 +46,7 @@ template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(Approxim
    * This loop relies on the fact that undef are sorted at the
    * end of the list. If ListSort::k_nanIsGreatest is changed, this
    * loop also needs to be changed. */
+  assert(ListSort::k_nanIsGreatest);
   int numberOfDefinedElements = 0;
   for (int i = n - 1 ; i >= 0 ; i--) {
     std::complex<T> c = list.complexAtIndex(i);
@@ -70,6 +73,8 @@ template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(Approxim
   }
 }
 
+/* TODO: This algorithm is duplicated with approximate. Maybe factorize with
+* with lambda functions ? We are not sure if it's worth it.*/
 Expression ListMedian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression sorted = ListSort::Builder(childAtIndex(0)).shallowReduce(reductionContext);
   int n = sorted.numberOfChildren();
@@ -81,6 +86,7 @@ Expression ListMedian::shallowReduce(ExpressionNode::ReductionContext reductionC
    * This loop relies on the fact that undef are sorted at the
    * end of the list. If ListSort::k_nanIsGreatest is changed, this
    * loop also needs to be changed. */
+  assert(ListSort::k_nanIsGreatest);
   int numberOfDefinedElements = 0;
   for (int i = n - 1 ; i >= 0 ; i--) {
     if (!sorted.childAtIndex(i).isUndefined()) {

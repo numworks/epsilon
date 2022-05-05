@@ -143,7 +143,7 @@ template<typename T> Evaluation<T> ListNode::templatedApproximate(ApproximationC
 
 Expression List::shallowReduce(Context * context) {
   // A list can't contain a matrix or a list
-  if (node()->hasMatrixChild(context) || node()->hasListChild(context)) {
+  if (node()->hasMatrixOrListChild(context)) {
     return replaceWithUndefinedInPlace();
   }
   /* We bypass the reduction to undef in case of undef children, as {undef} and

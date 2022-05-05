@@ -538,7 +538,7 @@ Expression Matrix::shallowReduce(Context * context) {
       return e;
     }
   }
-  if (node()->hasMatrixChild(context) || node()->hasListChild(context)) {
+  if (node()->hasMatrixOrListChild(context)) {
     return replaceWithUndefinedInPlace();
   }
   return *this;

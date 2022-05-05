@@ -2,12 +2,12 @@
 #define POINCARE_STUDENT_DISTRIBUTION_H
 
 #include <poincare/expression.h>
-#include <poincare/distribution.h>
+#include <poincare/continuous_distribution.h>
 #include <poincare/preferences.h>
 
 namespace Poincare {
 
-class StudentDistribution final : public Distribution {
+class StudentDistribution final : public ContinuousDistribution {
 public:
   template<typename T> static T EvaluateAtAbscissa(T x, const T k);
   float EvaluateAtAbscissa(float x, const float * parameters) override { return EvaluateAtAbscissa<float>(x, parameters[0]); }

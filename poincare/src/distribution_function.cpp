@@ -1,9 +1,5 @@
 #include <poincare/distribution_function.h>
 #include <poincare/binomial_distribution.h>
-#include <poincare/geometric_distribution.h>
-#include <poincare/normal_distribution.h>
-#include <poincare/poisson_distribution.h>
-#include <poincare/student_distribution.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -26,12 +22,6 @@ Expression DistributionFunctionNode::shallowReduce(ReductionContext reductionCon
   return DistributionFunction(this).shallowReduce(reductionContext.context());
 }
 
-template<typename T> T callbino(T x, T n, T p) {
-  T (*f)(T, const T *) = &BinomialDistribution::EvaluateAtAbscissa;
-  T par[] = {n, p};
-  return f(x, par);
-}
-
 Expression DistributionFunction::shallowReduce(Context * context, bool * stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
@@ -43,35 +33,17 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
     }
   }
 
-  bool couldCheckParameters;
-  bool parametersAreOk;
   int childIndex = numberOfParameters(functionType());
-  Expression parameters[2]; // TODO: constexpr to compute the maximum number of the
-                   // parameters
-  for (int i=0; i < numberOfParameters(distributionType()); i++) {
+  Expression parameters[Distribution::maxNumberOfParameters];
+  for (int i=0; i < Distribution::numberOfParameters(distributionType()); i++) {
     parameters[i] = childAtIndex(childIndex++);
   }
   BinomialDistribution distributionPlaceholder;
   Distribution * distribution = &distributionPlaceholder;
-  switch (distributionType()) {
-  case DistributionType::Binomial:
-    new (distribution) BinomialDistribution();
-    break;
-  case DistributionType::Normal:
-    new (distribution) NormalDistribution();
-    break;
-  case DistributionType::Student:
-    new (distribution) StudentDistribution();
-    break;
-  case DistributionType::Geometric:
-    new (distribution) GeometricDistribution();
-    break;
-  case DistributionType::Poisson:
-    new (distribution) PoissonDistribution();
-    break;
-  }
+  Distribution::Initialize(distribution, distributionType());
 
-  couldCheckParameters = distribution->ExpressionParametersAreOK(&parametersAreOk, parameters, context);
+  bool parametersAreOk;
+  bool couldCheckParameters = distribution->ExpressionParametersAreOK(&parametersAreOk, parameters, context);
 
   if (!couldCheckParameters) {
     return *this;
@@ -149,26 +121,9 @@ Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContex
   // Distributions are only vpointers
   BinomialDistribution distributionPlaceholder;
   Distribution * distribution = &distributionPlaceholder;
-  switch (m_distributionType) {
-  case DistributionType::Binomial:
-    new (distribution) BinomialDistribution();
-    break;
-  case DistributionType::Normal:
-    new (distribution) NormalDistribution();
-    break;
-  case DistributionType::Student:
-    new (distribution) StudentDistribution();
-    break;
-  case DistributionType::Geometric:
-    new (distribution) GeometricDistribution();
-    break;
-  case DistributionType::Poisson:
-    new (distribution) PoissonDistribution();
-    break;
-  }
-  T parameters[2]; // TODO: constexpr to compute the maximum number of the
-                   // parameters
-  for (int i=0; i < numberOfParameters(m_distributionType); i++) {
+  Distribution::Initialize(distribution, m_distributionType);
+  T parameters[Distribution::maxNumberOfParameters];
+  for (int i=0; i < Distribution::numberOfParameters(m_distributionType); i++) {
     Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
     parameters[i] = evaluation.toScalar();
   }

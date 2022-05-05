@@ -143,38 +143,25 @@ bool Expression::hasExpression(ExpressionTypeTest test, const void * context) co
 }
 
 bool Expression::deepIsMatrix(Context * context) const {
-  /* We could do something virtual instead of implementing a disjunction on
-   * types but in a first try, it was easier to group all code regarding
-   * isMatrix at the same place. */
-  if (IsMatrix(*this, context)) {
-    return true;
-  }
-  // Scalar expressions
-  ExpressionNode::Type types1[] = {ExpressionNode::Type::Determinant, ExpressionNode::Type::MatrixTrace};
-  if (isOfType(types1, sizeof(types1)/sizeof(ExpressionNode::Type))) {
-    return false;
-  }
-  // The children were sorted so any expression which is a matrix (deeply) would be at the end
-  if (IsNAry(*this, context)) {
-    int nbOfChildren = numberOfChildren();
-    assert(nbOfChildren > 0);
-    return childAtIndex(nbOfChildren-1).deepIsMatrix(context);
-  }
-  /* Dependency are matrices only if their first child is a matrix */
-  ExpressionNode::Type types2[] = {ExpressionNode::Type::Dependency};
-  if (isOfType(types2, sizeof(types2)/sizeof(ExpressionNode::Type))) {
-    assert(numberOfChildren() > 0);
-    return childAtIndex(0).deepIsMatrix(context);
-  }
-  // By default, an expression is a matrix of any of its children is one (eg, Cosine, Decimal...)
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    if (childAtIndex(i).deepIsMatrix(context)) {
-      return true;
-    }
-  }
-  return false;
-}
+  return recursivelyMatches([](const Expression e, Context * context, void *) {
+        if (IsMatrix(e, context)) { return RecursiveSearchResult::Yes; }
+        // The children were sorted so any expression which is a matrix (deeply) would be at the end
+        if (IsNAry(e, context) && e.numberOfChildren() > 0) {
+          return e.childAtIndex(e.numberOfChildren() - 1).deepIsMatrix(context) ? RecursiveSearchResult::Yes : RecursiveSearchResult::No;
+        }
+         /* Dependency are matrices only if their first child is a matrix */
+        if (e.type() == ExpressionNode::Type::Dependency) {
+           return e.childAtIndex(0).deepIsMatrix(context) ? RecursiveSearchResult::Yes : RecursiveSearchResult::No;
+        }
+        // These types are matrices if one of their children is one
+        ExpressionNode::Type typesThatCanBeMatrices[] = {ExpressionNode::Type::Power, ExpressionNode::Type::Opposite, ExpressionNode::Type::Sum, ExpressionNode::Type::Product};
+        if (e.isOfType(typesThatCanBeMatrices, sizeof(typesThatCanBeMatrices)/sizeof(ExpressionNode::Type))) {
+          return RecursiveSearchResult::Maybe;
+        }
+        // Any other type is not a matrix
+        return RecursiveSearchResult::No;
+      }, context);
+ }
 
 bool Expression::deepIsList(Context * context) const {
   return recursivelyMatches([](const Expression e, Context * context, void *) {

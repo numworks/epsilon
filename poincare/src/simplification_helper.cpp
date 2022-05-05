@@ -107,8 +107,11 @@ Expression SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChil
 }
 
 Expression SimplificationHelper::undefinedOnMatrix(Expression e, ExpressionNode::ReductionContext reductionContext) {
-  if (e.deepIsMatrix(reductionContext.context())) {
-    return Undefined::Builder();
+  int n = e.numberOfChildren();
+  for (int i = 0; i < n ; i ++) {
+    if (e.childAtIndex(i).deepIsMatrix(reductionContext.context())) {
+      return Undefined::Builder();
+    }
   }
   return Expression();
 }

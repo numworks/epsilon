@@ -285,8 +285,7 @@ public:
    * See Addition::shallowBeautify - step 1. for more info. */
   virtual double degreeForSortingAddition(bool symbolsOnly) const { return symbolsOnly ? 0. : 1.; }
 
-  bool hasMatrixChild(Context * context) const;
-  bool hasListChild(Context * context) const;
+  bool hasMatrixOrListChild(Context * context) const;
 
   virtual Expression removeUnit(Expression * unit); // Only reduced nodes should answer
 

@@ -130,18 +130,9 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
   return false;
 }
 
-bool ExpressionNode::hasMatrixChild(Context * context) const {
+bool ExpressionNode::hasMatrixOrListChild(Context * context) const {
   for (ExpressionNode * c : children()) {
-    if (Expression(c).deepIsMatrix(context)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-bool ExpressionNode::hasListChild(Context * context) const {
-  for (ExpressionNode * c : children()) {
-    if (Expression(c).deepIsList(context)) {
+    if (Expression(c).deepIsMatrix(context) || Expression(c).deepIsList(context)) {
       return true;
     }
   }

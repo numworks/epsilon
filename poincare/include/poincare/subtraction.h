@@ -61,7 +61,7 @@ private:
   LayoutShape rightLayoutShape() const override { return childAtIndex(1)->rightLayoutShape(); }
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::ElementWiseOnComplexMatrices(m, n, complexFormat, computeOnComplex<T>);
+    return ApproximationHelper::ElementWiseOnMatrices(m, n, complexFormat, computeOnComplex<T>);
   }
 };
 

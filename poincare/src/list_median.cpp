@@ -3,7 +3,6 @@
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
 #include <poincare/list.h>
-#include <poincare/list_helpers.h>
 #include <poincare/list_sort.h>
 #include <poincare/multiplication.h>
 #include <poincare/serialization_helper.h>
@@ -39,7 +38,7 @@ template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(Approxim
   if (n == 0) {
     return Complex<T>::Undefined();
   }
-  list = ListHelpers::SortListComplex(list);
+  list = list.sort();
 
   /* Do not take undef children into account.
    * This loop relies on the fact that undef are sorted at the

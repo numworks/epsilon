@@ -45,6 +45,7 @@ public:
   /* undef list is a list with a negative number of elements. */
   bool isUndefined() const override { return m_numberOfChildren < 0; }
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
+
 private:
   int16_t m_numberOfChildren;
 
@@ -64,6 +65,9 @@ public:
     return node()->complexAtIndex(index);
   }
   void addChildAtIndexInPlace(Evaluation<T> t, int index, int currentNumberOfChildren);
+
+  // Helper function
+  ListComplex<T> sort();
 private:
   ListComplexNode<T> * node() const { return static_cast<ListComplexNode<T> *>(Evaluation<T>::node()); }
 };

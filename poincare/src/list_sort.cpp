@@ -1,7 +1,6 @@
 #include <poincare/list_sort.h>
 #include <poincare/layout_helper.h>
 #include <poincare/list_complex.h>
-#include <poincare/list_helpers.h>
 #include <poincare/helpers.h>
 #include <poincare/serialization_helper.h>
 
@@ -31,7 +30,7 @@ template<typename T> Evaluation<T> ListSortNode::templatedApproximate(Approximat
     return Complex<T>::Undefined();
   }
   ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
-  listChild = ListHelpers::SortListComplex(listChild);
+  listChild = listChild.sort();
   return std::move(listChild);
 }
 
@@ -52,7 +51,7 @@ Expression ListSort::shallowReduce(ExpressionNode::ReductionContext reductionCon
         e->swapChildrenInPlace(i, j);
       },
       // Compare
-      ListHelpers::ListEvaluationComparison,
+      Helpers::ListEvaluationComparisonAtIndex,
       pack,
       child.numberOfChildren());
   replaceWithInPlace(child);

@@ -44,7 +44,6 @@ poincare_src += $(addprefix poincare/src/,\
   erf_inv.cpp \
   exception_checkpoint.cpp \
   helpers.cpp \
-  list_helpers.cpp \
   normal_distribution.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \

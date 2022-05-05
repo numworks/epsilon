@@ -1,7 +1,6 @@
 #include <poincare/list_sum.h>
 #include <poincare/addition.h>
 #include <poincare/layout_helper.h>
-#include <poincare/list_helpers.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
@@ -30,7 +29,7 @@ template<typename T> Evaluation<T> ListSumNode::templatedApproximate(Approximati
     return Complex<T>::Undefined();
   }
 
-  return ListHelpers::SumOfListNode<T>(static_cast<ListNode *>(child), approximationContext);
+  return static_cast<ListNode *>(child)->sumOfElements<T>(approximationContext);
 }
 
 Expression ListSum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

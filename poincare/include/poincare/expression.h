@@ -295,6 +295,16 @@ public:
   Expression radianToAngleUnit(Preferences::AngleUnit angleUnit);
   Expression angleUnitToRadian(Preferences::AngleUnit angleUnit);
 
+  /* Returns:
+   * - a number >= 0 if all the lists have the same size,
+   * - -1 if there are no lists in the children
+   * - -2 if there are lists of differents lengths. */
+  static constexpr int k_noList = -1;
+  static constexpr int k_mismatchedLists = -2;
+  /* LengthOfListChildren is to be called during reduction, when all children
+   * are already reduced. */
+  int lengthOfListChildren() const;
+
   /* Approximation Helper */
   // These methods reset the sApproximationEncounteredComplex flag. They should not be use to implement node approximation
   template<typename U> Expression approximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
@@ -431,11 +441,6 @@ protected:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext) { return node()->shallowBeautify(reductionContext); }
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
-  /* Distribute an operator by matching elements in lists at the same position
-   * and duplicating scalars.
-   * i.e.: {1,2}+{3,4} -> {1+3,2+4} and -2*{5,6} -> {-2*5,-2*6}
-   * Returns an uninitialized expression if nothing has been done. */
-  Expression distributeOverLists(ExpressionNode::ReductionContext reductionContext);
 
   /* Derivation */
   /* This method is used for the reduction of Derivative expressions.

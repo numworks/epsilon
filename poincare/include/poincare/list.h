@@ -37,6 +37,14 @@ public:
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
 
+  // Helper functions
+  int extremumIndex(ApproximationContext approximationContext, bool minimum);
+  template <typename T> Evaluation<T> extremumApproximation(ApproximationContext approximationContext, bool minimum);
+  template<typename T> Evaluation<T> sumOfElements(ApproximationContext approximationContext);
+  template<typename T> Evaluation<T> productOfElements(ApproximationContext approximationContext);
+  template<typename T> Evaluation<T> squareSumOfElements(ApproximationContext approximationContext);
+  template<typename T> Evaluation<T> variance(ApproximationContext approximationContext);
+
 private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 
@@ -50,6 +58,7 @@ public:
   List(const ListNode * n) : Expression(n) {}
   static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
   ListNode * node() { return static_cast<ListNode *>(Expression::node()); }
+  Expression extremum(ExpressionNode::ReductionContext reductionContext, bool minimum);
   Expression shallowReduce(Context * context);
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;

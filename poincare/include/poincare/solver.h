@@ -48,7 +48,7 @@ public:
   // Cumulative distributive inverse for function defined on N (positive integers)
   template<typename T> static T CumulativeDistributiveInverseForNDefinedFunction(T * probability, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
   // Cumulative distributive function for function defined on N (positive integers)
-  template<typename T> static T CumulativeDistributiveFunctionForNDefinedFunction(T x, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
+  template<typename T> static T CumulativeDistributiveFunctionForNDefinedFunction(T x, typename SolverHelper<T>::ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
 
   static double DefaultMaximalStep(double start, double stop);
 

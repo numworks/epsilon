@@ -2,12 +2,12 @@
 #define POINCARE_BINOMIAL_DISTRIBUTION_H
 
 #include <poincare/expression.h>
-#include <poincare/distribution.h>
+#include <poincare/discrete_distribution.h>
 #include <poincare/preferences.h>
 
 namespace Poincare {
 
-class BinomialDistribution final : public Distribution {
+class BinomialDistribution final : public DiscreteDistribution {
 public:
   template<typename T> static T EvaluateAtAbscissa(T x, const T n, const T p);
   float EvaluateAtAbscissa(float x, const float * parameters) override { return EvaluateAtAbscissa<float>(x, parameters[0], parameters[1]); }

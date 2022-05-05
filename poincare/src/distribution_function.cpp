@@ -146,7 +146,6 @@ Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContex
       }
   }
   T result = NAN;
-  T castedOne = static_cast<T>(1.0);
   // Distributions are only vpointers
   BinomialDistribution distributionPlaceholder;
   Distribution * distribution = &distributionPlaceholder;
@@ -184,12 +183,7 @@ Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContex
     result = distribution->CumulativeDistributiveInverseForProbability(x, parameters);
     break;
   case FunctionType::CDFRange:
-    // TODO: add a virtual method for this
-    if (m_distributionType == DistributionType::Normal || m_distributionType == DistributionType::Student) {
-      result = distribution->CumulativeDistributiveFunctionAtAbscissa(y, parameters) -  distribution->CumulativeDistributiveFunctionAtAbscissa(x, parameters);
-    } else {
-      result = distribution->CumulativeDistributiveFunctionAtAbscissa(y, parameters) -  distribution->CumulativeDistributiveFunctionAtAbscissa(x - castedOne, parameters);
-    }
+    result = distribution->CumulativeDistributiveFunctionForRange(x, y, parameters);
     break;
   }
   return Complex<T>::Builder(result);

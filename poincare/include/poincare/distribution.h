@@ -16,6 +16,14 @@ public:
   virtual float CumulativeDistributiveInverseForProbability(float x, const float * parameters) = 0;
   virtual double CumulativeDistributiveInverseForProbability(double x, const double * parameters) = 0;
 
+  virtual float CumulativeDistributiveFunctionForRange(float x, float y, const float * parameters) {
+    return CumulativeDistributiveFunctionAtAbscissa(y, parameters) - CumulativeDistributiveFunctionAtAbscissa(x, parameters);
+  };
+
+  virtual double CumulativeDistributiveFunctionForRange(double x, double y, const double * parameters) {
+    return CumulativeDistributiveFunctionAtAbscissa(y, parameters) - CumulativeDistributiveFunctionAtAbscissa(x, parameters);
+  };
+
   virtual bool ParametersAreOK(const float * parameters) = 0;
   virtual bool ParametersAreOK(const double * parameters) = 0;
 

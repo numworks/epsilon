@@ -36,12 +36,7 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
          * PressToTest settings menu after having changed the country). */
         return true;
       }, this),
-    {
-      I18n::Message::Default,
-      I18n::Message::Default,
-      I18n::Message::Default,
       I18n::Message::Default
-    }
   ),
   m_targetExamMode(Poincare::Preferences::ExamMode::Unknown),
   m_delegate(delegate)
@@ -50,9 +45,7 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
 
 void ExamPopUpController::setTargetExamMode(Poincare::Preferences::ExamMode mode) {
   m_targetExamMode = mode;
-  for (int i = 0; i < k_numberOfLines; i++) {
-    setContentMessage(i, ExamModeConfiguration::examModeActivationWarningMessage(mode, i));
-  }
+  setContentMessage(ExamModeConfiguration::examModeActivationWarningMessage(mode));
 }
 
 void ExamPopUpController::viewDidDisappear() {

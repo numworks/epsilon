@@ -18,12 +18,7 @@ AboutController::AboutController(Responder * parentResponder) :
       },
       this
     ),
-    {
-      I18n::Message::HardwareTestLaunch1,
-      I18n::Message::HardwareTestLaunch2,
-      I18n::Message::HardwareTestLaunch3,
-      I18n::Message::HardwareTestLaunch4
-    }
+    I18n::Message::HardwareTestLaunch
   )
 {
 }

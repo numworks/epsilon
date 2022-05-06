@@ -127,7 +127,6 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   assert(typeAtLocation(columnIndex, 0) == k_titleCellType);
   StoreTitleCell * myTitleCell = static_cast<StoreTitleCell *>(cell);
   if (isCumulatedFrequencyColumn(columnIndex)) {
-    // TODO: Translate this message
     myTitleCell->setText(I18n::translate(I18n::Message::CumulatedFrequencyColumnName));
   } else {
     char columnName[Shared::ColumnParameterController::k_maxSizeOfColumnName];

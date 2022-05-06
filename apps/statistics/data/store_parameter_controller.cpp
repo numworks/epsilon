@@ -8,7 +8,6 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   Shared::StoreParameterController(parentResponder, storeController),
   m_displayCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnToggleTitle)
 {
-  // TODO: Translate this message and make this view scrollable.
   m_displayCumulatedFrequencyCell.setSubLabelMessage(I18n::Message::CumulatedFrequencyColumnToggleDescription);
 }
 
@@ -57,8 +56,9 @@ void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * c
        * switch. We instead take over fill formula cell to only display a
        * message. */
       assert(cell == &m_fillFormula);
-      // TODO: Translate this message
-      m_fillFormula.setMessage(I18n::Message::CumulatedFrequencyColumnHide);
+      // TODO: Use cell that have a sublabel :
+      // setSubLabelMessage(I18n::Message::CumulatedFrequencyColumnHideDescription);
+      m_fillFormula.setMessage(I18n::Message::CumulatedFrequencyColumnHideTitle);
     } else {
       assert(cell == &m_displayCumulatedFrequencyCell);
       m_displayCumulatedFrequencyCell.setState(static_cast<StoreController *>(m_storeController)->displayCumulatedFrequenciesForSeries(m_storeController->selectedSeries()));

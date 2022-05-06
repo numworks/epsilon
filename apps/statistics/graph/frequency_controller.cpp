@@ -33,21 +33,74 @@ void FrequencyController::appendLabelSuffix(Shared::CurveView::Axis axis, char *
   labelBuffer[length+1] = 0;
 }
 
-int FrequencyController::getNextIndex(int series, int totValues, int startIndex, int direction, double * x) const {
-  assert(direction != 0);
-  int index = SanitizeIndex(startIndex, totValues);
-  /* If directions is > 0, find the first index of value strictly above x
-   * Otherwise, find the first index of value equal or under x */
-  while ((direction > 0) == (*x >= valueAtIndex(series, index))) {
-    int nextIndex = SanitizeIndex(index + direction, totValues);
-    if (nextIndex == index) {
-      // Minimum reached, cap cursor's position.
-      *x = valueAtIndex(series, index);
-      break;
+bool FrequencyController::getNextCursorPosition(int totValues, double step, double * x, double * y) {
+  /* Virtually increase the step so that if the cursor were to move very close
+   * to a significant value, it will instead snap on this value. */
+  double latchFactor = 1.5;
+
+  int index, nextIndex;
+  if (step > 0.0) {
+    index = m_selectedIndex;
+    nextIndex = m_selectedIndex + 1;
+    if (nextIndex >= totValues) {
+      // Cursor cannot move further
+      return false;
     }
-    index = nextIndex;
+    double xNextIndex = valueAtIndex(m_selectedSeries, nextIndex);
+    if (*x + step * latchFactor >= xNextIndex) {
+      // Step is too big, snap on the next interesting value
+      *x = xNextIndex;
+      m_selectedIndex = nextIndex;
+      *y = resultAtIndex(m_selectedSeries, m_selectedIndex);
+      return true;
+    }
+  } else {
+    double xSelectedIndex = valueAtIndex(m_selectedSeries, m_selectedIndex);
+    assert(*x >= xSelectedIndex);
+    index = (*x == xSelectedIndex) ? m_selectedIndex - 1 : m_selectedIndex;
+    nextIndex = index + 1;
+    if (index < 0) {
+      // Cursor cannot move further
+      return false;
+    }
+    double xIndex = valueAtIndex(m_selectedSeries, index);
+    if (*x + step * latchFactor <= xIndex) {
+      // Step is too big, snap on the previous interesting value
+      *x = xIndex;
+      m_selectedIndex = index;
+      *y = resultAtIndex(m_selectedSeries, m_selectedIndex);
+      return true;
+    }
   }
-  return index;
+
+  // Apply step
+  *x += step;
+
+  // Update the newly selected index
+  m_selectedIndex = index;
+
+  // Simplify cursor's position
+  if (std::fabs(*x) <= std::fabs(step / 2.0)) {
+    // At half a step of 0.0
+    *x = 0.0;
+  } else {
+    /* Using pixelWidth(), simplify the cursor's position value while staying at
+     * the same pixel. */
+    assert(std::fabs(step / 2.0) >= m_curveView.pixelWidth());
+    double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(m_curveView.pixelWidth()) - 1.0);
+    *x = magnitude * std::round(*x / magnitude);
+  }
+
+  // Compute start and end of the segment on which the cursor is
+  double xIndex = valueAtIndex(m_selectedSeries, index);
+  double xNextIndex = valueAtIndex(m_selectedSeries, nextIndex);
+  assert(*x > xIndex && *x < xNextIndex && nextIndex == index + 1);
+  double yIndex = resultAtIndex(m_selectedSeries, index);
+  double yNextIndex = resultAtIndex(m_selectedSeries, nextIndex);
+
+  // Compute the cursor's position
+  *y = yIndex + (yNextIndex - yIndex) * ((*x - xIndex) / (xNextIndex - xIndex));
+  return true;
 }
 
 void FrequencyController::moveCursorVertically(bool seriesChanged) {
@@ -71,61 +124,19 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   if (totValues <= 1) {
     return false;
   }
-  // Increment cursor's position
+
+  double x = m_cursor.x();
+  double y;
+  // Compute cursor step
   double step = deltaIndex * static_cast<double>(m_graphRange.xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
-  double x = m_cursor.x() + step;
+  assert(step != 0.0);
 
-  // Find an index of value under x.
-  int index = getNextIndex(m_selectedSeries, totValues, m_selectedIndex, -1, &x);
-
-  // Find the first index of value strictly above x.
-  int nextIndex = getNextIndex(m_selectedSeries, totValues, index + 1, 1, &x);
-
-  if (x == m_cursor.x()) {
-    // Cursor did not move
-    return false;
+  bool cursorHasMoved = getNextCursorPosition(totValues, step, &x, &y);
+  if (cursorHasMoved) {
+    m_cursor.moveTo(x, x, y);
+    m_curveView.reload();
   }
-
-  // Set the selected index
-  m_selectedIndex = index = SanitizeIndex(nextIndex - 1, totValues);
-  assert(index != nextIndex);
-
-  double xIndex = valueAtIndex(m_selectedSeries, index);
-  double xNextIndex = valueAtIndex(m_selectedSeries, nextIndex);
-
-  double precision = std::fabs(step / 2.0);
-
-  // Round cursor's position to closest interesting value
-  if (std::fabs(x - xIndex) < precision) {
-    x = xIndex;
-  } else if (std::fabs(x - xNextIndex) < precision) {
-    x = xNextIndex;
-    // Update index values
-    nextIndex = SanitizeIndex(nextIndex + 1, totValues);
-    index = SanitizeIndex(nextIndex - 1, totValues);
-    xIndex = valueAtIndex(m_selectedSeries, index);
-    xNextIndex = valueAtIndex(m_selectedSeries, nextIndex);
-  } else if (std::fabs(x) < precision) {
-    // Round the cursor to 0 if it is close to it
-    x = 0.0;
-  } else {
-    // Simplify the cursor's position while staying at the same pixel.
-    assert(precision >= m_curveView.pixelWidth());
-    double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(m_curveView.pixelWidth()) - 1.0);
-    x = magnitude * std::round(x / magnitude);
-  }
-
-  assert(x >= xIndex && x <= xNextIndex && nextIndex >= index && nextIndex - index <= 1);
-
-  double yIndex = resultAtIndex(m_selectedSeries, index);
-  double yNextIndex = resultAtIndex(m_selectedSeries, nextIndex);
-
-  // Compute the cursor's position on the segment between the two indexes
-  double y = yIndex + (yNextIndex - yIndex) * ((x - xIndex) / (xNextIndex - xIndex));
-
-  m_cursor.moveTo(x, x, y);
-  m_curveView.reload();
-  return true;
+  return cursorHasMoved;
 }
 
 bool FrequencyController::moveSelectionVertically(int direction) {

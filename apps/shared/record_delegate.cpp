@@ -3,9 +3,9 @@
 namespace Shared {
 
 size_t RecordDelegate::precedenceScoreOfExtension(const char * extension) {
-  for (int i = 0 ; i < k_numberOfCompetingExtensions ; i++) {
-    if (strcmp(extension, k_competingExtensions[i]) == 0) {
-      return k_competingExtensionsPrecedenceScore[i];
+  for (int i = 0 ; i < k_numberOfRestrictiveExtensions ; i++) {
+    if (strcmp(extension, k_restrictiveExtensions[i]) == 0) {
+      return k_restrictiveExtensionsPrecedenceScore[i];
     }
   }
   return -1;
@@ -16,11 +16,11 @@ Ion::RecordDelegate::OverrideStatus RecordDelegate::shouldRecordBeOverridenWithN
     return Ion::RecordDelegate::OverrideStatus::Allowed;
   }
   if (previousRecord.hasExtension(newExtension)) {
-    return competingExtensionsOverrideThemselves() ? Ion::RecordDelegate::OverrideStatus::Allowed : Ion::RecordDelegate::OverrideStatus::Forbidden;
+    return restrictiveExtensionsOverrideThemselves() ? Ion::RecordDelegate::OverrideStatus::Allowed : Ion::RecordDelegate::OverrideStatus::Forbidden;
   }
   int newPrecedenceScore = precedenceScoreOfExtension(newExtension);
   int previousPrecedenceScore = precedenceScoreOfExtension(previousRecord.name().extension);
-  // If at least one is not a competing extension, they can coexist.
+  // If at least one is not a restrictive extension, they can coexist.
   if (newPrecedenceScore == -1 || previousPrecedenceScore == -1) {
     return Ion::RecordDelegate::OverrideStatus::CanCoexist;
   }

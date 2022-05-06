@@ -7,7 +7,7 @@ namespace Statistics {
 void FrequencyController::viewWillAppearBeforeReload() {
   // Setup the adequate cursor before reloading the curve view
   if (m_continuousCursor) {
-    m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+    m_roundCursorView.setColor(Escher::Palette::YellowDark);
   }
   #ifdef GRAPH_CURSOR_SPEEDUP
   if (m_continuousCursor) {
@@ -52,6 +52,7 @@ bool FrequencyController::getNextCursorPosition(int totValues, double step, doub
       *x = xNextIndex;
       m_selectedIndex = nextIndex;
       *y = resultAtIndex(m_selectedSeries, m_selectedIndex);
+      m_roundCursorView.setColor(Escher::Palette::YellowDark);
       return true;
     }
   } else {
@@ -69,6 +70,7 @@ bool FrequencyController::getNextCursorPosition(int totValues, double step, doub
       *x = xIndex;
       m_selectedIndex = index;
       *y = resultAtIndex(m_selectedSeries, m_selectedIndex);
+      m_roundCursorView.setColor(Escher::Palette::YellowDark);
       return true;
     }
   }
@@ -100,13 +102,14 @@ bool FrequencyController::getNextCursorPosition(int totValues, double step, doub
 
   // Compute the cursor's position
   *y = yIndex + (yNextIndex - yIndex) * ((*x - xIndex) / (xNextIndex - xIndex));
+  m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
   return true;
 }
 
 void FrequencyController::moveCursorVertically(bool seriesChanged) {
   m_continuousCursor = !m_continuousCursor;
   if (m_continuousCursor) {
-    m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+    m_roundCursorView.setColor(Escher::Palette::YellowDark);
   }
   #ifdef GRAPH_CURSOR_SPEEDUP
   m_roundCursorView.resetMemoization();

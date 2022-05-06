@@ -84,14 +84,24 @@ void Sequence::setType(Type t) {
       break;
     case Type::SingleRecurrence:
     {
-      char ex[5] = "u{n}";
+      char ex[] = "u{n}";
+      /* Maybe in the future sequence names will be longer and this
+      * code won't be valid anymore. This assert is to ensure that this code is
+      * changed if it's the case.
+      * */
+      assert(fullName()[1] == 0 || fullName()[1] == '.');
       ex[0] = fullName()[0];
       error = setContent(ex, nullptr); // No context needed here
       break;
     }
     case Type::DoubleRecurrence:
     {
-      char ex[12] = "u{n+1}+u{n}";
+      char ex[] = "u{n+1}+u{n}";
+      /* Maybe in the future sequence names will be longer and this
+      * code won't be valid anymore. This assert is to ensure that this code is
+      * changed if it's the case.
+      * */
+      assert(fullName()[1] == 0 || fullName()[1] == '.');
       char name = fullName()[0];
       ex[0] = name;
       ex[7] = name;

@@ -34,7 +34,7 @@ Storage * Storage::sharedStorage() {
 // RECORD
 
 Storage::Record::Name Storage::Record::CreateRecordNameFromFullName(const char * fullName) {
-  if (fullName == nullptr || strlen(fullName) == 0) {
+  if (fullName == nullptr || fullName[0] == 0) {
     return EmptyName();
   }
   const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
@@ -42,7 +42,7 @@ Storage::Record::Name Storage::Record::CreateRecordNameFromFullName(const char *
     // Name not compliant
     return EmptyName();
   }
-   return Name({fullName, static_cast<size_t>(dotChar - fullName), dotChar + 1});
+  return Name({fullName, static_cast<size_t>(dotChar - fullName), dotChar + 1});
 }
 
 Storage::Record::Name Storage::Record::CreateRecordNameFromBaseNameAndExtension(const char * baseName, const char * extension) {
@@ -303,18 +303,18 @@ void Storage::destroyRecordsWithExtension(const char * extension) {
 }
 
 bool Storage::destroyCompetingRecord(Record::Name recordName, Record * excludedRecord) {
-  if (m_recordNameHelper == nullptr) {
+  if (m_recordDelegate == nullptr) {
     return true;
   }
-  Record competingRecord = privateRecordBasedNamedWithExtensions(recordName.baseName, recordName.baseNameLength, m_recordNameHelper->competingExtensions(), m_recordNameHelper->numberOfCompetingExtensions());
+  Record competingRecord = privateRecordBasedNamedWithExtensions(recordName.baseName, recordName.baseNameLength, m_recordDelegate->competingExtensions(), m_recordDelegate->numberOfCompetingExtensions());
   if (competingRecord.isNull() || (excludedRecord != nullptr && *excludedRecord == competingRecord)) {
     return true;
   }
-  RecordNameHelper::OverrideStatus result = m_recordNameHelper->shouldRecordBeOverridenWithNewExtension(competingRecord, recordName.extension);
-  if (result == RecordNameHelper::OverrideStatus::Forbidden) {
+  RecordDelegate::OverrideStatus result = m_recordDelegate->shouldRecordBeOverridenWithNewExtension(competingRecord, recordName.extension);
+  if (result == RecordDelegate::OverrideStatus::Forbidden) {
     return false;
   }
-  if (result == RecordNameHelper::OverrideStatus::Allowed) {
+  if (result == RecordDelegate::OverrideStatus::Allowed) {
     competingRecord.destroy();
   }
   return true;
@@ -328,7 +328,7 @@ Storage::Storage() :
   m_buffer(),
   m_magicFooter(Magic),
   m_delegate(nullptr),
-  m_recordNameHelper(nullptr),
+  m_recordDelegate(nullptr),
   m_lastRecordRetrieved(nullptr),
   m_lastRecordRetrievedPointer(nullptr)
 {

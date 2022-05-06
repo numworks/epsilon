@@ -19,10 +19,10 @@ app_shared_test_src = $(addprefix apps/shared/,\
   memoized_curve_view_range.cpp \
   poincare_helpers.cpp \
   range_1D.cpp \
-  record_name_helper.cpp \
-  sequence.cpp\
-  sequence_context.cpp\
-  sequence_store.cpp\
+  record_delegate.cpp \
+  sequence.cpp \
+  sequence_context.cpp \
+  sequence_store.cpp \
   toolbox_helpers.cpp \
   zoom_and_pan_curve_view_controller.cpp \
   zoom_curve_view_controller.cpp \
@@ -70,7 +70,7 @@ app_shared_src = $(addprefix apps/shared/,\
   prefaced_table_view.cpp \
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \
-  record_name_helper.cpp \
+  record_delegate.cpp \
   round_cursor_view.cpp \
   scrollable_multiple_expressions_view.cpp \
   scrollable_two_expressions_cell.cpp \

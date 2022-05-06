@@ -269,7 +269,7 @@ void StoreController::reloadSeriesVisibleCells(int series, int relativeColumn) {
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
   // Fetch the series used in the formula to compute the size of the filled in series
-  constexpr static int k_maxSizeOfStoreSymbols = DoublePairStore::k_lenOfColumnNames + 1;
+  constexpr static int k_maxSizeOfStoreSymbols = DoublePairStore::k_columnNamesLength + 1;
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
   variables[0][0] = 0;
   AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
@@ -280,7 +280,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   int index = 0;
   while (variables[index][0] != 0) {
     int series;
-    m_store->isColumnName(variables[index], DoublePairStore::k_lenOfColumnNames, &series);
+    m_store->isColumnName(variables[index], DoublePairStore::k_columnNamesLength, &series);
     assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
     if (numberOfValuesToCompute == -1) {
       numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);

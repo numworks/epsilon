@@ -1,6 +1,6 @@
 #include <quiz.h>
 #include <apps/shared/global_context.h>
-#include <apps/shared/record_name_helper.h>
+#include <apps/shared/record_delegate.h>
 #include <string.h>
 #include <assert.h>
 #include <cmath>
@@ -75,8 +75,8 @@ void check_sum_of_sequence_between_bounds(double result, double start, double en
 }
 
 QUIZ_CASE(sequence_evaluation) {
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
 
   Sequence::Type types[SequenceStore::k_maxNumberOfSequences] = {Sequence::Type::Explicit, Sequence::Type::Explicit, Sequence::Type::Explicit};
   const char * definitions[SequenceStore::k_maxNumberOfSequences] = {nullptr, nullptr, nullptr};
@@ -490,7 +490,7 @@ QUIZ_CASE(sequence_evaluation) {
   conditions2[0] = "1";
   check_sequences_defined_by(result37, types, definitions, conditions1, conditions2);
 
-  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
+  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 QUIZ_CASE(sequence_context) {

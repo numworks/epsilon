@@ -23,8 +23,6 @@ public:
   void displayFormulaInput();
   void setFormulaLabel();
   virtual bool fillColumnWithFormula(Poincare::Expression formula) = 0;
-  virtual int relativeColumnIndex(int columnIndex) const { return columnIndex % DoublePairStore::k_numberOfColumnsPerSeries; }
-  virtual int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
   virtual void sortSelectedColumn();
 
   // TextFieldDelegate
@@ -49,7 +47,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
-  int selectedSeries() { return seriesAtColumn(selectedColumn()); }
+  int selectedSeries() { return m_store->seriesAtColumn(selectedColumn()); }
 
 protected:
   static constexpr KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * 7 + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness; // KDFont::SmallFont->glyphSize().width() = 7
@@ -63,7 +61,7 @@ protected:
 
   class ContentView : public Escher::View , public Escher::Responder {
   public:
-    ContentView(DoublePairStore * store, Responder * parentResponder, StoreController * dataSource, Escher::SelectableTableViewDataSource * selectionDataSource, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
+    ContentView(DoublePairStore * store, Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDataSource * selectionDataSource, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
    StoreSelectableTableView * dataView() { return &m_dataView; }
    BufferTextViewWithTextField * formulaInputView() { return &m_formulaInputView; }
    void displayFormulaInput(bool display);

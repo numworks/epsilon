@@ -16,14 +16,10 @@ public:
   static void FillSeriesName(int series, char * buffer, bool withFinalSpace = false);
 
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
-  bool displayCumulatedFrequenciesForSeries(int series) const { return m_displayCumulatedFrequencies[series]; }
-  void setDisplayCumulatedFrequenciesForSeries(int series, bool state) { m_displayCumulatedFrequencies[series] = state; }
 
   /* Shared::StoreController */
   Shared::StoreContext * storeContext() override { return &m_statisticsContext; }
   bool fillColumnWithFormula(Poincare::Expression formula) override;
-  int relativeColumnIndex(int columnIndex) const override;
-  int seriesAtColumn(int column) const override { return computeRelativeColumnAndSeries(&column); }
   void sortSelectedColumn() override;
 
   /* EditableCellTableViewController */
@@ -43,9 +39,8 @@ private:
   constexpr static int k_maxNumberOfDisplayableNonEditableColumns = 1 + k_maxNumberOfDisplayableColumns / 3;
   constexpr static int k_maxNumberOfNonEditableCells = k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableNonEditableColumns;
 
-  bool isCumulatedFrequencyColumn(int i) const { return relativeColumnIndex(i) == 2; }
+  bool isCumulatedFrequencyColumn(int i) const { return m_store->relativeColumnIndex(i) == 2; }
   bool isCumulatedFrequencyCell(int i, int j) const { return j != 0 && isCumulatedFrequencyColumn(i); }
-  int computeRelativeColumnAndSeries(int * i) const;
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
@@ -58,7 +53,6 @@ private:
   StatisticsContext m_statisticsContext;
   StoreParameterController m_storeParameterController;
   Shared::HideableEvenOddBufferTextCell m_nonEditableCells[k_maxNumberOfNonEditableCells];
-  bool m_displayCumulatedFrequencies[Store::k_numberOfSeries];
 };
 
 }

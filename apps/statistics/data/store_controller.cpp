@@ -17,21 +17,15 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
   Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
   m_store(store),
   m_statisticsContext(m_store, parentContext),
-  m_storeParameterController(this, this),
-  m_displayCumulatedFrequencies{false, false, false}
+  m_storeParameterController(this, this, store)
 {}
 
 bool StoreController::fillColumnWithFormula(Expression formula) {
   return privateFillColumnWithFormula(formula, Symbol::isSeriesSymbol);
 }
 
-int StoreController::relativeColumnIndex(int i) const {
-  computeRelativeColumnAndSeries(&i);
-  return i;
-}
-
 void StoreController::sortSelectedColumn() {
-  int relativeIndex = relativeColumnIndex(selectedColumn());
+  int relativeIndex = m_store->relativeColumnIndex(selectedColumn());
   // Also sort the values if the cumulated frequency is selected
   m_store->sortColumn(selectedSeries(), relativeIndex < 2 ? relativeIndex : 0);
 }
@@ -42,8 +36,8 @@ int StoreController::fillColumnName(int columnIndex, char * buffer) {
     buffer[0] = 0;
     return 0;
   }
-  int series = seriesAtColumn(columnIndex);
-  int isValueColumn = relativeColumnIndex(columnIndex) == 0;
+  int series = m_store->seriesAtColumn(columnIndex);
+  int isValueColumn = m_store->relativeColumnIndex(columnIndex) == 0;
   buffer[0] = isValueColumn ? 'V' : 'N';
   buffer[1] = static_cast<char>('1' + series);
   buffer[2] = 0;
@@ -53,7 +47,7 @@ int StoreController::fillColumnName(int columnIndex, char * buffer) {
 int StoreController::numberOfColumns() const {
   int result = Shared::StoreController::numberOfColumns();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    result += m_displayCumulatedFrequencies[i];
+    result += m_store->displayCumulatedFrequenciesForSeries(i);
   }
   return result;
 }
@@ -85,21 +79,11 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   }
 }
 
-int StoreController::computeRelativeColumnAndSeries(int * i) const {
-  int seriesIndex = 0;
-  while (*i >= DoublePairStore::k_numberOfColumnsPerSeries + m_displayCumulatedFrequencies[seriesIndex]) {
-    *i -= DoublePairStore::k_numberOfColumnsPerSeries + m_displayCumulatedFrequencies[seriesIndex];
-    seriesIndex++;
-    assert(seriesIndex < Store::k_numberOfSeries);
-  }
-  return seriesIndex;
-}
-
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   if (floatBody < -Shared::Range1D::k_lowerMaxFloat || floatBody > Shared::Range1D::k_upperMaxFloat) {
     return false;
   }
-  if (relativeColumnIndex(columnIndex) == 1) {
+  if (m_store->relativeColumnIndex(columnIndex) == 1) {
     if (floatBody < 0) {
       return false;
     }
@@ -107,7 +91,7 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
   if (!Shared::StoreController::setDataAtLocation(floatBody, columnIndex, rowIndex)) {
     return false;
   }
-  if (m_displayCumulatedFrequencies[seriesAtColumn(columnIndex)]) {
+  if (m_store->displayCumulatedFrequenciesForSeries(m_store->seriesAtColumn(columnIndex))) {
     // Data must be reloaded so that each cumulated frequencies is re-computed
     selectableTableView()->reloadData();
   }
@@ -116,7 +100,7 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
 
 double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
   if (isCumulatedFrequencyColumn(columnIndex)) {
-    int series = seriesAtColumn(columnIndex);
+    int series = m_store->seriesAtColumn(columnIndex);
     double value = m_store->get(series, 0, rowIndex - 1);
     return m_store->sumOfValuesBetween(series, -DBL_MAX, value, false);
   }
@@ -132,15 +116,15 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
     char columnName[Shared::ColumnParameterController::k_maxSizeOfColumnName];
     fillColumnName(columnIndex, columnName);
     char columnTitle[k_columnTitleSize]; // 50 is an ad-hoc value. A title cell can contain max 15 glyphs but the glyph can take more space than 1 byte in memory.
-    I18n::Message titleType = relativeColumnIndex(columnIndex) % 2 == 1 ? I18n::Message::Frequencies : I18n::Message::Values;
+    I18n::Message titleType = m_store->relativeColumnIndex(columnIndex) % 2 == 1 ? I18n::Message::Frequencies : I18n::Message::Values;
     Poincare::Print::customPrintf(columnTitle, k_columnTitleSize, I18n::translate(titleType), columnName);
     myTitleCell->setText(columnTitle);
   }
 }
 
 void StoreController::clearSelectedColumn() {
-  int series = seriesAtColumn(selectedColumn());
-  int column = relativeColumnIndex(selectedColumn());
+  int series = m_store->seriesAtColumn(selectedColumn());
+  int column = m_store->relativeColumnIndex(selectedColumn());
   if (column == 0) {
     m_store->deleteAllPairsOfSeries(series);
   } else {
@@ -149,9 +133,9 @@ void StoreController::clearSelectedColumn() {
 }
 
 void StoreController::setClearPopUpContent() {
-  int column = relativeColumnIndex(selectedColumn());
+  int column = m_store->relativeColumnIndex(selectedColumn());
   assert(column == 0 || column == 1);
-  int series = seriesAtColumn(selectedColumn());
+  int series = m_store->seriesAtColumn(selectedColumn());
   if (column == 0) {
     char tableName[k_tableNameSize];
     FillSeriesName(series, tableName, true);

@@ -5,10 +5,9 @@ using namespace Escher;
 
 namespace Shared {
 
-StoreSelectableTableView::StoreSelectableTableView(DoublePairStore * store, Responder * parentResponder, StoreController * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
+StoreSelectableTableView::StoreSelectableTableView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
   SelectableTableView(parentResponder, dataSource, selectionDataSource, delegate),
-  m_store(store),
-  m_controller(dataSource)
+  m_store(store)
 {
 }
 
@@ -36,7 +35,7 @@ bool StoreSelectableTableView::selectNonHiddenCellAtClippedLocation(int i, int j
   } else if (i >= dataSource()->numberOfColumns()) {
     i = dataSource()->numberOfColumns() - 1;
   }
-  int seriesIndex = m_controller->seriesAtColumn(i);
+  int seriesIndex = m_store->seriesAtColumn(i);
   int numberOfPairs = m_store->numberOfPairsOfSeries(seriesIndex);
   if (j > 1 + numberOfPairs) {
     j = 1 + numberOfPairs;

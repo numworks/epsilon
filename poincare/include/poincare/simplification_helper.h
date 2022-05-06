@@ -27,6 +27,8 @@ public:
   static Expression shallowReduceUndefinedKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext);
 
   static Expression undefinedOnMatrix(Expression e, ExpressionNode::ReductionContext reductionContext);
+  /* This method should be called only on expressions which have all their
+   * children reduced */
   static Expression distributeReductionOverLists(Expression e, ExpressionNode::ReductionContext reductionContext);
 };
 }

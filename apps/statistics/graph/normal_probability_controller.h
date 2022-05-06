@@ -9,7 +9,14 @@ namespace Statistics {
 
 class NormalProbabilityController : public PlotController, public Escher::AlternateEmptyViewDefaultDelegate {
 public:
-  using PlotController::PlotController;
+  NormalProbabilityController(
+    Escher::Responder * parentResponder,
+    Escher::ButtonRowController * header,
+    Escher::Responder * tabController,
+    Escher::StackViewController * stackViewController,
+    Escher::ViewController * typeViewController,
+    Store * store
+  );
 
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override { return !m_store->hasValidSeries(validSerieMethod()); }
@@ -27,6 +34,7 @@ private:
   // PlotController
   // Hide series having invalid total values.
   Shared::DoublePairStore::ValidSeries validSerieMethod() const override { return Store::ValidSeriesAndValidTotalNormalProbabilities; };
+  bool moveSelectionHorizontally(int deltaIndex) override;
   void computeYBounds(float * yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return false; }
   // Horizontal labels will always be in the middle
@@ -35,6 +43,8 @@ private:
   KDCoordinate topMargin() const override { return k_smallMargin; }
   const char * resultMessageTemplate() const override { return "%s%s%*.*ed"; }
   I18n::Message resultMessage() const override { return I18n::Message::StatisticsNormalProbabilityZScore; }
+
+  Shared::CursorView m_cursorView;
 };
 
 }  // namespace Statistics

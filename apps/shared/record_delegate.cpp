@@ -27,16 +27,8 @@ Ion::RecordDelegate::OverrideStatus RecordDelegate::shouldRecordBeOverridenWithN
   Ion::Storage::Record::Name previousName = previousRecord.name();
   bool newIsReservedForAnotherExtension = isNameReservedForAnotherExtension(previousName.baseName, previousName.baseNameLength, newExtension);
   bool previousIsReservedForAnotherExtension = isNameReservedForAnotherExtension(previousName.baseName, previousName.baseNameLength, previousRecord.name().extension);
-  if (newIsReservedForAnotherExtension && !previousIsReservedForAnotherExtension) {
-    // Name is reserved for previousExtension.
-    return Ion::RecordDelegate::OverrideStatus::Forbidden;
-  }
-  if (!newIsReservedForAnotherExtension && previousIsReservedForAnotherExtension) {
-    // Name is reserved for new extension.
-    return Ion::RecordDelegate::OverrideStatus::Allowed;
-  }
-  if (newPrecedenceScore > previousPrecedenceScore) {
-    // Previous extension has precedence over new one.
+  if ((newIsReservedForAnotherExtension && !previousIsReservedForAnotherExtension) // since they have the same baseName, it means that previousRecord is reserved for its extension.
+      || newPrecedenceScore > previousPrecedenceScore) {
     return Ion::RecordDelegate::OverrideStatus::Forbidden;
   }
   return  Ion::RecordDelegate::OverrideStatus::Allowed;
@@ -45,24 +37,26 @@ Ion::RecordDelegate::OverrideStatus RecordDelegate::shouldRecordBeOverridenWithN
 bool RecordDelegate::isNameReservedForAnotherExtension(const char * name, int nameLength, const char * extension) {
   for (int i = 0 ; i < k_reservedExtensionsLength ; i++) {
     ReservedExtension reservedExtension = k_reservedExtensions[i];
+    /* If it it has the same extension, skip the test.
+     * We only search if the name is reserved for an OTHER extension.
+     * */
+    if (strcmp(extension, reservedExtension.extension) == 0) {
+      continue;
+    }
     for (int j = 0 ; j < reservedExtension.numberOfElements ; j++) {
-      int charIndex = 0;
-      // For each reserved name, check if the record has the same base name.
-      while (charIndex < nameLength) {
-        if (name[charIndex] != reservedExtension.namePrefixes[j][charIndex]) {
-          break;
-        }
-        charIndex++;
-      }
-      bool hasSameBaseName;
-      if (reservedExtension.prefixRepetitions > 0) {
-        // Check if the last char of the name is the suffix-digit
-        hasSameBaseName = charIndex == nameLength - 1 && charIndex == strlen(reservedExtension.namePrefixes[j]) && name[charIndex] >= '1' && name[charIndex] < '1' + reservedExtension.prefixRepetitions;
-      } else {
-        hasSameBaseName = charIndex == nameLength && charIndex == strlen(reservedExtension.namePrefixes[j]);
-      }
-      // If it has the same base name but not the same extension, return true
-      if (hasSameBaseName && strcmp(extension, reservedExtension.extension) != 0) {
+      // Check if the record has the same base name.
+      bool hasSuffixDigit = reservedExtension.prefixRepetitions > 0;
+      // First check the prefix:
+      int diffBetweenPrefix = strncmp(name, reservedExtension.namePrefixes[j], nameLength - static_cast<int>(hasSuffixDigit));
+      // Then check suffix if needed:
+      if (diffBetweenPrefix == 0
+          && (!hasSuffixDigit
+            || (hasSuffixDigit
+              && name[nameLength - 1] >= '1'
+              && name[nameLength - 1] < '1' + reservedExtension.prefixRepetitions
+              )
+            )
+          ) {
         return true;
       }
     }

@@ -197,7 +197,10 @@ Storage::Record::ErrorStatus Storage::createRecordWithDataChunks(Record::Name re
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
    return notifyFullnessToDelegate();
   }
-  if (!destroyCompetingRecord(recordName) || isNameTaken(recordName)) {
+  /* WARNING : This relies on the fact that when you create a python script or
+   * a function, you first create it with a placeholder name and then let the
+   * user set its name through setNameOfRecord. */
+  if (!handleCompetingRecord(recordName, m_recordDelegate != nullptr ? m_recordDelegate->extensionCanOverrideItself(recordName.extension) : false)) {
     return Record::ErrorStatus::NameTaken;
   }
 
@@ -302,12 +305,20 @@ void Storage::destroyRecordsWithExtension(const char * extension) {
   }
 }
 
-bool Storage::destroyCompetingRecord(Record::Name recordName, Record * excludedRecord) {
+bool Storage::handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName) {
+  Record sameNameRecord = Record(recordName);
+  if (isNameOfRecordTaken(sameNameRecord)) {
+    if (destroyRecordWithSameFullName) {
+      sameNameRecord.destroy();
+      return true;
+    }
+    return false;
+  }
   if (m_recordDelegate == nullptr) {
     return true;
   }
   Record competingRecord = privateRecordBasedNamedWithExtensions(recordName.baseName, recordName.baseNameLength, m_recordDelegate->restrictiveExtensions(), m_recordDelegate->numberOfRestrictiveExtensions());
-  if (competingRecord.isNull() || (excludedRecord != nullptr && *excludedRecord == competingRecord)) {
+  if (competingRecord.isNull()) {
     return true;
   }
   RecordDelegate::OverrideStatus result = m_recordDelegate->shouldRecordBeOverridenWithNewExtension(competingRecord, recordName.extension);
@@ -319,7 +330,6 @@ bool Storage::destroyCompetingRecord(Record::Name recordName, Record * excludedR
   }
   return true;
 }
-
 
 // PRIVATE
 
@@ -352,7 +362,13 @@ Storage::Record::ErrorStatus Storage::setNameOfRecord(Record * record, Record::N
   }
   Record newRecord = Record(name);
   Record oldRecord = *record;
-  if (isNameOfRecordTaken(newRecord, record) || !destroyCompetingRecord(name, record)) {
+  if (newRecord == oldRecord) {
+    // Name has not changed
+    return Record::ErrorStatus::None;
+  }
+  /* If you do not verifiy that the name has not changed if the previous 'if'
+   * this will return false, and see the name as taken. */
+  if (!handleCompetingRecord(name, false)) {
     return Record::ErrorStatus::NameTaken;
   }
   size_t nameSize = Record::SizeOfName(name);
@@ -487,11 +503,6 @@ size_t Storage::overrideNameAtPosition(char * position, Record::Name name) {
 size_t Storage::overrideValueAtPosition(char * position, const void * data, record_size_t size) {
   memcpy(position, data, size);
   return size;
-}
-
-bool Storage::isNameTaken(Record::Name name, const Record * recordToExclude) {
-  Record r = Record(name);
-  return isNameOfRecordTaken(r, recordToExclude);
 }
 
 bool Storage::isNameOfRecordTaken(Record r, const Record * recordToExclude) {

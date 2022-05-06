@@ -47,10 +47,12 @@ public:
   };
   static_assert(k_numberOfRestrictiveExtensions == sizeof(k_restrictiveExtensionsPrecedenceScore) / sizeof(char *), "Number of precedence scores and number of restrictive extensions don't match.");
 
-  bool restrictiveExtensionsOverrideThemselves() override { return true; }
   const char * const * restrictiveExtensions() override { return k_restrictiveExtensions; }
   int numberOfRestrictiveExtensions() override { return k_numberOfRestrictiveExtensions; }
-  size_t precedenceScoreOfExtension(const char * extension);
+  bool extensionCanOverrideItself(const char * extension) override {
+    // Restrictive extension override themselves.
+    return precedenceScoreOfExtension(extension) > 0;
+  }
 
   /* This method indicates if a record can be overwritten with another which
    * has the same base name but a new extension.
@@ -68,6 +70,7 @@ public:
   Ion::RecordDelegate::OverrideStatus shouldRecordBeOverridenWithNewExtension(Ion::Storage::Record previousRecord, const char * newExtension) override;
 
 private:
+  size_t precedenceScoreOfExtension(const char * extension);
   /* Some names are reserved for specific extensions, such as V1, X1, or N1
    * which are reserved for the list extension.
    * This means that a record can be name V1 only in two cases :

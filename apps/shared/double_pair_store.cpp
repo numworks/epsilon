@@ -18,11 +18,11 @@ int DoublePairStore::fillColumnName(int series, int columnIndex, char * buffer) 
 }
 
 bool DoublePairStore::isColumnName(const char * name, int nameLen, int * returnSeries, int * returnColumn) {
-  if (nameLen != 2) {
+  if (nameLen != 2 || name[1] < '1' || name[1] >= '1' + k_numberOfSeries) {
     return false;
   }
   for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
-    if (name[0] == columnNamePrefixAtIndex(i) && name[1] >= '1' && name[1] < '1' + k_numberOfSeries) {
+    if (name[0] == columnNamePrefixAtIndex(i)) {
       if (returnSeries != nullptr) {
         *returnSeries = name[1] - '1';
       }

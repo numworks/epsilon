@@ -1,5 +1,9 @@
 #include <poincare/distribution_function.h>
 #include <poincare/binomial_distribution.h>
+#include <poincare/geometric_distribution.h>
+#include <poincare/student_distribution.h>
+#include <poincare/poisson_distribution.h>
+#include <poincare/normal_distribution.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -9,6 +13,37 @@
 #include <assert.h>
 
 namespace Poincare {
+
+constexpr Expression::FunctionHelper NormCDF::s_functionHelper;
+constexpr Expression::FunctionHelper NormCDFRange::s_functionHelper;
+constexpr Expression::FunctionHelper NormPDF::s_functionHelper;
+constexpr Expression::FunctionHelper InvNorm::s_functionHelper;
+
+constexpr Expression::FunctionHelper StudentCDF::s_functionHelper;
+constexpr Expression::FunctionHelper StudentCDFRange::s_functionHelper;
+constexpr Expression::FunctionHelper StudentPDF::s_functionHelper;
+constexpr Expression::FunctionHelper InvStudent::s_functionHelper;
+
+constexpr Expression::FunctionHelper PoissonCDF::s_functionHelper;
+constexpr Expression::FunctionHelper PoissonPDF::s_functionHelper;
+
+constexpr Expression::FunctionHelper BinomCDF::s_functionHelper;
+constexpr Expression::FunctionHelper BinomPDF::s_functionHelper;
+constexpr Expression::FunctionHelper InvBinom::s_functionHelper;
+
+constexpr Expression::FunctionHelper GeomCDF::s_functionHelper;
+constexpr Expression::FunctionHelper GeomCDFRange::s_functionHelper;
+constexpr Expression::FunctionHelper GeomPDF::s_functionHelper;
+constexpr Expression::FunctionHelper InvGeom::s_functionHelper;
+
+union AnyDistribution {
+  AnyDistribution() {}
+  NormalDistribution n;
+  StudentDistribution s;
+  BinomialDistribution b;
+  PoissonDistribution p;
+  GeometricDistribution g;
+};
 
 Layout DistributionFunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(DistributionFunction(this), floatDisplayMode, numberOfSignificantDigits, name());
@@ -38,8 +73,8 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
   for (int i=0; i < Distribution::numberOfParameters(distributionType()); i++) {
     parameters[i] = childAtIndex(childIndex++);
   }
-  BinomialDistribution distributionPlaceholder;
-  Distribution * distribution = &distributionPlaceholder;
+  AnyDistribution distributionPlaceholder;
+  Distribution * distribution = static_cast<Distribution *>(static_cast<void*>(&distributionPlaceholder));
   Distribution::Initialize(distribution, distributionType());
 
   bool parametersAreOk;
@@ -94,9 +129,9 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
   return *this;
 }
 
-
 template<typename T>
 Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContext approximationContext) const {
+
   int childIndex = 0;
   T x, y;
   switch (m_functionType) {
@@ -119,8 +154,8 @@ Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContex
   }
   T result = NAN;
   // Distributions are only vpointers
-  BinomialDistribution distributionPlaceholder;
-  Distribution * distribution = &distributionPlaceholder;
+  AnyDistribution distributionPlaceholder;
+  Distribution * distribution = static_cast<Distribution *>(static_cast<void*>(&distributionPlaceholder));
   Distribution::Initialize(distribution, m_distributionType);
   T parameters[Distribution::maxNumberOfParameters];
   for (int i=0; i < Distribution::numberOfParameters(m_distributionType); i++) {

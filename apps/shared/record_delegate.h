@@ -20,11 +20,11 @@ public:
    * For instance, test.py can coexist with test.func, but test.exp can't
    * coexist with test.func */
   constexpr static const char * k_competingExtensions[] = {
+    Ion::Storage::funcExtension,
+    Ion::Storage::seqExtension,
     Ion::Storage::expExtension,
     Ion::Storage::lisExtension,
-    Ion::Storage::matExtension,
-    Ion::Storage::funcExtension,
-    Ion::Storage::seqExtension
+    Ion::Storage::matExtension
   };
   constexpr static int k_numberOfCompetingExtensions = sizeof(k_competingExtensions) / sizeof(char *);
 
@@ -32,18 +32,20 @@ public:
    * an other extension with the same base name.
    * WARNING : Each of these scores correspond to the extension at the same
    * index in the k_competingExtensions table.
+   * These are not in the same table because we need the k_competingExtensions
+   * table to be passed to some storage functions.
    *
    * If precendeceScore1 <= precedenceScore2 record1 can override record2
-   *If precedenceScore1 > precedenceScore2, record1 cannot override record2
+   * If precedenceScore1 > precedenceScore2, record1 cannot override record2
    * */
   constexpr static size_t k_competingExtensionsPrecedenceScore[] = {
-    2,
-    2,
-    2,
     1,
-    1
+    1,
+    2,
+    2,
+    2
   };
-  static_assert(k_numberOfCompetingExtensions == sizeof(k_competingExtensionsPrecedenceScore) / sizeof(char *), "A competing record extension has no precedence score.");
+  static_assert(k_numberOfCompetingExtensions == sizeof(k_competingExtensionsPrecedenceScore) / sizeof(char *), "Number of precedence scores and number of competing extensions don't match.");
 
   bool competingExtensionsOverrideThemselves() override { return true; }
   const char * const * competingExtensions() override { return k_competingExtensions; }

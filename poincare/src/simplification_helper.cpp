@@ -129,6 +129,10 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, Expr
   int n = e.numberOfChildren();
   List children = List::Builder();
   for (int i = 0; i < n; i++) {
+    // You can't mix lists and matrices
+    if (e.childAtIndex(i).deepIsMatrix(reductionContext.context())) {
+      return Undefined::Builder();
+    }
     children.addChildAtIndexInPlace(e.childAtIndex(i), i, i);
   }
   assert(children.numberOfChildren() == n);
@@ -151,7 +155,7 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, Expr
     element.shallowReduce(reductionContext);
   }
   e.replaceWithInPlace(result);
-  return std::move(result);
+  return  result.shallowReduce(reductionContext.context());
 }
 
 }

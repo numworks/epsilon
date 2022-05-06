@@ -94,7 +94,8 @@ int InfixPrefix(
     const char * operatorName,
     bool needsSystemParentheses,
     int firstChildIndex,
-    int lastChildIndex)
+    int lastChildIndex,
+    bool bracesInsteadOfParenthesis)
 {
   {
     int result = 0;
@@ -104,7 +105,8 @@ int InfixPrefix(
   }
 
   int numberOfChar = 0;
-
+  CodePoint openingCodePoint = bracesInsteadOfParenthesis ? CodePoint('{') : CodePoint('(');
+  CodePoint closingCodePoint = bracesInsteadOfParenthesis ? CodePoint('}') : CodePoint(')');
   /* For Prefix, we use system parentheses so that, for instance, |3)+(1| is not
    * parsable after serialization.*/
 
@@ -117,7 +119,7 @@ int InfixPrefix(
       return bufferSize-1;
     }
     // Add the opening (system or user) parenthesis
-    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, needsSystemParentheses ? UCodePointLeftSystemParenthesis : CodePoint('('));
+    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, needsSystemParentheses ? UCodePointLeftSystemParenthesis : openingCodePoint);
     if (numberOfChar >= bufferSize-1) {
       assert(buffer[bufferSize - 1] == 0);
       return bufferSize - 1;
@@ -176,7 +178,7 @@ int InfixPrefix(
 
   if (prefix) {
     // Add the closing system parenthesis
-    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, needsSystemParentheses ? UCodePointRightSystemParenthesis : CodePoint(')'));
+    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, needsSystemParentheses ? UCodePointRightSystemParenthesis : closingCodePoint);
     if (numberOfChar >= bufferSize-1) {
        assert(buffer[bufferSize - 1] == 0);
        return bufferSize - 1;
@@ -195,9 +197,10 @@ int SerializationHelper::Infix(
     int numberOfDigits,
     const char * operatorName,
     int firstChildIndex,
-    int lastChildIndex)
+    int lastChildIndex,
+    bool bracesInsteadOfParenthesis)
 {
-  return InfixPrefix(false, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, false, firstChildIndex, lastChildIndex);
+  return InfixPrefix(false, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, false, firstChildIndex, lastChildIndex, bracesInsteadOfParenthesis);
 }
 
 int SerializationHelper::Prefix(
@@ -208,9 +211,10 @@ int SerializationHelper::Prefix(
     int numberOfDigits,
     const char * operatorName,
     bool needsSystemParentheses,
-    int lastChildIndex)
+    int lastChildIndex,
+    bool bracesInsteadOfParenthesis)
 {
-  return InfixPrefix(true, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, needsSystemParentheses, 0, lastChildIndex);
+  return InfixPrefix(true, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, needsSystemParentheses, 0, lastChildIndex, bracesInsteadOfParenthesis);
 }
 
 int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoint c) {

@@ -1989,10 +1989,11 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
   assert_parsed_expression_simplify_to("tan({0,π/4})", "{0,1}");
 }
 
-QUIZ_CASE(poincare_simplification_mix_lists_and_matrices) {
+QUIZ_CASE(poincare_simplification_mix_lists) {
   assert_parsed_expression_simplify_to("{{1,2},{3,4}}", Undefined::Name());
   assert_parsed_expression_simplify_to("{[[1,2][3,4]]}", Undefined::Name());
   assert_parsed_expression_simplify_to("[[{1,2},{3,4}][3,4]]", Undefined::Name());
   assert_parsed_expression_simplify_to("{1,2}+[[1,2][3,4]]", Undefined::Name());
   assert_parsed_expression_simplify_to("{1,2}*[[1,2][3,4]]", Undefined::Name());
+  assert_parsed_expression_simplify_to("{1_kg, 2_kg}+3_kg", "{4×_kg,5×_kg}", User, Radian, MetricUnitFormat);
 }

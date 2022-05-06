@@ -110,7 +110,8 @@ bool Expression::recursivelyMatches(ExpressionTernaryTest test, Context * contex
   }
 
   const int childrenCount = this->numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
+  // Run loop backwards to find lists and matrices quicker in NAry expressions
+  for (int i = childrenCount - 1; i >= 0; i--) {
     if (childAtIndex(i).recursivelyMatches(test, context, replaceSymbols, auxiliary)) {
       return true;
     }
@@ -941,7 +942,11 @@ Expression Expression::setSign(ExpressionNode::Sign s, ExpressionNode::Reduction
 int Expression::lengthOfListChildren() const {
   int lastLength = k_noList;
   int n = numberOfChildren();
-  for (int i = 0; i < n; i++) {
+  bool isNAry = IsNAry(*this, nullptr);
+  for (int i = n - 1; i >= 0; i--) {
+    if (isNAry && childAtIndex(i).type() < ExpressionNode::Type::List) {
+      return lastLength;
+    }
     if (childAtIndex(i).type() == ExpressionNode::Type::List) {
       int length = childAtIndex(i).numberOfChildren();
       if (lastLength == k_noList) {

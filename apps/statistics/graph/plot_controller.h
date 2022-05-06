@@ -39,7 +39,6 @@ public:
 
   // DataViewController
   DataView * dataView() override { return &m_view; }
-  bool moveSelectionHorizontally(int deltaIndex) override;
 
 protected:
   constexpr static KDCoordinate k_smallMargin = 10;
@@ -49,21 +48,22 @@ protected:
     return std::max(0, std::min(index, numberOfPairs - 1));
   }
 
-  virtual void moveCursorVertically(bool seriesChanged);
+  virtual void moveCursorToSelectedIndex();
 
   // DataViewController
-  void viewWillAppearBeforeReload() override;
-  bool moveSelectionVertically(int deltaIndex) override;
   bool reloadBannerView() override;
 
   Shared::CurveViewCursor m_cursor;
   PlotRange m_graphRange;
   PlotBannerView m_bannerView;
-  Shared::CursorView m_cursorView;
   PlotView m_view;
   PlotCurveView m_curveView;
 
 private:
+  // DataViewController
+  void viewWillAppearBeforeReload() override;
+  bool moveSelectionVertically(int deltaIndex) override;
+
   void computeRanges(KDCoordinate bannerHeight);
   void computeXBounds(float * xMin, float *xMax) const;
   virtual void computeYBounds(float * yMin, float *yMax) const = 0;

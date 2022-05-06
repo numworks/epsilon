@@ -15,42 +15,21 @@ PlotController::PlotController(Escher::Responder * parentResponder,
     m_cursor(FLT_MAX),
     m_view(&m_curveView, &m_graphRange, &m_bannerView),
     // No bannerView given to the curve view because the display is handled here
-    m_curveView(&m_graphRange, &m_cursor, &m_cursorView, this)  {
+    m_curveView(&m_graphRange, &m_cursor, nullptr, this)  {
 }
 
-void PlotController::moveCursorVertically(bool seriesChanged) {
-  if (seriesChanged) {
-    // Cursor must be repositionned
-    double x = valueAtIndex(m_selectedSeries, m_selectedIndex);
-    double y = resultAtIndex(m_selectedSeries, m_selectedIndex);
-    m_cursor.moveTo(x, x, y);
-    m_curveView.reload();
-  }
-}
-
-void PlotController::viewWillAppearBeforeReload() {
-  computeRanges(m_bannerView.bounds().height());
-  // Sanitize m_selectedBarIndex and cursor's position
-  m_selectedIndex = SanitizeIndex(m_selectedIndex, totalValues(m_selectedSeries));
+void PlotController::moveCursorToSelectedIndex() {
   double x = valueAtIndex(m_selectedSeries, m_selectedIndex);
   double y = resultAtIndex(m_selectedSeries, m_selectedIndex);
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
 }
 
-bool PlotController::moveSelectionHorizontally(int deltaIndex) {
-  assert(m_selectedSeries >= 0);
-  int nextIndex = SanitizeIndex(m_selectedIndex + deltaIndex, totalValues(m_selectedSeries));
-  if (nextIndex != m_selectedIndex) {
-    m_selectedIndex = nextIndex;
-    // Compute coordinates
-    double x = valueAtIndex(m_selectedSeries, nextIndex);
-    double y = resultAtIndex(m_selectedSeries, nextIndex);
-    m_cursor.moveTo(x, x, y);
-    m_curveView.reload();
-    return true;
-  }
-  return false;
+void PlotController::viewWillAppearBeforeReload() {
+  computeRanges(m_bannerView.bounds().height());
+  // Sanitize m_selectedBarIndex and cursor's position
+  m_selectedIndex = SanitizeIndex(m_selectedIndex, totalValues(m_selectedSeries));
+  moveCursorToSelectedIndex();
 }
 
 bool PlotController::moveSelectionVertically(int direction) {
@@ -58,7 +37,7 @@ bool PlotController::moveSelectionVertically(int direction) {
   bool result = DataViewController::moveSelectionVertically(direction);
   if (result && previousSeries != m_selectedSeries) {
     // Cursor has been moved into another curve, cursor must be switched
-    moveCursorVertically(true);
+    moveCursorToSelectedIndex();
   }
   return result;
 }

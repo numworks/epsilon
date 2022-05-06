@@ -8,7 +8,14 @@ namespace Statistics {
 
 class FrequencyController : public PlotController {
 public:
-  using PlotController::PlotController;
+  FrequencyController(
+    Escher::Responder * parentResponder,
+    Escher::ButtonRowController * header,
+    Escher::Responder * tabController,
+    Escher::StackViewController * stackViewController,
+    Escher::ViewController * typeViewController,
+    Store * store
+  );
 
   // PlotController
   int totalValues(int series) const override { return m_store->totalCumulatedFrequencyValues(series); }
@@ -24,14 +31,9 @@ public:
 private:
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
 
-  // Move the cursor x by step and compute y. Snap on closest interesting value
-  bool getNextCursorPosition(int totValues, double step, double * x, double * y);
-
   // PlotController
-  void moveCursorVertically(bool seriesChanged) override;
-  void viewWillAppearBeforeReload() override;
+  void moveCursorToSelectedIndex() override;
   bool moveSelectionHorizontally(int deltaIndex) override;
-  bool moveSelectionVertically(int deltaIndex) override;
   void computeYBounds(float * yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return true; }
   // Horizontal labels will always be in bottom, vertical labels are wider
@@ -42,7 +44,6 @@ private:
   I18n::Message resultMessage() const override { return I18n::Message::StatisticsFrequencyFcc; }
 
   Shared::RoundCursorView m_roundCursorView;
-  bool m_continuousCursor = false;
 };
 
 }  // namespace Statistics

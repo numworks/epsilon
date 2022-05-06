@@ -4,6 +4,7 @@
 #include <poincare/init.h>
 #include <poincare/tree_pool.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/print.h>
 
 void quiz_print(const char * message) {
   Ion::Console::writeLine(message);
@@ -11,6 +12,7 @@ void quiz_print(const char * message) {
 
 static inline void ion_main_inner() {
   int i = 0;
+  int time = Ion::Timing::millis();
   while (quiz_cases[i] != NULL) {
     QuizCase c = quiz_cases[i];
     quiz_print(quiz_case_names[i]);
@@ -22,6 +24,10 @@ static inline void ion_main_inner() {
     i++;
   }
   quiz_print("ALL TESTS FINISHED");
+  time = Ion::Timing::millis() - time;
+  char timeString[30];
+  Poincare::Print::customPrintf(timeString, 30, "DURATION : %i ms", time);
+  quiz_print(timeString);
 #ifdef PLATFORM_DEVICE
   while (1) {
     Ion::Timing::msleep(100000);

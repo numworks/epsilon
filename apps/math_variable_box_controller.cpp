@@ -238,8 +238,8 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
 
 I18n::Message MathVariableBoxController::nodeLabelAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfMenuRows);
-  Page pageAtIndex = static_cast<Page>(index +1);
-  switch (pageAtIndex) {
+  Page page = pageAtIndex(index);
+  switch (page) {
     case Page::Expression:
       return I18n::Message::Expressions;
     case Page::Function:

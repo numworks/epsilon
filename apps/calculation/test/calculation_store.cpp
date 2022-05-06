@@ -1,6 +1,6 @@
 #include <quiz.h>
 #include <apps/shared/global_context.h>
-#include <apps/shared/record_name_helper.h>
+#include <apps/shared/record_delegate.h>
 #include <poincare/test/helper.h>
 #include <poincare/preferences.h>
 #include <poincare_expressions.h>
@@ -267,8 +267,8 @@ void assertMainCalculationOutputIs(const char * input, const char * output, Cont
 
 QUIZ_CASE(calculation_symbolic_computation) {
   Shared::GlobalContext globalContext;
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
   // 0 - General cases
@@ -395,7 +395,7 @@ QUIZ_CASE(calculation_symbolic_computation) {
   Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
-  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
+  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {

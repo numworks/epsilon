@@ -1,8 +1,8 @@
-#include "record_name_helper.h"
+#include "record_delegate.h"
 
 namespace Shared {
 
-size_t RecordNameHelper::precedenceScoreOfExtension(const char * extension) {
+size_t RecordDelegate::precedenceScoreOfExtension(const char * extension) {
   for (int i = 0 ; i < k_numberOfCompetingExtensions ; i++) {
     if (strcmp(extension, k_competingExtensions[i]) == 0) {
       return k_competingExtensionsPrecedenceScore[i];
@@ -11,38 +11,38 @@ size_t RecordNameHelper::precedenceScoreOfExtension(const char * extension) {
   return -1;
 }
 
-Ion::RecordNameHelper::OverrideStatus RecordNameHelper::shouldRecordBeOverridenWithNewExtension(Ion::Storage::Record previousRecord, const char * newExtension) {
+Ion::RecordDelegate::OverrideStatus RecordDelegate::shouldRecordBeOverridenWithNewExtension(Ion::Storage::Record previousRecord, const char * newExtension) {
   if (previousRecord.isNull()) {
-    return Ion::RecordNameHelper::OverrideStatus::Allowed;
+    return Ion::RecordDelegate::OverrideStatus::Allowed;
   }
   if (previousRecord.hasExtension(newExtension)) {
-    return competingExtensionsOverrideThemselves() ? Ion::RecordNameHelper::OverrideStatus::Allowed : Ion::RecordNameHelper::OverrideStatus::Forbidden;
+    return competingExtensionsOverrideThemselves() ? Ion::RecordDelegate::OverrideStatus::Allowed : Ion::RecordDelegate::OverrideStatus::Forbidden;
   }
   int newPrecedenceScore = precedenceScoreOfExtension(newExtension);
   int previousPrecedenceScore = precedenceScoreOfExtension(previousRecord.name().extension);
   // If at least one is not a competing extension, they can coexist.
   if (newPrecedenceScore == -1 || previousPrecedenceScore == -1) {
-    return Ion::RecordNameHelper::OverrideStatus::CanCoexist;
+    return Ion::RecordDelegate::OverrideStatus::CanCoexist;
   }
   Ion::Storage::Record::Name previousName = previousRecord.name();
   bool newIsReservedForAnotherExtension = isNameReservedForAnotherExtension(previousName.baseName, previousName.baseNameLength, newExtension);
   bool previousIsReservedForAnotherExtension = isNameReservedForAnotherExtension(previousName.baseName, previousName.baseNameLength, previousRecord.name().extension);
   if (newIsReservedForAnotherExtension && !previousIsReservedForAnotherExtension) {
     // Name is reserved for previousExtension.
-    return Ion::RecordNameHelper::OverrideStatus::Forbidden;
+    return Ion::RecordDelegate::OverrideStatus::Forbidden;
   }
   if (!newIsReservedForAnotherExtension && previousIsReservedForAnotherExtension) {
     // Name is reserved for new extension.
-    return Ion::RecordNameHelper::OverrideStatus::Allowed;
+    return Ion::RecordDelegate::OverrideStatus::Allowed;
   }
   if (newPrecedenceScore > previousPrecedenceScore) {
     // Previous extension has precedence over new one.
-    return Ion::RecordNameHelper::OverrideStatus::Forbidden;
+    return Ion::RecordDelegate::OverrideStatus::Forbidden;
   }
-  return  Ion::RecordNameHelper::OverrideStatus::Allowed;
+  return  Ion::RecordDelegate::OverrideStatus::Allowed;
 }
 
-bool RecordNameHelper::isNameReservedForAnotherExtension(const char * name, int nameLength, const char * extension) {
+bool RecordDelegate::isNameReservedForAnotherExtension(const char * name, int nameLength, const char * extension) {
   for (int i = 0 ; i < k_reservedExtensionsLength ; i++) {
     ReservedExtension reservedExtension = k_reservedExtensions[i];
     for (int j = 0 ; j < reservedExtension.numberOfElements ; j++) {

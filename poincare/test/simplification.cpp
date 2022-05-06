@@ -1,5 +1,5 @@
 #include <ion/storage.h>
-#include <apps/shared/record_name_helper.h>
+#include <apps/shared/record_delegate.h>
 #include <poincare/constant.h>
 #include <poincare/function.h>
 #include <poincare/infinity.h>
@@ -1287,20 +1287,20 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
 }
 
 QUIZ_CASE(poincare_simplification_store) {
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
   assert_parsed_expression_simplify_to("1+2→x", "3");
   assert_parsed_expression_simplify_to("0.1+0.2→x", "3/10");
   assert_parsed_expression_simplify_to("a→x", Undefined::Name());
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
-  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
+  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 QUIZ_CASE(poincare_simplification_store_matrix) {
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
   assert_parsed_expression_simplify_to("1+1→a", "2");
   assert_parsed_expression_simplify_to("[[8]]→f(x)", "[[8]]");
   assert_parsed_expression_simplify_to("[[x]]→f(x)", "[[x]]");
@@ -1311,8 +1311,8 @@ QUIZ_CASE(poincare_simplification_store_matrix) {
 }
 
 QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
   assert_parsed_expression_simplify_to("abc", "a×b×c");
   assert_parsed_expression_simplify_to("\"abc\"", "\"abc\"");
   assert_parsed_expression_simplify_to("2→a", "2");
@@ -1338,7 +1338,7 @@ QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
   Ion::Storage::sharedStorage()->recordNamed("bar.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("foo.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("foobar.func").destroy();
-  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
+  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 QUIZ_CASE(poincare_simplification_unit_convert) {

@@ -1,5 +1,5 @@
 #include <apps/shared/global_context.h>
-#include <apps/shared/record_name_helper.h>
+#include <apps/shared/record_delegate.h>
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/arc_cosine.h>
@@ -366,8 +366,8 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("π×x", 1);
   assert_reduced_expression_polynomial_degree("√(-1)×x", -1, "x", Real);
 
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
   // f: y→y^2+πy+1
   assert_reduce("1+π×y+y^2→f(y)");
   assert_reduced_expression_polynomial_degree("f(x)", 2);
@@ -385,7 +385,7 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("f(x)", 1);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
+  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 void assert_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {

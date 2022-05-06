@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include "../record_name_helper.h"
+#include "../record_delegate.h"
 
 using namespace Ion;
 
@@ -23,9 +23,9 @@ bool isDataOfRecord(const char * baseName, const char * extension, const char * 
   return strcmp(recordData, data) == 0;
 }
 
-QUIZ_CASE(record_name_helper) {
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+QUIZ_CASE(record_delegate) {
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
 
   const char * varName0 = "A";
   const char * varName1 = "A1";
@@ -58,10 +58,10 @@ QUIZ_CASE(record_name_helper) {
 
   quiz_assert(getRecord(varName0, Storage::expExtension).isNull());
   quiz_assert(!getRecord(varName0, Storage::funcExtension).isNull());
-  
+
   quiz_assert(getRecord(varName1, Storage::matExtension).isNull());
   quiz_assert(!getRecord(varName1, Storage::seqExtension).isNull());
-  
+
   quiz_assert(getRecord(varName2, Storage::lisExtension).isNull());
   quiz_assert(!getRecord(varName2, Storage::funcExtension).isNull());
 
@@ -105,7 +105,7 @@ QUIZ_CASE(record_name_helper) {
   createTestRecordWithErrorStatus("X1", Storage::lisExtension);
   quiz_assert(getRecord("X1", Storage::funcExtension).isNull());
   createTestRecordWithErrorStatus("Y1", Storage::lisExtension);
-  quiz_assert(getRecord("Y1", Storage::funcExtension).isNull()); 
+  quiz_assert(getRecord("Y1", Storage::funcExtension).isNull());
   createTestRecordWithErrorStatus("V2", Storage::lisExtension);
   quiz_assert(getRecord("V2", Storage::funcExtension).isNull());
   createTestRecordWithErrorStatus("N3", Storage::lisExtension);
@@ -138,7 +138,7 @@ QUIZ_CASE(record_name_helper) {
   createTestRecordWithErrorStatus("u", testExtension);
 
   Storage::sharedStorage()->destroyAllRecords();
-  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
+  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 }

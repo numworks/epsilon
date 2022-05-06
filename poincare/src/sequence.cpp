@@ -52,11 +52,11 @@ int SequenceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
    * We want to replace the parenthesis with braces u(n) -> u{n} */
   int i = 0;
   while (buffer[i] != 0) {
-      if (buffer[i] == '(') {
-        // Replace the left-most left-parenthesis
-        buffer[i] = '{';
-        break;
-      }
+    if (buffer[i] == '(') {
+      // Replace the left-most left-parenthesis
+      buffer[i] = '{';
+      break;
+    }
     i++;
   }
   if (buffer[i] == 0) {

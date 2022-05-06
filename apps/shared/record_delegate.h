@@ -10,9 +10,9 @@
 
 namespace Shared {
 
-class RecordNameHelper : public Ion::RecordNameHelper {
+class RecordDelegate : public Ion::RecordDelegate {
 public:
-  /* Some record extensions are competing, which means that two record with
+  /* Some records extensions are competing, which means that two record with
    * the same base name and one of these extensions can't exist at the same
    * time in the storage.
    * If a record's extension is not a competing extension, it means that it can
@@ -33,9 +33,8 @@ public:
    * WARNING : Each of these scores correspond to the extension at the same
    * index in the k_competingExtensions table.
    *
-   * If precendeceScore1 < precedenceScore2, record2 cannot override record1,
-   * but if precedenceScore 1 >= precedenceScore2, record2 can override record1
-   * So the lowest precendenceScore is the strongest.
+   * If precendeceScore1 <= precedenceScore2 record1 can override record2
+   *If precedenceScore1 > precedenceScore2, record1 cannot override record2
    * */
   constexpr static size_t k_competingExtensionsPrecedenceScore[] = {
     2,
@@ -53,7 +52,7 @@ public:
 
   /* This method indicates if a record can be overwritten with another which
    * has the same base name but a new extension.
-   * The return values are :
+   * The return values are:
    * - OverrideStatus::Forbidden : if the newExtension has a higher
    *   precedence score than the previous, OR if the previousRecord name is
    *   reserved for its extension (see below).
@@ -64,15 +63,15 @@ public:
    *
    * - OverrideStatus::CanCoexist : if at least one of the two extensions is
    *   not a competing extension. */
-  Ion::RecordNameHelper::OverrideStatus shouldRecordBeOverridenWithNewExtension(Ion::Storage::Record previousRecord, const char * newExtension) override;
+  Ion::RecordDelegate::OverrideStatus shouldRecordBeOverridenWithNewExtension(Ion::Storage::Record previousRecord, const char * newExtension) override;
 
 private:
   /* Some names are reserved for specific extensions, such as V1, X1, or N1
    * which are reserved for the list extension.
    * This means that a record can be name V1 only in two cases :
    * If it is a list OR if no list named V1 exists.
-   * This behaves such as the list extension has a precedence score lower
-   * to any other score if it is reserved for the base name.
+   * To do so, the list extension has a precedence score lower to any other
+   * score if it is reserved for the base name.
    * So if X1.func exists in the storage, X1.lis will override it, even if
    * the list extension has usually an higher precedence score.
    *

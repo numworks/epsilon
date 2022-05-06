@@ -28,7 +28,7 @@ AppsContainer::AppsContainer() :
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
   Ion::Storage::sharedStorage()->setDelegate(this);
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&m_recordNameHelper);
+  Ion::Storage::sharedStorage()->setRecordDelegate(&m_recordDelegate);
 }
 
 Ion::ExternalApps::App AppsContainer::externalAppAtIndex(int index) {

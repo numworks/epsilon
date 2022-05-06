@@ -53,6 +53,10 @@ public:
   int numberOfValidSeries(ValidSeries = &DefaultValidSeries) const;
   int indexOfKthValidSeries(int k, ValidSeries = &DefaultValidSeries) const;
 
+  // Series and columns
+  virtual int relativeColumnIndex(int columnIndex) const { return columnIndex % k_numberOfColumnsPerSeries; }
+  virtual int seriesAtColumn(int column) const { return column / k_numberOfColumnsPerSeries; }
+
   // Calculations
   virtual void sortColumn(int series, int column);
   void sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const;

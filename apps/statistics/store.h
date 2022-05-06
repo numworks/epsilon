@@ -16,6 +16,10 @@ public:
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
   int validSeriesIndex(int series, ValidSeries = &DefaultValidSeries) const;
+  bool displayCumulatedFrequenciesForSeries(int series) const { return m_displayCumulatedFrequencies[series]; }
+  void setDisplayCumulatedFrequenciesForSeries(int series, bool state) { m_displayCumulatedFrequencies[series] = state; }
+  int seriesAtColumn(int column) const override { return computeRelativeColumnAndSeries(&column); }
+  int relativeColumnIndex(int columnIndex) const override;
   // Histogram bars
   double barWidth() const { return m_barWidth; }
   void setBarWidth(double barWidth);
@@ -121,6 +125,7 @@ private:
     &Store::upperWhisker
   };
 
+  int computeRelativeColumnAndSeries(int * i) const;
   double defaultValue(int series, int i, int j) const override;
   /* Find the i-th distinct value (if i is -1, browse the entire series) from
    * start to end (ordered by value).
@@ -138,6 +143,8 @@ private:
   uint8_t valueIndexAtSortedIndex(int series, int i) const;
   // Sort and memoize values indexes in increasing order.
   void buildSortedIndex(int series) const;
+  // Cumulated frequencies column display
+  bool m_displayCumulatedFrequencies[k_numberOfSeries];
   // Histogram bars
   double m_barWidth;
   double m_firstDrawnBarAbscissa;

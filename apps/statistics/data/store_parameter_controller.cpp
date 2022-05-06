@@ -4,10 +4,11 @@
 
 namespace Statistics {
 
-StoreParameterController::StoreParameterController(Responder * parentResponder, StoreController * storeController) :
+StoreParameterController::StoreParameterController(Responder * parentResponder, StoreController * storeController, Store * store) :
   Shared::StoreParameterController(parentResponder, storeController),
   m_displayCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnToggleTitle),
-  m_hideCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnHideTitle)
+  m_hideCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnHideTitle),
+  m_store(store)
 {
   m_displayCumulatedFrequencyCell.setSubLabelMessage(I18n::Message::CumulatedFrequencyColumnToggleDescription);
   m_hideCumulatedFrequencyCell.setSubLabelMessage(I18n::Message::CumulatedFrequencyColumnHideDescription);
@@ -18,9 +19,9 @@ void StoreParameterController::initializeColumnParameters() {
   resetMemoization();
   Shared::StoreParameterController::initializeColumnParameters();
   // Initialize clear column message
-  if (m_storeController->relativeColumnIndex(m_columnIndex) == 1) {
+  if (m_store->relativeColumnIndex(m_columnIndex) == 1) {
       m_clearColumn.setMessageWithPlaceholder(I18n::Message::ResetFrequencies);
-  } else if (m_storeController->relativeColumnIndex(m_columnIndex) == 0) {
+  } else if (m_store->relativeColumnIndex(m_columnIndex) == 0) {
     int series = m_storeController->selectedSeries();
     char tableName[StoreController::k_tableNameSize];
     StoreController::FillSeriesName(series, tableName);
@@ -31,8 +32,8 @@ void StoreParameterController::initializeColumnParameters() {
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == indexOfCumulatedFrequencyCell()) {
     bool shouldPop = isCumulatedFrequencyColumnSelected();
-    bool state = !static_cast<StoreController *>(m_storeController)->displayCumulatedFrequenciesForSeries(m_storeController->selectedSeries());
-    static_cast<StoreController *>(m_storeController)->setDisplayCumulatedFrequenciesForSeries(m_storeController->selectedSeries(), state);
+    bool state = !m_store->displayCumulatedFrequenciesForSeries(m_storeController->selectedSeries());
+    m_store->setDisplayCumulatedFrequenciesForSeries(m_storeController->selectedSeries(), state);
     if (shouldPop) {
       m_hideCumulatedFrequencyCell.setHighlighted(false);
       stackView()->pop();
@@ -60,7 +61,7 @@ void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * c
       assert(cell == &m_hideCumulatedFrequencyCell);
     } else {
       assert(cell == &m_displayCumulatedFrequencyCell);
-      m_displayCumulatedFrequencyCell.setState(static_cast<StoreController *>(m_storeController)->displayCumulatedFrequenciesForSeries(m_storeController->selectedSeries()));
+      m_displayCumulatedFrequencyCell.setState(m_store->displayCumulatedFrequenciesForSeries(m_storeController->selectedSeries()));
     }
     return;
   }
@@ -75,7 +76,7 @@ int StoreParameterController::numberOfCells() const {
 }
 
 bool StoreParameterController::isCumulatedFrequencyColumnSelected() const {
-  return m_storeController->relativeColumnIndex(m_columnIndex) == 2;
+  return m_store->relativeColumnIndex(m_columnIndex) == 2;
 }
 
 }

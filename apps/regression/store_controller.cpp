@@ -31,7 +31,7 @@ int StoreController::fillColumnName(int columnIndex, char * buffer) {
 }
 
 void StoreController::clearSelectedColumn() {
-  m_store->deleteColumn(seriesAtColumn(selectedColumn()), relativeColumnIndex(selectedColumn()));
+  m_store->deleteColumn(m_store->seriesAtColumn(selectedColumn()), m_store->relativeColumnIndex(selectedColumn()));
 }
 
 }

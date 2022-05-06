@@ -11,7 +11,7 @@ using namespace Escher;
 
 namespace Shared {
 
-StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, StoreController * dataSource, SelectableTableViewDataSource * selectionDataSource, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
+StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
   View(),
   Responder(parentResponder),
   m_dataView(store, this, dataSource, selectionDataSource),
@@ -166,7 +166,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   if (typeAtLocation(i, j) == k_editableCellType) {
     Shared::StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->setHide(false);
-    myCell->setSeparatorLeft(i > 0 && (relativeColumnIndex(i) == 0));
+    myCell->setSeparatorLeft(i > 0 && (m_store->relativeColumnIndex(i) == 0));
   }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
 }
@@ -178,8 +178,8 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
 }
 
 void StoreController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
-  int seriesIndex = seriesAtColumn(columnIndex);
-  int realColumnIndex = relativeColumnIndex(columnIndex);
+  int seriesIndex = m_store->seriesAtColumn(columnIndex);
+  int realColumnIndex = m_store->relativeColumnIndex(columnIndex);
   Shared::StoreTitleCell * myCell = static_cast<Shared::StoreTitleCell *>(cell);
   myCell->setColor(!m_store->seriesIsValid(seriesIndex) ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
   myCell->setSeparatorLeft(columnIndex > 0 && ( realColumnIndex == 0));
@@ -200,12 +200,12 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
-  int series = seriesAtColumn(selectedColumn());
+  int series = m_store->seriesAtColumn(selectedColumn());
   if (event == Ion::Events::Backspace) {
     if (selectedRow() == 0 || selectedRow() > numberOfElementsInColumn(selectedColumn())) {
       return false;
     }
-    m_store->deleteValueAtIndex(series, relativeColumnIndex(selectedColumn()), selectedRow()-1);
+    m_store->deleteValueAtIndex(series, m_store->relativeColumnIndex(selectedColumn()), selectedRow()-1);
     selectableTableView()->reloadData();
     return true;
   }
@@ -233,16 +233,16 @@ bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  m_store->set(floatBody, seriesAtColumn(columnIndex), relativeColumnIndex(columnIndex), rowIndex-1);
+  m_store->set(floatBody, m_store->seriesAtColumn(columnIndex), m_store->relativeColumnIndex(columnIndex), rowIndex-1);
   return true;
 }
 
 double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
-  return m_store->get(seriesAtColumn(columnIndex), relativeColumnIndex(columnIndex), rowIndex-1);
+  return m_store->get(m_store->seriesAtColumn(columnIndex), m_store->relativeColumnIndex(columnIndex), rowIndex-1);
 }
 
 int StoreController::numberOfElementsInColumn(int columnIndex) const {
-  return m_store->numberOfPairsOfSeries(seriesAtColumn(columnIndex));
+  return m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(columnIndex));
 }
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
@@ -297,7 +297,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
 }
 
 void StoreController::sortSelectedColumn() {
-  m_store->sortColumn(selectedSeries(), relativeColumnIndex(selectedColumn()));
+  m_store->sortColumn(selectedSeries(), m_store->relativeColumnIndex(selectedColumn()));
 }
 
 }

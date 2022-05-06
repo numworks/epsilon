@@ -4,6 +4,7 @@
 #include <apps/shared/store_parameter_controller.h>
 #include <escher/message_table_cell_with_message_with_switch.h>
 #include <escher/message_table_cell_with_message.h>
+#include "../store.h"
 
 namespace Statistics {
 
@@ -11,7 +12,7 @@ class StoreController;
 
 class StoreParameterController : public Shared::StoreParameterController {
 public:
-  StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController);
+  StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController, Store * m_store);
   void initializeColumnParameters() override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
@@ -26,6 +27,7 @@ private:
 
   Escher::MessageTableCellWithMessageWithSwitch m_displayCumulatedFrequencyCell;
   Escher::MessageTableCellWithMessage m_hideCumulatedFrequencyCell;
+  Store * m_store;
 };
 
 }

@@ -20,11 +20,9 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_selectableTableView(this, this, this, this),
   m_store(store)
 {
-  m_r2Layout = HorizontalLayout::Builder(CodePointLayout::Builder('r', KDFont::SmallFont), VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript));
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
   m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  m_r2TitleCell.setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     m_columnTitleCells[i].setParentResponder(&m_selectableTableView);
   }
@@ -127,12 +125,6 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   const int numberRows = numberOfRows();
   // Calculation title
   if (i == 0) {
-    if (j == numberRows - 1) {
-      EvenOddExpressionCell * myCell = static_cast<EvenOddExpressionCell *>(cell);
-      myCell->setLayout(m_r2Layout);
-      myCell->setTextColor(ExamModeConfiguration::statsDiagnosticsAreForbidden() ? Palette::GrayDark : KDColorBlack);
-      return;
-    }
     EvenOddMessageTextCell * myCell = static_cast<EvenOddMessageTextCell *>(cell);
     myCell->setTextColor(KDColorBlack);
     myCell->setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
@@ -143,6 +135,13 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     }
     if (hasLinearRegression() && j == numberRows - 2) {
       myCell->setMessage(I18n::Message::R);
+      if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
+        myCell->setTextColor(Palette::GrayDark);
+      }
+      return;
+    }
+    if (j == numberRows - 1) {
+      myCell->setMessage(I18n::Message::R2);
       if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
         myCell->setTextColor(Palette::GrayDark);
       }
@@ -301,10 +300,6 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
     return &m_titleCells[index];
   }
-  if (type == k_r2CellType) {
-    assert(index == 0);
-    return &m_r2TitleCell;
-  }
   if (type == k_columnTitleCellType) {
     assert(index >= 0 && index < Store::k_numberOfSeries);
     return &m_columnTitleCells[index];
@@ -324,9 +319,6 @@ int CalculationController::reusableCellCount(int type) {
   if (type == k_standardCalculationTitleCellType) {
     return k_maxNumberOfDisplayableRows;
   }
-  if (type == k_r2CellType) {
-    return 1;
-  }
   if (type == k_columnTitleCellType) {
     return Store::k_numberOfSeries;
   }
@@ -343,10 +335,6 @@ int CalculationController::reusableCellCount(int type) {
 int CalculationController::typeAtLocation(int i, int j) {
   if (i == 0 && j == 0) {
     return k_hideableCellType;
-  }
-  int numberRows = numberOfRows();
-  if (i == 0 && j == numberRows-1) {
-    return k_r2CellType;
   }
   if (i == 0) {
     return k_standardCalculationTitleCellType;

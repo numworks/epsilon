@@ -51,19 +51,18 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
 private:
-  constexpr static int k_maxNumberOfDisplayableRows = 9;
+  constexpr static int k_maxNumberOfDisplayableRows = 11;
   constexpr static int k_totalNumberOfDoubleBufferRows = 5;
   constexpr static int k_numberOfDoubleCalculationCells = Store::k_numberOfSeries * k_totalNumberOfDoubleBufferRows;
   constexpr static int k_numberOfCalculationCells = Store::k_numberOfSeries * k_maxNumberOfDisplayableRows;
   constexpr static int k_standardCalculationTitleCellType = 0;
-  constexpr static int k_r2CellType = 1;
-  constexpr static int k_columnTitleCellType = 2;
-  constexpr static int k_doubleBufferCalculationCellType = 3;
-  constexpr static int k_standardCalculationCellType = 4;
-  static constexpr int k_hideableCellType = 5;
+  constexpr static int k_columnTitleCellType = 1;
+  constexpr static int k_doubleBufferCalculationCellType = 2;
+  constexpr static int k_standardCalculationCellType = 3;
+  static constexpr int k_hideableCellType = 4;
   static constexpr int k_regressionCellIndex = 9;
 
-  static constexpr KDCoordinate k_cellHeight = 25;
+  static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_titleCalculationCellWidth = Ion::Display::Width/2 - Escher::Metric::CommonRightMargin/2 - Escher::Metric::CommonLeftMargin/2;
   /* Separator and margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here.
@@ -81,10 +80,8 @@ private:
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   bool hasLinearRegression() const;
   int maxNumberOfCoefficients() const;
-  Poincare::Layout m_r2Layout;
   Escher::SelectableTableView m_selectableTableView;
   Escher::EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
-  Escher::EvenOddExpressionCell m_r2TitleCell;
   ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];

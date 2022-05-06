@@ -410,9 +410,8 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
   }
 }
 
-void Parser::parseSequence(Expression & leftHandSide, const char * name, bool delimiterIsBrace) {
-  // The braces or parenthesis have already been popped.
-  Token::Type rightDelimiter = delimiterIsBrace ? Token::RightBrace : Token::RightParenthesis;
+void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter) {
+  // The left delimiter has already been popped.
   Expression rank = parseUntil(rightDelimiter);
   if (m_status != Status::Progress) {
   } else if (!popTokenIfType(rightDelimiter)) {
@@ -430,10 +429,9 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide, Token::Type stopp
     leftHandSide = Infinity::Builder(false);
   } else if (m_currentToken.compareTo(Undefined::Name()) == 0) {
     leftHandSide = Undefined::Builder();
-  } else if (m_currentToken.compareTo(Nonreal::Name()) == 0) {
-    leftHandSide = Nonreal::Builder();
   } else {
-     m_status = Status::Error;
+    assert(m_currentToken.compareTo(Nonreal::Name()) == 0);
+    leftHandSide = Nonreal::Builder();
   }
   isThereImplicitMultiplication();
 }
@@ -476,7 +474,7 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
         m_status = Status::Error;
         return;
       }
-      parseSequence(leftHandSide, name, poppedBrace);
+      parseSequence(leftHandSide, name, poppedBrace ? Token::RightBrace : Token::RightParenthesis);
       return;
     }
   }

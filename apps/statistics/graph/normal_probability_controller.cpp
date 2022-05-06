@@ -4,6 +4,11 @@
 
 namespace Statistics {
 
+NormalProbabilityController::NormalProbabilityController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
+    PlotController(parentResponder, header, tabController, stackViewController, typeViewController, store) {
+  m_curveView.setCursorView(&m_cursorView);
+}
+
 bool NormalProbabilityController::drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const {
   // Plot the y=(x-mean(X)/sigma(X)) line
   float mean = m_store->mean(series);
@@ -15,6 +20,17 @@ bool NormalProbabilityController::drawSeriesZScoreLine(int series, float * x, fl
   *u = xMax;
   *v = (xMax-mean)/sigma;
   return true;
+}
+
+bool NormalProbabilityController::moveSelectionHorizontally(int deltaIndex) {
+  assert(m_selectedSeries >= 0);
+  int nextIndex = SanitizeIndex(m_selectedIndex + deltaIndex, totalValues(m_selectedSeries));
+  if (nextIndex != m_selectedIndex) {
+    m_selectedIndex = nextIndex;
+    moveCursorToSelectedIndex();
+    return true;
+  }
+  return false;
 }
 
 void NormalProbabilityController::computeYBounds(float * yMin, float *yMax) const {

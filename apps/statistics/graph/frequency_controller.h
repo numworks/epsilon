@@ -24,8 +24,8 @@ public:
 private:
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
 
-  // Get the closest index strictly above (direction>0) or below (direction<0) x
-  int getNextIndex(int series, int totValues, int startIndex, int direction, double * x) const;
+  // Move the cursor x by step and compute y. Snap on closest interesting value
+  bool getNextCursorPosition(int totValues, double step, double * x, double * y);
 
   // PlotController
   void moveCursorVertically(bool seriesChanged) override;

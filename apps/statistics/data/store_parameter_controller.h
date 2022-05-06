@@ -3,6 +3,7 @@
 
 #include <apps/shared/store_parameter_controller.h>
 #include <escher/message_table_cell_with_message_with_switch.h>
+#include <escher/message_table_cell_with_message.h>
 
 namespace Statistics {
 
@@ -24,6 +25,7 @@ private:
   }
 
   Escher::MessageTableCellWithMessageWithSwitch m_displayCumulatedFrequencyCell;
+  Escher::MessageTableCellWithMessage m_hideCumulatedFrequencyCell;
 };
 
 }

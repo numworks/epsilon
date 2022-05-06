@@ -6,9 +6,11 @@ namespace Statistics {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, StoreController * storeController) :
   Shared::StoreParameterController(parentResponder, storeController),
-  m_displayCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnToggleTitle)
+  m_displayCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnToggleTitle),
+  m_hideCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnHideTitle)
 {
   m_displayCumulatedFrequencyCell.setSubLabelMessage(I18n::Message::CumulatedFrequencyColumnToggleDescription);
+  m_hideCumulatedFrequencyCell.setSubLabelMessage(I18n::Message::CumulatedFrequencyColumnHideDescription);
 }
 
 void StoreParameterController::initializeColumnParameters() {
@@ -32,6 +34,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     bool state = !static_cast<StoreController *>(m_storeController)->displayCumulatedFrequenciesForSeries(m_storeController->selectedSeries());
     static_cast<StoreController *>(m_storeController)->setDisplayCumulatedFrequenciesForSeries(m_storeController->selectedSeries(), state);
     if (shouldPop) {
+      m_hideCumulatedFrequencyCell.setHighlighted(false);
       stackView()->pop();
     } else {
       m_displayCumulatedFrequencyCell.setState(state);
@@ -44,7 +47,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 Escher::HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0 && index < numberOfCells());
   if (index == indexOfCumulatedFrequencyCell()) {
-    return isCumulatedFrequencyColumnSelected() ? &m_fillFormula : &m_displayCumulatedFrequencyCell;
+    return isCumulatedFrequencyColumnSelected() ? &m_hideCumulatedFrequencyCell : &m_displayCumulatedFrequencyCell;
   }
   return Shared::StoreParameterController::reusableCell(index, type);
 }
@@ -53,24 +56,15 @@ void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * c
   if (index == indexOfCumulatedFrequencyCell()) {
     if (isCumulatedFrequencyColumnSelected()) {
       /* If the cumulated frequency column is selected, there is no need for a
-       * switch. We instead take over fill formula cell to only display a
-       * message. */
-      assert(cell == &m_fillFormula);
-      // TODO: Use cell that have a sublabel :
-      // setSubLabelMessage(I18n::Message::CumulatedFrequencyColumnHideDescription);
-      m_fillFormula.setMessage(I18n::Message::CumulatedFrequencyColumnHideTitle);
+       * switch. */
+      assert(cell == &m_hideCumulatedFrequencyCell);
     } else {
       assert(cell == &m_displayCumulatedFrequencyCell);
       m_displayCumulatedFrequencyCell.setState(static_cast<StoreController *>(m_storeController)->displayCumulatedFrequenciesForSeries(m_storeController->selectedSeries()));
     }
     return;
   }
-  assert(cell != &m_displayCumulatedFrequencyCell);
-  if (cell == &m_fillFormula) {
-    /* m_fillFormula isn't set in
-     * Shared::StoreParameterController::willDisplayCellForIndex otherwise. */
-    m_fillFormula.setMessage(I18n::Message::FillWithFormula);
-  }
+  assert(cell != &m_displayCumulatedFrequencyCell && cell != &m_hideCumulatedFrequencyCell);
   Shared::StoreParameterController::willDisplayCellForIndex(cell, index);
 }
 

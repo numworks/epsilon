@@ -27,7 +27,7 @@ public:
   Store();
 
   // DoublePairStore
-  char columnNamePrefix(int column) override {
+  char columnNamePrefixAtIndex(int column) override {
     assert(column >= 0 && column < DoublePairStore::k_numberOfColumnsPerSeries);
     assert(strlen(k_columnNames[column]) == 1);
     return k_columnNames[column][0];

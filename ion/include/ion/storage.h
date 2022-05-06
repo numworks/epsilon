@@ -176,7 +176,7 @@ public:
   void destroyAllRecords();
   void destroyRecordsWithExtension(const char * extension);
 
-  /* Destroy a record with same baseName and a competing extension
+  /* Destroy a record with same baseName and a restrictive extension
    * Return false if there is a competing record but it can't be destroyed
    * since it has precedence on its base name. (See RecordDelegate)
    * WARNING : If m_recordDelegate == nullptr, record won't override
@@ -277,10 +277,10 @@ public:
     Allowed,
     CanCoexist
   };
-  virtual const char * const * competingExtensions() = 0;
-  virtual int numberOfCompetingExtensions() = 0;
+  virtual const char * const * restrictiveExtensions() = 0;
+  virtual int numberOfRestrictiveExtensions() = 0;
   virtual OverrideStatus shouldRecordBeOverridenWithNewExtension(Storage::Record previousRecord, const char * newExtension) = 0;
-  virtual bool competingExtensionsOverrideThemselves() = 0;
+  virtual bool restrictiveExtensionsOverrideThemselves() = 0;
 };
 
 // emscripten read and writes must be aligned.

@@ -12,44 +12,44 @@ namespace Shared {
 
 class RecordDelegate : public Ion::RecordDelegate {
 public:
-  /* Some records extensions are competing, which means that two record with
+  /* Some records extensions are restrictive, which means that two record with
    * the same base name and one of these extensions can't exist at the same
    * time in the storage.
-   * If a record's extension is not a competing extension, it means that it can
+   * If a record's extension is not a restrictive extension, it means that it can
    * coexist with any record of a same base name and a different extension.
    * For instance, test.py can coexist with test.func, but test.exp can't
    * coexist with test.func */
-  constexpr static const char * k_competingExtensions[] = {
+  constexpr static const char * k_restrictiveExtensions[] = {
     Ion::Storage::funcExtension,
     Ion::Storage::seqExtension,
     Ion::Storage::expExtension,
     Ion::Storage::lisExtension,
     Ion::Storage::matExtension
   };
-  constexpr static int k_numberOfCompetingExtensions = sizeof(k_competingExtensions) / sizeof(char *);
+  constexpr static int k_numberOfRestrictiveExtensions = sizeof(k_restrictiveExtensions) / sizeof(char *);
 
   /* The precedence score of an extension indicates if it can override
    * an other extension with the same base name.
    * WARNING : Each of these scores correspond to the extension at the same
-   * index in the k_competingExtensions table.
-   * These are not in the same table because we need the k_competingExtensions
+   * index in the k_restrictiveExtensions table.
+   * These are not in the same table because we need the k_restrictiveExtensions
    * table to be passed to some storage functions.
    *
    * If precendeceScore1 <= precedenceScore2 record1 can override record2
    * If precedenceScore1 > precedenceScore2, record1 cannot override record2
    * */
-  constexpr static size_t k_competingExtensionsPrecedenceScore[] = {
+  constexpr static size_t k_restrictiveExtensionsPrecedenceScore[] = {
     1,
     1,
     2,
     2,
     2
   };
-  static_assert(k_numberOfCompetingExtensions == sizeof(k_competingExtensionsPrecedenceScore) / sizeof(char *), "Number of precedence scores and number of competing extensions don't match.");
+  static_assert(k_numberOfRestrictiveExtensions == sizeof(k_restrictiveExtensionsPrecedenceScore) / sizeof(char *), "Number of precedence scores and number of restrictive extensions don't match.");
 
-  bool competingExtensionsOverrideThemselves() override { return true; }
-  const char * const * competingExtensions() override { return k_competingExtensions; }
-  int numberOfCompetingExtensions() override { return k_numberOfCompetingExtensions; }
+  bool restrictiveExtensionsOverrideThemselves() override { return true; }
+  const char * const * restrictiveExtensions() override { return k_restrictiveExtensions; }
+  int numberOfRestrictiveExtensions() override { return k_numberOfRestrictiveExtensions; }
   size_t precedenceScoreOfExtension(const char * extension);
 
   /* This method indicates if a record can be overwritten with another which
@@ -64,7 +64,7 @@ public:
    *   reserved for the newExtension.
    *
    * - OverrideStatus::CanCoexist : if at least one of the two extensions is
-   *   not a competing extension. */
+   *   not a restrictive extension. */
   Ion::RecordDelegate::OverrideStatus shouldRecordBeOverridenWithNewExtension(Ion::Storage::Record previousRecord, const char * newExtension) override;
 
 private:

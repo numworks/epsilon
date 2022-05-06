@@ -224,14 +224,16 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   const int childrenCount = numberOfChildren();
   assert(childrenCount > 1);
 
-  /* Step 2
-   * Distribute the addition over lists */
+  // Step 2: Sort the children
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context());
+
+ // Step 3 : Distribute the addition over lists
   Expression distributed = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
   if (!distributed.isUninitialized()) {
     return distributed;
   }
 
-  /* Step 3: Handle the units. All children should have the same unit, otherwise
+  /* Step 4: Handle the units. All children should have the same unit, otherwise
    * the result is not homogeneous. */
   {
     Expression unit;
@@ -263,9 +265,6 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
       return std::move(result);
     }
   }
-
-  // Step 4: Sort the children
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context());
 
   /* Step 5: Handle matrices. We return undef for a scalar added to a matrix.
    * Thanks to the simplification order, all matrix children (if any) are the

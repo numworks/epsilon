@@ -302,7 +302,8 @@ public:
   static constexpr int k_noList = -1;
   static constexpr int k_mismatchedLists = -2;
   /* LengthOfListChildren is to be called during reduction, when all children
-   * are already reduced. */
+   * are already reduced. If you expression is NAry, it must be sorted before
+   * calling this function. */
   int lengthOfListChildren() const;
 
   /* Approximation Helper */

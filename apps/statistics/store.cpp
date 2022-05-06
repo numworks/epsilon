@@ -16,6 +16,7 @@ static_assert(Store::k_numberOfSeries == 3, "The constructor of Statistics::Stor
 
 Store::Store() :
   DoublePairStore(),
+  m_displayCumulatedFrequencies{false, false, false},
   m_barWidth(1.0),
   m_firstDrawnBarAbscissa(0.0),
   m_sortedIndex(nullptr),
@@ -44,6 +45,13 @@ int Store::validSeriesIndex(int series, ValidSeries validSeries) const {
     index += validSeries(this, i);
   }
   return index;
+}
+
+/* Data */
+
+int Store::relativeColumnIndex(int i) const {
+  computeRelativeColumnAndSeries(&i);
+  return i;
 }
 
 /* Histogram bars */
@@ -468,6 +476,16 @@ void Store::deleteAllPairsOfSeries(int series) {
 
 
 /* Private methods */
+
+int Store::computeRelativeColumnAndSeries(int * i) const {
+  int seriesIndex = 0;
+  while (*i >= DoublePairStore::k_numberOfColumnsPerSeries + displayCumulatedFrequenciesForSeries(seriesIndex)) {
+    *i -= DoublePairStore::k_numberOfColumnsPerSeries + displayCumulatedFrequenciesForSeries(seriesIndex);
+    seriesIndex++;
+    assert(seriesIndex < k_numberOfSeries);
+  }
+  return seriesIndex;
+}
 
 double Store::defaultValue(int series, int i, int j) const {
   return (i == 0 && j > 1) ? 2 * m_data[series][i][j-1] - m_data[series][i][j-2] : 1.0;

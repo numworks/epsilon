@@ -155,7 +155,7 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, Expr
     element.shallowReduce(reductionContext);
   }
   e.replaceWithInPlace(result);
-  return  result.shallowReduce(reductionContext.context());
+  return  result.shallowReduce(reductionContext);
 }
 
 }

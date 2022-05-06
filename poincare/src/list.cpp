@@ -128,7 +128,7 @@ template<typename T> Evaluation<T> ListNode::variance(ApproximationContext appro
 }
 
 Expression ListNode::shallowReduce(ReductionContext reductionContext) {
-  return List(this).shallowReduce(reductionContext.context());
+  return List(this).shallowReduce(reductionContext);
 }
 
 template<typename T> Evaluation<T> ListNode::templatedApproximate(ApproximationContext approximationContext) const {
@@ -141,9 +141,9 @@ template<typename T> Evaluation<T> ListNode::templatedApproximate(ApproximationC
 
 // List
 
-Expression List::shallowReduce(Context * context) {
+Expression List::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   // A list can't contain a matrix or a list
-  if (node()->hasMatrixOrListChild(context)) {
+  if (node()->hasMatrixOrListChild(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
   /* We bypass the reduction to undef in case of undef children, as {undef} and

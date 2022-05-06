@@ -306,7 +306,7 @@ bool Storage::destroyCompetingRecord(Record::Name recordName, Record * excludedR
   if (m_recordDelegate == nullptr) {
     return true;
   }
-  Record competingRecord = privateRecordBasedNamedWithExtensions(recordName.baseName, recordName.baseNameLength, m_recordDelegate->competingExtensions(), m_recordDelegate->numberOfCompetingExtensions());
+  Record competingRecord = privateRecordBasedNamedWithExtensions(recordName.baseName, recordName.baseNameLength, m_recordDelegate->restrictiveExtensions(), m_recordDelegate->numberOfRestrictiveExtensions());
   if (competingRecord.isNull() || (excludedRecord != nullptr && *excludedRecord == competingRecord)) {
     return true;
   }

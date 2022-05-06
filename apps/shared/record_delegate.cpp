@@ -15,9 +15,7 @@ Ion::RecordDelegate::OverrideStatus RecordDelegate::shouldRecordBeOverridenWithN
   if (previousRecord.isNull()) {
     return Ion::RecordDelegate::OverrideStatus::Allowed;
   }
-  if (previousRecord.hasExtension(newExtension)) {
-    return restrictiveExtensionsOverrideThemselves() ? Ion::RecordDelegate::OverrideStatus::Allowed : Ion::RecordDelegate::OverrideStatus::Forbidden;
-  }
+  assert(!previousRecord.hasExtension(newExtension));
   int newPrecedenceScore = precedenceScoreOfExtension(newExtension);
   int previousPrecedenceScore = precedenceScoreOfExtension(previousRecord.name().extension);
   // If at least one is not a restrictive extension, they can coexist.

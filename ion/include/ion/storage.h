@@ -176,13 +176,16 @@ public:
   void destroyAllRecords();
   void destroyRecordsWithExtension(const char * extension);
 
-  /* Destroy a record with same baseName and a restrictive extension
-   * Return false if there is a competing record but it can't be destroyed
-   * since it has precedence on its base name. (See RecordDelegate)
+  /* Destroy competing records.
+   * Return true if other records with same full name or competing names
+   * have been destroyed.
+   * Return false if other records with same full name or competing names
+   * still exist but can't be destroyed.
+   * (see RecordDelegate for more info on competing names)
    * WARNING : If m_recordDelegate == nullptr, record won't override
    * themself when replaced with a record with same name and same extension.
    * This in maily relevant for tests, where you have to set the helper by hand.*/
-  bool destroyCompetingRecord(Record::Name recordName, Record * excludedRecord = nullptr);
+  bool handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName);
 
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
@@ -219,8 +222,7 @@ private:
   size_t overrideNameAtPosition(char * position, Record::Name name);
   size_t overrideValueAtPosition(char * position, const void * data, record_size_t size);
 
-  bool isNameTaken(Record::Name name, const Record * recordToExclude = nullptr);
-  bool isNameOfRecordTaken(Record r, const Record * recordToExclude);
+  bool isNameOfRecordTaken(Record r, const Record * recordToExclude = nullptr);
   char * endBuffer();
   size_t sizeOfRecordWithName(Record::Name name, size_t dataSize);
   bool slideBuffer(char * position, int delta);
@@ -279,8 +281,8 @@ public:
   };
   virtual const char * const * restrictiveExtensions() = 0;
   virtual int numberOfRestrictiveExtensions() = 0;
+  virtual bool extensionCanOverrideItself(const char * extension) = 0;
   virtual OverrideStatus shouldRecordBeOverridenWithNewExtension(Storage::Record previousRecord, const char * newExtension) = 0;
-  virtual bool restrictiveExtensionsOverrideThemselves() = 0;
 };
 
 // emscripten read and writes must be aligned.

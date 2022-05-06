@@ -10,7 +10,7 @@ namespace Shared {
 
 class DoublePairStore {
 public:
-  constexpr static int k_lenOfColumnNames = 2; // 1 char for prefix, 1 char for index
+  constexpr static int k_columnNamesLength = 2; // 1 char for prefix, 1 char for index
   constexpr static int k_numberOfSeries = 3;
   constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static uint8_t k_maxNumberOfPairs = 100;

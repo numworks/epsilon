@@ -1,7 +1,7 @@
 #include <quiz.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
-#include <apps/shared/record_name_helper.h>
+#include <apps/shared/record_delegate.h>
 #include <string.h>
 #include <assert.h>
 #include <limits.h>
@@ -147,8 +147,8 @@ void set(const char * variable, const char * value) {
   strlcat(buffer, variable, sizeof(buffer));
 
   Shared::GlobalContext globalContext;
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
   Expression::ParseAndSimplify(
     buffer,
     &globalContext,
@@ -156,7 +156,7 @@ void set(const char * variable, const char * value) {
     Preferences::sharedPreferences()->angleUnit(),
     GlobalPreferences::sharedGlobalPreferences()->unitFormat()
   );
-  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
+  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 void unset(const char * variable) {

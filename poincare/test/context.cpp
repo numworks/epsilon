@@ -1,5 +1,5 @@
 #include <apps/shared/global_context.h>
-#include <apps/shared/record_name_helper.h>
+#include <apps/shared/record_delegate.h>
 #include <poincare/addition.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -17,8 +17,8 @@ void assert_parsed_expression_approximates_with_value_for_symbol(Expression expr
 }
 
 QUIZ_CASE(poincare_context_store_overwrite) {
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
   assert_parsed_expression_simplify_to("1→g", "1");
   assert_parsed_expression_simplify_to("2→g", "2");
   assert_expression_approximates_to<double>("g", "2");
@@ -28,12 +28,12 @@ QUIZ_CASE(poincare_context_store_overwrite) {
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
-  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
+  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 QUIZ_CASE(poincare_context_store_do_not_overwrite) {
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
 
   assert_parsed_expression_simplify_to("-1→g(x)", "-1");
   assert_parsed_expression_simplify_to("1+g(x)→f(x)", "1+g(x)");
@@ -45,12 +45,12 @@ QUIZ_CASE(poincare_context_store_do_not_overwrite) {
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
-  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
+  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 QUIZ_CASE(poincare_context_user_variable_simple) {
-  Shared::RecordNameHelper recordNameHelper;
-  Ion::Storage::sharedStorage()->setRecordNameHelper(&recordNameHelper);
+  Shared::RecordDelegate recordDelegate;
+  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
 
   // Fill variable
   assert_parsed_expression_simplify_to("1+2→Adadas", "3");
@@ -85,7 +85,7 @@ QUIZ_CASE(poincare_context_user_variable_simple) {
   Ion::Storage::sharedStorage()->recordNamed("f1.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f2.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("fBoth.func").destroy();
-  Ion::Storage::sharedStorage()->setRecordNameHelper(nullptr);
+  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_variables) {

@@ -10,7 +10,7 @@ public:
     ModalViewEmptyController()
   {}
   /* Because of inclusion of this .h into math_variable_box_controller.h,
-  * the page needs to be casted to int before being past to this method. */
+  * the page needs to be casted to int before being passed to this method. */
   void setPage(int pageCastedToInt);
   // View Controller
   Escher::View * view() override { return &m_view; }

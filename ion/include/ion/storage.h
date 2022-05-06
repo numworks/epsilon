@@ -15,7 +15,7 @@ namespace Ion {
  * A record's fullName is baseName.extension. */
 
 class StorageDelegate;
-class RecordNameHelper;
+class RecordDelegate;
 
 class Storage {
 public:
@@ -135,7 +135,7 @@ public:
   Record::ErrorStatus notifyFullnessToDelegate() const;
 
   // Record name helper
-  void setRecordNameHelper(RecordNameHelper * helper) { m_recordNameHelper = helper; }
+  void setRecordDelegate(RecordDelegate * helper) { m_recordDelegate = helper; }
 
   // Record counters
   int numberOfRecordsWithExtension(const char * extension) {
@@ -178,8 +178,8 @@ public:
 
   /* Destroy a record with same baseName and a competing extension
    * Return false if there is a competing record but it can't be destroyed
-   * since it has precedence on its base name. (See RecordNameHelper)
-   * WARNING : If m_recordNameHelper == nullptr, record won't override
+   * since it has precedence on its base name. (See RecordDelegate)
+   * WARNING : If m_recordDelegate == nullptr, record won't override
    * themself when replaced with a record with same name and same extension.
    * This in maily relevant for tests, where you have to set the helper by hand.*/
   bool destroyCompetingRecord(Record::Name recordName, Record * excludedRecord = nullptr);
@@ -248,7 +248,7 @@ private:
   char m_buffer[k_storageSize];
   uint32_t m_magicFooter;
   StorageDelegate * m_delegate;
-  RecordNameHelper * m_recordNameHelper;
+  RecordDelegate * m_recordDelegate;
   mutable Record m_lastRecordRetrieved;
   mutable char * m_lastRecordRetrievedPointer;
 };
@@ -266,11 +266,11 @@ public:
   virtual void storageIsFull() = 0;
 };
 
-/* This helper is used by the storage to know if it can override a record with
+/* This is used by the storage to know if it can override a record with
  * a new one. It is pure virtual so that it is defined in Apps and not in Ion.
  * It contains only "static" functions.
- * See Apps::Shared::RecordNameHelper */
-class RecordNameHelper {
+ * See Apps::Shared::RecordDelegate */
+class RecordDelegate {
 public:
   enum class OverrideStatus {
     Forbidden = 0,

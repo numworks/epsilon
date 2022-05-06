@@ -14,6 +14,9 @@ namespace Statistics {
 
 static_assert(Store::k_numberOfSeries == 3, "The constructor of Statistics::Store should be changed");
 
+constexpr I18n::Message Store::k_quantilesName[Store::k_numberOfQuantiles];
+constexpr Store::CalculPointer Store::k_quantileCalculation[Store::k_numberOfQuantiles];
+
 Store::Store(GlobalContext * context) :
   DoublePairStore(context),
   m_displayCumulatedFrequencies{false, false, false},

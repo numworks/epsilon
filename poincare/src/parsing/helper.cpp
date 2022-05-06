@@ -3,6 +3,9 @@
 
 namespace Poincare {
 
+constexpr const Expression::FunctionHelper * ParsingHelper::s_reservedFunctions[];
+constexpr const char * ParsingHelper::s_specialIdentifierNames[];
+
 const Expression::FunctionHelper * const * ParsingHelper::GetReservedFunction(const char * name, size_t nameLength) {
   const Expression::FunctionHelper * const * reservedFunction = s_reservedFunctions;
   while (reservedFunction < s_reservedFunctionsUpperBound) {

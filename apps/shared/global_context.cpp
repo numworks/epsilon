@@ -175,6 +175,8 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   } else {
     extension = Ion::Storage::expExtension;
   }
+  /* If there is another record competing with this one for its name,
+  * it is destroyed directly in Storage, through the Record_delegate. */
   return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), extension, reducedExpression.addressInPool(), reducedExpression.size());
 }
 

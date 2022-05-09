@@ -1,7 +1,7 @@
 #ifndef ION_DEVICE_N0110_CONFIG_EXTERNAL_FLASH_H
 #define ION_DEVICE_N0110_CONFIG_EXTERNAL_FLASH_H
 
-#include <config/memory_layout.h>
+#include <config/board.h>
 #include <regs/regs.h>
 
 /*  Pin | Role                 | Mode                  | Function

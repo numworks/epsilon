@@ -1,4 +1,4 @@
-INCLUDE memory_layout.ld
+INCLUDE board.ld
 
 EPSILON_OFFSET = SlotBOffset;
 

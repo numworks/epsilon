@@ -1,7 +1,7 @@
 #ifndef ION_DEVICE_N0100_CONFIG_INTERNAL_FLASH_H
 #define ION_DEVICE_N0100_CONFIG_INTERNAL_FLASH_H
 
-#include <config/memory_layout.h>
+#include <config/board.h>
 #include <regs/regs.h>
 
 namespace Ion {

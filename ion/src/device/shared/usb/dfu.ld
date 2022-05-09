@@ -19,7 +19,7 @@
  * the DFU code (namely, Ion::USB::Device::Calculator::Poll). We're simply
  * making sure this is the first symbol output. */
 
-INCLUDE memory_layout.ld
+INCLUDE board.ld
 
 PROCESS_STACK_END = UserlandSRAMOrigin + UserlandSRAMLength - UserlandStackLength;
 

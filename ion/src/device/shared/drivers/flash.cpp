@@ -22,7 +22,7 @@ int SectorAtAddress(uint32_t address) {
 }
 
 bool IncludesAddress(uint32_t address) {
-  return address >= Device::Config::InternalFlashOrigin && address <= Device::Config::InternalFlashOrigin + Device::Config::InternalFlashLength;
+  return address >= Board::Config::InternalFlashOrigin && address <= Board::Config::InternalFlashOrigin + Board::Config::InternalFlashLength;
 }
 
 using namespace Regs;
@@ -51,7 +51,7 @@ bool EraseSector(int i) {
 
 bool WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
   uint32_t address = reinterpret_cast<uint32_t>(destination);
-  if (Config::InternalFlashOrigin <= address && address < Config::InternalFlashOrigin + Config::InternalFlashLength) {
+  if (Board::Config::InternalFlashOrigin <= address && address < Board::Config::InternalFlashOrigin + Board::Config::InternalFlashLength) {
     InternalFlash::WriteMemory(destination, source, length);
     return true;
   }

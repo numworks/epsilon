@@ -35,6 +35,7 @@ app_shared_src = $(addprefix apps/shared/,\
   cell_with_separator.cpp \
   column_parameter_controller.cpp \
   cursor_view.cpp \
+  double_pair_table_controller.cpp \
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \
   expression_model_list_controller.cpp \

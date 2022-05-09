@@ -12,9 +12,7 @@ using namespace Escher;
 namespace Statistics {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
-  TabTableController(parentResponder),
-  ButtonRowDelegate(header, nullptr),
-  m_selectableTableView(this, this, this),
+  DoublePairTableController(parentResponder, header),
   m_tableView(1, this, &m_selectableTableView, this),
   m_store(store)
 {
@@ -39,20 +37,6 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_hideableCell[0].setHide(true);
     m_hideableCell[1].setHide(true);
   }
-}
-
-// AlternateEmptyViewDefaultDelegate
-
-bool CalculationController::isEmpty() const {
-  return !m_store->hasValidSeries();
-}
-
-I18n::Message CalculationController::emptyMessage() {
-  return I18n::Message::NoValueToCompute;
-}
-
-Responder * CalculationController::defaultController() {
-  return tabController();
 }
 
 // TableViewDataSource
@@ -172,14 +156,6 @@ KDCoordinate CalculationController::columnWidth(int i) {
   return k_calculationCellWidth;
 }
 
-KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
-  return j*rowHeight(0);
-}
-
-int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  return (offsetY-1) / rowHeight(0);
-}
-
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   assert(index >= 0 && index < reusableCellCount(type));
   switch (type) {
@@ -240,30 +216,6 @@ int CalculationController::typeAtLocation(int i, int j) {
   return k_calculationCellType;
 }
 
-// ViewController
-const char * CalculationController::title() {
-  return I18n::translate(I18n::Message::StatTab);
-}
-
-// Responder
-bool CalculationController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up) {
-    selectableTableView()->deselectTable();
-    Container::activeApp()->setFirstResponder(tabController());
-    return true;
-  }
-  return false;
-}
-
-void CalculationController::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 1);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
-  }
-  TabTableController::didBecomeFirstResponder();
-}
-
 // MarginDelegate
 
 KDCoordinate CalculationController::prefaceMargin(Escher::TableView * preface) {
@@ -282,11 +234,4 @@ KDCoordinate CalculationController::prefaceMargin(Escher::TableView * preface) {
   return 0;
 }
 
-// Private
-
-Responder * CalculationController::tabController() const {
-  return (parentResponder()->parentResponder()->parentResponder());
 }
-
-}
-

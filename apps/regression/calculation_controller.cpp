@@ -15,9 +15,7 @@ using namespace Escher;
 namespace Regression {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
-  TabTableController(parentResponder),
-  ButtonRowDelegate(header, nullptr),
-  m_selectableTableView(this, this, this, this),
+  DoublePairTableController(parentResponder, header),
   m_store(store)
 {
   m_selectableTableView.setVerticalCellOverlap(0);
@@ -33,28 +31,6 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_titleCells[i].setMessageFont(KDFont::SmallFont);
   }
   m_hideableCell.setHide(true);
-}
-
-const char * CalculationController::title() {
-  return I18n::translate(I18n::Message::StatTab);
-}
-
-bool CalculationController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up) {
-    selectableTableView()->deselectTable();
-    Container::activeApp()->setFirstResponder(tabController());
-    return true;
-  }
-  return false;
-}
-
-void CalculationController::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    selectCellAtLocation(1, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
-  }
-  TabTableController::didBecomeFirstResponder();
 }
 
 void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
@@ -91,18 +67,6 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
     }
     myCell->selectFirstText(firstSubCellSelected);
   }
-}
-
-bool CalculationController::isEmpty() const {
-  return !m_store->hasValidSeries();
-}
-
-I18n::Message CalculationController::emptyMessage() {
-  return I18n::Message::NoValueToCompute;
-}
-
-Responder * CalculationController::defaultController() {
-  return tabController();
 }
 
 int CalculationController::numberOfRows() const {
@@ -283,18 +247,6 @@ KDCoordinate CalculationController::columnWidth(int i) {
   return k_minCalculationCellWidth;
 }
 
-KDCoordinate CalculationController::rowHeight(int j) {
-  return k_cellHeight;
-}
-
-KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
-  return j*rowHeight(0);
-}
-
-int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  return (offsetY-1) / rowHeight(0);
-}
-
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   if (type == k_standardCalculationTitleCellType) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
@@ -346,10 +298,6 @@ int CalculationController::typeAtLocation(int i, int j) {
     return k_doubleBufferCalculationCellType;
   }
   return k_standardCalculationCellType;
-}
-
-Responder * CalculationController::tabController() const {
-  return (parentResponder()->parentResponder()->parentResponder());
 }
 
 bool CalculationController::hasLinearRegression() const {

@@ -108,7 +108,7 @@ private:
       m_initialConditionSizes[conditionIndex] = size;
     }
   private:
-    static_assert((1 << 8*sizeof(uint16_t)) > Ion::Storage::Container::k_storageSize, "Potential overflows of Sequence initial condition sizes");
+    static_assert((1 << 8*sizeof(uint16_t)) > Ion::Storage::FileSystem::k_storageSize, "Potential overflows of Sequence initial condition sizes");
     Type m_type;
     uint8_t m_initialRank;
 #if __EMSCRIPTEN__

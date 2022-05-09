@@ -40,12 +40,12 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
   assert(baseName != nullptr);
   // Create the record
   RecordDataBuffer data(Escher::Palette::nextDataColor(&s_colorIndex));
-  *error = Ion::Storage::Container::sharedStorage()->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
+  *error = Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
   if (*error != Ion::Storage::Record::ErrorStatus::None) {
     return ContinuousFunction();
   }
   // Return the ContinuousFunction with the new record
-  return ContinuousFunction(Ion::Storage::Container::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
+  return ContinuousFunction(Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
 I18n::Message ContinuousFunction::MessageForSymbolType(SymbolType symbolType) {
@@ -789,7 +789,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
     char name[k_maxDefaultNameSize];
     const char * const extensions[1] = { Ion::Storage::funcExtension };
     name[0] = k_unnamedRecordFirstChar;
-    Ion::Storage::Container::sharedStorage()->firstAvailableNameFromPrefix(name, 1, k_maxDefaultNameSize, extensions, 1, 99);
+    Ion::Storage::FileSystem::sharedFileSystem()->firstAvailableNameFromPrefix(name, 1, k_maxDefaultNameSize, extensions, 1, 99);
     error = Ion::Storage::Record::SetBaseNameWithExtension(record, name, Ion::Storage::funcExtension);
   }
   return error;

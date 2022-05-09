@@ -496,7 +496,7 @@ QUIZ_CASE(sequence_context) {
   SequenceContext sequenceContext(&globalContext, store);
   addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, &sequenceContext);
   assert_expression_simplifies_approximates_to<double>("f(u(2))", "3");
-  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 
   store->removeAll();
   addSequence(store, Sequence::Type::Explicit, "1/0", nullptr, nullptr, &sequenceContext);
@@ -517,8 +517,8 @@ QUIZ_CASE(sequence_order) {
   quiz_assert(v->fullName()[0] == 'v');
   Sequence * w = addSequence(store, Sequence::Type::Explicit, "3", nullptr, nullptr, &sequenceContext);
   quiz_assert(w->fullName()[0] == 'w');
-  Ion::Storage::Container::sharedStorage()->recordNamed("u.seq").destroy();
-  Ion::Storage::Container::sharedStorage()->recordNamed("v.seq").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("u.seq").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("v.seq").destroy();
   u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, &sequenceContext);
   assert(u->fullName()[0] == 'u');
   v = addSequence(store, Sequence::Type::Explicit, "1+w(1)", nullptr, nullptr, &sequenceContext);
@@ -530,7 +530,7 @@ QUIZ_CASE(sequence_order) {
   store->removeAll();
   u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, &sequenceContext);
   v = addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, &sequenceContext);
-  Ion::Storage::Container::sharedStorage()->recordNamed("u.seq").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("u.seq").destroy();
   sequenceContext.resetCache();
   quiz_assert(v->evaluateXYAtParameter(1., &sequenceContext).x2() == 1.);
 

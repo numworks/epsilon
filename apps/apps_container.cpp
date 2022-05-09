@@ -28,7 +28,7 @@ AppsContainer::AppsContainer() :
   m_promptController(k_promptMessages, k_promptColors, k_promptNumberOfMessages)
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
-  Ion::Storage::Container::sharedStorage()->setDelegate(this);
+  Ion::Storage::FileSystem::sharedFileSystem()->setDelegate(this);
   Shared::RecordRestrictiveExtensions::registerRestrictiveExtensionsToSharedStorage();
 }
 
@@ -57,7 +57,7 @@ App::Snapshot * AppsContainer::usbConnectedAppSnapshot() {
 
 void AppsContainer::reset() {
   // Empty storage (delete functions, variables, python scripts)
-  Ion::Storage::Container::sharedStorage()->destroyAllRecords();
+  Ion::Storage::FileSystem::sharedFileSystem()->destroyAllRecords();
   // Empty clipboard
   Clipboard::sharedClipboard()->reset();
   for (int i = 0; i < numberOfBuiltinApps(); i++) {

@@ -8,11 +8,11 @@ ExpressionModelStore::ExpressionModelStore() :
 }
 
 int ExpressionModelStore::numberOfModels() const {
-  return Ion::Storage::Container::sharedStorage()->numberOfRecordsWithExtension(modelExtension());
+  return Ion::Storage::FileSystem::sharedFileSystem()->numberOfRecordsWithExtension(modelExtension());
 }
 
 Ion::Storage::Record ExpressionModelStore::recordAtIndex(int i) const {
-  return Ion::Storage::Container::sharedStorage()->recordWithExtensionAtIndex(modelExtension(), i);
+  return Ion::Storage::FileSystem::sharedFileSystem()->recordWithExtensionAtIndex(modelExtension(), i);
 }
 
 ExpressionModelHandle * ExpressionModelStore::privateModelForRecord(Ion::Storage::Record record) const {
@@ -28,7 +28,7 @@ ExpressionModelHandle * ExpressionModelStore::privateModelForRecord(Ion::Storage
 
 
 void ExpressionModelStore::removeAll() {
-  Ion::Storage::Container::sharedStorage()->destroyRecordsWithExtension(modelExtension());
+  Ion::Storage::FileSystem::sharedFileSystem()->destroyRecordsWithExtension(modelExtension());
 }
 
 void ExpressionModelStore::removeModel(Ion::Storage::Record record) {

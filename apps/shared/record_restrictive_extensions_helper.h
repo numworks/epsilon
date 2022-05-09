@@ -1,7 +1,7 @@
 #ifndef SHARED_RECORD_RESTRICTIVE_EXTENSIONS_HELPER_H
 #define SHARED_RECORD_RESTRICTIVE_EXTENSIONS_HELPER_H
 
-#include <ion/storage/container.h>
+#include <ion/storage/file_system.h>
 
 namespace Shared {
 
@@ -22,7 +22,7 @@ constexpr static RestrictiveExtension k_restrictiveExtensions[] = {
 constexpr static int k_numberOfRestrictiveExtensions = sizeof(k_restrictiveExtensions) / sizeof(RestrictiveExtension);
 
 void registerRestrictiveExtensionsToSharedStorage() {
-  Ion::Storage::RecordNameVerifier * recordNameVerifier = Ion::Storage::Container::sharedStorage()->recordNameVerifier();
+  Ion::Storage::RecordNameVerifier * recordNameVerifier = Ion::Storage::FileSystem::sharedFileSystem()->recordNameVerifier();
   for (int i = 0; i < k_numberOfRestrictiveExtensions; i++) {
     recordNameVerifier->registerRestrictiveExtensionWithPrecedence(k_restrictiveExtensions[i].extension, k_restrictiveExtensions[i].precedenceScore);
   }

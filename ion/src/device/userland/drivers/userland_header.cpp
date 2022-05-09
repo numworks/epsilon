@@ -29,7 +29,7 @@ constexpr UserlandHeader::UserlandHeader() :
   m_header(Magic),
   m_expectedEpsilonVersion{EPSILON_VERSION},
   m_storageAddressRAM(storageAddress),
-  m_storageSizeRAM(Ion::Storage::Container::k_storageSize),
+  m_storageSizeRAM(Ion::Storage::FileSystem::k_storageSize),
   m_externalAppsFlashStart(&_external_apps_flash_start),
   m_externalAppsFlashEnd(&_external_apps_flash_end),
   m_externalAppsRAMStart(&_external_apps_RAM_start),

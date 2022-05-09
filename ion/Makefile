@@ -27,7 +27,7 @@ ion_src += $(addprefix ion/src/shared/, \
   keyboard.cpp \
   keyboard_queue.cpp \
   stack_position.cpp \
-  storage/container.cpp \
+  storage/file_system.cpp \
   storage/record_name_verifier.cpp \
   storage/record.cpp \
   unicode/code_point.cpp\
@@ -67,7 +67,7 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   decompress.cpp:+consoledisplay \
   stack_position.cpp \
-  storage/container.cpp \
+  storage/file_system.cpp \
   storage/record_name_verifier.cpp \
   storage/record.cpp \
   unicode/code_point.cpp\

@@ -6,7 +6,7 @@
 #include <poincare/float.h>
 #include <poincare/decimal.h>
 #include <poincare/symbol.h>
-#include <ion/storage/container.h>
+#include <ion/storage/file_system.h>
 #include <assert.h>
 #include "sequence_store.h"
 

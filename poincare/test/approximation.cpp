@@ -1043,9 +1043,9 @@ QUIZ_CASE(poincare_approximation_store) {
   assert_expression_simplifies_and_approximates_to("abs({0}×π)→f(x)", "{0}");
 
   // Clean the storage for other tests
-  Ion::Storage::Container::sharedStorage()->recordNamed("A.exp").destroy();
-  Ion::Storage::Container::sharedStorage()->recordNamed("B.exp").destroy();
-  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("A.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("B.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_approximation_store_matrix) {
@@ -1054,7 +1054,7 @@ QUIZ_CASE(poincare_approximation_store_matrix) {
   assert_expression_approximates_to_scalar<float>("[[7]]→a", NAN);
 
   // Clean the storage for other tests
-  Ion::Storage::Container::sharedStorage()->recordNamed("a.mat").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.mat").destroy();
 }
 
 QUIZ_CASE(poincare_approximation_complex_format) {

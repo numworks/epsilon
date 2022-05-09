@@ -38,16 +38,6 @@ constexpr Expression::FunctionHelper GeomCDFRange::s_functionHelper;
 constexpr Expression::FunctionHelper GeomPDF::s_functionHelper;
 constexpr Expression::FunctionHelper InvGeom::s_functionHelper;
 
-union AnyDistribution {
-  AnyDistribution() {}
-  NormalDistribution n;
-  StudentDistribution s;
-  BinomialDistribution b;
-  PoissonDistribution p;
-  GeometricDistribution g;
-};
-
-
 union AnyFunction {
   AnyFunction() {}
   CDFFunction f;
@@ -91,9 +81,7 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
   AnyFunction functionPlaceholder;
   DistributionMethod * function = static_cast<DistributionMethod *>(static_cast<void*>(&functionPlaceholder));
   DistributionMethod::Initialize(function, functionType());
-  AnyDistribution distributionPlaceholder;
-  Distribution * distribution = static_cast<Distribution *>(static_cast<void*>(&distributionPlaceholder));
-  Distribution::Initialize(distribution, distributionType());
+  Distribution * distribution = Distribution::Get(distributionType());
 
   bool parametersAreOk;
   bool couldCheckParameters = distribution->ExpressionParametersAreOK(&parametersAreOk, parameters, context);
@@ -130,10 +118,7 @@ Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContex
     parameters[i] = evaluation.toScalar();
   }
   T result = NAN;
-  // Distributions are only vpointers
-  AnyDistribution distributionPlaceholder;
-  Distribution * distribution = static_cast<Distribution *>(static_cast<void*>(&distributionPlaceholder));
-  Distribution::Initialize(distribution, m_distributionType);
+  Distribution * distribution = Distribution::Get(m_distributionType);
   AnyFunction functionPlaceholder;
   DistributionMethod * function = static_cast<DistributionMethod *>(static_cast<void*>(&functionPlaceholder));
   DistributionMethod::Initialize(function, m_functionType);

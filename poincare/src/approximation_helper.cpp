@@ -120,7 +120,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   if (numberOfParameters == 0) {
     return Complex<T>::Undefined();
   }
-  int listLength = -1;
+  int listLength = Expression::k_noList;
   for (int i = 0; i < numberOfParameters; i++) {
     evaluationArray[i] = expression->childAtIndex(i)->approximate(T(), approximationContext);
     if (evaluationArray[i].type() == EvaluationNode<T>::Type::MatrixComplex) {
@@ -131,7 +131,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
         return Complex<T>::Undefined();
       }
       int newLength = evaluationArray[i].numberOfChildren();
-      if (listLength == -1) {
+      if (listLength == Expression::k_noList) {
         listLength = newLength;
       } else if (listLength != newLength) {
         return Complex<T>::Undefined();
@@ -140,7 +140,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   }
 
   std::complex<T> complexesArray[k_maxNumberOfParametersForMap];
-  if (listLength == -1) {
+  if (listLength == Expression::k_noList) {
     for (int i = 0; i < numberOfParameters; i++) {
       assert(evaluationArray[i].type() == EvaluationNode<T>::Type::Complex);
       complexesArray[i] = evaluationArray[i].complexAtIndex(0);

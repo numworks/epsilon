@@ -2,54 +2,35 @@
 #define POINCARE_DISTRIBUTION_FUNCTION_H
 
 #include <poincare/distribution.h>
-#include <poincare/expression.h>
+#include <poincare/distribution_method.h>
 #include <poincare/n_ary_expression.h>
 
 namespace Poincare {
 
-enum class FunctionType {
-  PDF,
-  CDF,
-  CDFRange,
-  Inverse,
-};
-
-template<Distribution::Type T, FunctionType U>
+template<Distribution::Type T, DistributionMethod::Type U>
 constexpr const char * getName();
 
-template<> constexpr const char * getName<Distribution::Type::Normal, FunctionType::CDF>() { return "normcdf"; }
-template<> constexpr const char * getName<Distribution::Type::Normal, FunctionType::CDFRange>() { return "normcdfrange"; }
-template<> constexpr const char * getName<Distribution::Type::Normal, FunctionType::PDF>() { return "normpdf"; }
-template<> constexpr const char * getName<Distribution::Type::Normal, FunctionType::Inverse>() { return "invnorm"; }
+template<> constexpr const char * getName<Distribution::Type::Normal, DistributionMethod::Type::CDF>() { return "normcdf"; }
+template<> constexpr const char * getName<Distribution::Type::Normal, DistributionMethod::Type::CDFRange>() { return "normcdfrange"; }
+template<> constexpr const char * getName<Distribution::Type::Normal, DistributionMethod::Type::PDF>() { return "normpdf"; }
+template<> constexpr const char * getName<Distribution::Type::Normal, DistributionMethod::Type::Inverse>() { return "invnorm"; }
 
-template<> constexpr const char * getName<Distribution::Type::Student, FunctionType::CDF>() { return "tcdf"; }
-template<> constexpr const char * getName<Distribution::Type::Student, FunctionType::CDFRange>() { return "tcdfrange"; }
-template<> constexpr const char * getName<Distribution::Type::Student, FunctionType::PDF>() { return "tpdf"; }
-template<> constexpr const char * getName<Distribution::Type::Student, FunctionType::Inverse>() { return "invt"; }
+template<> constexpr const char * getName<Distribution::Type::Student, DistributionMethod::Type::CDF>() { return "tcdf"; }
+template<> constexpr const char * getName<Distribution::Type::Student, DistributionMethod::Type::CDFRange>() { return "tcdfrange"; }
+template<> constexpr const char * getName<Distribution::Type::Student, DistributionMethod::Type::PDF>() { return "tpdf"; }
+template<> constexpr const char * getName<Distribution::Type::Student, DistributionMethod::Type::Inverse>() { return "invt"; }
 
-template<> constexpr const char * getName<Distribution::Type::Binomial, FunctionType::CDF>() { return "binomcdf"; }
-template<> constexpr const char * getName<Distribution::Type::Binomial, FunctionType::PDF>() { return "binompdf"; }
-template<> constexpr const char * getName<Distribution::Type::Binomial, FunctionType::Inverse>() { return "invbinom"; }
+template<> constexpr const char * getName<Distribution::Type::Binomial, DistributionMethod::Type::CDF>() { return "binomcdf"; }
+template<> constexpr const char * getName<Distribution::Type::Binomial, DistributionMethod::Type::PDF>() { return "binompdf"; }
+template<> constexpr const char * getName<Distribution::Type::Binomial, DistributionMethod::Type::Inverse>() { return "invbinom"; }
 
-template<> constexpr const char * getName<Distribution::Type::Poisson, FunctionType::CDF>() { return "poissoncdf"; }
-template<> constexpr const char * getName<Distribution::Type::Poisson, FunctionType::PDF>() { return "poissonpdf"; }
+template<> constexpr const char * getName<Distribution::Type::Poisson, DistributionMethod::Type::CDF>() { return "poissoncdf"; }
+template<> constexpr const char * getName<Distribution::Type::Poisson, DistributionMethod::Type::PDF>() { return "poissonpdf"; }
 
-template<> constexpr const char * getName<Distribution::Type::Geometric, FunctionType::CDF>() { return "geomcdf"; }
-template<> constexpr const char * getName<Distribution::Type::Geometric, FunctionType::CDFRange>() { return "geomcdfrange"; }
-template<> constexpr const char * getName<Distribution::Type::Geometric, FunctionType::PDF>() { return "geompdf"; }
-template<> constexpr const char * getName<Distribution::Type::Geometric, FunctionType::Inverse>() { return "invgeom"; }
-
-
-static constexpr int numberOfParameters(FunctionType f) {
-  switch(f) {
-  case FunctionType::PDF:
-  case FunctionType::CDF:
-  case FunctionType::Inverse:
-    return 1;
-  case FunctionType::CDFRange:
-    return 2;
-  }
-}
+template<> constexpr const char * getName<Distribution::Type::Geometric, DistributionMethod::Type::CDF>() { return "geomcdf"; }
+template<> constexpr const char * getName<Distribution::Type::Geometric, DistributionMethod::Type::CDFRange>() { return "geomcdfrange"; }
+template<> constexpr const char * getName<Distribution::Type::Geometric, DistributionMethod::Type::PDF>() { return "geompdf"; }
+template<> constexpr const char * getName<Distribution::Type::Geometric, DistributionMethod::Type::Inverse>() { return "invgeom"; }
 
 class DistributionFunctionNode : public NAryExpressionNode {
 public:
@@ -67,7 +48,7 @@ public:
     // for example to simplify two binomial expressions together
   }
   Sign sign(Context * context) const override {
-    if (m_functionType != FunctionType::Inverse) {
+    if (m_functionType != DistributionMethod::Type::Inverse) {
       return Sign::Positive;
     }
     return Sign::Unknown;
@@ -93,16 +74,16 @@ public:
       break;
     }
     switch (m_functionType) {
-    case FunctionType::PDF:
+    case DistributionMethod::Type::PDF:
       stream << "PDF";
       break;
-    case FunctionType::CDF:
+    case DistributionMethod::Type::CDF:
       stream << "CDF";
       break;
-    case FunctionType::CDFRange:
+    case DistributionMethod::Type::CDFRange:
       stream << "CDFRange";
       break;
-    case FunctionType::Inverse:
+    case DistributionMethod::Type::Inverse:
       stream << "Inv";
       break;
     }
@@ -123,7 +104,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 
   friend class DistributionFunction;
-  void setType(FunctionType f) {
+  void setType(DistributionMethod::Type f) {
     m_functionType = f;
   }
   void setDistribution(Distribution::Type d) {
@@ -134,7 +115,7 @@ private:
   }
 private:
   const char * m_name;
-  FunctionType m_functionType;
+  DistributionMethod::Type m_functionType;
   Distribution::Type m_distributionType;
 };
 
@@ -143,7 +124,7 @@ public:
   DistributionFunction(const DistributionFunctionNode * n) : NAryExpression(n) {}
   static DistributionFunction Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<DistributionFunction, DistributionFunctionNode>(convert(children)); }
 
-  template <Distribution::Type T, FunctionType U>
+  template <Distribution::Type T, DistributionMethod::Type U>
   static Expression hook(Expression children) {
     Expression exp = UntypedBuilderMultipleChildren<DistributionFunction>(children);
     DistributionFunction dist = exp.convert<DistributionFunction>();
@@ -154,7 +135,7 @@ public:
   }
 
   Expression shallowReduce(Context * context, bool * stopReduction = nullptr);
-  void setType(FunctionType f) {
+  void setType(DistributionMethod::Type f) {
     static_cast<DistributionFunctionNode*>(node())->setType(f);
   }
   void setDistribution(Distribution::Type d) {
@@ -168,40 +149,40 @@ public:
     return static_cast<DistributionFunctionNode*>(node())->m_distributionType;
   }
 
-  FunctionType functionType() {
+  DistributionMethod::Type functionType() {
     return static_cast<DistributionFunctionNode*>(node())->m_functionType;
   }
 };
 
-template <Distribution::Type T, FunctionType U>
+template <Distribution::Type T, DistributionMethod::Type U>
 constexpr Expression::FunctionHelper makeHelper() {
   return Expression::FunctionHelper(
     getName<T,U>(),
-    Distribution::numberOfParameters(T) + numberOfParameters(U),
+    Distribution::numberOfParameters(T) + DistributionMethod::numberOfParameters(U),
     &DistributionFunction::hook<T, U>);
 }
 
-struct NormCDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Normal, FunctionType::CDF>(); };
-struct NormCDFRange { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Normal, FunctionType::CDFRange>(); };
-struct NormPDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Normal, FunctionType::PDF>(); };
-struct InvNorm      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Normal, FunctionType::Inverse>(); };
+struct NormCDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Normal, DistributionMethod::Type::CDF>(); };
+struct NormCDFRange { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Normal, DistributionMethod::Type::CDFRange>(); };
+struct NormPDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Normal, DistributionMethod::Type::PDF>(); };
+struct InvNorm      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Normal, DistributionMethod::Type::Inverse>(); };
 
-struct StudentCDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Student, FunctionType::CDF>(); };
-struct StudentCDFRange { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Student, FunctionType::CDFRange>(); };
-struct StudentPDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Student, FunctionType::PDF>(); };
-struct InvStudent      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Student, FunctionType::Inverse>(); };
+struct StudentCDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Student, DistributionMethod::Type::CDF>(); };
+struct StudentCDFRange { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Student, DistributionMethod::Type::CDFRange>(); };
+struct StudentPDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Student, DistributionMethod::Type::PDF>(); };
+struct InvStudent      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Student, DistributionMethod::Type::Inverse>(); };
 
-struct PoissonCDF { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Poisson, FunctionType::CDF>(); };
-struct PoissonPDF { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Poisson, FunctionType::PDF>(); };
+struct PoissonCDF { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Poisson, DistributionMethod::Type::CDF>(); };
+struct PoissonPDF { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Poisson, DistributionMethod::Type::PDF>(); };
 
-struct BinomCDF { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Binomial, FunctionType::CDF>(); };
-struct BinomPDF { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Binomial, FunctionType::PDF>(); };
-struct InvBinom { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Binomial, FunctionType::Inverse>(); };
+struct BinomCDF { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Binomial, DistributionMethod::Type::CDF>(); };
+struct BinomPDF { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Binomial, DistributionMethod::Type::PDF>(); };
+struct InvBinom { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Binomial, DistributionMethod::Type::Inverse>(); };
 
-struct GeomCDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, FunctionType::CDF>(); };
-struct GeomCDFRange { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, FunctionType::CDFRange>(); };
-struct GeomPDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, FunctionType::PDF>(); };
-struct InvGeom      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, FunctionType::Inverse>(); };
+struct GeomCDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, DistributionMethod::Type::CDF>(); };
+struct GeomCDFRange { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, DistributionMethod::Type::CDFRange>(); };
+struct GeomPDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, DistributionMethod::Type::PDF>(); };
+struct InvGeom      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, DistributionMethod::Type::Inverse>(); };
 
 }
 

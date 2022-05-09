@@ -4,12 +4,14 @@
 #include <poincare/student_distribution.h>
 #include <poincare/poisson_distribution.h>
 #include <poincare/normal_distribution.h>
+#include <poincare/distribution_method.h>
+#include <poincare/cdf_function.h>
+#include <poincare/cdf_range_function.h>
+#include <poincare/pdf_function.h>
+#include <poincare/inv_function.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/infinity.h>
-#include <poincare/integer.h>
-#include <poincare/rational.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -45,6 +47,15 @@ union AnyDistribution {
   GeometricDistribution g;
 };
 
+
+union AnyFunction {
+  AnyFunction() {}
+  CDFFunction f;
+  CDFRangeFunction r;
+  PDFFunction p;
+  InverseFunction i;
+};
+
 Layout DistributionFunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(DistributionFunction(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -68,11 +79,18 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
     }
   }
 
-  int childIndex = numberOfParameters(functionType());
-  Expression parameters[Distribution::maxNumberOfParameters];
+  int childIndex = 0;
+  Expression abscissa[DistributionMethod::k_maxNumberOfParameters];
+  for (int i=0; i < DistributionMethod::numberOfParameters(functionType()); i++) {
+    abscissa[i] = childAtIndex(childIndex++);
+  }
+  Expression parameters[Distribution::k_maxNumberOfParameters];
   for (int i=0; i < Distribution::numberOfParameters(distributionType()); i++) {
     parameters[i] = childAtIndex(childIndex++);
   }
+  AnyFunction functionPlaceholder;
+  DistributionMethod * function = static_cast<DistributionMethod *>(static_cast<void*>(&functionPlaceholder));
+  DistributionMethod::Initialize(function, functionType());
   AnyDistribution distributionPlaceholder;
   Distribution * distribution = static_cast<Distribution *>(static_cast<void*>(&distributionPlaceholder));
   Distribution::Initialize(distribution, distributionType());
@@ -87,40 +105,9 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
     return replaceWithUndefinedInPlace();
   }
 
-  switch (functionType()) {
-  case FunctionType::Inverse:
-  {
-      Expression a = childAtIndex(0);
-      // Check a
-      if (a.deepIsMatrix(context)) {
-        return replaceWithUndefinedInPlace();
-      }
-      if (a.type() != ExpressionNode::Type::Rational) {
-        return *this;
-      }
-
-      // Special values
-
-      // Undef if a < 0 or a > 1
-      Rational rationalA = static_cast<Rational &>(a);
-      if (rationalA.isNegative()) {
-        return replaceWithUndefinedInPlace();
-      }
-      Integer num = rationalA.unsignedIntegerNumerator();
-      Integer den = rationalA.integerDenominator();
-      if (den.isLowerThan(num)) {
-        return replaceWithUndefinedInPlace();
-      }
-      bool is0 = rationalA.isZero();
-      bool is1 = !is0 && rationalA.isOne();
-      if (is0 || is1) {
-        Expression result = Infinity::Builder(is0);
-        replaceWithInPlace(result);
-        return result;
-      }
-  }
-  default:
-    ;
+  Expression e = function->shallowReduce(abscissa, context, this);
+  if (!e.isUninitialized()) {
+    return e;
   }
 
   if (stopReduction != nullptr) {
@@ -131,51 +118,27 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
 
 template<typename T>
 Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContext approximationContext) const {
-
   int childIndex = 0;
-  T x, y;
-  switch (m_functionType) {
-      case FunctionType::CDF:
-      case FunctionType::PDF:
-      case FunctionType::Inverse:
-      {
-        Evaluation<T> xEvaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
-        x = xEvaluation.toScalar();
-        break;
-      }
-      case FunctionType::CDFRange:
-      {
-        Evaluation<T> xEvaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
-        Evaluation<T> yEvaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
-        x = xEvaluation.toScalar();
-        y = yEvaluation.toScalar();
-        break;
-      }
+  T abscissa[DistributionMethod::k_maxNumberOfParameters];
+  for (int i=0; i < DistributionMethod::numberOfParameters(m_functionType); i++) {
+    Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
+    abscissa[i] = evaluation.toScalar();
+  }
+  T parameters[Distribution::k_maxNumberOfParameters];
+  for (int i=0; i < Distribution::numberOfParameters(m_distributionType); i++) {
+    Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
+    parameters[i] = evaluation.toScalar();
   }
   T result = NAN;
   // Distributions are only vpointers
   AnyDistribution distributionPlaceholder;
   Distribution * distribution = static_cast<Distribution *>(static_cast<void*>(&distributionPlaceholder));
   Distribution::Initialize(distribution, m_distributionType);
-  T parameters[Distribution::maxNumberOfParameters];
-  for (int i=0; i < Distribution::numberOfParameters(m_distributionType); i++) {
-    Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
-    parameters[i] = evaluation.toScalar();
-  }
-  switch (m_functionType) {
-  case FunctionType::PDF:
-    result = distribution->EvaluateAtAbscissa(x, parameters);
-    break;
-  case FunctionType::CDF:
-    result = distribution->CumulativeDistributiveFunctionAtAbscissa(x, parameters);
-    break;
-  case FunctionType::Inverse:
-    result = distribution->CumulativeDistributiveInverseForProbability(x, parameters);
-    break;
-  case FunctionType::CDFRange:
-    result = distribution->CumulativeDistributiveFunctionForRange(x, y, parameters);
-    break;
-  }
+  AnyFunction functionPlaceholder;
+  DistributionMethod * function = static_cast<DistributionMethod *>(static_cast<void*>(&functionPlaceholder));
+  DistributionMethod::Initialize(function, m_functionType);
+  result = function->EvaluateAtAbscissa(abscissa, distribution, parameters);
   return Complex<T>::Builder(result);
 }
+
 }

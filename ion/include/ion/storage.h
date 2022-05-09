@@ -8,7 +8,6 @@ namespace Ion {
 class Storage : public InternalStorage {
 public:
   using InternalStorage::Record;
-  using InternalStorage::MetadataRowHeader;
 
   using InternalStorage::expExtension;
   using InternalStorage::funcExtension;

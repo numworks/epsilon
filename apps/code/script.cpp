@@ -65,21 +65,6 @@ bool Script::nameCompliant(const char * name) {
   return false;
 }
 
-uint16_t Script::cursorOffset() {
-  assert(!isNull());
-  Ion::Storage::MetadataRowHeader * metadataForRecord = Ion::Storage::sharedStorage()->metadataForRecord(*this);
-  if (metadataForRecord != nullptr) {
-    assert(metadataForRecord->metadataSize == 2);
-    return *((uint16_t*) metadataForRecord->data());
-  }
-
-  return -1;
-}
-void Script::setCursorOffset(uint16_t position) {
-  assert(!isNull());
-  Ion::Storage::sharedStorage()->setMetadataForRecord(*this, sizeof(uint16_t), &position);
-}
-
 uint8_t * StatusFromData(Script::Data d) {
   return const_cast<uint8_t *>(static_cast<const uint8_t *>(d.buffer));
 }

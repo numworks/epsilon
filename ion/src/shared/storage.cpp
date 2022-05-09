@@ -21,7 +21,7 @@ size_t Storage::availableSize() {
         bufferSize += sizeOfRecordStarting(p);
       }
     }
-    return k_storageSize-bufferSize-sizeof(record_size_t)-InternalStorage::m_metadataMapHeader->metadataMapSize;
+    return k_storageSize-bufferSize-sizeof(record_size_t);
   } else {
     return InternalStorage::availableSize();
   }

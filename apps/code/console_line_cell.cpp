@@ -25,7 +25,7 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(KDCon
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::minimalSizeForOptimalDisplay() const {
-  return GlobalPreferences::sharedGlobalPreferences()->font()->stringSize(m_line->text());
+  return m_line ? GlobalPreferences::sharedGlobalPreferences()->font()->stringSize(m_line->text()) : KDSizeZero;
 }
 
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder * parentResponder) :

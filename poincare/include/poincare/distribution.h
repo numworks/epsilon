@@ -28,26 +28,26 @@ public:
     }
   }
 
-  static Distribution * Get(Type type);
+  static const Distribution * Get(Type type);
 
-  virtual float EvaluateAtAbscissa(float x, const float * parameters) = 0;
-  virtual double EvaluateAtAbscissa(double x, const double * parameters) = 0;
+  virtual float EvaluateAtAbscissa(float x, const float * parameters) const = 0;
+  virtual double EvaluateAtAbscissa(double x, const double * parameters) const = 0;
 
-  virtual float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) = 0;
-  virtual double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) = 0;
+  virtual float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) const = 0;
+  virtual double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) const = 0;
 
-  virtual float CumulativeDistributiveInverseForProbability(float x, const float * parameters) = 0;
-  virtual double CumulativeDistributiveInverseForProbability(double x, const double * parameters) = 0;
+  virtual float CumulativeDistributiveInverseForProbability(float x, const float * parameters) const = 0;
+  virtual double CumulativeDistributiveInverseForProbability(double x, const double * parameters) const = 0;
 
-  virtual float CumulativeDistributiveFunctionForRange(float x, float y, const float * parameters) = 0;
-  virtual double CumulativeDistributiveFunctionForRange(double x, double y, const double * parameters) = 0;
+  virtual float CumulativeDistributiveFunctionForRange(float x, float y, const float * parameters) const = 0;
+  virtual double CumulativeDistributiveFunctionForRange(double x, double y, const double * parameters) const = 0;
 
-  virtual bool ParametersAreOK(const float * parameters) = 0;
-  virtual bool ParametersAreOK(const double * parameters) = 0;
+  virtual bool ParametersAreOK(const float * parameters) const = 0;
+  virtual bool ParametersAreOK(const double * parameters) const = 0;
 
   /* ExpressionParametersAreOK returns true if the expression could be verified.
    * The result of the verification is *result. */
-  virtual bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) = 0;
+  virtual bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const = 0;
 
 protected:
   /* This method looks for bounds such that:

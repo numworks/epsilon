@@ -38,14 +38,6 @@ constexpr Expression::FunctionHelper GeomCDFRange::s_functionHelper;
 constexpr Expression::FunctionHelper GeomPDF::s_functionHelper;
 constexpr Expression::FunctionHelper InvGeom::s_functionHelper;
 
-union AnyFunction {
-  AnyFunction() {}
-  CDFFunction f;
-  CDFRangeFunction r;
-  PDFFunction p;
-  InverseFunction i;
-};
-
 Layout DistributionFunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(DistributionFunction(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -78,9 +70,7 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
   for (int i=0; i < Distribution::numberOfParameters(distributionType()); i++) {
     parameters[i] = childAtIndex(childIndex++);
   }
-  AnyFunction functionPlaceholder;
-  DistributionMethod * function = static_cast<DistributionMethod *>(static_cast<void*>(&functionPlaceholder));
-  DistributionMethod::Initialize(function, functionType());
+  DistributionMethod * function = DistributionMethod::Get(functionType());
   Distribution * distribution = Distribution::Get(distributionType());
 
   bool parametersAreOk;
@@ -117,13 +107,9 @@ Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContex
     Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
     parameters[i] = evaluation.toScalar();
   }
-  T result = NAN;
+  DistributionMethod * function = DistributionMethod::Get(m_functionType);
   Distribution * distribution = Distribution::Get(m_distributionType);
-  AnyFunction functionPlaceholder;
-  DistributionMethod * function = static_cast<DistributionMethod *>(static_cast<void*>(&functionPlaceholder));
-  DistributionMethod::Initialize(function, m_functionType);
-  result = function->EvaluateAtAbscissa(abscissa, distribution, parameters);
-  return Complex<T>::Builder(result);
+  return Complex<T>::Builder(function->EvaluateAtAbscissa(abscissa, distribution, parameters));
 }
 
 }

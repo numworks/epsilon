@@ -1,5 +1,5 @@
 #include "helper.h"
-#include <ion/storage/container.h>
+#include <ion/storage/file_system.h>
 #include <poincare/derivative.h>
 #include <poincare/undefined.h>
 #include <poincare/nonreal.h>
@@ -65,10 +65,10 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(a^2,a,a)", "4");
   assert_reduces_to_formal_expression("diff(b^2,b,2)", "4", Radian, Real);
 
-  Ion::Storage::Container::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::Container::sharedStorage()->recordNamed("b.exp").destroy();
-  Ion::Storage::Container::sharedStorage()->recordNamed("c.exp").destroy();
-  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("b.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("c.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 
 }
 
@@ -77,7 +77,7 @@ void assert_reduces_for_approximation(const char * expression, const char * resu
 }
 
 QUIZ_CASE(poincare_derivative_reduced_approximation) {
-  assert(Ion::Storage::Container::sharedStorage()->recordNamed("x.exp").isNull());
+  assert(Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").isNull());
   assert_reduces_for_approximation("diff(ln(x),x,1)", "1");
   assert_reduces_for_approximation("diff(ln(x),x,2.2)", "5/11");
   assert_reduces_for_approximation("diff(ln(x),x,0)", Undefined::Name());
@@ -101,7 +101,7 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff((-1)^(4-2*2),x,3)", "0");
   assert_reduce("0→a");
   assert_reduces_for_approximation("diff((-1)^(a*x),x,3)", "0");
-  Ion::Storage::Container::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 }
 
 void assert_approximate_to(const char * expression, const char * result, Preferences::AngleUnit angleUnit = Radian) {

@@ -37,7 +37,7 @@ void EditorController::setScript(Script script, int scriptIndex) {
    *
    * */
 
-  Ion::Storage::Container::sharedStorage()->putAvailableSpaceAtEndOfRecord(m_script);
+  Ion::Storage::FileSystem::sharedFileSystem()->putAvailableSpaceAtEndOfRecord(m_script);
   m_editorView.setText(const_cast<char *>(m_script.content()), m_script.contentSize());
 }
 
@@ -152,10 +152,10 @@ StackViewController * EditorController::stackController() {
 }
 
 void EditorController::cleanStorageEmptySpace() {
-  if (m_script.isNull() || !Ion::Storage::Container::sharedStorage()->hasRecord(m_script)) {
+  if (m_script.isNull() || !Ion::Storage::FileSystem::sharedFileSystem()->hasRecord(m_script)) {
     return;
   }
-  Ion::Storage::Container::sharedStorage()->getAvailableSpaceFromEndOfRecord(m_script, m_script.usedSize());
+  Ion::Storage::FileSystem::sharedFileSystem()->getAvailableSpaceFromEndOfRecord(m_script, m_script.usedSize());
 }
 
 

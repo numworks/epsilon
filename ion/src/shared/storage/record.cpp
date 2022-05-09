@@ -67,34 +67,34 @@ uint32_t Record::checksum() {
 
 
 Record::Name Record::name() const {
-  return Storage::Container::sharedStorage()->nameOfRecord(*this);
+  return Storage::FileSystem::sharedFileSystem()->nameOfRecord(*this);
 }
 
 const char * Record::fullName() const {
   // The baseName points towards the start of the fullName
-  return Storage::Container::sharedStorage()->nameOfRecord(*this).baseName;
+  return Storage::FileSystem::sharedFileSystem()->nameOfRecord(*this).baseName;
 }
 
 Record::Data Record::value() const {
-  return Storage::Container::sharedStorage()->valueOfRecord(*this);
+  return Storage::FileSystem::sharedFileSystem()->valueOfRecord(*this);
 }
 
 Record::ErrorStatus Record::setValue(Data data) {
-  return Storage::Container::sharedStorage()->setValueOfRecord(*this, data);
+  return Storage::FileSystem::sharedFileSystem()->setValueOfRecord(*this, data);
 }
 
 void Record::destroy() {
-  return Storage::Container::sharedStorage()->destroyRecord(*this);
+  return Storage::FileSystem::sharedFileSystem()->destroyRecord(*this);
 }
 
 Record::ErrorStatus Record::SetBaseNameWithExtension(Record * record, const char * baseName, const char * extension) {
   Name name = CreateRecordNameFromBaseNameAndExtension(baseName, extension);
-  return Storage::Container::sharedStorage()->setNameOfRecord(record, name);
+  return Storage::FileSystem::sharedFileSystem()->setNameOfRecord(record, name);
 }
 
 Record::ErrorStatus Record::SetFullName(Record * record, const char * fullName) {
   Name name = CreateRecordNameFromFullName(fullName);
-  return Storage::Container::sharedStorage()->setNameOfRecord(record, name);
+  return Storage::FileSystem::sharedFileSystem()->setNameOfRecord(record, name);
 }
 
 }

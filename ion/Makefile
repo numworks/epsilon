@@ -27,7 +27,9 @@ ion_src += $(addprefix ion/src/shared/, \
   keyboard.cpp \
   keyboard_queue.cpp \
   stack_position.cpp \
-  storage.cpp \
+  storage/container.cpp \
+  storage/record_name_verifier.cpp \
+  storage/record.cpp \
   unicode/code_point.cpp\
   unicode/utf8_decoder.cpp\
   unicode/utf8_helper.cpp\
@@ -65,7 +67,9 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   decompress.cpp:+consoledisplay \
   stack_position.cpp \
-  storage.cpp \
+  storage/container.cpp \
+  storage/record_name_verifier.cpp \
+  storage/record.cpp \
   unicode/code_point.cpp\
   unicode/utf8_decoder.cpp\
   unicode/utf8_helper.cpp\
@@ -86,7 +90,9 @@ tests_src += $(addprefix ion/test/,\
   keyboard.cpp\
   persisting_bytes.cpp\
   ring_buffer.cpp \
-  storage.cpp\
+  storage/container.cpp \
+  storage/record_name_verifier.cpp \
+  storage/record.cpp \
   utf8_decoder.cpp\
   utf8_helper.cpp\
 )

@@ -7,6 +7,7 @@
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
 #include "global_preferences.h"
+#include "shared/record_restrictive_extensions_helper.h"
 
 extern "C" {
 #include <assert.h>
@@ -27,8 +28,8 @@ AppsContainer::AppsContainer() :
   m_promptController(k_promptMessages, k_promptColors, k_promptNumberOfMessages)
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
-  Ion::Storage::sharedStorage()->setDelegate(this);
-  Ion::Storage::sharedStorage()->setRecordDelegate(&m_recordDelegate);
+  Ion::Storage::Container::sharedStorage()->setDelegate(this);
+  Shared::RecordRestrictiveExtensions::registerRestrictiveExtensionsToSharedStorage();
 }
 
 Ion::ExternalApps::App AppsContainer::externalAppAtIndex(int index) {

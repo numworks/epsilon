@@ -34,7 +34,7 @@ char ones[Config::ExamModeBufferSize]
 
 constexpr static size_t numberOfBitsInByte = 8;
 
-// if i = 0b000011101, firstOneBitInByte(i) returns 5
+// if i = 0b000011101, numberOfBitsAfterLeadingZeroes(i) returns 5
 size_t numberOfBitsAfterLeadingZeroes(int i) {
   int minShift = 0;
   int maxShift = numberOfBitsInByte;

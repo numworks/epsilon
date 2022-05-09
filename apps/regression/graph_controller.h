@@ -33,7 +33,6 @@ public:
   void tidyModels() override {}
 
 private:
-  constexpr static int k_maxLegendLength = 16;
   constexpr static float k_displayHorizontalMarginRatio = 0.05f;
 
   class SeriesSelectionController : public Shared::CurveSelectionController {

@@ -29,8 +29,8 @@ public:
 
   static const DistributionMethod * Get(Type type);
 
-  virtual float EvaluateAtAbscissa(float * x, Distribution * distribution, const float * parameters) const = 0;
-  virtual double EvaluateAtAbscissa(double * x, Distribution * distribution, const double * parameters) const = 0;
+  virtual float EvaluateAtAbscissa(float * x, const Distribution * distribution, const float * parameters) const = 0;
+  virtual double EvaluateAtAbscissa(double * x, const Distribution * distribution, const double * parameters) const = 0;
 
   virtual Expression shallowReduce(Expression * x, Context * context, Expression * expression) const { return *expression; }
 };

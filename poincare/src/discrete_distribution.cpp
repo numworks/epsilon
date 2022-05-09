@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-template<typename T> T DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, const T * parameters) {
+template<typename T> T DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, const T * parameters) const {
   if (!ParametersAreOK(parameters) || std::isnan(x)) {
     return NAN;
   }
@@ -23,7 +23,7 @@ template<typename T> T DiscreteDistribution::CumulativeDistributiveFunctionAtAbs
         nullptr, pack);
 }
 
-template float DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, const float *);
-template double DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, const double *);
+template float DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, const float *) const;
+template double DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, const double *) const;
 
 }

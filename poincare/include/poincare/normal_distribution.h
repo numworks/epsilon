@@ -10,22 +10,22 @@ namespace Poincare {
 class NormalDistribution final : public ContinuousDistribution {
 public:
   template<typename T> static T EvaluateAtAbscissa(T x, const T mu, const T sigma);
-  float EvaluateAtAbscissa(float x, const float * parameters) override { return EvaluateAtAbscissa<float>(x, parameters[0], parameters[1]); }
-  double EvaluateAtAbscissa(double x, const double * parameters) override { return EvaluateAtAbscissa<double>(x, parameters[0], parameters[1]); }
+  float EvaluateAtAbscissa(float x, const float * parameters) const override { return EvaluateAtAbscissa<float>(x, parameters[0], parameters[1]); }
+  double EvaluateAtAbscissa(double x, const double * parameters) const override { return EvaluateAtAbscissa<double>(x, parameters[0], parameters[1]); }
 
   template<typename T> static T CumulativeDistributiveFunctionAtAbscissa(T x, const T mu, const T sigma);
-  float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) override { return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters[0], parameters[1]); }
-  double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) override { return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters[0], parameters[1]); }
+  float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters[0], parameters[1]); }
+  double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters[0], parameters[1]); }
 
   template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, const T mu, const T sigma);
-  float CumulativeDistributiveInverseForProbability(float x, const float * parameters) override { return CumulativeDistributiveInverseForProbability<float>(x, parameters[0], parameters[1]); }
-  double CumulativeDistributiveInverseForProbability(double x, const double * parameters) override { return CumulativeDistributiveInverseForProbability<double>(x, parameters[0], parameters[1]); }
+  float CumulativeDistributiveInverseForProbability(float x, const float * parameters) const override { return CumulativeDistributiveInverseForProbability<float>(x, parameters[0], parameters[1]); }
+  double CumulativeDistributiveInverseForProbability(double x, const double * parameters) const override { return CumulativeDistributiveInverseForProbability<double>(x, parameters[0], parameters[1]); }
 
-  bool ParametersAreOK(const float * parameters) override { return MuAndSigmaAreOK(parameters[0], parameters[1]); }
-  bool ParametersAreOK(const double * parameters) override { return MuAndSigmaAreOK(parameters[0], parameters[1]); }
+  bool ParametersAreOK(const float * parameters) const override { return MuAndSigmaAreOK(parameters[0], parameters[1]); }
+  bool ParametersAreOK(const double * parameters) const override { return MuAndSigmaAreOK(parameters[0], parameters[1]); }
 
   static bool ExpressionMuAndVarAreOK(bool * result, const Expression &mu, const Expression &sigma, Context * context);
-  bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) override { return ExpressionMuAndVarAreOK(result, parameters[0], parameters[1], context); }
+  bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const override { return ExpressionMuAndVarAreOK(result, parameters[0], parameters[1], context); }
 
 private:
   template<typename T> static T parameterMu(T* parameters) { return parameters[0]; }

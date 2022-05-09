@@ -8,22 +8,22 @@
 
 namespace Poincare {
 
-Distribution * Distribution::Get(Type type) {
+const Distribution * Distribution::Get(Type type) {
   switch (type) {
   case Type::Binomial:
-    static BinomialDistribution binomial;
+    static constexpr BinomialDistribution binomial;
     return &binomial;
   case Type::Normal:
-    static NormalDistribution normal;
+    static constexpr NormalDistribution normal;
     return &normal;
   case Type::Student:
-    static StudentDistribution student;
+    static constexpr StudentDistribution student;
     return &student;
   case Type::Geometric:
-    static GeometricDistribution geometric;
+    static constexpr GeometricDistribution geometric;
     return &geometric;
   case Type::Poisson:
-    static PoissonDistribution poisson;
+    static constexpr PoissonDistribution poisson;
     return &poisson;
   }
 }

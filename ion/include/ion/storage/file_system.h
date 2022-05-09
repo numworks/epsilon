@@ -32,7 +32,7 @@ public:
 };
 
 // This is the main class
-class Container {
+class FileSystem {
 friend class Record;
 public:
   typedef uint16_t record_size_t;
@@ -40,7 +40,7 @@ public:
   constexpr static size_t k_storageSize = 32768;
   static_assert(UINT16_MAX >= k_storageSize, "record_size_t not big enough");
 
-  static Container * sharedStorage();
+  static FileSystem * sharedFileSystem();
 
 #if ION_STORAGE_LOG
   void log();
@@ -122,7 +122,7 @@ private:
   int numberOfRecordsWithFilter(const char * extension, RecordFilter filter, const void * auxiliary = nullptr);
   Record recordWithFilterAtIndex(const char * extension, int index, RecordFilter filter, const void * auxiliary = nullptr);
 
-  Container();
+  FileSystem();
 
   /* Getters/Setters on recordID */
   Record::Name nameOfRecord(const Record record) const;

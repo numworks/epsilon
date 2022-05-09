@@ -23,7 +23,7 @@ const Image * App::Descriptor::icon() const {
 
 App::Snapshot::Snapshot() : Shared::FunctionApp::Snapshot::Snapshot() {
   // Register u, v and w as reserved names to the sharedStorage.
-  Ion::Storage::Container::sharedStorage()->recordNameVerifier()->registerArrayOfReservedNames(Shared::SequenceStore::k_sequenceNames, Ion::Storage::seqExtension, 0, sizeof(Shared::SequenceStore::k_sequenceNames) / sizeof(char *));
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNameVerifier()->registerArrayOfReservedNames(Shared::SequenceStore::k_sequenceNames, Ion::Storage::seqExtension, 0, sizeof(Shared::SequenceStore::k_sequenceNames) / sizeof(char *));
 }
 
 App * App::Snapshot::unpack(Container * container) {

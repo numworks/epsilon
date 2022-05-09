@@ -40,9 +40,9 @@ Ion::Storage::Record createRecord(T * store) {
 template<class T>
 void testAlignmentHandlingFor() {
   T store;
-  Ion::Storage::Container * sharedStorage = Ion::Storage::Container::sharedStorage();
+  Ion::Storage::FileSystem * sharedFileSystem = Ion::Storage::FileSystem::sharedFileSystem();
 
-  sharedStorage->destroyAllRecords();
+  sharedFileSystem->destroyAllRecords();
   Ion::Storage::Record rec1 = createRecord<T>(&store);
   // Evaluate the sequence shift compared to a 2-byte alignment
   uintptr_t shift = reinterpret_cast<uintptr_t>(rec1.value().buffer) % 2;
@@ -51,9 +51,9 @@ void testAlignmentHandlingFor() {
    * should throw an abort(alignment fault) exception */
   interactWithRecordMember(&store, rec1);
 
-  sharedStorage->destroyAllRecords();
+  sharedFileSystem->destroyAllRecords();
   // Repeat the same process with a 1 byte record padding
-  Ion::Storage::Record::ErrorStatus err = sharedStorage->createRecordWithExtension("1", "1", "1", 1);
+  Ion::Storage::Record::ErrorStatus err = sharedFileSystem->createRecordWithExtension("1", "1", "1", 1);
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void) err; // Silence compilation warning about unused variable.
 
@@ -65,7 +65,7 @@ void testAlignmentHandlingFor() {
    * mishandled record alignment */
   quiz_assert(shift == 1);
 
-  sharedStorage->destroyAllRecords();
+  sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(alignment_handling) {

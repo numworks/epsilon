@@ -9,7 +9,7 @@ bool Script::DefaultName(char buffer[], size_t bufferSize) {
   static constexpr int k_defaultScriptNameLength = sizeof(k_defaultScriptName) - 1;
   strlcpy(buffer, k_defaultScriptName, bufferSize);
   const char * const extensions[1] = { ScriptStore::k_scriptExtension };
-  return Ion::Storage::Container::sharedStorage()->firstAvailableNameFromPrefix(buffer, k_defaultScriptNameLength, bufferSize, extensions, 1, k_maxNumberOfDefaultScriptNames) > k_defaultScriptNameLength;
+  return Ion::Storage::FileSystem::sharedFileSystem()->firstAvailableNameFromPrefix(buffer, k_defaultScriptNameLength, bufferSize, extensions, 1, k_maxNumberOfDefaultScriptNames) > k_defaultScriptNameLength;
 }
 
 bool Script::NameCompliant(const char * name) {
@@ -45,7 +45,7 @@ Script::ErrorStatus Script::Create(const char * name, const char * content) {
   Status status;
   const void * dataChunks[] = {&status, content};
   size_t sizeChunks[] = {sizeof(status), strlen(content)+1};
-  ErrorStatus err = Ion::Storage::Container::sharedStorage()->createRecordWithFullNameAndDataChunks(name, dataChunks, sizeChunks, 2);
+  ErrorStatus err = Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithFullNameAndDataChunks(name, dataChunks, sizeChunks, 2);
   assert(err != ErrorStatus::NonCompliantName);
   return err;
 }

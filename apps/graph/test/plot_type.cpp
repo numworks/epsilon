@@ -113,8 +113,8 @@ QUIZ_CASE(graph_function_plot_type_with_predefined_variables) {
     assert_reduce("1→y", Preferences::AngleUnit::Radian, Poincare::Preferences::UnitFormat::Metric, Poincare::Preferences::ComplexFormat::Real);
     addFunction("y=x", ContinuousFunction::PlotType::Line, &store, &context);
 
-    Ion::Storage::Container::sharedStorage()->recordNamed("a.exp").destroy();
-    Ion::Storage::Container::sharedStorage()->recordNamed("y.exp").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("y.exp").destroy();
     store.removeAll();
 }
 

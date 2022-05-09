@@ -24,7 +24,7 @@ App::Snapshot::Snapshot() :
   m_storeVersion(0)
 {
   // Register V1, V2, V3, N1, N2, N3 as reserved names to the sharedStorage.
-  Ion::Storage::Container::sharedStorage()->recordNameVerifier()->registerArrayOfReservedNames(Store::k_columnNames, Ion::Storage::lisExtension, Shared::DoublePairStore::k_numberOfSeries, sizeof(Store::k_columnNames) / sizeof(char *));
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNameVerifier()->registerArrayOfReservedNames(Store::k_columnNames, Ion::Storage::lisExtension, Shared::DoublePairStore::k_numberOfSeries, sizeof(Store::k_columnNames) / sizeof(char *));
 }
 
 App * App::Snapshot::unpack(Container * container) {

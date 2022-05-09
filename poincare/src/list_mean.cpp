@@ -32,7 +32,7 @@ template<typename T> Evaluation<T> ListMeanNode::templatedApproximate(Approximat
     return Complex<T>::Undefined();
   }
   Evaluation<T> sum = static_cast<ListNode *>(child)->sumOfElements<T>(approximationContext);
-  return MultiplicationNode::Compute<T>(sum, Complex<T>::Builder(static_cast<T>(1)/n), approximationContext.complexFormat());
+  return MultiplicationNode::Compute<T>(sum, Complex<T>::Builder(static_cast<T>(1)/static_cast<T>(n)), approximationContext.complexFormat());
 }
 
 Expression ListMean::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

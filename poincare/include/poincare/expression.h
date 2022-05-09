@@ -9,7 +9,7 @@
 #include <poincare/complex.h>
 #include <poincare/solver.h>
 #include <poincare/simplification_helper.h>
-#include <ion/storage.h>
+#include <ion/storage/container.h>
 #include <utility>
 
 namespace Poincare {

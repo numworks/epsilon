@@ -1,7 +1,7 @@
 #include <quiz.h>
 #include "helper.h"
 #include <apps/shared/global_context.h>
-#include <apps/shared/record_delegate.h>
+
 
 using namespace Shared;
 
@@ -91,8 +91,6 @@ QUIZ_CASE(graph_function_plot_type_with_predefined_variables) {
 
     GlobalContext context;
     ContinuousFunctionStore store;
-    Shared::RecordDelegate recordDelegate;
-    Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
     // Add a predefined test function
     addFunction("test(x)=1+x", ContinuousFunction::PlotType::Cartesian, &store, &context);
 
@@ -115,10 +113,9 @@ QUIZ_CASE(graph_function_plot_type_with_predefined_variables) {
     assert_reduce("1→y", Preferences::AngleUnit::Radian, Poincare::Preferences::UnitFormat::Metric, Poincare::Preferences::ComplexFormat::Real);
     addFunction("y=x", ContinuousFunction::PlotType::Line, &store, &context);
 
-    Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-    Ion::Storage::sharedStorage()->recordNamed("y.exp").destroy();
+    Ion::Storage::Container::sharedStorage()->recordNamed("a.exp").destroy();
+    Ion::Storage::Container::sharedStorage()->recordNamed("y.exp").destroy();
     store.removeAll();
-    Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 }

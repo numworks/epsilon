@@ -474,17 +474,17 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_text_not_parsable("log(1,2,3)");
 
   // Custom identifiers with storage
-  Ion::Storage::sharedStorage()->createRecordWithExtension("ab", "exp", "", 0);
-  Ion::Storage::sharedStorage()->createRecordWithExtension("bacos", "func", "", 0);
-  Ion::Storage::sharedStorage()->createRecordWithExtension("azfoo", "exp", "", 0);
-  Ion::Storage::sharedStorage()->createRecordWithExtension("foobar", "func", "", 0);
+  Ion::Storage::Container::sharedStorage()->createRecordWithExtension("ab", "exp", "", 0);
+  Ion::Storage::Container::sharedStorage()->createRecordWithExtension("bacos", "func", "", 0);
+  Ion::Storage::Container::sharedStorage()->createRecordWithExtension("azfoo", "exp", "", 0);
+  Ion::Storage::Container::sharedStorage()->createRecordWithExtension("foobar", "func", "", 0);
   assert_parsed_expression_is("xyz", Multiplication::Builder(Symbol::Builder("x", 1), Multiplication::Builder(Symbol::Builder("y", 1), Symbol::Builder("z", 1))));
   assert_parsed_expression_is("3→xyz", Store::Builder(BasedInteger::Builder(3), Symbol::Builder("xyz", 3)));
   assert_parsed_expression_is("ab", Symbol::Builder("ab", 2));
   assert_parsed_expression_is("aacos(x)", Multiplication::Builder(Symbol::Builder("a", 1), ArcCosine::Builder(Symbol::Builder("x", 1))));
   assert_parsed_expression_is("bacos(x)", Function::Builder("bacos", 5, Symbol::Builder("x", 1)));
   assert_parsed_expression_is("azfoobar(x)", Multiplication::Builder(Symbol::Builder("a", 1), Multiplication::Builder(Symbol::Builder("z", 1), Function::Builder("foobar", 6, Symbol::Builder("x", 1)))));
-  Ion::Storage::sharedStorage()->destroyAllRecords();
+  Ion::Storage::Container::sharedStorage()->destroyAllRecords();
 }
 
 QUIZ_CASE(poincare_parsing_parse_store) {

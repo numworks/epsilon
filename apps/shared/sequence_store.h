@@ -20,7 +20,7 @@ public:
    * changed */
   /* If the sequences have been defined in a unusual order, recordAtIndex(0)
    * may not be the record for u. */
-  Ion::Storage::Record recordAtNameIndex(int i) const { return Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(k_sequenceNames[i], modelExtension()); }
+  Ion::Storage::Record recordAtNameIndex(int i) const { return Ion::Storage::Container::sharedStorage()->recordBaseNamedWithExtension(k_sequenceNames[i], modelExtension()); }
 
 
   static int sequenceIndexForName(char name);

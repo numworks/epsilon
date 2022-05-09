@@ -1,6 +1,5 @@
 #include <quiz.h>
 #include <apps/shared/global_context.h>
-#include <apps/shared/record_delegate.h>
 #include <string.h>
 #include <assert.h>
 #include <cmath>
@@ -75,9 +74,6 @@ void check_sum_of_sequence_between_bounds(double result, double start, double en
 }
 
 QUIZ_CASE(sequence_evaluation) {
-  Shared::RecordDelegate recordDelegate;
-  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
-
   Sequence::Type types[SequenceStore::k_maxNumberOfSequences] = {Sequence::Type::Explicit, Sequence::Type::Explicit, Sequence::Type::Explicit};
   const char * definitions[SequenceStore::k_maxNumberOfSequences] = {nullptr, nullptr, nullptr};
   const char * conditions1[SequenceStore::k_maxNumberOfSequences] = {nullptr, nullptr, nullptr};
@@ -489,8 +485,6 @@ QUIZ_CASE(sequence_evaluation) {
   conditions1[0] = "0";
   conditions2[0] = "1";
   check_sequences_defined_by(result37, types, definitions, conditions1, conditions2);
-
-  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
 }
 
 QUIZ_CASE(sequence_context) {
@@ -502,7 +496,7 @@ QUIZ_CASE(sequence_context) {
   SequenceContext sequenceContext(&globalContext, store);
   addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, &sequenceContext);
   assert_expression_simplifies_approximates_to<double>("f(u(2))", "3");
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
 
   store->removeAll();
   addSequence(store, Sequence::Type::Explicit, "1/0", nullptr, nullptr, &sequenceContext);
@@ -523,8 +517,8 @@ QUIZ_CASE(sequence_order) {
   quiz_assert(v->fullName()[0] == 'v');
   Sequence * w = addSequence(store, Sequence::Type::Explicit, "3", nullptr, nullptr, &sequenceContext);
   quiz_assert(w->fullName()[0] == 'w');
-  Ion::Storage::sharedStorage()->recordNamed("u.seq").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("v.seq").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("u.seq").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("v.seq").destroy();
   u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, &sequenceContext);
   assert(u->fullName()[0] == 'u');
   v = addSequence(store, Sequence::Type::Explicit, "1+w(1)", nullptr, nullptr, &sequenceContext);
@@ -536,7 +530,7 @@ QUIZ_CASE(sequence_order) {
   store->removeAll();
   u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, &sequenceContext);
   v = addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, &sequenceContext);
-  Ion::Storage::sharedStorage()->recordNamed("u.seq").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("u.seq").destroy();
   sequenceContext.resetCache();
   quiz_assert(v->evaluateXYAtParameter(1., &sequenceContext).x2() == 1.);
 

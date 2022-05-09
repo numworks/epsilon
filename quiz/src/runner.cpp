@@ -26,7 +26,7 @@ static inline void ion_main_inner() {
   quiz_print("ALL TESTS FINISHED");
   time = Ion::Timing::millis() - time;
   char timeString[30];
-  Poincare::Print::customPrintf(timeString, 30, "DURATION : %i ms", time);
+  Poincare::Print::customPrintf(timeString, 30, "DURATION: %i ms", time);
   quiz_print(timeString);
 #ifdef PLATFORM_DEVICE
   while (1) {

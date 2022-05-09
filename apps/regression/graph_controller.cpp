@@ -1,6 +1,5 @@
 #include "graph_controller.h"
 #include "../apps_container.h"
-#include "../exam_mode_configuration.h"
 #include "../shared/function_banner_delegate.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
@@ -140,104 +139,46 @@ Poincare::Context * GraphController::globalContext() {
 // SimpleInteractiveCurveViewController
 
 void GraphController::reloadBannerView() {
-  Model * model = m_store->modelForSeries(*m_selectedSeriesIndex);
-  Model::Type modelType = m_store->seriesRegressionType(*m_selectedSeriesIndex);
-  bool displayRandR2 = modelType == Model::Type::Linear && !ExamModeConfiguration::statsDiagnosticsAreForbidden();
-  m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + (displayRandR2 ? 2 : 0) + model->numberOfCoefficients() + BannerView::k_numberOfSharedSubviews);
-
   // Set point equals: "P(...) ="
   const int significantDigits = Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
   constexpr size_t bufferSize = Shared::FunctionBannerDelegate::k_textBufferSize;
-  char buffer[bufferSize];
 
-  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex) || *m_selectedDotIndex < 0) {
-    Poincare::Print::customPrintf(buffer, bufferSize, "P(%s)",
-      *m_selectedDotIndex < 0 ? I18n::translate(I18n::Message::Reg) : I18n::translate(I18n::Message::MeanDot));
+  bool displayMean = (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex));
+  char buffer[bufferSize];
+  if (*m_selectedDotIndex < 0) {
+    // Cursor is on Regression, display the formula if it is a Linear regression
+    if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear) {
+      m_bannerView.setDisplayParameters(false, false);
+      double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
+      Poincare::Print::customPrintf(buffer, bufferSize, "y=%*.*ed·x+%*.*ed",
+        coefficients[0], displayMode, significantDigits,
+        coefficients[1], displayMode, significantDigits);
+    } else {
+      m_bannerView.setDisplayParameters(true, false);
+      buffer[0] = 0;
+    }
+  } else if (displayMean) {
+    m_bannerView.setDisplayParameters(false, true);
+    Poincare::Print::customPrintf(buffer, bufferSize, "P(%s)", I18n::translate(I18n::Message::MeanDot));
   } else {
+    m_bannerView.setDisplayParameters(false, true);
+    assert(*m_selectedDotIndex < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex));
     Poincare::Print::customPrintf(buffer, bufferSize, "P(%i)", *m_selectedDotIndex + 1);
   }
-  m_bannerView.dotNameView()->setText(buffer);
+  m_bannerView.otherView()->setText(buffer);
 
-  // Set "x=..." or "xmean=..."
-  const char * legend = "x=";
-  double x = m_cursor->x();
-  // Display a specific legend if the mean dot is selected
-  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-    // \xCC\x85 represents the combining overline ' ̅'
-    legend = "x\xCC\x85=";
-    x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
-  }
-  m_bannerView.abscissaSymbol()->setText(legend);
-
+  /* Use "x=..." or "xmean=..." (\xCC\x85 represents the combining overline ' ̅')
+   * if the mean dot is selected. Same with y. */
+  m_bannerView.abscissaSymbol()->setText(displayMean ? "x\xCC\x85=" : "x=");
+  double x = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 0) : m_cursor->x();
   buffer[PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, significantDigits)] = 0;
   m_bannerView.abscissaValue()->setText(buffer);
 
-  // Set "y=..." or "ymean=..."
-  legend = "y=%*.*ed";
-  double y = m_cursor->y();
-  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-    // \xCC\x85 represents the combining overline ' ̅'
-    legend = "y\xCC\x85=%*.*ed";
-    y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
-  }
-  Poincare::Print::customPrintf(buffer, bufferSize, legend, y, displayMode, significantDigits);
+  double y = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 1) : m_cursor->y();
+  Poincare::Print::customPrintf(buffer, bufferSize, (displayMean ? "y\xCC\x85=%*.*ed" : "y=%*.*ed"), y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 
-  // Set formula
-  I18n::Message formula = model->formulaMessage();
-  m_bannerView.regressionTypeView()->setMessage(formula);
-
-  // Get the coefficients
-  double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
-  bool coefficientsAreDefined = true;
-  for (int i = 0; i < model->numberOfCoefficients(); i++) {
-    if (std::isnan(coefficients[i])) {
-      coefficientsAreDefined = false;
-      break;
-    }
-  }
-  m_bannerView.setCoefficientsDefined(coefficientsAreDefined);
-  if (!coefficientsAreDefined) {
-    const char * dataNotSuitableMessage = I18n::translate(I18n::Message::DataNotSuitableForRegression);
-    m_bannerView.subTextAtIndex(0)->setText(const_cast<char *>(dataNotSuitableMessage));
-    for (int i = 1; i < m_bannerView.numberOfsubTexts(); i++) {
-      m_bannerView.subTextAtIndex(i)->setText("");
-    }
-    m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + BannerView::k_numberOfSharedSubviews + 1);
-    m_bannerView.reload();
-    return;
-  }
-  char coefficientName = 'a';
-  for (int i = 0; i < model->numberOfCoefficients(); i++) {
-    Poincare::Print::customPrintf(buffer, bufferSize, "%c=%*.*ed", coefficientName, coefficients[i], displayMode, significantDigits);
-    m_bannerView.subTextAtIndex(i)->setText(buffer);
-    coefficientName++;
-  }
-
-  if (displayRandR2) {
-    int index = model->numberOfCoefficients();
-    // Set "r=..."
-    double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
-    Poincare::Print::customPrintf(buffer, bufferSize, "r=%*.*ed", r, displayMode, significantDigits);
-    m_bannerView.subTextAtIndex(0+index)->setText(buffer);
-
-    // Set "r2=..."
-    double r2 = m_store->determinationCoefficientForSeries(*m_selectedSeriesIndex, globalContext());
-    Poincare::Print::customPrintf(buffer, bufferSize, "r2=%*.*ed", r2, displayMode, significantDigits);
-    m_bannerView.subTextAtIndex(1+index)->setText(buffer);
-
-    // Clean the last subview
-    buffer[0] = 0;
-    m_bannerView.subTextAtIndex(2+index)->setText(buffer);
-
-  } else {
-    // Empty all non used subviews
-    for (int i = model->numberOfCoefficients(); i < m_bannerView.numberOfsubTexts(); i++) {
-      buffer[0] = 0;
-      m_bannerView.subTextAtIndex(i)->setText(buffer);
-    }
-  }
   m_bannerView.reload();
 }
 

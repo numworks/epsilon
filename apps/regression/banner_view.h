@@ -8,34 +8,21 @@ namespace Regression {
 
 class BannerView : public Shared::XYBannerView {
 public:
-  static constexpr int k_numberOfSharedSubviews = 2;
-
   BannerView(
     Escher::Responder * parentResponder,
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     Escher::TextFieldDelegate * textFieldDelegate
   );
-  Escher::BufferTextView * dotNameView() { return &m_dotNameView; }
-  Escher::MessageTextView * regressionTypeView() { return &m_regressionTypeView; }
-  Escher::BufferTextView * subTextAtIndex(int index);
-  static constexpr int numberOfsubTexts() { return k_numberOfSubtexts; }
-  void setNumberOfSubviews(int subviewsNumber) { m_numberOfSubviews = subviewsNumber; }
-  void setCoefficientsDefined(bool defined) { m_coefficientsAreDefined = defined; }
+  Escher::BufferTextView * otherView() { return &m_otherView; }
+  // The other view may either be hidden, displayed first, or displayed last
+  void setDisplayParameters(bool hideOtherView, bool otherViewIsFirst);
 private:
-  static constexpr int k_numberOfSubtexts = 5;
-  static constexpr int k_maxNumberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + k_numberOfSharedSubviews + k_numberOfSubtexts;
+  static constexpr int k_maxNumberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 1;
   int numberOfSubviews() const override { return m_numberOfSubviews; }
   Escher::View * subviewAtIndex(int index) override;
-  bool lineBreakBeforeSubview(Escher::View * subview) const override;
-  Escher::BufferTextView m_dotNameView;
-  Escher::MessageTextView m_regressionTypeView;
-  Escher::BufferTextView m_subText0;
-  Escher::BufferTextView m_subText1;
-  Escher::BufferTextView m_subText2;
-  Escher::BufferTextView m_subText3;
-  Escher::BufferTextView m_subText4;
+  Escher::BufferTextView m_otherView;
+  bool m_otherViewIsFirst;
   int m_numberOfSubviews;
-  bool m_coefficientsAreDefined;
 };
 
 }

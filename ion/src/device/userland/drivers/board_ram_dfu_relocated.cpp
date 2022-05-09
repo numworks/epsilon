@@ -1,5 +1,4 @@
 #include <config/board.h>
-#include <drivers/ram_layout.h>
 
 namespace Ion {
 namespace Device {
@@ -11,11 +10,11 @@ namespace Board {
  *   override itself) */
 
 uint32_t writableSRAMStartAddress() {
-  return UserlandSRAMAddress;
+  return Device::Config::UserlandSRAMOrigin;
 }
 
 uint32_t writableSRAMEndAddress() {
-  return UserlandSRAMAddress + UserlandSRAMLength - UserlandStackLength;;
+  return Device::Config::UserlandSRAMOrigin + Device::Config::UserlandSRAMLength - Device::Config::UserlandStackLength;;
 }
 
 }

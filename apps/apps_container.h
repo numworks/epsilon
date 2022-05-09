@@ -53,7 +53,7 @@ public:
   void activateExamMode(Poincare::Preferences::ExamMode examMode);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
-  // Ion::StorageDelegate
+  // Ion::Storage::StorageDelegate
   void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   void storageIsFull() override;
 protected:

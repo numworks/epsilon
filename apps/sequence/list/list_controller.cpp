@@ -450,7 +450,7 @@ KDCoordinate ListController::maxFunctionNameWidth() {
   for (int i = 0; i < numberOfModels; i++) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(i);
     const char * functionName = record.fullName();
-    const char * dotPosition = strchr(functionName, Ion::Storage::k_dotChar);
+    const char * dotPosition = strchr(functionName, Ion::Storage::Record::k_dotChar);
     assert(dotPosition != nullptr);
     maxNameLength = std::max(maxNameLength, static_cast<int>(dotPosition-functionName));
   }

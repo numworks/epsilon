@@ -5,7 +5,7 @@
 #include <apps/i18n.h>
 #include <algorithm>
 #include <assert.h>
-#include <ion/storage.h>
+#include <ion/storage/container.h>
 #include <escher/metric.h>
 #include <apps/global_preferences.h>
 #include <apps/apps_container.h>

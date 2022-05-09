@@ -40,7 +40,7 @@ Ion::Storage::Record createRecord(T * store) {
 template<class T>
 void testAlignmentHandlingFor() {
   T store;
-  Ion::Storage * sharedStorage = Ion::Storage::sharedStorage();
+  Ion::Storage::Container * sharedStorage = Ion::Storage::Container::sharedStorage();
 
   sharedStorage->destroyAllRecords();
   Ion::Storage::Record rec1 = createRecord<T>(&store);

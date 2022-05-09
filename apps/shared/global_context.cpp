@@ -44,23 +44,23 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
 void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(const char * baseName, const char * extension) {
   for (int i = 0; i < k_numberOfExtensions; i++) {
     if (strcmp(k_extensions[i], extension) != 0) {
-      Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, k_extensions[i]).destroy();
+      Ion::Storage::Container::sharedStorage()->recordBaseNamedWithExtension(baseName, k_extensions[i]).destroy();
     }
   }
 }
 
 Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const char * identifier, int length) {
-  const char * extension = Ion::Storage::sharedStorage()->extensionOfRecordBaseNamedWithExtensions(identifier, length, k_extensions, k_numberOfExtensions);
+  const char * extension = Ion::Storage::Container::sharedStorage()->extensionOfRecordBaseNamedWithExtensions(identifier, length, k_extensions, k_numberOfExtensions);
   if (extension == nullptr) {
     return Context::SymbolAbstractType::None;
-  } else if (extension == Ion::Storage::expExtension || extension == Ion::Storage::matExtension) {
+  } else if (strcmp(extension, Ion::Storage::expExtension) == 0 || strcmp(extension, Ion::Storage::matExtension) == 0) {
     return Context::SymbolAbstractType::Symbol;
-  } else if (extension == Ion::Storage::funcExtension) {
+  } else if (strcmp(extension, Ion::Storage::funcExtension) == 0) {
     return Context::SymbolAbstractType::Function;
-  } else if (extension == Ion::Storage::lisExtension) {
+  } else if (strcmp(extension, Ion::Storage::lisExtension) == 0) {
     return Context::SymbolAbstractType::List;
   } else {
-    assert(extension == Ion::Storage::seqExtension);
+    assert(strcmp(extension, Ion::Storage::seqExtension) == 0);
     return Context::SymbolAbstractType::Sequence;
   }
 }
@@ -177,7 +177,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   }
   /* If there is another record competing with this one for its name,
   * it is destroyed directly in Storage, through the Record_delegate. */
-  return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), extension, reducedExpression.addressInPool(), reducedExpression.size());
+  return Ion::Storage::Container::sharedStorage()->createRecordWithExtension(symbol.name(), extension, reducedExpression.addressInPool(), reducedExpression.size());
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
@@ -199,7 +199,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const 
 }
 
 Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(const char * name) {
-  return Ion::Storage::sharedStorage()->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
+  return Ion::Storage::Container::sharedStorage()->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
 }
 
 void GlobalContext::tidyDownstreamPoolFrom(char * treePoolCursor) {

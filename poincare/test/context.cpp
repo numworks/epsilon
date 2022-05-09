@@ -1,5 +1,4 @@
 #include <apps/shared/global_context.h>
-#include <apps/shared/record_delegate.h>
 #include <poincare/addition.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -17,8 +16,6 @@ void assert_parsed_expression_approximates_with_value_for_symbol(Expression expr
 }
 
 QUIZ_CASE(poincare_context_store_overwrite) {
-  Shared::RecordDelegate recordDelegate;
-  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
   assert_parsed_expression_simplify_to("1→g", "1");
   assert_parsed_expression_simplify_to("2→g", "2");
   assert_expression_approximates_to<double>("g", "2");
@@ -27,14 +24,10 @@ QUIZ_CASE(poincare_context_store_overwrite) {
   assert_expression_approximates_to<double>("g(4)", "-1");
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
-  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
+  Ion::Storage::Container::sharedStorage()->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_store_do_not_overwrite) {
-  Shared::RecordDelegate recordDelegate;
-  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
-
   assert_parsed_expression_simplify_to("-1→g(x)", "-1");
   assert_parsed_expression_simplify_to("1+g(x)→f(x)", "1+g(x)");
   assert_expression_approximates_to<double>("f(1)", "0");
@@ -43,15 +36,11 @@ QUIZ_CASE(poincare_context_store_do_not_overwrite) {
   assert_expression_approximates_to<double>("f(4)", "0");
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
-  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
+  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_simple) {
-  Shared::RecordDelegate recordDelegate;
-  Ion::Storage::sharedStorage()->setRecordDelegate(&recordDelegate);
-
   // Fill variable
   assert_parsed_expression_simplify_to("1+2→Adadas", "3");
   assert_parsed_expression_simplify_to("Adadas", "3");
@@ -81,11 +70,10 @@ QUIZ_CASE(poincare_context_user_variable_simple) {
   assert_parsed_expression_simplify_to("fBoth(Adadas)", "7");
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("Adadas.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("f1.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("f2.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("fBoth.func").destroy();
-  Ion::Storage::sharedStorage()->setRecordDelegate(nullptr);
+  Ion::Storage::Container::sharedStorage()->recordNamed("Adadas.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f1.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f2.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("fBoth.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_variables) {
@@ -96,8 +84,8 @@ QUIZ_CASE(poincare_context_user_variable_2_circular_variables) {
   assert_expression_approximates_to<double>("b", Undefined::Name());
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("b.exp").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_variables) {
@@ -109,9 +97,9 @@ QUIZ_CASE(poincare_context_user_variable_3_circular_variables) {
   assert_expression_approximates_to<double>("c", Undefined::Name());
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("c.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("c.exp").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_1_circular_function) {
@@ -120,7 +108,7 @@ QUIZ_CASE(poincare_context_user_variable_1_circular_function) {
   assert_expression_approximates_to<double>("h(1)", Undefined::Name());
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("h.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("h.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
@@ -131,8 +119,8 @@ QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
   assert_expression_approximates_to<double>("g(1)", Undefined::Name());
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
@@ -145,9 +133,9 @@ QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
   assert_expression_approximates_to<double>("h(1)", Undefined::Name());
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("h.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("h.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_circular_variables_and_functions) {
@@ -159,9 +147,9 @@ QUIZ_CASE(poincare_context_user_variable_circular_variables_and_functions) {
   assert_expression_approximates_to<double>("b", Undefined::Name());
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("b.exp").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_composed_functions) {
@@ -186,8 +174,8 @@ QUIZ_CASE(poincare_context_user_variable_composed_functions) {
   assert_expression_approximates_to<double>("f(g(4))+sum(1, n, 2, 4)", "28");
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value_for_symbol) {
@@ -204,7 +192,7 @@ QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value_for_
   assert_parsed_expression_approximates_with_value_for_symbol(Addition::Builder(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1))), Function::Builder("f", 1, Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))), x, 3.0, 20.0);
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
 
   // f : x → √(-1)
   assert_reduce("√(-1)×√(-1)→f(x)");
@@ -215,7 +203,7 @@ QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value_for_
   assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(UCodePointUnknown)), x, 1.0, (double)NAN, Real);
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_properties) {
@@ -234,10 +222,10 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
   quiz_assert(Function::Builder("g", 1, Rational::Builder(2)).recursivelyMatches(Expression::IsApproximate, &context));
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("a.mat").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("a.mat").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_function_evaluate_at_undef) {
@@ -249,10 +237,10 @@ QUIZ_CASE(poincare_context_function_evaluate_at_undef) {
   assert_reduce("f(undef)→b");
   assert_parsed_expression_simplify_to("b", Undefined::Name());
 
-  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::Container::sharedStorage()->recordNamed("g.func").destroy();
 }
 
 template void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expression, const char *, float, float, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);

@@ -720,47 +720,46 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
   }
 }
 
-void Expression::SimplifyAndApproximateMatrix(Matrix input, Expression * simplifiedOutput, Expression * approximateOutput, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionContext reductionContext) {
-  Matrix simplifiedMatrix = Matrix::Builder(), approximateMatrix = Matrix::Builder();
-  int n = input.numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    Expression simplifiedChild, approximateChild;
-    input.childAtIndex(i).beautifyAndApproximateScalar(&simplifiedChild, approximateOutput ? &approximateChild : nullptr, reductionContext, context, complexFormat, angleUnit);
-    simplifiedMatrix.addChildAtIndexInPlace(simplifiedChild, i, i);
-    if (approximateOutput) {
-      assert(!approximateChild.isUninitialized());
-      /* Clone the child in case it was set to the same node as simplified
-       * child. This can happen when beautifying an unreduced matrix. */
-      approximateMatrix.addChildAtIndexInPlace(approximateChild.clone(), i, i);
-    }
-  }
-  simplifiedMatrix.setDimensions(input.numberOfRows(), input.numberOfColumns());
-  *simplifiedOutput = simplifiedMatrix;
-  if (approximateOutput) {
-    approximateMatrix.setDimensions(input.numberOfRows(), input.numberOfColumns());
-    *approximateOutput = approximateMatrix;
-  }
-}
-
-void Expression::SimplifyAndApproximateList(List input, Expression * simplifiedOutput, Expression * approximateOutput, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionContext reductionContext) {
-  List simplifiedList = List::Builder(), approximateList = List::Builder();
+void Expression::SimplifyAndApproximateChildren(Expression input, Expression * simplifiedOutput, Expression * approximateOutput, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionContext reductionContext) {
+  assert(input.type() == ExpressionNode::Type::Matrix || input.type() == ExpressionNode::Type::List);
+  List simplifiedChildren = List::Builder(), approximatedChildren = List::Builder();
   int n = input.numberOfChildren();
   for (int i = 0; i < n; i++) {
     Expression simplifiedChild, approximateChild;
     Expression * approximateChildAddress = approximateOutput ? &approximateChild : nullptr;
     Expression childI = input.childAtIndex(i);
     childI.beautifyAndApproximateScalar(&simplifiedChild, approximateChildAddress, reductionContext, context, complexFormat, angleUnit);
-    simplifiedList.addChildAtIndexInPlace(simplifiedChild, i, i);
+    simplifiedChildren.addChildAtIndexInPlace(simplifiedChild, i, i);
     if (approximateOutput) {
       assert(!approximateChild.isUninitialized());
       /* Clone the child in case it was set to the same node as simplified
        * child. This can happen when beautifying an unreduced matrix. */
-      approximateList.addChildAtIndexInPlace(approximateChild.clone(), i, i);
+      approximatedChildren.addChildAtIndexInPlace(approximateChild.clone(), i, i);
     }
   }
-  *simplifiedOutput = simplifiedList;
+
+  if (input.type() == ExpressionNode::Type::List) {
+    *simplifiedOutput = simplifiedChildren;
+    if (approximateOutput) {
+      *approximateOutput = approximatedChildren;
+    }
+    return;
+  }
+
+  assert(input.type() == ExpressionNode::Type::Matrix);
+  Matrix simplifiedMatrix = Matrix::Builder(), approximateMatrix = Matrix::Builder();
+  for (int i = 0; i < n; i++) {
+    simplifiedMatrix.addChildAtIndexInPlace(simplifiedChildren.childAtIndex(i), i, i);
+    if (approximateOutput) {
+      approximateMatrix.addChildAtIndexInPlace(approximatedChildren.childAtIndex(i), i, i);
+    }
+  }
+  Matrix m = static_cast<Matrix &>(input);
+  simplifiedMatrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
+  *simplifiedOutput = simplifiedMatrix;
   if (approximateOutput) {
-    *approximateOutput = approximateList;
+    approximateMatrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
+    *approximateOutput = approximateMatrix;
   }
 }
 
@@ -788,12 +787,10 @@ void Expression::cloneAndSimplifyAndApproximate(Expression * simplifiedExpressio
   // Step 2: we approximate and beautify the reduced expression
   /* Case 1: the reduced expression is a matrix or a list : We scan the
    * children to beautify them with the right complex format. */
-  if (e.type() == ExpressionNode::Type::Matrix) {
-    SimplifyAndApproximateMatrix(static_cast<Matrix &>(e), simplifiedExpression, approximateExpression, context, complexFormat, angleUnit, userReductionContext);
-  } else if  (e.type() == ExpressionNode::Type::List) {
-    SimplifyAndApproximateList(static_cast<List &>(e), simplifiedExpression, approximateExpression, context, complexFormat, angleUnit, userReductionContext);
+  if (e.type() == ExpressionNode::Type::Matrix || e.type() == ExpressionNode::Type::List) {
+    SimplifyAndApproximateChildren(e, simplifiedExpression, approximateExpression, context, complexFormat, angleUnit, userReductionContext);
   } else {
-    /* Case 3: the reduced expression is scalar or too complex to respect the
+    /* Case 2: the reduced expression is scalar or too complex to respect the
      * complex format. */
     e.beautifyAndApproximateScalar(simplifiedExpression, approximateExpression, userReductionContext, context, complexFormat, angleUnit);
   }

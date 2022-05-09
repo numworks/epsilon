@@ -4,6 +4,7 @@
 #include <poincare/student_distribution.h>
 #include <poincare/geometric_distribution.h>
 #include <poincare/poisson_distribution.h>
+#include <new>
 
 namespace Poincare {
 

@@ -74,7 +74,7 @@ Events::Event DFU() {
    *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
    */
 
-  Events::Event abortReason abortReason = dfu_bootloader_entry();
+  Events::Event abortReason = dfu_bootloader_entry();
 
   Device::USB::didExecuteDFU();
 

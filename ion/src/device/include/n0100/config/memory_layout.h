@@ -1,6 +1,8 @@
 #ifndef ION_DEVICE_N0100_CONFIG_MEMORY_H
 #define ION_DEVICE_N0100_CONFIG_MEMORY_H
 
+#include <stdint.h>
+
 /* This file is used to generate the corresponding .ld file for the linker.
  * Declarations must be of the form:
  *   constexpr <integer type> <name> = <expression>; [// <comment>]

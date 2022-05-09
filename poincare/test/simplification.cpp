@@ -1146,7 +1146,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("[[1][2]]^1", Undefined::Name());
 
   // Determinant
-  assert_parsed_expression_simplify_to("det(π+π)", "2×π");
+  assert_parsed_expression_simplify_to("det(π+π)", Undefined::Name());
   assert_parsed_expression_simplify_to("det([[π+π]])", "2×π");
   assert_parsed_expression_simplify_to("det([[1,2][3,4]])", "-2");
   assert_parsed_expression_simplify_to("det([[2,2][3,4]])", "2");

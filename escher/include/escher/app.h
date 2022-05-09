@@ -8,7 +8,7 @@
 #include <escher/timer.h>
 #include <escher/view_controller.h>
 #include <escher/warning_controller.h>
-#include <ion/storage.h>
+#include <ion/storage/container.h>
 #include <poincare/context.h>
 #include <escher/telemetry.h>
 

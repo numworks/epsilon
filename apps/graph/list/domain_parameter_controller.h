@@ -3,7 +3,7 @@
 
 #include <escher/message_table_cell_with_expression.h>
 #include <escher/message_table_cell_with_editable_text.h>
-#include <ion/storage.h>
+#include <ion/storage/container.h>
 #include "../../shared/continuous_function.h"
 #include "../../shared/expiring_pointer.h"
 #include "../../shared/float_parameter_controller.h"

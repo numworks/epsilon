@@ -3,12 +3,12 @@
 
 #include "expression_model_handle.h"
 #include "expiring_pointer.h"
-#include <ion/storage.h>
+#include <ion/storage/container.h>
 #include <assert.h>
 
 namespace Shared {
 
-// ExpressionModelStore is a handle to Ion::Storage::sharedStorage()
+// ExpressionModelStore is a handle to Ion::Storage::Container::sharedStorage()
 
 class ExpressionModelStore {
   // TODO find better name (once we remove ExpressionModelStore?)

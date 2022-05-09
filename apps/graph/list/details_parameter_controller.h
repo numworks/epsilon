@@ -6,7 +6,7 @@
 #include <escher/selectable_table_view.h>
 #include <escher/message_table_cell_with_message_with_buffer.h>
 #include <escher/stack_view_controller.h>
-#include <ion/storage.h>
+#include <ion/storage/container.h>
 #include "../../shared/continuous_function.h"
 #include <poincare/conic.h>
 

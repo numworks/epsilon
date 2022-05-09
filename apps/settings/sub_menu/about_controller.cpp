@@ -4,6 +4,7 @@
 #include <cmath>
 
 using namespace Escher;
+using namespace Poincare;
 
 namespace Settings {
 
@@ -31,7 +32,7 @@ AboutController::AboutController(Responder * parentResponder) :
 bool AboutController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the last row. */
-  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_messageTreeModel->label() == I18n::Message::About && selectedRow() == numberOfRows()-1 && !GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_messageTreeModel->label() == I18n::Message::About && selectedRow() == numberOfRows()-1 && !Preferences::sharedPreferences()->isInExamMode()) {
     m_hardwareTestPopUpController.presentModally();
     return true;
   }

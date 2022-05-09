@@ -3,12 +3,13 @@
 #include <assert.h>
 #include <poincare/integer.h>
 #include <new>
-#include <ion/unicode/utf8_helper.h>
 #if ION_STORAGE_LOG
 #include<iostream>
 #endif
 
 namespace Ion {
+
+namespace Storage {
 
 /* We want to implement a simple singleton pattern, to make sure the storage is
  * initialized on first use, therefore preventing the static init order fiasco.
@@ -24,83 +25,17 @@ namespace Ion {
  * We use 'uintptr_t' to ensure the Storage to be correctly aligned accordingly
  * to the platform. */
 
-uintptr_t staticStorageArea[sizeof(Storage)/sizeof(uintptr_t)] = {0};
+uintptr_t staticStorageArea[sizeof(Storage::Container)/sizeof(uintptr_t)] = {0};
 
-Storage * Storage::sharedStorage() {
-  static Storage * storage = new (staticStorageArea) Storage();
-  return storage;
-}
-
-// RECORD
-
-Storage::Record::Name Storage::Record::CreateRecordNameFromFullName(const char * fullName) {
-  if (fullName == nullptr || fullName[0] == 0) {
-    return EmptyName();
-  }
-  const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
-  if (*dotChar == 0 || *(dotChar + 1) == 0 || *(UTF8Helper::CodePointSearch(dotChar + 1, k_dotChar)) != 0) {
-    // Name not compliant
-    return EmptyName();
-  }
-  return Name({fullName, static_cast<size_t>(dotChar - fullName), dotChar + 1});
-}
-
-Storage::Record::Name Storage::Record::CreateRecordNameFromBaseNameAndExtension(const char * baseName, const char * extension) {
-  return Name({baseName, strlen(baseName), extension});
-}
-
-size_t Storage::Record::SizeOfName(Record::Name name) {
-  // +1 for the dot and +1 for the null terminating char.
-  return name.baseNameLength + 1 + strlen(name.extension) + 1;
-}
-
-bool Storage::Record::NameIsEmpty(Name name) {
-  return name.baseName == nullptr || name.extension == nullptr;
-}
-
-Storage::Record::Record(Storage::Record::Name name) {
-  if (NameIsEmpty(name)) {
-    m_fullNameCRC32 = 0;
-    return;
-  }
-  // We compute the CRC32 of the CRC32s of the basename and the extension
-  uint32_t crc32Results[2];
-  crc32Results[0] = Ion::crc32Byte((const uint8_t *)name.baseName, name.baseNameLength);
-  crc32Results[1] = Ion::crc32Byte((const uint8_t *)name.extension, strlen(name.extension));
-  m_fullNameCRC32 = Ion::crc32Word(crc32Results, 2);
-}
-
-Storage::Record::Record(const char * fullName) {
-  Name name = CreateRecordNameFromFullName(fullName);
-  new (this) Record(name);
-}
-
-Storage::Record::Record(const char * baseName, const char * extension) {
-  Name name = CreateRecordNameFromBaseNameAndExtension(baseName, extension);
-  new (this) Record(name);
-}
-
-
-#if ION_STORAGE_LOG
-
-void Storage::Record::log() {
-  std::cout << "Name: " << fullName() << std::endl;
-  std::cout << "        Value (" << value().size << "): " << (char *)value().buffer << "\n\n" << std::endl;
-}
-#endif
-
-uint32_t Storage::Record::checksum() {
-  uint32_t crc32Results[2];
-  crc32Results[0] = m_fullNameCRC32;
-  Data data = value();
-  crc32Results[1] = Ion::crc32Byte((const uint8_t *)data.buffer, data.size);
-  return Ion::crc32Word(crc32Results, 2);
+Container * Container::sharedStorage() {
+  static Container * storageContainer = new (staticStorageArea) Container();
+  return storageContainer;
 }
 
 // STORAGE
 
 #if ION_STORAGE_LOG
-void Storage::log() {
+void Container::log() {
   for (char * p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
     Record(currentName).log();
@@ -108,14 +43,14 @@ void Storage::log() {
 }
 #endif
 
-size_t Storage::availableSize() {
+size_t Container::availableSize() {
   /* TODO maybe do: availableSize(char ** endBuffer) to get the endBuffer if it
    * is needed after calling availableSize */
   assert(k_storageSize >= (endBuffer() - m_buffer) + sizeof(record_size_t));
   return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
 }
 
-size_t Storage::putAvailableSpaceAtEndOfRecord(Storage::Record r) {
+size_t Container::putAvailableSpaceAtEndOfRecord(Record r) {
   char * p = pointerOfRecord(r);
   size_t previousRecordSize = sizeOfRecordStarting(p);
   size_t availableStorageSize = availableSize();
@@ -128,7 +63,7 @@ size_t Storage::putAvailableSpaceAtEndOfRecord(Storage::Record r) {
   return newRecordSize;
 }
 
-void Storage::getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableSpace) {
+void Container::getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableSpace) {
   char * p = pointerOfRecord(r);
   size_t previousRecordSize = sizeOfRecordStarting(p);
   char * nextRecord = p + previousRecordSize;
@@ -138,11 +73,11 @@ void Storage::getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableS
   overrideSizeAtPosition(p, (record_size_t)(previousRecordSize - recordAvailableSpace));
 }
 
-uint32_t Storage::checksum() {
+uint32_t Container::checksum() {
   return Ion::crc32Byte((const uint8_t *) m_buffer, endBuffer()-m_buffer);
 }
 
-void Storage::notifyChangeToDelegate(const Record record) const {
+void Container::notifyChangeToDelegate(const Record record) const {
   m_lastRecordRetrieved = Record(nullptr);
   m_lastRecordRetrievedPointer = nullptr;
   if (m_delegate != nullptr) {
@@ -150,14 +85,14 @@ void Storage::notifyChangeToDelegate(const Record record) const {
   }
 }
 
-Storage::Record::ErrorStatus Storage::notifyFullnessToDelegate() const {
+Record::ErrorStatus Container::notifyFullnessToDelegate() const {
   if (m_delegate != nullptr) {
     m_delegate->storageIsFull();
   }
   return Record::ErrorStatus::NotEnoughSpaceAvailable;
 }
 
-int Storage::firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId) {
+int Container::firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId) {
   /* With '?' being the prefix, fill buffer with the first available name for
    * the extension following this pattern : ?1, ?2, ?3, .. ?10, ?11, .. ?99 */
   int id = 1;
@@ -173,19 +108,19 @@ int Storage::firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, si
   return prefixLength;
 }
 
-Storage::Record::ErrorStatus Storage::createRecordWithFullNameAndDataChunks(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks) {
+Record::ErrorStatus Container::createRecordWithFullNameAndDataChunks(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks) {
   Record::Name recordName = Record::CreateRecordNameFromFullName(fullName);
   return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, numberOfChunks);
 }
 
-Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size) {
+Record::ErrorStatus Container::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size) {
   Record::Name recordName = Record::CreateRecordNameFromBaseNameAndExtension(baseName, extension);
   const void * dataChunks[] = {data};
   size_t sizeChunks[] = {size};
   return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, 1);
 }
 
-Storage::Record::ErrorStatus Storage::createRecordWithDataChunks(Record::Name recordName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks) {
+Record::ErrorStatus Container::createRecordWithDataChunks(Record::Name recordName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks) {
   if (Record::NameIsEmpty(recordName)) {
     return Record::ErrorStatus::NonCompliantName;
   }
@@ -200,7 +135,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithDataChunks(Record::Name re
   /* WARNING : This relies on the fact that when you create a python script or
    * a function, you first create it with a placeholder name and then let the
    * user set its name through setNameOfRecord. */
-  if (!handleCompetingRecord(recordName, m_recordDelegate != nullptr ? m_recordDelegate->extensionCanOverrideItself(recordName.extension) : false)) {
+  if (!handleCompetingRecord(recordName, m_recordNameVerifier.extensionCanOverrideItself(recordName.extension))) {
     return Record::ErrorStatus::NameTaken;
   }
 
@@ -225,7 +160,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithDataChunks(Record::Name re
 }
 
 
-int Storage::numberOfRecordsWithFilter(const char * extension, RecordFilter filter, const void * auxiliary) {
+int Container::numberOfRecordsWithFilter(const char * extension, RecordFilter filter, const void * auxiliary) {
   int count = 0;
   for (char * p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
@@ -236,7 +171,7 @@ int Storage::numberOfRecordsWithFilter(const char * extension, RecordFilter filt
   return count;
 }
 
-Storage::Record Storage::recordWithFilterAtIndex(const char * extension, int index, RecordFilter filter, const void * auxiliary) {
+Record Container::recordWithFilterAtIndex(const char * extension, int index, RecordFilter filter, const void * auxiliary) {
   int currentIndex = -1;
   Record::Name name = Record::EmptyName();
   char * recordAddress = nullptr;
@@ -260,7 +195,7 @@ Storage::Record Storage::recordWithFilterAtIndex(const char * extension, int ind
   return Record(name);
 }
 
-Storage::Record Storage::recordNamed(Record::Name name) {
+Record Container::recordNamed(Record::Name name) {
   if (Record::NameIsEmpty(name)) {
     return Record();
   }
@@ -272,22 +207,22 @@ Storage::Record Storage::recordNamed(Record::Name name) {
   return Record();
 }
 
-Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions) {
+Record Container::recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions) {
   return privateRecordBasedNamedWithExtensions(baseName, strlen(baseName), extensions, numberOfExtensions);
 }
 
-const char * Storage::extensionOfRecordBaseNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions) {
+const char * Container::extensionOfRecordBaseNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions) {
   const char * result = nullptr;
   privateRecordBasedNamedWithExtensions(baseName, baseNameLength, extensions, numberOfExtensions, &result);
   return result;
 }
 
-void Storage::destroyAllRecords() {
+void Container::destroyAllRecords() {
   overrideSizeAtPosition(m_buffer, 0);
   notifyChangeToDelegate();
 }
 
-void Storage::destroyRecordsWithExtension(const char * extension) {
+void Container::destroyRecordsWithExtension(const char * extension) {
   char * currentRecordStart = (char *)m_buffer;
   bool didChange = false;
   while (currentRecordStart != nullptr && sizeOfRecordStarting(currentRecordStart) != 0) {
@@ -305,7 +240,7 @@ void Storage::destroyRecordsWithExtension(const char * extension) {
   }
 }
 
-bool Storage::handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName) {
+bool Container::handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName) {
   Record sameNameRecord = Record(recordName);
   if (isNameOfRecordTaken(sameNameRecord)) {
     if (destroyRecordWithSameFullName) {
@@ -314,18 +249,15 @@ bool Storage::handleCompetingRecord(Record::Name recordName, bool destroyRecordW
     }
     return false;
   }
-  if (m_recordDelegate == nullptr) {
-    return true;
-  }
-  Record competingRecord = privateRecordBasedNamedWithExtensions(recordName.baseName, recordName.baseNameLength, m_recordDelegate->restrictiveExtensions(), m_recordDelegate->numberOfRestrictiveExtensions());
+  Record competingRecord = privateRecordBasedNamedWithExtensions(recordName.baseName, recordName.baseNameLength, m_recordNameVerifier.restrictiveExtensions(), m_recordNameVerifier.numberOfRestrictiveExtensions());
   if (competingRecord.isNull()) {
     return true;
   }
-  RecordDelegate::OverrideStatus result = m_recordDelegate->shouldRecordBeOverridenWithNewExtension(competingRecord, recordName.extension);
-  if (result == RecordDelegate::OverrideStatus::Forbidden) {
+  RecordNameVerifier::OverrideStatus result = m_recordNameVerifier.shouldRecordBeOverridenWithNewExtension(competingRecord, recordName.extension);
+  if (result == RecordNameVerifier::OverrideStatus::Forbidden) {
     return false;
   }
-  if (result == RecordDelegate::OverrideStatus::Allowed) {
+  if (result == RecordNameVerifier::OverrideStatus::Allowed) {
     competingRecord.destroy();
   }
   return true;
@@ -333,12 +265,11 @@ bool Storage::handleCompetingRecord(Record::Name recordName, bool destroyRecordW
 
 // PRIVATE
 
-Storage::Storage() :
+Container::Container() :
   m_magicHeader(Magic),
   m_buffer(),
   m_magicFooter(Magic),
   m_delegate(nullptr),
-  m_recordDelegate(nullptr),
   m_lastRecordRetrieved(nullptr),
   m_lastRecordRetrievedPointer(nullptr)
 {
@@ -348,7 +279,7 @@ Storage::Storage() :
   overrideSizeAtPosition(m_buffer, 0);
 }
 
-Storage::Record::Name Storage::nameOfRecord(const Record record) const {
+Record::Name Container::nameOfRecord(const Record record) const {
   char * p = pointerOfRecord(record);
   if (p != nullptr) {
     return nameOfRecordStarting(p);
@@ -356,7 +287,7 @@ Storage::Record::Name Storage::nameOfRecord(const Record record) const {
   return Record::EmptyName();
 }
 
-Storage::Record::ErrorStatus Storage::setNameOfRecord(Record * record, Record::Name name) {
+Record::ErrorStatus Container::setNameOfRecord(Record * record, Record::Name name) {
   if (Record::NameIsEmpty(name)) {
     return Record::ErrorStatus::NonCompliantName;
   }
@@ -393,7 +324,7 @@ Storage::Record::ErrorStatus Storage::setNameOfRecord(Record * record, Record::N
   return Record::ErrorStatus::RecordDoesNotExist;
 }
 
-Storage::Record::Data Storage::valueOfRecord(const Record record) {
+Record::Data Container::valueOfRecord(const Record record) {
   char * p = pointerOfRecord(record);
   if (p != nullptr) {
     Record::Name name = nameOfRecordStarting(p);
@@ -404,7 +335,7 @@ Storage::Record::Data Storage::valueOfRecord(const Record record) {
   return {.buffer= nullptr, .size= 0};
 }
 
-Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Data data) {
+Record::ErrorStatus Container::setValueOfRecord(Record record, Record::Data data) {
   char * p = pointerOfRecord(record);
   /* TODO: if data.buffer == p, assert that size hasn't change and do not do any
    * memcopy, but still notify the delegate. Beware of scripts and the accordion
@@ -427,7 +358,7 @@ Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Da
   return Record::ErrorStatus::RecordDoesNotExist;
 }
 
-void Storage::destroyRecord(Record record) {
+void Container::destroyRecord(Record record) {
   if (record.isNull()) {
     return;
   }
@@ -439,7 +370,7 @@ void Storage::destroyRecord(Record record) {
   }
 }
 
-char * Storage::pointerOfRecord(const Record record) const {
+char * Container::pointerOfRecord(const Record record) const {
   if (record.isNull()) {
     return nullptr;
   }
@@ -458,14 +389,14 @@ char * Storage::pointerOfRecord(const Record record) const {
   return nullptr;
 }
 
-Storage::record_size_t Storage::sizeOfRecordStarting(char * start) const {
+Container::record_size_t Container::sizeOfRecordStarting(char * start) const {
   if (start == nullptr) {
     return 0;
   }
   return StorageHelper::unalignedShort(start);
 }
 
-const void * Storage::valueOfRecordStarting(char * start) const {
+const void * Container::valueOfRecordStarting(char * start) const {
   if (start == nullptr) {
     return nullptr;
   }
@@ -474,7 +405,7 @@ const void * Storage::valueOfRecordStarting(char * start) const {
   return currentChar + fullNameLength + 1;
 }
 
-Storage::Record::Name Storage::nameOfRecordStarting(char * start) const {
+Record::Name Container::nameOfRecordStarting(char * start) const {
    if (start == nullptr) {
     return Record::EmptyName();
    }
@@ -482,16 +413,16 @@ Storage::Record::Name Storage::nameOfRecordStarting(char * start) const {
   }
 
 
-size_t Storage::overrideSizeAtPosition(char * position, record_size_t size) {
+size_t Container::overrideSizeAtPosition(char * position, record_size_t size) {
   StorageHelper::writeUnalignedShort(size, position);
   return sizeof(record_size_t);
 }
 
-size_t Storage::overrideNameAtPosition(char * position, Record::Name name) {
+size_t Container::overrideNameAtPosition(char * position, Record::Name name) {
   memcpy(position, name.baseName, name.baseNameLength);
   position += name.baseNameLength;
-  assert(UTF8Decoder::CharSizeOfCodePoint(k_dotChar) == 1);
-  *(position) = k_dotChar;
+  assert(UTF8Decoder::CharSizeOfCodePoint(Record::k_dotChar) == 1);
+  *(position) = Record::k_dotChar;
   position++;
   int extensionLength = strlen(name.extension);
   memcpy(position, name.extension, extensionLength);
@@ -500,12 +431,12 @@ size_t Storage::overrideNameAtPosition(char * position, Record::Name name) {
   return name.baseNameLength + 1 + extensionLength + 1;
 }
 
-size_t Storage::overrideValueAtPosition(char * position, const void * data, record_size_t size) {
+size_t Container::overrideValueAtPosition(char * position, const void * data, record_size_t size) {
   memcpy(position, data, size);
   return size;
 }
 
-bool Storage::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
+bool Container::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
   if (r == Record()) {
     /* If the CRC32 of fullName is 0, we want to refuse the name as it would
      * interfere with our escape case in the Record constructor, when the given
@@ -524,7 +455,7 @@ bool Storage::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
   return false;
 }
 
-char * Storage::endBuffer() {
+char * Container::endBuffer() {
   char * currentBuffer = m_buffer;
   for (char * p : *this) {
     currentBuffer += sizeOfRecordStarting(p);
@@ -532,11 +463,11 @@ char * Storage::endBuffer() {
   return currentBuffer;
 }
 
-size_t Storage::sizeOfRecordWithName(Record::Name name, size_t dataSize) {
+size_t Container::sizeOfRecordWithName(Record::Name name, size_t dataSize) {
   return Record::SizeOfName(name) + dataSize + sizeof(record_size_t);
 }
 
-bool Storage::slideBuffer(char * position, int delta) {
+bool Container::slideBuffer(char * position, int delta) {
   if (delta > (int)availableSize()) {
     return false;
   }
@@ -544,7 +475,7 @@ bool Storage::slideBuffer(char * position, int delta) {
   return true;
 }
 
-Storage::Record Storage::privateRecordBasedNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
+Record Container::privateRecordBasedNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
   Record::Name lastRetrievedRecordName = nameOfRecordStarting(m_lastRecordRetrievedPointer);
   if (m_lastRecordRetrievedPointer != nullptr && recordNameHasBaseNameAndOneOfTheseExtensions(lastRetrievedRecordName, baseName, baseNameLength, extensions, numberOfExtensions, extensionResult)) {
     return m_lastRecordRetrieved;
@@ -561,7 +492,7 @@ Storage::Record Storage::privateRecordBasedNamedWithExtensions(const char * base
   return Record();
 }
 
-bool Storage::recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name, const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
+bool Container::recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name, const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
   if (!Record::NameIsEmpty(name) && strncmp(baseName, name.baseName, baseNameLength) == 0 && baseNameLength == name.baseNameLength) {
     for (size_t i = 0; i < numberOfExtensions; i++) {
       if (strcmp(name.extension, extensions[i]) == 0) {
@@ -575,13 +506,15 @@ bool Storage::recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name, co
   return false;
 }
 
-Storage::RecordIterator & Storage::RecordIterator::operator++() {
+Container::RecordIterator & Container::RecordIterator::operator++() {
   assert(m_recordStart);
   record_size_t size = StorageHelper::unalignedShort(m_recordStart);
   char * nextRecord = m_recordStart+size;
   record_size_t newRecordSize = StorageHelper::unalignedShort(nextRecord);
   m_recordStart = (newRecordSize == 0 ? nullptr : nextRecord);
   return *this;
+}
+
 }
 
 }

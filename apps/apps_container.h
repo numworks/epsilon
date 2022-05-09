@@ -15,13 +15,12 @@
 #include "suspend_timer.h"
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
-#include "shared/record_delegate.h"
 #include "on_boarding/prompt_controller.h"
 #include <escher/container.h>
 #include <poincare/preferences.h>
 #include <ion/events.h>
 
-class AppsContainer : public Escher::Container, ExamPopUpControllerDelegate, Ion::StorageDelegate {
+class AppsContainer : public Escher::Container, ExamPopUpControllerDelegate, Ion::Storage::StorageDelegate {
 public:
   static AppsContainer * sharedAppsContainer();
   AppsContainer();
@@ -87,7 +86,6 @@ private:
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;
   USB::App::Snapshot m_usbConnectedSnapshot;
-  Shared::RecordDelegate m_recordDelegate;
 };
 
 #endif

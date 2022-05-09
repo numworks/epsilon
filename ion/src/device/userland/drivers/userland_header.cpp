@@ -15,11 +15,15 @@ extern char _external_apps_RAM_end;
 
 namespace Ion {
 
+namespace Storage {
+
 extern char staticStorageArea[];
+
+}
 
 namespace Device {
 
-constexpr void * storageAddress = &(Ion::staticStorageArea);
+constexpr void * storageAddress = &(Ion::Storage::staticStorageArea);
 
 constexpr UserlandHeader::UserlandHeader() :
   m_header(Magic),

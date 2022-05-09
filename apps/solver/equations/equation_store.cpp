@@ -38,8 +38,8 @@ Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
   static_assert(k_maxNumberOfEquations < 9, "Equation name record might not fit");
   const char * const extensions[1] = { Ion::Storage::eqExtension };
   name[0] = 'e';
-  Ion::Storage::sharedStorage()->firstAvailableNameFromPrefix(name, 1, 3, extensions, 1, k_maxNumberOfEquations);
-  return Ion::Storage::sharedStorage()->createRecordWithExtension(name, Ion::Storage::eqExtension, nullptr, 0);
+  Ion::Storage::Container::sharedStorage()->firstAvailableNameFromPrefix(name, 1, 3, extensions, 1, k_maxNumberOfEquations);
+  return Ion::Storage::Container::sharedStorage()->createRecordWithExtension(name, Ion::Storage::eqExtension, nullptr, 0);
 }
 
 Shared::ExpressionModelHandle * EquationStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {

@@ -15,7 +15,7 @@
 #include <ion/persisting_bytes.h>
 #include <ion/power.h>
 #include <ion/reset.h>
-#include <ion/storage.h>
+#include <ion/storage/container.h>
 #include <ion/timing.h>
 #include <ion/usb.h>
 #include <ion/unicode/utf8_decoder.h>

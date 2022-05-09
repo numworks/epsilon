@@ -23,7 +23,7 @@ for line in readelf_output.splitlines():
   if not words:
     continue
   symbol = words[-1]
-  if symbol == "_ZN3Ion17staticStorageAreaE":
+  if symbol == "_ZN3Ion7Storage17staticStorageAreaE":
     storage = parse_line(line)
   if symbol == "_ZZN13AppsContainer19sharedAppsContainerEvE20appsContainerStorage":
     container = parse_line(line)

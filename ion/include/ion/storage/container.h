@@ -5,7 +5,9 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
-#include "unicode/utf8_helper.h"
+#include <ion/unicode/utf8_helper.h>
+#include "record.h"
+#include "record_name_verifier.h"
 
 namespace Ion {
 
@@ -14,111 +16,31 @@ namespace Ion {
  *
  * A record's fullName is baseName.extension. */
 
-class StorageDelegate;
-class RecordDelegate;
+namespace Storage {
 
-class Storage {
+/* Some apps memoize records and need to be notified when a record might have
+ * become invalid. For instance in the Graph app, if f(x) = A+x, and A changed,
+ * f(x) memoization which stores the reduced expression of f is outdated.
+ * We could have computed and compared the checksum of the storage to detect
+ * storage invalidity, but profiling showed that this slows down the execution
+ * (for example when scrolling the functions list).
+ * We thus decided to notify a delegate when the storage changes. */
+class StorageDelegate {
+public:
+  virtual void storageDidChangeForRecord(const Record record) = 0;
+  virtual void storageIsFull() = 0;
+};
+
+// This is the main class
+class Container {
+friend class Record;
 public:
   typedef uint16_t record_size_t;
 
   constexpr static size_t k_storageSize = 32768;
   static_assert(UINT16_MAX >= k_storageSize, "record_size_t not big enough");
 
-  static Storage * sharedStorage();
-  constexpr static char k_dotChar = '.';
-
-  constexpr static char eqExtension[] = "eq";
-  constexpr static char expExtension[] = "exp";
-  constexpr static char funcExtension[] = "func";
-  constexpr static char lisExtension[] = "lis";
-  constexpr static char seqExtension[] = "seq";
-  constexpr static char matExtension[] = "mat";
-
-  class Record {
-    /* A Record is identified by the CRC32 on its fullName because:
-     * - A record is identified by its fullName, which is unique
-     * - We cannot keep the address pointing to the fullName because if another
-     *   record is modified, it might alter our record's fullName address.
-     *   Keeping a buffer with the fullNames will waste memory as we cannot
-     *   forsee the size of the fullNames. */
-  friend class Storage;
-  public:
-    enum class ErrorStatus {
-      None = 0,
-      NameTaken = 1,
-      NonCompliantName = 2,
-      NotEnoughSpaceAvailable = 3,
-      RecordDoesNotExist = 4
-    };
-    struct Data {
-      const void * buffer;
-      size_t size;
-    };
-    /* Extension is null terminated,
-     * but baseName is not always, so we store its length.
-     */
-    struct Name {
-      const char * baseName;
-      size_t baseNameLength;
-      const char * extension;
-    };
-    Record(const char * fullName = nullptr);
-    Record(const char * basename, const char * extension);
-    Record(Name name);
-    bool operator==(const Record & other) const {
-      return m_fullNameCRC32 == other.m_fullNameCRC32;
-    }
-    bool operator!=(const Record & other) const {
-      return !(*this == other);
-    }
-#if ION_STORAGE_LOG
-    void log();
-#endif
-    uint32_t checksum();
-    bool isNull() const {
-      return m_fullNameCRC32 == 0;
-    }
-    Name name() const {
-      return Storage::sharedStorage()->nameOfRecord(*this);
-    }
-    const char * fullName() const {
-      // The baseName points towards the start of the fullName
-      return Storage::sharedStorage()->nameOfRecord(*this).baseName;
-    }
-    Data value() const {
-      return Storage::sharedStorage()->valueOfRecord(*this);
-    }
-    ErrorStatus setValue(Data data) {
-      return Storage::sharedStorage()->setValueOfRecord(*this, data);
-    }
-    void destroy() {
-      return Storage::sharedStorage()->destroyRecord(*this);
-    }
-    bool hasExtension(const char * extension) {
-      const char * thisExtension = name().extension;
-      return thisExtension == nullptr ? false : strcmp(thisExtension, extension) == 0;
-    }
-    // Record::Name
-    static Name CreateRecordNameFromFullName(const char * fullName);
-    static Name CreateRecordNameFromBaseNameAndExtension(const char * baseName, const char * extension);
-    static size_t SizeOfName(Record::Name name);
-    static bool NameIsEmpty(Name name);
-    static Name EmptyName() {
-      return Name({nullptr, 0, nullptr});
-    }
-    /* This methods are static to prevent any calling these methods on "this",
-     * since these methods might modify in-place the record */
-    static Record::ErrorStatus SetBaseNameWithExtension(Record * record, const char * baseName, const char * extension) {
-      Name name = CreateRecordNameFromBaseNameAndExtension(baseName, extension);
-      return Storage::sharedStorage()->setNameOfRecord(record, name);
-    }
-    static Record::ErrorStatus SetFullName(Record * record, const char * fullName) {
-      Name name = CreateRecordNameFromFullName(fullName);
-      return Storage::sharedStorage()->setNameOfRecord(record, name);
-    }
-  private:
-    uint32_t m_fullNameCRC32;
-  };
+  static Container * sharedStorage();
 
 #if ION_STORAGE_LOG
   void log();
@@ -129,13 +51,13 @@ public:
   void getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableSpace);
   uint32_t checksum();
 
-  // Delegate
+  // Storage delegate
   void setDelegate(StorageDelegate * delegate) { m_delegate = delegate; }
   void notifyChangeToDelegate(const Record r = Record()) const;
   Record::ErrorStatus notifyFullnessToDelegate() const;
 
-  // Record name helper
-  void setRecordDelegate(RecordDelegate * helper) { m_recordDelegate = helper; }
+  // Record name verifier
+  RecordNameVerifier * recordNameVerifier() { return &m_recordNameVerifier; }
 
   // Record counters
   int numberOfRecordsWithExtension(const char * extension) {
@@ -181,10 +103,8 @@ public:
    * have been destroyed.
    * Return false if other records with same full name or competing names
    * still exist but can't be destroyed.
-   * (see RecordDelegate for more info on competing names)
-   * WARNING : If m_recordDelegate == nullptr, record won't override
-   * themself when replaced with a record with same name and same extension.
-   * This in maily relevant for tests, where you have to set the helper by hand.*/
+   * (see RecordNameVerifier for more info on competing names)
+.*/
   bool handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName);
 
 private:
@@ -202,7 +122,7 @@ private:
   int numberOfRecordsWithFilter(const char * extension, RecordFilter filter, const void * auxiliary = nullptr);
   Record recordWithFilterAtIndex(const char * extension, int index, RecordFilter filter, const void * auxiliary = nullptr);
 
-  Storage();
+  Container();
 
   /* Getters/Setters on recordID */
   Record::Name nameOfRecord(const Record record) const;
@@ -250,39 +170,9 @@ private:
   char m_buffer[k_storageSize];
   uint32_t m_magicFooter;
   StorageDelegate * m_delegate;
-  RecordDelegate * m_recordDelegate;
+  RecordNameVerifier m_recordNameVerifier;
   mutable Record m_lastRecordRetrieved;
   mutable char * m_lastRecordRetrievedPointer;
-};
-
-/* Some apps memoize records and need to be notified when a record might have
- * become invalid. For instance in the Graph app, if f(x) = A+x, and A changed,
- * f(x) memoization which stores the reduced expression of f is outdated.
- * We could have computed and compared the checksum of the storage to detect
- * storage invalidity, but profiling showed that this slows down the execution
- * (for example when scrolling the functions list).
- * We thus decided to notify a delegate when the storage changes. */
-class StorageDelegate {
-public:
-  virtual void storageDidChangeForRecord(const Storage::Record record) = 0;
-  virtual void storageIsFull() = 0;
-};
-
-/* This is used by the storage to know if it can override a record with
- * a new one. It is pure virtual so that it is defined in Apps and not in Ion.
- * It contains only "static" functions.
- * See Apps::Shared::RecordDelegate */
-class RecordDelegate {
-public:
-  enum class OverrideStatus {
-    Forbidden = 0,
-    Allowed,
-    CanCoexist
-  };
-  virtual const char * const * restrictiveExtensions() = 0;
-  virtual int numberOfRestrictiveExtensions() = 0;
-  virtual bool extensionCanOverrideItself(const char * extension) = 0;
-  virtual OverrideStatus shouldRecordBeOverridenWithNewExtension(Storage::Record previousRecord, const char * newExtension) = 0;
 };
 
 // emscripten read and writes must be aligned.
@@ -307,6 +197,8 @@ public:
 #endif
   }
 };
+
+}
 
 }
 

@@ -19,16 +19,16 @@ constexpr uint32_t InternalFlashLength = 0x100000; // 1MiB
 constexpr uint32_t SmallestFlashSectorLength = 0x4000; // 16KiB
 
 constexpr uint32_t KernelLength = 2 * SmallestFlashSectorLength;
-constexpr uint32_t KernelOrigin = InternalFlashOrigin;
+constexpr uint32_t KernelVirtualOrigin = InternalFlashOrigin;
 
 constexpr uint32_t ExtraDataLength = 0;
-constexpr uint32_t BootloaderUpdateOrigin = 0;
+constexpr uint32_t ExtraDataVirtualOrigin = 0;
 
 constexpr uint32_t PersistingBytesLength = SmallestFlashSectorLength;
-constexpr uint32_t PersistingBytesOrigin = KernelOrigin + KernelLength;
+constexpr uint32_t PersistingBytesVirtualOrigin = KernelVirtualOrigin + KernelLength;
 
 constexpr uint32_t UserlandLength = InternalFlashLength - KernelLength - PersistingBytesLength;
-constexpr uint32_t UserlandOrigin = PersistingBytesOrigin + PersistingBytesLength;
+constexpr uint32_t UserlandVirtualOrigin = PersistingBytesVirtualOrigin + PersistingBytesLength;
 
 /* SRAM */
 constexpr uint32_t SRAMOrigin = 0x20000000;

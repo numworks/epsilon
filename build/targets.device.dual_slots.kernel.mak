@@ -11,11 +11,10 @@ kernel_obj += $(BUILD_DIR)/bootloader.o $(BUILD_DIR)/trampoline.o
 endif
 
 $(BUILD_DIR)/kernel.A.$(EXE): $(kernel_obj)
-$(BUILD_DIR)/kernel.A.$(EXE): SFLAGS += -DUSE_B_SLOT=0
+$(BUILD_DIR)/kernel.A.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/flash/kernel_A.ld
 
 $(BUILD_DIR)/kernel.B.$(EXE): $(kernel_obj)
-$(BUILD_DIR)/kernel.B.$(EXE): SFLAGS += -DUSE_B_SLOT=1
+$(BUILD_DIR)/kernel.B.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/kernel/flash/kernel_B.ld
 
 $(BUILD_DIR)/kernel.%.$(EXE): LDFLAGS += $(KERNEL_LDFLAGS)
-$(BUILD_DIR)/kernel.%.$(EXE): LDSCRIPT = $(KERNEL_LDSCRIPT)
-$(BUILD_DIR)/kernel.%.$(EXE): LDDEPS += $(KERNEL_LDDEPS)
+$(BUILD_DIR)/kernel.%.$(EXE): LDDEPS += $(KERNEL_LDDEPS) $(LDSCRIPT)

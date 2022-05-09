@@ -7,7 +7,7 @@ userland_test_src += $(ion_device_userland_src) $(liba_src) $(kandinsky_src) $(e
 userland_targets = $(addprefix $(BUILD_DIR)/,$(addsuffix .$(EXE),$(userland_target_variants)))
 
 USERLAND_LDFLAGS += -Lion/src/$(PLATFORM)/userland/flash -Lion/src/$(PLATFORM)/userland/flash/$(MODEL)
-USERLAND_LDDEPS += ion/src/$(PLATFORM)/userland/flash/$(MODEL)/signature.ld ion/src/$(PLATFORM)/userland/flash/$(MODEL)/external_apps.ld
+USERLAND_LDDEPS += ion/src/$(PLATFORM)/userland/flash/userland_shared.ld ion/src/$(PLATFORM)/userland/flash/$(MODEL)/signature.ld ion/src/$(PLATFORM)/userland/flash/$(MODEL)/external_apps.ld
 
 define rule_for_flavored_userland
 $(1): $$(call flavored_object_for, \
@@ -18,5 +18,4 @@ endef
 $(foreach target,$(userland_targets),$(eval $(call rule_for_flavored_userland,$(MODEL) $(target) $(THIRD_PARTY_FLAVOR))))
 
 $(userland_targets): LDFLAGS += $(USERLAND_LDFLAGS)
-$(userland_targets): LDSCRIPT = ion/src/$(PLATFORM)/userland/flash/userland.ld
 

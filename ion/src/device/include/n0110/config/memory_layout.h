@@ -32,27 +32,24 @@ constexpr uint32_t ExternalFlashOrigin = 0x90000000;
 constexpr uint32_t ExternalFlashLength = 0x800000; // 8MiB
 constexpr uint32_t StandardExternalFlashSectorLength = 0x10000; // 64KiB
 
-#if USE_B_SLOT
-constexpr uint32_t SlotOrigin = ExternalFlashOrigin + ExternalFlashLength / 2;
-#else
-constexpr uint32_t SlotOrigin = ExternalFlashOrigin;
-#endif
+constexpr uint32_t SlotAOffset = 0;
+constexpr uint32_t SlotBOffset = ExternalFlashLength / 2;
 
 constexpr uint32_t PersistingBytesLength = StandardExternalFlashSectorLength;
-constexpr uint32_t PersistingBytesOrigin = SlotOrigin + ExternalFlashLength / 2 - PersistingBytesLength;
+constexpr uint32_t PersistingBytesVirtualOrigin = ExternalFlashOrigin + ExternalFlashLength / 2 - PersistingBytesLength;
 
 constexpr uint32_t KernelLength = StandardExternalFlashSectorLength;
-constexpr uint32_t KernelOrigin = SlotOrigin;
+constexpr uint32_t KernelVirtualOrigin = ExternalFlashOrigin;
 
 #if EMBED_EXTRA_DATA
 constexpr uint32_t ExtraDataLength = StandardExternalFlashSectorLength;
 #else
 constexpr uint32_t ExtraDataLength = 0;
 #endif
-constexpr uint32_t BootloaderUpdateOrigin = KernelOrigin + KernelLength;
+constexpr uint32_t ExtraDataVirtualOrigin = KernelVirtualOrigin + KernelLength;
 
 constexpr uint32_t UserlandLength = ExternalFlashLength / 2 - KernelLength - ExtraDataLength - PersistingBytesLength;
-constexpr uint32_t UserlandOrigin = BootloaderUpdateOrigin + ExtraDataLength;
+constexpr uint32_t UserlandVirtualOrigin = ExtraDataVirtualOrigin + ExtraDataLength;
 
 /* SRAM */
 constexpr uint32_t SRAMOrigin = 0x20000000;

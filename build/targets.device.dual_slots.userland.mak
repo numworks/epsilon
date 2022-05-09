@@ -3,7 +3,7 @@ userland_target_variants = $(addsuffix .A,$(userland_target_simple_variants)) $(
 
 include build/targets.$(PLATFORM).userland.mak
 
-$(filter %.A.$(EXE),$(userland_targets)): SFLAGS += -DUSE_B_SLOT=0
-$(filter %.B.$(EXE),$(userland_targets)): SFLAGS += -DUSE_B_SLOT=1
+$(filter %.A.$(EXE),$(userland_targets)): LDSCRIPT = ion/src/$(PLATFORM)/userland/flash/userland_A.ld
+$(filter %.B.$(EXE),$(userland_targets)): LDSCRIPT = ion/src/$(PLATFORM)/userland/flash/userland_B.ld
 
 $(userland_targets): LDDEPS += $(USERLAND_LDDEPS) $(LDSCRIPT)

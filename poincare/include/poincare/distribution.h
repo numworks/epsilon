@@ -28,7 +28,7 @@ public:
     }
   }
 
-  static void Initialize(Distribution * distribution, Type type);
+  static Distribution * Get(Type type);
 
   virtual float EvaluateAtAbscissa(float x, const float * parameters) = 0;
   virtual double EvaluateAtAbscissa(double x, const double * parameters) = 0;

@@ -8,23 +8,23 @@
 
 namespace Poincare {
 
-void Distribution::Initialize(Distribution * distribution, Type type) {
+Distribution * Distribution::Get(Type type) {
   switch (type) {
   case Type::Binomial:
-    new (distribution) BinomialDistribution();
-    break;
+    static BinomialDistribution binomial;
+    return &binomial;
   case Type::Normal:
-    new (distribution) NormalDistribution();
-    break;
+    static NormalDistribution normal;
+    return &normal;
   case Type::Student:
-    new (distribution) StudentDistribution();
-    break;
+    static StudentDistribution student;
+    return &student;
   case Type::Geometric:
-    new (distribution) GeometricDistribution();
-    break;
+    static GeometricDistribution geometric;
+    return &geometric;
   case Type::Poisson:
-    new (distribution) PoissonDistribution();
-    break;
+    static PoissonDistribution poisson;
+    return &poisson;
   }
 }
 

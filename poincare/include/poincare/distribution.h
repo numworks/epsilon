@@ -15,7 +15,7 @@ public:
     Geometric,
   };
 
-  static constexpr int maxNumberOfParameters = 2;
+  static constexpr int k_maxNumberOfParameters = 2;
   static constexpr int numberOfParameters(Type type) {
     switch (type) {
     case Type::Student:

@@ -42,10 +42,12 @@ poincare_src += $(addprefix poincare/src/,\
   circuit_breaker_checkpoint.cpp \
   discrete_distribution.cpp \
   distribution.cpp \
+  distribution_method.cpp \
   erf_inv.cpp \
   exception_checkpoint.cpp \
   geometric_distribution.cpp \
   helpers.cpp \
+  inv_function.cpp \
   normal_distribution.cpp \
   poisson_distribution.cpp \
   regularized_gamma_function.cpp \

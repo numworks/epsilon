@@ -22,8 +22,8 @@ constexpr uint32_t STBootloaderAddress = 0x1FF00000;
 constexpr uint32_t ExternalAppsSectorUnit = 0x10000;
 constexpr int NumberOfMPUSectors = 8;
 
-constexpr uint32_t SlotAOrigin = Device::Config::ExternalFlashOrigin;
-constexpr uint32_t SlotBOrigin = Device::Config::ExternalFlashOrigin + Device::Config::ExternalFlashLength / 2;
+constexpr uint32_t SlotAOrigin = Device::Config::ExternalFlashOrigin + Device::Config::SlotAOffset;
+constexpr uint32_t SlotBOrigin = Device::Config::ExternalFlashOrigin + Device::Config::SlotBOffset;
 
 }
 }

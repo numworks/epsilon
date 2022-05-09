@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-Expression InverseFunction::shallowReduce(Expression * x, Context * context, Expression * expression) {
+Expression InverseFunction::shallowReduce(Expression * x, Context * context, Expression * expression) const {
   Expression a = x[0];
   // Check a
   if (a.deepIsMatrix(context)) {

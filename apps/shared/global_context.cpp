@@ -176,8 +176,8 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
     extension = Ion::Storage::expExtension;
   }
   /* If there is another record competing with this one for its name,
-  * it is destroyed directly in Storage, through the Record_delegate. */
-  return Ion::Storage::Container::sharedStorage()->createRecordWithExtension(symbol.name(), extension, reducedExpression.addressInPool(), reducedExpression.size());
+  * it is destroyed directly in Storage, through the record_name_verifier. */
+  return Ion::Storage::Container::sharedStorage()->createRecordWithExtension(symbol.name(), extension, reducedExpression.addressInPool(), reducedExpression.size(), true);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {

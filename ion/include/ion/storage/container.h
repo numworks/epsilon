@@ -72,9 +72,9 @@ public:
   int firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId);
 
   // Record creation
-  Record::ErrorStatus createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size);
-  Record::ErrorStatus createRecordWithFullNameAndDataChunks(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks);
-  Record::ErrorStatus createRecordWithDataChunks(Record::Name recordName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks);
+  Record::ErrorStatus createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size, bool extensionCanOverrideItself = false);
+  Record::ErrorStatus createRecordWithFullNameAndDataChunks(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks, bool extensionCanOverrideItself = false);
+  Record::ErrorStatus createRecordWithDataChunks(Record::Name recordName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks, bool extensionCanOverrideItself = false);
 
   // Record getters
   bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }

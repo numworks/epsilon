@@ -71,7 +71,7 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
     parameters[i] = childAtIndex(childIndex++);
   }
   const DistributionMethod * function = DistributionMethod::Get(functionType());
-  Distribution * distribution = Distribution::Get(distributionType());
+  const Distribution * distribution = Distribution::Get(distributionType());
 
   bool parametersAreOk;
   bool couldCheckParameters = distribution->ExpressionParametersAreOK(&parametersAreOk, parameters, context);
@@ -108,7 +108,7 @@ Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContex
     parameters[i] = evaluation.toScalar();
   }
   const DistributionMethod * function = DistributionMethod::Get(m_functionType);
-  Distribution * distribution = Distribution::Get(m_distributionType);
+  const Distribution * distribution = Distribution::Get(m_distributionType);
   return Complex<T>::Builder(function->EvaluateAtAbscissa(abscissa, distribution, parameters));
 }
 

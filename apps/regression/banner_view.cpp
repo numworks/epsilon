@@ -5,50 +5,30 @@ using namespace Escher;
 
 namespace Regression {
 
-BannerView::BannerView(
-  Responder * parentResponder,
-  InputEventHandlerDelegate * inputEventHandlerDelegate,
-  TextFieldDelegate * textFieldDelegate
-) :
+BannerView::BannerView(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
   Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-  m_dotNameView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_regressionTypeView(Font(), (I18n::Message)0, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_subText0(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_subText1(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_subText2(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_subText3(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_subText4(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_otherView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_otherViewIsFirst(false),
   m_numberOfSubviews(k_maxNumberOfSubviews)
-{
-}
+{}
 
-BufferTextView * BannerView::subTextAtIndex(int index) {
-  assert(0 <= index && index < numberOfsubTexts());
-  BufferTextView * subTexts[numberOfsubTexts()] = {&m_subText0, &m_subText1, &m_subText2, &m_subText3, &m_subText4};
-  return subTexts[index];
+void BannerView::setDisplayParameters(bool hideOtherView, bool otherViewIsFirst) {
+  assert(!hideOtherView || !otherViewIsFirst);
+  m_otherViewIsFirst = otherViewIsFirst && !hideOtherView;
+  m_numberOfSubviews = k_maxNumberOfSubviews - hideOtherView;
 }
 
 View * BannerView::subviewAtIndex(int index) {
-  assert(0 <= index && index < numberOfSubviews() && numberOfSubviews() <= k_maxNumberOfSubviews);
-  if (index == 0) {
-    return &m_dotNameView;
+  assert(0 <= index && index < m_numberOfSubviews);
+  if (m_otherViewIsFirst) {
+    if (index == 0) {
+      return &m_otherView;
+    }
+    index--;
+  } else if (index == k_maxNumberOfSubviews - 1) {
+    return &m_otherView;
   }
-  index--;
-  if (index < Shared::XYBannerView::k_numberOfSubviews) {
-    return Shared::XYBannerView::subviewAtIndex(index);
-  }
-  index -= Shared::XYBannerView::k_numberOfSubviews;
-  if (index == 0) {
-    return &m_regressionTypeView;
-  }
-  return subTextAtIndex(index - 1);
-}
-
-bool BannerView::lineBreakBeforeSubview(Escher::View * subview) const {
-  return subview == &m_regressionTypeView
-    // Force the "Data not suitable" message to be on the next line
-      || (subview == &m_subText0 && !m_coefficientsAreDefined)
-      || Shared::XYBannerView::lineBreakBeforeSubview(subview);
+  return Shared::XYBannerView::subviewAtIndex(index);
 }
 
 }

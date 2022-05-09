@@ -10,7 +10,7 @@ namespace Device {
 namespace Board {
 
 bool isRunningSlotA() {
-  return reinterpret_cast<uint32_t>(&_external_apps_flash_start) < Device::Config::ExternalFlashOrigin + Device::Config::SlotBOffset;
+  return reinterpret_cast<uint32_t>(&_external_apps_flash_start) < Config::ExternalFlashOrigin + Config::SlotBOffset;
 }
 
 }

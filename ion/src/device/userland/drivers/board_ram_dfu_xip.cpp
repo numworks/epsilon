@@ -7,11 +7,11 @@ namespace Board {
 /* N0110 userland DFU cannot write the SRAM allocated for the kernel. */
 
 uint32_t writableSRAMStartAddress() {
-  return Device::Config::UserlandSRAMOrigin;
+  return Config::UserlandSRAMOrigin;
 }
 
 uint32_t writableSRAMEndAddress() {
-  return Device::Config::UserlandSRAMOrigin + Device::Config::UserlandSRAMLength;
+  return Config::UserlandSRAMOrigin + Config::UserlandSRAMLength;
 }
 
 }

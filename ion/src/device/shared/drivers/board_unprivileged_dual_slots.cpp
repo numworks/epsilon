@@ -11,13 +11,13 @@ namespace Device {
 namespace Board {
 
 KernelHeader * kernelHeader() {
-  uint32_t slotOffset = isRunningSlotA() ? Device::Config::SlotAOffset : Device::Config::SlotBOffset;
-  return reinterpret_cast<KernelHeader *>(Device::Config::KernelVirtualOrigin + slotOffset + Device::Config::SignedPayloadLength);
+  uint32_t slotOffset = isRunningSlotA() ? Config::SlotAOffset : Config::SlotBOffset;
+  return reinterpret_cast<KernelHeader *>(Config::KernelVirtualOrigin + slotOffset + Config::SignedPayloadLength);
 }
 
 UserlandHeader * userlandHeader() {
-  uint32_t slotOffset = isRunningSlotA() ? Device::Config::SlotAOffset : Device::Config::SlotBOffset;
-  return reinterpret_cast<UserlandHeader *>(Device::Config::UserlandVirtualOrigin + slotOffset);
+  uint32_t slotOffset = isRunningSlotA() ? Config::SlotAOffset : Config::SlotBOffset;
+  return reinterpret_cast<UserlandHeader *>(Config::UserlandVirtualOrigin + slotOffset);
 }
 
 uint32_t userlandEnd() {

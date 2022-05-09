@@ -13,7 +13,7 @@ int TotalNumberOfSectors() {
 int SectorAtAddress(uint32_t address) {
   /* WARNING: this code assumes that the flash sectors are of increasing size:
    * first all 4K sectors, then all 32K sectors, and finally all 64K sectors. */
-  address -= Config::ExternalFlashOrigin;
+  address -= Board::Config::ExternalFlashOrigin;
   int i = address >> ExternalFlash::Config::NumberOfAddressBitsIn64KbyteBlock;
   if (i > ExternalFlash::Config::NumberOf64KSectors) {
     return -1;
@@ -33,8 +33,8 @@ int SectorAtAddress(uint32_t address) {
 }
 
 bool IncludesAddress(uint32_t address) {
-  return address >= Config::ExternalFlashOrigin
-    && address <= Config::ExternalFlashOrigin + Config::ExternalFlashLength;
+  return address >= Board::Config::ExternalFlashOrigin
+    && address <= Board::Config::ExternalFlashOrigin + Board::Config::ExternalFlashLength;
 }
 
 }

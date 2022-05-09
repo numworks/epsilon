@@ -19,9 +19,9 @@
  * the DFU code (namely, Ion::USB::Device::Calculator::Poll). We're simply
  * making sure this is the first symbol output. */
 
-INCLUDE config_sram.ld
+INCLUDE memory_layout.ld
 
-PROCESS_STACK_END = USERLAND_SRAM_ORIGIN + USERLAND_SRAM_LENGTH - USERLAND_STACK_LENGTH;
+PROCESS_STACK_END = UserlandSRAMOrigin + UserlandSRAMLength - UserlandStackLength;
 
 MEMORY {
   RAM_BUFFER (rw) : ORIGIN = PROCESS_STACK_END, LENGTH = 9K

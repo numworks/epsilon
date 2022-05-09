@@ -22,7 +22,7 @@ int SectorAtAddress(uint32_t address) {
 }
 
 bool IncludesAddress(uint32_t address) {
-  return address >= Config::InternalFlashOrigin && address <= Config::InternalFlashOrigin + Config::InternalFlashLength;
+  return address >= Device::Config::InternalFlashOrigin && address <= Device::Config::InternalFlashOrigin + Device::Config::InternalFlashLength;
 }
 
 using namespace Regs;

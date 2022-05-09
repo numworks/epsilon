@@ -7,15 +7,15 @@ namespace Device {
 namespace Board {
 
 KernelHeader * kernelHeader() {
-  return reinterpret_cast<KernelHeader *>(Config::KernelHeaderAddress);
+  return reinterpret_cast<KernelHeader *>(Device::Config::KernelVirtualOrigin + Device::Config::SignedPayloadLength);
 }
 
 UserlandHeader * userlandHeader() {
-  return reinterpret_cast<UserlandHeader *>(Config::UserlandStartAddress);
+  return reinterpret_cast<UserlandHeader *>(Device::Config::UserlandVirtualOrigin);
 }
 
 uint32_t userlandEnd() {
-  return InternalFlash::Config::EndAddress;
+  return Device::Config::UserlandVirtualOrigin + Device::Config::UserlandLength;
 }
 
 }

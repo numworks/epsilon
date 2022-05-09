@@ -102,7 +102,14 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
     }
     return true;
   }
-  return EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
+  int selectedCol = m_store->seriesAtColumn(selectedColumn());
+  bool wasSeriesValid = m_store->seriesIsValid(selectedCol);
+  bool result = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
+  if (wasSeriesValid != m_store->seriesIsValid(selectedCol)) {
+    // Series changed validity, series' cells have changed color. Reload them.
+    selectableTableView()->reloadData();
+  }
+  return result;
 }
 
 bool StoreController::textFieldDidAbortEditing(TextField * textField) {
@@ -167,6 +174,8 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     Shared::StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->setHide(false);
     myCell->setSeparatorLeft(i > 0 && (m_store->relativeColumnIndex(i) == 0));
+    KDColor textColor = m_store->seriesIsValid(m_store->seriesAtColumn(i)) ? KDColorBlack : Palette::GrayDark;
+    myCell->editableTextCell()->textField()->setTextColor(textColor);
   }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
 }

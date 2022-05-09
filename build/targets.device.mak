@@ -64,9 +64,9 @@ SFLAGS += -DEMBED_EXTRA_DATA=$(EMBED_EXTRA_DATA)
 $(BUILD_DIR)/%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared/flash -Lion/src/$(PLATFORM)/shared/flash/$(MODEL)
 $(BUILD_DIR)/%.$(EXE): LDFLAGS += -L$(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)
 
-$(BUILD_DIR)/%.$(EXE): LDDEPS += $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)/memory_layout.ld
+$(BUILD_DIR)/%.$(EXE): LDDEPS += $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)/board.ld
 
-$(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)/memory_layout.ld: ion/src/$(PLATFORM)/include/$(MODEL)/config/memory_layout.h | $$(@D)/.
+$(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)/board.ld: ion/src/$(PLATFORM)/include/$(MODEL)/config/board.h | $$(@D)/.
 	$(Q) $(CXX) $(SFLAGS) -E $< -o $(@:.ld=.h)
 	$(Q) awk '/^constexpr/ {$$1=$$2=""; sub(";.*", ";"); print}; /^static_assert/ {sub("static_assert", "ASSERT"); print}' $(@:.ld=.h) >$@
 

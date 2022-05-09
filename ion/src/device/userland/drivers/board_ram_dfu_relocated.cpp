@@ -10,11 +10,11 @@ namespace Board {
  *   override itself) */
 
 uint32_t writableSRAMStartAddress() {
-  return Device::Config::UserlandSRAMOrigin;
+  return Config::UserlandSRAMOrigin;
 }
 
 uint32_t writableSRAMEndAddress() {
-  return Device::Config::UserlandSRAMOrigin + Device::Config::UserlandSRAMLength - Device::Config::UserlandStackLength;;
+  return Config::UserlandSRAMOrigin + Config::UserlandSRAMLength - Config::UserlandStackLength;;
 }
 
 }

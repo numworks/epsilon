@@ -68,8 +68,9 @@ $(BUILD_DIR)/%.$(EXE): LDDEPS += $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$
 
 # The linker script needs to be rebuilt every time in case the compilation
 # flags have changed, as they are not tracked by Make.
-$(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)/memory_layout.ld: force_remake | $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)/.
-	$(Q) $(CXX) $(SFLAGS) -E ion/src/$(PLATFORM)/include/$(MODEL)/config/memory_layout.h | awk '/^constexpr/ {$$1=$$2=""; sub(";.*", ";"); print}; /^static_assert/ {sub("static_assert", "ASSERT"); print}' >$@
+$(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)/memory_layout.ld: force_remake | $$(@D)/.
+	$(Q) $(CXX) $(SFLAGS) -E ion/src/$(PLATFORM)/include/$(MODEL)/config/memory_layout.h -o $(@:.ld=.h)
+	$(Q) awk '/^constexpr/ {$$1=$$2=""; sub(";.*", ";"); print}; /^static_assert/ {sub("static_assert", "ASSERT"); print}' $(@:.ld=.h) >$@
 
 # Generate objects files containing the raw bootloader binary, to be linked
 # into the kernel.

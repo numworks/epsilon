@@ -7,15 +7,15 @@
 namespace Poincare {
 
 class InverseFunction final : public DistributionMethod {
-  float EvaluateAtAbscissa(float * x, Distribution * distribution, const float * parameters) override {
+  float EvaluateAtAbscissa(float * x, Distribution * distribution, const float * parameters) const override {
     return distribution->CumulativeDistributiveInverseForProbability(x[0], parameters);
   }
 
-  double EvaluateAtAbscissa(double * x, Distribution * distribution, const double * parameters) override {
+  double EvaluateAtAbscissa(double * x, Distribution * distribution, const double * parameters) const override {
     return distribution->CumulativeDistributiveInverseForProbability(x[0], parameters);
   }
 
-  Expression shallowReduce(Expression * x, Context * context, Expression * expression) override;
+  Expression shallowReduce(Expression * x, Context * context, Expression * expression) const override;
 };
 
 }

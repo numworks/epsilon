@@ -7,20 +7,20 @@
 
 namespace Poincare {
 
-void DistributionMethod::Initialize(DistributionMethod * distribution, Type type) {
+DistributionMethod * DistributionMethod::Get(Type type) {
   switch (type) {
   case Type::CDF:
-    new (distribution) CDFFunction();
-    break;
+    static CDFFunction cdf;
+    return &cdf;
   case Type::PDF:
-    new (distribution) PDFFunction();
-    break;
+    static PDFFunction pdf;
+    return &pdf;
   case Type::Inverse:
-    new (distribution) InverseFunction();
-    break;
+    static InverseFunction inverse;
+    return &inverse;
   case Type::CDFRange:
-    new (distribution) CDFRangeFunction();
-    break;
+    static CDFRangeFunction cdfRange;
+    return &cdfRange;
   }
 }
 

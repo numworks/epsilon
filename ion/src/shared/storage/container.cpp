@@ -108,19 +108,19 @@ int Container::firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, 
   return prefixLength;
 }
 
-Record::ErrorStatus Container::createRecordWithFullNameAndDataChunks(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks) {
+Record::ErrorStatus Container::createRecordWithFullNameAndDataChunks(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks, bool extensionCanOverrideItself) {
   Record::Name recordName = Record::CreateRecordNameFromFullName(fullName);
-  return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, numberOfChunks);
+  return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, numberOfChunks, extensionCanOverrideItself);
 }
 
-Record::ErrorStatus Container::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size) {
+Record::ErrorStatus Container::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size, bool extensionCanOverrideItself) {
   Record::Name recordName = Record::CreateRecordNameFromBaseNameAndExtension(baseName, extension);
   const void * dataChunks[] = {data};
   size_t sizeChunks[] = {size};
-  return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, 1);
+  return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, 1, extensionCanOverrideItself);
 }
 
-Record::ErrorStatus Container::createRecordWithDataChunks(Record::Name recordName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks) {
+Record::ErrorStatus Container::createRecordWithDataChunks(Record::Name recordName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks, bool extensionCanOverrideItself) {
   if (Record::NameIsEmpty(recordName)) {
     return Record::ErrorStatus::NonCompliantName;
   }
@@ -135,7 +135,7 @@ Record::ErrorStatus Container::createRecordWithDataChunks(Record::Name recordNam
   /* WARNING : This relies on the fact that when you create a python script or
    * a function, you first create it with a placeholder name and then let the
    * user set its name through setNameOfRecord. */
-  if (!handleCompetingRecord(recordName, m_recordNameVerifier.extensionCanOverrideItself(recordName.extension))) {
+  if (!handleCompetingRecord(recordName, extensionCanOverrideItself)) {
     return Record::ErrorStatus::NameTaken;
   }
 

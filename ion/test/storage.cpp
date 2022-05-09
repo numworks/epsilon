@@ -534,9 +534,9 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   const char * data0 = "abcdefgh";
   const char * data1 = "Bonjour Hello";
 
-  // Test if record overrides itself if same name and extension
-  createTestRecordWithErrorStatus(varName1, Storage::expExtension);
+  // Test if record does not overrides itself if same name and extension
   createTestRecordWithErrorStatus(varName1, Storage::expExtension, data1);
+  createTestRecordWithErrorStatus(varName1, Storage::expExtension, data0, Storage::Record::ErrorStatus::NameTaken);
   quiz_assert(isDataOfRecord(varName1, Storage::expExtension, data1));
 
   // Test if record does not overrides if name slightly differs

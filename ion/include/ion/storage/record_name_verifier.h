@@ -58,10 +58,6 @@ public:
   // Getters
   const char * const * restrictiveExtensions() const { return m_restrictiveExtensions; }
   int numberOfRestrictiveExtensions() const { return m_numberOfRestrictiveExtensions; }
-  bool extensionCanOverrideItself(const char * extension) const {
-    // Restrictive extension override themselves.
-    return precedenceScoreOfExtension(extension) > 0;
-  }
 
   // Register a new array of reserved names
   void registerArrayOfReservedNames(const char * const * namePrefixes, const char* extension, int prefixRepetitions, int numberOfElements);

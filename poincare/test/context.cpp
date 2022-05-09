@@ -15,31 +15,6 @@ void assert_parsed_expression_approximates_with_value_for_symbol(Expression expr
   assert_roughly_equal(result, approximation, Poincare::Float<T>::Epsilon(), true);
 }
 
-QUIZ_CASE(poincare_context_store_overwrite) {
-  assert_parsed_expression_simplify_to("1→g", "1");
-  assert_parsed_expression_simplify_to("2→g", "2");
-  assert_expression_approximates_to<double>("g", "2");
-  assert_parsed_expression_simplify_to("-1→g(x)", "-1");
-  assert_expression_approximates_to<double>("g", "undef");
-  assert_expression_approximates_to<double>("g(4)", "-1");
-
-  // Clean the storage for other tests
-  Ion::Storage::Container::sharedStorage()->recordNamed("g.func").destroy();
-}
-
-QUIZ_CASE(poincare_context_store_do_not_overwrite) {
-  assert_parsed_expression_simplify_to("-1→g(x)", "-1");
-  assert_parsed_expression_simplify_to("1+g(x)→f(x)", "1+g(x)");
-  assert_expression_approximates_to<double>("f(1)", "0");
-  assert_parsed_expression_simplify_to("2→g", Undefined::Name());
-  assert_expression_approximates_to<double>("g(4)", "-1");
-  assert_expression_approximates_to<double>("f(4)", "0");
-
-  // Clean the storage for other tests
-  Ion::Storage::Container::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::Container::sharedStorage()->recordNamed("g.func").destroy();
-}
-
 QUIZ_CASE(poincare_context_user_variable_simple) {
   // Fill variable
   assert_parsed_expression_simplify_to("1+2→Adadas", "3");

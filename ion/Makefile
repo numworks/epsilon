@@ -90,9 +90,7 @@ tests_src += $(addprefix ion/test/,\
   keyboard.cpp\
   persisting_bytes.cpp\
   ring_buffer.cpp \
-  storage/container.cpp \
-  storage/record_name_verifier.cpp \
-  storage/record.cpp \
+  storage.cpp \
   utf8_decoder.cpp\
   utf8_helper.cpp\
 )

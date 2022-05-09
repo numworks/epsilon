@@ -7,11 +7,11 @@
 namespace Poincare {
 
 class CDFRangeFunction final : public DistributionMethod {
-  float EvaluateAtAbscissa(float * x, Distribution * distribution, const float * parameters) override {
+  float EvaluateAtAbscissa(float * x, Distribution * distribution, const float * parameters) const override {
     return distribution->CumulativeDistributiveFunctionForRange(x[0], x[1], parameters);
   }
 
-  double EvaluateAtAbscissa(double * x, Distribution * distribution, const double * parameters) override {
+  double EvaluateAtAbscissa(double * x, Distribution * distribution, const double * parameters) const override {
     return distribution->CumulativeDistributiveFunctionForRange(x[0], x[1], parameters);
   }
 };

@@ -125,7 +125,12 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, Expr
     /* Operators only apply to lists of the same length. */
     return e.replaceWithUndefinedInPlace();
   }
-  /* We want to transform f({a,b},c) into {f(a,c),f(b,c)} */
+  /* We want to transform f({a,b},c) into {f(a,c),f(b,c)}.
+   * Step 1 : Move all of 'this' children into another expression, so that
+   * 'this' contains only ghosts children.
+   * This is to ensure that no list will be duplicated in the pool when we'll
+   * clone 'this' into the result list.
+   * */
   int n = e.numberOfChildren();
   List children = List::Builder();
   for (int i = 0; i < n; i++) {
@@ -136,9 +141,9 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, Expr
     children.addChildAtIndexInPlace(e.childAtIndex(i), i, i);
   }
   assert(children.numberOfChildren() == n);
-  /* We moved all of our children into another expression. Now, by cloning
-   * 'this', we get an empty expression with the right type, to be inserted
-   * into the result list. */
+  /* Step 2 : Build the result list by cloning 'this' and readding
+   * its children at the right place. If the child is a list, just add
+   * the k-th element of the list. */
   List result = List::Builder();
   for (int listIndex = 0; listIndex < listLength; listIndex++) {
     Expression element = e.clone();

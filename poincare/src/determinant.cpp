@@ -30,7 +30,7 @@ template<typename T>
 Evaluation<T> DeterminantNode::templatedApproximate(ApproximationContext approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   if (input.type() != EvaluationNode<T>::Type::MatrixComplex) {
-    return input;
+    return Complex<T>::Undefined();
   }
   return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).determinant());
 }
@@ -47,10 +47,9 @@ Expression Determinant::shallowReduce(ExpressionNode::ReductionContext reduction
     }
   }
   Expression c0 = childAtIndex(0);
-  // det(A) = A if A is not a matrix
+  // det(A) = undef if A is not a matrix
   if (!c0.deepIsMatrix(reductionContext.context())) {
-    replaceWithInPlace(c0);
-    return c0;
+    return replaceWithUndefinedInPlace();
   }
   if (c0.type() == ExpressionNode::Type::Matrix) {
     Matrix m0 = static_cast<Matrix &>(c0);

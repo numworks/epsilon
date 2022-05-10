@@ -98,7 +98,7 @@ public:
   // DoublePairStore
   void sortColumn(int series, int column) override;
   void set(double f, int series, int i, int j) override;
-  void memoizeValidSeries(int series) override;
+  void updateSeriesValidity(int series) override;
   bool deleteValueAtIndex(int series, int i, int j) override;
   void deletePairOfSeriesAtIndex(int series, int j) override;
   void resetColumn(int series, int i) override;

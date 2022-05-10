@@ -138,12 +138,12 @@ int Store::nextDot(int series, int direction, int dot) {
 
 /* Series */
 
-void Store::memoizeValidSeries(int series) {
+void Store::updateSeriesValidity(int series) {
   if (numberOfPairsOfSeries(series) < 2) {
     m_validSeries[series] = false;
     return;
   }
-  Shared::DoublePairStore::memoizeValidSeries(series);
+  Shared::DoublePairStore::updateSeriesValidity(series);
 }
 
 /* Calculations */

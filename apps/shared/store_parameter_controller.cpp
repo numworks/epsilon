@@ -44,7 +44,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     case k_indexOfHideColumn:
     {
       m_storeController->switchSelectedColumnHideStatus();
-      m_selectableTableView.reloadData();
+      m_selectableTableView.reloadCellAtLocation(0, k_indexOfHideColumn);
       break;
     }
     case k_indexOfSortCell:

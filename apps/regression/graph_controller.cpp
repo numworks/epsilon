@@ -151,7 +151,7 @@ void GraphController::reloadBannerView() {
     if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear) {
       m_bannerView.setDisplayParameters(false, false);
       double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
-      Poincare::Print::customPrintf(buffer, bufferSize, "y=%*.*ed·x+%*.*ed",
+      Poincare::Print::customPrintf(buffer, bufferSize, "ŷ=%*.*ed·x+%*.*ed",
         coefficients[0], displayMode, significantDigits,
         coefficients[1], displayMode, significantDigits);
     } else {

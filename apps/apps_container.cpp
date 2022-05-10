@@ -272,7 +272,13 @@ void AppsContainer::run() {
        * the pool. */
       switchToBuiltinApp(initialAppSnapshot());
     } else {
+      /* We lock the Poincare pool until the application is destroyed (the pool
+       * is then asserted empty). This prevents from allocating new handles
+       * with the same identifiers as potential dangling handles (that have
+       * lost their nodes in the exception). */
+      Poincare::TreePool::Lock();
       handleRunException(true);
+      Poincare::TreePool::Unlock();
       s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
     }
   } else {

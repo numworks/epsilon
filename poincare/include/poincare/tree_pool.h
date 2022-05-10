@@ -20,7 +20,17 @@ class TreePool final {
   friend class Checkpoint;
 public:
   static TreePool * sharedPool() { assert(SharedStaticPool != nullptr); return SharedStaticPool; }
-  static void RegisterPool(TreePool * pool) {  assert(SharedStaticPool == nullptr); SharedStaticPool = pool; }
+  static void RegisterPool(TreePool * pool) { assert(SharedStaticPool == nullptr); SharedStaticPool = pool; }
+  static void Lock() {
+#ifndef NDEBUG
+    s_treePoolLocked = true;
+#endif
+  }
+  static void Unlock() {
+#ifndef NDEBUG
+    s_treePoolLocked = false;
+#endif
+ }
 
   TreePool() : m_cursor(buffer()) {}
 
@@ -59,6 +69,9 @@ private:
   constexpr static int k_maxNodeOffset = BufferSize/ByteAlignment;
 
   static TreePool * SharedStaticPool;
+#ifndef NDEBUG
+  static bool s_treePoolLocked;
+#endif
 
   // TreeNode
   void discardTreeNode(TreeNode * node);

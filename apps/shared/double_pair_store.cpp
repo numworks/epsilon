@@ -21,7 +21,7 @@ void DoublePairStore::set(double f, int series, int i, int j) {
     assert(m_numberOfPairs[series] < UINT8_MAX);
     m_numberOfPairs[series]++;
   }
-  memoizeValidSeries(series);
+  updateSeriesValidity(series);
 }
 
 int DoublePairStore::numberOfPairs() const {
@@ -41,7 +41,7 @@ bool DoublePairStore::deleteValueAtIndex(int series, int i, int j) {
     return true;
   } else {
     m_data[series][i][j] = NAN;
-    memoizeValidSeries(series);
+    updateSeriesValidity(series);
     return false;
   }
 }
@@ -56,7 +56,7 @@ void DoublePairStore::deletePairOfSeriesAtIndex(int series, int j) {
    * checksum. */
   m_data[series][0][m_numberOfPairs[series]] = 0;
   m_data[series][1][m_numberOfPairs[series]] = 0;
-  memoizeValidSeries(series);
+  updateSeriesValidity(series);
 }
 
 void DoublePairStore::deleteAllPairsOfSeries(int series) {
@@ -68,7 +68,7 @@ void DoublePairStore::deleteAllPairsOfSeries(int series) {
     }
   }
   m_numberOfPairs[series] = 0;
-  memoizeValidSeries(series);
+  updateSeriesValidity(series);
 }
 
 void DoublePairStore::deleteAllPairs() {
@@ -85,7 +85,7 @@ void DoublePairStore::deleteColumn(int series, int i) {
       k--;
     }
   }
-  memoizeValidSeries(series);
+  updateSeriesValidity(series);
 }
 
 void DoublePairStore::resetColumn(int series, int i) {
@@ -94,7 +94,7 @@ void DoublePairStore::resetColumn(int series, int i) {
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
     m_data[series][i][k] = defaultValue(series, i, k);
   }
-  memoizeValidSeries(series);
+  updateSeriesValidity(series);
 }
 
 bool DoublePairStore::hasValidSeries(ValidSeries validSeries) const {
@@ -111,7 +111,7 @@ bool DoublePairStore::seriesIsValid(int series) const {
   return m_validSeries[series];
 }
 
-void DoublePairStore::memoizeValidSeries(int series) {
+void DoublePairStore::updateSeriesValidity(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (m_numberOfPairs[series] == 0) {
     m_validSeries[series] = false;

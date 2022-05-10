@@ -146,7 +146,7 @@ int Store::numberOfBoxPlotCalculations(int series) const {
   return numberOfLowerOutliers(series) + k_numberOfQuantiles + numberOfUpperOutliers(series);
 }
 
-void Store::memoizeValidSeries(int series) {
+void Store::updateSeriesValidity(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
   bool isSeriesValid = numberOfPairsOfSeries(series) > 0 && sumOfOccurrences(series) > 0.0;
   // Reset the graph view any time one of the series gets invalidated

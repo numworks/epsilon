@@ -317,7 +317,7 @@ void StoreController::switchSelectedColumnHideStatus() {
     m_store->hideSeries(series);
   } else {
     // Series may still be invalid, in that case nothing happens
-    m_store->memoizeValidSeries(series);
+    m_store->updateSeriesValidity(series);
   }
 }
 

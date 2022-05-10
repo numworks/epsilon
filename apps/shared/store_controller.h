@@ -89,6 +89,7 @@ protected:
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
   Escher::SelectableTableView * selectableTableView() override { return m_contentView.dataView(); }
+  void reloadSeriesVisibleCells(int series, int relativeColumn = -1);
 
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;

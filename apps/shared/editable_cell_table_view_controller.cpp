@@ -62,10 +62,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     // Reload the whole table, if a value was appended.
     selectableTableView()->reloadData();
   } else {
-    // Reload the row, if an existing value was edited.
-    for (int i = 0; i < numberOfColumns(); i++) {
-      selectableTableView()->reloadCellAtLocation(i, previousRow);
-    }
+    selectableTableView()->reloadCellAtLocation(column, previousRow);
   }
   return true;
 }

@@ -97,15 +97,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       myCell->setMessage(titles[j-1]);
       return;
     }
-    if (hasLinearRegression() && j == numberRows - 2) {
-      myCell->setMessage(I18n::Message::R);
-      if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
-        myCell->setTextColor(Palette::GrayDark);
-      }
-      return;
-    }
-    if (j == numberRows - 1) {
-      myCell->setMessage(I18n::Message::R2);
+    if (j == numberRows - 1 || (hasLinearRegression() && j == numberRows - 2)) {
+      myCell->setMessage((j == numberRows - 1) ? I18n::Message::R2 : I18n::Message::R);
       if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
         myCell->setTextColor(Palette::GrayDark);
       }

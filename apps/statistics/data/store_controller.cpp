@@ -93,9 +93,10 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
   if (!Shared::StoreController::setDataAtLocation(floatBody, columnIndex, rowIndex)) {
     return false;
   }
-  if (m_store->displayCumulatedFrequenciesForSeries(m_store->seriesAtColumn(columnIndex))) {
-    // Data must be reloaded so that each cumulated frequencies is re-computed
-    selectableTableView()->reloadData();
+  int series = m_store->seriesAtColumn(columnIndex);
+  if (m_store->displayCumulatedFrequenciesForSeries(series)) {
+    // Cumulated frequencies must be re-computed
+    reloadSeriesVisibleCells(series, k_cumulatedFrequencyRelativeColumnIndex);
   }
   return true;
 }

@@ -8,6 +8,10 @@
 
 namespace Poincare {
 
+#ifndef NDEBUG
+bool TreePool::s_treePoolLocked = false;
+#endif
+
 TreePool * TreePool::SharedStaticPool = nullptr;
 
 void TreePool::freeIdentifier(uint16_t identifier) {
@@ -69,6 +73,12 @@ void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveS
   assert((((uintptr_t)source) % 4) == 0);
   assert((((uintptr_t)destination) % 4) == 0);
 
+#ifndef NDEBUG
+    if (s_treePoolLocked) {
+      return;
+    }
+#endif
+
   uint32_t * src = reinterpret_cast<uint32_t *>(source);
   uint32_t * dst = reinterpret_cast<uint32_t *>(destination);
   size_t len = moveSize/4;
@@ -113,7 +123,13 @@ int TreePool::numberOfNodes() const {
 
 void * TreePool::alloc(size_t size) {
   assert(IsAfterTopmostCheckpoint(last()));
-  size = Helpers::AlignedSize(size, ByteAlignment);
+#ifndef NDEBUG
+    if (s_treePoolLocked) {
+      return nullptr;
+    }
+#endif
+
+    size = Helpers::AlignedSize(size, ByteAlignment);
   if (m_cursor + size > buffer() + BufferSize) {
     ExceptionCheckpoint::Raise();
   }
@@ -124,6 +140,12 @@ void * TreePool::alloc(size_t size) {
 
 void TreePool::dealloc(TreeNode * node, size_t size) {
   assert(IsAfterTopmostCheckpoint(node));
+#ifndef NDEBUG
+    if (s_treePoolLocked) {
+      return;
+    }
+#endif
+
   size = Helpers::AlignedSize(size, ByteAlignment);
   char * ptr = reinterpret_cast<char *>(node);
   assert(ptr >= buffer() && ptr < m_cursor);

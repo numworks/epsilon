@@ -7,8 +7,14 @@
 
 namespace Poincare {
 
+/* We chose the definition:
+ * 0 < p <= 1 for distribution of success
+ * k number of trials needed to get one success, where k ∈ {1, 2, 3, ...}. */
+
 class GeometricDistribution final : public DiscreteDistribution {
 public:
+  bool isSymmetrical() const override { return false; }
+
   template<typename T> static T EvaluateAtAbscissa(T x, const T p);
   float EvaluateAtAbscissa(float x, const float * parameters) const override { return EvaluateAtAbscissa<float>(x, parameters[0]); }
   double EvaluateAtAbscissa(double x, const double * parameters) const override { return EvaluateAtAbscissa<double>(x, parameters[0]); }

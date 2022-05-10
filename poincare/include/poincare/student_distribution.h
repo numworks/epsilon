@@ -9,6 +9,8 @@ namespace Poincare {
 
 class StudentDistribution final : public ContinuousDistribution {
 public:
+  bool isSymmetrical() const override { return true; }
+
   template<typename T> static T EvaluateAtAbscissa(T x, const T k);
   float EvaluateAtAbscissa(float x, const float * parameters) const override { return EvaluateAtAbscissa<float>(x, parameters[0]); }
   double EvaluateAtAbscissa(double x, const double * parameters) const override { return EvaluateAtAbscissa<double>(x, parameters[0]); }

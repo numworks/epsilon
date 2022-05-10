@@ -6,13 +6,14 @@
 #include "inference/models/probability/calculation/finite_integral_calculation.h"
 #include "inference/models/probability/calculation/left_integral_calculation.h"
 #include "inference/models/probability/calculation/right_integral_calculation.h"
+#include <poincare/distribution.h>
 #include <new>
 
 namespace Inference {
 
 class Distribution : public Inference {
 public:
-  Distribution() : m_calculationBuffer(this) {}
+  Distribution(Poincare::Distribution::Type type) : m_calculationBuffer(this), m_distribution(Poincare::Distribution::Get(type)) {}
 
   SubApp subApp() const override { return SubApp::Probability; }
 
@@ -31,15 +32,16 @@ public:
   static bool Initialize(Distribution * distribution, Type type);
   virtual Type type() const = 0;
 
-  virtual bool isContinuous() const = 0;
-  virtual bool isSymmetrical() const = 0;
   virtual double meanAbscissa() { assert(false); return NAN; } // Must be implemented by all symmetrical and continouous distributions.
+  bool isContinuous() const { return m_distribution->isContinuous(); }
+  bool isSymmetrical() const { return m_distribution->isSymmetrical(); }
 
   // Parameters
   void setParameterAtIndex(double f, int index) override;
   virtual const char * parameterNameAtIndex(int index) const = 0;
 
   // Evaluation
+  float evaluateAtAbscissa(float x) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double rightIntegralFromAbscissa(double x) const;
   double finiteIntegralBetweenAbscissas(double a, double b) const;
@@ -55,7 +57,6 @@ protected:
   static_assert(Poincare::Preferences::VeryLargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to LargeNumberOfSignificantDigits");
   constexpr static double k_maxProbability = 0.9999995;
   float computeXMin() const override { return -k_displayLeftMarginRatio * computeXMax(); }
-  double cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(double * p, double ax, double bx);
 
   union CalculationBuffer {
   public:
@@ -77,7 +78,10 @@ protected:
     RightIntegralCalculation m_rightIntegralCalculation;
   };
 
+  virtual const double * constParametersArray() const = 0;
+
   CalculationBuffer m_calculationBuffer;
+  const Poincare::Distribution * m_distribution;
 };
 
 }

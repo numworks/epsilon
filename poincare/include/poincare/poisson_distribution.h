@@ -9,6 +9,8 @@ namespace Poincare {
 
 class PoissonDistribution final : public DiscreteDistribution {
 public:
+  bool isSymmetrical() const override { return false; }
+
   template<typename T> static T EvaluateAtAbscissa(T x, const T lambda);
   float EvaluateAtAbscissa(float x, const float * parameters) const override { return EvaluateAtAbscissa<float>(x, parameters[0]); }
   double EvaluateAtAbscissa(double x, const double * parameters) const override { return EvaluateAtAbscissa<double>(x, parameters[0]); }

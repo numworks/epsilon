@@ -53,21 +53,17 @@ bool Distribution::Initialize(Distribution * distribution, Type type) {
   return true;
 }
 
+float Distribution::evaluateAtAbscissa(float x) const {
+  return m_distribution->EvaluateAtAbscissa(x, constParametersArray());
+}
+
 void Distribution::setParameterAtIndex(double f, int index) {
   Inference::setParameterAtIndex(f, index);
   computeCurveViewRange();
 }
 
 double Distribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  if (!isContinuous()) {
-    return Poincare::Solver::CumulativeDistributiveFunctionForNDefinedFunction<double>(x,
-        [](double k, Poincare::Context * context, const void * auxiliary) {
-          const Distribution * distribution = static_cast<const Distribution *>(auxiliary);
-          return distribution->evaluateAtDiscreteAbscissa(k);
-        },
-        nullptr, this);
-  }
-  return 0.0;
+  return m_distribution->CumulativeDistributiveFunctionAtAbscissa(x, constParametersArray());
 }
 
 double Distribution::rightIntegralFromAbscissa(double x) const {
@@ -105,20 +101,7 @@ double Distribution::finiteIntegralBetweenAbscissas(double a, double b) const {
 }
 
 double Distribution::cumulativeDistributiveInverseForProbability(double * p) {
-  if (*p > 1.0 - DBL_EPSILON) {
-    return INFINITY;
-  }
-  if (isContinuous()) {
-    return 0.0;
-  }
-  if (*p < DBL_EPSILON) {
-    return -1.0;
-  }
-  return Poincare::Solver::CumulativeDistributiveInverseForNDefinedFunction<double>(p,
-      [](double k, Poincare::Context * context, const void * auxiliary) {
-        const Distribution * distribution = static_cast<const Distribution *>(auxiliary);
-        return distribution->evaluateAtDiscreteAbscissa(k);
-      }, nullptr, this);
+    return m_distribution->CumulativeDistributiveInverseForProbability(*p, constParametersArray());
 }
 
 double Distribution::rightIntegralInverseForProbability(double * probability) {
@@ -155,38 +138,10 @@ double Distribution::rightIntegralInverseForProbability(double * probability) {
 }
 
 double Distribution::evaluateAtDiscreteAbscissa(int k) const {
-  assert(isContinuous()); // Discrete distribution override this method
-  return 0.0;
-}
-
-double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(double * p, double ax, double bx) {
-  assert(ax < bx);
-  if (*p > 1.0 - DBL_EPSILON) {
-    return INFINITY;
+  if (isContinuous()) {
+    return 0.0;
   }
-  if (*p < DBL_EPSILON) {
-    return -INFINITY;
-  }
-  const void * pack[2] = { this, p };
-  Poincare::Coordinate2D<double> result = Poincare::Solver::IncreasingFunctionRoot(
-      ax, bx, DBL_EPSILON,
-      [](double x, Poincare::Context * context, const void * auxiliary) {
-        const void * const * pack = static_cast<const void * const *>(auxiliary);
-        const Distribution * distribution = static_cast<const Distribution *>(pack[0]);
-        const double * proba = static_cast<const double *>(pack[1]);
-        return distribution->cumulativeDistributiveFunctionAtAbscissa(x) - *proba; // This needs to be an increasing function
-      },
-      nullptr, pack);
-  /* Either no result was found, the precision is ok or the result was outside
-   * the given ax bx bounds */
-   if (!(std::isnan(result.x2()) || std::fabs(result.x2()) <= FLT_EPSILON || std::fabs(result.x1()- ax) < FLT_EPSILON || std::fabs(result.x1() - bx) < FLT_EPSILON)) {
-     /* We would like to put this as an assertion, but sometimes we do get
-      * false result: we replace them with inf to make the problem obvious to
-      * the student. */
-     assert(false);  // TODO this assert is used to hunt a case where that happens. If it doesn't, then we can remove this block of code
-     return *p > 0.5 ? INFINITY : -INFINITY;
-   }
-   return result.x1();
+  return m_distribution->EvaluateAtAbscissa((double) k, constParametersArray());
 }
 
 }

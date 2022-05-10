@@ -3,7 +3,6 @@
 #include <poincare/cdf_range_method.h>
 #include <poincare/pdf_method.h>
 #include <poincare/inv_method.h>
-#include <new>
 
 namespace Poincare {
 

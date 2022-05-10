@@ -1801,7 +1801,7 @@ QUIZ_CASE(poincare_advanced_trigonometry) {
 QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
   assert_parsed_expression_simplify_to("invnorm(0,2,3)", "-inf");
-  // assert_parsed_expression_simplify_to("invnorm(0.5,2,3)", "2");
+  assert_parsed_expression_simplify_to("invnorm(0.5,2,3)", "2");
   assert_parsed_expression_simplify_to("invnorm(1,2,3)", "inf");
   assert_parsed_expression_simplify_to("invnorm(1.3,2,3)", "undef");
   assert_parsed_expression_simplify_to("invnorm(3/4,2,random())", "invnorm(3/4,2,random())"); // random can be 0
@@ -1811,8 +1811,8 @@ QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("normcdfrange(1,2,0,1)", "normcdfrange(1,2,0,1)");
   assert_parsed_expression_simplify_to("normpdf(2,0,1)", "normpdf(2,0,1)");
 
-  // assert_parsed_expression_simplify_to("invt(0.5,12)", "0");
-  // assert_parsed_expression_simplify_to("invt(0.5,0)", "undef");
+  assert_parsed_expression_simplify_to("invt(0.5,12)", "0");
+  assert_parsed_expression_simplify_to("invt(0.5,0)", "undef");
 }
 
 QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {

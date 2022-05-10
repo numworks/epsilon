@@ -32,7 +32,7 @@ public:
   virtual float EvaluateAtAbscissa(float * x, const Distribution * distribution, const float * parameters) const = 0;
   virtual double EvaluateAtAbscissa(double * x, const Distribution * distribution, const double * parameters) const = 0;
 
-  virtual Expression shallowReduce(Expression * x, Context * context, Expression * expression) const { return *expression; }
+  virtual Expression shallowReduce(Expression * x, const Distribution * distribution, Expression * parameters, Context * context, Expression * expression) const { return *expression; }
 };
 
 }

@@ -1207,7 +1207,7 @@ QUIZ_CASE(poincare_approximation_lists_access) {
   assert_expression_approximates_to<float>("L(3,1)","{}");
   assert_expression_approximates_to<float>("L(8,9)","{}");
 
-  Ion::Storage::sharedStorage()->recordNamed("L.lis").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("L.lis").destroy();
 }
 
 QUIZ_CASE(poincare_approximation_lists_functions) {

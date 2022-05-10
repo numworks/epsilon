@@ -9,12 +9,10 @@ namespace Inference {
 
 class ExponentialDistribution final : public OneParameterDistribution {
 public:
-  ExponentialDistribution() : OneParameterDistribution(1.0) { computeCurveViewRange(); }
+  ExponentialDistribution() : OneParameterDistribution(Poincare::Distribution::Type::Exponential, 1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::ExponentialDistribution; }
   Type type() const override { return Type::Exponential; }
   const char * parameterNameAtIndex(int index) const override { return "λ"; }
-  bool isContinuous() const override { return true; }
-  bool isSymmetrical() const override { return false; }
   float evaluateAtAbscissa(float x) const override;
   bool authorizedParameterAtIndex(double x, int index) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;

@@ -3,8 +3,11 @@
 #include <poincare/normal_distribution.h>
 #include <poincare/student_distribution.h>
 #include <poincare/geometric_distribution.h>
+#include <poincare/exponential_distribution.h>
 #include <poincare/poisson_distribution.h>
-#include <new>
+#include <poincare/fisher_distribution.h>
+#include <poincare/uniform_distribution.h>
+#include <poincare/chi2_distribution.h>
 
 namespace Poincare {
 
@@ -22,9 +25,21 @@ const Distribution * Distribution::Get(Type type) {
   case Type::Geometric:
     static constexpr GeometricDistribution geometric;
     return &geometric;
+  case Type::Fisher:
+    static constexpr FisherDistribution fisher;
+    return &fisher;
+  case Type::Uniform:
+    static constexpr UniformDistribution uniform;
+    return &uniform;
+  case Type::Exponential:
+    static constexpr ExponentialDistribution exponential;
+    return &exponential;
   case Type::Poisson:
     static constexpr PoissonDistribution poisson;
     return &poisson;
+  case Type::ChiSquared:
+    static constexpr Chi2Distribution chiSquared;
+    return &chiSquared;
   }
 }
 
@@ -56,6 +71,37 @@ template <typename T> void Distribution::findBoundsForBinarySearch(Poincare::Sol
     xmin = -xmax;
     xmax = temp;
   }
+}
+
+double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(double p, double ax, double bx, double * parameters) const {
+  assert(ax < bx);
+  if (p > 1.0 - DBL_EPSILON) {
+    return INFINITY;
+  }
+  if (p < DBL_EPSILON) {
+    return -INFINITY;
+  }
+  const void * pack[3] = { this, &p, parameters };
+  Coordinate2D<double> result = Solver::IncreasingFunctionRoot(
+      ax, bx, DBL_EPSILON,
+      [](double x, Poincare::Context * context, const void * auxiliary) {
+        const void * const * pack = static_cast<const void * const *>(auxiliary);
+        const Distribution * distribution = static_cast<const Distribution *>(pack[0]);
+        const double * proba = static_cast<const double *>(pack[1]);
+        const double * parameters = static_cast<const double *>(pack[2]);
+        return distribution->CumulativeDistributiveFunctionAtAbscissa(x, parameters) - *proba; // This needs to be an increasing function
+      },
+      nullptr, pack);
+  /* Either no result was found, the precision is ok or the result was outside
+   * the given ax bx bounds */
+   if (!(std::isnan(result.x2()) || std::fabs(result.x2()) <= FLT_EPSILON || std::fabs(result.x1()- ax) < FLT_EPSILON || std::fabs(result.x1() - bx) < FLT_EPSILON)) {
+     /* We would like to put this as an assertion, but sometimes we do get
+      * false result: we replace them with inf to make the problem obvious to
+      * the student. */
+     assert(false);  // TODO this assert is used to hunt a case where that happens. If it doesn't, then we can remove this block of code
+     return p > 0.5 ? INFINITY : -INFINITY;
+   }
+   return result.x1();
 }
 
 template void Distribution::findBoundsForBinarySearch<float>(double (*)(double, Poincare::Context*, void const*), Poincare::Context*, void const*, float&, float&);

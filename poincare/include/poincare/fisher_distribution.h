@@ -1,0 +1,40 @@
+#ifndef POINCARE_FISHER_DISTRIBUTION_H
+#define POINCARE_FISHER_DISTRIBUTION_H
+
+#include <poincare/expression.h>
+#include <poincare/continuous_distribution.h>
+#include <poincare/preferences.h>
+
+namespace Poincare {
+
+class FisherDistribution final : public ContinuousDistribution {
+public:
+  bool isSymmetrical() const override { return false; }
+
+  template<typename T> static T EvaluateAtAbscissa(T x, const T d1, const T d2);
+  float EvaluateAtAbscissa(float x, const float * parameters) const override { return EvaluateAtAbscissa<float>(x, parameters[0], parameters[1]); }
+  double EvaluateAtAbscissa(double x, const double * parameters) const override { return EvaluateAtAbscissa<double>(x, parameters[0], parameters[1]); }
+
+  template<typename T> static T CumulativeDistributiveFunctionAtAbscissa(T x, const T d1, const T d2);
+  float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters[0], parameters[1]); }
+  double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters[0], parameters[1]); }
+
+  template<typename T> T CumulativeDistributiveInverseForProbability(T probability, const T d1, const T d2) const;
+  float CumulativeDistributiveInverseForProbability(float x, const float * parameters) const override { return this->CumulativeDistributiveInverseForProbability<float>(x, parameters[0], parameters[1]); }
+  double CumulativeDistributiveInverseForProbability(double x, const double * parameters) const override { return CumulativeDistributiveInverseForProbability<double>(x, parameters[0], parameters[1]); }
+
+  bool ParametersAreOK(const float * parameters) const override { return D1AndD2AreOK(parameters[0], parameters[1]); }
+  bool ParametersAreOK(const double * parameters) const override { return D1AndD2AreOK(parameters[0], parameters[1]); }
+
+  static bool ExpressionD1AndD2AreOK(bool * result, const Expression &d1, const Expression &d2, Context * context);
+  bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const override { return ExpressionD1AndD2AreOK(result, parameters[0], parameters[1], context); }
+
+private:
+  template<typename T> static T parameterD1(T* parameters) { return parameters[0]; }
+  template<typename T> static T parameterD2(T* parameters) { return parameters[1]; }
+  template<typename T> static bool D1AndD2AreOK(T d1, T d2);
+};
+
+}
+
+#endif

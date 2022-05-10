@@ -10,6 +10,10 @@ public:
   enum class Type : uint8_t {
     Normal,
     Student,
+    Exponential,
+    Fisher,
+    Uniform,
+    ChiSquared,
     Binomial,
     Poisson,
     Geometric,
@@ -21,7 +25,11 @@ public:
     case Type::Student:
     case Type::Poisson:
     case Type::Geometric:
+    case Type::Exponential:
+    case Type::ChiSquared:
       return 1;
+    case Type::Uniform:
+    case Type::Fisher:
     case Type::Normal:
     case Type::Binomial:
       return 2;
@@ -35,6 +43,10 @@ public:
      * enforced by the protected constructor */
     return this == Get(type);
   }
+
+  virtual bool isContinuous() const = 0;
+  virtual bool isSymmetrical() const = 0;
+  virtual double meanAbscissa() { assert(false); return NAN; } // Must be implemented by all symmetrical and continouous distributions.
 
   virtual float EvaluateAtAbscissa(float x, const float * parameters) const = 0;
   virtual double EvaluateAtAbscissa(double x, const double * parameters) const = 0;
@@ -60,7 +72,9 @@ protected:
   /* This method looks for bounds such that:
    * cumulativeDistributionEvaluation(xmin) < 0 < cumulativeDistributionEvaluation(xmax)
    */
-  template <typename T> static void findBoundsForBinarySearch(Poincare::Solver::ValueAtAbscissa cumulativeDistributionEvaluation, Poincare::Context * context, const void * auxiliary, T & xmin, T & xmax);
+  template <typename T> static void findBoundsForBinarySearch(Solver::ValueAtAbscissa cumulativeDistributionEvaluation, Context * context, const void * auxiliary, T & xmin, T & xmax);
+  double cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(double p, double ax, double bx, double * parameters) const;
+
 
 };
 

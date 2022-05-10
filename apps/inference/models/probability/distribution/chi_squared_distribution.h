@@ -10,12 +10,10 @@ namespace Inference {
 
 class ChiSquaredDistribution : public OneParameterDistribution {
 public:
-  ChiSquaredDistribution() : OneParameterDistribution(1.0) { computeCurveViewRange(); }
+  ChiSquaredDistribution() : OneParameterDistribution(Poincare::Distribution::Type::ChiSquared, 1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::ChiSquaredDistribution; }
   Type type() const override { return Type::ChiSquared; }
   const char * parameterNameAtIndex(int index) const override { return "k"; }
-  bool isContinuous() const override { return true; }
-  bool isSymmetrical() const override { return false; }
   float evaluateAtAbscissa(float x) const override;
   bool authorizedParameterAtIndex(double x, int index) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;

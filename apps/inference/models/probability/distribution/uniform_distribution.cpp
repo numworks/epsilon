@@ -8,21 +8,6 @@
 
 namespace Inference {
 
-float UniformDistribution::evaluateAtAbscissa(float t) const {
-  float parameter1 = m_parameters[0];
-  float parameter2 = m_parameters[1];
-  if (parameter2 - parameter1 < FLT_EPSILON) {
-    if (parameter1 - k_diracWidth<= t && t <= parameter2 + k_diracWidth) {
-      return 2.0f * k_diracMaximum;
-    }
-    return 0.0f;
-  }
-  if (parameter1 <= t && t <= parameter2) {
-    return (1.0f/(parameter2 - parameter1));
-  }
-  return 0.0f;
-}
-
 bool UniformDistribution::authorizedParameterAtIndex(double x, int index) const {
   if (!TwoParameterDistribution::authorizedParameterAtIndex(x, index)) {
     return false;
@@ -43,26 +28,6 @@ void UniformDistribution::setParameterAtIndex(double f, int index) {
     m_parameters[1] = m_parameters[0] + std::max(1.0, std::round(std::fabs(m_parameters[0]) * 0.01));
   }
   computeCurveViewRange();
-}
-
-double UniformDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  if (x <= m_parameters[0]) {
-    return 0.0;
-  }
-  if (x < m_parameters[1]) {
-    return (x - m_parameters[0])/(m_parameters[1] - m_parameters[0]);
-  }
-  return 1.0;
-}
-
-double UniformDistribution::cumulativeDistributiveInverseForProbability(double * p) {
-  if (*p >= 1.0f) {
-    return m_parameters[1];
-  }
-  if (*p <= 0.0f) {
-    return m_parameters[0];
-  }
-  return m_parameters[0] * (1 - *p) + *p * m_parameters[1];
 }
 
 ParameterRepresentation UniformDistribution::paramRepresentationAtIndex(int i) const {

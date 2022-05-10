@@ -45,6 +45,8 @@ poincare_src += $(addprefix poincare/src/,\
   distribution_method.cpp \
   erf_inv.cpp \
   exception_checkpoint.cpp \
+  exponential_distribution.cpp \
+  fisher_distribution.cpp \
   geometric_distribution.cpp \
   helpers.cpp \
   inv_method.cpp \
@@ -54,6 +56,7 @@ poincare_src += $(addprefix poincare/src/,\
   regularized_incomplete_beta_function.cpp \
   statistics_dataset.cpp\
   student_distribution.cpp \
+  uniform_distribution.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/,\

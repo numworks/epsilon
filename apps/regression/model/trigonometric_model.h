@@ -10,6 +10,7 @@ public:
   using Model::Model;
   Poincare::Layout layout() override;
   I18n::Message formulaMessage() const override { return I18n::Message::TrigonometricRegressionFormula; }
+  I18n::Message name() const override { return I18n::Message::Trigonometrical; }
   double evaluate(double * modelCoefficients, double x) const override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return k_numberOfCoefficients; }

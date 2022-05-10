@@ -34,6 +34,7 @@ public:
   void tidy();
   Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context);
   virtual I18n::Message formulaMessage() const = 0;
+  virtual I18n::Message name() const = 0;
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
   virtual double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context);
   virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);

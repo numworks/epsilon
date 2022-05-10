@@ -65,11 +65,10 @@ HighlightCell * RegressionController::reusableCell(int index, int type) {
 
 void RegressionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < k_numberOfRows);
-  I18n::Message messages[k_numberOfRows] = {I18n::Message::Linear, I18n::Message::Proportional, I18n::Message::Quadratic, I18n::Message::Cubic, I18n::Message::Quartic, I18n::Message::Logarithmic, I18n::Message::Exponential, I18n::Message::Exponential, I18n::Message::Power, I18n::Message::Trigonometrical, I18n::Message::Logistic, I18n::Message::MedianRegression};
-  static_assert(sizeof(messages) / sizeof(I18n::Message) == Model::k_numberOfModels, "Inconsistency between the number of models and the number of messages");
   MessageTableCellWithExpression * castedCell = static_cast<MessageTableCellWithExpression *>(cell);
-  castedCell->setMessage(messages[index]);
-  castedCell->setLayout(m_store->regressionModel((Model::Type) index)->layout());
+  Model * model = m_store->regressionModel((Model::Type) index);
+  castedCell->setMessage(model->name());
+  castedCell->setLayout(model->layout());
 }
 
 }

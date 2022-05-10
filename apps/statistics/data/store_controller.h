@@ -33,13 +33,14 @@ public:
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
 private:
+  constexpr static int k_cumulatedFrequencyRelativeColumnIndex = 2;
   constexpr static int k_columnTitleSize = 50;
   static constexpr int k_nonEditableCellType = Shared::StoreController::k_editableCellType + 1;
   // At most 1 non editable column every 3 columns
   constexpr static int k_maxNumberOfDisplayableNonEditableColumns = 1 + k_maxNumberOfDisplayableColumns / 3;
   constexpr static int k_maxNumberOfNonEditableCells = k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableNonEditableColumns;
 
-  bool isCumulatedFrequencyColumn(int i) const { return m_store->relativeColumnIndex(i) == 2; }
+  bool isCumulatedFrequencyColumn(int i) const { return m_store->relativeColumnIndex(i) == k_cumulatedFrequencyRelativeColumnIndex; }
   bool isCumulatedFrequencyCell(int i, int j) const { return j != 0 && isCumulatedFrequencyColumn(i); }
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;

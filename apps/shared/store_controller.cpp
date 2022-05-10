@@ -102,12 +102,12 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
     }
     return true;
   }
-  int selectedCol = m_store->seriesAtColumn(selectedColumn());
-  bool wasSeriesValid = m_store->seriesIsValid(selectedCol);
+  int series = m_store->seriesAtColumn(selectedColumn());
+  bool wasSeriesValid = m_store->seriesIsValid(series);
   bool result = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
-  if (wasSeriesValid != m_store->seriesIsValid(selectedCol)) {
-    // Series changed validity, series' cells have changed color. Reload them.
-    selectableTableView()->reloadData();
+  if (wasSeriesValid != m_store->seriesIsValid(series)) {
+    // Series changed validity, series' cells have changed color.
+    reloadSeriesVisibleCells(series);
   }
   return result;
 }
@@ -214,8 +214,12 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == 0 || selectedRow() > numberOfElementsInColumn(selectedColumn())) {
       return false;
     }
-    m_store->deleteValueAtIndex(series, m_store->relativeColumnIndex(selectedColumn()), selectedRow()-1);
-    selectableTableView()->reloadData();
+    if (m_store->deleteValueAtIndex(series, m_store->relativeColumnIndex(selectedColumn()), selectedRow()-1)) {
+      // A row has been deleted
+      selectableTableView()->reloadData();
+    } else {
+      reloadSeriesVisibleCells(series);
+    }
     return true;
   }
   return false;
@@ -252,6 +256,21 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
 
 int StoreController::numberOfElementsInColumn(int columnIndex) const {
   return m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(columnIndex));
+}
+
+void StoreController::reloadSeriesVisibleCells(int series, int relativeColumn) {
+  // Reload visible cells of the series and, if not -1, relative column
+  int firstVisibleRow = selectableTableView()->firstDisplayedRowIndex();
+  int lastVisibleRow = std::min({firstVisibleRow + selectableTableView()->numberOfDisplayableRows(), numberOfRows() - 1});
+  int firstVisibleCol = selectableTableView()->firstDisplayedColumnIndex();
+  int lastVisibleCol = std::min({firstVisibleCol + selectableTableView()->numberOfDisplayableColumns(), numberOfColumns() - 1});
+  for (int i = firstVisibleCol; i <= lastVisibleCol; i++) {
+    if (m_store->seriesAtColumn(i) == series && (relativeColumn == -1 || relativeColumn == m_store->relativeColumnIndex(i))) {
+      for (int j = firstVisibleRow; j <= lastVisibleRow; j++) {
+        selectableTableView()->reloadCellAtLocation(i, j);
+      }
+    }
+  }
 }
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
@@ -301,7 +320,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, store);
     setDataAtLocation(evaluation, selectedColumn(), j + 1);
   }
-  selectableTableView()->reloadData();
+  reloadSeriesVisibleCells(selectedSeries());
   return true;
 }
 

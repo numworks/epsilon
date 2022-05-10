@@ -50,7 +50,7 @@ class Expression : public TreeHandle {
   friend class Derivative;
   friend class Determinant;
   friend class Dimension;
-  friend class DistributionFunction;
+  friend class DistributionDispatcher;
   friend class Division;
   friend class DivisionQuotient;
   friend class DivisionRemainder;
@@ -68,7 +68,7 @@ class Expression : public TreeHandle {
   friend class InferiorEqual;
   friend class Integer;
   friend class Integral;
-  friend class InverseFunction;
+  friend class InverseMethod;
   friend class LeastCommonMultiple;
   friend class List;
   friend class ListMean;

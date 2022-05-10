@@ -307,7 +307,7 @@ template Derivative TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(co
 template DerivativeLayout TreeHandle::FixedArityBuilder<DerivativeLayout, DerivativeLayoutNode>(const Tuple &);
 template Determinant TreeHandle::FixedArityBuilder<Determinant, DeterminantNode>(const Tuple &);
 template Dimension TreeHandle::FixedArityBuilder<Dimension, DimensionNode>(const Tuple &);
-template DistributionFunction TreeHandle::NAryBuilder<DistributionFunction, DistributionFunctionNode>(const Tuple &);
+template DistributionDispatcher TreeHandle::NAryBuilder<DistributionDispatcher, DistributionDispatcherNode>(const Tuple &);
 template Division TreeHandle::FixedArityBuilder<Division, DivisionNode>(const Tuple &);
 template DivisionQuotient TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>(const Tuple &);
 template DivisionRemainder TreeHandle::FixedArityBuilder<DivisionRemainder, DivisionRemainderNode>(const Tuple &);

@@ -70,9 +70,9 @@ void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * c
 }
 
 int StoreParameterController::numberOfCells() const {
-  /* Add m_displayCumulatedFrequencyCell and hide m_clearColumn, m_hideCell and
-   * m_fillFormula when the frequency column is selected. */
-  return Shared::StoreParameterController::numberOfCells() + (isCumulatedFrequencyColumnSelected() ? -2 : 1);
+  /* Hide cells if cumulated frequency column is selected.
+   * Always add the appropriate cumulated frequency cell. */
+  return Shared::StoreParameterController::numberOfCells() - (isCumulatedFrequencyColumnSelected() ? k_numberOfHiddenCells : 0) + 1;
 }
 
 bool StoreParameterController::isCumulatedFrequencyColumnSelected() const {

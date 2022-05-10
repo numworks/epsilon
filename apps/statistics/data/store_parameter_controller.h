@@ -19,6 +19,11 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int numberOfCells() const override;
 private:
+  /* Number of Shared::StoreParameterController's cells to hide when cumulated
+   * frequency column is selected : m_clearColumn, m_hideCell and m_fillFormula.
+   */
+  constexpr static int k_numberOfHiddenCells = 3;
+
   int indexOfCumulatedFrequencyCell() const { return numberOfCells() - 1; }
   bool isCumulatedFrequencyColumnSelected() const;
   I18n::Message sortMessage() override {

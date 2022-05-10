@@ -27,7 +27,7 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
 void StoreController::sortSelectedColumn() {
   int relativeIndex = m_store->relativeColumnIndex(selectedColumn());
   // Also sort the values if the cumulated frequency is selected
-  m_store->sortColumn(selectedSeries(), relativeIndex < 2 ? relativeIndex : 0);
+  m_store->sortColumn(selectedSeries(), relativeIndex != k_cumulatedFrequencyRelativeColumnIndex ? relativeIndex : 0);
 }
 
 int StoreController::fillColumnName(int columnIndex, char * buffer) {

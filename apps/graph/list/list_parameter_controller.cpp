@@ -14,6 +14,7 @@ namespace Graph {
 
 ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) :
   Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
+  m_detailsCell(I18n::Message::Details),
   m_detailsParameterController(this),
   m_domainParameterController(nullptr, inputEventHandlerDelegate)
 {
@@ -60,7 +61,6 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
     Shared::ExpiringPointer<ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
     if (cell == &m_detailsCell) {
       assert(typeAtIndex(index) == k_detailsCellType);
-      m_detailsCell.setMessage(I18n::Message::Details);
       m_detailsCell.setSubtitle(function->plotTypeMessage());
     } else {
       assert(cell == &m_functionDomain && typeAtIndex(index) == k_domainCellType);

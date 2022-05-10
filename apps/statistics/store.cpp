@@ -155,7 +155,8 @@ void Store::updateSeriesValidity(int series) {
 }
 
 bool Store::columnIsIntegersOnly(int series, int column) const {
-  for (const double freq : m_data[series][column]) {
+  for (int i = 0; i < numberOfPairsOfSeries(series); i++) {
+    double freq = get(series, column, i);
     if (std::fabs(freq - std::round(freq)) > DBL_EPSILON) {
       return false;
     }
@@ -344,7 +345,7 @@ double Store::sum(int series) const {
   double result = 0;
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    result += m_data[series][0][k]*m_data[series][1][k];
+    result += get(series,0,k)*get(series,1,k);
   }
   return result;
 }
@@ -357,8 +358,8 @@ double Store::squaredOffsettedValueSum(int series, double offset) const {
   double result = 0;
   const int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    double value = m_data[series][0][k] - offset;
-    result += value*value*m_data[series][1][k];
+    double value = get(series,0,k) - offset;
+    result += value*value*get(series,1,k);
   }
   return result;
 }
@@ -488,7 +489,7 @@ int Store::computeRelativeColumnAndSeries(int * i) const {
 }
 
 double Store::defaultValue(int series, int i, int j) const {
-  return (i == 0 && j > 1) ? 2 * m_data[series][i][j-1] - m_data[series][i][j-2] : 1.0;
+  return (i == 0 && j > 1) ? 2 * get(series, i, j-1) - get(series, i, j-2) : 1.0;
 }
 
 double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUpperBound) const {

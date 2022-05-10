@@ -51,6 +51,7 @@ template<typename T>
 class ListComplex final : public Evaluation<T> {
   friend class ListComplexNode<T>;
 public:
+  ListComplex() : Evaluation<T>(nullptr) {}
   ListComplex(ListComplexNode<T> * node) : Evaluation<T>(node) {}
   static ListComplex Builder() { return TreeHandle::NAryBuilder<ListComplex<T>, ListComplexNode<T>>(); }
   static ListComplex<T> Undefined();

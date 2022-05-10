@@ -5,6 +5,8 @@
 #include <escher/palette.h>
 #include <stdint.h>
 #include <assert.h>
+#include <poincare/list.h>
+#include <poincare/complex.h>
 
 namespace Shared {
 
@@ -14,11 +16,7 @@ public:
   constexpr static int k_numberOfSeries = 3;
   constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static uint8_t k_maxNumberOfPairs = 100;
-  DoublePairStore() :
-    m_data{},
-    m_validSeries{false, false, false},
-    m_numberOfPairs{}
-  {}
+  DoublePairStore();
   // Delete the implicit copy constructor: the object is heavy
   DoublePairStore(const DoublePairStore&) = delete;
 
@@ -28,17 +26,15 @@ public:
   bool isColumnName(const char * name, int nameLen, int * returnSeries = nullptr, int * returnColumn = nullptr);
 
   // Get and set data
-  double get(int series, int i, int j) const {
-    assert(j < m_numberOfPairs[series]);
-    return m_data[series][i][j];
-  }
+  double get(int series, int i, int j) const;
   virtual void set(double f, int series, int i, int j);
 
   // Counts
   int numberOfPairs() const;
   uint8_t numberOfPairsOfSeries(int series) const {
-    assert(series >= 0 && series < k_numberOfSeries && m_numberOfPairs[series] <= k_maxNumberOfPairs);
-    return m_numberOfPairs[series];
+    assert(series >= 0 && series < k_numberOfSeries);
+    assert(m_dataLists[series][0].numberOfChildren() == m_dataLists[series][1].numberOfChildren());
+    return m_dataLists[series][0].numberOfChildren();
   }
 
   // Delete and reset
@@ -83,14 +79,22 @@ public:
     assert(i < Escher::Palette::numberOfLightDataColors());
     return Escher::Palette::DataColorLight[i];
   }
-  double * data() { return reinterpret_cast<double*>(&m_data); }
+
 protected:
+  void preventUpdate() {
+    m_updateFlag = false;
+  }
+  void enableUpdate() {
+    m_updateFlag = true;
+  }
   virtual double defaultValue(int series, int i, int j) const;
-  double m_data[k_numberOfSeries][k_numberOfColumnsPerSeries][k_maxNumberOfPairs];
   bool m_validSeries[k_numberOfSeries];
 private:
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
-  uint8_t m_numberOfPairs[k_numberOfSeries];
+  /* This is used to ensures that we do not update validSeries and store the
+   * lists each time we do a modification, but only after multiple changes. */
+  Poincare::List m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
+  bool m_updateFlag;
 };
 
 }

@@ -8,10 +8,11 @@ namespace Inference {
 
 class OneParameterDistribution : public Distribution {
 public:
-  OneParameterDistribution(double parameterValue) : m_parameter(parameterValue) {}
+  OneParameterDistribution(Poincare::Distribution::Type type, double parameterValue) : Distribution(type), m_parameter(parameterValue) {}
   int numberOfParameters() override { return 1; }
 protected:
   double * parametersArray() override { return &m_parameter; }
+  const double * constParametersArray() const override { return &m_parameter; }
   double m_parameter;
 };
 

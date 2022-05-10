@@ -7,6 +7,8 @@ namespace Poincare {
 
 class ContinuousDistribution : public Distribution {
 public:
+  bool isContinuous() const override { return true; }
+
   // The range is inclusive on both ends
   float CumulativeDistributiveFunctionForRange(float x, float y, const float * parameters) const override {
     if (y <= x) {

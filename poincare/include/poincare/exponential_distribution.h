@@ -1,13 +1,13 @@
-#ifndef POINCARE_POISSON_DISTRIBUTION_H
-#define POINCARE_POISSON_DISTRIBUTION_H
+#ifndef POINCARE_EXPONENTIAL_DISTRIBUTION_H
+#define POINCARE_EXPONENTIAL_DISTRIBUTION_H
 
 #include <poincare/expression.h>
-#include <poincare/discrete_distribution.h>
+#include <poincare/continuous_distribution.h>
 #include <poincare/preferences.h>
 
 namespace Poincare {
 
-class PoissonDistribution final : public DiscreteDistribution {
+class ExponentialDistribution final : public ContinuousDistribution {
 public:
   bool isSymmetrical() const override { return false; }
 
@@ -15,7 +15,11 @@ public:
   float EvaluateAtAbscissa(float x, const float * parameters) const override { return EvaluateAtAbscissa<float>(x, parameters[0]); }
   double EvaluateAtAbscissa(double x, const double * parameters) const override { return EvaluateAtAbscissa<double>(x, parameters[0]); }
 
-  template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, const T lambda);
+  template<typename T> static T CumulativeDistributiveFunctionAtAbscissa(T x, const T lambda);
+  float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters[0]); }
+  double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters[0]); }
+
+  template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, T lambda);
   float CumulativeDistributiveInverseForProbability(float x, const float * parameters) const override { return CumulativeDistributiveInverseForProbability<float>(x, parameters[0]); }
   double CumulativeDistributiveInverseForProbability(double x, const double * parameters) const override { return CumulativeDistributiveInverseForProbability<double>(x, parameters[0]); }
 

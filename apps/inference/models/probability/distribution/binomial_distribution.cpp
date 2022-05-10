@@ -7,10 +7,6 @@
 
 namespace Inference {
 
-float BinomialDistribution::evaluateAtAbscissa(float x) const {
-  return Poincare::BinomialDistribution::EvaluateAtAbscissa<float>(x, m_parameters[0], m_parameters[1]);
-}
-
 bool BinomialDistribution::authorizedParameterAtIndex(double x, int index) const {
   if (!TwoParameterDistribution::authorizedParameterAtIndex(x, index)) {
     return false;

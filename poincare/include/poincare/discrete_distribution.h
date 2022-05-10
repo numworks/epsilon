@@ -8,6 +8,8 @@ namespace Poincare {
 // More precisely distributions deriving from this should be defined on N
 class DiscreteDistribution : public Distribution {
 public:
+  bool isContinuous() const override { return false; }
+
   template<typename T> T CumulativeDistributiveFunctionAtAbscissa(T x, const T * parameters) const;
   float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters); }
   double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters); }

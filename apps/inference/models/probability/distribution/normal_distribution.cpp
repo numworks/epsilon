@@ -6,10 +6,6 @@
 
 namespace Inference {
 
-float NormalDistribution::evaluateAtAbscissa(float x) const {
-  return Poincare::NormalDistribution::EvaluateAtAbscissa<float>(x, m_parameters[0], m_parameters[1]);
-}
-
 bool NormalDistribution::authorizedParameterAtIndex(double x, int index) const {
   if (!TwoParameterDistribution::authorizedParameterAtIndex(x, index)) {
     return false;
@@ -29,14 +25,6 @@ void NormalDistribution::setParameterAtIndex(double f, int index) {
     m_parameters[1] = m_parameters[0]/k_maxRatioMuSigma;
   }
   computeCurveViewRange();
-}
-
-double NormalDistribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(x, m_parameters[0], m_parameters[1]);
-}
-
-double NormalDistribution::cumulativeDistributiveInverseForProbability(double * p) {
-  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability(*p, m_parameters[0], m_parameters[1]);
 }
 
 float NormalDistribution::xExtremum(bool min) const {

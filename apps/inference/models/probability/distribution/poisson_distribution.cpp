@@ -15,11 +15,6 @@ bool PoissonDistribution::authorizedParameterAtIndex(double x, int index) const 
   return true;
 }
 
-template<typename T>
-T PoissonDistribution::templatedApproximateAtAbscissa(T x) const {
-  return Poincare::PoissonDistribution::EvaluateAtAbscissa<T>(x, static_cast<T>(m_parameter));
-}
-
 float PoissonDistribution::computeXMax() const {
   assert(m_parameter != 0);
   return (m_parameter + 5.0f * std::sqrt(m_parameter)) * (1.0f + k_displayRightMarginRatio);
@@ -34,8 +29,5 @@ float PoissonDistribution::computeYMax() const {
   }
   return result * (1.0f + k_displayTopMarginRatio);
 }
-
-template float PoissonDistribution::templatedApproximateAtAbscissa(float x) const;
-template double PoissonDistribution::templatedApproximateAtAbscissa(double x) const;
 
 }

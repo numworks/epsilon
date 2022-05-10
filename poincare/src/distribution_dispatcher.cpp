@@ -1,14 +1,4 @@
-#include <poincare/distribution_function.h>
-#include <poincare/binomial_distribution.h>
-#include <poincare/geometric_distribution.h>
-#include <poincare/student_distribution.h>
-#include <poincare/poisson_distribution.h>
-#include <poincare/normal_distribution.h>
-#include <poincare/distribution_method.h>
-#include <poincare/cdf_function.h>
-#include <poincare/cdf_range_function.h>
-#include <poincare/pdf_function.h>
-#include <poincare/inv_function.h>
+#include <poincare/distribution_dispatcher.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -38,19 +28,19 @@ constexpr Expression::FunctionHelper GeomCDFRange::s_functionHelper;
 constexpr Expression::FunctionHelper GeomPDF::s_functionHelper;
 constexpr Expression::FunctionHelper InvGeom::s_functionHelper;
 
-Layout DistributionFunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(DistributionFunction(this), floatDisplayMode, numberOfSignificantDigits, name());
+Layout DistributionDispatcherNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(DistributionDispatcher(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-int DistributionFunctionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int DistributionDispatcherNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression DistributionFunctionNode::shallowReduce(ReductionContext reductionContext) {
-  return DistributionFunction(this).shallowReduce(reductionContext.context());
+Expression DistributionDispatcherNode::shallowReduce(ReductionContext reductionContext) {
+  return DistributionDispatcher(this).shallowReduce(reductionContext.context());
 }
 
-Expression DistributionFunction::shallowReduce(Context * context, bool * stopReduction) {
+Expression DistributionDispatcher::shallowReduce(Context * context, bool * stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
   }
@@ -63,14 +53,14 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
 
   int childIndex = 0;
   Expression abscissa[DistributionMethod::k_maxNumberOfParameters];
-  for (int i=0; i < DistributionMethod::numberOfParameters(functionType()); i++) {
+  for (int i=0; i < DistributionMethod::numberOfParameters(methodType()); i++) {
     abscissa[i] = childAtIndex(childIndex++);
   }
   Expression parameters[Distribution::k_maxNumberOfParameters];
   for (int i=0; i < Distribution::numberOfParameters(distributionType()); i++) {
     parameters[i] = childAtIndex(childIndex++);
   }
-  const DistributionMethod * function = DistributionMethod::Get(functionType());
+  const DistributionMethod * function = DistributionMethod::Get(methodType());
   const Distribution * distribution = Distribution::Get(distributionType());
 
   bool parametersAreOk;
@@ -95,10 +85,10 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
 }
 
 template<typename T>
-Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> DistributionDispatcherNode::templatedApproximate(ApproximationContext approximationContext) const {
   int childIndex = 0;
   T abscissa[DistributionMethod::k_maxNumberOfParameters];
-  for (int i=0; i < DistributionMethod::numberOfParameters(m_functionType); i++) {
+  for (int i=0; i < DistributionMethod::numberOfParameters(m_methodType); i++) {
     Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
     abscissa[i] = evaluation.toScalar();
   }
@@ -107,7 +97,7 @@ Evaluation<T> DistributionFunctionNode::templatedApproximate(ApproximationContex
     Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
     parameters[i] = evaluation.toScalar();
   }
-  const DistributionMethod * function = DistributionMethod::Get(m_functionType);
+  const DistributionMethod * function = DistributionMethod::Get(m_methodType);
   const Distribution * distribution = Distribution::Get(m_distributionType);
   return Complex<T>::Builder(function->EvaluateAtAbscissa(abscissa, distribution, parameters));
 }

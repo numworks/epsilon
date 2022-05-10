@@ -1,11 +1,11 @@
-#include <poincare/inv_function.h>
+#include <poincare/inv_method.h>
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/rational.h>
 
 namespace Poincare {
 
-Expression InverseFunction::shallowReduce(Expression * x, const Distribution * distribution, Expression * parameters, Context * context, Expression * expression) const {
+Expression InverseMethod::shallowReduce(Expression * x, const Distribution * distribution, Expression * parameters, Context * context, Expression * expression) const {
   Expression a = x[0];
   // Check a
   if (a.deepIsMatrix(context)) {

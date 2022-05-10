@@ -1,8 +1,8 @@
 #include <poincare/distribution_method.h>
-#include <poincare/cdf_function.h>
-#include <poincare/cdf_range_function.h>
-#include <poincare/pdf_function.h>
-#include <poincare/inv_function.h>
+#include <poincare/cdf_method.h>
+#include <poincare/cdf_range_method.h>
+#include <poincare/pdf_method.h>
+#include <poincare/inv_method.h>
 #include <new>
 
 namespace Poincare {
@@ -10,16 +10,16 @@ namespace Poincare {
 const DistributionMethod * DistributionMethod::Get(Type type) {
   switch (type) {
   case Type::CDF:
-    static constexpr CDFFunction cdf;
+    static constexpr CDFMethod cdf;
     return &cdf;
   case Type::PDF:
-    static constexpr PDFFunction pdf;
+    static constexpr PDFMethod pdf;
     return &pdf;
   case Type::Inverse:
-    static constexpr InverseFunction inverse;
+    static constexpr InverseMethod inverse;
     return &inverse;
   case Type::CDFRange:
-    static constexpr CDFRangeFunction cdfRange;
+    static constexpr CDFRangeMethod cdfRange;
     return &cdfRange;
   }
 }

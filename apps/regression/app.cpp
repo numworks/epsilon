@@ -34,7 +34,6 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
-  m_store.reset();
   m_rangeVersion = 0;
   setActiveTab(0);
 }
@@ -46,26 +45,28 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 }
 
 void App::Snapshot::tidy() {
-  m_store.setDelegate(nullptr);
-  m_store.tidy();
+  /*m_store.setDelegate(nullptr);
+  m_store.tidy();*/
 }
 
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
-  m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
+  m_store(),
+  m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
-  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->store(), snapshot->cursor(), snapshot->rangeVersion(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex()),
+  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, &m_store, snapshot->cursor(), snapshot->rangeVersion(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex()),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader, Escher::StackViewController::Style::WhiteUniform),
-  m_storeController(&m_storeHeader, this, snapshot->store(), &m_storeHeader, parentContext),
+  m_storeController(&m_storeHeader, this, &m_store, &m_storeHeader, parentContext),
   m_storeHeader(&m_storeStackViewController, &m_storeController, &m_storeController),
   m_storeStackViewController(&m_tabViewController, &m_storeHeader, Escher::StackViewController::Style::WhiteUniform),
   m_tabViewController(&m_inputViewController, snapshot, &m_storeStackViewController, &m_graphStackViewController, &m_calculationHeader),
-  m_regressionController(nullptr, snapshot->store()),
+  m_regressionController(nullptr, &m_store),
   m_inputViewController(&m_modalViewController, &m_tabViewController, &m_storeController, &m_storeController, &m_storeController)
 {
+  m_store.initListsFromStorage();
 }
 
 

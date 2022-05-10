@@ -27,14 +27,12 @@ public:
     App * unpack(Escher::Container * container) override;
     void reset() override;
     const Descriptor * descriptor() const override;
-    Store * store() { return &m_store; }
     Shared::CurveViewCursor * cursor() { return &m_cursor; }
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
   private:
     void tidy() override;
-    Store m_store;
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
     uint32_t m_rangeVersion;
@@ -48,6 +46,7 @@ public:
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
+  Store m_store;
   CalculationController m_calculationController;
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   Escher::ButtonRowController m_calculationHeader;

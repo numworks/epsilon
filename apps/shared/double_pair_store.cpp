@@ -1,6 +1,9 @@
 #include "double_pair_store.h"
+#include "poincare_helpers.h"
+#include <apps/apps_container.h>
 #include <poincare/helpers.h>
 #include <poincare/float.h>
+#include <ion/storage/file_system.h>
 #include <cmath>
 #include <assert.h>
 #include <stddef.h>
@@ -8,18 +11,39 @@
 #include <algorithm>
 
 using namespace Poincare;
+using namespace Ion::Storage;
 
 namespace Shared {
 
 DoublePairStore::DoublePairStore() :
   m_validSeries{false,false,false},
   m_updateFlag(true)
-  {
-    for (int s = 0; s < k_numberOfSeries; s++) {
-      for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
-        m_dataLists[s][i] = List::Builder();
-      }
+{
+  for (int s = 0; s < k_numberOfSeries; s++) {
+    for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
+      m_dataLists[s][i] = List::Builder();
     }
+  }
+}
+
+void DoublePairStore::initListsFromStorage() {
+  char listName[k_columnNamesLength + 1];
+  for (int s = 0; s < k_numberOfSeries; s++) {
+    for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
+      // Get the data of X1, Y1, X2, Y2, V1, V2, etc. from storage
+      fillColumnName(s, i, listName);
+      Record r = Record(listName, lisExtension);
+      Record::Data listData = r.value();
+      if (listData.size == 0) {
+        continue;
+      }
+      Expression e = Expression::ExpressionFromAddress(listData.buffer, listData.size);
+      if (e.type() != ExpressionNode::Type::List) {
+        continue;
+      }
+      setList(static_cast<List &>(e), s, i, i < k_numberOfColumnsPerSeries - 1 ? false : true);
+    }
+  }
 }
 
 int DoublePairStore::fillColumnName(int series, int columnIndex, char * buffer) {
@@ -50,7 +74,7 @@ bool DoublePairStore::isColumnName(const char * name, int nameLen, int * returnS
 }
 
 double DoublePairStore::get(int series, int i, int j) const {
-  assert(j < numberOfPairsOfSeries(series) && m_dataLists[series][i].childAtIndex(j).type() == ExpressionNode::Type::Float);
+  assert(j < numberOfPairsOfSeries(series) && m_dataLists[series][i].childAtIndex(j).type() == ExpressionNode::Type::Double);
   Expression child = m_dataLists[series][i].childAtIndex(j);
   return static_cast<Float<double> &>(child).value();
 }
@@ -70,6 +94,63 @@ void DoublePairStore::set(double f, int series, int i, int j) {
   }
   updateSeriesValidity(series);
 }
+
+void DoublePairStore::setList(List list, int series, int i, bool formatSeriesAfterwards) {
+  /* Approximate the list to turn it into list of doubles since we do not
+   * want to work with exact expressions in Regression and Statistics.*/
+  assert(series >= 0 && series < k_numberOfSeries);
+  assert(i == 0 || i ==1);
+  int newListLength = std::max(list.numberOfChildren(), m_dataLists[series][i].numberOfChildren());
+  for (int j = 0; j < newListLength; j++) {
+    if (j >= list.numberOfChildren()) {
+      m_dataLists[series][i].replaceChildAtIndexInPlace(j, Float<double>::Builder(NAN));
+      continue;
+    }
+    double evaluation = PoincareHelpers::ApproximateToScalar<double>(list.childAtIndex(j), AppsContainer::sharedAppsContainer()->globalContext());
+    Expression newChild = Float<double>::Builder(evaluation);
+    if (j >= m_dataLists[series][i].numberOfChildren()) {
+      m_dataLists[series][i].addChildAtIndexInPlace(newChild, j, j);
+      continue;
+    }
+    m_dataLists[series][i].replaceChildAtIndexInPlace(j, newChild);
+  }
+  if (formatSeriesAfterwards) {
+    formatListsOfSeries(series);
+  }
+  memoizeValidSeries(series);
+}
+
+void DoublePairStore::formatListsOfSeries(int series) {
+  int seriesLength = std::max(m_dataLists[series][0].numberOfChildren(), m_dataLists[series][1].numberOfChildren());
+  int j = 0;
+  for (int n = 0; n < seriesLength; n++) {
+    for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
+      // Step 1: if one of the columns is shorter, add NAN at the end of it
+      if (j >= m_dataLists[series][i].numberOfChildren()) {
+        Expression e = Float<double>::Builder(NAN);
+        m_dataLists[series][i].addChildAtIndexInPlace(e, j, j);
+      }
+      /* Step 2: Transform all the elements into Float<double> */
+      Expression data = m_dataLists[series][i].childAtIndex(j);
+      if (data.type() != ExpressionNode::Type::Double) {
+        m_dataLists[series][i].replaceChildAtIndexInPlace(j, Float<double>::Builder(NAN));
+      }
+    }
+    Expression dataX = m_dataLists[series][0].childAtIndex(j);
+    Expression dataY = m_dataLists[series][1].childAtIndex(j);
+    assert(dataX.type() == ExpressionNode::Type::Double && dataY.type() == ExpressionNode::Type::Double);
+    /* Step 3: if both values are NAN, or if number of values exceeds
+     * k_maxNumberOfPairs, remove the row. */
+    if (j >= k_maxNumberOfPairs || (std::isnan(static_cast<Float<double> &>(dataX).value()) && std::isnan(static_cast<Float<double> &>(dataY).value()))) {
+      m_dataLists[series][0].removeChildAtIndexInPlace(j);
+      m_dataLists[series][1].removeChildAtIndexInPlace(j);
+      j--;
+    }
+    j++;
+  }
+
+}
+
 
 int DoublePairStore::numberOfPairs() const {
   int result = 0;

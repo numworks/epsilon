@@ -20,6 +20,7 @@ public:
   // Delete the implicit copy constructor: the object is heavy
   DoublePairStore(const DoublePairStore&) = delete;
 
+  void initListsFromStorage();
   // Column name
   virtual char columnNamePrefixAtIndex(int column) = 0;
   int fillColumnName(int series, int column, char * buffer); // Fills 3 chars in the buffer (2 chars for name + null terminate)
@@ -28,6 +29,7 @@ public:
   // Get and set data
   double get(int series, int i, int j) const;
   virtual void set(double f, int series, int i, int j);
+  void setList(Poincare::List List, int series, int i, bool formatSeriesAfterwards = true);
 
   // Counts
   int numberOfPairs() const;
@@ -81,6 +83,7 @@ public:
   }
 
 protected:
+  void formatListsOfSeries(int series);
   void preventUpdate() {
     m_updateFlag = false;
   }

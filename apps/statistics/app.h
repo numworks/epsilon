@@ -33,11 +33,9 @@ public:
     App * unpack(Escher::Container * container) override;
     void reset() override;
     const Descriptor * descriptor() const override;
-    Store * store() { return &m_store; }
     uint32_t * storeVersion() { return &m_storeVersion; }
     GraphViewModel * graphViewModel() { return &m_graphViewModel; }
   private:
-    Store m_store;
     uint32_t m_storeVersion;
     GraphViewModel m_graphViewModel;
   };
@@ -58,6 +56,7 @@ private:
   void activeViewDidBecomeFirstResponder(Escher::ViewController * activeViewController) override;
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   void didBecomeActive(Escher::Window * window) override;
+  Store m_store;
   CalculationController m_calculationController;
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;
   Escher::ButtonRowController m_calculationHeader; // Needed for upper margin only

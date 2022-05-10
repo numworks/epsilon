@@ -146,25 +146,20 @@ void GraphController::reloadBannerView() {
 
   bool displayMean = (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex));
   char buffer[bufferSize];
-  if (*m_selectedDotIndex < 0) {
-    // Cursor is on Regression, display the formula if it is a Linear regression
-    if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear) {
-      m_bannerView.setDisplayParameters(false, false);
-      double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
-      Poincare::Print::customPrintf(buffer, bufferSize, "ŷ=%*.*ed·x+%*.*ed",
-        coefficients[0], displayMode, significantDigits,
-        coefficients[1], displayMode, significantDigits);
-    } else {
-      m_bannerView.setDisplayParameters(true, false);
-      buffer[0] = 0;
-    }
+  if (*m_selectedDotIndex < 0 && m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear) {
+    // Cursor is on linear Regression, display the formula
+    m_bannerView.setDisplayParameters(false, false);
+    double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
+    Poincare::Print::customPrintf(buffer, bufferSize, "ŷ=%*.*ed·x+%*.*ed",
+      coefficients[0], displayMode, significantDigits,
+      coefficients[1], displayMode, significantDigits);
   } else if (displayMean) {
     m_bannerView.setDisplayParameters(false, true);
-    Poincare::Print::customPrintf(buffer, bufferSize, "P(%s)", I18n::translate(I18n::Message::MeanDot));
+    Poincare::Print::customPrintf(buffer, bufferSize, "%s", I18n::translate(I18n::Message::MeanDot));
   } else {
-    m_bannerView.setDisplayParameters(false, true);
-    assert(*m_selectedDotIndex < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex));
-    Poincare::Print::customPrintf(buffer, bufferSize, "P(%i)", *m_selectedDotIndex + 1);
+    // Nothing else to display
+    m_bannerView.setDisplayParameters(true, false);
+    buffer[0] = 0;
   }
   m_bannerView.otherView()->setText(buffer);
 

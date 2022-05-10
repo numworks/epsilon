@@ -35,7 +35,7 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
 void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   if (index == k_indexOfRegressionCell) {
     assert(cell == &m_changeRegressionCell);
-    m_changeRegressionCell.setLayout(static_cast<StoreController *>(m_storeController)->selectedModel()->layout());
+    m_changeRegressionCell.setSubtitle(static_cast<StoreController *>(m_storeController)->selectedModel()->name());
     return;
   }
   assert(cell != &m_changeRegressionCell);

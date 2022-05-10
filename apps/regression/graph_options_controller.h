@@ -3,7 +3,7 @@
 
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/message_table_cell_with_chevron_and_expression.h>
+#include <escher/message_table_cell_with_chevron_and_message.h>
 #include "store.h"
 #include "../shared/curve_view_cursor.h"
 #include "go_to_parameter_controller.h"
@@ -31,7 +31,7 @@ private:
   constexpr static int k_parameterCelltype = 1;
   constexpr static int k_numberOfParameterCells = 2;
   Escher::MessageTableCellWithChevron m_parameterCells[k_numberOfParameterCells];
-  Escher::MessageTableCellWithChevronAndExpression m_changeRegressionCell;
+  Escher::MessageTableCellWithChevronAndMessage m_changeRegressionCell;
   GoToParameterController m_goToParameterController;
   Store * m_store;
   GraphController * m_graphController;

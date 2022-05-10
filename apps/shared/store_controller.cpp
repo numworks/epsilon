@@ -239,8 +239,25 @@ void StoreController::reloadSeriesVisibleCells(int series, int relativeColumn) {
 }
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
-  // Fetch the series used in the formula to compute the size of the filled in series
   constexpr static int k_maxSizeOfStoreSymbols = DoublePairStore::k_columnNamesLength + 1;
+  int columnToFill = m_store->relativeColumnIndex(selectedColumn());
+  int seriesToFill = m_store->seriesAtColumn(selectedColumn());
+  if (formula.type() == ExpressionNode::Type::Equal) {
+    bool isValidEquality = false;
+    Expression leftOfEqual = formula.childAtIndex(0);
+    if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {
+      Symbol symbolLeftOfEqual = static_cast<Symbol &>(leftOfEqual);
+      if (m_store->isColumnName(symbolLeftOfEqual.name(), strlen(symbolLeftOfEqual.name()), &seriesToFill, &columnToFill)) {
+        formula = formula.childAtIndex(1);
+        isValidEquality = true;
+      }
+    }
+    if (!isValidEquality) {
+      Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
+      return false;
+    }
+  }
+  // Fetch the series used in the formula to compute the size of the filled in series
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
   variables[0][0] = 0;
   AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
@@ -282,7 +299,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   for (int j = 0; j < numberOfValuesToCompute; j++) {
     store->setSeriesPairIndex(j);
     double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, store);
-    setDataAtLocation(evaluation, selectedColumn(), j + 1);
+    m_store->set(evaluation, seriesToFill, columnToFill, j);
   }
   reloadSeriesVisibleCells(selectedSeries());
   return true;

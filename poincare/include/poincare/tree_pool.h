@@ -132,7 +132,6 @@ private:
   private:
     uint16_t m_currentIndex;
     uint16_t m_availableIdentifiers[MaxNumberOfNodes];
-    bool isSorted;
     static_assert(MaxNumberOfNodes < INT16_MAX && sizeof(m_availableIdentifiers[0] == sizeof(uint16_t)), "Tree node identifiers do not have the right data size.");
   };
 

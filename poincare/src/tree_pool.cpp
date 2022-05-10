@@ -172,13 +172,11 @@ void TreePool::IdentifierStack::reset() {
     m_availableIdentifiers[i] = i;
   }
   m_currentIndex = MaxNumberOfNodes;
-  isSorted = true;
 }
 
 void TreePool::IdentifierStack::push(uint16_t i) {
   assert(TreeNode::IsValidIdentifier(m_currentIndex) && m_currentIndex < MaxNumberOfNodes);
   m_availableIdentifiers[m_currentIndex++] = i;
-  isSorted = false;
 }
 
 uint16_t TreePool::IdentifierStack::pop() {

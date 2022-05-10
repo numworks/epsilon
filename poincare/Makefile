@@ -47,7 +47,7 @@ poincare_src += $(addprefix poincare/src/,\
   exception_checkpoint.cpp \
   geometric_distribution.cpp \
   helpers.cpp \
-  inv_function.cpp \
+  inv_method.cpp \
   normal_distribution.cpp \
   poisson_distribution.cpp \
   regularized_gamma_function.cpp \
@@ -86,7 +86,7 @@ poincare_src += $(addprefix poincare/src/,\
   derivative.cpp \
   determinant.cpp \
   dimension.cpp \
-  distribution_function.cpp \
+  distribution_dispatcher.cpp \
   division.cpp \
   division_quotient.cpp \
   division_remainder.cpp \

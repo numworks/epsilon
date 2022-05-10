@@ -32,10 +32,10 @@ template<> constexpr const char * getName<Distribution::Type::Geometric, Distrib
 template<> constexpr const char * getName<Distribution::Type::Geometric, DistributionMethod::Type::PDF>() { return "geompdf"; }
 template<> constexpr const char * getName<Distribution::Type::Geometric, DistributionMethod::Type::Inverse>() { return "invgeom"; }
 
-class DistributionFunctionNode : public NAryExpressionNode {
+class DistributionDispatcherNode : public NAryExpressionNode {
 public:
   // Simplication
-  size_t size() const override { return sizeof(DistributionFunctionNode); }
+  size_t size() const override { return sizeof(DistributionDispatcherNode); }
 
   const char * name() const {
     return m_name;
@@ -43,12 +43,12 @@ public:
 
   // Properties
   Type type() const override {
-    return Type::DistributionFunction;
+    return Type::DistributionDispatcher;
     // TODO: do we need more precise info ?
     // for example to simplify two binomial expressions together
   }
   Sign sign(Context * context) const override {
-    if (m_functionType != DistributionMethod::Type::Inverse) {
+    if (m_methodType != DistributionMethod::Type::Inverse) {
       return Sign::Positive;
     }
     return Sign::Unknown;
@@ -73,7 +73,7 @@ public:
       stream << "Geom";
       break;
     }
-    switch (m_functionType) {
+    switch (m_methodType) {
     case DistributionMethod::Type::PDF:
       stream << "PDF";
       break;
@@ -103,9 +103,9 @@ private:
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 
-  friend class DistributionFunction;
+  friend class DistributionDispatcher;
   void setType(DistributionMethod::Type f) {
-    m_functionType = f;
+    m_methodType = f;
   }
   void setDistribution(Distribution::Type d) {
     m_distributionType = d;
@@ -115,19 +115,19 @@ private:
   }
 private:
   const char * m_name;
-  DistributionMethod::Type m_functionType;
+  DistributionMethod::Type m_methodType;
   Distribution::Type m_distributionType;
 };
 
-class DistributionFunction final : public NAryExpression {
+class DistributionDispatcher final : public NAryExpression {
 public:
-  DistributionFunction(const DistributionFunctionNode * n) : NAryExpression(n) {}
-  static DistributionFunction Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<DistributionFunction, DistributionFunctionNode>(convert(children)); }
+  DistributionDispatcher(const DistributionDispatcherNode * n) : NAryExpression(n) {}
+  static DistributionDispatcher Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<DistributionDispatcher, DistributionDispatcherNode>(convert(children)); }
 
   template <Distribution::Type T, DistributionMethod::Type U>
   static Expression hook(Expression children) {
-    Expression exp = UntypedBuilderMultipleChildren<DistributionFunction>(children);
-    DistributionFunction dist = exp.convert<DistributionFunction>();
+    Expression exp = UntypedBuilderMultipleChildren<DistributionDispatcher>(children);
+    DistributionDispatcher dist = exp.convert<DistributionDispatcher>();
     dist.setDistribution(T);
     dist.setType(U);
     dist.setName(getName<T,U>());
@@ -136,21 +136,21 @@ public:
 
   Expression shallowReduce(Context * context, bool * stopReduction = nullptr);
   void setType(DistributionMethod::Type f) {
-    static_cast<DistributionFunctionNode*>(node())->setType(f);
+    static_cast<DistributionDispatcherNode*>(node())->setType(f);
   }
   void setDistribution(Distribution::Type d) {
-    static_cast<DistributionFunctionNode*>(node())->setDistribution(d);
+    static_cast<DistributionDispatcherNode*>(node())->setDistribution(d);
   }
   void setName(const char * name) {
-    static_cast<DistributionFunctionNode*>(node())->setName(name);
+    static_cast<DistributionDispatcherNode*>(node())->setName(name);
   }
 
   Distribution::Type distributionType() {
-    return static_cast<DistributionFunctionNode*>(node())->m_distributionType;
+    return static_cast<DistributionDispatcherNode*>(node())->m_distributionType;
   }
 
-  DistributionMethod::Type functionType() {
-    return static_cast<DistributionFunctionNode*>(node())->m_functionType;
+  DistributionMethod::Type methodType() {
+    return static_cast<DistributionDispatcherNode*>(node())->m_methodType;
   }
 };
 
@@ -159,7 +159,7 @@ constexpr Expression::FunctionHelper makeHelper() {
   return Expression::FunctionHelper(
     getName<T,U>(),
     Distribution::numberOfParameters(T) + DistributionMethod::numberOfParameters(U),
-    &DistributionFunction::hook<T, U>);
+    &DistributionDispatcher::hook<T, U>);
 }
 
 struct NormCDF      { static constexpr Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Normal, DistributionMethod::Type::CDF>(); };

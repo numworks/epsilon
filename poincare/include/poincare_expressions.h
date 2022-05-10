@@ -24,7 +24,7 @@
 #include <poincare/derivative.h>
 #include <poincare/determinant.h>
 #include <poincare/dimension.h>
-#include <poincare/distribution_function.h>
+#include <poincare/distribution_dispatcher.h>
 #include <poincare/division.h>
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>

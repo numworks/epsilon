@@ -88,7 +88,7 @@ int GraphOptionsController::typeAtIndex(int index) {
 
 void GraphOptionsController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == numberOfRows() - 1) {
-    m_changeRegressionCell.setLayout(static_cast<Store *>(m_store)->modelForSeries(m_graphController->selectedSeriesIndex())->layout());
+    m_changeRegressionCell.setSubtitle(static_cast<Store *>(m_store)->modelForSeries(m_graphController->selectedSeriesIndex())->name());
     return;
   }
   assert(index >=0 && index < k_numberOfParameterCells);

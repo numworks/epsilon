@@ -68,6 +68,7 @@ public:
   constexpr static T Epsilon();
   constexpr static T Min();
   constexpr static T Max();
+  T value() const { return node()->value(); }
 private:
   FloatNode<T> * node() const { return static_cast<FloatNode<T> *>(Number::node()); }
 };

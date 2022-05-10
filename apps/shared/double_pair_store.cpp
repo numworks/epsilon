@@ -1,12 +1,26 @@
 #include "double_pair_store.h"
 #include <poincare/helpers.h>
+#include <poincare/float.h>
 #include <cmath>
 #include <assert.h>
 #include <stddef.h>
 #include <ion.h>
 #include <algorithm>
 
+using namespace Poincare;
+
 namespace Shared {
+
+DoublePairStore::DoublePairStore() :
+  m_validSeries{false,false,false},
+  m_updateFlag(true)
+  {
+    for (int s = 0; s < k_numberOfSeries; s++) {
+      for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
+        m_dataLists[s][i] = List::Builder();
+      }
+    }
+}
 
 int DoublePairStore::fillColumnName(int series, int columnIndex, char * buffer) {
   assert(series >= 0 && series < k_numberOfSeries);
@@ -35,19 +49,24 @@ bool DoublePairStore::isColumnName(const char * name, int nameLen, int * returnS
   return false;
 }
 
+double DoublePairStore::get(int series, int i, int j) const {
+  assert(j < numberOfPairsOfSeries(series) && m_dataLists[series][i].childAtIndex(j).type() == ExpressionNode::Type::Float);
+  Expression child = m_dataLists[series][i].childAtIndex(j);
+  return static_cast<Float<double> &>(child).value();
+}
 
 void DoublePairStore::set(double f, int series, int i, int j) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (j >= k_maxNumberOfPairs) {
     return;
   }
-  assert(j <= m_numberOfPairs[series]);
-  m_data[series][i][j] = f;
-  if (j >= m_numberOfPairs[series]) {
+  assert(j <= numberOfPairsOfSeries(series));
+  if (j == numberOfPairsOfSeries(series)) {
+    m_dataLists[series][i].addChildAtIndexInPlace(Float<double>::Builder(f), j, j);
     int otherI = i == 0 ? 1 : 0;
-    m_data[series][otherI][j] = defaultValue(series, otherI, j);
-    assert(m_numberOfPairs[series] < UINT8_MAX);
-    m_numberOfPairs[series]++;
+    m_dataLists[series][otherI].addChildAtIndexInPlace(Float<double>::Builder(defaultValue(series, otherI, j)), j, j);
+  } else {
+    m_dataLists[series][i].replaceChildAtIndexInPlace(j, Float<double>::Builder(f));
   }
   updateSeriesValidity(series);
 }
@@ -55,47 +74,37 @@ void DoublePairStore::set(double f, int series, int i, int j) {
 int DoublePairStore::numberOfPairs() const {
   int result = 0;
   for (int i = 0; i < k_numberOfSeries; i++) {
-    result += m_numberOfPairs[i];
+    result += numberOfPairsOfSeries(i);
   }
   return result;
 }
 
 bool DoublePairStore::deleteValueAtIndex(int series, int i, int j) {
   assert(series >= 0 && series < k_numberOfSeries);
-  assert(j >= 0 && j < m_numberOfPairs[series]);
+  assert(j >= 0 && j < numberOfPairsOfSeries(series));
   int otherI = i == 0 ? 1 : 0;
-  if (std::isnan(m_data[series][otherI][j])) {
+  if (std::isnan(get(series,otherI,j))) {
     deletePairOfSeriesAtIndex(series, j);
     return true;
   } else {
-    m_data[series][i][j] = NAN;
-    updateSeriesValidity(series);
+    set(NAN, series, i, j);
     return false;
   }
 }
 
 void DoublePairStore::deletePairOfSeriesAtIndex(int series, int j) {
-  m_numberOfPairs[series]--;
-  for (int k = j; k < m_numberOfPairs[series]; k++) {
-    m_data[series][0][k] = m_data[series][0][k+1];
-    m_data[series][1][k] = m_data[series][1][k+1];
-  }
-  /* We reset the values of the empty row to ensure the correctness of the
-   * checksum. */
-  m_data[series][0][m_numberOfPairs[series]] = 0;
-  m_data[series][1][m_numberOfPairs[series]] = 0;
+  m_dataLists[series][0].removeChildAtIndexInPlace(j);
+  m_dataLists[series][1].removeChildAtIndexInPlace(j);
   updateSeriesValidity(series);
 }
 
 void DoublePairStore::deleteAllPairsOfSeries(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
-  /* We reset all values to 0 to ensure the correctness of the checksum.*/
+  preventUpdate();
   for (int i = 0 ; i < k_numberOfColumnsPerSeries ; i++) {
-    for (int k = 0 ; k < m_numberOfPairs[series] ; k++) {
-      m_data[series][i][k] = 0.0;
-    }
+    deletePairOfSeriesAtIndex(series, i);
   }
-  m_numberOfPairs[series] = 0;
+  enableUpdate();
   updateSeriesValidity(series);
 }
 
@@ -108,20 +117,24 @@ void DoublePairStore::deleteAllPairs() {
 void DoublePairStore::deleteColumn(int series, int i) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
-  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+  preventUpdate();
+  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
     if(deleteValueAtIndex(series, i, k)) {
       k--;
     }
   }
+  enableUpdate();
   updateSeriesValidity(series);
 }
 
 void DoublePairStore::resetColumn(int series, int i) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
-  for (int k = 0; k < m_numberOfPairs[series]; k++) {
-    m_data[series][i][k] = defaultValue(series, i, k);
+  preventUpdate();
+  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+    set(defaultValue(series, i, k), series, i, k);
   }
+  enableUpdate();
   updateSeriesValidity(series);
 }
 
@@ -149,7 +162,6 @@ int DoublePairStore::numberOfValidSeries(ValidSeries validSeries) const {
   return nonEmptySeriesCount;
 }
 
-
 int DoublePairStore::indexOfKthValidSeries(int k, ValidSeries validSeries) const {
   assert(k >= 0 && k < numberOfValidSeries());
   int validSeriesCount = 0;
@@ -167,28 +179,32 @@ int DoublePairStore::indexOfKthValidSeries(int k, ValidSeries validSeries) const
 
 void DoublePairStore::sortColumn(int series, int column) {
   assert(column == 0 || column == 1);
-  static Poincare::Helpers::Swap swapRows = [](int i, int j, void * context, int numberOfElements) {
+  static Poincare::Helpers::Swap swapRows = [](int a, int b, void * ctx, int numberOfElements) {
     // Swap X and Y values
-    double * dataX = static_cast<double*>(context);
-    double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
-    double tempX = dataX[i];
-    double tempY = dataY[i];
-    dataX[i] = dataX[j];
-    dataY[i] = dataY[j];
-    dataX[j] = tempX;
-    dataY[j] = tempY;
+    void ** pack = reinterpret_cast<void **>(ctx);
+    DoublePairStore * store = reinterpret_cast<DoublePairStore *>(pack[0]);
+    int * series = reinterpret_cast<int *>(pack[1]);
+    double dataAx = store->get(*series, 0, a);
+    double dataAy = store->get(*series, 1, a);
+    store->set(store->get(*series, 0, b), *series, 0, a);
+    store->set(store->get(*series, 1, b), *series, 1, a);
+    store->set(dataAx, *series, 0, b);
+    store->set(dataAy, *series, 1, b);
   };
-  static Poincare::Helpers::Compare compareX = [](int a, int b, void * context, int numberOfElements)->bool{
-    double * dataX = static_cast<double*>(context);
-    return dataX[a] >= dataX[b] || std::isnan(dataX[a]);
+  static Poincare::Helpers::Compare compare = [](int a, int b, void * ctx, int numberOfElements)->bool{
+    void ** pack = reinterpret_cast<void **>(ctx);
+    const DoublePairStore * store = reinterpret_cast<const DoublePairStore *>(pack[0]);
+    int * series = reinterpret_cast<int *>(pack[1]);
+    int * column = reinterpret_cast<int *>(pack[2]);
+    double dataA = store->get(*series, *column, a);
+    double dataB = store->get(*series, *column, b);
+    return dataA >= dataB || std::isnan(dataA);
   };
-  static Poincare::Helpers::Compare compareY = [](int a, int b, void * context, int numberOfElements)->bool{
-    double * dataY = static_cast<double*>(context) + DoublePairStore::k_maxNumberOfPairs;
-    return dataY[a] >= dataY[b] || std::isnan(dataY[a]);
-  };
-  int indexOfFirstCell = series * DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_maxNumberOfPairs;
-  double * seriesContext = &(data()[indexOfFirstCell]);
-  Poincare::Helpers::Sort(swapRows, (column == 0) ? compareX : compareY, seriesContext, numberOfPairsOfSeries(series));
+  preventUpdate();
+  void * context[] = { const_cast<DoublePairStore *>(this), &series, &column };
+  Poincare::Helpers::Sort(swapRows, compare, context, numberOfPairsOfSeries(series));
+  enableUpdate();
+  updateSeriesValidity(series);
 }
 
 void DoublePairStore::sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const {
@@ -216,8 +232,8 @@ double DoublePairStore::sumOfColumn(int series, int i, bool lnOfSeries) const {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
   double result = 0;
-  for (int k = 0; k < m_numberOfPairs[series]; k++) {
-    result += lnOfSeries ? log(m_data[series][i][k]) : m_data[series][i][k];
+  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+    result += lnOfSeries ? log(get(series, i, k)) : get(series, i, k);
   }
   return result;
 }
@@ -225,14 +241,14 @@ double DoublePairStore::sumOfColumn(int series, int i, bool lnOfSeries) const {
 bool DoublePairStore::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const {
   assert(series >= 0 && series < k_numberOfSeries);
   int count = 0;
-  for (int j = 0; j < m_numberOfPairs[series]; j++) {
+  for (int j = 0; j < numberOfPairsOfSeries(series); j++) {
     if (count >= i) {
       return true;
     }
-    double currentAbsissa = m_data[series][0][j];
+    double currentAbsissa = get(series, 0, j);
     bool firstOccurence = true;
     for (int k = 0; k < j; k++) {
-      if (m_data[series][0][k] == currentAbsissa) {
+      if (get(series, 0, k) == currentAbsissa) {
         firstOccurence = false;
         break;
       }
@@ -261,13 +277,14 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
    * We cannot simply put "empty" values to 0 and compute the checksum of the
    * whole data, because adding or removing (0, 0) "real" data pairs would not
    * change the checksum. */
-  size_t dataLengthInBytesPerDataColumn = m_numberOfPairs[series]*sizeof(double);
+  /*size_t dataLengthInBytesPerDataColumn = m_numberOfPairs[series]*sizeof(double);
   assert((dataLengthInBytesPerDataColumn & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
   uint32_t checkSumPerColumn[k_numberOfColumnsPerSeries];
   for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
     checkSumPerColumn[i] = Ion::crc32Word((uint32_t *)m_data[series][i], dataLengthInBytesPerDataColumn/sizeof(uint32_t));
   }
-  return Ion::crc32Word(checkSumPerColumn, k_numberOfColumnsPerSeries);
+  return Ion::crc32Word(checkSumPerColumn, k_numberOfColumnsPerSeries);*/
+  return 0;
 }
 
 double DoublePairStore::defaultValue(int series, int i, int j) const {

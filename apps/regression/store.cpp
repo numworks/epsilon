@@ -71,8 +71,8 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
     int numberOfPoints = numberOfPairsOfSeries(series);
     bool displayMean = seriesRegressionType(series) != Model::Type::None;
     for (int i = 0; i < numberOfPoints + displayMean; i++) {
-      double currentX = i < numberOfPoints ? m_data[series][0][i] : meanOfColumn(series, 0);
-      double currentY = i < numberOfPoints ? m_data[series][1][i] : meanOfColumn(series, 1);
+      double currentX = i < numberOfPoints ? get(series, 0, i) : meanOfColumn(series, 0);
+      double currentY = i < numberOfPoints ? get(series, 1, i) : meanOfColumn(series, 1);
       if (xMin() <= currentX && currentX <= xMax() // The next dot is within the window abscissa bounds
           && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
           && ((currentY > y && direction > 0) // The next dot is above/under y
@@ -104,16 +104,17 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
    * select all dots (even with equal abscissa) */
   if (direction > 0) {
     for (int index = 0; index < numberOfPairsOfSeries(series); index++) {
+      double data = get(series, 0, index);
       /* The conditions to test are in this order:
        * - the next dot is the closest one in abscissa to x
        * - the next dot is not the same as the selected one
        * - the next dot is at the right of the selected one */
-      if (std::fabs(m_data[series][0][index] - x) < std::fabs(nextX - x) &&
+      if (std::fabs(data - x) < std::fabs(nextX - x) &&
           (index != dot) &&
-          (m_data[series][0][index] >= x)) {
+          (data >= x)) {
         // Handle edge case: 2 dots have same abscissa
-        if (m_data[series][0][index] != x || (index > dot)) {
-          nextX = m_data[series][0][index];
+        if (data != x || (index > dot)) {
+          nextX = data;
           selectedDot = index;
         }
       }
@@ -137,12 +138,13 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
       }
     }
     for (int index = numberOfPairsOfSeries(series)-1; index >= 0; index--) {
-      if (std::fabs(m_data[series][0][index] - x) < std::fabs(nextX - x) &&
+      double data = get(series, 0, index);
+      if (std::fabs(data - x) < std::fabs(nextX - x) &&
           (index != dot) &&
-          (m_data[series][0][index] <= x)) {
+          (data <= x)) {
         // Handle edge case: 2 dots have same abscissa
-        if (m_data[series][0][index] != x || (index < dot)) {
-          nextX = m_data[series][0][index];
+        if (data != x || (index < dot)) {
+          nextX = data;
           selectedDot = index;
         }
       }
@@ -164,7 +166,7 @@ void Store::updateSeriesValidity(int series) {
   }
   for (int i = 0 ; i < k_numberOfColumnsPerSeries; i++) {
     for (int j = 0 ; j < numberOfPairs; j ++) {
-      if (std::isnan(m_data[series][i][j])) {
+      if (std::isnan(get(series, i, j))) {
         m_validSeries[series] = false;
         return;
       }
@@ -239,7 +241,7 @@ void Store::resetMemoization() {
 float Store::maxValueOfColumn(int series, int i) const {
   float maxColumn = -FLT_MAX;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    maxColumn = std::max<float>(maxColumn, m_data[series][i][k]);
+    maxColumn = std::max<float>(maxColumn, get(series,i,k));
   }
   return maxColumn;
 }
@@ -247,7 +249,7 @@ float Store::maxValueOfColumn(int series, int i) const {
 float Store::minValueOfColumn(int series, int i) const {
   float minColumn = FLT_MAX;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    minColumn = std::min<float>(minColumn, m_data[series][i][k]);
+    minColumn = std::min<float>(minColumn, get(series,i,k));
   }
   return minColumn;
 }
@@ -256,7 +258,7 @@ double Store::squaredOffsettedValueSumOfColumn(int series, int i, bool lnOfSerie
   double result = 0;
   const int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    double value = m_data[series][i][k];
+    double value = get(series,i,k);
     if (lnOfSeries) {
       value = log(value);
     }
@@ -273,8 +275,8 @@ double Store::squaredValueSumOfColumn(int series, int i, bool lnOfSeries) const 
 double Store::columnProductSum(int series, bool lnOfSeries) const {
   double result = 0;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    double value0 = m_data[series][0][k];
-    double value1 = m_data[series][1][k];
+    double value0 = get(series,0,k);
+    double value1 = get(series,1,k);
     if (lnOfSeries) {
       value0 = log(value0);
       value1 = log(value1);
@@ -361,15 +363,15 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
   const int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
     // Difference between the observation and the estimated value of the model
-    double evaluation = yValueForXValue(series, m_data[series][0][k], globalContext);
+    double evaluation = yValueForXValue(series, get(series,0,k), globalContext);
     if (std::isnan(evaluation) || std::isinf(evaluation)) {
       // Data Not Suitable for evaluation
       return NAN;
     }
-    double residual = m_data[series][1][k] - evaluation;
+    double residual = get(series,1,k) - evaluation;
     ssr += residual * residual;
     // Difference between the observation and the overall observations mean
-    double difference = m_data[series][1][k] - mean;
+    double difference = get(series,1,k) - mean;
     sst += difference * difference;
   }
   if (sst == 0.0) {

@@ -14,7 +14,7 @@ int DoublePairStore::fillColumnName(int series, int columnIndex, char * buffer) 
   buffer[0] = columnNamePrefixAtIndex(columnIndex);
   buffer[1] = static_cast<char>('1' + series);
   buffer[2] = 0;
-  return 3;
+  return 2;
 }
 
 bool DoublePairStore::isColumnName(const char * name, int nameLen, int * returnSeries, int * returnColumn) {

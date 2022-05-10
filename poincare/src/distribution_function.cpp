@@ -83,7 +83,7 @@ Expression DistributionFunction::shallowReduce(Context * context, bool * stopRed
     return replaceWithUndefinedInPlace();
   }
 
-  Expression e = function->shallowReduce(abscissa, context, this);
+  Expression e = function->shallowReduce(abscissa, distribution, parameters, context, this);
   if (!e.isUninitialized()) {
     return e;
   }

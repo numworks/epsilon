@@ -30,6 +30,12 @@ public:
 
   static const Distribution * Get(Type type);
 
+  bool hasType(Type type) const {
+    /* assumes no distribution has been constructed outside of Get which is
+     * enforced by the protected constructor */
+    return this == Get(type);
+  }
+
   virtual float EvaluateAtAbscissa(float x, const float * parameters) const = 0;
   virtual double EvaluateAtAbscissa(double x, const double * parameters) const = 0;
 
@@ -50,10 +56,12 @@ public:
   virtual bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const = 0;
 
 protected:
+  constexpr Distribution() {}
   /* This method looks for bounds such that:
    * cumulativeDistributionEvaluation(xmin) < 0 < cumulativeDistributionEvaluation(xmax)
    */
   template <typename T> static void findBoundsForBinarySearch(Poincare::Solver::ValueAtAbscissa cumulativeDistributionEvaluation, Poincare::Context * context, const void * auxiliary, T & xmin, T & xmax);
+
 };
 
 }

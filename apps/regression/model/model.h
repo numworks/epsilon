@@ -35,6 +35,7 @@ public:
   Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context);
   virtual I18n::Message formulaMessage() const = 0;
   virtual I18n::Message name() const = 0;
+  virtual int buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const = 0;
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
   virtual double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context);
   virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);

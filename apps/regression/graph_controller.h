@@ -34,6 +34,8 @@ public:
 
 private:
   constexpr static float k_displayHorizontalMarginRatio = 0.05f;
+  // Ion::Display::Width / KDFont::SmallFont->glyphSize().width() + 1 for ŷ + 1
+  constexpr static float k_bannerViewTextBufferSize = 47;
 
   class SeriesSelectionController : public Shared::CurveSelectionController {
   public:
@@ -49,7 +51,8 @@ private:
     CurveSelectionCell m_cells[Store::k_numberOfSeries];
   };
 
-  Poincare::Context * globalContext();
+  Poincare::Context * globalContext() const;
+  bool buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
 
   // SimpleInteractiveCurveViewController
   float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(m_bannerView.minimalSizeForOptimalDisplay().height()); }

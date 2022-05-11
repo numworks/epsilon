@@ -5,6 +5,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/print.h>
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
@@ -34,6 +35,13 @@ Layout LogisticModel::layout() {
     );
   }
   return m_layout;
+}
+
+int LogisticModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
+  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed/(1+%*.*ed·e^(-%*.*ed·x))",
+      modelCoefficients[2], displayMode, significantDigits,
+      modelCoefficients[0], displayMode, significantDigits,
+      modelCoefficients[1], displayMode, significantDigits);
 }
 
 double LogisticModel::evaluate(double * modelCoefficients, double x) const {

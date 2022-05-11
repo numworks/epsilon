@@ -9,6 +9,7 @@
 #include <poincare/symbol.h>
 #include <poincare/addition.h>
 #include <poincare/multiplication.h>
+#include <poincare/print.h>
 #include <poincare/power.h>
 
 using namespace Poincare;
@@ -43,6 +44,14 @@ Layout CubicModel::layout() {
     });
   }
   return m_layout;
+}
+
+int CubicModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
+  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed·x^3+%*.*ed·x^2+%*.*ed·x+%*.*ed",
+      modelCoefficients[0], displayMode, significantDigits,
+      modelCoefficients[1], displayMode, significantDigits,
+      modelCoefficients[2], displayMode, significantDigits,
+      modelCoefficients[3], displayMode, significantDigits);
 }
 
 double CubicModel::evaluate(double * modelCoefficients, double x) const {

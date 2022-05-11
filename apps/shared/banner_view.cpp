@@ -77,7 +77,13 @@ int BannerView::numberOfSubviewsOnOneLine(int firstSubview, KDCoordinate width, 
     View * subview = const_cast<Shared::BannerView *>(this)->subviewAtIndex(i);
     KDCoordinate subviewWidth = subview->minimalSizeForOptimalDisplay().width() + k_minimalSpaceBetweenSubviews;
     if (subviewWidth > *lineWidth || (lineBreakBeforeSubview(subview) && i != firstSubview)) {
-      return i == firstSubview ? 1 : i - firstSubview;
+      if (i == firstSubview) {
+        // Subview should fit without k_minimalSpaceBetweenSubviews
+        assert(subviewWidth - k_minimalSpaceBetweenSubviews <= *lineWidth);
+        *lineWidth -= subviewWidth - k_minimalSpaceBetweenSubviews;
+        return 1;
+      }
+      return i - firstSubview;
     }
     *lineWidth -= subviewWidth;
   }

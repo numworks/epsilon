@@ -14,10 +14,12 @@ static inline void ion_main_inner(const char * testFilter) {
   int i = 0;
   int time = Ion::Timing::millis();
   while (quiz_cases[i] != NULL) {
+#ifdef PLATFORM_DEVICE
     if (testFilter && strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
       i++;
       continue;
     }
+#endif
     QuizCase c = quiz_cases[i];
     quiz_print(quiz_case_names[i]);
     int initialPoolSize = Poincare::TreePool::sharedPool()->numberOfNodes();

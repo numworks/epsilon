@@ -59,6 +59,15 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
   }
 
   if (mod & (KMOD_CTRL|KMOD_GUI)) {
+    if (mod & KMOD_SHIFT) {
+      switch (sym) {
+#if ION_SIMULATOR_FILES
+        case SDLK_p:
+          Simulator::Actions::copyScreenshot();
+          return None;
+#endif
+      }
+    }
     switch (sym) {
       case SDLK_x:
         return Cut;

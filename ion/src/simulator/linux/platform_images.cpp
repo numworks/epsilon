@@ -220,6 +220,10 @@ void saveImage(const KDColor * pixels, int width, int height, const char * path)
   fclose(file);
 }
 
+void copyImageToClipboard(const KDColor * pixels, int width, int height) {
+  // Unsupported
+}
+
 }
 }
 }

@@ -154,6 +154,10 @@ void saveImage(const KDColor * pixels, int width, int height, const char * path)
   }
 }
 
+void copyImageToClipboard(const KDColor * pixels, int width, int height) {
+  // TODO
+}
+
 }
 }
 }

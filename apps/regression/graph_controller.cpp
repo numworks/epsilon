@@ -82,6 +82,10 @@ void GraphController::viewWillAppear() {
   setRoundCrossCursorView();
 }
 
+Poincare::Context * GraphController::globalContext() const {
+  return AppsContainer::sharedAppsContainer()->globalContext();
+}
+
 void GraphController::computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) {
   *xMin = FLT_MAX;
   *xMax = -FLT_MAX;
@@ -130,10 +134,6 @@ void GraphController::SeriesSelectionController::willDisplayCellForIndex(Highlig
   int j = graphController()->m_store->indexOfKthValidSeries(index);
   name[1] = name[4] = '1' + j;
   static_cast<CurveSelectionCell *>(cell)->setLayout(LayoutHelper::String(name, sizeof(name) / sizeof(char)));
-}
-
-Poincare::Context * GraphController::globalContext() const {
-  return AppsContainer::sharedAppsContainer()->globalContext();
 }
 
 bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {

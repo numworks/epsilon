@@ -373,22 +373,30 @@ uint32_t DoublePairStore::storeChecksum() const {
 }
 
 uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
-  /* Ideally, we would compute the checksum of the first m_numberOfPairs pairs.
-   * However, the two values of a pair are not stored consecutively. We thus
-   * compute the checksum of the x values of the pairs, then we compute the
-   * checksum of the y values of the pairs, and finally we compute the checksum
-   * of the checksums.
-   * We cannot simply put "empty" values to 0 and compute the checksum of the
-   * whole data, because adding or removing (0, 0) "real" data pairs would not
-   * change the checksum. */
-  /*size_t dataLengthInBytesPerDataColumn = m_numberOfPairs[series]*sizeof(double);
-  assert((dataLengthInBytesPerDataColumn & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  uint32_t checkSumPerColumn[k_numberOfColumnsPerSeries];
-  for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
-    checkSumPerColumn[i] = Ion::crc32Word((uint32_t *)m_data[series][i], dataLengthInBytesPerDataColumn/sizeof(uint32_t));
+  if (numberOfPairsOfSeries(series) == 0) {
+    return 0;
   }
-  return Ion::crc32Word(checkSumPerColumn, k_numberOfColumnsPerSeries);*/
-  return 0;
+  /* Columns of a same series should be consecutive in pool since they are
+   * built consecutively in init(). So to compute the CRC32 of a series, we
+   * just need to compute the CRC32 of the bytes at the adress of the first
+   * column, with a length of the two column combined.
+   * */
+  // Assert that the two columns are consecutive in pool.
+   assert((char *)(m_dataLists[series][0].addressInPool()) + m_dataLists[series][0].size() / sizeof(char) == (char *)m_dataLists[series][1].addressInPool());
+  /* The size of each column is needed to compute its CRC32. Since the method
+   * size() has a linear complexity with the number of children of a TreeNode,
+   * we do a workaround to compute the size in constant time.
+   * This relies on the fact that the lists contain only FloatNodes, and that
+   * the columns have the same number of elements. */
+  size_t dataLengthOfSeries = 2 * (m_dataLists[series][0].sizeOfNode() + m_dataLists[series][0].childAtIndex(0).sizeOfNode() * numberOfPairsOfSeries(series));
+  /* Assert that the computed size is the real size.
+   * It can be false if not all elements are floatNode for example.
+   * */
+  assert(dataLengthOfSeries == m_dataLists[series][0].size() + m_dataLists[series][1].size());
+  // Assert that dataLengthInBytes is a multiple of 4
+  assert((dataLengthOfSeries & 0x3) == 0);
+  return Ion::crc32Word((uint32_t *)(m_dataLists[series][0].addressInPool()), dataLengthOfSeries / sizeof(uint32_t));
+
 }
 
 double DoublePairStore::defaultValue(int series, int i, int j) const {

@@ -66,6 +66,7 @@ public:
   }
   int nodeRetainCount() const { return node()->retainCount(); }
   size_t size() const;
+  size_t sizeOfNode() const { return node()->size(); }
   void * addressInPool() const { return reinterpret_cast<void *>(node()); }
 
   bool isGhost() const { return node()->isGhost(); }

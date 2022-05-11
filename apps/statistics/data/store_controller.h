@@ -3,7 +3,6 @@
 
 #include "../store.h"
 #include "store_parameter_controller.h"
-#include "statistics_context.h"
 #include <apps/shared/store_controller.h>
 #include <apps/shared/hideable_even_odd_buffer_text_cell.h>
 
@@ -18,8 +17,6 @@ public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
 
   /* Shared::StoreController */
-  Shared::StoreContext * storeContext() override { return &m_statisticsContext; }
-  bool fillColumnWithFormula(Poincare::Expression formula) override;
   void sortSelectedColumn() override;
   int fillColumnName(int columnIndex, char * buffer) override;
 
@@ -51,7 +48,6 @@ private:
   bool isColumnClearable(int columnIndex) override { return !isCumulatedFrequencyColumn(columnIndex); }
 
   Store * m_store;
-  StatisticsContext m_statisticsContext;
   StoreParameterController m_storeParameterController;
   Shared::HideableEvenOddBufferTextCell m_nonEditableCells[k_maxNumberOfNonEditableCells];
 };

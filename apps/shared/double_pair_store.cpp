@@ -28,6 +28,8 @@ DoublePairStore::DoublePairStore() :
 
 void DoublePairStore::initListsFromStorage() {
   char listName[k_columnNamesLength + 1];
+  // Prevent update to avoid storing empty lists
+  preventUpdate();
   for (int s = 0; s < k_numberOfSeries; s++) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
       // Get the data of X1, Y1, X2, Y2, V1, V2, etc. from storage
@@ -43,7 +45,9 @@ void DoublePairStore::initListsFromStorage() {
       }
       setList(static_cast<List &>(e), s, i, i < k_numberOfColumnsPerSeries - 1 ? false : true);
     }
+    memoizeValidSeries(s);
   }
+  enableUpdate();
 }
 
 int DoublePairStore::fillColumnName(int series, int columnIndex, char * buffer) {
@@ -74,7 +78,7 @@ bool DoublePairStore::isColumnName(const char * name, int nameLen, int * returnS
 }
 
 double DoublePairStore::get(int series, int i, int j) const {
-  assert(j < numberOfPairsOfSeries(series) && m_dataLists[series][i].childAtIndex(j).type() == ExpressionNode::Type::Double);
+  assert(j < m_dataLists[series][i].numberOfChildren() && m_dataLists[series][i].childAtIndex(j).type() == ExpressionNode::Type::Double);
   Expression child = m_dataLists[series][i].childAtIndex(j);
   return static_cast<Float<double> &>(child).value();
 }
@@ -92,7 +96,7 @@ void DoublePairStore::set(double f, int series, int i, int j) {
   } else {
     m_dataLists[series][i].replaceChildAtIndexInPlace(j, Float<double>::Builder(f));
   }
-  updateSeriesValidity(series);
+  updateStorageAndValidity(series);
 }
 
 void DoublePairStore::setList(List list, int series, int i, bool formatSeriesAfterwards) {
@@ -117,7 +121,7 @@ void DoublePairStore::setList(List list, int series, int i, bool formatSeriesAft
   if (formatSeriesAfterwards) {
     formatListsOfSeries(series);
   }
-  memoizeValidSeries(series);
+  updateStorageAndValidity(series);
 }
 
 void DoublePairStore::formatListsOfSeries(int series) {
@@ -176,7 +180,7 @@ bool DoublePairStore::deleteValueAtIndex(int series, int i, int j) {
 void DoublePairStore::deletePairOfSeriesAtIndex(int series, int j) {
   m_dataLists[series][0].removeChildAtIndexInPlace(j);
   m_dataLists[series][1].removeChildAtIndexInPlace(j);
-  updateSeriesValidity(series);
+  updateStorageAndValidity(series);
 }
 
 void DoublePairStore::deleteAllPairsOfSeries(int series) {
@@ -186,7 +190,7 @@ void DoublePairStore::deleteAllPairsOfSeries(int series) {
     deletePairOfSeriesAtIndex(series, i);
   }
   enableUpdate();
-  updateSeriesValidity(series);
+  updateStorageAndValidity(series);
 }
 
 void DoublePairStore::deleteAllPairs() {
@@ -205,7 +209,7 @@ void DoublePairStore::deleteColumn(int series, int i) {
     }
   }
   enableUpdate();
-  updateSeriesValidity(series);
+  updateStorageAndValidity(series);
 }
 
 void DoublePairStore::resetColumn(int series, int i) {
@@ -216,7 +220,7 @@ void DoublePairStore::resetColumn(int series, int i) {
     set(defaultValue(series, i, k), series, i, k);
   }
   enableUpdate();
-  updateSeriesValidity(series);
+  updateStorageAndValidity(series);
 }
 
 bool DoublePairStore::hasValidSeries(ValidSeries validSeries) const {
@@ -231,6 +235,25 @@ bool DoublePairStore::hasValidSeries(ValidSeries validSeries) const {
 bool DoublePairStore::seriesIsValid(int series) const {
   assert(series >= 0 && series < k_numberOfSeries);
   return m_validSeries[series];
+}
+
+void DoublePairStore::updateStorageAndValidity(int series) {
+  if (!m_updateFlag) {
+    return;
+  }
+  updateSeriesValidity(series);
+  storeLists(series);
+}
+
+void DoublePairStore::storeLists(int series) {
+  assert(series >= 0 && series < k_numberOfSeries);
+  for (int i = 0; i < k_numberOfColumnsPerSeries ; i++) {
+    List listToStore = m_dataLists[series][i];
+    char name[k_columnNamesLength + 1];
+    int length = fillColumnName(series, i, name);
+    Symbol listSymbol = Symbol::Builder(name, length);
+    AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(listToStore, listSymbol);
+  }
 }
 
 int DoublePairStore::numberOfValidSeries(ValidSeries validSeries) const {
@@ -285,7 +308,7 @@ void DoublePairStore::sortColumn(int series, int column) {
   void * context[] = { const_cast<DoublePairStore *>(this), &series, &column };
   Poincare::Helpers::Sort(swapRows, compare, context, numberOfPairsOfSeries(series));
   enableUpdate();
-  updateSeriesValidity(series);
+  updateStorageAndValidity(series);
 }
 
 void DoublePairStore::sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const {

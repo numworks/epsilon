@@ -84,6 +84,8 @@ public:
 
 protected:
   void formatListsOfSeries(int series);
+  void updateStorageAndValidity(int series);
+  void storeLists(int series);
   void preventUpdate() {
     m_updateFlag = false;
   }

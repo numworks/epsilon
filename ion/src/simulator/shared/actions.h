@@ -8,7 +8,7 @@ namespace Simulator {
 namespace Actions {
 
 void saveState();
-void takeScreenshot();
+void saveScreenshot();
 void saveStateForReload();
 void handleUSR1Sig(int i);
 }

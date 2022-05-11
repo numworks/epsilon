@@ -71,7 +71,7 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
         Simulator::Actions::saveState();
         return None;
       case SDLK_p:
-        Simulator::Actions::takeScreenshot();
+        Simulator::Actions::saveScreenshot();
         return None;
 #endif
     }

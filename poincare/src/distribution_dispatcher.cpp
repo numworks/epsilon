@@ -2,6 +2,7 @@
 #include <poincare/simplification_helper.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/approximation_helper.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -37,15 +38,23 @@ int DistributionDispatcherNode::serialize(char * buffer, int bufferSize, Prefere
 }
 
 Expression DistributionDispatcherNode::shallowReduce(ReductionContext reductionContext) {
-  return DistributionDispatcher(this).shallowReduce(reductionContext.context());
+  return DistributionDispatcher(this).shallowReduce(reductionContext);
 }
 
-Expression DistributionDispatcher::shallowReduce(Context * context, bool * stopReduction) {
+Expression DistributionDispatcher::shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
   }
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -64,7 +73,7 @@ Expression DistributionDispatcher::shallowReduce(Context * context, bool * stopR
   const Distribution * distribution = Distribution::Get(distributionType());
 
   bool parametersAreOk;
-  bool couldCheckParameters = distribution->ExpressionParametersAreOK(&parametersAreOk, parameters, context);
+  bool couldCheckParameters = distribution->ExpressionParametersAreOK(&parametersAreOk, parameters, reductionContext.context());
 
   if (!couldCheckParameters) {
     return *this;
@@ -73,7 +82,7 @@ Expression DistributionDispatcher::shallowReduce(Context * context, bool * stopR
     return replaceWithUndefinedInPlace();
   }
 
-  Expression e = function->shallowReduce(abscissa, distribution, parameters, context, this);
+  Expression e = function->shallowReduce(abscissa, distribution, parameters, reductionContext, this);
   if (!e.isUninitialized()) {
     return e;
   }
@@ -86,20 +95,29 @@ Expression DistributionDispatcher::shallowReduce(Context * context, bool * stopR
 
 template<typename T>
 Evaluation<T> DistributionDispatcherNode::templatedApproximate(ApproximationContext approximationContext) const {
-  int childIndex = 0;
-  T abscissa[DistributionMethod::k_maxNumberOfParameters];
-  for (int i=0; i < DistributionMethod::numberOfParameters(m_methodType); i++) {
-    Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
-    abscissa[i] = evaluation.toScalar();
-  }
-  T parameters[Distribution::k_maxNumberOfParameters];
-  for (int i=0; i < Distribution::numberOfParameters(m_distributionType); i++) {
-    Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
-    parameters[i] = evaluation.toScalar();
-  }
-  const DistributionMethod * function = DistributionMethod::Get(m_methodType);
-  const Distribution * distribution = Distribution::Get(m_distributionType);
-  return Complex<T>::Builder(function->EvaluateAtAbscissa(abscissa, distribution, parameters));
+  return ApproximationHelper::Map<T>(
+    this,
+    approximationContext,
+    [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+      const DistributionDispatcherNode * self = static_cast<DistributionDispatcherNode *>(ctx);
+      int childIndex = 0;
+      T abscissa[DistributionMethod::k_maxNumberOfParameters];
+      for (int i=0; i < DistributionMethod::numberOfParameters(self->m_methodType); i++) {
+        // Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
+        abscissa[i] = ComplexNode<T>::ToScalar(c[childIndex++]);//evaluation.toScalar();
+      }
+      T parameters[Distribution::k_maxNumberOfParameters];
+      for (int i=0; i < Distribution::numberOfParameters(self->m_distributionType); i++) {
+        // Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
+        parameters[i] = ComplexNode<T>::ToScalar(c[childIndex++]);//evaluation.toScalar();
+      }
+      const DistributionMethod * function = DistributionMethod::Get(self->m_methodType);
+      const Distribution * distribution = Distribution::Get(self->m_distributionType);
+      return Complex<T>::Builder(function->EvaluateAtAbscissa(abscissa, distribution, parameters));
+    },
+    true,
+    static_cast<void*>(const_cast<DistributionDispatcherNode *>(this))
+    );
 }
 
 }

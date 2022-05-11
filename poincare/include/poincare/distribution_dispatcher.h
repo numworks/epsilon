@@ -134,7 +134,7 @@ public:
     return dist;
   }
 
-  Expression shallowReduce(Context * context, bool * stopReduction = nullptr);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction = nullptr);
   void setType(DistributionMethod::Type f) {
     static_cast<DistributionDispatcherNode*>(node())->setType(f);
   }

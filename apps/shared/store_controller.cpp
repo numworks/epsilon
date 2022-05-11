@@ -238,8 +238,12 @@ void StoreController::reloadSeriesVisibleCells(int series, int relativeColumn) {
   }
 }
 
+bool returnFalseAndDisplayWarning() {
+   Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
+   return false;
+}
+
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
-  constexpr static int k_maxSizeOfStoreSymbols = DoublePairStore::k_columnNamesLength + 1;
   int columnToFill = m_store->relativeColumnIndex(selectedColumn());
   int seriesToFill = m_store->seriesAtColumn(selectedColumn());
   if (formula.type() == ExpressionNode::Type::Equal) {
@@ -253,52 +257,34 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
       }
     }
     if (!isValidEquality) {
-      Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
-      return false;
+      return returnFalseAndDisplayWarning();
     }
   }
-  // Fetch the series used in the formula to compute the size of the filled in series
-  char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
-  variables[0][0] = 0;
-  AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
-  int nbOfVariables = formula.getVariables(appsContainer->globalContext(), isVariable, (char *)variables, k_maxSizeOfStoreSymbols);
-  (void) nbOfVariables; // Remove compilation warning of unused variable
-  assert(nbOfVariables >= 0);
-  int numberOfValuesToCompute = -1;
-  int index = 0;
-  while (variables[index][0] != 0) {
-    int series;
-    m_store->isColumnName(variables[index], DoublePairStore::k_columnNamesLength, &series);
-    assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
-    if (numberOfValuesToCompute == -1) {
-      numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
-    } else {
-      numberOfValuesToCompute = std::min(numberOfValuesToCompute, static_cast<int>(m_store->numberOfPairsOfSeries(series)));
+  Context * context = AppsContainer::sharedAppsContainer()->globalContext();
+  PoincareHelpers::CloneAndSimplify(&formula, context, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  if (formula.isUndefined()) {
+      return returnFalseAndDisplayWarning();
+  }
+  if (formula.type() == ExpressionNode::Type::List) {
+    bool allChildrenAreUndefined = true;
+    for (int i = 0; i < formula.numberOfChildren(); i++) {
+      if (!formula.childAtIndex(i).isUndefined()) {
+        allChildrenAreUndefined = false;
+        break;
+      }
     }
-    index++;
-  }
-  if (numberOfValuesToCompute == -1) {
-    numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedSeries());
-  }
-
-  StoreContext * store = storeContext();
-
-  // Make sure no value is undef, else display an error
-  for (int j = 0; j < numberOfValuesToCompute; j++) {
-    // Set the context
-    store->setSeriesPairIndex(j);
-    // Compute the new value using the formula
-    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, store);
-    if (std::isnan(evaluation) || std::isinf(evaluation)) {
-      Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
-      return false;
+    if (allChildrenAreUndefined) {
+      return returnFalseAndDisplayWarning();
     }
+    m_store->setList(static_cast<List &>(formula), seriesToFill, columnToFill);
+    selectableTableView()->reloadData();
+    return true;
   }
-
-  // Fill in the table with the formula values
-  for (int j = 0; j < numberOfValuesToCompute; j++) {
-    store->setSeriesPairIndex(j);
-    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, store);
+  double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, context);
+  if (std::isnan(evaluation)) {
+      return returnFalseAndDisplayWarning();
+  }
+  for (int j = 0; j < m_store->numberOfPairsOfSeries(seriesToFill); j++) {
     m_store->set(evaluation, seriesToFill, columnToFill, j);
   }
   reloadSeriesVisibleCells(selectedSeries());

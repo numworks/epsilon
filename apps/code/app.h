@@ -65,18 +65,32 @@ public:
 
   VariableBoxController * variableBoxController() { return &m_variableBoxController; }
 
-  static constexpr int k_pythonHeapSize = 32768;
+  static constexpr size_t k_pythonHeapSize = 65536;
 
 private:
+  App(Snapshot * snapshot);
+
   /* Python delegate:
    * MicroPython requires a heap. To avoid dynamic allocation, we keep a working
    * buffer here and we give to controllers that load Python environment. We
    * also memoize the last Python user to avoid re-initiating MicroPython when
    * unneeded. */
+#if PLATFORM_DEVICE
+  /* On the device, we reach 64K of heap by repurposing the unused tree pool.
+   * The linker must make sure that the pool and the apps buffer are
+   * contiguous. */
+  char * pythonHeap() {
+    char * heap = reinterpret_cast<char *>(Poincare::TreePool::sharedPool());
+    assert(heap && heap + k_pythonHeapSize <= m_pythonHeapExtension + k_pythonHeapExtensionSize);
+    return heap;
+  }
+  static constexpr int k_pythonHeapExtensionSize = k_pythonHeapSize - sizeof(Poincare::TreePool);
+  char m_pythonHeap[k_pythonHeapExtensionSize];
+#else
+  char * pythonHeap() { return m_pythonHeap; }
   char m_pythonHeap[k_pythonHeapSize];
+#endif
   const void * m_pythonUser;
-
-  App(Snapshot * snapshot);
   ConsoleController m_consoleController;
   Escher::ButtonRowController m_listFooter;
   MenuController m_menuController;

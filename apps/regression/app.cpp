@@ -44,11 +44,6 @@ const App::Descriptor * App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-void App::Snapshot::tidy() {
-  /*m_store.setDelegate(nullptr);
-  m_store.tidy();*/
-}
-
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
   m_store(),

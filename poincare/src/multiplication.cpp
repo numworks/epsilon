@@ -241,7 +241,15 @@ Layout  MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDispla
   constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
   char string[stringMaxSize];
   SerializationHelper::CodePoint(string, stringMaxSize, operatorSymbol());
-  return LayoutHelper::Infix(Multiplication(this), floatDisplayMode, numberOfSignificantDigits, string);
+  return LayoutHelper::Infix(
+    Multiplication(this),
+    floatDisplayMode,
+    numberOfSignificantDigits,
+    string,
+    [](Expression left, Expression right) {
+      bool rightIsUnit = right.type() == ExpressionNode::Type::Unit || (right.type() == ExpressionNode::Type::Power && right.childAtIndex(0).type() == ExpressionNode::Type::Unit);
+      return rightIsUnit && operatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape()) == 0;
+    });
 }
 
 int MultiplicationNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

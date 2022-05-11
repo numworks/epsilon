@@ -7,7 +7,12 @@ namespace Poincare {
 
 void Init() {
   // Create and register the shared static pool
-  static TreePool pool;
+  static TreePool pool
+#if PLATFORM_DEVICE
+    __attribute__((section(".bss.$poincare_pool")));
+#else
+    ;
+#endif
   TreePool::RegisterPool(&pool);
 }
 

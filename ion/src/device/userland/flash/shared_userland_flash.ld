@@ -84,6 +84,7 @@ SECTIONS {
      * COMMON blocks. This can be disabled with -fno-common if needed. */
     *(COMMON)
     _external_apps_RAM_start = .;
+    KEEP(*(.bss.$poincare_pool))
     KEEP(*(.bss.$app_buffer))
     _bss_section_end_ram = .;
     *(.bss.*)

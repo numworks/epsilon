@@ -69,7 +69,6 @@ void App::Snapshot::setOpt(const char * name, const char * value) {
 
 App::App(Snapshot * snapshot) :
   Shared::InputEventHandlerDelegateApp(snapshot, &m_codeStackViewController),
-  m_pythonHeap{},
   m_pythonUser(nullptr),
   m_consoleController(nullptr, this, snapshot->scriptStore()
 #if EPSILON_GETOPT
@@ -126,7 +125,8 @@ bool App::textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::E
 
 void App::initPythonWithUser(const void * pythonUser) {
   if (!m_pythonUser) {
-    MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
+    char * heap = pythonHeap();
+    MicroPython::init(heap, heap + k_pythonHeapSize);
   }
   m_pythonUser = pythonUser;
 }

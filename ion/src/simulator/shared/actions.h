@@ -9,6 +9,7 @@ namespace Actions {
 
 void saveState();
 void saveScreenshot();
+void copyScreenshot();
 void saveStateForReload();
 void handleUSR1Sig(int i);
 }

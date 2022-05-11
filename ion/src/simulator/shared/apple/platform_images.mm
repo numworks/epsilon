@@ -99,17 +99,39 @@ private:
 };
 static_assert(sizeof(ABGR8888Pixel) == 4, "ARGB8888Pixel shall be 4 bytes long");
 
-void saveImage(const KDColor * pixels, int width, int height, const char * path) {
+static CGImageRef createImageWithPixels(const KDColor * pixels, int width, int height) {
   CGContextRef context = createABGR8888Context(width, height);
   if (context == nullptr) {
-    return;
+    return nullptr;
   }
   ABGR8888Pixel * argb8888Pixels = static_cast<ABGR8888Pixel *>(CGBitmapContextGetData(context));
   for (int i=0; i<width*height; i++) {
     argb8888Pixels[i] = ABGR8888Pixel(pixels[i]);
   }
-
   CGImageRef image = CGBitmapContextCreateImage(context);
+  CGContextRelease(context);
+  return image;
+}
+
+void copyImageToClipboard(const KDColor * pixels, int width, int height) {
+  CGImageRef cgImage = createImageWithPixels(pixels, width, height);
+
+#if TARGET_OS_OSX
+  NSImage * nsImage = [[NSImage alloc] initWithCGImage:cgImage size:NSZeroSize];
+  NSPasteboard * pasteboard = [NSPasteboard generalPasteboard];
+  [pasteboard clearContents];
+  [pasteboard writeObjects:[NSArray arrayWithObject:nsImage]];
+  [nsImage release];
+#else
+  // TODO: Implement on iOS
+#endif
+
+  CGImageRelease(cgImage);
+}
+
+
+void saveImage(const KDColor * pixels, int width, int height, const char * path) {
+  CGImageRef image = createImageWithPixels(pixels, width, height);
 
   CFURLRef url = static_cast<CFURLRef>([NSURL fileURLWithPath:[NSString stringWithUTF8String:path]]);
 
@@ -121,7 +143,6 @@ void saveImage(const KDColor * pixels, int width, int height, const char * path)
     CFRelease(destination);
   }
   CGImageRelease(image);
-  CGContextRelease(context);
 }
 
 

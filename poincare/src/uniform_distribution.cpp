@@ -14,15 +14,6 @@ T UniformDistribution::EvaluateAtAbscissa(T x, T d1, T d2) {
   if (std::isnan(x) || std::isinf(x) || !D1AndD2AreOK(d1, d2)){
     return NAN;
   }
-  // TODO: dirac
-  /*
-  if (parameter2 - parameter1 < FLT_EPSILON) {
-    if (parameter1 - k_diracWidth<= t && t <= parameter2 + k_diracWidth) {
-      return 2.0f * k_diracMaximum;
-    }
-    return 0.0f;
-  }
-*/
   if (d1 <= x && x <= d2) {
     return (1.0/(d2 - d1));
   }

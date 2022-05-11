@@ -15,7 +15,7 @@ class InverseMethod final : public DistributionMethod {
     return distribution->CumulativeDistributiveInverseForProbability(x[0], parameters);
   }
 
-  Expression shallowReduce(Expression * x, const Distribution * distribution, Expression * parameters, Context * context, Expression * expression) const override;
+  Expression shallowReduce(Expression * x, const Distribution * distribution, Expression * parameters, ExpressionNode::ReductionContext reductionContext, Expression * expression) const override;
 };
 
 }

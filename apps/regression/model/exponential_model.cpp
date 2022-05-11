@@ -6,6 +6,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
+#include <poincare/print.h>
 
 using namespace Poincare;
 
@@ -37,6 +38,12 @@ Layout ExponentialModel::layout() {
     });
   }
   return m_layout;
+}
+
+int ExponentialModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
+  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, m_isAbxForm ? "%*.*ed·%*.*ed^x" : "%*.*ed·e^%*.*ed·x",
+      modelCoefficients[0], displayMode, significantDigits,
+      modelCoefficients[1], displayMode, significantDigits);
 }
 
 double ExponentialModel::aebxFormatBValue(double * modelCoefficients) const {

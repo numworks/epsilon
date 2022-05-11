@@ -132,8 +132,21 @@ void GraphController::SeriesSelectionController::willDisplayCellForIndex(Highlig
   static_cast<CurveSelectionCell *>(cell)->setLayout(LayoutHelper::String(name, sizeof(name) / sizeof(char)));
 }
 
-Poincare::Context * GraphController::globalContext() {
+Poincare::Context * GraphController::globalContext() const {
   return AppsContainer::sharedAppsContainer()->globalContext();
+}
+
+bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
+  int length = Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%s", "ŷ=");
+  if (length >= bufferSize) {
+    return false;
+  }
+  buffer += length;
+  bufferSize -= length;
+
+  double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
+  length = m_store->regressionModel(modelType)->buildEquationTemplate(buffer, bufferSize, coefficients, significantDigits, displayMode);
+  return length < bufferSize;
 }
 
 // SimpleInteractiveCurveViewController
@@ -142,32 +155,29 @@ void GraphController::reloadBannerView() {
   // Set point equals: "P(...) ="
   const int significantDigits = Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
-  constexpr size_t bufferSize = Shared::FunctionBannerDelegate::k_textBufferSize;
+  constexpr size_t bufferSize = k_bannerViewTextBufferSize;
 
   bool displayMean = (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex));
   char buffer[bufferSize];
-  if (*m_selectedDotIndex < 0 && m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear) {
-    // Cursor is on linear Regression, display the formula
+  Model::Type modelType = m_store->seriesRegressionType(*m_selectedSeriesIndex);
+  if (*m_selectedDotIndex < 0 && buildRegressionExpression(buffer, bufferSize, modelType, significantDigits, displayMode)) {
+    // Regression equation fits in the banner, display it
     m_bannerView.setDisplayParameters(false, false);
-    double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
-    Poincare::Print::customPrintf(buffer, bufferSize, "ŷ=%*.*ed·x+%*.*ed",
-      coefficients[0], displayMode, significantDigits,
-      coefficients[1], displayMode, significantDigits);
+    m_bannerView.otherView()->setText(buffer);
   } else if (displayMean) {
     m_bannerView.setDisplayParameters(false, true);
-    Poincare::Print::customPrintf(buffer, bufferSize, "%s", I18n::translate(I18n::Message::MeanDot));
+    m_bannerView.otherView()->setText(I18n::translate(I18n::Message::MeanDot));
   } else {
     // Nothing else to display
     m_bannerView.setDisplayParameters(true, false);
-    buffer[0] = 0;
+    m_bannerView.otherView()->setText("");
   }
-  m_bannerView.otherView()->setText(buffer);
 
   /* Use "x=..." or "xmean=..." (\xCC\x85 represents the combining overline ' ̅')
    * if the mean dot is selected. Same with y. */
   m_bannerView.abscissaSymbol()->setText(displayMean ? "x\xCC\x85=" : "x=");
   double x = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 0) : m_cursor->x();
-  buffer[PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, significantDigits)] = 0;
+  Poincare::Print::customPrintf(buffer, bufferSize, "%*.*ed", x, displayMode, significantDigits);
   m_bannerView.abscissaValue()->setText(buffer);
 
   double y = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 1) : m_cursor->y();

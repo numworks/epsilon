@@ -10,6 +10,7 @@
 #include <poincare/addition.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
+#include <poincare/print.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -35,6 +36,13 @@ Layout QuadraticModel::layout() {
     });
   }
   return m_layout;
+}
+
+int QuadraticModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
+  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed·x^2+%*.*ed·x+%*.*ed",
+      modelCoefficients[0], displayMode, significantDigits,
+      modelCoefficients[1], displayMode, significantDigits,
+      modelCoefficients[2], displayMode, significantDigits);
 }
 
 double QuadraticModel::evaluate(double * modelCoefficients, double x) const {

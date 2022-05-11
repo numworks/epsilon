@@ -12,6 +12,7 @@ public:
   Type type() const override { return Type::Uniform; }
   const char * parameterNameAtIndex(int index) const override { return index == 0 ? "a" : "b"; }
   double meanAbscissa() override { return (m_parameters[0] + m_parameters[1]) / 2.0; }
+  float evaluateAtAbscissa(float x) const override;
   bool authorizedParameterAtIndex(double x, int index) const override;
   void setParameterAtIndex(double f, int index) override;
 private:

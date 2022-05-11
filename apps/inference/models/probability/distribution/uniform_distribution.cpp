@@ -8,6 +8,19 @@
 
 namespace Inference {
 
+float UniformDistribution::evaluateAtAbscissa(float t) const {
+  float parameter1 = m_parameters[0];
+  float parameter2 = m_parameters[1];
+  if (parameter2 - parameter1 < FLT_EPSILON) {
+    if (parameter1 - k_diracWidth<= t && t <= parameter2 + k_diracWidth) {
+      return 2.0f * k_diracMaximum;
+    }
+    return 0.0f;
+  }
+  return Distribution::evaluateAtAbscissa(t);
+}
+
+
 bool UniformDistribution::authorizedParameterAtIndex(double x, int index) const {
   if (!TwoParameterDistribution::authorizedParameterAtIndex(x, index)) {
     return false;

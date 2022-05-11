@@ -34,6 +34,11 @@ void loadState() {
 }
 #endif
 
+void copyScreenshot() {
+  Screenshot s;
+  s.capture();
+}
+
 void saveScreenshot() {
   Screenshot s(Platform::filePathForWriting("png"));
   s.capture();

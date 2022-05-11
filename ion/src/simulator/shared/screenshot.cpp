@@ -23,6 +23,8 @@ void Screenshot::capture() {
   if (m_path != nullptr) {
     Simulator::Platform::saveImage(Simulator::Framebuffer::address(), Display::Width,
                                    Display::Height, m_path);
+  } else {
+    Simulator::Platform::copyImageToClipboard(Simulator::Framebuffer::address(), Display::Width, Display::Height);
   }
 }
 

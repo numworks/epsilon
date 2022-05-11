@@ -14,6 +14,9 @@ public:
   constexpr static const char * k_columnNames[] = {"V", "N"}; // Must be 1 char long
   static_assert(sizeof(k_columnNames) / sizeof(char *) == Shared::DoublePairStore::k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Statistics.");
   Store();
+  ~Store() {
+    tidyListsBeforeFinalStoring();
+  }
 
   void setSortedIndex(uint8_t * buffer, size_t bufferSize);
   void invalidateSortedIndexes();

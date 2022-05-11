@@ -28,6 +28,9 @@ public:
   static const char * SeriesTitle(int series);
 
   Store();
+  ~Store() {
+    tidyListsBeforeFinalStoring();
+  }
 
   // DoublePairStore
   char columnNamePrefixAtIndex(int column) override {
@@ -37,8 +40,6 @@ public:
   }
 
   void reset();
-  // Clean pool
-  void tidy();
 
   // Regression
   void setSeriesRegressionType(int series, Model::Type type);

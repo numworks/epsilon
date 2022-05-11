@@ -117,7 +117,6 @@ app_shared_test_src += $(addprefix apps/shared/,\
   sequence_cache_context.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
-  store_context.cpp \
 )
 
 tests_src += $(addprefix apps/shared/test/,\

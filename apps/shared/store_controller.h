@@ -8,7 +8,6 @@
 #include "layout_field_delegate.h"
 #include "input_event_handler_delegate.h"
 #include "store_cell.h"
-#include "store_context.h"
 #include "store_parameter_controller.h"
 #include "store_selectable_table_view.h"
 #include "store_title_cell.h"
@@ -24,9 +23,8 @@ public:
   // EditableCellViewController
   virtual int fillColumnName(int columnIndex, char * buffer) override { return m_store->fillColumnName(m_store->seriesAtColumn(columnIndex), m_store->relativeColumnIndex(columnIndex), buffer); }
 
-  virtual StoreContext * storeContext() = 0;
   void displayFormulaInput();
-  virtual bool fillColumnWithFormula(Poincare::Expression formula) = 0;
+  bool fillColumnWithFormula(Poincare::Expression formula);
   virtual void sortSelectedColumn();
   // Return false if the series can't switch hide status because it's invalid
   bool switchSelectedColumnHideStatus();
@@ -84,7 +82,6 @@ protected:
   Escher::Responder * tabController() const override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  bool privateFillColumnWithFormula(Poincare::Expression formula, Poincare::ExpressionNode::isVariableTest isVariable);
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;

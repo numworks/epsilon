@@ -148,6 +148,10 @@ int Store::numberOfBoxPlotCalculations(int series) const {
 
 void Store::updateSeriesValidity(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
+  DoublePairStore::memoizeValidSeries(series);
+  if (!m_validSeries[series]) {
+    return;
+  }
   bool isSeriesValid = numberOfPairsOfSeries(series) > 0 && sumOfOccurrences(series) > 0.0;
   // Reset the graph view any time one of the series gets invalidated
   m_graphViewInvalidated = m_graphViewInvalidated || (m_validSeries[series] && !isSeriesValid);

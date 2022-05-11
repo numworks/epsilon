@@ -12,10 +12,6 @@ using namespace Shared;
 
 namespace Regression {
 
-void Model::tidy() {
-  m_layout = Layout();
-}
-
 Poincare::Expression Model::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
   Expression e = expression(modelCoefficients);
   if (!e.isUninitialized()) {

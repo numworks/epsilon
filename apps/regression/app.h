@@ -32,7 +32,6 @@ public:
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
   private:
-    void tidy() override;
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
     uint32_t m_rangeVersion;

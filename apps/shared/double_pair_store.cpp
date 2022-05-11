@@ -28,9 +28,9 @@ DoublePairStore::DoublePairStore() :
 
 void DoublePairStore::initListsFromStorage() {
   char listName[k_columnNamesLength + 1];
-  // Prevent update to avoid storing empty lists
-  preventUpdate();
   for (int s = 0; s < k_numberOfSeries; s++) {
+    // Prevent update before the whole series is filled.
+    preventUpdate();
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
       // Get the data of X1, Y1, X2, Y2, V1, V2, etc. from storage
       fillColumnName(s, i, listName);
@@ -45,9 +45,11 @@ void DoublePairStore::initListsFromStorage() {
       }
       setList(static_cast<List &>(e), s, i, i < k_numberOfColumnsPerSeries - 1 ? false : true);
     }
-    memoizeValidSeries(s);
+    enableUpdate();
+    /* We store all lists, even empty ones, so that the context knows their
+    * symbols. */
+    updateStorageAndValidity(s);
   }
-  enableUpdate();
 }
 
 int DoublePairStore::fillColumnName(int series, int columnIndex, char * buffer) {
@@ -152,9 +154,34 @@ void DoublePairStore::formatListsOfSeries(int series) {
     }
     j++;
   }
-
 }
 
+void DoublePairStore::tidyListsBeforeFinalStoring() {
+  // When destroying the object, clean the lists for final storage.
+  char listName[k_columnNamesLength + 1];
+  for (int s = 0; s < k_numberOfSeries; s++) {
+    for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
+      // Step 1: Remove all undef at the end of the list.
+      int lastNonUndefIndex = m_dataLists[s][i].numberOfChildren();
+      for (int j = m_dataLists[s][i].numberOfChildren() - 1; j >= 0; j--) {
+        if (!std::isnan(get(s, i, j))) {
+          lastNonUndefIndex = j;
+          break;
+        }
+      }
+      while(m_dataLists[s][i].numberOfChildren() > lastNonUndefIndex + 1) {
+        m_dataLists[s][i].removeChildAtIndexInPlace(lastNonUndefIndex + 1);
+      }
+      // Step 2: Destroy empty lists.
+      if (m_dataLists[s][i].numberOfChildren() == 0) {
+        fillColumnName(s, i, listName);
+        Record(listName, lisExtension).destroy();
+      } else {
+        storeColumn(s, i);
+      }
+    }
+  }
+}
 
 int DoublePairStore::numberOfPairs() const {
   int result = 0;
@@ -242,17 +269,21 @@ void DoublePairStore::updateStorageAndValidity(int series) {
     return;
   }
   updateSeriesValidity(series);
-  storeLists(series);
+  storeSeries(series);
 }
 
-void DoublePairStore::storeLists(int series) {
+void DoublePairStore::storeColumn(int series, int i) {
+  List listToStore = m_dataLists[series][i];
+  char name[k_columnNamesLength + 1];
+  int length = fillColumnName(series, i, name);
+  Symbol listSymbol = Symbol::Builder(name, length);
+  AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(listToStore, listSymbol);
+}
+
+void DoublePairStore::storeSeries(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
   for (int i = 0; i < k_numberOfColumnsPerSeries ; i++) {
-    List listToStore = m_dataLists[series][i];
-    char name[k_columnNamesLength + 1];
-    int length = fillColumnName(series, i, name);
-    Symbol listSymbol = Symbol::Builder(name, length);
-    AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(listToStore, listSymbol);
+    storeColumn(series, i);
   }
 }
 

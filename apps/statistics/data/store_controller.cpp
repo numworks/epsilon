@@ -17,13 +17,8 @@ namespace Statistics {
 StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Context * parentContext) :
   Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
   m_store(store),
-  m_statisticsContext(m_store, parentContext),
   m_storeParameterController(this, this, store)
 {}
-
-bool StoreController::fillColumnWithFormula(Expression formula) {
-  return privateFillColumnWithFormula(formula, StatisticsContext::IsSymbol);
-}
 
 void StoreController::sortSelectedColumn() {
   int relativeIndex = m_store->relativeColumnIndex(selectedColumn());

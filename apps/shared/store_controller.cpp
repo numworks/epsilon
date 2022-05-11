@@ -70,7 +70,7 @@ void StoreController::displayFormulaInput() {
 }
 
 bool StoreController::createExpressionForFillingCollumnWithFormula(const char * text) {
-  Expression expression = Expression::Parse(text, storeContext());
+  Expression expression = Expression::Parse(text, AppsContainer::sharedAppsContainer()->globalContext());
   if (expression.isUninitialized()) {
     Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
     return false;
@@ -243,7 +243,7 @@ bool returnFalseAndDisplayWarning() {
    return false;
 }
 
-bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
+bool StoreController::fillColumnWithFormula(Expression formula) {
   int columnToFill = m_store->relativeColumnIndex(selectedColumn());
   int seriesToFill = m_store->seriesAtColumn(selectedColumn());
   if (formula.type() == ExpressionNode::Type::Equal) {

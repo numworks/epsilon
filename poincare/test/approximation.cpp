@@ -328,9 +328,6 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("abs(3+2i)", "3.605551");
   assert_expression_approximates_to<double>("abs(3+2i)", "3.605551275464");
 
-  assert_expression_approximates_to<float>("binomcdf(5.3, 9, 0.7)", "0.270341", Degree, MetricUnitFormat, Cartesian, 6); // FIXME: precision problem
-  assert_expression_approximates_to<double>("binomcdf(5.3, 9, 0.7)", "0.270340902", Degree, MetricUnitFormat, Cartesian, 10); //FIXME precision problem
-
   assert_expression_approximates_to<float>("binomial(10, 4)", "210");
   assert_expression_approximates_to<double>("binomial(10, 4)", "210");
   assert_expression_approximates_to<float>("binomial(12, 3)", "220");
@@ -351,9 +348,6 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("binomial(-5, -10)", "0");
   assert_expression_approximates_to<float>("binomial(10, 2.1)", Undefined::Name());
   assert_expression_approximates_to<double>("binomial(10, 2.1)", Undefined::Name());
-
-  assert_expression_approximates_to<float>("binompdf(4.4, 9, 0.7)", "0.0735138", Degree, MetricUnitFormat, Cartesian, 6); // FIXME: precision problem
-  assert_expression_approximates_to<double>("binompdf(4.4, 9, 0.7)", "0.073513818");
 
   assert_expression_approximates_to<float>("ceil(0.2)", "1");
   assert_expression_approximates_to<double>("ceil(0.2)", "1");
@@ -381,16 +375,6 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("gcd(6,15,10)", "1");
   assert_expression_approximates_to<float>("gcd(30,105,70,42)", "1");
   assert_expression_approximates_to<double>("gcd(30,105,70,42)", "1");
-
-  assert_expression_approximates_to<double>("geompdf(1,1)", "1");
-  assert_expression_approximates_to<double>("geompdf(2,0.5)", "0.25");
-  assert_expression_approximates_to<double>("geompdf(2,1)", "0");
-  assert_expression_approximates_to<double>("geompdf(1,0)", "undef");
-  assert_expression_approximates_to<double>("geomcdf(2,0.5)", "0.75");
-  assert_expression_approximates_to<double>("geomcdfrange(2,3,0.5)", "0.375");
-  assert_expression_approximates_to<double>("geomcdfrange(2,2,0.5)", "0.25");
-  assert_expression_approximates_to<double>("invgeom(1,1)", "1");
-  assert_expression_approximates_to<double>("invgeom(0.825,0.5)", "3");
 
   assert_expression_approximates_to<float>("im(2+3i)", "3");
   assert_expression_approximates_to<double>("im(2+3i)", "3");
@@ -437,43 +421,11 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
   assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");
 
-  assert_expression_approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
-  assert_expression_approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
-  assert_expression_approximates_to<float>("invbinom(0.95,100,0.42)", "50");
-  assert_expression_approximates_to<double>("invbinom(0.95,100,0.42)", "50");
-  assert_expression_approximates_to<float>("invbinom(0.01,150,0.9)", "126");
-  assert_expression_approximates_to<double>("invbinom(0.01,150,0.9)", "126");
-
-  assert_expression_approximates_to<float>("invnorm(0.56, 1.3, 2.4)", "1.662326");
-  //assert_expression_approximates_to<double>("invnorm(0.56, 1.3, 2.4)", "1.6623258450088"); FIXME precision error
-
   assert_expression_approximates_to<float>("ln(2)", "0.6931472");
   assert_expression_approximates_to<double>("ln(2)", "0.69314718055995");
 
   assert_expression_approximates_to<float>("log(2)", "0.30103");
   assert_expression_approximates_to<double>("log(2)", "0.30102999566398");
-
-  assert_expression_approximates_to<double>("normcdf(5, 7, 0.3162)", "1.265256ᴇ-10", Radian, MetricUnitFormat, Cartesian, 7);
-
-  assert_expression_approximates_to<float>("normcdf(1.2, 3.4, 5.6)", "0.3472125");
-  assert_expression_approximates_to<double>("normcdf(1.2, 3.4, 5.6)", "0.34721249841587");
-  assert_expression_approximates_to<float>("normcdf(-1ᴇ99,3.4,5.6)", "0");
-  assert_expression_approximates_to<float>("normcdf(1ᴇ99,3.4,5.6)", "1");
-  assert_expression_approximates_to<float>("normcdf(-6,0,1)", "0");
-  assert_expression_approximates_to<float>("normcdf(6,0,1)", "1");
-
-  assert_expression_approximates_to<float>("normcdfrange(0.5, 3.6, 1.3, 3.4)", "0.3436388");
-  assert_expression_approximates_to<double>("normcdfrange(0.5, 3.6, 1.3, 3.4)", "0.34363881299147");
-
-  assert_expression_approximates_to<float>("normpdf(1.2, 3.4, 5.6)", "0.06594901");
-
-  assert_expression_approximates_to<float>("tcdf(0.5, 2)", "0.6666667");
-  assert_expression_approximates_to<float>("tcdf(1.2, 3.4)", "0.8464878");
-
-  assert_expression_approximates_to<double>("tcdf(1.2, 3.4)", "0.8464877995", Radian, MetricUnitFormat, Cartesian, 10); //FIXME: precision problem
-
-  assert_expression_approximates_to<float>("tpdf(1.2, 3.4)", "0.1706051");
-  assert_expression_approximates_to<double>("tpdf(1.2, 3.4)", "0.17060506917323");
 
   assert_expression_approximates_to<float>("permute(10, 4)", "5040");
   assert_expression_approximates_to<double>("permute(10, 4)", "5040");
@@ -1056,6 +1008,62 @@ QUIZ_CASE(poincare_approximation_map_on_list) {
   assert_expression_approximates_to<float>("sin({0,π})", "{0,0}", Radian);
   assert_expression_approximates_to<float>("{2,3.4}-{0.1,3.1}", "{1.9,0.3}");
   assert_expression_approximates_to<float>("tan({0,π/4})", "{0,1}", Radian);
+}
+
+QUIZ_CASE(poincare_approximation_probability) {
+  assert_expression_approximates_to<float>("binomcdf(5.3, 9, 0.7)", "0.270341", Degree, MetricUnitFormat, Cartesian, 6); // FIXME: precision problem
+  assert_expression_approximates_to<double>("binomcdf(5.3, 9, 0.7)", "0.270340902", Degree, MetricUnitFormat, Cartesian, 10); //FIXME precision problem
+
+  assert_expression_approximates_to<float>("binompdf(4.4, 9, 0.7)", "0.0735138", Degree, MetricUnitFormat, Cartesian, 6); // FIXME: precision problem
+  assert_expression_approximates_to<double>("binompdf(4.4, 9, 0.7)", "0.073513818");
+
+  assert_expression_approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
+  assert_expression_approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
+  assert_expression_approximates_to<float>("invbinom(0.95,100,0.42)", "50");
+  assert_expression_approximates_to<double>("invbinom(0.95,100,0.42)", "50");
+  assert_expression_approximates_to<float>("invbinom(0.01,150,0.9)", "126");
+  assert_expression_approximates_to<double>("invbinom(0.01,150,0.9)", "126");
+
+  assert_expression_approximates_to<double>("geompdf(1,1)", "1");
+  assert_expression_approximates_to<double>("geompdf(2,0.5)", "0.25");
+  assert_expression_approximates_to<double>("geompdf(2,1)", "0");
+  assert_expression_approximates_to<double>("geompdf(1,0)", "undef");
+  assert_expression_approximates_to<double>("geomcdf(2,0.5)", "0.75");
+  assert_expression_approximates_to<double>("geomcdfrange(2,3,0.5)", "0.375");
+  assert_expression_approximates_to<double>("geomcdfrange(2,2,0.5)", "0.25");
+  assert_expression_approximates_to<double>("invgeom(1,1)", "1");
+  assert_expression_approximates_to<double>("invgeom(0.825,0.5)", "3");
+
+  assert_expression_approximates_to<double>("normcdf(5, 7, 0.3162)", "1.265256ᴇ-10", Radian, MetricUnitFormat, Cartesian, 7);
+
+  assert_expression_approximates_to<float>("normcdf(1.2, 3.4, 5.6)", "0.3472125");
+  assert_expression_approximates_to<double>("normcdf(1.2, 3.4, 5.6)", "0.34721249841587");
+  assert_expression_approximates_to<float>("normcdf(-1ᴇ99,3.4,5.6)", "0");
+  assert_expression_approximates_to<float>("normcdf(1ᴇ99,3.4,5.6)", "1");
+  assert_expression_approximates_to<float>("normcdf(-6,0,1)", "0");
+  assert_expression_approximates_to<float>("normcdf(6,0,1)", "1");
+
+  assert_expression_approximates_to<float>("normcdfrange(0.5, 3.6, 1.3, 3.4)", "0.3436388");
+  assert_expression_approximates_to<double>("normcdfrange(0.5, 3.6, 1.3, 3.4)", "0.34363881299147");
+
+  assert_expression_approximates_to<float>("normpdf(1.2, 3.4, 5.6)", "0.06594901");
+  assert_expression_approximates_to<float>("invnorm(0.56, 1.3, 2.4)", "1.662326");
+  //assert_expression_approximates_to<double>("invnorm(0.56, 1.3, 2.4)", "1.6623258450088"); FIXME precision error
+
+  assert_expression_approximates_to<float>("poissonpdf(2,1)", "0.1839397");
+  assert_expression_approximates_to<double>("poissonpdf(2,1)", "0.18393972058572");
+  assert_expression_approximates_to<float>("poissonpdf(2,2)", "0.2706706");
+  assert_expression_approximates_to<float>("poissoncdf(2,2)", "0.6766764");
+  assert_expression_approximates_to<double>("poissoncdf(2,2)", "0.67667641618306");
+
+  assert_expression_approximates_to<float>("tpdf(1.2, 3.4)", "0.1706051");
+  assert_expression_approximates_to<double>("tpdf(1.2, 3.4)", "0.17060506917323");
+  assert_expression_approximates_to<float>("tcdf(0.5, 2)", "0.6666667");
+  assert_expression_approximates_to<float>("tcdf(1.2, 3.4)", "0.8464878");
+  assert_expression_approximates_to<double>("tcdf(1.2, 3.4)", "0.8464877995", Radian, MetricUnitFormat, Cartesian, 10); //FIXME: precision problem
+  assert_expression_approximates_to<float>("invt(0.8464878,3.4)", "1.2");
+  assert_expression_approximates_to<double>("invt(0.84648779949601043,3.4)", "1.2", Radian, MetricUnitFormat, Cartesian, 10);
+
 }
 
 QUIZ_CASE(poincare_approximation_store) {

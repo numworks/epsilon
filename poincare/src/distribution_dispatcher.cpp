@@ -61,9 +61,9 @@ Expression DistributionDispatcher::shallowReduce(ExpressionNode::ReductionContex
   }
 
   int childIndex = 0;
-  Expression abscissa[DistributionMethod::k_maxNumberOfParameters];
+  Expression abscissae[DistributionMethod::k_maxNumberOfParameters];
   for (int i=0; i < DistributionMethod::numberOfParameters(methodType()); i++) {
-    abscissa[i] = childAtIndex(childIndex++);
+    abscissae[i] = childAtIndex(childIndex++);
   }
   Expression parameters[Distribution::k_maxNumberOfParameters];
   for (int i=0; i < Distribution::numberOfParameters(distributionType()); i++) {
@@ -82,7 +82,7 @@ Expression DistributionDispatcher::shallowReduce(ExpressionNode::ReductionContex
     return replaceWithUndefinedInPlace();
   }
 
-  Expression e = function->shallowReduce(abscissa, distribution, parameters, reductionContext, this);
+  Expression e = function->shallowReduce(abscissae, distribution, parameters, reductionContext, this);
   if (!e.isUninitialized()) {
     return e;
   }

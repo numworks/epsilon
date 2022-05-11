@@ -1799,6 +1799,27 @@ QUIZ_CASE(poincare_advanced_trigonometry) {
 }
 
 QUIZ_CASE(poincare_probability) {
+  assert_parsed_expression_simplify_to("binompdf(2,4,-1)", "undef");
+  assert_parsed_expression_simplify_to("binompdf(2,4,1.2)", "undef");
+  assert_parsed_expression_simplify_to("binompdf(-inf,4,0.4)", "0");
+  assert_parsed_expression_simplify_to("binompdf(inf,4,0.4)", "0");
+  assert_parsed_expression_simplify_to("binomcdf(2,4,-1)", "undef");
+  assert_parsed_expression_simplify_to("binomcdf(2,4,1.2)", "undef");
+  assert_parsed_expression_simplify_to("binomcdf(-inf,4,0.4)", "0");
+  assert_parsed_expression_simplify_to("binomcdf(inf,4,0.4)", "1");
+  assert_parsed_expression_simplify_to("invbinom(1,4,-1)", "undef");
+  assert_parsed_expression_simplify_to("invbinom(0,4,1.2)", "undef");
+  assert_parsed_expression_simplify_to("invbinom(1,4,0.4)", "4");
+  assert_parsed_expression_simplify_to("invbinom(0,4,0.4)", "undef");
+  assert_parsed_expression_simplify_to("invbinom(1,4,1)", "4");
+  assert_parsed_expression_simplify_to("invbinom(0,4,1)", "0");
+
+  assert_parsed_expression_simplify_to("geompdf(1,0)", "undef");
+  assert_parsed_expression_simplify_to("geomcdf(inf,0.5)", "1");
+  assert_parsed_expression_simplify_to("invgeom(1,1)", "1");
+
+  assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
+  assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
   assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
   assert_parsed_expression_simplify_to("invnorm(0,2,3)", "-inf");
   assert_parsed_expression_simplify_to("invnorm(0.5,2,3)", "2");
@@ -1808,9 +1829,19 @@ QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("invnorm(0.5,2,0)", Undefined::Name());
   assert_parsed_expression_simplify_to("invnorm(0.5,2,-1)", Undefined::Name());
   assert_parsed_expression_simplify_to("normcdf(2,0,1)", "normcdf(2,0,1)");
+  assert_parsed_expression_simplify_to("normcdfrange(-inf,inf,20,4)", "1");
   assert_parsed_expression_simplify_to("normcdfrange(1,2,0,1)", "normcdfrange(1,2,0,1)");
   assert_parsed_expression_simplify_to("normpdf(2,0,1)", "normpdf(2,0,1)");
 
+  assert_parsed_expression_simplify_to("poissonpdf(1,0)", "undef");
+  assert_parsed_expression_simplify_to("poissoncdf(inf,0.5)", "1");
+
+  assert_parsed_expression_simplify_to("tpdf(-inf,0)", "undef");
+  assert_parsed_expression_simplify_to("tpdf(-inf,2)", "0");
+  assert_parsed_expression_simplify_to("tpdf(inf,2)", "0");
+  assert_parsed_expression_simplify_to("tcdf(-inf,2)", "0");
+  assert_parsed_expression_simplify_to("tcdf(inf,2)", "1");
+  assert_parsed_expression_simplify_to("invt(0.5,0)", "undef");
   assert_parsed_expression_simplify_to("invt(0.5,12)", "0");
   assert_parsed_expression_simplify_to("invt(0.5,0)", "undef");
 }

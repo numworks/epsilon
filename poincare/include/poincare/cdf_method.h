@@ -14,6 +14,9 @@ class CDFMethod final : public DistributionMethod {
   double EvaluateAtAbscissa(double * x, const Distribution * distribution, const double * parameters) const override {
     return distribution->CumulativeDistributiveFunctionAtAbscissa(x[0], parameters);
   }
+
+  Expression shallowReduce(Expression * abscissae, const Distribution * distribution, Expression * parameters, ExpressionNode::ReductionContext reductionContext, Expression * expression) const override;
+
 };
 
 }

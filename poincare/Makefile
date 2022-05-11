@@ -38,6 +38,8 @@ poincare_src += $(addprefix poincare/src/,\
   beta_function.cpp \
   binomial_distribution.cpp \
   checkpoint.cpp \
+  cdf_method.cpp \
+  cdf_range_method.cpp \
   chi2_distribution.cpp \
   circuit_breaker_checkpoint.cpp \
   discrete_distribution.cpp \
@@ -51,6 +53,7 @@ poincare_src += $(addprefix poincare/src/,\
   helpers.cpp \
   inv_method.cpp \
   normal_distribution.cpp \
+  pdf_method.cpp \
   poisson_distribution.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \

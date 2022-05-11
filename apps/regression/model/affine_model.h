@@ -11,6 +11,7 @@ public:
   using Model::Model;
   Poincare::Layout layout() override;
   I18n::Message formulaMessage() const override { return I18n::Message::LinearRegressionFormula; }
+  int buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const override;
   double evaluate(double * modelCoefficients, double x) const override;
   double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;

@@ -7,6 +7,7 @@
 #include <poincare/number.h>
 #include <poincare/power.h>
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 #include <poincare/sine.h>
 #include <poincare/symbol.h>
 #include <assert.h>
@@ -27,6 +28,14 @@ Layout TrigonometricModel::layout() {
     m_layout = LayoutHelper::StringToCodePointsLayout(s, strlen(s), k_layoutFont);
   }
   return m_layout;
+}
+
+int TrigonometricModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
+  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed·sin(%*.*ed·x+%*.*ed)+%*.*ed",
+      modelCoefficients[0], displayMode, significantDigits,
+      modelCoefficients[1], displayMode, significantDigits,
+      modelCoefficients[2], displayMode, significantDigits,
+      modelCoefficients[3], displayMode, significantDigits);
 }
 
 double TrigonometricModel::evaluate(double * modelCoefficients, double x) const {

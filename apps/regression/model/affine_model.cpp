@@ -1,6 +1,7 @@
 #include "affine_model.h"
 #include "../store.h"
 #include <poincare/layout_helper.h>
+#include <poincare/print.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -13,6 +14,12 @@ Layout AffineModel::layout() {
     m_layout = LayoutHelper::StringToCodePointsLayout(s, strlen(s), k_layoutFont);
   }
   return m_layout;
+}
+
+int AffineModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
+  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed·x+%*.*ed",
+      modelCoefficients[0], displayMode, significantDigits,
+      modelCoefficients[1], displayMode, significantDigits);
 }
 
 double AffineModel::evaluate(double * modelCoefficients, double x) const {

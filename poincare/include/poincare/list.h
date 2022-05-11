@@ -57,7 +57,7 @@ public:
   List() : Expression( ) {}
   List(const ListNode * n) : Expression(n) {}
   static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
-  ListNode * node() { return static_cast<ListNode *>(Expression::node()); }
+  ListNode * node() const { return static_cast<ListNode *>(Expression::node()); }
   Expression extremum(ExpressionNode::ReductionContext reductionContext, bool minimum);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   using TreeHandle::addChildAtIndexInPlace;

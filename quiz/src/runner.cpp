@@ -10,10 +10,14 @@ void quiz_print(const char * message) {
   Ion::Console::writeLine(message);
 }
 
-static inline void ion_main_inner() {
+static inline void ion_main_inner(const char * testFilter) {
   int i = 0;
   int time = Ion::Timing::millis();
   while (quiz_cases[i] != NULL) {
+    if (testFilter && strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
+      i++;
+      continue;
+    }
     QuizCase c = quiz_cases[i];
     quiz_print(quiz_case_names[i]);
     int initialPoolSize = Poincare::TreePool::sharedPool()->numberOfNodes();
@@ -47,9 +51,10 @@ void ion_main(int argc, const char * const argv[]) {
   Ion::setStackStart((void *)(&stackTop));
 #endif
 
+  const char * testFilter = argv[1][0] != '-' ? argv[1] : nullptr;
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    ion_main_inner();
+    ion_main_inner(testFilter);
   } else {
     // There has been a memory allocation problem
 #if POINCARE_TREE_LOG

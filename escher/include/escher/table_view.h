@@ -19,27 +19,29 @@ public:
   int numberOfDisplayableRows() const { return m_contentView.numberOfDisplayableRows(); }
   int numberOfDisplayableColumns() const { return m_contentView.numberOfDisplayableColumns(); }
 
-  virtual void scrollToCell(int i, int j);
-  HighlightCell * cellAtLocation(int i, int j);
-  void reloadCellAtLocation(int i, int j);
+  /* This method computes the minimal scrolling needed to properly display the
+   * requested cell. */
+  virtual void scrollToCell(int i, int j) { scrollToContentRect(m_contentView.cellFrame(i, j), true); }
+  HighlightCell * cellAtLocation(int i, int j) { return m_contentView.cellAtLocation(i, j); }
+  void reloadCellAtLocation(int i, int j) { m_contentView.reloadCellAtLocation(i, j); }
   void initWidth(KDCoordinate width);
 protected:
 #if ESCHER_VIEW_LOGGING
-  const char * className() const override;
+  const char * className() const override { return "TableView"; }
 #endif
-  TableViewDataSource * dataSource();
+  TableViewDataSource * dataSource() { return m_contentView.dataSource(); }
   void layoutSubviews(bool force = false) override;
   class ContentView : public View {
   public:
     ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlap, KDCoordinate verticalCellOverlap);
-    KDSize minimalSizeForOptimalDisplay() const override;
+    KDSize minimalSizeForOptimalDisplay() const override { return KDSize(width(), height()); }
 
     void setHorizontalCellOverlap(KDCoordinate o) { m_horizontalCellOverlap = o; }
     void setVerticalCellOverlap(KDCoordinate o) { m_verticalCellOverlap = o; }
 
     void reloadCellAtLocation(int i, int j);
     HighlightCell * cellAtLocation(int i, int j);
-    TableViewDataSource * dataSource();
+    TableViewDataSource * dataSource() { return m_dataSource; }
     int rowsScrollingOffset() const;
     int columnsScrollingOffset() const;
     int numberOfDisplayableRows() const;
@@ -48,20 +50,20 @@ protected:
     void layoutSubviews(bool force = false) override;
   protected:
 #if ESCHER_VIEW_LOGGING
-    const char * className() const override;
+    const char * className() const override { return "TableView::ContentView"; }
 #endif
   private:
-    KDCoordinate height() const;
+    KDCoordinate height() const { return m_dataSource->cumulatedHeightFromIndex(m_dataSource->numberOfRows()) + m_verticalCellOverlap; }
     KDCoordinate width() const;
 
-    int numberOfSubviews() const override;
+    int numberOfSubviews() const override { return numberOfDisplayableRows() * numberOfDisplayableColumns(); }
     View * subview(int index) override;
     View * subviewAtIndex(int index) override;
 
-    /* These two methods transform an index (of subview for instance) into
-     * coordinates that refer to the data source entire table */
-    int absoluteColumnNumberFromSubviewIndex(int index) const;
-    int absoluteRowNumberFromSubviewIndex(int index) const;
+    /* These two methods transform a positive index (of subview for instance)
+     * into coordinates that refer to the data source entire table */
+    int absoluteColumnNumberFromSubviewIndex(int index) const { return (index % numberOfDisplayableColumns()) + columnsScrollingOffset(); }
+    int absoluteRowNumberFromSubviewIndex(int index) const { return (index / numberOfDisplayableColumns()) + rowsScrollingOffset(); }
     int typeOfSubviewAtIndex(int index) const;
     /* This method transform a index (of subview for instance) into an index
      * refering to the set of cells of type "type". */

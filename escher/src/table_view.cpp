@@ -21,6 +21,22 @@ void TableView::initWidth(KDCoordinate width) {
   }
 }
 
+void TableView::reloadVisibleCellsAtColumn(int column) {
+  // Reload visible cells of the selected column
+  int firstVisibleCol = firstDisplayedColumnIndex();
+  int lastVisibleCol = firstVisibleCol + numberOfDisplayableColumns();
+  if (column < firstVisibleCol || column >= lastVisibleCol) {
+    // Column is not visible
+    return;
+  }
+  int firstVisibleRow = firstDisplayedRowIndex();
+  int lastVisibleRow = std::max(firstVisibleRow + numberOfDisplayableRows(), m_contentView.dataSource()->numberOfRows() - 1);
+
+  for (int j = firstVisibleRow; j <= lastVisibleRow; j++) {
+    reloadCellAtLocation(column, j);
+  }
+}
+
 void TableView::layoutSubviews(bool force) {
   /* On the one hand, ScrollView::layoutSubviews()
    * calls setFrame(...) over m_contentView,

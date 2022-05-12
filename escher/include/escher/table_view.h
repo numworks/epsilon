@@ -25,6 +25,7 @@ public:
   HighlightCell * cellAtLocation(int i, int j) { return m_contentView.cellAtLocation(i, j); }
   void reloadCellAtLocation(int i, int j) { m_contentView.reloadCellAtLocation(i, j); }
   void initWidth(KDCoordinate width);
+  void reloadVisibleCellsAtColumn(int column);
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override { return "TableView"; }

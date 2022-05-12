@@ -10,7 +10,7 @@ namespace Inference {
 
 ParametersController::ContentView::ContentView(SelectableTableView * selectableTableView) :
       m_titleView(KDFont::SmallFont,
-                  I18n::Message::ChooseParameters,
+                  I18n::Message::DefineParameters,
                   KDContext::k_alignCenter,
                   KDContext::k_alignCenter,
                   Palette::GrayDark,

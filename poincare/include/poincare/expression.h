@@ -256,6 +256,9 @@ public:
 
   /* Layout Helper */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool stripMarginStyle = false, bool nested = false) const;
+  ExpressionNode::LayoutShape leftLayoutShape() const { return node()->leftLayoutShape(); }
+  ExpressionNode::LayoutShape rightLayoutShape() const { return node()->rightLayoutShape(); }
+
   /* TODO:
    * - change signature to
    *   size_t serialize(char * buffer, size_t bufferSize...)

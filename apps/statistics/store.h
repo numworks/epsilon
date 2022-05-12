@@ -108,13 +108,8 @@ public:
   double normalProbabilityResultAtIndex(int series, int i) const;
 
   // DoublePairStore
-  void sortColumn(int series, int column) override;
-  void set(double f, int series, int i, int j, bool setOtherColumnToDefaultIfEmpty = false) override;
   void updateSeriesValidity(int series) override;
   bool deleteValueAtIndex(int series, int i, int j) override;
-  void deletePairOfSeriesAtIndex(int series, int j) override;
-  void resetColumn(int series, int i) override;
-  void deleteAllPairsOfSeries(int series) override;
 
   typedef double (Store::*CalculPointer)(int) const;
   static bool ValidSeriesAndValidTotalNormalProbabilities(const DoublePairStore * store, int series) {
@@ -138,7 +133,10 @@ private:
   };
 
   int computeRelativeColumnAndSeries(int * i) const;
+
+  // DoublePairStore
   double defaultValue(int series, int i, int j) const override;
+  void updateSeries(int series) override;
   /* Find the i-th distinct value (if i is -1, browse the entire series) from
    * start to end (ordered by value).
    * Retrieve the i-th value and the number distinct values encountered.

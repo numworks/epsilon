@@ -154,11 +154,8 @@ int TableView::ContentView::numberOfSubviews() const {
 }
 
 int TableView::ContentView::absoluteColumnNumberFromSubviewIndex(int index) const {
-  /* "x = i % columns" but we avoid a call to modulo not to implement
-  * "__aeabi_idivmod" */
   int displayableColumnsCount = numberOfDisplayableColumns();
-  int j = index / displayableColumnsCount;
-  int i = index - j * displayableColumnsCount;
+  int i = index % displayableColumnsCount;
   int columnOffset = columnsScrollingOffset();
   return i + columnOffset;
 }

@@ -148,13 +148,11 @@ int Store::numberOfBoxPlotCalculations(int series) const {
 
 void Store::updateSeriesValidity(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
-  DoublePairStore::memoizeValidSeries(series);
-  if (!m_validSeries[series]) {
-    return;
-  }
-  bool isSeriesValid = numberOfPairsOfSeries(series) > 0 && sumOfOccurrences(series) > 0.0;
+  bool oldValidity = m_validSeries[series];
+  DoublePairStore::updateSeriesValidity(series);
+  bool isSeriesValid = m_validSeries[series] && frequenciesAreValid(series);
   // Reset the graph view any time one of the series gets invalidated
-  m_graphViewInvalidated = m_graphViewInvalidated || (m_validSeries[series] && !isSeriesValid);
+  m_graphViewInvalidated = m_graphViewInvalidated || (oldValidity && !isSeriesValid);
   m_validSeries[series] = isSeriesValid;
 }
 
@@ -450,10 +448,10 @@ void Store::sortColumn(int series, int column) {
   DoublePairStore::sortColumn(series, column);
 }
 
-void Store::set(double f, int series, int i, int j) {
+void Store::set(double f, int series, int i, int j, bool setOtherColumnToDefaultIfEmpty) {
   m_sortedIndexValid[series] = false;
   m_memoizedMaxNumberOfModes = 0;
-  DoublePairStore::set(f, series, i, j);
+  DoublePairStore::set(f, series, i, j, setOtherColumnToDefaultIfEmpty);
 }
 
 bool Store::deleteValueAtIndex(int series, int i, int j) {
@@ -664,6 +662,21 @@ void Store::buildSortedIndex(int series) const {
   }
   sortIndexByColumn(m_sortedIndex + series * k_maxNumberOfPairs, series, 0, 0, numberOfPairs);
   m_sortedIndexValid[series] = true;
+}
+
+bool Store::frequenciesAreValid(int series) const {
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  bool onlyZeros = true;
+  for (int i = 0; i < numberOfPairs; i++) {
+    double frequency = get(series, 1, i);
+    if (std::isnan(frequency) || frequency < 0.0) {
+      return false;
+    }
+    if (onlyZeros && frequency > 0.0) {
+      onlyZeros = false;
+    }
+  }
+  return !onlyZeros;
 }
 
 }

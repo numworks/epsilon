@@ -46,7 +46,7 @@ document.getElementById("action-fullscreen").addEventListener("click", function(
 });
 
 document.getElementById("action-screenshot").addEventListener("click", function(e) {
-  Module.downloadScreenshot();
+  Module.takeScreenshot(e);
 });
     </script>
     <script async src="https://www.numworks.com/simulator/update.js"></script>

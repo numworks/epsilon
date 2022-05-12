@@ -443,40 +443,10 @@ double Store::computeModes(int series, int i, double * modeFreq, int * modesTota
   return ithValue;
 }
 
-void Store::sortColumn(int series, int column) {
-  m_sortedIndexValid[series] = false;
-  DoublePairStore::sortColumn(series, column);
-}
-
-void Store::set(double f, int series, int i, int j, bool setOtherColumnToDefaultIfEmpty) {
-  m_sortedIndexValid[series] = false;
-  m_memoizedMaxNumberOfModes = 0;
-  DoublePairStore::set(f, series, i, j, setOtherColumnToDefaultIfEmpty);
-}
-
 bool Store::deleteValueAtIndex(int series, int i, int j) {
   deletePairOfSeriesAtIndex(series, j);
   return true;
 }
-
-void Store::deletePairOfSeriesAtIndex(int series, int i) {
-  m_sortedIndexValid[series] = false;
-  m_memoizedMaxNumberOfModes = 0;
-  DoublePairStore::deletePairOfSeriesAtIndex(series, i);
-}
-
-void Store::resetColumn(int series, int i) {
-  m_sortedIndexValid[series] = false;
-  m_memoizedMaxNumberOfModes = 0;
-  DoublePairStore::resetColumn(series, i);
-}
-
-void Store::deleteAllPairsOfSeries(int series) {
-  m_sortedIndexValid[series] = false;
-  m_memoizedMaxNumberOfModes = 0;
-  DoublePairStore::deleteAllPairsOfSeries(series);
-}
-
 
 /* Private methods */
 
@@ -492,6 +462,12 @@ int Store::computeRelativeColumnAndSeries(int * i) const {
 
 double Store::defaultValue(int series, int i, int j) const {
   return (i == 0 && j > 1) ? 2 * get(series, i, j-1) - get(series, i, j-2) : 1.0;
+}
+
+void Store::updateSeries(int series) {
+  m_sortedIndexValid[series] = false;
+  m_memoizedMaxNumberOfModes = 0;
+  DoublePairStore::updateSeries(series);
 }
 
 double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUpperBound) const {

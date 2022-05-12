@@ -14,26 +14,6 @@ TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * sc
 {
 }
 
-TableViewDataSource * TableView::dataSource() {
-  return m_contentView.dataSource();
-}
-
-// This method computes the minimal scrolling needed to properly display the
-// requested cell.
-void TableView::scrollToCell(int i, int j) {
-  scrollToContentRect(m_contentView.cellFrame(i, j), true);
-}
-
-HighlightCell * TableView::cellAtLocation(int i, int j) {
-  return m_contentView.cellAtLocation(i, j);
-}
-
-#if ESCHER_VIEW_LOGGING
-const char * TableView::className() const {
-  return "TableView";
-}
-#endif
-
 void TableView::initWidth(KDCoordinate width) {
   if (bounds().width() <= 0) {
     setSize(KDSize(width, 0));
@@ -62,10 +42,6 @@ void TableView::layoutSubviews(bool force) {
   ScrollView::layoutSubviews(force);
 }
 
-void TableView::reloadCellAtLocation(int i, int j) {
-  m_contentView.reloadCellAtLocation(i, j);
-}
-
 /* TableView::ContentView */
 
 TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlap, KDCoordinate verticalCellOverlap) :
@@ -74,16 +50,7 @@ TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource *
   m_dataSource(dataSource),
   m_horizontalCellOverlap(horizontalCellOverlap),
   m_verticalCellOverlap(verticalCellOverlap)
-{
-}
-
-KDSize TableView::ContentView::minimalSizeForOptimalDisplay() const {
-  return KDSize(width(), height());
-}
-
-TableViewDataSource * TableView::ContentView::dataSource() {
-  return m_dataSource;
-}
+{}
 
 KDRect TableView::ContentView::cellFrame(int i, int j) const {
   KDCoordinate columnWidth = m_dataSource->columnWidth(i);
@@ -93,10 +60,6 @@ KDRect TableView::ContentView::cellFrame(int i, int j) const {
     columnWidth + m_horizontalCellOverlap,
     m_dataSource->rowHeight(j) + m_verticalCellOverlap
   );
-}
-
-KDCoordinate TableView::ContentView::height() const {
-  return m_dataSource->cumulatedHeightFromIndex(m_dataSource->numberOfRows())+m_verticalCellOverlap;
 }
 
 KDCoordinate TableView::ContentView::width() const {
@@ -141,29 +104,6 @@ HighlightCell * TableView::ContentView::cellAtLocation(int x, int y) {
   int index = relativeY*numberOfDisplayableColumns()+relativeX;
   int typeIndex = typeIndexFromSubviewIndex(index, type);
   return m_dataSource->reusableCell(typeIndex, type);
-}
-
-#if ESCHER_VIEW_LOGGING
-const char * TableView::ContentView::className() const {
-  return "TableView::ContentView";
-}
-#endif
-
-int TableView::ContentView::numberOfSubviews() const {
-  return numberOfDisplayableRows() * numberOfDisplayableColumns();
-}
-
-int TableView::ContentView::absoluteColumnNumberFromSubviewIndex(int index) const {
-  int displayableColumnsCount = numberOfDisplayableColumns();
-  int i = index % displayableColumnsCount;
-  int columnOffset = columnsScrollingOffset();
-  return i + columnOffset;
-}
-
-int TableView::ContentView::absoluteRowNumberFromSubviewIndex(int index) const {
-  int j = index / numberOfDisplayableColumns();
-  int rowOffset = rowsScrollingOffset();
-  return j + rowOffset;
 }
 
 View * TableView::ContentView::subview(int index) {

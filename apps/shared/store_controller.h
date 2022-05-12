@@ -3,9 +3,11 @@
 
 #include <escher/button_row_controller.h>
 #include <escher/input_view_controller.h>
+#include <escher/stack_view_controller.h>
 #include "editable_cell_table_view_controller.h"
 #include "double_pair_store.h"
 #include "layout_field_delegate.h"
+#include "formula_template_menu_controller.h"
 #include "input_event_handler_delegate.h"
 #include "store_cell.h"
 #include "store_context.h"
@@ -25,6 +27,7 @@ public:
   virtual int fillColumnName(int columnIndex, char * buffer) override { return m_store->fillColumnName(m_store->seriesAtColumn(columnIndex), m_store->relativeColumnIndex(columnIndex), buffer); }
 
   void displayFormulaInput();
+  void fillFormulaInputWithTemplate(Poincare::Layout layout);
   bool fillColumnWithFormula(Poincare::Expression formula);
   virtual void sortSelectedColumn();
   // Return false if the series can't switch hide status because it's invalid
@@ -92,7 +95,6 @@ protected:
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
 
-protected:
   virtual Escher::InputViewController * inputViewController() = 0;
 
 private:
@@ -101,6 +103,8 @@ private:
 
   StoreTitleCell m_titleCells[k_numberOfTitleCells];
   ContentView m_contentView;
+  FormulaTemplateMenuController m_templateController;
+  Escher::StackViewController m_templateStackController;
   StoreContext m_storeContext;
 
 };

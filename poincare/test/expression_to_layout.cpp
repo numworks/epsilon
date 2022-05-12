@@ -113,6 +113,18 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Constant::Builder("π"), Symbol::Builder('a')), "2·π·a");
   // 2(1+a)(1+π)
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Symbol::Builder('a'))), Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Constant::Builder("π")))), "2(1+a)(1+π)");
+
+  /* Special case for units
+   * When possible, do not display an operator between a value and its unit,
+   * even if there is another operator defined for this multiplication. */
+  // 2_m·3_m
+  assert_expression_layouts_and_serializes_to(
+      Multiplication::Builder(Rational::Builder(2), Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix()), Rational::Builder(3), Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix())),
+      "2_m·3_m");
+  // 2_m×3.5_m
+  assert_expression_layouts_and_serializes_to(
+      Multiplication::Builder(Rational::Builder(2), Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix()), Float<double>::Builder(3.5), Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix())),
+      "2_m×3.5_m");
 }
 
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout) {

@@ -41,15 +41,15 @@ public:
   constexpr static int k_numberOfReusableCells = k_maxNumberOfReusableRows * k_numberOfReusableColumns; // 5 * 10
 
 protected:
+  constexpr static int k_maxNumberOfColumns = HomogeneityTest::k_maxNumberOfColumns;
+  constexpr static int k_maxNumberOfRows = HomogeneityTest::k_maxNumberOfRows;
+
   virtual int innerNumberOfRows() const = 0;
   virtual int innerNumberOfColumns() const = 0;
   virtual void willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) = 0;
   virtual Escher::HighlightCell * innerCell(int i) = 0;
 
 private:
-  constexpr static int k_maxNumberOfColumns = HomogeneityTest::k_maxNumberOfColumns;
-  constexpr static int k_maxNumberOfRows = HomogeneityTest::k_maxNumberOfRows;
-
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
   constexpr static int k_headerTranslationBuffer = 20;
 

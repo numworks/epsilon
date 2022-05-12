@@ -17,6 +17,16 @@ void InputHomogeneityTableCell::didBecomeFirstResponder() {
   EditableCategoricalTableCell::didBecomeFirstResponder();
 }
 
+void InputHomogeneityTableCell::willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
+  HomogeneityTableDataSource::willDisplayCellAtLocation(cell, column, row);
+  if ((column == 0 && row != 0 && row == numberOfRows() - 1 && row < k_maxNumberOfRows)
+   || (row == 0 && column != 0 && column == numberOfColumns() - 1 && column < k_maxNumberOfColumns)) {
+    /* The last column/row is empty and has its title grayed out. */
+    Escher::EvenOddBufferTextCell * typedCell = static_cast<Escher::EvenOddBufferTextCell *>(cell);
+    typedCell->setTextColor(Palette::GrayDark);
+  }
+}
+
 void InputHomogeneityTableCell::willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
   willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, column, row, m_statistic);

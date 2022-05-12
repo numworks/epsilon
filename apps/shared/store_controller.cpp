@@ -36,11 +36,12 @@ void StoreController::ContentView::layoutSubviews(bool force) {
   m_dataView.setFrame(dataViewFrame, force);
 }
 
-StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header) :
+StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header, Context * parentContext) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_store(store),
-  m_contentView(m_store, this, this, this)
+  m_contentView(m_store, this, this, this),
+  m_storeContext(store, parentContext)
 {
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i].setParentResponder(m_contentView.dataView());
@@ -70,7 +71,7 @@ void StoreController::displayFormulaInput() {
 }
 
 bool StoreController::createExpressionForFillingCollumnWithFormula(const char * text) {
-  Expression expression = Expression::Parse(text, AppsContainer::sharedAppsContainer()->globalContext());
+  Expression expression = Expression::Parse(text, &m_storeContext);
   if (expression.isUninitialized()) {
     Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
     return false;
@@ -260,8 +261,7 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
       return returnFalseAndDisplayWarning();
     }
   }
-  Context * context = AppsContainer::sharedAppsContainer()->globalContext();
-  PoincareHelpers::CloneAndSimplify(&formula, context, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  PoincareHelpers::CloneAndSimplify(&formula, &m_storeContext, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (formula.isUndefined()) {
       return returnFalseAndDisplayWarning();
   }
@@ -280,7 +280,7 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
     selectableTableView()->reloadData();
     return true;
   }
-  double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, context);
+  double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &m_storeContext);
   if (std::isnan(evaluation)) {
       return returnFalseAndDisplayWarning();
   }

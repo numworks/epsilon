@@ -49,8 +49,6 @@ private:
   double observedValue(int resultsIndex) const override;
   int numberOfValuePairs() const override;
 
-  double observedValueAtPosition(Index2D index);
-  double expectedValueAtPosition(Index2D index);
   int computeDegreesOfFreedom(Index2D max);
   double * parametersArray() override { return m_input; }
   void computeExpectedValues(Index2D max);

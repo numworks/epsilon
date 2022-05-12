@@ -74,9 +74,7 @@ void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveS
   assert((((uintptr_t)destination) % 4) == 0);
 
 #ifndef NDEBUG
-    if (s_treePoolLocked) {
-      return;
-    }
+  assert(!s_treePoolLocked);
 #endif
 
   uint32_t * src = reinterpret_cast<uint32_t *>(source);
@@ -124,12 +122,10 @@ int TreePool::numberOfNodes() const {
 void * TreePool::alloc(size_t size) {
   assert(IsAfterTopmostCheckpoint(last()));
 #ifndef NDEBUG
-    if (s_treePoolLocked) {
-      return nullptr;
-    }
+  assert(!s_treePoolLocked);
 #endif
 
-    size = Helpers::AlignedSize(size, ByteAlignment);
+  size = Helpers::AlignedSize(size, ByteAlignment);
   if (m_cursor + size > buffer() + BufferSize) {
     ExceptionCheckpoint::Raise();
   }
@@ -141,9 +137,7 @@ void * TreePool::alloc(size_t size) {
 void TreePool::dealloc(TreeNode * node, size_t size) {
   assert(IsAfterTopmostCheckpoint(node));
 #ifndef NDEBUG
-    if (s_treePoolLocked) {
-      return;
-    }
+  assert(!s_treePoolLocked);
 #endif
 
   size = Helpers::AlignedSize(size, ByteAlignment);

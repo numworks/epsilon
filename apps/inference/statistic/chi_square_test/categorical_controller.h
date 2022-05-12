@@ -20,7 +20,7 @@ namespace Inference {
 
 class CategoricalController : public Escher::SelectableListViewController<Escher::ListViewDataSource>, public Escher::SelectableTableViewDelegate {
 public:
-  CategoricalController(Escher::StackViewController * parent, Escher::ViewController * nextController, Escher::Invocation invocation);
+  CategoricalController(Escher::Responder * parent, Escher::ViewController * nextController, Escher::Invocation invocation);
 
   // Responder
   void didBecomeFirstResponder() override;

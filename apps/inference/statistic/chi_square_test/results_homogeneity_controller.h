@@ -8,7 +8,7 @@ namespace Inference {
 
 class ResultsHomogeneityController : public CategoricalController {
 public:
-  ResultsHomogeneityController(StackViewController * parent, Escher::ViewController * nextController, HomogeneityTest * statistic);
+  ResultsHomogeneityController(Responder * parent, Escher::ViewController * nextController, HomogeneityTest * statistic);
 
   // Responder
   void didBecomeFirstResponder() override;

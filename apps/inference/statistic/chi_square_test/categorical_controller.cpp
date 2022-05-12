@@ -10,7 +10,7 @@ using namespace Escher;
 namespace Inference {
 
 CategoricalController::CategoricalController(
-    StackViewController * parent,
+    Responder * parent,
     ViewController * nextController,
     Invocation invocation) :
       SelectableListViewController<ListViewDataSource>(parent),

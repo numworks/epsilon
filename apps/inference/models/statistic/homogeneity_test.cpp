@@ -55,6 +55,12 @@ double HomogeneityTest::expectedValueAtLocation(int row, int column) {
   return m_expectedValues[index2DToIndex(row, column)];
 }
 
+double HomogeneityTest::contributionAtLocation(int row, int column) {
+  double eV = expectedValueAtLocation(row, column);
+  double oV = parameterAtPosition(row, column);
+  return std::pow(eV - oV, 2.) / eV;
+}
+
 double HomogeneityTest::observedValue(int resultsIndex) const {
   return parameterAtIndex(resultsIndexToArrayIndex(resultsIndex));
 }

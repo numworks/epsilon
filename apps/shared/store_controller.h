@@ -8,6 +8,7 @@
 #include "layout_field_delegate.h"
 #include "input_event_handler_delegate.h"
 #include "store_cell.h"
+#include "store_context.h"
 #include "store_parameter_controller.h"
 #include "store_selectable_table_view.h"
 #include "store_title_cell.h"
@@ -16,7 +17,7 @@ namespace Shared {
 
 class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
 public:
-  StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header);
+  StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
   Escher::View * view() override { return &m_contentView; }
   TELEMETRY_ID("Store");
 
@@ -100,6 +101,7 @@ private:
 
   StoreTitleCell m_titleCells[k_numberOfTitleCells];
   ContentView m_contentView;
+  StoreContext m_storeContext;
 
 };
 

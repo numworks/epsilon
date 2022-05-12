@@ -11,7 +11,7 @@ using namespace Escher;
 namespace Regression {
 
 StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header, Context * parentContext) :
-  Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
+  Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header, parentContext),
   m_storeParameterController(this, this)
   { }
 

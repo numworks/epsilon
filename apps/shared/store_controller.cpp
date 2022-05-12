@@ -41,6 +41,8 @@ StoreController::StoreController(Responder * parentResponder, Escher::InputEvent
   ButtonRowDelegate(header, nullptr),
   m_store(store),
   m_contentView(m_store, this, this, this),
+  m_templateController(this, this),
+  m_templateStackController(nullptr, &m_templateController, StackViewController::Style::PurpleWhite),
   m_storeContext(store, parentContext)
 {
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
@@ -50,13 +52,21 @@ StoreController::StoreController(Responder * parentResponder, Escher::InputEvent
 }
 
 void StoreController::displayFormulaInput() {
-  char name[Shared::EditableCellTableViewController::k_maxSizeOfColumnName];
-  int filledLength = fillColumnName(selectedColumn(), name);
+  Container::activeApp()->displayModalViewController(&m_templateStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
+}
+
+void StoreController::fillFormulaInputWithTemplate(Layout templateLayout) {
+  int k_sizeOfBuffer = DoublePairStore::k_columnNamesLength + 1 + FormulaTemplateMenuController::k_maxSizeOfTemplateText;
+  char templateString[k_sizeOfBuffer];
+  int filledLength = fillColumnName(selectedColumn(), templateString);
   if (filledLength < Shared::EditableCellTableViewController::k_maxSizeOfColumnName - 1) {
-    name[filledLength] = '=';
-    name[filledLength+1] = 0;
+    templateString[filledLength] = '=';
+    templateString[filledLength + 1] = 0;
   }
-  inputViewController()->setTextBody(name);
+  if (!templateLayout.isUninitialized()) {
+    templateLayout.serializeParsedExpression(templateString + filledLength + 1, k_sizeOfBuffer, nullptr);
+  }
+  inputViewController()->setTextBody(templateString);
   inputViewController()->edit(
       this,
       Ion::Events::OK,

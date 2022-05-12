@@ -43,6 +43,7 @@ app_shared_src = $(addprefix apps/shared/,\
   expression_field_delegate_app.cpp \
   expression_model_list_controller.cpp \
   float_parameter_controller.cpp \
+  formula_template_menu_controller.cpp \
   function_app.cpp \
   function_banner_delegate.cpp \
   function_curve_parameter_controller.cpp \

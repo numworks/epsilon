@@ -1,3 +1,8 @@
+Temp1 = "Integers from 1 to 10"
+Temp2 = "10 random values between 0 and 1"
+Temp3 = "ln(k) with k from 1 to 10"
+Temp4 = "Sum of the lists %s and %s"
+Temp5 = "Values from list %s"
 UnitTimeSecondSymbol = "_s"
 UnitTimeSecondMilliSymbol = "_ms"
 UnitTimeSecondMicroSymbol = "_μs"

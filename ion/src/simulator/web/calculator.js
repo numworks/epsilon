@@ -25,13 +25,33 @@ function Calculator(emModule) {
     onEpsilonIdle: function() {
       calculatorElement.classList.remove('loading');
     },
+    takeScreenshot: function(e) {
+      if (e.altKey) {
+        this.copyScreenshot();
+      } else {
+        this.downloadScreenshot();
+      }
+    },
+    copyScreenshot: function() {
+      this.screenshot(function(blob){
+        let data = [new ClipboardItem({[blob.type]: blob})];
+        navigator.clipboard.write(data);
+      });
+    },
     downloadScreenshot: function() {
-      // toDataURL needs the canvas to be refreshed
+      this.screenshot(function(blob){
+        var url = URL.createObjectURL(blob);
+        console.log(blob, url);
+        var link = document.createElement('a');
+        link.download = 'screenshot.png';
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      });
+    },
+    screenshot: function(callback) {
       this._IonDisplayForceRefresh();
-      var link = document.createElement('a');
-      link.download = 'screenshot.png';
-      link.href = mainCanvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-      link.click();
+      return mainCanvas.toBlob(callback);
     }
   };
   if (mirrorCanvasContext) {

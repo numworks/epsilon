@@ -260,15 +260,9 @@ int StoreController::numberOfElementsInColumn(int columnIndex) const {
 
 void StoreController::reloadSeriesVisibleCells(int series, int relativeColumn) {
   // Reload visible cells of the series and, if not -1, relative column
-  int firstVisibleRow = selectableTableView()->firstDisplayedRowIndex();
-  int lastVisibleRow = std::min({firstVisibleRow + selectableTableView()->numberOfDisplayableRows(), numberOfRows() - 1});
-  int firstVisibleCol = selectableTableView()->firstDisplayedColumnIndex();
-  int lastVisibleCol = std::min({firstVisibleCol + selectableTableView()->numberOfDisplayableColumns(), numberOfColumns() - 1});
-  for (int i = firstVisibleCol; i <= lastVisibleCol; i++) {
+  for (int i = 0; i < numberOfColumns(); i++) {
     if (m_store->seriesAtColumn(i) == series && (relativeColumn == -1 || relativeColumn == m_store->relativeColumnIndex(i))) {
-      for (int j = firstVisibleRow; j <= lastVisibleRow; j++) {
-        selectableTableView()->reloadCellAtLocation(i, j);
-      }
+      selectableTableView()->reloadVisibleCellsAtColumn(i);
     }
   }
 }

@@ -17,7 +17,7 @@ namespace Shared {
 
 DoublePairStore::DoublePairStore() :
   m_validSeries{false,false,false},
-  m_updateFlag(true)
+  m_updateFlag(0)
 {
   for (int s = 0; s < k_numberOfSeries; s++) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
@@ -43,16 +43,14 @@ void DoublePairStore::initListsFromStorage() {
       if (e.type() != ExpressionNode::Type::List) {
         continue;
       }
-      setList(static_cast<List &>(e), s, i, i < k_numberOfColumnsPerSeries - 1 ? false : true);
+      setList(static_cast<List &>(e), s, i);
     }
     enableUpdate();
-    /* We store all lists, even empty ones, so that the context knows their
-    * symbols. */
-    updateStorageAndValidity(s);
+    updateSeries(s);
   }
 }
 
-int DoublePairStore::fillColumnName(int series, int columnIndex, char * buffer) {
+int DoublePairStore::fillColumnName(int series, int columnIndex, char * buffer) const {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(columnIndex >= 0 && columnIndex < k_numberOfColumnsPerSeries);
   buffer[0] = columnNamePrefixAtIndex(columnIndex);
@@ -80,107 +78,55 @@ bool DoublePairStore::isColumnName(const char * name, int nameLen, int * returnS
 }
 
 double DoublePairStore::get(int series, int i, int j) const {
-  assert(j < m_dataLists[series][i].numberOfChildren() && m_dataLists[series][i].childAtIndex(j).type() == ExpressionNode::Type::Double);
+  assert(j < numberOfPairsOfSeries(series));
+  if (j >= lengthOfColumn(series, i)) {
+    return NAN;
+  }
+  assert(m_dataLists[series][i].childAtIndex(j).type() == ExpressionNode::Type::Double);
   Expression child = m_dataLists[series][i].childAtIndex(j);
   return static_cast<Float<double> &>(child).value();
 }
 
-void DoublePairStore::set(double f, int series, int i, int j) {
+void DoublePairStore::set(double f, int series, int i, int j, bool setOtherColumnToDefaultIfEmpty) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (j >= k_maxNumberOfPairs) {
     return;
   }
   assert(j <= numberOfPairsOfSeries(series));
-  if (j == numberOfPairsOfSeries(series)) {
+  if (j >= lengthOfColumn(series, i)) {
+    for (int k = lengthOfColumn(series, i); k < j; k++) {
+      m_dataLists[series][i].addChildAtIndexInPlace(Float<double>::Builder(NAN), k, k);
+    }
     m_dataLists[series][i].addChildAtIndexInPlace(Float<double>::Builder(f), j, j);
-    int otherI = i == 0 ? 1 : 0;
-    m_dataLists[series][otherI].addChildAtIndexInPlace(Float<double>::Builder(defaultValue(series, otherI, j)), j, j);
   } else {
     m_dataLists[series][i].replaceChildAtIndexInPlace(j, Float<double>::Builder(f));
   }
-  updateStorageAndValidity(series);
+  preventUpdate();
+  int otherI = i == 0 ? 1 : 0;
+  if (setOtherColumnToDefaultIfEmpty && j >= lengthOfColumn(series, otherI)) {
+    set(defaultValue(series, otherI, j), series, otherI, j, false);
+  }
+  enableUpdate();
+  updateSeries(series);
 }
 
-void DoublePairStore::setList(List list, int series, int i, bool formatSeriesAfterwards) {
+void DoublePairStore::setList(List list, int series, int i) {
   /* Approximate the list to turn it into list of doubles since we do not
    * want to work with exact expressions in Regression and Statistics.*/
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i ==1);
+  preventUpdate();
   int newListLength = std::max(list.numberOfChildren(), m_dataLists[series][i].numberOfChildren());
   for (int j = 0; j < newListLength; j++) {
     if (j >= list.numberOfChildren()) {
-      m_dataLists[series][i].replaceChildAtIndexInPlace(j, Float<double>::Builder(NAN));
+      m_dataLists[series][i].removeChildAtIndexInPlace(list.numberOfChildren());
       continue;
     }
     double evaluation = PoincareHelpers::ApproximateToScalar<double>(list.childAtIndex(j), AppsContainer::sharedAppsContainer()->globalContext());
-    Expression newChild = Float<double>::Builder(evaluation);
-    if (j >= m_dataLists[series][i].numberOfChildren()) {
-      m_dataLists[series][i].addChildAtIndexInPlace(newChild, j, j);
-      continue;
-    }
-    m_dataLists[series][i].replaceChildAtIndexInPlace(j, newChild);
+    set(evaluation, series, i, j);
   }
-  if (formatSeriesAfterwards) {
-    formatListsOfSeries(series);
-  }
-  updateStorageAndValidity(series);
-}
-
-void DoublePairStore::formatListsOfSeries(int series) {
-  int seriesLength = std::max(m_dataLists[series][0].numberOfChildren(), m_dataLists[series][1].numberOfChildren());
-  int j = 0;
-  for (int n = 0; n < seriesLength; n++) {
-    for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
-      // Step 1: if one of the columns is shorter, add NAN at the end of it
-      if (j >= m_dataLists[series][i].numberOfChildren()) {
-        Expression e = Float<double>::Builder(NAN);
-        m_dataLists[series][i].addChildAtIndexInPlace(e, j, j);
-      }
-      /* Step 2: Transform all the elements into Float<double> */
-      Expression data = m_dataLists[series][i].childAtIndex(j);
-      if (data.type() != ExpressionNode::Type::Double) {
-        m_dataLists[series][i].replaceChildAtIndexInPlace(j, Float<double>::Builder(NAN));
-      }
-    }
-    Expression dataX = m_dataLists[series][0].childAtIndex(j);
-    Expression dataY = m_dataLists[series][1].childAtIndex(j);
-    assert(dataX.type() == ExpressionNode::Type::Double && dataY.type() == ExpressionNode::Type::Double);
-    /* Step 3: if both values are NAN, or if number of values exceeds
-     * k_maxNumberOfPairs, remove the row. */
-    if (j >= k_maxNumberOfPairs || (std::isnan(static_cast<Float<double> &>(dataX).value()) && std::isnan(static_cast<Float<double> &>(dataY).value()))) {
-      m_dataLists[series][0].removeChildAtIndexInPlace(j);
-      m_dataLists[series][1].removeChildAtIndexInPlace(j);
-      j--;
-    }
-    j++;
-  }
-}
-
-void DoublePairStore::tidyListsBeforeFinalStoring() {
-  // When destroying the object, clean the lists for final storage.
-  char listName[k_columnNamesLength + 1];
-  for (int s = 0; s < k_numberOfSeries; s++) {
-    for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
-      // Step 1: Remove all undef at the end of the list.
-      int lastNonUndefIndex = m_dataLists[s][i].numberOfChildren();
-      for (int j = m_dataLists[s][i].numberOfChildren() - 1; j >= 0; j--) {
-        if (!std::isnan(get(s, i, j))) {
-          lastNonUndefIndex = j;
-          break;
-        }
-      }
-      while(m_dataLists[s][i].numberOfChildren() > lastNonUndefIndex + 1) {
-        m_dataLists[s][i].removeChildAtIndexInPlace(lastNonUndefIndex + 1);
-      }
-      // Step 2: Destroy empty lists.
-      if (m_dataLists[s][i].numberOfChildren() == 0) {
-        fillColumnName(s, i, listName);
-        Record(listName, lisExtension).destroy();
-      } else {
-        storeColumn(s, i);
-      }
-    }
-  }
+  enableUpdate();
+  updateSeries(series);
 }
 
 int DoublePairStore::numberOfPairs() const {
@@ -194,30 +140,28 @@ int DoublePairStore::numberOfPairs() const {
 bool DoublePairStore::deleteValueAtIndex(int series, int i, int j) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(j >= 0 && j < numberOfPairsOfSeries(series));
-  int otherI = i == 0 ? 1 : 0;
-  if (std::isnan(get(series,otherI,j))) {
-    deletePairOfSeriesAtIndex(series, j);
-    return true;
-  } else {
-    set(NAN, series, i, j);
-    return false;
-  }
+  int otherI = (i + 1) % k_numberOfColumnsPerSeries;
+  bool willDeletePair = std::isnan(get(series, otherI, j));
+  set(NAN, series, i, j);
+  return willDeletePair;
 }
 
 void DoublePairStore::deletePairOfSeriesAtIndex(int series, int j) {
-  m_dataLists[series][0].removeChildAtIndexInPlace(j);
-  m_dataLists[series][1].removeChildAtIndexInPlace(j);
-  updateStorageAndValidity(series);
+  preventUpdate();
+  deleteValueAtIndex(series, 0, j);
+  deleteValueAtIndex(series, 1, j);
+  enableUpdate();
+  updateSeries(series);
 }
 
 void DoublePairStore::deleteAllPairsOfSeries(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
   preventUpdate();
   for (int i = 0 ; i < k_numberOfColumnsPerSeries ; i++) {
-    deletePairOfSeriesAtIndex(series, i);
+    deleteColumn(series, i);
   }
   enableUpdate();
-  updateStorageAndValidity(series);
+  updateSeries(series);
 }
 
 void DoublePairStore::deleteAllPairs() {
@@ -231,12 +175,10 @@ void DoublePairStore::deleteColumn(int series, int i) {
   assert(i == 0 || i == 1);
   preventUpdate();
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    if(deleteValueAtIndex(series, i, k)) {
-      k--;
-    }
+    deleteValueAtIndex(series, i, k);
   }
   enableUpdate();
-  updateStorageAndValidity(series);
+  updateSeries(series);
 }
 
 void DoublePairStore::resetColumn(int series, int i) {
@@ -247,7 +189,30 @@ void DoublePairStore::resetColumn(int series, int i) {
     set(defaultValue(series, i, k), series, i, k);
   }
   enableUpdate();
-  updateStorageAndValidity(series);
+  updateSeries(series);
+}
+
+bool DoublePairStore::seriesIsValid(int series) const {
+  assert(series >= 0 && series < k_numberOfSeries);
+  return m_validSeries[series];
+}
+
+void DoublePairStore::updateSeriesValidity(int series) {
+  assert(series >= 0 && series < k_numberOfSeries);
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  if (numberOfPairs == 0 || lengthOfColumn(series, 0) != lengthOfColumn(series, 1)) {
+    m_validSeries[series] = false;
+    return;
+  }
+  for (int i = 0 ; i < k_numberOfColumnsPerSeries; i++) {
+    for (int j = 0 ; j < numberOfPairs; j ++) {
+      if (std::isnan(get(series, i, j))) {
+        m_validSeries[series] = false;
+        return;
+      }
+    }
+  }
+  m_validSeries[series] = true;
 }
 
 bool DoublePairStore::hasValidSeries(ValidSeries validSeries) const {
@@ -257,34 +222,6 @@ bool DoublePairStore::hasValidSeries(ValidSeries validSeries) const {
     }
   }
   return false;
-}
-
-bool DoublePairStore::seriesIsValid(int series) const {
-  assert(series >= 0 && series < k_numberOfSeries);
-  return m_validSeries[series];
-}
-
-void DoublePairStore::updateStorageAndValidity(int series) {
-  if (!m_updateFlag) {
-    return;
-  }
-  updateSeriesValidity(series);
-  storeSeries(series);
-}
-
-void DoublePairStore::storeColumn(int series, int i) {
-  List listToStore = m_dataLists[series][i];
-  char name[k_columnNamesLength + 1];
-  int length = fillColumnName(series, i, name);
-  Symbol listSymbol = Symbol::Builder(name, length);
-  AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(listToStore, listSymbol);
-}
-
-void DoublePairStore::storeSeries(int series) {
-  assert(series >= 0 && series < k_numberOfSeries);
-  for (int i = 0; i < k_numberOfColumnsPerSeries ; i++) {
-    storeColumn(series, i);
-  }
 }
 
 int DoublePairStore::numberOfValidSeries(ValidSeries validSeries) const {
@@ -339,7 +276,7 @@ void DoublePairStore::sortColumn(int series, int column) {
   void * context[] = { const_cast<DoublePairStore *>(this), &series, &column };
   Poincare::Helpers::Sort(swapRows, compare, context, numberOfPairsOfSeries(series));
   enableUpdate();
-  updateStorageAndValidity(series);
+  updateSeries(series);
 }
 
 void DoublePairStore::sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const {
@@ -417,9 +354,11 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
   /* The size of each column is needed to compute its CRC32. Since the method
    * size() has a linear complexity with the number of children of a TreeNode,
    * we do a workaround to compute the size in constant time.
-   * This relies on the fact that the lists contain only FloatNodes, and that
-   * the columns have the same number of elements. */
-  size_t dataLengthOfSeries = 2 * (m_dataLists[series][0].sizeOfNode() + m_dataLists[series][0].childAtIndex(0).sizeOfNode() * numberOfPairsOfSeries(series));
+   * This relies on the fact that the lists contain only FloatNodes */
+  size_t dataLengthOfSeries = 0;
+  for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
+    dataLengthOfSeries += m_dataLists[series][i].sizeOfNode() + (lengthOfColumn(series, i) > 0 ? m_dataLists[series][i].childAtIndex(i).sizeOfNode() * lengthOfColumn(series, i) : 0);
+  }
   /* Assert that the computed size is the real size.
    * It can be false if not all elements are floatNode for example.
    * */
@@ -433,6 +372,59 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
 double DoublePairStore::defaultValue(int series, int i, int j) const {
   assert(series >= 0 && series < k_numberOfSeries);
   return 0.0;
+}
+
+
+void DoublePairStore::updateSeries(int series) {
+  assert(series >= 0 && series < k_numberOfSeries);
+  if (m_updateFlag > 0) {
+    return;
+  }
+  deleteTrailingUndef(series, 0);
+  deleteTrailingUndef(series, 1);
+  deletePairsOfUndef(series);
+  storeColumn(series, 0);
+  storeColumn(series, 1);
+  updateSeriesValidity(series);
+}
+
+void DoublePairStore::storeColumn(int series, int i) const {
+  List listToStore = m_dataLists[series][i];
+  char name[k_columnNamesLength + 1];
+  int nameLength = fillColumnName(series, i, name);
+  if (lengthOfColumn(series, i) == 0) {
+    Record(name, lisExtension).destroy();
+    return;
+  }
+  Symbol listSymbol = Symbol::Builder(name, nameLength);
+  AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(listToStore, listSymbol);
+}
+
+void DoublePairStore::deleteTrailingUndef(int series, int i) {
+  int columnLength = lengthOfColumn(series, i);
+  for (int j = columnLength - 1; j >= 0; j--) {
+    if (!std::isnan(get(series, i, j))) {
+      return;
+    }
+    m_dataLists[series][i].removeChildAtIndexInPlace(j);
+  }
+}
+
+void DoublePairStore::deletePairsOfUndef(int series) {
+  int j = 0;
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  while(j < numberOfPairs) {
+    if (std::isnan(get(series, 0, j)) && std::isnan(get(series, 1, j))) {
+      for (int i = 0; i < k_numberOfColumnsPerSeries ; i++) {
+        if (j < lengthOfColumn(series, i)) {
+          m_dataLists[series][i].removeChildAtIndexInPlace(j);
+        }
+      }
+      j--;
+      numberOfPairs--;
+    }
+    j++;
+  }
 }
 
 }

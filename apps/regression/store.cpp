@@ -150,23 +150,12 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
 /* Series */
 
 void Store::updateSeriesValidity(int series) {
-  assert(series >= 0 && series < k_numberOfSeries);
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  if (numberOfPairs == 0) {
-    m_validSeries[series] = false;
+  DoublePairStore::updateSeriesValidity(series);
+  if (!m_validSeries[series]) {
     // Reset series regression type to None
     m_regressionTypes[series] = Model::Type::None;
     return;
   }
-  for (int i = 0 ; i < k_numberOfColumnsPerSeries; i++) {
-    for (int j = 0 ; j < numberOfPairs; j ++) {
-      if (std::isnan(get(series, i, j))) {
-        m_validSeries[series] = false;
-        return;
-      }
-    }
-  }
-  m_validSeries[series] = true;
 }
 
 /* Calculations */

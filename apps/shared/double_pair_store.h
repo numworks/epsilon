@@ -20,27 +20,31 @@ public:
   // Delete the implicit copy constructor: the object is heavy
   DoublePairStore(const DoublePairStore&) = delete;
 
+  // Call this after initializing the store
   void initListsFromStorage();
+
   // Column name
-  virtual char columnNamePrefixAtIndex(int column) = 0;
-  int fillColumnName(int series, int column, char * buffer); // Fills 3 chars in the buffer (2 chars for name + null terminate)
+  virtual char columnNamePrefixAtIndex(int column) const =0;
+  int fillColumnName(int series, int column, char * buffer) const; // Fills 3 chars in the buffer (2 chars for name + null terminate)
   bool isColumnName(const char * name, int nameLen, int * returnSeries = nullptr, int * returnColumn = nullptr);
 
   // Get and set data
   double get(int series, int i, int j) const;
-  virtual void set(double f, int series, int i, int j);
-  void setList(Poincare::List List, int series, int i, bool formatSeriesAfterwards = true);
+  virtual void set(double f, int series, int i, int j, bool setOtherColumnToDefaultIfEmpty = false);
+  void setList(Poincare::List List, int series, int i);
 
   // Counts
   int numberOfPairs() const;
   uint8_t numberOfPairsOfSeries(int series) const {
     assert(series >= 0 && series < k_numberOfSeries);
-    assert(m_dataLists[series][0].numberOfChildren() == m_dataLists[series][1].numberOfChildren());
-    return m_dataLists[series][0].numberOfChildren();
+    return std::max(lengthOfColumn(series, 0), lengthOfColumn(series, 1));
+  }
+  int lengthOfColumn(int series, int i) const {
+    return m_dataLists[series][i].numberOfChildren();
   }
 
   // Delete and reset
-  virtual bool deleteValueAtIndex(int series, int i, int j); // Return True if the pair was deleted.
+  virtual bool deleteValueAtIndex(int series, int i, int j);
   virtual void deletePairOfSeriesAtIndex(int series, int j);
   void deleteColumn(int series, int i);
   virtual void resetColumn(int series, int i);
@@ -54,7 +58,7 @@ public:
   static bool DefaultValidSeries(const DoublePairStore * store, int series) { return store->seriesIsValid(series); }
   // These methods can be implemented with a different validity method
   bool hasValidSeries(ValidSeries = &DefaultValidSeries) const;
-  virtual void updateSeriesValidity(int series) = 0;
+  virtual void updateSeriesValidity(int series);
   int numberOfValidSeries(ValidSeries = &DefaultValidSeries) const;
   int indexOfKthValidSeries(int k, ValidSeries = &DefaultValidSeries) const;
 
@@ -83,25 +87,31 @@ public:
   }
 
 protected:
-  void formatListsOfSeries(int series);
-  void updateStorageAndValidity(int series);
-  void storeColumn(int series, int i);
-  void storeSeries(int series);
-  void tidyListsBeforeFinalStoring();
+  virtual double defaultValue(int series, int i, int j) const;
+  /* This must be called each time the lists are modified.
+   * It deletes the pairs of empty values and the trailing undef values,
+   * updates the valid series, and stores the lists in the storage
+   * */
+  void updateSeries(int series);
+  /* Since sometimes we do multiple list modification in a row, we don't want
+   * to update the series each time, but only at the end of the modifications.
+   * So these methods are called to set a flag preventing the update.*/
   void preventUpdate() {
-    m_updateFlag = false;
+    m_updateFlag++;
   }
   void enableUpdate() {
-    m_updateFlag = true;
+    assert(m_updateFlag > 0);
+    m_updateFlag--;
   }
-  virtual double defaultValue(int series, int i, int j) const;
   bool m_validSeries[k_numberOfSeries];
 private:
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
-  /* This is used to ensures that we do not update validSeries and store the
-   * lists each time we do a modification, but only after multiple changes. */
+  void storeColumn(int series, int i) const;
+  void deleteTrailingUndef(int series, int i);
+  void deletePairsOfUndef(int series);
+
   Poincare::List m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
-  bool m_updateFlag;
+  int m_updateFlag;
 };
 
 }

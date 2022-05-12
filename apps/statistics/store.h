@@ -14,9 +14,6 @@ public:
   constexpr static const char * k_columnNames[] = {"V", "N"}; // Must be 1 char long
   static_assert(sizeof(k_columnNames) / sizeof(char *) == Shared::DoublePairStore::k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Statistics.");
   Store();
-  ~Store() {
-    tidyListsBeforeFinalStoring();
-  }
 
   void setSortedIndex(uint8_t * buffer, size_t bufferSize);
   void invalidateSortedIndexes();
@@ -29,7 +26,7 @@ public:
   int relativeColumnIndex(int columnIndex) const override;
 
   // DoublePairStore
-  char columnNamePrefixAtIndex(int column) override {
+  char columnNamePrefixAtIndex(int column) const override {
     assert(column >= 0 && column < DoublePairStore::k_numberOfColumnsPerSeries);
     assert(strlen(k_columnNames[column]) == 1);
     return k_columnNames[column][0];
@@ -112,7 +109,7 @@ public:
 
   // DoublePairStore
   void sortColumn(int series, int column) override;
-  void set(double f, int series, int i, int j) override;
+  void set(double f, int series, int i, int j, bool setOtherColumnToDefaultIfEmpty = false) override;
   void updateSeriesValidity(int series) override;
   bool deleteValueAtIndex(int series, int i, int j) override;
   void deletePairOfSeriesAtIndex(int series, int j) override;
@@ -158,6 +155,7 @@ private:
   uint8_t valueIndexAtSortedIndex(int series, int i) const;
   // Sort and memoize values indexes in increasing order.
   void buildSortedIndex(int series) const;
+  bool frequenciesAreValid(int series) const;
   // Cumulated frequencies column display
   bool m_displayCumulatedFrequencies[k_numberOfSeries];
   // Histogram bars

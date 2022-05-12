@@ -28,12 +28,9 @@ public:
   static const char * SeriesTitle(int series);
 
   Store();
-  ~Store() {
-    tidyListsBeforeFinalStoring();
-  }
 
   // DoublePairStore
-  char columnNamePrefixAtIndex(int column) override {
+  char columnNamePrefixAtIndex(int column) const override {
     assert(column >= 0 && column < DoublePairStore::k_numberOfColumnsPerSeries);
     assert(strlen(k_columnNames[column]) == 1);
     return k_columnNames[column][0];

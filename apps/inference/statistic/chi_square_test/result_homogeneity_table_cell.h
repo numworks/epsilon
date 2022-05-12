@@ -11,6 +11,11 @@ class ResultHomogeneityTableCell : public CategoricalTableCell, public Homogenei
 public:
   ResultHomogeneityTableCell(Escher::Responder * parentResponder, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, HomogeneityTest * test);
 
+  enum class Mode : bool {
+    ExpectedValue,
+    Contribution
+  };
+
   // Responder
   void didBecomeFirstResponder() override;
 
@@ -30,8 +35,9 @@ private:
   constexpr static KDCoordinate k_titleHeight = 24;
 
   // HomogeneityTableViewDataSource
-  int innerNumberOfRows() const override { return m_statistic->numberOfResultRows() + 1; }
-  int innerNumberOfColumns() const override { return m_statistic->numberOfResultColumns() + 1; }
+  /* The totals are not displayed when in Contribution mode. */
+  int innerNumberOfRows() const override { return m_statistic->numberOfResultRows() + (m_mode == Mode::ExpectedValue); }
+  int innerNumberOfColumns() const override { return m_statistic->numberOfResultColumns() + (m_mode == Mode::ExpectedValue); }
   Escher::HighlightCell * innerCell(int i) override { return DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>::cell(i); }
   void willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
 
@@ -47,6 +53,7 @@ private:
 
   HomogeneityTest * m_statistic;
   Escher::MessageTextView m_title;
+  Mode m_mode;
 };
 
 }  // namespace Inference

@@ -13,7 +13,8 @@ ResultHomogeneityTableCell::ResultHomogeneityTableCell(Escher::Responder * paren
       KDContext::k_alignCenter,
       KDContext::k_alignCenter,
       Escher::Palette::GrayVeryDark,
-      Escher::Palette::WallScreenDark)
+      Escher::Palette::WallScreenDark),
+  m_mode(Mode::Contribution) // FIXME Turn to ExpectedValue once tabs are implemented
 {
   m_selectableTableView.setTopMargin(0);
   m_selectableTableView.setBottomMargin(Metric::CellSeparatorThickness);
@@ -38,8 +39,7 @@ void ResultHomogeneityTableCell::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void ResultHomogeneityTableCell::willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
-  if ((column == 0 && row == innerNumberOfRows()) ||
-      (row == 0 && column == innerNumberOfColumns())) {
+  if (m_mode == Mode::ExpectedValue && ((column == 0 && row == innerNumberOfRows()) || (row == 0 && column == innerNumberOfColumns()))) {
     // Override to display "Total" instead
     Escher::EvenOddBufferTextCell * myCell = static_cast<Escher::EvenOddBufferTextCell *>(cell);
     myCell->setText(I18n::translate(I18n::Message::Total));
@@ -53,14 +53,19 @@ void ResultHomogeneityTableCell::willDisplayInnerCellAtLocation(Escher::Highligh
   EvenOddBufferTextCell * myCell = static_cast<EvenOddBufferTextCell *>(cell);
 
   double value;
-  if (column == m_statistic->numberOfResultColumns() && row == m_statistic->numberOfResultRows()) {
-    value = m_statistic->total();
-  } else if (column == m_statistic->numberOfResultColumns()) {
-    value = m_statistic->rowTotal(row);
-  } else if (row == m_statistic->numberOfResultRows()) {
-    value = m_statistic->columnTotal(column);
+  if (m_mode == Mode::ExpectedValue) {
+    if (column == m_statistic->numberOfResultColumns() && row == m_statistic->numberOfResultRows()) {
+      value = m_statistic->total();
+    } else if (column == m_statistic->numberOfResultColumns()) {
+      value = m_statistic->rowTotal(row);
+    } else if (row == m_statistic->numberOfResultRows()) {
+      value = m_statistic->columnTotal(column);
+    } else {
+      value = m_statistic->expectedValueAtLocation(row, column);
+    }
   } else {
-    value = m_statistic->expectedValueAtLocation(row, column);
+    assert(m_mode == Mode::Contribution);
+    value = m_statistic->contributionAtLocation(row, column);
   }
   PrintValueInTextHolder(value, myCell);
   myCell->setEven(row % 2 == 1);

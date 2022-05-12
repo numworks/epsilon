@@ -34,6 +34,7 @@ public:
   int numberOfResultRows() { return m_numberOfResultRows; }
   int numberOfResultColumns() { return m_numberOfResultColumns; }
   double expectedValueAtLocation(int row, int column);
+  double contributionAtLocation(int row, int column);
 
   double total() { return m_total;}
   double rowTotal(int row) { return m_rowTotals[row]; }

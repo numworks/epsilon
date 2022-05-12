@@ -30,7 +30,7 @@ public:
 
   // Get and set data
   double get(int series, int i, int j) const;
-  virtual void set(double f, int series, int i, int j, bool setOtherColumnToDefaultIfEmpty = false);
+  void set(double f, int series, int i, int j, bool setOtherColumnToDefaultIfEmpty = false);
   void setList(Poincare::List List, int series, int i);
 
   // Counts
@@ -45,10 +45,10 @@ public:
 
   // Delete and reset
   virtual bool deleteValueAtIndex(int series, int i, int j);
-  virtual void deletePairOfSeriesAtIndex(int series, int j);
+  void deletePairOfSeriesAtIndex(int series, int j);
   void deleteColumn(int series, int i);
-  virtual void resetColumn(int series, int i);
-  virtual void deleteAllPairsOfSeries(int series);
+  void resetColumn(int series, int i);
+  void deleteAllPairsOfSeries(int series);
   void deleteAllPairs();
 
   // Series validity
@@ -67,7 +67,7 @@ public:
   virtual int seriesAtColumn(int column) const { return column / k_numberOfColumnsPerSeries; }
 
   // Calculations
-  virtual void sortColumn(int series, int column);
+  void sortColumn(int series, int column);
   void sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const;
   double sumOfColumn(int series, int i, bool lnOfSeries = false) const;
   bool seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const;
@@ -92,7 +92,7 @@ protected:
    * It deletes the pairs of empty values and the trailing undef values,
    * updates the valid series, and stores the lists in the storage
    * */
-  void updateSeries(int series);
+  virtual void updateSeries(int series);
   /* Since sometimes we do multiple list modification in a row, we don't want
    * to update the series each time, but only at the end of the modifications.
    * So these methods are called to set a flag preventing the update.*/

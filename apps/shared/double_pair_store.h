@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <poincare/list.h>
 #include <poincare/complex.h>
+#include <algorithm>
 
 namespace Shared {
 

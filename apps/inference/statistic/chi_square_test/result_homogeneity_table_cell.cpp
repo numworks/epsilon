@@ -14,7 +14,7 @@ ResultHomogeneityTableCell::ResultHomogeneityTableCell(Escher::Responder * paren
       KDContext::k_alignCenter,
       Escher::Palette::GrayVeryDark,
       Escher::Palette::WallScreenDark),
-  m_mode(Mode::Contribution) // FIXME Turn to ExpectedValue once tabs are implemented
+  m_mode(Mode::ExpectedValue)
 {
   m_selectableTableView.setTopMargin(0);
   m_selectableTableView.setBottomMargin(Metric::CellSeparatorThickness);

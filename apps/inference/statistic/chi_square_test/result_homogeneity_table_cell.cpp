@@ -8,12 +8,6 @@ ResultHomogeneityTableCell::ResultHomogeneityTableCell(Escher::Responder * paren
   CategoricalTableCell(parentResponder, this, selectableTableViewDelegate),
   DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>(this),
   m_statistic(test),
-  m_title(KDFont::SmallFont,
-      I18n::Message::HomogeneityResultsTitle,
-      KDContext::k_alignCenter,
-      KDContext::k_alignCenter,
-      Escher::Palette::GrayVeryDark,
-      Escher::Palette::WallScreenDark),
   m_mode(Mode::ExpectedValue)
 {
   m_selectableTableView.setTopMargin(0);
@@ -82,20 +76,6 @@ void ResultHomogeneityTableCell::createCells() {
 void ResultHomogeneityTableCell::destroyCells() {
   DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>::destroyCells();
   DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
-}
-
-Escher::View * ResultHomogeneityTableCell::subviewAtIndex(int i) {
-  Escher::View * views[] = {&m_selectableTableView, &m_title};
-  return views[i];
-}
-
-void ResultHomogeneityTableCell::layoutSubviews(bool force) {
-  m_title.setFrame(KDRect(0, 0, bounds().width(), k_titleHeight), force);
-  m_selectableTableView.setFrame(KDRect(0, k_titleHeight, bounds().width(), bounds().height() - k_titleHeight - Metric::CellSeparatorThickness), force);
-}
-
-KDSize ResultHomogeneityTableCell::minimalSizeForOptimalDisplay() const {
-  return m_selectableTableView.minimalSizeForOptimalDisplay() + KDSize(0, k_titleHeight);
 }
 
 }  // namespace Inference

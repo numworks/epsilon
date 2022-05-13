@@ -7,9 +7,7 @@ namespace Inference {
 ResultsHomogeneityController::ResultsTableController::ResultsTableController(Responder * parent, Escher::ViewController * resultsController, HomogeneityTest * statistic) :
   CategoricalController(parent, resultsController, Invocation(&CategoricalController::ButtonAction, this)),
   m_resultHomogeneityTable(&m_selectableTableView, this, statistic)
-{
-  m_selectableTableView.setTopMargin(0);
-}
+{}
 
 void ResultsHomogeneityController::ResultsTableController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData(false, false);

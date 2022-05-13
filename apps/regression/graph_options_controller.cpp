@@ -123,6 +123,9 @@ int GraphOptionsController::typeAtIndex(int index) {
   if (index >= k_r2CellType && !displayR2Cell()) {
     index++;
   }
+  if (index >= k_residualPlotCellType && !displayResidualPlotCell()) {
+    index++;
+  }
   return index;
 }
 
@@ -156,6 +159,10 @@ void GraphOptionsController::willDisplayCellForIndex(HighlightCell * cell, int i
 }
 
 bool GraphOptionsController::displayR2Cell() const {
+  return m_store->seriesRegressionType(m_graphController->selectedSeriesIndex()) != Regression::Model::Type::Median;
+}
+
+bool GraphOptionsController::displayResidualPlotCell() const {
   return m_store->seriesRegressionType(m_graphController->selectedSeriesIndex()) == Regression::Model::Type::Linear;
 }
 

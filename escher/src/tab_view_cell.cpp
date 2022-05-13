@@ -1,5 +1,6 @@
-#include <escher/tab_view_cell.h>
 #include <escher/palette.h>
+#include <escher/tab_view_cell.h>
+#include <escher/tab_view_controller.h>
 extern "C" {
 #include <assert.h>
 }
@@ -38,12 +39,13 @@ void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   // choose the background color
   KDColor text = m_active ? Palette::PurpleBright : KDColorWhite;
-  KDColor background = m_active ? KDColorWhite : Palette::PurpleBright;
+  KDColor inactiveBackground = static_cast<TabViewController *>(m_controller->parentResponder())->tabBackgroundColor();
+  KDColor background = m_active ? KDColorWhite : inactiveBackground;
   KDColor selection = m_active ? Palette::Select : Palette::SelectDark;
   background = m_selected ? selection : background;
   // Color the background according to the state of the tab cell
   if (m_active || m_selected) {
-    ctx->fillRect(KDRect(0, 0, width, 1), Palette::PurpleBright);
+    ctx->fillRect(KDRect(0, 0, width, 1), inactiveBackground);
     ctx->fillRect(KDRect(0, 1, width, height-1), background);
   } else {
     ctx->fillRect(KDRect(0, 0, width, height), background);

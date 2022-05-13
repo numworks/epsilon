@@ -535,16 +535,6 @@ double PooledTwoMeans::ComputeStandardError(double n1, double s1, double n2, dou
 
 /* TwoProportions */
 
-Poincare::Layout TwoProportions::P2Layout(Poincare::Layout * layout) {
-  if (layout->isUninitialized()) {
-    *layout = std::move(Poincare::HorizontalLayout::Builder(
-        CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
-        VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
-          VerticalOffsetLayoutNode::Position::Subscript)));
-  }
-  return *layout;
-}
-
 Poincare::Layout TwoProportions::EstimateLayout(Poincare::Layout * layout) {
   if (layout->isUninitialized()) {
     Poincare::HorizontalLayout p1 = Poincare::HorizontalLayout::Builder(

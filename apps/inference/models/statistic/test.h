@@ -41,6 +41,12 @@ bool hasHypothesisParameters() const override { return true; }
   HypothesisParams * hypothesisParams() override { return &m_hypothesisParams; }
   virtual bool isValidH0(double h0) { return true; }
 
+  // Additional estimates
+  virtual int numberOfEstimates() const { return 0; };
+  virtual double estimateValue(int index) { return 0; };
+  virtual Poincare::Layout estimateLayout(int index) const { return nullptr; }
+  virtual I18n::Message estimateDescription(int index) { return I18n::Message::Default; }
+
   // Test statistic
   /* Returns the abscissa on the normalized density curve
    * corresponding to the input sample. */
@@ -53,7 +59,7 @@ bool hasHypothesisParameters() const override { return true; }
   bool canRejectNull();
 
   // Output
-  int numberOfResults() const override { return 2 + hasDegreeOfFreedom(); }
+  int numberOfResults() const override { return 2 + numberOfEstimates() + hasDegreeOfFreedom(); }
   void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) override;
 
   // Range

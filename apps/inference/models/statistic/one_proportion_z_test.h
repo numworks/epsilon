@@ -14,6 +14,7 @@ public:
   DistributionType distributionType() const override { return DistributionType::Z; }
   I18n::Message title() const override { return OneProportion::Title(); }
   I18n::Message graphTitleFormat() const override { return DistributionZ::GraphTitleFormat(); }
+  void tidy() override { m_estimateLayout = Poincare::Layout(); }
 
   // Significance Test: OneProportion
   const char * hypothesisSymbol() override { return OneProportion::HypothesisSymbol(); }
@@ -26,6 +27,12 @@ public:
   bool isValidH0(double h0) override { return OneProportion::ValidH0(h0); }
 
   void compute() override { OneProportion::ComputeTest(this); }
+
+  // Estimates
+  int numberOfEstimates() const override { return 1; };
+  double estimateValue(int index) override { return OneProportion::X(parametersArray()) / OneProportion::N(parametersArray()); };
+  Poincare::Layout estimateLayout(int index) const override { return OneProportion::EstimateLayout(&m_estimateLayout); }
+  I18n::Message estimateDescription(int index) override { return OneProportion::EstimateDescription(); };
 
   // Distribution: z
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionZ::TestCriticalValueSymbol(font); }
@@ -42,7 +49,9 @@ private:
   // Distribution: z
   float computeYMax() const override { return DistributionZ::YMax(m_degreesOfFreedom); }
 
-  double m_params[OneProportion::k_numberOfParams];};
+  double m_params[OneProportion::k_numberOfParams];
+  mutable Poincare::Layout m_estimateLayout;
+};
 }  // namespace Inference
 
 #endif /* PROBABILITY_MODELS_STATISTIC_ONE_PROPORTION_Z_TEST_H */

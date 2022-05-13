@@ -15,6 +15,7 @@ public:
     ExpectedValue,
     Contribution
   };
+  void setMode(Mode mode) { m_mode = mode; }
 
   // Responder
   void didBecomeFirstResponder() override;

@@ -1,13 +1,12 @@
 #ifndef ION_STORAGE_H
 #define ION_STORAGE_H
 
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
 #include <assert.h>
 #include <ion/unicode/utf8_helper.h>
 #include "record.h"
 #include "record_name_verifier.h"
+#include "storage_delegate.h"
+#include "storage_helper.h"
 
 namespace Ion {
 
@@ -18,20 +17,6 @@ namespace Ion {
 
 namespace Storage {
 
-/* Some apps memoize records and need to be notified when a record might have
- * become invalid. For instance in the Graph app, if f(x) = A+x, and A changed,
- * f(x) memoization which stores the reduced expression of f is outdated.
- * We could have computed and compared the checksum of the storage to detect
- * storage invalidity, but profiling showed that this slows down the execution
- * (for example when scrolling the functions list).
- * We thus decided to notify a delegate when the storage changes. */
-class StorageDelegate {
-public:
-  virtual void storageDidChangeForRecord(const Record record) = 0;
-  virtual void storageIsFull() = 0;
-};
-
-// This is the main class
 class FileSystem {
 friend class Record;
 public:
@@ -173,29 +158,6 @@ private:
   RecordNameVerifier m_recordNameVerifier;
   mutable Record m_lastRecordRetrieved;
   mutable char * m_lastRecordRetrievedPointer;
-};
-
-// emscripten read and writes must be aligned.
-class StorageHelper {
-public:
-  static uint16_t unalignedShort(char * address) {
-#if __EMSCRIPTEN__
-    uint8_t f1 = *(address);
-    uint8_t f2 = *(address+1);
-    uint16_t f = (uint16_t)f1 + (((uint16_t)f2)<<8);
-    return f;
-#else
-    return *(uint16_t *)address;
-#endif
-  }
-  static void writeUnalignedShort(uint16_t value, char * address) {
-#if __EMSCRIPTEN__
-    *((uint8_t *)address) = (uint8_t)(value & ((1 << 8) - 1));
-    *((uint8_t *)address+1) = (uint8_t)(value >> 8);
-#else
-    *((uint16_t *)address) = value;
-#endif
-  }
 };
 
 }

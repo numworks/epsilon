@@ -141,11 +141,21 @@ int Store::nextDot(int series, int direction, int dot) {
 /* Series */
 
 void Store::updateSeriesValidity(int series) {
-  if (numberOfPairsOfSeries(series) < 2) {
+  assert(series >= 0 && series < k_numberOfSeries);
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  if (numberOfPairs == 0) {
     m_validSeries[series] = false;
     return;
   }
-  Shared::DoublePairStore::updateSeriesValidity(series);
+  for (int i = 0 ; i < k_numberOfColumnsPerSeries; i++) {
+    for (int j = 0 ; j < numberOfPairs; j ++) {
+      if (std::isnan(m_data[series][i][j])) {
+        m_validSeries[series] = false;
+        return;
+      }
+    }
+  }
+  m_validSeries[series] = true;
 }
 
 /* Calculations */

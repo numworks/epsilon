@@ -53,11 +53,15 @@ KDSize ScrollView::minimalSizeForOptimalDisplay() const {
   if (excessWidth > 0 && excessWidth <= marginPortionTolerance() * m_rightMargin) {
     width -= excessWidth;
     m_excessWidth = excessWidth;
+  } else {
+    m_excessWidth = 0;
   }
   KDCoordinate excessHeight = height - m_frame.height();
   if (excessHeight > 0 && excessHeight <= marginPortionTolerance() * m_bottomMargin) {
     height -= excessHeight;
     m_excessHeight = excessHeight;
+  } else {
+    m_excessHeight = 0;
   }
 
   return KDSize(width, height);

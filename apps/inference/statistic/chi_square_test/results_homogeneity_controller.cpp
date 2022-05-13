@@ -40,6 +40,8 @@ ResultsHomogeneityController::ResultsHomogeneityController(Escher::StackViewCont
   m_tableController(this, nextController, statistic),
   m_expectedValuesController(this),
   m_contributionsController(this)
-{}
+{
+  TabViewController::initView();
+}
 
 }

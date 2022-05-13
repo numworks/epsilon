@@ -57,11 +57,11 @@ private:
   };
   // TODO : Replace with translations
   constexpr static I18n::Message k_subLabelMessages[k_numberOfExpressionCellsWithMessage + k_numberOfExpressionCellsWithBuffer] = {
-    I18n::Message::Temp1,
-    I18n::Message::Temp2,
-    I18n::Message::Temp3,
-    I18n::Message::Temp4,
-    I18n::Message::Temp5,
+    I18n::Message::FormulaTemplateInt,
+    I18n::Message::FormulaTemplateRand,
+    I18n::Message::FormulaTemplateLog,
+    I18n::Message::FormulaTemplateSum,
+    I18n::Message::FormulaTemplateList,
   };
 
   int relativeCellIndex(int index, CellType type);

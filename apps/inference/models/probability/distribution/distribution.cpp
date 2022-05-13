@@ -141,7 +141,7 @@ double Distribution::evaluateAtDiscreteAbscissa(int k) const {
   if (isContinuous()) {
     return 0.0;
   }
-  return m_distribution->EvaluateAtAbscissa((double) k, constParametersArray());
+  return m_distribution->EvaluateAtAbscissa(static_cast<double>(k), constParametersArray());
 }
 
 }

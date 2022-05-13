@@ -103,13 +103,11 @@ Evaluation<T> DistributionDispatcherNode::templatedApproximate(ApproximationCont
       int childIndex = 0;
       T abscissa[DistributionMethod::k_maxNumberOfParameters];
       for (int i=0; i < DistributionMethod::numberOfParameters(self->m_methodType); i++) {
-        // Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
-        abscissa[i] = ComplexNode<T>::ToScalar(c[childIndex++]);//evaluation.toScalar();
+        abscissa[i] = ComplexNode<T>::ToScalar(c[childIndex++]);
       }
       T parameters[Distribution::k_maxNumberOfParameters];
       for (int i=0; i < Distribution::numberOfParameters(self->m_distributionType); i++) {
-        // Evaluation<T> evaluation = childAtIndex(childIndex++)->approximate(T(), approximationContext);
-        parameters[i] = ComplexNode<T>::ToScalar(c[childIndex++]);//evaluation.toScalar();
+        parameters[i] = ComplexNode<T>::ToScalar(c[childIndex++]);
       }
       const DistributionMethod * function = DistributionMethod::Get(self->m_methodType);
       const Distribution * distribution = Distribution::Get(self->m_distributionType);

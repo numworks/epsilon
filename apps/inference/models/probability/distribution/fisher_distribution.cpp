@@ -49,7 +49,7 @@ float FisherDistribution::computeXMax() const {
 
 float FisherDistribution::computeYMax() const {
   const float m = mode();
-  float max = std::isnan(m) ? k_defaultMax : Distribution::evaluateAtAbscissa(m);
+  float max = std::isnan(m) ? k_defaultMax : evaluateAtAbscissa(m);
   max = std::isnan(max) ? k_defaultMax : max;
   return max * (1.0f + k_displayTopMarginRatio);
 }

@@ -18,11 +18,6 @@ Expression CDFMethod::shallowReduce(Expression * abscissae, const Distribution *
       expression->replaceWithInPlace(result);
       return result;
     }
-    return *expression;
-  }
-
-  if (x.type() != ExpressionNode::Type::Rational) {
-    return *expression;
   }
 
   return *expression;

@@ -20,7 +20,7 @@ private:
     ResultsTableController(Responder * parent, Escher::ViewController * nextController, HomogeneityTest * statistic);
     // Responder
     void didBecomeFirstResponder() override;
-    bool handleEvent(Ion::Events::Event event) override { return typedParent()->popFromStackViewControllerOnLeftEvent(event); }
+    bool handleEvent(Ion::Events::Event event) override;
     // ViewController
     void stackOpenPage(ViewController * nextPage) override { typedParent()->stackOpenPage(nextPage); }
 

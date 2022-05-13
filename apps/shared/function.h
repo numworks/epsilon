@@ -27,6 +27,7 @@ public:
   // Properties
   virtual bool isActive() const;
   KDColor color() const;
+  void setColor(KDColor color);
   void setActive(bool active);
   virtual int numberOfSubCurves() const { return 1; }
   virtual bool hasVerticalLines() const { return false; }
@@ -71,6 +72,9 @@ protected:
     RecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
     KDColor color() const {
       return KDColor::RGB16(m_color);
+    }
+    void setColor(KDColor color) {
+      m_color = color;
     }
     virtual bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }

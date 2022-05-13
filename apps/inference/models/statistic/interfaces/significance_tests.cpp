@@ -535,6 +535,16 @@ double PooledTwoMeans::ComputeStandardError(double n1, double s1, double n2, dou
 
 /* TwoProportions */
 
+Poincare::Layout TwoProportions::P2Layout(Poincare::Layout * layout) {
+  if (layout->isUninitialized()) {
+    *layout = std::move(Poincare::HorizontalLayout::Builder(
+        CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
+        VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
+          VerticalOffsetLayoutNode::Position::Subscript)));
+  }
+  return *layout;
+}
+
 Poincare::Layout TwoProportions::EstimateLayout(Poincare::Layout * layout) {
   if (layout->isUninitialized()) {
     Poincare::HorizontalLayout p1 = Poincare::HorizontalLayout::Builder(
@@ -545,10 +555,10 @@ Poincare::Layout TwoProportions::EstimateLayout(Poincare::Layout * layout) {
         CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
         VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
           VerticalOffsetLayoutNode::Position::Subscript));
+    /* we build a nested layout instead of a flat one to be able to retrieve p1
+       and p2 from it when needed by the estimates of the TwoProportionTest */
     Poincare::HorizontalLayout res = Poincare::HorizontalLayout::Builder(
-        CodePointLayout::Builder('-'));
-    res.addOrMergeChildAtIndex(p2, 1, true);
-    res.addOrMergeChildAtIndex(p1, 0, true);
+      p1, CodePointLayout::Builder('-'), p2);
     *layout = std::move(res);
   }
   return *layout;

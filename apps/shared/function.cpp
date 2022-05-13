@@ -24,6 +24,10 @@ KDColor Function::color() const {
   return recordData()->color();
 }
 
+void Function::setColor(KDColor color) {
+  recordData()->setColor(color);
+}
+
 void Function::setActive(bool active) {
   recordData()->setActive(active);
   if (!active) {

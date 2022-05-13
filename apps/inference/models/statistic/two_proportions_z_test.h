@@ -48,7 +48,10 @@ public:
     case EstimatesOrder::P1:
       return layout.childAtIndex(0); // p̂1
     case EstimatesOrder::P2:
-      return TwoProportions::P2Layout(&m_p2Layout);
+      if (m_p2Layout.isUninitialized()) {
+        m_p2Layout = layout.childAtIndex(2).clone(); // p̂2
+      }
+      return m_p2Layout;
     case EstimatesOrder::Pooled:
       return layout.childAtIndex(0).childAtIndex(0); // p̂1 -> p̂
     }

@@ -195,15 +195,17 @@ void FormulaTemplateMenuController::fillSumColumnNames(char * buffers[]) {
 }
 
 char correspondingColumnInOtherApp(char columnPrefix) {
-  /* TODO: Store k_regressionColumnNames and k_statisticsColumNames in
-   * DoublePairStore. */
-  switch (columnPrefix) {
-    case 'X': return 'V';
-    case 'Y': return 'N';
-    case 'V': return 'X';
-    case 'N': return 'Y';
-    default: assert(false);
+  constexpr static int k_numberOfApps = 2;
+  constexpr static const char * const * columnNames[k_numberOfApps] = {DoublePairStore::k_regressionColumNames, DoublePairStore::k_statisticsColumNames};
+  for (int i = 0; i < DoublePairStore::k_numberOfColumnsPerSeries; i++) {
+    for (int j = 0; j < k_numberOfApps; j++) {
+      if (columnNames[j][i][0] == columnPrefix) {
+        return columnNames[(j + 1) % k_numberOfApps][i][0];
+      }
+    }
   }
+  assert(false);
+  return 0;
 }
 
 void FormulaTemplateMenuController::fillOtherAppColumnName(char * buffer) {

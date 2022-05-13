@@ -11,8 +11,8 @@ namespace Statistics {
 class Store : public Shared::DoublePairStore {
 friend class BoxRange;
 public:
-  constexpr static const char * k_columnNames[] = {"V", "N"}; // Must be 1 char long
-  static_assert(sizeof(k_columnNames) / sizeof(char *) == Shared::DoublePairStore::k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Statistics.");
+  constexpr static const char * const * k_columnNames = DoublePairStore::k_statisticsColumNames;
+
   Store();
 
   void setSortedIndex(uint8_t * buffer, size_t bufferSize);

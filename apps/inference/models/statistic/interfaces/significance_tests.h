@@ -164,7 +164,6 @@ public:
   static const char * HypothesisSymbol() { return "p1-p2"; }
   static const char * EstimateSymbol() { return "p̂1-p̂2"; }
   static Poincare::Layout EstimateLayout(Poincare::Layout * layout);
-  static Poincare::Layout P2Layout(Poincare::Layout * layout);
   static I18n::Message EstimateDescription() { return I18n::Message::SampleTwoProportions; }
   static I18n::Message Sample1ProportionDescription() { return I18n::Message::Sample1Proportion; }
   static I18n::Message Sample2ProportionDescription() { return I18n::Message::Sample2Proportion; }

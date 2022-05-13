@@ -54,14 +54,14 @@ private:
   class ExpectedValuesController : public SingleModeController {
   public:
     using SingleModeController::SingleModeController;
-    const char * title() override { return "E.V."; } // TODO
+    const char * title() override { return I18n::translate(I18n::Message::HomogeneityResultsExpectedValuesTitle); }
     void didBecomeFirstResponder() override { switchToTableWithMode(ResultHomogeneityTableCell::Mode::ExpectedValue); }
   };
 
   class ContributionsController : public SingleModeController {
   public:
     using SingleModeController::SingleModeController;
-    const char * title() override { return "Cont."; } // TODO
+    const char * title() override { return I18n::translate(I18n::Message::HomogeneityResultsContributionsTitle); }
     void didBecomeFirstResponder() override { switchToTableWithMode(ResultHomogeneityTableCell::Mode::Contribution); }
   };
 

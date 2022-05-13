@@ -16,6 +16,15 @@ void ResultsHomogeneityController::ResultsTableController::didBecomeFirstRespond
   CategoricalController::didBecomeFirstResponder();
 }
 
+bool ResultsHomogeneityController::ResultsTableController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Up) {
+    m_resultHomogeneityTable.tableView()->deselectTable();
+    Escher::Container::activeApp()->setFirstResponder(parentResponder());
+    return true;
+  }
+  return typedParent()->popFromStackViewControllerOnLeftEvent(event);
+}
+
 // SingleModeController
 
 void ResultsHomogeneityController::SingleModeController::switchToTableWithMode(ResultHomogeneityTableCell::Mode mode) {

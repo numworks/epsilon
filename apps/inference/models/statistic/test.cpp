@@ -55,6 +55,13 @@ bool Test::canRejectNull() {
 }
 
 void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) {
+  if (index < numberOfEstimates()) {
+      *value = estimateValue(index);
+      *message = estimateLayout(index);
+      *subMessage = estimateDescription(index);
+      return;
+  }
+  index -= numberOfEstimates();
   switch (index) {
     case ResultOrder::Z:
       *value = testCriticalValue();

@@ -102,6 +102,7 @@ void TreePool::treeLog(std::ostream & stream, bool verbose) {
   for (TreeNode * node : roots()) {
     node->log(stream, true, 1, verbose);
   }
+  stream << std::endl;
   stream << "</TreePool>";
   stream << std::endl;
 }

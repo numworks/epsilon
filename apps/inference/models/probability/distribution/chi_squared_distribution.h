@@ -12,7 +12,6 @@ class ChiSquaredDistribution : public OneParameterDistribution {
 public:
   ChiSquaredDistribution() : OneParameterDistribution(Poincare::Distribution::Type::ChiSquared, 1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::ChiSquaredDistribution; }
-  Type type() const override { return Type::ChiSquared; }
   const char * parameterNameAtIndex(int index) const override { return "k"; }
   float evaluateAtAbscissa(float x) const override;
   bool authorizedParameterAtIndex(double x, int index) const override;

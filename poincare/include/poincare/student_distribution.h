@@ -9,6 +9,7 @@ namespace Poincare {
 
 class StudentDistribution final : public ContinuousDistribution {
 public:
+  Type type() const override { return Type::Student; }
   bool isSymmetrical() const override { return true; }
 
   template<typename T> static T EvaluateAtAbscissa(T x, const T k);

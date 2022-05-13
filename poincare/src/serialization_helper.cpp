@@ -95,7 +95,7 @@ int InfixPrefix(
     bool needsSystemParentheses,
     int firstChildIndex,
     int lastChildIndex,
-    bool bracesInsteadOfParenthesis)
+    bool bracesInsteadOfParentheses)
 {
   {
     int result = 0;
@@ -105,8 +105,8 @@ int InfixPrefix(
   }
 
   int numberOfChar = 0;
-  CodePoint openingCodePoint = bracesInsteadOfParenthesis ? CodePoint('{') : CodePoint('(');
-  CodePoint closingCodePoint = bracesInsteadOfParenthesis ? CodePoint('}') : CodePoint(')');
+  CodePoint openingCodePoint = bracesInsteadOfParentheses ? CodePoint('{') : CodePoint('(');
+  CodePoint closingCodePoint = bracesInsteadOfParentheses ? CodePoint('}') : CodePoint(')');
   /* For Prefix, we use system parentheses so that, for instance, |3)+(1| is not
    * parsable after serialization.*/
 
@@ -198,9 +198,9 @@ int SerializationHelper::Infix(
     const char * operatorName,
     int firstChildIndex,
     int lastChildIndex,
-    bool bracesInsteadOfParenthesis)
+    bool bracesInsteadOfParentheses)
 {
-  return InfixPrefix(false, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, false, firstChildIndex, lastChildIndex, bracesInsteadOfParenthesis);
+  return InfixPrefix(false, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, false, firstChildIndex, lastChildIndex, bracesInsteadOfParentheses);
 }
 
 int SerializationHelper::Prefix(
@@ -212,9 +212,9 @@ int SerializationHelper::Prefix(
     const char * operatorName,
     bool needsSystemParentheses,
     int lastChildIndex,
-    bool bracesInsteadOfParenthesis)
+    bool bracesInsteadOfParentheses)
 {
-  return InfixPrefix(true, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, needsSystemParentheses, 0, lastChildIndex, bracesInsteadOfParenthesis);
+  return InfixPrefix(true, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, needsSystemParentheses, 0, lastChildIndex, bracesInsteadOfParentheses);
 }
 
 int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoint c) {

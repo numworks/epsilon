@@ -253,7 +253,7 @@ bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyReco
   if (competingRecord.isNull()) {
     return true;
   }
-  RecordNameVerifier::OverrideStatus result = m_recordNameVerifier.shouldRecordBeOverridenWithNewExtension(competingRecord, recordName.extension);
+  RecordNameVerifier::OverrideStatus result = m_recordNameVerifier.canOverrideRecordWithNewExtension(competingRecord, recordName.extension);
   if (result == RecordNameVerifier::OverrideStatus::Forbidden) {
     return false;
   }

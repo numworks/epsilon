@@ -26,7 +26,7 @@ namespace SerializationHelper {
       const char * operatorName,
       int firstChildIndex = 0,
       int lastChildIndex = -1,
-      bool bracesInsteadOfParenthesis = false);
+      bool bracesInsteadOfParentheses = false);
 
   /* needsSystemParentheses add System parentheses wrapping the layout children.
    * It is used when serializing layouts to avoid creating a parsable string
@@ -44,7 +44,7 @@ namespace SerializationHelper {
       const char * operatorName,
       bool needsSystemParentheses = false,
       int lastChildIndex = -1,
-      bool bracesInsteadOfParenthesis = false);
+      bool bracesInsteadOfParentheses = false);
 
   int SerializeChild(
     const TreeNode * childNode,

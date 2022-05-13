@@ -19,7 +19,7 @@ void RecordNameVerifier::registerArrayOfReservedNames(const char * const * nameP
   m_numberOfReservedNamesArrays++;
 }
 
-RecordNameVerifier::OverrideStatus RecordNameVerifier::shouldRecordBeOverridenWithNewExtension(Storage::Record previousRecord, const char * newExtension) const {
+RecordNameVerifier::OverrideStatus RecordNameVerifier::canOverrideRecordWithNewExtension(Storage::Record previousRecord, const char * newExtension) const {
   if (previousRecord.isNull()) {
     return OverrideStatus::Allowed;
   }

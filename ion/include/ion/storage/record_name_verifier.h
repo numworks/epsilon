@@ -10,7 +10,7 @@
  *  - Reserved names
  *
  * == Restrictive extensions ==
- * Some records extensions are restrictive, which means that two record with
+ * Some records extensions are restrictive, which means that two records with
  * the same base name and one of these extensions can't exist at the same
  * time in the storage.
  * If a record's extension is not a restrictive extension, it means that it can
@@ -39,7 +39,8 @@
  * 3 in prefixRepetitions.
  * For u, v, and w, reserved for sequence, prefixRepetitions = 0
  *
- * The reserved names are registerd by each app, when the snapshot is instiated
+ * The reserved names are registerd by each app, when the snapshot is
+ * instantiated.
  * (Sequence registers u, v and w, Regression registers X1, Y1, etc.)
  * */
 
@@ -82,7 +83,7 @@ public:
    *
    * - OverrideStatus::CanCoexist : if at least one of the two extensions is
    *   not a restrictive extension. */
-  OverrideStatus shouldRecordBeOverridenWithNewExtension(Record previousRecord, const char * newExtension) const;
+  OverrideStatus canOverrideRecordWithNewExtension(Record previousRecord, const char * newExtension) const;
 
 private:
   typedef struct {

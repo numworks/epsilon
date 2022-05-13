@@ -9,7 +9,6 @@ class FisherDistribution final : public TwoParameterDistribution {
 public:
   FisherDistribution() : TwoParameterDistribution(Poincare::Distribution::Type::Fisher, 1.0, 1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::FisherDistribution; }
-  Type type() const override { return Type::Fisher; }
   const char * parameterNameAtIndex(int index) const override { return index == 0 ? "d1" : "d2"; }
   bool authorizedParameterAtIndex(double x, int index) const override;
 private:

@@ -96,7 +96,7 @@ void DistributionController::willDisplayCellForIndex(HighlightCell * cell, int i
 }
 
 void DistributionController::setDistributionAccordingToIndex(int index) {
-  if (Distribution::Initialize(m_distribution, static_cast<Distribution::Type>(index))) {
+  if (Distribution::Initialize(m_distribution, static_cast<Poincare::Distribution::Type>(index))) {
     m_parametersController->reinitCalculation();
   }
 }

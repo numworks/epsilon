@@ -10,7 +10,6 @@ class PoissonDistribution final : public OneParameterDistribution {
 public:
   PoissonDistribution() : OneParameterDistribution(Poincare::Distribution::Type::Poisson, 4.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::PoissonDistribution; }
-  Type type() const override { return Type::Poisson; }
   const char * parameterNameAtIndex(int index) const override { return "λ"; }
   bool authorizedParameterAtIndex(double x, int index) const override;
 private:

@@ -12,7 +12,6 @@ class StudentDistribution : public OneParameterDistribution {
 public:
   StudentDistribution() : OneParameterDistribution(Poincare::Distribution::Type::Student, 1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::StudentDistribution; }
-  Type type() const override { return Type::Student; }
   const char * parameterNameAtIndex(int index) const override { return "k"; }
   double meanAbscissa() override { return 0.0; }
   bool authorizedParameterAtIndex(double x, int index) const override;

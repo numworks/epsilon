@@ -9,6 +9,7 @@ namespace Poincare {
 
 class FisherDistribution final : public ContinuousDistribution {
 public:
+  Type type() const override { return Type::Fisher; }
   bool isSymmetrical() const override { return false; }
 
   template<typename T> static T EvaluateAtAbscissa(T x, const T d1, const T d2);

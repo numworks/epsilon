@@ -17,20 +17,8 @@ public:
 
   SubApp subApp() const override { return SubApp::Probability; }
 
-  enum class Type : uint8_t{
-    // Order matters (displayed order)
-    Binomial,
-    Uniform,
-    Exponential,
-    Normal,
-    ChiSquared,
-    Student,
-    Geometric,
-    Poisson,
-    Fisher
-  };
-  static bool Initialize(Distribution * distribution, Type type);
-  virtual Type type() const = 0;
+  static bool Initialize(Distribution * distribution, Poincare::Distribution::Type type);
+  Poincare::Distribution::Type type() const { return m_distribution->type(); };
 
   virtual double meanAbscissa() { assert(false); return NAN; } // Must be implemented by all symmetrical and continouous distributions.
   bool isContinuous() const { return m_distribution->isContinuous(); }

@@ -12,24 +12,14 @@ Expression CDFRangeMethod::shallowReduce(Expression * abscissae, const Distribut
 
   if (x.type() == ExpressionNode::Type::Infinity && x.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
     if (y.type() == ExpressionNode::Type::Infinity) {
-      if (y.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
-        Expression result = Rational::Builder(0);
-        expression->replaceWithInPlace(result);
-        return result;
-      } else {
-        Expression result = Rational::Builder(1);
-        expression->replaceWithInPlace(result);
-        return result;
-      }
+      Expression result = Rational::Builder(y.sign(reductionContext.context()) == ExpressionNode::Sign::Positive);
+      expression->replaceWithInPlace(result);
+      return result;
     }
-    // TODO: return CDF of the same distributions with the same arguments but x
+    // TODO: return CDF of the same distributions with the same arguments except x
     // Expression result = DistributionDispatcher::Builder(expression->children[1:], distribution->type(), DistributionMethod::CDF);
     // expression->replaceWithInPlace(result);
     // return result;
-  }
-
-  if (x.type() != ExpressionNode::Type::Rational) {
-    return *expression;
   }
 
   return *expression;

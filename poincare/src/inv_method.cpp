@@ -30,7 +30,7 @@ Expression InverseMethod::shallowReduce(Expression * x, const Distribution * dis
 
   if (is0 || is1) {
     // TODO: for all distributions with finite support
-    if (distribution == Distribution::Get(Distribution::Type::Binomial)) {
+    if (distribution->hasType(Distribution::Type::Binomial)) {
       if (is0) {
         Expression p = parameters[1];
         if (p.type() != ExpressionNode::Type::Rational) {

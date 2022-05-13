@@ -55,7 +55,8 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
       continue;
     }
     int numberOfPoints = numberOfPairsOfSeries(series);
-    for (int i = 0; i <= numberOfPoints; i++) {
+    bool displayMean = seriesRegressionType(series) != Model::Type::None;
+    for (int i = 0; i < numberOfPoints + displayMean; i++) {
       double currentX = i < numberOfPoints ? m_data[series][0][i] : meanOfColumn(series, 0);
       double currentY = i < numberOfPoints ? m_data[series][1][i] : meanOfColumn(series, 1);
       if (xMin() <= currentX && currentX <= xMax() // The next dot is within the window abscissa bounds
@@ -80,6 +81,7 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
 int Store::nextDot(int series, int direction, int dot) {
   double nextX = INFINITY;
   int selectedDot = -1;
+  bool displayMean = seriesRegressionType(series) != Model::Type::None;
   double meanX = meanOfColumn(series, 0);
   double x = meanX;
   if (dot >= 0 && dot < numberOfPairsOfSeries(series)) {
@@ -104,7 +106,7 @@ int Store::nextDot(int series, int direction, int dot) {
       }
     }
     // Compare with the mean dot
-    if (std::fabs(meanX - x) < std::fabs(nextX - x) &&
+    if (displayMean && std::fabs(meanX - x) < std::fabs(nextX - x) &&
         (numberOfPairsOfSeries(series) != dot) &&
         (meanX >= x)) {
       if (meanX != x || (numberOfPairsOfSeries(series) > dot)) {
@@ -113,7 +115,7 @@ int Store::nextDot(int series, int direction, int dot) {
     }
   } else {
     // Compare with the mean dot
-    if (std::fabs(meanX - x) < std::fabs(nextX - x) &&
+    if (displayMean && std::fabs(meanX - x) < std::fabs(nextX - x) &&
         (numberOfPairsOfSeries(series) != dot) &&
         (meanX <= x)) {
       if ((meanX != x) || (numberOfPairsOfSeries(series) < dot)) {
@@ -192,7 +194,7 @@ double Store::doubleCastedNumberOfPairsOfSeries(int series) const {
 }
 
 void Store::resetMemoization() {
-  assert(((int)Model::Type::Linear) == 0);
+  static_assert(((int)Model::Type::None) == 0, "None type should be default at 0");
   memset(m_seriesChecksum, 0, sizeof(m_seriesChecksum));
   memset(m_regressionTypes, 0, sizeof(m_regressionTypes));
   memset(m_regressionChanged, 0, sizeof(m_regressionChanged));
@@ -307,10 +309,8 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
    * R2 does not need to be computed if model is median-median, so we avoid computation.
    * If needed, it could be computed though.
    * */
-  /* TODO: try to assert(m_regressionTypes[series] != Model::Type::Median)
-   * once the r is not displayed anymore */
-  if (m_regressionTypes[series] == Model::Type::Median) {
-    return 0.0;
+  if (m_regressionTypes[series] == Model::Type::Median || m_regressionTypes[series] == Model::Type::None) {
+    return NAN;
   }
   // Residual sum of squares
   double ssr = 0;
@@ -344,7 +344,7 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
 }
 
 Model * Store::regressionModel(int index) {
-  Model * models[Model::k_numberOfModels] = {&m_linearModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialAebxModel, &m_exponentialAbxModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel, &m_medianModel};
+  Model * models[Model::k_numberOfModels] = {&m_noneModel, &m_linearModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialAebxModel, &m_exponentialAbxModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel, &m_medianModel};
   static_assert(sizeof(models) / sizeof(Model *) == Model::k_numberOfModels, "Inconsistency between the number of models in the store and the real number.");
   return models[index];
 }

@@ -13,6 +13,7 @@
 #include "model/median_model.h"
 #include "../shared/interactive_curve_view_controller.h"
 #include <assert.h>
+#include <algorithm>
 
 using namespace Poincare;
 using namespace Escher;
@@ -31,14 +32,16 @@ const char * RegressionController::title() {
 }
 
 void RegressionController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, static_cast<uint8_t>(m_store->seriesRegressionType(m_series)));
+  int initialindex = std::max(0, static_cast<int>(m_store->seriesRegressionType(m_series))-1);
+  assert(m_store->seriesRegressionType(m_series) == Model::Type::None || m_store->seriesRegressionType(m_series) == ModelTypeAtIndex(initialindex));
+  selectCellAtLocation(0, initialindex);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool RegressionController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(m_series > -1);
-    m_store->setSeriesRegressionType(m_series, (Model::Type)selectedRow());
+    m_store->setSeriesRegressionType(m_series, ModelTypeAtIndex(selectedRow()));
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
     return true;
@@ -66,7 +69,7 @@ HighlightCell * RegressionController::reusableCell(int index, int type) {
 void RegressionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < k_numberOfRows);
   MessageTableCellWithExpression * castedCell = static_cast<MessageTableCellWithExpression *>(cell);
-  Model * model = m_store->regressionModel((Model::Type) index);
+  Model * model = m_store->regressionModel(ModelTypeAtIndex(index));
   castedCell->setMessage(model->name());
   castedCell->setLayout(model->layout());
 }

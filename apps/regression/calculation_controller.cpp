@@ -72,8 +72,9 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
 }
 
 int CalculationController::numberOfRows() const {
-  // rows for : title + Mean ... Variance + Number of points ...  Regression + Coefficients + (R) + R2
-  return 1 + k_totalNumberOfDoubleBufferRows + 4 + maxNumberOfCoefficients() + hasLinearRegression() + 1;
+  /* Rows for : title + Mean ... Variance + Number of points + Covariance + ∑xy
+   * + (Regression) + Coefficients + (R) + (R2) */
+  return 1 + k_totalNumberOfDoubleBufferRows + 3 + hasSeriesDisplaying(&DisplayRegression) + maxNumberOfCoefficients() + hasSeriesDisplaying(&DisplayR) + hasSeriesDisplaying(&DisplayR2);
 }
 
 int CalculationController::numberOfColumns() const {
@@ -89,17 +90,20 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
 
   const int numberRows = numberOfRows();
+  const int numberOfRowsBeforeCoefficients = k_regressionCellIndex + hasSeriesDisplaying(&DisplayRegression) - 1;
   // Calculation title
   if (i == 0) {
     EvenOddMessageTextCell * myCell = static_cast<EvenOddMessageTextCell *>(cell);
     myCell->setTextColor(KDColorBlack);
     myCell->setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
-    if (j <= k_regressionCellIndex) {
+    if (j <= numberOfRowsBeforeCoefficients) {
       I18n::Message titles[k_regressionCellIndex] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression};
       myCell->setMessage(titles[j-1]);
       return;
     }
-    if (j == numberRows - 1 || (hasLinearRegression() && j == numberRows - 2)) {
+    // R cannot be displayed without R2
+    assert(!hasSeriesDisplaying(&DisplayR) || hasSeriesDisplaying(&DisplayR2));
+    if (hasSeriesDisplaying(&DisplayR2) && (j == numberRows - 1 || (hasSeriesDisplaying(&DisplayR) && j == numberRows - 2))) {
       myCell->setMessage((j == numberRows - 1) ? I18n::Message::R2 : I18n::Message::R);
       if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
         myCell->setTextColor(Palette::GrayDark);
@@ -107,7 +111,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       return;
     }
     I18n::Message titles[5] = {I18n::Message::A, I18n::Message::B, I18n::Message::C, I18n::Message::D, I18n::Message::E};
-    myCell->setMessage(titles[j - k_regressionCellIndex - 1]);
+    myCell->setMessage(titles[j - numberOfRowsBeforeCoefficients - 1]);
     return;
   }
 
@@ -146,8 +150,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   bufferCell->setTextColor(KDColorBlack);
   if (i > 0 && j == k_regressionCellIndex) {
     Model * model = m_store->modelForSeries(seriesNumber);
-    const char * formula = I18n::translate(model->formulaMessage());
-    bufferCell->setText(formula);
+    I18n::Message message = shouldSeriesDisplay(seriesNumber, &DisplayRegression) ? model->formulaMessage() : I18n::Message::Dash;
+    bufferCell->setText(I18n::translate(message));
     return;
   }
   if (i > 0 && j > k_totalNumberOfDoubleBufferRows && j < k_regressionCellIndex) {
@@ -169,9 +173,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
   if (i > 0 && j > k_totalNumberOfDoubleBufferRows) {
-    assert(j > k_regressionCellIndex);
+    assert(j > numberOfRowsBeforeCoefficients);
     int maxNumberCoefficients = maxNumberOfCoefficients();
-    Model::Type modelType = m_store->seriesRegressionType(seriesNumber);
 
     // Put dashes if regression is not defined
     Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
@@ -189,9 +192,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
        return;
     }
 
-    if (j > k_regressionCellIndex + maxNumberCoefficients) {
-      // Fill r (if needed, before last row) and r2 (last row)
-      if ((modelType == Model::Type::Linear && j == numberRows - 2) || j == numberRows - 1) {
+    if (j > numberOfRowsBeforeCoefficients + maxNumberCoefficients) {
+      // Fill r and r2 if needed
+      if (shouldSeriesDisplay(seriesNumber, DisplayR2) && (j == numberRows - 1 || (shouldSeriesDisplay(seriesNumber, DisplayR) && j == numberRows - 2))) {
         if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
           bufferCell->setTextColor(Palette::GrayDark);
           bufferCell->setText(I18n::translate(I18n::Message::Disabled));
@@ -296,10 +299,14 @@ int CalculationController::typeAtLocation(int i, int j) {
   return k_standardCalculationCellType;
 }
 
-bool CalculationController::hasLinearRegression() const {
+bool CalculationController::shouldSeriesDisplay(int series, DisplayCondition condition) const {
+  return condition(m_store->seriesRegressionType(series));
+}
+
+bool CalculationController::hasSeriesDisplaying(DisplayCondition condition) const {
   int numberOfDefinedSeries = m_store->numberOfValidSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
-    if (m_store->seriesRegressionType(m_store->indexOfKthValidSeries(i)) == Model::Type::Linear) {
+    if (shouldSeriesDisplay(m_store->indexOfKthValidSeries(i), condition)) {
       return true;
     }
   }

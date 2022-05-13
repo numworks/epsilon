@@ -35,8 +35,11 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       for (int index = 0; index < m_store->numberOfPairsOfSeries(series); index++) {
         drawDot(ctx, rect, m_store->get(series, 0, index), m_store->get(series, 1, index), color);
       }
-      drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), color, Size::Medium);
-      drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), KDColorWhite);
+      // Hide mean points in scatter plots
+      if (m_store->seriesRegressionType(series) != Model::Type::None) {
+        drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), color, Size::Medium);
+        drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), KDColorWhite);
+      }
     }
   }
 }

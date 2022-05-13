@@ -16,7 +16,11 @@ public:
  * changes to potentially relay out. */
 class DynamicSizeTableViewDataSource {
 public:
-  DynamicSizeTableViewDataSource(DynamicSizeTableViewDataSourceDelegate * delegate) : m_dynamicDatSourceDelegate(delegate) {}
+  DynamicSizeTableViewDataSource(DynamicSizeTableViewDataSourceDelegate * delegate) :
+    m_numberOfRows(0),
+    m_numberOfColumns(0),
+    m_dynamicDatSourceDelegate(delegate)
+  {}
 
 protected:
   bool didChangeSize(int numberOfRows, int numberOfColumns) {

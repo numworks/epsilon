@@ -20,6 +20,8 @@ class GraphController;
 class GraphOptionsController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
+  void removeRegression();
+
   const char * title() override { return I18n::translate(I18n::Message::RegressionCurve); }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

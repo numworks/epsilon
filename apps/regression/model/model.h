@@ -14,20 +14,21 @@ class Store;
 class Model {
 public:
   enum class Type : uint8_t {
-    Linear          = 0,
-    Proportional    = 1,
-    Quadratic       = 2,
-    Cubic           = 3,
-    Quartic         = 4,
-    Logarithmic     = 5,
-    ExponentialAebx = 6,
-    ExponentialAbx  = 7,
-    Power           = 8,
-    Trigonometric   = 9,
-    Logistic        = 10,
-    Median          = 11
+    None            = 0,
+    Linear          = 1,
+    Proportional    = 2,
+    Quadratic       = 3,
+    Cubic           = 4,
+    Quartic         = 5,
+    Logarithmic     = 6,
+    ExponentialAebx = 7,
+    ExponentialAbx  = 8,
+    Power           = 9,
+    Trigonometric   = 10,
+    Logistic        = 11,
+    Median          = 12,
   };
-  static constexpr int k_numberOfModels = 12;
+  static constexpr int k_numberOfModels = 13;
   static constexpr int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients
   virtual Poincare::Layout layout() = 0;
   // Reinitialize m_layout to empty the pool

@@ -1,3 +1,4 @@
+#include "app.h"
 #include "graph_controller.h"
 #include "../apps_container.h"
 #include "../shared/function_banner_delegate.h"
@@ -50,14 +51,7 @@ void GraphController::viewWillAppear() {
     *m_selectedSeriesIndex = m_store->indexOfKthValidSeries(0);
   }
 
-  /* Both the GraphController and the Store hold the Model::Type of each
-   * series. The values differ in two cases:
-   *  1) the very first time the graph view appears
-   *  2) when the user selects another Model::Type for a series.
-   * where we decide to place the cursor at a default position. */
-  if (m_modelType[*m_selectedSeriesIndex] != m_store->seriesRegressionType(*m_selectedSeriesIndex)) {
-    initCursorParameters();
-  }
+  Model::Type previousSelectedRegressionType = m_modelType[*m_selectedSeriesIndex];
 
   /* Equalize the Model::Type of each series between the GraphController and
    * the Store.
@@ -69,7 +63,16 @@ void GraphController::viewWillAppear() {
    *     storeChecksum in order to detect any change in the series and in
    *     their model types. */
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    m_modelType[i] = m_store->seriesRegressionType(*m_selectedSeriesIndex);
+    m_modelType[i] = m_store->seriesRegressionType(i);
+  }
+
+  /* Both the GraphController and the Store hold the Model::Type of each
+   * series. The values differ in two cases:
+   *  1) the very first time the graph view appears
+   *  2) when the user selects another Model::Type for a series.
+   * where we decide to place the cursor at a default position. */
+  if (previousSelectedRegressionType != m_store->seriesRegressionType(*m_selectedSeriesIndex)) {
+    initCursorParameters();
   }
 
   /* The following
@@ -196,6 +199,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
       x = m_store->get(*m_selectedSeriesIndex, 0, dotSelected);
       y = m_store->get(*m_selectedSeriesIndex, 1, dotSelected);
     } else if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
+      assert(!selectedSeriesIsScatterPlot());
       x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
       y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
     } else {
@@ -226,16 +230,30 @@ bool GraphController::openMenuForCurveAtIndex(int index) {
     Coordinate2D<double> xy = xyValues(activeIndex, m_cursor->t(), textFieldDelegateApp()->localContext());
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
-  stackController()->push(&m_graphOptionsController);
+  if (selectedSeriesIsScatterPlot()) {
+    // Push regression controller directly
+    RegressionController * controller = App::app()->regressionController();
+    controller->setSeries(*m_selectedSeriesIndex);
+    stackController()->push(controller);
+  } else {
+    stackController()->push(&m_graphOptionsController);
+  }
   return true;
 }
 
 // InteractiveCurveViewController
 void GraphController::initCursorParameters() {
-  double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
-  double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
+  double x, y;
+  if (selectedSeriesIsScatterPlot()) {
+    x = m_store->get(*m_selectedSeriesIndex, 0, 0);
+    y = m_store->get(*m_selectedSeriesIndex, 1, 0);
+    *m_selectedDotIndex = 0;
+  } else {
+    x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
+    y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
+    *m_selectedDotIndex = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
+  }
   m_cursor->moveTo(x, x, y);
-  *m_selectedDotIndex = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
 }
 
 bool GraphController::cursorMatchesModel() {
@@ -246,6 +264,7 @@ bool GraphController::cursorMatchesModel() {
   if (*m_selectedDotIndex == -1) {
     xy = xyValues(*m_selectedSeriesIndex, m_cursor->t(), globalContext());
   } else if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
+    assert(!selectedSeriesIsScatterPlot());
     xy = Coordinate2D<double>(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
   } else if (*m_selectedDotIndex > m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     return false;
@@ -317,6 +336,7 @@ bool GraphController::moveCursorVertically(int direction) {
     *m_selectedDotIndex = dotSelected;
     setRoundCrossCursorView();
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
+      assert(!selectedSeriesIsScatterPlot());
       // Select the mean dot
       double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
       double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);

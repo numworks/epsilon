@@ -20,7 +20,7 @@ void DistributionCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), k_backgroundColor);
   drawAxis(ctx, rect, Axis::Horizontal);
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
-  if (m_distribution->type() == Distribution::Type::Normal) {
+  if (m_distribution->type() == Poincare::Distribution::Type::Normal) {
     /* Special case for the normal distribution, which has always the same curve
      * We indicate the pixels from and to which we color under the curve, not
      * the float values, as we change the curve parameters. */

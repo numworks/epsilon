@@ -8,6 +8,7 @@ namespace Poincare {
 
 class Chi2Distribution final : public ContinuousDistribution {
 public:
+  Type type() const override { return Type::ChiSquared; }
   bool isSymmetrical() const override { return false; }
 
   template <typename T> static T EvaluateAtAbscissa(T x, T k);

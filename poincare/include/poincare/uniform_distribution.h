@@ -9,6 +9,7 @@ namespace Poincare {
 
 class UniformDistribution final : public ContinuousDistribution {
 public:
+  Type type() const override { return Type::Uniform; }
   bool isSymmetrical() const override { return true; }
 
   template<typename T> static T EvaluateAtAbscissa(T x, const T d1, const T d2);

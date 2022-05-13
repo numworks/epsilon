@@ -15,7 +15,6 @@ class GeometricDistribution final : public OneParameterDistribution {
 public:
   GeometricDistribution() : OneParameterDistribution(Poincare::Distribution::Type::Geometric, 0.5) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::GeometricDistribution; }
-  Type type() const override { return Type::Geometric; }
   const char * parameterNameAtIndex(int index) const override { return "p"; }
   bool authorizedParameterAtIndex(double x, int index) const override;
   double defaultComputedValue() const override { return 1.0; }

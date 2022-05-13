@@ -14,37 +14,37 @@
 
 namespace Inference {
 
-bool Distribution::Initialize(Distribution * distribution, Type type) {
+bool Distribution::Initialize(Distribution * distribution, Poincare::Distribution::Type type) {
   if (distribution->type() == type) {
     return false;
   }
   distribution->~Distribution();
   switch (type) {
-    case Type::Binomial:
+    case Poincare::Distribution::Type::Binomial:
       new (distribution) BinomialDistribution();
       break;
-    case Type::Uniform:
+    case Poincare::Distribution::Type::Uniform:
       new (distribution) UniformDistribution();
       break;
-    case Type::Exponential:
+    case Poincare::Distribution::Type::Exponential:
       new (distribution) ExponentialDistribution();
       break;
-    case Type::Normal:
+    case Poincare::Distribution::Type::Normal:
       new (distribution) NormalDistribution();
       break;
-    case Type::ChiSquared:
+    case Poincare::Distribution::Type::ChiSquared:
       new (distribution) ChiSquaredDistribution();
       break;
-    case Type::Student:
+    case Poincare::Distribution::Type::Student:
       new (distribution) StudentDistribution();
       break;
-    case Type::Geometric:
+    case Poincare::Distribution::Type::Geometric:
       new (distribution) GeometricDistribution();
       break;
-    case Type::Poisson:
+    case Poincare::Distribution::Type::Poisson:
       new (distribution) PoissonDistribution();
       break;
-    case Type::Fisher:
+    case Poincare::Distribution::Type::Fisher:
       new (distribution) FisherDistribution();
       break;
     default:

@@ -7,16 +7,17 @@ namespace Poincare {
 
 class Distribution {
 public:
-  enum class Type : uint8_t {
-    Normal,
-    Student,
-    Exponential,
-    Fisher,
-    Uniform,
-    ChiSquared,
+  enum class Type : uint8_t{
+    // Order matters (used as displayed order in apps/inference)
     Binomial,
-    Poisson,
+    Uniform,
+    Exponential,
+    Normal,
+    ChiSquared,
+    Student,
     Geometric,
+    Poisson,
+    Fisher
   };
 
   static constexpr int k_maxNumberOfParameters = 2;
@@ -38,6 +39,7 @@ public:
 
   static const Distribution * Get(Type type);
 
+  virtual Type type() const = 0;
   bool hasType(Type type) const {
     /* assumes no distribution has been constructed outside of Get which is
      * enforced by the protected constructor */

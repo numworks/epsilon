@@ -13,6 +13,7 @@ namespace Poincare {
 
 class GeometricDistribution final : public DiscreteDistribution {
 public:
+  Type type() const override { return Type::Geometric; }
   bool isSymmetrical() const override { return false; }
 
   template<typename T> static T EvaluateAtAbscissa(T x, const T p);

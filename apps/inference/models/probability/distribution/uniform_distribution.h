@@ -9,7 +9,6 @@ class UniformDistribution final : public TwoParameterDistribution {
 public:
   UniformDistribution() : TwoParameterDistribution(Poincare::Distribution::Type::Uniform, -1.0, 1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::UniformDistribution; }
-  Type type() const override { return Type::Uniform; }
   const char * parameterNameAtIndex(int index) const override { return index == 0 ? "a" : "b"; }
   double meanAbscissa() override { return (m_parameters[0] + m_parameters[1]) / 2.0; }
   float evaluateAtAbscissa(float x) const override;

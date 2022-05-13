@@ -7,6 +7,7 @@
 #include "model/linear_model.h"
 #include "model/logarithmic_model.h"
 #include "model/logistic_model.h"
+#include "model/none_model.h"
 #include "model/power_model.h"
 #include "model/proportional_model.h"
 #include "model/quadratic_model.h"
@@ -45,7 +46,7 @@ public:
   Model * modelForSeries(int series) {
     assert(series >= 0 && series < k_numberOfSeries);
     assert((int)m_regressionTypes[series] >= 0 && (int)m_regressionTypes[series] < Model::k_numberOfModels);
-    return regressionModel((int)m_regressionTypes[series]);
+    return regressionModel(m_regressionTypes[series]);
   }
   uint32_t * seriesChecksum() { return m_seriesChecksum; }
 
@@ -90,6 +91,7 @@ private:
   Model * regressionModel(int index);
   uint32_t m_seriesChecksum[k_numberOfSeries];
   Model::Type m_regressionTypes[k_numberOfSeries];
+  NoneModel m_noneModel;
   LinearModel m_linearModel;
   ProportionalModel m_proportionalModel;
   QuadraticModel m_quadraticModel;

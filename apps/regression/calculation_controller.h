@@ -59,7 +59,13 @@ private:
   static constexpr KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(7*27+2*Escher::EvenOddCell::k_horizontalMargin+Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
 
   Shared::DoublePairStore * store() const override { return m_store; }
-  bool hasLinearRegression() const;
+  typedef bool (*DisplayCondition)(Model::Type type);
+  static bool DisplayR(Model::Type type) { return type == Model::Type::Linear; }
+  static bool DisplayR2(Model::Type type) { return type != Model::Type::None && type != Model::Type::Median; }
+  static bool DisplayRegression(Model::Type type) { return type != Model::Type::None; }
+
+  bool hasSeriesDisplaying(DisplayCondition condition) const;
+  bool shouldSeriesDisplay(int series, DisplayCondition condition) const;
   int maxNumberOfCoefficients() const;
 
   Escher::EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];

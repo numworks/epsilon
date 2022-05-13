@@ -26,7 +26,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Inpu
   m_yParameterCell(I18n::Message::YPrediction),
   m_removeRegressionCell(&(this->m_selectableTableView), I18n::Message::Regression, Invocation([](void * context, void * sender) {
       GraphOptionsController * controller = (GraphOptionsController *) context;
-      // TODO Hugo : Implement regression removal
+      controller->removeRegression();
       return true;
     }, this)),
   m_goToParameterController(this, inputEventHandlerDelegate, store, cursor, graphController),
@@ -38,6 +38,12 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Inpu
        Poincare::VerticalOffsetLayout::Builder(
            Poincare::CodePointLayout::Builder('2', KDFont::LargeFont),
            Poincare::VerticalOffsetLayoutNode::Position::Superscript)}));
+}
+
+void GraphOptionsController::removeRegression() {
+  int series = m_graphController->selectedSeriesIndex();
+  m_store->setSeriesRegressionType(series, Model::Type::None);
+  static_cast<StackViewController *>(parentResponder())->pop();
 }
 
 void GraphOptionsController::didBecomeFirstResponder() {

@@ -11,12 +11,13 @@ class ResultsHomogeneityController : public Escher::TabViewController, public Es
 public:
   ResultsHomogeneityController(Escher::StackViewController * parent, Escher::ViewController * nextController, HomogeneityTest * statistic);
 
-  // ViewController
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
   /* TabViewController::initView() will create new tabs every time it's called,
    * without ever destroying them. As such, we make sure to call it only once
    * in the constructor. */
   void initView() override {}
+  KDColor tabBackgroundColor() const override { return Palette::GrayDark; }
+
 
 private:
   class ResultsTableController : public CategoricalController {

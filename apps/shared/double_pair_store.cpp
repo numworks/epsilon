@@ -139,23 +139,6 @@ bool DoublePairStore::seriesIsValid(int series) const {
   return m_validSeries[series];
 }
 
-void DoublePairStore::updateSeriesValidity(int series) {
-  assert(series >= 0 && series < k_numberOfSeries);
-  if (m_numberOfPairs[series] == 0) {
-    m_validSeries[series] = false;
-    return;
-  }
-  for (int i = 0 ; i < k_numberOfColumnsPerSeries ; i++) {
-    for (int j = 0 ; j < m_numberOfPairs[series] ; j ++) {
-      if (std::isnan(m_data[series][i][j])) {
-        m_validSeries[series] = false;
-        return;
-      }
-    }
-  }
-  m_validSeries[series] = true;
-}
-
 int DoublePairStore::numberOfValidSeries(ValidSeries validSeries) const {
   int nonEmptySeriesCount = 0;
   for (int i = 0; i< k_numberOfSeries; i++) {

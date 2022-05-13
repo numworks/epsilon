@@ -56,7 +56,7 @@ public:
   static bool DefaultValidSeries(const DoublePairStore * store, int series) { return store->seriesIsValid(series); }
   // These methods can be implemented with a different validity method
   bool hasValidSeries(ValidSeries = &DefaultValidSeries) const;
-  virtual void updateSeriesValidity(int series);
+  virtual void updateSeriesValidity(int series) = 0;
   int numberOfValidSeries(ValidSeries = &DefaultValidSeries) const;
   int indexOfKthValidSeries(int k, ValidSeries = &DefaultValidSeries) const;
 

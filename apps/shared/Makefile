@@ -102,6 +102,8 @@ app_shared_src = $(addprefix apps/shared/,\
 app_shared_src += $(app_shared_test_src)
 apps_src += $(app_shared_src)
 
+i18n_files += $(call i18n_with_universal_for,shared/colors)
+
 # The .cpp files could also be added to app_shared_test_src in their respective makefiles
 #     -> it would then be impossible to run the shared test alone
 app_shared_test_src += $(addprefix apps/graph/,\

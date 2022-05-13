@@ -1,9 +1,10 @@
 #ifndef ESCHER_TAB_VIEW_CONTROLLER_H
 #define ESCHER_TAB_VIEW_CONTROLLER_H
 
-#include <escher/view_controller.h>
-#include <escher/tab_view_data_source.h>
+#include <escher/palette.h>
 #include <escher/tab_view.h>
+#include <escher/tab_view_data_source.h>
+#include <escher/view_controller.h>
 
 namespace Escher {
 
@@ -25,6 +26,9 @@ public:
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+
+  virtual KDColor tabBackgroundColor() const { return Palette::PurpleBright; }
+
 private:
   ViewController * activeViewController();
   class ContentView : public View {

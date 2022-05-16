@@ -319,6 +319,11 @@ double Store::correlationCoefficient(int series) const {
   return (v0 == 0.0 || v1 == 0.0) ? 1.0 : covariance(series) / std::sqrt(v0 * v1);
 }
 
+double Store::residualAtIndexForSeries(int series, int index, Poincare::Context * globalContext) {
+  double x = get(series, 0, index);
+  return get(series, 1, index) - yValueForXValue(series, x, globalContext);
+}
+
 double Store::computeDeterminationCoefficient(int series, Poincare::Context * globalContext) {
   /* Computes and returns the determination coefficient (R2) of the regression.
    * For linear regressions, it is equal to the square of the correlation

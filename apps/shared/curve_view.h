@@ -27,8 +27,7 @@ public:
   CurveView(CurveViewRange * curveViewRange = nullptr,
       CurveViewCursor * curveViewCursor = nullptr,
       BannerView * bannerView = nullptr,
-      CursorView * cursorView = nullptr,
-      bool displayBanner = true);
+      CursorView * cursorView = nullptr);
   virtual void reload(bool resetInterrupted = false, bool force = false);
   // When the main view is selected, the banner view is visible
   bool isMainViewSelected() const;

@@ -208,7 +208,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("1/0", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
   assertCalculationIs("2x-x", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
   assertCalculationIs("[[1,2,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("[[1,x,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "undef", "undef", &globalContext, &store);
+  assertCalculationIs("[[1,x,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "[[1,undef,3]]", "[[1,undef,3]]", &globalContext, &store);
   assertCalculationIs("28^7", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("3+√(2)→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "3+√(2)", nullptr, nullptr, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
@@ -228,7 +228,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   // Exact output that have dependencies are not displayed
   assertCalculationIs("sum(1/k,k,0,5)→a", DisplayOutput::ApproximateOnly, EqualSign::Approximation, "sum(1/k,k,0,5)", "undef", "undef", &globalContext, &store);
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Equal, "2", "2", "2", &globalContext, &store);
-  assertCalculationIs("f(a)", DisplayOutput::ApproximateOnly, EqualSign::Approximation, "dep\U00000014(2,[[sum(1/k,k,0,5)]])", "undef", "undef", &globalContext, &store);
+  assertCalculationIs("f(a)", DisplayOutput::ApproximateOnly, EqualSign::Approximation, "dep\U00000014(2,{sum(1/k,k,0,5)})", "undef", "undef", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 

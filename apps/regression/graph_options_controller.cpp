@@ -120,6 +120,10 @@ HighlightCell * GraphOptionsController::reusableCell(int index, int type) {
 }
 
 int GraphOptionsController::typeAtIndex(int index) {
+  static_assert(k_regressionEquationCellType < k_r2CellType && k_r2CellType < k_residualPlotCellType, "This type order is assumed.");
+  if (index >= k_regressionEquationCellType && !displayRegressionEquationCell()) {
+    index++;
+  }
   if (index >= k_r2CellType && !displayR2Cell()) {
     index++;
   }
@@ -158,12 +162,16 @@ void GraphOptionsController::willDisplayCellForIndex(HighlightCell * cell, int i
   }
 }
 
+bool GraphOptionsController::displayRegressionEquationCell() const {
+  return m_store->coefficientsAreDefined(m_graphController->selectedSeriesIndex(), m_graphController->globalContext());
+}
+
 bool GraphOptionsController::displayR2Cell() const {
-  return m_store->seriesRegressionType(m_graphController->selectedSeriesIndex()) != Regression::Model::Type::Median;
+  return m_store->seriesRegressionType(m_graphController->selectedSeriesIndex()) != Regression::Model::Type::Median && displayRegressionEquationCell();
 }
 
 bool GraphOptionsController::displayResidualPlotCell() const {
-  return m_store->seriesRegressionType(m_graphController->selectedSeriesIndex()) == Regression::Model::Type::Linear;
+  return m_store->seriesRegressionType(m_graphController->selectedSeriesIndex()) == Regression::Model::Type::Linear && displayRegressionEquationCell();
 }
 
 }

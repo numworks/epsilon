@@ -52,12 +52,12 @@ void GoodnessTableCell::willDisplayCellAtLocation(Escher::HighlightCell * cell, 
     return;
   }
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
-  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, i, j - 1, m_statistic);
+  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, i, j - 1, m_tableModel);
 }
 
-bool GoodnessTableCell::recomputeDimensions(Chi2Test * s) {
+bool GoodnessTableCell::recomputeDimensions() {
   // Update degree of freedom if Number of non-empty rows changed
-  if (EditableCategoricalTableCell::recomputeDimensions(s)) {
+  if (EditableCategoricalTableCell::recomputeDimensions()) {
     int newDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
     statistic()->setDegreeOfFreedom(newDegreeOfFreedom);
     m_inputGoodnessController->updateDegreeOfFreedomCell();

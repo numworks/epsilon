@@ -36,12 +36,11 @@ enum class CategoricalType {
 class Statistic : public Inference {
 friend class DistributionInterface;
 public:
-  constexpr static int k_numberOfSignificanceTestType = 5;
-  static_assert(k_numberOfSignificanceTestType == static_cast<int>(SignificanceTestType::NumberOfSignificanceTestTypes), "k_numberOfSignificanceTestType doesn't agree with SignificanceTestType::NumberOfSignificanceTestTypes");
-
   Statistic() :
     m_threshold(-1),
     m_degreesOfFreedom(NAN) {}
+
+  constexpr static int k_numberOfSignificanceTestType = static_cast<int>(SignificanceTestType::NumberOfSignificanceTestTypes);
 
   virtual int numberOfSignificancesTestTypes() const { return k_numberOfSignificanceTestType; }
   virtual int numberOfAvailableDistributions() const { return 1; }

@@ -96,6 +96,12 @@ bool Chi2Test::authorizedParameterAtIndex(double p, int i) const {
   return Inference::authorizedParameterAtIndex(p, i);
 }
 
+void Chi2Test::deleteParametersInColumn(int column) {
+  for (int i = 0; i < maxNumberOfRows(); i++) {
+    setParameterAtPosition(k_undefinedValue, i, column);
+  }
+}
+
 bool Chi2Test::deleteParameterAtPosition(int row, int column) {
   if (std::isnan(parameterAtPosition(row, column))) {
     // Param is already deleted

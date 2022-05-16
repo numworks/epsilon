@@ -44,7 +44,6 @@ private:
   // CategoricalTableViewDataSource
   int relativeColumnIndex(int columnIndex) override { return columnIndex; }
 
-  bool deleteSelectedValue() override;
   GoodnessTest * statistic() { return static_cast<GoodnessTest *>(m_statistic); }
 
   Escher::EvenOddMessageTextCell m_header[GoodnessTest::k_maxNumberOfColumns];

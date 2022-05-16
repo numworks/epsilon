@@ -57,21 +57,7 @@ void GoodnessTableCell::willDisplayCellAtLocation(Escher::HighlightCell * cell, 
 
 bool GoodnessTableCell::recomputeDimensions(Chi2Test * s) {
   // Update degree of freedom if Number of non-empty rows changed
-  int previousDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
   if (EditableCategoricalTableCell::recomputeDimensions(s)) {
-    int newDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
-    if (previousDegreeOfFreedom != newDegreeOfFreedom) {
-      statistic()->setDegreeOfFreedom(newDegreeOfFreedom);
-      m_inputGoodnessController->updateDegreeOfFreedomCell();
-    }
-    return true;
-  }
-  return false;
-}
-
-bool GoodnessTableCell::deleteSelectedValue() {
-  if (EditableCategoricalTableCell::deleteSelectedValue()) {
-    // Number of non-empty rows changed, update degree of freedom.
     int newDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
     statistic()->setDegreeOfFreedom(newDegreeOfFreedom);
     m_inputGoodnessController->updateDegreeOfFreedomCell();

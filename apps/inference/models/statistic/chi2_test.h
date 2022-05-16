@@ -39,6 +39,7 @@ public:
   double parameterAtPosition(int row, int column) const;
   bool authorizedParameterAtPosition(double p, int row, int column) const;
   bool authorizedParameterAtIndex(double p, int i) const override;
+  void deleteParametersInColumn(int column);
   /* Delete parameter at location, return true if the deleted param was the last
    * non-deleted value of its row or column. */
   virtual bool deleteParameterAtPosition(int row, int column);

@@ -6,6 +6,11 @@
 
 namespace Regression {
 
+/* This banner view displays cursor's x and y position as well as (optionally)
+ * two other views :
+ *  - m_otherView : A buffer text either postionned first or after "y="
+ *  - m_displayDataNotSuitable : A message text displayed last */
+
 class BannerView : public Shared::XYBannerView {
 public:
   BannerView(
@@ -14,15 +19,19 @@ public:
     Escher::TextFieldDelegate * textFieldDelegate
   );
   Escher::BufferTextView * otherView() { return &m_otherView; }
-  // The other view may either be hidden, displayed first, or displayed last
-  void setDisplayParameters(bool hideOtherView, bool otherViewIsFirst);
+  void setDisplayParameters(bool displayOtherView, bool otherViewIsFirst, bool displayDataNotSuitable);
+
 private:
-  static constexpr int k_maxNumberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 1;
-  int numberOfSubviews() const override { return m_numberOfSubviews; }
+  static constexpr int k_maxNumberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 2;
+
+  int numberOfSubviews() const override { return k_maxNumberOfSubviews - !m_displayOtherView - !m_displayDataNotSuitable; }
   Escher::View * subviewAtIndex(int index) override;
+
   Escher::BufferTextView m_otherView;
+  Escher::MessageTextView m_dataNotSuitableView;
+  bool m_displayOtherView;
   bool m_otherViewIsFirst;
-  int m_numberOfSubviews;
+  bool m_displayDataNotSuitable;
 };
 
 }

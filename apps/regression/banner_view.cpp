@@ -1,4 +1,5 @@
 #include "banner_view.h"
+#include <apps/i18n.h>
 #include <assert.h>
 
 using namespace Escher;
@@ -8,25 +9,27 @@ namespace Regression {
 BannerView::BannerView(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
   Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
   m_otherView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_dataNotSuitableView(Font(), I18n::Message::DataNotSuitableForRegression, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_displayOtherView(false),
   m_otherViewIsFirst(false),
-  m_numberOfSubviews(k_maxNumberOfSubviews)
+  m_displayDataNotSuitable(false)
 {}
 
-void BannerView::setDisplayParameters(bool hideOtherView, bool otherViewIsFirst) {
-  assert(!hideOtherView || !otherViewIsFirst);
-  m_otherViewIsFirst = otherViewIsFirst && !hideOtherView;
-  m_numberOfSubviews = k_maxNumberOfSubviews - hideOtherView;
+void BannerView::setDisplayParameters(bool displayOtherView, bool otherViewIsFirst, bool displayDataNotSuitable) {
+  assert(displayOtherView || !otherViewIsFirst);
+  m_displayOtherView = displayOtherView;
+  m_otherViewIsFirst = otherViewIsFirst;
+  m_displayDataNotSuitable = displayDataNotSuitable;
 }
 
 View * BannerView::subviewAtIndex(int index) {
-  assert(0 <= index && index < m_numberOfSubviews);
-  if (m_otherViewIsFirst) {
-    if (index == 0) {
-      return &m_otherView;
-    }
-    index--;
-  } else if (index == k_maxNumberOfSubviews - 1) {
+  assert(0 <= index && index < numberOfSubviews());
+  if (m_displayOtherView && ((m_otherViewIsFirst && index == 0) || (!m_otherViewIsFirst && index == 2))) {
     return &m_otherView;
+  }
+  index -= (m_displayOtherView && m_otherViewIsFirst);
+  if (index >= Shared::XYBannerView::k_numberOfSubviews) {
+    return &m_dataNotSuitableView;
   }
   return Shared::XYBannerView::subviewAtIndex(index);
 }

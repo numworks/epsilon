@@ -21,7 +21,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Inpu
   // TODO Hugo : Update LineEquationTitle, Plot and Regression Messages
   m_regressionEquationCell(&m_selectableTableView, I18n::Message::LineEquationTitle),
   m_r2Cell(&m_selectableTableView),
-  m_residualPlot(I18n::Message::Plot),
+  m_residualPlotCell(I18n::Message::Plot),
   m_xParameterCell(I18n::Message::XPrediction),
   m_yParameterCell(I18n::Message::YPrediction),
   m_removeRegressionCell(&(this->m_selectableTableView), I18n::Message::Regression, Invocation([](void * context, void * sender) {
@@ -111,7 +111,7 @@ HighlightCell * GraphOptionsController::reusableCell(int index, int type) {
     &m_changeRegressionCell,
     &m_regressionEquationCell,
     &m_r2Cell,
-    &m_residualPlot,
+    &m_residualPlotCell,
     &m_xParameterCell,
     &m_yParameterCell,
     &m_removeRegressionCell,

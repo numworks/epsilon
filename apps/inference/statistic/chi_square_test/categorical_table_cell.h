@@ -69,6 +69,7 @@ protected:
   virtual int relativeColumnIndex(int columnIndex) = 0;
   int relativeRowIndex(int rowIndex) { return rowIndex - 1; }
   virtual bool deleteSelectedValue();
+  void deleteSelectedColumn();
 
   Chi2Test * m_statistic;
 };

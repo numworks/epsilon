@@ -126,10 +126,22 @@ bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::TextField *
 }
 
 bool EditableCategoricalTableCell::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Backspace && tableViewDataSource()->typeAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow()) == CategoricalTableViewDataSource::k_typeOfInnerCells) {
-    deleteSelectedValue();
+  int column = m_selectableTableView.selectedColumn();
+  int row = m_selectableTableView.selectedRow();
+  int cellType = tableViewDataSource()->typeAtLocation(column, row);
+  if (event == Ion::Events::Backspace) {
+    if (cellType == CategoricalTableViewDataSource::k_typeOfInnerCells) {
+      deleteSelectedValue();
+      return true;
+    } else if (row == 0) {
+      deleteSelectedColumn();
+      return true;
+    }
+  } else if (event == Ion::Events::Clear && (cellType == CategoricalTableViewDataSource::k_typeOfInnerCells || row == 0)) {
+    deleteSelectedColumn();
     return true;
   }
+
   return CategoricalTableCell::handleEvent(event);
 }
 
@@ -165,6 +177,16 @@ bool EditableCategoricalTableCell::deleteSelectedValue() {
     tableView()->selectCellAtClippedLocation(col, row, false);
     return true;
   }
+}
+
+void EditableCategoricalTableCell::deleteSelectedColumn() {
+  int column = m_selectableTableView.selectedColumn();
+  m_statistic->deleteParametersInColumn(relativeColumnIndex(column));
+  m_statistic->recomputeData();
+  if (!recomputeDimensions(m_statistic)) {
+    m_selectableTableView.reloadData(false);
+  }
+  tableView()->selectCellAtClippedLocation(column, 0, false);
 }
 
 bool EditableCategoricalTableCell::recomputeDimensions(Chi2Test * test) {

@@ -52,7 +52,7 @@ protected:
 
 class InputCategoricalController : public CategoricalController, public Shared::ParameterTextFieldDelegate, public DynamicSizeTableViewDataSourceDelegate {
 public:
-  InputCategoricalController(Escher::StackViewController * parent, Escher::ViewController * resultsController, Chi2Test * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
+  InputCategoricalController(Escher::StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
@@ -86,7 +86,7 @@ protected:
     return -1;
   }
 
-  Chi2Test * m_statistic;
+  Statistic * m_statistic;
   Escher::MessageTableCellWithEditableTextWithMessage m_innerSignificanceCell;
   Escher::CellWithMargins m_significanceCell;
 };

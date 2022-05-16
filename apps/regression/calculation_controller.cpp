@@ -176,20 +176,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     assert(j > numberOfRowsBeforeCoefficients);
     int maxNumberCoefficients = maxNumberOfCoefficients();
 
-    // Put dashes if regression is not defined
     Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
-    double * coefficients = m_store->coefficientsForSeries(seriesNumber, globContext);
-    bool coefficientsAreDefined = true;
-    int numberOfCoefs = m_store->modelForSeries(seriesNumber)->numberOfCoefficients();
-    for (int i = 0; i < numberOfCoefs; i++) {
-      if (std::isnan(coefficients[i])) {
-        coefficientsAreDefined = false;
-        break;
-      }
-    }
-    if (!coefficientsAreDefined) {
-       bufferCell->setText(I18n::translate(I18n::Message::Dash));
-       return;
+    if (!m_store->coefficientsAreDefined(seriesNumber, globContext)) {
+      // Put dashes if regression is not defined
+      bufferCell->setText(I18n::translate(I18n::Message::Dash));
+      return;
     }
 
     if (j > numberOfRowsBeforeCoefficients + maxNumberCoefficients) {
@@ -222,6 +213,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
         bufferCell->setText(I18n::translate(I18n::Message::Dash));
         return;
       } else {
+        double * coefficients = m_store->coefficientsForSeries(seriesNumber, globContext);
         constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
         char buffer[bufferSize];
         PoincareHelpers::ConvertFloatToText<double>(coefficients[j - k_regressionCellIndex - 1], buffer, bufferSize, numberSignificantDigits);

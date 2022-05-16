@@ -192,6 +192,17 @@ double * Store::coefficientsForSeries(int series, Poincare::Context * globalCont
   return m_regressionCoefficients[series];
 }
 
+bool Store::coefficientsAreDefined(int series, Poincare::Context * globalContext) {
+  double * coefficients = coefficientsForSeries(series, globalContext);
+  int numberOfCoefficients = modelForSeries(series)->numberOfCoefficients();
+  for (int i = 0; i < numberOfCoefficients; i++) {
+    if (std::isnan(coefficients[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 double Store::determinationCoefficientForSeries(int series, Poincare::Context * globalContext) {
   /* Returns the Determination coefficient (R2).
    * It will be updated if the regression has been updated */

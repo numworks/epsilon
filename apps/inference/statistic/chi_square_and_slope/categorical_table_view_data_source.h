@@ -4,7 +4,7 @@
 #include <escher/even_odd_cell.h>
 #include "inference/statistic/chi_square_and_slope/dynamic_size_table_view_data_source.h"
 #include "inference/statistic/chi_square_and_slope/bordered_table_view_data_source.h"
-#include "inference/models/statistic/goodness_test.h"
+#include "inference/models/statistic/table.h"
 #include "inference/text_helpers.h"
 
 namespace Inference {
@@ -12,8 +12,8 @@ namespace Inference {
 class CategoricalTableViewDataSource : public BorderedTableViewDataSource {
 public:
   // TableViewDataSource
-  template <typename TextHolder> void willDisplayValueCellAtLocation(TextHolder * textHolder, Escher::EvenOddCell * evenOddCell, int column, int row, Chi2Test * test) {
-    double p = test->parameterAtPosition(row, column);
+  template <typename TextHolder> void willDisplayValueCellAtLocation(TextHolder * textHolder, Escher::EvenOddCell * evenOddCell, int column, int row, Table * tableModel) {
+    double p = tableModel->parameterAtPosition(row, column);
     PrintValueInTextHolder(p, textHolder);
     evenOddCell->setEven(row % 2 == 1);
   }

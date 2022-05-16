@@ -95,7 +95,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
 }
 
 void InputCategoricalController::didEnterResponderChain(Responder * previousResponder) {
-  categoricalTableCell()->recomputeDimensions(m_statistic);
+  categoricalTableCell()->recomputeDimensions();
 }
 
 void InputCategoricalController::didBecomeFirstResponder() {

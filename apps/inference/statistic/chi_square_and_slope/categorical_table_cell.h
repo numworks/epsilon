@@ -11,7 +11,7 @@
 #include <shared/text_field_delegate.h>
 #include "inference/statistic/chi_square_and_slope/categorical_table_view_data_source.h"
 #include "inference/shared/dynamic_cells_data_source.h"
-#include "inference/models/statistic/chi2_test.h"
+#include "inference/models/statistic/table.h"
 
 namespace Inference {
 
@@ -52,7 +52,7 @@ private:
 
 class EditableCategoricalTableCell : public CategoricalTableCell, public Shared::TextFieldDelegate, public DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell>, public DynamicSizeTableViewDataSource, public Shared::ClearColumnHelper {
 public:
-  EditableCategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDelegate, Chi2Test * chi2Test);
+  EditableCategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDelegate, Table * tableModel);
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
@@ -65,7 +65,7 @@ public:
   void initCell(Escher::EvenOddEditableTextCell, void * cell, int index) override;
 
   // DynamicSizeTableViewDataSource
-  virtual bool recomputeDimensions(Chi2Test * test);
+  virtual bool recomputeDimensions();
 
 protected:
   // ClearColumnHelper
@@ -78,7 +78,7 @@ protected:
   int relativeRowIndex(int rowIndex) { return rowIndex - 1; }
   bool deleteSelectedValue();
 
-  Chi2Test * m_statistic;
+  Table * m_tableModel;
 };
 
 }  // namespace Inference

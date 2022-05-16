@@ -16,16 +16,8 @@ using namespace Poincare;
 namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder) :
-  TabTableController(parentResponder),
-  m_confirmPopUpController(
-    Invocation([](void * context, void * parent){
-      EditableCellTableViewController * param = static_cast<EditableCellTableViewController *>(context);
-      param->clearSelectedColumn();
-      Container::activeApp()->dismissModalViewController();
-      param->selectableTableView()->reloadData();
-      return true;
-    }, this))
-  { }
+  TabTableController(parentResponder)
+{}
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
@@ -130,13 +122,6 @@ void EditableCellTableViewController::viewWillAppear() {
   }
 }
 
-void EditableCellTableViewController::presentClearSelectedColumnPopupIfClearable() {
-  if (numberOfElementsInColumn(selectedColumn()) > 0 && isColumnClearable(selectedColumn())) {
-    setClearPopUpContent();
-    m_confirmPopUpController.presentModally();
-   }
-}
-
 bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Backspace && selectedRow() == 0) || event == Ion::Events::Clear) {
     presentClearSelectedColumnPopupIfClearable();
@@ -156,12 +141,6 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
 
 int EditableCellTableViewController::fillColumnNameWithMessage(char * buffer, I18n::Message message) {
   return Poincare::Print::customPrintf(buffer, k_maxSizeOfColumnName, I18n::translate(message));
-}
-
-void EditableCellTableViewController::setClearPopUpContent() {
-  char columnNameBuffer[ColumnParameterController::k_titleBufferSize];
-  fillColumnName(selectedColumn(), columnNameBuffer);
-  m_confirmPopUpController.setMessageWithPlaceholder(I18n::Message::ClearColumnConfirmation, columnNameBuffer);
 }
 
 }

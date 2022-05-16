@@ -33,6 +33,7 @@ app_shared_src = $(addprefix apps/shared/,\
   buffer_text_view_with_text_field.cpp \
   button_with_separator.cpp \
   cell_with_separator.cpp \
+  clear_column_helper.cpp \
   column_parameter_controller.cpp \
   cursor_view.cpp \
   double_pair_table_controller.cpp \

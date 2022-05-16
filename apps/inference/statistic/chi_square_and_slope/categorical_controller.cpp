@@ -70,7 +70,7 @@ HighlightCell * CategoricalController::reusableCell(int index, int type) {
 InputCategoricalController::InputCategoricalController(
     StackViewController * parent,
     ViewController * nextController,
-    Chi2Test * statistic,
+    Statistic * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
       CategoricalController(parent, nextController, Invocation(&InputCategoricalController::ButtonAction, this)),
       m_statistic(statistic),

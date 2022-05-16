@@ -81,7 +81,7 @@ private:
    * contiguous. */
   char * pythonHeap() {
     char * heap = reinterpret_cast<char *>(Poincare::TreePool::sharedPool());
-    assert(heap && heap + k_pythonHeapSize <= m_pythonHeapExtension + k_pythonHeapExtensionSize);
+    assert(heap && heap + k_pythonHeapSize <= m_pythonHeap + k_pythonHeapExtensionSize);
     return heap;
   }
   static constexpr int k_pythonHeapExtensionSize = k_pythonHeapSize - sizeof(Poincare::TreePool);

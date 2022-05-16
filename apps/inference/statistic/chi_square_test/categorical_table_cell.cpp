@@ -129,19 +129,13 @@ bool EditableCategoricalTableCell::handleEvent(Ion::Events::Event event) {
   int column = m_selectableTableView.selectedColumn();
   int row = m_selectableTableView.selectedRow();
   int cellType = tableViewDataSource()->typeAtLocation(column, row);
-  if (event == Ion::Events::Backspace) {
-    if (cellType == CategoricalTableViewDataSource::k_typeOfInnerCells) {
-      deleteSelectedValue();
-      return true;
-    } else if (row == 0) {
-      deleteSelectedColumn();
-      return true;
-    }
-  } else if (event == Ion::Events::Clear && (cellType == CategoricalTableViewDataSource::k_typeOfInnerCells || row == 0)) {
-    deleteSelectedColumn();
+  if (event == Ion::Events::Backspace && cellType == CategoricalTableViewDataSource::k_typeOfInnerCells) {
+    deleteSelectedValue();
+    return true;
+  } else if (event == Ion::Events::Backspace || event == Ion::Events::Clear) {
+    presentClearSelectedColumnPopupIfClearable();
     return true;
   }
-
   return CategoricalTableCell::handleEvent(event);
 }
 
@@ -179,7 +173,17 @@ bool EditableCategoricalTableCell::deleteSelectedValue() {
   }
 }
 
-void EditableCategoricalTableCell::deleteSelectedColumn() {
+int EditableCategoricalTableCell::numberOfElementsInColumn(int column) const {
+  int n = m_statistic->maxNumberOfRows();
+  column = relativeColumnIndex(column);
+  int res = 0;
+  for (int row = 0; row < n; row++) {
+    res += std::isfinite(m_statistic->parameterAtPosition(row, column));
+  }
+  return res;
+}
+
+void EditableCategoricalTableCell::clearSelectedColumn() {
   int column = m_selectableTableView.selectedColumn();
   m_statistic->deleteParametersInColumn(relativeColumnIndex(column));
   m_statistic->recomputeData();

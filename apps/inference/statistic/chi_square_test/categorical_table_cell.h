@@ -6,6 +6,8 @@
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
 #include <escher/selectable_table_view.h>
+#include <shared/clear_column_helper.h>
+#include <shared/parameter_text_field_delegate.h>
 #include <shared/text_field_delegate.h>
 #include "inference/statistic/chi_square_test/categorical_table_view_data_source.h"
 #include "inference/shared/dynamic_cells_data_source.h"
@@ -48,7 +50,7 @@ private:
   KDSize minimalSizeForOptimalDisplay() const override { return m_selectableTableView.minimalSizeForOptimalDisplay(); }
 };
 
-class EditableCategoricalTableCell : public CategoricalTableCell, public Shared::TextFieldDelegate, public DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell>, public DynamicSizeTableViewDataSource {
+class EditableCategoricalTableCell : public CategoricalTableCell, public Shared::TextFieldDelegate, public DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell>, public DynamicSizeTableViewDataSource, public Shared::ClearColumnHelper {
 public:
   EditableCategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDelegate, Chi2Test * chi2Test);
 
@@ -66,10 +68,15 @@ public:
   virtual bool recomputeDimensions(Chi2Test * test);
 
 protected:
-  virtual int relativeColumnIndex(int columnIndex) = 0;
+  // ClearColumnHelper
+  Escher::SelectableTableView * table() override { return selectableTableView(); }
+  int numberOfElementsInColumn(int column) const override;
+  void clearSelectedColumn() override;
+  bool isColumnClearable(int column) override { return relativeColumnIndex(column) >= 0; }
+
+  virtual int relativeColumnIndex(int columnIndex) const = 0;
   int relativeRowIndex(int rowIndex) { return rowIndex - 1; }
   virtual bool deleteSelectedValue();
-  void deleteSelectedColumn();
 
   Chi2Test * m_statistic;
 };

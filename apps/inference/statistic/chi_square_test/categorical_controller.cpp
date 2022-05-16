@@ -150,6 +150,4 @@ bool InputCategoricalController::handleEditedValue(int i, double p, TextField * 
   return true;
 }
 
-
-
 }  // namespace Inference

@@ -15,6 +15,7 @@ public:
   }
   double parameterAtPosition(int row, int column) const { return tableParameterAtIndex(index2DToIndex(row, column)); }
   bool authorizedParameterAtPosition(double p, int row, int column) const { return tableAuthorizedParameterAtIndex(p, index2DToIndex(row, column)); }
+  void deleteParametersInColumn(int column);
   /* Delete parameter at location, return true if the deleted param was the last
    * non-deleted value of its row or column. */
   virtual bool deleteParameterAtPosition(int row, int column);

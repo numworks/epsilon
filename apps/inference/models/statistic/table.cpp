@@ -4,6 +4,12 @@
 
 namespace Inference {
 
+void Table::deleteParametersInColumn(int column) {
+  for (int i = 0; i < maxNumberOfRows(); i++) {
+    setParameterAtPosition(k_undefinedValue, i, column);
+  }
+}
+
 bool Table::deleteParameterAtPosition(int row, int column) {
   if (std::isnan(parameterAtPosition(row, column))) {
     // Param is already deleted

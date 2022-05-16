@@ -209,6 +209,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("2x-x", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
   assertCalculationIs("[[1,2,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("[[1,x,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "[[1,undef,3]]", "[[1,undef,3]]", &globalContext, &store);
+  assertCalculationIs("[[1/0,2/0]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "[[undef,undef]]", "[[undef,undef]]", &globalContext, &store);
+  assertCalculationIs("{1/0,2/0}", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "{undef,undef}", "{undef,undef}", &globalContext, &store);
   assertCalculationIs("28^7", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("3+√(2)→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "3+√(2)", nullptr, nullptr, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();

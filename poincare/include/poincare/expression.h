@@ -167,6 +167,7 @@ public:
   ExpressionNode::NullStatus nullStatus(Context * context) const { return node()->nullStatus(context); }
   bool isStrictly(ExpressionNode::Sign s, Context * context) const { return s == node()->sign(context) && node()->nullStatus(context) == ExpressionNode::NullStatus::NonNull;  }
   bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined ||  node()->type() == ExpressionNode::Type::Nonreal; }
+  bool allChildrenAreUndefined();
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalOne() const;
   bool isRandom() const { return node()->isRandom(); }

@@ -290,6 +290,16 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
   return !isMultivariablePolynomial;
 }
 
+bool Expression::allChildrenAreUndefined() {
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    if (!childAtIndex(i).isOfType({ExpressionNode::Type::Nonreal, ExpressionNode::Type::Undefined})) {
+      return false;
+    }
+  }
+  return true;
+}
+
 bool Expression::isDefinedCosineOrSine(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   ExpressionNode::Type t = type();
   if (t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine) {

@@ -35,8 +35,7 @@ bool SubtractionNode::childAtIndexNeedsUserParentheses(const Expression & child,
   if (child.type() == Type::Conjugate) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Addition};
-  return child.isOfType(types, 3);
+  return child.isOfType({Type::Subtraction, Type::Opposite, Type::Addition});
 }
 
 Layout SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

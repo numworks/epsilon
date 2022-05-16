@@ -162,7 +162,7 @@ public:
 
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
-  bool isOfType(ExpressionNode::Type * types, int length) const { return node()->isOfType(types, length); }
+  bool isOfType(std::initializer_list<ExpressionNode::Type> types) const { return node()->isOfType(types); }
   ExpressionNode::Sign sign(Context * context) const { return node()->sign(context); }
   ExpressionNode::NullStatus nullStatus(Context * context) const { return node()->nullStatus(context); }
   bool isStrictly(ExpressionNode::Sign s, Context * context) const { return s == node()->sign(context) && node()->nullStatus(context) == ExpressionNode::NullStatus::NonNull;  }

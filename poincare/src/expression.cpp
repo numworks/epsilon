@@ -155,8 +155,7 @@ bool Expression::deepIsMatrix(Context * context) const {
            return e.childAtIndex(0).deepIsMatrix(context) ? RecursiveSearchResult::Yes : RecursiveSearchResult::No;
         }
         // These types are matrices if one of their children is one
-        ExpressionNode::Type typesThatCanBeMatrices[] = {ExpressionNode::Type::Power, ExpressionNode::Type::Opposite, ExpressionNode::Type::Sum, ExpressionNode::Type::Product};
-        if (e.isOfType(typesThatCanBeMatrices, sizeof(typesThatCanBeMatrices)/sizeof(ExpressionNode::Type))) {
+        if (e.isOfType({ExpressionNode::Type::Power, ExpressionNode::Type::Opposite, ExpressionNode::Type::Sum, ExpressionNode::Type::Product})) {
           return RecursiveSearchResult::Maybe;
         }
         // Any other type is not a matrix
@@ -533,20 +532,17 @@ bool Expression::isReal(Context * context) const {
    * factorize it here. */
 
   // These expressions are real if their children are
-  ExpressionNode::Type types1[] = {ExpressionNode::Type::ArcTangent, ExpressionNode::Type::Conjugate, ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine, ExpressionNode::Type::Tangent};
-  if (isOfType(types1, sizeof(types1)/sizeof(ExpressionNode::Type))) {
+  if (isOfType({ExpressionNode::Type::ArcTangent, ExpressionNode::Type::Conjugate, ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine, ExpressionNode::Type::Tangent})) {
     return childAtIndex(0).isReal(context);
   }
 
   // These expressions are always real
-  ExpressionNode::Type types2[] = {ExpressionNode::Type::BinomialCoefficient, ExpressionNode::Type::Derivative, ExpressionNode::Type::DivisionQuotient, ExpressionNode::Type::DivisionRemainder, ExpressionNode::Type::GreatCommonDivisor, ExpressionNode::Type::Integral, ExpressionNode::Type::LeastCommonMultiple, ExpressionNode::Type::PermuteCoefficient, ExpressionNode::Type::Randint, ExpressionNode::Type::Random, ExpressionNode::Type::Round, ExpressionNode::Type::SignFunction, ExpressionNode::Type::Unit};
-  if ((isNumber() && !isUndefined()) || isOfType(types2, sizeof(types2)/sizeof(ExpressionNode::Type))) {
+  if ((isNumber() && !isUndefined()) || isOfType({ExpressionNode::Type::BinomialCoefficient, ExpressionNode::Type::Derivative, ExpressionNode::Type::DivisionQuotient, ExpressionNode::Type::DivisionRemainder, ExpressionNode::Type::GreatCommonDivisor, ExpressionNode::Type::Integral, ExpressionNode::Type::LeastCommonMultiple, ExpressionNode::Type::PermuteCoefficient, ExpressionNode::Type::Randint, ExpressionNode::Type::Random, ExpressionNode::Type::Round, ExpressionNode::Type::SignFunction, ExpressionNode::Type::Unit})) {
     return true;
   }
 
   // These expressions are real when they are scalar
-  ExpressionNode::Type types3[] = {ExpressionNode::Type::AbsoluteValue, ExpressionNode::Type::Ceiling, ExpressionNode::Type::ComplexArgument, ExpressionNode::Type::Factorial, ExpressionNode::Type::Floor, ExpressionNode::Type::FracPart, ExpressionNode::Type::ImaginaryPart, ExpressionNode::Type::RealPart};
-  if (isOfType(types3, sizeof(types3)/sizeof(ExpressionNode::Type))) {
+  if (isOfType({ExpressionNode::Type::AbsoluteValue, ExpressionNode::Type::Ceiling, ExpressionNode::Type::ComplexArgument, ExpressionNode::Type::Factorial, ExpressionNode::Type::Floor, ExpressionNode::Type::FracPart, ExpressionNode::Type::ImaginaryPart, ExpressionNode::Type::RealPart})) {
     return !deepIsMatrix(context);
   }
 

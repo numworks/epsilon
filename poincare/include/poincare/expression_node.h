@@ -281,7 +281,7 @@ public:
   /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
   typedef bool (*isVariableTest)(const char * c, Poincare::Context * context);
   virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const;
-  bool isOfType(Type * types, int length) const;
+  bool isOfType(std::initializer_list<ExpressionNode::Type> types) const;
   /* This has a special behaviour for Multiplication, Power and Symbol.
    * See Addition::shallowBeautify - step 1. for more info. */
   virtual double degreeForSortingAddition(bool symbolsOnly) const { return symbolsOnly ? 0. : 1.; }

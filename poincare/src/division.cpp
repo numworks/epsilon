@@ -44,8 +44,7 @@ bool DivisionNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * c
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 5);
+  return static_cast<const ExpressionNode *>(child)->isOfType({Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition});
 }
 
 int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -46,7 +46,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
-  m_store(),
+  m_store(AppsContainer::sharedAppsContainer()->globalContext()),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),

@@ -27,9 +27,9 @@ const char * Store::SeriesTitle(int series) {
   }
 }
 
-Store::Store() :
+Store::Store(GlobalContext * context) :
   InteractiveCurveViewRange(),
-  DoublePairStore(),
+  DoublePairStore(context),
   m_exponentialAbxModel(true),
   m_angleUnit(Poincare::Preferences::AngleUnit::Degree)
 {

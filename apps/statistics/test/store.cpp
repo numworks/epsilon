@@ -9,6 +9,7 @@
 #include <poincare/test/helper.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Statistics {
 
@@ -43,7 +44,8 @@ void assert_data_statistics_equal_to(
     double trueModes[],
     double trueModeFrequency
   ) {
-  Store store;
+  GlobalContext context;
+  Store store(&context);
   uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
   store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
@@ -99,7 +101,8 @@ void assert_data_cumulated_frequency(
     double trueCumulatedFrequencyResults[],
     int totalCumulatedFrequency
   ) {
-  Store store;
+  GlobalContext context;
+  Store store(&context);
   uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
   store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
@@ -124,7 +127,8 @@ void assert_data_normal_probability(
     double trueNormalProbabilityResults[],
     int totalNormalProbability
   ) {
-  Store store;
+  GlobalContext context;
+  Store store(&context);
   uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
   store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
@@ -161,7 +165,8 @@ void assert_data_box_plot(
     double trueMaxValue,
     bool shouldUseFrequencyMethod
   ) {
-  Store store;
+  GlobalContext context;
+  Store store(&context);
   uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
   store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
@@ -966,7 +971,8 @@ void assert_data_statistics_multiple_series_equal_to(
     double minValue,
     double maxValueIgnoringFrequency,
     double minValueIgnoringFrequency) {
-  Store store;
+  GlobalContext context;
+  Store store(&context);
   uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
   store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
 

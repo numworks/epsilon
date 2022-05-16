@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <poincare/list.h>
 #include <poincare/complex.h>
+#include "global_context.h"
 #include <algorithm>
 
 namespace Shared {
@@ -22,7 +23,7 @@ public:
   constexpr static const char * k_statisticsColumNames[] = {"V", "N"}; // Must be 1 char long.
   static_assert(sizeof(k_statisticsColumNames) / sizeof(char *) == k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Statistics.");
 
-  DoublePairStore();
+  DoublePairStore(GlobalContext * context);
   // Delete the implicit copy constructor: the object is heavy
   DoublePairStore(const DoublePairStore&) = delete;
 
@@ -117,6 +118,7 @@ private:
   void deletePairsOfUndef(int series);
 
   Poincare::List m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
+  GlobalContext * m_context;
   int m_updateFlag;
 };
 

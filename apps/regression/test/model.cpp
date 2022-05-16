@@ -26,11 +26,11 @@ void setRegressionPoints(Regression::Store * store, int series, int numberOfPoin
 
 void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::Type modelType, double * trueCoefficients, double trueR2, bool acceptNAN = false) {
   int series = 0;
-  Regression::Store store;
+  Shared::GlobalContext globalContext;
+  Regression::Store store(&globalContext);
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
   store.setSeriesRegressionType(series, modelType);
-  Shared::GlobalContext globalContext;
   Shared::StoreContext context(&store, &globalContext);
 
   double precision = 1e-2;
@@ -323,7 +323,8 @@ QUIZ_CASE(logistic_regression) {
 
 void assert_column_calculations_is(double * xi, int numberOfPoints, double trueMean, double trueSum, double trueSquaredSum, double trueStandardDeviation, double trueVariance) {
   int series = 0;
-  Regression::Store store;
+  Shared::GlobalContext globalContext;
+  Regression::Store store(&globalContext);
 
   setRegressionPoints(&store, series, numberOfPoints, xi);
 
@@ -371,7 +372,8 @@ QUIZ_CASE(constant_column_calculation) {
 
 void assert_regression_calculations_is(double * xi, double * yi, int numberOfPoints, double trueCovariance, double trueProductSum, double trueR) {
   int series = 0;
-  Regression::Store store;
+  Shared::GlobalContext globalContext;
+  Regression::Store store(&globalContext);
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
 

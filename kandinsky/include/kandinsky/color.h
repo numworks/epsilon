@@ -18,22 +18,43 @@ public:
   }
   uint8_t red() const {
     uint8_t r5 = (m_value>>11)&0x1F;
-    return r5 << 3;
+    return expand(r5, 5);
   }
 
   uint8_t green() const {
     uint8_t g6 = (m_value>>5)&0x3F;
-    return g6 << 2;
+    return expand(g6, 6);
   }
 
   uint8_t blue() const {
     uint8_t b5 = m_value&0x1F;
-    return b5 << 3;
+    return expand(b5, 5);
   }
 
   static KDColor blend(KDColor first, KDColor second, uint8_t alpha);
   operator uint16_t() const { return m_value; }
 private:
+  /* When converting from RGB565 to RGB888 we need to artificially expand the
+   * bit precision of each color channel. For example, we need to convert a 5
+   * bit red color into an 8 bit one.
+   * Of course we cannot create information out of thin air, so a simple way to
+   * convert the value would be to just pad them with zeros. From a theoretical
+   * standpoint, this is as good as any other alogrithm.
+   * But in practices, this yields a rather visible problem : whites end up
+   * being too dark. For example, converting a 5 bit pure white (value 0b11111)
+   * to 8 bit would give 0b11111000, which is quite different from a pure white
+   * in 8 bit (0b11111111). And if padded with ones instead, we would have a
+   * similar problem with blacks.
+   * Enters a simple trick: fill the padding with the most significant bits from
+   * the original value. For example, to expand 0b101010 from 6 to 8 bits we
+   * would append the first two bits (0b10), resulting in 0b10101010. This way,
+   * full blacks remain black, and full whites remain whites. Yay, contrast! */
+  static constexpr uint8_t expand(uint8_t s, uint8_t nBits) {
+    return
+    (s << (8-nBits)) // Normal, zero-padded shifted value
+    |
+    (s >> (nBits-(8-nBits))); // Trick: let's try and fill the padding
+  }
   constexpr KDColor(uint16_t value) : m_value(value) {}
   uint16_t m_value;
 };

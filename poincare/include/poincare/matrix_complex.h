@@ -22,7 +22,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixComplexNode<T>); }
-  int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }
+  int numberOfChildren() const override { return isUndefined() ? 0 : m_numberOfRows*m_numberOfColumns; }
   void didChangeArity(int newNumberOfChildren) override { return Array::didChangeNumberOfChildren(newNumberOfChildren); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
@@ -36,7 +36,7 @@ public:
 
   // EvaluationNode
   typename EvaluationNode<T>::Type type() const override { return EvaluationNode<T>::Type::MatrixComplex; }
-  bool isUndefined() const override;
+  bool isUndefined() const override { return m_numberOfRows == static_cast<uint16_t>(-1); }
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
 
   // Matrix related functions

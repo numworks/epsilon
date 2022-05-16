@@ -44,7 +44,7 @@ class SelectableCellListPage : public SelectableListViewController<DataSource> {
     !std::is_same<DataSource, SimpleListViewDataSource>::value,
     "A SelectableCellListPage shouldn't use SimpleListViewDataSource as datasource because reusable cells are already handled here. Use a RegularListViewDataSource instead."
   );
-  static_assert(NumberOfCells <= 5, "There should'nt be a need for more than 5 reusable cells.");
+  static_assert(NumberOfCells <= 6, "There should'nt be a need for more than 6 reusable cells.");
 public:
   SelectableCellListPage(Responder * parent, SelectableTableViewDelegate * tableDelegate = nullptr) : SelectableListViewController<DataSource>(parent, tableDelegate) {}
   Cell * cellAtIndex(int i) { assert(i >= 0 && i < NumberOfCells); return &m_cells[i]; }

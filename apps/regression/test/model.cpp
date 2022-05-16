@@ -2,8 +2,8 @@
 #include <string.h>
 #include <assert.h>
 #include <apps/shared/global_context.h>
+#include <apps/shared/store_context.h>
 #include "../model/model.h"
-#include "../regression_context.h"
 #include "../store.h"
 #include <poincare/helpers.h>
 #include <poincare/trigonometry.h>
@@ -31,7 +31,7 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
   store.setSeriesRegressionType(series, modelType);
   Shared::GlobalContext globalContext;
-  RegressionContext context(&store, &globalContext);
+  Shared::StoreContext context(&store, &globalContext);
 
   double precision = 1e-2;
   // When expected value is null, expect a stronger precision

@@ -1,4 +1,5 @@
 #include "input_homogeneity_table_cell.h"
+#include <shared/column_parameter_controller.h>
 
 using namespace Escher;
 
@@ -25,6 +26,14 @@ void InputHomogeneityTableCell::willDisplayCellAtLocation(Escher::HighlightCell 
     Escher::EvenOddBufferTextCell * typedCell = static_cast<Escher::EvenOddBufferTextCell *>(cell);
     typedCell->setTextColor(Palette::GrayDark);
   }
+}
+
+int InputHomogeneityTableCell::fillColumnName(int column, char * buffer) {
+  int length = strlcpy(buffer, I18n::translate(I18n::Message::Group), Shared::ColumnParameterController::k_titleBufferSize);
+  buffer[length++] = '0' + column;
+  buffer[length] = '\0';
+  assert(length < Shared::ColumnParameterController::k_titleBufferSize);
+  return length;
 }
 
 void InputHomogeneityTableCell::willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) {

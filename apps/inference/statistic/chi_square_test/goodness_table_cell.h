@@ -41,8 +41,13 @@ public:
   constexpr static int k_numberOfReusableCells = GoodnessTest::k_maxNumberOfColumns * k_maxNumberOfReusableRows;
 
 private:
+  static constexpr I18n::Message k_columnHeaders[GoodnessTest::k_maxNumberOfColumns] = {I18n::Message::Observed, I18n::Message::Expected};
+
+  // ClearColumnHelper
+  int fillColumnName(int column, char * buffer) override;
+
   // CategoricalTableViewDataSource
-  int relativeColumnIndex(int columnIndex) override { return columnIndex; }
+  int relativeColumnIndex(int columnIndex) const override { return columnIndex; }
 
   GoodnessTest * statistic() { return static_cast<GoodnessTest *>(m_statistic); }
 

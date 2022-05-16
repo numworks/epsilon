@@ -1,5 +1,6 @@
 #include "goodness_table_cell.h"
 #include "inference/statistic/chi_square_test/input_goodness_controller.h"
+#include <shared/column_parameter_controller.h>
 
 using namespace Escher;
 
@@ -10,9 +11,8 @@ GoodnessTableCell::GoodnessTableCell(Responder * parentResponder, DynamicSizeTab
   DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells>(this),
   m_inputGoodnessController(inputGoodnessController)
 {
-  m_header[0].setMessage(I18n::Message::Observed);
-  m_header[1].setMessage(I18n::Message::Expected);
   for (int i = 0; i < GoodnessTest::k_maxNumberOfColumns; i++) {
+    m_header[i].setMessage(k_columnHeaders[i]);
     m_header[i].setEven(true);
     m_header[i].setMessageFont(KDFont::SmallFont);
   }
@@ -64,6 +64,10 @@ bool GoodnessTableCell::recomputeDimensions(Chi2Test * s) {
     return true;
   }
   return false;
+}
+
+int GoodnessTableCell::fillColumnName(int column, char * buffer) {
+  return strlcpy(buffer, I18n::translate(k_columnHeaders[column]), Shared::ColumnParameterController::k_titleBufferSize);
 }
 
 }  // namespace Inference

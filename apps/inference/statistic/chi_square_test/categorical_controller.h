@@ -8,7 +8,6 @@
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <shared/button_with_separator.h>
-#include <shared/parameter_text_field_delegate.h>
 #include "inference/statistic/chi_square_test/categorical_table_cell.h"
 #include "inference/statistic/chi_square_test/dynamic_size_table_view_data_source.h"
 #include "inference/models/statistic/chi2_test.h"
@@ -54,7 +53,6 @@ protected:
 class InputCategoricalController : public CategoricalController, public Shared::ParameterTextFieldDelegate, public DynamicSizeTableViewDataSourceDelegate {
 public:
   InputCategoricalController(Escher::StackViewController * parent, Escher::ViewController * resultsController, Chi2Test * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
-
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;

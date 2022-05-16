@@ -16,7 +16,7 @@ using namespace Poincare;
 namespace Shared {
 
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
-    CursorView * cursorView, bool displayBanner) :
+    CursorView * cursorView) :
   View(),
   m_bannerView(bannerView),
   m_curveViewCursor(curveViewCursor),

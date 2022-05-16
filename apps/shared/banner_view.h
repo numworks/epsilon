@@ -9,6 +9,9 @@ namespace Shared {
 
 class BannerView : public Escher::View {
 public:
+  // Ion::Display::Width / KDFont::SmallFont->glyphSize().width()
+  constexpr static float k_maxLengthDisplayed = 45;
+
   static KDCoordinate HeightGivenNumberOfLines(int linesCount);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

@@ -35,8 +35,7 @@ public:
 
 private:
   constexpr static float k_displayHorizontalMarginRatio = 0.05f;
-  // Ion::Display::Width / KDFont::SmallFont->glyphSize().width() + 1 for ŷ + 1
-  constexpr static float k_bannerViewTextBufferSize = 47;
+  constexpr static size_t k_bannerViewTextBufferSize = Shared::BannerView::k_maxLengthDisplayed + sizeof("ŷ");
 
   class SeriesSelectionController : public Shared::CurveSelectionController {
   public:

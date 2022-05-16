@@ -13,7 +13,7 @@ friend class BoxRange;
 public:
   constexpr static const char * const * k_columnNames = DoublePairStore::k_statisticsColumNames;
 
-  Store();
+  Store(Shared::GlobalContext * context);
 
   void setSortedIndex(uint8_t * buffer, size_t bufferSize);
   void invalidateSortedIndexes();

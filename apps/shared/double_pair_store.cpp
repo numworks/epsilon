@@ -1,6 +1,5 @@
 #include "double_pair_store.h"
 #include "poincare_helpers.h"
-#include <apps/apps_container.h>
 #include <poincare/helpers.h>
 #include <poincare/float.h>
 #include <ion/storage/file_system.h>
@@ -15,8 +14,9 @@ using namespace Ion::Storage;
 
 namespace Shared {
 
-DoublePairStore::DoublePairStore() :
+DoublePairStore::DoublePairStore(GlobalContext * context) :
   m_validSeries{false,false,false},
+  m_context(context),
   m_updateFlag(0)
 {
   for (int s = 0; s < k_numberOfSeries; s++) {
@@ -122,7 +122,7 @@ void DoublePairStore::setList(List list, int series, int i) {
       m_dataLists[series][i].removeChildAtIndexInPlace(list.numberOfChildren());
       continue;
     }
-    double evaluation = PoincareHelpers::ApproximateToScalar<double>(list.childAtIndex(j), AppsContainer::sharedAppsContainer()->globalContext());
+    double evaluation = PoincareHelpers::ApproximateToScalar<double>(list.childAtIndex(j), m_context);
     set(evaluation, series, i, j);
   }
   enableUpdate();
@@ -397,7 +397,7 @@ void DoublePairStore::storeColumn(int series, int i) const {
     return;
   }
   Symbol listSymbol = Symbol::Builder(name, nameLength);
-  AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(listToStore, listSymbol);
+  m_context->setExpressionForSymbolAbstract(listToStore, listSymbol);
 }
 
 void DoublePairStore::deleteTrailingUndef(int series, int i) {

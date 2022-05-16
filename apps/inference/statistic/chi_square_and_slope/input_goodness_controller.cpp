@@ -31,7 +31,7 @@ HighlightCell * InputGoodnessController::reusableCell(int index, int type) {
 
 int InputGoodnessController::indexOfEditedParameterAtIndex(int index) const {
   if (index == k_indexOfDegreeOfFreedom) {
-    return m_statistic->indexOfDegreeOfFreedom();
+    return static_cast<GoodnessTest *>(m_statistic)->indexOfDegreeOfFreedom();
   }
   return InputCategoricalController::indexOfEditedParameterAtIndex(index);
 }

@@ -25,6 +25,8 @@ public:
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; };
   int maxNumberOfRows() const override { return k_maxNumberOfRows; };
 
+  // GoodnessTest
+  int indexOfDegreeOfFreedom() const { return indexOfThreshold() + 1; }
   void setDegreeOfFreedom(double degreeOfFreedom) { m_degreesOfFreedom = degreeOfFreedom; }
   /* Return the DegreesOfFreedom computed from the numberOfValuesPairs. Actual
    * statistic's degree of freedom may differ because it can be overridden by
@@ -36,6 +38,7 @@ private:
   constexpr static int k_maxNumberOfRows = 10;
 
   // Statistic
+  void setParameterAtIndex(double p, int i) override;
   bool authorizedParameterAtIndex(double p, int i) const override;
 
   // Chi2Test

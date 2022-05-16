@@ -1,8 +1,8 @@
 #ifndef PROBABILITY_CONTROLLERS_INPUT_HOMOGENEITY_CONTROLLER_H
 #define PROBABILITY_CONTROLLERS_INPUT_HOMOGENEITY_CONTROLLER_H
 
-#include "inference/statistic/chi_square_test/categorical_controller.h"
-#include "inference/statistic/chi_square_test/input_homogeneity_table_cell.h"
+#include "inference/statistic/chi_square_and_slope/categorical_controller.h"
+#include "inference/statistic/chi_square_and_slope/input_homogeneity_table_cell.h"
 
 namespace Inference {
 

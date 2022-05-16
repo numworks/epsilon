@@ -2,8 +2,8 @@
 #define PROBABILITY_ABSTRACT_CATEGORICAL_TABLE_VIEW_DATA_SOURCE_H
 
 #include <escher/even_odd_cell.h>
-#include "inference/statistic/chi_square_test/dynamic_size_table_view_data_source.h"
-#include "inference/statistic/chi_square_test/bordered_table_view_data_source.h"
+#include "inference/statistic/chi_square_and_slope/dynamic_size_table_view_data_source.h"
+#include "inference/statistic/chi_square_and_slope/bordered_table_view_data_source.h"
 #include "inference/models/statistic/goodness_test.h"
 #include "inference/text_helpers.h"
 

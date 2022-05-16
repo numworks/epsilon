@@ -8,8 +8,8 @@
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <shared/button_with_separator.h>
-#include "inference/statistic/chi_square_test/categorical_table_cell.h"
-#include "inference/statistic/chi_square_test/dynamic_size_table_view_data_source.h"
+#include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
+#include "inference/statistic/chi_square_and_slope/dynamic_size_table_view_data_source.h"
 #include "inference/models/statistic/chi2_test.h"
 
 namespace Inference {

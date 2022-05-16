@@ -20,19 +20,10 @@ std::complex<T> MatrixComplexNode<T>::complexAtIndex(int index) const {
 }
 
 template<typename T>
-bool MatrixComplexNode<T>::isUndefined() const {
-  if (numberOfRows() != 1 || numberOfColumns() != 1) {
-    return false;
-  }
-  EvaluationNode<T> * child = const_cast<MatrixComplexNode<T> *>(this)->childAtIndex(0);
-  if (child->type() == EvaluationNode<T>::Type::Complex && std::isnan(static_cast<ComplexNode<T> *>(child)->real()) && std::isnan(static_cast<ComplexNode<T> *>(child)->imag())) {
-    return true;
-  }
-  return false;
-}
-
-template<typename T>
 Expression MatrixComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
+  if (isUndefined()) {
+    return Undefined::Builder();
+  }
   Matrix matrix = Matrix::Builder();
   int i = 0;
   for (EvaluationNode<T> * c : this->children()) {
@@ -182,8 +173,9 @@ MatrixComplex<T> MatrixComplex<T>::Builder(std::complex<T> * operands, int numbe
 
 template<typename T>
 MatrixComplex<T> MatrixComplex<T>::Undefined() {
-  std::complex<T> undef = std::complex<T>(NAN, NAN);
-  return MatrixComplex<T>::Builder((std::complex<T> *)&undef, 1, 1);
+  MatrixComplex<T> m = MatrixComplex<T>::Builder();
+  m.setDimensions(-1, 0);
+  return m;
 }
 
 template<typename T>

@@ -19,7 +19,8 @@ public:
   VectorType vectorType() const { return m_numberOfColumns == 1 ? VectorType::Vertical : (m_numberOfRows == 1 ? VectorType::Horizontal : VectorType::None); }
   int numberOfRows() const { return m_numberOfRows; }
   int numberOfColumns() const { return m_numberOfColumns; }
-  void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
+  // Convention: Undefined Matrix complex have -1 row.
+  void setNumberOfRows(int rows) { assert(rows == -1 || rows >= 0); m_numberOfRows = rows; }
   void setNumberOfColumns(int columns) { assert(columns >= 0); m_numberOfColumns = columns; }
   void didChangeNumberOfChildren(int newNumberOfChildren);
 protected:

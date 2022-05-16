@@ -11,7 +11,7 @@ PlotCurveView::PlotCurveView(Shared::CurveViewRange * curveViewRange,
                              Shared::CursorView * cursorView,
                              PlotController * plotController) :
     // No banners to display
-    Shared::LabeledCurveView(curveViewRange, curveViewCursor, nullptr, cursorView, false),
+    Shared::LabeledCurveView(curveViewRange, curveViewCursor, nullptr, cursorView),
     m_plotController(plotController) {
 }
 

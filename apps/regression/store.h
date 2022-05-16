@@ -39,6 +39,7 @@ public:
   void tidy();
 
   // Regression
+  // TODO Hugo : Reset series regression type when it becomes empty
   void setSeriesRegressionType(int series, Model::Type type);
   Model::Type seriesRegressionType(int series) {
     return m_regressionTypes[series];

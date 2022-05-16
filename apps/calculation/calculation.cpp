@@ -169,7 +169,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
        * approximate output. */
    || inputExp.recursivelyMatches(
         [](const Expression e, Context * c) {
-          ExpressionNode::Type approximateOnlyTypes[] = {
+          return e.isOfType({
             ExpressionNode::Type::ConstantPhysics,
             ExpressionNode::Type::Random,
             ExpressionNode::Type::Unit,
@@ -180,8 +180,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
             ExpressionNode::Type::Sum,
             ExpressionNode::Type::Derivative,
             ExpressionNode::Type::Sequence
-          };
-          return e.isOfType(approximateOnlyTypes, sizeof(approximateOnlyTypes)/sizeof(ExpressionNode::Type));
+          });
         }, context))
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;

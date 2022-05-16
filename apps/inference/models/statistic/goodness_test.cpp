@@ -66,9 +66,20 @@ bool GoodnessTest::validateInputs() {
   return true;
 }
 
+void GoodnessTest::setParameterAtIndex(double p, int i) {
+  if (i == indexOfDegreeOfFreedom()) {
+    m_degreesOfFreedom = p;
+  } else {
+    return Statistic::setParameterAtIndex(p, i);
+  }
+}
+
 bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
   if (i < numberOfStatisticParameters() && i % k_maxNumberOfColumns == 1 && std::fabs(p) < DBL_MIN) {
     // Expected value should not be null
+    return false;
+  }
+  if (i == indexOfDegreeOfFreedom() && (p != std::round(p) || p < 1.0)) {
     return false;
   }
   return Chi2Test::authorizedParameterAtIndex(p, i);

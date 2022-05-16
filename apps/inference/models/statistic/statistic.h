@@ -74,7 +74,7 @@ public:
   double threshold() const { return m_threshold; }
   void setThreshold(double s) { m_threshold = s; }
 
-  int indexOfThreshold() const{ return numberOfStatisticParameters(); }
+  int indexOfThreshold() const { return numberOfStatisticParameters(); }
   virtual void initThreshold() = 0;
   virtual I18n::Message thresholdName() const = 0;
   virtual I18n::Message thresholdDescription() const = 0;

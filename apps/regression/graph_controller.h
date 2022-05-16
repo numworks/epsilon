@@ -12,6 +12,8 @@
 
 namespace Regression {
 
+// TODO Hugo : Factorize m_modelType into store
+
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:

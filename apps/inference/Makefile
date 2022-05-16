@@ -58,7 +58,7 @@ app_inference_src += $(addprefix apps/inference/shared/,\
   expression_cell_with_editable_text_with_message.cpp \
 )
 
-app_inference_src += $(addprefix apps/inference/statistic/chi_square_test/,\
+app_inference_src += $(addprefix apps/inference/statistic/chi_square_and_slope/,\
   categorical_controller.cpp \
   categorical_table_cell.cpp \
   categorical_type_controller.cpp \

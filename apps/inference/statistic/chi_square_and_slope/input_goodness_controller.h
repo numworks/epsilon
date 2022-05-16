@@ -1,8 +1,8 @@
 #ifndef PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H
 #define PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H
 
-#include "inference/statistic/chi_square_test/categorical_controller.h"
-#include "inference/statistic/chi_square_test/goodness_table_cell.h"
+#include "inference/statistic/chi_square_and_slope/categorical_controller.h"
+#include "inference/statistic/chi_square_and_slope/goodness_table_cell.h"
 
 using namespace Escher;
 

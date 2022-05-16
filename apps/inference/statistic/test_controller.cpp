@@ -7,7 +7,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 
-#include "chi_square_test/categorical_type_controller.h"
+#include "chi_square_and_slope/categorical_type_controller.h"
 #include "test/hypothesis_controller.h"
 #include "inference/app.h"
 #include "type_controller.h"

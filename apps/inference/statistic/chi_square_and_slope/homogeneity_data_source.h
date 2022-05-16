@@ -6,7 +6,7 @@
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/solid_color_cell.h>
 
-#include "inference/statistic/chi_square_test/categorical_table_view_data_source.h"
+#include "inference/statistic/chi_square_and_slope/categorical_table_view_data_source.h"
 #include "inference/shared/dynamic_cells_data_source.h"
 #include "inference/models/statistic/homogeneity_test.h"
 

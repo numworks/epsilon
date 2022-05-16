@@ -9,7 +9,7 @@
 #include <shared/clear_column_helper.h>
 #include <shared/parameter_text_field_delegate.h>
 #include <shared/text_field_delegate.h>
-#include "inference/statistic/chi_square_test/categorical_table_view_data_source.h"
+#include "inference/statistic/chi_square_and_slope/categorical_table_view_data_source.h"
 #include "inference/shared/dynamic_cells_data_source.h"
 #include "inference/models/statistic/chi2_test.h"
 

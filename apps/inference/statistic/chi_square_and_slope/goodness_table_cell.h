@@ -4,8 +4,8 @@
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_message_text_cell.h>
 #include <escher/metric.h>
-#include "inference/statistic/chi_square_test/categorical_table_cell.h"
-#include "inference/statistic/chi_square_test/categorical_table_view_data_source.h"
+#include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
+#include "inference/statistic/chi_square_and_slope/categorical_table_view_data_source.h"
 #include "inference/shared/dynamic_cells_data_source.h"
 #include "inference/models/statistic/goodness_test.h"
 

@@ -39,6 +39,7 @@ app_inference_test_src += $(addprefix apps/inference/models/statistic/,\
   homogeneity_test.cpp \
   interval.cpp \
   statistic.cpp \
+  table.cpp \
   test.cpp \
   two_proportions_z_test.cpp \
 )

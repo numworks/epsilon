@@ -157,14 +157,13 @@ bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize
 void GraphController::reloadBannerView() {
   const int significantDigits = Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
-  constexpr size_t bufferSize = k_bannerViewTextBufferSize;
 
   // If any coefficient is NAN, display that data is not suitable
   bool coefficientsAreDefined = m_store->coefficientsAreDefined(*m_selectedSeriesIndex, globalContext());
   bool displayMean = (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex));
-  char buffer[bufferSize];
+  char buffer[k_bannerViewTextBufferSize];
   Model::Type modelType = m_store->seriesRegressionType(*m_selectedSeriesIndex);
-  if (*m_selectedDotIndex < 0 && coefficientsAreDefined && buildRegressionExpression(buffer, bufferSize, modelType, significantDigits, displayMode)) {
+  if (*m_selectedDotIndex < 0 && coefficientsAreDefined && buildRegressionExpression(buffer, k_bannerViewTextBufferSize, modelType, significantDigits, displayMode)) {
     // Regression equation fits in the banner, display it
     m_bannerView.setDisplayParameters(true, false, false);
     m_bannerView.otherView()->setText(buffer);
@@ -182,11 +181,11 @@ void GraphController::reloadBannerView() {
    * if the mean dot is selected. Same with y. */
   m_bannerView.abscissaSymbol()->setText(displayMean ? "x\xCC\x85=" : "x=");
   double x = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 0) : m_cursor->x();
-  Poincare::Print::customPrintf(buffer, bufferSize, "%*.*ed", x, displayMode, significantDigits);
+  Poincare::Print::customPrintf(buffer, k_bannerViewTextBufferSize, "%*.*ed", x, displayMode, significantDigits);
   m_bannerView.abscissaValue()->setText(buffer);
 
   double y = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 1) : m_cursor->y();
-  Poincare::Print::customPrintf(buffer, bufferSize, (displayMean ? "y\xCC\x85=%*.*ed" : "y=%*.*ed"), y, displayMode, significantDigits);
+  Poincare::Print::customPrintf(buffer, k_bannerViewTextBufferSize, (displayMean ? "y\xCC\x85=%*.*ed" : "y=%*.*ed"), y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 
   m_bannerView.reload();

@@ -30,7 +30,7 @@ void assert_expression_simplify_to_with_dependencies(
   quiz_assert_print_if_failure(d.type() == ExpressionNode::Type::Dependency, expression);
   assert_expression_serialize_to(d.childAtIndex(0), simplifiedExpression);
   Expression m = d.childAtIndex(1);
-  quiz_assert_print_if_failure(m.type() == ExpressionNode::Type::Matrix, expression);
+  quiz_assert_print_if_failure(m.type() == ExpressionNode::Type::List, expression);
   quiz_assert_print_if_failure(m.numberOfChildren() == N, expression);
   for (size_t i = 0; i < N; i++) {
     assert_expression_serialize_to(m.childAtIndex(i), dependencies[i]);
@@ -103,7 +103,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   /* Dependencies are not bubbled up out of an integral, but they are still
    * present inside the integral. */
   assert_reduce("1→f(x)");
-  assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", "int(dep\u0014(2,[[x,a]]),x,0,1)", {""});
+  assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", "int(dep\u0014(2,{x,a}),x,0,1)", {""});
   assert_reduce("1/0→a");
   assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", Undefined::Name(), {""});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
@@ -112,7 +112,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   /* If the derivation is not handled properly, the symbol x could be reduced
    * to undef. */
   assert_reduce("x→f(x)");
-  assert_expression_simplify_to_with_dependencies("int(diff(f(x),x,x),x,0,1)", "int(dep\u0014(1,[[x,x]]),x,0,1)", {""});
+  assert_expression_simplify_to_with_dependencies("int(diff(f(x),x,x),x,0,1)", "int(dep\u0014(1,{x,x}),x,0,1)", {""});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 
   /* When trimming dependencies, we must be able to recognize unreduced

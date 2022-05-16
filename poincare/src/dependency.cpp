@@ -26,7 +26,7 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(Approxim
   if (dependencies->type() == Type::Undefined || dependencies->type() == Type::Nonreal) {
     return Complex<T>::Undefined();
   }
-  assert(dependencies->type() == ExpressionNode::Type::Matrix);
+  assert(dependencies->type() == ExpressionNode::Type::List);
   for (int i = 0; i < dependencies->numberOfChildren(); i++) {
     if (dependencies->childAtIndex(i)->approximate(static_cast<T>(1), approximationContext).isUndefined()) {
       return Complex<T>::Undefined();
@@ -38,17 +38,15 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(Approxim
 // Dependency
 
 Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  /* If one of the element in the matrix is undefined (nonreal), the whole
-   * matrix will be reduced to Undefined (Nonreal).
-   * This is the reason why dependencies are better stored as a matrix
-   * than as a list. */
+  // Undefined/Unreal nodes are bubbled-up
+  SimplificationHelper::shallowReduceUndefined(childAtIndex(1));
   Expression dependencies = childAtIndex(1);
   if (dependencies.isUndefined()) {
     /* dependencies is either Undefined or Nonreal. */
     replaceWithInPlace(dependencies);
     return dependencies;
   }
-  assert(dependencies.type() == ExpressionNode::Type::Matrix);
+  assert(dependencies.type() == ExpressionNode::Type::List);
 
   int totalNumberOfDependencies = numberOfDependencies();
   int i = 0;
@@ -62,7 +60,7 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
        * approximated while in reducing routine). */
       i++;
     } else {
-      static_cast<Matrix &>(dependencies).removeChildAtIndexInPlace(i);
+      static_cast<List &>(dependencies).removeChildAtIndexInPlace(i);
       totalNumberOfDependencies--;
     }
   }
@@ -78,42 +76,39 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
 
 void Dependency::addDependency(Expression newDependency) {
   Expression dependencies = childAtIndex(1);
-  if (dependencies.type() == ExpressionNode::Type::Matrix) {
-    Matrix matrixChild = static_cast<Matrix &>(dependencies);
-    matrixChild.addChildAtIndexInPlace(newDependency.clone(), numberOfDependencies(), numberOfDependencies());
+  if (dependencies.type() == ExpressionNode::Type::List) {
+    List listChild = static_cast<List &>(dependencies);
+    listChild.addChildAtIndexInPlace(newDependency.clone(), numberOfDependencies(), numberOfDependencies());
   }
-  /* If dependencies is not a Matrix, it is either Undef or Nonreal. As such,
+  /* If dependencies is not a List, it is either Undef or Nonreal. As such,
    * the expression will be undefined: new dependencies will not change that,
    * and will disappear in the next reduction. */
 }
 
-void Dependency::extractDependencies(Matrix m) {
-  assert(m.numberOfChildren() == 0 || m.numberOfRows() == 1);
-
-  int previousNumberOfChildren = m.numberOfChildren();
+void Dependency::extractDependencies(List l) {
+  int previousNumberOfChildren = l.numberOfChildren();
 
   Expression dependencies = childAtIndex(1);
   if (dependencies.isUndefined()) {
-    m.addChildAtIndexInPlace(dependencies, previousNumberOfChildren, previousNumberOfChildren);
+    l.addChildAtIndexInPlace(dependencies, previousNumberOfChildren, previousNumberOfChildren);
     return;
   }
 
-  assert(dependencies.type() == ExpressionNode::Type::Matrix);
-  Matrix matrixChild = static_cast<Matrix &>(dependencies);
-  assert (matrixChild.numberOfRows() == 1);
+  assert(dependencies.type() == ExpressionNode::Type::List);
+  List listChild = static_cast<List &>(dependencies);
   int newNumberOfChildren = previousNumberOfChildren;
-  int numberOfChildrenToDump = matrixChild.numberOfChildren();
+  int numberOfChildrenToDump = listChild.numberOfChildren();
   for (int i = 0; i < numberOfChildrenToDump; i++) {
-    Expression child = matrixChild.childAtIndex(i);
+    Expression child = listChild.childAtIndex(i);
     bool unique = true;
     int j = 0;
     while (j < previousNumberOfChildren && unique) {
-      unique = !child.isIdenticalTo(m.childAtIndex(j++));
+      unique = !child.isIdenticalTo(l.childAtIndex(j++));
     }
     if (unique) {
       /* As matrixChild will be destroyed afterwards, we steal the child,
        * leaving a Ghost in its place. */
-      m.addChildAtIndexInPlace(child, newNumberOfChildren, newNumberOfChildren);
+      l.addChildAtIndexInPlace(child, newNumberOfChildren, newNumberOfChildren);
       newNumberOfChildren++;
     }
   }
@@ -123,11 +118,11 @@ void Dependency::extractDependencies(Matrix m) {
 
 Expression Dependency::UntypedBuilder(Expression children) {
   assert(children.type() == ExpressionNode::Type::List);
-  if (children.childAtIndex(1).type() != ExpressionNode::Type::Matrix) {
-    // Second parameter must be a Matrix.
+  if (children.childAtIndex(1).type() != ExpressionNode::Type::List) {
+    // Second parameter must be a List.
     return Expression();
   }
-  return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Matrix>());
+  return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<List>());
 }
 
 }

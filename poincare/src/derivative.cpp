@@ -170,10 +170,10 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
       return e;
     }
   }
-  Matrix m = Matrix::Builder();
+  List l = List::Builder();
   Expression derivand = childAtIndex(0);
   if (derivand.type() == ExpressionNode::Type::Dependency) {
-    static_cast<Dependency &>(derivand).extractDependencies(m);
+    static_cast<Dependency &>(derivand).extractDependencies(l);
     derivand = childAtIndex(0);
   }
   Symbol symbol = childAtIndex(1).convert<Symbol>();
@@ -183,8 +183,8 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   /* Since derivand is a child to the derivative node, it can be replaced in
    * place without derivate having to return the derivative. */
   if (!derivand.derivate(reductionContext, symbol, symbolValue)) {
-    if (m.numberOfChildren() > 0) {
-      replaceChildAtIndexInPlace(0, Dependency::Builder(derivand, m));
+    if (l.numberOfChildren() > 0) {
+      replaceChildAtIndexInPlace(0, Dependency::Builder(derivand, l));
     }
     return *this;
   }
@@ -194,7 +194,7 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
    * general formulas used during the derivation process can create some nodes
    * that are not defined for some values (e.g. log), but that would disappear
    * at reduction. */
-  Dependency d = Dependency::Builder(childAtIndex(0).deepReduce(reductionContext), m);
+  Dependency d = Dependency::Builder(childAtIndex(0).deepReduce(reductionContext), l);
   d.addDependency(derivandAsDependency);
 
   /* Deep reduces the child, because derivate may not preserve its reduced

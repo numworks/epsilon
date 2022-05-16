@@ -1,7 +1,7 @@
 #ifndef POINCARE_DEPENDENCY_H
 #define POINCARE_DEPENDENCY_H
 
-#include <poincare/matrix.h>
+#include <poincare/list.h>
 
 namespace Poincare {
 
@@ -42,14 +42,14 @@ class Dependency : public Expression {
   friend class DependencyNode;
 public:
   Dependency(const DependencyNode * n) : Expression(n) {}
-  static Dependency Builder(Expression expression, Matrix dependencies = Matrix::Builder()) { return TreeHandle::FixedArityBuilder<Dependency, DependencyNode>({expression, dependencies}); }
+  static Dependency Builder(Expression expression, List dependencies = List::Builder()) { return TreeHandle::FixedArityBuilder<Dependency, DependencyNode>({expression, dependencies}); }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
   int numberOfDependencies() const { return childAtIndex(1).numberOfChildren(); }
   void addDependency(Expression newDependency);
   /* Store the dependecies in m and replace the dependency node with the true expression. */
-  void extractDependencies(Matrix m);
+  void extractDependencies(List l);
   bool dependencyRecursivelyMatches(ExpressionTernaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols, auxiliary); }
 
   // Parser utils

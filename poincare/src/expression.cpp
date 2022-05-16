@@ -293,7 +293,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 bool Expression::allChildrenAreUndefined() {
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
-    if (!childAtIndex(i).isOfType({ExpressionNode::Type::Nonreal, ExpressionNode::Type::Undefined})) {
+    if (!childAtIndex(i).isUndefined()) {
       return false;
     }
   }

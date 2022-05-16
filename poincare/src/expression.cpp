@@ -301,8 +301,7 @@ bool Expression::allChildrenAreUndefined() {
 }
 
 bool Expression::isDefinedCosineOrSine(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  ExpressionNode::Type t = type();
-  if (t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine) {
+  if (isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine})) {
     float r = childAtIndex(0).approximateToScalar<float>(context, complexFormat, angleUnit);
     if (!std::isnan(r)) {
       return true;

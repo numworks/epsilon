@@ -14,7 +14,6 @@ ExpressionField::ExpressionField(Responder * parentResponder,
                                  LayoutFieldDelegate * layoutFieldDelegate) :
     Responder(parentResponder),
     View(),
-    m_inputViewMemoizedHeight(0),
     m_textField(parentResponder,
                 nullptr,
                 k_textFieldBufferSize,
@@ -26,7 +25,8 @@ ExpressionField::ExpressionField(Responder * parentResponder,
                 KDContext::k_alignCenter,
                 KDColorBlack,
                 KDColorWhite),
-    m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate) {
+    m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate),
+    m_inputViewMemoizedHeight(0) {
   // Initialize text field
   m_textField.setMargins(0, k_horizontalMargin, 0, k_horizontalMargin);
   m_textField.setBackgroundColor(KDColorWhite);

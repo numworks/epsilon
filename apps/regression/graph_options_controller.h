@@ -28,7 +28,7 @@ public:
   void viewWillAppear() override;
 
   // MemoizedListViewDataSource
-  int numberOfRows() const override { return k_maxNumberOfRows - !displayR2Cell() - !displayResidualPlotCell(); }
+  int numberOfRows() const override { return k_maxNumberOfRows - !displayRegressionEquationCell() - !displayR2Cell() - !displayResidualPlotCell(); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   // Each cell has its own type
   int reusableCellCount(int type) override { return 1; }
@@ -45,6 +45,7 @@ private:
   constexpr static int k_removeRegressionCellType = 6;
   constexpr static int k_maxNumberOfRows = 7;
 
+  bool displayRegressionEquationCell() const;
   bool displayR2Cell() const;
   bool displayResidualPlotCell() const;
 

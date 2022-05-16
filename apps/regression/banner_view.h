@@ -11,6 +11,7 @@ namespace Regression {
  *  - m_otherView : A buffer text either postionned first or after "y="
  *  - m_displayDataNotSuitable : A message text displayed last */
 
+// TODO Hugo : XYBannerView has TextField logic that are unused here. Optimize it.
 class BannerView : public Shared::XYBannerView {
 public:
   BannerView(

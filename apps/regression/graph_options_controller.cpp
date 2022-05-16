@@ -30,6 +30,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Inpu
       return true;
     }, this)),
   m_goToParameterController(this, inputEventHandlerDelegate, store, cursor, graphController),
+  m_residualPlotCellController(parentResponder, store),
   m_store(store),
   m_graphController(graphController)
 {
@@ -79,7 +80,8 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
         return true;
       }
     case k_residualPlotCellType:
-      // TODO Hugo : Implement residual plot
+      m_residualPlotCellController.setSeries(m_graphController->selectedSeriesIndex());
+      stack->push(&m_residualPlotCellController);
       return true;
     case k_xParameterCellType:
     case k_yParameterCellType:

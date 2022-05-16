@@ -9,9 +9,10 @@
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
-#include "message_table_cell_with_chevron_with_separator.h"
-#include "store.h"
 #include "go_to_parameter_controller.h"
+#include "message_table_cell_with_chevron_with_separator.h"
+#include "residual_plot_controller.h"
+#include "store.h"
 
 namespace Regression {
 
@@ -57,6 +58,7 @@ private:
   Escher::MessageTableCellWithChevron m_yParameterCell;
   Shared::ButtonWithSeparator m_removeRegressionCell;
   GoToParameterController m_goToParameterController;
+  ResidualPlotController m_residualPlotCellController;
   Store * m_store;
   GraphController * m_graphController;
 };

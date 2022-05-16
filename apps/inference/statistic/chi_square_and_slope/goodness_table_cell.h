@@ -33,7 +33,7 @@ public:
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
   // DynamicSizeTableViewDataSource
-  bool recomputeDimensions(Chi2Test * test) override;
+  bool recomputeDimensions() override;
 
   // DynamicCellsDataSource
   Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
@@ -49,7 +49,7 @@ private:
   // CategoricalTableViewDataSource
   int relativeColumnIndex(int columnIndex) const override { return columnIndex; }
 
-  GoodnessTest * statistic() { return static_cast<GoodnessTest *>(m_statistic); }
+  GoodnessTest * statistic() { return static_cast<GoodnessTest *>(m_tableModel); }
 
   Escher::EvenOddMessageTextCell m_header[GoodnessTest::k_maxNumberOfColumns];
   InputGoodnessController * m_inputGoodnessController;

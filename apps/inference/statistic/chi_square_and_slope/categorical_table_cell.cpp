@@ -79,10 +79,10 @@ void CategoricalTableCell::scrollViewDidChangeOffset(ScrollViewDataSource * scro
 
 /* EditableCategoricalTableCell */
 
-EditableCategoricalTableCell::EditableCategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDelegate, Chi2Test * chi2Test) :
+EditableCategoricalTableCell::EditableCategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDelegate, Table * tableModel) :
   CategoricalTableCell(parentResponder, dataSource, selectableTableViewDelegate),
   DynamicSizeTableViewDataSource(dynamicSizeTableViewDelegate),
-  m_statistic(chi2Test)
+  m_tableModel(tableModel)
 {
   m_selectableTableView.setTopMargin(0);
   m_selectableTableView.setBottomMargin(k_bottomMargin);
@@ -104,17 +104,17 @@ bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::TextField *
     return false;
   }
   int row = m_selectableTableView.selectedRow(), column = m_selectableTableView.selectedColumn();
-  if (!m_statistic->authorizedParameterAtPosition(p, relativeRowIndex(row), relativeColumnIndex(column))) {
+  if (!m_tableModel->authorizedParameterAtPosition(p, relativeRowIndex(row), relativeColumnIndex(column))) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_statistic->setParameterAtPosition(p,  relativeRowIndex(row), relativeColumnIndex(column));
+  m_tableModel->setParameterAtPosition(p,  relativeRowIndex(row), relativeColumnIndex(column));
 
   m_selectableTableView.deselectTable();
   // Add row or column
-  if ((row == tableViewDataSource()->numberOfRows() - 1 && relativeRowIndex(tableViewDataSource()->numberOfRows()) < m_statistic->maxNumberOfRows()) ||
-      (column == tableViewDataSource()->numberOfColumns() - 1 && relativeColumnIndex(tableViewDataSource()->numberOfColumns()) < m_statistic->maxNumberOfColumns())) {
-    recomputeDimensions(m_statistic);
+  if ((row == tableViewDataSource()->numberOfRows() - 1 && relativeRowIndex(tableViewDataSource()->numberOfRows()) < m_tableModel->maxNumberOfRows()) ||
+      (column == tableViewDataSource()->numberOfColumns() - 1 && relativeColumnIndex(tableViewDataSource()->numberOfColumns()) < m_tableModel->maxNumberOfColumns())) {
+    recomputeDimensions();
   }
   m_selectableTableView.reloadCellAtLocation(column, row);
   m_selectableTableView.selectCellAtClippedLocation(column, row);
@@ -150,7 +150,7 @@ bool EditableCategoricalTableCell::deleteSelectedValue() {
   int row = m_selectableTableView.selectedRow(), col = m_selectableTableView.selectedColumn();
   assert(relativeRowIndex(row) >= 0 && relativeColumnIndex(col) >= 0);
   // Remove value
-  bool shouldDeleteRowOrCol = m_statistic->deleteParameterAtPosition(relativeRowIndex(row), relativeColumnIndex(col));
+  bool shouldDeleteRowOrCol = m_tableModel->deleteParameterAtPosition(relativeRowIndex(row), relativeColumnIndex(col));
   if (!shouldDeleteRowOrCol) {
     // Only one cell needs to reload.
     assert(row < tableViewDataSource()->numberOfRows() && col < tableViewDataSource()->numberOfColumns());
@@ -158,11 +158,11 @@ bool EditableCategoricalTableCell::deleteSelectedValue() {
     return false;
   } else {
     // A row and/or column has been deleted, we should recompute data
-    m_statistic->recomputeData();
+    m_tableModel->recomputeData();
     /* Due to an initial number of rows/ols of 2, we cannot ensure that at most
      * one row and one col have been deleted here */
     m_selectableTableView.deselectTable();
-    if (!recomputeDimensions(m_statistic)) {
+    if (!recomputeDimensions()) {
       /* A row has been deleted, but size didn't change, meaning the number of
        * non-empty rows was k_maxNumberOfRows. However, recomputeData may have
        * moved up multiple cells, m_inputTableView should be reloaded. */
@@ -174,28 +174,28 @@ bool EditableCategoricalTableCell::deleteSelectedValue() {
 }
 
 int EditableCategoricalTableCell::numberOfElementsInColumn(int column) const {
-  int n = m_statistic->maxNumberOfRows();
+  int n = m_tableModel->maxNumberOfRows();
   column = relativeColumnIndex(column);
   int res = 0;
   for (int row = 0; row < n; row++) {
-    res += std::isfinite(m_statistic->parameterAtPosition(row, column));
+    res += std::isfinite(m_tableModel->parameterAtPosition(row, column));
   }
   return res;
 }
 
 void EditableCategoricalTableCell::clearSelectedColumn() {
   int column = m_selectableTableView.selectedColumn();
-  m_statistic->deleteParametersInColumn(relativeColumnIndex(column));
-  m_statistic->recomputeData();
-  if (!recomputeDimensions(m_statistic)) {
+  m_tableModel->deleteParametersInColumn(relativeColumnIndex(column));
+  m_tableModel->recomputeData();
+  if (!recomputeDimensions()) {
     m_selectableTableView.reloadData(false);
   }
   tableView()->selectCellAtClippedLocation(column, 0, false);
 }
 
-bool EditableCategoricalTableCell::recomputeDimensions(Chi2Test * test) {
+bool EditableCategoricalTableCell::recomputeDimensions() {
   // Return true if size changed
-  Chi2Test::Index2D dimensions = test->computeDimensions();
+  Chi2Test::Index2D dimensions = m_tableModel->computeDimensions();
   return didChangeSize(dimensions.row, dimensions.col);
 }
 

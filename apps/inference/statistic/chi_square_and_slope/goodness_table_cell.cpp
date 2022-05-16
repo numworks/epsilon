@@ -1,5 +1,5 @@
 #include "goodness_table_cell.h"
-#include "inference/statistic/chi_square_test/input_goodness_controller.h"
+#include "inference/statistic/chi_square_and_slope/input_goodness_controller.h"
 #include <shared/column_parameter_controller.h>
 
 using namespace Escher;

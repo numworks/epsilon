@@ -1,8 +1,8 @@
 #ifndef PROBABILITY_CONTROLLERS_RESULTS_HOMOGENEITY_CONTROLLER_H
 #define PROBABILITY_CONTROLLERS_RESULTS_HOMOGENEITY_CONTROLLER_H
 
-#include "inference/statistic/chi_square_test/categorical_controller.h"
-#include "inference/statistic/chi_square_test/result_homogeneity_table_cell.h"
+#include "inference/statistic/chi_square_and_slope/categorical_controller.h"
+#include "inference/statistic/chi_square_and_slope/result_homogeneity_table_cell.h"
 #include <escher/tab_view_controller.h>
 
 namespace Inference {

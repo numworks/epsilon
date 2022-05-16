@@ -82,6 +82,7 @@ public:
   double yValueForXValue(int series, double x, Poincare::Context * globalContext);
   double xValueForYValue(int series, double y, Poincare::Context * globalContext);
   double correlationCoefficient(int series) const; // R
+  double residualAtIndexForSeries(int series, int index, Poincare::Context * globalContext);
 
   // To speed up computation during drawings, float is returned.
   float maxValueOfColumn(int series, int i) const;

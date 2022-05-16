@@ -141,7 +141,7 @@ void GraphController::SeriesSelectionController::willDisplayCellForIndex(Highlig
 
 bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
   int length = Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%s", "ŷ=");
-  if (length >= bufferSize) {
+  if (length >= static_cast<int>(bufferSize)) {
     return false;
   }
   buffer += length;
@@ -149,7 +149,7 @@ bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize
 
   double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
   length = m_store->regressionModel(modelType)->buildEquationTemplate(buffer, bufferSize, coefficients, significantDigits, displayMode);
-  return length < bufferSize;
+  return length < static_cast<int>(bufferSize);
 }
 
 // SimpleInteractiveCurveViewController

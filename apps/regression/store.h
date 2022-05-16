@@ -26,7 +26,7 @@ public:
   constexpr static const char * const * k_columnNames = DoublePairStore::k_regressionColumNames;
   static const char * SeriesTitle(int series);
 
-  Store();
+  Store(Shared::GlobalContext * context);
 
   // DoublePairStore
   char columnNamePrefixAtIndex(int column) const override {

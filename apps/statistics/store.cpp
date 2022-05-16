@@ -14,8 +14,8 @@ namespace Statistics {
 
 static_assert(Store::k_numberOfSeries == 3, "The constructor of Statistics::Store should be changed");
 
-Store::Store() :
-  DoublePairStore(),
+Store::Store(GlobalContext * context) :
+  DoublePairStore(context),
   m_displayCumulatedFrequencies{false, false, false},
   m_barWidth(1.0),
   m_firstDrawnBarAbscissa(0.0),

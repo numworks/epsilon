@@ -34,7 +34,7 @@ public:
   Escher::App::Snapshot * usbConnectedAppSnapshot();
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
   void reset();
-  Poincare::Context * globalContext();
+  Shared::GlobalContext * globalContext();
   MathToolbox * mathToolbox();
   MathVariableBoxController * variableBoxController();
   void didSuspend();

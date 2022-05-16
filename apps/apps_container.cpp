@@ -65,7 +65,7 @@ void AppsContainer::reset() {
   }
 }
 
-Poincare::Context * AppsContainer::globalContext() {
+Shared::GlobalContext * AppsContainer::globalContext() {
   return &m_globalContext;
 }
 

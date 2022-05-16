@@ -67,6 +67,7 @@ public:
   // Calculation
   void updateCoefficients(int series, Poincare::Context * globalContext);
   double * coefficientsForSeries(int series, Poincare::Context * globalContext);
+  bool coefficientsAreDefined(int series, Poincare::Context * globalContext);
   double determinationCoefficientForSeries(int series, Poincare::Context * globalContext); // R2
   double doubleCastedNumberOfPairsOfSeries(int series) const;
   double squaredOffsettedValueSumOfColumn(int series, int i, bool lnOfSeries = false, double offset = 0) const;

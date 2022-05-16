@@ -161,15 +161,7 @@ void GraphController::reloadBannerView() {
   constexpr size_t bufferSize = k_bannerViewTextBufferSize;
 
   // If any coefficient is NAN, display that data is not suitable
-  double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
-  bool coefficientsAreDefined = true;
-  for (int i = 0; i < m_store->modelForSeries(*m_selectedSeriesIndex)->numberOfCoefficients(); i++) {
-    if (std::isnan(coefficients[i])) {
-      coefficientsAreDefined = false;
-      break;
-    }
-  }
-
+  bool coefficientsAreDefined = m_store->coefficientsAreDefined(*m_selectedSeriesIndex, globalContext());
   bool displayMean = (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex));
   char buffer[bufferSize];
   Model::Type modelType = m_store->seriesRegressionType(*m_selectedSeriesIndex);

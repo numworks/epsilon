@@ -52,7 +52,7 @@ private:
   Escher::MessageTableCellWithChevronAndMessage m_changeRegressionCell;
   Escher::ExpressionTableCellWithMessage m_regressionEquationCell;
   Escher::ExpressionTableCellWithMessageWithBuffer m_r2Cell;
-  Escher::MessageTableCell m_residualPlot;
+  Escher::MessageTableCell m_residualPlotCell;
   MessageTableCellWithChevronWithSeparator m_xParameterCell;
   Escher::MessageTableCellWithChevron m_yParameterCell;
   Shared::ButtonWithSeparator m_removeRegressionCell;

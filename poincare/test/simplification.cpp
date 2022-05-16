@@ -1319,9 +1319,9 @@ QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
   assert_parsed_expression_simplify_to("aacos(b)", "2×acos(b)");
   assert_parsed_expression_simplify_to("t→bar(t)", "t");
   assert_parsed_expression_simplify_to("8→foo", "8");
-  assert_parsed_expression_simplify_to("foobar(t)", "dep\u0014(8×t,[[t]])");
+  assert_parsed_expression_simplify_to("foobar(t)", "dep\u0014(8×t,{t})");
   assert_parsed_expression_simplify_to("t^2→foobar(t)", "t^2");
-  assert_parsed_expression_simplify_to("foobar(t)", "dep\u0014(t^2,[[t]])");
+  assert_parsed_expression_simplify_to("foobar(t)", "dep\u0014(t^2,{t})");
 
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
@@ -1394,7 +1394,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("(-8)^(1/5)", "-root(8,5)", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("(-8)^(1/4)", "nonreal", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("(-8)^(1/3)", "-2", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("[[1,2+√(-1)]]", "nonreal", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("[[1,2+√(-1)]]", "[[1,nonreal]]", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("atan(2)", "atan(2)", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("atan(-2)", "-atan(2)", User, Radian, MetricUnitFormat, Real);
 

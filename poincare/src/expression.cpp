@@ -895,7 +895,7 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
   deepReduceChildren(reductionContext);
   if (type() != ExpressionNode::Type::Store && !ComparisonOperator::IsComparisonOperatorType(type())) {
     /* Bubble up dependencies */
-    Matrix dependencies = Matrix::Builder();
+    List dependencies = List::Builder();
     for (int i = 0; i < numberOfChildren(); i++) {
       if (isParameteredExpression() && (i == ParameteredExpression::ParameteredChildIndex())) {
         /* A parametered expression can have dependencies on its parameter, which

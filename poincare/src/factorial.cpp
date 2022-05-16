@@ -22,8 +22,7 @@ bool FactorialNode::childAtIndexNeedsUserParentheses(const Expression & child, i
   if (child.type() == Type::Conjugate) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Addition};
-  return child.isOfType(types, 4);
+  return child.isOfType({Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Addition});
 }
 
 // Layout
@@ -36,8 +35,7 @@ bool FactorialNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * 
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
-  Type types[] = {Type::Division, Type::Power};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 2);
+  return static_cast<const ExpressionNode *>(child)->isOfType({Type::Division, Type::Power});
 }
 
 // Simplification

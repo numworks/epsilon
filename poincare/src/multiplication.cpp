@@ -63,8 +63,7 @@ bool MultiplicationNode::childAtIndexNeedsUserParentheses(const Expression & chi
   if (NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(child, childIndex)) {
     return true;
   }
-  Type types[] = {Type::Subtraction, Type::Addition};
-  return child.isOfType(types, 2);
+  return child.isOfType({Type::Subtraction, Type::Addition});
 }
 
 Expression MultiplicationNode::removeUnit(Expression * unit) {

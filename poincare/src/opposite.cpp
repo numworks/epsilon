@@ -46,8 +46,7 @@ bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression & child, in
   if (child.type() == Type::Conjugate) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), 0);
   }
-  Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite};
-  return child.isOfType(types, 3);
+  return child.isOfType({Type::Addition, Type::Subtraction, Type::Opposite});
 }
 
 Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

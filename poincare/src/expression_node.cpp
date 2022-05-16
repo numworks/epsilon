@@ -121,9 +121,9 @@ Expression ExpressionNode::unaryFunctionDifferential(ReductionContext reductionC
   return Expression(this).defaultUnaryFunctionDifferential();
 }
 
-bool ExpressionNode::isOfType(Type * types, int length) const {
-  for (int i = 0; i < length; i++) {
-    if (type() == types[i]) {
+bool ExpressionNode::isOfType(std::initializer_list<ExpressionNode::Type> types) const {
+  for (ExpressionNode::Type t : types) {
+    if (type() == t) {
       return true;
     }
   }

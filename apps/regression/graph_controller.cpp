@@ -155,7 +155,6 @@ bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize
 // SimpleInteractiveCurveViewController
 
 void GraphController::reloadBannerView() {
-  // Set point equals: "P(...) ="
   const int significantDigits = Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
   constexpr size_t bufferSize = k_bannerViewTextBufferSize;

@@ -160,19 +160,30 @@ void GraphController::reloadBannerView() {
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
   constexpr size_t bufferSize = k_bannerViewTextBufferSize;
 
+  // If any coefficient is NAN, display that data is not suitable
+  double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
+  bool coefficientsAreDefined = true;
+  for (int i = 0; i < m_store->modelForSeries(*m_selectedSeriesIndex)->numberOfCoefficients(); i++) {
+    if (std::isnan(coefficients[i])) {
+      coefficientsAreDefined = false;
+      break;
+    }
+  }
+
   bool displayMean = (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex));
   char buffer[bufferSize];
   Model::Type modelType = m_store->seriesRegressionType(*m_selectedSeriesIndex);
-  if (*m_selectedDotIndex < 0 && buildRegressionExpression(buffer, bufferSize, modelType, significantDigits, displayMode)) {
+  if (*m_selectedDotIndex < 0 && coefficientsAreDefined && buildRegressionExpression(buffer, bufferSize, modelType, significantDigits, displayMode)) {
     // Regression equation fits in the banner, display it
-    m_bannerView.setDisplayParameters(false, false);
+    m_bannerView.setDisplayParameters(true, false, false);
     m_bannerView.otherView()->setText(buffer);
   } else if (displayMean) {
-    m_bannerView.setDisplayParameters(false, true);
+    // Display MeanDot before x= and y=
+    m_bannerView.setDisplayParameters(true, true, !coefficientsAreDefined);
     m_bannerView.otherView()->setText(I18n::translate(I18n::Message::MeanDot));
   } else {
     // Nothing else to display
-    m_bannerView.setDisplayParameters(true, false);
+    m_bannerView.setDisplayParameters(false, false, !coefficientsAreDefined);
     m_bannerView.otherView()->setText("");
   }
 

@@ -125,6 +125,8 @@ bool App::textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::E
 
 void App::initPythonWithUser(const void * pythonUser) {
   if (!m_pythonUser) {
+    /* On device, the heap will overlap the pool, so we make sure it is unused. */
+    assert(Poincare::TreePool::sharedPool()->numberOfNodes() == 0);
     char * heap = pythonHeap();
     MicroPython::init(heap, heap + k_pythonHeapSize);
   }

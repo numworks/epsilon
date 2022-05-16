@@ -3,7 +3,6 @@
 #include <assert.h>
 #include "../model/model.h"
 #include "../graph_controller.h"
-#include "../regression_context.h"
 #include "../store.h"
 
 using namespace Poincare;

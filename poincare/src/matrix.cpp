@@ -532,12 +532,6 @@ Matrix Matrix::cross(Matrix * b, ExpressionNode::ReductionContext reductionConte
 }
 
 Expression Matrix::shallowReduce(Context * context) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
   if (node()->hasMatrixOrListChild(context)) {
     return replaceWithUndefinedInPlace();
   }

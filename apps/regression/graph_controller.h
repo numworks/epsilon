@@ -12,8 +12,6 @@
 
 namespace Regression {
 
-// TODO Hugo : Factorize m_modelType into store
-
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
@@ -54,7 +52,7 @@ private:
   };
 
   bool buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
-  bool selectedSeriesIsScatterPlot() const { return m_modelType[*m_selectedSeriesIndex] == Model::Type::None; }
+  bool selectedSeriesIsScatterPlot() const { return m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::None; }
 
   // SimpleInteractiveCurveViewController
   float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(m_bannerView.minimalSizeForOptimalDisplay().height()); }
@@ -91,7 +89,7 @@ private:
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;
   int * m_selectedSeriesIndex;
-  Model::Type m_modelType[Store::k_numberOfSeries];
+  Model::Type m_selectedModelType;
 };
 
 }

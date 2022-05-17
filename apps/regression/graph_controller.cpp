@@ -24,11 +24,9 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   m_seriesSelectionController(this),
   m_calculusButton(this, I18n::Message::Regression, calculusButtonInvocation(), KDFont::SmallFont),
   m_selectedDotIndex(selectedDotIndex),
-  m_selectedSeriesIndex(selectedSeriesIndex)
+  m_selectedSeriesIndex(selectedSeriesIndex),
+  m_selectedModelType((Model::Type)-1)
 {
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    m_modelType[i] = (Model::Type) -1;
-  }
   m_store->setDelegate(this);
 }
 
@@ -49,29 +47,17 @@ void GraphController::viewWillAppear() {
    * either null (right after construction) or refering a removed series. */
   if (*m_selectedSeriesIndex < 0 || !m_store->seriesIsValid(*m_selectedSeriesIndex)) {
     *m_selectedSeriesIndex = m_store->indexOfKthValidSeries(0);
+    m_selectedModelType = (Model::Type)-1;
   }
 
-  Model::Type previousSelectedRegressionType = m_modelType[*m_selectedSeriesIndex];
-
-  /* Equalize the Model::Type of each series between the GraphController and
-   * the Store.
-   * TODO In passing, one may probably avoid keeping the Model::Type of each
-   * series in two places:
-   *  1) call initCursorParameters elsewhere the very first time the graph view
-   *     appears,
-   *  2) take into account the Model::Type in the computation of the
-   *     storeChecksum in order to detect any change in the series and in
-   *     their model types. */
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    m_modelType[i] = m_store->seriesRegressionType(i);
-  }
-
-  /* Both the GraphController and the Store hold the Model::Type of each
-   * series. The values differ in two cases:
+  /* Selected model type is memoized. The values differ in three cases:
    *  1) the very first time the graph view appears
    *  2) when the user selects another Model::Type for a series.
+   *  3) selected series has been removed
    * where we decide to place the cursor at a default position. */
-  if (previousSelectedRegressionType != m_store->seriesRegressionType(*m_selectedSeriesIndex)) {
+  Model::Type newSelectedModelType = m_store->seriesRegressionType(*m_selectedSeriesIndex);
+  if (m_selectedModelType != newSelectedModelType) {
+    m_selectedModelType = newSelectedModelType;
     initCursorParameters();
   }
 

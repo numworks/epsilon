@@ -8,7 +8,7 @@
 namespace Poincare {
 
 template<typename T>
-class FloatList : public List, DatasetColumn<T> {
+class FloatList : public List, public DatasetColumn<T> {
 
 public:
   static FloatList<T> Builder() { return TreeHandle::NAryBuilder<FloatList<T>, ListNode>(); }
@@ -33,6 +33,8 @@ public:
     assert((child.type() == ExpressionNode::Type::Float && sizeof(T) == sizeof(float)) || (child.type() == ExpressionNode::Type::Double && sizeof(T) == sizeof(double)));
     return static_cast<Float<T> &>(child).value();
   }
+
+  int length() const override { return numberOfChildren(); }
 
 };
 

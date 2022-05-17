@@ -96,6 +96,7 @@ protected:
   int fillColumnName(int columnIndex, char * buffer) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
+  void reloadEditedCell(int column, int row) override;
 
 private:
   // Specialization depending on the abscissa names (x, n, t...)

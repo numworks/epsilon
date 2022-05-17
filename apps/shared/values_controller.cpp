@@ -384,6 +384,13 @@ void ValuesController::setTitleCellStyle(HighlightCell * cell, int columnIndex) 
   }
 }
 
+void ValuesController::reloadEditedCell(int column, int row) {
+  // Reload the row, if an existing value was edited.
+  for (int i = 0; i < numberOfColumns(); i++) {
+    selectableTableView()->reloadCellAtLocation(i, row);
+  }
+}
+
 void ValuesController::initializeInterval() {
   intervalParameterController()->setInterval(intervalAtColumn(selectedColumn()));
   setStartEndMessages(intervalParameterController(), selectedColumn());

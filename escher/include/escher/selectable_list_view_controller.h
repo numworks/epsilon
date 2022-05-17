@@ -50,7 +50,7 @@ public:
   Cell * cellAtIndex(int i) { assert(i >= 0 && i < NumberOfCells); return &m_cells[i]; }
   int numberOfRows() const override { return NumberOfCells; }
   int reusableCellCount(int type) override { return NumberOfCells; }
-  HighlightCell * reusableCell(int i, int type) final { assert(type == 0); return cellAtIndex(i); }
+  HighlightCell * reusableCell(int i, int type) override { assert(type == 0); return cellAtIndex(i); }
 private:
   Cell m_cells[NumberOfCells];
 };

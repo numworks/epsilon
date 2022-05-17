@@ -10,7 +10,7 @@ namespace Inference {
 
 class InputSlopeController : public InputCategoricalController {
 public:
-  InputSlopeController(StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Table * tableModel, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  InputSlopeController(StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   // ViewController
   const char * title() override;
@@ -18,6 +18,7 @@ public:
 private:
   EditableCategoricalTableCell * categoricalTableCell() override { return &m_slopeTableCell; }
   int indexOfSignificanceCell() const override { return k_indexOfTableCell + 1; }
+  Table * tableModel();
 
   // TODO: check longuest message?
   constexpr static int k_titleBufferSize = sizeof("t-interval for a slope");

@@ -9,6 +9,7 @@
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
 
+#include "inference/statistic/chi_square_and_slope/input_slope_controller.h"
 #include "inference/statistic/comparison_operator_popup_data_source.h"
 #include "inference/statistic/expression_cell_with_sublabel_and_dropdown.h"
 #include "inference/statistic/input_controller.h"
@@ -25,6 +26,7 @@ class HypothesisController : public Escher::SelectableListViewController<Escher:
 public:
   HypothesisController(Escher::StackViewController * parent,
                        InputController * inputController,
+                       InputSlopeController * inputSlopeController,
                        InputEventHandlerDelegate * handler,
                        Test * test);
   ViewController::TitlesDisplay titlesDisplay() override {
@@ -59,6 +61,7 @@ private:
                                           Constants::k_shortFloatNumberOfChars /* float */ +
                                           1 /* \0 */;
   InputController * m_inputController;
+  InputSlopeController * m_inputSlopeController;
 
   ComparisonOperatorPopupDataSource m_operatorDataSource;
 

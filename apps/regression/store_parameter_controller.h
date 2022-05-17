@@ -18,9 +18,10 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 protected:
   int numberOfCells() const override { return Shared::StoreParameterController::k_numberOfCells + 1; }
+  int indexOfHideColumn() const override { return Shared::StoreParameterController::indexOfHideColumn() + 1; }
 
 private:
-  constexpr static int k_indexOfRegressionCell = Shared::StoreParameterController::k_numberOfCells;
+  int indexOfRegressionCell() const { return Shared::StoreParameterController::indexOfHideColumn(); }
 
   Escher::MessageTableCellWithChevronAndMessage m_changeRegressionCell;
 };

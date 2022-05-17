@@ -23,7 +23,8 @@ public:
   GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   void removeRegression();
 
-  const char * title() override { return I18n::translate(I18n::Message::Regression); }
+  const char * title() override { return m_title ? m_title : I18n::translate(I18n::Message::Regression); }
+  void setTitle(const char * title) { m_title = title; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
@@ -61,6 +62,7 @@ private:
   ResidualPlotController m_residualPlotCellController;
   Store * m_store;
   GraphController * m_graphController;
+  const char * m_title;
 };
 
 }

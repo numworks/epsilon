@@ -13,6 +13,20 @@ namespace Regression {
 
 static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regression::Store() needs to adapt (m_seriesChecksum)");
 
+const char * Store::SeriesTitle(int series) {
+  /* Controller titles for menus targetting a specific series. These cannot
+   * live on the stack and must be const char *. */
+  switch (series) {
+  case 0:
+    return "X1/Y1";
+  case 1:
+    return "X2/Y2";
+  default:
+    assert(series == 2);
+    return "X3/Y3";
+  }
+}
+
 Store::Store() :
   InteractiveCurveViewRange(),
   DoublePairStore(),

@@ -352,12 +352,14 @@ template ListMean TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<2>>(const
 template ListMedian TreeHandle::FixedArityBuilder<ListMedian, ListMedianNode>(const Tuple &);
 template ListMinimum TreeHandle::FixedArityBuilder<ListMinimum, ListMinimumNode>(const Tuple &);
 template ListProduct TreeHandle::FixedArityBuilder<ListProduct, ListProductNode>(const Tuple &);
-template ListSampleStandardDeviation TreeHandle::FixedArityBuilder<ListSampleStandardDeviation, ListSampleStandardDeviationNode>(const Tuple &);
+template ListSampleStandardDeviation TreeHandle::FixedArityBuilder<ListSampleStandardDeviation, ListSampleStandardDeviationNode<1>>(const Tuple &);
+template ListSampleStandardDeviation TreeHandle::FixedArityBuilder<ListSampleStandardDeviation, ListSampleStandardDeviationNode<2>>(const Tuple &);
 template ListSlice TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(const Tuple &);
 template ListSequence TreeHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(const Tuple &);
 template ListSequenceLayout TreeHandle::FixedArityBuilder<ListSequenceLayout, ListSequenceLayoutNode>(const Tuple &);
 template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(const Tuple &);
-template ListStandardDeviation TreeHandle::FixedArityBuilder<ListStandardDeviation, ListStandardDeviationNode>(const Tuple &);
+template ListStandardDeviation TreeHandle::FixedArityBuilder<ListStandardDeviation, ListStandardDeviationNode<1>>(const Tuple &);
+template ListStandardDeviation TreeHandle::FixedArityBuilder<ListStandardDeviation, ListStandardDeviationNode<2>>(const Tuple &);
 template ListSum TreeHandle::FixedArityBuilder<ListSum, ListSumNode>(const Tuple &);
 template ListVariance TreeHandle::FixedArityBuilder<ListVariance, ListVarianceNode<1>>(const Tuple &);
 template ListVariance TreeHandle::FixedArityBuilder<ListVariance, ListVarianceNode<2>>(const Tuple &);

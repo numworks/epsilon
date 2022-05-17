@@ -72,13 +72,14 @@ Escher::HighlightCell * DynamicCellsDataSource<T,N>::cell(int i) {
 
 static_assert(k_homogeneityTableNumberOfReusableHeaderCells == HomogeneityTableDataSource::k_numberOfReusableColumns + HomogeneityTableDataSource::k_maxNumberOfReusableRows - 1, "k_homogeneityTableNumberOfReusableHeaderCells should be updated with HomogeneityTableDataSource::k_numberOfReusableColumns and HomogeneityTableDataSource::k_maxNumberOfReusableRows"); // -1 takes the hidden top left cell into account
 static_assert(k_homogeneityTableNumberOfReusableInnerCells == HomogeneityTableDataSource::k_numberOfReusableCells, "k_homogeneityTableNumberOfReusableHeaderCells should be updated with HomogeneityTableDataSource::k_numberOfReusableCells");
-static_assert(k_inputGoodnessTableNumberOfReusableCells == GoodnessTableCell::k_numberOfReusableCells, "k_inputGoodnessTableNumberOfReusableCells should be updated with GoodnessTableCell::k_numberOfReusableCells");
+static_assert(k_doubleColumnTableNumberOfReusableCells == GoodnessTableCell::k_numberOfReusableCells, "k_doubleColumnTableNumberOfReusableCells should be updated with GoodnessTableCell::k_numberOfReusableCells");
+static_assert(k_doubleColumnTableNumberOfReusableCells == SlopeTableCell::k_numberOfReusableCells, "k_doubleColumnTableNumberOfReusableCells should be updated with SlopeTableCell::k_numberOfReusableCells");
 static_assert(k_inputControllerNumberOfReusableCells == InputController::k_numberOfReusableCells, "k_inputControllerNumberOfReusableCells should be updated with InputController::k_numberOfReusableCells");
 static_assert(k_resultDataSourceNumberOfReusableCells == ResultsDataSource::k_numberOfReusableCells, "k_resultDataSourceNumberOfReusableCells should be updated with ResultsDataSource::k_numberOfReusableCells");
 template class DynamicCellsDataSource<Escher::EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>;
 template class DynamicCellsDataSource<Escher::EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>;
 template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>;
-template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells>;
+template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_doubleColumnTableNumberOfReusableCells>;
 template class DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>;
 template class DynamicCellsDataSource<ExpressionCellWithBufferWithMessage, k_maxNumberOfExpressionCellsWithBufferWithMessage>;
 

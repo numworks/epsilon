@@ -17,6 +17,7 @@
 #include "statistic/input_controller.h"
 #include "statistic/chi_square_and_slope/input_goodness_controller.h"
 #include "statistic/chi_square_and_slope/input_homogeneity_controller.h"
+#include "statistic/chi_square_and_slope/input_slope_controller.h"
 #include "statistic/interval/interval_graph_controller.h"
 #include "statistic/results_controller.h"
 #include "statistic/chi_square_and_slope/results_homogeneity_controller.h"
@@ -25,7 +26,6 @@
 #include "statistic/type_controller.h"
 #include "models/models_buffer.h"
 
-#include "statistic/chi_square_and_slope/slope_table_cell.h"
 namespace Inference {
 
 class App : public Shared::TextFieldDelegateApp, public Shared::MenuControllerDelegate {
@@ -97,6 +97,7 @@ private:
   ResultsHomogeneityController m_homogeneityResultsController;
   InputHomogeneityController m_inputHomogeneityController;
   InputGoodnessController m_inputGoodnessController;
+  InputSlopeController m_inputSlopeController;
   ResultsController m_resultsController;
   InputController m_inputController;
   TypeController m_typeController;

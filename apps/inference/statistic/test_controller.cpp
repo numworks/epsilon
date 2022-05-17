@@ -18,6 +18,7 @@ TestController::TestController(Escher::StackViewController * parentResponder,
                                HypothesisController * hypothesisController,
                                TypeController * typeController,
                                CategoricalTypeController * categoricalController,
+                               InputSlopeController * inputSlopeController,
                                InputController * inputController,
                                Statistic * statistic) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType, Escher::MemoizedListViewDataSource>(parentResponder),
@@ -25,6 +26,7 @@ TestController::TestController(Escher::StackViewController * parentResponder,
       m_typeController(typeController),
       m_inputController(inputController),
       m_categoricalController(categoricalController),
+      m_inputSlopeController(inputSlopeController),
       m_statistic(statistic) {
   // Create cells
   cellAtIndex(k_indexOfOneProp)->setMessage(I18n::Message::TestOneProp);
@@ -33,6 +35,7 @@ TestController::TestController(Escher::StackViewController * parentResponder,
   cellAtIndex(k_indexOfTwoMeans)->setMessage(I18n::Message::TestTwoMeans);
   cellAtIndex(k_indexOfCategorical)->setMessage(I18n::Message::TestCategorical);
   cellAtIndex(k_indexOfCategorical)->setSubtitle(I18n::Message::X2Test);
+  cellAtIndex(k_indexOfSlope)->setMessage(I18n::Message::Slope);
 
   // Init selection
   selectRow(0);
@@ -54,6 +57,7 @@ void TestController::viewWillAppear() {
   cellAtIndex(k_indexOfOneMean)->setSubtitle(m_statistic->tOrZStatisticMessage());
   cellAtIndex(k_indexOfTwoProps)->setSubtitle(m_statistic->zStatisticMessage());
   cellAtIndex(k_indexOfTwoMeans)->setSubtitle(m_statistic->tOrZStatisticMessage());
+  cellAtIndex(k_indexOfSlope)->setSubtitle(m_statistic->tStatisticMessage());
 }
 
 void TestController::didBecomeFirstResponder() {
@@ -66,34 +70,35 @@ bool TestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     Escher::SelectableViewController * controller = nullptr;
     SignificanceTestType testType;
-    switch (selectedRow()) {
-      case k_indexOfOneProp:
-        testType = SignificanceTestType::OneProportion;
-        controller = m_inputController;
-        if (m_statistic->hasHypothesisParameters()) {
-          controller = m_hypothesisController;
-        }
-        break;
-      case k_indexOfTwoProps:
-        testType = SignificanceTestType::TwoProportions;
-        controller = m_inputController;
-        if (m_statistic->hasHypothesisParameters()) {
-          controller = m_hypothesisController;
-        }
-        break;
-      case k_indexOfOneMean:
-        testType = SignificanceTestType::OneMean;
-        controller = m_typeController;
-        break;
-      case k_indexOfTwoMeans:
-        testType = SignificanceTestType::TwoMeans;
-        controller = m_typeController;
-        break;
-      default:
-        assert(selectedRow() == k_indexOfCategorical);
-        testType = SignificanceTestType::Categorical;
-        controller = m_categoricalController;
-        break;
+    int row = selectedRow();
+    if (row == k_indexOfOneProp) {
+      testType = SignificanceTestType::OneProportion;
+      controller = m_inputController;
+      if (m_statistic->hasHypothesisParameters()) {
+        controller = m_hypothesisController;
+      }
+    } else if (row == k_indexOfTwoProps) {
+      testType = SignificanceTestType::TwoProportions;
+      controller = m_inputController;
+      if (m_statistic->hasHypothesisParameters()) {
+        controller = m_hypothesisController;
+      }
+    } else if (row == k_indexOfOneMean) {
+      testType = SignificanceTestType::OneMean;
+      controller = m_typeController;
+    } else if (row == k_indexOfTwoMeans) {
+      testType = SignificanceTestType::TwoMeans;
+      controller = m_typeController;
+    } else if (row == virtualIndexOfSlope()) {
+      testType = SignificanceTestType::Slope;
+      controller = m_inputSlopeController;
+      if (m_statistic->hasHypothesisParameters()) {
+        controller = m_hypothesisController;
+      }
+    } else {
+      assert(selectedRow() == k_indexOfCategorical);
+      testType = SignificanceTestType::Categorical;
+      controller = m_categoricalController;
     }
     assert(controller != nullptr);
     if (m_statistic->initializeSignificanceTest(testType)) {
@@ -107,4 +112,11 @@ bool TestController::handleEvent(Ion::Events::Event event) {
 
 int TestController::numberOfRows() const {
   return m_statistic->numberOfSignificancesTestTypes();
+}
+
+Escher::HighlightCell * TestController::reusableCell(int i, int type) {
+  if (i == virtualIndexOfSlope()) {
+    return cellAtIndex(k_indexOfSlope);
+  }
+  return cellAtIndex(i);
 }

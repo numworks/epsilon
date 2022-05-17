@@ -25,6 +25,7 @@
 #include "statistic/type_controller.h"
 #include "models/models_buffer.h"
 
+#include "statistic/chi_square_and_slope/slope_table_cell.h"
 namespace Inference {
 
 class App : public Shared::TextFieldDelegateApp, public Shared::MenuControllerDelegate {

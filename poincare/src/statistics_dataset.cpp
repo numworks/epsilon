@@ -7,6 +7,25 @@
 namespace Poincare {
 
 template<typename T>
+StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(const ExpressionNode * e, ExpressionNode::ApproximationContext approximationContext, ListComplex<T> evaluationArray[]) {
+  int n = e->numberOfChildren();
+  if (n == 0) {
+    return StatisticsDataset<T>();
+  }
+  for (int i = 0; i < std::min(n, 2); i++) {
+    Evaluation<T> childEval = e->childAtIndex(i)->approximate(T(), approximationContext);
+    if (childEval.type() != EvaluationNode<T>::Type::ListComplex) {
+      return StatisticsDataset<T>();
+    }
+    evaluationArray[i] = static_cast<ListComplex<T> &>(childEval);
+  }
+  if (n == 1) {
+    return StatisticsDataset<T>(&evaluationArray[0]);
+  }
+  return StatisticsDataset<T>(&evaluationArray[0], &evaluationArray[1]);
+}
+
+template<typename T>
 T StatisticsDataset<T>::totalWeight() const {
   T total = (T)0.0;
   for (int i = 0; i < datasetLength(); i++) {
@@ -136,4 +155,5 @@ void StatisticsDataset<T>::buildSortedIndex() const {
 
 template class StatisticsDataset<float>;
 template class StatisticsDataset<double>;
+
 }

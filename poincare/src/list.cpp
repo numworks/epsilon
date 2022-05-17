@@ -95,38 +95,6 @@ template<typename T> Evaluation<T> ListNode::productOfElements(ApproximationCont
       );
 }
 
-template<typename T> Evaluation<T> ListNode::squareSumOfElements(ApproximationContext approximationContext) {
-  return ApproximationHelper::MapReduce<T>(
-      this,
-      approximationContext,
-      [] (Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat) {
-      return ApproximationHelper::Reduce<T>(
-          eval1,
-          eval2,
-          complexFormat,
-          [] (const std::complex<T> c1, const std::complex<T> c2, Preferences::ComplexFormat complexFormat) {
-            return AdditionNode::computeOnComplex(c1, MultiplicationNode::computeOnComplex<T>(c2, c2, complexFormat).complexAtIndex(0), complexFormat);
-          },
-          ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
-          ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
-          ApproximationHelper::UndefinedOnMatrixAndMatrix<T>
-          );
-      }
-      );
-}
-
-template<typename T> Evaluation<T> ListNode::variance(ApproximationContext approximationContext) {
-  int n = numberOfChildren();
-  Preferences::ComplexFormat complexFormat = approximationContext.complexFormat();
-  Evaluation<T> m = sumOfElements<T>(approximationContext);
-  Evaluation<T> ml2 = squareSumOfElements<T>(approximationContext);
-  Complex<T> div = Complex<T>::Builder(static_cast<T>(1.0)/static_cast<T>(n));
-  m = MultiplicationNode::Compute<T>(m, div, complexFormat);
-  ml2 = MultiplicationNode::Compute<T>(ml2, div, complexFormat);
-
-  return AdditionNode::Compute<T>(ml2, MultiplicationNode::Compute<T>(Complex<T>::Builder(static_cast<T>(-1.0)), MultiplicationNode::Compute<T>(m, m, complexFormat), complexFormat), complexFormat);
-}
-
 Expression ListNode::shallowReduce(ReductionContext reductionContext) {
   return List(this).shallowReduce(reductionContext);
 }
@@ -179,11 +147,4 @@ template Evaluation<double> ListNode::sumOfElements<double>(ApproximationContext
 
 template Evaluation<float> ListNode::productOfElements<float>(ApproximationContext approximationContext);
 template Evaluation<double> ListNode::productOfElements<double>(ApproximationContext approximationContext);
-
-template Evaluation<float> ListNode::squareSumOfElements<float>(ApproximationContext approximationContext);
-template Evaluation<double> ListNode::squareSumOfElements<double>(ApproximationContext approximationContext);
-
-template Evaluation<float> ListNode::variance<float>(ApproximationContext approximationContext);
-template Evaluation<double> ListNode::variance<double>(ApproximationContext approximationContext);
-
 }

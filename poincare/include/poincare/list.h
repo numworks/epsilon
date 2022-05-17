@@ -41,8 +41,6 @@ public:
   template <typename T> Evaluation<T> extremumApproximation(ApproximationContext approximationContext, bool minimum);
   template<typename T> Evaluation<T> sumOfElements(ApproximationContext approximationContext);
   template<typename T> Evaluation<T> productOfElements(ApproximationContext approximationContext);
-  template<typename T> Evaluation<T> squareSumOfElements(ApproximationContext approximationContext);
-  template<typename T> Evaluation<T> variance(ApproximationContext approximationContext);
 
 private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;

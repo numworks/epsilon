@@ -12,6 +12,7 @@
 #include "goodness_test.h"
 #include "one_mean_t_test.h"
 #include "one_proportion_z_test.h"
+#include "slope_t_test.h"
 #include "two_means_t_test.h"
 #include "two_proportions_z_test.h"
 
@@ -39,6 +40,9 @@ bool Test::initializeSignificanceTest(SignificanceTestType testType) {
       break;
     case SignificanceTestType::TwoProportions:
       new (this) TwoProportionsZTest();
+      break;
+    case SignificanceTestType::Slope:
+      new (this) SlopeTTest();
       break;
     default:
       assert(testType == SignificanceTestType::Categorical);

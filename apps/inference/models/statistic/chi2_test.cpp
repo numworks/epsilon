@@ -8,7 +8,7 @@
 
 namespace Inference {
 
-Chi2Test::Chi2Test() : Test() {
+Chi2Test::Chi2Test() {
   m_hypothesisParams.setComparisonOperator(HypothesisParams::ComparisonOperator::Higher);  // Always higher
 }
 

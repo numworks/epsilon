@@ -11,6 +11,7 @@
 #include <shared/text_field_delegate.h>
 #include "inference/statistic/chi_square_and_slope/categorical_table_view_data_source.h"
 #include "inference/shared/dynamic_cells_data_source.h"
+#include "inference/models/statistic/statistic.h"
 #include "inference/models/statistic/table.h"
 
 namespace Inference {
@@ -52,7 +53,7 @@ private:
 
 class EditableCategoricalTableCell : public CategoricalTableCell, public Shared::TextFieldDelegate, public DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell>, public DynamicSizeTableViewDataSource, public Shared::ClearColumnHelper {
 public:
-  EditableCategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDelegate, Table * tableModel);
+  EditableCategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDelegate, Statistic * statistic);
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
@@ -77,13 +78,15 @@ protected:
   virtual int relativeColumnIndex(int columnIndex) const = 0;
   int relativeRowIndex(int rowIndex) { return rowIndex - 1; }
   bool deleteSelectedValue();
+  Table * tableModel();
+  const Table * constTableModel() const { return const_cast<EditableCategoricalTableCell *>(this)->tableModel(); }
 
-  Table * m_tableModel;
+  Statistic * m_statistic;
 };
 
 class DoubleColumnTableCell : public EditableCategoricalTableCell, public CategoricalTableViewDataSource, public DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_doubleColumnTableNumberOfReusableCells> {
 public:
-  DoubleColumnTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, Table * tableModel);
+  DoubleColumnTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, Statistic * statistic);
 
   // EditableCategoricalTableCell
   CategoricalTableViewDataSource * tableViewDataSource() override { return this; }

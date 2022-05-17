@@ -18,7 +18,6 @@ public:
 private:
   EditableCategoricalTableCell * categoricalTableCell() override { return &m_slopeTableCell; }
   int indexOfSignificanceCell() const override { return k_indexOfTableCell + 1; }
-  Table * tableModel();
 
   // TODO: check longuest message?
   constexpr static int k_titleBufferSize = sizeof("t-interval for a slope");

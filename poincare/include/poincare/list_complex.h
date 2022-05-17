@@ -2,6 +2,8 @@
 #define POINCARE_LIST_COMPLEX_H
 
 #include <poincare/evaluation.h>
+#include <poincare/complex.h>
+#include <poincare/dataset_column.h>
 #include <poincare/list.h>
 
 namespace Poincare {
@@ -48,7 +50,7 @@ private:
 };
 
 template<typename T>
-class ListComplex final : public Evaluation<T> {
+class ListComplex final : public Evaluation<T>, public DatasetColumn<T> {
   friend class ListComplexNode<T>;
 public:
   ListComplex() : Evaluation<T>(nullptr) {}
@@ -61,10 +63,20 @@ public:
   std::complex<T> complexAtIndex(int index) const {
     return node()->complexAtIndex(index);
   }
+
   void addChildAtIndexInPlace(Evaluation<T> t, int index, int currentNumberOfChildren);
 
   // Helper function
   ListComplex<T> sort();
+
+  // DataSetColumn
+  T valueAtIndex(int index) const override {
+    return ComplexNode<T>::ToScalar(complexAtIndex(index));
+  }
+  int length() const override {
+    return numberOfChildren();
+  }
+
 private:
   ListComplexNode<T> * node() const { return static_cast<ListComplexNode<T> *>(Evaluation<T>::node()); }
 };

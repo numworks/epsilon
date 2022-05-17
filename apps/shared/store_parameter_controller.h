@@ -25,6 +25,8 @@ protected:
   constexpr static int k_numberOfCells = 4;
   virtual int numberOfCells() const { return k_numberOfCells; }
   StoreController * m_storeController;
+  virtual int indexOfHideColumn() const { return k_indexOfFillFormula + 1; }
+  int indexOfClearColumn() const { return indexOfHideColumn() + 1; }
 
   Escher::BufferTableCell m_clearColumn;
   Escher::MessageTableCell m_fillFormula;
@@ -33,8 +35,6 @@ private:
   virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
   constexpr static int k_indexOfSortCell = 0;
   constexpr static int k_indexOfFillFormula = k_indexOfSortCell + 1;
-  constexpr static int k_indexOfHideColumn = k_indexOfFillFormula + 1;
-  constexpr static int k_indexOfClearColumn = k_indexOfHideColumn + 1;
 
   Escher::MessageTableCellWithMessage m_sortCell;
   Escher::MessageTableCellWithSwitch m_hideCell;

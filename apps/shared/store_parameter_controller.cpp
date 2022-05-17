@@ -29,10 +29,10 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   switch (selectedRow()) {
-    case k_indexOfClearColumn:
+    case k_indexOfSortCell:
     {
+      m_storeController->sortSelectedColumn();
       stackView()->pop();
-      m_storeController->presentClearSelectedColumnPopupIfClearable();
       break;
     }
     case k_indexOfFillFormula:
@@ -41,37 +41,45 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       stackView()->pop();
       break;
     }
-    case k_indexOfHideColumn:
+    default:
     {
-      bool canSwitchHideStatus = m_storeController->switchSelectedColumnHideStatus();
-      if (!canSwitchHideStatus) {
-        Container::activeApp()->displayWarning(I18n::Message::InvalidSeries1, I18n::Message::InvalidSeries2);
+      if (selectedRow() == indexOfHideColumn()) {
+        bool canSwitchHideStatus = m_storeController->switchSelectedColumnHideStatus();
+        if (!canSwitchHideStatus) {
+          Container::activeApp()->displayWarning(I18n::Message::InvalidSeries1, I18n::Message::InvalidSeries2);
+        } else {
+          m_selectableTableView.reloadCellAtLocation(0, indexOfHideColumn());
+        }
       } else {
-        m_selectableTableView.reloadCellAtLocation(0, k_indexOfHideColumn);
+        assert(selectedRow() == indexOfClearColumn());
+        stackView()->pop();
+        m_storeController->presentClearSelectedColumnPopupIfClearable();
       }
       break;
     }
-    case k_indexOfSortCell:
-    {
-      m_storeController->sortSelectedColumn();
-      stackView()->pop();
-      break;
-    }
-    default :
-      assert(false);
-      return false;
   }
   return true;
 }
 
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0 && index < numberOfCells());
-  HighlightCell * cells[] = {&m_sortCell, &m_fillFormula, &m_hideCell, &m_clearColumn};
-  return cells[index];
+  switch (index) {
+    case k_indexOfSortCell:
+      return &m_sortCell;
+    case k_indexOfFillFormula:
+      return &m_fillFormula;
+    default:
+      break;
+  }
+  if (index == indexOfHideColumn()) {
+    return &m_hideCell;
+  }
+  assert(index == indexOfClearColumn());
+  return &m_clearColumn;
 }
 
 void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  if (index == k_indexOfHideColumn) {
+  if (index == indexOfHideColumn()) {
     m_hideCell.setState(!m_storeController->selectedSeriesIsValid());
   }
 }

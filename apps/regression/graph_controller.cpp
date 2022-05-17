@@ -17,7 +17,7 @@ namespace Regression {
 
 GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor, rangeVersion),
-  m_bannerView(this, inputEventHandlerDelegate, this),
+  m_bannerView(),
   m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
   m_store(store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
@@ -179,10 +179,9 @@ void GraphController::reloadBannerView() {
 
   /* Use "x=..." or "xmean=..." (\xCC\x85 represents the combining overline ' ̅')
    * if the mean dot is selected. Same with y. */
-  m_bannerView.abscissaSymbol()->setText(displayMean ? "x\xCC\x85=" : "x=");
   double x = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 0) : m_cursor->x();
-  Poincare::Print::customPrintf(buffer, k_bannerViewTextBufferSize, "%*.*ed", x, displayMode, significantDigits);
-  m_bannerView.abscissaValue()->setText(buffer);
+  Poincare::Print::customPrintf(buffer, k_bannerViewTextBufferSize, (displayMean ? "x\xCC\x85=%*.*ed" : "x=%*.*ed"), x, displayMode, significantDigits);
+  m_bannerView.abscissaView()->setText(buffer);
 
   double y = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 1) : m_cursor->y();
   Poincare::Print::customPrintf(buffer, k_bannerViewTextBufferSize, (displayMean ? "y\xCC\x85=%*.*ed" : "y=%*.*ed"), y, displayMode, significantDigits);

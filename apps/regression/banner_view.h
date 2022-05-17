@@ -1,31 +1,25 @@
 #ifndef REGRESSION_BANNER_VIEW_H
 #define REGRESSION_BANNER_VIEW_H
 
+#include <escher/buffer_text_view.h>
 #include <escher/message_text_view.h>
-#include "../shared/xy_banner_view.h"
+#include "xy_banner_view.h"
 
 namespace Regression {
 
 /* This banner view displays cursor's x and y position as well as (optionally)
  * two other views :
- *  - m_otherView : A buffer text either postionned first or after "y="
+ *  - m_otherView : A buffer text either postionned first or after ordinateView
  *  - m_displayDataNotSuitable : A message text displayed last */
 
-// TODO Hugo : XYBannerView has TextField logic that are unused here. Optimize it.
-class BannerView : public Shared::XYBannerView {
+class BannerView : public XYBannerView {
 public:
-  BannerView(
-    Escher::Responder * parentResponder,
-    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-    Escher::TextFieldDelegate * textFieldDelegate
-  );
+  BannerView();
   Escher::BufferTextView * otherView() { return &m_otherView; }
   void setDisplayParameters(bool displayOtherView, bool otherViewIsFirst, bool displayDataNotSuitable);
 
 private:
-  static constexpr int k_maxNumberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 2;
-
-  int numberOfSubviews() const override { return k_maxNumberOfSubviews - !m_displayOtherView - !m_displayDataNotSuitable; }
+  int numberOfSubviews() const override { return XYBannerView::k_numberOfSubviews + m_displayOtherView + m_displayDataNotSuitable; }
   Escher::View * subviewAtIndex(int index) override;
 
   Escher::BufferTextView m_otherView;

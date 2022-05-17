@@ -140,7 +140,7 @@ void GraphController::SeriesSelectionController::willDisplayCellForIndex(Highlig
 }
 
 bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  int length = Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%s", "ŷ=");
+  int length = Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%s=", I18n::translate(I18n::Message::RegressionEquationY));
   if (length >= static_cast<int>(bufferSize)) {
     return false;
   }

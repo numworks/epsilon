@@ -9,7 +9,7 @@ namespace Regression {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, StoreController * storeController) :
   Shared::StoreParameterController(parentResponder, storeController),
-  m_changeRegressionCell(I18n::Message::Regression)
+  m_changeRegressionCell(I18n::Message::RegressionModel)
 {
 }
 

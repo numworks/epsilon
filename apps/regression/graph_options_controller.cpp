@@ -17,14 +17,13 @@ namespace Regression {
 
 GraphOptionsController::GraphOptionsController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
   SelectableListViewController(parentResponder),
-  m_changeRegressionCell(I18n::Message::Regression),
-  // TODO Hugo : Update LineEquationTitle, Plot and Regression Messages
-  m_regressionEquationCell(&m_selectableTableView, I18n::Message::LineEquationTitle),
+  m_changeRegressionCell(I18n::Message::RegressionModel),
+  m_regressionEquationCell(&m_selectableTableView, I18n::Message::RegressionEquation),
   m_r2Cell(&m_selectableTableView),
-  m_residualPlotCell(I18n::Message::Plot),
+  m_residualPlotCell(I18n::Message::ResidualPlot),
   m_xParameterCell(I18n::Message::XPrediction),
   m_yParameterCell(I18n::Message::YPrediction),
-  m_removeRegressionCell(&(this->m_selectableTableView), I18n::Message::Regression, Invocation([](void * context, void * sender) {
+  m_removeRegressionCell(&(this->m_selectableTableView), I18n::Message::RemoveRegression, Invocation([](void * context, void * sender) {
       GraphOptionsController * controller = (GraphOptionsController *) context;
       controller->removeRegression();
       return true;

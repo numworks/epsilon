@@ -28,7 +28,7 @@ RegressionController::RegressionController(Responder * parentResponder, Store * 
 }
 
 const char * RegressionController::title() {
-  return I18n::translate(I18n::Message::Regression);
+  return I18n::translate(I18n::Message::RegressionModel);
 }
 
 void RegressionController::didBecomeFirstResponder() {

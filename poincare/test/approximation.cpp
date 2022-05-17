@@ -1226,6 +1226,22 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
   assert_expression_approximates_to_scalar<double>("prod({1,4,9})", 36.);
 }
 
+template<typename T>
+void assert_expression_approximates_with_value_for_symbol(const char * expression, T approximation, const char * symbol, T symbolValue, Preferences::AngleUnit angleUnit = Degree, Preferences::ComplexFormat complexFormat = Cartesian) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, false);
+  T result = e.approximateWithValueForSymbol<T>(symbol, symbolValue, &globalContext, complexFormat, angleUnit);
+  quiz_assert_print_if_failure(roughly_equal(result, approximation, Poincare::Float<T>::EpsilonLax(), true), expression);
+}
+
+QUIZ_CASE(poincare_approximation_floor_ceil_integer) {
+  constexpr double upperBound = 1000.;
+  for (double d = 0.; d < upperBound; d += 1.) {
+    assert_expression_approximates_with_value_for_symbol("floor(x * (x+1)^(-1) + x^2 * (x+1)^(-1))", d, "x", d);
+    assert_expression_approximates_with_value_for_symbol("ceil(x * (x+1)^(-1) + x^2 * (x+1)^(-1))", d, "x", d);
+  }
+}
+
 template void assert_expression_approximates_to_scalar(const char * expression, float approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
 template void assert_expression_approximates_to_scalar(const char * expression, double approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
 

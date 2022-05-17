@@ -64,8 +64,7 @@ bool RecordNameVerifier::isNameReservedForExtension(const char * name, int nameL
       if (strlen(reservedNamesArray.namePrefixes[j]) == namePrefixLength              // Prefixes have same length
           && strncmp(name, reservedNamesArray.namePrefixes[j], namePrefixLength) == 0 // Prefixes are equal
           && (!hasSuffixDigit
-            || (hasSuffixDigit                                                        // Suffixes are equal
-              && name[nameLength - 1] >= '1'
+            || (name[nameLength - 1] >= '1'                                           // Suffixes are equal
               && name[nameLength - 1] < '1' + reservedNamesArray.prefixRepetitions))) {
         return true;
       }

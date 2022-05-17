@@ -46,7 +46,7 @@ public:
     return std::max(lengthOfColumn(series, 0), lengthOfColumn(series, 1));
   }
   int lengthOfColumn(int series, int i) const {
-    return m_dataLists[series][i].numberOfChildren();
+    return m_dataLists[series][i].length();
   }
 
   // Delete and reset

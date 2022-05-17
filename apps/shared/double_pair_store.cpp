@@ -103,7 +103,7 @@ void DoublePairStore::setList(List list, int series, int i, bool delayUpdate) {
    * want to work with exact expressions in Regression and Statistics.*/
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i ==1);
-  int newListLength = std::max(list.numberOfChildren(), m_dataLists[series][i].numberOfChildren());
+  int newListLength = std::max(list.numberOfChildren(), lengthOfColumn(series, i));
   for (int j = 0; j < newListLength; j++) {
     if (j >= list.numberOfChildren()) {
       m_dataLists[series][i].removeValueAtIndex(list.numberOfChildren());

@@ -159,6 +159,15 @@ Expression List::extremum(ExpressionNode::ReductionContext reductionContext, boo
   return childAtIndex(node()->extremumIndex(approximationContext, minimum));
 }
 
+bool List::allChildrenArePositive(Context * context) const {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (childAtIndex(i).sign(context) != ExpressionNode::Sign::Positive) {
+      return false;
+    }
+  }
+  return true;
+}
+
 template Evaluation<float> ListNode::templatedApproximate(ApproximationContext approximationContext) const;
 template Evaluation<double> ListNode::templatedApproximate(ApproximationContext approximationContext) const;
 

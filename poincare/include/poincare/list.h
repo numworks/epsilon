@@ -60,6 +60,7 @@ public:
   ListNode * node() const { return static_cast<ListNode *>(Expression::node()); }
   Expression extremum(ExpressionNode::ReductionContext reductionContext, bool minimum);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  bool allChildrenArePositive(Context * context) const;
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;
 };

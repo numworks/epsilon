@@ -25,6 +25,8 @@ class Store : public Shared::InteractiveCurveViewRange, public Shared::DoublePai
 public:
   constexpr static const char * k_columnNames[] = {"X", "Y"}; // Must be 1 char long.
   static_assert(sizeof(k_columnNames) / sizeof(char *) == Shared::DoublePairStore::k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Regression.");
+  static const char * SeriesTitle(int series);
+
   Store();
 
   // DoublePairStore

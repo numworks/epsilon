@@ -31,7 +31,8 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Inpu
   m_goToParameterController(this, inputEventHandlerDelegate, store, cursor, graphController),
   m_residualPlotCellController(parentResponder, store),
   m_store(store),
-  m_graphController(graphController)
+  m_graphController(graphController),
+  m_title(nullptr)
 {
   m_r2Cell.setLayout(Poincare::HorizontalLayout::Builder(
       {Poincare::CodePointLayout::Builder('r', KDFont::LargeFont),
@@ -75,6 +76,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
     case k_changeRegressionCellType: {
         RegressionController * controller = App::app()->regressionController();
         controller->setSeries(m_graphController->selectedSeriesIndex());
+        controller->setTitle(nullptr);
         stack->push(controller);
         return true;
       }

@@ -40,6 +40,7 @@ protected:
   virtual Escher::StackViewController * stackController() const = 0;
   virtual void setTitleCellText(Escher::HighlightCell * cell, int columnIndex) = 0;
   virtual void setTitleCellStyle(Escher::HighlightCell * cell, int columnIndex) = 0;
+  virtual void reloadEditedCell(int column, int row) { selectableTableView()->reloadCellAtLocation(column, row); }
 
   Shared::BufferPopUpController m_confirmPopUpController;
 private:

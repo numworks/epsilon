@@ -6,8 +6,8 @@ using namespace Escher;
 
 namespace Inference {
 
-SlopeTableCell::SlopeTableCell(Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, SelectableTableViewDelegate * selectableTableViewDelegate, Table * tableModel) :
-  DoubleColumnTableCell(parentResponder, dynamicSizeTableViewDataSourceDelegate, selectableTableViewDelegate, tableModel)
+SlopeTableCell::SlopeTableCell(Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, SelectableTableViewDelegate * selectableTableViewDelegate, Statistic * statistic) :
+  DoubleColumnTableCell(parentResponder, dynamicSizeTableViewDataSourceDelegate, selectableTableViewDelegate, statistic)
 {
   // TODO: use Felix constexpr
   m_header[0].setText("X1");

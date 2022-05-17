@@ -38,7 +38,7 @@ int InputHomogeneityTableCell::fillColumnName(int column, char * buffer) {
 
 void InputHomogeneityTableCell::willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) {
   Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
-  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, column, row, m_tableModel);
+  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, column, row, tableModel());
 }
 
 void InputHomogeneityTableCell::createCells() {

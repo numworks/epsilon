@@ -195,6 +195,26 @@ private:
   static double ComputeStandardError(double p1Estimate, int n1, double p2Estimate, int n2);
 };
 
+class Slope : public SignificanceTest {
+public:
+  constexpr static int k_maxNumberOfColumns = 2;
+  // Description
+  static I18n::Message Title() { return I18n::Message::HypothesisControllerTitleOneMeanT; }
+
+  static const char * HypothesisSymbol() { return "ß"; }
+  static const char * EstimateSymbol() { return "x̅"; };
+
+  // Parameters
+  static bool AuthorizedParameterAtIndex(int i, double p);
+  static int NumberOfParameters();
+  static double X1(int index);
+  static double Y1(int index);
+
+  // Computation
+  static void ComputeTest(Test * test);
+  static void ComputeInterval(Interval * interval);
+};
+
 }
 
 #endif // PROBABILITY_MODELS_STATISTIC_INTERFACES_TESTS_H

@@ -20,10 +20,12 @@ using namespace Inference;
 
 HypothesisController::HypothesisController(Escher::StackViewController * parent,
                                            InputController * inputController,
+                                           InputSlopeController * inputSlopeController,
                                            InputEventHandlerDelegate * handler,
                                            Test * test) :
       Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(parent),
       m_inputController(inputController),
+      m_inputSlopeController(inputSlopeController),
       m_operatorDataSource(test),
       m_h0(&m_selectableTableView, handler, this),
       m_ha(&m_selectableTableView, &m_operatorDataSource, this),
@@ -141,7 +143,11 @@ void HypothesisController::didBecomeFirstResponder() {
 
 bool HypothesisController::ButtonAction(void * c, void * s) {
   HypothesisController * controller = static_cast<HypothesisController *>(c);
-  controller->stackOpenPage(controller->m_inputController);
+  if (controller->m_test->significanceTestType() == SignificanceTestType::Slope) {
+    controller->stackOpenPage(controller->m_inputSlopeController);
+  } else {
+    controller->stackOpenPage(controller->m_inputController);
+  }
   return true;
 }
 

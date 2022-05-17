@@ -98,15 +98,6 @@ void InputCategoricalController::didEnterResponderChain(Responder * previousResp
   categoricalTableCell()->recomputeDimensions();
 }
 
-void InputCategoricalController::didBecomeFirstResponder() {
-  if (m_statistic->threshold() == -1) {
-    // Init significance cell
-    m_statistic->initThreshold();
-  }
-  PrintValueInTextHolder(m_statistic->threshold(), m_innerSignificanceCell.textField(), true, true);
-  CategoricalController::didBecomeFirstResponder();
-}
-
 bool InputCategoricalController::ButtonAction(void * c, void * s) {
   InputCategoricalController * controller = static_cast<InputCategoricalController *>(c);
   if (!controller->m_statistic->validateInputs()) {

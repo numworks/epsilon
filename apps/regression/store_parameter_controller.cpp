@@ -15,7 +15,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right)
-        && selectedRow() == k_indexOfRegressionCell) {
+        && selectedRow() == indexOfRegressionCell()) {
     RegressionController * regressionController = App::app()->regressionController();
     regressionController->setSeries(m_storeController->selectedSeries());
     regressionController->setTitle(nullptr);
@@ -27,14 +27,14 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0 && index < numberOfCells());
-  if (index == k_indexOfRegressionCell) {
+  if (index == indexOfRegressionCell()) {
     return &m_changeRegressionCell;
   }
   return Shared::StoreParameterController::reusableCell(index, type);
 }
 
 void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  if (index == k_indexOfRegressionCell) {
+  if (index == indexOfRegressionCell()) {
     assert(cell == &m_changeRegressionCell);
     m_changeRegressionCell.setSubtitle(static_cast<StoreController *>(m_storeController)->selectedModel()->name());
     return;

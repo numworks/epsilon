@@ -35,6 +35,7 @@
 #include <poincare/factor.h>
 #include <poincare/factorial.h>
 #include <poincare/float.h>
+#include <poincare/float_list.h>
 #include <poincare/floor.h>
 #include <poincare/frac_part.h>
 #include <poincare/function.h>

@@ -5,8 +5,7 @@
 #include <escher/palette.h>
 #include <stdint.h>
 #include <assert.h>
-#include <poincare/list.h>
-#include <poincare/complex.h>
+#include <poincare/float_list.h>
 #include "global_context.h"
 #include <algorithm>
 
@@ -110,7 +109,7 @@ private:
   void deleteTrailingUndef(int series, int i);
   void deletePairsOfUndef(int series);
 
-  Poincare::List m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
+  Poincare::FloatList<double> m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
   GlobalContext * m_context;
 };
 

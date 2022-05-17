@@ -674,4 +674,16 @@ double TwoProportions::ComputeStandardError(double x1, int n1, double x2, int n2
   return std::sqrt(p1Estimate * (1 - p1Estimate) / n1 + p2Estimate * (1 - p2Estimate) / n2);
 }
 
+/* Slope */
+
+void Slope::SetParameterAtPosition(double p, int row, int col) {}
+double Slope::ParameterAtPosition(int row, int col) { return 0.0; }
+bool Slope::AuthorizedParameterAtIndex(double p, int index) { return true; }
+int Slope::NumberOfParameters() { return 10; }
+int Slope::NumberOfRows() { return 5; }
+
+void Slope::RecomputeData() {}
+void Slope::ComputeTest(Test * test) {}
+void Slope::ComputeInterval(Interval * interval) {}
+
 }

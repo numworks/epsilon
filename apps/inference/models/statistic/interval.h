@@ -28,6 +28,7 @@ public:
   // Don't show Categorical cell for Interval
   int numberOfSignificancesTestTypes() const override { return k_numberOfSignificanceTestType - 1; }
   // TODO: factorize with tests!
+  I18n::Message tStatisticMessage() const override { return I18n::Message::TInterval; }
   I18n::Message zStatisticMessage() const override { return I18n::Message::ZInterval; }
   I18n::Message tOrZStatisticMessage() const override { return I18n::Message::TOrZInterval; }
   I18n::Message tDistributionName() const override { return I18n::Message::TInterval; }

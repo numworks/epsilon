@@ -48,6 +48,7 @@ public:
 
   virtual I18n::Message statisticTitle() const = 0;
   virtual I18n::Message statisticBasicTitle() const = 0;
+  virtual I18n::Message tStatisticMessage() const = 0;
   virtual I18n::Message zStatisticMessage() const = 0;
   virtual I18n::Message tOrZStatisticMessage() const = 0;
   virtual I18n::Message distributionTitle() const { return I18n::Message::Default; }

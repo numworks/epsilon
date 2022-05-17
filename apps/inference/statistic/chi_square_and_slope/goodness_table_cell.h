@@ -13,21 +13,9 @@ namespace Inference {
 
 class InputGoodnessController;
 
-class GoodnessTableCell : public EditableCategoricalTableCell, public CategoricalTableViewDataSource, public DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells> {
+class GoodnessTableCell : public DoubleColumnTableCell {
 public:
   GoodnessTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, GoodnessTest * test, InputGoodnessController * inputGoodnessController);
-
-  // EditableCategoricalTableCell
-  CategoricalTableViewDataSource * tableViewDataSource() override { return this; }
-
-  // DataSource
-  int numberOfRows() const override { return m_numberOfRows + 1; } // Add header
-  int numberOfColumns() const override { return m_numberOfColumns; }
-  int reusableCellCount(int type) override;
-  Escher::HighlightCell * reusableCell(int i, int type) override;
-  int typeAtLocation(int i, int j) override { return j == 0 ? k_typeOfHeaderCells : k_typeOfInnerCells; }
-  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
-  KDCoordinate columnWidth(int i) override { return k_columnWidth; }
 
   // Responder
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
@@ -35,23 +23,18 @@ public:
   // DynamicSizeTableViewDataSource
   bool recomputeDimensions() override;
 
-  // DynamicCellsDataSource
-  Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
-
-  constexpr static int k_numberOfReusableCells = GoodnessTest::k_maxNumberOfColumns * k_maxNumberOfReusableRows;
-
 private:
+  static_assert(GoodnessTest::k_maxNumberOfColumns == DoubleColumnTableCell::k_maxNumberOfColumns, "GoodnessTest is not adjusted to the DoubleColumnTableCell");
   static constexpr I18n::Message k_columnHeaders[GoodnessTest::k_maxNumberOfColumns] = {I18n::Message::Observed, I18n::Message::Expected};
 
   // ClearColumnHelper
   int fillColumnName(int column, char * buffer) override;
 
-  // CategoricalTableViewDataSource
-  int relativeColumnIndex(int columnIndex) const override { return columnIndex; }
-
   GoodnessTest * statistic() { return static_cast<GoodnessTest *>(m_tableModel); }
 
-  Escher::EvenOddMessageTextCell m_header[GoodnessTest::k_maxNumberOfColumns];
+  Escher::HighlightCell * headerCell(int index) override { return &m_header[index]; }
+
+  Escher::EvenOddMessageTextCell m_header[k_maxNumberOfColumns];
   InputGoodnessController * m_inputGoodnessController;
 };
 

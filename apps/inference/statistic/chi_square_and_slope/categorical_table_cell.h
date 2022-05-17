@@ -81,6 +81,33 @@ protected:
   Table * m_tableModel;
 };
 
+class DoubleColumnTableCell : public EditableCategoricalTableCell, public CategoricalTableViewDataSource, public DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_doubleColumnTableNumberOfReusableCells> {
+public:
+  DoubleColumnTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, Table * tableModel);
+
+  // EditableCategoricalTableCell
+  CategoricalTableViewDataSource * tableViewDataSource() override { return this; }
+
+  // DataSource
+  int numberOfRows() const override { return m_numberOfRows + 1; } // Add header
+  int numberOfColumns() const override { return m_numberOfColumns; }
+  int reusableCellCount(int type) override;
+  Escher::HighlightCell * reusableCell(int i, int type) override;
+  int typeAtLocation(int i, int j) override { return j == 0 ? k_typeOfHeaderCells : k_typeOfInnerCells; }
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
+  KDCoordinate columnWidth(int i) override { return k_columnWidth; }
+
+  // DynamicCellsDataSource
+  Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
+
+  constexpr static int k_maxNumberOfColumns = 2;
+  constexpr static int k_numberOfReusableCells = k_maxNumberOfColumns * k_maxNumberOfReusableRows;
+private:
+  // CategoricalTableViewDataSource
+  int relativeColumnIndex(int columnIndex) const override { return columnIndex; }
+  virtual Escher::HighlightCell * headerCell(int index) = 0;
+};
+
 }  // namespace Inference
 
 #endif /* PROBABILITY_GUI_CATEGORICAL_TABLE_CELL_H */

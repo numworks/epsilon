@@ -5,13 +5,17 @@
 
 namespace Poincare {
 
+template<int U>
 class ListStandardDeviationNode : public ExpressionNode {
 public:
   size_t size() const override { return sizeof(ListStandardDeviationNode); }
-  int numberOfChildren() const override;
+  int numberOfChildren() const override { return U; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "ListStandardDeviation";
+  }
+  void logAttributes(std::ostream & stream) const override {
+    stream << " numberOfParameters=\"" << U << "\"";
   }
 #endif
   Type type() const override { return Type::ListStandardDeviation; }
@@ -31,10 +35,14 @@ private:
 
 class ListStandardDeviation : public Expression {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("stddev", 1, &UntypedBuilderOneChild<ListStandardDeviation>);
+  constexpr static const char * k_functionName = "stddev";
+  constexpr static FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &UntypedBuilderOneChild<ListStandardDeviation>);
+  constexpr static FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &UntypedBuilderTwoChildren<ListStandardDeviation>);
 
-  ListStandardDeviation(const ListStandardDeviationNode * n) : Expression(n) {}
-  static ListStandardDeviation Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListStandardDeviation, ListStandardDeviationNode>({list}); }
+  ListStandardDeviation(const ListStandardDeviationNode<1> * n) : Expression(n) {}
+  ListStandardDeviation(const ListStandardDeviationNode<2> * n) : Expression(n) {}
+  static ListStandardDeviation Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListStandardDeviation, ListStandardDeviationNode<1>>({list}); }
+    static ListStandardDeviation Builder(Expression values, Expression weights) { return TreeHandle::FixedArityBuilder<ListStandardDeviation, ListStandardDeviationNode<2>>({values, weights}); }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

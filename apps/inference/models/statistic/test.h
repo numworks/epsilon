@@ -32,7 +32,7 @@ public:
 
   // Evaluation
   float evaluateAtAbscissa(float x) const override { return canonicalDensityFunction(x); }
-  void initThreshold() override { m_threshold = 0.05; }
+  void initParameters() override { m_threshold = 0.05; }
   I18n::Message thresholdName() const override { return I18n::Message::GreekAlpha; }
   I18n::Message thresholdDescription() const override { return I18n::Message::SignificanceLevel; }
 

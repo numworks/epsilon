@@ -60,7 +60,6 @@ public:
 
   // Responder
   void didEnterResponderChain(Responder * previousResponder) override;
-  void didBecomeFirstResponder() override;
 
   static bool ButtonAction(void * c, void * s);
 

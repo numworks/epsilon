@@ -90,6 +90,7 @@ bool OneMean::IntervalInitializeDistribution(Statistic * statistic, Distribution
 }
 
 void OneMean::InitTestParameters(Test * t) {
+  t->Test::initParameters();
   double * params = t->parametersArray();
   params[ParamsOrder::x] = 47.9;
   t->parametersArray()[ParamsOrder::n] = 12;
@@ -99,12 +100,14 @@ void OneMean::InitTestParameters(Test * t) {
 }
 
 void OneMean::InitTIntervalParameters(Interval * i) {
+  i->Interval::initParameters();
   i->parametersArray()[ParamsOrder::x] = 1.2675;
   i->parametersArray()[ParamsOrder::n] = 40;
   i->parametersArray()[ParamsOrder::s] = 0.3332;
 }
 
 void OneMean::InitZIntervalParameters(Interval * i) {
+  i->Interval::initParameters();
   i->parametersArray()[ParamsOrder::x] = 240.80;
   i->parametersArray()[ParamsOrder::n] = 16;
   i->parametersArray()[ParamsOrder::s] = 20;
@@ -212,6 +215,7 @@ Poincare::Layout OneProportion::EstimateLayout(Poincare::Layout * layout) {
 }
 
 void OneProportion::InitTestParameters(Test * t) {
+  t->Test::initParameters();
   t->parametersArray()[ParamsOrder::x] = 47;
   t->parametersArray()[ParamsOrder::n] = 500;
   t->m_hypothesisParams.setFirstParam(0.08);
@@ -219,6 +223,7 @@ void OneProportion::InitTestParameters(Test * t) {
 }
 
 void OneProportion::InitIntervalParameters(Interval * i) {
+  i->Interval::initParameters();
   i->parametersArray()[ParamsOrder::x] = 107;
   i->parametersArray()[ParamsOrder::n] = 251;
 }
@@ -340,6 +345,7 @@ Poincare::Layout TwoMeans::EstimateLayout(Poincare::Layout * layout) {
 }
 
 void TwoMeans::InitTestParameters(Test * t) {
+  t->Test::initParameters();
   t->parametersArray()[ParamsOrder::x1] = 5;
   t->parametersArray()[ParamsOrder::n1] = 10;
   t->parametersArray()[ParamsOrder::s1] = 8.743;
@@ -351,6 +357,7 @@ void TwoMeans::InitTestParameters(Test * t) {
 }
 
 void TwoMeans::InitIntervalParameters(Interval * i) {
+  i->Interval::initParameters();
   i->parametersArray()[ParamsOrder::x1] = 23.7;
   i->parametersArray()[ParamsOrder::n1] = 30;
   i->parametersArray()[ParamsOrder::s1] = 17.5;
@@ -557,6 +564,7 @@ Poincare::Layout TwoProportions::EstimateLayout(Poincare::Layout * layout) {
 }
 
 void TwoProportions::InitTestParameters(Test * t) {
+  t->Test::initParameters();
   t->parametersArray()[ParamsOrder::x1] = 19;
   t->parametersArray()[ParamsOrder::n1] = 80;
   t->parametersArray()[ParamsOrder::x2] = 26;
@@ -566,6 +574,7 @@ void TwoProportions::InitTestParameters(Test * t) {
 }
 
 void TwoProportions::InitIntervalParameters(Interval * i) {
+  i->Interval::initParameters();
   i->parametersArray()[ParamsOrder::x1] = 639;
   i->parametersArray()[ParamsOrder::n1] = 799;
   i->parametersArray()[ParamsOrder::x2] = 1555;

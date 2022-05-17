@@ -6,8 +6,8 @@ using namespace Escher;
 
 namespace Regression {
 
-BannerView::BannerView(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
-  Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
+BannerView::BannerView() :
+  XYBannerView(),
   m_otherView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_dataNotSuitableView(Font(), I18n::Message::DataNotSuitableForRegression, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_displayOtherView(false),
@@ -24,14 +24,14 @@ void BannerView::setDisplayParameters(bool displayOtherView, bool otherViewIsFir
 
 View * BannerView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());
-  if (m_displayOtherView && ((m_otherViewIsFirst && index == 0) || (!m_otherViewIsFirst && index == 2))) {
+  if (m_displayOtherView && ((m_otherViewIsFirst && index == 0) || (!m_otherViewIsFirst && index == XYBannerView::k_numberOfSubviews))) {
     return &m_otherView;
   }
   index -= (m_displayOtherView && m_otherViewIsFirst);
-  if (index >= Shared::XYBannerView::k_numberOfSubviews) {
+  if (index >= XYBannerView::k_numberOfSubviews) {
     return &m_dataNotSuitableView;
   }
-  return Shared::XYBannerView::subviewAtIndex(index);
+  return XYBannerView::subviewAtIndex(index);
 }
 
 }

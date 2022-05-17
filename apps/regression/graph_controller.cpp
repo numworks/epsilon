@@ -119,10 +119,9 @@ KDCoordinate GraphController::SeriesSelectionController::rowHeight(int j) {
 }
 
 void GraphController::SeriesSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  char name[] = "X?/Y?";
-  int j = graphController()->m_store->indexOfKthValidSeries(index);
-  name[1] = name[4] = '1' + j;
-  static_cast<CurveSelectionCell *>(cell)->setLayout(LayoutHelper::String(name, sizeof(name) / sizeof(char)));
+  int series = graphController()->m_store->indexOfKthValidSeries(index);
+  const char * name = Store::SeriesTitle(series);
+  static_cast<CurveSelectionCell *>(cell)->setLayout(LayoutHelper::String(name));
 }
 
 bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
@@ -216,12 +215,16 @@ bool GraphController::openMenuForCurveAtIndex(int index) {
     Coordinate2D<double> xy = xyValues(activeIndex, m_cursor->t(), textFieldDelegateApp()->localContext());
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
+  bool isSeriesSelectionSubmenu = (stackController()->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth);
+  const char * title = isSeriesSelectionSubmenu ? Store::SeriesTitle(*m_selectedSeriesIndex) : nullptr;
   if (selectedSeriesIsScatterPlot()) {
     // Push regression controller directly
     RegressionController * controller = App::app()->regressionController();
     controller->setSeries(*m_selectedSeriesIndex);
+    controller->setTitle(title);
     stackController()->push(controller);
   } else {
+    m_graphOptionsController.setTitle(title);
     stackController()->push(&m_graphOptionsController);
   }
   return true;

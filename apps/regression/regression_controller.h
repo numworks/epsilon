@@ -14,7 +14,8 @@ public:
   RegressionController(Escher::Responder * parentResponder, Store * store);
   void setSeries(int series) { m_series = series; }
   // ViewController
-  const char * title() override;
+  const char * title() override { return m_title ? m_title : I18n::translate(I18n::Message::RegressionModel); }
+  void setTitle(const char * title) { m_title = title; }
   TELEMETRY_ID("Regression");
 
   // Responder
@@ -36,6 +37,7 @@ private:
   Escher::MessageTableCellWithExpression m_regressionCells[k_numberOfCells];
   Store * m_store;
   int m_series;
+  const char * m_title;
 };
 
 }

@@ -23,12 +23,9 @@ namespace Regression {
 RegressionController::RegressionController(Responder * parentResponder, Store * store) :
   SelectableListViewController(parentResponder),
   m_store(store),
-  m_series(-1)
+  m_series(-1),
+  m_title(nullptr)
 {
-}
-
-const char * RegressionController::title() {
-  return I18n::translate(I18n::Message::RegressionModel);
 }
 
 void RegressionController::didBecomeFirstResponder() {

@@ -18,6 +18,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
         && selectedRow() == k_indexOfRegressionCell) {
     RegressionController * regressionController = App::app()->regressionController();
     regressionController->setSeries(m_storeController->selectedSeries());
+    regressionController->setTitle(nullptr);
     stackView()->push(regressionController);
     return true;
   }

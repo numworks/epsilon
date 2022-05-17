@@ -92,10 +92,9 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
   return selectedDot;
 }
 
-int Store::nextDot(int series, int direction, int dot) {
+int Store::nextDot(int series, int direction, int dot, bool displayMean) {
   double nextX = INFINITY;
   int selectedDot = -1;
-  bool displayMean = seriesRegressionType(series) != Model::Type::None;
   double meanX = meanOfColumn(series, 0);
   double x = meanX;
   if (dot >= 0 && dot < numberOfPairsOfSeries(series)) {

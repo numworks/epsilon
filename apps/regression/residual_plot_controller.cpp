@@ -45,10 +45,12 @@ void ResidualPlotController::updateCursor() {
 }
 
 bool ResidualPlotController::moveHorizontally(int direction) {
-  if ((direction == -1 && m_selectedDotIndex <= 0) || (direction == 1 && m_selectedDotIndex >= m_store->numberOfPairsOfSeries(m_selectedSeriesIndex) - 1)) {
+  int nextIndex = m_store->nextDot(m_selectedSeriesIndex, direction, m_selectedDotIndex, false);
+  if (nextIndex == m_selectedDotIndex || nextIndex < 0) {
     return false;
   }
-  m_selectedDotIndex += direction;
+  assert(nextIndex < m_store->numberOfPairsOfSeries(m_selectedSeriesIndex));
+  m_selectedDotIndex = nextIndex;
   updateCursor();
   return true;
 }

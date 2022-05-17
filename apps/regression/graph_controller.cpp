@@ -179,7 +179,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   double x;
   double y;
   if (*m_selectedDotIndex >= 0) {
-    int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex);
+    int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex, !selectedSeriesIsScatterPlot());
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       x = m_store->get(*m_selectedSeriesIndex, 0, dotSelected);
       y = m_store->get(*m_selectedSeriesIndex, 1, dotSelected);

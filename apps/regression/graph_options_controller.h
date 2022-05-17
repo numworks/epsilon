@@ -23,7 +23,7 @@ public:
   GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   void removeRegression();
 
-  const char * title() override { return I18n::translate(I18n::Message::RegressionCurve); }
+  const char * title() override { return I18n::translate(I18n::Message::Regression); }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;

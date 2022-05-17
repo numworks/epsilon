@@ -24,7 +24,7 @@ public:
   int numberOfResidualDots() const { return m_store->numberOfPairsOfSeries(m_selectedSeriesIndex); }
 
   // Escher::ViewController
-  const char * title() override { return I18n::translate(I18n::Message::Plot); } // TODO Hugo : Use correct Message
+  const char * title() override { return I18n::translate(I18n::Message::ResidualPlot); }
   Escher::View * view() override { return &m_curveView; }
   void viewWillAppear() override;
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayLastTitle; }

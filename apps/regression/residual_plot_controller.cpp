@@ -34,8 +34,10 @@ void ResidualPlotController::updateCursor() {
   Poincare::Print::customPrintf(buffer, bufferSize, "x=%*.*ed", x, displayMode, significantDigits);
   m_bannerView.abscissaView()->setText(buffer);
 
-  // TODO Hugo : Create the i18n message for "Residual:"
-  Poincare::Print::customPrintf(buffer, bufferSize, "Residual: %*.*ed", y, displayMode, significantDigits);
+  Poincare::Print::customPrintf(buffer, bufferSize, "%s%s%*.*ed",
+    I18n::translate(I18n::Message::Residual),
+    I18n::translate(I18n::Message::ColonConvention),
+    y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 
   m_curveView.reload();

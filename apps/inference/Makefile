@@ -68,6 +68,7 @@ app_inference_src += $(addprefix apps/inference/statistic/chi_square_and_slope/,
   input_goodness_controller.cpp \
   input_homogeneity_controller.cpp \
   input_homogeneity_table_cell.cpp \
+  input_slope_controller.cpp \
   result_homogeneity_table_cell.cpp \
   results_homogeneity_controller.cpp \
   slope_table_cell.cpp \

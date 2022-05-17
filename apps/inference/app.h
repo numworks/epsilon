@@ -76,7 +76,7 @@ public:
       sizeof(ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage, // 1040 * 8 = 8320
       sizeof(EvenOddBufferTextCell) * (k_homogeneityTableNumberOfReusableHeaderCells + k_homogeneityTableNumberOfReusableInnerCells), // 360 * (5 + 9 + 45) = 21 240
       sizeof(EvenOddEditableTextCell) * k_homogeneityTableNumberOfReusableInnerCells + sizeof(EvenOddBufferTextCell) * k_homogeneityTableNumberOfReusableHeaderCells, // 640 * 72 + 360 *(6+12) = 33 840
-      sizeof(EvenOddEditableTextCell) * k_inputGoodnessTableNumberOfReusableCells // 24 * 640 = 15 360
+      sizeof(EvenOddEditableTextCell) * k_doubleColumnTableNumberOfReusableCells // 24 * 640 = 15 360
     });
 
   TELEMETRY_ID("Inference");

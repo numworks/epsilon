@@ -199,4 +199,35 @@ bool EditableCategoricalTableCell::recomputeDimensions() {
   return didChangeSize(dimensions.row, dimensions.col);
 }
 
+/* DoubleColumnTableCell */
+
+DoubleColumnTableCell::DoubleColumnTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, Table * tableModel) :
+  EditableCategoricalTableCell(parentResponder, this, selectableTableViewDelegate, dynamicSizeTableViewDataSourceDelegate, tableModel),
+  DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_doubleColumnTableNumberOfReusableCells>(this)
+{}
+
+int DoubleColumnTableCell::reusableCellCount(int type) {
+  if (type == k_typeOfHeaderCells) {
+    return k_maxNumberOfColumns;
+  }
+  return k_maxNumberOfReusableRows * k_maxNumberOfColumns;
+}
+
+HighlightCell * DoubleColumnTableCell::reusableCell(int i, int type) {
+  assert(i < reusableCellCount(type));
+  if (type == k_typeOfHeaderCells) {
+    assert(i < 2);
+    return headerCell(i);
+  }
+  return cell(i);
+}
+
+void DoubleColumnTableCell::willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) {
+  if (j == 0) {  // Header
+    return;
+  }
+  Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
+  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, i, j - 1, m_tableModel);
+}
+
 }  // namespace Inference

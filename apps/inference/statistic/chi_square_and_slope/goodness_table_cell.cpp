@@ -7,8 +7,7 @@ using namespace Escher;
 namespace Inference {
 
 GoodnessTableCell::GoodnessTableCell(Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, SelectableTableViewDelegate * selectableTableViewDelegate, GoodnessTest * test, InputGoodnessController * inputGoodnessController) :
-  EditableCategoricalTableCell(parentResponder, this, selectableTableViewDelegate, dynamicSizeTableViewDataSourceDelegate, test),
-  DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_inputGoodnessTableNumberOfReusableCells>(this),
+  DoubleColumnTableCell(parentResponder, dynamicSizeTableViewDataSourceDelegate, selectableTableViewDelegate, test),
   m_inputGoodnessController(inputGoodnessController)
 {
   for (int i = 0; i < GoodnessTest::k_maxNumberOfColumns; i++) {
@@ -16,22 +15,6 @@ GoodnessTableCell::GoodnessTableCell(Responder * parentResponder, DynamicSizeTab
     m_header[i].setEven(true);
     m_header[i].setMessageFont(KDFont::SmallFont);
   }
-}
-
-int GoodnessTableCell::reusableCellCount(int type) {
-    if (type == k_typeOfHeaderCells) {
-    return GoodnessTest::k_maxNumberOfColumns;
-  }
-  return k_maxNumberOfReusableRows * GoodnessTest::k_maxNumberOfColumns;
-}
-
-HighlightCell * GoodnessTableCell::reusableCell(int i, int type) {
-  assert(i < reusableCellCount(type));
-  if (type == k_typeOfHeaderCells) {
-    assert(i < 2);
-    return &m_header[i];
-  }
-  return cell(i);
 }
 
 bool GoodnessTableCell::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
@@ -45,14 +28,6 @@ bool GoodnessTableCell::textFieldDidFinishEditing(Escher::TextField * textField,
     return true;
   }
   return false;
-}
-
-void GoodnessTableCell::willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) {
-  if (j == 0) {  // Header
-    return;
-  }
-  Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
-  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, i, j - 1, m_tableModel);
 }
 
 bool GoodnessTableCell::recomputeDimensions() {

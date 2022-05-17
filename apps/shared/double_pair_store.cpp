@@ -1,7 +1,6 @@
 #include "double_pair_store.h"
 #include "poincare_helpers.h"
 #include <poincare/helpers.h>
-#include <poincare/float.h>
 #include <ion/storage/file_system.h>
 #include <cmath>
 #include <assert.h>
@@ -20,7 +19,7 @@ DoublePairStore::DoublePairStore(GlobalContext * context) :
 {
   for (int s = 0; s < k_numberOfSeries; s++) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
-      m_dataLists[s][i] = List::Builder();
+      m_dataLists[s][i] = FloatList<double>::Builder();
     }
   }
 }
@@ -75,12 +74,7 @@ bool DoublePairStore::isColumnName(const char * name, int nameLen, int * returnS
 
 double DoublePairStore::get(int series, int i, int j) const {
   assert(j < numberOfPairsOfSeries(series));
-  if (j >= lengthOfColumn(series, i)) {
-    return NAN;
-  }
-  assert(m_dataLists[series][i].childAtIndex(j).type() == ExpressionNode::Type::Double);
-  Expression child = m_dataLists[series][i].childAtIndex(j);
-  return static_cast<Float<double> &>(child).value();
+  return m_dataLists[series][i].valueAtIndex(j);
 }
 
 void DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate, bool setOtherColumnToDefaultIfEmpty) {
@@ -91,11 +85,11 @@ void DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate, 
   assert(j <= numberOfPairsOfSeries(series));
   if (j >= lengthOfColumn(series, i)) {
     for (int k = lengthOfColumn(series, i); k < j; k++) {
-      m_dataLists[series][i].addChildAtIndexInPlace(Float<double>::Builder(NAN), k, k);
+      m_dataLists[series][i].addValueAtIndex(NAN, k);
     }
-    m_dataLists[series][i].addChildAtIndexInPlace(Float<double>::Builder(f), j, j);
+    m_dataLists[series][i].addValueAtIndex(f, j);
   } else {
-    m_dataLists[series][i].replaceChildAtIndexInPlace(j, Float<double>::Builder(f));
+    m_dataLists[series][i].replaceValueAtIndex(f, j);
   }
   int otherI = i == 0 ? 1 : 0;
   if (setOtherColumnToDefaultIfEmpty && j >= lengthOfColumn(series, otherI)) {
@@ -112,7 +106,7 @@ void DoublePairStore::setList(List list, int series, int i, bool delayUpdate) {
   int newListLength = std::max(list.numberOfChildren(), m_dataLists[series][i].numberOfChildren());
   for (int j = 0; j < newListLength; j++) {
     if (j >= list.numberOfChildren()) {
-      m_dataLists[series][i].removeChildAtIndexInPlace(list.numberOfChildren());
+      m_dataLists[series][i].removeValueAtIndex(list.numberOfChildren());
       continue;
     }
     double evaluation = PoincareHelpers::ApproximateToScalar<double>(list.childAtIndex(j), m_context);
@@ -394,7 +388,7 @@ void DoublePairStore::deleteTrailingUndef(int series, int i) {
     if (!std::isnan(get(series, i, j))) {
       return;
     }
-    m_dataLists[series][i].removeChildAtIndexInPlace(j);
+    m_dataLists[series][i].removeValueAtIndex(j);
   }
 }
 
@@ -405,7 +399,7 @@ void DoublePairStore::deletePairsOfUndef(int series) {
     if (std::isnan(get(series, 0, j)) && std::isnan(get(series, 1, j))) {
       for (int i = 0; i < k_numberOfColumnsPerSeries ; i++) {
         if (j < lengthOfColumn(series, i)) {
-          m_dataLists[series][i].removeChildAtIndexInPlace(j);
+          m_dataLists[series][i].removeValueAtIndex(j);
         }
       }
       j--;

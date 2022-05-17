@@ -4,55 +4,58 @@
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/square_root.h>
+#include <poincare/statistics_dataset.h>
 
 namespace Poincare {
 
-const Expression::FunctionHelper ListStandardDeviation::s_functionHelper;
-
-int ListStandardDeviationNode::numberOfChildren() const {
-  return ListStandardDeviation::s_functionHelper.numberOfChildren();
+template<int U>
+int ListStandardDeviationNode<U>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListStandardDeviation::k_functionName);
 }
 
-int ListStandardDeviationNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListStandardDeviation::s_functionHelper.name());
+template<int U>
+Layout ListStandardDeviationNode<U>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(ListStandardDeviation(this), floatDisplayMode, numberOfSignificantDigits, ListStandardDeviation::k_functionName);
 }
 
-Layout ListStandardDeviationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ListStandardDeviation(this), floatDisplayMode, numberOfSignificantDigits, ListStandardDeviation::s_functionHelper.name());
-}
-
-Expression ListStandardDeviationNode::shallowReduce(ReductionContext reductionContext) {
+template<int U>
+Expression ListStandardDeviationNode<U>::shallowReduce(ReductionContext reductionContext) {
   return ListStandardDeviation(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListStandardDeviationNode::templatedApproximate(ApproximationContext approximationContext) const {
-  ExpressionNode * child = childAtIndex(0);
-  if (child->type() != ExpressionNode::Type::List) {
+template<int U>
+template<typename T> Evaluation<T> ListStandardDeviationNode<U>::templatedApproximate(ApproximationContext approximationContext) const {
+  ListComplex<T> evaluationArray[2];
+  StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(this, approximationContext, evaluationArray);
+  if (dataset.isUndefined()) {
     return Complex<T>::Undefined();
   }
-
-  Evaluation<T> variance = static_cast<ListNode *>(child)->variance<T>(approximationContext);
-  if (variance.type() != EvaluationNode<T>::Type::Complex) {
-    return Complex<T>::Undefined();
-  }
-  return SquareRootNode::computeOnComplex<T>(variance.complexAtIndex(0), approximationContext.complexFormat(), approximationContext.angleUnit());
+  return Complex<T>::Builder(dataset.standardDeviation());
 }
 
 Expression ListStandardDeviation::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Expression child = childAtIndex(0);
-  if (child.type() != ExpressionNode::Type::List) {
-    return replaceWithUndefinedInPlace();
+  int n = numberOfChildren();
+  assert(n <= 2);
+  Expression children[2];
+  for (int i = 0; i < n; i++) {
+    children[i] = childAtIndex(i);
+    if (children[i].type() != ExpressionNode::Type::List || children[i].numberOfChildren() == 0) {
+      return replaceWithUndefinedInPlace();
+    }
   }
-
-  ListVariance var = ListVariance::Builder(child);
+  ListVariance var = n == 1 ? ListVariance::Builder(children[0]) : ListVariance::Builder(children[0], children[1]);
   Power sqrt = Power::Builder(var, Rational::Builder(1, 2));
   var.shallowReduce(reductionContext);
   replaceWithInPlace(sqrt);
   return sqrt.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> ListStandardDeviationNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListStandardDeviationNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListStandardDeviationNode<1>::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListStandardDeviationNode<2>::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListStandardDeviationNode<1>::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListStandardDeviationNode<2>::templatedApproximate<double>(ApproximationContext approximationContext) const;
 
+template class ListStandardDeviationNode<1>;
+template class ListStandardDeviationNode<2>;
 
 }

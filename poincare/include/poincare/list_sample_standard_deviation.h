@@ -5,13 +5,17 @@
 
 namespace Poincare {
 
+template<int U>
 class ListSampleStandardDeviationNode : public ExpressionNode {
 public:
   size_t size() const override { return sizeof(ListSampleStandardDeviationNode); }
-  int numberOfChildren() const override;
+  int numberOfChildren() const override { return U; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "ListSampleStandardDeviation";
+  }
+  void logAttributes(std::ostream & stream) const override {
+    stream << " numberOfParameters=\"" << U << "\"";
   }
 #endif
   Type type() const override { return Type::ListSampleStandardDeviation; }
@@ -31,10 +35,14 @@ private:
 
 class ListSampleStandardDeviation : public Expression {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("samplestddev", 1, &UntypedBuilderOneChild<ListSampleStandardDeviation>);
+  constexpr static const char * k_functionName = "samplestddev";
+  static constexpr FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &UntypedBuilderOneChild<ListSampleStandardDeviation>);
+  static constexpr FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &UntypedBuilderTwoChildren<ListSampleStandardDeviation>);
 
-  ListSampleStandardDeviation(const ListSampleStandardDeviationNode * n) : Expression(n) {}
-  static ListSampleStandardDeviation Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListSampleStandardDeviation, ListSampleStandardDeviationNode>({list}); }
+  ListSampleStandardDeviation(const ListSampleStandardDeviationNode<1> * n) : Expression(n) {}
+  ListSampleStandardDeviation(const ListSampleStandardDeviationNode<2> * n) : Expression(n) {}
+  static ListSampleStandardDeviation Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListSampleStandardDeviation, ListSampleStandardDeviationNode<1>>({list}); }
+  static ListSampleStandardDeviation Builder(Expression values, Expression weights) { return TreeHandle::FixedArityBuilder<ListSampleStandardDeviation, ListSampleStandardDeviationNode<2>>({values, weights}); }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

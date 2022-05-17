@@ -5,13 +5,17 @@
 
 namespace Poincare {
 
+template<int U>
 class ListMedianNode : public ExpressionNode {
 public:
   size_t size() const override { return sizeof(ListMedianNode); }
-  int numberOfChildren() const override;
+  int numberOfChildren() const override { return U; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "ListMedian";
+  }
+  void logAttributes(std::ostream & stream) const override {
+    stream << " numberOfParameters=\"" << U << "\"";
   }
 #endif
   Type type() const override { return Type::ListMedian; }
@@ -30,12 +34,17 @@ private:
 };
 
 class ListMedian : public Expression {
-friend class ListMedianNode;
+friend class ListMedianNode<1>;
+friend class ListMedianNode<2>;
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("med", 1, &UntypedBuilderOneChild<ListMedian>);
+  constexpr static const char * k_functionName = "med";
+  static constexpr FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &UntypedBuilderOneChild<ListMedian>);
+  static constexpr FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &UntypedBuilderTwoChildren<ListMedian>);
 
-  ListMedian(const ListMedianNode * n) : Expression(n) {}
-  static ListMedian Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListMedian, ListMedianNode>({list}); }
+  ListMedian(const ListMedianNode<1> * n) : Expression(n) {}
+  ListMedian(const ListMedianNode<2> * n) : Expression(n) {}
+  static ListMedian Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListMedian, ListMedianNode<1>>({list}); }
+  static ListMedian Builder(Expression values, Expression weights) { return TreeHandle::FixedArityBuilder<ListMedian, ListMedianNode<2>>({values, weights}); }
 
 private:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

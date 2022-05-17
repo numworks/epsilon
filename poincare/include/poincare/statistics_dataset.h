@@ -35,16 +35,19 @@ public:
   T sortedElementAtCumulatedFrequency(T freq, bool createMiddleElement) const;
   T sortedElementAtCumulatedWeight(T weight, bool createMiddleElement) const;
   T median() const;
+  int indexAtCumulatedFrequency(T freq, int * upperIndex = nullptr) const;
+  int indexAtCumulatedWeight(T weight, int * upperIndex = nullptr) const;
+  int medianIndex(int * upperIndex = nullptr) const;
 
 private:
   int datasetLength() const { return m_weights == nullptr ? m_values->length() : std::min(m_values->length(), m_weights->length()); }
   T valueAtIndex(int index) const {
-    return index < m_values->length() ? m_values->valueAtIndex(index) : NAN;
+    return index >= 0 && index < m_values->length() ? m_values->valueAtIndex(index) : NAN;
   }
   T weightAtIndex(int index) const {
     if (m_weights == nullptr) { return (T)1.0; }
     // All weights must be positive.
-    return index < m_weights->length() && m_weights->valueAtIndex(index) >= (T)0.0 ? m_weights->valueAtIndex(index) : NAN;
+    return index >= 0 && index < m_weights->length() && m_weights->valueAtIndex(index) >= (T)0.0 ? m_weights->valueAtIndex(index) : NAN;
   }
 
   void buildSortedIndex() const;

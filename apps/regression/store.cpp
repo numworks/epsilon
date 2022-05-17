@@ -158,6 +158,8 @@ void Store::updateSeriesValidity(int series) {
   int numberOfPairs = numberOfPairsOfSeries(series);
   if (numberOfPairs == 0) {
     m_validSeries[series] = false;
+    // Reset series regression type to None
+    m_regressionTypes[series] = Model::Type::None;
     return;
   }
   for (int i = 0 ; i < k_numberOfColumnsPerSeries; i++) {

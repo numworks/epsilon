@@ -8,6 +8,7 @@
 #include <ion.h>
 #include <assert.h>
 #include <cmath>
+#include <float.h>
 
 namespace Poincare {
 
@@ -27,6 +28,11 @@ template<typename T>
 Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
     return Complex<T>::RealUndefined();
+  }
+  /* Assume low deviation from natural numbers are errors */
+  T delta = std::fabs((std::round(c.real()) - c.real()) / c.real());
+  if (delta <= (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON)) {
+    return Complex<T>::Builder(std::round(c.real()));
   }
   return Complex<T>::Builder(std::floor(c.real()));
 }

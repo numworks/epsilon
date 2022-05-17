@@ -70,6 +70,7 @@ app_inference_src += $(addprefix apps/inference/statistic/chi_square_and_slope/,
   input_homogeneity_table_cell.cpp \
   result_homogeneity_table_cell.cpp \
   results_homogeneity_controller.cpp \
+  slope_table_cell.cpp \
 )
 
 app_inference_src += $(addprefix apps/inference/statistic/interval/,\

@@ -9,7 +9,7 @@ namespace Inference {
 
 class SlopeTableCell : public DoubleColumnTableCell {
 public:
-  SlopeTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, Table * tableModel);
+  SlopeTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, Statistic * statistic);
 
   constexpr static int k_numberOfReusableCells = Slope::k_maxNumberOfColumns * k_maxNumberOfReusableRows;
 

@@ -30,9 +30,8 @@ private:
   // ClearColumnHelper
   int fillColumnName(int column, char * buffer) override;
 
-  GoodnessTest * statistic() { return static_cast<GoodnessTest *>(m_tableModel); }
-
   Escher::HighlightCell * headerCell(int index) override { return &m_header[index]; }
+  GoodnessTest * statistic() { return static_cast<GoodnessTest *>(m_statistic); }
 
   Escher::EvenOddMessageTextCell m_header[k_maxNumberOfColumns];
   InputGoodnessController * m_inputGoodnessController;

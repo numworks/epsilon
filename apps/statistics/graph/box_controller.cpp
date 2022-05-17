@@ -60,7 +60,7 @@ bool BoxController::reloadBannerView() {
     k_bufferSize,
     "%s%s%*.*ed",
     I18n::translate(m_store->boxPlotCalculationMessageAtIndex(m_selectedSeries, selectedBoxCalculation)),
-    I18n::translate(I18n::Message::StatisticsColonConvention),
+    I18n::translate(I18n::Message::ColonConvention),
     value, displayMode, precision
   );
   m_view.bannerView()->calculationValue()->setText(buffer);

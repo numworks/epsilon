@@ -9,7 +9,7 @@
 #include <apps/shared/cursor_view.h>
 #include <apps/shared/cursor_view.h>
 #include "residual_plot_curve_view.h"
-#include "banner_view.h"
+#include "xy_banner_view.h"
 
 namespace Regression {
 
@@ -44,7 +44,7 @@ private:
   Shared::CurveViewCursor m_cursor;
   Shared::CursorView m_cursorView;
   Shared::MemoizedCurveViewRange m_range;
-  BannerView m_bannerView;
+  XYBannerView m_bannerView;
   ResidualPlotCurveView m_curveView;
   int m_selectedDotIndex;
   int m_selectedSeriesIndex;

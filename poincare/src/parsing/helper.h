@@ -108,7 +108,8 @@ private:
     &HyperbolicTangent::s_functionHelper,
     &MatrixTrace::s_functionHelper,
     &MatrixTranspose::s_functionHelper,
-    &ListVariance::s_functionHelper,
+    &ListVariance::s_functionHelperOneChild,
+    &ListVariance::s_functionHelperTwoChildren,
     &SquareRoot::s_functionHelper,
   };
 

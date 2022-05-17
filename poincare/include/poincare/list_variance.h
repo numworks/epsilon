@@ -5,13 +5,17 @@
 
 namespace Poincare {
 
+template<int U>
 class ListVarianceNode : public ExpressionNode {
 public:
-  size_t size() const override { return sizeof(ListVarianceNode); }
-  int numberOfChildren() const override;
+  size_t size() const override { return sizeof(ListVarianceNode<U>); }
+  int numberOfChildren() const override { return U; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "ListVariance";
+  }
+  void logAttributes(std::ostream & stream) const override {
+    stream << " numberOfParameters=\"" << U << "\"";
   }
 #endif
   Type type() const override { return Type::ListVariance; }
@@ -31,10 +35,15 @@ private:
 
 class ListVariance : public Expression {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("var", 1, &UntypedBuilderOneChild<ListVariance>);
+  constexpr static const char * k_functionName = "var";
+  constexpr static FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &UntypedBuilderOneChild<ListVariance>);
+  constexpr static FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &UntypedBuilderTwoChildren<ListVariance>);
 
-  ListVariance(const ListVarianceNode * n) : Expression(n) {}
-  static ListVariance Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListVariance, ListVarianceNode>({list}); }
+  ListVariance(const ListVarianceNode<1> * n) : Expression(n) {}
+  ListVariance(const ListVarianceNode<2> * n) : Expression(n) {}
+
+  static ListVariance Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListVariance, ListVarianceNode<1>>({list}); }
+  static ListVariance Builder(Expression values, Expression weights) { return TreeHandle::FixedArityBuilder<ListVariance, ListVarianceNode<2>>({values, weights}); }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

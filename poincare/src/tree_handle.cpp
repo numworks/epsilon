@@ -347,7 +347,8 @@ template ListComplex<double> TreeHandle::NAryBuilder<ListComplex<double>, ListCo
 template ListComplex<float> TreeHandle::NAryBuilder<ListComplex<float>, ListComplexNode<float> >(const Tuple &);
 template ListElement TreeHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>(const Tuple &);
 template ListMaximum TreeHandle::FixedArityBuilder<ListMaximum, ListMaximumNode>(const Tuple &);
-template ListMean TreeHandle::FixedArityBuilder<ListMean, ListMeanNode>(const Tuple &);
+template ListMean TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<1>>(const Tuple &);
+template ListMean TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<2>>(const Tuple &);
 template ListMedian TreeHandle::FixedArityBuilder<ListMedian, ListMedianNode>(const Tuple &);
 template ListMinimum TreeHandle::FixedArityBuilder<ListMinimum, ListMinimumNode>(const Tuple &);
 template ListProduct TreeHandle::FixedArityBuilder<ListProduct, ListProductNode>(const Tuple &);

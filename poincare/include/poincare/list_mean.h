@@ -5,13 +5,17 @@
 
 namespace Poincare {
 
+template<int U>
 class ListMeanNode : public ExpressionNode {
 public:
-  size_t size() const override { return sizeof(ListMeanNode); }
-  int numberOfChildren() const override;
+  size_t size() const override { return sizeof(ListMeanNode<U>); }
+  int numberOfChildren() const override { return U; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << "ListMean";
+    stream << "ListMean" ;
+  }
+  void logAttributes(std::ostream & stream) const override {
+    stream << " numberOfParameters=\"" << U << "\"";
   }
 #endif
   Type type() const override { return Type::ListMean; }
@@ -31,10 +35,14 @@ private:
 
 class ListMean : public Expression {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("mean", 1, &UntypedBuilderOneChild<ListMean>);
+  constexpr static const char * k_functionName = "mean";
+  constexpr static FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &UntypedBuilderOneChild<ListMean>);
+  constexpr static FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &UntypedBuilderTwoChildren<ListMean>);
 
-  ListMean(const ListMeanNode * n) : Expression(n) {}
-  static ListMean Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListMean, ListMeanNode>({list}); }
+  ListMean(const ListMeanNode<1> * n) : Expression(n) {}
+  ListMean(const ListMeanNode<2> * n) : Expression(n) {}
+  static ListMean Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<1>>({list}); }
+  static ListMean Builder(Expression values, Expression weights) { return TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<2>>({values, weights}); }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

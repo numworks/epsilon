@@ -76,7 +76,6 @@ public:
   void setThreshold(double s) { m_threshold = s; }
 
   int indexOfThreshold() const { return numberOfStatisticParameters(); }
-  virtual void initThreshold() = 0;
   virtual I18n::Message thresholdName() const = 0;
   virtual I18n::Message thresholdDescription() const = 0;
   virtual Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) = 0;

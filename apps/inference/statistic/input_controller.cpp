@@ -78,10 +78,6 @@ int InputController::typeAtIndex(int i) {
 }
 
 void InputController::didBecomeFirstResponder() {
-  if (m_statistic->threshold() == -1) {
-    m_statistic->initThreshold();
-    m_selectableTableView.reloadCellAtLocation(0, m_statistic->indexOfThreshold());
-  }
   selectCellAtLocation(0, 0);
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }

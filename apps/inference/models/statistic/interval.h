@@ -37,7 +37,7 @@ public:
   void setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const override;
 
   float evaluateAtAbscissa(float x) const override { return canonicalDensityFunction((x - estimate()) / standardError()); }
-  void initThreshold() override { m_threshold = 0.95; }
+  void initParameters() override { m_threshold = 0.95; }
   I18n::Message thresholdName() const override { return I18n::Message::ConfidenceLevel; }
   I18n::Message thresholdDescription() const override { return I18n::Message::Default; }
 

@@ -39,7 +39,6 @@ protected:
   using Test::parameterAtIndex;  // Hidden
 
   // Instanciate unused abstract classs
-  void initParameters() override {}
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {
     return ParameterRepresentation{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
   }

@@ -14,6 +14,4 @@ const char * InputSlopeController::title() {
   return m_titleBuffer;
 }
 
-
-
 }

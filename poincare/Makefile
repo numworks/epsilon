@@ -47,6 +47,7 @@ poincare_src += $(addprefix poincare/src/,\
   normal_distribution.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
+  statistics_dataset.cpp\
   student_distribution.cpp \
 )
 

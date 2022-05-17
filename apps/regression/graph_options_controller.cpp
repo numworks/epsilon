@@ -31,8 +31,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Inpu
   m_goToParameterController(this, inputEventHandlerDelegate, store, cursor, graphController),
   m_residualPlotCellController(parentResponder, store),
   m_store(store),
-  m_graphController(graphController),
-  m_title(nullptr)
+  m_graphController(graphController)
 {
   m_r2Cell.setLayout(Poincare::HorizontalLayout::Builder(
       {Poincare::CodePointLayout::Builder('r', KDFont::LargeFont),

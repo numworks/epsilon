@@ -13,18 +13,18 @@
 #include "message_table_cell_with_chevron_with_separator.h"
 #include "residual_plot_controller.h"
 #include "store.h"
+#include "overriden_title.h"
 
 namespace Regression {
 
 class GraphController;
 
-class GraphOptionsController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
+class GraphOptionsController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>, public OverridenTitle {
 public:
   GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   void removeRegression();
 
-  const char * title() override { return m_title ? m_title : I18n::translate(I18n::Message::Regression); }
-  void setTitle(const char * title) { m_title = title; }
+  const char * title() override { return getTitle(I18n::Message::Regression); }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
@@ -62,7 +62,6 @@ private:
   ResidualPlotController m_residualPlotCellController;
   Store * m_store;
   GraphController * m_graphController;
-  const char * m_title;
 };
 
 }

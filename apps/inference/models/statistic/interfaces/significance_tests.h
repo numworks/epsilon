@@ -199,18 +199,20 @@ class Slope : public SignificanceTest {
 public:
   constexpr static int k_maxNumberOfColumns = 2;
   // Description
-  static I18n::Message Title() { return I18n::Message::HypothesisControllerTitleOneMeanT; }
+  static I18n::Message Title() { return I18n::Message::HypothesisControllerTitleSlope; }
 
   static const char * HypothesisSymbol() { return "ß"; }
   static const char * EstimateSymbol() { return "x̅"; };
 
   // Parameters
-  static bool AuthorizedParameterAtIndex(int i, double p);
+  static void SetParameterAtPosition(double p, int row, int col);
+  static double ParameterAtPosition(int row, int col);
+  static bool AuthorizedParameterAtIndex(double p, int index);
   static int NumberOfParameters();
-  static double X1(int index);
-  static double Y1(int index);
+  static int NumberOfRows();
 
   // Computation
+  static void RecomputeData();
   static void ComputeTest(Test * test);
   static void ComputeInterval(Interval * interval);
 };

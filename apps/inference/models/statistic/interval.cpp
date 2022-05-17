@@ -10,6 +10,7 @@
 
 #include "one_mean_t_interval.h"
 #include "one_proportion_z_interval.h"
+#include "slope_t_interval.h"
 #include "two_means_t_interval.h"
 #include "two_proportions_z_interval.h"
 
@@ -54,9 +55,12 @@ bool Interval::initializeSignificanceTest(SignificanceTestType testType) {
     case SignificanceTestType::OneProportion:
       new (this) OneProportionZInterval();
       break;
-    default:
-      assert(testType == SignificanceTestType::TwoProportions);
+    case SignificanceTestType::TwoProportions:
       new (this) TwoProportionsZInterval();
+      break;
+    default:
+      assert(testType == SignificanceTestType::Slope);
+      new (this) SlopeTInterval();
       break;
   }
   initParameters();

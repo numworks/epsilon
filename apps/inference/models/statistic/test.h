@@ -23,6 +23,7 @@ public:
   I18n::Message statisticTitle() const override { return I18n::Message::Tests; }
   I18n::Message statisticBasicTitle() const override { return I18n::Message::Test; }
   // TODO: factorize with intervals!
+  I18n::Message tStatisticMessage() const override { return I18n::Message::TTest; }
   I18n::Message zStatisticMessage() const override { return I18n::Message::ZTest; }
   I18n::Message tOrZStatisticMessage() const override { return I18n::Message::TOrZTest; }
   I18n::Message tDistributionName() const override { return I18n::Message::TTest; }

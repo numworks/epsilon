@@ -33,6 +33,14 @@ public:
     return DistributionChi2::CumulativeNormalizedInverseDistributionFunction(proba, m_degreesOfFreedom);
   }
 
+  // Table
+  void setParameterAtPosition(double value, int row, int column) override {
+    assert(index2DToIndex(row, column) < numberOfStatisticParameters());
+    setParameterAtIndex(value, index2DToIndex(row, column));
+  }
+  double parameterAtPosition(int row, int column) const override { return parameterAtIndex(index2DToIndex(row, column)); }
+  bool authorizedParameterAtPosition(double p, int row, int column) const override { return authorizedParameterAtIndex(p, index2DToIndex(row, column)); }
+
   bool authorizedParameterAtIndex(double p, int i) const override;
 
 protected:
@@ -56,13 +64,6 @@ private:
   float computeYMax() const override {
     return DistributionChi2::YMax(m_degreesOfFreedom);
   }
-
-  // Table
-  void tableSetParameterAtIndex(double p, int index) override { return setParameterAtIndex(p, index); }
-  double tableParameterAtIndex(int index) const override { return parameterAtIndex(index); }
-  bool tableAuthorizedParameterAtIndex(double p, int i) const override { return authorizedParameterAtIndex(p, i); }
-  int numberOfTableParameters() const override { return numberOfStatisticParameters(); }
-
 };
 
 }  // namespace Inference

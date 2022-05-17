@@ -59,7 +59,7 @@ public:
   int closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext);
   /* Return the closest dot to given dot, on the right if direction > 0,
    * on the left otherwise */
-  int nextDot(int series, int direction, int dot);
+  int nextDot(int series, int direction, int dot, bool displayMean);
   Model * regressionModel(Model::Type type) {
     return regressionModel((int) type);
   }

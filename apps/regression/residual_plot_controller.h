@@ -17,7 +17,6 @@ class ResidualPlotController : public Escher::ViewController {
 public:
   ResidualPlotController(Escher::Responder * parentResponder, Store * store);
   void setSeries(int series);
-  // TODO Hugo : Sort the indexes by values, add a context for y
   double xAtIndex(int index) const { return m_store->get(m_selectedSeriesIndex, 0, index); }
   double yAtIndex(int index) const { return m_store->residualAtIndexForSeries(m_selectedSeriesIndex, index, AppsContainer::sharedAppsContainer()->globalContext()); }
   KDColor selectedSeriesColor() const { return Store::colorOfSeriesAtIndex(m_selectedSeriesIndex); }

@@ -85,7 +85,7 @@ bool PlotController::reloadBannerView() {
     k_bufferSize,
     "%s%s%*.*ed",
     I18n::translate(I18n::Message::StatisticsValue),
-    I18n::translate(I18n::Message::StatisticsColonConvention),
+    I18n::translate(I18n::Message::ColonConvention),
     m_cursor.x(), displayMode, precision);
   m_bannerView.value()->setText(buffer);
 
@@ -95,7 +95,7 @@ bool PlotController::reloadBannerView() {
     k_bufferSize,
     resultMessageTemplate(),
     I18n::translate(resultMessage()),
-    I18n::translate(I18n::Message::StatisticsColonConvention),
+    I18n::translate(I18n::Message::ColonConvention),
     m_cursor.y(), displayMode, precision);
   m_bannerView.result()->setText(buffer);
 

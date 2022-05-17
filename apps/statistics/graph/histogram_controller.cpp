@@ -86,7 +86,7 @@ bool HistogramController::reloadBannerView() {
     k_bufferSize,
     "%s%s[%*.*ed;%*.*ed[",
     I18n::translate(I18n::Message::Interval),
-    I18n::translate(I18n::Message::StatisticsColonConvention),
+    I18n::translate(I18n::Message::ColonConvention),
     lowerBound, displayMode, precision,
     upperBound, displayMode, precision);
   m_view.bannerView()->intervalView()->setText(buffer);
@@ -98,7 +98,7 @@ bool HistogramController::reloadBannerView() {
     k_bufferSize,
     "%s%s%*.*ed",
     I18n::translate(I18n::Message::Frequency),
-    I18n::translate(I18n::Message::StatisticsColonConvention),
+    I18n::translate(I18n::Message::ColonConvention),
     size, displayMode, precision);
   m_view.bannerView()->frequencyView()->setText(buffer);
 
@@ -109,7 +109,7 @@ bool HistogramController::reloadBannerView() {
     k_bufferSize,
     "%s%s%*.*ed",
     I18n::translate(I18n::Message::RelativeFrequency),
-    I18n::translate(I18n::Message::StatisticsColonConvention),
+    I18n::translate(I18n::Message::ColonConvention),
     relativeFrequency, displayMode, precision);
   m_view.bannerView()->relativeFrequencyView()->setText(buffer);
 

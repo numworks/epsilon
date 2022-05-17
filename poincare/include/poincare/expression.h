@@ -73,6 +73,7 @@ class Expression : public TreeHandle {
   friend class List;
   friend class ListMean;
   friend class ListSequence;
+  friend class ListVariance;
   friend class Logarithm;
   friend class Matrix;
   friend class MatrixIdentity;

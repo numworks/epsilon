@@ -17,6 +17,7 @@ enum class SignificanceTestType {
   TwoProportions,
   TwoMeans,
   Categorical,
+  Slope,
   NumberOfSignificanceTestTypes
 };
 

@@ -46,7 +46,8 @@ const char * TestController::title() {
 }
 
 void TestController::stackOpenPage(Escher::ViewController * nextPage) {
-  selectRow(static_cast<int>(m_statistic->significanceTestType()));
+  SignificanceTestType type = m_statistic->significanceTestType();
+  selectRow(type == SignificanceTestType::Slope ? virtualIndexOfSlope() : static_cast<int>(type));
   ViewController::stackOpenPage(nextPage);
 }
 

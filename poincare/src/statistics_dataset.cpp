@@ -1,6 +1,7 @@
 #include <poincare/statistics_dataset.h>
 #include <poincare/based_integer.h>
 #include <helpers.h>
+#include <algorithm>
 #include <cmath>
 #include <float.h>
 
@@ -84,6 +85,33 @@ T StatisticsDataset<T>::sortedElementAtCumulatedFrequency(T freq, bool createMid
 
 template<typename T>
 T StatisticsDataset<T>::sortedElementAtCumulatedWeight(T weight, bool createMiddleElement) const {
+  int upperIndex;
+  int lowerIndex = indexAtCumulatedWeight(weight, &upperIndex);
+  if (createMiddleElement && upperIndex != lowerIndex) {
+    return (valueAtIndex(lowerIndex) + valueAtIndex(upperIndex)) / (T)2.0;
+  }
+  return valueAtIndex(lowerIndex);
+}
+
+template<typename T>
+T StatisticsDataset<T>::median() const {
+  return sortedElementAtCumulatedFrequency((T)1.0/(T)2.0, true);
+}
+
+template<typename T>
+int StatisticsDataset<T>::indexAtCumulatedFrequency(T freq, int * upperIndex) const {
+  assert(freq >= 0.0 && freq <= 1.0);
+  return indexAtCumulatedWeight(freq * totalWeight(), upperIndex);
+}
+
+template<typename T>
+int StatisticsDataset<T>::indexAtCumulatedWeight(T weight, int * upperIndex) const {
+  if (std::isnan(weight)) {
+    if (upperIndex) {
+      *upperIndex = -1;
+    }
+    return -1;
+  }
   T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   int elementSortedIndex;
   T cumulatedWeight = (T)0.0;
@@ -94,23 +122,30 @@ T StatisticsDataset<T>::sortedElementAtCumulatedWeight(T weight, bool createMidd
       break;
     }
   }
-  if (createMiddleElement && std::fabs(cumulatedWeight - weight) < epsilon) {
+  if (std::fabs(cumulatedWeight - weight) < epsilon) {
     /* There is an element of cumulated weight, so the result is
      * the mean between this element and the next element (in terms of cumulated
      * weight) that has a non-null weight. */
     for (int i = elementSortedIndex + 1; i < datasetLength(); i++) {
-      int nextElementSortedIndex = indexAtSortedIndex(i);
-      if (weightAtIndex(nextElementSortedIndex) > (T)0.0) {
-        return (valueAtIndex(indexAtSortedIndex(elementSortedIndex)) + valueAtIndex(nextElementSortedIndex)) / (T)2.0;
+      int nextElementIndex = indexAtSortedIndex(i);
+      T nextWeight = weightAtIndex(nextElementIndex);
+      if (!std::isnan(nextWeight) && nextWeight > (T)0.0) {
+        if (upperIndex) {
+          *upperIndex = nextElementIndex;
+        }
+        return indexAtSortedIndex(elementSortedIndex);
       }
     }
   }
-  return valueAtIndex(indexAtSortedIndex(elementSortedIndex));
+  if (upperIndex) {
+    *upperIndex = indexAtSortedIndex(elementSortedIndex);
+  }
+  return indexAtSortedIndex(elementSortedIndex);
 }
 
 template<typename T>
-T StatisticsDataset<T>::median() const {
-  return sortedElementAtCumulatedFrequency((T)1.0/(T)2.0, true);
+int StatisticsDataset<T>::medianIndex(int * upperIndex) const {
+  return indexAtCumulatedFrequency((T)1.0/(T)2.0, upperIndex);
 }
 
 int getIntFromBasedInteger(Expression e) {
@@ -146,10 +181,11 @@ void StatisticsDataset<T>::buildSortedIndex() const {
         DatasetColumn<T> * values = reinterpret_cast<DatasetColumn<T> *>(pack[1]);
         int sortedIndexI = getIntFromBasedInteger(sortedIndex->childAtIndex(i));
         int sortedIndexJ = getIntFromBasedInteger(sortedIndex->childAtIndex(j));
-        return values->valueAtIndex(sortedIndexI) >= values->valueAtIndex(sortedIndexJ);
+        return std::isnan(values->valueAtIndex(sortedIndexI)) || values->valueAtIndex(sortedIndexI) >= values->valueAtIndex(sortedIndexJ);
       },
       pack,
       datasetLength());
+  m_sortedIndex = sortedIndexes;
   m_recomputeSortedIndex = false;
 }
 

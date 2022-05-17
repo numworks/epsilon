@@ -1,56 +1,85 @@
 #include <poincare/list_mean.h>
+#include <poincare/statistics_dataset.h>
 #include <poincare/layout_helper.h>
+#include <poincare/list_complex.h>
 #include <poincare/list_sum.h>
 #include <poincare/multiplication.h>
+#include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-const Expression::FunctionHelper ListMean::s_functionHelper;
-
-int ListMeanNode::numberOfChildren() const {
-  return ListMean::s_functionHelper.numberOfChildren();
+template<int U>
+int ListMeanNode<U>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListMean::k_functionName);
 }
 
-int ListMeanNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListMean::s_functionHelper.name());
+template<int U>
+Layout ListMeanNode<U>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(ListMean(this), floatDisplayMode, numberOfSignificantDigits, ListMean::k_functionName);
 }
 
-Layout ListMeanNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ListMean(this), floatDisplayMode, numberOfSignificantDigits, ListMean::s_functionHelper.name());
-}
-
-Expression ListMeanNode::shallowReduce(ReductionContext reductionContext) {
+template<int U>
+Expression ListMeanNode<U>::shallowReduce(ReductionContext reductionContext) {
   return ListMean(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListMeanNode::templatedApproximate(ApproximationContext approximationContext) const {
-  ExpressionNode * child = childAtIndex(0);
-  int n = child->numberOfChildren();
-  if (child->type() != ExpressionNode::Type::List || n == 0) {
+template<int U>
+template<typename T> Evaluation<T> ListMeanNode<U>::templatedApproximate(ApproximationContext approximationContext) const {
+  ListComplex<T> evaluationArray[2];
+  StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(this, approximationContext, evaluationArray);
+  if (dataset.isUndefined()) {
     return Complex<T>::Undefined();
   }
-  Evaluation<T> sum = static_cast<ListNode *>(child)->sumOfElements<T>(approximationContext);
-  return MultiplicationNode::Compute<T>(sum, Complex<T>::Builder(static_cast<T>(1)/static_cast<T>(n)), approximationContext.complexFormat());
+  return Complex<T>::Builder(dataset.mean());
 }
 
 Expression ListMean::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  Expression child = childAtIndex(0);
-  int n = child.numberOfChildren();
-  if (child.type() != ExpressionNode::Type::List || n == 0) {
-    return replaceWithUndefinedInPlace();
+  int n = numberOfChildren();
+  assert(n <= 2);
+  Expression children[2];
+  for (int i = 0; i < n; i++) {
+    children[i] = childAtIndex(i);
+    if (children[i].type() != ExpressionNode::Type::List || children[i].numberOfChildren() == 0) {
+      return replaceWithUndefinedInPlace();
+    }
   }
-
-  ListSum sum = ListSum::Builder(child);
-  Multiplication result = Multiplication::Builder(sum, Rational::Builder(1, n));
+  List weights = static_cast<List &>(children[1]);
+  if (n > 1 && !weights.allChildrenArePositive(reductionContext.context())) {
+    // All weights need to be positive.
+    return *this;
+  }
+  int numberOfElementsInList = children[0].numberOfChildren();
+  Expression listToSum;
+  if (n == 1) {
+    listToSum = children[0];
+  } else {
+    assert(n == 2);
+    listToSum = Multiplication::Builder(children[0], children[1].clone());
+  }
+  ListSum sum = ListSum::Builder(listToSum);
+  listToSum.shallowReduce(reductionContext);
+  Expression inverseOfTotalWeights;
+  if (n == 1) {
+    inverseOfTotalWeights = Rational::Builder(1, numberOfElementsInList);
+  } else {
+    ListSum sumOfWeights = ListSum::Builder(children[1]);
+    inverseOfTotalWeights = Power::Builder(sumOfWeights, Rational::Builder(-1, 1));
+    sumOfWeights.shallowReduce(reductionContext);
+  }
+  Multiplication result = Multiplication::Builder(sum, inverseOfTotalWeights);
   sum.shallowReduce(reductionContext);
+  inverseOfTotalWeights.shallowReduce(reductionContext);
   replaceWithInPlace(result);
   return result.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> ListMeanNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListMeanNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListMeanNode<1>::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListMeanNode<2>::templatedApproximate<float>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListMeanNode<1>::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<double> ListMeanNode<2>::templatedApproximate<double>(ApproximationContext approximationContext) const;
 
-
+template class ListMeanNode<1>;
+template class ListMeanNode<2>;
 }

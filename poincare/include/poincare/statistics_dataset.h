@@ -3,6 +3,7 @@
 
 #include "dataset_column.h"
 #include "list.h"
+#include "list_complex.h"
 #include <algorithm>
 
 namespace Poincare {
@@ -10,8 +11,13 @@ namespace Poincare {
 template<typename T>
 class StatisticsDataset {
 public:
+  static StatisticsDataset<T> BuildFromChildren(const ExpressionNode * e, ExpressionNode::ApproximationContext approximationContext, ListComplex<T> evaluationArray[]);
+
   StatisticsDataset(DatasetColumn<T> * values, DatasetColumn<T> * weights) : m_values(values), m_weights(weights), m_sortedIndex(List::Builder()), m_recomputeSortedIndex(true) {}
   StatisticsDataset(DatasetColumn<T> * values) : StatisticsDataset(values, nullptr) {}
+  StatisticsDataset() : StatisticsDataset(nullptr, nullptr) {}
+
+  bool isUndefined() { return m_values == nullptr; }
 
   void recomputeSortedIndex() { m_recomputeSortedIndex = true; }
   int indexAtSortedIndex(int i) const;
@@ -37,7 +43,8 @@ private:
   }
   T weightAtIndex(int index) const {
     if (m_weights == nullptr) { return (T)1.0; }
-    return index < m_weights->length() ? m_weights->valueAtIndex(index) : NAN;
+    // All weights must be positive.
+    return index < m_weights->length() && m_weights->valueAtIndex(index) >= (T)0.0 ? m_weights->valueAtIndex(index) : NAN;
   }
 
   void buildSortedIndex() const;

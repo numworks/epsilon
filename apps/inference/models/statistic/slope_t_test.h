@@ -3,31 +3,27 @@
 
 #include "interfaces/distributions.h"
 #include "interfaces/significance_tests.h"
-#include "table.h"
 #include "test.h"
+#include "slope_t_statistic.h"
 
 namespace Inference {
 
-class SlopeTTest : public Test, public Table {
+class SlopeTTest : public Test, public SlopeTStatistic {
 public:
+  SlopeTTest(Shared::GlobalContext * context) : SlopeTStatistic(context) {}
+  void tidy() override { DoublePairStore::tidy(); }
+
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::Slope; }
   DistributionType distributionType() const override { return DistributionType::T; }
   I18n::Message title() const override { return Slope::Title(); }
   I18n::Message graphTitleFormat() const override { return DistributionT::GraphTitleFormat(); }
 
   // Inference
-  void setParameterAtPosition(double value, int row, int column) override { return Slope::SetParameterAtPosition(value, row, column); }
-  double parameterAtPosition(int row, int column) const override { return Slope::ParameterAtPosition(row, column); }
   bool authorizedParameterAtPosition(double p, int row, int column) const override { return authorizedParameterAtIndex(p, index2DToIndex(row, column)); }
-  /* Delete parameter at location, return true if the deleted param was the last
-   * non-deleted value of its row or column. */
-  void recomputeData() override { Slope::RecomputeData(); }
-  int maxNumberOfColumns() const override { return k_maxNumberOfColumns; }
-  int maxNumberOfRows() const override { return Slope::NumberOfRows(); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && Slope::AuthorizedParameterAtIndex(p, i); }
 
   // Significance Test: Slope
   const char * hypothesisSymbol() override { return Slope::HypothesisSymbol(); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && Slope::AuthorizedParameterAtIndex(p, i); }
 
   void compute() override { Slope::ComputeTest(this); }
 
@@ -37,13 +33,9 @@ public:
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override { return DistributionT::CumulativeNormalizedDistributionFunction(x, m_degreesOfFreedom); }
   double cumulativeDistributiveInverseForProbability(double p) const override { return DistributionT::CumulativeNormalizedInverseDistributionFunction(p, m_degreesOfFreedom); }
 
-  constexpr static int k_maxNumberOfColumns = 2;
-  // DOUBLE PAIR STORE, k_maxNumberOfPairs
 private:
-  // Table
-  Index2D initialDimensions() const override { return Index2D{.row = 1, .col = 2}; }
   // Significance Test: Slope
-  int numberOfStatisticParameters() const override { return Slope::NumberOfParameters(); }
+  int numberOfStatisticParameters() const override { return numberOfPairsOfSeries(0) * k_maxNumberOfColumns; }
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {
     return ParameterRepresentation{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
   }

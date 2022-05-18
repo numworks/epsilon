@@ -34,7 +34,7 @@ public:
   bool switchSelectedColumnHideStatus();
 
   // LayoutFieldDelegate
-  bool createExpressionForFillingCollumnWithFormula(const char * text);
+  bool createExpressionForFillingColumnWithFormula(const char * text);
 
   //TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;

@@ -39,7 +39,7 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, P
     approximateOutputLayout = exactOutputLayout;
   } else {
     bool couldNotCreateApproximateLayout = false;
-    approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+    approximateOutputLayout = calculation->createApproximateOutputLayout(&couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
       if (canChangeDisplayOutput && calculation->displayOutput(context) != ::Calculation::Calculation::DisplayOutput::ApproximateOnly) {
         /* Set the display output to ApproximateOnly, make room in the pool by
@@ -47,7 +47,7 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, P
         calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ApproximateOnly);
         exactOutputLayout = Poincare::Layout();
         couldNotCreateApproximateLayout = false;
-        approximateOutputLayout = calculation->createApproximateOutputLayout(context, &couldNotCreateApproximateLayout);
+        approximateOutputLayout = calculation->createApproximateOutputLayout(&couldNotCreateApproximateLayout);
         if (couldNotCreateApproximateLayout) {
           Poincare::ExceptionCheckpoint::Raise();
         }

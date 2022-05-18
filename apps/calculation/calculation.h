@@ -77,12 +77,12 @@ public:
   // Expressions
   Poincare::Expression input();
   Poincare::Expression exactOutput();
-  Poincare::Expression approximateOutput(Poincare::Context * context, NumberOfSignificantDigits numberOfSignificantDigits);
+  Poincare::Expression approximateOutput(NumberOfSignificantDigits numberOfSignificantDigits);
 
   // Layouts
   Poincare::Layout createInputLayout();
   Poincare::Layout createExactOutputLayout(bool * couldNotCreateExactLayout);
-  Poincare::Layout createApproximateOutputLayout(Poincare::Context * context, bool * couldNotCreateApproximateLayout);
+  Poincare::Layout createApproximateOutputLayout(bool * couldNotCreateApproximateLayout);
 
   // Heights
   KDCoordinate height(bool expanded);

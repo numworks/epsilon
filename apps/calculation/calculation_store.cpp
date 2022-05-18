@@ -267,7 +267,7 @@ Expression CalculationStore::ansExpression(Context * context) {
    * Equal expression appears. */
   bool exactOutputInvolvesStoreEqual = exactOutput.type() == ExpressionNode::Type::Store || exactOutput.type() == ExpressionNode::Type::Equal;
   if (input.recursivelyMatches(Expression::IsApproximate, context) || exactOutputInvolvesStoreEqual) {
-    Expression approximate = mostRecentCalculation->approximateOutput(context, Calculation::NumberOfSignificantDigits::Maximal);
+    Expression approximate = mostRecentCalculation->approximateOutput(Calculation::NumberOfSignificantDigits::Maximal);
     if (approximate.isUninitialized()) {
       return defaultAns;
     }

@@ -271,6 +271,10 @@ double Store::standardDeviationOfColumn(int series, int i, bool lnOfSeries) cons
   return createDatasetFromColumn(series, i, lnOfSeries).standardDeviation();
 }
 
+double Store::sampleStandardDeviationOfColumn(int series, int i, bool lnOfSeries) const {
+  return createDatasetFromColumn(series, i, lnOfSeries).sampleStandardDeviation();
+}
+
 double Store::covariance(int series, bool lnOfSeries) const {
   double mean0 = meanOfColumn(series, 0, lnOfSeries);
   double mean1 = meanOfColumn(series, 1, lnOfSeries);

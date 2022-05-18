@@ -1220,12 +1220,25 @@ QUIZ_CASE(poincare_approximation_lists_access) {
 QUIZ_CASE(poincare_approximation_lists_functions) {
   assert_expression_approximates_to<double>("sort({5,8,7,undef,-inf})", "{-inf,5,7,8,undef}");
   assert_expression_approximates_to_scalar<double>("mean({5,8,7,4,12})", 7.2);
+  assert_expression_approximates_to_scalar<double>("mean({5,8,7,4,12},{1,2,3,5,6})", 7.882352941176471);
+  assert_expression_approximates_to<double>("mean({5,8,7,4,12},{2})", Undefined::Name());
+  assert_expression_approximates_to<double>("mean({5,8,7,4,12},{-1,1,1,1,1})", Undefined::Name());
+  assert_expression_approximates_to<double>("mean({5,8,7,4,12},{0,0,0,0,0})", Undefined::Name());
   assert_expression_approximates_to_scalar<double>("stddev({1,2,3,4,5,6})", 1.707825127659933);
+  assert_expression_approximates_to_scalar<double>("stddev({1,2,3,4,5,6},{6,2,3,4,5,1})", 1.6700645635000173);
+  assert_expression_approximates_to_scalar<double>("stddev({1})", 0.);
   assert_expression_approximates_to_scalar<double>("med({1,6,3,5,2})", 3.);
   assert_expression_approximates_to_scalar<double>("med({1,6,3,4,5,2})", 3.5);
-  assert_expression_approximates_to_scalar<double>("med({1,undef,6,3,5,undef,2})", 3.);
+  assert_expression_approximates_to_scalar<double>("med({1,6,3,4,5,2},{2,3,0.1,2.8,3,1})", 5.);
+  assert_expression_approximates_to<double>("med({1,undef,6,3,5,undef,2})", Undefined::Name());
   assert_expression_approximates_to_scalar<double>("var({1,2,3,4,5,6})", 2.916666666666666);
+  assert_expression_approximates_to<double>("var({1,2,3,undef,4,5,6})", Undefined::Name());
+  assert_expression_approximates_to_scalar<double>("var({1,2,3,4,5,6},{7,0.1,2,0,1,10})", 5.2815524368208706);
+  assert_expression_approximates_to<double>("var({1,2,3,3,4,5,6},{-2,2,2,2,2,2,2})", Undefined::Name());
+  assert_expression_approximates_to<double>("var({1,2,3,4,5,6},{0,0,0,0,0,0})", Undefined::Name());
   assert_expression_approximates_to_scalar<double>("samplestddev({1,2,3,4,5,6})", 1.8708286933869704);
+  assert_expression_approximates_to_scalar<double>("samplestddev({1,2,3,4,5,6},{6,2,3,4,5,1})", 1.7113069358158486);
+  assert_expression_approximates_to<double>("samplestddev({1})", Undefined::Name());
   assert_expression_approximates_to_scalar<double>("dim({1,2,3})", 3.);
   assert_expression_approximates_to_scalar<double>("min({1,2,3})", 1.);
   assert_expression_approximates_to_scalar<double>("max({1,2,3})", 3.);

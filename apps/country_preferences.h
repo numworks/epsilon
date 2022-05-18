@@ -36,13 +36,19 @@ public:
     D
   };
 
-  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol) :
+  enum class HistogramsOffset : bool {
+    None,
+    OnIntegerValues
+  };
+
+  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol, HistogramsOffset histogramOffset) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
     m_unitFormat(unitFormat),
     m_methodForQuartiles(methodForQuartiles),
     m_outliersStatus(outliersStatus),
-    m_discriminantSymbol(discriminantSymbol)
+    m_discriminantSymbol(discriminantSymbol),
+    m_histogramOffset(histogramOffset)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -50,6 +56,7 @@ public:
   constexpr OutlierDefaultVisibility outliersStatus() const { return m_outliersStatus; }
   constexpr Poincare::Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
   constexpr HomeAppsLayout homeAppsLayout() const { return m_homeAppsLayout; }
+  constexpr HistogramsOffset histogramOffset() const { return m_histogramOffset; }
   constexpr const char * discriminantSymbol() const { return m_discriminantSymbol == DiscriminantSymbol::Delta ? "Δ" : "D"; }
 
 private:
@@ -59,6 +66,7 @@ private:
   const MethodForQuartiles m_methodForQuartiles;
   const OutlierDefaultVisibility m_outliersStatus;
   const DiscriminantSymbol m_discriminantSymbol;
+  const HistogramsOffset m_histogramOffset;
 };
 
 #endif

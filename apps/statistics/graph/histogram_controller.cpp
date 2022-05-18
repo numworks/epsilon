@@ -1,4 +1,5 @@
 #include "histogram_controller.h"
+#include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include "../app.h"
 #include <poincare/ieee754.h>
@@ -212,16 +213,20 @@ void HistogramController::initBarParameters() {
     // Use k_maxNumberOfBars - 1 for extra margin in case of a loss of precision
     barWidth = (xMax - xMin) / (HistogramRange::k_maxNumberOfBars - 1);
   }
-  if (barWidth != std::ceil(barWidth)) {
-    bool allValuesAreIntegers = true;
-    for (int i = 0; i < Store::k_numberOfSeries; i ++) {
-      if (allValuesAreIntegers && validSerieMethod()(m_store, i)) {
-        allValuesAreIntegers = m_store->columnIsIntegersOnly(i, 0);
-      }
+  bool allValuesAreIntegers = true;
+  for (int i = 0; i < Store::k_numberOfSeries; i ++) {
+    if (allValuesAreIntegers && validSerieMethod()(m_store, i)) {
+      allValuesAreIntegers = m_store->columnIsIntegersOnly(i, 0);
     }
-    if (allValuesAreIntegers) {
-      // With integer values, the histogram is better with an integer bar width
-      barWidth = std::ceil(barWidth);
+  }
+  if (allValuesAreIntegers) {
+    // With integer values, the histogram is better with an integer bar width
+    barWidth = std::ceil(barWidth);
+    if (GlobalPreferences::sharedGlobalPreferences()->histogramOffset() == CountryPreferences::HistogramsOffset::OnIntegerValues) {
+      // Bars are offsetted right to center the bars around the labels.
+      xMin -= barWidth/2.0;
+      m_store->setFirstDrawnBarAbscissa(xMin);
+      m_histogramRange.setHistogramXMin(m_histogramRange.xMin() - barWidth/2.0, true);
     }
   }
   assert(barWidth > 0.0 && std::ceil((xMax - xMin) / barWidth) <= HistogramRange::k_maxNumberOfBars);

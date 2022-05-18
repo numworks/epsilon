@@ -27,6 +27,7 @@ bool Chi2Test::initializeCategoricalType(CategoricalType type) {
     default:
       assert(false);
   }
+  initParameters();
   return true;
 }
 

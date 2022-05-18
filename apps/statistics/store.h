@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/double_pair_store.h>
+#include <poincare/statistics_dataset.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -15,7 +16,6 @@ public:
 
   Store(Shared::GlobalContext * context);
 
-  void setSortedIndex(uint8_t * buffer, size_t bufferSize);
   void invalidateSortedIndexes();
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
@@ -82,7 +82,6 @@ public:
   double upperOutlierAtIndex(int series, int index) const;
   double sum(int series) const;
   double squaredValueSum(int series) const;
-  double squaredOffsettedValueSum(int series, double offset) const;
   int numberOfModes(int series) const;
   int totalNumberOfModes() const;
   double modeAtIndex(int series, int index) const;
@@ -152,9 +151,8 @@ private:
   uint8_t upperWhiskerSortedIndex(int series) const;
   // Return the value index from its sorted index (a 0 sorted index is the min)
   uint8_t valueIndexAtSortedIndex(int series, int i) const;
-  // Sort and memoize values indexes in increasing order.
-  void buildSortedIndex(int series) const;
   bool frequenciesAreValid(int series) const;
+
   // Cumulated frequencies column display
   bool m_displayCumulatedFrequencies[k_numberOfSeries];
   // Histogram bars
@@ -162,8 +160,7 @@ private:
   double m_firstDrawnBarAbscissa;
   // Sorted value indexes are memoized to save computation
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
-  mutable uint8_t * m_sortedIndex;
-  mutable bool m_sortedIndexValid[k_numberOfSeries];
+  Poincare::StatisticsDataset<double> m_datasets[k_numberOfSeries];
   /* Memoizing the max number of modes because the CalculationControllers needs
    * it in numberOfRows(), which is used a lot. */
   mutable int m_memoizedMaxNumberOfModes;

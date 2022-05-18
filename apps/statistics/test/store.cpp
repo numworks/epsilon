@@ -13,8 +13,6 @@ using namespace Shared;
 
 namespace Statistics {
 
-constexpr size_t k_sortedIndexBufferSize = Shared::DoublePairStore::k_numberOfSeries * Shared::DoublePairStore::k_maxNumberOfPairs;
-
 void assert_value_approximately_equal_to(double d1, double d2, double precision, double nullExpectedPrecision) {
   quiz_assert((std::isinf(d1) && std::isinf(d2) && d1 * d2 > 0.0 /*same sign*/)
       || roughly_equal(d1, d2, precision, true, nullExpectedPrecision));
@@ -46,8 +44,6 @@ void assert_data_statistics_equal_to(
   ) {
   GlobalContext context;
   Store store(&context);
-  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
-  store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
 
@@ -103,8 +99,6 @@ void assert_data_cumulated_frequency(
   ) {
   GlobalContext context;
   Store store(&context);
-  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
-  store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
 
@@ -129,8 +123,6 @@ void assert_data_normal_probability(
   ) {
   GlobalContext context;
   Store store(&context);
-  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
-  store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
 
@@ -167,8 +159,6 @@ void assert_data_box_plot(
   ) {
   GlobalContext context;
   Store store(&context);
-  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
-  store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
 
@@ -973,8 +963,6 @@ void assert_data_statistics_multiple_series_equal_to(
     double minValueIgnoringFrequency) {
   GlobalContext context;
   Store store(&context);
-  uint8_t m_sortedIndexBuffer[k_sortedIndexBufferSize];
-  store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
 
   // Set the data in the store
   for (int i = 0; i < numberOfData1; i++) {

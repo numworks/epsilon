@@ -103,13 +103,13 @@ protected:
    * to update the series each time, but only at the end of the modifications.
    * So these methods are called to set a flag preventing the update.*/
   bool m_validSeries[k_numberOfSeries];
+  Poincare::FloatList<double> m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
 private:
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
   void storeColumn(int series, int i) const;
   void deleteTrailingUndef(int series, int i);
   void deletePairsOfUndef(int series);
 
-  Poincare::FloatList<double> m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
   GlobalContext * m_context;
 };
 

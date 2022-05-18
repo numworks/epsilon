@@ -64,7 +64,7 @@ void StoreController::fillFormulaInputWithTemplate(Layout templateLayout) {
     templateString[filledLength + 1] = 0;
   }
   if (!templateLayout.isUninitialized()) {
-    templateLayout.serializeParsedExpression(templateString + filledLength + 1, k_sizeOfBuffer, nullptr);
+    templateLayout.serializeParsedExpression(templateString + filledLength + 1, k_sizeOfBuffer - filledLength - 1, nullptr);
   }
   inputViewController()->setTextBody(templateString);
   inputViewController()->edit(

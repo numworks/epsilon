@@ -54,7 +54,7 @@ private:
 class List : public Expression {
   friend class ListNode;
 public:
-  List() : Expression( ) {}
+  List() : Expression() {}
   List(const ListNode * n) : Expression(n) {}
   static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
   ListNode * node() const { return static_cast<ListNode *>(Expression::node()); }

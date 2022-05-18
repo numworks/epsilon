@@ -26,8 +26,27 @@ StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(const ExpressionNod
   return StatisticsDataset<T>(&evaluationArray[0], &evaluationArray[1]);
 }
 
+T StatisticsDataset<T>::valueAtIndex(int index) const {
+  if (index < 0 || index >= m_values->length()) {
+    return NAN;
+  }
+  return m_lnOfValues ? log(m_values->valueAtIndex(index)) : m_values->valueAtIndex(index);
+}
+
+template<typename T>
+T StatisticsDataset<T>::weightAtIndex(int index) const {
+  if (m_weights == nullptr) {
+    return std::isnan(valueAtIndex(index)) ? (T)0.0 : (T)1.0;
+  }
+  // All weights must be positive.
+  return index >= 0 && index < m_weights->length() && m_weights->valueAtIndex(index) >= (T)0.0 ? m_weights->valueAtIndex(index) : NAN;
+}
+
 template<typename T>
 T StatisticsDataset<T>::totalWeight() const {
+  if (datasetLength() == 0) {
+    return NAN;
+  }
   T total = (T)0.0;
   for (int i = 0; i < datasetLength(); i++) {
     total += weightAtIndex(i);
@@ -113,7 +132,7 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight, int * upperIndex) con
     return -1;
   }
   T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
-  int elementSortedIndex;
+  int elementSortedIndex = -1;
   T cumulatedWeight = (T)0.0;
   for (int i = 0; i < datasetLength(); i++) {
     elementSortedIndex = i;

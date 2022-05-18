@@ -19,6 +19,7 @@ public:
   // Inference
   bool authorizedParameterAtPosition(double p, int row, int column) const override { return Inference::authorizedParameterAtIndex(p, index2DToIndex(row, column)); }
   bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && SlopeTStatistic::authorizedParameterAtIndex(p, i); }
+  bool validateInputs() override { return seriesIsValid(0); }
 
   void compute() override { Slope::ComputeInterval(this); }
 

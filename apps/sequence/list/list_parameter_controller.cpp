@@ -23,25 +23,6 @@ const char * ListParameterController::title() {
   return I18n::translate(I18n::Message::SequenceOptions);
 }
 
-bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0)) {
-    int index = selectedRow();
-    int type = typeAtIndex(index);
-    if (type == k_typeCellType) {
-      StackViewController * stack = (StackViewController *)(parentResponder());
-      m_typeParameterController.setRecord(m_record);
-      stack->push(&m_typeParameterController);
-      return true;
-    }
-    if (type == k_enableCellType) {
-      // Shared::ListParameterController::m_enableCell is selected
-      App::app()->localContext()->resetCache();
-    }
-    return handleEnterOnRow(index);
-  }
-  return false;
-}
-
 bool ListParameterController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::Down || event == Ion::Events::Up || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
@@ -123,6 +104,27 @@ int ListParameterController::typeAtIndex(int index) {
     return k_initialRankCellType;
   }
   return Shared::ListParameterController::typeAtIndex(index);
+}
+
+bool ListParameterController::handleEnterOnRow(int rowIndex) {
+  int type = typeAtIndex(rowIndex);
+  switch (type) {
+    case k_typeCellType: {
+      StackViewController * stack = (StackViewController *)(parentResponder());
+      m_typeParameterController.setRecord(m_record);
+      stack->push(&m_typeParameterController);
+      return true;
+    }
+    case k_enableCellType:
+      // Shared::ListParameterController::m_enableCell is selected
+      App::app()->localContext()->resetCache();
+    default:
+      return Shared::ListParameterController::handleEnterOnRow(rowIndex);
+  }
+}
+
+bool ListParameterController::rightEventIsEnterOnType(int type) {
+  return type == k_typeCellType || Shared::ListParameterController::rightEventIsEnterOnType(type);
 }
 
 bool ListParameterController::hasInitialRankRow() const {

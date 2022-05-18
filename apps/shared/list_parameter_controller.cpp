@@ -62,7 +62,7 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && typeAtIndex(selectedRow()) == k_colorCellType)) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && rightEventIsEnterOnType(typeAtIndex(selectedRow())))) {
     return handleEnterOnRow(selectedRow());
   }
   return false;
@@ -115,6 +115,5 @@ ExpiringPointer<Function> ListParameterController::function() {
 FunctionStore * ListParameterController::functionStore() {
   return FunctionApp::app()->functionStore();
 }
-
 
 }

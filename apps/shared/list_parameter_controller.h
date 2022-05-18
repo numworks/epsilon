@@ -35,6 +35,7 @@ protected:
   constexpr static int k_deleteCellType = k_colorCellType + 1;
   constexpr static int k_numberOfSharedCells = k_deleteCellType + 1;
   virtual bool handleEnterOnRow(int rowIndex);
+  virtual bool rightEventIsEnterOnType(int type) { return type == k_colorCellType; }
   FunctionStore * functionStore();
   ExpiringPointer<Function> function();
   Ion::Storage::Record m_record;

@@ -13,7 +13,7 @@ class StatisticsDataset {
 public:
   static StatisticsDataset<T> BuildFromChildren(const ExpressionNode * e, ExpressionNode::ApproximationContext approximationContext, ListComplex<T> evaluationArray[]);
 
-  StatisticsDataset(DatasetColumn<T> * values, DatasetColumn<T> * weights) : m_values(values), m_weights(weights), m_sortedIndex(List::Builder()), m_recomputeSortedIndex(true) {}
+  StatisticsDataset(DatasetColumn<T> * values, DatasetColumn<T> * weights) : m_values(values), m_weights(weights), m_sortedIndex(List::Builder()), m_recomputeSortedIndex(true), m_lnOfValues(false) {}
   StatisticsDataset(DatasetColumn<T> * values) : StatisticsDataset(values, nullptr) {}
   StatisticsDataset() : StatisticsDataset(nullptr, nullptr) {}
 
@@ -21,6 +21,8 @@ public:
 
   void recomputeSortedIndex() { m_recomputeSortedIndex = true; }
   int indexAtSortedIndex(int i) const;
+
+  void setLnOfValues(bool b) { m_lnOfValues = b; }
 
   T totalWeight() const;
   T weightedSum() const;
@@ -49,6 +51,7 @@ private:
   DatasetColumn<T> * m_weights;
   mutable List m_sortedIndex;
   mutable bool m_recomputeSortedIndex;
+  bool m_lnOfValues;
 };
 
 }

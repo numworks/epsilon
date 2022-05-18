@@ -26,6 +26,7 @@ StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(const ExpressionNod
   return StatisticsDataset<T>(&evaluationArray[0], &evaluationArray[1]);
 }
 
+template<typename T>
 T StatisticsDataset<T>::valueAtIndex(int index) const {
   if (index < 0 || index >= m_values->length()) {
     return NAN;

@@ -238,17 +238,7 @@ float Store::minValueOfColumn(int series, int i) const {
 }
 
 double Store::squaredOffsettedValueSumOfColumn(int series, int i, bool lnOfSeries, double offset) const {
-  double result = 0;
-  const int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int k = 0; k < numberOfPairs; k++) {
-    double value = get(series,i,k);
-    if (lnOfSeries) {
-      value = log(value);
-    }
-    value -= offset;
-    result += value * value;
-  }
-  return result;
+  return createDatasetFromColumn(series, i, lnOfSeries).offsettedSquaredSum(offset);
 }
 
 double Store::squaredValueSumOfColumn(int series, int i, bool lnOfSeries) const {
@@ -270,18 +260,15 @@ double Store::columnProductSum(int series, bool lnOfSeries) const {
 }
 
 double Store::meanOfColumn(int series, int i, bool lnOfSeries) const {
-  return numberOfPairsOfSeries(series) == 0 ? 0 : sumOfColumn(series, i, lnOfSeries) / numberOfPairsOfSeries(series);
+  return createDatasetFromColumn(series, i, lnOfSeries).mean();
 }
 
 double Store::varianceOfColumn(int series, int i, bool lnOfSeries) const {
-  /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] - E[X]^2
-   * to ensure a positive result and to minimize rounding errors */
-  double mean = meanOfColumn(series, i, lnOfSeries);
-  return squaredOffsettedValueSumOfColumn(series, i, lnOfSeries, mean)/numberOfPairsOfSeries(series);
+  return createDatasetFromColumn(series, i, lnOfSeries).variance();
 }
 
 double Store::standardDeviationOfColumn(int series, int i, bool lnOfSeries) const {
-  return std::sqrt(varianceOfColumn(series, i, lnOfSeries));
+  return createDatasetFromColumn(series, i, lnOfSeries).standardDeviation();
 }
 
 double Store::covariance(int series, bool lnOfSeries) const {
@@ -373,6 +360,12 @@ Model * Store::regressionModel(int index) {
   Model * models[Model::k_numberOfModels] = {&m_noneModel, &m_linearModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialAebxModel, &m_exponentialAbxModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel, &m_medianModel};
   static_assert(sizeof(models) / sizeof(Model *) == Model::k_numberOfModels, "Inconsistency between the number of models in the store and the real number.");
   return models[index];
+}
+
+Poincare::StatisticsDataset<double> Store::createDatasetFromColumn(int series, int i, bool lnOfSeries) const {
+  Poincare::StatisticsDataset<double> dataset = Poincare::StatisticsDataset<double>(&m_dataLists[series][i]);
+  dataset.setLnOfValues(lnOfSeries);
+  return dataset;
 }
 
 }

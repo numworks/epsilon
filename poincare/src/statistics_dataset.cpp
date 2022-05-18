@@ -188,7 +188,7 @@ void StatisticsDataset<T>::buildSortedIndex() const {
   for (int i = 0; i < datasetLength(); i++) {
     sortedIndexes.addChildAtIndexInPlace(BasedInteger::Builder(Integer(i)), i, i);
   }
-  void * pack[] = {&sortedIndexes, m_values};
+  void * pack[] = {&sortedIndexes, const_cast<DatasetColumn<T> *>(m_values)};
   Helpers::Sort(
       [](int i, int j, void * ctx, int n) { // swap
         void ** pack = reinterpret_cast<void **>(ctx);

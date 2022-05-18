@@ -59,7 +59,7 @@ Expression Calculation::exactOutput() {
   return Expression::Parse(exactOutputText(), nullptr);
 }
 
-Expression Calculation::approximateOutput(Context * context, NumberOfSignificantDigits numberOfSignificantDigits) {
+Expression Calculation::approximateOutput(NumberOfSignificantDigits numberOfSignificantDigits) {
   /* Warning:
    * Since quite old versions of Epsilon, the Expression 'exp' was used to be
    * approximated again to ensure its content was in the expected form - a
@@ -115,10 +115,10 @@ Layout Calculation::createExactOutputLayout(bool * couldNotCreateExactLayout) {
   return Layout();
 }
 
-Layout Calculation::createApproximateOutputLayout(Context * context, bool * couldNotCreateApproximateLayout) {
+Layout Calculation::createApproximateOutputLayout(bool * couldNotCreateApproximateLayout) {
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    Expression e = approximateOutput(context, NumberOfSignificantDigits::UserDefined);
+    Expression e = approximateOutput(NumberOfSignificantDigits::UserDefined);
     if (!e.isUninitialized()) {
       return PoincareHelpers::CreateLayout(e);
     }
@@ -250,6 +250,7 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
   Expression i = input();
   Expression o = exactOutput();
+  Expression a = approximateOutput(NumberOfSignificantDigits::Maximal);
   /* Special case for Equal and Store:
    * Equal/Store nodes have to be at the root of the expression, which prevents
    * from creating new expressions with equal/store node as a child. We don't
@@ -284,7 +285,7 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   if (o.isDivisionOfIntegers() || (o.type() == ExpressionNode::Type::Opposite && o.childAtIndex(0).isDivisionOfIntegers())) {
     return AdditionalInformationType::Rational;
   }
-  if (o.hasDefinedComplexApproximation(context, complexFormat, preferences->angleUnit())) {
+  if (a.hasDefinedComplexApproximation(context, complexFormat, preferences->angleUnit())) {
     return AdditionalInformationType::Complex;
   }
   if (o.type() == ExpressionNode::Type::Matrix) {

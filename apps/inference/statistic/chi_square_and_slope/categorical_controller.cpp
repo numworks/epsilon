@@ -96,6 +96,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField
 
 void InputCategoricalController::didEnterResponderChain(Responder * previousResponder) {
   categoricalTableCell()->recomputeDimensions();
+  PrintValueInTextHolder(m_statistic->threshold(), m_innerSignificanceCell.textField(), true, true);
 }
 
 bool InputCategoricalController::ButtonAction(void * c, void * s) {

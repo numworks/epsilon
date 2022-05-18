@@ -147,11 +147,12 @@ void GraphOptionsController::willDisplayCellForIndex(HighlightCell * cell, int i
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
   if (type == k_regressionEquationCellType) {
     // Regression equation uses at most 5 coefficients and a few chars (Quartic)
-    constexpr int bufferSize = (Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)-1)*5 + sizeof("·x^4+·x^3+·x^2+·x+");
-    char buffer[bufferSize];
+    constexpr int bufferSize = (Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)-1)*5 + sizeof("y=·x^4+·x^3+·x^2+·x+");
+    char buffer[bufferSize] = "y=";
+    constexpr int bufferOffset = sizeof("y=") - 1;
     double * coefficients = m_store->coefficientsForSeries(series, m_graphController->globalContext());
-    int length = model->buildEquationTemplate(buffer, bufferSize, coefficients, significantDigits, displayMode);
-    assert(length < bufferSize);
+    int length = model->buildEquationTemplate(buffer + bufferOffset, bufferSize - bufferOffset, coefficients, significantDigits, displayMode);
+    assert(length < bufferSize - bufferOffset);
     (void) length;
     m_regressionEquationCell.setLayout(Poincare::LayoutHelper::StringToCodePointsLayout(buffer, strlen(buffer)));
   } else if (type == k_r2CellType) {

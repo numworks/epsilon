@@ -97,7 +97,18 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     myCell->setTextColor(KDColorBlack);
     myCell->setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
     if (j <= numberOfRowsBeforeCoefficients) {
-      I18n::Message titles[k_regressionCellIndex] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression};
+      I18n::Message titles[k_regressionCellIndex] = {
+        I18n::Message::Mean,
+        I18n::Message::Sum,
+        I18n::Message::SquareSum,
+        I18n::Message::StandardDeviation,
+        I18n::Message::Deviation,
+        I18n::Message::SampleStandardDeviationS,
+        I18n::Message::NumberOfDots,
+        I18n::Message::Covariance,
+        I18n::Message::Sxy,
+        I18n::Message::Regression,
+      };
       myCell->setMessage(titles[j-1]);
       return;
     }
@@ -134,7 +145,14 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   // Calculation cell
   const int numberSignificantDigits = Preferences::VeryLargeNumberOfSignificantDigits;
   if (i > 0 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
-    ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn, &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
+    ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {
+      &Store::meanOfColumn,
+      &Store::sumOfColumn,
+      &Store::squaredValueSumOfColumn,
+      &Store::standardDeviationOfColumn,
+      &Store::varianceOfColumn,
+      &Store::sampleStandardDeviationOfColumn,
+    };
     double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0, false);
     double calculation2 = (m_store->*calculationMethods[j-1])(seriesNumber, 1, false);
     EvenOddDoubleBufferTextCellWithSeparator * myCell = static_cast<EvenOddDoubleBufferTextCellWithSeparator *>(cell);

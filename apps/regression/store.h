@@ -76,6 +76,7 @@ public:
   double meanOfColumn(int series, int i, bool lnOfSeries = false) const;
   double varianceOfColumn(int series, int i, bool lnOfSeries = false) const;
   double standardDeviationOfColumn(int series, int i, bool lnOfSeries = false) const;
+  double sampleStandardDeviationOfColumn(int series, int i, bool lnOfSeries = false) const;
   double covariance(int series, bool lnOfSeries = false) const;
   double slope(int series, bool lnOfSeries = false) const;
   double yIntercept(int series, bool lnOfSeries = false) const;

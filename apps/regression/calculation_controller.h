@@ -36,7 +36,7 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
 private:
-  constexpr static int k_totalNumberOfDoubleBufferRows = 5;
+  constexpr static int k_totalNumberOfDoubleBufferRows = 6;
   constexpr static int k_numberOfDoubleCalculationCells = Store::k_numberOfSeries * k_totalNumberOfDoubleBufferRows;
   constexpr static int k_numberOfCalculationCells = Store::k_numberOfSeries * k_maxNumberOfDisplayableRows;
   constexpr static int k_standardCalculationTitleCellType = 0;
@@ -44,7 +44,7 @@ private:
   constexpr static int k_doubleBufferCalculationCellType = 2;
   constexpr static int k_standardCalculationCellType = 3;
   static constexpr int k_hideableCellType = 4;
-  static constexpr int k_regressionCellIndex = 9;
+  static constexpr int k_regressionCellIndex = 10;
 
   static constexpr KDCoordinate k_titleCalculationCellWidth = Ion::Display::Width/2 - Escher::Metric::CommonRightMargin/2 - Escher::Metric::CommonLeftMargin/2;
   /* Separator and margins from EvenOddCell::layoutSubviews (and derived classes

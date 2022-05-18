@@ -77,12 +77,14 @@ void HomogeneityTableDataSource::willDisplayCellAtLocation(Escher::HighlightCell
   }
 }
 
-void HomogeneityTableDataSource::unselectTopLeftCell(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+bool HomogeneityTableDataSource::unselectTopLeftCell(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   // Prevent top left selection
   if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
     t->selectRow(previousSelectedCellY);
     t->selectColumn(previousSelectedCellX);
+    return true;
   }
+  return false;
 }
 
 }

@@ -33,7 +33,8 @@ int TableViewDataSource::indexFromCumulatedWidth(KDCoordinate offsetX) {
 int TableViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   int result = 0;
   int j = 0;
-  while (result < offsetY && j < numberOfRows()) {
+  int nRows = numberOfRows();
+  while (result < offsetY && j < nRows) {
     result += rowHeight(j++);
   }
   return (result < offsetY || offsetY == 0) ? j : j - 1;

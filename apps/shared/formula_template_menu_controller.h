@@ -24,7 +24,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override {
-    return k_numberOfTemplates - (m_displayOtherAppCell ? 0 : 1);
+    return k_numberOfTemplates - (shouldDisplayOtherAppCell() ? 0 : 1);
   }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
@@ -65,19 +65,18 @@ private:
   };
 
   int relativeCellIndex(int index, CellType type);
-  bool shouldDisplayOtherAppCell();
+  bool shouldDisplayOtherAppCell() const;
   Poincare::Expression templateExpressionForCell(Cell cell);
   void computeUninitializedLayouts();
   void fillSubLabelBuffer(Escher::ExpressionTableCellWithBuffer * cell, int index);
-  void fillSumColumnNames(char * buffers[]);
-  void fillOtherAppColumnName(char * buffer);
+  void fillSumColumnNames(char * buffers[]) const;
+  void fillOtherAppColumnName(char * buffer) const;
 
   Escher::MessageTableCell m_emptyTemplateCell;
   Escher::ExpressionTableCellWithMessage m_templatesWithMessage[k_numberOfExpressionCellsWithMessage];
   Escher::ExpressionTableCellWithBuffer m_templatesWithBuffer[k_numberOfExpressionCellsWithBuffer];
   Poincare::Layout m_layouts[k_numberOfTemplates - 1];
   StoreController * m_storeController;
-  bool m_displayOtherAppCell;
 };
 
 }

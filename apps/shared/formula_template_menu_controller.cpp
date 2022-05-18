@@ -13,8 +13,7 @@ namespace Shared {
 FormulaTemplateMenuController::FormulaTemplateMenuController(Responder * parentResponder, StoreController * storeController) :
   SelectableListViewController(parentResponder),
   m_emptyTemplateCell(I18n::Message::Empty),
-  m_storeController(storeController),
-  m_displayOtherAppCell(true)
+  m_storeController(storeController)
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
@@ -25,7 +24,6 @@ const char * FormulaTemplateMenuController::title() {
 }
 
 void FormulaTemplateMenuController::viewWillAppear() {
-  m_displayOtherAppCell = shouldDisplayOtherAppCell();
   computeUninitializedLayouts();
   ViewController::viewWillAppear();
   selectCellAtLocation(0, 0);
@@ -118,7 +116,6 @@ int FormulaTemplateMenuController::typeAtIndex(int index) {
   return (int)CellType::TemplateWithBuffer;
 }
 
-
 int FormulaTemplateMenuController::relativeCellIndex(int index, CellType type) {
   if (type == CellType::TemplateWithMessage || type == CellType::TemplateWithBuffer) {
     index -= reusableCellCount((int)CellType::EmptyTemplate);
@@ -129,7 +126,7 @@ int FormulaTemplateMenuController::relativeCellIndex(int index, CellType type) {
   return index;
 }
 
-bool FormulaTemplateMenuController::shouldDisplayOtherAppCell() {
+bool FormulaTemplateMenuController::shouldDisplayOtherAppCell() const {
   char columnName[DoublePairStore::k_columnNamesLength + 1];
   fillOtherAppColumnName(columnName);
   Ion::Storage::Record r(columnName, Ion::Storage::lisExtension);
@@ -150,14 +147,15 @@ Expression FormulaTemplateMenuController::templateExpressionForCell(Cell cell) {
     return Addition::Builder(Symbol::Builder(columnNames[0], DoublePairStore::k_columnNamesLength), Symbol::Builder(columnNames[1], DoublePairStore::k_columnNamesLength));
   }
   // Build the expression "V1"
-  assert(cell == Cell::OtherApp && m_displayOtherAppCell);
+  assert(cell == Cell::OtherApp && shouldDisplayOtherAppCell());
   char columnName[DoublePairStore::k_columnNamesLength + 1];
   fillOtherAppColumnName(columnName);
   return Symbol::Builder(columnName, DoublePairStore::k_columnNamesLength);
 }
 
 void FormulaTemplateMenuController::computeUninitializedLayouts() {
-  for (int i = 1; i < numberOfRows(); i++) {
+  int nRows = numberOfRows();
+  for (int i = 1; i < nRows; i++) {
     if (!m_layouts[i - 1].isUninitialized()) {
       continue;
     }
@@ -185,7 +183,7 @@ void FormulaTemplateMenuController::fillSubLabelBuffer(Escher::ExpressionTableCe
   cell->setSubLabelText(buffer);
 }
 
-void FormulaTemplateMenuController::fillSumColumnNames(char * buffers[]) {
+void FormulaTemplateMenuController::fillSumColumnNames(char * buffers[]) const {
   for (int i = 0; i < 2; i++) {
     m_storeController->fillColumnName(m_storeController->selectedColumn(), buffers[i]);
     int seriesIndex = (int)(buffers[i][1] - '1');
@@ -208,7 +206,7 @@ char correspondingColumnInOtherApp(char columnPrefix) {
   return 0;
 }
 
-void FormulaTemplateMenuController::fillOtherAppColumnName(char * buffer) {
+void FormulaTemplateMenuController::fillOtherAppColumnName(char * buffer) const {
   m_storeController->fillColumnName(m_storeController->selectedColumn(), buffer);
   buffer[0] = correspondingColumnInOtherApp(buffer[0]);
 }

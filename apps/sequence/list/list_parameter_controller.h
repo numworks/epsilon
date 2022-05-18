@@ -21,7 +21,6 @@ class ListParameterController : public Shared::ListParameterController, public E
 public:
   ListParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * list);
   const char * title() override;
-  bool handleEvent(Ion::Events::Event event) override;
 
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
@@ -35,6 +34,8 @@ public:
 private:
   constexpr static int k_typeCellType = k_numberOfSharedCells;
   constexpr static int k_initialRankCellType = k_typeCellType + 1;
+  bool handleEnterOnRow(int rowIndex) override;
+  bool rightEventIsEnterOnType(int type) override;
   int numberOfNonInheritedCells() const { return 1 + hasInitialRankRow(); } // number of non inherited cells
   Shared::Sequence * sequence() { return static_cast<Shared::Sequence *>(function().pointer()); }
   bool hasInitialRankRow() const;

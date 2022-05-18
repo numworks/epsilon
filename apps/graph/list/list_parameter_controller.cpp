@@ -32,20 +32,6 @@ HighlightCell * ListParameterController::reusableCell(int index, int type) {
   }
 }
 
-bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  if (Shared::ListParameterController::handleEvent(event)) {
-    return true;
-  }
-  if (event == Ion::Events::Right) {
-    int index = selectedRow();
-    if (index < displayDetails() + displayDomain()) {
-      // Go in the submenu
-      return handleEnterOnRow(index);
-    }
-  }
-  return false;
-}
-
 void ListParameterController::setRecord(Ion::Storage::Record record) {
   Shared::ListParameterController::setRecord(record);
   /* Set controllers' record here because we need to know which ones should be
@@ -113,6 +99,10 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
   default:
     return Shared::ListParameterController::handleEnterOnRow(rowIndex);
   }
+}
+
+bool ListParameterController::rightEventIsEnterOnType(int type) {
+  return type == k_detailsCellType || type == k_domainCellType || Shared::ListParameterController::rightEventIsEnterOnType(type);
 }
 
 }

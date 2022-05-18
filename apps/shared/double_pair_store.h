@@ -33,7 +33,11 @@ public:
   void tidy();
 
   // Column name
-  virtual char columnNamePrefixAtIndex(int column) const =0;
+  virtual char columnNamePrefixAtIndex(int column) const {
+    assert(column >= 0 && column < DoublePairStore::k_numberOfColumnsPerSeries);
+    assert(strlen(k_regressionColumNames[column]) == 1);
+    return k_regressionColumNames[column][0];
+  }
   int fillColumnName(int series, int column, char * buffer) const; // Fills 3 chars in the buffer (2 chars for name + null terminate)
   bool isColumnName(const char * name, int nameLen, int * returnSeries = nullptr, int * returnColumn = nullptr);
 

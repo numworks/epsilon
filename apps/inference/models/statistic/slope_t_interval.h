@@ -11,15 +11,14 @@ namespace Inference {
 class SlopeTInterval : public Interval, public SlopeTStatistic {
 public:
   SlopeTInterval(Shared::GlobalContext * context) : SlopeTStatistic(context) {}
-
   void tidy() override { DoublePairStore::tidy(); }
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::Slope; }
   DistributionType distributionType() const override { return DistributionType::T; }
   I18n::Message title() const override { return Slope::Title(); }
 
   // Inference
-  bool authorizedParameterAtPosition(double p, int row, int column) const override { return authorizedParameterAtIndex(p, index2DToIndex(row, column)); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && Slope::AuthorizedParameterAtIndex(p, i); }
+  bool authorizedParameterAtPosition(double p, int row, int column) const override { return Inference::authorizedParameterAtIndex(p, index2DToIndex(row, column)); }
+  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && SlopeTStatistic::authorizedParameterAtIndex(p, i); }
 
   void compute() override { Slope::ComputeInterval(this); }
 
@@ -32,7 +31,7 @@ public:
 
 private:
   // Significance Test: Slope
-  int numberOfStatisticParameters() const override { return numberOfPairsOfSeries(0) * k_maxNumberOfColumns; }
+  int numberOfStatisticParameters() const override { return numberOfTableParameters(); }
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {
     return ParameterRepresentation{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
   }

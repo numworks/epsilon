@@ -676,8 +676,6 @@ double TwoProportions::ComputeStandardError(double x1, int n1, double x2, int n2
 
 /* Slope */
 
-bool Slope::AuthorizedParameterAtIndex(double p, int index) { return true; }
-
 void Slope::ComputeTest(Test * test) {}
 void Slope::ComputeInterval(Interval * interval) {}
 

@@ -203,8 +203,6 @@ public:
   static const char * HypothesisSymbol() { return "ß"; }
   static const char * EstimateSymbol() { return "x̅"; };
 
-  static bool AuthorizedParameterAtIndex(double p, int index);
-
   // Computation
   static void ComputeTest(Test * test);
   static void ComputeInterval(Interval * interval);

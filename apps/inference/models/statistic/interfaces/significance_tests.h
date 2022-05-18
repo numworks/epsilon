@@ -195,19 +195,6 @@ private:
   static double ComputeStandardError(double p1Estimate, int n1, double p2Estimate, int n2);
 };
 
-class Slope : public SignificanceTest {
-public:
-  // Description
-  static I18n::Message Title() { return I18n::Message::HypothesisControllerTitleSlope; }
-
-  static const char * HypothesisSymbol() { return "ß"; }
-  static const char * EstimateSymbol() { return "x̅"; };
-
-  // Computation
-  static void ComputeTest(Test * test);
-  static void ComputeInterval(Interval * interval);
-};
-
 }
 
 #endif // PROBABILITY_MODELS_STATISTIC_INTERFACES_TESTS_H

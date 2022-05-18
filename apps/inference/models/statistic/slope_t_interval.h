@@ -14,17 +14,17 @@ public:
   void tidy() override { DoublePairStore::tidy(); }
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::Slope; }
   DistributionType distributionType() const override { return DistributionType::T; }
-  I18n::Message title() const override { return Slope::Title(); }
+  I18n::Message title() const override { return SlopeTStatistic::title(); }
 
   // Inference
   bool authorizedParameterAtPosition(double p, int row, int column) const override { return Inference::authorizedParameterAtIndex(p, index2DToIndex(row, column)); }
   bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && SlopeTStatistic::authorizedParameterAtIndex(p, i); }
   bool validateInputs() override { return seriesIsValid(0); }
 
-  void compute() override { Slope::ComputeInterval(this); }
+  void compute() override {  }
 
   // Distribution: t
-  const char * estimateSymbol() const override { return Slope::EstimateSymbol(); }
+  const char * estimateSymbol() const override { return "x̅"; }
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionT::TestCriticalValueSymbol(font); }
   float canonicalDensityFunction(float x) const override { return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom); }
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override { return DistributionT::CumulativeNormalizedDistributionFunction(x, m_degreesOfFreedom); }

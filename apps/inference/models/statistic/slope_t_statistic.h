@@ -12,6 +12,9 @@ public:
   SlopeTStatistic(Shared::GlobalContext * context) : Shared::LinearRegressionStore(context) {
     initListsFromStorage();
   }
+
+  I18n::Message title() const { return I18n::Message::HypothesisControllerTitleSlope; }
+
   // Table
   void setParameterAtPosition(double value, int row, int column) override { set(value, 0, column, row, false); }
   double parameterAtPosition(int row, int column) const override {

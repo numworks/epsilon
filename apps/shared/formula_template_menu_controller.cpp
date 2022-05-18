@@ -31,7 +31,7 @@ void FormulaTemplateMenuController::viewWillAppear() {
 
 void FormulaTemplateMenuController::willDisplayCellForIndex(HighlightCell * cell, int i) {
   assert(i < k_numberOfTemplates);
-  CellType type = (CellType)typeAtIndex(i);
+  CellType type = static_cast<CellType>(typeAtIndex(i));
   if (type == CellType::EmptyTemplate) {
     return;
   }
@@ -76,14 +76,14 @@ bool FormulaTemplateMenuController::handleEvent(Ion::Events::Event event) {
 
 KDCoordinate FormulaTemplateMenuController::nonMemoizedRowHeight(int index) {
   assert(index < k_numberOfTemplates);
-  CellType type = (CellType)typeAtIndex(index);
+  CellType type = static_cast<CellType>(typeAtIndex(index));
   int reusableCellIndex = relativeCellIndex(index, type);
   return heightForCellAtIndex(reusableCell(reusableCellIndex, typeAtIndex(index)), index);
 }
 
 HighlightCell * FormulaTemplateMenuController::reusableCell(int index, int type) {
   assert(index < reusableCellCount(type));
-  CellType cellType = (CellType)type;
+  CellType cellType = static_cast<CellType>(type);
   if (cellType == CellType::EmptyTemplate) {
     return &m_emptyTemplateCell;
   }
@@ -95,33 +95,33 @@ HighlightCell * FormulaTemplateMenuController::reusableCell(int index, int type)
 }
 
 int FormulaTemplateMenuController::reusableCellCount(int type) {
-  if (type == (int)CellType::EmptyTemplate) {
+  if (type == static_cast<int>(CellType::EmptyTemplate)) {
     return 1;
   }
-  if (type == (int)CellType::TemplateWithMessage) {
+  if (type == static_cast<int>(CellType::TemplateWithMessage)) {
     return k_numberOfExpressionCellsWithMessage;
   }
-  assert(type == (int)CellType::TemplateWithBuffer);
+  assert(type == static_cast<int>(CellType::TemplateWithBuffer));
   return k_numberOfExpressionCellsWithBuffer;
 }
 
 int FormulaTemplateMenuController::typeAtIndex(int index) {
   assert(index < numberOfRows());
-  if (index <= (int)Cell::EmptyTemplate) {
-    return (int)CellType::EmptyTemplate;
+  if (index <= static_cast<int>(Cell::EmptyTemplate)) {
+    return static_cast<int>(CellType::EmptyTemplate);
   }
-  if (index <= (int)Cell::Logarithm) {
-    return (int)CellType::TemplateWithMessage;
+  if (index <= static_cast<int>(Cell::Logarithm)) {
+    return static_cast<int>(CellType::TemplateWithMessage);
   }
-  return (int)CellType::TemplateWithBuffer;
+  return static_cast<int>(CellType::TemplateWithBuffer);
 }
 
 int FormulaTemplateMenuController::relativeCellIndex(int index, CellType type) {
   if (type == CellType::TemplateWithMessage || type == CellType::TemplateWithBuffer) {
-    index -= reusableCellCount((int)CellType::EmptyTemplate);
+    index -= reusableCellCount(static_cast<int>(CellType::EmptyTemplate));
   }
   if (type == CellType::TemplateWithBuffer) {
-    index -= reusableCellCount((int)CellType::TemplateWithMessage);
+    index -= reusableCellCount(static_cast<int>(CellType::TemplateWithMessage));
   }
   return index;
 }
@@ -136,7 +136,7 @@ bool FormulaTemplateMenuController::shouldDisplayOtherAppCell() const {
 Expression FormulaTemplateMenuController::templateExpressionForCell(Cell cell) {
   assert(cell < Cell::MaxNumberOfRows && cell > Cell::EmptyTemplate);
   if (cell <= Cell::Logarithm) {
-    return Expression::Parse(k_templates[(int)cell - 1], nullptr);
+    return Expression::Parse(k_templates[static_cast<int>(cell) - 1], nullptr);
   }
   // Build the expression "X2+X3"
   if (cell == Cell::OtherColumns) {
@@ -159,7 +159,7 @@ void FormulaTemplateMenuController::computeUninitializedLayouts() {
     if (!m_layouts[i - 1].isUninitialized()) {
       continue;
     }
-    Poincare::Expression e = templateExpressionForCell((Cell)(i));
+    Poincare::Expression e = templateExpressionForCell(static_cast<Cell>(i));
     m_layouts[i - 1] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits);
   }
 }
@@ -186,7 +186,7 @@ void FormulaTemplateMenuController::fillSubLabelBuffer(Escher::ExpressionTableCe
 void FormulaTemplateMenuController::fillSumColumnNames(char * buffers[]) const {
   for (int i = 0; i < 2; i++) {
     m_storeController->fillColumnName(m_storeController->selectedColumn(), buffers[i]);
-    int seriesIndex = (int)(buffers[i][1] - '1');
+    int seriesIndex = static_cast<int>(buffers[i][1] - '1');
     int newSeriesIndex = (seriesIndex + i + 1) % DoublePairStore::k_numberOfSeries;
     buffers[i][1] = '1' + newSeriesIndex;
   }

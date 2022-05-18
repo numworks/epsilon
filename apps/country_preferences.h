@@ -13,12 +13,12 @@ public:
     All
   };
 
-  enum class MethodForQuartiles : uint8_t {
+  enum class MethodForQuartiles : bool {
     MedianOfSublist,
     CumulatedFrequency
   };
 
-  enum class OutlierDefaultVisibility : uint8_t {
+  enum class OutlierDefaultVisibility : bool {
     Displayed,
     Hidden
   };
@@ -31,17 +31,17 @@ public:
     Variant4
   };
 
-  enum class DiscriminantSymbol : uint8_t {
+  enum class DiscriminantSymbol : bool {
     Delta,
     D
   };
 
   constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol) :
     m_availableExamModes(availableExamModes),
+    m_homeAppsLayout(homeAppsLayout),
+    m_unitFormat(unitFormat),
     m_methodForQuartiles(methodForQuartiles),
     m_outliersStatus(outliersStatus),
-    m_unitFormat(unitFormat),
-    m_homeAppsLayout(homeAppsLayout),
     m_discriminantSymbol(discriminantSymbol)
   {}
 
@@ -54,10 +54,10 @@ public:
 
 private:
   const AvailableExamModes m_availableExamModes;
+  const HomeAppsLayout m_homeAppsLayout;
+  const Poincare::Preferences::UnitFormat m_unitFormat;
   const MethodForQuartiles m_methodForQuartiles;
   const OutlierDefaultVisibility m_outliersStatus;
-  const Poincare::Preferences::UnitFormat m_unitFormat;
-  const HomeAppsLayout m_homeAppsLayout;
   const DiscriminantSymbol m_discriminantSymbol;
 };
 

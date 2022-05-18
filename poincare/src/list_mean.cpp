@@ -45,10 +45,22 @@ Expression ListMean::shallowReduce(ExpressionNode::ReductionContext reductionCon
       return replaceWithUndefinedInPlace();
     }
   }
-  List weights = static_cast<List &>(children[1]);
-  if (n > 1 && !weights.allChildrenArePositive(reductionContext.context())) {
+  if (n > 1) {
     // All weights need to be positive.
-    return *this;
+    bool allWeightsArePositive = true;
+    for (int i = 0; i < children[1].numberOfChildren(); i++) {
+      if (children[1].childAtIndex(i).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+        // If at least one child is negative, return undef
+        return replaceWithUndefinedInPlace();
+      }
+      if (children[1].childAtIndex(i).sign(reductionContext.context()) == ExpressionNode::Sign::Unknown) {
+        allWeightsArePositive = false;
+      }
+    }
+    if (!allWeightsArePositive) {
+      // Could not find a negative but some children have unknown sign
+      return *this;
+    }
   }
   int numberOfElementsInList = children[0].numberOfChildren();
   Expression listToSum;

@@ -23,6 +23,13 @@ bool ResultsHomogeneityController::ResultsTableController::handleEvent(Ion::Even
   return false;
 }
 
+void ResultsHomogeneityController::ResultsTableController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX, previousSelectedCellY)) {
+    m_resultHomogeneityTable.tableView()->deselectTable();
+    Escher::Container::activeApp()->setFirstResponder(parentResponder());
+  }
+}
+
 // SingleModeController
 
 void ResultsHomogeneityController::SingleModeController::switchToTableWithMode(ResultHomogeneityTableCell::Mode mode) {

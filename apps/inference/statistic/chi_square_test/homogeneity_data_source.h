@@ -33,7 +33,7 @@ public:
   void initCell(Escher::EvenOddBufferTextCell, void * cell, int index) override;
 
   // SelectableTableViewDelegate
-  void unselectTopLeftCell(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY);
+  bool unselectTopLeftCell(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY);
 
   constexpr static int k_columnWidth = 82;
   constexpr static int k_numberOfReusableColumns = std::min(Ion::Display::Width / k_columnWidth + 2, HomogeneityTest::k_maxNumberOfColumns + 1); // 5 - we take into account the potential "Total" column

@@ -36,8 +36,11 @@ T StatisticsDataset<T>::valueAtIndex(int index) const {
 
 template<typename T>
 T StatisticsDataset<T>::weightAtIndex(int index) const {
+  if (std::isnan(valueAtIndex(index))) {
+    return NAN;
+  }
   if (m_weights == nullptr) {
-    return std::isnan(valueAtIndex(index)) ? (T)0.0 : (T)1.0;
+    return (T)1.0;
   }
   // All weights must be positive.
   return index >= 0 && index < m_weights->length() && m_weights->valueAtIndex(index) >= (T)0.0 ? m_weights->valueAtIndex(index) : NAN;

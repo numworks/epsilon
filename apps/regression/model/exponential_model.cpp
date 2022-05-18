@@ -1,6 +1,6 @@
 #include "exponential_model.h"
 #include "../store.h"
-#include "../linear_model_helper.h"
+#include "../../shared/linear_regression_store.h"
 #include <cmath>
 #include <assert.h>
 #include <poincare/code_point_layout.h>
@@ -9,6 +9,7 @@
 #include <poincare/print.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Regression {
 

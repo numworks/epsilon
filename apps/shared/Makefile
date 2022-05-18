@@ -63,6 +63,7 @@ app_shared_src = $(addprefix apps/shared/,\
   interval.cpp \
   interval_parameter_controller.cpp \
   layout_field_delegate.cpp \
+  linear_regression_store.cpp \
   list_parameter_controller.cpp \
   localization_controller.cpp \
   menu_controller.cpp \

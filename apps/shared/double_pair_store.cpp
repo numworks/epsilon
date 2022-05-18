@@ -1,6 +1,7 @@
 #include "double_pair_store.h"
 #include "poincare_helpers.h"
 #include <poincare/helpers.h>
+#include <poincare/list.h>
 #include <ion/storage/file_system.h>
 #include <cmath>
 #include <assert.h>

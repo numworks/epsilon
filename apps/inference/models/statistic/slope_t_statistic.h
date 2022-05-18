@@ -1,15 +1,15 @@
 #ifndef PROBABILITY_MODELS_STATISTIC_SLOPE_T_STATISTIC_H
 #define PROBABILITY_MODELS_STATISTIC_SLOPE_T_STATISTIC_H
 
-#include <apps/shared/double_pair_store.h>
+#include <apps/shared/linear_regression_store.h>
 #include "interfaces/significance_tests.h"
 #include "table.h"
 
 namespace Inference {
 
-class SlopeTStatistic : public Table, public Shared::DoublePairStore {
+class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
 public:
-  SlopeTStatistic(Shared::GlobalContext * context) : Shared::DoublePairStore(context) {
+  SlopeTStatistic(Shared::GlobalContext * context) : Shared::LinearRegressionStore(context) {
     initListsFromStorage();
   }
   // Table

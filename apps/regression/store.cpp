@@ -1,5 +1,4 @@
 #include "store.h"
-#include "linear_model_helper.h"
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <float.h>
@@ -29,7 +28,7 @@ const char * Store::SeriesTitle(int series) {
 
 Store::Store(GlobalContext * context) :
   InteractiveCurveViewRange(),
-  DoublePairStore(context),
+  LinearRegressionStore(context),
   m_exponentialAbxModel(true),
   m_angleUnit(Poincare::Preferences::AngleUnit::Degree)
 {
@@ -150,7 +149,7 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
 /* Series */
 
 void Store::updateSeriesValidity(int series) {
-  DoublePairStore::updateSeriesValidity(series);
+  LinearRegressionStore::updateSeriesValidity(series);
   if (!m_validSeries[series]) {
     // Reset series regression type to None
     m_regressionTypes[series] = Model::Type::None;
@@ -237,58 +236,6 @@ float Store::minValueOfColumn(int series, int i) const {
   return minColumn;
 }
 
-double Store::squaredOffsettedValueSumOfColumn(int series, int i, bool lnOfSeries, double offset) const {
-  return createDatasetFromColumn(series, i, lnOfSeries).offsettedSquaredSum(offset);
-}
-
-double Store::squaredValueSumOfColumn(int series, int i, bool lnOfSeries) const {
-  return squaredOffsettedValueSumOfColumn(series, i, lnOfSeries, 0.0);
-}
-
-double Store::columnProductSum(int series, bool lnOfSeries) const {
-  double result = 0;
-  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    double value0 = get(series,0,k);
-    double value1 = get(series,1,k);
-    if (lnOfSeries) {
-      value0 = log(value0);
-      value1 = log(value1);
-    }
-    result += value0 * value1;
-  }
-  return result;
-}
-
-double Store::meanOfColumn(int series, int i, bool lnOfSeries) const {
-  return createDatasetFromColumn(series, i, lnOfSeries).mean();
-}
-
-double Store::varianceOfColumn(int series, int i, bool lnOfSeries) const {
-  return createDatasetFromColumn(series, i, lnOfSeries).variance();
-}
-
-double Store::standardDeviationOfColumn(int series, int i, bool lnOfSeries) const {
-  return createDatasetFromColumn(series, i, lnOfSeries).standardDeviation();
-}
-
-double Store::sampleStandardDeviationOfColumn(int series, int i, bool lnOfSeries) const {
-  return createDatasetFromColumn(series, i, lnOfSeries).sampleStandardDeviation();
-}
-
-double Store::covariance(int series, bool lnOfSeries) const {
-  double mean0 = meanOfColumn(series, 0, lnOfSeries);
-  double mean1 = meanOfColumn(series, 1, lnOfSeries);
-  return columnProductSum(series, lnOfSeries)/numberOfPairsOfSeries(series) - mean0 * mean1;
-}
-
-double Store::slope(int series, bool lnOfSeries) const {
-  return LinearModelHelper::Slope(covariance(series, lnOfSeries), varianceOfColumn(series, 0, lnOfSeries));
-}
-
-double Store::yIntercept(int series, bool lnOfSeries) const {
-  return LinearModelHelper::YIntercept(meanOfColumn(series, 1, lnOfSeries), meanOfColumn(series, 0, lnOfSeries), slope(series, lnOfSeries));
-}
-
 double Store::yValueForXValue(int series, double x, Poincare::Context * globalContext) {
   Model * model = regressionModel((int)m_regressionTypes[series]);
   double * coefficients = coefficientsForSeries(series, globalContext);
@@ -299,15 +246,6 @@ double Store::xValueForYValue(int series, double y, Poincare::Context * globalCo
   Model * model = regressionModel((int)m_regressionTypes[series]);
   double * coefficients = coefficientsForSeries(series, globalContext);
   return model->levelSet(coefficients, xMin(), xMax(), y, globalContext);
-}
-
-double Store::correlationCoefficient(int series) const {
-  /* Returns the correlation coefficient (R) between the series X and Y.
-   * In non-linear regressions, its square is different from the determinationCoefficient
-   * It is usually displayed in linear regressions only to avoid confusion */
-  double v0 = varianceOfColumn(series, 0);
-  double v1 = varianceOfColumn(series, 1);
-  return (v0 == 0.0 || v1 == 0.0) ? 1.0 : covariance(series) / std::sqrt(v0 * v1);
 }
 
 double Store::residualAtIndexForSeries(int series, int index, Poincare::Context * globalContext) {
@@ -388,12 +326,6 @@ Model * Store::regressionModel(int index) {
   Model * models[Model::k_numberOfModels] = {&m_noneModel, &m_linearModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialAebxModel, &m_exponentialAbxModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel, &m_medianModel};
   static_assert(sizeof(models) / sizeof(Model *) == Model::k_numberOfModels, "Inconsistency between the number of models in the store and the real number.");
   return models[index];
-}
-
-Poincare::StatisticsDataset<double> Store::createDatasetFromColumn(int series, int i, bool lnOfSeries) const {
-  Poincare::StatisticsDataset<double> dataset = Poincare::StatisticsDataset<double>(&m_dataLists[series][i]);
-  dataset.setLnOfValues(lnOfSeries);
-  return dataset;
 }
 
 }

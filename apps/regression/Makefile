@@ -2,7 +2,6 @@ apps += Regression::App
 app_headers += apps/regression/app.h
 
 app_regression_test_src += $(addprefix apps/regression/,\
-  linear_model_helper.cpp \
   store.cpp \
 )
 

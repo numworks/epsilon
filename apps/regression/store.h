@@ -15,14 +15,13 @@
 #include "model/trigonometric_model.h"
 #include "model/median_model.h"
 #include "../shared/interactive_curve_view_range.h"
-#include "../shared/double_pair_store.h"
+#include "../shared/linear_regression_store.h"
 #include <escher/responder.h>
-#include <poincare/statistics_dataset.h>
 #include <float.h>
 
 namespace Regression {
 
-class Store : public Shared::InteractiveCurveViewRange, public Shared::DoublePairStore {
+class Store : public Shared::InteractiveCurveViewRange, public Shared::LinearRegressionStore {
 public:
   constexpr static const char * const * k_columnNames = DoublePairStore::k_regressionColumNames;
   static const char * SeriesTitle(int series);
@@ -54,35 +53,20 @@ public:
     return regressionModel((int) type);
   }
 
-  // Series
-  void updateSeriesValidity(int series) override;
-
   // Calculation
   void updateCoefficients(int series, Poincare::Context * globalContext);
   double * coefficientsForSeries(int series, Poincare::Context * globalContext);
   bool coefficientsAreDefined(int series, Poincare::Context * globalContext);
   double determinationCoefficientForSeries(int series, Poincare::Context * globalContext); // R2
   double doubleCastedNumberOfPairsOfSeries(int series) const;
-  double squaredOffsettedValueSumOfColumn(int series, int i, bool lnOfSeries = false, double offset = 0) const;
-  double squaredValueSumOfColumn(int series, int i, bool lnOfSeries = false) const;
-  double columnProductSum(int series, bool lnOfSeries = false) const;
-  double meanOfColumn(int series, int i, bool lnOfSeries = false) const;
-  double varianceOfColumn(int series, int i, bool lnOfSeries = false) const;
-  double standardDeviationOfColumn(int series, int i, bool lnOfSeries = false) const;
-  double sampleStandardDeviationOfColumn(int series, int i, bool lnOfSeries = false) const;
-  double covariance(int series, bool lnOfSeries = false) const;
-  double slope(int series, bool lnOfSeries = false) const;
-  double yIntercept(int series, bool lnOfSeries = false) const;
   double yValueForXValue(int series, double x, Poincare::Context * globalContext);
   double xValueForYValue(int series, double y, Poincare::Context * globalContext);
-  double correlationCoefficient(int series) const; // R
   double residualAtIndexForSeries(int series, int index, Poincare::Context * globalContext);
 
   // To speed up computation during drawings, float is returned.
   float maxValueOfColumn(int series, int i) const;
   float minValueOfColumn(int series, int i) const;
 private:
-  Poincare::StatisticsDataset<double> createDatasetFromColumn(int series, int i, bool lnOfSeries = false) const;
   double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);
   void resetMemoization();
   Model * regressionModel(int index);

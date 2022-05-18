@@ -17,6 +17,7 @@
 #include "../shared/interactive_curve_view_range.h"
 #include "../shared/double_pair_store.h"
 #include <escher/responder.h>
+#include <poincare/statistics_dataset.h>
 #include <float.h>
 
 namespace Regression {
@@ -87,6 +88,7 @@ public:
   float maxValueOfColumn(int series, int i) const;
   float minValueOfColumn(int series, int i) const;
 private:
+  Poincare::StatisticsDataset<double> createDatasetFromColumn(int series, int i, bool lnOfSeries = false) const;
   double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);
   void resetMemoization();
   Model * regressionModel(int index);

@@ -63,9 +63,10 @@ bool HypothesisController::handleEvent(Ion::Events::Event event) {
 
 bool HypothesisController::textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) {
   if (selectedRow() == 0 && m_test->significanceTestType() == SignificanceTestType::Slope) {
-    /* Forbid the edition of Test t for slope hypothesis by catching the event
+    /* Shortcut the edition of Test t for slope hypothesis by catching the event
      * before being given to the textfield. */
-    m_selectableTableView.handleEvent(event);
+    AppsContainer::activeApp()->setFirstResponder(&m_selectableTableView);
+    AppsContainer::activeApp()->processEvent(event);
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {

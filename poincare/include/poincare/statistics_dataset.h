@@ -6,6 +6,35 @@
 #include "list_complex.h"
 #include <algorithm>
 
+/* This class is used to compute basic statistics functions on a dataset.
+ *
+ * === INSTANTIATION ===
+ * You can build it either:
+ * - with 2 columns (the values and the weights/population/frequencies.
+ *   This second column needs to be positive).
+ * - with 1 column (values only). In this case, all weights are equal to 1.
+ *
+ * === COMPLEXITY ===
+ * There are two categories of methods:
+ * - The ones which will always take the same time (like mean).
+ * - The ones which memoize sorted indexes (like median).
+ *
+ * If you need to compute a mean, variance, standardDeviation, or any other
+ * method that does not need sortedIndex, you can recreate a StatisticsDataset
+ * object each time. You don't need to memoize the dataset.
+ * (for example, that's what we do in Apps::Regression::Store)
+ *
+ * If you need to compute a median, a sortedElementAtCumulatedWeight, (or any
+ * other method that needs sortedIndex) multiple times with the same datas,
+ * you should memoize your dataset.
+ * Indeed, the object memoizes m_sortedIndex and recomputes it only if you
+ * ask it to.
+ * (for example, that's what we do in Apps::Statistics::Store)
+ *
+ * === ENHANCEMENTS ===
+ * More statistics method could be implemented here if factorization is needed.
+ * */
+
 namespace Poincare {
 
 template<typename T>
@@ -34,6 +63,7 @@ public:
   T standardDeviation() const;
   T sampleStandardDeviation() const;
 
+  // Need sortedIndex
   T sortedElementAtCumulatedFrequency(T freq, bool createMiddleElement) const;
   T sortedElementAtCumulatedWeight(T weight, bool createMiddleElement) const;
   T median() const;

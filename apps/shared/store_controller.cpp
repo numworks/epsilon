@@ -11,42 +11,20 @@ using namespace Escher;
 
 namespace Shared {
 
-StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource) :
-  View(),
-  Responder(parentResponder),
-  m_dataView(store, this, dataSource, selectionDataSource)
-{
-  m_dataView.setBackgroundColor(Palette::WallScreenDark);
-  m_dataView.setVerticalCellOverlap(0);
-  m_dataView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-}
-
-void StoreController::ContentView::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(static_cast<Responder *>(&m_dataView));
-}
-
-View * StoreController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < numberOfSubviews());
-  View * views[] = {&m_dataView};
-  return views[index];
-}
-
-void StoreController::ContentView::layoutSubviews(bool force) {
-  KDRect dataViewFrame(0, 0, bounds().width(), bounds().height());
-  m_dataView.setFrame(dataViewFrame, force);
-}
-
 StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header, Context * parentContext) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_store(store),
-  m_contentView(m_store, this, this, this),
+  m_dataView(m_store, this, this, this),
   m_templateController(this, this),
   m_templateStackController(nullptr, &m_templateController, StackViewController::Style::PurpleWhite),
   m_storeContext(store, parentContext)
 {
+  m_dataView.setBackgroundColor(Palette::WallScreenDark);
+  m_dataView.setVerticalCellOverlap(0);
+  m_dataView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
-    m_editableCells[i].setParentResponder(m_contentView.dataView());
+    m_editableCells[i].setParentResponder(&m_dataView);
     m_editableCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
   }
 }
@@ -87,7 +65,7 @@ bool StoreController::createExpressionForFillingColumnWithFormula(const char * t
     return false;
   }
   if (fillColumnWithFormula(expression)) {
-    Container::activeApp()->setFirstResponder(&m_contentView);
+    Container::activeApp()->setFirstResponder(&m_dataView);
     return true;
   }
   return false;
@@ -212,7 +190,7 @@ void StoreController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
-  Container::activeApp()->setFirstResponder(&m_contentView);
+  Container::activeApp()->setFirstResponder(&m_dataView);
 }
 
 StackViewController * StoreController::stackController() const {

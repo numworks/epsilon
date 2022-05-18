@@ -40,8 +40,8 @@ void Interval::setResultTitle(char * buffer, size_t bufferSize, bool resultIsTop
   }
 }
 
-bool Interval::initializeSignificanceTest(SignificanceTestType testType) {
-  if (!Statistic::initializeSignificanceTest(testType)) {
+bool Interval::initializeSignificanceTest(SignificanceTestType testType, Shared::GlobalContext * context) {
+  if (!Statistic::initializeSignificanceTest(testType, context)) {
     return false;
   }
   this->~Interval();
@@ -60,7 +60,7 @@ bool Interval::initializeSignificanceTest(SignificanceTestType testType) {
       break;
     default:
       assert(testType == SignificanceTestType::Slope);
-      new (this) SlopeTInterval();
+      new (this) SlopeTInterval(context);
       break;
   }
   initParameters();

@@ -23,8 +23,8 @@ void Test::setGraphTitle(char * buffer, size_t bufferSize) const {
   Poincare::Print::customPrintf(buffer, bufferSize, format, testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-bool Test::initializeSignificanceTest(SignificanceTestType testType) {
-  if (!Statistic::initializeSignificanceTest(testType)) {
+bool Test::initializeSignificanceTest(SignificanceTestType testType, Shared::GlobalContext * context) {
+  if (!Statistic::initializeSignificanceTest(testType, context)) {
     return false;
   }
   this->~Test();
@@ -42,7 +42,7 @@ bool Test::initializeSignificanceTest(SignificanceTestType testType) {
       new (this) TwoProportionsZTest();
       break;
     case SignificanceTestType::Slope:
-      new (this) SlopeTTest();
+      new (this) SlopeTTest(context);
       break;
     default:
       assert(testType == SignificanceTestType::Categorical);

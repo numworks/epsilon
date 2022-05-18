@@ -1,6 +1,7 @@
 #ifndef PROBABILITY_MODELS_STATISTIC_STATISTIC_H
 #define PROBABILITY_MODELS_STATISTIC_STATISTIC_H
 
+#include <apps/shared/global_context.h>
 #include <inference/models/inference.h>
 #include "hypothesis_params.h"
 
@@ -63,7 +64,7 @@ public:
 
   /* Instantiate correct Statistic based on SignificanceTestType, DistributionType and CategoricalType. */
   virtual SignificanceTestType significanceTestType() const = 0;
-  virtual bool initializeSignificanceTest(SignificanceTestType testType) { return testType != significanceTestType(); } // Default implementation used in final implementation
+  virtual bool initializeSignificanceTest(SignificanceTestType testType, Shared::GlobalContext * context) { return testType != significanceTestType(); } // Default implementation used in final implementation
   virtual DistributionType distributionType() const = 0;
   virtual bool initializeDistribution(DistributionType distribution) { return distribution != distributionType(); } // Default implementation used in final implementation
   virtual CategoricalType categoricalType() const { assert(false); return CategoricalType::Homogeneity; }

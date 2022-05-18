@@ -674,9 +674,4 @@ double TwoProportions::ComputeStandardError(double x1, int n1, double x2, int n2
   return std::sqrt(p1Estimate * (1 - p1Estimate) / n1 + p2Estimate * (1 - p2Estimate) / n2);
 }
 
-/* Slope */
-
-void Slope::ComputeTest(Test * test) {}
-void Slope::ComputeInterval(Interval * interval) {}
-
 }

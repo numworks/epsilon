@@ -69,8 +69,6 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_inputViewController(&m_modalViewController, &m_tabViewController, &m_storeController, &m_storeController, &m_storeController)
 {
   m_store.initListsFromStorage();
-  /* Set the store's sorted index buffer. */
-  m_store.setSortedIndex(m_sortedIndexBuffer, k_sortedIndexBufferSize);
 
   // Order used in m_graphController constructor
   assert(GraphViewModel::IndexOfGraphView(GraphViewModel::GraphView::Histogram) == 0);

@@ -19,22 +19,18 @@ Store::Store(GlobalContext * context) :
   m_displayCumulatedFrequencies{false, false, false},
   m_barWidth(1.0),
   m_firstDrawnBarAbscissa(0.0),
-  m_sortedIndex(nullptr),
-  m_sortedIndexValid{false, false, false},
   m_memoizedMaxNumberOfModes(0),
   m_graphViewInvalidated(true),
   m_displayOutliers(GlobalPreferences::sharedGlobalPreferences()->outliersStatus() == CountryPreferences::OutlierDefaultVisibility::Displayed)
 {
-}
-
-void Store::setSortedIndex(uint8_t * buffer, size_t bufferSize) {
-  assert(k_numberOfSeries * k_maxNumberOfPairs <= bufferSize);
-  m_sortedIndex = buffer;
+  for (int s = 0; s < k_numberOfSeries; s++) {
+    m_datasets[s] = Poincare::StatisticsDataset(&m_dataLists[s][0], &m_dataLists[s][1]);
+  }
 }
 
 void Store::invalidateSortedIndexes() {
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    m_sortedIndexValid[i] = false;
+    m_datasets[i].recomputeSortedIndex();
   }
 }
 
@@ -169,7 +165,7 @@ bool Store::columnIsIntegersOnly(int series, int column) const {
 /* Calculation */
 
 double Store::sumOfOccurrences(int series) const {
-  return sumOfColumn(series, 1);
+  return m_datasets[series].totalWeight();
 }
 
 double Store::maxValueForAllSeries(bool handleNullFrequencies, ValidSeries validSeries) const {
@@ -229,24 +225,19 @@ double Store::range(int series) const {
 }
 
 double Store::mean(int series) const {
-  return sum(series)/sumOfOccurrences(series);
+  return m_datasets[series].mean();
 }
 
 double Store::variance(int series) const {
-  /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] - E[X]^2
-   * to ensure a positive result and to minimize rounding errors */
-  double m = mean(series);
-  return squaredOffsettedValueSum(series, m)/sumOfOccurrences(series);
+  return m_datasets[series].variance();
 }
 
 double Store::standardDeviation(int series) const {
-  return std::sqrt(variance(series));
+  return m_datasets[series].standardDeviation();
 }
 
 double Store::sampleStandardDeviation(int series) const {
-  double n = sumOfOccurrences(series);
-  double s = std::sqrt(n/(n-1.0));
-  return s*standardDeviation(series);
+  return m_datasets[series].sampleStandardDeviation();
 }
 
 double Store::sampleVariance(int series) const {
@@ -293,7 +284,7 @@ double Store::quartileRange(int series) const {
 }
 
 double Store::median(int series) const {
-  return sortedElementAtCumulatedFrequency(series, 1.0/2.0, true);
+  return m_datasets[series].median();
 }
 
 double Store::lowerWhisker(int series) const {
@@ -349,26 +340,11 @@ double Store::upperOutlierAtIndex(int series, int index) const {
 }
 
 double Store::sum(int series) const {
-  double result = 0;
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int k = 0; k < numberOfPairs; k++) {
-    result += get(series,0,k)*get(series,1,k);
-  }
-  return result;
+  return m_datasets[series].weightedSum();
 }
 
 double Store::squaredValueSum(int series) const {
-  return squaredOffsettedValueSum(series, 0.0);
-}
-
-double Store::squaredOffsettedValueSum(int series, double offset) const {
-  double result = 0;
-  const int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int k = 0; k < numberOfPairs; k++) {
-    double value = get(series,0,k) - offset;
-    result += value*value*get(series,1,k);
-  }
-  return result;
+  return m_datasets[series].squaredSum();
 }
 
 int Store::numberOfModes(int series) const {
@@ -470,7 +446,7 @@ double Store::defaultValue(int series, int i, int j) const {
 }
 
 void Store::updateSeries(int series, bool delayUpdate) {
-  m_sortedIndexValid[series] = false;
+  m_datasets[series].recomputeSortedIndex();
   m_memoizedMaxNumberOfModes = 0;
   DoublePairStore::updateSeries(series, delayUpdate);
 }
@@ -492,36 +468,11 @@ double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUp
 }
 
 double Store::sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement) const {
-  assert(k >= 0.0 && k <= 1.0);
-  return sortedElementAtCumulatedPopulation(series, k * sumOfOccurrences(series), createMiddleElement);
+  return m_datasets[series].sortedElementAtCumulatedFrequency(k, createMiddleElement);
 }
 
 double Store::sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement) const {
-  // Find the element after which cumulated population exceeds the population.
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  int elementSortedIndex;
-  double cumulatedPopulation = 0.0;
-  for (int k = 0; k < numberOfPairs; k++) {
-    elementSortedIndex = k;
-    cumulatedPopulation += get(series, 1, valueIndexAtSortedIndex(series, k));
-    if (cumulatedPopulation >= population-DBL_EPSILON) {
-      break;
-    }
-  }
-
-  if (createMiddleElement && std::fabs(cumulatedPopulation - population) < DBL_EPSILON) {
-    /* There is an element of cumulated frequency population, so the result is
-     * the mean between this element and the next element (in terms of cumulated
-     * frequency) that has a non-null frequency. */
-    for (int k = elementSortedIndex + 1; k < numberOfPairs; k++) {
-      int nextElementSortedIndex = valueIndexAtSortedIndex(series, k);
-      if (get(series, 1, nextElementSortedIndex) > 0.0) {
-        return (get(series, 0, valueIndexAtSortedIndex(series, elementSortedIndex)) + get(series, 0, nextElementSortedIndex)) / 2.0;
-      }
-    }
-  }
-
-  return get(series, 0, valueIndexAtSortedIndex(series, elementSortedIndex));
+  return m_datasets[series].sortedElementAtCumulatedWeight(population, createMiddleElement);
 }
 
 uint8_t Store::lowerWhiskerSortedIndex(int series) const {
@@ -627,22 +578,7 @@ double Store::normalProbabilityResultAtIndex(int series, int i) const {
 }
 
 uint8_t Store::valueIndexAtSortedIndex(int series, int i) const {
-  assert(m_sortedIndex && i >= 0 && i < numberOfPairsOfSeries(series));
-  buildSortedIndex(series);
-  return m_sortedIndex[series * k_maxNumberOfPairs + i];
-}
-
-void Store::buildSortedIndex(int series) const {
-  // Index is already built
-  if (m_sortedIndexValid[series]) {
-    return;
-  }
-  uint8_t numberOfPairs = numberOfPairsOfSeries(series);
-  for (uint8_t i = 0; i < numberOfPairs; i++) {
-    m_sortedIndex[series * k_maxNumberOfPairs + i] = i;
-  }
-  sortIndexByColumn(m_sortedIndex + series * k_maxNumberOfPairs, series, 0, 0, numberOfPairs);
-  m_sortedIndexValid[series] = true;
+  return m_datasets[series].indexAtSortedIndex(i);
 }
 
 bool Store::frequenciesAreValid(int series) const {

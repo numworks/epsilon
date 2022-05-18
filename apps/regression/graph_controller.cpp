@@ -225,6 +225,8 @@ bool GraphController::openMenuForCurveAtIndex(int index) {
     stackController()->push(controller);
   } else {
     m_graphOptionsController.setTitle(title);
+    // Reset selected row. It is preserved when navigating in its submenus
+    m_graphOptionsController.selectRow(0);
     stackController()->push(&m_graphOptionsController);
   }
   return true;

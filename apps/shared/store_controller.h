@@ -20,7 +20,7 @@ namespace Shared {
 class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
 public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
-  Escher::View * view() override { return &m_contentView; }
+  Escher::View * view() override { return &m_dataView; }
   TELEMETRY_ID("Store");
 
   // EditableCellViewController
@@ -69,19 +69,6 @@ protected:
   static constexpr int k_titleCellType = 0;
   static constexpr int k_editableCellType = 1;
 
-  class ContentView : public Escher::View , public Escher::Responder {
-  public:
-    ContentView(DoublePairStore * store, Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDataSource * selectionDataSource);
-   StoreSelectableTableView * dataView() { return &m_dataView; }
-  // Responder
-  void didBecomeFirstResponder() override;
-  private:
-    int numberOfSubviews() const override { return 1; }
-    View * subviewAtIndex(int index) override;
-    void layoutSubviews(bool force = false) override;
-    StoreSelectableTableView m_dataView;
-  };
-
   Escher::StackViewController * stackController() const override;
   Escher::Responder * tabController() const override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
@@ -89,7 +76,7 @@ protected:
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
-  Escher::SelectableTableView * selectableTableView() override { return m_contentView.dataView(); }
+  Escher::SelectableTableView * selectableTableView() override { return &m_dataView; }
   void reloadSeriesVisibleCells(int series, int relativeColumn = -1);
 
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
@@ -102,7 +89,7 @@ private:
   int maxNumberOfElements() const override { return DoublePairStore::k_maxNumberOfPairs; }
 
   StoreTitleCell m_titleCells[k_numberOfTitleCells];
-  ContentView m_contentView;
+  StoreSelectableTableView m_dataView;
   FormulaTemplateMenuController m_templateController;
   Escher::StackViewController m_templateStackController;
   StoreContext m_storeContext;

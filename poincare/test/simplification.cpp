@@ -1885,7 +1885,11 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("mean({})", Undefined::Name());
   assert_parsed_expression_simplify_to("mean({1,2,3})", "2");
   assert_parsed_expression_simplify_to("mean({5,8,7,4,12})", "36/5");
-
+  assert_parsed_expression_simplify_to("mean({1,6,3,4,5,2},{2,3,1,2,3,1})", "4");
+  assert_parsed_expression_simplify_to("mean({1,6,3,undef,5,2},{2,3,1,2,3,1})", Undefined::Name());
+  assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{2})", Undefined::Name());
+  assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{0,0,0,0,0})", Undefined::Name());
+  assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{-2,4,4,4,4})", Undefined::Name());
   // Minimum of a list
   assert_parsed_expression_simplify_to("min({})", Undefined::Name());
   assert_parsed_expression_simplify_to("min({1,2,3})", "1");
@@ -1900,20 +1904,25 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("var({})", Undefined::Name());
   assert_parsed_expression_simplify_to("var({1})", "0");
   assert_parsed_expression_simplify_to("var({1,2,3,4,5,6})", "35/12");
+  assert_parsed_expression_simplify_to("var({1,2,3,4,5,6},{2,3,2,1,3,1})", "43/16");
   // Standard deviation of a list
   assert_parsed_expression_simplify_to("stddev({})", Undefined::Name());
   assert_parsed_expression_simplify_to("stddev({1})", "0");
   assert_parsed_expression_simplify_to("stddev({1,2,3,4,5,6})", "√(105)/6");
+  assert_parsed_expression_simplify_to("stddev({1,2,3,4,5,6},{2,3,1,1,2,4})", "\u00122×√(157)\u0013/13");
   // Sample standard deviation of a list
   assert_parsed_expression_simplify_to("samplestddev({})", Undefined::Name());
   assert_parsed_expression_simplify_to("samplestddev({1})", Undefined::Name());
   assert_parsed_expression_simplify_to("samplestddev({1,2,3,4,5,6})", "√(14)/2");
+  assert_parsed_expression_simplify_to("samplestddev({1,2,3,4,5,6},{2,3,1,1,2,4})", "√(6123)/39");
   // Median of a list
   assert_parsed_expression_simplify_to("med({})", Undefined::Name());
   assert_parsed_expression_simplify_to("med({1})", "1");
   assert_parsed_expression_simplify_to("med({4,2,3,1,6})", "3");
   assert_parsed_expression_simplify_to("med({1,6,3,4,5,2})", "7/2");
-  assert_parsed_expression_simplify_to("med({1,undef,2,3})", "2");
+  assert_parsed_expression_simplify_to("med({1,undef,2,3})", Undefined::Name());
+  assert_parsed_expression_simplify_to("med({1,6,3,4,5,2},{1,2,1,1,2,2})", "4");
+  assert_parsed_expression_simplify_to("med({1,6,3,4,5,undef,2},{1,1,1,1,2,4,2})", Undefined::Name());
   // List sequences
   assert_parsed_expression_simplify_to("sequence(1,k,1)", "{1}");
   assert_parsed_expression_simplify_to("sequence(k,k,10)", "{1,2,3,4,5,6,7,8,9,10}");

@@ -7,11 +7,19 @@ namespace Escher {
 
 class RegularListViewDataSource : public ListViewDataSource {
 public:
-  virtual KDCoordinate cellHeight() { return ListViewDataSource::rowHeight(0); }
+  RegularListViewDataSource() : m_rowHeight(-1) {}
+  /* TODO : It would be better if we could set m_rowHeight in the constructor
+   *        but we cannot because ListViewDataSource::rowHeight requires
+   *        virtual methods that are unavailable in this constructor. */
+  virtual KDCoordinate cellHeight() {
+    return m_rowHeight < 0 ? (m_rowHeight = ListViewDataSource::rowHeight(0)) : m_rowHeight;
+  }
 
   KDCoordinate rowHeight(int j) override { return cellHeight(); }
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+private:
+  KDCoordinate m_rowHeight;
 };
 
 class SimpleListViewDataSource : public RegularListViewDataSource {

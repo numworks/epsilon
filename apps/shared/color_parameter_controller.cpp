@@ -42,13 +42,11 @@ void ColorParameterController::didBecomeFirstResponder() {
 }
 
 void ColorParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  // TODO: There's a bug with the first cell
   ColorCell * colorCell = static_cast<ColorCell *>(cell);
   assert(index >= 0);
   assert(index < ColorNames::Count);
   colorCell->setMessage(ColorNames::Messages[index]);
   colorCell->setColor(ColorNames::Colors[index]);
-  colorCell->reloadCell();
 }
 
 ExpiringPointer<Function> ColorParameterController::function() {

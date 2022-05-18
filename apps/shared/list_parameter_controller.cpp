@@ -10,11 +10,9 @@ namespace Shared {
 ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate) :
   SelectableListViewController(parentResponder, tableDelegate),
   m_enableCell(I18n::Message::ActivateDeactivate),
-  m_colorCell(),
   m_deleteCell(deleteFunctionMessage),
   m_colorParameterController(this)
-{
-}
+{}
 
 const char * ListParameterController::title() {
   return I18n::translate(I18n::Message::FunctionOptions);
@@ -64,10 +62,7 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    return handleEnterOnRow(selectedRow());
-  }
-  if (event == Ion::Events::Right && typeAtIndex(selectedRow()) == k_colorCellType) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && typeAtIndex(selectedRow()) == k_colorCellType)) {
     return handleEnterOnRow(selectedRow());
   }
   return false;

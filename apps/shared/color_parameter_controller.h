@@ -12,8 +12,7 @@ class ColorParameterController : public Escher::SelectableListViewController<Esc
 public:
   ColorParameterController(Escher::Responder * parentResponder) :
     SelectableListViewController<SimpleListViewDataSource>(parentResponder)
-  {
-  }
+  {}
 
   // ViewController
   const char * title() override { return I18n::translate(I18n::Message::Color); }

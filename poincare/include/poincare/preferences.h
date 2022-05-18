@@ -38,7 +38,7 @@ public:
     Degree = 1,
     Gradian = 2
   };
-  enum class UnitFormat : uint8_t {
+  enum class UnitFormat : bool {
     Metric = 0,
     Imperial = 1
   };

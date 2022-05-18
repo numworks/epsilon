@@ -29,6 +29,7 @@ public:
   int reusableCellCount(int type) override { return 1; }
   int typeAtIndex(int index) override;
 protected:
+  // Type order defines cell order
   constexpr static int k_enableCellType = 0;
   constexpr static int k_colorCellType = k_enableCellType + 1;
   constexpr static int k_deleteCellType = k_colorCellType + 1;

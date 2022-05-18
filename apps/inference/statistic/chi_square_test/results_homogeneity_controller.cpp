@@ -20,7 +20,7 @@ bool ResultsHomogeneityController::ResultsTableController::handleEvent(Ion::Even
     Escher::Container::activeApp()->setFirstResponder(parentResponder());
     return true;
   }
-  return typedParent()->popFromStackViewControllerOnLeftEvent(event);
+  return false;
 }
 
 // SingleModeController

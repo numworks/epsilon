@@ -87,7 +87,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       { I18n::Message::Maximum, I18n::Message::MaximumSymbol },
       { I18n::Message::Range, I18n::Message::RangeSymbol },
       { I18n::Message::Mean, I18n::Message::MeanSymbol },
-      { I18n::Message::StandardDeviationSigma, I18n::Message::StandardDeviationSigmaSymbol },
+      { I18n::Message::StandardDeviation, I18n::Message::StandardDeviationSigmaSymbol },
       { I18n::Message::Deviation, I18n::Message::DeviationSymbol },
       { I18n::Message::FirstQuartile, I18n::Message::FirstQuartileSymbol },
       { I18n::Message::ThirdQuartile, I18n::Message::ThirdQuartileSymbol },

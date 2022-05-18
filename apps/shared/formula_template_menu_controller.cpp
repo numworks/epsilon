@@ -137,7 +137,7 @@ bool FormulaTemplateMenuController::shouldDisplayOtherAppCell() {
 }
 
 Expression FormulaTemplateMenuController::templateExpressionForCell(Cell cell) {
-  assert(cell < Cell::maxNumberOfRows && cell > Cell::EmptyTemplate);
+  assert(cell < Cell::MaxNumberOfRows && cell > Cell::EmptyTemplate);
   if (cell <= Cell::Logarithm) {
     return Expression::Parse(k_templates[(int)cell - 1], nullptr);
   }
@@ -196,11 +196,11 @@ void FormulaTemplateMenuController::fillSumColumnNames(char * buffers[]) {
 
 char correspondingColumnInOtherApp(char columnPrefix) {
   constexpr static int k_numberOfApps = 2;
-  constexpr static const char * const * columnNames[k_numberOfApps] = {DoublePairStore::k_regressionColumNames, DoublePairStore::k_statisticsColumNames};
+  constexpr static const char * const * k_columnNames[k_numberOfApps] = {DoublePairStore::k_regressionColumNames, DoublePairStore::k_statisticsColumNames};
   for (int i = 0; i < DoublePairStore::k_numberOfColumnsPerSeries; i++) {
     for (int j = 0; j < k_numberOfApps; j++) {
-      if (columnNames[j][i][0] == columnPrefix) {
-        return columnNames[(j + 1) % k_numberOfApps][i][0];
+      if (k_columnNames[j][i][0] == columnPrefix) {
+        return k_columnNames[(j + 1) % k_numberOfApps][i][0];
       }
     }
   }

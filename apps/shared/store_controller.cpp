@@ -56,7 +56,7 @@ void StoreController::displayFormulaInput() {
 }
 
 void StoreController::fillFormulaInputWithTemplate(Layout templateLayout) {
-  int k_sizeOfBuffer = DoublePairStore::k_columnNamesLength + 1 + FormulaTemplateMenuController::k_maxSizeOfTemplateText;
+  constexpr int k_sizeOfBuffer = DoublePairStore::k_columnNamesLength + 1 + FormulaTemplateMenuController::k_maxSizeOfTemplateText;
   char templateString[k_sizeOfBuffer];
   int filledLength = fillColumnName(selectedColumn(), templateString);
   if (filledLength < Shared::EditableCellTableViewController::k_maxSizeOfColumnName - 1) {
@@ -73,14 +73,14 @@ void StoreController::fillFormulaInputWithTemplate(Layout templateLayout) {
       this,
       [](void * context, void * sender) {
         StoreController * thisController = static_cast<StoreController *>(context);
-        InputViewController * thisInputViewController =  static_cast<InputViewController *>(sender);
-        return thisController->createExpressionForFillingCollumnWithFormula(thisInputViewController->textBody());
+        InputViewController * thisInputViewController = static_cast<InputViewController *>(sender);
+        return thisController->createExpressionForFillingColumnWithFormula(thisInputViewController->textBody());
       }, [](void * context, void * sender) {
         return true;
       });
 }
 
-bool StoreController::createExpressionForFillingCollumnWithFormula(const char * text) {
+bool StoreController::createExpressionForFillingColumnWithFormula(const char * text) {
   Expression expression = Expression::Parse(text, &m_storeContext);
   if (expression.isUninitialized()) {
     Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
@@ -249,7 +249,7 @@ void StoreController::reloadSeriesVisibleCells(int series, int relativeColumn) {
   }
 }
 
-bool returnFalseAndDisplayWarning() {
+bool displayNotSuitableWarning() {
    Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
    return false;
 }
@@ -268,12 +268,12 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
       }
     }
     if (!isValidEquality) {
-      return returnFalseAndDisplayWarning();
+      return displayNotSuitableWarning();
     }
   }
   PoincareHelpers::CloneAndSimplify(&formula, &m_storeContext, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (formula.isUndefined()) {
-      return returnFalseAndDisplayWarning();
+      return displayNotSuitableWarning();
   }
   if (formula.type() == ExpressionNode::Type::List) {
     bool allChildrenAreUndefined = true;
@@ -284,7 +284,7 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
       }
     }
     if (allChildrenAreUndefined) {
-      return returnFalseAndDisplayWarning();
+      return displayNotSuitableWarning();
     }
     m_store->setList(static_cast<List &>(formula), seriesToFill, columnToFill);
     selectableTableView()->reloadData();
@@ -292,7 +292,7 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
   }
   double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &m_storeContext);
   if (std::isnan(evaluation)) {
-      return returnFalseAndDisplayWarning();
+      return displayNotSuitableWarning();
   }
   for (int j = 0; j < m_store->numberOfPairsOfSeries(seriesToFill); j++) {
     m_store->set(evaluation, seriesToFill, columnToFill, j);

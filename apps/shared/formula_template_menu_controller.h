@@ -39,9 +39,9 @@ private:
     Logarithm = 3,
     OtherColumns = 4,
     OtherApp = 5,
-    maxNumberOfRows = 6
+    MaxNumberOfRows = 6 // Only used to know the number of cells.
   };
-  constexpr static int k_numberOfTemplates = static_cast<int>(Cell::maxNumberOfRows);
+  constexpr static int k_numberOfTemplates = static_cast<int>(Cell::MaxNumberOfRows);
   constexpr static int k_numberOfExpressionCellsWithMessage = 1 + (int)Cell::Logarithm - (int)Cell::Integers;
   constexpr static int k_numberOfExpressionCellsWithBuffer = 1 + (int)Cell::OtherApp - (int)Cell::OtherColumns;
   static_assert(k_numberOfTemplates == 1 + k_numberOfExpressionCellsWithMessage + k_numberOfExpressionCellsWithBuffer, "Wrong number of cells in FormulaTemplateMenuController");

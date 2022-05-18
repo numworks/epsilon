@@ -53,14 +53,15 @@ KDCoordinate MemoizedListViewDataSource::cumulatedHeightFromIndex(int j) {
   // Search cumulatedHeight around m_memoizedCumulatedHeightOffset
   KDCoordinate cumulatedHeight = m_memoizedCumulatedHeightOffset;
   if (j >= m_memoizedIndexOffset) {
-    for (int i = m_memoizedIndexOffset; i < numberOfRows(); i++) {
+    int nRows = numberOfRows();
+    for (int i = m_memoizedIndexOffset; i < nRows; i++) {
       if (i == j) {
         return cumulatedHeight;
       }
       // From here on, memoization might be updated.
       cumulatedHeight += rowHeight(i);
     }
-    assert(j == numberOfRows());
+    assert(j == nRows);
     // Update memoized total height
     m_memoizedTotalHeight = cumulatedHeight;
     return cumulatedHeight;
@@ -91,14 +92,15 @@ int MemoizedListViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
   // Search index around m_memoizedIndexOffset
   KDCoordinate cumulatedHeight = m_memoizedCumulatedHeightOffset;
   if (offsetY > m_memoizedCumulatedHeightOffset) {
-    for (int i = m_memoizedIndexOffset; i < numberOfRows(); i++) {
+    int nRows = numberOfRows();
+    for (int i = m_memoizedIndexOffset; i < nRows; i++) {
       // From here on, memoization might be updated.
       cumulatedHeight += rowHeight(i);
       if (offsetY <= cumulatedHeight) {
         return i;
       }
     }
-    return numberOfRows();
+    return nRows;
   }
   for (int i = m_memoizedIndexOffset - 1; i >= 0; i--) {
     // From here on, memoization might be updated.

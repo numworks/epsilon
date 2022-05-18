@@ -3,7 +3,8 @@
 namespace Escher {
 
 void ListViewDataSource::initCellWidth(TableView * view) {
-  for (int row = 0; row < numberOfRows(); row++) {
+  int nRows = numberOfRows();
+  for (int row = 0; row < nRows; row++) {
     int type = typeAtIndex(row);
     for (int i = 0; i < reusableCellCount(type); i++) {
       /* Some cells need a width to compute their height, so we need to set

@@ -29,6 +29,9 @@ public:
   // Call this after initializing the store
   void initListsFromStorage();
 
+  // Clean the pool
+  void tidy();
+
   // Column name
   virtual char columnNamePrefixAtIndex(int column) const =0;
   int fillColumnName(int series, int column, char * buffer) const; // Fills 3 chars in the buffer (2 chars for name + null terminate)

@@ -45,6 +45,14 @@ void DoublePairStore::initListsFromStorage() {
   }
 }
 
+void DoublePairStore::tidy() {
+  for (int serie = 0; serie < k_numberOfSeries ; serie++) {
+    for (int i = 0; i < k_numberOfColumnsPerSeries ; i++) {
+      m_dataLists[serie][i] = Poincare::FloatList<double>();
+    }
+  }
+}
+
 int DoublePairStore::fillColumnName(int series, int columnIndex, char * buffer) const {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(columnIndex >= 0 && columnIndex < k_numberOfColumnsPerSeries);

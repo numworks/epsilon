@@ -1,5 +1,6 @@
 #include <poincare/floor.h>
 #include <poincare/decimal.h>
+#include <poincare/float.h>
 #include <poincare/floor_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -31,7 +32,7 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Com
   }
   /* Assume low deviation from natural numbers are errors */
   T delta = std::fabs((std::round(c.real()) - c.real()) / c.real());
-  if (delta <= (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON)) {
+  if (delta <= Float<T>::Epsilon()) {
     return Complex<T>::Builder(std::round(c.real()));
   }
   return Complex<T>::Builder(std::floor(c.real()));

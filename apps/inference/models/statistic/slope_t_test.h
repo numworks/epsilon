@@ -2,7 +2,6 @@
 #define PROBABILITY_MODELS_STATISTIC_SLOPE_T_TEST_H
 
 #include "interfaces/distributions.h"
-#include "interfaces/significance_tests.h"
 #include "test.h"
 #include "slope_t_statistic.h"
 
@@ -14,7 +13,7 @@ public:
   void tidy() override { DoublePairStore::tidy(); }
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::Slope; }
   DistributionType distributionType() const override { return DistributionType::T; }
-  I18n::Message title() const override { return Slope::Title(); }
+  I18n::Message title() const override { return SlopeTStatistic::title(); }
   I18n::Message graphTitleFormat() const override { return DistributionT::GraphTitleFormat(); }
 
   // Inference
@@ -23,9 +22,9 @@ public:
   bool validateInputs() override { return seriesIsValid(0); }
 
   // Significance Test: Slope
-  const char * hypothesisSymbol() override { return Slope::HypothesisSymbol(); }
+  const char * hypothesisSymbol() override { return "β"; }
 
-  void compute() override { Slope::ComputeTest(this); }
+  void compute() override {  }
 
   // Distribution: t
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionT::TestCriticalValueSymbol(font); }

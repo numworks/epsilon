@@ -40,10 +40,10 @@ T StatisticsDataset<T>::weightAtIndex(int index) const {
     return NAN;
   }
   if (m_weights == nullptr) {
-    return (T)1.0;
+    return 1.0;
   }
   // All weights must be positive.
-  return index >= 0 && index < m_weights->length() && m_weights->valueAtIndex(index) >= (T)0.0 ? m_weights->valueAtIndex(index) : NAN;
+  return index >= 0 && index < m_weights->length() && m_weights->valueAtIndex(index) >= 0.0 ? m_weights->valueAtIndex(index) : NAN;
 }
 
 template<typename T>
@@ -51,7 +51,7 @@ T StatisticsDataset<T>::totalWeight() const {
   if (datasetLength() == 0) {
     return NAN;
   }
-  T total = (T)0.0;
+  T total = 0.0;
   for (int i = 0; i < datasetLength(); i++) {
     total += weightAtIndex(i);
   }
@@ -60,7 +60,7 @@ T StatisticsDataset<T>::totalWeight() const {
 
 template<typename T>
 T StatisticsDataset<T>::weightedSum() const {
-  T total = (T)0.0;
+  T total = 0.0;
   for (int i = 0; i < datasetLength(); i++) {
     total += valueAtIndex(i) * weightAtIndex(i);
   }
@@ -69,7 +69,7 @@ T StatisticsDataset<T>::weightedSum() const {
 
 template<typename T>
 T StatisticsDataset<T>::offsettedSquaredSum(T offset) const {
-  T total = (T)0.0;
+  T total = 0.0;
   for (int i = 0; i < datasetLength(); i++) {
     T offsettedValue = valueAtIndex(i) - offset;
     total += offsettedValue * offsettedValue * weightAtIndex(i);
@@ -97,7 +97,7 @@ T StatisticsDataset<T>::standardDeviation() const {
 template<typename T>
 T StatisticsDataset<T>::sampleStandardDeviation() const {
   T weight = totalWeight();
-  return std::sqrt(weight / (weight - (T)1.0)) * standardDeviation();
+  return std::sqrt(weight / (weight - 1.0)) * standardDeviation();
 }
 
 template<typename T>
@@ -111,14 +111,14 @@ T StatisticsDataset<T>::sortedElementAtCumulatedWeight(T weight, bool createMidd
   int upperIndex;
   int lowerIndex = indexAtCumulatedWeight(weight, &upperIndex);
   if (createMiddleElement && upperIndex != lowerIndex) {
-    return (valueAtIndex(lowerIndex) + valueAtIndex(upperIndex)) / (T)2.0;
+    return (valueAtIndex(lowerIndex) + valueAtIndex(upperIndex)) / 2.0;
   }
   return valueAtIndex(lowerIndex);
 }
 
 template<typename T>
 T StatisticsDataset<T>::median() const {
-  return sortedElementAtCumulatedFrequency((T)1.0/(T)2.0, true);
+  return sortedElementAtCumulatedFrequency(1.0/2.0, true);
 }
 
 template<typename T>
@@ -137,7 +137,7 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight, int * upperIndex) con
   }
   T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   int elementSortedIndex = -1;
-  T cumulatedWeight = (T)0.0;
+  T cumulatedWeight = 0.0;
   for (int i = 0; i < datasetLength(); i++) {
     elementSortedIndex = i;
     cumulatedWeight += weightAtIndex(indexAtSortedIndex(i));
@@ -152,7 +152,7 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight, int * upperIndex) con
     for (int i = elementSortedIndex + 1; i < datasetLength(); i++) {
       int nextElementIndex = indexAtSortedIndex(i);
       T nextWeight = weightAtIndex(nextElementIndex);
-      if (!std::isnan(nextWeight) && nextWeight > (T)0.0) {
+      if (!std::isnan(nextWeight) && nextWeight > 0.0) {
         if (upperIndex) {
           *upperIndex = nextElementIndex;
         }
@@ -168,7 +168,7 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight, int * upperIndex) con
 
 template<typename T>
 int StatisticsDataset<T>::medianIndex(int * upperIndex) const {
-  return indexAtCumulatedFrequency((T)1.0/(T)2.0, upperIndex);
+  return indexAtCumulatedFrequency(1.0/2.0, upperIndex);
 }
 
 int getIntFromBasedInteger(Expression e) {

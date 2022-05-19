@@ -66,20 +66,16 @@ double ExponentialModel::levelSet(double * modelCoefficients, double xMin, doubl
   return std::log(y/a)/b;
 }
 
-void ExponentialModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
+void ExponentialModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsValid(series));
-  /* We try a better initialization than the default value. We hope that this
-   * will improve the gradient descent to find correct coefficients.
-   *
-   * By the change of variable z=ln(y), the equation y=a*exp(b*x) becomes
+  /* By the change of variable z=ln(y), the equation y=a*exp(b*x) becomes
    * z=c*x+d with c=b and d=ln(a). That change of variable does not preserve the
-   * regression error function, so it isn't the best regression.
-   * However, it turns this exponential regression problem into a linear one,
-   * for which the solution is set of initial coefficients for a fit.
-   * That being said, one should check that the y values are all positive. (If
-   * the y values are all negative, one may replace each of them by its
-   * opposite. In the case where y values happen to be zero or of opposite
-   * sign, we call the base class method as a fallback. */
+   * default regression error function, so default R2 isn't optimal.
+   * However, we compute R2 using that change of variable, so that it matches
+   * the fit and is optimal.
+   * This change turns this exponential regression problem into a linear one.
+   * If the y values are all negative, one may replace each of them by its
+   * opposite. */
   double sumOfX = 0;
   double sumOfY = 0;
   double sumOfXX = 0;

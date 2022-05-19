@@ -41,14 +41,20 @@ public:
     OnIntegerValues
   };
 
-  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol, HistogramsOffset histogramOffset) :
+  enum class MeanSymbol : uint8_t {
+    Default,
+    WithMu,
+  };
+
+  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol, HistogramsOffset histogramOffset, MeanSymbol meanSymbol) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
     m_unitFormat(unitFormat),
     m_methodForQuartiles(methodForQuartiles),
     m_outliersStatus(outliersStatus),
     m_discriminantSymbol(discriminantSymbol),
-    m_histogramOffset(histogramOffset)
+    m_histogramOffset(histogramOffset),
+    m_meanSymbol(meanSymbol)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -58,6 +64,7 @@ public:
   constexpr HomeAppsLayout homeAppsLayout() const { return m_homeAppsLayout; }
   constexpr HistogramsOffset histogramOffset() const { return m_histogramOffset; }
   constexpr const char * discriminantSymbol() const { return m_discriminantSymbol == DiscriminantSymbol::Delta ? "Δ" : "D"; }
+  constexpr MeanSymbol meanSymbol() const { return m_meanSymbol; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -67,6 +74,7 @@ private:
   const OutlierDefaultVisibility m_outliersStatus;
   const DiscriminantSymbol m_discriminantSymbol;
   const HistogramsOffset m_histogramOffset;
+  const MeanSymbol m_meanSymbol;
 };
 
 #endif

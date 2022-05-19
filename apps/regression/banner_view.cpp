@@ -23,15 +23,25 @@ void BannerView::setDisplayParameters(bool displayOtherView, bool otherViewIsFir
 }
 
 View * BannerView::subviewAtIndex(int index) {
+  // In the subviews order :
   assert(0 <= index && index < numberOfSubviews());
-  if (m_displayOtherView && ((m_otherViewIsFirst && index == 0) || (!m_otherViewIsFirst && index == XYBannerView::k_numberOfSubviews))) {
+  assert(m_displayOtherView || !m_otherViewIsFirst);
+  // - OtherView if first and displayed
+  if (m_otherViewIsFirst && index == 0) {
     return &m_otherView;
   }
-  index -= (m_displayOtherView && m_otherViewIsFirst);
-  if (index >= XYBannerView::k_numberOfSubviews) {
-    return &m_dataNotSuitableView;
+  index -= m_otherViewIsFirst;
+  // - XYBanner subviews
+  if (index < XYBannerView::k_numberOfSubviews) {
+    return XYBannerView::subviewAtIndex(index);
   }
-  return XYBannerView::subviewAtIndex(index);
+  // - OtherView if not first and displayed
+  if (m_displayOtherView && !m_otherViewIsFirst && index == XYBannerView::k_numberOfSubviews) {
+    return &m_otherView;
+  }
+  // - DataNotSuitable if displayed
+  assert(m_displayDataNotSuitable && index + m_otherViewIsFirst == numberOfSubviews() - 1);
+  return &m_dataNotSuitableView;
 }
 
 }

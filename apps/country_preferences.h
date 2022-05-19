@@ -51,7 +51,12 @@ public:
     YHat
   };
 
-  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol, HistogramsOffset histogramOffset, MeanSymbol meanSymbol, YPredictedSymbol yPredictedSymbol) :
+  enum class StatsRowsLayout : uint8_t {
+    Default,
+    Variant1,
+  };
+
+  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol, HistogramsOffset histogramOffset, MeanSymbol meanSymbol, YPredictedSymbol yPredictedSymbol, StatsRowsLayout statsRowsLayout) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
     m_unitFormat(unitFormat),
@@ -60,7 +65,8 @@ public:
     m_discriminantSymbol(discriminantSymbol),
     m_histogramOffset(histogramOffset),
     m_meanSymbol(meanSymbol),
-    m_yPredictedSymbol(yPredictedSymbol)
+    m_yPredictedSymbol(yPredictedSymbol),
+    m_statsRowsLayout(statsRowsLayout)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -72,6 +78,7 @@ public:
   constexpr const char * discriminantSymbol() const { return m_discriminantSymbol == DiscriminantSymbol::Delta ? "Δ" : "D"; }
   constexpr MeanSymbol meanSymbol() const { return m_meanSymbol; }
   constexpr const char * yPredictedSymbol() const { return m_yPredictedSymbol == YPredictedSymbol::Y ? "y" : "y\xCC\x82"; }
+  constexpr StatsRowsLayout statsRowsLayout() const { return m_statsRowsLayout; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -83,6 +90,7 @@ private:
   const HistogramsOffset m_histogramOffset;
   const MeanSymbol m_meanSymbol;
   const YPredictedSymbol m_yPredictedSymbol;
+  const StatsRowsLayout m_statsRowsLayout;
 };
 
 #endif

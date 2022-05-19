@@ -95,28 +95,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   case k_calculationSymbolCellType: {
     assert(j >= 1 && ((i == 0 && type == k_calculationTitleCellType) || (i == 1 && type == k_calculationSymbolCellType)));
     // Display a calculation title or symbol
-    I18n::Message titles[k_fixedNumberOfRows - 2][k_numberOfHeaderColumns] = {
-      { I18n::Message::TotalFrequency, I18n::Message::TotalFrequencySymbol },
-      { I18n::Message::Minimum, I18n::Message::MinimumSymbol },
-      { I18n::Message::Maximum, I18n::Message::MaximumSymbol },
-      { I18n::Message::Range, I18n::Message::RangeSymbol },
-      { GlobalPreferences::sharedGlobalPreferences()->meanSymbol() == CountryPreferences::MeanSymbol::WithMu && GlobalPreferences::sharedGlobalPreferences()->language() == I18n::Language::EN ? I18n::Message::SpecialMeanTitle : I18n::Message::Mean,
-        GlobalPreferences::sharedGlobalPreferences()->meanSymbol() == CountryPreferences::MeanSymbol::WithMu ? I18n::Message::MeanDoubleSymbol : I18n::Message::MeanSymbol },
-      { I18n::Message::StandardDeviation, I18n::Message::StandardDeviationSigmaSymbol },
-      { I18n::Message::Deviation, I18n::Message::DeviationSymbol },
-      { I18n::Message::FirstQuartile, I18n::Message::FirstQuartileSymbol },
-      { I18n::Message::ThirdQuartile, I18n::Message::ThirdQuartileSymbol },
-      { I18n::Message::Median, I18n::Message::MedianSymbol },
-      { I18n::Message::InterquartileRange, I18n::Message::InterquartileRangeSymbol },
-      { I18n::Message::SumValues, I18n::Message::SumValuesSymbol },
-      { I18n::Message::SumSquareValues, I18n::Message::SumSquareValuesSymbol },
-      { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol },
-      { I18n::Message::SampleVariance, I18n::Message::SampleVarianceSymbol },
-    };
     I18n::Message message;
-    int messageIndex = j - 1;
-    if (messageIndex < k_fixedNumberOfRows - 2) {
-      message = titles[messageIndex][i];
+    if (j - 1 < k_fixedNumberOfRows - 2) {
+      int messageIndex = findCellIndex(j - 1);
+      message = i == 1 ? k_calculationRows[messageIndex].symbol : k_calculationRows[messageIndex].title;
+      if (message == I18n::Message::Mean && GlobalPreferences::sharedGlobalPreferences()->meanSymbol() == CountryPreferences::MeanSymbol::WithMu && GlobalPreferences::sharedGlobalPreferences()->language() == I18n::Language::EN) {
+        message = I18n::Message::SpecialMeanTitle;
+      }
+      if (message == I18n::Message::MeanSymbol && GlobalPreferences::sharedGlobalPreferences()->meanSymbol() == CountryPreferences::MeanSymbol::WithMu) {
+        message = I18n::Message::MeanDoubleSymbol;
+      }
     } else {
       // titles index does not include the Mode Frequency messages
       assert(j == numberOfRows() - 1);
@@ -130,14 +118,12 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
   case k_calculationCellType: {
     // Display a calculation cell
-    Store::CalculPointer calculationMethods[k_fixedNumberOfRows - 2] = {&Store::sumOfOccurrences, &Store::minValue,
-      &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
-      &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation, &Store::sampleVariance};
     int seriesIndex = m_store->indexOfKthValidSeries(i-2);
     double calculation;
     EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
     if (j - 1 < (k_fixedNumberOfRows - 2)) {
-      calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
+      int calculationIndex = findCellIndex(j - 1);
+      calculation = (m_store->*k_calculationRows[calculationIndex].calculationMethod)(seriesIndex);
     } else if (j == numberOfRows() - 1) {
       calculation = m_store->modeFrequency(seriesIndex);
     } else {
@@ -231,6 +217,18 @@ int CalculationController::typeAtLocation(int i, int j) {
     return k_seriesTitleCellType;
   }
   return k_calculationCellType;
+}
+
+int CalculationController::findCellIndex(int i) const {
+  int returnIndex = 0;
+  while (returnIndex < k_fixedNumberOfRows) {
+    if (i == (GlobalPreferences::sharedGlobalPreferences()->statsRowsLayout() == CountryPreferences::StatsRowsLayout::Variant1 ? k_calculationRows[returnIndex].variant1Index : k_calculationRows[returnIndex].defaultIndex)) {
+      return returnIndex;
+    }
+    returnIndex++;
+  }
+  assert(false);
+  return 0;
 }
 
 }

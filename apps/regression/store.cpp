@@ -329,23 +329,47 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
   if (m_regressionTypes[series] == Model::Type::Median || m_regressionTypes[series] == Model::Type::None) {
     return NAN;
   }
+  /* Exponential Regression are fitted with a z = ln(+-y) change of variable.
+   * This change must be replicated here when computing R2. */
+  bool applyLn = m_regressionTypes[series] == Model::Type::ExponentialAbx || m_regressionTypes[series] == Model::Type::ExponentialAebx;
+  bool applyOpposite = applyLn && get(series, 1, 0) < 0.0;
   // Residual sum of squares
   double ssr = 0;
   // Total sum of squares
   double sst = 0;
-  double mean = meanOfColumn(series, 1);
   const int numberOfPairs = numberOfPairsOfSeries(series);
+  assert(numberOfPairs > 0);
+  double mean = 0.0;
+  if (!applyOpposite) {
+    mean = meanOfColumn(series, 1, applyLn);
+  } else {
+    assert(applyLn);
+    // Compute the mean of ln(-y)
+    for (int k = 0; k < numberOfPairs; k++) {
+      mean += std::log(-get(series, 1, k));
+    }
+    mean /= numberOfPairs;
+  }
   for (int k = 0; k < numberOfPairs; k++) {
     // Difference between the observation and the estimated value of the model
-    double evaluation = yValueForXValue(series, get(series,0,k), globalContext);
-    if (std::isnan(evaluation) || std::isinf(evaluation)) {
-      // Data Not Suitable for evaluation
+    double estimation = yValueForXValue(series, get(series, 0, k), globalContext);
+    double observation = get(series, 1, k);
+    if (applyOpposite) {
+      estimation *= -1.0;
+      observation *= -1.0;
+    }
+    if (applyLn) {
+      estimation = std::log(estimation);
+      observation = std::log(observation);
+    }
+    if (std::isnan(estimation) || std::isinf(estimation)) {
+      // Data Not Suitable for estimation
       return NAN;
     }
-    double residual = get(series,1,k) - evaluation;
+    double residual = observation - estimation;
     ssr += residual * residual;
     // Difference between the observation and the overall observations mean
-    double difference = get(series,1,k) - mean;
+    double difference = observation - mean;
     sst += difference * difference;
   }
   if (sst == 0.0) {

@@ -14,11 +14,11 @@ public:
   I18n::Message name() const override { return I18n::Message::ExponentialRegression; }
   double evaluate(double * modelCoefficients, double x) const override;
   double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) override;
+  void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 2; }
 protected:
   bool dataSuitableForFit(Store * store, int series) const override;
-  void specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const override;
 private:
   double aebxFormatBValue(double * modelCoefficients) const;
   /* In a*b^x form, modelCoefficients[1] contains the b, and is transformed via

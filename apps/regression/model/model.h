@@ -43,7 +43,6 @@ public:
 protected:
   // Fit
   virtual bool dataSuitableForFit(Store * store, int series) const;
-  virtual void specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store = nullptr, int series = -1) const;
   constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;
   Poincare::Layout m_layout;
 private:
@@ -66,6 +65,7 @@ private:
   double betaCoefficient(Store * store, int series, double * modelCoefficients, int k) const;
   int solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Poincare::Context * context);
   void initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store = nullptr, int series = -1) const;
+  virtual void specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store = nullptr, int series = -1) const;
   virtual void uniformizeCoefficientsFromFit(double * modelCoefficients) const {}
 };
 

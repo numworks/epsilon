@@ -174,15 +174,15 @@ QUIZ_CASE(exponential_regression3) {
 QUIZ_CASE(exponential_regression4) {
   double x[] = {1.0, 2.0, 3.0, 4.0};
   double y[] = {2.0, 3.0, 4.0, 1.0};
-  double coefficients[] = {2.905, -0.0606857};
-  double r2 = 0.03032936518;
+  double coefficients[] = {3.4641, -0.179};
+  double r2 = 0.1481;
   assert_regression_is(x, y, 4, Model::Type::ExponentialAebx, coefficients, r2);
 }
 
 QUIZ_CASE(exponential_regression5) {
   double x[] = {1, 1, 2, 2};
   double y[] = {1, 2, 2, 1};
-  double coefficients[] = {1.5, 0.0};
+  double coefficients[] = {1.41421, 0.0};
   double r2 = 0.0;
   assert_regression_is(x, y, 4, Model::Type::ExponentialAebx, coefficients, r2);
 }

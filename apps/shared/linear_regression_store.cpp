@@ -37,6 +37,15 @@ double LinearRegressionStore::squaredValueSumOfColumn(int series, int i, bool ln
   return squaredOffsettedValueSumOfColumn(series, i, lnOfSeries, 0.0);
 }
 
+double LinearRegressionStore::leastSquaredSum(int series) const {
+  Poincare::StatisticsDataset<double> xDataset = createDatasetFromColumn(series, 0);
+  Poincare::StatisticsDataset<double> yDataset = createDatasetFromColumn(series, 1);
+  // Find the linear regression
+  double a = yIntercept(series);
+  double b = slope(series);
+  return yDataset.squaredSumOffsettedByLinearTransformationOfDataset(xDataset, a, b);
+}
+
 double LinearRegressionStore::columnProductSum(int series, bool lnOfSeries) const {
   double result = 0;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {

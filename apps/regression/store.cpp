@@ -153,7 +153,6 @@ void Store::updateSeriesValidity(int series) {
   if (!m_validSeries[series]) {
     // Reset series regression type to None
     m_regressionTypes[series] = Model::Type::None;
-    return;
   }
 }
 
@@ -207,10 +206,6 @@ double Store::determinationCoefficientForSeries(int series, Poincare::Context * 
    * It will be updated if the regression has been updated */
   updateCoefficients(series, globalContext);
   return m_determinationCoefficient[series];
-}
-
-double Store::doubleCastedNumberOfPairsOfSeries(int series) const {
-  return DoublePairStore::numberOfPairsOfSeries(series);
 }
 
 void Store::resetMemoization() {

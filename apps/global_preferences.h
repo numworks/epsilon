@@ -24,6 +24,19 @@ public:
   const char * yPredictedSymbol() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].yPredictedSymbol(); }
   CountryPreferences::StatsRowsLayout statsRowsLayout() { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].statsRowsLayout(); }
   Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].combinatoricSymbols(); }
+  const char * openIntervalChar(bool left) const {
+    /* This should be done by country instead of language, but it requires the
+     * toolbox to contain buffers instead of messages, which felt a bit too
+     * much too implement for such a minor change. So we decided that for now
+     * it's a language preference. (Félix) */
+    if (m_language == I18n::Language::NL) {
+      return left ? "⟨" : "⟩";
+    }
+    if (m_language == I18n::Language::PT || m_language == I18n::Language::FR) {
+      return left ? "]" : "[";
+    }
+    return left ? "(" : ")";
+  }
 
   bool showPopUp() const { return m_showPopUp; }
   void setShowPopUp(bool showPopUp) { m_showPopUp = showPopUp; }

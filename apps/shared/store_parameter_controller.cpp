@@ -43,8 +43,12 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     }
     case k_indexOfHideColumn:
     {
-      m_storeController->switchSelectedColumnHideStatus();
-      m_selectableTableView.reloadCellAtLocation(0, k_indexOfHideColumn);
+      bool canSwitchHideStatus = m_storeController->switchSelectedColumnHideStatus();
+      if (!canSwitchHideStatus) {
+        Container::activeApp()->displayWarning(I18n::Message::InvalidSeries1, I18n::Message::InvalidSeries2);
+      } else {
+        m_selectableTableView.reloadCellAtLocation(0, k_indexOfHideColumn);
+      }
       break;
     }
     case k_indexOfSortCell:

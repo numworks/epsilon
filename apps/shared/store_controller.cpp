@@ -321,15 +321,17 @@ void StoreController::sortSelectedColumn() {
   m_store->sortColumn(selectedSeries(), m_store->relativeColumnIndex(selectedColumn()));
 }
 
-void StoreController::switchSelectedColumnHideStatus() {
+bool StoreController::switchSelectedColumnHideStatus() {
   int series = selectedSeries();
   bool previousStatus = m_store->seriesIsValid(series);
   if (previousStatus) {
     // Any previously valid series can be hidden
     m_store->hideSeries(series);
+    return true;
   } else {
     // Series may still be invalid, in that case nothing happens
     m_store->updateSeriesValidity(series);
+    return m_store->seriesIsValid(series);
   }
 }
 

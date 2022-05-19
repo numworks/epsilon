@@ -27,7 +27,8 @@ public:
   void setFormulaLabel();
   virtual bool fillColumnWithFormula(Poincare::Expression formula) = 0;
   virtual void sortSelectedColumn();
-  void switchSelectedColumnHideStatus();
+  // Return false if the series can't switch hide status because it's invalid
+  bool switchSelectedColumnHideStatus();
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;

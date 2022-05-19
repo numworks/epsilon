@@ -13,6 +13,9 @@
 #include "inference/models/statistic/one_proportion_z_test.h"
 #include "inference/models/statistic/pooled_two_means_t_interval.h"
 #include "inference/models/statistic/pooled_two_means_t_test.h"
+#include "inference/models/statistic/slope_t_interval.h"
+#include "inference/models/statistic/slope_t_statistic.h"
+#include "inference/models/statistic/slope_t_test.h"
 #include "inference/models/statistic/statistic.h"
 #include "inference/models/statistic/two_means_t_interval.h"
 #include "inference/models/statistic/two_means_t_test.h"
@@ -50,21 +53,33 @@ struct StatisticTestCase {
 
 double tolerance() { return 1E11 * DBL_EPSILON; }
 
-void inputValues(Statistic * stat, StatisticTestCase & testCase, double initialThreshold, double threshold) {
-  stat->initThreshold();
-  assert_roughly_equal<double>(stat->threshold(), initialThreshold, tolerance());
+void inputThreshold(Statistic * stat, double threshold) {
   stat->setThreshold(threshold);
   assert_roughly_equal<double>(stat->threshold(), threshold, tolerance());
+}
 
+void inputValues(Statistic * stat, StatisticTestCase & testCase, double initialThreshold) {
+  stat->initParameters();
+  assert_roughly_equal<double>(stat->threshold(), initialThreshold, tolerance());
   for (int i = 0; i < testCase.m_numberOfInputs; i++) {
     stat->setParameterAtIndex(testCase.m_inputs[i], i);
     quiz_assert((stat->parameterAtIndex(i) && testCase.m_inputs[i]) ||
-                (stat->parameterAtIndex(i) == testCase.m_inputs[i]));
+        (stat->parameterAtIndex(i) == testCase.m_inputs[i]));
+  }
+}
+
+void inputTableValues(Table * table, Statistic * stat, StatisticTestCase & testCase) {
+  stat->initParameters();
+  for (int i = 0; i < testCase.m_numberOfInputs; i++) {
+    Table::Index2D rowCol = table->indexToIndex2D(i);;
+    table->setParameterAtPosition(testCase.m_inputs[i], rowCol.row, rowCol.col);
+    quiz_assert((table->parameterAtPosition(rowCol.row, rowCol.col) && testCase.m_inputs[i]) ||
+                (table->parameterAtPosition(rowCol.row, rowCol.col) == testCase.m_inputs[i]));
   }
 }
 
 void testTest(Test * test, StatisticTestCase & testCase) {
-  inputValues(test, testCase, 0.05, testCase.m_significanceLevel);
+  inputThreshold(test, testCase.m_significanceLevel);
   test->hypothesisParams()->setFirstParam(testCase.m_firstHypothesisParam);
   test->hypothesisParams()->setComparisonOperator(testCase.m_op);
 
@@ -81,7 +96,7 @@ void testTest(Test * test, StatisticTestCase & testCase) {
 }
 
 void testInterval(Interval * interval, StatisticTestCase & testCase) {
-  inputValues(interval, testCase, 0.95, testCase.m_confidenceLevel);
+  inputThreshold(interval, testCase.m_confidenceLevel);
 
   interval->compute();
 
@@ -130,7 +145,9 @@ QUIZ_CASE(probability_one_proportion_statistic) {
   OneProportionZTest test;
   OneProportionZInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
+    inputValues(&interval, tests[i], 0.95);
     testInterval(&interval, tests[i]);
   }
 }
@@ -178,7 +195,9 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
   OneMeanTTest test;
   OneMeanTInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
+    inputValues(&interval, tests[i], 0.95);
     testInterval(&interval, tests[i]);
   }
 }
@@ -224,7 +243,9 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   OneMeanZTest test;
   OneMeanZInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
+    inputValues(&interval, tests[i], 0.95);
     testInterval(&interval, tests[i]);
   }
 }
@@ -272,7 +293,9 @@ QUIZ_CASE(probability_two_proportions_statistic) {
   TwoProportionsZTest test;
   TwoProportionsZInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
+    inputValues(&interval, tests[i], 0.95);
     testInterval(&interval, tests[i]);
   }
 }
@@ -326,7 +349,9 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   TwoMeansTTest test;
   TwoMeansTInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
+    inputValues(&interval, tests[i], 0.95);
     testInterval(&interval, tests[i]);
   }
 }
@@ -380,7 +405,9 @@ QUIZ_CASE(probability_pooled_t_test) {
   PooledTwoMeansTTest test;
   PooledTwoMeansTInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
+    inputValues(&interval, tests[i], 0.95);
     testInterval(&interval, tests[i]);
   }
 }
@@ -432,7 +459,9 @@ QUIZ_CASE(probability_two_means_z_statistic) {
   TwoMeansZTest test;
   TwoMeansZInterval interval;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+    inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
+    inputValues(&interval, tests[i], 0.95);
     testInterval(&interval, tests[i]);
   }
 }
@@ -462,7 +491,7 @@ QUIZ_CASE(probability_goodness_test) {
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     stat.recomputeData();
     // Initialize values before calling computeDegreesOfFreedom
-    inputValues(&stat, tests[i], 0.05, tests[i].m_significanceLevel);
+    inputTableValues(&stat, &stat, tests[i]);
     /* Degree of freedom is either overridden or computed as the user inputs
      * values in the UI table. It must be set here to replicate this. */
     stat.setDegreeOfFreedom(stat.computeDegreesOfFreedom());
@@ -526,6 +555,8 @@ QUIZ_CASE(probability_homogeneity_test) {
   HomogeneityTest test;
   for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
     test.recomputeData();
+    inputTableValues(&test, &test, tests[i]);
+
     testTest(&test, tests[i]);
     // Check expected values
     for (int j = 0;
@@ -537,4 +568,47 @@ QUIZ_CASE(probability_homogeneity_test) {
       assert_roughly_equal(real, expected, 1E-4, true);
     }
   }
+}
+
+QUIZ_CASE(probability_slope_t_statistic) {
+  Shared::GlobalContext context;
+  StatisticTestCase testCase;
+  testCase.m_firstHypothesisParam = 0.;
+  testCase.m_op = HypothesisParams::ComparisonOperator::Different;
+  testCase.m_numberOfInputs = SlopeTStatistic::k_maxNumberOfColumns * 8;
+  testCase.m_inputs[0] = 7;
+  testCase.m_inputs[1] = 7.10;
+  testCase.m_inputs[2] = 8;
+  testCase.m_inputs[3] = 7.14;
+  testCase.m_inputs[4] = 9;
+  testCase.m_inputs[5] = 6.50;
+  testCase.m_inputs[6] = 10;
+  testCase.m_inputs[7] = 6.78;
+  testCase.m_inputs[8] = 11;
+  testCase.m_inputs[9] = 6.44;
+  testCase.m_inputs[10] = 12;
+  testCase.m_inputs[11] = 6.94;
+  testCase.m_inputs[12] = 13;
+  testCase.m_inputs[13] = 6.3;
+  testCase.m_inputs[14] = 14;
+  testCase.m_inputs[15] = 6.46;
+  testCase.m_significanceLevel = 0.1;
+  testCase.m_confidenceLevel = 0.9;
+  testCase.m_numberOfParameters = SlopeTStatistic::k_maxNumberOfColumns * Shared::DoublePairStore::k_maxNumberOfPairs + 1;
+  testCase.m_hasDegreeOfFreedom = true;
+  testCase.m_degreesOfFreedom = 6;
+  testCase.m_testPassed = true;
+  testCase.m_testCriticalValue = -0.0916667/0.03931119904518827;
+  testCase.m_pValue = 0.05849481308399189;
+  testCase.m_estimate = -0.0916667;
+  testCase.m_intervalCriticalValue = 1.94318;
+  testCase.m_standardError = 0.03931119904518827;
+  testCase.m_marginOfError = 0.0763887357606289424986;
+
+  SlopeTTest test(&context);
+  inputTableValues(&test, &test, testCase);
+  testTest(&test, testCase);
+  SlopeTInterval interval(&context);
+  inputTableValues(&interval, &interval, testCase);
+  testInterval(&interval, testCase);
 }

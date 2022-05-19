@@ -34,6 +34,7 @@ protected:
     assert(i == numberOfTableParameters());
     return SignificanceTest::ValidThreshold(p);
   }
+  bool validateInputs() { return seriesIsValid(0) && numberOfPairsOfSeries(0) > 2; }
 private:
   // Table
   Index2D initialDimensions() const override { return Index2D{.row = 1, .col = 2}; }

@@ -148,8 +148,8 @@ bool DoublePairStore::deleteValueAtIndex(int series, int i, int j) {
 
 void DoublePairStore::deletePairOfSeriesAtIndex(int series, int j) {
   preventUpdate();
-  deleteValueAtIndex(series, 0, j);
-  deleteValueAtIndex(series, 1, j);
+  set(NAN, series, 0, j);
+  set(NAN, series, 1, j);
   enableUpdate();
   updateSeries(series);
 }

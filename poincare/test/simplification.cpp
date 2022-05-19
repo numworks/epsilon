@@ -568,8 +568,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("product(1,x,0,_s)", "undef");
   assert_parsed_expression_simplify_to("quo(_s,1)", "undef");
   assert_parsed_expression_simplify_to("quo(1,_s)", "undef");
-  assert_parsed_expression_simplify_to("randint(_s,1)", "undef");
-  assert_parsed_expression_simplify_to("randint(1,_s)", "undef");
   assert_parsed_expression_simplify_to("re(_s)", "undef");
   assert_parsed_expression_simplify_to("ref(_s)", "undef");
   assert_parsed_expression_simplify_to("rem(_s,1)", "undef");
@@ -792,12 +790,8 @@ QUIZ_CASE(poincare_simplification_random) {
 }
 
 QUIZ_CASE(poincare_simplification_randint) {
-  assert_parsed_expression_simplify_to("1/randint(2,2)+1/2", "1");
-  assert_parsed_expression_simplify_to("randint(1, inf)", "undef");
-  assert_parsed_expression_simplify_to("randint(-inf, 3)", "undef");
-  assert_parsed_expression_simplify_to("randint(4, 3)", "undef");
-  assert_parsed_expression_simplify_to("randint(2, 23345678909876545678)", "undef");
-  assert_parsed_expression_simplify_to("randint(123456789876543, 123456789876543+10)", "undef");
+  // Randint is not simplified
+  assert_parsed_expression_simplify_to("randint(1,3)", "randint(1,3)");
 }
 
 QUIZ_CASE(poincare_simplification_function) {
@@ -1275,8 +1269,6 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
   assert_parsed_expression_simplify_to("permute(5,[[2,3]])", Undefined::Name());
   assert_parsed_expression_simplify_to("product(1,x,[[0,180]],1)", Undefined::Name());
   assert_parsed_expression_simplify_to("product(1,x,1,[[0,180]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("randint([[2,3]],5)", Undefined::Name());
-  assert_parsed_expression_simplify_to("randint(5,[[2,3]])", Undefined::Name());
   assert_parsed_expression_simplify_to("re([[1,i]])", Undefined::Name());
   assert_parsed_expression_simplify_to("round(1.3, [[2.1,3.4]])", Undefined::Name());
   assert_parsed_expression_simplify_to("round(1.3, [[2.1,3.4]])", Undefined::Name());
@@ -1477,7 +1469,6 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("root(2,i+1)", "√(2)×cos(\u001290×ln(2)\u0013/π)-√(2)×sin(\u001290×ln(2)\u0013/π)×i", User, Degree, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("root(2,i+1)", "√(2)×cos(ln(2)/2)-√(2)×sin(ln(2)/2)×i", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("permute(10, 4)", "5040", User, Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("randint(2,2)", "2", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("random()", "random()", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("re(x)", "re(x)", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("round(x,y)", "round(x,y)", User, Radian, MetricUnitFormat, Cartesian);

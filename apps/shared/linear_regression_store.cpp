@@ -25,6 +25,10 @@ LinearRegressionStore::LinearRegressionStore(GlobalContext * context) :
 
 /* Calculations */
 
+double LinearRegressionStore::doubleCastedNumberOfPairsOfSeries(int series) const {
+  return DoublePairStore::numberOfPairsOfSeries(series);
+}
+
 double LinearRegressionStore::squaredOffsettedValueSumOfColumn(int series, int i, bool lnOfSeries, double offset) const {
   return createDatasetFromColumn(series, i, lnOfSeries).offsettedSquaredSum(offset);
 }

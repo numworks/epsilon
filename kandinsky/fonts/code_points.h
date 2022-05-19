@@ -154,6 +154,8 @@ uint32_t CodePoints[] = {
   0x2248,  // ≈ // ALMOST EQUAL TO
   0x2264,  // ≤ // LESS-THAN OR EQUAL TO
   0x2265,  // ≥ // GREATER-THAN OR EQUAL TO
+  0x27E8,  // ⟨ // LEFT ANGLE BRACKET
+  0x27E9,  // ⟩ // RIGHT ANGLE BRACKET
   0xFFFD,  // � // REPLACEMENT CHARACTER
 };
 

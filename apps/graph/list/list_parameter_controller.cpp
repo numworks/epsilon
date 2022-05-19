@@ -41,12 +41,15 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
   m_domainParameterController.setRecord(m_record);
 }
 
-char intervalBracket(double value, bool opening) {
-  return std::isinf(value) == opening ? ']' : '[';
+const char * intervalBracket(double value, bool opening) {
+  if (std::isinf(value)) {
+    return GlobalPreferences::sharedGlobalPreferences()->openIntervalChar(opening);
+  }
+  return opening ? "[" : "]";
 }
 
 int writeInterval(char * buffer, int bufferSize, double min, double max, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
-  return Poincare::Print::customPrintf(buffer, bufferSize, "%c%*.*ed,%*.*ed%c",
+  return Poincare::Print::customPrintf(buffer, bufferSize, "%s%*.*ed,%*.*ed%s",
     intervalBracket(min, true),
     min, mode, numberOfSignificantDigits,
     max, mode, numberOfSignificantDigits,

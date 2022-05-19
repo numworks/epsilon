@@ -28,6 +28,7 @@ public:
   }
 
   // Calculation
+  double doubleCastedNumberOfPairsOfSeries(int series) const;
   double squaredOffsettedValueSumOfColumn(int series, int i, bool lnOfSeries = false, double offset = 0) const;
   double squaredValueSumOfColumn(int series, int i, bool lnOfSeries = false) const;
   double columnProductSum(int series, bool lnOfSeries = false) const;

@@ -578,6 +578,7 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximation_is_bounded("randint(4,45)", 4.0f, 45.0f, true);
   assert_expression_approximation_is_bounded("randint(4,45)", 4.0, 45.0, true);
+  assert_expression_approximates_to<double>("randint(45,4)", Undefined::Name());
 }
 
 QUIZ_CASE(poincare_approximation_trigonometry_functions) {

@@ -24,7 +24,7 @@ public:
 
   constexpr static int k_maxNumberOfColumns = 2;
 protected:
-  int numberOfTableParameters() const { return numberOfPairsOfSeries(0) * k_maxNumberOfColumns; }
+  int numberOfTableParameters() const { return k_maxNumberOfPairs * k_maxNumberOfColumns; }
   bool authorizedParameterAtIndex(double p, int i) const;
   double computeStandardError() const;
   bool validateInputs() { return seriesIsValid(0) && numberOfPairsOfSeries(0) > 2; }

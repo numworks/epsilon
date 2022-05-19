@@ -24,7 +24,7 @@ public:
   // Significance Test: Slope
   const char * hypothesisSymbol() override { return "β"; }
 
-  void compute() override {  }
+  void compute() override;
 
   // Distribution: t
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionT::TestCriticalValueSymbol(font); }

@@ -17,7 +17,7 @@ bool SlopeTStatistic::authorizedParameterAtIndex(double p, int i) const {
 double SlopeTStatistic::computeStandardError() const {
   double n = doubleCastedNumberOfPairsOfSeries(0);
   double xMean = meanOfColumn(0, 0);
-  return std::sqrt((1.0/(n - 2.0)) * leastSquaredSum(0) / squaredOffsettedValueSumOfColumn(0, 0, xMean));
+  return std::sqrt((1.0/(n - 2.0)) * leastSquaredSum(0) / squaredOffsettedValueSumOfColumn(0, 0, false, xMean));
 }
 
 }  // namespace Inference

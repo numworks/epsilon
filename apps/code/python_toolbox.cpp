@@ -185,7 +185,7 @@ const ToolboxMessageTree RandomModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandrange, I18n::Message::PythonRandrange),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandint, I18n::Message::PythonRandint),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandChoice, I18n::Message::PythonChoice),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandom, I18n::Message::PythonRandom, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandom, I18n::Message::RandomFloat, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUniform, I18n::Message::PythonUniform)
 };
 
@@ -398,7 +398,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColorPurple, I18n::Message::PythonColorPurple, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRadians, I18n::Message::PythonRadians),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandint, I18n::Message::PythonRandint),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandom, I18n::Message::PythonRandom, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandom, I18n::Message::RandomFloat, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandomFunction, I18n::Message::PythonRandomFunction, false, I18n::Message::PythonCommandRandomFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandrange, I18n::Message::PythonRandrange),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRangeStartStop, I18n::Message::PythonRangeStartStop),

@@ -89,9 +89,7 @@ void ExponentialModel::specializedInitCoefficientsForFit(double * modelCoefficie
   for (int p = 0; p < numberOfPoints; p++) {
     const double x = store->get(series, 0, p);
     const double z = store->get(series, 1, p) * sign;
-    if (z <= 0) {
-      return Model::specializedInitCoefficientsForFit(modelCoefficients, defaultValue, store, series);
-    }
+    assert(z > 0.0);
     const double y = std::log(z);
     sumOfX += x;
     sumOfY += y;
@@ -120,6 +118,23 @@ double ExponentialModel::partialDerivate(double * modelCoefficients, int derivat
   // Derivate with respect to b: a*x*exp(b*x)
   double a = modelCoefficients[0];
   return a*x*std::exp(b*x);
+}
+
+bool ExponentialModel::dataSuitableForFit(Store * store, int series) const {
+  if (!Model::dataSuitableForFit(store, series)) {
+    return false;
+  }
+  // All Y data must be of the same sign and non-null
+  int numberOfPairs = store->numberOfPairsOfSeries(series);
+  assert(numberOfPairs > 0);
+  bool coefficientsAreNegative = store->get(series, 1, 0) < 0.0;
+  for (int j = 0; j < numberOfPairs; j++) {
+    double value = store->get(series, 1, j);
+    if (value == 0.0 || coefficientsAreNegative != (value < 0.0)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 }

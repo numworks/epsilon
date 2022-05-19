@@ -17,6 +17,7 @@ public:
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 2; }
 protected:
+  bool dataSuitableForFit(Store * store, int series) const override;
   void specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const override;
 private:
   double aebxFormatBValue(double * modelCoefficients) const;

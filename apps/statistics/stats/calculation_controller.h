@@ -53,6 +53,34 @@ private:
    * width from SeparatorEvenOddBufferTextCell. */
   static constexpr KDCoordinate k_calculationCellWidth = Escher::Metric::SmallFontCellWidth(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits), Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth;
 
+  typedef struct {
+    I18n::Message title;
+    I18n::Message symbol;
+    Store::CalculPointer calculationMethod;
+    uint8_t defaultIndex;
+    uint8_t variant1Index;
+  } CalculationRow;
+
+  constexpr static CalculationRow k_calculationRows[] = {
+    // Message, symbol, function, defaultLayout, variant1Layout
+    { I18n::Message::TotalFrequency, I18n::Message::TotalFrequencySymbol, &Store::sumOfOccurrences, 0, 0 },
+    { I18n::Message::Minimum, I18n::Message::MinimumSymbol, &Store::minValue, 1, 1 },
+    { I18n::Message::Maximum, I18n::Message::MaximumSymbol, &Store::maxValue, 2, 5 },
+    { I18n::Message::Range, I18n::Message::RangeSymbol, &Store::range, 3, 6 },
+    { I18n::Message::Mean, I18n::Message::MeanSymbol, &Store::mean, 4, 8},
+    { I18n::Message::StandardDeviation, I18n::Message::StandardDeviationSigmaSymbol, &Store::standardDeviation, 5, 9 },
+    { I18n::Message::Deviation, I18n::Message::DeviationSymbol, &Store::variance, 6, 10 },
+    { I18n::Message::FirstQuartile, I18n::Message::FirstQuartileSymbol, &Store::firstQuartile, 7, 2 },
+    { I18n::Message::ThirdQuartile, I18n::Message::ThirdQuartileSymbol, &Store::thirdQuartile, 8, 4 },
+    { I18n::Message::Median, I18n::Message::MedianSymbol, &Store::median, 9, 3 },
+    { I18n::Message::InterquartileRange, I18n::Message::InterquartileRangeSymbol, &Store::quartileRange, 10, 7 },
+    { I18n::Message::SumValues, I18n::Message::SumValuesSymbol, &Store::sum, 11, 13 },
+    { I18n::Message::SumSquareValues, I18n::Message::SumSquareValuesSymbol, &Store::squaredValueSum, 12, 14 },
+    { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol, &Store::sampleStandardDeviation, 13, 11 },
+    { I18n::Message::SampleVariance, I18n::Message::SampleVarianceSymbol, &Store::sampleVariance, 14, 12 },
+  };
+  int findCellIndex(int i) const;
+
   Shared::DoublePairStore * store() const override { return m_store; }
 
   Shared::StoreTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];

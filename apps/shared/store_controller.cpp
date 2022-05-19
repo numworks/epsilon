@@ -190,7 +190,6 @@ void StoreController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
-  Container::activeApp()->setFirstResponder(&m_dataView);
 }
 
 StackViewController * StoreController::stackController() const {

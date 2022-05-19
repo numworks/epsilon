@@ -57,6 +57,8 @@ public:
   T weightedSum() const;
   T offsettedSquaredSum(T offset) const;
   T squaredSum() const { return offsettedSquaredSum(0.0);}
+  // sum(value(i) - (a + b * dataset.value(i))
+  T squaredSumOffsettedByLinearTransformationOfDataset(StatisticsDataset<T> dataset, double a, double b) const;
 
   T mean() const { return weightedSum() / totalWeight(); }
   /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] - E[X]^2

@@ -16,6 +16,7 @@ app_shared_test_src = $(addprefix apps/shared/,\
   interactive_curve_view_range_delegate.cpp \
   interval.cpp \
   labeled_curve_view.cpp \
+  linear_regression_store.cpp \
   memoized_curve_view_range.cpp \
   poincare_helpers.cpp \
   range_1D.cpp \
@@ -63,7 +64,6 @@ app_shared_src = $(addprefix apps/shared/,\
   interval.cpp \
   interval_parameter_controller.cpp \
   layout_field_delegate.cpp \
-  linear_regression_store.cpp \
   list_parameter_controller.cpp \
   localization_controller.cpp \
   menu_controller.cpp \

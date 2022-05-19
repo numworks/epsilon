@@ -17,12 +17,7 @@ public:
 
   // Table
   void setParameterAtPosition(double value, int row, int column) override { set(value, 0, column, row, false); }
-  double parameterAtPosition(int row, int column) const override {
-    if (row >= numberOfPairsOfSeries(0)) {
-      return NAN;
-    }
-    return get(0, column, row);
-  }
+  double parameterAtPosition(int row, int column) const override;
   void recomputeData() override { updateSeries(0); }
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; }
   int maxNumberOfRows() const override { return k_maxNumberOfPairs; }
@@ -30,10 +25,8 @@ public:
   constexpr static int k_maxNumberOfColumns = 2;
 protected:
   int numberOfTableParameters() const { return numberOfPairsOfSeries(0) * k_maxNumberOfColumns; }
-  bool authorizedParameterAtIndex(double p, int i) const {
-    assert(i == numberOfTableParameters());
-    return SignificanceTest::ValidThreshold(p);
-  }
+  bool authorizedParameterAtIndex(double p, int i) const;
+  double computeStandardError() const;
   bool validateInputs() { return seriesIsValid(0) && numberOfPairsOfSeries(0) > 2; }
 private:
   // Table

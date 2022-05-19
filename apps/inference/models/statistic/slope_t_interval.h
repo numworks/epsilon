@@ -21,7 +21,7 @@ public:
   bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && SlopeTStatistic::authorizedParameterAtIndex(p, i); }
   bool validateInputs() override { return SlopeTStatistic::validateInputs(); }
 
-  void compute() override {  }
+  void compute() override;
 
   // Distribution: t
   const char * estimateSymbol() const override { return "x̅"; }

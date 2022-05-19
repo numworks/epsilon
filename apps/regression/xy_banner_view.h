@@ -6,11 +6,6 @@
 
 namespace Regression {
 
-/* This banner view displays cursor's x and y position as well as (optionally)
- * two other views :
- *  - m_otherView : A buffer text either postionned first or after "y="
- *  - m_displayDataNotSuitable : A message text displayed last */
-
 class XYBannerView : public Shared::BannerView {
 public:
   static constexpr int k_numberOfSubviews = 2;

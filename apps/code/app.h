@@ -65,7 +65,7 @@ public:
 
   VariableBoxController * variableBoxController() { return &m_variableBoxController; }
 
-  static constexpr size_t k_pythonHeapSize = 65536;
+  static constexpr size_t k_pythonHeapSize = 65536; // 64KiB
 
 private:
   App(Snapshot * snapshot);
@@ -75,21 +75,6 @@ private:
    * buffer here and we give to controllers that load Python environment. We
    * also memoize the last Python user to avoid re-initiating MicroPython when
    * unneeded. */
-#if PLATFORM_DEVICE
-  /* On the device, we reach 64K of heap by repurposing the unused tree pool.
-   * The linker must make sure that the pool and the apps buffer are
-   * contiguous. */
-  char * pythonHeap() {
-    char * heap = reinterpret_cast<char *>(Poincare::TreePool::sharedPool());
-    assert(heap && heap + k_pythonHeapSize <= m_pythonHeap + k_pythonHeapExtensionSize);
-    return heap;
-  }
-  static constexpr int k_pythonHeapExtensionSize = k_pythonHeapSize - sizeof(Poincare::TreePool);
-  char m_pythonHeap[k_pythonHeapExtensionSize];
-#else
-  char * pythonHeap() { return m_pythonHeap; }
-  char m_pythonHeap[k_pythonHeapSize];
-#endif
   const void * m_pythonUser;
   ConsoleController m_consoleController;
   Escher::ButtonRowController m_listFooter;
@@ -97,6 +82,27 @@ private:
   Escher::StackViewController m_codeStackViewController;
   PythonToolbox m_toolbox;
   VariableBoxController m_variableBoxController;
+#if PLATFORM_DEVICE
+  /* On the device, we reach 64K of heap by repurposing the unused tree pool.
+   * The linker must make sure that the pool and the apps buffer are
+   * contiguous. */
+  char * pythonHeap() {
+    /* The python heap will be made of the pool plus an additional buffer to
+     * reach 64KiB. We declare the buffer with the length necessary to reach
+     * this size, but in practice the heap will use more space in the Apps
+     * buffer if Code is not the largest app.
+     * We must also make sure in the linker script that the pool is located
+     * right after the Apps buffer. */
+    assert(Poincare::TreePool::sharedPool()->numberOfNodes() == 0);
+    assert(m_pythonHeap + k_pythonHeapSize <= Poincare::TreePool::sharedPool() + sizeof(Poincare::TreePool));
+    return m_pythonHeap;
+  }
+  static constexpr int k_pythonHeapExtensionSize = k_pythonHeapSize - sizeof(Poincare::TreePool);
+  char m_pythonHeap[k_pythonHeapExtensionSize];
+#else
+  char * pythonHeap() { return m_pythonHeap; }
+  char m_pythonHeap[k_pythonHeapSize];
+#endif
 };
 
 }

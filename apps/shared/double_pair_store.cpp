@@ -357,7 +357,7 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
    * This relies on the fact that the lists contain only FloatNodes */
   size_t dataLengthOfSeries = 0;
   for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
-    dataLengthOfSeries += m_dataLists[series][i].sizeOfNode() + (lengthOfColumn(series, i) > 0 ? m_dataLists[series][i].childAtIndex(i).sizeOfNode() * lengthOfColumn(series, i) : 0);
+    dataLengthOfSeries += m_dataLists[series][i].sizeOfNode() + (lengthOfColumn(series, i) > 0 ? m_dataLists[series][i].childAtIndex(0).sizeOfNode() * lengthOfColumn(series, i) : 0);
   }
   /* Assert that the computed size is the real size.
    * It can be false if not all elements are floatNode for example.

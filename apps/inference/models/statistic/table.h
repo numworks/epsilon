@@ -24,6 +24,7 @@ public:
     int row;
     int col;
   };
+  Index2D indexToIndex2D(int index) const;
   Index2D computeDimensions() const;
 
   constexpr static float k_undefinedValue = NAN;
@@ -31,7 +32,6 @@ public:
 protected:
   Index2D computeInnerDimensions() const;
   virtual Index2D initialDimensions() const = 0;
-  Index2D indexToIndex2D(int index) const;
   int index2DToIndex(Index2D indexes) const;
   int index2DToIndex(int row, int column) const;
 };

@@ -160,6 +160,7 @@ private:
   double m_firstDrawnBarAbscissa;
   // Sorted value indexes are memoized to save computation
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
+  /* The dataset memoizes the sorted indexes */
   Poincare::StatisticsDataset<double> m_datasets[k_numberOfSeries];
   /* Memoizing the max number of modes because the CalculationControllers needs
    * it in numberOfRows(), which is used a lot. */

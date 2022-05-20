@@ -35,7 +35,7 @@ public:
   KDCoordinate prefaceMargin(Escher::TableView * preface) override;
 
 private:
-  static constexpr int k_fixedNumberOfRows = 16;
+  static constexpr int k_fixedNumberOfRows = 17;
   static constexpr int k_numberOfCalculationCells = 3 * k_maxNumberOfDisplayableRows;
   static constexpr int k_numberOfSeriesTitleCells = 3;
   static constexpr int k_numberOfCalculationTitleCells = k_maxNumberOfDisplayableRows;

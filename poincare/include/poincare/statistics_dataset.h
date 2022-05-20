@@ -77,7 +77,10 @@ public:
   int medianIndex(int * upperIndex = nullptr) const { return indexAtCumulatedFrequency(1.0/2.0, upperIndex); }
 
 private:
-  int datasetLength() const { return m_weights == nullptr ? m_values->length() : std::max(m_values->length(), m_weights->length()); }
+  int datasetLength() const {
+    assert(m_weights == nullptr || m_weights->length() == m_values->length());
+    return m_values->length();
+  }
   T valueAtIndex(int index) const;
   T weightAtIndex(int index) const;
   void buildSortedIndex() const;

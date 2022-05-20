@@ -75,23 +75,6 @@ T StatisticsDataset<T>::offsettedSquaredSum(T offset) const {
 }
 
 template<typename T>
-T StatisticsDataset<T>::mean() const {
-  return weightedSum() / totalWeight();
-}
-
-template<typename T>
-T StatisticsDataset<T>::variance() const {
-  /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] - E[X]^2
-   * to ensure a positive result and to minimize rounding errors */
-  return offsettedSquaredSum(mean()) / totalWeight();
-}
-
-template<typename T>
-T StatisticsDataset<T>::standardDeviation() const {
-  return std::sqrt(variance());
-}
-
-template<typename T>
 T StatisticsDataset<T>::sampleStandardDeviation() const {
   T weight = totalWeight();
   return std::sqrt(weight / (weight - 1.0)) * standardDeviation();
@@ -111,17 +94,6 @@ T StatisticsDataset<T>::sortedElementAtCumulatedWeight(T weight, bool createMidd
     return (valueAtIndex(lowerIndex) + valueAtIndex(upperIndex)) / 2.0;
   }
   return valueAtIndex(lowerIndex);
-}
-
-template<typename T>
-T StatisticsDataset<T>::median() const {
-  return sortedElementAtCumulatedFrequency(1.0/2.0, true);
-}
-
-template<typename T>
-int StatisticsDataset<T>::indexAtCumulatedFrequency(T freq, int * upperIndex) const {
-  assert(freq >= 0.0 && freq <= 1.0);
-  return indexAtCumulatedWeight(freq * totalWeight(), upperIndex);
 }
 
 template<typename T>
@@ -161,11 +133,6 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight, int * upperIndex) con
     *upperIndex = indexAtSortedIndex(elementSortedIndex);
   }
   return indexAtSortedIndex(elementSortedIndex);
-}
-
-template<typename T>
-int StatisticsDataset<T>::medianIndex(int * upperIndex) const {
-  return indexAtCumulatedFrequency(1.0/2.0, upperIndex);
 }
 
 int getIntFromBasedInteger(Expression e) {

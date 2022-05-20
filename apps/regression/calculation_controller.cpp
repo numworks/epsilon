@@ -19,6 +19,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   DoublePairTableController(parentResponder, header),
   m_store(store)
 {
+  m_selectableTableView.setDelegate(this);
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
   m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);

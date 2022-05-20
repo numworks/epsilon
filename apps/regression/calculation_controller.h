@@ -8,6 +8,7 @@
 #include "column_title_cell.h"
 #include "even_odd_double_buffer_text_cell_with_separator.h"
 #include <apps/shared/hideable_even_odd_cell.h>
+#include <apps/shared/prefaced_table_view.h>
 #include <apps/shared/separator_even_odd_buffer_text_cell.h>
 #include <apps/shared/store_cell.h>
 #include <apps/shared/double_pair_table_controller.h>
@@ -16,7 +17,7 @@ namespace Regression {
 
 constexpr static KDCoordinate maxCoordinate(KDCoordinate a, KDCoordinate b) { return a > b ? a : b; }
 
-class CalculationController : public Shared::DoublePairTableController, public Escher::SelectableTableViewDelegate {
+class CalculationController : public Shared::DoublePairTableController, public Escher::SelectableTableViewDelegate, public Shared::PrefacedTableView::MarginDelegate {
 
 public:
   CalculationController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Store * store);
@@ -27,6 +28,9 @@ public:
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
+  // ViewController
+  Escher::View * view() override { return &m_tableView; }
+
   // TableViewDataSource
   int numberOfRows() const override;
   int numberOfColumns() const override;
@@ -35,6 +39,9 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
+
+  // MarginDelegate
+  KDCoordinate prefaceMargin(Escher::TableView * preface) override;
 private:
   constexpr static int k_totalNumberOfDoubleBufferRows = 6;
   constexpr static int k_numberOfDoubleCalculationCells = Store::k_numberOfSeries * k_totalNumberOfDoubleBufferRows;
@@ -44,7 +51,9 @@ private:
   constexpr static int k_doubleBufferCalculationCellType = 2;
   constexpr static int k_standardCalculationCellType = 3;
   static constexpr int k_hideableCellType = 4;
+  constexpr static int k_symbolCalculationTitleCellType = 5;
   static constexpr int k_regressionCellIndex = 10;
+  static constexpr int k_numberOfHeaderColumns = 2; // Title & Symbol
 
   static constexpr KDCoordinate k_titleCalculationCellWidth = Ion::Display::Width/2 - Escher::Metric::CommonRightMargin/2 - Escher::Metric::CommonLeftMargin/2;
   /* Separator and margins from EvenOddCell::layoutSubviews (and derived classes
@@ -68,11 +77,13 @@ private:
   bool shouldSeriesDisplay(int series, DisplayCondition condition) const;
   int maxNumberOfCoefficients() const;
 
+  Shared::PrefacedTableView m_tableView;
   Escher::EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
+  Escher::EvenOddMessageTextCell m_titleSymbolCells[k_maxNumberOfDisplayableRows];
   ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
-  Shared::HideableEvenOddCell m_hideableCell;
+  Shared::HideableEvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   Store * m_store;
 };
 

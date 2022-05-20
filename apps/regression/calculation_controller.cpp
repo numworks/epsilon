@@ -17,12 +17,13 @@ namespace Regression {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   DoublePairTableController(parentResponder, header),
+  m_tableView(1, this, &m_selectableTableView, this, this),
   m_store(store)
 {
-  m_selectableTableView.setDelegate(this);
-  m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_tableView.setCellOverlap(0, 0);
+  m_tableView.setBackgroundColor(Palette::WallScreenDark);
+  m_tableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_tableView.setMarginDelegate(this);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     m_columnTitleCells[i].setParentResponder(&m_selectableTableView);
   }
@@ -30,9 +31,14 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_doubleCalculationCells[i].setParentResponder(&m_selectableTableView);
   }
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
+    m_titleCells[i].setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
     m_titleCells[i].setMessageFont(KDFont::SmallFont);
+    m_titleSymbolCells[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
+    m_titleSymbolCells[i].setMessageFont(KDFont::SmallFont);
   }
-  m_hideableCell.setHide(true);
+  for (int i = 0; i < k_numberOfHeaderColumns; i++) {
+    m_hideableCell[i].setHide(true);
+  }
 }
 
 void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
@@ -45,15 +51,15 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
    * the selection comes. This trick does not create an endless loop as the
    * previous cell cannot be the top left corner cell if it also is the
    * selected one. */
-  if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
-    if (previousSelectedCellX == 0 && previousSelectedCellY == 1) {
+  if (t->selectedRow() == 0 && t->selectedColumn() <= 1) {
+    if (previousSelectedCellX <= 1 && previousSelectedCellY == 1) {
       selectableTableView()->deselectTable();
       Container::activeApp()->setFirstResponder(tabController());
     } else {
-      t->selectCellAtLocation(0, 1);
+      t->selectCellAtLocation(selectedColumn(), 1);
     }
   }
-  if (t->selectedColumn() > 0 && t->selectedRow() >= 0 && t->selectedRow() <= k_totalNumberOfDoubleBufferRows) {
+  if (t->selectedColumn() > 1 && t->selectedRow() >= 0 && t->selectedRow() <= k_totalNumberOfDoubleBufferRows) {
     // If we are on a double text cell, we have to choose which subcell to select
     EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)t->selectedCell();
     // Default selected subcell is the left one
@@ -78,11 +84,11 @@ int CalculationController::numberOfRows() const {
 }
 
 int CalculationController::numberOfColumns() const {
-  return 1 + m_store->numberOfValidSeries();
+  return 2 + m_store->numberOfValidSeries();
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  if (i == 0 && j == 0) {
+  if (i <= 1 && j == 0) {
     return;
   }
   EvenOddCell * myCell = static_cast<EvenOddCell *>(cell);
@@ -91,25 +97,24 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 
   const int numberRows = numberOfRows();
   const int numberOfRowsBeforeCoefficients = k_regressionCellIndex + hasSeriesDisplaying(&DisplayRegression) - 1;
-  // Calculation title
-  if (i == 0) {
+  // Calculation title and symbols
+  if (i <= 1) {
     EvenOddMessageTextCell * myCell = static_cast<EvenOddMessageTextCell *>(cell);
-    myCell->setTextColor(KDColorBlack);
-    myCell->setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
+    myCell->setTextColor(i == 1 ? Palette::GrayDark : KDColorBlack);
     if (j <= numberOfRowsBeforeCoefficients) {
-      I18n::Message titles[k_regressionCellIndex] = {
-        I18n::Message::Mean,
-        I18n::Message::Sum,
-        I18n::Message::SquareSum,
-        I18n::Message::StandardDeviation,
-        I18n::Message::Deviation,
-        I18n::Message::SampleStandardDeviationS,
-        I18n::Message::NumberOfDots,
-        I18n::Message::Covariance,
-        I18n::Message::Sxy,
-        I18n::Message::Regression,
+      I18n::Message titles[k_regressionCellIndex][k_numberOfHeaderColumns] = {
+        { I18n::Message::Mean, I18n::Message::A },
+        { I18n::Message::Sum, I18n::Message::A },
+        { I18n::Message::SquareSum, I18n::Message::A },
+        { I18n::Message::StandardDeviation, I18n::Message::A },
+        { I18n::Message::Deviation, I18n::Message::A },
+        { I18n::Message::SampleStandardDeviationS, I18n::Message::A}
+        { I18n::Message::NumberOfDots, I18n::Message::A },
+        { I18n::Message::Covariance, I18n::Message::A },
+        { I18n::Message::Sxy, I18n::Message::A },
+        { I18n::Message::Regression, I18n::Message::A }
       };
-      myCell->setMessage(titles[j-1]);
+      myCell->setMessage(titles[j-1][i]);
       return;
     }
     // R cannot be displayed without R2
@@ -126,11 +131,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
 
-  size_t seriesNumber = m_store->indexOfKthValidSeries(i - 1);
+  size_t seriesNumber = m_store->indexOfKthValidSeries(i - k_numberOfHeaderColumns);
   assert(seriesNumber < DoublePairStore::k_numberOfSeries);
 
   // Coordinate and series title
-  if (j == 0 && i > 0) {
+  if (j == 0 && i > 1) {
     ColumnTitleCell * myCell = static_cast<ColumnTitleCell *>(cell);
     char buffer[Shared::EditableCellTableViewController::k_maxSizeOfColumnName];
     m_store->fillColumnName(seriesNumber, 0, buffer);
@@ -144,7 +149,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 
   // Calculation cell
   const int numberSignificantDigits = Preferences::VeryLargeNumberOfSignificantDigits;
-  if (i > 0 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
+  if (i > 1 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
     ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {
       &Store::meanOfColumn,
       &Store::sumOfColumn,
@@ -166,13 +171,13 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
   SeparatorEvenOddBufferTextCell * bufferCell = static_cast<SeparatorEvenOddBufferTextCell *>(cell);
   bufferCell->setTextColor(KDColorBlack);
-  if (i > 0 && j == k_regressionCellIndex) {
+  if (i > 1 && j == k_regressionCellIndex) {
     Model * model = m_store->modelForSeries(seriesNumber);
     I18n::Message message = shouldSeriesDisplay(seriesNumber, &DisplayRegression) ? model->formulaMessage() : I18n::Message::Dash;
     bufferCell->setText(I18n::translate(message));
     return;
   }
-  if (i > 0 && j > k_totalNumberOfDoubleBufferRows && j < k_regressionCellIndex) {
+  if (i > 1 && j > k_totalNumberOfDoubleBufferRows && j < k_regressionCellIndex) {
     assert(j != k_regressionCellIndex);
     double calculation = 0;
     const int calculationIndex = j-k_totalNumberOfDoubleBufferRows-1;
@@ -190,7 +195,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     bufferCell->setText(buffer);
     return;
   }
-  if (i > 0 && j > k_totalNumberOfDoubleBufferRows) {
+  if (i > 1 && j > k_totalNumberOfDoubleBufferRows) {
     assert(j > numberOfRowsBeforeCoefficients);
     int maxNumberCoefficients = maxNumberOfCoefficients();
 
@@ -246,7 +251,11 @@ KDCoordinate CalculationController::columnWidth(int i) {
   if (i == 0) {
     return k_titleCalculationCellWidth;
   }
-  Model::Type currentType = m_store->seriesRegressionType(m_store->indexOfKthValidSeries(i-1));
+  if (i == 1) {
+    // TODO; Clean this
+    return 20;
+  }
+  Model::Type currentType = m_store->seriesRegressionType(m_store->indexOfKthValidSeries(i - k_numberOfHeaderColumns));
   if (currentType == Model::Type::Quartic) {
     return k_quarticCalculationCellWidth;
   }
@@ -261,6 +270,10 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
     return &m_titleCells[index];
   }
+  if (type == k_symbolCalculationTitleCellType) {
+    assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
+    return &m_titleSymbolCells[index];
+  }
   if (type == k_columnTitleCellType) {
     assert(index >= 0 && index < Store::k_numberOfSeries);
     return &m_columnTitleCells[index];
@@ -270,14 +283,15 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
     return &m_doubleCalculationCells[index];
   }
   if (type == k_hideableCellType) {
-    return &m_hideableCell;
+    assert(index >= 0 && index < k_numberOfHeaderColumns);
+    return &m_hideableCell[index];
   }
   assert(index >= 0 && index < k_numberOfCalculationCells);
   return &m_calculationCells[index];
 }
 
 int CalculationController::reusableCellCount(int type) {
-  if (type == k_standardCalculationTitleCellType) {
+  if (type == k_standardCalculationTitleCellType || type == k_symbolCalculationTitleCellType) {
     return k_maxNumberOfDisplayableRows;
   }
   if (type == k_columnTitleCellType) {
@@ -287,18 +301,21 @@ int CalculationController::reusableCellCount(int type) {
     return k_numberOfDoubleCalculationCells;
   }
   if (type == k_hideableCellType) {
-    return 1;
+    return 2;
   }
   assert(type == k_standardCalculationCellType);
   return k_numberOfCalculationCells;
 }
 
 int CalculationController::typeAtLocation(int i, int j) {
-  if (i == 0 && j == 0) {
+  if (i <= 1 && j == 0) {
     return k_hideableCellType;
   }
   if (i == 0) {
     return k_standardCalculationTitleCellType;
+  }
+  if (i == 1) {
+    return k_symbolCalculationTitleCellType;
   }
   if (j == 0) {
     return k_columnTitleCellType;
@@ -331,6 +348,22 @@ int CalculationController::maxNumberOfCoefficients() const {
     maxNumberCoefficients = std::max(maxNumberCoefficients, currentNumberOfCoefs);
   }
   return maxNumberCoefficients;
+}
+
+KDCoordinate CalculationController::prefaceMargin(Escher::TableView * preface) {
+  KDCoordinate prefaceRightSide = offset().x() + (preface->bounds().isEmpty() ? preface->minimalSizeForOptimalDisplay().width() : 0);
+
+  for (int i = 0; i < numberOfColumns(); i++) {
+    constexpr KDCoordinate maxMargin = Escher::Metric::TableSeparatorThickness;
+    KDCoordinate delta = prefaceRightSide - cumulatedWidthFromIndex(i);
+    if (delta < 0) {
+      return maxMargin;
+    } else if (delta <= maxMargin) {
+      return delta;
+    }
+  }
+  assert(false);
+  return 0;
 }
 
 }

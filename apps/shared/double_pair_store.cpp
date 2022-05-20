@@ -16,8 +16,7 @@ namespace Shared {
 
 DoublePairStore::DoublePairStore(GlobalContext * context) :
   m_validSeries{false,false,false},
-  m_context(context),
-  m_updateFlag(0)
+  m_context(context)
 {
   for (int s = 0; s < k_numberOfSeries; s++) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
@@ -29,8 +28,6 @@ DoublePairStore::DoublePairStore(GlobalContext * context) :
 void DoublePairStore::initListsFromStorage() {
   char listName[k_columnNamesLength + 1];
   for (int s = 0; s < k_numberOfSeries; s++) {
-    // Prevent update before the whole series is filled.
-    preventUpdate();
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
       // Get the data of X1, Y1, X2, Y2, V1, V2, etc. from storage
       fillColumnName(s, i, listName);
@@ -43,9 +40,8 @@ void DoublePairStore::initListsFromStorage() {
       if (e.type() != ExpressionNode::Type::List) {
         continue;
       }
-      setList(static_cast<List &>(e), s, i);
+      setList(static_cast<List &>(e), s, i, true);
     }
-    enableUpdate();
     updateSeries(s);
   }
 }
@@ -87,7 +83,7 @@ double DoublePairStore::get(int series, int i, int j) const {
   return static_cast<Float<double> &>(child).value();
 }
 
-void DoublePairStore::set(double f, int series, int i, int j, bool setOtherColumnToDefaultIfEmpty) {
+void DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate, bool setOtherColumnToDefaultIfEmpty) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (j >= k_maxNumberOfPairs) {
     return;
@@ -101,21 +97,18 @@ void DoublePairStore::set(double f, int series, int i, int j, bool setOtherColum
   } else {
     m_dataLists[series][i].replaceChildAtIndexInPlace(j, Float<double>::Builder(f));
   }
-  preventUpdate();
   int otherI = i == 0 ? 1 : 0;
   if (setOtherColumnToDefaultIfEmpty && j >= lengthOfColumn(series, otherI)) {
-    set(defaultValue(series, otherI, j), series, otherI, j, false);
+    set(defaultValue(series, otherI, j), series, otherI, j, true, false);
   }
-  enableUpdate();
-  updateSeries(series);
+  updateSeries(series, delayUpdate);
 }
 
-void DoublePairStore::setList(List list, int series, int i) {
+void DoublePairStore::setList(List list, int series, int i, bool delayUpdate) {
   /* Approximate the list to turn it into list of doubles since we do not
    * want to work with exact expressions in Regression and Statistics.*/
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i ==1);
-  preventUpdate();
   int newListLength = std::max(list.numberOfChildren(), m_dataLists[series][i].numberOfChildren());
   for (int j = 0; j < newListLength; j++) {
     if (j >= list.numberOfChildren()) {
@@ -123,10 +116,9 @@ void DoublePairStore::setList(List list, int series, int i) {
       continue;
     }
     double evaluation = PoincareHelpers::ApproximateToScalar<double>(list.childAtIndex(j), m_context);
-    set(evaluation, series, i, j);
+    set(evaluation, series, i, j, true);
   }
-  enableUpdate();
-  updateSeries(series);
+  updateSeries(series, delayUpdate);
 }
 
 int DoublePairStore::numberOfPairs() const {
@@ -137,59 +129,51 @@ int DoublePairStore::numberOfPairs() const {
   return result;
 }
 
-bool DoublePairStore::deleteValueAtIndex(int series, int i, int j) {
+bool DoublePairStore::deleteValueAtIndex(int series, int i, int j, bool delayUpdate) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(j >= 0 && j < numberOfPairsOfSeries(series));
   int otherI = (i + 1) % k_numberOfColumnsPerSeries;
   bool willDeletePair = std::isnan(get(series, otherI, j));
-  set(NAN, series, i, j);
+  set(NAN, series, i, j, delayUpdate);
   return willDeletePair;
 }
 
-void DoublePairStore::deletePairOfSeriesAtIndex(int series, int j) {
-  preventUpdate();
-  set(NAN, series, 0, j);
-  set(NAN, series, 1, j);
-  enableUpdate();
-  updateSeries(series);
+void DoublePairStore::deletePairOfSeriesAtIndex(int series, int j, bool delayUpdate) {
+  set(NAN, series, 0, j, true);
+  set(NAN, series, 1, j, true);
+  updateSeries(series, delayUpdate);
 }
 
-void DoublePairStore::deleteAllPairsOfSeries(int series) {
+void DoublePairStore::deleteAllPairsOfSeries(int series, bool delayUpdate) {
   assert(series >= 0 && series < k_numberOfSeries);
-  preventUpdate();
   for (int i = 0 ; i < k_numberOfColumnsPerSeries ; i++) {
-    deleteColumn(series, i);
+    deleteColumn(series, i, true);
   }
-  enableUpdate();
-  updateSeries(series);
+  updateSeries(series, delayUpdate);
 }
 
-void DoublePairStore::deleteAllPairs() {
+void DoublePairStore::deleteAllPairs(bool delayUpdate) {
   for (int i = 0; i < k_numberOfSeries; i ++) {
-    deleteAllPairsOfSeries(i);
+    deleteAllPairsOfSeries(i, delayUpdate);
   }
 }
 
-void DoublePairStore::deleteColumn(int series, int i) {
+void DoublePairStore::deleteColumn(int series, int i, bool delayUpdate) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
-  preventUpdate();
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    deleteValueAtIndex(series, i, k);
+    deleteValueAtIndex(series, i, k, true);
   }
-  enableUpdate();
-  updateSeries(series);
+  updateSeries(series, delayUpdate);
 }
 
-void DoublePairStore::resetColumn(int series, int i) {
+void DoublePairStore::resetColumn(int series, int i, bool delayUpdate) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
-  preventUpdate();
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    set(defaultValue(series, i, k), series, i, k);
+    set(defaultValue(series, i, k), series, i, k, true);
   }
-  enableUpdate();
-  updateSeries(series);
+  updateSeries(series, delayUpdate);
 }
 
 bool DoublePairStore::seriesIsValid(int series) const {
@@ -249,7 +233,7 @@ int DoublePairStore::indexOfKthValidSeries(int k, ValidSeries validSeries) const
   return 0;
 }
 
-void DoublePairStore::sortColumn(int series, int column) {
+void DoublePairStore::sortColumn(int series, int column, bool delayUpdate) {
   assert(column == 0 || column == 1);
   static Poincare::Helpers::Swap swapRows = [](int a, int b, void * ctx, int numberOfElements) {
     // Swap X and Y values
@@ -258,10 +242,10 @@ void DoublePairStore::sortColumn(int series, int column) {
     int * series = reinterpret_cast<int *>(pack[1]);
     double dataAx = store->get(*series, 0, a);
     double dataAy = store->get(*series, 1, a);
-    store->set(store->get(*series, 0, b), *series, 0, a);
-    store->set(store->get(*series, 1, b), *series, 1, a);
-    store->set(dataAx, *series, 0, b);
-    store->set(dataAy, *series, 1, b);
+    store->set(store->get(*series, 0, b), *series, 0, a, true);
+    store->set(store->get(*series, 1, b), *series, 1, a, true);
+    store->set(dataAx, *series, 0, b, true);
+    store->set(dataAy, *series, 1, b, true);
   };
   static Poincare::Helpers::Compare compare = [](int a, int b, void * ctx, int numberOfElements)->bool{
     void ** pack = reinterpret_cast<void **>(ctx);
@@ -272,11 +256,9 @@ void DoublePairStore::sortColumn(int series, int column) {
     double dataB = store->get(*series, *column, b);
     return dataA >= dataB || std::isnan(dataA);
   };
-  preventUpdate();
   void * context[] = { const_cast<DoublePairStore *>(this), &series, &column };
   Poincare::Helpers::Sort(swapRows, compare, context, numberOfPairsOfSeries(series));
-  enableUpdate();
-  updateSeries(series);
+  updateSeries(series, delayUpdate);
 }
 
 void DoublePairStore::sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const {
@@ -375,9 +357,9 @@ double DoublePairStore::defaultValue(int series, int i, int j) const {
 }
 
 
-void DoublePairStore::updateSeries(int series) {
+void DoublePairStore::updateSeries(int series, bool delayUpdate) {
   assert(series >= 0 && series < k_numberOfSeries);
-  if (m_updateFlag > 0) {
+  if (delayUpdate) {
     return;
   }
   deleteTrailingUndef(series, 0);

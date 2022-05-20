@@ -443,8 +443,8 @@ double Store::computeModes(int series, int i, double * modeFreq, int * modesTota
   return ithValue;
 }
 
-bool Store::deleteValueAtIndex(int series, int i, int j) {
-  deletePairOfSeriesAtIndex(series, j);
+bool Store::deleteValueAtIndex(int series, int i, int j, bool delayUpdate) {
+  deletePairOfSeriesAtIndex(series, j, delayUpdate);
   return true;
 }
 
@@ -464,10 +464,10 @@ double Store::defaultValue(int series, int i, int j) const {
   return (i == 0 && j > 1) ? 2 * get(series, i, j-1) - get(series, i, j-2) : 1.0;
 }
 
-void Store::updateSeries(int series) {
+void Store::updateSeries(int series, bool delayUpdate) {
   m_sortedIndexValid[series] = false;
   m_memoizedMaxNumberOfModes = 0;
-  DoublePairStore::updateSeries(series);
+  DoublePairStore::updateSeries(series, delayUpdate);
 }
 
 double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUpperBound) const {

@@ -330,6 +330,12 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
    * built consecutively in init(). So to compute the CRC32 of a series, we
    * just need to compute the CRC32 of the bytes at the adress of the first
    * column, with a length of the two column combined.
+   * WARNING: The pool is not packed so it might be noisy. So if your object
+   * changed, this changes, but if this changes, it does not mean
+   * automatically that your object change.
+   * This is not a problem for now since we use the CRC32 to know if we have
+   * to recompute the graph, the calculations, etc, not to ensure an object
+   * equality.
    * */
   // Assert that the two columns are consecutive in pool.
    assert((char *)(m_dataLists[series][0].addressInPool()) + m_dataLists[series][0].size() / sizeof(char) == (char *)m_dataLists[series][1].addressInPool());

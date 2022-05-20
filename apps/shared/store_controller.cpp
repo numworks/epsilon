@@ -205,7 +205,7 @@ bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  m_store->set(floatBody, m_store->seriesAtColumn(columnIndex), m_store->relativeColumnIndex(columnIndex), rowIndex-1, true);
+  m_store->set(floatBody, m_store->seriesAtColumn(columnIndex), m_store->relativeColumnIndex(columnIndex), rowIndex-1, false, true);
   return true;
 }
 

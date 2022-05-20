@@ -56,7 +56,7 @@ public:
   T totalWeight() const;
   T weightedSum() const;
   T offsettedSquaredSum(T offset) const;
-  T squaredSum() const { return offsettedSquaredSum((T)0.0);}
+  T squaredSum() const { return offsettedSquaredSum(0.0);}
 
   T mean() const;
   T variance() const;

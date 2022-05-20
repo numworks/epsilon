@@ -66,6 +66,7 @@ public:
   static Float Builder(T value);
   constexpr static T EpsilonLax();
   constexpr static T Epsilon();
+  constexpr static T SqrtEpsilonLax();
   constexpr static T Min();
   constexpr static T Max();
   T value() const { return node()->value(); }
@@ -88,6 +89,8 @@ template <> constexpr inline float Float<float>::EpsilonLax() { return 1E-6f; }
 template <> constexpr inline double Float<double>::EpsilonLax() { return 1E-15; }
 template <> constexpr inline float Float<float>::Epsilon() { return FLT_EPSILON; }
 template <> constexpr inline double Float<double>::Epsilon() { return DBL_EPSILON; }
+template <> constexpr inline float Float<float>::SqrtEpsilonLax() { return 1e-3f; }
+template <> constexpr inline double Float<double>::SqrtEpsilonLax() { return 3e-8f; }
 template <> constexpr inline float Float<float>::Min() { return FLT_MIN; }
 template <> constexpr inline double Float<double>::Min() { return DBL_MIN; }
 template <> constexpr inline float Float<float>::Max() { return FLT_MAX; }

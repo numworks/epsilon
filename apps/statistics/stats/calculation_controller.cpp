@@ -34,8 +34,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_calculationModeSymbolCells[i].setFont(KDFont::SmallFont);
   }
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
-    m_hideableCell[0].setHide(true);
-    m_hideableCell[1].setHide(true);
+    m_hideableCell[i].setHide(true);
   }
 }
 
@@ -109,7 +108,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       message = modeFrequencyTitles[i];
     }
     EvenOddMessageTextCell * calcTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
-    calcTitleCell->setMessage(message, (i == 1 ? Palette::GrayDark : KDColorBlack));
+    calcTitleCell->setTextColor(i == 1 ? Palette::GrayDark : KDColorBlack);
+    calcTitleCell->setMessage(message);
     return;
   }
   case k_calculationCellType: {

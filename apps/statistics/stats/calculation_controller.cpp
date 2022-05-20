@@ -96,6 +96,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       { I18n::Message::SumValues, I18n::Message::SumValuesSymbol },
       { I18n::Message::SumSquareValues, I18n::Message::SumSquareValuesSymbol },
       { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol },
+      { I18n::Message::SampleVariance, I18n::Message::SampleVarianceSymbol },
     };
     I18n::Message message;
     int messageIndex = j - 1;
@@ -115,7 +116,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     // Display a calculation cell
     Store::CalculPointer calculationMethods[k_fixedNumberOfRows - 2] = {&Store::sumOfOccurrences, &Store::minValue,
       &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
-      &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
+      &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation, &Store::sampleVariance};
     int seriesIndex = m_store->indexOfKthValidSeries(i-2);
     double calculation;
     EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);

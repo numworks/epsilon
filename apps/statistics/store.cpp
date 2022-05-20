@@ -249,6 +249,11 @@ double Store::sampleStandardDeviation(int series) const {
   return s*standardDeviation(series);
 }
 
+double Store::sampleVariance(int series) const {
+  double sampleStddev = sampleStandardDeviation(series);
+  return sampleStddev * sampleStddev;
+}
+
 /* Below is the equivalence between quartiles and cumulated population, for the
  * international definition of quartiles (as medians of the lower and upper
  * half-lists). Let N be the total population, and k an integer.

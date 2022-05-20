@@ -29,10 +29,10 @@ public:
   void compute() override { OneProportion::ComputeTest(this); }
 
   // Estimates
-  int numberOfEstimates() const override { return 1; };
-  double estimateValue(int index) override { return OneProportion::X(parametersArray()) / OneProportion::N(parametersArray()); };
+  int numberOfEstimates() const override { return 1; }
+  double estimateValue(int index) override { return OneProportion::X(parametersArray()) / OneProportion::N(parametersArray()); }
   Poincare::Layout estimateLayout(int index) const override { return OneProportion::EstimateLayout(&m_estimateLayout); }
-  I18n::Message estimateDescription(int index) override { return OneProportion::EstimateDescription(); };
+  I18n::Message estimateDescription(int index) override { return OneProportion::EstimateDescription(); }
 
   // Distribution: z
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionZ::TestCriticalValueSymbol(font); }

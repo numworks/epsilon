@@ -20,19 +20,21 @@ StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(const ExpressionNod
     }
     evaluationArray[i] = static_cast<ListComplex<T> &>(childEval);
   }
+  if (n > 1 && evaluationArray[0].numberOfChildren() != evaluationArray[1].numberOfChildren()) {
+    return StatisticsDataset<T>();
+  }
   return n == 1 ? StatisticsDataset<T>(&evaluationArray[0]) : StatisticsDataset<T>(&evaluationArray[0], &evaluationArray[1]);
 }
 
 template<typename T>
 T StatisticsDataset<T>::valueAtIndex(int index) const {
-  if (index < 0 || index >= m_values->length()) {
-    return NAN;
-  }
+  assert(index >= 0 && index < m_values->length());
   return m_lnOfValues ? log(m_values->valueAtIndex(index)) : m_values->valueAtIndex(index);
 }
 
 template<typename T>
 T StatisticsDataset<T>::weightAtIndex(int index) const {
+  assert(m_weights == nullptr || (index >= 0 && index < m_weights->length()));
   if (std::isnan(valueAtIndex(index))) {
     return NAN;
   }
@@ -40,7 +42,7 @@ T StatisticsDataset<T>::weightAtIndex(int index) const {
     return 1.0;
   }
   // All weights must be positive.
-  return index >= 0 && index < m_weights->length() && m_weights->valueAtIndex(index) >= 0.0 ? m_weights->valueAtIndex(index) : NAN;
+  return m_weights->valueAtIndex(index) >= 0.0 ? m_weights->valueAtIndex(index) : NAN;
 }
 
 template<typename T>

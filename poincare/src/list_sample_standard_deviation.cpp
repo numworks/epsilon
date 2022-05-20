@@ -6,6 +6,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/statistics_dataset.h>
 #include <poincare/square_root.h>
 
@@ -40,11 +41,8 @@ Expression ListSampleStandardDeviation::shallowReduce(ExpressionNode::ReductionC
   int n = numberOfChildren();
   assert(n <= 2);
   Expression children[2];
-  for (int i = 0; i < n; i++) {
-    children[i] = childAtIndex(i);
-    if (children[i].type() != ExpressionNode::Type::List || children[i].numberOfChildren() == 0) {
-      return replaceWithUndefinedInPlace();
-    }
+  if (!SimplificationHelper::allChildrenAreNonEmptyLists(*this, children)) {
+    return replaceWithUndefinedInPlace();
   }
   // Sample sttdev = sttdev * sqrt(weights / weights - 1)
   Expression correctionFactor;

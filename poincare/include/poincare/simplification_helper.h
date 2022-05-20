@@ -30,6 +30,8 @@ public:
   /* This method should be called only on expressions which have all their
    * children reduced */
   static Expression distributeReductionOverLists(Expression e, ExpressionNode::ReductionContext reductionContext);
+
+  static bool allChildrenAreNonEmptyLists(Expression e, Expression memoizedChildren[]);
 };
 }
 

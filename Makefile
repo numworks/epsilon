@@ -4,7 +4,7 @@
 # Define the default recipe
 default:
 
-# Define a phony target with no rule. Targets that depend on it will alwaysr
+# Define a phony target with no rule. Targets that depend on it will always
 # be remade
 .PHONY: force_remake
 

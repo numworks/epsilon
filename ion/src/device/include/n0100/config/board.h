@@ -16,7 +16,13 @@ namespace Device {
 namespace Board {
 namespace Config {
 
-/* Internal flash */
+/* Internal flash
+ * |                     INTERNAL FLASH                        |
+ * | 16K + 16K + 16k |           16K          |  64k + 7*128K  |
+ * |      KERNEL     | PERSISTIG BYTES BUFFER |   USERLAND     |
+ *
+ */
+
 constexpr uint32_t InternalFlashOrigin = 0x08000000;
 constexpr uint32_t InternalFlashLength = 0x100000; // 1MiB
 constexpr uint32_t SmallestFlashSectorLength = 0x4000; // 16KiB

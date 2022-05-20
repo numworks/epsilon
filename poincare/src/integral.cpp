@@ -3,9 +3,13 @@
 #include <poincare/integral_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/addition.h>
+#include <poincare/multiplication.h>
+#include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
+#include <algorithm>
 #include <cmath>
 #include <float.h>
 #include <stdlib.h>
@@ -13,6 +17,10 @@
 namespace Poincare {
 
 constexpr Expression::FunctionHelper Integral::s_functionHelper;
+
+template <typename T> constexpr T sqrt_epsilon;
+template<> constexpr float sqrt_epsilon<float>  = 3.4e-4;
+template<> constexpr double sqrt_epsilon<double> = 1.5e-8;
 
 int IntegralNode::numberOfChildren() const { return Integral::s_functionHelper.numberOfChildren(); }
 
@@ -52,15 +60,207 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
   Evaluation<T> bInput = childAtIndex(3)->approximate(T(), approximationContext);
   T a = aInput.toScalar();
   T b = bInput.toScalar();
+  m_a = a;
+  m_b = b;
   if (std::isnan(a) || std::isnan(b)) {
     return Complex<T>::RealUndefined();
   }
-#ifdef LAGRANGE_METHOD
-  T result = lagrangeGaussQuadrature<T>(a, b, approximationContext);
-#else
-  T result = adaptiveQuadrature<T>(a, b, 0.1, k_maxNumberOfIterations, approximationContext);
-#endif
+  ExpressionNode::ReductionContext context(approximationContext.context(), approximationContext.complexFormat(), Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  bool fIsNanInA = std::isnan(firstChildScalarValueForArgument(a, approximationContext));
+  bool fIsNanInB = std::isnan(firstChildScalarValueForArgument(b, approximationContext));
+  /* Rewrite the integrand to be able to compute it directly at abscissa a +
+     delta to avoid precision loss when we are really close from a */
+  if (fIsNanInA && a != 0) {
+    Expression formula = Expression(childAtIndex(0)).clone();
+    Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
+    Expression bound = Expression(childAtIndex(2)).clone();
+    Expression expr = Addition::Builder(bound, symbol);
+    formula.replaceSymbolWithExpression(symbol, expr);
+    m_expr_a = formula.deepReduce(context);
+  }
+  // Same near b - delta
+  if (fIsNanInB && b != 0) {
+    Expression formula = Expression(childAtIndex(0)).clone();
+    Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
+    Expression bound = Expression(childAtIndex(3)).clone();
+    Expression expr = Addition::Builder(bound, Multiplication::Builder(Rational::Builder(-1), symbol));
+    formula.replaceSymbolWithExpression(symbol, expr);
+    m_expr_b = formula.deepReduce(context);
+  }
+
+  // The integrand has a singularity on a bound of the interval, use tanh-sinh quadrature
+  if (fIsNanInA || fIsNanInB) {
+    /* We are using 4 levels of refinement which means ≈ 64 integrand evaluations
+     * = 2 (R- and R+) * 2^4 (ticks/unit) * 4 (typical decay on the examples)
+     * It could be increased but precision is likely lost somewhere else in
+     * hard examples. */
+    DetailedResult<T> detailedResult = tanhSinhQuadrature<T>(4, approximationContext);
+    m_expr_a = Expression();
+    m_expr_b = Expression();
+    // Arbitrary value to have the best choice of quadrature on the examples
+    if (!std::isnan(detailedResult.integral) && detailedResult.absoluteError < 0.001) {
+      return Complex<T>::Builder(detailedResult.integral);
+    }
+  }
+  /* Choose the right substitution to use in Gauss-Konrod.
+   * We are using a (0,inf) -> (-1,1) like substitution when a bound is above
+   * these thresholds to deal with big but finite bounds */
+  T leftOpenThreshold = -1000;
+  T rightOpenThreshold = 1000;
+  T start, end, scale = 1.0;
+  if (a < leftOpenThreshold) {
+    if (b > rightOpenThreshold) {
+      m_substitution = Substitution::RealLine;
+      // Two solutions but we need the one with the sign of a (resp. b)
+      start = std::isfinite(a) ? ((std::sqrt(4*a*a+1)-1)/(2*a)) : -1;
+      end = std::isfinite(b) ? ((std::sqrt(4*b*b+1)-1)/(2*b)) : 1;
+    } else {
+      m_substitution = Substitution::LeftOpen;
+      start = std::isfinite(a) ? (a-b+1)/(b-a+1) : -1;
+      end = 1;
+      scale = 2.0;
+    }
+  } else {
+    if (b > rightOpenThreshold) {
+      m_substitution = Substitution::RightOpen;
+      start = std::isfinite(b) ? (a-b+1)/(b-a+1) : -1;
+      end = 1;
+      scale = 2.0;
+    } else {
+      m_substitution = Substitution::None;
+      start = a;
+      end = b;
+    }
+  }
+  /* The tolerance sqrt(eps) estimated by the method is an upper bound and the
+   * real is error is typically eps */
+  DetailedResult<T> detailedResult = adaptiveQuadrature<T>(start, end, sqrt_epsilon<T>, k_maxNumberOfIterations, approximationContext);
+  // Arbitrary value: precision at which we decide to ignore the result
+  T result = detailedResult.absoluteError > 0.1 ? NAN : scale * detailedResult.integral;
   return Complex<T>::Builder(result);
+}
+
+template<typename T>
+T IntegralNode::integrand(T x, ApproximationContext approximationContext) const {
+  switch (m_substitution) {
+  case Substitution::None:
+    return firstChildScalarValueForArgument(x, approximationContext);
+  case Substitution::LeftOpen:
+  {
+    T z = 1 / (x + 1);
+    T arg = m_b - (2 * z - 1);
+    return firstChildScalarValueForArgument(arg, approximationContext) * z * z;
+  }
+  case Substitution::RightOpen:
+  {
+    T z = 1 / (x + 1);
+    T arg = 2 * z + m_a - 1;
+    return firstChildScalarValueForArgument(arg, approximationContext) * z * z;
+  }
+  case Substitution::RealLine:
+  {
+    T x2 = x * x;
+    T inv = 1 / (1 - x2);
+    T w = (1 + x2) * inv * inv;
+    T arg = x * inv;
+    return firstChildScalarValueForArgument(arg, approximationContext) * w;
+  }
+  }
+}
+
+template<typename T>
+T IntegralNode::integrandNearBound(T x, T xc, ApproximationContext approximationContext) const {
+  T scale = (m_b - m_a) / 2;
+  T arg = xc * scale;
+  if (x < 0) {
+    if (!m_expr_a.isUninitialized()) {
+      return approximateExpressionWithArgument(m_expr_a.node(), arg, approximationContext).toScalar() * scale;
+    }
+    arg = arg + m_a;
+  } else {
+    if (!m_expr_b.isUninitialized()) {
+      return approximateExpressionWithArgument(m_expr_b.node(), arg, approximationContext).toScalar() * scale;
+    }
+    arg = m_b - arg;
+  }
+  return firstChildScalarValueForArgument(arg, approximationContext) * scale;
+}
+
+constexpr double halfPi = M_PI_2;
+template <typename T> constexpr T ignoreTailThreshold;
+template<> constexpr float ignoreTailThreshold<float>  = 1e-15;
+template<> constexpr double ignoreTailThreshold<double> = 1e-15;
+
+
+/* Tanh-Sinh quadrature
+ * cf https://www.davidhbailey.com/dhbpapers/dhb-tanh-sinh.pdf */
+template<typename T>
+IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, ApproximationContext approximationContext) const {
+  T h = 2;
+  T result = halfPi * integrandNearBound(0.0, 1.0, approximationContext); // j=0
+  int j=1;
+  T sn2, sn1 = 0;
+  T maxWjFj = 0;
+  for (int k=0; k<level; k++) {
+    sn2 = sn1;
+    sn1 = result * h;
+    h = h / 2.0;
+    j = 1;
+    bool leftOk = true;
+    bool rightOk = true;
+    while (leftOk || rightOk) {
+      T sinh = halfPi * std::sinh(h * j);
+      T cs = std::cosh(sinh);
+      T weight = halfPi * std::cosh(h * j) / (cs * cs);
+      T abscissa = std::tanh(sinh);
+      T distanceToBound = 1 / (std::exp(sinh) * std::cosh(sinh));
+      if (leftOk) {
+        T leftValue = integrandNearBound(-abscissa, distanceToBound, approximationContext);
+        if (std::isnan(leftValue)) {
+          leftOk = false;
+        } else {
+          maxWjFj = std::max(maxWjFj, std::abs(weight * leftValue));
+          result += weight * leftValue;
+        }
+        // criterion used in boost: abs(y * weights) > abs(L1_I0 * tail_tolerance) but
+        // L1_IO is abs(pi/2 * f(0)) before the first row and tail_tolerance = tolerance^2
+        if (std::abs(weight * leftValue) < ignoreTailThreshold<T>) leftOk = false;
+      }
+      if (rightOk) {
+        T rightValue = integrandNearBound(abscissa, distanceToBound, approximationContext);
+        if (std::isnan(rightValue)) {
+          rightOk = false;
+        } else {
+          maxWjFj = std::max(maxWjFj, std::abs(weight * rightValue));
+          result += weight * rightValue;
+        }
+        if (std::abs(weight * rightValue) < ignoreTailThreshold<T>) rightOk = false;
+      }
+      // computing only odd ticks after the first level
+      if (k) {
+        j += 2;
+      } else {
+        j += 1;
+      }
+    }
+  }
+  T error;
+  T sn = h * result;
+  if (sn == sn1) {
+    error = 0;
+  } else {
+    /* We need to have an estimation of the precision to be able to know that
+     * 1/x is nonintegrable between 0 and 1 for instance */
+    T d1 = std::log10(std::abs(sn-sn1));
+    T d2 = std::log10(std::abs(sn1-sn2));
+    T d3 = std::log10(maxWjFj) - 15;
+    T d = std::max({d1*d1/d2, 2*d1, d3});
+    error = std::pow(static_cast<T>(10.0), d);
+  }
+  DetailedResult<T> detailedResult;
+  detailedResult.integral = sn;
+  detailedResult.absoluteError = error;
+  return detailedResult;
 }
 
 #ifdef LAGRANGE_METHOD
@@ -80,11 +280,11 @@ T IntegralNode::lagrangeGaussQuadrature(T a, T b, ApproximationContext approxima
   T result = 0;
   for (int j = 0; j < 10; j++) {
     T dx = xr * x[j];
-    T evaluationAfterX = firstChildScalarValueForArgument(xm+dx, approximationContext);
+    T evaluationAfterX = integrand(xm+dx, approximationContext);
     if (std::isnan(evaluationAfterX)) {
       return NAN;
     }
-    T evaluationBeforeX = firstChildScalarValueForArgument(xm-dx, approximationContext);
+    T evaluationBeforeX = integrand(xm-dx, approximationContext);
     if (std::isnan(evaluationBeforeX)) {
       return NAN;
     }
@@ -131,7 +331,7 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
   errorResult.absoluteError = 0;
 
   T gaussIntegral = 0;
-  T fCenter = firstChildScalarValueForArgument(center, approximationContext);
+  T fCenter = integrand(center, approximationContext);
   if (std::isnan(fCenter)) {
     return errorResult;
   }
@@ -139,11 +339,11 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
   T absKronrodIntegral = std::fabs(kronrodIntegral);
   for (int j = 0; j < 10; j++) {
     T xDelta = halfLength * x[j];
-    T fval1 = firstChildScalarValueForArgument(center - xDelta, approximationContext);
+    T fval1 = integrand(center - xDelta, approximationContext);
     if (std::isnan(fval1)) {
       return errorResult;
     }
-    T fval2 = firstChildScalarValueForArgument(center + xDelta, approximationContext);
+    T fval2 = integrand(center + xDelta, approximationContext);
     if (std::isnan(fval2)) {
       return errorResult;
     }
@@ -181,16 +381,20 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
 }
 
 template<typename T>
-T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, ApproximationContext approximationContext) const {
+IntegralNode::DetailedResult<T> IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, ApproximationContext approximationContext) const {
   DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, approximationContext);
-  T result = quadKG.integral;
   if (quadKG.absoluteError <= eps) {
-    return result;
+    return quadKG;
   } else if (--numberOfIterations > 0) {
     T m = (a+b)/2;
-    return adaptiveQuadrature<T>(a, m, eps/2, numberOfIterations, approximationContext) + adaptiveQuadrature<T>(m, b, eps/2, numberOfIterations, approximationContext);
+    DetailedResult<T> left = adaptiveQuadrature<T>(a, m, eps/2, numberOfIterations, approximationContext);
+    DetailedResult<T> right = adaptiveQuadrature<T>(m, b, eps/2, numberOfIterations, approximationContext);
+    DetailedResult<T> result;
+    result.integral = left.integral + right.integral;
+    result.absoluteError = left.absoluteError + right.absoluteError;
+    return result;
   } else {
-    return NAN;
+    return quadKG;
   }
 }
 #endif

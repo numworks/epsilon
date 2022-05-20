@@ -46,6 +46,10 @@ void GraphOptionsController::removeRegression() {
   static_cast<StackViewController *>(parentResponder())->pop();
 }
 
+const char * GraphOptionsController::title() {
+  return Store::SeriesTitle(m_graphController->selectedSeriesIndex());
+}
+
 void GraphOptionsController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
@@ -75,7 +79,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
     case k_changeRegressionCellType: {
         RegressionController * controller = App::app()->regressionController();
         controller->setSeries(m_graphController->selectedSeriesIndex());
-        controller->setTitle(nullptr);
+        controller->setDisplayedFromDataTab(false);
         stack->push(controller);
         return true;
       }

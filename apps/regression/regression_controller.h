@@ -5,17 +5,18 @@
 #include <escher/selectable_list_view_controller.h>
 #include "model/model.h"
 #include "store.h"
-#include "overriden_title.h"
 #include <apps/i18n.h>
 
 namespace Regression {
 
-class RegressionController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>, public OverridenTitle{
+class RegressionController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   RegressionController(Escher::Responder * parentResponder, Store * store);
   void setSeries(int series) { m_series = series; }
+  void setDisplayedFromDataTab(bool status) { m_displayedFromDataTab = status; }
   // ViewController
-  const char * title() override { return getTitle(I18n::Message::RegressionModel); }
+  const char * title() override;
+  ViewController::TitlesDisplay titlesDisplay() override;
   TELEMETRY_ID("Regression");
 
   // Responder
@@ -34,9 +35,13 @@ private:
   constexpr static int k_numberOfCells = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight - 2*Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
   constexpr static Model::Type ModelTypeAtIndex(int index) { return static_cast<Model::Type>(index + 1); }
 
+  // Display X?/Y? only when no other displayed title already names the series.
+  bool displaySeriesNameAsTitle() const { return !m_displayedFromDataTab && m_store->seriesRegressionType(m_series) == Model::Type::None; }
+
   Escher::MessageTableCellWithExpression m_regressionCells[k_numberOfCells];
   Store * m_store;
   int m_series;
+  bool m_displayedFromDataTab;
 };
 
 }

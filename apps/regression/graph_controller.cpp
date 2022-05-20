@@ -215,16 +215,13 @@ bool GraphController::openMenuForCurveAtIndex(int index) {
     Coordinate2D<double> xy = xyValues(activeIndex, m_cursor->t(), textFieldDelegateApp()->localContext());
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
-  bool isSeriesSelectionSubmenu = (stackController()->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth);
-  const char * title = isSeriesSelectionSubmenu ? Store::SeriesTitle(*m_selectedSeriesIndex) : nullptr;
   if (selectedSeriesIsScatterPlot()) {
     // Push regression controller directly
     RegressionController * controller = App::app()->regressionController();
     controller->setSeries(*m_selectedSeriesIndex);
-    controller->setTitle(title);
+    controller->setDisplayedFromDataTab(false);
     stackController()->push(controller);
   } else {
-    m_graphOptionsController.setTitle(title);
     // Reset selected row. It is preserved when navigating in its submenus
     m_graphOptionsController.selectRow(0);
     stackController()->push(&m_graphOptionsController);

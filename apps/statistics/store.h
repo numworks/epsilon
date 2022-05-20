@@ -67,6 +67,7 @@ public:
   double variance(int series) const;
   double standardDeviation(int series) const;
   double sampleStandardDeviation(int series) const;
+  double sampleVariance(int series) const;
   double firstQuartile(int series) const;
   double thirdQuartile(int series) const;
   double quartileRange(int series) const;

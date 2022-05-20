@@ -17,6 +17,7 @@ namespace Graph {
 ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header),
   m_selectableTableView(this),
+  m_prefacedView(0, this, &m_selectableTableView, this, this),
   m_functionParameterController(this),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),
@@ -41,7 +42,6 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
     m_functionTitleCells[i].setFont(KDFont::SmallFont);
   }
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
-  m_selectableTableView.setDelegate(this);
 }
 
 // TableViewDataSource

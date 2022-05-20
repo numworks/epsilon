@@ -13,6 +13,7 @@ namespace Sequence {
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header),
   m_selectableTableView(this),
+  m_prefacedView(0, this, &m_selectableTableView, this),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;

@@ -18,7 +18,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
         && selectedRow() == indexOfRegressionCell()) {
     RegressionController * regressionController = App::app()->regressionController();
     regressionController->setSeries(m_storeController->selectedSeries());
-    regressionController->setTitle(nullptr);
+    regressionController->setDisplayedFromDataTab(true);
     stackView()->push(regressionController);
     return true;
   }

@@ -23,8 +23,22 @@ namespace Regression {
 RegressionController::RegressionController(Responder * parentResponder, Store * store) :
   SelectableListViewController(parentResponder),
   m_store(store),
-  m_series(-1)
-{
+  m_series(-1),
+  m_displayedFromDataTab(true)
+{}
+
+const char * RegressionController::title() {
+  if (displaySeriesNameAsTitle()) {
+    return Store::SeriesTitle(m_series);
+  }
+  return I18n::translate(I18n::Message::RegressionModel);
+}
+
+ViewController::TitlesDisplay RegressionController::titlesDisplay() {
+  if (displaySeriesNameAsTitle()) {
+    return ViewController::TitlesDisplay::DisplayLastTitle;
+  }
+  return ViewController::TitlesDisplay::DisplayLastTwoTitles;
 }
 
 void RegressionController::didBecomeFirstResponder() {

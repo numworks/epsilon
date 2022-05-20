@@ -312,6 +312,9 @@ pour compiler les binpacks que vous pouvez distribuer et flasher depuis le [Ti-p
 
 </details>
 
+<details>
+
+
 <summary><b>Model n0110 (obsolète, utilisez le bootloader à la place, pas de protection contre Epsilon)</b></summary>
 
 ```bash

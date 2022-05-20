@@ -280,8 +280,6 @@ to make binpack which you can flash to the calculator from [Ti-planet's webDFU](
 
 <details>
 
-<details>
-
 <summary><b>Model bootloader (N0110)</b></summary>
 
 ```bash

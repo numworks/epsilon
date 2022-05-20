@@ -126,16 +126,16 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-      - run: make -j2 epsilon.dfu
-      - run: make -j2 epsilon.onboarding.dfu
-      - run: make -j2 epsilon.onboarding.update.dfu
-      - run: make -j2 epsilon.onboarding.beta.dfu
-      - run: make -j2 flasher.light.dfu
-      - run: make -j2 flasher.verbose.dfu
+      - run: make -j2 MODEL=n0110 epsilon.dfu
+      - run: make -j2 MODEL=n0110 epsilon.onboarding.dfu
+      - run: make -j2 MODEL=n0110 epsilon.onboarding.update.dfu
+      - run: make -j2 MODEL=n0110 epsilon.onboarding.beta.dfu
+      - run: make -j2 MODEL=n0110 flasher.light.dfu
+      - run: make -j2 MODEL=n0110 flasher.verbose.dfu
       # We  don't need bench as it is used only in factory
       # - run: make -j2 bench.ram.dfu
       # - run: make -j2 bench.flash.dfu
-      - run: make -j2 binpack
+      - run: make -j2 MODEL=n0110 binpack
       - run: cp output/release/device/n0110/binpack-n0110-`git rev-parse HEAD | head -c 7`.tgz output/release/device/n0110/binpack-n0110.tgz
       - id: 'auth'
         if: ${{ github.event_name == 'push' && github.ref_name == 'upsilon-dev' && github.repository == 'UpsilonNumworks/Upsilon' }}
@@ -161,15 +161,15 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-      - run: make -j2 bootloader.dfu
-      - run: make MODEL=bootloader -j2 epsilon.A.dfu epsilon.B.dfu
-      - run: make MODEL=bootloader -j2 epsilon.onboarding.A.dfu
-      - run: make MODEL=bootloader -j2 epsilon.onboarding.B.dfu
-      - run: make MODEL=bootloader -j2 epsilon.onboarding.update.A.dfu
-      - run: make MODEL=bootloader -j2 epsilon.onboarding.update.B.dfu
-      - run: make MODEL=bootloader -j2 epsilon.onboarding.beta.A.dfu
-      - run: make MODEL=bootloader -j2 epsilon.onboarding.beta.B.dfu
-      - run: make MODEL=bootloader -j2 binpack
+      - run: make -j2 MODEL=n0110 bootloader.dfu
+      - run: make -j2 epsilon.A.dfu epsilon.B.dfu
+      - run: make -j2 epsilon.onboarding.A.dfu
+      - run: make -j2 epsilon.onboarding.B.dfu
+      - run: make -j2 epsilon.onboarding.update.A.dfu
+      - run: make -j2 epsilon.onboarding.update.B.dfu
+      - run: make -j2 epsilon.onboarding.beta.A.dfu
+      - run: make -j2 epsilon.onboarding.beta.B.dfu
+      - run: make -j2 binpack
       - run: cp output/release/device/bootloader/binpack-bootloader-`git rev-parse HEAD | head -c 7`.tgz output/release/device/bootloader/binpack-bootloader.tgz
       - uses: actions/upload-artifact@master
         with:

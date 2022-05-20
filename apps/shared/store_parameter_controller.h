@@ -17,25 +17,27 @@ class StoreParameterController : public ColumnParameterController {
 public:
   StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() const override { return numberOfCells(); }
+  int numberOfRows() const override { return k_numberOfCells; }
+  int reusableCellCount(int type) override { return 1; }
+  int typeAtIndex(int index) override { assert(index < k_numberOfCells); return index; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void initializeColumnParameters() override;
 protected:
-  constexpr static int k_numberOfCells = 4;
-  virtual int numberOfCells() const { return k_numberOfCells; }
-  StoreController * m_storeController;
-  virtual int indexOfHideColumn() const { return k_indexOfFillFormula + 1; }
-  int indexOfClearColumn() const { return indexOfHideColumn() + 1; }
+  // For these cells, type defines the orders
+  constexpr static int k_sortCellType = 0;
+  constexpr static int k_fillFormulaCellType = k_sortCellType + 1;
+  constexpr static int k_hideCellType = k_fillFormulaCellType + 1;
+  constexpr static int k_clearCellType = k_hideCellType + 1;
+  constexpr static int k_numberOfCells = k_clearCellType + 1;
 
+  StoreController * m_storeController;
   Escher::BufferTableCell m_clearColumn;
-  Escher::MessageTableCell m_fillFormula;
 private:
   EditableCellTableViewController * editableCellTableViewController() override;
   virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
-  constexpr static int k_indexOfSortCell = 0;
-  constexpr static int k_indexOfFillFormula = k_indexOfSortCell + 1;
 
+  Escher::MessageTableCell m_fillFormula;
   Escher::MessageTableCellWithMessage m_sortCell;
   Escher::MessageTableCellWithMessageWithSwitch m_hideCell;
 };

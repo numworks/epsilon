@@ -72,15 +72,18 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   m_selectedIndex = index;
 
   // Simplify cursor's position
-  if (std::fabs(x) <= std::fabs(step / 2.0)) {
-    // At half a step of 0.0
+  double simplifyFactor = 0.5;
+  // Simplification should not cross over intersting values
+  assert(snapFactor >= 1 + simplifyFactor);
+  if (std::fabs(x) <= std::fabs(step * simplifyFactor)) {
     x = 0.0;
   } else {
     /* Using pixelWidth(), simplify the cursor's position value while staying at
      * the same pixel. */
-    assert(std::fabs(step / 2.0) >= m_curveView.pixelWidth());
     double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(m_curveView.pixelWidth()) - 1.0);
-    x = magnitude * std::round(x / magnitude);
+    double xSimplified = magnitude * std::round(x / magnitude);
+    assert(std::fabs(xSimplified - x) <= std::fabs(step * simplifyFactor));
+    x = xSimplified;
   }
 
   // Compute start and end of the segment on which the cursor is

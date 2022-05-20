@@ -37,8 +37,8 @@ public:
 
   // Get and set data
   double get(int series, int i, int j) const;
-  void set(double f, int series, int i, int j, bool setOtherColumnToDefaultIfEmpty = false);
-  void setList(Poincare::List List, int series, int i);
+  void set(double f, int series, int i, int j, bool delayUpdate = false, bool setOtherColumnToDefaultIfEmpty = false);
+  void setList(Poincare::List List, int series, int i, bool delayUpdate = false);
 
   // Counts
   int numberOfPairs() const;
@@ -51,12 +51,12 @@ public:
   }
 
   // Delete and reset
-  virtual bool deleteValueAtIndex(int series, int i, int j);
-  void deletePairOfSeriesAtIndex(int series, int j);
-  void deleteColumn(int series, int i);
-  void resetColumn(int series, int i);
-  void deleteAllPairsOfSeries(int series);
-  void deleteAllPairs();
+  virtual bool deleteValueAtIndex(int series, int i, int j, bool delayUpdate = false);
+  void deletePairOfSeriesAtIndex(int series, int j, bool delayUpdate = false);
+  void deleteColumn(int series, int i, bool delayUpdate = false);
+  void resetColumn(int series, int i, bool delayUpdate = false);
+  void deleteAllPairsOfSeries(int series, bool delayUpdate = false);
+  void deleteAllPairs(bool delayUpdate = false);
 
   // Series validity
   void hideSeries(int series) { m_validSeries[series] = false; }
@@ -74,7 +74,7 @@ public:
   virtual int seriesAtColumn(int column) const { return column / k_numberOfColumnsPerSeries; }
 
   // Calculations
-  void sortColumn(int series, int column);
+  void sortColumn(int series, int column, bool delayUpdate = false);
   void sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const;
   double sumOfColumn(int series, int i, bool lnOfSeries = false) const;
   bool seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const;
@@ -99,17 +99,10 @@ protected:
    * It deletes the pairs of empty values and the trailing undef values,
    * updates the valid series, and stores the lists in the storage
    * */
-  virtual void updateSeries(int series);
+  virtual void updateSeries(int series, bool delayUpdate = false);
   /* Since sometimes we do multiple list modification in a row, we don't want
    * to update the series each time, but only at the end of the modifications.
    * So these methods are called to set a flag preventing the update.*/
-  void preventUpdate() {
-    m_updateFlag++;
-  }
-  void enableUpdate() {
-    assert(m_updateFlag > 0);
-    m_updateFlag--;
-  }
   bool m_validSeries[k_numberOfSeries];
 private:
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
@@ -119,7 +112,6 @@ private:
 
   Poincare::List m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
   GlobalContext * m_context;
-  int m_updateFlag;
 };
 
 }

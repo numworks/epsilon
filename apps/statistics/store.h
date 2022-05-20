@@ -109,7 +109,7 @@ public:
 
   // DoublePairStore
   void updateSeriesValidity(int series) override;
-  bool deleteValueAtIndex(int series, int i, int j) override;
+  bool deleteValueAtIndex(int series, int i, int j, bool delayUpdate = false) override;
 
   typedef double (Store::*CalculPointer)(int) const;
   static bool ValidSeriesAndValidTotalNormalProbabilities(const DoublePairStore * store, int series) {
@@ -136,7 +136,7 @@ private:
 
   // DoublePairStore
   double defaultValue(int series, int i, int j) const override;
-  void updateSeries(int series) override;
+  void updateSeries(int series, bool delayUpdate = false) override;
   /* Find the i-th distinct value (if i is -1, browse the entire series) from
    * start to end (ordered by value).
    * Retrieve the i-th value and the number distinct values encountered.

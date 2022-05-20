@@ -104,27 +104,30 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
    * these thresholds to deal with big but finite bounds */
   constexpr T leftOpenThreshold = -1000.0;
   constexpr T rightOpenThreshold = 1000.0;
+  Substitution<T> substitution;
+  substitution.originA = a;
+  substitution.originB = b;
   T start, end, scale = 1.0;
   if (a < leftOpenThreshold) {
     if (b > rightOpenThreshold) {
-      m_substitution = Substitution::RealLine;
+      substitution.type = Substitution<T>::Type::RealLine;
       // Two solutions but we need the one with the sign of a (resp. b)
       start = std::isfinite(a) ? ((std::sqrt(4*a*a+1.0)-1.0)/(2.0*a)) : -1.0;
       end = std::isfinite(b) ? ((std::sqrt(4*b*b+1.0)-1.0)/(2.0*b)) : 1.0;
     } else {
-      m_substitution = Substitution::LeftOpen;
+      substitution.type = Substitution<T>::Type::LeftOpen;
       start = std::isfinite(a) ? (a-b+1.0)/(b-a+1.0) : -1.0;
       end = 1.0;
       scale = 2.0;
     }
   } else {
     if (b > rightOpenThreshold) {
-      m_substitution = Substitution::RightOpen;
+      substitution.type = Substitution<T>::Type::RightOpen;
       start = std::isfinite(b) ? (a-b+1.0)/(b-a+1.0) : -1.0;
       end = 1.0;
       scale = 2.0;
     } else {
-      m_substitution = Substitution::None;
+      substitution.type = Substitution<T>::Type::None;
       start = a;
       end = b;
     }
@@ -132,30 +135,30 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
   /* The tolerance sqrt(eps) estimated by the method is an upper bound and the
    * real is error is typically eps */
   constexpr T precision = Float<T>::SqrtEpsilonLax();
-  DetailedResult<T> detailedResult = adaptiveQuadrature<T>(start, end, precision, k_maxNumberOfIterations, approximationContext);
+  DetailedResult<T> detailedResult = adaptiveQuadrature<T>(start, end, precision, k_maxNumberOfIterations, substitution, approximationContext);
   constexpr T minimumPrecisionForDisplay = 0.1;
   T result = detailedResult.absoluteError > minimumPrecisionForDisplay ? NAN : scale * detailedResult.integral;
   return Complex<T>::Builder(result);
 }
 
 template<typename T>
-T IntegralNode::integrand(T x, ApproximationContext approximationContext) const {
-  switch (m_substitution) {
-  case Substitution::None:
+T IntegralNode::integrand(T x, Substitution<T> substitution, ApproximationContext approximationContext) const {
+  switch (substitution.type) {
+  case Substitution<T>::Type::None:
     return firstChildScalarValueForArgument(x, approximationContext);
-  case Substitution::LeftOpen:
+  case Substitution<T>::Type::LeftOpen:
   {
     T z = 1.0 / (x + 1.0);
-    T arg = m_b - (2.0 * z - 1.0);
+    T arg = substitution.originB - (2.0 * z - 1.0);
     return firstChildScalarValueForArgument(arg, approximationContext) * z * z;
   }
-  case Substitution::RightOpen:
+  case Substitution<T>::Type::RightOpen:
   {
     T z = 1.0 / (x + 1);
-    T arg = 2.0 * z + m_a - 1.0;
+    T arg = 2.0 * z + substitution.originA - 1.0;
     return firstChildScalarValueForArgument(arg, approximationContext) * z * z;
   }
-  case Substitution::RealLine:
+  case Substitution<T>::Type::RealLine:
   {
     T x2 = x * x;
     T inv = 1.0 / (1.0 - x2);
@@ -289,7 +292,7 @@ T IntegralNode::lagrangeGaussQuadrature(T a, T b, ApproximationContext approxima
 #else
 
 template<typename T>
-IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, ApproximationContext approximationContext) const {
+IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, Substitution<T> substitution, ApproximationContext approximationContext) const {
   constexpr T epsilon = Float<T>::Epsilon();
   constexpr T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
@@ -323,7 +326,7 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
   errorResult.absoluteError = 0;
 
   T gaussIntegral = 0;
-  T fCenter = integrand(center, approximationContext);
+  T fCenter = integrand(center ,substitution, approximationContext);
   if (std::isnan(fCenter)) {
     return errorResult;
   }
@@ -331,11 +334,11 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
   T absKronrodIntegral = std::fabs(kronrodIntegral);
   for (int j = 0; j < 10; j++) {
     T xDelta = halfLength * x[j];
-    T fval1 = integrand(center - xDelta, approximationContext);
+    T fval1 = integrand(center - xDelta, substitution, approximationContext);
     if (std::isnan(fval1)) {
       return errorResult;
     }
-    T fval2 = integrand(center + xDelta, approximationContext);
+    T fval2 = integrand(center + xDelta, substitution, approximationContext);
     if (std::isnan(fval2)) {
       return errorResult;
     }
@@ -373,14 +376,14 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, A
 }
 
 template<typename T>
-IntegralNode::DetailedResult<T> IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, ApproximationContext approximationContext) const {
-  DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, approximationContext);
+IntegralNode::DetailedResult<T> IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Substitution<T> substitution, ApproximationContext approximationContext) const {
+  DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, substitution, approximationContext);
   if (quadKG.absoluteError <= eps) {
     return quadKG;
   } else if (--numberOfIterations > 0) {
     T m = (a+b)/2;
-    DetailedResult<T> left = adaptiveQuadrature<T>(a, m, eps/2, numberOfIterations, approximationContext);
-    DetailedResult<T> right = adaptiveQuadrature<T>(m, b, eps/2, numberOfIterations, approximationContext);
+    DetailedResult<T> left = adaptiveQuadrature<T>(a, m, eps/2, numberOfIterations, substitution, approximationContext);
+    DetailedResult<T> right = adaptiveQuadrature<T>(m, b, eps/2, numberOfIterations, substitution, approximationContext);
     DetailedResult<T> result;
     result.integral = left.integral + right.integral;
     result.absoluteError = left.absoluteError + right.absoluteError;

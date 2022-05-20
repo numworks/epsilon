@@ -44,17 +44,23 @@ private:
 #ifdef LAGRANGE_METHOD
   template<typename T> T lagrangeGaussQuadrature(T a, T b, ApproximationContext approximationContext) const;
 #else
-  enum class Substitution { None, LeftOpen, RightOpen, RealLine };
-  mutable Substitution m_substitution;
+  template<typename T>
+  class Substitution {
+  public:
+    enum class Type { None, LeftOpen, RightOpen, RealLine };
+    Type type;
+    T originA;
+    T originB;
+  };
   mutable double m_a;
   mutable double m_b;
   mutable Expression m_expr_a;
   mutable Expression m_expr_b;
-  template<typename T> T integrand(T x, ApproximationContext approximationContext) const;
+  template<typename T> T integrand(T x, Substitution<T> substitution, ApproximationContext approximationContext) const;
   template<typename T> T integrandNearBound(T x, T xc, ApproximationContext approximationContext) const;
   template<typename T> DetailedResult<T> tanhSinhQuadrature(int level, ApproximationContext approximationContext) const;
-  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, ApproximationContext approximationContext) const;
-  template<typename T> DetailedResult<T> adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, ApproximationContext approximationContext) const;
+  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution, ApproximationContext approximationContext) const;
+  template<typename T> DetailedResult<T> adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Substitution<T> substitution, ApproximationContext approximationContext) const;
 #endif
 
 };

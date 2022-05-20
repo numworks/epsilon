@@ -13,6 +13,8 @@ public:
   GoToParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   void setXPrediction(bool xPrediction);
   const char * title() override;
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
+
 private:
   double extractParameterAtIndex(int index) override;
   bool confirmParameterAtIndex(int parameterIndex, double f) override;

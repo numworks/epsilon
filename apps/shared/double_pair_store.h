@@ -18,9 +18,9 @@ public:
   constexpr static int k_numberOfSeries = 3;
   constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static uint8_t k_maxNumberOfPairs = 100;
-  constexpr static const char * k_regressionColumNames[] = {"X", "Y"}; // Must be 1 char long.
+  constexpr static const char * k_regressionColumNames[] = {"X", "Y"}; // Must be 1 char long or change the name-related methods.
   static_assert(sizeof(k_regressionColumNames) / sizeof(char *) == k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Regression.");
-  constexpr static const char * k_statisticsColumNames[] = {"V", "N"}; // Must be 1 char long.
+  constexpr static const char * k_statisticsColumNames[] = {"V", "N"}; // Must be 1 char long or change the name-related methods.
   static_assert(sizeof(k_statisticsColumNames) / sizeof(char *) == k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Statistics.");
 
   DoublePairStore(GlobalContext * context);

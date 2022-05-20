@@ -29,9 +29,9 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
 {}
 
 void ValuesController::setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate) {
-  selectableTableView()->setVerticalCellOverlap(0);
-  selectableTableView()->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  selectableTableView()->setBackgroundColor(Palette::WallScreenDark);
+  prefacedView()->setCellOverlap(0, 0);
+  prefacedView()->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  prefacedView()->setBackgroundColor(Palette::WallScreenDark);
 
   int numberOfAbscissaCells = abscissaCellsCount();
   for (int i = 0; i < numberOfAbscissaCells; i++) {

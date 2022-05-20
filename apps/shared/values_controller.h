@@ -1,15 +1,16 @@
 #ifndef SHARED_VALUES_CONTROLLER_H
 #define SHARED_VALUES_CONTROLLER_H
 
-#include <escher/alternate_empty_view_delegate.h>
-#include <escher/button_row_controller.h>
+#include "editable_cell_table_view_controller.h"
 #include "function_store.h"
 #include "function_title_cell.h"
-#include "editable_cell_table_view_controller.h"
 #include "interval.h"
-#include "values_parameter_controller.h"
 #include "interval_parameter_controller.h"
+#include "prefaced_table_view.h"
+#include "values_parameter_controller.h"
 #include <apps/i18n.h>
+#include <escher/alternate_empty_view_delegate.h>
+#include <escher/button_row_controller.h>
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_message_text_cell.h>
@@ -21,6 +22,7 @@ public:
   ValuesController(Escher::Responder * parentResponder, Escher::ButtonRowController * header);
   // View controller
   const char * title() override;
+  Escher::View * view() override { return prefacedView(); }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   TELEMETRY_ID("Values");
@@ -92,6 +94,7 @@ protected:
   virtual int numberOfMemoizedColumn() = 0;
 
   ColumnParameterController * columnParameterController() override;
+  virtual PrefacedTableView * prefacedView() = 0;
 
   int fillColumnName(int columnIndex, char * buffer) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;

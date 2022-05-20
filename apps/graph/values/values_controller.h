@@ -4,13 +4,13 @@
 #include "../continuous_function_store.h"
 #include "../../shared/buffer_function_title_cell.h"
 #include "../../shared/hideable_even_odd_buffer_text_cell.h"
-#include "../../shared/values_controller.h"
 #include "../../shared/interval_parameter_controller.h"
 #include "../../shared/store_cell.h"
+#include "../../shared/values_controller.h"
 #include "abscissa_title_cell.h"
-#include "interval_parameter_selector_controller.h"
 #include "derivative_parameter_controller.h"
 #include "function_parameter_controller.h"
+#include "interval_parameter_selector_controller.h"
 
 namespace Graph {
 
@@ -57,6 +57,7 @@ private:
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
   int maxNumberOfFunctions() override { return k_maxNumberOfDisplayableFunctions; }
+  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedView; }
 
   // Number of columns memoization
   void updateNumberOfColumns() const override;
@@ -124,6 +125,7 @@ private:
   };
 
   ValuesSelectableTableView m_selectableTableView;
+  Shared::PrefacedTableView m_prefacedView;
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
   Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];

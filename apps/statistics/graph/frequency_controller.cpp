@@ -44,37 +44,25 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
 
   /* Virtually increase the step so that if the cursor were to move very close
    * to a significant value, it will instead snap on this value. */
-  double latchFactor = 1.5;
+  double snapFactor = 1.5;
 
-  int index, nextIndex;
-  if (step > 0.0) {
-    index = m_selectedIndex;
-    nextIndex = m_selectedIndex + 1;
-    if (nextIndex >= totValues) {
-      // Cursor cannot move further
-      return false;
-    }
-    if (x + step * latchFactor >= valueAtIndex(m_selectedSeries, nextIndex)) {
-      // Step is too big, snap on the next interesting value
-      m_selectedIndex = nextIndex;
-      moveCursorToSelectedIndex();
-      return true;
-    }
-  } else {
-    double xSelectedIndex = valueAtIndex(m_selectedSeries, m_selectedIndex);
-    assert(x >= xSelectedIndex);
-    index = (x == xSelectedIndex) ? m_selectedIndex - 1 : m_selectedIndex;
-    nextIndex = index + 1;
-    if (index < 0) {
-      // Cursor cannot move further
-      return false;
-    }
-    if (x + step * latchFactor <= valueAtIndex(m_selectedSeries, index)) {
-      // Step is too big, snap on the previous interesting value
-      m_selectedIndex = index;
-      moveCursorToSelectedIndex();
-      return true;
-    }
+  assert(x >= valueAtIndex(m_selectedSeries, m_selectedIndex));
+  int index = (step > 0.0 || x > valueAtIndex(m_selectedSeries, m_selectedIndex)) ? m_selectedIndex : m_selectedIndex - 1;
+  int nextIndex = index + 1;
+  if (index < 0 || (step > 0.0 && nextIndex >= totValues)) {
+    // Cursor cannot move further
+    return false;
+  }
+  double xTarget = x + step * snapFactor;
+  double xIndex = valueAtIndex(m_selectedSeries, index);
+  double xNextIndex = valueAtIndex(m_selectedSeries, nextIndex);
+  if (xTarget <= xIndex || xTarget >= xNextIndex) {
+    assert((xTarget <= xIndex) == (step < 0.0));
+    assert((xTarget >= xNextIndex) == (step > 0.0));
+    // Step is too big, snap on the next interesting value
+    m_selectedIndex = (step > 0.0) ? nextIndex : index;
+    moveCursorToSelectedIndex();
+    return true;
   }
 
   // Apply step
@@ -96,8 +84,6 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   }
 
   // Compute start and end of the segment on which the cursor is
-  double xIndex = valueAtIndex(m_selectedSeries, index);
-  double xNextIndex = valueAtIndex(m_selectedSeries, nextIndex);
   assert(x > xIndex && x < xNextIndex && nextIndex == index + 1);
   double yIndex = resultAtIndex(m_selectedSeries, index);
   double yNextIndex = resultAtIndex(m_selectedSeries, nextIndex);

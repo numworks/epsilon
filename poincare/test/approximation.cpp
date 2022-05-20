@@ -573,7 +573,7 @@ QUIZ_CASE(poincare_approximation_integral) {
   assert_expression_approximates_to<double>("int(2*√(9-(x-3)^2),x,0,6)", "28.27433388231"); // #1378
 
   // far bounds
-  assert_expression_approximates_to<double>("int(e^(-x^2),x,0,100000)", "0.88622692545276"); // ≈sqrt(pi)/2 #258
+  assert_expression_approximates_to<double>("int(e^(-x^2),x,0,100000)", "0.88622692545276"); // ≈sqrt(pi)/2 #258
   assert_expression_approximates_to<double>("int(1/(x^2+1),x,0,100000)", "1.5707863267949"); // atan(100000) #1104
   assert_expression_approximates_to<double>("int(1/(x^2+1),x,0,inf)", "1.5707963267949"); // pi/2 #1104
   assert_expression_approximates_to<double>("int(1/x,x,1,1000000)", "13.81551056", Radian, MetricUnitFormat, Cartesian, 10); // #1104

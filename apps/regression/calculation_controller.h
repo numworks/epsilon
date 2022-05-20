@@ -67,6 +67,9 @@ private:
   // To hold _y=a·x^4+b·x^3+c·x^2+d·x+e_
   static constexpr KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(7*27+2*Escher::EvenOddCell::k_horizontalMargin+Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
 
+  constexpr static int k_symbolColumnMaxNumberOfChars = 3;
+  constexpr static KDCoordinate k_symbolColumnWidth = k_symbolColumnMaxNumberOfChars * 7 + 2 * Escher::Metric::CellVerticalElementMargin;
+
   Shared::DoublePairStore * store() const override { return m_store; }
   typedef bool (*DisplayCondition)(Model::Type type);
   static bool DisplayR(Model::Type type) { return type == Model::Type::Linear; }

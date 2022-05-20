@@ -19,11 +19,6 @@ void EvenOddMessageTextCell::setEven(bool even) {
   m_messageTextView.setBackgroundColor(backgroundColor());
 }
 
-void EvenOddMessageTextCell::setMessage(I18n::Message title, KDColor textColor) {
-  m_messageTextView.setMessage(title);
-  m_messageTextView.setTextColor(textColor);
-}
-
 void EvenOddMessageTextCell::setAlignment(float horizontalAlignment, float verticalAlignment) {
   m_messageTextView.setAlignment(horizontalAlignment, verticalAlignment);
 }

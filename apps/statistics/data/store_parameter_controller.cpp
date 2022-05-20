@@ -6,13 +6,10 @@ namespace Statistics {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, StoreController * storeController, Store * store) :
   Shared::StoreParameterController(parentResponder, storeController),
-  m_displayCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnToggleTitle),
-  m_hideCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnHideTitle),
+  m_displayCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnToggleTitle, I18n::Message::CumulatedFrequencyColumnToggleDescription),
+  m_hideCumulatedFrequencyCell(I18n::Message::CumulatedFrequencyColumnHideTitle, I18n::Message::CumulatedFrequencyColumnHideDescription),
   m_store(store)
-{
-  m_displayCumulatedFrequencyCell.setSubLabelMessage(I18n::Message::CumulatedFrequencyColumnToggleDescription);
-  m_hideCumulatedFrequencyCell.setSubLabelMessage(I18n::Message::CumulatedFrequencyColumnHideDescription);
-}
+{}
 
 void StoreParameterController::initializeColumnParameters() {
   // Number of cells and cells size may change when switching between columns

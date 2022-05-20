@@ -58,18 +58,23 @@ public:
   T offsettedSquaredSum(T offset) const;
   T squaredSum() const { return offsettedSquaredSum(0.0);}
 
-  T mean() const;
-  T variance() const;
-  T standardDeviation() const;
+  T mean() const { return weightedSum() / totalWeight(); }
+  /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] - E[X]^2
+   * to ensure a positive result and to minimize rounding errors */
+  T variance() const { return offsettedSquaredSum(mean()) / totalWeight(); }
+  T standardDeviation() const { return std::sqrt(variance()); }
   T sampleStandardDeviation() const;
 
   // Need sortedIndex
   T sortedElementAtCumulatedFrequency(T freq, bool createMiddleElement) const;
   T sortedElementAtCumulatedWeight(T weight, bool createMiddleElement) const;
-  T median() const;
-  int indexAtCumulatedFrequency(T freq, int * upperIndex = nullptr) const;
+  T median() const { return sortedElementAtCumulatedFrequency(1.0/2.0, true); }
+  int indexAtCumulatedFrequency(T freq, int * upperIndex = nullptr) const {
+    assert(freq >= 0.0 && freq <= 1.0);
+    return indexAtCumulatedWeight(freq * totalWeight(), upperIndex);
+  }
   int indexAtCumulatedWeight(T weight, int * upperIndex = nullptr) const;
-  int medianIndex(int * upperIndex = nullptr) const;
+  int medianIndex(int * upperIndex = nullptr) const { return indexAtCumulatedFrequency(1.0/2.0, upperIndex); }
 
 private:
   int datasetLength() const { return m_weights == nullptr ? m_values->length() : std::max(m_values->length(), m_weights->length()); }

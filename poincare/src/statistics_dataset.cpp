@@ -20,10 +20,7 @@ StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(const ExpressionNod
     }
     evaluationArray[i] = static_cast<ListComplex<T> &>(childEval);
   }
-  if (n == 1) {
-    return StatisticsDataset<T>(&evaluationArray[0]);
-  }
-  return StatisticsDataset<T>(&evaluationArray[0], &evaluationArray[1]);
+  return n == 1 ? StatisticsDataset<T>(&evaluationArray[0]) : StatisticsDataset<T>(&evaluationArray[0], &evaluationArray[1]);
 }
 
 template<typename T>

@@ -46,22 +46,11 @@ Expression ListVariance::shallowReduce(ExpressionNode::ReductionContext reductio
       return replaceWithUndefinedInPlace();
     }
   }
-  Expression m;
-  if (n == 2) {
-    m = ListMean::Builder(children[0].clone(), children[1].clone());
-  } else {
-    assert(n == 1);
-    m = ListMean::Builder(children[0].clone());
-  }
+  Expression m = n == 2 ? ListMean::Builder(children[0].clone(), children[1].clone()) : ListMean::Builder(children[0].clone());
   Power m2 = Power::Builder(m, Rational::Builder(2));
   m.shallowReduce(reductionContext);
   Power l2 = Power::Builder(children[0], Rational::Builder(2));
-  Expression ml2;
-  if (n == 2) {
-    ml2 = ListMean::Builder(l2, children[1]);
-  } else {
-    ml2 = ListMean::Builder(l2);
-  }
+  Expression ml2 = n == 2 ? ListMean::Builder(l2, children[1]) : ListMean::Builder(l2);
   l2.shallowReduce(reductionContext);
   Subtraction s = Subtraction::Builder(ml2, m2);
   ml2.shallowReduce(reductionContext);

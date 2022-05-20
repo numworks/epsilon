@@ -18,10 +18,6 @@ namespace Poincare {
 
 constexpr Expression::FunctionHelper Integral::s_functionHelper;
 
-template <typename T> constexpr T sqrt_epsilon;
-template<> constexpr float sqrt_epsilon<float>  = 3.4e-4;
-template<> constexpr double sqrt_epsilon<double> = 1.5e-8;
-
 int IntegralNode::numberOfChildren() const { return Integral::s_functionHelper.numberOfChildren(); }
 
 int IntegralNode::polynomialDegree(Context * context, const char * symbolName) const {
@@ -68,8 +64,8 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
   ExpressionNode::ReductionContext context(approximationContext.context(), approximationContext.complexFormat(), Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
   bool fIsNanInA = std::isnan(firstChildScalarValueForArgument(a, approximationContext));
   bool fIsNanInB = std::isnan(firstChildScalarValueForArgument(b, approximationContext));
-  /* Rewrite the integrand to be able to compute it directly at abscissa a +
-     delta to avoid precision loss when we are really close from a */
+  /* Rewrite the integrand to be able to compute it directly at abscissa a + x
+     to avoid precision loss when we are really close from a */
   if (fIsNanInA && a != 0) {
     Expression formula = Expression(childAtIndex(0)).clone();
     Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
@@ -78,7 +74,7 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
     formula.replaceSymbolWithExpression(symbol, expr);
     m_expr_a = formula.deepReduce(context);
   }
-  // Same near b - delta
+  // Same near b - x
   if (fIsNanInB && b != 0) {
     Expression formula = Expression(childAtIndex(0)).clone();
     Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
@@ -98,33 +94,34 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
     m_expr_a = Expression();
     m_expr_b = Expression();
     // Arbitrary value to have the best choice of quadrature on the examples
-    if (!std::isnan(detailedResult.integral) && detailedResult.absoluteError < 0.001) {
+    constexpr T insufficientPrecision = 0.001;
+    if (!std::isnan(detailedResult.integral) && detailedResult.absoluteError < insufficientPrecision) {
       return Complex<T>::Builder(detailedResult.integral);
     }
   }
   /* Choose the right substitution to use in Gauss-Konrod.
    * We are using a (0,inf) -> (-1,1) like substitution when a bound is above
    * these thresholds to deal with big but finite bounds */
-  T leftOpenThreshold = -1000;
-  T rightOpenThreshold = 1000;
+  constexpr T leftOpenThreshold = -1000.0;
+  constexpr T rightOpenThreshold = 1000.0;
   T start, end, scale = 1.0;
   if (a < leftOpenThreshold) {
     if (b > rightOpenThreshold) {
       m_substitution = Substitution::RealLine;
       // Two solutions but we need the one with the sign of a (resp. b)
-      start = std::isfinite(a) ? ((std::sqrt(4*a*a+1)-1)/(2*a)) : -1;
-      end = std::isfinite(b) ? ((std::sqrt(4*b*b+1)-1)/(2*b)) : 1;
+      start = std::isfinite(a) ? ((std::sqrt(4*a*a+1.0)-1.0)/(2.0*a)) : -1.0;
+      end = std::isfinite(b) ? ((std::sqrt(4*b*b+1.0)-1.0)/(2.0*b)) : 1.0;
     } else {
       m_substitution = Substitution::LeftOpen;
-      start = std::isfinite(a) ? (a-b+1)/(b-a+1) : -1;
-      end = 1;
+      start = std::isfinite(a) ? (a-b+1.0)/(b-a+1.0) : -1.0;
+      end = 1.0;
       scale = 2.0;
     }
   } else {
     if (b > rightOpenThreshold) {
       m_substitution = Substitution::RightOpen;
-      start = std::isfinite(b) ? (a-b+1)/(b-a+1) : -1;
-      end = 1;
+      start = std::isfinite(b) ? (a-b+1.0)/(b-a+1.0) : -1.0;
+      end = 1.0;
       scale = 2.0;
     } else {
       m_substitution = Substitution::None;
@@ -134,9 +131,10 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
   }
   /* The tolerance sqrt(eps) estimated by the method is an upper bound and the
    * real is error is typically eps */
-  DetailedResult<T> detailedResult = adaptiveQuadrature<T>(start, end, sqrt_epsilon<T>, k_maxNumberOfIterations, approximationContext);
-  // Arbitrary value: precision at which we decide to ignore the result
-  T result = detailedResult.absoluteError > 0.1 ? NAN : scale * detailedResult.integral;
+  constexpr T precision = Float<T>::SqrtEpsilonLax();
+  DetailedResult<T> detailedResult = adaptiveQuadrature<T>(start, end, precision, k_maxNumberOfIterations, approximationContext);
+  constexpr T minimumPrecisionForDisplay = 0.1;
+  T result = detailedResult.absoluteError > minimumPrecisionForDisplay ? NAN : scale * detailedResult.integral;
   return Complex<T>::Builder(result);
 }
 
@@ -147,21 +145,21 @@ T IntegralNode::integrand(T x, ApproximationContext approximationContext) const 
     return firstChildScalarValueForArgument(x, approximationContext);
   case Substitution::LeftOpen:
   {
-    T z = 1 / (x + 1);
-    T arg = m_b - (2 * z - 1);
+    T z = 1.0 / (x + 1.0);
+    T arg = m_b - (2.0 * z - 1.0);
     return firstChildScalarValueForArgument(arg, approximationContext) * z * z;
   }
   case Substitution::RightOpen:
   {
-    T z = 1 / (x + 1);
-    T arg = 2 * z + m_a - 1;
+    T z = 1.0 / (x + 1);
+    T arg = 2.0 * z + m_a - 1.0;
     return firstChildScalarValueForArgument(arg, approximationContext) * z * z;
   }
   case Substitution::RealLine:
   {
     T x2 = x * x;
-    T inv = 1 / (1 - x2);
-    T w = (1 + x2) * inv * inv;
+    T inv = 1.0 / (1.0 - x2);
+    T w = (1.0 + x2) * inv * inv;
     T arg = x * inv;
     return firstChildScalarValueForArgument(arg, approximationContext) * w;
   }
@@ -170,7 +168,7 @@ T IntegralNode::integrand(T x, ApproximationContext approximationContext) const 
 
 template<typename T>
 T IntegralNode::integrandNearBound(T x, T xc, ApproximationContext approximationContext) const {
-  T scale = (m_b - m_a) / 2;
+  T scale = (m_b - m_a) / 2.0;
   T arg = xc * scale;
   if (x < 0) {
     if (!m_expr_a.isUninitialized()) {
@@ -186,19 +184,13 @@ T IntegralNode::integrandNearBound(T x, T xc, ApproximationContext approximation
   return firstChildScalarValueForArgument(arg, approximationContext) * scale;
 }
 
-constexpr double halfPi = M_PI_2;
-template <typename T> constexpr T ignoreTailThreshold;
-template<> constexpr float ignoreTailThreshold<float>  = 1e-15;
-template<> constexpr double ignoreTailThreshold<double> = 1e-15;
-
-
 /* Tanh-Sinh quadrature
  * cf https://www.davidhbailey.com/dhbpapers/dhb-tanh-sinh.pdf */
 template<typename T>
 IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, ApproximationContext approximationContext) const {
-  T h = 2;
-  T result = halfPi * integrandNearBound(0.0, 1.0, approximationContext); // j=0
-  int j=1;
+  T h = 2.0;
+  T result = M_PI_2 * integrandNearBound(0.0, 1.0, approximationContext); // j=0
+  int j = 1;
   T sn2, sn1 = 0;
   T maxWjFj = 0;
   for (int k=0; k<level; k++) {
@@ -209,11 +201,11 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, Appr
     bool leftOk = true;
     bool rightOk = true;
     while (leftOk || rightOk) {
-      T sinh = halfPi * std::sinh(h * j);
+      T sinh = M_PI_2 * std::sinh(h * j);
       T cs = std::cosh(sinh);
-      T weight = halfPi * std::cosh(h * j) / (cs * cs);
+      T weight = M_PI_2 * std::cosh(h * j) / (cs * cs);
       T abscissa = std::tanh(sinh);
-      T distanceToBound = 1 / (std::exp(sinh) * std::cosh(sinh));
+      T distanceToBound = 1.0 / (std::exp(sinh) * std::cosh(sinh));
       if (leftOk) {
         T leftValue = integrandNearBound(-abscissa, distanceToBound, approximationContext);
         if (std::isnan(leftValue)) {
@@ -224,7 +216,7 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, Appr
         }
         // criterion used in boost: abs(y * weights) > abs(L1_I0 * tail_tolerance) but
         // L1_IO is abs(pi/2 * f(0)) before the first row and tail_tolerance = tolerance^2
-        if (std::abs(weight * leftValue) < ignoreTailThreshold<T>) leftOk = false;
+        if (std::abs(weight * leftValue) < Float<T>::EpsilonLax()) leftOk = false;
       }
       if (rightOk) {
         T rightValue = integrandNearBound(abscissa, distanceToBound, approximationContext);
@@ -234,7 +226,7 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, Appr
           maxWjFj = std::max(maxWjFj, std::abs(weight * rightValue));
           result += weight * rightValue;
         }
-        if (std::abs(weight * rightValue) < ignoreTailThreshold<T>) rightOk = false;
+        if (std::abs(weight * rightValue) < Float<T>::EpsilonLax()) rightOk = false;
       }
       // computing only odd ticks after the first level
       if (k) {
@@ -247,7 +239,7 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, Appr
   T error;
   T sn = h * result;
   if (sn == sn1) {
-    error = 0;
+    error = 0.0;
   } else {
     /* We need to have an estimation of the precision to be able to know that
      * 1/x is nonintegrable between 0 and 1 for instance */

@@ -103,16 +103,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     myCell->setTextColor(i == 1 ? Palette::GrayDark : KDColorBlack);
     if (j <= numberOfRowsBeforeCoefficients) {
       I18n::Message titles[k_regressionCellIndex][k_numberOfHeaderColumns] = {
-        { I18n::Message::Mean, I18n::Message::A },
-        { I18n::Message::Sum, I18n::Message::A },
-        { I18n::Message::SquareSum, I18n::Message::A },
-        { I18n::Message::StandardDeviation, I18n::Message::A },
-        { I18n::Message::Deviation, I18n::Message::A },
-        { I18n::Message::SampleStandardDeviationS, I18n::Message::A}
-        { I18n::Message::NumberOfDots, I18n::Message::A },
-        { I18n::Message::Covariance, I18n::Message::A },
-        { I18n::Message::Sxy, I18n::Message::A },
-        { I18n::Message::Regression, I18n::Message::A }
+        { I18n::Message::Mean, I18n::Message::MeanSymbol },
+        { I18n::Message::Sum, I18n::Message::SumValuesSymbol },
+        { I18n::Message::SquareSum, I18n::Message::SumSquareValuesSymbol },
+        { I18n::Message::StandardDeviation, I18n::Message::StandardDeviationSigmaSymbol },
+        { I18n::Message::Deviation, I18n::Message::DeviationSymbol },
+        { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol},
+        { I18n::Message::NumberOfDots, I18n::Message::UpperN },
+        { I18n::Message::Covariance, I18n::Message::Cov },
+        { I18n::Message::SumOfProducts, I18n::Message::Sxy },
+        { I18n::Message::Regression, I18n::Message::Y }
       };
       myCell->setMessage(titles[j-1][i]);
       return;
@@ -120,14 +120,24 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     // R cannot be displayed without R2
     assert(!hasSeriesDisplaying(&DisplayR) || hasSeriesDisplaying(&DisplayR2));
     if (hasSeriesDisplaying(&DisplayR2) && (j == numberRows - 1 || (hasSeriesDisplaying(&DisplayR) && j == numberRows - 2))) {
-      myCell->setMessage((j == numberRows - 1) ? I18n::Message::R2 : I18n::Message::R);
+      I18n::Message titles[2][k_numberOfHeaderColumns] = {
+        { I18n::Message::DeterminationCoeff, I18n::Message::R2 },
+        { I18n::Message::CorrelationCoeff, I18n::Message::R }
+      };
+      myCell->setMessage((j == numberRows - 1) ? titles[0][i] : titles[1][i]);
       if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
         myCell->setTextColor(Palette::GrayDark);
       }
       return;
     }
-    I18n::Message titles[5] = {I18n::Message::A, I18n::Message::B, I18n::Message::C, I18n::Message::D, I18n::Message::E};
-    myCell->setMessage(titles[j - numberOfRowsBeforeCoefficients - 1]);
+    I18n::Message titles[5][k_numberOfHeaderColumns] = {
+      { I18n::Message::CoefficientA, I18n::Message::A },
+      { I18n::Message::CoefficientB, I18n::Message::B },
+      { I18n::Message::CoefficientC, I18n::Message::C },
+      { I18n::Message::CoefficientD, I18n::Message::D },
+      { I18n::Message::CoefficientE, I18n::Message::E }
+    };
+    myCell->setMessage(titles[j - numberOfRowsBeforeCoefficients - 1][i]);
     return;
   }
 
@@ -252,8 +262,7 @@ KDCoordinate CalculationController::columnWidth(int i) {
     return k_titleCalculationCellWidth;
   }
   if (i == 1) {
-    // TODO; Clean this
-    return 20;
+    return k_symbolColumnWidth;
   }
   Model::Type currentType = m_store->seriesRegressionType(m_store->indexOfKthValidSeries(i - k_numberOfHeaderColumns));
   if (currentType == Model::Type::Quartic) {

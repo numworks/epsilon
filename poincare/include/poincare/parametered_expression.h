@@ -26,6 +26,8 @@ protected:
   template<typename T> T firstChildScalarValueForArgument(T x, ApproximationContext approximationContext) const {
     return approximateFirstChildWithArgument(x, approximationContext).toScalar();
   }
+  template<typename T> Evaluation<T> approximateExpressionWithArgument(ExpressionNode * child, T x, ApproximationContext approximationContext) const;
+
 };
 
 class ParameteredExpression : public Expression {

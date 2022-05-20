@@ -74,13 +74,6 @@ KDPoint ExpressionView::absoluteDrawingOrigin() const {
 }
 
 void ExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (m_layout.type()==Poincare::LayoutNode::Type::CodePointLayout) {
-    Poincare::CodePointLayout cp = static_cast<Poincare::CodePointLayout&>(m_layout);
-    if (cp.codePoint() == '-') {
-      volatile int i = 0;
-      i++;
-    }
-  }
   ctx->fillRect(rect, m_backgroundColor);
   if (!m_layout.isUninitialized()) {
     m_layout.draw(ctx, drawingOrigin(), m_textColor, m_backgroundColor, m_selectionStart, m_selectionEnd, Palette::Select);

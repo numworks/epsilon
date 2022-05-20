@@ -548,7 +548,9 @@ Poincare::Layout TwoProportions::EstimateLayout(Poincare::Layout * layout) {
     /* we build a nested layout instead of a flat one to be able to retrieve p1
        and p2 from it when needed by the estimates of the TwoProportionTest */
     Poincare::HorizontalLayout res = Poincare::HorizontalLayout::Builder(
-      p1, CodePointLayout::Builder('-'), p2);
+      p1,
+      CodePointLayout::Builder('-'),
+      p2);
     *layout = std::move(res);
   }
   return *layout;

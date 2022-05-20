@@ -40,6 +40,7 @@ app_inference_test_src += $(addprefix apps/inference/models/statistic/,\
   interval.cpp \
   statistic.cpp \
   test.cpp \
+  two_proportions_z_test.cpp \
 )
 
 app_inference_src += $(addprefix apps/inference/probability/,\

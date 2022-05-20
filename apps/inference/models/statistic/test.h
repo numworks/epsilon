@@ -42,15 +42,15 @@ bool hasHypothesisParameters() const override { return true; }
   virtual bool isValidH0(double h0) { return true; }
 
   // Additional estimates
-  virtual int numberOfEstimates() const { return 0; };
-  virtual double estimateValue(int index) { return 0; };
+  virtual int numberOfEstimates() const { return 0; }
+  virtual double estimateValue(int index) { return 0; }
   virtual Poincare::Layout estimateLayout(int index) const { return nullptr; }
   virtual I18n::Message estimateDescription(int index) { return I18n::Message::Default; }
 
   // Test statistic
   /* Returns the abscissa on the normalized density curve
    * corresponding to the input sample. */
-  double testCriticalValue() const { return m_testCriticalValue; };
+  double testCriticalValue() const { return m_testCriticalValue; }
   /* The p-value is the probability of obtaining a results at least
    * as extreme as what was observed with the sample */
   double pValue() const { return m_pValue; };

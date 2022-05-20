@@ -14,14 +14,13 @@ class StoreParameterController : public Shared::StoreParameterController {
 public:
   StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
+  int numberOfRows() const override { return Shared::StoreParameterController::numberOfRows() + 1; }
+  int typeAtIndex(int index) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-protected:
-  int numberOfCells() const override { return Shared::StoreParameterController::k_numberOfCells + 1; }
-  int indexOfHideColumn() const override { return Shared::StoreParameterController::indexOfHideColumn() + 1; }
-
 private:
-  int indexOfRegressionCell() const { return Shared::StoreParameterController::indexOfHideColumn(); }
+  constexpr static int k_changeRegressionCellType = Shared::StoreParameterController::k_numberOfCells;
+  constexpr static int k_changeRegressionCellIndex = 2;
 
   Escher::MessageTableCellWithChevronAndMessage m_changeRegressionCell;
 };

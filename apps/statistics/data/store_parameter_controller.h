@@ -15,16 +15,18 @@ public:
   StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController, Store * m_store);
   void initializeColumnParameters() override;
   bool handleEvent(Ion::Events::Event event) override;
+  int numberOfRows() const override;
+  int typeAtIndex(int index) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  int numberOfCells() const override;
 private:
-  /* Number of Shared::StoreParameterController's cells to hide when cumulated
-   * frequency column is selected : m_clearColumn, m_hideCell and m_fillFormula.
-   */
-  constexpr static int k_numberOfHiddenCells = 3;
+  /* When displayed, HideCumulatedFrequencyCell is last and second.
+   * Remaining Shared::StoreParameterController are not displayed:
+   * m_fillFormula, m_hideCell and m_clearColumn */
+  constexpr static int k_indexOfHideCumulatedFrequencyCell = Shared::StoreParameterController::k_fillFormulaCellType;
+  constexpr static int k_displayCumulatedFrequencyCellType = Shared::StoreParameterController::k_numberOfCells;
+  constexpr static int k_hideCumulatedFrequencyCellType = k_displayCumulatedFrequencyCellType + 1;
 
-  int indexOfCumulatedFrequencyCell() const { return numberOfCells() - 1; }
   bool isCumulatedFrequencyColumnSelected() const;
   I18n::Message sortMessage() override {
     return (m_columnIndex % 2 == 0) ? I18n::Message::SortValues : I18n::Message::SortSizes;

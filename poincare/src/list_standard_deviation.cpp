@@ -3,6 +3,7 @@
 #include <poincare/list_variance.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/square_root.h>
 #include <poincare/statistics_dataset.h>
 
@@ -37,11 +38,8 @@ Expression ListStandardDeviation::shallowReduce(ExpressionNode::ReductionContext
   int n = numberOfChildren();
   assert(n <= 2);
   Expression children[2];
-  for (int i = 0; i < n; i++) {
-    children[i] = childAtIndex(i);
-    if (children[i].type() != ExpressionNode::Type::List || children[i].numberOfChildren() == 0) {
-      return replaceWithUndefinedInPlace();
-    }
+  if (!SimplificationHelper::allChildrenAreNonEmptyLists(*this, children)) {
+    return replaceWithUndefinedInPlace();
   }
   ListVariance var = n == 1 ? ListVariance::Builder(children[0]) : ListVariance::Builder(children[0], children[1]);
   Power sqrt = Power::Builder(var, Rational::Builder(1, 2));

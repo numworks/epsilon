@@ -418,8 +418,15 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("gcd(1ᴇ16,10)", Undefined::Name());
   assert_expression_approximates_to<double>("gcd(1ᴇ16,10)", Undefined::Name());
 
-  assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
-  assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");
+  assert_expression_approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
+  assert_expression_approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
+  assert_expression_approximates_to<float>("invbinom(0.95,100,0.42)", "50");
+  assert_expression_approximates_to<double>("invbinom(0.95,100,0.42)", "50");
+  assert_expression_approximates_to<float>("invbinom(0.01,150,0.9)", "126");
+  assert_expression_approximates_to<double>("invbinom(0.01,150,0.9)", "126");
+
+  assert_expression_approximates_to<float>("invnorm(0.56, 1.3, 2.4)", "1.662326");
+  //assert_expression_approximates_to<double>("invnorm(0.56, 1.3, 2.4)", "1.6623258450088"); FIXME precision error
 
   assert_expression_approximates_to<float>("ln(2)", "0.6931472");
   assert_expression_approximates_to<double>("ln(2)", "0.69314718055995");
@@ -537,12 +544,6 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("root(-1,3)", "0.5+0.8660254×i");
   assert_expression_approximates_to<double>("root(-1,3)", "0.5+0.86602540378444×i");
 
-  assert_expression_approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");
-  assert_expression_approximates_to<double>("int(int(x×x,x,0,x),x,0,4)", "21.333333333333");
-
-  assert_expression_approximates_to<float>("int(1+cos(a),a, 0, 180)", "180");
-  assert_expression_approximates_to<double>("int(1+cos(a),a, 0, 180)", "180");
-
   assert_expression_approximation_is_bounded("random()", 0.0f, 1.0f);
   assert_expression_approximation_is_bounded("random()", 0.0, 1.0);
 
@@ -555,6 +556,52 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("randint(4, 3)", Undefined::Name());
   assert_expression_approximates_to<double>("randint(2, 23345678909876545678)", Undefined::Name());
   assert_expression_approximates_to<double>("randint(123456789876543, 123456789876543+10)", Undefined::Name());
+}
+
+QUIZ_CASE(poincare_approximation_integral) {
+  assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
+  assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");
+  assert_expression_approximates_to<float>("int(1/x,x,0,1)", "undef");
+
+  assert_expression_approximates_to<float>("int(1+cos(a),a, 0, 180)", "180");
+  assert_expression_approximates_to<double>("int(1+cos(a),a, 0, 180)", "180");
+
+  // former precision issues
+  assert_expression_approximates_to<double>("int(abs(2*sin(e^(x/4))+1),x,0,6)", "12.573260585347", Radian); // #1912
+  assert_expression_approximates_to<double>("int(4*√(1-x^2),x,0,1)", "3.1415926535899"); // #1912
+  assert_expression_approximates_to<double>("int(1/(1+25*x^2),x,0,1)", "0.274680153389"); // Runge function
+  assert_expression_approximates_to<double>("int(2*√(9-(x-3)^2),x,0,6)", "28.27433388231"); // #1378
+
+  // far bounds
+  assert_expression_approximates_to<double>("int(e^(-x^2),x,0,100000)", "0.88622692545276"); // ≈sqrt(pi)/2 #258
+  assert_expression_approximates_to<double>("int(1/(x^2+1),x,0,100000)", "1.5707863267949"); // atan(100000) #1104
+  assert_expression_approximates_to<double>("int(1/(x^2+1),x,0,inf)", "1.5707963267949"); // pi/2 #1104
+  assert_expression_approximates_to<double>("int(1/x,x,1,1000000)", "13.81551056", Radian, MetricUnitFormat, Cartesian, 10); // #1104
+  assert_expression_approximates_to<double>("int(e^(-x)/√(x),x,0,inf)", "1.7724", Radian, MetricUnitFormat, Cartesian, 5); // poor precision
+
+  // singularities
+  assert_expression_approximates_to<double>("int(ln(x)*√(x),x,0,1)", "-0.444444444444", Radian, MetricUnitFormat, Cartesian, 12);
+  assert_expression_approximates_to<double>("int(1/√(x),x,0,1)", "2", Radian, MetricUnitFormat, Cartesian, 12);
+  assert_expression_approximates_to<double>("int(1/√(1-x),x,0,1)", "2", Radian, MetricUnitFormat, Cartesian, 12);
+  assert_expression_approximates_to<double>("int(1/√(x)+1/√(1-x),x,0,1)", "4", Radian, MetricUnitFormat, Cartesian, 12);
+  assert_expression_approximates_to<double>("int(ln(x)^2,x,0,1)", "2", Radian, MetricUnitFormat, Cartesian, 12);
+  assert_expression_approximates_to<double>("int(1/√(x-1),x,1,2)", "2", Radian, MetricUnitFormat, Cartesian, 12); // #596
+  assert_expression_approximates_to<double>("int(2/√(1-x^2),x,0,1)", "3.1415926535898"); // #1780
+  assert_expression_approximates_to<double>("int(4x/√(1-x^4),x,0,1)", "3.1415926535898"); // #1780
+  // convergence is slow with 1/x^k k≈1, therefore precision is poor
+  assert_expression_approximates_to<float>("int(1/x^0.9,x,0,1)", "10", Radian, MetricUnitFormat, Cartesian, 3);
+
+  // double integration
+  assert_expression_approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");
+  assert_expression_approximates_to<double>("int(int(x×x,x,0,x),x,0,4)", "21.333333333333");
+  assert_expression_approximates_to<double>("int(int(e^(-x*t)/t^2,t,1,inf),x,0,1)", "0.3903080328", Radian, MetricUnitFormat, Cartesian, 10);
+  // this integral on R2 takes about one minute to compute on N110
+  assert_expression_approximates_to<double>("int(int(e^(-(x^2+y^2)),x,-inf,inf),y,-inf,inf)", "3.141592654", Radian, MetricUnitFormat, Cartesian, 10);
+  assert_expression_approximates_to<double>("int(sum(sin(x)^k,k,0,100),x,0,π)", "48.3828", Radian, MetricUnitFormat, Cartesian, 6); // poor precision in wolfram
+
+  // oscillator
+  assert_expression_approximates_to<double>("int((sin(x)/x)^2,x,0,inf)", "1.5708", Radian, MetricUnitFormat, Cartesian, 5); // poor precision
+  assert_expression_approximates_to<double>("int(x*sin(1/x)*√(abs(1-x)),x,0,3)", "1.9819412", Radian, MetricUnitFormat, Cartesian, 8);
 }
 
 QUIZ_CASE(poincare_approximation_trigonometry_functions) {

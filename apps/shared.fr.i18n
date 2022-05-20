@@ -1,4 +1,7 @@
-ActivateDeactivate = "Masquer"
+ActivateDeactivateListParamTitle = "Afficher l'élément"
+ActivateDeactivateListParamDescription = "Dans les onglets Graphique et Tableau"
+ActivateDeactivateStoreParamTitle = "Afficher la série"
+ActivateDeactivateStoreParamDescription = "Dans les onglets Graphique et Stats"
 ActivateExamMode = "Activer le mode examen"
 ActiveExamModeMessage = "Toutes vos données seront\nsupprimées si vous activez\nle mode examen."
 ActiveDutchExamModeMessage = "Toutes vos données seront supprimées\nsi vous activez le mode examen (NL).\nPython sera inaccessible."

@@ -1,4 +1,7 @@
-ActivateDeactivate = "Esconder"
+ActivateDeactivateListParamTitle = "Mostrar o elemento"
+ActivateDeactivateListParamDescription = "Nos separadores Gráfica e Tabela"
+ActivateDeactivateStoreParamTitle = "Mostrar a série"
+ActivateDeactivateStoreParamDescription = "Nos separadores Gráfico e Estat"
 ActivateExamMode = "Ativar o modo de exame"
 ActiveExamModeMessage = "Todos os seus dados serão\napagados se ativar\no modo de exame."
 ActiveDutchExamModeMessage = "Todos os seus dados serão apagados\nse ativar o modo de exame (NL). A\naplicação Python estará indisponível."

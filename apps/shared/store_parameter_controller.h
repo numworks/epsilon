@@ -3,7 +3,7 @@
 
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_message.h>
-#include <escher/message_table_cell_with_switch.h>
+#include <escher/message_table_cell_with_message_with_switch.h>
 #include <escher/message_table_cell.h>
 #include <escher/buffer_table_cell.h>
 #include <apps/i18n.h>
@@ -37,7 +37,7 @@ private:
   constexpr static int k_indexOfFillFormula = k_indexOfSortCell + 1;
 
   Escher::MessageTableCellWithMessage m_sortCell;
-  Escher::MessageTableCellWithSwitch m_hideCell;
+  Escher::MessageTableCellWithMessageWithSwitch m_hideCell;
 };
 
 }

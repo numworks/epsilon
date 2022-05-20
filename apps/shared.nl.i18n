@@ -1,4 +1,7 @@
-ActivateDeactivate = "Verbergen"
+ActivateDeactivateListParamTitle = "Toon het element"
+ActivateDeactivateListParamDescription = "Op de tabbladen Grafiek en Tabel"
+ActivateDeactivateStoreParamTitle = "Toon de gegevensreeks"
+ActivateDeactivateStoreParamDescription = "Op de tabbladen Grafiek en Stats"
 ActivateExamMode = "Activeer de examenstand"
 ActiveExamModeMessage = "Al je gegevens worden\ngewist wanneer je de\nexamenstand activeert."
 ActiveDutchExamModeMessage = "Al je gegevens worden gewist\nwanneer je de Nederlandse\nexamenstand activeert. De\nPython app wordt uitgeschakeld."

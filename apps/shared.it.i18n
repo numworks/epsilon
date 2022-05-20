@@ -1,4 +1,7 @@
-ActivateDeactivate = "Nascondere"
+ActivateDeactivateListParamTitle = "Visualizzare l'elemento"
+ActivateDeactivateListParamDescription = "Nelle schede Grafico e Tabella"
+ActivateDeactivateStoreParamTitle = "Visualizzare la serie"
+ActivateDeactivateStoreParamDescription = "Nelle schede Grafico e Stats"
 ActivateExamMode = "Attiva modalità d'esame"
 ActiveExamModeMessage = "Tutti i tuoi dati saranno\ncancellati se attivi\nla modalità d'esame."
 ActiveDutchExamModeMessage = "Tutti i tuoi dati saranno cancellati\nse attivi la modalità d'esame (NL).\nL'app Python sarà inaccessibile."

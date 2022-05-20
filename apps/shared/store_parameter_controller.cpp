@@ -14,7 +14,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_storeController(storeController),
   m_fillFormula(I18n::Message::FillWithFormula),
   m_sortCell(I18n::Message::SortCellLabel),
-  m_hideCell(I18n::Message::ActivateDeactivate)
+  m_hideCell(I18n::Message::ActivateDeactivateStoreParamTitle, I18n::Message::ActivateDeactivateStoreParamDescription, false)
 {
   m_clearColumn.setMessageWithPlaceholder(I18n::Message::ClearColumn);
 }
@@ -25,6 +25,7 @@ void StoreParameterController::initializeColumnParameters() {
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
+  // TODO Hugo : Use proper types because all cells are no longer visible
   if (event != Ion::Events::OK && event != Ion::Events::EXE) {
     return false;
   }
@@ -80,7 +81,7 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
 
 void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   if (index == indexOfHideColumn()) {
-    m_hideCell.setState(!m_storeController->selectedSeriesIsValid());
+    m_hideCell.setState(m_storeController->selectedSeriesIsValid());
   }
 }
 

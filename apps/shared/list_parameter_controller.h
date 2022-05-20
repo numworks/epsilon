@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/selectable_list_view_controller.h>
-#include <escher/message_table_cell_with_switch.h>
+#include <escher/message_table_cell_with_message_with_switch.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_table_view_delegate.h>
 #include "color_parameter_controller.h"
@@ -42,7 +42,7 @@ protected:
 private:
   // Return index of shared cell from row number
   int sharedCellIndex(int j);
-  Escher::MessageTableCellWithSwitch m_enableCell;
+  Escher::MessageTableCellWithMessageWithSwitch m_enableCell;
   Escher::MessageTableCellWithChevronAndMessage m_colorCell;
   Escher::MessageTableCell m_deleteCell;
   ColorParameterController m_colorParameterController;

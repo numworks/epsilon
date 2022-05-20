@@ -9,7 +9,7 @@ namespace Shared {
 
 ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate) :
   SelectableListViewController(parentResponder, tableDelegate),
-  m_enableCell(I18n::Message::ActivateDeactivate),
+  m_enableCell(I18n::Message::ActivateDeactivateListParamTitle, I18n::Message::ActivateDeactivateListParamDescription, true),
   m_deleteCell(deleteFunctionMessage),
   m_colorParameterController(this)
 {}
@@ -36,7 +36,7 @@ void ListParameterController::viewWillAppear() {
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_enableCell && !m_record.isNull()) {
     assert(typeAtIndex(index) == k_enableCellType);
-    m_enableCell.setState(!function()->isActive());
+    m_enableCell.setState(function()->isActive());
   }
   if (cell == &m_colorCell) {
     m_colorCell.setMessage(I18n::Message::Color);

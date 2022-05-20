@@ -14,14 +14,17 @@ public:
   static FloatList<T> Builder() { return TreeHandle::NAryBuilder<FloatList<T>, ListNode>(); }
 
   void addValueAtIndex(T value, int index) {
+    assert(index <= numberOfChildren());
     List::addChildAtIndexInPlace(Float<T>::Builder(value), index, numberOfChildren());
   }
 
   void replaceValueAtIndex(T value, int index) {
+    assert(index < numberOfChildren());
     List::replaceChildAtIndexInPlace(index, Float<T>::Builder(value));
   }
 
   void removeValueAtIndex(int index) {
+    assert(index < numberOfChildren());
     List::removeChildAtIndexInPlace(index);
   }
 

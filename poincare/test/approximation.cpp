@@ -578,7 +578,13 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximation_is_bounded("randint(4,45)", 4.0f, 45.0f, true);
   assert_expression_approximation_is_bounded("randint(4,45)", 4.0, 45.0, true);
+  assert_expression_approximates_to<double>("1/randint(2,2)+1/2", "1");
   assert_expression_approximates_to<double>("randint(45,4)", Undefined::Name());
+  assert_expression_approximates_to<double>("randint(1, inf)",Undefined::Name());
+  assert_expression_approximates_to<double>("randint(-inf, 3)", Undefined::Name());
+  assert_expression_approximates_to<double>("randint(4, 3)", Undefined::Name());
+  assert_expression_approximates_to<double>("randint(2, 23345678909876545678)", Undefined::Name());
+  assert_expression_approximates_to<double>("randint(123456789876543, 123456789876543+10)", Undefined::Name());
 }
 
 QUIZ_CASE(poincare_approximation_trigonometry_functions) {

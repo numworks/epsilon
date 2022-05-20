@@ -63,13 +63,7 @@ Expression ListMean::shallowReduce(ExpressionNode::ReductionContext reductionCon
     }
   }
   int numberOfElementsInList = children[0].numberOfChildren();
-  Expression listToSum;
-  if (n == 1) {
-    listToSum = children[0];
-  } else {
-    assert(n == 2);
-    listToSum = Multiplication::Builder(children[0], children[1].clone());
-  }
+  Expression listToSum = n == 2 ? Multiplication::Builder(children[0], children[1].clone()) : children[0];
   ListSum sum = ListSum::Builder(listToSum);
   listToSum.shallowReduce(reductionContext);
   Expression inverseOfTotalWeights;

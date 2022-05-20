@@ -5,7 +5,7 @@
 #include <escher/selectable_table_view.h>
 
 /* This class is used to add a "preface" to a selectable table : one of its
- * column will appear on the left of the screen if it should go out of frame.
+ * row will appear on the left of the screen if it should go out of frame.
  * It uses a secondary table view, which it syncs up to the selectable table
  * by intercepting callbacks to its delegate. */
 
@@ -13,7 +13,7 @@ namespace Shared {
 
 class PrefacedTableView : public Escher::View, public Escher::Responder, public Escher::SelectableTableViewDelegate {
 public:
-  PrefacedTableView(int prefaceColumn, Escher::Responder * parentResponder, Escher::SelectableTableView * mainTableView, Escher::TableViewDataSource * cellsDataSource, Escher::SelectableTableViewDelegate * delegate = nullptr);
+  PrefacedTableView(int prefaceRow, Escher::Responder * parentResponder, Escher::SelectableTableView * mainTableView, Escher::TableViewDataSource * cellsDataSource, Escher::SelectableTableViewDelegate * delegate = nullptr);
 
   // Responder
   void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(m_mainTableView); }
@@ -37,23 +37,23 @@ public:
 private:
   class PrefaceDataSource : public Escher::TableViewDataSource, public Escher::ScrollViewDataSource {
   public:
-    PrefaceDataSource(int prefaceColumn, Escher::TableViewDataSource * mainDataSource) : m_mainDataSource(mainDataSource), m_prefaceColumn(prefaceColumn) {}
+    PrefaceDataSource(int prefaceRow, Escher::TableViewDataSource * mainDataSource) : m_mainDataSource(mainDataSource), m_prefaceRow(prefaceRow) {}
 
-    bool prefaceFullyInFrame(int offset) const { return offset <= m_mainDataSource->cumulatedWidthFromIndex(m_prefaceColumn); }
+    bool prefaceFullyInFrame(int offset) const { return offset <= m_mainDataSource->cumulatedHeightFromIndex(m_prefaceRow); }
 
     // TableViewDataSource
-    int numberOfRows() const override { return m_mainDataSource->numberOfRows(); }
-    int numberOfColumns() const override { return 1; }
-    void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override { assert(i == 0); return m_mainDataSource->willDisplayCellAtLocation(cell, m_prefaceColumn, j); }
-    KDCoordinate columnWidth(int i) override { assert(i == 0); return m_mainDataSource->columnWidth(m_prefaceColumn); }
-    KDCoordinate rowHeight(int j) override { return m_mainDataSource->rowHeight(j); }
+    int numberOfRows() const override { return 1; }
+    int numberOfColumns() const override { return m_mainDataSource->numberOfColumns(); }
+    void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override { assert(j == 0); return m_mainDataSource->willDisplayCellAtLocation(cell, i, m_prefaceRow); }
+    KDCoordinate columnWidth(int i) override { return m_mainDataSource->columnWidth(i); }
+    KDCoordinate rowHeight(int j) override { assert(j == 0); return m_mainDataSource->rowHeight(m_prefaceRow); }
     Escher::HighlightCell * reusableCell(int index, int type) override { return m_mainDataSource->reusableCell(index, type); }
     int reusableCellCount(int type) override { return m_mainDataSource->reusableCellCount(type); }
-    int typeAtLocation(int i, int j) override { assert(i == 0); return m_mainDataSource->typeAtLocation(m_prefaceColumn, j); }
+    int typeAtLocation(int i, int j) override { assert(j == 0); return m_mainDataSource->typeAtLocation(i, m_prefaceRow); }
 
   private:
     Escher::TableViewDataSource * m_mainDataSource;
-    const int m_prefaceColumn;
+    const int m_prefaceRow;
   };
 
   // View

@@ -37,18 +37,30 @@ void extapp_pushRect(int16_t x, int16_t y, uint16_t w, uint16_t h, const uint16_
   KDRect rect(x, y, w, h);
 
   Ion::Display::pushRect(rect, reinterpret_cast<const KDColor *>(pixels));
+  #ifndef DEVICE
+  // Refresh the display.
+  Ion::Keyboard::scan();
+  #endif
 }
 
 void extapp_pushRectUniform(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t color) {
   KDRect rect(x, y, w, h);
 
   Ion::Display::pushRectUniform(rect, KDColor::RGB16(color));
+  #ifndef DEVICE
+  // Refresh the display.
+  Ion::Keyboard::scan();
+  #endif
 }
 
 void extapp_pullRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t * pixels) {
   KDRect rect(x, y, w, h);
 
   Ion::Display::pullRect(rect, (KDColor *)pixels);
+  #ifndef DEVICE
+  // Refresh the display.
+  Ion::Keyboard::scan();
+  #endif
 }
 
 int16_t extapp_drawTextLarge(const char * text, int16_t x, int16_t y, uint16_t fg, uint16_t bg, bool fake) {
@@ -58,6 +70,11 @@ int16_t extapp_drawTextLarge(const char * text, int16_t x, int16_t y, uint16_t f
   ctx->setClippingRect(KDRect(0, 0, 320, fake ? 0 : 240));
   ctx->setOrigin(KDPoint(0, 0));
   point = ctx->drawString(text, point, KDFont::LargeFont, KDColor::RGB16(fg), KDColor::RGB16(bg));
+
+  #ifndef DEVICE
+  // Refresh the display.
+  Ion::Keyboard::scan();
+  #endif
 
   return point.x();
 }
@@ -69,6 +86,11 @@ int16_t extapp_drawTextSmall(const char * text, int16_t x, int16_t y, uint16_t f
   ctx->setClippingRect(KDRect(0, 0, 320, fake ? 0 : 240));
   ctx->setOrigin(KDPoint(0, 0));
   point = ctx->drawString(text, point, KDFont::SmallFont, KDColor::RGB16(fg), KDColor::RGB16(bg));
+
+  #ifndef DEVICE
+  // Refresh the display.
+  Ion::Keyboard::scan();
+  #endif
 
   return point.x();
 }

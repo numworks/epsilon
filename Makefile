@@ -31,14 +31,11 @@ ifeq ($(filter reader,$(apps_list)),)
   HAS_READER := 1
 endif
 
-ifeq (${MODEL}, n0110)
-  apps_list = ${EPSILON_APPS}
-else
-  ifeq (${MODEL},bootloader)
-    apps_list = ${EPSILON_APPS}
-  else
+# Remove the external apps for the n0100
+ifeq (${MODEL}, n0100)
     apps_list = $(foreach i, ${EPSILON_APPS}, $(if $(filter external, $(i)),,$(i)))
-  endif
+else
+    apps_list = ${EPSILON_APPS}
 endif
 
 ifdef FORCE_EXTERNAL

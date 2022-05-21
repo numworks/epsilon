@@ -16,7 +16,7 @@ jobs:
           ref: ${{ github.event.pull_request.base.sha }}
           path: base
       - name: Build base
-        run: make -j2 -C base epsilon.elf
+        run: make -j2 -C base MODEL=n0110 epsilon.elf
       - name: Checkout PR head
         uses: actions/checkout@v2
         with:
@@ -24,7 +24,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           path: head
       - name: Build head
-        run: make -j2 -C head epsilon.elf
+        run: make -j2 -C head MODEL=n0110 epsilon.elf
       - name: Retrieve binary size analysis
         id: binary_size
         run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/epsilon.elf head/output/release/device/n0110/epsilon.elf --labels Base Head --sections .text .rodata .bss .data --custom 'Total (RAM)' .data .bss --custom 'Total (ROM)' .text .rodata .data --escape)"

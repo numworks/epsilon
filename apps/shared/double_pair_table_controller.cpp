@@ -7,7 +7,7 @@ namespace Shared {
 DoublePairTableController::DoublePairTableController(Responder * parentResponder, ButtonRowController * header) :
   TabTableController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  m_prefacedView(0, this, &m_selectableTableView, this, this),
+  m_prefacedView(0, 1, this, &m_selectableTableView, this, this),
   m_selectableTableView(this, this, this, &m_prefacedView)
 {
   m_prefacedView.setCellOverlap(0, 0);

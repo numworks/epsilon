@@ -2,7 +2,7 @@
 #define SHARED_DOUBLE_PAIR_TABLE_CONTROLLER_H
 
 #include "double_pair_store.h"
-#include "prefaced_table_view.h"
+#include "prefaced_twice_table_view.h"
 #include "tab_table_controller.h"
 #include <escher/table_view_data_source.h>
 #include <escher/button_row_controller.h>
@@ -45,7 +45,7 @@ protected:
   Escher::Responder * tabController() const override { return (parentResponder()->parentResponder()->parentResponder()); }
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 
-  Shared::PrefacedTableView m_prefacedView;
+  PrefacedTwiceTableView m_prefacedView;
   Escher::SelectableTableView m_selectableTableView;
 };
 

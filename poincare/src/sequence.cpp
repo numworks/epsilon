@@ -39,7 +39,6 @@ int SequenceNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
 }
 
 Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  assert(name()[0] >= 'u' && name()[0] <= 'w');
   Layout rank = childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits);
   return HorizontalLayout::Builder(
     CodePointLayout::Builder(name()[0]),

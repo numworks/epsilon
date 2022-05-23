@@ -456,6 +456,9 @@ void Store::updateSeries(int series, bool delayUpdate) {
 }
 
 double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUpperBound) const {
+  if (!seriesIsValid(series)) {
+    return NAN;
+  }
   double result = 0;
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {

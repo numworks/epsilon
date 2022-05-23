@@ -35,26 +35,39 @@ public:
   void setMarginDelegate(MarginDelegate * delegate) { m_marginDelegate = delegate; }
 
 protected:
-  class PrefaceDataSource : public Escher::TableViewDataSource, public Escher::ScrollViewDataSource {
+  class IntermediaryDataSource : public Escher::TableViewDataSource, public Escher::ScrollViewDataSource {
   public:
-    PrefaceDataSource(int prefaceRow, Escher::TableViewDataSource * mainDataSource) : m_mainDataSource(mainDataSource), m_prefaceRow(prefaceRow) {}
-
-    int prefaceRow() const { return m_prefaceRow; }
-
-    bool prefaceFullyInFrame(int offset) const { return offset <= m_mainDataSource->cumulatedHeightFromIndex(m_prefaceRow); }
+    IntermediaryDataSource(Escher::TableViewDataSource * mainDataSource) : m_mainDataSource(mainDataSource) {}
 
     // TableViewDataSource
-    int numberOfRows() const override { return 1; }
+    int numberOfRows() const override { return m_mainDataSource->numberOfRows(); }
     int numberOfColumns() const override { return m_mainDataSource->numberOfColumns(); }
-    void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override { assert(j == 0); return m_mainDataSource->willDisplayCellAtLocation(cell, i, m_prefaceRow); }
-    KDCoordinate columnWidth(int i) override { return m_mainDataSource->columnWidth(i); }
-    KDCoordinate rowHeight(int j) override { assert(j == 0); return m_mainDataSource->rowHeight(m_prefaceRow); }
+    void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override { m_mainDataSource->willDisplayCellAtLocation(cell, relativeColumn(i), relativeRow(j)); }
+    KDCoordinate columnWidth(int i) override { return m_mainDataSource->columnWidth(relativeColumn(i)); }
+    KDCoordinate rowHeight(int j) override { return m_mainDataSource->rowHeight(relativeRow(j)); }
     Escher::HighlightCell * reusableCell(int index, int type) override { return m_mainDataSource->reusableCell(index, type); }
     int reusableCellCount(int type) override { return m_mainDataSource->reusableCellCount(type); }
-    int typeAtLocation(int i, int j) override { assert(j == 0); return m_mainDataSource->typeAtLocation(i, m_prefaceRow); }
+    int typeAtLocation(int i, int j) override { return m_mainDataSource->typeAtLocation(relativeColumn(i), relativeRow(j)); }
+
+  protected:
+    virtual int relativeColumn(int i) = 0;
+    virtual int relativeRow(int j) = 0;
+
+    Escher::TableViewDataSource * m_mainDataSource;
+  };
+
+  class PrefaceDataSource : public IntermediaryDataSource {
+  public:
+    PrefaceDataSource(int prefaceRow, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceRow(prefaceRow) {}
+
+    int prefaceRow() const { return m_prefaceRow; }
+    bool prefaceFullyInFrame(int offset) const { return offset <= m_mainDataSource->cumulatedHeightFromIndex(m_prefaceRow); }
+    int numberOfRows() const override { return 1; }
 
   private:
-    Escher::TableViewDataSource * m_mainDataSource;
+    int relativeColumn(int i) override { return i; }
+    int relativeRow(int j) override { assert(j == 0); return m_prefaceRow; }
+
     const int m_prefaceRow;
   };
 

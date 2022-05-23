@@ -550,7 +550,7 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
 }
 
 int Store::totalNormalProbabilityValues(int series) const {
-  if (!columnIsIntegersOnly(series, 1)) {
+  if (!seriesIsValid(series) || !columnIsIntegersOnly(series, 1)) {
     return 0;
   }
   double result = sumOfOccurrences(series);

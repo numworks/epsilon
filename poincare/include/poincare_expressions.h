@@ -81,6 +81,7 @@
 #include <poincare/number.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
+#include <poincare/percent.h>
 #include <poincare/permute_coefficient.h>
 #include <poincare/power.h>
 #include <poincare/preferences.h>

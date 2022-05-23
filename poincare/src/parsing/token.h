@@ -33,6 +33,7 @@ public:
     RightParenthesis,
     RightBrace,
     Comma,
+    Percent,
     Plus,
     Minus,
     Times,

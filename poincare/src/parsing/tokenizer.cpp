@@ -332,6 +332,9 @@ Token Tokenizer::popToken() {
   if (c == '!') {
     return Token(Token::Bang);
   }
+  if (c == '%') {
+    return Token(Token::Percent);
+  }
   if (c == '=') {
     return Token(Token::Equal);
   }

@@ -92,6 +92,9 @@ template<typename T>
 T StatisticsDataset<T>::sortedElementAtCumulatedWeight(T weight, bool createMiddleElement) const {
   int upperIndex;
   int lowerIndex = indexAtCumulatedWeight(weight, &upperIndex);
+  if (lowerIndex < 0) {
+    return NAN;
+  }
   if (createMiddleElement && upperIndex != lowerIndex) {
     return (valueAtIndex(lowerIndex) + valueAtIndex(upperIndex)) / 2.0;
   }

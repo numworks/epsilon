@@ -41,7 +41,7 @@ Expression ListSampleStandardDeviation::shallowReduce(ExpressionNode::ReductionC
   int n = numberOfChildren();
   assert(n <= 2);
   Expression children[2];
-  if (!SimplificationHelper::allChildrenAreNonEmptyLists(*this, children)) {
+  if (!SimplificationHelper::getChildrenIfNonEmptyList(*this, children)) {
     return replaceWithUndefinedInPlace();
   }
   // Sample sttdev = sttdev * sqrt(weights / weights - 1)

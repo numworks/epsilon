@@ -41,7 +41,7 @@ Expression ListVariance::shallowReduce(ExpressionNode::ReductionContext reductio
   int n = numberOfChildren();
   assert(n <= 2);
   Expression children[2];
-  if (!SimplificationHelper::allChildrenAreNonEmptyLists(*this, children)) {
+  if (!SimplificationHelper::getChildrenIfNonEmptyList(*this, children)) {
     return replaceWithUndefinedInPlace();
   }
   Expression m = n == 2 ? ListMean::Builder(children[0].clone(), children[1].clone()) : ListMean::Builder(children[0].clone());

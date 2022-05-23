@@ -13,6 +13,7 @@ DoublePairTableController::DoublePairTableController(Responder * parentResponder
   m_prefacedView.setCellOverlap(0, 0);
   m_prefacedView.setBackgroundColor(Palette::WallScreenDark);
   m_prefacedView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_prefacedView.setMarginDelegate(this);
 }
 
 bool DoublePairTableController::handleEvent(Ion::Events::Event event) {
@@ -30,6 +31,25 @@ void DoublePairTableController::didBecomeFirstResponder() {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
   TabTableController::didBecomeFirstResponder();
+}
+
+KDCoordinate DoublePairTableController::prefaceMargin(TableView * preface, TableViewDataSource * prefaceDataSource) {
+  if (prefaceDataSource->numberOfColumns() > 1) {
+    return 0;
+  }
+  KDCoordinate prefaceRightSide = offset().x() + (preface->bounds().isEmpty() ? preface->minimalSizeForOptimalDisplay().width() : 0);
+
+  for (int i = 0; i < numberOfColumns(); i++) {
+    constexpr KDCoordinate maxMargin = Escher::Metric::TableSeparatorThickness;
+    KDCoordinate delta = prefaceRightSide - cumulatedWidthFromIndex(i);
+    if (delta < 0) {
+      return maxMargin;
+    } else if (delta <= maxMargin) {
+      return delta;
+    }
+  }
+  assert(false);
+  return 0;
 }
 
 }

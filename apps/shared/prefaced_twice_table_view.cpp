@@ -51,6 +51,7 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     m_prefaceView.setLeftMargin(m_storedXMargin);
     layoutSubviewsInRect(bounds(), force);
   } else {
+    m_columnPrefaceView.setRightMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_columnPrefaceView, &m_columnPrefaceDataSource) : 0);
     m_mainTableView->setLeftMargin(0);
     m_prefaceView.setLeftMargin(0);
     KDCoordinate columnPrefaceWidth = m_columnPrefaceView.minimalSizeForOptimalDisplay().width();
@@ -59,7 +60,6 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     KDCoordinate rowPrefaceHeight = m_prefaceView.bounds().height();
     m_columnPrefaceDataSource.setPrefaceRow(rowPrefaceHeight == 0 ? -1 : m_prefaceDataSource.prefaceRow());
     m_columnPrefaceView.setContentOffset(KDPoint(0, m_mainTableView->contentOffset().y() - rowPrefaceHeight + m_columnPrefaceView.topMargin() - m_mainTableView->topMargin()));
-    m_columnPrefaceView.setRightMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_columnPrefaceView) : 0);
     m_columnPrefaceView.setFrame(KDRect(0, 0, columnPrefaceWidth, bounds().height()), force);
   }
 }

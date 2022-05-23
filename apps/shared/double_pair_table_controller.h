@@ -11,7 +11,7 @@
 
 namespace Shared {
 
-class DoublePairTableController : public TabTableController, public Escher::TableViewDataSource, public Escher::ButtonRowDelegate, public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableTableViewDelegate {
+class DoublePairTableController : public TabTableController, public Escher::TableViewDataSource, public Escher::ButtonRowDelegate, public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableTableViewDelegate, public PrefacedTableView::MarginDelegate {
 public:
   constexpr static int k_titleNumberOfChars = 22;
 
@@ -34,6 +34,10 @@ public:
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+
+  // PrefacedTableView::MarginDelegate
+  KDCoordinate prefaceMargin(Escher::TableView * preface, Escher::TableViewDataSource * prefaceDataSource) override;
+
 
 protected:
   constexpr static int k_maxNumberOfDisplayableRows = 11;

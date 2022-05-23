@@ -17,7 +17,7 @@ public:
     assert(false); /* Not needed because DropdownPopupController takes care of it */
     return 1;
   }
-  int reusableCellCount(int type) override { return k_numberOfImages; }
+  int reusableCellCount(int type) override { return numberOfRows(); }
   Escher::HighlightImageCell * reusableCell(int i, int type) override { return &m_imageCells[i]; }
 
   constexpr static int k_numberOfImages = 4;

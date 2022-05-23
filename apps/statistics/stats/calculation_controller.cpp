@@ -13,13 +13,8 @@ namespace Statistics {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   DoublePairTableController(parentResponder, header),
-  m_tableView(1, this, &m_selectableTableView, this, this),
   m_store(store)
 {
-  m_tableView.setCellOverlap(0, 0);
-  m_tableView.setBackgroundColor(Palette::WallScreenDark);
-  m_tableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  m_tableView.setMarginDelegate(this);
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
     m_seriesTitleCells[i].setSeparatorLeft(true);
   }
@@ -235,24 +230,6 @@ int CalculationController::typeAtLocation(int i, int j) {
     return k_seriesTitleCellType;
   }
   return k_calculationCellType;
-}
-
-// MarginDelegate
-
-KDCoordinate CalculationController::prefaceMargin(Escher::TableView * preface) {
-  KDCoordinate prefaceRightSide = offset().x() + (preface->bounds().isEmpty() ? preface->minimalSizeForOptimalDisplay().width() : 0);
-
-  for (int i = 0; i < numberOfColumns(); i++) {
-    constexpr KDCoordinate maxMargin = Escher::Metric::TableSeparatorThickness;
-    KDCoordinate delta = prefaceRightSide - cumulatedWidthFromIndex(i);
-    if (delta < 0) {
-      return maxMargin;
-    } else if (delta <= maxMargin) {
-      return delta;
-    }
-  }
-  assert(false);
-  return 0;
 }
 
 }

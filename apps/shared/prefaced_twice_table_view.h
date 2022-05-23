@@ -14,7 +14,6 @@ public:
   void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) override;
 
 private:
-  // TODO The first cell should always be (m_prefaceColumn, m_prefaceRow)
   // TODO Factor this class and PrefacedTableView::PrefacedDataSource
   class ColumnPrefaceDataSource : public Escher::TableViewDataSource, public Escher::ScrollViewDataSource {
   public:
@@ -27,14 +26,16 @@ private:
     // TableViewDataSource
     int numberOfRows() const override { return m_mainDataSource->numberOfRows(); }
     int numberOfColumns() const override { return 1; }
-    void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override { assert(i == 0); return m_mainDataSource->willDisplayCellAtLocation(cell, m_prefaceColumn, j); }
+    void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override { assert(i == 0); m_mainDataSource->willDisplayCellAtLocation(cell, m_prefaceColumn, isPrefaceRow(j) ? m_prefaceRow : j); }
     KDCoordinate columnWidth(int i) override { assert(i == 0); return m_mainDataSource->columnWidth(m_prefaceColumn); }
     KDCoordinate rowHeight(int j) override { return m_mainDataSource->rowHeight(j); }
     Escher::HighlightCell * reusableCell(int index, int type) override { return m_mainDataSource->reusableCell(index, type); }
     int reusableCellCount(int type) override { return m_mainDataSource->reusableCellCount(type); }
-    int typeAtLocation(int i, int j) override { assert(i == 0); return m_mainDataSource->typeAtLocation(m_prefaceColumn, j); }
+    int typeAtLocation(int i, int j) override { assert(i == 0); return m_mainDataSource->typeAtLocation(m_prefaceColumn, isPrefaceRow(j) ? m_prefaceRow : j); }
 
   private:
+    bool isPrefaceRow(int row) { return m_prefaceRow >= 0 && row == indexFromCumulatedHeight(offset().y()); }
+
     Escher::TableViewDataSource * m_mainDataSource;
     const int m_prefaceColumn;
     int m_prefaceRow;

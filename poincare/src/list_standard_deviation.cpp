@@ -38,7 +38,7 @@ Expression ListStandardDeviation::shallowReduce(ExpressionNode::ReductionContext
   int n = numberOfChildren();
   assert(n <= 2);
   Expression children[2];
-  if (!SimplificationHelper::allChildrenAreNonEmptyLists(*this, children)) {
+  if (!SimplificationHelper::getChildrenIfNonEmptyList(*this, children)) {
     return replaceWithUndefinedInPlace();
   }
   ListVariance var = n == 1 ? ListVariance::Builder(children[0]) : ListVariance::Builder(children[0], children[1]);

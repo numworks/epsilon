@@ -85,6 +85,11 @@ void ParametersController::viewWillAppear() {
   FloatParameterController::viewWillAppear();
 }
 
+void ParametersController::viewDidDisappear() {
+  // Prevent initWidth to be bypassed when reopening the ParametersController.
+  m_contentView.resetWidth();
+}
+
 int ParametersController::numberOfRows() const {
   return 1 + m_distribution->numberOfParameters();
 }

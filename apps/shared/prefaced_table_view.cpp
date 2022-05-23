@@ -9,8 +9,8 @@ namespace Shared {
   m_prefaceDataSource(prefaceRow, cellsDataSource),
   m_prefaceView(&m_prefaceDataSource, &m_prefaceDataSource),
   m_mainTableView(mainTableView),
-  m_mainTableDelegate(delegate),
   m_marginDelegate(nullptr),
+  m_mainTableDelegate(delegate),
   m_storedMargin(0)
 {
   m_mainTableView->setParentResponder(parentResponder);
@@ -56,23 +56,35 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::Selectab
   layoutSubviews();
 }
 
-void PrefacedTableView::layoutSubviews(bool force) {
+void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   bool hidePreface = m_prefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().y()) || m_mainTableView->selectedRow() == -1;
+  KDCoordinate prefaceHeight;
+
   if (hidePreface) {
     m_mainTableView->setTopMargin(m_storedMargin);
-    m_mainTableView->setFrame(bounds(), force);
-    m_prefaceView.setFrame(KDRectZero, force);
+    m_mainTableView->setFrame(rect, force);
   } else {
-    KDCoordinate prefaceHeight = m_prefaceView.minimalSizeForOptimalDisplay().height();
+    prefaceHeight = m_prefaceView.minimalSizeForOptimalDisplay().height();
     m_mainTableView->setTopMargin(0);
-    m_mainTableView->setFrame(KDRect(0, prefaceHeight, bounds().width(), bounds().height() - prefaceHeight), force);
+    m_mainTableView->setFrame(KDRect(rect.x(), rect.y() + prefaceHeight, rect.width(), rect.height() - prefaceHeight), force);
+  }
+
+  if (m_mainTableView->selectedRow() >= 0) {
     /* Scroll to update the content offset with the new margins. */
     m_mainTableView->scrollToCell(m_mainTableView->selectedColumn(), m_mainTableView->selectedRow());
+  }
 
+  if (hidePreface) {
+    m_prefaceView.setFrame(KDRectZero, force);
+  } else {
     m_prefaceView.setContentOffset(KDPoint(m_mainTableView->contentOffset().x(), 0));
     m_prefaceView.setBottomMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_prefaceView) : 0);
-    m_prefaceView.setFrame(KDRect(0, 0, bounds().width(), prefaceHeight), force);
+    m_prefaceView.setFrame(KDRect(rect.x(), rect.y(), rect.width(), prefaceHeight), force);
   }
+}
+
+void PrefacedTableView::layoutSubviews(bool force) {
+  layoutSubviewsInRect(bounds(), force);
 }
 
 }

@@ -71,6 +71,7 @@ app_shared_src = $(addprefix apps/shared/,\
   parameter_text_field_delegate.cpp \
   poincare_helpers.cpp \
   prefaced_table_view.cpp \
+  prefaced_twice_table_view.cpp \
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \
   round_cursor_view.cpp \

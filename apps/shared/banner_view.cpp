@@ -9,7 +9,8 @@ KDCoordinate BannerView::HeightGivenNumberOfLines(int linesCount) {
 }
 
 void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
-  const KDCoordinate frameHeight = minimalSizeForOptimalDisplay().height();
+  assert(!bounds().isEmpty());
+  const KDCoordinate frameHeight = bounds().height();
   const KDCoordinate lineHeight = Font()->glyphSize().height() + LineSpacing;
   const KDCoordinate lineWidth = m_frame.width();
   for (KDCoordinate y = 0; y < frameHeight; y += lineHeight) {

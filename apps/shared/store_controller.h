@@ -4,11 +4,12 @@
 #include <escher/button_row_controller.h>
 #include <escher/input_view_controller.h>
 #include <escher/stack_view_controller.h>
-#include "editable_cell_table_view_controller.h"
 #include "double_pair_store.h"
-#include "layout_field_delegate.h"
+#include "editable_cell_table_view_controller.h"
 #include "formula_template_menu_controller.h"
 #include "input_event_handler_delegate.h"
+#include "layout_field_delegate.h"
+#include "prefaced_table_view.h"
 #include "store_cell.h"
 #include "store_context.h"
 #include "store_parameter_controller.h"
@@ -20,7 +21,7 @@ namespace Shared {
 class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
 public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
-  Escher::View * view() override { return &m_dataView; }
+  Escher::View * view() override { return &m_prefacedView; }
   TELEMETRY_ID("Store");
 
   // EditableCellViewController
@@ -89,6 +90,7 @@ private:
   int maxNumberOfElements() const override { return DoublePairStore::k_maxNumberOfPairs; }
 
   StoreTitleCell m_titleCells[k_numberOfTitleCells];
+  PrefacedTableView m_prefacedView;
   StoreSelectableTableView m_dataView;
   FormulaTemplateMenuController m_templateController;
   Escher::StackViewController m_templateStackController;

@@ -39,6 +39,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseUnexpected,      // Token::RightParenthesis
     &Parser::parseUnexpected,      // Token::RightBrace
     &Parser::parseUnexpected,      // Token::Comma
+    &Parser::parsePercent,        // Token::Percent
     &Parser::parsePlus,            // Token::Plus
     &Parser::parseMinus,           // Token::Minus
     &Parser::parseTimes,           // Token::Times
@@ -333,6 +334,15 @@ void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {
     m_status = Status::Error; // Left-hand side missing
   } else {
     leftHandSide = Factorial::Builder(leftHandSide);
+  }
+  isThereImplicitMultiplication();
+}
+
+void Parser::parsePercent(Expression & leftHandSide, Token::Type stoppingType) {
+  if (leftHandSide.isUninitialized()) {
+    m_status = Status::Error; // Left-hand side missing
+  } else {
+    leftHandSide = Percent::ParseTarget(leftHandSide);
   }
   isThereImplicitMultiplication();
 }

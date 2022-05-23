@@ -15,14 +15,15 @@ StoreController::StoreController(Responder * parentResponder, Escher::InputEvent
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_store(store),
-  m_dataView(m_store, this, this, this),
+  m_prefacedView(0, this, &m_dataView, this),
+  m_dataView(m_store, this, this, this, &m_prefacedView),
   m_templateController(this, this),
   m_templateStackController(nullptr, &m_templateController, StackViewController::Style::PurpleWhite),
   m_storeContext(store, parentContext)
 {
-  m_dataView.setBackgroundColor(Palette::WallScreenDark);
-  m_dataView.setVerticalCellOverlap(0);
-  m_dataView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_prefacedView.setBackgroundColor(Palette::WallScreenDark);
+  m_prefacedView.setCellOverlap(0, 0);
+  m_prefacedView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i].setParentResponder(&m_dataView);
     m_editableCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);

@@ -13,7 +13,7 @@
 
 namespace Statistics {
 
-class CalculationController : public Shared::DoublePairTableController, public Shared::PrefacedTableView::MarginDelegate {
+class CalculationController : public Shared::DoublePairTableController, public Escher::SelectableTableViewDelegate, public Shared::PrefacedTableView::MarginDelegate {
 
 public:
   CalculationController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Store * store);
@@ -30,6 +30,9 @@ public:
   // ViewController
   Escher::View * view() override { return &m_tableView; }
   TELEMETRY_ID("Calculation");
+
+  // SelectableTableViewDelegate
+  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // MarginDelegate
   KDCoordinate prefaceMargin(Escher::TableView * preface) override;

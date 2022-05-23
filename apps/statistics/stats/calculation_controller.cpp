@@ -13,7 +13,7 @@ namespace Statistics {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   DoublePairTableController(parentResponder, header),
-  m_tableView(1, this, &m_selectableTableView, this),
+  m_tableView(1, this, &m_selectableTableView, this, this),
   m_store(store)
 {
   m_tableView.setCellOverlap(0, 0);
@@ -35,6 +35,26 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   }
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
     m_hideableCell[i].setHide(true);
+  }
+}
+
+void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
+  }
+  /* To prevent selecting cell with no content (top left corner of the table),
+   * as soon as the selected cell is the top left corner, we either reselect
+   * the previous cell or select the tab controller depending on from which cell
+   * the selection comes. This trick does not create an endless loop as the
+   * previous cell cannot be the top left corner cell if it also is the
+   * selected one. */
+  if (t->selectedRow() == 0 && t->selectedColumn() <= 1) {
+    if (previousSelectedCellX <= 1 && previousSelectedCellY == 1) {
+      selectableTableView()->deselectTable();
+      Container::activeApp()->setFirstResponder(tabController());
+    } else {
+      t->selectCellAtLocation(selectedColumn(), 1);
+    }
   }
 }
 

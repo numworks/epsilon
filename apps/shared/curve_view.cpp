@@ -300,7 +300,8 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
   float verticalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Vertical, 0.0f));
   float horizontalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Horizontal, 0.0f));
 
-  KDCoordinate viewHeight = bounds().height() - (bannerIsVisible() ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0);
+  assert(!(bannerIsVisible() && m_bannerView->bounds().isEmpty()));
+  KDCoordinate viewHeight = bounds().height() - (bannerIsVisible() ? m_bannerView->bounds().height() : 0);
 
   /* If the axis is not visible, draw floating labels on the edge of the screen.
    * The X axis floating status is needed when drawing both axes labels. */

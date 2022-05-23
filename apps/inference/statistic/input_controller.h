@@ -14,13 +14,17 @@
 namespace Inference {
 
 class InputController : public Shared::FloatParameterController<double>, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate<ExpressionCellWithEditableTextWithMessage> {
+friend class InputSlopeController;
 public:
   InputController(Escher::StackViewController * parent,
                   ResultsController * resultsController,
                   Statistic * statistic,
                   Escher::InputEventHandlerDelegate * handler);
   int numberOfRows() const override { return m_statistic->numberOfParameters() + 1 /* button */; }
-  const char * title() override;
+  const char * title() override {
+    InputTitle(this, m_statistic, m_titleBuffer, k_titleBufferSize);
+    return m_titleBuffer;
+  }
   ViewController::TitlesDisplay titlesDisplay() override;
   int typeAtIndex(int i) override;
   void didBecomeFirstResponder() override;
@@ -43,6 +47,7 @@ private:
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   int convertFloatToText(double value, char * buffer, int bufferSize);
+  static void InputTitle(Escher::ViewController * vc, Statistic * statistic, char * titleBuffer, size_t titleBufferSize);
 
   constexpr static int k_numberOfTitleSignificantDigit = 3;
   constexpr static int k_titleBufferSize = sizeof("H0:= Ha: α=") + 7 /* μ1-μ2 */ +

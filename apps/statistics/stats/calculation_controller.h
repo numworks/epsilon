@@ -6,14 +6,13 @@
 #include "../store.h"
 #include "calculation_selectable_table_view.h"
 #include <apps/shared/hideable_even_odd_cell.h>
-#include <apps/shared/prefaced_table_view.h>
 #include <apps/shared/separator_even_odd_buffer_text_cell.h>
 #include <apps/shared/store_title_cell.h>
 #include <apps/shared/double_pair_table_controller.h>
 
 namespace Statistics {
 
-class CalculationController : public Shared::DoublePairTableController, public Escher::SelectableTableViewDelegate, public Shared::PrefacedTableView::MarginDelegate {
+class CalculationController : public Shared::DoublePairTableController {
 
 public:
   CalculationController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Store * store);
@@ -28,14 +27,10 @@ public:
   int typeAtLocation(int i, int j) override;
 
   // ViewController
-  Escher::View * view() override { return &m_tableView; }
   TELEMETRY_ID("Calculation");
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
-
-  // MarginDelegate
-  KDCoordinate prefaceMargin(Escher::TableView * preface) override;
 
 private:
   static constexpr int k_fixedNumberOfRows = 17;
@@ -60,7 +55,6 @@ private:
 
   Shared::DoublePairStore * store() const override { return m_store; }
 
-  Shared::PrefacedTableView m_tableView;
   Shared::StoreTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];
   Escher::EvenOddMessageTextCell m_calculationTitleCells[k_numberOfCalculationTitleCells];
   Escher::EvenOddMessageTextCell m_calculationSymbolCells[k_numberOfCalculationTitleCells];

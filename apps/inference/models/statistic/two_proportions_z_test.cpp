@@ -21,6 +21,9 @@ Poincare::Layout TwoProportionsZTest::estimateLayout(int index) const {
     return layout.childAtIndex(0); // p̂1
   case EstimatesOrder::P2:
     if (m_p2Layout.isUninitialized()) {
+    /* we would like to reuse p2 directly from p1-p2 layout but
+     * Layout::draw * detects if the layout has parents to find where
+     * to render therefore we clone p2 to detach it from its parent */
       m_p2Layout = layout.childAtIndex(2).clone(); // p̂2
     }
     return m_p2Layout;

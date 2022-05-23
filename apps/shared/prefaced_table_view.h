@@ -23,9 +23,9 @@ public:
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
   Escher::SelectableTableView * selectableTableView() { return m_mainTableView; }
-  void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left);
-  void setBackgroundColor(KDColor color);
-  void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical);
+  virtual void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left);
+  virtual void setBackgroundColor(KDColor color);
+  virtual void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical);
 
   class MarginDelegate {
   public:
@@ -34,10 +34,12 @@ public:
 
   void setMarginDelegate(MarginDelegate * delegate) { m_marginDelegate = delegate; }
 
-private:
+protected:
   class PrefaceDataSource : public Escher::TableViewDataSource, public Escher::ScrollViewDataSource {
   public:
     PrefaceDataSource(int prefaceRow, Escher::TableViewDataSource * mainDataSource) : m_mainDataSource(mainDataSource), m_prefaceRow(prefaceRow) {}
+
+    int prefaceRow() const { return m_prefaceRow; }
 
     bool prefaceFullyInFrame(int offset) const { return offset <= m_mainDataSource->cumulatedHeightFromIndex(m_prefaceRow); }
 
@@ -56,16 +58,20 @@ private:
     const int m_prefaceRow;
   };
 
+  void layoutSubviewsInRect(KDRect rect, bool force);
+
+  PrefaceDataSource m_prefaceDataSource;
+  Escher::TableView m_prefaceView;
+  Escher::SelectableTableView * m_mainTableView;
+  MarginDelegate * m_marginDelegate;
+
+private:
   // View
   int numberOfSubviews() const override { return 2; }
   Escher::View * subviewAtIndex(int index) override { return index == 0 ? m_mainTableView : &m_prefaceView; }
   void layoutSubviews(bool force = false) override;
 
-  PrefaceDataSource m_prefaceDataSource;
-  Escher::TableView m_prefaceView;
-  Escher::SelectableTableView * m_mainTableView;
   Escher::SelectableTableViewDelegate * m_mainTableDelegate;
-  MarginDelegate * m_marginDelegate;
   KDCoordinate m_storedMargin;
 };
 

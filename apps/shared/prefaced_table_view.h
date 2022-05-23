@@ -29,7 +29,7 @@ public:
 
   class MarginDelegate {
   public:
-    virtual KDCoordinate prefaceMargin(Escher::TableView * preface) = 0;
+    virtual KDCoordinate prefaceMargin(Escher::TableView * preface, Escher::TableViewDataSource * prefaceDataSource) = 0;
   };
 
   void setMarginDelegate(MarginDelegate * delegate) { m_marginDelegate = delegate; }

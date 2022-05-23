@@ -64,6 +64,7 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     m_mainTableView->setTopMargin(m_storedMargin);
     m_mainTableView->setFrame(rect, force);
   } else {
+    m_prefaceView.setBottomMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_prefaceView, &m_prefaceDataSource) : 0);
     prefaceHeight = m_prefaceView.minimalSizeForOptimalDisplay().height();
     m_mainTableView->setTopMargin(0);
     m_mainTableView->setFrame(KDRect(rect.x(), rect.y() + prefaceHeight, rect.width(), rect.height() - prefaceHeight), force);
@@ -78,7 +79,6 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     m_prefaceView.setFrame(KDRectZero, force);
   } else {
     m_prefaceView.setContentOffset(KDPoint(m_mainTableView->contentOffset().x(), 0));
-    m_prefaceView.setBottomMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_prefaceView) : 0);
     m_prefaceView.setFrame(KDRect(rect.x(), rect.y(), rect.width(), prefaceHeight), force);
   }
 }

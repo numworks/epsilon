@@ -12,7 +12,7 @@ public:
   EvenOddMessageTextCell(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = KDContext::k_alignCenter);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
-  void setMessage(I18n::Message textContent) { m_messageTextView.setMessage(textContent); };
+  void setMessage(I18n::Message textContent) { m_messageTextView.setMessage(textContent); }
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   void setMessageFont(const KDFont * font) { m_messageTextView.setFont(font); }
   void setTextColor(KDColor color) { m_messageTextView.setTextColor(color); }

@@ -222,6 +222,10 @@ bool Expression::IsInfinity(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Infinity;
 }
 
+bool Expression::IsPercent(const Expression e, Context * context) {
+  return e.type() == ExpressionNode::Type::Percent;
+}
+
 bool containsVariables(const Expression e, char * variables, int maxVariableSize) {
   if (e.type() == ExpressionNode::Type::Symbol) {
     int index = 0;

@@ -206,6 +206,7 @@ public:
   static bool IsRandom(const Expression e, Context * context);
   static bool IsMatrix(const Expression e, Context * context);
   static bool IsInfinity(const Expression e, Context * context);
+  static bool IsPercent(const Expression e, Context * context);
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynomial
    * - the degree of the polynomial otherwise */

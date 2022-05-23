@@ -40,7 +40,7 @@ Expression ListMean::shallowReduce(ExpressionNode::ReductionContext reductionCon
   int n = numberOfChildren();
   assert(n <= 2);
   Expression children[2];
-  if (!SimplificationHelper::allChildrenAreNonEmptyLists(*this, children)) {
+  if (!SimplificationHelper::getChildrenIfNonEmptyList(*this, children)) {
     return replaceWithUndefinedInPlace();
   }
   if (n > 1) {

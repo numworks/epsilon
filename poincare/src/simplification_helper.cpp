@@ -163,7 +163,7 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, Expr
   return  result.shallowReduce(reductionContext);
 }
 
-bool SimplificationHelper::allChildrenAreNonEmptyLists(Expression e, Expression memoizedChildren[]) {
+bool SimplificationHelper::getChildrenIfNonEmptyList(Expression e, Expression memoizedChildren[]) {
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
     memoizedChildren[i] = e.childAtIndex(i);

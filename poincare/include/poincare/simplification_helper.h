@@ -31,7 +31,7 @@ public:
    * children reduced */
   static Expression distributeReductionOverLists(Expression e, ExpressionNode::ReductionContext reductionContext);
 
-  static bool allChildrenAreNonEmptyLists(Expression e, Expression memoizedChildren[]);
+  static bool getChildrenIfNonEmptyList(Expression e, Expression memoizedChildren[]);
 };
 }
 

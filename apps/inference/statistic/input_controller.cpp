@@ -34,33 +34,32 @@ void InputController::initCell(ExpressionCellWithEditableTextWithMessage, void *
   c->setDelegates(App::app(), this);
 }
 
-const char * InputController::title() {
-  if (m_statistic->hasHypothesisParameters()) {
+void InputController::InputTitle(Escher::ViewController * vc, Statistic * statistic, char * titleBuffer, size_t titleBufferSize) {
+  if (statistic->hasHypothesisParameters()) {
     // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams> α=<threshold>
-    const char * symbol = m_statistic->hypothesisSymbol();
-    const char * op = HypothesisParams::strForComparisonOp(m_statistic->hypothesisParams()->comparisonOperator());
-    StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
-    if (stackViewControllerResponder->topViewController() != this) {
-      Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",
+    const char * symbol = statistic->hypothesisSymbol();
+    const char * op = HypothesisParams::strForComparisonOp(statistic->hypothesisParams()->comparisonOperator());
+    StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(vc->parentResponder());
+    if (stackViewControllerResponder->topViewController() != vc) {
+      Poincare::Print::customPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",
           symbol,
-          m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
           symbol,
           op,
-          m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-          m_statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     } else {
-      Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed",
+      Poincare::Print::customPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed",
           symbol,
-          m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
           symbol,
           op,
-          m_statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     }
   } else {
-    Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(m_statistic->title()),
-           I18n::translate(I18n::Message::Interval));
+    Poincare::Print::customPrintf(titleBuffer, titleBufferSize, I18n::translate(statistic->title()),
+        I18n::translate(I18n::Message::Interval));
   }
-  return m_titleBuffer;
 }
 
 ViewController::TitlesDisplay InputController::titlesDisplay() {

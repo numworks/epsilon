@@ -9,9 +9,4 @@ InputSlopeController::InputSlopeController(StackViewController * parent, Escher:
 {
 }
 
-const char * InputSlopeController::title() {
-  Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(m_statistic->title()), I18n::translate(m_statistic->statisticBasicTitle()));
-  return m_titleBuffer;
-}
-
 }

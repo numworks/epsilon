@@ -17,8 +17,8 @@ void ColumnParameterController::viewWillAppear() {
 }
 
 void ColumnParameterController::initializeColumnParameters() {
-  m_columnIndex = editableCellTableViewController()->selectedColumn();
-  editableCellTableViewController()->fillColumnName(m_columnIndex, m_columnNameBuffer);
+  m_columnIndex = clearColumnHelper()->table()->selectedColumn();
+  clearColumnHelper()->fillColumnName(m_columnIndex, m_columnNameBuffer);
   Poincare::Print::customPrintf(m_titleBuffer, sizeof(m_titleBuffer),
       I18n::translate(I18n::Message::ColumnOptions), m_columnNameBuffer);
 }

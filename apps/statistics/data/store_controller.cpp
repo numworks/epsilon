@@ -107,7 +107,7 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   if (isCumulatedFrequencyColumn(columnIndex)) {
     myTitleCell->setText(I18n::translate(I18n::Message::CumulatedFrequencyColumnName));
   } else {
-    char columnName[Shared::EditableCellTableViewController::k_maxSizeOfColumnName];
+    char columnName[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
     fillColumnName(columnIndex, columnName);
     char columnTitle[k_columnTitleSize]; // 50 is an ad-hoc value. A title cell can contain max 15 glyphs but the glyph can take more space than 1 byte in memory.
     I18n::Message titleType = m_store->relativeColumnIndex(columnIndex) % 2 == 1 ? I18n::Message::Frequencies : I18n::Message::Values;

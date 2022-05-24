@@ -3,7 +3,7 @@
 
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
-#include "editable_cell_table_view_controller.h"
+#include "column_helper.h"
 
 namespace Shared {
 
@@ -19,10 +19,10 @@ public:
   const char * title() override { return m_titleBuffer; };
   virtual void initializeColumnParameters(); // Always initialize parent class before initiliazing child.
 protected:
-  virtual EditableCellTableViewController * editableCellTableViewController() = 0;
+  virtual ClearColumnHelper * clearColumnHelper() = 0;
   Escher::StackViewController * stackView();
   int m_columnIndex;
-  char m_columnNameBuffer[EditableCellTableViewController::k_maxSizeOfColumnName];
+  char m_columnNameBuffer[ClearColumnHelper::k_maxSizeOfColumnName];
   char m_titleBuffer[k_titleBufferSize];
 
 };

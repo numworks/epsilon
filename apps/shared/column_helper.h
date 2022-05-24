@@ -19,9 +19,9 @@ public:
   ClearColumnHelper();
   void presentClearSelectedColumnPopupIfClearable();
   virtual int fillColumnName(int columnIndex, char * buffer) = 0;
+  virtual Escher::SelectableTableView * table() = 0;
 
 protected:
-  virtual Escher::SelectableTableView * table() = 0;
   virtual int numberOfElementsInColumn(int columnIndex) const = 0;
   int fillColumnNameWithMessage(char * buffer, I18n::Message message);
 
@@ -38,6 +38,8 @@ public:
   StoreColumnHelper(Escher::Responder * responder, Poincare::Context * parentContext, ClearColumnHelper * clearColumnHelper);
 
   int referencedColumn() { return table()->selectedColumn(); }
+  ClearColumnHelper * clearColumnHelper() { return m_clearColumnHelper; }
+
   /* Hide series */
   // Return false if the series can't switch hide status because it's invalid
   bool switchSelectedColumnHideStatus();

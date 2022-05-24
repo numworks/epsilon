@@ -26,7 +26,7 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
       }
       case k_indexOfSetInterval:
       {
-        IntervalParameterController * intervalParameterController = static_cast<ValuesController *>(editableCellTableViewController())->intervalParameterController();
+        IntervalParameterController * intervalParameterController = m_valuesController->intervalParameterController();
         intervalParameterController->setTitle(I18n::Message::IntervalSet);
         stackView()->push(intervalParameterController);
         return true;
@@ -41,14 +41,13 @@ bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
 
 void ValuesParameterController::initializeColumnParameters() {
   ColumnParameterController::initializeColumnParameters();
-  static_cast<ValuesController *>(editableCellTableViewController())->initializeInterval();
+  m_valuesController->initializeInterval();
 }
 
 
-EditableCellTableViewController * ValuesParameterController::editableCellTableViewController() {
+ClearColumnHelper * ValuesParameterController::clearColumnHelper() {
   return m_valuesController;
 }
-
 
 HighlightCell * ValuesParameterController::reusableCell(int index, int type) {
   assert(index >= 0);

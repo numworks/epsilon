@@ -240,7 +240,7 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
     model->text(initialTextContent, initialTextContentMaxSize);
     inputController()->setTextBody(initialTextContent);
   }
-  inputController()->edit(this, event, this,
+  inputController()->edit(event, this,
       [](void * context, void * sender){
         ExpressionModelListController * myController = static_cast<ExpressionModelListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;

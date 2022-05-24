@@ -111,7 +111,7 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
   App::app()->localContext()->resetCache();
   switch (sequenceDefinition) {
     case 0:
-      inputController->edit(this, event, this,
+      inputController->edit(event, this,
         [](void * context, void * sender){
         ListController * myController = static_cast<ListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;
@@ -123,7 +123,7 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
       });
       break;
   case 1:
-    inputController->edit(this, event, this,
+    inputController->edit(event, this,
       [](void * context, void * sender){
       ListController * myController = static_cast<ListController *>(context);
       InputViewController * myInputViewController = (InputViewController *)sender;
@@ -135,7 +135,7 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
     });
     break;
   default:
-    inputController->edit(this, event, this,
+    inputController->edit(event, this,
       [](void * context, void * sender){
       ListController * myController = static_cast<ListController *>(context);
       InputViewController * myInputViewController = (InputViewController *)sender;

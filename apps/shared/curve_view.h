@@ -29,6 +29,7 @@ public:
       BannerView * bannerView = nullptr,
       CursorView * cursorView = nullptr);
   virtual void reload(bool resetInterrupted = false, bool force = false);
+  virtual void resetCurvesInterrupted() {}
   // When the main view is selected, the banner view is visible
   bool isMainViewSelected() const;
   void selectMainView(bool mainViewSelected);

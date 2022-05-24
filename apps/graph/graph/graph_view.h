@@ -23,6 +23,7 @@ public:
   GraphView(Shared::InteractiveCurveViewRange * graphRange,
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
   void reload(bool resetInterrupted = false, bool force = false) override;
+  void resetCurvesInterrupted() override { m_functionsInterrupted = 0; }
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void drawTangent(bool tangent) { m_tangent = tangent; }
   /* We override setAreaHighlightColor to make it reload nothing as the

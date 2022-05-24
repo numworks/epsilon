@@ -182,7 +182,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
             ExpressionNode::Type::Product,
             ExpressionNode::Type::Sum,
             ExpressionNode::Type::Derivative,
-            ExpressionNode::Type::Sequence
+            ExpressionNode::Type::Sequence,
+	    ExpressionNode::Type::DistributionDispatcher,
           });
         }, context))
   {

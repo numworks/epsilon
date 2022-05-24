@@ -1844,6 +1844,8 @@ QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("invt(0.5,0)", "undef");
   assert_parsed_expression_simplify_to("invt(0.5,12)", "0");
   assert_parsed_expression_simplify_to("invt(0.5,0)", "undef");
+
+  assert_parsed_expression_simplify_to("invt(0.3,4)+normcdf(2,0,1)+invt(0.3,4)", "2×invt(3/10,4)+normcdf(2,0,1)");
 }
 
 QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {

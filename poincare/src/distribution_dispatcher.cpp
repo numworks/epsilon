@@ -37,6 +37,24 @@ int DistributionDispatcherNode::serialize(char * buffer, int bufferSize, Prefere
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
+int DistributionDispatcherNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
+  if (!ascending) {
+    return e->simplificationOrderSameType(this, true, ignoreParentheses);
+  }
+  const DistributionDispatcherNode * other = static_cast<const DistributionDispatcherNode *>(e);
+  if (m_distributionType < other->m_distributionType) {
+    return -1;
+  } else if (m_distributionType > other->m_distributionType) {
+    return 1;
+  }
+  if (m_methodType < other->m_methodType) {
+    return -1;
+  } else if (m_methodType > other->m_methodType) {
+    return 1;
+  }
+  return ExpressionNode::simplificationOrderSameType(e, ascending, ignoreParentheses);
+}
+
 Expression DistributionDispatcherNode::shallowReduce(ReductionContext reductionContext) {
   return DistributionDispatcher(this).shallowReduce(reductionContext);
 }

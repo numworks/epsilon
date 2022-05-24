@@ -86,7 +86,9 @@ void ParametersController::viewWillAppear() {
 }
 
 void ParametersController::viewDidDisappear() {
-  // Prevent initWidth to be bypassed when reopening the ParametersController.
+  /* Prevent initWidth to be bypassed when reopening the ParametersController.
+   * Indeed, number of cells might increase so their width need to be computed
+   * */
   m_contentView.resetWidth();
 }
 

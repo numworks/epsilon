@@ -77,7 +77,11 @@ ExpressionNode::NullStatus PowerNode::nullStatus(Context * context) const {
     // 0^+x is null
     return ExpressionNode::NullStatus::Null;
   }
-  // Nothing else can be assumed because base and index could be infinite.
+  if ((index->isNumber() || index->type() == Type::ConstantMaths || index->type() == Type::ConstantPhysics) && baseNullStatus == ExpressionNode::NullStatus::NonNull) {
+    // x^y is not null if y is not -inf and x not null.
+    return ExpressionNode::NullStatus::NonNull;
+  }
+  // We don't know if index == -inf or base == 0.
   return ExpressionNode::NullStatus::Unknown;
 }
 

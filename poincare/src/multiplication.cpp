@@ -55,6 +55,22 @@ int MultiplicationNode::polynomialDegree(Context * context, const char * symbolN
   return degree;
 }
 
+ExpressionNode::NullStatus MultiplicationNode::nullStatus(Context * context) const {
+  if (numberOfChildren() == 0) {
+    return NullStatus::Unknown;
+  }
+  /* If multiplying elements with same null-status, multiplication has this
+   * status. If the null-status are different, we return Unknown because it
+   * could be inf * 0. */
+  NullStatus nullStatus = childAtIndex(0)->nullStatus(context);
+  for (int i = 1; i < numberOfChildren(); i++) {
+    if (childAtIndex(i)->nullStatus(context) != nullStatus) {
+      return NullStatus::Unknown;
+    }
+  }
+  return nullStatus;
+}
+
 int MultiplicationNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   return Multiplication(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }

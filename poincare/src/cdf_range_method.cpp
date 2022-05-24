@@ -16,10 +16,8 @@ Expression CDFRangeMethod::shallowReduce(Expression * abscissae, const Distribut
       expression->replaceWithInPlace(result);
       return result;
     }
-    // TODO: return CDF of the same distributions with the same arguments except x
-    // Expression result = DistributionDispatcher::Builder(expression->children[1:], distribution->type(), DistributionMethod::CDF);
-    // expression->replaceWithInPlace(result);
-    // return result;
+    // TODO: return CDF of the same distributions with the same parameters
+    // tcdfrange(-inf, 4, 5) => tcdf(4, 5)
   }
 
   return *expression;

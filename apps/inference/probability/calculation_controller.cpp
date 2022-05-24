@@ -44,7 +44,7 @@ void CalculationController::ContentView::layoutSubviews(bool force) {
 }
 
 CalculationController::CalculationController(Escher::StackViewController * parentResponder,
-                                             InputEventHandlerDelegate * inputEventHandlerDelegate,
+                                             Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                                              Distribution * distribution,
                                              Calculation * calculation) :
       Escher::ViewController(parentResponder),

@@ -14,7 +14,7 @@ namespace Shared {
 StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header, Context * parentContext) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  StoreColumnHelper(this, store, parentContext, this),
+  StoreColumnHelper(this, parentContext, this),
   m_store(store),
   m_prefacedView(0, this, &m_dataView, this),
   m_dataView(m_store, this, this, this, &m_prefacedView)

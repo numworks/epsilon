@@ -12,6 +12,7 @@
 #include "probability/distribution_controller.h"
 #include "probability/parameters_controller.h"
 #include "shared/dynamic_cells_data_source.h"
+#include "shared/expression_field_delegate_app.h"
 #include "statistic/chi_square_and_slope/categorical_type_controller.h"
 #include "statistic/test/hypothesis_controller.h"
 #include "statistic/input_controller.h"
@@ -28,7 +29,7 @@
 
 namespace Inference {
 
-class App : public Shared::TextFieldDelegateApp, public Shared::MenuControllerDelegate {
+class App : public Shared::ExpressionFieldDelegateApp, public Shared::MenuControllerDelegate {
 public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {
@@ -41,9 +42,7 @@ public:
   // Snapshot
   class Snapshot : public Shared::SharedApp::Snapshot {
   public:
-    App * unpack(Escher::Container * container) override {
-      return new (container->currentAppBuffer()) App(this);
-    };
+    App * unpack(Escher::Container * container) override;
     const Descriptor * descriptor() const override;
     void tidy() override;
     void reset() override;
@@ -87,8 +86,9 @@ public:
   int selectedSubApp() const override { return static_cast<int>(snapshot()->inference()->subApp()); }
   int numberOfSubApps() const override { return static_cast<int>(Inference::SubApp::NumberOfSubApps); }
 
+  Escher::InputViewController * inputViewController() { return &m_inputViewController; }
 private:
-  App(Snapshot *);
+  App(Snapshot * snapshot, Poincare::Context * parentContext);
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
   // Controllers
@@ -109,6 +109,7 @@ private:
   TestController m_testController;
   Shared::MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
+  Escher::InputViewController m_inputViewController;
   /* Buffer used for allocating table cells to avoid duplicating required
    * space for these memory-needy tables. */
   char m_buffer[k_bufferSize];

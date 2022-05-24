@@ -1,5 +1,6 @@
 #include "app.h"
 
+#include <apps/apps_container.h>
 #include <apps/shared/text_field_delegate_app.h>
 #include <apps/exam_mode_configuration.h>
 
@@ -15,8 +16,12 @@ const Escher::Image * App::Descriptor::icon() const {
   return ImageStore::InferenceIcon;
 }
 
-App::App(Snapshot * snapshot) :
-    TextFieldDelegateApp(snapshot, &m_stackViewController),
+App * App::Snapshot::unpack(Container * container) {
+  return new (container->currentAppBuffer()) App(this, static_cast<AppsContainer *>(container)->globalContext());
+}
+
+App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
+    ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
     m_testGraphController(&m_stackViewController, static_cast<Test *>(snapshot->statistic())),
     m_intervalGraphController(&m_stackViewController, static_cast<Interval *>(snapshot->statistic())),
     m_homogeneityResultsController(
@@ -35,7 +40,8 @@ App::App(Snapshot * snapshot) :
     m_inputSlopeController(&m_stackViewController,
                               &m_resultsController,
                               snapshot->statistic(),
-                              this),
+                              this,
+                              parentContext),
     m_resultsController(&m_stackViewController,
                         snapshot->statistic(),
                         &m_testGraphController,
@@ -85,6 +91,7 @@ App::App(Snapshot * snapshot) :
         this
       ),
     m_stackViewController(&m_modalViewController, &m_menuController, StackViewController::Style::GrayGradation),
+    m_inputViewController(&m_modalViewController, &m_stackViewController, &m_inputSlopeController, &m_inputSlopeController, &m_inputSlopeController),
     m_bufferDestructor(nullptr)
 {
 }

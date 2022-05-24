@@ -4,14 +4,16 @@
 #include "inference/statistic/chi_square_and_slope/categorical_controller.h"
 #include "inference/statistic/chi_square_and_slope/slope_table_cell.h"
 #include "inference/statistic/input_controller.h"
+#include "shared/layout_field_delegate.h"
+#include "shared/input_event_handler_delegate.h"
 
 using namespace Escher;
 
 namespace Inference {
 
-class InputSlopeController : public InputCategoricalController {
+class InputSlopeController : public InputCategoricalController, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
 public:
-  InputSlopeController(StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  InputSlopeController(StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Poincare::Context * parentContext);
 
   // ViewController
   const char * title() override {

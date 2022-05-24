@@ -104,34 +104,31 @@ double Distribution::cumulativeDistributiveInverseForProbability(double p) const
     return m_distribution->CumulativeDistributiveInverseForProbability(p, constParametersArray());
 }
 
-double Distribution::rightIntegralInverseForProbability(double * probability) {
+double Distribution::rightIntegralInverseForProbability(double probability) const {
   if (isContinuous()) {
-    double f = 1.0 - *probability;
+    double f = 1.0 - probability;
     return cumulativeDistributiveInverseForProbability(f);
   }
-  if (*probability >= 1.0) {
+  if (probability >= 1.0) {
     return 0.0;
   }
-  if (*probability <= 0.0) {
+  if (probability <= 0.0) {
     return INFINITY;
   }
   double p = 0.0;
   int k = 0;
   double delta = 0.0;
   do {
-    delta = std::fabs(1.0-*probability-p);
+    delta = std::fabs(1.0-probability-p);
     p += evaluateAtDiscreteAbscissa(k++);
-    if (p >= k_maxProbability && std::fabs(1.0-*probability-p) <= delta) {
-      *probability = 0.0;
+    if (p >= k_maxProbability && std::fabs(1.0-probability-p) <= delta) {
       return k;
     }
-  } while (std::fabs(1.0-*probability-p) <= delta && k < k_maxNumberOfOperations);
+  } while (std::fabs(1.0-probability-p) <= delta && k < k_maxNumberOfOperations);
   if (k == k_maxNumberOfOperations) {
-    *probability = 1.0;
     return INFINITY;
   }
-  *probability = 1.0 - (p - evaluateAtDiscreteAbscissa(k-1));
-  if (std::isnan(*probability)) {
+  if (std::isnan(1.0 - (p - evaluateAtDiscreteAbscissa(k-1)))) {
     return NAN;
   }
   return k-1.0;

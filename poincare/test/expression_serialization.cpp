@@ -8,6 +8,7 @@
 #include <poincare/float.h>
 #include <poincare/infinity.h>
 #include <poincare/opposite.h>
+#include <poincare/percent.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/subtraction.h>
@@ -164,4 +165,11 @@ QUIZ_CASE(poincare_serialization_factorial) {
   assert_expression_serialize_to(Factorial::Builder(Rational::Builder(2,3)), "\u00122/3\u0013!");
   assert_expression_serialize_to(Factorial::Builder(Division::Builder(Constant::Builder("π"),Rational::Builder(3))), "\u0012π/3\u0013!");
   assert_expression_serialize_to(Factorial::Builder(Power::Builder(Constant::Builder("π"),Rational::Builder(3))), "\u0012π^3\u0013!");
+}
+
+QUIZ_CASE(poincare_serialization_percent) {
+  assert_expression_serialize_to(Percent::Builder({Rational::Builder(2,3)}), "\u00122/3\u0013%");
+  assert_expression_serialize_to(Percent::Builder({Division::Builder(Constant::Builder("π"),Rational::Builder(3))}), "\u0012π/3\u0013%");
+  assert_expression_serialize_to(Percent::Builder({Power::Builder(Constant::Builder("π"),Rational::Builder(3))}), "\u0012π^3\u0013%");
+  assert_expression_serialize_to(Percent::Builder({Percent::Builder({Rational::Builder(100), Rational::Builder(20)}), Opposite::Builder(Rational::Builder(30))}), "100+20%-30%");
 }

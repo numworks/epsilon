@@ -29,14 +29,14 @@ double ExponentialDistribution::cumulativeDistributiveFunctionAtAbscissa(double 
   return 1.0 - std::exp((-m_parameter * x));
 }
 
-double ExponentialDistribution::cumulativeDistributiveInverseForProbability(double * p) {
-  if (*p >= 1.0) {
+double ExponentialDistribution::cumulativeDistributiveInverseForProbability(double p) const {
+  if (p >= 1.0) {
     return INFINITY;
   }
-  if (*p <= 0.0) {
+  if (p <= 0.0) {
     return 0.0;
   }
-  return -std::log(1.0 - *p)/m_parameter;
+  return -std::log(1.0 - p)/m_parameter;
 }
 
 float ExponentialDistribution::computeXMax() const {

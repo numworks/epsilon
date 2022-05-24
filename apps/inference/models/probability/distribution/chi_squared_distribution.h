@@ -16,7 +16,7 @@ public:
   float evaluateAtAbscissa(float x) const override;
   bool authorizedParameterAtIndex(double x, int index) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
-  double cumulativeDistributiveInverseForProbability(double * p) override;
+  double cumulativeDistributiveInverseForProbability(double p) const override;
 private:
   static constexpr double k_maxK = 31500.0;
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {

@@ -33,7 +33,7 @@ public:
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double rightIntegralFromAbscissa(double x) const;
   double finiteIntegralBetweenAbscissas(double a, double b) const;
-  double cumulativeDistributiveInverseForProbability(double * p) override;
+  double cumulativeDistributiveInverseForProbability(double p) const override;
   virtual double rightIntegralInverseForProbability(double * p);
   virtual double evaluateAtDiscreteAbscissa(int k) const;
   constexpr static int k_maxNumberOfOperations = 1000000;

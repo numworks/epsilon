@@ -19,8 +19,8 @@ bool BinomialDistribution::authorizedParameterAtIndex(double x, int index) const
   return (x >= 0.0) && (x <= 1.0);
 }
 
-double BinomialDistribution::cumulativeDistributiveInverseForProbability(double * p) {
-  return Poincare::BinomialDistribution::CumulativeDistributiveInverseForProbability(*p, m_parameters[0], m_parameters[1]);
+double BinomialDistribution::cumulativeDistributiveInverseForProbability(double p) const {
+  return Poincare::BinomialDistribution::CumulativeDistributiveInverseForProbability(p, m_parameters[0], m_parameters[1]);
 }
 
 double BinomialDistribution::rightIntegralInverseForProbability(double * p) {

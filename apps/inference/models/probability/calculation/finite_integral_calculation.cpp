@@ -56,7 +56,7 @@ void FiniteIntegralCalculation::compute(int indexKnownElement) {
   if (indexKnownElement == 2) {
     assert(m_distribution->isContinuous() && m_distribution->isSymmetrical());
     double p = (1.0 + m_result) / 2.0;
-    m_upperBound = m_distribution->cumulativeDistributiveInverseForProbability(&p);
+    m_upperBound = m_distribution->cumulativeDistributiveInverseForProbability(p);
     m_lowerBound = 2.0 * (m_distribution->meanAbscissa()) - m_upperBound;
   }
   m_result = m_distribution->finiteIntegralBetweenAbscissas(m_lowerBound, m_upperBound);

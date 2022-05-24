@@ -52,7 +52,7 @@ void LeftIntegralCalculation::compute(int indexKnownElement) {
         return;
       }
     }
-    m_upperBound = m_distribution->cumulativeDistributiveInverseForProbability(&m_result);
+    m_upperBound = m_distribution->cumulativeDistributiveInverseForProbability(m_result);
     m_result = m_distribution->cumulativeDistributiveFunctionAtAbscissa(m_upperBound);
     if (std::isnan(m_upperBound)) {
       m_result = NAN;

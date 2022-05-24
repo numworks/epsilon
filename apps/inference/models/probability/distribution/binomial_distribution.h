@@ -12,7 +12,7 @@ public:
   const char * parameterNameAtIndex(int index) const override { return index == 0 ? "n" : "p"; }
   bool authorizedParameterAtIndex(double x, int index) const override;
   double cumulativeDistributiveInverseForProbability(double p) const override;
-  double rightIntegralInverseForProbability(double * p) override;
+  double rightIntegralInverseForProbability(double p) const override;
 protected:
   enum ParamsOrder { N, P };
   ParameterRepresentation paramRepresentationAtIndex(int i) const override;

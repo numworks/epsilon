@@ -106,7 +106,7 @@ template <typename T> Evaluation<T> PercentNode::templateApproximate(Approximati
   return Complex<T>::Builder(a * (1.0 + b/100.0));
 }
 
-Percent Percent::ParseTarget(Expression & leftHandSide) {
+Expression Percent::ParseTarget(Expression & leftHandSide) {
   assert(!leftHandSide.isUninitialized());
   /* We must extract the parameters for the percent operation :
    * 1+2+3% -> Percent(1+2,3)
@@ -134,11 +134,17 @@ Percent Percent::ParseTarget(Expression & leftHandSide) {
     // Subtraction elements must be separated
     rightHandSide = Opposite::Builder(leftHandSide.childAtIndex(1));
     leftHandSide = leftHandSide.childAtIndex(0);
-  }
-  if (rightHandSide.isUninitialized()) {
+  } else {
     // Percent apply on only on element
-    return Percent::Builder({leftHandSide});
+    if (leftHandSide.type() != ExpressionNode::Type::Multiplication) {
+      return Percent::Builder({leftHandSide});
+    }
+    // a*b*c% -> a*b*(c%)
+    int lastIndex = leftHandSide.numberOfChildren()-1;
+    leftHandSide.replaceChildAtIndexInPlace(lastIndex, Percent::Builder({leftHandSide.childAtIndex(lastIndex)}));
+    return leftHandSide;
   }
+  assert(!rightHandSide.isUninitialized());
   return Percent::Builder({leftHandSide, rightHandSide});
 }
 

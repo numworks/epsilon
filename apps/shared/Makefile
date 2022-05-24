@@ -33,10 +33,10 @@ app_shared_src = $(addprefix apps/shared/,\
   buffer_function_title_cell.cpp \
   button_with_separator.cpp \
   cell_with_separator.cpp \
-  clear_column_helper.cpp \
   color_cell.cpp \
   color_names.cpp \
   color_parameter_controller.cpp \
+  column_helper.cpp \
   column_parameter_controller.cpp \
   cursor_view.cpp \
   double_pair_table_controller.cpp \

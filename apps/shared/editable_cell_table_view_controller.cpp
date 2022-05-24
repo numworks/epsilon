@@ -139,8 +139,4 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int EditableCellTableViewController::fillColumnNameWithMessage(char * buffer, I18n::Message message) {
-  return Poincare::Print::customPrintf(buffer, k_maxSizeOfColumnName, I18n::translate(message));
-}
-
 }

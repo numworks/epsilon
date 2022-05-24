@@ -6,6 +6,7 @@
 #include "inference/statistic/input_controller.h"
 #include "shared/layout_field_delegate.h"
 #include "shared/input_event_handler_delegate.h"
+#include "shared/store_parameter_controller.h"
 
 using namespace Escher;
 
@@ -14,6 +15,9 @@ namespace Inference {
 class InputSlopeController : public InputCategoricalController, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
 public:
   InputSlopeController(StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Poincare::Context * parentContext);
+
+  // Responder
+  bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController
   const char * title() override {
@@ -24,10 +28,12 @@ public:
 private:
   EditableCategoricalTableCell * categoricalTableCell() override { return &m_slopeTableCell; }
   int indexOfSignificanceCell() const override { return k_indexOfTableCell + 1; }
+  Escher::StackViewController * stackController() const { return static_cast<Escher::StackViewController *>(parentResponder()); }
 
   char m_titleBuffer[InputController::k_titleBufferSize];
   Escher::MessageTableCellWithEditableTextWithMessage m_innerDegreeOfFreedomCell;
   SlopeTableCell m_slopeTableCell;
+  Shared::StoreParameterController m_storeParameterController;
 };
 
 }  // namespace Inference

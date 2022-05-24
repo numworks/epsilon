@@ -54,20 +54,19 @@ private:
   constexpr static int k_symbolCalculationTitleCellType = 5;
   static constexpr int k_regressionCellIndex = 10;
   static constexpr int k_numberOfHeaderColumns = 2; // Title & Symbol
-  constexpr static KDCoordinate k_titleCalculationCellWidth = 161;
+  constexpr static KDCoordinate k_titleCalculationCellWidth = Escher::Metric::SmallFontCellWidth(k_titleNumberOfChars, Escher::Metric::CellVerticalElementMargin);
   /* Separator and margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here.
-   * TODO: change 7 for KDFont::SmallFont->glyphSize().width()
-   * Calculation width should at least be able to hold to numbers with
+   * Calculation width should at least be able to hold two numbers with
    * VeryLargeNumberOfSignificantDigits and contains two even odd cells. */
-  static constexpr KDCoordinate k_minCalculationCellWidth = 2*(7*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+2*Escher::EvenOddCell::k_horizontalMargin)+Escher::EvenOddCell::k_separatorWidth;
+  static constexpr KDCoordinate k_minCalculationCellWidth = 2 * Escher::Metric::SmallFontCellWidth(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits), Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth;
   // To hold _y=a·x^3+b·x^2+c·x+d_
-  static constexpr KDCoordinate k_cubicCalculationCellWidth = maxCoordinate(7*21+2*Escher::EvenOddCell::k_horizontalMargin+Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
+  static constexpr KDCoordinate k_cubicCalculationCellWidth = maxCoordinate(Escher::Metric::SmallFontCellWidth(21, Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
   // To hold _y=a·x^4+b·x^3+c·x^2+d·x+e_
-  static constexpr KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(7*27+2*Escher::EvenOddCell::k_horizontalMargin+Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
+  static constexpr KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(Escher::Metric::SmallFontCellWidth(27, Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
 
   constexpr static int k_symbolColumnMaxNumberOfChars = 3;
-  constexpr static KDCoordinate k_symbolColumnWidth = k_symbolColumnMaxNumberOfChars * 7 + 2 * Escher::Metric::CellVerticalElementMargin;
+  constexpr static KDCoordinate k_symbolColumnWidth = Escher::Metric::SmallFontCellWidth(k_symbolColumnMaxNumberOfChars, Escher::Metric::CellVerticalElementMargin);
 
   Shared::DoublePairStore * store() const override { return m_store; }
   typedef bool (*DisplayCondition)(Model::Type type);

@@ -54,8 +54,7 @@ private:
   constexpr static int k_symbolCalculationTitleCellType = 5;
   static constexpr int k_regressionCellIndex = 10;
   static constexpr int k_numberOfHeaderColumns = 2; // Title & Symbol
-
-  static constexpr KDCoordinate k_titleCalculationCellWidth = Ion::Display::Width/2 - Escher::Metric::CommonRightMargin/2 - Escher::Metric::CommonLeftMargin/2;
+  constexpr static KDCoordinate k_titleCalculationCellWidth = 161;
   /* Separator and margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here.
    * TODO: change 7 for KDFont::SmallFont->glyphSize().width()

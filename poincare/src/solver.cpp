@@ -393,7 +393,7 @@ Coordinate2D<double> Solver::IncreasingFunctionRoot(double ax, double bx, double
 }
 
 template<typename T>
-T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, ValueAtAbscissa evaluation, Context * context, const void * auxiliary) {
+T Solver::CumulativeDistributiveInverseForNDefinedFunction(T * probability, typename SolverHelper<T>::ValueAtAbscissa evaluation, Context * context, const void * auxiliary) {
   constexpr T precision = Float<T>::Epsilon();
   assert(*probability <= (static_cast<T>(1.f) - precision) && *probability >= precision);
   (void) precision;
@@ -460,8 +460,8 @@ Coordinate2D<double> Solver::RoundCoordinatesToZero(Coordinate2D<double> xy, dou
 template Coordinate2D<float> SolverHelper<float>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, float start, float end, float relativePrecision, float minimalStep, float maximalStep);
 template bool SolverHelper<float>::RootExistsOnInterval(float fa, float fb, float fc);
 
-template float Solver::CumulativeDistributiveInverseForNDefinedFunction(float *, ValueAtAbscissa, Context *, const void *);
-template double Solver::CumulativeDistributiveInverseForNDefinedFunction(double *, ValueAtAbscissa, Context *, const void *);
+template float Solver::CumulativeDistributiveInverseForNDefinedFunction(float *, SolverHelper<float>::ValueAtAbscissa, Context *, const void *);
+template double Solver::CumulativeDistributiveInverseForNDefinedFunction(double *, SolverHelper<double>::ValueAtAbscissa, Context *, const void *);
 template float Solver::CumulativeDistributiveFunctionForNDefinedFunction(float, SolverHelper<float>::ValueAtAbscissa, Context *, const void *);
 template double Solver::CumulativeDistributiveFunctionForNDefinedFunction(double, SolverHelper<double>::ValueAtAbscissa, Context *, const void *);
 }

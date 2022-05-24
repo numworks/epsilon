@@ -153,9 +153,13 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
   const char * cursorPositionInCommand = TextInputHelpers::CursorPositionInCommand(insertionPosition, endOfInsertedText);
 
   // Remove the Empty code points
-  UTF8Helper::RemoveCodePoint(insertionPosition, UCodePointEmpty, &cursorPositionInCommand, endOfInsertedText);
+  UTF8Helper::RemoveCodePoint(insertionPosition, UCodePointEmpty, &endOfInsertedText, endOfInsertedText);
 
   // Set the cursor location
+  /* In theory, we should also update cursorPositionInCommand after removing
+   * the empty code points. But in practice, we never need to remove empty code
+   * points before a cursor we want to keep. */
+  assert(forceCursorRightOfText || !UTF8Helper::HasCodePoint(insertionPosition, UCodePointEmpty, cursorPositionInCommand - 1));
   const char * nextCursorLocation = forceCursorRightOfText ? endOfInsertedText : cursorPositionInCommand;
   setCursorLocation(nextCursorLocation);
 

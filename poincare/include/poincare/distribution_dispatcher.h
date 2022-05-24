@@ -44,9 +44,8 @@ public:
   // Properties
   Type type() const override {
     return Type::DistributionDispatcher;
-    // TODO: do we need more precise info ?
-    // for example to simplify two binomial expressions together
   }
+
   Sign sign(Context * context) const override {
     if (m_methodType != DistributionMethod::Type::Inverse) {
       return Sign::Positive;
@@ -89,6 +88,8 @@ public:
     }
   }
 #endif
+
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
 
 private:
   Expression shallowReduce(ReductionContext reductionContext) override;

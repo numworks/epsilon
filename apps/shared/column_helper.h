@@ -35,7 +35,7 @@ private:
 
 class StoreColumnHelper {
 public:
-  StoreColumnHelper(Escher::Responder * responder, DoublePairStore * store, Poincare::Context * parentContext, ClearColumnHelper * clearColumnHelper);
+  StoreColumnHelper(Escher::Responder * responder, Poincare::Context * parentContext, ClearColumnHelper * clearColumnHelper);
 
   int referencedColumn() { return table()->selectedColumn(); }
   /* Hide series */
@@ -68,7 +68,7 @@ private:
   /* Fill with formula */
   FormulaTemplateMenuController m_templateController;
   Escher::StackViewController m_templateStackController;
-  StoreContext m_storeContext;
+  Poincare::Context * m_parentContext;
 };
 
 }

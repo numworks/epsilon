@@ -1,13 +1,15 @@
 #include "slope_table_cell.h"
 #include <escher/palette.h>
+#include "inference/app.h"
 #include "inference/statistic/chi_square_and_slope/input_goodness_controller.h"
 
 using namespace Escher;
 
 namespace Inference {
 
-SlopeTableCell::SlopeTableCell(Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, SelectableTableViewDelegate * selectableTableViewDelegate, Statistic * statistic) :
-  DoubleColumnTableCell(parentResponder, dynamicSizeTableViewDataSourceDelegate, selectableTableViewDelegate, statistic)
+SlopeTableCell::SlopeTableCell(Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, SelectableTableViewDelegate * selectableTableViewDelegate, Statistic * statistic, Poincare::Context * parentContext) :
+  DoubleColumnTableCell(parentResponder, dynamicSizeTableViewDataSourceDelegate, selectableTableViewDelegate, statistic),
+  StoreColumnHelper(this, parentContext, this)
 {
   // TODO: use Felix constexpr
   m_header[0].setText("X1");
@@ -18,6 +20,10 @@ SlopeTableCell::SlopeTableCell(Responder * parentResponder, DynamicSizeTableView
     m_header[i].setEven(true);
     m_header[i].setFont(KDFont::SmallFont);
   }
+}
+
+InputViewController * SlopeTableCell::inputViewController() {
+  return App::app()->inputViewController();
 }
 
 }  // namespace Inference

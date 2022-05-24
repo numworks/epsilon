@@ -46,11 +46,11 @@ bool displayNotSuitableWarning() {
   return false;
 }
 
-StoreColumnHelper::StoreColumnHelper(Escher::Responder * responder, DoublePairStore * store, Context * parentContext, ClearColumnHelper * clearColumnHelper) :
+StoreColumnHelper::StoreColumnHelper(Escher::Responder * responder, Context * parentContext, ClearColumnHelper * clearColumnHelper) :
   m_clearColumnHelper(clearColumnHelper),
   m_templateController(responder, this),
   m_templateStackController(nullptr, &m_templateController, StackViewController::Style::PurpleWhite),
-  m_storeContext(store, parentContext)
+  m_parentContext(parentContext)
 {
 }
 
@@ -101,7 +101,8 @@ void StoreColumnHelper::fillFormulaInputWithTemplate(Layout templateLayout) {
 }
 
 bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(const char * text) {
-  Expression expression = Expression::Parse(text, &m_storeContext);
+  StoreContext storeContext(store(), m_parentContext);
+  Expression expression = Expression::Parse(text, &storeContext);
   if (expression.isUninitialized()) {
     Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
     return false;
@@ -130,7 +131,8 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
       return displayNotSuitableWarning();
     }
   }
-  PoincareHelpers::CloneAndSimplify(&formula, &m_storeContext, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  StoreContext storeContext(store(), m_parentContext);
+  PoincareHelpers::CloneAndSimplify(&formula, &storeContext, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (formula.isUndefined()) {
       return displayNotSuitableWarning();
   }
@@ -151,14 +153,14 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   }
   // If formula contains a random formula, evaluate it for each pairs.
   bool evaluateForEachPairs = formula.hasExpression([](const Expression e, const void * context) { return e.isRandom(); }, nullptr);
-  double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &m_storeContext);
+  double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
   if (std::isnan(evaluation)) {
     return displayNotSuitableWarning();
   }
   for (int j = 0; j < store()->numberOfPairsOfSeries(seriesToFill); j++) {
     store()->set(evaluation, seriesToFill, columnToFill, j);
     if (evaluateForEachPairs) {
-      evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &m_storeContext);
+      evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
     }
   }
   reloadSeriesVisibleCells(selectedSeries());

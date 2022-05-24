@@ -6,7 +6,7 @@
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
 #include <escher/selectable_table_view.h>
-#include <shared/clear_column_helper.h>
+#include <shared/column_helper.h>
 #include <shared/parameter_text_field_delegate.h>
 #include <shared/text_field_delegate.h>
 #include "inference/statistic/chi_square_and_slope/categorical_table_view_data_source.h"

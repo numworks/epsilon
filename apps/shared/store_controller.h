@@ -2,40 +2,25 @@
 #define SHARED_STORE_CONTROLLER_H
 
 #include <escher/button_row_controller.h>
-#include <escher/input_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include "double_pair_store.h"
 #include "editable_cell_table_view_controller.h"
-#include "formula_template_menu_controller.h"
+#include "layout_field_delegate.h"
 #include "input_event_handler_delegate.h"
 #include "layout_field_delegate.h"
 #include "prefaced_table_view.h"
 #include "store_cell.h"
-#include "store_context.h"
 #include "store_parameter_controller.h"
 #include "store_selectable_table_view.h"
 #include "store_title_cell.h"
 
 namespace Shared {
 
-class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
+class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public LayoutFieldDelegate, public Shared::InputEventHandlerDelegate, public StoreColumnHelper {
 public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
   Escher::View * view() override { return &m_prefacedView; }
   TELEMETRY_ID("Store");
-
-  // EditableCellViewController
-  virtual int fillColumnName(int columnIndex, char * buffer) override { return m_store->fillColumnName(m_store->seriesAtColumn(columnIndex), m_store->relativeColumnIndex(columnIndex), buffer); }
-
-  void displayFormulaInput();
-  void fillFormulaInputWithTemplate(Poincare::Layout layout);
-  bool fillColumnWithFormula(Poincare::Expression formula);
-  virtual void sortSelectedColumn();
-  // Return false if the series can't switch hide status because it's invalid
-  bool switchSelectedColumnHideStatus();
-
-  // LayoutFieldDelegate
-  bool createExpressionForFillingColumnWithFormula(const char * text);
 
   //TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
@@ -57,8 +42,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
-  int selectedSeries() { return m_store->seriesAtColumn(selectedColumn()); }
-  bool selectedSeriesIsValid() { return m_store->seriesIsValid(selectedSeries()); }
+  // ClearColumnHelper
+  int fillColumnName(int columnIndex, char * buffer) override { return fillColumnNameFromStore(columnIndex, buffer); }
 
 protected:
   static constexpr KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * 7 + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness; // KDFont::SmallFont->glyphSize().width() = 7
@@ -78,23 +63,20 @@ protected:
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
   Escher::SelectableTableView * selectableTableView() override { return &m_dataView; }
-  void reloadSeriesVisibleCells(int series, int relativeColumn = -1);
 
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
-
-  virtual Escher::InputViewController * inputViewController() = 0;
 
 private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   int maxNumberOfElements() const override { return DoublePairStore::k_maxNumberOfPairs; }
 
+  // StoreColumnHelper
+  DoublePairStore * store() override { return m_store; }
+
   StoreTitleCell m_titleCells[k_numberOfTitleCells];
   PrefacedTableView m_prefacedView;
   StoreSelectableTableView m_dataView;
-  FormulaTemplateMenuController m_templateController;
-  Escher::StackViewController m_templateStackController;
-  StoreContext m_storeContext;
 
 };
 

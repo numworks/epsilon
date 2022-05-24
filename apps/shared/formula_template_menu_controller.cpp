@@ -1,5 +1,5 @@
 #include "formula_template_menu_controller.h"
-#include "store_controller.h"
+#include "column_helper.h"
 #include <poincare/addition.h>
 #include <poincare/print.h>
 #include <poincare/symbol.h>
@@ -10,10 +10,10 @@ using namespace Poincare;
 
 namespace Shared {
 
-FormulaTemplateMenuController::FormulaTemplateMenuController(Responder * parentResponder, StoreController * storeController) :
+FormulaTemplateMenuController::FormulaTemplateMenuController(Responder * parentResponder, StoreColumnHelper * storeColumnHelper) :
   SelectableListViewController(parentResponder),
   m_emptyTemplateCell(I18n::Message::Empty),
-  m_storeController(storeController)
+  m_storeColumnHelper(storeColumnHelper)
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
@@ -68,7 +68,7 @@ bool FormulaTemplateMenuController::handleEvent(Ion::Events::Event event) {
     int i = selectedRow();
     Layout templateLayout = i == 0 ? Layout() : m_layouts[i - 1];
     Container::activeApp()->dismissModalViewController();
-    m_storeController->fillFormulaInputWithTemplate(templateLayout);
+    m_storeColumnHelper->fillFormulaInputWithTemplate(templateLayout);
     return true;
   }
   return false;
@@ -185,7 +185,7 @@ void FormulaTemplateMenuController::fillSubLabelBuffer(Escher::ExpressionTableCe
 
 void FormulaTemplateMenuController::fillSumColumnNames(char * buffers[]) const {
   for (int i = 0; i < 2; i++) {
-    m_storeController->fillColumnName(m_storeController->selectedColumn(), buffers[i]);
+    m_storeColumnHelper->fillColumnNameFromStore(m_storeColumnHelper->referencedColumn(), buffers[i]);
     int seriesIndex = static_cast<int>(buffers[i][1] - '1');
     int newSeriesIndex = (seriesIndex + i + 1) % DoublePairStore::k_numberOfSeries;
     buffers[i][1] = '1' + newSeriesIndex;
@@ -207,7 +207,7 @@ char correspondingColumnInOtherApp(char columnPrefix) {
 }
 
 void FormulaTemplateMenuController::fillOtherAppColumnName(char * buffer) const {
-  m_storeController->fillColumnName(m_storeController->selectedColumn(), buffer);
+  m_storeColumnHelper->fillColumnNameFromStore(m_storeColumnHelper->referencedColumn(), buffer);
   buffer[0] = correspondingColumnInOtherApp(buffer[0]);
 }
 

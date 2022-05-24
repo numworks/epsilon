@@ -14,12 +14,10 @@ namespace Shared {
 StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header, Context * parentContext) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
+  StoreColumnHelper(this, store, parentContext, this),
   m_store(store),
   m_prefacedView(0, this, &m_dataView, this),
-  m_dataView(m_store, this, this, this, &m_prefacedView),
-  m_templateController(this, this),
-  m_templateStackController(nullptr, &m_templateController, StackViewController::Style::PurpleWhite),
-  m_storeContext(store, parentContext)
+  m_dataView(m_store, this, this, this, &m_prefacedView)
 {
   m_prefacedView.setBackgroundColor(Palette::WallScreenDark);
   m_prefacedView.setCellOverlap(0, 0);
@@ -28,47 +26,6 @@ StoreController::StoreController(Responder * parentResponder, Escher::InputEvent
     m_editableCells[i].setParentResponder(&m_dataView);
     m_editableCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
   }
-}
-
-void StoreController::displayFormulaInput() {
-  Container::activeApp()->displayModalViewController(&m_templateStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
-}
-
-void StoreController::fillFormulaInputWithTemplate(Layout templateLayout) {
-  constexpr int k_sizeOfBuffer = DoublePairStore::k_columnNamesLength + 1 + FormulaTemplateMenuController::k_maxSizeOfTemplateText;
-  char templateString[k_sizeOfBuffer];
-  int filledLength = fillColumnName(selectedColumn(), templateString);
-  if (filledLength < Shared::EditableCellTableViewController::k_maxSizeOfColumnName - 1) {
-    templateString[filledLength] = '=';
-    templateString[filledLength + 1] = 0;
-  }
-  if (!templateLayout.isUninitialized()) {
-    templateLayout.serializeParsedExpression(templateString + filledLength + 1, k_sizeOfBuffer - filledLength - 1, nullptr);
-  }
-  inputViewController()->setTextBody(templateString);
-  inputViewController()->edit(
-      Ion::Events::OK,
-      this,
-      [](void * context, void * sender) {
-        StoreController * thisController = static_cast<StoreController *>(context);
-        InputViewController * thisInputViewController = static_cast<InputViewController *>(sender);
-        return thisController->createExpressionForFillingColumnWithFormula(thisInputViewController->textBody());
-      }, [](void * context, void * sender) {
-        return true;
-      });
-}
-
-bool StoreController::createExpressionForFillingColumnWithFormula(const char * text) {
-  Expression expression = Expression::Parse(text, &m_storeContext);
-  if (expression.isUninitialized()) {
-    Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
-    return false;
-  }
-  if (fillColumnWithFormula(expression)) {
-    Container::activeApp()->setFirstResponder(&m_dataView);
-    return true;
-  }
-  return false;
 }
 
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
@@ -215,90 +172,6 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
 
 int StoreController::numberOfElementsInColumn(int columnIndex) const {
   return m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(columnIndex));
-}
-
-void StoreController::reloadSeriesVisibleCells(int series, int relativeColumn) {
-  // Reload visible cells of the series and, if not -1, relative column
-  for (int i = 0; i < numberOfColumns(); i++) {
-    if (m_store->seriesAtColumn(i) == series && (relativeColumn == -1 || relativeColumn == m_store->relativeColumnIndex(i))) {
-      selectableTableView()->reloadVisibleCellsAtColumn(i);
-    }
-  }
-}
-
-bool displayNotSuitableWarning() {
-   Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
-   return false;
-}
-
-bool StoreController::fillColumnWithFormula(Expression formula) {
-  int columnToFill = m_store->relativeColumnIndex(selectedColumn());
-  int seriesToFill = m_store->seriesAtColumn(selectedColumn());
-  if (formula.type() == ExpressionNode::Type::Equal) {
-    bool isValidEquality = false;
-    Expression leftOfEqual = formula.childAtIndex(0);
-    if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {
-      Symbol symbolLeftOfEqual = static_cast<Symbol &>(leftOfEqual);
-      if (m_store->isColumnName(symbolLeftOfEqual.name(), strlen(symbolLeftOfEqual.name()), &seriesToFill, &columnToFill)) {
-        formula = formula.childAtIndex(1);
-        isValidEquality = true;
-      }
-    }
-    if (!isValidEquality) {
-      return displayNotSuitableWarning();
-    }
-  }
-  PoincareHelpers::CloneAndSimplify(&formula, &m_storeContext, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  if (formula.isUndefined()) {
-      return displayNotSuitableWarning();
-  }
-  if (formula.type() == ExpressionNode::Type::List) {
-    bool allChildrenAreUndefined = true;
-    for (int i = 0; i < formula.numberOfChildren(); i++) {
-      if (!formula.childAtIndex(i).isUndefined()) {
-        allChildrenAreUndefined = false;
-        break;
-      }
-    }
-    if (allChildrenAreUndefined) {
-      return displayNotSuitableWarning();
-    }
-    m_store->setList(static_cast<List &>(formula), seriesToFill, columnToFill);
-    selectableTableView()->reloadData();
-    return true;
-  }
-  // If formula contains a random formula, evaluate it for each pairs.
-  bool evaluateForEachPairs = formula.hasExpression([](const Expression e, const void * context) { return e.isRandom(); }, nullptr);
-  double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &m_storeContext);
-  if (std::isnan(evaluation)) {
-    return displayNotSuitableWarning();
-  }
-  for (int j = 0; j < m_store->numberOfPairsOfSeries(seriesToFill); j++) {
-    m_store->set(evaluation, seriesToFill, columnToFill, j);
-    if (evaluateForEachPairs) {
-      evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &m_storeContext);
-    }
-  }
-  reloadSeriesVisibleCells(selectedSeries());
-  return true;
-}
-
-void StoreController::sortSelectedColumn() {
-  m_store->sortColumn(selectedSeries(), m_store->relativeColumnIndex(selectedColumn()));
-}
-
-bool StoreController::switchSelectedColumnHideStatus() {
-  int series = selectedSeries();
-  bool previousStatus = m_store->seriesIsValid(series);
-  if (previousStatus) {
-    // Any previously valid series can be hidden
-    m_store->hideSeries(series);
-    return true;
-  } else {
-    // Series may still be invalid, in that case nothing happens
-    m_store->updateSeriesValidity(series);
-    return m_store->seriesIsValid(series);
-  }
 }
 
 }

@@ -10,12 +10,12 @@
 
 namespace Shared {
 
-class StoreController;
+class StoreColumnHelper;
 
 class FormulaTemplateMenuController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   constexpr static int k_maxSizeOfTemplateText = 30;
-  FormulaTemplateMenuController(Escher::Responder * parentResponder, StoreController * storeController);
+  FormulaTemplateMenuController(Escher::Responder * parentResponder, StoreColumnHelper * storeColumnHelper);
 
   const char * title() override;
   void viewWillAppear() override;
@@ -76,7 +76,7 @@ private:
   Escher::ExpressionTableCellWithMessage m_templatesWithMessage[k_numberOfExpressionCellsWithMessage];
   Escher::ExpressionTableCellWithBuffer m_templatesWithBuffer[k_numberOfExpressionCellsWithBuffer];
   Poincare::Layout m_layouts[k_numberOfTemplates - 1];
-  StoreController * m_storeController;
+  StoreColumnHelper * m_storeColumnHelper;
 };
 
 }

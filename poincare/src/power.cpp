@@ -4,6 +4,7 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/constant.h>
 #include <poincare/cosine.h>
+#include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/float.h>
@@ -599,10 +600,27 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
   Expression newIndex = ReduceLogarithmLinearCombination(reductionContext, index, base);
   if (isLogarithmOfSameBase(newIndex)) {
+    /* if x == 0 or (complexFoart = real and x < 0), e^ln(x) = undef.
+     * if x != 0 and (complexFormat != real or x > 0), e^ln(x) = x.
+     * if x ?= 0 or (complexFormat = real and x ?> 0), e^ln(x) depends on ln(x)
+     */
     Expression newSelf = newIndex.childAtIndex(0);
-    assert(newSelf.sign(context) == ExpressionNode::Sign::Positive);
-    replaceWithInPlace(newSelf);
-    return newSelf;
+    ExpressionNode::NullStatus nullStatus = newSelf.nullStatus(context);
+    ExpressionNode::Sign sign = newSelf.sign(context);
+    if (nullStatus == ExpressionNode::NullStatus::Null || (reductionContext.complexFormat() == Preferences::ComplexFormat::Real && sign == ExpressionNode::Sign::Negative)) {
+      return replaceWithUndefinedInPlace();
+    }
+    if (nullStatus == ExpressionNode::NullStatus::NonNull && (reductionContext.complexFormat() != Preferences::ComplexFormat::Real || sign == ExpressionNode::Sign::Positive)) {
+      replaceWithInPlace(newSelf);
+      return newSelf;
+    }
+    // If not able to know sign and/or nullStatus, create a dependency.
+    List listOfDependencies = List::Builder();
+    // e^ln(x) = x if ln(x) is defined.
+    listOfDependencies.addChildAtIndexInPlace(newIndex.clone(), 0, 0);
+    Expression dependency = Dependency::Builder(newSelf, listOfDependencies);
+    replaceWithInPlace(dependency);
+    return dependency;
   }
   /* Step 5
    * Handle complex numbers. */
@@ -1332,7 +1350,6 @@ bool Power::IsLogarithmOfBase(const Expression e, const Expression base) {
  * but does nothing to "log(a)+log(b)+anything_that_is_not_a_log"
  * */
 Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionContext reductionContext, Expression linearCombination, const Expression base) {
-  Context * context = reductionContext.context();
   if (linearCombination.isUninitialized()) {
     return Expression();
   }
@@ -1345,36 +1362,33 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
     for (int i = 0; i < nChildren; i++) {
       Expression child = multiplication.childAtIndex(i);
       if (IsLogarithmOfBase(child, base)) {
-        Expression insideLogarithm = child.childAtIndex(0);
-        if (insideLogarithm.sign(context) == ExpressionNode::Sign::Positive) {
-          /* Follow the steps with an example: We want to turn 4*ln(3)
-           * into ln(3^4).
-           * Here, child = ln(3) and insideLogarithm = 3 */
-          Expression baseClone = base.clone();
-          /* power = insideLogarithm ^ multiplication
-           * so power = 3 ^ (4 * ln(ghost)) */
-          Power power = Power::Builder(insideLogarithm, multiplication);
-          /* Remove the logarithm from multiplication,
-           * so power = 3 ^ (4 * ghost) */
-          multiplication.removeChildAtIndexInPlace(i);
-          /* Reduce multiplication so power = 3 ^ 4 */
-          multiplication.shallowReduce(reductionContext);
-          /* Create a log with same base so result = ln(3^4) */
-          Logarithm result = Logarithm::Builder(power, baseClone);
-          power.shallowReduce(reductionContext);
-          linearCombination.replaceWithInPlace(result);
-          return std::move(result);
-        }
+        /* Follow the steps with an example: We want to turn 4*ln(3)
+         * into ln(3^4).
+         * Here, child = ln(3) and insideLogarithm = 3 */
+        Expression baseClone = base.clone();
+        /* power = insideLogarithm ^ multiplication
+         * so power = 3 ^ (4 * ln(ghost)) */
+        Power power = Power::Builder(child.childAtIndex(0), multiplication);
+        /* Remove the logarithm from multiplication,
+         * so power = 3 ^ (4 * ghost) */
+        multiplication.removeChildAtIndexInPlace(i);
+        /* Reduce multiplication so power = 3 ^ 4 */
+        multiplication.shallowReduce(reductionContext);
+        /* Create a log with same base so result = ln(3^4) */
+        Logarithm result = Logarithm::Builder(power, baseClone);
+        power.shallowReduce(reductionContext);
+        linearCombination.replaceWithInPlace(result);
+        return std::move(result);
       }
     }
-  // Handle log(x) + log(y) -> log(x*y)
+    // Handle log(x) + log(y) -> log(x*y)
   } else if (linearCombination.type() == ExpressionNode::Type::Addition) {
     Expression clone = linearCombination.clone();
     Addition addition = static_cast<Addition &>(clone);
     int nChildren = addition.numberOfChildren();
     assert(nChildren > 1);
-     /* Reduce terms of the addition.
-      * For example if the addition is (log(x) + log(y)) + a*log(b), turn it into log(x*y) + log(b^a) */
+    /* Reduce terms of the addition.
+     * For example if the addition is (log(x) + log(y)) + a*log(b), turn it into log(x*y) + log(b^a) */
     for (int i = 0; i < nChildren; i++) {
       ReduceLogarithmLinearCombination(reductionContext, addition.childAtIndex(i), base);
     }
@@ -1400,10 +1414,8 @@ Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionCont
       firstLogarithm.replaceChildInPlace(firstLogarithm.childAtIndex(0), insideLogarithm);
       // firstLogarithm = ln(5*6*7)
       insideLogarithm.shallowReduce(reductionContext);
-      if (firstLogarithm.childAtIndex(0).sign(context) == ExpressionNode::Sign::Positive) {
-        linearCombination.replaceWithInPlace(firstLogarithm);
-        return firstLogarithm;
-      }
+      linearCombination.replaceWithInPlace(firstLogarithm);
+      return firstLogarithm;
     }
   }
   return linearCombination;

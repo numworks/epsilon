@@ -14,9 +14,11 @@ FunctionParameterController::FunctionParameterController(ValuesController * valu
   m_valuesController(valuesController)
 { }
 
-Shared::EditableCellTableViewController * FunctionParameterController::editableCellTableViewController() {
+Shared::ClearColumnHelper * FunctionParameterController::clearColumnHelper() {
   return m_valuesController;
 }
+
+
 
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {

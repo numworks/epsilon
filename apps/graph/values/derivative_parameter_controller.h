@@ -25,7 +25,7 @@ public:
 private:
   ContinuousFunctionStore * functionStore();
   constexpr static int k_totalNumberOfCell = 1;
-  Shared::EditableCellTableViewController * editableCellTableViewController() override;
+  Shared::ClearColumnHelper * clearColumnHelper() override;
   Escher::MessageTableCell m_hideColumn;
   Ion::Storage::Record m_record;
   ValuesController * m_valuesController;

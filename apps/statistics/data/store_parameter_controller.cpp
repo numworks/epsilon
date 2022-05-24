@@ -19,7 +19,7 @@ void StoreParameterController::initializeColumnParameters() {
   if (m_store->relativeColumnIndex(m_columnIndex) == 1) {
       m_clearColumn.setMessageWithPlaceholder(I18n::Message::ResetFrequencies);
   } else if (m_store->relativeColumnIndex(m_columnIndex) == 0) {
-    int series = m_storeController->selectedSeries();
+    int series = m_storeColumnHelper->selectedSeries();
     char tableName[StoreController::k_tableNameSize];
     StoreController::FillSeriesName(series, tableName);
     m_clearColumn.setMessageWithPlaceholder(I18n::Message::ClearTable, tableName);
@@ -29,8 +29,8 @@ void StoreParameterController::initializeColumnParameters() {
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   int type = typeAtIndex(selectedRow());
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && ((type == k_displayCumulatedFrequencyCellType || type == k_hideCumulatedFrequencyCellType))) {
-    bool state = !m_store->displayCumulatedFrequenciesForSeries(m_storeController->selectedSeries());
-    m_store->setDisplayCumulatedFrequenciesForSeries(m_storeController->selectedSeries(), state);
+    bool state = !m_store->displayCumulatedFrequenciesForSeries(m_storeColumnHelper->selectedSeries());
+    m_store->setDisplayCumulatedFrequenciesForSeries(m_storeColumnHelper->selectedSeries(), state);
     if (type == k_hideCumulatedFrequencyCellType) {
       assert(!state);
       m_hideCumulatedFrequencyCell.setHighlighted(false);
@@ -71,7 +71,7 @@ void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * c
   int type = typeAtIndex(index);
   if (type == k_displayCumulatedFrequencyCellType) {
     assert(cell == &m_displayCumulatedFrequencyCell);
-    m_displayCumulatedFrequencyCell.setState(m_store->displayCumulatedFrequenciesForSeries(m_storeController->selectedSeries()));
+    m_displayCumulatedFrequencyCell.setState(m_store->displayCumulatedFrequenciesForSeries(m_storeColumnHelper->selectedSeries()));
     return;
   } else if (type == k_hideCumulatedFrequencyCellType) {
     assert(cell == &m_hideCumulatedFrequencyCell);

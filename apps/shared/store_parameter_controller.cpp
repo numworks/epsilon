@@ -9,9 +9,9 @@ using namespace Escher;
 
 namespace Shared {
 
-StoreParameterController::StoreParameterController(Responder * parentResponder, StoreController * storeController) :
+StoreParameterController::StoreParameterController(Responder * parentResponder, StoreColumnHelper * storeColumnHelper) :
   ColumnParameterController(parentResponder),
-  m_storeController(storeController),
+  m_storeColumnHelper(storeColumnHelper),
   m_fillFormula(I18n::Message::FillWithFormula),
   m_sortCell(I18n::Message::SortCellLabel),
   m_hideCell(I18n::Message::ActivateDeactivateStoreParamTitle, I18n::Message::ActivateDeactivateStoreParamDescription, false)
@@ -33,19 +33,19 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   switch (type) {
     case k_sortCellType:
     {
-      m_storeController->sortSelectedColumn();
+      m_storeColumnHelper->sortSelectedColumn();
       stackView()->pop();
       break;
     }
     case k_fillFormulaCellType:
     {
       stackView()->pop();
-      m_storeController->displayFormulaInput();
+      m_storeColumnHelper->displayFormulaInput();
       break;
     }
     case k_hideCellType:
     {
-      bool canSwitchHideStatus = m_storeController->switchSelectedColumnHideStatus();
+      bool canSwitchHideStatus = m_storeColumnHelper->switchSelectedColumnHideStatus();
       if (!canSwitchHideStatus) {
         Container::activeApp()->displayWarning(I18n::Message::InvalidSeries1, I18n::Message::InvalidSeries2);
       } else {
@@ -57,7 +57,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     {
       assert(type == k_clearCellType);
       stackView()->pop();
-      m_storeController->presentClearSelectedColumnPopupIfClearable();
+      m_storeColumnHelper->clearColumnHelper()->presentClearSelectedColumnPopupIfClearable();
       break;
     }
   }
@@ -72,12 +72,12 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
 
 void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   if (typeAtIndex(index) == k_hideCellType) {
-    m_hideCell.setState(m_storeController->selectedSeriesIsValid());
+    m_hideCell.setState(m_storeColumnHelper->selectedSeriesIsValid());
   }
 }
 
-EditableCellTableViewController * StoreParameterController::editableCellTableViewController() {
-  return m_storeController;
+ClearColumnHelper * StoreParameterController::clearColumnHelper() {
+  return m_storeColumnHelper->clearColumnHelper();
 }
 
 }

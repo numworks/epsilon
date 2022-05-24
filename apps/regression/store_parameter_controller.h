@@ -12,7 +12,7 @@ class StoreController;
 
 class StoreParameterController : public Shared::StoreParameterController {
 public:
-  StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController);
+  StoreParameterController(Escher::Responder * parentResponder, Shared::StoreColumnHelper * storeColumnHelper);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return Shared::StoreParameterController::numberOfRows() + 1; }
   int typeAtIndex(int index) override;

@@ -26,6 +26,7 @@ private:
   // Simplication
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression deepBeautify(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   // Evaluation
@@ -46,6 +47,7 @@ public:
   Percent(const PercentNode * n) : NAryExpression(n) {}
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
+  Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

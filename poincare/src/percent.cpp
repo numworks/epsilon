@@ -4,6 +4,7 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
+#include <poincare/parenthesis.h>
 #include <poincare/percent.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -46,6 +47,10 @@ Expression PercentNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression PercentNode::shallowBeautify(ReductionContext * reductionContext) {
   return Percent(this).shallowBeautify(reductionContext);
+}
+
+Expression PercentNode::deepBeautify(ReductionContext reductionContext) {
+  return Percent(this).deepBeautify(reductionContext);
 }
 
 Layout PercentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -164,6 +169,33 @@ Expression Percent::shallowReduce(ExpressionNode::ReductionContext reductionCont
     }
   }
   return *this;
+}
+
+Expression Percent::deepBeautify(ExpressionNode::ReductionContext reductionContext) {
+  Expression e = shallowBeautify(&reductionContext);
+  if (numberOfChildren() == 1) {
+    assert(e.type() == ExpressionNode::Type::Division);
+    SimplificationHelper::defaultDeepBeautifyChildren(e, reductionContext);
+  } else {
+    /* Overriding deepBeautify to prevent the shallow reduce of the addition
+     * because we need to preserve the order. */
+    assert(e.numberOfChildren() == 2);
+    Expression child0 = e.childAtIndex(0);
+    child0 = child0.deepBeautify(reductionContext);
+    // We add missing Parentheses after beautifying the parent and child
+    if (e.node()->childAtIndexNeedsUserParentheses(child0, 0)) {
+      e.replaceChildAtIndexInPlace(0, Parenthesis::Builder(child0));
+    }
+    // Skip the Addition's shallowBeautify
+    Expression child1 = e.childAtIndex(1);
+    assert(child1.type() == ExpressionNode::Type::Addition);
+    SimplificationHelper::defaultDeepBeautifyChildren(child1, reductionContext);
+    // We add missing Parentheses after beautifying the parent and child
+    if (e.node()->childAtIndexNeedsUserParentheses(child1, 0)) {
+      e.replaceChildAtIndexInPlace(1, Parenthesis::Builder(child1));
+    }
+  }
+  return e;
 }
 
 }

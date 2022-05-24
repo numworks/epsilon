@@ -310,7 +310,6 @@ public:
 
   /* Simplification */
   /*!*/ virtual void deepReduceChildren(ReductionContext reductionContext);
-  /*!*/ virtual void deepBeautifyChildren(ReductionContext reductionContext);
   /*!*/ virtual Expression shallowReduce(ReductionContext reductionContext);
   /* TODO: shallowBeautify takes a pointer to the reduction context, unlike
    * other methods. The pointer is needed to allow UnitConvert to modify the
@@ -319,6 +318,7 @@ public:
    * We should uniformize this behaviour and use pointers in other methods using
    * the reduction context. */
   /*!*/ virtual Expression shallowBeautify(ReductionContext * reductionContext);
+  /*!*/ virtual Expression deepBeautify(ReductionContext reductionContext);
   /*!*/ virtual bool derivate(ReductionContext, Symbol symbol, Expression symbolValue);
   virtual Expression unaryFunctionDifferential(ReductionContext reductionContext);
   /* Return a clone of the denominator part of the expression */

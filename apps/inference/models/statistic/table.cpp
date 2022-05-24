@@ -5,8 +5,9 @@
 namespace Inference {
 
 void Table::deleteParametersInColumn(int column) {
-  for (int i = 0; i < maxNumberOfRows(); i++) {
-    setParameterAtPosition(k_undefinedValue, i, column);
+  int nbOfRows = computeInnerDimensions().row;
+  for (int j = nbOfRows - 1; j >= 0; j--) {
+    setParameterAtPosition(k_undefinedValue, j, column);
   }
 }
 

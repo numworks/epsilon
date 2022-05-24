@@ -927,7 +927,7 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
 
 Expression Expression::defaultDeepBeautify(ExpressionNode::ReductionContext reductionContext) {
   Expression e = shallowBeautify(&reductionContext);
-  SimplificationHelper::defaultDeepBeautifyChildren(e, reductionContext);
+  SimplificationHelper::deepBeautifyChildren(e, reductionContext);
   return e;
 }
 

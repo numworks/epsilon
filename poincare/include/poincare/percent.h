@@ -42,7 +42,7 @@ private:
 class Percent final : public NAryExpression {
 public:
   static Percent Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<Percent, PercentNode>(convert(children)); }
-  static Percent ParseTarget(Expression & leftHandSide);
+  static Expression ParseTarget(Expression & leftHandSide);
 
   Percent(const PercentNode * n) : NAryExpression(n) {}
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

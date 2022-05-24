@@ -3,7 +3,7 @@
 namespace Poincare {
 
 template<typename T> T DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, const T * parameters) const {
-  if (!ParametersAreOK(parameters) || std::isnan(x)) {
+  if (!parametersAreOK(parameters) || std::isnan(x)) {
     return NAN;
   }
   if (std::isinf(x)) {
@@ -18,7 +18,7 @@ template<typename T> T DiscreteDistribution::CumulativeDistributiveFunctionAtAbs
           const void * const * pack = static_cast<const void * const *>(auxiliary);
           Distribution * distribution = const_cast<Distribution *>(static_cast<const Distribution *>(pack[0]));
           const T * parameters = static_cast<const T *>(pack[1]);
-          return distribution->EvaluateAtAbscissa(k, parameters);
+          return distribution->evaluateAtAbscissa(k, parameters);
         },
         nullptr, pack);
 }

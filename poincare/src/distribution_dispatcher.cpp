@@ -91,7 +91,7 @@ Expression DistributionDispatcher::shallowReduce(ExpressionNode::ReductionContex
   const Distribution * distribution = Distribution::Get(distributionType());
 
   bool parametersAreOk;
-  bool couldCheckParameters = distribution->ExpressionParametersAreOK(&parametersAreOk, parameters, reductionContext.context());
+  bool couldCheckParameters = distribution->expressionParametersAreOK(&parametersAreOk, parameters, reductionContext.context());
 
   if (!couldCheckParameters) {
     return *this;

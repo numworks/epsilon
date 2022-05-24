@@ -99,7 +99,7 @@ bool BinomialDistribution::ParametersAreOK(T n, T p) {
     && (p >= static_cast<T>(0.0)) && (p <= static_cast<T>(1.0));
 }
 
-bool BinomialDistribution::ExpressionParametersAreOK(bool * result, const Expression & n, const Expression & p, Context * context) {
+bool BinomialDistribution::expressionParametersAreOK(bool * result, const Expression & n, const Expression & p, Context * context) {
   assert(result != nullptr);
   if (n.deepIsMatrix(context) || p.deepIsMatrix(context)) {
     *result = false;

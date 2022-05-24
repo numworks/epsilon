@@ -84,7 +84,11 @@ double Store::heightOfBarAtValue(int series, double value) const {
 }
 
 double Store::startOfBarAtIndex(int series, int index) const {
-  double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue(series) - m_firstDrawnBarAbscissa)/m_barWidth);
+  double minimalValue = minValue(series);
+  /* Because of floating point approximation, firstBarAbscissa could be lesser
+   * than the minimal value. As a result, we would compute a height of zero for
+   * all bars. */
+  double firstBarAbscissa = std::min(minimalValue, m_firstDrawnBarAbscissa + m_barWidth*std::floor((minimalValue - m_firstDrawnBarAbscissa)/m_barWidth));
   return firstBarAbscissa + index * m_barWidth;
 }
 

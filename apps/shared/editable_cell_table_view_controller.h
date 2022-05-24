@@ -3,7 +3,7 @@
 
 #include <poincare/preferences.h>
 #include <escher/stack_view_controller.h>
-#include "clear_column_helper.h"
+#include "column_helper.h"
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
 #include "regular_table_view_data_source.h"
@@ -14,8 +14,6 @@ class ColumnParameterController;
 
 class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource, public TextFieldDelegate, public ClearColumnHelper {
 public:
-  // this is an ad hoc value. Most of the time, colum_name are very short like "X1", "n" or "f(x)"
-  constexpr static int k_maxSizeOfColumnName = 16;
   EditableCellTableViewController(Responder * parentResponder);
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
@@ -36,7 +34,6 @@ protected:
   // ClearColumnHelper
   Escher::SelectableTableView * table() override { return selectableTableView(); }
 
-  int fillColumnNameWithMessage(char * buffer, I18n::Message message);
   virtual ColumnParameterController * columnParameterController() = 0;
   virtual Escher::StackViewController * stackController() const = 0;
   virtual void setTitleCellText(Escher::HighlightCell * cell, int columnIndex) = 0;

@@ -6,7 +6,7 @@
 #include "inference/statistic/input_controller.h"
 #include "shared/layout_field_delegate.h"
 #include "shared/input_event_handler_delegate.h"
-#include "shared/store_parameter_controller.h"
+#include "slope_column_parameter_controller.h"
 
 using namespace Escher;
 
@@ -33,7 +33,7 @@ private:
   char m_titleBuffer[InputController::k_titleBufferSize];
   Escher::MessageTableCellWithEditableTextWithMessage m_innerDegreeOfFreedomCell;
   SlopeTableCell m_slopeTableCell;
-  Shared::StoreParameterController m_storeParameterController;
+  SlopeColumnParameterController m_storeParameterController;
 };
 
 }  // namespace Inference

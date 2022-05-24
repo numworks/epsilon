@@ -13,22 +13,22 @@ public:
   bool isSymmetrical() const override { return true; }
 
   template<typename T> static T EvaluateAtAbscissa(T x, const T k);
-  float EvaluateAtAbscissa(float x, const float * parameters) const override { return EvaluateAtAbscissa<float>(x, parameters[0]); }
-  double EvaluateAtAbscissa(double x, const double * parameters) const override { return EvaluateAtAbscissa<double>(x, parameters[0]); }
+  float evaluateAtAbscissa(float x, const float * parameters) const override { return EvaluateAtAbscissa<float>(x, parameters[0]); }
+  double evaluateAtAbscissa(double x, const double * parameters) const override { return EvaluateAtAbscissa<double>(x, parameters[0]); }
 
   template<typename T> static T CumulativeDistributiveFunctionAtAbscissa(T x, const T k);
-  float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters[0]); }
-  double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters[0]); }
+  float cumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters[0]); }
+  double cumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) const override { return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters[0]); }
 
   template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, T k);
-  float CumulativeDistributiveInverseForProbability(float x, const float * parameters) const override { return CumulativeDistributiveInverseForProbability<float>(x, parameters[0]); }
-  double CumulativeDistributiveInverseForProbability(double x, const double * parameters) const override { return CumulativeDistributiveInverseForProbability<double>(x, parameters[0]); }
+  float cumulativeDistributiveInverseForProbability(float x, const float * parameters) const override { return CumulativeDistributiveInverseForProbability<float>(x, parameters[0]); }
+  double cumulativeDistributiveInverseForProbability(double x, const double * parameters) const override { return CumulativeDistributiveInverseForProbability<double>(x, parameters[0]); }
 
-  bool ParametersAreOK(const float * parameters) const override { return KIsOK(parameters[0]); }
-  bool ParametersAreOK(const double * parameters) const override { return KIsOK(parameters[0]); }
+  bool parametersAreOK(const float * parameters) const override { return KIsOK(parameters[0]); }
+  bool parametersAreOK(const double * parameters) const override { return KIsOK(parameters[0]); }
 
   static bool ExpressionKIsOK(bool * result, const Expression &k, Context * context);
-  bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const override { return ExpressionKIsOK(result, parameters[0], context); }
+  bool expressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const override { return ExpressionKIsOK(result, parameters[0], context); }
 
   template <typename T> static T lnCoefficient(T k);
 private:

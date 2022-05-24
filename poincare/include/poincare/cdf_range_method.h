@@ -8,11 +8,11 @@ namespace Poincare {
 
 class CDFRangeMethod final : public DistributionMethod {
   float EvaluateAtAbscissa(float * x, const Distribution * distribution, const float * parameters) const override {
-    return distribution->CumulativeDistributiveFunctionForRange(x[0], x[1], parameters);
+    return distribution->cumulativeDistributiveFunctionForRange(x[0], x[1], parameters);
   }
 
   double EvaluateAtAbscissa(double * x, const Distribution * distribution, const double * parameters) const override {
-    return distribution->CumulativeDistributiveFunctionForRange(x[0], x[1], parameters);
+    return distribution->cumulativeDistributiveFunctionForRange(x[0], x[1], parameters);
   }
 
   Expression shallowReduce(Expression * abscissae, const Distribution * distribution, Expression * parameters, ExpressionNode::ReductionContext reductionContext, Expression * expression) const override;

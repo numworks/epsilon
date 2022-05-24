@@ -54,7 +54,7 @@ bool Distribution::Initialize(Distribution * distribution, Poincare::Distributio
 }
 
 float Distribution::evaluateAtAbscissa(float x) const {
-  return m_distribution->EvaluateAtAbscissa(x, constParametersArray());
+  return m_distribution->evaluateAtAbscissa(x, constParametersArray());
 }
 
 void Distribution::setParameterAtIndex(double f, int index) {
@@ -63,7 +63,7 @@ void Distribution::setParameterAtIndex(double f, int index) {
 }
 
 double Distribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  return m_distribution->CumulativeDistributiveFunctionAtAbscissa(x, constParametersArray());
+  return m_distribution->cumulativeDistributiveFunctionAtAbscissa(x, constParametersArray());
 }
 
 double Distribution::rightIntegralFromAbscissa(double x) const {
@@ -101,7 +101,7 @@ double Distribution::finiteIntegralBetweenAbscissas(double a, double b) const {
 }
 
 double Distribution::cumulativeDistributiveInverseForProbability(double p) const {
-    return m_distribution->CumulativeDistributiveInverseForProbability(p, constParametersArray());
+    return m_distribution->cumulativeDistributiveInverseForProbability(p, constParametersArray());
 }
 
 double Distribution::rightIntegralInverseForProbability(double probability) const {
@@ -138,7 +138,7 @@ double Distribution::evaluateAtDiscreteAbscissa(int k) const {
   if (isContinuous()) {
     return 0.0;
   }
-  return m_distribution->EvaluateAtAbscissa(static_cast<double>(k), constParametersArray());
+  return m_distribution->evaluateAtAbscissa(static_cast<double>(k), constParametersArray());
 }
 
 }

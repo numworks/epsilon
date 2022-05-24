@@ -11,7 +11,8 @@ namespace Poincare {
 class SimplificationHelper {
 public:
   static void defaultDeepReduceChildren(Expression e, ExpressionNode::ReductionContext reductionContext);
-  static void defaultDeepBeautifyChildren(Expression e, ExpressionNode::ReductionContext reductionContext);
+  // DeepBeautify children and add parentheses if needed.
+  static void deepBeautifyChildren(Expression e, ExpressionNode::ReductionContext reductionContext);
   /* Handle circuit breaker and early reduce if should be undefined
    * Returns uninitialized handle if nothing was done, the resulting expression
    * otherwise. */

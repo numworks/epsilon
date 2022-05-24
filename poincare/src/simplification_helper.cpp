@@ -10,7 +10,7 @@
 namespace Poincare {
 
 
-void SimplificationHelper::defaultDeepBeautifyChildren(Expression e, ExpressionNode::ReductionContext reductionContext) {
+void SimplificationHelper::deepBeautifyChildren(Expression e, ExpressionNode::ReductionContext reductionContext) {
   const int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     Expression child = e.childAtIndex(i);

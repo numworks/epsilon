@@ -50,24 +50,24 @@ public:
   virtual bool isSymmetrical() const = 0;
   virtual double meanAbscissa() { assert(false); return NAN; } // Must be implemented by all symmetrical and continouous distributions.
 
-  virtual float EvaluateAtAbscissa(float x, const float * parameters) const = 0;
-  virtual double EvaluateAtAbscissa(double x, const double * parameters) const = 0;
+  virtual float evaluateAtAbscissa(float x, const float * parameters) const = 0;
+  virtual double evaluateAtAbscissa(double x, const double * parameters) const = 0;
 
-  virtual float CumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) const = 0;
-  virtual double CumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) const = 0;
+  virtual float cumulativeDistributiveFunctionAtAbscissa(float x, const float * parameters) const = 0;
+  virtual double cumulativeDistributiveFunctionAtAbscissa(double x, const double * parameters) const = 0;
 
-  virtual float CumulativeDistributiveInverseForProbability(float x, const float * parameters) const = 0;
-  virtual double CumulativeDistributiveInverseForProbability(double x, const double * parameters) const = 0;
+  virtual float cumulativeDistributiveInverseForProbability(float x, const float * parameters) const = 0;
+  virtual double cumulativeDistributiveInverseForProbability(double x, const double * parameters) const = 0;
 
-  virtual float CumulativeDistributiveFunctionForRange(float x, float y, const float * parameters) const = 0;
-  virtual double CumulativeDistributiveFunctionForRange(double x, double y, const double * parameters) const = 0;
+  virtual float cumulativeDistributiveFunctionForRange(float x, float y, const float * parameters) const = 0;
+  virtual double cumulativeDistributiveFunctionForRange(double x, double y, const double * parameters) const = 0;
 
-  virtual bool ParametersAreOK(const float * parameters) const = 0;
-  virtual bool ParametersAreOK(const double * parameters) const = 0;
+  virtual bool parametersAreOK(const float * parameters) const = 0;
+  virtual bool parametersAreOK(const double * parameters) const = 0;
 
-  /* ExpressionParametersAreOK returns true if the expression could be verified.
+  /* expressionParametersAreOK returns true if the expression could be verified.
    * The result of the verification is *result. */
-  virtual bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const = 0;
+  virtual bool expressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const = 0;
 
 protected:
   constexpr Distribution() {}

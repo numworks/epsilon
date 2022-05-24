@@ -110,7 +110,7 @@ Expression SimplificationHelper::undefinedOnMatrix(Expression e, ExpressionNode:
   int n = e.numberOfChildren();
   for (int i = 0; i < n ; i ++) {
     if (e.childAtIndex(i).deepIsMatrix(reductionContext.context())) {
-      return Undefined::Builder();
+      return e.replaceWithUndefinedInPlace();
     }
   }
   return Expression();
@@ -136,7 +136,7 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, Expr
   for (int i = 0; i < n; i++) {
     // You can't mix lists and matrices
     if (e.childAtIndex(i).deepIsMatrix(reductionContext.context())) {
-      return Undefined::Builder();
+      return e.replaceWithUndefinedInPlace();
     }
     children.addChildAtIndexInPlace(e.childAtIndex(i), i, i);
   }

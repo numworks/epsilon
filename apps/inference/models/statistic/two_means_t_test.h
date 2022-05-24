@@ -33,7 +33,7 @@ public:
   Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionT::TestCriticalValueSymbol(font); }
   float canonicalDensityFunction(float x) const override { return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom); }
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override { return DistributionT::CumulativeNormalizedDistributionFunction(x, m_degreesOfFreedom); }
-  double cumulativeDistributiveInverseForProbability(double * p) override { return DistributionT::CumulativeNormalizedInverseDistributionFunction(*p, m_degreesOfFreedom); }
+  double cumulativeDistributiveInverseForProbability(double p) const override { return DistributionT::CumulativeNormalizedInverseDistributionFunction(p, m_degreesOfFreedom); }
 
 private:
   // Significance Test: TwoMeans

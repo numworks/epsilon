@@ -15,7 +15,7 @@ public:
   float evaluateAtAbscissa(float x) const override;
   bool authorizedParameterAtIndex(double x, int index) const override;
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
-  double cumulativeDistributiveInverseForProbability(double * p) override;
+  double cumulativeDistributiveInverseForProbability(double p) const override;
 private:
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {
     return ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::LambdaExponentialDefinition};

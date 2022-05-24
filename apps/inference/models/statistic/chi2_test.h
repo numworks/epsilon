@@ -28,8 +28,8 @@ public:
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
     return DistributionChi2::CumulativeNormalizedDistributionFunction(x, m_degreesOfFreedom);
   }
-  double cumulativeDistributiveInverseForProbability(double * proba) override {
-    return DistributionChi2::CumulativeNormalizedInverseDistributionFunction(*proba, m_degreesOfFreedom);
+  double cumulativeDistributiveInverseForProbability(double proba) const override {
+    return DistributionChi2::CumulativeNormalizedInverseDistributionFunction(proba, m_degreesOfFreedom);
   }
   int indexOfDegreeOfFreedom() const { return indexOfThreshold() + 1; }
 

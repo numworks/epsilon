@@ -150,12 +150,16 @@ Expression Percent::shallowBeautify(ExpressionNode::ReductionContext * reduction
     result = Division::Builder(childAtIndex(0), Rational::Builder(100));
   } else {
     assert(numberOfChildren() == 2);
-    // a+b% -> a*(1+b/100)
-    result = Multiplication::Builder(
-        {childAtIndex(0),
-         Addition::Builder(
-             Rational::Builder(1),
-             Division::Builder(childAtIndex(1), Rational::Builder(100)))});
+    Expression ratio;
+    Expression positiveArg = childAtIndex(1).makePositiveAnyNegativeNumeralFactor(*reductionContext);
+    if (!positiveArg.isUninitialized()) {
+      // a-b% -> a*(1-b/100)
+      ratio = Subtraction::Builder(Rational::Builder(1), Division::Builder(positiveArg, Rational::Builder(100)));
+    } else {
+      // a+b% -> a*(1+b/100)
+      ratio = Addition::Builder(Rational::Builder(1), Division::Builder(childAtIndex(1), Rational::Builder(100)));
+    }
+    result = Multiplication::Builder({childAtIndex(0), ratio});
   }
   replaceWithInPlace(result);
   return result;
@@ -188,7 +192,7 @@ Expression Percent::deepBeautify(ExpressionNode::ReductionContext reductionConte
     }
     // Skip the Addition's shallowBeautify
     Expression child1 = e.childAtIndex(1);
-    assert(child1.type() == ExpressionNode::Type::Addition);
+    assert(child1.type() == ExpressionNode::Type::Addition || child1.type() == ExpressionNode::Type::Subtraction);
     SimplificationHelper::deepBeautifyChildren(child1, reductionContext);
     // We add missing Parentheses after beautifying the parent and child
     if (e.node()->childAtIndexNeedsUserParentheses(child1, 0)) {

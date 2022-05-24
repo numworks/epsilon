@@ -47,7 +47,6 @@ void StoreController::fillFormulaInputWithTemplate(Layout templateLayout) {
   }
   inputViewController()->setTextBody(templateString);
   inputViewController()->edit(
-      this,
       Ion::Events::OK,
       this,
       [](void * context, void * sender) {

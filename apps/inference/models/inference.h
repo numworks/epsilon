@@ -45,7 +45,7 @@ public:
   // Evaluation of distribution
   virtual float evaluateAtAbscissa(float x) const = 0;
   virtual double cumulativeDistributiveFunctionAtAbscissa(double x) const = 0;
-  virtual double cumulativeDistributiveInverseForProbability(double * probability) = 0;
+  virtual double cumulativeDistributiveInverseForProbability(double probability) const = 0;
 
   constexpr static float k_displayTopMarginRatio = 0.05f;
   constexpr static float k_displayLeftMarginRatio = 0.05f;

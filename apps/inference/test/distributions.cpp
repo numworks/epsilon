@@ -22,7 +22,7 @@ void assert_cumulative_distributive_function_direct_and_inverse_is(Inference::Di
   quiz_assert(!std::isinf(r));
   quiz_assert(std::fabs(r-result) < FLT_EPSILON || std::fabs(r-result)/result < FLT_EPSILON);
 
-  r = distribution->cumulativeDistributiveInverseForProbability(&result);
+  r = distribution->cumulativeDistributiveInverseForProbability(result);
   quiz_assert(!std::isnan(r));
   quiz_assert(!std::isinf(r));
   quiz_assert(std::fabs(r-x) < FLT_EPSILON || std::fabs(r-x)/x < FLT_EPSILON);

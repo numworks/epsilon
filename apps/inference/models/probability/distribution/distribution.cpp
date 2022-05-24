@@ -100,14 +100,14 @@ double Distribution::finiteIntegralBetweenAbscissas(double a, double b) const {
   return result;
 }
 
-double Distribution::cumulativeDistributiveInverseForProbability(double * p) {
-    return m_distribution->CumulativeDistributiveInverseForProbability(*p, constParametersArray());
+double Distribution::cumulativeDistributiveInverseForProbability(double p) const {
+    return m_distribution->CumulativeDistributiveInverseForProbability(p, constParametersArray());
 }
 
 double Distribution::rightIntegralInverseForProbability(double * probability) {
   if (isContinuous()) {
     double f = 1.0 - *probability;
-    return cumulativeDistributiveInverseForProbability(&f);
+    return cumulativeDistributiveInverseForProbability(f);
   }
   if (*probability >= 1.0) {
     return 0.0;

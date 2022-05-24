@@ -92,7 +92,7 @@ float Interval::computeXMax() const {
 
 double Interval::computeIntervalCriticalValue() {
   double value = 0.5 + m_threshold / 2;
-  return cumulativeDistributiveInverseForProbability(&value);
+  return cumulativeDistributiveInverseForProbability(value);
 }
 
 float Interval::largestMarginOfError() {

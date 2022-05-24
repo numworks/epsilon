@@ -21,8 +21,8 @@ double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(double x
   return Poincare::Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(x, m_parameter);
 }
 
-double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(double * p) {
-  return Poincare::Chi2Distribution::CumulativeDistributiveInverseForProbability(*p, m_parameter);
+double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(double p) const {
+  return Poincare::Chi2Distribution::CumulativeDistributiveInverseForProbability(p, m_parameter);
 }
 
 float ChiSquaredDistribution::computeXMax() const {

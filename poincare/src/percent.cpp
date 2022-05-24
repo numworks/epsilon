@@ -175,7 +175,7 @@ Expression Percent::deepBeautify(ExpressionNode::ReductionContext reductionConte
   Expression e = shallowBeautify(&reductionContext);
   if (numberOfChildren() == 1) {
     assert(e.type() == ExpressionNode::Type::Division);
-    SimplificationHelper::defaultDeepBeautifyChildren(e, reductionContext);
+    SimplificationHelper::deepBeautifyChildren(e, reductionContext);
   } else {
     /* Overriding deepBeautify to prevent the shallow reduce of the addition
      * because we need to preserve the order. */
@@ -189,7 +189,7 @@ Expression Percent::deepBeautify(ExpressionNode::ReductionContext reductionConte
     // Skip the Addition's shallowBeautify
     Expression child1 = e.childAtIndex(1);
     assert(child1.type() == ExpressionNode::Type::Addition);
-    SimplificationHelper::defaultDeepBeautifyChildren(child1, reductionContext);
+    SimplificationHelper::deepBeautifyChildren(child1, reductionContext);
     // We add missing Parentheses after beautifying the parent and child
     if (e.node()->childAtIndexNeedsUserParentheses(child1, 0)) {
       e.replaceChildAtIndexInPlace(1, Parenthesis::Builder(child1));

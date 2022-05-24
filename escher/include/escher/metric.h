@@ -52,6 +52,12 @@ public:
   constexpr static KDCoordinate ThousandsSeparatorWidth = 3;
   constexpr static KDCoordinate TitleBarExternHorizontalMargin = 5;
   constexpr static KDCoordinate TitleBarHeight = 18;
+
+  constexpr static KDCoordinate SmallFontCellWidth(int numberOfChars, KDCoordinate margin) {
+    /* KDFont::SmallFont->glyphSize().width() = 7
+     * TODO: Replace 7 by a constexpr */
+    return numberOfChars * 7 + 2 * margin;
+  }
 };
 
 }

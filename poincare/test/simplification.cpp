@@ -741,6 +741,18 @@ QUIZ_CASE(poincare_simplification_factorial) {
   assert_parsed_expression_simplify_to("e!", Undefined::Name());
 }
 
+QUIZ_CASE(poincare_simplification_percent) {
+  assert_parsed_expression_simplify_to("20%", "20/100");
+  assert_parsed_expression_simplify_to("20%%", "\u001220/100\u0013/100");
+  assert_parsed_expression_simplify_to("80*20%", "80×20/100");
+  assert_parsed_expression_simplify_to("80/(20%)", "80/\u001220/100\u0013");
+  assert_parsed_expression_simplify_to("80+20%", "80×(1+20/100)");
+  assert_parsed_expression_simplify_to("20%+80+20%", "(20/100+80)×(1+20/100)");
+  assert_parsed_expression_simplify_to("80+20%+20%", "80×(1+20/100)×(1+20/100)");
+  assert_parsed_expression_simplify_to("80-20%", "80×(1-20/100)");
+  assert_parsed_expression_simplify_to("80+20-20%", "100×(1-20/100)");
+}
+
 QUIZ_CASE(poincare_simplification_logarithm) {
   assert_parsed_expression_simplify_to("log(0,0)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(0,1)", Undefined::Name());

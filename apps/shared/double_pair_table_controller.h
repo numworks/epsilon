@@ -38,7 +38,6 @@ public:
   // PrefacedTableView::MarginDelegate
   KDCoordinate prefaceMargin(Escher::TableView * preface, Escher::TableViewDataSource * prefaceDataSource) override;
 
-
 protected:
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   static constexpr KDCoordinate k_cellHeight = 20;

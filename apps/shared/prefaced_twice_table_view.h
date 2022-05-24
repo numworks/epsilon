@@ -16,7 +16,7 @@ public:
 private:
   class ColumnPrefaceDataSource : public IntermediaryDataSource {
   public:
-    ColumnPrefaceDataSource(int prefaceColumn, Escher::TableViewDataSource * mainDataSource) :IntermediaryDataSource(mainDataSource), m_prefaceColumn(prefaceColumn), m_prefaceRow(-1) {}
+    ColumnPrefaceDataSource(int prefaceColumn, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceColumn(prefaceColumn), m_prefaceRow(-1) {}
 
     void setPrefaceRow(int row) { m_prefaceRow = row; }
     bool prefaceFullyInFrame(int offset) const { return offset <= m_mainDataSource->cumulatedWidthFromIndex(m_prefaceColumn); }

@@ -24,6 +24,7 @@ bool DoublePairTableController::handleEvent(Ion::Events::Event event) {
   }
   return false;
 }
+
 void DoublePairTableController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 1);

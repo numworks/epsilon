@@ -2,6 +2,7 @@
 #define POINCARE_CHI2_DISTRIBUTION_H
 
 #include <poincare/continuous_distribution.h>
+#include <poincare/expression.h>
 #include <float.h>
 
 namespace Poincare {
@@ -23,13 +24,15 @@ public:
   float CumulativeDistributiveInverseForProbability(float x, const float * parameters) const override { return CumulativeDistributiveInverseForProbability<float>(x, parameters[0]); }
   double CumulativeDistributiveInverseForProbability(double x, const double * parameters) const override { return CumulativeDistributiveInverseForProbability<double>(x, parameters[0]); }
 
-  bool ParametersAreOK(const float * parameters) const override { return false; }
-  bool ParametersAreOK(const double * parameters) const override { return false; }
+  bool ParametersAreOK(const float * parameters) const override { return KIsOK(parameters[0]); }
+  bool ParametersAreOK(const double * parameters) const override { return KIsOK(parameters[0]); }
 
-  bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const override { return false; }
+  static bool ExpressionKIsOK(bool * result, const Expression &k, Context * context);
+  bool ExpressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const override { return ExpressionKIsOK(result, parameters[0], context); }
 private:
   static constexpr int k_maxRegularizedGammaIterations = 1000;
   static constexpr double k_regularizedGammaPrecision = DBL_EPSILON;
+  template<typename T> static bool KIsOK(T k);
 };
 
 }

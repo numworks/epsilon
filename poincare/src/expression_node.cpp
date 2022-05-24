@@ -91,10 +91,6 @@ void ExpressionNode::deepReduceChildren(ExpressionNode::ReductionContext reducti
   SimplificationHelper::defaultDeepReduceChildren(Expression(this), reductionContext);
 }
 
-void ExpressionNode::deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
-  SimplificationHelper::defaultDeepBeautifyChildren(Expression(this), reductionContext);
-}
-
 Expression ExpressionNode::shallowReduce(ReductionContext reductionContext) {
   Expression e(this);
   Expression res = SimplificationHelper::shallowReduceUndefined(e);
@@ -106,6 +102,10 @@ Expression ExpressionNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression ExpressionNode::shallowBeautify(ReductionContext * reductionContext) {
   return Expression(this).defaultShallowBeautify();
+}
+
+Expression ExpressionNode::deepBeautify(ReductionContext reductionContext) {
+  return Expression(this).defaultDeepBeautify(reductionContext);
 }
 
 bool ExpressionNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {

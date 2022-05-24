@@ -447,7 +447,7 @@ protected:
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const { return node()->denominator(reductionContext); }
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext) { return node()->shallowBeautify(reductionContext); }
-  Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression deepBeautify(ExpressionNode::ReductionContext reductionContext) { return node()->deepBeautify(reductionContext); }
 
   /* Derivation */
   /* This method is used for the reduction of Derivative expressions.
@@ -484,9 +484,7 @@ private:
 
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
-  void deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
-    node()->deepBeautifyChildren(reductionContext);
-  }
+  Expression defaultDeepBeautify(ExpressionNode::ReductionContext reductionContext);
 
   bool defaultDidDerivate() { return false; }
   Expression defaultUnaryFunctionDifferential() { return *this; }

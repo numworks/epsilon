@@ -29,8 +29,8 @@ void UnitConvertNode::deepReduceChildren(ExpressionNode::ReductionContext reduct
   UnitConvert(this).deepReduceChildren(reductionContext);
 }
 
-void UnitConvertNode::deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
-  UnitConvert(this).deepBeautifyChildren(reductionContext);
+Expression UnitConvertNode::deepBeautify(ExpressionNode::ReductionContext reductionContext) {
+  return UnitConvert(this).deepBeautify(reductionContext);
 }
 
 template<typename T>
@@ -55,7 +55,8 @@ void UnitConvert::deepReduceChildren(ExpressionNode::ReductionContext reductionC
   childAtIndex(1).deepReduce(reductionContextKeepUnitAsIs);
 }
 
-void UnitConvert::deepBeautifyChildren(ExpressionNode::ReductionContext reductionContext) {
+Expression UnitConvert::deepBeautify(ExpressionNode::ReductionContext reductionContext) {
+  Expression e = shallowBeautify(&reductionContext);
   ExpressionNode::ReductionContext reductionContextKeepUnitAsIs = ExpressionNode::ReductionContext(
       reductionContext.context(),
       reductionContext.complexFormat(),
@@ -64,7 +65,8 @@ void UnitConvert::deepBeautifyChildren(ExpressionNode::ReductionContext reductio
       reductionContext.target(),
       reductionContext.symbolicComputation(),
       ExpressionNode::UnitConversion::None);
-  SimplificationHelper::defaultDeepBeautifyChildren(*this, reductionContextKeepUnitAsIs);
+  SimplificationHelper::defaultDeepBeautifyChildren(e, reductionContextKeepUnitAsIs);
+  return e;
 }
 
 Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {

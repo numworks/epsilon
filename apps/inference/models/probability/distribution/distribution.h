@@ -34,7 +34,7 @@ public:
   double rightIntegralFromAbscissa(double x) const;
   double finiteIntegralBetweenAbscissas(double a, double b) const;
   double cumulativeDistributiveInverseForProbability(double p) const override;
-  virtual double rightIntegralInverseForProbability(double * p);
+  virtual double rightIntegralInverseForProbability(double p) const;
   virtual double evaluateAtDiscreteAbscissa(int k) const;
   constexpr static int k_maxNumberOfOperations = 1000000;
   virtual double defaultComputedValue() const { return 0.0f; }

@@ -23,11 +23,11 @@ double BinomialDistribution::cumulativeDistributiveInverseForProbability(double 
   return Poincare::BinomialDistribution::CumulativeDistributiveInverseForProbability(p, m_parameters[0], m_parameters[1]);
 }
 
-double BinomialDistribution::rightIntegralInverseForProbability(double * p) {
+double BinomialDistribution::rightIntegralInverseForProbability(double p) const {
   if (m_parameters[0] == 0.0 && (m_parameters[1] == 0.0 || m_parameters[1] == 1.0)) {
     return NAN;
   }
-  if (*p <= 0.0) {
+  if (p <= 0.0) {
     return m_parameters[0];
   }
   return Distribution::rightIntegralInverseForProbability(p);

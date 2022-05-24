@@ -140,7 +140,7 @@ bool OneMean::TAuthorizedParameterAtIndex(int i, double p) {
 double OneMean::ProcessParamaterForIndex(double p, int index) {
   if (index == ParamsOrder::n) {
     p = std::round(p);
-    assert(p > 1.0);
+    assert(p > 0.0);
   }
   return p;
 }

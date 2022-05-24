@@ -142,7 +142,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   // Coordinate and series title
   if (j == 0 && i > 1) {
     ColumnTitleCell * myCell = static_cast<ColumnTitleCell *>(cell);
-    char buffer[Shared::EditableCellTableViewController::k_maxSizeOfColumnName];
+    char buffer[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
     m_store->fillColumnName(seriesNumber, 0, buffer);
     myCell->setFirstText(buffer);
     m_store->fillColumnName(seriesNumber, 1, buffer);

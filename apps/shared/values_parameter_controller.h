@@ -19,7 +19,7 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void initializeColumnParameters() override;
 private:
-  EditableCellTableViewController * editableCellTableViewController() override;
+  ClearColumnHelper * clearColumnHelper() override;
   constexpr static int k_totalNumberOfCell = 2;
   constexpr static int k_indexOfClearColumn = 0;
   constexpr static int k_indexOfSetInterval = k_indexOfClearColumn + 1;

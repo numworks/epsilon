@@ -21,7 +21,7 @@ public:
 private:
   constexpr static int k_totalNumberOfCell = 1;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function();
-  Shared::EditableCellTableViewController * editableCellTableViewController() override;
+  Shared::ClearColumnHelper * clearColumnHelper() override;
 
   Escher::MessageTableCellWithSwitch m_displayDerivativeColumn;
   ValuesController * m_valuesController;

@@ -14,7 +14,7 @@ DerivativeParameterController::DerivativeParameterController(ValuesController * 
 {
 }
 
-Shared::EditableCellTableViewController * DerivativeParameterController::editableCellTableViewController() {
+Shared::ClearColumnHelper * DerivativeParameterController::clearColumnHelper() {
   return m_valuesController;
 }
 

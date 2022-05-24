@@ -148,9 +148,9 @@ bool ModalViewController::handleEvent(Ion::Events::Event event) {
   if (!m_contentView.isDisplayingModal()) {
     return false;
   }
-  if (event == Ion::Events::Back) {
+  if (event == Ion::Events::Back || event == Ion::Events::Home) {
     dismissModalViewController();
-    return true;
+    return event != Ion::Events::Home;
   }
   return false;
 }

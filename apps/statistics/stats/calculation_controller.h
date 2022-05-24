@@ -51,14 +51,12 @@ private:
   static constexpr int k_calculationCellType = 4;
   static constexpr int k_seriesTitleCellType = 5;
   static constexpr int k_hideableCellType = 6;
-  static constexpr KDCoordinate k_calculationTitleCellWidth = 161;
-  /* FIXME: 7 in CalculationSymbolCellWidth and k_calculationCellWidth stands
-   * for KDFont::SmallFont->glyphSize().width(). */
-  static constexpr KDCoordinate CalculationSymbolCellWidth(int maxChars) { return maxChars * 7 + 2 * Escher::Metric::CellVerticalElementMargin; }
+  static constexpr KDCoordinate k_calculationTitleCellWidth = Escher::Metric::SmallFontCellWidth(k_titleNumberOfChars, Escher::Metric::CellVerticalElementMargin);
+  static constexpr KDCoordinate CalculationSymbolCellWidth(int maxChars) { return Escher::Metric::SmallFontCellWidth(maxChars, Escher::Metric::CellVerticalElementMargin); }
   /* Margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here, along with the separator
    * width from SeparatorEvenOddBufferTextCell. */
-  static constexpr KDCoordinate k_calculationCellWidth = 7 * Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) + 2 * Escher::EvenOddCell::k_horizontalMargin + Escher::EvenOddCell::k_separatorWidth;
+  static constexpr KDCoordinate k_calculationCellWidth = Escher::Metric::SmallFontCellWidth(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits), Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth;
 
   Shared::DoublePairStore * store() const override { return m_store; }
 

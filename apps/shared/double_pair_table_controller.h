@@ -12,6 +12,7 @@ namespace Shared {
 
 class DoublePairTableController : public TabTableController, public Escher::TableViewDataSource, public Escher::ButtonRowDelegate, public Escher::AlternateEmptyViewDefaultDelegate {
 public:
+  constexpr static int k_titleNumberOfChars = 22;
   DoublePairTableController(Escher::Responder * parentResponder, Escher::ButtonRowController * header) :
     TabTableController(parentResponder),
     ButtonRowDelegate(header, nullptr),

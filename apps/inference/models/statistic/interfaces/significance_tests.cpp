@@ -388,7 +388,7 @@ bool TwoMeans::TAuthorizedParameterAtIndex(int i, double p) {
 double TwoMeans::ProcessParamaterForIndex(double p, int index) {
   if (index == ParamsOrder::n1 || index == ParamsOrder::n2) {
     p = std::round(p);
-    assert(p > 1.0);
+    assert(p > 0.0);
   }
   return p;
 }

@@ -16,10 +16,6 @@ constexpr Expression::FunctionHelper Conjugate::s_functionHelper;
 
 int ConjugateNode::numberOfChildren() const { return Conjugate::s_functionHelper.numberOfChildren(); }
 
-Expression ConjugateNode::setSign(Sign s, ReductionContext reductionContext) {
-  return Conjugate(this).setSign(s, reductionContext);
-}
-
 Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return ConjugateLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
@@ -35,10 +31,6 @@ Expression ConjugateNode::shallowReduce(ReductionContext reductionContext) {
 template<typename T>
 Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   return Complex<T>::Builder(std::conj(c));
-}
-
-Expression Conjugate::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
-  return defaultOddFunctionSetSign(s, reductionContext);
 }
 
 Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

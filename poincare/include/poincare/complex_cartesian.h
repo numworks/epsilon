@@ -20,7 +20,6 @@ public:
 
   // Properties
   Sign sign(Context * context) const override { return childAtIndex(1)->nullStatus(context) == NullStatus::Null ? childAtIndex(0)->sign(context) : Sign::Unknown; }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
   NullStatus nullStatus(Context * context) const override;
   Type type() const override { return Type::ComplexCartesian; }
 private:
@@ -66,7 +65,6 @@ public:
   ComplexCartesian powerInteger(int n, ExpressionNode::ReductionContext reductionContext);
   ComplexCartesian multiply(ComplexCartesian & other,ExpressionNode::ReductionContext reductionContext);
   ComplexCartesian power(ComplexCartesian & other, ExpressionNode::ReductionContext reductionContext);
-  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 private:
   static constexpr int k_maxNumberOfNodesBeforeInterrupting = 50;
   void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, ExpressionNode::ReductionContext reductionContext);

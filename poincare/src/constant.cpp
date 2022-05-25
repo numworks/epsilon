@@ -30,11 +30,6 @@ ExpressionNode::Sign ConstantNode::sign(Context * context) const {
   return Sign::Unknown;
 }
 
-Expression ConstantNode::setSign(Sign s, ReductionContext reductionContext) {
-  // Override SymbolAbstract's setSign method to use the default implementation.
-  return ExpressionNode::setSign(s, reductionContext);
-}
-
 bool ConstantNode::isReal() const {
   ConstantInfo info = constantInfo();
   return isConstant("π", info) || isConstant("e", info);

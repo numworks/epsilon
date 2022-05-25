@@ -33,7 +33,6 @@ public:
 
   // Property
   Sign sign(Context * context) const override;
-  Expression setSign(ExpressionNode::Sign s, ReductionContext reductionContext) override;
 
   // TreeNode
 #if POINCARE_TREE_LOG

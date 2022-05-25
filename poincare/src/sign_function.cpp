@@ -19,14 +19,6 @@ constexpr Expression::FunctionHelper SignFunction::s_functionHelper;
 
 int SignFunctionNode::numberOfChildren() const { return SignFunction::s_functionHelper.numberOfChildren(); }
 
-Expression SignFunctionNode::setSign(Sign s, ReductionContext reductionContext) {
- assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  SignFunction sign(this);
-  Rational r = Rational::Builder(s == ExpressionNode::Sign::Positive ? 1 : -1);
-  sign.replaceWithInPlace(r);
-  return std::move(r);
-}
-
 Layout SignFunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(SignFunction(this), floatDisplayMode, numberOfSignificantDigits, SignFunction::s_functionHelper.name());
 }

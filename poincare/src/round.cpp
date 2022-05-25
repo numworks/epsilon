@@ -15,10 +15,6 @@ constexpr Expression::FunctionHelper Round::s_functionHelper;
 
 int RoundNode::numberOfChildren() const { return Round::s_functionHelper.numberOfChildren(); }
 
-Expression RoundNode::setSign(Sign s, ReductionContext reductionContext) {
-  return Round(this).setSign(s, reductionContext);
-}
-
 Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, Round::s_functionHelper.name());
 }
@@ -46,10 +42,6 @@ Evaluation<T> RoundNode::templatedApproximate(ApproximationContext approximation
           T err = std::pow(10, std::floor(f2));
           return Complex<T>::Builder(std::round(f1*err)/err);
       });
-}
-
-Expression Round::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
-  return defaultOddFunctionSetSign(s, reductionContext);
 }
 
 Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

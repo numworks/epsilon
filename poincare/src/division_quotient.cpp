@@ -15,10 +15,6 @@ constexpr Expression::FunctionHelper DivisionQuotient::s_functionHelper;
 
 int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::s_functionHelper.numberOfChildren(); }
 
-Expression DivisionQuotientNode::setSign(Sign s, ReductionContext reductionContext) {
-  return DivisionQuotient(this).setSign(s, reductionContext);
-}
-
 ExpressionNode::Sign DivisionQuotientNode::sign(Context * context) const {
   ExpressionNode::Sign numeratorSign = childAtIndex(0)->sign(context);
   ExpressionNode::Sign denominatorSign = childAtIndex(1)->sign(context);
@@ -54,18 +50,6 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(ApproximationContext ap
         return Complex<T>::Builder(DivisionQuotient::TemplatedQuotient(f1, f2));
       });
   }
-
-Expression DivisionQuotient::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  ExpressionNode::Sign selfSign = sign(reductionContext.context());
-  assert(selfSign == ExpressionNode::Sign::Positive || selfSign == ExpressionNode::Sign::Negative);
-  if (selfSign != s) {
-    Multiplication m = Multiplication::Builder(Rational::Builder(-1), childAtIndex(1));
-    replaceChildAtIndexInPlace(1, m);
-    m.shallowReduce(reductionContext);
-  }
-  return *this;
-}
 
 Expression DivisionQuotient::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {

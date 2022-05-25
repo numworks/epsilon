@@ -4,16 +4,6 @@
 namespace Poincare {
 
 template<typename T>
-Expression FloatNode<T>::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  Sign currentSign = m_value < 0 ? Sign::Negative : Sign::Positive;
-  Expression thisExpr = Number(this);
-  Expression result = Float<T>::Builder(s == currentSign ? m_value : -m_value);
-  thisExpr.replaceWithInPlace(result);
-  return result;
-}
-
-template<typename T>
 int FloatNode<T>::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, ignoreParentheses);

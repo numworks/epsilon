@@ -30,6 +30,9 @@ public:
   Sign sign(Context * context) const override { return Sign::Positive; }
   NullStatus nullStatus(Context * context) const override { return integer().isZero() ? NullStatus::Null : NullStatus::NonNull; }
 
+  // NumberNode
+  void setNegative(bool negative) override { assert(!negative); }
+
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 

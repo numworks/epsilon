@@ -10,11 +10,6 @@ extern "C" {
 
 namespace Poincare {
 
-Expression InfinityNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  return Infinity(this).setSign(s);
-}
-
 Layout InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[5];
   int numberOfChars = serialize(buffer, 5, floatDisplayMode, numberOfSignificantDigits);
@@ -41,13 +36,6 @@ Infinity Infinity::Builder(bool negative) {
   InfinityNode * node = new (bufferNode) InfinityNode(negative);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<Infinity &>(h);
-}
-
-Expression Infinity::setSign(ExpressionNode::Sign s) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  Expression result = Infinity::Builder(s == ExpressionNode::Sign::Negative);
-  replaceWithInPlace(result);
-  return result;
 }
 
 bool Infinity::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {

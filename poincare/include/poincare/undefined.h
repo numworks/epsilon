@@ -19,7 +19,10 @@ public:
   // Properties
   Type type() const override { return Type::Undefined; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
+
+
+  // NumberNode
+  void setNegative(bool negative) override { }
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {

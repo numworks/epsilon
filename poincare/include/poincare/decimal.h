@@ -44,7 +44,9 @@ public:
   Type type() const override { return Type::Decimal; }
   Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
   NullStatus nullStatus(Context * context) const override { return unsignedMantissa().isZero() ? NullStatus::Null : NullStatus::NonNull; }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
+
+  // NumberNode
+  void setNegative(bool negative) override { m_negative = negative; }
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
@@ -77,7 +79,6 @@ private:
 
   int convertToText(char * buffer, int bufferSize, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) const;
   template<typename T> T templatedApproximate() const;
-  void setNegative(bool negative) { m_negative = negative; }
   bool m_negative;
   int m_exponent;
   uint8_t m_numberOfDigitsInMantissa;
@@ -106,7 +107,6 @@ private:
   constexpr static int k_maxMantissaLength = 20;
   DecimalNode * node() const { return static_cast<DecimalNode *>(Number::node()); }
   static Decimal Builder(size_t size, const Integer & m, int e);
-  Expression setSign(ExpressionNode::Sign s);
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();

@@ -11,6 +11,7 @@ namespace Inference {
 class SlopeTInterval : public Interval, public SlopeTStatistic {
 public:
   SlopeTInterval(Shared::GlobalContext * context) : SlopeTStatistic(context) {}
+  void init() override { DoublePairStore::initListsFromStorage(); }
   void tidy() override { DoublePairStore::tidy(); }
   SignificanceTestType significanceTestType() const override { return SignificanceTestType::Slope; }
   DistributionType distributionType() const override { return DistributionType::T; }

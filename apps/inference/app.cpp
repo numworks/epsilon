@@ -17,6 +17,7 @@ const Escher::Image * App::Descriptor::icon() const {
 }
 
 App * App::Snapshot::unpack(Container * container) {
+  inference()->init();
   return new (container->currentAppBuffer()) App(this, static_cast<AppsContainer *>(container)->globalContext());
 }
 

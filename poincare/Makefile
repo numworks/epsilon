@@ -45,6 +45,7 @@ poincare_src += $(addprefix poincare/src/,\
   discrete_distribution.cpp \
   distribution.cpp \
   distribution_method.cpp \
+  domain.cpp \
   erf_inv.cpp \
   exception_checkpoint.cpp \
   exponential_distribution.cpp \

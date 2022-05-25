@@ -1,7 +1,7 @@
 #include <poincare/normal_distribution.h>
 #include <poincare/erf_inv.h>
 #include <poincare/float.h>
-#include <poincare/rational.h>
+#include <poincare/domain.h>
 #include <cmath>
 #include <float.h>
 #include <assert.h>
@@ -43,45 +43,7 @@ bool NormalDistribution::MuAndSigmaAreOK(T mu, T sigma) {
 }
 
 bool NormalDistribution::ExpressionMuAndVarAreOK(bool * result, const Expression & mu, const Expression & var, Context * context) {
-  assert(result != nullptr);
-  if (mu.deepIsMatrix(context) || var.deepIsMatrix(context)) {
-    *result = false;
-    return true;
-  }
-
-  if (mu.isUndefined() || var.isUndefined() || Expression::IsInfinity(mu, context) || Expression::IsInfinity(var,context)) {
-    *result = false;
-    return true;
-  }
-  if (!mu.isReal(context) || !var.isReal(context)) {
-    // We cannot check that mu and var are real
-    return false;
-  }
-
-  {
-    ExpressionNode::Sign s = var.sign(context);
-    if (s == ExpressionNode::Sign::Negative) {
-      *result = false;
-      return true;
-    }
-    // We cannot check that var is positive
-    if (s != ExpressionNode::Sign::Positive) {
-      return false;
-    }
-  }
-
-  if (var.type() != ExpressionNode::Type::Rational) {
-    // We cannot check that var is not null
-    return false;
-  }
-
-  const Rational rationalVar = static_cast<const Rational &>(var);
-  if (rationalVar.isZero()) {
-    *result = false;
-    return true;
-  }
-  *result = true;
-  return true;
+  return Domain::expressionsAreIn(result, mu, Domain::Type::R, var, Domain::Type::RPlusStar, context);
 }
 
 template<typename T>

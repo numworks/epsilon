@@ -1,6 +1,6 @@
 #include <poincare/binomial_distribution.h>
 #include <poincare/float.h>
-#include <poincare/rational.h>
+#include <poincare/domain.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <cmath>
 #include <float.h>
@@ -100,58 +100,8 @@ bool BinomialDistribution::ParametersAreOK(T n, T p) {
 }
 
 bool BinomialDistribution::expressionParametersAreOK(bool * result, const Expression & n, const Expression & p, Context * context) {
-  assert(result != nullptr);
-  if (n.deepIsMatrix(context) || p.deepIsMatrix(context)) {
-    *result = false;
-    return true;
-  }
-
-  if (n.isUndefined() || p.isUndefined() || Expression::IsInfinity(n, context) || Expression::IsInfinity(p,context)) {
-    *result = false;
-    return true;
-  }
-  if (!n.isReal(context) || !p.isReal(context)) {
-    // We cannot check that n and p are real
-    return false;
-  }
-
-  if (n.type() != ExpressionNode::Type::Rational) {
-    // We cannot check that that n is an integer
-    return false;
-  }
-
-  {
-    const Rational rationalN = static_cast<const Rational &>(n);
-    if (rationalN.isNegative() || !rationalN.isInteger()) {
-      // n is negative or not an integer
-      *result = false;
-      return true;
-    }
-  }
-
-  if (p.type() != ExpressionNode::Type::Rational) {
-    // We cannot check that that p is >= 0 and <= 1
-    return false;
-  }
-
-  const Rational rationalP = static_cast<const Rational &>(p);
-  if (rationalP.isNegative()) {
-    // p is negative
-    *result = false;
-    return true;
-  }
-  Integer num = rationalP.unsignedIntegerNumerator();
-  Integer den = rationalP.integerDenominator();
-  if (den.isLowerThan(num)) {
-    // p > 1
-    *result = false;
-    return true;
-  }
-
-  *result = true;
-  return true;
+  return Domain::expressionsAreIn(result, n, Domain::Type::N, p, Domain::Type::UnitSegment, context);
 }
-
 
 template float BinomialDistribution::EvaluateAtAbscissa<float>(float, float, float);
 template double BinomialDistribution::EvaluateAtAbscissa<double>(double, double, double);

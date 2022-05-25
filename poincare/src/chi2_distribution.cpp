@@ -1,5 +1,5 @@
 #include <poincare/chi2_distribution.h>
-#include <poincare/rational.h>
+#include <poincare/domain.h>
 #include <poincare/regularized_gamma_function.h>
 #include <cmath>
 
@@ -73,46 +73,7 @@ bool Chi2Distribution::KIsOK(T k) {
 }
 
 bool Chi2Distribution::ExpressionKIsOK(bool * result, const Expression & k, Context * context) {
-  assert(result != nullptr);
-  if (k.deepIsMatrix(context)) {
-    *result = false;
-    return true;
-  }
-
-  if (k.isUndefined() || Expression::IsInfinity(k, context)) {
-    // TODO : use normal distribution when k = +inf
-    *result = false;
-    return true;
-  }
-  if (!k.isReal(context)) {
-    // We cannot check that k is real
-    return false;
-  }
-
-  {
-    ExpressionNode::Sign s = k.sign(context);
-    if (s == ExpressionNode::Sign::Negative) {
-      *result = false;
-      return true;
-    }
-    // We cannot check that k is positive
-    if (s != ExpressionNode::Sign::Positive) {
-      return false;
-    }
-  }
-
-  if (k.type() != ExpressionNode::Type::Rational) {
-    // We cannot check that k is not null
-    return false;
-  }
-
-  const Rational rationalVar = static_cast<const Rational &>(k);
-  if (rationalVar.isZero()) {
-    *result = false;
-    return true;
-    }
-  *result = true;
-  return true;
+  return Domain::expressionIsIn(result, k, Domain::Type::NStar, context);
 }
 
 // Specialisations

@@ -15,7 +15,7 @@ public:
   Integer unsignedNumerator() const;
   Integer denominator() const;
   bool isNegative() const { return m_negative; }
-  void setNegative(bool negative) { m_negative = negative; }
+  void setNegative(bool negative) override { m_negative = negative; }
   bool isInteger() const { return denominator().isOne(); }
   NullStatus nullStatus(Context * context) const override { return isZero() ? NullStatus::Null : NullStatus::NonNull; }
 
@@ -61,7 +61,6 @@ private:
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { assert(!m_negative); return isInteger() ? LayoutShape::Integer : LayoutShape::Fraction; };
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
   Expression denominator(ReductionContext reductionContext) const override;
   bool m_negative;
   uint8_t m_numberOfDigitsNumerator;
@@ -123,7 +122,6 @@ private:
   /* Simplification */
   Expression shallowBeautify();
   Expression denominator() const;
-  Expression setSign(ExpressionNode::Sign s);
 };
 
 }

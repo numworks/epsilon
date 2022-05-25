@@ -18,14 +18,16 @@ DoublePairStore::DoublePairStore(GlobalContext * context) :
   m_validSeries{false,false,false},
   m_context(context)
 {
+}
+
+void DoublePairStore::initListsFromStorage() {
+  // Initialize empty list in the pool
   for (int s = 0; s < k_numberOfSeries; s++) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
       m_dataLists[s][i] = FloatList<double>::Builder();
     }
   }
-}
 
-void DoublePairStore::initListsFromStorage() {
   char listName[k_columnNamesLength + 1];
   for (int s = 0; s < k_numberOfSeries; s++) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {

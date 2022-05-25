@@ -14,6 +14,7 @@ bool InputSlopeController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
     m_storeParameterController.initializeColumnParameters();
     m_storeParameterController.selectRow(0);
+    m_storeParameterController.setTitlesDisplay(titlesDisplay() == ViewController::TitlesDisplay::DisplayLastTitle ? ViewController::TitlesDisplay::DisplayLastTwoTitles : ViewController::TitlesDisplay::DisplayLastThreeTitles);
     stackController()->push(&m_storeParameterController);
     return true;
   }

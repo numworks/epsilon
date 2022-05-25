@@ -12,6 +12,8 @@ using namespace Escher;
 
 namespace Inference {
 
+// TODO: add another StackViewController here to push the SlopeColumnParameterController on it and display it with Style::WhiteUniform
+
 class InputSlopeController : public InputCategoricalController, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
 public:
   InputSlopeController(StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Poincare::Context * parentContext);
@@ -25,7 +27,7 @@ public:
     return m_titleBuffer;
   }
   ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
+    return m_statistic->subApp() == Inference::SubApp::Interval ? ViewController::TitlesDisplay::DisplayLastTitle : ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
 
 private:

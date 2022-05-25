@@ -17,7 +17,9 @@ KDCoordinate MultipleDataView::subviewHeight() {
 void MultipleDataView::reload() {
   layoutSubviews();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    curveViewForSeries(i)->reload();
+    if (Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {
+        curveViewForSeries(i)->reload();
+    }
   }
 }
 

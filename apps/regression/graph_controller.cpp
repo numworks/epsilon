@@ -146,9 +146,10 @@ void GraphController::reloadBannerView() {
   // If any coefficient is NAN, display that data is not suitable
   bool coefficientsAreDefined = m_store->coefficientsAreDefined(*m_selectedSeriesIndex, globalContext());
   bool displayMean = (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex));
+  bool displayEquation = (*m_selectedDotIndex < 0);
   char buffer[k_bannerViewTextBufferSize];
   Model::Type modelType = m_store->seriesRegressionType(*m_selectedSeriesIndex);
-  if (*m_selectedDotIndex < 0 && coefficientsAreDefined && buildRegressionExpression(buffer, k_bannerViewTextBufferSize, modelType, significantDigits, displayMode)) {
+  if (displayEquation && coefficientsAreDefined && buildRegressionExpression(buffer, k_bannerViewTextBufferSize, modelType, significantDigits, displayMode)) {
     // Regression equation fits in the banner, display it
     m_bannerView.setDisplayParameters(true, false, false);
     m_bannerView.otherView()->setText(buffer);
@@ -165,11 +166,17 @@ void GraphController::reloadBannerView() {
   /* Use "x=..." or "xmean=..." (\xCC\x85 represents the combining overline ' ̅')
    * if the mean dot is selected. Same with y. */
   double x = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 0) : m_cursor->x();
-  Poincare::Print::customPrintf(buffer, k_bannerViewTextBufferSize, (displayMean ? "x\xCC\x85=%*.*ed" : "x=%*.*ed"), x, displayMode, significantDigits);
+  Poincare::Print::customPrintf(
+    buffer, k_bannerViewTextBufferSize, "%s=%*.*ed",
+    (displayMean ? "x\xCC\x85" : "x"),
+    x, displayMode, significantDigits);
   m_bannerView.abscissaView()->setText(buffer);
 
   double y = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 1) : m_cursor->y();
-  Poincare::Print::customPrintf(buffer, k_bannerViewTextBufferSize, (displayMean ? "y\xCC\x85=%*.*ed" : "y=%*.*ed"), y, displayMode, significantDigits);
+  Poincare::Print::customPrintf(
+    buffer, k_bannerViewTextBufferSize, "%s=%*.*ed",
+    (displayMean ? "y\xCC\x85" : (displayEquation ? I18n::translate(I18n::Message::RegressionEquationY) : "y")),
+    y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 
   m_bannerView.reload();

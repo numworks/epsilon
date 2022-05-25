@@ -141,7 +141,7 @@ Expression MultiplicationNode::setSign(Sign s, ReductionContext reductionContext
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
  *
- *               | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction | Hexa/Binary
+ *               | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction | Hexa/Binary
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
  * Decimal       |    ×    |   x     |    ø      |     ×       |      ×        |  ×   |    ×    |    ×     |    •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
@@ -655,7 +655,15 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     }
   }
 
-  /* Step 1: MultiplicationNode is associative, so let's start by merging children
+  bool productHasUnit = hasUnit();
+
+  /* Before merging with multiplication children, we must catch a forbidden
+   * case of unit reduction. */
+  if (productHasUnit && Unit::IsForbiddenTemperatureProduct(*this)) {
+    return replaceWithUndefinedInPlace();
+  }
+
+  /* MultiplicationNode is associative, so let's start by merging children
    * which also are multiplications themselves.
    * TODO If the parent Expression is a Multiplication, one should perhaps
    * return now and let the parent do the reduction.
@@ -664,17 +672,16 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
 
   Context * context = reductionContext.context();
 
-  // Step 2: Sort the children
+  // Sort the children
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, context);
 
-  /* Step 3
-   * Distribute the multiplication over lists */
+  /* Distribute the multiplication over lists */
   Expression distributed = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
   if (!distributed.isUninitialized()) {
     return distributed;
   }
 
-  // Step 4: Handle matrices
+  // Handle matrices
   /* Thanks to the simplification order, all matrix children (if any) are the
    * last children. */
   Expression lastChild = childAtIndex(numberOfChildren()-1);
@@ -703,20 +710,20 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
        *                                resultMatrix
        *                                  i2= 0..m
        *                                +-+-+-+-+-+
-       *                                | | | | | |
+       *                                | | | | | |
        *                                +-+-+-+-+-+
-       *                         j=0..n | | | | | |
+       *                         j=0..n | | | | | |
        *                                +-+-+-+-+-+
-       *                                | | | | | |
+       *                                | | | | | |
        *                                +-+-+-+-+-+
        *                currentMatrix
        *                j=0..currentM
        *                +---+---+---+   +-+-+-+-+-+
-       *                |   |   |   |   | | | | | |
+       *                |   |   |   |   | | | | | |
        *                +---+---+---+   +-+-+-+-+-+
-       * i1=0..currentN |   |   |   |   | |e| | | |
+       * i1=0..currentN |   |   |   |   | |e| | | |
        *                +---+---+---+   +-+-+-+-+-+
-       *                |   |   |   |   | | | | | |
+       *                |   |   |   |   | | | | | |
        *                +---+---+---+   +-+-+-+-+-+
        * */
       int newResultN = currentN;
@@ -763,7 +770,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     return resultMatrix.shallowReduce(context);
   }
 
-  /* Step 5: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
+  /* Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
   int i = 0;
@@ -822,7 +829,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     i++;
   }
 
-  /* Step 6: We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
+  /* We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
    * opposite signs. We replace them by either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
@@ -848,7 +855,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, context);
   }
 
-  /* Step 7: We remove rational children that appeared in the middle of sorted
+  /* We remove rational children that appeared in the middle of sorted
    * children. It's important to do this after having factorized because
    * factorization can lead to new ones. Indeed:
    * pi^(-1)*pi-> 1
@@ -889,14 +896,14 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     i++;
   }
 
-   /* Step 8: If the first child is zero, the multiplication result is zero. We
+   /* If the first child is zero, the multiplication result is zero. We
     * do this after merging the rational children, because the merge takes care
     * of turning 0*inf into undef. We still have to check that no other child
     * involves an infinity expression to avoid reducing 0*e^(inf) to 0.
     * If the first child is 1, we remove it if there are other children. */
   {
     const Expression c = childAtIndex(0);
-    if (hasUnit()) {
+    if (productHasUnit) {
       // Do not expand Multiplication in presence of units
       shouldExpand = false;
     } else if (c.type() != ExpressionNode::Type::Rational) {
@@ -911,12 +918,12 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     }
   }
 
-  /* Step 9: Expand multiplication over addition children if any. For example,
+  /* Expand multiplication over addition children if any. For example,
    * turn (a+b)*c into a*c + b*c. We do not want to do this step right now if
    * the parent is a multiplication or if the reduction is done bottom up to
    * avoid missing factorization such as (x+y)^(-1)*((a+b)*(x+y)).
-   * Note: This step must be done after Step 5, otherwise we wouldn't be able to
-   * reduce expressions such as (x+y)^(-1)*(x+y)(a+b).
+   * Note: This step must be done after gathering similar terms, otherwise we
+   * wouldn't be able to reduce expressions such as (x+y)^(-1)*(x+y)(a+b).
    * If there is a random somewhere, do not expand. */
   Expression p = parent();
   bool hasRandom = recursivelyMatches(Expression::IsRandom, context);
@@ -931,13 +938,13 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     }
   }
 
-  // Step 10: Let's remove the multiplication altogether if it has one child
+  // Let's remove the multiplication altogether if it has one child
   Expression result = squashUnaryHierarchyInPlace();
   if (result != *this) {
     return result;
   }
 
-  /* Step 11: Let's bubble up the complex operator if possible
+  /* Let's bubble up the complex operator if possible
    * 3 cases:
    * - All children are real, we do nothing (allChildrenAreReal == 1)
    * - One of the child is non-real and not a ComplexCartesian: it means a

@@ -15,11 +15,6 @@ int UndefinedNode::polynomialDegree(Context * context, const char * symbolName) 
   return -1;
 }
 
-Expression UndefinedNode::setSign(Sign s, ExpressionNode::ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  return Undefined(this);
-}
-
 Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::String(Undefined::Name(), Undefined::NameSize()-1);
 }

@@ -91,13 +91,6 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return numberOfChar;
 }
 
-// Expression subclassing
-
-Expression RationalNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  return Rational(this).setSign(s);
-}
-
 // Layout
 
 Layout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -279,12 +272,6 @@ Expression Rational::denominator() const {
     return Infinity::Builder(false);
   }
   return Rational::Builder(d);
-}
-
-Expression Rational::setSign(ExpressionNode::Sign s) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  node()->setNegative(s == ExpressionNode::Sign::Negative);
-  return *this;
 }
 
 template float RationalNode::templatedApproximate() const;

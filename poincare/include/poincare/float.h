@@ -40,8 +40,15 @@ public:
   Type type() const override { return (sizeof(T) == sizeof(float)) ? Type::Float : Type::Double; }
   Sign sign(Context * context) const override { return std::isnan(m_value) ? Sign::Unknown : (m_value < 0 ? Sign::Negative : Sign::Positive); }
   NullStatus nullStatus(Context * context) const override { return m_value == 0.0 ? NullStatus::Null : NullStatus::NonNull; }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
+
+
+  // NumberNode
+  void setNegative(bool negative) override {
+    if (m_value < 0.0 != negative) {
+      m_value = -1.0 * m_value;
+    }
+  }
 
   // Layout
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

@@ -84,11 +84,6 @@ size_t DecimalNode::size() const {
   return DecimalSize(m_numberOfDigitsInMantissa);
 }
 
-Expression DecimalNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  return Decimal(this).setSign(s);
-}
-
 int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
@@ -440,13 +435,6 @@ Decimal Decimal::Builder(size_t size, const Integer & m, int e) {
   DecimalNode * node = new (bufferNode) DecimalNode(m.digits(), m.numberOfDigits(), e, m.isNegative());
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<Decimal &>(h);
-}
-
-Expression Decimal::setSign(ExpressionNode::Sign s) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  Decimal result = *this;
-  result.node()->setNegative(s == ExpressionNode::Sign::Negative);
-  return std::move(result);
 }
 
 Expression Decimal::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

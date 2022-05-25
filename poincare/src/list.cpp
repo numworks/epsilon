@@ -29,16 +29,12 @@ int ListNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
 }
 
 Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  Layout result;
+  HorizontalLayout result = HorizontalLayout::Builder(LeftCurlyBraceLayout::Builder(), RightCurlyBraceLayout::Builder());
   if (m_numberOfChildren > 1) {
     Layout elementsLayout = LayoutHelper::Infix(List(this), floatDisplayMode, numberOfSignificantDigits, ",");
-    result = HorizontalLayout::Builder(LeftCurlyBraceLayout::Builder(), elementsLayout, RightCurlyBraceLayout::Builder());
-    result.mergeChildrenAtIndexInPlace(elementsLayout, 1);
+    result.addOrMergeChildAtIndex(elementsLayout, 1, true);
   } else if (m_numberOfChildren == 1) {
-    result = HorizontalLayout::Builder(LeftCurlyBraceLayout::Builder(), childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), RightCurlyBraceLayout::Builder());
-  } else {
-    assert(m_numberOfChildren == 0);
-    result = HorizontalLayout::Builder(LeftCurlyBraceLayout::Builder(), RightCurlyBraceLayout::Builder());
+    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, true);
   }
   return result;
 }

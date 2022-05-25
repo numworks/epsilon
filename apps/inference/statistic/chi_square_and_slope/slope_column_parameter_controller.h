@@ -8,7 +8,7 @@ namespace Inference {
 class SlopeColumnParameterController : public Shared::StoreParameterController {
 public:
   using StoreParameterController::StoreParameterController;
-  Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayLastTwoTitles; }
+  Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayLastThreeTitles; }
   int numberOfRows() const override { return sizeof(k_typesOrder)/sizeof(int); }
   int typeAtIndex(int index) override { return k_typesOrder[index]; }
 

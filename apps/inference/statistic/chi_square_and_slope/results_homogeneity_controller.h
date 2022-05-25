@@ -22,12 +22,14 @@ public:
 private:
   class ResultsTableController : public CategoricalController {
   public:
-    ResultsTableController(Responder * parent, Escher::ViewController * nextController, HomogeneityTest * statistic);
+    ResultsTableController(Escher::ViewController * nextController, HomogeneityTest * statistic);
+
     // Responder
-    void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event event) override;
+
     // ViewController
-    void stackOpenPage(ViewController * nextPage) override { typedParent()->stackOpenPage(nextPage); }
+    void viewWillAppear() override;
+    void stackOpenPage(ViewController * nextPage) override { tabController()->stackOpenPage(nextPage); }
 
     // SelectableTableViewDelegate
     void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
@@ -35,34 +37,44 @@ private:
     void setMode(ResultHomogeneityTableCell::Mode mode) { m_resultHomogeneityTable.setMode(mode); }
 
   private:
-    ResultsHomogeneityController * typedParent() const { return static_cast<ResultsHomogeneityController *>(parentResponder()); }
-
+    Escher::ViewController * tabController() { return static_cast<Escher::ViewController *>(parentResponder()->parentResponder()); }
     CategoricalTableCell * categoricalTableCell() override { return &m_resultHomogeneityTable; }
     ResultHomogeneityTableCell m_resultHomogeneityTable;
   };
 
   class SingleModeController : public ViewController {
   public:
-    using ViewController::ViewController;
-    View * view() override { return typedParent()->m_tableController.view(); }
+    SingleModeController(Escher::Responder * responder, ResultsTableController * tableController) :
+      Escher::ViewController(responder),
+      m_tableController(tableController)
+    {}
+    View * view() override { return m_tableController->view(); }
+    void didBecomeFirstResponder() override { m_tableController->didBecomeFirstResponder(); }
+    void viewWillAppear() override { m_tableController->viewWillAppear(); }
 
   protected:
-    ResultsHomogeneityController * typedParent() const { return static_cast<ResultsHomogeneityController *>(parentResponder()); }
     void switchToTableWithMode(ResultHomogeneityTableCell::Mode mode);
+    ResultsTableController * m_tableController;
   };
 
   class ExpectedValuesController : public SingleModeController {
   public:
     using SingleModeController::SingleModeController;
     const char * title() override { return I18n::translate(I18n::Message::HomogeneityResultsExpectedValuesTitle); }
-    void didBecomeFirstResponder() override { switchToTableWithMode(ResultHomogeneityTableCell::Mode::ExpectedValue); }
+    void viewWillAppear() override {
+      switchToTableWithMode(ResultHomogeneityTableCell::Mode::ExpectedValue);
+      SingleModeController::viewWillAppear();
+    }
   };
 
   class ContributionsController : public SingleModeController {
   public:
     using SingleModeController::SingleModeController;
     const char * title() override { return I18n::translate(I18n::Message::HomogeneityResultsContributionsTitle); }
-    void didBecomeFirstResponder() override { switchToTableWithMode(ResultHomogeneityTableCell::Mode::Contribution); }
+    void viewWillAppear() override {
+      switchToTableWithMode(ResultHomogeneityTableCell::Mode::Contribution);
+      SingleModeController::viewWillAppear();
+    }
   };
 
   ResultsTableController m_tableController;

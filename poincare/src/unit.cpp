@@ -866,7 +866,18 @@ bool Unit::IsForbiddenTemperatureProduct(Expression e) {
       break;
     }
   }
-  return temperatureChildIndex >= 0 && e.childAtIndex(1 - temperatureChildIndex).hasUnit();
+  if (temperatureChildIndex < 0) {
+    return false;
+  }
+  if (e.childAtIndex(1 - temperatureChildIndex).hasUnit()) {
+    return true;
+  }
+  Expression p = e.parent();
+  if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert) {
+    return false;
+  }
+  Expression pp = p.parent();
+  return !(p.type() == ExpressionNode::Type::Opposite && (pp.isUninitialized() || pp.type() == ExpressionNode::Type::UnitConvert));
 }
 
 Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
@@ -891,26 +902,15 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
    *      UnitConversion is set to None in this case. */
   if (node()->representative()->dimensionVector() == TemperatureRepresentative::Default().dimensionVector() && node()->representative() != k_temperatureRepresentatives + k_kelvinRepresentativeIndex) {
     Expression p = parent();
-    if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert) {
-      // Form (1) and (2)
+    if (p.isUninitialized()
+     || p.type() == ExpressionNode::Type::UnitConvert
+     || (p.type() == ExpressionNode::Type::Multiplication && p.numberOfChildren() == 2)
+     || p.type() == ExpressionNode::Type::Opposite)
+    {
+      /* If the parent is a UnitConvert, the temperature is always legal.
+       * Otherwise, we need to wait until the reduction of the multiplication
+       * to fully detect forbidden forms. */
       return *this;
-    }
-    if (p.type() == ExpressionNode::Type::Multiplication && p.numberOfChildren() == 2) {
-      Expression pp = p.parent();
-      if (pp.isUninitialized() || pp.type() == UnitNode::Type::UnitConvert) {
-        // Form (3) and (5)
-        return *this;
-      }
-      Expression ppp = pp.parent();
-      if (pp.type() == UnitNode::Type::Opposite && (ppp.isUninitialized() || ppp.type() == UnitNode::Type::UnitConvert)) {
-        // Form (4) and (6)
-        return *this;
-      }
-      /* There is one other forbidden case: E*_°C where E contains units.
-       * However, since we cannot guarantee that the other child in the
-       * multiplication will have already been reduced, we cannot test if it
-       * has any unit. As such, this case is caught in
-       * Multiplication::shallowReduce. */
     }
     return replaceWithUndefinedInPlace();
   }

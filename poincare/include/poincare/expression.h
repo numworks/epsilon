@@ -287,7 +287,7 @@ public:
   Expression cloneAndDeepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const;
   // TODO: reduceAndRemoveUnit should be private but we need to make poincare/text/helper.h a class to be able to friend it
   Expression reduceAndRemoveUnit(ExpressionNode::ReductionContext context, Expression * Unit);
-  // WARNING: this must be called on reduced expressions
+  // WARNING: this must be called only on expressions that have a known sign.
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 
   /* 'ExpressionWithoutSymbols' replaces symbols in place and returns an
@@ -426,7 +426,6 @@ protected:
    */
   Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) { return node()->deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation); }
   Expression defaultReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
-  Expression defaultOddFunctionSetSign(ExpressionNode::Sign, ExpressionNode::ReductionContext reductionContext);
 
   /* Simplification */
   static void SimplifyAndApproximateChildren(Expression input, Expression * simplifiedOutput, Expression * approximateOutput, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionContext reductionContext);

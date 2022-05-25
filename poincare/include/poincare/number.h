@@ -23,6 +23,7 @@ class NumberNode : public ExpressionNode {
 public:
   bool isNumber() const override { return true; }
   int numberOfChildren() const override { return 0; }
+  virtual void setNegative(bool negative) =0;
 
   double doubleApproximation() const;
 
@@ -48,12 +49,13 @@ public:
   static Number Power(const Number & i, const Number & j);
   static int NaturalOrder(const Number & i, const Number & j);
 
-  /* Number::sign() or Number::setSign does not need a context or an angle unit
+  /* Number::sign() does not need a context or an angle unit
    * (a number can be Infinity, Undefined, Float, Decimal, Rational). */
   ExpressionNode::Sign sign() const { return Expression::sign(nullptr); }
   Number setSign(ExpressionNode::Sign s) {
     assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-    return Expression::setSign(s, ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User)).convert<Number>();
+    node()->setNegative(s == ExpressionNode::Sign::Negative);
+    return *this;
   }
 
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);

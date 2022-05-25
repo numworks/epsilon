@@ -419,6 +419,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_cKπ23", "0.72256631032565×_K");
   assert_parsed_expression_simplify_to("100×_°C→_K", "373.15×_K");
   assert_parsed_expression_simplify_to("-100×_°C→_K", "173.15×_K");
+  assert_parsed_expression_simplify_to("(12_m/6_m)×_°C", "2×_°C");
   assert_parsed_expression_simplify_to("_°C+_°C", Undefined::Name());
   assert_parsed_expression_simplify_to("_°C+_°F", Undefined::Name());
   assert_parsed_expression_simplify_to("_K+_°F", Undefined::Name());
@@ -426,6 +427,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_°C^2", Undefined::Name());
   assert_parsed_expression_simplify_to("1/(-3_°C)", Undefined::Name());
   assert_parsed_expression_simplify_to("-1×100×_°C→_K", Undefined::Name());
+  assert_parsed_expression_simplify_to("_K×_°C", Undefined::Name());
 
   /* Rational exponents */
   assert_parsed_expression_simplify_to("√(_m)", "1×_m^\u00121/2\u0013");

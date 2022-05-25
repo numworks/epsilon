@@ -695,6 +695,7 @@ public:
   static int SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext);
   static Expression BuildSplit(double value, const Unit * units, int length, ExpressionNode::ReductionContext reductionContext);
   static Expression ConvertTemperatureUnits(Expression e, Unit unit, ExpressionNode::ReductionContext reductionContext);
+  static bool IsForbiddenTemperatureProduct(Expression e);
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

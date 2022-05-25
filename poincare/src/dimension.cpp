@@ -37,11 +37,9 @@ Evaluation<T> DimensionNode::templatedApproximate(ApproximationContext approxima
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     operands[0] = std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfRows());
     operands[1] = std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfColumns());
-  } else {
-    operands[0] = std::complex<T>(1.0);
-    operands[1] = std::complex<T>(1.0);
+    return MatrixComplex<T>::Builder(operands, 1, 2);
   }
-  return MatrixComplex<T>::Builder(operands, 1, 2);
+  return Complex<T>::Undefined();
 }
 
 
@@ -53,23 +51,24 @@ Expression Dimension::shallowReduce(Context * context) {
     }
   }
   Expression c = childAtIndex(0);
+
   if (c.type() == ExpressionNode::Type::List) {
     Expression result = Rational::Builder(c.numberOfChildren());
     replaceWithInPlace(result);
     return result;
   }
-  if (c.deepIsMatrix(context) && c.type() != ExpressionNode::Type::Matrix) {
-    return *this;
+
+  if (c.type() != ExpressionNode::Type::Matrix) {
+    if (c.deepIsMatrix(context)) {
+      return *this;
+    }
+    return replaceWithUndefinedInPlace();
   }
+
   Matrix result = Matrix::Builder();
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix m = static_cast<Matrix &>(c);
-    result.addChildAtIndexInPlace(Rational::Builder(m.numberOfRows()), 0, 0);
-    result.addChildAtIndexInPlace(Rational::Builder(m.numberOfColumns()), 1, 1);
-  } else {
-    result.addChildAtIndexInPlace(Rational::Builder(1), 0, 0);
-    result.addChildAtIndexInPlace(Rational::Builder(1), 1, 1);
-  }
+  Matrix m = static_cast<Matrix &>(c);
+  result.addChildAtIndexInPlace(Rational::Builder(m.numberOfRows()), 0, 0);
+  result.addChildAtIndexInPlace(Rational::Builder(m.numberOfColumns()), 1, 1);
   result.setDimensions(1, 2);
   replaceWithInPlace(result);
   return std::move(result);

@@ -13,7 +13,6 @@ static Domain::Result isGreaterThanOne(const Rational &rational, Context * conte
 }
 
 Domain::Result Domain::expressionIsIn(const Expression &expression, Type type, Context * context) {
-  assert(result != nullptr);
   Result res;
   if (expression.deepIsMatrix(context)) {
     return False;

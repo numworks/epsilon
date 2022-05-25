@@ -850,6 +850,25 @@ Expression Unit::ConvertTemperatureUnits(Expression e, Unit unit, ExpressionNode
       unit.clone());
 }
 
+bool Unit::IsForbiddenTemperatureProduct(Expression e) {
+  assert(e.type() == ExpressionNode::Type::Multiplication);
+  if (e.numberOfChildren() != 2) {
+    return false;
+  }
+  int temperatureChildIndex = -1;
+  for (int i = 0; i < 2; i++) {
+    Expression child = e.childAtIndex(i);
+    if (child.type() == ExpressionNode::Type::Unit
+     && (static_cast<Unit &>(child).node()->representative() == k_temperatureRepresentatives + k_celsiusRepresentativeIndex
+      || static_cast<Unit &>(child).node()->representative() == k_temperatureRepresentatives + k_fahrenheitRepresentativeIndex))
+    {
+      temperatureChildIndex = i;
+      break;
+    }
+  }
+  return temperatureChildIndex >= 0 && e.childAtIndex(1 - temperatureChildIndex).hasUnit();
+}
+
 Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None
       || isBaseUnit()) {
@@ -887,6 +906,11 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
         // Form (4) and (6)
         return *this;
       }
+      /* There is one other forbidden case: E*_°C where E contains units.
+       * However, since we cannot guarantee that the other child in the
+       * multiplication will have already been reduced, we cannot test if it
+       * has any unit. As such, this case is caught in
+       * Multiplication::shallowReduce. */
     }
     return replaceWithUndefinedInPlace();
   }

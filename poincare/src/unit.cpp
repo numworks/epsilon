@@ -853,6 +853,9 @@ Expression Unit::ConvertTemperatureUnits(Expression e, Unit unit, ExpressionNode
 bool Unit::IsForbiddenTemperatureProduct(Expression e) {
   assert(e.type() == ExpressionNode::Type::Multiplication);
   if (e.numberOfChildren() != 2) {
+    /* A multiplication cannot contain a °C or °F if it does not have 2
+     * children, as otherwise the temperature would have reduced itself to
+     * undef. */
     return false;
   }
   int temperatureChildIndex = -1;

@@ -2,22 +2,33 @@
 
 namespace Inference {
 
+// ResultsHomogeneityController
+
+ResultsHomogeneityController::ResultsHomogeneityController(Escher::StackViewController * parent, Escher::ViewController * nextController, HomogeneityTest * statistic) :
+  TabViewController(parent, this, &m_expectedValuesController, &m_contributionsController, nullptr),
+  m_tableController(nextController, statistic),
+  m_expectedValuesController(this, &m_tableController),
+  m_contributionsController(this, &m_tableController)
+{
+  TabViewController::initView();
+}
+
 // ResultsTableController
 
-ResultsHomogeneityController::ResultsTableController::ResultsTableController(Responder * parent, Escher::ViewController * resultsController, HomogeneityTest * statistic) :
-  CategoricalController(parent, resultsController, Invocation(&CategoricalController::ButtonAction, this)),
+ResultsHomogeneityController::ResultsTableController::ResultsTableController(Escher::ViewController * resultsController, HomogeneityTest * statistic) :
+  CategoricalController(nullptr, resultsController, Invocation(&CategoricalController::ButtonAction, this)),
   m_resultHomogeneityTable(&m_selectableTableView, this, statistic)
 {}
 
-void ResultsHomogeneityController::ResultsTableController::didBecomeFirstResponder() {
+void ResultsHomogeneityController::ResultsTableController::viewWillAppear() {
   m_selectableTableView.reloadData(false, false);
-  CategoricalController::didBecomeFirstResponder();
+  CategoricalController::viewWillAppear();
 }
 
 bool ResultsHomogeneityController::ResultsTableController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     m_resultHomogeneityTable.tableView()->deselectTable();
-    Escher::Container::activeApp()->setFirstResponder(parentResponder());
+    Escher::Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
   return false;
@@ -33,20 +44,8 @@ void ResultsHomogeneityController::ResultsTableController::tableViewDidChangeSel
 // SingleModeController
 
 void ResultsHomogeneityController::SingleModeController::switchToTableWithMode(ResultHomogeneityTableCell::Mode mode) {
-  ResultsTableController * tableController = &(typedParent()->m_tableController);
-  tableController->setMode(mode);
-  Escher::Container::activeApp()->setFirstResponder(tableController);
-}
-
-// ResultsHomogeneityController
-
-ResultsHomogeneityController::ResultsHomogeneityController(Escher::StackViewController * parent, Escher::ViewController * nextController, HomogeneityTest * statistic) :
-  TabViewController(parent, this, &m_expectedValuesController, &m_contributionsController, nullptr),
-  m_tableController(this, nextController, statistic),
-  m_expectedValuesController(this),
-  m_contributionsController(this)
-{
-  TabViewController::initView();
+  m_tableController->setMode(mode);
+  m_tableController->setParentResponder(this);
 }
 
 }

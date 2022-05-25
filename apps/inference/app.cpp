@@ -119,6 +119,8 @@ bool App::selectSubApp(int subAppIndex) {
   if (subAppIndex >= 0 && Inference::Initialize(snapshot()->inference(), static_cast<Inference::SubApp>(subAppIndex))) {
     m_distributionController.selectRow(0);
     m_testController.selectRow(0);
+    m_hypothesisController.selectRow(0);
+    m_typeController.selectRow(0);
   }
   return true;
 }

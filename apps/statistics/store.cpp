@@ -26,6 +26,7 @@ Store::Store(GlobalContext * context) :
   m_graphViewInvalidated(true),
   m_displayOutliers(GlobalPreferences::sharedGlobalPreferences()->outliersStatus() == CountryPreferences::OutlierDefaultVisibility::Displayed)
 {
+  initListsInPool();
   for (int s = 0; s < k_numberOfSeries; s++) {
     m_datasets[s] = Poincare::StatisticsDataset(&m_dataLists[s][0], &m_dataLists[s][1]);
   }

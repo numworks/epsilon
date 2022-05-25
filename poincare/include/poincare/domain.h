@@ -5,6 +5,7 @@
 #include <poincare/expression.h>
 #include <poincare/float.h>
 #include <poincare/rational.h>
+#include <algorithm>
 
 namespace Poincare {
 

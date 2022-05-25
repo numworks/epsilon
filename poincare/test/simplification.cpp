@@ -1159,7 +1159,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("det(identity(5))", "1");
 
   // Dimension
-  assert_parsed_expression_simplify_to("dim(3)", "[[1,1]]");
+  assert_parsed_expression_simplify_to("dim(3)", Undefined::Name());
   assert_parsed_expression_simplify_to("dim([[1/√(2),1/2,3][2,1,-3]])", "[[2,3]]");
 
   // Inverse

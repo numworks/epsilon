@@ -22,6 +22,10 @@ SlopeTableCell::SlopeTableCell(Responder * parentResponder, DynamicSizeTableView
   }
 }
 
+void SlopeTableCell::didEnterResponderChain(Responder * previousResponder) {
+  m_selectableTableView.reloadData(false, false);
+}
+
 InputViewController * SlopeTableCell::inputViewController() {
   return App::app()->inputViewController();
 }

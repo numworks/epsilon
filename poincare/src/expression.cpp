@@ -421,21 +421,6 @@ Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool 
   return *this;
 }
 
-Expression Expression::defaultOddFunctionSetSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  /* The node can have more than one child if the children after the first are
-   * not relevant when changing the sign (e.g.: the precision in Round, or the
-   * imaginary part in ComplexCartesian as it should be null when setting the
-   * sign.) */
-  assert(numberOfChildren() >= 1);
-  ExpressionNode::Sign childSign = childAtIndex(0).sign(reductionContext.context());
-  assert(childSign == ExpressionNode::Sign::Positive || childSign == ExpressionNode::Sign::Negative);
-  if (childSign != s) {
-    replaceChildAtIndexInPlace(0, childAtIndex(0).setSign(s, reductionContext));
-  }
-  return *this;
-}
-
 Expression Expression::makePositiveAnyNegativeNumeralFactor(ExpressionNode::ReductionContext reductionContext) {
   // The expression is a negative number
   if (isNumber() && sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
@@ -944,7 +929,20 @@ Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionCo
 
 Expression Expression::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  return node()->setSign(s, reductionContext);
+  if (isNumber()) {
+    // Needed to avoid infinite loop in Multiplication::shallowReduce
+    Number thisNumber = static_cast<Number &>(*this);
+    return thisNumber.setSign(s);
+  }
+  ExpressionNode::Sign currentSign = sign(reductionContext.context());
+  assert(currentSign != ExpressionNode::Sign::Unknown);
+  if (currentSign == s) {
+    return *this;
+  }
+  Multiplication revertedSign = Multiplication::Builder(Rational::Builder(-1));
+  replaceWithInPlace(revertedSign);
+  revertedSign.addChildAtIndexInPlace(*this, 1, 1);
+  return revertedSign.shallowReduce(reductionContext);
 }
 
 int Expression::lengthOfListChildren() const {

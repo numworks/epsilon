@@ -251,13 +251,6 @@ public:
     bool m_withinReduce;
   };
 
-  /* During reduction, several functions assume that a node which can take a
-   * sign other than Unknown also has a working setSign method.
-   * Nodes that appear in reduced expressions and override sign must also
-   * override setSign.
-   * FIXME: sign and setSign depends too much on future programmers reading the
-   * above comment. This constraint should be enforced in the design. Also,
-   * setSign is not always overriden and only handle obvious cases by default.*/
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
   virtual bool isNumber() const { return false; }
@@ -269,7 +262,6 @@ public:
    */
   virtual bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const { return false; }
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  /*!*/ virtual Expression setSign(Sign s, ReductionContext reductionContext);
   virtual int polynomialDegree(Context * context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation);

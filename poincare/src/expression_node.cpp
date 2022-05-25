@@ -20,11 +20,6 @@ Expression ExpressionNode::replaceSymbolWithExpression(const SymbolAbstract & sy
   return Expression(this).defaultReplaceSymbolWithExpression(symbol, expression);
 }
 
-Expression ExpressionNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == sign(reductionContext.context()));
-  return Expression(this);
-}
-
 int ExpressionNode::polynomialDegree(Context * context, const char * symbolName) const {
   for (ExpressionNode * c : children()) {
     if (c->polynomialDegree(context, symbolName) != 0) {

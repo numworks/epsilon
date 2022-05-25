@@ -47,8 +47,6 @@ public:
   }
 
 private:
-  // Property
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -95,7 +93,6 @@ public:
   // Approximation
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Simplification
-  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   Expression denominator(ExpressionNode::ReductionContext reductionContext) const;

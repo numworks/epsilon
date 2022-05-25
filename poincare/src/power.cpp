@@ -58,11 +58,6 @@ ExpressionNode::Sign PowerNode::sign(Context * context) const {
   return Sign::Unknown;
 }
 
-Expression PowerNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive);
-  return Power(this).setSign(s, reductionContext);
-}
-
 ExpressionNode::NullStatus PowerNode::nullStatus(Context * context) const {
   // In practice, calling nullStatus on a reduced power always returns Unknown.
   ExpressionNode * base = childAtIndex(0);
@@ -377,16 +372,6 @@ defaultApproximation:
 }
 
 // Power
-
-Expression Power::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive);
-  if (childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
-    Expression result = Power::Builder(childAtIndex(0).setSign(ExpressionNode::Sign::Positive, reductionContext), childAtIndex(1));
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
-  }
-  return *this;
-}
 
 int Power::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);

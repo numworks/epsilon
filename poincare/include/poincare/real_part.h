@@ -20,7 +20,6 @@ public:
 
   // Properties
   Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
   NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context) == NullStatus::Null ? NullStatus::Null : NullStatus::Unknown; }
   Type type() const override { return Type::RealPart; }
 
@@ -52,7 +51,6 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("re", 1, &UntypedBuilderOneChild<RealPart>);
 
-  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

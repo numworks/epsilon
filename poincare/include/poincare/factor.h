@@ -19,7 +19,6 @@ public:
   }
 #endif
   Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
   NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   Type type() const override { return Type::Factor; }
 private:
@@ -47,7 +46,6 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("factor", 1, &UntypedBuilderOneChild<Factor>);
 
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i) const;
-  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

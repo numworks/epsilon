@@ -20,10 +20,6 @@ constexpr Expression::FunctionHelper Factor::s_functionHelper;
 
 int FactorNode::numberOfChildren() const { return Factor::s_functionHelper.numberOfChildren(); }
 
-Expression FactorNode::setSign(Sign s, ReductionContext reductionContext) {
-  return Factor(this).setSign(s, reductionContext);
-}
-
 Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
@@ -76,10 +72,6 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
     m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
   }
   return m;
-}
-
-Expression Factor::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
-  return defaultOddFunctionSetSign(s, reductionContext);
 }
 
 Expression Factor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

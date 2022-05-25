@@ -10,6 +10,9 @@ double TwoProportionsZTest::estimateValue(int index) {
     return TwoProportions::X2(parametersArray()) / TwoProportions::N2(parametersArray());
   case EstimatesOrder::Pooled:
     return (TwoProportions::X1(parametersArray())+TwoProportions::X2(parametersArray())) / (TwoProportions::N1(parametersArray())+TwoProportions::N2(parametersArray()));
+  default:
+    assert(false);
+    return 0.0;
   }
 }
 
@@ -29,6 +32,9 @@ Poincare::Layout TwoProportionsZTest::estimateLayout(int index) const {
     return m_p2Layout;
   case EstimatesOrder::Pooled:
     return layout.childAtIndex(0).childAtIndex(0); // p̂1 -> p̂
+  default:
+    assert(false);
+    return Poincare::Layout();
   }
 }
 
@@ -40,6 +46,9 @@ I18n::Message TwoProportionsZTest::estimateDescription(int index) {
     return TwoProportions::Sample2ProportionDescription();
   case EstimatesOrder::Pooled:
     return TwoProportions::PooledProportionDescription();
+  default:
+    assert(false);
+    return I18n::Message::Default;
   }
 }
 

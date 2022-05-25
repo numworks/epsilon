@@ -14,6 +14,8 @@ public:
 
   constexpr static int k_numberOfReusableCells = SlopeTStatistic::k_maxNumberOfColumns * k_maxNumberOfReusableRows;
 
+  void didEnterResponderChain(Escher::Responder * previousResponder) override;
+
 private:
   Escher::HighlightCell * headerCell(int index) override { return &m_header[index]; }
 

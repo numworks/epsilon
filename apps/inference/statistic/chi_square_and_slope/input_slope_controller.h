@@ -24,6 +24,9 @@ public:
     InputController::InputTitle(this, m_statistic, m_titleBuffer, InputController::k_titleBufferSize);
     return m_titleBuffer;
   }
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
+  }
 
 private:
   EditableCategoricalTableCell * categoricalTableCell() override { return &m_slopeTableCell; }

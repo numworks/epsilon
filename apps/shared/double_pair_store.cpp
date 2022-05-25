@@ -20,14 +20,17 @@ DoublePairStore::DoublePairStore(GlobalContext * context) :
 {
 }
 
-void DoublePairStore::initListsFromStorage() {
+void DoublePairStore::initListsInPool() {
   // Initialize empty list in the pool
   for (int s = 0; s < k_numberOfSeries; s++) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
       m_dataLists[s][i] = FloatList<double>::Builder();
     }
   }
+}
 
+void DoublePairStore::initListsFromStorage() {
+  initListsInPool();
   char listName[k_columnNamesLength + 1];
   for (int s = 0; s < k_numberOfSeries; s++) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {

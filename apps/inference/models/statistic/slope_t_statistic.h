@@ -10,6 +10,7 @@ namespace Inference {
 class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
 public:
   SlopeTStatistic(Shared::GlobalContext * context) : Shared::LinearRegressionStore(context) {
+    initListsInPool();
     initListsFromStorage();
   }
 

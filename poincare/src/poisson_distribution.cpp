@@ -1,6 +1,6 @@
 #include <poincare/poisson_distribution.h>
 #include <poincare/float.h>
-#include <poincare/rational.h>
+#include <poincare/domain.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <poincare/solver.h>
 #include <poincare/distribution.h>
@@ -53,37 +53,7 @@ bool PoissonDistribution::LambdaIsOK(T lambda) {
 }
 
 bool PoissonDistribution::ExpressionLambdaIsOK(bool * result, const Expression & lambda, Context * context) {
-  assert(result != nullptr);
-  if (lambda.deepIsMatrix(context)) {
-    *result = false;
-    return true;
-  }
-
-  if (lambda.isUndefined() || Expression::IsInfinity(lambda, context)) {
-    *result = false;
-    return true;
-  }
-  if (!lambda.isReal(context)) {
-    // We cannot check that lambda is real
-    return false;
-  }
-
-  if (lambda.type() != ExpressionNode::Type::Rational) {
-    // We cannot check that lambda is positive
-    return false;
-  }
-
-  {
-    const Rational rationalLambda = static_cast<const Rational &>(lambda);
-    if (rationalLambda.isNegative() || rationalLambda.isZero()) {
-      // lambda is negative or null
-      *result = false;
-      return true;
-    }
-  }
-
-  *result = true;
-  return true;
+  return Domain::expressionIsIn(result, lambda, Domain::Type::RPlusStar, context);
 }
 
 

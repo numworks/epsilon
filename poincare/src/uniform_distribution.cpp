@@ -2,7 +2,7 @@
 #include <poincare/beta_function.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <poincare/float.h>
-#include <poincare/rational.h>
+#include <poincare/domain.h>
 #include <cmath>
 #include <float.h>
 #include <assert.h>
@@ -56,23 +56,7 @@ bool UniformDistribution::D1AndD2AreOK(T d1, T d2) {
 }
 
 bool UniformDistribution::ExpressionD1AndD2AreOK(bool * result, const Expression & d1, const Expression & d2, Context * context) {
-  assert(result != nullptr);
-  if (d1.deepIsMatrix(context) || d2.deepIsMatrix(context)) {
-    *result = false;
-    return true;
-  }
-
-  if (d1.isUndefined() || d2.isUndefined() || Expression::IsInfinity(d1, context) || Expression::IsInfinity(d2,context)) {
-    *result = false;
-    return true;
-  }
-  if (!d1.isReal(context) || !d2.isReal(context)) {
-    // We cannot check that d1 and d2 are real
-    return false;
-  }
-
-  *result = true;
-  return true;
+  return Domain::expressionsAreIn(result, d2, Domain::Type::R, d1, Domain::Type::R, context);
 }
 
 template float UniformDistribution::EvaluateAtAbscissa<float>(float, float, float);

@@ -1,5 +1,5 @@
 #include <poincare/exponential_distribution.h>
-#include <poincare/rational.h>
+#include <poincare/domain.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <cmath>
 #include <float.h>
@@ -37,45 +37,7 @@ bool ExponentialDistribution::LambdaIsOK(T lambda) {
 }
 
 bool ExponentialDistribution::ExpressionLambdaIsOK(bool * result, const Expression & lambda, Context * context) {
-  assert(result != nullptr);
-  if (lambda.deepIsMatrix(context)) {
-    *result = false;
-    return true;
-  }
-
-  if (lambda.isUndefined() || Expression::IsInfinity(lambda, context)) {
-    *result = false;
-    return true;
-  }
-  if (!lambda.isReal(context)) {
-    // We cannot check that lambda is real
-    return false;
-  }
-
-  {
-    ExpressionNode::Sign s = lambda.sign(context);
-    if (s == ExpressionNode::Sign::Negative) {
-      *result = false;
-      return true;
-    }
-    // We cannot check that var is positive
-    if (s != ExpressionNode::Sign::Positive) {
-      return false;
-    }
-  }
-
-  if (lambda.type() != ExpressionNode::Type::Rational) {
-    // We cannot check that var is not null
-    return false;
-  }
-
-  const Rational rationalVar = static_cast<const Rational &>(lambda);
-  if (rationalVar.isZero()) {
-    *result = false;
-    return true;
-    }
-  *result = true;
-  return true;
+  return Domain::expressionIsIn(result, lambda, Domain::Type::RPlusStar, context);
 }
 
 // Specialisations

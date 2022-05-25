@@ -2,7 +2,7 @@
 #include <poincare/beta_function.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <poincare/float.h>
-#include <poincare/rational.h>
+#include <poincare/domain.h>
 #include <cmath>
 #include <float.h>
 #include <assert.h>
@@ -49,69 +49,7 @@ bool FisherDistribution::D1AndD2AreOK(T d1, T d2) {
 }
 
 bool FisherDistribution::ExpressionD1AndD2AreOK(bool * result, const Expression & d1, const Expression & d2, Context * context) {
-  assert(result != nullptr);
-  if (d1.deepIsMatrix(context) || d2.deepIsMatrix(context)) {
-    *result = false;
-    return true;
-  }
-
-  if (d1.isUndefined() || d2.isUndefined() || Expression::IsInfinity(d1, context) || Expression::IsInfinity(d2,context)) {
-    *result = false;
-    return true;
-  }
-  if (!d1.isReal(context) || !d2.isReal(context)) {
-    // We cannot check that d1 and d2 are real
-    return false;
-  }
-
-  {
-    ExpressionNode::Sign s = d1.sign(context);
-    if (s == ExpressionNode::Sign::Negative) {
-      *result = false;
-      return true;
-    }
-    // We cannot check that d1 is positive
-    if (s != ExpressionNode::Sign::Positive) {
-      return false;
-    }
-  }
-
-  {
-    ExpressionNode::Sign s = d2.sign(context);
-    if (s == ExpressionNode::Sign::Negative) {
-      *result = false;
-      return true;
-    }
-    // We cannot check that d2 is positive
-    if (s != ExpressionNode::Sign::Positive) {
-      return false;
-    }
-  }
-
-  if (d1.type() != ExpressionNode::Type::Rational) {
-    // We cannot check that d1 is not null
-    return false;
-  }
-
-  const Rational rationalD1 = static_cast<const Rational &>(d1);
-  if (rationalD1.isZero()) {
-    *result = false;
-    return true;
-  }
-
-  if (d2.type() != ExpressionNode::Type::Rational) {
-    // We cannot check that d2 is not null
-    return false;
-  }
-
-  const Rational rationalD2 = static_cast<const Rational &>(d2);
-  if (rationalD2.isZero()) {
-    *result = false;
-    return true;
-  }
-
-  *result = true;
-  return true;
+  return Domain::expressionsAreIn(result, d1, Domain::Type::RPlusStar, d2, Domain::Type::RPlusStar, context);
 }
 
 template float FisherDistribution::EvaluateAtAbscissa<float>(float, float, float);

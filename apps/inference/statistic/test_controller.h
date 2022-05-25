@@ -16,7 +16,7 @@ class TypeController;
 class InputController;
 class InputSlopeController;
 
-class TestController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType, Escher::MemoizedListViewDataSource> {
+class TestController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   TestController(Escher::StackViewController * parentResponder,
                  HypothesisController * hypothesisController,
@@ -26,12 +26,13 @@ public:
                  InputController * inputController,
                  Statistic * statistic);
   void stackOpenPage(Escher::ViewController * nextPage) override;
-  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override;
   int numberOfRows() const override;
-  Escher::HighlightCell * reusableCell(int i, int type) override;
+  Escher::HighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
+  int reusableCellCount(int type) override { return Statistic::k_numberOfSignificanceTestType; }
+  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   constexpr static int k_indexOfOneProp = 0;
   constexpr static int k_indexOfOneMean = 1;
@@ -43,6 +44,8 @@ public:
 private:
   int virtualIndexOfSlope() const { return m_statistic->numberOfSignificancesTestTypes() - 1; }
 
+
+  Escher::MessageTableCellWithChevronAndMessage m_cells[Statistic::k_numberOfSignificanceTestType];
   HypothesisController * m_hypothesisController;
   TypeController * m_typeController;
   InputController * m_inputController;

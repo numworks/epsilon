@@ -22,22 +22,13 @@ TestController::TestController(Escher::StackViewController * parentResponder,
                                InputSlopeController * inputSlopeController,
                                InputController * inputController,
                                Statistic * statistic) :
-      Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType, Escher::MemoizedListViewDataSource>(parentResponder),
+      Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
       m_inputController(inputController),
       m_categoricalController(categoricalController),
       m_inputSlopeController(inputSlopeController),
       m_statistic(statistic) {
-  // Create cells
-  cellAtIndex(k_indexOfOneProp)->setMessage(I18n::Message::TestOneProp);
-  cellAtIndex(k_indexOfOneMean)->setMessage(I18n::Message::TestOneMean);
-  cellAtIndex(k_indexOfTwoProps)->setMessage(I18n::Message::TestTwoProps);
-  cellAtIndex(k_indexOfTwoMeans)->setMessage(I18n::Message::TestTwoMeans);
-  cellAtIndex(k_indexOfCategorical)->setMessage(I18n::Message::TestCategorical);
-  cellAtIndex(k_indexOfCategorical)->setSubtitle(I18n::Message::X2Test);
-  cellAtIndex(k_indexOfSlope)->setMessage(I18n::Message::Slope);
-
   // Init selection
   selectRow(0);
 }
@@ -50,16 +41,6 @@ void TestController::stackOpenPage(Escher::ViewController * nextPage) {
   SignificanceTestType type = m_statistic->significanceTestType();
   selectRow(type == SignificanceTestType::Slope ? virtualIndexOfSlope() : static_cast<int>(type));
   ViewController::stackOpenPage(nextPage);
-}
-
-void TestController::viewWillAppear() {
-  Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, Statistic::k_numberOfSignificanceTestType, Escher::MemoizedListViewDataSource>::viewWillAppear();
-  // Create cells whose legends vary
-  cellAtIndex(k_indexOfOneProp)->setSubtitle(m_statistic->zStatisticMessage());
-  cellAtIndex(k_indexOfOneMean)->setSubtitle(m_statistic->tOrZStatisticMessage());
-  cellAtIndex(k_indexOfTwoProps)->setSubtitle(m_statistic->zStatisticMessage());
-  cellAtIndex(k_indexOfTwoMeans)->setSubtitle(m_statistic->tOrZStatisticMessage());
-  cellAtIndex(k_indexOfSlope)->setSubtitle(m_statistic->tStatisticMessage());
 }
 
 void TestController::didBecomeFirstResponder() {
@@ -116,9 +97,34 @@ int TestController::numberOfRows() const {
   return m_statistic->numberOfSignificancesTestTypes();
 }
 
-Escher::HighlightCell * TestController::reusableCell(int i, int type) {
-  if (i == virtualIndexOfSlope()) {
-    return cellAtIndex(k_indexOfSlope);
+void TestController::willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) {
+  Escher::MessageTableCellWithChevronAndMessage * c = static_cast<Escher::MessageTableCellWithChevronAndMessage *>(cell);
+  switch (j) {
+    case k_indexOfOneProp:
+      c->setMessage(I18n::Message::TestOneProp);
+      c->setSubtitle(m_statistic->zStatisticMessage());
+      return;
+    case k_indexOfOneMean:
+      c->setMessage(I18n::Message::TestOneMean);
+      c->setSubtitle(m_statistic->tOrZStatisticMessage());
+      return;
+    case k_indexOfTwoProps:
+      c->setMessage(I18n::Message::TestTwoProps);
+      c->setSubtitle(m_statistic->zStatisticMessage());
+      return;
+    case k_indexOfTwoMeans:
+      c->setMessage(I18n::Message::TestTwoMeans);
+      c->setSubtitle(m_statistic->tOrZStatisticMessage());
+      return;
+    case k_indexOfCategorical:
+      c->setMessage(I18n::Message::TestCategorical);
+      c->setSubtitle(I18n::Message::X2Test);
+      return;
+    case k_indexOfSlope:
+      c->setMessage(I18n::Message::Slope);
+      c->setSubtitle(m_statistic->tStatisticMessage());
+      return;
+    default:
+      assert(false);
   }
-  return cellAtIndex(i);
 }

@@ -1,6 +1,6 @@
 #include <poincare/geometric_distribution.h>
 #include <poincare/float.h>
-#include <poincare/rational.h>
+#include <poincare/domain.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <poincare/solver.h>
 #include <poincare/distribution.h>
@@ -63,44 +63,7 @@ bool GeometricDistribution::PIsOK(T p) {
 }
 
 bool GeometricDistribution::ExpressionPIsOK(bool * result, const Expression & p, Context * context) {
-  assert(result != nullptr);
-  if (p.deepIsMatrix(context)) {
-    *result = false;
-    return true;
-  }
-
-  if (p.isUndefined() || Expression::IsInfinity(p, context)) {
-    *result = false;
-    return true;
-  }
-  if (!p.isReal(context)) {
-    // We cannot check that p is real
-    return false;
-  }
-
-  if (p.type() != ExpressionNode::Type::Rational) {
-    // We cannot check that 0 < p <= 1
-    return false;
-  }
-
-  {
-    const Rational rationalP = static_cast<const Rational &>(p);
-    if (rationalP.isNegative() || rationalP.isZero()) {
-      // p is negative or null
-      *result = false;
-      return true;
-    }
-    Integer num = rationalP.unsignedIntegerNumerator();
-    Integer den = rationalP.integerDenominator();
-    if (den.isLowerThan(num)) {
-      // p > 1
-      *result = false;
-      return true;
-    }
-  }
-
-  *result = true;
-  return true;
+  return Domain::expressionIsIn(result, p, Domain::Type::LeftOpenUnitSegment, context);
 }
 
 

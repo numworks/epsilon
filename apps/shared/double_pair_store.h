@@ -96,6 +96,7 @@ public:
   }
 
 protected:
+  void initListsInPool();
   virtual double defaultValue(int series, int i, int j) const;
   /* This must be called each time the lists are modified.
    * It deletes the pairs of empty values and the trailing undef values,

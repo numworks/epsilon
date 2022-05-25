@@ -32,6 +32,7 @@ Store::Store(GlobalContext * context) :
   m_exponentialAbxModel(true),
   m_angleUnit(Poincare::Preferences::AngleUnit::Degree)
 {
+  initListsInPool();
   resetMemoization();
 }
 

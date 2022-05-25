@@ -149,11 +149,6 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
   return result;
 }
 
-Expression MultiplicationNode::setSign(Sign s, ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive);
-  return Multiplication(this).setSign(s, reductionContext);
-}
-
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
  *
@@ -372,16 +367,6 @@ void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColu
       result[i*nNumberOfColumns+j] = res;
     }
   }
-}
-
-Expression Multiplication::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive);
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (childAtIndex(i).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
-      replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, reductionContext));
-    }
-  }
-  return shallowReduce(reductionContext);
 }
 
 Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reductionContext) {

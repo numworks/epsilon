@@ -29,14 +29,6 @@ ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
   return e.sign(context);
 }
 
-Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, ReductionContext reductionContext) {
-  SymbolAbstract sa(this);
-  Expression e = SymbolAbstract::Expand(sa, reductionContext.context(), true, reductionContext.symbolicComputation());
-  assert(!e.isUninitialized());
-  sa.replaceWithInPlace(e);
-  return e.setSign(s, reductionContext);
-}
-
 int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
   assert(type() == e->type());
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());

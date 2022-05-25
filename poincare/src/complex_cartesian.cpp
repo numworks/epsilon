@@ -21,10 +21,6 @@
 
 namespace Poincare {
 
-Expression ComplexCartesianNode::setSign(Sign s, ReductionContext reductionContext) {
-  return ComplexCartesian(this).setSign(s, reductionContext);
-}
-
 ExpressionNode::NullStatus ComplexCartesianNode::nullStatus(Context * context) const {
   ExpressionNode::NullStatus realNullStatus = childAtIndex(0)->nullStatus(context);
   ExpressionNode::NullStatus imagNullStatus = childAtIndex(1)->nullStatus(context);
@@ -97,13 +93,6 @@ Expression ComplexCartesian::shallowBeautify(ExpressionNode::ReductionContext * 
     );
   replaceWithInPlace(e);
   return e;
-}
-
-Expression ComplexCartesian::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  /* We cannot set the sign if the cartesian is not real. */
-  assert(childAtIndex(1).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null);
-  return defaultOddFunctionSetSign(s, reductionContext);
 }
 
 void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, ExpressionNode::ReductionContext reductionContext) {

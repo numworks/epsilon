@@ -21,7 +21,6 @@ public:
 
   // Properties
   Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
   Type type() const override { return Type::Round; }
 private:
   // Layout
@@ -43,7 +42,6 @@ public:
   static Round Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Round, RoundNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("round", 2, &UntypedBuilderTwoChildren<Round>);
 
-  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -28,7 +28,6 @@ public:
   Type type() const override { return Type::Power; }
   Sign sign(Context * context) const override;
   NullStatus nullStatus(Context * context) const override;
-  Expression setSign(Sign s, ReductionContext reductionContext) override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
   double degreeForSortingAddition(bool symbolsOnly) const override;
   Expression removeUnit(Expression * unit) override;
@@ -86,7 +85,6 @@ public:
   Power(const PowerNode * n) : Expression(n) {}
   static Power Builder(Expression base, Expression exponent) { return TreeHandle::FixedArityBuilder<Power, PowerNode>({base, exponent}); }
 
-  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);

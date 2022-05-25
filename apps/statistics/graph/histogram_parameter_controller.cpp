@@ -95,8 +95,16 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
   assert(DoublePairStore::k_numberOfSeries > 0);
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
     const double min = std::min(m_store->minValue(i), nextFirstDrawnBarAbscissa);
-    double numberOfBars = std::ceil((m_store->maxValue(i) - min)/nextBarWidth);
-    if (numberOfBars > HistogramRange::k_maxNumberOfBars) {
+    const double max = m_store->maxValue(i);
+    double numberOfBars = std::ceil((max - min)/nextBarWidth);
+    // First escape case: if the bars are too thin or there is too much bars
+    if (numberOfBars > HistogramRange::k_maxNumberOfBars
+    /* Second escape case: Since interval width is computed in float, we
+     * need to check if the values are not too close.
+     * If max == min then the interval goes from min to min + barWidth.
+     * But if min == min + barWidth, the display is bugged.
+     * */
+        || (static_cast<float>(min) == static_cast<float>(max) && static_cast<float>(min + nextBarWidth) == static_cast<float>(min))) {
       // Assert the current temporary values were valid in the first place
       assert(nextBarWidth != m_tempBarWidth || nextFirstDrawnBarAbscissa != m_tempFirstDrawnBarAbscissa);
       Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);

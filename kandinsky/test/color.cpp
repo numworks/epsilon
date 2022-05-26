@@ -24,7 +24,12 @@ void assert_colors_blend_to(KDColor c1, KDColor c2, uint8_t alpha, KDColor res) 
 
 QUIZ_CASE(kandinsky_color_blend) {
   KDColor midGray = KDColor::RGB24(0x7F7F7F);
-  KDColor midTurquoise = KDColor::RGB24(0x007F7F);
+  KDColor midTurquoise = KDColor::RGB24(0x007F80);
+  /* Note: midTurquoise is the blending of 0x7F/0xFF Green and Blue. In other
+   * words, it's 0x7F/0xFF*Green + (0xFF-0x7F)/0xFF*Blue
+   *           = 0x7F/0xFF*Green + 0x80/0xFF*Blue
+   *           = 0x7F*(0x000100) + 0x80*(0x000001)
+   *           = 0x007F80 */
 
   assert_colors_blend_to(KDColorWhite, KDColorBlack, 0x00, KDColorBlack);
   assert_colors_blend_to(KDColorWhite, KDColorBlack, 0xFF, KDColorWhite);

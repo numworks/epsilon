@@ -221,7 +221,8 @@ int HorizontalLayoutNode::serializeChildrenBetweenIndexes(char * buffer, int buf
             || nextChildType == LayoutNode::Type::CeilingLayout
             || nextChildType == LayoutNode::Type::FloorLayout
             || nextChildType == LayoutNode::Type::IntegralLayout
-            || nextChildType == LayoutNode::Type::NCRLayout
+            || nextChildType == LayoutNode::Type::LetterAWithSubAndSuperscriptLayout
+            || nextChildType == LayoutNode::Type::LetterCWithSubAndSuperscriptLayout
             || (nextChildType == LayoutNode::Type::NthRootLayout
               && !static_cast<NthRootLayoutNode *>(nextChild)->isSquareRoot())
             || nextChildType == LayoutNode::Type::ProductLayout

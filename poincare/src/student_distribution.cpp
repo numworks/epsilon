@@ -64,7 +64,7 @@ bool StudentDistribution::KIsOK(T k) {
 }
 
 bool StudentDistribution::ExpressionKIsOK(bool * result, const Expression & k, Context * context) {
-  return Domain::expressionIsIn(result, k, Domain::Type::RPlusStar, context);
+  return Domain::ExpressionIsIn(result, k, Domain::Type::RPlusStar, context);
 }
 
 

@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-Domain::Result Domain::expressionIsIn(const Expression &expression, Type type, Context * context) {
+Domain::Result Domain::ExpressionIsIn(const Expression &expression, Type type, Context * context) {
   if (expression.deepIsMatrix(context)) {
     return False;
   }
@@ -11,7 +11,7 @@ Domain::Result Domain::expressionIsIn(const Expression &expression, Type type, C
     return False;
   }
 
-  if (type & onlyPositive) {
+  if (type & k_onlyPositive) {
     ExpressionNode::Sign sign = expression.sign(context);
     if (sign == ExpressionNode::Sign::Negative) {
       return False;
@@ -21,7 +21,7 @@ Domain::Result Domain::expressionIsIn(const Expression &expression, Type type, C
     }
   }
 
-  if (type & onlyNegative) {
+  if (type & k_onlyNegative) {
     ExpressionNode::Sign sign = expression.sign(context);
     if (sign == ExpressionNode::Sign::Positive) {
       return False;
@@ -41,11 +41,11 @@ Domain::Result Domain::expressionIsIn(const Expression &expression, Type type, C
 
   const Rational rational = static_cast<const Rational &>(expression);
 
-  if (type & onlyIntegers && !rational.isInteger()) {
+  if (type & k_onlyIntegers && !rational.isInteger()) {
     return False;
   }
 
-  if (type & nonZero && rational.isZero()) {
+  if (type & k_nonZero && rational.isZero()) {
     return False;
   }
 

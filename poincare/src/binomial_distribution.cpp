@@ -100,7 +100,7 @@ bool BinomialDistribution::ParametersAreOK(T n, T p) {
 }
 
 bool BinomialDistribution::expressionParametersAreOK(bool * result, const Expression & n, const Expression & p, Context * context) {
-  return Domain::expressionsAreIn(result, n, Domain::Type::N, p, Domain::Type::UnitSegment, context);
+  return Domain::ExpressionsAreIn(result, n, Domain::Type::N, p, Domain::Type::UnitSegment, context);
 }
 
 template float BinomialDistribution::EvaluateAtAbscissa<float>(float, float, float);

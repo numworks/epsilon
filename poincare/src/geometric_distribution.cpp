@@ -63,7 +63,7 @@ bool GeometricDistribution::PIsOK(T p) {
 }
 
 bool GeometricDistribution::ExpressionPIsOK(bool * result, const Expression & p, Context * context) {
-  return Domain::expressionIsIn(result, p, Domain::Type::LeftOpenUnitSegment, context);
+  return Domain::ExpressionIsIn(result, p, Domain::Type::LeftOpenUnitSegment, context);
 }
 
 

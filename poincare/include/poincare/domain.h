@@ -24,27 +24,27 @@ public:
     OpenUnitSegment = 1 << 9,
   };
 
-  static constexpr Type nonZero = static_cast<Type>(NStar | RStar | RPlusStar | LeftOpenUnitSegment | OpenUnitSegment);
-  static constexpr Type finite = static_cast<Type>(UnitSegment | LeftOpenUnitSegment | OpenUnitSegment);
-  static constexpr Type onlyIntegers = static_cast<Type>(N | NStar);
-  static constexpr Type onlyNegative = static_cast<Type>(RMinus);
-  static constexpr Type onlyPositive = static_cast<Type>(N | NStar | RPlus | RPlusStar | UnitSegment | LeftOpenUnitSegment | OpenUnitSegment);
+  static constexpr Type k_nonZero = static_cast<Type>(NStar | RStar | RPlusStar | LeftOpenUnitSegment | OpenUnitSegment);
+  static constexpr Type k_finite = static_cast<Type>(UnitSegment | LeftOpenUnitSegment | OpenUnitSegment);
+  static constexpr Type k_onlyIntegers = static_cast<Type>(N | NStar);
+  static constexpr Type k_onlyNegative = static_cast<Type>(RMinus);
+  static constexpr Type k_onlyPositive = static_cast<Type>(N | NStar | RPlus | RPlusStar | UnitSegment | LeftOpenUnitSegment | OpenUnitSegment);
 
-  template<typename T> static bool contains(Type type, T value) {
+  template<typename T> static bool Contains(T value, Type type) {
     if (std::isnan(value)) {
       return false;
     }
-    if (std::isinf(value) && type & finite) {
+    if (std::isinf(value) && type & k_finite) {
       return false;
     }
     // TODO: should we test for integers; is inf an integer ?
-    if (value == static_cast<T>(0.0) && type & nonZero) { // Epsilon ?
+    if (value == static_cast<T>(0.0) && type & k_nonZero) { // Epsilon ?
       return false;
     }
-    if (value > static_cast<T>(0.0) && type & onlyNegative) {
+    if (value > static_cast<T>(0.0) && type & k_onlyNegative) {
       return false;
     }
-    if (value < static_cast<T>(0.0) && type & onlyPositive) {
+    if (value < static_cast<T>(0.0) && type & k_onlyPositive) {
       return false;
     }
     if (value > static_cast<T>(1.0) && type & (UnitSegment | LeftOpenUnitSegment | OpenUnitSegment)) {
@@ -65,11 +65,11 @@ public:
     False,
   };
 
-  static Result expressionIsIn(const Expression &expression, Type domain, Context * context);
+  static Result ExpressionIsIn(const Expression &expression, Type domain, Context * context);
 
-  static bool expressionIsIn(bool * result, const Expression &expression, Type domain, Context * context) {
+  static bool ExpressionIsIn(bool * result, const Expression &expression, Type domain, Context * context) {
     assert(result != nullptr);
-    switch (expressionIsIn(expression, domain, context)) {
+    switch (ExpressionIsIn(expression, domain, context)) {
     case CantCheck:
       return false;
     case True:
@@ -81,9 +81,9 @@ public:
     }
   }
 
-  static bool expressionsAreIn(bool * result, const Expression &expression1, Type domain1, const Expression &expression2, Type domain2, Context * context) {
+  static bool ExpressionsAreIn(bool * result, const Expression &expression1, Type domain1, const Expression &expression2, Type domain2, Context * context) {
     assert(result != nullptr);
-    switch (std::max(expressionIsIn(expression1, domain1, context), expressionIsIn(expression2, domain2, context))) {
+    switch (std::max(ExpressionIsIn(expression1, domain1, context), ExpressionIsIn(expression2, domain2, context))) {
     case CantCheck:
       return false;
     case True:

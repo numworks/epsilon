@@ -29,13 +29,16 @@ double Model::levelSet(double * modelCoefficients, double xMin, double xMax, dou
 }
 
 void Model::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
-  if (dataSuitableForFit(store, series)) {
-    initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false, store, series);
-    fitLevenbergMarquardt(store, series, modelCoefficients, context);
-    uniformizeCoefficientsFromFit(modelCoefficients);
-  } else {
-    initCoefficientsForFit(modelCoefficients, NAN, true);
+  if (!dataSuitableForFit(store, series)) {
+    return initCoefficientsForFit(modelCoefficients, NAN, true);
   }
+  return privateFit(store, series, modelCoefficients, context);
+}
+
+void Model::privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
+  initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false, store, series);
+  fitLevenbergMarquardt(store, series, modelCoefficients, context);
+  uniformizeCoefficientsFromFit(modelCoefficients);
 }
 
 bool Model::dataSuitableForFit(Store * store, int series) const {

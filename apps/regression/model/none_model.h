@@ -18,8 +18,9 @@ public:
   double evaluate(double * modelCoefficients, double x) const override { return NAN; }
   double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) override { assert(false); return NAN; }
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override { assert(false); return NAN; }
-  void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override {}
   int numberOfCoefficients() const override { return 0; }
+private:
+  void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override {}
 };
 
 }

@@ -16,8 +16,8 @@ public:
   double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 2; }
-  virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override = 0;
-
+private:
+  virtual void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override = 0;
 };
 
 }

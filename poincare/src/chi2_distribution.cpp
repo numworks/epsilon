@@ -73,7 +73,7 @@ bool Chi2Distribution::KIsOK(T k) {
 }
 
 bool Chi2Distribution::ExpressionKIsOK(bool * result, const Expression & k, Context * context) {
-  return Domain::expressionIsIn(result, k, Domain::Type::NStar, context);
+  return Domain::ExpressionIsIn(result, k, Domain::Type::NStar, context);
 }
 
 // Specialisations

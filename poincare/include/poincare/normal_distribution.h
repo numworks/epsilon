@@ -27,8 +27,8 @@ public:
   bool parametersAreOK(const float * parameters) const override { return MuAndSigmaAreOK(parameters[0], parameters[1]); }
   bool parametersAreOK(const double * parameters) const override { return MuAndSigmaAreOK(parameters[0], parameters[1]); }
 
-  static bool ExpressionMuAndVarAreOK(bool * result, const Expression &mu, const Expression &sigma, Context * context);
-  bool expressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const override { return ExpressionMuAndVarAreOK(result, parameters[0], parameters[1], context); }
+  static bool ExpressionMuAndSigmaAreOK(bool * result, const Expression &mu, const Expression &sigma, Context * context);
+  bool expressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const override { return ExpressionMuAndSigmaAreOK(result, parameters[0], parameters[1], context); }
 
 private:
   template<typename T> static T parameterMu(T* parameters) { return parameters[0]; }

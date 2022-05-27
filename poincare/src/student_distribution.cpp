@@ -58,9 +58,8 @@ template <typename T> T StudentDistribution::CumulativeDistributiveInverseForPro
 
 template<typename T>
 bool StudentDistribution::KIsOK(T k) {
-  return !std::isnan(k) && !std::isinf(k)
-   && k > static_cast<T>(DBL_EPSILON) && k <= static_cast<T>(200.0);
-  // We cannot draw the curve for x > 200 (coefficient() is too small)
+  return Domain::Contains(k, Domain::Type::RPlusStar) && k <= static_cast<T>(200.0);
+  // We cannot draw the curve for k > 200 (coefficient() is too small)
 }
 
 bool StudentDistribution::ExpressionKIsOK(bool * result, const Expression & k, Context * context) {

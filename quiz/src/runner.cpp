@@ -46,13 +46,11 @@ void ion_main(int argc, const char * const argv[]) {
   Poincare::Init(); // Initialize Poincare::TreePool::sharedPool
   const char * testFilter = nullptr;
 #if !PLATFORM_DEVICE
-  // use the last non-option argument as the test filter
   for (int i=1; i<argc; i++) {
-     if (argv[i][0] != '-') {
-       testFilter = argv[i];
-     } else if (strcmp(argv[i], "--language") == 0) {
-       i++;
-     }
+    if (strcmp(argv[i], "--filter") == 0) {
+      assert(i+1 < argc);
+      testFilter = argv[i+1];
+    }
   }
   /* s_stackStart must be defined as early as possible to ensure that there
    * cannot be allocated memory pointers before. Otherwise, with MicroPython for

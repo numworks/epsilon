@@ -339,6 +339,8 @@ template LeastCommonMultiple TreeHandle::NAryBuilder<LeastCommonMultiple, LeastC
 template LeftCurlyBraceLayout TreeHandle::FixedArityBuilder<LeftCurlyBraceLayout, LeftCurlyBraceLayoutNode>(const Tuple &);
 template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayout, LeftParenthesisLayoutNode>(const Tuple &);
 template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(const Tuple &);
+template LetterAWithSubAndSuperscriptLayout TreeHandle::FixedArityBuilder<LetterAWithSubAndSuperscriptLayout, LetterAWithSubAndSuperscriptLayoutNode>(const Tuple &);
+template LetterCWithSubAndSuperscriptLayout TreeHandle::FixedArityBuilder<LetterCWithSubAndSuperscriptLayout, LetterCWithSubAndSuperscriptLayoutNode>(const Tuple &);
 template List TreeHandle::NAryBuilder<List, ListNode>(const Tuple &);
 template ListComplex<double> TreeHandle::NAryBuilder<ListComplex<double>, ListComplexNode<double> >(const Tuple &);
 template ListComplex<float> TreeHandle::NAryBuilder<ListComplex<float>, ListComplexNode<float> >(const Tuple &);
@@ -373,7 +375,6 @@ template MatrixRowEchelonForm TreeHandle::FixedArityBuilder<MatrixRowEchelonForm
 template MatrixReducedRowEchelonForm TreeHandle::FixedArityBuilder<MatrixReducedRowEchelonForm, MatrixReducedRowEchelonFormNode>(const Tuple &);
 template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
 template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(const Tuple &);
-template NCRLayout TreeHandle::FixedArityBuilder<NCRLayout, NCRLayoutNode>(const Tuple &);
 template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(const Tuple &);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tuple &);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);

@@ -2,18 +2,7 @@
 
 namespace Poincare {
 
-static Domain::Result isGreaterThanOne(const Rational &rational, Context * context) {
-  Integer num = rational.unsignedIntegerNumerator();
-  Integer den = rational.integerDenominator();
-  if (den.isLowerThan(num)) {
-    return Domain::False;
-  }
-
-  return Domain::True;
-}
-
 Domain::Result Domain::expressionIsIn(const Expression &expression, Type type, Context * context) {
-  Result res;
   if (expression.deepIsMatrix(context)) {
     return False;
   }
@@ -60,8 +49,8 @@ Domain::Result Domain::expressionIsIn(const Expression &expression, Type type, C
     return False;
   }
 
-  if (type & (UnitSegment | LeftOpenUnitSegment | OpenUnitSegment) && (res=isGreaterThanOne(rational, context))) {
-    return res;
+  if (type & (UnitSegment | LeftOpenUnitSegment | OpenUnitSegment) && rational.isGreaterThanOne()) {
+    return False;
   }
 
   return True;

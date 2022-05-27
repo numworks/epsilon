@@ -268,12 +268,17 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
     selectableTableView()->reloadData();
     return true;
   }
+  // If formula contains a random formula, evaluate it for each pairs.
+  bool evaluateForEachPairs = formula.hasExpression([](const Expression e, const void * context) { return e.isRandom(); }, nullptr);
   double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &m_storeContext);
   if (std::isnan(evaluation)) {
-      return displayNotSuitableWarning();
+    return displayNotSuitableWarning();
   }
   for (int j = 0; j < m_store->numberOfPairsOfSeries(seriesToFill); j++) {
     m_store->set(evaluation, seriesToFill, columnToFill, j);
+    if (evaluateForEachPairs) {
+      evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &m_storeContext);
+    }
   }
   reloadSeriesVisibleCells(selectedSeries());
   return true;

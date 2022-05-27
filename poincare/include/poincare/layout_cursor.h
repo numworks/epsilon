@@ -22,6 +22,7 @@ class LayoutCursor final {
   friend class IntegralLayoutNode;
   friend class LayoutNode;
   friend class MatrixLayoutNode;
+  friend class NCRLayoutNode;
   friend class NthRootLayoutNode;
   friend class SequenceLayoutNode;
   friend class VerticalOffsetLayoutNode;

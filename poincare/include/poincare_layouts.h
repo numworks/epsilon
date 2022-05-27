@@ -22,6 +22,7 @@
 #include <poincare/left_square_bracket_layout.h>
 #include <poincare/list_sequence_layout.h>
 #include <poincare/matrix_layout.h>
+#include <poincare/ncr_layout.h>
 #include <poincare/nth_root_layout.h>
 #include <poincare/product_layout.h>
 #include <poincare/right_parenthesis_layout.h>

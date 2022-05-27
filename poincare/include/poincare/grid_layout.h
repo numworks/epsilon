@@ -15,6 +15,8 @@ class GridLayoutNode : public Array, public LayoutNode {
   friend class MatrixLayoutNode;
   friend class BinomialCoefficientLayoutNode;
   friend class BinomialCoefficientLayout;
+  friend class NCRLayoutNode;
+  friend class NCRLayout;
   friend class GridLayout;
 public:
   GridLayoutNode() :

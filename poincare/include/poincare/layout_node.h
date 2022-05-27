@@ -42,6 +42,7 @@ public:
     LeftSquareBracketLayout,
     ListSequenceLayout,
     MatrixLayout,
+    NCRLayout,
     NthRootLayout,
     ProductLayout,
     RightCurlyBraceLayout,

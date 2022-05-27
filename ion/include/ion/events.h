@@ -34,6 +34,7 @@ public:
   bool operator!=(const Event & other) const { return (m_id != other.m_id); }
   bool isKeyboardEvent() const { return m_id < k_specialEventsOffset; }
   bool isSpecialEvent() const { return m_id >= k_specialEventsOffset; }
+  bool isRepeating() const;
   // Return the length of the copied text (and not the size)
   const char * text() const;
 #ifndef NDEBUG

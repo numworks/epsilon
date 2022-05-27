@@ -32,6 +32,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     bool state = !m_store->displayCumulatedFrequenciesForSeries(m_storeController->selectedSeries());
     m_store->setDisplayCumulatedFrequenciesForSeries(m_storeController->selectedSeries(), state);
     if (type == k_hideCumulatedFrequencyCellType) {
+      assert(!state);
       m_hideCumulatedFrequencyCell.setHighlighted(false);
       stackView()->pop();
     } else {

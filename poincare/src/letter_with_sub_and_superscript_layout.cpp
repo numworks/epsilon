@@ -1,24 +1,10 @@
-#include <poincare/binomial_coefficient.h>
-#include <poincare/ncr_layout.h>
-#include <poincare/code_point_layout.h>
+#include <poincare/letter_with_sub_and_superscript_layout.h>
 #include <poincare/layout_helper.h>
-#include <assert.h>
 #include <algorithm>
 
 namespace Poincare {
 
-const uint8_t symbolUpperHalf[] = {
-  0xFF, 0xFF, 0xFF, 0xE9, 0x8D, 0x01, 0x00, 0x00, 0x26, 0x9C, 0xFE, 0xFF,
-  0xFF, 0xFF, 0xB7, 0x00, 0x6B, 0xD0, 0xFF, 0xFF, 0xD2, 0x57, 0x59, 0xE8,
-  0xFF, 0xDD, 0x00, 0xA9, 0xFF, 0xFE, 0xFF, 0xFF, 0xFE, 0xFF, 0x9C, 0xDC,
-  0xFF, 0x42, 0x7D, 0xFF, 0xFF, 0xFF, 0xFE, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF,
-  0xD1, 0x00, 0xDD, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFE,
-  0x9D, 0x58, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF,
-  0x6B, 0x7D, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFE, 0xFF, 0xFE,
-  0x6B, 0x8D, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF,
-};
-
-void NCRLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+void LetterWithSubAndSuperscriptLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Left
       && cursor->layoutNode() == kLayout())
   {
@@ -49,7 +35,7 @@ void NCRLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecompute
   }
 }
 
-void NCRLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+void LetterWithSubAndSuperscriptLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Right
       && cursor->layoutNode() == nLayout())
   {
@@ -80,7 +66,7 @@ void NCRLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomput
   }
 }
 
-void NCRLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+void LetterWithSubAndSuperscriptLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->layoutNode()->hasAncestor(kLayout(), true)) {
     // Case: kLayout. Move to nLayout.
     return nLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
@@ -88,7 +74,7 @@ void NCRLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLa
   LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-void NCRLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+void LetterWithSubAndSuperscriptLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->layoutNode()->hasAncestor(nLayout(), true)) {
     // Case: nLayout. Move to kLayout.
     return kLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
@@ -96,29 +82,25 @@ void NCRLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecompute
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-int NCRLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::s_functionHelper.name(), true);
-}
-
-KDCoordinate NCRLayoutNode::aboveSymbol() {
+KDCoordinate LetterWithSubAndSuperscriptLayoutNode::aboveSymbol() {
   return std::max<KDCoordinate>(nLayout()->baseline(), kLayout()->baseline() - k_symbolHeight);
 }
 
-KDCoordinate NCRLayoutNode::totalHeight() {
+KDCoordinate LetterWithSubAndSuperscriptLayoutNode::totalHeight() {
     KDCoordinate underSymbol = std::max<KDCoordinate>(kLayout()->layoutSize().height() - kLayout()->baseline(), nLayout()->layoutSize().height() - nLayout()->baseline() - k_symbolHeight);
     return aboveSymbol() + k_symbolHeight + underSymbol;
 }
 
-KDSize NCRLayoutNode::computeSize() {
+KDSize LetterWithSubAndSuperscriptLayoutNode::computeSize() {
   KDCoordinate width = nLayout()->layoutSize().width() + k_symbolWidthWithMargins + kLayout()->layoutSize().width();
   return KDSize(width, totalHeight());
 }
 
-KDCoordinate NCRLayoutNode::computeBaseline() {
+KDCoordinate LetterWithSubAndSuperscriptLayoutNode::computeBaseline() {
   return std::max(0, aboveSymbol() + k_symbolBaseline);
 }
 
-KDPoint NCRLayoutNode::positionOfChild(LayoutNode * child) {
+KDPoint LetterWithSubAndSuperscriptLayoutNode::positionOfChild(LayoutNode * child) {
   if (child == nLayout()) {
     return KDPoint(0, aboveSymbol() - nLayout()->baseline());
   }
@@ -127,29 +109,13 @@ KDPoint NCRLayoutNode::positionOfChild(LayoutNode * child) {
                  aboveSymbol() + k_symbolHeight - kLayout()->baseline());
 }
 
-void NCRLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  // Render the parentheses.
-  uint8_t symbolPixel[k_symbolHeight * k_symbolWidth];
-  static_assert(k_symbolHeight%2 == 0, "ncr_layout : k_symbolHeight is odd");
-
-  for (int i = 0; i < k_symbolHeight / 2; i++) {
-    for (int j = 0; j < k_symbolWidth; j++) {
-      symbolPixel[i * k_symbolWidth + j] = symbolUpperHalf[i * k_symbolWidth + j];
-      symbolPixel[(k_symbolHeight - 1 - i) * k_symbolWidth + j] = symbolUpperHalf[i * k_symbolWidth + j];
-    }
-  }
-
-  KDCoordinate combinationSymbolX = nLayout()->layoutSize().width() + k_margin;
+void LetterWithSubAndSuperscriptLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  KDCoordinate combinationSymbolX = nLayout()->layoutSize().width();
   KDCoordinate combinationSymbolY = aboveSymbol();
-
-  // Render the nCr symbol.
-  KDColor workingBuffer[k_symbolWidth * k_symbolHeight];
   KDPoint base = p.translatedBy(KDPoint(combinationSymbolX, combinationSymbolY));
-  KDRect symbolFrame(base.x(), base.y(),
-                     k_symbolWidth, k_symbolHeight);
 
-  ctx->blendRectWithMask(symbolFrame, expressionColor, (const uint8_t *)symbolPixel, (KDColor *)workingBuffer);
-
+  // Margin around the letter is left to the letter renderer
+  renderLetter(ctx, base, expressionColor, backgroundColor);
 }
 
 }

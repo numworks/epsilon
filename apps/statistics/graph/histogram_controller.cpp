@@ -85,8 +85,10 @@ bool HistogramController::reloadBannerView() {
   /* In a worst case scenario, the bounds of the interval can be displayed
    * with 5 significant digits:
    * "Intervalle : [-1.2345ᴇ-123;-1.2345ᴇ-123[\0" is 45 chars, compared to
-   * k_bufferSize 46 (remembering ᴇ is 3 chars) */
-  constexpr int intervalDefaultPrecision = (k_bufferSize - 13 - 4) / 2 - 9;
+   * k_bufferSize 46 (remembering ᴇ is 3 chars).
+   * We add 1 to account for the fact that both calls to sizeof count the null
+   * character. */
+  constexpr int intervalDefaultPrecision = (k_bufferSize - sizeof("Intervalle : [;[")) / 2 - sizeof("-.ᴇ-123") + 1;
   int intervalPrecision = precision;
   do {
     intervalLength = Poincare::Print::safeCustomPrintf(

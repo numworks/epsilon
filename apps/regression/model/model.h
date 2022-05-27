@@ -38,10 +38,11 @@ public:
   virtual int buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const = 0;
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
   virtual double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context);
-  virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
+  void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
   virtual int numberOfCoefficients() const = 0;
 protected:
   // Fit
+  virtual void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
   virtual bool dataSuitableForFit(Store * store, int series) const;
   constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;
   Poincare::Layout m_layout;

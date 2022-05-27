@@ -237,6 +237,19 @@ tests_src += $(addprefix poincare/test/,\
   zoom.cpp\
 )
 
+poincare_bench_src = $(addprefix poincare/src/,\
+  exception_checkpoint.cpp \
+  helpers.cpp \
+  init.cpp \
+  integer.cpp \
+  print_float.cpp \
+  print_int.cpp \
+  serialization_helper.cpp \
+  tree_handle.cpp \
+  tree_node.cpp \
+  tree_pool.cpp \
+)
+
 ifeq ($(DEBUG),1)
   ifeq ($(PLATFORM),simulator)
     POINCARE_TREE_LOG ?= 1

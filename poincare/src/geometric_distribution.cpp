@@ -57,9 +57,7 @@ T GeometricDistribution::CumulativeDistributiveInverseForProbability(T probabili
 
 template<typename T>
 bool GeometricDistribution::PIsOK(T p) {
-  return !std::isnan(p) && !std::isinf(p)
-    && (p > static_cast<T>(0.0))
-    && (p <= static_cast<T>(1.0));
+  return Domain::Contains(p, Domain::Type::LeftOpenUnitSegment);
 }
 
 bool GeometricDistribution::ExpressionPIsOK(bool * result, const Expression & p, Context * context) {

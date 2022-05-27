@@ -68,8 +68,7 @@ T Chi2Distribution::CumulativeDistributiveInverseForProbability(T probability, T
 
 template<typename T>
 bool Chi2Distribution::KIsOK(T k) {
-  return !std::isnan(k) && !std::isinf(k)
-    && k > static_cast<T>(DBL_EPSILON);
+  return Domain::Contains(k, Domain::Type::NStar);
 }
 
 bool Chi2Distribution::ExpressionKIsOK(bool * result, const Expression & k, Context * context) {

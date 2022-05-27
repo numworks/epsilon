@@ -850,42 +850,48 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(ExpressionNode::Re
   *reduceFailure = false;
 #if __EMSCRIPTEN__
   Expression e = clone().deepReduce(*reductionContext);
-  if (ExceptionCheckpoint::HasBeenInterrupted()) {
-    ExceptionCheckpoint::ClearInterruption();
-    if (reductionContext->target() == ExpressionNode::ReductionTarget::SystemForApproximation) {
-      goto failure;
-    }
-    reductionContext->setTarget(ExpressionNode::ReductionTarget::SystemForApproximation);
-    e = clone().deepReduce(*reductionContext);
+  {
     if (ExceptionCheckpoint::HasBeenInterrupted()) {
       ExceptionCheckpoint::ClearInterruption();
+      if (reductionContext->target() == ExpressionNode::ReductionTarget::SystemForApproximation) {
+        goto failure;
+      }
+      reductionContext->setTarget(ExpressionNode::ReductionTarget::SystemForApproximation);
+      e = clone().deepReduce(*reductionContext);
+      if (ExceptionCheckpoint::HasBeenInterrupted()) {
+        ExceptionCheckpoint::ClearInterruption();
 failure:
-      e = clone();
-      *reduceFailure = true;
+        *reduceFailure = true;
+      }
     }
   }
 #else
   Expression e;
-  char * treePoolCursor = TreePool::sharedPool()->cursor();
-  ExceptionCheckpoint ecp;
-  if (ExceptionRun(ecp)) {
-    e = clone().deepReduce(*reductionContext);
-  } else {
-    /* We don't want to tidy all the Pool in the case we are in a nested
-     * cloneAndDeepReduceWithSystemCheckpoint: cleaning all the pool might
-     * discard ExpressionHandles that are used by parent
-     * cloneAndDeepReduceWithSystemCheckpoint. */
-    reductionContext->context()->tidyDownstreamPoolFrom(treePoolCursor);
-    if (reductionContext->target() != ExpressionNode::ReductionTarget::SystemForApproximation) {
-      // System interruption, try again with another ReductionTarget
-      reductionContext->setTarget(ExpressionNode::ReductionTarget::SystemForApproximation);
+  {
+    char * treePoolCursor = TreePool::sharedPool()->cursor();
+    ExceptionCheckpoint ecp;
+    if (ExceptionRun(ecp)) {
       e = clone().deepReduce(*reductionContext);
     } else {
-      *reduceFailure = true;
-      e = clone();
+      /* We don't want to tidy all the Pool in the case we are in a nested
+       * cloneAndDeepReduceWithSystemCheckpoint: cleaning all the pool might
+       * discard ExpressionHandles that are used by parent
+       * cloneAndDeepReduceWithSystemCheckpoint. */
+      reductionContext->context()->tidyDownstreamPoolFrom(treePoolCursor);
+      if (reductionContext->target() != ExpressionNode::ReductionTarget::SystemForApproximation) {
+        // System interruption, try again with another ReductionTarget
+        reductionContext->setTarget(ExpressionNode::ReductionTarget::SystemForApproximation);
+        e = clone().deepReduce(*reductionContext);
+      } else {
+        *reduceFailure = true;
+      }
     }
   }
 #endif
+  if (*reduceFailure) {
+    // Cloning outside of ecp's scope in case it raises an exception
+    e = clone();
+  }
   assert(!e.isUninitialized());
   return e;
 }

@@ -23,6 +23,7 @@ poincare_src += $(addprefix poincare/src/,\
   left_square_bracket_layout.cpp \
   list_sequence_layout.cpp \
   matrix_layout.cpp \
+  ncr_layout.cpp \
   nth_root_layout.cpp \
   product_layout.cpp \
   right_parenthesis_layout.cpp \

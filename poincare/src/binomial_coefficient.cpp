@@ -1,6 +1,7 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/binomial_coefficient_layout.h>
 #include <poincare/approximation_helper.h>
+#include <poincare/ncr_layout.h>
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -22,7 +23,8 @@ Expression BinomialCoefficientNode::shallowReduce(ReductionContext reductionCont
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return BinomialCoefficientLayout::Builder(
+//  return BinomialCoefficientLayout::Builder(
+  return NCRLayout::Builder(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

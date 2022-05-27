@@ -53,6 +53,7 @@ public:
   bool isHalf() const { return signedNumerator().isOne() && denominator().isTwo(); }
   bool isMinusHalf() const { return signedNumerator().isMinusOne() && denominator().isTwo(); }
   bool isTen() const { return signedNumerator().isTen() && isInteger(); }
+  bool isGreaterThanOne() const { return denominator().isLowerThan(signedNumerator()); }
 
   static int NaturalOrder(const RationalNode * i, const RationalNode * j);
 private:
@@ -100,6 +101,7 @@ public:
   bool isHalf() const { return node()->isHalf(); }
   bool isMinusHalf() const { return node()->isMinusHalf(); }
   bool isTen() const { return node()->isTen(); }
+  bool isGreaterThanOne() const { return node()->isGreaterThanOne(); }
   bool numeratorOrDenominatorIsInfinity() const;
   bool isInteger() const { return node()->isInteger(); }
 

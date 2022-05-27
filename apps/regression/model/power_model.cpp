@@ -63,7 +63,7 @@ double PowerModel::partialDerivate(double * modelCoefficients, int derivateCoeff
   return x == 0.0 ? 0.0 : std::log(x) * a * std::pow(x, b);
 }
 
-void PowerModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
+void PowerModel::privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   /* Y1 = aX1^b => ln(Y1) = ln(a) + b*ln(X1)*/
   modelCoefficients[0] = std::exp(store->yIntercept(series, true));
   modelCoefficients[1] = store->slope(series, true);

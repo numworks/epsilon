@@ -5,7 +5,7 @@ using namespace Poincare;
 
 namespace Regression {
 
-void LinearModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
+void LinearModel::privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   modelCoefficients[0] = store->slope(series);
   modelCoefficients[1] = store->yIntercept(series);
 }

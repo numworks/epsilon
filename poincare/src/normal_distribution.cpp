@@ -37,13 +37,11 @@ T NormalDistribution::CumulativeDistributiveInverseForProbability(T probability,
 
 template<typename T>
 bool NormalDistribution::MuAndSigmaAreOK(T mu, T sigma) {
-  return !std::isnan(mu) && !std::isnan(sigma)
-    && !std::isinf(mu) && !std::isinf(sigma)
-    && sigma > static_cast<T>(0.0);
+  return Domain::Contains(mu, Domain::Type::R) && Domain::Contains(sigma, Domain::Type::RPlusStar);
 }
 
-bool NormalDistribution::ExpressionMuAndVarAreOK(bool * result, const Expression & mu, const Expression & var, Context * context) {
-  return Domain::ExpressionsAreIn(result, mu, Domain::Type::R, var, Domain::Type::RPlusStar, context);
+bool NormalDistribution::ExpressionMuAndSigmaAreOK(bool * result, const Expression & mu, const Expression & sigma, Context * context) {
+  return Domain::ExpressionsAreIn(result, mu, Domain::Type::R, sigma, Domain::Type::RPlusStar, context);
 }
 
 template<typename T>

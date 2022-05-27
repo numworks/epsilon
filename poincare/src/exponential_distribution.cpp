@@ -32,12 +32,11 @@ template <typename T> T ExponentialDistribution::CumulativeDistributiveInverseFo
 
 template<typename T>
 bool ExponentialDistribution::LambdaIsOK(T lambda) {
-  return !std::isnan(lambda) && !std::isinf(lambda)
-   && lambda >= static_cast<T>(0.0) && lambda <= static_cast<T>(7500.0);
+  return Domain::Contains(lambda, Domain::Type::RPlus);
 }
 
 bool ExponentialDistribution::ExpressionLambdaIsOK(bool * result, const Expression & lambda, Context * context) {
-  return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlusStar, context);
+  return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlus, context);
 }
 
 // Specialisations

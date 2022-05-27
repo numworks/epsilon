@@ -42,10 +42,7 @@ T FisherDistribution::CumulativeDistributiveInverseForProbability(T probability,
 
 template<typename T>
 bool FisherDistribution::D1AndD2AreOK(T d1, T d2) {
-  return !std::isnan(d1) && !std::isnan(d2)
-    && !std::isinf(d1) && !std::isinf(d2)
-    && d1 > static_cast<T>(0.0)
-    && d2 > static_cast<T>(0.0);
+  return Domain::Contains(d1, Domain::Type::RPlusStar) && Domain::Contains(d2, Domain::Type::RPlusStar);
 }
 
 bool FisherDistribution::ExpressionD1AndD2AreOK(bool * result, const Expression & d1, const Expression & d2, Context * context) {

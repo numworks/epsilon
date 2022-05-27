@@ -93,10 +93,7 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(T probabilit
 
 template<typename T>
 bool BinomialDistribution::ParametersAreOK(T n, T p) {
-  return !std::isnan(n) && !std::isnan(p)
-    && !std::isinf(n) && !std::isinf(p)
-    && (n == static_cast<int>(n)) && (n >= static_cast<T>(0.0))
-    && (p >= static_cast<T>(0.0)) && (p <= static_cast<T>(1.0));
+  return Domain::Contains(n, Domain::Type::N) && Domain::Contains(p, Domain::Type::UnitSegment);
 }
 
 bool BinomialDistribution::expressionParametersAreOK(bool * result, const Expression & n, const Expression & p, Context * context) {

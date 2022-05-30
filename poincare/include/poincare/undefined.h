@@ -22,7 +22,7 @@ public:
 
 
   // NumberNode
-  void setNegative(bool negative) override { }
+  void setNegative(bool negative) override {}
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {

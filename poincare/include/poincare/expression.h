@@ -94,7 +94,8 @@ class Expression : public TreeHandle {
   friend class ParameteredExpression;
   friend class ParameteredExpressionNode;
   friend class Parenthesis;
-  friend class Percent;
+  friend class PercentAddition;
+  friend class PercentSimple;
   friend class PermuteCoefficient;
   friend class Power;
   friend class PowerNode;

@@ -1,14 +1,16 @@
 #ifndef POINCARE_PERCENT_H
 #define POINCARE_PERCENT_H
 
-#include <poincare/n_ary_expression.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-class PercentNode final : public NAryExpressionNode  {
+template<int T>
+class PercentNode final : public ExpressionNode  {
 public:
   // TreeNode
   size_t size() const override { return sizeof(PercentNode); }
+  int numberOfChildren() const override { return T; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "Percent";
@@ -36,18 +38,33 @@ private:
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
     return templateApproximate<double>(approximationContext);
   }
-  template <typename T> Evaluation<T> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
+  template <typename U> Evaluation<U> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
 };
 
-class Percent final : public NAryExpression {
+class Percent : public Expression {
 public:
-  static Percent Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<Percent, PercentNode>(convert(children)); }
   static Expression ParseTarget(Expression & leftHandSide);
 
-  Percent(const PercentNode * n) : NAryExpression(n) {}
+  template <int T> Percent(const PercentNode<T> * n) : Expression(n) {}
+  Percent(const PercentNode<2> * n) : Expression(n) {}
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+};
+
+class PercentAddition final : public Percent {
+public:
+  static PercentAddition Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PercentAddition, PercentNode<2>>({child0, child1}); }
+
+  PercentAddition(const PercentNode<2> * n) : Percent(n) {}
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
+};
+
+class PercentSimple final : public Percent {
+public:
+  static PercentSimple Builder(Expression child) { return TreeHandle::FixedArityBuilder<PercentSimple, PercentNode<1>>({child}); }
+
+  PercentSimple(const PercentNode<1> * n) : Percent(n) {}
+  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
 };
 
 }

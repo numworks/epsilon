@@ -604,15 +604,21 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
   Expression newIndex = ReduceLogarithmLinearCombination(reductionContext, index, base);
   if (isLogarithmOfSameBase(newIndex)) {
-    /* if x == 0 or (complexFoart = real and x < 0), e^ln(x) = undef.
+    /* if x == 0, e^ln(x) = undef.
+     * if complexFormat = real and x < 0, e^ln(x) = unreal.
      * if x != 0 and (complexFormat != real or x > 0), e^ln(x) = x.
      * if x ?= 0 or (complexFormat = real and x ?> 0), e^ln(x) depends on ln(x)
      */
     Expression newSelf = newIndex.childAtIndex(0);
     ExpressionNode::NullStatus nullStatus = newSelf.nullStatus(context);
     ExpressionNode::Sign sign = newSelf.sign(context);
-    if (nullStatus == ExpressionNode::NullStatus::Null || (reductionContext.complexFormat() == Preferences::ComplexFormat::Real && sign == ExpressionNode::Sign::Negative)) {
+    if (nullStatus == ExpressionNode::NullStatus::Null) {
       return replaceWithUndefinedInPlace();
+    }
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real && sign == ExpressionNode::Sign::Negative) {
+      Expression result = Nonreal::Builder();
+      replaceWithInPlace(result);
+      return result;
     }
     if (nullStatus == ExpressionNode::NullStatus::NonNull && (reductionContext.complexFormat() != Preferences::ComplexFormat::Real || sign == ExpressionNode::Sign::Positive)) {
       replaceWithInPlace(newSelf);

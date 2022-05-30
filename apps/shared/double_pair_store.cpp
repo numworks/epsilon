@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <ion.h>
+#include <ion/src/shared/crc32_eat_byte.h>
 #include <algorithm>
 
 using namespace Poincare;
@@ -331,38 +332,24 @@ uint32_t DoublePairStore::storeChecksum() const {
 }
 
 uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
+  /* Since the pool is noisy, we cannot just compute the CRC32 of the expressionNode
+   * in the pool, and we have to build it from the values of the columns. */
+  uint32_t crc = 0;
   if (numberOfPairsOfSeries(series) == 0) {
-    return 0;
+    return crc;
   }
-  /* Columns of a same series should be consecutive in pool since they are
-   * built consecutively in init(). So to compute the CRC32 of a series, we
-   * just need to compute the CRC32 of the bytes at the adress of the first
-   * column, with a length of the two column combined.
-   * WARNING: The pool is not packed so it might be noisy. So if your object
-   * changed, this changes, but if this changes, it does not mean
-   * automatically that your object change.
-   * This is not a problem for now since we use the CRC32 to know if we have
-   * to recompute the graph, the calculations, etc, not to ensure an object
-   * equality.
-   * */
-  // Assert that the two columns are consecutive in pool.
-   assert((char *)(m_dataLists[series][0].addressInPool()) + m_dataLists[series][0].size() / sizeof(char) == (char *)m_dataLists[series][1].addressInPool());
-  /* The size of each column is needed to compute its CRC32. Since the method
-   * size() has a linear complexity with the number of children of a TreeNode,
-   * we do a workaround to compute the size in constant time.
-   * This relies on the fact that the lists contain only FloatNodes */
-  size_t dataLengthOfSeries = 0;
-  for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
-    dataLengthOfSeries += m_dataLists[series][i].sizeOfNode() + (lengthOfColumn(series, i) > 0 ? m_dataLists[series][i].childAtIndex(0).sizeOfNode() * lengthOfColumn(series, i) : 0);
+  constexpr int k_bufferLength = sizeof(double) / sizeof(uint8_t);
+  uint8_t buffer[k_bufferLength];
+  for (int j = 0; j < numberOfPairsOfSeries(series); j++) {
+    for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
+      double value = get(series, i, j);
+      memcpy(buffer, &value, sizeof(double));
+      for (int index = 0; index < k_bufferLength; index++) {
+        crc = Ion::crc32EatByte(crc, buffer[index]);
+      }
+    }
   }
-  /* Assert that the computed size is the real size.
-   * It can be false if not all elements are floatNode for example.
-   * */
-  assert(dataLengthOfSeries == m_dataLists[series][0].size() + m_dataLists[series][1].size());
-  // Assert that dataLengthInBytes is a multiple of 4
-  assert((dataLengthOfSeries & 0x3) == 0);
-  return Ion::crc32Word((uint32_t *)(m_dataLists[series][0].addressInPool()), dataLengthOfSeries / sizeof(uint32_t));
-
+  return crc;
 }
 
 double DoublePairStore::defaultValue(int series, int i, int j) const {

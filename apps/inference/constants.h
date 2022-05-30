@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_CONSTANTS_H
-#define PROBABILITY_CONSTANTS_H
+#ifndef INFERENCE_CONSTANTS_H
+#define INFERENCE_CONSTANTS_H
 
 #include <poincare/print_float.h>
 
@@ -19,4 +19,4 @@ constexpr int k_largeFloatNumberOfChars = k_largeBufferSize - 1;
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_CONSTANTS_H */
+#endif /* INFERENCE_CONSTANTS_H */

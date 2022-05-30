@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_MODELS_STATISTIC_SLOPE_T_STATISTIC_H
-#define PROBABILITY_MODELS_STATISTIC_SLOPE_T_STATISTIC_H
+#ifndef INFERENCE_MODELS_STATISTIC_SLOPE_T_STATISTIC_H
+#define INFERENCE_MODELS_STATISTIC_SLOPE_T_STATISTIC_H
 
 #include <apps/shared/linear_regression_store.h>
 #include "interfaces/significance_tests.h"
@@ -36,4 +36,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_MODELS_STATISTIC_ONE_MEAN_T_TEST_H */
+#endif /* INFERENCE_MODELS_STATISTIC_ONE_MEAN_T_TEST_H */

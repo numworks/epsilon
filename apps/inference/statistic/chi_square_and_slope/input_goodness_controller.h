@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H
-#define PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H
+#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_GOODNESS_CONTROLLER_H
+#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_GOODNESS_CONTROLLER_H
 
 #include "inference/statistic/chi_square_and_slope/categorical_controller.h"
 #include "inference/statistic/chi_square_and_slope/goodness_table_cell.h"
@@ -37,4 +37,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_CONTROLLERS_INPUT_GOODNESS_CONTROLLER_H */
+#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_GOODNESS_CONTROLLER_H */

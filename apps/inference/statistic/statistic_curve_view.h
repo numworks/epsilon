@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H
-#define PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H
+#ifndef INFERENCE_STATISTIC_STATISTIC_CURVE_VIEW_H
+#define INFERENCE_STATISTIC_STATISTIC_CURVE_VIEW_H
 
 #include <apps/shared/curve_view.h>
 #include <escher/palette.h>
@@ -30,4 +30,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H */
+#endif /* INFERENCE_STATISTIC_STATISTIC_CURVE_VIEW_H */

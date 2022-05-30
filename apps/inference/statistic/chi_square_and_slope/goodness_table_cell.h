@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GUI_GOODNESS_TABLE_CELL_H
-#define PROBABILITY_GUI_GOODNESS_TABLE_CELL_H
+#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_GOODNESS_TABLE_CELL_H
+#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_GOODNESS_TABLE_CELL_H
 
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_message_text_cell.h>
@@ -39,4 +39,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_GUI_CATEGORICAL_TABLE_CELL_H */
+#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_GOODNESS_TABLE_CELL_H */

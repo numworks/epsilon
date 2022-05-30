@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_CONTROLLERS_INPUT_CONTROLLER_H
-#define PROBABILITY_CONTROLLERS_INPUT_CONTROLLER_H
+#ifndef INFERENCE_STATISTIC_INPUT_CONTROLLER_H
+#define INFERENCE_STATISTIC_INPUT_CONTROLLER_H
 
 #include <escher/highlight_cell.h>
 #include <escher/input_event_handler_delegate.h>
@@ -64,4 +64,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_CONTROLLERS_INPUT_CONTROLLER_H */
+#endif /* INFERENCE_STATISTIC_INPUT_CONTROLLER_H */

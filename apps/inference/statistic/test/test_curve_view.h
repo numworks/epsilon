@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GUI_TEST_CURVE_VIEW_H
-#define PROBABILITY_GUI_TEST_CURVE_VIEW_H
+#ifndef INFERENCE_INFERENCE_STATISTIC_TEST_TEST_CURVE_VIEW_H
+#define INFERENCE_INFERENCE_STATISTIC_TEST_TEST_CURVE_VIEW_H
 
 #include "inference/models/statistic/test.h"
 #include "inference/statistic/statistic_curve_view.h"
@@ -28,4 +28,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H */
+#endif /* INFERENCE_INFERENCE_STATISTIC_TEST_TEST_CURVE_VIEW_H */

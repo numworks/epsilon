@@ -90,7 +90,6 @@ private:
   double m_regressionCoefficients[k_numberOfSeries][Model::k_maxNumberOfCoefficients];
   double m_determinationCoefficient[k_numberOfSeries];
   bool m_regressionChanged[k_numberOfSeries];
-  Poincare::Preferences::AngleUnit m_angleUnit;
 };
 
 typedef double (Store::*ArgCalculPointer)(int, int, bool) const;

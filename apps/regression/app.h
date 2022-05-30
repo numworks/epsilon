@@ -31,11 +31,13 @@ public:
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
+    Model::Type * regressionTypes() { return m_regressionTypes; }
   private:
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
     uint32_t m_rangeVersion;
     int m_selectedSeriesIndex;
+    Model::Type m_regressionTypes[Store::k_numberOfSeries];
   };
   static App * app() {
     return static_cast<App *>(Escher::Container::activeApp());

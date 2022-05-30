@@ -26,7 +26,7 @@ public:
   constexpr static const char * const * k_columnNames = DoublePairStore::k_regressionColumNames;
   static const char * SeriesTitle(int series);
 
-  Store(Shared::GlobalContext * context);
+  Store(Shared::GlobalContext * context, Model::Type * regressionTypes);
 
   void reset();
 
@@ -73,7 +73,7 @@ private:
   void resetMemoization();
   Model * regressionModel(int index);
   uint32_t m_seriesChecksum[k_numberOfSeries];
-  Model::Type m_regressionTypes[k_numberOfSeries];
+  Model::Type * m_regressionTypes; // This is a table of size k_numberOfSeries.
   NoneModel m_noneModel;
   LinearModel m_linearModel;
   ProportionalModel m_proportionalModel;

@@ -35,6 +35,7 @@ void App::Snapshot::reset() {
   m_storeVersion = 0;
   m_graphViewModel.selectGraphView(GraphViewModel::GraphView::Histogram);
   setActiveTab(0);
+  m_userPreferences = UserPreferences();
 }
 
 static constexpr App::Descriptor sDescriptor;

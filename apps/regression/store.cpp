@@ -26,14 +26,14 @@ const char * Store::SeriesTitle(int series) {
   }
 }
 
-Store::Store(GlobalContext * context) :
+Store::Store(Shared::GlobalContext * context, Model::Type * regressionTypes) :
   InteractiveCurveViewRange(),
   LinearRegressionStore(context),
+  m_regressionTypes(regressionTypes),
   m_exponentialAbxModel(true),
   m_angleUnit(Poincare::Preferences::AngleUnit::Degree)
 {
   initListsInPool();
-  resetMemoization();
 }
 
 void Store::reset() {
@@ -211,8 +211,8 @@ double Store::determinationCoefficientForSeries(int series, Poincare::Context * 
 
 void Store::resetMemoization() {
   static_assert(((int)Model::Type::None) == 0, "None type should be default at 0");
-  memset(m_seriesChecksum, 0, sizeof(m_seriesChecksum));
-  memset(m_regressionTypes, 0, sizeof(m_regressionTypes));
+  memset(m_seriesChecksum, 0, sizeof(uint32_t) * Store::k_numberOfSeries);
+  memset(m_regressionTypes, 0, sizeof(Model::Type) * Store::k_numberOfSeries);
   memset(m_regressionChanged, 0, sizeof(m_regressionChanged));
 }
 

@@ -41,7 +41,6 @@ double Chi2Test::computeChi2() {
 }
 
 bool Chi2Test::authorizedParameterAtIndex(double p, int i) const {
-
   if (i == indexOfThreshold() && !SignificanceTest::ValidThreshold(p)) {
     return false;
   }

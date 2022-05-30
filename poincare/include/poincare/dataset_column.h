@@ -21,7 +21,6 @@ private:
   int m_length;
 };
 
-
 }
 
 #endif

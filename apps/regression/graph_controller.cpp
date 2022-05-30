@@ -125,7 +125,7 @@ void GraphController::SeriesSelectionController::willDisplayCellForIndex(Highlig
 }
 
 bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  int length = Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%s=", I18n::translate(I18n::Message::RegressionEquationY));
+  int length = Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%s=", GlobalPreferences::sharedGlobalPreferences()->yPredictedSymbol());
   if (length >= static_cast<int>(bufferSize)) {
     return false;
   }
@@ -175,7 +175,7 @@ void GraphController::reloadBannerView() {
   double y = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 1) : m_cursor->y();
   Poincare::Print::customPrintf(
     buffer, k_bannerViewTextBufferSize, "%s=%*.*ed",
-    (displayMean ? "y\xCC\x85" : (displayEquation ? I18n::translate(I18n::Message::RegressionEquationY) : "y")),
+    (displayMean ? "y\xCC\x85" : (displayEquation ? GlobalPreferences::sharedGlobalPreferences()->yPredictedSymbol() : "y")),
     y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 

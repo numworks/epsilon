@@ -100,7 +100,7 @@ double Store::endOfBarAtIndex(int series, int index) const {
 }
 
 int Store::numberOfBars(int series) const {
-  double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue(series)- m_firstDrawnBarAbscissa)/m_barWidth);
+  double firstBarAbscissa = startOfBarAtIndex(series, 0);
   return static_cast<int>(std::ceil((maxValue(series) - firstBarAbscissa)/m_barWidth)+1);
 }
 

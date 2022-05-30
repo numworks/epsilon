@@ -287,7 +287,9 @@ public:
   Expression cloneAndDeepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const;
   // TODO: reduceAndRemoveUnit should be private but we need to make poincare/text/helper.h a class to be able to friend it
   Expression reduceAndRemoveUnit(ExpressionNode::ReductionContext context, Expression * Unit);
-  // WARNING: this must be called only on expressions that have a known sign.
+  /* WARNING: this must be called only on expressions that:
+   *  - are reduced.
+   *  - have a known sign. (sign() != Sign::Unknown) */
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
 
   /* 'ExpressionWithoutSymbols' replaces symbols in place and returns an

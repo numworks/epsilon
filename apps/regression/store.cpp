@@ -32,7 +32,7 @@ Store::Store(Shared::GlobalContext * context, Model::Type * regressionTypes) :
   m_regressionTypes(regressionTypes),
   m_exponentialAbxModel(true)
 {
-  initListsInPool();
+  initListsFromStorage();
 }
 
 void Store::reset() {

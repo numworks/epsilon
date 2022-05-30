@@ -18,7 +18,7 @@ void MultipleDataView::reload() {
   layoutSubviews();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {
-        curveViewForSeries(i)->reload();
+      curveViewForSeries(i)->reload();
     }
   }
 }

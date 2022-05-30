@@ -56,43 +56,38 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
   Evaluation<T> bInput = childAtIndex(3)->approximate(T(), approximationContext);
   T a = aInput.toScalar();
   T b = bInput.toScalar();
-  m_a = a;
-  m_b = b;
   if (std::isnan(a) || std::isnan(b)) {
     return Complex<T>::RealUndefined();
   }
-  ExpressionNode::ReductionContext context(approximationContext.context(), approximationContext.complexFormat(), Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
   bool fIsNanInA = std::isnan(firstChildScalarValueForArgument(a, approximationContext));
   bool fIsNanInB = std::isnan(firstChildScalarValueForArgument(b, approximationContext));
-  /* Rewrite the integrand to be able to compute it directly at abscissa a + x
-     to avoid precision loss when we are really close from a */
-  if (fIsNanInA && a != 0) {
-    Expression formula = Expression(childAtIndex(0)).clone();
-    Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
-    Expression bound = Expression(childAtIndex(2)).clone();
-    Expression expr = Addition::Builder(bound, symbol);
-    formula.replaceSymbolWithExpression(symbol, expr);
-    m_expr_a = formula.deepReduce(context);
-  }
-  // Same near b - x
-  if (fIsNanInB && b != 0) {
-    Expression formula = Expression(childAtIndex(0)).clone();
-    Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
-    Expression bound = Expression(childAtIndex(3)).clone();
-    Expression expr = Addition::Builder(bound, Multiplication::Builder(Rational::Builder(-1), symbol));
-    formula.replaceSymbolWithExpression(symbol, expr);
-    m_expr_b = formula.deepReduce(context);
-  }
-
   // The integrand has a singularity on a bound of the interval, use tanh-sinh quadrature
   if (fIsNanInA || fIsNanInB) {
+    /* When we have a singularity at a bound, we want to evaluate the integrand
+     * really close to the bound since the area there is non-negligible.  If the
+     * bound is non-null, say 1/sqrt(1-x) near 1, the closest point from 1 where
+     * the integrand can be evaluated is 1-1e-15. However by using reduction to
+     * simplify the expression near one 1/sqrt(1-(1-dx)) = 1/sqrt(dx) we can
+     * evaluate the integrand really close to 1 (about 1-1e-300). */
+    AlternativeIntegrand alternativeIntegrand;
+    alternativeIntegrand.a = a;
+    alternativeIntegrand.b = b;
+    /* We need SystemForAnalysis to remove the constant part by expanding
+     * polynomials introduced by the replacement, e.g. 1-(1-x)^2 -> 2x-x^2 */
+    ExpressionNode::ReductionContext reductionContext(approximationContext.context(), approximationContext.complexFormat(), approximationContext.angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    /* Rewrite the integrand to be able to compute it directly at abscissa a + x */
+    if (fIsNanInA && a != 0) {
+      alternativeIntegrand.integrandNearA = rewriteIntegrandNear(childAtIndex(2), reductionContext);
+    }
+    // Same near b - x
+    if (fIsNanInB && b != 0) {
+      alternativeIntegrand.integrandNearB = rewriteIntegrandNear(childAtIndex(3), reductionContext);
+    }
     /* We are using 4 levels of refinement which means ≈ 64 integrand evaluations
      * = 2 (R- and R+) * 2^4 (ticks/unit) * 4 (typical decay on the examples)
      * It could be increased but precision is likely lost somewhere else in
      * hard examples. */
-    DetailedResult<T> detailedResult = tanhSinhQuadrature<T>(4, approximationContext);
-    m_expr_a = Expression();
-    m_expr_b = Expression();
+    DetailedResult<T> detailedResult = tanhSinhQuadrature<T>(4, alternativeIntegrand, approximationContext);
     // Arbitrary value to have the best choice of quadrature on the examples
     constexpr T insufficientPrecision = 0.001;
     if (!std::isnan(detailedResult.integral) && detailedResult.absoluteError < insufficientPrecision) {
@@ -169,20 +164,27 @@ T IntegralNode::integrand(T x, Substitution<T> substitution, ApproximationContex
   }
 }
 
+Expression IntegralNode::rewriteIntegrandNear(Expression bound, ExpressionNode::ReductionContext reductionContext) const {
+  Expression integrand = Expression(childAtIndex(0)).clone();
+  Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
+  integrand.replaceSymbolWithExpression(symbol, Addition::Builder(bound.clone(), symbol));
+  return integrand.deepReduce(reductionContext);
+}
+
 template<typename T>
-T IntegralNode::integrandNearBound(T x, T xc, ApproximationContext approximationContext) const {
-  T scale = (m_b - m_a) / 2.0;
+T IntegralNode::integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand, ApproximationContext approximationContext) const {
+  T scale = (alternativeIntegrand.b - alternativeIntegrand.a) / 2.0;
   T arg = xc * scale;
   if (x < 0) {
-    if (!m_expr_a.isUninitialized()) {
-      return approximateExpressionWithArgument(m_expr_a.node(), arg, approximationContext).toScalar() * scale;
+    if (!alternativeIntegrand.integrandNearA.isUninitialized()) {
+      return approximateExpressionWithArgument(alternativeIntegrand.integrandNearA.node(), arg, approximationContext).toScalar() * scale;
     }
-    arg = arg + m_a;
+    arg = arg + alternativeIntegrand.a;
   } else {
-    if (!m_expr_b.isUninitialized()) {
-      return approximateExpressionWithArgument(m_expr_b.node(), arg, approximationContext).toScalar() * scale;
+    if (!alternativeIntegrand.integrandNearB.isUninitialized()) {
+      return approximateExpressionWithArgument(alternativeIntegrand.integrandNearB.node(), -arg, approximationContext).toScalar() * scale;
     }
-    arg = m_b - arg;
+    arg = alternativeIntegrand.b - arg;
   }
   return firstChildScalarValueForArgument(arg, approximationContext) * scale;
 }
@@ -190,9 +192,9 @@ T IntegralNode::integrandNearBound(T x, T xc, ApproximationContext approximation
 /* Tanh-Sinh quadrature
  * cf https://www.davidhbailey.com/dhbpapers/dhb-tanh-sinh.pdf */
 template<typename T>
-IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, ApproximationContext approximationContext) const {
+IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, AlternativeIntegrand alternativeIntegrand, ApproximationContext approximationContext) const {
   T h = 2.0;
-  T result = M_PI_2 * integrandNearBound(0.0, 1.0, approximationContext); // j=0
+  T result = M_PI_2 * integrandNearBound(0.0, 1.0, alternativeIntegrand, approximationContext); // j=0
   int j = 1;
   T sn2, sn1 = 0;
   T maxWjFj = 0;
@@ -210,7 +212,7 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, Appr
       T abscissa = std::tanh(sinh);
       T distanceToBound = 1.0 / (std::exp(sinh) * std::cosh(sinh));
       if (leftOk) {
-        T leftValue = integrandNearBound(-abscissa, distanceToBound, approximationContext);
+        T leftValue = integrandNearBound(-abscissa, distanceToBound, alternativeIntegrand, approximationContext);
         if (std::isnan(leftValue)) {
           leftOk = false;
         } else {
@@ -222,7 +224,7 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, Appr
         if (std::abs(weight * leftValue) < Float<T>::EpsilonLax()) leftOk = false;
       }
       if (rightOk) {
-        T rightValue = integrandNearBound(abscissa, distanceToBound, approximationContext);
+        T rightValue = integrandNearBound(abscissa, distanceToBound, alternativeIntegrand, approximationContext);
         if (std::isnan(rightValue)) {
           rightOk = false;
         } else {

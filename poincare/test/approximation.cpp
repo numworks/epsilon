@@ -594,10 +594,11 @@ QUIZ_CASE(poincare_approximation_integral) {
   // double integration
   assert_expression_approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");
   assert_expression_approximates_to<double>("int(int(x×x,x,0,x),x,0,4)", "21.333333333333");
-  assert_expression_approximates_to<double>("int(int(e^(-x*t)/t^2,t,1,inf),x,0,1)", "0.3903080328", Radian, MetricUnitFormat, Cartesian, 10);
+  assert_expression_approximates_to<double>("int(sum(sin(x)^k,k,0,100),x,0,π)", "48.3828", Radian, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<double>("int(int(1/(1-x)^k,x,0,1),k,0.5,0.25)", "-0.405465", Radian, MetricUnitFormat, Cartesian, 6);
   // this integral on R2 takes about one minute to compute on N110
-  assert_expression_approximates_to<double>("int(int(e^(-(x^2+y^2)),x,-inf,inf),y,-inf,inf)", "3.141592654", Radian, MetricUnitFormat, Cartesian, 10);
-  assert_expression_approximates_to<double>("int(sum(sin(x)^k,k,0,100),x,0,π)", "48.3828", Radian, MetricUnitFormat, Cartesian, 6); // poor precision in wolfram
+  // assert_expression_approximates_to<double>("int(int(e^(-(x^2+y^2)),x,-inf,inf),y,-inf,inf)", "3.141592654", Radian, MetricUnitFormat, Cartesian, 10);
+  // assert_expression_approximates_to<double>("int(int(e^(-x*t)/t^2,t,1,inf),x,0,1)", "0.3903080328", Radian, MetricUnitFormat, Cartesian, 10);
 
   // oscillator
   assert_expression_approximates_to<double>("int((sin(x)/x)^2,x,0,inf)", "1.5708", Radian, MetricUnitFormat, Cartesian, 5); // poor precision

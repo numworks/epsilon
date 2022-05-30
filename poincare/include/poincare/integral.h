@@ -52,13 +52,17 @@ private:
     T originA;
     T originB;
   };
-  mutable double m_a;
-  mutable double m_b;
-  mutable Expression m_expr_a;
-  mutable Expression m_expr_b;
+  class AlternativeIntegrand {
+  public:
+    double a;
+    double b;
+    Expression integrandNearA;
+    Expression integrandNearB;
+  };
+  Expression rewriteIntegrandNear(Expression bound, ExpressionNode::ReductionContext reductionContext) const;
   template<typename T> T integrand(T x, Substitution<T> substitution, ApproximationContext approximationContext) const;
-  template<typename T> T integrandNearBound(T x, T xc, ApproximationContext approximationContext) const;
-  template<typename T> DetailedResult<T> tanhSinhQuadrature(int level, ApproximationContext approximationContext) const;
+  template<typename T> T integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand, ApproximationContext approximationContext) const;
+  template<typename T> DetailedResult<T> tanhSinhQuadrature(int level, AlternativeIntegrand alternativeIntegrand, ApproximationContext approximationContext) const;
   template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution, ApproximationContext approximationContext) const;
   template<typename T> DetailedResult<T> adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Substitution<T> substitution, ApproximationContext approximationContext) const;
 #endif

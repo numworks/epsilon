@@ -23,7 +23,8 @@ const Image * App::Descriptor::icon() const {
 App::Snapshot::Snapshot() :
   m_graphSelectedDotIndex(-1),
   m_rangeVersion(0),
-  m_selectedSeriesIndex(-1)
+  m_selectedSeriesIndex(-1),
+  m_regressionTypes{Model::Type::None,  Model::Type::None,  Model::Type::None}
 {
   // Register X1, X2, X3, Y1, Y2, Y3 as reserved names to the sharedStorage.
   Ion::Storage::FileSystem::sharedFileSystem()->recordNameVerifier()->registerArrayOfReservedNames(Store::k_columnNames, Ion::Storage::lisExtension, Shared::DoublePairStore::k_numberOfSeries, sizeof(Store::k_columnNames) / sizeof(char *));
@@ -36,6 +37,7 @@ App * App::Snapshot::unpack(Container * container) {
 void App::Snapshot::reset() {
   m_rangeVersion = 0;
   setActiveTab(0);
+  memset(m_regressionTypes, 0, sizeof(m_regressionTypes));
 }
 
 static constexpr App::Descriptor sDescriptor;
@@ -46,7 +48,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
-  m_store(AppsContainer::sharedAppsContainer()->globalContext()),
+  m_store(AppsContainer::sharedAppsContainer()->globalContext(), snapshot->regressionTypes()),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),

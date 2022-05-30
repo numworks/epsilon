@@ -10,6 +10,7 @@
 #include <apps/shared/cursor_view.h>
 #include "residual_plot_curve_view.h"
 #include "xy_banner_view.h"
+#include "residual_plot_range.h"
 
 namespace Regression {
 
@@ -33,8 +34,6 @@ public:
 
   TELEMETRY_ID("ResidualPlotGraph");
 private:
-  static constexpr double k_relativeMargin = 0.1;
-
   // Move cursor to selected and updates the banner
   void updateCursor();
   bool moveHorizontally(int direction);
@@ -42,7 +41,7 @@ private:
   Store * m_store;
   Shared::CurveViewCursor m_cursor;
   Shared::CursorView m_cursorView;
-  Shared::MemoizedCurveViewRange m_range;
+  ResidualPlotRange m_range;
   XYBannerView m_bannerView;
   ResidualPlotCurveView m_curveView;
   int m_selectedDotIndex;

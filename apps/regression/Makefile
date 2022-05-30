@@ -34,6 +34,7 @@ app_regression_src = $(addprefix apps/regression/,\
   regression_controller.cpp \
   residual_plot_controller.cpp \
   residual_plot_curve_view.cpp \
+  residual_plot_range.cpp \
   store_controller.cpp \
   store_parameter_controller.cpp \
 )

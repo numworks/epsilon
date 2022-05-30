@@ -556,7 +556,7 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
     double x = get(series, 0, valueIndexAtSortedIndex(series, j));
     (x <= value ? cumulatedOccurrences : otherOccurrences) += get(series, 1, valueIndexAtSortedIndex(series, j));
   }
-  assert(cumulatedOccurrences + otherOccurrences == sumOfOccurrences(series));
+  assert(std::abs(cumulatedOccurrences + otherOccurrences - sumOfOccurrences(series)) <= FLT_EPSILON);
   return 100.0 * cumulatedOccurrences / (cumulatedOccurrences + otherOccurrences);
 }
 

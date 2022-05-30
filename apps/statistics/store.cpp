@@ -23,7 +23,7 @@ Store::Store(GlobalContext * context, UserPreferences * userPreferences) :
   m_memoizedMaxNumberOfModes(0),
   m_graphViewInvalidated(true)
 {
-  initListsInPool();
+  initListsFromStorage();
   for (int s = 0; s < k_numberOfSeries; s++) {
     m_datasets[s] = Poincare::StatisticsDataset(&m_dataLists[s][0], &m_dataLists[s][1]);
   }

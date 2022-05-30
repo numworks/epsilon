@@ -63,7 +63,6 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_regressionController(nullptr, &m_store),
   m_inputViewController(&m_modalViewController, &m_tabViewController, &m_storeController, &m_storeController, &m_storeController)
 {
-  m_store.initListsFromStorage();
 }
 
 

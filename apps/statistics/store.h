@@ -6,6 +6,7 @@
 #include <poincare/statistics_dataset.h>
 #include <stddef.h>
 #include <string.h>
+#include "user_preferences.h"
 
 namespace Statistics {
 
@@ -14,14 +15,14 @@ friend class BoxRange;
 public:
   constexpr static const char * const * k_columnNames = DoublePairStore::k_statisticsColumNames;
 
-  Store(Shared::GlobalContext * context);
+  Store(Shared::GlobalContext * context, UserPreferences * userPreferences);
 
   void invalidateSortedIndexes();
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
   int validSeriesIndex(int series, ValidSeries = &DefaultValidSeries) const;
-  bool displayCumulatedFrequenciesForSeries(int series) const { return m_displayCumulatedFrequencies[series]; }
-  void setDisplayCumulatedFrequenciesForSeries(int series, bool state) { m_displayCumulatedFrequencies[series] = state; }
+  bool displayCumulatedFrequenciesForSeries(int series) const { return m_userPreferences->displayCumulatedFrequencies(series); }
+  void setDisplayCumulatedFrequenciesForSeries(int series, bool state) { m_userPreferences->setDisplayCumulatedFrequencies(series, state); }
   int seriesAtColumn(int column) const override { return computeRelativeColumnAndSeries(&column); }
   int relativeColumnIndex(int columnIndex) const override;
 
@@ -33,10 +34,10 @@ public:
   }
 
   // Histogram bars
-  double barWidth() const { return m_barWidth; }
+  double barWidth() const { return m_userPreferences->barWidth(); }
   void setBarWidth(double barWidth);
-  double firstDrawnBarAbscissa() const { return m_firstDrawnBarAbscissa; }
-  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa) { m_firstDrawnBarAbscissa = firstDrawnBarAbscissa;}
+  double firstDrawnBarAbscissa() const { return m_userPreferences->firstDrawnBarAbscissa(); }
+  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa) { m_userPreferences->setFirstDrawnBarAbscissa(firstDrawnBarAbscissa);}
   double heightOfBarAtIndex(int series, int index) const;
   double maxHeightOfBar(int series) const;
   double heightOfBarAtValue(int series, double value) const;
@@ -44,8 +45,8 @@ public:
   double endOfBarAtIndex(int series, int index) const;
   int numberOfBars(int series) const;
   // Box plot
-  bool displayOutliers() const { return m_displayOutliers; }
-  void setDisplayOutliers(bool displayOutliers) { m_displayOutliers = displayOutliers; }
+  bool displayOutliers() const { return m_userPreferences->displayOutliers(); }
+  void setDisplayOutliers(bool displayOutliers) { m_userPreferences->setDisplayOutliers(displayOutliers); }
   I18n::Message boxPlotCalculationMessageAtIndex(int series, int index) const;
   double boxPlotCalculationAtIndex(int series, int index) const;
   bool boxPlotCalculationIsOutlier(int series, int index) const;
@@ -153,11 +154,7 @@ private:
   uint8_t valueIndexAtSortedIndex(int series, int i) const;
   bool frequenciesAreValid(int series) const;
 
-  // Cumulated frequencies column display
-  bool m_displayCumulatedFrequencies[k_numberOfSeries];
-  // Histogram bars
-  double m_barWidth;
-  double m_firstDrawnBarAbscissa;
+  UserPreferences * m_userPreferences;
   // Sorted value indexes are memoized to save computation
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
   /* The dataset memoizes the sorted indexes */
@@ -166,7 +163,6 @@ private:
    * it in numberOfRows(), which is used a lot. */
   mutable int m_memoizedMaxNumberOfModes;
   bool m_graphViewInvalidated;
-  bool m_displayOutliers;
 };
 
 }

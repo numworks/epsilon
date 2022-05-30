@@ -62,6 +62,17 @@ void HistogramController::highlightSelection() {
   }
 }
 
+static bool fillBufferWithIntervalFormula(char * buffer, int bufferSize, double lowerBound, double upperBound, Preferences::PrintFloatMode displayMode, int precision) {
+  return bufferSize > Poincare::Print::safeCustomPrintf(
+    buffer,
+    bufferSize,
+    "%s%s[%*.*ed;%*.*ed[",
+    I18n::translate(I18n::Message::Interval),
+    I18n::translate(I18n::Message::ColonConvention),
+    lowerBound, displayMode, precision,
+    upperBound, displayMode, precision);
+}
+
 bool HistogramController::reloadBannerView() {
   if (m_selectedSeries < 0) {
     return false;
@@ -81,7 +92,6 @@ bool HistogramController::reloadBannerView() {
   // Display interval
   double lowerBound = m_store->startOfBarAtIndex(m_selectedSeries, m_selectedIndex);
   double upperBound = m_store->endOfBarAtIndex(m_selectedSeries, m_selectedIndex);
-  int intervalLength = 0;
   /* In a worst case scenario, the bounds of the interval can be displayed
    * with 5 significant digits:
    * "Intervalle : [-1.2345ᴇ-123;-1.2345ᴇ-123[\0" is 45 chars, compared to
@@ -89,19 +99,11 @@ bool HistogramController::reloadBannerView() {
    * We add 1 to account for the fact that both calls to sizeof count the null
    * character. */
   constexpr int intervalDefaultPrecision = (k_bufferSize - sizeof("Intervalle : [;[")) / 2 - sizeof("-.ᴇ-123") + 1;
-  int intervalPrecision = precision;
-  do {
-    intervalLength = Poincare::Print::safeCustomPrintf(
-      buffer,
-      k_bufferSize,
-      "%s%s[%*.*ed;%*.*ed[",
-      I18n::translate(I18n::Message::Interval),
-      I18n::translate(I18n::Message::ColonConvention),
-      lowerBound, displayMode, intervalPrecision,
-      upperBound, displayMode, intervalPrecision);
-    assert(intervalLength < k_bufferSize || intervalPrecision == precision);
-    intervalPrecision = intervalDefaultPrecision;
-  } while (intervalLength >= k_bufferSize);
+  if (!fillBufferWithIntervalFormula(buffer, k_bufferSize, lowerBound, upperBound, displayMode, precision)) {
+    bool intervalFitsInBuffer = fillBufferWithIntervalFormula(buffer, k_bufferSize, lowerBound, upperBound, displayMode, intervalDefaultPrecision);
+    assert(intervalFitsInBuffer);
+    (void)intervalFitsInBuffer; // Silence warning about unused variable
+  }
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Display frequency

@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GUI_INTERVAL_CURVE_VIEW_H
-#define PROBABILITY_GUI_INTERVAL_CURVE_VIEW_H
+#ifndef INFERENCE_STATISTIC_INTERVAL_INTERVAL_CURVE_VIEW_H
+#define INFERENCE_STATISTIC_INTERVAL_INTERVAL_CURVE_VIEW_H
 
 #include "inference/models/statistic/interval.h"
 #include "inference/statistic/statistic_curve_view.h"
@@ -26,4 +26,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_GUI_STATISTIC_CURVE_VIEW_H */
+#endif /* INFERENCE_STATISTIC_INTERVAL_INTERVAL_CURVE_VIEW_H */

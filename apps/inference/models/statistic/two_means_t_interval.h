@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_MODELS_STATISTIC_TWO_MEANS_T_INTERVAl_H
-#define PROBABILITY_MODELS_STATISTIC_TWO_MEANS_T_INTERVAl_H
+#ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_T_INTERVAl_H
+#define INFERENCE_MODELS_STATISTIC_TWO_MEANS_T_INTERVAl_H
 
 #include "interfaces/distributions.h"
 #include "interfaces/significance_tests.h"
@@ -51,4 +51,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_MODELS_STATISTIC_TWO_MEANS_T_INTERVAl_H */
+#endif /* INFERENCE_MODELS_STATISTIC_TWO_MEANS_T_INTERVAl_H */

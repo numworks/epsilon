@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GUI_DISTRIBUTION_CELL_H
-#define PROBABILITY_GUI_DISTRIBUTION_CELL_H
+#ifndef INFERENCE_PROBABILITY_DISTRIBUTION_CELL_H
+#define INFERENCE_PROBABILITY_DISTRIBUTION_CELL_H
 
 #include <escher/chevron_view.h>
 #include <escher/i18n.h>
@@ -34,4 +34,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_GUI_DISTRIBUTION_CELL_H */
+#endif /* INFERENCE_PROBABILITY_DISTRIBUTION_CELL_H */

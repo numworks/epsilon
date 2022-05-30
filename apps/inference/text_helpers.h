@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_TEXT_HELPERS_H
-#define PROBABILITY_TEXT_HELPERS_H
+#ifndef INFERENCE_TEXT_HELPERS_H
+#define INFERENCE_TEXT_HELPERS_H
 
 #include <apps/i18n.h>
 #include <ion/unicode/code_point.h>
@@ -28,4 +28,4 @@ Poincare::Layout XOneMinusXTwoLayout();
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_TEXT_HELPERS_H */
+#endif /* INFERENCE_TEXT_HELPERS_H */

@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GUI_INPUT_HOMOGENEITY_TABLE_CELL_H
-#define PROBABILITY_GUI_INPUT_HOMOGENEITY_TABLE_CELL_H
+#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_HOMOGENEITY_TABLE_CELL_H
+#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_HOMOGENEITY_TABLE_CELL_H
 
 #include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
 #include "inference/statistic/chi_square_and_slope/homogeneity_data_source.h"
@@ -43,4 +43,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_GUI_INPUT_HOMOGENEITY_TABLE_CELL_H */
+#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_HOMOGENEITY_TABLE_CELL_H */

@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_MODELS_STATISTIC_TWO_MEANS_Z_TEST_H
-#define PROBABILITY_MODELS_STATISTIC_TWO_MEANS_Z_TEST_H
+#ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_Z_TEST_H
+#define INFERENCE_MODELS_STATISTIC_TWO_MEANS_Z_TEST_H
 
 #include "interfaces/distributions.h"
 #include "interfaces/significance_tests.h"
@@ -50,4 +50,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_MODELS_STATISTIC_TWO_MEANS_Z_TEST_H */
+#endif /* INFERENCE_MODELS_STATISTIC_TWO_MEANS_Z_TEST_H */

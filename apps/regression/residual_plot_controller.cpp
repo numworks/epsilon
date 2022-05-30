@@ -81,34 +81,7 @@ void ResidualPlotController::viewWillAppear() {
     yMin = std::min(yMin, y);
     yMax = std::max(yMax, y);
   }
-  if (std::fabs(yMax - yMin) < FLT_EPSILON) {
-    assert(std::fabs(yMax) < FLT_EPSILON);
-    yMax = 1.0;
-    yMin = -1.0;
-  }
-  assert(xMax > xMin && yMax > yMin);
-
-  double xOffset = (xMax - xMin) * k_relativeMargin;
-  m_range.setXMin(xMin - xOffset);
-  m_range.setXMax(xMax + xOffset);
-
-  /* Computing yRangeMax and yRangeMin so that :
-   * - yRangeMax = yMax + k_relativeMargin * range = yRangeMin + height
-   * - yMax = yMin + range
-   * - yMin = yVisibleRangeMin + k_relativeMargin * range
-   * - yVisibleRangeMin = yRangeMin + bannerHeight
-   */
-
-  double range = yMax - yMin;
-  double yRangeMax = yMax + k_relativeMargin * range;
-  double yVisibleRangeMin = yMin - k_relativeMargin * range;
-  KDCoordinate height = view()->bounds().height();
-  KDCoordinate bannerHeight = m_bannerView.bounds().height();
-  double heightRatio = static_cast<double>(bannerHeight) / static_cast<double>(height);
-  double yRangeMin = (yVisibleRangeMin - yRangeMax * heightRatio) / (1 - heightRatio);
-
-  m_range.setYMin(yRangeMin);
-  m_range.setYMax(yRangeMax);
+  m_range.calibrate(xMin, xMax, yMin, yMax, view()->bounds().height(), m_bannerView.bounds().height());
 
   updateCursor();
 }

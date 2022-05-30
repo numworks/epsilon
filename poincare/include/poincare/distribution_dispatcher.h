@@ -71,6 +71,9 @@ public:
     case Distribution::Type::Geometric:
       stream << "Geom";
       break;
+    default:
+      // Other distributions should not be accessible from calculation
+      assert(false);
     }
     switch (m_methodType) {
     case DistributionMethod::Type::PDF:

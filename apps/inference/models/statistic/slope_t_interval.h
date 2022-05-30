@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_MODELS_STATISTIC_SLOPE_T_INTERVAL_H
-#define PROBABILITY_MODELS_STATISTIC_SLOPE_T_INTERVAL_H
+#ifndef INFERENCE_MODELS_STATISTIC_SLOPE_T_INTERVAL_H
+#define INFERENCE_MODELS_STATISTIC_SLOPE_T_INTERVAL_H
 
 #include "interfaces/distributions.h"
 #include "interfaces/significance_tests.h"
@@ -51,4 +51,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_MODELS_STATISTIC_ONE_MEAN_T_TEST_H */
+#endif /* INFERENCE_MODELS_STATISTIC_ONE_MEAN_T_TEST_H */

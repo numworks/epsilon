@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_ABSTRACT_DYNAMIC_CELLS_DATA_SOURCE_H
-#define PROBABILITY_ABSTRACT_DYNAMIC_CELLS_DATA_SOURCE_H
+#ifndef INFERENCE_SHARED_DYNAMIC_CELLS_DATA_SOURCE_H
+#define INFERENCE_SHARED_DYNAMIC_CELLS_DATA_SOURCE_H
 
 #include <escher/highlight_cell.h>
 #include <escher/selectable_table_view.h>
@@ -51,4 +51,4 @@ constexpr int k_maxNumberOfExpressionCellsWithBufferWithMessage = k_resultDataSo
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_ABSTRACT_DYNAMIC_CELLS_DATA_SOURCE_H */
+#endif /* INFERENCE_SHARED_DYNAMIC_CELLS_DATA_SOURCE_H */

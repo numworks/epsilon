@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H
-#define PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H
+#ifndef INFERENCE_STATISTIC_TYPE_CONTROLLER_H
+#define INFERENCE_STATISTIC_TYPE_CONTROLLER_H
 
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
@@ -56,4 +56,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_CONTROLLERS_TYPE_CONTROLLER_H */
+#endif /* INFERENCE_STATISTIC_TYPE_CONTROLLER_H */

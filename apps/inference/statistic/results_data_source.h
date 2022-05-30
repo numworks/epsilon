@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_MODELS_RESULTS_DATA_SOURCE_H
-#define PROBABILITY_MODELS_RESULTS_DATA_SOURCE_H
+#ifndef INFERENCE_STATISTIC_RESULTS_DATA_SOURCE_H
+#define INFERENCE_STATISTIC_RESULTS_DATA_SOURCE_H
 
 #include <apps/shared/button_with_separator.h>
 #include <escher/memoized_list_view_data_source.h>
@@ -34,4 +34,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_MODELS_RESULTS_DATA_SOURCE_H */
+#endif /* INFERENCE_STATISTIC_RESULTS_DATA_SOURCE_H */

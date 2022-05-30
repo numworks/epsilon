@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GUI_CALCULATION_CELL_H
-#define PROBABILITY_GUI_CALCULATION_CELL_H
+#ifndef INFERENCE_PROBABILITY_CALCULATION_CELL_H
+#define INFERENCE_PROBABILITY_CALCULATION_CELL_H
 
 #include <escher/editable_text_cell.h>
 #include <escher/highlight_cell.h>
@@ -37,4 +37,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_GUI_CALCULATION_CELL_H */
+#endif /* INFERENCE_PROBABILITY_CALCULATION_CELL_H */

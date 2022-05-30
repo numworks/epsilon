@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_MODELS_BUFFER_H
-#define PROBABILITY_MODELS_BUFFER_H
+#ifndef INFERENCE_MODELS_BUFFER_H
+#define INFERENCE_MODELS_BUFFER_H
 
 #include <new>
 
@@ -110,4 +110,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_MODELS_BUFFER_H */
+#endif /* INFERENCE_MODELS_BUFFER_H */

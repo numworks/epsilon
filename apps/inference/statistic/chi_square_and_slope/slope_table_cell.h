@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_GUI_SLOPE_TABLE_CELL_H
-#define PROBABILITY_GUI_SLOPE_TABLE_CELL_H
+#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H
+#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H
 
 #include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
 #include "inference/models/statistic/slope_t_statistic.h"
@@ -30,4 +30,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_GUI_CATEGORICAL_TABLE_CELL_H */
+#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H */

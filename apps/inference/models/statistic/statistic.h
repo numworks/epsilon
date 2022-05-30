@@ -1,5 +1,5 @@
-#ifndef PROBABILITY_MODELS_STATISTIC_STATISTIC_H
-#define PROBABILITY_MODELS_STATISTIC_STATISTIC_H
+#ifndef INFERENCE_MODELS_STATISTIC_STATISTIC_H
+#define INFERENCE_MODELS_STATISTIC_STATISTIC_H
 
 #include <apps/shared/global_context.h>
 #include <inference/models/inference.h>
@@ -106,4 +106,4 @@ protected:
 
 }  // namespace Inference
 
-#endif /* PROBABILITY_MODELS_STATISTIC_STATISTIC_H */
+#endif /* INFERENCE_MODELS_STATISTIC_STATISTIC_H */

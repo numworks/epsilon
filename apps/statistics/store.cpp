@@ -17,14 +17,11 @@ static_assert(Store::k_numberOfSeries == 3, "The constructor of Statistics::Stor
 constexpr I18n::Message Store::k_quantilesName[Store::k_numberOfQuantiles];
 constexpr Store::CalculPointer Store::k_quantileCalculation[Store::k_numberOfQuantiles];
 
-Store::Store(GlobalContext * context) :
+Store::Store(GlobalContext * context, UserPreferences * userPreferences) :
   DoublePairStore(context),
-  m_displayCumulatedFrequencies{false, false, false},
-  m_barWidth(1.0),
-  m_firstDrawnBarAbscissa(0.0),
+  m_userPreferences(userPreferences),
   m_memoizedMaxNumberOfModes(0),
-  m_graphViewInvalidated(true),
-  m_displayOutliers(GlobalPreferences::sharedGlobalPreferences()->outliersStatus() == CountryPreferences::OutlierDefaultVisibility::Displayed)
+  m_graphViewInvalidated(true)
 {
   initListsInPool();
   for (int s = 0; s < k_numberOfSeries; s++) {
@@ -58,7 +55,7 @@ int Store::relativeColumnIndex(int i) const {
 
 void Store::setBarWidth(double barWidth) {
   assert(barWidth > 0.0);
-  m_barWidth = barWidth;
+  m_userPreferences->setBarWidth(barWidth);
 }
 
 double Store::heightOfBarAtIndex(int series, int index) const {
@@ -81,9 +78,9 @@ double Store::maxHeightOfBar(int series) const {
 
 double Store::heightOfBarAtValue(int series, double value) const {
   double width = barWidth();
-  int barNumber = std::floor((value - m_firstDrawnBarAbscissa)/width);
-  double lowerBound = m_firstDrawnBarAbscissa + static_cast<double>(barNumber) * width;
-  double upperBound = m_firstDrawnBarAbscissa + static_cast<double>(barNumber + 1) * width;
+  int barNumber = std::floor((value - firstDrawnBarAbscissa())/width);
+  double lowerBound = firstDrawnBarAbscissa() + static_cast<double>(barNumber) * width;
+  double upperBound = firstDrawnBarAbscissa() + static_cast<double>(barNumber + 1) * width;
   return sumOfValuesBetween(series, lowerBound, upperBound);
 }
 
@@ -92,8 +89,8 @@ double Store::startOfBarAtIndex(int series, int index) const {
   /* Because of floating point approximation, firstBarAbscissa could be lesser
    * than the minimal value. As a result, we would compute a height of zero for
    * all bars. */
-  double firstBarAbscissa = std::min(minimalValue, m_firstDrawnBarAbscissa + m_barWidth*std::floor((minimalValue - m_firstDrawnBarAbscissa)/m_barWidth));
-  return firstBarAbscissa + index * m_barWidth;
+  double firstBarAbscissa = std::min(minimalValue, firstDrawnBarAbscissa() + barWidth() * std::floor((minimalValue - firstDrawnBarAbscissa())/ barWidth()));
+  return firstBarAbscissa + index * barWidth();
 }
 
 double Store::endOfBarAtIndex(int series, int index) const {
@@ -102,7 +99,7 @@ double Store::endOfBarAtIndex(int series, int index) const {
 
 int Store::numberOfBars(int series) const {
   double firstBarAbscissa = startOfBarAtIndex(series, 0);
-  return static_cast<int>(std::ceil((maxValue(series) - firstBarAbscissa)/m_barWidth)+1);
+  return static_cast<int>(std::ceil((maxValue(series) - firstBarAbscissa) / barWidth())+1);
 }
 
 I18n::Message Store::boxPlotCalculationMessageAtIndex(int series, int index) const {
@@ -312,7 +309,7 @@ double Store::upperFence(int series) const {
 }
 
 int Store::numberOfLowerOutliers(int series) const {
-  if (!m_displayOutliers) {
+  if (!displayOutliers()) {
     return 0;
   }
   double value;
@@ -322,7 +319,7 @@ int Store::numberOfLowerOutliers(int series) const {
 }
 
 int Store::numberOfUpperOutliers(int series) const {
-  if (!m_displayOutliers) {
+  if (!displayOutliers()) {
     return 0;
   }
   double value;
@@ -332,7 +329,7 @@ int Store::numberOfUpperOutliers(int series) const {
 }
 
 double Store::lowerOutlierAtIndex(int series, int index) const {
-  assert(m_displayOutliers && index < numberOfLowerOutliers(series));
+  assert(displayOutliers() && index < numberOfLowerOutliers(series));
   double value;
   int distinctValues;
   countDistinctValues(series, 0, lowerWhiskerSortedIndex(series), index, false, &value, &distinctValues);
@@ -340,7 +337,7 @@ double Store::lowerOutlierAtIndex(int series, int index) const {
 }
 
 double Store::upperOutlierAtIndex(int series, int index) const {
-  assert(m_displayOutliers && index < numberOfUpperOutliers(series));
+  assert(displayOutliers() && index < numberOfUpperOutliers(series));
   double value;
   int distinctValues;
   countDistinctValues(series, upperWhiskerSortedIndex(series) + 1, numberOfPairsOfSeries(series), index, false, &value, &distinctValues);
@@ -491,7 +488,7 @@ uint8_t Store::lowerWhiskerSortedIndex(int series) const {
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
     int valueIndex = valueIndexAtSortedIndex(series, k);
-    if ((!m_displayOutliers || get(series, 0, valueIndex) >= lowFence) && get(series, 1, valueIndex) > 0.0) {
+    if ((!displayOutliers() || get(series, 0, valueIndex) >= lowFence) && get(series, 1, valueIndex) > 0.0) {
       return k;
     }
   }
@@ -504,7 +501,7 @@ uint8_t Store::upperWhiskerSortedIndex(int series) const {
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = numberOfPairs - 1; k >= 0; k--) {
     int valueIndex = valueIndexAtSortedIndex(series, k);
-    if ((!m_displayOutliers || get(series, 0, valueIndex) <= uppFence) && get(series, 1, valueIndex) > 0.0) {
+    if ((!displayOutliers() || get(series, 0, valueIndex) <= uppFence) && get(series, 1, valueIndex) > 0.0) {
       return k;
     }
   }

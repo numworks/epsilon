@@ -150,6 +150,8 @@ bool ModalViewController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Back || event == Ion::Events::Home) {
     dismissModalViewController();
+    /* If Home is pressed, dismiss the modal view but still
+    * propagate the event so that the app is properly closed. */
     return event != Ion::Events::Home;
   }
   return false;

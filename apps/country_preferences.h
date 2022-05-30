@@ -41,12 +41,17 @@ public:
     OnIntegerValues
   };
 
-  enum class MeanSymbol : uint8_t {
+  enum class MeanSymbol : bool {
     Default,
     WithMu,
   };
 
-  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol, HistogramsOffset histogramOffset, MeanSymbol meanSymbol) :
+  enum class YPredictedSymbol : bool {
+    Y,
+    YHat
+  };
+
+  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol, HistogramsOffset histogramOffset, MeanSymbol meanSymbol, YPredictedSymbol yPredictedSymbol) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
     m_unitFormat(unitFormat),
@@ -54,7 +59,8 @@ public:
     m_outliersStatus(outliersStatus),
     m_discriminantSymbol(discriminantSymbol),
     m_histogramOffset(histogramOffset),
-    m_meanSymbol(meanSymbol)
+    m_meanSymbol(meanSymbol),
+    m_yPredictedSymbol(yPredictedSymbol)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -65,6 +71,7 @@ public:
   constexpr HistogramsOffset histogramOffset() const { return m_histogramOffset; }
   constexpr const char * discriminantSymbol() const { return m_discriminantSymbol == DiscriminantSymbol::Delta ? "Δ" : "D"; }
   constexpr MeanSymbol meanSymbol() const { return m_meanSymbol; }
+  constexpr const char * yPredictedSymbol() const { return m_yPredictedSymbol == YPredictedSymbol::Y ? "y" : "y\xCC\x82"; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -75,6 +82,7 @@ private:
   const DiscriminantSymbol m_discriminantSymbol;
   const HistogramsOffset m_histogramOffset;
   const MeanSymbol m_meanSymbol;
+  const YPredictedSymbol m_yPredictedSymbol;
 };
 
 #endif

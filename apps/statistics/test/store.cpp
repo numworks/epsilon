@@ -20,6 +20,7 @@ void assert_value_approximately_equal_to(double d1, double d2, double precision,
 
 // Set the data in the store
 void setStoreData(Store * store, double v[], double n[], int numberOfData, int seriesIndex) {
+  store->deleteAllPairsOfSeries(seriesIndex);
   for (int i = 0; i < numberOfData; i++) {
     store->set(v[i], seriesIndex, 0, i);
     store->set(n[i], seriesIndex, 1, i);
@@ -43,7 +44,8 @@ void assert_data_statistics_equal_to(
     double trueModeFrequency
   ) {
   GlobalContext context;
-  Store store(&context);
+  UserPreferences userPreferences;
+  Store store(&context, &userPreferences);
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
 
@@ -98,7 +100,9 @@ void assert_data_cumulated_frequency(
     int totalCumulatedFrequency
   ) {
   GlobalContext context;
-  Store store(&context);
+  UserPreferences userPreferences;
+  Store store(&context, &userPreferences);
+
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
 
@@ -122,7 +126,9 @@ void assert_data_normal_probability(
     int totalNormalProbability
   ) {
   GlobalContext context;
-  Store store(&context);
+  UserPreferences userPreferences;
+  Store store(&context, &userPreferences);
+
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
 
@@ -158,7 +164,9 @@ void assert_data_box_plot(
     bool shouldUseFrequencyMethod
   ) {
   GlobalContext context;
-  Store store(&context);
+  UserPreferences userPreferences;
+  Store store(&context, &userPreferences);
+
   int seriesIndex = 0;
   setStoreData(&store, v, n, numberOfData, seriesIndex);
 
@@ -962,7 +970,8 @@ void assert_data_statistics_multiple_series_equal_to(
     double maxValueIgnoringFrequency,
     double minValueIgnoringFrequency) {
   GlobalContext context;
-  Store store(&context);
+  UserPreferences userPreferences;
+  Store store(&context, &userPreferences);
 
   // Set the data in the store
   for (int i = 0; i < numberOfData1; i++) {

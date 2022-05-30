@@ -18,8 +18,6 @@ Shared::ClearColumnHelper * FunctionParameterController::clearColumnHelper() {
   return m_valuesController;
 }
 
-
-
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(selectedRow() == 0);

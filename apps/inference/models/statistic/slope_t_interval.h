@@ -52,4 +52,3 @@ private:
 }  // namespace Inference
 
 #endif /* PROBABILITY_MODELS_STATISTIC_ONE_MEAN_T_TEST_H */
-

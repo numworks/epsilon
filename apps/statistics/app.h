@@ -35,9 +35,11 @@ public:
     const Descriptor * descriptor() const override;
     uint32_t * storeVersion() { return &m_storeVersion; }
     GraphViewModel * graphViewModel() { return &m_graphViewModel; }
+    UserPreferences * userPreferences() { return &m_userPreferences; }
   private:
     uint32_t m_storeVersion;
     GraphViewModel m_graphViewModel;
+    UserPreferences m_userPreferences;
   };
   static App * app() {
     return static_cast<App *>(Escher::Container::activeApp());

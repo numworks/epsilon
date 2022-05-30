@@ -4,6 +4,7 @@
 
 #include "framebuffer.h"
 #include "platform.h"
+#include "window.h"
 
 namespace Ion {
 namespace Simulator {
@@ -23,7 +24,7 @@ void Screenshot::capture() {
   if (m_path != nullptr) {
     Simulator::Platform::saveImage(Simulator::Framebuffer::address(), Display::Width,
                                    Display::Height, m_path);
-  } else {
+  } else if (!Simulator::Window::isHeadless()) {
     Simulator::Platform::copyImageToClipboard(Simulator::Framebuffer::address(), Display::Width, Display::Height);
   }
 }

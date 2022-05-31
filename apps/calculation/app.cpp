@@ -77,7 +77,7 @@ bool App::isAcceptableExpression(const Poincare::Expression expression) {
 
 void App::didBecomeActive(Window * window) {
   m_editExpressionController.restoreInput();
-  m_historyController.restoreHistory();
+  m_historyController.recomputeHistoryCellHeightsIfNeeded();
   Shared::ExpressionFieldDelegateApp::didBecomeActive(window);
 }
 

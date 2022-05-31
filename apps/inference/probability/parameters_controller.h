@@ -37,7 +37,7 @@ private:
     ContentView(Escher::SelectableTableView * selectableTableView);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void layoutSubviews(bool force = false) override;
-    void resetWidth() { m_selectableTableView->setSize(KDSize(0,0)); }
+    void resetSize() { m_selectableTableView->setSize(KDSize(0,0)); }
   private:
     constexpr static KDCoordinate k_textMargin = Escher::Metric::CommonSmallMargin;
     // Removing a pixel to skew title's baseline downward.

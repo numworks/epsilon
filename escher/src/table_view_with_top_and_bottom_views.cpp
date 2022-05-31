@@ -13,7 +13,7 @@ void TableViewWithTopAndBottomViews::reload() {
 void TableViewWithTopAndBottomViews::layoutSubviews(bool force) {
   /* SelectableTableView must be given a width, so that it can percole it to its
    * cells. The cells might need their widths to know their heights. */
-  m_contentView.tableView()->initWidth(visibleContentRect().width());
+  m_contentView.tableView()->initSize(visibleContentRect());
   ScrollView::layoutSubviews(force);
 }
 

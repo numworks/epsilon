@@ -33,8 +33,8 @@ public:
   bool selectCellAtLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   bool selectCellAtClippedLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   HighlightCell * selectedCell();
-protected:
   void unhighlightSelectedCell();
+protected:
   SelectableTableViewDataSource * m_selectionDataSource;
   SelectableTableViewDelegate * m_delegate;
 };

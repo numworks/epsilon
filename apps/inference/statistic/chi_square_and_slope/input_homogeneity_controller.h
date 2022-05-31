@@ -14,7 +14,7 @@ public:
   const char * title() override { return I18n::translate(I18n::Message::InputHomogeneityControllerTitle); }
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override { m_inputHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX, previousSelectedCellY); }
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
 private:
   int indexOfSignificanceCell() const override { return k_indexOfTableCell + 1; }

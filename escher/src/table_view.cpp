@@ -17,7 +17,7 @@ TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * sc
 void TableView::initSize(KDRect rect) {
   if (bounds().width() <= 0 || bounds().height() <= 0) {
     setSize(KDSize(rect.width(), rect.height()));
-    dataSource()->initCellWidth(this);
+    dataSource()->initCellSize(this);
   }
 }
 
@@ -53,7 +53,7 @@ void TableView::layoutSubviews(bool force) {
    * FIXME:
    * Finally, this solution is not optimal at all since
    * layoutSubviews is called twice over m_contentView. */
-  dataSource()->initCellWidth(this);
+  dataSource()->initCellSize(this);
   m_contentView.layoutSubviews(force);
   ScrollView::layoutSubviews(force);
 }

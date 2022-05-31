@@ -86,7 +86,6 @@ EditableCategoricalTableCell::EditableCategoricalTableCell(Escher::Responder * p
   DynamicSizeTableViewDataSource(dynamicSizeTableViewDelegate),
   m_statistic(statistic)
 {
-  m_selectableTableView.setTopMargin(0);
   m_selectableTableView.setBottomMargin(k_bottomMargin);
 }
 

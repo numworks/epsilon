@@ -17,6 +17,7 @@ CategoricalController::CategoricalController(
       m_nextController(nextController),
       m_next(&m_selectableTableView, I18n::Message::Next, invocation, Palette::WallScreenDark, Metric::CommonMargin)
 {
+  m_selectableTableView.setTopMargin(0);
   m_selectableTableView.setLeftMargin(0);
   m_selectableTableView.setRightMargin(0);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);

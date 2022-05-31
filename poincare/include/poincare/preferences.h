@@ -42,6 +42,10 @@ public:
     Metric = 0,
     Imperial = 1
   };
+  enum class CombinatoricSymbols : uint8_t {
+    Default = 0,
+    LetterWithSubAndSuperscript = 1
+  };
   enum class ExamMode : int8_t {
     Unknown = -1,
     Off = 0,
@@ -89,6 +93,8 @@ public:
   void setEditionMode(EditionMode editionMode) { m_editionMode = editionMode; }
   ComplexFormat complexFormat() const { return m_complexFormat; }
   void setComplexFormat(Preferences::ComplexFormat complexFormat) { m_complexFormat = complexFormat; }
+  CombinatoricSymbols combinatoricSymbols() const { return m_combinatoricSymbols; }
+  void setCombinatoricSymbols(CombinatoricSymbols combinatoricSymbols) { m_combinatoricSymbols = combinatoricSymbols; }
   uint8_t numberOfSignificantDigits() const { return m_numberOfSignificantDigits; }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
 
@@ -118,6 +124,7 @@ private:
   EditionMode m_editionMode;
   ComplexFormat m_complexFormat;
   uint8_t m_numberOfSignificantDigits;
+  mutable CombinatoricSymbols m_combinatoricSymbols;
   mutable ExamMode m_examMode;
   mutable PressToTestParams m_pressToTestParams;
 };

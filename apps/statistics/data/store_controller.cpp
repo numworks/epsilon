@@ -121,6 +121,7 @@ void StoreController::clearSelectedColumn() {
   int column = m_store->relativeColumnIndex(selectedColumn());
   if (column == 0) {
     m_store->deleteAllPairsOfSeries(series);
+    selectCellAtLocation(selectedColumn(), 1);
   } else {
     m_store->resetColumn(series, column);
   }

@@ -14,22 +14,19 @@ Events::Event Calculator::PollAndReset() {
   char serialNumber[Ion::k_serialNumberLength+1];
   SerialNumber::copy(serialNumber);
   Calculator c(serialNumber, USB::stringDescriptor());
-  Events::Event stopDfu;
+  Events::Event stopDFU;
   while (Ion::USB::isPlugged() && !c.isSoftDisconnected()
-         && !((stopDfu=USB::shouldInterruptDFU()) != Events::None && !c.isErasingAndWriting())) {
+         && !((stopDFU=USB::shouldInterruptDFU()) != Events::None && !c.isErasingAndWriting())) {
     c.poll();
   }
 
-  if (stopDfu != Events::None) {
-    return stopDfu;
-  }
   if (!c.isSoftDisconnected()) {
     c.detach();
   }
   if (c.resetOnDisconnect()) {
     c.leave(c.addressPointer());
   }
-  return Events::None;
+  return stopDFU;
 }
 
 Descriptor * Calculator::descriptor(uint8_t type, uint8_t index) {

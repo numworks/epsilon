@@ -84,6 +84,7 @@ public:
   double sum(int series) const;
   double squaredValueSum(int series) const;
   int numberOfModes(int series) const;
+  bool shouldDisplayModes(int series) const;
   int totalNumberOfModes() const;
   double modeAtIndex(int series, int index) const;
   double modeFrequency(int series) const;

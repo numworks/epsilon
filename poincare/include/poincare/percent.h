@@ -5,12 +5,13 @@
 
 namespace Poincare {
 
-template<int T>
-class PercentNode final : public ExpressionNode  {
+class PercentSimpleNode : public ExpressionNode  {
 public:
+  static Expression ParseTarget(Expression & leftHandSide);
+
   // TreeNode
-  size_t size() const override { return sizeof(PercentNode); }
-  int numberOfChildren() const override { return T; }
+  size_t size() const override { return sizeof(PercentSimpleNode); }
+  int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "Percent";
@@ -18,9 +19,14 @@ public:
 #endif
   // Properties
   Type type() const override { return Type::Percent; }
-  Sign sign(Context * context) const override;
-  NullStatus nullStatus(Context * context) const override;
+  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
+  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
+
+protected:
+  virtual int createSecondChildLayout(Poincare::HorizontalLayout * result, int childrenCount, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return childrenCount; }
+  virtual int serializeSecondChild(char * buffer, int bufferSize, int numberOfChar, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return numberOfChar; }
+  virtual Expression getExpression() const;
 
 private:
   // Layout
@@ -43,29 +49,48 @@ private:
   template <typename U> Evaluation<U> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
 };
 
-class Percent : public Expression {
+class PercentAdditionNode final : public PercentSimpleNode  {
 public:
-  static Expression ParseTarget(Expression & leftHandSide);
+  // TreeNode
+  size_t size() const override { return sizeof(PercentAdditionNode); }
+  int numberOfChildren() const override { return 2; }
+  // Properties
+  Type type() const override { return Type::PercentAddition; }
+  Sign sign(Context * context) const override;
+  NullStatus nullStatus(Context * context) const override;
 
-  template <int T> Percent(const PercentNode<T> * n) : Expression(n) {}
-  Percent(const PercentNode<2> * n) : Expression(n) {}
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+private:
+  // PercentSimpleNode
+  int createSecondChildLayout(Poincare::HorizontalLayout * result, int childrenCount, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serializeSecondChild(char * buffer, int bufferSize, int numberOfChar, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Expression getExpression() const override;
+  // Simplication
+  Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression deepBeautify(ReductionContext reductionContext) override;
+  // Evaluation
+  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+    return templateApproximate<float>(approximationContext);
+  }
+  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+    return templateApproximate<double>(approximationContext);
+  }
+  template <typename U> Evaluation<U> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
 };
 
-class PercentAddition final : public Percent {
+class PercentAddition final : public Expression {
 public:
-  static PercentAddition Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PercentAddition, PercentNode<2>>({child0, child1}); }
+  static PercentAddition Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PercentAddition, PercentAdditionNode>({child0, child1}); }
 
-  PercentAddition(const PercentNode<2> * n) : Percent(n) {}
+  PercentAddition(const PercentAdditionNode * n) : Expression(n) {}
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
 };
 
-class PercentSimple final : public Percent {
+class PercentSimple final : public Expression {
 public:
-  static PercentSimple Builder(Expression child) { return TreeHandle::FixedArityBuilder<PercentSimple, PercentNode<1>>({child}); }
+  static PercentSimple Builder(Expression child) { return TreeHandle::FixedArityBuilder<PercentSimple, PercentSimpleNode>({child}); }
 
-  PercentSimple(const PercentNode<1> * n) : Percent(n) {}
+  PercentSimple(const PercentSimpleNode * n) : Expression(n) {}
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
 };
 

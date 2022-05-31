@@ -342,7 +342,7 @@ void Parser::parsePercent(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Left-hand side missing
   } else {
-    leftHandSide = Percent::ParseTarget(leftHandSide);
+    leftHandSide = PercentSimpleNode::ParseTarget(leftHandSide);
   }
   isThereImplicitMultiplication();
 }

@@ -151,7 +151,7 @@ void GraphOptionsController::willDisplayCellForIndex(HighlightCell * cell, int i
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
   if (type == k_regressionEquationCellType) {
     // Regression equation uses at most 5 coefficients and a few chars (Quartic)
-    constexpr int bufferSize = (Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)-1)*5 + sizeof("y=·x^4+·x^3+·x^2+·x+");
+    constexpr int bufferSize = (Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits)-1)*5 + sizeof("y=·x^4+·x^3+·x^2+·x+");
     char buffer[bufferSize] = "y=";
     constexpr int bufferOffset = sizeof("y=") - 1;
     double * coefficients = m_store->coefficientsForSeries(series, m_graphController->globalContext());

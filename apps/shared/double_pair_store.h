@@ -94,18 +94,14 @@ public:
     assert(i < Escher::Palette::numberOfLightDataColors());
     return Escher::Palette::DataColorLight[i];
   }
-
-protected:
-  void initListsInPool();
-  virtual double defaultValue(int series, int i, int j) const;
   /* This must be called each time the lists are modified.
    * It deletes the pairs of empty values and the trailing undef values,
    * updates the valid series, and stores the lists in the storage
    * */
   virtual void updateSeries(int series, bool delayUpdate = false);
-  /* Since sometimes we do multiple list modification in a row, we don't want
-   * to update the series each time, but only at the end of the modifications.
-   * So these methods are called to set a flag preventing the update.*/
+protected:
+  void initListsInPool();
+  virtual double defaultValue(int series, int i, int j) const;
   bool m_validSeries[k_numberOfSeries];
   Poincare::FloatList<double> m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
 private:

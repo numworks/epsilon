@@ -58,7 +58,7 @@ bool Test::canRejectNull() {
   return pValue() <= m_threshold;
 }
 
-void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) {
+void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) {
   if (index < numberOfEstimates()) {
     *value = estimateValue(index);
     *message = estimateLayout(index);
@@ -82,6 +82,7 @@ void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, 
       *value = degreeOfFreedom();
       *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
       *subMessage = I18n::Message::Default;
+      *precision = Poincare::Preferences::MediumNumberOfSignificantDigits;
   }
 }
 

@@ -149,7 +149,7 @@ int Interval::MainDisplayedIntervalThresholdIndex(float mainThreshold) {
   return k_numberOfDisplayedIntervals - 1;
 }
 
-void Interval::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) {
+void Interval::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) {
   // Estimate cell is not displayed -> shift i
   index += estimateLayout().isUninitialized();
   switch (index) {
@@ -178,6 +178,7 @@ void Interval::resultAtIndex(int index, double * value, Poincare::Layout * messa
       *value = degreeOfFreedom();
       *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
       *subMessage = I18n::Message::Default;
+      *precision = Poincare::Preferences::MediumNumberOfSignificantDigits;
       break;
   }
 }

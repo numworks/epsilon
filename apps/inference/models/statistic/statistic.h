@@ -84,7 +84,7 @@ public:
 
   // Outputs
   virtual int numberOfResults() const = 0;
-  virtual void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) = 0;
+  virtual void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) = 0;
   bool hasDegreeOfFreedom() const { return !std::isnan(m_degreesOfFreedom); }
   double degreeOfFreedom() const { return m_degreesOfFreedom; }
 

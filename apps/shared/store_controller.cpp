@@ -91,7 +91,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     Shared::StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->setHide(false);
     myCell->setSeparatorLeft(i > 0 && (m_store->relativeColumnIndex(i) == 0));
-    KDColor textColor = m_store->seriesIsValid(m_store->seriesAtColumn(i)) ? KDColorBlack : Palette::GrayDark;
+    KDColor textColor = (m_store->seriesIsValid(m_store->seriesAtColumn(i)) || m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0) ? KDColorBlack : Palette::GrayDark;
     myCell->editableTextCell()->textField()->setTextColor(textColor);
   }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());

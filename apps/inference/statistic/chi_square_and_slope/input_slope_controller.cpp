@@ -6,8 +6,9 @@ namespace Inference {
 InputSlopeController::InputSlopeController(StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Poincare::Context * context) :
   InputCategoricalController(parent, resultsController, statistic, inputEventHandlerDelegate),
   m_slopeTableCell(&m_selectableTableView, this, this, statistic, context),
-  m_storeParameterController(nullptr, &m_slopeTableCell)
+  m_storeParameterController(parent, &m_slopeTableCell)
 {
+  m_storeParameterController.selectRow(0);
 }
 
 bool InputSlopeController::handleEvent(Ion::Events::Event event) {

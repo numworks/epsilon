@@ -331,7 +331,8 @@ uint32_t DoublePairStore::storeChecksum() const {
 }
 
 /* TODO: This function is temporary. We want to create a function with a
- * similar behaviour in Ion in a near future. */
+ * similar behaviour in Ion in a near future.
+ * This was copy pasted from the crc32EatByte function in the kernel. */
 constexpr uint32_t polynomialForCrc = 0x04C11DB7;
 uint32_t crc32EatByte(uint32_t crc, uint8_t data) {
     crc ^= data << 24;

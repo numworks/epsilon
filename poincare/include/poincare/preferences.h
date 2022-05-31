@@ -14,7 +14,7 @@ public:
   constexpr static int ShortNumberOfSignificantDigits = 4;
   constexpr static int VeryShortNumberOfSignificantDigits = 3;
 
-  enum class EditionMode {
+  enum class EditionMode : uint8_t {
     Edition2D,
     Edition1D
   };
@@ -42,6 +42,8 @@ public:
     Metric = 0,
     Imperial = 1
   };
+  /* The symbol used for combinations and permutations is country-dependent and
+   * set in apps but it stored there to be accessible from Poincare */
   enum class CombinatoricSymbols : uint8_t {
     Default = 0,
     LetterWithSubAndSuperscript = 1

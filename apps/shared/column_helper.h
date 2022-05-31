@@ -39,6 +39,7 @@ public:
 
   int referencedColumn() { return table()->selectedColumn(); }
   ClearColumnHelper * clearColumnHelper() { return m_clearColumnHelper; }
+  void selectColumn(int columnIndex) { table()->selectColumn(columnIndex); }
 
   /* Hide series */
   // Return false if the series can't switch hide status because it's invalid

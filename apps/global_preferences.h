@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 #include <kandinsky/font.h>
 #include <ion.h>
+#include <poincare/preferences.h>
 
 class GlobalPreferences {
 public:
@@ -11,7 +12,7 @@ public:
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }
-  void setCountry(I18n::Country country) { m_country = country; }
+  void setCountry(I18n::Country country);
   CountryPreferences::AvailableExamModes availableExamModes() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].availableExamModes(); }
   CountryPreferences::MethodForQuartiles methodForQuartiles() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].methodForQuartiles(); }
   CountryPreferences::OutlierDefaultVisibility outliersStatus() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].outliersStatus(); }
@@ -22,6 +23,7 @@ public:
   CountryPreferences::MeanSymbol meanSymbol() { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].meanSymbol(); }
   const char * yPredictedSymbol() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].yPredictedSymbol(); }
   CountryPreferences::StatsRowsLayout statsRowsLayout() { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].statsRowsLayout(); }
+  Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].combinatoricSymbols(); }
 
   bool showPopUp() const { return m_showPopUp; }
   void setShowPopUp(bool showPopUp) { m_showPopUp = showPopUp; }

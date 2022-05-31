@@ -7,7 +7,6 @@
 #include "../exam_mode_configuration.h"
 #include <assert.h>
 #include <ion/circuit_breaker.h>
-#include "history_view_cell.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -297,14 +296,14 @@ void CalculationStore::recomputeHeights(HeightComputer heightComputer) {
   }
 }
 
-void CalculationStore::preferencesMightHaveChanged(Poincare::Preferences * preferences) {
+bool CalculationStore::preferencesMightHaveChanged(Poincare::Preferences * preferences) {
   // Track settings that might invalidate HistoryCells heights
   if (m_inUsePreferences.combinatoricSymbols() == preferences->combinatoricSymbols()
     && m_inUsePreferences.numberOfSignificantDigits() == preferences->numberOfSignificantDigits()) {
-    return;
+    return false;
   }
   m_inUsePreferences = *preferences;
-  recomputeHeights(HistoryViewCell::Height);
+  return true;
 }
 
 // Push converted expression in the buffer

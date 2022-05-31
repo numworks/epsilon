@@ -46,7 +46,7 @@ public:
   int numberOfCalculations() const { return m_numberOfCalculations; }
   Poincare::Expression ansExpression(Poincare::Context * context);
   void recomputeHeights(HeightComputer heightComputer);
-  void preferencesMightHaveChanged(Poincare::Preferences * preferences);
+  bool preferencesMightHaveChanged(Poincare::Preferences * preferences);
 
 private:
   class CalculationIterator {

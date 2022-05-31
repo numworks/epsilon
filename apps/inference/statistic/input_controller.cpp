@@ -43,18 +43,18 @@ void InputController::InputTitle(Escher::ViewController * vc, Statistic * statis
     if (stackViewControllerResponder->topViewController() != vc) {
       Poincare::Print::customPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",
           symbol,
-          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigit,
           symbol,
           op,
-          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-          statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigit,
+          statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigit);
     } else {
       Poincare::Print::customPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed",
           symbol,
-          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigit,
           symbol,
           op,
-          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigit);
     }
   } else {
     Poincare::Print::customPrintf(titleBuffer, titleBufferSize, I18n::translate(statistic->title()),

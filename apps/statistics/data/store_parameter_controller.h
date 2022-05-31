@@ -27,7 +27,6 @@ private:
   constexpr static int k_displayCumulatedFrequencyCellType = Shared::StoreParameterController::k_numberOfCells;
   constexpr static int k_hideCumulatedFrequencyCellType = k_displayCumulatedFrequencyCellType + 1;
 
-  bool isCumulatedFrequencyColumnSelected() const;
   I18n::Message sortMessage() override {
     return (m_columnIndex % 2 == 0) ? I18n::Message::SortValues : I18n::Message::SortSizes;
   }
@@ -35,6 +34,7 @@ private:
   Escher::MessageTableCellWithMessageWithSwitch m_displayCumulatedFrequencyCell;
   Escher::MessageTableCellWithMessage m_hideCumulatedFrequencyCell;
   Store * m_store;
+  bool m_isCumulatedFrequencyColumnSelected;
 };
 
 }

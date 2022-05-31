@@ -102,7 +102,9 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
     double numberOfBars = std::ceil((max - min)/nextBarWidth);
     // First escape case: if the bars are too thin or there is too much bars
     if (numberOfBars > HistogramRange::k_maxNumberOfBars
-    /* Second escape case: Since interval width is computed in float, we
+    // Second escape case : X-start > max
+        || max < nextFirstDrawnBarAbscissa
+    /* Third escape case: Since interval width is computed in float, we
      * need to check if the values are not too close.
      * If max == min then the interval goes from min to min + barWidth.
      * But if min == min + barWidth, the display is bugged.

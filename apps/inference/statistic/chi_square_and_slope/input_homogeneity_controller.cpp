@@ -7,4 +7,9 @@ InputHomogeneityController::InputHomogeneityController(StackViewController * par
   m_inputHomogeneityTable(&m_selectableTableView, this, this, statistic)
 {}
 
+void InputHomogeneityController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  m_inputHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX, previousSelectedCellY);
+  InputCategoricalController::tableViewDidChangeSelection(t, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
+}
+
 }

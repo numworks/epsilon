@@ -35,10 +35,7 @@ bool PercentNode<T>::childNeedsSystemParenthesesAtSerialization(const TreeNode *
    * --- % ---> [2/3]%
    *  3
    */
-  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
-    return true;
-  }
-  return static_cast<const ExpressionNode *>(child)->isOfType({Type::Division, Type::Power});
+  return SerializationHelper::PostfixChildNeedsSystemParenthesesAtSerialization(child);
 }
 
 // Simplification

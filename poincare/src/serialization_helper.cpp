@@ -1,4 +1,6 @@
 #include <poincare/serialization_helper.h>
+#include <poincare/expression_node.h>
+#include <poincare/rational.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <string.h>
@@ -234,6 +236,13 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
     buffer[length] = 0;
   }
   return length;
+}
+
+bool SerializationHelper::PostfixChildNeedsSystemParenthesesAtSerialization(const TreeNode * child) {
+  if (static_cast<const ExpressionNode *>(child)->type() == ExpressionNode::Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
+    return true;
+  }
+  return static_cast<const ExpressionNode *>(child)->isOfType({ExpressionNode::Type::Division, ExpressionNode::Type::Power});
 }
 
 }

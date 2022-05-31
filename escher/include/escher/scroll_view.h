@@ -98,8 +98,8 @@ public:
   void setContentOffset(KDPoint offset, bool forceRelayout = false);
   KDPoint contentOffset() const { return m_dataSource->offset(); }
 
-  void scrollToContentPoint(KDPoint p, bool allowOverscroll = false, bool clippedToFrame = true);
-  void scrollToContentRect(KDRect rect, bool allowOverscroll = false, bool clippedToFrame = true); // Minimal scrolling to make this rect visible
+  void scrollToContentPoint(KDPoint p, bool allowOverscroll = false);
+  void scrollToContentRect(KDRect rect, bool allowOverscroll = false); // Minimal scrolling to make this rect visible
 protected:
   KDCoordinate maxContentWidthDisplayableWithoutScrolling() const {
     return m_frame.width() - m_leftMargin - m_rightMargin;

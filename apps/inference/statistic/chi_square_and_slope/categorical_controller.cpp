@@ -56,14 +56,19 @@ void CategoricalController::scrollViewDidChangeOffset(ScrollViewDataSource * scr
   setScrollViewDelegate(this);
 }
 
-
-void CategoricalController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+void CategoricalController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   int row = t->selectedRow();
   int col = t->selectedColumn();
   if (!withinTemporarySelection && previousSelectedCellY != t->selectedRow()) {
     // We need to clip the size of the CategoricalTableCell to force it to scroll
     categoricalTableCell()->selectableTableView()->setSize(m_selectableTableView.bounds().size());
+    KDSize previousSize = m_selectableTableView.bounds().size();
+    /* Clip the Categorical table to the CategoricalTableCell to authorize the
+     * CategoricalTableCell to scroll downer than its own height. */
+    m_selectableTableView.setSize(KDSize(m_selectableTableView.bounds().width(), rowHeight(0)));
     categoricalTableCell()->selectableTableView()->scrollToCell(col, row);
+    // Reset the Categorical table size
+    m_selectableTableView.setSize(previousSize);
     m_selectableTableView.reloadData(false, false);
   }
 }

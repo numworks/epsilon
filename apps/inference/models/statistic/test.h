@@ -61,7 +61,7 @@ bool hasHypothesisParameters() const override { return true; }
 
   // Output
   int numberOfResults() const override { return 2 + numberOfEstimates() + hasDegreeOfFreedom(); }
-  void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) override;
+  void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) override;
 
   // Range
   constexpr static float k_displayWidthToSTDRatio = 5.f;

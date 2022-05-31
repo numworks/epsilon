@@ -35,14 +35,15 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
     double value;
     Poincare::Layout message;
     I18n::Message subMessage;
-    m_statistic->resultAtIndex(i, &value, &message, &subMessage);
+    int precision = Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
+    m_statistic->resultAtIndex(i, &value, &message, &subMessage, &precision);
     constexpr int bufferSize = Constants::k_largeBufferSize;
     char buffer[bufferSize];
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
         value,
         buffer,
         bufferSize,
-        Poincare::Preferences::VeryLargeNumberOfSignificantDigits,
+        precision,
         Poincare::Preferences::PrintFloatMode::Decimal);
 
     messageCell->setLayout(message);

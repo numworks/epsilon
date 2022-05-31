@@ -43,7 +43,8 @@ void CategoricalTableCell::drawRect(KDContext * ctx, KDRect rect) const {
   // │cell │
   // └─────┘
 
-  KDPoint offset = KDPoint(m_selectableTableView.leftMargin(), m_selectableTableView.topMargin()).translatedBy(m_selectableTableView.contentOffset().opposite());
+  KDPoint scrollingOffset = m_selectableTableView.contentOffset();
+  KDPoint offset = KDPoint(m_selectableTableView.leftMargin() - scrollingOffset.x(), std::max(0, m_selectableTableView.topMargin() - scrollingOffset.y()));
   TableViewDataSource * data = const_cast<CategoricalTableCell *>(this)->tableViewDataSource();
 
   KDCoordinate width = bounds().width();

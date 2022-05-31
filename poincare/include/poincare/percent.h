@@ -5,10 +5,12 @@
 
 namespace Poincare {
 
+namespace Percent {
+  Expression ParseTarget(Expression & leftHandSide);
+}
+
 class PercentSimpleNode : public ExpressionNode  {
 public:
-  static Expression ParseTarget(Expression & leftHandSide);
-
   // TreeNode
   size_t size() const override { return sizeof(PercentSimpleNode); }
   int numberOfChildren() const override { return 1; }

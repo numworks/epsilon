@@ -147,7 +147,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     if (allChildrenAreUndefined) {
       return displayNotSuitableWarning();
     }
-    store()->setList(static_cast<List &>(formula), seriesToFill, columnToFill);
+    store()->setList(static_cast<List &>(formula), seriesToFill, columnToFill, false, true);
     table()->reloadData();
     return true;
   }
@@ -158,11 +158,12 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     return displayNotSuitableWarning();
   }
   for (int j = 0; j < store()->numberOfPairsOfSeries(seriesToFill); j++) {
-    store()->set(evaluation, seriesToFill, columnToFill, j);
+    store()->set(evaluation, seriesToFill, columnToFill, j, true, true);
     if (evaluateForEachPairs) {
       evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
     }
   }
+  store()->updateSeries(seriesToFill);
   reloadSeriesVisibleCells(selectedSeries());
   return true;
 }

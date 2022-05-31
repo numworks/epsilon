@@ -112,7 +112,7 @@ void DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate, 
   updateSeries(series, delayUpdate);
 }
 
-void DoublePairStore::setList(List list, int series, int i, bool delayUpdate) {
+void DoublePairStore::setList(List list, int series, int i, bool delayUpdate, bool setOtherColumnToDefaultIfEmpty) {
   /* Approximate the list to turn it into list of doubles since we do not
    * want to work with exact expressions in Regression and Statistics.*/
   assert(series >= 0 && series < k_numberOfSeries);
@@ -124,7 +124,7 @@ void DoublePairStore::setList(List list, int series, int i, bool delayUpdate) {
       continue;
     }
     double evaluation = PoincareHelpers::ApproximateToScalar<double>(list.childAtIndex(j), m_context);
-    set(evaluation, series, i, j, true);
+    set(evaluation, series, i, j, true, setOtherColumnToDefaultIfEmpty);
   }
   updateSeries(series, delayUpdate);
 }

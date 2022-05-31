@@ -117,6 +117,7 @@ public:
   static bool ValidSeriesAndValidTotalNormalProbabilities(const DoublePairStore * store, int series) {
     return store->seriesIsValid(series) && static_cast<const Store *>(store)->totalNormalProbabilityValues(series) > 0;
   }
+  void updateSeries(int series, bool delayUpdate = false) override;
 private:
   constexpr static int k_numberOfQuantiles = 5;
   constexpr static I18n::Message k_quantilesName[k_numberOfQuantiles] = {
@@ -138,7 +139,6 @@ private:
 
   // DoublePairStore
   double defaultValue(int series, int i, int j) const override;
-  void updateSeries(int series, bool delayUpdate = false) override;
   /* Find the i-th distinct value (if i is -1, browse the entire series) from
    * start to end (ordered by value).
    * Retrieve the i-th value and the number distinct values encountered.

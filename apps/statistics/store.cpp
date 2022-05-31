@@ -202,6 +202,7 @@ double Store::minValueForAllSeries(bool handleNullFrequencies, ValidSeries valid
 }
 
 double Store::maxValue(int series, bool handleNullFrequencies) const {
+  assert(seriesIsValid(series));
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = numberOfPairs - 1; k >= 0; k--) {
     // Unless handleNullFrequencies is true, look for the last non null value.
@@ -214,6 +215,7 @@ double Store::maxValue(int series, bool handleNullFrequencies) const {
 }
 
 double Store::minValue(int series, bool handleNullFrequencies) const {
+  assert(seriesIsValid(series));
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
     // Unless handleNullFrequencies is true, look for the first non null value.

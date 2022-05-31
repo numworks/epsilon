@@ -255,4 +255,10 @@ void HistoryController::historyViewCellDidChangeSelection(HistoryViewCell ** cel
   }
 }
 
+void HistoryController::restoreHistory() {
+  if (m_calculationStore->preferencesMightHaveChanged(Poincare::Preferences::sharedPreferences())) {
+    m_calculationStore->recomputeHeights(HistoryViewCell::Height);
+  };
+}
+
 }

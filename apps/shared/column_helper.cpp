@@ -164,7 +164,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     }
   }
   store()->updateSeries(seriesToFill);
-  reloadSeriesVisibleCells(selectedSeries());
+  reloadSeriesVisibleCells(seriesToFill);
   return true;
 }
 

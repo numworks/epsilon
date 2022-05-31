@@ -38,7 +38,7 @@ void SelectableTableView::selectColumn(int i) {
 }
 
 void SelectableTableView::reloadData(bool setFirstResponder, bool setSelection) {
-  dataSource()->initCellWidth(this);
+  dataSource()->initCellSize(this);
   int col = selectedColumn();
   int row = selectedRow();
   // TODO: remove setSelection? (Cf comment in DynamicCellsDataSource)

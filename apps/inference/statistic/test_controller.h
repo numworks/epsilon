@@ -32,7 +32,7 @@ public:
   int numberOfRows() const override;
   Escher::HighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
   int reusableCellCount(int type) override { return Statistic::k_numberOfSignificanceTestType; }
-  void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   constexpr static int k_indexOfOneProp = 0;
   constexpr static int k_indexOfOneMean = 1;

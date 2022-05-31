@@ -53,7 +53,8 @@ void CategoricalController::scrollViewDidChangeOffset(ScrollViewDataSource * scr
   /* Firs, unselect the CategoricalTableCell cell; indeed, the offset is about
    * to change, the categoricalTableCell cells will be relayouted. */
   categoricalTableCell()->selectableTableView()->unhighlightSelectedCell();
-  categoricalTableCell()->selectableTableView()->setContentOffset(KDPoint(0, categoricalTableCell()->selectableTableView()->contentOffset().y() + scrollViewDataSource->offset().y()));
+  KDPoint currentOffset = categoricalTableCell()->selectableTableView()->contentOffset();
+  categoricalTableCell()->selectableTableView()->setContentOffset(KDPoint(currentOffset.x(), currentOffset.y() + scrollViewDataSource->offset().y()));
   // Unset the ScrollViewDelegate to avoid infinite looping
   setScrollViewDelegate(nullptr);
   m_selectableTableView.setContentOffset(KDPointZero);

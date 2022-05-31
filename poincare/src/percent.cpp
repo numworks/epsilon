@@ -13,9 +13,7 @@
 
 namespace Poincare {
 
-/* PercentSimpleNode */
-
-Expression PercentSimpleNode::ParseTarget(Expression & leftHandSide) {
+Expression Percent::ParseTarget(Expression & leftHandSide) {
   assert(!leftHandSide.isUninitialized());
   /* We must extract the parameters for the percent operation :
    * 1+2+3% -> PercentAddition(1+2,3)
@@ -56,6 +54,8 @@ Expression PercentSimpleNode::ParseTarget(Expression & leftHandSide) {
   assert(!rightHandSide.isUninitialized());
   return PercentAddition::Builder(leftHandSide, rightHandSide);
 }
+
+/* PercentSimpleNode */
 
 // Property
 

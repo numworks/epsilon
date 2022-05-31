@@ -17,6 +17,7 @@ StoreController::StoreController(Responder * parentResponder, Escher::InputEvent
 
 void StoreController::clearSelectedColumn() {
   m_store->deleteColumn(m_store->seriesAtColumn(selectedColumn()), m_store->relativeColumnIndex(selectedColumn()));
+  selectCellAtLocation(selectedColumn(), 1);
 }
 
 InputViewController * StoreController::inputViewController() {

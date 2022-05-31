@@ -7,7 +7,6 @@
 #include <assert.h>
 #include <stddef.h>
 #include <ion.h>
-#include <ion/src/shared/crc32_eat_byte.h>
 #include <algorithm>
 
 using namespace Poincare;
@@ -331,6 +330,17 @@ uint32_t DoublePairStore::storeChecksum() const {
   return Ion::crc32Word(checkSumPerSeries, k_numberOfSeries);
 }
 
+/* TODO: This function is temporary. We want to create a function with a
+ * similar behaviour in Ion in a near future. */
+constexpr uint32_t polynomialForCrc = 0x04C11DB7;
+uint32_t crc32EatByte(uint32_t crc, uint8_t data) {
+    crc ^= data << 24;
+    for (int i=8; i--;) {
+      crc = crc & 0x80000000 ? ((crc<<1)^polynomialForCrc) : (crc << 1);
+    }
+    return crc;
+}
+
 uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
   /* Since the pool is noisy, we cannot just compute the CRC32 of the expressionNode
    * in the pool, and we have to build it from the values of the columns. */
@@ -345,7 +355,7 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
       double value = get(series, i, j);
       memcpy(buffer, &value, sizeof(double));
       for (int index = 0; index < k_bufferLength; index++) {
-        crc = Ion::crc32EatByte(crc, buffer[index]);
+        crc = crc32EatByte(crc, buffer[index]);
       }
     }
   }

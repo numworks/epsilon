@@ -111,7 +111,7 @@ bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::TextField *
   }
   tableModel()->setParameterAtPosition(p,  relativeRowIndex(row), relativeColumnIndex(column));
 
-  m_selectableTableView.deselectTable();
+  m_selectableTableView.deselectTable(true);
   // Add row or column
   if ((row == tableViewDataSource()->numberOfRows() - 1 && relativeRowIndex(tableViewDataSource()->numberOfRows()) < tableModel()->maxNumberOfRows()) ||
       (column == tableViewDataSource()->numberOfColumns() - 1 && relativeColumnIndex(tableViewDataSource()->numberOfColumns()) < tableModel()->maxNumberOfColumns())) {

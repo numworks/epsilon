@@ -41,7 +41,7 @@ public:
     Power,
     Addition,
     Factorial,
-    Percent,
+    PercentSimple,
     PercentAddition,
     Division,
     ConstantMaths,

@@ -97,9 +97,9 @@ int TestController::numberOfRows() const {
   return m_statistic->numberOfSignificancesTestTypes();
 }
 
-void TestController::willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) {
+void TestController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   Escher::MessageTableCellWithChevronAndMessage * c = static_cast<Escher::MessageTableCellWithChevronAndMessage *>(cell);
-  switch (j) {
+  switch (index) {
     case k_indexOfOneProp:
       c->setMessage(I18n::Message::TestOneProp);
       c->setSubtitle(m_statistic->zStatisticMessage());

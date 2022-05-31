@@ -547,6 +547,7 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("80+20%+20%", "115.2");
   assert_expression_approximates_to<float>("80-20%", "64");
   assert_expression_approximates_to<float>("80+20-20%", "80");
+  assert_expression_approximates_to<float>("10+2*3%", "10.06");
 
   assert_expression_approximates_to<float>("√(-1)", "i");
   assert_expression_approximates_to<double>("√(-1)", "i");

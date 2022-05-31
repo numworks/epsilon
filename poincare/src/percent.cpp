@@ -20,6 +20,7 @@ Expression Percent::ParseTarget(Expression & leftHandSide) {
    * 1+2-3% -> PercentAddition(1+2,-3)
    * 1-3%   -> PercentAddition(1,-3)
    * 2*3%   -> PercentSimple(2*3)
+   * 1+2*3% -> 1+PercentSimple(2*3)
    */
   Expression rightHandSide;
   if (leftHandSide.type() == ExpressionNode::Type::Addition) {
@@ -52,6 +53,9 @@ Expression Percent::ParseTarget(Expression & leftHandSide) {
     return leftHandSide;
   }
   assert(!rightHandSide.isUninitialized());
+  if (rightHandSide.type() == ExpressionNode::Type::Multiplication) {
+    return Addition::Builder(leftHandSide, PercentSimple::Builder(rightHandSide));
+  }
   return PercentAddition::Builder(leftHandSide, rightHandSide);
 }
 

@@ -49,6 +49,10 @@ void CategoricalController::scrollViewDidChangeOffset(ScrollViewDataSource * scr
    * displayable cells as its real number of cells. Since the CategoricalController
    * need at most 3 cells, we delegate the scroll handling to the
    * CategoricalTableCell. */
+
+  /* Firs, unselect the CategoricalTableCell cell; indeed, the offset is about
+   * to change, the categoricalTableCell cells will be relayouted. */
+  categoricalTableCell()->selectableTableView()->unhighlightSelectedCell();
   categoricalTableCell()->selectableTableView()->setContentOffset(KDPoint(0, categoricalTableCell()->selectableTableView()->contentOffset().y() + scrollViewDataSource->offset().y()));
   // Unset the ScrollViewDelegate to avoid infinite looping
   setScrollViewDelegate(nullptr);

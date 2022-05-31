@@ -345,6 +345,16 @@ void Parser::parsePercent(Expression & leftHandSide, Token::Type stoppingType) {
     leftHandSide = PercentSimpleNode::ParseTarget(leftHandSide);
   }
   isThereImplicitMultiplication();
+  if (m_pendingImplicitMultiplication || m_nextToken.is(Token::Times) || m_nextToken.is(Token::Slash)) {
+    /* TODO: We should handle the parsing of expressions such as 2+3%*4 as
+     * 2+(3*4)% instead of (2+3%)*4.
+     * Idea: On first popped % token set a boolean so that next popToken() call
+     * will return a "percent2" token. Both tokens have a different priority:
+     * the first one is higher than +, the second one is lower than *.
+     * Then, we parse both expressions accordingly. */
+    m_status = Status::Error;
+    return;
+  }
 }
 
 void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) {

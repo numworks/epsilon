@@ -99,6 +99,11 @@ int TestController::numberOfRows() const {
 
 void TestController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   Escher::MessageTableCellWithChevronAndMessage * c = static_cast<Escher::MessageTableCellWithChevronAndMessage *>(cell);
+  if (index == virtualIndexOfSlope()) {
+    c->setMessage(I18n::Message::Slope);
+    c->setSubtitle(m_statistic->tStatisticMessage());
+    return;
+  }
   switch (index) {
     case k_indexOfOneProp:
       c->setMessage(I18n::Message::TestOneProp);
@@ -116,15 +121,10 @@ void TestController::willDisplayCellForIndex(Escher::HighlightCell * cell, int i
       c->setMessage(I18n::Message::TestTwoMeans);
       c->setSubtitle(m_statistic->tOrZStatisticMessage());
       return;
-    case k_indexOfCategorical:
+    default:
+      assert(index == k_indexOfCategorical);
       c->setMessage(I18n::Message::TestCategorical);
       c->setSubtitle(I18n::Message::X2Test);
       return;
-    case k_indexOfSlope:
-      c->setMessage(I18n::Message::Slope);
-      c->setSubtitle(m_statistic->tStatisticMessage());
-      return;
-    default:
-      assert(false);
   }
 }

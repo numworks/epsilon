@@ -168,8 +168,8 @@ QUIZ_CASE(poincare_serialization_factorial) {
 }
 
 QUIZ_CASE(poincare_serialization_percent) {
-  assert_expression_serialize_to(Percent::Builder({Rational::Builder(2,3)}), "\u00122/3\u0013%");
-  assert_expression_serialize_to(Percent::Builder({Division::Builder(Constant::Builder("π"),Rational::Builder(3))}), "\u0012π/3\u0013%");
-  assert_expression_serialize_to(Percent::Builder({Power::Builder(Constant::Builder("π"),Rational::Builder(3))}), "\u0012π^3\u0013%");
-  assert_expression_serialize_to(Percent::Builder({Percent::Builder({Rational::Builder(100), Rational::Builder(20)}), Opposite::Builder(Rational::Builder(30))}), "100+20%-30%");
+  assert_expression_serialize_to(PercentSimple::Builder(Rational::Builder(2,3)), "\u00122/3\u0013%");
+  assert_expression_serialize_to(PercentSimple::Builder(Division::Builder(Constant::Builder("π"),Rational::Builder(3))), "\u0012π/3\u0013%");
+  assert_expression_serialize_to(PercentSimple::Builder(Power::Builder(Constant::Builder("π"),Rational::Builder(3))), "\u0012π^3\u0013%");
+  assert_expression_serialize_to(PercentAddition::Builder(PercentAddition::Builder(Rational::Builder(100), Rational::Builder(20)), Opposite::Builder(Rational::Builder(30))), "100+20%-30%");
 }

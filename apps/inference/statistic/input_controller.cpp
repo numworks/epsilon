@@ -149,12 +149,3 @@ bool InputController::setParameterAtIndex(int parameterIndex, double f) {
   m_statistic->setParameterAtIndex(f, parameterIndex);
   return true;
 }
-
-int InputController::convertFloatToText(double value, char * buffer, int bufferSize) {
-  return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
-      value,
-      buffer,
-      bufferSize,
-      k_numberOfTitleSignificantDigit,
-      Poincare::Preferences::PrintFloatMode::Decimal);
-}

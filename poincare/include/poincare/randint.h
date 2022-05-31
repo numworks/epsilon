@@ -27,6 +27,8 @@ private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // Simplification
+  Expression shallowReduce(ReductionContext reductionContext) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return templateApproximate<float>(approximationContext);
@@ -47,7 +49,9 @@ public:
   static Randint Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Randint, RandintNode>({child0, child1}); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("randint", 2, &UntypedBuilderTwoChildren<Randint>);
 
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
+
 
 }
 

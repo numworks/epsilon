@@ -51,7 +51,9 @@ void IntervalCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
         std::round(floatToPixel(Axis::Vertical, verticalPosition)) + k_labelGraduationLength,
         KDFont::SmallFont->stringSize(buffer), RelativePosition::None, RelativePosition::After);
     KDColor textColor = isMainInterval ? KDColorBlack : Escher::Palette::GrayDarkMiddle;
-    ctx->drawString(buffer, labelPosition, KDFont::SmallFont, textColor, k_backgroundColor);
+    if (rect.contains(labelPosition)) {
+      ctx->drawString(buffer, labelPosition, KDFont::SmallFont, textColor, k_backgroundColor);
+    }
 
     // Draw the interval segment : --------
     double intervalRightBound = estimate - marginOfError;

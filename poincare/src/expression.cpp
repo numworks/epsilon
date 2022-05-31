@@ -223,7 +223,7 @@ bool Expression::IsInfinity(const Expression e, Context * context) {
 }
 
 bool Expression::IsPercent(const Expression e, Context * context) {
-  return e.type() == ExpressionNode::Type::Percent;
+  return e.type() == ExpressionNode::Type::PercentSimple || e.type() == ExpressionNode::Type::PercentAddition;
 }
 
 bool containsVariables(const Expression e, char * variables, int maxVariableSize) {

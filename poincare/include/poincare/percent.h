@@ -20,7 +20,7 @@ public:
   }
 #endif
   // Properties
-  Type type() const override { return Type::Percent; }
+  Type type() const override { return Type::PercentSimple; }
   Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
   NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;

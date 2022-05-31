@@ -30,6 +30,10 @@ int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.name());
 }
 
+Expression RandintNode::shallowReduce(ReductionContext reductionContext) {
+  return Randint(this).shallowReduce(reductionContext);
+}
+
 template <typename T> Evaluation<T> RandintNode::templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined) const {
   Evaluation<T> aInput = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> bInput = childAtIndex(1)->approximate(T(), approximationContext);
@@ -62,6 +66,20 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Approximati
         T result = std::floor(Random::random<T>()*(b+static_cast<T>(1.0)-a)+a);
         return Complex<T>::Builder(result);
       });
+}
+
+Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  {
+    Expression e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    if (!e.isUninitialized()) {
+      return e;
+    }
+  }
+  return *this;
 }
 
 }

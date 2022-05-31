@@ -34,7 +34,6 @@ public:
   }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
-  void initWidth(KDCoordinate width);
 private:
   virtual KDRect adaptRect(KDRect rect) const = 0;
   virtual KDSize adaptSize(KDSize size) const = 0;

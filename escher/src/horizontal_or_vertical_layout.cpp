@@ -4,16 +4,6 @@
 
 using namespace Escher;
 
-void OrientedLayout::initWidth(KDCoordinate width) {
-  if (bounds().width() <= 0) {
-    setSize(KDSize(width, 0));
-    for (int i = 0; i < numberOfSubviews(); i++) {
-      View * subview = const_cast<OrientedLayout *>(this)->subviewAtIndex(i);
-      subview->setSize(KDSize(width - 2 * m_secondaryDirectionMargin, 0));
-    }
-  }
-}
-
 KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
   int requiredSecondaryDirectionLength = 0, requiredMainDirectionLength = 0;
   int n = numberOfSubviews();

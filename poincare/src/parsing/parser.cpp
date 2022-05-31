@@ -39,7 +39,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseUnexpected,      // Token::RightParenthesis
     &Parser::parseUnexpected,      // Token::RightBrace
     &Parser::parseUnexpected,      // Token::Comma
-    &Parser::parsePercent,        // Token::Percent
+    &Parser::parsePercent,         // Token::Percent
     &Parser::parsePlus,            // Token::Plus
     &Parser::parseMinus,           // Token::Minus
     &Parser::parseTimes,           // Token::Times

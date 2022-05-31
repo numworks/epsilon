@@ -82,6 +82,8 @@ void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, 
       *value = degreeOfFreedom();
       *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
       *subMessage = I18n::Message::Default;
+      /* We reduce the precision since "Degrees of freedom" might not fit in
+       * all languages with 7 significant digits. */
       *precision = Poincare::Preferences::MediumNumberOfSignificantDigits;
   }
 }

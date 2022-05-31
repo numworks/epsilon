@@ -2,7 +2,7 @@
 
 namespace Escher {
 
-void ListViewDataSource::initCellWidth(TableView * view) {
+void ListViewDataSource::initCellSize(TableView * view) {
   int nRows = numberOfRows();
   for (int row = 0; row < nRows; row++) {
     int type = typeAtIndex(row);

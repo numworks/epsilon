@@ -10,7 +10,7 @@ class TableView;
 
 class TableViewDataSource {
 public:
-  virtual void initCellWidth(TableView * view) {}
+  virtual void initCellSize(TableView * view) {}
   virtual int numberOfRows() const = 0;
   virtual int numberOfColumns() const = 0;
   virtual void willDisplayCellAtLocation(HighlightCell * cell, int i, int j);

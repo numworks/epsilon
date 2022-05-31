@@ -9,7 +9,7 @@ namespace Escher {
 
 class ListViewDataSource : public TableViewDataSource {
 public:
-  void initCellWidth(TableView * view) override;
+  void initCellSize(TableView * view) override;
   // ListViewDataSource has only one column
   int numberOfColumns() const override { return 1; }
   int indexFromCumulatedWidth(KDCoordinate offsetX) override { return 0; }

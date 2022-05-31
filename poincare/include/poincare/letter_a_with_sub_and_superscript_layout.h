@@ -20,6 +20,7 @@ public:
 #endif
 
 private:
+  static constexpr KDCoordinate k_barHeight = 6;
   void renderLetter(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 

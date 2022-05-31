@@ -24,14 +24,12 @@ Expression BinomialCoefficientNode::shallowReduce(ReductionContext reductionCont
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  Layout child0 = childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  Layout child1 = childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits);
   if (Preferences::sharedPreferences()->combinatoricSymbols() == Preferences::CombinatoricSymbols::Default) {
-    return BinomialCoefficientLayout::Builder(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+    return BinomialCoefficientLayout::Builder(child0, child1);
   } else {
-    return LetterCWithSubAndSuperscriptLayout::Builder(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+    return LetterCWithSubAndSuperscriptLayout::Builder(child0, child1);
   }
 }
 

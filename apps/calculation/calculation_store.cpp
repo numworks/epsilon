@@ -7,6 +7,7 @@
 #include "../exam_mode_configuration.h"
 #include <assert.h>
 #include <ion/circuit_breaker.h>
+#include "history_view_cell.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -17,7 +18,8 @@ CalculationStore::CalculationStore(char * buffer, int size) :
   m_buffer(buffer),
   m_bufferSize(size),
   m_calculationAreaEnd(m_buffer),
-  m_numberOfCalculations(0)
+  m_numberOfCalculations(0),
+  m_inUsePreferences(*Poincare::Preferences::sharedPreferences())
 {
   assert(m_buffer != nullptr);
   assert(m_bufferSize > 0);
@@ -283,6 +285,26 @@ Expression CalculationStore::ansExpression(Context * context) {
     return input;
   }
   return exactOutput;
+}
+
+void CalculationStore::recomputeHeights(HeightComputer heightComputer) {
+  for (Calculation * calculation : *this) {
+    calculation->setHeights(
+      /* The void context is used since there is no reasons for the
+       * heightComputer to resolve symbols */
+      heightComputer(calculation, nullptr, false),
+      heightComputer(calculation, nullptr, true));
+  }
+}
+
+void CalculationStore::preferencesMightHaveChanged(Poincare::Preferences * preferences) {
+  // Track settings that might invalidate HistoryCells heights
+  if (m_inUsePreferences.combinatoricSymbols() == preferences->combinatoricSymbols()
+    && m_inUsePreferences.numberOfSignificantDigits() == preferences->numberOfSignificantDigits()) {
+    return;
+  }
+  m_inUsePreferences = *preferences;
+  recomputeHeights(HistoryViewCell::Height);
 }
 
 // Push converted expression in the buffer

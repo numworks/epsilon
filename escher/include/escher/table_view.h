@@ -24,7 +24,7 @@ public:
   virtual void scrollToCell(int i, int j) { scrollToContentRect(m_contentView.cellFrame(i, j), true); }
   HighlightCell * cellAtLocation(int i, int j) { return m_contentView.cellAtLocation(i, j); }
   void reloadCellAtLocation(int i, int j) { m_contentView.reloadCellAtLocation(i, j); }
-  void initWidth(KDCoordinate width);
+  void initSize(KDRect rect);
   void reloadVisibleCellsAtColumn(int column);
 protected:
 #if ESCHER_VIEW_LOGGING

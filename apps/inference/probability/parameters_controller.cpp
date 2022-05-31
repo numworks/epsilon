@@ -40,7 +40,7 @@ void ParametersController::ContentView::layoutSubviews(bool force) {
   KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height() + k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
   /* SelectableTableView must be given a width before computing height. */
-  m_selectableTableView->initWidth(bounds().width());
+  m_selectableTableView->initSize(bounds());
   KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), tableHeight), force);
 }
@@ -86,10 +86,10 @@ void ParametersController::viewWillAppear() {
 }
 
 void ParametersController::viewDidDisappear() {
-  /* Prevent initWidth to be bypassed when reopening the ParametersController.
+  /* Prevent initSize to be bypassed when reopening the ParametersController.
    * Indeed, number of cells might increase so their width need to be computed
    * */
-  m_contentView.resetWidth();
+  m_contentView.resetSize();
 }
 
 int ParametersController::numberOfRows() const {

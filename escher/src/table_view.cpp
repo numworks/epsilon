@@ -14,9 +14,9 @@ TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * sc
 {
 }
 
-void TableView::initWidth(KDCoordinate width) {
-  if (bounds().width() <= 0) {
-    setSize(KDSize(width, 0));
+void TableView::initSize(KDRect rect) {
+  if (bounds().width() <= 0 || bounds().height() <= 0) {
+    setSize(KDSize(rect.width(), rect.height()));
     dataSource()->initCellWidth(this);
   }
 }

@@ -17,7 +17,7 @@ namespace Inference {
 /* Common controller between InputHomogeneityController,
  * InputGoodnessController and ResultsHomogeneityController. */
 
-class CategoricalController : public Escher::SelectableListViewController<Escher::ListViewDataSource>, public Escher::SelectableTableViewDelegate {
+class CategoricalController : public Escher::SelectableListViewController<Escher::ListViewDataSource>, public Escher::SelectableTableViewDelegate, public Escher::ScrollViewDelegate {
 public:
   CategoricalController(Escher::Responder * parent, Escher::ViewController * nextController, Escher::Invocation invocation);
 
@@ -27,6 +27,9 @@ public:
 
   static bool ButtonAction(void * c, void * s);
 
+  // ScrollViewDelegate
+  void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
+
   // SelectableTableViewDelegate
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
@@ -34,6 +37,7 @@ public:
   int typeAtIndex(int index) override { return index; } // One cell per type
   int numberOfRows() const override { return indexOfNextCell() + 1; }
   virtual Escher::HighlightCell * reusableCell(int index, int type) override;
+  KDCoordinate rowHeight(int index) override;
   int reusableCellCount(int type) override { return 1; }
 
 protected:

@@ -111,10 +111,6 @@ Expression PercentSimpleNode::shallowBeautify(ReductionContext * reductionContex
   return PercentSimple(this).shallowBeautify(reductionContext);
 }
 
-Expression PercentSimpleNode::deepBeautify(ReductionContext reductionContext) {
-  return ExpressionNode::deepBeautify(reductionContext);
-}
-
 // Evaluation
 
 template <typename U> Evaluation<U> PercentSimpleNode::templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined) const {

@@ -74,7 +74,7 @@ void ScrollView::setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate b
   m_leftMargin = left;
 }
 
-void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
+void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll, bool clippedInFrame) {
   if (!allowOverscroll && !m_contentView->bounds().contains(p)) {
     return;
   }
@@ -104,8 +104,11 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
     setContentOffset(contentOffset().translatedBy(KDPoint(offsetX, offsetY)));
   }
 
-  // Handle cases when the size of the view has decreased.
-  if (!allowOverscroll) {
+  if (clippedInFrame) {
+    /* Handle cases when the size of the view has decreased. There are some cases
+     * where we want to bypass this and authorize the content view to be shorter
+     * than the scroll view. This might be the case with table. Hence the
+     * clippedInFrame argument (see Inference > Test > Slope)  */
     setContentOffset(KDPoint(
           std::min(
             contentOffset().x(),
@@ -120,7 +123,7 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
   }
 }
 
-void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
+void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll, bool clippedInFrame) {
   KDPoint tl  = rect.topLeft();
   KDPoint br  = rect.bottomRight();
   KDRect visibleRect = visibleContentRect();
@@ -146,8 +149,8 @@ void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
       tl = KDPoint(rect.right() - visibleRect.width(), tl.y());
     }
   }
-  scrollToContentPoint(tl, allowOverscroll);
-  scrollToContentPoint(br, allowOverscroll);
+  scrollToContentPoint(tl, allowOverscroll, clippedInFrame);
+  scrollToContentPoint(br, allowOverscroll, clippedInFrame);
 }
 
 KDRect ScrollView::visibleContentRect() {

@@ -78,7 +78,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   case k_calculationModeSymbolCellType: {
     assert((i == 0 && type == k_calculationModeTitleCellType) || (i == 1 && type == k_calculationModeSymbolCellType));
     // Mode title and symbol cells have an index value
-    const char * pattern = (i == 0 ? "%s %i" : "%s%i");
+    const char * pattern = (m_store->totalNumberOfModes() == 1 ? "%s" : (i == 0 ? "%s %i" : "%s%i"));
     I18n::Message message = (i == 0 ? I18n::Message::Mode : I18n::Message::ModeSymbol);
     int index = j - k_fixedNumberOfRows + 2;
     assert(j >= 1);

@@ -49,9 +49,9 @@ private:
   int convertFloatToText(double value, char * buffer, int bufferSize);
   static void InputTitle(Escher::ViewController * vc, Statistic * statistic, char * titleBuffer, size_t titleBufferSize);
 
-  constexpr static int k_numberOfTitleSignificantDigit = 3;
+  constexpr static int k_numberOfTitleSignificantDigit = Poincare::Preferences::VeryShortNumberOfSignificantDigits;
   constexpr static int k_titleBufferSize = sizeof("H0:= Ha: α=") + 7 /* μ1-μ2 */ +
-                                           3 * Constants::k_shortFloatNumberOfChars + 2 /* op */ +
+                                           3 * (Poincare::PrintFloat::charSizeForFloatsWithPrecision(k_numberOfTitleSignificantDigit) - 1) + 2 /* op */ +
                                            10;
   char m_titleBuffer[k_titleBufferSize];
   Statistic * m_statistic;

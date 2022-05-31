@@ -42,6 +42,7 @@ public:
     Addition,
     Factorial,
     Percent,
+    PercentAddition,
     Division,
     ConstantMaths,
     ConstantPhysics,

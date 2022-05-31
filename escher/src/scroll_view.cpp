@@ -105,17 +105,19 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
   }
 
   // Handle cases when the size of the view has decreased.
-  setContentOffset(KDPoint(
-    std::min(
-      contentOffset().x(),
-      std::max<KDCoordinate>(
-        minimalSizeForOptimalDisplay().width() - bounds().width(),
-        KDCoordinate(0))),
-    std::min(
-      contentOffset().y(),
-      std::max<KDCoordinate>(
-        minimalSizeForOptimalDisplay().height() - bounds().height(),
-        KDCoordinate(0)))));
+  if (!allowOverscroll) {
+    setContentOffset(KDPoint(
+          std::min(
+            contentOffset().x(),
+            std::max<KDCoordinate>(
+              minimalSizeForOptimalDisplay().width() - bounds().width(),
+              KDCoordinate(0))),
+          std::min(
+            contentOffset().y(),
+            std::max<KDCoordinate>(
+              minimalSizeForOptimalDisplay().height() - bounds().height(),
+              KDCoordinate(0)))));
+  }
 }
 
 void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {

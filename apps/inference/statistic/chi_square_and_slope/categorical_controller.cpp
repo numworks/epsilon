@@ -20,6 +20,7 @@ CategoricalController::CategoricalController(
   m_selectableTableView.setLeftMargin(0);
   m_selectableTableView.setRightMargin(0);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
+  setScrollViewDelegate(this);
 }
 
 void CategoricalController::didBecomeFirstResponder() {
@@ -39,22 +40,30 @@ bool CategoricalController::ButtonAction(void * c, void * s) {
   return true;
 }
 
-void CategoricalController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView * t,
-    int previousSelectedCellX,
-    int previousSelectedCellY,
-    bool withinTemporarySelection) {
-  int row = categoricalTableCell()->selectableTableView()->selectedRow();
-  int col = categoricalTableCell()->selectableTableView()->selectedColumn();
-  if (!withinTemporarySelection && previousSelectedCellY != row) {
-    // Make contentView scroll to cell
-    KDRect cellFrame = KDRect(
-        0,  // We'll scroll only vertically
-        categoricalTableCell()->tableViewDataSource()->cumulatedHeightFromIndex(row) + categoricalTableCell()->selectableTableView()->topMargin(),
-        categoricalTableCell()->tableViewDataSource()->columnWidth(col),
-        categoricalTableCell()->tableViewDataSource()->rowHeight(row));
+void CategoricalController::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
+  /* Transfer the CategoricalController offset to the CategoricalTableCell
+   * offset. This is a hack to ensure that the categorical table cell doesn't
+   * require too many displayable cells. If the scroll was handled by the
+   * CategoricalController, the CategoricalTableCell would need as many
+   * displayable cells as its real number of cells. Since the CategoricalController
+   * need at most 3 cells, we delegate the scroll handling to the
+   * CategoricalTableCell. */
+  categoricalTableCell()->selectableTableView()->setContentOffset(KDPoint(0, categoricalTableCell()->selectableTableView()->contentOffset().y() + scrollViewDataSource->offset().y()));
+  // Unset the ScrollViewDelegate to avoid infinite looping
+  setScrollViewDelegate(nullptr);
+  m_selectableTableView.setContentOffset(KDPointZero);
+  setScrollViewDelegate(this);
+}
 
-    m_selectableTableView.scrollToContentRect(cellFrame);
+
+void CategoricalController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  int row = t->selectedRow();
+  int col = t->selectedColumn();
+  if (!withinTemporarySelection && previousSelectedCellY != t->selectedRow()) {
+    // We need to clip the size of the CategoricalTableCell to force it to scroll
+    categoricalTableCell()->selectableTableView()->setSize(m_selectableTableView.bounds().size());
+    categoricalTableCell()->selectableTableView()->scrollToCell(col, row);
+    m_selectableTableView.reloadData(false, false);
   }
 }
 
@@ -65,6 +74,13 @@ HighlightCell * CategoricalController::reusableCell(int index, int type) {
     assert(type == indexOfNextCell());
     return &m_next;
   }
+}
+
+KDCoordinate CategoricalController::rowHeight(int index) {
+  if (index == k_indexOfTableCell) {
+    return std::min(categoricalTableCell()->minimalSizeForOptimalDisplay().height() - categoricalTableCell()->selectableTableView()->contentOffset().y(), static_cast<int>(m_selectableTableView.bounds().height()));
+  }
+  return ListViewDataSource::rowHeight(index);
 }
 
 InputCategoricalController::InputCategoricalController(

@@ -4,6 +4,7 @@
 #include <poincare/letter_c_with_sub_and_superscript_layout.h>
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
+#include <poincare/preferences.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
@@ -23,10 +24,15 @@ Expression BinomialCoefficientNode::shallowReduce(ReductionContext reductionCont
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-//  return BinomialCoefficientLayout::Builder(
-  return LetterCWithSubAndSuperscriptLayout::Builder(
+  if (Preferences::sharedPreferences()->combinatoricSymbols() == Preferences::CombinatoricSymbols::Default) {
+    return BinomialCoefficientLayout::Builder(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  } else {
+    return LetterCWithSubAndSuperscriptLayout::Builder(
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  }
 }
 
 int BinomialCoefficientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

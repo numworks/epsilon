@@ -11,7 +11,7 @@ namespace Statistics {
 BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
   MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
   m_view(store, &m_selectedIndex),
-  m_boxParameterController(nullptr, store),
+  m_boxParameterController(nullptr, store, &m_selectedIndex),
   m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation([](void * context, void * sender) {
     BoxController * boxController = static_cast<BoxController * >(context);
     boxController->stackController()->push(boxController->boxParameterController());

@@ -96,7 +96,7 @@ bool EditableCategoricalTableCell::textFieldShouldFinishEditing(TextField * text
           m_selectableTableView.selectedColumn() < tableViewDataSource()->numberOfColumns() - 1) ||
          (event == Ion::Events::Left && m_selectableTableView.selectedColumn() > 0) ||
          (event == Ion::Events::Down &&
-          m_selectableTableView.selectedRow() < tableViewDataSource()->numberOfRows() - 1) ||
+          m_selectableTableView.selectedRow() < tableViewDataSource()->numberOfRows()) ||
          (event == Ion::Events::Up && m_selectableTableView.selectedRow() > 0);
 }
 

@@ -80,7 +80,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     // Mode title and symbol cells have an index value
     const char * pattern = (m_store->totalNumberOfModes() == 1 ? "%s" : (i == 0 ? "%s %i" : "%s%i"));
     I18n::Message message = (i == 0 ? I18n::Message::Mode : I18n::Message::ModeSymbol);
-    int index = j - k_fixedNumberOfRows + 2;
+    int index = j - k_fixedNumberOfRows + 1;
     assert(j >= 1);
     // The NL "Modus 100" is the longest possible text here.
     constexpr static int bufferSize = sizeof("Modus 100") / sizeof(char);
@@ -96,7 +96,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     assert(j >= 1 && ((i == 0 && type == k_calculationTitleCellType) || (i == 1 && type == k_calculationSymbolCellType)));
     // Display a calculation title or symbol
     I18n::Message message;
-    if (j - 1 < k_fixedNumberOfRows - 2) {
+    if (j - 1 < k_fixedNumberOfRows - 1) {
       int messageIndex = findCellIndex(j - 1);
       message = i == 1 ? k_calculationRows[messageIndex].symbol : k_calculationRows[messageIndex].title;
       if (message == I18n::Message::Mean && GlobalPreferences::sharedGlobalPreferences()->meanSymbol() == CountryPreferences::MeanSymbol::WithMu && GlobalPreferences::sharedGlobalPreferences()->language() == I18n::Language::EN) {
@@ -107,7 +107,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       }
     } else {
       // titles index does not include the Mode Frequency messages
-      assert(j == numberOfRows() - 1);
+      assert(showModeFrequency() && j == numberOfRows() - 1);
       I18n::Message modeFrequencyTitles[k_numberOfHeaderColumns] = { I18n::Message::ModeFrequency, I18n::Message::ModeFrequencySymbol };
       message = modeFrequencyTitles[i];
     }
@@ -121,13 +121,13 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     int seriesIndex = m_store->indexOfKthValidSeries(i-2);
     double calculation;
     EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
-    if (j - 1 < (k_fixedNumberOfRows - 2)) {
+    if (j - 1 < (k_fixedNumberOfRows - 1)) {
       int calculationIndex = findCellIndex(j - 1);
       calculation = (m_store->*k_calculationRows[calculationIndex].calculationMethod)(seriesIndex);
-    } else if (j == numberOfRows() - 1) {
+    } else if (showModeFrequency() && j == numberOfRows() - 1) {
       calculation = m_store->modeFrequency(seriesIndex);
     } else {
-      int modeIndex = j - k_fixedNumberOfRows + 1;
+      int modeIndex = j - k_fixedNumberOfRows;
       if (modeIndex < m_store->numberOfModes(seriesIndex)) {
         calculation = m_store->modeAtIndex(seriesIndex, modeIndex);
       } else {
@@ -208,7 +208,7 @@ int CalculationController::typeAtLocation(int i, int j) {
   }
   if (i <= 1) {
     assert(j > 0);
-    if (j < k_fixedNumberOfRows - 1 || j == numberOfRows() - 1) {
+    if (j < k_fixedNumberOfRows || (showModeFrequency() && j == numberOfRows() - 1)) {
       return i == 0 ? k_calculationTitleCellType : k_calculationSymbolCellType;
     }
     return i == 0 ? k_calculationModeTitleCellType : k_calculationModeSymbolCellType;
@@ -221,7 +221,7 @@ int CalculationController::typeAtLocation(int i, int j) {
 
 int CalculationController::findCellIndex(int i) const {
   int returnIndex = 0;
-  while (returnIndex < k_fixedNumberOfRows) {
+  while (returnIndex <= k_fixedNumberOfRows) {
     if (i == (GlobalPreferences::sharedGlobalPreferences()->statsRowsLayout() == CountryPreferences::StatsRowsLayout::Variant1 ? k_calculationRows[returnIndex].variant1Index : k_calculationRows[returnIndex].defaultIndex)) {
       return returnIndex;
     }

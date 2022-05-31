@@ -361,13 +361,17 @@ int Store::numberOfModes(int series) const {
   return modesTotal;
 }
 
+bool Store::shouldDisplayModes(int series) const {
+  modeFrequency(series) != 1.0;
+}
+
 int Store::totalNumberOfModes() const {
   if (m_memoizedMaxNumberOfModes > 0) {
     return m_memoizedMaxNumberOfModes;
   }
   int maxNumberOfModes = 0;
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    if (seriesIsValid(i)) {
+    if (seriesIsValid(i) && shouldDisplayModes(i)) {
       maxNumberOfModes = std::max(maxNumberOfModes, numberOfModes(i));
     }
   }

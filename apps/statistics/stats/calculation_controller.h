@@ -18,7 +18,8 @@ public:
   CalculationController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Store * store);
 
   // TableViewDataSource
-  int numberOfRows() const override { return k_fixedNumberOfRows + m_store->totalNumberOfModes(); }
+  int numberOfRows() const override { return k_fixedNumberOfRows + m_store->totalNumberOfModes() + showModeFrequency(); }
+  bool showModeFrequency() const { return m_store->totalNumberOfModes() > 0; }
   int numberOfColumns() const override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
@@ -33,7 +34,7 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
 private:
-  static constexpr int k_fixedNumberOfRows = 17;
+  static constexpr int k_fixedNumberOfRows = 16;
   static constexpr int k_numberOfCalculationCells = 3 * k_maxNumberOfDisplayableRows;
   static constexpr int k_numberOfSeriesTitleCells = 3;
   static constexpr int k_numberOfCalculationTitleCells = k_maxNumberOfDisplayableRows;

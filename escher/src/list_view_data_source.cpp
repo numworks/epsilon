@@ -10,7 +10,7 @@ void ListViewDataSource::initCellWidth(TableView * view) {
       /* Some cells need a width to compute their height, so we need to set
        * width. We also provide a default height because if we set the frame of
        * a cell to a empty-area rectangle, the subviews aren't layouted. */
-      reusableCell(i, type)->setSize(KDSize(view->bounds().width() - view->rightMargin() - view->leftMargin(), view->bounds().width() - view->topMargin() - view->bottomMargin()));
+      reusableCell(i, type)->setSize(KDSize(view->bounds().width() - view->rightMargin() - view->leftMargin(), view->bounds().height() - view->topMargin() - view->bottomMargin()));
     }
   }
 }

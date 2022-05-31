@@ -27,6 +27,37 @@ bool PercentNode<T>::childAtIndexNeedsUserParentheses(const Expression & child, 
   return false;
 }
 
+template<>
+ExpressionNode::Sign PercentNode<1>::sign(Context * context) const {
+  return childAtIndex(0)->sign(context);
+}
+
+template<>
+ExpressionNode::Sign PercentNode<2>::sign(Context * context) const {
+  ExpressionNode::Sign sign0 = childAtIndex(0)->sign(context);
+  ExpressionNode::Sign sign1 = childAtIndex(1)->sign(context);
+  if (sign0 == sign1) {
+    return sign0;
+  }
+  return Sign::Unknown;
+}
+
+template<>
+ExpressionNode::NullStatus PercentNode<1>::nullStatus(Context * context) const {
+  return childAtIndex(0)->nullStatus(context);
+}
+
+template<>
+ExpressionNode::NullStatus PercentNode<2>::nullStatus(Context * context) const {
+  ExpressionNode::NullStatus nullStatus0 = childAtIndex(0)->nullStatus(context);
+  ExpressionNode::NullStatus nullStatus1 = childAtIndex(1)->nullStatus(context);
+  if (nullStatus0 != ExpressionNode::NullStatus::NonNull || nullStatus1 == ExpressionNode::NullStatus::Null) {
+    return nullStatus0;
+  }
+  // At this point if the expression has a defined sign, it is a strict sign
+  return (sign(context) != ExpressionNode::Sign::Unknown) ? ExpressionNode::NullStatus::NonNull : ExpressionNode::NullStatus::Unknown;
+}
+
 // Layout
 
 template<int T>
@@ -168,6 +199,8 @@ Expression Percent::shallowReduce(ExpressionNode::ReductionContext reductionCont
       return e;
     }
   }
+  /* Percent Expression is preserved for beautification. Escape cases are
+   * therefore not implemented */
   return *this;
 }
 

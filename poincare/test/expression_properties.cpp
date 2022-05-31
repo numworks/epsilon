@@ -25,6 +25,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
+#include <poincare/percent.h>
 #include <poincare/permute_coefficient.h>
 #include <poincare/power.h>
 #include <poincare/product.h>
@@ -93,6 +94,9 @@ QUIZ_CASE(poincare_properties_is_number_zero) {
   quiz_assert(Division::Builder(Rational::Builder(0), Rational::Builder(3,7)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
   quiz_assert(Power::Builder(Rational::Builder(0), Rational::Builder(3,7)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
   quiz_assert(SquareRoot::Builder(Rational::Builder(2,5)).nullStatus(&context) == ExpressionNode::NullStatus::NonNull);
+  quiz_assert(PercentAddition::Builder(Rational::Builder(0), Rational::Builder(1)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
+  quiz_assert(PercentAddition::Builder(Rational::Builder(1), Rational::Builder(1)).nullStatus(&context) == ExpressionNode::NullStatus::NonNull);
+  quiz_assert(PercentAddition::Builder(Rational::Builder(1), Rational::Builder(-1)).nullStatus(&context) == ExpressionNode::NullStatus::Unknown);
 }
 
 QUIZ_CASE(poincare_properties_is_random) {
@@ -256,6 +260,9 @@ QUIZ_CASE(poincare_properties_sign) {
   assert_reduced_expression_sign("√(-1)", Unknown, Real);
   assert_reduced_expression_sign("sign(π)", Positive);
   assert_reduced_expression_sign("sign(-π)", Negative);
+  assert_reduced_expression_sign("1%", Positive);
+  assert_reduced_expression_sign("-1-1%", Negative);
+  assert_reduced_expression_sign("1-1%", Unknown);
   assert_reduced_expression_sign("a", Unknown);
   assert_reduce("42→a");
   assert_reduced_expression_sign("a", Positive);

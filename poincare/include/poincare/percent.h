@@ -18,6 +18,8 @@ public:
 #endif
   // Properties
   Type type() const override { return Type::Percent; }
+  Sign sign(Context * context) const override;
+  NullStatus nullStatus(Context * context) const override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
 private:

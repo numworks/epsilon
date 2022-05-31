@@ -342,20 +342,18 @@ uint32_t crc32EatByte(uint32_t crc, uint8_t data) {
 }
 
 uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
-  /* Since the pool is noisy, we cannot just compute the CRC32 of the expressionNode
-   * in the pool, and we have to build it from the values of the columns. */
+  /* Since the pool is not packed, it's noisy and we cannot just compute
+   * the CRC32 of the expressionNode in the pool.
+   * So we have to build it from the values of the columns. */
   uint32_t crc = 0;
   if (numberOfPairsOfSeries(series) == 0) {
     return crc;
   }
-  constexpr int k_bufferLength = sizeof(double) / sizeof(uint8_t);
-  uint8_t buffer[k_bufferLength];
   for (int j = 0; j < numberOfPairsOfSeries(series); j++) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
       double value = get(series, i, j);
-      memcpy(buffer, &value, sizeof(double));
-      for (int index = 0; index < k_bufferLength; index++) {
-        crc = crc32EatByte(crc, buffer[index]);
+      for (int index = 0; index < sizeof(double) / sizeof(uint8_t); index++) {
+        crc = crc32EatByte(crc, *(reinterpret_cast<uint8_t *>(&value) + index));
       }
     }
   }

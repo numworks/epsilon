@@ -46,7 +46,6 @@ private:
   int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
-  int convertFloatToText(double value, char * buffer, int bufferSize);
   static void InputTitle(Escher::ViewController * vc, Statistic * statistic, char * titleBuffer, size_t titleBufferSize);
 
   constexpr static int k_numberOfTitleSignificantDigit = Poincare::Preferences::VeryShortNumberOfSignificantDigits;

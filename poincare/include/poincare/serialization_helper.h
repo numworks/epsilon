@@ -56,6 +56,10 @@ namespace SerializationHelper {
 
   // Write one code point in a buffer and a null-terminating char
   int CodePoint(char * buffer, int bufferSize, CodePoint c);
+
+  /* Default childNeedsSystemParenthesesAtSerialization for postfix operators
+   * such as % and ! */
+  bool PostfixChildNeedsSystemParenthesesAtSerialization(const TreeNode * child);
 };
 
 }

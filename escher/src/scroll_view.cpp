@@ -74,7 +74,7 @@ void ScrollView::setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate b
   m_leftMargin = left;
 }
 
-void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll, bool clippedInFrame) {
+void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
   if (!allowOverscroll && !m_contentView->bounds().contains(p)) {
     return;
   }
@@ -104,26 +104,21 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll, bool clip
     setContentOffset(contentOffset().translatedBy(KDPoint(offsetX, offsetY)));
   }
 
-  if (clippedInFrame) {
-    /* Handle cases when the size of the view has decreased. There are some cases
-     * where we want to bypass this and authorize the content view to be shorter
-     * than the scroll view. This might be the case with table. Hence the
-     * clippedInFrame argument (see Inference > Test > Slope)  */
-    setContentOffset(KDPoint(
-          std::min(
-            contentOffset().x(),
-            std::max<KDCoordinate>(
-              minimalSizeForOptimalDisplay().width() - bounds().width(),
-              KDCoordinate(0))),
-          std::min(
-            contentOffset().y(),
-            std::max<KDCoordinate>(
-              minimalSizeForOptimalDisplay().height() - bounds().height(),
-              KDCoordinate(0)))));
-  }
+  // Handle cases when the size of the view has decreased.
+  setContentOffset(KDPoint(
+        std::min(
+          contentOffset().x(),
+          std::max<KDCoordinate>(
+            minimalSizeForOptimalDisplay().width() - bounds().width(),
+            KDCoordinate(0))),
+        std::min(
+          contentOffset().y(),
+          std::max<KDCoordinate>(
+            minimalSizeForOptimalDisplay().height() - bounds().height(),
+            KDCoordinate(0)))));
 }
 
-void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll, bool clippedInFrame) {
+void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
   KDPoint tl  = rect.topLeft();
   KDPoint br  = rect.bottomRight();
   KDRect visibleRect = visibleContentRect();
@@ -149,8 +144,8 @@ void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll, bool cli
       tl = KDPoint(rect.right() - visibleRect.width(), tl.y());
     }
   }
-  scrollToContentPoint(tl, allowOverscroll, clippedInFrame);
-  scrollToContentPoint(br, allowOverscroll, clippedInFrame);
+  scrollToContentPoint(tl, allowOverscroll);
+  scrollToContentPoint(br, allowOverscroll);
 }
 
 KDRect ScrollView::visibleContentRect() {

@@ -21,7 +21,7 @@ public:
 
   /* This method computes the minimal scrolling needed to properly display the
    * requested cell. */
-  virtual void scrollToCell(int i, int j) { scrollToContentRect(m_contentView.cellFrame(i, j), true, false); }
+  virtual void scrollToCell(int i, int j) { scrollToContentRect(m_contentView.cellFrame(i, j), true); }
   HighlightCell * cellAtLocation(int i, int j) { return m_contentView.cellAtLocation(i, j); }
   void reloadCellAtLocation(int i, int j) { m_contentView.reloadCellAtLocation(i, j); }
   void initSize(KDRect rect);

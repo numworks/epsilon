@@ -15,7 +15,9 @@
 namespace Inference {
 
 /* Common controller between InputHomogeneityController,
- * InputGoodnessController and ResultsHomogeneityController. */
+ * InputGoodnessController and ResultsHomogeneityController.
+ * A CategoricalController is a table whose first cell is also a table of class
+ * CategoricalTableCell. */
 
 class CategoricalController : public Escher::SelectableListViewController<Escher::ListViewDataSource>, public Escher::SelectableTableViewDelegate, public Escher::ScrollViewDelegate {
 public:
@@ -31,7 +33,7 @@ public:
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // ListViewDataSource
   int typeAtIndex(int index) override { return index; } // One cell per type

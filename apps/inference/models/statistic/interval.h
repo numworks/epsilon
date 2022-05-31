@@ -60,7 +60,7 @@ public:
 
   // Output
   int numberOfResults() const override { return 3 + hasDegreeOfFreedom() + !estimateLayout().isUninitialized(); }
-  void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage) override;
+  void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) override;
 
   // CurveViewRange
   bool isGraphable() const override;

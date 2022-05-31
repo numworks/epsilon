@@ -15,15 +15,21 @@ void StoreParameterController::initializeColumnParameters() {
   // Number of cells and cells size may change when switching between columns
   resetMemoization();
   Shared::StoreParameterController::initializeColumnParameters();
+  int relativeColumnIndex = m_store->relativeColumnIndex(m_columnIndex);
+  m_isCumulatedFrequencyColumnSelected = relativeColumnIndex == 2;
   // Initialize clear column message
-  if (m_store->relativeColumnIndex(m_columnIndex) == 1) {
+  if (relativeColumnIndex == 1) {
       m_clearColumn.setMessageWithPlaceholder(I18n::Message::ResetFrequencies);
-  } else if (m_store->relativeColumnIndex(m_columnIndex) == 0) {
+      return;
+  }
+  if (relativeColumnIndex == 0) {
     int series = m_storeColumnHelper->selectedSeries();
     char tableName[StoreController::k_tableNameSize];
     StoreController::FillSeriesName(series, tableName);
     m_clearColumn.setMessageWithPlaceholder(I18n::Message::ClearTable, tableName);
+    return;
   }
+  assert(relativeColumnIndex == 2);
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
@@ -33,6 +39,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     m_store->setDisplayCumulatedFrequenciesForSeries(m_storeColumnHelper->selectedSeries(), state);
     if (type == k_hideCumulatedFrequencyCellType) {
       assert(!state);
+      m_storeColumnHelper->selectColumn(m_columnIndex - 1);
       m_hideCumulatedFrequencyCell.setHighlighted(false);
       stackView()->pop();
     } else {
@@ -44,13 +51,13 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int StoreParameterController::numberOfRows() const {
-  return isCumulatedFrequencyColumnSelected() ? k_indexOfHideCumulatedFrequencyCell + 1 : Shared::StoreParameterController::numberOfRows() + 1;
+  return m_isCumulatedFrequencyColumnSelected ? k_indexOfHideCumulatedFrequencyCell + 1 : Shared::StoreParameterController::numberOfRows() + 1;
 }
 
 int StoreParameterController::typeAtIndex(int index) {
   assert(index >= 0 && index < numberOfRows());
   if (index == numberOfRows() - 1) {
-    return isCumulatedFrequencyColumnSelected() ? k_hideCumulatedFrequencyCellType : k_displayCumulatedFrequencyCellType;
+    return m_isCumulatedFrequencyColumnSelected ? k_hideCumulatedFrequencyCellType : k_displayCumulatedFrequencyCellType;
   }
   return Shared::StoreParameterController::typeAtIndex(index);
 }
@@ -79,10 +86,6 @@ void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * c
   }
   assert(cell != &m_displayCumulatedFrequencyCell && cell != &m_hideCumulatedFrequencyCell);
   Shared::StoreParameterController::willDisplayCellForIndex(cell, index);
-}
-
-bool StoreParameterController::isCumulatedFrequencyColumnSelected() const {
-  return m_store->relativeColumnIndex(m_columnIndex) == 2;
 }
 
 }

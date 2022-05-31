@@ -45,6 +45,8 @@ public:
   int remainingBufferSize() const { assert(m_calculationAreaEnd >= m_buffer); return m_bufferSize - (m_calculationAreaEnd - m_buffer) - m_numberOfCalculations*sizeof(Calculation*); }
   int numberOfCalculations() const { return m_numberOfCalculations; }
   Poincare::Expression ansExpression(Poincare::Context * context);
+  void recomputeHeights(HeightComputer heightComputer);
+  void preferencesMightHaveChanged(Poincare::Preferences * preferences);
 
 private:
   class CalculationIterator {
@@ -76,6 +78,7 @@ private:
   const int m_bufferSize;
   char * m_calculationAreaEnd;
   int m_numberOfCalculations;
+  Poincare::Preferences m_inUsePreferences;
 };
 
 }

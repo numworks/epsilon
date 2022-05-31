@@ -129,6 +129,8 @@ private:
   mutable CombinatoricSymbols m_combinatoricSymbols;
   mutable ExamMode m_examMode;
   mutable PressToTestParams m_pressToTestParams;
+  /* Settings that alter layouts should be tracked by
+   * CalculationStore::preferencesMightHaveChanged */
 };
 
 }

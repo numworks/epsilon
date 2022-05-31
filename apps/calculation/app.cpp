@@ -77,6 +77,7 @@ bool App::isAcceptableExpression(const Poincare::Expression expression) {
 
 void App::didBecomeActive(Window * window) {
   m_editExpressionController.restoreInput();
+  static_cast<Snapshot *>(snapshot())->calculationStore()->preferencesMightHaveChanged(Poincare::Preferences::sharedPreferences());
   Shared::ExpressionFieldDelegateApp::didBecomeActive(window);
 }
 

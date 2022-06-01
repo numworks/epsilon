@@ -92,6 +92,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       {
         editController->insertTextBody(calculation->approximateOutputText(Calculation::NumberOfSignificantDigits::Maximal));
       } else {
+        assert(calculation->displayOutput(nullptr) != Calculation::DisplayOutput::ApproximateOnly);
         editController->insertTextBody(calculation->exactOutputText());
       }
     } else {

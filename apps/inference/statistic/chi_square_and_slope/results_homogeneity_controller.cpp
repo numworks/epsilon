@@ -35,9 +35,9 @@ bool ResultsHomogeneityController::ResultsTableController::handleEvent(Ion::Even
 }
 
 void ResultsHomogeneityController::ResultsTableController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
-  if (m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX, previousSelectedCellY)) {
+  if (m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX, previousSelectedCellY) && t->selectedColumn() == 0) {
     m_resultHomogeneityTable.tableView()->deselectTable();
-    Escher::Container::activeApp()->setFirstResponder(parentResponder());
+    Escher::Container::activeApp()->setFirstResponder(tabController());
   }
 }
 

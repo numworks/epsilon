@@ -26,25 +26,24 @@ bool TestCurveView::shouldDrawLabelAtPosition(float labelValue) const {
 
 void TestCurveView::drawTest(KDContext * ctx, KDRect rect) const {
   float z = static_cast<float>(m_test->testCriticalValue());
-  float xAlpha = m_test->cumulativeDistributiveInverseForProbability(m_test->threshold());
 
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   drawZLabelAndZGraduation(ctx, z);
-  drawAlphaStripes(ctx, rect, m_test->hypothesisParams()->comparisonOperator(), z, xAlpha);
-  colorUnderCurve(ctx, rect, m_test->hypothesisParams()->comparisonOperator(), z, xAlpha);
+  drawAlphaStripes(ctx, rect, m_test->hypothesisParams()->comparisonOperator(), z);
+  colorUnderCurve(ctx, rect, m_test->hypothesisParams()->comparisonOperator(), z);
 }
 
-void TestCurveView::drawAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z, float xAlpha) const {
+void TestCurveView::drawAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const {
+  float xAlpha = m_test->thresholdAbscissa(op);
   float xStart, xEnd, xSolidEnd, xDir;
   int secondAreaIndex;
   switch (op) {
   case HypothesisParams::ComparisonOperator::Different:
     z = std::fabs(z);
-    drawAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z, xAlpha);
-    drawAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z, xAlpha);
+    drawAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z);
+    drawAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z);
     return;
   case HypothesisParams::ComparisonOperator::Higher:
-    xAlpha = -xAlpha;
     xStart = curveViewRange()->xMax();
     xEnd = xAlpha;
     xSolidEnd = std::max(xEnd, z);
@@ -72,18 +71,19 @@ void TestCurveView::drawAlphaStripes(KDContext * ctx, KDRect rect, HypothesisPar
   }
 }
 
-void TestCurveView::colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z, float xAlpha) const {
+void TestCurveView::colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const {
   if (op == HypothesisParams::ComparisonOperator::Different) {
     // Recurse for both colors
     z = std::fabs(z);
     // TODO optimize ?
-    colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z, xAlpha);
-    colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z, xAlpha);
+    colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z);
+    colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z);
     return;
   }
 
+  float xAlpha = m_test->thresholdAbscissa(op);
   float min = op == HypothesisParams::ComparisonOperator::Higher ? z : xAlpha;
-  float max = op == HypothesisParams::ComparisonOperator::Higher ? -xAlpha : z;
+  float max = op == HypothesisParams::ComparisonOperator::Higher ? xAlpha : z;
   drawCartesianCurve(
     ctx,
     rect,

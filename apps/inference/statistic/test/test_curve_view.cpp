@@ -29,10 +29,7 @@ void TestCurveView::drawTest(KDContext * ctx, KDRect rect) const {
   colorUnderCurve(ctx, rect, m_test->hypothesisParams()->comparisonOperator(), z);
 }
 
-void TestCurveView::colorUnderCurve(KDContext * ctx,
-                                         KDRect rect,
-                                         HypothesisParams::ComparisonOperator op,
-                                         float z) const {
+void TestCurveView::colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const {
   if (op == HypothesisParams::ComparisonOperator::Different) {
     // Recurse for both colors
     z = std::fabs(z);
@@ -44,32 +41,27 @@ void TestCurveView::colorUnderCurve(KDContext * ctx,
 
   float min = op == HypothesisParams::ComparisonOperator::Higher ? z : -INFINITY;
   float max = op == HypothesisParams::ComparisonOperator::Higher ? INFINITY : z;
-  drawCartesianCurve(ctx,
-                     rect,
-                     -INFINITY,
-                     INFINITY,
-                     evaluateAtAbscissa,
-                     m_test,
-                     nullptr,
-                     Escher::Palette::YellowDark,
-                     true,
-                     true,
-                     min,
-                     max);
+  drawCartesianCurve(
+    ctx,
+    rect,
+    -INFINITY,
+    INFINITY,
+    evaluateAtAbscissa,
+    m_test,
+    nullptr,
+    Escher::Palette::YellowDark,
+    true,
+    true,
+    min,
+    max);
 }
 
-void TestCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx,
-                                                          float position,
-                                                          Poincare::Layout symbol) const {
+void TestCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float position, Poincare::Layout symbol) const {
   if ((curveViewRange()->xMin() <= position) && (position <= curveViewRange()->xMax())) {
     float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
     KDCoordinate graduationPosition = drawGraduationAtPosition(ctx, position);
 
-    KDPoint labelPosition = positionLabel(graduationPosition,
-                                          verticalOrigin,
-                                          symbol.layoutSize(),
-                                          RelativePosition::None,
-                                          RelativePosition::Before);
+    KDPoint labelPosition = positionLabel(graduationPosition, verticalOrigin, symbol.layoutSize(), RelativePosition::None, RelativePosition::Before);
     symbol.draw(ctx, labelPosition, KDColorBlack, k_backgroundColor);
   }
 }
@@ -80,23 +72,16 @@ void TestCurveView::drawZLabelAndZGraduation(KDContext * ctx, float z) const {
     // z outside screen
     return;
   }
-  if (m_test->hypothesisParams()->comparisonOperator() ==
-      HypothesisParams::ComparisonOperator::Different) {
-    Poincare::AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(
-        m_test->testCriticalValueSymbol(KDFont::SmallFont));
+  if (m_test->hypothesisParams()->comparisonOperator() == HypothesisParams::ComparisonOperator::Different) {
+    Poincare::AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(m_test->testCriticalValueSymbol(KDFont::SmallFont));
     drawLabelAndGraduationAtPosition(ctx, std::abs(z), absolute);
-    drawLabelAndGraduationAtPosition(
-        ctx,
-        -std::abs(z),
-        Poincare::HorizontalLayout::Builder(Poincare::CodePointLayout::Builder('-'), absolute));
+    drawLabelAndGraduationAtPosition(ctx, -std::abs(z), Poincare::HorizontalLayout::Builder(Poincare::CodePointLayout::Builder('-'), absolute));
   } else {
     drawLabelAndGraduationAtPosition(ctx, z, m_test->testCriticalValueSymbol(KDFont::SmallFont));
   }
 }
 
-Poincare::Coordinate2D<float> TestCurveView::evaluateAtAbscissa(float x,
-                                                                         void * model,
-                                                                         void * context) {
+Poincare::Coordinate2D<float> TestCurveView::evaluateAtAbscissa(float x, void * model, void * context) {
   Test * test = static_cast<Test *>(model);
   return Poincare::Coordinate2D<float>(x, test->evaluateAtAbscissa(x));
 }

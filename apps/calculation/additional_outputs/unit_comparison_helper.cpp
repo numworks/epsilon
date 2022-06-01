@@ -224,7 +224,7 @@ int FindUpperAndLowerReferenceValues(double inputValue, Expression orderedSIUnit
   // 2. Iterate through table to find upper and lower values indexes
   int referenceIndex;
   int upperIndex = -1;
-  for (referenceIndex = 0; referenceIndex < k_referenceTables[referenceTableIndex].tableLength; referenceIndex++) {
+  for (referenceIndex = 0; referenceIndex < static_cast<int>(k_referenceTables[referenceTableIndex].tableLength); referenceIndex++) {
     assert(referenceIndex == 0 || referenceTable[referenceIndex].value > referenceTable[referenceIndex - 1].value); // This checks if table is sorted (in case of value wrongly added to table).
     if (referenceTable[referenceIndex].value >= inputValue) {
       upperIndex = referenceIndex;

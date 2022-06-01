@@ -61,10 +61,10 @@ bool RecordNameVerifier::isNameReservedForExtension(const char * name, int nameL
       // Check if the record has the same base name.
       bool hasSuffixDigit = reservedNamesArray.prefixRepetitions > 0;
       int namePrefixLength = hasSuffixDigit ? nameLength - 1 : nameLength;
-      if (strlen(reservedNamesArray.namePrefixes[j]) == namePrefixLength              // Prefixes have same length
-          && strncmp(name, reservedNamesArray.namePrefixes[j], namePrefixLength) == 0 // Prefixes are equal
+      if (strlen(reservedNamesArray.namePrefixes[j]) == static_cast<size_t>(namePrefixLength) // Prefixes have same length
+          && strncmp(name, reservedNamesArray.namePrefixes[j], namePrefixLength) == 0         // Prefixes are equal
           && (!hasSuffixDigit
-            || (name[nameLength - 1] >= '1'                                           // Suffixes are equal
+            || (name[nameLength - 1] >= '1'                                                   // Suffixes are equal
               && name[nameLength - 1] < '1' + reservedNamesArray.prefixRepetitions))) {
         return true;
       }

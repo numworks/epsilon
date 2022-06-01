@@ -298,7 +298,7 @@ QUIZ_CASE(poincare_parsing_matrices) {
 template<size_t N>
 List BuildList(Expression (&elements)[N]) {
   List l = List::Builder();
-  for (int i = 0; i < N; i++) {
+  for (size_t i = 0; i < N; i++) {
     l.addChildAtIndexInPlace(elements[i], i, i);
   }
   return l;

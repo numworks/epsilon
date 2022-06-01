@@ -20,7 +20,7 @@ constexpr Store::CalculPointer Store::k_quantileCalculation[Store::k_numberOfQua
 Store::Store(GlobalContext * context, UserPreferences * userPreferences) :
   DoublePairStore(context),
   m_userPreferences(userPreferences),
-  m_memoizedMaxNumberOfModes(0),
+  m_memoizedMaxNumberOfModes(-1),
   m_graphViewInvalidated(true)
 {
   initListsFromStorage();
@@ -366,7 +366,7 @@ bool Store::shouldDisplayModes(int series) const {
 }
 
 int Store::totalNumberOfModes() const {
-  if (m_memoizedMaxNumberOfModes > 0) {
+  if (m_memoizedMaxNumberOfModes >= 0) {
     return m_memoizedMaxNumberOfModes;
   }
   int maxNumberOfModes = 0;
@@ -458,7 +458,7 @@ double Store::defaultValue(int series, int i, int j) const {
 
 void Store::updateSeries(int series, bool delayUpdate) {
   m_datasets[series].recomputeSortedIndex();
-  m_memoizedMaxNumberOfModes = 0;
+  m_memoizedMaxNumberOfModes = -1;
   DoublePairStore::updateSeries(series, delayUpdate);
 }
 

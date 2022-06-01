@@ -66,6 +66,7 @@ public:
 
   // Range
   constexpr static float k_displayWidthToSTDRatio = 5.f;
+  void computeCurveViewRange(float transition);
 
 protected:
   float computeXMin() const override { return -k_displayWidthToSTDRatio; }

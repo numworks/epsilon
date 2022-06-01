@@ -16,12 +16,15 @@ public:
   const char * title() override;
   Escher::View * view() override { return &m_graphView; }
   void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
 
 private:
   constexpr static int k_titleBufferSize = sizeof("df= α= z= p-value=") + Constants::k_shortFloatNumberOfChars * 4;
+  constexpr static int k_zoomSteps = 6;
   char m_titleBuffer[k_titleBufferSize];
   TestGraphView m_graphView;
   Test * m_test;
+  int m_zoom;
 };
 
 }  // namespace Inference

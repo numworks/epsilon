@@ -93,4 +93,40 @@ void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, 
   }
 }
 
+static float interpolate(float a, float b, float alpha) {
+  return alpha * (b-a) + a;
+}
+
+void Test::computeCurveViewRange(float transition) {
+  // Transition goes from 0 (default view) to 1 (zoomed view)
+  float alpha = cumulativeDistributiveInverseForProbability(1 - threshold());
+  float z = testCriticalValue();
+  float margin = std::abs(alpha - z) * 0.3;
+  if (alpha == z) {
+    // Arbitrary value to provide some zoom if we can't separate α and z
+    margin = 0.1;
+  }
+  float targetXMin = std::min(alpha, z) - margin;
+  float targetXMax = std::max(alpha, z) + margin;
+  float targetXCenter = (alpha + z) / 2;
+  float targetYMax = std::max(evaluateAtAbscissa(alpha), evaluateAtAbscissa(z)) * 1.2;
+  float cMin = computeXMin();
+  float cMax = computeXMax();
+  // We want each zoom step to scale the width by the same factor
+  float width = std::exp(interpolate(std::log(cMax-cMin), std::log(targetXMax-targetXMin), transition));
+  // and the middle of target range to progress linearly to the screen center
+  float ratio = interpolate((targetXCenter-cMin)/(cMax-cMin), 0.5, transition);
+  float xMin = targetXCenter - ratio * width ;
+  float xMax = xMin + width;
+
+  float height = std::exp(interpolate(std::log(computeYMax()), std::log(targetYMax), transition));
+  float yMax = height;
+  float yMin =  -k_displayBottomMarginRatio * height;
+  protectedSetXMin(xMin, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, false);
+  protectedSetXMax(xMax, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, true);
+  protectedSetYMin(yMin, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, false);
+  protectedSetYMax(yMax, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, true);
+
+}
+
 }  // namespace Inference

@@ -58,6 +58,14 @@ bool Test::canRejectNull() {
   return pValue() <= m_threshold;
 }
 
+double Test::thresholdAbscissa(HypothesisParams::ComparisonOperator op) const {
+  if (op == HypothesisParams::ComparisonOperator::Different) {
+    return NAN;
+  }
+  double x = cumulativeDistributiveInverseForProbability(threshold());
+  return op == HypothesisParams::ComparisonOperator::Lower ? x : -x;
+}
+
 void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) {
   if (index < numberOfEstimates()) {
     *value = estimateValue(index);

@@ -38,7 +38,7 @@ public:
   I18n::Message thresholdDescription() const override { return I18n::Message::SignificanceLevel; }
 
   // Input
-bool hasHypothesisParameters() const override { return true; }
+  bool hasHypothesisParameters() const override { return true; }
   HypothesisParams * hypothesisParams() override { return &m_hypothesisParams; }
   virtual bool isValidH0(double h0) { return true; }
 
@@ -58,6 +58,7 @@ bool hasHypothesisParameters() const override { return true; }
   /* Returns the value above/below (depending on the operator) which the probability
    * of landing is inferior to a given significance level. */
   bool canRejectNull();
+  virtual double thresholdAbscissa(HypothesisParams::ComparisonOperator op) const;
 
   // Output
   int numberOfResults() const override { return 2 + numberOfEstimates() + hasDegreeOfFreedom(); }

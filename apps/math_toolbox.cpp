@@ -486,7 +486,7 @@ constexpr ToolboxMessageTree listsOperationsChildren[] = {
 constexpr ToolboxMessageTree listsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ListCommandWithArg, I18n::Message::NewList, false, I18n::Message::ListCommand),
   ToolboxMessageTree::Leaf(I18n::Message::ListSequenceCommandWithArg, I18n::Message::ListSequenceDescription, false, I18n::Message::ListSequenceCommand),
-  ToolboxMessageTree::Node(I18n::Message::StatTab, listsStatsChildren),
+  ToolboxMessageTree::Node(I18n::Message::StatsApp, listsStatsChildren),
   ToolboxMessageTree::Node(I18n::Message::Operations, listsOperationsChildren)
 };
 

@@ -101,7 +101,7 @@ void Test::computeCurveViewRange(float transition) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha = cumulativeDistributiveInverseForProbability(1 - threshold());
   float z = testCriticalValue();
-  float margin = std::abs(alpha - z) * 0.3;
+  float margin = std::abs(alpha - z) * k_displayZoomedInHorizontalMarginRatio;
   if (alpha == z) {
     // Arbitrary value to provide some zoom if we can't separate α and z
     margin = 0.1;
@@ -109,7 +109,7 @@ void Test::computeCurveViewRange(float transition) {
   float targetXMin = std::min(alpha, z) - margin;
   float targetXMax = std::max(alpha, z) + margin;
   float targetXCenter = (alpha + z) / 2;
-  float targetYMax = std::max(evaluateAtAbscissa(alpha), evaluateAtAbscissa(z)) * 1.2;
+  float targetYMax = std::max(evaluateAtAbscissa(alpha), evaluateAtAbscissa(z)) * (1 + k_displayZoomedInTopMarginRatio);
   float cMin = computeXMin();
   float cMax = computeXMax();
   // We want each zoom step to scale the width by the same factor

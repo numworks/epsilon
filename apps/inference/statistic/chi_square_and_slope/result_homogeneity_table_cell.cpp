@@ -10,7 +10,6 @@ ResultHomogeneityTableCell::ResultHomogeneityTableCell(Escher::Responder * paren
   m_statistic(test),
   m_mode(Mode::ExpectedValue)
 {
-  m_selectableTableView.setTopMargin(0);
   m_selectableTableView.setBottomMargin(Metric::CellSeparatorThickness);
 }
 

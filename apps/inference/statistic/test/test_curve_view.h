@@ -17,7 +17,8 @@ protected:
 private:
   constexpr static int k_marginsAroundZLabel = 30;
   void drawTest(KDContext * ctx, KDRect rect) const;
-  void colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const;
+  void drawAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z, float xAlpha) const;
+  void colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z, float xAlpha) const;
   void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, Poincare::Layout symbol) const;
   void drawZLabelAndZGraduation(KDContext * ctx, float x) const;
 

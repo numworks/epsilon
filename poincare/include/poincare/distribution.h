@@ -33,7 +33,9 @@ public:
     case Type::Fisher:
     case Type::Normal:
     default:
-      assert(type == Type::Binomial);
+      // assert(type == Type::Binomial);
+      /* assertion triggers a bug on gcc compiler?
+       * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86678 */
       return 2;
     }
   }

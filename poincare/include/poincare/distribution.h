@@ -32,7 +32,8 @@ public:
     case Type::Uniform:
     case Type::Fisher:
     case Type::Normal:
-    case Type::Binomial:
+    default:
+      assert(type == Type::Binomial);
       return 2;
     }
   }

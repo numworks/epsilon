@@ -153,8 +153,9 @@ T IntegralNode::integrand(T x, Substitution<T> substitution, ApproximationContex
     T arg = 2.0 * z + substitution.originA - 1.0;
     return firstChildScalarValueForArgument(arg, approximationContext) * z * z;
   }
-  case Substitution<T>::Type::RealLine:
+  default:
   {
+    assert(substitution.type == Substitution<T>::Type::RealLine);
     T x2 = x * x;
     T inv = 1.0 / (1.0 - x2);
     T w = (1.0 + x2) * inv * inv;

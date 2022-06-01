@@ -45,7 +45,7 @@ public:
 
   // NumberNode
   void setNegative(bool negative) override {
-    if (m_value < 0.0 != negative) {
+    if ((m_value < 0.0) != negative) {
       m_value = -1.0 * m_value;
     }
   }

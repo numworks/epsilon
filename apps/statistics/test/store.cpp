@@ -215,13 +215,13 @@ void assert_data_box_plot(
 
     int numberOfLowerOutliers = store.numberOfLowerOutliers(seriesIndex);
     quiz_assert((trueNumberOfLowerOutliers) == numberOfLowerOutliers);
-    for (size_t i = 0; i < (trueNumberOfLowerOutliers); i++) {
+    for (int i = 0; i < trueNumberOfLowerOutliers; i++) {
       quiz_assert((trueLowerOutliers)[i] == store.lowerOutlierAtIndex(seriesIndex, i));
     }
 
     int numberOfUpperOutliers = store.numberOfUpperOutliers(seriesIndex);
     quiz_assert((trueNumberOfUpperOutliers) == numberOfUpperOutliers);
-    for (size_t i = 0; i < (trueNumberOfUpperOutliers); i++) {
+    for (int i = 0; i < trueNumberOfUpperOutliers; i++) {
       quiz_assert((trueUpperOutliers)[i] == store.upperOutlierAtIndex(seriesIndex, i));
     }
   }

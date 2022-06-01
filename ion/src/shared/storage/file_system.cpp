@@ -493,7 +493,7 @@ Record FileSystem::privateRecordBasedNamedWithExtensions(const char * baseName, 
 }
 
 bool FileSystem::recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name, const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
-  if (!Record::NameIsEmpty(name) && strncmp(baseName, name.baseName, baseNameLength) == 0 && baseNameLength == name.baseNameLength) {
+  if (!Record::NameIsEmpty(name) && strncmp(baseName, name.baseName, baseNameLength) == 0 && static_cast<size_t>(baseNameLength) == name.baseNameLength) {
     for (size_t i = 0; i < numberOfExtensions; i++) {
       if (strcmp(name.extension, extensions[i]) == 0) {
         if (extensionResult != nullptr) {

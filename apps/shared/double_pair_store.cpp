@@ -353,7 +353,7 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
   for (int j = 0; j < numberOfPairsOfSeries(series); j++) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
       double value = get(series, i, j);
-      for (int index = 0; index < sizeof(double) / sizeof(uint8_t); index++) {
+      for (size_t index = 0; index < sizeof(double) / sizeof(uint8_t); index++) {
         crc = crc32EatByte(crc, *(reinterpret_cast<uint8_t *>(&value) + index));
       }
     }

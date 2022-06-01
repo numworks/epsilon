@@ -66,8 +66,14 @@ bool HypothesisController::textFieldDidReceiveEvent(Escher::TextField * textFiel
     /* Shortcut the edition of Test t for slope hypothesis by catching the event
      * before being given to the textfield. */
     AppsContainer::activeApp()->setFirstResponder(&m_selectableTableView);
-    AppsContainer::activeApp()->processEvent(event);
-    return true;
+    if (AppsContainer::activeApp()->processEvent(event)) {
+      return true;
+    }
+    // Return true on all events except those handled by the container to bypass the textfield
+    return event != Ion::Events::USBEnumeration &&
+           event != Ion::Events::USBPlug &&
+           event != Ion::Events::Home &&
+           event != Ion::Events::OnOff;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
     // Remove prefix to edit text

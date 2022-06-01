@@ -19,7 +19,7 @@ void PlotCurveView::drawSeriesCurve(KDContext * ctx, KDRect rect, int series) co
   int numberOfPairs = m_plotController->totalValues(series);
   // Draw and connect each points
   KDColor color = Store::colorOfSeriesAtIndex(series);
-  double previousX, previousY;
+  double previousX = NAN, previousY = NAN;
   for (int i = 0; i < numberOfPairs; i++) {
     double x = m_plotController->valueAtIndex(series, i);
     double y = m_plotController->resultAtIndex(series, i);

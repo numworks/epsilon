@@ -32,6 +32,7 @@ public:
   double cumulativeDistributiveInverseForProbability(double proba) const override {
     return DistributionChi2::CumulativeNormalizedInverseDistributionFunction(proba, m_degreesOfFreedom);
   }
+  double thresholdAbscissa(HypothesisParams::ComparisonOperator op) const override;
 
   // Table
   void setParameterAtPosition(double value, int row, int column) override {

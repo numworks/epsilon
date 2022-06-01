@@ -43,18 +43,18 @@ void InputController::InputTitle(Escher::ViewController * vc, Statistic * statis
     if (stackViewControllerResponder->topViewController() != vc) {
       Poincare::Print::customPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",
           symbol,
-          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigit,
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigits,
           symbol,
           op,
-          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigit,
-          statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigit);
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigits,
+          statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigits);
     } else {
       Poincare::Print::customPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed",
           symbol,
-          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigit,
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigits,
           symbol,
           op,
-          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigit);
+          statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigits);
     }
   } else {
     Poincare::Print::customPrintf(titleBuffer, titleBufferSize, I18n::translate(statistic->title()),

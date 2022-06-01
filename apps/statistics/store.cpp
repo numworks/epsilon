@@ -362,7 +362,7 @@ int Store::numberOfModes(int series) const {
 }
 
 bool Store::shouldDisplayModes(int series) const {
-  modeFrequency(series) != 1.0;
+  return modeFrequency(series) != 1.0;
 }
 
 int Store::totalNumberOfModes() const {

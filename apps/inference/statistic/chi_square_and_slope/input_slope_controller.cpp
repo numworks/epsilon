@@ -22,4 +22,8 @@ bool InputSlopeController::handleEvent(Ion::Events::Event event) {
   return InputCategoricalController::handleEvent(event);
 }
 
+void InputSlopeController::viewWillAppear() {
+  m_slopeTableCell.willAppear();
+}
+
 }

@@ -29,6 +29,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override {
     return m_statistic->subApp() == Inference::SubApp::Interval ? ViewController::TitlesDisplay::DisplayLastTitle : ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
+  void viewWillAppear() override;
 
 private:
   EditableCategoricalTableCell * categoricalTableCell() override { return &m_slopeTableCell; }

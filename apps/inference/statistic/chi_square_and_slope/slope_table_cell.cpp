@@ -19,7 +19,7 @@ SlopeTableCell::SlopeTableCell(Responder * parentResponder, DynamicSizeTableView
   }
 }
 
-void SlopeTableCell::didEnterResponderChain(Responder * previousResponder) {
+void SlopeTableCell::willAppear() {
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
     /* We delayed filling the column names X1, Y1 to ensure that the underlying
      * model was a valid DoublePairStore. */

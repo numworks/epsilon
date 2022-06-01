@@ -22,7 +22,8 @@ public:
     case Type::CDF:
     case Type::Inverse:
       return 1;
-    case Type::CDFRange:
+    default:
+      assert(f == Type::CDFRange);
       return 2;
     }
   }

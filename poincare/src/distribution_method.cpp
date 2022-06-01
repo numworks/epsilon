@@ -17,7 +17,8 @@ const DistributionMethod * DistributionMethod::Get(Type type) {
   case Type::Inverse:
     static constexpr InverseMethod inverse;
     return &inverse;
-  case Type::CDFRange:
+  default:
+    assert(type == Type::CDFRange);
     static constexpr CDFRangeMethod cdfRange;
     return &cdfRange;
   }

@@ -47,10 +47,10 @@ void CategoricalController::scrollViewDidChangeOffset(ScrollViewDataSource * scr
    * require too many displayable cells. If the scroll was handled by the
    * CategoricalController, the CategoricalTableCell would need as many
    * displayable cells as its real number of cells. Since the CategoricalController
-   * need at most 3 cells, we delegate the scroll handling to the
+   * needs at most 3 cells, we delegate the scroll handling to the
    * CategoricalTableCell. */
 
-  /* Firs, unselect the CategoricalTableCell cell; indeed, the offset is about
+  /* First, unselect the CategoricalTableCell cell; indeed, the offset is about
    * to change, the categoricalTableCell cells will be relayouted. */
   categoricalTableCell()->selectableTableView()->unhighlightSelectedCell();
   KDPoint currentOffset = categoricalTableCell()->selectableTableView()->contentOffset();

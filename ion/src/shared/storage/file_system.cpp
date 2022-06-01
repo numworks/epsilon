@@ -164,6 +164,7 @@ int FileSystem::numberOfRecordsWithFilter(const char * extension, RecordFilter f
   int count = 0;
   for (char * p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
+    assert(currentName.extension);
     if (!Record::NameIsEmpty(currentName) && filter(currentName, auxiliary) && strcmp(currentName.extension, extension) == 0) {
       count++;
     }
@@ -177,6 +178,7 @@ Record FileSystem::recordWithFilterAtIndex(const char * extension, int index, Re
   char * recordAddress = nullptr;
   for (char * p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
+    assert(currentName.extension);
     if (!Record::NameIsEmpty(currentName) && filter(currentName, auxiliary) &&  strcmp(currentName.extension, extension) == 0) {
       currentIndex++;
     }
@@ -493,6 +495,7 @@ Record FileSystem::privateRecordBasedNamedWithExtensions(const char * baseName, 
 }
 
 bool FileSystem::recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name, const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
+    assert(name.baseName);
   if (!Record::NameIsEmpty(name) && strncmp(baseName, name.baseName, baseNameLength) == 0 && static_cast<size_t>(baseNameLength) == name.baseNameLength) {
     for (size_t i = 0; i < numberOfExtensions; i++) {
       if (strcmp(name.extension, extensions[i]) == 0) {

@@ -174,14 +174,14 @@ bool HomogeneityTest::validateInputs() {
    * - Neither a whole row nor a whole column should be null. */
   bool nullRow[k_maxNumberOfRows];
   bool nullColumn[k_maxNumberOfColumns];
+  for (int col = 0; col < max.col; col++) {
+    // Init nullColumn array
+    nullColumn[col] = true;
+  }
   for (int row = 0; row < max.row; row++) {
     // Init nullRow array
     nullRow[row] = true;
     for (int col = 0; col < max.col; col++) {
-      if (row == 0) {
-        // Init nullColumn array
-        nullColumn[col] = true;
-      }
       double value = parameterAtPosition(row, col);
       nullRow[row] = nullRow[row] && std::fabs(value) < DBL_MIN;
       nullColumn[col] = nullColumn[col] && std::fabs(value) < DBL_MIN;

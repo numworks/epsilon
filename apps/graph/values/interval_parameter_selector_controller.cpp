@@ -73,15 +73,14 @@ Shared::ContinuousFunction::SymbolType IntervalParameterSelectorController::symb
   int rowCount = 0;
   size_t symbolTypeIndex = 0;
   Shared::ContinuousFunction::SymbolType symbolType;
-  while (symbolTypeIndex < k_numberOfSymbolTypes) {
+  do {
     symbolType = static_cast<Shared::ContinuousFunction::SymbolType>(symbolTypeIndex);
     bool symbolTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsOfSymbolType(symbolType) > 0;
     if (symbolTypeIsShown && rowCount == j) {
       break;
     }
     rowCount += symbolTypeIsShown;
-    symbolTypeIndex++;
-  }
+  } while (symbolTypeIndex++ < k_numberOfSymbolTypes);
   assert(rowCount == j);
   return symbolType;
 }
@@ -96,6 +95,7 @@ I18n::Message IntervalParameterSelectorController::messageForType(Shared::Contin
     I18n::Message::IntervalT,
     I18n::Message::IntervalX
   };
+  assert(static_cast<size_t>(symbolType) < sizeof(message)/sizeof(I18n::Message));
   return message[static_cast<size_t>(symbolType)];
 }
 

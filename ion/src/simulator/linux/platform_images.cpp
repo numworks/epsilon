@@ -14,7 +14,8 @@ namespace Platform {
 
 enum class AssetFormat {
   JPG,
-  PNG
+  PNG,
+  None
 };
 
 png_size_t readSize = 0;
@@ -106,7 +107,7 @@ SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
 
   unsigned char * assetStart = nullptr;
   unsigned long assertSize = 0;
-  AssetFormat format;
+  AssetFormat format = AssetFormat::None;
 
   // Find the asset corresponding to identifier
   for (size_t i = 0; i < sizeof(resources_addresses)/sizeof(resources_addresses[0]); i++) {
@@ -122,10 +123,10 @@ SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
       assertSize = resources_addresses[i].end() - resources_addresses[i].start();
       break;
     }
-    if (i == sizeof(resources_addresses)/sizeof(resources_addresses[0]) - 1) {
-      assert(false);
-      return nullptr;
-    }
+  }
+  if (format == AssetFormat::None) {
+    assert(false);
+    return nullptr;
   }
   assert(assetStart);
 

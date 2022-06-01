@@ -258,6 +258,7 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
    * string. */
   assert((goingRight && initialPosition == nullptr)
       || (!goingRight && initialPosition != nullptr));
+  assert(actionCodePoint && actionOtherCodePoint);
 
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1 && UTF8Decoder::CharSizeOfCodePoint(stoppingCodePoint) == 1) {
     /* The code points are one char long, so they are equal to their char

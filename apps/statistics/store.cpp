@@ -25,7 +25,7 @@ Store::Store(GlobalContext * context, UserPreferences * userPreferences) :
 {
   initListsFromStorage();
   for (int s = 0; s < k_numberOfSeries; s++) {
-    m_datasets[s] = Poincare::StatisticsDataset(&m_dataLists[s][0], &m_dataLists[s][1]);
+    m_datasets[s] = Poincare::StatisticsDataset<double>(&m_dataLists[s][0], &m_dataLists[s][1]);
   }
 }
 

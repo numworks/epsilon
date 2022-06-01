@@ -139,6 +139,12 @@ public:
   bool hasVerticalLines() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::VerticalLines; }
   // If the ContinuousFunction is named ("f(x)=...")
   bool isNamed() const;
+  /* If we can compute the ContinuousFunction intersections.
+   * hasVerticalLines must be false, but it is checked by "isActiveInTable()".
+   * TODO : Handle more types of curves ?
+   * If intersections are implemented for verticalLines, isActiveInTable might
+   * need a change. */
+  bool isIntersectable() const { return isActiveInTable() && !(plotType() == PlotType::Polar || plotType() == PlotType::Parametric); }
   // Compute line parameters (slope and intercept) from ContinuousFunction
   void getLineParameters(double * slope, double * intercept, Poincare::Context * context) const;
   // Compute conic parameters from ContinuousFunction

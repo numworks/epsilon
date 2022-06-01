@@ -108,14 +108,9 @@ bool CalculationParameterController::shouldDisplayIntersection() const {
   /* Intersection is handled between all active functions having one subcurve,
    * except Polar, Parametric and VerticalLines. */
   ContinuousFunctionStore * store = App::app()->functionStore();
-  // TODO : Handle more types of curves ?
-  int intersectableFunctions = store->numberOfActiveFunctionsInTable();
-  // VerticalLines are not included into numberOfActiveFunctionsInTable.
-  intersectableFunctions -= store->numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType::Polar);
-  intersectableFunctions -= store->numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType::Parametric);
-  /* Intersection row is displayed when all functions are intersectable and
-   * there are least two of them. */
-  return intersectableFunctions > 1 && intersectableFunctions == store->numberOfActiveFunctions();
+  /* Intersection row is displayed if there is at least two intersectable
+   * functions. */
+  return store->numberOfIntersectableFunctions() > 1;
 }
 
 }

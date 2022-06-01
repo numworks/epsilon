@@ -43,7 +43,7 @@ void HistoryController::reload() {
   if (numberOfRows() > 0) {
     m_selectableTableView.scrollToBottom();
     // Force to reload last added cell (hide the burger and exact output if necessary)
-    tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, numberOfRows()-1);
+    tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, -1);
   }
 }
 

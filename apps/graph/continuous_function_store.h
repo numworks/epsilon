@@ -20,6 +20,9 @@ public:
   int numberOfActiveFunctionsOfType(Shared::ContinuousFunction::PlotType plotType) const {
     return numberOfModelsSatisfyingTest(&isFunctionActiveOfType, &plotType);
   }
+  int numberOfIntersectableFunctions() const {
+    return numberOfModelsSatisfyingTest(&isFunctionIntersectable, nullptr);
+  }
   Ion::Storage::Record activeRecordInTableAtIndex(int i) const {
     return recordSatisfyingTestAtIndex(i, &isFunctionActiveInTable, nullptr);
   }
@@ -48,6 +51,9 @@ private:
   static bool isFunctionActiveOfSymbolType(Shared::ExpressionModelHandle * model, void * context) {
     Shared::ContinuousFunction::SymbolType symbolType = *static_cast<Shared::ContinuousFunction::SymbolType *>(context);
     return isFunctionActiveInTable(model, context) && symbolType == static_cast<Shared::ContinuousFunction *>(model)->symbolType();
+  }
+  static bool isFunctionIntersectable(Shared::ExpressionModelHandle * model, void * context) {
+    return static_cast<Shared::ContinuousFunction *>(model)->isIntersectable();
   }
   int maxNumberOfMemoizedModels() const override { return k_maxNumberOfMemoizedModels; }
   const char * modelExtension() const override { return Ion::Storage::funcExtension; }

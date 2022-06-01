@@ -36,7 +36,7 @@ Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
   } else if (m_numberOfChildren == 1) {
     result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, true);
   }
-  return result;
+  return std::move(result);
 }
 
 // Helper functions

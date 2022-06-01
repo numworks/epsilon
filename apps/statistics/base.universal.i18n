@@ -1,7 +1,7 @@
 TotalFrequencySymbol = "n"
 MinimumSymbol = "Min"
 MaximumSymbol = "Max"
-MeanDoubleSymbol = "x̅,μ"
+MeanDoubleSymbol = "μ,x̅"
 FirstQuartileSymbol = "Q1"
 ThirdQuartileSymbol = "Q3"
 SampleVarianceSymbol = "s2"

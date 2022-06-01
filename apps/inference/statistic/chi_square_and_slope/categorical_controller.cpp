@@ -24,6 +24,10 @@ CategoricalController::CategoricalController(
   setScrollViewDelegate(this);
 }
 
+void CategoricalController::viewWillAppear() {
+  categoricalTableCell()->selectableTableView()->setContentOffset(KDPointZero);
+}
+
 void CategoricalController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectRow(0);

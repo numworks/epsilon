@@ -51,7 +51,7 @@ Evaluation<T> NthRootNode::templatedApproximate(ApproximationContext approximati
           // root(x, q) with q integer and x real
           Complex<T> result = PowerNode::computeNotPrincipalRealRootOfRationalPow(basec, static_cast<T>(1.0), indexc.real());
           if (!result.isUndefined()) {
-            return std::move(result);
+            return result;
           }
         }
         return PowerNode::computeOnComplex<T>(basec, std::complex<T>(1.0)/(indexc), complexFormat);

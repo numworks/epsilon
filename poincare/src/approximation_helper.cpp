@@ -95,7 +95,7 @@ template<typename T> ListComplex<T> ElementWiseOnListAndComplex(const ListComple
     }
     result.addChildAtIndexInPlace(computedNewComplex, i, i);
   }
-  return std::move(result);
+  return result;
 }
 
 template<typename T> ListComplex<T> ElementWiseOnLists(const ListComplex<T> l1, const ListComplex<T> l2, Preferences::ComplexFormat complexFormat, ApproximationHelper::ComplexAndComplexReduction<T> computeOnComplexes) {
@@ -107,7 +107,7 @@ template<typename T> ListComplex<T> ElementWiseOnLists(const ListComplex<T> l1, 
   for (int i = 0; i < nChildren; i++) {
     result.addChildAtIndexInPlace(computeOnComplexes(l1.complexAtIndex(i), l2.complexAtIndex(i), complexFormat), i, i);
   }
-  return std::move(result);
+  return result;
 }
 
 constexpr static int k_maxNumberOfParametersForMap = 4;

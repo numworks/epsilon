@@ -6,7 +6,8 @@ namespace Inference {
 TestGraphController::TestGraphController(Escher::StackViewController * stack, Test * test) :
       Escher::ViewController(stack),
       m_graphView(test),
-      m_test(test) {
+      m_test(test),
+      m_zoom(0) {
 }
 
 Escher::ViewController::TitlesDisplay TestGraphController::titlesDisplay() {
@@ -23,8 +24,21 @@ const char * TestGraphController::title() {
 }
 
 void TestGraphController::didBecomeFirstResponder() {
-  m_test->computeCurveViewRange();
+  m_test->computeCurveViewRange(0);
   m_graphView.reload();
+}
+
+bool TestGraphController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Plus && m_zoom < k_zoomSteps) {
+    m_zoom++;
+  } else if (event == Ion::Events::Minus && m_zoom > 0) {
+    m_zoom--;
+  } else {
+    return false;
+  }
+  m_test->computeCurveViewRange(static_cast<float>(m_zoom) / k_zoomSteps);
+  m_graphView.reload();
+  return true;
 }
 
 }  // namespace Inference

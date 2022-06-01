@@ -29,13 +29,8 @@ public:
     case Type::Exponential:
     case Type::ChiSquared:
       return 1;
-    case Type::Uniform:
-    case Type::Fisher:
-    case Type::Normal:
     default:
-      // assert(type == Type::Binomial);
-      /* assertion triggers a bug on gcc compiler?
-       * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86678 */
+       assert(type == Type::Binomial || type == Type::Uniform || type == Type::Fisher || type == Type::Normal);
       return 2;
     }
   }

@@ -18,8 +18,8 @@ T FisherDistribution::EvaluateAtAbscissa(T x, T d1, T d2) {
     return NAN;
   }
   const T f = d1*x/(d1*x+d2);
-  const T numerator = std::pow(f, d1/2.0) * std::pow(1.0 - f, d2/2.0);
-  const T denominator = x * Poincare::BetaFunction(d1/2.0, d2/2.0);
+  const T numerator = std::pow(f, d1/static_cast<T>(2.0)) * std::pow(static_cast<T>(1.0) - f, d2/static_cast<T>(2.0));
+  const T denominator = x * Poincare::BetaFunction(d1/static_cast<T>(2.0), d2/static_cast<T>(2.0));
   return numerator / denominator;
 }
 

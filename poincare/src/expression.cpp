@@ -258,7 +258,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
   }
   Expression equation = *this;
   Expression polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
-  for (size_t index = 0; index < numberOfVariables; index++) {
+  for (int index = 0; index < numberOfVariables; index++) {
     assert(variables[index*maxVariableSize] != 0);
     int degree = equation.getPolynomialReducedCoefficients(&variables[index*maxVariableSize], polynomialCoefficients, context, complexFormat, angleUnit, unitFormat, symbolicComputation);
     switch (degree) {

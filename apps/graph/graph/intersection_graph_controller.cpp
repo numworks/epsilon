@@ -46,6 +46,9 @@ Poincare::Coordinate2D<double> IntersectionGraphController::computeNewPointOfInt
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
     if (record != m_record) {
       ContinuousFunction f = *(functionStore()->modelForRecord(record));
+      if (!f.isIntersectable()) {
+        continue;
+      }
       Poincare::Coordinate2D<double> intersection = functionStore()->modelForRecord(m_record)->nextIntersectionFrom(start, max, context, f.expressionReduced(context), relativePrecision, minimalStep, maximalStep, f.tMin(), f.tMax());
       if ((std::isnan(result.x1()) || std::fabs(intersection.x1()-start) < std::fabs(result.x1()-start)) && !std::isnan(intersection.x1())) {
         m_intersectedRecord = record;

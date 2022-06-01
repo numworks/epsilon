@@ -197,7 +197,7 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, Alte
   T h = 2.0;
   T result = M_PI_2 * integrandNearBound(0.0, 1.0, alternativeIntegrand, approximationContext); // j=0
   int j = 1;
-  T sn2, sn1 = 0;
+  T sn2 = 0, sn1 = 0;
   T maxWjFj = 0;
   for (int k=0; k<level; k++) {
     sn2 = sn1;

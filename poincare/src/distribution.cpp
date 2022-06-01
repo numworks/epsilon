@@ -37,7 +37,8 @@ const Distribution * Distribution::Get(Type type) {
   case Type::Poisson:
     static constexpr PoissonDistribution poisson;
     return &poisson;
-  case Type::ChiSquared:
+  default:
+    assert(type == Type::ChiSquared);
     static constexpr Chi2Distribution chiSquared;
     return &chiSquared;
   }

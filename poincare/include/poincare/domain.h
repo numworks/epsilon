@@ -69,13 +69,15 @@ public:
 
   static bool ExpressionIsIn(bool * result, const Expression &expression, Type domain, Context * context) {
     assert(result != nullptr);
-    switch (ExpressionIsIn(expression, domain, context)) {
+    Result expressionsIsIn = ExpressionIsIn(expression, domain, context);
+    switch (expressionsIsIn) {
     case CantCheck:
       return false;
     case True:
       *result = true;
       return true;
-    case False:
+    default:
+      assert(expressionsIsIn == False);
       *result = false;
       return true;
     }
@@ -83,13 +85,15 @@ public:
 
   static bool ExpressionsAreIn(bool * result, const Expression &expression1, Type domain1, const Expression &expression2, Type domain2, Context * context) {
     assert(result != nullptr);
-    switch (std::max(ExpressionIsIn(expression1, domain1, context), ExpressionIsIn(expression2, domain2, context))) {
+    Result expressionsAreIn = std::max(ExpressionIsIn(expression1, domain1, context), ExpressionIsIn(expression2, domain2, context));
+    switch (expressionsAreIn) {
     case CantCheck:
       return false;
     case True:
       *result = true;
       return true;
-    case False:
+    default:
+      assert(expressionsAreIn == False);
       *result = false;
       return true;
     }

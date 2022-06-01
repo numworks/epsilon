@@ -27,6 +27,9 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
+  // ViewController
+  void viewWillAppear() override;
+
   static bool ButtonAction(void * c, void * s);
 
   // ScrollViewDelegate

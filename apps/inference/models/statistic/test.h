@@ -66,6 +66,8 @@ public:
 
   // Range
   constexpr static float k_displayWidthToSTDRatio = 5.f;
+  constexpr static float k_displayZoomedInTopMarginRatio = 0.2f;
+  constexpr static float k_displayZoomedInHorizontalMarginRatio = 0.3f;
   void computeCurveViewRange(float transition);
 
 protected:

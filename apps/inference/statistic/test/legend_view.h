@@ -11,7 +11,7 @@ class LegendView : public Escher::View {
 public:
   LegendView();
 
-  int numberOfSubviews() const override { return 2; }
+  int numberOfSubviews() const override { return 4; }
   Escher::View * subviewAtIndex(int i) override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force) override;
@@ -33,7 +33,9 @@ private:
   };
 
   Escher::MessageTextView m_pValueLabel;
+  Escher::MessageTextView m_alphaLabel;
   DotView m_pValueIcon;
+  DotView m_alphaIcon;
 };
 
 }  // namespace Inference

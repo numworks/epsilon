@@ -65,16 +65,23 @@ void CategoricalController::tableViewDidChangeSelection(SelectableTableView * t,
   int row = t->selectedRow();
   int col = t->selectedColumn();
   if (!withinTemporarySelection && previousSelectedCellY != t->selectedRow()) {
-    // We need to clip the size of the CategoricalTableCell to force it to scroll
-    categoricalTableCell()->selectableTableView()->setSize(m_selectableTableView.bounds().size());
-    KDSize previousSize = m_selectableTableView.bounds().size();
-    /* Clip the Categorical table to the CategoricalTableCell to authorize the
-     * CategoricalTableCell to scroll downer than its own height. */
-    m_selectableTableView.setSize(KDSize(m_selectableTableView.bounds().width(), rowHeight(0)));
+    KDCoordinate verticalOffset = categoricalTableCell()->selectableTableView()->contentOffset().y();
+    KDCoordinate tableCellRequiredHeight = categoricalTableCell()->selectableTableView()->minimalSizeForOptimalDisplay().height();
+    KDCoordinate displayedHeight = m_selectableTableView.bounds().height();
+    KDCoordinate givenHeight;
+    if (verticalOffset + displayedHeight < tableCellRequiredHeight) {
+      // We need to clip the size of the CategoricalTableCell to force it to scroll
+      givenHeight = displayedHeight;
+    } else {
+      // We need to enlarge the size of the CategoricalTableCell to authorize it to scroll downer than its own height
+      givenHeight = tableCellRequiredHeight - verticalOffset;
+    }
+    categoricalTableCell()->selectableTableView()->setSize(KDSize(m_selectableTableView.bounds().width(), givenHeight));
     categoricalTableCell()->selectableTableView()->scrollToCell(col, row);
-    // Reset the Categorical table size
-    m_selectableTableView.setSize(previousSize);
-    m_selectableTableView.reloadData(false, false);
+    if (categoricalTableCell()->selectableTableView()->contentOffset().y() != verticalOffset) {
+      // Relayout the whole Categorical table if the scroll change
+      m_selectableTableView.reloadData(false, false);
+    }
   }
 }
 

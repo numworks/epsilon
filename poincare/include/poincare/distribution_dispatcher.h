@@ -135,7 +135,7 @@ public:
     dist.setDistribution(T);
     dist.setType(U);
     dist.setName(getName<T,U>());
-    return dist;
+    return std::move(dist);
   }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction = nullptr);

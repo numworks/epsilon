@@ -72,8 +72,8 @@ i18n_files += $(call i18n_without_universal_for,variables)
 $(eval $(call rule_for, \
   I18N, \
   apps/i18n.cpp, \
-  $(i18n_files), \
-  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --countrypreferences $(country_preferences) --languagepreferences $(language_preferences) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $$^ $(if $(filter $(I18N_COMPRESS),1),--compress,), \
+  $(i18n_files) $(country_preferences) $(language_preferences), \
+  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --countrypreferences $(country_preferences) --languagepreferences $(language_preferences) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $(i18n_files) $(if $(filter $(I18N_COMPRESS),1),--compress,), \
   global \
 ))
 

@@ -80,6 +80,12 @@ public:
   void sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const;
   double sumOfColumn(int series, int i, bool lnOfSeries = false) const;
   bool seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const;
+
+  /* WARNING: This checksum is too slow. Avoid using it if you can.
+  * Use it if you want to check that the list was modified outside this object
+  * (through the modification of lists in calculation for example).
+  * In other cases, you can use the method updateSeries, which is called
+  * each time a series is modified during the lifecycle of the store object. */
   uint32_t storeChecksum() const;
   uint32_t storeChecksumForSeries(int series) const;
 

@@ -71,7 +71,7 @@ void Sequence::setType(Type t) {
     return;
   }
   if (type() == Type::Explicit) {
-    setInitialRank(0);
+    setInitialRank(GlobalPreferences::sharedGlobalPreferences()->sequencesFirstIndex());
   }
   recordData()->setType(t);
   m_definition.tidyName();

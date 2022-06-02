@@ -40,7 +40,6 @@ public:
     assert((int)m_regressionTypes[series] >= 0 && (int)m_regressionTypes[series] < Model::k_numberOfModels);
     return regressionModel(m_regressionTypes[series]);
   }
-  uint32_t * seriesChecksum() { return m_seriesChecksum; }
 
   // Dots
   /* Return the closest dot to abscissa x above the regression curve if
@@ -68,11 +67,16 @@ public:
   // To speed up computation during drawings, float is returned.
   float maxValueOfColumn(int series, int i) const;
   float minValueOfColumn(int series, int i) const;
+
+  // Double Pair Store
+  bool updateSeries(int series, bool delayUpdate = false) override {
+    m_recomputeCoefficients[series] = true;
+    return DoublePairStore::updateSeries(series, delayUpdate);
+  }
 private:
   double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);
   void resetMemoization();
   Model * regressionModel(int index);
-  uint32_t m_seriesChecksum[k_numberOfSeries];
   Model::Type * m_regressionTypes; // This is a table of size k_numberOfSeries.
   NoneModel m_noneModel;
   LinearModel m_linearModel;
@@ -89,7 +93,7 @@ private:
   MedianModel m_medianModel;
   double m_regressionCoefficients[k_numberOfSeries][Model::k_maxNumberOfCoefficients];
   double m_determinationCoefficient[k_numberOfSeries];
-  bool m_regressionChanged[k_numberOfSeries];
+  bool m_recomputeCoefficients[k_numberOfSeries];
 };
 
 typedef double (Store::*ArgCalculPointer)(int, int, bool) const;

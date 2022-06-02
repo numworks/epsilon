@@ -30,7 +30,8 @@ Store::Store(Shared::GlobalContext * context, Model::Type * regressionTypes) :
   InteractiveCurveViewRange(),
   LinearRegressionStore(context),
   m_regressionTypes(regressionTypes),
-  m_exponentialAbxModel(true)
+  m_exponentialAbxModel(true),
+  m_recomputeCoefficients{true, true, true}
 {
   initListsFromStorage();
 }
@@ -45,7 +46,7 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (m_regressionTypes[series] != type) {
     m_regressionTypes[series] = type;
-    m_regressionChanged[series] = true;
+    m_recomputeCoefficients[series] = true;
   }
 }
 
@@ -161,13 +162,11 @@ void Store::updateSeriesValidity(int series) {
 void Store::updateCoefficients(int series, Poincare::Context * globalContext) {
   assert(series >= 0 && series <= k_numberOfSeries);
   assert(seriesIsValid(series));
-  uint32_t storeChecksumSeries = storeChecksumForSeries(series);
-  if (m_regressionChanged[series] || (m_seriesChecksum[series] != storeChecksumSeries)) {
+  if (m_recomputeCoefficients[series]) {
     Model * seriesModel = modelForSeries(series);
     seriesModel->fit(this, series, m_regressionCoefficients[series], globalContext);
-    m_regressionChanged[series] = false;
-    m_seriesChecksum[series] = storeChecksumSeries;
-    /* m_determinationCoefficient must be updated after m_seriesChecksum and m_regressionChanged
+    m_recomputeCoefficients[series] = false;
+    /* m_determinationCoefficient must be updated after m_recomputeCoefficients
      * updates to avoid infinite recursive calls as computeDeterminationCoefficient calls
      * yValueForXValue which calls coefficientsForSeries which calls updateCoefficients */
     m_determinationCoefficient[series] = computeDeterminationCoefficient(series, globalContext);
@@ -199,9 +198,8 @@ double Store::determinationCoefficientForSeries(int series, Poincare::Context * 
 
 void Store::resetMemoization() {
   static_assert(((int)Model::Type::None) == 0, "None type should be default at 0");
-  memset(m_seriesChecksum, 0, sizeof(uint32_t) * Store::k_numberOfSeries);
   memset(m_regressionTypes, 0, sizeof(Model::Type) * Store::k_numberOfSeries);
-  memset(m_regressionChanged, 0, sizeof(m_regressionChanged));
+  memset(m_recomputeCoefficients, 0, sizeof(m_recomputeCoefficients));
 }
 
 float Store::maxValueOfColumn(int series, int i) const {

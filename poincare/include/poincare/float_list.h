@@ -32,12 +32,21 @@ public:
     if (index >= numberOfChildren()) {
       return NAN;
     }
-    Expression child = childAtIndex(index);
+    Expression child = Expression(childAtIndexWithChildrenOfSameSize(index));
     assert((child.type() == ExpressionNode::Type::Float && sizeof(T) == sizeof(float)) || (child.type() == ExpressionNode::Type::Double && sizeof(T) == sizeof(double)));
     return static_cast<Float<T> &>(child).value();
   }
 
   int length() const override { return numberOfChildren(); }
+
+  /* This replaces childAtIndex. Instead of being in linear time, it's
+   * in constant time. */
+  ExpressionNode * childAtIndexWithChildrenOfSameSize(int index) const {
+    assert(index < numberOfChildren() && numberOfChildren() > 0);
+    ExpressionNode * myNode = node();
+    char * firstChild = reinterpret_cast<char *>(myNode) + Helpers::AlignedSize(myNode->size(), ByteAlignment);
+    return reinterpret_cast<ExpressionNode *>(firstChild + index * childAtIndex(0).size());
+  }
 
 };
 

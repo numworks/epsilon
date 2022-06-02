@@ -2,7 +2,7 @@
 #define POINCARE_STATISTICS_DATASET_H
 
 #include "dataset_column.h"
-#include "list.h"
+#include "float_list.h"
 #include "list_complex.h"
 #include <algorithm>
 
@@ -42,7 +42,7 @@ class StatisticsDataset {
 public:
   static StatisticsDataset<T> BuildFromChildren(const ExpressionNode * e, ExpressionNode::ApproximationContext approximationContext, ListComplex<T> evaluationArray[]);
 
-  StatisticsDataset(const DatasetColumn<T> * values, const DatasetColumn<T> * weights) : m_values(values), m_weights(weights), m_sortedIndex(List::Builder()), m_recomputeSortedIndex(true), m_lnOfValues(false) {}
+  StatisticsDataset(const DatasetColumn<T> * values, const DatasetColumn<T> * weights) : m_values(values), m_weights(weights), m_sortedIndex(FloatList<float>::Builder()), m_recomputeSortedIndex(true), m_lnOfValues(false) {}
   StatisticsDataset(const DatasetColumn<T> * values) : StatisticsDataset(values, nullptr) {}
   StatisticsDataset() : StatisticsDataset(nullptr, nullptr) {}
 
@@ -89,7 +89,9 @@ private:
 
   const DatasetColumn<T> * m_values;
   const DatasetColumn<T> * m_weights;
-  mutable List m_sortedIndex;
+  /* This is just a list of int, but FloatList is the most optimized class for
+   * containing numbers in the pool.*/
+  mutable FloatList<float> m_sortedIndex;
   mutable bool m_recomputeSortedIndex;
   bool m_lnOfValues;
 };

@@ -94,7 +94,6 @@ escher_src += $(addprefix escher/src/,\
   text_input.cpp \
   text_input_helpers.cpp \
   text_view.cpp \
-  tiled_view.cpp \
   timer.cpp \
   toggleable_dot_view.cpp \
   toggleable_view.cpp \

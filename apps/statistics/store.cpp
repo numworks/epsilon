@@ -31,7 +31,7 @@ Store::Store(GlobalContext * context, UserPreferences * userPreferences) :
 
 void Store::invalidateSortedIndexes() {
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    m_datasets[i].recomputeSortedIndex();
+    m_datasets[i].setHasBeenModified();
   }
 }
 
@@ -462,7 +462,7 @@ double Store::defaultValue(int series, int i, int j) const {
 }
 
 bool Store::updateSeries(int series, bool delayUpdate) {
-  m_datasets[series].recomputeSortedIndex();
+  m_datasets[series].setHasBeenModified();
   m_memoizedMaxNumberOfModes = -1;
   return DoublePairStore::updateSeries(series, delayUpdate);
 }

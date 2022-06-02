@@ -47,6 +47,15 @@ T StatisticsDataset<T>::weightAtIndex(int index) const {
 
 template<typename T>
 T StatisticsDataset<T>::totalWeight() const {
+  if (std::isnan(m_memoizedTotalWeight)) {
+    m_memoizedTotalWeight = privateTotalWeight();
+  }
+  assert(m_memoizedTotalWeight == privateTotalWeight());
+  return m_memoizedTotalWeight;
+}
+
+template<typename T>
+T StatisticsDataset<T>::privateTotalWeight() const {
   if (datasetLength() == 0) {
     return NAN;
   }

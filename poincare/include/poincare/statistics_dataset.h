@@ -42,13 +42,13 @@ class StatisticsDataset {
 public:
   static StatisticsDataset<T> BuildFromChildren(const ExpressionNode * e, ExpressionNode::ApproximationContext approximationContext, ListComplex<T> evaluationArray[]);
 
-  StatisticsDataset(const DatasetColumn<T> * values, const DatasetColumn<T> * weights) : m_values(values), m_weights(weights), m_sortedIndex(FloatList<float>::Builder()), m_recomputeSortedIndex(true), m_lnOfValues(false) {}
+  StatisticsDataset(const DatasetColumn<T> * values, const DatasetColumn<T> * weights) : m_values(values), m_weights(weights), m_sortedIndex(FloatList<float>::Builder()), m_recomputeSortedIndex(true), m_memoizedTotalWeight(NAN), m_lnOfValues(false) {}
   StatisticsDataset(const DatasetColumn<T> * values) : StatisticsDataset(values, nullptr) {}
   StatisticsDataset() : StatisticsDataset(nullptr, nullptr) {}
 
   bool isUndefined() { return m_values == nullptr; }
 
-  void recomputeSortedIndex() { m_recomputeSortedIndex = true; }
+  void setHasBeenModified() { m_recomputeSortedIndex = true; m_memoizedTotalWeight = NAN; }
   int indexAtSortedIndex(int i) const;
 
   void setLnOfValues(bool b) { m_lnOfValues = b; }
@@ -85,6 +85,7 @@ private:
   }
   T valueAtIndex(int index) const;
   T weightAtIndex(int index) const;
+  T privateTotalWeight() const;
   void buildSortedIndex() const;
 
   const DatasetColumn<T> * m_values;
@@ -93,6 +94,7 @@ private:
    * containing numbers in the pool.*/
   mutable FloatList<float> m_sortedIndex;
   mutable bool m_recomputeSortedIndex;
+  mutable double m_memoizedTotalWeight;
   bool m_lnOfValues;
 };
 

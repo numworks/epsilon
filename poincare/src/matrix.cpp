@@ -111,7 +111,8 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
     assert(t.numberOfChildren() == numberOfColumns());
   }
   int previousNumberOfRows = numberOfRows();
-  for (int i = 0; i < t.numberOfChildren(); i++) {
+  int childrenNumber = t.numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     addChildAtIndexInPlace(t.childAtIndex(i), numberOfChildren(), numberOfChildren());
   }
   setDimensions(previousNumberOfRows + 1, previousNumberOfColumns == 0 ? t.numberOfChildren() : previousNumberOfColumns);
@@ -488,7 +489,8 @@ Expression Matrix::norm(ExpressionNode::ReductionContext reductionContext) const
   // Norm is defined on vectors only
   assert(vectorType() != Array::VectorType::None);
   Addition sum = Addition::Builder();
-  for (int j = 0; j < numberOfChildren(); j++) {
+  int childrenNumber = numberOfChildren();
+  for (int j = 0; j < childrenNumber; j++) {
     Expression absValue = AbsoluteValue::Builder(const_cast<Matrix *>(this)->childAtIndex(j).clone());
     Expression squaredAbsValue = Power::Builder(absValue, Rational::Builder(2));
     absValue.shallowReduce(reductionContext);
@@ -504,7 +506,8 @@ Expression Matrix::dot(Matrix * b, ExpressionNode::ReductionContext reductionCon
   // Dot product is defined between two vectors of same size and type
   assert(vectorType() != Array::VectorType::None && vectorType() == b->vectorType() && numberOfChildren() == b->numberOfChildren());
   Addition sum = Addition::Builder();
-  for (int j = 0; j < numberOfChildren(); j++) {
+  int childrenNumber = numberOfChildren();
+  for (int j = 0; j < childrenNumber; j++) {
     Expression product = Multiplication::Builder(const_cast<Matrix *>(this)->childAtIndex(j).clone(), const_cast<Matrix *>(b)->childAtIndex(j).clone());
     sum.addChildAtIndexInPlace(product, sum.numberOfChildren(), sum.numberOfChildren());
     product.shallowReduce(reductionContext);

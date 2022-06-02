@@ -890,14 +890,15 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       }
 
       Expression result = base;
-      Expression a = result.clone();
+      const Expression a = result.clone();
+      int numberOfChildrenOfA = a.numberOfChildren();
       for (int i = 2; i <= clippedN; i++) {
         /* result = result * (a0+a1+...+a(m-1) in its expanded form */
         if (result.type() == ExpressionNode::Type::Addition) {
           /* We need a 'double' distribution and newA will hold the new
            * expanded form. */
           Expression newA = Addition::Builder();
-          for (int j = 0; j < a.numberOfChildren(); j++) {
+          for (int j = 0; j < numberOfChildrenOfA; j++) {
             Expression m = Multiplication::Builder(result.clone(), a.childAtIndex(j).clone()).distributeOnOperandAtIndex(0, reductionContext);
             if (newA.type() == ExpressionNode::Type::Addition) {
               static_cast<Addition &>(newA).addChildAtIndexInPlace(m, newA.numberOfChildren(), newA.numberOfChildren());

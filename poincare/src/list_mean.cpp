@@ -46,7 +46,8 @@ Expression ListMean::shallowReduce(ExpressionNode::ReductionContext reductionCon
   if (n > 1) {
     // All weights need to be positive.
     bool allWeightsArePositive = true;
-    for (int i = 0; i < children[1].numberOfChildren(); i++) {
+    int childrenNumber = children[1].numberOfChildren();
+    for (int i = 0; i < childrenNumber; i++) {
       if (children[1].childAtIndex(i).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
         // If at least one child is negative, return undef
         return replaceWithUndefinedInPlace();

@@ -526,10 +526,11 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
   }
 
   // Merge the horizontal layout
-  for (int i = 0; i < h.numberOfChildren(); i++) {
+  int childrenNumber = h.numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     if (i == 0
         && h.childAtIndex(0).isEmpty()
-        && h.numberOfChildren() > 1
+        && childrenNumber > 1
         && h.childAtIndex(1).mustHaveLeftSibling()
         && newIndex > 0)
     {
@@ -542,7 +543,7 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
         || !h.childAtIndex(i).isEmpty()
         || (numberOfChildren() > 0
           && childAtIndex(0).mustHaveLeftSibling())
-        || (i < h.numberOfChildren()-1 && h.childAtIndex(i+1).mustHaveLeftSibling()))
+        || (i < childrenNumber-1 && h.childAtIndex(i+1).mustHaveLeftSibling()))
     {
       addChildAtIndexInPlace(h.childAtIndex(i), newIndex, numberOfChildren());
       if (firstAddedChild) {

@@ -27,7 +27,8 @@ void BankViewController::didEnterResponderChain(Responder * previousResponder) {
 }
 
 void BankViewController::initView() {
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     childAtIndex(i)->initView();
   }
   m_view.setSubview(activeViewController()->view());

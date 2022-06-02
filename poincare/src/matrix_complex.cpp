@@ -63,7 +63,8 @@ std::complex<T> MatrixComplexNode<T>::determinant() const {
     return std::complex<T>(NAN, NAN);
   }
   std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     operandsCopy[i] = complexAtIndex(i); // Returns complex<T>(NAN, NAN) if Node type is not Complex
   }
   std::complex<T> determinant = std::complex<T>(1);
@@ -114,7 +115,8 @@ MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
     return MatrixComplex<T>::Undefined();
   }
   std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     operandsCopy[i] = complexAtIndex(i); // Returns complex<T>(NAN, NAN) if Node type is not Complex
   }
   /* Reduced row echelon form is also called row canonical form. To compute the
@@ -129,7 +131,8 @@ std::complex<T> MatrixComplexNode<T>::norm() const {
     return std::complex<T>(NAN, NAN);
   }
   std::complex<T> sum = 0;
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     sum += std::norm(complexAtIndex(i));
   }
   return std::sqrt(sum);
@@ -141,7 +144,8 @@ std::complex<T> MatrixComplexNode<T>::dot(MatrixComplex<T> * e) const {
     return std::complex<T>(NAN, NAN);
   }
   std::complex<T> sum = 0;
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     sum += complexAtIndex(i) * e->complexAtIndex(i);
   }
   return sum;

@@ -68,7 +68,8 @@ void ConsoleController::unloadPythonEnvironment() {
 }
 
 void ConsoleController::autoImport() {
-  for (int i = 0; i < m_scriptStore->numberOfScripts(); i++) {
+  int numberOfScripts = m_scriptStore->numberOfScripts();
+  for (int i = 0; i < numberOfScripts; i++) {
     autoImportScript(m_scriptStore->scriptAtIndex(i));
   }
 }

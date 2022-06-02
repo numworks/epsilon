@@ -102,7 +102,8 @@ void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode:
     return;
   }
   if (e.type() == ExpressionNode::Type::Multiplication) {
-    for (int i = 0; i < e.numberOfChildren(); i++) {
+    int childrenNumber = e.numberOfChildren();
+    for (int i = 0; i < childrenNumber; i++) {
       if (e.childAtIndex(i).type() == searchedType) {
         *argument = e.childAtIndex(i).childAtIndex(0);
         *factor = e.clone();

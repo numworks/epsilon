@@ -36,7 +36,8 @@ int ParameteredExpressionNode::getVariables(Context * context, isVariableTest is
   nextVariableIndex = numberOfVariables;
   static_assert(ParameteredExpression::ParameteredChildIndex() == 0 && ParameteredExpression::ParameterChildIndex() == 1,
       "ParameteredExpression::getVariables might not be valid");
-  for (int i = ParameteredExpression::ParameterChildIndex() + 1; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = ParameteredExpression::ParameterChildIndex() + 1; i < childrenNumber; i++) {
     int n = childAtIndex(i)->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
     // Handle exception
     if (n < 0) {

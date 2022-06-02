@@ -48,7 +48,8 @@ double LinearRegressionStore::leastSquaredSum(int series) const {
 
 double LinearRegressionStore::columnProductSum(int series, bool lnOfSeries) const {
   double result = 0;
-  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
     double value0 = get(series,0,k);
     double value1 = get(series,1,k);
     if (lnOfSeries) {

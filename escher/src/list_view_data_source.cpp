@@ -6,7 +6,8 @@ void ListViewDataSource::initCellSize(TableView * view) {
   int nRows = numberOfRows();
   for (int row = 0; row < nRows; row++) {
     int type = typeAtIndex(row);
-    for (int i = 0; i < reusableCellCount(type); i++) {
+    int numberOfReusableCells = reusableCellCount(type);
+    for (int i = 0; i < numberOfReusableCells; i++) {
       /* Some cells need a width to compute their height, so we need to set
        * width. We also provide a default height because if we set the frame of
        * a cell to a empty-area rectangle, the subviews aren't layouted. */

@@ -42,7 +42,8 @@ void IntersectionGraphController::reloadBannerView() {
 Poincare::Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
   // TODO The following three lines should be factored.
   Poincare::Coordinate2D<double> result = Poincare::Coordinate2D<double>(NAN, NAN);
-  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+  int numberOfActiveFunctions = functionStore()->numberOfActiveFunctions();
+  for (int i = 0; i < numberOfActiveFunctions; i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
     if (record != m_record) {
       ContinuousFunction f = *(functionStore()->modelForRecord(record));

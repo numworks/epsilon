@@ -20,7 +20,7 @@ public:
 
   void replaceValueAtIndex(T value, int index) {
     assert(index < numberOfChildren());
-    Expression child = childAtIndexWithChildrenOfSameSize(index);
+    Expression child = floatExpressionAtIndex(index);
     assert((child.type() == ExpressionNode::Type::Float && sizeof(T) == sizeof(float)) || (child.type() == ExpressionNode::Type::Double && sizeof(T) == sizeof(double)));
     static_cast<Float<T> &>(child).setValue(value);
   }
@@ -34,7 +34,7 @@ public:
     if (index >= numberOfChildren()) {
       return NAN;
     }
-    Expression child = childAtIndexWithChildrenOfSameSize(index);
+    Expression child = floatExpressionAtIndex(index);
     assert((child.type() == ExpressionNode::Type::Float && sizeof(T) == sizeof(float)) || (child.type() == ExpressionNode::Type::Double && sizeof(T) == sizeof(double)));
     return static_cast<Float<T> &>(child).value();
   }
@@ -43,11 +43,10 @@ public:
 
   /* This replaces childAtIndex. Instead of being in linear time, it's
    * in constant time. */
-  Expression childAtIndexWithChildrenOfSameSize(int index) const {
+  Expression floatExpressionAtIndex(int index) const {
     assert(index < numberOfChildren() && numberOfChildren() > 0);
-    ExpressionNode * myNode = node();
-    char * firstChild = reinterpret_cast<char *>(myNode) + Helpers::AlignedSize(myNode->size(), ByteAlignment);
-    return Expression(reinterpret_cast<ExpressionNode *>(firstChild + index * childAtIndex(0).size()));
+    char * firstChild = reinterpret_cast<char *>(node()) + Helpers::AlignedSize(sizeof(ListNode), ByteAlignment);
+    return Expression(reinterpret_cast<ExpressionNode *>(firstChild + index * sizeof(FloatNode<T>)));
   }
 
 };

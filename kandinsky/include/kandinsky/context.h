@@ -43,7 +43,8 @@ public:
   void strokeRect(KDRect rect, KDColor color);
 
   // Circle
-  void fillAntialiasedCircle(KDPoint topLeft, KDCoordinate radius, KDColor color, KDColor background);
+  void fillAntialiasedCircle(KDPoint topLeft, KDCoordinate radius, KDColor color, KDColor background) { fillCircleWithStripes(topLeft, radius, color, background, 0); }
+  void fillCircleWithStripes(KDPoint topLeft, KDCoordinate radius, KDColor color, KDColor background, KDCoordinate spacing, bool ascending = true);
 
 protected:
   KDContext(KDPoint origin, KDRect clippingRect) : m_origin(origin), m_clippingRect(clippingRect) {}

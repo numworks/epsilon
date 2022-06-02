@@ -36,7 +36,11 @@ static void setToAllSymetries(float buffer[], float alpha, int i, int j, int r) 
   buffer[posToIndex(-j - 1, -i - 1, r)] = alpha;
 }
 
-void KDContext::fillAntialiasedCircle(KDPoint topLeft, KDCoordinate radius, KDColor color, KDColor background) {
+static float alphaGivenSpacingAndPosition(int i, int j, KDCoordinate spacing, bool ascending) {
+    return (i + (ascending ? -j : j)) % (spacing + 1) == 0 ? 1.f : 0.f;
+}
+
+void KDContext::fillCircleWithStripes(KDPoint topLeft, KDCoordinate radius, KDColor color, KDColor background, KDCoordinate spacing, bool ascending) {
   // This algorithm can be greatly optimized
   constexpr static int maxDiameter = 30;
   assert(radius <= maxDiameter / 2);
@@ -53,24 +57,28 @@ void KDContext::fillAntialiasedCircle(KDPoint topLeft, KDCoordinate radius, KDCo
     hip1 = std::sqrt(r2 - pow(i + 1, 2));
     yi = std::floor(hi - 1e-5);
 
-    if (yi > hip1) {      // Circle crosses two pixels
-      alphaAbove = (hi - yi) / 2;
-      alphaBelow = (2 + hip1 - yi) / 2;
-      setToAllSymetries(buffer, alphaBelow, i, yi - 1, radius);
-      setToAllSymetries(buffer, alphaAbove, i, yi, radius);
-    } else {              // Circle crosses one pixel
-      alphaBelow = (hi + hip1 - 2 * yi) / 2;
-      setToAllSymetries(buffer, alphaBelow, i, yi, radius);
+    if (spacing == 0) {
+      if (yi > hip1) {      // Circle crosses two pixels
+        alphaAbove = (hi - yi) / 2;
+        alphaBelow = (2 + hip1 - yi) / 2;
+        setToAllSymetries(buffer, alphaBelow, i, yi - 1, radius);
+        setToAllSymetries(buffer, alphaAbove, i, yi, radius);
+      } else {              // Circle crosses one pixel
+        alphaBelow = (hi + hip1 - 2 * yi) / 2;
+        setToAllSymetries(buffer, alphaBelow, i, yi, radius);
+      }
+    } else {
+      yi += 1;
     }
 
     // Filled lines
     for (int j = yi - 1; j > -yi - 1; j--) {
-      buffer[posToIndex(i, j, radius)] = 1;
-      buffer[posToIndex(-i - 1, j, radius)] = 1;
+      buffer[posToIndex(i, j, radius)] = alphaGivenSpacingAndPosition(i, j, spacing, ascending);
+      buffer[posToIndex(-i - 1, j, radius)] = alphaGivenSpacingAndPosition(-i-1, j, spacing, ascending);
     }
     for (int j = i; j > -i - 2; j--) {
-      buffer[posToIndex(yi - 1, j, radius)] = 1;
-      buffer[posToIndex(-yi, j, radius)] = 1;
+      buffer[posToIndex(yi - 1, j, radius)] = alphaGivenSpacingAndPosition(yi -1, j, spacing, ascending);
+      buffer[posToIndex(-yi, j, radius)] = alphaGivenSpacingAndPosition(-yi, j, spacing, ascending);
     }
   }
 

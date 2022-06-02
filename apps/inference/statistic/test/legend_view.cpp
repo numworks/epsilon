@@ -7,14 +7,16 @@ using namespace Escher;
 namespace Inference {
 
 void LegendView::DotView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillAntialiasedCircle(KDPointZero, k_diameter / 2, m_color, Palette::WallScreen);
+  ctx->fillAntialiasedCircle(KDPointZero, k_diameter / 2, KDColorOrange, Palette::WallScreen);
+}
+
+void LegendView::StripedDotView::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->fillCircleWithStripes(KDPointZero, k_diameter / 2, Palette::GrayVeryDark, Palette::WallScreen, 3);
 }
 
 LegendView::LegendView() :
   m_pValueLabel(KDFont::SmallFont, I18n::Message::PValue, 0.0, 0.0, Palette::GrayVeryDark, Palette::WallScreen),
-  m_alphaLabel(KDFont::SmallFont, I18n::Message::GreekAlpha, 0.0, 0.0, Palette::GrayVeryDark, Palette::WallScreen),
-  m_pValueIcon(KDColorOrange),
-  m_alphaIcon(Palette::GrayVeryDark)
+  m_alphaLabel(KDFont::SmallFont, I18n::Message::GreekAlpha, 0.0, 0.0, Palette::GrayVeryDark, Palette::WallScreen)
 {}
 
 View * LegendView::subviewAtIndex(int i) {

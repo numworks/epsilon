@@ -23,19 +23,20 @@ private:
 
   class DotView : public Escher::View {
   public:
-    DotView(KDColor color) : m_color(color) {}
-
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override { return KDSize(k_diameter, k_diameter); }
+  };
 
-  private:
-    KDColor m_color;
+  class StripedDotView : public Escher::View {
+  public:
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+    KDSize minimalSizeForOptimalDisplay() const override { return KDSize(k_diameter, k_diameter); }
   };
 
   Escher::MessageTextView m_pValueLabel;
   Escher::MessageTextView m_alphaLabel;
   DotView m_pValueIcon;
-  DotView m_alphaIcon;
+  StripedDotView m_alphaIcon;
 };
 
 }  // namespace Inference

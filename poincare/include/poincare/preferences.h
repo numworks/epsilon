@@ -118,6 +118,7 @@ public:
 private:
   static constexpr int k_pressToTestParamsPersistingByteIndex = 0;
   static constexpr int k_examModePersistingByteIndex = 1;
+  static_assert(k_examModePersistingByteIndex == 1, "k_examModePersistingByteIndex != 1 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
 
   void updateExamModeFromPersistingBytesIfNeeded() const;
 

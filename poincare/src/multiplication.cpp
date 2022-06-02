@@ -63,7 +63,8 @@ ExpressionNode::NullStatus MultiplicationNode::nullStatus(Context * context) con
    * status. If the null-status are different, we return Unknown because it
    * could be inf * 0. */
   NullStatus nullStatus = childAtIndex(0)->nullStatus(context);
-  for (int i = 1; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 1; i < childrenNumber; i++) {
     if (childAtIndex(i)->nullStatus(context) != nullStatus) {
       return NullStatus::Unknown;
     }
@@ -232,7 +233,8 @@ CodePoint MultiplicationNode::operatorSymbol() const {
    * · --> 1
    * × --> 2 */
   int sign = -1;
-  for (int i = 0; i < numberOfChildren() - 1; i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber - 1; i++) {
     /* The operator symbol must be the same for all operands of the multiplication.
      * If one operator has to be '×', they will all be '×'. Idem for '·'. */
     sign = std::max(sign, operatorSymbolBetween(childAtIndex(i)->rightLayoutShape(), childAtIndex(i+1)->leftLayoutShape()));
@@ -300,7 +302,8 @@ int Multiplication::getPolynomialCoefficients(Context * context, const char * sy
 
   Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Let's note result = a(0)+a(1)*X+a(2)*X^2+a(3)*x^3+..
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     // childAtIndex(i) = b(0)+b(1)*X+b(2)*X^2+b(3)*x^3+...
     int degI = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients);
     assert(degI <= Expression::k_maxPolynomialDegree);
@@ -835,13 +838,14 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
   if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
-    for (int i = 0; i < numberOfChildren(); i++) {
+    int childrenNumber = numberOfChildren();
+    for (int i = 0; i < childrenNumber; i++) {
       Expression o1 = childAtIndex(i);
       if (Base(o1).type() == ExpressionNode::Type::Sine && TermHasNumeralExponent(o1)) {
         const Expression x = Base(o1).childAtIndex(0);
         /* Thanks to the SimplificationOrder, Cosine-base factors are after
          * Sine-base factors */
-        for (int j = i+1; j < numberOfChildren(); j++) {
+        for (int j = i+1; j < childrenNumber; j++) {
           Expression o2 = childAtIndex(j);
           if (Base(o2).type() == ExpressionNode::Type::Cosine && TermHasNumeralExponent(o2) && Base(o2).childAtIndex(0).isIdenticalTo(x)) {
             factorizeSineAndCosine(i, j, reductionContext);
@@ -932,7 +936,8 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
       && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)
       && !hasRandom)
   {
-    for (int i = 0; i < numberOfChildren(); i++) {
+    int childrenNumber = numberOfChildren();
+    for (int i = 0; i < childrenNumber; i++) {
       if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
         return distributeOnOperandAtIndex(i, reductionContext);
       }
@@ -1099,7 +1104,8 @@ Expression Multiplication::distributeOnOperandAtIndex(int i, ExpressionNode::Red
 
 void Multiplication::addMissingFactors(Expression factor, ExpressionNode::ReductionContext reductionContext) {
   if (factor.type() == ExpressionNode::Type::Multiplication) {
-    for (int j = 0; j < factor.numberOfChildren(); j++) {
+    int childrenNumber = factor.numberOfChildren();
+    for (int j = 0; j < childrenNumber; j++) {
       addMissingFactors(factor.childAtIndex(j), reductionContext);
     }
     return;

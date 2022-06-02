@@ -49,7 +49,8 @@ Layout Layout::recursivelyMatches(LayoutTest test) const {
   if (test(*this)) {
     return *this;
   }
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     Layout childResult = childAtIndex(i).recursivelyMatches(test);
     if (!childResult.isUninitialized()) {
       return childResult;

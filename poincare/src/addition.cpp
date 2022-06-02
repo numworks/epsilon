@@ -22,7 +22,8 @@ ExpressionNode::Sign AdditionNode::sign(Context * context) const {
   }
   // If all children have same sign, addition has this sign too.
   ExpressionNode::Sign additionSign = childAtIndex(0)->sign(context);
-  for (int i = 1; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 1; i < childrenNumber; i++) {
     if (childAtIndex(i)->sign(context) != additionSign) {
       return Sign::Unknown;
     }
@@ -90,7 +91,8 @@ int Addition::getPolynomialCoefficients(Context * context, const char * symbolNa
     coefficients[k] = Addition::Builder();
   }
   Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     int d = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients);
     assert(d < Expression::k_maxNumberOfPolynomialCoefficients);
     for (int j = 0; j < d+1; j++) {
@@ -406,7 +408,8 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
 }
 
 bool Addition::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     derivateChildAtIndexInPlace(i, reductionContext, symbol, symbolValue);
   }
   return true;
@@ -497,7 +500,8 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
    * want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d = a*d + c*b + e*d */
   assert(reductionContext.target() ==  ExpressionNode::ReductionTarget::User); // Else, before, the algorithm used User target -> put back ?
   Addition numerator = Addition::Builder();
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     Multiplication m = Multiplication::Builder(childAtIndex(i), commonDenominator.clone());
     numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
     m.privateShallowReduce(reductionContext, true);

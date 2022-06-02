@@ -17,7 +17,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   /* A dot is drawn at every step where step is larger than 1
    * and than a pixel's width. */
   const int step = std::ceil(pixelWidth());
-  for (int i = 0; i < m_sequenceStore->numberOfActiveFunctions(); i++) {
+  int numberOfActiveFunctions = m_sequenceStore->numberOfActiveFunctions();
+  for (int i = 0; i < numberOfActiveFunctions; i++) {
     Ion::Storage::Record record = m_sequenceStore->activeRecordAtIndex(i);
     Shared::Sequence * s = m_sequenceStore->modelForRecord(record);;
     float rectXMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);

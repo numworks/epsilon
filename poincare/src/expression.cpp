@@ -896,7 +896,8 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
   if (type() != ExpressionNode::Type::Store && !ComparisonOperator::IsComparisonOperatorType(type())) {
     /* Bubble up dependencies */
     List dependencies = List::Builder();
-    for (int i = 0; i < numberOfChildren(); i++) {
+    int childrenNumber = numberOfChildren();
+    for (int i = 0; i < childrenNumber; i++) {
       if (isParameteredExpression() && (i == ParameteredExpression::ParameteredChildIndex())) {
         /* A parametered expression can have dependencies on its parameter, which
          * we don't want to factor, as the parameter does not have meaning

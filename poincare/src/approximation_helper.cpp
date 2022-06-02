@@ -233,7 +233,8 @@ template<typename T> Evaluation<T> ApproximationHelper::MapReduce(
     ) {
   assert(expression->numberOfChildren() > 0);
   Evaluation<T> result = expression->childAtIndex(0)->approximate(T(), approximationContext);
-  for (int i = 1; i < expression->numberOfChildren(); i++) {
+  int childrenNumber = expression->numberOfChildren();
+  for (int i = 1; i < childrenNumber; i++) {
     Evaluation<T> nextOperandEvaluation = expression->childAtIndex(i)->approximate(T(), approximationContext);
     result = reductionFunction(result, nextOperandEvaluation, approximationContext.complexFormat());
     if (result.isUndefined()) {
@@ -245,7 +246,8 @@ template<typename T> Evaluation<T> ApproximationHelper::MapReduce(
 
 template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Poincare::Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes) {
   MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
-  for (int i = 0; i < m.numberOfChildren(); i++) {
+  int childrenNumber = m.numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     matrix.addChildAtIndexInPlace(computeOnComplexes(m.complexAtIndex(i), c, complexFormat), i, i);
   }
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
@@ -257,7 +259,8 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnMatrices
     return MatrixComplex<T>::Undefined();
   }
   MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
-  for (int i = 0; i < m.numberOfChildren(); i++) {
+  int childrenNumber = m.numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     matrix.addChildAtIndexInPlace(computeOnComplexes(m.complexAtIndex(i), n.complexAtIndex(i), complexFormat), i, i);
   }
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());

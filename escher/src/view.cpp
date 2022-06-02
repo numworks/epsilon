@@ -58,7 +58,8 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   KDRect redrawnArea = rectNeedingRedraw;
 
   // Then, let's recursively draw our children over ourself
-  for (uint8_t i=0; i<numberOfSubviews(); i++) {
+  uint8_t subviewsNumber = numberOfSubviews();
+  for (uint8_t i=0; i < subviewsNumber; i++) {
     View * subview = this->subview(i);
     if (subview == nullptr) {
       continue;

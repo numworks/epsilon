@@ -184,7 +184,8 @@ void ValuesController::updateNumberOfColumns() const {
   for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
     m_numberOfValuesColumnsForType[symbolTypeIndex] = 0;
   }
-  for (int i = 0; i < functionStore()->numberOfActiveFunctionsInTable(); i++) {
+  int numberOfActiveFunctionsInTable = functionStore()->numberOfActiveFunctionsInTable();
+  for (int i = 0; i < numberOfActiveFunctionsInTable; i++) {
     Ion::Storage::Record record = functionStore()->activeRecordInTableAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
     int symbolTypeIndex = static_cast<int>(f->symbolType());
@@ -208,7 +209,8 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
   ContinuousFunction::SymbolType symbolType = symbolTypeAtColumn(&i);
   int index = 1;
-  for (int k = 0; k < functionStore()->numberOfActiveFunctionsOfSymbolType(symbolType); k++) {
+  int numberOfActiveFunctionsOfSymbolType = functionStore()->numberOfActiveFunctionsOfSymbolType(symbolType);
+  for (int k = 0; k < numberOfActiveFunctionsOfSymbolType; k++) {
     Ion::Storage::Record record = functionStore()->activeRecordOfSymbolTypeAtIndex(symbolType, k);
     const int numberOfColumnsForCurrentRecord = numberOfColumnsForRecord(record);
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {

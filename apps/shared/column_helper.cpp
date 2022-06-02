@@ -138,7 +138,8 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   }
   if (formula.type() == ExpressionNode::Type::List) {
     bool allChildrenAreUndefined = true;
-    for (int i = 0; i < formula.numberOfChildren(); i++) {
+    int formulaNumberOfChildren = formula.numberOfChildren();
+    for (int i = 0; i < formulaNumberOfChildren; i++) {
       if (!formula.childAtIndex(i).isUndefined()) {
         allChildrenAreUndefined = false;
         break;

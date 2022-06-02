@@ -184,7 +184,8 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
   if (numberOfChildren() != l.numberOfChildren()) {
     return false;
   }
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     if (!childAtIndex(i)->isIdenticalTo(l.childAtIndex(i))) {
       return false;
     }
@@ -297,7 +298,8 @@ void LayoutNode::changeGraySquaresOfAllMatrixRelatives(bool add, bool ancestors,
         *changedSquares = true;
       }
     }
-    for (int i = 0; i < numberOfChildren(); i++) {
+    int childrenNumber = numberOfChildren();
+    for (int i = 0; i < childrenNumber; i++) {
       /* We cannot use "for l : children()", as the node addresses might change,
        * especially the iterator stopping address. */
       childAtIndex(i)->changeGraySquaresOfAllMatrixRelatives(add, false, changedSquares);

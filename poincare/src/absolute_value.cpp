@@ -102,7 +102,8 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
   // |x*y| = |x|*|y|
   if (c.type() == ExpressionNode::Type::Multiplication) {
     Multiplication m = Multiplication::Builder();
-    for (int i = 0; i < c.numberOfChildren(); i++) {
+    int childrenNumber = c.numberOfChildren();
+    for (int i = 0; i < childrenNumber; i++) {
       AbsoluteValue newabs  = AbsoluteValue::Builder(c.childAtIndex(i));
       m.addChildAtIndexInPlace(newabs, m.numberOfChildren(), m.numberOfChildren());
       newabs.shallowReduce(reductionContext);

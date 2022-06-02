@@ -102,7 +102,8 @@ Expression applyAssociativeFunctionOnChildren(const Expression & expression, Int
   // We define f(a) = f(a,a) = a
   Integer result = getIntegerFromRationalExpression(expression.childAtIndex(0));
   // f is associative, f(a,b,c,d) = f(f(f(a,b),c),d)
-  for (int i = 1; i < expression.numberOfChildren(); ++i) {
+  int childrenNumber = expression.numberOfChildren();
+  for (int i = 1; i < childrenNumber; ++i) {
     result = f(result, getIntegerFromRationalExpression(expression.childAtIndex(i)));
   }
   return Rational::Builder(result);
@@ -128,7 +129,8 @@ Evaluation<T> applyAssociativeFunctionOnChildren(const ExpressionNode & expressi
   // We define f(a) = f(a,a) = a
   uint32_t a = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(expressionNode.childAtIndex(0), &isUndefined, approximationContext);
   // f is associative, f(a,b,c,d) = f(f(f(a,b),c),d)
-  for (int i = 1; i < expressionNode.numberOfChildren(); ++i) {
+  int childrenNumber = expressionNode.numberOfChildren();
+  for (int i = 1; i < childrenNumber; ++i) {
     uint32_t b = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(expressionNode.childAtIndex(i), &isUndefined, approximationContext);
     if (isUndefined) {
       return Complex<T>::RealUndefined();

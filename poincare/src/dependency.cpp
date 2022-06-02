@@ -27,7 +27,8 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(Approxim
     return Complex<T>::Undefined();
   }
   assert(dependencies->type() == ExpressionNode::Type::List);
-  for (int i = 0; i < dependencies->numberOfChildren(); i++) {
+  int childrenNumber = dependencies->numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     if (dependencies->childAtIndex(i)->approximate(static_cast<T>(1), approximationContext).isUndefined()) {
       return Complex<T>::Undefined();
     }

@@ -554,7 +554,8 @@ void PythonToolbox::scrollToLetter(char letter) {
    * a letter higher than the wanted letter. */
   char lowerLetter = tolower(letter);
   int index = -1;
-  for (int i = 0; i < m_messageTreeModel->numberOfChildren(); i++) {
+  int childrenNumber = m_messageTreeModel->numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
     char l = tolower(I18n::translate(m_messageTreeModel->childAtIndex(i)->label())[0]);
     if (l == lowerLetter) {
       index = i;

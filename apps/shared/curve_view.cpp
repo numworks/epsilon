@@ -421,7 +421,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
   }
 }
 
-void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness, KDCoordinate dashSize, int areaIndex) const {
+void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis, float coordinate, float lowerBound, float upperBound, KDColor color, KDCoordinate thickness, KDCoordinate dashSize, int areaPattern) const {
   if (lowerBound > upperBound) {
     // Swap lower and upper bounds
     float tempBound = lowerBound;
@@ -450,41 +450,16 @@ void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Ax
     return;
   }
 
-  if (areaIndex >= 0) {
+  if (areaPattern >= 0) {
     assert(pixelCoordinate >= 0 && dashSize == 1);
-    /* Draw an inequation area. Up to four areas are handled. Otherwise, they
-     * override. */
-    int areaId = areaIndex % 4;
-    /* Inequation Area is tiled over 4x4 blocks of pixels.
-     * Depending on the areaIndex, the colorized pixel will be :
-     *
-     * Segment:    Tile:              Example:
-     *    0        0 # 1 #         0 # 1 # 0 # 1 # 0 # 1 # 0 # 1 #
-     *    #   ->   # 2 # 3  ->     # 2 # 3 # 2 # 3 # 2 # 3 # 2 # 3
-     *    1        1 # 0 #         1 # 0 # 1 # 0 # 1 # 0 # 1 # 0 #
-     *    #        # 3 # 2         # 3 # 2 # 3 # 2 # 3 # 2 # 3 # 2
-     *
-     * Pixels' positions are absolute. Drawn independently, all segments shall
-     * align. */
-    const int evenOddIndex[4] = {0,0,1,1};
-    // Depending on the areaIndex, either even or odd lines are drawn
-    if ((pixelCoordinate + evenOddIndex[areaId])%2 == 0) {
-      // Compute the offset (modulo 4) to respect the tile's requirements
-      // - Offset due to areaId
-      const int areaOffset[4] = {0,2,0,2};
-      int offset = areaOffset[areaId];
-      // - Offset due to each subsequent segment shifting by 1
-      offset += pixelCoordinate%4;
-      // - Offset to make the segment alignment absolute (indepandent of start)
-      offset += 4 - start%4;
-      for (KDCoordinate i = start + offset%4; i < end; i += 4) {
-        KDPoint point = (axis == Axis::Horizontal) ? KDPoint(i, pixelCoordinate) :  KDPoint(pixelCoordinate, i);
-        assert(rect.contains(point));
-        ctx->setPixel(point, color);
+    for (int area = 0; area < k_numberOfPatternAreas; area++) {
+      if (areaPattern & (1 << area)) {
+        drawPatternAreaInLine(ctx, axis, pixelCoordinate, start, end, area, color);
       }
     }
     return;
   }
+
   if (dashSize < 0) {
     // Continuous segment is equivalent to one big dash
     dashSize = end - start;
@@ -493,6 +468,38 @@ void CurveView::drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Ax
     KDRect lineRect = (axis == Axis::Horizontal) ? KDRect(i, pixelCoordinate, dashSize, thickness) :  KDRect(pixelCoordinate, i, thickness, dashSize);
     assert(rect.intersects(lineRect));
     ctx->fillRect(lineRect, color);
+  }
+}
+
+void CurveView::drawPatternAreaInLine(KDContext * ctx, Axis axis, KDCoordinate coordinate, KDCoordinate start, KDCoordinate end, int areaIndex, KDColor color) const {
+  /* Draw an inequation area. Up to four areas are handled. Otherwise, they
+   * override. */
+  /* Inequation Area is tiled over 4x4 blocks of pixels.
+   * Depending on the areaIndex, the colorized pixel will be :
+   *
+   * Segment:    Tile:              Example:
+   *    0        0 # 1 #         0 # 1 # 0 # 1 # 0 # 1 # 0 # 1 #
+   *    #   ->   # 2 # 3  ->     # 2 # 3 # 2 # 3 # 2 # 3 # 2 # 3
+   *    1        1 # 0 #         1 # 0 # 1 # 0 # 1 # 0 # 1 # 0 #
+   *    #        # 3 # 2         # 3 # 2 # 3 # 2 # 3 # 2 # 3 # 2
+   *
+   * Pixels' positions are absolute. Drawn independently, all segments shall
+   * align. */
+  constexpr int evenOddIndex[4] = {0,0,1,1};
+  // Depending on the areaIndex, either even or odd lines are drawn
+  if ((coordinate + evenOddIndex[areaIndex])%2 == 0) {
+    // Compute the offset (modulo 4) to respect the tile's requirements
+    // - Offset due to areaIndex
+    constexpr int areaOffset[4] = {0,2,0,2};
+    int offset = areaOffset[areaIndex];
+    // - Offset due to each subsequent segment shifting by 1
+    offset += coordinate%4;
+    // - Offset to make the segment alignment absolute (indepandent of start)
+    offset += 4 - start%4;
+    for (KDCoordinate i = start + offset%4; i < end; i += 4) {
+      KDPoint point = (axis == Axis::Horizontal) ? KDPoint(i, coordinate) :  KDPoint(coordinate, i);
+      ctx->setPixel(point, color);
+    }
   }
 }
 
@@ -667,7 +674,7 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex, Axis axis) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, KDColor colorOfFill, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaPattern, Axis axis) const {
   /* ContinuousFunction caching relies on a consistent tStart and tStep. These
    * values shouldn't be altered here. */
   float previousT = NAN;
@@ -702,7 +709,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, floa
     float secondaryCoordinate = axis == Axis::Horizontal ? y : x;
     Axis secondaryAxis = axis == Axis::Horizontal ? Axis::Vertical : Axis::Horizontal;
     if (colorUnderCurve && !std::isnan(mainCoordinate) && colorLowerBound < mainCoordinate && mainCoordinate < colorUpperBound && !(std::isnan(secondaryCoordinate) || std::isinf(secondaryCoordinate))) {
-      drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, std::min(0.0f, secondaryCoordinate), std::max(0.0f, secondaryCoordinate), color, 1);
+      drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, std::min(0.0f, secondaryCoordinate), std::max(0.0f, secondaryCoordinate), colorOfFill, 1, 1, areaPattern);
     }
     if (xyAreaBound && (shouldColorAreaWhenNan || !std::isnan(secondaryCoordinate))) {
       Coordinate2D<float> xyArea = xyAreaBound(t, model, context);
@@ -710,14 +717,14 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, floa
       if (shouldColorAreaWhenNan || !std::isnan(areaBound)) {
         float lowerBound = std::isnan(secondaryCoordinate) || std::isnan(areaBound) ? -INFINITY : std::min(secondaryCoordinate, areaBound);
         float upperBound = std::isnan(secondaryCoordinate) || std::isnan(areaBound) ? INFINITY : std::max(secondaryCoordinate, areaBound);
-        drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, lowerBound, upperBound, color, 1, 1, areaIndex);
+        drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, lowerBound, upperBound, colorOfFill, 1, 1, areaPattern);
       }
     }
     stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation, dashedCurve, stampNumber);
   } while (!isLastSegment);
 }
 
-void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, float tMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaIndex, float cachedTStep, Axis axis) const {
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, float tMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, KDColor colorOfFill, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaPattern, float cachedTStep, Axis axis) const {
   float tStart = tMin;
   float tStep = cachedTStep;
   KDCoordinate pixelMin = axis == Axis::Horizontal ? rect.left() - k_externRectMargin : rect.bottom() + k_externRectMargin;
@@ -738,7 +745,7 @@ void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, flo
   if (std::isinf(tStart) || std::isinf(tEnd) || tStart > tEnd) {
     return;
   }
-  drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation, dashedCurve, xyAreaBound, shouldColorAreaWhenNan, areaIndex, axis);
+  drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, thick, colorUnderCurve, colorOfFill, colorLowerBound, colorUpperBound, xyDoubleEvaluation, dashedCurve, xyAreaBound, shouldColorAreaWhenNan, areaPattern, axis);
 }
 
 float PolarThetaFromCoordinates(float x, float y, Preferences::AngleUnit angleUnit) {
@@ -765,7 +772,7 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
   if (cancelOptimization || (rectUp > 0.0f && rectDown < 0.0f && rectLeft < 0.0f)) {
     if (cancelOptimization || rectRight > 0.0f) {
       // Origin is inside rect, tStart and tEnd cannot be optimized
-      return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+      return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, color, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
     }
     // Rect view overlaps the abscissa, on the left of the origin.
     rectOverlapsNegativeAbscissaAxis = true;
@@ -822,7 +829,7 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
    * overlap (at tStart+5*tStep). Optimization is useless.
    * If tStep < piInAngleUnit - (tMax - tMin), situation B cannot happen. */
   if (tStep >= piInAngleUnit - tMax + tMin) {
-    return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+    return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, color, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
   }
 
   /* The number of segments to draw can be reduced by drawing curve on intervals
@@ -852,7 +859,7 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
       tCache2 = std::min(tStart + tStep * j, tEnd);
 
       assert(tCache1 <= tCache2);
-      drawCurve(ctx, rect, tCache1, tCache2, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+      drawCurve(ctx, rect, tCache1, tCache2, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, color, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
     }
     thetaOffset += piInAngleUnit;
   }

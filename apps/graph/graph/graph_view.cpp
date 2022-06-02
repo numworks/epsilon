@@ -176,10 +176,10 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         // 2 - Draw the first curve
         drawCartesianCurve(ctx, rect, tCacheMin, tmax, xyFloatEvaluation,
                            f.operator->(), context(), f->color(), true,
-                           record == m_selectedRecord, m_highlightedStart,
+                           record == m_selectedRecord, f->color(), m_highlightedStart,
                            m_highlightedEnd, xyDoubleEvaluation,
                            f->drawDottedCurve(), xyAreaBound,
-                           shouldColorAreaWhenNan, areaIndex, tCacheStep, axis);
+                           shouldColorAreaWhenNan, 1 << areaIndex, tCacheStep, axis);
         if (hasTwoCurves) {
           /* Evaluations for the second cartesian curve, which is lesser than
            * the first one */
@@ -204,13 +204,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           drawCartesianCurve(
               ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
               context(), f->color(), true, record == m_selectedRecord,
-              m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
+              f->color(), m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
               f->drawDottedCurve(), xyAreaBound, shouldColorAreaWhenNan,
-              areaIndex, tCacheStep, axis);
+              1 << areaIndex, tCacheStep, axis);
         }
         if (area != ContinuousFunction::AreaType::None) {
           // We can properly display the superposition of up to 4 areas
-          areaIndex++;
+          areaIndex = (areaIndex + 1) % CurveView::k_numberOfPatternAreas;
         }
         // 4 - Draw tangent
         if (m_tangent && record == m_selectedRecord) {

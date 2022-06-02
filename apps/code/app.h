@@ -94,7 +94,7 @@ private:
      * We must also make sure in the linker script that the pool is located
      * right after the Apps buffer. */
     assert(Poincare::TreePool::sharedPool()->numberOfNodes() == 0);
-    assert(m_pythonHeap + k_pythonHeapSize <= Poincare::TreePool::sharedPool() + sizeof(Poincare::TreePool));
+    assert(static_cast<void *>(m_pythonHeap + k_pythonHeapSize) <= static_cast<void *>(Poincare::TreePool::sharedPool() + sizeof(Poincare::TreePool)));
     return m_pythonHeap;
   }
   static constexpr int k_pythonHeapExtensionSize = k_pythonHeapSize - sizeof(Poincare::TreePool);

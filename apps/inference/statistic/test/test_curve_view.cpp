@@ -66,8 +66,8 @@ void TestCurveView::drawAlphaStripes(KDContext * ctx, KDRect rect, HypothesisPar
     if (x * xDir < xSolidEnd * xDir) {
       drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::YellowDark);
     }
-    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::GrayVeryDark, 1, 1, 0);
-    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::GrayVeryDark, 1, 1, secondAreaIndex);
+    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::PurpleDark, 1, 1, 0);
+    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::PurpleDark, 1, 1, secondAreaIndex);
   }
 }
 

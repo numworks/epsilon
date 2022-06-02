@@ -24,6 +24,7 @@ public:
   FloatNode(T value = 0.0) : m_value(value) {}
 
   T value() const { return m_value; }
+  void setValue(T value) { m_value = value; }
 
   // TreeNode
   size_t size() const override { return sizeof(FloatNode<T>); }
@@ -77,6 +78,7 @@ public:
   constexpr static T Min();
   constexpr static T Max();
   T value() const { return node()->value(); }
+  void setValue(T value) { node()->setValue(value); }
 private:
   FloatNode<T> * node() const { return static_cast<FloatNode<T> *>(Number::node()); }
 };

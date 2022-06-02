@@ -66,7 +66,8 @@ double Store::maxHeightOfBar(int series) const {
   assert(seriesIsValid(series));
   double maxHeight = -DBL_MAX;
   double endOfBar = startOfBarAtIndex(series, 0);
-  for (int i = 0; i < numberOfBars(series); i++) {
+  int myNumberOfBars = numberOfBars(series);
+  for (int i = 0; i < myNumberOfBars; i++) {
     // Reuse previous endOfBarAtIndex result
     double startOfBar = endOfBar;
     endOfBar = endOfBarAtIndex(series, i);
@@ -559,7 +560,8 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
   double cumulatedOccurrences = 0.0, otherOccurrences = 0.0;
   double value = cumulatedFrequencyValueAtIndex(series, i);
   // Recompute sumOfOccurrences() here to save some computation.
-  for (int j = 0; j < numberOfPairsOfSeries(series); j++) {
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int j = 0; j < numberOfPairs; j++) {
     double x = get(series, 0, valueIndexAtSortedIndex(series, j));
     (x <= value ? cumulatedOccurrences : otherOccurrences) += get(series, 1, valueIndexAtSortedIndex(series, j));
   }

@@ -56,7 +56,25 @@ public:
     Alternate
   };
 
-  constexpr CountryPreferences(AvailableExamModes availableExamModes, MethodForQuartiles methodForQuartiles, OutlierDefaultVisibility outliersStatus, Poincare::Preferences::UnitFormat unitFormat, HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol, HistogramsOffset histogramOffset, YPredictedSymbol yPredictedSymbol, StatsRowsLayout statsRowsLayout, Poincare::Preferences::CombinatoricSymbols combinatoricSymbols, ListsStatsOrderInToolbox listsStatsOrderInToolbox) :
+  enum class SequencesFirstIndex : bool {
+    Zero,
+    One,
+  };
+
+  constexpr CountryPreferences(
+    AvailableExamModes availableExamModes,
+    MethodForQuartiles methodForQuartiles,
+    OutlierDefaultVisibility outliersStatus,
+    Poincare::Preferences::UnitFormat unitFormat,
+    HomeAppsLayout homeAppsLayout,
+    DiscriminantSymbol discriminantSymbol,
+    HistogramsOffset histogramOffset,
+    YPredictedSymbol yPredictedSymbol,
+    StatsRowsLayout statsRowsLayout,
+    Poincare::Preferences::CombinatoricSymbols combinatoricSymbols,
+    ListsStatsOrderInToolbox listsStatsOrderInToolbox,
+    SequencesFirstIndex sequencesFirstIndex
+    ) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
     m_unitFormat(unitFormat),
@@ -67,7 +85,8 @@ public:
     m_yPredictedSymbol(yPredictedSymbol),
     m_statsRowsLayout(statsRowsLayout),
     m_combinatoricSymbols(combinatoricSymbols),
-    m_listsStatsOrderInToolbox(listsStatsOrderInToolbox)
+    m_listsStatsOrderInToolbox(listsStatsOrderInToolbox),
+    m_sequencesFirstIndex(sequencesFirstIndex)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -81,6 +100,7 @@ public:
   constexpr StatsRowsLayout statsRowsLayout() const { return m_statsRowsLayout; }
   constexpr Poincare::Preferences::CombinatoricSymbols combinatoricSymbols() const { return m_combinatoricSymbols; }
   constexpr ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return m_listsStatsOrderInToolbox; }
+  constexpr SequencesFirstIndex sequencesFirstIndex() const { return m_sequencesFirstIndex; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -94,6 +114,7 @@ private:
   const StatsRowsLayout m_statsRowsLayout;
   const Poincare::Preferences::CombinatoricSymbols m_combinatoricSymbols;
   const ListsStatsOrderInToolbox m_listsStatsOrderInToolbox;
+  const SequencesFirstIndex m_sequencesFirstIndex;
 };
 
 #endif

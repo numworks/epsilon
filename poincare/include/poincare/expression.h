@@ -57,6 +57,8 @@ class Expression : public TreeHandle {
   friend class Equal;
   friend class Factor;
   friend class Factorial;
+  template<typename T>
+  friend class FloatList;
   friend class Floor;
   friend class FracPart;
   friend class Function;

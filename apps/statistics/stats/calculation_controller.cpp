@@ -31,6 +31,12 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
     m_hideableCell[i].setHide(true);
   }
+  resetMemoization();
+}
+
+void CalculationController::viewWillAppear() {
+  resetMemoization();
+  Shared::DoublePairTableController::viewWillAppear();
 }
 
 void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
@@ -118,7 +124,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
     if (j - 1 < (numberOfFixedRows - 1)) {
       int calculationIndex = findCellIndex(j - 1);
-      calculation = (m_store->*k_calculationRows[calculationIndex].calculationMethod)(seriesIndex);
+      if (std::isnan(m_memoizedCellContent[seriesIndex][calculationIndex])) {
+        m_memoizedCellContent[seriesIndex][calculationIndex] = (m_store->*k_calculationRows[calculationIndex].calculationMethod)(seriesIndex);
+      }
+      assert(m_memoizedCellContent[seriesIndex][calculationIndex] == (m_store->*k_calculationRows[calculationIndex].calculationMethod)(seriesIndex));
+      calculation = m_memoizedCellContent[seriesIndex][calculationIndex];
     } else if (showModeFrequency() && j == numberOfRows() - 1) {
       calculation = m_store->modeFrequency(seriesIndex);
     } else {
@@ -229,6 +239,14 @@ int CalculationController::findCellIndex(int i) const {
 int CalculationController::fixedNumberOfRows() const {
   // Hide SampleMean under default StatsRowLayout
   return GlobalPreferences::sharedGlobalPreferences()->statsRowsLayout() == CountryPreferences::StatsRowsLayout::Variant1 ? k_fixedMaxNumberOfRows : k_fixedMaxNumberOfRows - 1;
+}
+
+void CalculationController::resetMemoization() {
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    for (int j = 0; j < k_numberOfCalculations; j++) {
+      m_memoizedCellContent[i][j] = NAN;
+    }
+  }
 }
 
 }

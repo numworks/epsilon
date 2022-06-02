@@ -17,6 +17,8 @@ class CalculationController : public Shared::DoublePairTableController {
 public:
   CalculationController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Store * store);
 
+  void viewWillAppear() override;
+
   // TableViewDataSource
   int numberOfRows() const override { return fixedNumberOfRows() + m_store->totalNumberOfModes() + showModeFrequency(); }
   bool showModeFrequency() const { return m_store->totalNumberOfModes() > 0; }
@@ -82,7 +84,9 @@ private:
     { I18n::Message::Mean, I18n::Message::MuMeanSymbol, &Store::mean, 15, 8 }, // Not displayed with defaultLayout
     { I18n::Message::StatisticsSampleMean, I18n::Message::MeanSymbol, &Store::mean, 16, 11 }, // Not displayed with defaultLayout
   };
+  constexpr static int k_numberOfCalculations = sizeof(k_calculationRows) / sizeof(CalculationRow);
   int findCellIndex(int i) const;
+  void resetMemoization();
 
   int fixedNumberOfRows() const;
   Shared::DoublePairStore * store() const override { return m_store; }
@@ -94,6 +98,7 @@ private:
   Escher::EvenOddBufferTextCell m_calculationModeSymbolCells[k_numberOfCalculationTitleCells];
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
   Shared::HideableEvenOddCell m_hideableCell[k_numberOfHeaderColumns];
+  double m_memoizedCellContent[Store::k_numberOfSeries][k_numberOfCalculations];
   Store * m_store;
 };
 

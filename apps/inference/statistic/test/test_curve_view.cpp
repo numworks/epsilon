@@ -29,74 +29,60 @@ void TestCurveView::drawTest(KDContext * ctx, KDRect rect) const {
 
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   drawZLabelAndZGraduation(ctx, z);
-  drawAlphaStripes(ctx, rect, m_test->hypothesisParams()->comparisonOperator(), z);
   colorUnderCurve(ctx, rect, m_test->hypothesisParams()->comparisonOperator(), z);
+  drawCurveAndAlphaStripes(ctx, rect, m_test->hypothesisParams()->comparisonOperator());
 }
 
-void TestCurveView::drawAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const {
+void TestCurveView::drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op) const {
+  float stripesStart, stripesEnd;
   float xAlpha = m_test->thresholdAbscissa(op);
-  float xStart, xEnd, xSolidEnd, xDir;
-  int secondAreaIndex;
+  int pattern;
+  switch (op) {
+  case HypothesisParams::ComparisonOperator::Different:
+    drawCurveAndAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Higher);
+    drawCurveAndAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Lower);
+    return;
+  case HypothesisParams::ComparisonOperator::Higher:
+    stripesStart = xAlpha;
+    stripesEnd = INFINITY;
+    pattern = 0b1001;
+    break;
+  default:
+    assert(op == HypothesisParams::ComparisonOperator::Lower);
+    stripesStart = -INFINITY;
+    stripesEnd = xAlpha;
+    pattern = 0b101;
+    break;
+  }
+
+  assert(std::isfinite(xAlpha));
+  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateAtAbscissa, m_test, nullptr, Palette::YellowDark, true, true, Palette::PurpleDark, stripesStart, stripesEnd, nullptr, false, nullptr, false, pattern);
+}
+
+void TestCurveView::colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const {
+  float xStart, xEnd;
   switch (op) {
   case HypothesisParams::ComparisonOperator::Different:
     z = std::fabs(z);
-    drawAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z);
-    drawAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z);
+    colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z);
+    colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z);
     return;
   case HypothesisParams::ComparisonOperator::Higher:
-    xStart = curveViewRange()->xMax();
-    xEnd = xAlpha;
-    xSolidEnd = std::max(xEnd, z);
-    xDir = -1.f;
-    secondAreaIndex = 3;
+    xStart = z;
+    xEnd = curveViewRange()->xMax();
     break;
   default:
     assert(op == HypothesisParams::ComparisonOperator::Lower);
     xStart = curveViewRange()->xMin();
-    xEnd = xAlpha;
-    xSolidEnd = std::min(xEnd, z);
-    xDir = 1.f;
-    secondAreaIndex = 2;
+    xEnd = z;
     break;
   }
 
   float xStep = pixelLengthToFloatLength(Axis::Horizontal, 1);
-  for (float x = xStart; x * xDir < xEnd * xDir; x += xDir * xStep) {
+  for (float x = xStart; x <= xEnd; x += xStep) {
     float y = m_test->evaluateAtAbscissa(x);
-    if (x * xDir < xSolidEnd * xDir) {
-      drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::YellowDark);
-    }
-    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::PurpleDark, 1, 1, 0);
-    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::PurpleDark, 1, 1, secondAreaIndex);
+    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::YellowDark);
   }
-}
-
-void TestCurveView::colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const {
-  if (op == HypothesisParams::ComparisonOperator::Different) {
-    // Recurse for both colors
-    z = std::fabs(z);
-    // TODO optimize ?
-    colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z);
-    colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z);
-    return;
-  }
-
-  float xAlpha = m_test->thresholdAbscissa(op);
-  float min = op == HypothesisParams::ComparisonOperator::Higher ? z : xAlpha;
-  float max = op == HypothesisParams::ComparisonOperator::Higher ? xAlpha : z;
-  drawCartesianCurve(
-    ctx,
-    rect,
-    -INFINITY,
-    INFINITY,
-    evaluateAtAbscissa,
-    m_test,
-    nullptr,
-    Palette::YellowDark,
-    true,
-    true,
-    min,
-    max);
 }
 
 void TestCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float position, Poincare::Layout symbol) const {

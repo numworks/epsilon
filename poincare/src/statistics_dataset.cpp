@@ -147,15 +147,10 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight, int * upperIndex) con
   return indexAtSortedIndex(elementSortedIndex);
 }
 
-int getIntFromBasedInteger(Expression e) {
-  assert(e.type() == ExpressionNode::Type::BasedInteger);
-  return static_cast<BasedInteger &>(e).integer().extractedInt();
-}
-
 template<typename T>
 int StatisticsDataset<T>::indexAtSortedIndex(int i) const {
   buildSortedIndex();
-  return getIntFromBasedInteger(m_sortedIndex.childAtIndex(i));
+  return static_cast<int>(m_sortedIndex.valueAtIndex(i));
 }
 
 template<typename T>
@@ -163,23 +158,25 @@ void StatisticsDataset<T>::buildSortedIndex() const {
   if (!m_recomputeSortedIndex) {
     return;
   }
-  List sortedIndexes = List::Builder();
+  FloatList<float> sortedIndexes = FloatList<float>::Builder();
   for (int i = 0; i < datasetLength(); i++) {
-    sortedIndexes.addChildAtIndexInPlace(BasedInteger::Builder(Integer(i)), i, i);
+    sortedIndexes.addValueAtIndex(static_cast<float>(i), i);
   }
   void * pack[] = {&sortedIndexes, const_cast<DatasetColumn<T> *>(m_values)};
   Helpers::Sort(
       [](int i, int j, void * ctx, int n) { // swap
         void ** pack = reinterpret_cast<void **>(ctx);
-        List * sortedIndex = reinterpret_cast<List *>(pack[0]);
-        sortedIndex->swapChildrenInPlace(i, j);
+        FloatList<float> * sortedIndex = reinterpret_cast<FloatList<float> *>(pack[0]);
+        float temp = sortedIndex->valueAtIndex(i);
+        sortedIndex->replaceValueAtIndex(sortedIndex->valueAtIndex(j), i);
+        sortedIndex->replaceValueAtIndex(temp, j);
       },
       [](int i, int j, void * ctx, int n) { // compare
         void ** pack = reinterpret_cast<void **>(ctx);
-        List * sortedIndex = reinterpret_cast<List *>(pack[0]);
+        FloatList<float> * sortedIndex = reinterpret_cast<FloatList<float> *>(pack[0]);
         DatasetColumn<T> * values = reinterpret_cast<DatasetColumn<T> *>(pack[1]);
-        int sortedIndexI = getIntFromBasedInteger(sortedIndex->childAtIndex(i));
-        int sortedIndexJ = getIntFromBasedInteger(sortedIndex->childAtIndex(j));
+        int sortedIndexI = static_cast<int>(sortedIndex->valueAtIndex(i));
+        int sortedIndexJ = static_cast<int>(sortedIndex->valueAtIndex(j));
         return std::isnan(values->valueAtIndex(sortedIndexI)) || values->valueAtIndex(sortedIndexI) >= values->valueAtIndex(sortedIndexJ);
       },
       pack,

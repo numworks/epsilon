@@ -59,8 +59,8 @@ public:
     Undefined = 6, // Undefined must be the last ExamMode.
   };
   static constexpr int k_numberOfExamModes = 6;
-  static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
-  static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
+  static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
+  static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
   static_assert(k_numberOfExamModes == static_cast<int>(ExamMode::Undefined), "Preferences::ExamMode::Undefined should be last but the number of exam modes does not match.");
   static_assert(static_cast<ExamMode>(0xFF) == ExamMode::Unknown, "0xFF persisting bytes must be parsed as Unknown.");
   /* Params are false if the feature is activated (allowed) and true if
@@ -118,7 +118,7 @@ public:
 private:
   static constexpr int k_pressToTestParamsPersistingByteIndex = 0;
   static constexpr int k_examModePersistingByteIndex = 1;
-  static_assert(k_examModePersistingByteIndex == 1, "k_examModePersistingByteIndex != 1 but this value is used in ion/src/device/n0110/kernel/driver/led.cpp");
+  static_assert(k_examModePersistingByteIndex == 1, "k_examModePersistingByteIndex != 1 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
 
   void updateExamModeFromPersistingBytesIfNeeded() const;
 

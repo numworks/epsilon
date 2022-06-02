@@ -118,7 +118,8 @@ void TestCurveView::drawZLabelAndZGraduation(KDContext * ctx, float z) const {
   if (m_test->hypothesisParams()->comparisonOperator() == HypothesisParams::ComparisonOperator::Different) {
     Poincare::AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(m_test->testCriticalValueSymbol(KDFont::SmallFont));
     drawLabelAndGraduationAtPosition(ctx, std::abs(z), absolute);
-    drawLabelAndGraduationAtPosition(ctx, -std::abs(z), Poincare::HorizontalLayout::Builder(Poincare::CodePointLayout::Builder('-'), absolute));
+    absolute.invalidAllSizesPositionsAndBaselines();
+    drawLabelAndGraduationAtPosition(ctx, -std::abs(z), Poincare::HorizontalLayout::Builder(Poincare::CodePointLayout::Builder('-', KDFont::SmallFont), absolute));
   } else {
     drawLabelAndGraduationAtPosition(ctx, z, m_test->testCriticalValueSymbol(KDFont::SmallFont));
   }

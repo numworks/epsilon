@@ -17,6 +17,8 @@ public:
   /* We want a 3 characters margin before the first label tick, so that most
    * labels appear completely. This gives 3*charWidth/320 = 3*7/320= 0.066 */
   static constexpr float k_labelsHorizontalMarginRatio = 0.066f;
+  static constexpr int k_numberOfPatternAreas = 4;
+
   typedef Poincare::Coordinate2D<float> (*EvaluateXYForFloatParameter)(float t, void * model, void * context);
   typedef Poincare::Coordinate2D<double> (*EvaluateXYForDoubleParameter)(double t, void * model, void * context);
   typedef float (*EvaluateYForX)(float x, void * model, void * context);
@@ -63,9 +65,18 @@ protected:
     return drawHorizontalOrVerticalSegment(ctx, rect, axis, coordinate, -INFINITY, INFINITY, color,
         thickness, dashSize);
   }
+  /* Areas are tiled over a 4x4 pattern. The bits in the areaPattern argument
+   * describe which pixels will be drawn. A negative areaPattern indicates all
+   * pixels will be drawn.
+   *              e.g. areaPattern = 0b1010
+   * 0 # 1 #        . . X .
+   * # 2 # 3        . . . X
+   * 1 # 0 #        X . . .
+   * # 3 # 2        . X . .
+   */
   void drawHorizontalOrVerticalSegment(KDContext * ctx, KDRect rect, Axis axis,
       float coordinate, float lowerBound, float upperBound,
-      KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1, int areaIndex = -1) const;
+      KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = -1, int areaPattern = -1) const;
   void drawSegment(KDContext * ctx, KDRect rect,
     float x, float y, float u, float v,
     KDColor color, bool thick = true
@@ -105,8 +116,9 @@ protected:
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
-  void drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, bool dashedCurve = false, EvaluateXYForFloatParameter xyAreaBound = nullptr, bool shouldColorAreaWhenNan = false, int areaIndex = 0, Axis axis = Axis::Horizontal) const;
-  void drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, float tMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, bool dashedCurve = false, EvaluateXYForFloatParameter xyAreaBound = nullptr, bool shouldColorAreaWhenNan = false, int areaIndex = 0, float cachedTStep = 0.f, Axis axis = Axis::Horizontal) const;
+
+  void drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, KDColor colorOfFill = KDColorBlack, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, bool dashedCurve = false, EvaluateXYForFloatParameter xyAreaBound = nullptr, bool shouldColorAreaWhenNan = false, int areaPattern = 1, Axis axis = Axis::Horizontal) const;
+  void drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, float tMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick = true, bool colorUnderCurve = false, KDColor colorOfFill = KDColorBlack, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, bool dashedCurve = false, EvaluateXYForFloatParameter xyAreaBound = nullptr, bool shouldColorAreaWhenNan = false, int areaPattern = 1, float cachedTStep = 0.f, Axis axis = Axis::Horizontal) const;
   void drawPolarCurve(KDContext * ctx, KDRect rect, float xMin, float xMax, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick = true, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr) const;
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
@@ -130,6 +142,7 @@ protected:
 
 private:
   static constexpr const KDFont * k_font = KDFont::SmallFont;
+
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const;
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */
@@ -161,6 +174,7 @@ private:
   float labelValueAtIndex(Axis axis, int i) const;
   bool bannerIsVisible() const;
   float roundFloatToPixelPerfect(Axis axis, float x) const;
+  void drawPatternAreaInLine(KDContext * ctx, Axis axis, KDCoordinate coordinate, KDCoordinate start, KDCoordinate end, int areaIndex, KDColor color) const;
 
   CurveViewRange * m_curveViewRange;
   CursorView * m_cursorView;

@@ -57,6 +57,10 @@ bool ResidualPlotController::moveHorizontally(int direction) {
 
 bool ResidualPlotController::handleEvent(Ion::Events::Event event) {
   assert(m_store->seriesIsValid(m_selectedSeriesIndex));
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    static_cast<Escher::StackViewController *>(parentResponder())->pop();
+    return true;
+  }
   if (event == Ion::Events::Right || event == Ion::Events::Left) {
     return moveHorizontally(event == Ion::Events::Right ? 1 : -1);
   }

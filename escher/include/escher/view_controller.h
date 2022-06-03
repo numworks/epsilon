@@ -45,11 +45,13 @@ public:
      * but also does not add it to the stack headers. */
     NeverDisplayOwnTitle = 0b11111110,
     /* Hide all previous headers but the last one. */
-    DisplayLastTitle = 0b00000001,
-    DisplayLastTwoTitles = 0b00000011,
-    DisplayLastThreeTitles = 0b00000111,
     DisplayLastFourTitles = 0b00001111,
+    DisplayLastThreeTitles = 0b00000111,
+    DisplaySecondAndThirdToLast = 0b00000110,
     DisplayLastAndThirdToLast = 0b00000101,
+    DisplayLastTwoTitles = 0b00000011,
+    DisplaySecondToLast = 0b00000010,
+    DisplayLastTitle = 0b00000001,
     DisplayNoTitle = 0b00000000
   };
 

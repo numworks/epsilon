@@ -362,6 +362,13 @@ int Store::numberOfModes(int series) const {
 }
 
 bool Store::shouldDisplayModes(int series) const {
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int i = 0; i < numberOfPairs; i++) {
+    double valueFrequency = get(series, 1, i);
+    if (static_cast<int>(valueFrequency) != valueFrequency) {
+      return false;
+    }
+  }
   float frequency = modeFrequency(series);
   return static_cast<int>(frequency) == frequency && frequency != 1.f;
 }

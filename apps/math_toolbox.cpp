@@ -474,6 +474,16 @@ constexpr ToolboxMessageTree listsStatsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ListSampleStandardDevCommandWithArg, I18n::Message::SampleSTD)
 };
 
+constexpr int alternateListsStatsOrder[] {
+  0, // Mean
+  1, // StandardDev
+  4, // SampleStandardDev
+  2, // Median
+  3  // Variance
+};
+
+static_assert(sizeof(alternateListsStatsOrder) / sizeof(int) == sizeof(listsStatsChildren) / sizeof(ToolboxMessageTree), "Alternate lists stats order in toolbox has wrong size");
+
 constexpr ToolboxMessageTree listsOperationsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ListLengthCommandWithArg, I18n::Message::ListLength),
   ToolboxMessageTree::Leaf(I18n::Message::ListMinCommandWithArg, I18n::Message::Minimum),
@@ -567,6 +577,10 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   KDColor textColor = isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack;
   if (messageTree->numberOfChildren() == 0) {
     // Message is leaf
+    if (GlobalPreferences::sharedGlobalPreferences()->listsStatsOrderInToolbox() == CountryPreferences::ListsStatsOrderInToolbox::Alternate && m_messageTreeModel->childrenList() == listsStatsChildren) {
+      // We are in lists stats sub-menu
+      messageTree = messageTreeModelAtIndex(alternateListsStatsOrder[index]);
+    }
     ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
     const char * text = I18n::translate(messageTree->label());
     Layout resultLayout;
@@ -609,6 +623,10 @@ bool MathToolbox::selectSubMenu(int selectedRow) {
 
 bool MathToolbox::selectLeaf(int selectedRow) {
   assert(typeAtIndex(selectedRow) == k_leafCellType);
+  if (GlobalPreferences::sharedGlobalPreferences()->listsStatsOrderInToolbox() == CountryPreferences::ListsStatsOrderInToolbox::Alternate && m_messageTreeModel->childrenList() == listsStatsChildren) {
+    // We are in lists stats sub-menu
+    selectedRow = alternateListsStatsOrder[selectedRow];
+  }
   const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(selectedRow);
   if (displayMessageTreeDisabledPopUp(messageTree)) {
     return true;

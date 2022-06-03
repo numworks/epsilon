@@ -39,6 +39,9 @@ public:
   const MessageTree * childAtIndex(int index) const override {
     return m_childrenConsecutive ? m_children.m_direct + index : m_children.m_indirect[index];
   }
+  const ToolboxMessageTree * childrenList() const {
+    return m_childrenConsecutive ? m_children.m_direct : nullptr;
+  }
   I18n::Message text() const { return m_text; }
   I18n::Message insertedText() const { return m_insertedText; }
   bool stripInsertedText() const { return m_stripInsertedText; }

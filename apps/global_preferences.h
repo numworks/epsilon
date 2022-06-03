@@ -24,6 +24,7 @@ public:
   const char * yPredictedSymbol() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].yPredictedSymbol(); }
   CountryPreferences::StatsRowsLayout statsRowsLayout() { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].statsRowsLayout(); }
   Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].combinatoricSymbols(); }
+  CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].listsStatsOrderInToolbox(); }
   const char * openIntervalChar(bool left) const {
     /* This should be done by country instead of language. However, some
      * messages have intervals. The toolbox would have to contain buffers

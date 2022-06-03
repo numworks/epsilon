@@ -71,7 +71,6 @@ HighlightCell * ListParameterController::reusableCell(int index, int type) {
     case k_typeCellType:
       return &m_typeCell;
     case k_initialRankCellType:
-      assert(hasInitialRankRow());
       return &m_initialRankCell;
     default:
       return Shared::ListParameterController::reusableCell(index, type);

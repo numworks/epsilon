@@ -11,7 +11,7 @@ void LegendView::DotView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void LegendView::StripedDotView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillCircleWithStripes(KDPointZero, k_diameter / 2, Palette::PurpleDark, Palette::WallScreen, 3);
+  ctx->fillCircleWithStripes(KDPointZero, k_diameter / 2, Palette::PurpleBright, Palette::WallScreen, 3);
 }
 
 LegendView::LegendView() :

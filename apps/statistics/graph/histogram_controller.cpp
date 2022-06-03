@@ -66,7 +66,7 @@ static bool fillBufferWithIntervalFormula(char * buffer, int bufferSize, double 
   return bufferSize > Poincare::Print::safeCustomPrintf(
     buffer,
     bufferSize,
-    "%s%s[%*.*ed;%*.*ed%s",
+    "%s%s[%*.*ed,%*.*ed%s",
     I18n::translate(I18n::Message::Interval),
     I18n::translate(I18n::Message::ColonConvention),
     lowerBound, displayMode, precision,

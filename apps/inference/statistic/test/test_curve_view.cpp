@@ -56,7 +56,7 @@ void TestCurveView::drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, Hypot
   }
 
   assert(std::isfinite(xAlpha));
-  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateAtAbscissa, m_test, nullptr, Palette::YellowDark, true, true, Palette::PurpleDark, stripesStart, stripesEnd, nullptr, false, nullptr, false, pattern);
+  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateAtAbscissa, m_test, nullptr, Palette::YellowDark, true, true, Palette::PurpleBright, stripesStart, stripesEnd, nullptr, false, nullptr, false, pattern);
 }
 
 void TestCurveView::colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const {

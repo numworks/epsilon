@@ -79,6 +79,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     Ion::Storage::Record record = sequenceStore()->recordAtIndex(sequenceStore()->numberOfModels()-1);
     Shared::Sequence * newSequence = sequenceStore()->modelForRecord(record);
+    newSequence->setInitialRank(GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank());
     newSequence->setType(static_cast<Shared::Sequence::Type>(selectedRow()));
     Container::activeApp()->dismissModalViewController();
     m_listController->editExpression(0, Ion::Events::OK);

@@ -3,7 +3,6 @@
 
 #include "../shared/function.h"
 #include <assert.h>
-#include <apps/global_preferences.h>
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>
@@ -93,7 +92,7 @@ private:
     RecordDataBuffer(KDColor color) :
       Shared::Function::RecordDataBuffer(color),
       m_type(Type::Explicit),
-      m_initialRank(GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank()),
+      m_initialRank(0),
       m_initialConditionSizes{0,0}
     {}
     Type type() const { return m_type; }

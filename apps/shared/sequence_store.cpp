@@ -1,5 +1,6 @@
 #include "sequence_store.h"
 #include <ion/storage/file_system.h>
+#include <algorithm>
 extern "C" {
 #include <assert.h>
 #include <stddef.h>

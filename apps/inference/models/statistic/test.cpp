@@ -97,10 +97,18 @@ static float interpolate(float a, float b, float alpha) {
   return alpha * (b-a) + a;
 }
 
-void Test::computeCurveViewRange(float transition) {
+void Test::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
-  float alpha = cumulativeDistributiveInverseForProbability(1 - threshold());
+  float alpha;
   float z = testCriticalValue();
+  if (hypothesisParams()->comparisonOperator() != HypothesisParams::ComparisonOperator::Different) {
+    alpha = thresholdAbscissa(hypothesisParams()->comparisonOperator());
+  } else if (zoomSide) {
+    alpha = thresholdAbscissa(HypothesisParams::ComparisonOperator::Higher);
+  } else {
+    alpha = thresholdAbscissa(HypothesisParams::ComparisonOperator::Lower);
+    z *= -1;
+  }
   float margin = std::abs(alpha - z) * k_displayZoomedInHorizontalMarginRatio;
   if (alpha == z) {
     // Arbitrary value to provide some zoom if we can't separate α and z

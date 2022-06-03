@@ -3,9 +3,10 @@
 
 namespace Inference {
 
-InputSlopeController::InputSlopeController(StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Poincare::Context * context) :
+InputSlopeController::InputSlopeController(Escher::StackViewController * parent, ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Poincare::Context * context) :
   InputCategoricalController(parent, resultsController, statistic, inputEventHandlerDelegate),
   m_slopeTableCell(&m_selectableTableView, this, this, statistic, context),
+  m_secondStackController(this, &m_storeParameterController, Escher::StackViewController::Style::WhiteUniform),
   m_storeParameterController(parent, &m_slopeTableCell)
 {
   m_storeParameterController.selectRow(0);
@@ -15,8 +16,9 @@ bool InputSlopeController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
     m_storeParameterController.initializeColumnParameters();
     m_storeParameterController.selectRow(0);
-    m_storeParameterController.setTitlesDisplay(titlesDisplay() == ViewController::TitlesDisplay::DisplayLastTitle ? ViewController::TitlesDisplay::DisplayLastTwoTitles : ViewController::TitlesDisplay::DisplayLastThreeTitles);
-    stackController()->push(&m_storeParameterController);
+    m_storeParameterController.setTitlesDisplay(ViewController::TitlesDisplay::DisplayLastTitle);
+    m_secondStackController.setTitlesDisplay(titlesDisplay() == ViewController::TitlesDisplay::DisplayLastTitle ? ViewController::TitlesDisplay::DisplaySecondToLast : ViewController::TitlesDisplay::DisplaySecondAndThirdToLast);
+    stackController()->push(&m_secondStackController);
     return true;
   }
   return InputCategoricalController::handleEvent(event);

@@ -12,8 +12,6 @@ using namespace Escher;
 
 namespace Inference {
 
-// TODO: add another StackViewController here to push the SlopeColumnParameterController on it and display it with Style::WhiteUniform
-
 class InputSlopeController : public InputCategoricalController, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
 public:
   InputSlopeController(StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Poincare::Context * parentContext);
@@ -32,6 +30,15 @@ public:
   void viewWillAppear() override;
 
 private:
+  class PrivateStackViewController: public Escher::StackViewController {
+  public:
+    using Escher::StackViewController::StackViewController;
+    TitlesDisplay titlesDisplay() override { return m_titlesDisplay; }
+    void setTitlesDisplay(TitlesDisplay titlesDisplay) { m_titlesDisplay = titlesDisplay; }
+  private:
+    TitlesDisplay m_titlesDisplay;
+  };
+
   EditableCategoricalTableCell * categoricalTableCell() override { return &m_slopeTableCell; }
   int indexOfSignificanceCell() const override { return k_indexOfTableCell + 1; }
   Escher::StackViewController * stackController() const { return static_cast<Escher::StackViewController *>(parentResponder()); }
@@ -39,6 +46,10 @@ private:
   char m_titleBuffer[InputController::k_titleBufferSize];
   Escher::MessageTableCellWithEditableTextWithMessage m_innerDegreeOfFreedomCell;
   SlopeTableCell m_slopeTableCell;
+  /* This second stack view controller is used to make the banner of the store
+   * parameter controller white, which deviates from the style of the main
+   * stack view controller (gray scales). */
+  PrivateStackViewController m_secondStackController;
   SlopeColumnParameterController m_storeParameterController;
 };
 

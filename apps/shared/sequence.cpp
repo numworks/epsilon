@@ -70,9 +70,6 @@ void Sequence::setType(Type t) {
   if (t == type()) {
     return;
   }
-  if (type() == Type::Explicit) {
-    setInitialRank(GlobalPreferences::sharedGlobalPreferences()->sequencesFirstIndex());
-  }
   recordData()->setType(t);
   m_definition.tidyName();
   tidyDownstreamPoolFrom();

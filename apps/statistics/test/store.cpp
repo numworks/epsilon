@@ -200,6 +200,7 @@ void assert_data_box_plot(
       quiz_assert((trueUpperOutliers)[i] == store->upperOutlierAtIndex(k_defaultSeriesIndex, i));
     }
   }
+  GlobalPreferences::sharedGlobalPreferences()->setCountry(I18n::Country::WW);
 }
 
 QUIZ_CASE(data_statistics) {

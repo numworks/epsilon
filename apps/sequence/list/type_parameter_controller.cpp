@@ -6,6 +6,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <apps/i18n.h>
+#include <apps/global_preferences.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -61,7 +62,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
         App::app()->localContext()->resetCache();
         // Reset the first index if the new type is "Explicit"
         if (sequenceType == Shared::Sequence::Type::Explicit) {
-          sequence()->setInitialRank(0);
+          sequence()->setInitialRank(GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank());
         }
       }
       StackViewController * stack = stackController();

@@ -20,7 +20,8 @@ GraphController::GraphController(Responder * parentResponder, Escher::InputEvent
   m_graphRange(graphRange),
   m_curveParameterController(inputEventHandlerDelegate, this, graphRange, m_cursor),
   m_sequenceSelectionController(this),
-  m_termSumController(this, inputEventHandlerDelegate, &m_view, graphRange, m_cursor)
+  m_termSumController(this, inputEventHandlerDelegate, &m_view, graphRange, m_cursor),
+  m_sequenceStore(sequenceStore)
 {
   m_graphRange->setDelegate(this);
 }
@@ -34,6 +35,7 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   m_view.setCursorView(&m_cursorView);
+  m_smallestRank = m_sequenceStore->smallestInitialRank();
   FunctionGraphController::viewWillAppear();
 }
 
@@ -78,7 +80,7 @@ bool GraphController::openMenuForCurveAtIndex(int index) {
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   double xCursorPosition = std::round(m_cursor->x());
-  if (direction < 0 && xCursorPosition <= 0) {
+  if (direction < 0 && xCursorPosition <= m_smallestRank) {
     return false;
   }
   // The cursor moves by step that is larger than 1 and than a pixel's width.

@@ -59,7 +59,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
     EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)t->selectedCell();
     // Default selected subcell is the left one
     bool firstSubCellSelected = true;
-    if (previousSelectedCellX > 0 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
+    if (previousSelectedCellX > 1 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
       // If we come from another double text cell, we have to update subselection
       EvenOddDoubleBufferTextCellWithSeparator * myPreviousCell = (EvenOddDoubleBufferTextCellWithSeparator *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
       /* If the selection stays in the same column, we copy the subselection

@@ -24,6 +24,8 @@ public:
   // View Controller
   TELEMETRY_ID("Calculation");
 
+  void viewWillAppear() override;
+
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
@@ -71,6 +73,7 @@ private:
   bool hasSeriesDisplaying(DisplayCondition condition) const;
   bool shouldSeriesDisplay(int series, DisplayCondition condition) const;
   int maxNumberOfCoefficients() const;
+  void resetMemoization();
 
   Escher::EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   Escher::EvenOddMessageTextCell m_titleSymbolCells[k_maxNumberOfDisplayableRows];
@@ -79,6 +82,8 @@ private:
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
   Shared::HideableEvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   Store * m_store;
+  double m_memoizedDoubleCalculationCells[Store::k_numberOfSeries][2][k_totalNumberOfDoubleBufferRows];
+  double m_memoizedSimpleCalculationCells[Store::k_numberOfSeries][k_regressionCellIndex-k_totalNumberOfDoubleBufferRows-1];
 };
 
 }

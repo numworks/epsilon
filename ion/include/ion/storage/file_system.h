@@ -10,7 +10,7 @@
 
 namespace Ion {
 
-/* Storage : | Magic |             Record1                 |            Record2                  | ... | Magic |
+/* Storage : | Magic |             Record1                 |            Record2                  | ... | Magic |
  *           | Magic | Size1(uint16_t) | FullName1 | Body1 | Size2(uint16_t) | FullName2 | Body2 | ... | Magic |
  *
  * A record's fullName is baseName.extension. */
@@ -22,8 +22,8 @@ friend class Record;
 public:
   typedef uint16_t record_size_t;
 
-  constexpr static size_t k_storageSize = 32768;
-  static_assert(UINT16_MAX >= k_storageSize, "record_size_t not big enough");
+  constexpr static size_t k_storageSize = 42 * 1024;
+  static_assert(UINT16_MAX >= k_storageSize - 1, "record_size_t not big enough");
 
   static FileSystem * sharedFileSystem();
 

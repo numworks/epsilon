@@ -24,6 +24,9 @@ private:
   char m_titleBuffer[k_titleBufferSize];
   TestGraphView m_graphView;
   Test * m_test;
+  /* When the test curve has two interesting sides, we can choose to zoom on
+   * the left or the right side. */
+  bool m_zoomSide;
   int m_zoom;
 };
 

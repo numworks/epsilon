@@ -24,7 +24,9 @@ const char * TestGraphController::title() {
 }
 
 void TestGraphController::didBecomeFirstResponder() {
-  m_test->computeCurveViewRange(0);
+  m_zoom = 0;
+  m_zoomSide = true;
+  m_test->computeCurveViewRange(0, m_zoomSide);
   m_graphView.reload();
 }
 
@@ -33,10 +35,14 @@ bool TestGraphController::handleEvent(Ion::Events::Event event) {
     m_zoom++;
   } else if (event == Ion::Events::Minus && m_zoom > 0) {
     m_zoom--;
+  } else if (m_zoom > 0 && event == Ion::Events::Left && m_zoomSide) {
+    m_zoomSide = false;
+  } else if (m_zoom > 0 && event == Ion::Events::Right && !m_zoomSide) {
+    m_zoomSide = true;
   } else {
     return false;
   }
-  m_test->computeCurveViewRange(static_cast<float>(m_zoom) / k_zoomSteps);
+  m_test->computeCurveViewRange(static_cast<float>(m_zoom) / k_zoomSteps, m_zoomSide);
   m_graphView.reload();
   return true;
 }

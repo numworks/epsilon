@@ -1,5 +1,4 @@
 #include "categorical_controller.h"
-
 #include "inference/app.h"
 #include "inference/constants.h"
 #include "inference/text_helpers.h"
@@ -9,13 +8,10 @@ using namespace Escher;
 
 namespace Inference {
 
-CategoricalController::CategoricalController(
-    Responder * parent,
-    ViewController * nextController,
-    Invocation invocation) :
-      SelectableListViewController<ListViewDataSource>(parent),
-      m_nextController(nextController),
-      m_next(&m_selectableTableView, I18n::Message::Next, invocation, Palette::WallScreenDark, Metric::CommonMargin)
+CategoricalController::CategoricalController(Responder * parent, ViewController * nextController, Invocation invocation) :
+  SelectableListViewController<ListViewDataSource>(parent),
+  m_nextController(nextController),
+  m_next(&m_selectableTableView, I18n::Message::Next, invocation, Palette::WallScreenDark, Metric::CommonMargin)
 {
   m_selectableTableView.setTopMargin(0);
   m_selectableTableView.setLeftMargin(0);
@@ -63,6 +59,19 @@ void CategoricalController::scrollViewDidChangeOffset(ScrollViewDataSource * scr
   setScrollViewDelegate(nullptr);
   m_selectableTableView.setContentOffset(KDPointZero);
   setScrollViewDelegate(this);
+}
+
+bool CategoricalController::updateBarIndicator(bool vertical, bool * visible) {
+  assert(visible);
+  if (!vertical) {
+    return false;
+  }
+
+  ScrollView::BarDecorator * decorator = static_cast<ScrollView::BarDecorator *>(m_selectableTableView.decorator());
+  KDCoordinate otherCellsHeight = m_selectableTableView.minimalSizeForOptimalDisplay().height() - categoricalTableCell()->bounds().height();
+  KDCoordinate trueOptimalHeight = categoricalTableCell()->minimalSizeForOptimalDisplay().height() + otherCellsHeight;
+  *visible = decorator->verticalBar()->update(trueOptimalHeight, categoricalTableCell()->selectableTableView()->contentOffset().y(), m_selectableTableView.bounds().height());
+  return true;
 }
 
 void CategoricalController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {

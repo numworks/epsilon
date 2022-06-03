@@ -34,6 +34,7 @@ public:
 
   // ScrollViewDelegate
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
+  bool updateBarIndicator(bool vertical, bool * visible) override;
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;

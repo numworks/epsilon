@@ -162,7 +162,7 @@ void ScrollView::layoutSubviews(bool force) {
   }
   KDRect r1 = KDRectZero;
   KDRect r2 = KDRectZero;
-  KDRect innerFrame = decorator()->layoutIndicators(minimalSizeForOptimalDisplay(), contentOffset(), bounds(), &r1, &r2, force);
+  KDRect innerFrame = decorator()->layoutIndicators(minimalSizeForOptimalDisplay(), contentOffset(), bounds(), &r1, &r2, force, m_dataSource->delegate());
   if (!r1.isEmpty()) {
     markRectAsDirty(r1);
   }
@@ -202,11 +202,16 @@ View * ScrollView::BarDecorator::indicatorAtIndex(int index) {
   return &m_horizontalBar;
 }
 
-KDRect ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) {
+KDRect ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force, ScrollViewDelegate * delegate) {
   bool hBarWasVisible = m_horizontalBar.visible();
-  bool hBarIsVisible = m_horizontalBar.update(content.width(), offset.x(), frame.width());
   bool vBarWasVisible = m_verticalBar.visible();
-  bool vBarIsVisible = m_verticalBar.update(content.height(), offset.y(), frame.height());
+  bool hBarIsVisible, vBarIsVisible;
+  if (!(delegate && delegate->updateBarIndicator(false, &hBarIsVisible))) {
+    hBarIsVisible = m_horizontalBar.update(content.width(), offset.x(), frame.width());
+  }
+  if (!(delegate && delegate->updateBarIndicator(true, &vBarIsVisible))) {
+    vBarIsVisible = m_verticalBar.update(content.height(), offset.y(), frame.height());
+  }
 
   KDCoordinate hBarFrameBreadth = k_barsFrameBreadth * hBarIsVisible;
   KDCoordinate vBarFrameBreadth = k_barsFrameBreadth * vBarIsVisible;
@@ -242,7 +247,7 @@ View * ScrollView::ArrowDecorator::indicatorAtIndex(int index) {
   }
 }
 
-KDRect ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force) {
+KDRect ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force, ScrollViewDelegate * delegate) {
   // There is no need to dirty the rects
   KDSize arrowSize = KDFont::LargeFont->glyphSize();
   KDCoordinate topArrowFrameBreadth = arrowSize.height() * m_topArrow.update(0 < offset.y());

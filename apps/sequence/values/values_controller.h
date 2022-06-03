@@ -27,6 +27,8 @@ public:
   IntervalParameterController * intervalParameterController() override {
     return &m_intervalParameterController;
   }
+  void setIntervalModifiedByUser(bool intervalModifiedByUse) { m_intervalModifiedByUser = intervalModifiedByUse; }
+
 private:
   constexpr static int k_maxNumberOfDisplayableSequences = 3;
   constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableSequences * k_maxNumberOfDisplayableRows;
@@ -59,7 +61,7 @@ private:
   int valuesCellBufferSize() const override{ return k_valuesCellBufferSize; }
   int numberOfMemoizedColumn() override { return k_maxNumberOfDisplayableSequences; }
   void fillMemoizedBuffer(int i, int j, int index) override;
-
+  void viewWillAppear() override;
 
   // Parameters controllers getter
   Shared::ColumnParameterController * functionParameterController() override { return nullptr; }
@@ -98,6 +100,7 @@ private:
   IntervalParameterController m_intervalParameterController;
   Escher::Button m_setIntervalButton;
   mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
+  bool m_intervalModifiedByUser;
 };
 
 }

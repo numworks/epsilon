@@ -56,7 +56,7 @@ public:
     Alternate
   };
 
-  enum class SequencesFirstIndex : bool {
+  enum class SequencesInitialRank : bool {
     Zero,
     One,
   };
@@ -73,7 +73,7 @@ public:
     StatsRowsLayout statsRowsLayout,
     Poincare::Preferences::CombinatoricSymbols combinatoricSymbols,
     ListsStatsOrderInToolbox listsStatsOrderInToolbox,
-    SequencesFirstIndex sequencesFirstIndex
+    SequencesInitialRank sequencesInitialRank
     ) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
@@ -86,7 +86,7 @@ public:
     m_statsRowsLayout(statsRowsLayout),
     m_combinatoricSymbols(combinatoricSymbols),
     m_listsStatsOrderInToolbox(listsStatsOrderInToolbox),
-    m_sequencesFirstIndex(sequencesFirstIndex)
+    m_sequencesInitialRank(sequencesInitialRank)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -100,7 +100,7 @@ public:
   constexpr StatsRowsLayout statsRowsLayout() const { return m_statsRowsLayout; }
   constexpr Poincare::Preferences::CombinatoricSymbols combinatoricSymbols() const { return m_combinatoricSymbols; }
   constexpr ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return m_listsStatsOrderInToolbox; }
-  constexpr SequencesFirstIndex sequencesFirstIndex() const { return m_sequencesFirstIndex; }
+  constexpr SequencesInitialRank sequencesInitialRank() const { return m_sequencesInitialRank; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -114,7 +114,7 @@ private:
   const StatsRowsLayout m_statsRowsLayout;
   const Poincare::Preferences::CombinatoricSymbols m_combinatoricSymbols;
   const ListsStatsOrderInToolbox m_listsStatsOrderInToolbox;
-  const SequencesFirstIndex m_sequencesFirstIndex;
+  const SequencesInitialRank m_sequencesInitialRank;
 };
 
 #endif

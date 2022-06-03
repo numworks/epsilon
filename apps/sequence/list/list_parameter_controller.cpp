@@ -33,11 +33,15 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
     return false;
   }
   int index = std::floor(floatBody);
-  if (index < 0 || index > Shared::Sequence::maxFirstIndex) {
+  if (index < 0 || index > Shared::Sequence::k_maxInitialRank) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   sequence()->setInitialRank(index);
+  if (index < App::app()->interval()->parameters()->start()) {
+    App::app()->interval()->parameters()->setStart(index);
+    App::app()->interval()->forceRecompute();
+  }
   // Invalidate sequence context cache when changing sequence type
   App::app()->localContext()->resetCache();
   m_selectableTableView.reloadCellAtLocation(0, selectedRow());
@@ -47,9 +51,6 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
 
 void ListParameterController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (withinTemporarySelection || (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow())) {
-    return;
-  }
-  if (!hasInitialRankRow()) {
     return;
   }
   if (previousSelectedCellY == 1) {
@@ -100,7 +101,7 @@ int ListParameterController::typeAtIndex(int index) {
   if (index == 0) {
     return k_typeCellType;
   }
-  if (index == 1 && hasInitialRankRow()) {
+  if (index == 1) {
     return k_initialRankCellType;
   }
   return Shared::ListParameterController::typeAtIndex(index);
@@ -125,10 +126,6 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
 
 bool ListParameterController::rightEventIsEnterOnType(int type) {
   return type == k_typeCellType || Shared::ListParameterController::rightEventIsEnterOnType(type);
-}
-
-bool ListParameterController::hasInitialRankRow() const {
-  return !m_record.isNull() && const_cast<ListParameterController *>(this)->sequence()->type() != Shared::Sequence::Type::Explicit;
 }
 
 }

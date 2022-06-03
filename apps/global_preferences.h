@@ -24,11 +24,11 @@ public:
   CountryPreferences::StatsRowsLayout statsRowsLayout() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].statsRowsLayout(); }
   Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].combinatoricSymbols(); }
   CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].listsStatsOrderInToolbox(); }
-  int sequencesFirstIndex() const {
-    switch(I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].sequencesFirstIndex()) {
-    case CountryPreferences::SequencesFirstIndex::Zero:
+  int sequencesInitialRank() const {
+    switch(I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].sequencesInitialRank()) {
+    case CountryPreferences::SequencesInitialRank::Zero:
       return 0;
-    case CountryPreferences::SequencesFirstIndex::One:
+    case CountryPreferences::SequencesInitialRank::One:
       return 1;
     }
   }

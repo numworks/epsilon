@@ -20,17 +20,28 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     IntervalParameterController * controller = valuesController->intervalParameterController();
     controller->setInterval(valuesController->intervalAtColumn(valuesController->selectedColumn()));
+    valuesController->setIntervalModifiedByUser(true);
     /* No need to change Nstart/Nend messages because they are the only messages
      * used and we set them in ValuesController::ValuesController(...) */
     stack->push(controller);
     return true;
-  }, this), k_font)
+  }, this), k_font),
+  m_intervalModifiedByUser(false)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableSequences; i++) {
     m_sequenceTitleCells[i].setOrientation(Shared::FunctionTitleCell::Orientation::HorizontalIndicator);
   }
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
   setDefaultStartEndMessages();
+}
+
+void ValuesController::viewWillAppear() {
+  int index = GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank();
+  if (!m_intervalModifiedByUser && App::app()->interval()->parameters()->start() != index && App::app()->functionStore()->smallestInitialRank() >= index) {
+    App::app()->interval()->parameters()->setStart(index);
+    App::app()->interval()->forceRecompute();
+  }
+  Shared::ValuesController::viewWillAppear();
 }
 
 // TableViewDataSource

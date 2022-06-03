@@ -3,6 +3,7 @@
 
 #include "../shared/function.h"
 #include <assert.h>
+#include <apps/global_preferences.h>
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>
@@ -72,7 +73,7 @@ public:
   template<typename T> T valueAtRank(int n, SequenceContext * sqctx);
 
   Poincare::Expression sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
-  constexpr static int maxFirstIndex = 255; // m_initialRank is capped by 255
+  constexpr static int k_maxInitialRank = 255; // m_initialRank is capped by 255
   // 255 + 1 (to take into account a double recursive sequence) fits in 3 digits
   constexpr static int k_initialRankNumberOfDigits = 3;
 
@@ -92,7 +93,7 @@ private:
     RecordDataBuffer(KDColor color) :
       Shared::Function::RecordDataBuffer(color),
       m_type(Type::Explicit),
-      m_initialRank(0),
+      m_initialRank(GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank()),
       m_initialConditionSizes{0,0}
     {}
     Type type() const { return m_type; }

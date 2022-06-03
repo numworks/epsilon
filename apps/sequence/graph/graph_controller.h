@@ -48,6 +48,8 @@ private:
   CurveParameterController m_curveParameterController;
   SequenceSelectionController m_sequenceSelectionController;
   TermSumController m_termSumController;
+  Shared::SequenceStore * m_sequenceStore;
+  float m_smallestRank;
 };
 
 

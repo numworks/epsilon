@@ -36,9 +36,8 @@ private:
   constexpr static int k_initialRankCellType = k_typeCellType + 1;
   bool handleEnterOnRow(int rowIndex) override;
   bool rightEventIsEnterOnType(int type) override;
-  int numberOfNonInheritedCells() const { return 1 + hasInitialRankRow(); } // number of non inherited cells
+  int numberOfNonInheritedCells() const { return 2; } // number of non inherited cells
   Shared::Sequence * sequence() { return static_cast<Shared::Sequence *>(function().pointer()); }
-  bool hasInitialRankRow() const;
   Escher::MessageTableCellWithChevronAndExpression m_typeCell;
   Escher::MessageTableCellWithEditableText m_initialRankCell;
   TypeParameterController m_typeParameterController;

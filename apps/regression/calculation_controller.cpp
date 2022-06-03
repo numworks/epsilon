@@ -34,6 +34,12 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
     m_hideableCell[i].setHide(true);
   }
+  resetMemoization();
+}
+
+void CalculationController::viewWillAppear() {
+  resetMemoization();
+  Shared::DoublePairTableController::viewWillAppear();
 }
 
 void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
@@ -163,8 +169,13 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       &Store::varianceOfColumn,
       &Store::sampleStandardDeviationOfColumn,
     };
-    double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0, false);
-    double calculation2 = (m_store->*calculationMethods[j-1])(seriesNumber, 1, false);
+    if (std::isnan(m_memoizedDoubleCalculationCells[seriesNumber][0][j-1]) || std::isnan(m_memoizedDoubleCalculationCells[seriesNumber][1][j-1])) {
+      m_memoizedDoubleCalculationCells[seriesNumber][0][j-1] = (m_store->*calculationMethods[j-1])(seriesNumber, 0, false);
+      m_memoizedDoubleCalculationCells[seriesNumber][1][j-1] = (m_store->*calculationMethods[j-1])(seriesNumber, 1, false);
+    }
+    assert(m_memoizedDoubleCalculationCells[seriesNumber][0][j-1] == (m_store->*calculationMethods[j-1])(seriesNumber, 0, false) && m_memoizedDoubleCalculationCells[seriesNumber][1][j-1] == (m_store->*calculationMethods[j-1])(seriesNumber, 1, false));
+    double calculation1 = m_memoizedDoubleCalculationCells[seriesNumber][0][j-1];
+    double calculation2 = m_memoizedDoubleCalculationCells[seriesNumber][1][j-1];
     EvenOddDoubleBufferTextCellWithSeparator * myCell = static_cast<EvenOddDoubleBufferTextCellWithSeparator *>(cell);
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
@@ -184,16 +195,23 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
   if (i > 1 && j > k_totalNumberOfDoubleBufferRows && j < k_regressionCellIndex) {
     assert(j != k_regressionCellIndex);
-    double calculation = 0;
     const int calculationIndex = j-k_totalNumberOfDoubleBufferRows-1;
-    if (calculationIndex == 0) {
-      calculation = m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber);
-    } else if (calculationIndex == 1) {
-      calculation = m_store->covariance(seriesNumber);
-    } else {
-      assert(calculationIndex == 2);
-      calculation = m_store->columnProductSum(seriesNumber);
+    if (std::isnan(m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex])) {
+      if (calculationIndex == 0) {
+        m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex] = m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber);
+      } else if (calculationIndex == 1) {
+        m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex] = m_store->covariance(seriesNumber);
+      } else {
+        assert(calculationIndex == 2);
+        m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex] = m_store->columnProductSum(seriesNumber);
+      }
     }
+    assert(
+        (calculationIndex == 0 && m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex] == m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber))
+        || (calculationIndex == 1 && m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex] == m_store->covariance(seriesNumber))
+        || (calculationIndex == 2 && m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex] == m_store->columnProductSum(seriesNumber))
+        );
+    double calculation = m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex];
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);
@@ -352,6 +370,19 @@ int CalculationController::maxNumberOfCoefficients() const {
     maxNumberCoefficients = std::max(maxNumberCoefficients, currentNumberOfCoefs);
   }
   return maxNumberCoefficients;
+}
+
+void CalculationController::resetMemoization() {
+  for (int s = 0; s < Store::k_numberOfSeries; s++) {
+    for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < k_totalNumberOfDoubleBufferRows; j++) {
+        m_memoizedDoubleCalculationCells[s][i][j] = NAN;
+      }
+    }
+    for (int i = 0; i < k_regressionCellIndex-k_totalNumberOfDoubleBufferRows-1; i++) {
+      m_memoizedSimpleCalculationCells[s][i] = NAN;
+    }
+  }
 }
 
 }

@@ -101,6 +101,8 @@ all_objs = $(call object_for,$(all_src))
 # Define main and shortcut targets
 include build/targets.mak
 
+-include $(kernel_obj:.o=.d)
+
 # Fill in the default recipe
 default: $(firstword $(HANDY_TARGETS)).$(firstword $(HANDY_TARGETS_EXTENSIONS))
 

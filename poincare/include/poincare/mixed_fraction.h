@@ -30,12 +30,12 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
-    return templateApproximate<float>();
+    return templateApproximate<float>(approximationContext);
   }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
-    return templateApproximate<double>();
+    return templateApproximate<double>(approximationContext);
   }
-  template <typename T> Evaluation<T> templateApproximate() const;
+  template <typename T> Evaluation<T> templateApproximate(ApproximationContext approximationContext) const;
 };
 
 class MixedFraction final : public Expression {

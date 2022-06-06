@@ -12,6 +12,7 @@ public:
   BasedIntegerNode(const native_uint_t * digits, uint8_t size, Integer::Base base);
 
   Integer integer() const;
+  Integer::Base base() const { return m_base; }
 
   // TreeNode
   size_t size() const override;
@@ -63,6 +64,7 @@ public:
 
   // Properties
   Integer integer() const { return node()->integer(); }
+  Integer::Base base() const { return node()->base(); }
 
 private:
   BasedIntegerNode * node() { return static_cast<BasedIntegerNode *>(Number::node()); }

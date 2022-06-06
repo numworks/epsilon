@@ -17,6 +17,8 @@ public:
   Tokenizer(const char * text, Context * context) : m_context(context), m_decoder(text), m_encounteredRightwardsArrow(false) {}
   Token popToken();
   void setContext(Context * context) { m_context = context; }
+  // This is used to know if there is a mixed fraction.
+  bool followingStringIsIntegersFraction();
 
 private:
   typedef bool (*PopTest)(CodePoint c, CodePoint context);

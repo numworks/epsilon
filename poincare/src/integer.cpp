@@ -702,20 +702,6 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   return div;
 }
 
-Expression Integer::CreateMixedFraction(const Integer & num, const Integer & denom) {
-  Integer numPositive(num), denomPositive(denom);
-  numPositive.setNegative(false);
-  denomPositive.setNegative(false);
-  IntegerDivision division = Division(numPositive, denomPositive);
-  Expression integerPart = Rational::Builder(division.quotient);
-  Expression fractionPart = Rational::Builder(division.remainder, denomPositive);
-  if (num.isNegative() == denom.isNegative()) {
-    return Addition::Builder(integerPart, fractionPart);
-  }
-  /* Do not add a minus sign before a zero. */
-  return Subtraction::Builder(NaturalOrder(numPositive, denomPositive) < 0 ? integerPart : Opposite::Builder(integerPart), fractionPart);
-}
-
 Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer & denom) {
   Expression quo = DivisionQuotient::Reduce(num, denom);
   Expression rem = DivisionRemainder::Reduce(num, denom);

@@ -3,6 +3,7 @@
 #include "../../shared/poincare_helpers.h"
 #include <poincare/based_integer.h>
 #include <poincare/integer.h>
+#include <poincare/mixed_fraction.h>
 #include <string.h>
 
 using namespace Poincare;
@@ -38,7 +39,7 @@ void RationalListController::setExpression(Poincare::Expression e) {
   Integer denominator = extractInteger(div.childAtIndex(1));
 
   int index = 0;
-  m_layouts[index++] = PoincareHelpers::CreateLayout(Integer::CreateMixedFraction(numerator, denominator));
+  m_layouts[index++] = PoincareHelpers::CreateLayout(MixedFraction::CreateMixedFractionFromIntegers(numerator, denominator));
   m_layouts[index++] = PoincareHelpers::CreateLayout(Integer::CreateEuclideanDivision(numerator, denominator));
 }
 

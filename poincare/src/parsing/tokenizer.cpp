@@ -410,4 +410,39 @@ Token Tokenizer::popToken() {
   return Token(Token::Undefined);
 }
 
+// Detect if there is an expression which looks like "int/int"
+bool Tokenizer::followingStringIsIntegersFraction() {
+  const char * start = m_decoder.stringPosition();
+  bool hasSlash = false;
+  int numberOfOpenedParenthesis = 0;
+  CodePoint c = m_decoder.nextCodePoint();
+  while(c.isDecimalDigit()
+      || c == '/'
+      || c == UCodePointLeftSystemParenthesis
+      || (numberOfOpenedParenthesis > 0 && c == UCodePointRightSystemParenthesis)
+      ){
+    if (c == '/') {
+      if (hasSlash) {
+        return false;
+      }
+      hasSlash = true;
+    } else if (c == UCodePointLeftSystemParenthesis) {
+      numberOfOpenedParenthesis++;
+    } else if (c == UCodePointRightSystemParenthesis) {
+      numberOfOpenedParenthesis--;
+    }
+    c = m_decoder.nextCodePoint();
+  }
+  m_decoder.setPosition(start);
+  // The mixed-fraction can only be followed by:
+  return (c == 0 // End of line
+      || c == UCodePointRightSystemParenthesis
+      || c == ')' // Parenthesis
+      || c == '+' // Addition
+      || c == '-' // Subtraction
+      || c == UCodePointMultiplicationSign // Multiplication
+      || c == UCodePointMiddleDot)
+    && hasSlash;
+}
+
 }

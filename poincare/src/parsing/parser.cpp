@@ -43,6 +43,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parsePlus,            // Token::Plus
     &Parser::parseMinus,           // Token::Minus
     &Parser::parseTimes,           // Token::Times
+    &Parser::parseFakeToken,       // Token::MixedFraction
     &Parser::parseSlash,           // Token::Slash
     &Parser::parseImplicitTimes,   // Token::ImplicitTimes
     &Parser::parseCaret,           // Token::Power
@@ -136,8 +137,33 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
     return;
   }
   leftHandSide = m_currentToken.expression();
-   // No implicit multiplication between two numbers
-  if (m_nextToken.isNumber()
+  bool checkForMixedFraction = true; // TODO: Depends on the country
+  // Check for mixed fraction. There is a mixed fraction if :
+  if (checkForMixedFraction // The country allow mixed fractions
+      // The number is an integer
+      && leftHandSide.type() == ExpressionNode::Type::BasedInteger
+      && static_cast<BasedInteger &>(leftHandSide).base() == Integer::Base::Decimal
+      // The next token is either a number or a system parenthesis
+      && (m_nextToken.is(Token::Type::LeftSystemParenthesis) || m_nextToken.is(Token::Type::Number))
+      // The following expression looks like "int/int"
+      && m_tokenizer.followingStringIsIntegersFraction()) {
+    bool popRightSystemParenthesis = false;
+    if (m_nextToken.is(Token::Type::LeftSystemParenthesis)) {
+      // If there is system parenthesis, pop it.
+      popRightSystemParenthesis = true;
+      popToken();
+    }
+    Expression rightHandSide = parseUntil(Token::MixedFraction);
+    leftHandSide = MixedFraction::Builder(leftHandSide, rightHandSide);
+    if (popRightSystemParenthesis) {
+      if (!m_nextToken.is(Token::Type::RightSystemParenthesis)) {
+        m_status = Status::Error;
+        return;
+      }
+      // If there is system parenthesis, pop it.
+      popToken();
+    }
+  } else if (m_nextToken.isNumber() // No implicit multiplication between two numbers
        // No implicit multiplication between a hexadecimal number and an identifer (avoid parsing 0x2abch as 0x2ABC*h)
       || (m_currentToken.is(Token::Type::HexadecimalNumber) && (m_nextToken.is(Token::Type::CustomIdentifier) || m_nextToken.is(Token::Type::SpecialIdentifier) || m_nextToken.is(Token::Type::ReservedFunction)))) {
     m_status = Status::Error;

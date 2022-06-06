@@ -137,11 +137,8 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
     return;
   }
   leftHandSide = m_currentToken.expression();
-  bool checkForMixedFraction = true; // TODO: Depends on the country
   // Check for mixed fraction. There is a mixed fraction if :
-  if (checkForMixedFraction // The country allow mixed fractions
-      // The number is an integer
-      && leftHandSide.type() == ExpressionNode::Type::BasedInteger
+  if (leftHandSide.type() == ExpressionNode::Type::BasedInteger  // The number is an integer
       && static_cast<BasedInteger &>(leftHandSide).base() == Integer::Base::Decimal
       // The next token is either a number or a system parenthesis
       && (m_nextToken.is(Token::Type::LeftSystemParenthesis) || m_nextToken.is(Token::Type::Number))
@@ -154,7 +151,11 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
       popToken();
     }
     Expression rightHandSide = parseUntil(Token::MixedFraction);
-    leftHandSide = MixedFraction::Builder(leftHandSide, rightHandSide);
+    if (Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
+      leftHandSide = MixedFraction::Builder(leftHandSide, rightHandSide);
+    } else {
+      leftHandSide = Addition::Builder(leftHandSide, rightHandSide);
+    }
     if (popRightSystemParenthesis) {
       if (!m_nextToken.is(Token::Type::RightSystemParenthesis)) {
         m_status = Status::Error;

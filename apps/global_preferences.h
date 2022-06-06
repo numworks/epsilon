@@ -13,6 +13,7 @@ public:
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }
   void setCountry(I18n::Country country);
+
   CountryPreferences::AvailableExamModes availableExamModes() const { return preferences().availableExamModes(); }
   CountryPreferences::MethodForQuartiles methodForQuartiles() const { return preferences().methodForQuartiles(); }
   CountryPreferences::OutlierDefaultVisibility outliersStatus() const { return preferences().outliersStatus(); }
@@ -24,6 +25,7 @@ public:
   CountryPreferences::StatsRowsLayout statsRowsLayout() const { return preferences().statsRowsLayout(); }
   Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const { return preferences().combinatoricSymbols(); }
   CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return preferences().listsStatsOrderInToolbox(); }
+  Poincare::Preferences::MixedFractions mixedFractions() const { return preferences().mixedFractions(); }
   int sequencesInitialRank() const;
 
   const char * openIntervalChar(bool left) const {

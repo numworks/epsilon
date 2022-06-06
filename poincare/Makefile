@@ -147,6 +147,7 @@ poincare_src += $(addprefix poincare/src/,\
   matrix_echelon_form.cpp \
   matrix_row_echelon_form.cpp \
   matrix_reduced_row_echelon_form.cpp \
+  mixed_fraction.cpp \
   multiplication.cpp \
   n_ary_expression.cpp \
   n_ary_infix_expression.cpp \

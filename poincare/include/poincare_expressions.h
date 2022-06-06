@@ -75,6 +75,7 @@
 #include <poincare/matrix_transpose.h>
 #include <poincare/matrix_row_echelon_form.h>
 #include <poincare/matrix_reduced_row_echelon_form.h>
+#include <poincare/mixed_fraction.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/nth_root.h>

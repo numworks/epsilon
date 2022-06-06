@@ -250,6 +250,11 @@ Token Tokenizer::popNumber() {
 }
 
 Token Tokenizer::popToken() {
+  if (m_endOfMixedFractionIndex != nullptr && m_decoder.stringPosition() == m_endOfMixedFractionIndex) {
+    // The end of a mixed fraction was reached
+    m_endOfMixedFractionIndex = nullptr;
+    return Token(Token::MixedFractionEnd);
+  }
   // Skip whitespaces
   while (canPopCodePoint(' ')) {}
 
@@ -415,16 +420,14 @@ bool Tokenizer::followingStringIsIntegersFraction() {
   const char * start = m_decoder.stringPosition();
   bool hasSlash = false;
   int numberOfOpenedParenthesis = 0;
-  CodePoint c = m_decoder.nextCodePoint();
+  // Rewind from 1 codePoint to get the eventual LeftSystemParenthesis
+  CodePoint c = m_decoder.previousCodePoint();
   while(c.isDecimalDigit()
-      || c == '/'
+      || (c == '/' && !hasSlash)
       || c == UCodePointLeftSystemParenthesis
       || (numberOfOpenedParenthesis > 0 && c == UCodePointRightSystemParenthesis)
       ){
     if (c == '/') {
-      if (hasSlash) {
-        return false;
-      }
       hasSlash = true;
     } else if (c == UCodePointLeftSystemParenthesis) {
       numberOfOpenedParenthesis++;
@@ -433,16 +436,23 @@ bool Tokenizer::followingStringIsIntegersFraction() {
     }
     c = m_decoder.nextCodePoint();
   }
-  m_decoder.setPosition(start);
+  bool result = false;
   // The mixed-fraction can only be followed by:
-  return (c == 0 // End of line
+  if ((c == 0 // End of line
       || c == UCodePointRightSystemParenthesis
       || c == ')' // Parenthesis
       || c == '+' // Addition
       || c == '-' // Subtraction
+      || c == '/'
       || c == UCodePointMultiplicationSign // Multiplication
       || c == UCodePointMiddleDot)
-    && hasSlash;
+    && hasSlash) {
+    // Rememeber the end of the mixed fraction
+    m_endOfMixedFractionIndex = m_decoder.stringPosition() - 1;
+    result = true;
+  }
+  m_decoder.setPosition(start);
+  return result;
 }
 
 }

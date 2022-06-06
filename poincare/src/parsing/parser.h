@@ -73,7 +73,6 @@ private:
   void parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseList(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseFakeToken(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { assert(false); }
 
   // Parsing helpers
   bool parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType);

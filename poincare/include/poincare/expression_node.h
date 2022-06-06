@@ -31,6 +31,7 @@ public:
     Nonreal,
     Rational,
     BasedInteger,
+    MixedFraction,
     Decimal,
     Double,
     Float,

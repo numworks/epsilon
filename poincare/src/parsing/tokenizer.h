@@ -14,7 +14,7 @@ namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text, Context * context) : m_context(context), m_decoder(text), m_encounteredRightwardsArrow(false) {}
+  Tokenizer(const char * text, Context * context) : m_context(context), m_decoder(text), m_encounteredRightwardsArrow(false), m_endOfMixedFractionIndex(nullptr) {}
   Token popToken();
   void setContext(Context * context) { m_context = context; }
   // This is used to know if there is a mixed fraction.
@@ -40,6 +40,9 @@ private:
    * the storage. 5->abc should NOT be parsed as 5->a*b*c
    * */
   bool m_encounteredRightwardsArrow;
+  /* Remember the end of a mixed fraction when parsing it to pop the
+   * MixedFractionEnd token when needed.*/
+  const char * m_endOfMixedFractionIndex;
 };
 
 }

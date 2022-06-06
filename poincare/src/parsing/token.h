@@ -17,6 +17,7 @@ public:
   enum Type {
     // Ordered from lower to higher precedence to make Parser's job easier
     EndOfStream = 0, // Must be the first
+    MixedFractionEnd, // Popped when reaching the end of a mixed fraction
     RightwardsArrow,
     Equal,
     Superior,
@@ -37,10 +38,6 @@ public:
     Plus,
     Minus,
     Times,
-    MixedFraction,
-    /* The MixeFraction token should not be instantiated. It's
-     * just a precedence type that let the parser know until which
-     * token the mixed fraction should be parsed. */
     Slash,
     ImplicitTimes,
       /* The ImplicitTimes Token allows to parse text where the Times Token is omitted.

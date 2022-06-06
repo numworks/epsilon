@@ -158,7 +158,6 @@ public:
   static Integer Factorial(const Integer & i);
 
   // Derived expression builder
-  static Expression CreateMixedFraction(const Integer & num, const Integer & denom);
   static Expression CreateEuclideanDivision(const Integer & num, const Integer & denom);
 
   constexpr static int k_maxNumberOfDigits = 32;

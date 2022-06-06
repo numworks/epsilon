@@ -151,11 +151,7 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
       popToken();
     }
     Expression rightHandSide = parseUntil(Token::MixedFraction);
-    if (Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
-      leftHandSide = MixedFraction::Builder(leftHandSide, rightHandSide);
-    } else {
-      leftHandSide = Addition::Builder(leftHandSide, rightHandSide);
-    }
+    leftHandSide = MixedFraction::BuildMixedFractionDependingOnPreferences(leftHandSide, rightHandSide);
     if (popRightSystemParenthesis) {
       if (!m_nextToken.is(Token::Type::RightSystemParenthesis)) {
         m_status = Status::Error;

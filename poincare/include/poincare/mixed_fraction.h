@@ -2,6 +2,7 @@
 #define POINCARE_MIXED_FRACTION_H
 
 #include <poincare/expression.h>
+#include <poincare/integer.h>
 
 namespace Poincare {
 
@@ -43,6 +44,9 @@ public:
   MixedFraction(const MixedFractionNode * n) : Expression(n) {}
   static MixedFraction Builder(Expression integerPart, Expression fractionPart) { return TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>({integerPart, fractionPart}); }
   Expression shallowReduce(ExpressionNode::ReductionContext context);
+
+  static Expression CreateMixedFractionFromIntegers(const Integer & num, const Integer & denom);
+  static Expression BuildMixedFractionDependingOnPreferences(Expression integerPart, Expression fractionPart);
 
 };
 

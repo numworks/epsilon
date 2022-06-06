@@ -48,6 +48,10 @@ public:
     Default = 0,
     LetterWithSubAndSuperscript = 1
   };
+  enum class MixedFractions : bool {
+    Disabled = false,
+    Enabled = true
+  };
   enum class ExamMode : int8_t {
     Unknown = -1,
     Off = 0,
@@ -99,6 +103,9 @@ public:
   void setCombinatoricSymbols(CombinatoricSymbols combinatoricSymbols) { m_combinatoricSymbols = combinatoricSymbols; }
   uint8_t numberOfSignificantDigits() const { return m_numberOfSignificantDigits; }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
+  bool mixedFractionsAreEnabled() const { return m_mixedFractionsAreEnabled; }
+  void enableMixedFractions(MixedFractions enable) { m_mixedFractionsAreEnabled = static_cast<bool>(enable); }
+
 
   static_assert((int8_t)Preferences::ExamMode::Off == 0 && (int8_t)Preferences::ExamMode::Unknown < 0, "Preferences::isInExamMode() relies on exam modes order");
   bool isInExamMode() const { return (int8_t)examMode() > 0; }
@@ -129,6 +136,7 @@ private:
   mutable CombinatoricSymbols m_combinatoricSymbols;
   mutable ExamMode m_examMode;
   mutable PressToTestParams m_pressToTestParams;
+  mutable bool m_mixedFractionsAreEnabled;
   /* Settings that alter layouts should be tracked by
    * CalculationStore::preferencesMightHaveChanged */
 };

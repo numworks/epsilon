@@ -73,7 +73,8 @@ public:
     StatsRowsLayout statsRowsLayout,
     Poincare::Preferences::CombinatoricSymbols combinatoricSymbols,
     ListsStatsOrderInToolbox listsStatsOrderInToolbox,
-    SequencesInitialRank sequencesInitialRank
+    SequencesInitialRank sequencesInitialRank,
+    Poincare::Preferences::MixedFractions mixedFractions
     ) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
@@ -86,7 +87,8 @@ public:
     m_statsRowsLayout(statsRowsLayout),
     m_combinatoricSymbols(combinatoricSymbols),
     m_listsStatsOrderInToolbox(listsStatsOrderInToolbox),
-    m_sequencesInitialRank(sequencesInitialRank)
+    m_sequencesInitialRank(sequencesInitialRank),
+    m_mixedFractions(mixedFractions)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -101,6 +103,7 @@ public:
   constexpr Poincare::Preferences::CombinatoricSymbols combinatoricSymbols() const { return m_combinatoricSymbols; }
   constexpr ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return m_listsStatsOrderInToolbox; }
   constexpr SequencesInitialRank sequencesInitialRank() const { return m_sequencesInitialRank; }
+  constexpr Poincare::Preferences::MixedFractions mixedFractions() const { return m_mixedFractions; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -115,6 +118,7 @@ private:
   const Poincare::Preferences::CombinatoricSymbols m_combinatoricSymbols;
   const ListsStatsOrderInToolbox m_listsStatsOrderInToolbox;
   const SequencesInitialRank m_sequencesInitialRank;
+  const Poincare::Preferences::MixedFractions m_mixedFractions;
 };
 
 #endif

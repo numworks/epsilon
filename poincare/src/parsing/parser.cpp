@@ -39,13 +39,14 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseUnexpected,      // Token::RightParenthesis
     &Parser::parseUnexpected,      // Token::RightBrace
     &Parser::parseUnexpected,      // Token::Comma
-    &Parser::parsePercent,         // Token::Percent
+    &Parser::parsePercentAddition, // Token::PercentAddition
     &Parser::parsePlus,            // Token::Plus
     &Parser::parseMinus,           // Token::Minus
     &Parser::parseTimes,           // Token::Times
     &Parser::parseSlash,           // Token::Slash
     &Parser::parseImplicitTimes,   // Token::ImplicitTimes
     &Parser::parseCaret,           // Token::Power
+    &Parser::parsePercentSimple,   // Token::PercentSimple
     &Parser::parseBang,            // Token::Bang
     &Parser::parseCaretWithParenthesis, // Token::CaretWithParenthesis
     &Parser::parseMatrix,          // Token::LeftBracket
@@ -338,23 +339,23 @@ void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {
   isThereImplicitMultiplication();
 }
 
-void Parser::parsePercent(Expression & leftHandSide, Token::Type stoppingType) {
+void Parser::parsePercentAddition(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Left-hand side missing
-  } else {
-    leftHandSide = Percent::ParseTarget(leftHandSide);
-  }
-  isThereImplicitMultiplication();
-  if (m_pendingImplicitMultiplication || m_nextToken.is(Token::Times) || m_nextToken.is(Token::Slash)) {
-    /* TODO: We should handle the parsing of expressions such as 2+3%*4 as
-     * 2+(3*4)% instead of (2+3%)*4.
-     * Idea: On first popped % token set a boolean so that next popToken() call
-     * will return a "percent2" token. Both tokens have a different priority:
-     * the first one is higher than +, the second one is lower than *.
-     * Then, we parse both expressions accordingly. */
-    m_status = Status::Error;
     return;
   }
+  leftHandSide = Percent::ParseTarget(leftHandSide, false);
+  isThereImplicitMultiplication();
+  assert(!m_pendingImplicitMultiplication && !m_nextToken.is(Token::Times) && !m_nextToken.is(Token::Slash));
+}
+
+void Parser::parsePercentSimple(Expression & leftHandSide, Token::Type stoppingType) {
+  if (leftHandSide.isUninitialized()) {
+    m_status = Status::Error; // Left-hand side missing
+    return;
+  }
+  leftHandSide = Percent::ParseTarget(leftHandSide, true);
+  isThereImplicitMultiplication();
 }
 
 void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) {

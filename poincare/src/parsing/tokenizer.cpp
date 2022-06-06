@@ -333,7 +333,10 @@ Token Tokenizer::popToken() {
     return Token(Token::Bang);
   }
   if (c == '%') {
-    return Token(Token::Percent);
+    if (canPopCodePoint(UCodePointMultiplicationSign) || canPopCodePoint('*') || canPopCodePoint(UCodePointMiddleDot) || canPopCodePoint('/')) {
+      return Token(Token::PercentSimple);
+    }
+    return Token(Token::PercentAddition);
   }
   if (c == '=') {
     return Token(Token::Equal);

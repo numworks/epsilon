@@ -33,7 +33,7 @@ public:
     RightParenthesis,
     RightBrace,
     Comma,
-    Percent,
+    PercentAddition,
     Plus,
     Minus,
     Times,
@@ -44,6 +44,7 @@ public:
        * the ImplicitTimes Token Type is defined here with the desired precedence,
        * in order to allow the Parser to insert such Tokens where needed. */
     Caret,
+    PercentSimple,
     Bang,
     CaretWithParenthesis,
     LeftBracket,

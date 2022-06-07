@@ -16,8 +16,6 @@
 #include "inference/shared/expression_cell_with_editable_text_with_message.h"
 #include <escher/selectable_list_view_controller.h>
 
-using namespace Escher;
-
 namespace Inference {
 
 class HypothesisController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>,
@@ -27,7 +25,7 @@ public:
   HypothesisController(Escher::StackViewController * parent,
                        InputController * inputController,
                        InputSlopeController * inputSlopeController,
-                       InputEventHandlerDelegate * handler,
+                       Escher::InputEventHandlerDelegate * handler,
                        Test * test);
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
@@ -35,7 +33,7 @@ public:
   const char * title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  HighlightCell * reusableCell(int i, int type) override;
+  Escher::HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }
   static bool ButtonAction(void * c, void * s);
 
@@ -45,7 +43,7 @@ public:
   bool textFieldDidFinishEditing(Escher::TextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
+  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
 
   // Escher::DropdownCallback
   void onDropdownSelected(int selectedRow) override;

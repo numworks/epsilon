@@ -12,17 +12,15 @@
 #include "test/hypothesis_controller.h"
 #include "input_controller.h"
 
-using namespace Escher;
-
 namespace Inference {
 
 class TypeController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
-  TypeController(StackViewController * parent,
+  TypeController(Escher::StackViewController * parent,
                  HypothesisController * hypothesisController,
                  InputController * intervalInputController,
                  Statistic * statistic);
-  View * view() override { return &m_selectableTableView; }
+  Escher::View * view() override { return &m_selectableTableView; }
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
@@ -31,7 +29,7 @@ public:
   void didBecomeFirstResponder() override;
   // ListViewDataSource
   int numberOfRows() const override;
-  HighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
+  Escher::HighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
   bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;
 
@@ -46,7 +44,7 @@ private:
   HypothesisController * m_hypothesisController;
   InputController * m_inputController;
 
-  MessageTableCellWithChevron m_cells[k_numberOfRows];
+  Escher::MessageTableCellWithChevron m_cells[k_numberOfRows];
 
   constexpr static int k_titleBufferSize = sizeof("intervalle pour une moyenne à deux échantillons");
   char m_titleBuffer[k_titleBufferSize];

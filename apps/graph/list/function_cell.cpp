@@ -1,6 +1,7 @@
 #include "function_cell.h"
-
 #include <escher/palette.h>
+
+using namespace Escher;
 
 namespace Graph {
 

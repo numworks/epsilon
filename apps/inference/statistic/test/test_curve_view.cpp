@@ -53,7 +53,7 @@ void TestCurveView::drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, Hypot
     pattern = 0b101;
   }
 
-  assert(std::isfinite(xAlpha));
+  assert(!std::isnan(xAlpha));
   drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateAtAbscissa, m_test, nullptr, Palette::YellowDark, true, true, Palette::PurpleBright, stripesStart, stripesEnd, nullptr, false, nullptr, false, pattern);
 }
 

@@ -18,8 +18,8 @@ namespace Config {
 
 /* Internal flash
  * |                     INTERNAL FLASH                        |
- * | 16K + 16K + 16k |           16K          |  64k + 7*128K  |
- * |      KERNEL     | PERSISTIG BYTES BUFFER |   USERLAND     |
+ * |    16K    |           16K          | 2*16k + 64k + 7*128K |
+ * |   KERNEL  | PERSISTIG BYTES BUFFER |       USERLAND       |
  *
  */
 
@@ -27,7 +27,7 @@ constexpr uint32_t InternalFlashOrigin = 0x08000000;
 constexpr uint32_t InternalFlashLength = 0x100000; // 1MiB
 constexpr uint32_t SmallestFlashSectorLength = 0x4000; // 16KiB
 
-constexpr uint32_t KernelLength = 2 * SmallestFlashSectorLength;
+constexpr uint32_t KernelLength = SmallestFlashSectorLength;
 constexpr uint32_t KernelVirtualOrigin = InternalFlashOrigin;
 
 constexpr uint32_t ExtraDataLength = 0;

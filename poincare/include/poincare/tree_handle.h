@@ -111,6 +111,7 @@ public:
   typedef std::initializer_list<TreeHandle> Tuple;
 
   static TreeHandle Builder(TreeNode * (* const initializer)(void *), size_t size);
+  static TreeHandle Maker(TreeNode * (* const initializer)(void *), size_t size, const Tuple & children);
 
 protected:
   /* Constructor */

@@ -11,8 +11,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Round::s_functionHelper;
-
 int RoundNode::numberOfChildren() const { return Round::s_functionHelper.numberOfChildren(); }
 
 Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

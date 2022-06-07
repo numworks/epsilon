@@ -49,11 +49,9 @@ private:
 #endif
 };
 
-class Factorial final : public Expression {
+class Factorial final : public HandleOneChild<Factorial, FactorialNode> {
 public:
-  Factorial(const FactorialNode * n) : Expression(n) {}
-  static Factorial Builder(Expression child) { return TreeHandle::FixedArityBuilder<Factorial, FactorialNode>({child}); }
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 private:
   constexpr static int k_maxOperandValue = 100;

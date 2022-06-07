@@ -11,6 +11,8 @@ namespace Poincare {
 template<int T>
 class LogarithmNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "log";
+
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }
   int numberOfChildren() const override;
@@ -49,13 +51,10 @@ public:
   template<typename U> Evaluation<U> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Logarithm final : public Expression {
+class Logarithm final : public HandleTwoChildren<Logarithm, LogarithmNode<2>> {
   friend class LogarithmNode<2>;
 public:
-  Logarithm(const LogarithmNode<2> * n) : Expression(n) {}
-  static Logarithm Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2>>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 2, Initializer<LogarithmNode<2>>, sizeof(LogarithmNode<2>));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
@@ -69,13 +68,9 @@ private:
   bool parentIsAPowerOfSameBase() const;
 };
 
-class CommonLogarithm : public Expression {
+class CommonLogarithm : public HandleOneChild<CommonLogarithm, LogarithmNode<1>> {
 public:
-  CommonLogarithm(const LogarithmNode<1> * n) : Expression(n) {}
-  static CommonLogarithm Builder(Expression child) { return TreeHandle::FixedArityBuilder<CommonLogarithm, LogarithmNode<1>>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 1, Initializer<LogarithmNode<1>>, sizeof(LogarithmNode<1>));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

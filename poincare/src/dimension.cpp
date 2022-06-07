@@ -11,8 +11,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Dimension::s_functionHelper;
-
 int DimensionNode::numberOfChildren() const { return Dimension::s_functionHelper.numberOfChildren(); }
 
 Expression DimensionNode::shallowReduce(ReductionContext reductionContext) {

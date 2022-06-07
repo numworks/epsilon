@@ -13,8 +13,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Tangent::s_functionHelper;
-
 int TangentNode::numberOfChildren() const { return Tangent::s_functionHelper.numberOfChildren(); }
 
 Layout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

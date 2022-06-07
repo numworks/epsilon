@@ -7,6 +7,7 @@ namespace Poincare {
 
 class ListMaximumNode : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "max";
   size_t size() const override { return sizeof(ListMaximumNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
@@ -29,13 +30,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class ListMaximum : public Expression {
+class ListMaximum : public HandleOneChild<ListMaximum, ListMaximumNode> {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("max", 1, &Initializer<ListMaximumNode>, sizeof(ListMaximumNode));
-
-  ListMaximum(const ListMaximumNode * n) : Expression(n) {}
-  static ListMaximum Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListMaximum, ListMaximumNode>({list}); }
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

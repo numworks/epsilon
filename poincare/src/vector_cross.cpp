@@ -8,8 +8,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper VectorCross::s_functionHelper;
-
 int VectorCrossNode::numberOfChildren() const { return VectorCross::s_functionHelper.numberOfChildren(); }
 
 Expression VectorCrossNode::shallowReduce(ReductionContext reductionContext) {

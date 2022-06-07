@@ -8,6 +8,7 @@ namespace Poincare {
 
 class SignFunctionNode final : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "sign";
 
   // TreeNode
   size_t size() const override { return sizeof(SignFunctionNode); }
@@ -43,12 +44,9 @@ private:
   bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
 };
 
-class SignFunction final : public Expression {
+class SignFunction final : public HandleOneChild<SignFunction, SignFunctionNode> {
 public:
-  SignFunction(const SignFunctionNode * n) : Expression(n) {}
-  static SignFunction Builder(Expression child) { return TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sign", 1, Initializer<SignFunctionNode>, sizeof(SignFunctionNode));
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);

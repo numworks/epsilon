@@ -15,8 +15,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper SignFunction::s_functionHelper;
-
 int SignFunctionNode::numberOfChildren() const { return SignFunction::s_functionHelper.numberOfChildren(); }
 
 Layout SignFunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

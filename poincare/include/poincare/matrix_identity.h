@@ -7,6 +7,8 @@ namespace Poincare {
 
 class MatrixIdentityNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "identity";
+
   // TreeNode
   size_t size() const override { return sizeof(MatrixIdentityNode); }
   int numberOfChildren() const override;
@@ -32,13 +34,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class MatrixIdentity final : public Expression {
+class MatrixIdentity final : public HandleOneChild<MatrixIdentity, MatrixIdentityNode> {
 public:
-  MatrixIdentity(const MatrixIdentityNode * n) : Expression(n) {}
-  static MatrixIdentity Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixIdentity, MatrixIdentityNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("identity", 1, Initializer<MatrixIdentityNode>, sizeof(MatrixIdentityNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

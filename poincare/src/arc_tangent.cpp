@@ -12,8 +12,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper ArcTangent::s_functionHelper;
-
 int ArcTangentNode::numberOfChildren() const { return ArcTangent::s_functionHelper.numberOfChildren(); }
 
 Layout ArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -15,8 +15,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper BinomialCoefficient::s_functionHelper;
-
 int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::s_functionHelper.numberOfChildren(); }
 
 Expression BinomialCoefficientNode::shallowReduce(ReductionContext reductionContext) {

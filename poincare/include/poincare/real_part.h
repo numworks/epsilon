@@ -8,6 +8,7 @@ namespace Poincare {
 
 class RealPartNode final : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "re";
 
   // TreeNode
   size_t size() const override { return sizeof(RealPartNode); }
@@ -44,13 +45,9 @@ private:
   }
 };
 
-class RealPart final : public Expression {
+class RealPart final : public HandleOneChild<RealPart, RealPartNode> {
 public:
-  RealPart(const RealPartNode * n) : Expression(n) {}
-  static RealPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<RealPart, RealPartNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("re", 1, Initializer<RealPartNode>, sizeof(RealPartNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

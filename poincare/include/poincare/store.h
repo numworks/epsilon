@@ -29,11 +29,10 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Store final : public Expression {
+class Store final : public HandleOneChild<Store, StoreNode> {
 friend class StoreNode;
 public:
-  Store(const StoreNode * n) : Expression(n) {}
-  static Store Builder(Expression value, SymbolAbstract symbol) { return TreeHandle::FixedArityBuilder<Store, StoreNode>({value, symbol}); }
+  using Handle::Handle, Handle::Builder;
 
   // Store
   const SymbolAbstract symbol() const {

@@ -8,6 +8,7 @@ namespace Poincare {
 
 class ConjugateNode /*final*/ : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "conj";
 
   // TreeNode
   size_t size() const override { return sizeof(ConjugateNode); }
@@ -41,13 +42,9 @@ private:
   }
 };
 
-class Conjugate final : public Expression {
+class Conjugate final : public HandleOneChild<Conjugate, ConjugateNode> {
 public:
-  Conjugate(const ConjugateNode * n) : Expression(n) {}
-  static Conjugate Builder(Expression child) { return TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("conj", 1, Initializer<ConjugateNode>, sizeof(ConjugateNode));;
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

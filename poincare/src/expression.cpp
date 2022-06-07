@@ -1187,11 +1187,11 @@ Coordinate2D<double> Expression::nextIntersection(const char * symbol, double st
   return Coordinate2D<double>(resultX, approximateWithValueForSymbol(symbol, resultX, context, complexFormat, angleUnit));
 }
 
-static Expression maker(Expression children, int nbChildren, ExpressionNode * (* const initializer)(void *), size_t size) {
+static Expression maker(Expression children, int nbChildren, TreeNode * (* const initializer)(void *), size_t size) {
   assert(children.type() == ExpressionNode::Type::List);
-  TreeHandle handle = TreeHandle::Builder(reinterpret_cast<TreeNode * (* const)(void *)>(initializer), size);
+  TreeHandle handle = TreeHandle::Builder(initializer, size);
   Expression result = static_cast<Expression &>(handle);
-  for (size_t i = 0; i<nbChildren; i++) {
+  for (size_t i = 0; i<(size_t) nbChildren; i++) {
     result.replaceChildAtIndexInPlace(i, children.childAtIndex(i));
   }
   return result;

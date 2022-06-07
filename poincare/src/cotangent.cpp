@@ -10,8 +10,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Cotangent::s_functionHelper;
-
 int CotangentNode::numberOfChildren() const { return Cotangent::s_functionHelper.numberOfChildren(); }
 
 template<typename T>

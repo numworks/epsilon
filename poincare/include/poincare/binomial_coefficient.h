@@ -8,6 +8,7 @@ namespace Poincare {
 
 class BinomialCoefficientNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "binomial";
 
   // TreeNode
   size_t size() const override { return sizeof(BinomialCoefficientNode); }
@@ -35,11 +36,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class BinomialCoefficient final : public Expression {
+class BinomialCoefficient final : public HandleTwoChildren<BinomialCoefficient, BinomialCoefficientNode> {
 public:
-  BinomialCoefficient(const BinomialCoefficientNode * n) : Expression(n) {}
-  static BinomialCoefficient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<BinomialCoefficient, BinomialCoefficientNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("binomial", 2, Initializer<BinomialCoefficientNode>, sizeof(BinomialCoefficientNode));
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

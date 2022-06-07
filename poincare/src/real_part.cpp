@@ -9,8 +9,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper RealPart::s_functionHelper;
-
 int RealPartNode::numberOfChildren() const { return RealPart::s_functionHelper.numberOfChildren(); }
 
 Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -39,10 +39,9 @@ private:
  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Parenthesis final : public Expression {
+class Parenthesis final : public HandleOneChild<Parenthesis, ParenthesisNode> {
 public:
-  Parenthesis(const ParenthesisNode * n) : Expression(n) {}
-  static Parenthesis Builder(Expression child) { return TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>({child}); }
+  using Handle::Handle, Handle::Builder;
   // Expression
   Expression shallowReduce();
 };

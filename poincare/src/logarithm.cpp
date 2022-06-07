@@ -24,10 +24,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Logarithm::s_functionHelper;
-
-constexpr Expression::FunctionHelper CommonLogarithm::s_functionHelper;
-
 template<>
 int LogarithmNode<1>::numberOfChildren() const { return CommonLogarithm::s_functionHelper.numberOfChildren(); }
 

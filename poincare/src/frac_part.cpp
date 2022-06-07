@@ -7,8 +7,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper FracPart::s_functionHelper;
-
 int FracPartNode::numberOfChildren() const { return FracPart::s_functionHelper.numberOfChildren(); }
 
 Layout FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

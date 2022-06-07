@@ -8,6 +8,7 @@ namespace Poincare {
 
 class ImaginaryPartNode final : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "im";
 
   // TreeNode
   size_t size() const override { return sizeof(ImaginaryPartNode); }
@@ -42,13 +43,9 @@ private:
   }
 };
 
-class ImaginaryPart final : public Expression {
+class ImaginaryPart final : public HandleOneChild<ImaginaryPart, ImaginaryPartNode> {
 public:
-  ImaginaryPart(const ImaginaryPartNode * n) : Expression(n) {}
-  static ImaginaryPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPartNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("im", 1, Initializer<ImaginaryPartNode>, sizeof(ImaginaryPartNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

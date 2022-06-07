@@ -9,8 +9,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Secant::s_functionHelper;
-
 int SecantNode::numberOfChildren() const { return Secant::s_functionHelper.numberOfChildren(); }
 
 template<typename T>

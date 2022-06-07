@@ -9,6 +9,8 @@ namespace Poincare {
 
 class SquareRootNode /*final*/ : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "√";
+
   // ExpressionNode
   Sign sign(Context * context) const override { return childAtIndex(0)->sign(context) == Sign::Positive ? Sign::Positive : Sign::Unknown ; }
   NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
@@ -41,14 +43,12 @@ private:
   }
 };
 
-class SquareRoot final : public Expression {
+class SquareRoot final : public HandleOneChild<SquareRoot, SquareRootNode> {
 public:
-  SquareRoot(const SquareRootNode * n) : Expression(n) {}
-  static SquareRoot Builder(Expression child) { return TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>({child}); }
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   /* Reduce an expression of the form √(a√b + c√d) */
   static Expression ReduceNestedRadicals(Expression a, Expression b, Expression c, Expression d, ExpressionNode::ReductionContext reductionContext);
   static bool SplitRadical(Expression term, Expression * factor, Expression * underRoot);
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("√", 1, Initializer<SquareRootNode>, sizeof(SquareRootNode));
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

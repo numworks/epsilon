@@ -14,8 +14,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper ArcCosine::s_functionHelper;
-
 int ArcCosineNode::numberOfChildren() const { return ArcCosine::s_functionHelper.numberOfChildren(); }
 
 Layout ArcCosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

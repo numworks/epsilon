@@ -8,8 +8,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper ImaginaryPart::s_functionHelper;
-
 int ImaginaryPartNode::numberOfChildren() const { return ImaginaryPart::s_functionHelper.numberOfChildren(); }
 
 Layout ImaginaryPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

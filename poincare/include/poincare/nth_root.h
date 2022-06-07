@@ -7,6 +7,7 @@ namespace Poincare {
 
 class NthRootNode final : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "root";
   // ExpressionNode
   Type type() const override { return Type::NthRoot; }
 
@@ -35,12 +36,9 @@ private:
 
 };
 
-class NthRoot final : public Expression {
+class NthRoot final : public HandleTwoChildren<NthRoot, NthRootNode> {
 public:
-  NthRoot(const NthRootNode * n) : Expression(n) {}
-  static NthRoot Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("root", 2, Initializer<NthRootNode>, sizeof(NthRootNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

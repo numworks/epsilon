@@ -8,6 +8,7 @@ namespace Poincare {
 
 class PermuteCoefficientNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "permute";
 
   // TreeNode
   size_t size() const override { return sizeof(PermuteCoefficientNode); }
@@ -38,12 +39,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class PermuteCoefficient final : public Expression {
+class PermuteCoefficient final : public HandleTwoChildren<PermuteCoefficient, PermuteCoefficientNode> {
 public:
-  PermuteCoefficient(const PermuteCoefficientNode * n) : Expression(n) {}
-  static PermuteCoefficient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PermuteCoefficient, PermuteCoefficientNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("permute", 2, Initializer<PermuteCoefficientNode>, sizeof(PermuteCoefficientNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

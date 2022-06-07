@@ -13,8 +13,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper ArcSine::s_functionHelper;
-
 int ArcSineNode::numberOfChildren() const { return ArcSine::s_functionHelper.numberOfChildren(); }
 
 Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

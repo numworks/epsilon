@@ -154,6 +154,10 @@ void Store::updateSeriesValidity(int series) {
   bool isSeriesValid = m_validSeries[series] && frequenciesAreValid(series);
   // Reset the graph view any time one of the series gets invalidated
   m_graphViewInvalidated = m_graphViewInvalidated || (oldValidity && !isSeriesValid);
+  if (m_graphViewInvalidated && numberOfPairsOfSeries(series) == 0) {
+    // Hide the cumulated frequencies if series is invalidated and empty
+    m_userPreferences->setDisplayCumulatedFrequencies(series, false);
+  }
   m_validSeries[series] = isSeriesValid;
 }
 

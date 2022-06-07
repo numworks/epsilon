@@ -1339,6 +1339,11 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
   assert_expression_approximates_to_scalar<double>("prod({1,4,9})", 36.);
 }
 
+QUIZ_CASE(poincare_approximation_mixed_fraction) {
+  assert_expression_approximates_to_scalar<double>("1 1/2", 1.5);
+  assert_expression_approximates_to_scalar<double>("-1 1/2", -1.5);
+}
+
 template<typename T>
 void assert_expression_approximates_with_value_for_symbol(const char * expression, T approximation, const char * symbol, T symbolValue, Preferences::AngleUnit angleUnit = Degree, Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;

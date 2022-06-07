@@ -53,8 +53,9 @@ Expression Percent::ParseTarget(Expression & leftHandSide, bool isPercentSimple)
     return leftHandSide;
   }
   assert(!rightHandSide.isUninitialized());
-  if (rightHandSide.type() == ExpressionNode::Type::Multiplication) {
+  if (rightHandSide.type() == ExpressionNode::Type::Multiplication || rightHandSide.type() == ExpressionNode::Type::PercentSimple) {
     // 1+2*3% => 1+PercentSimple(2*3)
+    // 1+3%% => 1+PercentSimple(PercentSimple(3))
     return Addition::Builder(leftHandSide, PercentSimple::Builder(rightHandSide));
   }
   return PercentAddition::Builder(leftHandSide, rightHandSide);

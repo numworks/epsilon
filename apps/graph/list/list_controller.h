@@ -51,7 +51,7 @@ private:
   bool textRepresentsAnEquation(const char * text) const;
   bool textRepresentsPolarFunction(const char * text) const;
   // Complete the equationField with a valid left equation side
-  bool completeEquation(InputEventHandler * equationField, bool polarFunction);
+  bool completeEquation(Escher::InputEventHandler * equationField, bool polarFunction);
   KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override {
     return ListViewDataSource::cumulatedHeightFromIndex(j);
   }

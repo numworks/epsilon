@@ -9,11 +9,9 @@
 
 #include <apps/i18n.h>
 
-using namespace Escher;
-
 namespace Graph {
 
-class FunctionCell : public EvenOddCell {
+class FunctionCell : public Escher::EvenOddCell {
 public:
   FunctionCell();
   // EvenOddCell
@@ -52,7 +50,7 @@ public:
 private:
   // View
   int numberOfSubviews() const override { return 3; }
-  View * subviewAtIndex(int index) override;
+  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
   constexpr static KDCoordinate k_colorIndicatorThickness = 3;
@@ -61,9 +59,9 @@ private:
       Escher::Metric::CellVerticalElementMargin;
   constexpr static KDCoordinate k_parametersColumnWidth =
       Escher::Metric::EllipsisCellWidth;
-  ExpressionView m_expressionView;
-  MessageTextView m_messageTextView;
-  EllipsisView m_ellipsisView;
+  Escher::ExpressionView m_expressionView;
+  Escher::MessageTextView m_messageTextView;
+  Escher::EllipsisView m_ellipsisView;
   KDColor m_functionColor;
   KDColor m_expressionBackground;
   KDColor m_ellipsisBackground;

@@ -4,13 +4,11 @@
 #include "inference/statistic/chi_square_and_slope/categorical_controller.h"
 #include "inference/statistic/chi_square_and_slope/goodness_table_cell.h"
 
-using namespace Escher;
-
 namespace Inference {
 
 class InputGoodnessController : public InputCategoricalController {
 public:
-  InputGoodnessController(StackViewController * parent, Escher::ViewController * resultsController, GoodnessTest * statistic, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  InputGoodnessController(Escher::StackViewController * parent, Escher::ViewController * resultsController, GoodnessTest * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   void updateDegreeOfFreedomCell();
 

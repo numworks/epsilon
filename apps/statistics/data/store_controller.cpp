@@ -153,6 +153,20 @@ void StoreController::FillSeriesName(int series, char * buffer, bool withFinalSp
   }
 }
 
+bool StoreController::deleteCellValue(int series, int i, int j) {
+  /* Deleting the last cumulated frequency value will remove its column.
+   * The previously selected cell needs to be un-highlighted. */
+  Escher::HighlightCell * selectedCell = nullptr;
+  if (isCumulatedFrequencyColumn(i)) {
+    selectedCell = selectableTableView()->selectedCell();
+  }
+  bool result = Shared::StoreController::deleteCellValue(series, i, j);
+  if (selectedCell && result) {
+    selectedCell->setHighlighted(false);
+  }
+  return result;
+}
+
 InputViewController * StoreController::inputViewController() {
   return Statistics::App::app()->inputViewController();
 }

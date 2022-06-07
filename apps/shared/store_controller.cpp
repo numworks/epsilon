@@ -119,19 +119,21 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   if (EditableCellTableViewController::handleEvent(event)) {
     return true;
   }
+  int i = selectedColumn();
+  int j = selectedRow();
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
-    assert(selectedRow() == -1);
+    assert(j == -1);
     Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
-  assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
-  int series = m_store->seriesAtColumn(selectedColumn());
+  assert(i >= 0 && i < numberOfColumns());
+  int series = m_store->seriesAtColumn(i);
   if (event == Ion::Events::Backspace) {
-    if (selectedRow() == 0 || selectedRow() > numberOfElementsInColumn(selectedColumn())) {
+    if (j == 0 || j > numberOfElementsInColumn(i)) {
       return false;
     }
-    if (m_store->deleteValueAtIndex(series, m_store->relativeColumnIndex(selectedColumn()), selectedRow()-1)) {
+    if (deleteCellValue(series, i, j)) {
       // A row has been deleted
       selectableTableView()->reloadData();
     } else {
@@ -147,6 +149,10 @@ void StoreController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
+}
+
+bool StoreController::deleteCellValue(int series, int i, int j) {
+  return m_store->deleteValueAtIndex(series, m_store->relativeColumnIndex(i), j - 1);
 }
 
 StackViewController * StoreController::stackController() const {

@@ -1,8 +1,10 @@
 #include "input_goodness_controller.h"
 
+using namespace Escher;
+
 namespace Inference {
 
-InputGoodnessController::InputGoodnessController(StackViewController * parent, Escher::ViewController * resultsController, GoodnessTest * statistic, InputEventHandlerDelegate * inputEventHandlerDelegate) :
+InputGoodnessController::InputGoodnessController(StackViewController * parent, ViewController * resultsController, GoodnessTest * statistic, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   InputCategoricalController(parent, resultsController, statistic, inputEventHandlerDelegate),
   m_innerDegreeOfFreedomCell(&m_selectableTableView, inputEventHandlerDelegate, this),
   m_degreeOfFreedomCell(&m_innerDegreeOfFreedomCell),

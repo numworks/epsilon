@@ -2,6 +2,8 @@
 #include <escher/palette.h>
 #include <assert.h>
 
+using namespace Escher;
+
 namespace Code {
 
 constexpr KDColor SubtitleCell::k_backgroundColor;

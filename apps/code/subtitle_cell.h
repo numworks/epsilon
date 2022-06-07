@@ -6,14 +6,12 @@
 #include <escher/metric.h>
 #include <ion/display.h>
 
-using namespace Escher;
-
 namespace Code {
 
-class SubtitleCell : public BufferTableCell {
+class SubtitleCell : public Escher::BufferTableCell {
 public:
   SubtitleCell();
-  const View * labelView() const override { return &m_labelView; }
+  const Escher::View * labelView() const override { return &m_labelView; }
   void setHighlighted(bool highlight) override { assert(!highlight); }
   // Overriding TableCell row Height
   void layoutSubviews(bool force = false) override;
@@ -27,10 +25,10 @@ protected:
 private:
   /* Text from BufferTableCell can be formed from user input (script names).
    * A char limit on display is enforced */
-  constexpr static int k_maxNumberOfCharsInBuffer = (Ion::Display::Width - Metric::PopUpLeftMargin - 2 * Metric::CellSeparatorThickness - Metric::CellLeftMargin - Metric::CellRightMargin - Metric::PopUpRightMargin) / 7; // With 7 = KDFont::SmallFont->glyphSize().width()
+  constexpr static int k_maxNumberOfCharsInBuffer = (Ion::Display::Width - Escher::Metric::PopUpLeftMargin - 2 * Escher::Metric::CellSeparatorThickness - Escher::Metric::CellLeftMargin - Escher::Metric::CellRightMargin - Escher::Metric::PopUpRightMargin) / 7; // With 7 = KDFont::SmallFont->glyphSize().width()
   static_assert(k_maxNumberOfCharsInBuffer < Escher::BufferTextView::k_maxNumberOfChar, "k_maxNumberOfCharsInBuffer is too high");
-  constexpr static KDColor k_backgroundColor = Palette::WallScreen;
-  constexpr static KDColor k_textColor = Palette::BlueishGray;
+  constexpr static KDColor k_backgroundColor = Escher::Palette::WallScreen;
+  constexpr static KDColor k_textColor = Escher::Palette::BlueishGray;
 };
 
 }

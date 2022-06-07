@@ -14,7 +14,6 @@ public:
     m_numberOfBlocks(0),
     m_size(size)
   {}
-  ~TreeSandbox();
 
   void replaceBlock(TreeBlock * previousBlock, TreeBlock newBlock);
   bool pushBlock(TreeBlock block);
@@ -22,6 +21,8 @@ public:
 
   TreeBlock * firstBlock() override { return m_firstBlock; }
   TreeBlock * lastBlock() override { return m_firstBlock + m_numberOfBlocks; }
+  void setNumberOfBlocks(int numberOfBlocks) { m_numberOfBlocks = numberOfBlocks; }
+
 
 private:
   TreeBlock * m_firstBlock;

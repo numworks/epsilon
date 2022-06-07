@@ -10,22 +10,29 @@ class TreeCache final : public TreePool {
 public:
   static TreeCache * sharedCache();
 
-  TreeBlock * treeForIdentifier(int id) { return m_cachedTree[id]; }
+  TreeBlock * treeForIdentifier(int id);
   int storeLastTree();
+  bool copyTreeForEditing(int id);
 
-  TreeSandbox sandbox();
+  TreeBlock * sandboxBlockAtIndex(int i) { return m_sandbox.blockAtIndex(i); }
+  void replaceBlock(TreeBlock * previousBlock, TreeBlock newBlock) { return m_sandbox.replaceBlock(previousBlock, newBlock); }
+  bool pushBlock(TreeBlock block);
+  bool popBlock() { return m_sandbox.popBlock(); }
+  TreeSandbox * sandbox() { return &m_sandbox; }
 
 private:
-  constexpr static int k_numberOfBlocks = 512;
+  constexpr static int k_maxNumberOfBlocks = 512;
   constexpr static int k_maxNumberOfCachedTrees = 32;
 
-  TreeCache() : m_numberOfCachedTree(0) {}
-  TreeBlock * firstBlock() override { return m_numberOfCachedTree == 0 ? 0 : reinterpret_cast<TreeBlock *>(this); }
-  TreeBlock * lastBlock() override { return m_numberOfCachedTree == 0 ? reinterpret_cast<TreeBlock *>(this) : nextTree(m_cachedTree[m_numberOfCachedTree - 1]); }
+  TreeCache();
+  TreeBlock * firstBlock() override { return m_nextIdentifier == 0 ? nullptr : &m_pool[0]; }
+  TreeBlock * lastBlock() override { return m_nextIdentifier == 0 ? &m_pool[0] : nextTree(m_cachedTree[m_nextIdentifier - 1]); }
+  void resetCache();
 
-
+  TreeSandbox m_sandbox;
+  TreeBlock m_pool[k_maxNumberOfBlocks];
+  int m_nextIdentifier;
   TreeBlock * m_cachedTree[k_maxNumberOfCachedTrees];
-  int m_numberOfCachedTree;
 };
 
 }

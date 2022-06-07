@@ -3,10 +3,6 @@
 
 namespace Poincare {
 
-TreeSandbox::~TreeSandbox() {
-  TreeCache::sharedCache()->storeLastTree();
-}
-
 void TreeSandbox::replaceBlock(TreeBlock * previousBlock, TreeBlock newBlock) {
   *previousBlock = newBlock;
 }

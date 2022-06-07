@@ -13,7 +13,7 @@ enum class BlockType : uint8_t {
 
 class TreeBlock {
 public:
-  constexpr TreeBlock(uint8_t content) : m_content(content) {}
+  constexpr TreeBlock(uint8_t content = 0) : m_content(content) {}
   constexpr TreeBlock(BlockType content) : m_content(static_cast<uint8_t>(content)) {}
 
   bool operator!=(const TreeBlock& b) { return b.m_content != m_content; }

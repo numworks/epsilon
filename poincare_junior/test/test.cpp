@@ -4,6 +4,13 @@
 
 using namespace Poincare;
 
+/*
+ * Key points:
+ * - User interruptions
+ * - System checkpoints
+ *
+ * */
+
 void printLinearPool(TreePool * pool) {
   TreeBlock * b = pool->firstBlock();
   while (b < pool->lastBlock()) {
@@ -18,7 +25,7 @@ void printIndentation(int deep) {
   }
 }
 
-void printTreePoolRec(TreePool * pool, TreeBlock * block, int deep) {
+TreeBlock * printTreePoolRec(TreePool * pool, TreeBlock * block, int deep) {
   std::cout << block->log() << std::endl;
   TreeBlock * child = pool->nextBlock(block);
   for (int i = 0; i < block->numberOfSubtrees(); i++) {
@@ -26,30 +33,41 @@ void printTreePoolRec(TreePool * pool, TreeBlock * block, int deep) {
     printTreePoolRec(pool, child, deep + 1);
     child = pool->nextTree(child);
   }
+  return child;
 }
 
 void printTreePool(TreePool * pool) {
   TreeBlock * b = pool->firstBlock();
-  printTreePoolRec(pool, b, 0);
+  int counter = 0;
+  while (b && b < pool->lastBlock()) {
+    std::cout << "---------------------------------- Tree n° " << counter++ << "----------------------------------" << std::endl;
+    b = printTreePoolRec(pool, b, 0);
+    std::cout << "------------------------------------------------------------------------------" << std::endl;
+  }
 }
 
 int main() {
   // "1 * 2 + 3";
-  TreeSandbox sandbox = TreeCache::sharedCache()->sandbox();
-  sandbox.pushBlock(AdditionBlock());
-  sandbox.pushBlock(MultiplicationBlock());
-  sandbox.pushBlock(IntegerBlock());
-  sandbox.pushBlock(TreeBlock(1));
-  sandbox.pushBlock(IntegerBlock());
-  sandbox.pushBlock(TreeBlock(2));
-  sandbox.pushBlock(IntegerBlock());
-  sandbox.pushBlock(TreeBlock(3));
+  TreeCache * cache = TreeCache::sharedCache();
+  cache->pushBlock(AdditionBlock());
+  cache->pushBlock(MultiplicationBlock());
+  cache->pushBlock(IntegerBlock());
+  cache->pushBlock(TreeBlock(1));
+  cache->pushBlock(IntegerBlock());
+  cache->pushBlock(TreeBlock(2));
+  cache->pushBlock(IntegerBlock());
+  cache->pushBlock(TreeBlock(3));
 
-  printTreePool(&sandbox);
+  int treeId = cache->storeLastTree();
+  printTreePool(cache);
 
-  sandbox.replaceBlock(sandbox.blockAtIndex(3), TreeBlock(4));
-  sandbox.replaceBlock(sandbox.blockAtIndex(5), TreeBlock(5));
-  sandbox.replaceBlock(sandbox.blockAtIndex(7), TreeBlock(6));
+  cache->copyTreeForEditing(treeId);
+  printTreePool(cache->sandbox());
 
-  printTreePool(&sandbox);
+  cache->replaceBlock(cache->sandboxBlockAtIndex(3), TreeBlock(4));
+  cache->replaceBlock(cache->sandboxBlockAtIndex(5), TreeBlock(5));
+  cache->replaceBlock(cache->sandboxBlockAtIndex(7), TreeBlock(6));
+  treeId = cache->storeLastTree();
+
+  printTreePool(cache);
 }

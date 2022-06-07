@@ -574,3 +574,12 @@ QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {
   assert_parsed_expression_with_user_parentheses_is("-conj(2+3)", Opposite::Builder(Parenthesis::Builder(Conjugate::Builder(Addition::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))))));
   assert_parsed_expression_with_user_parentheses_is("conj(2+3)!", Factorial::Builder(Parenthesis::Builder(Conjugate::Builder(Addition::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))))));
 }
+
+QUIZ_CASE(poincare_parse_mixed_fraction) {
+ assert_parsed_expression_is("1 2/3", MixedFraction::Builder(BasedInteger::Builder(1), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))));
+ assert_parsed_expression_is("1\u0012\u00122\u0013/\u00123\u0013\u0013", MixedFraction::Builder(BasedInteger::Builder(1), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))));
+ assert_parsed_expression_is("1\u00122/3\u00132", Multiplication::Builder(MixedFraction::Builder(BasedInteger::Builder(1), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))), BasedInteger::Builder(2)));
+ assert_parsed_expression_is("1\u00122/3\u0013\u00122/3\u0013", Multiplication::Builder(MixedFraction::Builder(BasedInteger::Builder(1), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))));
+ assert_parsed_expression_is("1\u0012e/3\u0013", Multiplication::Builder(BasedInteger::Builder(1),Division::Builder(Constant::Builder("e"), BasedInteger::Builder(3))));
+ assert_parsed_expression_is("1\u00122.5/3\u0013", Multiplication::Builder(BasedInteger::Builder(1),Division::Builder(Decimal::Builder(2.5), BasedInteger::Builder(3))));
+}

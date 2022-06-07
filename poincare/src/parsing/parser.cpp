@@ -484,10 +484,11 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
   }
 
   if (!m_symbolPlusParenthesesAreFunctions) {
-    /* If the user is not defining a variable and the identifier is followed
+    /* If the user is not defining a variable and the identifier is already
+     * known to be a sequence, or has an unknown type and is followed
      * by braces, it's a sequence call. */
     bool poppedBrace = popTokenIfType(Token::LeftBrace);
-    if (poppedBrace || idType == Context::SymbolAbstractType::Sequence) {
+    if (idType == Context::SymbolAbstractType::Sequence || (poppedBrace && idType == Context::SymbolAbstractType::None)) {
       /* If the identifier is a sequence but not followed by braces, it can
        * also be followed by parenthesis. */
       if (!poppedBrace && !popTokenIfType(Token::LeftParenthesis)) {

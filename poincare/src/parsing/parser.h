@@ -83,7 +83,7 @@ private:
   void privateParseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
   void parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter);
   void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
-
+  bool generateMixedFractionIfNeeded(Expression & leftHandSide);
   // Data members
   Context * m_context;
   Status m_status;

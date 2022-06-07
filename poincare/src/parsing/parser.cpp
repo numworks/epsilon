@@ -344,9 +344,9 @@ void Parser::parsePercentAddition(Expression & leftHandSide, Token::Type stoppin
     m_status = Status::Error; // Left-hand side missing
     return;
   }
-  leftHandSide = Percent::ParseTarget(leftHandSide, false);
+  assert(!(m_nextToken.is(Token::Times) || m_nextToken.is(Token::Slash)));
   isThereImplicitMultiplication();
-  assert(!m_pendingImplicitMultiplication && !m_nextToken.is(Token::Times) && !m_nextToken.is(Token::Slash));
+  leftHandSide = Percent::ParseTarget(leftHandSide, m_pendingImplicitMultiplication);
 }
 
 void Parser::parsePercentSimple(Expression & leftHandSide, Token::Type stoppingType) {

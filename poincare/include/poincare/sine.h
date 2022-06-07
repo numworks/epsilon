@@ -9,6 +9,7 @@ namespace Poincare {
 
 class SineNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "sin";
 
   // TreeNode
   size_t size() const override { return sizeof(SineNode); }
@@ -47,12 +48,9 @@ private:
   }
 };
 
-class Sine final : public Expression {
+class Sine final : public HandleOneChild<Sine, SineNode> {
 public:
-  Sine(const SineNode * n) : Expression(n) {}
-  static Sine Builder(Expression child) { return TreeHandle::FixedArityBuilder<Sine, SineNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sin", 1, Initializer<SineNode>, sizeof(SineNode));
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

@@ -8,6 +8,7 @@ namespace Poincare {
 
 class CeilingNode final : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "ceil";
 
   // TreeNode
   size_t size() const override { return sizeof(CeilingNode); }
@@ -38,13 +39,9 @@ private:
   }
 };
 
-class Ceiling final : public Expression {
+class Ceiling final : public HandleOneChild<Ceiling, CeilingNode> {
 public:
-  Ceiling(const CeilingNode * n) : Expression(n) {}
-  static Ceiling Builder(Expression child) { return TreeHandle::FixedArityBuilder<Ceiling, CeilingNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ceil", 1, Initializer<CeilingNode>, sizeof(CeilingNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

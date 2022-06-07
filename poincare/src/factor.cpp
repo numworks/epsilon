@@ -16,8 +16,6 @@ extern "C" {
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Factor::s_functionHelper;
-
 int FactorNode::numberOfChildren() const { return Factor::s_functionHelper.numberOfChildren(); }
 
 Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

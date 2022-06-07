@@ -6,8 +6,6 @@
 
 namespace Poincare {
 
-const Expression::FunctionHelper ListMinimum::s_functionHelper;
-
 int ListMinimumNode::numberOfChildren() const {
   return ListMinimum::s_functionHelper.numberOfChildren();
 }

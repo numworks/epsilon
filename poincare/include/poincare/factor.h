@@ -10,6 +10,8 @@ namespace Poincare {
 
 class FactorNode /*final*/ : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "factor";
+
   // TreeNode
   size_t size() const override { return sizeof(FactorNode); }
   int numberOfChildren() const override;
@@ -38,12 +40,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Factor final : public Expression {
+class Factor final : public HandleOneChild<Factor, FactorNode> {
 public:
-  Factor(const FactorNode * n) : Expression(n) {}
-  static Factor Builder(Expression child) { return TreeHandle::FixedArityBuilder<Factor, FactorNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("factor", 1, Initializer<FactorNode>, sizeof(FactorNode));
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
 
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i) const;
 

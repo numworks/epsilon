@@ -340,7 +340,7 @@ public:
       m_untypedBuilder(builder),
       m_initializer(nullptr),
       m_size(0) {}
-    constexpr FunctionHelper(const char * name, const int numberOfChildren, ExpressionNode * (* const initializer)(void *), size_t size) :
+    constexpr FunctionHelper(const char * name, const int numberOfChildren, TreeNode * (* const initializer)(void *), size_t size) :
       m_name(name),
       m_numberOfChildren(numberOfChildren),
       m_untypedBuilder(nullptr),
@@ -353,7 +353,7 @@ public:
     const char * m_name;
     const int m_numberOfChildren;
     Expression (* const m_untypedBuilder)(Expression children);
-    ExpressionNode * (* const m_initializer)(void *);
+    TreeNode * (* const m_initializer)(void *);
     const size_t m_size;
   };
 
@@ -365,7 +365,7 @@ protected:
   Expression(int nodeIdentifier) : TreeHandle(nodeIdentifier) {}
 
   template<typename T>
-  static ExpressionNode * Initializer(void * buffer) {
+  static TreeNode * Initializer(void * buffer) {
     return new (buffer) T;
   }
 
@@ -521,6 +521,28 @@ private:
   static Expression CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb);
 };
 
+// Helper to create the expression associated to a node
+template<typename T, typename U, int N>
+class Handle : public Expression {
+public:
+  Handle(const U * n) : Expression(n) {}
+  static T Builder() {
+    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {});
+    return static_cast<T&>(h);
+  }
+  static T Builder(Expression child) {
+    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child});
+    return static_cast<T&>(h);
+  }
+  static T Builder(Expression child1, Expression child2) {
+    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2});
+    return static_cast<T&>(h);
+  }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::functionName, N, Initializer<U>, sizeof(U));
+};
+
+template<typename T, typename U> using HandleOneChild = Handle<T,U,1>;
+template<typename T, typename U> using HandleTwoChildren = Handle<T,U,2>;
 }
 
 #endif

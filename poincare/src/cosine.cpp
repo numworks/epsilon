@@ -12,8 +12,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Cosine::s_functionHelper;
-
 int CosineNode::numberOfChildren() const { return Cosine::s_functionHelper.numberOfChildren(); }
 
 template<typename T>

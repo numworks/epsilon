@@ -8,6 +8,7 @@ namespace Poincare {
 
 class TangentNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "tan";
 
   // TreeNode
   size_t size() const override { return sizeof(TangentNode); }
@@ -45,12 +46,9 @@ private:
   }
 };
 
-class Tangent final : public Expression {
+class Tangent final : public HandleOneChild<Tangent, TangentNode> {
 public:
-  Tangent(const TangentNode * n) : Expression(n) {}
-  static Tangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<Tangent, TangentNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tan", 1, Initializer<TangentNode>, sizeof(TangentNode));
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

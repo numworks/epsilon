@@ -12,8 +12,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Conjugate::s_functionHelper;
-
 int ConjugateNode::numberOfChildren() const { return Conjugate::s_functionHelper.numberOfChildren(); }
 
 Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

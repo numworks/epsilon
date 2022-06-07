@@ -11,8 +11,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Sine::s_functionHelper;
-
 int SineNode::numberOfChildren() const { return Sine::s_functionHelper.numberOfChildren(); }
 
 template<typename T>

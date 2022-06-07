@@ -9,6 +9,8 @@ namespace Poincare {
 
 class AbsoluteValueNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "abs";
+
   // TreeNode
   size_t size() const override { return sizeof(AbsoluteValueNode); }
   int numberOfChildren() const override;
@@ -45,14 +47,10 @@ private:
   bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
 };
 
-class AbsoluteValue final : public Expression {
+class AbsoluteValue final : public HandleOneChild<AbsoluteValue, AbsoluteValueNode> {
 friend class AbsoluteValueNode;
 public:
-  AbsoluteValue(const AbsoluteValueNode * n) : Expression(n) {}
-  static AbsoluteValue Builder(Expression child) { return TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValueNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, Initializer<AbsoluteValueNode>, sizeof(AbsoluteValueNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
 };

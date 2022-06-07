@@ -8,6 +8,8 @@ namespace Poincare {
 
 class CosecantNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "csc";
+
   // TreeNode
   size_t size() const override { return sizeof(CosecantNode); }
   int numberOfChildren() const override;
@@ -39,13 +41,9 @@ private:
   }
 };
 
-class Cosecant final : public Expression {
+class Cosecant final : public HandleOneChild<Cosecant, CosecantNode> {
 public:
-  Cosecant(const CosecantNode * n) : Expression(n) {}
-  static Cosecant Builder(Expression child) { return TreeHandle::FixedArityBuilder<Cosecant, CosecantNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("csc", 1, Initializer<CosecantNode>, sizeof(CosecantNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

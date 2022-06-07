@@ -8,8 +8,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper VectorDot::s_functionHelper;
-
 int VectorDotNode::numberOfChildren() const { return VectorDot::s_functionHelper.numberOfChildren(); }
 
 Expression VectorDotNode::shallowReduce(ReductionContext reductionContext) {

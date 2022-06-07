@@ -7,6 +7,7 @@ namespace Poincare {
 
 class ListMinimumNode : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "min";
   size_t size() const override { return sizeof(ListMinimumNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
@@ -29,12 +30,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class ListMinimum : public Expression {
+class ListMinimum : public HandleOneChild<ListMinimum, ListMinimumNode> {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("min", 1, &Initializer<ListMinimumNode>, sizeof(ListMinimumNode));
-  ListMinimum(const ListMinimumNode * n) : Expression(n) {}
-  static ListMinimum Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListMinimum, ListMinimumNode>({list}); }
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

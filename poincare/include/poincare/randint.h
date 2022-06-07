@@ -8,6 +8,7 @@ namespace Poincare {
 class RandintNode /*final*/ : public ExpressionNode  {
   friend class Randint;
 public:
+  static constexpr char functionName[] = "randint";
 
   // TreeNode
   size_t size() const override { return sizeof(RandintNode); }
@@ -42,13 +43,10 @@ private:
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 };
 
-class Randint final : public Expression {
+class Randint final : public HandleTwoChildren<Randint, RandintNode> {
 friend class RandintNode;
 public:
-  Randint(const RandintNode * n) : Expression(n) {}
-  static Randint Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Randint, RandintNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("randint", 2, Initializer<RandintNode>, sizeof(RandintNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

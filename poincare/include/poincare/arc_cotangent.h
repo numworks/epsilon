@@ -8,6 +8,8 @@ namespace Poincare {
 
 class ArcCotangentNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "acot";
+
   // TreeNode
   size_t size() const override { return sizeof(ArcCotangentNode); }
   int numberOfChildren() const override;
@@ -40,13 +42,9 @@ private:
   }
 };
 
-class ArcCotangent final : public Expression {
+class ArcCotangent final : public HandleOneChild<ArcCotangent, ArcCotangentNode> {
 public:
-  ArcCotangent(const ArcCotangentNode * n) : Expression(n) {}
-  static ArcCotangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCotangent, ArcCotangentNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acot", 1, Initializer<ArcCotangentNode>, sizeof(ArcCotangentNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

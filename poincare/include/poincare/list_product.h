@@ -7,6 +7,7 @@ namespace Poincare {
 
 class ListProductNode : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "prod";
   size_t size() const override { return sizeof(ListProductNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
@@ -29,13 +30,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class ListProduct : public Expression {
+class ListProduct : public HandleOneChild<ListProduct, ListProductNode> {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("prod", 1, &Initializer<ListProductNode>, sizeof(ListProductNode));
-
-  ListProduct(const ListProductNode * n) : Expression(n) {}
-  static ListProduct Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListProduct, ListProductNode>({list}); }
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

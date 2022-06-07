@@ -13,8 +13,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Floor::s_functionHelper;
-
 int FloorNode::numberOfChildren() const { return Floor::s_functionHelper.numberOfChildren(); }
 
 Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

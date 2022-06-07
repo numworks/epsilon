@@ -78,19 +78,15 @@ private:
   template <typename U> Evaluation<U> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
 };
 
-class PercentSimple final : public Expression {
+class PercentSimple final : public HandleOneChild<PercentSimple, PercentSimpleNode> {
 public:
-  static PercentSimple Builder(Expression child) { return TreeHandle::FixedArityBuilder<PercentSimple, PercentSimpleNode>({child}); }
-
-  PercentSimple(const PercentSimpleNode * n) : Expression(n) {}
+  using Handle::Handle, Handle::Builder;
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
 };
 
-class PercentAddition final : public Expression {
+class PercentAddition final : public HandleTwoChildren<PercentAddition, PercentAdditionNode> {
 public:
-  static PercentAddition Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PercentAddition, PercentAdditionNode>({child0, child1}); }
-
-  PercentAddition(const PercentAdditionNode * n) : Expression(n) {}
+  using Handle::Handle, Handle::Builder;
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
 };

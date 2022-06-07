@@ -8,8 +8,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Random::s_functionHelper;
-
 int RandomNode::numberOfChildren() const { return Random::s_functionHelper.numberOfChildren(); }
 
 Layout RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

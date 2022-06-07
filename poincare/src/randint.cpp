@@ -18,8 +18,6 @@ extern "C" {
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Randint::s_functionHelper;
-
 int RandintNode::numberOfChildren() const { return Randint::s_functionHelper.numberOfChildren(); }
 
 Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -11,8 +11,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper MatrixTrace::s_functionHelper;
-
 int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixTraceNode::shallowReduce(ReductionContext reductionContext) {

@@ -15,8 +15,6 @@ extern "C" {
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper PermuteCoefficient::s_functionHelper;
-
 int PermuteCoefficientNode::numberOfChildren() const { return PermuteCoefficient::s_functionHelper.numberOfChildren(); }
 
 Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

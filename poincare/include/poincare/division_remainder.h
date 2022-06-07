@@ -9,6 +9,7 @@ namespace Poincare {
 
 class DivisionRemainderNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "rem";
 
   // TreeNode
   size_t size() const override { return sizeof(DivisionRemainderNode); }
@@ -40,12 +41,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class DivisionRemainder final : public Expression {
+class DivisionRemainder final : public HandleTwoChildren<DivisionRemainder, DivisionRemainderNode> {
 public:
-  DivisionRemainder(const DivisionRemainderNode * n) : Expression(n) {}
-  static DivisionRemainder Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<DivisionRemainder, DivisionRemainderNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("rem", 2, Initializer<DivisionRemainderNode>, sizeof(DivisionRemainderNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   static Expression Reduce(const Integer & a, const Integer & b);

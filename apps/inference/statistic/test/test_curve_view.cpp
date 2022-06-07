@@ -34,25 +34,24 @@ void TestCurveView::drawTest(KDContext * ctx, KDRect rect) const {
 }
 
 void TestCurveView::drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op) const {
-  float stripesStart, stripesEnd;
-  float xAlpha = m_test->thresholdAbscissa(op);
-  int pattern;
-  switch (op) {
-  case HypothesisParams::ComparisonOperator::Different:
+  if (op == HypothesisParams::ComparisonOperator::Different) {
     drawCurveAndAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Higher);
     drawCurveAndAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Lower);
     return;
-  case HypothesisParams::ComparisonOperator::Higher:
+  }
+
+  float stripesStart, stripesEnd;
+  float xAlpha = m_test->thresholdAbscissa(op);
+  int pattern;
+  if (op == HypothesisParams::ComparisonOperator::Higher) {
     stripesStart = xAlpha;
     stripesEnd = INFINITY;
     pattern = 0b1001;
-    break;
-  default:
+  } else {
     assert(op == HypothesisParams::ComparisonOperator::Lower);
     stripesStart = -INFINITY;
     stripesEnd = xAlpha;
     pattern = 0b101;
-    break;
   }
 
   assert(std::isfinite(xAlpha));
@@ -60,22 +59,21 @@ void TestCurveView::drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, Hypot
 }
 
 void TestCurveView::colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const {
-  float xStart, xEnd;
-  switch (op) {
-  case HypothesisParams::ComparisonOperator::Different:
+  if (op == HypothesisParams::ComparisonOperator::Different) {
     z = std::fabs(z);
     colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z);
     colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z);
     return;
-  case HypothesisParams::ComparisonOperator::Higher:
+  }
+
+  float xStart, xEnd;
+  if (op == HypothesisParams::ComparisonOperator::Higher) {
     xStart = z;
     xEnd = curveViewRange()->xMax();
-    break;
-  default:
+  } else {
     assert(op == HypothesisParams::ComparisonOperator::Lower);
     xStart = curveViewRange()->xMin();
     xEnd = z;
-    break;
   }
 
   float xStep = pixelLengthToFloatLength(Axis::Horizontal, 1);

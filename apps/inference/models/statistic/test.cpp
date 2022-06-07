@@ -59,9 +59,7 @@ bool Test::canRejectNull() {
 }
 
 double Test::thresholdAbscissa(HypothesisParams::ComparisonOperator op) const {
-  if (op == HypothesisParams::ComparisonOperator::Different) {
-    return NAN;
-  }
+  assert(op != HypothesisParams::ComparisonOperator::Different);
   double x = cumulativeDistributiveInverseForProbability(threshold());
   return op == HypothesisParams::ComparisonOperator::Lower ? x : -x;
 }

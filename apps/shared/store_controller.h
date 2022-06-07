@@ -55,6 +55,7 @@ protected:
   static constexpr int k_titleCellType = 0;
   static constexpr int k_editableCellType = 1;
 
+  virtual bool deleteCellValue(int series, int col, int row);
   Escher::StackViewController * stackController() const override;
   Escher::Responder * tabController() const override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;

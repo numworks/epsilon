@@ -1,4 +1,5 @@
 #include "tree_cache.h"
+#include <assert.h>
 #include <string.h>
 
 namespace Poincare {
@@ -16,9 +17,7 @@ TreeBlock * TreeCache::treeForIdentifier(int id) {
 }
 
 int TreeCache::storeLastTree() {
-  if (m_nextIdentifier >= k_maxNumberOfCachedTrees) {
-    resetCache();
-  }
+  assert(m_nextIdentifier < k_maxNumberOfCachedTrees);
   TreeBlock * block = lastBlock();
   m_cachedTree[m_nextIdentifier++] = block;
   size_t numberOfCachedBlocks = lastBlock() - firstBlock();
@@ -26,29 +25,33 @@ int TreeCache::storeLastTree() {
   return m_nextIdentifier - 1;
 }
 
-bool TreeCache::copyTreeForEditing(int id) {
+TreeCache::Error TreeCache::copyTreeForEditing(int id) {
   if (m_nextIdentifier <= id) {
-    // TODO error
-    return false;
+    return Error::UninitializedIdentifier;
   }
   size_t treeSize = nextTree(m_cachedTree[id]) - m_cachedTree[id];
-  memcpy(lastBlock(), m_cachedTree[id], treeSize * sizeof(TreeBlock));
+  TreeBlock * copiedTree = m_cachedTree[id];
+  if (m_sandbox.size() < treeSize) {
+    bool reset = resetCache();
+    assert(reset); // the tree was at least already cached
+  }
+  memmove(lastBlock(), copiedTree, treeSize * sizeof(TreeBlock));
   m_sandbox.setNumberOfBlocks(treeSize);
-  return true;
+  return Error::None;
 }
 
 bool TreeCache::pushBlock(TreeBlock block) {
   if (!m_sandbox.pushBlock(block)) {
-    if (m_nextIdentifier == 0) {
-      // The cache has already been emptied
-      // TODO: trigger an exception checkpoint?
+    if (!resetCache()) {
       return false;
     }
+    // Reinitialize the sandbox with the previous content
     int nbOfSanboxBlocks = m_sandbox.lastBlock() - m_sandbox.firstBlock();
-    resetCache();
-    memcpy(m_pool, m_sandbox.firstBlock(), nbOfSanboxBlocks * sizeof(TreeBlock));
+    memmove(m_pool, m_sandbox.firstBlock(), nbOfSanboxBlocks * sizeof(TreeBlock));
     m_sandbox = TreeSandbox(lastBlock(), k_maxNumberOfBlocks);
     m_sandbox.setNumberOfBlocks(nbOfSanboxBlocks);
+
+    // Push new block
     m_sandbox.pushBlock(block);
   }
   return true;
@@ -60,8 +63,16 @@ TreeCache::TreeCache() :
 {
 }
 
-void TreeCache::resetCache() {
-  *this = TreeCache();
+bool TreeCache::resetCache() {
+  if (m_nextIdentifier == 0) {
+    // The cache has already been emptied
+    // TODO: trigger an exception checkpoint?
+    return false;
+  }
+  m_nextIdentifier = 0;
+  // Redefine sandbox without overriding its content since we might need it
+  m_sandbox = TreeSandbox(lastBlock(), k_maxNumberOfBlocks);
+  return true;
 }
 
 }

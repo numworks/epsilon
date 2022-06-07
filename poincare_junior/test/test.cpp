@@ -59,15 +59,37 @@ int main() {
   cache->pushBlock(TreeBlock(3));
 
   int treeId = cache->storeLastTree();
+  std::cout << "Cache Tree" << std::endl;
   printTreePool(cache);
 
   cache->copyTreeForEditing(treeId);
+  std::cout << "Edited Tree which has overflowed" << std::endl;
+  printTreePool(cache->sandbox());
+  std::cout << "Cache Tree" << std::endl;
+  printTreePool(cache);
+
+  cache->replaceBlock(cache->sandboxBlockAtIndex(6), AdditionBlock());
+  cache->replaceBlock(cache->sandboxBlockAtIndex(7), MultiplicationBlock());
+  cache->pushBlock(TreeBlock(4));
+  cache->pushBlock(TreeBlock(5));
+  cache->pushBlock(TreeBlock(6));
+  std::cout << "Edited Tree which has overflowed" << std::endl;
   printTreePool(cache->sandbox());
 
+#if 0
+  cache->replaceBlock(cache->sandboxBlockAtIndex(7), AdditionBlock());
+  cache->pushBlock(TreeBlock(4));
+  cache->pushBlock(TreeBlock(5));
+
+  std << "Edited Tree which has overflowed" << std::endl;
+  printTreePool(cache->sandbox());
+  std << "Cache Tree" << std::endl;
+  printTreePool(cache);
   cache->replaceBlock(cache->sandboxBlockAtIndex(3), TreeBlock(4));
   cache->replaceBlock(cache->sandboxBlockAtIndex(5), TreeBlock(5));
   cache->replaceBlock(cache->sandboxBlockAtIndex(7), TreeBlock(6));
   treeId = cache->storeLastTree();
 
   printTreePool(cache);
+#endif
 }

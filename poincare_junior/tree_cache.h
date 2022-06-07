@@ -8,11 +8,16 @@ namespace Poincare {
 
 class TreeCache final : public TreePool {
 public:
+  enum class Error {
+    UninitializedIdentifier,
+    None
+  };
+
   static TreeCache * sharedCache();
 
   TreeBlock * treeForIdentifier(int id);
   int storeLastTree();
-  bool copyTreeForEditing(int id);
+  Error copyTreeForEditing(int id);
 
   TreeBlock * sandboxBlockAtIndex(int i) { return m_sandbox.blockAtIndex(i); }
   void replaceBlock(TreeBlock * previousBlock, TreeBlock newBlock) { return m_sandbox.replaceBlock(previousBlock, newBlock); }
@@ -27,7 +32,7 @@ private:
   TreeCache();
   TreeBlock * firstBlock() override { return m_nextIdentifier == 0 ? nullptr : &m_pool[0]; }
   TreeBlock * lastBlock() override { return m_nextIdentifier == 0 ? &m_pool[0] : nextTree(m_cachedTree[m_nextIdentifier - 1]); }
-  void resetCache();
+  bool resetCache();
 
   TreeSandbox m_sandbox;
   TreeBlock m_pool[k_maxNumberOfBlocks];

@@ -21,6 +21,7 @@ public:
 
   TreeBlock * firstBlock() override { return m_firstBlock; }
   TreeBlock * lastBlock() override { return m_firstBlock + m_numberOfBlocks; }
+  size_t size() const { return m_size; }
   void setNumberOfBlocks(int numberOfBlocks) { m_numberOfBlocks = numberOfBlocks; }
 
 

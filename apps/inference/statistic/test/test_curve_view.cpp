@@ -1,5 +1,4 @@
 #include "test_curve_view.h"
-#include "inference/text_helpers.h"
 #include <poincare/absolute_value_layout.h>
 #include <poincare/code_point_layout.h>
 #include <algorithm>

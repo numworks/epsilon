@@ -333,10 +333,16 @@ Token Tokenizer::popToken() {
     return Token(Token::Bang);
   }
   if (c == '%') {
-    if (canPopCodePoint(UCodePointMultiplicationSign) || canPopCodePoint('*') || canPopCodePoint(UCodePointMiddleDot) || canPopCodePoint('/')) {
-      return Token(Token::PercentSimple);
+    static constexpr CodePoint k_percentAdditionNextCodePoints[] = {
+        0, ')', '+', ',', '-', '<', '=', '>', ']', '}', UCodePointRightSystemParenthesis, UCodePointRightwardsArrow };
+    static constexpr int codePointsTotal = sizeof(k_percentAdditionNextCodePoints) / sizeof(CodePoint);
+    CodePoint nc = nextCodePoint([](CodePoint, CodePoint) { return false; }, c, nullptr);
+    for (int i = 0; i < codePointsTotal; i++) {
+      if (nc == k_percentAdditionNextCodePoints[i]) {
+        return Token(Token::PercentAddition);
+      }
     }
-    return Token(Token::PercentAddition);
+    return Token(Token::PercentSimple);
   }
   if (c == '=') {
     return Token(Token::Equal);

@@ -173,13 +173,14 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             };
           }
         }
+        bool isIntegral = f->color() && area == ContinuousFunction::AreaType::None;
         // 2 - Draw the first curve
         drawCartesianCurve(ctx, rect, tCacheMin, tmax, xyFloatEvaluation,
                            f.operator->(), context(), f->color(), true,
                            record == m_selectedRecord, f->color(), m_highlightedStart,
                            m_highlightedEnd, xyDoubleEvaluation,
                            f->drawDottedCurve(), xyAreaBound,
-                           shouldColorAreaWhenNan, 1 << areaIndex, tCacheStep, axis);
+                           shouldColorAreaWhenNan, isIntegral ? -1 : 1 << areaIndex, tCacheStep, axis);
         if (hasTwoCurves) {
           /* Evaluations for the second cartesian curve, which is lesser than
            * the first one */

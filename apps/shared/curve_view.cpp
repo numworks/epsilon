@@ -680,7 +680,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, floa
     float secondaryCoordinate = axis == Axis::Horizontal ? y : x;
     Axis secondaryAxis = axis == Axis::Horizontal ? Axis::Vertical : Axis::Horizontal;
     if (colorUnderCurve && !std::isnan(mainCoordinate) && colorLowerBound < mainCoordinate && mainCoordinate < colorUpperBound && !(std::isnan(secondaryCoordinate) || std::isinf(secondaryCoordinate))) {
-      drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, std::min(0.0f, secondaryCoordinate), std::max(0.0f, secondaryCoordinate), colorOfFill, 1, 1, areaPattern);
+      drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, std::min(0.0f, secondaryCoordinate), std::max(0.0f, secondaryCoordinate), colorOfFill, 1, areaPattern >= 0 ? 1 : -1, areaPattern);
     }
     if (xyAreaBound && (shouldColorAreaWhenNan || !std::isnan(secondaryCoordinate))) {
       Coordinate2D<float> xyArea = xyAreaBound(t, model, context);

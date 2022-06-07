@@ -157,6 +157,11 @@ void Store::updateSeriesValidity(int series) {
   }
 }
 
+bool Store::updateSeries(int series, bool delayUpdate) {
+  m_recomputeCoefficients[series] = true;
+  return DoublePairStore::updateSeries(series, delayUpdate);
+}
+
 /* Calculations */
 
 void Store::updateCoefficients(int series, Poincare::Context * globalContext) {

@@ -36,8 +36,8 @@ private:
 class ListSampleStandardDeviation : public Expression {
 public:
   constexpr static const char * k_functionName = "samplestddev";
-  static constexpr FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &UntypedBuilderOneChild<ListSampleStandardDeviation>);
-  static constexpr FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &UntypedBuilderTwoChildren<ListSampleStandardDeviation>);
+  static constexpr FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &Initializer<ListSampleStandardDeviationNode<1>>, sizeof(ListSampleStandardDeviationNode<1>));
+  static constexpr FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &Initializer<ListSampleStandardDeviationNode<2>>, sizeof(ListSampleStandardDeviationNode<2>));
 
   ListSampleStandardDeviation(const ListSampleStandardDeviationNode<1> * n) : Expression(n) {}
   ListSampleStandardDeviation(const ListSampleStandardDeviationNode<2> * n) : Expression(n) {}

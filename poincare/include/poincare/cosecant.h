@@ -44,7 +44,7 @@ public:
   Cosecant(const CosecantNode * n) : Expression(n) {}
   static Cosecant Builder(Expression child) { return TreeHandle::FixedArityBuilder<Cosecant, CosecantNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("csc", 1, &UntypedBuilderOneChild<Cosecant>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("csc", 1, Initializer<CosecantNode>, sizeof(CosecantNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

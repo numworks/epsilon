@@ -52,7 +52,7 @@ public:
   Sine(const SineNode * n) : Expression(n) {}
   static Sine Builder(Expression child) { return TreeHandle::FixedArityBuilder<Sine, SineNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sin", 1, &UntypedBuilderOneChild<Sine>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sin", 1, Initializer<SineNode>, sizeof(SineNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

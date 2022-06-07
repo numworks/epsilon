@@ -31,7 +31,7 @@ private:
 
 class ListSum : public Expression {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("sum", 1, &UntypedBuilderOneChild<ListSum>);
+  static constexpr FunctionHelper s_functionHelper = FunctionHelper("sum", 1, &Initializer<ListSumNode>, sizeof(ListSumNode));
 
   ListSum(const ListSumNode * n) : Expression(n) {}
   static ListSum Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListSum, ListSumNode>({list}); }

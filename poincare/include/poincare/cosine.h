@@ -51,7 +51,7 @@ public:
   Cosine(const CosineNode * n) : Expression(n) {}
   static Cosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<Cosine, CosineNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cos", 1, &UntypedBuilderOneChild<Cosine>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cos", 1, Initializer<CosineNode>, sizeof(CosineNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

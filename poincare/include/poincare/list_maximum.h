@@ -31,7 +31,7 @@ private:
 
 class ListMaximum : public Expression {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("max", 1, &UntypedBuilderOneChild<ListMaximum>);
+  static constexpr FunctionHelper s_functionHelper = FunctionHelper("max", 1, &Initializer<ListMaximumNode>, sizeof(ListMaximumNode));
 
   ListMaximum(const ListMaximumNode * n) : Expression(n) {}
   static ListMaximum Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListMaximum, ListMaximumNode>({list}); }

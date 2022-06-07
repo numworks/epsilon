@@ -44,7 +44,7 @@ public:
   ArcCosecant(const ArcCosecantNode * n) : Expression(n) {}
   static ArcCosecant Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCosecant, ArcCosecantNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acsc", 1, &UntypedBuilderOneChild<ArcCosecant>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acsc", 1, Initializer<ArcCosecantNode>, sizeof(ArcCosecantNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

@@ -36,8 +36,8 @@ private:
 class ListMean : public Expression {
 public:
   constexpr static const char * k_functionName = "mean";
-  constexpr static FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &UntypedBuilderOneChild<ListMean>);
-  constexpr static FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &UntypedBuilderTwoChildren<ListMean>);
+  constexpr static FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &Initializer<ListMeanNode<1>>, sizeof(ListMeanNode<1>));
+  constexpr static FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &Initializer<ListMeanNode<2>>, sizeof(ListMeanNode<2>));
 
   ListMean(const ListMeanNode<1> * n) : Expression(n) {}
   ListMean(const ListMeanNode<2> * n) : Expression(n) {}

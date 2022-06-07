@@ -54,7 +54,7 @@ class Logarithm final : public Expression {
 public:
   Logarithm(const LogarithmNode<2> * n) : Expression(n) {}
   static Logarithm Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2>>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 2, &UntypedBuilderTwoChildren<Logarithm>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 2, Initializer<LogarithmNode<2>>, sizeof(LogarithmNode<2>));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
@@ -74,7 +74,7 @@ public:
   CommonLogarithm(const LogarithmNode<1> * n) : Expression(n) {}
   static CommonLogarithm Builder(Expression child) { return TreeHandle::FixedArityBuilder<CommonLogarithm, LogarithmNode<1>>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 1, &UntypedBuilderOneChild<CommonLogarithm>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 1, Initializer<LogarithmNode<1>>, sizeof(LogarithmNode<1>));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

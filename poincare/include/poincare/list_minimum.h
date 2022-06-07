@@ -31,7 +31,7 @@ private:
 
 class ListMinimum : public Expression {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("min", 1, &UntypedBuilderOneChild<ListMinimum>);
+  static constexpr FunctionHelper s_functionHelper = FunctionHelper("min", 1, &Initializer<ListMinimumNode>, sizeof(ListMinimumNode));
   ListMinimum(const ListMinimumNode * n) : Expression(n) {}
   static ListMinimum Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListMinimum, ListMinimumNode>({list}); }
 

@@ -38,7 +38,7 @@ public:
   MatrixTranspose(const MatrixTransposeNode * n) : Expression(n) {}
   static MatrixTranspose Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTransposeNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("transpose", 1, &UntypedBuilderOneChild<MatrixTranspose>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("transpose", 1, Initializer<MatrixTransposeNode>, sizeof(MatrixTransposeNode));
 
   Expression shallowReduce(Context * context);
 };

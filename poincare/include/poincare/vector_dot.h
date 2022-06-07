@@ -38,7 +38,7 @@ public:
   VectorDot(const VectorDotNode * n) : Expression(n) {}
   static VectorDot Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<VectorDot, VectorDotNode>({child0, child1}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dot", 2, &UntypedBuilderTwoChildren<VectorDot>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dot", 2, Initializer<VectorDotNode>, sizeof(VectorDotNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

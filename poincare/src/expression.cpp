@@ -1187,6 +1187,24 @@ Coordinate2D<double> Expression::nextIntersection(const char * symbol, double st
   return Coordinate2D<double>(resultX, approximateWithValueForSymbol(symbol, resultX, context, complexFormat, angleUnit));
 }
 
+static Expression maker(Expression children, int nbChildren, ExpressionNode * (* const initializer)(void *), size_t size) {
+  assert(children.type() == ExpressionNode::Type::List);
+  TreeHandle handle = TreeHandle::Builder(reinterpret_cast<TreeNode * (* const)(void *)>(initializer), size);
+  Expression result = static_cast<Expression &>(handle);
+  for (size_t i = 0; i<nbChildren; i++) {
+    result.replaceChildAtIndexInPlace(i, children.childAtIndex(i));
+  }
+  return result;
+}
+
+Expression Expression::FunctionHelper::build(Expression children) const {
+  if (m_untypedBuilder) {
+    return (*m_untypedBuilder)(children);
+  }
+  return maker(children, m_numberOfChildren, m_initializer, m_size);
+}
+
+
 template Expression Expression::approximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;
 template Expression Expression::approximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;
 

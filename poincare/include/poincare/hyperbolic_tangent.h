@@ -44,7 +44,7 @@ public:
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tanh", 1, &UntypedBuilderOneChild<HyperbolicTangent>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tanh", 1, Initializer<HyperbolicTangentNode>, sizeof(HyperbolicTangentNode));
 };
 
 }

@@ -50,7 +50,7 @@ public:
   Tangent(const TangentNode * n) : Expression(n) {}
   static Tangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<Tangent, TangentNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tan", 1, &UntypedBuilderOneChild<Tangent>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tan", 1, Initializer<TangentNode>, sizeof(TangentNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

@@ -32,7 +32,7 @@ private:
 class ListSort : public Expression {
 public:
   constexpr static bool k_nanIsGreatest = true;
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("sort", 1, &UntypedBuilderOneChild<ListSort>);
+  static constexpr FunctionHelper s_functionHelper = FunctionHelper("sort", 1, &Initializer<ListSortNode>, sizeof(ListSortNode));
 
   ListSort(const ListSortNode * n) : Expression(n) {}
   static ListSort Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListSort, ListSortNode>({list}); }

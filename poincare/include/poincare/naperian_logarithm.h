@@ -50,7 +50,7 @@ public:
   NaperianLogarithm(const NaperianLogarithmNode * n) : Expression(n) {}
   static NaperianLogarithm Builder(Expression child) { return TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ln", 1, &UntypedBuilderOneChild<NaperianLogarithm>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ln", 1, Initializer<NaperianLogarithmNode>, sizeof(NaperianLogarithmNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

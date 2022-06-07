@@ -51,7 +51,7 @@ public:
   AbsoluteValue(const AbsoluteValueNode * n) : Expression(n) {}
   static AbsoluteValue Builder(Expression child) { return TreeHandle::FixedArityBuilder<AbsoluteValue, AbsoluteValueNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, &UntypedBuilderOneChild<AbsoluteValue>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, Initializer<AbsoluteValueNode>, sizeof(AbsoluteValueNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);

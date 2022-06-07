@@ -421,9 +421,11 @@ bool Tokenizer::followingStringIsIntegersFraction() {
   bool hasSlash = false;
   int numberOfOpenedParenthesis = 0;
   // Rewind from 1 codePoint to get the eventual LeftSystemParenthesis
-  CodePoint c = m_decoder.previousCodePoint();
+  m_decoder.previousCodePoint();
+  CodePoint c = m_decoder.nextCodePoint();
   while(c.isDecimalDigit()
       || (c == '/' && !hasSlash)
+      || c == UCodePointEmpty
       || c == UCodePointLeftSystemParenthesis
       || (numberOfOpenedParenthesis > 0 && c == UCodePointRightSystemParenthesis)
       ){
@@ -448,7 +450,8 @@ bool Tokenizer::followingStringIsIntegersFraction() {
       || c == UCodePointMiddleDot)
     && hasSlash) {
     // Rememeber the end of the mixed fraction
-    m_endOfMixedFractionIndex = m_decoder.stringPosition() - 1;
+    m_decoder.previousCodePoint();
+    m_endOfMixedFractionIndex = m_decoder.stringPosition();
     result = true;
   }
   m_decoder.setPosition(start);

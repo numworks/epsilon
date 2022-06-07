@@ -64,21 +64,11 @@ Expression MixedFraction::CreateMixedFractionFromIntegers(const Integer & num, c
   denomPositive.setNegative(false);
   Expression quo = DivisionQuotient::Reduce(numPositive, denomPositive);
   Expression rem = DivisionRemainder::Reduce(numPositive, denomPositive);
-  Expression mixedFraction = BuildMixedFractionDependingOnPreferences(quo, Division::Builder(rem, Rational::Builder(denomPositive)));
+  Expression mixedFraction = Builder(quo, Division::Builder(rem, Rational::Builder(denomPositive)));
   if (num.isNegative() != denom.isNegative()) {
-    if (mixedFraction.type() == ExpressionNode::Type::Addition) {
-      mixedFraction = Parenthesis::Builder(mixedFraction);
-    }
     mixedFraction = Opposite::Builder(mixedFraction);
   }
   return mixedFraction;
-}
-
-Expression MixedFraction::BuildMixedFractionDependingOnPreferences(Expression integerPart, Expression fractionPart) {
-  if (Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
-    return MixedFraction::Builder(integerPart, fractionPart);
-  }
-  return Addition::Builder(integerPart, fractionPart);
 }
 
 }

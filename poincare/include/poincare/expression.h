@@ -316,6 +316,9 @@ public:
    * calling this function. */
   int lengthOfListChildren() const;
 
+  // Mixed fractions
+  Expression convertMixedFractionIntoAdditionDependingOnCountry();
+
   /* Approximation Helper */
   // These methods reset the sApproximationEncounteredComplex flag. They should not be use to implement node approximation
   template<typename U> Expression approximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;

@@ -709,7 +709,7 @@ bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
       // The following expression looks like "int/int"
       && m_tokenizer.followingStringIsIntegersFraction()) {
     Expression rightHandSide = parseUntil(Token::MixedFractionEnd);
-    leftHandSide = MixedFraction::BuildMixedFractionDependingOnPreferences(leftHandSide, rightHandSide);
+    leftHandSide = MixedFraction::Builder(leftHandSide, rightHandSide);
     // Pop Token::MixedFractionEnd
     popToken();
     return true;

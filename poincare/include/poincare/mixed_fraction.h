@@ -46,7 +46,6 @@ public:
   Expression shallowReduce(ExpressionNode::ReductionContext context);
 
   static Expression CreateMixedFractionFromIntegers(const Integer & num, const Integer & denom);
-  static Expression BuildMixedFractionDependingOnPreferences(Expression integerPart, Expression fractionPart);
 
 };
 

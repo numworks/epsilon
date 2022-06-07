@@ -75,7 +75,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   float upBound = pixelToFloat(Axis::Vertical, k_verticalSideSize);
 
   // Draw each unselected calculations
-  int myNumberOfBoxPlotCalculations = m_store->numberOfBoxPlotCalculations(m_series);
+  const int myNumberOfBoxPlotCalculations = m_store->numberOfBoxPlotCalculations(m_series);
   for (int i = 0; i < myNumberOfBoxPlotCalculations; i++) {
     KDColor calculationColor = k_unfocusedColor;
     if (isMainViewSelected()) {

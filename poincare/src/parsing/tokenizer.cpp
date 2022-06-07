@@ -423,32 +423,38 @@ bool Tokenizer::followingStringIsIntegersFraction() {
   // Rewind from 1 codePoint to get the eventual LeftSystemParenthesis
   m_decoder.previousCodePoint();
   CodePoint c = m_decoder.nextCodePoint();
-  while(c.isDecimalDigit()
-      || (c == '/' && !hasSlash)
-      || c == UCodePointEmpty
-      || c == UCodePointLeftSystemParenthesis
-      || (numberOfOpenedParenthesis > 0 && c == UCodePointRightSystemParenthesis)
-      ){
+  // Indicate to stop searching after final parenthesis.
+  bool waitForFinalSystemParenthesis = false;
+  if (c == UCodePointLeftSystemParenthesis) {
+    waitForFinalSystemParenthesis = true;
+    numberOfOpenedParenthesis++;
+    c = m_decoder.nextCodePoint();
+  }
+  /* The first condition is to ensure it stops searching when reaching
+   * the final parenthesis.
+   * */
+  while((!waitForFinalSystemParenthesis || numberOfOpenedParenthesis > 0)
+      && (c.isDecimalDigit()
+        || (c == '/' && !hasSlash)
+        || c == UCodePointEmpty
+        || c == UCodePointLeftSystemParenthesis
+        || (c == UCodePointRightSystemParenthesis && numberOfOpenedParenthesis > 0)
+      )){
     if (c == '/') {
       hasSlash = true;
     } else if (c == UCodePointLeftSystemParenthesis) {
       numberOfOpenedParenthesis++;
     } else if (c == UCodePointRightSystemParenthesis) {
       numberOfOpenedParenthesis--;
+      if (waitForFinalSystemParenthesis && numberOfOpenedParenthesis == 0) {
+        c = m_decoder.nextCodePoint();
+        break;
+      }
     }
     c = m_decoder.nextCodePoint();
   }
   bool result = false;
-  // The mixed-fraction can only be followed by:
-  if ((c == 0 // End of line
-      || c == UCodePointRightSystemParenthesis
-      || c == ')' // Parenthesis
-      || c == '+' // Addition
-      || c == '-' // Subtraction
-      || c == '/'
-      || c == UCodePointMultiplicationSign // Multiplication
-      || c == UCodePointMiddleDot)
-    && hasSlash) {
+  if (hasSlash && numberOfOpenedParenthesis == 0) {
     // Rememeber the end of the mixed fraction
     m_decoder.previousCodePoint();
     m_endOfMixedFractionIndex = m_decoder.stringPosition();

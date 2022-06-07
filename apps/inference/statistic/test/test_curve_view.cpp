@@ -67,12 +67,12 @@ void TestCurveView::colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisPara
 
   float xStart, xEnd;
   if (op == HypothesisParams::ComparisonOperator::Higher) {
-    xStart = z;
+    xStart = std::max(z, curveViewRange()->xMin());
     xEnd = curveViewRange()->xMax();
   } else {
     assert(op == HypothesisParams::ComparisonOperator::Lower);
     xStart = curveViewRange()->xMin();
-    xEnd = z;
+    xEnd = std::min(z, curveViewRange()->xMax());
   }
 
   float xStep = pixelLengthToFloatLength(Axis::Horizontal, 1);

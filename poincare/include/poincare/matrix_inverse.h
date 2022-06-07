@@ -38,7 +38,7 @@ public:
   MatrixInverse(const MatrixInverseNode * n) : Expression(n) {}
   static MatrixInverse Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("inverse", 1, &UntypedBuilderOneChild<MatrixInverse>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("inverse", 1, Initializer<MatrixInverseNode>, sizeof(MatrixInverseNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

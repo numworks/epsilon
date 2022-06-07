@@ -54,7 +54,7 @@ public:
   ArcCosine(const ArcCosineNode * n) : Expression(n) {}
   static ArcCosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acos", 1, &UntypedBuilderOneChild<ArcCosine>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acos", 1, Initializer<ArcCosineNode>, sizeof(ArcCosineNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

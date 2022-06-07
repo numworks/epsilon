@@ -39,7 +39,7 @@ class BinomialCoefficient final : public Expression {
 public:
   BinomialCoefficient(const BinomialCoefficientNode * n) : Expression(n) {}
   static BinomialCoefficient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<BinomialCoefficient, BinomialCoefficientNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("binomial", 2, &UntypedBuilderTwoChildren<BinomialCoefficient>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("binomial", 2, Initializer<BinomialCoefficientNode>, sizeof(BinomialCoefficientNode));
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

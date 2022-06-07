@@ -29,7 +29,7 @@ class MatrixRowEchelonForm final : public MatrixEchelonForm {
 public:
   MatrixRowEchelonForm(const MatrixRowEchelonFormNode * n) : MatrixEchelonForm(n) {}
   static MatrixRowEchelonForm Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixRowEchelonForm, MatrixRowEchelonFormNode>({child}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ref", MatrixEchelonFormNode::sNumberOfChildren, &UntypedBuilderOneChild<MatrixRowEchelonForm>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ref", MatrixEchelonFormNode::sNumberOfChildren, Initializer<MatrixRowEchelonFormNode>, sizeof(MatrixRowEchelonFormNode));
 };
 
 }

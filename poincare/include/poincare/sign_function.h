@@ -48,7 +48,7 @@ public:
   SignFunction(const SignFunctionNode * n) : Expression(n) {}
   static SignFunction Builder(Expression child) { return TreeHandle::FixedArityBuilder<SignFunction, SignFunctionNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sign", 1, &UntypedBuilderOneChild<SignFunction>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sign", 1, Initializer<SignFunctionNode>, sizeof(SignFunctionNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);

@@ -211,6 +211,12 @@ TreeHandle TreeHandle::Builder() {
   return TreeHandle::BuildWithGhostChildren(node);
 }
 
+TreeHandle TreeHandle::Builder(TreeNode * (* const initializer)(void *), size_t size) {
+  void * bufferNode = TreePool::sharedPool()->alloc(size);
+  TreeNode * node = initializer(bufferNode);
+  return TreeHandle::BuildWithGhostChildren(node);
+}
+
 template <class T, class U>
 T TreeHandle::NAryBuilder(const Tuple & children) {
   TreeHandle h = Builder<U>();

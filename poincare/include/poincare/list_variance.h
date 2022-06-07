@@ -36,8 +36,8 @@ private:
 class ListVariance : public Expression {
 public:
   constexpr static const char * k_functionName = "var";
-  constexpr static FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &UntypedBuilderOneChild<ListVariance>);
-  constexpr static FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &UntypedBuilderTwoChildren<ListVariance>);
+  constexpr static FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &Initializer<ListVarianceNode<1>>, sizeof(ListVarianceNode<1>));
+  constexpr static FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &Initializer<ListVarianceNode<2>>, sizeof(ListVarianceNode<2>));
 
   ListVariance(const ListVarianceNode<1> * n) : Expression(n) {}
   ListVariance(const ListVarianceNode<2> * n) : Expression(n) {}

@@ -39,7 +39,7 @@ public:
   Determinant(const DeterminantNode * n) : Expression(n) {}
   static Determinant Builder(Expression child) { return TreeHandle::FixedArityBuilder<Determinant, DeterminantNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, &UntypedBuilderOneChild<Determinant>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, Initializer<DeterminantNode>, sizeof(DeterminantNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

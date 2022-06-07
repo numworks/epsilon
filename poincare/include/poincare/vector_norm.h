@@ -38,7 +38,7 @@ public:
   VectorNorm(const VectorNormNode * n) : Expression(n) {}
   static VectorNorm Builder(Expression child) { return TreeHandle::FixedArityBuilder<VectorNorm, VectorNormNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("norm", 1, &UntypedBuilderOneChild<VectorNorm>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("norm", 1, Initializer<VectorNormNode>, sizeof(VectorNormNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

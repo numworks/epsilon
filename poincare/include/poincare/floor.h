@@ -44,7 +44,7 @@ public:
   Floor(const FloorNode * n) : Expression(n) {}
   static Floor Builder(Expression child) { return TreeHandle::FixedArityBuilder<Floor, FloorNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("floor", 1, &UntypedBuilderOneChild<Floor>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("floor", 1, Initializer<FloorNode>, sizeof(FloorNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

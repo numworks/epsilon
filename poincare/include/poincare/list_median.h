@@ -38,8 +38,8 @@ friend class ListMedianNode<1>;
 friend class ListMedianNode<2>;
 public:
   constexpr static const char * k_functionName = "med";
-  static constexpr FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &UntypedBuilderOneChild<ListMedian>);
-  static constexpr FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &UntypedBuilderTwoChildren<ListMedian>);
+  static constexpr FunctionHelper s_functionHelperOneChild = FunctionHelper(k_functionName, 1, &Initializer<ListMedianNode<1>>, sizeof(ListMedianNode<1>));
+  static constexpr FunctionHelper s_functionHelperTwoChildren = FunctionHelper(k_functionName, 2, &Initializer<ListMedianNode<2>>, sizeof(ListMedianNode<2>));
 
   ListMedian(const ListMedianNode<1> * n) : Expression(n) {}
   ListMedian(const ListMedianNode<2> * n) : Expression(n) {}

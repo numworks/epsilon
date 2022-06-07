@@ -42,7 +42,7 @@ class DivisionQuotient final : public Expression {
 public:
   DivisionQuotient(const DivisionQuotientNode * n) : Expression(n) {}
   static DivisionQuotient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("quo", 2, &UntypedBuilderTwoChildren<DivisionQuotient>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("quo", 2, Initializer<DivisionQuotientNode>, sizeof(DivisionQuotientNode));
 
   template <typename T>
   static T TemplatedQuotient(T a, T b) { return b >= 0 ? std::floor(a/b) : -std::floor(a/(-b)); }

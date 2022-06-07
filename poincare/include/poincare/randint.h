@@ -47,7 +47,7 @@ friend class RandintNode;
 public:
   Randint(const RandintNode * n) : Expression(n) {}
   static Randint Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Randint, RandintNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("randint", 2, &UntypedBuilderTwoChildren<Randint>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("randint", 2, Initializer<RandintNode>, sizeof(RandintNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

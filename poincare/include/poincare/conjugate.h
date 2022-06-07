@@ -46,7 +46,7 @@ public:
   Conjugate(const ConjugateNode * n) : Expression(n) {}
   static Conjugate Builder(Expression child) { return TreeHandle::FixedArityBuilder<Conjugate, ConjugateNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("conj", 1, &UntypedBuilderOneChild<Conjugate>);;
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("conj", 1, Initializer<ConjugateNode>, sizeof(ConjugateNode));;
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

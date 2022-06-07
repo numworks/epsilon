@@ -44,7 +44,7 @@ public:
   Cotangent(const CotangentNode * n) : Expression(n) {}
   static Cotangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<Cotangent, CotangentNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cot", 1, &UntypedBuilderOneChild<Cotangent>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cot", 1, Initializer<CotangentNode>, sizeof(CotangentNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

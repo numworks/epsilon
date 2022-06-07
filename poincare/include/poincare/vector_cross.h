@@ -38,7 +38,7 @@ public:
   VectorCross(const VectorCrossNode * n) : Expression(n) {}
   static VectorCross Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<VectorCross, VectorCrossNode>({child0, child1}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cross", 2, &UntypedBuilderTwoChildren<VectorCross>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cross", 2, Initializer<VectorCrossNode>, sizeof(VectorCrossNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

@@ -337,14 +337,24 @@ public:
     constexpr FunctionHelper(const char * name, const int numberOfChildren, Expression (* const builder)(Expression)) :
       m_name(name),
       m_numberOfChildren(numberOfChildren),
-      m_untypedBuilder(builder) {}
+      m_untypedBuilder(builder),
+      m_initializer(nullptr),
+      m_size(0) {}
+    constexpr FunctionHelper(const char * name, const int numberOfChildren, ExpressionNode * (* const initializer)(void *), size_t size) :
+      m_name(name),
+      m_numberOfChildren(numberOfChildren),
+      m_untypedBuilder(nullptr),
+      m_initializer(initializer),
+      m_size(size) {}
     constexpr const char * name() const { return m_name; }
     int numberOfChildren() const { return m_numberOfChildren; }
-    Expression build(Expression children) const { return (*m_untypedBuilder)(children); }
+    Expression build(Expression children) const;
   private:
     const char * m_name;
     const int m_numberOfChildren;
     Expression (* const m_untypedBuilder)(Expression children);
+    ExpressionNode * (* const m_initializer)(void *);
+    const size_t m_size;
   };
 
   /* Tuple */
@@ -353,6 +363,12 @@ public:
 protected:
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
   Expression(int nodeIdentifier) : TreeHandle(nodeIdentifier) {}
+
+  template<typename T>
+  static ExpressionNode * Initializer(void * buffer) {
+    return new (buffer) T;
+  }
+
   template<typename U>
   static Expression UntypedBuilderOneChild(Expression children) {
     assert(children.type() == ExpressionNode::Type::List);

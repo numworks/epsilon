@@ -44,7 +44,7 @@ public:
   Secant(const SecantNode * n) : Expression(n) {}
   static Secant Builder(Expression child) { return TreeHandle::FixedArityBuilder<Secant, SecantNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sec", 1, &UntypedBuilderOneChild<Secant>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sec", 1, Initializer<SecantNode>, sizeof(SecantNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

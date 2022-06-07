@@ -45,7 +45,7 @@ public:
   ArcCotangent(const ArcCotangentNode * n) : Expression(n) {}
   static ArcCotangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCotangent, ArcCotangentNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acot", 1, &UntypedBuilderOneChild<ArcCotangent>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acot", 1, Initializer<ArcCotangentNode>, sizeof(ArcCotangentNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

@@ -47,7 +47,7 @@ public:
   ImaginaryPart(const ImaginaryPartNode * n) : Expression(n) {}
   static ImaginaryPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<ImaginaryPart, ImaginaryPartNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("im", 1, &UntypedBuilderOneChild<ImaginaryPart>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("im", 1, Initializer<ImaginaryPartNode>, sizeof(ImaginaryPartNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

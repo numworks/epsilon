@@ -39,7 +39,7 @@ class NthRoot final : public Expression {
 public:
   NthRoot(const NthRootNode * n) : Expression(n) {}
   static NthRoot Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("root", 2, &UntypedBuilderTwoChildren<NthRoot>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("root", 2, Initializer<NthRootNode>, sizeof(NthRootNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

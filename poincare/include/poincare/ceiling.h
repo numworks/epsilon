@@ -43,7 +43,7 @@ public:
   Ceiling(const CeilingNode * n) : Expression(n) {}
   static Ceiling Builder(Expression child) { return TreeHandle::FixedArityBuilder<Ceiling, CeilingNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ceil", 1, &UntypedBuilderOneChild<Ceiling>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ceil", 1, Initializer<CeilingNode>, sizeof(CeilingNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

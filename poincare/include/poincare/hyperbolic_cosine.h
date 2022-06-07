@@ -46,7 +46,7 @@ public:
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cosh", 1, &UntypedBuilderOneChild<HyperbolicCosine>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cosh", 1, Initializer<HyperbolicCosineNode>, sizeof(HyperbolicCosineNode));
 };
 
 }

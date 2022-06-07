@@ -39,7 +39,7 @@ public:
   Dimension(const DimensionNode * n) : Expression(n) {}
   static Dimension Builder(Expression child) { return TreeHandle::FixedArityBuilder<Dimension, DimensionNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, &UntypedBuilderOneChild<Dimension>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, Initializer<DimensionNode>, sizeof(DimensionNode));
 
   Expression shallowReduce(Context * context);
 };

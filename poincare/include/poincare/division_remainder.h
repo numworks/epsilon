@@ -44,7 +44,7 @@ class DivisionRemainder final : public Expression {
 public:
   DivisionRemainder(const DivisionRemainderNode * n) : Expression(n) {}
   static DivisionRemainder Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<DivisionRemainder, DivisionRemainderNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("rem", 2, &UntypedBuilderTwoChildren<DivisionRemainder>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("rem", 2, Initializer<DivisionRemainderNode>, sizeof(DivisionRemainderNode));
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

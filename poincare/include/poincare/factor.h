@@ -43,7 +43,7 @@ public:
   Factor(const FactorNode * n) : Expression(n) {}
   static Factor Builder(Expression child) { return TreeHandle::FixedArityBuilder<Factor, FactorNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("factor", 1, &UntypedBuilderOneChild<Factor>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("factor", 1, Initializer<FactorNode>, sizeof(FactorNode));
 
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i) const;
 

@@ -44,7 +44,7 @@ public:
   ArcSecant(const ArcSecantNode * n) : Expression(n) {}
   static ArcSecant Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcSecant, ArcSecantNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("asec", 1, &UntypedBuilderOneChild<ArcSecant>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("asec", 1, Initializer<ArcSecantNode>, sizeof(ArcSecantNode));
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

@@ -38,7 +38,7 @@ public:
   HyperbolicArcSine(const HyperbolicArcSineNode * n) : HyperbolicTrigonometricFunction(n) {}
   static HyperbolicArcSine Builder(Expression child) { return TreeHandle::FixedArityBuilder<HyperbolicArcSine, HyperbolicArcSineNode>({child}); }
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("asinh", 1, &UntypedBuilderOneChild<HyperbolicArcSine>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("asinh", 1, Initializer<HyperbolicArcSineNode>, sizeof(HyperbolicArcSineNode));
 };
 
 }

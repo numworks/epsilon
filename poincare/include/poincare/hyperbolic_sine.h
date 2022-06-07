@@ -44,7 +44,7 @@ public:
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sinh", 1, &UntypedBuilderOneChild<HyperbolicSine>);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sinh", 1, Initializer<HyperbolicSineNode>, sizeof(HyperbolicSineNode));
 };
 
 }

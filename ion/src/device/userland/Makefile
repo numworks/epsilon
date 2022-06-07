@@ -1,6 +1,8 @@
 ion_device_userland_src += $(addprefix ion/src/device/userland/boot/, \
   isr.cpp \
   rt0.cpp \
+  rt0_standalone.cpp:+n0100 \
+  rt0_bootloader.cpp:-n0100 \
 )
 
 ion_device_userland_src += $(addprefix ion/src/device/userland/drivers/, \

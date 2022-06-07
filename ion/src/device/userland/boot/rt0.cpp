@@ -1,8 +1,7 @@
 #include "isr.h"
-#include <shared/boot/rt0.h>
 #include <ion.h>
 #include <config/board.h>
-#include <shared/drivers/usb.h>
+#include <shared/drivers/board.h>
 
 extern "C" {
   void abort();
@@ -16,12 +15,3 @@ void abort() {
   }
 #endif
 }
-
-void __attribute__((noinline)) start() {
-  Ion::Device::Init::configureRAM();
-  // Initialize slotInfo to be accessible to Kernel
-  Ion::Device::USB::slotInfo();
-  ion_main(0, nullptr);
-  abort();
-}
-

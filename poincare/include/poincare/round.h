@@ -8,6 +8,7 @@ namespace Poincare {
 
 class RoundNode final : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "round";
 
   // TreeNode
   size_t size() const override { return sizeof(RoundNode); }
@@ -36,12 +37,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Round final : public Expression {
+class Round final : public HandleTwoChildren<Round, RoundNode> {
 public:
-  Round(const RoundNode * n) : Expression(n) {}
-  static Round Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Round, RoundNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("round", 2, Initializer<RoundNode>, sizeof(RoundNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

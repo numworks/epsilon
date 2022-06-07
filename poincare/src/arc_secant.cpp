@@ -9,8 +9,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper ArcSecant::s_functionHelper;
-
 int ArcSecantNode::numberOfChildren() const { return ArcSecant::s_functionHelper.numberOfChildren(); }
 
 template<typename T>

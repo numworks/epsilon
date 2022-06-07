@@ -7,6 +7,7 @@ namespace Poincare {
 
 class DimensionNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "dim";
 
   // TreeNode
   size_t size() const override { return sizeof(DimensionNode); }
@@ -34,13 +35,9 @@ private:
  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Dimension final : public Expression {
+class Dimension final : public HandleOneChild<Dimension, DimensionNode> {
 public:
-  Dimension(const DimensionNode * n) : Expression(n) {}
-  static Dimension Builder(Expression child) { return TreeHandle::FixedArityBuilder<Dimension, DimensionNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, Initializer<DimensionNode>, sizeof(DimensionNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(Context * context);
 };
 

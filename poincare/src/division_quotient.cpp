@@ -11,8 +11,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper DivisionQuotient::s_functionHelper;
-
 int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::s_functionHelper.numberOfChildren(); }
 
 ExpressionNode::Sign DivisionQuotientNode::sign(Context * context) const {

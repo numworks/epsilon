@@ -7,6 +7,7 @@ namespace Poincare {
 
 class MatrixTransposeNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "transpose";
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixTransposeNode); }
@@ -33,13 +34,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class MatrixTranspose final : public Expression {
+class MatrixTranspose final : public HandleOneChild<MatrixTranspose, MatrixTransposeNode> {
 public:
-  MatrixTranspose(const MatrixTransposeNode * n) : Expression(n) {}
-  static MatrixTranspose Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTransposeNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("transpose", 1, Initializer<MatrixTransposeNode>, sizeof(MatrixTransposeNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(Context * context);
 };
 

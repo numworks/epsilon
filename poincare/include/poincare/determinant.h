@@ -7,6 +7,7 @@ namespace Poincare {
 
 class DeterminantNode /*final*/ : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "det";
 
   // TreeNode
   size_t size() const override { return sizeof(DeterminantNode); }
@@ -34,13 +35,9 @@ private:
 };
 
 
-class Determinant final : public Expression {
+class Determinant final : public HandleOneChild<Determinant, DeterminantNode> {
 public:
-  Determinant(const DeterminantNode * n) : Expression(n) {}
-  static Determinant Builder(Expression child) { return TreeHandle::FixedArityBuilder<Determinant, DeterminantNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, Initializer<DeterminantNode>, sizeof(DeterminantNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

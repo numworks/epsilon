@@ -11,6 +11,7 @@ namespace Poincare {
 class ArcCosineNode final : public ExpressionNode {
 friend class ArcSecantNode;
 public:
+  static constexpr char functionName[] = "acos";
 
   // TreeNode
   size_t size() const override { return sizeof(ArcCosineNode); }
@@ -49,13 +50,9 @@ private:
   }
 };
 
-class ArcCosine final : public Expression {
+class ArcCosine final : public HandleOneChild<ArcCosine, ArcCosineNode> {
 public:
-  ArcCosine(const ArcCosineNode * n) : Expression(n) {}
-  static ArcCosine Builder(Expression child) { return TreeHandle::FixedArityBuilder<ArcCosine, ArcCosineNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acos", 1, Initializer<ArcCosineNode>, sizeof(ArcCosineNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);

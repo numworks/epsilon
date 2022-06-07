@@ -8,6 +8,7 @@ namespace Poincare {
 
 class RandomNode final : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "random";
 
   // TreeNode
   size_t size() const override { return sizeof(RandomNode); }
@@ -40,11 +41,10 @@ private:
   template <typename T> Evaluation<T> templateApproximate() const;
 };
 
-class Random final : public Expression {
+class Random final : public HandleOneChild<Random, RandomNode> {
 friend class RandomNode;
 public:
-  Random(const RandomNode * n) : Expression(n) {}
-  static Random Builder() { return TreeHandle::FixedArityBuilder<Random, RandomNode>(); }
+  using Handle::Handle, Handle::Builder;
   static Expression UntypedBuilder(Expression children) { assert(children.type() == ExpressionNode::Type::List); return Builder(); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("random", 0, &UntypedBuilder);
 

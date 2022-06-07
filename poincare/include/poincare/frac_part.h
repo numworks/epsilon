@@ -8,6 +8,7 @@ namespace Poincare {
 
 class FracPartNode final : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "frac";
 
   // TreeNode
   size_t size() const override { return sizeof(FracPartNode); }
@@ -41,15 +42,9 @@ private:
   }
 };
 
-class FracPart final : public Expression {
+class FracPart final : public HandleOneChild<FracPart, FracPartNode> {
 public:
-  FracPart(const FracPartNode * n) : Expression(n) {}
-  static FracPart Builder(Expression child) {
-    return TreeHandle::FixedArityBuilder<FracPart, FracPartNode>({child});
-  }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("frac", 1, Initializer<FracPartNode>, sizeof(FracPartNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

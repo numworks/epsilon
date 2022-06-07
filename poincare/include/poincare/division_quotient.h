@@ -8,6 +8,7 @@ namespace Poincare {
 
 class DivisionQuotientNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "quo";
 
   // TreeNode
   size_t size() const override { return sizeof(DivisionQuotientNode); }
@@ -38,11 +39,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class DivisionQuotient final : public Expression {
+class DivisionQuotient final : public HandleTwoChildren<DivisionQuotient, DivisionQuotientNode> {
 public:
-  DivisionQuotient(const DivisionQuotientNode * n) : Expression(n) {}
-  static DivisionQuotient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<DivisionQuotient, DivisionQuotientNode>({child0, child1}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("quo", 2, Initializer<DivisionQuotientNode>, sizeof(DivisionQuotientNode));
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
 
   template <typename T>
   static T TemplatedQuotient(T a, T b) { return b >= 0 ? std::floor(a/b) : -std::floor(a/(-b)); }

@@ -12,8 +12,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper MatrixIdentity::s_functionHelper;
-
 int MatrixIdentityNode::numberOfChildren() const { return MatrixIdentity::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixIdentityNode::shallowReduce(ReductionContext reductionContext) {

@@ -7,6 +7,7 @@ namespace Poincare {
 
 class ListSumNode : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "sum";
   size_t size() const override { return sizeof(ListSumNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
@@ -29,13 +30,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class ListSum : public Expression {
+class ListSum : public HandleOneChild<ListSum, ListSumNode> {
 public:
-  static constexpr FunctionHelper s_functionHelper = FunctionHelper("sum", 1, &Initializer<ListSumNode>, sizeof(ListSumNode));
-
-  ListSum(const ListSumNode * n) : Expression(n) {}
-  static ListSum Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListSum, ListSumNode>({list}); }
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

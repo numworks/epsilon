@@ -9,8 +9,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper ArcCotangent::s_functionHelper;
-
 int ArcCotangentNode::numberOfChildren() const { return ArcCotangent::s_functionHelper.numberOfChildren(); }
 
 template<typename T>

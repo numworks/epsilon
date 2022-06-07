@@ -8,6 +8,7 @@ namespace Poincare {
 
 class NaperianLogarithmNode final : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "ln";
   // TreeNode
   size_t size() const override { return sizeof(NaperianLogarithmNode); }
   int numberOfChildren() const override;
@@ -45,13 +46,9 @@ private:
   }
 };
 
-class NaperianLogarithm final : public Expression {
+class NaperianLogarithm final : public HandleOneChild<NaperianLogarithm, NaperianLogarithmNode> {
 public:
-  NaperianLogarithm(const NaperianLogarithmNode * n) : Expression(n) {}
-  static NaperianLogarithm Builder(Expression child) { return TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ln", 1, Initializer<NaperianLogarithmNode>, sizeof(NaperianLogarithmNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

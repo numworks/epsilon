@@ -48,12 +48,9 @@ public:
   LayoutShape rightLayoutShape() const override { return childAtIndex(0)->rightLayoutShape(); }
 };
 
-class Opposite final : public Expression {
+class Opposite final : public HandleOneChild<Opposite, OppositeNode> {
 public:
-  Opposite(const OppositeNode * n) : Expression(n) {}
-  static Opposite Builder() { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(); }
-  static Opposite Builder(Expression child) { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>({child}); }
-
+  using Handle::Handle, Handle::Builder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

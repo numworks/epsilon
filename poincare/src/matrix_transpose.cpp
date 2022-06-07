@@ -9,8 +9,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper MatrixTranspose::s_functionHelper;
-
 int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixTransposeNode::shallowReduce(ReductionContext reductionContext) {

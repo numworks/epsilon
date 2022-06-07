@@ -8,6 +8,8 @@ namespace Poincare {
 
 class SecantNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "sec";
+
   // TreeNode
   size_t size() const override { return sizeof(SecantNode); }
   int numberOfChildren() const override;
@@ -39,13 +41,9 @@ private:
   }
 };
 
-class Secant final : public Expression {
+class Secant final : public HandleOneChild<Secant, SecantNode> {
 public:
-  Secant(const SecantNode * n) : Expression(n) {}
-  static Secant Builder(Expression child) { return TreeHandle::FixedArityBuilder<Secant, SecantNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sec", 1, Initializer<SecantNode>, sizeof(SecantNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

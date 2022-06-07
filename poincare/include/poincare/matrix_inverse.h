@@ -7,6 +7,7 @@ namespace Poincare {
 
 class MatrixInverseNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "inverse";
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixInverseNode); }
@@ -33,13 +34,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class MatrixInverse final : public Expression {
+class MatrixInverse final : public HandleOneChild<MatrixInverse, MatrixInverseNode> {
 public:
-  MatrixInverse(const MatrixInverseNode * n) : Expression(n) {}
-  static MatrixInverse Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("inverse", 1, Initializer<MatrixInverseNode>, sizeof(MatrixInverseNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -6,8 +6,6 @@
 
 namespace Poincare {
 
-const Expression::FunctionHelper ListSort::s_functionHelper;
-
 int ListSortNode::numberOfChildren() const {
   return ListSort::s_functionHelper.numberOfChildren();
 }

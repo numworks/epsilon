@@ -13,8 +13,6 @@ extern "C" {
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper ComplexArgument::s_functionHelper;
-
 int ComplexArgumentNode::numberOfChildren() const { return ComplexArgument::s_functionHelper.numberOfChildren(); }
 
 Layout ComplexArgumentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -6,8 +6,6 @@
 
 namespace Poincare {
 
-const Expression::FunctionHelper ListMaximum::s_functionHelper;
-
 int ListMaximumNode::numberOfChildren() const {
   return ListMaximum::s_functionHelper.numberOfChildren();
 }

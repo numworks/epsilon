@@ -13,8 +13,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Ceiling::s_functionHelper;
-
 int CeilingNode::numberOfChildren() const { return Ceiling::s_functionHelper.numberOfChildren(); }
 
 Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -14,8 +14,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper AbsoluteValue::s_functionHelper;
-
 int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::s_functionHelper.numberOfChildren(); }
 
 Layout AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

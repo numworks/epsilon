@@ -68,12 +68,9 @@ private:
   }
 };
 
-class Division final : public Expression {
+class Division final : public HandleTwoChildren<Division, DivisionNode> {
 public:
-  Division(const DivisionNode * n) : Expression(n) {}
-  static Division Builder() { return TreeHandle::FixedArityBuilder<Division, DivisionNode>(); }
-  static Division Builder(Expression numerator, Expression denominator) { return TreeHandle::FixedArityBuilder<Division, DivisionNode>({numerator, denominator}); }
-
+  using Handle::Handle, Handle::Builder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

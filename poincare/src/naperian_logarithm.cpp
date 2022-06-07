@@ -8,8 +8,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper NaperianLogarithm::s_functionHelper;
-
 int NaperianLogarithmNode::numberOfChildren() const { return NaperianLogarithm::s_functionHelper.numberOfChildren(); }
 
 Layout NaperianLogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -7,6 +7,7 @@ namespace Poincare {
 
 class VectorNormNode final : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "norm";
 
   // TreeNode
   size_t size() const override { return sizeof(VectorNormNode); }
@@ -33,13 +34,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class VectorNorm final : public Expression {
+class VectorNorm final : public HandleOneChild<VectorNorm, VectorNormNode> {
 public:
-  VectorNorm(const VectorNormNode * n) : Expression(n) {}
-  static VectorNorm Builder(Expression child) { return TreeHandle::FixedArityBuilder<VectorNorm, VectorNormNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("norm", 1, Initializer<VectorNormNode>, sizeof(VectorNormNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

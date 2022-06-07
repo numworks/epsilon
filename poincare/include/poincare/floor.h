@@ -8,6 +8,7 @@ namespace Poincare {
 
 class FloorNode /*final*/ : public ExpressionNode {
 public:
+  static constexpr char functionName[] = "floor";
 
   // TreeNode
   size_t size() const override { return sizeof(FloorNode); }
@@ -39,13 +40,9 @@ private:
   }
 };
 
-class Floor final : public Expression {
+class Floor final : public HandleOneChild<Floor, FloorNode> {
 public:
-  Floor(const FloorNode * n) : Expression(n) {}
-  static Floor Builder(Expression child) { return TreeHandle::FixedArityBuilder<Floor, FloorNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("floor", 1, Initializer<FloorNode>, sizeof(FloorNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

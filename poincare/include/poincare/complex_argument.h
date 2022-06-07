@@ -8,6 +8,7 @@ namespace Poincare {
 
 class ComplexArgumentNode final : public ExpressionNode  {
 public:
+  static constexpr char functionName[] = "arg";
 
   // TreeNode
   size_t size() const override { return sizeof(ComplexArgumentNode); }
@@ -39,13 +40,9 @@ private:
   }
 };
 
-class ComplexArgument final : public Expression {
+class ComplexArgument final : public HandleOneChild<ComplexArgument, ComplexArgumentNode> {
 public:
-  ComplexArgument(const ComplexArgumentNode * n) : Expression(n) {}
-  static ComplexArgument Builder(Expression child) { return TreeHandle::FixedArityBuilder<ComplexArgument, ComplexArgumentNode>({child}); }
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("arg", 1, Initializer<ComplexArgumentNode>, sizeof(ComplexArgumentNode));
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

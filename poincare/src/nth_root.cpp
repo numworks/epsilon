@@ -17,8 +17,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper NthRoot::s_functionHelper;
-
 int NthRootNode::numberOfChildren() const { return NthRoot::s_functionHelper.numberOfChildren(); }
 
 Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

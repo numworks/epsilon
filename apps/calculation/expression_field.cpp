@@ -1,4 +1,5 @@
 #include "expression_field.h"
+#include <apps/i18n.h>
 #include <poincare/symbol.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/code_point_layout.h>
@@ -21,7 +22,6 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
        event == Ion::Events::Plus ||
        event == Ion::Events::Power ||
        event == Ion::Events::Square ||
-       event == Ion::Events::Division ||
        event == Ion::Events::Sto)) {
     handleEventWithText(Poincare::Symbol::k_ans);
   }
@@ -30,6 +30,27 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
       && fieldContainsSingleMinusSymbol()) {
     setText(Poincare::Symbol::k_ans);
     // The 'minus' symbol will be addded by ExpressionField::handleEvent
+  }
+  if (event == Ion::Events::Division
+      && isEditing()) {
+    /* The cycle is:
+     * Ans fraction -> Empty fraction -> mixed fraction -> ans fraction -> etc.
+     */
+    DivisionCycleStep currentDivisionCycleStep = currentStepOfDivisionCycling();
+    if (currentDivisionCycleStep == DivisionCycleStep::MixedFraction || currentDivisionCycleStep == DivisionCycleStep::Start) {
+      setText(Poincare::Symbol::k_ans);
+    } else if (currentDivisionCycleStep == DivisionCycleStep::AnsDivided) {
+      setText("");
+    } else if (currentDivisionCycleStep == DivisionCycleStep::EmptyFraction) {
+      if (editionIsInTextField()) {
+        setText(k_1DMixedFractionCommand);
+        m_textField.setCursorLocation(m_textField.draftTextBuffer());
+      } else {
+        setText("");
+        handleEventWithText(I18n::translate(I18n::Message::MixedFractionCommand));
+      }
+      return true;
+    }
   }
   return (::ExpressionField::handleEvent(event));
 }
@@ -51,4 +72,34 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
   }
 }
 
+ExpressionField::DivisionCycleStep ExpressionField::currentStepOfDivisionCycling() {
+  if (isEmpty()) {
+    return DivisionCycleStep::Start;
+  }
+  bool cursorIsLeftOfLayout = false;
+  char inputBuffer[k_divisionCycleCheckBufferSize];
+  if (editionIsInTextField()) {
+    if (strlen(m_textField.draftTextBuffer()) >= k_divisionCycleCheckBufferSize) {
+      return DivisionCycleStep::NotCycling;
+    }
+    strlcpy(inputBuffer, m_textField.draftTextBuffer(), k_divisionCycleCheckBufferSize);
+  } else {
+    Layout layout = m_layoutField.layout();
+    if (layout.numberOfChildren() > 1) {
+      return DivisionCycleStep::NotCycling;
+    }
+    layout.serializeForParsing(inputBuffer, k_divisionCycleCheckBufferSize);
+    cursorIsLeftOfLayout = m_layoutField.cursor()->isEquivalentTo(LayoutCursor(layout, Poincare::LayoutCursor::Position::Left));
+  }
+  if ((inputBuffer[0] == '/' && inputBuffer[1] == 0) || (!cursorIsLeftOfLayout && strcmp(k_serializedEmptyFraction, inputBuffer) == 0)) {
+    return DivisionCycleStep::EmptyFraction;
+  }
+  if (strcmp(k_1DAnsFraction, inputBuffer) == 0 || strcmp(k_serializedAnsFraction, inputBuffer) == 0) {
+    return DivisionCycleStep::AnsDivided;
+  }
+  if (strcmp(k_1DMixedFractionCommand, inputBuffer) == 0 || (cursorIsLeftOfLayout && strcmp(k_serializedEmptyFraction, inputBuffer) == 0)) {
+    return DivisionCycleStep::MixedFraction;
+  }
+  return DivisionCycleStep::NotCycling;
+}
 }

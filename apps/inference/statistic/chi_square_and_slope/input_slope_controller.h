@@ -8,13 +8,11 @@
 #include "shared/input_event_handler_delegate.h"
 #include "slope_column_parameter_controller.h"
 
-using namespace Escher;
-
 namespace Inference {
 
 class InputSlopeController : public InputCategoricalController, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate {
 public:
-  InputSlopeController(StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Poincare::Context * parentContext);
+  InputSlopeController(Escher::StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Poincare::Context * parentContext);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

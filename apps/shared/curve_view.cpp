@@ -461,18 +461,19 @@ void CurveView::drawPatternAreaInLine(KDContext * ctx, Axis axis, KDCoordinate c
    *
    * Pixels' positions are absolute. Drawn independently, all segments shall
    * align. */
-  constexpr int evenOddIndex[4] = {0,0,1,1};
+  assert(0 <= areaIndex && areaIndex < k_numberOfPatternAreas);
+  constexpr int evenOddIndex[k_numberOfPatternAreas] = {0,0,1,1};
   // Depending on the areaIndex, either even or odd lines are drawn
   if ((coordinate + evenOddIndex[areaIndex])%2 == 0) {
     // Compute the offset (modulo 4) to respect the tile's requirements
     // - Offset due to areaIndex
-    constexpr int areaOffset[4] = {0,2,0,2};
+    constexpr int areaOffset[k_numberOfPatternAreas] = {0,2,0,2};
     int offset = areaOffset[areaIndex];
     // - Offset due to each subsequent segment shifting by 1
-    offset += coordinate%4;
+    offset += coordinate%k_numberOfPatternAreas;
     // - Offset to make the segment alignment absolute (indepandent of start)
-    offset += 4 - start%4;
-    for (KDCoordinate i = start + offset%4; i < end; i += 4) {
+    offset += k_numberOfPatternAreas - start%k_numberOfPatternAreas;
+    for (KDCoordinate i = start + offset%k_numberOfPatternAreas; i < end; i += k_numberOfPatternAreas) {
       KDPoint point = (axis == Axis::Horizontal) ? KDPoint(i, coordinate) :  KDPoint(coordinate, i);
       ctx->setPixel(point, color);
     }

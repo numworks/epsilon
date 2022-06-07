@@ -69,10 +69,7 @@ public:
   float minValueOfColumn(int series, int i) const;
 
   // Double Pair Store
-  bool updateSeries(int series, bool delayUpdate = false) override {
-    m_recomputeCoefficients[series] = true;
-    return DoublePairStore::updateSeries(series, delayUpdate);
-  }
+  bool updateSeries(int series, bool delayUpdate = false) override;
 private:
   double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);
   void resetMemoization();

@@ -60,8 +60,7 @@ bool Test::canRejectNull() {
 
 double Test::thresholdAbscissa(HypothesisParams::ComparisonOperator op) const {
   assert(op != HypothesisParams::ComparisonOperator::Different);
-  double x = cumulativeDistributiveInverseForProbability(threshold());
-  return op == HypothesisParams::ComparisonOperator::Lower ? x : -x;
+  return cumulativeDistributiveInverseForProbability(op == HypothesisParams::ComparisonOperator::Lower ? threshold() : 1.0 - threshold());
 }
 
 void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) {

@@ -31,11 +31,6 @@ bool Chi2Test::initializeCategoricalType(CategoricalType type) {
   return true;
 }
 
-double Chi2Test::thresholdAbscissa(HypothesisParams::ComparisonOperator op) const {
-  assert(op != HypothesisParams::ComparisonOperator::Different);
-  return cumulativeDistributiveInverseForProbability(1 - threshold());
-}
-
 double Chi2Test::computeChi2() {
   double z = 0;
   int n = numberOfValuePairs();

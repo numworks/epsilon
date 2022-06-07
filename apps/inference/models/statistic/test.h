@@ -58,7 +58,7 @@ public:
   /* Returns the value above/below (depending on the operator) which the probability
    * of landing is inferior to a given significance level. */
   bool canRejectNull();
-  virtual double thresholdAbscissa(HypothesisParams::ComparisonOperator op) const;
+  double thresholdAbscissa(HypothesisParams::ComparisonOperator op) const;
 
   // Output
   int numberOfResults() const override { return 2 + numberOfEstimates() + hasDegreeOfFreedom(); }

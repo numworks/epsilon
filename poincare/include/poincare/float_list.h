@@ -10,45 +10,23 @@ namespace Poincare {
 template<typename T>
 class FloatList : public List, public DatasetColumn<T> {
 
+/* WARNING: Do not add children to FloatList with addChildAtIndex,
+ * and do not replace children with replaceChildAtIndex.
+ * The method floatExpressionAtIndex assumes that every child is a FloatNode.
+ * Use addValueAtIndex and replaceValueAtIndex instead.
+ */
 public:
   static FloatList<T> Builder() { return TreeHandle::NAryBuilder<FloatList<T>, ListNode>(); }
 
-  void addValueAtIndex(T value, int index) {
-    assert(index <= numberOfChildren());
-    List::addChildAtIndexInPlace(Float<T>::Builder(value), index, numberOfChildren());
-  }
-
-  void replaceValueAtIndex(T value, int index) {
-    assert(index < numberOfChildren());
-    Expression child = floatExpressionAtIndex(index);
-    assert((child.type() == ExpressionNode::Type::Float && sizeof(T) == sizeof(float)) || (child.type() == ExpressionNode::Type::Double && sizeof(T) == sizeof(double)));
-    static_cast<Float<T> &>(child).setValue(value);
-  }
-
-  void removeValueAtIndex(int index) {
-    assert(index < numberOfChildren());
-    List::removeChildAtIndexInPlace(index);
-  }
-
-  T valueAtIndex(int index) const override {
-    if (index >= numberOfChildren()) {
-      return NAN;
-    }
-    Expression child = floatExpressionAtIndex(index);
-    assert((child.type() == ExpressionNode::Type::Float && sizeof(T) == sizeof(float)) || (child.type() == ExpressionNode::Type::Double && sizeof(T) == sizeof(double)));
-    return static_cast<Float<T> &>(child).value();
-  }
-
+  void addValueAtIndex(T value, int index);
+  void replaceValueAtIndex(T value, int index);
+  void removeValueAtIndex(int index);
+  T valueAtIndex(int index) const override;
   int length() const override { return numberOfChildren(); }
 
   /* This replaces childAtIndex. Instead of being in linear time, it's
    * in constant time. */
-  Expression floatExpressionAtIndex(int index) const {
-    assert(index < numberOfChildren() && numberOfChildren() > 0);
-    char * firstChild = reinterpret_cast<char *>(node()) + Helpers::AlignedSize(sizeof(ListNode), ByteAlignment);
-    return Expression(reinterpret_cast<ExpressionNode *>(firstChild + index * sizeof(FloatNode<T>)));
-  }
-
+  Expression floatExpressionAtIndex(int index) const;
 };
 
 }

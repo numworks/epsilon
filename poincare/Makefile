@@ -107,6 +107,7 @@ poincare_src += $(addprefix poincare/src/,\
   factor.cpp \
   factorial.cpp \
   float.cpp \
+  float_list.cpp \
   floor.cpp \
   frac_part.cpp \
   function.cpp \

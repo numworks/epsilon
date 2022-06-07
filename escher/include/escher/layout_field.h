@@ -58,6 +58,8 @@ public:
   bool resetSelection() { return m_contentView.resetSelection(); }
   void deleteSelection();
 
+  Poincare::LayoutCursor * cursor() { return m_contentView.cursor(); }
+
 private:
   constexpr static int k_maxNumberOfLayouts = 220;
   static_assert(k_maxNumberOfLayouts == TextField::maxBufferSize(), "Maximal number of layouts in a layout field should be equal to max number of char in text field");

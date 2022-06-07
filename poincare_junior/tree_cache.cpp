@@ -32,7 +32,7 @@ bool TreeCache::copyTreeForEditing(int id) {
     return false;
   }
   size_t treeSize = nextTree(m_cachedTree[id]) - m_cachedTree[id];
-  memcpy(lastBlock(), m_cachedTree[id], treeSize);
+  memcpy(lastBlock(), m_cachedTree[id], treeSize * sizeof(TreeBlock));
   m_sandbox.setNumberOfBlocks(treeSize);
   return true;
 }
@@ -46,7 +46,7 @@ bool TreeCache::pushBlock(TreeBlock block) {
     }
     int nbOfSanboxBlocks = m_sandbox.lastBlock() - m_sandbox.firstBlock();
     resetCache();
-    memcpy(m_pool, m_sandbox.firstBlock(), nbOfSanboxBlocks);
+    memcpy(m_pool, m_sandbox.firstBlock(), nbOfSanboxBlocks * sizeof(TreeBlock));
     m_sandbox = TreeSandbox(lastBlock(), k_maxNumberOfBlocks);
     m_sandbox.setNumberOfBlocks(nbOfSanboxBlocks);
     m_sandbox.pushBlock(block);

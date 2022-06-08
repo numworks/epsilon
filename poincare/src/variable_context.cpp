@@ -11,16 +11,16 @@ void VariableContext::setApproximationForVariable(T value) {
   m_value = Float<T>::Builder(value);
 }
 
-void VariableContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
+bool VariableContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
   if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
     assert(symbol.type() == ExpressionNode::Type::Symbol);
     if (expression.isUninitialized()) {
-      return;
+      return false;
     }
     m_value = expression.clone();
-  } else {
-    return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
+    return true;
   }
+  return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
 }
 
 const Expression VariableContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue ) {

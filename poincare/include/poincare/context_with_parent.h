@@ -13,7 +13,7 @@ public:
 
   // Context
   virtual SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override { return m_parentContext->expressionTypeForIdentifier(identifier, length); }
-  void setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override { m_parentContext->setExpressionForSymbolAbstract(expression, symbol); }
+  bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override { return m_parentContext->setExpressionForSymbolAbstract(expression, symbol); }
   const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override { return m_parentContext->expressionForSymbolAbstract(symbol, clone, unknownSymbolValue); }
 
 private:

@@ -26,7 +26,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "Complex";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
+  void logAttributes(std::ostream & stream) const override {
     stream << " real=\"" << this->real() << "\"";
     stream << " imag=\"" << this->imag() << "\"";
   }

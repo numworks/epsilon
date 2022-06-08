@@ -25,7 +25,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "Rational";
   }
-  virtual void logAttributes(std::ostream & stream) const override;
+  void logAttributes(std::ostream & stream) const override;
 #endif
 
   // SerializationHelperInterface

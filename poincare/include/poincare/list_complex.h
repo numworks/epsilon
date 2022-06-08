@@ -33,7 +33,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "ListComplex";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
+  void logAttributes(std::ostream & stream) const override {
     stream << " numberOfElements=\"" << m_numberOfChildren << "\"";
   }
 #endif

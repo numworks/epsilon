@@ -20,10 +20,6 @@ CategoricalController::CategoricalController(Responder * parent, ViewController 
   setScrollViewDelegate(this);
 }
 
-void CategoricalController::viewWillAppear() {
-  categoricalTableCell()->selectableTableView()->setContentOffset(KDPointZero);
-}
-
 void CategoricalController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectRow(0);
@@ -54,7 +50,13 @@ void CategoricalController::scrollViewDidChangeOffset(ScrollViewDataSource * scr
    * to change, the categoricalTableCell cells will be relayouted. */
   categoricalTableCell()->selectableTableView()->unhighlightSelectedCell();
   KDPoint currentOffset = categoricalTableCell()->selectableTableView()->contentOffset();
-  categoricalTableCell()->selectableTableView()->setContentOffset(KDPoint(currentOffset.x(), currentOffset.y() + scrollViewDataSource->offset().y()));
+  KDCoordinate maximalOffsetY = m_selectableTableView.minimalSizeForOptimalDisplay().height() - m_selectableTableView.bounds().height();
+  KDCoordinate offsetToAdd = scrollViewDataSource->offset().y();
+  if (offsetToAdd > maximalOffsetY) {
+    /* Prevent the table from scrolling past the screen */
+    offsetToAdd = maximalOffsetY;
+  }
+  categoricalTableCell()->selectableTableView()->setContentOffset(KDPoint(currentOffset.x(), currentOffset.y() + offsetToAdd));
   // Unset the ScrollViewDelegate to avoid infinite looping
   setScrollViewDelegate(nullptr);
   m_selectableTableView.setContentOffset(KDPointZero);

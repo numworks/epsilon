@@ -38,9 +38,13 @@ void ComplexListController::setExpression(Poincare::Expression e) {
   m_calculationStore.push("abs(z)", &context, CalculationHeight);
 
   // Set Complex illustration
-  // Compute a and b as in Expression::hasDefinedComplexApproximation to ensure the same defined result
-  float a = Shared::PoincareHelpers::ApproximateToScalar<float>(RealPart::Builder(e.clone()), &context);
-  float b = Shared::PoincareHelpers::ApproximateToScalar<float>(ImaginaryPart::Builder(e.clone()), &context);
+  /* Compute a and b as in Expression::hasDefinedComplexApproximation to ensure
+   * the same defined result. Since in Calculation::additionalInformationType,
+   * we check for Complex additional output with the approximate output,
+   * which is computed in doubles, the approximation must be done with doubles
+   * here too. */
+  float a = static_cast<float>(Shared::PoincareHelpers::ApproximateToScalar<double>(RealPart::Builder(e.clone()), &context));
+  float b = static_cast<float>(Shared::PoincareHelpers::ApproximateToScalar<double>(ImaginaryPart::Builder(e.clone()), &context));
   m_model.setComplex(std::complex<float>(a,b));
 
   // Reset complex format as before

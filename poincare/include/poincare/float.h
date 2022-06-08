@@ -32,7 +32,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "Float";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
+  void logAttributes(std::ostream & stream) const override {
     stream << " value=\"" << m_value << "\" type=\"" << (sizeof(T) == sizeof(float) ? "float" : "double") << "\"";
   }
 #endif

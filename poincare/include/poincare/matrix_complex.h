@@ -28,7 +28,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "MatrixComplex";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
+  void logAttributes(std::ostream & stream) const override {
     stream << " rows=\"" << m_numberOfRows << "\"";
     stream << " columns=\"" << m_numberOfColumns << "\"";
   }

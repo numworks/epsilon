@@ -39,7 +39,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "SymbolAbstract";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
+  void logAttributes(std::ostream & stream) const override {
     stream << " name=\"" << name() << "\"";
   }
 #endif

@@ -41,7 +41,7 @@ private:
   template <typename T> Evaluation<T> templateApproximate() const;
 };
 
-class Random final : public HandleOneChild<Random, RandomNode> {
+class Random final : public HandleNoChildren<Random, RandomNode> {
 friend class RandomNode;
 public:
   using Handle::Handle, Handle::Builder;

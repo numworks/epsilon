@@ -29,7 +29,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Store final : public HandleOneChild<Store, StoreNode> {
+class Store final : public HandleTwoChildren<Store, StoreNode> {
 friend class StoreNode;
 public:
   using Handle::Handle, Handle::Builder;

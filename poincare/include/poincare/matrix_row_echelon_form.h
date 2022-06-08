@@ -7,6 +7,7 @@ namespace Poincare {
 
 class MatrixRowEchelonFormNode final : public MatrixEchelonFormNode {
 public:
+  static constexpr char functionName[] = "ref";
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixRowEchelonFormNode); }
@@ -24,12 +25,9 @@ private:
   bool isFormReduced() const override { return false; }
 };
 
-
-class MatrixRowEchelonForm final : public MatrixEchelonForm {
+class MatrixRowEchelonForm final : public HandleOneChildWithParent<MatrixRowEchelonForm, MatrixRowEchelonFormNode, MatrixEchelonForm> {
 public:
-  MatrixRowEchelonForm(const MatrixRowEchelonFormNode * n) : MatrixEchelonForm(n) {}
-  static MatrixRowEchelonForm Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixRowEchelonForm, MatrixRowEchelonFormNode>({child}); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ref", MatrixEchelonFormNode::sNumberOfChildren, Initializer<MatrixRowEchelonFormNode>, sizeof(MatrixRowEchelonFormNode));
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
 };
 
 }

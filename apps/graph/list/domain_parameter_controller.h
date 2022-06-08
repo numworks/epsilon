@@ -25,15 +25,16 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   // TextFieldDelegate
-  void textFieldDidStartEditing(Escher::TextField * textField) override;
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::TextField * textField) override;
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   bool isVisible() const { return m_record.isNull() ? false : function()->canHaveCustomDomain(); }
+
 private:
   constexpr static int k_totalNumberOfCell = 2;
+
   void viewWillAppear() override;
   int reusableParameterCellCount(int type) override { return k_totalNumberOfCell; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
@@ -49,6 +50,8 @@ private:
   void extractParameters();
   // Return true if temporary parameters and function parameters are equal.
   bool equalTempParameters();
+  void switchToolboxContent(Escher::TextField * textField, bool setSpecificContent);
+
   Escher::MessageTableCellWithEditableText m_domainCells[k_totalNumberOfCell];
   Ion::Storage::Record m_record;
   Shared::Range1D m_tempDomain;

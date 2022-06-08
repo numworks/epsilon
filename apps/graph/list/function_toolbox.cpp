@@ -11,7 +11,10 @@ using namespace Escher;
 namespace Graph {
 
 FunctionToolbox::FunctionToolbox() :
-  MathToolbox()
+  MathToolbox(),
+  /* We initialize m_addedCellsContent with a different value than the one we
+   * want to make sure we actually update the cells in setAddedCellsContent. */
+  m_addedCellsContent(AddedCellsContent::PositiveInfinity)
 {
   for (int i = 0; i < k_maxNumberOfAddedCells; i++) {
     m_addedCells[i].setParentResponder(&m_selectableTableView);
@@ -20,6 +23,9 @@ FunctionToolbox::FunctionToolbox() :
 }
 
 void FunctionToolbox::setAddedCellsContent(AddedCellsContent content) {
+  if (content == m_addedCellsContent) {
+    return;
+  }
   constexpr CodePoint codepoints[k_maxNumberOfAddedCells] = {UCodePointInferiorEqual, UCodePointSuperiorEqual};
   m_addedCellsContent = content;
   switch (content) {

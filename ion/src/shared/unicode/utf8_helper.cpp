@@ -258,7 +258,6 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
    * string. */
   assert((goingRight && initialPosition == nullptr)
       || (!goingRight && initialPosition != nullptr));
-  assert(actionCodePoint && actionOtherCodePoint);
 
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1 && UTF8Decoder::CharSizeOfCodePoint(stoppingCodePoint) == 1) {
     /* The code points are one char long, so they are equal to their char
@@ -267,10 +266,14 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
       const char * i = s;
       while (*i != stoppingCodePoint.getChar() && *i != 0 && i != stoppingPosition) {
         if (*i == c.getChar()) {
-          actionCodePoint(i - s, contextPointer, contextInt1, contextInt2);
+          if (actionCodePoint) {
+            actionCodePoint(i - s, contextPointer, contextInt1, contextInt2);
+          }
         } else {
           // FIXME we are stopping at every char, not every code point -> it does not make any bug for now
-          actionOtherCodePoint(i - s, contextPointer, contextInt1, contextInt2);
+          if (actionOtherCodePoint) {
+            actionOtherCodePoint(i - s, contextPointer, contextInt1, contextInt2);
+          }
         }
         i++;
       }
@@ -279,9 +282,13 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
     const char * i = initialPosition - 1;
     while (i >= s && *i != stoppingCodePoint.getChar() && i != stoppingPosition) {
       if (*i == c.getChar()) {
-        actionCodePoint(i - s, contextPointer, contextInt1, contextInt2);
+        if (actionCodePoint) {
+          actionCodePoint(i - s, contextPointer, contextInt1, contextInt2);
+        }
       } else {
-        actionOtherCodePoint(i - s, contextPointer, contextInt1, contextInt2);
+        if (actionOtherCodePoint) {
+          actionOtherCodePoint(i - s, contextPointer, contextInt1, contextInt2);
+        }
       }
       i--;
     }
@@ -294,9 +301,13 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
     CodePoint codePoint = decoder.nextCodePoint();
     while (codePoint != stoppingCodePoint && codePoint != UCodePointNull && codePointPointer != stoppingPosition) {
       if (codePoint == c) {
-        actionCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
+        if (actionCodePoint) {
+          actionCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
+        }
       } else {
-        actionOtherCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
+        if (actionOtherCodePoint) {
+          actionOtherCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
+        }
       }
       codePointPointer = decoder.stringPosition();
       codePoint = decoder.nextCodePoint();
@@ -312,9 +323,13 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
   const char * codePointPointer = decoder.stringPosition();
   while (codePointPointer >= s && codePoint != stoppingCodePoint && codePointPointer != stoppingPosition) {
     if (codePoint == c) {
-      actionCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
+      if (actionCodePoint) {
+        actionCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
+      }
     } else {
-      actionOtherCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
+      if (actionOtherCodePoint) {
+        actionOtherCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
+      }
     }
     if (codePointPointer > s) {
       codePoint = decoder.previousCodePoint();

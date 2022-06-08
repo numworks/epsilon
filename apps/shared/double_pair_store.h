@@ -27,7 +27,7 @@ public:
   DoublePairStore(const DoublePairStore&) = delete;
 
   // Call this after initializing the store
-  void initListsFromStorage();
+  void initListsFromStorage(bool seriesShouldUpdate = true);
 
   // Clean the pool
   void tidy();
@@ -98,7 +98,7 @@ public:
    * It deletes the pairs of empty values and the trailing undef values,
    * updates the valid series, and stores the lists in the storage
    * */
-  virtual void updateSeries(int series, bool delayUpdate = false);
+  virtual bool updateSeries(int series, bool delayUpdate = false);
 protected:
   void initListsInPool();
   virtual double defaultValue(int series, int i, int j) const;

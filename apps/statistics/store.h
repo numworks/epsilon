@@ -117,7 +117,7 @@ public:
   static bool ValidSeriesAndValidTotalNormalProbabilities(const DoublePairStore * store, int series) {
     return store->seriesIsValid(series) && static_cast<const Store *>(store)->totalNormalProbabilityValues(series) > 0;
   }
-  void updateSeries(int series, bool delayUpdate = false) override;
+  bool updateSeries(int series, bool delayUpdate = false) override;
 private:
   constexpr static int k_numberOfQuantiles = 5;
   constexpr static I18n::Message k_quantilesName[k_numberOfQuantiles] = {

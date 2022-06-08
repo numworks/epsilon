@@ -57,6 +57,23 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
+bool DomainParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  /* Do not refuse empty text, as that will later be replaced by ±inf. */
+  return !(textFieldShouldFinishEditing(textField, event) && textField->text()[0] == '\0') && FloatParameterController<float>::textFieldDidReceiveEvent(textField, event);
+}
+
+bool DomainParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  if (text[0] == '\0') {
+    if (textField == m_domainCells[0].textField()) {
+      text = "-inf";
+    } else {
+      assert(textField == m_domainCells[1].textField());
+      text = "inf";
+    }
+  }
+  return FloatParameterController<float>::textFieldDidFinishEditing(textField, text, event);
+}
+
 HighlightCell * DomainParameterController::reusableParameterCell(int index, int type) {
   assert(index >= 0 && index < k_totalNumberOfCell);
   return &m_domainCells[index];

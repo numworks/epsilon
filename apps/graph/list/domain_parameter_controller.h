@@ -24,6 +24,10 @@ public:
   int numberOfRows() const override { return k_totalNumberOfCell+1; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
+  // TextFieldDelegate
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   bool isVisible() const { return m_record.isNull() ? false : function()->canHaveCustomDomain(); }
 private:

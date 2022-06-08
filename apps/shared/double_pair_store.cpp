@@ -93,10 +93,10 @@ double DoublePairStore::get(int series, int i, int j) const {
   return m_dataLists[series][i].valueAtIndex(j);
 }
 
-void DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate, bool setOtherColumnToDefaultIfEmpty) {
+bool DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate, bool setOtherColumnToDefaultIfEmpty) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (j >= k_maxNumberOfPairs) {
-    return;
+    return false;
   }
   assert(j <= numberOfPairsOfSeries(series));
   if (j >= lengthOfColumn(series, i)) {
@@ -111,7 +111,7 @@ void DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate, 
   if (setOtherColumnToDefaultIfEmpty && j >= lengthOfColumn(series, otherI)) {
     set(defaultValue(series, otherI, j), series, otherI, j, true, false);
   }
-  updateSeries(series, delayUpdate);
+  return updateSeries(series, delayUpdate);
 }
 
 void DoublePairStore::setList(List list, int series, int i, bool delayUpdate, bool setOtherColumnToDefaultIfEmpty) {

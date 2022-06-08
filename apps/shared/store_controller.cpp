@@ -123,7 +123,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   int j = selectedRow();
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
-    assert(j == -1);
+    assert(selectedRow() == -1);
     Container::activeApp()->setFirstResponder(tabController());
     return true;
   }

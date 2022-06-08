@@ -293,10 +293,6 @@ int PowerNode::simplificationOrderSameType(const ExpressionNode * e, bool ascend
   return SimplificationOrder(childAtIndex(1), e->childAtIndex(1), ascending, ignoreParentheses);
 }
 
-Expression PowerNode::denominator(ReductionContext reductionContext) const {
-  return Power(this).denominator(reductionContext);
-}
-
 bool PowerNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Power(this).derivate(reductionContext, symbol, symbolValue);
 }

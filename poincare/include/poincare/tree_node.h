@@ -54,7 +54,9 @@ public:
   size_t deepSize(int realNumberOfChildren) const;
 
   // Ghost
+#ifndef NDEBUG
   virtual bool isGhost() const { return false; }
+#endif
 
   // Node operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
@@ -63,13 +65,13 @@ public:
   void rename(uint16_t identifier, bool unregisterPreviousIdentifier);
 
   // Hierarchy
-  virtual TreeNode * parent() const;
-  virtual TreeNode * root();
+  TreeNode * parent() const;
+  TreeNode * root();
   virtual int numberOfChildren() const = 0;
   virtual void incrementNumberOfChildren(int increment = 1) {} // Do no put an assert(false), we need this method for instance in GridLayout::removeRow
   virtual void eraseNumberOfChildren() {}
   int numberOfDescendants(bool includeSelf) const;
-  virtual TreeNode * childAtIndex(int i) const;
+  TreeNode * childAtIndex(int i) const;
   int indexOfChild(const TreeNode * child) const;
   int indexInParent() const;
   bool hasChild(const TreeNode * child) const;

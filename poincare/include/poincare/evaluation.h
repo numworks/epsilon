@@ -24,7 +24,7 @@ public:
     MatrixComplex,
     ListComplex
   };
-  EvaluationNode<T> * childAtIndex(int index) const override { return static_cast<EvaluationNode<T> *>(TreeNode::childAtIndex(index)); }
+  EvaluationNode<T> * childAtIndex(int index) const { return static_cast<EvaluationNode<T> *>(TreeNode::childAtIndex(index)); }
   Direct<EvaluationNode<T> > children() const { return Direct<EvaluationNode<T> >(this); }
   virtual Type type() const = 0;
   virtual ~EvaluationNode() = default;

@@ -255,9 +255,9 @@ public:
 
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
-  virtual bool isNumber() const { return false; }
-  virtual bool isRandom() const { return false; }
-  virtual bool isParameteredExpression() const { return false; }
+  bool isNumber() const;
+  bool isRandom() const;
+  bool isParameteredExpression() const;
   /* childAtIndexNeedsUserParentheses checks if parentheses are required by mathematical rules:
    * +(2,-1) --> 2+(-1)
    * *(+(2,1),3) --> (2+1)*3
@@ -310,7 +310,8 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const = 0;
 
   /* Simplification */
-  /*!*/ virtual void deepReduceChildren(ReductionContext reductionContext);
+  /*!*/ void deepReduceChildren(ReductionContext reductionContext);
+  /*!*/ Expression deepBeautify(ReductionContext reductionContext);
   /*!*/ virtual Expression shallowReduce(ReductionContext reductionContext);
   /* TODO: shallowBeautify takes a pointer to the reduction context, unlike
    * other methods. The pointer is needed to allow UnitConvert to modify the
@@ -319,11 +320,10 @@ public:
    * We should uniformize this behaviour and use pointers in other methods using
    * the reduction context. */
   /*!*/ virtual Expression shallowBeautify(ReductionContext * reductionContext);
-  /*!*/ virtual Expression deepBeautify(ReductionContext reductionContext);
   /*!*/ virtual bool derivate(ReductionContext, Symbol symbol, Expression symbolValue);
   virtual Expression unaryFunctionDifferential(ReductionContext reductionContext);
   /* Return a clone of the denominator part of the expression */
-  /*!*/ virtual Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
+  /*!*/ Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
   /* LayoutShape is used to check if the multiplication sign can be omitted between two expressions.
    * It depends on the "layout syle" of the on the right of the left expression */
   enum class LayoutShape {
@@ -342,13 +342,40 @@ public:
   virtual LayoutShape rightLayoutShape() const { return leftLayoutShape(); }
 
   /* Hierarchy */
-  ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }
+  ExpressionNode * childAtIndex(int i) const { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }
+#ifndef NDEBUG
   virtual void setChildrenInPlace(Expression other);
+#else
+  void setChildrenInPlace(Expression other);
+#endif
 
 protected:
   /* Hierarchy */
-  ExpressionNode * parent() const override { return static_cast<ExpressionNode *>(TreeNode::parent()); }
+  ExpressionNode * parent() const { return static_cast<ExpressionNode *>(TreeNode::parent()); }
   Direct<ExpressionNode> children() const { return Direct<ExpressionNode>(this); }
+};
+
+// Helper to create a node
+template<typename T, int N, typename Parent>
+class Node : public Parent {
+public:
+#ifndef PLATFORM_DEVICE
+  static_assert(std::is_base_of<ExpressionNode, Parent>::value);
+#endif
+  const char * functionHelperName() const override { return T::functionName; }
+  size_t size() const override { return sizeof(T); }
+  int numberOfChildren() const override { return N; };
+
+  // TreeNode
+#if POINCARE_TREE_LOG
+  void logNodeName(std::ostream & stream) const override {
+    stream << T::nodeName;
+  }
+#endif
+  // Evaluation
+/*  Evaluation<float> approximate(ExpressionNode::SinglePrecision p, ExpressionNode::ApproximationContext approximationContext) const override { return T::template templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(ExpressionNode::DoublePrecision p, ExpressionNode::ApproximationContext approximationContext) const override { return T::template templatedApproximate<double>(approximationContext); }
+*/
 };
 
 }

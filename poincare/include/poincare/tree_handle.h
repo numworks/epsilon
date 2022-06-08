@@ -69,7 +69,9 @@ public:
   size_t sizeOfNode() const { return node()->size(); }
   void * addressInPool() const { return reinterpret_cast<void *>(node()); }
 
+#ifndef NDEBUG
   bool isGhost() const { return node()->isGhost(); }
+#endif
   bool isUninitialized() const { return m_identifier == TreeNode::NoNodeIdentifier; }
   bool isDownstreamOf(char * treePoolCursor) { return !isUninitialized() && (node() == nullptr || reinterpret_cast<char *>(node()) >= treePoolCursor); }
 

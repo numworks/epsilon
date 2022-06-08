@@ -95,6 +95,7 @@ poincare_src += $(addprefix poincare/src/,\
   dependency.cpp \
   derivative.cpp \
   determinant.cpp \
+  devirtualisation.cpp \
   dimension.cpp \
   distribution_dispatcher.cpp \
   division.cpp \

@@ -48,16 +48,6 @@ int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 template<>
-void LogarithmNode<2>::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-  Logarithm(this).deepReduceChildren(reductionContext);
-}
-
-template<>
-void LogarithmNode<1>::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-  return SimplificationHelper::defaultDeepReduceChildren(Expression(this), reductionContext);
-}
-
-template<>
 Expression LogarithmNode<1>::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   return CommonLogarithm(this).shallowReduce(reductionContext);
 }

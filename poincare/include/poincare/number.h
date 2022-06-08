@@ -21,8 +21,7 @@ class Rational;
 
 class NumberNode : public ExpressionNode {
 public:
-  bool isNumber() const override { return true; }
-  int numberOfChildren() const override { return 0; }
+  int numberOfChildren() const override { assert(isNumber()); return 0; }
   virtual void setNegative(bool negative) = 0;
 
   double doubleApproximation() const;

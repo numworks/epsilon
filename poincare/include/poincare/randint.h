@@ -22,8 +22,6 @@ public:
   // Properties
   Type type() const override { return Type::Randint; }
 
-  bool isRandom() const override { return true; }
-
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

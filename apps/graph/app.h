@@ -20,6 +20,7 @@ public:
     I18n::Message upperName() const override;
     const Escher::Image * icon() const override;
   };
+
   class Snapshot : public Shared::FunctionApp::Snapshot {
   public:
     using Shared::FunctionApp::Snapshot::Snapshot;
@@ -43,19 +44,16 @@ public:
   Snapshot * snapshot() const {
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }
+
   TELEMETRY_ID("Graph");
   CodePoint XNT() override;
   Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
   ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
-  Shared::Interval * intervalForSymbolType(Shared::ContinuousFunction::SymbolType symbolType) {
-    return snapshot()->intervalForSymbolType(symbolType);
-  }
-  ValuesController * valuesController() override {
-    return &m_valuesController;
-  }
-  Escher::InputViewController * inputViewController() override {
-    return &m_inputViewController;
-  }
+  Shared::Interval * intervalForSymbolType(Shared::ContinuousFunction::SymbolType symbolType) { return snapshot()->intervalForSymbolType(symbolType); }
+  ValuesController * valuesController() override { return &m_valuesController; }
+  Escher::InputViewController * inputViewController() override { return &m_inputViewController; }
+  ListController * listController() { return &m_listController; }
+
 private:
   App(Snapshot * snapshot);
   ListController m_listController;

@@ -39,7 +39,7 @@ public:
   // Make methods public
   void editExpression(Ion::Events::Event event) override { return Shared::FunctionListController::editExpression(event); }
   bool editSelectedRecordWithText(const char * text) override { return Shared::FunctionListController::editSelectedRecordWithText(text); }
-  Escher::Toolbox * toolboxForInputEventHandler(Escher::InputEventHandler * handler) override;
+  FunctionToolbox * toolboxForInputEventHandler(Escher::InputEventHandler * handler) override;
 private:
   constexpr static int k_functionCellType = 0;
   constexpr static int k_addNewModelType = 1;

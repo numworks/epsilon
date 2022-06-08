@@ -25,8 +25,10 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   // TextFieldDelegate
+  void textFieldDidStartEditing(Escher::TextField * textField) override;
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   bool isVisible() const { return m_record.isNull() ? false : function()->canHaveCustomDomain(); }

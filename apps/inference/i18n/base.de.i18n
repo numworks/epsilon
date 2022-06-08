@@ -1,5 +1,4 @@
 BinomialDistribution = "Binomialverteilung"
-CalculatedValues = "Calculated values"
 CategoricalTypeControllerTitle = "χ2-test"
 ChiSquared = "Chi-Quadrat"
 ChiSquaredDistribution = "Chi-Quadrat-Verteilung"

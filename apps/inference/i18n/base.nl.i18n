@@ -1,5 +1,4 @@
 BinomialDistribution = "Binomiale verdeling"
-CalculatedValues = "Berekende waarden"
 CategoricalTypeControllerTitle = "χ2-toets"
 ChiSquared = "Chi-kwadraat"
 ChiSquaredDistribution = "Chi-kwadraatverdeling"

@@ -19,7 +19,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "BasedInteger";
   }
-  virtual void logAttributes(std::ostream & stream) const override;
+  void logAttributes(std::ostream & stream) const override;
 #endif
 
   // SerializationHelperInterface

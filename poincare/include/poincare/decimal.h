@@ -31,7 +31,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "Decimal";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
+  void logAttributes(std::ostream & stream) const override {
     stream << " negative=\"" << m_negative << "\"";
     stream << " mantissa=\"";
     this->signedMantissa().logInteger(stream);

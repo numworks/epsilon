@@ -455,7 +455,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "Unit";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
+  void logAttributes(std::ostream & stream) const override {
     stream << " prefix=\"" << m_prefix->symbol() << "\"";
     stream << " rootSymbol=\"" << m_representative->rootSymbol() << "\"";
   }

@@ -41,7 +41,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "CodePointLayout";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
+  void logAttributes(std::ostream & stream) const override {
     constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
     char buffer[bufferSize];
     SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);

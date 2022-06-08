@@ -28,7 +28,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "CombinedCodePointsLayout";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
+  void logAttributes(std::ostream & stream) const override {
     constexpr int bufferSize = 2 * CodePoint::MaxCodePointCharLength + 1;
     char buffer[bufferSize];
     serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, PrintFloat::k_floatNumberOfSignificantDigits);

@@ -41,7 +41,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "Integer";
   }
-  virtual void logAttributes(std::ostream & stream) const override;
+  void logAttributes(std::ostream & stream) const override;
 #endif
 
   const native_uint_t * digits() const { return m_digits; }

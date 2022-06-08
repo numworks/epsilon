@@ -38,7 +38,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "StringLayout";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
+  void logAttributes(std::ostream & stream) const override {
     stream <<" string=\"" << m_string << "\"";
   }
 #endif

@@ -380,15 +380,15 @@ void DoublePairStore::updateSeries(int series, bool delayUpdate) {
   updateSeriesValidity(series);
 }
 
-void DoublePairStore::storeColumn(int series, int i) const {
+bool DoublePairStore::storeColumn(int series, int i) const {
   char name[k_columnNamesLength + 1];
   int nameLength = fillColumnName(series, i, name);
   if (lengthOfColumn(series, i) == 0) {
     Record(name, lisExtension).destroy();
-    return;
+    return true;
   }
   Symbol listSymbol = Symbol::Builder(name, nameLength);
-  m_context->setExpressionForSymbolAbstract(m_dataLists[series][i], listSymbol);
+  return m_context->setExpressionForSymbolAbstract(m_dataLists[series][i], listSymbol);
 }
 
 void DoublePairStore::deleteTrailingUndef(int series, int i) {

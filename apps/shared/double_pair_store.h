@@ -106,7 +106,7 @@ protected:
   Poincare::FloatList<double> m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
 private:
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
-  void storeColumn(int series, int i) const;
+  bool storeColumn(int series, int i) const;
   void deleteTrailingUndef(int series, int i);
   void deletePairsOfUndef(int series);
 

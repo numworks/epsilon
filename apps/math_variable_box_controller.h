@@ -49,6 +49,7 @@ private:
   void setPage(Page page);
   bool selectSubMenu(int selectedRow) override;
   bool returnToPreviousMenu() override;
+  bool returnToRootMenu() override;
   bool selectLeaf(int selectedRow) override;
   I18n::Message nodeLabelAtIndex(int index);
   Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record, int index);

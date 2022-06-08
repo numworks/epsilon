@@ -57,6 +57,7 @@ protected:
   SelectableTableView m_selectableTableView;
   Ion::RingBuffer<StackState, k_maxModelTreeDepth> * stack() { return &m_stack; }
   virtual int controlChecksum() const { return 0; }
+  virtual bool isToolbox() const { return false; }
 
 private:
   class BreadcrumbController : public ViewController {

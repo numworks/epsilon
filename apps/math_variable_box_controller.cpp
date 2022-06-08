@@ -202,6 +202,11 @@ bool MathVariableBoxController::returnToPreviousMenu() {
   return AlternateEmptyNestedMenuController::returnToPreviousMenu();
 }
 
+bool MathVariableBoxController::returnToRootMenu() {
+  assert(stackDepth() == 1);
+  return returnToPreviousMenu();
+}
+
 bool MathVariableBoxController::selectLeaf(int selectedRow) {
   if (isDisplayingEmptyController()) {
     /* We do not want to handle OK/EXE events in that case. */

@@ -18,14 +18,12 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int typeAtIndex(int i) override;
 
-  // StackViewController
-  bool handleEvent(Ion::Events::Event event) override;
-
 protected:
   constexpr static int k_maxMessageSize = 100;
   bool selectSubMenu(int selectedRow) override;
   bool returnToPreviousMenu() override;
   bool returnToRootMenu() override;
+  bool isToolbox() const override { return true; }
   virtual int maxNumberOfDisplayedRows() = 0;
   virtual const ToolboxMessageTree * rootModel() const = 0;
   /* indexAfterFork is called when a fork-node is encountered to choose which

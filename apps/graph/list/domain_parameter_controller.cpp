@@ -57,18 +57,20 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-void DomainParameterController::textFieldDidStartEditing(TextField * textField) {
-  FunctionToolbox::AddedCellsContent content = textField == m_domainCells[0].textField() ? FunctionToolbox::AddedCellsContent::NegativeInfinity : FunctionToolbox::AddedCellsContent::PositiveInfinity;
-  App::app()->listController()->toolboxForInputEventHandler(textField)->setAddedCellsContent(content);
-}
-
 bool DomainParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  /* Set the right additional cells in the toolbox. Ideally, we would like to
+   * update the toolbox in textFieldDidStartEditing, but if the edition is
+   * started by pressing the Toolbox key, textFieldDidStartEditing will be
+   * called after displayModalViewController. */
+  if (event == Ion::Events::Toolbox) {
+    switchToolboxContent(textField, true);
+  }
   /* Do not refuse empty text, as that will later be replaced by ±inf. */
   return !(textFieldShouldFinishEditing(textField, event) && textField->text()[0] == '\0') && FloatParameterController<float>::textFieldDidReceiveEvent(textField, event);
 }
 
 bool DomainParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  App::app()->listController()->toolboxForInputEventHandler(textField)->setAddedCellsContent(FunctionToolbox::AddedCellsContent::ComparisonOperators);
+  switchToolboxContent(textField, false);
   if (text[0] == '\0') {
     if (textField == m_domainCells[0].textField()) {
       text = "-inf";
@@ -81,7 +83,7 @@ bool DomainParameterController::textFieldDidFinishEditing(TextField * textField,
 }
 
 bool DomainParameterController::textFieldDidAbortEditing(TextField * textField) {
-  App::app()->listController()->toolboxForInputEventHandler(textField)->setAddedCellsContent(FunctionToolbox::AddedCellsContent::ComparisonOperators);
+  switchToolboxContent(textField, false);
   return false;
 }
 
@@ -154,6 +156,18 @@ FloatParameterController<float>::InfinityTolerance DomainParameterController::in
     return row == 0 ? FloatParameterController<float>::InfinityTolerance::MinusInfinity : FloatParameterController<float>::InfinityTolerance::PlusInfinity;
   }
   return FloatParameterController<float>::InfinityTolerance::None;
+}
+
+void DomainParameterController::switchToolboxContent(Escher::TextField * textField, bool setSpecificContent) {
+  assert(textField == m_domainCells[0].textField() || textField == m_domainCells[1].textField());
+  FunctionToolbox::AddedCellsContent content;
+  if (setSpecificContent) {
+    content = textField == m_domainCells[0].textField() ? FunctionToolbox::AddedCellsContent::NegativeInfinity : FunctionToolbox::AddedCellsContent::PositiveInfinity;
+  } else {
+    content = FunctionToolbox::AddedCellsContent::ComparisonOperators;
+  }
+  FunctionToolbox * toolbox = App::app()->listController()->toolboxForInputEventHandler(textField);
+  toolbox->setAddedCellsContent(content);
 }
 
 }

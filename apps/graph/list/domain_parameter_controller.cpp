@@ -57,12 +57,18 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
+void DomainParameterController::textFieldDidStartEditing(TextField * textField) {
+  FunctionToolbox::AddedCellsContent content = textField == m_domainCells[0].textField() ? FunctionToolbox::AddedCellsContent::NegativeInfinity : FunctionToolbox::AddedCellsContent::PositiveInfinity;
+  App::app()->listController()->toolboxForInputEventHandler(textField)->setAddedCellsContent(content);
+}
+
 bool DomainParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   /* Do not refuse empty text, as that will later be replaced by ±inf. */
   return !(textFieldShouldFinishEditing(textField, event) && textField->text()[0] == '\0') && FloatParameterController<float>::textFieldDidReceiveEvent(textField, event);
 }
 
 bool DomainParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  App::app()->listController()->toolboxForInputEventHandler(textField)->setAddedCellsContent(FunctionToolbox::AddedCellsContent::ComparisonOperators);
   if (text[0] == '\0') {
     if (textField == m_domainCells[0].textField()) {
       text = "-inf";
@@ -72,6 +78,11 @@ bool DomainParameterController::textFieldDidFinishEditing(TextField * textField,
     }
   }
   return FloatParameterController<float>::textFieldDidFinishEditing(textField, text, event);
+}
+
+bool DomainParameterController::textFieldDidAbortEditing(TextField * textField) {
+  App::app()->listController()->toolboxForInputEventHandler(textField)->setAddedCellsContent(FunctionToolbox::AddedCellsContent::ComparisonOperators);
+  return false;
 }
 
 HighlightCell * DomainParameterController::reusableParameterCell(int index, int type) {

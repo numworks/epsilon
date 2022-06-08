@@ -269,7 +269,7 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   functionCell->reloadCell();
 }
 
-Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textInput) {
+FunctionToolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textInput) {
   // Set sender
   m_functionToolbox.setSender(textInput);
   return &m_functionToolbox;

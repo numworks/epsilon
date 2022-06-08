@@ -148,7 +148,9 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     if (allChildrenAreUndefined) {
       return displayNotSuitableWarning();
     }
-    store()->setList(static_cast<List &>(formula), seriesToFill, columnToFill, false, true);
+    if (!store()->setList(static_cast<List &>(formula), seriesToFill, columnToFill, false, true)) {
+      return false;
+    }
     table()->reloadData();
     return true;
   }
@@ -164,7 +166,9 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
       evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
     }
   }
-  store()->updateSeries(seriesToFill);
+  if (!store()->updateSeries(seriesToFill)) {
+    return false;
+  }
   reloadSeriesVisibleCells(seriesToFill);
   return true;
 }

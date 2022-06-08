@@ -58,7 +58,7 @@ private:
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
-  Expression denominator(ExpressionNode::ReductionContext reductionContext) const override;
+
   // Derivation
   bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
 

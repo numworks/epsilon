@@ -67,7 +67,6 @@ private:
   Expression getExpression() const override;
   // Simplication
   Expression shallowBeautify(ReductionContext * reductionContext) override;
-  Expression deepBeautify(ReductionContext reductionContext) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return templateApproximate<float>(approximationContext);

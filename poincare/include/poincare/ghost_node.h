@@ -17,7 +17,9 @@ public:
 #endif
 
   // Ghost
+#ifndef NDEBUG
   bool isGhost() const override { return true; }
+#endif
 };
 
 }

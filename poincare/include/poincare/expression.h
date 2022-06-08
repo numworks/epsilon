@@ -498,7 +498,6 @@ private:
 
   Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
   Expression defaultShallowBeautify() { return *this; }
-  Expression defaultDeepBeautify(ExpressionNode::ReductionContext reductionContext);
 
   bool defaultDidDerivate() { return false; }
   Expression defaultUnaryFunctionDifferential() { return *this; }

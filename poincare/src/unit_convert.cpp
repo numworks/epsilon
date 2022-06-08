@@ -21,16 +21,9 @@ Expression UnitConvertNode::removeUnit(Expression * unit) {
   *unit = Expression();
   return UnitConvert(this).replaceWithUndefinedInPlace();
 }
+
 Expression UnitConvertNode::shallowBeautify(ReductionContext * reductionContext) {
   return UnitConvert(this).shallowBeautify(reductionContext);
-}
-
-void UnitConvertNode::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-  UnitConvert(this).deepReduceChildren(reductionContext);
-}
-
-Expression UnitConvertNode::deepBeautify(ExpressionNode::ReductionContext reductionContext) {
-  return UnitConvert(this).deepBeautify(reductionContext);
 }
 
 template<typename T>

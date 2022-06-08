@@ -87,10 +87,6 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool a
   return 0;
 }
 
-void ExpressionNode::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-  SimplificationHelper::defaultDeepReduceChildren(Expression(this), reductionContext);
-}
-
 Expression ExpressionNode::shallowReduce(ReductionContext reductionContext) {
   Expression e(this);
   Expression res = SimplificationHelper::shallowReduceUndefined(e);
@@ -102,10 +98,6 @@ Expression ExpressionNode::shallowReduce(ReductionContext reductionContext) {
 
 Expression ExpressionNode::shallowBeautify(ReductionContext * reductionContext) {
   return Expression(this).defaultShallowBeautify();
-}
-
-Expression ExpressionNode::deepBeautify(ReductionContext reductionContext) {
-  return Expression(this).defaultDeepBeautify(reductionContext);
 }
 
 bool ExpressionNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
@@ -140,10 +132,6 @@ Expression ExpressionNode::removeUnit(Expression * unit) {
 
 void ExpressionNode::setChildrenInPlace(Expression other) {
   Expression(this).defaultSetChildrenInPlace(other);
-}
-
-Expression ExpressionNode::denominator(ReductionContext reductionContext) const {
-  return Expression();
 }
 
 }

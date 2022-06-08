@@ -21,7 +21,6 @@ public:
 
 private:
   // Simplification
-  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override {}
   Expression shallowReduce(ReductionContext reductionContext) override;
   // Evalutation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }

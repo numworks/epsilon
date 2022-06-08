@@ -1,5 +1,4 @@
 BinomialDistribution = "Loi binomiale"
-CalculatedValues = "Valeurs calculées"
 CategoricalTypeControllerTitle = "Test du χ2"
 ChiSquared = "Chi2"
 ChiSquaredDistribution = "Loi du Khi-2"

@@ -23,10 +23,9 @@ private:
   const char * comparisonString() const override { return "<"; };
 };
 
-class Inferior final : public ComparisonOperator {
+class Inferior final : public HandleTwoChildrenWithParent<Inferior, InferiorNode, ComparisonOperator> {
 public:
-  Inferior(const InferiorNode * n) : ComparisonOperator(n) {}
-  static Inferior Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Inferior, InferiorNode>({child0, child1}); }
+  using Handle::Handle, Handle::Builder;
 };
 
 }

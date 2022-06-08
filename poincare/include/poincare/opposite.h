@@ -51,6 +51,7 @@ public:
 class Opposite final : public HandleOneChild<Opposite, OppositeNode> {
 public:
   using Handle::Handle, Handle::Builder;
+  static Opposite Builder() { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(); }
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

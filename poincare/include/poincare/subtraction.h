@@ -65,9 +65,10 @@ private:
   }
 };
 
-class Subtraction final : public HandleOneChild<Subtraction, SubtractionNode> {
+class Subtraction final : public HandleTwoChildren<Subtraction, SubtractionNode> {
 public:
   using Handle::Handle, Handle::Builder;
+  static Subtraction Builder() { return TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(); }
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

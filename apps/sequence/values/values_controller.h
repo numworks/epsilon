@@ -43,6 +43,7 @@ private:
   int maxNumberOfFunctions() override { return k_maxNumberOfDisplayableSequences; }
 
   // EditableCellViewController
+  bool checkDataAtLocation(double floatBody, int columnIndex, int rowIndex) const override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
 
   // Model getters

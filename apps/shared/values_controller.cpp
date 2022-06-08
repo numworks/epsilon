@@ -221,6 +221,7 @@ ColumnParameterController * ValuesController::columnParameterController() {
 }
 
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
+  assert(checkDataAtLocation(floatBody, columnIndex, rowIndex));
   intervalAtColumn(columnIndex)->setElement(rowIndex-1, floatBody);
   return true;
 }

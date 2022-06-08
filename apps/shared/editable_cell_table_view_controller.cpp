@@ -36,8 +36,12 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
   int column = selectedColumn();
   int previousRow = selectedRow();
   int previousNumberOfElementsInColumn = numberOfElementsInColumn(column);
-  if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
+  if (!checkDataAtLocation(floatBody, column, previousRow)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
+  if (!setDataAtLocation(floatBody, column, previousRow)) {
+    // Storage memory error
     return false;
   }
   /* At this point, a new cell is selected depending on the event, before the

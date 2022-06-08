@@ -70,7 +70,7 @@ const Expression GlobalContext::expressionForSymbolAbstract(const Poincare::Symb
   return ExpressionForSymbolAndRecord(symbol, r, this, unknownSymbolValue);
 }
 
-void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
+bool GlobalContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
@@ -82,20 +82,18 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.type() == ExpressionNode::Type::Symbol) {
-    SetExpressionForActualSymbol(finalExpression, symbol, record, this);
-  } else {
-    assert(symbol.type() == ExpressionNode::Type::Function && symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
-    Expression childSymbol = symbol.childAtIndex(0);
-    finalExpression = finalExpression.replaceSymbolWithExpression(static_cast<const Symbol &>(childSymbol), Symbol::Builder(UCodePointUnknown));
-    if (!(childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) || childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol)) || childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_polarSymbol)))) {
-      // Unsupported symbol. Fall back to the default cartesain function symbol
-      Expression symbolInX = symbol.clone();
-      symbolInX.replaceChildAtIndexInPlace(0, Symbol::Builder(ContinuousFunction::k_cartesianSymbol));
-      setExpressionForFunction(finalExpression, static_cast<const SymbolAbstract&>(symbolInX), record);
-    } else {
-      setExpressionForFunction(finalExpression, symbol, record);
-    }
+    return SetExpressionForActualSymbol(finalExpression, symbol, record, this) == Ion::Storage::Record::ErrorStatus::None;
   }
+  assert(symbol.type() == ExpressionNode::Type::Function && symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
+  Expression childSymbol = symbol.childAtIndex(0);
+  finalExpression = finalExpression.replaceSymbolWithExpression(static_cast<const Symbol &>(childSymbol), Symbol::Builder(UCodePointUnknown));
+  if (!(childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) || childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol)) || childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_polarSymbol)))) {
+    // Unsupported symbol. Fall back to the default cartesain function symbol
+    Expression symbolInX = symbol.clone();
+    symbolInX.replaceChildAtIndexInPlace(0, Symbol::Builder(ContinuousFunction::k_cartesianSymbol));
+    return setExpressionForFunction(finalExpression, static_cast<const SymbolAbstract&>(symbolInX), record) == Ion::Storage::Record::ErrorStatus::None;
+  }
+  return setExpressionForFunction(finalExpression, symbol, record) == Ion::Storage::Record::ErrorStatus::None;
 }
 
 const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue ) {

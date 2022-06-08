@@ -11,7 +11,7 @@ class EmptyContext : public Context {
 public:
   // Context
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override { return SymbolAbstractType::None; }
-  void setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override { assert(false); }
+  bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override { assert(false); return false; }
   const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override { return Expression(); }
 };
 

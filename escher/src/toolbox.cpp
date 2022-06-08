@@ -43,22 +43,6 @@ int Toolbox::typeAtIndex(int index) {
   return k_nodeCellType;
 }
 
-bool Toolbox::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Toolbox) {
-    if (stackDepth() == 0) {
-      Container::activeApp()->dismissModalViewController();
-      return true;
-    } else {
-      return returnToRootMenu();
-    }
-  } else if (event == Ion::Events::Var) {
-    Container::activeApp()->dismissModalViewController();
-    assert(sender());
-    return sender()->handleBoxEvent(event);
-  }
-  return NestedMenuController::handleEvent(event);
-}
-
 bool Toolbox::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
   assert(typeAtIndex(selectedRow) == k_nodeCellType);

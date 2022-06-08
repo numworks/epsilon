@@ -85,9 +85,9 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override { assert(false); return 0; }
 
   // Tree
-  LayoutNode * parent() const override { return static_cast<LayoutNode *>(TreeNode::parent()); }
-  LayoutNode * childAtIndex(int i) const override { return static_cast<LayoutNode *>(TreeNode::childAtIndex(i)); }
-  LayoutNode * root() override { return static_cast<LayoutNode *>(TreeNode::root()); }
+  LayoutNode * parent() const { return static_cast<LayoutNode *>(TreeNode::parent()); }
+  LayoutNode * childAtIndex(int i) const { return static_cast<LayoutNode *>(TreeNode::childAtIndex(i)); }
+  LayoutNode * root() { return static_cast<LayoutNode *>(TreeNode::root()); }
 
   // Tree navigation
   virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;

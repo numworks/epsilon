@@ -190,10 +190,6 @@ Expression PercentAdditionNode::shallowBeautify(ReductionContext * reductionCont
   return PercentAddition(this).shallowBeautify(reductionContext);
 }
 
-Expression PercentAdditionNode::deepBeautify(ReductionContext reductionContext) {
-  return PercentAddition(this).deepBeautify(reductionContext);
-}
-
 // Evaluation
 
 template <typename U> Evaluation<U> PercentAdditionNode::templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined) const {

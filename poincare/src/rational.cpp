@@ -143,10 +143,6 @@ Expression RationalNode::shallowBeautify(ReductionContext * reductionContext) {
   return Rational(this).shallowBeautify();
 }
 
-Expression RationalNode::denominator(ReductionContext reductionContext) const {
-  return Rational(this).denominator();
-}
-
 /* Rational  */
 
 // Constructors

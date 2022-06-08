@@ -19,8 +19,6 @@ public:
   }
 #endif
 
-  bool isRandom() const override { return true; }
-
   // Properties
   Type type() const override { return Type::Random; }
   Sign sign(Context * context) const override { return Sign::Positive; }

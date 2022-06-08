@@ -933,12 +933,6 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
   return shallowReduce(reductionContext);
 }
 
-Expression Expression::defaultDeepBeautify(ExpressionNode::ReductionContext reductionContext) {
-  Expression e = shallowBeautify(&reductionContext);
-  SimplificationHelper::deepBeautifyChildren(e, reductionContext);
-  return e;
-}
-
 Expression Expression::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   if (isNumber()) {

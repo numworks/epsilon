@@ -277,10 +277,6 @@ Expression MultiplicationNode::shallowBeautify(ReductionContext * reductionConte
   return Multiplication(this).shallowBeautify(reductionContext);
 }
 
-Expression MultiplicationNode::denominator(ReductionContext reductionContext) const {
-  return Multiplication(this).denominator(reductionContext);
-}
-
 bool MultiplicationNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
   return Multiplication(this).derivate(reductionContext, symbol, symbolValue);
 }

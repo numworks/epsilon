@@ -29,7 +29,6 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override;
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
@@ -52,6 +51,7 @@ public:
 };
 
 class Logarithm final : public HandleTwoChildren<Logarithm, LogarithmNode<2>> {
+  friend class ExpressionNode;
   friend class LogarithmNode<2>;
 public:
   using Handle::Handle, Handle::Builder, Handle::s_functionHelper;

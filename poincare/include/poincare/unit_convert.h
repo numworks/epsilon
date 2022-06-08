@@ -22,8 +22,6 @@ public:
 private:
   Expression removeUnit(Expression * unit) override;
   // Simplification
-  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override;
-  Expression deepBeautify(ExpressionNode::ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
   // Evalutation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }

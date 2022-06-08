@@ -15,6 +15,7 @@ Expression ParameteredExpressionNode::deepReplaceReplaceableSymbols(Context * co
 }
 
 int ParameteredExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {
+  assert(isParameteredExpression());
   int numberOfVariables = childAtIndex(ParameteredExpression::ParameteredChildIndex())->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
   // Handle exception
   if (numberOfVariables < 0) {

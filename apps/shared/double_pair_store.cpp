@@ -29,7 +29,7 @@ void DoublePairStore::initListsInPool() {
   }
 }
 
-void DoublePairStore::initListsFromStorage() {
+void DoublePairStore::initListsFromStorage(bool seriesShouldUpdate) {
   initListsInPool();
   char listName[k_columnNamesLength + 1];
   for (int s = 0; s < k_numberOfSeries; s++) {
@@ -47,7 +47,9 @@ void DoublePairStore::initListsFromStorage() {
       }
       setList(static_cast<List &>(e), s, i, true);
     }
-    updateSeries(s);
+    if (seriesShouldUpdate) {
+      updateSeries(s);
+    }
   }
 }
 
@@ -367,17 +369,24 @@ double DoublePairStore::defaultValue(int series, int i, int j) const {
 }
 
 
-void DoublePairStore::updateSeries(int series, bool delayUpdate) {
+bool DoublePairStore::updateSeries(int series, bool delayUpdate) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (delayUpdate) {
-    return;
+    return true;
   }
   deleteTrailingUndef(series, 0);
   deleteTrailingUndef(series, 1);
   deletePairsOfUndef(series);
-  storeColumn(series, 0);
-  storeColumn(series, 1);
-  updateSeriesValidity(series);
+  bool success = storeColumn(series, 0);
+  success = success && storeColumn(series, 1);
+  if (!success) {
+    /* Column couldn't be updated in the store. Revert lists from storage state
+     * and make sure updateSeries isn't called again. */
+    initListsFromStorage(false);
+  } else {
+    updateSeriesValidity(series);
+  }
+  return success;
 }
 
 bool DoublePairStore::storeColumn(int series, int i) const {

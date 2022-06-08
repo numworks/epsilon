@@ -40,7 +40,7 @@ public:
   // Get and set data
   double get(int series, int i, int j) const;
   bool set(double f, int series, int i, int j, bool delayUpdate = false, bool setOtherColumnToDefaultIfEmpty = false);
-  void setList(Poincare::List List, int series, int i, bool delayUpdate = false, bool setOtherColumnToDefaultIfEmpty = false);
+  bool setList(Poincare::List List, int series, int i, bool delayUpdate = false, bool setOtherColumnToDefaultIfEmpty = false);
 
   // Counts
   int numberOfPairs() const;

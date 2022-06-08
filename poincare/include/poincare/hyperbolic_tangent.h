@@ -8,6 +8,7 @@ namespace Poincare {
 
 class HyperbolicTangentNode final : public HyperbolicTrigonometricFunctionNode {
 public:
+  static constexpr char functionName[] = "tanh";
 
   // TreeNode
   size_t size() const override { return sizeof(HyperbolicTangentNode); }
@@ -36,15 +37,11 @@ private:
   }
 };
 
-class HyperbolicTangent final : public HyperbolicTrigonometricFunction {
+class HyperbolicTangent final : public HandleOneChildWithParent<HyperbolicTangent, HyperbolicTangentNode, HyperbolicTrigonometricFunction> {
 public:
-  HyperbolicTangent(const HyperbolicTangentNode * n) : HyperbolicTrigonometricFunction(n) {}
-  static HyperbolicTangent Builder(Expression child) { return TreeHandle::FixedArityBuilder<HyperbolicTangent, HyperbolicTangentNode>({child}); }
-
+  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
-
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tanh", 1, Initializer<HyperbolicTangentNode>, sizeof(HyperbolicTangentNode));
 };
 
 }

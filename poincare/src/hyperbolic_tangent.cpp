@@ -7,8 +7,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper HyperbolicTangent::s_functionHelper;
-
 Layout HyperbolicTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(HyperbolicTangent(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicTangent::s_functionHelper.name());
 }

@@ -364,11 +364,6 @@ protected:
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
   Expression(int nodeIdentifier) : TreeHandle(nodeIdentifier) {}
 
-  template<typename T>
-  static TreeNode * Initializer(void * buffer) {
-    return new (buffer) T;
-  }
-
   template<typename U>
   static Expression UntypedBuilderOneChild(Expression children) {
     assert(children.type() == ExpressionNode::Type::List);
@@ -521,28 +516,55 @@ private:
   static Expression CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb);
 };
 
+template<typename T>
+static TreeNode * Initializer(void * buffer) {
+  return new (buffer) T;
+}
+
 // Helper to create the expression associated to a node
-template<typename T, typename U, int N>
-class Handle : public Expression {
+template<typename T, typename U, int N, typename Parent>
+class Handle : public Parent {
 public:
-  Handle(const U * n) : Expression(n) {}
+#ifndef PLATFORM_DEVICE
+  static_assert(std::is_base_of<Expression, Parent>::value);
+#endif
+  Handle(const U * n) : Parent(n) {}
   static T Builder() {
+    static_assert(N == 0);
     TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {});
     return static_cast<T&>(h);
   }
   static T Builder(Expression child) {
+    static_assert(N == 1);
     TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child});
     return static_cast<T&>(h);
   }
   static T Builder(Expression child1, Expression child2) {
+    static_assert(N == 2);
     TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2});
+    return static_cast<T&>(h);
+  }
+  static T Builder(Expression child1, Expression child2, Expression child3) {
+    static_assert(N == 3);
+    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2, child3});
+    return static_cast<T&>(h);
+  }
+  static T Builder(Expression child1, Expression child2, Expression child3, Expression child4) {
+    static_assert(N == 4);
+    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2, child3, child4});
     return static_cast<T&>(h);
   }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::functionName, N, Initializer<U>, sizeof(U));
 };
 
-template<typename T, typename U> using HandleOneChild = Handle<T,U,1>;
-template<typename T, typename U> using HandleTwoChildren = Handle<T,U,2>;
+template<typename T, typename U> using HandleNoChildren = Handle<T,U,0,Expression>;
+template<typename T, typename U> using HandleOneChild = Handle<T,U,1,Expression>;
+template<typename T, typename U> using HandleTwoChildren = Handle<T,U,2,Expression>;
+
+template<typename T, typename U, typename P> using HandleOneChildWithParent = Handle<T,U,1,P>;
+template<typename T, typename U, typename P> using HandleTwoChildrenWithParent = Handle<T,U,2,P>;
+template<typename T, typename U, typename P> using HandleThreeChildrenWithParent = Handle<T,U,3,P>;
+template<typename T, typename U, typename P> using HandleFourChildrenWithParent = Handle<T,U,4,P>;
 }
 
 #endif

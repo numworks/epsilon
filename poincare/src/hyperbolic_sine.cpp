@@ -6,8 +6,6 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper HyperbolicSine::s_functionHelper;
-
 Layout HyperbolicSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(HyperbolicSine(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicSine::s_functionHelper.name());
 }

@@ -185,7 +185,7 @@ bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool going
 
 void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
   if (cursor != nullptr) {
-    cursor->setLayoutNode(denominatorLayout());
+    cursor->setLayoutNode(numeratorLayout()->isEmpty() ? numeratorLayout() : denominatorLayout());
     cursor->setPosition(LayoutCursor::Position::Left);
   }
 }

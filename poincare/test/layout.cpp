@@ -78,6 +78,17 @@ QUIZ_CASE(poincare_layout_fraction_create) {
   assert_layout_serialize_to(layout, "\u0012\u001212\u0013/\u001234\u0013\u0013+5");
   quiz_assert(cursor.isEquivalentTo(LayoutCursor(layout.childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left)));
 
+    /*                     |
+   * |34+5 -> "Divide" -> --- + 5
+   *                      34
+   * */
+  Layout lHalfEmptyFraction = LayoutHelper::StringToCodePointsLayout("34+5", 6);
+  LayoutCursor fractionCursor(lHalfEmptyFraction.childAtIndex(0), LayoutCursor::Position::Left);
+  fractionCursor.addFractionLayoutAndCollapseSiblings();
+  assert_layout_serialize_to(lHalfEmptyFraction, "\u0012\u0012\u0013/\u001234\u0013\u0013+5");
+  quiz_assert(fractionCursor.isEquivalentTo(LayoutCursor(lHalfEmptyFraction.childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Left)));
+
+
   /*
    *  1                      1   3
    * --- 3|4 -> "Divide" -> --- ---

@@ -129,14 +129,15 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
     totalSize += sizeChunks[i];
   }
   size_t recordSize = sizeOfRecordWithName(recordName, totalSize);
-  if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
-   return notifyFullnessToDelegate();
-  }
   /* WARNING : This relies on the fact that when you create a python script or
    * a function, you first create it with a placeholder name and then let the
    * user set its name through setNameOfRecord. */
   if (!handleCompetingRecord(recordName, extensionCanOverrideItself)) {
     return Record::ErrorStatus::NameTaken;
+  }
+
+  if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
+   return notifyFullnessToDelegate();
   }
 
   // Find the end of data

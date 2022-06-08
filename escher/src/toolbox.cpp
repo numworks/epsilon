@@ -45,7 +45,12 @@ int Toolbox::typeAtIndex(int index) {
 
 bool Toolbox::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Toolbox) {
-    return returnToRootMenu();
+    if (stackDepth() == 0) {
+      Container::activeApp()->dismissModalViewController();
+      return true;
+    } else {
+      return returnToRootMenu();
+    }
   }
   return NestedMenuController::handleEvent(event);
 }

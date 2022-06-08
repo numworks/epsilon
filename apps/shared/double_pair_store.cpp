@@ -381,7 +381,6 @@ void DoublePairStore::updateSeries(int series, bool delayUpdate) {
 }
 
 void DoublePairStore::storeColumn(int series, int i) const {
-  List listToStore = m_dataLists[series][i];
   char name[k_columnNamesLength + 1];
   int nameLength = fillColumnName(series, i, name);
   if (lengthOfColumn(series, i) == 0) {
@@ -389,7 +388,7 @@ void DoublePairStore::storeColumn(int series, int i) const {
     return;
   }
   Symbol listSymbol = Symbol::Builder(name, nameLength);
-  m_context->setExpressionForSymbolAbstract(listToStore, listSymbol);
+  m_context->setExpressionForSymbolAbstract(m_dataLists[series][i], listSymbol);
 }
 
 void DoublePairStore::deleteTrailingUndef(int series, int i) {

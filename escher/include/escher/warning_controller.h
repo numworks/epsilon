@@ -36,7 +36,7 @@ private:
 
   ContentView m_contentView;
   I18n::Message m_warningMessage1;
-  bool m_exitOnOKBackEXE;
+  bool m_exitOnOKBackEXEOnly;
 };
 
 }

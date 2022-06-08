@@ -13,10 +13,28 @@ namespace Graph {
 FunctionToolbox::FunctionToolbox() :
   MathToolbox()
 {
-  const CodePoint codepoints[k_numberOfAddedCells] = {UCodePointInferiorEqual, UCodePointSuperiorEqual};
-  for (int i = 0; i < k_numberOfAddedCells; i++) {
+  for (int i = 0; i < k_maxNumberOfAddedCells; i++) {
     m_addedCells[i].setParentResponder(&m_selectableTableView);
-    m_addedCellLayout[i] = CodePointLayout::Builder(codepoints[i]);
+  }
+  setAddedCellsContent(AddedCellsContent::ComparisonOperators);
+}
+
+void FunctionToolbox::setAddedCellsContent(AddedCellsContent content) {
+  constexpr CodePoint codepoints[k_maxNumberOfAddedCells] = {UCodePointInferiorEqual, UCodePointSuperiorEqual};
+  m_addedCellsContent = content;
+  switch (content) {
+  case AddedCellsContent::ComparisonOperators:
+    for (int i = 0; i < k_maxNumberOfAddedCells; i++) {
+      m_addedCellLayout[i] = CodePointLayout::Builder(codepoints[i]);
+    }
+    break;
+  case AddedCellsContent::NegativeInfinity:
+    m_addedCellLayout[0] = LayoutHelper::String("-inf");
+    break;
+  default:
+    assert(content == AddedCellsContent::PositiveInfinity);
+    m_addedCellLayout[0] = LayoutHelper::String("inf");
+    break;
   }
 }
 
@@ -34,7 +52,7 @@ int FunctionToolbox::numberOfRows() const {
 
 int FunctionToolbox::reusableCellCount(int type) {
   if (type == k_addedCellType) {
-    return k_numberOfAddedCells;
+    return addedCellsAtRoot();
   }
   return MathToolbox::reusableCellCount(type);
 }
@@ -43,7 +61,7 @@ HighlightCell * FunctionToolbox::reusableCell(int index, int type) {
   assert(type <= k_addedCellType);
   assert(index >= 0);
   if (type == k_addedCellType) {
-    assert(index < k_numberOfAddedCells);
+    assert(index < k_maxNumberOfAddedCells);
     return &m_addedCells[index];
   }
   return MathToolbox::reusableCell(index, type);
@@ -51,6 +69,7 @@ HighlightCell * FunctionToolbox::reusableCell(int index, int type) {
 
 void FunctionToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (typeAtIndex(index) == k_addedCellType) {
+    assert(index < addedCellsAtRoot());
     static_cast<ExpressionTableCell *>(cell)->setLayout(m_addedCellLayout[index]);
     cell->reloadCell();
     return;

@@ -31,7 +31,7 @@ private:
 
   TreeCache();
   TreeBlock * firstBlock() override { return m_nextIdentifier == 0 ? nullptr : &m_pool[0]; }
-  TreeBlock * lastBlock() override { return m_nextIdentifier == 0 ? &m_pool[0] : nextTree(m_cachedTree[m_nextIdentifier - 1]); }
+  TreeBlock * lastBlock() override { return m_nextIdentifier == 0 ? &m_pool[0] : m_cachedTree[m_nextIdentifier - 1]->nextTree(); }
   bool resetCache();
 
   TreeSandbox m_sandbox;

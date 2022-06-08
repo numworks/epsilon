@@ -18,9 +18,58 @@ public:
 
   bool operator!=(const TreeBlock& b) { return b.m_content != m_content; }
 
-  int numberOfSubtrees() const;
-
   const char * log();
+
+  int numberOfSubtrees() const;
+  TreeBlock * nextBlock() { return this + sizeof(TreeBlock); }
+  TreeBlock * previousBlock() { return this - sizeof(TreeBlock); }
+  TreeBlock * nextTree();
+
+  class Iterator {
+  public:
+    Iterator(const TreeBlock * block) : m_block(const_cast<TreeBlock *>(block)) {}
+    TreeBlock * operator*() { return m_block; }
+    bool operator!=(const Iterator& it) const { return (m_block != it.m_block); }
+  protected:
+    TreeBlock * m_block;
+  };
+
+  class Direct final {
+  public:
+    Direct(const TreeBlock * block) : m_block(const_cast<TreeBlock *>(block)) {}
+    class Iterator : public TreeBlock::Iterator {
+    public:
+      using TreeBlock::Iterator::Iterator;
+      Iterator & operator++() {
+        this->m_block = this->m_block->nextTree();
+        return *this;
+      }
+    };
+    Iterator begin() const { return Iterator(m_block->nextBlock()); }
+    Iterator end() const { return Iterator(m_block->nextTree()); }
+  private:
+    TreeBlock * m_block;
+  };
+
+  class DepthFirst final {
+  public:
+    DepthFirst(const TreeBlock * block) : m_block(const_cast<TreeBlock *>(block)) {}
+    class Iterator : public TreeBlock::Iterator {
+    public:
+      using TreeBlock::Iterator::Iterator;
+      Iterator & operator++() {
+        this->m_block = this->m_block->nextBlock();
+        return *this;
+      }
+    };
+    Iterator begin() const { return Iterator(m_block->nextBlock()); }
+    Iterator end() const { return Iterator(m_block->nextBlock()); }
+  private:
+    TreeBlock * m_block;
+  };
+
+  Direct directChildren() const { return Direct(this); }
+  DepthFirst depthFirstChildren() const { return DepthFirst(this); }
 
 private:
   uint8_t m_content;

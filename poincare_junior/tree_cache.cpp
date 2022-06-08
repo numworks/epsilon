@@ -29,7 +29,7 @@ TreeCache::Error TreeCache::copyTreeForEditing(int id) {
   if (m_nextIdentifier <= id) {
     return Error::UninitializedIdentifier;
   }
-  size_t treeSize = nextTree(m_cachedTree[id]) - m_cachedTree[id];
+  size_t treeSize = m_cachedTree[id]->nextTree() - m_cachedTree[id];
   TreeBlock * copiedTree = m_cachedTree[id];
   if (m_sandbox.size() < treeSize) {
     bool reset = resetCache();

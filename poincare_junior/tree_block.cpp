@@ -31,4 +31,14 @@ int TreeBlock::numberOfSubtrees() const {
   }
 }
 
+TreeBlock * TreeBlock::nextTree() {
+  int nbOfSubtreesToScan = numberOfSubtrees();
+  TreeBlock * result = this;
+  while (nbOfSubtreesToScan > 0) {
+    result = result->nextBlock();
+    nbOfSubtreesToScan += result->numberOfSubtrees() - 1;
+  }
+  return result->nextBlock();
+}
+
 }

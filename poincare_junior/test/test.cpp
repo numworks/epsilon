@@ -15,7 +15,7 @@ void printLinearPool(TreePool * pool) {
   TreeBlock * b = pool->firstBlock();
   while (b < pool->lastBlock()) {
     std::cout << b->log() << std::endl;
-    b = pool->nextBlock(b);
+    b = b->nextBlock();
   }
 }
 
@@ -25,15 +25,13 @@ void printIndentation(int deep) {
   }
 }
 
-TreeBlock * printTreePoolRec(TreePool * pool, TreeBlock * block, int deep) {
+TreeBlock * printTreePoolRec(TreeBlock * block, int deep) {
   std::cout << block->log() << std::endl;
-  TreeBlock * child = pool->nextBlock(block);
-  for (int i = 0; i < block->numberOfSubtrees(); i++) {
+  for (TreeBlock * child : block->directChildren()) {
     printIndentation(deep);
-    printTreePoolRec(pool, child, deep + 1);
-    child = pool->nextTree(child);
+    printTreePoolRec(child, deep + 1);
   }
-  return child;
+  return block->nextTree();
 }
 
 void printTreePool(TreePool * pool) {
@@ -41,7 +39,7 @@ void printTreePool(TreePool * pool) {
   int counter = 0;
   while (b && b < pool->lastBlock()) {
     std::cout << "---------------------------------- Tree n° " << counter++ << "----------------------------------" << std::endl;
-    b = printTreePoolRec(pool, b, 0);
+    b = printTreePoolRec(b, 0);
     std::cout << "------------------------------------------------------------------------------" << std::endl;
   }
 }

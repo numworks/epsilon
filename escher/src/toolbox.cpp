@@ -51,6 +51,10 @@ bool Toolbox::handleEvent(Ion::Events::Event event) {
     } else {
       return returnToRootMenu();
     }
+  } else if (event == Ion::Events::Var) {
+    Container::activeApp()->dismissModalViewController();
+    assert(sender());
+    return sender()->handleBoxEvent(event);
   }
   return NestedMenuController::handleEvent(event);
 }

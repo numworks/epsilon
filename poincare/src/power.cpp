@@ -791,7 +791,11 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       replaceWithInPlace(base);
       return base.shallowReduce(reductionContext);
     }
-    // Case 2: (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a not -1
+    /* Case 2: (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a not -1
+     * NOTE: we only do this reduction if:
+     * a is a number or a is positive.
+     * This is mainly to avoid infinite loop where a.setSign(positive)
+     * would create the expression -1*a which would be reduced here again.*/
     Multiplication multiplicationBase = static_cast<Multiplication &>(base);
     for (int i = 0; i < baseChildren; i++) {
       Expression child = base.childAtIndex(i);

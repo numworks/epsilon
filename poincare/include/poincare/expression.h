@@ -179,7 +179,7 @@ public:
   bool isDefinedCosineOrSine(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   bool isBasedIntegerCappedBy(const char * integerString) const;
   bool isDivisionOfIntegers() const;
-  bool hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  bool hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, float * returnRealPart = nullptr, float * returnImagPart = nullptr) const;
 
   /* recursivelyMatches will test each node recursively with the function
    * provided as argument. If the result is Yes, it will stop searching and

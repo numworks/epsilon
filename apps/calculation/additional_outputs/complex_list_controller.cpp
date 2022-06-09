@@ -38,12 +38,14 @@ void ComplexListController::setExactAndApproximateExpression(Poincare::Expressio
   m_calculationStore.push("abs(z)", &context, CalculationHeight);
 
   // Set Complex illustration
-  /* Compute a and b as in Expression::hasDefinedComplexApproximation to ensure
-   * the same defined result. */
-  float a = Shared::PoincareHelpers::ApproximateToScalar<float>(RealPart::Builder(approximateExpression.clone()), &context);
-  float b = Shared::PoincareHelpers::ApproximateToScalar<float>(ImaginaryPart::Builder(approximateExpression.clone()), &context);
-  m_model.setComplex(std::complex<float>(a,b));
+  float realPart;
+  float imagPart;
+  bool hasComplexApprox = approximateExpression.hasDefinedComplexApproximation(&context, preferences->complexFormat(), preferences->angleUnit(), &realPart, &imagPart);
 
+  assert(hasComplexApprox);
+  (void) hasComplexApprox; // Silence the compiler;
+
+  m_model.setComplex(std::complex<float>(realPart,imagPart));
   // Reset complex format as before
   preferences->setComplexFormat(currentComplexFormat);
 }

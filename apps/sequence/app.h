@@ -51,7 +51,7 @@ public:
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CodePoint XNT() override { return 'n'; }
   Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
-  Shared::SequenceContext * localContext() override;
+  Shared::SequenceContext * localContext() override { return static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceContext(); }
   Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceStore(); }
   Shared::Interval * interval() { return snapshot()->interval(); }
   ValuesController * valuesController() override {
@@ -63,7 +63,6 @@ public:
   bool isAcceptableExpression(const Poincare::Expression expression) override;
 private:
   App(Snapshot * snapshot);
-  Shared::SequenceContext m_sequenceContext;
   ListController m_listController;
   Escher::ButtonRowController m_listFooter;
   Escher::ButtonRowController m_listHeader;

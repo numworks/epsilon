@@ -67,14 +67,14 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const cha
 
 const Expression GlobalContext::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * childContext) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
-  return ExpressionForSymbolAndRecord(symbol, r, childContext ? childContext : this);
+  return expressionForSymbolAndRecord(symbol, r, childContext ? childContext : this);
 }
 
 bool GlobalContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
-  Expression e = ExpressionForSymbolAndRecord(symbol, record, this);
+  Expression e = expressionForSymbolAndRecord(symbol, record, this);
   if (e.isUninitialized()) {
     e = Undefined::Builder();
   }
@@ -96,14 +96,14 @@ bool GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
   return setExpressionForFunction(finalExpression, symbol, record) == Ion::Storage::Record::ErrorStatus::None;
 }
 
-const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx) {
+const Expression GlobalContext::expressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx) {
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForActualSymbol(r);
   } else if (symbol.type() == ExpressionNode::Type::Function) {
     return ExpressionForFunction(symbol.childAtIndex(0), r);
   }
   assert(symbol.type() == ExpressionNode::Type::Sequence);
-  return ExpressionForSequence(symbol, r, ctx);
+  return expressionForSequence(symbol, r, ctx);
 }
 
 const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r) {
@@ -131,7 +131,7 @@ const Expression GlobalContext::ExpressionForFunction(const Expression & paramet
   return e;
 }
 
-const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx) {
+const Expression GlobalContext::expressionForSequence(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx) {
   if (!r.hasExtension(Ion::Storage::seqExtension)) {
     return Expression();
   }
@@ -151,8 +151,7 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
     rankIsInteger = std::floor(rankValue) == rankValue;
   }
   if (rankIsInteger) {
-    SequenceContext sqctx(ctx, sequenceStore());
-    return Float<double>::Builder(seq.evaluateXYAtParameter(rankValue, &sqctx).x2());
+    return Float<double>::Builder(seq.evaluateXYAtParameter(rankValue, sequenceContext()).x2());
   }
   return Float<double>::Builder(NAN);
 }

@@ -23,7 +23,7 @@ private:
   const char * comparisonString() const override { return "<"; };
 };
 
-class Inferior final : public HandleTwoChildrenWithParent<Inferior, InferiorNode, ComparisonOperator> {
+class Inferior final : public HandleTwoChildren<Inferior, InferiorNode, ComparisonOperator> {
 public:
   using Handle::Handle, Handle::Builder;
 };

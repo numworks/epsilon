@@ -35,7 +35,7 @@ private:
 };
 
 
-class HyperbolicArcTangent final : public HandleOneChildWithParent<HyperbolicArcTangent, HyperbolicArcTangentNode, HyperbolicTrigonometricFunction> {
+class HyperbolicArcTangent final : public HandleOneChild<HyperbolicArcTangent, HyperbolicArcTangentNode, HyperbolicTrigonometricFunction> {
 public:
   using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
 };

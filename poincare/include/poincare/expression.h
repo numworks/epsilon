@@ -556,14 +556,11 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::functionName, N, Initializer<U>, sizeof(U));
 };
 
-template<typename T, typename U> using HandleNoChildren = Handle<T,U,0,Expression>;
-template<typename T, typename U> using HandleOneChild = Handle<T,U,1,Expression>;
-template<typename T, typename U> using HandleTwoChildren = Handle<T,U,2,Expression>;
-
-template<typename T, typename U, typename P> using HandleOneChildWithParent = Handle<T,U,1,P>;
-template<typename T, typename U, typename P> using HandleTwoChildrenWithParent = Handle<T,U,2,P>;
-template<typename T, typename U, typename P> using HandleThreeChildrenWithParent = Handle<T,U,3,P>;
-template<typename T, typename U, typename P> using HandleFourChildrenWithParent = Handle<T,U,4,P>;
+template<typename T, typename U, typename P = Expression> using HandleNoChildren = Handle<T,U,0,P>;
+template<typename T, typename U, typename P = Expression> using HandleOneChild = Handle<T,U,1,P>;
+template<typename T, typename U, typename P = Expression> using HandleTwoChildren = Handle<T,U,2,P>;
+template<typename T, typename U, typename P = Expression> using HandleThreeChildren = Handle<T,U,3,P>;
+template<typename T, typename U, typename P = Expression> using HandleFourChildren = Handle<T,U,4,P>;
 }
 
 #endif

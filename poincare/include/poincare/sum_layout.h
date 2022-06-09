@@ -25,9 +25,9 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
-class SumLayout final : public Layout {
+class SumLayout final : public LayoutFourChildren<SumLayout, SumLayoutNode> {
 public:
-  static SumLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<SumLayout,SumLayoutNode>({argument, variable, lowerB, upperB}); }
+  using LayoutHandle::Builder;
   SumLayout() = delete;
 };
 

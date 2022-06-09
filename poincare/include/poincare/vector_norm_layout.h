@@ -3,6 +3,7 @@
 
 #include <poincare/vector_norm.h>
 #include <poincare/bracket_pair_layout.h>
+#include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
@@ -36,9 +37,8 @@ private:
   bool renderDoubleBar() const override { return true; }
 };
 
-class VectorNormLayout final : public Layout {
+class VectorNormLayout final : public LayoutOneChild<VectorNormLayout, VectorNormLayoutNode> {
 public:
-  static VectorNormLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<VectorNormLayout, VectorNormLayoutNode>({child}); }
   VectorNormLayout() = delete;
 };
 

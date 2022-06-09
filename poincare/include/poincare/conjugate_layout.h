@@ -2,7 +2,7 @@
 #define POINCARE_CONJUGATE_LAYOUT_NODE_H
 
 #include <poincare/layout_cursor.h>
-#include <poincare/layout.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -42,9 +42,8 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
-class ConjugateLayout final : public Layout {
+class ConjugateLayout final : public LayoutOneChild<ConjugateLayout, ConjugateLayoutNode> {
 public:
-  static ConjugateLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>({child}); }
   ConjugateLayout() = delete;
 };
 

@@ -53,9 +53,8 @@ private:
   LayoutNode * superscriptLayout() { return childAtIndex(2); }
 };
 
-class CondensedSumLayout final : public Layout {
+class CondensedSumLayout final : public LayoutThreeChildren<CondensedSumLayout, CondensedSumLayoutNode> {
 public:
-  static CondensedSumLayout Builder(Layout base, Layout subscript, Layout superscript) { return TreeHandle::FixedArityBuilder<CondensedSumLayout, CondensedSumLayoutNode>({base, subscript, superscript}); }
   CondensedSumLayout() = delete;
 };
 

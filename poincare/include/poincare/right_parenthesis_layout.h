@@ -33,9 +33,8 @@ protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
-class RightParenthesisLayout final : public Layout {
+class RightParenthesisLayout final : public LayoutNoChildren<RightParenthesisLayout, RightParenthesisLayoutNode> {
 public:
-  static RightParenthesisLayout Builder() { return TreeHandle::FixedArityBuilder<RightParenthesisLayout, RightParenthesisLayoutNode>(); }
   RightParenthesisLayout() = delete;
 };
 

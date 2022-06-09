@@ -27,9 +27,8 @@ private:
   constexpr static KDCoordinate k_lineThickness = 1;
 };
 
-class ProductLayout final : public Layout {
+class ProductLayout final : public LayoutFourChildren<ProductLayout, ProductLayoutNode> {
 public:
-  static ProductLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<ProductLayout,ProductLayoutNode>({argument, variable, lowerB, upperB}); }
   ProductLayout() = delete;
 };
 

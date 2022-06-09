@@ -1,6 +1,7 @@
 #ifndef POINCARE_ABSOLUTE_VALUE_LAYOUT_NODE_H
 #define POINCARE_ABSOLUTE_VALUE_LAYOUT_NODE_H
 
+#include <poincare/layout_helper.h>
 #include <poincare/absolute_value.h>
 #include <poincare/bracket_pair_layout.h>
 #include <poincare/serialization_helper.h>
@@ -35,9 +36,8 @@ private:
   bool renderBottomBar() const override { return false; }
 };
 
-class AbsoluteValueLayout final : public Layout {
+class AbsoluteValueLayout final : public LayoutOneChild<AbsoluteValueLayout,AbsoluteValueLayoutNode> {
 public:
-  static AbsoluteValueLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>({child}); }
   AbsoluteValueLayout() = delete;
 };
 

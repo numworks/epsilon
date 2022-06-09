@@ -14,7 +14,7 @@ public:
   // Context
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override { return m_parentContext->expressionTypeForIdentifier(identifier, length); }
   bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override { return m_parentContext->setExpressionForSymbolAbstract(expression, symbol); }
-  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override { return m_parentContext->expressionForSymbolAbstract(symbol, clone, unknownSymbolValue); }
+  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * childContext = nullptr) override { return m_parentContext->expressionForSymbolAbstract(symbol, clone, childContext == nullptr ? this : childContext); }
 
 private:
   Context * m_parentContext;

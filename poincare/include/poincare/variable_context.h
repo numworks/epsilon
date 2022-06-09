@@ -20,7 +20,7 @@ public:
   // Context
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
   bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override;
-  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override;
+  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * childContext = nullptr) override;
 
 private:
   const char * m_name;

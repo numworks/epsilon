@@ -99,12 +99,6 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     if (j - 1 < k_fixedNumberOfRows - 1) {
       int messageIndex = findCellIndex(j - 1);
       message = i == 1 ? k_calculationRows[messageIndex].symbol : k_calculationRows[messageIndex].title;
-      if (message == I18n::Message::Mean && GlobalPreferences::sharedGlobalPreferences()->meanSymbol() == CountryPreferences::MeanSymbol::WithMu) {
-        message = I18n::Message::SpecialMeanTitle;
-      }
-      if (message == I18n::Message::MeanSymbol && GlobalPreferences::sharedGlobalPreferences()->meanSymbol() == CountryPreferences::MeanSymbol::WithMu) {
-        message = I18n::Message::MeanDoubleSymbol;
-      }
     } else {
       // titles index does not include the Mode Frequency messages
       assert(showModeFrequency() && j == numberOfRows() - 1);

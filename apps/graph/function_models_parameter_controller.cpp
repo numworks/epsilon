@@ -74,9 +74,8 @@ int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferS
 bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record::ErrorStatus error = App::app()->functionStore()->addEmptyModel();
-    // Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
     if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
-      return false;
+      return true;
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     int modelIndex = getModelIndex(selectedRow());

@@ -45,7 +45,7 @@ bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record::ErrorStatus error = m_equationStore->addEmptyModel();
     if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
-      return false;
+      return true;
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     m_listController->editSelectedRecordWithText(k_models[selectedRow()]);

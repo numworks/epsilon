@@ -37,7 +37,7 @@ private:
 };
 
 
-class HyperbolicArcCosine final : public HandleOneChildWithParent<HyperbolicArcCosine, HyperbolicArcCosineNode, HyperbolicTrigonometricFunction> {
+class HyperbolicArcCosine final : public HandleOneChild<HyperbolicArcCosine, HyperbolicArcCosineNode, HyperbolicTrigonometricFunction> {
 public:
   using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
 };

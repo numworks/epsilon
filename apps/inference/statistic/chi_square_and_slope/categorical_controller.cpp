@@ -23,6 +23,7 @@ CategoricalController::CategoricalController(Responder * parent, ViewController 
 void CategoricalController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectRow(0);
+    categoricalTableCell()->selectableTableView()->setContentOffset(KDPointZero);
   }
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }

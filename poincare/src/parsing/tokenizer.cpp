@@ -42,6 +42,18 @@ bool Tokenizer::ShouldAddCodePointToIdentifier(const CodePoint c, const CodePoin
   return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || (c != UCodePointNull && c == context) || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
 }
 
+bool stringIsACodePointFollowedByNumbers(const char * string, int length) {
+  UTF8Decoder tempDecoder(string);
+  tempDecoder.nextCodePoint();
+  while (tempDecoder.stringPosition() < string + length) {
+    CodePoint c = tempDecoder.nextCodePoint();
+    if (!c.isDecimalDigit()) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /* Identifiers can be ReservedFunctions, SpecialIdentifiers or
  * CustomIdentifiers.
  * When tokenizing a string, the tokenizer will pop identifiers depending on
@@ -69,6 +81,8 @@ bool Tokenizer::ShouldAddCodePointToIdentifier(const CodePoint c, const CodePoin
  *     acos(x)  |  acos(x) and not a*cos(x)
  *    bacos(x)  |  bacos(x) and not b*acos(x), because bacos is defined
  * azfoobar(x)  |  a*z*foobar(x) and not azfoo*b*a*r*(x)
+ *        x2y   |  x2*y (letter followed by numbers are always in the same
+ *                 identifier)
  *
  * TODO : handle combined code points? For now combining code points will
  * trigger a syntax error.
@@ -151,7 +165,7 @@ Token::Type Tokenizer::stringTokenType(const char * string, size_t length) {
   if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
     return Token::ReservedFunction;
   }
-  if (m_encounteredRightwardsArrow || m_context == nullptr || m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
+  if (m_encounteredRightwardsArrow || m_context == nullptr || stringIsACodePointFollowedByNumbers(string, length) ||m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;

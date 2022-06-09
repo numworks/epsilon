@@ -1,6 +1,7 @@
 #ifndef POINCARE_EMPTY_LAYOUT_NODE_H
 #define POINCARE_EMPTY_LAYOUT_NODE_H
 
+#include <poincare/layout_helper.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
 

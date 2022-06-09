@@ -31,9 +31,8 @@ protected:
   bool renderBottomBar() const override { return false; }
 };
 
-class CeilingLayout final : public Layout {
+class CeilingLayout final : public LayoutOneChild<CeilingLayout, CeilingLayoutNode> {
 public:
-  static CeilingLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<CeilingLayout, CeilingLayoutNode>({child}); }
   CeilingLayout() = delete;
 };
 

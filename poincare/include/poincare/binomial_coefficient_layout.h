@@ -1,6 +1,7 @@
 #ifndef POINCARE_BINOMIAL_COEFFICIENT_LAYOUT_NODE_H
 #define POINCARE_BINOMIAL_COEFFICIENT_LAYOUT_NODE_H
 
+#include <poincare/layout_helper.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
 #include <poincare/grid_layout.h>
@@ -44,9 +45,8 @@ private:
   LayoutNode * kLayout() { return childAtIndex(1); }
 };
 
-class BinomialCoefficientLayout final : public Layout {
+class BinomialCoefficientLayout final : public LayoutTwoChildren<BinomialCoefficientLayout, BinomialCoefficientLayoutNode> {
 public:
-  static BinomialCoefficientLayout Builder(Layout child0, Layout child1) { return TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>({child0, child1}); }
   BinomialCoefficientLayout() = delete;
 };
 

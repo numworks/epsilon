@@ -3,6 +3,7 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -62,9 +63,8 @@ private:
   LayoutNode * denominatorLayout() { return childAtIndex(1); }
 };
 
-class FractionLayout final : public Layout {
+class FractionLayout final : public LayoutTwoChildren<FractionLayout, FractionLayoutNode> {
 public:
-  static FractionLayout Builder(Layout child0, Layout child1) { return TreeHandle::FixedArityBuilder<FractionLayout, FractionLayoutNode>({child0, child1}); }
   FractionLayout() = delete;
 };
 

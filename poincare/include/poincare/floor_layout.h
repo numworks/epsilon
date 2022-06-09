@@ -31,9 +31,8 @@ protected:
   bool renderTopBar() const override { return false; }
 };
 
-class FloorLayout final : public Layout {
+class FloorLayout final : public LayoutOneChild<FloorLayout, FloorLayoutNode> {
 public:
-  static FloorLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>({child}); }
   FloorLayout() = delete;
 };
 

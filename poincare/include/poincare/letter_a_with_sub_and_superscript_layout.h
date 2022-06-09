@@ -2,6 +2,7 @@
 #define LETTER_A_WITH_SUB_AND_SUPERSCRIPT_LAYOUT_NODE_H
 
 #include <poincare/letter_with_sub_and_superscript_layout.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -24,9 +25,8 @@ private:
   void renderLetter(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class LetterAWithSubAndSuperscriptLayout final : public Layout {
+class LetterAWithSubAndSuperscriptLayout final : public LayoutTwoChildren<LetterAWithSubAndSuperscriptLayout, LetterAWithSubAndSuperscriptLayoutNode> {
 public:
-  static LetterAWithSubAndSuperscriptLayout Builder(Layout child0, Layout child1) { return TreeHandle::FixedArityBuilder<LetterAWithSubAndSuperscriptLayout, LetterAWithSubAndSuperscriptLayoutNode>({child0, child1}); }
   LetterAWithSubAndSuperscriptLayout() = delete;
 };
 

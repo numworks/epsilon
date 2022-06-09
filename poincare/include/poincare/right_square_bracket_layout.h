@@ -30,9 +30,8 @@ protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
-class RightSquareBracketLayout final : public Layout {
+class RightSquareBracketLayout final : public LayoutNoChildren<RightSquareBracketLayout, RightSquareBracketLayoutNode> {
 public:
-  static RightSquareBracketLayout Builder() { return TreeHandle::FixedArityBuilder<RightSquareBracketLayout, RightSquareBracketLayoutNode>(); }
   RightSquareBracketLayout() = delete;
 };
 

@@ -3,6 +3,7 @@
 
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -42,10 +43,9 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
-class ListSequenceLayout final : public Layout {
+class ListSequenceLayout final : public LayoutThreeChildren<ListSequenceLayout, ListSequenceLayoutNode> {
 public:
   // sequence(f(k), k, 10)
-  static ListSequenceLayout Builder(Layout function, Layout variable, Layout variableUpperBound)  { return TreeHandle::FixedArityBuilder<ListSequenceLayout,ListSequenceLayoutNode>({function, variable, variableUpperBound}); }
   ListSequenceLayout() = delete;
 };
 

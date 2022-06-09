@@ -54,7 +54,6 @@ bool App::isAcceptableExpression(const Poincare::Expression exp) {
 
 App::App(Snapshot * snapshot) :
   FunctionApp(snapshot, &m_inputViewController),
-  m_sequenceContext(AppsContainer::sharedAppsContainer()->globalContext(), static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceStore()),
   m_listController(&m_listFooter, this, &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray),
   m_listHeader(nullptr, &m_listFooter, &m_listController),
@@ -70,10 +69,6 @@ App::App(Snapshot * snapshot) :
   m_tabViewController(&m_inputViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
   m_inputViewController(&m_modalViewController, &m_tabViewController, &m_listController, &m_listController, &m_listController)
 {
-}
-
-Shared::SequenceContext * App::localContext() {
-  return &m_sequenceContext;
 }
 
 NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {

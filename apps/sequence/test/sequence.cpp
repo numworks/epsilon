@@ -37,17 +37,17 @@ Sequence * addSequence(SequenceStore * store, Sequence::Type type, const char * 
 void check_sequences_defined_by(double result[SequenceStore::k_maxNumberOfSequences][10], Sequence::Type types[SequenceStore::k_maxNumberOfSequences], const char * definitions[SequenceStore::k_maxNumberOfSequences], const char * conditions1[SequenceStore::k_maxNumberOfSequences], const char * conditions2[SequenceStore::k_maxNumberOfSequences]) {
   Shared::GlobalContext globalContext;
   SequenceStore * store = globalContext.sequenceStore();
-  SequenceContext sequenceContext(&globalContext, store);
+  SequenceContext * sequenceContext = globalContext.sequenceContext();
 
   Sequence * seqs[SequenceStore::k_maxNumberOfSequences];
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    seqs[i] = addSequence(store, types[i], definitions[i], conditions1[i], conditions2[i], &sequenceContext);
+    seqs[i] = addSequence(store, types[i], definitions[i], conditions1[i], conditions2[i], sequenceContext);
   }
 
   for (int j = 0; j < 10; j++) {
     for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
       if (seqs[i]->isDefined()) {
-        double un = seqs[i]->evaluateXYAtParameter((double)j, &sequenceContext).x2();
+        double un = seqs[i]->evaluateXYAtParameter((double)j, sequenceContext).x2();
         quiz_assert((std::isnan(un) && std::isnan(result[i][j])) || (un == result[i][j]));
       }
     }
@@ -62,11 +62,11 @@ void check_sequences_defined_by(double result[SequenceStore::k_maxNumberOfSequen
 void check_sum_of_sequence_between_bounds(double result, double start, double end, Sequence::Type type, const char * definition, const char * condition1, const char * condition2) {
   Shared::GlobalContext globalContext;
   SequenceStore * store = globalContext.sequenceStore();
-  SequenceContext sequenceContext(&globalContext, store);
+  SequenceContext * sequenceContext = globalContext.sequenceContext();
 
-  Sequence * seq = addSequence(store, type, definition, condition1, condition2, &sequenceContext);
+  Sequence * seq = addSequence(store, type, definition, condition1, condition2, sequenceContext);
 
-  double sum = PoincareHelpers::ApproximateToScalar<double>(seq->sumBetweenBounds(start, end, &sequenceContext), &sequenceContext);
+  double sum = PoincareHelpers::ApproximateToScalar<double>(seq->sumBetweenBounds(start, end, sequenceContext), sequenceContext);
   assert_roughly_equal(sum, result);
 
   store->removeAll();
@@ -493,13 +493,13 @@ QUIZ_CASE(sequence_context) {
 
   Shared::GlobalContext globalContext;
   SequenceStore * store = globalContext.sequenceStore();
-  SequenceContext sequenceContext(&globalContext, store);
-  addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, &sequenceContext);
+  SequenceContext * sequenceContext = globalContext.sequenceContext();
+  addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, sequenceContext);
   assert_expression_simplifies_approximates_to<double>("f(u(2))", "3");
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 
   store->removeAll();
-  addSequence(store, Sequence::Type::Explicit, "1/0", nullptr, nullptr, &sequenceContext);
+  addSequence(store, Sequence::Type::Explicit, "1/0", nullptr, nullptr, sequenceContext);
   assert_expression_simplifies_approximates_to<double>("f(u(2))", "undef");
 
   store->removeAll();
@@ -509,30 +509,30 @@ QUIZ_CASE(sequence_context) {
 QUIZ_CASE(sequence_order) {
   Shared::GlobalContext globalContext;
   SequenceStore * store = globalContext.sequenceStore();
-  SequenceContext sequenceContext(&globalContext, store);
+  SequenceContext * sequenceContext = globalContext.sequenceContext();
 
-  Sequence * u = addSequence(store, Sequence::Type::Explicit, "", nullptr, nullptr, &sequenceContext);
+  Sequence * u = addSequence(store, Sequence::Type::Explicit, "", nullptr, nullptr, sequenceContext);
   quiz_assert(u->fullName()[0] == 'u');
-  Sequence * v = addSequence(store, Sequence::Type::Explicit, "", nullptr, nullptr, &sequenceContext);
+  Sequence * v = addSequence(store, Sequence::Type::Explicit, "", nullptr, nullptr, sequenceContext);
   quiz_assert(v->fullName()[0] == 'v');
-  Sequence * w = addSequence(store, Sequence::Type::Explicit, "3", nullptr, nullptr, &sequenceContext);
+  Sequence * w = addSequence(store, Sequence::Type::Explicit, "3", nullptr, nullptr, sequenceContext);
   quiz_assert(w->fullName()[0] == 'w');
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("u.seq").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("v.seq").destroy();
-  u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, &sequenceContext);
+  u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, sequenceContext);
   assert(u->fullName()[0] == 'u');
-  v = addSequence(store, Sequence::Type::Explicit, "1+w(1)", nullptr, nullptr, &sequenceContext);
+  v = addSequence(store, Sequence::Type::Explicit, "1+w(1)", nullptr, nullptr, sequenceContext);
   assert(v->fullName()[0] == 'v');
 
-  sequenceContext.resetCache();
-  quiz_assert(v->evaluateXYAtParameter(1., &sequenceContext).x2() == 4.);
+  sequenceContext->resetCache();
+  quiz_assert(v->evaluateXYAtParameter(1., sequenceContext).x2() == 4.);
 
   store->removeAll();
-  u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, &sequenceContext);
-  v = addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, &sequenceContext);
+  u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr, sequenceContext);
+  v = addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, sequenceContext);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("u.seq").destroy();
-  sequenceContext.resetCache();
-  quiz_assert(v->evaluateXYAtParameter(1., &sequenceContext).x2() == 1.);
+  sequenceContext->resetCache();
+  quiz_assert(v->evaluateXYAtParameter(1., sequenceContext).x2() == 1.);
 
   store->removeAll();
   store->tidyDownstreamPoolFrom();

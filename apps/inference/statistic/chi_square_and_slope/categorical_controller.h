@@ -23,11 +23,11 @@ class CategoricalController : public Escher::SelectableListViewController<Escher
 public:
   CategoricalController(Escher::Responder * parent, Escher::ViewController * nextController, Escher::Invocation invocation);
 
+  static bool ButtonAction(void * c, void * s);
+
   // Responder
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-
-  static bool ButtonAction(void * c, void * s);
 
   // ScrollViewDelegate
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;

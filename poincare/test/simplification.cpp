@@ -1979,6 +1979,11 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("sequence(k,k,10)", "{1,2,3,4,5,6,7,8,9,10}");
   assert_parsed_expression_simplify_to("sequence(1/(n-3),n,5)", "{-1/2,-1,undef,1,1/2}");
   assert_parsed_expression_simplify_to("sequence(x^2,x,3)", "{1,4,9}");
+  // Do not confuse u{n} and L*1*{n}
+  assert_parsed_expression_simplify_to("{3}→L", "{3}");
+  assert_parsed_expression_simplify_to("L1{2}", "{6}"); // L*1*{2}
+  // Clean the storage for other tests
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("L.list").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_functions_of_lists) {

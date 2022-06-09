@@ -796,11 +796,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     for (int i = 0; i < baseChildren; i++) {
       Expression child = base.childAtIndex(i);
       ExpressionNode::Sign childSign = child.sign(context);
-      if (child.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(child).isMinusOne()) {
-        // Break when there is -1 to avoid infinite loop with setSign
-        break;
-      }
-      if (childSign != ExpressionNode::Sign::Unknown) {
+      if ((child.type() != ExpressionNode::Type::Rational || !static_cast<Rational &>(child).isMinusOne()) && (childSign == ExpressionNode::Sign::Positive || (childSign == ExpressionNode::Sign::Negative && child.isNumber()))) {
         if (childSign == ExpressionNode::Sign::Negative) {
           multiplicationBase.replaceChildAtIndexInPlace(i, Rational::Builder(-1));
         } else {

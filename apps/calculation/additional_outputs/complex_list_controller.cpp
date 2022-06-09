@@ -19,8 +19,8 @@ void ComplexListController::viewWillAppear() {
   m_complexGraphCell.reload(); // compute labels
 }
 
-void ComplexListController::setExpression(Poincare::Expression e) {
-  IllustratedListController::setExpression(e);
+void ComplexListController::setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) {
+  IllustratedListController::setExactAndApproximateExpression(exactExpression, approximateExpression);
 
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat currentComplexFormat = preferences->complexFormat();
@@ -39,12 +39,9 @@ void ComplexListController::setExpression(Poincare::Expression e) {
 
   // Set Complex illustration
   /* Compute a and b as in Expression::hasDefinedComplexApproximation to ensure
-   * the same defined result. Since in Calculation::additionalInformationType,
-   * we check for Complex additional output with the approximate output,
-   * which is computed in doubles, the approximation must be done with doubles
-   * here too. */
-  float a = static_cast<float>(Shared::PoincareHelpers::ApproximateToScalar<double>(RealPart::Builder(e.clone()), &context));
-  float b = static_cast<float>(Shared::PoincareHelpers::ApproximateToScalar<double>(ImaginaryPart::Builder(e.clone()), &context));
+   * the same defined result. */
+  float a = Shared::PoincareHelpers::ApproximateToScalar<float>(RealPart::Builder(approximateExpression.clone()), &context);
+  float b = Shared::PoincareHelpers::ApproximateToScalar<float>(ImaginaryPart::Builder(approximateExpression.clone()), &context);
   m_model.setComplex(std::complex<float>(a,b));
 
   // Reset complex format as before

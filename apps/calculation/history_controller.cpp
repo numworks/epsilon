@@ -120,7 +120,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         }
         if (vc) {
           assert(!e.isUninitialized());
-          vc->setExpression(e);
+          vc->setExactAndApproximateExpression(e, calculationAtIndex(focusRow)->approximateOutput(Calculation::NumberOfSignificantDigits::Maximal));;
           Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
         }
       }

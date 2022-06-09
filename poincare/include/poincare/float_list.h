@@ -18,6 +18,9 @@ class FloatList : public List, public DatasetColumn<T> {
 public:
   static FloatList<T> Builder() { return TreeHandle::NAryBuilder<FloatList<T>, ListNode>(); }
 
+  void addChildAtIndexInPlace(TreeHandle t, int index, int currentNumberOfChildren) = delete;
+  void replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild) = delete;
+
   void addValueAtIndex(T value, int index);
   void replaceValueAtIndex(T value, int index);
   void removeValueAtIndex(int index);

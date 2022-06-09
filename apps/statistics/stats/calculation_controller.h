@@ -18,7 +18,7 @@ public:
   CalculationController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Store * store);
 
   // TableViewDataSource
-  int numberOfRows() const override { return k_fixedNumberOfRows + m_store->totalNumberOfModes() + showModeFrequency(); }
+  int numberOfRows() const override { return fixedNumberOfRows() + m_store->totalNumberOfModes() + showModeFrequency(); }
   bool showModeFrequency() const { return m_store->totalNumberOfModes() > 0; }
   int numberOfColumns() const override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
@@ -34,7 +34,7 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
 private:
-  static constexpr int k_fixedNumberOfRows = 16;
+  static constexpr int k_fixedMaxNumberOfRows = 16;
   static constexpr int k_numberOfCalculationCells = 3 * k_maxNumberOfDisplayableRows;
   static constexpr int k_numberOfSeriesTitleCells = 3;
   static constexpr int k_numberOfCalculationTitleCells = k_maxNumberOfDisplayableRows;
@@ -68,20 +68,23 @@ private:
     { I18n::Message::Minimum, I18n::Message::MinimumSymbol, &Store::minValue, 1, 1 },
     { I18n::Message::Maximum, I18n::Message::MaximumSymbol, &Store::maxValue, 2, 5 },
     { I18n::Message::Range, I18n::Message::RangeSymbol, &Store::range, 3, 6 },
-    { I18n::Message::Mean, I18n::Message::MeanSymbol, &Store::mean, 4, 8},
+    { I18n::Message::Mean, I18n::Message::MeanSymbol, &Store::mean, 4, 16}, // Not displayed under variant1Layout
     { I18n::Message::StandardDeviation, I18n::Message::StandardDeviationSigmaSymbol, &Store::standardDeviation, 5, 9 },
     { I18n::Message::Deviation, I18n::Message::DeviationSymbol, &Store::variance, 6, 10 },
     { I18n::Message::FirstQuartile, I18n::Message::FirstQuartileSymbol, &Store::firstQuartile, 7, 2 },
     { I18n::Message::ThirdQuartile, I18n::Message::ThirdQuartileSymbol, &Store::thirdQuartile, 8, 4 },
     { I18n::Message::Median, I18n::Message::MedianSymbol, &Store::median, 9, 3 },
     { I18n::Message::InterquartileRange, I18n::Message::InterquartileRangeSymbol, &Store::quartileRange, 10, 7 },
-    { I18n::Message::SumValues, I18n::Message::SumValuesSymbol, &Store::sum, 11, 13 },
-    { I18n::Message::SumSquareValues, I18n::Message::SumSquareValuesSymbol, &Store::squaredValueSum, 12, 14 },
-    { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol, &Store::sampleStandardDeviation, 13, 11 },
-    { I18n::Message::SampleVariance, I18n::Message::SampleVarianceSymbol, &Store::sampleVariance, 14, 12 },
+    { I18n::Message::SumValues, I18n::Message::SumValuesSymbol, &Store::sum, 11, 14 },
+    { I18n::Message::SumSquareValues, I18n::Message::SumSquareValuesSymbol, &Store::squaredValueSum, 12, 15 },
+    { I18n::Message::SampleStandardDeviationS, I18n::Message::SampleStandardDeviationSSymbol, &Store::sampleStandardDeviation, 13, 12 },
+    { I18n::Message::SampleVariance, I18n::Message::SampleVarianceSymbol, &Store::sampleVariance, 14, 13 },
+    { I18n::Message::Mean, I18n::Message::MuMeanSymbol, &Store::mean, 15, 8 }, // Not displayed with defaultLayout
+    { I18n::Message::StatisticsSampleMean, I18n::Message::MeanSymbol, &Store::mean, 16, 11 }, // Not displayed with defaultLayout
   };
   int findCellIndex(int i) const;
 
+  int fixedNumberOfRows() const;
   Shared::DoublePairStore * store() const override { return m_store; }
 
   Shared::StoreTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];

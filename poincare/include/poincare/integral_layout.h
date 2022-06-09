@@ -3,6 +3,7 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
+#include <poincare/layout_helper.h>
 #include <kandinsky/font.h>
 
 namespace Poincare {
@@ -80,9 +81,8 @@ private:
   IntegralLayoutNode * mostNestedIntegral (NestedPosition position);
 };
 
-class IntegralLayout final : public Layout {
+class IntegralLayout final : public LayoutFourChildren<IntegralLayout, IntegralLayoutNode> {
 public:
-  static IntegralLayout Builder(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) { return TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>({integrand, differential, lowerBound, upperBound}); }
   IntegralLayout() = delete;
 };
 

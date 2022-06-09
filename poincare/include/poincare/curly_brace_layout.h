@@ -1,6 +1,7 @@
 #ifndef POINCARE_CURLY_BRACE_LAYOUT_NODE_H
 #define POINCARE_CURLY_BRACE_LAYOUT_NODE_H
 
+#include <poincare/layout_helper.h>
 #include <poincare/brace_layout.h>
 #include <poincare/serialization_helper.h>
 
@@ -54,9 +55,8 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override { RenderWithChildHeight(CurlyBraceLayoutNode::ChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor); }
 };
 
-class LeftCurlyBraceLayout final : public Layout {
+class LeftCurlyBraceLayout final : public LayoutNoChildren<LeftCurlyBraceLayout, LeftCurlyBraceLayoutNode> {
 public:
-  static LeftCurlyBraceLayout Builder() { return TreeHandle::FixedArityBuilder<LeftCurlyBraceLayout, LeftCurlyBraceLayoutNode>(); }
   LeftCurlyBraceLayout() = delete;
 };
 
@@ -77,9 +77,8 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override { RenderWithChildHeight(CurlyBraceLayoutNode::ChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor); }
 };
 
-class RightCurlyBraceLayout final : public Layout {
+class RightCurlyBraceLayout final : public LayoutNoChildren<RightCurlyBraceLayout, RightCurlyBraceLayoutNode> {
 public:
-  static RightCurlyBraceLayout Builder() { return TreeHandle::FixedArityBuilder<RightCurlyBraceLayout, RightCurlyBraceLayoutNode>(); }
   RightCurlyBraceLayout() = delete;
 };
 

@@ -295,33 +295,19 @@ void TreeHandle::release(uint16_t identifier) {
   node->release(node->numberOfChildren());
 }
 
-template AbsoluteValueLayout TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>(const Tuple &);
 template Addition TreeHandle::NAryBuilder<Addition, AdditionNode>(const Tuple &);
-template BinomialCoefficientLayout TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>(const Tuple &);
-template CeilingLayout TreeHandle::FixedArityBuilder<CeilingLayout, CeilingLayoutNode>(const Tuple &);
 template ComplexCartesian TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>(const Tuple &);
-template CondensedSumLayout TreeHandle::FixedArityBuilder<CondensedSumLayout, CondensedSumLayoutNode>(const Tuple &);
-template ConjugateLayout TreeHandle::FixedArityBuilder<ConjugateLayout, ConjugateLayoutNode>(const Tuple &);
 template Dependency TreeHandle::FixedArityBuilder<Dependency, DependencyNode>(const Tuple &);
 template Derivative TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(const Tuple &);
-template DerivativeLayout TreeHandle::FixedArityBuilder<DerivativeLayout, DerivativeLayoutNode>(const Tuple &);
 template DistributionDispatcher TreeHandle::NAryBuilder<DistributionDispatcher, DistributionDispatcherNode>(const Tuple &);
 template EmptyExpression TreeHandle::FixedArityBuilder<EmptyExpression, EmptyExpressionNode>(const Tuple &);
 template FloatList<double> TreeHandle::NAryBuilder<FloatList<double>, ListNode>(const Tuple &);
 template FloatList<float> TreeHandle::NAryBuilder<FloatList<float>, ListNode>(const Tuple &);
-template FloorLayout TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>(const Tuple &);
-template FractionLayout TreeHandle::FixedArityBuilder<FractionLayout, FractionLayoutNode>(const Tuple &);
 template Ghost TreeHandle::FixedArityBuilder<Ghost, GhostNode>(const Tuple &);
 template GreatCommonDivisor TreeHandle::NAryBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(const Tuple &);
 template HorizontalLayout TreeHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(const Tuple &);
 template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(const Tuple &);
-template IntegralLayout TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(const Tuple &);
 template LeastCommonMultiple TreeHandle::NAryBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);
-template LeftCurlyBraceLayout TreeHandle::FixedArityBuilder<LeftCurlyBraceLayout, LeftCurlyBraceLayoutNode>(const Tuple &);
-template LeftParenthesisLayout TreeHandle::FixedArityBuilder<LeftParenthesisLayout, LeftParenthesisLayoutNode>(const Tuple &);
-template LeftSquareBracketLayout TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(const Tuple &);
-template LetterAWithSubAndSuperscriptLayout TreeHandle::FixedArityBuilder<LetterAWithSubAndSuperscriptLayout, LetterAWithSubAndSuperscriptLayoutNode>(const Tuple &);
-template LetterCWithSubAndSuperscriptLayout TreeHandle::FixedArityBuilder<LetterCWithSubAndSuperscriptLayout, LetterCWithSubAndSuperscriptLayoutNode>(const Tuple &);
 template List TreeHandle::NAryBuilder<List, ListNode>(const Tuple &);
 template ListComplex<double> TreeHandle::NAryBuilder<ListComplex<double>, ListComplexNode<double> >(const Tuple &);
 template ListComplex<float> TreeHandle::NAryBuilder<ListComplex<float>, ListComplexNode<float> >(const Tuple &);
@@ -330,7 +316,7 @@ template ListMean TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<1>>(const
 template ListMean TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<2>>(const Tuple &);
 template ListSlice TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(const Tuple &);
 template ListSequence TreeHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(const Tuple &);
-template ListSequenceLayout TreeHandle::FixedArityBuilder<ListSequenceLayout, ListSequenceLayoutNode>(const Tuple &);
+template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(const Tuple &);
 template ListStandardDeviation TreeHandle::FixedArityBuilder<ListStandardDeviation, ListStandardDeviationNode<1>>(const Tuple &);
 template ListStandardDeviation TreeHandle::FixedArityBuilder<ListStandardDeviation, ListStandardDeviationNode<2>>(const Tuple &);
 template ListVariance TreeHandle::FixedArityBuilder<ListVariance, ListVarianceNode<1>>(const Tuple &);
@@ -339,22 +325,16 @@ template Logarithm TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2> >(c
 template Matrix TreeHandle::NAryBuilder<Matrix, MatrixNode>(const Tuple &);
 template MatrixComplex<double> TreeHandle::NAryBuilder<MatrixComplex<double>, MatrixComplexNode<double> >(const Tuple &);
 template MatrixComplex<float> TreeHandle::NAryBuilder<MatrixComplex<float>, MatrixComplexNode<float> >(const Tuple &);
-template MatrixRowEchelonForm TreeHandle::FixedArityBuilder<MatrixRowEchelonForm, MatrixRowEchelonFormNode>(const Tuple &);
-template MatrixReducedRowEchelonForm TreeHandle::FixedArityBuilder<MatrixReducedRowEchelonForm, MatrixReducedRowEchelonFormNode>(const Tuple &);
 template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tuple &);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
 template Product TreeHandle::FixedArityBuilder<Product, ProductNode>(const Tuple &);
 template ProductLayout TreeHandle::FixedArityBuilder<ProductLayout, ProductLayoutNode>(const Tuple &);
-template RightCurlyBraceLayout TreeHandle::FixedArityBuilder<RightCurlyBraceLayout, RightCurlyBraceLayoutNode>(const Tuple &);
-template RightParenthesisLayout TreeHandle::FixedArityBuilder<RightParenthesisLayout, RightParenthesisLayoutNode>(const Tuple &);
-template RightSquareBracketLayout TreeHandle::FixedArityBuilder<RightSquareBracketLayout, RightSquareBracketLayoutNode>(const Tuple &);
 template Subtraction TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
 template Sum TreeHandle::FixedArityBuilder<Sum, SumNode>(const Tuple &);
 template SumLayout TreeHandle::FixedArityBuilder<SumLayout, SumLayoutNode>(const Tuple &);
 template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(const Tuple &);
 template Nonreal TreeHandle::FixedArityBuilder<Nonreal, NonrealNode>(const Tuple &);
-template VectorNormLayout TreeHandle::FixedArityBuilder<VectorNormLayout, VectorNormLayoutNode>(const Tuple &);
 template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
 
 }

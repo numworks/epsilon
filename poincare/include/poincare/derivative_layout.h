@@ -3,6 +3,7 @@
 
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -60,9 +61,8 @@ private:
   bool m_variableChildInFractionSlot;
 };
 
-class DerivativeLayout : public Layout {
+class DerivativeLayout final : public LayoutThreeChildren<DerivativeLayout, DerivativeLayoutNode> {
 public:
-  static DerivativeLayout Builder(Layout derivand, Layout variable, Layout abscissa) { return TreeHandle::FixedArityBuilder<DerivativeLayout, DerivativeLayoutNode>({derivand, variable, abscissa}); }
   DerivativeLayout() = delete;
 };
 

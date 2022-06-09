@@ -59,14 +59,6 @@ Evaluation<T> ParameteredExpressionNode::approximateExpressionWithArgument(Expre
   // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounteredComplex flag
   ApproximationContext childContext = approximationContext;
   childContext.setContext(&variableContext);
-  if (expression->type() == ExpressionNode::Type::Sequence) {
-    /* Since we cannot get the expression of a sequence term like we would for
-     * a function, we replace its potential abstract rank by the value it should
-     * have. We can then evaluate its value */
-    Expression temporary = Expression(expression).clone();
-    temporary = temporary.node()->replaceSymbolWithExpression(symbol, Float<T>::Builder(x));
-    return temporary.node()->approximate(T(), childContext);
-  }
   return expression->approximate(T(), childContext);
 }
 

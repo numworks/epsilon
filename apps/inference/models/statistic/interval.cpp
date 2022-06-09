@@ -82,8 +82,8 @@ Poincare::Layout Interval::intervalCriticalValueSymbol() {
 
 bool Interval::isGraphable() const {
   double SE = standardError();
-  assert(SE >= 0);
-  return SE >= FLT_MIN;
+  assert(std::isnan(SE) || SE >= 0);
+  return !std::isnan(SE) && SE >= FLT_MIN;
 }
 
 float Interval::computeXMin() const {

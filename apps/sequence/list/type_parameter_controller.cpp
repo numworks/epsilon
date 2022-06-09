@@ -73,7 +73,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
 
     Ion::Storage::Record::ErrorStatus error = sequenceStore()->addEmptyModel();
     if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
-      return false;
+      return true;
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     Ion::Storage::Record record = sequenceStore()->recordAtIndex(sequenceStore()->numberOfModels()-1);

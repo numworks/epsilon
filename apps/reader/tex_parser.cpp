@@ -190,7 +190,12 @@ Layout TexParser::popCommand() {
       return popOverrightarrowCommand();
     }
   }
-
+  if (strncmp(k_binomCommand, m_text, strlen(k_binomCommand)) == 0) {
+    if (isCommandEnded(*(m_text + strlen(k_binomCommand)))) {
+      m_text += strlen(k_binomCommand);
+      return popBinomCommand();
+    }
+  }
   for (int i = 0; i < k_NumberOfSymbols; i++) {
     if (strncmp(k_SymbolsCommands[i], m_text, strlen(k_SymbolsCommands[i])) == 0) {
       if (isCommandEnded(*(m_text + strlen(k_SymbolsCommands[i])))) {
@@ -262,6 +267,13 @@ Layout TexParser::popSpaceCommand() {
 
 Layout TexParser::popOverrightarrowCommand() {
   return VectorLayout::Builder(popBlock());
+}
+
+Layout TexParser::popBinomCommand() {
+  Layout numerator = popBlock();
+  Layout denominator = popBlock();
+  BinomialCoefficientLayout b = BinomialCoefficientLayout::Builder(numerator, denominator);
+  return b;
 }
 
 Layout TexParser::popSymbolCommand(int SymbolIndex) {

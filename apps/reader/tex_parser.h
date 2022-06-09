@@ -28,6 +28,7 @@ private:
   Layout popSqrtCommand();
   Layout popSpaceCommand();
   Layout popOverrightarrowCommand();
+  Layout popBinomCommand();
 
   //Symbols
   Layout popSymbolCommand(int SymbolIndex);
@@ -47,6 +48,7 @@ private:
   static constexpr char const * k_sqrtCommand = "sqrt";
   static constexpr char const * k_spaceCommand = "space";
   static constexpr char const * k_overrightArrowCommand = "overrightarrow";
+  static constexpr char const * k_binomCommand = "binom";
 };
 
 }

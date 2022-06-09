@@ -30,19 +30,14 @@ bool VariableContext::setExpressionForSymbolAbstract(const Expression & expressi
   return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
 }
 
-const Expression VariableContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue ) {
+const Expression VariableContext::expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * childContext) {
   if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
     if (symbol.type() == ExpressionNode::Type::Symbol) {
       return clone ? m_value.clone() : m_value;
     }
     return Undefined::Builder();
-  } else {
-    Symbol unknownSymbol = Symbol::Builder(UCodePointUnknown);
-    if (m_name != nullptr && strcmp(m_name, unknownSymbol.name()) == 0) {
-      unknownSymbolValue = m_value.approximateToScalar<float>(this, Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit(), true);
-    }
-    return ContextWithParent::expressionForSymbolAbstract(symbol, clone, unknownSymbolValue);
   }
+  return ContextWithParent::expressionForSymbolAbstract(symbol, clone, childContext);
 }
 
 template void VariableContext::setApproximationForVariable(float);

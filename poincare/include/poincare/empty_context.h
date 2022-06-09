@@ -12,7 +12,7 @@ public:
   // Context
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override { return SymbolAbstractType::None; }
   bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override { assert(false); return false; }
-  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override { return Expression(); }
+  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * childContext = nullptr) override { return Expression(); }
 };
 
 }

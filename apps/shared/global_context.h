@@ -29,16 +29,16 @@ public:
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
-  const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override;
+  const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * childContext = nullptr) override;
   bool setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol) override;
   static SequenceStore * sequenceStore();
   void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) override;
 private:
   // Expression getters
-  static const Poincare::Expression ExpressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue = NAN);
+  static const Poincare::Expression ExpressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx);
   static const Poincare::Expression ExpressionForActualSymbol(Ion::Storage::Record r);
   static const Poincare::Expression ExpressionForFunction(const Poincare::Expression & parameter, Ion::Storage::Record r);
-  static const Poincare::Expression ExpressionForSequence(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue = NAN);
+  static const Poincare::Expression ExpressionForSequence(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx);
   // Expression setters
   static Ion::Storage::Record::ErrorStatus SetExpressionForActualSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord, Poincare::Context * context);
   Ion::Storage::Record::ErrorStatus setExpressionForFunction(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);

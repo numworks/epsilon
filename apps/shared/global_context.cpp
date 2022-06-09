@@ -65,9 +65,9 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const cha
   }
 }
 
-const Expression GlobalContext::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, float unknownSymbolValue ) {
+const Expression GlobalContext::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * childContext) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
-  return ExpressionForSymbolAndRecord(symbol, r, this, unknownSymbolValue);
+  return ExpressionForSymbolAndRecord(symbol, r, childContext ? childContext : this);
 }
 
 bool GlobalContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
@@ -96,14 +96,14 @@ bool GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
   return setExpressionForFunction(finalExpression, symbol, record) == Ion::Storage::Record::ErrorStatus::None;
 }
 
-const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue ) {
+const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx) {
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForActualSymbol(r);
   } else if (symbol.type() == ExpressionNode::Type::Function) {
     return ExpressionForFunction(symbol.childAtIndex(0), r);
   }
   assert(symbol.type() == ExpressionNode::Type::Sequence);
-  return ExpressionForSequence(symbol, r, ctx, unknownSymbolValue);
+  return ExpressionForSequence(symbol, r, ctx);
 }
 
 const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r) {
@@ -131,7 +131,7 @@ const Expression GlobalContext::ExpressionForFunction(const Expression & paramet
   return e;
 }
 
-const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx, float unknownSymbolValue) {
+const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx) {
   if (!r.hasExtension(Ion::Storage::seqExtension)) {
     return Expression();
   }
@@ -139,20 +139,16 @@ const Expression GlobalContext::ExpressionForSequence(const SymbolAbstract & sym
    * expression, use the function record handle. */
   Sequence seq(r);
   Expression rank = symbol.childAtIndex(0).clone();
-  rank = rank.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Float<float>::Builder(unknownSymbolValue));
-  rank = rank.cloneAndSimplify(ExpressionNode::ReductionContext(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::SystemForApproximation));
   bool rankIsInteger = false;
   double rankValue = rank.approximateToScalar<double>(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
   if (rank.type() == ExpressionNode::Type::Rational) {
     Rational n = static_cast<Rational &>(rank);
     rankIsInteger = n.isInteger();
-  } else if (!std::isnan(unknownSymbolValue)) {
-    /* If unknownSymbolValue is not nan, then we are in the graph app. In order
-     * to allow functions like f(x) = u(x+0.5) to be ploted, we need to
-     * approximate the rank and check if it is an integer. Unfortunatly this
-     * leads to some edge cases were, because of quantification, we have
+  } else if (!std::isnan(rankValue)) {
+    /* WARNING:
+     * in some edge cases were, because of quantification, we have
      * floor(x) = x while x is not integer.*/
-  rankIsInteger = std::floor(rankValue) == rankValue;
+    rankIsInteger = std::floor(rankValue) == rankValue;
   }
   if (rankIsInteger) {
     SequenceContext sqctx(ctx, sequenceStore());

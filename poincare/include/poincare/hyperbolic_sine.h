@@ -37,7 +37,7 @@ private:
   }
 };
 
-class HyperbolicSine final : public HandleOneChildWithParent<HyperbolicSine, HyperbolicSineNode, HyperbolicTrigonometricFunction> {
+class HyperbolicSine final : public HandleOneChild<HyperbolicSine, HyperbolicSineNode, HyperbolicTrigonometricFunction> {
 public:
   using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);

@@ -23,7 +23,7 @@ private:
   const char * comparisonString() const override { return "="; };
 };
 
-class Equal final : public HandleTwoChildrenWithParent<Equal, EqualNode, ComparisonOperator> {
+class Equal final : public HandleTwoChildren<Equal, EqualNode, ComparisonOperator> {
 public:
   using Handle::Handle, Handle::Builder;
 };

@@ -16,7 +16,7 @@ public:
   // ViewController
   void viewWillAppear() override;
 
-  void setExpression(Poincare::Expression e) override;
+  void setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) override;
 private:
   static constexpr char k_symbol[] = "z";
   const char * symbol() const override { return k_symbol; }

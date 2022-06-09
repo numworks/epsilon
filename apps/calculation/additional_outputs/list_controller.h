@@ -8,6 +8,7 @@
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/stack_view_controller.h>
+#include <poincare/expression.h>
 
 namespace Calculation {
 
@@ -23,6 +24,9 @@ public:
 
   // ListController
   virtual void setExpression(Poincare::Expression e) = 0;
+  virtual void setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) {
+    setExpression(exactExpression);
+  }
 
 protected:
   class InnerListController : public ViewController {

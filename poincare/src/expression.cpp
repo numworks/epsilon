@@ -322,22 +322,30 @@ bool Expression::isDivisionOfIntegers() const {
   return type() == ExpressionNode::Type::Division && childAtIndex(0).type() == ExpressionNode::Type::BasedInteger && childAtIndex(1).type() == ExpressionNode::Type::BasedInteger;
 }
 
-bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, float * returnRealPart, float * returnImagPart) const {
   if (complexFormat == Preferences::ComplexFormat::Real) {
     return false;
   }
   /* We return true when both real and imaginary approximation are defined and
    * imaginary part is not null. */
-  Expression e = clone();
-  Expression imag = ImaginaryPart::Builder(e);
-  float b = imag.approximateToScalar<float>(context, complexFormat, angleUnit);
+  Evaluation<float> approximation = node()->approximate(float(), ExpressionNode::ApproximationContext(context, complexFormat, angleUnit));
+  if (approximation.type() != EvaluationNode<float>::Type::Complex) {
+    return false;
+  }
+  Complex<float> z = static_cast<Complex<float> &>(approximation);
+  float b = z.imag();
   if (b == 0.0f || std::isinf(b) || std::isnan(b)) {
     return false;
   }
-  Expression real = RealPart::Builder(e);
-  float a = real.approximateToScalar<float>(context, complexFormat, angleUnit);
+  float a = z.real();
   if (std::isinf(a) || std::isnan(a)) {
     return false;
+  }
+  if (returnRealPart) {
+    *returnRealPart = a;
+  }
+  if (returnImagPart) {
+    *returnImagPart = b;
   }
   return true;
 }

@@ -731,6 +731,9 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("√(1/(ln(2)^2-2πln(2)+π^2))", "1/\u0012-ln(2)+π\u0013");
   assert_parsed_expression_simplify_to("(-2)^(n-1)", "-(-2)^n/2");
   assert_parsed_expression_simplify_to("e^(ln(x))", "dep\u0014(x,{ln(x)})");
+  // Special cases with (a*b)^x = |a|^x*(sign(a)*b)
+  assert_parsed_expression_simplify_to("√(-asin(-e-1))", "√(-asin(-e-1))");
+  assert_parsed_expression_simplify_to("((-e^3)×cos(2))^(1/3)", "e×root(-cos(2),3)");
 }
 
 QUIZ_CASE(poincare_simplification_factorial) {

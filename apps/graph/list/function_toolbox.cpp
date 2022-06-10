@@ -1,9 +1,10 @@
 #include "function_toolbox.h"
 #include "../continuous_function_store.h"
-#include <poincare/layout_helper.h>
-#include <assert.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/infinity.h>
+#include <poincare/preferences.h>
 #include <poincare/vertical_offset_layout.h>
+#include <assert.h>
 
 using namespace Poincare;
 using namespace Escher;
@@ -28,6 +29,7 @@ void FunctionToolbox::setAddedCellsContent(AddedCellsContent content) {
   }
   constexpr CodePoint codepoints[k_maxNumberOfAddedCells] = {UCodePointInferiorEqual, UCodePointSuperiorEqual};
   m_addedCellsContent = content;
+  Preferences * pref = Preferences::sharedPreferences();
   switch (content) {
   case AddedCellsContent::ComparisonOperators:
     for (int i = 0; i < k_maxNumberOfAddedCells; i++) {
@@ -35,11 +37,13 @@ void FunctionToolbox::setAddedCellsContent(AddedCellsContent content) {
     }
     break;
   case AddedCellsContent::NegativeInfinity:
-    m_addedCellLayout[0] = LayoutHelper::String("-inf");
+    m_addedCellLayout[0] = Infinity::Builder(true).createLayout(pref->displayMode(), pref->numberOfSignificantDigits());
+    m_addedCellLayout[1] = Layout();
     break;
   default:
     assert(content == AddedCellsContent::PositiveInfinity);
-    m_addedCellLayout[0] = LayoutHelper::String("inf");
+    m_addedCellLayout[0] = Infinity::Builder(false).createLayout(pref->displayMode(), pref->numberOfSignificantDigits());
+    m_addedCellLayout[1] = Layout();
     break;
   }
 }

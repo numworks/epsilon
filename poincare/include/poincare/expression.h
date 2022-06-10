@@ -515,11 +515,6 @@ private:
   static Expression CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb);
 };
 
-template<typename T>
-static TreeNode * Initializer(void * buffer) {
-  return new (buffer) T;
-}
-
 // Helper to create the expression associated to a node
 template<typename T, typename U, int N, typename Parent>
 class ExpressionBuilder : public Parent {

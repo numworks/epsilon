@@ -27,7 +27,7 @@ private:
 
 class SumLayout final : public LayoutFourChildren<SumLayout, SumLayoutNode> {
 public:
-  using LayoutHandle::Builder;
+  using LayoutBuilder::Builder;
   SumLayout() = delete;
 };
 

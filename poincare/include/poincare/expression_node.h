@@ -355,29 +355,6 @@ protected:
   Direct<ExpressionNode> children() const { return Direct<ExpressionNode>(this); }
 };
 
-// Helper to create a node
-template<typename T, int N, typename Parent>
-class Node : public Parent {
-public:
-#ifndef PLATFORM_DEVICE
-  static_assert(std::is_base_of<ExpressionNode, Parent>::value);
-#endif
-  const char * functionHelperName() const override { return T::k_functionName; }
-  size_t size() const override { return sizeof(T); }
-  int numberOfChildren() const override { return N; };
-
-  // TreeNode
-#if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
-    stream << T::nodeName;
-  }
-#endif
-  // Evaluation
-/*  Evaluation<float> approximate(ExpressionNode::SinglePrecision p, ExpressionNode::ApproximationContext approximationContext) const override { return T::template templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(ExpressionNode::DoublePrecision p, ExpressionNode::ApproximationContext approximationContext) const override { return T::template templatedApproximate<double>(approximationContext); }
-*/
-};
-
 }
 
 #endif

@@ -211,13 +211,13 @@ TreeHandle TreeHandle::Builder() {
   return TreeHandle::BuildWithGhostChildren(node);
 }
 
-TreeHandle TreeHandle::Builder(TreeNode * (* const initializer)(void *), size_t size) {
+TreeHandle TreeHandle::Builder(TreeNode::Initializer initializer, size_t size) {
   void * bufferNode = TreePool::sharedPool()->alloc(size);
   TreeNode * node = initializer(bufferNode);
   return TreeHandle::BuildWithGhostChildren(node);
 }
 
-TreeHandle TreeHandle::BuilderWithChildren(TreeNode * (* const initializer)(void *), size_t size, const Tuple & children) {
+TreeHandle TreeHandle::BuilderWithChildren(TreeNode::Initializer initializer, size_t size, const Tuple & children) {
   TreeHandle h = Builder(initializer, size);
   size_t i = 0;
   for (TreeHandle child : children) {

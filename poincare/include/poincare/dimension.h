@@ -7,7 +7,7 @@ namespace Poincare {
 
 class DimensionNode final : public ExpressionNode {
 public:
-  static constexpr char functionName[] = "dim";
+  static constexpr char k_functionName[] = "dim";
 
   // TreeNode
   size_t size() const override { return sizeof(DimensionNode); }

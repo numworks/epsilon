@@ -8,7 +8,7 @@ namespace Poincare {
 
 class ArcCotangentNode final : public ExpressionNode {
 public:
-  static constexpr char functionName[] = "acot";
+  static constexpr char k_functionName[] = "acot";
 
   // TreeNode
   size_t size() const override { return sizeof(ArcCotangentNode); }

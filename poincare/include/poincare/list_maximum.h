@@ -7,7 +7,7 @@ namespace Poincare {
 
 class ListMaximumNode : public ExpressionNode {
 public:
-  static constexpr char functionName[] = "max";
+  static constexpr char k_functionName[] = "max";
   size_t size() const override { return sizeof(ListMaximumNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

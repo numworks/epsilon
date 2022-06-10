@@ -362,7 +362,7 @@ public:
 #ifndef PLATFORM_DEVICE
   static_assert(std::is_base_of<ExpressionNode, Parent>::value);
 #endif
-  const char * functionHelperName() const override { return T::functionName; }
+  const char * functionHelperName() const override { return T::k_functionName; }
   size_t size() const override { return sizeof(T); }
   int numberOfChildren() const override { return N; };
 

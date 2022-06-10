@@ -7,7 +7,7 @@ namespace Poincare {
 
 class MatrixTransposeNode final : public ExpressionNode {
 public:
-  static constexpr char functionName[] = "transpose";
+  static constexpr char k_functionName[] = "transpose";
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixTransposeNode); }

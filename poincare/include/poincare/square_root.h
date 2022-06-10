@@ -9,7 +9,7 @@ namespace Poincare {
 
 class SquareRootNode /*final*/ : public ExpressionNode  {
 public:
-  static constexpr char functionName[] = "√";
+  static constexpr char k_functionName[] = "√";
 
   // ExpressionNode
   Sign sign(Context * context) const override { return childAtIndex(0)->sign(context) == Sign::Positive ? Sign::Positive : Sign::Unknown ; }

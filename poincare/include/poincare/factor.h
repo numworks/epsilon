@@ -10,7 +10,7 @@ namespace Poincare {
 
 class FactorNode /*final*/ : public ExpressionNode {
 public:
-  static constexpr char functionName[] = "factor";
+  static constexpr char k_functionName[] = "factor";
 
   // TreeNode
   size_t size() const override { return sizeof(FactorNode); }

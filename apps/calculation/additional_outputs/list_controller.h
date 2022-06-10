@@ -25,6 +25,7 @@ public:
   // ListController
   virtual void setExpression(Poincare::Expression e) = 0;
   virtual void setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) {
+    // WARNING: Default only uses exactExpression
     setExpression(exactExpression);
   }
 

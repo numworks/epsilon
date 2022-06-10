@@ -129,15 +129,20 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
     totalSize += sizeChunks[i];
   }
   size_t recordSize = sizeOfRecordWithName(recordName, totalSize);
+  Record recordWithSameName(recordName);
+  size_t sameNameRecordSize = sizeOfRecordStarting(pointerOfRecord(recordWithSameName));
+  if (recordSize >= k_maxRecordSize || (recordSize > sameNameRecordSize && recordSize - sameNameRecordSize > availableSize())) {
+    /* If there is an other record with the same name, it will be either
+     * destroyed or this new record won't be created. So we only need the
+     * difference of size between the two of available space. */
+   return notifyFullnessToDelegate();
+  }
+
   /* WARNING : This relies on the fact that when you create a python script or
    * a function, you first create it with a placeholder name and then let the
    * user set its name through setNameOfRecord. */
   if (!handleCompetingRecord(recordName, extensionCanOverrideItself)) {
     return Record::ErrorStatus::NameTaken;
-  }
-
-  if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
-   return notifyFullnessToDelegate();
   }
 
   // Find the end of data

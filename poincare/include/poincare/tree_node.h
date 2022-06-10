@@ -192,6 +192,11 @@ private:
   int8_t m_referenceCounter;
 };
 
+template<typename T>
+static TreeNode * Initializer(void * buffer) {
+  return new (buffer) T;
+}
+
 }
 
 #endif

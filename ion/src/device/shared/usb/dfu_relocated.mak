@@ -1,4 +1,5 @@
 # List sources for the relocated binary
+ion_device_dfu_deps_src += liba/src/assert.c
 ion_device_dfu_deps_src += liba/src/strlen.c
 ion_device_dfu_deps_src += liba/src/memset.c
 ion_device_dfu_deps_src += liba/src/memcpy.c
@@ -8,6 +9,7 @@ ion_device_dfu_deps_src += $(addprefix ion/src/device/shared/usb/, \
   timing.cpp \
 )
 
+ion_device_dfu_deps_src += ion/src/device/userland/boot/rt0.cpp
 ion_device_dfu_deps_src += $(addprefix ion/src/device/userland/drivers/, \
   board_ram_dfu_relocated.cpp \
   reset.cpp \

@@ -1,34 +1,34 @@
-#ifndef POINCARE_BINOMIAL_COEFFICIENT_H
-#define POINCARE_BINOMIAL_COEFFICIENT_H
+#ifndef POINCARE_NORM_CDF_RANGE_H
+#define POINCARE_NORM_CDF_RANGE_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/expression.h>
+#include <poincare/normal_distribution_function.h>
 
 namespace Poincare {
 
-class BinomialCoefficientNode final : public ExpressionNode {
+class NormCDFRangeNode final : public NormalDistributionFunctionNode  {
 public:
-  static constexpr char k_functionName[] = "binomial";
+  static constexpr char k_functionName[] = "normcdfrange";
 
   // TreeNode
-  size_t size() const override { return sizeof(BinomialCoefficientNode); }
+  size_t size() const override { return sizeof(NormCDFRangeNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << "BinomialCoefficient";
+    stream << "NormCDFRange";
   }
 #endif
 
   // Properties
-  Type type() const override{ return Type::BinomialCoefficient; }
-  template<typename T> static T compute(T k, T n);
+  Type type() const override { return Type::NormCDFRange; }
+  Sign sign(Context * context) const override { return Sign::Positive; }
+  int muIndex() const override { return 2; }
+  int varIndex() const override { return 3; }
+
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
-  LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
 
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
@@ -36,14 +36,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class BinomialCoefficient final : public HandleTwoChildren<BinomialCoefficient, BinomialCoefficientNode> {
+class NormCDFRange final : public HandleFourChildren<NormCDFRange, NormCDFRangeNode, NormalDistributionFunction> {
 public:
   using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
-
-  // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-private:
-  constexpr static int k_maxNValue = 300;
 };
 
 }

@@ -7,7 +7,7 @@ namespace Poincare {
 
 class DeterminantNode /*final*/ : public ExpressionNode {
 public:
-  static constexpr char functionName[] = "det";
+  static constexpr char k_functionName[] = "det";
 
   // TreeNode
   size_t size() const override { return sizeof(DeterminantNode); }

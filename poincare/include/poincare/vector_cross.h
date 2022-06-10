@@ -7,7 +7,7 @@ namespace Poincare {
 
 class VectorCrossNode final : public ExpressionNode {
 public:
-  static constexpr char functionName[] = "cross";
+  static constexpr char k_functionName[] = "cross";
 
   // TreeNode
   size_t size() const override { return sizeof(VectorCrossNode); }

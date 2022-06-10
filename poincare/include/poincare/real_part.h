@@ -8,7 +8,7 @@ namespace Poincare {
 
 class RealPartNode final : public ExpressionNode  {
 public:
-  static constexpr char functionName[] = "re";
+  static constexpr char k_functionName[] = "re";
 
   // TreeNode
   size_t size() const override { return sizeof(RealPartNode); }

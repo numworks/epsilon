@@ -8,7 +8,7 @@ namespace Poincare {
 
 class CeilingNode final : public ExpressionNode  {
 public:
-  static constexpr char functionName[] = "ceil";
+  static constexpr char k_functionName[] = "ceil";
 
   // TreeNode
   size_t size() const override { return sizeof(CeilingNode); }

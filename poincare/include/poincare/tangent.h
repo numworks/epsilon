@@ -8,7 +8,7 @@ namespace Poincare {
 
 class TangentNode final : public ExpressionNode {
 public:
-  static constexpr char functionName[] = "tan";
+  static constexpr char k_functionName[] = "tan";
 
   // TreeNode
   size_t size() const override { return sizeof(TangentNode); }

@@ -1,34 +1,32 @@
-#ifndef POINCARE_BINOMIAL_COEFFICIENT_H
-#define POINCARE_BINOMIAL_COEFFICIENT_H
+#ifndef POINCARE_NORM_PDF_H
+#define POINCARE_NORM_PDF_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/expression.h>
+#include <poincare/normal_distribution_function.h>
 
 namespace Poincare {
 
-class BinomialCoefficientNode final : public ExpressionNode {
+class NormPDFNode final : public NormalDistributionFunctionNode  {
 public:
-  static constexpr char k_functionName[] = "binomial";
+  static constexpr char k_functionName[] = "normpdf";
 
   // TreeNode
-  size_t size() const override { return sizeof(BinomialCoefficientNode); }
+  size_t size() const override { return sizeof(NormPDFNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << "BinomialCoefficient";
+    stream << "NormPDF";
   }
 #endif
 
   // Properties
-  Type type() const override{ return Type::BinomialCoefficient; }
-  template<typename T> static T compute(T k, T n);
+  Type type() const override { return Type::NormPDF; }
+  Sign sign(Context * context) const override { return Sign::Positive; }
+
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
-  LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
 
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
@@ -36,14 +34,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class BinomialCoefficient final : public HandleTwoChildren<BinomialCoefficient, BinomialCoefficientNode> {
+class NormPDF final : public HandleThreeChildren<NormPDF, NormPDFNode, NormalDistributionFunction> {
 public:
   using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
-
-  // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-private:
-  constexpr static int k_maxNValue = 300;
 };
 
 }

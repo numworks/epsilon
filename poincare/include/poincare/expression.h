@@ -553,7 +553,7 @@ public:
     TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2, child3, child4});
     return static_cast<T&>(h);
   }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::functionName, N, Initializer<U>, sizeof(U));
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::k_functionName, N, Initializer<U>, sizeof(U));
 };
 
 template<typename T, typename U, typename P = Expression> using HandleNoChildren = Handle<T,U,0,P>;

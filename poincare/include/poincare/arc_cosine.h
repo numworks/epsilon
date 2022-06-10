@@ -11,7 +11,7 @@ namespace Poincare {
 class ArcCosineNode final : public ExpressionNode {
 friend class ArcSecantNode;
 public:
-  static constexpr char functionName[] = "acos";
+  static constexpr char k_functionName[] = "acos";
 
   // TreeNode
   size_t size() const override { return sizeof(ArcCosineNode); }

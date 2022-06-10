@@ -42,9 +42,9 @@ private:
   }
 };
 
-class FracPart final : public HandleOneChild<FracPart, FracPartNode> {
+class FracPart final : public ExpressionOneChild<FracPart, FracPartNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

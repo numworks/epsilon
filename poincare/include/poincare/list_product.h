@@ -30,9 +30,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class ListProduct : public HandleOneChild<ListProduct, ListProductNode> {
+class ListProduct : public ExpressionOneChild<ListProduct, ListProductNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -39,9 +39,9 @@ private:
   }
 };
 
-class HyperbolicCosine final : public HandleOneChild<HyperbolicCosine, HyperbolicCosineNode, HyperbolicTrigonometricFunction> {
+class HyperbolicCosine final : public ExpressionOneChild<HyperbolicCosine, HyperbolicCosineNode, HyperbolicTrigonometricFunction> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);

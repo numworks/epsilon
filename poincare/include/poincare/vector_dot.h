@@ -34,9 +34,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class VectorDot final : public HandleTwoChildren<VectorDot, VectorDotNode> {
+class VectorDot final : public ExpressionTwoChildren<VectorDot, VectorDotNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

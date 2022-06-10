@@ -41,9 +41,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class DivisionRemainder final : public HandleTwoChildren<DivisionRemainder, DivisionRemainderNode> {
+class DivisionRemainder final : public ExpressionTwoChildren<DivisionRemainder, DivisionRemainderNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   static Expression Reduce(const Integer & a, const Integer & b);

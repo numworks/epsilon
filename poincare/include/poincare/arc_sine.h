@@ -50,9 +50,9 @@ private:
   }
 };
 
-class ArcSine final : public HandleOneChild<ArcSine, ArcSineNode> {
+class ArcSine final : public ExpressionOneChild<ArcSine, ArcSineNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);

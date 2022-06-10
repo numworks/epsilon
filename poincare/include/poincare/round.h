@@ -37,9 +37,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Round final : public HandleTwoChildren<Round, RoundNode> {
+class Round final : public ExpressionTwoChildren<Round, RoundNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -41,9 +41,9 @@ private:
   }
 };
 
-class ArcCosecant final : public HandleOneChild<ArcCosecant, ArcCosecantNode> {
+class ArcCosecant final : public ExpressionOneChild<ArcCosecant, ArcCosecantNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

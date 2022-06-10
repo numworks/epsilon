@@ -49,9 +49,9 @@ private:
 #endif
 };
 
-class Factorial final : public HandleOneChild<Factorial, FactorialNode> {
+class Factorial final : public ExpressionOneChild<Factorial, FactorialNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 private:
   constexpr static int k_maxOperandValue = 100;

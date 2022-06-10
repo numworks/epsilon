@@ -39,9 +39,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class DivisionQuotient final : public HandleTwoChildren<DivisionQuotient, DivisionQuotientNode> {
+class DivisionQuotient final : public ExpressionTwoChildren<DivisionQuotient, DivisionQuotientNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 
   template <typename T>
   static T TemplatedQuotient(T a, T b) { return b >= 0 ? std::floor(a/b) : -std::floor(a/(-b)); }

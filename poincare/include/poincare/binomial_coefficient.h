@@ -36,9 +36,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class BinomialCoefficient final : public HandleTwoChildren<BinomialCoefficient, BinomialCoefficientNode> {
+class BinomialCoefficient final : public ExpressionTwoChildren<BinomialCoefficient, BinomialCoefficientNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

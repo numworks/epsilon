@@ -39,9 +39,9 @@ private:
  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Parenthesis final : public HandleOneChild<Parenthesis, ParenthesisNode> {
+class Parenthesis final : public ExpressionOneChild<Parenthesis, ParenthesisNode> {
 public:
-  using Handle::Handle, Handle::Builder;
+  using ExpressionBuilder::ExpressionBuilder;
   // Expression
   Expression shallowReduce();
 };

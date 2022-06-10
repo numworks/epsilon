@@ -34,9 +34,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class VectorCross final : public HandleTwoChildren<VectorCross, VectorCrossNode> {
+class VectorCross final : public ExpressionTwoChildren<VectorCross, VectorCrossNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -50,9 +50,9 @@ private:
   }
 };
 
-class ArcTangent final : public HandleOneChild<ArcTangent, ArcTangentNode> {
+class ArcTangent final : public ExpressionOneChild<ArcTangent, ArcTangentNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);

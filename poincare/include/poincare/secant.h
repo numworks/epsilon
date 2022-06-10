@@ -41,9 +41,9 @@ private:
   }
 };
 
-class Secant final : public HandleOneChild<Secant, SecantNode> {
+class Secant final : public ExpressionOneChild<Secant, SecantNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -47,9 +47,9 @@ private:
   }
 };
 
-class NaperianLogarithm final : public HandleOneChild<NaperianLogarithm, NaperianLogarithmNode> {
+class NaperianLogarithm final : public ExpressionOneChild<NaperianLogarithm, NaperianLogarithmNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

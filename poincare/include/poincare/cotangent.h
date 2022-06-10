@@ -41,9 +41,9 @@ private:
   }
 };
 
-class Cotangent final : public HandleOneChild<Cotangent, CotangentNode> {
+class Cotangent final : public ExpressionOneChild<Cotangent, CotangentNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

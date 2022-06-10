@@ -34,9 +34,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class MatrixIdentity final : public HandleOneChild<MatrixIdentity, MatrixIdentityNode> {
+class MatrixIdentity final : public ExpressionOneChild<MatrixIdentity, MatrixIdentityNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

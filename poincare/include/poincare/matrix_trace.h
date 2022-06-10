@@ -34,9 +34,9 @@ private:
  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class MatrixTrace final : public HandleOneChild<MatrixTrace, MatrixTraceNode> {
+class MatrixTrace final : public ExpressionOneChild<MatrixTrace, MatrixTraceNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -47,9 +47,9 @@ private:
   }
 };
 
-class Cosine final : public HandleOneChild<Cosine, CosineNode> {
+class Cosine final : public ExpressionOneChild<Cosine, CosineNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

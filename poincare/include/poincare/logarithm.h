@@ -50,11 +50,11 @@ public:
   template<typename U> Evaluation<U> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Logarithm final : public HandleTwoChildren<Logarithm, LogarithmNode<2>> {
+class Logarithm final : public ExpressionTwoChildren<Logarithm, LogarithmNode<2>> {
   friend class ExpressionNode;
   friend class LogarithmNode<2>;
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
@@ -68,9 +68,9 @@ private:
   bool parentIsAPowerOfSameBase() const;
 };
 
-class CommonLogarithm : public HandleOneChild<CommonLogarithm, LogarithmNode<1>> {
+class CommonLogarithm : public ExpressionOneChild<CommonLogarithm, LogarithmNode<1>> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

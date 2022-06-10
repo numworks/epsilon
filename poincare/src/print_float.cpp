@@ -180,21 +180,14 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer
   //TODO: accelerate for f between 0 and 10 ?
   if (std::isinf(f)) {
     // Infinity
-    bool writeMinusSign = f < 0;
-    assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
-    int requiredCharLength = (writeMinusSign ? 1 : 0) + Infinity::NameSize() - 1;
+    int requiredCharLength = Infinity::NameSize(f < 0) - 1;
     TextLengths requiredTextLengths = {.CharLength = requiredCharLength, .GlyphLength = requiredCharLength};
     if (requiredCharLength > availableCharLength) {
       // We will not be able to print
       return requiredTextLengths;
     }
     // Write inf or -inf
-    int currentChar = 0;
-    if (f < 0) {
-      currentChar += SerializationHelper::CodePoint(buffer, bufferSize, '-');
-    }
-    assert(bufferSize - currentChar > 0);
-    strlcpy(buffer+currentChar, Infinity::Name(), bufferSize-currentChar);
+    strlcpy(buffer, Infinity::Name(f < 0), bufferSize);
     return requiredTextLengths;
   }
 

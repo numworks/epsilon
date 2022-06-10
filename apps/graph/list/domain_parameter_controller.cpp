@@ -1,10 +1,12 @@
 #include "domain_parameter_controller.h"
-#include <apps/i18n.h>
 #include "../app.h"
+#include <apps/i18n.h>
+#include <poincare/infinity.h>
 #include <assert.h>
 
 using namespace Shared;
 using namespace Escher;
+using namespace Poincare;
 
 namespace Graph {
 
@@ -73,10 +75,10 @@ bool DomainParameterController::textFieldDidFinishEditing(TextField * textField,
   switchToolboxContent(textField, false);
   if (text[0] == '\0') {
     if (textField == m_domainCells[0].textField()) {
-      text = "-inf";
+      text = Infinity::Name(true);
     } else {
       assert(textField == m_domainCells[1].textField());
-      text = "inf";
+      text = Infinity::Name(false);
     }
   }
   return FloatParameterController<float>::textFieldDidFinishEditing(textField, text, event);

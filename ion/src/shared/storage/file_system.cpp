@@ -130,6 +130,9 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
   }
   size_t recordSize = sizeOfRecordWithName(recordName, totalSize);
   Record recordWithSameName(recordName);
+  /* pointerOfRecord wiil find the record with same name in the FileSystem.
+   * If the record does not already exist, pointerOfRecord == nullptr and
+   * sameNameRecordSize == 0 */
   size_t sameNameRecordSize = sizeOfRecordStarting(pointerOfRecord(recordWithSameName));
   if (recordSize >= k_maxRecordSize || (recordSize > sameNameRecordSize && recordSize - sameNameRecordSize > availableSize())) {
     /* If there is an other record with the same name, it will be either
@@ -144,6 +147,8 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
   if (!handleCompetingRecord(recordName, extensionCanOverrideItself)) {
     return Record::ErrorStatus::NameTaken;
   }
+
+  assert(recordSize <= availableSize());
 
   // Find the end of data
   char * newRecordAddress = endBuffer();

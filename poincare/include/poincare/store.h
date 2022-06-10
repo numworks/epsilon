@@ -28,10 +28,10 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Store final : public HandleTwoChildren<Store, StoreNode> {
+class Store final : public ExpressionTwoChildren<Store, StoreNode> {
 friend class StoreNode;
 public:
-  using Handle::Handle, Handle::Builder;
+  using ExpressionBuilder::ExpressionBuilder;
 
   // Store
   const SymbolAbstract symbol() const {

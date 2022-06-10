@@ -29,10 +29,10 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class UnitConvert final : public HandleTwoChildren<UnitConvert, UnitConvertNode> {
+class UnitConvert final : public ExpressionTwoChildren<UnitConvert, UnitConvertNode> {
 friend class UnitConvertNode;
 public:
-  using Handle::Handle, Handle::Builder;
+  using ExpressionBuilder::ExpressionBuilder;
   // Expression
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext);
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);

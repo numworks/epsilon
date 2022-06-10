@@ -40,9 +40,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Factor final : public HandleOneChild<Factor, FactorNode> {
+class Factor final : public ExpressionOneChild<Factor, FactorNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i) const;
 

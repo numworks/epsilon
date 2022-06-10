@@ -34,9 +34,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class NormPDF final : public HandleThreeChildren<NormPDF, NormPDFNode, NormalDistributionFunction> {
+class NormPDF final : public ExpressionThreeChildren<NormPDF, NormPDFNode, NormalDistributionFunction> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 };
 
 }

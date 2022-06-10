@@ -35,9 +35,9 @@ private:
 };
 
 
-class HyperbolicArcSine final : public HandleOneChild<HyperbolicArcSine, HyperbolicArcSineNode, HyperbolicTrigonometricFunction> {
+class HyperbolicArcSine final : public ExpressionOneChild<HyperbolicArcSine, HyperbolicArcSineNode, HyperbolicTrigonometricFunction> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 };
 
 }

@@ -39,9 +39,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class PermuteCoefficient final : public HandleTwoChildren<PermuteCoefficient, PermuteCoefficientNode> {
+class PermuteCoefficient final : public ExpressionTwoChildren<PermuteCoefficient, PermuteCoefficientNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

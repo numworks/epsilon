@@ -522,45 +522,45 @@ static TreeNode * Initializer(void * buffer) {
 
 // Helper to create the expression associated to a node
 template<typename T, typename U, int N, typename Parent>
-class Handle : public Parent {
+class ExpressionBuilder : public Parent {
 public:
 #ifndef PLATFORM_DEVICE
   static_assert(std::is_base_of<Expression, Parent>::value);
 #endif
-  Handle(const U * n) : Parent(n) {}
+  ExpressionBuilder(const U * n) : Parent(n) {}
   static T Builder() {
     static_assert(N == 0);
-    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {});
     return static_cast<T&>(h);
   }
   static T Builder(Expression child) {
     static_assert(N == 1);
-    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child});
     return static_cast<T&>(h);
   }
   static T Builder(Expression child1, Expression child2) {
     static_assert(N == 2);
-    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2});
     return static_cast<T&>(h);
   }
   static T Builder(Expression child1, Expression child2, Expression child3) {
     static_assert(N == 3);
-    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2, child3});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2, child3});
     return static_cast<T&>(h);
   }
   static T Builder(Expression child1, Expression child2, Expression child3, Expression child4) {
     static_assert(N == 4);
-    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2, child3, child4});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2, child3, child4});
     return static_cast<T&>(h);
   }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::k_functionName, N, Initializer<U>, sizeof(U));
 };
 
-template<typename T, typename U, typename P = Expression> using HandleNoChildren = Handle<T,U,0,P>;
-template<typename T, typename U, typename P = Expression> using HandleOneChild = Handle<T,U,1,P>;
-template<typename T, typename U, typename P = Expression> using HandleTwoChildren = Handle<T,U,2,P>;
-template<typename T, typename U, typename P = Expression> using HandleThreeChildren = Handle<T,U,3,P>;
-template<typename T, typename U, typename P = Expression> using HandleFourChildren = Handle<T,U,4,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionNoChildren = ExpressionBuilder<T,U,0,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionOneChild = ExpressionBuilder<T,U,1,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionTwoChildren = ExpressionBuilder<T,U,2,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionThreeChildren = ExpressionBuilder<T,U,3,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionFourChildren = ExpressionBuilder<T,U,4,P>;
 }
 
 #endif

@@ -39,9 +39,9 @@ private:
   }
 };
 
-class Ceiling final : public HandleOneChild<Ceiling, CeilingNode> {
+class Ceiling final : public ExpressionOneChild<Ceiling, CeilingNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

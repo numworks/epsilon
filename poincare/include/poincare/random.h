@@ -39,10 +39,10 @@ private:
   template <typename T> Evaluation<T> templateApproximate() const;
 };
 
-class Random final : public HandleNoChildren<Random, RandomNode> {
+class Random final : public ExpressionNoChildren<Random, RandomNode> {
 friend class RandomNode;
 public:
-  using Handle::Handle, Handle::Builder;
+  using ExpressionBuilder::ExpressionBuilder;
   static Expression UntypedBuilder(Expression children) { assert(children.type() == ExpressionNode::Type::List); return Builder(); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("random", 0, &UntypedBuilder);
 

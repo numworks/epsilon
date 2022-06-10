@@ -77,15 +77,15 @@ private:
   template <typename U> Evaluation<U> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
 };
 
-class PercentSimple final : public HandleOneChild<PercentSimple, PercentSimpleNode> {
+class PercentSimple final : public ExpressionOneChild<PercentSimple, PercentSimpleNode> {
 public:
-  using Handle::Handle, Handle::Builder;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
 };
 
-class PercentAddition final : public HandleTwoChildren<PercentAddition, PercentAdditionNode> {
+class PercentAddition final : public ExpressionTwoChildren<PercentAddition, PercentAdditionNode> {
 public:
-  using Handle::Handle, Handle::Builder;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
   Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
 };

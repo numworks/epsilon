@@ -41,9 +41,9 @@ private:
   }
 };
 
-class Cosecant final : public HandleOneChild<Cosecant, CosecantNode> {
+class Cosecant final : public ExpressionOneChild<Cosecant, CosecantNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

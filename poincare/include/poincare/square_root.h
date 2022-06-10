@@ -43,9 +43,9 @@ private:
   }
 };
 
-class SquareRoot final : public HandleOneChild<SquareRoot, SquareRootNode> {
+class SquareRoot final : public ExpressionOneChild<SquareRoot, SquareRootNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   /* Reduce an expression of the form √(a√b + c√d) */
   static Expression ReduceNestedRadicals(Expression a, Expression b, Expression c, Expression d, ExpressionNode::ReductionContext reductionContext);
   static bool SplitRadical(Expression term, Expression * factor, Expression * underRoot);

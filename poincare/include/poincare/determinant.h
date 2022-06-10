@@ -35,9 +35,9 @@ private:
 };
 
 
-class Determinant final : public HandleOneChild<Determinant, DeterminantNode> {
+class Determinant final : public ExpressionOneChild<Determinant, DeterminantNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

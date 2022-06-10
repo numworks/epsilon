@@ -44,9 +44,9 @@ private:
   bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
 };
 
-class SignFunction final : public HandleOneChild<SignFunction, SignFunctionNode> {
+class SignFunction final : public ExpressionOneChild<SignFunction, SignFunctionNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);

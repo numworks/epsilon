@@ -67,8 +67,9 @@ bool DomainParameterController::textFieldDidReceiveEvent(TextField * textField, 
   if (event == Ion::Events::Toolbox) {
     switchToolboxContent(textField, true);
   }
-  /* Do not refuse empty text, as that will later be replaced by ±inf. */
-  return !(textFieldShouldFinishEditing(textField, event) && textField->text()[0] == '\0') && FloatParameterController<float>::textFieldDidReceiveEvent(textField, event);
+  /* Do not refuse empty text for functions of x, as that will later be
+   * replaced by ±inf. */
+  return !(function()->isAlongX() && textFieldShouldFinishEditing(textField, event) && textField->text()[0] == '\0') && FloatParameterController<float>::textFieldDidReceiveEvent(textField, event);
 }
 
 bool DomainParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
@@ -164,7 +165,9 @@ void DomainParameterController::switchToolboxContent(Escher::TextField * textFie
   assert(textField == m_domainCells[0].textField() || textField == m_domainCells[1].textField());
   FunctionToolbox::AddedCellsContent content;
   if (setSpecificContent) {
-    content = textField == m_domainCells[0].textField() ? FunctionToolbox::AddedCellsContent::NegativeInfinity : FunctionToolbox::AddedCellsContent::PositiveInfinity;
+    content = !function()->isAlongX() ? FunctionToolbox::AddedCellsContent::None
+            : textField == m_domainCells[0].textField() ? FunctionToolbox::AddedCellsContent::NegativeInfinity
+            : FunctionToolbox::AddedCellsContent::PositiveInfinity;
   } else {
     content = FunctionToolbox::AddedCellsContent::ComparisonOperators;
   }

@@ -601,18 +601,16 @@ uint8_t Store::valueIndexAtSortedIndex(int series, int i) const {
 }
 
 bool Store::frequenciesAreValid(int series) const {
+  assert(seriesIsValid(series));
   int numberOfPairs = numberOfPairsOfSeries(series);
   bool onlyZeros = true;
   for (int i = 0; i < numberOfPairs; i++) {
     double frequency = get(series, 1, i);
-    if (std::isnan(frequency) || frequency < 0.0) {
-      return false;
-    }
     if (onlyZeros && frequency > 0.0) {
-      onlyZeros = false;
+      return true;
     }
   }
-  return !onlyZeros;
+  return false;
 }
 
 }

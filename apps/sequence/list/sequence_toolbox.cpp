@@ -22,11 +22,8 @@ SequenceToolbox::SequenceToolbox() :
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
   const int rowIndex = selectedRow();
-  if (typeAtIndex(rowIndex) == k_addedCellType) {
-    if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-      return selectAddedCell(rowIndex);
-    }
-    return false;
+  if (typeAtIndex(rowIndex) == k_addedCellType && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
+    return selectAddedCell(rowIndex);
   }
   return MathToolbox::handleEvent(event);
 }

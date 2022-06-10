@@ -431,9 +431,11 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
 }
 
 void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter) {
-  // The left delimiter has already been popped.
+  assert(m_nextToken.type() == (rightDelimiter == Token::RightBrace) ? Token::LeftBrace : Token::LeftParenthesis);
+  popToken(); // Pop the left delimiter
   Expression rank = parseUntil(rightDelimiter);
   if (m_status != Status::Progress) {
+    return;
   } else if (!popTokenIfType(rightDelimiter)) {
     m_status = Status::Error; // Right delimiter missing
   } else {
@@ -483,24 +485,23 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
     }
   }
 
-  if (!m_symbolPlusParenthesesAreFunctions) {
+  if (!m_symbolPlusParenthesesAreFunctions
+      && (idType == Context::SymbolAbstractType::Sequence
+        || (idType == Context::SymbolAbstractType::None && m_nextToken.type() == Token::LeftBrace))) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
      * by braces, it's a sequence call. */
-    bool poppedBrace = popTokenIfType(Token::LeftBrace);
-    if (idType == Context::SymbolAbstractType::Sequence || (poppedBrace && idType == Context::SymbolAbstractType::None)) {
+    if (m_nextToken.type() != Token::LeftBrace && m_nextToken.type() != Token::LeftParenthesis) {
       /* If the identifier is a sequence but not followed by braces, it can
-       * also be followed by parenthesis. */
-      if (!poppedBrace && !popTokenIfType(Token::LeftParenthesis)) {
-        m_status = Status::Error;
-        return;
-      }
-      parseSequence(leftHandSide, name, poppedBrace ? Token::RightBrace : Token::RightParenthesis);
+       * also be followed by parenthesis. If not, it's a syntax error. */
+      m_status = Status::Error;
       return;
     }
+    parseSequence(leftHandSide, name,  m_nextToken.type() == Token::LeftBrace ? Token::RightBrace : Token::RightParenthesis);
+    return;
   }
 
-  // If the identifier is not followed by parentheses or braces, it is a symbol
+  // If the identifier is not followed by parentheses, it is a symbol
   if (!popTokenIfType(Token::LeftParenthesis)) {
     if (!popTokenIfType(Token::LeftSystemParenthesis)) {
       leftHandSide = Symbol::Builder(name, length);

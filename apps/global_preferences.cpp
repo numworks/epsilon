@@ -18,3 +18,12 @@ void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {
     Ion::Backlight::setBrightness(m_brightnessLevel);
   }
 }
+
+int GlobalPreferences::sequencesInitialRank() const {
+  switch(preferences().sequencesInitialRank()) {
+  case CountryPreferences::SequencesInitialRank::Zero:
+    return 0;
+  case CountryPreferences::SequencesInitialRank::One:
+    return 1;
+  }
+}

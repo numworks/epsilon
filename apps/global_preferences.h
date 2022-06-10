@@ -13,25 +13,18 @@ public:
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }
   void setCountry(I18n::Country country);
-  CountryPreferences::AvailableExamModes availableExamModes() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].availableExamModes(); }
-  CountryPreferences::MethodForQuartiles methodForQuartiles() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].methodForQuartiles(); }
-  CountryPreferences::OutlierDefaultVisibility outliersStatus() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].outliersStatus(); }
-  CountryPreferences::HistogramsOffset histogramOffset() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].histogramOffset(); }
-  Poincare::Preferences::UnitFormat unitFormat() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].unitFormat(); }
-  CountryPreferences::HomeAppsLayout homeAppsLayout() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].homeAppsLayout(); }
-  const char * discriminantSymbol() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].discriminantSymbol(); }
-  const char * yPredictedSymbol() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].yPredictedSymbol(); }
-  CountryPreferences::StatsRowsLayout statsRowsLayout() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].statsRowsLayout(); }
-  Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].combinatoricSymbols(); }
-  CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].listsStatsOrderInToolbox(); }
-  int sequencesInitialRank() const {
-    switch(I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)].sequencesInitialRank()) {
-    case CountryPreferences::SequencesInitialRank::Zero:
-      return 0;
-    case CountryPreferences::SequencesInitialRank::One:
-      return 1;
-    }
-  }
+  CountryPreferences::AvailableExamModes availableExamModes() const { return preferences().availableExamModes(); }
+  CountryPreferences::MethodForQuartiles methodForQuartiles() const { return preferences().methodForQuartiles(); }
+  CountryPreferences::OutlierDefaultVisibility outliersStatus() const { return preferences().outliersStatus(); }
+  CountryPreferences::HistogramsOffset histogramOffset() const { return preferences().histogramOffset(); }
+  Poincare::Preferences::UnitFormat unitFormat() const { return preferences().unitFormat(); }
+  CountryPreferences::HomeAppsLayout homeAppsLayout() const { return preferences().homeAppsLayout(); }
+  const char * discriminantSymbol() const { return preferences().discriminantSymbol(); }
+  const char * yPredictedSymbol() const { return preferences().yPredictedSymbol(); }
+  CountryPreferences::StatsRowsLayout statsRowsLayout() const { return preferences().statsRowsLayout(); }
+  Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const { return preferences().combinatoricSymbols(); }
+  CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return preferences().listsStatsOrderInToolbox(); }
+  int sequencesInitialRank() const;
 
   const char * openIntervalChar(bool left) const {
     /* This should be done by country instead of language. However, some
@@ -52,6 +45,8 @@ public:
   void setFont(const KDFont * font) { m_font = font; }
 
 private:
+  const CountryPreferences & preferences() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)]; }
+
   static_assert(I18n::NumberOfLanguages > 0, "I18n::NumberOfLanguages is not superior to 0"); // There should already have been an error when processing an empty EPSILON_I18N flag
   static_assert(I18n::NumberOfCountries > 0, "I18n::NumberOfCountries is not superior to 0"); // There should already have been an error when processing an empty EPSILON_COUNTRIES flag
   GlobalPreferences() :

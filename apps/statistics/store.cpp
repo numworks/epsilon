@@ -152,14 +152,13 @@ void Store::updateSeriesValidity(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
   bool oldValidity = m_validSeries[series];
   DoublePairStore::updateSeriesValidity(series);
-  bool isSeriesValid = m_validSeries[series] && frequenciesAreValid(series);
+  m_validSeries[series] = m_validSeries[series] && frequenciesAreValid(series);
   // Reset the graph view any time one of the series gets invalidated
-  m_graphViewInvalidated = m_graphViewInvalidated || (oldValidity && !isSeriesValid);
+  m_graphViewInvalidated = m_graphViewInvalidated || (oldValidity && !m_validSeries[series]);
   if (m_graphViewInvalidated && numberOfPairsOfSeries(series) == 0) {
     // Hide the cumulated frequencies if series is invalidated and empty
     m_userPreferences->setDisplayCumulatedFrequencies(series, false);
   }
-  m_validSeries[series] = isSeriesValid;
 }
 
 bool Store::columnIsIntegersOnly(int series, int column) const {

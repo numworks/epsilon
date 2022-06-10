@@ -196,8 +196,8 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   int mantissaLength = m.serialize(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
 
   // Assert that m is not +/-inf
-  assert(strcmp(tempBuffer, Infinity::Name()) != 0);
-  assert(!(UTF8Helper::CodePointIs(tempBuffer, '-') && strcmp(&tempBuffer[1], Infinity::Name()) == 0));
+  assert(strcmp(tempBuffer, Infinity::Name(false)) != 0);
+  assert(strcmp(tempBuffer, Infinity::Name(true)) != 0);
 
   // Stop here if m is undef
   if (strcmp(tempBuffer, Undefined::Name()) == 0) {

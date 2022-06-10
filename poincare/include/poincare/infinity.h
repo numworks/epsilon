@@ -55,16 +55,16 @@ private:
 
 class Infinity final : public Number {
 public:
-  Infinity(InfinityNode * n) : Number(n) {}
+  constexpr static char k_fullName[] = "-inf";
+
+  constexpr static const char * Name(bool negative = false) { return &k_fullName[negative ? 0 : 1]; }
+  constexpr static int NameSize(bool negative = false) { return sizeof(k_fullName) + negative - 1; }
   static Infinity Builder(bool negative);
+
+  Infinity(InfinityNode * n) : Number(n) {}
   Expression setSign(ExpressionNode::Sign s);
-  constexpr static const char * Name() {
-    return "inf";
-  }
-  static int NameSize() {
-    return 4;
-  }
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
+
 private:
   InfinityNode * node() const { return static_cast<InfinityNode *>(Number::node()); }
 };

@@ -125,9 +125,8 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
     if (stackDepth() == 0) {
       Container::activeApp()->dismissModalViewController();
       return true;
-    } else {
-      return returnToRootMenu();
     }
+    return returnToRootMenu();
   }
   if ((event == Ion::Events::Var && isToolbox()) || (event == Ion::Events::Toolbox && !isToolbox())) {
     Container::activeApp()->dismissModalViewController();

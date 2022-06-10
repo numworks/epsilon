@@ -45,9 +45,9 @@ private:
   }
 };
 
-class RealPart final : public HandleOneChild<RealPart, RealPartNode> {
+class RealPart final : public ExpressionOneChild<RealPart, RealPartNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -23,9 +23,9 @@ private:
   const char * comparisonString() const override { return "≤"; };
 };
 
-class InferiorEqual final : public HandleTwoChildren<InferiorEqual, InferiorEqualNode, ComparisonOperator> {
+class InferiorEqual final : public ExpressionTwoChildren<InferiorEqual, InferiorEqualNode, ComparisonOperator> {
 public:
-  using Handle::Handle, Handle::Builder;
+  using ExpressionBuilder::ExpressionBuilder;
 };
 
 }

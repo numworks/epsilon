@@ -25,9 +25,9 @@ private:
   bool isFormReduced() const override { return false; }
 };
 
-class MatrixRowEchelonForm final : public HandleOneChild<MatrixRowEchelonForm, MatrixRowEchelonFormNode, MatrixEchelonForm> {
+class MatrixRowEchelonForm final : public ExpressionOneChild<MatrixRowEchelonForm, MatrixRowEchelonFormNode, MatrixEchelonForm> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 };
 
 }

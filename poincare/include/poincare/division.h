@@ -68,9 +68,9 @@ private:
   }
 };
 
-class Division final : public HandleTwoChildren<Division, DivisionNode> {
+class Division final : public ExpressionTwoChildren<Division, DivisionNode> {
 public:
-  using Handle::Handle, Handle::Builder;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

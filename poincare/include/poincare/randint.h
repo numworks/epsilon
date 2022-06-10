@@ -41,10 +41,10 @@ private:
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 };
 
-class Randint final : public HandleTwoChildren<Randint, RandintNode> {
+class Randint final : public ExpressionTwoChildren<Randint, RandintNode> {
 friend class RandintNode;
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

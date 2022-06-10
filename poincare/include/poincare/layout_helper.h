@@ -21,27 +21,27 @@ public:
 #endif
   static T Builder() {
     static_assert(N == 0);
-    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {});
     return static_cast<T&>(h);
   }
   static T Builder(Layout child) {
     static_assert(N == 1);
-    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child});
     return static_cast<T&>(h);
   }
   static T Builder(Layout child1, Layout child2) {
     static_assert(N == 2);
-    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2});
     return static_cast<T&>(h);
   }
   static T Builder(Layout child1, Layout child2, Layout child3) {
     static_assert(N == 3);
-    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2, child3});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2, child3});
     return static_cast<T&>(h);
   }
   static T Builder(Layout child1, Layout child2, Layout child3, Layout child4) {
     static_assert(N == 4);
-    TreeHandle h = TreeHandle::Maker(Initializer<U>, sizeof(U), {child1, child2, child3, child4});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2, child3, child4});
     return static_cast<T&>(h);
   }
 };

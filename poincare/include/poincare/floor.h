@@ -40,9 +40,9 @@ private:
   }
 };
 
-class Floor final : public HandleOneChild<Floor, FloorNode> {
+class Floor final : public ExpressionOneChild<Floor, FloorNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

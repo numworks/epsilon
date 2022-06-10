@@ -47,10 +47,10 @@ private:
   bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
 };
 
-class AbsoluteValue final : public HandleOneChild<AbsoluteValue, AbsoluteValueNode> {
+class AbsoluteValue final : public ExpressionOneChild<AbsoluteValue, AbsoluteValueNode> {
 friend class AbsoluteValueNode;
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
 };

@@ -35,9 +35,9 @@ private:
  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Dimension final : public HandleOneChild<Dimension, DimensionNode> {
+class Dimension final : public ExpressionOneChild<Dimension, DimensionNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(Context * context);
 };
 

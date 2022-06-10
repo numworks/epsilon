@@ -43,9 +43,9 @@ private:
   }
 };
 
-class ImaginaryPart final : public HandleOneChild<ImaginaryPart, ImaginaryPartNode> {
+class ImaginaryPart final : public ExpressionOneChild<ImaginaryPart, ImaginaryPartNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

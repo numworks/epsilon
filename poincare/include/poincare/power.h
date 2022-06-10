@@ -77,12 +77,12 @@ private:
  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class Power final : public HandleTwoChildren<Power, PowerNode> {
+class Power final : public ExpressionTwoChildren<Power, PowerNode> {
   friend class ExpressionNode;
   friend class PowerNode;
   friend class Round;
 public:
-  using Handle::Handle, Handle::Builder;
+  using ExpressionBuilder::ExpressionBuilder;
 
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

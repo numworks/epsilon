@@ -42,9 +42,9 @@ private:
   }
 };
 
-class ArcCotangent final : public HandleOneChild<ArcCotangent, ArcCotangentNode> {
+class ArcCotangent final : public ExpressionOneChild<ArcCotangent, ArcCotangentNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -30,9 +30,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class ListMinimum : public HandleOneChild<ListMinimum, ListMinimumNode> {
+class ListMinimum : public ExpressionOneChild<ListMinimum, ListMinimumNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

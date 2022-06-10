@@ -48,9 +48,9 @@ private:
   }
 };
 
-class Sine final : public HandleOneChild<Sine, SineNode> {
+class Sine final : public ExpressionOneChild<Sine, SineNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

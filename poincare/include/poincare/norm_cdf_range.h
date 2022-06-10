@@ -36,9 +36,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class NormCDFRange final : public HandleFourChildren<NormCDFRange, NormCDFRangeNode, NormalDistributionFunction> {
+class NormCDFRange final : public ExpressionFourChildren<NormCDFRange, NormCDFRangeNode, NormalDistributionFunction> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 };
 
 }

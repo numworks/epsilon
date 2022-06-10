@@ -46,9 +46,9 @@ private:
   }
 };
 
-class Tangent final : public HandleOneChild<Tangent, TangentNode> {
+class Tangent final : public ExpressionOneChild<Tangent, TangentNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 

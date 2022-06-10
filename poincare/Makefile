@@ -95,7 +95,6 @@ poincare_src += $(addprefix poincare/src/,\
   dependency.cpp \
   derivative.cpp \
   determinant.cpp \
-  devirtualisation.cpp \
   dimension.cpp \
   distribution_dispatcher.cpp \
   division.cpp \
@@ -105,6 +104,7 @@ poincare_src += $(addprefix poincare/src/,\
   evaluation.cpp \
   expression.cpp \
   expression_node.cpp \
+  expression_node_properties.cpp \
   factor.cpp \
   factorial.cpp \
   float.cpp \

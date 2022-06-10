@@ -30,9 +30,9 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
 };
 
-class ListSort : public HandleOneChild<ListSort, ListSortNode> {
+class ListSort : public ExpressionOneChild<ListSort, ListSortNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   constexpr static bool k_nanIsGreatest = true;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };

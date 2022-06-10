@@ -36,9 +36,9 @@ private:
 
 };
 
-class NthRoot final : public HandleTwoChildren<NthRoot, NthRootNode> {
+class NthRoot final : public ExpressionTwoChildren<NthRoot, NthRootNode> {
 public:
-  using Handle::Handle, Handle::Builder, Handle::s_functionHelper;
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -7,7 +7,7 @@ namespace Poincare {
 
 class MatrixRowEchelonFormNode final : public MatrixEchelonFormNode {
 public:
-  static constexpr char functionName[] = "ref";
+  static constexpr char k_functionName[] = "ref";
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixRowEchelonFormNode); }

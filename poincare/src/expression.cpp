@@ -1185,7 +1185,7 @@ static Expression maker(Expression children, int nbChildren, TreeNode * (* const
   assert(children.type() == ExpressionNode::Type::List);
   TreeHandle handle = TreeHandle::Builder(initializer, size);
   Expression result = static_cast<Expression &>(handle);
-  for (size_t i = 0; i<(size_t) nbChildren; i++) {
+  for (size_t i = 0; i < static_cast<size_t>(nbChildren); i++) {
     result.replaceChildAtIndexInPlace(i, children.childAtIndex(i));
   }
   return result;

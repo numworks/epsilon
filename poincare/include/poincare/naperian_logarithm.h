@@ -8,7 +8,8 @@ namespace Poincare {
 
 class NaperianLogarithmNode final : public ExpressionNode  {
 public:
-  static constexpr char functionName[] = "ln";
+  static constexpr char k_functionName[] = "ln";
+
   // TreeNode
   size_t size() const override { return sizeof(NaperianLogarithmNode); }
   int numberOfChildren() const override;

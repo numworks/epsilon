@@ -8,7 +8,7 @@ namespace Poincare {
 
 class PermuteCoefficientNode final : public ExpressionNode {
 public:
-  static constexpr char functionName[] = "permute";
+  static constexpr char k_functionName[] = "permute";
 
   // TreeNode
   size_t size() const override { return sizeof(PermuteCoefficientNode); }

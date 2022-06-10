@@ -8,7 +8,7 @@ namespace Poincare {
 
 class RoundNode final : public ExpressionNode  {
 public:
-  static constexpr char functionName[] = "round";
+  static constexpr char k_functionName[] = "round";
 
   // TreeNode
   size_t size() const override { return sizeof(RoundNode); }

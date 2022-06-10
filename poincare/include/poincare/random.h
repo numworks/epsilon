@@ -8,7 +8,7 @@ namespace Poincare {
 
 class RandomNode final : public ExpressionNode  {
 public:
-  static constexpr char functionName[] = "random";
+  static constexpr char k_functionName[] = "random";
 
   // TreeNode
   size_t size() const override { return sizeof(RandomNode); }

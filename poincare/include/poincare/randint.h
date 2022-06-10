@@ -8,7 +8,7 @@ namespace Poincare {
 class RandintNode /*final*/ : public ExpressionNode  {
   friend class Randint;
 public:
-  static constexpr char functionName[] = "randint";
+  static constexpr char k_functionName[] = "randint";
 
   // TreeNode
   size_t size() const override { return sizeof(RandintNode); }

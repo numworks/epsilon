@@ -8,7 +8,7 @@ namespace Poincare {
 
 class CotangentNode final : public ExpressionNode {
 public:
-  static constexpr char functionName[] = "cot";
+  static constexpr char k_functionName[] = "cot";
 
   // TreeNode
   size_t size() const override { return sizeof(CotangentNode); }

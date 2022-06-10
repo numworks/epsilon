@@ -8,7 +8,7 @@ namespace Poincare {
 
 class ComplexArgumentNode final : public ExpressionNode  {
 public:
-  static constexpr char functionName[] = "arg";
+  static constexpr char k_functionName[] = "arg";
 
   // TreeNode
   size_t size() const override { return sizeof(ComplexArgumentNode); }

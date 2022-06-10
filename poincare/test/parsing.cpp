@@ -479,8 +479,10 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension("azfoo", "exp", "", 0);
   Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension("foobar", "func", "", 0);
   assert_parsed_expression_is("xyz", Multiplication::Builder(Symbol::Builder("x", 1), Multiplication::Builder(Symbol::Builder("y", 1), Symbol::Builder("z", 1))));
+  assert_parsed_expression_is("xy123z", Multiplication::Builder(Symbol::Builder("x", 1), Multiplication::Builder(Symbol::Builder("y123", 4), Symbol::Builder("z", 1))));
   assert_parsed_expression_is("3→xyz", Store::Builder(BasedInteger::Builder(3), Symbol::Builder("xyz", 3)));
   assert_parsed_expression_is("ab", Symbol::Builder("ab", 2));
+  assert_parsed_expression_is("ab3", Multiplication::Builder(Symbol::Builder("a", 1), Symbol::Builder("b3", 2)));
   assert_parsed_expression_is("aacos(x)", Multiplication::Builder(Symbol::Builder("a", 1), ArcCosine::Builder(Symbol::Builder("x", 1))));
   assert_parsed_expression_is("bacos(x)", Function::Builder("bacos", 5, Symbol::Builder("x", 1)));
   assert_parsed_expression_is("azfoobar(x)", Multiplication::Builder(Symbol::Builder("a", 1), Multiplication::Builder(Symbol::Builder("z", 1), Function::Builder("foobar", 6, Symbol::Builder("x", 1)))));
@@ -518,7 +520,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("1x", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)));
   assert_parsed_expression_is("1Ans", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("Ans", 3)));
   // Fallback from binary number
-  assert_parsed_expression_is("0b2", Multiplication::Builder(BasedInteger::Builder(0),Multiplication::Builder(Symbol::Builder("b", 1),BasedInteger::Builder(2))));
+  assert_parsed_expression_is("0b2", Multiplication::Builder(BasedInteger::Builder(0),Symbol::Builder("b2", 2)));
   assert_parsed_expression_is("0xG", Multiplication::Builder(BasedInteger::Builder(0),Multiplication::Builder(Symbol::Builder("x", 1),Symbol::Builder("G", 1))));
   assert_parsed_expression_is("1x+2", Addition::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)),BasedInteger::Builder(2)));
   assert_parsed_expression_is("1π", Multiplication::Builder(BasedInteger::Builder(1),Constant::Builder("π")));

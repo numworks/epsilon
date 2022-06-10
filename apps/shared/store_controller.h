@@ -58,6 +58,7 @@ protected:
   virtual bool deleteCellValue(int series, int col, int row);
   Escher::StackViewController * stackController() const override;
   Escher::Responder * tabController() const override;
+  bool checkDataAtLocation(double floatBody, int columnIndex, int rowIndex) const override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;

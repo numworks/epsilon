@@ -72,18 +72,6 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   }
 }
 
-bool StoreController::checkDataAtLocation(double floatBody, int columnIndex, int rowIndex) const {
-  if (floatBody < -Shared::Range1D::k_lowerMaxFloat || floatBody > Shared::Range1D::k_upperMaxFloat) {
-    return false;
-  }
-  if (m_store->relativeColumnIndex(columnIndex) == 1) {
-    if (floatBody < 0) {
-      return false;
-    }
-  }
-  return Shared::StoreController::checkDataAtLocation(floatBody, columnIndex, rowIndex);
-}
-
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   assert(checkDataAtLocation(floatBody, columnIndex, rowIndex));
   if (!Shared::StoreController::setDataAtLocation(floatBody, columnIndex, rowIndex)) {

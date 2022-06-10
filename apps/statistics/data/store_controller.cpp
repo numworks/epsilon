@@ -73,7 +73,6 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  assert(checkDataAtLocation(floatBody, columnIndex, rowIndex));
   if (!Shared::StoreController::setDataAtLocation(floatBody, columnIndex, rowIndex)) {
     return false;
   }

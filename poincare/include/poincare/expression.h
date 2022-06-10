@@ -340,7 +340,7 @@ public:
       m_untypedBuilder(builder),
       m_initializer(nullptr),
       m_size(0) {}
-    constexpr FunctionHelper(const char * name, const int numberOfChildren, TreeNode * (* const initializer)(void *), size_t size) :
+    constexpr FunctionHelper(const char * name, const int numberOfChildren, TreeNode::Initializer initializer, size_t size) :
       m_name(name),
       m_numberOfChildren(numberOfChildren),
       m_untypedBuilder(nullptr),
@@ -353,7 +353,7 @@ public:
     const char * m_name;
     const int m_numberOfChildren;
     Expression (* const m_untypedBuilder)(Expression children);
-    TreeNode * (* const m_initializer)(void *);
+    TreeNode::Initializer m_initializer;
     const size_t m_size;
   };
 

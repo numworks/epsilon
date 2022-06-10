@@ -44,6 +44,7 @@ public:
 
   // Constructor and destructor
   virtual ~TreeNode() {}
+  typedef TreeNode * (* const Initializer)(void *);
 
   // Attributes
   void setParentIdentifier(uint16_t parentID) { m_parentIdentifier = parentID; }

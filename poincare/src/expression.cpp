@@ -1181,7 +1181,7 @@ Coordinate2D<double> Expression::nextIntersection(const char * symbol, double st
   return Coordinate2D<double>(resultX, approximateWithValueForSymbol(symbol, resultX, context, complexFormat, angleUnit));
 }
 
-static Expression maker(Expression children, int nbChildren, TreeNode * (* const initializer)(void *), size_t size) {
+static Expression maker(Expression children, int nbChildren, TreeNode::Initializer initializer, size_t size) {
   assert(children.type() == ExpressionNode::Type::List);
   TreeHandle handle = TreeHandle::Builder(initializer, size);
   Expression result = static_cast<Expression &>(handle);

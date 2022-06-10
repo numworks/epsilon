@@ -88,8 +88,13 @@ include apps/Makefile
 include build/struct_layout/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
+# Define main and shortcut targets
+include build/targets.mak
+
 all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(tests_src)
-all_objs = $(call object_for,$(all_src))
+
+# kernel_obj are added separately since they require variants resolution
+all_objs = $(call object_for,$(all_src)) $(kernel_obj)
 .SECONDARY: $(all_objs)
 
 # Load source-based dependencies
@@ -97,11 +102,6 @@ all_objs = $(call object_for,$(all_src))
 # objet to other source and headers. This serve no purpose for a clean build,
 # but allows correct yet optimal incremental builds.
 -include $(all_objs:.o=.d)
-
-# Define main and shortcut targets
-include build/targets.mak
-
--include $(kernel_obj:.o=.d)
 
 # Fill in the default recipe
 default: $(firstword $(HANDY_TARGETS)).$(firstword $(HANDY_TARGETS_EXTENSIONS))

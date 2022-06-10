@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/double_pair_store.h>
+#include <apps/shared/range_1D.h>
 #include <poincare/statistics_dataset.h>
 #include <stddef.h>
 #include <string.h>
@@ -112,6 +113,9 @@ public:
   // DoublePairStore
   void updateSeriesValidity(int series) override;
   bool deleteValueAtIndex(int series, int i, int j, bool delayUpdate = false) override;
+  bool valueValidInColumn(double value, int relativeColumn) const override {
+    return DoublePairStore::valueValidInColumn(value, relativeColumn) && (relativeColumn != 1 || value >= 0.0) && value >= -Shared::Range1D::k_lowerMaxFloat && value <= Shared::Range1D::k_upperMaxFloat;
+  }
 
   typedef double (Store::*CalculPointer)(int) const;
   static bool ValidSeriesAndValidTotalNormalProbabilities(const DoublePairStore * store, int series) {

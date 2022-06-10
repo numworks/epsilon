@@ -105,6 +105,7 @@ public:
    * updates the valid series, and stores the lists in the storage
    * */
   virtual bool updateSeries(int series, bool delayUpdate = false);
+  virtual bool valueValidInColumn(double value, int relativeColumn) const { return !std::isnan(value); }
 protected:
   void initListsInPool();
   virtual double defaultValue(int series, int i, int j) const;

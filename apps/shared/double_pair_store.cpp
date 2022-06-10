@@ -200,7 +200,7 @@ void DoublePairStore::updateSeriesValidity(int series) {
   }
   for (int i = 0 ; i < k_numberOfColumnsPerSeries; i++) {
     for (int j = 0 ; j < numberOfPairs; j ++) {
-      if (std::isnan(get(series, i, j))) {
+      if (!valueValidInColumn(get(series, i, j), i)) {
         m_validSeries[series] = false;
         return;
       }

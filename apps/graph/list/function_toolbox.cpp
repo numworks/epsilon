@@ -15,7 +15,7 @@ FunctionToolbox::FunctionToolbox() :
   MathToolbox(),
   /* We initialize m_addedCellsContent with a different value than the one we
    * want to make sure we actually update the cells in setAddedCellsContent. */
-  m_addedCellsContent(AddedCellsContent::PositiveInfinity)
+  m_addedCellsContent(AddedCellsContent::None)
 {
   for (int i = 0; i < k_maxNumberOfAddedCells; i++) {
     m_addedCells[i].setParentResponder(&m_selectableTableView);
@@ -31,6 +31,10 @@ void FunctionToolbox::setAddedCellsContent(AddedCellsContent content) {
   m_addedCellsContent = content;
   Preferences * pref = Preferences::sharedPreferences();
   switch (content) {
+  case AddedCellsContent::None:
+    m_addedCellLayout[0] = Layout();
+    m_addedCellLayout[1] = Layout();
+    break;
   case AddedCellsContent::ComparisonOperators:
     for (int i = 0; i < k_maxNumberOfAddedCells; i++) {
       m_addedCellLayout[i] = CodePointLayout::Builder(codepoints[i]);
@@ -102,7 +106,7 @@ int FunctionToolbox::typeAtIndex(int index) {
   return MathToolbox::typeAtIndex(index);
 }
 
-bool FunctionToolbox::selectAddedCell(int selectedRow){
+bool FunctionToolbox::selectAddedCell(int selectedRow) {
   /* Longest text is "-inf" */
   constexpr int bufferSize = Infinity::NameSize(true);
   char buffer[bufferSize];
@@ -110,6 +114,17 @@ bool FunctionToolbox::selectAddedCell(int selectedRow){
   sender()->handleEventWithText(buffer);
   Container::activeApp()->dismissModalViewController();
   return true;
+}
+
+int FunctionToolbox::numberOfAddedCells() const {
+  switch (m_addedCellsContent) {
+  case AddedCellsContent::None:
+    return 0;
+  case AddedCellsContent::ComparisonOperators:
+    return 2;
+  default:
+    return 1;
+  }
 }
 
 }

@@ -77,10 +77,6 @@ I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) 
 
 // EditableCellViewController
 
-bool ValuesController::checkDataAtLocation(double floatBody, int columnIndex, int rowIndex) const {
-  return floatBody >= 0;
-}
-
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   assert(checkDataAtLocation(floatBody, columnIndex, rowIndex));
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);

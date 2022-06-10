@@ -37,8 +37,15 @@ public:
   Record recordAtIndex(int index);
   void destroyRecord(Record record);
 
+  // Trash
   void reinsertTrash(const char * extension);
   void emptyTrash();
+
+  // Metadata
+  typedef Record::Data Metadata;
+  Metadata metadataForRecord(Record record);
+  Record::ErrorStatus setMetadataForRecord(Record record, Metadata metadata);
+  void removeMetadataForRecord(Record record);
 
 private:
   Storage():

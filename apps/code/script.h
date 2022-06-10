@@ -50,6 +50,8 @@ public:
   void toggleAutoimportationStatus();
   const char * content() const;
   size_t contentSize() { return value().size - k_statusSize; }
+  void setCursorOffset(uint16_t position); // -1 if no metadata
+  uint16_t cursorOffset();
 
   /* Fetched status */
   bool fetchedFromConsole() const;

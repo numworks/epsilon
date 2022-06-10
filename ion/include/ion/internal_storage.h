@@ -14,6 +14,11 @@ namespace Ion {
 
 class StorageDelegate;
 
+/**
+ * Purpose the two storage classes :
+ *  - The first (InternalStorage) is the base, it allows to create, modify and delete records
+ *  - The second (Storage) is the visible part. It handle the trash system and the metadata records
+ */
 class InternalStorage {
 public:
   typedef uint16_t record_size_t;
@@ -114,6 +119,7 @@ public:
   // Used by Python OS module
   int numberOfRecords();
   Record recordAtIndex(int index);
+
 protected:
   InternalStorage();
   /* Getters on address in buffer */

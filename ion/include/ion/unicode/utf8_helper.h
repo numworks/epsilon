@@ -26,6 +26,10 @@ int CountOccurrences(const char * s, CodePoint c);
  * null terminating char otherwise. */
 const char * CodePointSearch(const char * s, CodePoint c, const char * stoppingPosition = nullptr);
 
+/* Returns the last occurrence of a code point in a string, the position of the
+ * null terminating char otherwise. */
+const char * LastCodePoint(const char * s, CodePoint c, const char * stoppingPosition = nullptr);
+
 // Returns true if the text had the code point
 bool HasCodePoint(const char * s, CodePoint c, const char * stoppingPosition = nullptr);
 

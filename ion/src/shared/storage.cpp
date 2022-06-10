@@ -61,6 +61,10 @@ bool Storage::hasRecord(Record r) {
 
 void Storage::destroyRecord(Record record) {
   emptyTrash();
+  const Record metadataRecord = recordBaseNamedWithExtension(record.fullName(), "sys");
+  if (!metadataRecord.isNull()) {
+    InternalStorage::destroyRecord(metadataRecord);
+  }
   m_trashRecord = record;
 }
 
@@ -175,6 +179,23 @@ void Storage::emptyTrash() {
     InternalStorage::destroyRecord(m_trashRecord);
     m_trashRecord = Record();
   }
+}
+
+Storage::Metadata Storage::metadataForRecord(Record record) {
+  return recordBaseNamedWithExtension(record.fullName(), "sys").value();
+}
+
+Storage::Record::ErrorStatus Storage::setMetadataForRecord(Record record, Metadata data) {
+  Record metadataRecord = Record(record.fullName(), "sys");
+  if (!hasRecord(metadataRecord)) {
+    return createRecordWithExtension(record.fullName(), "sys", data.buffer, data.size);
+  } else {
+    return metadataRecord.setValue(data);
+  }
+}
+
+void Storage::removeMetadataForRecord(Record record) {
+  recordBaseNamedWithExtension(record.fullName(), "sys").destroy();
 }
 
 }

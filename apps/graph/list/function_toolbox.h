@@ -10,6 +10,7 @@ namespace Graph {
 class FunctionToolbox : public MathToolbox {
 public:
   enum class AddedCellsContent : uint8_t {
+    None,
     ComparisonOperators,
     NegativeInfinity,
     PositiveInfinity,
@@ -40,7 +41,7 @@ private:
   // At root depth, there are additional rows to display.
   int addedCellsAtRoot() const { return m_messageTreeModel == rootModel() ? numberOfAddedCells() : 0; }
   bool selectAddedCell(int selectedRow);
-  int numberOfAddedCells() const { return m_addedCellsContent == AddedCellsContent::ComparisonOperators ? k_maxNumberOfAddedCells : 1; }
+  int numberOfAddedCells() const;
 
   Escher::ExpressionTableCell m_addedCells[k_maxNumberOfAddedCells];
   Poincare::Layout m_addedCellLayout[k_maxNumberOfAddedCells];

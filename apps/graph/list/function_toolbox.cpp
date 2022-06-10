@@ -103,7 +103,8 @@ int FunctionToolbox::typeAtIndex(int index) {
 }
 
 bool FunctionToolbox::selectAddedCell(int selectedRow){
-  constexpr int bufferSize = 4;
+  /* Longest text is "-inf" */
+  constexpr int bufferSize = Infinity::NameSize(true);
   char buffer[bufferSize];
   m_addedCellLayout[selectedRow].serializeForParsing(buffer, bufferSize);
   sender()->handleEventWithText(buffer);

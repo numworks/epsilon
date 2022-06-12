@@ -171,7 +171,7 @@ Cette commande permet d'autoriser le démarrage des machines signées par Micros
 
 2. Redémarrez votre ordinateur.
 
-3. Téléchargez ce fichier [this file](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi) et suivez les instructions d'installation.
+3. Téléchargez [ce fichier](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi) et suivez les instructions d'installation.
 
 4. Ouvrez votre fenêtre powershell comme avant et tapez:
 
@@ -182,6 +182,11 @@ wsl --set-default-version 2
 5. téléchargez [Ubuntu](https://www.microsoft.com/store/apps/9n6svws3rx71) depuis le Microsoft store. Vous pouvez aussi installer [Debian](https://www.microsoft.com/store/productI9MSVKQC78PK6).
 
 WSL est maintenant installé.
+
+6. Installez maintenant la version pour ARM de GCC.
+```bash
+sudo apt-get install build-essential git imagemagick libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config gcc-arm-none-eabi binutils-arm-none-eabi
+```
 
 ### Installation d'usbipd pour connecter la calculatrice à WSL (facultatif)
 

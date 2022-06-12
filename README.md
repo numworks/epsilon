@@ -176,10 +176,15 @@ This one allows virtual machines developed by Microsoft.
 
 ```powershell
 wsl --set-default-version 2
-        ```
+```
 5. Download [Ubuntu](https://www.microsoft.com/store/apps/9n6svws3rx71) from Microsoft store.
 
 WSL is now installed.
+
+6. Then Install GCC cross compiler for ARM.
+```bash
+apt-get install build-essential git imagemagick libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config gcc-arm-none-eabi binutils-arm-none-eabi
+```
 
 ### Usbipd installation to connect your calculator
 If you want to connect to the calculator, you have to connect to install this [tool](https://github.com/dorssel/usbipd-win/releases/download/v1.3.0/usbipd-win_1.3.0.msi). This will allow you toconnect WSL to the calculator through internet. Follow the on screen information to install.

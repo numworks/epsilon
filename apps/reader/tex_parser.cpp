@@ -12,7 +12,7 @@ namespace Reader {
     "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon", "Phi", "Chi", "Psi","Omega",
     "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda",
     "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega",
-    "sim",
+    "sim", "f", "i", 
   };
 
   static constexpr int const k_NumberOfSymbols = sizeof(k_SymbolsCommands) / sizeof(char *);
@@ -26,7 +26,7 @@ namespace Reader {
     0x39c, 0x39d, 0x39e, 0x39f, 0x3a0, 0x3a1, 0x3a3, 0x3a4, 0x3a5, 0x3a6, 0x3a7, 0x3a8, 0x3a9,
     0x3b1, 0x3b2, 0x3b3, 0x3b4, 0x3b5, 0x3b6, 0x3b7, 0x3b8, 0x3b9, 0x3ba, 0x3bb,
     0x3bc, 0x3bd, 0x3be, 0x3bf, 0x3c0, 0x3c1, 0x3c3, 0x3c4, 0x3c5, 0x3c6, 0x3c7, 0x3c8, 0x3c9,
-    0x7e,
+    0x7e, 0x192, 0x1d422, 
   };
 
   static_assert(sizeof(k_SymbolsCodePoints) / sizeof(uint32_t) == k_NumberOfSymbols);
@@ -141,6 +141,12 @@ Layout TexParser::popText(char stop) {
 
 Layout TexParser::popCommand() {
   // TODO: Factorize this code
+  if (strncmp(k_binomCommand, m_text, strlen(k_binomCommand)) == 0) {
+    if (isCommandEnded(*(m_text + strlen(k_binomCommand)))) {
+      m_text += strlen(k_binomCommand);
+      return popBinomCommand();
+    }
+  }
   if (strncmp(k_ceilCommand, m_text, strlen(k_ceilCommand)) == 0) {
     if (isCommandEnded(*(m_text + strlen(k_ceilCommand)))) {
       m_text += strlen(k_ceilCommand);
@@ -190,10 +196,16 @@ Layout TexParser::popCommand() {
       return popOverrightarrowCommand();
     }
   }
-  if (strncmp(k_binomCommand, m_text, strlen(k_binomCommand)) == 0) {
-    if (isCommandEnded(*(m_text + strlen(k_binomCommand)))) {
-      m_text += strlen(k_binomCommand);
-      return popBinomCommand();
+  if (strncmp(k_overlineCommand, m_text, strlen(k_overlineCommand)) == 0) {
+    if (isCommandEnded(*(m_text + strlen(k_overlineCommand)))) {
+      m_text += strlen(k_overlineCommand);
+      return popOverlineCommand();
+    }
+  }
+  if (strncmp(k_intsetCommand, m_text, strlen(k_intsetCommand)) == 0) {
+    if (isCommandEnded(*(m_text + strlen(k_intsetCommand)))) {
+      m_text += strlen(k_intsetCommand);
+      return popIntsetCommand();
     }
   }
   for (int i = 0; i < k_NumberOfSymbols; i++) {
@@ -219,6 +231,13 @@ Layout TexParser::popCommand() {
 }
 
 // Expressions
+Layout TexParser::popBinomCommand() {
+  Layout numerator = popBlock();
+  Layout denominator = popBlock();
+  BinomialCoefficientLayout b = BinomialCoefficientLayout::Builder(numerator, denominator);
+  return b;
+}  
+  
 Layout TexParser::popCeilCommand() {
   Layout ceil = popBlock();
   return CeilingLayout::Builder(ceil);
@@ -234,6 +253,14 @@ Layout TexParser::popFracCommand() {
   Layout denominator = popBlock();
   FractionLayout l = FractionLayout::Builder(numerator, denominator);
   return l;
+}
+
+Layout TexParser::popIntsetCommand() {
+  HorizontalLayout intset = HorizontalLayout::Builder();
+  intset.addOrMergeChildAtIndex(CodePointLayout::Builder(0x27e6), 0, false);
+  intset.addOrMergeChildAtIndex(popBlock(), intset.numberOfChildren(), false);
+  intset.addOrMergeChildAtIndex(CodePointLayout::Builder(0x27e7), intset.numberOfChildren(), false);
+  return intset;
 }
 
 Layout TexParser::popLeftCommand() {
@@ -269,11 +296,8 @@ Layout TexParser::popOverrightarrowCommand() {
   return VectorLayout::Builder(popBlock());
 }
 
-Layout TexParser::popBinomCommand() {
-  Layout numerator = popBlock();
-  Layout denominator = popBlock();
-  BinomialCoefficientLayout b = BinomialCoefficientLayout::Builder(numerator, denominator);
-  return b;
+Layout TexParser::popOverlineCommand() {
+  return ConjugateLayout::Builder(popBlock());
 }
 
 Layout TexParser::popSymbolCommand(int SymbolIndex) {

@@ -668,7 +668,7 @@ bool WordWrapTextView::updateTextColorForward(const char * colorStart) const {
             m_textColor = Palette::Brown;
             keySize = 2;
         }
-        if (*(colorStart+2) == 'l') {
+        else if (*(colorStart+2) == 'l') {
             m_textColor = Palette::BlueLight;
             keySize = 2;
         }
@@ -744,7 +744,7 @@ bool WordWrapTextView::updateTextColorBackward(const char * colorStart) const {
             m_textColor = Palette::Brown;
             keySize = 2;
         }
-        if (*(colorStart+2) == 'l') {
+        else if (*(colorStart+2) == 'l') {
             m_textColor = Palette::BlueLight;
             keySize = 2;
         }

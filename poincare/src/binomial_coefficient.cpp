@@ -36,7 +36,7 @@ int BinomialCoefficientNode::serialize(char * buffer, int bufferSize, Preference
 }
 
 template<typename T>
-Evaluation<T> BinomialCoefficientNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> BinomialCoefficientNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return ApproximationHelper::Map<T>(this,
       approximationContext,
       [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {

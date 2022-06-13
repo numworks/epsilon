@@ -41,8 +41,8 @@ Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 }
 
 // Helper functions
-int ListNode::extremumIndex(ApproximationContext approximationContext, bool minimum) {
-  void * comparisonContext[] = {this, &approximationContext, &minimum};
+int ListNode::extremumIndex(const ApproximationContext& approximationContext, bool minimum) {
+  void * comparisonContext[] = {this, const_cast<ApproximationContext*>(&approximationContext), &minimum};
   return Poincare::Helpers::ExtremumIndex(
       Helpers::ListEvaluationComparisonAtIndex,
       comparisonContext,
@@ -50,14 +50,14 @@ int ListNode::extremumIndex(ApproximationContext approximationContext, bool mini
       minimum);
 }
 
-template <typename T> Evaluation<T> ListNode::extremumApproximation(ApproximationContext approximationContext, bool minimum) {
+template <typename T> Evaluation<T> ListNode::extremumApproximation(const ApproximationContext& approximationContext, bool minimum) {
   if (numberOfChildren() == 0) {
     return Complex<T>::Undefined();
   }
   return childAtIndex(extremumIndex(approximationContext, minimum))->approximate(static_cast<T>(0), approximationContext);
 }
 
-template<typename T> Evaluation<T> ListNode::sumOfElements(ApproximationContext approximationContext) {
+template<typename T> Evaluation<T> ListNode::sumOfElements(const ApproximationContext& approximationContext) {
   if (numberOfChildren() == 0) {
     return Complex<T>::Builder(0.0);
   }
@@ -77,7 +77,8 @@ template<typename T> Evaluation<T> ListNode::sumOfElements(ApproximationContext 
       }
       );
 }
-template<typename T> Evaluation<T> ListNode::productOfElements(ApproximationContext approximationContext) {
+
+template<typename T> Evaluation<T> ListNode::productOfElements(const ApproximationContext& approximationContext) {
   if (numberOfChildren() == 0) {
     return Complex<T>::Builder(1.0);
   }
@@ -102,7 +103,7 @@ Expression ListNode::shallowReduce(const ReductionContext& reductionContext) {
   return List(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListNode::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> ListNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   ListComplex<T> list = ListComplex<T>::Builder();
   for (ExpressionNode * c : children()) {
     list.addChildAtIndexInPlace(c->approximate(T(), approximationContext), list.numberOfChildren(), list.numberOfChildren());
@@ -131,19 +132,19 @@ Expression List::extremum(const ExpressionNode::ReductionContext& reductionConte
   if (numberOfChildren() == 0) {
     return Undefined::Builder();
   }
-  ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
+  const ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
   return childAtIndex(node()->extremumIndex(approximationContext, minimum));
 }
 
-template Evaluation<float> ListNode::templatedApproximate(ApproximationContext approximationContext) const;
-template Evaluation<double> ListNode::templatedApproximate(ApproximationContext approximationContext) const;
+template Evaluation<float> ListNode::templatedApproximate(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListNode::templatedApproximate(const ApproximationContext& approximationContext) const;
 
-template Evaluation<float> ListNode::extremumApproximation<float>(ApproximationContext approximationContext, bool minimum);
-template Evaluation<double> ListNode::extremumApproximation<double>(ApproximationContext approximationContext, bool minimum);
+template Evaluation<float> ListNode::extremumApproximation<float>(const ApproximationContext& approximationContext, bool minimum);
+template Evaluation<double> ListNode::extremumApproximation<double>(const ApproximationContext& approximationContext, bool minimum);
 
-template Evaluation<float> ListNode::sumOfElements<float>(ApproximationContext approximationContext);
-template Evaluation<double> ListNode::sumOfElements<double>(ApproximationContext approximationContext);
+template Evaluation<float> ListNode::sumOfElements<float>(const ApproximationContext& approximationContext);
+template Evaluation<double> ListNode::sumOfElements<double>(const ApproximationContext& approximationContext);
 
-template Evaluation<float> ListNode::productOfElements<float>(ApproximationContext approximationContext);
-template Evaluation<double> ListNode::productOfElements<double>(ApproximationContext approximationContext);
+template Evaluation<float> ListNode::productOfElements<float>(const ApproximationContext& approximationContext);
+template Evaluation<double> ListNode::productOfElements<double>(const ApproximationContext& approximationContext);
 }

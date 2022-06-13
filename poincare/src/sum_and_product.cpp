@@ -25,7 +25,7 @@ Expression SumAndProductNode::shallowReduce(const ReductionContext& reductionCon
 }
 
 template<typename T>
-Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> SumAndProductNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   // TODO : Reduction distributes on list but not approx
   if (type() == ExpressionNode::Type::Sum && Poincare::Preferences::sharedPreferences()->sumIsForbidden()) {
     return Complex<T>::Undefined();
@@ -68,7 +68,7 @@ Expression SumAndProduct::shallowReduce(const ExpressionNode::ReductionContext& 
   return *this;
 }
 
-template Evaluation<float> SumAndProductNode::templatedApproximate(ApproximationContext approximationContext) const;
-template Evaluation<double> SumAndProductNode::templatedApproximate(ApproximationContext approximationContext) const;
+template Evaluation<float> SumAndProductNode::templatedApproximate(const ApproximationContext& approximationContext) const;
+template Evaluation<double> SumAndProductNode::templatedApproximate(const ApproximationContext& approximationContext) const;
 
 }

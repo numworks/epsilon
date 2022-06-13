@@ -47,7 +47,7 @@ Expression DerivativeNode::shallowReduce(const ReductionContext& reductionContex
 }
 
 template<typename T>
-Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> DerivativeNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   /* TODO : Reduction is mapped on list, but not approximation.
   * Find a smart way of doing it. */
   Evaluation<T> evaluationArgumentInput = childAtIndex(2)->approximate(T(), approximationContext);
@@ -96,14 +96,14 @@ Evaluation<T> DerivativeNode::templatedApproximate(ApproximationContext approxim
 }
 
 template<typename T>
-T DerivativeNode::growthRateAroundAbscissa(T x, T h, ApproximationContext approximationContext) const {
+T DerivativeNode::growthRateAroundAbscissa(T x, T h, const ApproximationContext& approximationContext) const {
   T expressionPlus = firstChildScalarValueForArgument(x+h, approximationContext);
   T expressionMinus = firstChildScalarValueForArgument(x-h, approximationContext);
   return (expressionPlus - expressionMinus)/(h+h);
 }
 
 template<typename T>
-T DerivativeNode::riddersApproximation(ApproximationContext approximationContext, T x, T h, T * error) const {
+T DerivativeNode::riddersApproximation(const ApproximationContext& approximationContext, T x, T h, T * error) const {
   /* Ridders' Algorithm
    * Blibliography:
    * - Ridders, C.J.F. 1982, Advances in Helperering Software, vol. 4, no. 2,

@@ -22,7 +22,7 @@ Expression ListProductNode::shallowReduce(const ReductionContext& reductionConte
   return ListProduct(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListProductNode::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> ListProductNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   ExpressionNode * child = childAtIndex(0);
   if (child->type() != ExpressionNode::Type::List) {
     return Complex<T>::Undefined();
@@ -45,7 +45,7 @@ Expression ListProduct::shallowReduce(const ExpressionNode::ReductionContext& re
   return product.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> ListProductNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListProductNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListProductNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListProductNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 }

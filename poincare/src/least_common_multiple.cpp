@@ -24,7 +24,7 @@ Expression LeastCommonMultipleNode::shallowBeautify(const ReductionContext& redu
 }
 
 template<typename T>
-Evaluation<T> LeastCommonMultipleNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> LeastCommonMultipleNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   /* TODO : distribute approx over list with Map */
   return Arithmetic::LCM<T>(*this, approximationContext);
 }
@@ -72,7 +72,7 @@ Expression LeastCommonMultiple::shallowReduce(const ExpressionNode::ReductionCon
   return result;
 }
 
-template Evaluation<float> LeastCommonMultipleNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> LeastCommonMultipleNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> LeastCommonMultipleNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> LeastCommonMultipleNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 }

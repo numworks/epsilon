@@ -65,16 +65,16 @@ Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool *
   return Function(this).deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
 }
 
-Evaluation<float> FunctionNode::approximate(SinglePrecision p, ApproximationContext approximationContext) const {
+Evaluation<float> FunctionNode::approximate(SinglePrecision p, const ApproximationContext& approximationContext) const {
   return templatedApproximate<float>(approximationContext);
 }
 
-Evaluation<double> FunctionNode::approximate(DoublePrecision p, ApproximationContext approximationContext) const {
+Evaluation<double> FunctionNode::approximate(DoublePrecision p, const ApproximationContext& approximationContext) const {
   return templatedApproximate<double>(approximationContext);
 }
 
 template<typename T>
-Evaluation<T> FunctionNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> FunctionNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, approximationContext.context(), true, SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {

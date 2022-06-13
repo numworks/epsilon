@@ -21,11 +21,11 @@ public:
 
 protected:
   // Evaluation
-  template<typename T> Evaluation<T> approximateFirstChildWithArgument(T x, ApproximationContext approximationContext) const;
-  template<typename T> T firstChildScalarValueForArgument(T x, ApproximationContext approximationContext) const {
+  template<typename T> Evaluation<T> approximateFirstChildWithArgument(T x, const ApproximationContext& approximationContext) const;
+  template<typename T> T firstChildScalarValueForArgument(T x, const ApproximationContext& approximationContext) const {
     return approximateFirstChildWithArgument(x, approximationContext).toScalar();
   }
-  template<typename T> Evaluation<T> approximateExpressionWithArgument(ExpressionNode * child, T x, ApproximationContext approximationContext) const;
+  template<typename T> Evaluation<T> approximateExpressionWithArgument(ExpressionNode * child, T x, const ApproximationContext& approximationContext) const;
 
 };
 

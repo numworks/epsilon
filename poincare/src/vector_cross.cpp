@@ -23,7 +23,7 @@ int VectorCrossNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 template<typename T>
-Evaluation<T> VectorCrossNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> VectorCrossNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   if (Poincare::Preferences::sharedPreferences()->vectorProductsAreForbidden()) {
     return Complex<T>::Undefined();
   }

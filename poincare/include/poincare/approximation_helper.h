@@ -12,16 +12,16 @@ namespace Poincare {
 namespace ApproximationHelper {
   template <typename T> T Epsilon();
   template <typename T> bool IsIntegerRepresentationAccurate(T x);
-  template <typename T> uint32_t PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, ExpressionNode::ApproximationContext approximationContext);
+  template <typename T> uint32_t PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, const ExpressionNode::ApproximationContext& approximationContext);
   template <typename T> std::complex<T> NeglectRealOrImaginaryPartIfNeglectable(std::complex<T> result, std::complex<T> input1, std::complex<T> input2 = 1.0, bool enableNullResult = true);
 
   // Map on mutliple children
   template <typename T> using ComplexesCompute = Complex<T>(*)(const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * context);
-  template<typename T> Evaluation<T> Map(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexesCompute<T> compute, bool mapOnList = true, void * context = nullptr);
+template<typename T> Evaluation<T> Map(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexesCompute<T> compute, bool mapOnList = true, void * context = nullptr);
 
   // Map on one child
   template <typename T> using ComplexCompute = Complex<T>(*)(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-  template<typename T> Evaluation<T> MapOneChild(const ExpressionNode * expression, ExpressionNode::ApproximationContext approximationContext, ComplexCompute<T> compute, bool mapOnList = true);
+  template<typename T> Evaluation<T> MapOneChild(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexCompute<T> compute, bool mapOnList = true);
 
   // Lambda computation function
   template <typename T> using ComplexAndComplexReduction = Complex<T>(*)(const std::complex<T> c1, const std::complex<T> c2, Preferences::ComplexFormat complexFormat);
@@ -56,7 +56,7 @@ namespace ApproximationHelper {
 
   template<typename T> Evaluation<T> MapReduce(
       const ExpressionNode * expression,
-      ExpressionNode::ApproximationContext approximationContext,
+      const ExpressionNode::ApproximationContext& approximationContext,
       ReductionFunction<T> reductionFunction
       );
 

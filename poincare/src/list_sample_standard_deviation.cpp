@@ -28,7 +28,7 @@ Expression ListSampleStandardDeviationNode<U>::shallowReduce(const ReductionCont
 }
 
 template<int U>
-template<typename T> Evaluation<T> ListSampleStandardDeviationNode<U>::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> ListSampleStandardDeviationNode<U>::templatedApproximate(const ApproximationContext& approximationContext) const {
   ListComplex<T> evaluationArray[2];
   StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(this, approximationContext, evaluationArray);
   if (dataset.isUndefined()) {
@@ -74,10 +74,10 @@ Expression ListSampleStandardDeviation::shallowReduce(const ExpressionNode::Redu
   return m.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> ListSampleStandardDeviationNode<1>::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<float> ListSampleStandardDeviationNode<2>::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListSampleStandardDeviationNode<1>::templatedApproximate<double>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListSampleStandardDeviationNode<2>::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListSampleStandardDeviationNode<1>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<float> ListSampleStandardDeviationNode<2>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListSampleStandardDeviationNode<1>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListSampleStandardDeviationNode<2>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 template class ListSampleStandardDeviationNode<1>;
 template class ListSampleStandardDeviationNode<2>;

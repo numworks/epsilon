@@ -22,7 +22,7 @@ Expression ListSortNode::shallowReduce(const ReductionContext& reductionContext)
   return ListSort(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListSortNode::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> ListSortNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> child = childAtIndex(0)->approximate(T(), approximationContext);
   if (child.type() != EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Undefined();
@@ -56,7 +56,7 @@ Expression ListSort::shallowReduce(const ExpressionNode::ReductionContext& reduc
   return child;
 }
 
-template Evaluation<float> ListSortNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListSortNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListSortNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListSortNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 }

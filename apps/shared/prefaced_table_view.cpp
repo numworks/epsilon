@@ -58,16 +58,18 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::Selectab
 
 void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   bool hidePreface = m_prefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().y()) || m_mainTableView->selectedRow() == -1;
-  KDCoordinate prefaceHeight;
+  KDCoordinate prefaceHeight = m_prefaceView.minimalSizeForOptimalDisplay().height();
+  ScrollViewVerticalBar * verticalBar = static_cast<TableView::BarDecorator*>(m_mainTableView->decorator())->verticalBar();
 
   if (hidePreface) {
     m_mainTableView->setTopMargin(m_storedMargin);
     m_mainTableView->setFrame(rect, force);
+    verticalBar->setTopMargin(prefaceHeight + 2*m_storedMargin);
   } else {
     m_prefaceView.setBottomMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_prefaceView, &m_prefaceDataSource) : 0);
-    prefaceHeight = m_prefaceView.minimalSizeForOptimalDisplay().height();
     m_mainTableView->setTopMargin(0);
     m_mainTableView->setFrame(KDRect(rect.x(), rect.y() + prefaceHeight, rect.width(), rect.height() - prefaceHeight), force);
+    verticalBar->setTopMargin(2*m_storedMargin);
   }
 
   if (m_mainTableView->selectedRow() >= 0) {

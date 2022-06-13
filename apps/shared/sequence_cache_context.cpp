@@ -47,7 +47,6 @@ const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poin
         // In case the sequence referenced is not defined or if the rank is not an int, return NAN
         if (seq->fullName() != nullptr) {
           if (std::floor(n) == n) {
-            Expression sequenceExpression = seq->expressionReduced(this);
             result = seq->valueAtRank<T>(n, m_sequenceContext);
           }
         }

@@ -58,7 +58,10 @@ template <typename T> Evaluation<T> ListNode::extremumApproximation(Approximatio
 }
 
 template<typename T> Evaluation<T> ListNode::sumOfElements(ApproximationContext approximationContext) {
-   return ApproximationHelper::MapReduce<T>(
+  if (numberOfChildren() == 0) {
+    return Complex<T>::Builder(0.0);
+  }
+  return ApproximationHelper::MapReduce<T>(
       this,
       approximationContext,
       [] (Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat) {
@@ -75,6 +78,9 @@ template<typename T> Evaluation<T> ListNode::sumOfElements(ApproximationContext 
       );
 }
 template<typename T> Evaluation<T> ListNode::productOfElements(ApproximationContext approximationContext) {
+  if (numberOfChildren() == 0) {
+    return Complex<T>::Builder(1.0);
+  }
   return ApproximationHelper::MapReduce<T>(
       this,
       approximationContext,

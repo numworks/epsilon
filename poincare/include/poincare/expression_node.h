@@ -307,8 +307,8 @@ public:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   constexpr static int k_maxNumberOfSteps = 10000;
-  virtual Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const = 0;
-  virtual Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const = 0;
+  virtual Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const = 0;
+  virtual Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const = 0;
 
   /* Simplification */
   /*!*/ void deepReduceChildren(const ReductionContext& reductionContext);

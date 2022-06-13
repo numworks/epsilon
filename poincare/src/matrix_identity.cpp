@@ -27,7 +27,7 @@ int MatrixIdentityNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 }
 
 template<typename T>
-Evaluation<T> MatrixIdentityNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> MatrixIdentityNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   T r = input.toScalar(); // Undefined if the child is not real
   if (!std::isnan(r) && !std::isinf(r) && r > static_cast<T>(0.0) // The child is defined and positive

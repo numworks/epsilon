@@ -32,7 +32,7 @@ Expression RandintNode::shallowReduce(const ReductionContext& reductionContext) 
   return Randint(this).shallowReduce(reductionContext);
 }
 
-template <typename T> Evaluation<T> RandintNode::templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined) const {
+template <typename T> Evaluation<T> RandintNode::templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined) const {
   Evaluation<T> aInput = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> bInput = childAtIndex(1)->approximate(T(), approximationContext);
   if (inputIsUndefined) {

@@ -24,7 +24,7 @@ int MatrixTransposeNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 template<typename T>
-Evaluation<T> MatrixTransposeNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> MatrixTransposeNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> transpose;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {

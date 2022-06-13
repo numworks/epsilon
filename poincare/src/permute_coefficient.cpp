@@ -36,7 +36,7 @@ Expression PermuteCoefficientNode::shallowReduce(const ReductionContext& reducti
 }
 
 template<typename T>
-Evaluation<T> PermuteCoefficientNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> PermuteCoefficientNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return ApproximationHelper::Map<T>(
       this,
       approximationContext,

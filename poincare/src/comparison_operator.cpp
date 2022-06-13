@@ -22,16 +22,16 @@ int ComparisonOperatorNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, comparisonString());
 }
 
-Evaluation<float> ComparisonOperatorNode::approximate(SinglePrecision p, ApproximationContext approximationContext) const {
+Evaluation<float> ComparisonOperatorNode::approximate(SinglePrecision p, const ApproximationContext& approximationContext) const {
   return templatedApproximate<float>(approximationContext);
 }
 
-Evaluation<double> ComparisonOperatorNode::approximate(DoublePrecision p, ApproximationContext approximationContext) const {
+Evaluation<double> ComparisonOperatorNode::approximate(DoublePrecision p, const ApproximationContext& approximationContext) const {
   return templatedApproximate<double>(approximationContext);
 }
 
 template<typename T>
-Evaluation<T> ComparisonOperatorNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> ComparisonOperatorNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return Complex<T>::Undefined();
 }
 

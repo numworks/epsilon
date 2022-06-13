@@ -22,7 +22,7 @@ Expression ListMinimumNode::shallowReduce(const ReductionContext& reductionConte
   return ListMinimum(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListMinimumNode::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> ListMinimumNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   ExpressionNode * child = childAtIndex(0);
   if (child->type() != ExpressionNode::Type::List) {
     return Complex<T>::Undefined();
@@ -41,7 +41,7 @@ Expression ListMinimum::shallowReduce(const ExpressionNode::ReductionContext& re
   return result;
 }
 
-template Evaluation<float> ListMinimumNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListMinimumNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListMinimumNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListMinimumNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 }

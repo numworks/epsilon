@@ -31,8 +31,8 @@ private:
   LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::MoreLetters; }
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
  template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
   template<typename T>
   struct DetailedResult
@@ -42,7 +42,7 @@ private:
   };
   constexpr static int k_maxNumberOfIterations = 20;
 #ifdef LAGRANGE_METHOD
-  template<typename T> T lagrangeGaussQuadrature(T a, T b, ApproximationContext approximationContext) const;
+  template<typename T> T lagrangeGaussQuadrature(T a, T b, const ApproximationContext& approximationContext) const;
 #else
   template<typename T>
   class Substitution {

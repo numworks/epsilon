@@ -26,7 +26,7 @@ Expression DivisionRemainderNode::shallowReduce(const ReductionContext& reductio
 }
 
 template<typename T>
-Evaluation<T> DivisionRemainderNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> DivisionRemainderNode::templatedApproximate(const ApproximationContext& approximationContext) const {
    return ApproximationHelper::Map<T>(this,
       approximationContext,
       [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {

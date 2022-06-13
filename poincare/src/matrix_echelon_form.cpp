@@ -22,7 +22,7 @@ int MatrixEchelonFormNode::serialize(char * buffer, int bufferSize, Preferences:
 }
 
 template<typename T>
-Evaluation<T> MatrixEchelonFormNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> MatrixEchelonFormNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> ref;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {

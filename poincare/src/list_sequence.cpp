@@ -31,7 +31,7 @@ int ListSequenceNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 template<typename T>
-Evaluation<T> ListSequenceNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> ListSequenceNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   ListComplex<T> list = ListComplex<T>::Builder();
   T upperBound = childAtIndex(2)->approximate(T(), approximationContext).toScalar();
     if (std::isnan(upperBound) || upperBound < 1) {

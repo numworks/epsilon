@@ -119,7 +119,7 @@ Expression PercentSimpleNode::shallowBeautify(const ReductionContext& reductionC
 
 // Evaluation
 
-template <typename U> Evaluation<U> PercentSimpleNode::templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined) const {
+template <typename U> Evaluation<U> PercentSimpleNode::templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined) const {
   return Complex<U>::Builder(childAtIndex(0)->approximate(U(), approximationContext).toScalar() / 100.0);
 }
 
@@ -192,7 +192,7 @@ Expression PercentAdditionNode::shallowBeautify(const ReductionContext& reductio
 
 // Evaluation
 
-template <typename U> Evaluation<U> PercentAdditionNode::templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined) const {
+template <typename U> Evaluation<U> PercentAdditionNode::templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined) const {
   Evaluation<U> aInput = childAtIndex(0)->approximate(U(), approximationContext);
   Evaluation<U> bInput = childAtIndex(1)->approximate(U(), approximationContext);
   U a = aInput.toScalar();

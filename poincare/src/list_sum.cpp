@@ -21,7 +21,7 @@ Expression ListSumNode::shallowReduce(const ReductionContext& reductionContext) 
   return ListSum(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListSumNode::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> ListSumNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   ExpressionNode * child = childAtIndex(0);
   if (child->type() != ExpressionNode::Type::List) {
     return Complex<T>::Undefined();
@@ -45,7 +45,7 @@ Expression ListSum::shallowReduce(const ExpressionNode::ReductionContext& reduct
   return sum.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> ListSumNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListSumNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListSumNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListSumNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 }

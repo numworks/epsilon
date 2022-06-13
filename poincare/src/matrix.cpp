@@ -88,7 +88,7 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 }
 
 template<typename T>
-Evaluation<T> MatrixNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> MatrixNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
   for (ExpressionNode * c : children()) {
     matrix.addChildAtIndexInPlace(c->approximate(T(), approximationContext), matrix.numberOfChildren(), matrix.numberOfChildren());

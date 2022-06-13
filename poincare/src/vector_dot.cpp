@@ -23,7 +23,7 @@ int VectorDotNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 template<typename T>
-Evaluation<T> VectorDotNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> VectorDotNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   if (Poincare::Preferences::sharedPreferences()->vectorProductsAreForbidden()) {
     return Complex<T>::Undefined();
   }

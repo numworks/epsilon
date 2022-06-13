@@ -36,7 +36,7 @@ Expression FactorNode::shallowBeautify(const ReductionContext& reductionContext)
 
 // Add tests :)
 template<typename T>
-Evaluation<T> FactorNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> FactorNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return ApproximationHelper::MapOneChild<T>(this,
       approximationContext,
       [] (const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {

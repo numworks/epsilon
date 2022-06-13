@@ -29,13 +29,13 @@ private:
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override {
     return templateApproximate<float>(approximationContext);
   }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override {
     return templateApproximate<double>(approximationContext);
   }
-  template <typename T> Evaluation<T> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
+  template <typename T> Evaluation<T> templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined = nullptr) const;
 
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }

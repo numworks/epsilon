@@ -66,10 +66,10 @@ private:
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::ElementWiseOnMatrixAndComplex(m, c, complexFormat, computeOnComplex<T>);
   }
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override {
     return ApproximationHelper::MapReduce<float>(this, approximationContext, Compute<float>);
    }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override {
     return ApproximationHelper::MapReduce<double>(this, approximationContext, Compute<double>);
   }
 };

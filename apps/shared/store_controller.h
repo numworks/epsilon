@@ -16,7 +16,7 @@
 
 namespace Shared {
 
-class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public LayoutFieldDelegate, public Shared::InputEventHandlerDelegate, public StoreColumnHelper {
+class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public StoreColumnHelper {
 public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
   Escher::View * view() override { return &m_prefacedView; }

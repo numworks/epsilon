@@ -29,6 +29,8 @@ StoreController::StoreController(Responder * parentResponder, Escher::InputEvent
 }
 
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  // First row is not editable.
+  assert(selectedRow() != 0);
   int series = m_store->seriesAtColumn(selectedColumn());
   bool wasSeriesValid = m_store->seriesIsValid(series);
   bool result = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);

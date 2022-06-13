@@ -71,8 +71,13 @@ static inline bool load(FILE * f) {
   // Events
   while ((c = getc(f)) != EOF) {
     Ion::Events::Event e = Ion::Events::Event(c);
-    if (Events::isDefined(static_cast<uint8_t>(e)) && e.isKeyboardEvent()) {
-      // Avoid pushing invalid events - useful when fuzzing
+    if (Events::isDefined(static_cast<uint8_t>(e))
+        && e != Ion::Events::None
+        && e != Ion::Events::Termination
+        && e != Ion::Events::TimerFire
+        && e != Ion::Events::ExternalText) {
+      /* Avoid pushing invalid events - useful when fuzzing.
+       * ExternalText is not handled by state files. */
       journal->pushEvent(e);
     }
   }

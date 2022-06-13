@@ -25,7 +25,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-constexpr char ContinuousFunction::k_unknownName[2];
 constexpr char ContinuousFunction::k_ordinateName[2];
 constexpr CodePoint ContinuousFunction::k_cartesianSymbol;
 constexpr CodePoint ContinuousFunction::k_parametricSymbol;

@@ -190,10 +190,6 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
     return NAN;
   }
 
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char unknownN[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknown);
-
   SequenceCacheContext<T> ctx = SequenceCacheContext<T>(sqctx, sequenceIndex);
   // Hold values u(n), u(n-1), u(n-2), v(n), v(n-1), v(n-2)...
   T values[SequenceStore::k_maxNumberOfSequences][SequenceStore::k_maxRecurrenceDepth+1];
@@ -235,34 +231,34 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
         // Set in context u(n) = u(n) for all sequences
         ctx.setValueForSymbol(values[i][0], symbols[i][0]);
       }
-      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, static_cast<T>(n), &ctx);
+      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), k_unknownName, static_cast<T>(n), &ctx);
     }
     case Type::SingleRecurrence:
     {
       if (n == initialRank()) {
-        return PoincareHelpers::ApproximateWithValueForSymbol(firstInitialConditionExpressionReduced(sqctx), unknownN, static_cast<T>(NAN), &ctx);
+        return PoincareHelpers::ApproximateWithValueForSymbol(firstInitialConditionExpressionReduced(sqctx), k_unknownName, static_cast<T>(NAN), &ctx);
       }
       for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
         // Set in context u(n) = u(n-1) and u(n+1) = u(n) for all sequences
         ctx.setValueForSymbol(values[i][0], symbols[i][1]);
         ctx.setValueForSymbol(values[i][1], symbols[i][0]);
       }
-      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, static_cast<T>(n-1), &ctx);
+      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), k_unknownName, static_cast<T>(n-1), &ctx);
     }
     default:
     {
       if (n == initialRank()) {
-        return PoincareHelpers::ApproximateWithValueForSymbol(firstInitialConditionExpressionReduced(sqctx), unknownN, static_cast<T>(NAN), &ctx);
+        return PoincareHelpers::ApproximateWithValueForSymbol(firstInitialConditionExpressionReduced(sqctx), k_unknownName, static_cast<T>(NAN), &ctx);
       }
       if (n == initialRank()+1) {
-        return PoincareHelpers::ApproximateWithValueForSymbol(secondInitialConditionExpressionReduced(sqctx), unknownN, static_cast<T>(NAN), &ctx);
+        return PoincareHelpers::ApproximateWithValueForSymbol(secondInitialConditionExpressionReduced(sqctx), k_unknownName, static_cast<T>(NAN), &ctx);
       }
       for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
         // Set in context u(n) = u(n-2) and u(n+1) = u(n-1) for all sequences
         ctx.setValueForSymbol(values[i][1], symbols[i][1]);
         ctx.setValueForSymbol(values[i][2], symbols[i][0]);
       }
-      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, static_cast<T>(n-2), &ctx);
+      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), k_unknownName, static_cast<T>(n-2), &ctx);
     }
   }
 }

@@ -40,7 +40,7 @@ namespace Poincare {
 template<typename T>
 class StatisticsDataset {
 public:
-  static StatisticsDataset<T> BuildFromChildren(const ExpressionNode * e, ExpressionNode::ApproximationContext approximationContext, ListComplex<T> evaluationArray[]);
+  static StatisticsDataset<T> BuildFromChildren(const ExpressionNode * e, const ExpressionNode::ApproximationContext& approximationContext, ListComplex<T> evaluationArray[]);
 
   StatisticsDataset(const DatasetColumn<T> * values, const DatasetColumn<T> * weights) : m_values(values), m_weights(weights), m_sortedIndex(FloatList<float>::Builder()), m_recomputeSortedIndex(true), m_memoizedTotalWeight(NAN), m_lnOfValues(false) {}
   StatisticsDataset(const DatasetColumn<T> * values) : StatisticsDataset(values, nullptr) {}

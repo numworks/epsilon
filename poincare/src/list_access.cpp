@@ -50,7 +50,7 @@ Expression ListAccessNode<2>::shallowReduce(const ReductionContext& reductionCon
 }
 
 template<>
-template<typename T> Evaluation<T> ListAccessNode<1>::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> ListAccessNode<1>::templatedApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> child = childAtIndex(ListAccessNode<1>::k_listChildIndex)->approximate(T(), approximationContext);
   if (child.type() != EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Undefined();
@@ -69,7 +69,7 @@ template<typename T> Evaluation<T> ListAccessNode<1>::templatedApproximate(Appro
 }
 
 template<>
-template<typename T> Evaluation<T> ListAccessNode<2>::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> ListAccessNode<2>::templatedApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> child = childAtIndex(ListAccessNode<2>::k_listChildIndex)->approximate(T(), approximationContext);
   if (child.type() != EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Undefined();
@@ -179,9 +179,9 @@ Expression ListSlice::shallowReduce(const ExpressionNode::ReductionContext& redu
   return std::move(typedList);
 }
 
-template Evaluation<float> ListAccessNode<1>::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<float> ListAccessNode<2>::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListAccessNode<1>::templatedApproximate<double>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListAccessNode<2>::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListAccessNode<1>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<float> ListAccessNode<2>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListAccessNode<1>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListAccessNode<2>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 }

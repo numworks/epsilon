@@ -34,7 +34,7 @@ int DivisionQuotientNode::serialize(char * buffer, int bufferSize, Preferences::
 }
 
 template<typename T>
-Evaluation<T> DivisionQuotientNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> DivisionQuotientNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return ApproximationHelper::Map<T>(
       this,
       approximationContext,

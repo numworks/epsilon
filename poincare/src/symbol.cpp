@@ -97,7 +97,7 @@ bool SymbolNode::derivate(const ReductionContext& reductionContext, Symbol symbo
 }
 
 template<typename T>
-Evaluation<T> SymbolNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> SymbolNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   Symbol s(this);
   // No need to preserve undefined symbols because they will be approximated.
   Expression e = SymbolAbstract::Expand(s, approximationContext.context(), false, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);

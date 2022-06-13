@@ -39,8 +39,8 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
   template<typename T> T templatedApproximate() const;
 
   // Basic test

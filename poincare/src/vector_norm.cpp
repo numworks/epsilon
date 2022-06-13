@@ -24,7 +24,7 @@ int VectorNormNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 }
 
 template<typename T>
-Evaluation<T> VectorNormNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> VectorNormNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   if (Poincare::Preferences::sharedPreferences()->vectorNormIsForbidden()) {
     return Complex<T>::Undefined();
   }

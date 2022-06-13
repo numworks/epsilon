@@ -45,9 +45,9 @@ public:
      * gives log(0) = -inf, which is only a generous shorthand for the limit. */
     return Complex<U>::Builder(c == std::complex<U>(0) ? std::complex<U>(NAN, NAN) : std::log10(c));
   }
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
-  template<typename U> Evaluation<U> templatedApproximate(ApproximationContext approximationContext) const;
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  template<typename U> Evaluation<U> templatedApproximate(const ApproximationContext& approximationContext) const;
 };
 
 class Logarithm final : public ExpressionTwoChildren<Logarithm, LogarithmNode<2>> {

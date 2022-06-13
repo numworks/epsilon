@@ -26,7 +26,7 @@ Expression RoundNode::shallowReduce(const ReductionContext& reductionContext) {
 }
 
 template<typename T>
-Evaluation<T> RoundNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> RoundNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return ApproximationHelper::Map<T>(
       this,
       approximationContext,

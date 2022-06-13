@@ -26,7 +26,7 @@ int MatrixTraceNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 template<typename T>
-Evaluation<T> MatrixTraceNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> MatrixTraceNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   if (input.type() != EvaluationNode<T>::Type::MatrixComplex) {
     return input;

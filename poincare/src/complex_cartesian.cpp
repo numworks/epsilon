@@ -39,7 +39,7 @@ Expression ComplexCartesianNode::shallowBeautify(const ReductionContext& reducti
 }
 
 template<typename T>
-Complex<T> ComplexCartesianNode::templatedApproximate(ApproximationContext approximationContext) const {
+Complex<T> ComplexCartesianNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> realEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> imagEvalution = childAtIndex(1)->approximate(T(), approximationContext);
   assert(realEvaluation.type() == EvaluationNode<T>::Type::Complex);

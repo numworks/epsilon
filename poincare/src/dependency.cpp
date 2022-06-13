@@ -21,7 +21,7 @@ int DependencyNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Dependency::s_functionHelper.name());
 }
 
-template<typename T> Evaluation<T> DependencyNode::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> DependencyNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   ExpressionNode * dependencies = childAtIndex(Dependency::k_indexOfDependenciesList);
   if (dependencies->type() == Type::Undefined || dependencies->type() == Type::Nonreal) {
     return Complex<T>::Undefined();

@@ -27,7 +27,7 @@ Expression ListMeanNode<U>::shallowReduce(const ReductionContext& reductionConte
 }
 
 template<int U>
-template<typename T> Evaluation<T> ListMeanNode<U>::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> ListMeanNode<U>::templatedApproximate(const ApproximationContext& approximationContext) const {
   ListComplex<T> evaluationArray[2];
   StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(this, approximationContext, evaluationArray);
   if (dataset.isUndefined()) {
@@ -79,10 +79,10 @@ Expression ListMean::shallowReduce(const ExpressionNode::ReductionContext& reduc
   return result.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> ListMeanNode<1>::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<float> ListMeanNode<2>::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListMeanNode<1>::templatedApproximate<double>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListMeanNode<2>::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListMeanNode<1>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<float> ListMeanNode<2>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListMeanNode<1>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListMeanNode<2>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 template class ListMeanNode<1>;
 template class ListMeanNode<2>;

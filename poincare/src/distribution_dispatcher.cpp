@@ -112,7 +112,7 @@ Expression DistributionDispatcher::shallowReduce(const ExpressionNode::Reduction
 }
 
 template<typename T>
-Evaluation<T> DistributionDispatcherNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> DistributionDispatcherNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return ApproximationHelper::Map<T>(
     this,
     approximationContext,

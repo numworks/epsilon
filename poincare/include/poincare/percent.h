@@ -41,13 +41,13 @@ private:
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override {
     return templateApproximate<float>(approximationContext);
   }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override {
     return templateApproximate<double>(approximationContext);
   }
-  template <typename U> Evaluation<U> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
+  template <typename U> Evaluation<U> templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined = nullptr) const;
 };
 
 class PercentAdditionNode final : public PercentSimpleNode  {
@@ -68,13 +68,13 @@ private:
   // Simplication
   Expression shallowBeautify(const ReductionContext& reductionContext) override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override {
     return templateApproximate<float>(approximationContext);
   }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override {
     return templateApproximate<double>(approximationContext);
   }
-  template <typename U> Evaluation<U> templateApproximate(ApproximationContext approximationContext, bool * inputIsUndefined = nullptr) const;
+  template <typename U> Evaluation<U> templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined = nullptr) const;
 };
 
 class PercentSimple final : public ExpressionOneChild<PercentSimple, PercentSimpleNode> {

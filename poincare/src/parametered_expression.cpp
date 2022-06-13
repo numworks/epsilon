@@ -49,26 +49,27 @@ int ParameteredExpressionNode::getVariables(Context * context, isVariableTest is
 }
 
 template<typename T>
-Evaluation<T> ParameteredExpressionNode::approximateExpressionWithArgument(ExpressionNode * expression, T x, ApproximationContext approximationContext) const {
+Evaluation<T> ParameteredExpressionNode::approximateExpressionWithArgument(ExpressionNode * expression, T x, const ApproximationContext& approximationContext) const {
   assert(childAtIndex(1)->type() == Type::Symbol);
   Symbol symbol = Symbol(static_cast<SymbolNode *>(childAtIndex(1)));
   VariableContext variableContext = VariableContext(symbol.name(), approximationContext.context());
   variableContext.setApproximationForVariable<T>(x);
   // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounteredComplex flag
-  approximationContext.setContext(&variableContext);
+  ApproximationContext childContext = approximationContext;
+  childContext.setContext(&variableContext);
   if (expression->type() == ExpressionNode::Type::Sequence) {
     /* Since we cannot get the expression of a sequence term like we would for
      * a function, we replace its potential abstract rank by the value it should
      * have. We can then evaluate its value */
     Expression temporary = Expression(expression).clone();
     temporary = temporary.node()->replaceSymbolWithExpression(symbol, Float<T>::Builder(x));
-    return temporary.node()->approximate(T(), approximationContext);
+    return temporary.node()->approximate(T(), childContext);
   }
-  return expression->approximate(T(), approximationContext);
+  return expression->approximate(T(), childContext);
 }
 
 template<typename T>
-Evaluation<T> ParameteredExpressionNode::approximateFirstChildWithArgument(T x, ApproximationContext approximationContext) const {
+Evaluation<T> ParameteredExpressionNode::approximateFirstChildWithArgument(T x, const ApproximationContext& approximationContext) const {
   return approximateExpressionWithArgument(childAtIndex(0), x, approximationContext);
 }
 
@@ -117,9 +118,9 @@ Symbol ParameteredExpression::parameter() {
   return static_cast<Symbol&>(e);
 }
 
-template Evaluation<float> ParameteredExpressionNode::approximateFirstChildWithArgument(float x, ApproximationContext approximationContext) const;
-template Evaluation<double> ParameteredExpressionNode::approximateFirstChildWithArgument(double x, ApproximationContext approximationContext) const;
-template Evaluation<float> ParameteredExpressionNode::approximateExpressionWithArgument(ExpressionNode * expr, float x, ApproximationContext approximationContext) const;
-template Evaluation<double> ParameteredExpressionNode::approximateExpressionWithArgument(ExpressionNode * expr, double x, ApproximationContext approximationContext) const;
+template Evaluation<float> ParameteredExpressionNode::approximateFirstChildWithArgument(float x, const ApproximationContext& approximationContext) const;
+template Evaluation<double> ParameteredExpressionNode::approximateFirstChildWithArgument(double x, const ApproximationContext& approximationContext) const;
+template Evaluation<float> ParameteredExpressionNode::approximateExpressionWithArgument(ExpressionNode * expr, float x, const ApproximationContext& approximationContext) const;
+template Evaluation<double> ParameteredExpressionNode::approximateExpressionWithArgument(ExpressionNode * expr, double x, const ApproximationContext& approximationContext) const;
 
 }

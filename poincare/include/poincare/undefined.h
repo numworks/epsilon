@@ -25,10 +25,10 @@ public:
   void setNegative(bool negative) override {}
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override {
     return templatedApproximate<float>();
   }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override {
     return templatedApproximate<double>();
   }
 

@@ -323,7 +323,7 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
   return result;
 }
 
-template<typename T> Evaluation<T> PowerNode::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> PowerNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   /* Special case: c^(p/q) with p, q integers
    * In real mode, c^(p/q) might have a real root which is not the principal
    * root. We return this value in that case to avoid returning "nonreal". */
@@ -1503,7 +1503,7 @@ template Complex<float> PowerNode::computeNotPrincipalRealRootOfRationalPow<floa
 template Evaluation<float> Poincare::PowerNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Preferences::ComplexFormat complexFormat);
 template Evaluation<double> Poincare::PowerNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Preferences::ComplexFormat complexFormat);
 
-template Evaluation<float> Poincare::PowerNode::templatedApproximate<float>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
-template Evaluation<double> Poincare::PowerNode::templatedApproximate<double>(Poincare::ExpressionNode::ApproximationContext approximationContext) const;
+template Evaluation<float> Poincare::PowerNode::templatedApproximate<float>(const Poincare::ExpressionNode::ApproximationContext& approximationContext) const;
+template Evaluation<double> Poincare::PowerNode::templatedApproximate<double>(const Poincare::ExpressionNode::ApproximationContext& approximationContext) const;
 
 }

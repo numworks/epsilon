@@ -54,16 +54,16 @@ Expression SequenceNode::shallowReduce(const ReductionContext& reductionContext)
   return Sequence(this).shallowReduce(reductionContext);
 }
 
-Evaluation<float> SequenceNode::approximate(SinglePrecision p, ApproximationContext approximationContext) const {
+Evaluation<float> SequenceNode::approximate(SinglePrecision p, const ApproximationContext& approximationContext) const {
   return templatedApproximate<float>(approximationContext);
 }
 
-Evaluation<double> SequenceNode::approximate(DoublePrecision p, ApproximationContext approximationContext) const {
+Evaluation<double> SequenceNode::approximate(DoublePrecision p, const ApproximationContext& approximationContext) const {
   return templatedApproximate<double>(approximationContext);
 }
 
 template<typename T>
-Evaluation<T> SequenceNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> SequenceNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   if (approximationContext.withinReduce() || childAtIndex(0)->approximate((T)1, approximationContext).isUndefined()) {
     /* If we're inside a reducing routine, we want to escape the sequence
      * approximation. Indeed, in order to know that the sequence is well defined

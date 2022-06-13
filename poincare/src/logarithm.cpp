@@ -93,12 +93,12 @@ Expression LogarithmNode<2>::shallowBeautify(const ReductionContext& reductionCo
 }
 
 template<>
-template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(const ApproximationContext& approximationContext) const {
   return ApproximationHelper::MapOneChild<U>(this, approximationContext, computeOnComplex<U>);
 }
 
 template<>
-template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<U> n = childAtIndex(1)->approximate(U(), approximationContext);
   if (Poincare::Preferences::sharedPreferences()->basedLogarithmIsForbidden()
       && n.toScalar() != static_cast<U>(10.0)
@@ -405,10 +405,10 @@ Expression Logarithm::shallowBeautify() {
   return *this;
 }
 
-template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(ApproximationContext) const;
-template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(ApproximationContext) const;
-template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(ApproximationContext) const;
-template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(ApproximationContext) const;
+template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(const ApproximationContext&) const;
+template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(const ApproximationContext&) const;
+template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(const ApproximationContext&) const;
+template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(const ApproximationContext&) const;
 template int LogarithmNode<1>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
 template int LogarithmNode<2>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
 

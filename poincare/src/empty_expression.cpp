@@ -13,7 +13,7 @@ Layout EmptyExpressionNode::createLayout(Preferences::PrintFloatMode floatDispla
   return EmptyLayout::Builder();
 }
 
-template<typename T> Evaluation<T> EmptyExpressionNode::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> EmptyExpressionNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return Complex<T>::Undefined();
 }
 

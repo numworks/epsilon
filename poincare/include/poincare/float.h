@@ -56,13 +56,13 @@ public:
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Evaluation */
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
 private:
   // Simplification
   LayoutShape leftLayoutShape() const override { return LayoutShape::Decimal; }
 
-  template<typename U> Evaluation<U> templatedApproximate(ApproximationContext approximationContext) const {
+  template<typename U> Evaluation<U> templatedApproximate(const ApproximationContext& approximationContext) const {
     return Complex<U>::Builder((U)m_value);
   }
   T m_value;

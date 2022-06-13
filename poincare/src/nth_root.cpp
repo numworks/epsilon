@@ -34,7 +34,7 @@ Expression NthRootNode::shallowReduce(const ReductionContext& reductionContext) 
 }
 
 template<typename T>
-Evaluation<T> NthRootNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> NthRootNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return ApproximationHelper::Map<T>(
       this,
       approximationContext,

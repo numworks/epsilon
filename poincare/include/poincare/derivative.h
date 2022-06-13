@@ -33,11 +33,11 @@ private:
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
-  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
-  template<typename T> T growthRateAroundAbscissa(T x, T h, ApproximationContext approximationContext) const;
-  template<typename T> T riddersApproximation(ApproximationContext approximationContext, T x, T h, T * error) const;
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
+  template<typename T> T growthRateAroundAbscissa(T x, T h, const ApproximationContext& approximationContext) const;
+  template<typename T> T riddersApproximation(const ApproximationContext& approximationContext, T x, T h, T * error) const;
   // TODO: Change coefficients?
   constexpr static double k_maxErrorRateOnApproximation = 0.001;
   constexpr static double k_minInitialRate = 0.01;

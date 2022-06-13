@@ -33,17 +33,17 @@ public:
   Expression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
 
   // Helper functions
-  int extremumIndex(ApproximationContext approximationContext, bool minimum);
-  template <typename T> Evaluation<T> extremumApproximation(ApproximationContext approximationContext, bool minimum);
-  template<typename T> Evaluation<T> sumOfElements(ApproximationContext approximationContext);
-  template<typename T> Evaluation<T> productOfElements(ApproximationContext approximationContext);
+  int extremumIndex(const ApproximationContext& approximationContext, bool minimum);
+  template <typename T> Evaluation<T> extremumApproximation(const ApproximationContext& approximationContext, bool minimum);
+  template<typename T> Evaluation<T> sumOfElements(const ApproximationContext& approximationContext);
+  template<typename T> Evaluation<T> productOfElements(const ApproximationContext& approximationContext);
 
 private:
-  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
+  template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
 
   /* See comment on NAryExpressionNode */
   uint16_t m_numberOfChildren;

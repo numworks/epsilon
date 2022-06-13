@@ -16,7 +16,7 @@ Expression StoreNode::shallowReduce(const ReductionContext& reductionContext) {
 }
 
 template<typename T>
-Evaluation<T> StoreNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> StoreNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   /* If we are here, it means that the store node was not shallowReduced.
    * Otherwise, it would have been replaced by its symbol. We thus have to
    * setExpressionForSymbolAbstract. */

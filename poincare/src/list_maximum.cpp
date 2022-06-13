@@ -22,7 +22,7 @@ Expression ListMaximumNode::shallowReduce(const ReductionContext& reductionConte
   return ListMaximum(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListMaximumNode::templatedApproximate(ApproximationContext approximationContext) const {
+template<typename T> Evaluation<T> ListMaximumNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   ExpressionNode * child = childAtIndex(0);
   if (child->type() != ExpressionNode::Type::List) {
     return Complex<T>::Undefined();
@@ -40,7 +40,7 @@ Expression ListMaximum::shallowReduce(const ExpressionNode::ReductionContext& re
   return result;
 }
 
-template Evaluation<float> ListMaximumNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> ListMaximumNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> ListMaximumNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListMaximumNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 }

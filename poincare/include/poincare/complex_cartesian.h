@@ -26,8 +26,8 @@ private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { assert(false); return Layout(); }
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   // Simplification
   Expression shallowBeautify(const ReductionContext& reductionContext) override;
   Expression shallowReduce(const ReductionContext& reductionContext) override;
@@ -38,7 +38,7 @@ private:
     return LayoutShape::BoundaryPunctuation;
   };
 
-  template<typename T> Complex<T> templatedApproximate(ApproximationContext approximationContext) const;
+  template<typename T> Complex<T> templatedApproximate(const ApproximationContext& approximationContext) const;
 };
 
 class ComplexCartesian final : public Expression {

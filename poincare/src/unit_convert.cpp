@@ -27,7 +27,7 @@ Expression UnitConvertNode::shallowBeautify(const ReductionContext& reductionCon
 }
 
 template<typename T>
-Evaluation<T> UnitConvertNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> UnitConvertNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   /* If we are here, it means that the unit convert node was not shallowReduced.
    * Otherwise, it would have been replaced by the division of the value by the
    * unit. We thus return Undefined. */
@@ -122,7 +122,7 @@ Expression UnitConvert::shallowBeautify(const ExpressionNode::ReductionContext& 
   return result;
 }
 
-template Evaluation<float> UnitConvertNode::templatedApproximate<float>(ApproximationContext approximationContext) const;
-template Evaluation<double> UnitConvertNode::templatedApproximate<double>(ApproximationContext approximationContext) const;
+template Evaluation<float> UnitConvertNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> UnitConvertNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 }

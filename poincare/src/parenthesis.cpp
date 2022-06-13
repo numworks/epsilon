@@ -22,7 +22,7 @@ Expression ParenthesisNode::shallowReduce(const ReductionContext& reductionConte
 }
 
 template<typename T>
-Evaluation<T> ParenthesisNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> ParenthesisNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return childAtIndex(0)->approximate(T(), approximationContext);
 }
 

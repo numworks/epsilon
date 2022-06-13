@@ -27,15 +27,15 @@ public:
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
 
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
 
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
 
 private:
-  template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
+  template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
 };
 
 class Dependency : public Expression {

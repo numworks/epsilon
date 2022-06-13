@@ -19,21 +19,21 @@ Complex<T> HyperbolicCosineNode::computeOnComplex(const std::complex<T> c, Prefe
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::cosh(c), c));
 }
 
-bool HyperbolicCosineNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool HyperbolicCosineNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return HyperbolicCosine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression HyperbolicCosineNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+Expression HyperbolicCosineNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return HyperbolicCosine(this).unaryFunctionDifferential(reductionContext);
 }
 
 
-bool HyperbolicCosine::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool HyperbolicCosine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression HyperbolicCosine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+Expression HyperbolicCosine::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
   return HyperbolicSine::Builder(childAtIndex(0).clone());
 }
 

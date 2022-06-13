@@ -36,11 +36,11 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Com
   return Complex<T>::Builder(std::floor(c.real()));
 }
 
-Expression FloorNode::shallowReduce(ReductionContext reductionContext) {
+Expression FloorNode::shallowReduce(const ReductionContext& reductionContext) {
   return Floor(this).shallowReduce(reductionContext);
 }
 
-Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Floor::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChild(*this, reductionContext);
     if (!e.isUninitialized()) {

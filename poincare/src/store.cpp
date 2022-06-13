@@ -11,7 +11,7 @@
 
 namespace Poincare {
 
-Expression StoreNode::shallowReduce(ReductionContext reductionContext) {
+Expression StoreNode::shallowReduce(const ReductionContext& reductionContext) {
   return Store(this).shallowReduce(reductionContext);
 }
 
@@ -25,7 +25,7 @@ Evaluation<T> StoreNode::templatedApproximate(ApproximationContext approximation
   return storedExpression.node()->approximate(T(), approximationContext);
 }
 
-Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Store::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   // Store the expression.
   Expression storedExpression = storeValueForSymbol(reductionContext.context());
 

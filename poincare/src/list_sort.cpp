@@ -18,7 +18,7 @@ Layout ListSortNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   return LayoutHelper::Prefix(ListSort(this), floatDisplayMode, numberOfSignificantDigits, ListSort::s_functionHelper.name());
 }
 
-Expression ListSortNode::shallowReduce(ReductionContext reductionContext) {
+Expression ListSortNode::shallowReduce(const ReductionContext& reductionContext) {
   return ListSort(this).shallowReduce(reductionContext);
 }
 
@@ -32,7 +32,7 @@ template<typename T> Evaluation<T> ListSortNode::templatedApproximate(Approximat
   return std::move(listChild);
 }
 
-Expression ListSort::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListSort::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();

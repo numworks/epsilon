@@ -123,7 +123,7 @@ template <typename U> Evaluation<U> PercentSimpleNode::templateApproximate(Appro
   return Complex<U>::Builder(childAtIndex(0)->approximate(U(), approximationContext).toScalar() / 100.0);
 }
 
-Expression PercentSimpleNode::shallowReduce(ReductionContext reductionContext) {
+Expression PercentSimpleNode::shallowReduce(const ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(getExpression());
     if (!e.isUninitialized()) {
@@ -227,13 +227,14 @@ Expression PercentAddition::shallowBeautify(ExpressionNode::ReductionContext * r
   return result;
 }
 
-Expression PercentAddition::deepBeautify(ExpressionNode::ReductionContext reductionContext) {
-  Expression e = shallowBeautify(&reductionContext);
+Expression PercentAddition::deepBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+  ExpressionNode::ReductionContext childContext = reductionContext;
+  Expression e = shallowBeautify(&childContext);
   /* Overriding deepBeautify to prevent the shallow reduce of the addition
     * because we need to preserve the order. */
   assert(e.numberOfChildren() == 2);
   Expression child0 = e.childAtIndex(0);
-  child0 = child0.deepBeautify(reductionContext);
+  child0 = child0.deepBeautify(childContext);
   // We add missing Parentheses after beautifying the parent and child
   if (e.node()->childAtIndexNeedsUserParentheses(child0, 0)) {
     e.replaceChildAtIndexInPlace(0, Parenthesis::Builder(child0));
@@ -241,7 +242,7 @@ Expression PercentAddition::deepBeautify(ExpressionNode::ReductionContext reduct
   // Skip the Addition's shallowBeautify
   Expression child1 = e.childAtIndex(1);
   assert(child1.type() == ExpressionNode::Type::Addition || child1.type() == ExpressionNode::Type::Subtraction);
-  SimplificationHelper::deepBeautifyChildren(child1, reductionContext);
+  SimplificationHelper::deepBeautifyChildren(child1, childContext);
   // We add missing Parentheses after beautifying the parent and child
   if (e.node()->childAtIndexNeedsUserParentheses(child1, 0)) {
     e.replaceChildAtIndexInPlace(1, Parenthesis::Builder(child1));

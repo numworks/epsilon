@@ -98,7 +98,7 @@ template<typename T> Evaluation<T> ListNode::productOfElements(ApproximationCont
       );
 }
 
-Expression ListNode::shallowReduce(ReductionContext reductionContext) {
+Expression ListNode::shallowReduce(const ReductionContext& reductionContext) {
   return List(this).shallowReduce(reductionContext);
 }
 
@@ -112,7 +112,7 @@ template<typename T> Evaluation<T> ListNode::templatedApproximate(ApproximationC
 
 // List
 
-Expression List::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression List::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   // A list can't contain a matrix or a list
   if (node()->hasMatrixOrListChild(reductionContext.context())) {
     Expression myParent = parent();
@@ -127,7 +127,7 @@ Expression List::shallowReduce(ExpressionNode::ReductionContext reductionContext
   return *this;
 }
 
-Expression List::extremum(ExpressionNode::ReductionContext reductionContext, bool minimum) {
+Expression List::extremum(const ExpressionNode::ReductionContext& reductionContext, bool minimum) {
   if (numberOfChildren() == 0) {
     return Undefined::Builder();
   }

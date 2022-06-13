@@ -26,7 +26,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, symbolChild()->name(), false, U - 1); }
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
 
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
@@ -40,7 +40,7 @@ public:
   ListElement(const ListAccessNode<1> * n) : Expression(n) {}
   static ListElement Builder(Expression index, Expression list) { return TreeHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>({index, list}); }
 
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 class ListSlice : public Expression {
@@ -48,7 +48,7 @@ public:
   ListSlice(const ListAccessNode<2> * n) : Expression(n) {}
   static ListSlice Builder(Expression firstIndex, Expression lastIndex, Expression list) { return TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>({firstIndex, lastIndex, list}); }
 
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

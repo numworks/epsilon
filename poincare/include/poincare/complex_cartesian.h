@@ -29,8 +29,8 @@ private:
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     /* leftLayoutShape is called after beautifying expression. ComplexCartesian
      * is transformed in another expression at beautifying. */
@@ -53,24 +53,24 @@ public:
   Expression imag() { return childAtIndex(1); }
 
   // Simplification
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 
   // Common operations (done in-place)
-  Expression squareNorm(ExpressionNode::ReductionContext reductionContext);
-  Expression norm(ExpressionNode::ReductionContext reductionContext);
-  Expression argument(ExpressionNode::ReductionContext reductionContext);
-  ComplexCartesian inverse(ExpressionNode::ReductionContext reductionContext);
-  ComplexCartesian squareRoot(ExpressionNode::ReductionContext reductionContext);
-  ComplexCartesian powerInteger(int n, ExpressionNode::ReductionContext reductionContext);
-  ComplexCartesian multiply(ComplexCartesian & other,ExpressionNode::ReductionContext reductionContext);
-  ComplexCartesian power(ComplexCartesian & other, ExpressionNode::ReductionContext reductionContext);
+  Expression squareNorm(const ExpressionNode::ReductionContext& reductionContext);
+  Expression norm(const ExpressionNode::ReductionContext& reductionContext);
+  Expression argument(const ExpressionNode::ReductionContext& reductionContext);
+  ComplexCartesian inverse(const ExpressionNode::ReductionContext& reductionContext);
+  ComplexCartesian squareRoot(const ExpressionNode::ReductionContext& reductionContext);
+  ComplexCartesian powerInteger(int n, const ExpressionNode::ReductionContext& reductionContext);
+  ComplexCartesian multiply(ComplexCartesian & other,const ExpressionNode::ReductionContext& reductionContext);
+  ComplexCartesian power(ComplexCartesian & other, const ExpressionNode::ReductionContext& reductionContext);
 private:
   static constexpr int k_maxNumberOfNodesBeforeInterrupting = 50;
-  void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, ExpressionNode::ReductionContext reductionContext);
+  void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, const ExpressionNode::ReductionContext& reductionContext);
   ComplexCartesian interruptComputationIfManyNodes();
-  static Multiplication squareRootHelper(Expression e, ExpressionNode::ReductionContext reductionContext);
-  static Expression powerHelper(Expression norm, Expression trigo, ExpressionNode::ReductionContext reductionContext);
+  static Multiplication squareRootHelper(Expression e, const ExpressionNode::ReductionContext& reductionContext);
+  static Expression powerHelper(Expression norm, Expression trigo, const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

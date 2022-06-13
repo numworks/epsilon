@@ -29,13 +29,13 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   // Derivation
-  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
-  Expression unaryFunctionDifferential(ReductionContext reductionContext) override;
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
+  Expression unaryFunctionDifferential(const ReductionContext& reductionContext) override;
   // Evaluation
   template<typename U> static Complex<U> computeOnComplex(const std::complex<U> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
     /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
@@ -55,23 +55,23 @@ class Logarithm final : public ExpressionTwoChildren<Logarithm, LogarithmNode<2>
   friend class LogarithmNode<2>;
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
   Expression shallowBeautify();
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
-  Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
+  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext);
 
 private:
-  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext);
-  Expression simpleShallowReduce(ExpressionNode::ReductionContext reductionContext);
+  void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext);
+  Expression simpleShallowReduce(const ExpressionNode::ReductionContext& reductionContext);
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
-  Expression splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext);
+  Expression splitLogarithmInteger(Integer i, bool isDenominator, const ExpressionNode::ReductionContext& reductionContext);
   bool parentIsAPowerOfSameBase() const;
 };
 
 class CommonLogarithm : public ExpressionOneChild<CommonLogarithm, LogarithmNode<1>> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

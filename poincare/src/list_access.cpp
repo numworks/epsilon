@@ -40,12 +40,12 @@ Layout ListAccessNode<2>::createLayout(Preferences::PrintFloatMode floatDisplayM
 }
 
 template<>
-Expression ListAccessNode<1>::shallowReduce(ReductionContext reductionContext) {
+Expression ListAccessNode<1>::shallowReduce(const ReductionContext& reductionContext) {
   return ListElement(this).shallowReduce(reductionContext);
 }
 
 template<>
-Expression ListAccessNode<2>::shallowReduce(ReductionContext reductionContext) {
+Expression ListAccessNode<2>::shallowReduce(const ReductionContext& reductionContext) {
   return ListSlice(this).shallowReduce(reductionContext);
 }
 
@@ -99,7 +99,7 @@ template<typename T> Evaluation<T> ListAccessNode<2>::templatedApproximate(Appro
   return std::move(returnList);
 }
 
-Expression ListElement::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListElement::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);
     if (!e.isUninitialized()) {
@@ -130,7 +130,7 @@ Expression ListElement::shallowReduce(ExpressionNode::ReductionContext reduction
   return element;
 }
 
-Expression ListSlice::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListSlice::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);
     if (!e.isUninitialized()) {

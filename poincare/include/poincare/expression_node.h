@@ -193,7 +193,7 @@ public:
       m_complexFormat(complexFormat),
       m_angleUnit(angleUnit)
     {}
-    Context * context() { return m_context; }
+    Context * context() const { return m_context; }
     void setContext(Context * context) { m_context = context; }
     Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
     Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
@@ -212,7 +212,7 @@ public:
       m_symbolicComputation(symbolicComputation),
       m_unitConversion(unitConversion)
     {}
-    static ReductionContext NonInvasiveReductionContext(ReductionContext reductionContext) {
+    static ReductionContext NonInvasiveReductionContext(const ReductionContext& reductionContext) {
       return ReductionContext(
           reductionContext.context(),
           reductionContext.complexFormat(),
@@ -246,7 +246,7 @@ public:
       ComputationContext(context, complexFormat, angleUnit),
       m_withinReduce(withinReduce)
     {}
-    ApproximationContext(ReductionContext reductionContext, bool withinReduce) :
+    ApproximationContext(const ReductionContext& reductionContext, bool withinReduce) :
       ApproximationContext(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), withinReduce) {}
     bool withinReduce() const { return m_withinReduce; }
   private:
@@ -310,9 +310,9 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const = 0;
 
   /* Simplification */
-  /*!*/ void deepReduceChildren(ReductionContext reductionContext);
-  /*!*/ Expression deepBeautify(ReductionContext reductionContext);
-  /*!*/ virtual Expression shallowReduce(ReductionContext reductionContext);
+  /*!*/ void deepReduceChildren(const ReductionContext& reductionContext);
+  /*!*/ Expression deepBeautify(const ReductionContext& reductionContext);
+  /*!*/ virtual Expression shallowReduce(const ReductionContext& reductionContext);
   /* TODO: shallowBeautify takes a pointer to the reduction context, unlike
    * other methods. The pointer is needed to allow UnitConvert to modify the
    * context and prevent unit modifications (in Expression::deepBeautify, after
@@ -320,10 +320,10 @@ public:
    * We should uniformize this behaviour and use pointers in other methods using
    * the reduction context. */
   /*!*/ virtual Expression shallowBeautify(ReductionContext * reductionContext);
-  /*!*/ virtual bool derivate(ReductionContext, Symbol symbol, Expression symbolValue);
-  virtual Expression unaryFunctionDifferential(ReductionContext reductionContext);
+  /*!*/ virtual bool derivate(const ReductionContext&, Symbol symbol, Expression symbolValue);
+  virtual Expression unaryFunctionDifferential(const ReductionContext& reductionContext);
   /* Return a clone of the denominator part of the expression */
-  /*!*/ Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
+  /*!*/ Expression denominator(const ExpressionNode::ReductionContext& reductionContext) const;
   /* LayoutShape is used to check if the multiplication sign can be omitted between two expressions.
    * It depends on the "layout syle" of the on the right of the left expression */
   enum class LayoutShape {

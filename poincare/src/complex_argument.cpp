@@ -23,7 +23,7 @@ int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ComplexArgument::s_functionHelper.name());
 }
 
-Expression ComplexArgumentNode::shallowReduce(ReductionContext reductionContext) {
+Expression ComplexArgumentNode::shallowReduce(const ReductionContext& reductionContext) {
   return ComplexArgument(this).shallowReduce(reductionContext);
 }
 
@@ -32,7 +32,7 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
   return Complex<T>::Builder(std::arg(c));
 }
 
-Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ComplexArgument::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

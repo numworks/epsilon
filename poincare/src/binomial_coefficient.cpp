@@ -17,7 +17,7 @@ namespace Poincare {
 
 int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::s_functionHelper.numberOfChildren(); }
 
-Expression BinomialCoefficientNode::shallowReduce(ReductionContext reductionContext) {
+Expression BinomialCoefficientNode::shallowReduce(const ReductionContext& reductionContext) {
   return BinomialCoefficient(this).shallowReduce(reductionContext);
 }
 
@@ -72,7 +72,7 @@ T BinomialCoefficientNode::compute(T k, T n) {
 }
 
 
-Expression BinomialCoefficient::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression BinomialCoefficient::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

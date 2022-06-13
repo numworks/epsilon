@@ -42,7 +42,7 @@ int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
 }
 
-Expression DerivativeNode::shallowReduce(ReductionContext reductionContext) {
+Expression DerivativeNode::shallowReduce(const ReductionContext& reductionContext) {
   return Derivative(this).shallowReduce(reductionContext);
 }
 
@@ -155,7 +155,7 @@ T DerivativeNode::riddersApproximation(ApproximationContext approximationContext
   return ans;
 }
 
-Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Derivative::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
@@ -204,7 +204,7 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   return result.deepReduce(reductionContext);
 }
 
-void Derivative::DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, ExpressionNode::ReductionContext reductionContext) {
+void Derivative::DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, const ExpressionNode::ReductionContext& reductionContext) {
   Expression df = function.unaryFunctionDifferential(reductionContext);
   Expression g = function.childAtIndex(0);
   Expression dg = g.derivate(reductionContext, symbol, symbolValue) ? function.childAtIndex(0) : Derivative::Builder(function.childAtIndex(0), symbol.clone().convert<Symbol>(), symbolValue.clone());

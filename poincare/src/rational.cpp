@@ -135,7 +135,7 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
 
 // Simplification
 
-Expression RationalNode::shallowReduce(ReductionContext reductionContext) {
+Expression RationalNode::shallowReduce(const ReductionContext& reductionContext) {
   return Rational(this).shallowReduce();
 }
 

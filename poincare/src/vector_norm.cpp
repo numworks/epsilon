@@ -11,7 +11,7 @@ namespace Poincare {
 
 int VectorNormNode::numberOfChildren() const { return VectorNorm::s_functionHelper.numberOfChildren(); }
 
-Expression VectorNormNode::shallowReduce(ReductionContext reductionContext) {
+Expression VectorNormNode::shallowReduce(const ReductionContext& reductionContext) {
   return VectorNorm(this).shallowReduce(reductionContext);
 }
 
@@ -35,7 +35,7 @@ Evaluation<T> VectorNormNode::templatedApproximate(ApproximationContext approxim
   return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).norm());
 }
 
-Expression VectorNorm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression VectorNorm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

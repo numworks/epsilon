@@ -29,7 +29,7 @@ int NthRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name());
 }
 
-Expression NthRootNode::shallowReduce(ReductionContext reductionContext) {
+Expression NthRootNode::shallowReduce(const ReductionContext& reductionContext) {
   return NthRoot(this).shallowReduce(reductionContext);
 }
 
@@ -56,7 +56,7 @@ Evaluation<T> NthRootNode::templatedApproximate(ApproximationContext approximati
       });
 }
 
-Expression NthRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression NthRoot::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);
     if (!e.isUninitialized()) {

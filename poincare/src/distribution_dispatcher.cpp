@@ -55,11 +55,11 @@ int DistributionDispatcherNode::simplificationOrderSameType(const ExpressionNode
   return ExpressionNode::simplificationOrderSameType(e, ascending, ignoreParentheses);
 }
 
-Expression DistributionDispatcherNode::shallowReduce(ReductionContext reductionContext) {
+Expression DistributionDispatcherNode::shallowReduce(const ReductionContext& reductionContext) {
   return DistributionDispatcher(this).shallowReduce(reductionContext);
 }
 
-Expression DistributionDispatcher::shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction) {
+Expression DistributionDispatcher::shallowReduce(const ExpressionNode::ReductionContext& reductionContext, bool * stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
   }

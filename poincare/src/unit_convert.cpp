@@ -34,7 +34,7 @@ Evaluation<T> UnitConvertNode::templatedApproximate(ApproximationContext approxi
   return Complex<T>::Undefined();
 }
 
-void UnitConvert::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+void UnitConvert::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
   childAtIndex(0).deepReduce(reductionContext);
   ExpressionNode::ReductionContext reductionContextKeepUnitAsIs = ExpressionNode::ReductionContext(
       reductionContext.context(),
@@ -48,17 +48,18 @@ void UnitConvert::deepReduceChildren(ExpressionNode::ReductionContext reductionC
   childAtIndex(1).deepReduce(reductionContextKeepUnitAsIs);
 }
 
-Expression UnitConvert::deepBeautify(ExpressionNode::ReductionContext reductionContext) {
-  Expression e = shallowBeautify(&reductionContext);
-  ExpressionNode::ReductionContext reductionContextKeepUnitAsIs = ExpressionNode::ReductionContext(
-      reductionContext.context(),
-      reductionContext.complexFormat(),
-      reductionContext.angleUnit(),
-      reductionContext.unitFormat(),
-      reductionContext.target(),
-      reductionContext.symbolicComputation(),
+Expression UnitConvert::deepBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+  ExpressionNode::ReductionContext childContext = reductionContext;
+  Expression e = shallowBeautify(&childContext);
+  ExpressionNode::ReductionContext childContextKeepUnitAsIs = ExpressionNode::ReductionContext(
+      childContext.context(),
+      childContext.complexFormat(),
+      childContext.angleUnit(),
+      childContext.unitFormat(),
+      childContext.target(),
+      childContext.symbolicComputation(),
       ExpressionNode::UnitConversion::None);
-  SimplificationHelper::deepBeautifyChildren(e, reductionContextKeepUnitAsIs);
+  SimplificationHelper::deepBeautifyChildren(e, childContextKeepUnitAsIs);
   return e;
 }
 

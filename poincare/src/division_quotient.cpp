@@ -22,7 +22,7 @@ ExpressionNode::Sign DivisionQuotientNode::sign(Context * context) const {
   return numeratorSign == denominatorSign ? ExpressionNode::Sign::Positive : ExpressionNode::Sign::Negative;
 }
 
-Expression DivisionQuotientNode::shallowReduce(ReductionContext reductionContext) {
+Expression DivisionQuotientNode::shallowReduce(const ReductionContext& reductionContext) {
   return DivisionQuotient(this).shallowReduce(reductionContext);
 }
 
@@ -49,7 +49,7 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(ApproximationContext ap
       });
   }
 
-Expression DivisionQuotient::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression DivisionQuotient::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

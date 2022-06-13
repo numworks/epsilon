@@ -18,7 +18,7 @@ Layout ListProductNode::createLayout(Preferences::PrintFloatMode floatDisplayMod
   return LayoutHelper::Prefix(ListProduct(this), floatDisplayMode, numberOfSignificantDigits, ListProduct::s_functionHelper.name());
 }
 
-Expression ListProductNode::shallowReduce(ReductionContext reductionContext) {
+Expression ListProductNode::shallowReduce(const ReductionContext& reductionContext) {
   return ListProduct(this).shallowReduce(reductionContext);
 }
 
@@ -30,7 +30,7 @@ template<typename T> Evaluation<T> ListProductNode::templatedApproximate(Approxi
   return static_cast<ListNode*>(child)->productOfElements<T>(approximationContext);
 }
 
-Expression ListProduct::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListProduct::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();

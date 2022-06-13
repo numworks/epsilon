@@ -13,7 +13,7 @@ namespace Poincare {
 
 int DimensionNode::numberOfChildren() const { return Dimension::s_functionHelper.numberOfChildren(); }
 
-Expression DimensionNode::shallowReduce(ReductionContext reductionContext) {
+Expression DimensionNode::shallowReduce(const ReductionContext& reductionContext) {
   return Dimension(this).shallowReduce(reductionContext.context());
 }
 

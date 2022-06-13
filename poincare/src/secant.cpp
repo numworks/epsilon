@@ -28,11 +28,11 @@ int SecantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Secant::s_functionHelper.name());
 }
 
-Expression SecantNode::shallowReduce(ReductionContext reductionContext) {
+Expression SecantNode::shallowReduce(const ReductionContext& reductionContext) {
   return Secant(this).shallowReduce(reductionContext);
 }
 
-Expression Secant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Secant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

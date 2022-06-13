@@ -15,7 +15,7 @@ bool ExpressionNode::isRandom() const { return isOfType({Type::Random, Type::Ran
 
 bool ExpressionNode::isParameteredExpression() const { return isOfType({Type::Derivative, Type::Integral, Type::ListSequence, Type::Sum, Type::Product}); }
 
-Expression ExpressionNode::denominator(ReductionContext reductionContext) const {
+Expression ExpressionNode::denominator(const ReductionContext& reductionContext) const {
   if (type() == Type::Multiplication) {
     return Expression(this).convert<Multiplication>().denominator(reductionContext);
   }
@@ -28,19 +28,20 @@ Expression ExpressionNode::denominator(ReductionContext reductionContext) const 
   return Expression();
 }
 
-Expression ExpressionNode::deepBeautify(ExpressionNode::ReductionContext reductionContext) {
+Expression ExpressionNode::deepBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   if (type() == Type::UnitConvert) {
     return Expression(this).convert<UnitConvert>().deepBeautify(reductionContext);
   } else if (type() == Type::PercentAddition) {
     return Expression(this).convert<PercentAddition>().deepBeautify(reductionContext);
   } else {
-    Expression e = shallowBeautify(&reductionContext);
-    SimplificationHelper::deepBeautifyChildren(e, reductionContext);
+    ExpressionNode::ReductionContext childContext = reductionContext;
+    Expression e = shallowBeautify(&childContext);
+    SimplificationHelper::deepBeautifyChildren(e, childContext);
     return e;
   }
 }
 
-void ExpressionNode::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+void ExpressionNode::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
   if (type() == Type::Store) {
     return;
   }

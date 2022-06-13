@@ -20,7 +20,7 @@ Layout ListStandardDeviationNode<U>::createLayout(Preferences::PrintFloatMode fl
 }
 
 template<int U>
-Expression ListStandardDeviationNode<U>::shallowReduce(ReductionContext reductionContext) {
+Expression ListStandardDeviationNode<U>::shallowReduce(const ReductionContext& reductionContext) {
   return ListStandardDeviation(this).shallowReduce(reductionContext);
 }
 
@@ -34,7 +34,7 @@ template<typename T> Evaluation<T> ListStandardDeviationNode<U>::templatedApprox
   return Complex<T>::Builder(dataset.standardDeviation());
 }
 
-Expression ListStandardDeviation::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListStandardDeviation::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   int n = numberOfChildren();
   assert(n <= 2);
   Expression children[2];

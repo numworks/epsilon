@@ -40,7 +40,7 @@ double NumberNode::doubleApproximation() const {
   }
 }
 
-bool NumberNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool NumberNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Number(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -145,7 +145,7 @@ int Number::NaturalOrder(const Number & i, const Number & j) {
   }
 }
 
-bool Number::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Number::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   replaceWithInPlace(Rational::Builder(0));
   return true;
 }

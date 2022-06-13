@@ -33,7 +33,7 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, std::complex<T>(std::log(std::abs(c)), std::arg(c))));
 }
 
-Expression SquareRootNode::shallowReduce(ReductionContext reductionContext) {
+Expression SquareRootNode::shallowReduce(const ReductionContext& reductionContext) {
   return SquareRoot(this).shallowReduce(reductionContext);
 }
 
@@ -62,7 +62,7 @@ bool SquareRoot::SplitRadical(Expression term, Expression * factor, Expression *
   return false;
 }
 
-Expression SquareRoot::ReduceNestedRadicals(Expression a, Expression b, Expression c, Expression d, ExpressionNode::ReductionContext reductionContext) {
+Expression SquareRoot::ReduceNestedRadicals(Expression a, Expression b, Expression c, Expression d, const ExpressionNode::ReductionContext& reductionContext) {
   assert(a.type() == ExpressionNode::Type::Rational && b.type() == ExpressionNode::Type::Rational && c.type() == ExpressionNode::Type::Rational && d.type() == ExpressionNode::Type::Rational);
   Expression result;
   /* We want to go from √(a√b + c√d) to root(w,4)×√x×√(y+√z), because √(y+√z)
@@ -108,7 +108,7 @@ Expression SquareRoot::ReduceNestedRadicals(Expression a, Expression b, Expressi
   return result.deepReduce(reductionContext);
 }
 
-Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression SquareRoot::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);
     if (!e.isUninitialized()) {

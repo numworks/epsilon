@@ -27,11 +27,11 @@ int ArcCosecantNode::serialize(char * buffer, int bufferSize, Preferences::Print
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcCosecant::s_functionHelper.name());
 }
 
-Expression ArcCosecantNode::shallowReduce(ReductionContext reductionContext) {
+Expression ArcCosecantNode::shallowReduce(const ReductionContext& reductionContext) {
   return ArcCosecant(this).shallowReduce(reductionContext);
 }
 
-Expression ArcCosecant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ArcCosecant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

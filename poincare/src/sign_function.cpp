@@ -25,11 +25,11 @@ int SignFunctionNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SignFunction::s_functionHelper.name());
 }
 
-Expression SignFunctionNode::shallowReduce(ReductionContext reductionContext) {
+Expression SignFunctionNode::shallowReduce(const ReductionContext& reductionContext) {
   return SignFunction(this).shallowReduce(reductionContext);
 }
 
-bool SignFunctionNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool SignFunctionNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return SignFunction(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -48,7 +48,7 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
 }
 
 
-Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression SignFunction::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);
     if (!e.isUninitialized()) {
@@ -104,7 +104,7 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
   return std::move(resultSign);
 }
 
-bool SignFunction::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool SignFunction::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   /* This function derivate is equal to 0 everywhere but in 0 where
    * it's not defined.
    * We approximate it's child to know if it is equal to 0

@@ -10,7 +10,7 @@ namespace Poincare {
 
 int VectorCrossNode::numberOfChildren() const { return VectorCross::s_functionHelper.numberOfChildren(); }
 
-Expression VectorCrossNode::shallowReduce(ReductionContext reductionContext) {
+Expression VectorCrossNode::shallowReduce(const ReductionContext& reductionContext) {
   return VectorCross(this).shallowReduce(reductionContext);
 }
 
@@ -38,7 +38,7 @@ Evaluation<T> VectorCrossNode::templatedApproximate(ApproximationContext approxi
   return static_cast<MatrixComplex<T>&>(input0).cross(static_cast<MatrixComplex<T> *>(&input1));
 }
 
-Expression VectorCross::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression VectorCross::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

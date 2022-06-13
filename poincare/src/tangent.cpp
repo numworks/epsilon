@@ -43,19 +43,19 @@ Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::C
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(res, angleInput));
 }
 
-Expression TangentNode::shallowReduce(ReductionContext reductionContext) {
+Expression TangentNode::shallowReduce(const ReductionContext& reductionContext) {
   return Tangent(this).shallowReduce(reductionContext);
 }
 
-bool TangentNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool TangentNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Tangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression TangentNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+Expression TangentNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Tangent(this).unaryFunctionDifferential(reductionContext);
 }
 
-Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Tangent::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
@@ -76,12 +76,12 @@ Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionCont
   return newExpression;
 }
 
-bool Tangent::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Tangent::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression Tangent::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+Expression Tangent::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
   return Multiplication::Builder(Trigonometry::UnitConversionFactor(reductionContext.angleUnit(), Preferences::AngleUnit::Radian), Power::Builder(Cosine::Builder(childAtIndex(0).clone()), Rational::Builder(-2)));
 }
 

@@ -17,7 +17,7 @@ Layout ListSumNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
   return LayoutHelper::Prefix(ListSum(this), floatDisplayMode, numberOfSignificantDigits, ListSum::s_functionHelper.name());
 }
 
-Expression ListSumNode::shallowReduce(ReductionContext reductionContext) {
+Expression ListSumNode::shallowReduce(const ReductionContext& reductionContext) {
   return ListSum(this).shallowReduce(reductionContext);
 }
 
@@ -30,7 +30,7 @@ template<typename T> Evaluation<T> ListSumNode::templatedApproximate(Approximati
   return static_cast<ListNode *>(child)->sumOfElements<T>(approximationContext);
 }
 
-Expression ListSum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListSum::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();

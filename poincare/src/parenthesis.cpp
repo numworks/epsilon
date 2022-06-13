@@ -17,7 +17,7 @@ int ParenthesisNode::serialize(char * buffer, int bufferSize, Preferences::Print
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 
-Expression ParenthesisNode::shallowReduce(ReductionContext reductionContext) {
+Expression ParenthesisNode::shallowReduce(const ReductionContext& reductionContext) {
   return Parenthesis(this).shallowReduce();
 }
 

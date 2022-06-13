@@ -1,6 +1,7 @@
 #include <poincare/list.h>
 #include <poincare/addition.h>
 #include <poincare/curly_brace_layout.h>
+#include <poincare/dependency.h>
 #include <poincare/helpers.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
@@ -108,7 +109,12 @@ template<typename T> Evaluation<T> ListNode::templatedApproximate(ApproximationC
 Expression List::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   // A list can't contain a matrix or a list
   if (node()->hasMatrixOrListChild(reductionContext.context())) {
-    return replaceWithUndefinedInPlace();
+    Expression myParent = parent();
+    bool isDependenciesList = !myParent.isUninitialized() && myParent.type() == ExpressionNode::Type::Dependency && myParent.indexOfChild(*this) == Dependency::k_indexOfDependenciesList;
+    // If it's a list of dependencies, it can contain matrices and lists.
+    if (!isDependenciesList) {
+      return replaceWithUndefinedInPlace();
+    }
   }
   /* We bypass the reduction to undef in case of undef children, as {undef} and
    * undef are different objects. */

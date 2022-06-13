@@ -132,6 +132,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   assert(i >= 0 && i < numberOfColumns());
   int series = m_store->seriesAtColumn(i);
   if (event == Ion::Events::Backspace) {
+    assert(j >= 0);
     if (j == 0 || j > numberOfElementsInColumn(i)) {
       return false;
     }

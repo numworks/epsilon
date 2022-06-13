@@ -21,6 +21,7 @@ public:
   constexpr static int k_parenthesedXNTArgumentByteLength = 3;
   constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedThetaArgumentByteLength; /* Function name and null-terminating char + "(θ)" */;
 
+  constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
   // Constructors
   Function(Ion::Storage::Record record) : ExpressionModelHandle(record){}
 

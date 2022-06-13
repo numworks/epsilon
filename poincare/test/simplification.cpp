@@ -1627,9 +1627,10 @@ QUIZ_CASE(poincare_simplification_unit_conversion) {
 
 QUIZ_CASE(poincare_simplification_user_function) {
   // User defined function
-  // f: x → x*1
+  // f: x → x*3
   assert_reduce("x*3→f(x)", Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("f(1+1)", "6", User, Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("f({2,3})", "{6,9}", User, Radian, MetricUnitFormat, Polar);
   // f: x → 3
   assert_reduce("3→f(x)", Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("f(1/0)", Undefined::Name(), User, Radian, MetricUnitFormat, Polar);

@@ -32,7 +32,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::Root; };
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
@@ -47,9 +47,9 @@ class SquareRoot final : public ExpressionOneChild<SquareRoot, SquareRootNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
   /* Reduce an expression of the form √(a√b + c√d) */
-  static Expression ReduceNestedRadicals(Expression a, Expression b, Expression c, Expression d, ExpressionNode::ReductionContext reductionContext);
+  static Expression ReduceNestedRadicals(Expression a, Expression b, Expression c, Expression d, const ExpressionNode::ReductionContext& reductionContext);
   static bool SplitRadical(Expression term, Expression * factor, Expression * underRoot);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

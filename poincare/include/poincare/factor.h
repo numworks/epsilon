@@ -30,7 +30,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Simplification */
   Expression shallowBeautify(ReductionContext * reductionContext) override;
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
@@ -47,8 +47,8 @@ public:
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i) const;
 
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

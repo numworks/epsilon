@@ -48,35 +48,35 @@ int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 template<>
-Expression LogarithmNode<1>::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression LogarithmNode<1>::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   return CommonLogarithm(this).shallowReduce(reductionContext);
 }
 
 template<>
-Expression LogarithmNode<2>::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression LogarithmNode<2>::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   return Logarithm(this).shallowReduce(reductionContext);
 }
 
 template <>
-bool LogarithmNode<2>::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool LogarithmNode<2>::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Logarithm(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 template <>
-Expression LogarithmNode<2>::unaryFunctionDifferential(ReductionContext reductionContext) {
+Expression LogarithmNode<2>::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Logarithm(this).unaryFunctionDifferential(reductionContext);
 }
 
 /* Those two methods will not be called, as CommonLogarithm disappears in
  * reduction */
 template <>
-bool LogarithmNode<1>::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool LogarithmNode<1>::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   assert(false);
   return false;
 }
 
 template <>
-Expression LogarithmNode<1>::unaryFunctionDifferential(ReductionContext reductionContext) {
+Expression LogarithmNode<1>::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   assert(false);
   return Expression();
 }
@@ -120,7 +120,7 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Approx
       });
 }
 
-void Logarithm::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+void Logarithm::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
   /* We reduce the base first because of the case log(x1^y, x2) with x1 == x2.
    * When reducing x1^y, we want to be able to compare x1 of x2 so x2 need to be
    * reduced first. */
@@ -128,7 +128,7 @@ void Logarithm::deepReduceChildren(ExpressionNode::ReductionContext reductionCon
   childAtIndex(0).deepReduce(reductionContext);
 }
 
-Expression CommonLogarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression CommonLogarithm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
@@ -149,7 +149,7 @@ Expression CommonLogarithm::shallowReduce(ExpressionNode::ReductionContext reduc
   return log.shallowReduce(reductionContext);
 }
 
-Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Logarithm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
@@ -269,7 +269,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
   return *this;
 }
 
-Expression Logarithm::simpleShallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Logarithm::simpleShallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   Expression c = childAtIndex(0);
   Expression b = childAtIndex(1);
 
@@ -336,7 +336,7 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base
   return i;
 }
 
-bool Logarithm::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Logarithm::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   /* We do nothing if the base is a function of the derivation variable, as the
    * log is then not an unary function anymore.
    * TODO : Check whether we want to deal with the case log(..., f(x)). */
@@ -347,14 +347,14 @@ bool Logarithm::derivate(ExpressionNode::ReductionContext reductionContext, Symb
   return true;
 }
 
-Expression Logarithm::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+Expression Logarithm::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
   /* log(x, b)` = (ln(x)/ln(b))`
    *            = 1 / (x * ln(b))
    */
   return Power::Builder(Multiplication::Builder(childAtIndex(0).clone(), NaperianLogarithm::Builder(childAtIndex(1).clone())), Rational::Builder(-1));
 }
 
-Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext) {
+Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, const ExpressionNode::ReductionContext& reductionContext) {
   assert(!i.isZero());
   assert(!i.isNegative());
   Arithmetic arithmetic;

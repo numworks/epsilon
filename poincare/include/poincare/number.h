@@ -26,7 +26,7 @@ public:
 
   double doubleApproximation() const;
 
-  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
 
 };
 
@@ -57,7 +57,7 @@ public:
     return *this;
   }
 
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
+  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 protected:
   Number() : Expression() {}
   NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }

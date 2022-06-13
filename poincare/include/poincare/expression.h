@@ -283,19 +283,19 @@ public:
    *   (For instance, in Polar mode, they return an expression of the form
    *   r*e^(i*th) reduced and approximated.) */
   static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
-  Expression cloneAndSimplify(ExpressionNode::ReductionContext reductionContext);
+  Expression cloneAndSimplify(const ExpressionNode::ReductionContext& reductionContext);
 
   static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
   void cloneAndSimplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default) const;
-  Expression cloneAndReduce(ExpressionNode::ReductionContext context) const;
+  Expression cloneAndReduce(const ExpressionNode::ReductionContext& reductionContext) const;
   // TODO: deepReduceWithSystemCheckpoint should be private but we need to make poincare/text/helper.h a class to be able to friend it
   Expression cloneAndDeepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const;
   // TODO: reduceAndRemoveUnit should be private but we need to make poincare/text/helper.h a class to be able to friend it
-  Expression reduceAndRemoveUnit(ExpressionNode::ReductionContext context, Expression * Unit);
+  Expression reduceAndRemoveUnit(const ExpressionNode::ReductionContext& reductionContext, Expression * Unit);
   /* WARNING: this must be called only on expressions that:
    *  - are reduced.
    *  - have a known sign. (sign() != Sign::Unknown) */
-  Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
+  Expression setSign(ExpressionNode::Sign s, const ExpressionNode::ReductionContext& reductionContext);
 
   /* 'ExpressionWithoutSymbols' replaces symbols in place and returns an
    * uninitialized expression if it is circularly defined.
@@ -446,7 +446,7 @@ protected:
   Expression defaultReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
 
   /* Simplification */
-  static void SimplifyAndApproximateChildren(Expression input, Expression * simplifiedOutput, Expression * approximateOutput, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionContext reductionContext);
+  static void SimplifyAndApproximateChildren(Expression input, Expression * simplifiedOutput, Expression * approximateOutput, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const ExpressionNode::ReductionContext& reductionContext);
   void beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   /* makePositiveAnyNegativeNumeralFactor looks for:
    * - a negative numeral
@@ -457,19 +457,19 @@ protected:
    *  was -1, it was removed from the multiplication).
    * Warning: this must be called on reduced expressions
    */
-  Expression makePositiveAnyNegativeNumeralFactor(ExpressionNode::ReductionContext reductionContext);
-  Expression denominator(ExpressionNode::ReductionContext reductionContext) const { return node()->denominator(reductionContext); }
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext) { return node()->shallowBeautify(reductionContext); }
-  Expression deepBeautify(ExpressionNode::ReductionContext reductionContext) { return node()->deepBeautify(reductionContext); }
+  Expression makePositiveAnyNegativeNumeralFactor(const ExpressionNode::ReductionContext& reductionContext);
+  Expression denominator(const ExpressionNode::ReductionContext& reductionContext) const { return node()->denominator(reductionContext); }
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext) { return node()->shallowReduce(reductionContext); }
+  Expression deepBeautify(const ExpressionNode::ReductionContext& reductionContext) { return node()->deepBeautify(reductionContext); }
 
   /* Derivation */
   /* This method is used for the reduction of Derivative expressions.
    * It returns whether the instance is differentiable, and differentiates it if
    * able. */
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
-  void derivateChildAtIndexInPlace(int index, ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
-  Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) { return node()->unaryFunctionDifferential(reductionContext); }
+  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  void derivateChildAtIndexInPlace(int index, const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) { return node()->unaryFunctionDifferential(reductionContext); }
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
@@ -491,12 +491,12 @@ private:
    * mantissa is stored on 53 bits (2E308 can be stored exactly in IEEE754
    * representation but some smaller integers can't - like 2E308-1). */
   static constexpr double k_largestExactIEEE754Integer = 9007199254740992.0;
-  Expression deepReduce(ExpressionNode::ReductionContext reductionContext);
-  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+  Expression deepReduce(const ExpressionNode::ReductionContext& reductionContext);
+  void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
     node()->deepReduceChildren(reductionContext);
   }
 
-  Expression shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduceUsingApproximation(const ExpressionNode::ReductionContext& reductionContext);
   Expression defaultShallowBeautify() { return *this; }
 
   bool defaultDidDerivate() { return false; }

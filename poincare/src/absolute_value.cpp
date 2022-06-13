@@ -24,15 +24,15 @@ int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::s_functionHelper.name());
 }
 
-Expression AbsoluteValueNode::shallowReduce(ReductionContext reductionContext) {
+Expression AbsoluteValueNode::shallowReduce(const ReductionContext& reductionContext) {
   return AbsoluteValue(this).shallowReduce(reductionContext);
 }
 
-bool AbsoluteValueNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool AbsoluteValueNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return AbsoluteValue(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression AbsoluteValue::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChild(*this, reductionContext);
     if (!e.isUninitialized()) {
@@ -120,7 +120,7 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
 }
 
 // Derivate of |f(x)| is f'(x)*sg(x) (and undef in 0) = f'(x)*(f(x)/|f(x)|)
-bool AbsoluteValue::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool AbsoluteValue::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Expression f = childAtIndex(0);
   Multiplication result = Multiplication::Builder();
   result.addChildAtIndexInPlace(Derivative::Builder(f.clone(),

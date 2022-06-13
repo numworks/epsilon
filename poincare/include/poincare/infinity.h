@@ -43,7 +43,7 @@ public:
 
   /* Derivation
    * Unlike Numbers that derivate to 0, Infinity derivates to Undefined. */
-  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
 
 private:
   // Simplification
@@ -64,7 +64,7 @@ public:
   static int NameSize() {
     return 4;
   }
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
+  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 private:
   InfinityNode * node() const { return static_cast<InfinityNode *>(Number::node()); }
 };

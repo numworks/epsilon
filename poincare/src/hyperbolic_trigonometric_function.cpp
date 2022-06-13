@@ -5,11 +5,11 @@
 
 namespace Poincare {
 
-Expression HyperbolicTrigonometricFunctionNode::shallowReduce(ReductionContext reductionContext) {
+Expression HyperbolicTrigonometricFunctionNode::shallowReduce(const ReductionContext& reductionContext) {
   return HyperbolicTrigonometricFunction(this).shallowReduce(reductionContext);
 }
 
-Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression HyperbolicTrigonometricFunction::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

@@ -28,11 +28,11 @@ int CosecantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cosecant::s_functionHelper.name());
 }
 
-Expression CosecantNode::shallowReduce(ReductionContext reductionContext) {
+Expression CosecantNode::shallowReduce(const ReductionContext& reductionContext) {
   return Cosecant(this).shallowReduce(reductionContext);
 }
 
-Expression Cosecant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Cosecant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

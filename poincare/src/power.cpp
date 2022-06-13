@@ -266,7 +266,7 @@ int PowerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 
 // Simplify
 
-Expression PowerNode::shallowReduce(ReductionContext reductionContext) {
+Expression PowerNode::shallowReduce(const ReductionContext& reductionContext) {
   return Power(this).shallowReduce(reductionContext);
 }
 
@@ -293,7 +293,7 @@ int PowerNode::simplificationOrderSameType(const ExpressionNode * e, bool ascend
   return SimplificationOrder(childAtIndex(1), e->childAtIndex(1), ascending, ignoreParentheses);
 }
 
-bool PowerNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool PowerNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Power(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -449,7 +449,7 @@ static int indexOfChildWithSquare(Expression e) {
   return -1;
 }
 
-Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);
     if (!e.isUninitialized()) {
@@ -1110,7 +1110,7 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext * reductionCo
   return *this;
 }
 
-bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   /* Generalized power derivation formula
    * (f^g)` = (e^(g * ln(f)))`
    *       = (g * ln(f))` * f^g
@@ -1130,10 +1130,11 @@ bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Symbol s
    * using naperian logarithm of f, which rely on the sign of f. Prevent the
    * replacement of any symbols to preserve the local symbols. */
   ExpressionNode::SymbolicComputation previousSymbolicComputation = reductionContext.symbolicComputation();
-  reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
-  derivedFromExponent.deepReduceChildren(reductionContext);
-  reductionContext.setSymbolicComputation(previousSymbolicComputation);
-  if (derivedFromExponent.childAtIndex(0).nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
+  ExpressionNode::ReductionContext childContext = reductionContext;
+  childContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  derivedFromExponent.deepReduceChildren(childContext);
+  childContext.setSymbolicComputation(previousSymbolicComputation);
+  if (derivedFromExponent.childAtIndex(0).nullStatus(childContext.context()) != ExpressionNode::NullStatus::Null) {
     derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 1, 1);
     derivedFromExponent.addChildAtIndexInPlace(clone(), 2, 2);
   }
@@ -1144,7 +1145,7 @@ bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Symbol s
     Subtraction::Builder(exponent.clone(), Rational::Builder(1))
     ), 1, 1);
   derivedFromBase.addChildAtIndexInPlace(base.clone(), 2, 2);
-  derivedFromBase.derivateChildAtIndexInPlace(2, reductionContext, symbol, symbolValue);
+  derivedFromBase.derivateChildAtIndexInPlace(2, childContext, symbol, symbolValue);
 
   Addition result = Addition::Builder(derivedFromBase, derivedFromExponent);
   replaceWithInPlace(result);
@@ -1154,7 +1155,7 @@ bool Power::derivate(ExpressionNode::ReductionContext reductionContext, Symbol s
 // Private
 
 // Simplification
-Expression Power::denominator(ExpressionNode::ReductionContext reductionContext) const {
+Expression Power::denominator(const ExpressionNode::ReductionContext& reductionContext) const {
   if (childAtIndex(0).type() == ExpressionNode::Type::Unit) {
     return Expression();
   }
@@ -1172,7 +1173,7 @@ Expression Power::denominator(ExpressionNode::ReductionContext reductionContext)
   return pow;
 }
 
-Expression Power::PowerRationalRational(Rational base, Rational index, ExpressionNode::ReductionContext reductionContext) {
+Expression Power::PowerRationalRational(Rational base, Rational index, const ExpressionNode::ReductionContext& reductionContext) {
   assert(!base.numeratorOrDenominatorIsInfinity() && !index.numeratorOrDenominatorIsInfinity());
   /* Handle this case right now to always reduce to Nonreal if needed. */
   if (base.isNegative()) {
@@ -1262,7 +1263,7 @@ Expression Power::PowerRationalRational(Rational base, Rational index, Expressio
   return m.shallowReduce(reductionContext);
 }
 
-Expression Power::PowerIntegerRational(Integer base, Rational index, ExpressionNode::ReductionContext reductionContext) {
+Expression Power::PowerIntegerRational(Integer base, Rational index, const ExpressionNode::ReductionContext& reductionContext) {
   assert(!index.isNegative());
   if (base.isZero()) {
     if (index.isZero()) {
@@ -1348,7 +1349,7 @@ bool Power::IsLogarithmOfBase(const Expression e, const Expression base) {
  * but if so, it needs a rework since for now, this reduces "log(a)+log(b)" into "log(a*b)"
  * but does nothing to "log(a)+log(b)+anything_that_is_not_a_log"
  * */
-Expression Power::ReduceLogarithmLinearCombination(ExpressionNode::ReductionContext reductionContext, Expression linearCombination, const Expression base) {
+Expression Power::ReduceLogarithmLinearCombination(const ExpressionNode::ReductionContext& reductionContext, Expression linearCombination, const Expression base) {
   if (linearCombination.isUninitialized()) {
     return Expression();
   }
@@ -1445,7 +1446,7 @@ bool Power::isNthRootOfUnity() const {
   return n == 2 || index.childAtIndex(0).type() == ExpressionNode::Type::Rational;
 }
 
-Expression Power::CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext) {
+Expression Power::CreateComplexExponent(const Expression & r, const ExpressionNode::ReductionContext& reductionContext) {
   // Returns e^(i*pi*r)
   const Constant exp = Constant::Builder("e");
   Constant iComplex = Constant::Builder("i");

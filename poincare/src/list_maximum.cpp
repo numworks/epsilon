@@ -18,7 +18,7 @@ Layout ListMaximumNode::createLayout(Preferences::PrintFloatMode floatDisplayMod
   return LayoutHelper::Prefix(ListMaximum(this), floatDisplayMode, numberOfSignificantDigits, ListMaximum::s_functionHelper.name());
 }
 
-Expression ListMaximumNode::shallowReduce(ReductionContext reductionContext) {
+Expression ListMaximumNode::shallowReduce(const ReductionContext& reductionContext) {
   return ListMaximum(this).shallowReduce(reductionContext);
 }
 
@@ -30,7 +30,7 @@ template<typename T> Evaluation<T> ListMaximumNode::templatedApproximate(Approxi
   return static_cast<ListNode *>(child)->extremumApproximation<T>(approximationContext, false);
 }
 
-Expression ListMaximum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListMaximum::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();

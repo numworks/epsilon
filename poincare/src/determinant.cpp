@@ -33,11 +33,11 @@ Evaluation<T> DeterminantNode::templatedApproximate(ApproximationContext approxi
   return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).determinant());
 }
 
-Expression DeterminantNode::shallowReduce(ReductionContext reductionContext) {
+Expression DeterminantNode::shallowReduce(const ReductionContext& reductionContext) {
   return Determinant(this).shallowReduce(reductionContext);
 }
 
-Expression Determinant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Determinant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

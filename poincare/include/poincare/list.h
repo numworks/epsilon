@@ -30,7 +30,7 @@ public:
   LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
 
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
@@ -56,8 +56,8 @@ public:
   List(const ListNode * n) : Expression(n) {}
   static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
   ListNode * node() const { return static_cast<ListNode *>(Expression::node()); }
-  Expression extremum(ExpressionNode::ReductionContext reductionContext, bool minimum);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression extremum(const ExpressionNode::ReductionContext& reductionContext, bool minimum);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;
 };

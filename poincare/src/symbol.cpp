@@ -75,7 +75,7 @@ Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
   return LayoutHelper::String(m_name, strlen(m_name));
 }
 
-Expression SymbolNode::shallowReduce(ReductionContext reductionContext) {
+Expression SymbolNode::shallowReduce(const ReductionContext& reductionContext) {
   return Symbol(this).shallowReduce(reductionContext);
 }
 
@@ -92,7 +92,7 @@ ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
   return LayoutShape::MoreLetters;
 }
 
-bool SymbolNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool SymbolNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Symbol(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -124,7 +124,7 @@ Symbol Symbol::Builder(CodePoint name) {
   return Symbol::Builder(buffer, codePointLength);
 }
 
-Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Symbol::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   ExpressionNode::SymbolicComputation symbolicComputation = reductionContext.symbolicComputation();
   if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
     || symbolicComputation == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol)
@@ -182,15 +182,16 @@ Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionConte
    * ReductionContext's SymbolicComputation is altered, enforcing preservation
    * of remaining variables only to save computation that has already been
    * done in SymbolAbstract::Expand, when looking for parametered functions. */
-  reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  ExpressionNode::ReductionContext childContext = reductionContext;
+  childContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
   // The stored expression is as entered by the user, so we need to call reduce
-  result = result.deepReduce(reductionContext);
+  result = result.deepReduce(childContext);
   // Restore symbolic computation
-  reductionContext.setSymbolicComputation(symbolicComputation);
+  childContext.setSymbolicComputation(symbolicComputation);
   return result;
 }
 
-bool Symbol::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Symbol::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   replaceWithInPlace(Rational::Builder(strcmp(name(), symbol.name()) == 0));
   return true;
 }

@@ -26,7 +26,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
 
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
@@ -44,7 +44,7 @@ public:
   static ListMean Builder(Expression list) { return TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<1>>({list}); }
   static ListMean Builder(Expression values, Expression weights) { return TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<2>>({values, weights}); }
 
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

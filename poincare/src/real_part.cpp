@@ -19,11 +19,11 @@ int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.name());
 }
 
-Expression RealPartNode::shallowReduce(ReductionContext reductionContext) {
+Expression RealPartNode::shallowReduce(const ReductionContext& reductionContext) {
   return RealPart(this).shallowReduce(reductionContext);
 }
 
-Expression RealPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression RealPart::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

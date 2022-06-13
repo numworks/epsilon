@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-Expression TrigonometryCheatTable::Row::Pair::reducedExpression(bool assertNotUninitialized, ExpressionNode::ReductionContext reductionContext) const {
+Expression TrigonometryCheatTable::Row::Pair::reducedExpression(bool assertNotUninitialized, const ExpressionNode::ReductionContext& reductionContext) const {
   Expression e = Expression::Parse(m_expression, nullptr); // No context needed
   if (assertNotUninitialized) {
     assert(!e.isUninitialized());
@@ -15,7 +15,7 @@ Expression TrigonometryCheatTable::Row::Pair::reducedExpression(bool assertNotUn
   return e.deepReduce(reductionContext);
 }
 
-Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::Type type, ExpressionNode::ReductionContext reductionContext) const {
+Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::Type type, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(type == ExpressionNode::Type::Sine
       || type == ExpressionNode::Type::Cosine
       || type == ExpressionNode::Type::Tangent

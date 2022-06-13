@@ -24,15 +24,15 @@ int ArcCosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcCosine::s_functionHelper.name());
 }
 
-Expression ArcCosineNode::shallowReduce(ReductionContext reductionContext) {
+Expression ArcCosineNode::shallowReduce(const ReductionContext& reductionContext) {
   return ArcCosine(this).shallowReduce(reductionContext);
 }
 
-bool ArcCosineNode::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcCosineNode::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return ArcCosine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression ArcCosineNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+Expression ArcCosineNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return ArcCosine(this).unaryFunctionDifferential(reductionContext);
 }
 
@@ -62,7 +62,7 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences:
 }
 
 
-Expression ArcCosine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ArcCosine::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
@@ -72,12 +72,12 @@ Expression ArcCosine::shallowReduce(ExpressionNode::ReductionContext reductionCo
   return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }
 
-bool ArcCosine::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcCosine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression ArcCosine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+Expression ArcCosine::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
   return Power::Builder(
       Multiplication::Builder(
         Rational::Builder(-1),

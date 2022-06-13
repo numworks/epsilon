@@ -40,7 +40,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     // leftLayoutShape of Opposite is only called from Conjugate
     assert(parent() && parent()->type() == Type::Conjugate);
@@ -52,7 +52,7 @@ class Opposite final : public ExpressionOneChild<Opposite, OppositeNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder, ExpressionBuilder::Builder;
   static Opposite Builder() { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(); }
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

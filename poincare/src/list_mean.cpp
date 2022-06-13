@@ -22,7 +22,7 @@ Layout ListMeanNode<U>::createLayout(Preferences::PrintFloatMode floatDisplayMod
 }
 
 template<int U>
-Expression ListMeanNode<U>::shallowReduce(ReductionContext reductionContext) {
+Expression ListMeanNode<U>::shallowReduce(const ReductionContext& reductionContext) {
   return ListMean(this).shallowReduce(reductionContext);
 }
 
@@ -36,7 +36,7 @@ template<typename T> Evaluation<T> ListMeanNode<U>::templatedApproximate(Approxi
   return Complex<T>::Builder(dataset.mean());
 }
 
-Expression ListMean::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListMean::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   int n = numberOfChildren();
   assert(n <= 2);
   Expression children[2];

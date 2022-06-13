@@ -58,7 +58,7 @@ int AdditionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Simplication
 
-Expression AdditionNode::shallowReduce(ReductionContext reductionContext) {
+Expression AdditionNode::shallowReduce(const ReductionContext& reductionContext) {
   return Addition(this).shallowReduce(reductionContext);
 }
 
@@ -67,7 +67,7 @@ Expression AdditionNode::shallowBeautify(ReductionContext * reductionContext) {
 }
 
 // Derivation
-bool AdditionNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool AdditionNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Addition(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -200,7 +200,7 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductio
   return result;
 }
 
-Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Addition::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);
     if (!e.isUninitialized()) {
@@ -405,7 +405,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result;
 }
 
-bool Addition::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Addition::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   for (int i = 0; i < numberOfChildren(); i++) {
     derivateChildAtIndexInPlace(i, reductionContext, symbol, symbolValue);
   }
@@ -458,7 +458,7 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const 
   }
 }
 
-Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionContext reductionContext) {
+Expression Addition::factorizeOnCommonDenominator(const ExpressionNode::ReductionContext& reductionContext) {
   /* We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d), except if one of
    * the denominators contains random, in which case the factors with random
    * should stay appart. */
@@ -515,16 +515,17 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
    * Example: int((e^(-x))-x^(0.5), x, 0, 3), when creating the common
    * denominator for the integrand. */
   ExpressionNode::SymbolicComputation previousSymbolicComputation = reductionContext.symbolicComputation();
-  reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  ExpressionNode::ReductionContext childContext = reductionContext;
+  childContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 
   // Step 4: Simplify the numerator
-  numerator.shallowReduce(reductionContext);
+  numerator.shallowReduce(childContext);
 
   // Step 5: Simplify the denominator (in case it's a rational number)
-  inverseDenominator.deepReduce(reductionContext);
+  inverseDenominator.deepReduce(childContext);
 
   // Restore symbolicComputation status
-  reductionContext.setSymbolicComputation(previousSymbolicComputation);
+  childContext.setSymbolicComputation(previousSymbolicComputation);
 
   /* Step 6: We simplify the resulting multiplication forbidding any
    * distribution of multiplication on additions (to avoid an infinite loop).
@@ -532,15 +533,15 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
   int aChildrenCount = a.numberOfChildren();
   if (aChildrenCount == 0) {
     replaceWithInPlace(result);
-    return result.privateShallowReduce(reductionContext, false);
+    return result.privateShallowReduce(childContext, false);
   }
   a.addChildAtIndexInPlace(result, aChildrenCount, aChildrenCount);
-  result.privateShallowReduce(reductionContext, false);
+  result.privateShallowReduce(childContext, false);
   replaceWithInPlace(a);
   return std::move(a);
 }
 
-void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, ExpressionNode::ReductionContext reductionContext) {
+void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, const ExpressionNode::ReductionContext& reductionContext) {
   /* This function factorizes two children which only differ by a rational
    * factor. For example, if this is AdditionNode(2*pi, 3*pi), then 2*pi and 3*pi
    * could be merged, and this turned into AdditionNode(5*pi). */

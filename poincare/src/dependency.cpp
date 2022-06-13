@@ -9,11 +9,11 @@ constexpr Expression::FunctionHelper Dependency::s_functionHelper;
 
 // DependencyNode
 
-Expression DependencyNode::shallowReduce(ReductionContext reductionContext) {
+Expression DependencyNode::shallowReduce(const ReductionContext& reductionContext) {
   return Dependency(this).shallowReduce(reductionContext);
 }
 
-bool DependencyNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool DependencyNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   assert(false); return false;
 }
 
@@ -37,7 +37,7 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(Approxim
 
 // Dependency
 
-Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Dependency::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   // Undefined/Unreal nodes are bubbled-up
   SimplificationHelper::shallowReduceUndefined(childAtIndex(k_indexOfDependenciesList));
   Expression dependencies = childAtIndex(k_indexOfDependenciesList);

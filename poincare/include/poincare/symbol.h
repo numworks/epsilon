@@ -35,12 +35,12 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) override;
   LayoutShape leftLayoutShape() const override;
 
   /* Derivation */
-  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
@@ -72,8 +72,8 @@ public:
   const char * name() const { return node()->name(); }
 
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);

@@ -50,7 +50,7 @@ int SequenceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return result;
 }
 
-Expression SequenceNode::shallowReduce(ReductionContext reductionContext) {
+Expression SequenceNode::shallowReduce(const ReductionContext& reductionContext) {
   return Sequence(this).shallowReduce(reductionContext);
 }
 
@@ -106,7 +106,7 @@ Expression Sequence::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-Expression Sequence::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Sequence::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   Expression e = SimplificationHelper::defaultShallowReduce(*this);
   if (!e.isUninitialized()) {
     return e;

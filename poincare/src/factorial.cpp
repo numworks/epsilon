@@ -37,7 +37,7 @@ bool FactorialNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * 
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(ReductionContext reductionContext) {
+Expression FactorialNode::shallowReduce(const ReductionContext& reductionContext) {
   return Factorial(this).shallowReduce(reductionContext);
 }
 
@@ -75,7 +75,7 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 
-Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Factorial::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

@@ -350,11 +350,11 @@ bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::
   return true;
 }
 
-bool Expression::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Expression::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return node()->derivate(reductionContext, symbol, symbolValue);
 }
 
-void Expression::derivateChildAtIndexInPlace(int index, ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+void Expression::derivateChildAtIndexInPlace(int index, const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   if (!childAtIndex(index).derivate(reductionContext, symbol, symbolValue)) {
     replaceChildAtIndexInPlace(index, Derivative::Builder(childAtIndex(index), symbol.clone().convert<Symbol>(), symbolValue.clone()));
   }
@@ -387,7 +387,7 @@ Expression Expression::addMissingParentheses() {
   return *this;
 }
 
-Expression Expression::shallowReduceUsingApproximation(ExpressionNode::ReductionContext reductionContext) {
+Expression Expression::shallowReduceUsingApproximation(const ExpressionNode::ReductionContext& reductionContext) {
   double approx = node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
   /* If approx is capped by the largest integer such as all smaller integers can
    * be exactly represented in IEEE754, approx is the exact result (no
@@ -433,7 +433,7 @@ Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool 
   return *this;
 }
 
-Expression Expression::makePositiveAnyNegativeNumeralFactor(ExpressionNode::ReductionContext reductionContext) {
+Expression Expression::makePositiveAnyNegativeNumeralFactor(const ExpressionNode::ReductionContext& reductionContext) {
   // The expression is a negative number
   if (isNumber() && sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
     return setSign(ExpressionNode::Sign::Positive, reductionContext);
@@ -650,14 +650,15 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
   assert(!simplifiedExpression->isUninitialized() && (!approximateExpression || !approximateExpression->isUninitialized()));
 }
 
-Expression Expression::cloneAndSimplify(ExpressionNode::ReductionContext reductionContext) {
+Expression Expression::cloneAndSimplify(const ExpressionNode::ReductionContext& reductionContext) {
   bool reduceFailure = false;
-  Expression e = cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  ExpressionNode::ReductionContext childReductionContext = reductionContext;
+  Expression e = cloneAndDeepReduceWithSystemCheckpoint(&childReductionContext, &reduceFailure);
   if (reduceFailure) {
     // We can't beautify unreduced expression
     return e;
   }
-  return e.deepBeautify(reductionContext);
+  return e.deepBeautify(childReductionContext);
 }
 
 void makePositive(Expression * e, bool * isNegative) {
@@ -722,7 +723,7 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
   }
 }
 
-void Expression::SimplifyAndApproximateChildren(Expression input, Expression * simplifiedOutput, Expression * approximateOutput, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionContext reductionContext) {
+void Expression::SimplifyAndApproximateChildren(Expression input, Expression * simplifiedOutput, Expression * approximateOutput, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const ExpressionNode::ReductionContext& reductionContext) {
   assert(input.type() == ExpressionNode::Type::Matrix || input.type() == ExpressionNode::Type::List);
   List simplifiedChildren = List::Builder(), approximatedChildren = List::Builder();
   int n = input.numberOfChildren();
@@ -837,7 +838,7 @@ Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
   return *this;
 }
 
-Expression Expression::reduceAndRemoveUnit(ExpressionNode::ReductionContext reductionContext, Expression * Unit) {
+Expression Expression::reduceAndRemoveUnit(const ExpressionNode::ReductionContext& reductionContext, Expression * Unit) {
   /* RemoveUnit has to be called on reduced expression. reduce method is called
    * instead of deepReduce to catch interrupted simplification. */
   return deepReduce(reductionContext).removeUnit(Unit);
@@ -893,13 +894,14 @@ failure:
   return e;
 }
 
-Expression Expression::cloneAndReduce(ExpressionNode::ReductionContext reductionContext) const {
+Expression Expression::cloneAndReduce(const ExpressionNode::ReductionContext& reductionContext) const {
   // TODO: Ensure all cloneAndReduce usages handle reduction failure.
   bool reduceFailure;
-  return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  ExpressionNode::ReductionContext childReductionContext = reductionContext;
+  return cloneAndDeepReduceWithSystemCheckpoint(&childReductionContext, &reduceFailure);
 }
 
-Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Expression::deepReduce(const ExpressionNode::ReductionContext& reductionContext) {
   deepReduceChildren(reductionContext);
   if (type() != ExpressionNode::Type::Store && !ComparisonOperator::IsComparisonOperatorType(type())) {
     /* Bubble up dependencies */
@@ -933,7 +935,7 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
   return shallowReduce(reductionContext);
 }
 
-Expression Expression::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
+Expression Expression::setSign(ExpressionNode::Sign s, const ExpressionNode::ReductionContext& reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   if (isNumber()) {
     // Needed to avoid infinite loop in Multiplication::shallowReduce

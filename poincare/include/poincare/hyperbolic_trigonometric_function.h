@@ -16,7 +16,7 @@ private:
   // Simplification
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   virtual bool isNotableValue(Expression e, Context * context) const { return e.nullStatus(context) == ExpressionNode::NullStatus::Null; }
   virtual Expression imageOfNotableValue() const { return Rational::Builder(0); }
 };
@@ -24,7 +24,7 @@ private:
 class HyperbolicTrigonometricFunction : public Expression {
 public:
   HyperbolicTrigonometricFunction(const HyperbolicTrigonometricFunctionNode * n) : Expression(n) {}
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 private:
   HyperbolicTrigonometricFunctionNode * node() const { return static_cast<HyperbolicTrigonometricFunctionNode *>(Expression::node()); }
 };

@@ -28,7 +28,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
@@ -52,9 +52,9 @@ public:
   static Expression UntypedBuilder(Expression children);
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
   static constexpr char k_defaultXNTChar = 'x';
-  static void DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, ExpressionNode::ReductionContext reductionContext);
+  static void DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, const ExpressionNode::ReductionContext& reductionContext);
 
-  Expression shallowReduce(ExpressionNode::ReductionContext context);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

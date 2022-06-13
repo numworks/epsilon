@@ -14,7 +14,7 @@ Layout NonrealNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
   return LayoutHelper::String(Nonreal::Name(), Nonreal::NameSize()-1);
 }
 
-bool NonrealNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool NonrealNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return true;
 }
 

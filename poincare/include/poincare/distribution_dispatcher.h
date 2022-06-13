@@ -95,7 +95,7 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
 
 private:
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -138,7 +138,7 @@ public:
     return std::move(dist);
   }
 
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction = nullptr);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext, bool * stopReduction = nullptr);
   void setType(DistributionMethod::Type f) {
     static_cast<DistributionDispatcherNode*>(node())->setType(f);
   }

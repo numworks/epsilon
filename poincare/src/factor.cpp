@@ -26,7 +26,7 @@ int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
 
-Expression FactorNode::shallowReduce(ReductionContext reductionContext) {
+Expression FactorNode::shallowReduce(const ReductionContext& reductionContext) {
   return Factor(this).shallowReduce(reductionContext);
 }
 
@@ -72,7 +72,7 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   return m;
 }
 
-Expression Factor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Factor::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

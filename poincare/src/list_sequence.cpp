@@ -15,7 +15,7 @@ int ListSequenceNode::numberOfChildren() const {
   return ListSequence::s_functionHelper.numberOfChildren();
 }
 
-Expression ListSequenceNode::shallowReduce(ReductionContext reductionContext) {
+Expression ListSequenceNode::shallowReduce(const ReductionContext& reductionContext) {
   return ListSequence(this).shallowReduce(reductionContext);
 }
 
@@ -52,7 +52,7 @@ Expression ListSequence::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2));
 }
 
-Expression ListSequence::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListSequence::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

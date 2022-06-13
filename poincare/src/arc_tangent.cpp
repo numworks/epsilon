@@ -47,19 +47,19 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences
   return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-Expression ArcTangentNode::shallowReduce(ReductionContext reductionContext) {
+Expression ArcTangentNode::shallowReduce(const ReductionContext& reductionContext) {
   return ArcTangent(this).shallowReduce(reductionContext);
 }
 
-bool ArcTangentNode::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcTangentNode::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return ArcTangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression ArcTangentNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+Expression ArcTangentNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return ArcTangent(this).unaryFunctionDifferential(reductionContext);
 }
 
-Expression ArcTangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ArcTangent::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
@@ -69,12 +69,12 @@ Expression ArcTangent::shallowReduce(ExpressionNode::ReductionContext reductionC
   return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }
 
-bool ArcTangent::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcTangent::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression ArcTangent::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+Expression ArcTangent::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
   return Power::Builder(
       Multiplication::Builder(
         Trigonometry::UnitConversionFactor(

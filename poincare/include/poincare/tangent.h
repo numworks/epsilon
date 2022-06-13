@@ -28,13 +28,13 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplication
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
   // Derivation
-  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
-  Expression unaryFunctionDifferential(ReductionContext reductionContext) override;
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
+  Expression unaryFunctionDifferential(const ReductionContext& reductionContext) override;
 
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
@@ -50,10 +50,10 @@ class Tangent final : public ExpressionOneChild<Tangent, TangentNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
 
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
-  Expression unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext);
+  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

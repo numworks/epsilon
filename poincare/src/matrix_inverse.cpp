@@ -13,7 +13,7 @@ namespace Poincare {
 
 int MatrixInverseNode::numberOfChildren() const { return MatrixInverse::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixInverseNode::shallowReduce(ReductionContext reductionContext) {
+Expression MatrixInverseNode::shallowReduce(const ReductionContext& reductionContext) {
   return MatrixInverse(this).shallowReduce(reductionContext);
 }
 
@@ -41,7 +41,7 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(ApproximationContext appro
 }
 
 
-Expression MatrixInverse::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression MatrixInverse::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

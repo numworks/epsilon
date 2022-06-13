@@ -31,7 +31,7 @@ int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.name());
 }
 
-Expression PermuteCoefficientNode::shallowReduce(ReductionContext reductionContext) {
+Expression PermuteCoefficientNode::shallowReduce(const ReductionContext& reductionContext) {
   return PermuteCoefficient(this).shallowReduce(reductionContext);
 }
 
@@ -62,7 +62,7 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(ApproximationContext 
 }
 
 
-Expression PermuteCoefficient::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression PermuteCoefficient::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

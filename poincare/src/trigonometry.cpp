@@ -132,7 +132,7 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
   return false;
 }
 
-Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext) {
   assert(isDirectTrigonometryFunction(e));
 
   // Step 0. Map on list child if possible
@@ -309,7 +309,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
   return e;
 }
 
-Expression Trigonometry::shallowReduceInverseFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+Expression Trigonometry::shallowReduceInverseFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext) {
   assert(isInverseTrigonometryFunction(e));
   // Step 0. Map on list child if possible
   {
@@ -433,7 +433,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
   return e;
 }
 
-Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext) {
   assert(isAdvancedTrigonometryFunction(e));
   // Step 0. Replace with inverse (^-1) of equivalent direct function.
   Expression result;
@@ -462,7 +462,7 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, Expressio
   return p.shallowReduce(reductionContext);
 }
 
-Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext) {
   assert(isInverseAdvancedTrigonometryFunction(e));
   // Step 0. Replace with equivalent inverse function on inverse (^-1) argument
   Power p = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));

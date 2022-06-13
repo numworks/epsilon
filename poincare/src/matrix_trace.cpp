@@ -13,7 +13,7 @@ namespace Poincare {
 
 int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixTraceNode::shallowReduce(ReductionContext reductionContext) {
+Expression MatrixTraceNode::shallowReduce(const ReductionContext& reductionContext) {
   return MatrixTrace(this).shallowReduce(reductionContext);
 }
 
@@ -35,7 +35,7 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(ApproximationContext approxi
   return std::move(result);
 }
 
-Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression MatrixTrace::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

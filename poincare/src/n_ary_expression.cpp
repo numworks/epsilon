@@ -74,7 +74,7 @@ int NAryExpression::allChildrenAreReal(Context * context) const {
   return result;
 }
 
-Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(ExpressionNode::ReductionContext reductionContext) {
+Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(const ExpressionNode::ReductionContext& reductionContext) {
   for (int i = 0; i < numberOfChildren(); ++i) {
     Expression c = childAtIndex(i);
     if (c.deepIsMatrix(reductionContext.context())) {

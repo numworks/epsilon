@@ -22,7 +22,7 @@ Layout ListVarianceNode<U>::createLayout(Preferences::PrintFloatMode floatDispla
 }
 
 template<int U>
-Expression ListVarianceNode<U>::shallowReduce(ReductionContext reductionContext) {
+Expression ListVarianceNode<U>::shallowReduce(const ReductionContext& reductionContext) {
   return ListVariance(this).shallowReduce(reductionContext);
 }
 
@@ -36,7 +36,7 @@ template<typename T> Evaluation<T> ListVarianceNode<U>::templatedApproximate(App
   return Complex<T>::Builder(dataset.variance());
 }
 
-Expression ListVariance::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListVariance::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   /* var(L) = mean(L^2) - mean(L)^2 */
   int n = numberOfChildren();
   assert(n <= 2);

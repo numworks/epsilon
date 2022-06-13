@@ -17,7 +17,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   // Evaluation
@@ -32,7 +32,7 @@ private:
 class MatrixEchelonForm : public Expression {
 public:
   MatrixEchelonForm(const MatrixEchelonFormNode * n) : Expression(n) {}
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
   bool isFormReduced() const { return static_cast<MatrixEchelonFormNode *>(node())->isFormReduced(); }
 };
 

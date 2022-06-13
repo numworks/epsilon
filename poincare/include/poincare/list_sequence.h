@@ -23,7 +23,7 @@ public:
 
 private:
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
@@ -46,7 +46,7 @@ public:
   constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sequence", 3, &UntypedBuilder);
   constexpr static char k_defaultXNTChar = 'k';
 
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 
 };
 

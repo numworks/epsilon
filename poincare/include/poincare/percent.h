@@ -36,7 +36,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplication
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
@@ -87,7 +87,7 @@ class PercentAddition final : public ExpressionTwoChildren<PercentAddition, Perc
 public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
-  Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression deepBeautify(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

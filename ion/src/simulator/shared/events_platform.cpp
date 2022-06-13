@@ -150,7 +150,7 @@ static constexpr Event sEventForASCIICharAbove32[95] = {
   None, UpperA, UpperB, UpperC, UpperD, UpperE, UpperF, UpperG,
   UpperH, UpperI, UpperJ, UpperK, UpperL, UpperM, UpperN, UpperO,
   UpperP, UpperQ, UpperR, UpperS, UpperT, UpperU, UpperV, UpperW,
-  UpperX, UpperY, UpperZ, LeftBracket, None, RightBracket, None, Underscore,
+  UpperX, UpperY, UpperZ, LeftBracket, None, RightBracket, Power, Underscore,
   None, LowerA, LowerB, LowerC, LowerD, LowerE, LowerF, LowerG,
   LowerH, LowerI, LowerJ, LowerK, LowerL, LowerM, LowerN, LowerO,
   LowerP, LowerQ, LowerR, LowerS, LowerT, LowerU, LowerV, LowerW,

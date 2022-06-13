@@ -22,7 +22,7 @@ int DependencyNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 }
 
 template<typename T> Evaluation<T> DependencyNode::templatedApproximate(ApproximationContext approximationContext) const {
-  ExpressionNode * dependencies = childAtIndex(1);
+  ExpressionNode * dependencies = childAtIndex(Dependency::k_indexOfDependenciesList);
   if (dependencies->type() == Type::Undefined || dependencies->type() == Type::Nonreal) {
     return Complex<T>::Undefined();
   }
@@ -39,8 +39,8 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(Approxim
 
 Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   // Undefined/Unreal nodes are bubbled-up
-  SimplificationHelper::shallowReduceUndefined(childAtIndex(1));
-  Expression dependencies = childAtIndex(1);
+  SimplificationHelper::shallowReduceUndefined(childAtIndex(k_indexOfDependenciesList));
+  Expression dependencies = childAtIndex(k_indexOfDependenciesList);
   if (dependencies.isUndefined()) {
     /* dependencies is either Undefined or Nonreal. */
     replaceWithInPlace(dependencies);
@@ -75,7 +75,7 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
 }
 
 void Dependency::addDependency(Expression newDependency) {
-  Expression dependencies = childAtIndex(1);
+  Expression dependencies = childAtIndex(k_indexOfDependenciesList);
   if (dependencies.type() == ExpressionNode::Type::List) {
     List listChild = static_cast<List &>(dependencies);
     listChild.addChildAtIndexInPlace(newDependency.clone(), numberOfDependencies(), numberOfDependencies());
@@ -88,7 +88,7 @@ void Dependency::addDependency(Expression newDependency) {
 void Dependency::extractDependencies(List l) {
   int previousNumberOfChildren = l.numberOfChildren();
 
-  Expression dependencies = childAtIndex(1);
+  Expression dependencies = childAtIndex(k_indexOfDependenciesList);
   if (dependencies.isUndefined()) {
     l.addChildAtIndexInPlace(dependencies, previousNumberOfChildren, previousNumberOfChildren);
     return;

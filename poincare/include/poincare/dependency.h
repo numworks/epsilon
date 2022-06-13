@@ -41,12 +41,13 @@ private:
 class Dependency : public Expression {
   friend class DependencyNode;
 public:
+  constexpr static int k_indexOfDependenciesList = 1;
   Dependency(const DependencyNode * n) : Expression(n) {}
   static Dependency Builder(Expression expression, List dependencies = List::Builder()) { return TreeHandle::FixedArityBuilder<Dependency, DependencyNode>({expression, dependencies}); }
 
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
-  int numberOfDependencies() const { return childAtIndex(1).numberOfChildren(); }
+  int numberOfDependencies() const { return childAtIndex(k_indexOfDependenciesList).numberOfChildren(); }
   void addDependency(Expression newDependency);
   /* Store the dependecies in m and replace the dependency node with the true expression. */
   void extractDependencies(List l);

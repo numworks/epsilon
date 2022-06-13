@@ -42,7 +42,7 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
     outputType = Type::AngleInRadians;
   } else {
     // Turn to Radian
-    exp = exp.clone().angleUnitToRadian(angleUnit).deepReduce(reductionContext);
+    exp = exp.clone().angleUnitToRadian(angleUnit).shallowReduce(reductionContext);
     inputType = Type::AngleInRadians;
     outputType = trigonometricFunctionType;
   }
@@ -78,7 +78,7 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
     if (input.isIdenticalTo(exp)) {
       Expression result = expressionForTypeAtIndex(outputType, i, false, reductionContext);
       if (isIndirectType) {
-        result = result.radianToAngleUnit(angleUnit).deepReduce(reductionContext);
+        result = result.radianToAngleUnit(angleUnit).shallowReduce(reductionContext);
       }
       return result;
     }

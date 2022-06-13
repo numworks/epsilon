@@ -44,6 +44,7 @@ public:
   ScrollViewVerticalBar();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setMargins(KDCoordinate top, KDCoordinate bottom);
+  void setTopMargin(KDCoordinate top) { setMargins(top, m_bottomMargin); }
 private:
   KDCoordinate totalLength() const { return m_frame.height() - m_topMargin - m_bottomMargin; }
   KDCoordinate m_topMargin;

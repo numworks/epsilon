@@ -30,11 +30,11 @@ int CotangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cotangent::s_functionHelper.name());
 }
 
-Expression CotangentNode::shallowReduce(ReductionContext reductionContext) {
+Expression CotangentNode::shallowReduce(const ReductionContext& reductionContext) {
   return Cotangent(this).shallowReduce(reductionContext);
 }
 
-Expression Cotangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Cotangent::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

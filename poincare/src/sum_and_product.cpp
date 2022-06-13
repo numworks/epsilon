@@ -20,7 +20,7 @@ Layout SumAndProductNode::createLayout(Preferences::PrintFloatMode floatDisplayM
   );
 }
 
-Expression SumAndProductNode::shallowReduce(ReductionContext reductionContext) {
+Expression SumAndProductNode::shallowReduce(const ReductionContext& reductionContext) {
   return SumAndProduct(this).shallowReduce(reductionContext);
 }
 
@@ -47,7 +47,7 @@ Evaluation<T> SumAndProductNode::templatedApproximate(ApproximationContext appro
   return result;
 }
 
-Expression SumAndProduct::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression SumAndProduct::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

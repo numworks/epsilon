@@ -21,7 +21,7 @@ int DivisionRemainderNode::serialize(char * buffer, int bufferSize, Preferences:
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::s_functionHelper.name());
 }
 
-Expression DivisionRemainderNode::shallowReduce(ReductionContext reductionContext) {
+Expression DivisionRemainderNode::shallowReduce(const ReductionContext& reductionContext) {
   return DivisionRemainder(this).shallowReduce(reductionContext);
 }
 
@@ -40,7 +40,7 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(ApproximationContext a
       });
 }
 
-Expression DivisionRemainder::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression DivisionRemainder::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

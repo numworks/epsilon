@@ -23,15 +23,15 @@ int ArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.name());
 }
 
-Expression ArcSineNode::shallowReduce(ReductionContext reductionContext) {
+Expression ArcSineNode::shallowReduce(const ReductionContext& reductionContext) {
   return ArcSine(this).shallowReduce(reductionContext);
 }
 
-bool ArcSineNode::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcSineNode::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return ArcSine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression ArcSineNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+Expression ArcSineNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return ArcSine(this).unaryFunctionDifferential(reductionContext);
 }
 
@@ -60,7 +60,7 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::C
   return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-Expression ArcSine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ArcSine::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
@@ -70,12 +70,12 @@ Expression ArcSine::shallowReduce(ExpressionNode::ReductionContext reductionCont
   return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }
 
-bool ArcSine::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcSine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression ArcSine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+Expression ArcSine::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
   return Power::Builder(
       Multiplication::Builder(
         Trigonometry::UnitConversionFactor(

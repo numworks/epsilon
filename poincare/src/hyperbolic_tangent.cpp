@@ -20,20 +20,20 @@ Complex<T> HyperbolicTangentNode::computeOnComplex(const std::complex<T> c, Pref
   return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::tanh(c), c));
 }
 
-bool HyperbolicTangentNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool HyperbolicTangentNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return HyperbolicTangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression HyperbolicTangentNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+Expression HyperbolicTangentNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return HyperbolicTangent(this).unaryFunctionDifferential(reductionContext);
 }
 
-bool HyperbolicTangent::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool HyperbolicTangent::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression HyperbolicTangent::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+Expression HyperbolicTangent::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
   return Power::Builder(HyperbolicCosine::Builder(childAtIndex(0).clone()), Rational::Builder(-2));
 }
 

@@ -28,7 +28,7 @@ int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.name());
 }
 
-Expression RandintNode::shallowReduce(ReductionContext reductionContext) {
+Expression RandintNode::shallowReduce(const ReductionContext& reductionContext) {
   return Randint(this).shallowReduce(reductionContext);
 }
 
@@ -66,7 +66,7 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Approximati
       });
 }
 
-Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Randint::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
     if (!e.isUninitialized()) {

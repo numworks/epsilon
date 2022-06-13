@@ -34,8 +34,8 @@ friend class UnitConvertNode;
 public:
   using ExpressionBuilder::ExpressionBuilder;
   // Expression
-  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext);
-  Expression deepBeautify(ExpressionNode::ReductionContext reductionContext);
+  void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext);
+  Expression deepBeautify(const ExpressionNode::ReductionContext& reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
 private:
   UnitConvertNode * node() const { return static_cast<UnitConvertNode *>(Expression::node()); }

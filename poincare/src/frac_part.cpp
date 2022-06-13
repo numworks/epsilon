@@ -17,7 +17,7 @@ int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, FracPart::s_functionHelper.name());
 }
 
-Expression FracPartNode::shallowReduce(ReductionContext reductionContext) {
+Expression FracPartNode::shallowReduce(const ReductionContext& reductionContext) {
   return FracPart(this).shallowReduce(reductionContext);
 }
 
@@ -30,7 +30,7 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
 }
 
 
-Expression FracPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression FracPart::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

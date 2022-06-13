@@ -27,11 +27,11 @@ int ArcCotangentNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcCotangent::s_functionHelper.name());
 }
 
-Expression ArcCotangentNode::shallowReduce(ReductionContext reductionContext) {
+Expression ArcCotangentNode::shallowReduce(const ReductionContext& reductionContext) {
   return ArcCotangent(this).shallowReduce(reductionContext);
 }
 
-Expression ArcCotangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ArcCotangent::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

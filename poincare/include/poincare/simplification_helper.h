@@ -10,9 +10,9 @@ namespace Poincare {
  * for expression simplication (reduce / beautify). */
 class SimplificationHelper {
 public:
-  static void defaultDeepReduceChildren(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static void defaultDeepReduceChildren(Expression e, const ExpressionNode::ReductionContext& reductionContext);
   // DeepBeautify children and add parentheses if needed.
-  static void deepBeautifyChildren(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static void deepBeautifyChildren(Expression e, const ExpressionNode::ReductionContext& reductionContext);
   /* Handle circuit breaker and early reduce if should be undefined
    * Returns uninitialized handle if nothing was done, the resulting expression
    * otherwise. */
@@ -24,13 +24,13 @@ public:
   /* *In place* shallowReduce while keeping the units from first child.
    * The returned expression is the result with the units if units were handled.
    * Otherwise returns uninitialized handle. */
-  static Expression shallowReduceKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext);
-  static Expression shallowReduceUndefinedKeepingUnitsFromFirstChild(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Expression shallowReduceKeepingUnitsFromFirstChild(Expression e, const ExpressionNode::ReductionContext& reductionContext);
+  static Expression shallowReduceUndefinedKeepingUnitsFromFirstChild(Expression e, const ExpressionNode::ReductionContext& reductionContext);
 
-  static Expression undefinedOnMatrix(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Expression undefinedOnMatrix(Expression e, const ExpressionNode::ReductionContext& reductionContext);
   /* This method should be called only on expressions which have all their
    * children reduced */
-  static Expression distributeReductionOverLists(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Expression distributeReductionOverLists(Expression e, const ExpressionNode::ReductionContext& reductionContext);
 
   static bool getChildrenIfNonEmptyList(Expression e, Expression memoizedChildren[]);
 };

@@ -27,13 +27,13 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::MoreLetters; }
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
- template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
+ template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
   template<typename T>
   struct DetailedResult
   {
@@ -59,12 +59,12 @@ private:
     Expression integrandNearA;
     Expression integrandNearB;
   };
-  Expression rewriteIntegrandNear(Expression bound, ExpressionNode::ReductionContext reductionContext) const;
-  template<typename T> T integrand(T x, Substitution<T> substitution, ApproximationContext approximationContext) const;
-  template<typename T> T integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand, ApproximationContext approximationContext) const;
-  template<typename T> DetailedResult<T> tanhSinhQuadrature(int level, AlternativeIntegrand alternativeIntegrand, ApproximationContext approximationContext) const;
-  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution, ApproximationContext approximationContext) const;
-  template<typename T> DetailedResult<T> adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Substitution<T> substitution, ApproximationContext approximationContext) const;
+  Expression rewriteIntegrandNear(Expression bound, const ExpressionNode::ReductionContext& reductionContext) const;
+  template<typename T> T integrand(T x, Substitution<T> substitution, const ApproximationContext& approximationContext) const;
+  template<typename T> T integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand, const ApproximationContext& approximationContext) const;
+  template<typename T> DetailedResult<T> tanhSinhQuadrature(int level, AlternativeIntegrand alternativeIntegrand, const ApproximationContext& approximationContext) const;
+  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution, const ApproximationContext& approximationContext) const;
+  template<typename T> DetailedResult<T> adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Substitution<T> substitution, const ApproximationContext& approximationContext) const;
 #endif
 
 };
@@ -79,7 +79,7 @@ public:
   static constexpr char k_defaultXNTChar = 'x';
 
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

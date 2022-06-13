@@ -332,7 +332,7 @@ bool UnitNode::Representative::canParse(const char * symbol, size_t length, cons
   return false;
 }
 
-Expression UnitNode::Representative::toBaseUnits(ExpressionNode::ReductionContext reductionContext) const {
+Expression UnitNode::Representative::toBaseUnits(const ExpressionNode::ReductionContext& reductionContext) const {
   Expression result;
   if (isBaseUnit()) {
     result =  Unit::Builder(this, basePrefix());
@@ -426,7 +426,7 @@ const UnitNode::Representative * UnitNode::CatalyticActivityRepresentative::repr
 const UnitNode::Representative * UnitNode::SurfaceRepresentative::representativesOfSameDimension() const { return Unit::k_surfaceRepresentatives; }
 const UnitNode::Representative * UnitNode::VolumeRepresentative::representativesOfSameDimension() const { return Unit::k_volumeRepresentatives; }
 
-int UnitNode::TimeRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+int UnitNode::TimeRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 1);
   /* Use all representatives but week */
   const Unit splitUnits[] = {
@@ -441,7 +441,7 @@ int UnitNode::TimeRepresentative::setAdditionalExpressions(double value, Express
   return 1;
 }
 
-const UnitNode::Representative * UnitNode::DistanceRepresentative::standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const {
+const UnitNode::Representative * UnitNode::DistanceRepresentative::standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const {
   return (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ?
     /* Exclude imperial units from the search. */
     DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), Unit::k_inchRepresentativeIndex, prefix) :
@@ -449,7 +449,7 @@ const UnitNode::Representative * UnitNode::DistanceRepresentative::standardRepre
     DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + 1, numberOfRepresentatives() - 1, prefix);
 }
 
-int UnitNode::DistanceRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+int UnitNode::DistanceRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 1);
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
     return 0;
@@ -468,7 +468,7 @@ const UnitNode::Prefix * UnitNode::MassRepresentative::basePrefix() const {
   return isBaseUnit() ? Prefix::Prefixes() + Unit::k_kiloPrefixIndex : Prefix::EmptyPrefix();
 }
 
-const UnitNode::Representative * UnitNode::MassRepresentative::standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const {
+const UnitNode::Representative * UnitNode::MassRepresentative::standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const {
   return (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ?
     /* Only search in g. */
     DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), 1, prefix) :
@@ -476,7 +476,7 @@ const UnitNode::Representative * UnitNode::MassRepresentative::standardRepresent
     DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_ounceRepresentativeIndex, Unit::k_shortTonRepresentativeIndex - Unit::k_ounceRepresentativeIndex + 1, prefix);
 }
 
-int UnitNode::MassRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+int UnitNode::MassRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 1);
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
     return 0;
@@ -505,7 +505,7 @@ double UnitNode::TemperatureRepresentative::ConvertTemperatures(double value, co
   return (value + sourceOrigin) * source->ratio() / target->ratio() - targetOrigin;
 }
 
-int UnitNode::TemperatureRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+int UnitNode::TemperatureRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   const Representative * celsius = TemperatureRepresentative::Default().representativesOfSameDimension() + Unit::k_celsiusRepresentativeIndex;
   const Representative * fahrenheit = TemperatureRepresentative::Default().representativesOfSameDimension() + Unit::k_fahrenheitRepresentativeIndex;
@@ -528,7 +528,7 @@ int UnitNode::TemperatureRepresentative::setAdditionalExpressions(double value, 
   return numberOfExpressionsSet;
 }
 
-int UnitNode::EnergyRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+int UnitNode::EnergyRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   int index = 0;
   /* 1. Convert into Joules
@@ -558,12 +558,12 @@ int UnitNode::EnergyRepresentative::setAdditionalExpressions(double value, Expre
   return index;
 }
 
-const UnitNode::Representative * UnitNode::SurfaceRepresentative::standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const {
+const UnitNode::Representative * UnitNode::SurfaceRepresentative::standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const {
   *prefix = Prefix::EmptyPrefix();
   return representativesOfSameDimension() + (reductionContext.unitFormat() == Preferences::UnitFormat::Metric ? Unit::k_hectareRepresentativeIndex : Unit::k_acreRepresentativeIndex);
 }
 
-int UnitNode::SurfaceRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+int UnitNode::SurfaceRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   Expression * destMetric;
   Expression * destImperial = nullptr;
@@ -585,7 +585,7 @@ int UnitNode::SurfaceRepresentative::setAdditionalExpressions(double value, Expr
   return 2;
 }
 
-const UnitNode::Representative * UnitNode::VolumeRepresentative::standardRepresentative(double value, double exponent, ExpressionNode::ReductionContext reductionContext, const Prefix * * prefix) const {
+const UnitNode::Representative * UnitNode::VolumeRepresentative::standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const {
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
     *prefix = representativesOfSameDimension()->findBestPrefix(value, exponent);
     return representativesOfSameDimension();
@@ -593,7 +593,7 @@ const UnitNode::Representative * UnitNode::VolumeRepresentative::standardReprese
   return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + 1, numberOfRepresentatives() - 1, prefix);
 }
 
-int UnitNode::VolumeRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+int UnitNode::VolumeRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   Expression * destMetric;
   Expression * destImperial = nullptr;
@@ -624,7 +624,7 @@ int UnitNode::VolumeRepresentative::setAdditionalExpressions(double value, Expre
   return 2;
 }
 
-int UnitNode::SpeedRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) const {
+int UnitNode::SpeedRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   Expression * destMetric;
   Expression * destImperial = nullptr;
@@ -698,7 +698,7 @@ int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascendi
   return prediff;
 }
 
-Expression UnitNode::shallowReduce(ReductionContext reductionContext) {
+Expression UnitNode::shallowReduce(const ReductionContext& reductionContext) {
   return Unit(this).shallowReduce(reductionContext);
 }
 
@@ -728,7 +728,7 @@ bool Unit::CanParse(const char * symbol, size_t length, const Unit::Representati
   return false;
 }
 
-static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(Expression unit, double * value, ExpressionNode::ReductionContext reductionContext, bool optimizePrefix) {
+static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(Expression unit, double * value, const ExpressionNode::ReductionContext& reductionContext, bool optimizePrefix) {
   double exponent = 1.f;
   Expression factor = unit;
   if (factor.type() == ExpressionNode::Type::Power) {
@@ -749,7 +749,7 @@ static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(Expression uni
   static_cast<Unit &>(factor).chooseBestRepresentativeAndPrefix(value, exponent, reductionContext, optimizePrefix);
 }
 
-void Unit::ChooseBestRepresentativeAndPrefixForValue(Expression units, double * value, ExpressionNode::ReductionContext reductionContext) {
+void Unit::ChooseBestRepresentativeAndPrefixForValue(Expression units, double * value, const ExpressionNode::ReductionContext& reductionContext) {
   int numberOfFactors;
   Expression factor;
   if (units.type() == ExpressionNode::Type::Multiplication) {
@@ -780,7 +780,7 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Prefere
     || unit.hasExpression(isNonBase, nullptr);
 }
 
-int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) {
+int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) {
   if (units.isUninitialized()) {
     return 0;
   }
@@ -791,7 +791,7 @@ int Unit::SetAdditionalExpressions(Expression units, double value, Expression * 
   return representative->setAdditionalExpressions(value, dest, availableLength, reductionContext);
 }
 
-Expression Unit::BuildSplit(double value, const Unit * units, int length, ExpressionNode::ReductionContext reductionContext) {
+Expression Unit::BuildSplit(double value, const Unit * units, int length, const ExpressionNode::ReductionContext& reductionContext) {
   assert(!std::isnan(value));
   assert(units);
   assert(length > 0);
@@ -828,7 +828,7 @@ Expression Unit::BuildSplit(double value, const Unit * units, int length, Expres
   return res.squashUnaryHierarchyInPlace().shallowBeautify(&keepUnitsContext);
 }
 
-Expression Unit::ConvertTemperatureUnits(Expression e, Unit unit, ExpressionNode::ReductionContext reductionContext) {
+Expression Unit::ConvertTemperatureUnits(Expression e, Unit unit, const ExpressionNode::ReductionContext& reductionContext) {
   const Representative * targetRepr = unit.representative();
   const Prefix * targetPrefix = unit.node()->prefix();
   assert(unit.representative()->dimensionVector() == TemperatureRepresentative::Default().dimensionVector());
@@ -883,7 +883,7 @@ bool Unit::IsForbiddenTemperatureProduct(Expression e) {
   return !(p.type() == ExpressionNode::Type::Opposite && (pp.isUninitialized() || pp.type() == ExpressionNode::Type::UnitConvert));
 }
 
-Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Unit::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None
       || isBaseUnit()) {
     /* We escape early if we are one of the seven base units.
@@ -950,7 +950,7 @@ Expression Unit::removeUnit(Expression * unit) {
   return one;
 }
 
-void Unit::chooseBestRepresentativeAndPrefix(double * value, double exponent, ExpressionNode::ReductionContext reductionContext, bool optimizePrefix) {
+void Unit::chooseBestRepresentativeAndPrefix(double * value, double exponent, const ExpressionNode::ReductionContext& reductionContext, bool optimizePrefix) {
   assert(exponent != 0.f);
 
   if ((std::isinf(*value) || (*value == 0.0 && node()->representative()->dimensionVector() != TemperatureRepresentative::Default().dimensionVector()))) {

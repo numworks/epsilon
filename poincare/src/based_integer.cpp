@@ -76,7 +76,7 @@ int BasedIntegerNode::simplificationOrderSameType(const ExpressionNode * e, bool
   return Integer::NaturalOrder(integer(), other->integer());
 }
 
-Expression BasedIntegerNode::shallowReduce(ReductionContext reductionContext) {
+Expression BasedIntegerNode::shallowReduce(const ReductionContext& reductionContext) {
   return BasedInteger(this).shallowReduce();
 }
 

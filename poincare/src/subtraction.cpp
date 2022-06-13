@@ -46,11 +46,11 @@ int SubtractionNode::serialize(char * buffer, int bufferSize, Preferences::Print
     return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "-");
 }
 
-Expression SubtractionNode::shallowReduce(ReductionContext reductionContext) {
+Expression SubtractionNode::shallowReduce(const ReductionContext& reductionContext) {
   return Subtraction(this).shallowReduce(reductionContext);
 }
 
-Expression Subtraction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Subtraction::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   Expression e = SimplificationHelper::shallowReduceUndefined(*this);
   if (!e.isUninitialized()) {
     return e;

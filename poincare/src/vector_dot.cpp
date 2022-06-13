@@ -10,7 +10,7 @@ namespace Poincare {
 
 int VectorDotNode::numberOfChildren() const { return VectorDot::s_functionHelper.numberOfChildren(); }
 
-Expression VectorDotNode::shallowReduce(ReductionContext reductionContext) {
+Expression VectorDotNode::shallowReduce(const ReductionContext& reductionContext) {
   return VectorDot(this).shallowReduce(reductionContext);
 }
 
@@ -39,7 +39,7 @@ Evaluation<T> VectorDotNode::templatedApproximate(ApproximationContext approxima
 }
 
 
-Expression VectorDot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression VectorDot::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

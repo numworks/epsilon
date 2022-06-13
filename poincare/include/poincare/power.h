@@ -59,13 +59,13 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplify
-  Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
-  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
   // Evaluation
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
@@ -85,28 +85,28 @@ public:
   using ExpressionBuilder::ExpressionBuilder;
 
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
 private:
   constexpr static int k_maxExactPowerMatrix = 100;
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
 
   // Simplification
-  static Expression PowerRationalRational(Rational base, Rational index, ExpressionNode::ReductionContext reductionContext);
-  static Expression PowerIntegerRational(Integer base, Rational index, ExpressionNode::ReductionContext reductionContext);
-  static Expression CreateComplexExponent(const Expression & r, ExpressionNode::ReductionContext reductionContext); // Returns e^(i*pi*r)
+  static Expression PowerRationalRational(Rational base, Rational index, const ExpressionNode::ReductionContext& reductionContext);
+  static Expression PowerIntegerRational(Integer base, Rational index, const ExpressionNode::ReductionContext& reductionContext);
+  static Expression CreateComplexExponent(const Expression & r, const ExpressionNode::ReductionContext& reductionContext); // Returns e^(i*pi*r)
   static bool RationalExponentShouldNotBeReduced(const Rational & b, const Rational & r);
   static bool IsLogarithmOfBase(const Expression e, const Expression base);
-  static Expression ReduceLogarithmLinearCombination(ExpressionNode::ReductionContext reductionContext, Expression linearCombination, const Expression baseOfLogarithmToReduce);
+  static Expression ReduceLogarithmLinearCombination(const ExpressionNode::ReductionContext& reductionContext, Expression linearCombination, const Expression baseOfLogarithmToReduce);
   bool isLogarithmOfSameBase(Expression e) const;
   bool isNthRootOfUnity() const;
 
   // Unit
   Expression removeUnit(Expression * unit);
 
-  Expression denominator(ExpressionNode::ReductionContext reductionContext) const;
+  Expression denominator(const ExpressionNode::ReductionContext& reductionContext) const;
 };
 
 }

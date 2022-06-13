@@ -21,7 +21,7 @@ namespace Poincare {
 int Polynomial::LinearPolynomialRoots(Expression a, Expression b, Expression * root, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   assert(root);
   assert(!(a.isUninitialized() || b.isUninitialized()));
-  ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
+  const ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
 
   *root = Division::Builder(Opposite::Builder(b), a).cloneAndSimplify(reductionContext);
   return !root->isUndefined();
@@ -31,7 +31,7 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
   assert(root1 && root2 && delta);
   assert(!(a.isUninitialized() || b.isUninitialized() || c.isUninitialized()));
 
-  ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
+  const ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
 
   *delta = Subtraction::Builder(Power::Builder(b.clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), a.clone(), c.clone()));
   *delta = delta->cloneAndSimplify(reductionContext);
@@ -125,7 +125,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   constexpr int degree = 3;
   static_assert(Expression::k_maxPolynomialDegree >= degree, "The maximal polynomial degree is too low to handle cubic equations.");
 
-  ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
+  const ExpressionNode::ReductionContext reductionContext(context, complexFormat, angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
   bool approximate = approximateSolutions ? *approximateSolutions : false;
   const bool equationIsReal = a.isReal(context) && b.isReal(context) && c.isReal(context) && d.isReal(context);
 
@@ -394,7 +394,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   return !root1->isUndefined() + !root2->isUndefined() + !root3->isUndefined();
 }
 
-Expression Polynomial::ReducePolynomial(const Expression * coefficients, int degree, Expression parameter, ExpressionNode::ReductionContext reductionContext) {
+Expression Polynomial::ReducePolynomial(const Expression * coefficients, int degree, Expression parameter, const ExpressionNode::ReductionContext& reductionContext) {
   Addition polynomial = Addition::Builder();
   polynomial.addChildAtIndexInPlace(coefficients[0].clone(), 0, 0);
   for (int i = 1; i <= degree; i++) {
@@ -413,7 +413,7 @@ Rational Polynomial::ReduceRationalPolynomial(const Rational * coefficients, int
   return result;
 }
 
-Expression Polynomial::RationalRootSearch(const Expression * coefficients, int degree, ExpressionNode::ReductionContext reductionContext) {
+Expression Polynomial::RationalRootSearch(const Expression * coefficients, int degree, const ExpressionNode::ReductionContext& reductionContext) {
   assert(degree <= Expression::k_maxPolynomialDegree);
 
   const Rational * rationalCoefficients = static_cast<const Rational *>(coefficients);
@@ -464,7 +464,7 @@ Expression Polynomial::RationalRootSearch(const Expression * coefficients, int d
   return Expression();
 }
 
-Expression Polynomial::SumRootSearch(const Expression * coefficients, int degree, int relevantCoefficient, ExpressionNode::ReductionContext reductionContext) {
+Expression Polynomial::SumRootSearch(const Expression * coefficients, int degree, int relevantCoefficient, const ExpressionNode::ReductionContext& reductionContext) {
   Expression a = coefficients[degree];
   Expression b = coefficients[relevantCoefficient].clone();
 
@@ -483,7 +483,7 @@ Expression Polynomial::SumRootSearch(const Expression * coefficients, int degree
   return Expression();
 }
 
-Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool * approximate, ExpressionNode::ReductionContext reductionContext) {
+Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool * approximate, const ExpressionNode::ReductionContext& reductionContext) {
   assert(approximate != nullptr);
 
   /* C = root((delta1 ± sqrt(delta1^2 - 4*delta0^3)) / 2, 3)

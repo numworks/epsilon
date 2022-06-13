@@ -31,8 +31,8 @@ public:
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
 
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
-  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
 
 private:
   template<typename T> Evaluation<T> templatedApproximate(ApproximationContext approximationContext) const;
@@ -45,7 +45,7 @@ public:
   Dependency(const DependencyNode * n) : Expression(n) {}
   static Dependency Builder(Expression expression, List dependencies = List::Builder()) { return TreeHandle::FixedArityBuilder<Dependency, DependencyNode>({expression, dependencies}); }
 
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 
   int numberOfDependencies() const { return childAtIndex(k_indexOfDependenciesList).numberOfChildren(); }
   void addDependency(Expression newDependency);

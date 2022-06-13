@@ -57,7 +57,7 @@ int FunctionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression FunctionNode::shallowReduce(ReductionContext reductionContext) {
+Expression FunctionNode::shallowReduce(const ReductionContext& reductionContext) {
   return Function(this).shallowReduce(reductionContext); // This uses Symbol::shallowReduce
 }
 
@@ -106,7 +106,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Function::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }

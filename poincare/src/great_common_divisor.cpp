@@ -16,7 +16,7 @@ int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::s_functionHelper.name());
 }
 
-Expression GreatCommonDivisorNode::shallowReduce(ReductionContext reductionContext) {
+Expression GreatCommonDivisorNode::shallowReduce(const ReductionContext& reductionContext) {
   return GreatCommonDivisor(this).shallowReduce(reductionContext);
 }
 
@@ -38,7 +38,7 @@ Expression GreatCommonDivisor::shallowBeautify(Context * context) {
   return *this;
 }
 
-Expression GreatCommonDivisor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression GreatCommonDivisor::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

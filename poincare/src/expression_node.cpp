@@ -87,7 +87,7 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool a
   return 0;
 }
 
-Expression ExpressionNode::shallowReduce(ReductionContext reductionContext) {
+Expression ExpressionNode::shallowReduce(const ReductionContext& reductionContext) {
   Expression e(this);
   Expression res = SimplificationHelper::shallowReduceUndefined(e);
   if (!res.isUninitialized()) {
@@ -100,11 +100,11 @@ Expression ExpressionNode::shallowBeautify(ReductionContext * reductionContext) 
   return Expression(this).defaultShallowBeautify();
 }
 
-bool ExpressionNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool ExpressionNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Expression(this).defaultDidDerivate();
 }
 
-Expression ExpressionNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+Expression ExpressionNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Expression(this).defaultUnaryFunctionDifferential();
 }
 

@@ -18,11 +18,11 @@ int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::s_functionHelper.name());
 }
 
-Expression ImaginaryPartNode::shallowReduce(ReductionContext reductionContext) {
+Expression ImaginaryPartNode::shallowReduce(const ReductionContext& reductionContext) {
   return ImaginaryPart(this).shallowReduce(reductionContext);
 }
 
-Expression ImaginaryPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ImaginaryPart::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

@@ -43,7 +43,7 @@ public:
 
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return m_base == Integer::Base::Decimal ? LayoutShape::Integer : LayoutShape::BinaryHexadecimal; }
   Integer::Base m_base;
   uint8_t m_numberOfDigits;

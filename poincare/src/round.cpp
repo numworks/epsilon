@@ -21,7 +21,7 @@ int RoundNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Round::s_functionHelper.name());
 }
 
-Expression RoundNode::shallowReduce(ReductionContext reductionContext) {
+Expression RoundNode::shallowReduce(const ReductionContext& reductionContext) {
   return Round(this).shallowReduce(reductionContext);
 }
 
@@ -42,7 +42,7 @@ Evaluation<T> RoundNode::templatedApproximate(ApproximationContext approximation
       });
 }
 
-Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Round::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     if (childAtIndex(1).hasUnit()) {
       // Number of digits cannot have units

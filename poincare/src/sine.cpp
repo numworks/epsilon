@@ -28,19 +28,19 @@ int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sine::s_functionHelper.name());
 }
 
-Expression SineNode::shallowReduce(ReductionContext reductionContext) {
+Expression SineNode::shallowReduce(const ReductionContext& reductionContext) {
   return Sine(this).shallowReduce(reductionContext);
 }
 
-bool SineNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool SineNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Sine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression SineNode::unaryFunctionDifferential(ReductionContext reductionContext) {
+Expression SineNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Sine(this).unaryFunctionDifferential(reductionContext);
 }
 
-Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Sine::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {
@@ -50,12 +50,12 @@ Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext
   return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }
 
-bool Sine::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Sine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression Sine::unaryFunctionDifferential(ExpressionNode::ReductionContext reductionContext) {
+Expression Sine::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
   return Multiplication::Builder(Trigonometry::UnitConversionFactor(reductionContext.angleUnit(), Preferences::AngleUnit::Radian), Cosine::Builder(childAtIndex(0).clone()));
 }
 

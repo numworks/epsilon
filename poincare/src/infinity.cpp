@@ -27,7 +27,7 @@ template<typename T> Evaluation<T> InfinityNode::templatedApproximate() const {
   return Complex<T>::Builder(m_negative ? -INFINITY : INFINITY);
 }
 
-bool InfinityNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool InfinityNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Infinity(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -38,7 +38,7 @@ Infinity Infinity::Builder(bool negative) {
   return static_cast<Infinity &>(h);
 }
 
-bool Infinity::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Infinity::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   replaceWithUndefinedInPlace();
   return true;
 }

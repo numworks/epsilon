@@ -51,7 +51,7 @@ int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "/");
 }
 
-Expression DivisionNode::shallowReduce(ReductionContext reductionContext) {
+Expression DivisionNode::shallowReduce(const ReductionContext& reductionContext) {
   return Division(this).shallowReduce(reductionContext);
 }
 
@@ -81,7 +81,7 @@ template<typename T> Complex<T> DivisionNode::computeOnComplex(const std::comple
 }
 
 // Division
-Expression Division::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Division::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);
     if (!e.isUninitialized()) {

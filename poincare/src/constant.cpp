@@ -66,11 +66,11 @@ Evaluation<T> ConstantNode::templatedApproximate() const {
   return Complex<T>::Undefined();
 }
 
-Expression ConstantNode::shallowReduce(ReductionContext reductionContext) {
+Expression ConstantNode::shallowReduce(const ReductionContext& reductionContext) {
   return Constant(this).shallowReduce(reductionContext);
 }
 
-bool ConstantNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool ConstantNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Constant(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -103,7 +103,7 @@ bool Constant::IsConstant(const char * name, size_t length) {
   return false;
 }
 
-Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Constant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   ConstantNode::ConstantInfo info = constantInfo();
   if (isConstant("e", info) || isConstant("π", info)) {
     return *this;
@@ -128,7 +128,7 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result;
 }
 
-bool Constant::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Constant::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   ConstantNode::ConstantInfo info = constantInfo();
   if (info.unit() == nullptr && !std::isnan(info.value())) {
     replaceWithInPlace(Rational::Builder(0));

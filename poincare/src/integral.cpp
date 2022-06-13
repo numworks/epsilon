@@ -44,12 +44,12 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.name());
 }
 
-Expression IntegralNode::shallowReduce(ReductionContext reductionContext) {
+Expression IntegralNode::shallowReduce(const ReductionContext& reductionContext) {
   return Integral(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximationContext) const {
+Evaluation<T> IntegralNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   /* TODO : Reduction is mapped on list, but not approximation.
   * Find a smart way of doing it. */
   Evaluation<T> aInput = childAtIndex(2)->approximate(T(), approximationContext);
@@ -74,7 +74,7 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
     alternativeIntegrand.b = b;
     /* We need SystemForAnalysis to remove the constant part by expanding
      * polynomials introduced by the replacement, e.g. 1-(1-x)^2 -> 2x-x^2 */
-    ExpressionNode::ReductionContext reductionContext(approximationContext.context(), approximationContext.complexFormat(), approximationContext.angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    const ExpressionNode::ReductionContext reductionContext(approximationContext.context(), approximationContext.complexFormat(), approximationContext.angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
     /* Rewrite the integrand to be able to compute it directly at abscissa a + x */
     if (fIsNanInA && a != 0) {
       alternativeIntegrand.integrandNearA = rewriteIntegrandNear(childAtIndex(2), reductionContext);
@@ -137,7 +137,7 @@ Evaluation<T> IntegralNode::templatedApproximate(ApproximationContext approximat
 }
 
 template<typename T>
-T IntegralNode::integrand(T x, Substitution<T> substitution, ApproximationContext approximationContext) const {
+T IntegralNode::integrand(T x, Substitution<T> substitution, const ApproximationContext& approximationContext) const {
   switch (substitution.type) {
   case Substitution<T>::Type::None:
     return firstChildScalarValueForArgument(x, approximationContext);
@@ -165,7 +165,7 @@ T IntegralNode::integrand(T x, Substitution<T> substitution, ApproximationContex
   }
 }
 
-Expression IntegralNode::rewriteIntegrandNear(Expression bound, ExpressionNode::ReductionContext reductionContext) const {
+Expression IntegralNode::rewriteIntegrandNear(Expression bound, const ExpressionNode::ReductionContext& reductionContext) const {
   Expression integrand = Expression(childAtIndex(0)).clone();
   Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
   integrand.replaceSymbolWithExpression(symbol, Addition::Builder(bound.clone(), symbol));
@@ -173,7 +173,7 @@ Expression IntegralNode::rewriteIntegrandNear(Expression bound, ExpressionNode::
 }
 
 template<typename T>
-T IntegralNode::integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand, ApproximationContext approximationContext) const {
+T IntegralNode::integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand, const ApproximationContext& approximationContext) const {
   T scale = (alternativeIntegrand.b - alternativeIntegrand.a) / 2.0;
   T arg = xc * scale;
   if (x < 0) {
@@ -193,7 +193,7 @@ T IntegralNode::integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIn
 /* Tanh-Sinh quadrature
  * cf https://www.davidhbailey.com/dhbpapers/dhb-tanh-sinh.pdf */
 template<typename T>
-IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, AlternativeIntegrand alternativeIntegrand, ApproximationContext approximationContext) const {
+IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, AlternativeIntegrand alternativeIntegrand, const ApproximationContext& approximationContext) const {
   T h = 2.0;
   T result = M_PI_2 * integrandNearBound(0.0, 1.0, alternativeIntegrand, approximationContext); // j=0
   int j = 1;
@@ -264,7 +264,7 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, Alte
 #ifdef LAGRANGE_METHOD
 
 template<typename T>
-T IntegralNode::lagrangeGaussQuadrature(T a, T b, ApproximationContext approximationContext) const {
+T IntegralNode::lagrangeGaussQuadrature(T a, T b, const ApproximationContext& approximationContext) const {
   /* We here use Gauss-Legendre quadrature with n = 5
    * Gauss-Legendre abscissae and weights can be found in
    * C/C++ library source code. */
@@ -295,7 +295,7 @@ T IntegralNode::lagrangeGaussQuadrature(T a, T b, ApproximationContext approxima
 #else
 
 template<typename T>
-IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, Substitution<T> substitution, ApproximationContext approximationContext) const {
+IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, Substitution<T> substitution, const ApproximationContext& approximationContext) const {
   constexpr T epsilon = Float<T>::Epsilon();
   constexpr T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
@@ -379,7 +379,7 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, S
 }
 
 template<typename T>
-IntegralNode::DetailedResult<T> IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Substitution<T> substitution, ApproximationContext approximationContext) const {
+IntegralNode::DetailedResult<T> IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Substitution<T> substitution, const ApproximationContext& approximationContext) const {
   DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, substitution, approximationContext);
   if (quadKG.absoluteError <= eps) {
     return quadKG;
@@ -406,7 +406,7 @@ Expression Integral::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
-Expression Integral::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Integral::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

@@ -36,12 +36,12 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::C
   return Complex<T>::Builder(std::ceil(c.real()));
 }
 
-Expression CeilingNode::shallowReduce(ReductionContext reductionContext) {
+Expression CeilingNode::shallowReduce(const ReductionContext& reductionContext) {
   return Ceiling(this).shallowReduce(reductionContext);
 }
 
 
-Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Ceiling::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChild(*this, reductionContext);
     if (!e.isUninitialized()) {

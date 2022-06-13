@@ -62,11 +62,11 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Derivation
-  bool derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) override;
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
 
   /* Evaluation */
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
@@ -87,9 +87,9 @@ public:
   static Addition Builder(Expression e1) { return Addition::Builder({e1}); }
   static Addition Builder(Expression e1, Expression e2) { return Addition::Builder({e1, e2}); }
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
-  bool derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context) {
     NAryExpression::sortChildrenInPlace(order, context, true);
@@ -101,8 +101,8 @@ private:
   static inline const Expression FirstNonNumeralFactor(const Expression & e);
 
   static bool TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2, Context * context);
-  Expression factorizeOnCommonDenominator(ExpressionNode::ReductionContext reductionContext);
-  void factorizeChildrenAtIndexesInPlace(int index1, int index2, ExpressionNode::ReductionContext reductionContext);
+  Expression factorizeOnCommonDenominator(const ExpressionNode::ReductionContext& reductionContext);
+  void factorizeChildrenAtIndexesInPlace(int index1, int index2, const ExpressionNode::ReductionContext& reductionContext);
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }
 };
 

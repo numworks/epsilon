@@ -15,7 +15,7 @@ int LeastCommonMultipleNode::serialize(char * buffer, int bufferSize, Preference
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::s_functionHelper.name());
 }
 
-Expression LeastCommonMultipleNode::shallowReduce(ReductionContext reductionContext) {
+Expression LeastCommonMultipleNode::shallowReduce(const ReductionContext& reductionContext) {
   return LeastCommonMultiple(this).shallowReduce(reductionContext);
 }
 
@@ -37,7 +37,7 @@ Expression LeastCommonMultiple::shallowBeautify(Context * context) {
   return *this;
 }
 
-Expression LeastCommonMultiple::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression LeastCommonMultiple::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

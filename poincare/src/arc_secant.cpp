@@ -27,11 +27,11 @@ int ArcSecantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSecant::s_functionHelper.name());
 }
 
-Expression ArcSecantNode::shallowReduce(ReductionContext reductionContext) {
+Expression ArcSecantNode::shallowReduce(const ReductionContext& reductionContext) {
   return ArcSecant(this).shallowReduce(reductionContext);
 }
 
-Expression ArcSecant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ArcSecant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

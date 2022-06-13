@@ -19,7 +19,7 @@ Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return LayoutHelper::String(Undefined::Name(), Undefined::NameSize()-1);
 }
 
-bool UndefinedNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool UndefinedNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return true;
 }
 

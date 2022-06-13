@@ -271,7 +271,7 @@ int MultiplicationNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, string);
 }
 
-Expression MultiplicationNode::shallowReduce(ReductionContext reductionContext) {
+Expression MultiplicationNode::shallowReduce(const ReductionContext& reductionContext) {
   return Multiplication(this).shallowReduce(reductionContext);
 }
 
@@ -279,7 +279,7 @@ Expression MultiplicationNode::shallowBeautify(ReductionContext * reductionConte
   return Multiplication(this).shallowBeautify(reductionContext);
 }
 
-bool MultiplicationNode::derivate(ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool MultiplicationNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Multiplication(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -368,7 +368,7 @@ void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColu
   }
 }
 
-Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   return privateShallowReduce(reductionContext, true);
 }
 
@@ -620,7 +620,7 @@ replace_by_result:
   return result;
 }
 
-Expression Multiplication::denominator(ExpressionNode::ReductionContext reductionContext) const {
+Expression Multiplication::denominator(const ExpressionNode::ReductionContext& reductionContext) const {
   /* TODO ?
    * Turn the denominator const method into an extractDenominator method
    * (non const) in the same same way as extractUnits.
@@ -631,7 +631,7 @@ Expression Multiplication::denominator(ExpressionNode::ReductionContext reductio
   return denom;
 }
 
-bool Multiplication::derivate(ExpressionNode::ReductionContext reductionContext, Symbol symbol, Expression symbolValue) {
+bool Multiplication::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Addition resultingAddition = Addition::Builder();
   int numberOfTerms = numberOfChildren();
   assert (numberOfTerms > 0);
@@ -647,7 +647,7 @@ bool Multiplication::derivate(ExpressionNode::ReductionContext reductionContext,
   return true;
 }
 
-Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand) {
+Expression Multiplication::privateShallowReduce(const ExpressionNode::ReductionContext& reductionContext, bool shouldExpand) {
   {
     Expression e = SimplificationHelper::shallowReduceUndefined(*this);
     if (!e.isUninitialized()) {
@@ -995,7 +995,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
 /* This function factorizes two children which have a common base. For example
   * if this is Multiplication::Builder(pi^2, pi^3), then pi^2 and pi^3 could be merged
   * and this turned into Multiplication::Builder(pi^5). */
-void Multiplication::factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext) {
+void Multiplication::factorizeBase(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
   Expression e = childAtIndex(j);
   // Step 1: Get rid of the child j
   removeChildAtIndexInPlace(j);
@@ -1003,7 +1003,7 @@ void Multiplication::factorizeBase(int i, int j, ExpressionNode::ReductionContex
   mergeInChildByFactorizingBase(i, e, reductionContext);
 }
 
-void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, ExpressionNode::ReductionContext reductionContext) {
+void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, const ExpressionNode::ReductionContext& reductionContext) {
   /* This function replace the child at index i by its factorization with e. e
    * and childAtIndex(i) are supposed to have a common base. */
 
@@ -1023,7 +1023,7 @@ void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, Expressi
   }
 }
 
-void Multiplication::factorizeExponent(int i, int j, ExpressionNode::ReductionContext reductionContext) {
+void Multiplication::factorizeExponent(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
   /* This function factorizes children which share a common exponent. For
    * example, it turns Multiplication::Builder(2^x,3^x) into Multiplication::Builder(6^x). */
 
@@ -1044,7 +1044,7 @@ void Multiplication::factorizeExponent(int i, int j, ExpressionNode::ReductionCo
   }
 }
 
-bool Multiplication::gatherRationalPowers(int i, int j, ExpressionNode::ReductionContext reductionContext) {
+bool Multiplication::gatherRationalPowers(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
   /* Turn x^(a/b)*y^(p/q) into (x^(ak/b)*y^(pk/q))^(1/k) where k = lcm(b,q)
    * This effectively gathers all roots into a single root.
    * Returns true if operation was successful. */
@@ -1078,7 +1078,7 @@ bool Multiplication::gatherRationalPowers(int i, int j, ExpressionNode::Reductio
   return true;
 }
 
-Expression Multiplication::distributeOnOperandAtIndex(int i, ExpressionNode::ReductionContext reductionContext) {
+Expression Multiplication::distributeOnOperandAtIndex(int i, const ExpressionNode::ReductionContext& reductionContext) {
   /* This method creates a*...*b*y... + a*...*c*y... + ... from
    * a*...*(b+c+...)*y... */
   assert(i >= 0 && i < numberOfChildren());
@@ -1098,7 +1098,7 @@ Expression Multiplication::distributeOnOperandAtIndex(int i, ExpressionNode::Red
   return a.shallowReduce(reductionContext); // Order terms, put under a common denominator if needed
 }
 
-void Multiplication::addMissingFactors(Expression factor, ExpressionNode::ReductionContext reductionContext) {
+void Multiplication::addMissingFactors(Expression factor, const ExpressionNode::ReductionContext& reductionContext) {
   if (factor.type() == ExpressionNode::Type::Multiplication) {
     int childrenNumber = factor.numberOfChildren();
     for (int j = 0; j < childrenNumber; j++) {
@@ -1146,7 +1146,7 @@ void Multiplication::addMissingFactors(Expression factor, ExpressionNode::Reduct
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context());
 }
 
-void Multiplication::factorizeSineAndCosine(int i, int j, ExpressionNode::ReductionContext reductionContext) {
+void Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
   /* This function turn sin(x)^p * cos(x)^q into either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
@@ -1227,7 +1227,7 @@ bool Multiplication::TermsHaveIdenticalExponent(const Expression & e1, const Exp
    * not be simplified to (pi*x+1)/x^3 since x^-2*x^2 can't be simplified when x=0.
    * But if we just add a dependency we could remove all this function
    * */
-bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const Expression & e2, ExpressionNode::ReductionContext reductionContext) {
+bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const Expression & e2, const ExpressionNode::ReductionContext& reductionContext) {
   /* Combining exponents on terms of same base (x^a)*(x^b)->x^(a+b) is safe if :
    *  x cannot be null
    *  OR a and b are strictly positive
@@ -1307,7 +1307,7 @@ bool Multiplication::TermIsPowerOfRationals(const Expression & e) {
   return e.childAtIndex(0).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).type() == ExpressionNode::Type::Rational;
 }
 
-void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, ExpressionNode::ReductionContext reductionContext) const {
+void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, const ExpressionNode::ReductionContext& reductionContext) const {
   Multiplication mNumerator = Multiplication::Builder();
   Multiplication mDenominator = Multiplication::Builder();
   int numberOfFactorsInNumerator = 0;

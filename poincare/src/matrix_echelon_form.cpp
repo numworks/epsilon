@@ -9,7 +9,7 @@ namespace Poincare {
 
 int MatrixEchelonFormNode::numberOfChildren() const { return sNumberOfChildren; }
 
-Expression MatrixEchelonFormNode::shallowReduce(ReductionContext reductionContext) {
+Expression MatrixEchelonFormNode::shallowReduce(const ReductionContext& reductionContext) {
   return MatrixEchelonForm(this).shallowReduce(reductionContext);
 }
 
@@ -35,7 +35,7 @@ Evaluation<T> MatrixEchelonFormNode::templatedApproximate(ApproximationContext a
 }
 
 
-Expression MatrixEchelonForm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression MatrixEchelonForm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this);
     if (!e.isUninitialized()) {

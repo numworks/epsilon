@@ -21,7 +21,7 @@ Layout ListMedianNode<U>::createLayout(Preferences::PrintFloatMode floatDisplayM
 }
 
 template<int U>
-Expression ListMedianNode<U>::shallowReduce(ReductionContext reductionContext) {
+Expression ListMedianNode<U>::shallowReduce(const ReductionContext& reductionContext) {
   return ListMedian(this).shallowReduce(reductionContext);
 }
 
@@ -35,7 +35,7 @@ template<typename T> Evaluation<T> ListMedianNode<U>::templatedApproximate(Appro
   return Complex<T>::Builder(dataset.median());
 }
 
-Expression ListMedian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListMedian::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
   ListComplex<double> evaluationArray[2];
   StatisticsDataset<double> dataset = StatisticsDataset<double>::BuildFromChildren(node(), approximationContext, evaluationArray);

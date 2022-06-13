@@ -18,7 +18,7 @@ Layout ListMinimumNode::createLayout(Preferences::PrintFloatMode floatDisplayMod
   return LayoutHelper::Prefix(ListMinimum(this), floatDisplayMode, numberOfSignificantDigits, ListMinimum::s_functionHelper.name());
 }
 
-Expression ListMinimumNode::shallowReduce(ReductionContext reductionContext) {
+Expression ListMinimumNode::shallowReduce(const ReductionContext& reductionContext) {
   return ListMinimum(this).shallowReduce(reductionContext);
 }
 
@@ -30,7 +30,7 @@ template<typename T> Evaluation<T> ListMinimumNode::templatedApproximate(Approxi
   return static_cast<ListNode *>(child)->extremumApproximation<T>(approximationContext, true);
 }
 
-Expression ListMinimum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListMinimum::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();

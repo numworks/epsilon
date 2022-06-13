@@ -5,14 +5,14 @@ namespace Poincare {
 
 bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
   /* Expressions like "-2" require parentheses in Addition/Multiplication except
-   * when they are the first operand. */
+   * when they are the first operand. (same for -2%) */
   if (childIndex != 0
     && ((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
       || child.type() == Type::Opposite))
   {
     return true;
   }
-  if (child.type() == Type::Conjugate) {
+  if (child.type() == Type::Conjugate || child.type() == Type::PercentSimple) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
   return false;

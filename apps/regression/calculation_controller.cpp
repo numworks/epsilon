@@ -173,9 +173,12 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       m_memoizedDoubleCalculationCells[seriesNumber][0][j-1] = (m_store->*calculationMethods[j-1])(seriesNumber, 0, false);
       m_memoizedDoubleCalculationCells[seriesNumber][1][j-1] = (m_store->*calculationMethods[j-1])(seriesNumber, 1, false);
     }
-    assert(m_memoizedDoubleCalculationCells[seriesNumber][0][j-1] == (m_store->*calculationMethods[j-1])(seriesNumber, 0, false) && m_memoizedDoubleCalculationCells[seriesNumber][1][j-1] == (m_store->*calculationMethods[j-1])(seriesNumber, 1, false));
     double calculation1 = m_memoizedDoubleCalculationCells[seriesNumber][0][j-1];
     double calculation2 = m_memoizedDoubleCalculationCells[seriesNumber][1][j-1];
+    assert((calculation1 == (m_store->*calculationMethods[j-1])(seriesNumber, 0, false)
+         || (std::isnan(calculation1) && std::isnan((m_store->*calculationMethods[j-1])(seriesNumber, 0, false))))
+        && (calculation2 == (m_store->*calculationMethods[j-1])(seriesNumber, 1, false)
+          || (std::isnan(calculation2) && std::isnan((m_store->*calculationMethods[j-1])(seriesNumber, 1, false)))));
     EvenOddDoubleBufferTextCellWithSeparator * myCell = static_cast<EvenOddDoubleBufferTextCellWithSeparator *>(cell);
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];

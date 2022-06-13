@@ -127,8 +127,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       if (std::isnan(m_memoizedCellContent[seriesIndex][calculationIndex])) {
         m_memoizedCellContent[seriesIndex][calculationIndex] = (m_store->*k_calculationRows[calculationIndex].calculationMethod)(seriesIndex);
       }
-      assert(m_memoizedCellContent[seriesIndex][calculationIndex] == (m_store->*k_calculationRows[calculationIndex].calculationMethod)(seriesIndex));
       calculation = m_memoizedCellContent[seriesIndex][calculationIndex];
+      assert(calculation == (m_store->*k_calculationRows[calculationIndex].calculationMethod)(seriesIndex)
+          || (std::isnan(calculation) && std::isnan((m_store->*k_calculationRows[calculationIndex].calculationMethod)(seriesIndex))));
     } else if (showModeFrequency() && j == numberOfRows() - 1) {
       calculation = m_store->modeFrequency(seriesIndex);
     } else {

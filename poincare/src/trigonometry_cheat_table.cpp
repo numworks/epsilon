@@ -42,6 +42,10 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
     outputType = Type::AngleInRadians;
   } else {
     // Turn to Radian
+    /* We only shallow reduce and not deep reduce since:
+     * - radianToAngleUnit creates a multiplication of reduced children
+     * - if we deep reduce, the complexity becomes exponential for
+     * for expressions like sin(sin(sin(sin(...)))) */
     exp = exp.clone().angleUnitToRadian(angleUnit).shallowReduce(reductionContext);
     inputType = Type::AngleInRadians;
     outputType = trigonometricFunctionType;
@@ -78,6 +82,10 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
     if (input.isIdenticalTo(exp)) {
       Expression result = expressionForTypeAtIndex(outputType, i, false, reductionContext);
       if (isIndirectType) {
+        /* We only shallow reduce and not deep reduce since:
+         * - radianToAngleUnit creates a multiplication of reduced children
+         * - if we deep reduce, the complexity becomes exponential for
+         * for expressions like sin(sin(sin(sin(...)))) */
         result = result.radianToAngleUnit(angleUnit).shallowReduce(reductionContext);
       }
       return result;

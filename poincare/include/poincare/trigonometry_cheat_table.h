@@ -28,6 +28,7 @@ public:
     Tangent = 3,
   };
   static const TrigonometryCheatTable * Table();
+  // Only call simplify on expressions which have reduced children
   Expression simplify(const Expression e, ExpressionNode::Type type, ExpressionNode::ReductionContext reductionContext) const;
 
 private:

@@ -457,7 +457,7 @@ protected:
    *  was -1, it was removed from the multiplication).
    * Warning: this must be called on reduced expressions
    */
-  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext) { return node()->shallowBeautify(reductionContext); }
+  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) { return node()->shallowBeautify(reductionContext); }
   Expression makePositiveAnyNegativeNumeralFactor(const ExpressionNode::ReductionContext& reductionContext);
   Expression denominator(const ExpressionNode::ReductionContext& reductionContext) const { return node()->denominator(reductionContext); }
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext) { return node()->shallowReduce(reductionContext); }

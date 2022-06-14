@@ -96,7 +96,7 @@ Expression ExpressionNode::shallowReduce(const ReductionContext& reductionContex
   return e;
 }
 
-Expression ExpressionNode::shallowBeautify(ReductionContext * reductionContext) {
+Expression ExpressionNode::shallowBeautify(const ReductionContext& reductionContext) {
   return Expression(this).defaultShallowBeautify();
 }
 

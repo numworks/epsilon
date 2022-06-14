@@ -20,8 +20,8 @@ Expression GreatCommonDivisorNode::shallowReduce(const ReductionContext& reducti
   return GreatCommonDivisor(this).shallowReduce(reductionContext);
 }
 
-Expression GreatCommonDivisorNode::shallowBeautify(ReductionContext * reductionContext) {
-  return GreatCommonDivisor(this).shallowBeautify(reductionContext->context());
+Expression GreatCommonDivisorNode::shallowBeautify(const ReductionContext& reductionContext) {
+  return GreatCommonDivisor(this).shallowBeautify(reductionContext.context());
 }
 
 template<typename T>

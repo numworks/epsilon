@@ -29,7 +29,7 @@ private:
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   // Simplification
-  Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowBeautify(const ReductionContext& reductionContext) override;
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     /* leftLayoutShape is called after beautifying expression. ComplexCartesian
@@ -53,7 +53,7 @@ public:
   Expression imag() { return childAtIndex(1); }
 
   // Simplification
-  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
+  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 
   // Common operations (done in-place)

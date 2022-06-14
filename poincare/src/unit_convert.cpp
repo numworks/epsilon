@@ -22,7 +22,7 @@ Expression UnitConvertNode::removeUnit(Expression * unit) {
   return UnitConvert(this).replaceWithUndefinedInPlace();
 }
 
-Expression UnitConvertNode::shallowBeautify(ReductionContext * reductionContext) {
+Expression UnitConvertNode::shallowBeautify(const ReductionContext& reductionContext) {
   return UnitConvert(this).shallowBeautify(reductionContext);
 }
 
@@ -50,7 +50,7 @@ void UnitConvert::deepReduceChildren(const ExpressionNode::ReductionContext& red
 
 Expression UnitConvert::deepBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   ExpressionNode::ReductionContext childContext = reductionContext;
-  Expression e = shallowBeautify(&childContext);
+  Expression e = shallowBeautify(childContext);
   ExpressionNode::ReductionContext childContextKeepUnitAsIs = ExpressionNode::ReductionContext(
       childContext.context(),
       childContext.complexFormat(),
@@ -63,15 +63,15 @@ Expression UnitConvert::deepBeautify(const ExpressionNode::ReductionContext& red
   return e;
 }
 
-Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
+Expression UnitConvert::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   // Discard cases like 4 -> _m/_km
   {
     ExpressionNode::ReductionContext reductionContextWithUnits = ExpressionNode::ReductionContext(
-        reductionContext->context(),
-        reductionContext->complexFormat(),
-        reductionContext->angleUnit(),
-        reductionContext->unitFormat(),
-        reductionContext->target(),
+        reductionContext.context(),
+        reductionContext.complexFormat(),
+        reductionContext.angleUnit(),
+        reductionContext.unitFormat(),
+        reductionContext.target(),
         ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     Expression unit;
     Expression childWithoutUnit = childAtIndex(1).clone().reduceAndRemoveUnit(reductionContextWithUnits, &unit);
@@ -93,7 +93,7 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reduc
   if (unit.type() == ExpressionNode::Type::Unit) {
     Unit unitRef = static_cast<Unit &>(unit);
     if (unitRef.representative()->dimensionVector() == Unit::TemperatureRepresentative::Default().dimensionVector()) {
-      Expression result = Unit::ConvertTemperatureUnits(childAtIndex(0), unitRef, *reductionContext);
+      Expression result = Unit::ConvertTemperatureUnits(childAtIndex(0), unitRef, reductionContext);
       replaceWithInPlace(result);
       return result;
     }
@@ -102,7 +102,7 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reduc
   // Divide the left member by the new unit
   Expression division = Division::Builder(childAtIndex(0), unit.clone());
   Expression divisionUnit;
-  division = division.reduceAndRemoveUnit(*reductionContext, &divisionUnit);
+  division = division.reduceAndRemoveUnit(reductionContext, &divisionUnit);
   if (!divisionUnit.isUninitialized()) {
     // The left and right members are not homogeneous
     return replaceWithUndefinedInPlace();
@@ -110,23 +110,15 @@ Expression UnitConvert::shallowBeautify(ExpressionNode::ReductionContext * reduc
   Expression result = Multiplication::Builder(division, unit);
   replaceWithInPlace(result);
   ExpressionNode::ReductionContext reductionContextWithoutUnits = ExpressionNode::ReductionContext(
-      reductionContext->context(),
-      reductionContext->complexFormat(),
-      reductionContext->angleUnit(),
-      reductionContext->unitFormat(),
-      reductionContext->target(),
+      reductionContext.context(),
+      reductionContext.complexFormat(),
+      reductionContext.angleUnit(),
+      reductionContext.unitFormat(),
+      reductionContext.target(),
       ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined,
       ExpressionNode::UnitConversion::None);
   result = result.shallowReduce(reductionContextWithoutUnits);
-  result = result.shallowBeautify(&reductionContextWithoutUnits);
-  *reductionContext = ExpressionNode::ReductionContext(
-      reductionContext->context(),
-      reductionContext->complexFormat(),
-      reductionContext->angleUnit(),
-      reductionContext->unitFormat(),
-      reductionContext->target(),
-      reductionContext->symbolicComputation(),
-      ExpressionNode::UnitConversion::None);
+  result = result.shallowBeautify(reductionContextWithoutUnits);
   return result;
 }
 

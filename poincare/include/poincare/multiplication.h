@@ -56,7 +56,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowBeautify(const ReductionContext& reductionContext) override;
   Expression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Derivation
@@ -93,7 +93,7 @@ public:
   // Approximation
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Simplification
-  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
+  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
   Expression denominator(const ExpressionNode::ReductionContext& reductionContext) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context) {

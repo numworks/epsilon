@@ -35,7 +35,7 @@ Expression ExpressionNode::deepBeautify(const ExpressionNode::ReductionContext& 
     return Expression(this).convert<PercentAddition>().deepBeautify(reductionContext);
   } else {
     ExpressionNode::ReductionContext childContext = reductionContext;
-    Expression e = shallowBeautify(&childContext);
+    Expression e = shallowBeautify(childContext);
     SimplificationHelper::deepBeautifyChildren(e, childContext);
     return e;
   }

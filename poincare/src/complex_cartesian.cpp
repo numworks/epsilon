@@ -34,7 +34,7 @@ Expression ComplexCartesianNode::shallowReduce(const ReductionContext& reduction
   return ComplexCartesian(this).shallowReduce(reductionContext);
 }
 
-Expression ComplexCartesianNode::shallowBeautify(ReductionContext * reductionContext) {
+Expression ComplexCartesianNode::shallowBeautify(const ReductionContext& reductionContext) {
   return ComplexCartesian(this).shallowBeautify(reductionContext);
 }
 
@@ -78,11 +78,11 @@ Expression ComplexCartesian::shallowReduce(const ExpressionNode::ReductionContex
   return *this;
 }
 
-Expression ComplexCartesian::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
+Expression ComplexCartesian::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
-  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(*reductionContext);
-  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(*reductionContext);
+  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(reductionContext);
+  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(reductionContext);
   a = oppositeA.isUninitialized() ? a : oppositeA;
   b = oppositeB.isUninitialized() ? b : oppositeB;
   Expression e = Expression::CreateComplexExpression(a, b, Preferences::ComplexFormat::Cartesian,

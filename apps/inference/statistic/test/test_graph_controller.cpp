@@ -26,7 +26,8 @@ const char * TestGraphController::title() {
 void TestGraphController::didBecomeFirstResponder() {
   m_zoom = 0;
   m_zoomSide = true;
-  m_test->computeCurveViewRange(0, m_zoomSide);
+  bool isHardToSee = m_test->computeCurveViewRange(0, m_zoomSide);
+  m_graphView.setDisplayHint(isHardToSee);
   m_graphView.reload();
 }
 
@@ -42,6 +43,7 @@ bool TestGraphController::handleEvent(Ion::Events::Event event) {
   } else {
     return false;
   }
+  m_graphView.setDisplayHint(false);
   m_test->computeCurveViewRange(static_cast<float>(m_zoom) / k_zoomSteps, m_zoomSide);
   m_graphView.reload();
   return true;

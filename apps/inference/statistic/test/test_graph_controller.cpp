@@ -26,8 +26,8 @@ const char * TestGraphController::title() {
 void TestGraphController::didBecomeFirstResponder() {
   m_zoom = 0;
   m_zoomSide = true;
-  bool isHardToSee = m_test->computeCurveViewRange(0, m_zoomSide);
-  m_graphView.setDisplayHint(isHardToSee);
+  m_test->computeCurveViewRange(0, m_zoomSide);
+  m_graphView.setDisplayHint(true);
   m_graphView.reload();
 }
 

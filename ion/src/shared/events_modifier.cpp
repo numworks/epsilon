@@ -5,6 +5,8 @@ namespace Ion {
 namespace Events {
 
 static ShiftAlphaStatus sShiftAlphaStatus = ShiftAlphaStatus::Default;
+static bool sShiftIsHeldAndUsed = false;
+static bool sAlphaIsHeldAndUsed = false;
 
 ShiftAlphaStatus shiftAlphaStatus() {
   return sShiftAlphaStatus;
@@ -17,6 +19,14 @@ void removeShift() {
     sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
   } else if (sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock) {
     sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+  }
+}
+
+void removeAlpha() {
+  if (sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock) {
+    sShiftAlphaStatus = ShiftAlphaStatus::Default;
+  } else if (sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock) {
+    sShiftAlphaStatus = ShiftAlphaStatus::Shift;
   }
 }
 
@@ -39,10 +49,34 @@ void setShiftAlphaStatus(ShiftAlphaStatus s) {
   sShiftAlphaStatus = s;
 }
 
+bool wasShiftReleased(Keyboard::State state) {
+  if (sShiftIsHeldAndUsed && !state.keyDown(Keyboard::Key::Shift)) {
+    sShiftIsHeldAndUsed = false;
+    removeShift();
+    return true;
+  }
+  return false;
+}
+
+bool wasAlphaReleased(Keyboard::State state) {
+  if (sAlphaIsHeldAndUsed && !state.keyDown(Keyboard::Key::Alpha)) {
+    sAlphaIsHeldAndUsed = false;
+    removeAlpha();
+    return true;
+  }
+  return false;
+}
+
 void updateModifiersFromEvent(Event e, Keyboard::State state) {
   assert(e.isKeyboardEvent());
   bool shiftKeyDown = state.keyDown(Keyboard::Key::Shift);
   bool alphaKeyDown = state.keyDown(Keyboard::Key::Alpha);
+  if (e != Shift && shiftKeyDown) {
+    sShiftIsHeldAndUsed = true;
+  }
+  if (e != Alpha && alphaKeyDown) {
+    sAlphaIsHeldAndUsed = true;
+  }
   switch (sShiftAlphaStatus) {
     case ShiftAlphaStatus::Default:
       if (e == Shift) {

@@ -98,7 +98,7 @@ static float interpolate(float a, float b, float alpha) {
   return alpha * (b-a) + a;
 }
 
-bool Test::computeCurveViewRange(float transition, bool zoomSide) {
+void Test::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha;
   float z = testCriticalValue();
@@ -135,7 +135,6 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   protectedSetXMax(xMax, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, true);
   protectedSetYMin(yMin, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, false);
   protectedSetYMax(yMax, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, true);
-  return std::abs(alpha-z) < k_thresholdHardToSee;
 }
 
 }  // namespace Inference

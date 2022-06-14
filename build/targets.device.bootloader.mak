@@ -53,5 +53,5 @@ binpack: $(BUILD_DIR)/epsilon.onboarding.bin
 	cp $(BUILD_DIR)/epsilon.onboarding.bin $(BUILD_DIR)/binpack
 	cp $(BUILD_DIR)/epsilon.onboarding.A.bin $(BUILD_DIR)/binpack
 	cp $(BUILD_DIR)/epsilon.onboarding.B.bin $(BUILD_DIR)/binpack
-	cd $(BUILD_DIR) && for binary in epsilon.onboarding.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
+	cd $(BUILD_DIR) && for binary in epsilon.onboarding*.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd $(BUILD_DIR) && tar cvfz binpack-$(MODEL)-`git rev-parse HEAD | head -c 7`.tgz binpack/*

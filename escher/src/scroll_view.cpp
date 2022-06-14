@@ -123,7 +123,7 @@ void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
   /* Compute the farthest corner of the rect to scroll to. 
    * By scrolling to it, the whole rect should be displayed.
    */
-  KDPoint farthestCorner = KDPoint(0,0);
+  KDPoint farthestCorner = KDPointZero;
   if (rect.top() >= visibleRect.top()) {
     if (rect.left() >= visibleRect.left()) {
       farthestCorner = rect.bottomRight();

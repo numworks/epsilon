@@ -4,6 +4,7 @@
 #include <escher/view.h>
 #include "inference/statistic/test/legend_view.h"
 #include "inference/statistic/test/test_curve_view.h"
+#include "inference/statistic/test/zoom_hint_view.h"
 
 namespace Inference {
 
@@ -12,16 +13,21 @@ public:
   TestGraphView(Test * test) : m_curveView(test) {}
   void reload();
 
+  void setDisplayHint(bool displayHint) { m_displayHint = displayHint; }
+
 private:
   constexpr static int k_legendMarginRight = 10;
   constexpr static int k_legendMarginTop = 10;
+  constexpr static KDCoordinate k_zoomHintHeight = 2 * Escher::Metric::BannerTextMargin + 14; // k_legendFont->glyphSize().height() = 14
 
-  int numberOfSubviews() const override { return 2; }
+  int numberOfSubviews() const override { return 3; }
   void layoutSubviews(bool force = false) override;
   Escher::View * subviewAtIndex(int i) override;
 
+  bool m_displayHint;
   TestCurveView m_curveView;
   LegendView m_legend;
+  ZoomHintView m_zoom_hint;
 };
 
 }  // namespace Inference

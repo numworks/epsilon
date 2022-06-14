@@ -90,6 +90,7 @@ app_inference_src += $(addprefix apps/inference/statistic/test/,\
   test_curve_view.cpp \
   test_graph_controller.cpp \
   test_graph_view.cpp \
+  zoom_hint_view.cpp \
 )
 
 app_inference_src += $(addprefix apps/inference/statistic/,\

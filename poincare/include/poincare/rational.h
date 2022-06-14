@@ -58,7 +58,7 @@ public:
   static int NaturalOrder(const RationalNode * i, const RationalNode * j);
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
-  Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowBeautify(const ReductionContext& reductionContext) override;
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { assert(!m_negative); return isInteger() ? LayoutShape::Integer : LayoutShape::Fraction; };
   bool m_negative;

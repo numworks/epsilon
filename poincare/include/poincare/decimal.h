@@ -63,7 +63,7 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
 
   // Simplification
-  Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowBeautify(const ReductionContext& reductionContext) override;
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { assert(!m_negative); return LayoutShape::Decimal; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::Decimal; }

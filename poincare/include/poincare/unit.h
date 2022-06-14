@@ -479,7 +479,7 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
 
   // Simplification
-  Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowBeautify(const ReductionContext& reductionContext) override;
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::OneLetter; } // TODO
 

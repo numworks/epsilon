@@ -62,7 +62,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowBeautify(const ReductionContext& reductionContext) override;
   Expression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Derivation
@@ -87,7 +87,7 @@ public:
   static Addition Builder(Expression e1) { return Addition::Builder({e1}); }
   static Addition Builder(Expression e1, Expression e2) { return Addition::Builder({e1, e2}); }
   // Expression
-  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
+  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;

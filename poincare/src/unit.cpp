@@ -702,7 +702,7 @@ Expression UnitNode::shallowReduce(const ReductionContext& reductionContext) {
   return Unit(this).shallowReduce(reductionContext);
 }
 
-Expression UnitNode::shallowBeautify(ReductionContext * reductionContext) {
+Expression UnitNode::shallowBeautify(const ReductionContext& reductionContext) {
   return Unit(this).shallowBeautify();
 }
 
@@ -825,7 +825,7 @@ Expression Unit::BuildSplit(double value, const Unit * units, int length, const 
       ExpressionNode::ReductionTarget::User,
       ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       ExpressionNode::UnitConversion::None);
-  return res.squashUnaryHierarchyInPlace().shallowBeautify(&keepUnitsContext);
+  return res.squashUnaryHierarchyInPlace().shallowBeautify(keepUnitsContext);
 }
 
 Expression Unit::ConvertTemperatureUnits(Expression e, Unit unit, const ExpressionNode::ReductionContext& reductionContext) {

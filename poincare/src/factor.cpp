@@ -30,7 +30,7 @@ Expression FactorNode::shallowReduce(const ReductionContext& reductionContext) {
   return Factor(this).shallowReduce(reductionContext);
 }
 
-Expression FactorNode::shallowBeautify(ReductionContext * reductionContext) {
+Expression FactorNode::shallowBeautify(const ReductionContext& reductionContext) {
   return Factor(this).shallowBeautify(reductionContext);
 }
 
@@ -90,7 +90,7 @@ Expression Factor::shallowReduce(const ExpressionNode::ReductionContext& reducti
   return *this;
 }
 
-Expression Factor::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
+Expression Factor::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   Expression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational) {
     return replaceWithUndefinedInPlace();

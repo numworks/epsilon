@@ -22,7 +22,7 @@ public:
 private:
   Expression removeUnit(Expression * unit) override;
   // Simplification
-  Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowBeautify(const ReductionContext& reductionContext) override;
   // Evalutation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override { return templatedApproximate<double>(approximationContext); }
@@ -36,7 +36,7 @@ public:
   // Expression
   void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext);
   Expression deepBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
+  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
 private:
   UnitConvertNode * node() const { return static_cast<UnitConvertNode *>(Expression::node()); }
 };

@@ -37,7 +37,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplication
   Expression shallowReduce(const ReductionContext& reductionContext) override;
-  Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowBeautify(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   // Evaluation
@@ -66,7 +66,7 @@ private:
   int serializeSecondChild(char * buffer, int bufferSize, int numberOfChar, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   Expression getExpression() const override;
   // Simplication
-  Expression shallowBeautify(ReductionContext * reductionContext) override;
+  Expression shallowBeautify(const ReductionContext& reductionContext) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
     return templateApproximate<float>(approximationContext);
@@ -80,13 +80,13 @@ private:
 class PercentSimple final : public ExpressionOneChild<PercentSimple, PercentSimpleNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
+  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 class PercentAddition final : public ExpressionTwoChildren<PercentAddition, PercentAdditionNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowBeautify(ExpressionNode::ReductionContext * reductionContext);
+  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
   Expression deepBeautify(const ExpressionNode::ReductionContext& reductionContext);
 };
 

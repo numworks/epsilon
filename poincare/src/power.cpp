@@ -270,7 +270,7 @@ Expression PowerNode::shallowReduce(const ReductionContext& reductionContext) {
   return Power(this).shallowReduce(reductionContext);
 }
 
-Expression PowerNode::shallowBeautify(ReductionContext * reductionContext) {
+Expression PowerNode::shallowBeautify(const ReductionContext& reductionContext) {
   return Power(this).shallowBeautify(reductionContext);
 }
 
@@ -1071,9 +1071,9 @@ Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductio
   return *this;
 }
 
-Expression Power::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
+Expression Power::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   // Step 1: X^-y -> 1/(X->shallowBeautify)^y
-  Expression p = denominator(*reductionContext);
+  Expression p = denominator(reductionContext);
   // If the denominator is initialized, the index of the power is of form -y
   if (!p.isUninitialized()) {
     if (Trigonometry::isDirectTrigonometryFunction(p)) {
@@ -1082,7 +1082,7 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext * reductionCo
     }
     Division d = Division::Builder(Rational::Builder(1), p);
     replaceWithInPlace(d);
-    p.shallowReduce(*reductionContext);
+    p.shallowReduce(reductionContext);
     return d.shallowBeautify(reductionContext);
   }
   // Step 2: Turn a^(1/n) into root(a, n), unless base is a unit

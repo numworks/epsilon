@@ -228,6 +228,7 @@ public:
     void setTarget(ReductionTarget target) { m_target = target; }
     SymbolicComputation symbolicComputation() const { return m_symbolicComputation; }
     void setSymbolicComputation(SymbolicComputation symbolicComputation) { m_symbolicComputation = symbolicComputation; }
+    void setUnitConversion(UnitConversion unitConversion) { m_unitConversion = unitConversion; }
     UnitConversion unitConversion() const { return m_unitConversion; }
   private:
     Preferences::UnitFormat m_unitFormat;
@@ -319,7 +320,7 @@ public:
    * calling UnitConvert::shallowBeautify).
    * We should uniformize this behaviour and use pointers in other methods using
    * the reduction context. */
-  /*!*/ virtual Expression shallowBeautify(ReductionContext * reductionContext);
+  /*!*/ virtual Expression shallowBeautify(const ReductionContext& reductionContext);
   /*!*/ virtual bool derivate(const ReductionContext&, Symbol symbol, Expression symbolValue);
   virtual Expression unaryFunctionDifferential(const ReductionContext& reductionContext);
   /* Return a clone of the denominator part of the expression */

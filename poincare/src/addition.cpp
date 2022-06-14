@@ -62,7 +62,7 @@ Expression AdditionNode::shallowReduce(const ReductionContext& reductionContext)
   return Addition(this).shallowReduce(reductionContext);
 }
 
-Expression AdditionNode::shallowBeautify(ReductionContext * reductionContext) {
+Expression AdditionNode::shallowBeautify(const ReductionContext& reductionContext) {
   return Addition(this).shallowBeautify(reductionContext);
 }
 
@@ -102,7 +102,7 @@ int Addition::getPolynomialCoefficients(Context * context, const char * symbolNa
   return deg;
 }
 
-Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
+Expression Addition::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   /* Step 1 : Sort children in decreasing order of degree.
    * 1+x+x^3+y^2+x*y+sqrt(x) --> x^3+y^2+x*y+x+1+sqrt(x)
    * sqrt(2)+1 = 1+sqrt(2)
@@ -157,7 +157,7 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductio
         // If they have same degree, sort children in decreasing order of base.
         return ExpressionNode::SimplificationOrder(e1, e2, false);
       },
-      reductionContext->context());
+      reductionContext.context());
 
    /* Step 2 : Add Subtractions if needed
    * We want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
@@ -170,7 +170,7 @@ Expression Addition::shallowBeautify(ExpressionNode::ReductionContext * reductio
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     // Try to make the child i positive if any negative numeral factor is found
-    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(*reductionContext);
+    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(reductionContext);
     if (subtractant.isUninitialized())
     {
       // if subtractant is not initialized, it means the child i had no negative numeral factor

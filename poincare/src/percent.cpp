@@ -113,7 +113,7 @@ int PercentSimpleNode::serialize(char * buffer, int bufferSize, Preferences::Pri
 
 // Simplification
 
-Expression PercentSimpleNode::shallowBeautify(ReductionContext * reductionContext) {
+Expression PercentSimpleNode::shallowBeautify(const ReductionContext& reductionContext) {
   return PercentSimple(this).shallowBeautify(reductionContext);
 }
 
@@ -186,7 +186,7 @@ Expression PercentAdditionNode::getExpression() const { return PercentAddition(t
 
 // Simplication
 
-Expression PercentAdditionNode::shallowBeautify(ReductionContext * reductionContext) {
+Expression PercentAdditionNode::shallowBeautify(const ReductionContext& reductionContext) {
   return PercentAddition(this).shallowBeautify(reductionContext);
 }
 
@@ -202,7 +202,7 @@ template <typename U> Evaluation<U> PercentAdditionNode::templateApproximate(App
 
 /* PercentSimple */
 
-Expression PercentSimple::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
+Expression PercentSimple::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   // Beautify Percent into what is actually computed : a% -> a/100
   Expression result = Division::Builder(childAtIndex(0), Rational::Builder(100));
   replaceWithInPlace(result);
@@ -211,10 +211,10 @@ Expression PercentSimple::shallowBeautify(ExpressionNode::ReductionContext * red
 
 /* PercentAddition */
 
-Expression PercentAddition::shallowBeautify(ExpressionNode::ReductionContext * reductionContext) {
+Expression PercentAddition::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   // Beautify Percent into what is actually computed
   Expression ratio;
-  Expression positiveArg = childAtIndex(1).makePositiveAnyNegativeNumeralFactor(*reductionContext);
+  Expression positiveArg = childAtIndex(1).makePositiveAnyNegativeNumeralFactor(reductionContext);
   if (!positiveArg.isUninitialized()) {
     // a-b% -> a*(1-b/100)
     ratio = Subtraction::Builder(Rational::Builder(1), Division::Builder(positiveArg, Rational::Builder(100)));
@@ -229,7 +229,7 @@ Expression PercentAddition::shallowBeautify(ExpressionNode::ReductionContext * r
 
 Expression PercentAddition::deepBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   ExpressionNode::ReductionContext childContext = reductionContext;
-  Expression e = shallowBeautify(&childContext);
+  Expression e = shallowBeautify(childContext);
   /* Overriding deepBeautify to prevent the shallow reduce of the addition
     * because we need to preserve the order. */
   assert(e.numberOfChildren() == 2);

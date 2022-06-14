@@ -14,6 +14,7 @@ public:
   void reload();
 
   void setDisplayHint(bool displayHint) { m_displayHint = displayHint; }
+  bool displayHint() { return m_displayHint; }
 
 private:
   constexpr static int k_legendMarginRight = 10;

@@ -119,33 +119,47 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
 }
 
 void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
-  KDPoint tl  = rect.topLeft();
-  KDPoint br  = rect.bottomRight();
   KDRect visibleRect = visibleContentRect();
-  /* We first check that we can display the whole rect. If we can't, we focus
+  /* Compute the farthest corner of the rect to scroll to. 
+   * By scrolling to it, the whole rect should be displayed.
+   */
+  KDPoint farthestCorner = KDPoint(0,0);
+  if (rect.top() >= visibleRect.top()) {
+    if (rect.left() >= visibleRect.left()) {
+      farthestCorner = rect.bottomRight();
+    } else {
+      farthestCorner = rect.bottomLeft();
+    }
+  } else {
+    if (rect.left() >= visibleRect.left()) {
+      farthestCorner = rect.topRight();
+    } else {
+      farthestCorner = rect.topLeft();
+    }
+  }
+  /* We check that we can display the whole rect. If we can't, we focus
    * the scroll to the closest part of the rect. */
   if (visibleRect.height() < rect.height()) {
     // The visible rect is too small to display 'rect'
     if (rect.top() >= visibleRect.top()) {
       // We scroll to display the top part of rect
-      br = KDPoint(br.x(), rect.top() + visibleRect.height() - 1);
+      farthestCorner = KDPoint(farthestCorner.x(), rect.top() + visibleRect.height() - 1);
     } else {
       // We scroll to display the bottom part of rect
-      tl = KDPoint(tl.x(), rect.bottom() - visibleRect.height());
+      farthestCorner = KDPoint(farthestCorner.x(), rect.bottom() - visibleRect.height());
     }
   }
   if (visibleRect.width() < rect.width()) {
     // The visible rect is too small to display 'rect'
     if (rect.left() >= visibleRect.left()) {
       // We scroll to display the left part of rect
-      br = KDPoint(rect.left() + visibleRect.width() - 1, br.y());
+      farthestCorner = KDPoint(rect.left() + visibleRect.width() - 1, farthestCorner.y());
     } else {
       // We scroll to display the right part of rect
-      tl = KDPoint(rect.right() - visibleRect.width(), tl.y());
+      farthestCorner = KDPoint(rect.right() - visibleRect.width(), farthestCorner.y());
     }
   }
-  scrollToContentPoint(tl, allowOverscroll);
-  scrollToContentPoint(br, allowOverscroll);
+  scrollToContentPoint(farthestCorner, allowOverscroll);
 }
 
 KDRect ScrollView::visibleContentRect() {

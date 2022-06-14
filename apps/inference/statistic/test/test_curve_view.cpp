@@ -76,7 +76,7 @@ void TestCurveView::colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisPara
   }
 
   float xStep = pixelLengthToFloatLength(Axis::Horizontal, 1);
-  for (float x = xStart; x <= xEnd; x += xStep) {
+  for (float x = xStart; x < xEnd + xStep; x += xStep) {
     float y = m_test->evaluateAtAbscissa(x);
     drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::YellowDark);
   }

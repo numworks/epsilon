@@ -83,6 +83,7 @@ bool stringIsACodePointFollowedByNumbers(const char * string, int length) {
  * azfoobar(x)  |  a*z*foobar(x) and not azfoo*b*a*r*(x)
  *        x2y   |  x2*y (letter followed by numbers are always in the same
  *                 identifier)
+ *        x2y   |  x2y if x2y is defined
  *
  * TODO : handle combined code points? For now combining code points will
  * trigger a syntax error.

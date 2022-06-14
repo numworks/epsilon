@@ -98,6 +98,10 @@ static float interpolate(float a, float b, float alpha) {
   return alpha * (b-a) + a;
 }
 
+bool Test::hasTwoSides() {
+  return hypothesisParams()->comparisonOperator() == HypothesisParams::ComparisonOperator::Different;
+}
+
 void Test::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha;

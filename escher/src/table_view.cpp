@@ -54,9 +54,7 @@ void TableView::layoutSubviews(bool force) {
    * Finally, this solution is not optimal at all since
    * layoutSubviews is called twice over m_contentView. */
   dataSource()->initCellSize(this);
-  m_contentView.shouldUpdateCellContent(true);
-  m_contentView.layoutSubviews(force);
-  m_contentView.shouldUpdateCellContent(false);
+  m_contentView.layoutSubviews(force, true);
   ScrollView::layoutSubviews(force);
 }
 
@@ -67,8 +65,7 @@ TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource *
   m_tableView(tableView),
   m_dataSource(dataSource),
   m_horizontalCellOverlap(horizontalCellOverlap),
-  m_verticalCellOverlap(verticalCellOverlap),
-  m_shouldUpdateCellContent(true)
+  m_verticalCellOverlap(verticalCellOverlap)
 {}
 
 KDRect TableView::ContentView::cellFrame(int i, int j) const {
@@ -142,14 +139,14 @@ View * TableView::ContentView::subviewAtIndex(int index) {
   return m_dataSource->reusableCell(typeIndex, type);
 }
 
-void TableView::ContentView::layoutSubviews(bool force) {
+void TableView::ContentView::layoutSubviews(bool force, bool updateCellContent) {
   /* The number of subviews might change during the layouting so it needs to be
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfSubviews(); index++) {
     View * cell = subviewAtIndex(index);
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
-    if (m_shouldUpdateCellContent) {
+    if (updateCellContent) {
       m_dataSource->willDisplayCellAtLocation(static_cast<HighlightCell *>(cell), i, j);
     }
     /* Cell's content might change and fit in the same frame. LayoutSubviews

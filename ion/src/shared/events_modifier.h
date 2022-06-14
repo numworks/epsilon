@@ -7,9 +7,14 @@ namespace Ion {
 namespace Events {
 
 void removeShift();
+void removeAlpha();
+bool isShiftActive();
+bool isAlphaActive();
 bool isShiftActive();
 bool isAlphaActive();
 bool isLockActive();
+bool wasShiftReleased(Keyboard::State state);
+bool wasAlphaReleased(Keyboard::State state);
 void updateModifiersFromEvent(Event e, Keyboard::State state);
 int longPressFactor();
 void resetLongPress();

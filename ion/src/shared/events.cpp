@@ -104,6 +104,13 @@ Event sharedGetEvent(int * timeout) {
       keysSeenTransitionningFromUpToDown = state & sKeysSeenUp;
       sKeysSeenUp = ~state;
 
+      if (wasShiftReleased(state)) {
+        return Event::PlainKey(Keyboard::Key::Shift);
+      }
+      if (wasAlphaReleased(state)) {
+        return Event::PlainKey(Keyboard::Key::Alpha);
+      }
+
       if (keysSeenTransitionningFromUpToDown != 0) {
         sEventIsRepeating = false;
         resetLongPress();

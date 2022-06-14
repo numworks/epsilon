@@ -151,7 +151,7 @@ bool StoreController::deleteCellValue(int series, int i, int j) {
     selectedCell = selectableTableView()->selectedCell();
   }
   bool result = Shared::StoreController::deleteCellValue(series, i, j);
-  if (selectedCell && result) {
+  if (selectedCell && result && j == 1 && m_store->numberOfPairsOfSeries(series) == 0) {
     /* Deleting the last cumulated frequency value will remove its column.
      * The previously selected cell needs to be un-highlighted and selection
      * must shift to the left. */

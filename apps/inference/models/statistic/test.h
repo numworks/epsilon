@@ -69,6 +69,7 @@ public:
   constexpr static float k_displayZoomedInTopMarginRatio = 0.2f;
   constexpr static float k_displayZoomedInHorizontalMarginRatio = 0.3f;
   void computeCurveViewRange(float transition, bool zoomSide);
+  bool hasTwoSides();
 
 protected:
   float computeXMin() const override { return -k_displayWidthToSTDRatio; }

@@ -8,12 +8,12 @@ on:
       - master
 
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  MAKEFLAGS: ${{ endswith(github.repository, '/epsilon-internal') && '-j32' || '-j2' }}
 
 jobs:
   android:
     runs-on: ubuntu-latest
-    if: ${{ github.repository != 'numworks/epsilon-internal' }}
+    if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
       - run: pip3 install lz4 pypng stringcase
       - uses: actions/checkout@v2
@@ -25,7 +25,7 @@ jobs:
           name: epsilon-android.apk
           path: output/release/simulator/android/epsilon.apk
   n0110:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
+    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4 pypng stringcase
@@ -36,12 +36,12 @@ jobs:
       - run: make MODEL=n0110 flasher.dfu
       - run: make MODEL=n0110 bench.ram.dfu
       - uses: actions/upload-artifact@master
-        if: ${{ github.repository != 'numworks/epsilon-internal' }}
+        if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
         with:
           name: epsilon-n0110.dfu
           path: output/release/device/n0110/epsilon.dfu
   n0120:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
+    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4 pypng stringcase
@@ -52,13 +52,13 @@ jobs:
       - run: make MODEL=n0120 flasher.dfu
       - run: make MODEL=n0120 bench.ram.dfu
       - uses: actions/upload-artifact@master
-        if: ${{ github.repository != 'numworks/epsilon-internal' }}
+        if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
         with:
           name: epsilon-n0120.dfu
           path: output/release/device/n0120/epsilon.dfu
   windows:
     runs-on: windows-latest
-    if: ${{ github.repository != 'numworks/epsilon-internal' }}
+    if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     defaults:
        run:
          shell: msys2 {0}
@@ -76,7 +76,7 @@ jobs:
           name: epsilon-windows.exe
           path: output/release/simulator/windows/epsilon.exe
   web:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
+    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
     steps:
       - uses: numworks/setup-emscripten@v1
         with:
@@ -91,7 +91,7 @@ jobs:
           path: output/release/simulator/web/epsilon.zip
           retention-days: 7
   linux:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4 pypng stringcase
@@ -99,13 +99,13 @@ jobs:
       - run: make PLATFORM=simulator ASAN=1 epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
-        if: ${{ github.repository != 'numworks/epsilon-internal' }}
+        if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
         with:
           name: epsilon-linux.bin
           path: output/release/simulator/linux/epsilon.bin
   macos:
     runs-on: macOS-latest
-    if: ${{ github.repository != 'numworks/epsilon-internal' }}
+    if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
       - run: brew install numworks/tap/epsilon-sdk
       - run: pip3 install lz4 pypng stringcase # TODO: should be part of brew formula
@@ -120,7 +120,7 @@ jobs:
           path: output/release/simulator/macos/epsilon.app
   ios:
     runs-on: macOS-latest
-    if: ${{ github.repository != 'numworks/epsilon-internal' }}
+    if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
       - run: brew install numworks/tap/epsilon-sdk
       - run: pip3 install lz4 pypng stringcase # TODO: should be part of brew formula

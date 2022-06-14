@@ -48,8 +48,8 @@ protected:
     int numberOfDisplayableRows() const;
     int numberOfDisplayableColumns() const;
     KDRect cellFrame(int i, int j) const;
-    void layoutSubviews(bool force = false) override;
-    void shouldUpdateCellContent(bool shouldUpdate) { m_shouldUpdateCellContent = shouldUpdate; }
+    void layoutSubviews(bool force = false) override { layoutSubviews(force, false); }
+    void layoutSubviews(bool force, bool updateCellContent);
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override { return "TableView::ContentView"; }
@@ -74,7 +74,6 @@ protected:
     TableViewDataSource * m_dataSource;
     KDCoordinate m_horizontalCellOverlap;
     KDCoordinate m_verticalCellOverlap;
-    bool m_shouldUpdateCellContent;
   };
   ContentView m_contentView;
 };

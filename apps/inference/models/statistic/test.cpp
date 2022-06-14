@@ -8,6 +8,7 @@
 
 #include <new>
 #include <float.h>
+#include <algorithm>
 
 #include "goodness_test.h"
 #include "one_mean_t_test.h"

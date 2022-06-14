@@ -42,7 +42,7 @@ bool TestGraphController::handleEvent(Ion::Events::Event event) {
     m_zoomSide = true;
   } else if (event == Ion::Events::Back || event == Ion::Events::Home || event == Ion::Events::OnOff) {
     return false;
-  } else if (!m_graphView.displayHint()) {
+  } else if (!m_graphView.displayHint() && event != Ion::Events::Plus && event != Ion::Events::Minus) {
       m_graphView.setDisplayHint(true);
       m_graphView.reload();
       return true;

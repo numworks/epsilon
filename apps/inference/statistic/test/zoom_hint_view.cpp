@@ -53,7 +53,6 @@ void ZoomHintView::layoutSubviews(bool force) {
   m_legends[1].setFrame(KDRect(x, 0, legendWidth[1], height), force);
   x += legendWidth[1];
   m_legendPictograms[1].setFrame(KDRect(x, 0, k_tokenWidth, height), force);
-  x += k_tokenWidth;
 }
 
 }

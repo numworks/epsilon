@@ -509,13 +509,6 @@ void Expression::SetEncounteredComplex(bool encounterComplex) {
   sApproximationEncounteredComplex = encounterComplex;
 }
 
-Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput) {
-  if (complexFormat == Preferences::ComplexFormat::Real && UTF8Helper::HasCodePoint(textInput, 'i')) {
-    return Preferences::ComplexFormat::Cartesian;
-  }
-  return complexFormat;
-}
-
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & exp, Context * context) {
   if (complexFormat == Preferences::ComplexFormat::Real && exp.hasComplexI(context)) {
     return Preferences::ComplexFormat::Cartesian;
@@ -523,13 +516,13 @@ Preferences::ComplexFormat Expression::UpdatedComplexFormatWithExpressionInput(P
   return complexFormat;
 }
 
-bool Expression::hasComplexI(Context * context) const {
+bool Expression::hasComplexI(Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {
   return recursivelyMatches(
       [](const Expression e, Context * context) {
         return e.type() == ExpressionNode::Type::ConstantMaths
                && static_cast<const Constant &>(e).isConstant("i");
       },
-      context);
+      context, replaceSymbols);
 }
 
 bool Expression::isReal(Context * context) const {
@@ -630,6 +623,9 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 
 Expression Expression::ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
   Expression exp = Parse(text, context, false);
+  if (complexFormat == Preferences::ComplexFormat::ToGuess) {
+    complexFormat = UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat::Real, exp, context);
+  }
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
@@ -641,6 +637,7 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
 void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
   assert(simplifiedExpression);
   Expression exp = Parse(text, context, false);
+  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
   if (exp.isUninitialized()) {
     *simplifiedExpression = Undefined::Builder();
     *approximateExpression = Undefined::Builder();
@@ -651,6 +648,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
 }
 
 Expression Expression::cloneAndSimplify(const ExpressionNode::ReductionContext& reductionContext) {
+  assert(reductionContext.complexFormat() != Preferences::ComplexFormat::ToGuess);
   bool reduceFailure = false;
   ExpressionNode::ReductionContext childReductionContext = reductionContext;
   Expression e = cloneAndDeepReduceWithSystemCheckpoint(&childReductionContext, &reduceFailure);
@@ -988,6 +986,9 @@ U Expression::approximateToScalar(Context * context, Preferences::ComplexFormat 
 template<typename U>
 U Expression::ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) {
   Expression exp = ParseAndSimplify(text, context, complexFormat, angleUnit, unitFormat, symbolicComputation);
+  if (complexFormat == Preferences::ComplexFormat::ToGuess) {
+    complexFormat = UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat::Real, exp, context);
+  }
   assert(!exp.isUninitialized());
   return exp.approximateToScalar<U>(context, complexFormat, angleUnit);
 }

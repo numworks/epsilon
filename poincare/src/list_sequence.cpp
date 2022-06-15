@@ -65,13 +65,13 @@ Expression ListSequence::shallowReduce(const ExpressionNode::ReductionContext& r
   Symbol variable = static_cast<Symbol &>(variableExpression);
 
   int upperBound;
-  int upperBoundIndex[] = {2};
-  bool hasSymbols;
-  bool hasOnlyIntegerChildrenAtIndex = SimplificationHelper::extractIntegerChildrenAtIndex(*this, upperBoundIndex, 1, &upperBound, &hasSymbols);
-  if (!hasOnlyIntegerChildrenAtIndex) {
+  int upperBoundIndex = 2;
+  bool indexIsSymbol;
+  bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, upperBoundIndex, &upperBound, &indexIsSymbol);
+  if (!indexIsInteger) {
     return replaceWithUndefinedInPlace();
   }
-  if (hasSymbols) {
+  if (indexIsSymbol) {
     return *this;
   }
 

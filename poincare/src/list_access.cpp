@@ -113,13 +113,13 @@ Expression ListElement::shallowReduce(const ExpressionNode::ReductionContext& re
   }
 
   int integerChild;
-  int integerChildrenIndexes[] = {0};
-  bool hasSymbols;
-  bool hasOnlyIntegerChildrenAtIndex = SimplificationHelper::extractIntegerChildrenAtIndex(*this, integerChildrenIndexes, 1, &integerChild, &hasSymbols);
-  if (!hasOnlyIntegerChildrenAtIndex) {
+  int integerChildIndex = 0;
+  bool indexIsSymbol;
+  bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, integerChildIndex, &integerChild, &indexIsSymbol);
+  if (!indexIsInteger) {
     return replaceWithUndefinedInPlace();
   }
-  if (hasSymbols) {
+  if (indexIsSymbol) {
     return *this;
   }
 
@@ -147,13 +147,17 @@ Expression ListSlice::shallowReduce(const ExpressionNode::ReductionContext& redu
   }
 
   int integerChildren[2];
-  int integerChildrenIndexes[] = {0, 1};
-  bool hasSymbols;
-  bool hasOnlyIntegerChildrenAtIndex = SimplificationHelper::extractIntegerChildrenAtIndex(*this, integerChildrenIndexes, 2, integerChildren, &hasSymbols);
-  if (!hasOnlyIntegerChildrenAtIndex) {
+  bool firstIndexIsSymbol;
+  bool firstIndexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, 0, integerChildren, &firstIndexIsSymbol);
+  if (!firstIndexIsInteger) {
     return replaceWithUndefinedInPlace();
   }
-  if (hasSymbols) {
+  bool secondIndexIsSymbol;
+  bool secondIndexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, 1, integerChildren + 1, &secondIndexIsSymbol);
+  if (!secondIndexIsInteger) {
+    return replaceWithUndefinedInPlace();
+  }
+  if (firstIndexIsSymbol || secondIndexIsSymbol) {
     return *this;
   }
 

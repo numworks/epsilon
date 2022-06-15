@@ -112,10 +112,10 @@ Expression ListElement::shallowReduce(const ExpressionNode::ReductionContext& re
     return replaceWithUndefinedInPlace();
   }
 
-  int integerChild;
-  int integerChildIndex = 0;
+  int index;
+  int indexChildIndex = 0;
   bool indexIsSymbol;
-  bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, integerChildIndex, &integerChild, &indexIsSymbol);
+  bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, indexChildIndex, &index, &indexIsSymbol);
   if (!indexIsInteger) {
     return replaceWithUndefinedInPlace();
   }
@@ -123,7 +123,7 @@ Expression ListElement::shallowReduce(const ExpressionNode::ReductionContext& re
     return *this;
   }
 
-  int index = integerChild - 1; // List index starts at 1
+  index = index - 1; // List index starts at 1
   if (index < 0 || index >= listChild.numberOfChildren()) {
     return replaceWithUndefinedInPlace();
   }
@@ -146,24 +146,23 @@ Expression ListSlice::shallowReduce(const ExpressionNode::ReductionContext& redu
     return replaceWithUndefinedInPlace();
   }
 
-  int integerChildren[2];
-  bool firstIndexIsSymbol;
-  bool firstIndexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, 0, integerChildren, &firstIndexIsSymbol);
-  if (!firstIndexIsInteger) {
-    return replaceWithUndefinedInPlace();
+  int indexes[2];
+  bool oneOfTheIndexesIsSymbol = false;
+  for (int childIndex = 0; childIndex <= 1; childIndex++) {
+    bool indexIsSymbol;
+    bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, childIndex, indexes + childIndex, &indexIsSymbol);
+    if (!indexIsInteger) {
+      return replaceWithUndefinedInPlace();
+    }
+    oneOfTheIndexesIsSymbol = oneOfTheIndexesIsSymbol || indexIsSymbol;
   }
-  bool secondIndexIsSymbol;
-  bool secondIndexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, 1, integerChildren + 1, &secondIndexIsSymbol);
-  if (!secondIndexIsInteger) {
-    return replaceWithUndefinedInPlace();
-  }
-  if (firstIndexIsSymbol || secondIndexIsSymbol) {
+  if (oneOfTheIndexesIsSymbol) {
     return *this;
   }
 
   int listNumberOfChildren = listChild.numberOfChildren();
-  int firstIndex = integerChildren[0] - 1;
-  int lastIndex = integerChildren[1] - 1;
+  int firstIndex = indexes[0] - 1; // List index starts at 1
+  int lastIndex = indexes[1] - 1;
   List typedList = static_cast<List &>(listChild);
 
   if (lastIndex < -1) {

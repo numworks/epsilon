@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/button_with_separator.h>
+#include <apps/shared/pop_up_controller.h>
 #include <escher/memoized_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/view_controller.h>
@@ -27,8 +28,8 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Poincare::Preferences::PressToTestParams getPressToTestParams();
-  void viewDidDisappear() override;
   Escher::View * view() override { return &m_view; }
+  void resetController();
 private:
   /* Cell type */
   static constexpr int k_switchCellType = 0;
@@ -41,7 +42,6 @@ private:
   static constexpr int k_numberOfReusableSwitchCells = k_numberOfSwitchCells;
 
   // Switch Cells
-  void resetSwitches();
   void setParamAtIndex(int index, bool value);
   bool getParamAtIndex(int index);
   void setMessages();
@@ -53,6 +53,7 @@ private:
   PressToTestSwitch m_switchCells[k_numberOfReusableSwitchCells];
   Poincare::Preferences::PressToTestParams m_tempPressToTestParams;
   Shared::ButtonWithSeparator m_activateButton;
+  Shared::MessagePopUpController m_confirmPopUpController;
 
   static I18n::Message LabelAtIndex(int index);
   static I18n::Message SubLabelAtIndex(int index);

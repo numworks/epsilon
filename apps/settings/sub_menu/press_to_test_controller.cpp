@@ -17,14 +17,21 @@ PressToTestController::PressToTestController(Responder * parentResponder) :
   m_bottomMessageView(KDFont::SmallFont, I18n::Message::ToDeactivatePressToTest1, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen),
   m_view(&m_selectableTableView, this, &m_topMessageView, &m_bottomMessageView),
   m_tempPressToTestParams{},
-  m_activateButton{&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {
+  m_activateButton(&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {
     AppsContainer::sharedAppsContainer()->displayExamModePopUp(Preferences::ExamMode::PressToTest, static_cast<PressToTestController *>(context)->getPressToTestParams());
-    return true; }, this)}
+    return true; }, this)),
+  m_confirmPopUpController(Invocation([](void * context, void * sender) {
+    Container::activeApp()->dismissModalViewController();
+    PressToTestController * controller = static_cast<PressToTestController *>(context);
+    controller->resetController();
+    static_cast<StackViewController *>(controller->parentResponder())->pop();
+    return true; }, this))
 {
-  resetSwitches();
+  resetController();
 }
 
-void PressToTestController::resetSwitches() {
+void PressToTestController::resetController() {
+  selectCellAtLocation(0, 0);
   if (Preferences::sharedPreferences()->isInExamMode()) {
     // Reset switches states to press-to-test current parameter.
     m_tempPressToTestParams = Preferences::sharedPreferences()->pressToTestParams();
@@ -113,10 +120,6 @@ void PressToTestController::setMessages() {
   }
 }
 
-void PressToTestController::viewDidDisappear() {
-  m_selectableTableView.deselectTable();
-}
-
 bool PressToTestController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(row) == k_switchCellType && !Preferences::sharedPreferences()->isInExamMode()) {
@@ -127,8 +130,18 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.reloadCellAtLocation(selectedColumn(), row);
     return true;
   }
-  if (event == Ion::Events::Left) {
-    ((StackViewController *)parentResponder())->pop();
+  if (event == Ion::Events::Left || event == Ion::Events::Back) {
+    // Deselect table because select cell will change anyway
+    m_selectableTableView.deselectTable();
+    if (!Preferences::sharedPreferences()->isInExamMode() && m_tempPressToTestParams.m_value != Preferences::k_inactivePressToTest.m_value) {
+      // Scroll to validation cell if m_confirmPopUpController is discarded.
+      selectCellAtLocation(0, numberOfRows() - 1);
+      // Open pop-up to confirm discarding values
+      m_confirmPopUpController.presentModally();
+    } else {
+      resetController();
+      static_cast<StackViewController *>(parentResponder())->pop();
+    }
     return true;
   }
   return false;
@@ -139,10 +152,11 @@ void PressToTestController::didBecomeFirstResponder() {
 }
 
 void PressToTestController::didEnterResponderChain(Responder * previousFirstResponder) {
-  /* When a pop-up is dismissed, the exam mode status might have changed. We
-   * reload the selection as the number of rows might have also changed. We
-   * force to reload the entire data because they might have changed. */
-  selectCellAtLocation(0, 0);
+  // Reset selection and params only if exam mode has been activated.
+  if (Preferences::sharedPreferences()->isInExamMode()) {
+    resetController();
+  }
+  assert(selectedRow() >= 0);
   setMessages();
   resetMemoization();
   m_view.reload();

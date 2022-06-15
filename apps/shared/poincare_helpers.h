@@ -57,14 +57,12 @@ inline T ApproximateWithValueForSymbol(const Poincare::Expression e, const char 
 template <class T>
 inline T ApproximateToScalar(const char * text, Poincare::Context * context, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
-  Poincare::Preferences::ComplexFormat complexFormat = preferences->complexFormatGuessIfReal();
-  return Poincare::Expression::ApproximateToScalar<T>(text, context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
+  return Poincare::Expression::ApproximateToScalar<T>(text, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
 }
 
 inline Poincare::Expression ParseAndSimplify(const char * text, Poincare::Context * context, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
-  Poincare::Preferences::ComplexFormat complexFormat = preferences->complexFormatGuessIfReal();
-  return Poincare::Expression::ParseAndSimplify(text, context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
+  return Poincare::Expression::ParseAndSimplify(text, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
 }
 
 inline void CloneAndSimplify(Poincare::Expression * e, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion unitConversion = Poincare::ExpressionNode::UnitConversion::Default) {

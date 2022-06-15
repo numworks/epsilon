@@ -31,8 +31,7 @@ public:
   enum class ComplexFormat : uint8_t {
     Real = 0,
     Cartesian = 1,
-    Polar = 2,
-    ToGuess = 3,
+    Polar = 2
   };
   enum class AngleUnit : uint8_t {
     Radian = 0,
@@ -95,7 +94,6 @@ public:
   EditionMode editionMode() const { return m_editionMode; }
   void setEditionMode(EditionMode editionMode) { m_editionMode = editionMode; }
   ComplexFormat complexFormat() const { return m_complexFormat; }
-  ComplexFormat complexFormatGuessIfReal() const { return m_complexFormat == ComplexFormat::Real ? ComplexFormat::ToGuess : m_complexFormat; }
   void setComplexFormat(Preferences::ComplexFormat complexFormat) { m_complexFormat = complexFormat; }
   CombinatoricSymbols combinatoricSymbols() const { return m_combinatoricSymbols; }
   void setCombinatoricSymbols(CombinatoricSymbols combinatoricSymbols) { m_combinatoricSymbols = combinatoricSymbols; }

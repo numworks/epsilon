@@ -232,8 +232,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   if (ExceptionRun(ecp)) {
     Preferences * preferences = Preferences::sharedPreferences();
     // TODO: complex format should not be needed here (as it is not used to create layouts)
-    Preferences::ComplexFormat complexFormat = preferences->complexFormatGuessIfReal();
-    m_equalSign = Expression::ParsedExpressionsAreEqual(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined), context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat()) ? EqualSign::Equal : EqualSign::Approximation;
+    m_equalSign = Expression::ParsedExpressionsAreEqual(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined), context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat()) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool

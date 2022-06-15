@@ -176,27 +176,24 @@ bool SimplificationHelper::getChildrenIfNonEmptyList(Expression e, Expression me
   return true;
 }
 
-bool SimplificationHelper::extractIntegerChildrenAtIndex(Expression e, int integerChildrenIndexes[], int numberOfIntegerChildren, int * integerChildrenReturnValue, bool * hasSymbolsReturnValue) {
+bool SimplificationHelper::extractIntegerChildAtIndex(Expression e, int integerChildIndex, int * integerChildReturnValue, bool * isSymbolReturnValue) {
   int nChildren = e.numberOfChildren();
-  *hasSymbolsReturnValue = false;
-  for (int i = 0; i < numberOfIntegerChildren; i++) {
-    assert(nChildren > integerChildrenIndexes[i]);
-    Expression child = e.childAtIndex(integerChildrenIndexes[i]);
-    if (child.type() != ExpressionNode::Type::Rational) {
-      if (child.type() != ExpressionNode::Type::Symbol) {
-        return false;
-      }
-      *hasSymbolsReturnValue = true;
-      integerChildrenReturnValue[i] = -1;
-      continue;
-    }
-    Rational rationalChild = static_cast<Rational &>(child);
-    Integer integerChild = rationalChild.signedIntegerNumerator();
-    if (!rationalChild.isInteger() || !integerChild.isExtractable()) {
+  assert(nChildren > integerChildIndex);
+  Expression child = e.childAtIndex(integerChildIndex);
+  *isSymbolReturnValue = false;
+  if (child.type() != ExpressionNode::Type::Rational) {
+    if (child.type() != ExpressionNode::Type::Symbol) {
       return false;
     }
-    integerChildrenReturnValue[i] = integerChild.extractedInt();
+    *isSymbolReturnValue = true;
+    return true;
   }
+  Rational rationalChild = static_cast<Rational &>(child);
+  Integer integerChild = rationalChild.signedIntegerNumerator();
+  if (!rationalChild.isInteger() || !integerChild.isExtractable()) {
+    return false;
+  }
+  *integerChildReturnValue = integerChild.extractedInt();
   return true;
 }
 

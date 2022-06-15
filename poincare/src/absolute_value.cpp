@@ -1,5 +1,6 @@
 #include <poincare/absolute_value.h>
 #include <poincare/constant.h>
+#include <poincare/dependency.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/absolute_value_layout.h>
@@ -91,10 +92,17 @@ Expression AbsoluteValue::shallowReduce(const ExpressionNode::ReductionContext& 
    * So if b = 0, |z^y| = |z|^y
    */
   if (c.type() == ExpressionNode::Type::Power && c.childAtIndex(1).isReal(reductionContext.context())) {
+    List listOfDependencies = List::Builder();
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+      listOfDependencies.addChildAtIndexInPlace(c.clone(), 0, 0);
+    }
     Expression newabs = AbsoluteValue::Builder(c.childAtIndex(0));
     c.replaceChildAtIndexInPlace(0, newabs);
     newabs.shallowReduce(reductionContext);
     replaceWithInPlace(c);
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+      return Dependency::Builder(c.shallowReduce(reductionContext), listOfDependencies);
+    }
     return c.shallowReduce(reductionContext);
   }
   // |x*y| = |x|*|y|

@@ -9,6 +9,7 @@
 #include <poincare/cotangent.h>
 #include <poincare/decimal.h>
 #include <poincare/derivative.h>
+#include <poincare/dependency.h>
 #include <poincare/division.h>
 #include <poincare/float.h>
 #include <poincare/multiplication.h>
@@ -158,6 +159,11 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const Expre
   // Step 2. Look for an expression of type "cos(acos(x))", return x
   if (AreInverseFunctions(e, e.childAtIndex(0))) {
     Expression result = e.childAtIndex(0).childAtIndex(0);
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+      List listOfDependencies = List::Builder();
+      listOfDependencies.addChildAtIndexInPlace(e.childAtIndex(0).clone(), 0, 0);
+      result = Dependency::Builder(e.childAtIndex(0).childAtIndex(0),listOfDependencies);
+    }
     e.replaceWithInPlace(result);
     return result;
   }
@@ -255,13 +261,13 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const Expre
         && e.childAtIndex(0).type() == ExpressionNode::Type::Rational))
   {
     Rational r = angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0).childAtIndex(0).convert<Rational>() : e.childAtIndex(0).convert<Rational>();
-    /* Step 4.1. In radians:
+    /* Step 6.1. In radians:
      * We first check if p/q * π is already in the right quadrant:
      * p/q * π < π/2 => p/q < 2 => 2p < q */
     Integer dividand = Integer::Addition(r.unsignedIntegerNumerator(), r.unsignedIntegerNumerator());
     Integer divisor = Integer::Multiplication(r.integerDenominator(), Integer(s_piDivisor[(int)angleUnit]));
     if (divisor.isLowerThan(dividand)) {
-      /* Step 4.2. p/q * π is not in the wanted trigonometrical quadrant.
+      /* Step 6.2. p/q * π is not in the wanted trigonometrical quadrant.
        * We could subtract n*π to p/q with n an integer.
        * Given p/q = (q'*q+r')/q, we have
        * (p/q * π - q'*π) < π/2 => r'/q < 1/2 => 2*r'<q
@@ -271,7 +277,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const Expre
       IntegerDivision div = Integer::Division(r.unsignedIntegerNumerator(), piDivisor);
       dividand = Integer::Addition(div.remainder, div.remainder);
       if (divisor.isLowerThan(dividand)) {
-        /* Step 4.3. r'/q * π is not in the wanted trigonometrical quadrant,
+        /* Step 6.3. r'/q * π is not in the wanted trigonometrical quadrant,
          * and because r'<q (as r' is the remainder of an euclidian division
          * by q), we know that r'/q*π is in [π/2; π[.
          * So we can take the new angle π - r'/q*π, which changes cosinus or
@@ -284,7 +290,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const Expre
       if (div.remainder.isOverflow()) {
         return e;
       }
-      // Step 4.5. Build the new result.
+      // Step 6.5. Build the new result.
       Integer rDenominator = r.integerDenominator();
       Expression newR = Rational::Builder(div.remainder, rDenominator);
       Expression rationalParent = angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0) : e;
@@ -294,7 +300,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const Expre
         e.childAtIndex(0).shallowReduce(reductionContext);
       }
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e.type() != ExpressionNode::Type::Tangent) {
-        /* Step 4.6. If we subtracted an odd number of π in 4.2, we need to
+        /* Step 6.6. If we subtracted an odd number of π in 6.2, we need to
          * multiply the result by -1 (because cos((2k+1)π + x) = -cos(x) */
         unaryCoefficient *= -1;
       }

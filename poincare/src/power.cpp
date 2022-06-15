@@ -857,10 +857,23 @@ Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductio
         && (!(reductionContext.complexFormat() == Preferences::ComplexFormat::Real)
           || (b.type() == ExpressionNode::Type::Rational && !static_cast<Rational &>(b).integerDenominator().isEven()))))
     {
-      Multiplication m = Multiplication::Builder(base.childAtIndex(1), index);
-      replaceChildAtIndexInPlace(0, base.childAtIndex(0));
+      Multiplication m = Multiplication::Builder(base.childAtIndex(1).clone(), index);
+      replaceChildAtIndexInPlace(0, base.childAtIndex(0).clone());
       replaceChildAtIndexInPlace(1, m);
       m.shallowReduce(reductionContext);
+      if (rationalIndex.isNegative() && (b.sign(context) == ExpressionNode::Sign::Negative || b.sign(context) == ExpressionNode::Sign::Unknown)) {
+        /* Add dependency if b < 0 and c < 0
+         * This is useful for cases like f(x) = 1/(1/x), where the information
+         * of the negative power is lost during reduction.
+         * It ensures that f(0) = undef */
+        List listOfDependencies = List::Builder();
+        listOfDependencies.addChildAtIndexInPlace(base, 0, 0);
+        Dependency dep = Dependency::Builder(Undefined::Builder(), listOfDependencies);
+        replaceWithInPlace(dep);
+        dep.replaceChildAtIndexInPlace(0, *this);
+        shallowReduce(reductionContext);
+        return dep.shallowReduce(reductionContext);
+      }
       return shallowReduce(reductionContext);
     }
     return *this;

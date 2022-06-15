@@ -181,7 +181,18 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
 void Dropdown::reloadAllCells() {
   // Reload popup list
   m_popup.resetMemoization();  // Reset computed width
-  m_popup.m_selectableTableView.reloadData(false);   // Re layout cells
+  // No need to set selection when m_selectableTableView is not visible.
+  m_popup.m_selectableTableView.reloadData(false, m_isPoppingUp);
+  if (!m_isPoppingUp) {
+    /* Build the innerCell so that is has the right width.
+     * TODO : rework this entire class so that this isn't necessary. */
+    int index = m_popup.m_selectionDataSource.selectedRow();
+    HighlightCell * cell = m_popup.reusableCell(index, 0);
+    m_popup.willDisplayCellForIndex(cell, index);
+    /* Revert Dropdown::DropdownPopupController::willDisplayCellForIndex
+     * highlighting */
+    cell->setHighlighted(isHighlighted());
+  }
 
   if (innerCell()) {
     // Highlight state was corrupted by m_selectableTableView

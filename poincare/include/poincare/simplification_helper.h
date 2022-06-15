@@ -33,6 +33,7 @@ public:
   static Expression distributeReductionOverLists(Expression e, const ExpressionNode::ReductionContext& reductionContext);
 
   static bool getChildrenIfNonEmptyList(Expression e, Expression memoizedChildren[]);
+  static bool extractIntegerChildrenAtIndex(Expression e, int integerChildrenIndexes[], int numberOfIntegerChildren, int * integerChildrenReturnValue, bool * hasSymbolsReturnValue);
 };
 }
 

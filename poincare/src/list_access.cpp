@@ -107,20 +107,23 @@ Expression ListElement::shallowReduce(const ExpressionNode::ReductionContext& re
     }
   }
 
-  Expression indexChild = childAtIndex(0);
   Expression listChild = childAtIndex(ListAccessNode<1>::k_listChildIndex);
-
-  if (listChild.type() != ExpressionNode::Type::List || indexChild.type() != ExpressionNode::Type::Rational) {
+  if (listChild.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();
   }
 
-  Rational rationalIndex = static_cast<Rational &>(indexChild);
-  Integer integerIndex = rationalIndex.signedIntegerNumerator();
-  if (!rationalIndex.isInteger() || !integerIndex.isExtractable()) {
+  int integerChild;
+  int integerChildrenIndexes[] = {0};
+  bool hasSymbols;
+  bool hasOnlyIntegerChildrenAtIndex = SimplificationHelper::extractIntegerChildrenAtIndex(*this, integerChildrenIndexes, 1, &integerChild, &hasSymbols);
+  if (!hasOnlyIntegerChildrenAtIndex) {
     return replaceWithUndefinedInPlace();
   }
+  if (hasSymbols) {
+    return *this;
+  }
 
-  int index = integerIndex.extractedInt() - 1; // List index starts at 1
+  int index = integerChild - 1; // List index starts at 1
   if (index < 0 || index >= listChild.numberOfChildren()) {
     return replaceWithUndefinedInPlace();
   }
@@ -138,25 +141,25 @@ Expression ListSlice::shallowReduce(const ExpressionNode::ReductionContext& redu
     }
   }
 
-  Expression firstIndexChild = childAtIndex(0);
-  Expression lastIndexChild = childAtIndex(1);
   Expression listChild = childAtIndex(ListAccessNode<2>::k_listChildIndex);
+  if (listChild.type() != ExpressionNode::Type::List) {
+    return replaceWithUndefinedInPlace();
+  }
+
+  int integerChildren[2];
+  int integerChildrenIndexes[] = {0, 1};
+  bool hasSymbols;
+  bool hasOnlyIntegerChildrenAtIndex = SimplificationHelper::extractIntegerChildrenAtIndex(*this, integerChildrenIndexes, 2, integerChildren, &hasSymbols);
+  if (!hasOnlyIntegerChildrenAtIndex) {
+    return replaceWithUndefinedInPlace();
+  }
+  if (hasSymbols) {
+    return *this;
+  }
+
   int listNumberOfChildren = listChild.numberOfChildren();
-
-  if (listChild.type() != ExpressionNode::Type::List || firstIndexChild.type() != ExpressionNode::Type::Rational || lastIndexChild.type() != ExpressionNode::Type::Rational) {
-    return replaceWithUndefinedInPlace();
-  }
-
-  Rational firstRationalIndex = static_cast<Rational &>(firstIndexChild);
-  Rational lastRationalIndex = static_cast<Rational &>(lastIndexChild);
-  Integer firstIntegerIndex = firstRationalIndex.signedIntegerNumerator();
-  Integer lastIntegerIndex = lastRationalIndex.signedIntegerNumerator();
-  if (!firstRationalIndex.isInteger() || !lastRationalIndex.isInteger() || !firstIntegerIndex.isExtractable() || !lastIntegerIndex.isExtractable()) {
-    return replaceWithUndefinedInPlace();
-  }
-
-  int firstIndex = firstIntegerIndex.extractedInt() - 1;
-  int lastIndex = lastIntegerIndex.extractedInt() - 1;
+  int firstIndex = integerChildren[0] - 1;
+  int lastIndex = integerChildren[1] - 1;
   List typedList = static_cast<List &>(listChild);
 
   if (lastIndex < -1) {

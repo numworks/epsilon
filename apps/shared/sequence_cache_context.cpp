@@ -21,7 +21,7 @@ SequenceCacheContext<T>::SequenceCacheContext(SequenceContext * sequenceContext,
 }
 
 template<typename T>
-const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * childContext) {
+const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) {
   // [u|v|w](n(+1)?)
   if (symbol.type() == ExpressionNode::Type::Sequence) {
     T result = NAN;
@@ -43,7 +43,7 @@ const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poin
       if (!record.isNull()) {
         assert(record.fullName()[0] == symbol.name()[0]);
         Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
-        T n = PoincareHelpers::ApproximateToScalar<T>(rank, childContext ? childContext : this);
+        T n = PoincareHelpers::ApproximateToScalar<T>(rank, contextWithMoreInformations ? contextWithMoreInformations : this);
         // In case the sequence referenced is not defined or if the rank is not an int, return NAN
         if (seq->fullName() != nullptr) {
           if (std::floor(n) == n) {
@@ -54,7 +54,7 @@ const Expression SequenceCacheContext<T>::expressionForSymbolAbstract(const Poin
     }
     return Float<T>::Builder(result);
   }
-  return ContextWithParent::expressionForSymbolAbstract(symbol, clone, childContext);
+  return ContextWithParent::protectedExpressionForSymbolAbstract(symbol, clone, contextWithMoreInformations);
 }
 
 template<typename T>

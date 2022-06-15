@@ -31,13 +31,13 @@ public:
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
-  const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * childContext = nullptr) override;
   bool setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol) override;
   static SequenceStore * sequenceStore();
   SequenceContext * sequenceContext() { return &m_sequenceContext; }
   void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) override;
 private:
   // Expression getters
+  const Poincare::Expression protectedExpressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) override;
   const Poincare::Expression expressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx);
   static const Poincare::Expression ExpressionForActualSymbol(Ion::Storage::Record r);
   static const Poincare::Expression ExpressionForFunction(const Poincare::Expression & parameter, Ion::Storage::Record r);

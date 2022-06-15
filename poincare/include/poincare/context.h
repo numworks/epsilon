@@ -11,6 +11,7 @@ class Expression;
 class SymbolAbstract;
 
 class Context {
+  friend class ContextWithParent;
 public:
   enum class SymbolAbstractType : uint8_t {
     None,
@@ -20,9 +21,12 @@ public:
     List
   };
   virtual SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) = 0;
-  virtual const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * childContext = nullptr) = 0;
+  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone);
   virtual bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) = 0;
   virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) {}
+protected:
+  virtual const Expression protectedExpressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) = 0;
+
 };
 
 }

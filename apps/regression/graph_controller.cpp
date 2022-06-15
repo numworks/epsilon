@@ -97,6 +97,9 @@ void GraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic,
   *yMin = yMinIntrinsic;
   *yMax = yMaxIntrinsic;
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
+    if (!m_store->seriesIsValid(series)) {
+      continue;
+    }
     for (int pair = 0; pair < m_store->numberOfPairsOfSeries(series); pair++) {
       float x = m_store->get(series, 0, pair);
       if (x < xMin || x > xMax) {

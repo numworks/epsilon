@@ -232,7 +232,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   if (ExceptionRun(ecp)) {
     Preferences * preferences = Preferences::sharedPreferences();
     // TODO: complex format should not be needed here (as it is not used to create layouts)
-    Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
+    Preferences::ComplexFormat complexFormat = preferences->complexFormatGuessIfReal();
     m_equalSign = Expression::ParsedExpressionsAreEqual(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined), context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat()) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
   } else {
@@ -248,8 +248,8 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
     return AdditionalInformationType::None;
   }
   Preferences * preferences = Preferences::sharedPreferences();
-  Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
   Expression i = input();
+  Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), i, context);
   Expression o = exactOutput();
   Expression a = approximateOutput(NumberOfSignificantDigits::Maximal);
   /* Special case for Equal and Store:

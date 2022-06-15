@@ -244,9 +244,8 @@ public:
   /* Complex */
   static bool EncounteredComplex();
   static void SetEncounteredComplex(bool encounterComplex);
-  static Preferences::ComplexFormat UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput);
   static Preferences::ComplexFormat UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & e, Context * context);
-  bool hasComplexI(Context * context) const;
+  bool hasComplexI(Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
   // WARNING: this methods must be called on reduced expressions
   bool isReal(Context * context) const;
 

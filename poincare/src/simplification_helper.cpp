@@ -177,8 +177,7 @@ bool SimplificationHelper::getChildrenIfNonEmptyList(Expression e, Expression me
 }
 
 bool SimplificationHelper::extractIntegerChildAtIndex(Expression e, int integerChildIndex, int * integerChildReturnValue, bool * isSymbolReturnValue) {
-  int nChildren = e.numberOfChildren();
-  assert(nChildren > integerChildIndex);
+  assert(e.numberOfChildren() > integerChildIndex);
   Expression child = e.childAtIndex(integerChildIndex);
   *isSymbolReturnValue = false;
   if (child.type() != ExpressionNode::Type::Rational) {

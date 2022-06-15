@@ -63,26 +63,20 @@ Expression ListSequence::shallowReduce(const ExpressionNode::ReductionContext& r
   Expression function = childAtIndex(0);
   Expression variableExpression = childAtIndex(1);
   Symbol variable = static_cast<Symbol &>(variableExpression);
-  Expression upperBound = childAtIndex(2);
 
-  if (upperBound.type() != ExpressionNode::Type::Rational) {
+  int upperBound;
+  int upperBoundIndex[] = {2};
+  bool hasSymbols;
+  bool hasOnlyIntegerChildrenAtIndex = SimplificationHelper::extractIntegerChildrenAtIndex(*this, upperBoundIndex, 1, &upperBound, &hasSymbols);
+  if (!hasOnlyIntegerChildrenAtIndex) {
     return replaceWithUndefinedInPlace();
   }
-
-  Rational rationalUpperBound = static_cast<Rational &>(upperBound);
-  if (!rationalUpperBound.isInteger() || rationalUpperBound.isNegative() || rationalUpperBound.isZero()) {
-    return replaceWithUndefinedInPlace();
+  if (hasSymbols) {
+    return *this;
   }
-
-  Integer integerUpperBound = rationalUpperBound.node()->unsignedNumerator();
-  if (!integerUpperBound.isExtractable()) {
-    return replaceWithUndefinedInPlace();
-  }
-
-  int intUpperBound = rationalUpperBound.node()->unsignedNumerator().extractedInt();
 
   List finalList = List::Builder();
-  for (int i = 1; i <= intUpperBound; i++) {
+  for (int i = 1; i <= upperBound; i++) {
     Expression newListElement = function.clone().replaceSymbolWithExpression(variable, BasedInteger::Builder(Integer(i)));
     finalList.addChildAtIndexInPlace(newListElement, i - 1, i - 1);
     newListElement.deepReduce(reductionContext);

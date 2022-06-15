@@ -1,7 +1,9 @@
 #include <poincare/simplification_helper.h>
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
+#include <poincare/integer.h>
 #include <poincare/parenthesis.h>
+#include <poincare/rational.h>
 #include <poincare/undefined.h>
 #include <poincare/nonreal.h>
 #include <assert.h>
@@ -173,4 +175,29 @@ bool SimplificationHelper::getChildrenIfNonEmptyList(Expression e, Expression me
   }
   return true;
 }
+
+bool SimplificationHelper::extractIntegerChildrenAtIndex(Expression e, int integerChildrenIndexes[], int numberOfIntegerChildren, int * integerChildrenReturnValue, bool * hasSymbolsReturnValue) {
+  int nChildren = e.numberOfChildren();
+  *hasSymbolsReturnValue = false;
+  for (int i = 0; i < numberOfIntegerChildren; i++) {
+    assert(nChildren > integerChildrenIndexes[i]);
+    Expression child = e.childAtIndex(integerChildrenIndexes[i]);
+    if (child.type() != ExpressionNode::Type::Rational) {
+      if (child.type() != ExpressionNode::Type::Symbol) {
+        return false;
+      }
+      *hasSymbolsReturnValue = true;
+      integerChildrenReturnValue[i] = -1;
+      continue;
+    }
+    Rational rationalChild = static_cast<Rational &>(child);
+    Integer integerChild = rationalChild.signedIntegerNumerator();
+    if (!rationalChild.isInteger() || !integerChild.isExtractable()) {
+      return false;
+    }
+    integerChildrenReturnValue[i] = integerChild.extractedInt();
+  }
+  return true;
+}
+
 }

@@ -736,6 +736,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("acos(0.5)", "60", Degree);
   assert_expression_approximates_to<double>("acos(0.5)", "66.666666666667", Gradian);
   // On [1, inf[
+  assert_expression_approximates_to<double>("acos(2)", "nonreal", Radian, MetricUnitFormat, Real);
   assert_expression_approximates_to<double>("acos(2)", "1.3169578969248×i", Radian);
   assert_expression_approximates_to<double>("acos(2)", "75.456129290217×i", Degree);
   assert_expression_approximates_to<double>("acos(2)", "83.84×i", Gradian, MetricUnitFormat, Cartesian, 4);
@@ -783,6 +784,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("asin(0.5)", "30", Degree);
   assert_expression_approximates_to<double>("asin(0.5)", "33.3333", Gradian, MetricUnitFormat, Cartesian, 6);
   // On [1, inf[
+  assert_expression_approximates_to<double>("asin(2)", "nonreal", Radian, MetricUnitFormat, Real);
   assert_expression_approximates_to<double>("asin(2)", "1.5707963267949-1.3169578969248×i", Radian);
   assert_expression_approximates_to<double>("asin(2)", "90-75.456129290217×i", Degree);
   assert_expression_approximates_to<double>("asin(2)", "100-83.84×i", Gradian, MetricUnitFormat, Cartesian, 4);

@@ -31,13 +31,15 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setPopping(bool popping) { m_isPoppingUp = popping; }
 
+protected:
+  bool m_isPoppingUp;
+
 private:
   constexpr static int k_marginCaretRight = 2;
   constexpr static int k_marginImageHorizontal = 3;
   constexpr static int k_marginImageVertical = 2;
   HighlightCell * m_cell;
   TransparentImageView m_caret;
-  bool m_isPoppingUp;
 };
 
 class DropdownCallback {

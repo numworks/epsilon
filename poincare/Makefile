@@ -84,6 +84,7 @@ poincare_src += $(addprefix poincare/src/,\
   conic.cpp \
   conjugate.cpp \
   constant.cpp \
+  context.cpp \
   cosecant.cpp \
   cosine.cpp \
   cotangent.cpp \

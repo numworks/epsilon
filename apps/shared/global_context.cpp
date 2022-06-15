@@ -65,9 +65,9 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const cha
   }
 }
 
-const Expression GlobalContext::expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * childContext) {
+const Expression GlobalContext::protectedExpressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
-  return expressionForSymbolAndRecord(symbol, r, childContext ? childContext : this);
+  return expressionForSymbolAndRecord(symbol, r, contextWithMoreInformations ? contextWithMoreInformations : this);
 }
 
 bool GlobalContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {

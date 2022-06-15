@@ -16,12 +16,11 @@ public:
 
   template<typename T>
   void setApproximationForVariable(T value);
-
   // Context
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
   bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override;
-  const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * childContext = nullptr) override;
-
+protected:
+  const Expression protectedExpressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) override;
 private:
   const char * m_name;
   Expression m_value;

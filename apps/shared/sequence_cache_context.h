@@ -12,9 +12,9 @@ template<typename T>
 class SequenceCacheContext : public Poincare::ContextWithParent {
 public:
   SequenceCacheContext(SequenceContext * sequenceContext, int forbiddenSequenceIndex);
-  const Poincare::Expression expressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * childContext = nullptr) override;
   void setValueForSymbol(T value, const Poincare::Symbol & symbol);
 private:
+  const Poincare::Expression protectedExpressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) override;
   int nameIndexForSymbol(const Poincare::Symbol & symbol);
   int rankIndexForSymbol(const Poincare::Symbol & symbol);
   T m_values[SequenceStore::k_maxNumberOfSequences][SequenceStore::k_maxRecurrenceDepth];

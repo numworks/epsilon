@@ -10,7 +10,7 @@
 
 namespace Escher {
 
-PopupItemView::PopupItemView(HighlightCell * cell) : m_cell(cell) {
+PopupItemView::PopupItemView(HighlightCell * cell) : m_isPoppingUp(false), m_cell(cell) {
   m_caret.setImage(ImageStore::Caret);
   m_caret.setBackgroundColor(KDColorWhite);
 }
@@ -185,13 +185,13 @@ void Dropdown::reloadAllCells() {
   m_popup.m_selectableTableView.reloadData(false, m_isPoppingUp);
   if (!m_isPoppingUp) {
     /* Build the innerCell so that is has the right width.
+     * Mimicking Dropdown::DropdownPopupController::willDisplayCellForIndex
+     * without altering highlight status and popping status.
      * TODO : rework this entire class so that this isn't necessary. */
     int index = m_popup.m_selectionDataSource.selectedRow();
-    HighlightCell * cell = m_popup.reusableCell(index, 0);
-    m_popup.willDisplayCellForIndex(cell, index);
-    /* Revert Dropdown::DropdownPopupController::willDisplayCellForIndex
-     * highlighting */
-    cell->setHighlighted(isHighlighted());
+    PopupItemView * cell = static_cast<PopupItemView *>(m_popup.reusableCell(index, 0));
+    cell->setInnerCell(m_popup.innerCellAtIndex(index));
+    m_popup.m_listViewDataSource->willDisplayCellForIndex(cell->innerCell(), index);
   }
 
   if (innerCell()) {

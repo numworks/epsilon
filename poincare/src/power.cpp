@@ -826,13 +826,7 @@ Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductio
    * This rule is true if a > 0
    * OR c is integer
    *
-   * Note 1: in real mode only c integer is not enough:
-   * ex: ((-2)^(1/2))^2 = nonreal != -2
-   * We have to add the condition that b is rational and has an odd denominator
-   * So in real mode the condition becomes :
-   * a > 0 OR (c is integer AND b has odd denominator)
-   *
-   * Note 2: We also apply if c = -1/
+   * Note: We also apply if c = -1
    * If we did not apply this rule on expressions of the form (a^b)^(-1),
    * we would end up in infinite loop when factorizing an addition on the same
    * denominator. For ex:
@@ -847,25 +841,30 @@ Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductio
     /* For (a^b)^c, apply the rule :
      * if c = -1
      * OR a > 0
-     * OR (c is integer
-     *   AND (format is complex
-     *      OR b has odd denominator)) */
+     * OR c is integer */
     if (rationalIndex.isMinusOne()
       || a.sign(context) == ExpressionNode::Sign::Positive
       || a.approximateToScalar<double>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true) > Float<double>::EpsilonLax()
-      || (rationalIndex.isInteger()
-        && (!(reductionContext.complexFormat() == Preferences::ComplexFormat::Real)
-          || (b.type() == ExpressionNode::Type::Rational && !static_cast<Rational &>(b).integerDenominator().isEven()))))
+      || rationalIndex.isInteger())
     {
       Multiplication m = Multiplication::Builder(base.childAtIndex(1).clone(), index);
       replaceChildAtIndexInPlace(0, base.childAtIndex(0).clone());
       replaceChildAtIndexInPlace(1, m);
       m.shallowReduce(reductionContext);
-      if (rationalIndex.isNegative() && (b.sign(context) == ExpressionNode::Sign::Negative || b.sign(context) == ExpressionNode::Sign::Unknown)) {
-        /* Add dependency if b < 0 and c < 0
-         * This is useful for cases like f(x) = 1/(1/x), where the information
-         * of the negative power is lost during reduction.
-         * It ensures that f(0) = undef */
+      /* Add dependency in two cases:
+       * - Case 1. If b < 0 and c < 0
+       * This is useful for cases like f(x) = 1/(1/x), where the information
+       * of the negative power is lost during reduction.
+       * It ensures that f(0) = undef
+       * - Case 2. If in real mode and b is not a rational with odd denominator.
+       * It ensures that ((-2)^(1/2))^2 = nonreal != -2 */
+      ExpressionNode::Sign signOfB = b.sign(context);
+      if ((rationalIndex.isNegative() // Case 1
+            && (signOfB == ExpressionNode::Sign::Negative
+              || signOfB == ExpressionNode::Sign::Unknown))
+          || (reductionContext.complexFormat() == Preferences::ComplexFormat::Real // Case 2
+            && (b.type() != ExpressionNode::Type::Rational
+              || static_cast<Rational &>(b).integerDenominator().isEven()))) {
         List listOfDependencies = List::Builder();
         listOfDependencies.addChildAtIndexInPlace(base, 0, 0);
         Dependency dep = Dependency::Builder(Undefined::Builder(), listOfDependencies);
@@ -887,7 +886,7 @@ Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductio
      * SystemForApproximation, as developping would increase the number of
      * operations and thus reduce precision. */
     if (rationalIndex.isInteger() && !rationalIndex.isMinusOne() && !rationalIndex.isZero()
-     && reductionContext.target() != ExpressionNode::ReductionTarget::SystemForApproximation) {
+      && reductionContext.target() != ExpressionNode::ReductionTarget::SystemForApproximation) {
       Integer n = rationalIndex.unsignedIntegerNumerator();
       /* If n is above 25, the resulting sum would have more than
        * k_maxNumberOfTermsInExpandedMultinome terms so we do not expand it. */

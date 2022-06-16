@@ -1,6 +1,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
+#include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
@@ -911,6 +912,16 @@ Expression Multiplication::privateShallowReduce(const ExpressionNode::ReductionC
     } else if (static_cast<const Rational &>(c).isZero()) {
       // Check that other children don't match inf or matrix
       if (!recursivelyMatches([](const Expression e, Context * context) { return IsInfinity(e, context) || IsMatrix(e, context); }, context)) {
+        if (numberOfChildren() > 1) {
+          /* If we replace the multiplication with 0, we must add a dependency
+           * in case the other terms of the multiplication are undef.
+           * For example, if f(x) = 0*(1/x), then f(0) = undef. */
+          Dependency dep = Dependency::Builder(c, List::Builder());
+          removeChildAtIndexInPlace(0);
+          replaceWithInPlace(dep);
+          dep.addDependency(*this);
+          return dep.shallowReduce(reductionContext);
+        }
         replaceWithInPlace(c);
         return c;
       }

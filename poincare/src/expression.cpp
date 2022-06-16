@@ -85,7 +85,7 @@ bool Expression::recursivelyMatches(ExpressionTernaryTest test, Context * contex
   } else if (testResult == RecursiveSearchResult::No) {
     return false;
   }
-  assert(testResult == RecursiveSearchResult::Maybe);
+  assert(testResult == RecursiveSearchResult::Maybe && !isUninitialized());
 
   // Handle dependencies, symbols and functions
   ExpressionNode::Type t = type();
@@ -517,7 +517,7 @@ Preferences::ComplexFormat Expression::UpdatedComplexFormatWithExpressionInput(P
 }
 
 bool Expression::hasComplexI(Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {
-  return recursivelyMatches(
+  return !isUninitialized() && recursivelyMatches(
       [](const Expression e, Context * context) {
         return e.type() == ExpressionNode::Type::ConstantMaths
                && static_cast<const Constant &>(e).isConstant("i");

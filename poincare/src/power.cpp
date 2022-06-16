@@ -851,20 +851,8 @@ Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductio
       replaceChildAtIndexInPlace(0, base.childAtIndex(0).clone());
       replaceChildAtIndexInPlace(1, m);
       m.shallowReduce(reductionContext);
-      /* Add dependency in two cases:
-       * - Case 1. If b < 0 and c < 0
-       * This is useful for cases like f(x) = 1/(1/x), where the information
-       * of the negative power is lost during reduction.
-       * It ensures that f(0) = undef
-       * - Case 2. If in real mode and b is not a rational with odd denominator.
-       * It ensures that ((-2)^(1/2))^2 = nonreal != -2 */
-      ExpressionNode::Sign signOfB = b.sign(context);
-      if ((rationalIndex.isNegative() // Case 1
-            && (signOfB == ExpressionNode::Sign::Negative
-              || signOfB == ExpressionNode::Sign::Unknown))
-          || (reductionContext.complexFormat() == Preferences::ComplexFormat::Real // Case 2
-            && (b.type() != ExpressionNode::Type::Rational
-              || static_cast<Rational &>(b).integerDenominator().isEven()))) {
+      /* Add dependency if needed */
+      if (static_cast<Power &>(base).shouldAddDependencyWhenDisappearingDuringReduction(reductionContext)) {
         List listOfDependencies = List::Builder();
         listOfDependencies.addChildAtIndexInPlace(base, 0, 0);
         Dependency dep = Dependency::Builder(Undefined::Builder(), listOfDependencies);
@@ -1163,6 +1151,40 @@ bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, S
   Addition result = Addition::Builder(derivedFromBase, derivedFromExponent);
   replaceWithInPlace(result);
   return true;
+}
+
+bool Power::shouldAddDependencyWhenDisappearingDuringReduction(const ExpressionNode::ReductionContext& reductionContext) {
+  /* When a power node is disppearing during reduction, you sometimes
+   * have to add a dependency.
+   * There are two cases where this is true:
+   *
+   * Case 1: If the exponent is negative and the base can be null.
+   * For example, the function f(x) = (x^-1)^-1 is equal to x everywhere
+   * but in x=0.
+   *
+   * Case 2: In real mode, if the exponent is not an rational with an odd
+   * denominator, and the base can be negative.
+   * For example, f(x) = (x^1/2)^2 is equal to x except when x < 0 and in
+   * real mode where f(x) = nonreal.
+   */
+  Expression base = childAtIndex(0);
+  Expression index = childAtIndex(1);
+
+  // Case 1.
+  if (index.sign(reductionContext.context()) != ExpressionNode::Sign::Positive
+      && base.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::NonNull) {
+    return true;
+  }
+
+  // Case 2.
+  if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real
+      && (index.type() != ExpressionNode::Type::Rational
+        || static_cast<Rational &>(index).integerDenominator().isEven())
+      && base.sign(reductionContext.context()) != ExpressionNode::Sign::Positive) {
+    return true;
+  }
+  return false;
+
 }
 
 // Private

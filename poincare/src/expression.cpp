@@ -888,36 +888,6 @@ Expression Expression::cloneAndReduce(const ExpressionNode::ReductionContext& re
 
 Expression Expression::deepReduce(const ExpressionNode::ReductionContext& reductionContext) {
   deepReduceChildren(reductionContext);
-  if (type() != ExpressionNode::Type::Store && !ComparisonOperator::IsComparisonOperatorType(type())) {
-    /* Bubble up dependencies */
-    List dependencies = List::Builder();
-    int childrenNumber = numberOfChildren();
-    for (int i = 0; i < childrenNumber; i++) {
-      if (isParameteredExpression() && (i == ParameteredExpression::ParameteredChildIndex())) {
-        /* A parametered expression can have dependencies on its parameter, which
-         * we don't want to factor, as the parameter does not have meaning
-         * outside of the parametered expression.
-         * The parametered expression will have to handle dependencies manually
-         * in its shallowReduce. */
-        continue;
-      }
-      Expression child = childAtIndex(i);
-      if (child.type() == ExpressionNode::Type::Dependency) {
-        static_cast<Dependency &>(child).extractDependencies(dependencies);
-      }
-    }
-    if (dependencies.numberOfChildren() > 0) {
-      Expression e = shallowReduce(reductionContext);
-      Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
-      e.replaceWithInPlace(d);
-      d.replaceChildAtIndexInPlace(0, e);
-      if (e.type() == ExpressionNode::Type::Dependency) {
-        static_cast<Dependency &>(e).extractDependencies(dependencies);
-      }
-      return d.shallowReduce(reductionContext);
-    }
-  }
-
   return shallowReduce(reductionContext);
 }
 

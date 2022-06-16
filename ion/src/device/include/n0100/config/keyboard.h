@@ -69,7 +69,7 @@ inline uint64_t ValidKeys(uint64_t state) {
   return state & 0x1F7DF7FFFFF0FF;
 }
 
-constexpr int DebouncingDelay = 10;
+constexpr int DebouncingDelay = Clocks::Config::AHBLowFrequencyPrescaler * 28;
 constexpr int PollDelay = Clocks::Config::AHBLowFrequencyPrescaler * 100;
 
 }

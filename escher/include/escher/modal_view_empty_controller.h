@@ -21,6 +21,7 @@ protected:
     void initMessageViews();
     void setMessages(I18n::Message * message);
     void drawRect(KDContext * ctx, KDRect rect) const override;
+    void reload();
   private:
     constexpr static int k_expressionViewRowIndex = 2;
     constexpr static KDColor k_backgroundColor = Palette::WallScreen;

@@ -29,10 +29,7 @@ void MathVariableBoxEmptyController::setPage(int pageCastedToInt) {
     I18n::Message::Default,
     I18n::Message::EnableCharacters
   };
-  /* Since layoutSubviews is not called when the page changes, we need a
-   * non-empty layout the first time otherwise no screen space will be
-   * allocated. */
-  Poincare::Layout layout = Poincare::LayoutHelper::String(" ", 1, MathVariableBoxEmptyView::k_font);;
+  Poincare::Layout layout;
   switch (page) {
     case MathVariableBoxController::Page::Expression:
     {
@@ -82,4 +79,5 @@ void MathVariableBoxEmptyController::setPage(int pageCastedToInt) {
   }
   m_view.setMessages(messages);
   m_view.setLayout(layout);
+  m_view.reload();
 }

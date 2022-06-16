@@ -1,7 +1,10 @@
 #include <poincare/simplification_helper.h>
+#include <poincare/comparison_operator.h>
+#include <poincare/dependency.h>
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
 #include <poincare/integer.h>
+#include <poincare/parametered_expression.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
@@ -33,6 +36,39 @@ void SimplificationHelper::defaultDeepReduceChildren(Expression e, const Express
   }
 }
 
+Expression SimplificationHelper::defaultShallowReduce(Expression e,  const ExpressionNode::ReductionContext& reductionContext, UnitReduction unitParameter, MatrixReduction matrixParameter, ListReduction listParameter) {
+  // Step1. Shallow reduce undefined
+  Expression res = shallowReduceUndefined(e);
+  if (!res.isUninitialized()) {
+    return res;
+  }
+  // Step2. Bubble up dependencies
+  res = bubbleUpDependencies(e, reductionContext);
+  if (!res.isUninitialized()) {
+    return res;
+  }
+  // Step3. Handle units
+  if (unitParameter == UnitReduction::BanUnits) {
+    res = shallowReduceBanningUnits(e);
+  } else if (unitParameter == UnitReduction::ExtractUnitsOfFirstChild) {
+    res = shallowReduceKeepingUnitsFromFirstChild(e, reductionContext);
+  }
+  if (!res.isUninitialized()) {
+    return res;
+  }
+  // Step4. Hande matrices
+  if (matrixParameter == MatrixReduction::UndefinedOnMatrix) {
+    res = undefinedOnMatrix(e, reductionContext);
+    if (!res.isUninitialized()) {
+      return res;
+    }
+  }
+  // Step5. Handle lists
+  if (listParameter == ListReduction::DistributeOverLists) {
+    res = distributeReductionOverLists(e, reductionContext);
+  }
+  return res;
+}
 
 Expression SimplificationHelper::shallowReduceUndefined(Expression e) {
   Expression result;
@@ -57,7 +93,6 @@ Expression SimplificationHelper::shallowReduceUndefined(Expression e) {
   return Expression();
 }
 
-
 Expression SimplificationHelper::shallowReduceBanningUnits(Expression e) {
   // Generically, an Expression does not accept any Unit in its children.
   const int childrenCount = e.numberOfChildren();
@@ -69,14 +104,6 @@ Expression SimplificationHelper::shallowReduceBanningUnits(Expression e) {
     }
   }
   return Expression();
-}
-
-Expression SimplificationHelper::defaultShallowReduce(Expression e) {
-  Expression res = shallowReduceUndefined(e);
-  if (res.isUninitialized()) {  // did nothing
-    res = shallowReduceBanningUnits(e);
-  }
-  return res;
 }
 
 Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
@@ -98,14 +125,6 @@ Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(Express
     return std::move(mul);
   }
   return Expression();
-}
-
-Expression SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChild(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
-  Expression res = shallowReduceUndefined(e);
-  if (res.isUninitialized()) {
-    res = shallowReduceKeepingUnitsFromFirstChild(e, reductionContext);
-  }
-  return res;
 }
 
 Expression SimplificationHelper::undefinedOnMatrix(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
@@ -163,6 +182,40 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, cons
   }
   e.replaceWithInPlace(result);
   return  result.shallowReduce(reductionContext);
+}
+
+
+Expression SimplificationHelper::bubbleUpDependencies(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
+  if (ComparisonOperator::IsComparisonOperatorType(e.type())) {
+    return Expression();
+  }
+  List dependencies = List::Builder();
+  int nChildren = e.numberOfChildren();
+  for (int i = 0; i < nChildren; i++) {
+    if (e.isParameteredExpression() && (i == ParameteredExpression::ParameteredChildIndex())) {
+      /* A parametered expression can have dependencies on its parameter, which
+       * we don't want to factor, as the parameter does not have meaning
+       * outside of the parametered expression.
+       * The parametered expression will have to handle dependencies manually
+       * in its shallowReduce. */
+      continue;
+    }
+    Expression child = e.childAtIndex(i);
+    if (child.type() == ExpressionNode::Type::Dependency) {
+      static_cast<Dependency &>(child).extractDependencies(dependencies);
+    }
+  }
+  if (dependencies.numberOfChildren() > 0) {
+    e = e.shallowReduce(reductionContext);
+    Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
+    e.replaceWithInPlace(d);
+    d.replaceChildAtIndexInPlace(0, e);
+    if (e.type() == ExpressionNode::Type::Dependency) {
+      static_cast<Dependency &>(e).extractDependencies(dependencies);
+    }
+    return d.shallowReduce(reductionContext);
+  }
+  return Expression();
 }
 
 bool SimplificationHelper::getChildrenIfNonEmptyList(Expression e, Expression memoizedChildren[]) {

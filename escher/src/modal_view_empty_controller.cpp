@@ -39,6 +39,10 @@ int ModalViewEmptyController::ModalViewEmptyView::numberOfSubviews() const {
   return numberOfMessageTextViews() + hasExpressionView();
 }
 
+void ModalViewEmptyController::ModalViewEmptyView::reload() {
+  layoutSubviews();
+}
+
 View * ModalViewEmptyController::ModalViewEmptyView::subviewAtIndex(int index) {
   if (hasExpressionView()) {
     if (index == k_expressionViewRowIndex) {

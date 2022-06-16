@@ -32,29 +32,12 @@ TreeCache::Error TreeCache::copyTreeForEditing(int id) {
   size_t treeSize = m_cachedTree[id]->nextTree() - m_cachedTree[id];
   TreeBlock * copiedTree = m_cachedTree[id];
   if (m_sandbox.size() < treeSize) {
-    bool reset = resetCache();
+    bool reset = resetCache(false);
     assert(reset); // the tree was at least already cached
   }
   memmove(lastBlock(), copiedTree, treeSize * sizeof(TreeBlock));
   m_sandbox.setNumberOfBlocks(treeSize);
   return Error::None;
-}
-
-bool TreeCache::pushBlock(TreeBlock block) {
-  if (!m_sandbox.pushBlock(block)) {
-    if (!resetCache()) {
-      return false;
-    }
-    // Reinitialize the sandbox with the previous content
-    int nbOfSanboxBlocks = m_sandbox.lastBlock() - m_sandbox.firstBlock();
-    memmove(m_pool, m_sandbox.firstBlock(), nbOfSanboxBlocks * sizeof(TreeBlock));
-    m_sandbox = TreeSandbox(lastBlock(), k_maxNumberOfBlocks);
-    m_sandbox.setNumberOfBlocks(nbOfSanboxBlocks);
-
-    // Push new block
-    m_sandbox.pushBlock(block);
-  }
-  return true;
 }
 
 TreeCache::TreeCache() :
@@ -63,15 +46,20 @@ TreeCache::TreeCache() :
 {
 }
 
-bool TreeCache::resetCache() {
+bool TreeCache::resetCache(bool preserveSandbox) {
   if (m_nextIdentifier == 0) {
     // The cache has already been emptied
     // TODO: trigger an exception checkpoint?
     return false;
   }
   m_nextIdentifier = 0;
+  int nbOfSanboxBlocks = preserveSandbox ? m_sandbox.lastBlock() - m_sandbox.firstBlock() : 0;
+  if (preserveSandbox) {
+    memmove(m_pool, m_sandbox.firstBlock(), nbOfSanboxBlocks * sizeof(TreeBlock));
+  }
   // Redefine sandbox without overriding its content since we might need it
-  m_sandbox = TreeSandbox(lastBlock(), k_maxNumberOfBlocks);
+  m_sandbox = TreeSandbox(lastBlock(), k_maxNumberOfBlocks, nbOfSanboxBlocks);
+  m_sandbox.setNumberOfBlocks(nbOfSanboxBlocks);
   return true;
 }
 

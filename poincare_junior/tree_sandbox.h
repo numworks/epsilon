@@ -7,11 +7,16 @@
 
 namespace Poincare {
 
+/* Which API do we want?
+ * void insertTreeBefore(Tree * block)
+ * void pushCopyOfTree(TreeBlock * block)
+ * */
+
 class TreeSandbox final : public TreePool {
 public:
-  TreeSandbox(TreeBlock * firstBlock, size_t size) :
+  TreeSandbox(TreeBlock * firstBlock, size_t size, int numberOfBlocks = 0) :
     m_firstBlock(firstBlock),
-    m_numberOfBlocks(0),
+    m_numberOfBlocks(numberOfBlocks),
     m_size(size)
   {}
 
@@ -23,7 +28,6 @@ public:
   TreeBlock * lastBlock() override { return m_firstBlock + m_numberOfBlocks; }
   size_t size() const { return m_size; }
   void setNumberOfBlocks(int numberOfBlocks) { m_numberOfBlocks = numberOfBlocks; }
-
 
 private:
   TreeBlock * m_firstBlock;

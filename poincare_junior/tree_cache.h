@@ -6,6 +6,10 @@
 
 namespace Poincare {
 
+/*
+ * Ref-counter or LRU ?
+ * */
+
 class TreeCache final : public TreePool {
 public:
   enum class Error {
@@ -19,11 +23,8 @@ public:
   int storeLastTree();
   Error copyTreeForEditing(int id);
 
-  TreeBlock * sandboxBlockAtIndex(int i) { return m_sandbox.blockAtIndex(i); }
-  void replaceBlock(TreeBlock * previousBlock, TreeBlock newBlock) { return m_sandbox.replaceBlock(previousBlock, newBlock); }
-  bool pushBlock(TreeBlock block);
-  bool popBlock() { return m_sandbox.popBlock(); }
   TreeSandbox * sandbox() { return &m_sandbox; }
+  bool resetCache(bool preserveSandbox);
 
 private:
   constexpr static int k_maxNumberOfBlocks = 512;
@@ -32,7 +33,6 @@ private:
   TreeCache();
   TreeBlock * firstBlock() override { return m_nextIdentifier == 0 ? nullptr : &m_pool[0]; }
   TreeBlock * lastBlock() override { return m_nextIdentifier == 0 ? &m_pool[0] : m_cachedTree[m_nextIdentifier - 1]->nextTree(); }
-  bool resetCache();
 
   TreeSandbox m_sandbox;
   TreeBlock m_pool[k_maxNumberOfBlocks];

@@ -53,7 +53,6 @@ private:
 class ArcSine final : public ExpressionOneChild<ArcSine, ArcSineNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext);

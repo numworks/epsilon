@@ -29,7 +29,8 @@ int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
 }
 
 Expression SineNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Sine(this).shallowReduce(reductionContext);
+  Sine e = Sine(this);
+  return Trigonometry::shallowReduceDirectFunction(e, reductionContext);
 }
 
 bool SineNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
@@ -38,16 +39,6 @@ bool SineNode::derivate(const ReductionContext& reductionContext, Symbol symbol,
 
 Expression SineNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Sine(this).unaryFunctionDifferential(reductionContext);
-}
-
-Expression Sine::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
-  return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }
 
 bool Sine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {

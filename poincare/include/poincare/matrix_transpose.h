@@ -37,7 +37,7 @@ private:
 class MatrixTranspose final : public ExpressionOneChild<MatrixTranspose, MatrixTransposeNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(Context * context);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

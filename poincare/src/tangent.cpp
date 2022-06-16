@@ -56,13 +56,6 @@ Expression TangentNode::unaryFunctionDifferential(const ReductionContext& reduct
 }
 
 Expression Tangent::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
-
   Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());

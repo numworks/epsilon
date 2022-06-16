@@ -2,6 +2,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/percent.h>
 #include <poincare/power.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/unit_convert.h>
 
 namespace Poincare {

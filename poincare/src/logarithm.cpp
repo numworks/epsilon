@@ -130,15 +130,13 @@ void Logarithm::deepReduceChildren(const ExpressionNode::ReductionContext& reduc
 
 Expression CommonLogarithm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits,
+        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
+        SimplificationHelper::ListReduction::DistributeOverLists
+    );
     if (!e.isUninitialized()) {
       return e;
     }
@@ -151,15 +149,13 @@ Expression CommonLogarithm::shallowReduce(const ExpressionNode::ReductionContext
 
 Expression Logarithm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits,
+        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
+        SimplificationHelper::ListReduction::DistributeOverLists
+    );
     if (!e.isUninitialized()) {
       return e;
     }

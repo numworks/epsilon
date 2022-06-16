@@ -5,6 +5,7 @@
 #include <poincare/float.h>
 #include <poincare/infinity.h>
 #include <poincare/multiplication.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <assert.h>

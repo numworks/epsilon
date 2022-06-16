@@ -138,14 +138,15 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const Expre
 
   // Step 0. Map on list child if possible
   {
-    Expression temp = SimplificationHelper::undefinedOnMatrix(e, reductionContext);
-    if (!temp.isUninitialized()) {
-      return temp;
-    }
-
-    temp = SimplificationHelper::distributeReductionOverLists(e, reductionContext);
-    if (!temp.isUninitialized()) {
-      return temp;
+    Expression eReduced = SimplificationHelper::defaultShallowReduce(
+        e,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits,
+        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
+        SimplificationHelper::ListReduction::DistributeOverLists
+        );
+    if (!eReduced.isUninitialized()) {
+      return eReduced;
     }
   }
 
@@ -320,14 +321,15 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, const Expr
   assert(isInverseTrigonometryFunction(e));
   // Step 0. Map on list child if possible
   {
-    Expression temp = SimplificationHelper::undefinedOnMatrix(e, reductionContext);
-    if (!temp.isUninitialized()) {
-      return temp;
-    }
-
-    temp = SimplificationHelper::distributeReductionOverLists(e, reductionContext);
-    if (!temp.isUninitialized()) {
-      return temp;
+    Expression eReduced = SimplificationHelper::defaultShallowReduce(
+        e,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits,
+        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
+        SimplificationHelper::ListReduction::DistributeOverLists
+        );
+    if (!eReduced.isUninitialized()) {
+      return eReduced;
     }
   }
 

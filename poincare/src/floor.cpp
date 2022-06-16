@@ -42,15 +42,13 @@ Expression FloorNode::shallowReduce(const ReductionContext& reductionContext) {
 
 Expression Floor::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::shallowReduceUndefinedKeepingUnitsFromFirstChild(*this, reductionContext);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
+        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
+        SimplificationHelper::ListReduction::DistributeOverLists
+        );
     if (!e.isUninitialized()) {
       return e;
     }

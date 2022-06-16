@@ -48,7 +48,8 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences
 }
 
 Expression ArcTangentNode::shallowReduce(const ReductionContext& reductionContext) {
-  return ArcTangent(this).shallowReduce(reductionContext);
+  ArcTangent e = ArcTangent(this);
+  return Trigonometry::shallowReduceInverseFunction(e, reductionContext);
 }
 
 bool ArcTangentNode::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
@@ -57,16 +58,6 @@ bool ArcTangentNode::derivate(const ExpressionNode::ReductionContext& reductionC
 
 Expression ArcTangentNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return ArcTangent(this).unaryFunctionDifferential(reductionContext);
-}
-
-Expression ArcTangent::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
-  return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }
 
 bool ArcTangent::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {

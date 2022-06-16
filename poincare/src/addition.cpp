@@ -204,7 +204,7 @@ Expression Addition::shallowBeautify(const ExpressionNode::ReductionContext& red
 
 Expression Addition::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

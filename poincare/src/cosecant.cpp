@@ -3,6 +3,7 @@
 #include <poincare/cosecant.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/trigonometry.h>
 
 #include <cmath>
@@ -34,7 +35,11 @@ Expression CosecantNode::shallowReduce(const ReductionContext& reductionContext)
 
 Expression Cosecant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits
+    );
     if (!e.isUninitialized()) {
       return e;
     }

@@ -49,15 +49,13 @@ Evaluation<T> SumAndProductNode::templatedApproximate(const ApproximationContext
 
 Expression SumAndProduct::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits,
+        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
+        SimplificationHelper::ListReduction::DistributeOverLists
+    );
     if (!e.isUninitialized()) {
       return e;
     }

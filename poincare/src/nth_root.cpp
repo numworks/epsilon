@@ -58,15 +58,13 @@ Evaluation<T> NthRootNode::templatedApproximate(const ApproximationContext& appr
 
 Expression NthRoot::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::KeepUnits,
+        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
+        SimplificationHelper::ListReduction::DistributeOverLists
+        );
     if (!e.isUninitialized()) {
       return e;
     }

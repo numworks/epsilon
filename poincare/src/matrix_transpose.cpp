@@ -12,7 +12,7 @@ namespace Poincare {
 int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixTransposeNode::shallowReduce(const ReductionContext& reductionContext) {
-  return MatrixTranspose(this).shallowReduce(reductionContext.context());
+  return MatrixTranspose(this).shallowReduce(reductionContext);
 }
 
 Layout MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -37,9 +37,13 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(const ApproximationConte
 }
 
 
-Expression MatrixTranspose::shallowReduce(Context * context) {
+Expression MatrixTranspose::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits
+    );
     if (!e.isUninitialized()) {
       return e;
     }
@@ -50,7 +54,7 @@ Expression MatrixTranspose::shallowReduce(Context * context) {
     replaceWithInPlace(result);
     return result;
   }
-  if (c.deepIsMatrix(context)) {
+  if (c.deepIsMatrix(reductionContext.context())) {
     return *this;
   }
   replaceWithInPlace(c);

@@ -18,7 +18,7 @@ int ParenthesisNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 Expression ParenthesisNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Parenthesis(this).shallowReduce();
+  return Parenthesis(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
@@ -26,8 +26,8 @@ Evaluation<T> ParenthesisNode::templatedApproximate(const ApproximationContext& 
   return childAtIndex(0)->approximate(T(), approximationContext);
 }
 
-Expression Parenthesis::shallowReduce() {
-  Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+Expression Parenthesis::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+  Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
   if (!e.isUninitialized()) {
     return e;
   }

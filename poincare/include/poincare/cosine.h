@@ -51,8 +51,6 @@ class Cosine final : public ExpressionOneChild<Cosine, CosineNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
 
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
-
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext);
 };

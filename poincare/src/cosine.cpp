@@ -30,7 +30,8 @@ int CosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 }
 
 Expression CosineNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Cosine(this).shallowReduce(reductionContext);
+  Cosine e = Cosine(this);
+  return Trigonometry::shallowReduceDirectFunction(e, reductionContext);
 }
 
 bool CosineNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
@@ -40,17 +41,6 @@ bool CosineNode::derivate(const ReductionContext& reductionContext, Symbol symbo
 Expression CosineNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Cosine(this).unaryFunctionDifferential(reductionContext);
 }
-
-Expression Cosine::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
-  return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
-}
-
 
 bool Cosine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);

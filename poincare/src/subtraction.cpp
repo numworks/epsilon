@@ -51,7 +51,7 @@ Expression SubtractionNode::shallowReduce(const ReductionContext& reductionConte
 }
 
 Expression Subtraction::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+  Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
   if (!e.isUninitialized()) {
     return e;
   }

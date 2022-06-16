@@ -451,12 +451,13 @@ static int indexOfChildWithSquare(Expression e) {
 
 Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-
-    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::KeepUnits,
+        SimplificationHelper::MatrixReduction::DefinedOnMatrix,
+        SimplificationHelper::ListReduction::DistributeOverLists
+        );
     if (!e.isUninitialized()) {
       return e;
     }

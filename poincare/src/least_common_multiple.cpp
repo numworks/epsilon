@@ -2,6 +2,7 @@
 #include <poincare/arithmetic.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
@@ -39,15 +40,13 @@ Expression LeastCommonMultiple::shallowBeautify(Context * context) {
 
 Expression LeastCommonMultiple::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-    e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits,
+        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
+        SimplificationHelper::ListReduction::DistributeOverLists
+    );
     if (!e.isUninitialized()) {
       return e;
     }

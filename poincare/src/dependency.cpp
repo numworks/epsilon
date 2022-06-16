@@ -1,6 +1,7 @@
 #include <poincare/dependency.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/symbol.h>
 

@@ -33,7 +33,11 @@ Expression ArcCotangentNode::shallowReduce(const ReductionContext& reductionCont
 
 Expression ArcCotangent::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits
+    );
     if (!e.isUninitialized()) {
       return e;
     }

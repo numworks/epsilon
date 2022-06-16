@@ -5,6 +5,7 @@
 #include <poincare/list.h>
 #include <poincare/list_complex.h>
 #include <poincare/rational.h>
+#include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
@@ -101,7 +102,7 @@ template<typename T> Evaluation<T> ListAccessNode<2>::templatedApproximate(const
 
 Expression ListElement::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -135,7 +136,7 @@ Expression ListElement::shallowReduce(const ExpressionNode::ReductionContext& re
 
 Expression ListSlice::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

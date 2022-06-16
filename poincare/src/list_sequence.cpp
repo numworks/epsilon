@@ -5,6 +5,7 @@
 #include <poincare/list_sequence_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 
 namespace Poincare {
@@ -54,7 +55,11 @@ Expression ListSequence::UntypedBuilder(Expression children) {
 
 Expression ListSequence::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits
+    );
     if (!e.isUninitialized()) {
       return e;
     }

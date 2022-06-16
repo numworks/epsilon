@@ -25,7 +25,8 @@ int ArcCosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 Expression ArcCosineNode::shallowReduce(const ReductionContext& reductionContext) {
-  return ArcCosine(this).shallowReduce(reductionContext);
+  ArcCosine e = ArcCosine(this);
+  return Trigonometry::shallowReduceInverseFunction(e, reductionContext);
 }
 
 bool ArcCosineNode::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
@@ -59,17 +60,6 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences:
   }
   result = ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c);
   return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
-}
-
-
-Expression ArcCosine::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
-  return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }
 
 bool ArcCosine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {

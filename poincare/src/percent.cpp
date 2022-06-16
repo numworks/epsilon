@@ -124,7 +124,6 @@ Expression PercentSimpleNode::shallowReduce(const ExpressionNode::ReductionConte
 template <typename U> Evaluation<U> PercentSimpleNode::templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined) const {
   return Complex<U>::Builder(childAtIndex(0)->approximate(U(), approximationContext).toScalar() / 100.0);
 }
-
 /* PercentAdditionNode */
 
 // Properties
@@ -202,17 +201,17 @@ Expression PercentSimple::shallowBeautify(const ExpressionNode::ReductionContext
 }
 
 Expression PercentSimple::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  Expression e = SimplificationHelper::defaultShallowReduce(*this);
-  if (!e.isUninitialized()) {
-    return e;
-  }
-  e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
-  if (!e.isUninitialized()) {
-    return e;
-  }
-  e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
-  if (!e.isUninitialized()) {
-    return e;
+  {
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits,
+        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
+        SimplificationHelper::ListReduction::DistributeOverLists
+    );
+    if (!e.isUninitialized()) {
+      return e;
+    }
   }
   /* Percent Expression is preserved for beautification. Escape cases are
    * therefore not implemented */

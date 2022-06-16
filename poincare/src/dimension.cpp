@@ -14,7 +14,7 @@ namespace Poincare {
 int DimensionNode::numberOfChildren() const { return Dimension::s_functionHelper.numberOfChildren(); }
 
 Expression DimensionNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Dimension(this).shallowReduce(reductionContext.context());
+  return Dimension(this).shallowReduce(reductionContext);
 }
 
 Layout DimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -41,9 +41,13 @@ Evaluation<T> DimensionNode::templatedApproximate(const ApproximationContext& ap
 }
 
 
-Expression Dimension::shallowReduce(Context * context) {
+Expression Dimension::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this);
+    Expression e = SimplificationHelper::defaultShallowReduce(
+        *this,
+        reductionContext,
+        SimplificationHelper::UnitReduction::BanUnits
+    );
     if (!e.isUninitialized()) {
       return e;
     }
@@ -57,7 +61,7 @@ Expression Dimension::shallowReduce(Context * context) {
   }
 
   if (c.type() != ExpressionNode::Type::Matrix) {
-    if (c.deepIsMatrix(context)) {
+    if (c.deepIsMatrix(reductionContext.context())) {
       return *this;
     }
     return replaceWithUndefinedInPlace();

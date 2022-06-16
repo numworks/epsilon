@@ -8,7 +8,6 @@
 #include <poincare/expression_node.h>
 #include <poincare/complex.h>
 #include <poincare/solver.h>
-#include <poincare/simplification_helper.h>
 #include <ion/storage/file_system.h>
 #include <utility>
 

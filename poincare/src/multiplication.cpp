@@ -650,7 +650,7 @@ bool Multiplication::derivate(const ExpressionNode::ReductionContext& reductionC
 
 Expression Multiplication::privateShallowReduce(const ExpressionNode::ReductionContext& reductionContext, bool shouldExpand) {
   {
-    Expression e = SimplificationHelper::shallowReduceUndefined(*this);
+    Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

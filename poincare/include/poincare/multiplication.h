@@ -117,7 +117,6 @@ private:
   static bool HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2);
   static bool TermsHaveIdenticalBase(const Expression & e1, const Expression & e2);
   static bool TermsHaveIdenticalExponent(const Expression & e1, const Expression & e2);
-  static bool TermsCanSafelyCombineExponents(const Expression & e1, const Expression & e2, const ExpressionNode::ReductionContext& reductionContext);
   static bool TermHasNumeralBase(const Expression & e);
   static bool TermHasNumeralExponent(const Expression & e);
   static bool TermIsPowerOfRationals(const Expression & e);

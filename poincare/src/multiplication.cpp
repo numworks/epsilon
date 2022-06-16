@@ -775,49 +775,32 @@ Expression Multiplication::privateShallowReduce(const ExpressionNode::ReductionC
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
   int i = 0;
+  List dependencies = List::Builder();
   while (i < numberOfChildren()-1) {
     Expression oi = childAtIndex(i);
     Expression oi1 = childAtIndex(i+1);
     if (oi.recursivelyMatches(Expression::IsRandom, context)) {
       // Do not factorize random or randint
-    } else if (TermsHaveIdenticalBase(oi, oi1)) {
-      bool shouldFactorizeBase = true;
-
-      if (shouldFactorizeBase && TermHasNumeralBase(oi)) {
-        /* Combining powers of a given rational isn't straightforward. Indeed,
-         * there are two cases we want to deal with:
-         *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
-         *  - 2^(1/2)*2^(3/2) we want to combine. */
-        shouldFactorizeBase = oi.type() == ExpressionNode::Type::Power && oi1.type() == ExpressionNode::Type::Power;
-        /* WARNING : The terms should NOT combine if :
-         * - The base is negative
-         * AND We are in real mode
-         * AND one of the exponent has an even denominator.
-         * Ex : (-1)^(1/2)*(-1)^(1/2) != -1 (nonreal)
-         *
-         * We currently never encouter this case because (-1)^(1/2)
-         * is reduced into i before arriving here, but these could lead
-         * to problems one day.*/
+    } else if (TermsHaveIdenticalBase(oi, oi1)
+        && (!TermHasNumeralBase(oi)
+          || (oi.type() == ExpressionNode::Type::Power && oi1.type() == ExpressionNode::Type::Power))) {
+      /* The previous condition exists because combining powers
+       * of a given rational isn't straightforward. Indeed,
+       * there are two cases we want to deal with:
+       *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
+       *  - 2^(1/2)*2^(3/2) we want to combine. */
+      Dependency::AddPowerToListOfDependenciesIfNeeded(oi, dependencies, reductionContext, true);
+      Dependency::AddPowerToListOfDependenciesIfNeeded(oi1, dependencies, reductionContext, true);
+      factorizeBase(i, i+1, reductionContext);
+      /* An undef term could have appeared when factorizing 1^inf and 1^-inf
+       * for instance. In that case, we escape and return undef. */
+      if (childAtIndex(i).isUndefined()) {
+        return replaceWithUndefinedInPlace();
       }
-
-      if (shouldFactorizeBase) {
-        /* (x^a)*(x^b)->x^(a+b) is not generally true. For example :
-         * - x*x^-1 is undefined in 0
-         * - x^(1/2)*x^(1/2) is not equal to x if in real mode
-         * We handle theses cases here. */
-        shouldFactorizeBase = TermsCanSafelyCombineExponents(oi, oi1, reductionContext);
-      }
-
-      if (shouldFactorizeBase) {
-        factorizeBase(i, i+1, reductionContext);
-        /* An undef term could have appeared when factorizing 1^inf and 1^-inf
-         * for instance. In that case, we escape and return undef. */
-        if (childAtIndex(i).isUndefined()) {
-          return replaceWithUndefinedInPlace();
-        }
-        continue;
-      }
+      continue;
     } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
+      Dependency::AddPowerToListOfDependenciesIfNeeded(oi, dependencies, reductionContext, true);
+      Dependency::AddPowerToListOfDependenciesIfNeeded(oi1, dependencies, reductionContext, true);
       factorizeExponent(i, i+1, reductionContext);
       continue;
     } else if (TermIsPowerOfRationals(oi) && TermIsPowerOfRationals(oi1)
@@ -828,6 +811,13 @@ Expression Multiplication::privateShallowReduce(const ExpressionNode::ReductionC
       }
     }
     i++;
+  }
+  if (dependencies.numberOfChildren() > 0) {
+    Dependency dep = Dependency::Builder(Undefined::Builder(), dependencies);
+    replaceWithInPlace(dep);
+    dep.replaceChildAtIndexInPlace(0, *this);
+    shallowReduce(reductionContext);
+    return dep.shallowReduce(reductionContext);
   }
 
   /* We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
@@ -1230,70 +1220,6 @@ bool Multiplication::TermsHaveIdenticalExponent(const Expression & e1, const Exp
   /* Note: We will return false for e1=2 and e2=Pi, even though one could argue
    * that these have the same exponent whose value is 1. */
   return e1.type() == ExpressionNode::Type::Power && e2.type() == ExpressionNode::Type::Power && (e1.childAtIndex(1).isIdenticalTo(e2.childAtIndex(1)));
-}
-
-
-/* TODO : This should be replaced with dependencies.
-   * We escape this when the target is User, otherwise (pi*x^3+x^2)/x^5 would
-   * not be simplified to (pi*x+1)/x^3 since x^-2*x^2 can't be simplified when x=0.
-   * But if we just add a dependency we could remove all this function
-   * */
-bool Multiplication::TermsCanSafelyCombineExponents(const Expression & e1, const Expression & e2, const ExpressionNode::ReductionContext& reductionContext) {
-  /* Combining exponents on terms of same base (x^a)*(x^b)->x^(a+b) is safe if :
-   *  x cannot be null
-   *  OR a and b are strictly positive
-   *  OR a+b is negative or null
-   * Otherwise, although one of the term should be undefined with x=0, x^(a+b)
-   * would yield 0 instead of being undefined.
-   * In real mode, we cannot combine if :
-   * x can be negative
-   * AND
-   * (a or b is not rational
-   *   OR a or b has an even denominator) */
-  assert(TermsHaveIdenticalBase(e1,e2));
-
-  Expression base = Base(e1);
-  ExpressionNode::Sign baseSign = base.sign(reductionContext.context());
-  ExpressionNode::NullStatus baseNullStatus = base.nullStatus(reductionContext.context());
-
-  Expression exponent1 = CreateExponent(e1);
-  Expression exponent2 = CreateExponent(e2);
-
-  if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real
-      && baseSign != ExpressionNode::Sign::Positive
-      && (exponent1.type() != ExpressionNode::Type::Rational
-        || exponent2.type() != ExpressionNode::Type::Rational
-        || static_cast<Rational &>(exponent1).integerDenominator().isEven()
-        || static_cast<Rational &>(exponent2).integerDenominator().isEven())) {
-    return false;
-  }
-
-  if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
-     return true;
-  }
-
-  if (baseSign != ExpressionNode::Sign::Unknown && baseNullStatus == ExpressionNode::NullStatus::NonNull) {
-    // x cannot be null
-    return true;
-  }
-
-  if (exponent1.isStrictly(ExpressionNode::Sign::Positive, reductionContext.context())
-    && exponent2.isStrictly(ExpressionNode::Sign::Positive, reductionContext.context())) {
-    // a and b are strictly positive
-    return true;
-  }
-
-  Expression sum = Addition::Builder(exponent1, exponent2).shallowReduce(reductionContext);
-  ExpressionNode::Sign sumSign = sum.sign(reductionContext.context());
-  ExpressionNode::NullStatus sumNullStatus = sum.nullStatus(reductionContext.context());
-
-  if (sumSign == ExpressionNode::Sign::Negative || sumNullStatus == ExpressionNode::NullStatus::Null) {
-    // a+b is negative or null
-    return true;
-  }
-
-  // Otherwise, exponents cannot be combined safely
-  return false;
 }
 
 bool Multiplication::TermHasNumeralBase(const Expression & e) {

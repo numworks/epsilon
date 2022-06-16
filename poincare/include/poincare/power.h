@@ -89,6 +89,8 @@ public:
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
+  bool shouldAddDependencyWhenDisappearingDuringReduction(const ExpressionNode::ReductionContext& reductionContext);
+
 private:
   constexpr static int k_maxExactPowerMatrix = 100;
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;

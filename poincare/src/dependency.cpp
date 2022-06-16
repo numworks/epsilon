@@ -1,4 +1,5 @@
 #include <poincare/dependency.h>
+#include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/symbol.h>
@@ -85,6 +86,14 @@ void Dependency::addDependency(Expression newDependency) {
    * the expression will be undefined: new dependencies will not change that,
    * and will disappear in the next reduction. */
 }
+
+void Dependency::AddPowerToListOfDependenciesIfNeeded(Expression e, List l, ExpressionNode::ReductionContext reductionContext, bool clone) {
+  if (e.type() == ExpressionNode::Type::Power && static_cast<Power &>(e).shouldAddDependencyWhenDisappearingDuringReduction(reductionContext)) {
+    int n = l.numberOfChildren();
+    clone ? l.addChildAtIndexInPlace(e.clone(), n, n) : l.addChildAtIndexInPlace(e, n, n);
+  }
+}
+
 
 void Dependency::extractDependencies(List l) {
   int previousNumberOfChildren = l.numberOfChildren();

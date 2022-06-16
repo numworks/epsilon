@@ -16,6 +16,7 @@ public:
   // Significance Test: TwoMeans
   bool initializeDistribution(DistributionType distributionType) override { return TwoMeans::IntervalInitializeDistribution(this, distributionType); }
   int numberOfAvailableDistributions() const override { return TwoMeans::NumberOfAvailableDistributions(); }
+  I18n::Message distributionTitle() const override { return TwoMeans::DistributionTitle(); }
   void initParameters() override { TwoMeans::InitIntervalParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && TwoMeans::ZAuthorizedParameterAtIndex(i, p); }
   void setParameterAtIndex(double p, int index) override {

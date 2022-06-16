@@ -623,10 +623,10 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 
 Expression Expression::ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
   Expression exp = Parse(text, context, false);
-  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
+  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
   exp = exp.cloneAndSimplify(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion));
   assert(!exp.isUninitialized());
   return exp;

@@ -38,7 +38,7 @@ Layout LogisticModel::layout() {
 }
 
 int LogisticModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed/(1%+*.*ed·e^(%+*.*ed·x))",
+  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed/(1%+*.*ed·e^(%*.*ed·x))",
       modelCoefficients[2], displayMode, significantDigits,
       modelCoefficients[0], displayMode, significantDigits,
       -modelCoefficients[1], displayMode, significantDigits);

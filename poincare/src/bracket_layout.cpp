@@ -1,5 +1,4 @@
 #include <poincare/bracket_layout.h>
-#include <escher/metric.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <algorithm>
@@ -122,7 +121,7 @@ KDCoordinate BracketLayoutNode::childHeight() {
 KDCoordinate BracketLayoutNode::computeChildHeight() {
   LayoutNode * parentLayout = parent();
   assert(parentLayout != nullptr);
-  KDCoordinate result = Escher::Metric::MinimalBracketAndParenthesisHeight;
+  KDCoordinate result = 0;
   int idxInParent = parentLayout->indexOfChild(this);
   if (parentLayout->type() != LayoutNode::Type::HorizontalLayout) {
     /* The bracket has no true sibling. Those that might be founded by

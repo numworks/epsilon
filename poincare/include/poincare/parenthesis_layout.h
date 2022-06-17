@@ -2,6 +2,8 @@
 #define POINCARE_PARENTHESIS_LAYOUT_NODE_H
 
 #include <poincare/bracket_layout.h>
+#include <escher/metric.h>
+#include <algorithm>
 
 namespace Poincare {
 
@@ -31,7 +33,7 @@ protected:
     return KDSize(k_parenthesisWidth, HeightGivenChildHeight(childHeight()));
   }
   static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
-    return childHeight + k_verticalMargin;
+    return std::max<KDCoordinate>(childHeight, Escher::Metric::MinimalBracketAndParenthesisHeight) + k_verticalMargin;
   }
   static KDCoordinate ChildHeightGivenLayoutHeight(KDCoordinate layoutHeight) {
     return layoutHeight - k_verticalMargin;

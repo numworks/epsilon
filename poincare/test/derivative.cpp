@@ -19,13 +19,13 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(π,x,x)", "0");
   assert_reduces_to_formal_expression("diff(y,x,x)", "dep\u0014(0,{y})");
   assert_reduces_to_formal_expression("diff(x,x,x)", "dep\u0014(1,{x})");
-  assert_reduces_to_formal_expression("diff(x^2,x,x)", "dep\u0014(2×x,{x^2})");
-  assert_reduces_to_formal_expression("diff((x-1)(x-2)(x-3),x,x)", "dep\u0014(3×x^2-12×x+11,{x^3-6×x^2+11×x-6})");
-  assert_reduces_to_formal_expression("diff(√(x),x,x)", "dep\u0014(1/\u00122×√(x)\u0013,{√(x)})");
-  assert_reduces_to_formal_expression("diff(1/x,x,x)", "dep\u0014(-1/x^2,{1/x})");
+  assert_reduces_to_formal_expression("diff(x^2,x,x)", "2×x");
+  assert_reduces_to_formal_expression("diff((x-1)(x-2)(x-3),x,x)", "3×x^2-12×x+11");
+  assert_reduces_to_formal_expression("diff(√(x),x,x)", "1/\u00122×√(x)\u0013");
+  assert_reduces_to_formal_expression("diff(1/x,x,x)", "-1/x^2");
 
-  assert_reduces_to_formal_expression("diff(e^x,x,x)", "dep\u0014(e^\u0012x\u0013,{e^\U00000012x\U00000013})");
-  assert_reduces_to_formal_expression("diff(2^x,x,x)", "dep\u0014(2^x×ln(2),{2^x})");
+  assert_reduces_to_formal_expression("diff(e^x,x,x)", "e^\u0012x\u0013");
+  assert_reduces_to_formal_expression("diff(2^x,x,x)", "2^x×ln(2)");
   assert_reduces_to_formal_expression("diff(ln(x),x,x)", "dep\u0014(1/x,{ln(x)})");
   assert_reduces_to_formal_expression("diff(log(x),x,x)", "dep\u0014(1/\u0012x×ln(5)+x×ln(2)\u0013,{log(x)})");
 
@@ -42,8 +42,8 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(acos(x),x,x)", "dep\u0014(-180/\u0012π×√(-x^2+1)\u0013,{acos(x)})", Degree);
   assert_reduces_to_formal_expression("diff(atan(x),x,x)", "dep\u0014(1/\u0012x^2+1\u0013,{atan(x)})");
   assert_reduces_to_formal_expression("diff(atan(x),x,x)", "dep\u0014(180/\u0012π×x^2+π\u0013,{atan(x)})", Degree);
-  assert_reduces_to_formal_expression("diff(asec(x),x,x)", "dep\u0014(1/\u0012x^2×√(\u0012x^2-1\u0013/x^2)\u0013,{acos(1/x)})");
-  assert_reduces_to_formal_expression("diff(acsc(x),x,x)", "dep\u0014(-1/\u0012x^2×√(\u0012x^2-1\u0013/x^2)\u0013,{asin(1/x)})");
+  assert_reduces_to_formal_expression("diff(asec(x),x,x)", "dep\u0014(1/\u0012x^2×√(\u0012x^2-1\u0013/x^2)\u0013,{1/x^2,acos(1/x)})");
+  assert_reduces_to_formal_expression("diff(acsc(x),x,x)", "dep\u0014(-1/\u0012x^2×√(\u0012x^2-1\u0013/x^2)\u0013,{1/x^2,asin(1/x)})");
   assert_reduces_to_formal_expression("diff(acot(x),x,x)", "dep\u0014(-1/\u0012x^2+1\u0013,{\u0012π×sign(x)-2×atan(x)\u0013/2})");
 
   assert_reduces_to_formal_expression("diff(sinh(x),x,x)", "dep\u0014(cosh(x),{sinh(x)})");

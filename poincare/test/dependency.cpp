@@ -53,10 +53,10 @@ QUIZ_CASE(poincare_dependency_function) {
   assert_reduce("1+2→a");
 
   // A variable argument is used as dependency
-  assert_expression_simplify_to_with_dependencies("f(x)", "x+1", {"x"});
-  assert_expression_simplify_to_with_dependencies("f(x+y)", "x+y+1", {"x+y"});
+  assert_expression_simplify_to_with_dependencies("f(x)", "x+1", {""});
+  assert_expression_simplify_to_with_dependencies("f(x+y)", "x+y+1", {""});
   assert_expression_simplify_to_with_dependencies("g(x)", "3", {"x"});
-  assert_expression_simplify_to_with_dependencies("g(x+a+3+4)", "3", {"x+10"});
+  assert_expression_simplify_to_with_dependencies("g(x+a+3+4)", "3", {"x"});
   // A constant argument does not create dependencies
   assert_expression_simplify_to_with_dependencies("f(2)", "3", {""});
   assert_expression_simplify_to_with_dependencies("g(-1.23)", "3", {""});
@@ -73,10 +73,10 @@ QUIZ_CASE(poincare_dependency_bubble_up) {
   assert_reduce("2x→f(x)");
   assert_reduce("x+1→g(x)");
 
-  assert_expression_simplify_to_with_dependencies("1+f(x)", "2×x+1", {"x"});
-  assert_expression_simplify_to_with_dependencies("g(y)+f(x)", "2×x+y+1", {"y", "x"});
-  assert_expression_simplify_to_with_dependencies("g(f(x))", "2×x+1", {"x", "2×x"});
-  assert_expression_simplify_to_with_dependencies("f(g(x))", "2×x+2", {"x", "x+1"});
+  assert_expression_simplify_to_with_dependencies("1+f(x)", "2×x+1", {""});
+  assert_expression_simplify_to_with_dependencies("g(y)+f(x)", "2×x+y+1", {""});
+  assert_expression_simplify_to_with_dependencies("g(f(x))", "2×x+1", {""});
+  assert_expression_simplify_to_with_dependencies("f(g(x))", "2×x+2", {""});
 
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("g.func").destroy();
@@ -85,9 +85,8 @@ QUIZ_CASE(poincare_dependency_bubble_up) {
 QUIZ_CASE(poincare_dependency_derivative) {
   assert_reduce("x^2→f(x)");
   assert_expression_simplify_to_with_dependencies("diff(cos(x),x,0)", "0", {""});
-  assert_expression_simplify_to_with_dependencies("diff(2x,x,y)", "2", {"2×y"});
-  assert_expression_simplify_to_with_dependencies("diff(f(x),x,a)", "2×a", {"a", "a^2"});
-  assert_expression_simplify_to_with_dependencies("diff(f(x),x,a)", "2×a", {"a", "a^2"});
+  assert_expression_simplify_to_with_dependencies("diff(2x,x,y)", "2", {"y"});
+  assert_expression_simplify_to_with_dependencies("diff(f(x),x,a)", "2×a", {""});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 
   assert_reduce("3→f(x)");
@@ -112,7 +111,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   /* If the derivation is not handled properly, the symbol x could be reduced
    * to undef. */
   assert_reduce("x→f(x)");
-  assert_expression_simplify_to_with_dependencies("int(diff(f(x),x,x),x,0,1)", "int(dep\u0014(1,{x,x}),x,0,1)", {""});
+  assert_expression_simplify_to_with_dependencies("int(diff(f(x),x,x),x,0,1)", "int(dep\u0014(1,{x}),x,0,1)", {""});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 
   /* When trimming dependencies, we must be able to recognize unreduced
@@ -139,14 +138,14 @@ QUIZ_CASE(poincare_dependency_sequence) {
 
 QUIZ_CASE(poincare_dependency_power) {
   assert_reduce("1/(1/x)→f(x)");
-  assert_expression_simplify_to_with_dependencies("f(x)", "x", {"1/x","x"});
+  assert_expression_simplify_to_with_dependencies("f(x)", "x", {"1/x"});
   assert_reduce("1/tan(x)→f(x)");
-  assert_expression_simplify_to_with_dependencies("f(x)", "cot(x)", {"x"});
+  assert_expression_simplify_to_with_dependencies("f(x)", "cot(x)", {"sec(x)"});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_dependency_multiplication) {
   assert_reduce("ln(x)-ln(x)→f(x)");
-  assert_expression_simplify_to_with_dependencies("f(x)", "0", {"log(x,e)","x"});
+  assert_expression_simplify_to_with_dependencies("f(x)", "0", {"ln(x)"});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 }

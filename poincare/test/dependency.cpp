@@ -136,3 +136,17 @@ QUIZ_CASE(poincare_dependency_sequence) {
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("u.seq").destroy();
 }
+
+QUIZ_CASE(poincare_dependency_power) {
+  assert_reduce("1/(1/x)→f(x)");
+  assert_expression_simplify_to_with_dependencies("f(x)", "x", {"1/x","x"});
+  assert_reduce("1/tan(x)→f(x)");
+  assert_expression_simplify_to_with_dependencies("f(x)", "cot(x)", {"x"});
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+}
+
+QUIZ_CASE(poincare_dependency_multiplication) {
+  assert_reduce("ln(x)-ln(x)→f(x)");
+  assert_expression_simplify_to_with_dependencies("f(x)", "0", {"log(x,e)","x"});
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+}

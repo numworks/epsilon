@@ -29,6 +29,7 @@ namespace Print {
  *                   Preferences::PrintFloatMode::Scientific,
  *                   4)
  *       --> "A double 1.235E-2!"
+ * - %+i or %+*.*ef inserts the plus sign if the value is positive or null
  *
  * In contrast to safeCustomPrintf, customPrintf method asserts that the
  * bufferSize is large enough. If the text does not fit, the buffer is erased

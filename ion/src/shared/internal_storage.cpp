@@ -55,7 +55,7 @@ InternalStorage::Record::Record(const char * fullName) {
     m_fullNameCRC32 = 0;
     return;
   }
-  const char * dotChar = UTF8Helper::LastCodePoint(fullName, k_dotChar);
+  const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
   // If no extension, return empty record
   if (*dotChar == 0 || *(dotChar+1) == 0) {
     m_fullNameCRC32 = 0;

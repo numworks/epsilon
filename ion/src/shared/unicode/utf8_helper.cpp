@@ -54,34 +54,6 @@ const char * CodePointSearch(const char * s, CodePoint c, const char * stoppingP
   return currentPointer;
 }
 
-const char * LastCodePoint(const char * s, CodePoint c, const char * stoppingPosition) {
-  if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
-    const char * result = nullptr;
-    const char * position = s;
-    while (*position != 0 && (stoppingPosition == nullptr || position != stoppingPosition)) {
-      if (*position == c) {
-        result = position;
-      }
-      position++;
-    }
-    return result ? result : position;
-  }
-  UTF8Decoder decoder(s);
-  const char * currentPointer = s;
-  const char * result = nullptr;
-  CodePoint codePoint = decoder.nextCodePoint();
-  const char * nextPointer = decoder.stringPosition();
-  while (codePoint != UCodePointNull && (stoppingPosition == nullptr || currentPointer < stoppingPosition)) {
-    if (c == codePoint) {
-      result = currentPointer;
-    }
-    currentPointer = nextPointer;
-    codePoint = decoder.nextCodePoint();
-    nextPointer = decoder.stringPosition();
-  }
-  return result ? result : currentPointer;
-}
-
 bool HasCodePoint(const char * s, CodePoint c, const char * stoppingPosition) {
   assert(c != 0);
   const char * resultPosition = CodePointSearch(s, c, stoppingPosition);

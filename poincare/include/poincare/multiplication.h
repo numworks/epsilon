@@ -7,7 +7,6 @@
 namespace Poincare {
 
 class MultiplicationNode final : public NAryInfixExpressionNode {
-  friend class Addition;
 public:
   using NAryInfixExpressionNode::NAryInfixExpressionNode;
 
@@ -106,7 +105,6 @@ private:
   Expression removeUnit(Expression * unit);
 
   // Simplification
-  Expression privateShallowReduce(const ExpressionNode::ReductionContext& reductionContext, bool expand);
   void factorizeBase(int i, int j, const ExpressionNode::ReductionContext& reductionContext);
   void mergeInChildByFactorizingBase(int i, Expression e, const ExpressionNode::ReductionContext& reductionContext);
   void factorizeExponent(int i, int j, const ExpressionNode::ReductionContext& reductionContext);

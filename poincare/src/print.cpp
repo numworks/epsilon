@@ -16,6 +16,12 @@ int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, v
     if (*format == '%') {
       assert(*(format + 1) != 0);
       int formatLength = 2;
+      bool addPlusIfPositive = false;
+      if (*(format + 1) == '+') {
+        assert(*(format + 2) == 'i' || *(format + 2) == '*');
+        format++;
+        addPlusIfPositive = true;
+      }
       if (*(format + 1) == 's' || (*(format + 1) != 0 && *(format + 2) == 's')) {
         char * insertedText = buffer;
         // Insert text now
@@ -32,7 +38,12 @@ int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, v
         *buffer = static_cast<char>(va_arg(args, int));
         buffer++;
       } else if (*(format + 1) == 'i') {
-        buffer += Poincare::PrintInt::Left(va_arg(args, int), buffer, bufferSize - (buffer - origin) - 1);
+        int value = va_arg(args, int);
+        if (addPlusIfPositive && value >= 0) {
+          *buffer = '+';
+          buffer++;
+        }
+        buffer += Poincare::PrintInt::Left(value, buffer, bufferSize - (buffer - origin) - 1);
       } else if (*(format + 1) == '%') {
         *buffer = '%';
         buffer++;
@@ -44,6 +55,10 @@ int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, v
             && *(format + 4) == 'e'
             && *(format + 5) != 0);
         double value = va_arg(args, double);
+        if (addPlusIfPositive && value >= 0.0) {
+          *buffer = '+';
+          buffer++;
+        }
         Preferences::PrintFloatMode displayMode = static_cast<Preferences::PrintFloatMode>(va_arg(args, int));
         int numberOfSignificantDigits = va_arg(args, int);
         int glyphLength = PrintFloat::glyphLengthForFloatWithPrecision(numberOfSignificantDigits);

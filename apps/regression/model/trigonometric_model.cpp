@@ -31,7 +31,7 @@ Layout TrigonometricModel::layout() {
 }
 
 int TrigonometricModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed·sin(%*.*ed·x+%*.*ed)+%*.*ed",
+  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed·sin(%*.*ed·x%+*.*ed)%+*.*ed",
       modelCoefficients[0], displayMode, significantDigits,
       modelCoefficients[1], displayMode, significantDigits,
       modelCoefficients[2], displayMode, significantDigits,

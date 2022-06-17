@@ -16,6 +16,7 @@
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
 #include "on_boarding/prompt_controller.h"
+#include <escher/blink_timer.h>
 #include <escher/container.h>
 #include <poincare/preferences.h>
 #include <ion/events.h>
@@ -82,6 +83,7 @@ private:
   BatteryTimer m_batteryTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
+  Escher::BlinkTimer m_blinkTimer;
   Home::App::Snapshot m_homeSnapshot;
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;

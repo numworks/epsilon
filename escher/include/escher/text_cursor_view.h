@@ -10,6 +10,7 @@ public:
   constexpr static KDCoordinate k_width = 1;
 
   TextCursorView() : m_visible(true) {}
+  ~TextCursorView();
 
   // View
   void drawRect(KDContext * ctx, KDRect rect) const override;

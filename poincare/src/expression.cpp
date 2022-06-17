@@ -304,16 +304,6 @@ bool Expression::allChildrenAreUndefined() {
   return true;
 }
 
-bool Expression::isDefinedCosineOrSine(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  if (isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine})) {
-    float r = childAtIndex(0).approximateToScalar<float>(context, complexFormat, angleUnit);
-    if (!std::isnan(r)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 bool Expression::isBasedIntegerCappedBy(const char * stringInteger) const {
   return type() == ExpressionNode::Type::BasedInteger && (Integer::NaturalOrder(convert<BasedInteger>().integer(), Integer(stringInteger)) < 0);
 }

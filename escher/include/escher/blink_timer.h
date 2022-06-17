@@ -1,0 +1,25 @@
+#ifndef ESCHER_BLINK_TIMER_H
+#define ESCHER_BLINK_TIMER_H
+
+#include <escher/text_cursor_view.h>
+#include <escher/timer.h>
+
+namespace Escher {
+
+class BlinkTimer : public Timer {
+public:
+  constexpr static uint32_t k_blinkPeriod = 600;
+
+  static void registerCursor(TextCursorView * cursor) { s_cursor = cursor; }
+
+  BlinkTimer() : Timer(k_blinkPeriod / TickDuration) {}
+
+private:
+  static TextCursorView * s_cursor;
+
+  bool fire() override;
+};
+
+}
+
+#endif

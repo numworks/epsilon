@@ -504,7 +504,7 @@ Expression Addition::factorizeOnCommonDenominator(const ExpressionNode::Reductio
   for (int i = 0; i < childrenNumber; i++) {
     Multiplication m = Multiplication::Builder(childAtIndex(i), commonDenominator.clone());
     numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
-    m.privateShallowReduce(reductionContext, true);
+    m.shallowReduce(reductionContext);
   }
 
   // Step 3: Add the denominator
@@ -534,13 +534,14 @@ Expression Addition::factorizeOnCommonDenominator(const ExpressionNode::Reductio
   /* Step 6: We simplify the resulting multiplication forbidding any
    * distribution of multiplication on additions (to avoid an infinite loop).
    * Handle the removed random factors. */
+  childContext.setExpandMultiplication(false);
   int aChildrenCount = a.numberOfChildren();
   if (aChildrenCount == 0) {
     replaceWithInPlace(result);
-    return result.privateShallowReduce(childContext, false);
+    return result.shallowReduce(childContext);
   }
   a.addChildAtIndexInPlace(result, aChildrenCount, aChildrenCount);
-  result.privateShallowReduce(childContext, false);
+  result.shallowReduce(childContext);
   replaceWithInPlace(a);
   return std::move(a);
 }

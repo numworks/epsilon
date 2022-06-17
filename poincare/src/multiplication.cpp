@@ -369,10 +369,6 @@ void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColu
   }
 }
 
-Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  return privateShallowReduce(reductionContext, true);
-}
-
 static bool CanSimplifyUnitProduct(
     const UnitNode::Vector<int> &unitsExponents, size_t &unitsSupportSize,
     const UnitNode::Vector<int> * entryUnitExponents, int entryUnitExponent,
@@ -648,14 +644,14 @@ bool Multiplication::derivate(const ExpressionNode::ReductionContext& reductionC
   return true;
 }
 
-Expression Multiplication::privateShallowReduce(const ExpressionNode::ReductionContext& reductionContext, bool shouldExpand) {
+Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
   }
-
+  bool shouldExpand = reductionContext.shouldExpandMultiplication();
   bool productHasUnit = hasUnit();
 
   /* Before merging with multiplication children, we must catch a forbidden

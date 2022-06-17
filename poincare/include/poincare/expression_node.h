@@ -206,12 +206,13 @@ public:
 
   class ReductionContext : public ComputationContext {
   public:
-    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) :
+    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default, bool expandMultiplication = true) :
       ComputationContext(context, complexFormat, angleUnit),
       m_unitFormat(unitFormat),
       m_target(target),
       m_symbolicComputation(symbolicComputation),
-      m_unitConversion(unitConversion)
+      m_unitConversion(unitConversion),
+      m_expandMultiplication(expandMultiplication)
     {}
     static ReductionContext NonInvasiveReductionContext(const ReductionContext& reductionContext) {
       return ReductionContext(
@@ -231,11 +232,14 @@ public:
     void setSymbolicComputation(SymbolicComputation symbolicComputation) { m_symbolicComputation = symbolicComputation; }
     void setUnitConversion(UnitConversion unitConversion) { m_unitConversion = unitConversion; }
     UnitConversion unitConversion() const { return m_unitConversion; }
+    void setExpandMultiplication(bool expandMultiplication) { m_expandMultiplication = expandMultiplication; }
+    bool shouldExpandMultiplication() const { return static_cast<bool>(m_expandMultiplication); }
   private:
     Preferences::UnitFormat m_unitFormat;
     ReductionTarget m_target;
     SymbolicComputation m_symbolicComputation;
     UnitConversion m_unitConversion;
+    bool m_expandMultiplication;
   };
 
   class ApproximationContext : public ComputationContext {

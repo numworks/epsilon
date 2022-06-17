@@ -4,6 +4,8 @@
 #include <poincare/layout_helper.h>
 #include <poincare/bracket_layout.h>
 #include <poincare/serialization_helper.h>
+#include <escher/metric.h>
+#include <algorithm>
 
 namespace Poincare {
 
@@ -31,11 +33,15 @@ public:
 #endif
 
 protected:
-  static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) { return childHeight + k_verticalInternalMargin; }
+static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
+    return std::max<KDCoordinate>(childHeight, Escher::Metric::MinimalBracketAndParenthesisHeight) + k_verticalInternalMargin;
+  }
   static KDCoordinate ChildHeightGivenLayoutHeight(KDCoordinate layoutHeight) { return layoutHeight - k_verticalInternalMargin; }
   static void RenderWithChildHeight(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
 
-  KDSize computeSize() override { return KDSize(k_curlyBraceWidth, HeightGivenChildHeight(childHeight())); }
+  KDSize computeSize() override {
+    return KDSize(k_curlyBraceWidth, HeightGivenChildHeight(childHeight()));
+  }
 };
 
 class LeftCurlyBraceLayoutNode final : public CurlyBraceLayoutNode {

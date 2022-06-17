@@ -69,6 +69,12 @@ inline uint64_t ValidKeys(uint64_t state) {
   return state & 0x1F7DF7FFFFF17F;
 }
 
+/* TODO: 10 us seems to work, but wasn't really calculated. 100 us slows down
+ * USB::shouldInterruptDFU() which is called in DFU mode and breaks the
+ * USB protocole on some architectures. Alternative: we could activate
+ * the single OnOff/Home row, only once right before entering DFU mode and
+ * thereby interrupt DFU only on Home/OnOff keys. */
+constexpr int RowActivationDelay = 10; // us
 constexpr int DebouncingDelay = 80;
 constexpr int PollDelay = Clocks::Config::AHBLowFrequencyPrescaler * 100;
 

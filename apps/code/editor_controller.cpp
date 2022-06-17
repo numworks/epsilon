@@ -64,11 +64,7 @@ void EditorController::didBecomeFirstResponder() {
 void EditorController::viewWillAppear() {
   ViewController::viewWillAppear();
   m_editorView.loadSyntaxHighlighter();
-  if(GlobalPreferences::sharedGlobalPreferences()->cursorSaving()) {
-    m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
-  } else {
-    m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
-  }
+  m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
 }
 
 void EditorController::viewDidDisappear() {

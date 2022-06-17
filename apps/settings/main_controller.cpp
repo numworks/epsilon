@@ -26,7 +26,7 @@ constexpr SettingsMessageTree s_contributorsChildren[18] = {SettingsMessageTree(
 
 // Code Settings
 #ifdef HAS_CODE
-constexpr SettingsMessageTree s_codeChildren[4] = {SettingsMessageTree(I18n::Message::FontSizes, s_modelFontChildren), SettingsMessageTree(I18n::Message::Autocomplete), SettingsMessageTree(I18n::Message::SyntaxHighlighting), SettingsMessageTree(I18n::Message::CursorSaving)};
+constexpr SettingsMessageTree s_codeChildren[3] = {SettingsMessageTree(I18n::Message::FontSizes, s_modelFontChildren), SettingsMessageTree(I18n::Message::Autocomplete), SettingsMessageTree(I18n::Message::SyntaxHighlighting)};
 #endif
 constexpr SettingsMessageTree s_modelFontChildren[2] = {SettingsMessageTree(I18n::Message::LargeFont), SettingsMessageTree(I18n::Message::SmallFont)};
 

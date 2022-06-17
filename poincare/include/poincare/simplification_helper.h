@@ -38,10 +38,7 @@ public:
    * Step 5. Apply the list reduction depending on parameter
    * (Steps 3, 4 and 5 do nothing if parameter = 0) */
   static Expression defaultShallowReduce(Expression e,  const ExpressionNode::ReductionContext& reductionContext, UnitReduction unitParameter = UnitReduction::KeepUnits, MatrixReduction matrixParameter = MatrixReduction::DefinedOnMatrix, ListReduction listParameter = ListReduction::DoNotDistributeOverLists);
-  /* Handle circuit breaker and early reduce if should be undefined
-   * Returns uninitialized handle if nothing was done, the resulting expression
-   * otherwise. */
-  static Expression shallowReduceUndefined(Expression e);
+
   /* This method should be called only on expressions which have all their
    * children reduced */
   static Expression distributeReductionOverLists(Expression e, const ExpressionNode::ReductionContext& reductionContext);
@@ -51,6 +48,10 @@ public:
   static bool extractIntegerChildAtIndex(Expression e, int integerChildIndex, int * integerChildReturnValue, bool * isSymbolReturnValue);
 
 private:
+  /* Handle circuit breaker and early reduce if should be undefined
+   * Returns uninitialized handle if nothing was done, the resulting expression
+   * otherwise. */
+  static Expression shallowReduceUndefined(Expression e);
   /* If `e` contains units, replaces with undefined to parent and returns the
    * undefined handle. Returns uninitialized handle otherwise. */
   static Expression shallowReduceBanningUnits(Expression e);

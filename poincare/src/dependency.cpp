@@ -41,16 +41,19 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(const Ap
 // Dependency
 
 Expression Dependency::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  // Undefined/Unreal nodes are bubbled-up
-  SimplificationHelper::shallowReduceUndefined(childAtIndex(k_indexOfDependenciesList));
-  Expression dependencies = childAtIndex(k_indexOfDependenciesList);
-  if (dependencies.isUndefined()) {
-    /* dependencies is either Undefined or Nonreal. */
-    replaceWithInPlace(dependencies);
-    return dependencies;
-  }
-  assert(dependencies.type() == ExpressionNode::Type::List);
+  /* Undefined and dependencies are bubbled-up from list of dependencies.
+   * We do this here because we do not want to do this in List::shallowReduce
+   * since most of lists do not want to bubble up their undef and dependencies.
+   * (because {undef} != undef) */
+  SimplificationHelper::defaultShallowReduce(childAtIndex(k_indexOfDependenciesList), reductionContext);
 
+  Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+
+  Expression dependencies = childAtIndex(k_indexOfDependenciesList);
+  assert(dependencies.type() == ExpressionNode::Type::List);
   int totalNumberOfDependencies = numberOfDependencies();
   int i = 0;
   while (i < totalNumberOfDependencies) {

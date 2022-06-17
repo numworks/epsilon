@@ -24,7 +24,7 @@ static double toRadians() {
 
 Layout TrigonometricModel::layout() {
   if (m_layout.isUninitialized()) {
-    const char * s = "a·sin(b·X+c)+d";
+    const char * s = "a·sin(b·x+c)+d";
     m_layout = LayoutHelper::StringToCodePointsLayout(s, strlen(s), k_layoutFont);
   }
   return m_layout;

@@ -27,7 +27,7 @@ Layout LogisticModel::layout() {
             CodePointLayout::Builder('-', k_layoutFont),
             CodePointLayout::Builder('b', k_layoutFont),
             CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-            CodePointLayout::Builder('X', k_layoutFont)
+            CodePointLayout::Builder('x', k_layoutFont)
           }),
           VerticalOffsetLayoutNode::Position::Superscript
         )

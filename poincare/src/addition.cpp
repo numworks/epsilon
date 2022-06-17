@@ -504,7 +504,16 @@ Expression Addition::factorizeOnCommonDenominator(const ExpressionNode::Reductio
   for (int i = 0; i < childrenNumber; i++) {
     Multiplication m = Multiplication::Builder(childAtIndex(i), commonDenominator.clone());
     numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
-    m.shallowReduce(reductionContext);
+    Expression reducedM = m.shallowReduce(reductionContext);
+    if (reducedM.type() == ExpressionNode::Type::Dependency) {
+      /* The reduction of the numerator might have created dependencies that
+       * we do not need since the information of the forbidden values is either
+       * contained in the denominator or already bubbled up.
+       * Example: When creating the numerator for 3+(1/x^2), we compute
+       * x^2*(3+(1/x^2)) which create a dependency in 1/x^2.
+       * This is useless since the final result is (3x^2+1)/x^2 */
+      reducedM.replaceWithInPlace(reducedM.childAtIndex(0));
+    }
   }
 
   // Step 3: Add the denominator

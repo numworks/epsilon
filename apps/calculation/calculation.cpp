@@ -241,22 +241,23 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   }
 }
 
-Calculation::AdditionalInformationType Calculation::additionalInformationType(Context * context) {
+Calculation::AdditionalInformationType Calculation::additionalInformationType() {
   if (ExamModeConfiguration::additionalResultsAreForbidden()
       || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), "undef") == 0) {
     return AdditionalInformationType::None;
   }
   Preferences * preferences = Preferences::sharedPreferences();
   Expression i = input();
-  Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), i, context);
   Expression o = exactOutput();
   Expression a = approximateOutput(NumberOfSignificantDigits::Maximal);
+  Preferences::ComplexFormat complexFormat =  Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), a, nullptr);
+  bool isComplex = a.hasDefinedComplexApproximation(nullptr, complexFormat, preferences->angleUnit());
   /* Special case for Equal and Store:
    * Equal/Store nodes have to be at the root of the expression, which prevents
    * from creating new expressions with equal/store node as a child. We don't
    * return any additional outputs for them to avoid bothering with special
    * cases. */
-  if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Equal || i.type() == ExpressionNode::Type::Store) {
+  if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Equal || i.type() == ExpressionNode::Type::Store || a.type() == ExpressionNode::Type::Undefined) {
     return AdditionalInformationType::None;
   }
   /* Trigonometry additional results are displayed if either input or output is a sin or a cos. Indeed, we want to capture both cases:
@@ -264,8 +265,9 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
    *   > output: 1/2
    * - > input: 2cos(2) - cos(2)
    *   > output: cos(2)
+   * However if the result is complex, it is treated as a complex result instead
    */
-  if (i.isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit()) || o.isDefinedCosineOrSine(context, complexFormat, preferences->angleUnit())) {
+  if (!isComplex && (i.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine}) || o.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine}))) {
     return AdditionalInformationType::Trigonometry;
   }
   if (o.hasUnit()) {
@@ -285,7 +287,7 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   if (o.isDivisionOfIntegers() || (o.type() == ExpressionNode::Type::Opposite && o.childAtIndex(0).isDivisionOfIntegers())) {
     return AdditionalInformationType::Rational;
   }
-  if (a.hasDefinedComplexApproximation(context, complexFormat, preferences->angleUnit())) {
+  if (isComplex) {
     return AdditionalInformationType::Complex;
   }
   if (o.type() == ExpressionNode::Type::Matrix) {

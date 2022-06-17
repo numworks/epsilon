@@ -251,7 +251,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, P
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
   m_calculationExpanded = expanded && calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle;
-  m_calculationAdditionInformation = calculation->additionalInformationType(context);
+  m_calculationAdditionInformation = calculation->additionalInformationType();
   m_inputView.setLayout(calculation->createInputLayout());
 
   /* All expressions have to be updated at the same time. Otherwise,

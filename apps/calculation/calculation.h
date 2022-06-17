@@ -94,7 +94,7 @@ public:
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
 
   // Additional Information
-  AdditionalInformationType additionalInformationType(Poincare::Context * context);
+  AdditionalInformationType additionalInformationType();
 private:
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";

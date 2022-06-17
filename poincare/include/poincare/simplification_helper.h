@@ -39,6 +39,9 @@ public:
    * (Steps 3, 4 and 5 do nothing if parameter = 0) */
   static Expression defaultShallowReduce(Expression e,  const ExpressionNode::ReductionContext& reductionContext, UnitReduction unitParameter = UnitReduction::KeepUnits, MatrixReduction matrixParameter = MatrixReduction::DefinedOnMatrix, ListReduction listParameter = ListReduction::DoNotDistributeOverLists);
 
+  // This will shallowReduce the resulting expression.
+  static Expression bubbleUpDependencies(Expression e, const ExpressionNode::ReductionContext& reductionContext);
+
   /* This method should be called only on expressions which have all their
    * children reduced */
   static Expression distributeReductionOverLists(Expression e, const ExpressionNode::ReductionContext& reductionContext);
@@ -61,7 +64,6 @@ private:
   static Expression shallowReduceKeepingUnitsFromFirstChild(Expression e, const ExpressionNode::ReductionContext& reductionContext);
 
   static Expression undefinedOnMatrix(Expression e, const ExpressionNode::ReductionContext& reductionContext);
-  static Expression bubbleUpDependencies(Expression e, const ExpressionNode::ReductionContext& reductionContext);
 
 };
 }

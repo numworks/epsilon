@@ -343,6 +343,12 @@ Expression Addition::shallowReduce(const ExpressionNode::ReductionContext& reduc
     i++;
   }
 
+  // Factorizing terms might have create dependencies.
+  Expression eBubbledUp = SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
+  if (!eBubbledUp.isUninitialized()) {
+    return eBubbledUp;
+  }
+
   /* Step 7: Let's remove any zero. It's important to do this after having
    * factorized because factorization can lead to new zeroes. For example
    * pi+(-1)*pi. We don't remove the last zero if it's the only child left

@@ -12,6 +12,7 @@ namespace Print {
 
 int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, va_list args) {
   char * const origin = buffer;
+  assert(bufferSize > 0);
   while (*format != 0) {
     if (*format == '%') {
       assert(*(format + 1) != 0);

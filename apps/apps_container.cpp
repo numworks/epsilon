@@ -1,13 +1,13 @@
 #include "apps_container.h"
 #include "apps_container_storage.h"
-#include "global_preferences.h"
 #include "exam_mode_configuration.h"
-#include <escher/clipboard.h>
-#include <ion.h>
-#include <poincare/init.h>
-#include <poincare/exception_checkpoint.h>
+#include "global_preferences.h"
 #include "global_preferences.h"
 #include "shared/record_restrictive_extensions_helper.h"
+#include <escher/clipboard.h>
+#include <poincare/exception_checkpoint.h>
+#include <poincare/init.h>
+#include <ion.h>
 
 extern "C" {
 #include <assert.h>
@@ -404,11 +404,11 @@ Window * AppsContainer::window() {
 }
 
 int AppsContainer::numberOfContainerTimers() {
-  return 3;
+  return 4;
 }
 
 Timer * AppsContainer::containerTimerAtIndex(int i) {
-  Timer * timers[3] = {&m_batteryTimer, &m_suspendTimer, &m_backlightDimmingTimer};
+  Timer * timers[4] = {&m_batteryTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_blinkTimer};
   return timers[i];
 }
 

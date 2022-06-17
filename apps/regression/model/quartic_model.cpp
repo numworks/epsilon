@@ -22,7 +22,7 @@ Layout QuarticModel::layout() {
     m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder('X', k_layoutFont),
+      CodePointLayout::Builder('x', k_layoutFont),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('4', k_layoutFont),
         VerticalOffsetLayoutNode::Position::Superscript
@@ -30,7 +30,7 @@ Layout QuarticModel::layout() {
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('b', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder('X', k_layoutFont),
+      CodePointLayout::Builder('x', k_layoutFont),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('3', k_layoutFont),
         VerticalOffsetLayoutNode::Position::Superscript
@@ -38,7 +38,7 @@ Layout QuarticModel::layout() {
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('c', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder('X', k_layoutFont),
+      CodePointLayout::Builder('x', k_layoutFont),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('2', k_layoutFont),
         VerticalOffsetLayoutNode::Position::Superscript
@@ -46,7 +46,7 @@ Layout QuarticModel::layout() {
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('d', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder('X', k_layoutFont),
+      CodePointLayout::Builder('x', k_layoutFont),
       CodePointLayout::Builder('+', k_layoutFont),
       CodePointLayout::Builder('e', k_layoutFont),
     });

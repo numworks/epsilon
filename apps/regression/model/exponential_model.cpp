@@ -19,13 +19,13 @@ Layout ExponentialModel::layout() {
     Layout exponent;
     if (m_isAbxForm) {
       base = CodePointLayout::Builder('b', k_layoutFont),
-      exponent = CodePointLayout::Builder('X', k_layoutFont);
+      exponent = CodePointLayout::Builder('x', k_layoutFont);
     } else {
       base = CodePointLayout::Builder('e', k_layoutFont),
       exponent = HorizontalLayout::Builder({
         CodePointLayout::Builder('b', k_layoutFont),
         CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-        CodePointLayout::Builder('X', k_layoutFont)
+        CodePointLayout::Builder('x', k_layoutFont)
         });
     }
     m_layout = HorizontalLayout::Builder({

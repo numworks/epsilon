@@ -16,7 +16,7 @@ Layout PowerModel::layout() {
     m_layout = HorizontalLayout::Builder({
       CodePointLayout::Builder('a', k_layoutFont),
       CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder('X', k_layoutFont),
+      CodePointLayout::Builder('x', k_layoutFont),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('b', k_layoutFont),
         VerticalOffsetLayoutNode::Position::Superscript

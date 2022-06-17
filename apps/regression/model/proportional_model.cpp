@@ -10,7 +10,7 @@ namespace Regression {
 
 Layout ProportionalModel::layout() {
   if (m_layout.isUninitialized()) {
-    const char * s = "a·X";
+    const char * s = "a·x";
     m_layout = LayoutHelper::StringToCodePointsLayout(s, strlen(s), k_layoutFont);
   }
   return m_layout;

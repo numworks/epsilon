@@ -5,6 +5,7 @@ escher_src += $(addprefix escher/src/,\
   alternate_view_controller.cpp \
   app.cpp \
   bank_view_controller.cpp \
+  blink_timer.cpp \
   bordered.cpp \
   bordering_view.cpp \
   buffer_text_view.cpp \
@@ -58,7 +59,7 @@ escher_src += $(addprefix escher/src/,\
   message_table_cell_with_message.cpp \
   message_table_cell_with_message_with_buffer.cpp \
   message_text_view.cpp \
-  metric.cpp \
+  metric.cpp \
   modal_view_controller.cpp \
   modal_view_empty_controller.cpp \
   nested_menu_controller.cpp \

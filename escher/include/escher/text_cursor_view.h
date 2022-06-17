@@ -7,11 +7,19 @@ namespace Escher {
 
 class TextCursorView : public View {
 public:
-  using View::View;
-  KDRect frame() const { return m_frame; }
+  constexpr static KDCoordinate k_width = 1;
+
+  TextCursorView() : m_visible(true) {}
+
+  // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  constexpr static KDCoordinate k_width = 1;
+
+  KDRect frame() const { return m_frame; }
+  void switchVisible();
+
+private:
+  bool m_visible;
 };
 
 }

@@ -12,6 +12,21 @@ using namespace Shared;
 
 namespace Calculation {
 
+
+UnitListController::UnitListController(EditExpressionController * editExpressionController) :
+  ExpressionsListController(editExpressionController),
+  m_dimensionMessage(I18n::Message::Default)
+{
+  m_dimensionCell.setMessageFont(KDFont::LargeFont);
+}
+
+bool UnitListController::handleEvent(Ion::Events::Event event) {
+  if (selectedRow() == 0 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
+    return true;
+  }
+  return ListController::handleEvent(event);
+}
+
 void UnitListController::setExpression(Poincare::Expression e) {
   ExpressionsListController::setExpression(e);
   assert(!m_expression.isUninitialized());
@@ -22,6 +37,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   for (size_t i = 0; i < k_maxNumberOfRows; i++) {
     expressions[i] = Expression();
   }
+  m_dimensionMessage = I18n::Message::Default;
 
   /* 1. First rows: miscellaneous classic units for some dimensions, in both
    * metric and imperial units. */
@@ -37,7 +53,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
       GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
       ExpressionNode::ReductionTarget::User,
       ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  int numberOfExpressions = Unit::SetAdditionalExpressions(units, value, expressions, k_maxNumberOfRows, reductionContext);
+  int numberOfExpressions = Unit::SetAdditionalExpressionsAndMessage(units, value, expressions, k_maxNumberOfRows, reductionContext, &m_dimensionMessage);
 
   // 2. SI units only
   assert(numberOfExpressions < k_maxNumberOfRows - 1);
@@ -86,6 +102,44 @@ void UnitListController::setExpression(Poincare::Expression e) {
     if (!expressions[i].isUninitialized()) {
       m_layouts[i] = Shared::PoincareHelpers::CreateLayout(expressions[i]);
     }
+  }
+}
+
+int UnitListController::numberOfRows() const {
+  int messageRow = m_dimensionMessage != I18n::Message::Default ? 1 : 0;
+  return ExpressionsListController::numberOfRows() + messageRow;
+}
+
+void UnitListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if (index == 0) {
+    MessageTableCell * messageTableCell = (MessageTableCell *)cell;
+    messageTableCell->setMessage(m_dimensionMessage);
+  } else {
+    ExpressionsListController::willDisplayCellForIndex(cell, index - 1);
+  }
+}
+
+KDCoordinate UnitListController::rowHeight(int index) {
+  if (index == 0) {
+    return 35;
+  } else {
+    return ExpressionsListController::rowHeight(index - 1);
+  }
+}
+
+HighlightCell * UnitListController::reusableCell(int index, int type) {
+  if (type == 0) {
+    return ExpressionsListController::reusableCell(index, type);
+  } else {
+    return &m_dimensionCell;
+  }
+}
+
+int UnitListController::typeAtLocation(int i, int j) {
+  if (j == 0) {
+    return 1;
+  } else {
+    return ExpressionsListController::typeAtLocation(i, j - 1);
   }
 }
 

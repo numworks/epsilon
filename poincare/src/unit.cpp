@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <utility>
+#include <apps/i18n.h>
 
 namespace Poincare {
 
@@ -775,11 +776,10 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Prefere
     return e.type() == ExpressionNode::Type::Unit && !e.convert<Unit>().isBaseUnit();
   };
 
-  return (representative != nullptr && representative->hasSpecialAdditionalExpressions(value, unitFormat))
-      || unit.hasExpression(isNonBase, nullptr);
+  return representative != nullptr || unit.hasExpression(isNonBase, nullptr);
 }
 
-int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext) {
+int Unit::SetAdditionalExpressionsAndMessage(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext, I18n::Message * message) {
   if (units.isUninitialized()) {
     return 0;
   }
@@ -787,6 +787,7 @@ int Unit::SetAdditionalExpressions(Expression units, double value, Expression * 
   if (!representative) {
     return 0;
   }
+  *message = representative->dimensionMessage();
   return representative->setAdditionalExpressions(value, dest, availableLength, reductionContext);
 }
 

@@ -107,11 +107,16 @@ mp_obj_t modion_get_keys() {
 }
 
 mp_obj_t modion_set_brightness(mp_obj_t brightness_mp){
-  uint8_t brightness = static_cast<uint8_t>(mp_obj_get_int(brightness_mp));
-  GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(brightness);
-  Ion::Backlight::setBrightness(brightness);
-  micropython_port_interrupt_if_needed();
-  return mp_const_none;
+  int brightness = mp_obj_get_int(brightness_mp);
+  if (brightness < 0 || brightness > 240) {
+    mp_raise_ValueError("Brightness must be between 0 and 240");
+  } else {
+    uint8_t unsignedBrightness = static_cast<uint8_t>(brightness);
+    GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(unsignedBrightness);
+    Ion::Backlight::setBrightness(unsignedBrightness);
+    micropython_port_interrupt_if_needed();
+    return mp_const_none;
+  }
 }
 
 mp_obj_t modion_get_brightness(){

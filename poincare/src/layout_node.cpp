@@ -231,7 +231,7 @@ void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, 
   // If there is a valid result
   Layout resultRef(childResult);
   if ((*childResultPtr) != nullptr) {
-    *shouldRecomputeLayout = childResult->addGraySquaresToAllMatrixAncestors();
+    *shouldRecomputeLayout |= childResult->addGraySquaresToAllMatrixAncestors();
     // WARNING: Do not use "this" afterwards
   }
   cursor->setLayout(resultRef);

@@ -207,17 +207,7 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
       newChild = LeftCurlyBraceLayout::Builder();
     } else if (codePoint == '}') {
       newChild = RightCurlyBraceLayout::Builder();
-    }
-    /* We never insert text with brackets for now. Removing this code saves the
-     * binary file 2K. */
-#if 0
-    else if (codePoint == '[') {
-      newChild = LeftSquareBracketLayout();
-    } else if (codePoint == ']') {
-      newChild = RightSquareBracketLayout();
-    }
-#endif
-    else {
+    } else {
       newChild = CodePointLayout::Builder(codePoint);
     }
     if (forceCursorLeftOfText && pointedChild.isUninitialized()) {

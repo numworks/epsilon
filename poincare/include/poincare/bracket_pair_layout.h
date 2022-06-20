@@ -10,6 +10,11 @@ class BracketPairLayoutNode : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
+  constexpr static KDCoordinate k_lineThickness = 1;
+  constexpr static KDCoordinate k_widthMargin = 5;
+  constexpr static KDCoordinate k_externWidthMargin = 2;
+  constexpr static KDCoordinate k_squareBracketWidth = k_externWidthMargin + k_lineThickness + k_widthMargin;
+
   // Layout
   Type type() const override { return Type::BracketPairLayout; }
 
@@ -38,11 +43,8 @@ protected:
   LayoutNode * childLayout() { return childAtIndex(0); }
 
 private:
-  constexpr static KDCoordinate k_externWidthMargin = 2;
-  constexpr static KDCoordinate k_widthMargin = 5;
   constexpr static KDCoordinate k_verticalExternMargin = 0;
   constexpr static KDCoordinate k_bracketWidth = 5;
-  constexpr static KDCoordinate k_lineThickness = 1;
   constexpr static KDCoordinate k_verticalMargin = 1;
   constexpr static bool k_renderTopBar = true;
   constexpr static bool k_renderBottomBar = true;

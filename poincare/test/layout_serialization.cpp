@@ -85,11 +85,6 @@ QUIZ_CASE(poincare_layout_serialization) {
       LeftParenthesisLayout::Builder(),
       "(");
 
-  // LeftSquareBracketLayout
-  assert_layout_serialize_to(
-      LeftSquareBracketLayout::Builder(),
-      "[");
-
   // MatrixLayout
   assert_layout_serialize_to(
       MatrixLayout::Builder(
@@ -128,14 +123,7 @@ QUIZ_CASE(poincare_layout_serialization) {
       RightParenthesisLayout::Builder(),
       ")");
 
-  // RightSquareBracketLayout
-  assert_layout_serialize_to(
-      RightSquareBracketLayout::Builder(),
-      "]");
-
   // SequenceLayout -> Tested by SumLayout and ProductLayout
-
-  // SquareBracketLayout -> Tested by Left/RightSquareBracketLayout
 
   // SumLayout
   assert_layout_serialize_to(

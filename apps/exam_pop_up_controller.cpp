@@ -15,8 +15,7 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
         Poincare::Preferences::ExamMode previousMode = Poincare::Preferences::sharedPreferences()->examMode();
         assert(mode != Poincare::Preferences::ExamMode::Unknown);
         assert(mode == Poincare::Preferences::ExamMode::PressToTest || controller->targetPressToTestParams().m_value == Poincare::Preferences::k_inactivePressToTest.m_value);
-        Poincare::Preferences::sharedPreferences()->setExamMode(mode);
-        Poincare::Preferences::sharedPreferences()->setPressToTestParams(controller->targetPressToTestParams());
+        Poincare::Preferences::sharedPreferences()->setExamMode(mode, controller->targetPressToTestParams());
         AppsContainer * container = AppsContainer::sharedAppsContainer();
         if (mode == Poincare::Preferences::ExamMode::Off) {
           if (previousMode == Poincare::Preferences::ExamMode::PressToTest) {

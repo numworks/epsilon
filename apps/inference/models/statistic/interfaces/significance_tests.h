@@ -94,7 +94,7 @@ private:
 
 class TwoMeans : public SignificanceTest {
 public:
-  enum ParamsOrder { x1, n1, s1, x2, n2, s2 };
+  enum ParamsOrder { x1, s1, n1, x2, s2, n2 };
 
   // Initialization
   static bool TestInitializeDistribution(Statistic * statistic, DistributionType distributionType);

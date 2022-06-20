@@ -54,6 +54,8 @@ public:
   void extractDependencies(List l);
   bool dependencyRecursivelyMatches(ExpressionTernaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols, auxiliary); }
 
+  Expression removeUselessDependencies(const ExpressionNode::ReductionContext& reductionContext);
+
   // Parser utils
   static Expression UntypedBuilder(Expression children);
   static_assert(UCodePointSystem == 0x14, "UCodePointSystem value was modified");

@@ -1,4 +1,5 @@
 #include <poincare/dependency.h>
+#include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -129,6 +130,76 @@ Expression Dependency::UntypedBuilder(Expression children) {
     return Expression();
   }
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<List>());
+}
+
+Expression Dependency::removeUselessDependencies(const ExpressionNode::ReductionContext& reductionContext) {
+  // Step 1: Break dependencies into smaller expressions
+  Expression dependenciesExpression = childAtIndex(k_indexOfDependenciesList);
+  assert(dependenciesExpression.type() == ExpressionNode::Type::List);
+  List dependencies = static_cast<List &>(dependenciesExpression);
+  for (int i = 0; i < dependencies.numberOfChildren(); i++) {
+    Expression depI = dependencies.childAtIndex(i);
+    // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
+    if (depI.type() == ExpressionNode::Type::Multiplication || depI.type() == ExpressionNode::Type::Addition) {
+      if(depI.numberOfChildren() == 1) {
+        depI.replaceWithInPlace(depI.childAtIndex(0));
+      } else {
+        dependencies.addChildAtIndexInPlace(depI.childAtIndex(0), dependencies.numberOfChildren(), dependencies.numberOfChildren());
+        NAryExpression m = static_cast<NAryExpression &>(depI);
+        m.removeChildAtIndexInPlace(0);
+      }
+      i--;
+      continue;
+    }
+    // dep(..,{x^y}) = dep(..,{x}) if y > 0 and y != p/2*q
+    if (depI.type() == ExpressionNode::Type::Power) {
+      Power p = static_cast<Power &>(depI);
+      if (p.typeOfDependency(reductionContext) == Power::DependencyType::None) {
+        depI.replaceWithInPlace(depI.childAtIndex(0));
+        i--;
+        continue;
+      }
+    }
+  }
+
+  // ShallowReduce to remove defined dependencies ({x+3}->{x, 3}->{x})
+  Expression e = shallowReduce(reductionContext);
+  if (e.type() != ExpressionNode::Type::Dependency) {
+    return e;
+  }
+  Dependency expandedDependency = static_cast<Dependency &>(e);
+  Expression tempList = expandedDependency.childAtIndex(k_indexOfDependenciesList);
+  List newDependencies = static_cast<List &>(tempList);
+
+  /* Step 2: Remove duplicate dependencies and dependencies contained in others
+   * {sqrt(x), sqrt(x), 1/sqrt(x)} -> {1/sqrt(x)} */
+  for (int i = 0; i < newDependencies.numberOfChildren(); i++) {
+    Expression depI = newDependencies.childAtIndex(i);
+    for (int j = 0; j < newDependencies.numberOfChildren(); j++) {
+      if (i == j) {
+        continue;
+      }
+      if (newDependencies.childAtIndex(j).containsSameDependency(depI, reductionContext)) {
+        newDependencies.removeChildAtIndexInPlace(i);
+        i--;
+        break;
+      }
+    }
+  }
+
+  Expression tempList2 = expandedDependency.childAtIndex(k_indexOfDependenciesList);
+  newDependencies = static_cast<List &>(tempList2);
+  /* Step 3: Remove dependencies already contained in main expression.
+   * dep(x^2+1,{x}) -> x^2+1 */
+  for (int i = 0; i < newDependencies.numberOfChildren(); i++) {
+    Expression depI = newDependencies.childAtIndex(i);
+    if (expandedDependency.childAtIndex(0).containsSameDependency(depI, reductionContext)) {
+      newDependencies.removeChildAtIndexInPlace(i);
+      i--;
+    }
+  }
+
+  return expandedDependency.shallowReduce(reductionContext);
 }
 
 }

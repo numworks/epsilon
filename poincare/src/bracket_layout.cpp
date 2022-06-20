@@ -41,6 +41,24 @@ void BracketLayoutNode::invalidAllSizesPositionsAndBaselines() {
   LayoutNode::invalidAllSizesPositionsAndBaselines();
 }
 
+bool BracketLayoutNode::isCollapsable(int * numberOfOpenBrackets, bool goingLeft) const {
+  if (goingLeft == IsRightBracket(type())) {
+    /* This brace is an opening brace. */
+    *numberOfOpenBrackets = *numberOfOpenBrackets + 1;
+    return true;
+  }
+
+  /* This brace is a closing brace. We do not want to absorb it if
+   * there is no corresponding opening brace, as the absorber should be
+   * enclosed by this brace. */
+  assert((goingLeft && IsLeftBracket(type())) || (!goingLeft && IsRightBracket(type())));
+  if (*numberOfOpenBrackets == 0) {
+    return false;
+  }
+  *numberOfOpenBrackets = *numberOfOpenBrackets - 1;
+  return true;
+}
+
 KDCoordinate BracketLayoutNode::computeBaseline() {
   LayoutNode * parentLayout = parent();
   assert(parentLayout != nullptr);

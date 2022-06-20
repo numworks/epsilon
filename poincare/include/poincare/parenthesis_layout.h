@@ -1,14 +1,14 @@
 #ifndef POINCARE_PARENTHESIS_LAYOUT_NODE_H
 #define POINCARE_PARENTHESIS_LAYOUT_NODE_H
 
-#include <poincare/brace_layout.h>
+#include <poincare/bracket_layout.h>
 
 namespace Poincare {
 
-class ParenthesisLayoutNode : public BraceLayoutNode {
+class ParenthesisLayoutNode : public BracketLayoutNode {
   friend class SequenceLayoutNode;
 public:
-  using BraceLayoutNode::BraceLayoutNode;
+  using BracketLayoutNode::BracketLayoutNode;
   constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
   constexpr static KDCoordinate k_parenthesisCurveHeight = 7;
   constexpr static KDCoordinate k_externWidthMargin = 1;

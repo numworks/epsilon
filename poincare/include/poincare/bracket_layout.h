@@ -18,6 +18,7 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   void invalidAllSizesPositionsAndBaselines() override;
+  bool isCollapsable(int * numberOfOpenBrackets, bool goingLeft) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(BracketLayoutNode); }

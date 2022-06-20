@@ -2,12 +2,12 @@
 #define POINCARE_CURLY_BRACE_LAYOUT_NODE_H
 
 #include <poincare/layout_helper.h>
-#include <poincare/brace_layout.h>
+#include <poincare/bracket_layout.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-class CurlyBraceLayoutNode : public BraceLayoutNode {
+class CurlyBraceLayoutNode : public BracketLayoutNode {
 public:
   // Dimensions
   constexpr static KDCoordinate k_curveHeight = 6;
@@ -22,7 +22,7 @@ public:
 
   constexpr static KDCoordinate k_curlyBraceWidth = k_horizontalExternalMargin + (k_centerWidth + k_curveWidth - k_barWidth) + k_horizontalInternalMargin;
 
-  using BraceLayoutNode::BraceLayoutNode;
+  using BracketLayoutNode::BracketLayoutNode;
   size_t size() const override { return sizeof(CurlyBraceLayoutNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {

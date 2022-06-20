@@ -89,7 +89,15 @@ public:
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
-  bool shouldAddDependencyWhenDisappearingDuringReduction(const ExpressionNode::ReductionContext& reductionContext);
+  enum class DependencyType : uint8_t {
+    None = 0,
+    NegativeIndex,
+    RationalIndex,
+    Both
+  };
+
+  DependencyType typeOfDependencyWhenDisappearingDuringReduction(const ExpressionNode::ReductionContext& reductionContext);
+  static void AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, List l, const ExpressionNode::ReductionContext& reductionContext, bool clone);
 
 private:
   constexpr static int k_maxExactPowerMatrix = 100;

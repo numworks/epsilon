@@ -135,7 +135,7 @@ KDSize DerivativeLayoutNode::computeSize() {
 
 KDCoordinate DerivativeLayoutNode::computeBaseline() {
   KDCoordinate dBaseline = KDFont::LargeFont->stringSize("d").height() + FractionLayoutNode::k_fractionLineMargin + FractionLayoutNode::k_fractionLineHeight;
-  KDCoordinate fBaseline = ParenthesisLayoutNode::k_verticalMargin / 2 + derivandLayout()->baseline();
+  KDCoordinate fBaseline = ParenthesisLayoutNode::k_externHeightMargin + derivandLayout()->baseline();
   return std::max(dBaseline, fBaseline);
 }
 
@@ -209,7 +209,7 @@ void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expression
   ctx->fillRect(KDRect(xOffset, p.y() + baseline() - FractionLayoutNode::k_fractionLineHeight, barWidth, FractionLayoutNode::k_fractionLineHeight), expressionColor);
 
   // ...(f)...
-  KDPoint leftParenthesisPosition(xOffset + barWidth + Escher::Metric::FractionAndConjugateHorizontalMargin, p.y() + baseline() - derivandLayout()->baseline() - ParenthesisLayoutNode::k_verticalMargin / 2);
+  KDPoint leftParenthesisPosition(xOffset + barWidth + Escher::Metric::FractionAndConjugateHorizontalMargin, p.y() + baseline() - derivandLayout()->baseline() - ParenthesisLayoutNode::k_externHeightMargin);
   LeftParenthesisLayoutNode::RenderWithChildHeight(derivandSize.height(), ctx, leftParenthesisPosition, expressionColor, backgroundColor);
 
   KDPoint rightParenthesisPosition(leftParenthesisPosition.x() + ParenthesisLayoutNode::k_parenthesisWidth + derivandSize.width(), leftParenthesisPosition.y());

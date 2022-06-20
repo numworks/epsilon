@@ -17,7 +17,6 @@ public:
   constexpr static KDCoordinate k_externHeightMargin = 2;
   constexpr static KDCoordinate k_widthMargin = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
-  constexpr static KDCoordinate k_verticalMargin = 4;
   constexpr static KDCoordinate k_parenthesisWidth = k_widthMargin + k_lineThickness + k_externWidthMargin;
 
   // TreeNode
@@ -33,10 +32,10 @@ protected:
     return KDSize(k_parenthesisWidth, HeightGivenChildHeight(childHeight()));
   }
   static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
-    return std::max<KDCoordinate>(childHeight, Escher::Metric::MinimalBracketAndParenthesisHeight) + k_verticalMargin;
+    return std::max<KDCoordinate>(childHeight, Escher::Metric::MinimalBracketAndParenthesisHeight) + k_externHeightMargin * 2;
   }
   static KDCoordinate ChildHeightGivenLayoutHeight(KDCoordinate layoutHeight) {
-    return layoutHeight - k_verticalMargin;
+    return layoutHeight - k_externHeightMargin * 2;
   }
 };
 

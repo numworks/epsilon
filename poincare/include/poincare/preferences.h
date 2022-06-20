@@ -104,8 +104,7 @@ public:
   bool isInExamMode() const { return (int8_t)examMode() > 0; }
   ExamMode examMode() const;
   PressToTestParams pressToTestParams() const;
-  void setExamMode(ExamMode examMode);
-  void setPressToTestParams(PressToTestParams pressToTestParams);
+  void setExamMode(ExamMode examMode, PressToTestParams pressToTestParams);
   bool equationSolverIsForbidden() const;
   bool inequalityGraphingIsForbidden() const;
   bool implicitPlotsAreForbidden() const;

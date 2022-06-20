@@ -31,14 +31,20 @@ void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
     static_assert(sizeof(pb) == sizeof(uint16_t), "Exam mode encoding on persisting bytes has changed.");
     uint8_t params = pb & 0xFF;
     uint8_t mode = pb >> 8;
-
     assert(mode >= static_cast<uint8_t>(ExamMode::Off) && mode < static_cast<uint8_t>(ExamMode::Undefined));
-    m_examMode = static_cast<ExamMode>(mode);
-    if (m_examMode == ExamMode::Unknown) {
+
+    if (mode == static_cast<uint8_t>(ExamMode::Unknown)) {
+      /* PersistingBytes are invalid, most likely because of a botched update
+       * with a version that supports a different exam mode encoding. */
       m_examMode = ExamMode::Off;
+      m_pressToTestParams = k_inactivePressToTest;
+    } else {
+      m_examMode = static_cast<ExamMode>(mode);
+      m_pressToTestParams = PressToTestParams({params});
     }
-    assert(m_examMode == ExamMode::PressToTest || params == k_inactivePressToTest.m_value);
-    m_pressToTestParams = PressToTestParams({params});
+    assert(m_examMode != ExamMode::Unknown
+        && m_examMode != ExamMode::Undefined
+        && (m_examMode == ExamMode::PressToTest || params == k_inactivePressToTest.m_value));
   }
 }
 

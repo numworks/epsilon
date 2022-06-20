@@ -275,6 +275,18 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     footer()->setSelectedButton(0);
     return true;
   }
+  if (event == Ion::Events::Backspace) {
+    Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+    if (removeModelRow(record)) {
+      int newSelectedRow = selectedRow() >= numberOfRows() ? numberOfRows()-1 : selectedRow();
+      selectCellAtLocation(selectedColumn(), newSelectedRow);
+      selectableTableView()->reloadData();
+    }
+    if (modelStore()->numberOfModels() == 0) {
+      App::app()->snapshot()->setIntervalModifiedByUser(false);
+    }
+    return true;
+  }
   if (selectedRow() < 0) {
     return false;
   }
@@ -284,15 +296,6 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(selectedColumn() == 0);
     configureFunction(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
-    return true;
-  }
-  if (event == Ion::Events::Backspace) {
-    Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-    if (removeModelRow(record)) {
-      int newSelectedRow = selectedRow() >= numberOfRows() ? numberOfRows()-1 : selectedRow();
-      selectCellAtLocation(selectedColumn(), newSelectedRow);
-      selectableTableView()->reloadData();
-    }
     return true;
   }
   return false;

@@ -27,16 +27,16 @@ Preferences * Preferences::sharedPreferences() {
 
 void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
   if (m_examMode == ExamMode::Unknown) {
-    /* Persisting bytes are initialized at 0xFF but we set the first two ones at
-    * 0 in shared_kernel_flash.ld to ensure the exam mode is in off position
-    * after flashing. */
-    uint8_t mode = Ion::PersistingBytes::read(k_examModePersistingByteIndex);
-    // mode can be cast in ExamMode (Off, Standard, Dutch or Press-to-test)
+    Ion::PersistingBytes::PersistingBytesInt pb = Ion::PersistingBytes::read();
+    assert(sizeof(pb) == sizeof(uint16_t));
+    uint8_t params = pb & 0xFF;
+    uint8_t mode = pb >> 8;
+
     assert(mode >= static_cast<uint8_t>(ExamMode::Off) && mode < static_cast<uint8_t>(ExamMode::Undefined));
     m_examMode = static_cast<ExamMode>(mode);
-    assert(m_examMode != ExamMode::Unknown);
-
-    uint8_t params = Ion::PersistingBytes::read(k_pressToTestParamsPersistingByteIndex);
+    if (m_examMode == ExamMode::Unknown) {
+      m_examMode = ExamMode::Off;
+    }
     assert(m_examMode == ExamMode::PressToTest || params == k_inactivePressToTest.m_value);
     m_pressToTestParams = PressToTestParams({params});
   }
@@ -52,23 +52,16 @@ Preferences::PressToTestParams Preferences::pressToTestParams() const {
   return m_pressToTestParams;
 }
 
-void Preferences::setExamMode(ExamMode mode) {
+void Preferences::setExamMode(ExamMode mode, PressToTestParams newPressToTestParams) {
   assert(mode != ExamMode::Unknown && mode < ExamMode::Undefined);
+  assert(mode == ExamMode::PressToTest || newPressToTestParams.m_value == k_inactivePressToTest.m_value);
   ExamMode currentMode = examMode();
-  if (currentMode == mode) {
-    return;
-  }
-  Ion::PersistingBytes::write(static_cast<uint8_t>(mode), k_examModePersistingByteIndex);
-  m_examMode = mode;
-}
-
-void Preferences::setPressToTestParams(PressToTestParams newPressToTestParams) {
-  assert(m_examMode == ExamMode::PressToTest || newPressToTestParams.m_value == k_inactivePressToTest.m_value);
   PressToTestParams currentPressToTestParams = pressToTestParams();
-  if (currentPressToTestParams.m_value == newPressToTestParams.m_value) {
+  if (currentMode == mode && currentPressToTestParams.m_value == newPressToTestParams.m_value) {
     return;
   }
-  Ion::PersistingBytes::write(newPressToTestParams.m_value, k_pressToTestParamsPersistingByteIndex);
+  Ion::PersistingBytes::write(currentPressToTestParams.m_value | (static_cast<uint8_t>(mode) << 8));
+  m_examMode = mode;
   m_pressToTestParams = newPressToTestParams;
 }
 

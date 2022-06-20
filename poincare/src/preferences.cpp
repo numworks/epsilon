@@ -28,7 +28,7 @@ Preferences * Preferences::sharedPreferences() {
 void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
   if (m_examMode == ExamMode::Unknown) {
     Ion::PersistingBytes::PersistingBytesInt pb = Ion::PersistingBytes::read();
-    assert(sizeof(pb) == sizeof(uint16_t));
+    static_assert(sizeof(pb) == sizeof(uint16_t), "Exam mode encoding on persisting bytes has changed.");
     uint8_t params = pb & 0xFF;
     uint8_t mode = pb >> 8;
 

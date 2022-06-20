@@ -20,6 +20,8 @@ public:
   void switchVisible();
 
 private:
+  void layoutSubviews(bool force) override;
+
   bool m_visible;
 };
 

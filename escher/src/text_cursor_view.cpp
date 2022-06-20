@@ -22,4 +22,10 @@ void TextCursorView::switchVisible() {
    markRectAsDirty(bounds());
 }
 
+void TextCursorView::layoutSubviews(bool force) {
+  /* Force the cursor to appears when its frame changes. This way, the user
+   * does not lose sight of the cursor when moving around. */
+  m_visible = true;
+}
+
 }

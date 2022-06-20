@@ -91,14 +91,6 @@ void Dependency::addDependency(Expression newDependency) {
    * and will disappear in the next reduction. */
 }
 
-void Dependency::AddPowerToListOfDependenciesIfNeeded(Expression e, List l, ExpressionNode::ReductionContext reductionContext, bool clone) {
-  if (e.type() == ExpressionNode::Type::Power && static_cast<Power &>(e).shouldAddDependencyWhenDisappearingDuringReduction(reductionContext)) {
-    int n = l.numberOfChildren();
-    clone ? l.addChildAtIndexInPlace(e.clone(), n, n) : l.addChildAtIndexInPlace(e, n, n);
-  }
-}
-
-
 void Dependency::extractDependencies(List l) {
   int previousNumberOfChildren = l.numberOfChildren();
 

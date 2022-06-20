@@ -852,10 +852,19 @@ Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductio
       replaceChildAtIndexInPlace(0, base.childAtIndex(0).clone());
       replaceChildAtIndexInPlace(1, m);
       m.shallowReduce(reductionContext);
-      /* Add dependency if needed */
-      if (static_cast<Power &>(base).shouldAddDependencyWhenDisappearingDuringReduction(reductionContext)) {
-        List listOfDependencies = List::Builder();
-        listOfDependencies.addChildAtIndexInPlace(base, 0, 0);
+      /* Add dependency if needed.
+       * We should add a dependency if (a^b) is a type of power that
+       * needs dependency and if the newly created power does not need
+       * the same dependency (in which case it does not need to be created
+       * since the dependency info is still contained in the expression).
+       * For example:
+       * - x^(1/2)^4 needs a dependency since x^2 loses the info of x
+       *   needing to be positive (in real mode).
+       * - x^(1/2)^3 does not need a dependency since x^(3/2) keeps the
+       *   same interval of definition than x^(1/2) */
+      List listOfDependencies = List::Builder();
+      AddPowerToListOfDependenciesIfNeeded(base, *this, listOfDependencies, reductionContext, false);
+      if (listOfDependencies.numberOfChildren() > 0) {
         Dependency dep = Dependency::Builder(Undefined::Builder(), listOfDependencies);
         replaceWithInPlace(dep);
         dep.replaceChildAtIndexInPlace(0, *this);
@@ -1154,7 +1163,7 @@ bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, S
   return true;
 }
 
-bool Power::shouldAddDependencyWhenDisappearingDuringReduction(const ExpressionNode::ReductionContext& reductionContext) {
+Power::DependencyType Power::typeOfDependencyWhenDisappearingDuringReduction(const ExpressionNode::ReductionContext& reductionContext) {
   /* When a power node is disppearing during reduction, you sometimes
    * have to add a dependency.
    * There are two cases where this is true:
@@ -1171,10 +1180,12 @@ bool Power::shouldAddDependencyWhenDisappearingDuringReduction(const ExpressionN
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
 
+  DependencyType result = DependencyType::None;
+
   // Case 1.
   if (index.sign(reductionContext.context()) != ExpressionNode::Sign::Positive
       && base.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::NonNull) {
-    return true;
+    result = DependencyType::NegativeIndex;
   }
 
   // Case 2.
@@ -1182,10 +1193,19 @@ bool Power::shouldAddDependencyWhenDisappearingDuringReduction(const ExpressionN
       && (index.type() != ExpressionNode::Type::Rational
         || static_cast<Rational &>(index).integerDenominator().isEven())
       && base.sign(reductionContext.context()) != ExpressionNode::Sign::Positive) {
-    return true;
+    result = result == DependencyType::None ? DependencyType::RationalIndex : DependencyType::Both;
   }
-  return false;
+  return result;
+}
 
+void Power::AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, List l, const ExpressionNode::ReductionContext& reductionContext, bool clone) {
+  if (e.type() == ExpressionNode::Type::Power) {
+    DependencyType depType = static_cast<Power &>(e).typeOfDependencyWhenDisappearingDuringReduction(reductionContext);
+    if (depType != DependencyType::None && depType != compareTo.typeOfDependencyWhenDisappearingDuringReduction(reductionContext)) {
+      int n = l.numberOfChildren();
+      clone ? l.addChildAtIndexInPlace(e.clone(), n, n) : l.addChildAtIndexInPlace(e, n, n);
+    }
+  }
 }
 
 // Private

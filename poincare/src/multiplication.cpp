@@ -785,9 +785,7 @@ Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext&
        * there are two cases we want to deal with:
        *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
        *  - 2^(1/2)*2^(3/2) we want to combine. */
-      Dependency::AddPowerToListOfDependenciesIfNeeded(oi, dependencies, reductionContext, true);
-      Dependency::AddPowerToListOfDependenciesIfNeeded(oi1, dependencies, reductionContext, true);
-      factorizeBase(i, i+1, reductionContext);
+      factorizeBase(i, i+1, reductionContext, dependencies);
       /* An undef term could have appeared when factorizing 1^inf and 1^-inf
        * for instance. In that case, we escape and return undef. */
       if (childAtIndex(i).isUndefined()) {
@@ -795,8 +793,6 @@ Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext&
       }
       continue;
     } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
-      Dependency::AddPowerToListOfDependenciesIfNeeded(oi, dependencies, reductionContext, true);
-      Dependency::AddPowerToListOfDependenciesIfNeeded(oi1, dependencies, reductionContext, true);
       factorizeExponent(i, i+1, reductionContext);
       continue;
     } else if (TermIsPowerOfRationals(oi) && TermIsPowerOfRationals(oi1)
@@ -992,23 +988,28 @@ Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext&
 /* This function factorizes two children which have a common base. For example
   * if this is Multiplication::Builder(pi^2, pi^3), then pi^2 and pi^3 could be merged
   * and this turned into Multiplication::Builder(pi^5). */
-void Multiplication::factorizeBase(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
+void Multiplication::factorizeBase(int i, int j, const ExpressionNode::ReductionContext& reductionContext, List dependenciesCreatedDuringReduction) {
   Expression e = childAtIndex(j);
   // Step 1: Get rid of the child j
   removeChildAtIndexInPlace(j);
   // Step 2: Merge child j in child i by factorizing base
-  mergeInChildByFactorizingBase(i, e, reductionContext);
+  mergeInChildByFactorizingBase(i, e, reductionContext, dependenciesCreatedDuringReduction);
 }
 
-void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, const ExpressionNode::ReductionContext& reductionContext) {
+void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, const ExpressionNode::ReductionContext& reductionContext, List dependenciesCreatedDuringReduction) {
   /* This function replace the child at index i by its factorization with e. e
    * and childAtIndex(i) are supposed to have a common base. */
-
   // Step 1: Find the new exponent
   Expression s = Addition::Builder(CreateExponent(childAtIndex(i)), CreateExponent(e)); // pi^2*pi^3 -> pi^(2+3) -> pi^5
   // Step 2: Create the new Power
-  Expression p = Power::Builder(Base(childAtIndex(i)), s); // pi^2*pi^-2 -> pi^0 -> 1
+  Expression p = Power::Builder(Base(childAtIndex(i).clone()), s); // pi^2*pi^-2 -> pi^0 -> 1
   s.shallowReduce(reductionContext);
+
+  if (!dependenciesCreatedDuringReduction.isUninitialized()) {
+    Power::AddPowerToListOfDependenciesIfNeeded(childAtIndex(i), static_cast<Power &>(p), dependenciesCreatedDuringReduction, reductionContext, true);
+    Power::AddPowerToListOfDependenciesIfNeeded(e, static_cast<Power &>(p), dependenciesCreatedDuringReduction, reductionContext, true);
+  }
+
   // Step 3: Replace one of the child
   replaceChildAtIndexInPlace(i, p);
   p = p.shallowReduce(reductionContext);

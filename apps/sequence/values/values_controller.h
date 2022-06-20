@@ -27,7 +27,6 @@ public:
   IntervalParameterController * intervalParameterController() override {
     return &m_intervalParameterController;
   }
-  void setIntervalModifiedByUser(bool intervalModifiedByUse) { m_intervalModifiedByUser = intervalModifiedByUse; }
 
 private:
   constexpr static int k_maxNumberOfDisplayableSequences = 3;
@@ -100,7 +99,6 @@ private:
   IntervalParameterController m_intervalParameterController;
   Escher::Button m_setIntervalButton;
   mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
-  bool m_intervalModifiedByUser;
 };
 
 }

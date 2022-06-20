@@ -32,10 +32,13 @@ public:
     Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceStore(); }
     CurveViewRange * graphRange() { return &m_graphRange; }
     Shared::Interval * interval() { return &m_interval; }
+    bool intervalModifiedByUser() { return m_intervalModifiedByUser; }
+    void setIntervalModifiedByUser(bool intervalModifiedByUser) { m_intervalModifiedByUser = intervalModifiedByUser; }
   private:
     void tidy() override;
     CurveViewRange m_graphRange;
     Shared::Interval m_interval;
+    bool m_intervalModifiedByUser;
   };
   static App * app() {
     return static_cast<App *>(Escher::Container::activeApp());

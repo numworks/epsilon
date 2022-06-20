@@ -81,6 +81,8 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     Shared::Sequence * newSequence = sequenceStore()->modelForRecord(record);
     newSequence->setInitialRank(GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank());
     newSequence->setType(static_cast<Shared::Sequence::Type>(selectedRow()));
+    // Make all the lines of the added sequence visible
+    m_listController->showLastSequence();
     Container::activeApp()->dismissModalViewController();
     m_listController->editExpression(0, Ion::Events::OK);
     return true;

@@ -512,4 +512,10 @@ KDCoordinate ListController::nameWidth(int nameLength) const {
   return nameLength * const_cast<ListController *>(this)->titleCells(0)->font()->glyphSize().width();
 }
 
+void ListController::showLastSequence() {
+  SequenceStore * store = const_cast<ListController *>(this)->modelStore();
+  bool hasAddSequenceButton = store->numberOfModels()==store->maxNumberOfModels();
+  int lastRow = numberOfExpressionRows() - (hasAddSequenceButton ? 0 : 1) - 1;
+  m_selectableTableView.scrollToCell(1, lastRow);
+}
 }

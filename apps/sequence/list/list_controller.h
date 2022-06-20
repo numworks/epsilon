@@ -48,6 +48,7 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   /* ExpressionModelListController */
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
+  void showLastSequence();
 private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
   static constexpr KDCoordinate k_functionTitleSumOfMargins = 25;

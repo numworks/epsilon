@@ -3,7 +3,6 @@
 #include <poincare/empty_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/square_bracket_layout.h>
 #include <algorithm>
 
 namespace Poincare {
@@ -196,14 +195,14 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 KDSize MatrixLayoutNode::computeSize() {
   KDSize sizeWithoutBrackets = gridSize();
   KDSize sizeWithBrackets = KDSize(
-      sizeWithoutBrackets.width() + 2 * SquareBracketLayoutNode::k_squareBracketWidth,
-      sizeWithoutBrackets.height() + 2 * SquareBracketLayoutNode::k_lineThickness);
+      sizeWithoutBrackets.width() + 2 * BracketPairLayoutNode::k_squareBracketWidth,
+      sizeWithoutBrackets.height() + 2 * BracketPairLayoutNode::k_lineThickness);
   return sizeWithBrackets;
 }
 
 KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l) {
   assert(indexOfChild(l) >= 0);
-  return GridLayoutNode::positionOfChild(l).translatedBy(KDPoint(KDPoint(SquareBracketLayoutNode::k_squareBracketWidth, SquareBracketLayoutNode::k_lineThickness)));
+  return GridLayoutNode::positionOfChild(l).translatedBy(KDPoint(KDPoint(BracketPairLayoutNode::k_squareBracketWidth, BracketPairLayoutNode::k_lineThickness)));
 }
 
 void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {

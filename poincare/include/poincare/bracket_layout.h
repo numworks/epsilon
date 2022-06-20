@@ -29,7 +29,6 @@ public:
 protected:
   static bool IsLeftBracket(Type t);
   static bool IsRightBracket(Type t);
-  static bool IsSquareBracket(Type t);
 
   // LayoutNode
   KDCoordinate computeBaseline() override;

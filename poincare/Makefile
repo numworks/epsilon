@@ -20,7 +20,6 @@ poincare_src += $(addprefix poincare/src/,\
   layout.cpp \
   layout_node.cpp \
   left_parenthesis_layout.cpp \
-  left_square_bracket_layout.cpp \
   list_sequence_layout.cpp \
   letter_a_with_sub_and_superscript_layout.cpp \
   letter_c_with_sub_and_superscript_layout.cpp \
@@ -29,7 +28,6 @@ poincare_src += $(addprefix poincare/src/,\
   nth_root_layout.cpp \
   product_layout.cpp \
   right_parenthesis_layout.cpp \
-  right_square_bracket_layout.cpp \
   sequence_layout.cpp \
   string_layout.cpp \
   sum_layout.cpp \

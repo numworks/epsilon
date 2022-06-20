@@ -10,15 +10,13 @@ QUIZ_CASE(poincare_layout_constructors) {
   BinomialCoefficientLayout e3 = BinomialCoefficientLayout::Builder(e1, e2);
   CeilingLayout e4 = CeilingLayout::Builder(e3);
   RightParenthesisLayout e5 = RightParenthesisLayout::Builder();
-  RightSquareBracketLayout e6 = RightSquareBracketLayout::Builder();
-  CondensedSumLayout e7 = CondensedSumLayout::Builder(e4, e5, e6);
+  CondensedSumLayout e7 = CondensedSumLayout::Builder(e4, e5, e3);
   ConjugateLayout e8 = ConjugateLayout::Builder(e7);
   LeftParenthesisLayout e10 = LeftParenthesisLayout::Builder();
   FloorLayout e11 = FloorLayout::Builder(e10);
   FractionLayout e12 = FractionLayout::Builder(e8, e11);
   HorizontalLayout e13 = HorizontalLayout::Builder();
-  LeftSquareBracketLayout e14 = LeftSquareBracketLayout::Builder();
-  IntegralLayout e15 = IntegralLayout::Builder(e11, e12, e13, e14);
+  IntegralLayout e15 = IntegralLayout::Builder(e11, e12, e13, e10);
   NthRootLayout e16 = NthRootLayout::Builder(e15);
   MatrixLayout e17 = MatrixLayout::Builder();
   EmptyLayout e18 = EmptyLayout::Builder();

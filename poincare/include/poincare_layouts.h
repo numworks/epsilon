@@ -19,7 +19,6 @@
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/left_parenthesis_layout.h>
-#include <poincare/left_square_bracket_layout.h>
 #include <poincare/list_sequence_layout.h>
 #include <poincare/letter_a_with_sub_and_superscript_layout.h>
 #include <poincare/letter_c_with_sub_and_superscript_layout.h>
@@ -27,8 +26,6 @@
 #include <poincare/nth_root_layout.h>
 #include <poincare/product_layout.h>
 #include <poincare/right_parenthesis_layout.h>
-#include <poincare/right_square_bracket_layout.h>
-#include <poincare/square_bracket_layout.h>
 #include <poincare/sum_layout.h>
 #include <poincare/string_layout.h>
 #include <poincare/vector_norm_layout.h>

@@ -490,6 +490,12 @@ Expression Addition::factorizeOnCommonDenominator(const ExpressionNode::Reductio
         continue;
       }
       // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
+      /* TODO: I'm almost certain that we do not need to create dependencies
+       * when creating common denominator since we're working on reduced
+       * expression. Indeed, there should not be denominators like x*x^(-1)
+       * or sqrt(x)*sqrt(x). But i'm not 100% sure, so if a case is found, a
+       * dependency list can be passed to "addMissingFactor", which will then
+       * be passed to "Multiplication::mergeInChildByFactorizingBase" */
       commonDenominator.addMissingFactors(currentDenominator, reductionContext);
     }
   }

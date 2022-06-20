@@ -258,6 +258,8 @@ public:
   bool isIdenticalToWithoutParentheses(const Expression e) const;
   static bool ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat);
 
+  bool containsSameDependency(const Expression e, const ExpressionNode::ReductionContext& reductionContext) const;
+
   /* Layout Helper */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool stripMarginStyle = false, bool nested = false) const;
   ExpressionNode::LayoutShape leftLayoutShape() const { return node()->leftLayoutShape(); }
@@ -294,6 +296,8 @@ public:
    *  - are reduced.
    *  - have a known sign. (sign() != Sign::Unknown) */
   Expression setSign(ExpressionNode::Sign s, const ExpressionNode::ReductionContext& reductionContext);
+
+  Expression deepRemoveUselessDependencies(const ExpressionNode::ReductionContext& reductionContext);
 
   /* 'ExpressionWithoutSymbols' replaces symbols in place and returns an
    * uninitialized expression if it is circularly defined.

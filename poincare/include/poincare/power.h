@@ -96,7 +96,7 @@ public:
     Both
   };
 
-  DependencyType typeOfDependencyWhenDisappearingDuringReduction(const ExpressionNode::ReductionContext& reductionContext);
+  DependencyType typeOfDependency(const ExpressionNode::ReductionContext& reductionContext) const;
   static void AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, List l, const ExpressionNode::ReductionContext& reductionContext, bool clone);
 
 private:

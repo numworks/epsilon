@@ -1163,7 +1163,7 @@ bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, S
   return true;
 }
 
-Power::DependencyType Power::typeOfDependencyWhenDisappearingDuringReduction(const ExpressionNode::ReductionContext& reductionContext) {
+Power::DependencyType Power::typeOfDependency(const ExpressionNode::ReductionContext& reductionContext) const {
   /* When a power node is disppearing during reduction, you sometimes
    * have to add a dependency.
    * There are two cases where this is true:
@@ -1200,8 +1200,8 @@ Power::DependencyType Power::typeOfDependencyWhenDisappearingDuringReduction(con
 
 void Power::AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, List l, const ExpressionNode::ReductionContext& reductionContext, bool clone) {
   if (e.type() == ExpressionNode::Type::Power) {
-    DependencyType depType = static_cast<Power &>(e).typeOfDependencyWhenDisappearingDuringReduction(reductionContext);
-    if (depType != DependencyType::None && depType != compareTo.typeOfDependencyWhenDisappearingDuringReduction(reductionContext)) {
+    DependencyType depType = static_cast<Power &>(e).typeOfDependency(reductionContext);
+    if (depType != DependencyType::None && depType != compareTo.typeOfDependency(reductionContext)) {
       int n = l.numberOfChildren();
       clone ? l.addChildAtIndexInPlace(e.clone(), n, n) : l.addChildAtIndexInPlace(e, n, n);
     }

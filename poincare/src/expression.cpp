@@ -564,6 +564,28 @@ bool Expression::isIdenticalToWithoutParentheses(const Expression e) const {
   return ExpressionNode::SimplificationOrder(node(), e.node(), true, true) == 0;
 }
 
+bool Expression::containsSameDependency(const Expression e, const ExpressionNode::ReductionContext& reductionContext) const {
+  if (isIdenticalToWithoutParentheses(e)) {
+    return true;
+  }
+  if (e.type() == ExpressionNode::Type::Power && type() == ExpressionNode::Type::Power && e.childAtIndex(0).isIdenticalToWithoutParentheses(childAtIndex(0))) {
+    Power ePower = static_cast<const Power &>(e);
+    Power thisPower = static_cast<const Power &>(*this);
+    Power::DependencyType depTypeOfE = ePower.typeOfDependency(reductionContext);
+    Power::DependencyType depTypeOfThis = thisPower.typeOfDependency(reductionContext);
+    if (depTypeOfThis == depTypeOfE || depTypeOfThis == Power::DependencyType::Both || depTypeOfE == Power::DependencyType::None) {
+      return true;
+    }
+  }
+  int n = numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    if(childAtIndex(i).containsSameDependency(e, reductionContext)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat) {
   Expression exp0 = Expression::ParseAndSimplify(e0, context, complexFormat, angleUnit, unitFormat, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   Expression exp1 = Expression::ParseAndSimplify(e1, context, complexFormat, angleUnit, unitFormat, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
@@ -875,6 +897,7 @@ failure:
     // Cloning outside of ecp's scope in case it raises an exception
     e = clone();
   }
+  e = e.deepRemoveUselessDependencies(*reductionContext);
   assert(!e.isUninitialized());
   return e;
 }
@@ -889,6 +912,18 @@ Expression Expression::cloneAndReduce(const ExpressionNode::ReductionContext& re
 Expression Expression::deepReduce(const ExpressionNode::ReductionContext& reductionContext) {
   deepReduceChildren(reductionContext);
   return shallowReduce(reductionContext);
+}
+
+Expression Expression::deepRemoveUselessDependencies(const ExpressionNode::ReductionContext& reductionContext) {
+  Expression result = *this;
+  if (type() == ExpressionNode::Type::Dependency) {
+    Dependency depThis = static_cast<Dependency &>(*this);
+    result = depThis.removeUselessDependencies(reductionContext);
+  }
+  for(int i = 0; i < result.numberOfChildren(); i++) {
+    result.childAtIndex(i).deepRemoveUselessDependencies(reductionContext);
+  }
+  return result;
 }
 
 Expression Expression::setSign(ExpressionNode::Sign s, const ExpressionNode::ReductionContext& reductionContext) {

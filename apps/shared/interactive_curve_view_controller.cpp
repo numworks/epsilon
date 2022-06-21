@@ -179,7 +179,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   /* If possible, round floatBody so that we go to the evaluation of the
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::getValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), curveView()->pixelWidth(), false);
-  moveCursorAndPan(floatBody);
+  moveCursorAndCenterIfNeeded(floatBody);
   return true;
 }
 
@@ -190,11 +190,14 @@ bool InteractiveCurveViewController::textFieldDidReceiveEvent(TextField * textFi
   return SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(textField, event);
 }
 
-void InteractiveCurveViewController::moveCursorAndPan(double t) {
+void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   Coordinate2D<double> xy = xyValues(selectedCurveRelativePosition(), t, textFieldDelegateApp()->localContext(), 0);
   m_cursor->moveTo(t, xy.x1(), xy.x2());
   reloadBannerView();
-  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
+  if (!isCursorVisible()) {
+    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
+    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
+  }
   curveView()->reload();
 }
 

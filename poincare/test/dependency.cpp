@@ -52,7 +52,7 @@ QUIZ_CASE(poincare_dependency_function) {
   assert_reduce("3→g(x)");
   assert_reduce("1+2→a");
 
-  // A variable argument is used as dependency
+  // A variable argument is used as dependency only if needed
   assert_expression_simplify_to_with_dependencies("f(x)", "x+1", {""});
   assert_expression_simplify_to_with_dependencies("f(x+y)", "x+y+1", {""});
   assert_expression_simplify_to_with_dependencies("g(x)", "3", {"x"});
@@ -69,19 +69,6 @@ QUIZ_CASE(poincare_dependency_function) {
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 }
 
-QUIZ_CASE(poincare_dependency_bubble_up) {
-  assert_reduce("2x→f(x)");
-  assert_reduce("x+1→g(x)");
-
-  assert_expression_simplify_to_with_dependencies("1+f(x)", "2×x+1", {""});
-  assert_expression_simplify_to_with_dependencies("g(y)+f(x)", "2×x+y+1", {""});
-  assert_expression_simplify_to_with_dependencies("g(f(x))", "2×x+1", {""});
-  assert_expression_simplify_to_with_dependencies("f(g(x))", "2×x+2", {""});
-
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("g.func").destroy();
-}
-
 QUIZ_CASE(poincare_dependency_derivative) {
   assert_reduce("x^2→f(x)");
   assert_expression_simplify_to_with_dependencies("diff(cos(x),x,0)", "0", {""});
@@ -91,6 +78,7 @@ QUIZ_CASE(poincare_dependency_derivative) {
 
   assert_reduce("3→f(x)");
   assert_expression_simplify_to_with_dependencies("diff(cos(x)+f(y),x,0)", "0", {"y"});
+  assert_expression_simplify_to_with_dependencies("diff(cos(x)+f(y),x,x)", "-sin(x)", {"y", "cos(x)"});
   assert_reduce("1/0→y");
   assert_expression_simplify_to_with_dependencies("diff(cos(x)+f(y),x,0)", Undefined::Name(), {""});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
@@ -141,6 +129,8 @@ QUIZ_CASE(poincare_dependency_power) {
   assert_expression_simplify_to_with_dependencies("f(x)", "x", {"1/x"});
   assert_reduce("1/tan(x)→f(x)");
   assert_expression_simplify_to_with_dependencies("f(x)", "cot(x)", {"sec(x)"});
+  assert_reduce("x/√(x)→f(x)");
+  assert_expression_simplify_to_with_dependencies("f(x)", "√(x)", {"1/√(x)"});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 }
 

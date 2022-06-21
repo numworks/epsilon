@@ -18,15 +18,14 @@ poincare_src += $(addprefix poincare/src/,\
   layout_cursor.cpp \
   layout.cpp \
   layout_node.cpp \
-  left_parenthesis_layout.cpp \
   list_sequence_layout.cpp \
   letter_a_with_sub_and_superscript_layout.cpp \
   letter_c_with_sub_and_superscript_layout.cpp \
   letter_with_sub_and_superscript_layout.cpp \
   matrix_layout.cpp \
   nth_root_layout.cpp \
+  parenthesis_layout.cpp \
   product_layout.cpp \
-  right_parenthesis_layout.cpp \
   sequence_layout.cpp \
   string_layout.cpp \
   sum_layout.cpp \

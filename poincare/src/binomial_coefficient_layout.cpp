@@ -1,7 +1,6 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/binomial_coefficient_layout.h>
-#include <poincare/left_parenthesis_layout.h>
-#include <poincare/right_parenthesis_layout.h>
+#include <poincare/parenthesis_layout.h>
 #include <poincare/layout_helper.h>
 #include <assert.h>
 #include <algorithm>

@@ -11,7 +11,7 @@ namespace Graph {
 
 CurveParameterController::CurveParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
   FunctionCurveParameterController(),
-  m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor),
+  m_goToParameterController(this, inputEventHandlerDelegate, graphController, graphRange, cursor),
   m_graphController(graphController),
   m_calculationCell(I18n::Message::Compute),
   m_derivativeCell(I18n::Message::GraphDerivative),

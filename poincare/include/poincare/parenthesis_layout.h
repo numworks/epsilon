@@ -27,8 +27,14 @@ public:
   }
 #endif
 
+protected:
+  static void RenderWithChildHeight(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
+
 private:
   KDCoordinate width() const override { return k_parenthesisWidth; }
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {
+    RenderWithChildHeight(type() == Type::LeftParenthesisLayout, OptimalChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor);
+  }
 };
 
 class LeftParenthesisLayoutNode final : public ParenthesisLayoutNode {
@@ -38,7 +44,9 @@ public:
   // Layout
   Type type() const override { return Type::LeftParenthesisLayout; }
 
-  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
+  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+    ParenthesisLayoutNode::RenderWithChildHeight(true, childHeight, ctx, p, expressionColor, backgroundColor);
+  }
   static KDPoint PositionGivenChildHeightAndBaseline(KDSize childSize, KDCoordinate childBaseline) {
     return BracketLayoutNode::PositionGivenChildHeightAndBaseline(true, k_parenthesisWidth, childSize, childBaseline);
   }
@@ -54,9 +62,6 @@ public:
     stream << "LeftParenthesisLayout";
   }
 #endif
-
-private:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
 class LeftParenthesisLayout final : public LayoutNoChildren<LeftParenthesisLayout, LeftParenthesisLayoutNode> {
@@ -71,7 +76,9 @@ public:
   // Layout
   Type type() const override { return Type::RightParenthesisLayout; }
 
-  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
+  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+    ParenthesisLayoutNode::RenderWithChildHeight(false, childHeight, ctx, p, expressionColor, backgroundColor);
+  }
   static KDPoint PositionGivenChildHeightAndBaseline(KDSize childSize, KDCoordinate childBaseline) {
     return BracketLayoutNode::PositionGivenChildHeightAndBaseline(false, k_parenthesisWidth, childSize, childBaseline);
   }
@@ -88,9 +95,6 @@ public:
     stream << "RightParenthesisLayout";
   }
 #endif
-
-private:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
 class RightParenthesisLayout final : public LayoutNoChildren<RightParenthesisLayout, RightParenthesisLayoutNode> {

@@ -611,7 +611,7 @@ Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductio
     listOfDependencies.addChildAtIndexInPlace(newIndex.clone(), 0, 0);
     Expression dependency = Dependency::Builder(newSelf, listOfDependencies);
     replaceWithInPlace(dependency);
-    return dependency;
+    return dependency.shallowReduce(reductionContext);
   }
   /* Step 5
    * Handle complex numbers. */

@@ -1,8 +1,8 @@
 #include "calculation_controller.h"
-#include "../apps_container.h"
-#include "../exam_mode_configuration.h"
-#include "../shared/editable_cell_table_view_controller.h"
-#include "../shared/poincare_helpers.h"
+#include <apps/apps_container.h>
+#include <apps/exam_mode_configuration.h>
+#include <apps/shared/editable_cell_table_view_controller.h>
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/preferences.h>
@@ -209,12 +209,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
         m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex] = m_store->columnProductSum(seriesNumber);
       }
     }
-    assert(
-        (calculationIndex == 0 && m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex] == m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber))
-        || (calculationIndex == 1 && m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex] == m_store->covariance(seriesNumber))
-        || (calculationIndex == 2 && m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex] == m_store->columnProductSum(seriesNumber))
-        );
     double calculation = m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex];
+    assert((calculationIndex == 0 && PoincareHelpers::equalOrBothNan(calculation, m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber)))
+           || (calculationIndex == 1 && PoincareHelpers::equalOrBothNan(calculation, m_store->covariance(seriesNumber)))
+           || (calculationIndex == 2 && PoincareHelpers::equalOrBothNan(calculation, m_store->columnProductSum(seriesNumber))));
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);
@@ -389,4 +387,3 @@ void CalculationController::resetMemoization() {
 }
 
 }
-

@@ -1,5 +1,6 @@
 #include <poincare/addition.h>
 #include <poincare/complex_cartesian.h>
+#include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/layout_helper.h>
 #include <poincare/list.h>
@@ -343,6 +344,17 @@ Expression Addition::shallowReduce(const ExpressionNode::ReductionContext& reduc
     i++;
   }
 
+  // Step 6.2: factorize sin^2+cos^2
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression baseOfSquaredCos;
+    if (TermHasSquaredCos(childAtIndex(i), reductionContext, baseOfSquaredCos)) {
+      Expression additionWithFactorizedSumOfSquaredTrigFunction = factorizeSquaredTrigFunction(baseOfSquaredCos, reductionContext);
+      if (!additionWithFactorizedSumOfSquaredTrigFunction.isUninitialized()) {
+        return additionWithFactorizedSumOfSquaredTrigFunction;
+      }
+    }
+  }
+
   // Factorizing terms might have created dependencies.
   Expression eBubbledUp = SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
   if (!eBubbledUp.isUninitialized()) {
@@ -605,6 +617,73 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, const E
 
   // Step 5: Reduce the multiplication (in case the new rational factor is zero)
   m.shallowReduce(reductionContext);
+}
+
+bool Addition::TermHasSquaredCos(const Expression & e, const ExpressionNode::ReductionContext& reductionContext, Expression & baseOfCos) {
+  bool isCosine;
+  Expression temp;
+  bool isSquaredTrigFunction = TermHasSquaredTrigFunctionWithBase(e, reductionContext, baseOfCos, temp, &isCosine);
+  return isSquaredTrigFunction && isCosine;
+}
+
+bool Addition::TermHasSquaredTrigFunctionWithBase(const Expression & e, const ExpressionNode::ReductionContext& reductionContext, Expression & base, Expression & coefficient, bool * cosine) {
+  if (e.type() == ExpressionNode::Type::Power && (e.childAtIndex(0).type() == ExpressionNode::Type::Cosine || e.childAtIndex(0).type() == ExpressionNode::Type::Sine) && e.childAtIndex(1).isIdenticalTo(Rational::Builder(2))) {
+    *cosine = e.childAtIndex(0).type() == ExpressionNode::Type::Cosine;
+    coefficient = Rational::Builder(1);
+    Expression trigFunctionBase = e.childAtIndex(0).childAtIndex(0);
+    if (base.isUninitialized()) {
+      base = trigFunctionBase.clone();
+      return true;
+    } else if (base.isIdenticalTo(trigFunctionBase)) {
+      return true;
+    }
+  } else if (e.type() == ExpressionNode::Type::Multiplication) {
+    Expression trigFunctionCoeff;
+    int nChildren = e.numberOfChildren();
+    for (int i = 0; i < nChildren; i++) {
+      if (TermHasSquaredTrigFunctionWithBase(e.childAtIndex(i), reductionContext, base, trigFunctionCoeff, cosine)) {
+        coefficient = e.clone();
+        coefficient.replaceChildAtIndexInPlace(i, trigFunctionCoeff);
+        coefficient = coefficient.shallowReduce(reductionContext);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+Expression Addition::factorizeSquaredTrigFunction(Expression & baseOfTrigFunction, const ExpressionNode::ReductionContext& reductionContext) {
+  Addition totalCoefOfSine = Addition::Builder(Rational::Builder(0));
+  Addition totalCoefOfCosine = Addition::Builder(Rational::Builder(0));
+  Expression thisClone = clone();
+  assert(thisClone.type() == ExpressionNode::Type::Addition);
+  Addition result = static_cast<Addition &>(thisClone);
+  for (int i = 0; i < result.numberOfChildren(); i++) {
+    Expression child = result.childAtIndex(i);
+    bool isCosine;
+    Expression coefficientToAdd;
+    if (TermHasSquaredTrigFunctionWithBase(child, reductionContext, baseOfTrigFunction, coefficientToAdd, &isCosine)) {
+      if(isCosine) {
+        totalCoefOfCosine.addChildAtIndexInPlace(coefficientToAdd, totalCoefOfCosine.numberOfChildren(), totalCoefOfCosine.numberOfChildren());
+      } else {
+        totalCoefOfSine.addChildAtIndexInPlace(coefficientToAdd, totalCoefOfSine.numberOfChildren(), totalCoefOfSine.numberOfChildren());
+      }
+      result.removeChildAtIndexInPlace(i);
+      i--;
+    }
+  }
+  Expression totalCoefOfSineReduced = totalCoefOfSine.shallowReduce(reductionContext);
+  Expression totalCoefOfCosineReduced = totalCoefOfCosine.shallowReduce(reductionContext);
+  if (totalCoefOfCosineReduced.isIdenticalTo(totalCoefOfSineReduced)) {
+    /* Replace cos(x)^2+sin(x)^2 with 1. This is true only if x is defined
+     * so we add a dependency */
+    result.addChildAtIndexInPlace(totalCoefOfCosineReduced, result.numberOfChildren(), result.numberOfChildren());
+    Dependency dep = Dependency::Builder(result.shallowReduce(reductionContext), List::Builder());
+    dep.addDependency(baseOfTrigFunction);
+    replaceWithInPlace(dep);
+    return dep.shallowReduce(reductionContext);
+  }
+  return Expression();
 }
 
 }

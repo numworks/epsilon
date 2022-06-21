@@ -121,14 +121,30 @@ Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit, P
 }
 
 bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
-  // We look for (cos^-1 * sin)
-  assert(ExpressionNode::Type::Power < ExpressionNode::Type::Sine);
+  // We look for (sin * cos^-1)
+  assert(ExpressionNode::Type::Sine < ExpressionNode::Type::Cosine);
   if (e.type() == ExpressionNode::Type::Multiplication
-      && e.childAtIndex(1).type() == ExpressionNode::Type::Sine
+      && e.childAtIndex(0).type() == ExpressionNode::Type::Sine
+      && e.childAtIndex(1).type() == ExpressionNode::Type::Power
+      && e.childAtIndex(1).childAtIndex(0).type() == ExpressionNode::Type::Cosine
+      && e.childAtIndex(1).childAtIndex(1).type() == ExpressionNode::Type::Rational
+      && e.childAtIndex(1).childAtIndex(1).convert<Rational>().isMinusOne()
+      && e.childAtIndex(0).childAtIndex(0).isIdenticalTo(e.childAtIndex(1).childAtIndex(0).childAtIndex(0))) {
+    return true;
+  }
+  return false;
+}
+
+bool Trigonometry::ExpressionIsEquivalentToInverseOfTangent(const Expression & e) {
+  // We look for (sin * cos^-1)
+  assert(ExpressionNode::Type::Sine < ExpressionNode::Type::Cosine);
+  if (e.type() == ExpressionNode::Type::Multiplication
+      && e.childAtIndex(1).type() == ExpressionNode::Type::Cosine
       && e.childAtIndex(0).type() == ExpressionNode::Type::Power
-      && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Cosine
+      && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Sine
       && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
+      && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()
+      && e.childAtIndex(1).childAtIndex(0).isIdenticalTo(e.childAtIndex(0).childAtIndex(0).childAtIndex(0))) {
     return true;
   }
   return false;
@@ -338,10 +354,13 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, const Expr
   float pi = PiInAngleUnit(angleUnit);
 
   // Step 1. Look for an expression of type "acos(cos(x))", return x
-  if (AreInverseFunctions(e.childAtIndex(0), e)) {
-    float x = e.childAtIndex(0).childAtIndex(0).node()->approximate(float(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
+  Expression result;
+  // special case for arctan(sin/cos)
+  bool isArcTanOfSinCos = e.type() == ExpressionNode::Type::ArcTangent && ExpressionIsEquivalentToTangent(e.childAtIndex(0));
+  if (isArcTanOfSinCos || AreInverseFunctions(e.childAtIndex(0), e)) {
+    Expression result = isArcTanOfSinCos ? e.childAtIndex(0).childAtIndex(0).childAtIndex(0) : e.childAtIndex(0).childAtIndex(0);
+    float x = result.node()->approximate(float(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
     if (!(std::isinf(x) || std::isnan(x))) {
-      Expression result = e.childAtIndex(0).childAtIndex(0);
       // We translate the result within [-π,π] for acos(cos), [-π/2,π/2] for asin(sin) and atan(tan)
       float k = (e.type() == ExpressionNode::Type::ArcCosine) ? std::floor(x/pi) : std::floor((x+pi/2.0f)/pi);
       if (!std::isinf(k) && !std::isnan(k) && std::fabs(k) <= static_cast<float>(INT_MAX)) {
@@ -365,40 +384,38 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, const Expr
     }
   }
 
-  // Step 2. Special case for atan(sin(x)/cos(x))
-  if (e.type() == ExpressionNode::Type::ArcTangent && ExpressionIsEquivalentToTangent(e.childAtIndex(0))) {
-  float trigoOp = e.childAtIndex(0).childAtIndex(1).childAtIndex(0).node()->approximate(float(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
-    if (trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) {
-      Expression result = e.childAtIndex(0).childAtIndex(1).childAtIndex(0);
-      e.replaceWithInPlace(result);
-      return result;
+  // Step 2. Look for an expression of type atan(1/x) or atan(cos/sin), return sign(x)*π/2-atan(x)
+  bool isArcTanOfCosSin = e.type() == ExpressionNode::Type::ArcTangent && ExpressionIsEquivalentToInverseOfTangent(e.childAtIndex(0));
+  if (isArcTanOfCosSin || (e.type() == ExpressionNode::Type::ArcTangent && e.childAtIndex(0).type() == ExpressionNode::Type::Power && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne())) {
+    Expression x;
+    if (isArcTanOfCosSin) {
+      /* (cos(x)/sin(x))^-1 is turned to dep(tan(x),{1/sin(x)} so we don't
+       * need to add a dependency. */
+      x = Power::Builder(Undefined::Builder(), Rational::Builder(-1));
+      x.replaceChildAtIndexInPlace(0, e.childAtIndex(0));
+      x = x.shallowReduce(reductionContext);
+    } else {
+      // This equality is not true if x = 0. We thus add a dependency in 1/x
+      Dependency dep = Dependency::Builder(Undefined::Builder(), List::Builder());
+      dep.addDependency(e.childAtIndex(0).clone());
+      dep.replaceChildAtIndexInPlace(0, e.childAtIndex(0).childAtIndex(0));
+      x = dep.shallowReduce(reductionContext);
     }
-  }
-
-  // Step 3. Look for an expression of type "atan(1/x), return sign(x)*π/2-atan(x)
-  if (e.type() == ExpressionNode::Type::ArcTangent && e.childAtIndex(0).type() == ExpressionNode::Type::Power && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
-    Expression x = e.childAtIndex(0).childAtIndex(0);
-    // This equality is not true if x = 0. We thus add a dependency in 1/x
-    Dependency dep = Dependency::Builder(Undefined::Builder(), List::Builder());
-    dep.addDependency(e.childAtIndex(0).clone());
-
     Expression sign = SignFunction::Builder(x.clone());
     Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, PiExpressionInAngleUnit(angleUnit));
     sign.shallowReduce(reductionContext);
     e.replaceChildAtIndexInPlace(0, x);
     Addition a = Addition::Builder(m0);
     m0.shallowReduce(reductionContext);
-    e.replaceWithInPlace(dep);
+    e.replaceWithInPlace(a);
     Multiplication m1 = Multiplication::Builder(Rational::Builder(-1), e);
     e.shallowReduce(reductionContext);
     a.addChildAtIndexInPlace(m1, 1, 1);
     m1.shallowReduce(reductionContext);
-    dep.replaceChildAtIndexInPlace(0, a);
-    a.shallowReduce(reductionContext);
-    return dep.shallowReduce(reductionContext);
+    return a.shallowReduce(reductionContext);
   }
 
-  // Step 4. Try finding an easy standard calculation reduction
+  // Step 3. Try finding an easy standard calculation reduction
   Expression lookup = TrigonometryCheatTable::Table()->simplify(e.childAtIndex(0), e.type(), reductionContext);
   if (!lookup.isUninitialized()) {
     e.replaceWithInPlace(lookup);
@@ -413,7 +430,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, const Expr
    */
   Expression p = e.parent();
   bool letArcFunctionAtRoot = !p.isUninitialized() && isDirectTrigonometryFunction(p);
-  /* Step 5. Handle opposite argument: acos(-x) = π-acos(x),
+  /* Step 4. Handle opposite argument: acos(-x) = π-acos(x),
    * asin(-x) = -asin(x), atan(-x)= -atan(x) *
    */
   if (!letArcFunctionAtRoot) {

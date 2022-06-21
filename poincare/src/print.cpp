@@ -11,6 +11,8 @@ namespace Poincare {
 namespace Print {
 
 int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, va_list args) {
+  /* We still return the required sizes even if we could not write in the
+   * buffer in order to indicate that we overflew the buffer. */
   char * const origin = buffer;
   assert(bufferSize > 0);
   while (*format != 0) {
@@ -43,6 +45,10 @@ int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, v
         if (addPlusIfPositive && value >= 0) {
           *buffer = '+';
           buffer++;
+          if (buffer - origin >= static_cast<int>(bufferSize)) {
+            *origin = '\0';
+            return buffer - origin;
+          }
         }
         buffer += Poincare::PrintInt::Left(value, buffer, bufferSize - (buffer - origin) - 1);
       } else if (*(format + 1) == '%') {
@@ -59,6 +65,10 @@ int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, v
         if (addPlusIfPositive && value >= 0.0) {
           *buffer = '+';
           buffer++;
+          if (buffer - origin >= static_cast<int>(bufferSize)) {
+            *origin = '\0';
+            return buffer - origin;
+          }
         }
         Preferences::PrintFloatMode displayMode = static_cast<Preferences::PrintFloatMode>(va_arg(args, int));
         int numberOfSignificantDigits = va_arg(args, int);
@@ -77,8 +87,6 @@ int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, v
     }
     if (buffer - origin >= static_cast<int>(bufferSize)) {
       *origin = '\0';
-      /* We still return the required sizes even if we could not write in the
-       * buffer in order to indicate that we overflew the buffer. */
       return buffer - origin;
     }
   }

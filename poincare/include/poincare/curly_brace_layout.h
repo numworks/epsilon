@@ -4,7 +4,6 @@
 #include <poincare/layout_helper.h>
 #include <poincare/bracket_layout.h>
 #include <poincare/serialization_helper.h>
-#include <escher/metric.h>
 #include <algorithm>
 
 namespace Poincare {
@@ -16,13 +15,10 @@ public:
   constexpr static KDCoordinate k_curveWidth = 5;
   constexpr static KDCoordinate k_centerHeight = 3;
   constexpr static KDCoordinate k_centerWidth = 3;
-  constexpr static KDCoordinate k_barWidth = 1;
   // Margins
   constexpr static KDCoordinate k_horizontalExternalMargin = 1;
   constexpr static KDCoordinate k_horizontalInternalMargin = 1;
-  constexpr static KDCoordinate k_verticalInternalMargin = 4;
-
-  constexpr static KDCoordinate k_curlyBraceWidth = k_horizontalExternalMargin + (k_centerWidth + k_curveWidth - k_barWidth) + k_horizontalInternalMargin;
+  constexpr static KDCoordinate k_curlyBraceWidth = k_horizontalExternalMargin + (k_centerWidth + k_curveWidth - k_lineThickness) + k_horizontalInternalMargin;
 
   using BracketLayoutNode::BracketLayoutNode;
   size_t size() const override { return sizeof(CurlyBraceLayoutNode); }
@@ -33,20 +29,20 @@ public:
 #endif
 
 protected:
-static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
-    return std::max<KDCoordinate>(childHeight, Escher::Metric::MinimalBracketAndParenthesisHeight) + k_verticalInternalMargin;
-  }
-  static KDCoordinate ChildHeightGivenLayoutHeight(KDCoordinate layoutHeight) { return layoutHeight - k_verticalInternalMargin; }
   static void RenderWithChildHeight(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
 
-  KDSize computeSize() override {
-    return KDSize(k_curlyBraceWidth, HeightGivenChildHeight(childHeight()));
-  }
+private:
+  KDCoordinate width() const override { return k_curlyBraceWidth; }
 };
 
 class LeftCurlyBraceLayoutNode final : public CurlyBraceLayoutNode {
 public:
-  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) { CurlyBraceLayoutNode::RenderWithChildHeight(true, childHeight, ctx, p, expressionColor, backgroundColor); }
+  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+    CurlyBraceLayoutNode::RenderWithChildHeight(true, childHeight, ctx, p, expressionColor, backgroundColor);
+  }
+  static KDPoint PositionGivenChildHeightAndBaseline(KDSize childSize, KDCoordinate childBaseline) {
+    return BracketLayoutNode::PositionGivenChildHeightAndBaseline(true, k_curlyBraceWidth, childSize, childBaseline);
+  }
 
   using CurlyBraceLayoutNode::CurlyBraceLayoutNode;
   Type type() const override { return Type::LeftCurlyBraceLayout; }
@@ -58,7 +54,9 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return SerializationHelper::CodePoint(buffer, bufferSize, '{'); }
 
 private:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override { RenderWithChildHeight(CurlyBraceLayoutNode::ChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor); }
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {
+    RenderWithChildHeight(OptimalChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor);
+  }
 };
 
 class LeftCurlyBraceLayout final : public LayoutNoChildren<LeftCurlyBraceLayout, LeftCurlyBraceLayoutNode> {
@@ -68,7 +66,12 @@ public:
 
 class RightCurlyBraceLayoutNode final : public CurlyBraceLayoutNode {
 public:
-  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) { CurlyBraceLayoutNode::RenderWithChildHeight(false, childHeight, ctx, p, expressionColor, backgroundColor); }
+  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+    CurlyBraceLayoutNode::RenderWithChildHeight(false, childHeight, ctx, p, expressionColor, backgroundColor);
+  }
+  static KDPoint PositionGivenChildHeightAndBaseline(KDSize childSize, KDCoordinate childBaseline) {
+    return BracketLayoutNode::PositionGivenChildHeightAndBaseline(false, k_curlyBraceWidth, childSize, childBaseline);
+  }
 
   using CurlyBraceLayoutNode::CurlyBraceLayoutNode;
   Type type() const override { return Type::RightCurlyBraceLayout; }
@@ -80,7 +83,9 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return SerializationHelper::CodePoint(buffer, bufferSize, '}'); }
 
 private:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override { RenderWithChildHeight(CurlyBraceLayoutNode::ChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor); }
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {
+    RenderWithChildHeight(OptimalChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor);
+  }
 };
 
 class RightCurlyBraceLayout final : public LayoutNoChildren<RightCurlyBraceLayout, RightCurlyBraceLayoutNode> {

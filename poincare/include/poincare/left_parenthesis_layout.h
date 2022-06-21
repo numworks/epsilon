@@ -15,6 +15,9 @@ public:
   Type type() const override { return Type::LeftParenthesisLayout; }
 
   static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
+  static KDPoint PositionGivenChildHeightAndBaseline(KDSize childSize, KDCoordinate childBaseline) {
+    return BracketLayoutNode::PositionGivenChildHeightAndBaseline(true, k_parenthesisWidth, childSize, childBaseline);
+  }
 
   // Serializable Node
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
@@ -28,7 +31,7 @@ public:
   }
 #endif
 
-protected:
+private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 

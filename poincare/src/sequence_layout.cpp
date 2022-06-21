@@ -256,21 +256,17 @@ void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   // Render the "="
   KDSize variableSize = variableLayout()->layoutSize();
   KDPoint equalPosition = positionOfChild(variableLayout()).translatedBy(KDPoint(variableSize.width(), variableLayout()->baseline()-k_font->stringSize(k_equal).height()/2));
-  ctx->drawString(k_equal, p.translatedBy(equalPosition), k_font, expressionColor, backgroundColor);
+  ctx->drawString(k_equal, equalPosition.translatedBy(p), k_font, expressionColor, backgroundColor);
 
   // Render the parentheses
-  KDCoordinate argumentWithParenthesesHeight = ParenthesisLayoutNode::HeightGivenChildHeight(argumentLayout()->layoutSize().height());
+  KDSize argumentSize = argumentLayout()->layoutSize();
   KDPoint argumentPosition = positionOfChild(argumentLayout());
+  KDCoordinate argumentBaseline = argumentLayout()->baseline();
 
-  KDPoint leftParenthesisPoint = p.translatedBy(KDPoint(
-      argumentPosition.x() - ParenthesisLayoutNode::k_parenthesisWidth,
-      argumentPosition.y() + argumentLayout()->layoutSize().height() - argumentWithParenthesesHeight));
-  LeftParenthesisLayoutNode::RenderWithChildHeight(argumentWithParenthesesHeight, ctx, leftParenthesisPoint, expressionColor, backgroundColor);
-
-  KDPoint rightParenthesisPoint = p.translatedBy(KDPoint(
-      argumentPosition.x() + argumentLayout()->layoutSize().width(),
-      argumentPosition.y() + argumentLayout()->layoutSize().height() - argumentWithParenthesesHeight));
-  RightParenthesisLayoutNode::RenderWithChildHeight(argumentWithParenthesesHeight, ctx, rightParenthesisPoint, expressionColor, backgroundColor);
+  KDPoint leftParenthesisPosition = LeftParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(argumentSize, argumentBaseline).translatedBy(argumentPosition);
+  KDPoint rightParenthesisPosition = RightParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(argumentSize, argumentBaseline).translatedBy(argumentPosition);
+  LeftParenthesisLayoutNode::RenderWithChildHeight(argumentSize.height(), ctx, leftParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
+  RightParenthesisLayoutNode::RenderWithChildHeight(argumentSize.height(), ctx, rightParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
 }
 
 KDCoordinate SequenceLayoutNode::completeLowerBoundX() {

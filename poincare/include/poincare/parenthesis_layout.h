@@ -2,7 +2,6 @@
 #define POINCARE_PARENTHESIS_LAYOUT_NODE_H
 
 #include <poincare/bracket_layout.h>
-#include <escher/metric.h>
 #include <algorithm>
 
 namespace Poincare {
@@ -10,15 +9,15 @@ namespace Poincare {
 class ParenthesisLayoutNode : public BracketLayoutNode {
   friend class SequenceLayoutNode;
 public:
-  using BracketLayoutNode::BracketLayoutNode;
-  constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
-  constexpr static KDCoordinate k_parenthesisCurveHeight = 7;
+  // Dimensions
+  constexpr static KDCoordinate k_curveWidth = 5;
+  constexpr static KDCoordinate k_curveHeight = 7;
+  // Margins
   constexpr static KDCoordinate k_externWidthMargin = 1;
-  constexpr static KDCoordinate k_externHeightMargin = 2;
   constexpr static KDCoordinate k_widthMargin = 5;
-  constexpr static KDCoordinate k_lineThickness = 1;
-  constexpr static KDCoordinate k_parenthesisWidth = k_widthMargin + k_lineThickness + k_externWidthMargin;
+  constexpr static KDCoordinate k_parenthesisWidth = k_curveWidth + k_lineThickness + k_externWidthMargin;
 
+  using BracketLayoutNode::BracketLayoutNode;
   // TreeNode
   size_t size() const override { return sizeof(ParenthesisLayoutNode); }
 #if POINCARE_TREE_LOG
@@ -27,16 +26,8 @@ public:
   }
 #endif
 
-protected:
-  KDSize computeSize() override {
-    return KDSize(k_parenthesisWidth, HeightGivenChildHeight(childHeight()));
-  }
-  static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
-    return std::max<KDCoordinate>(childHeight, Escher::Metric::MinimalBracketAndParenthesisHeight) + k_externHeightMargin * 2;
-  }
-  static KDCoordinate ChildHeightGivenLayoutHeight(KDCoordinate layoutHeight) {
-    return layoutHeight - k_externHeightMargin * 2;
-  }
+private:
+  KDCoordinate width() const override { return k_parenthesisWidth; }
 };
 
 }

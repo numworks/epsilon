@@ -135,7 +135,7 @@ KDSize DerivativeLayoutNode::computeSize() {
 
 KDCoordinate DerivativeLayoutNode::computeBaseline() {
   KDCoordinate dBaseline = KDFont::LargeFont->stringSize("d").height() + FractionLayoutNode::k_fractionLineMargin + FractionLayoutNode::k_fractionLineHeight;
-  KDCoordinate fBaseline = ParenthesisLayoutNode::k_externHeightMargin + derivandLayout()->baseline();
+  KDCoordinate fBaseline = ParenthesisLayoutNode::BaselineGivenChildHeightAndBaseline(derivandLayout()->layoutSize().height(), derivandLayout()->baseline());
   return std::max(dBaseline, fBaseline);
 }
 
@@ -191,41 +191,45 @@ void DerivativeLayoutNode::setVariableSlot(bool fractionSlot, bool * shouldRecom
 }
 
 void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  KDPoint variableFractionPosition = positionOfVariableInFractionSlot().translatedBy(p);
+  KDPoint variableFractionPosition = positionOfVariableInFractionSlot();
   KDSize variableSize = variableLayout()->layoutSize();
-  KDSize derivandSize = derivandLayout()->layoutSize();
-  KDCoordinate xOffset = p.x() + Escher::Metric::FractionAndConjugateHorizontalMargin;
+  KDCoordinate xOffset = Escher::Metric::FractionAndConjugateHorizontalMargin;
 
   // d/dx...
   KDSize dSize = KDFont::LargeFont->stringSize("d");
   KDCoordinate charBaseline = dSize.height() / 2;
   KDPoint dPosition((variableSize.width() + k_dxHorizontalMargin) / 2 + xOffset + Escher::Metric::FractionAndConjugateHorizontalOverflow, variableFractionPosition.y() - dSize.height() - 2 * FractionLayoutNode::k_fractionLineMargin - FractionLayoutNode::k_fractionLineHeight);
-  ctx->drawString("d", dPosition, KDFont::LargeFont, expressionColor, backgroundColor);
+  ctx->drawString("d", dPosition.translatedBy(p), KDFont::LargeFont, expressionColor, backgroundColor);
 
   KDPoint dxPosition(variableFractionPosition.x() - dSize.width() - k_dxHorizontalMargin, variableFractionPosition.y() + variableLayout()->baseline() - charBaseline);
-  ctx->drawString("d", dxPosition, KDFont::LargeFont, expressionColor, backgroundColor);
+  ctx->drawString("d", dxPosition.translatedBy(p), KDFont::LargeFont, expressionColor, backgroundColor);
 
   KDCoordinate barWidth = fractionBarWidth();
-  ctx->fillRect(KDRect(xOffset, p.y() + baseline() - FractionLayoutNode::k_fractionLineHeight, barWidth, FractionLayoutNode::k_fractionLineHeight), expressionColor);
+  KDRect horizontalBar = KDRect(xOffset, baseline() - FractionLayoutNode::k_fractionLineHeight, barWidth, FractionLayoutNode::k_fractionLineHeight);
+  ctx->fillRect(horizontalBar.translatedBy(p), expressionColor);
 
   // ...(f)...
-  KDPoint leftParenthesisPosition(xOffset + barWidth + Escher::Metric::FractionAndConjugateHorizontalMargin, p.y() + baseline() - derivandLayout()->baseline() - ParenthesisLayoutNode::k_externHeightMargin);
-  LeftParenthesisLayoutNode::RenderWithChildHeight(derivandSize.height(), ctx, leftParenthesisPosition, expressionColor, backgroundColor);
+  KDSize derivandSize = derivandLayout()->layoutSize();
+  KDPoint derivandPosition = positionOfChild(derivandLayout());
+  KDCoordinate derivandBaseline = derivandLayout()->baseline();
 
-  KDPoint rightParenthesisPosition(leftParenthesisPosition.x() + ParenthesisLayoutNode::k_parenthesisWidth + derivandSize.width(), leftParenthesisPosition.y());
-  RightParenthesisLayoutNode::RenderWithChildHeight(derivandSize.height(), ctx, rightParenthesisPosition, expressionColor, backgroundColor);
+  KDPoint leftParenthesisPosition = LeftParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(derivandSize, derivandBaseline).translatedBy(derivandPosition);
+  LeftParenthesisLayoutNode::RenderWithChildHeight(derivandSize.height(), ctx, leftParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
+
+  KDPoint rightParenthesisPosition = RightParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(derivandSize, derivandBaseline).translatedBy(derivandPosition);
+  RightParenthesisLayoutNode::RenderWithChildHeight(derivandSize.height(), ctx, rightParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
 
   // ...|x=
-  KDRect verticalBar(rightParenthesisPosition.x() + ParenthesisLayoutNode::k_parenthesisWidth + k_barHorizontalMargin, p.y(), k_barWidth, abscissaBaseline() - variableLayout()->baseline() + variableSize.height());
-  ctx->fillRect(verticalBar, expressionColor);
+  KDRect verticalBar(rightParenthesisPosition.x() + ParenthesisLayoutNode::k_parenthesisWidth + k_barHorizontalMargin, 0, k_barWidth, abscissaBaseline() - variableLayout()->baseline() + variableSize.height());
+  ctx->fillRect(verticalBar.translatedBy(p), expressionColor);
 
-  KDPoint variableAssignmentPosition(verticalBar.x() + k_barWidth + k_barHorizontalMargin, p.y() + abscissaBaseline() - variableLayout()->baseline());
-  ctx->drawString("=", variableAssignmentPosition.translatedBy(KDPoint(variableSize.width(), variableLayout()->baseline() - charBaseline)), KDFont::LargeFont, expressionColor, backgroundColor);
+  KDPoint variableAssignmentPosition(verticalBar.x() + k_barWidth + k_barHorizontalMargin, abscissaBaseline() - variableLayout()->baseline());
+  KDPoint equalPosition = variableAssignmentPosition.translatedBy(KDPoint(variableSize.width(), variableLayout()->baseline() - charBaseline));
+  ctx->drawString("=", equalPosition.translatedBy(p), KDFont::LargeFont, expressionColor, backgroundColor);
 
   Layout variableCopy = HorizontalLayout::Builder(Layout(variableLayout()).clone());
   KDPoint copyPosition = m_variableChildInFractionSlot ? variableAssignmentPosition : variableFractionPosition;
-  variableCopy.draw(ctx, copyPosition, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
-
+  variableCopy.draw(ctx, copyPosition.translatedBy(p), expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
 }
 
 }

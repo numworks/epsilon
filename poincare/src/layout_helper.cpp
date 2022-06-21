@@ -2,8 +2,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/combined_code_points_layout.h>
 #include <poincare/horizontal_layout.h>
-#include <poincare/left_parenthesis_layout.h>
-#include <poincare/right_parenthesis_layout.h>
+#include <poincare/parenthesis_layout.h>
 #include <poincare/string_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>

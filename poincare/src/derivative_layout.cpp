@@ -2,8 +2,7 @@
 #include <poincare/derivative_layout.h>
 #include <poincare/derivative.h>
 #include <poincare/fraction_layout.h>
-#include <poincare/left_parenthesis_layout.h>
-#include <poincare/right_parenthesis_layout.h>
+#include <poincare/parenthesis_layout.h>
 #include <poincare/serialization_helper.h>
 #include <escher/metric.h>
 #include <algorithm>

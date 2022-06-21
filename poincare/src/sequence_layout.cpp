@@ -1,8 +1,7 @@
 #include <poincare/sequence_layout.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
-#include <poincare/left_parenthesis_layout.h>
-#include <poincare/right_parenthesis_layout.h>
+#include <poincare/parenthesis_layout.h>
 #include <poincare/sum_and_product.h>
 #include <assert.h>
 #include <algorithm>

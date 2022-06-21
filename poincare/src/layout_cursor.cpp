@@ -5,10 +5,9 @@
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout.h>
-#include <poincare/left_parenthesis_layout.h>
+#include <poincare/parenthesis_layout.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/nth_root_layout.h>
-#include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <algorithm>

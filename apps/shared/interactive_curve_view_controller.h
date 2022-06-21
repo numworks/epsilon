@@ -71,8 +71,6 @@ protected:
   // SimpleInteractiveCurveViewController
   bool handleEnter() override { return openMenu(); }
 
-  InteractiveCurveViewRange * interactiveRange() { return m_interactiveRange; }
-
   int m_selectedSubCurveIndex;
 private:
   /* The value 21 is the actual height of the ButtonRow, that is

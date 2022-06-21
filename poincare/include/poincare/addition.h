@@ -101,8 +101,16 @@ private:
   static inline const Expression FirstNonNumeralFactor(const Expression & e);
 
   static bool TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2, Context * context);
+  /* Return true if the expression is y*cos(x)^2 or y*sin(x)^2 and
+   * "base" is unintialized or "base" == x.
+   * Set "coefficient" to y. If "base" is uninitialized, set "base" to x
+   * Set cosine to true if it's a cosine, to false if it's a sine. */
+  static bool TermHasSquaredTrigFunctionWithBase(const Expression & e, const ExpressionNode::ReductionContext& reductionContext, Expression & base, Expression & coefficient, bool * cosine);
+  static bool TermHasSquaredCos(const Expression & e, const ExpressionNode::ReductionContext& reductionContext, Expression & baseOfCos);
+
   Expression factorizeOnCommonDenominator(const ExpressionNode::ReductionContext& reductionContext);
   void factorizeChildrenAtIndexesInPlace(int index1, int index2, const ExpressionNode::ReductionContext& reductionContext);
+  Expression factorizeSquaredTrigFunction(Expression & baseOfTrigFunction, const ExpressionNode::ReductionContext& reductionContext);
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }
 };
 

@@ -163,6 +163,11 @@ QUIZ_CASE(poincare_simplification_addition) {
   // Beautification order
   assert_parsed_expression_simplify_to("√(2)+4+3×π+√(5)+2×√(5)", "3×π+4+3×√(5)+√(2)");
   assert_parsed_expression_simplify_to("(√(2)+1+x+y)^3", "x^3+y^3+3×x×y^2+3×x^2×y+3×√(2)×x^2+3×x^2+3×√(2)×y^2+3×y^2+6×√(2)×x×y+6×x×y+6×√(2)×x+9×x+6×√(2)×y+9×y+7+5×√(2)");
+  // cos^2+sin^2
+  assert_parsed_expression_simplify_to("cos(x)^2+sin(x)^2", "dep\u0014(1,{x})");
+  assert_parsed_expression_simplify_to("2xln(x)cos(x)^2+2xln(x)sin(x)^2", "2×x×ln(x)");
+  assert_parsed_expression_simplify_to("5cos(3x+2)^2+5sin(3x+2)^2+3", "dep\u0014(8,{x})");
+  assert_parsed_expression_simplify_to("4cos(x)^2+3sin(x)^2", "4×cos(x)^2+3×sin(x)^2");
 }
 
 QUIZ_CASE(poincare_simplification_multiplication) {

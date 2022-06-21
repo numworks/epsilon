@@ -71,22 +71,10 @@ And there you can go to step 2!
 
 <br>
 
-To install basics dev tools:
+To install all dependencies:
 
 ```bash
-dnf install make automake gcc gcc-c++ kernel-devel
-```
-
-And then install required packages.
-
-```bash
-install git ImageMagick libX11-devel libXext-devel freetype-devel libpng-devel libjpeg-devel pkg-config
-```
-
-Then, install GCC cross compiler for ARM.
-
-```bash
-        dnf install arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++
+dnf install make automake gcc gcc-c++ kernel-devel git ImageMagick libX11-devel libXext-devel freetype-devel libpng-devel libjpeg-devel pkg-config arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++
 ```
 
 <br>
@@ -285,7 +273,15 @@ to make binpack which you can flash to the calculator from [Ti-planet's webDFU](
 
 <details>
 
-<summary><b>Model bootloader (N0110)</b></summary>
+<summary><b>Model n0110</b></summary>
+
+The bootloader allows you to install 2 firmware in separated "slots". If so, external apps won't have all the space but half. Bootloader will allow use of all of the memory if only one slot is flashed. In legacy mode, external apps use all the space available.
+
+<details>
+<summary>Bootloader</summary>
+
+Your calculator must already have been flashed with [Upsilon](https://getupsilon.web.app)'s or [Omega](https://getomega.dev)'s bootloader.
+Then, build with:
 
 ```bash
 make clean
@@ -308,13 +304,13 @@ or:
 make OMEGA_USERNAME="" binpack -j4
 ```
 
-to make binpack witch you can flash to the calculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0110/). Binpacks are a great way to share a custom build of Upsilon to friends.
-
+to make binpack which you can flash to the calculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0110/). You'll find them at `output/release/device/bootloader/`. Binpacks are a great way to share a custom build of Upsilon to friends.
 </details>
 
-<details>
 
-<summary><b>Model N0110 legacy (deprecated, use bootloader instead, no Epsilon protection)</b></summary>
+
+<details>
+<summary>Model N0110 legacy (deprecated, use bootloader instead for Epsilon protection)</summary>
 
 ```bash
 make MODEL=n0110 clean
@@ -337,9 +333,38 @@ or:
 make MODEL=n0110 OMEGA_USERNAME="" binpack -j4
 ```
 
-to make binpack witch you can flash to the calculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0110/). Binpacks are a great way to share a custom build of Upsilon to friends.
+to make binpack which you can flash to the calculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0110/). You'll find them at `output/release/device/bootloader/`. Binpacks are a great way to share a custom build of Upsilon to friends.
+</details>
 
 </details>
+
+
+<details>
+
+<summary><b>Native simulator</b></summary>
+
+Run this command:
+```bash
+make clean
+```
+You can either build using the following command that will automatically detect your platform:
+```bash
+make PLATFORM=simulator
+```
+or, choose the command corresponding to your platform:
+```bash
+make PLATFORM=simulator TARGET=android
+make PLATFORM=simulator TARGET=ios
+make PLATFORM=simulator TARGET=macos
+make PLATFORM=simulator TARGET=web
+make PLATFORM=simulator TARGET=windows
+make PLATFORM=simulator TARGET=3ds
+```
+
+You'll find simulator files in `output/release/simulator/`.
+
+</details>
+
 
 <details>
 

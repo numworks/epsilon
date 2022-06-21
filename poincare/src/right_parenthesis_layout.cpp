@@ -27,22 +27,22 @@ const uint8_t bottomRightCurve[ParenthesisLayoutNode::k_curveHeight][Parenthesis
 void RightParenthesisLayoutNode::RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDColor parenthesisWorkingBuffer[k_curveHeight * k_curveWidth];
   KDCoordinate parenthesisHeight = HeightGivenChildHeight(childHeight);
-  KDRect frame = KDRect(k_widthMargin + k_lineThickness - k_curveWidth,
+  KDRect frame = KDRect(k_widthMargin,
       k_verticalMargin,
       k_curveWidth,
       k_curveHeight);
 
   ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, (const uint8_t *)topRightCurve, parenthesisWorkingBuffer);
 
-  frame = KDRect(k_widthMargin + k_lineThickness - k_curveWidth,
+  frame = KDRect(k_widthMargin,
       parenthesisHeight - k_curveHeight - k_verticalMargin,
       k_curveWidth,
       k_curveHeight);
 
   ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, (const uint8_t *)bottomRightCurve, parenthesisWorkingBuffer);
 
-  frame = KDRect(k_widthMargin,
-      k_curveHeight + 2,
+  frame = KDRect(k_widthMargin + k_curveWidth - k_lineThickness,
+      k_curveHeight + k_verticalMargin,
       k_lineThickness,
       parenthesisHeight - 2 * (k_curveHeight + k_verticalMargin));
 

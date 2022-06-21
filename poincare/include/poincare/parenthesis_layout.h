@@ -13,9 +13,8 @@ public:
   constexpr static KDCoordinate k_curveWidth = 5;
   constexpr static KDCoordinate k_curveHeight = 7;
   // Margins
-  constexpr static KDCoordinate k_externWidthMargin = 1;
-  constexpr static KDCoordinate k_widthMargin = 5;
-  constexpr static KDCoordinate k_parenthesisWidth = k_curveWidth + k_lineThickness + k_externWidthMargin;
+  constexpr static KDCoordinate k_widthMargin = 1;
+  constexpr static KDCoordinate k_parenthesisWidth = k_widthMargin + k_curveWidth + k_widthMargin;
 
   using BracketLayoutNode::BracketLayoutNode;
   // TreeNode

@@ -18,6 +18,7 @@ public:
   // Table
   void setParameterAtPosition(double value, int row, int column) override { set(value, 0, column, row, false); }
   double parameterAtPosition(int row, int column) const override;
+  bool deleteParameterAtPosition(int row, int column) override;
   void recomputeData() override { updateSeries(0); }
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; }
   int maxNumberOfRows() const override { return k_maxNumberOfPairs; }

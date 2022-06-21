@@ -124,15 +124,22 @@ template <typename U> Evaluation<U> PercentSimpleNode::templateApproximate(const
 }
 
 Expression PercentSimpleNode::shallowReduce(const ReductionContext& reductionContext) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(getExpression());
-    if (!e.isUninitialized()) {
-      return e;
-    }
+  Expression percent = getExpression();
+  Expression e = SimplificationHelper::defaultShallowReduce(percent);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+  e = SimplificationHelper::undefinedOnMatrix(percent, reductionContext);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+  e = SimplificationHelper::distributeReductionOverLists(percent, reductionContext);
+  if (!e.isUninitialized()) {
+    return e;
   }
   /* Percent Expression is preserved for beautification. Escape cases are
    * therefore not implemented */
-  return getExpression();
+  return percent;
 }
 
 /* PercentAdditionNode */

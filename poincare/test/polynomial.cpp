@@ -45,7 +45,6 @@ QUIZ_CASE(poincare_polynomial_roots_quadratic) {
   assert_roots_of_polynomial_are("x^2+1", {""}, "-4", Real);
   assert_roots_of_polynomial_are("x^2+1", {"-i", "i"}, "-4", Cartesian);
   assert_roots_of_polynomial_are("2i×(x-3i)^2", {"3×i"}, "0", Cartesian);
-  assert_roots_of_polynomial_are("x^2+x+1-i^(2/30)", {"-1/2-√(4×cos(π/30)+4×i×sin(π/30)-3)/2", "-1/2+√(4×cos(π/30)+4×i×sin(π/30)-3)/2"}, "4×cos(π/30)-3+4×sin(π/30)×i", Cartesian);
 }
 
 QUIZ_CASE(poincare_polynomial_roots_cubic) {
@@ -68,6 +67,5 @@ QUIZ_CASE(poincare_polynomial_roots_cubic) {
   assert_roots_of_polynomial_are("(x-7/3)(x-π)(x-log(3))", {"log(3)", "7/3", "π"}, "1.598007ᴇ1", Real);
   assert_roots_of_polynomial_are("(x-2i+1)(x+3i-1)(x-i+2)", {"-2+1×i", "-1+2×i", "1-3×i"}, "-1288-666×i", Cartesian);
   assert_roots_of_polynomial_are("x^3+x^2+x-39999999", {"3.416612ᴇ2", "-1.713306ᴇ2-2.961771ᴇ2×i", "-1.713306ᴇ2+2.961771ᴇ2×i"}, "-43199998400000016", Cartesian);
-  assert_roots_of_polynomial_are("(x-π)(x^2+x+1-i^(2/30))", {"π", "-1/2-√(4×cos(π/30)+4×i×sin(π/30)-3)/2", "-1/2+√(4×cos(π/30)+4×i×sin(π/30)-3)/2"}, "1.668482ᴇ2+6.817647ᴇ1×i", Cartesian);
   assert_roots_of_polynomial_are("x^3+x^2+x+1-80*π*200000", {"3.687201ᴇ2", "-1.8486ᴇ2-3.196107ᴇ2×i", "-1.8486ᴇ2+3.196107ᴇ2×i"}, "-6912000000000000×π^2+640000000×π-16", Cartesian);
 }

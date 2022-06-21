@@ -24,35 +24,6 @@ const uint8_t bottomLeftCurve[ParenthesisLayoutNode::k_curveHeight][ParenthesisL
   {0xFF, 0xFF, 0xFF, 0xF9, 0x66},
 };
 
-void LeftParenthesisLayoutNode::RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  KDColor parenthesisWorkingBuffer[k_curveHeight * k_curveWidth];
-  KDCoordinate parenthesisHeight = HeightGivenChildHeight(childHeight);
-  KDRect frame = KDRect(k_widthMargin,
-      k_verticalMargin,
-      k_curveWidth,
-      k_curveHeight);
-
-  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, (const uint8_t *)topLeftCurve, parenthesisWorkingBuffer);
-
-  frame = KDRect(k_widthMargin,
-      parenthesisHeight - k_curveHeight - k_verticalMargin,
-      k_curveWidth,
-      k_curveHeight);
-
-  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, (const uint8_t *)bottomLeftCurve, parenthesisWorkingBuffer);
-
-  frame = KDRect(k_widthMargin,
-      k_curveHeight + k_verticalMargin,
-      k_lineThickness,
-      parenthesisHeight - 2 * (k_curveHeight + k_verticalMargin));
-
-  ctx->fillRect(frame.translatedBy(p), expressionColor);
-}
-
-void LeftParenthesisLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  RenderWithChildHeight(OptimalChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor);
-}
-
 const uint8_t topRightCurve[ParenthesisLayoutNode::k_curveHeight][ParenthesisLayoutNode::k_curveWidth] = {
   {0x66, 0xF9, 0xFF, 0xFF, 0xFF},
   {0x9A, 0x40, 0xEB, 0xFF, 0xFF},
@@ -73,7 +44,7 @@ const uint8_t bottomRightCurve[ParenthesisLayoutNode::k_curveHeight][Parenthesis
   {0x66, 0xF9, 0xFF, 0xFF, 0xFF},
 };
 
-void RightParenthesisLayoutNode::RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void ParenthesisLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDColor parenthesisWorkingBuffer[k_curveHeight * k_curveWidth];
   KDCoordinate parenthesisHeight = HeightGivenChildHeight(childHeight);
   KDRect frame = KDRect(k_widthMargin,
@@ -81,25 +52,21 @@ void RightParenthesisLayoutNode::RenderWithChildHeight(KDCoordinate childHeight,
       k_curveWidth,
       k_curveHeight);
 
-  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, (const uint8_t *)topRightCurve, parenthesisWorkingBuffer);
+  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, (const uint8_t *)(left ? topLeftCurve : topRightCurve), parenthesisWorkingBuffer);
 
   frame = KDRect(k_widthMargin,
       parenthesisHeight - k_curveHeight - k_verticalMargin,
       k_curveWidth,
       k_curveHeight);
 
-  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, (const uint8_t *)bottomRightCurve, parenthesisWorkingBuffer);
+  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, (const uint8_t *)(left ? bottomLeftCurve : bottomRightCurve), parenthesisWorkingBuffer);
 
-  frame = KDRect(k_widthMargin + k_curveWidth - k_lineThickness,
+  frame = KDRect(k_widthMargin + (left ? 0 : k_curveWidth - k_lineThickness),
       k_curveHeight + k_verticalMargin,
       k_lineThickness,
       parenthesisHeight - 2 * (k_curveHeight + k_verticalMargin));
 
   ctx->fillRect(frame.translatedBy(p), expressionColor);
-}
-
-void RightParenthesisLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  RenderWithChildHeight(OptimalChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor);
 }
 
 }

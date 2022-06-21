@@ -162,7 +162,12 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
    || (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0
     && strcmp(inputText(), exactOutputText()) == 0)
       // Exact output with remaining dependency are not displayed to avoid 2 ≈ undef
-   || outputExp.type() == ExpressionNode::Type::Dependency
+      /* TODO: This is temporary to v19 because some dependencies are not bubbled up
+       * correctly. This should be fixed in v20. */
+   || outputExp.recursivelyMatches(
+        [](const Expression e, Context * c) {
+          return e.isOfType({ExpressionNode::Type::Dependency});
+        }, context)
       // Lists or Matrices with only nonreal/undefined children
    || (outputExp.isOfType({ExpressionNode::Type::List, ExpressionNode::Type::Matrix}) && outputExp.allChildrenAreUndefined())
       // Force all outputs to be ApproximateOnly if required by the exam mode configuration

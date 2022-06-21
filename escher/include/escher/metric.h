@@ -41,7 +41,7 @@ public:
   constexpr static KDCoordinate ExpressionViewHorizontalMargin = 5;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
-  constexpr static KDCoordinate MinimalBracketAndParenthesisHeight = 18;
+  constexpr static KDCoordinate MinimalBracketAndParenthesisChildHeight = 18;
   constexpr static KDCoordinate OperatorHorizontalMargin = 4;
   constexpr static KDCoordinate ScrollStep = 10;
   constexpr static KDCoordinate SmallCellMargin = 2;

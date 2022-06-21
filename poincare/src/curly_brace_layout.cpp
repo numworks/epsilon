@@ -54,8 +54,8 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHe
   // Compute margins and dimensions for each part
   KDColor workingBuffer[k_curveHeight * k_curveWidth];
   assert(k_curveHeight * k_curveWidth >= k_centerHeight * k_centerWidth);
-  constexpr KDCoordinate curveHorizontalOffset = k_centerWidth - k_barWidth;
-  constexpr KDCoordinate centerHorizontalOffset = k_curveWidth - k_barWidth;
+  constexpr KDCoordinate curveHorizontalOffset = k_centerWidth - k_lineThickness;
+  constexpr KDCoordinate centerHorizontalOffset = k_curveWidth - k_lineThickness;
   KDCoordinate leftMargin, curveLeftOffset, barLeftOffset, centerLeftOffset;
   const uint8_t * topCurve, * bottomCurve, * centerPiece;
   if (left) {
@@ -83,49 +83,49 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHe
   assert(topBarHeight == bottomBarHeight || topBarHeight + 1 == bottomBarHeight);
 
   // Top curve
-  KDCoordinate dy = p.y();
+  KDCoordinate dy = 0;
   KDRect frame(
-      p.x() + leftMargin + curveLeftOffset,
+      leftMargin + curveLeftOffset,
       dy,
       k_curveWidth,
       k_curveHeight);
-  ctx->blendRectWithMask(frame, expressionColor, topCurve, workingBuffer);
+  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, topCurve, workingBuffer);
 
   // Top bar
   dy += k_curveHeight;
   frame = KDRect(
-      p.x() + leftMargin + barLeftOffset,
+      leftMargin + barLeftOffset,
       dy,
-      k_barWidth,
+      k_lineThickness,
       topBarHeight);
-  ctx->fillRect(frame, expressionColor);
+  ctx->fillRect(frame.translatedBy(p), expressionColor);
 
   // Center piece
   dy += topBarHeight;
   frame = KDRect(
-      p.x() + leftMargin + centerLeftOffset,
+      leftMargin + centerLeftOffset,
       dy,
       k_centerWidth,
       k_centerHeight);
-  ctx->blendRectWithMask(frame, expressionColor, centerPiece, workingBuffer);
+  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, centerPiece, workingBuffer);
 
   // Bottom bar
   dy += k_centerHeight;
   frame = KDRect(
-      p.x() + leftMargin + barLeftOffset,
+      leftMargin + barLeftOffset,
       dy,
-      k_barWidth,
+      k_lineThickness,
       bottomBarHeight);
-  ctx->fillRect(frame, expressionColor);
+  ctx->fillRect(frame.translatedBy(p), expressionColor);
 
   // Bottom curve
   dy += bottomBarHeight;
   frame = KDRect(
-      p.x() + leftMargin + curveLeftOffset,
+      leftMargin + curveLeftOffset,
       dy,
       k_curveWidth,
       k_curveHeight);
-  ctx->blendRectWithMask(frame, expressionColor, bottomCurve, workingBuffer);
+  ctx->blendRectWithMask(frame.translatedBy(p), expressionColor, bottomCurve, workingBuffer);
 }
 
 }

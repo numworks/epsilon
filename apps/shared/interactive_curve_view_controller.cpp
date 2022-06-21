@@ -30,7 +30,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   }, this), KDFont::SmallFont),
   m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
-    graphController->rangeParameterController()->setRange(graphController->interactiveRange());
+    graphController->rangeParameterController()->setRange(graphController->interactiveCurveViewRange());
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
     return true;

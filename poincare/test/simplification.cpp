@@ -1091,6 +1091,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(-1.2)", "-atan(6/5)");
   assert_parsed_expression_simplify_to("atan(tan(2/3))", "2/3");
   assert_parsed_expression_simplify_to("tan(atan(2/3))", "2/3");
+  assert_parsed_expression_simplify_to("atan(sin(2/3)/cos(2/3))", "2/3", SystemForAnalysis); // If target != User, sin/cos is not reduced to tan(x)
   assert_parsed_expression_simplify_to("tan(atan(5/2))", "5/2");
   assert_parsed_expression_simplify_to("atan(tan(5/2))", "\u0012-2×π+5\u0013/2");
   assert_parsed_expression_simplify_to("atan(tan(-π/7))", "-π/7");
@@ -1108,6 +1109,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(1/x)", "dep\u0014(\u0012π×sign(x)-2×atan(x)\u0013/2,{1/x})");
   assert_parsed_expression_simplify_to("atan(1/x)", "dep\u0014(90×sign(x)-atan(x),{1/x})", User, Degree);
   assert_parsed_expression_simplify_to("atan(1/x)", "dep\u0014(100×sign(x)-atan(x),{1/x})", User, Gradian);
+  assert_parsed_expression_simplify_to("atan(cos(x)/sin(x))", "dep\u0014(\u0012π×sign(tan(x))-2×atan(tan(x))\u0013/2,{csc(x)})");
 
   // cos(asin)
   assert_parsed_expression_simplify_to("cos(asin(x))", "√(-x^2+1)", User, Degree);

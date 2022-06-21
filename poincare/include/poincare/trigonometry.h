@@ -23,6 +23,7 @@ public:
    * are the same. */
   static Expression UnitConversionFactor(Preferences::AngleUnit fromUnit, Preferences::AngleUnit toUnit);
   static bool ExpressionIsEquivalentToTangent(const Expression & e);
+  static bool ExpressionIsEquivalentToInverseOfTangent(const Expression & e);
   static Expression shallowReduceDirectFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext);
   static Expression shallowReduceInverseFunction(Expression & e,  const ExpressionNode::ReductionContext& reductionContext);
   static Expression shallowReduceAdvancedFunction(Expression & e,  const ExpressionNode::ReductionContext& reductionContext);

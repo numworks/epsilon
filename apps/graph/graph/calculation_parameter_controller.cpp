@@ -9,11 +9,13 @@ using namespace Escher;
 
 namespace Graph {
 
-CalculationParameterController::CalculationParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
+CalculationParameterController::CalculationParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, GraphController * graphController) :
   SelectableListViewController(parentResponder),
   m_preimageCell(I18n::Message::Preimage),
+  m_graphController(graphController),
   m_preimageParameterController(nullptr, inputEventHandlerDelegate, range, cursor, &m_preimageGraphController),
   m_preimageGraphController(nullptr, graphView, bannerView, range, cursor),
+  m_derivativeCell(I18n::Message::GraphDerivative),
   m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
   m_integralGraphController(nullptr, inputEventHandlerDelegate, graphView, range, cursor),
   m_minimumGraphController(nullptr, graphView, bannerView, range, cursor),
@@ -42,6 +44,13 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && row == 0)) {
     static ViewController * controllers[] = {&m_preimageParameterController, &m_intersectionGraphController, &m_maximumGraphController, &m_minimumGraphController, &m_rootGraphController, &m_tangentGraphController, &m_integralGraphController};
     int displayIntersection = shouldDisplayIntersection();
+    if (row == 4 + displayIntersection) {
+      m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
+      m_selectableTableView.reloadData();
+      return true;
+    } else if (row > 4 + displayIntersection) {
+      row--;
+    }
     int indexController = row == 0 ? 0 : row + !displayIntersection;
     ViewController * controller = controllers[indexController];
     if (row == 0) {
@@ -71,8 +80,8 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int CalculationParameterController::numberOfRows() const {
-  // Inverse row + [optional intersection row] + all other rows (max, min zeros, tangent, integral)
-  return 1 + shouldDisplayIntersection() + k_totalNumberOfReusableCells - 1;
+  // Inverse row + [optional intersection row] + derivative + all other rows (max, min zeros, derivative, tangent, integral)
+  return 1 + shouldDisplayIntersection() + 1 + k_totalNumberOfReusableCells - 1;
 };
 
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
@@ -80,6 +89,9 @@ HighlightCell * CalculationParameterController::reusableCell(int index, int type
   assert(index < reusableCellCount(type));
   if (type == k_defaultCellType) {
     return &m_cells[index];
+  }
+  if (type == k_derivativeCellType) {
+    return &m_derivativeCell;
   }
   assert(type == k_preImageCellType);
   return &m_preimageCell;
@@ -94,8 +106,10 @@ int CalculationParameterController::reusableCellCount(int type) {
 
 void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index <= numberOfRows());
-  if (cell != &m_preimageCell) {
-    I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Tangent, I18n::Message::Integral};
+  if (cell == &m_derivativeCell) {
+    m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
+  } else if (cell != &m_preimageCell) {
+    I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Default, I18n::Message::Tangent, I18n::Message::Integral};
     static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1 + !shouldDisplayIntersection()]);
   }
 }

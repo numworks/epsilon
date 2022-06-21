@@ -3,6 +3,7 @@
 
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/selectable_list_view_controller.h>
+#include <escher/message_table_cell_with_switch.h>
 #include "preimage_parameter_controller.h"
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"
@@ -15,9 +16,11 @@
 
 namespace Graph {
 
+class GraphController;
+
 class CalculationParameterController : public Escher::SelectableListViewController<Escher::RegularListViewDataSource> {
 public:
-  CalculationParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor);
+  CalculationParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor, GraphController * graphController);
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
@@ -27,7 +30,7 @@ public:
 
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return index == 0 ? k_preImageCellType : k_defaultCellType; }
+  int typeAtIndex(int index) override { return index == 0 ? k_preImageCellType : index == (4 + shouldDisplayIntersection()) ? k_derivativeCellType : k_defaultCellType; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
@@ -35,11 +38,14 @@ private:
   Escher::MessageTableCellWithChevron m_preimageCell;
   constexpr static int k_totalNumberOfReusableCells = 6;
   constexpr static int k_defaultCellType = 0;
-  constexpr static int k_preImageCellType = 1;
+  constexpr static int k_derivativeCellType = 1;
+  constexpr static int k_preImageCellType = 2;
   Escher::MessageTableCell m_cells[k_totalNumberOfReusableCells];
   Ion::Storage::Record m_record;
+  GraphController * m_graphController;
   PreimageParameterController m_preimageParameterController;
   PreimageGraphController m_preimageGraphController;
+  Escher::MessageTableCellWithSwitch m_derivativeCell;
   TangentGraphController m_tangentGraphController;
   IntegralGraphController m_integralGraphController;
   MinimumGraphController m_minimumGraphController;

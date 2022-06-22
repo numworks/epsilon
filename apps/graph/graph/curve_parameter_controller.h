@@ -25,21 +25,17 @@ private:
   float parameterAtIndex(int index) override {
     return m_cursor->t();
   }
-  int reusableParameterCellCount(int type) override {
-    return 1;//k_maxNumberOfValues;
+  int reusableCellCount(int type) override {
+    return 1 + 1;//k_maxNumberOfValues;
   }
   bool setParameterAtIndex(int parameterIndex, float f) override {
     return confirmParameterAtIndex(parameterIndex, f);
-  }
-  Escher::HighlightCell * reusableParameterCell(int index, int type) override {
-    assert(index < k_maxNumberOfValues);
-    return &m_parameterCells[index];
   }
   Escher::HighlightCell * reusableCell(int index, int type) override {
     if (type == k_buttonCellType) {
       return &m_calculationCell;
     }
-    return reusableParameterCell(index, type);
+    return &m_parameterCells[index];
   }
   static constexpr int k_parameterCellType = 0;
   static constexpr int k_buttonCellType = 1;

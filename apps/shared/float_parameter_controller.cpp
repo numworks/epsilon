@@ -1,9 +1,4 @@
 #include "float_parameter_controller.h"
-#include "poincare_helpers.h"
-#include <escher/message_table_cell_with_editable_text.h>
-#include <poincare/preferences.h>
-#include <assert.h>
-#include <cmath>
 
 using namespace Escher;
 using namespace Poincare;
@@ -12,7 +7,7 @@ namespace Shared {
 
 template<typename T>
 FloatParameterController<T>::FloatParameterController(Responder * parentResponder) :
-  SelectableListViewController(parentResponder),
+  FloatParameterControllerWithoutButton<T>(parentResponder),
   m_okButton(&(this->m_selectableTableView), I18n::Message::Ok, Invocation([](void * context, void * sender) {
       FloatParameterController * parameterController = (FloatParameterController *) context;
       parameterController->buttonAction();
@@ -21,48 +16,16 @@ FloatParameterController<T>::FloatParameterController(Responder * parentResponde
 {}
 
 template<typename T>
-void FloatParameterController<T>::didBecomeFirstResponder() {
-  if (selectedRow() >= 0) {
-    int selRow = selectedRow();
-    selRow = selRow >= numberOfRows() ? numberOfRows()-1 : selRow;
-    int selColumn = selectedColumn();
-    selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
-    selectCellAtLocation(selColumn, selRow);
-  }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
-}
-
-template<typename T>
 void FloatParameterController<T>::viewWillAppear() {
-  ViewController::viewWillAppear();
-  int selRow = selectedRow();
-  if (selRow == -1 || typeAtIndex(selRow) == k_buttonCellType) {
-    selectCellAtLocation(0, 0);
-  } else {
-    selRow = selRow >= numberOfRows() ? numberOfRows()-1 : selRow;
-    int selColumn = selectedColumn();
-    selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
-    selectCellAtLocation(selColumn, selRow);
+  int selRow = FloatParameterControllerWithoutButton<T>::selectedRow();
+  if (typeAtIndex(selRow) == k_buttonCellType) {
+    ViewController::viewWillAppear();
+    FloatParameterControllerWithoutButton<T>::selectCellAtLocation(0, 0);
+    FloatParameterControllerWithoutButton<T>::resetMemoization();
+    FloatParameterControllerWithoutButton<T>::m_selectableTableView.reloadData();
+    return;
   }
-  resetMemoization();
-  m_selectableTableView.reloadData();
-}
-
-template<typename T>
-void FloatParameterController<T>::viewDidDisappear() {
-  if (parentResponder() == nullptr) {
-    m_selectableTableView.deselectTable();
-    m_selectableTableView.scrollToCell(0,0);
-  }
-}
-
-template<typename T>
-bool FloatParameterController<T>::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back) {
-    stackController()->pop();
-    return true;
-  }
-  return false;
+  FloatParameterControllerWithoutButton<T>::viewWillAppear();
 }
 
 template<typename T>
@@ -70,7 +33,7 @@ int FloatParameterController<T>::typeAtIndex(int index) {
   if (index == this->numberOfRows() - 1) {
     return k_buttonCellType;
   }
-  return k_parameterCellType;
+  return FloatParameterControllerWithoutButton<T>::k_parameterCellType;
 }
 
 template<typename T>
@@ -91,14 +54,10 @@ HighlightCell * FloatParameterController<T>::reusableCell(int index, int type) {
 
 template<typename T>
 void FloatParameterController<T>::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (typeAtIndex(index) == k_buttonCellType || isCellEditing(cell, index)) {
+  if (typeAtIndex(index) == k_buttonCellType) {
     return;
   }
-  constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
-  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
-  char buffer[bufferSize];
-  PoincareHelpers::ConvertFloatToTextWithDisplayMode<T>(parameterAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
-  setTextInCell(cell, buffer, index);
+  FloatParameterControllerWithoutButton<T>::willDisplayCellForIndex(cell, index);
 }
 
 template<typename T>
@@ -106,47 +65,7 @@ KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int j) {
   if (typeAtIndex(j) == k_buttonCellType) {
     return m_okButton.minimalSizeForOptimalDisplay().height();
   }
-  return SelectableListViewController::nonMemoizedRowHeight(j);
-}
-
-template<typename T>
-bool FloatParameterController<T>::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  return (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
-      || (event == Ion::Events::Up && selectedRow() > 0)
-      || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
-}
-
-template<typename T>
-bool FloatParameterController<T>::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  T floatBody;
-  int row = selectedRow();
-  InfinityTolerance infTolerance = infinityAllowanceForRow(row);
-  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody, infTolerance == InfinityTolerance::PlusInfinity, infTolerance == InfinityTolerance::MinusInfinity)) {
-    return false;
-  }
-  if (!setParameterAtIndex(row, floatBody)) {
-    return false;
-  }
-  resetMemoization();
-  m_selectableTableView.reloadCellAtLocation(0, activeCell());
-  m_selectableTableView.reloadData();
-  if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    m_selectableTableView.selectCellAtLocation(selectedColumn(), row + 1);
-  } else {
-    m_selectableTableView.handleEvent(event);
-  }
-  return true;
-}
-
-
-template<typename T>
-bool FloatParameterController<T>::isCellEditing(Escher::HighlightCell * cell, int index) {
-  return static_cast<MessageTableCellWithEditableText *>(cell)->isEditing();
-}
-
-template<typename T>
-void FloatParameterController<T>::setTextInCell(Escher::HighlightCell * cell, const char * text, int index) {
-  static_cast<MessageTableCellWithEditableText *>(cell)->setAccessoryText(text);
+  return FloatParameterControllerWithoutButton<T>::nonMemoizedRowHeight(j);
 }
 
 template<typename T>

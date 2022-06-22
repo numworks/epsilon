@@ -700,9 +700,11 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("(x^2)^3", "x^6", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("(x^2)^3", "x^6", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("(x^(2/3))^3", "x^2", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("(x^(3/4))^4", "dep\u0014(x^3,{x^3/4})", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("(x^(2/3))^3", "x^2", User, Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("(x^(3/4))^4", "dep\u0014(x^3,{x^\u00123/4\u0013})", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("(x^(3/4))^4", "x^3", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("√(-x)", "√(-x)");
+  assert_parsed_expression_simplify_to("√(x)^2", "dep\u0014(x,{√(x)})", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("√(-3)^2", "nonreal", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("(-0.0001)^6.3", "nonreal", User, Radian, MetricUnitFormat, Real);
@@ -1685,7 +1687,7 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("(A×B)^2×A+4×A^3", "A^3×B^2+4×A^3");
   assert_parsed_expression_simplify_to("(A×3)^2×A+4×A^3", "13×A^3");
   assert_parsed_expression_simplify_to("A^2^2×A+4×A^3", "A^5+4×A^3");
-  assert_parsed_expression_simplify_to("0.5+4×A×B-2.3+2×A×B-2×B×A^C-cos(4)+2×A^C×B+A×B×C×D", " dep\u0014(\u00125×A×B×C×D+30×A×B-5×cos(4)-9\u0013/5,{A^C})");
+  assert_parsed_expression_simplify_to("0.5+4×A×B-2.3+2×A×B-2×B×A^C-cos(4)+2×A^C×B+A×B×C×D", "dep\u0014(\u00125×A×B×C×D+30×A×B-5×cos(4)-9\u0013/5,{A^C})");
   assert_parsed_expression_simplify_to("(1+√(2))/5", "\u00121+√(2)\u0013/5");
   assert_parsed_expression_simplify_to("(2+√(6))^2", "10+4×√(6)");
   assert_parsed_expression_simplify_to("tan(3)ln(2)+π", "tan(3)×ln(2)+π");

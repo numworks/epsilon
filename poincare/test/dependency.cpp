@@ -125,17 +125,20 @@ QUIZ_CASE(poincare_dependency_sequence) {
 }
 
 QUIZ_CASE(poincare_dependency_power) {
-  assert_reduce("1/(1/x)→f(x)");
-  assert_expression_simplify_to_with_dependencies("f(x)", "x", {"1/x"});
-  assert_reduce("1/tan(x)→f(x)");
-  assert_expression_simplify_to_with_dependencies("f(x)", "cot(x)", {"sec(x)"});
-  assert_reduce("x/√(x)→f(x)");
-  assert_expression_simplify_to_with_dependencies("f(x)", "√(x)", {"1/√(x)"});
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+  assert_expression_simplify_to_with_dependencies("1/(1/x)", "x", {"1/x"});
+  assert_expression_simplify_to_with_dependencies("x/√(x)", "√(x)", {"1/√(x)"});
+  assert_expression_simplify_to_with_dependencies("(1+x)/(1+x)", "1", {"1/\u0012x+1\u0013"});
+  assert_expression_simplify_to_with_dependencies("x^0", "1", {"1/x"});
+  assert_expression_simplify_to_with_dependencies("e^(ln(x))", "x", {"ln(x)"});
+
 }
 
 QUIZ_CASE(poincare_dependency_multiplication) {
-  assert_reduce("ln(x)-ln(x)→f(x)");
-  assert_expression_simplify_to_with_dependencies("f(x)", "0", {"ln(x)"});
+  assert_expression_simplify_to_with_dependencies("ln(x)-ln(x)", "0", {"ln(x)"});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+}
+
+QUIZ_CASE(poincare_dependency_trigonometry) {
+  assert_expression_simplify_to_with_dependencies("atan(1/x)", "\u0012π×sign(x)-2×atan(x)\u0013/2", {"1/x"});
+
 }

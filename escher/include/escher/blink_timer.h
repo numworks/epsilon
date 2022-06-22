@@ -9,6 +9,7 @@ namespace Escher {
 class BlinkTimer : public Timer {
 public:
   constexpr static uint32_t k_blinkPeriod = 600;
+  static_assert(k_blinkPeriod > TickDuration, "BlinkTimer period is shorter than one tick.");
 
   static void registerCursor(TextCursorView * cursor) { s_cursor = cursor; }
 

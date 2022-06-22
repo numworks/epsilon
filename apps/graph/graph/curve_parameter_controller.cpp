@@ -10,7 +10,7 @@ using namespace Escher;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
-  FloatParameterControllerWithoutButton<float>(parentResponder()),
+  FloatParameterControllerWithoutButton<float,BufferTableCellWithEditableText>(parentResponder()),
   m_graphController(graphController),
   m_graphRange(graphRange),
   m_cursor(cursor),
@@ -38,14 +38,17 @@ void CurveParameterController::didBecomeFirstResponder() {
 
 void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   if (index == 0) {
-    m_parameterCells[index].setMessage(function()->parameterMessageName());
+    m_parameterCells[index].setMessageWithPlaceholder(function()->parameterMessageName());
     FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
-  } else if (index == 1) {
-    m_parameterCells[index].setMessage(I18n::Message::Y);
-    FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
-  } else if (shouldDisplayDerivative() && index == 2) {
-    m_parameterCells[index].setMessage(I18n::Message::Y);
-    //int numberOfChar = function()->derivativeNameWithArgument(buffer, bufferSize);
+  } else if (index == 1 || (shouldDisplayDerivative() && index == 2)) {
+    constexpr size_t bufferSize = BufferTextView::k_maxNumberOfChar;
+    char buffer[bufferSize];
+    if (index == 1) {
+      function()->nameWithArgument(buffer, bufferSize);
+    } else {
+      function()->derivativeNameWithArgument(buffer, bufferSize);
+    }
+    m_parameterCells[index].setLabelText(buffer);
     FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
   }
 }

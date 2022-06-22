@@ -111,7 +111,7 @@ private:
   bool gatherRationalPowers(int i, int j, const ExpressionNode::ReductionContext& reductionContext);
   Expression distributeOnOperandAtIndex(int index, const ExpressionNode::ReductionContext& reductionContext);
   void addMissingFactors(Expression factor, const ExpressionNode::ReductionContext& reductionContext);
-  void factorizeSineAndCosine(int i, int j, const ExpressionNode::ReductionContext& reductionContext);
+  bool factorizeSineAndCosine(int i, int j, const ExpressionNode::ReductionContext& reductionContext);
   static bool HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2);
   static bool TermsHaveIdenticalBase(const Expression & e1, const Expression & e2);
   static bool TermsHaveIdenticalExponent(const Expression & e1, const Expression & e2);

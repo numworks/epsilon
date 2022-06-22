@@ -11,6 +11,14 @@ void VariableContext::setApproximationForVariable(T value) {
   m_value = Float<T>::Builder(value);
 }
 
+Context::SymbolAbstractType VariableContext::expressionTypeForIdentifier(const char * identifier, int length) {
+  // return m_value.isUninitialized() ? SymbolAbstractType::None : SymbolAbstractType::Symbol;
+  if (strncmp(identifier, m_name, length) == 0) {
+    return m_value.isUninitialized() ? SymbolAbstractType::None : SymbolAbstractType::Symbol;
+  }
+  return ContextWithParent::expressionTypeForIdentifier(identifier, length);
+}
+
 bool VariableContext::setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) {
   if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
     assert(symbol.type() == ExpressionNode::Type::Symbol);

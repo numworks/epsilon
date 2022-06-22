@@ -18,6 +18,7 @@ public:
   void setApproximationForVariable(T value);
 
   // Context
+  SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
   bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override;
   const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, float unknownSymbolValue = NAN) override;
 

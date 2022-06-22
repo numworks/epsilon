@@ -51,10 +51,7 @@ void ion_main(int argc, const char * const argv[]) {
     if (strcmp(argv[i], "--filter") == 0) {
       assert(i+1 < argc);
       testFilter = argv[i+1];
-      i++;
-      continue;
-    }
-    if (strcmp(argv[i], "--no-abort") == 0) {
+    } else if (strcmp(argv[i], "--no-abort") == 0) {
       abort_when_assert_fails = false;
     }
   }

@@ -56,7 +56,7 @@ bool FunctionGraphController::openMenuForCurveAtIndex(int index) {
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  curveParameterController()->setRecord(record);
+  curveParameterControllerRecord()->setRecord(record);
   StackViewController * stack = stackController();
   stack->push(curveParameterController());
   return true;

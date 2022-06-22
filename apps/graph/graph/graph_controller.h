@@ -42,6 +42,7 @@ private:
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
+  CurveParameterController * curveParameterControllerRecord() override { return &m_curveParameterController; }
   FunctionSelectionController * curveSelectionController() const override { return const_cast<FunctionSelectionController *>(&m_functionSelectionController); }
   ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   bool defaultRangeIsNormalized() const override;

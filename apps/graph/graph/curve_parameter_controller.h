@@ -36,15 +36,17 @@ private:
   static constexpr int k_parameterCellType = 0;
   static constexpr int k_calculationCellType = 1;
   int typeAtIndex(int index) override;
-  int numberOfParameters() const { return 2; }
-  Escher::HighlightCell * reusableCell(int index, int type);
+  int numberOfParameters() const { return 2 + shouldDisplayDerivative(); }
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function();
+  GraphController * m_graphController;
+  Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   Shared::InteractiveCurveViewRange * m_graphRange;
   Shared::CurveViewCursor * m_cursor;
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
+  bool shouldDisplayDerivative() const;
   int cellIndex(int visibleCellIndex) const;
   static constexpr int k_maxNumberOfParameters = 3;
   PreimageGraphController m_preimageGraphController;

@@ -51,7 +51,6 @@ void StackViewController::ControllerView::pushStack(ViewController * vc) {
   } else {
     assert(m_style == Style::WhiteUniform);
   }
-  StackView(vc, textColor, backgroundColor, separatorColor);
   m_stackViews.push(StackView(vc, textColor, backgroundColor, separatorColor));
 }
 

@@ -1568,6 +1568,11 @@ QUIZ_CASE(poincare_simplification_complex_format) {
 }
 
 QUIZ_CASE(poincare_simplification_reduction_target) {
+  // Replace sin/cos-->tan for ReductionTarget = User
+  assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))", "sin(x)/cos(x)^2", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))", "sin(x)/cos(x)^2", SystemForApproximation);
+  assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))", "tan(x)/cos(x)", User);
+
   // Factorize on the same denominator only for ReductionTarget = User
   assert_parsed_expression_simplify_to("1/π+1/x", "1/π+1/x", SystemForAnalysis);
   assert_parsed_expression_simplify_to("1/π+1/x", "1/π+1/x", SystemForApproximation);
@@ -1579,39 +1584,9 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i", User);
   assert_parsed_expression_simplify_to("√(i×(i+2))", "√(2×i-1)", SystemForApproximation);
 
-  // Replace sin/cos-->tan for ReductionTarget = User
-  assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))", "sin(x)/cos(x)^2", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))", "sin(x)/cos(x)^2", SystemForApproximation);
-  assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))", "tan(x)/cos(x)", User);
-
-  // Apply rule x^0 --> 1 for ReductionTarget = User (because this is not always true)
-  assert_parsed_expression_simplify_to("x^0", "dep\u0014(1,{1/x})", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^0", "dep\u0014(1,{1/x})", SystemForApproximation);
-  assert_parsed_expression_simplify_to("x^0", "dep\u0014(1,{1/x})", User);
-  assert_parsed_expression_simplify_to("(1+x)/(1+x)", "dep\u0014(1,{1/\u0012x+1\u0013})", SystemForApproximation);
-  assert_parsed_expression_simplify_to("(1+x)/(1+x)", "dep\u0014(1,{1/\u0012x+1\u0013})", User);
-
-  // Apply rule x^(2/3) --> root(x,3)^2 for ReductionTarget = System
-  assert_parsed_expression_simplify_to("x^(2/3)", "x^\u00122/3\u0013", SystemForApproximation);
-  assert_parsed_expression_simplify_to("x^(2/3)", "x^\u00122/3\u0013", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^(2/3)", "x^\u00122/3\u0013", User);
-  assert_parsed_expression_simplify_to("x^(1/3)", "root(x,3)", SystemForApproximation);
-  assert_parsed_expression_simplify_to("x^(1/3)", "root(x,3)", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^(1/3)", "root(x,3)", User);
-  assert_parsed_expression_simplify_to("x^2", "x^2", SystemForApproximation);
-  assert_parsed_expression_simplify_to("x^2", "x^2", User);
-
-  // Remove square root at denominator for any ReductionTarget
-  assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "√(3)-√(2)", SystemForApproximation);
-  assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "√(3)-√(2)", User);
-
   // Always reduce sign for ReductionTarget = User
   assert_parsed_expression_simplify_to("sign(abs(x))", "sign(abs(x))", SystemForApproximation);
   assert_parsed_expression_simplify_to("sign(abs(x))", "1", User);
-
-  // Apply rule atan(1/x)-> (π×sign(x)-2×atan(x))/2 for ReductionTarget = User (as it is not always true)
-  assert_parsed_expression_simplify_to("atan(1/x)", "atan(1/x)", SystemForApproximation);
-  assert_parsed_expression_simplify_to("atan(1/x)", "\u0012π×sign(x)-2×atan(x)\u0013/2", User);
 
   // Expand multinome when ReductionTarget is not SystemForApproximation as it increases precision loss
   assert_parsed_expression_simplify_to("(2+x)^2", "(x+2)^2", SystemForApproximation);

@@ -16,6 +16,7 @@ public:
   static const Expression::FunctionHelper * const * ReservedFunctionsUpperBound() { return s_reservedFunctionsUpperBound; }
   static bool IsSpecialIdentifierName(const char * name, size_t nameLength);
   static bool IsParameteredExpression(const Expression::FunctionHelper * helper);
+  static Expression ParameteredExpressionParameter(const char * text);
 
 private:
   constexpr static const char * s_specialIdentifierNames[] = {

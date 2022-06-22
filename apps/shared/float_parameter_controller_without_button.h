@@ -4,13 +4,14 @@
 #include "parameter_text_field_delegate.h"
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
+#include <escher/message_table_cell_with_editable_text.h>
 
 namespace Shared {
 
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
-template<typename T>
+template<typename T, typename M=Escher::MessageTableCellWithEditableText>
 class FloatParameterControllerWithoutButton : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>, public ParameterTextFieldDelegate {
 public:
   FloatParameterControllerWithoutButton(Escher::Responder * parentResponder);

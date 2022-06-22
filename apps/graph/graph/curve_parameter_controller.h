@@ -2,7 +2,7 @@
 #define GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/message_table_cell_with_buffer.h>
+#include <escher/buffer_table_cell_with_editable_text.h>
 #include "../../shared/float_parameter_controller_without_button.h"
 #include "../../shared/with_record.h"
 #include "calculation_parameter_controller.h"
@@ -12,7 +12,7 @@ namespace Graph {
 
 class GraphController;
 
-class CurveParameterController : public Shared::FloatParameterControllerWithoutButton<float>, public Shared::WithRecord {
+class CurveParameterController : public Shared::FloatParameterControllerWithoutButton<float,Escher::BufferTableCellWithEditableText>, public Shared::WithRecord {
 public:
   CurveParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController);
   const char * title() override;
@@ -50,7 +50,7 @@ private:
   int cellIndex(int visibleCellIndex) const;
   static constexpr int k_maxNumberOfParameters = 3;
   PreimageGraphController m_preimageGraphController;
-  Escher::MessageTableCellWithEditableText m_parameterCells[k_maxNumberOfParameters];
+  Escher::BufferTableCellWithEditableText m_parameterCells[k_maxNumberOfParameters];
   Escher::MessageTableCellWithChevron m_calculationCell;
   CalculationParameterController m_calculationParameterController;
 };

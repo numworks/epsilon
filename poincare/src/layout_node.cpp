@@ -25,18 +25,14 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDCol
     && !selectionStart->isUninitialized() && !selectionStart->isUninitialized()
     && reinterpret_cast<char *>(this) >= reinterpret_cast<char *>(selectionStart->node())
     && reinterpret_cast<char *>(this) <= reinterpret_cast<char *>(selectionEnd->node());
+  selectionStart = isSelected ? nullptr : selectionStart;
+  selectionEnd = isSelected ? nullptr : selectionEnd;
   KDColor backColor = isSelected ? selectionColor : backgroundColor;
   KDPoint renderingAbsoluteOrigin = absoluteOrigin().translatedBy(p);
   ctx->fillRect(KDRect(renderingAbsoluteOrigin, layoutSize()), backColor);
   render(ctx, renderingAbsoluteOrigin, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
-  if (!isSelected) {
-    for (LayoutNode * l : children()) {
-      l->draw(ctx, p, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
-    }
-  } else {
-    for (LayoutNode * l : children()) {
-      l->draw(ctx, p, expressionColor, selectionColor);
-    }
+  for (LayoutNode * l : children()) {
+    l->draw(ctx, p, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
   }
 }
 

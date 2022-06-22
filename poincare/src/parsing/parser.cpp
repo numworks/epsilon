@@ -420,8 +420,7 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
       m_context = oldContext;
       m_tokenizer.setContext(m_context);
     } else {
-      m_status = Status::Error;
-      return;
+      parameters = parseFunctionParameters();
     }
   } else {
     parameters = parseFunctionParameters();

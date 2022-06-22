@@ -45,7 +45,7 @@ static inline void ion_main_inner(const char * testFilter) {
 void ion_main(int argc, const char * const argv[]) {
   Poincare::Init(); // Initialize Poincare::TreePool::sharedPool
   const char * testFilter = nullptr;
-  *abort_when_assert_fails() = true;
+  abort_when_assert_fails = true;
 #if !PLATFORM_DEVICE
   for (int i=1; i<argc; i++) {
     if (strcmp(argv[i], "--filter") == 0) {
@@ -55,7 +55,7 @@ void ion_main(int argc, const char * const argv[]) {
       continue;
     }
     if (strcmp(argv[i], "--no-abort") == 0) {
-      *abort_when_assert_fails() = false;
+      abort_when_assert_fails = false;
     }
   }
   /* s_stackStart must be defined as early as possible to ensure that there

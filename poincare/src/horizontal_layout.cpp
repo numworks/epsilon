@@ -452,22 +452,6 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
   return true;
 }
 
-void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  // Fill the background
-  KDSize s = layoutSize();
-  ctx->fillRect(KDRect(p, s), backgroundColor);
-  // Fill the selection background
-  HorizontalLayout thisLayout = HorizontalLayout(this);
-  bool childrenAreSelected = selectionStart != nullptr && selectionEnd != nullptr
-    && !selectionStart->isUninitialized() && !selectionStart->isUninitialized()
-    && thisLayout.hasChild(*selectionStart);
-  if (childrenAreSelected) {
-    assert(thisLayout.hasChild(*selectionEnd));
-    KDRect selectionRectangle = HorizontalLayout(this).relativeSelectionRect(selectionStart, selectionEnd);
-    ctx->fillRect(selectionRectangle.translatedBy(p), selectionColor);
-  }
-}
-
 // HorizontalLayout
 
 void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {

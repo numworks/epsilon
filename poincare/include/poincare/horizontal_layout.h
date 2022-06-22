@@ -64,7 +64,7 @@ private:
   bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override;
   void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
   // See comment on NAryExpressionNode
   uint16_t m_numberOfChildren;
 };

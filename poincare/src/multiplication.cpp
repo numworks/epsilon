@@ -838,6 +838,7 @@ Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext&
    * opposite signs. We replace them by either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
+  bool hasFactorizedTangent = false;
   if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
     int childrenNumber = numberOfChildren();
     for (int i = 0; i < childrenNumber; i++) {
@@ -849,18 +850,19 @@ Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext&
         for (int j = i+1; j < childrenNumber; j++) {
           Expression o2 = childAtIndex(j);
           if (Base(o2).type() == ExpressionNode::Type::Cosine && TermHasNumeralExponent(o2) && Base(o2).childAtIndex(0).isIdenticalTo(x)) {
-            factorizeSineAndCosine(i, j, reductionContext);
+            hasFactorizedTangent = factorizeSineAndCosine(i, j, reductionContext) || hasFactorizedTangent;
             break;
           }
         }
       }
     }
-    /* Replacing sin/cos by tan factors may have mixed factors and factors are
-     * guaranteed to be sorted (according ot SimplificationOrder) at the end of
-     * shallowReduce */
-    sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, context);
   }
-
+  if (hasFactorizedTangent) {
+    /* Return at the beginning of reduction in case some factors that already
+     * existed have appeared.
+     * For example: tan(3)*cos(3)^-1*sin(3) = tan(3)*tan(3) */
+    return shallowReduce(reductionContext);
+  }
   /* We remove rational children that appeared in the middle of sorted
    * children. It's important to do this after having factorized because
    * factorization can lead to new ones. Indeed:
@@ -1166,7 +1168,7 @@ void Multiplication::addMissingFactors(Expression factor, const ExpressionNode::
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context());
 }
 
-void Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
+bool Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
   /* This function turn sin(x)^p * cos(x)^q into either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
@@ -1176,7 +1178,7 @@ void Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::
   Number q = CreateExponent(childAtIndex(j)).convert<Number>();
   // If p and q have the same sign, we cannot replace them by a tangent
   if ((int)p.sign()*(int)q.sign() > 0) {
-    return;
+    return false;
   }
   Number sumPQ = Number::Addition(p, q);
   Number absP = p.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive);
@@ -1198,7 +1200,7 @@ void Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::
    * cos/sin into 1/tan. Indeed, cos(pi/2)/sin(pi/2) is defined, but tan(pi/2)
    * is undef. */
   if (tanPower.sign() == ExpressionNode::Sign::Negative && tan.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true).isUndefined()) {
-    return;
+    return false;
   }
   replaceChildAtIndexInPlace(tanIndex, Power::Builder(tan, tanPower));
   childAtIndex(tanIndex).shallowReduce(reductionContext);
@@ -1207,10 +1209,11 @@ void Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::
     /* We have to do this because x^0 != 1 because 0^0 is undef
      * so sin(x)^0 creates a dependency. */
     replaceChildAtIndexInPlace(otherIndex, Rational::Builder(1));
-    return;
+    return true;
   }
   replaceChildAtIndexInPlace(otherIndex, Power::Builder(Base(childAtIndex(otherIndex)), sumPQ));
   childAtIndex(otherIndex).shallowReduce(reductionContext);
+  return true;
 }
 
 bool Multiplication::HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2) {

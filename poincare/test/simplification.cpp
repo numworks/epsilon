@@ -1032,6 +1032,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("tan(-60)", "-√(3)", User, Degree);
   assert_parsed_expression_simplify_to("tan(tan(tan(tan(9))))", "tan(tan(tan(tan(9))))");
   assert_parsed_expression_simplify_to("1/tan(2)", "cot(2)"); // 1/tan = cot if tan(x) != undef
+  assert_parsed_expression_simplify_to("tan(3)*sin(3)/cos(3)", "tan(3)^2");
   // -- acos
   assert_parsed_expression_simplify_to("acos(-1/2)", "\u00122×π\u0013/3");
   assert_parsed_expression_simplify_to("acos(-1.2)", "-acos(6/5)+π");

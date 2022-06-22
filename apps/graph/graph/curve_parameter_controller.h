@@ -22,29 +22,22 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:
-  float parameterAtIndex(int index) override {
-    return m_cursor->t();
-  }
+  float parameterAtIndex(int index) override;
   int reusableCellCount(int type) override {
-    return 1 + 1;//k_maxNumberOfValues;
+    return type == k_parameterCellType ? numberOfParameters() : shouldDisplayCalculation();
   }
   bool setParameterAtIndex(int parameterIndex, float f) override {
     return confirmParameterAtIndex(parameterIndex, f);
   }
-  Escher::HighlightCell * reusableCell(int index, int type) override {
-    if (type == k_buttonCellType) {
-      return &m_calculationCell;
-    }
-    return &m_parameterCells[index];
+  void setRecord(Ion::Storage::Record record) override {
+    Shared::WithRecord::setRecord(record);
+    m_preimageGraphController.setRecord(record);
   }
   static constexpr int k_parameterCellType = 0;
-  static constexpr int k_buttonCellType = 1;
-  int typeAtIndex(int index) override {
-    if (index < 1) {
-      return k_parameterCellType;
-    }
-    return k_buttonCellType;
-  }
+  static constexpr int k_calculationCellType = 1;
+  int typeAtIndex(int index) override;
+  int numberOfParameters() const { return 2; }
+  Escher::HighlightCell * reusableCell(int index, int type);
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
   Shared::ExpiringPointer<Shared::ContinuousFunction> function();
@@ -53,9 +46,9 @@ private:
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
   int cellIndex(int visibleCellIndex) const;
-  static constexpr int k_maxNumberOfValues = 3;
-//  PreimageGraphController * m_preimageGraphController;
-  Escher::MessageTableCellWithEditableText m_parameterCells[k_maxNumberOfValues];
+  static constexpr int k_maxNumberOfParameters = 3;
+  PreimageGraphController m_preimageGraphController;
+  Escher::MessageTableCellWithEditableText m_parameterCells[k_maxNumberOfParameters];
   Escher::MessageTableCellWithChevron m_calculationCell;
   CalculationParameterController m_calculationParameterController;
 };

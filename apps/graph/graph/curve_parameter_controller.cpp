@@ -13,6 +13,7 @@ CurveParameterController::CurveParameterController(Escher::InputEventHandlerDele
   FloatParameterControllerWithoutButton<float>(parentResponder()),
   m_graphRange(graphRange),
   m_cursor(cursor),
+  m_preimageGraphController(nullptr, graphView, bannerView, graphRange, cursor),
   m_parameterCells {{&m_selectableTableView, inputEventHandlerDelegate, this}, {&m_selectableTableView, inputEventHandlerDelegate, this}, {&m_selectableTableView, inputEventHandlerDelegate, this}},
   m_calculationCell(I18n::Message::Compute),
   m_calculationParameterController(this, inputEventHandlerDelegate, graphView, bannerView, graphRange, cursor, graphController)
@@ -35,14 +36,25 @@ void CurveParameterController::didBecomeFirstResponder() {
 }
 
 void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int index) {
-  if (index < 1) {
-    m_parameterCells[0].setMessage(function()->parameterMessageName());
+  if (index == 0) {
+    m_parameterCells[index].setMessage(function()->parameterMessageName());
+    FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
+  } else if (index == 1) {
+    m_parameterCells[index].setMessage(I18n::Message::Y);
     FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
   }
 }
 
+float CurveParameterController::parameterAtIndex(int index) {
+  if (index==0) {
+    return m_cursor->t();
+  }
+  assert(index==1);
+  return m_preimageGraphController.image();
+}
+
 bool CurveParameterController::confirmParameterAtIndex(int parameterIndex, double f) {
-  assert(parameterIndex == 0);
+  if (parameterIndex == 0) {
   FunctionApp * myApp = FunctionApp::app();
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
   // If possible, round f so that we go to the evaluation of the displayed f
@@ -60,14 +72,26 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex, doubl
   uint32_t * snapshotRangeVersion = static_cast<FunctionApp::Snapshot *>(myApp->snapshot())->rangeVersion();
   *snapshotRangeVersion = m_graphRange->rangeChecksum();
   return true;
+  }
+  assert(parameterIndex == 1);
+  m_preimageGraphController.setImage(f);
+  return true;
 }
 
 bool CurveParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  if (FloatParameterControllerWithoutButton::textFieldDidFinishEditing(textField, text, event)) {
-    static_cast<StackViewController *>(parentResponder())->popUntilDepth(InteractiveCurveViewController::k_graphControllerStackDepth, true);
-    return true;
+  int row = selectedRow();
+  if (!FloatParameterControllerWithoutButton::textFieldDidFinishEditing(textField, text, event)) {
+    return false;
   }
-  return false;
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  if (row == 0 || row == 1) {
+    stack->popUntilDepth(InteractiveCurveViewController::k_graphControllerStackDepth, true);
+  }
+  if (row == 1) {
+    //m_preimageGraphController.setRecord(m_record);
+    stack->push(&m_preimageGraphController);
+  }
+  return true;
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
@@ -108,11 +132,26 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+Escher::HighlightCell * CurveParameterController::reusableCell(int index, int type) {
+  if (type == k_calculationCellType) {
+    return &m_calculationCell;
+  }
+  return &m_parameterCells[index];
+}
+
+int CurveParameterController::typeAtIndex(int index) {
+  if (index < numberOfParameters()) {
+    return k_parameterCellType;
+  }
+  return k_calculationCellType;
+}
+
 int CurveParameterController::numberOfRows() const {
-  return 1 + /*derivative */ shouldDisplayCalculation();
+  return numberOfParameters() + shouldDisplayCalculation();
 };
 
 void CurveParameterController::viewWillAppear() {
+  m_preimageGraphController.setImage(m_cursor->y());
   SelectableListViewController::viewWillAppear();
   m_selectableTableView.reloadData();
 }

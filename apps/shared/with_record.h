@@ -7,7 +7,7 @@ namespace Shared {
 
 class WithRecord {
 public:
-  void setRecord(Ion::Storage::Record record) { m_record = record; }
+  virtual void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   Ion::Storage::Record m_record;
 };

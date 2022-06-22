@@ -11,6 +11,7 @@ namespace Graph {
 
 CurveParameterController::CurveParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
   FloatParameterControllerWithoutButton<float>(parentResponder()),
+  m_graphController(graphController),
   m_graphRange(graphRange),
   m_cursor(cursor),
   m_preimageGraphController(nullptr, graphView, bannerView, graphRange, cursor),
@@ -20,7 +21,7 @@ CurveParameterController::CurveParameterController(Escher::InputEventHandlerDele
 {
 }
 
-Shared::ExpiringPointer<Shared::ContinuousFunction> CurveParameterController::function() {
+Shared::ExpiringPointer<Shared::ContinuousFunction> CurveParameterController::function() const {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 
@@ -42,15 +43,21 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int 
   } else if (index == 1) {
     m_parameterCells[index].setMessage(I18n::Message::Y);
     FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
+  } else if (shouldDisplayDerivative() && index == 2) {
+    m_parameterCells[index].setMessage(I18n::Message::Y);
+    //int numberOfChar = function()->derivativeNameWithArgument(buffer, bufferSize);
+    FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
   }
 }
 
 float CurveParameterController::parameterAtIndex(int index) {
   if (index==0) {
     return m_cursor->t();
+  } else if (index == 1) {
+    return m_preimageGraphController.image();
   }
-  assert(index==1);
-  return m_preimageGraphController.image();
+  assert(shouldDisplayDerivative() && index==2);
+  return function()->approximateDerivative(m_cursor->x(), App::app()->localContext());
 }
 
 bool CurveParameterController::confirmParameterAtIndex(int parameterIndex, double f) {
@@ -103,31 +110,12 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
     index = 1;
   }
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && (index == 0 || index == 1))) {
-    switch (index) {
-      case 0:
-      {
-//        stack->popUntilDepth(InteractiveCurveViewController::k_graphControllerStackDepth, true);
-        return false;
-      }
-      case 1: // TODO -1
-      {
-        m_calculationParameterController.setRecord(m_record);
-        stack->push(&m_calculationParameterController);
-        return true;
-      }
-      default:
-        assert(false);
-        return false;
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+    if (shouldDisplayCalculation() && index == numberOfRows() - 1) {
+      m_calculationParameterController.setRecord(m_record);
+      stack->push(&m_calculationParameterController);
+      return true;
     }
-  }
-  if (event == Ion::Events::Left
-   && stack->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth + 1)
-  {
-    /* We only allow popping with Left if there is another menu beneath this
-     * one. */
-    stack->pop();
-    return true;
   }
   return false;
 }
@@ -152,12 +140,17 @@ int CurveParameterController::numberOfRows() const {
 
 void CurveParameterController::viewWillAppear() {
   m_preimageGraphController.setImage(m_cursor->y());
-  SelectableListViewController::viewWillAppear();
+  resetMemoization();
   m_selectableTableView.reloadData();
+  SelectableListViewController::viewWillAppear();
 }
 
 bool CurveParameterController::shouldDisplayCalculation() const {
-  return App::app()->functionStore()->modelForRecord(m_record)->canDisplayDerivative();
+  return function()->canDisplayDerivative();
+}
+
+bool CurveParameterController::shouldDisplayDerivative() const {
+  return function()->canDisplayDerivative() && m_graphController->displayDerivativeInBanner();
 }
 
 }

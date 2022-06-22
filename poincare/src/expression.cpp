@@ -479,6 +479,9 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
   int degree = getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
     coefficients[i] = coefficients[i].cloneAndReduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation, symbolicComputation));
+    if (coefficients[i].type() == ExpressionNode::Type::Dependency) {
+      coefficients[i] = coefficients[i].childAtIndex(0);
+    }
   }
   return degree;
 }

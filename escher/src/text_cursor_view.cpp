@@ -4,11 +4,11 @@
 namespace Escher {
 
 TextCursorView::~TextCursorView() {
-  BlinkTimer::registerCursor(nullptr);
+  BlinkTimer::RegisterCursor(nullptr);
 }
 
 void TextCursorView::drawRect(KDContext * ctx, KDRect rect) const {
-  BlinkTimer::registerCursor(const_cast<TextCursorView *>(this));
+  BlinkTimer::RegisterCursor(const_cast<TextCursorView *>(this));
   KDCoordinate height = bounds().height();
   ctx->fillRect(KDRect(0, 0, k_width, height), m_visible ? KDColorBlack : KDColorWhite);
 }

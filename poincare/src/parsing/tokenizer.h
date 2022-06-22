@@ -16,6 +16,7 @@ class Tokenizer {
 public:
   Tokenizer(const char * text, Context * context) : m_context(context), m_decoder(text), m_encounteredRightwardsArrow(false) {}
   Token popToken();
+  void setContext(Context * context) { m_context = context; }
 
 private:
   typedef bool (*PopTest)(CodePoint c, CodePoint context);

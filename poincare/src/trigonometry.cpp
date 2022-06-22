@@ -8,6 +8,7 @@
 #include <poincare/cosine.h>
 #include <poincare/cotangent.h>
 #include <poincare/decimal.h>
+#include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/dependency.h>
 #include <poincare/division.h>
@@ -377,24 +378,24 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, const Expr
   // Step 3. Look for an expression of type "atan(1/x), return sign(x)*π/2-atan(x)
   if (e.type() == ExpressionNode::Type::ArcTangent && e.childAtIndex(0).type() == ExpressionNode::Type::Power && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
     Expression x = e.childAtIndex(0).childAtIndex(0);
-    /* This equality is not true if x = 0. We apply it under certain conditions:
-     * - the reduction target is the user
-     * - x is numeral (which means that x != 0 otherwise 0^(-1) would have been
-     *   reduced to undef) */
-    if (reductionContext.target() == ExpressionNode::ReductionTarget::User || x.isNumber()) {
-      Expression sign = SignFunction::Builder(x.clone());
-      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, PiExpressionInAngleUnit(angleUnit));
-      sign.shallowReduce(reductionContext);
-      e.replaceChildAtIndexInPlace(0, x);
-      Addition a = Addition::Builder(m0);
-      m0.shallowReduce(reductionContext);
-      e.replaceWithInPlace(a);
-      Multiplication m1 = Multiplication::Builder(Rational::Builder(-1), e);
-      e.shallowReduce(reductionContext);
-      a.addChildAtIndexInPlace(m1, 1, 1);
-      m1.shallowReduce(reductionContext);
-      return a.shallowReduce(reductionContext);
-    }
+    // This equality is not true if x = 0. We thus add a dependency in 1/x
+    Dependency dep = Dependency::Builder(Undefined::Builder(), List::Builder());
+    dep.addDependency(e.childAtIndex(0).clone());
+
+    Expression sign = SignFunction::Builder(x.clone());
+    Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, PiExpressionInAngleUnit(angleUnit));
+    sign.shallowReduce(reductionContext);
+    e.replaceChildAtIndexInPlace(0, x);
+    Addition a = Addition::Builder(m0);
+    m0.shallowReduce(reductionContext);
+    e.replaceWithInPlace(dep);
+    Multiplication m1 = Multiplication::Builder(Rational::Builder(-1), e);
+    e.shallowReduce(reductionContext);
+    a.addChildAtIndexInPlace(m1, 1, 1);
+    m1.shallowReduce(reductionContext);
+    dep.replaceChildAtIndexInPlace(0, a);
+    a.shallowReduce(reductionContext);
+    return dep.shallowReduce(reductionContext);
   }
 
   // Step 4. Try finding an easy standard calculation reduction

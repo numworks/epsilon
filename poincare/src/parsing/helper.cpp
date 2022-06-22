@@ -39,7 +39,8 @@ bool ParsingHelper::IsParameteredExpression(const Expression::FunctionHelper * h
       || helper == &Integral::s_functionHelper
       || helper == &ListSequence::s_functionHelper
       || helper == &Product::s_functionHelper
-      || helper == &Sum::s_functionHelper;
+      /* The string "sum" will give off the ListSum function helper. Since we call IsParameteredExpression before parsing the parameters, we cannot distinguish between the two. We make sure in parser.cpp that being considered a parametered expression does not cause problems for the parsing of ListSum. */
+      || helper == &ListSum::s_functionHelper;
 }
 
 Expression ParsingHelper::ParameteredExpressionParameter(const char * text) {
@@ -57,9 +58,9 @@ Expression ParsingHelper::ParameteredExpressionParameter(const char * text) {
     text += 1;
     if (text[0] == '\0') {
       return Expression();
-    } else if (text[0] == '(' || text[0] == UCodePointLeftSystemParenthesis.getChar()) {
+    } else if (text[0] == '(' || text[0] == UCodePointLeftSystemParenthesis.getChar() || text[0] == '{') {
       unmatchedLeftParenthesis++;
-    } else if (text[0] == ')' || text[0] == UCodePointRightSystemParenthesis.getChar()) {
+    } else if (text[0] == ')' || text[0] == UCodePointRightSystemParenthesis.getChar() || text[0] == '}') {
       if (unmatchedLeftParenthesis > 0) {
         unmatchedLeftParenthesis--;
       } else {

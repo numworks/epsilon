@@ -66,16 +66,6 @@ int FloatParameterControllerWithoutButton<T>::typeAtIndex(int index) {
 }
 
 template<typename T>
-int FloatParameterControllerWithoutButton<T>::reusableCellCount(int type) {
-  return reusableParameterCellCount(type);
-}
-
-template<typename T>
-HighlightCell * FloatParameterControllerWithoutButton<T>::reusableCell(int index, int type) {
-  return reusableParameterCell(index, type);
-}
-
-template<typename T>
 void FloatParameterControllerWithoutButton<T>::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (isCellEditing(cell, index)) {
     return;

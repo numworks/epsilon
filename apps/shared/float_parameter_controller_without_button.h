@@ -1,7 +1,6 @@
 #ifndef SHARED_FLOAT_PARAMETER_CONTROLLER_WITHOUT_BUTTON_H
 #define SHARED_FLOAT_PARAMETER_CONTROLLER_WITHOUT_BUTTON_H
 
-#include "button_with_separator.h"
 #include "parameter_text_field_delegate.h"
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
@@ -21,8 +20,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
   int typeAtIndex(int index) override;
-  int reusableCellCount(int type) override;
-  Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
@@ -44,8 +41,6 @@ protected:
 
 private:
   virtual InfinityTolerance infinityAllowanceForRow(int row) const { return InfinityTolerance::None; }
-  virtual int reusableParameterCellCount(int type) = 0;
-  virtual Escher::HighlightCell * reusableParameterCell(int index, int type) = 0;
   virtual bool setParameterAtIndex(int parameterIndex, T f) = 0;
 };
 

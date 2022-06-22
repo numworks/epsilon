@@ -40,6 +40,7 @@ private:
   Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
+  CurveParameterController * curveParameterControllerRecord() override { return &m_curveParameterController; }
   SequenceSelectionController * curveSelectionController() const override { return const_cast<SequenceSelectionController *>(&m_sequenceSelectionController); }
   Shared::CursorView m_cursorView;
   Shared::XYBannerView m_bannerView;

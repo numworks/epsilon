@@ -2,6 +2,7 @@
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
 #include <poincare/dependency.h>
+#include <poincare/cotangent.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
@@ -601,7 +602,28 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
       static_cast<Multiplication &>(result).mergeSameTypeChildrenInPlace();
     }
   } else {
-  // Step 3: Create a Division if relevant
+  /* Step 3: cos(x)/sin(x) is not always reduced to 1/tan(x), so we need to
+   * turn into cot(x) here.
+   *This only handle the simple cos(x)/sin(x) case and not cos(x)^p/sin(x)^q*/
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression child = childAtIndex(i);
+    if (child.type() == ExpressionNode::Type::Power
+        && child.childAtIndex(0).type() == ExpressionNode::Type::Sine
+        && IsMinusOne(child.childAtIndex(1))) {
+      for (int j = i+1; j < numberOfChildren(); j++) {
+        // Cosine are after sine in simplification order
+        Expression otherChild = childAtIndex(j);
+        if (otherChild.type() == ExpressionNode::Type::Cosine
+            && otherChild.childAtIndex(0).isIdenticalTo(child.childAtIndex(0).childAtIndex(0))) {
+          Expression cotangent = Cotangent::Builder(otherChild.childAtIndex(0));
+          replaceChildAtIndexInPlace(i, cotangent);
+          removeChildAtIndexInPlace(j);
+          break;
+        }
+      }
+    }
+  }
+  // Step 4: Create a Division if relevant
     Expression numer, denom;
     splitIntoNormalForm(numer, denom, reductionContext);
     if (!numer.isUninitialized()) {
@@ -1172,6 +1194,12 @@ void Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::
     otherIndex = i;
   }
 
+  /* If the power of tan is negative and tan(x) = undef, we can't transform
+   * cos/sin into 1/tan. Indeed, cos(pi/2)/sin(pi/2) is defined, but tan(pi/2)
+   * is undef. */
+  if (tanPower.sign() == ExpressionNode::Sign::Negative && tan.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true).isUndefined()) {
+    return;
+  }
   replaceChildAtIndexInPlace(tanIndex, Power::Builder(tan, tanPower));
   childAtIndex(tanIndex).shallowReduce(reductionContext);
   // Replace cos(x)^q by cos(x)^(p+q) or sin(x)^p by sin(x)^(p+q)
@@ -1183,7 +1211,6 @@ void Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::
   }
   replaceChildAtIndexInPlace(otherIndex, Power::Builder(Base(childAtIndex(otherIndex)), sumPQ));
   childAtIndex(otherIndex).shallowReduce(reductionContext);
-  return;
 }
 
 bool Multiplication::HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2) {

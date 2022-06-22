@@ -906,6 +906,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   // -- sin/cos -> tan
   assert_parsed_expression_simplify_to("sin(x)/cos(x)", "tan(x)");
   assert_parsed_expression_simplify_to("cos(x)/sin(x)", "cot(x)");
+  assert_parsed_expression_simplify_to("1/tan(x)", "1/tan(x)"); // 1/tan = cot if tan(x) != undef
   assert_parsed_expression_simplify_to("sin(x)×π/cos(x)", "π×tan(x)");
   assert_parsed_expression_simplify_to("sin(x)/(π×cos(x))", "tan(x)/π");
   assert_parsed_expression_simplify_to("1×tan(2)×tan(5)", "tan(2)×tan(5)");
@@ -1025,6 +1026,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("tan(180045)", "1", User, Degree);
   assert_parsed_expression_simplify_to("tan(-60)", "-√(3)", User, Degree);
   assert_parsed_expression_simplify_to("tan(tan(tan(tan(9))))", "tan(tan(tan(tan(9))))");
+  assert_parsed_expression_simplify_to("1/tan(2)", "cot(2)"); // 1/tan = cot if tan(x) != undef
   // -- acos
   assert_parsed_expression_simplify_to("acos(-1/2)", "\u00122×π\u0013/3");
   assert_parsed_expression_simplify_to("acos(-1.2)", "-acos(6/5)+π");

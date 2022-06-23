@@ -2047,6 +2047,7 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
   assert_parsed_expression_simplify_to("tan({0,π/4})", "{0,1}");
   assert_parsed_expression_simplify_to("{}%", "{}");
   assert_parsed_expression_simplify_to("abs({1}%)", "{abs(1/100)}");
+  assert_parsed_expression_simplify_to("2+{5,10}%", "{2×(1+5/100),2×(1+10/100)}");
 }
 
 QUIZ_CASE(poincare_simplification_mix_lists) {

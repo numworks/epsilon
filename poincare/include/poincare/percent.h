@@ -28,7 +28,6 @@ public:
 protected:
   virtual int createSecondChildLayout(Poincare::HorizontalLayout * result, int childrenCount, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return childrenCount; }
   virtual int serializeSecondChild(char * buffer, int bufferSize, int numberOfChar, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return numberOfChar; }
-  virtual Expression getExpression() const;
 
 private:
   // Layout
@@ -36,8 +35,8 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplication
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
   Expression shallowBeautify(const ReductionContext& reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   // Evaluation
@@ -64,9 +63,9 @@ private:
   // PercentSimpleNode
   int createSecondChildLayout(Poincare::HorizontalLayout * result, int childrenCount, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serializeSecondChild(char * buffer, int bufferSize, int numberOfChar, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  Expression getExpression() const override;
   // Simplication
   Expression shallowBeautify(const ReductionContext& reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override {
     return templateApproximate<float>(approximationContext);
@@ -77,13 +76,14 @@ private:
   template <typename U> Evaluation<U> templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined = nullptr) const;
 };
 
-class PercentSimple final : public ExpressionOneChild<PercentSimple, PercentSimpleNode> {
+class PercentSimple : public ExpressionOneChild<PercentSimple, PercentSimpleNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
-class PercentAddition final : public ExpressionTwoChildren<PercentAddition, PercentAdditionNode> {
+class PercentAddition final : public ExpressionTwoChildren<PercentAddition, PercentAdditionNode, PercentSimple> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);

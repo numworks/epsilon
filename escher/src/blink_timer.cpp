@@ -4,6 +4,11 @@ namespace Escher {
 
 TextCursorView * BlinkTimer::s_cursor = nullptr;
 
+void BlinkTimer::forceCursorVisible() {
+  s_cursor->forceVisible();
+  reset();
+}
+
 bool BlinkTimer::fire() {
   if (s_cursor) {
     s_cursor->switchVisible();

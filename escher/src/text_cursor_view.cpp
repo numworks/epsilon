@@ -17,15 +17,17 @@ KDSize TextCursorView::minimalSizeForOptimalDisplay() const {
   return KDSize(k_width, 0);
 }
 
-void TextCursorView::switchVisible() {
-   m_visible = !m_visible;
-   markRectAsDirty(bounds());
-}
-
 void TextCursorView::layoutSubviews(bool force) {
   /* Force the cursor to appears when its frame changes. This way, the user
    * does not lose sight of the cursor when moving around. */
   m_visible = true;
+}
+
+void TextCursorView::setVisible(bool visible) {
+  if (visible != m_visible) {
+    m_visible = visible;
+    markRectAsDirty(bounds());
+  }
 }
 
 }

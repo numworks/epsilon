@@ -17,10 +17,12 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
 
   KDRect frame() const { return m_frame; }
-  void switchVisible();
+  void switchVisible() { setVisible(!m_visible); }
+  void forceVisible() { setVisible(true); }
 
 private:
   void layoutSubviews(bool force) override;
+  void setVisible(bool visible);
 
   bool m_visible;
 };

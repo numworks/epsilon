@@ -1,6 +1,7 @@
 #include "calculation_graph_controller.h"
 #include "../app.h"
 #include "../../apps_container.h"
+#include <escher/clipboard.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -17,6 +18,14 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
                       BannerView::TextColor(), BannerView::BackgroundColor()),
   m_isActive(false)
 {
+}
+
+bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
+    Escher::Clipboard::sharedClipboard()->store(m_bannerView->abscissaValue()->text());
+    return true;
+  }
+  return SimpleInteractiveCurveViewController::handleEvent(event);
 }
 
 void CalculationGraphController::viewWillAppear() {

@@ -14,6 +14,7 @@ class App;
 class CalculationGraphController : public Shared::SimpleInteractiveCurveViewController, public Shared::FunctionBannerDelegate {
 public:
   CalculationGraphController(Escher::Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, I18n::Message defaultMessage);
+  bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void setRecord(Ion::Storage::Record record);

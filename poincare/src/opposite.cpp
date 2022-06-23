@@ -51,7 +51,7 @@ bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression & child, in
 
 Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout result = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
-  if (childAtIndex(0)->type() == Type::Opposite) {
+  if (childAtIndex(0)->isOfType({Type::Opposite, Type::Power})) {
     result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
   } else {
     result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, false);

@@ -126,7 +126,7 @@ const char * BeginningOfWord(const char * text, const char * word);
 const char * EndOfWord(const char * word);
 
 // On a line, count number of glyphs before and after locations
-void countGlyphsInLine(const char * text, int * before, int * after, const char * beforeLocation, const char *afterLocation = nullptr);
+void CountGlyphsInLine(const char * text, int * before, int * after, const char * beforeLocation, const char *afterLocation = nullptr);
 
 };
 

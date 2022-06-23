@@ -15,7 +15,7 @@
 
 namespace Poincare {
 
-Expression MixedFractionNode::shallowReduce(ReductionContext reductionContext) {
+Expression MixedFractionNode::shallowReduce(const ReductionContext& reductionContext) {
   return MixedFraction(this).shallowReduce(reductionContext);
 }
 
@@ -27,7 +27,7 @@ int MixedFractionNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, " ");
 }
 
-template <typename T> Evaluation<T> MixedFractionNode::templateApproximate(ApproximationContext approximationContext) const {
+template <typename T> Evaluation<T> MixedFractionNode::templateApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> integerPart = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> fractionPart = childAtIndex(1)->approximate(T(), approximationContext);
   if (integerPart.type() != EvaluationNode<T>::Type::Complex || integerPart.type() != EvaluationNode<T>::Type::Complex) {
@@ -42,7 +42,7 @@ template <typename T> Evaluation<T> MixedFractionNode::templateApproximate(Appro
 
 }
 
-Expression MixedFraction::shallowReduce(ExpressionNode::ReductionContext context) {
+Expression MixedFraction::shallowReduce(const ExpressionNode::ReductionContext& context) {
   Expression integerPart = childAtIndex(0);
   Expression fractionPart = childAtIndex(1);
   if (integerPart.type() != ExpressionNode::Type::Rational || fractionPart.type() != ExpressionNode::Type::Rational) {

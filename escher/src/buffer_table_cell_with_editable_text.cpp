@@ -17,7 +17,8 @@ BufferTableCellWithEditableText::BufferTableCellWithEditableText(
                 textFieldDelegate,
                 KDFont::LargeFont,
                 KDContext::k_alignRight, KDContext::k_alignCenter,
-                KDColorBlack) {
+                KDColorBlack),
+    m_editable(true) {
   m_textBody[0] = '\0';
 }
 

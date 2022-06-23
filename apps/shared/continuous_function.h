@@ -155,6 +155,13 @@ public:
    * numberOfSubCurves shouldn't be called at stages where the expressionReduced
    * has not been executed yet. */
   int numberOfSubCurves() const override { assert(m_model.numberOfSubCurves() > 0); return m_model.numberOfSubCurves(); }
+  int numberOfCurveParameters() const;
+  struct CurveParameter {
+    I18n::Message parameterName;
+    bool editable;
+    bool isPreimage;
+  };
+  CurveParameter getCurveParameter(int index) const;
 
   /* Expression */
 
@@ -176,6 +183,8 @@ public:
   Poincare::Coordinate2D<double> evaluateXYAtParameter(double t, Poincare::Context * context, int curveIndex = 0) const override {
     return privateEvaluateXYAtParameter<double>(t, context, curveIndex);
   }
+
+  double evaluateCurveParameter(int index, double cursorT, double cursorX, double cursorY, Poincare::Context * context) const;
 
   /* Derivative */
 

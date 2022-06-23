@@ -37,10 +37,23 @@ void CurveParameterController::didBecomeFirstResponder() {
 }
 
 void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int index) {
-  if (index == 0) {
-    m_parameterCells[index].setMessageWithPlaceholder(function()->parameterMessageName());
+  I18n::Message name = I18n::Message::Default;
+  if (index < function()->numberOfCurveParameters()) {
+    ContinuousFunction::CurveParameter parameter = function()->getCurveParameter(index);
+    name = parameter.parameterName;
+    m_parameterCells[index].setEditable(parameter.editable);
+  }
+  if (name != I18n::Message::Default) {
+    m_parameterCells[index].setMessageWithPlaceholder(name);
     FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
-  } else if (index == 1 || (shouldDisplayDerivative() && index == 2)) {
+    return;
+  }
+  if (isDerivative(index)) {
+    m_parameterCells[index].setEditable(false);
+  }
+  if (index == 1 || (isDerivative(index))) {
+    // The parameter requires a custom name built from the function name
+    assert(function()->plotType() == ContinuousFunction::PlotType::Cartesian);
     constexpr size_t bufferSize = BufferTextView::k_maxNumberOfChar;
     char buffer[bufferSize];
     if (index == 1) {
@@ -54,24 +67,23 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int 
 }
 
 float CurveParameterController::parameterAtIndex(int index) {
-  if (index==0) {
-    return m_cursor->t();
-  } else if (index == 1) {
-    return m_preimageGraphController.image();
+  if (isDerivative(index)) {
+    assert(function()->plotType() == ContinuousFunction::PlotType::Cartesian);
+    return function()->approximateDerivative(m_cursor->x(), App::app()->localContext());
   }
-  assert(shouldDisplayDerivative() && index==2);
-  return function()->approximateDerivative(m_cursor->x(), App::app()->localContext());
+  return function()->evaluateCurveParameter(index, m_cursor->t(), m_cursor->x(), m_cursor->y(), App::app()->localContext());
 }
 
 bool CurveParameterController::confirmParameterAtIndex(int parameterIndex, double f) {
-  if (parameterIndex == 0) {
-  FunctionApp * myApp = FunctionApp::app();
-  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+  if (function()->getCurveParameter(parameterIndex).isPreimage) {
+    m_preimageGraphController.setImage(f);
+    return true;
+  }
   // If possible, round f so that we go to the evaluation of the displayed f
   double pixelWidth = (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
-  f = FunctionBannerDelegate::getValueDisplayedOnBanner(f, myApp->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
+  f = FunctionBannerDelegate::getValueDisplayedOnBanner(f, App::app()->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
 
-  Poincare::Coordinate2D<double> xy = function->evaluateXYAtParameter(f, myApp->localContext());
+  Poincare::Coordinate2D<double> xy = function()->evaluateXYAtParameter(f, App::app()->localContext());
   m_cursor->moveTo(f, xy.x1(), xy.x2());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
@@ -79,42 +91,28 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex, doubl
    * to reinit the cursor position when displaying the graph controller. To
    * prevent this, we update the snapshot range version in order to make the
    * graph controller as if the range has not evolved since last appearance. */
-  uint32_t * snapshotRangeVersion = static_cast<FunctionApp::Snapshot *>(myApp->snapshot())->rangeVersion();
+  uint32_t * snapshotRangeVersion = App::app()->snapshot()->rangeVersion();
   *snapshotRangeVersion = m_graphRange->rangeChecksum();
-  return true;
-  }
-  assert(parameterIndex == 1);
-  m_preimageGraphController.setImage(f);
   return true;
 }
 
 bool CurveParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  int row = selectedRow();
+  int index = selectedRow();
   if (!FloatParameterControllerWithoutButton::textFieldDidFinishEditing(textField, text, event)) {
     return false;
   }
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  if (row == 0 || row == 1) {
-    stack->popUntilDepth(InteractiveCurveViewController::k_graphControllerStackDepth, true);
-  }
-  if (row == 1) {
-    //m_preimageGraphController.setRecord(m_record);
+  stack->popUntilDepth(InteractiveCurveViewController::k_graphControllerStackDepth, true);
+  if (function()->getCurveParameter(index).isPreimage) {
     stack->push(&m_preimageGraphController);
   }
   return true;
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
-  int index;
-  if (shouldDisplayCalculation()) {
-    index = selectedRow();
-  } else {
-    assert(selectedRow() == 0);
-    index = 1;
-  }
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    if (shouldDisplayCalculation() && index == numberOfRows() - 1) {
+    if (shouldDisplayCalculation() && selectedRow() == numberOfRows() - 1) {
       m_calculationParameterController.setRecord(m_record);
       stack->push(&m_calculationParameterController);
       return true;
@@ -137,6 +135,10 @@ int CurveParameterController::typeAtIndex(int index) {
   return k_calculationCellType;
 }
 
+bool CurveParameterController::editableParameter(int index) {
+  return !isDerivative(index) && function()->getCurveParameter(index).editable;
+}
+
 int CurveParameterController::numberOfRows() const {
   return numberOfParameters() + shouldDisplayCalculation();
 };
@@ -154,6 +156,10 @@ bool CurveParameterController::shouldDisplayCalculation() const {
 
 bool CurveParameterController::shouldDisplayDerivative() const {
   return function()->canDisplayDerivative() && m_graphController->displayDerivativeInBanner();
+}
+
+bool CurveParameterController::isDerivative(int index) const {
+  return shouldDisplayDerivative() && index == 2;
 }
 
 }

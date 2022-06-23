@@ -15,9 +15,10 @@ public:
   const View * accessoryView() const override { return &m_textField; }
   TextField * textField() { return &m_textField; }
   const char * editedText() const { return m_textField.text(); }
-  void didBecomeFirstResponder() override { Container::activeApp()->setFirstResponder(&m_textField); }
+  void didBecomeFirstResponder() override { if (m_editable) { Container::activeApp()->setFirstResponder(&m_textField); } }
   bool isEditing() { return m_textField.isEditing(); }
-  void setEditing(bool isEditing) { m_textField.setEditing(isEditing); }
+  void setEditing(bool isEditing) { m_textField.setEditing(m_editable && isEditing); }
+  void setEditable(bool isEditable) { m_editable = isEditable; }
   void setHighlighted(bool highlight) override;
   Responder * responder() override { return this; }
   const char * text() const override { return !m_textField.isEditing() ? m_textField.text() : nullptr; }
@@ -35,6 +36,7 @@ public:
 
 private:
   TextField m_textField;
+  bool m_editable;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
 };
 

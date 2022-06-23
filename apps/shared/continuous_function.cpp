@@ -267,6 +267,51 @@ Conic ContinuousFunction::getConicParameters(Context * context) const {
   return Conic(expressionEquation(context), context, k_unknownName);
 }
 
+int ContinuousFunction::numberOfCurveParameters() const {
+  return plotType() == PlotType::Parametric ? 3 : 2;
+}
+
+ContinuousFunction::CurveParameter ContinuousFunction::getCurveParameter(int index) const {
+  using namespace I18n;
+  switch (plotType()) {
+  case PlotType::Cartesian:
+    return {index == 0 ? Message::X : Message::Default, true, .isPreimage = index == 1};
+  case PlotType::Line:
+    return {index == 0 ? Message::X : Message::Y, true, .isPreimage = index == 1};
+  case PlotType::HorizontalLine:
+    return {index == 0 ? Message::X : Message::Y, index == 0};
+  case PlotType::VerticalLine:
+    return {index == 0 ? Message::X : Message::Y, index == 1};
+  case PlotType::Parametric:
+    return {index == 0 ? Message::T : index == 1 ? Message::XOfT : Message::YOfT, index == 0};
+  case PlotType::Polar:
+    return {index == 0 ? Message::Theta : Message::R, index == 0};
+  default:
+    // Conics
+    assert(plotType() < PlotType::Undefined);
+    return {index == 0 ? Message::X : Message::Y, false};
+  }
+}
+
+double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, double cursorX, double cursorY, Context * context) const {
+  switch (plotType()) {
+  case PlotType::Cartesian:
+  case PlotType::Line:
+  case PlotType::HorizontalLine:
+    return index == 0 ? cursorX : evaluateXYAtParameter(cursorX, context).x2();
+  case PlotType::VerticalLine:
+    return index == 0 ? evaluateXYAtParameter(cursorY, context).x1() : cursorY;
+  case PlotType::Parametric:
+    return index == 0 ? cursorT : index == 1 ? evaluateXYAtParameter(cursorT, context).x1() : evaluateXYAtParameter(cursorT, context).x2();
+  case PlotType::Polar:
+    return index == 0 ? cursorT : evaluate2DAtParameter(cursorT, context).x2();
+  default:
+    // Conics
+    assert(plotType() < PlotType::Undefined);
+    return index == 0 ? cursorX : cursorY;
+  }
+}
+
 void ContinuousFunction::udpateModel(Context * context) {
   // Do not call isAlongX() if model has already been resetted
   bool previousAlongXStatus = (m_model.plotType() == PlotType::Unknown) || isAlongX();

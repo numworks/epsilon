@@ -1,6 +1,7 @@
 #include <poincare/parametered_expression.h>
 #include <poincare/symbol.h>
 #include <poincare/variable_context.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <string.h>
 #include <assert.h>
 
@@ -71,6 +72,66 @@ Evaluation<T> ParameteredExpressionNode::approximateExpressionWithArgument(Expre
 template<typename T>
 Evaluation<T> ParameteredExpressionNode::approximateFirstChildWithArgument(T x, const ApproximationContext& approximationContext) const {
   return approximateExpressionWithArgument(childAtIndex(0), x, approximationContext);
+}
+
+bool ParameteredExpression::ParameterText(const char * text, const char * * parameterText, size_t * parameterLength) {
+  /* Find the beginning of the parameter. Count parentheses to handle the
+   * presence of functions with several parameters in the parametered
+   * expression. */
+  UTF8Decoder varDecoder(text);
+  CodePoint c = UCodePointUnknown;
+  bool variableFound = false;
+  int cursorLevel = 0;
+  while (c != UCodePointNull && cursorLevel >= 0 && !variableFound) {
+    c = varDecoder.nextCodePoint();
+    switch (c) {
+    case '(':
+    case '{':
+    case UCodePointLeftSystemParenthesis:
+      cursorLevel ++;
+      break;
+    case ')':
+    case '}':
+    case UCodePointRightSystemParenthesis:
+      cursorLevel --;
+      break;
+    case ',':
+      if (cursorLevel == 0) {
+        variableFound = true;
+        c = varDecoder.nextCodePoint();
+      }
+      break;
+    }
+  }
+  if (!variableFound || c == UCodePointNull) {
+    return false;
+  }
+
+  /* Skip whitespace at the beginning of the parameter name. */
+  while (c != UCodePointNull && (c == ' ' || c == UCodePointLeftSystemParenthesis)) {
+    c = varDecoder.nextCodePoint();
+  }
+  const char * variableTextStart = varDecoder.previousGlyphPosition();
+  c = varDecoder.nextCodePoint();
+  while (c != UCodePointNull && (c.isDecimalDigit() || c.isLatinLetter() || c == '_')) {
+    c = varDecoder.nextCodePoint();
+  }
+  const char * variableTextEnd = varDecoder.previousGlyphPosition();
+  c = varDecoder.nextCodePoint();
+  /* Skip whitespace at the end of the parameter name. */
+  while (c != UCodePointNull && (c == ' ' || c == UCodePointRightSystemParenthesis)) {
+    c = varDecoder.nextCodePoint();
+  }
+  if (c == UCodePointNull || c == ',' || c == ')') {
+    // Next character must be a ',', ')' or end of string
+    size_t length = variableTextEnd - variableTextStart;
+    if (length > 0) {
+      *parameterLength = length;
+      *parameterText = variableTextStart;
+      return true;
+    }
+  }
+  return false;
 }
 
 Expression ParameteredExpression::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

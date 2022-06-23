@@ -492,7 +492,7 @@ const char * EndOfWord(const char * word) {
   return result;
 }
 
-void countGlyphsInLine(const char * text, int * before, int * after, const char * beforeLocation, const char *afterLocation) {
+void CountGlyphsInLine(const char * text, int * before, int * after, const char * beforeLocation, const char *afterLocation) {
   UTF8Helper::CodePointAction countGlyph = [](int, void * glyphCount, int, int) {
     int * castedCount = (int *) glyphCount;
     *castedCount = *castedCount + 1;

@@ -15,7 +15,7 @@ extern "C" {
 
 void quiz_assert(bool condition);
 void quiz_print(const char * message);
-extern bool abort_when_assert_fails;
+extern bool sSkipAssertions;
 
 #ifdef __cplusplus
 }

@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <quiz.h>
 
-bool abort_when_assert_fails = true;
+bool sSkipAssertions = false;
 
 void quiz_assert(bool condition) {
-  if (abort_when_assert_fails && !condition) {
+  if (!sSkipAssertions && !condition) {
 #if PLATFORM_DEVICE
     /* Freeze on device so that the error message can be read.
      * Note : "while (!condition) {}" could be omitted by the compiler because

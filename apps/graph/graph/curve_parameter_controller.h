@@ -35,8 +35,9 @@ private:
   }
   static constexpr int k_parameterCellType = 0;
   static constexpr int k_calculationCellType = 1;
+  bool editableParameter(int index);
   int typeAtIndex(int index) override;
-  int numberOfParameters() const { return 2 + shouldDisplayDerivative(); }
+  int numberOfParameters() const { return function()->numberOfCurveParameters() + shouldDisplayDerivative(); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
@@ -47,6 +48,7 @@ private:
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
   bool shouldDisplayDerivative() const;
+  bool isDerivative(int index) const;
   int cellIndex(int visibleCellIndex) const;
   static constexpr int k_maxNumberOfParameters = 3;
   PreimageGraphController m_preimageGraphController;

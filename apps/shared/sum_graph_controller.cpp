@@ -1,5 +1,6 @@
 #include "sum_graph_controller.h"
 #include "function_app.h"
+#include <escher/clipboard.h>
 #include <poincare/empty_layout.h>
 #include <poincare/condensed_sum_layout.h>
 #include <poincare/layout_helper.h>
@@ -54,6 +55,16 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
       moveCursorHorizontallyToPosition(m_startSum);
     }
     reloadBannerView();
+    return true;
+  }
+  if ((event == Ion::Events::Copy || event == Ion::Events::Cut) &&  m_step == Step::Result) {
+    /* We want to save more digits than we have in the banner to we need to
+     * convert the result here */
+    constexpr static int precision = Poincare::Preferences::DefaultNumberOfPrintedSignificantDigits;
+    constexpr static int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
+     char buffer[bufferSize];
+    PoincareHelpers::ConvertFloatToText<double>(m_result, buffer, bufferSize, precision);
+    Escher::Clipboard::sharedClipboard()->store(buffer);
     return true;
   }
   return SimpleInteractiveCurveViewController::handleEvent(event);
@@ -148,6 +159,7 @@ void SumGraphController::reloadBannerView() {
     m_legendView.setEditableZone(m_cursor->x());
     result = NAN;
   }
+  m_result = result;
   m_legendView.setSumLayout(m_step, m_startSum, endSum, result, functionLayout);
 }
 

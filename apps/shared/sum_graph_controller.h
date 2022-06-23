@@ -30,6 +30,7 @@ protected:
   };
   Step m_step;
   double m_startSum;
+  double m_result;
   Ion::Storage::Record m_record;
   InteractiveCurveViewRange * m_graphRange;
 private:

@@ -12,7 +12,6 @@ void VariableContext::setApproximationForVariable(T value) {
 }
 
 Context::SymbolAbstractType VariableContext::expressionTypeForIdentifier(const char * identifier, int length) {
-  // return m_value.isUninitialized() ? SymbolAbstractType::None : SymbolAbstractType::Symbol;
   if (strncmp(identifier, m_name, length) == 0) {
     return m_value.isUninitialized() ? SymbolAbstractType::None : SymbolAbstractType::Symbol;
   }

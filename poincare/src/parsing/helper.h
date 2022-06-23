@@ -57,6 +57,7 @@ private:
     &Cosecant::s_functionHelper,
     &Dependency::s_functionHelper,
     &Determinant::s_functionHelper,
+    &Derivative::s_functionHelperFirstOrder,
     &Derivative::s_functionHelper,
     &Dimension::s_functionHelper,
     &VectorDot::s_functionHelper,

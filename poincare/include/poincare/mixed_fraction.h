@@ -39,14 +39,11 @@ private:
   template <typename T> Evaluation<T> templateApproximate(const ApproximationContext& approximationContext) const;
 };
 
-class MixedFraction final : public Expression {
+class MixedFraction final : public ExpressionTwoChildren<MixedFraction, MixedFractionNode> {
 public:
-  MixedFraction(const MixedFractionNode * n) : Expression(n) {}
-  static MixedFraction Builder(Expression integerPart, Expression fractionPart) { return TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>({integerPart, fractionPart}); }
+  using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(const ExpressionNode::ReductionContext& context);
-
   static Expression CreateMixedFractionFromIntegers(const Integer & num, const Integer & denom);
-
 };
 
 }

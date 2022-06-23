@@ -200,7 +200,8 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
   const CodePoint sigma[sigmaLength] = {' ', m_sumSymbol};
   Poincare::Layout sumLayout = LayoutHelper::CodePointsToLayout(sigma, sigmaLength);
   if (step != Step::FirstParameter) {
-    char buffer[k_valuesBufferSize];
+    static_assert(k_valuesBufferSize <= k_editableZoneBufferSize);
+    char buffer[k_editableZoneBufferSize];
     Layout endLayout;
     if (step == Step::SecondParameter) {
       endLayout = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false);
@@ -214,7 +215,9 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
         LayoutHelper::String(buffer, strlen(buffer), k_font),
         endLayout);
     if (step == Step::Result) {
-      PoincareHelpers::ConvertFloatToText<double>(result, buffer, k_valuesBufferSize, k_valuesPrecision);
+      int resultPrecision = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
+
+      PoincareHelpers::ConvertFloatToText<double>(result, buffer, k_editableZoneBufferSize, resultPrecision);
       sumLayout = HorizontalLayout::Builder(
           sumLayout,
           functionLayout,

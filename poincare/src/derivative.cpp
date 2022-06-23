@@ -53,13 +53,48 @@ Expression DerivativeNode::shallowReduce(const ReductionContext& reductionContex
 
 template<typename T>
 Evaluation<T> DerivativeNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+  T orderValue = childAtIndex(numberOfChildren() - 1)->approximate(T(), approximationContext).toScalar();
+  if (std::isnan(orderValue) || std::floor(orderValue) != orderValue) {
+    return Complex<T>::RealUndefined();
+  }
+  int order = static_cast<int>(orderValue);
+  if (order < 0) {
+    return Complex<T>::RealUndefined();
+  }
+  if (order > k_maxOrderForApproximation) {
+    /* FIXME:
+     * Since approximation of higher order derivative is exponentially complex,
+     * we set a threshold above which we won't compute the derivative.
+     *
+     * The method we use for now for the higher order derivatives is to
+     * recursively approximate the derivatives of lower levels.
+     * It's as if we approximated diff(diff(diff(diff(..(diff(f(x)))))))
+     * But this is method is way too expensive in time and memory.
+     *
+     * Other methods exists for approximating higher order derivative.
+     * This should be investigated
+     * */
+    return Complex<T>::RealUndefined();
+  }
+  T evaluationArgument = childAtIndex(2)->approximate(T(), approximationContext).toScalar();
+  // No complex/matrix version of Derivative
+  if (std::isnan(evaluationArgument)) {
+    return Complex<T>::RealUndefined();
+  }
+  return templatedApproximateWithValueForArgumentAndOrder<T>(evaluationArgument, order, approximationContext);
+}
+
+
+template<typename T>
+Evaluation<T> DerivativeNode::templatedApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order, const ApproximationContext& approximationContext) const {
   /* TODO : Reduction is mapped on list, but not approximation.
   * Find a smart way of doing it. */
-  Evaluation<T> evaluationArgumentInput = childAtIndex(2)->approximate(T(), approximationContext);
-  T evaluationArgument = evaluationArgumentInput.toScalar();
-  T functionValue = firstChildScalarValueForArgument(evaluationArgument, approximationContext);
-  // No complex/matrix version of Derivative
-  if (std::isnan(evaluationArgument) || std::isnan(functionValue)) {
+  assert(order >= 0);
+  if (order == 0) {
+    return Complex<T>::Builder(firstChildScalarValueForArgument(evaluationArgument, approximationContext));
+  }
+  T functionValue = firstChildScalarValueForArgumentAtLowerOrder(evaluationArgument, order, approximationContext);
+  if (std::isnan(functionValue)) {
     return Complex<T>::RealUndefined();
   }
 
@@ -69,7 +104,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(const ApproximationContext& a
   constexpr T tenEpsilon = static_cast<T>(10.0)*Float<T>::Epsilon();
   do {
     T currentError;
-    T currentResult = riddersApproximation(approximationContext, evaluationArgument, h, &currentError);
+    T currentResult = riddersApproximation(order, approximationContext, evaluationArgument, h, &currentError);
     h /= static_cast<T>(10.0);
     if (std::isnan(currentError) || currentError > error) {
       continue;
@@ -101,14 +136,14 @@ Evaluation<T> DerivativeNode::templatedApproximate(const ApproximationContext& a
 }
 
 template<typename T>
-T DerivativeNode::growthRateAroundAbscissa(T x, T h, const ApproximationContext& approximationContext) const {
-  T expressionPlus = firstChildScalarValueForArgument(x+h, approximationContext);
-  T expressionMinus = firstChildScalarValueForArgument(x-h, approximationContext);
+T DerivativeNode::growthRateAroundAbscissa(T x, T h, int order, const ApproximationContext& approximationContext) const {
+  T expressionPlus = firstChildScalarValueForArgumentAtLowerOrder(x+h, order, approximationContext);
+  T expressionMinus = firstChildScalarValueForArgumentAtLowerOrder(x-h, order, approximationContext);
   return (expressionPlus - expressionMinus)/(h+h);
 }
 
 template<typename T>
-T DerivativeNode::riddersApproximation(const ApproximationContext& approximationContext, T x, T h, T * error) const {
+T DerivativeNode::riddersApproximation(int order, const ApproximationContext& approximationContext, T x, T h, T * error) const {
   /* Ridders' Algorithm
    * Blibliography:
    * - Ridders, C.J.F. 1982, Advances in Helperering Software, vol. 4, no. 2,
@@ -127,7 +162,7 @@ T DerivativeNode::riddersApproximation(const ApproximationContext& approximation
       a[i][j] = 1;
     }
   }
-  a[0][0] = growthRateAroundAbscissa(x, hh, approximationContext);
+  a[0][0] = growthRateAroundAbscissa(x, hh, order, approximationContext);
   T ans = 0;
   T errt = 0;
   // Loop on i: change the step size
@@ -136,7 +171,7 @@ T DerivativeNode::riddersApproximation(const ApproximationContext& approximation
     // Make hh an exactly representable number
     volatile T temp = x+hh;
     hh = temp - x;
-    a[0][i] = growthRateAroundAbscissa(x, hh, approximationContext);
+    a[0][i] = growthRateAroundAbscissa(x, hh, order, approximationContext);
     T fac = k_rateStepSize*k_rateStepSize;
     // Loop on j: compute extrapolation for several orders
     for (int j = 1; j < 10; j++) {

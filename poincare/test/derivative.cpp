@@ -140,3 +140,15 @@ QUIZ_CASE(poincare_derivative_approximation) {
   // assert_expression_approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
   assert_expression_approximates_to<double>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
 }
+
+QUIZ_CASE(poincare_derivative_approximation_higher_order) {
+  // We have to approximate to double because error is too big on floats
+  assert_expression_approximates_to<double>("diff(x^3,x,10,2)", "60");
+  assert_expression_approximates_to<double>("diff(x^3,x,1,4)", "0");
+  assert_expression_approximates_to<double>("diff(e^(2x),x,0,4)", "16");
+  assert_approximate_to("diff(x^3,x,3,0)", "27");
+  assert_approximate_to("diff(x^3,x,3,-1)", Undefined::Name());
+  assert_approximate_to("diff(x^3,x,3,1.3)", Undefined::Name());
+  // Order 5 and above are not handled because recursively too long
+  assert_approximate_to("diff(e^(2x),x,0,5)", Undefined::Name());
+}

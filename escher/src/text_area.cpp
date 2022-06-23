@@ -84,7 +84,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
     // Counting line text lengths before and after insertion.
     int b = 0;
     int a = 0;
-    UTF8Helper::countGlyphsInLine(textAreaBuffer, &b, &a, insertionPosition);
+    UTF8Helper::CountGlyphsInLine(textAreaBuffer, &b, &a, insertionPosition);
 
     if (a + b + addedTextLength > k_maxLineChars) {
       /* Overflow expected, depending on '/n' code point presence and position.
@@ -367,7 +367,7 @@ size_t TextArea::Text::removeText(const char * start, const char * end) {
     // Counting text lengths between previous and last '/n' (non removed).
     int b = 0;
     int a = 0;
-    UTF8Helper::countGlyphsInLine(text(), &b, &a, start, end);
+    UTF8Helper::CountGlyphsInLine(text(), &b, &a, start, end);
 
     if (a + b > k_maxLineChars) {
       // Resulting line would exceed limits, no text is removed

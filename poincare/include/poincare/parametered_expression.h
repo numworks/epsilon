@@ -36,6 +36,8 @@ public:
   static constexpr int ParameteredChildIndex() { return 0; }
   static constexpr int ParameterChildIndex() { return 1; }
 
+  static bool ParameterText(const char * text, const char * * parameterText, size_t * parameterLength);
+
   // Expression
   /* We sometimes replace 'x' by 'UnknownX' to differentiate between a variable
    * and a function parameter. For instance, when defining the function

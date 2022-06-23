@@ -481,68 +481,16 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
     c = functionDecoder.previousCodePoint();
     location = functionDecoder.stringPosition();
   }
-  // Step 2 : Handle intermediary cases
-  if (!functionFound || cursorInVariableField) {
-    // General or local default code point.
-    removePreviousGlyphIfRepetition(defaultXNTHasChanged);
-    return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
-  }
-  // Step 3 : Search variable field
-  bool variableFound = false;
-  // Parsing text from cursor's location
-  UTF8Decoder varDecoder(text, locationOfCursor);
-  // Initialize c to any non null code point
-  c = UCodePointUnknown;
-  // Parse text rightward until next ',' at cursorLevel 0
-  while (c != UCodePointNull && cursorLevel >= 0 && !variableFound) {
-    c = varDecoder.nextCodePoint();
-    switch (c) {
-      case '(':
-        cursorLevel ++;
-        break;
-      case ')':
-        cursorLevel --;
-        break;
-      case ',':
-        if (cursorLevel == 0) {
-          variableFound = true;
-          c = varDecoder.nextCodePoint();
-        }
-        break;
+
+  /* Step 2 : Locate variable text */
+  if (functionFound && !cursorInVariableField) {
+    const char * parameterText;
+    size_t parameterLength;
+    if (Poincare::ParameteredExpression::ParameterText(locationOfCursor, &parameterText, &parameterLength)) {
+      memcpy(buffer, parameterText, parameterLength);
+      return parameterLength;
     }
   }
-  if (!variableFound || c == UCodePointNull) {
-    removePreviousGlyphIfRepetition(defaultXNTHasChanged);
-    return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
-  }
-  // Step 4 : Identify where variable text starts and ends.
-  // Skip whitespaces
-  while (c != UCodePointNull && c == ' ') {
-    c = varDecoder.nextCodePoint();
-  }
-  // Fetch position left of cursor
-  const char * variableTextStart = varDecoder.previousGlyphPosition();
-  c = varDecoder.nextCodePoint();
-  while (c != UCodePointNull && (c.isDecimalDigit() || c.isLatinLetter() || c == '_')) {
-    c = varDecoder.nextCodePoint();
-  }
-  // Fetch position left of cursor
-  const char * variableTextEnd = varDecoder.previousGlyphPosition();
-  c = varDecoder.nextCodePoint();
-  // Skip whitespaces
-  while (c != UCodePointNull && c == ' ') {
-    c = varDecoder.nextCodePoint();
-  }
-  // Step 5 : If valid, return variable's text
-  if (c == UCodePointNull || c == ',' || c == ')') {
-    // Next character must be a ',', ')' or end of string
-    size_t length = variableTextEnd - variableTextStart;
-    if (length > 0 && length <= bufferLength) {
-      memcpy(buffer, variableTextStart, length);
-      return length;
-    }
-  }
-  // Fall back on default code point
   removePreviousGlyphIfRepetition(defaultXNTHasChanged);
   return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
 }

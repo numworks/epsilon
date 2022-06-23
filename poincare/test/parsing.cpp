@@ -184,6 +184,7 @@ QUIZ_CASE(poincare_parsing_parse) {
   Expression::Tuple one_two_three = {BasedInteger::Builder(1),BasedInteger::Builder(2),BasedInteger::Builder(3)};
   assert_parsed_expression_is("1+2+3", Addition::Builder(one_two_three));
   assert_parsed_expression_is("1+2+(3+4)", Addition::Builder({BasedInteger::Builder(1), BasedInteger::Builder(2), Parenthesis::Builder(Addition::Builder(BasedInteger::Builder(3),BasedInteger::Builder(4)))}));
+  assert_parsed_expression_is("+2", BasedInteger::Builder(2));
   assert_parsed_expression_is("1×2", Multiplication::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("1×2×3", Multiplication::Builder(one_two_three));
   assert_parsed_expression_is("1+2×3", Addition::Builder(BasedInteger::Builder(1), Multiplication::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))));
@@ -243,7 +244,6 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_text_not_parsable("()");
   assert_text_not_parsable("(1");
   assert_text_not_parsable("1)");
-  assert_text_not_parsable("1++2");
   assert_text_not_parsable("1//2");
   assert_text_not_parsable("×1");
   assert_text_not_parsable("1^^2");
@@ -399,6 +399,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("π", Constant::Builder("π"));
   assert_parsed_expression_is("e", Constant::Builder("e"));
   assert_parsed_expression_is(Infinity::Name(), Infinity::Builder(false));
+  assert_parsed_expression_is("+inf", Infinity::Builder(false));
   assert_parsed_expression_is(Undefined::Name(), Undefined::Builder());
 
   // Reserved functions

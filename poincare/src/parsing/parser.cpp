@@ -160,6 +160,14 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
 }
 
 void Parser::parsePlus(Expression & leftHandSide, Token::Type stoppingType) {
+  if (leftHandSide.isUninitialized()) {
+    // +2 = 2
+    Expression rightHandSide = parseUntil(std::max(stoppingType, Token::Minus));
+    if (m_status == Status::Progress) {
+      leftHandSide = rightHandSide;
+    }
+    return;
+  }
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Plus)) {
     if (leftHandSide.type() == ExpressionNode::Type::Addition) {

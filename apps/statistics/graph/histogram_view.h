@@ -20,7 +20,8 @@ public:
   void setHighlight(float start, float end);
   void setDisplayLabels(bool display) { m_displayLabels = display; }
 private:
-  constexpr static KDColor k_notSelectedHistogramColor = Escher::Palette::GrayMiddle;
+  constexpr static KDColor k_notSelectedHistogramColor =  Escher::Palette::GrayWhite;
+  constexpr static KDColor k_notSelectedHistogramBorderColor = Escher::Palette::GrayMiddle;
   constexpr static KDColor k_selectedBarColor = Escher::Palette::YellowDark;
 
   Store * m_store;

@@ -43,7 +43,7 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   if (isMainViewSelected()) {
     drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, DoublePairStore::colorLightOfSeriesAtIndex(m_series), k_selectedBarColor, 1, Shared::DoublePairStore::colorOfSeriesAtIndex(m_series), m_highlightedBarStart, m_highlightedBarEnd);
   } else {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, k_notSelectedHistogramColor, k_selectedBarColor, 1, k_notSelectedHistogramColor);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, k_notSelectedHistogramColor, k_selectedBarColor, 1, k_notSelectedHistogramBorderColor);
   }
 }
 

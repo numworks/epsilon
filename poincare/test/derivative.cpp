@@ -72,6 +72,17 @@ QUIZ_CASE(poincare_derivative_formal) {
 
 }
 
+QUIZ_CASE(poincare_derivative_formal_higher_order) {
+  assert_reduces_to_formal_expression("diff(x^3,x,x,2)", "dep\u0014(6×x,{x^3})");
+  assert_reduces_to_formal_expression("diff(cos(x),x,x,3)", "dep\u0014(sin(x),{cos(x)})");
+  assert_reduces_to_formal_expression("diff(x^5+1,x,x,10)", "dep\u0014(0,{x^5+1})");
+  assert_reduces_to_formal_expression("diff(e^(2x),x,x,8)", "dep\u0014(256×e^\u00122×x\u0013,{e^\u00122×x\u0013})");
+  assert_reduces_to_formal_expression("diff(x^3,x,x,0)", "x^3");
+  assert_reduces_to_formal_expression("diff(x^3,x,x,-1)", Undefined::Name());
+  assert_reduces_to_formal_expression("diff(x^3,x,x,1.3)", Undefined::Name());
+  assert_reduces_to_formal_expression("diff(x^3,x,x,n)", "diff(x^3,x,x,n)");
+}
+
 void assert_reduces_for_approximation(const char * expression, const char * result, Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::ComplexFormat complexFormat = Real) {
   assert_parsed_expression_simplify_to(expression, result, SystemForApproximation, angleUnit, MetricUnitFormat, complexFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined);
 }

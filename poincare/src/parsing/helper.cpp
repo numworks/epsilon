@@ -36,6 +36,7 @@ bool ParsingHelper::IsSpecialIdentifierName(const char * name, size_t nameLength
 
 bool ParsingHelper::IsParameteredExpression(const Expression::FunctionHelper * helper) {
   return helper == &Derivative::s_functionHelper
+      || helper == &Derivative::s_functionHelperFirstOrder
       || helper == &Integral::s_functionHelper
       || helper == &ListSequence::s_functionHelper
       || helper == &Product::s_functionHelper

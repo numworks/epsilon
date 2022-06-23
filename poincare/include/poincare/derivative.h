@@ -2,6 +2,7 @@
 #define POINCARE_DERIVATIVE_H
 
 #include <poincare/parametered_expression.h>
+#include <poincare/rational.h>
 #include <poincare/symbol.h>
 
 namespace Poincare {
@@ -48,9 +49,11 @@ private:
 class Derivative final : public ParameteredExpression {
 public:
   Derivative(const DerivativeNode * n) : ParameteredExpression(n) {}
-  static Derivative Builder(Expression child0, Symbol child1, Expression child2) { return TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>({child0, child1, child2}); }
+  static Derivative Builder(Expression child0, Symbol child1, Expression child2) { return TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>({child0, child1, child2, Rational::Builder(1)}); }
+  static Derivative Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>({child0, child1, child2, child3}); }
   static Expression UntypedBuilder(Expression children);
-  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 4, &UntypedBuilder);
+  constexpr static Expression::FunctionHelper s_functionHelperFirstOrder = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
   constexpr static char k_defaultXNTChar = 'x';
   static void DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, const ExpressionNode::ReductionContext& reductionContext);
 

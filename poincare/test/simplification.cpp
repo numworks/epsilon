@@ -78,9 +78,7 @@ QUIZ_CASE(poincare_simplification_rational) {
   assert_parsed_expression_simplify_to("999^999", "999^999");
   assert_parsed_expression_simplify_to("999^-999", "1/999^999");
   assert_parsed_expression_simplify_to("0^0", Undefined::Name());
-  assert_parsed_expression_simplify_to("x^0", "1");
   assert_parsed_expression_simplify_to("π^0", "1");
-  assert_parsed_expression_simplify_to("A^0", "1");
   assert_parsed_expression_simplify_to("(-3)^0", "1");
   assert_parsed_expression_simplify_to("2ᴇ200/2ᴇ200", "1");
 }
@@ -223,7 +221,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("x^5/x^3", "dep\u0014(x^2,{1/x^3})");
   assert_parsed_expression_simplify_to("x^5*x^3", "x^8");
   assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2");
-  assert_parsed_expression_simplify_to("x^0", "1");
+  assert_parsed_expression_simplify_to("x^0", "dep\u0014(1,{1/x})");
   assert_parsed_expression_simplify_to("π^5/π^3", "π^2", SystemForAnalysis);
   assert_parsed_expression_simplify_to("π^5*π^3", "π^8", SystemForAnalysis);
   assert_parsed_expression_simplify_to("π^3/π^5", "1/π^2", SystemForAnalysis);
@@ -232,13 +230,13 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("x^5/x^3", "dep\u0014(x^2,{1/x^3})", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^5×x^3", "x^8", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^0", "1", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^0", "dep\u0014(1,{1/x})", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^π/x^(π-1)", "dep\u0014(x,{x^\u0012-π+1\u0013})", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^π/x^(π+1)", "1/x", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("2^x×2^(-x)", "dep(1,{x})", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("y^x×y^(-x)", "dep(1,{x})", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("2^x×2^(-x)", "dep\u0014(1,{x})", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("y^x×y^(-x)", "dep\u0014(1,{x,1/y})", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x/√(x)", "dep\u0014(√(x),{1/√(x)})", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "dep\u0014(x,{√(x)})",SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "x",SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "dep\u0014(x,{√(x)})", User, Radian, MetricUnitFormat, Real);
 }
 
@@ -1585,11 +1583,11 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))", "tan(x)/cos(x)", User);
 
   // Apply rule x^0 --> 1 for ReductionTarget = User (because this is not always true)
-  assert_parsed_expression_simplify_to("x^0", "x^0", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^0", "x^0", SystemForApproximation);
-  assert_parsed_expression_simplify_to("x^0", "1", User);
-  assert_parsed_expression_simplify_to("(1+x)/(1+x)", "(x+1)^0", SystemForApproximation);
-  assert_parsed_expression_simplify_to("(1+x)/(1+x)", "1", User);
+  assert_parsed_expression_simplify_to("x^0", "dep\u0014(1,{1/x})", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^0", "dep\u0014(1,{1/x})", SystemForApproximation);
+  assert_parsed_expression_simplify_to("x^0", "dep\u0014(1,{1/x})", User);
+  assert_parsed_expression_simplify_to("(1+x)/(1+x)", "dep\u0014(1,{1/\u0012x+1\u0013})", SystemForApproximation);
+  assert_parsed_expression_simplify_to("(1+x)/(1+x)", "dep\u0014(1,{1/\u0012x+1\u0013})", User);
 
   // Apply rule x^(2/3) --> root(x,3)^2 for ReductionTarget = System
   assert_parsed_expression_simplify_to("x^(2/3)", "x^\u00122/3\u0013", SystemForApproximation);

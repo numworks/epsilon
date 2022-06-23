@@ -565,9 +565,16 @@ Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductio
         // 0^+x -> 0
         trivialResult = Rational::Builder(0);
       }
-    } else if (indexNull == ExpressionNode::NullStatus::Null && (baseNull == ExpressionNode::NullStatus::NonNull || reductionContext.target() == ExpressionNode::ReductionTarget::User)) {
-      // x^0 -> 1
-      trivialResult = Rational::Builder(1);
+    } else if (indexNull == ExpressionNode::NullStatus::Null) {
+      // x^0 -> 1 or dep(1, {x^0})
+      if (baseNull == ExpressionNode::NullStatus::Unknown) {
+        List depList = List::Builder();
+        depList.addChildAtIndexInPlace(Power::Builder(base, Rational::Builder(-1)), 0, 0);
+        trivialResult = Dependency::Builder(Rational::Builder(1), depList);
+      } else {
+        assert(baseNull == ExpressionNode::NullStatus::NonNull);
+        trivialResult = Rational::Builder(1);
+      }
     }
   }
   if (!trivialResult.isUninitialized()) {

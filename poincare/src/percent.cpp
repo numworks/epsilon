@@ -76,8 +76,6 @@ bool PercentSimpleNode::childAtIndexNeedsUserParentheses(const Expression & chil
   return false;
 }
 
-Expression PercentSimpleNode::getExpression() const { return PercentSimple(this); }
-
 // Layout
 
 bool PercentSimpleNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
@@ -117,29 +115,14 @@ Expression PercentSimpleNode::shallowBeautify(const ReductionContext& reductionC
   return PercentSimple(this).shallowBeautify(reductionContext);
 }
 
+Expression PercentSimpleNode::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+  return PercentSimple(this).shallowReduce(reductionContext);
+}
+
 // Evaluation
 
 template <typename U> Evaluation<U> PercentSimpleNode::templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined) const {
   return Complex<U>::Builder(childAtIndex(0)->approximate(U(), approximationContext).toScalar() / 100.0);
-}
-
-Expression PercentSimpleNode::shallowReduce(const ReductionContext& reductionContext) {
-  Expression percent = getExpression();
-  Expression e = SimplificationHelper::defaultShallowReduce(percent);
-  if (!e.isUninitialized()) {
-    return e;
-  }
-  e = SimplificationHelper::undefinedOnMatrix(percent, reductionContext);
-  if (!e.isUninitialized()) {
-    return e;
-  }
-  e = SimplificationHelper::distributeReductionOverLists(percent, reductionContext);
-  if (!e.isUninitialized()) {
-    return e;
-  }
-  /* Percent Expression is preserved for beautification. Escape cases are
-   * therefore not implemented */
-  return percent;
 }
 
 /* PercentAdditionNode */
@@ -189,12 +172,14 @@ int PercentAdditionNode::serializeSecondChild(char * buffer, int bufferSize, int
   return numberOfChar;
 }
 
-Expression PercentAdditionNode::getExpression() const { return PercentAddition(this); }
-
 // Simplication
 
 Expression PercentAdditionNode::shallowBeautify(const ReductionContext& reductionContext) {
   return PercentAddition(this).shallowBeautify(reductionContext);
+}
+
+Expression PercentAdditionNode::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+  return PercentAddition(this).shallowReduce(reductionContext);
 }
 
 // Evaluation
@@ -214,6 +199,24 @@ Expression PercentSimple::shallowBeautify(const ExpressionNode::ReductionContext
   Expression result = Division::Builder(childAtIndex(0), Rational::Builder(100));
   replaceWithInPlace(result);
   return result;
+}
+
+Expression PercentSimple::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+  Expression e = SimplificationHelper::defaultShallowReduce(*this);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+  e = SimplificationHelper::undefinedOnMatrix(*this, reductionContext);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+  e = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+  /* Percent Expression is preserved for beautification. Escape cases are
+   * therefore not implemented */
+  return *this;
 }
 
 /* PercentAddition */

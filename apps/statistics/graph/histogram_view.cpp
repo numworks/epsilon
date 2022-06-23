@@ -6,15 +6,12 @@ using namespace Shared;
 
 namespace Statistics {
 
-HistogramView::HistogramView(Store * store, int series, Shared::CurveViewRange * curveViewRange, KDColor selectedHistogramColor, KDColor notSelectedHistogramColor, KDColor selectedBarColor) :
+HistogramView::HistogramView(Store * store, int series, Shared::CurveViewRange * curveViewRange) :
   HorizontallyLabeledCurveView(curveViewRange, nullptr, nullptr, nullptr),
   m_store(store),
   m_highlightedBarStart(NAN),
   m_highlightedBarEnd(NAN),
   m_series(series),
-  m_selectedHistogramColor(selectedHistogramColor),
-  m_notSelectedHistogramColor(notSelectedHistogramColor),
-  m_selectedBarColor(selectedBarColor),
   m_displayLabels(true)
 {
 }
@@ -44,9 +41,9 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   float totalSize = m_store->maxHeightOfBar(m_series);
   float context[] = {totalSize, static_cast<float>(m_series)};
   if (isMainViewSelected()) {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, m_selectedHistogramColor, m_selectedBarColor, m_highlightedBarStart, m_highlightedBarEnd);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, DoublePairStore::colorOfSeriesAtIndex(m_series), k_selectedBarColor, m_highlightedBarStart, m_highlightedBarEnd);
   } else {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, m_notSelectedHistogramColor, m_selectedBarColor);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, k_notSelectedHistogramColor, k_selectedBarColor);
   }
 }
 

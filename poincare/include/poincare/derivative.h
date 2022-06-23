@@ -37,13 +37,21 @@ private:
   Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
-  template<typename T> T growthRateAroundAbscissa(T x, T h, const ApproximationContext& approximationContext) const;
-  template<typename T> T riddersApproximation(const ApproximationContext& approximationContext, T x, T h, T * error) const;
+  template<typename T> Evaluation<T> templatedApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order, const ApproximationContext& approximationContext) const;
+  template<typename T> T firstChildScalarValueForArgumentAtLowerOrder(T evaluationArgument, int order, const ApproximationContext& approximationContext) const {
+    assert(order > 0);
+    T value = templatedApproximateWithValueForArgumentAndOrder<T>(evaluationArgument, order - 1, approximationContext).toScalar();
+    return value;
+  }
+  template<typename T> T growthRateAroundAbscissa(T x, T h, int order, const ApproximationContext& approximationContext) const;
+  template<typename T> T riddersApproximation(int order, const ApproximationContext& approximationContext, T x, T h, T * error) const;
   // TODO: Change coefficients?
   constexpr static double k_maxErrorRateOnApproximation = 0.001;
   constexpr static double k_minInitialRate = 0.01;
   constexpr static double k_rateStepSize = 1.4;
   constexpr static double k_minSignificantError = 3e-11;
+
+  constexpr static int k_maxOrderForApproximation = 4;
 };
 
 class Derivative final : public ParameteredExpression {

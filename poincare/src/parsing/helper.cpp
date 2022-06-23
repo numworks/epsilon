@@ -43,47 +43,4 @@ bool ParsingHelper::IsParameteredExpression(const Expression::FunctionHelper * h
       || helper == &ListSum::s_functionHelper;
 }
 
-Expression ParsingHelper::ParameteredExpressionParameter(const char * text) {
-  static_assert(ParameteredExpression::ParameterChildIndex() == 1, "Index of parameter in ParameteredExpression has changed");
-
-  /* ParameteredExpression arguments are of the form "(f(t),t,..." */
-  if (text[0] != UCodePointLeftSystemParenthesis.getChar() && text[0] != '(') {
-    return Expression();
-  }
-
-  /* Find the first comma, the beginning of the parameter. Count parenthesis to
-   * avoid stopping on a comma from a nested expression. */
-  int unmatchedLeftParenthesis = 0;
-  do {
-    text += 1;
-    if (text[0] == '\0') {
-      return Expression();
-    } else if (text[0] == '(' || text[0] == UCodePointLeftSystemParenthesis.getChar() || text[0] == '{') {
-      unmatchedLeftParenthesis++;
-    } else if (text[0] == ')' || text[0] == UCodePointRightSystemParenthesis.getChar() || text[0] == '}') {
-      if (unmatchedLeftParenthesis > 0) {
-        unmatchedLeftParenthesis--;
-      } else {
-        return Expression();
-      }
-    }
-  } while (text[0] != ',' || unmatchedLeftParenthesis > 0);
-
-  /* Skip the left system parenthesis that may be present at the beginning of
-   * the parameter name. */
-  text += 1 + (text[1] == UCodePointLeftSystemParenthesis.getChar());
-
-  /* Find the second comma, the end of the parameter. */
-  size_t parameterLength = 0;
-  while (text[parameterLength] != ',') {
-    if (text[parameterLength] == '\0') {
-      return Expression();
-    }
-    parameterLength++;
-  }
-  parameterLength -= text[parameterLength - 1] == UCodePointRightSystemParenthesis.getChar();
-
-  return Symbol::Builder(text, parameterLength);
-}
-
 }

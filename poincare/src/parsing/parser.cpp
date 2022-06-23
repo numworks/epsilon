@@ -407,15 +407,13 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
   Expression parameters;
   if (m_context && ParsingHelper::IsParameteredExpression(*functionHelper)) {
     /* We must make sure that the parameter is parsed as a single variable. */
-    Expression parameter = ParsingHelper::ParameteredExpressionParameter(m_currentToken.text() + m_currentToken.length());
-    if (!parameter.isUninitialized()) {
-      assert(parameter.type() == ExpressionNode::Type::Symbol);
-
+    const char * parameterText;
+    size_t parameterLength;
+    if (ParameteredExpression::ParameterText(m_currentToken.text() + m_currentToken.length() + 1, &parameterText, &parameterLength)) {
       Context * oldContext = m_context;
-      VariableContext parameterContext(static_cast<Symbol &>(parameter), m_context);
+      VariableContext parameterContext(Symbol::Builder(parameterText, parameterLength), m_context);
       m_context = &parameterContext;
       m_tokenizer.setContext(m_context);
-
       parameters = parseFunctionParameters();
       m_context = oldContext;
       m_tokenizer.setContext(m_context);

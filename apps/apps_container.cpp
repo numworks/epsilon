@@ -189,9 +189,13 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   }
 #if !PLATFORM_DEVICE
   if (event == Ion::Events::SaveScreenshot) {
+    m_blinkTimer.forceCursorVisible();
+    window()->redraw();
     Ion::Display::saveScreenshot();
     return true;
   } else if (event == Ion::Events::CopyScreenshot) {
+    m_blinkTimer.forceCursorVisible();
+    window()->redraw();
     Ion::Display::copyScreenshot();
     return true;
   }

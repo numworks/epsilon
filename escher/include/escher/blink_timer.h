@@ -15,6 +15,8 @@ public:
 
   BlinkTimer() : Timer(k_blinkPeriod / TickDuration) {}
 
+  void forceCursorVisible();
+
 private:
   static TextCursorView * s_cursor;
 

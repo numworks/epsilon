@@ -1,4 +1,5 @@
 #include "display.h"
+#include "actions.h"
 #include "framebuffer.h"
 #include <assert.h>
 #include <ion/display.h>
@@ -6,6 +7,19 @@
 #include <string.h>
 
 namespace Ion {
+
+namespace Display {
+
+void saveScreenshot() {
+  Simulator::Actions::saveScreenshot();
+}
+
+void copyScreenshot() {
+  Simulator::Actions::copyScreenshot();
+}
+
+}
+
 namespace Simulator {
 namespace Display {
 

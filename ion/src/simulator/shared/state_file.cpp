@@ -75,7 +75,9 @@ static inline bool load(FILE * f) {
         && e != Ion::Events::None
         && e != Ion::Events::Termination
         && e != Ion::Events::TimerFire
-        && e != Ion::Events::ExternalText) {
+        && e != Ion::Events::ExternalText
+        && e != Ion::Events::SaveScreenshot
+        && e != Ion::Events::CopyScreenshot) {
       /* Avoid pushing invalid events - useful when fuzzing.
        * ExternalText is not handled by state files. */
       journal->pushEvent(e);

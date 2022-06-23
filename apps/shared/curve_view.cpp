@@ -837,7 +837,7 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
   }
 }
 
-void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth, bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound, float highlightUpperBound) const {
+void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth, bool fillBar, KDColor defaultColor, KDColor highlightColor, KDCoordinate borderWidth, KDColor borderColor,  float highlightLowerBound, float highlightUpperBound) const {
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
   float rectMinBinNumber = std::floor((rectMin - firstBarAbscissa)/barWidth);
   float rectMinLowerBound = firstBarAbscissa + rectMinBinNumber*barWidth;
@@ -871,6 +871,14 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvalu
       binColor = highlightColor;
     }
     ctx->fillRect(binRect, binColor);
+    if (borderWidth > 0 && binRect.height() > 0 && binRect.width() > 0) {
+      KDRect leftBorderRect(binRect.x() - borderWidth, binRect.y(), borderWidth, binRect.height());
+      KDRect rightBorderRect(binRect.x() + binRect.width(), binRect.y(), borderWidth, binRect.height());
+      KDRect topBorderRect(binRect.x() - borderWidth, binRect.y() - borderWidth, binRect.width() + 2 * borderWidth, borderWidth);
+      ctx->fillRect(leftBorderRect, borderColor);
+      ctx->fillRect(rightBorderRect, borderColor);
+      ctx->fillRect(topBorderRect, borderColor);
+    }
   }
 }
 

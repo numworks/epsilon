@@ -41,9 +41,9 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   float totalSize = m_store->maxHeightOfBar(m_series);
   float context[] = {totalSize, static_cast<float>(m_series)};
   if (isMainViewSelected()) {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, DoublePairStore::colorOfSeriesAtIndex(m_series), k_selectedBarColor, m_highlightedBarStart, m_highlightedBarEnd);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, DoublePairStore::colorLightOfSeriesAtIndex(m_series), k_selectedBarColor, 1, Shared::DoublePairStore::colorOfSeriesAtIndex(m_series), m_highlightedBarStart, m_highlightedBarEnd);
   } else {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, k_notSelectedHistogramColor, k_selectedBarColor);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, k_notSelectedHistogramColor, k_selectedBarColor, 1, k_notSelectedHistogramColor);
   }
 }
 

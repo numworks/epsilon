@@ -1160,27 +1160,30 @@ void Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::
   Number absP = p.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive);
   Number absQ = q.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive);
   Expression tan = Tangent::Builder(x.clone());
-  if (Number::NaturalOrder(absP, absQ) < 0) {
-    // Replace sin(x) by tan(x) or sin(x)^p by tan(x)^p
-    if (p.isRationalOne()) {
-      replaceChildAtIndexInPlace(i, tan);
-    } else {
-      replaceChildAtIndexInPlace(i, Power::Builder(tan, p));
-    }
-    childAtIndex(i).shallowReduce(reductionContext);
-    // Replace cos(x)^q by cos(x)^(p+q)
-    replaceChildAtIndexInPlace(j, Power::Builder(Base(childAtIndex(j)), sumPQ));
-    childAtIndex(j).shallowReduce(reductionContext);
-  } else {
-    // Replace cos(x)^q by tan(x)^(-q)
-    Expression newPower = Power::Builder(tan, Number::Multiplication(q, Rational::Builder(-1)));
-    newPower.childAtIndex(1).shallowReduce(reductionContext);
-    replaceChildAtIndexInPlace(j, newPower);
-    newPower.shallowReduce(reductionContext);
-    // Replace sin(x)^p by sin(x)^(p+q)
-    replaceChildAtIndexInPlace(i, Power::Builder(Base(childAtIndex(i)), sumPQ));
-    childAtIndex(i).shallowReduce(reductionContext);
+
+  // First case: replace sin(x)^p by tan(x)^p
+  Number tanPower = p;
+  int tanIndex = i;
+  int otherIndex = j;
+  //Second case: Replace cos(x)^q by tan(x)^(-q)
+  if (Number::NaturalOrder(absP, absQ) >= 0) {
+    tanPower = Number::Multiplication(q, Rational::Builder(-1));
+    tanIndex = j;
+    otherIndex = i;
   }
+
+  replaceChildAtIndexInPlace(tanIndex, Power::Builder(tan, tanPower));
+  childAtIndex(tanIndex).shallowReduce(reductionContext);
+  // Replace cos(x)^q by cos(x)^(p+q) or sin(x)^p by sin(x)^(p+q)
+  if (Expression::IsZero(sumPQ)) {
+    /* We have to do this because x^0 != 1 because 0^0 is undef
+     * so sin(x)^0 creates a dependency. */
+    replaceChildAtIndexInPlace(otherIndex, Rational::Builder(1));
+    return;
+  }
+  replaceChildAtIndexInPlace(otherIndex, Power::Builder(Base(childAtIndex(otherIndex)), sumPQ));
+  childAtIndex(otherIndex).shallowReduce(reductionContext);
+  return;
 }
 
 bool Multiplication::HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2) {

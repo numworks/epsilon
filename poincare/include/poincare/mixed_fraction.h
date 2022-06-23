@@ -23,27 +23,27 @@ public:
   Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
 private:
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::Integer; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::Fraction; }
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override {
     return templateApproximate<float>(approximationContext);
   }
-  Evaluation<double> approximate(DoublePrecision p, ApproximationContext approximationContext) const override {
+  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override {
     return templateApproximate<double>(approximationContext);
   }
-  template <typename T> Evaluation<T> templateApproximate(ApproximationContext approximationContext) const;
+  template <typename T> Evaluation<T> templateApproximate(const ApproximationContext& approximationContext) const;
 };
 
 class MixedFraction final : public Expression {
 public:
   MixedFraction(const MixedFractionNode * n) : Expression(n) {}
   static MixedFraction Builder(Expression integerPart, Expression fractionPart) { return TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>({integerPart, fractionPart}); }
-  Expression shallowReduce(ExpressionNode::ReductionContext context);
+  Expression shallowReduce(const ExpressionNode::ReductionContext& context);
 
   static Expression CreateMixedFractionFromIntegers(const Integer & num, const Integer & denom);
 

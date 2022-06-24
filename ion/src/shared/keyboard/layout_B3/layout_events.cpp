@@ -97,7 +97,7 @@ const char * const s_nameForEvent[255] = {
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   // Special
   "None", "Termination", nullptr, "USBEnumeration", "USBPlug", "BatteryCharging",
-  "External", nullptr, nullptr, nullptr, nullptr, nullptr,
+  "External", "SaveScreenshot", "CopyScreenshot", nullptr, nullptr, nullptr,
 };
 
 #endif

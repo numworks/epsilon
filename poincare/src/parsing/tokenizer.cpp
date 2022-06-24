@@ -4,9 +4,9 @@
 
 namespace Poincare {
 
-const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, bool * testResult) {
+const CodePoint Tokenizer::nextCodePoint(PopTest popTest, bool * testResult) {
   CodePoint c = m_decoder.nextCodePoint();
-  bool shouldPop = popTest(c, context);
+  bool shouldPop = popTest(c);
   if (testResult != nullptr) {
     *testResult = shouldPop;
   }
@@ -17,16 +17,18 @@ const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, boo
 }
 
 bool Tokenizer::canPopCodePoint(const CodePoint c) {
-  bool didPop = false;
-  nextCodePoint([](CodePoint nextC, CodePoint context) { return nextC == context; }, c, &didPop);
-  return didPop;
+  if (m_decoder.nextCodePoint() == c) {
+    return true;
+  }
+  m_decoder.previousCodePoint();
+  return false;
 }
 
-size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
+size_t Tokenizer::popWhile(PopTest popTest) {
   size_t length = 0;
   bool didPop = true;
   while (true) {
-    CodePoint c = nextCodePoint(popTest, context, &didPop);
+    CodePoint c = nextCodePoint(popTest, &didPop);
     if (!didPop) {
       break;
     }
@@ -36,23 +38,27 @@ size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
 }
 
 bool Tokenizer::ShouldAddCodePointToIdentifier(const CodePoint c) {
-  return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || c == '_' || c == UCodePointDegreeSign || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+  return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || c == '_' || c == UCodePointDegreeSign || c == '\'' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+}
+
+size_t Tokenizer::popCustomIdentifier() {
+  return popWhile([](CodePoint c) { return ShouldAddCodePointToIdentifier(c); });
 }
 
 size_t Tokenizer::popIdentifier() {
-  return popWhile([](CodePoint c, CodePoint context){ return ShouldAddCodePointToIdentifier(c); });
+  return popWhile([](CodePoint c) { return ShouldAddCodePointToIdentifier(c) || c == '"'; });
 }
 
 size_t Tokenizer::popDigits() {
-  return popWhile([](CodePoint c, CodePoint context) { return c.isDecimalDigit(); });
+  return popWhile([](CodePoint c) { return c.isDecimalDigit(); });
 }
 
 size_t Tokenizer::popBinaryDigits() {
-  return popWhile([](CodePoint c, CodePoint context) { return c.isBinaryDigit(); });
+  return popWhile([](CodePoint c) { return c.isBinaryDigit(); });
 }
 
 size_t Tokenizer::popHexadecimalDigits() {
-  return popWhile([](CodePoint c, CodePoint context) { return c.isHexadecimalDigit(); });
+  return popWhile([](CodePoint c) { return c.isHexadecimalDigit(); });
 }
 
 Token Tokenizer::popNumber() {
@@ -127,7 +133,7 @@ Token Tokenizer::popToken() {
   /* If the next code point is the start of a number, we do not want to pop it
    * because popNumber needs this code point. */
   bool nextCodePointIsNeitherDotNorDigit = true;
-  const CodePoint c = nextCodePoint([](CodePoint cp, CodePoint context) { return cp != context && !cp.isDecimalDigit(); }, '.', &nextCodePointIsNeitherDotNorDigit);
+  const CodePoint c = nextCodePoint([](CodePoint cp) { return cp != '.' && !cp.isDecimalDigit(); }, &nextCodePointIsNeitherDotNorDigit);
 
   // According to c, recognize the Token::Type.
   if (!nextCodePointIsNeitherDotNorDigit) {
@@ -141,9 +147,15 @@ Token Tokenizer::popToken() {
   }
   if (c == '"') {
     Token result(Token::CustomIdentifier);
-    result.setString(start, popIdentifier() + 2);
+    int length = popCustomIdentifier();
+    result.setString(start, length + 2);
     // The +2 for the two ""
     if (m_decoder.stringPosition()[0] != '"') {
+      if (length == 0) {
+        result.setType(Token::Unit);
+        result.setString("\"", 1);
+        return result;
+      }
       return Token(Token::Undefined);
     }
     m_decoder.nextCodePoint();

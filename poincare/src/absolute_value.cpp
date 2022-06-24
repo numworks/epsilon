@@ -99,10 +99,10 @@ Expression AbsoluteValue::shallowReduce(const ExpressionNode::ReductionContext& 
     Expression newabs = AbsoluteValue::Builder(c.childAtIndex(0));
     c.replaceChildAtIndexInPlace(0, newabs);
     newabs.shallowReduce(reductionContext);
-    replaceWithInPlace(c);
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
-      return Dependency::Builder(c.shallowReduce(reductionContext), listOfDependencies);
+      c = Dependency::Builder(c.shallowReduce(reductionContext), listOfDependencies);
     }
+    replaceWithInPlace(c);
     return c.shallowReduce(reductionContext);
   }
   // |x*y| = |x|*|y|

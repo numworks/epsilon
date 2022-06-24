@@ -4,6 +4,7 @@
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_helper.h>
+#include <poincare/vertical_offset_layout.h>
 
 namespace Poincare {
 
@@ -26,6 +27,8 @@ protected:
   constexpr static int k_variableLayoutIndex = 1;
   constexpr static int k_abscissaLayoutIndex = 2;
 
+  constexpr static const char * k_d = "d";
+
   LayoutNode * derivandLayout() { return childAtIndex(k_derivandLayoutIndex); }
   LayoutNode * variableLayout() { return childAtIndex(k_variableLayoutIndex); }
   LayoutNode * abscissaLayout() { return childAtIndex(k_abscissaLayoutIndex); }
@@ -34,8 +37,13 @@ protected:
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
 
+  virtual KDCoordinate orderHeightOffset(KDFont::Size font) = 0;
+  virtual KDCoordinate orderWidth(KDFont::Size font) = 0;
+
   KDPoint positionOfVariableInFractionSlot(KDFont::Size font);
   KDPoint positionOfVariableInAssignmentSlot(KDFont::Size font);
+  KDPoint positionOfDInNumerator(KDFont::Size font);
+  KDPoint positionOfDInDenominator(KDFont::Size font);
   KDCoordinate abscissaBaseline(KDFont::Size font);
   KDCoordinate fractionBarWidth(KDFont::Size font);
   KDCoordinate parenthesesWidth(KDFont::Size font);
@@ -74,6 +82,9 @@ public:
 private:
   constexpr static int k_numberOfChildren = 3;
 
+  KDCoordinate orderHeightOffset(KDFont::Size font) override { return 0; }
+  KDCoordinate orderWidth(KDFont::Size font) override { return 0; }
+
 };
 
 class HigherOrderDerivativeLayoutNode final : public DerivativeLayoutNode {
@@ -100,6 +111,15 @@ private:
   constexpr static int k_numberOfChildren = 4;
   constexpr static int k_orderLayoutIndex = k_numberOfChildren - 1;
   LayoutNode * orderLayout() { return childAtIndex(k_orderLayoutIndex); }
+
+  KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
+  KDPoint positionOfOrderInNumerator(KDFont::Size font);
+  KDPoint positionOfOrderInDenominator(KDFont::Size font);
+
+  KDCoordinate orderHeightOffset(KDFont::Size font) override { return orderLayout()->layoutSize(font).height() - VerticalOffsetLayoutNode::k_indiceHeight; }
+  KDCoordinate orderWidth(KDFont::Size font) override { return orderLayout()->layoutSize(font).width(); }
+
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
   void setOrderSlot(bool denominator, bool * shouldRecomputeLayout);
   /* There are two slots for the order of the derivative: the numerator and

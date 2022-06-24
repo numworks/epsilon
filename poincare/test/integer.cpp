@@ -322,4 +322,5 @@ QUIZ_CASE(poincare_integer_mixed_fraction) {
   assert_mixed_fraction_computes_to(1, 5, "0+1/5");
   assert_mixed_fraction_computes_to(-33, 7, "-4-5/7");
   assert_mixed_fraction_computes_to(-28, 101, "0-28/101");
+  assert_mixed_fraction_computes_to(16, 12, "1+1/3");
 }

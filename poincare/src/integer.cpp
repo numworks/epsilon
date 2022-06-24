@@ -706,16 +706,14 @@ Expression Integer::CreateMixedFraction(const Integer & num, const Integer & den
   Integer numPositive(num), denomPositive(denom);
   numPositive.setNegative(false);
   denomPositive.setNegative(false);
-  Expression quo = DivisionQuotient::Reduce(numPositive, denomPositive);
-  Expression rem = DivisionRemainder::Reduce(numPositive, denomPositive);
+  IntegerDivision division = Division(numPositive, denomPositive);
+  Expression integerPart = Rational::Builder(division.quotient);
+  Expression fractionPart = Rational::Builder(division.remainder, denomPositive);
   if (num.isNegative() == denom.isNegative()) {
-    return Addition::Builder(quo, Division::Builder(rem, Rational::Builder(denomPositive)));
+    return Addition::Builder(integerPart, fractionPart);
   }
-  return Subtraction::Builder(
-      /* Do not add a minus sign before a zero. */
-      (NaturalOrder(numPositive, denomPositive) < 0) ? quo : Opposite::Builder(quo),
-      Division::Builder(rem, Rational::Builder(denomPositive)));
-
+  /* Do not add a minus sign before a zero. */
+  return Subtraction::Builder(NaturalOrder(numPositive, denomPositive) < 0 ? integerPart : Opposite::Builder(integerPart), fractionPart);
 }
 
 Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer & denom) {

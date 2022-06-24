@@ -257,7 +257,7 @@ QUIZ_CASE(poincare_layout_to_expression_unparsable) {
      * -----(x)|
      * d 1+x   |1+x=3
      */
-    Layout l = DerivativeLayout::Builder(
+    Layout l = FirstOrderDerivativeLayout::Builder(
       CodePointLayout::Builder('x'),
       HorizontalLayout::Builder({
         CodePointLayout::Builder('1'),
@@ -265,6 +265,23 @@ QUIZ_CASE(poincare_layout_to_expression_unparsable) {
         CodePointLayout::Builder('x')
       }),
       CodePointLayout::Builder('3')
+    );
+    assert_layout_is_not_parsed(l);
+  }
+  {
+    /*   d^2     |
+     * -------(x)|
+     * d 1+x^2   |1+x=3
+     */
+    Layout l = HigherOrderDerivativeLayout::Builder(
+      CodePointLayout::Builder('x'),
+      HorizontalLayout::Builder({
+        CodePointLayout::Builder('1'),
+        CodePointLayout::Builder('+'),
+        CodePointLayout::Builder('x')
+      }),
+      CodePointLayout::Builder('3'),
+      CodePointLayout::Builder('2')
     );
     assert_layout_is_not_parsed(l);
   }
@@ -528,7 +545,7 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
   assert_parsed_layout_is(l, e);
 
   // diff(1/Var, Var, cos(2))
-  l = DerivativeLayout::Builder(
+  l = FirstOrderDerivativeLayout::Builder(
       FractionLayout::Builder(
         CodePointLayout::Builder('1'),
         HorizontalLayout::Builder({
@@ -555,7 +572,44 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
         Symbol::Builder("Var", 3)),
       Symbol::Builder("Var", 3),
       Cosine::Builder(
-        BasedInteger::Builder(2))
+        BasedInteger::Builder(2)),
+      Rational::Builder(1)
       );
+
+  assert_parsed_layout_is(l, e);
+
+    // diff(1/Var, Var, cos(2), 2)
+  l = HigherOrderDerivativeLayout::Builder(
+      FractionLayout::Builder(
+        CodePointLayout::Builder('1'),
+        HorizontalLayout::Builder({
+          CodePointLayout::Builder('V'),
+          CodePointLayout::Builder('a'),
+          CodePointLayout::Builder('r')
+          })),
+      HorizontalLayout::Builder({
+        CodePointLayout::Builder('V'),
+        CodePointLayout::Builder('a'),
+        CodePointLayout::Builder('r')
+        }),
+      HorizontalLayout::Builder({
+        CodePointLayout::Builder('c'),
+        CodePointLayout::Builder('o'),
+        CodePointLayout::Builder('s'),
+        CodePointLayout::Builder('('),
+        CodePointLayout::Builder('2'),
+        CodePointLayout::Builder(')'),
+        }),
+      CodePointLayout::Builder('2'));
+  e = Derivative::Builder(
+      Division::Builder(
+        BasedInteger::Builder(1),
+        Symbol::Builder("Var", 3)),
+      Symbol::Builder("Var", 3),
+      Cosine::Builder(
+        BasedInteger::Builder(2)),
+      BasedInteger::Builder(2)
+      );
+
   assert_parsed_layout_is(l, e);
 }

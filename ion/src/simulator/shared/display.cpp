@@ -11,11 +11,15 @@ namespace Ion {
 namespace Display {
 
 void saveScreenshot() {
+#if ION_SIMULATOR_FILES
   Simulator::Actions::saveScreenshot();
+#endif
 }
 
 void copyScreenshot() {
+#if ION_SIMULATOR_FILES
   Simulator::Actions::copyScreenshot();
+#endif
 }
 
 }

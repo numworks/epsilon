@@ -66,6 +66,22 @@ void HistoryController::willExitResponderChain(Responder * nextFirstResponder) {
   }
 }
 
+static bool isIntegerInput(Expression e) {
+  return (e.type() == ExpressionNode::Type::BasedInteger || (e.type() == ExpressionNode::Type::Opposite && isIntegerInput(e.childAtIndex(0))));
+}
+
+static bool isFractionInput(Expression e) {
+  if (e.type() == ExpressionNode::Type::Opposite) {
+    return isFractionInput(e.childAtIndex(0));
+  }
+  if (e.type() != ExpressionNode::Type::Division) {
+    return false;
+  }
+  Expression num = e.childAtIndex(0);
+  Expression den = e.childAtIndex(1);
+  return isIntegerInput(num) && isIntegerInput(den);
+}
+
 bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     m_selectableTableView.deselectTable();
@@ -101,7 +117,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       if (CircuitBreakerRun(checkpoint)) {
         Calculation::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
         ListController * vc = nullptr;
-        Expression e = calculationAtIndex(focusRow)->exactOutput();
+        ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);
+        Expression e = focusCalculation->exactOutput();
         if (additionalInfoType == Calculation::AdditionalInformationType::Complex) {
           vc = &m_complexController;
         } else if (additionalInfoType == Calculation::AdditionalInformationType::Trigonometry) {
@@ -112,6 +129,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         } else if (additionalInfoType == Calculation::AdditionalInformationType::Integer) {
           vc = &m_integerController;
         } else if (additionalInfoType == Calculation::AdditionalInformationType::Rational) {
+          Expression focusInput = focusCalculation->input();
+          if (isFractionInput(focusInput)) {
+            e = focusInput;
+          }
           vc = &m_rationalController;
         } else if (additionalInfoType == Calculation::AdditionalInformationType::Unit) {
           vc = &m_unitController;

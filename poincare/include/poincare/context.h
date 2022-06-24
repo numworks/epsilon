@@ -9,6 +9,7 @@ namespace Poincare {
 
 class Expression;
 class SymbolAbstract;
+class ContextWithParent;
 
 class Context {
   friend class ContextWithParent;
@@ -25,9 +26,11 @@ public:
   virtual bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) = 0;
   virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) {}
 protected:
-  /* This is used by the context_with_parent to pass itself to its parent.
-   * (needed by Shared::GlobalContext for expressionForSequence) */
-  virtual const Expression protectedExpressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) = 0;
+  /* This is used by the ContextWithParent to pass itself to its parent.
+   * When getting the expression for a sequences in GlobalContext, you need
+   * information on the variable that is stored in the ContextWithParent that
+   * called you. */
+  virtual const Expression protectedExpressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, ContextWithParent * lastDescendantContext) = 0;
 
 };
 

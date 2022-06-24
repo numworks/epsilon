@@ -30,14 +30,14 @@ bool VariableContext::setExpressionForSymbolAbstract(const Expression & expressi
   return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
 }
 
-const Expression VariableContext::protectedExpressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) {
+const Expression VariableContext::protectedExpressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, ContextWithParent * lastDescendantContext) {
   if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
     if (symbol.type() == ExpressionNode::Type::Symbol) {
       return clone ? m_value.clone() : m_value;
     }
     return Undefined::Builder();
   }
-  return ContextWithParent::protectedExpressionForSymbolAbstract(symbol, clone, contextWithMoreInformations);
+  return ContextWithParent::protectedExpressionForSymbolAbstract(symbol, clone, lastDescendantContext);
 }
 
 template void VariableContext::setApproximationForVariable(float);

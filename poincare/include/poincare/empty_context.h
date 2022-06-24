@@ -13,7 +13,7 @@ public:
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override { return SymbolAbstractType::None; }
   bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override { assert(false); return false; }
 protected:
-  const Expression protectedExpressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) override { return Expression(); }
+  const Expression protectedExpressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, ContextWithParent * lastDescendantContext) override { return Expression(); }
 };
 
 }

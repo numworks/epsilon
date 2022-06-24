@@ -37,7 +37,7 @@ public:
   void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) override;
 private:
   // Expression getters
-  const Poincare::Expression protectedExpressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) override;
+  const Poincare::Expression protectedExpressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Poincare::ContextWithParent * lastDescendantContext) override;
   const Poincare::Expression expressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r, Context * ctx);
   static const Poincare::Expression ExpressionForActualSymbol(Ion::Storage::Record r);
   static const Poincare::Expression ExpressionForFunction(const Poincare::Expression & parameter, Ion::Storage::Record r);

@@ -7,6 +7,7 @@
 namespace Poincare {
 
 class VerticalOffsetLayoutNode final : public LayoutNode {
+  friend class HigherOrderDerivativeLayoutNode;
 public:
   enum class Position {
     Subscript,

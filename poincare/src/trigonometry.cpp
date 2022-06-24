@@ -163,6 +163,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const Expre
       List listOfDependencies = List::Builder();
       listOfDependencies.addChildAtIndexInPlace(e.childAtIndex(0).clone(), 0, 0);
       result = Dependency::Builder(e.childAtIndex(0).childAtIndex(0),listOfDependencies);
+      result = result.shallowReduce(reductionContext);
     }
     e.replaceWithInPlace(result);
     return result;

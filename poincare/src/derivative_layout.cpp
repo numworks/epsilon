@@ -14,16 +14,10 @@ int DerivativeLayoutNode::serialize(char * buffer, int bufferSize, Preferences::
 }
 
 void DerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+  assert(cursor->layoutNode() != derivandLayout()); // This is handled by child classes
   if (cursor->layoutNode() == variableLayout() && m_variableChildInFractionSlot) {
     assert(cursor->position() == LayoutCursor::Position::Left);
     cursor->setLayoutNode(this);
-    return;
-  }
-  if (cursor->layoutNode() == derivandLayout()) {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    setVariableSlot(true, shouldRecomputeLayout);
-    cursor->setLayoutNode(variableLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
     return;
   }
   if (cursor->layoutNode() == variableLayout() && !m_variableChildInFractionSlot) {
@@ -51,7 +45,42 @@ void DerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
   }
 }
 
+void FirstOrderDerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+  if (cursor->layoutNode() == derivandLayout()) {
+    assert(cursor->position() == LayoutCursor::Position::Left);
+    setVariableSlot(true, shouldRecomputeLayout);
+    cursor->setLayoutNode(variableLayout());
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return;
+  }
+  DerivativeLayoutNode::moveCursorLeft(cursor, shouldRecomputeLayout, forSelection);
+}
+
+void HigherOrderDerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+  if (cursor->layoutNode() == orderLayout() && m_orderInDenominator) {
+    assert(cursor->position() == LayoutCursor::Position::Left);
+    setVariableSlot(true, shouldRecomputeLayout);
+    cursor->setLayoutNode(variableLayout());
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return;
+  }
+  if (cursor->layoutNode() == orderLayout() && !m_orderInDenominator) {
+    assert(cursor->position() == LayoutCursor::Position::Left);
+    cursor->setLayoutNode(this);
+    return;
+  }
+  if (cursor->layoutNode() == derivandLayout()) {
+    assert(cursor->position() == LayoutCursor::Position::Left);
+    setOrderSlot(true, shouldRecomputeLayout);
+    cursor->setLayoutNode(orderLayout());
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return;
+  }
+  DerivativeLayoutNode::moveCursorLeft(cursor, shouldRecomputeLayout, forSelection);
+}
+
 void DerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+  assert(cursor->layoutNode() != variableLayout() || !m_variableChildInFractionSlot); // This is handled by child classes
   if (cursor->layoutNode() == variableLayout() && m_variableChildInFractionSlot) {
     assert(cursor->position() == LayoutCursor::Position::Right);
     cursor->setLayoutNode(derivandLayout());
@@ -89,8 +118,36 @@ void DerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
   }
 }
 
+void FirstOrderDerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+  if (cursor->layoutNode() == variableLayout() && m_variableChildInFractionSlot) {
+    assert(cursor->position() == LayoutCursor::Position::Right);
+    cursor->setLayoutNode(derivandLayout());
+    cursor->setPosition(LayoutCursor::Position::Left);
+    return;
+  }
+  DerivativeLayoutNode::moveCursorRight(cursor, shouldRecomputeLayout, forSelection);
+}
+
+void HigherOrderDerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+  if (cursor->layoutNode() == variableLayout() && m_variableChildInFractionSlot) {
+    assert(cursor->position() == LayoutCursor::Position::Right);
+    setOrderSlot(true, shouldRecomputeLayout);
+    cursor->setLayoutNode(orderLayout());
+    cursor->setPosition(LayoutCursor::Position::Left);
+    return;
+  }
+  if (cursor->layoutNode() == orderLayout()) {
+    assert(cursor->position() == LayoutCursor::Position::Right);
+    cursor->setLayoutNode(derivandLayout());
+    cursor->setPosition(LayoutCursor::Position::Left);
+    return;
+  }
+  DerivativeLayoutNode::moveCursorRight(cursor, shouldRecomputeLayout, forSelection);
+}
+
 void DerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))) {
+    setVariableSlot(true, shouldRecomputeLayout);
     variableLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
@@ -99,6 +156,57 @@ void DerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRe
     return;
   }
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+}
+
+void FirstOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+  if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))) {
+    setVariableSlot(true, shouldRecomputeLayout);
+    variableLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
+    return;
+  }
+  DerivativeLayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+}
+
+void HigherOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+  if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))
+      || (cursor->layoutNode() == orderLayout() && !m_orderInDenominator)) {
+    setOrderSlot(true, shouldRecomputeLayout);
+    orderLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
+    return;
+  }
+  DerivativeLayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+}
+
+void DerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+  if (cursor->layoutNode() == abscissaLayout()
+      || (cursor->layoutNode() == variableLayout() && !m_variableChildInFractionSlot)) {
+    derivandLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
+    return;
+  }
+  LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+}
+
+void FirstOrderDerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+  if (cursor->layoutNode() == variableLayout() && m_variableChildInFractionSlot) {
+    derivandLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
+    return;
+  }
+  DerivativeLayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+}
+
+void HigherOrderDerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+  if (cursor->layoutNode() == variableLayout() && m_variableChildInFractionSlot) {
+    setOrderSlot(true, shouldRecomputeLayout);
+    orderLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
+    return;
+  }
+  if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left)
+      || (cursor->layoutNode() == orderLayout() && m_orderInDenominator)) {
+    setOrderSlot(false, shouldRecomputeLayout);
+    orderLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
+    return;
+  }
+  DerivativeLayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
 void DerivativeLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
@@ -185,6 +293,13 @@ KDCoordinate DerivativeLayoutNode::parenthesesWidth(KDFont::Size font) {
 void DerivativeLayoutNode::setVariableSlot(bool fractionSlot, bool * shouldRecomputeLayout) {
   if (m_variableChildInFractionSlot != fractionSlot) {
     m_variableChildInFractionSlot = fractionSlot;
+    *shouldRecomputeLayout = true;
+  }
+}
+
+void HigherOrderDerivativeLayoutNode::setOrderSlot(bool denominator, bool * shouldRecomputeLayout) {
+  if (m_orderInDenominator != denominator) {
+    m_orderInDenominator = denominator;
     *shouldRecomputeLayout = true;
   }
 }

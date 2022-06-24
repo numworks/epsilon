@@ -75,7 +75,7 @@ int GenericSubController::typeAtLocation(int i, int j) {
 }
 
 void GenericSubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell * myCell = (MessageTableCell *)cell;
+  MessageTableCell<> * myCell = (MessageTableCell<> *)cell;
   myCell->setMessage(m_messageTreeModel->childAtIndex(index)->label());
 }
 

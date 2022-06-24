@@ -34,7 +34,7 @@ private:
   int m_txtFilesNumber;
   int m_urtFilesNumber;
   static const int k_cellsNumber = 6;
-  MessageTableCellWithChevron m_cells[k_cellsNumber];
+  MessageTableCellWithChevron<> m_cells[k_cellsNumber];
   ReadBookController m_readBookController;
 };
 

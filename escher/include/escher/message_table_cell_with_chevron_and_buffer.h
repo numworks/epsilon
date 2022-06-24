@@ -4,7 +4,7 @@
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/buffer_text_view.h>
 
-class MessageTableCellWithChevronAndBuffer : public MessageTableCellWithChevron {
+class MessageTableCellWithChevronAndBuffer : public MessageTableCellWithChevron<> {
 public:
   MessageTableCellWithChevronAndBuffer(const KDFont * labelFont = KDFont::SmallFont, const KDFont * subAccessoryFont = KDFont::SmallFont);
   View * subAccessoryView() const override;

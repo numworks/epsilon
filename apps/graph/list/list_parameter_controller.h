@@ -28,7 +28,7 @@ private:
   MessageTableCellWithChevronAndBuffer m_functionDomain;
   TypeParameterController m_typeParameterController;
   DomainParameterController m_domainParameterController;
-  MessageTableCell m_renameCell;
+  MessageTableCell<> m_renameCell;
 };
 
 }

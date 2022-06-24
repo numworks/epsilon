@@ -37,7 +37,7 @@ private:
   constexpr static int k_numberOfMenuRows = 3;
   constexpr static KDCoordinate k_leafMargin = 20;
   ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
-  MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
+  MessageTableCellWithChevron<> * nodeCellAtIndex(int index) override;
   Page pageAtIndex(int index);
   void setPage(Page page);
   bool selectSubMenu(int selectedRow) override;
@@ -53,7 +53,7 @@ private:
   Page m_currentPage;
   Page m_lockPageDelete;
   ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];
-  MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
+  MessageTableCellWithChevron<> m_nodeCells[k_numberOfMenuRows];
   MathVariableBoxEmptyController m_emptyViewController;
   // Layout memoization
   // TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to factorize this code and ExpressionModelStore code

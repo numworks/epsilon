@@ -32,9 +32,9 @@ public:
   void setRecord(Ion::Storage::Record record);
 private:
   bool shouldDisplayIntersection() const;
-  MessageTableCellWithChevron m_preimageCell;
+  MessageTableCellWithChevron<> m_preimageCell;
   constexpr static int k_totalNumberOfReusableCells = 6;
-  MessageTableCell m_cells[k_totalNumberOfReusableCells];
+  MessageTableCell<> m_cells[k_totalNumberOfReusableCells];
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
   PreimageParameterController m_preimageParameterController;

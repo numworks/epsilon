@@ -23,7 +23,7 @@ public:
 private:
   I18n::Message messageAtIndex(int index) override;
   I18n::Message m_dimensionMessage;
-  MessageTableCell m_dimensionCell;
+  MessageTableCell<> m_dimensionCell;
 };
 
 }

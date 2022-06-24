@@ -5,6 +5,7 @@ extern "C" {
 #include <ion.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <assert.h>
+#include <algorithm>
 
 constexpr static int k_tabCharacterWidth = 4;
 
@@ -12,24 +13,30 @@ KDSize KDFont::stringSizeUntil(const char * text, const char * limit) const {
   if (text == nullptr || (limit != nullptr && text >= limit)) {
     return KDSizeZero;
   }
-  KDSize stringSize = KDSize(0, m_glyphSize.height());
+  KDSize stringSize = KDSize(0, 0);
+  KDSize lineSize = KDSize(0, m_glyphSize.height());
 
   UTF8Decoder decoder(text);
   const char * currentStringPosition = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull && (limit == nullptr || currentStringPosition < limit)) {
-    KDSize cSize = KDSize(m_glyphSize.width(), 0);
+    KDCoordinate codePointWidth = m_glyphSize.width();
     if (codePoint == UCodePointLineFeed) {
-      cSize = KDSize(0, m_glyphSize.height());
+      KDCoordinate width = std::max(lineSize.width(), stringSize.width());
+      stringSize = KDSize(width, stringSize.height() + m_glyphSize.height());
+      lineSize = KDSize(0, m_glyphSize.height());
+      codePointWidth = 0;
     } else if (codePoint == UCodePointTabulation) {
-      cSize = KDSize(k_tabCharacterWidth * m_glyphSize.width(), 0);
+      codePointWidth = k_tabCharacterWidth * m_glyphSize.width();
     } else if (codePoint.isCombining()) {
-      cSize = KDSizeZero;
+      codePointWidth = 0;
     }
-    stringSize = KDSize(stringSize.width() + cSize.width(), stringSize.height() + cSize.height());
+    lineSize = KDSize(lineSize.width() + codePointWidth, lineSize.height());
     currentStringPosition = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();
   }
+  KDCoordinate width = std::max(lineSize.width(), stringSize.width());
+  stringSize = KDSize(width, stringSize.height() + m_glyphSize.height());
   assert(stringSize.width() >= 0 && stringSize.height() >= 0);
   return stringSize;
 }

@@ -6,7 +6,7 @@
 #include <escher/responder.h>
 #include <poincare/print_float.h>
 
-class MessageTableCellWithEditableText : public Responder, public MessageTableCell {
+class MessageTableCellWithEditableText : public Responder, public MessageTableCell<> {
 public:
   MessageTableCellWithEditableText(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0);
   View * accessoryView() const override;

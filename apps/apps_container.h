@@ -59,8 +59,6 @@ protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
 private:
   Window * window() override;
-  int numberOfContainerTimers() override;
-  Timer * containerTimerAtIndex(int i) override;
   bool processEvent(Ion::Events::Event event);
   void resetShiftAlphaStatus();
   bool updateAlphaLock();

@@ -4,7 +4,7 @@
 #include <escher/message_table_cell.h>
 #include <escher/buffer_text_view.h>
 
-class MessageTableCellWithBuffer : public MessageTableCell {
+class MessageTableCellWithBuffer : public MessageTableCell<> {
 public:
   MessageTableCellWithBuffer(I18n::Message message = (I18n::Message)0, const KDFont * font = KDFont::SmallFont, const KDFont * accessoryFont = KDFont::LargeFont, KDColor accessoryTextColor = Palette::PrimaryText);
   View * accessoryView() const override;

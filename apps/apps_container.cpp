@@ -58,6 +58,11 @@ AppsContainer::AppsContainer() :
   Poincare::Expression::SetCircuitBreaker(AppsContainer::poincareCircuitBreaker);
 // #endif
   Ion::Storage::sharedStorage()->setDelegate(this);
+
+  addTimer(&m_batteryTimer);
+  addTimer(&m_suspendTimer);
+  addTimer(&m_backlightDimmingTimer);
+  addTimer(&m_clockTimer);
 }
 
 bool AppsContainer::poincareCircuitBreaker() {
@@ -456,15 +461,6 @@ void AppsContainer::storageIsFull() {
 
 Window * AppsContainer::window() {
   return &m_window;
-}
-
-int AppsContainer::numberOfContainerTimers() {
-  return 4;
-}
-
-Timer * AppsContainer::containerTimerAtIndex(int i) {
-  Timer * timers[4] = {&m_batteryTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_clockTimer};
-  return timers[i];
 }
 
 void AppsContainer::resetShiftAlphaStatus() {

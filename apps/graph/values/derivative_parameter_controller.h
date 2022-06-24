@@ -33,9 +33,9 @@ private:
 #endif
   constexpr static int k_maxNumberOfCharsInTitle = Shared::Function::k_maxNameWithArgumentSize + 1; // +1 for the ' of the derivative
   char m_pageTitle[k_maxNumberOfCharsInTitle];
-  MessageTableCell m_hideColumn;
+  MessageTableCell<> m_hideColumn;
 #if COPY_COLUMN
-  MessageTableCellWithChevron m_copyColumn;
+  MessageTableCellWithChevron<> m_copyColumn;
 #endif
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;

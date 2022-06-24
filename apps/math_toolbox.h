@@ -10,15 +10,15 @@ public:
   const ToolboxMessageTree * rootModel() const override;
 protected:
   bool selectLeaf(int selectedRow, bool quitToolbox) override;
-  MessageTableCellWithMessage * leafCellAtIndex(int index) override;
-  MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
+  MessageTableCellWithMessage<SlideableMessageTextView> * leafCellAtIndex(int index) override;
+  MessageTableCellWithChevron<SlideableMessageTextView> * nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // = 240/40
 private:
   int indexAfterFork() const override;
 
-  MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
-  MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
+  MessageTableCellWithMessage<SlideableMessageTextView> m_leafCells[k_maxNumberOfDisplayedRows];
+  MessageTableCellWithChevron<SlideableMessageTextView> m_nodeCells[k_maxNumberOfDisplayedRows];
 };
 
 #endif

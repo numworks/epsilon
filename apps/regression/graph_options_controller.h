@@ -32,7 +32,7 @@ private:
   constexpr static int k_regressionCellType = 0;
   constexpr static int k_parameterCelltype = 1;
   constexpr static int k_numberOfParameterCells = 2;
-  MessageTableCellWithChevron m_parameterCells[k_numberOfParameterCells];
+  MessageTableCellWithChevron<> m_parameterCells[k_numberOfParameterCells];
   MessageTableCellWithChevronAndExpression m_changeRegressionCell;
   SelectableTableView m_selectableTableView;
   GoToParameterController m_goToParameterController;

@@ -3,16 +3,9 @@
 #include <assert.h>
 
 RunLoop::RunLoop() :
-  m_time(0) {
-}
-
-int RunLoop::numberOfTimers() {
-  return 0;
-}
-
-Timer * RunLoop::timerAtIndex(int i) {
-  assert(false);
-  return nullptr;
+  m_time(0),
+  m_firstTimer(nullptr)
+{
 }
 
 void RunLoop::run() {
@@ -45,11 +38,12 @@ bool RunLoop::step() {
 
   if (m_time >= Timer::TickDuration) {
     m_time -= Timer::TickDuration;
-    for (int i=0; i<numberOfTimers(); i++) {
-      Timer * timer = timerAtIndex(i);
+    Timer * timer = m_firstTimer;
+    while (timer) {
       if (timer->tick()) {
         dispatchEvent(Ion::Events::TimerFire);
       }
+      timer = timer->next();
     }
   }
 
@@ -65,7 +59,7 @@ bool RunLoop::step() {
 #endif
 
   if (event != Ion::Events::None) {
-#if !PLATFORM_DEVICE
+#if !PLATFORM_DEVICEdidStopAnimation
     if (event == Ion::Events::ExternalText && !KDFont::CanBeWrittenWithGlyphs(event.text())) {
       return true;
     }
@@ -74,4 +68,28 @@ bool RunLoop::step() {
   }
 
   return event != Ion::Events::Termination;
+}
+
+void RunLoop::addTimer(Timer * timer) {
+  if (m_firstTimer == nullptr) {
+    m_firstTimer = timer;
+  } else {
+    Timer * actual = m_firstTimer;
+    while (actual->next()) {
+      actual = actual->next();
+    }
+    actual->setNext(timer);
+  }
+}
+
+void RunLoop::removeTimer(Timer * timer) {
+  if (m_firstTimer == timer) {
+    m_firstTimer = timer->next();
+  } else {
+    Timer * actual = m_firstTimer;
+    while (actual->next() != timer) {
+      actual = actual->next();
+    }
+    actual->setNext(timer->next());
+  }
 }

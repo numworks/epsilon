@@ -41,7 +41,7 @@ protected:
 private:
   virtual I18n::Message sortMessage() { return m_xColumnSelected ? I18n::Message::SortValues : I18n::Message::SortSizes; }
   constexpr static int k_totalNumberOfCell = 3;
-  MessageTableCell m_cells[k_totalNumberOfCell];
+  MessageTableCell<> m_cells[k_totalNumberOfCell];
   StoreController * m_storeController;
   bool m_xColumnSelected;
 };

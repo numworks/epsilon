@@ -112,7 +112,7 @@ int UnitListController::numberOfRows() const {
 
 void UnitListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == 0) {
-    MessageTableCell * messageTableCell = (MessageTableCell *)cell;
+    MessageTableCell<> * messageTableCell = (MessageTableCell<> *)cell;
     messageTableCell->setMessage(m_dimensionMessage);
   } else {
     ExpressionsListController::willDisplayCellForIndex(cell, index - 1);

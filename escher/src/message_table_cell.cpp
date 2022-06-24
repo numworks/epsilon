@@ -1,39 +1,65 @@
 #include <escher/message_table_cell.h>
 #include <escher/palette.h>
+#include <escher/slideable_message_text_view.h>
 #include <assert.h>
 
-MessageTableCell::MessageTableCell(I18n::Message label, const KDFont * font, Layout layout) :
+template<class T>
+MessageTableCell<T>::MessageTableCell(I18n::Message label, const KDFont * font, Layout layout) :
   TableCell(layout),
   m_messageTextView(font, label, 0, 0.5, Palette::PrimaryText, Palette::ListCellBackground),
   m_backgroundColor(KDColorWhite)
 {
 }
 
-View * MessageTableCell::labelView() const {
+template<class T>
+View * MessageTableCell<T>::labelView() const {
   return (View *)&m_messageTextView;
 }
 
-void MessageTableCell::setHighlighted(bool highlight) {
+template<>
+void MessageTableCell<SlideableMessageTextView>::setHighlighted(bool highlight) {
+  HighlightCell::setHighlighted(highlight);
+  KDColor backgroundColor = highlight? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
+  m_messageTextView.setBackgroundColor(backgroundColor);
+  static AnimationTimer s_animationTimer = AnimationTimer();
+  if (highlight) {
+    m_messageTextView.willStartAnimation();
+    s_animationTimer.setAnimated(&m_messageTextView);
+  } else {
+    s_animationTimer.removeAnimated(&m_messageTextView);
+    m_messageTextView.didStopAnimation();
+  }
+}
+
+template<>
+void MessageTableCell<MessageTextView>::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_messageTextView.setBackgroundColor(backgroundColor);
 }
 
-void MessageTableCell::setMessage(I18n::Message text) {
+template<class T>
+void MessageTableCell<T>::setMessage(I18n::Message text) {
   m_messageTextView.setMessage(text);
   layoutSubviews();
 }
 
-void MessageTableCell::setTextColor(KDColor color) {
+template<class T>
+void MessageTableCell<T>::setTextColor(KDColor color) {
   m_messageTextView.setTextColor(color);
 }
 
-void MessageTableCell::setMessageFont(const KDFont * font) {
+template<class T>
+void MessageTableCell<T>::setMessageFont(const KDFont * font) {
   m_messageTextView.setFont(font);
   layoutSubviews();
 }
 
-void MessageTableCell::setBackgroundColor(KDColor color) {
+template<class T>
+void MessageTableCell<T>::setBackgroundColor(KDColor color) {
   m_backgroundColor = color;
   m_messageTextView.setBackgroundColor(color);
 }
+
+template class MessageTableCell<MessageTextView>;
+template class MessageTableCell<SlideableMessageTextView>;

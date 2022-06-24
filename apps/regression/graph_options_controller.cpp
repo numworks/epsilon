@@ -118,7 +118,7 @@ void GraphOptionsController::willDisplayCellForIndex(HighlightCell * cell, int i
     return;
   }
   assert(index >=0 && index < k_numberOfParameterCells);
-  MessageTableCellWithChevron * myCell = (MessageTableCellWithChevron *)cell;
+  MessageTableCellWithChevron<> * myCell = (MessageTableCellWithChevron<> *)cell;
   I18n::Message titles[k_numberOfParameterCells] = {I18n::Message::XPrediction, I18n::Message::YPrediction};
   myCell->setMessage(titles[index]);
 }

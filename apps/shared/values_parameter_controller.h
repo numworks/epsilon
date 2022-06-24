@@ -21,13 +21,13 @@ public:
 private:
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 3;
-  MessageTableCellWithChevron m_copyColumn;
+  MessageTableCellWithChevron<> m_copyColumn;
 #else
   constexpr static int k_totalNumberOfCell = 2;
 #endif
   I18n::Message m_pageTitle;
-  MessageTableCell m_deleteColumn;
-  MessageTableCellWithChevron m_setInterval;
+  MessageTableCell<> m_deleteColumn;
+  MessageTableCellWithChevron<> m_setInterval;
   SelectableTableView m_selectableTableView;
 };
 

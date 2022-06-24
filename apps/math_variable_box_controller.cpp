@@ -98,7 +98,7 @@ int MathVariableBoxController::reusableCellCount(int type) {
 void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
     I18n::Message label = nodeLabelAtIndex(index);
-    MessageTableCell * myCell = (MessageTableCell *)cell;
+    MessageTableCell<> * myCell = (MessageTableCell<> *)cell;
     myCell->setMessage(label);
     myCell->reloadCell();
     return;
@@ -158,7 +158,7 @@ ExpressionTableCellWithExpression * MathVariableBoxController::leafCellAtIndex(i
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron * MathVariableBoxController::nodeCellAtIndex(int index) {
+MessageTableCellWithChevron<> * MathVariableBoxController::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfMenuRows);
   return &m_nodeCells[index];
 }

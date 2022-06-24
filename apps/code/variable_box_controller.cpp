@@ -128,7 +128,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
     I18n::Message::BuiltinsAndKeywords,
     I18n::Message::ImportedModulesAndScripts
   };
-  static_cast<MessageTableCell *>(cell)->setMessage(subtitleMessages[(int)cellOrigin]);
+  static_cast<MessageTableCell<> *>(cell)->setMessage(subtitleMessages[(int)cellOrigin]);
 }
 
 void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {

@@ -24,7 +24,7 @@ public:
 private:
   Shared::ContinuousFunction::PlotType plotTypeAtRow(int j) const;
   I18n::Message messageForType(Shared::ContinuousFunction::PlotType plotType);
-  MessageTableCellWithChevron m_intervalParameterCell[Shared::ContinuousFunction::k_numberOfPlotTypes];
+  MessageTableCellWithChevron<> m_intervalParameterCell[Shared::ContinuousFunction::k_numberOfPlotTypes];
   SelectableTableView m_selectableTableView;
 };
 

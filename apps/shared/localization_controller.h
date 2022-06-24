@@ -71,7 +71,7 @@ protected:
 
 private:
   static constexpr int k_numberOfCells = I18n::NumberOfLanguages > I18n::NumberOfCountries ? I18n::NumberOfLanguages : I18n::NumberOfCountries;
-  MessageTableCell m_cells[k_numberOfCells];
+  MessageTableCell<> m_cells[k_numberOfCells];
   Mode m_mode;
 };
 

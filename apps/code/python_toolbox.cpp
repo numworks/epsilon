@@ -10,22 +10,22 @@ extern "C" {
 namespace Code {
 
 const ToolboxMessageTree forLoopChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::ForInRange1ArgLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInRange1ArgLoop),
-  ToolboxMessageTree::Leaf(I18n::Message::ForInRange2ArgsLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInRange2ArgsLoop),
-  ToolboxMessageTree::Leaf(I18n::Message::ForInRange3ArgsLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInRange3ArgsLoop),
-  ToolboxMessageTree::Leaf(I18n::Message::ForInListLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInListLoop)
+  ToolboxMessageTree::Leaf(I18n::Message::ForInRange1ArgLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInRange1ArgLoop, true, 2),
+  ToolboxMessageTree::Leaf(I18n::Message::ForInRange2ArgsLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInRange2ArgsLoop, true, 2),
+  ToolboxMessageTree::Leaf(I18n::Message::ForInRange3ArgsLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInRange3ArgsLoop, true, 2),
+  ToolboxMessageTree::Leaf(I18n::Message::ForInListLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInListLoop, true, 2)
 };
 
 const ToolboxMessageTree ifStatementChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::IfElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfElseStatement),
-  ToolboxMessageTree::Leaf(I18n::Message::IfThenStatementWithArg, I18n::Message::Default, false, I18n::Message::IfThenStatement),
-  ToolboxMessageTree::Leaf(I18n::Message::IfElifElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfElifElseStatement),
-  ToolboxMessageTree::Leaf(I18n::Message::IfAndIfElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfAndIfElseStatement),
-  ToolboxMessageTree::Leaf(I18n::Message::IfOrIfElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfOrIfElseStatement)
+  ToolboxMessageTree::Leaf(I18n::Message::IfElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfElseStatement, true, 4),
+  ToolboxMessageTree::Leaf(I18n::Message::IfThenStatementWithArg, I18n::Message::Default, false, I18n::Message::IfThenStatement, true, 2),
+  ToolboxMessageTree::Leaf(I18n::Message::IfElifElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfElifElseStatement, true, 6),
+  ToolboxMessageTree::Leaf(I18n::Message::IfAndIfElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfAndIfElseStatement, true, 4),
+  ToolboxMessageTree::Leaf(I18n::Message::IfOrIfElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfOrIfElseStatement, true, 4)
 };
 
 const ToolboxMessageTree whileLoopChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::WhileLoopWithArg, I18n::Message::Default, false, I18n::Message::WhileLoop)
+  ToolboxMessageTree::Leaf(I18n::Message::WhileLoopWithArg, I18n::Message::Default, false, I18n::Message::WhileLoop, true, 2)
 };
 
 const ToolboxMessageTree conditionsChildren[] = {
@@ -683,10 +683,10 @@ const ToolboxMessageTree fileChildren[] {
 };
 
 const ToolboxMessageTree exceptionsChildren[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::TryExcept1ErrorWithArg, I18n::Message::Default, false, I18n::Message::TryExcept1Error),
-  ToolboxMessageTree::Leaf(I18n::Message::TryExcept1ErrorElseWithArg, I18n::Message::Default, false, I18n::Message::TryExcept1ErrorElse),
-  ToolboxMessageTree::Leaf(I18n::Message::TryExcept2ErrorWithArg, I18n::Message::Default, false, I18n::Message::TryExcept2Error),
-  ToolboxMessageTree::Leaf(I18n::Message::WithInstructionWithArg, I18n::Message::Default, false, I18n::Message::WithInstruction),
+  ToolboxMessageTree::Leaf(I18n::Message::TryExcept1ErrorWithArg, I18n::Message::Default, false, I18n::Message::TryExcept1Error, true, 4),
+  ToolboxMessageTree::Leaf(I18n::Message::TryExcept1ErrorElseWithArg, I18n::Message::Default, false, I18n::Message::TryExcept1ErrorElse, true, 6),
+  ToolboxMessageTree::Leaf(I18n::Message::TryExcept2ErrorWithArg, I18n::Message::Default, false, I18n::Message::TryExcept2Error, true, 4),
+  ToolboxMessageTree::Leaf(I18n::Message::WithInstructionWithArg, I18n::Message::Default, false, I18n::Message::WithInstruction, true, 2),
 };
 
 const ToolboxMessageTree menu[] = {
@@ -704,6 +704,10 @@ const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::
 PythonToolbox::PythonToolbox() :
   Toolbox(nullptr, rootModel()->label())
 {
+  for (int i=0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_leafCells[i].setMessageFont(KDFont::LargeFont);
+    m_nodeCells[i].setMessageFont(KDFont::LargeFont);
+  }
 }
 
 const ToolboxMessageTree * PythonToolbox::moduleChildren(const char * name, int * numberOfNodes) const {
@@ -734,19 +738,17 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void PythonToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  Toolbox::willDisplayCellForIndex(cell, index);
+  const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));
+  MessageTableCell<SlideableMessageTextView> * myCell = static_cast<MessageTableCell<SlideableMessageTextView> *>(cell);
+  myCell->setMessageFont(messageTree->isMultiLine() ? KDFont::SmallFont : KDFont::LargeFont);
+}
+
 KDCoordinate PythonToolbox::rowHeight(int j) {
-  if (typeAtLocation(0, j) == Toolbox::LeafCellType && (m_messageTreeModel->label() == I18n::Message::IfStatementMenu || m_messageTreeModel->label() == I18n::Message::Exceptions)) {
-      /* To get the exact height needed for each cell, we have to compute its
-       * text size, which means scan the text char by char to look for '\n'
-       * chars. This is very costly and ruins the speed performance when
-       * scrolling at the bottom of a long table: to compute a position on the
-       * kth row, we call cumulatedHeightFromIndex(k), which calls rowHeight k
-       * times.
-       * We thus decided to compute the real height only for the ifStatement
-       * children of the toolbox, which is the only menu that has special height
-       * rows. */
-    const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(j));
-    return k_font->stringSize(I18n::translate(messageTree->label())).height() + 2*Metric::TableCellVerticalMargin + (messageTree->text() == I18n::Message::Default ? 0 : Toolbox::rowHeight(j));
+  const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(j));
+  if (messageTree->isMultiLine()) {
+    return k_fontForMultiLine->glyphSize().height() * messageTree->numberOfLines() + 2*Metric::TableCellVerticalMargin + (messageTree->text() == I18n::Message::Default ? 0 : Toolbox::rowHeight(j));
   }
   return Toolbox::rowHeight(j);
 }
@@ -791,12 +793,12 @@ const ToolboxMessageTree * PythonToolbox::rootModel() const {
   return &toolboxModel;
 }
 
-MessageTableCellWithMessage * PythonToolbox::leafCellAtIndex(int index) {
+MessageTableCellWithMessage<SlideableMessageTextView> * PythonToolbox::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron* PythonToolbox::nodeCellAtIndex(int index) {
+MessageTableCellWithChevron<SlideableMessageTextView> * PythonToolbox::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }

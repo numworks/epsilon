@@ -21,6 +21,7 @@ endif
 
 escher_src += $(addprefix escher/src/,\
   alternate_empty_view_controller.cpp \
+  animation_timer.cpp \
   app.cpp \
   background_view.cpp \
   bank_view_controller.cpp \
@@ -84,6 +85,7 @@ escher_src += $(addprefix escher/src/,\
   selectable_table_view.cpp \
   simple_list_view_data_source.cpp \
   simple_table_view_data_source.cpp \
+  slideable_message_text_view.cpp \
   solid_color_view.cpp \
   stack_view.cpp \
   stack_view_controller.cpp \

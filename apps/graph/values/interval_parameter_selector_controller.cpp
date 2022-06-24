@@ -69,7 +69,7 @@ int IntervalParameterSelectorController::reusableCellCount() const {
 void IntervalParameterSelectorController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < numberOfRows());
   Shared::ContinuousFunction::PlotType plotType = plotTypeAtRow(index);
-  static_cast<MessageTableCellWithChevron *>(cell)->setMessage(messageForType(plotType));
+  static_cast<MessageTableCellWithChevron<> *>(cell)->setMessage(messageForType(plotType));
 }
 
 Shared::ContinuousFunction::PlotType IntervalParameterSelectorController::plotTypeAtRow(int j) const {

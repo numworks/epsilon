@@ -29,7 +29,7 @@ public:
   int reusableCellCount() const override { return 1; }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
-  MessageTableCellWithChevron m_copyColumn;
+  MessageTableCellWithChevron<> m_copyColumn;
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:

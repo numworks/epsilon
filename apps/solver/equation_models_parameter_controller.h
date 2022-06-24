@@ -30,7 +30,7 @@ private:
   };
   StackViewController * stackController() const;
   constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;
-  MessageTableCell m_emptyModelCell;
+  MessageTableCell<> m_emptyModelCell;
   ExpressionTableCell m_modelCells[k_numberOfExpressionCells];
   Poincare::Layout m_layouts[k_numberOfExpressionCells];
   SelectableTableView m_selectableTableView;

@@ -3,6 +3,8 @@
 
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/alternate_empty_view_delegate.h>
+#include <escher/animated.h>
+#include <escher/animation_timer.h>
 #include <escher/background_view.h>
 #include <escher/bank_view_controller.h>
 #include <escher/buffer_text_view.h>
@@ -66,6 +68,7 @@
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/simple_table_view_data_source.h>
 #include <escher/simple_list_view_data_source.h>
+#include <escher/slideable_message_text_view.h>
 #include <escher/solid_color_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/switch_view.h>

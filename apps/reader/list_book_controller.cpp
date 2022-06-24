@@ -37,7 +37,7 @@ int ListBookController::reusableCellCount() const {
 }
 
 void ListBookController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell* myTextCell = static_cast<MessageTableCell*>(cell);
+  MessageTableCell<> * myTextCell = static_cast<MessageTableCell<> *>(cell);
   MessageTextView* textView = static_cast<MessageTextView*>(myTextCell->labelView());
   textView->setText(m_files[index].name);
   myTextCell->setMessageFont(KDFont::LargeFont); //TODO set cell font at building ?

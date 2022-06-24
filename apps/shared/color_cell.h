@@ -6,7 +6,7 @@
 
 namespace Shared {
 
-class MessageTableCellWithColor : public MessageTableCell {
+class MessageTableCellWithColor : public MessageTableCell<> {
 public:
   MessageTableCellWithColor();
   View * accessoryView() const override;

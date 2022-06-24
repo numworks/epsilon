@@ -109,7 +109,7 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   assert(index >= 0 && index <= numberOfRows());
   if (cell != &m_preimageCell) {
     I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Tangent, I18n::Message::Integral};
-    static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1 + !shouldDisplayIntersection()]);
+    static_cast<MessageTableCell<> *>(cell)->setMessage(titles[index - 1 + !shouldDisplayIntersection()]);
   }
 }
 

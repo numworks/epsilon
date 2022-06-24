@@ -15,9 +15,6 @@ public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;
   };
-
-  int numberOfTimers() override;
-  Timer * timerAtIndex(int i) override;
   bool processEvent(Ion::Events::Event) override;
   void didBecomeActive(Window * window) override;
 private:

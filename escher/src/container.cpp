@@ -55,23 +55,3 @@ void Container::run() {
   window()->redraw();
   RunLoop::run();
 }
-
-int Container::numberOfTimers() {
-  return s_activeApp->numberOfTimers() + numberOfContainerTimers();
-}
-
-Timer * Container::timerAtIndex(int i) {
-  if (i < s_activeApp->numberOfTimers()) {
-    return s_activeApp->timerAtIndex(i);
-  }
-  return containerTimerAtIndex(i-s_activeApp->numberOfTimers());
-}
-
-int Container::numberOfContainerTimers() {
-  return 0;
-}
-
-Timer * Container::containerTimerAtIndex(int i) {
-  assert(false);
-  return nullptr;
-}

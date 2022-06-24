@@ -28,8 +28,8 @@ protected:
   /* indexAfterFork is called when a fork-node is encountered to choose which
    * of its children should be selected, based on external context. */
   virtual int indexAfterFork() const { assert(false); return 0; };
-  MessageTableCellWithMessage * leafCellAtIndex(int index) override = 0;
-  MessageTableCellWithChevron * nodeCellAtIndex(int index) override = 0;
+  MessageTableCellWithMessage<SlideableMessageTextView> * leafCellAtIndex(int index) override = 0;
+  MessageTableCellWithChevron<SlideableMessageTextView> * nodeCellAtIndex(int index) override = 0;
   mutable const ToolboxMessageTree * m_messageTreeModel;
   /* m_messageTreeModel points at the messageTree of the tree (describing the
    * whole model) where we are located. It enables to know which rows are leaves

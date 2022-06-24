@@ -875,6 +875,10 @@ const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::
 MathToolbox::MathToolbox() :
   Toolbox(nullptr, rootModel()->label())
 {
+  for (int i=0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_leafCells[i].setMessageFont(KDFont::LargeFont);
+    m_nodeCells[i].setMessageFont(KDFont::LargeFont);
+  }
 }
 
 bool MathToolbox::selectLeaf(int selectedRow, bool quitToolbox) {
@@ -900,12 +904,12 @@ const ToolboxMessageTree * MathToolbox::rootModel() const {
   return &toolboxModel;
 }
 
-MessageTableCellWithMessage * MathToolbox::leafCellAtIndex(int index) {
+MessageTableCellWithMessage<SlideableMessageTextView> * MathToolbox::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron* MathToolbox::nodeCellAtIndex(int index) {
+MessageTableCellWithChevron<SlideableMessageTextView> * MathToolbox::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }

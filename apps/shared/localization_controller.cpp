@@ -191,10 +191,10 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
 
 void LocalizationController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (mode() == Mode::Language) {
-    static_cast<MessageTableCell *>(cell)->setMessage(I18n::LanguageNames[index]);
+    static_cast<MessageTableCell<> *>(cell)->setMessage(I18n::LanguageNames[index]);
     return;
   }
   assert(mode() == Mode::Country);
-  static_cast<MessageTableCell *>(cell)->setMessage(I18n::CountryNames[static_cast<uint8_t>(CountryAtIndex(index))]);
+  static_cast<MessageTableCell<> *>(cell)->setMessage(I18n::CountryNames[static_cast<uint8_t>(CountryAtIndex(index))]);
 }
 }

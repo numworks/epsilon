@@ -27,15 +27,16 @@ int Toolbox::reusableCellCount(int type) {
 void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->childAtIndex(index);
   if (messageTree->numberOfChildren() == 0) {
-    MessageTableCellWithMessage * myCell = (MessageTableCellWithMessage *)cell;
+    MessageTableCellWithMessage<SlideableMessageTextView> * myCell = (MessageTableCellWithMessage<SlideableMessageTextView> *)cell;
     myCell->setMessage(messageTree->label());
     myCell->setAccessoryMessage(messageTree->text());
     myCell->setAccessoryTextColor(Palette::SecondaryText);
     return;
+  } else {
+    MessageTableCell<> * myCell = (MessageTableCell<> *)cell;
+    myCell->setMessage(messageTree->label());
+    myCell->reloadCell();
   }
-  MessageTableCell * myCell = (MessageTableCell *)cell;
-  myCell->setMessage(messageTree->label());
-  myCell->reloadCell();
 }
 
 int Toolbox::typeAtLocation(int i, int j) {

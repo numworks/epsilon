@@ -34,11 +34,11 @@ private:
   constexpr static int k_totalNumberOfCell = 6;
   StackViewController * stackViewController();
   I18n::Message m_pageTitle;
-  MessageTableCell m_executeScript;
-  MessageTableCell m_renameScript;
+  MessageTableCell<> m_executeScript;
+  MessageTableCell<> m_renameScript;
   MessageTableCellWithSwitch m_autoImportScript;
-  MessageTableCell m_deleteScript;
-  MessageTableCell m_duplicateScript;
+  MessageTableCell<> m_deleteScript;
+  MessageTableCell<> m_duplicateScript;
   MessageTableCellWithBuffer m_size;
   void GetScriptSize(MessageTableCellWithBuffer* myCell);
   SelectableTableView m_selectableTableView;

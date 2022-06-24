@@ -2,38 +2,47 @@
 #include <escher/palette.h>
 #include <string.h>
 
-MessageTableCellWithMessage::MessageTableCellWithMessage(I18n::Message message, Layout layout) :
-  MessageTableCell(message, KDFont::SmallFont, layout),
+template <class T>
+MessageTableCellWithMessage<T>::MessageTableCellWithMessage(I18n::Message message, TableCell::Layout layout) :
+  MessageTableCell<T>(message, KDFont::SmallFont, layout),
   m_accessoryView(KDFont::SmallFont, (I18n::Message)0, 0.0f, 0.5f)
 {
-  if (layout != Layout::Vertical) {
+  if (layout != TableCell::Layout::Vertical) {
     m_accessoryView.setAlignment(1.0f, 0.5f);
   }
 }
 
-void MessageTableCellWithMessage::setAccessoryMessage(I18n::Message textBody) {
+template <class T>
+void MessageTableCellWithMessage<T>::setAccessoryMessage(I18n::Message textBody) {
   m_accessoryView.setMessage(textBody);
-  reloadCell();
+  this->reloadCell();
 }
 
-View * MessageTableCellWithMessage::accessoryView() const {
+template <class T>
+View * MessageTableCellWithMessage<T>::accessoryView() const {
   if (strlen(m_accessoryView.text()) == 0) {
     return nullptr;
   }
   return (View *)&m_accessoryView;
 }
 
-void MessageTableCellWithMessage::setHighlighted(bool highlight) {
-  MessageTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
+template <class T>
+void MessageTableCellWithMessage<T>::setHighlighted(bool highlight) {
+  MessageTableCell<T>::setHighlighted(highlight);
+  KDColor backgroundColor = this->isHighlighted()? Palette::ListCellBackgroundSelected : Palette::ListCellBackground;
   m_accessoryView.setBackgroundColor(backgroundColor);
 }
 
-void MessageTableCellWithMessage::setTextColor(KDColor color) {
+template <class T>
+void MessageTableCellWithMessage<T>::setTextColor(KDColor color) {
   m_accessoryView.setTextColor(color);
-  MessageTableCell::setTextColor(color);
+  MessageTableCell<T>::setTextColor(color);
 }
 
-void MessageTableCellWithMessage::setAccessoryTextColor(KDColor color) {
+template <class T>
+void MessageTableCellWithMessage<T>::setAccessoryTextColor(KDColor color) {
   m_accessoryView.setTextColor(color);
 }
+
+template class MessageTableCellWithMessage<MessageTextView>;
+template class MessageTableCellWithMessage<SlideableMessageTextView>;

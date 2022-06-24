@@ -41,7 +41,7 @@ protected:
 private:
   MessageTableCellWithChevronAndMessage m_colorCell;
   MessageTableCellWithSwitch m_enableCell;
-  MessageTableCell m_deleteCell;
+  MessageTableCell<> m_deleteCell;
   ColorParameterController m_colorParameterController;
 };
 

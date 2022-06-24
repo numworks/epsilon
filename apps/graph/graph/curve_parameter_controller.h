@@ -25,7 +25,7 @@ private:
   Shared::FunctionGoToParameterController * goToParameterController() override;
   Shared::FunctionGoToParameterController m_goToParameterController;
   GraphController * m_graphController;
-  MessageTableCellWithChevron m_calculationCell;
+  MessageTableCellWithChevron<> m_calculationCell;
   MessageTableCellWithSwitch m_derivativeCell;
   CalculationParameterController m_calculationParameterController;
 };

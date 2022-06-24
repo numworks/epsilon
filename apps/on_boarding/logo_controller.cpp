@@ -17,6 +17,7 @@ LogoController::LogoController() :
 
 bool LogoController::fire() {
   Container::activeApp()->dismissModalViewController();
+  AppsContainer::sharedAppsContainer()->removeTimer(this);
   return true;
 }
 
@@ -41,7 +42,6 @@ void LogoController::viewWillAppear() {
   if (!backlightInitialized) {
     Ion::Backlight::init();
   }
-  ViewController::viewWillAppear();
 }
 
 void LogoController::viewDidDisappear() {

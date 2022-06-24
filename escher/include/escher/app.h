@@ -69,8 +69,6 @@ public:
   virtual void didBecomeActive(Window * window);
   virtual void willBecomeInactive();
   View * modalView();
-  virtual int numberOfTimers() { return 0; }
-  virtual Timer * timerAtIndex(int i) { assert(false); return nullptr; }
   virtual Poincare::Context * localContext() { return nullptr; }
 protected:
   App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0) :

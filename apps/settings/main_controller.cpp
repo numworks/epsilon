@@ -175,7 +175,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-  MessageTableCell * myCell = (MessageTableCell *)cell;
+  MessageTableCell<> * myCell = (MessageTableCell<> *)cell;
   myCell->setMessage(title);
   if (model()->childAtIndex(index)->label() == I18n::Message::Language) {
     int index = (int)(globalPreferences->language());

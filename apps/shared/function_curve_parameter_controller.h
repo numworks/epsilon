@@ -16,7 +16,7 @@ public:
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   bool handleGotoSelection();
-  MessageTableCellWithChevron m_goToCell;
+  MessageTableCellWithChevron<> m_goToCell;
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:

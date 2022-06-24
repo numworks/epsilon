@@ -11,6 +11,11 @@ using namespace Shared;
 namespace Calculation {
 
 Integer extractInteger(const Expression e) {
+  if (e.type() == ExpressionNode::Type::Opposite) {
+    Integer i = extractInteger(e.childAtIndex(0));
+    i.setNegative(!i.isNegative());
+    return i;
+  }
   assert(e.type() == ExpressionNode::Type::BasedInteger);
   return static_cast<const BasedInteger &>(e).integer();
 }
@@ -29,7 +34,7 @@ void RationalListController::setExpression(Poincare::Expression e) {
 
   assert(div.type() == ExpressionNode::Type::Division);
   Integer numerator = extractInteger(div.childAtIndex(0));
-  numerator.setNegative(negative);
+  numerator.setNegative(negative != numerator.isNegative());
   Integer denominator = extractInteger(div.childAtIndex(1));
 
   int index = 0;

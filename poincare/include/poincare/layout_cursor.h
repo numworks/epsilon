@@ -73,8 +73,8 @@ public:
   }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
-  KDCoordinate cursorHeightWithoutSelection();
-  KDCoordinate baselineWithoutSelection();
+  KDCoordinate cursorHeightWithoutSelection(const KDFont * font);
+  KDCoordinate baselineWithoutSelection(const KDFont * font);
 
 
   /* Comparison */
@@ -134,7 +134,7 @@ private:
       m_layout = Layout(n);
     }
   }
-  KDCoordinate layoutHeight();
+  KDCoordinate layoutHeight(const KDFont * font);
   void privateAddEmptyPowerLayout(VerticalOffsetLayout v);
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);

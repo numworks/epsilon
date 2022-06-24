@@ -16,24 +16,24 @@ namespace Poincare {
 
 /* Getters and setters */
 
-KDCoordinate LayoutCursor::cursorHeightWithoutSelection() {
-  KDCoordinate height = layoutHeight();
+KDCoordinate LayoutCursor::cursorHeightWithoutSelection(const KDFont * font) {
+  KDCoordinate height = layoutHeight(font);
   return height == 0 ? k_cursorHeight : height;
 }
 
-KDCoordinate LayoutCursor::baselineWithoutSelection() {
-  if (layoutHeight() == 0) {
+KDCoordinate LayoutCursor::baselineWithoutSelection(const KDFont * font) {
+  if (layoutHeight(font) == 0) {
     return k_cursorHeight/2;
   }
-  KDCoordinate layoutBaseline = m_layout.baseline();
+  KDCoordinate layoutBaseline = m_layout.baseline(font);
   Layout equivalentLayout = m_layout.equivalentCursor(this).layout();
   if (equivalentLayout.isUninitialized()) {
     return layoutBaseline;
   }
   if (m_layout.hasChild(equivalentLayout)) {
-    return equivalentLayout.baseline();
+    return equivalentLayout.baseline(font);
   } else if (m_layout.hasSibling(equivalentLayout)) {
-    return std::max(layoutBaseline, equivalentLayout.baseline());
+    return std::max(layoutBaseline, equivalentLayout.baseline(font));
   }
   return layoutBaseline;
 }
@@ -49,9 +49,15 @@ bool LayoutCursor::isEquivalentTo(LayoutCursor cursor) {
 /* Position */
 
 KDPoint LayoutCursor::middleLeftPoint() {
-  KDPoint layoutOrigin = layout().absoluteOrigin();
-  KDCoordinate x = layoutOrigin.x() + (m_position == Position::Left ? 0 : m_layout.layoutSize().width());
-  KDCoordinate y = layoutOrigin.y() + m_layout.baseline() - k_cursorHeight/2;
+  /* Font consistency :
+   *  By not storing the font as member variable, and not passing it in the
+   *  signature either, we suppose here that :
+   *   - Comparing middleLeftPoints in the wrong font is be equivalent
+   *   - Asking for the LargeFont's absoluteOrigin/layoutSize/baseline of a
+   *     layout usually displayed in SmallFont is handled. */
+  KDPoint layoutOrigin = layout().absoluteOrigin(KDFont::LargeFont);
+  KDCoordinate x = layoutOrigin.x() + (m_position == Position::Left ? 0 : m_layout.layoutSize(KDFont::LargeFont).width());
+  KDCoordinate y = layoutOrigin.y() + m_layout.baseline(KDFont::LargeFont) - k_cursorHeight/2;
   return KDPoint(x,y);
 }
 
@@ -244,16 +250,16 @@ void LayoutCursor::clearLayout() {
 
 /* Private */
 
-KDCoordinate LayoutCursor::layoutHeight() {
+KDCoordinate LayoutCursor::layoutHeight(const KDFont * font) {
   Layout equivalentLayout = m_layout.equivalentCursor(this).layout();
   if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
-    return equivalentLayout.layoutSize().height();
+    return equivalentLayout.layoutSize(font).height();
   }
-  KDCoordinate pointedLayoutHeight = m_layout.layoutSize().height();
+  KDCoordinate pointedLayoutHeight = m_layout.layoutSize(font).height();
   if (!equivalentLayout.isUninitialized() && m_layout.hasSibling(equivalentLayout)) {
-    KDCoordinate equivalentLayoutHeight = equivalentLayout.layoutSize().height();
-    KDCoordinate pointedLayoutBaseline = m_layout.baseline();
-    KDCoordinate equivalentLayoutBaseline = equivalentLayout.baseline();
+    KDCoordinate equivalentLayoutHeight = equivalentLayout.layoutSize(font).height();
+    KDCoordinate pointedLayoutBaseline = m_layout.baseline(font);
+    KDCoordinate equivalentLayoutBaseline = equivalentLayout.baseline(font);
     return std::max(pointedLayoutBaseline, equivalentLayoutBaseline)
       + std::max(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
   }

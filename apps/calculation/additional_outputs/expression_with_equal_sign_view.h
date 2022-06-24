@@ -11,11 +11,12 @@ namespace Calculation {
 class ExpressionWithEqualSignView : public Escher::ExpressionView {
 public:
   ExpressionWithEqualSignView() :
-    m_equalSign(KDFont::LargeFont, I18n::Message::Equal, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack)
+    m_equalSign(k_font, I18n::Message::Equal, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack)
   {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
+  constexpr static const KDFont * k_font = KDFont::LargeFont;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   int numberOfSubviews() const override { return 1; }

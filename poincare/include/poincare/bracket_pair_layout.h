@@ -37,9 +37,9 @@ public:
 
 protected:
   // LayoutNode
-  KDCoordinate computeBaseline() override;
-  KDSize computeSize() override;
-  KDPoint positionOfChild(LayoutNode * child) override;
+  KDCoordinate computeBaseline(const KDFont * font) override;
+  KDSize computeSize(const KDFont * font) override;
+  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override;
   LayoutNode * childLayout() { return childAtIndex(0); }
 
 private:
@@ -56,7 +56,7 @@ private:
   virtual bool renderTopBar() const { return k_renderTopBar; }
   virtual bool renderBottomBar() const { return k_renderBottomBar; }
   virtual bool renderDoubleBar() const { return k_renderDoubleBar; }
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   static void renderWithParameters(KDSize childSize, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, KDCoordinate verticalMargin, KDCoordinate externWidthMargin, KDCoordinate verticalExternMargin, KDCoordinate widthMargin, bool renderTopBar, bool renderBottomBar, bool renderDoubleBar);
 };
 

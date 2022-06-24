@@ -257,42 +257,42 @@ bool HorizontalLayoutNode::hasText() const {
 
 // Protected
 
-KDSize HorizontalLayoutNode::computeSize() {
+KDSize HorizontalLayoutNode::computeSize(const KDFont * font) {
   KDCoordinate totalWidth = 0;
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
   for (LayoutNode * l : children()) {
-    KDSize childSize = l->layoutSize();
+    KDSize childSize = l->layoutSize(font);
     totalWidth += childSize.width();
-    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - l->baseline());
-    maxAboveBaseline = std::max(maxAboveBaseline, l->baseline());
+    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - l->baseline(font));
+    maxAboveBaseline = std::max(maxAboveBaseline, l->baseline(font));
   }
   return KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline);
 }
 
-KDCoordinate HorizontalLayoutNode::computeBaseline() {
+KDCoordinate HorizontalLayoutNode::computeBaseline(const KDFont * font) {
   KDCoordinate result = 0;
   for (LayoutNode * l : children()) {
-    result = std::max(result, l->baseline());
+    result = std::max(result, l->baseline(font));
   }
   return result;
 }
 
-KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
+KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l, const KDFont * font) {
   assert(hasChild(l));
   KDCoordinate x = 0;
   for (LayoutNode * c : children()) {
     if (c == l) {
       break;
     }
-    KDSize childSize = c->layoutSize();
+    KDSize childSize = c->layoutSize(font);
     x += childSize.width();
   }
-  KDCoordinate y = baseline() - l->baseline();
+  KDCoordinate y = baseline(font) - l->baseline(font);
   return KDPoint(x, y);
 }
 
-KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd) const {
+KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, const KDFont * font) const {
   assert(selectionStart != nullptr && !selectionStart->isUninitialized());
   assert(selectionEnd != nullptr && !selectionEnd->isUninitialized());
   HorizontalLayout thisLayout = HorizontalLayout(const_cast<HorizontalLayoutNode *>(this));
@@ -301,25 +301,25 @@ KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart
   assert(thisLayout.indexOfChild(*selectionStart) <= thisLayout.indexOfChild(*selectionEnd));
 
   // Compute the positions
-  KDCoordinate selectionXStart = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(selectionStart->node()).x();
-  KDCoordinate selectionXEnd = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(selectionEnd->node()).x() + selectionEnd->layoutSize().width();
+  KDCoordinate selectionXStart = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(selectionStart->node(), font).x();
+  KDCoordinate selectionXEnd = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(selectionEnd->node(), font).x() + selectionEnd->layoutSize(font).width();
   KDCoordinate drawWidth = selectionXEnd - selectionXStart;
 
   // Compute the height
   int firstSelectedNodeIndex = thisLayout.indexOfChild(*selectionStart);
   int secondSelectedNodeIndex = thisLayout.indexOfChild(*selectionEnd);
   if (firstSelectedNodeIndex == 0 && secondSelectedNodeIndex == numberOfChildren() - 1) {
-    return KDRect(KDPointZero, const_cast<HorizontalLayoutNode *>(this)->layoutSize());
+    return KDRect(KDPointZero, const_cast<HorizontalLayoutNode *>(this)->layoutSize(font));
   }
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
   for (int i = firstSelectedNodeIndex; i <= secondSelectedNodeIndex; i++) {
     Layout childi = thisLayout.childAtIndex(i);
-    KDSize childSize = childi.layoutSize();
-    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - childi.baseline());
-    maxAboveBaseline = std::max(maxAboveBaseline, childi.baseline());
+    KDSize childSize = childi.layoutSize(font);
+    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - childi.baseline(font));
+    maxAboveBaseline = std::max(maxAboveBaseline, childi.baseline(font));
   }
-  return KDRect(KDPoint(selectionXStart, const_cast<HorizontalLayoutNode *>(this)->baseline() - maxAboveBaseline), KDSize(drawWidth, maxUnderBaseline + maxAboveBaseline));
+  return KDRect(KDPoint(selectionXStart, const_cast<HorizontalLayoutNode *>(this)->baseline(font) - maxAboveBaseline), KDSize(drawWidth, maxUnderBaseline + maxAboveBaseline));
 }
 
 

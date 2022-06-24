@@ -178,8 +178,8 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
   return std::min(numberOfChar, bufferSize-1);
 }
 
-KDSize VerticalOffsetLayoutNode::computeSize() {
-  KDSize indiceSize = indiceLayout()->layoutSize();
+KDSize VerticalOffsetLayoutNode::computeSize(const KDFont * font) {
+  KDSize indiceSize = indiceLayout()->layoutSize(font);
   KDCoordinate width = indiceSize.width();
   if (m_position == Position::Superscript) {
     LayoutNode * parentNode = parent();
@@ -190,25 +190,25 @@ KDSize VerticalOffsetLayoutNode::computeSize() {
       width += k_separationMargin;
     }
   }
-  KDCoordinate height = baseLayout()->layoutSize().height() - k_indiceHeight + indiceLayout()->layoutSize().height();
+  KDCoordinate height = baseLayout()->layoutSize(font).height() - k_indiceHeight + indiceLayout()->layoutSize(font).height();
   return KDSize(width, height);
 }
 
-KDCoordinate VerticalOffsetLayoutNode::computeBaseline() {
+KDCoordinate VerticalOffsetLayoutNode::computeBaseline(const KDFont * font) {
   if (m_position == Position::Subscript) {
-    return baseLayout()->baseline();
+    return baseLayout()->baseline(font);
   } else {
-    return indiceLayout()->layoutSize().height() - k_indiceHeight + baseLayout()->baseline();
+    return indiceLayout()->layoutSize(font).height() - k_indiceHeight + baseLayout()->baseline(font);
   }
 }
 
-KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child) {
+KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
   assert(child == indiceLayout());
   if (m_position == Position::Superscript) {
     return KDPointZero;
   }
   assert(m_position == Position::Subscript);
-  return KDPoint(0, baseLayout()->layoutSize().height() - k_indiceHeight);
+  return KDPoint(0, baseLayout()->layoutSize(font).height() - k_indiceHeight);
 }
 
 bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {

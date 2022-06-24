@@ -16,9 +16,10 @@ namespace Escher {
 
 class LayoutField : public ScrollableView, public ScrollViewDataSource, public EditableField {
 public:
-  LayoutField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate = nullptr) :
+  LayoutField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate = nullptr, const KDFont * font = KDFont::LargeFont) :
     ScrollableView(parentResponder, &m_contentView, this),
     EditableField(inputEventHandlerDelegate),
+    m_contentView(font),
     m_insertionCursorEvent(Ion::Events::None),
     m_delegate(delegate)
   {}
@@ -28,7 +29,7 @@ public:
   void setEditing(bool isEditing) override;
   void clearLayout();
   void scrollToCursor() {
-    scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baselineWithoutSelection());
+    scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baselineWithoutSelection(m_contentView.font()));
   }
   bool hasText() const { return layout().hasText(); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
@@ -74,7 +75,7 @@ private:
 
   class ContentView : public View {
   public:
-    ContentView();
+    ContentView(const KDFont * font);
     bool isEditing() const { return m_isEditing; }
     bool setEditing(bool isEditing); // returns True if LayoutField should reload
     void setBackgroundColor(KDColor c) { m_expressionView.setBackgroundColor(c); }
@@ -96,6 +97,7 @@ private:
     void deleteSelection();
     void invalidateInsertionCursor() { m_insertionCursor = Poincare::LayoutCursor(); }
     void updateInsertionCursor();
+    const KDFont * font() const { return m_expressionView.font(); }
 
   private:
     int numberOfSubviews() const override { return 2; }

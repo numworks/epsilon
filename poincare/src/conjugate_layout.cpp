@@ -55,8 +55,8 @@ int ConjugateLayoutNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.name(), true);
 }
 
-KDSize ConjugateLayoutNode::computeSize() {
-  KDSize childSize = childLayout()->layoutSize();
+KDSize ConjugateLayoutNode::computeSize(const KDFont * font) {
+  KDSize childSize = childLayout()->layoutSize(font);
   KDCoordinate newWidth =
     Escher::Metric::FractionAndConjugateHorizontalMargin +
     Escher::Metric::FractionAndConjugateHorizontalOverflow +
@@ -70,23 +70,23 @@ KDSize ConjugateLayoutNode::computeSize() {
   return KDSize(newWidth, newHeight);
 }
 
-KDCoordinate ConjugateLayoutNode::computeBaseline() {
-  return childLayout()->baseline() + k_overlineWidth + k_overlineVerticalMargin;
+KDCoordinate ConjugateLayoutNode::computeBaseline(const KDFont * font) {
+  return childLayout()->baseline(font) + k_overlineWidth + k_overlineVerticalMargin;
 }
 
-KDPoint ConjugateLayoutNode::positionOfChild(LayoutNode * child) {
+KDPoint ConjugateLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
   assert(child == childLayout());
   return KDPoint(
       Escher::Metric::FractionAndConjugateHorizontalMargin + Escher::Metric::FractionAndConjugateHorizontalOverflow,
       k_overlineWidth + k_overlineVerticalMargin);
 }
 
-void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   ctx->fillRect(
       KDRect(
         p.x() + Escher::Metric::FractionAndConjugateHorizontalMargin,
         p.y(),
-        childLayout()->layoutSize().width() + 2 * Escher::Metric::FractionAndConjugateHorizontalOverflow,
+        childLayout()->layoutSize(font).width() + 2 * Escher::Metric::FractionAndConjugateHorizontalOverflow,
         k_overlineWidth),
       expressionColor);
 }

@@ -82,36 +82,36 @@ void LetterWithSubAndSuperscriptLayoutNode::moveCursorDown(LayoutCursor * cursor
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-KDCoordinate LetterWithSubAndSuperscriptLayoutNode::aboveSymbol() {
-  return std::max<KDCoordinate>(nLayout()->baseline(), kLayout()->baseline() - k_symbolHeight);
+KDCoordinate LetterWithSubAndSuperscriptLayoutNode::aboveSymbol(const KDFont * font) {
+  return std::max<KDCoordinate>(nLayout()->baseline(font), kLayout()->baseline(font) - k_symbolHeight);
 }
 
-KDCoordinate LetterWithSubAndSuperscriptLayoutNode::totalHeight() {
-    KDCoordinate underSymbol = std::max<KDCoordinate>(kLayout()->layoutSize().height() - kLayout()->baseline(), nLayout()->layoutSize().height() - nLayout()->baseline() - k_symbolHeight);
-    return aboveSymbol() + k_symbolHeight + underSymbol;
+KDCoordinate LetterWithSubAndSuperscriptLayoutNode::totalHeight(const KDFont * font) {
+    KDCoordinate underSymbol = std::max<KDCoordinate>(kLayout()->layoutSize(font).height() - kLayout()->baseline(font), nLayout()->layoutSize(font).height() - nLayout()->baseline(font) - k_symbolHeight);
+    return aboveSymbol(font) + k_symbolHeight + underSymbol;
 }
 
-KDSize LetterWithSubAndSuperscriptLayoutNode::computeSize() {
-  KDCoordinate width = nLayout()->layoutSize().width() + k_symbolWidthWithMargins + kLayout()->layoutSize().width();
-  return KDSize(width, totalHeight());
+KDSize LetterWithSubAndSuperscriptLayoutNode::computeSize(const KDFont * font) {
+  KDCoordinate width = nLayout()->layoutSize(font).width() + k_symbolWidthWithMargins + kLayout()->layoutSize(font).width();
+  return KDSize(width, totalHeight(font));
 }
 
-KDCoordinate LetterWithSubAndSuperscriptLayoutNode::computeBaseline() {
-  return std::max(0, aboveSymbol() + k_symbolBaseline);
+KDCoordinate LetterWithSubAndSuperscriptLayoutNode::computeBaseline(const KDFont * font) {
+  return std::max(0, aboveSymbol(font) + k_symbolBaseline);
 }
 
-KDPoint LetterWithSubAndSuperscriptLayoutNode::positionOfChild(LayoutNode * child) {
+KDPoint LetterWithSubAndSuperscriptLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
   if (child == nLayout()) {
-    return KDPoint(0, aboveSymbol() - nLayout()->baseline());
+    return KDPoint(0, aboveSymbol(font) - nLayout()->baseline(font));
   }
   assert(child == kLayout());
-  return KDPoint(nLayout()->layoutSize().width() + k_symbolWidthWithMargins,
-                 aboveSymbol() + k_symbolHeight - kLayout()->baseline());
+  return KDPoint(nLayout()->layoutSize(font).width() + k_symbolWidthWithMargins,
+                 aboveSymbol(font) + k_symbolHeight - kLayout()->baseline(font));
 }
 
-void LetterWithSubAndSuperscriptLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  KDCoordinate combinationSymbolX = nLayout()->layoutSize().width();
-  KDCoordinate combinationSymbolY = aboveSymbol();
+void LetterWithSubAndSuperscriptLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  KDCoordinate combinationSymbolX = nLayout()->layoutSize(font).width();
+  KDCoordinate combinationSymbolY = aboveSymbol(font);
   KDPoint base = p.translatedBy(KDPoint(combinationSymbolX, combinationSymbolY));
 
   // Margin around the letter is left to the letter renderer

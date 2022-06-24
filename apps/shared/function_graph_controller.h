@@ -60,6 +60,8 @@ protected:
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
 
 private:
+  constexpr static const KDFont * k_font = KDFont::SmallFont;
+
   virtual FunctionGraphView * functionGraphView() = 0;
 
   /* These two methods are likely to point to the same object but they are

@@ -9,16 +9,16 @@ int ProductLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SequenceLayoutNode::writeDerivedClassInBuffer("product", buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
-void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void ProductLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Compute sizes.
-  KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDSize lowerBoundNEqualsSize = lowerBoundSizeWithVariableEquals();
+  KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
+  KDSize lowerBoundNEqualsSize = lowerBoundSizeWithVariableEquals(font);
 
   // Render the Product symbol.
   ctx->fillRect(
       KDRect(
         p.x() + std::max({0, (upperBoundSize.width()-k_symbolWidth)/2, (lowerBoundNEqualsSize.width()-k_symbolWidth)/2}),
-        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline()-(k_symbolHeight+1)/2),
+        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(k_symbolHeight+1)/2),
         k_lineThickness,
         k_symbolHeight
       ),
@@ -27,7 +27,7 @@ void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
   ctx->fillRect(
       KDRect(
         p.x() + std::max({0, (upperBoundSize.width()-k_symbolWidth)/2, (lowerBoundNEqualsSize.width()-k_symbolWidth)/2}),
-        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline()-(k_symbolHeight+1)/2),
+        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(k_symbolHeight+1)/2),
         k_symbolWidth,
         k_lineThickness
       ),
@@ -36,7 +36,7 @@ void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
   ctx->fillRect(
       KDRect(
         p.x() + std::max({0, (upperBoundSize.width()-k_symbolWidth)/2, (lowerBoundNEqualsSize.width()-k_symbolWidth)/2})+k_symbolWidth,
-        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline()-(k_symbolHeight+1)/2),
+        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(k_symbolHeight+1)/2),
         k_lineThickness,
         k_symbolHeight
       ),
@@ -44,7 +44,7 @@ void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
     );
 
   // Render the "n=" and the parentheses.
-  SequenceLayoutNode::render(ctx, p, expressionColor, backgroundColor);
+  SequenceLayoutNode::render(ctx, p, font, expressionColor, backgroundColor);
 }
 
 }

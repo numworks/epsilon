@@ -16,7 +16,7 @@ namespace Shared {
 
 FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, rangeVersion),
-  m_calculusButton(this, I18n::Message::GraphCalculus, calculusButtonInvocation(), KDFont::SmallFont),
+  m_calculusButton(this, I18n::Message::GraphCalculus, calculusButtonInvocation(), k_font),
   m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {
 }
@@ -72,7 +72,7 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
 KDCoordinate FunctionGraphController::FunctionSelectionController::rowHeight(int j) {
   assert(j < graphController()->functionStore()->numberOfActiveFunctions());
   ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(j));
-  return std::max(function->layout().layoutSize().height(), nameLayoutAtIndex(j).layoutSize().height()) + Metric::CellTopMargin + Metric::CellBottomMargin + Metric::CellSeparatorThickness;
+  return std::max(function->layout().layoutSize(k_font).height(), nameLayoutAtIndex(j).layoutSize(k_font).height()) + Metric::CellTopMargin + Metric::CellBottomMargin + Metric::CellSeparatorThickness;
 }
 
 void FunctionGraphController::FunctionSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {

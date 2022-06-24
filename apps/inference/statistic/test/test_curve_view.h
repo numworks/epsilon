@@ -15,6 +15,7 @@ protected:
   bool shouldDrawLabelAtPosition(float labelValue) const override;
 
 private:
+  constexpr static const KDFont * k_font = KDFont::SmallFont;
   constexpr static int k_marginsAroundZLabel = 30;
   void drawTest(KDContext * ctx, KDRect rect) const;
   void drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op) const;

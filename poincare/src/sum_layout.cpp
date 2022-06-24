@@ -30,7 +30,7 @@ int SumLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SequenceLayoutNode::writeDerivedClassInBuffer("sum", buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
-void SumLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void SumLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Creates half size sigma symbol from one branch
   uint8_t symbolPixel[k_symbolHeight * k_symbolWidth];
   int whiteOffset;
@@ -68,17 +68,17 @@ void SumLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
   }
 
   // Compute sizes.
-  KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDSize lowerBoundNEqualsSize = lowerBoundSizeWithVariableEquals();
+  KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
+  KDSize lowerBoundNEqualsSize = lowerBoundSizeWithVariableEquals(font);
 
   // Render the Sum symbol.
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
   KDRect symbolFrame(p.x() + std::max({0, (upperBoundSize.width()-k_symbolWidth)/2, (lowerBoundNEqualsSize.width()-k_symbolWidth)/2}),
-      p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline()-(k_symbolHeight+1)/2),
+      p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(k_symbolHeight+1)/2),
       k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(symbolFrame, expressionColor, (const uint8_t *)symbolPixel, (KDColor *)workingBuffer);
 
   // Render the "n=" and the parentheses.
-  SequenceLayoutNode::render(ctx, p, expressionColor, backgroundColor);
+  SequenceLayoutNode::render(ctx, p, font, expressionColor, backgroundColor);
 }
 }

@@ -58,7 +58,7 @@ bool BracketLayoutNode::isCollapsable(int * numberOfOpenBrackets, bool goingLeft
   return true;
 }
 
-KDCoordinate BracketLayoutNode::computeBaseline() {
+KDCoordinate BracketLayoutNode::computeBaseline(const KDFont * font) {
   LayoutNode * parentLayout = parent();
   assert(parentLayout != nullptr);
   int idxInParent = parentLayout->indexOfChild(this);
@@ -70,7 +70,7 @@ KDCoordinate BracketLayoutNode::computeBaseline() {
      * bracket that is base of a superscript layout. In the latter case, it
      * should have a default baseline, else it creates an infinite loop as the
      * bracket needs the superscript baseline, which needs the bracket baseline.*/
-    return layoutSize().height()/2;
+    return layoutSize(font).height()/2;
   }
 
   int currentNumberOfOpenBrackets = 1;
@@ -98,27 +98,27 @@ KDCoordinate BracketLayoutNode::computeBaseline() {
       if (i == idxInParent + increment) {
         /* If the bracket is immediately closed, we set the baseline to half the
           * bracket height. */
-        return layoutSize().height()/2;
+        return layoutSize(font).height()/2;
       }
       currentNumberOfOpenBrackets--;
       if (currentNumberOfOpenBrackets == 0) {
         break;
       }
     }
-    result = std::max(result, sibling->baseline());
+    result = std::max(result, sibling->baseline(font));
   }
-  return result + (layoutSize().height() - childHeight()) / 2;
+  return result + (layoutSize(font).height() - childHeight(font)) / 2;
 }
 
-KDCoordinate BracketLayoutNode::childHeight() {
+KDCoordinate BracketLayoutNode::childHeight(const KDFont * font) {
   if (!m_childHeightComputed) {
-    m_childHeight = computeChildHeight();
+    m_childHeight = computeChildHeight(font);
     m_childHeightComputed = true;
   }
   return m_childHeight;
 }
 
-KDCoordinate BracketLayoutNode::computeChildHeight() {
+KDCoordinate BracketLayoutNode::computeChildHeight(const KDFont * font) {
   LayoutNode * parentLayout = parent();
   assert(parentLayout != nullptr);
   KDCoordinate result = 0;
@@ -162,15 +162,15 @@ KDCoordinate BracketLayoutNode::computeChildHeight() {
         break;
       }
     }
-    KDCoordinate siblingHeight = sibling->layoutSize().height();
-    KDCoordinate siblingBaseline = sibling->baseline();
+    KDCoordinate siblingHeight = sibling->layoutSize(font).height();
+    KDCoordinate siblingBaseline = sibling->baseline(font);
     maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, siblingHeight - siblingBaseline);
     maxAboveBaseline = std::max(maxAboveBaseline, siblingBaseline);
   }
   return std::max<KDCoordinate>(result, maxUnderBaseline + maxAboveBaseline);
 }
 
-KDPoint BracketLayoutNode::positionOfChild(LayoutNode * child) {
+KDPoint BracketLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
   assert(false);
   return KDPointZero;
 }

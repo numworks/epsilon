@@ -87,7 +87,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
     /* Default value of 0 for the baseline is the same as the one given to the
      * output baseline in
      * AbstractScrollableMultipleExpressionsView::ContentCell::baseline. */
-    KDCoordinate inputBaseline = inputLayout.isUninitialized() ? 0 : inputLayout.baseline();
+    KDCoordinate inputBaseline = inputLayout.isUninitialized() ? 0 : inputLayout.baseline(cell->inputView()->font());
     contentOffsetY += std::min(
         dataSource()->rowHeight(j) - maxContentHeightDisplayableWithoutScrolling(),
         std::max(0, (inputBaseline - cell->outputView()->baseline()) * (subviewType == HistoryViewCellDataSource::SubviewType::Input ? -1 : 1)));

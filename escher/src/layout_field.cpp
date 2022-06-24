@@ -15,11 +15,12 @@ using namespace Poincare;
 
 namespace Escher {
 
-LayoutField::ContentView::ContentView() :
+LayoutField::ContentView::ContentView(const KDFont * font) :
     m_expressionView(KDContext::k_alignLeft,
                      KDContext::k_alignCenter,
                      KDColorBlack,
                      KDColorWhite,
+                     font,
                      &m_selectionStart,
                      &m_selectionEnd),
     m_isEditing(false) {
@@ -281,14 +282,14 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
     pointedLayoutR = eqCursor.layout();
     cursorPosition = eqCursor.position();
   }
-  KDPoint cursoredExpressionViewOrigin = pointedLayoutR.absoluteOrigin();
+  KDPoint cursoredExpressionViewOrigin = pointedLayoutR.absoluteOrigin(font());
   KDCoordinate cursorX = expressionViewOrigin.x() + cursoredExpressionViewOrigin.x();
   if (cursorPosition == LayoutCursor::Position::Right) {
-    cursorX += pointedLayoutR.layoutSize().width();
+    cursorX += pointedLayoutR.layoutSize(font()).width();
   }
   if (selectionIsEmpty()) {
-    KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursoredExpressionViewOrigin.y() + pointedLayoutR.baseline() - m_cursor.baselineWithoutSelection());
-    m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeightWithoutSelection()), force);
+    KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursoredExpressionViewOrigin.y() + pointedLayoutR.baseline(font()) - m_cursor.baselineWithoutSelection(font()));
+    m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeightWithoutSelection(font())), force);
   } else {
     KDRect cursorRect = selectionRect();
     KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursorRect.y());
@@ -301,13 +302,13 @@ KDRect LayoutField::ContentView::selectionRect() const {
     return KDRectZero;
   }
   if (m_selectionStart == m_selectionEnd) {
-    return KDRect(m_selectionStart.absoluteOrigin(), m_selectionStart.layoutSize());
+    return KDRect(m_selectionStart.absoluteOrigin(font()), m_selectionStart.layoutSize(font()));
   }
   Layout selectionParent = m_selectionStart.parent();
   assert(m_selectionEnd.parent() == selectionParent);
   assert(selectionParent.type() == LayoutNode::Type::HorizontalLayout);
-  KDRect selectionRectInParent = static_cast<HorizontalLayout &>(selectionParent).relativeSelectionRect(&m_selectionStart, &m_selectionEnd);
-  return selectionRectInParent.translatedBy(selectionParent.absoluteOrigin());
+  KDRect selectionRectInParent = static_cast<HorizontalLayout &>(selectionParent).relativeSelectionRect(&m_selectionStart, &m_selectionEnd, font());
+  return selectionRectInParent.translatedBy(selectionParent.absoluteOrigin(font()));
 }
 
 void LayoutField::setEditing(bool isEditing) {
@@ -704,8 +705,8 @@ bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * s
 }
 
 void LayoutField::scrollRightOfLayout(Layout layoutR) {
-  KDRect layoutRect(layoutR.absoluteOrigin().translatedBy(m_contentView.expressionView()->drawingOrigin()), layoutR.layoutSize());
-  scrollToBaselinedRect(layoutRect, layoutR.baseline());
+  KDRect layoutRect(layoutR.absoluteOrigin(m_contentView.font()).translatedBy(m_contentView.expressionView()->drawingOrigin()), layoutR.layoutSize(m_contentView.font()));
+  scrollToBaselinedRect(layoutRect, layoutR.baseline(m_contentView.font()));
 }
 
 void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {

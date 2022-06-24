@@ -230,15 +230,15 @@ IntegralLayoutNode * IntegralLayoutNode::previousNestedIntegral() {
 
 /* Return the height of the tallest upper/lower bound amongst a row of integrals
  * If the integral is alone, will return its upper/lower bound height*/
-KDCoordinate IntegralLayoutNode::boundMaxHeight(BoundPosition position) {
+KDCoordinate IntegralLayoutNode::boundMaxHeight(BoundPosition position, const KDFont * font) {
   IntegralLayoutNode * p = mostNestedIntegral(NestedPosition::Next);
   LayoutNode * bound = p->boundLayout(position);
-  KDCoordinate max = bound->layoutSize().height();
+  KDCoordinate max = bound->layoutSize(font).height();
   IntegralLayoutNode * first = mostNestedIntegral(NestedPosition::Previous);
   while (p != first) {
     p = p->previousNestedIntegral();
     bound = p->boundLayout(position);
-    max = std::max(max, bound->layoutSize().height());
+    max = std::max(max, bound->layoutSize(font).height());
   }
   return max;
 }
@@ -318,79 +318,79 @@ Horizontal margins and offsets
 a = k_symbolWidth - k_lineThickness
 */
 
-KDSize IntegralLayoutNode::computeSize() {
-  KDSize dSize = k_font->stringSize("d");
-  KDSize integrandSize = integrandLayout()->layoutSize();
-  KDSize differentialSize = differentialLayout()->layoutSize();
-  KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
-  KDSize upperBoundSize = upperBoundLayout()->layoutSize();
+KDSize IntegralLayoutNode::computeSize(const KDFont * font) {
+  KDSize dSize = font->stringSize("d");
+  KDSize integrandSize = integrandLayout()->layoutSize(font);
+  KDSize differentialSize = differentialLayout()->layoutSize(font);
+  KDSize lowerBoundSize = lowerBoundLayout()->layoutSize(font);
+  KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
   KDCoordinate width = k_symbolWidth+k_lineThickness+k_boundHorizontalMargin+std::max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandHorizontalMargin+integrandSize.width()+k_differentialHorizontalMargin+dSize.width()+k_differentialHorizontalMargin+differentialSize.width();
   IntegralLayoutNode * last = mostNestedIntegral(NestedPosition::Next);
   KDCoordinate height;
   if (this == last) {
-    height = k_boundVerticalMargin + boundMaxHeight(BoundPosition::UpperBound) + k_integrandVerticalMargin + centralArgumentHeight() + k_integrandVerticalMargin + boundMaxHeight(BoundPosition::LowerBound) + k_boundVerticalMargin;
+    height = k_boundVerticalMargin + boundMaxHeight(BoundPosition::UpperBound, font) + k_integrandVerticalMargin + centralArgumentHeight(font) + k_integrandVerticalMargin + boundMaxHeight(BoundPosition::LowerBound, font) + k_boundVerticalMargin;
   } else {
-    height = last->layoutSize().height();
+    height = last->layoutSize(font).height();
   }
   return KDSize(width, height);
 }
 
-KDCoordinate IntegralLayoutNode::computeBaseline() {
+KDCoordinate IntegralLayoutNode::computeBaseline(const KDFont * font) {
   IntegralLayoutNode * last = mostNestedIntegral(NestedPosition::Next);
   if (this == last) {
-    return k_boundVerticalMargin + boundMaxHeight(BoundPosition::UpperBound) + k_integrandVerticalMargin + std::max(integrandLayout()->baseline(), differentialLayout()->baseline());
+    return k_boundVerticalMargin + boundMaxHeight(BoundPosition::UpperBound, font) + k_integrandVerticalMargin + std::max(integrandLayout()->baseline(font), differentialLayout()->baseline(font));
   } else {
     // If integrals are in a row, they must have the same baseline. Since the last integral has the lowest, we take this one for all the others
-    return last->baseline();
+    return last->baseline(font);
   }
 }
 
-KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
-  KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
-  KDSize upperBoundSize = upperBoundLayout()->layoutSize();
+KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+  KDSize lowerBoundSize = lowerBoundLayout()->layoutSize(font);
+  KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   KDCoordinate boundOffset = 2*k_symbolWidth - k_lineThickness + k_boundHorizontalMargin;
   if (child == lowerBoundLayout()) {
     x = boundOffset;
-    y = computeSize().height() - k_boundVerticalMargin - boundMaxHeight(BoundPosition::LowerBound);
+    y = computeSize(font).height() - k_boundVerticalMargin - boundMaxHeight(BoundPosition::LowerBound, font);
   } else if (child == upperBoundLayout()) {
     x = boundOffset;
-    y = k_boundVerticalMargin + boundMaxHeight(BoundPosition::UpperBound) - upperBoundSize.height();
+    y = k_boundVerticalMargin + boundMaxHeight(BoundPosition::UpperBound, font) - upperBoundSize.height();
   } else if (child == integrandLayout()) {
     x = boundOffset + std::max(lowerBoundSize.width(), upperBoundSize.width()) + k_integrandHorizontalMargin;
-    y = computeBaseline()-integrandLayout()->baseline();
+    y = computeBaseline(font)-integrandLayout()->baseline(font);
   } else {
     assert(child == differentialLayout());
-    x = computeSize().width() - differentialLayout()->layoutSize().width();
-    y = computeBaseline()-differentialLayout()->baseline();
+    x = computeSize(font).width() - differentialLayout()->layoutSize(font).width();
+    y = computeBaseline(font)-differentialLayout()->baseline(font);
   }
   return KDPoint(x,y);
 }
 
-KDCoordinate IntegralLayoutNode::centralArgumentHeight() {
+KDCoordinate IntegralLayoutNode::centralArgumentHeight(const KDFont * font) {
   // When integrals are in a row, the last one is the tallest. We take its central argument height to define the one of the others integrals
   IntegralLayoutNode * last = mostNestedIntegral(NestedPosition::Next);
   if (this == last) {
-    KDCoordinate integrandHeight = integrandLayout()->layoutSize().height();
-    KDCoordinate integrandBaseline = integrandLayout()->baseline();
-    KDCoordinate differentialHeight = differentialLayout()->layoutSize().height();
-    KDCoordinate differentialBaseline = differentialLayout()->baseline();
+    KDCoordinate integrandHeight = integrandLayout()->layoutSize(font).height();
+    KDCoordinate integrandBaseline = integrandLayout()->baseline(font);
+    KDCoordinate differentialHeight = differentialLayout()->layoutSize(font).height();
+    KDCoordinate differentialBaseline = differentialLayout()->baseline(font);
     return std::max(integrandBaseline, differentialBaseline) + std::max(integrandHeight-integrandBaseline, differentialHeight - differentialBaseline);
   } else {
-    return last->centralArgumentHeight();
+    return last->centralArgumentHeight(font);
   }
 }
 
-void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  KDSize integrandSize = integrandLayout()->layoutSize();
-  KDCoordinate centralArgHeight = centralArgumentHeight();
+void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  KDSize integrandSize = integrandLayout()->layoutSize(font);
+  KDCoordinate centralArgHeight = centralArgumentHeight(font);
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
 
 
   // Render the integral symbol
   KDCoordinate offsetX = p.x() + k_symbolWidth;
-  KDCoordinate offsetY = p.y() + k_boundVerticalMargin + boundMaxHeight(BoundPosition::UpperBound) + k_integrandVerticalMargin - k_symbolHeight;
+  KDCoordinate offsetY = p.y() + k_boundVerticalMargin + boundMaxHeight(BoundPosition::UpperBound, font) + k_integrandVerticalMargin - k_symbolHeight;
 
   // Upper part
   KDRect topSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);
@@ -407,8 +407,8 @@ void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   ctx->blendRectWithMask(bottomSymbolFrame, expressionColor, (const uint8_t *)bottomSymbolPixel, (KDColor *)workingBuffer);
 
   // Render "d"
-  KDPoint dPosition = p.translatedBy(positionOfChild(integrandLayout())).translatedBy(KDPoint(integrandSize.width() + k_differentialHorizontalMargin, integrandLayout()->baseline() - k_font->glyphSize().height()/2));
-  ctx->drawString("d", dPosition, k_font, expressionColor, backgroundColor);
+  KDPoint dPosition = p.translatedBy(positionOfChild(integrandLayout(), font)).translatedBy(KDPoint(integrandSize.width() + k_differentialHorizontalMargin, integrandLayout()->baseline(font) - font->glyphSize().height()/2));
+  ctx->drawString("d", dPosition, font, expressionColor, backgroundColor);
 }
 
 }

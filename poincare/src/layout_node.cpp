@@ -20,7 +20,7 @@ bool LayoutNode::isIdenticalTo(Layout l) {
 
 // Rendering
 
-void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void LayoutNode::draw(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   bool isSelected = selectionStart != nullptr && selectionEnd != nullptr
     && !selectionStart->isUninitialized() && !selectionStart->isUninitialized()
     && reinterpret_cast<char *>(this) >= reinterpret_cast<char *>(selectionStart->node())
@@ -28,19 +28,19 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDCol
   selectionStart = isSelected ? nullptr : selectionStart;
   selectionEnd = isSelected ? nullptr : selectionEnd;
   KDColor backColor = isSelected ? selectionColor : backgroundColor;
-  KDPoint renderingAbsoluteOrigin = absoluteOrigin().translatedBy(p);
-  ctx->fillRect(KDRect(renderingAbsoluteOrigin, layoutSize()), backColor);
-  render(ctx, renderingAbsoluteOrigin, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
+  KDPoint renderingAbsoluteOrigin = absoluteOrigin(font).translatedBy(p);
+  ctx->fillRect(KDRect(renderingAbsoluteOrigin, layoutSize(font)), backColor);
+  render(ctx, renderingAbsoluteOrigin, font, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
   for (LayoutNode * l : children()) {
-    l->draw(ctx, p, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
+    l->draw(ctx, p, font, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
   }
 }
 
-KDPoint LayoutNode::absoluteOrigin() {
+KDPoint LayoutNode::absoluteOrigin(const KDFont * font) {
   LayoutNode * p = parent();
   if (!m_positioned) {
     if (p != nullptr) {
-      m_frame.setOrigin(p->absoluteOrigin().translatedBy(p->positionOfChild(this)));
+      m_frame.setOrigin(p->absoluteOrigin(font).translatedBy(p->positionOfChild(this, font)));
     } else {
       m_frame.setOrigin(KDPointZero);
     }
@@ -49,18 +49,19 @@ KDPoint LayoutNode::absoluteOrigin() {
   return m_frame.origin().translatedBy(KDPoint(leftMargin(), 0));;
 }
 
-KDSize LayoutNode::layoutSize() {
+KDSize LayoutNode::layoutSize(const KDFont * font) {
   if (!m_sized) {
-    KDSize size = computeSize();
+    KDSize size = computeSize(font);
     m_frame.setSize(KDSize(size.width() + leftMargin(), size.height()));
     m_sized = true;
   }
+  // TODO Hugo : Assert font did not change
   return m_frame.size();
 }
 
-KDCoordinate LayoutNode::baseline() {
+KDCoordinate LayoutNode::baseline(const KDFont * font) {
   if (!m_baselined) {
-    m_baseline = computeBaseline();
+    m_baseline = computeBaseline(font);
     m_baselined = true;
   }
   return m_baseline;

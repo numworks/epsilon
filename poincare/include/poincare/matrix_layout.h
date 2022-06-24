@@ -41,8 +41,8 @@ public:
 
 protected:
   // LayoutNode
-  KDSize computeSize() override;
-  KDPoint positionOfChild(LayoutNode * l) override;
+  KDSize computeSize(const KDFont * font) override;
+  KDPoint positionOfChild(LayoutNode * l, const KDFont * font) override;
   void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) override;
 
 private:
@@ -53,7 +53,7 @@ private:
   bool hasGraySquares() const;
 
   // LayoutNode
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
 };
 

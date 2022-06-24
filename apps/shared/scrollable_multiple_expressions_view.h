@@ -45,6 +45,8 @@ public:
 protected:
   class ContentCell : public Escher::EvenOddCell {
   public:
+    constexpr static const KDFont * k_font = KDFont::LargeFont;
+
     static KDCoordinate StandardApproximateViewAndMarginsSize();
     ContentCell();
     KDColor backgroundColor() const override;
@@ -77,7 +79,6 @@ protected:
     KDCoordinate baseline(KDCoordinate * leftBaseline = nullptr, KDCoordinate * centerBaseline = nullptr, KDCoordinate * rightBaseline = nullptr) const;
     void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame);
   private:
-    constexpr static const KDFont * k_font = KDFont::LargeFont;
     const static I18n::Message k_defaultApproximateMessage = I18n::Message::AlmostEqual;
     KDSize privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const;
     View * subviewAtIndex(int index) override;
@@ -103,6 +104,7 @@ public:
     );
   }
   KDSize minimalSizeForOptimalDisplayFullSize() const;
+  const KDFont * font() const { return ContentCell::k_font; }
 private:
   ContentCell *  contentCell() override { return &m_contentCell; };
   const ContentCell *  constContentCell() const override { return &m_contentCell; };

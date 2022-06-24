@@ -5,7 +5,11 @@
 bool sSkipAssertions = false;
 
 void quiz_assert(bool condition) {
-  if (!sSkipAssertions && !condition) {
+  if(!condition) {
+    if (sSkipAssertions) {
+      quiz_print("  ASSERTION FAILED");
+      return;
+    }
 #if PLATFORM_DEVICE
     /* Freeze on device so that the error message can be read.
      * Note : "while (!condition) {}" could be omitted by the compiler because

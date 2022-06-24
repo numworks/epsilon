@@ -335,6 +335,7 @@ constexpr ToolboxMessageTree unitChildren[] = {
 
 constexpr ToolboxMessageTree calculChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, false, I18n::Message::DiffCommand),
+  ToolboxMessageTree::Leaf(I18n::Message::HigherOrderDiffCommandWithArg, I18n::Message::HigherOrderDerivateNumber, false, I18n::Message::HigherOrderDiffCommand),
   ToolboxMessageTree::Leaf(I18n::Message::IntCommandWithArg, I18n::Message::Integral, false, I18n::Message::IntCommand),
   ToolboxMessageTree::Leaf(I18n::Message::SumCommandWithArg, I18n::Message::Sum, false, I18n::Message::SumCommand),
   ToolboxMessageTree::Leaf(I18n::Message::ProductCommandWithArg, I18n::Message::Product, false, I18n::Message::ProductCommand)

@@ -20,7 +20,7 @@ public:
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
   bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) override;
 protected:
-  const Expression protectedExpressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) override;
+  const Expression protectedExpressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone, ContextWithParent * lastDescendantContext) override;
 private:
   const char * m_name;
   Expression m_value;

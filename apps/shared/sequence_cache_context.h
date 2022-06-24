@@ -14,7 +14,7 @@ public:
   SequenceCacheContext(SequenceContext * sequenceContext, int forbiddenSequenceIndex);
   void setValueForSymbol(T value, const Poincare::Symbol & symbol);
 private:
-  const Poincare::Expression protectedExpressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, Context * contextWithMoreInformations) override;
+  const Poincare::Expression protectedExpressionForSymbolAbstract(const Poincare::SymbolAbstract & symbol, bool clone, ContextWithParent * lastDescendantContext) override;
   int nameIndexForSymbol(const Poincare::Symbol & symbol);
   int rankIndexForSymbol(const Poincare::Symbol & symbol);
   T m_values[SequenceStore::k_maxNumberOfSequences][SequenceStore::k_maxRecurrenceDepth];

@@ -161,50 +161,50 @@ Layout SequenceLayoutNode::XNTLayout(int childIndex) const {
 
 // Protected
 
-KDSize SequenceLayoutNode::lowerBoundSizeWithVariableEquals() {
-  KDSize variableSize = variableLayout()->layoutSize();
-  KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
-  KDSize equalSize = k_font->stringSize(k_equal);
+KDSize SequenceLayoutNode::lowerBoundSizeWithVariableEquals(const KDFont * font) {
+  KDSize variableSize = variableLayout()->layoutSize(font);
+  KDSize lowerBoundSize = lowerBoundLayout()->layoutSize(font);
+  KDSize equalSize = font->stringSize(k_equal);
   return KDSize(
       variableSize.width() + equalSize.width() + lowerBoundSize.width(),
-      subscriptBaseline() + std::max({variableSize.height() - variableLayout()->baseline(), lowerBoundSize.height() - lowerBoundLayout()->baseline(), equalSize.height()/2}));
+      subscriptBaseline(font) + std::max({variableSize.height() - variableLayout()->baseline(font), lowerBoundSize.height() - lowerBoundLayout()->baseline(font), equalSize.height()/2}));
 }
 
-KDSize SequenceLayoutNode::computeSize() {
-  KDSize totalLowerBoundSize = lowerBoundSizeWithVariableEquals();
-  KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDSize argumentSize = argumentLayout()->layoutSize();
+KDSize SequenceLayoutNode::computeSize(const KDFont * font) {
+  KDSize totalLowerBoundSize = lowerBoundSizeWithVariableEquals(font);
+  KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
+  KDSize argumentSize = argumentLayout()->layoutSize(font);
   KDSize argumentSizeWithParentheses = KDSize(
     argumentSize.width() + 2*ParenthesisLayoutNode::k_parenthesisWidth,
     ParenthesisLayoutNode::HeightGivenChildHeight(argumentSize.height()));
   KDSize result = KDSize(
     std::max({k_symbolWidth, totalLowerBoundSize.width(), upperBoundSize.width()})+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
-    baseline() + std::max(k_symbolHeight/2+k_boundHeightMargin+totalLowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline()));
+    baseline(font) + std::max(k_symbolHeight/2+k_boundHeightMargin+totalLowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline(font)));
   return result;
 }
 
-KDCoordinate SequenceLayoutNode::computeBaseline() {
-  return std::max<KDCoordinate>(upperBoundLayout()->layoutSize().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
+KDCoordinate SequenceLayoutNode::computeBaseline(const KDFont * font) {
+  return std::max<KDCoordinate>(upperBoundLayout()->layoutSize(font).height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline(font));
 }
 
-KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {
-  KDSize variableSize = variableLayout()->layoutSize();
-  KDSize equalSize = k_font->stringSize(k_equal);
-  KDSize upperBoundSize = upperBoundLayout()->layoutSize();
+KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l, const KDFont * font) {
+  KDSize variableSize = variableLayout()->layoutSize(font);
+  KDSize equalSize = font->stringSize(k_equal);
+  KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   if (l == variableLayout()) {
-    x = completeLowerBoundX();
-    y = baseline() + k_symbolHeight/2 + k_boundHeightMargin + subscriptBaseline() - variableLayout()->baseline();
+    x = completeLowerBoundX(font);
+    y = baseline(font) + k_symbolHeight/2 + k_boundHeightMargin + subscriptBaseline(font) - variableLayout()->baseline(font);
   } else if (l == lowerBoundLayout()) {
-    x = completeLowerBoundX() + equalSize.width() + variableSize.width();
-    y = baseline() + k_symbolHeight/2 + k_boundHeightMargin + subscriptBaseline() - lowerBoundLayout()->baseline();
+    x = completeLowerBoundX(font) + equalSize.width() + variableSize.width();
+    y = baseline(font) + k_symbolHeight/2 + k_boundHeightMargin + subscriptBaseline(font) - lowerBoundLayout()->baseline(font);
   } else if (l == upperBoundLayout()) {
-    x = std::max({0, (k_symbolWidth-upperBoundSize.width())/2, (lowerBoundSizeWithVariableEquals().width()-upperBoundSize.width())/2});
-    y = baseline() - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
+    x = std::max({0, (k_symbolWidth-upperBoundSize.width())/2, (lowerBoundSizeWithVariableEquals(font).width()-upperBoundSize.width())/2});
+    y = baseline(font) - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
   } else if (l == argumentLayout()) {
-    x = std::max({k_symbolWidth, lowerBoundSizeWithVariableEquals().width(), upperBoundSize.width()})+k_argumentWidthMargin+ParenthesisLayoutNode::k_parenthesisWidth;
-    y = baseline() - argumentLayout()->baseline();
+    x = std::max({k_symbolWidth, lowerBoundSizeWithVariableEquals(font).width(), upperBoundSize.width()})+k_argumentWidthMargin+ParenthesisLayoutNode::k_parenthesisWidth;
+    y = baseline(font) - argumentLayout()->baseline(font);
   } else {
     assert(false);
   }
@@ -251,16 +251,16 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   return numberOfChar;
 }
 
-void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Render the "="
-  KDSize variableSize = variableLayout()->layoutSize();
-  KDPoint equalPosition = positionOfChild(variableLayout()).translatedBy(KDPoint(variableSize.width(), variableLayout()->baseline()-k_font->stringSize(k_equal).height()/2));
-  ctx->drawString(k_equal, equalPosition.translatedBy(p), k_font, expressionColor, backgroundColor);
+  KDSize variableSize = variableLayout()->layoutSize(font);
+  KDPoint equalPosition = positionOfChild(variableLayout(), font).translatedBy(KDPoint(variableSize.width(), variableLayout()->baseline(font)-font->stringSize(k_equal).height()/2));
+  ctx->drawString(k_equal, equalPosition.translatedBy(p), font, expressionColor, backgroundColor);
 
   // Render the parentheses
-  KDSize argumentSize = argumentLayout()->layoutSize();
-  KDPoint argumentPosition = positionOfChild(argumentLayout());
-  KDCoordinate argumentBaseline = argumentLayout()->baseline();
+  KDSize argumentSize = argumentLayout()->layoutSize(font);
+  KDPoint argumentPosition = positionOfChild(argumentLayout(), font);
+  KDCoordinate argumentBaseline = argumentLayout()->baseline(font);
 
   KDPoint leftParenthesisPosition = LeftParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(argumentSize, argumentBaseline).translatedBy(argumentPosition);
   KDPoint rightParenthesisPosition = RightParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(argumentSize, argumentBaseline).translatedBy(argumentPosition);
@@ -268,14 +268,14 @@ void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   RightParenthesisLayoutNode::RenderWithChildHeight(argumentSize.height(), ctx, rightParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
 }
 
-KDCoordinate SequenceLayoutNode::completeLowerBoundX() {
-  KDSize upperBoundSize = upperBoundLayout()->layoutSize();
- return std::max({0, (k_symbolWidth-lowerBoundSizeWithVariableEquals().width())/2,
-          (upperBoundSize.width()-lowerBoundSizeWithVariableEquals().width())/2});
+KDCoordinate SequenceLayoutNode::completeLowerBoundX(const KDFont * font) {
+  KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
+ return std::max({0, (k_symbolWidth-lowerBoundSizeWithVariableEquals(font).width())/2,
+          (upperBoundSize.width()-lowerBoundSizeWithVariableEquals(font).width())/2});
 }
 
-KDCoordinate SequenceLayoutNode::subscriptBaseline() {
-  return std::max<KDCoordinate>(std::max(variableLayout()->baseline(), lowerBoundLayout()->baseline()), k_font->stringSize(k_equal).height()/2);
+KDCoordinate SequenceLayoutNode::subscriptBaseline(const KDFont * font) {
+  return std::max<KDCoordinate>(std::max(variableLayout()->baseline(font), lowerBoundLayout()->baseline(font)), font->stringSize(k_equal).height()/2);
 }
 
 }

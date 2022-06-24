@@ -87,8 +87,8 @@ void TestCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float posi
     float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
     KDCoordinate graduationPosition = drawGraduationAtPosition(ctx, position);
 
-    KDPoint labelPosition = positionLabel(graduationPosition, verticalOrigin, symbol.layoutSize(), RelativePosition::None, RelativePosition::Before);
-    symbol.draw(ctx, labelPosition, KDColorBlack, k_backgroundColor);
+    KDPoint labelPosition = positionLabel(graduationPosition, verticalOrigin, symbol.layoutSize(k_font), RelativePosition::None, RelativePosition::Before);
+    symbol.draw(ctx, labelPosition, k_font, KDColorBlack, k_backgroundColor);
   }
 }
 
@@ -99,12 +99,12 @@ void TestCurveView::drawZLabelAndZGraduation(KDContext * ctx, float z) const {
     return;
   }
   if (m_test->hypothesisParams()->comparisonOperator() == HypothesisParams::ComparisonOperator::Different) {
-    Poincare::AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(m_test->testCriticalValueSymbol(KDFont::SmallFont));
+    Poincare::AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(m_test->testCriticalValueSymbol(k_font));
     drawLabelAndGraduationAtPosition(ctx, std::abs(z), absolute);
     absolute.invalidAllSizesPositionsAndBaselines();
-    drawLabelAndGraduationAtPosition(ctx, -std::abs(z), Poincare::HorizontalLayout::Builder(Poincare::CodePointLayout::Builder('-', KDFont::SmallFont), absolute));
+    drawLabelAndGraduationAtPosition(ctx, -std::abs(z), Poincare::HorizontalLayout::Builder(Poincare::CodePointLayout::Builder('-', k_font), absolute));
   } else {
-    drawLabelAndGraduationAtPosition(ctx, z, m_test->testCriticalValueSymbol(KDFont::SmallFont));
+    drawLabelAndGraduationAtPosition(ctx, z, m_test->testCriticalValueSymbol(k_font));
   }
 }
 

@@ -64,7 +64,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
   if (layout.isUninitialized()) {
     return defaultHeight;
   }
-  KDCoordinate sequenceHeight = layout.layoutSize().height();
+  KDCoordinate sequenceHeight = layout.layoutSize(k_font).height();
   return std::max<KDCoordinate>(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
 }
 
@@ -488,7 +488,7 @@ KDCoordinate ListController::privateBaseline(int j) const {
   if (layout.isUninitialized()) {
     return -1; // Baseline < 0 triggers default behaviour (centered alignment)
   }
-  return 0.5*(const_cast<ListController *>(this)->rowHeight(j)-layout.layoutSize().height())+layout.baseline();
+  return 0.5*(const_cast<ListController *>(this)->rowHeight(j)-layout.layoutSize(k_font).height())+layout.baseline(k_font);
 }
 
 void ListController::addModel() {

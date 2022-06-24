@@ -50,6 +50,7 @@ public:
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   void showLastSequence();
 private:
+  constexpr static const KDFont * k_font = KDFont::LargeFont;
   constexpr static KDCoordinate k_minTitleColumnWidth = 65;
   constexpr static KDCoordinate k_functionTitleSumOfMargins = 25;
   constexpr static KDCoordinate k_expressionCellVerticalMargin = 3;

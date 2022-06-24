@@ -194,39 +194,39 @@ int GridLayoutNode::indexAtRowColumn(int rowIndex, int columnIndex) const {
   return rowIndex * m_numberOfColumns + columnIndex;
 }
 
-KDSize GridLayoutNode::computeSize() {
-  return gridSize();
+KDSize GridLayoutNode::computeSize(const KDFont * font) {
+  return gridSize(font);
 }
 
-KDCoordinate GridLayoutNode::computeBaseline() {
-  return (height()+1)/2;
+KDCoordinate GridLayoutNode::computeBaseline(const KDFont * font) {
+  return (height(font)+1)/2;
 }
 
-KDPoint GridLayoutNode::positionOfChild(LayoutNode * l) {
+KDPoint GridLayoutNode::positionOfChild(LayoutNode * l, const KDFont * font) {
   int childIndex = indexOfChild(l);
   int rowIndex = rowAtChildIndex(childIndex);
   int columnIndex = columnAtChildIndex(childIndex);
   KDCoordinate x = 0;
   for (int j = 0; j < columnIndex; j++) {
-    x += columnWidth(j);
+    x += columnWidth(j, font);
   }
-  x += (columnWidth(columnIndex) - l->layoutSize().width())/2+ columnIndex * k_gridEntryMargin;
+  x += (columnWidth(columnIndex, font) - l->layoutSize(font).width())/2+ columnIndex * k_gridEntryMargin;
   KDCoordinate y = 0;
   for (int i = 0; i < rowIndex; i++) {
-    y += rowHeight(i);
+    y += rowHeight(i, font);
   }
-  y += rowBaseline(rowIndex) - l->baseline() + rowIndex * k_gridEntryMargin;
+  y += rowBaseline(rowIndex, font) - l->baseline(font) + rowIndex * k_gridEntryMargin;
   return KDPoint(x, y);
 }
 
 // Private
 
-KDCoordinate GridLayoutNode::rowBaseline(int i) {
+KDCoordinate GridLayoutNode::rowBaseline(int i, const KDFont * font) {
   assert(m_numberOfColumns > 0);
   KDCoordinate rowBaseline = 0;
   int j = 0;
   for (LayoutNode * l : childrenFromIndex(i*m_numberOfColumns)) {
-    rowBaseline = std::max(rowBaseline, l->baseline());
+    rowBaseline = std::max(rowBaseline, l->baseline(font));
     j++;
     if (j >= m_numberOfColumns) {
       break;
@@ -235,13 +235,13 @@ KDCoordinate GridLayoutNode::rowBaseline(int i) {
   return rowBaseline;
 }
 
-KDCoordinate GridLayoutNode::rowHeight(int i) const {
+KDCoordinate GridLayoutNode::rowHeight(int i, const KDFont * font) const {
   KDCoordinate underBaseline = 0;
   KDCoordinate aboveBaseline = 0;
   int j = 0;
   for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(i*m_numberOfColumns)) {
-    KDCoordinate b = l->baseline();
-    underBaseline = std::max<KDCoordinate>(underBaseline, l->layoutSize().height() - b);
+    KDCoordinate b = l->baseline(font);
+    underBaseline = std::max<KDCoordinate>(underBaseline, l->layoutSize(font).height() - b);
     aboveBaseline = std::max(aboveBaseline, b);
     j++;
     if (j >= m_numberOfColumns) {
@@ -251,22 +251,22 @@ KDCoordinate GridLayoutNode::rowHeight(int i) const {
   return aboveBaseline+underBaseline;
 }
 
-KDCoordinate GridLayoutNode::height() const {
+KDCoordinate GridLayoutNode::height(const KDFont * font) const {
   KDCoordinate totalHeight = 0;
   for (int i = 0; i < m_numberOfRows; i++) {
-    totalHeight += rowHeight(i);
+    totalHeight += rowHeight(i, font);
   }
   totalHeight += m_numberOfRows > 0 ? (m_numberOfRows-1)*k_gridEntryMargin : 0;
   return totalHeight;
 }
 
-KDCoordinate GridLayoutNode::columnWidth(int j) const {
+KDCoordinate GridLayoutNode::columnWidth(int j, const KDFont * font) const {
   KDCoordinate columnWidth = 0;
   int childIndex = j;
   int lastIndex = (m_numberOfRows-1)*m_numberOfColumns + j;
   for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(j)) {
     if (childIndex%m_numberOfColumns == j) {
-      columnWidth = std::max(columnWidth, l->layoutSize().width());
+      columnWidth = std::max(columnWidth, l->layoutSize(font).width());
       if (childIndex >= lastIndex) {
         break;
       }
@@ -276,10 +276,10 @@ KDCoordinate GridLayoutNode::columnWidth(int j) const {
   return columnWidth;
 }
 
-KDCoordinate GridLayoutNode::width() const {
+KDCoordinate GridLayoutNode::width(const KDFont * font) const {
   KDCoordinate totalWidth = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
-    totalWidth += columnWidth(j);
+    totalWidth += columnWidth(j, font);
   }
   totalWidth += m_numberOfColumns > 0 ? (m_numberOfColumns-1)*k_gridEntryMargin : 0;
   return totalWidth;

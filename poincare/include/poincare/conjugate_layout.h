@@ -30,16 +30,16 @@ public:
 
 protected:
   // LayoutNode
-  KDSize computeSize() override;
-  KDCoordinate computeBaseline() override;
-  KDPoint positionOfChild(LayoutNode * child) override;
+  KDSize computeSize(const KDFont * font) override;
+  KDCoordinate computeBaseline(const KDFont * font) override;
+  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override;
   constexpr static KDCoordinate k_overlineWidth = 1;
   constexpr static KDCoordinate k_overlineVerticalMargin = 1;
   LayoutNode * childLayout() { return childAtIndex(0); }
 
 private:
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
 class ConjugateLayout final : public LayoutOneChild<ConjugateLayout, ConjugateLayoutNode> {

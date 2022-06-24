@@ -73,7 +73,7 @@ void SequenceTitleCell::layoutSubviews(bool force) {
 float SequenceTitleCell::verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const {
   assert(m_orientation == Orientation::VerticalIndicator);
   Layout l = layout();
-  return ((float)(expressionBaseline - l.baseline()))/((float)rowHeight-l.layoutSize().height());
+  return ((float)(expressionBaseline - l.baseline(font())))/((float)rowHeight-l.layoutSize(font()).height());
 }
 
 }

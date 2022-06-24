@@ -171,62 +171,62 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name(), true);
 }
 
-KDSize NthRootLayoutNode::computeSize() {
-  KDSize radicandSize = radicandLayout()->layoutSize();
-  KDSize indexSize = adjustedIndexSize();
+KDSize NthRootLayoutNode::computeSize(const KDFont * font) {
+  KDSize radicandSize = radicandLayout()->layoutSize(font);
+  KDSize indexSize = adjustedIndexSize(font);
   KDSize newSize = KDSize(
       indexSize.width() + 3*k_widthMargin + k_radixLineThickness + radicandSize.width(),
-      baseline() + radicandSize.height() - radicandLayout()->baseline()
+      baseline(font) + radicandSize.height() - radicandLayout()->baseline(font)
       );
   return newSize;
 }
 
-KDCoordinate NthRootLayoutNode::computeBaseline() {
+KDCoordinate NthRootLayoutNode::computeBaseline(const KDFont * font) {
   return std::max<KDCoordinate>(
-      radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
-      adjustedIndexSize().height());
+      radicandLayout()->baseline(font) + k_radixLineThickness + k_heightMargin,
+      adjustedIndexSize(font).height());
 }
 
-KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child) {
+KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
-  KDSize indexSize = adjustedIndexSize();
+  KDSize indexSize = adjustedIndexSize(font);
   if (child == radicandLayout()) {
     x = indexSize.width() + 2*k_widthMargin + k_radixLineThickness;
-    y = baseline() - radicandLayout()->baseline();
+    y = baseline(font) - radicandLayout()->baseline(font);
   } else if (indexLayout() != nullptr && child == indexLayout()) {
     x = 0;
-    y = baseline() - indexSize.height();
+    y = baseline(font) - indexSize.height();
   } else {
     assert(false);
   }
   return KDPoint(x,y);
 }
 
-KDSize NthRootLayoutNode::adjustedIndexSize() {
+KDSize NthRootLayoutNode::adjustedIndexSize(const KDFont * font) {
   return indexLayout() == nullptr ?
     KDSize(k_leftRadixWidth, 0) :
-    KDSize(std::max(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height());
+    KDSize(std::max(k_leftRadixWidth, indexLayout()->layoutSize(font).width()), indexLayout()->layoutSize(font).height());
 }
 
-void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  KDSize radicandSize = radicandLayout()->layoutSize();
-  KDSize indexSize = adjustedIndexSize();
+void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  KDSize radicandSize = radicandLayout()->layoutSize(font);
+  KDSize indexSize = adjustedIndexSize(font);
   KDColor workingBuffer[k_leftRadixWidth*k_leftRadixHeight];
   KDRect leftRadixFrame(p.x() + indexSize.width() + k_widthMargin - k_leftRadixWidth,
-    p.y() + baseline() + radicandSize.height() - radicandLayout()->baseline() - k_leftRadixHeight,
+    p.y() + baseline(font) + radicandSize.height() - radicandLayout()->baseline(font) - k_leftRadixHeight,
     k_leftRadixWidth, k_leftRadixHeight);
   ctx->blendRectWithMask(leftRadixFrame, expressionColor, (const uint8_t *)radixPixel, (KDColor *)workingBuffer);
   // If the indice is higher than the root.
-  if (indexSize.height() > radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin) {
+  if (indexSize.height() > radicandLayout()->baseline(font) + k_radixLineThickness + k_heightMargin) {
     // Vertical radix bar
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
-                         p.y() + indexSize.height() - radicandLayout()->baseline() - k_radixLineThickness - k_heightMargin,
+                         p.y() + indexSize.height() - radicandLayout()->baseline(font) - k_radixLineThickness - k_heightMargin,
                          k_radixLineThickness,
                          radicandSize.height() + k_heightMargin + k_radixLineThickness), expressionColor);
     // Horizontal radix bar
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
-                         p.y() + indexSize.height() - radicandLayout()->baseline() - k_radixLineThickness - k_heightMargin,
+                         p.y() + indexSize.height() - radicandLayout()->baseline(font) - k_radixLineThickness - k_heightMargin,
                          radicandSize.width() + 2*k_widthMargin+1,
                          k_radixLineThickness), expressionColor);
   } else {

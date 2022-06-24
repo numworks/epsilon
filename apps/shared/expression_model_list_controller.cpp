@@ -16,7 +16,7 @@ namespace Shared {
 
 ExpressionModelListController::ExpressionModelListController(Responder * parentResponder, I18n::Message text) :
   ViewController(parentResponder),
-  m_addNewModel(KDFont::LargeFont, KDContext::k_alignLeft)
+  m_addNewModel(k_font, KDContext::k_alignLeft)
 {
   resetMemoization();
   m_addNewModel.setMessage(text);
@@ -164,8 +164,8 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
   if (m->layout().isUninitialized()) {
     return Metric::StoreRowHeight;
   }
-  KDCoordinate modelHeight = m->layout().layoutSize().height();
-  KDCoordinate modelHeightWithMargins = modelHeight + Metric::StoreRowHeight - KDFont::LargeFont->glyphSize().height();
+  KDCoordinate modelHeight = m->layout().layoutSize(k_font).height();
+  KDCoordinate modelHeightWithMargins = modelHeight + Metric::StoreRowHeight - k_font->glyphSize().height();
   return Metric::StoreRowHeight > modelHeightWithMargins ? Metric::StoreRowHeight : modelHeightWithMargins;
 }
 

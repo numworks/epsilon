@@ -56,6 +56,8 @@ private:
     void setWarningMessages(I18n::Message message0, I18n::Message message1);
     Escher::SelectableTableView * selectableTableView() { return &m_selectableTableView; }
   private:
+    constexpr static const KDFont * k_warningMessageFont = KDFont::SmallFont;
+
     int numberOfSubviews() const override;
     Escher::View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
@@ -111,6 +113,10 @@ private:
   constexpr static int k_numberOfApproximateValueCells = 1 + (k_maxNumberOfVisibleCells < EquationStore::k_maxNumberOfApproximateSolutions ? k_maxNumberOfVisibleCells : EquationStore::k_maxNumberOfApproximateSolutions);
   constexpr static int k_numberOfMessageCells = 2;
   constexpr static int k_numberOfEmptyCells = 2;
+
+  // Fonts
+  constexpr static const KDFont * k_deltaFont = KDFont::SmallFont;
+  constexpr static const KDFont * k_solutionsFont = KDFont::LargeFont;
 
   bool usedUserVariables() const { return m_equationStore->userVariablesUsed(); }
   int userVariablesMessageRow() const;

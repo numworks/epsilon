@@ -207,7 +207,7 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate
   KDCoordinate inputY = k_margin;
   KDCoordinate outputY = k_margin;
   if (m_calculationSingleLine && !m_inputView.layout().isUninitialized()) {
-    KDCoordinate inputBaseline = m_inputView.layout().baseline();
+    KDCoordinate inputBaseline = m_inputView.layout().baseline(m_inputView.font());
     KDCoordinate outputBaseline = m_scrollableOutputView.baseline();
     KDCoordinate baselineDifference = outputBaseline - inputBaseline;
     if (baselineDifference > 0) {
@@ -275,10 +275,10 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, P
     KDCoordinate maxVisibleWidth = Ion::Display::Width - (
         m_scrollableOutputView.leftMargin()
       + m_scrollableOutputView.rightMargin()
-      + 2 * KDFont::LargeFont->glyphSize().width()); // > arrow and = sign
+      + 2 * m_scrollableOutputView.font()->glyphSize().width()); // > arrow and = sign
     if (canChangeDisplayOutput
      && calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximate
-     && exactOutputLayout.layoutSize().width() > maxVisibleWidth)
+     && exactOutputLayout.layoutSize(m_scrollableOutputView.font()).width() > maxVisibleWidth)
     {
       calculation->forceDisplayOutput(::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle);
     }

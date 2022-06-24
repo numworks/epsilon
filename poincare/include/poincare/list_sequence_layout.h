@@ -34,13 +34,13 @@ private:
    // Sizing and positioning
   constexpr static KDCoordinate k_variableHorizontalMargin = 1;
   constexpr static KDCoordinate k_variableBaselineOffset = 2;
-  KDSize computeSize() override;
-  KDCoordinate computeBaseline() override;
-  KDPoint positionOfChild(LayoutNode * child) override;
-  KDPoint positionOfVariable();
-  KDCoordinate variableSlotBaseline();
-  KDCoordinate bracesWidth();
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  KDSize computeSize(const KDFont * font) override;
+  KDCoordinate computeBaseline(const KDFont * font) override;
+  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override;
+  KDPoint positionOfVariable(const KDFont * font);
+  KDCoordinate variableSlotBaseline(const KDFont * font);
+  KDCoordinate bracesWidth(const KDFont * font);
+  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 };
 
 class ListSequenceLayout final : public LayoutThreeChildren<ListSequenceLayout, ListSequenceLayoutNode> {

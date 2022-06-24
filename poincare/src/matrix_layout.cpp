@@ -192,17 +192,17 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 
 // Protected
 
-KDSize MatrixLayoutNode::computeSize() {
-  KDSize sizeWithoutBrackets = gridSize();
+KDSize MatrixLayoutNode::computeSize(const KDFont * font) {
+  KDSize sizeWithoutBrackets = gridSize(font);
   KDSize sizeWithBrackets = KDSize(
       sizeWithoutBrackets.width() + 2 * BracketPairLayoutNode::k_squareBracketWidth,
       sizeWithoutBrackets.height() + 2 * BracketPairLayoutNode::k_lineThickness);
   return sizeWithBrackets;
 }
 
-KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l) {
+KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l, const KDFont * font) {
   assert(indexOfChild(l) >= 0);
-  return GridLayoutNode::positionOfChild(l).translatedBy(KDPoint(KDPoint(BracketPairLayoutNode::k_squareBracketWidth, BracketPairLayoutNode::k_lineThickness)));
+  return GridLayoutNode::positionOfChild(l, font).translatedBy(KDPoint(KDPoint(BracketPairLayoutNode::k_squareBracketWidth, BracketPairLayoutNode::k_lineThickness)));
 }
 
 void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
@@ -331,8 +331,8 @@ bool MatrixLayoutNode::hasGraySquares() const {
   return false;
 }
 
-void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  BracketPairLayoutNode::RenderWithChildSize(gridSize(), ctx, p, expressionColor, backgroundColor);
+void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  BracketPairLayoutNode::RenderWithChildSize(gridSize(font), ctx, p, expressionColor, backgroundColor);
 }
 
 void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {

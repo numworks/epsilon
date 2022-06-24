@@ -30,9 +30,9 @@ public:
 #endif
 
 protected:
-  KDSize computeSize() override;
-  KDCoordinate computeBaseline() override;
-  KDPoint positionOfChild(LayoutNode * child) override;
+  KDSize computeSize(const KDFont * font) override;
+  KDCoordinate computeBaseline(const KDFont * font) override;
+  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override;
 
 private:
   // diff(f(x), x, a)
@@ -43,18 +43,18 @@ private:
   LayoutNode * variableLayout() { return childAtIndex(k_variableLayoutIndex); }
   LayoutNode * abscissaLayout() { return childAtIndex(k_abscissaLayoutIndex); }
 
-  KDPoint positionOfVariableInFractionSlot();
-  KDPoint positionOfVariableInAssignmentSlot();
-  KDCoordinate abscissaBaseline();
-  KDCoordinate fractionBarWidth();
-  KDCoordinate parenthesesWidth();
+  KDPoint positionOfVariableInFractionSlot(const KDFont * font);
+  KDPoint positionOfVariableInAssignmentSlot(const KDFont * font);
+  KDCoordinate abscissaBaseline(const KDFont * font);
+  KDCoordinate fractionBarWidth(const KDFont * font);
+  KDCoordinate parenthesesWidth(const KDFont * font);
 
   void setVariableSlot(bool fractionSlot, bool * shouldRecomputeLayout);
 
   constexpr static KDCoordinate k_dxHorizontalMargin = 2;
   constexpr static KDCoordinate k_barHorizontalMargin = 2;
   constexpr static KDCoordinate k_barWidth = 1;
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
  /* There are two slots for the variable name: the Fraction and the Assignment slots.
   * This member is used to make the two copies of the variable name interactive while storing the variable name only once. */

@@ -75,31 +75,31 @@ int BinomialCoefficientLayoutNode::serialize(char * buffer, int bufferSize, Pref
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::s_functionHelper.name(), true);
 }
 
-KDSize BinomialCoefficientLayoutNode::computeSize() {
+KDSize BinomialCoefficientLayoutNode::computeSize(const KDFont * font) {
   KDSize coefficientsSize = KDSize(
-      std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()),
-      knHeight());
+      std::max(nLayout()->layoutSize(font).width(), kLayout()->layoutSize(font).width()),
+      knHeight(font));
   KDCoordinate width = coefficientsSize.width() + 2*ParenthesisLayoutNode::k_parenthesisWidth;
   return KDSize(width, coefficientsSize.height());
 }
 
-KDCoordinate BinomialCoefficientLayoutNode::computeBaseline() {
-  return (knHeight()+1)/2;
+KDCoordinate BinomialCoefficientLayoutNode::computeBaseline(const KDFont * font) {
+  return (knHeight(font)+1)/2;
 }
 
-KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode * child) {
-  KDCoordinate horizontalCenter = ParenthesisLayoutNode::k_parenthesisWidth + std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width())/2;
+KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+  KDCoordinate horizontalCenter = ParenthesisLayoutNode::k_parenthesisWidth + std::max(nLayout()->layoutSize(font).width(), kLayout()->layoutSize(font).width())/2;
   if (child == nLayout()) {
-    return KDPoint(horizontalCenter - nLayout()->layoutSize().width()/2, 0);
+    return KDPoint(horizontalCenter - nLayout()->layoutSize(font).width()/2, 0);
   }
   assert(child == kLayout());
-  return KDPoint(horizontalCenter - kLayout()->layoutSize().width()/2, knHeight() - kLayout()->layoutSize().height());
+  return KDPoint(horizontalCenter - kLayout()->layoutSize(font).width()/2, knHeight(font) - kLayout()->layoutSize(font).height());
 }
 
-void BinomialCoefficientLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void BinomialCoefficientLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Render the parentheses.
-  KDCoordinate childHeight = knHeight();
-  KDCoordinate rightParenthesisPointX = std::max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()) + LeftParenthesisLayoutNode::k_parenthesisWidth;
+  KDCoordinate childHeight = knHeight(font);
+  KDCoordinate rightParenthesisPointX = std::max(nLayout()->layoutSize(font).width(), kLayout()->layoutSize(font).width()) + LeftParenthesisLayoutNode::k_parenthesisWidth;
   LeftParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p, expressionColor, backgroundColor);
   RightParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor, backgroundColor);
 }

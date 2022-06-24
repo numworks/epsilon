@@ -15,8 +15,10 @@ public:
                            float horizontalAlignment = KDContext::k_alignLeft,
                            float verticalAlignment = KDContext::k_alignCenter,
                            KDColor textColor = KDColorBlack,
-                           KDColor backgroundColor = KDColorWhite);
+                           KDColor backgroundColor = KDColorWhite,
+                           const KDFont * font = KDFont::LargeFont);
   Poincare::Layout layout() const;
+  const KDFont * font() const { return m_expressionView.font(); }
   void setLayout(Poincare::Layout layout);
   void setTextColor(KDColor color) { m_expressionView.setTextColor(color); }
   void setBackgroundColor(KDColor backgroundColor) override;

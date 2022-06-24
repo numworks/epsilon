@@ -48,14 +48,14 @@ private:
   constexpr static int k_minDigitsForThousandSeparator = 5;
 
   bool protectedIsIdenticalTo(Layout l) override;
-  KDSize computeSize() override;
-  KDCoordinate computeBaseline() override;
-  KDPoint positionOfChild(LayoutNode * child) override {
+  KDSize computeSize(const KDFont * font) override;
+  KDCoordinate computeBaseline(const KDFont * font) override;
+  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override {
     assert(false);
     return KDPointZero;
   }
   int firstNonDigitIndex();
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
   char m_string[0];
 };

@@ -21,8 +21,8 @@ namespace Solver {
 constexpr KDColor SolutionsController::ContentView::k_backgroundColor;
 
 SolutionsController::ContentView::ContentView(SolutionsController * controller) :
-  m_warningMessageView0(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, k_backgroundColor),
-  m_warningMessageView1(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, k_backgroundColor),
+  m_warningMessageView0(k_warningMessageFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, k_backgroundColor),
+  m_warningMessageView1(k_warningMessageFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, k_backgroundColor),
   m_selectableTableView(controller, controller, controller, controller),
   m_displayWarningMoreSolutions(false)
 {
@@ -76,7 +76,7 @@ View * SolutionsController::ContentView::subviewAtIndex(int index) {
 
 void SolutionsController::ContentView::layoutSubviews(bool force) {
   if (m_displayWarningMoreSolutions) {
-    KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
+    KDCoordinate textHeight = k_warningMessageFont->glyphSize().height();
     KDCoordinate topMargin;
     // Empty warning messages are handled to center both single or double lines
     KDCoordinate warningMessage0Height = m_warningMessageView0.text()[0] == 0 ? 0 : textHeight;
@@ -110,21 +110,21 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   size_t lenDelta = strlen(delta);
   const char * equalB = "=b";
   m_delta2Layout = Poincare::HorizontalLayout::Builder(
-    LayoutHelper::String(delta, lenDelta, KDFont::SmallFont),
-    LayoutHelper::String(equalB, strlen(equalB), KDFont::SmallFont),
-    VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript),
-    LayoutHelper::String("-4ac", 4, KDFont::SmallFont)
+    LayoutHelper::String(delta, lenDelta, k_deltaFont),
+    LayoutHelper::String(equalB, strlen(equalB), k_deltaFont),
+    VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', k_deltaFont), VerticalOffsetLayoutNode::Position::Superscript),
+    LayoutHelper::String("-4ac", 4, k_deltaFont)
   );
-  m_delta3Layout = LayoutHelper::String(delta, lenDelta, KDFont::SmallFont);
+  m_delta3Layout = LayoutHelper::String(delta, lenDelta, k_deltaFont);
   for (int i = 0; i < k_numberOfExactValueCells; i++) {
     m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }
   for (int i = 0; i < k_numberOfApproximateValueCells; i++) {
-    m_approximateValueCells[i].setFont(KDFont::LargeFont);
+    m_approximateValueCells[i].setFont(k_solutionsFont);
   }
   for (int i = 0; i < k_numberOfSymbolCells; i++) {
     m_symbolCells[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
-    m_symbolCells[i].setFont(KDFont::LargeFont);
+    m_symbolCells[i].setFont(k_solutionsFont);
   }
 }
 
@@ -284,9 +284,9 @@ KDCoordinate SolutionsController::rowHeight(int j) {
     }
     Poincare::Layout exactLayout = m_equationStore->exactSolutionLayoutAtIndex(j, true);
     Poincare::Layout approximateLayout = m_equationStore->exactSolutionLayoutAtIndex(j, false);
-    KDCoordinate exactLayoutHeight = exactLayout.layoutSize().height();
-    KDCoordinate approximateLayoutHeight = approximateLayout.layoutSize().height();
-    KDCoordinate layoutHeight = std::max(exactLayout.baseline(), approximateLayout.baseline()) + std::max(exactLayoutHeight-exactLayout.baseline(), approximateLayoutHeight-approximateLayout.baseline());
+    KDCoordinate exactLayoutHeight = exactLayout.layoutSize(k_solutionsFont).height();
+    KDCoordinate approximateLayoutHeight = approximateLayout.layoutSize(k_solutionsFont).height();
+    KDCoordinate layoutHeight = std::max(exactLayout.baseline(k_solutionsFont), approximateLayout.baseline(k_solutionsFont)) + std::max(exactLayoutHeight-exactLayout.baseline(k_solutionsFont), approximateLayoutHeight-approximateLayout.baseline(k_solutionsFont));
     return layoutHeight + 2 * Metric::CommonSmallMargin;
   }
   if (j == rowOfUserVariablesMessage || j == rowOfUserVariablesMessage - 1 ) {
@@ -296,7 +296,7 @@ KDCoordinate SolutionsController::rowHeight(int j) {
   // TODO: memoize user symbols if too slow
   const char * symbol = m_equationStore->userVariableAtIndex(j - rowOfUserVariablesMessage - 1);
   Poincare::Layout layout = PoincareHelpers::CreateLayout(App::app()->localContext()->expressionForSymbolAbstract(Poincare::Symbol::Builder(symbol, strlen(symbol)), false));
-  return layout.layoutSize().height() + 2 * Metric::CommonSmallMargin;
+  return layout.layoutSize(k_solutionsFont).height() + 2 * Metric::CommonSmallMargin;
 }
 
 KDCoordinate SolutionsController::cumulatedWidthFromIndex(int i) {

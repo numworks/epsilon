@@ -53,10 +53,10 @@ public:
 
 protected:
   // LayoutNode
-  KDSize computeSize() override;
-  KDCoordinate computeBaseline() override;
-  KDPoint positionOfChild(LayoutNode * l) override;
-  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd) const;
+  KDSize computeSize(const KDFont * font) override;
+  KDCoordinate computeBaseline(const KDFont * font) override;
+  KDPoint positionOfChild(LayoutNode * l, const KDFont * font) override;
+  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, const KDFont * font) const;
 
 private:
   bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) override;
@@ -64,7 +64,7 @@ private:
   bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override;
   void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
+  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
   // See comment on NAryExpressionNode
   uint16_t m_numberOfChildren;
 };
@@ -98,7 +98,7 @@ public:
 
   void serializeChildren(int firstIndex, int lastIndex, char * buffer, int bufferSize);
 
-  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd) const { return static_cast<HorizontalLayoutNode *>(node())->relativeSelectionRect(selectionStart, selectionEnd); }
+  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, const KDFont * font) const { return static_cast<HorizontalLayoutNode *>(node())->relativeSelectionRect(selectionStart, selectionEnd, font); }
 private:
   void removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor = nullptr);
 };

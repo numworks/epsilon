@@ -72,10 +72,10 @@ public:
   bool isIdenticalTo(Layout l);
 
   // Rendering
-  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed);
-  KDPoint absoluteOrigin();
-  KDSize layoutSize();
-  KDCoordinate baseline();
+  void draw(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed);
+  KDPoint absoluteOrigin(const KDFont * font);
+  KDSize layoutSize(const KDFont * font);
+  KDCoordinate baseline(const KDFont * font);
   void setMargin(bool hasMargin) { m_margin = hasMargin; }
   int leftMargin() { return m_margin ? Escher::Metric::OperatorHorizontalMargin : 0; }
   //TODO: invalid cache when tempering with hierarchy
@@ -163,9 +163,9 @@ protected:
   Direct<LayoutNode> childrenFromIndex(int i) { return Direct<LayoutNode>(this, i); }
 
   // Sizing and positioning
-  virtual KDSize computeSize() = 0;
-  virtual KDCoordinate computeBaseline() = 0;
-  virtual KDPoint positionOfChild(LayoutNode * child) = 0;
+  virtual KDSize computeSize(const KDFont * font) = 0;
+  virtual KDCoordinate computeBaseline(const KDFont * font) = 0;
+  virtual KDPoint positionOfChild(LayoutNode * child, const KDFont * font) = 0;
 
   /* m_baseline is the signed vertical distance from the top of the layout to
    * the fraction bar of an hypothetical fraction sibling layout. If the top of
@@ -188,7 +188,7 @@ private:
     void * resultPosition,
     int * resultScore,
     bool forSelection);
-  virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) = 0;
+  virtual void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) = 0;
   void changeGraySquaresOfAllMatrixRelatives(bool add, bool ancestors, bool * changedSquares);
 };
 

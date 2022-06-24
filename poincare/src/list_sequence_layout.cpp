@@ -86,52 +86,52 @@ Layout ListSequenceLayoutNode::XNTLayout(int childIndex) const {
   return LayoutNode::XNTLayout();
 }
 
-KDSize ListSequenceLayoutNode::computeSize() {
-  KDPoint upperBoundPosition = positionOfChild(upperBoundLayout());
-  KDSize upperBoundSize = upperBoundLayout()->layoutSize();
+KDSize ListSequenceLayoutNode::computeSize(const KDFont * font) {
+  KDPoint upperBoundPosition = positionOfChild(upperBoundLayout(), font);
+  KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
   return KDSize(
       upperBoundPosition.x() + upperBoundSize.width(),
-      std::max(upperBoundPosition.y() + upperBoundSize.height(), positionOfVariable().y() + variableLayout()->layoutSize().height()));
+      std::max(upperBoundPosition.y() + upperBoundSize.height(), positionOfVariable(font).y() + variableLayout()->layoutSize(font).height()));
 }
 
-KDPoint ListSequenceLayoutNode::positionOfChild(LayoutNode * child) {
+KDPoint ListSequenceLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
   if (child == variableLayout()) {
-    return positionOfVariable();
+    return positionOfVariable(font);
   }
   if (child == functionLayout()) {
-    return KDPoint(CurlyBraceLayoutNode::k_curlyBraceWidth, baseline() - functionLayout()->baseline());
+    return KDPoint(CurlyBraceLayoutNode::k_curlyBraceWidth, baseline(font) - functionLayout()->baseline(font));
   }
   assert(child == upperBoundLayout());
   return KDPoint(
-      positionOfVariable().x() + variableLayout()->layoutSize().width() + KDFont::LargeFont->stringSize("≤").width(),
-      variableSlotBaseline() - upperBoundLayout()->baseline());
+      positionOfVariable(font).x() + variableLayout()->layoutSize(font).width() + font->stringSize("≤").width(),
+      variableSlotBaseline(font) - upperBoundLayout()->baseline(font));
 }
 
-KDPoint ListSequenceLayoutNode::positionOfVariable() {
+KDPoint ListSequenceLayoutNode::positionOfVariable(const KDFont * font) {
   return KDPoint(
-     k_variableHorizontalMargin + bracesWidth(),
-     variableSlotBaseline() - variableLayout()->baseline());
+     k_variableHorizontalMargin + bracesWidth(font),
+     variableSlotBaseline(font) - variableLayout()->baseline(font));
 }
 
-KDCoordinate ListSequenceLayoutNode::variableSlotBaseline() {
-  return std::max({static_cast<int>(CurlyBraceLayoutNode::HeightGivenChildHeight(functionLayout()->layoutSize().height()) + k_variableBaselineOffset),
-                  static_cast<int>(upperBoundLayout()->baseline()),
-                  static_cast<int>(variableLayout()->baseline())});
+KDCoordinate ListSequenceLayoutNode::variableSlotBaseline(const KDFont * font) {
+  return std::max({static_cast<int>(CurlyBraceLayoutNode::HeightGivenChildHeight(functionLayout()->layoutSize(font).height()) + k_variableBaselineOffset),
+                  static_cast<int>(upperBoundLayout()->baseline(font)),
+                  static_cast<int>(variableLayout()->baseline(font))});
 }
 
-KDCoordinate ListSequenceLayoutNode::computeBaseline() {
-  return CurlyBraceLayoutNode::BaselineGivenChildHeightAndBaseline(functionLayout()->layoutSize().height(), functionLayout()->baseline());
+KDCoordinate ListSequenceLayoutNode::computeBaseline(const KDFont * font) {
+  return CurlyBraceLayoutNode::BaselineGivenChildHeightAndBaseline(functionLayout()->layoutSize(font).height(), functionLayout()->baseline(font));
 }
 
-KDCoordinate ListSequenceLayoutNode::bracesWidth() {
-  return 2 * CurlyBraceLayoutNode::k_curlyBraceWidth + functionLayout()->layoutSize().width();
+KDCoordinate ListSequenceLayoutNode::bracesWidth(const KDFont * font) {
+  return 2 * CurlyBraceLayoutNode::k_curlyBraceWidth + functionLayout()->layoutSize(font).width();
 }
 
-void ListSequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void ListSequenceLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Draw {  }
-  KDSize functionSize = functionLayout()->layoutSize();
-  KDPoint functionPosition = positionOfChild(functionLayout());
-  KDCoordinate functionBaseline = functionLayout()->baseline();
+  KDSize functionSize = functionLayout()->layoutSize(font);
+  KDPoint functionPosition = positionOfChild(functionLayout(), font);
+  KDCoordinate functionBaseline = functionLayout()->baseline(font);
 
   KDPoint leftBracePosition = LeftCurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(functionSize, functionBaseline).translatedBy(functionPosition);
   LeftCurlyBraceLayoutNode::RenderWithChildHeight(functionSize.height(), ctx, leftBracePosition.translatedBy(p), expressionColor, backgroundColor);
@@ -140,8 +140,8 @@ void ListSequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressi
   RightCurlyBraceLayoutNode::RenderWithChildHeight(functionSize.height(), ctx, rightBracePosition.translatedBy(p), expressionColor, backgroundColor);
 
   // Draw k≤...
-  KDPoint inferiorEqualPosition = KDPoint(positionOfVariable().x() + variableLayout()->layoutSize().width(), variableSlotBaseline() - KDFont::LargeFont->glyphSize().height() / 2);
-  ctx->drawString("≤", inferiorEqualPosition.translatedBy(p), KDFont::LargeFont, expressionColor, backgroundColor);
+  KDPoint inferiorEqualPosition = KDPoint(positionOfVariable(font).x() + variableLayout()->layoutSize(font).width(), variableSlotBaseline(font) - font->glyphSize().height() / 2);
+  ctx->drawString("≤", inferiorEqualPosition.translatedBy(p), font, expressionColor, backgroundColor);
 }
 
 }

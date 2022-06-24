@@ -41,15 +41,14 @@ public:
 
 protected:
   // LayoutNode
-  KDSize computeSize() override;
-  KDCoordinate computeBaseline() override;
-  KDCoordinate centralArgumentHeight();
-  KDPoint positionOfChild(LayoutNode * child) override;
+  KDSize computeSize(const KDFont * font) override;
+  KDCoordinate computeBaseline(const KDFont * font) override;
+  KDCoordinate centralArgumentHeight(const KDFont * font);
+  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override;
 
 private:
   constexpr static int k_integrandLayoutIndex = 0;
   constexpr static int k_differentialLayoutIndex = 1;
-  constexpr static const KDFont * k_font = KDFont::LargeFont;
   constexpr static KDCoordinate k_boundVerticalMargin = 4;
   constexpr static KDCoordinate k_boundHorizontalMargin = 3;
   constexpr static KDCoordinate k_differentialHorizontalMargin = 3;
@@ -61,7 +60,7 @@ private:
   LayoutNode * differentialLayout() { return childAtIndex(k_differentialLayoutIndex); } // dx
   LayoutNode * lowerBoundLayout() { return childAtIndex(2); } // a
   LayoutNode * upperBoundLayout() { return childAtIndex(3); } // b
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
   enum class BoundPosition : uint8_t{
     UpperBound,
@@ -77,7 +76,7 @@ private:
   IntegralLayoutNode * nextNestedIntegral();
   IntegralLayoutNode * previousNestedIntegral();
   IntegralLayoutNode * nestedIntegral(NestedPosition position) { return position == NestedPosition::Next ? nextNestedIntegral() : previousNestedIntegral(); }
-  KDCoordinate boundMaxHeight(BoundPosition position);
+  KDCoordinate boundMaxHeight(BoundPosition position, const KDFont * font);
   IntegralLayoutNode * mostNestedIntegral (NestedPosition position);
 };
 

@@ -60,6 +60,7 @@ protected:
   Escher::EvenOddMessageTextCell m_addNewModel;
 private:
   // Memoization
+  constexpr static const KDFont * k_font = KDFont::LargeFont;
   constexpr static int k_resetedMemoizedValue = -1;
   void resetMemoization();
 

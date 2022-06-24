@@ -101,8 +101,8 @@ int BracketPairLayoutNode::serialize(char * buffer, int bufferSize, Preferences:
   return numberOfChar;
 }
 
-void BracketPairLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  renderWithParameters(childLayout()->layoutSize(), ctx, p, expressionColor, backgroundColor, verticalMargin(), externWidthMargin(), verticalExternMargin(), widthMargin(), renderTopBar(), renderBottomBar(), renderDoubleBar());
+void BracketPairLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  renderWithParameters(childLayout()->layoutSize(font), ctx, p, expressionColor, backgroundColor, verticalMargin(), externWidthMargin(), verticalExternMargin(), widthMargin(), renderTopBar(), renderBottomBar(), renderDoubleBar());
 }
 
 void BracketPairLayoutNode::renderWithParameters(KDSize childSize, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, KDCoordinate verticalMargin, KDCoordinate externWidthMargin, KDCoordinate verticalExternMargin, KDCoordinate widthMargin, bool renderTopBar, bool renderBottomBar, bool renderDoubleBar) {
@@ -142,8 +142,8 @@ void BracketPairLayoutNode::renderWithParameters(KDSize childSize, KDContext * c
   }
 }
 
-KDSize BracketPairLayoutNode::computeSize() {
-  KDSize childSize = childLayout()->layoutSize();
+KDSize BracketPairLayoutNode::computeSize(const KDFont * font) {
+  KDSize childSize = childLayout()->layoutSize(font);
   KDCoordinate horizontalCoordinates = childSize.width() + 2*externWidthMargin() + 2*widthMargin() + 2*k_lineThickness;
   if (renderDoubleBar()) {
     horizontalCoordinates += 2*k_lineThickness + 2*widthMargin();
@@ -151,11 +151,11 @@ KDSize BracketPairLayoutNode::computeSize() {
   return KDSize(horizontalCoordinates, childSize.height() + 2*verticalMargin() + 2*verticalExternMargin());
 }
 
-KDCoordinate BracketPairLayoutNode::computeBaseline() {
-  return childLayout()->baseline() + verticalMargin() + verticalExternMargin();
+KDCoordinate BracketPairLayoutNode::computeBaseline(const KDFont * font) {
+  return childLayout()->baseline(font) + verticalMargin() + verticalExternMargin();
 }
 
-KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode * child) {
+KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
   assert(child == childLayout());
   KDCoordinate horizontalCoordinates = widthMargin() + externWidthMargin() + k_lineThickness;
   if (renderDoubleBar()) {

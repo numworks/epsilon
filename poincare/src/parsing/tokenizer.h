@@ -36,15 +36,15 @@ public:
     }
   }
 private:
-  typedef bool (*PopTest)(CodePoint c, CodePoint context);
   static bool ShouldAddCodePointToIdentifier(const CodePoint c);
-  const CodePoint nextCodePoint(PopTest popTest, CodePoint context = UCodePointNull, bool * testResult = nullptr);
+  typedef bool (*PopTest)(CodePoint c);
+  const CodePoint nextCodePoint(PopTest popTest, bool * testResult = nullptr);
   bool canPopCodePoint(const CodePoint c);
-  size_t popWhile(PopTest popTest, CodePoint context = UCodePointNull);
+  size_t popWhile(PopTest popTest);
   size_t popDigits();
   size_t popBinaryDigits();
   size_t popHexadecimalDigits();
-  size_t popUnitOrConstant();
+  size_t popCustomIdentifier();
   size_t popIdentifier();
   Token popNumber();
 

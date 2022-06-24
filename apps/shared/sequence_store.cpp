@@ -66,7 +66,7 @@ Shared::ExpressionModelHandle * SequenceStore::memoizedModelAtIndex(int cacheInd
 
 float SequenceStore::smallestInitialRank() const {
   int smallestRank = Shared::Sequence::k_maxInitialRank;
-  for (int i = 0; i < numberOfActiveFunctions(); i++) {
+  for (int i = 0, end = numberOfActiveFunctions(); i < end; i++) {
     Ion::Storage::Record record = activeRecordAtIndex(i);
     Shared::Sequence * s = modelForRecord(record);
     smallestRank = std::min(s->initialRank(), smallestRank);

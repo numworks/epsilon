@@ -29,6 +29,21 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   function = App::app()->functionStore()->modelForRecord(record); // Reload the expiring pointer
   double dir = (direction > 0 ? 1.0 : -1.0);
   double step = function->isAlongX() ? static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit : (tMax-tMin)/k_definitionDomainDivisor;
+  double scrollSpeedFactor = static_cast<double>(scrollSpeed);
+  if (function->canDisplayDerivative()) {
+    // Use the local derivative to slow down the cursor's step if needed
+    double slope = function->approximateDerivative(t, context, *subCurveIndex);
+    // If yGridUnit is twice xGridUnit, visible slope is halved
+    slope *= range->xGridUnit() / range->yGridUnit();
+    /* Assuming the curve is a straight line of slope s. To move the cursor at a
+     * fixed distance t along the line, the actual x-axis distance needed is
+     * t' = t * cos(θ) with θ the angle between the line and the x-axis.
+     * We also have tan(θ) = (s * t) / t = s
+     * As a result, t' = t * cos(tan(s)) = t / sqrt(1 + s^2) */
+    scrollSpeedFactor /= std::sqrt(1.0 + slope*slope);
+    // Cap the scroll speed reduction to be able to cross vertical asymptotes
+    scrollSpeedFactor = std::max(0.25, scrollSpeedFactor);
+  }
 
   bool specialConicCursorMove = false;
   if (function->isConic() && function->numberOfSubCurves() == 2) {
@@ -42,7 +57,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   }
 
   // Cursor's default horizontal movement
-  t += dir * step * scrollSpeed;
+  t += dir * step * scrollSpeedFactor;
 
   // If possible, round t so that f(x) matches f evaluated at displayed x
   t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);

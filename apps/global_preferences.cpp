@@ -23,7 +23,8 @@ int GlobalPreferences::sequencesInitialRank() const {
   switch(preferences().sequencesInitialRank()) {
   case CountryPreferences::SequencesInitialRank::Zero:
     return 0;
-  case CountryPreferences::SequencesInitialRank::One:
+  default:
+    assert(preferences().sequencesInitialRank() == CountryPreferences::SequencesInitialRank::One):
     return 1;
   }
 }

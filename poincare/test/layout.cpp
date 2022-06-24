@@ -29,8 +29,9 @@ QUIZ_CASE(poincare_layout_constructors) {
   SumLayout e25 = SumLayout::Builder(e21, e22, e23, e24);
   VerticalOffsetLayout e26 = VerticalOffsetLayout::Builder(e25, VerticalOffsetLayoutNode::Position::Superscript);
   CodePointLayout e27 = CodePointLayout::Builder('t');
-  DerivativeLayout e28 = DerivativeLayout::Builder(e15, e27, e26);
-  Layout e29 = LayoutHelper::String("Hé");
+  FirstOrderDerivativeLayout e28 = FirstOrderDerivativeLayout::Builder(e15, e27, e26);
+  HigherOrderDerivativeLayout e29 = HigherOrderDerivativeLayout::Builder(e15, e27, e26, e21);
+  Layout e30 = LayoutHelper::String("Hé");
 }
 
 QUIZ_CASE(poincare_layout_comparison) {

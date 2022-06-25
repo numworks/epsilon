@@ -452,7 +452,7 @@ void assert_additional_results_compute_to(const char * expression, const char * 
   Expression e = parse_expression(expression, &globalContext, false).reduceAndRemoveUnit(reductionContext, &units);
   double value = e.approximateToScalar<double>(&globalContext, Cartesian, Degree);
 
-  if (!Unit::ShouldDisplayAdditionalOutputs(value, units, unitFormat)) {
+  if (!Unit::HaveAdditionalOutputs(value, units, unitFormat)) {
     quiz_assert(length == 0);
     return;
   }

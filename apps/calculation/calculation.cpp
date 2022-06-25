@@ -257,8 +257,9 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType(Co
   if (o.hasUnit()) {
     Expression unit;
     PoincareHelpers::ReduceAndRemoveUnit(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
-    double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
-    return (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())) ? AdditionalInformationType::Unit : AdditionalInformationType::None;
+    UnitNode::Vector<int> vector = UnitNode::Vector<int>::FromBaseUnits(unit);
+    const Unit::Representative * representative = Unit::Representative::RepresentativeForDimension(vector);
+    return representative != nullptr ? AdditionalInformationType::Unit : AdditionalInformationType::None;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
     return AdditionalInformationType::Integer;

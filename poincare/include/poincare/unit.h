@@ -705,7 +705,7 @@ public:
   static Unit Builder(const Representative * representative, const Prefix * prefix);
   static bool CanParse(const char * symbol, size_t length, const Representative * * representative, const Prefix * * prefix);
   static void ChooseBestRepresentativeAndPrefixForValue(Expression units, double * value, ExpressionNode::ReductionContext reductionContext);
-  static bool ShouldDisplayAdditionalOutputs(double value, Expression unit, Preferences::UnitFormat unitFormat);
+  static bool HaveAdditionalOutputs(double value, Expression unit, Preferences::UnitFormat unitFormat);
   static int SetAdditionalExpressionsAndMessage(Expression units, double value, Expression * dest, int availableLength, ExpressionNode::ReductionContext reductionContext, I18n::Message * message);
   static Expression BuildSplit(double value, const Unit * units, int length, ExpressionNode::ReductionContext reductionContext);
   static Expression ConvertTemperatureUnits(Expression e, Unit unit, ExpressionNode::ReductionContext reductionContext);

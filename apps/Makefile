@@ -58,6 +58,7 @@ apps_src += $(addprefix apps/,\
   math_variable_box_empty_controller.cpp \
   shift_alpha_lock_view.cpp \
   suspend_timer.cpp \
+  timer_manager.cpp \
   title_bar_view.cpp \
 )
 
@@ -117,6 +118,7 @@ apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_graph_te
 apps_tests_src += $(addprefix apps/,\
   alternate_empty_nested_menu_controller.cpp \
   global_preferences.cpp \
+  dummy_timer_manager.cpp \
 )
 
 ifeq ($(THEME_REPO),local)

@@ -86,6 +86,7 @@
 #include <escher/table_view_data_source.h>
 #include <escher/tiled_view.h>
 #include <escher/timer.h>
+#include <escher/timer_manager.h>
 #include <escher/toolbox.h>
 #include <escher/toolbox_message_tree.h>
 #include <escher/transparent_view.h>

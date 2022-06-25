@@ -1,5 +1,4 @@
 #include <escher/slideable_message_text_view.h>
-#include <apps/apps_container.h>
 
 SlideableMessageTextView::SlideableMessageTextView(const KDFont * font, I18n::Message message, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   MessageTextView(font, message, horizontalAlignment, verticalAlignment, textColor, backgroundColor),

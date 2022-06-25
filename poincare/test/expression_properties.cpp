@@ -457,7 +457,7 @@ void assert_additional_results_compute_to(const char * expression, const char * 
     return;
   }
   I18n::Message unitMessage;
-  const int numberOfResults = Unit::SetAdditionalExpressionsAndMessage(units, value, additional, maxNumberOfResults, reductionContext, unitMessage);
+  const int numberOfResults = Unit::SetAdditionalExpressionsAndMessage(units, value, additional, maxNumberOfResults, reductionContext, &unitMessage);
 
   quiz_assert(numberOfResults == length);
   for (int i = 0; i < length; i++) {

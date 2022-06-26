@@ -155,6 +155,7 @@
     type *_array = (type *)array;\
     type tmp;\
     uint16_t itmp, c, q = (N), p, r = (N) >> 1;\
+    assert(N);\
     for (;;) {\
         if (r > 0) {\
             r--;\

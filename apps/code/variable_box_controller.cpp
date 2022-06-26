@@ -823,7 +823,7 @@ bool VariableBoxController::importationSourceIsModule(const char * sourceName, c
     return true;
   }
   // The sourceName might be a module that is not in the toolbox
-  return mp_module_get(qstr_from_str(sourceName)) != MP_OBJ_NULL;
+  return mp_module_get_loaded_or_builtin(qstr_from_str(sourceName)) != MP_OBJ_NULL;
 }
 
 bool VariableBoxController::importationSourceIsScript(const char * sourceName, const char * * scriptFullName, Script * retrievedScript) {

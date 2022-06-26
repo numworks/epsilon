@@ -46,7 +46,6 @@ ifeq ($(ARCH),x86)
 # x86
 CROSS =
 CFLAGS += -m32 -fno-stack-protector
-MPY_CROSS_FLAGS += -mcache-lookup-bc
 MICROPY_FLOAT_IMPL ?= double
 
 else ifeq ($(ARCH),x64)
@@ -54,8 +53,14 @@ else ifeq ($(ARCH),x64)
 # x64
 CROSS =
 CFLAGS += -fno-stack-protector
-MPY_CROSS_FLAGS += -mcache-lookup-bc
 MICROPY_FLOAT_IMPL ?= double
+
+else ifeq ($(ARCH),armv6m)
+
+# thumb
+CROSS = arm-none-eabi-
+CFLAGS += -mthumb -mcpu=cortex-m0
+MICROPY_FLOAT_IMPL ?= none
 
 else ifeq ($(ARCH),armv7m)
 

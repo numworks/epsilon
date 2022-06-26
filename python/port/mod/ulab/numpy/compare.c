@@ -20,11 +20,17 @@
 #include "../ulab.h"
 #include "../ndarray_operators.h"
 #include "../ulab_tools.h"
+#include "carray/carray_tools.h"
 #include "compare.h"
 
 static mp_obj_t compare_function(mp_obj_t x1, mp_obj_t x2, uint8_t op) {
     ndarray_obj_t *lhs = ndarray_from_mp_obj(x1, 0);
     ndarray_obj_t *rhs = ndarray_from_mp_obj(x2, 0);
+    #if ULAB_SUPPORTS_COMPLEX
+    if((lhs->dtype == NDARRAY_COMPLEX) || (rhs->dtype == NDARRAY_COMPLEX)) {
+        NOT_IMPLEMENTED_FOR_COMPLEX()
+    }
+    #endif
     uint8_t ndim = 0;
     size_t *shape = m_new(size_t, ULAB_MAX_DIMS);
     int32_t *lstrides = m_new(int32_t, ULAB_MAX_DIMS);
@@ -197,6 +203,7 @@ static mp_obj_t compare_isinf_isfinite(mp_obj_t _x, uint8_t mask) {
         }
     } else if(mp_obj_is_type(_x, &ulab_ndarray_type)) {
         ndarray_obj_t *x = MP_OBJ_TO_PTR(_x);
+        COMPLEX_DTYPE_NOT_IMPLEMENTED(x->dtype)
         ndarray_obj_t *results = ndarray_new_dense_ndarray(x->ndim, x->shape, NDARRAY_BOOL);
         // At this point, results is all False
         uint8_t *rarray = (uint8_t *)results->array;
@@ -312,6 +319,10 @@ mp_obj_t compare_where(mp_obj_t _condition, mp_obj_t _x, mp_obj_t _y) {
     ndarray_obj_t *c = ndarray_from_mp_obj(_condition, 0);
     ndarray_obj_t *x = ndarray_from_mp_obj(_x, 0);
     ndarray_obj_t *y = ndarray_from_mp_obj(_y, 0);
+
+    COMPLEX_DTYPE_NOT_IMPLEMENTED(c->dtype)
+    COMPLEX_DTYPE_NOT_IMPLEMENTED(x->dtype)
+    COMPLEX_DTYPE_NOT_IMPLEMENTED(y->dtype)
 
     int32_t *cstrides = m_new(int32_t, ULAB_MAX_DIMS);
     int32_t *xstrides = m_new(int32_t, ULAB_MAX_DIMS);

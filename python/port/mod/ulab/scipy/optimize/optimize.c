@@ -121,7 +121,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(optimize_bisect_obj, 3, optimize_bisect);
 //|     Find a minimum of the function ``f(x)`` using the downhill simplex method.
 //|     The located ``x`` is within ``fxtol`` of the actual minimum, and ``f(x)``
 //|     is within ``fatol`` of the actual minimum unless more than ``maxiter``
-//|     steps are required."""
+//|     steps are requried."""
 //|     ...
 //|
 
@@ -344,7 +344,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(optimize_curve_fit_obj, 2, optimize_curve_fit);
 //|
 //|     Find a solution (zero) of the function ``f(x)`` using Newton's Method.
 //|     The result is accurate to within ``xtol * rtol * |f(x)|`` unless more than
-//|     ``maxiter`` steps are required."""
+//|     ``maxiter`` steps are requried."""
 //|     ...
 //|
 

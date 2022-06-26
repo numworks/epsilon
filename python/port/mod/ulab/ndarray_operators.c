@@ -17,6 +17,7 @@
 #include "ndarray_operators.h"
 #include "ulab.h"
 #include "ulab_tools.h"
+#include "numpy/carray/carray.h"
 
 /*
     This file contains the actual implementations of the various
@@ -24,7 +25,8 @@
 
     These are the upcasting rules of the binary operators
 
-    - if one of the operarands is a float, the result is always float
+    - if complex is supported, and if one of the operarands is a complex, the result is always complex
+    - if both operarands are real one of them is a float, then the result is also a float
     - operation on identical types preserves type
 
     uint8 + int8 => int16
@@ -38,6 +40,12 @@
 #if NDARRAY_HAS_BINARY_OP_EQUAL | NDARRAY_HAS_BINARY_OP_NOT_EQUAL
 mp_obj_t ndarray_binary_equality(ndarray_obj_t *lhs, ndarray_obj_t *rhs,
                                             uint8_t ndim, size_t *shape,  int32_t *lstrides, int32_t *rstrides, mp_binary_op_t op) {
+
+    #if ULAB_SUPPORTS_COMPLEX
+    if((lhs->dtype == NDARRAY_COMPLEX) || (rhs->dtype == NDARRAY_COMPLEX))  {
+        return carray_binary_equal_not_equal(lhs, rhs, ndim, shape, lstrides, rstrides, op);
+    }
+    #endif
 
     ndarray_obj_t *results = ndarray_new_dense_ndarray(ndim, shape, NDARRAY_UINT8);
     results->boolean = 1;
@@ -161,6 +169,12 @@ mp_obj_t ndarray_binary_equality(ndarray_obj_t *lhs, ndarray_obj_t *rhs,
 mp_obj_t ndarray_binary_add(ndarray_obj_t *lhs, ndarray_obj_t *rhs,
                                         uint8_t ndim, size_t *shape, int32_t *lstrides, int32_t *rstrides) {
 
+    #if ULAB_SUPPORTS_COMPLEX
+    if((lhs->dtype == NDARRAY_COMPLEX) || (rhs->dtype == NDARRAY_COMPLEX))  {
+        return carray_binary_add(lhs, rhs, ndim, shape, lstrides, rstrides);
+    }
+    #endif
+
     ndarray_obj_t *results = NULL;
     uint8_t *larray = (uint8_t *)lhs->array;
     uint8_t *rarray = (uint8_t *)rhs->array;
@@ -237,6 +251,12 @@ mp_obj_t ndarray_binary_add(ndarray_obj_t *lhs, ndarray_obj_t *rhs,
 #if NDARRAY_HAS_BINARY_OP_MULTIPLY
 mp_obj_t ndarray_binary_multiply(ndarray_obj_t *lhs, ndarray_obj_t *rhs,
                                             uint8_t ndim, size_t *shape, int32_t *lstrides, int32_t *rstrides) {
+
+    #if ULAB_SUPPORTS_COMPLEX
+    if((lhs->dtype == NDARRAY_COMPLEX) || (rhs->dtype == NDARRAY_COMPLEX))  {
+        return carray_binary_multiply(lhs, rhs, ndim, shape, lstrides, rstrides);
+    }
+    #endif
 
     ndarray_obj_t *results = NULL;
     uint8_t *larray = (uint8_t *)lhs->array;
@@ -460,6 +480,12 @@ mp_obj_t ndarray_binary_more(ndarray_obj_t *lhs, ndarray_obj_t *rhs,
 mp_obj_t ndarray_binary_subtract(ndarray_obj_t *lhs, ndarray_obj_t *rhs,
                                             uint8_t ndim, size_t *shape, int32_t *lstrides, int32_t *rstrides) {
 
+    #if ULAB_SUPPORTS_COMPLEX
+    if((lhs->dtype == NDARRAY_COMPLEX) || (rhs->dtype == NDARRAY_COMPLEX))  {
+        return carray_binary_subtract(lhs, rhs, ndim, shape, lstrides, rstrides);
+    }
+    #endif
+
     ndarray_obj_t *results = NULL;
     uint8_t *larray = (uint8_t *)lhs->array;
     uint8_t *rarray = (uint8_t *)rhs->array;
@@ -558,6 +584,12 @@ mp_obj_t ndarray_binary_subtract(ndarray_obj_t *lhs, ndarray_obj_t *rhs,
 #if NDARRAY_HAS_BINARY_OP_TRUE_DIVIDE
 mp_obj_t ndarray_binary_true_divide(ndarray_obj_t *lhs, ndarray_obj_t *rhs,
                                             uint8_t ndim, size_t *shape, int32_t *lstrides, int32_t *rstrides) {
+
+    #if ULAB_SUPPORTS_COMPLEX
+    if((lhs->dtype == NDARRAY_COMPLEX) || (rhs->dtype == NDARRAY_COMPLEX))  {
+        return carray_binary_divide(lhs, rhs, ndim, shape, lstrides, rstrides);
+    }
+    #endif
 
     ndarray_obj_t *results = ndarray_new_dense_ndarray(ndim, shape, NDARRAY_FLOAT);
     uint8_t *larray = (uint8_t *)lhs->array;

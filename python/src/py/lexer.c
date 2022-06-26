@@ -363,9 +363,16 @@ STATIC void parse_string_literal(mp_lexer_t *lex, bool is_raw, bool is_fstring) 
                     // (MicroPython limitation) note: this is completely unaware of
                     // Python syntax and will not handle any expression containing '}' or ':'.
                     // e.g. f'{"}"}' or f'{foo({})}'.
-                    while (!is_end(lex) && !is_char_or(lex, ':', '}')) {
+                    unsigned int nested_bracket_level = 0;
+                    while (!is_end(lex) && (nested_bracket_level != 0 || !is_char_or(lex, ':', '}'))) {
+                        unichar c = CUR_CHAR(lex);
+                        if (c == '[' || c == '{') {
+                            nested_bracket_level += 1;
+                        } else if (c == ']' || c == '}') {
+                            nested_bracket_level -= 1;
+                        }
                         // like the default case at the end of this function, stay 8-bit clean
-                        vstr_add_byte(&lex->fstring_args, CUR_CHAR(lex));
+                        vstr_add_byte(&lex->fstring_args, c);
                         next_char(lex);
                     }
                     if (lex->fstring_args.buf[lex->fstring_args.len - 1] == '=') {
@@ -466,25 +473,23 @@ STATIC void parse_string_literal(mp_lexer_t *lex, bool is_raw, bool is_fstring) 
                     }
                 }
                 if (c != MP_LEXER_EOF) {
-                    if (MICROPY_PY_BUILTINS_STR_UNICODE_DYNAMIC) {
-                        if (c < 0x110000 && lex->tok_kind == MP_TOKEN_STRING) {
-                            vstr_add_char(&lex->vstr, c);
-                        } else if (c < 0x100 && lex->tok_kind == MP_TOKEN_BYTES) {
-                            vstr_add_byte(&lex->vstr, c);
-                        } else {
-                            // unicode character out of range
-                            // this raises a generic SyntaxError; could provide more info
-                            lex->tok_kind = MP_TOKEN_INVALID;
-                        }
-                    } else {
-                        // without unicode everything is just added as an 8-bit byte
-                        if (c < 0x100) {
-                            vstr_add_byte(&lex->vstr, c);
-                        } else {
-                            // 8-bit character out of range
-                            // this raises a generic SyntaxError; could provide more info
-                            lex->tok_kind = MP_TOKEN_INVALID;
-                        }
+                    #if MICROPY_PY_BUILTINS_STR_UNICODE
+                    if (c < 0x110000 && lex->tok_kind == MP_TOKEN_STRING) {
+                        // Valid unicode character in a str object.
+                        vstr_add_char(&lex->vstr, c);
+                    } else if (c < 0x100 && lex->tok_kind == MP_TOKEN_BYTES) {
+                        // Valid byte in a bytes object.
+                        vstr_add_byte(&lex->vstr, c);
+                    }
+                    #else
+                    if (c < 0x100) {
+                        // Without unicode everything is just added as an 8-bit byte.
+                        vstr_add_byte(&lex->vstr, c);
+                    }
+                    #endif
+                    else {
+                        // Character out of range; this raises a generic SyntaxError.
+                        lex->tok_kind = MP_TOKEN_INVALID;
                     }
                 }
             } else {
@@ -594,7 +599,7 @@ void mp_lexer_to_next(mp_lexer_t *lex) {
         // a string or bytes literal
 
         // Python requires adjacent string/bytes literals to be automatically
-        // concatenated.  We do it here in the tokenizer to make efficient use of RAM,
+        // concatenated.  We do it here in the tokeniser to make efficient use of RAM,
         // because then the lexer's vstr can be used to accumulate the string literal,
         // in contrast to creating a parse tree of strings and then joining them later
         // in the compiler.  It's also more compact in code size to do it here.

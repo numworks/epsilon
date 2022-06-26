@@ -37,7 +37,14 @@
 #include "py/stackctrl.h"
 #include "py/stream.h" // for mp_obj_print
 
-const mp_obj_type_t *mp_obj_get_type(mp_const_obj_t o_in) {
+// Allocates an object and also sets type, for mp_obj_malloc{,_var} macros.
+void *mp_obj_malloc_helper(size_t num_bytes, const mp_obj_type_t *type) {
+    mp_obj_base_t *base = (mp_obj_base_t *)m_malloc(num_bytes);
+    base->type = type;
+    return base;
+}
+
+const mp_obj_type_t *MICROPY_WRAP_MP_OBJ_GET_TYPE(mp_obj_get_type)(mp_const_obj_t o_in) {
     #if MICROPY_OBJ_IMMEDIATE_OBJS && MICROPY_OBJ_REPR == MICROPY_OBJ_REPR_A
 
     if (mp_obj_is_obj(o_in)) {
@@ -279,7 +286,7 @@ mp_obj_t mp_obj_equal_not_equal(mp_binary_op_t op, mp_obj_t o1, mp_obj_t o2) {
         o2 = temp;
     }
 
-    // equality not implemented, so fall back to pointer comparison
+    // equality not implemented, so fall back to pointer conparison
     return (o1 == o2) ? local_true : local_false;
 }
 

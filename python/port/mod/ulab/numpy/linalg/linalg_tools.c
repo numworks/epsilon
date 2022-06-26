@@ -14,8 +14,8 @@
 
 #include "linalg_tools.h"
 
-/* 
- * The following function inverts a matrix, whose entries are given in the input array 
+/*
+ * The following function inverts a matrix, whose entries are given in the input array
  * The function has no dependencies beyond micropython itself (for the definition of mp_float_t),
  * and can be used independent of ulab.
  */
@@ -26,10 +26,9 @@ bool linalg_invert_matrix(mp_float_t *data, size_t N) {
 
     // initially, this is the unit matrix: the contents of this matrix is what
     // will be returned after all the transformations
-    mp_float_t *unit = m_new(mp_float_t, N*N);
+    mp_float_t *unit = m_new0(mp_float_t, N*N);
     mp_float_t elem = 1.0;
-    // initialise the unit matrix
-    memset(unit, 0, sizeof(mp_float_t)*N*N);
+
     for(size_t m=0; m < N; m++) {
         memcpy(&unit[m * (N+1)], &elem, sizeof(mp_float_t));
     }
@@ -78,9 +77,9 @@ bool linalg_invert_matrix(mp_float_t *data, size_t N) {
     return true;
 }
 
-/* 
- * The following function calculates the eigenvalues and eigenvectors of a symmetric 
- * real matrix, whose entries are given in the input array. 
+/*
+ * The following function calculates the eigenvalues and eigenvectors of a symmetric
+ * real matrix, whose entries are given in the input array.
  * The function has no dependencies beyond micropython itself (for the definition of mp_float_t),
  * and can be used independent of ulab.
  */
@@ -166,6 +165,6 @@ size_t linalg_jacobi_rotations(mp_float_t *array, mp_float_t *eigvectors, size_t
             eigvectors[m * S + N] = s * vm + c * vn;
         }
     } while(iterations > 0);
-    
+
     return iterations;
 }

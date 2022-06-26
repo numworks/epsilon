@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include <alloca.h>
+// Include helpers when this is not a MicroPython build.
+#ifdef EPSILON_VERSION
 #include "helpers.h"
+#endif
 
 /* MicroPython configuration options
  * We're not listing the default options as defined in mpconfig.h */
@@ -15,6 +18,11 @@
  * variables that can store pointers to the Python heap. The pointed objects
  * are therefore erased prematurely. */
 #define MICROPY_ENABLE_PYSTACK (0)
+
+// Whether to encode None/False/True as immediate objects instead of pointers to
+// real objects.  Reduces code size by a decent amount without hurting
+// performance, for all representations except D on some architectures.
+#define MICROPY_OBJ_IMMEDIATE_OBJS 0
 
 // Maximum length of a path in the filesystem
 #define MICROPY_ALLOC_PATH_MAX (32)
@@ -138,40 +146,6 @@ typedef long mp_off_t;
     { MP_OBJ_NEW_QSTR(MP_QSTR_input), (mp_obj_t)&mp_builtin_input_obj },
 
 #define MP_STATE_PORT MP_STATE_VM
-
-extern const struct _mp_obj_module_t modion_module;
-extern const struct _mp_obj_module_t modkandinsky_module;
-extern const struct _mp_obj_module_t modmatplotlib_module;
-extern const struct _mp_obj_module_t modpyplot_module;
-extern const struct _mp_obj_module_t modtime_module;
-extern const struct _mp_obj_module_t modos_module;
-extern const struct _mp_obj_module_t modturtle_module;
-
-#if !defined(INCLUDE_ULAB)
-
-#define MICROPY_PORT_BUILTIN_MODULES \
-    { MP_ROM_QSTR(MP_QSTR_ion), MP_ROM_PTR(&modion_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_kandinsky), MP_ROM_PTR(&modkandinsky_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_matplotlib), MP_ROM_PTR(&modmatplotlib_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_matplotlib_dot_pyplot), MP_ROM_PTR(&modpyplot_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_os), MP_ROM_PTR(&modos_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&modturtle_module) }, \
-
-#else
-extern const struct _mp_obj_module_t ulab_user_cmodule;
-
-#define MICROPY_PORT_BUILTIN_MODULES \
-    { MP_ROM_QSTR(MP_QSTR_ion), MP_ROM_PTR(&modion_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_kandinsky), MP_ROM_PTR(&modkandinsky_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_matplotlib), MP_ROM_PTR(&modmatplotlib_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_matplotlib_dot_pyplot), MP_ROM_PTR(&modpyplot_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_os), MP_ROM_PTR(&modos_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&modturtle_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_ulab), MP_ROM_PTR(&ulab_user_cmodule) },        \
-
-#endif
 
 
 // Enable setjmp in debug mode. This is to avoid some optimizations done

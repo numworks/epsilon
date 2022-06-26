@@ -248,4 +248,5 @@ tests_src += $(addprefix python/test/,\
   time.cpp \
   turtle.cpp \
   matplotlib.cpp \
+  ulab.cpp \
 )

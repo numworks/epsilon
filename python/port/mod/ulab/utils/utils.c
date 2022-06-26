@@ -16,6 +16,8 @@
 #include "py/misc.h"
 #include "utils.h"
 
+#include "../numpy/fft/fft_tools.h"
+
 #if ULAB_HAS_UTILS_MODULE
 
 enum UTILS_BUFFER_TYPE {
@@ -187,7 +189,40 @@ static mp_obj_t utils_from_uint32_buffer(size_t n_args, const mp_obj_t *pos_args
 MP_DEFINE_CONST_FUN_OBJ_KW(utils_from_uint32_buffer_obj, 1, utils_from_uint32_buffer);
 #endif
 
+#endif /* ULAB_UTILS_HAS_FROM_INT16_BUFFER | ULAB_UTILS_HAS_FROM_UINT16_BUFFER | ULAB_UTILS_HAS_FROM_INT32_BUFFER | ULAB_UTILS_HAS_FROM_UINT32_BUFFER */
+
+#if ULAB_UTILS_HAS_SPECTROGRAM
+//| import ulab.numpy
+//|
+//| def spectrogram(r: ulab.numpy.ndarray) -> ulab.numpy.ndarray:
+//|     """
+//|     :param ulab.numpy.ndarray r: A 1-dimension array of values whose size is a power of 2
+//|
+//|     Computes the spectrum of the input signal.  This is the absolute value of the (complex-valued) fft of the signal.
+//|     This function is similar to scipy's ``scipy.signal.welch`` https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.welch.html."""
+//|     ...
+//|
+
+mp_obj_t utils_spectrogram(size_t n_args, const mp_obj_t *args) {
+    #if ULAB_SUPPORTS_COMPLEX & ULAB_FFT_IS_NUMPY_COMPATIBLE
+        return fft_fft_ifft_spectrogram(args[0], FFT_SPECTROGRAM);
+    #else
+    if(n_args == 2) {
+        return fft_fft_ifft_spectrogram(n_args, args[0], args[1], FFT_SPECTROGRAM);
+    } else {
+        return fft_fft_ifft_spectrogram(n_args, args[0], mp_const_none, FFT_SPECTROGRAM);
+    }
+    #endif
+}
+
+#if ULAB_SUPPORTS_COMPLEX & ULAB_FFT_IS_NUMPY_COMPATIBLE
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(utils_spectrogram_obj, 1, 1, utils_spectrogram);
+#else
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(utils_spectrogram_obj, 1, 2, utils_spectrogram);
 #endif
+
+#endif /* ULAB_UTILS_HAS_SPECTROGRAM */
+
 
 static const mp_rom_map_elem_t ulab_utils_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_utils) },
@@ -203,6 +238,9 @@ static const mp_rom_map_elem_t ulab_utils_globals_table[] = {
     #if ULAB_UTILS_HAS_FROM_UINT32_BUFFER
         { MP_OBJ_NEW_QSTR(MP_QSTR_from_uint32_buffer), (mp_obj_t)&utils_from_uint32_buffer_obj },
     #endif
+    #if ULAB_UTILS_HAS_SPECTROGRAM
+        { MP_OBJ_NEW_QSTR(MP_QSTR_spectrogram), (mp_obj_t)&utils_spectrogram_obj },
+    #endif
 };
 
 static MP_DEFINE_CONST_DICT(mp_module_ulab_utils_globals, ulab_utils_globals_table);
@@ -212,4 +250,4 @@ mp_obj_module_t ulab_utils_module = {
     .globals = (mp_obj_dict_t*)&mp_module_ulab_utils_globals,
 };
 
-#endif
+#endif /* ULAB_HAS_UTILS_MODULE */

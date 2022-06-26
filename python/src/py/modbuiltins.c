@@ -79,7 +79,7 @@ STATIC mp_obj_t mp_builtin___build_class__(size_t n_args, const mp_obj_t *args) 
     meta_args[2] = class_locals; // dict of members
     mp_obj_t new_class = mp_call_function_n_kw(meta, 3, 0, meta_args);
 
-    // store into cell if needed
+    // store into cell if neede
     if (cell != mp_const_none) {
         mp_obj_cell_set(cell, new_class);
     }
@@ -729,6 +729,9 @@ STATIC const mp_rom_map_elem_t mp_module_builtins_globals_table[] = {
     #endif
     { MP_ROM_QSTR(MP_QSTR_next), MP_ROM_PTR(&mp_builtin_next_obj) },
     { MP_ROM_QSTR(MP_QSTR_oct), MP_ROM_PTR(&mp_builtin_oct_obj) },
+    #if MICROPY_PY_IO
+    { MP_ROM_QSTR(MP_QSTR_open), MP_ROM_PTR(&mp_builtin_open_obj) },
+    #endif
     { MP_ROM_QSTR(MP_QSTR_ord), MP_ROM_PTR(&mp_builtin_ord_obj) },
     { MP_ROM_QSTR(MP_QSTR_pow), MP_ROM_PTR(&mp_builtin_pow_obj) },
     { MP_ROM_QSTR(MP_QSTR_print), MP_ROM_PTR(&mp_builtin_print_obj) },
@@ -775,6 +778,7 @@ STATIC const mp_rom_map_elem_t mp_module_builtins_globals_table[] = {
 
     // Extra builtins as defined by a port
     MICROPY_PORT_BUILTINS
+    MICROPY_PORT_EXTRA_BUILTINS
 };
 
 MP_DEFINE_CONST_DICT(mp_module_builtins_globals, mp_module_builtins_globals_table);
@@ -783,3 +787,5 @@ const mp_obj_module_t mp_module_builtins = {
     .base = { &mp_type_module },
     .globals = (mp_obj_dict_t *)&mp_module_builtins_globals,
 };
+
+MP_REGISTER_MODULE(MP_QSTR_builtins, mp_module_builtins);

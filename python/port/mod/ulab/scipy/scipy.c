@@ -48,4 +48,4 @@ mp_obj_module_t ulab_scipy_module = {
     .base = { &mp_type_module },
     .globals = (mp_obj_dict_t*)&mp_module_ulab_scipy_globals,
 };
-#endif
+#endif /* ULAB_HAS_SCIPY */

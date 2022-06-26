@@ -20,6 +20,9 @@
 #include "ulab.h"
 #include "ndarray.h"
 #include "numpy/ndarray/ndarray_iter.h"
+#if ULAB_SUPPORTS_COMPLEX
+#include "numpy/carray/carray.h"
+#endif
 
 #ifndef CIRCUITPY
 
@@ -82,6 +85,18 @@ void ndarray_properties_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
                 dest[0] = ndarray_transpose(self_in);
                 break;
             #endif
+            #if ULAB_SUPPORTS_COMPLEX
+            #if ULAB_NUMPY_HAS_IMAG
+            case MP_QSTR_imag:
+                dest[0] = carray_imag(self_in);
+                break;
+            #endif
+            #if ULAB_NUMPY_HAS_IMAG
+            case MP_QSTR_real:
+                dest[0] = carray_real(self_in);
+                break;
+            #endif
+            #endif /* ULAB_SUPPORTS_COMPLEX */
             default:
                 call_local_method(self_in, attr, dest);
                 break;

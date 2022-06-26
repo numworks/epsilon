@@ -22,6 +22,7 @@
 
 #include "../../ulab.h"
 #include "../../ulab_tools.h"
+#include "../carray/carray_tools.h"
 #include "linalg.h"
 
 #if ULAB_NUMPY_HAS_LINALG_MODULE
@@ -44,6 +45,7 @@
 
 static mp_obj_t linalg_cholesky(mp_obj_t oin) {
     ndarray_obj_t *ndarray = tools_object_is_square(oin);
+    COMPLEX_DTYPE_NOT_IMPLEMENTED(ndarray->dtype)
     ndarray_obj_t *L = ndarray_new_dense_ndarray(2, ndarray_shape_vector(0, 0, ndarray->shape[ULAB_MAX_DIMS - 1], ndarray->shape[ULAB_MAX_DIMS - 1]), NDARRAY_FLOAT);
     mp_float_t *Larray = (mp_float_t *)L->array;
 
@@ -110,6 +112,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(linalg_cholesky_obj, linalg_cholesky);
 
 static mp_obj_t linalg_det(mp_obj_t oin) {
     ndarray_obj_t *ndarray = tools_object_is_square(oin);
+    COMPLEX_DTYPE_NOT_IMPLEMENTED(ndarray->dtype)
     uint8_t *array = (uint8_t *)ndarray->array;
     size_t N = ndarray->shape[ULAB_MAX_DIMS - 1];
     mp_float_t *tmp = m_new(mp_float_t, N * N);
@@ -182,6 +185,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(linalg_det_obj, linalg_det);
 
 static mp_obj_t linalg_eig(mp_obj_t oin) {
     ndarray_obj_t *in = tools_object_is_square(oin);
+    COMPLEX_DTYPE_NOT_IMPLEMENTED(in->dtype)
     uint8_t *iarray = (uint8_t *)in->array;
     size_t S = in->shape[ULAB_MAX_DIMS - 1];
     mp_float_t *array = m_new(mp_float_t, S*S);
@@ -243,6 +247,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(linalg_eig_obj, linalg_eig);
 //|
 static mp_obj_t linalg_inv(mp_obj_t o_in) {
     ndarray_obj_t *ndarray = tools_object_is_square(o_in);
+    COMPLEX_DTYPE_NOT_IMPLEMENTED(ndarray->dtype)
     uint8_t *array = (uint8_t *)ndarray->array;
     size_t N = ndarray->shape[ULAB_MAX_DIMS - 1];
     ndarray_obj_t *inverted = ndarray_new_dense_ndarray(2, ndarray_shape_vector(0, 0, N, N), NDARRAY_FLOAT);
@@ -305,6 +310,7 @@ static mp_obj_t linalg_norm(size_t n_args, const mp_obj_t *pos_args, mp_map_t *k
         return mp_obj_new_float(MICROPY_FLOAT_C_FUN(sqrt)(dot * (count - 1)));
     } else if(mp_obj_is_type(x, &ulab_ndarray_type)) {
         ndarray_obj_t *ndarray = MP_OBJ_TO_PTR(x);
+        COMPLEX_DTYPE_NOT_IMPLEMENTED(ndarray->dtype)
         uint8_t *array = (uint8_t *)ndarray->array;
         // always get a float, so that we don't have to resolve the dtype later
         mp_float_t (*func)(void *) = ndarray_get_float_function(ndarray->dtype);
@@ -429,22 +435,22 @@ static mp_obj_t linalg_qr(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_
             // [[c  s],
             //  [s -c]]
             if(MICROPY_FLOAT_C_FUN(fabs)(rarray[i * n + j]) < LINALG_EPSILON) { // r[i, j]
-                c = (rarray[(i - 1) * n + j] >= 0.0) ? 1.0 : -1.0; // r[i-1, j]
+                c = (rarray[(i - 1) * n + j] >= MICROPY_FLOAT_CONST(0.0)) ? MICROPY_FLOAT_CONST(1.0) : MICROPY_FLOAT_CONST(-1.0); // r[i-1, j]
                 s = 0.0;
             } else if(MICROPY_FLOAT_C_FUN(fabs)(rarray[(i - 1) * n + j]) < LINALG_EPSILON) { // r[i-1, j]
                 c = 0.0;
-                s = (rarray[i * n + j] >= 0.0) ? -1.0 : 1.0; // r[i, j]
+                s = (rarray[i * n + j] >= MICROPY_FLOAT_CONST(0.0)) ? MICROPY_FLOAT_CONST(-1.0) : MICROPY_FLOAT_CONST(1.0); // r[i, j]
             } else {
                 mp_float_t t, u;
                 if(MICROPY_FLOAT_C_FUN(fabs)(rarray[(i - 1) * n + j]) > MICROPY_FLOAT_C_FUN(fabs)(rarray[i * n + j])) { // r[i-1, j], r[i, j]
                     t = rarray[i * n + j] / rarray[(i - 1) * n + j]; // r[i, j]/r[i-1, j]
                     u = MICROPY_FLOAT_C_FUN(sqrt)(1 + t * t);
-                    c = -1.0 / u;
+                    c = MICROPY_FLOAT_CONST(-1.0) / u;
                     s = c * t;
                 } else {
                     t = rarray[(i - 1) * n + j] / rarray[i * n + j]; // r[i-1, j]/r[i, j]
                     u = MICROPY_FLOAT_C_FUN(sqrt)(1 + t * t);
-                    s = -1.0 / u;
+                    s = MICROPY_FLOAT_CONST(-1.0) / u;
                     c = s * t;
                 }
             }

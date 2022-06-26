@@ -19,6 +19,7 @@
 #include "../ulab.h"
 #include "linalg/linalg_tools.h"
 #include "../ulab_tools.h"
+#include "carray/carray_tools.h"
 #include "poly.h"
 
 #if ULAB_NUMPY_HAS_POLYFIT
@@ -27,6 +28,12 @@ mp_obj_t poly_polyfit(size_t n_args, const mp_obj_t *args) {
     if(!ndarray_object_is_array_like(args[0])) {
         mp_raise_ValueError(translate("input data must be an iterable"));
     }
+    #if ULAB_SUPPORTS_COMPLEX
+    if(mp_obj_is_type(args[0], &ulab_ndarray_type)) {
+        ndarray_obj_t *ndarray = MP_OBJ_TO_PTR(args[0]);
+        COMPLEX_DTYPE_NOT_IMPLEMENTED(ndarray->dtype)
+    }
+    #endif
     size_t lenx = 0, leny = 0;
     uint8_t deg = 0;
     mp_float_t *x, *XT, *y, *prod;
@@ -142,6 +149,17 @@ mp_obj_t poly_polyval(mp_obj_t o_p, mp_obj_t o_x) {
     if(!ndarray_object_is_array_like(o_p) || !ndarray_object_is_array_like(o_x)) {
         mp_raise_TypeError(translate("inputs are not iterable"));
     }
+    #if ULAB_SUPPORTS_COMPLEX
+    ndarray_obj_t *input;
+    if(mp_obj_is_type(o_p, &ulab_ndarray_type)) {
+        input = MP_OBJ_TO_PTR(o_p);
+        COMPLEX_DTYPE_NOT_IMPLEMENTED(input->dtype)
+    }
+    if(mp_obj_is_type(o_x, &ulab_ndarray_type)) {
+        input = MP_OBJ_TO_PTR(o_x);
+        COMPLEX_DTYPE_NOT_IMPLEMENTED(input->dtype)
+    }
+    #endif
     // p had better be a one-dimensional standard iterable
     uint8_t plen = mp_obj_get_int(mp_obj_len_maybe(o_p));
     mp_float_t *p = m_new(mp_float_t, plen);
@@ -164,7 +182,7 @@ mp_obj_t poly_polyval(mp_obj_t o_p, mp_obj_t o_x) {
 
         mp_float_t (*func)(void *) = ndarray_get_float_function(source->dtype);
 
-        // TODO: these loops are really nothing, but the re-implementation of
+        // TODO: these loops are really nothing, but the re-impplementation of
         // ITERATE_VECTOR from vectorise.c. We could pass a function pointer here
         #if ULAB_MAX_DIMS > 3
         size_t i = 0;

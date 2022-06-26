@@ -213,6 +213,7 @@ STATIC void gc_mark_subtree(size_t block) {
     // Start with the block passed in the argument.
     size_t sp = 0;
     for (;;) {
+        MICROPY_GC_HOOK_LOOP
         // work out number of consecutive blocks in the chain starting with this one
         size_t n_blocks = 0;
         do {
@@ -222,6 +223,7 @@ STATIC void gc_mark_subtree(size_t block) {
         // check this block's children
         void **ptrs = (void **)PTR_FROM_BLOCK(block);
         for (size_t i = n_blocks * BYTES_PER_BLOCK / sizeof(void *); i > 0; i--, ptrs++) {
+            MICROPY_GC_HOOK_LOOP
             void *ptr = *ptrs;
             if (VERIFY_PTR(ptr)) {
                 // Mark and push this pointer
@@ -255,6 +257,7 @@ STATIC void gc_deal_with_stack_overflow(void) {
 
         // scan entire memory looking for blocks which have been marked but not their children
         for (size_t block = 0; block < MP_STATE_MEM(gc_alloc_table_byte_len) * BLOCKS_PER_ATB; block++) {
+            MICROPY_GC_HOOK_LOOP
             // trace (again) if mark bit set
             if (ATB_GET_KIND(block) == AT_MARK) {
                 gc_mark_subtree(block);
@@ -270,6 +273,7 @@ STATIC void gc_sweep(void) {
     // free unmarked heads and their tails
     int free_tail = 0;
     for (size_t block = 0; block < MP_STATE_MEM(gc_alloc_table_byte_len) * BLOCKS_PER_ATB; block++) {
+        MICROPY_GC_HOOK_LOOP
         switch (ATB_GET_KIND(block)) {
             case AT_HEAD:
                 #if MICROPY_ENABLE_FINALISER
@@ -354,6 +358,7 @@ static void *gc_get_ptr(void **ptrs, int i) {
 
 void gc_collect_root(void **ptrs, size_t len) {
     for (size_t i = 0; i < len; i++) {
+        MICROPY_GC_HOOK_LOOP
         void *ptr = gc_get_ptr(ptrs, i);
         if (VERIFY_PTR(ptr)) {
             size_t block = BLOCK_FROM_PTR(ptr);
@@ -512,7 +517,7 @@ found:
     // Set last free ATB index to block after last block we found, for start of
     // next scan.  To reduce fragmentation, we only do this if we were looking
     // for a single free block, which guarantees that there are no free blocks
-    // before this one.  Also, whenever we free or shrink a block we must check
+    // before this one.  Also, whenever we free or shink a block we must check
     // if this index needs adjusting (see gc_realloc and gc_free).
     if (n_free == 1) {
         MP_STATE_MEM(gc_last_free_atb_index) = (i + 1) / BLOCKS_PER_ATB;
@@ -915,13 +920,13 @@ void gc_dump_alloc_table(void) {
                     // This code prints "Q" for qstr-pool data, and "q" for qstr-str
                     // data.  It can be useful to see how qstrs are being allocated,
                     // but is disabled by default because it is very slow.
-                    for (qstr_pool_t *pool = MP_STATE_VM(last_pool); c == 'h' && pool != NULL; pool = pool->prev) {
-                        if ((qstr_pool_t *)ptr == pool) {
+                    for (const qstr_pool_t *pool = MP_STATE_VM(last_pool); c == 'h' && pool != NULL; pool = pool->prev) {
+                        if ((const qstr_pool_t *)ptr == pool) {
                             c = 'Q';
                             break;
                         }
-                        for (const byte **q = pool->qstrs, **q_top = pool->qstrs + pool->len; q < q_top; q++) {
-                            if ((const byte *)ptr == *q) {
+                        for (const char *const *q = pool->qstrs, *const *q_top = pool->qstrs + pool->len; q < q_top; q++) {
+                            if ((const char *)ptr == *q) {
                                 c = 'q';
                                 break;
                             }

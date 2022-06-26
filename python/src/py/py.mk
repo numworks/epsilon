@@ -176,6 +176,7 @@ PY_EXTMOD_O_BASENAME = \
 	extmod/moduasyncio.o \
 	extmod/moductypes.o \
 	extmod/modujson.o \
+	extmod/moduos.o \
 	extmod/modure.o \
 	extmod/moduzlib.o \
 	extmod/moduheapq.o \
@@ -189,11 +190,13 @@ PY_EXTMOD_O_BASENAME = \
 	extmod/machine_pinbase.o \
 	extmod/machine_signal.o \
 	extmod/machine_pulse.o \
+	extmod/machine_pwm.o \
 	extmod/machine_i2c.o \
 	extmod/machine_spi.o \
 	extmod/modbluetooth.o \
 	extmod/modussl_axtls.o \
 	extmod/modussl_mbedtls.o \
+	extmod/moduplatform.o\
 	extmod/modurandom.o \
 	extmod/moduselect.o \
 	extmod/moduwebsocket.o \
@@ -223,16 +226,6 @@ PY_O = $(PY_CORE_O) $(PY_EXTMOD_O)
 # object file for frozen code specified via a manifest
 ifneq ($(FROZEN_MANIFEST),)
 PY_O += $(BUILD)/$(BUILD)/frozen_content.o
-endif
-
-# object file for frozen files
-ifneq ($(FROZEN_DIR),)
-PY_O += $(BUILD)/$(BUILD)/frozen.o
-endif
-
-# object file for frozen bytecode (frozen .mpy files)
-ifneq ($(FROZEN_MPY_DIR),)
-PY_O += $(BUILD)/$(BUILD)/frozen_mpy.o
 endif
 
 # Sources that may contain qstrings
@@ -266,9 +259,9 @@ $(HEADER_BUILD)/compressed.data.h: $(HEADER_BUILD)/compressed.collected
 	$(Q)$(PYTHON) $(PY_SRC)/makecompresseddata.py $< > $@
 
 # build a list of registered modules for py/objmodule.c.
-$(HEADER_BUILD)/moduledefs.h: $(SRC_QSTR) $(QSTR_GLOBAL_DEPENDENCIES) | $(HEADER_BUILD)/mpversion.h
+$(HEADER_BUILD)/moduledefs.h: $(HEADER_BUILD)/moduledefs.collected
 	@$(ECHO) "GEN $@"
-	$(Q)$(PYTHON) $(PY_SRC)/makemoduledefs.py --vpath="., $(TOP), $(USER_C_MODULES)" $(SRC_QSTR) > $@
+	$(Q)$(PYTHON) $(PY_SRC)/makemoduledefs.py $< > $@
 
 # Standard C functions like memset need to be compiled with special flags so
 # the compiler does not optimise these functions in terms of themselves.

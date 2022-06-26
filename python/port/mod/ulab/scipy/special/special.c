@@ -21,16 +21,16 @@
 static const mp_rom_map_elem_t ulab_scipy_special_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_special) },
     #if ULAB_SCIPY_SPECIAL_HAS_ERF
-		{ MP_OBJ_NEW_QSTR(MP_QSTR_erf), (mp_obj_t)&vectorise_erf_obj },
+		{ MP_OBJ_NEW_QSTR(MP_QSTR_erf), (mp_obj_t)&vector_erf_obj },
     #endif
 	#if ULAB_SCIPY_SPECIAL_HAS_ERFC
-		{ MP_OBJ_NEW_QSTR(MP_QSTR_erfc), (mp_obj_t)&vectorise_erfc_obj },
+		{ MP_OBJ_NEW_QSTR(MP_QSTR_erfc), (mp_obj_t)&vector_erfc_obj },
 	#endif
 	#if ULAB_SCIPY_SPECIAL_HAS_GAMMA
-		{ MP_OBJ_NEW_QSTR(MP_QSTR_gamma), (mp_obj_t)&vectorise_gamma_obj },
+		{ MP_OBJ_NEW_QSTR(MP_QSTR_gamma), (mp_obj_t)&vector_gamma_obj },
 	#endif
 	#if ULAB_SCIPY_SPECIAL_HAS_GAMMALN
-		{ MP_OBJ_NEW_QSTR(MP_QSTR_gammaln), (mp_obj_t)&vectorise_lgamma_obj },
+		{ MP_OBJ_NEW_QSTR(MP_QSTR_gammaln), (mp_obj_t)&vector_lgamma_obj },
 	#endif
 };
 

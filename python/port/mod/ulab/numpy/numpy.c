@@ -8,7 +8,7 @@
  *
  * Copyright (c) 2020 Jeff Epler for Adafruit Industries
  *               2020 Scott Shawcroft for Adafruit Industries
- *               2020-2021 Zoltán Vörös
+ *               2020-2022 Zoltán Vörös
  *               2020 Taku Fukada
 */
 
@@ -17,11 +17,13 @@
 #include "py/runtime.h"
 
 #include "numpy.h"
-#include "../ulab_create.h"
 #include "approx.h"
+#include "carray/carray.h"
 #include "compare.h"
+#include "create.h"
 #include "fft/fft.h"
 #include "filter.h"
+#include "io/io.h"
 #include "linalg/linalg.h"
 #include "numerical.h"
 #include "stats.h"
@@ -125,6 +127,9 @@ static const mp_rom_map_elem_t ulab_numpy_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_uint16), MP_ROM_INT(NDARRAY_UINT16) },
     { MP_ROM_QSTR(MP_QSTR_int16), MP_ROM_INT(NDARRAY_INT16) },
     { MP_ROM_QSTR(MP_QSTR_float), MP_ROM_INT(NDARRAY_FLOAT) },
+    #if ULAB_SUPPORTS_COMPLEX
+        { MP_ROM_QSTR(MP_QSTR_complex), MP_ROM_INT(NDARRAY_COMPLEX) },
+    #endif
     // modules of numpy
     #if ULAB_NUMPY_HAS_FFT_MODULE
         { MP_ROM_QSTR(MP_QSTR_fft), MP_ROM_PTR(&ulab_fft_module) },
@@ -142,8 +147,14 @@ static const mp_rom_map_elem_t ulab_numpy_globals_table[] = {
     #if ULAB_NUMPY_HAS_ARANGE
         { MP_ROM_QSTR(MP_QSTR_arange), (mp_obj_t)&create_arange_obj },
     #endif
+    #if ULAB_NUMPY_HAS_COMPRESS
+        { MP_ROM_QSTR(MP_QSTR_compress), (mp_obj_t)&transform_compress_obj },
+    #endif
     #if ULAB_NUMPY_HAS_CONCATENATE
         { MP_ROM_QSTR(MP_QSTR_concatenate), (mp_obj_t)&create_concatenate_obj },
+    #endif
+    #if ULAB_NUMPY_HAS_DELETE
+        { MP_ROM_QSTR(MP_QSTR_delete), (mp_obj_t)&transform_delete_obj },
     #endif
     #if ULAB_NUMPY_HAS_DIAG
         #if ULAB_MAX_DIMS > 1
@@ -224,6 +235,9 @@ static const mp_rom_map_elem_t ulab_numpy_globals_table[] = {
     #if ULAB_NUMPY_HAS_ARGSORT
         { MP_OBJ_NEW_QSTR(MP_QSTR_argsort), (mp_obj_t)&numerical_argsort_obj },
     #endif
+    #if ULAB_NUMPY_HAS_ASARRAY
+        { MP_OBJ_NEW_QSTR(MP_QSTR_asarray), (mp_obj_t)&create_asarray_obj },
+    #endif
     #if ULAB_NUMPY_HAS_CROSS
         { MP_OBJ_NEW_QSTR(MP_QSTR_cross), (mp_obj_t)&numerical_cross_obj },
     #endif
@@ -243,6 +257,12 @@ static const mp_rom_map_elem_t ulab_numpy_globals_table[] = {
     #if ULAB_NUMPY_HAS_FLIP
         { MP_OBJ_NEW_QSTR(MP_QSTR_flip), (mp_obj_t)&numerical_flip_obj },
     #endif
+    #if ULAB_NUMPY_HAS_LOAD
+        { MP_OBJ_NEW_QSTR(MP_QSTR_load), (mp_obj_t)&io_load_obj },
+    #endif
+    #if ULAB_NUMPY_HAS_LOADTXT
+        { MP_OBJ_NEW_QSTR(MP_QSTR_loadtxt), (mp_obj_t)&io_loadtxt_obj },
+    #endif
     #if ULAB_NUMPY_HAS_MINMAX
         { MP_OBJ_NEW_QSTR(MP_QSTR_max), (mp_obj_t)&numerical_max_obj },
     #endif
@@ -257,6 +277,15 @@ static const mp_rom_map_elem_t ulab_numpy_globals_table[] = {
     #endif
     #if ULAB_NUMPY_HAS_ROLL
         { MP_OBJ_NEW_QSTR(MP_QSTR_roll), (mp_obj_t)&numerical_roll_obj },
+    #endif
+    #if ULAB_NUMPY_HAS_SAVE
+        { MP_OBJ_NEW_QSTR(MP_QSTR_save), (mp_obj_t)&io_save_obj },
+    #endif
+    #if ULAB_NUMPY_HAS_SAVETXT
+        { MP_OBJ_NEW_QSTR(MP_QSTR_savetxt), (mp_obj_t)&io_savetxt_obj },
+    #endif
+    #if ULAB_NUMPY_HAS_SIZE
+        { MP_OBJ_NEW_QSTR(MP_QSTR_size), (mp_obj_t)&transform_size_obj },
     #endif
     #if ULAB_NUMPY_HAS_SORT
         { MP_OBJ_NEW_QSTR(MP_QSTR_sort), (mp_obj_t)&numerical_sort_obj },
@@ -276,81 +305,94 @@ static const mp_rom_map_elem_t ulab_numpy_globals_table[] = {
     #endif
     // functions of the vector sub-module
     #if ULAB_NUMPY_HAS_ACOS
-    { MP_OBJ_NEW_QSTR(MP_QSTR_acos), (mp_obj_t)&vectorise_acos_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_acos), (mp_obj_t)&vector_acos_obj },
     #endif
     #if ULAB_NUMPY_HAS_ACOSH
-    { MP_OBJ_NEW_QSTR(MP_QSTR_acosh), (mp_obj_t)&vectorise_acosh_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_acosh), (mp_obj_t)&vector_acosh_obj },
     #endif
     #if ULAB_NUMPY_HAS_ARCTAN2
-    { MP_OBJ_NEW_QSTR(MP_QSTR_arctan2), (mp_obj_t)&vectorise_arctan2_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_arctan2), (mp_obj_t)&vector_arctan2_obj },
     #endif
     #if ULAB_NUMPY_HAS_AROUND
-    { MP_OBJ_NEW_QSTR(MP_QSTR_around), (mp_obj_t)&vectorise_around_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_around), (mp_obj_t)&vector_around_obj },
     #endif
     #if ULAB_NUMPY_HAS_ASIN
-    { MP_OBJ_NEW_QSTR(MP_QSTR_asin), (mp_obj_t)&vectorise_asin_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_asin), (mp_obj_t)&vector_asin_obj },
     #endif
     #if ULAB_NUMPY_HAS_ASINH
-    { MP_OBJ_NEW_QSTR(MP_QSTR_asinh), (mp_obj_t)&vectorise_asinh_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_asinh), (mp_obj_t)&vector_asinh_obj },
     #endif
     #if ULAB_NUMPY_HAS_ATAN
-    { MP_OBJ_NEW_QSTR(MP_QSTR_atan), (mp_obj_t)&vectorise_atan_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_atan), (mp_obj_t)&vector_atan_obj },
     #endif
     #if ULAB_NUMPY_HAS_ATANH
-    { MP_OBJ_NEW_QSTR(MP_QSTR_atanh), (mp_obj_t)&vectorise_atanh_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_atanh), (mp_obj_t)&vector_atanh_obj },
     #endif
     #if ULAB_NUMPY_HAS_CEIL
-    { MP_OBJ_NEW_QSTR(MP_QSTR_ceil), (mp_obj_t)&vectorise_ceil_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ceil), (mp_obj_t)&vector_ceil_obj },
     #endif
     #if ULAB_NUMPY_HAS_COS
-    { MP_OBJ_NEW_QSTR(MP_QSTR_cos), (mp_obj_t)&vectorise_cos_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_cos), (mp_obj_t)&vector_cos_obj },
     #endif
     #if ULAB_NUMPY_HAS_COSH
-    { MP_OBJ_NEW_QSTR(MP_QSTR_cosh), (mp_obj_t)&vectorise_cosh_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_cosh), (mp_obj_t)&vector_cosh_obj },
     #endif
     #if ULAB_NUMPY_HAS_DEGREES
-    { MP_OBJ_NEW_QSTR(MP_QSTR_degrees), (mp_obj_t)&vectorise_degrees_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_degrees), (mp_obj_t)&vector_degrees_obj },
     #endif
     #if ULAB_NUMPY_HAS_EXP
-    { MP_OBJ_NEW_QSTR(MP_QSTR_exp), (mp_obj_t)&vectorise_exp_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_exp), (mp_obj_t)&vector_exp_obj },
     #endif
     #if ULAB_NUMPY_HAS_EXPM1
-    { MP_OBJ_NEW_QSTR(MP_QSTR_expm1), (mp_obj_t)&vectorise_expm1_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_expm1), (mp_obj_t)&vector_expm1_obj },
     #endif
     #if ULAB_NUMPY_HAS_FLOOR
-    { MP_OBJ_NEW_QSTR(MP_QSTR_floor), (mp_obj_t)&vectorise_floor_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_floor), (mp_obj_t)&vector_floor_obj },
     #endif
     #if ULAB_NUMPY_HAS_LOG
-    { MP_OBJ_NEW_QSTR(MP_QSTR_log), (mp_obj_t)&vectorise_log_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_log), (mp_obj_t)&vector_log_obj },
     #endif
     #if ULAB_NUMPY_HAS_LOG10
-    { MP_OBJ_NEW_QSTR(MP_QSTR_log10), (mp_obj_t)&vectorise_log10_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_log10), (mp_obj_t)&vector_log10_obj },
     #endif
     #if ULAB_NUMPY_HAS_LOG2
-    { MP_OBJ_NEW_QSTR(MP_QSTR_log2), (mp_obj_t)&vectorise_log2_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_log2), (mp_obj_t)&vector_log2_obj },
     #endif
     #if ULAB_NUMPY_HAS_RADIANS
-    { MP_OBJ_NEW_QSTR(MP_QSTR_radians), (mp_obj_t)&vectorise_radians_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_radians), (mp_obj_t)&vector_radians_obj },
     #endif
     #if ULAB_NUMPY_HAS_SIN
-    { MP_OBJ_NEW_QSTR(MP_QSTR_sin), (mp_obj_t)&vectorise_sin_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_sin), (mp_obj_t)&vector_sin_obj },
     #endif
     #if ULAB_NUMPY_HAS_SINH
-    { MP_OBJ_NEW_QSTR(MP_QSTR_sinh), (mp_obj_t)&vectorise_sinh_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_sinh), (mp_obj_t)&vector_sinh_obj },
     #endif
     #if ULAB_NUMPY_HAS_SQRT
-    { MP_OBJ_NEW_QSTR(MP_QSTR_sqrt), (mp_obj_t)&vectorise_sqrt_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_sqrt), (mp_obj_t)&vector_sqrt_obj },
     #endif
     #if ULAB_NUMPY_HAS_TAN
-    { MP_OBJ_NEW_QSTR(MP_QSTR_tan), (mp_obj_t)&vectorise_tan_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_tan), (mp_obj_t)&vector_tan_obj },
     #endif
     #if ULAB_NUMPY_HAS_TANH
-    { MP_OBJ_NEW_QSTR(MP_QSTR_tanh), (mp_obj_t)&vectorise_tanh_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_tanh), (mp_obj_t)&vector_tanh_obj },
     #endif
     #if ULAB_NUMPY_HAS_VECTORIZE
-    { MP_OBJ_NEW_QSTR(MP_QSTR_vectorize), (mp_obj_t)&vectorise_vectorize_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_vectorize), (mp_obj_t)&vector_vectorize_obj },
     #endif
-
+    #if ULAB_SUPPORTS_COMPLEX
+        #if ULAB_NUMPY_HAS_REAL
+        { MP_OBJ_NEW_QSTR(MP_QSTR_real), (mp_obj_t)&carray_real_obj },
+        #endif
+        #if ULAB_NUMPY_HAS_IMAG
+        { MP_OBJ_NEW_QSTR(MP_QSTR_imag), (mp_obj_t)&carray_imag_obj },
+        #endif
+        #if ULAB_NUMPY_HAS_CONJUGATE
+            { MP_ROM_QSTR(MP_QSTR_conjugate), (mp_obj_t)&carray_conjugate_obj },
+        #endif
+        #if ULAB_NUMPY_HAS_SORT_COMPLEX
+            { MP_ROM_QSTR(MP_QSTR_sort_complex), (mp_obj_t)&carray_sort_complex_obj },
+        #endif
+    #endif
 };
 
 static MP_DEFINE_CONST_DICT(mp_module_ulab_numpy_globals, ulab_numpy_globals_table);

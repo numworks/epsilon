@@ -20,9 +20,9 @@
 #include "py/objarray.h"
 
 #include "ulab.h"
-#include "ulab_create.h"
 #include "ndarray.h"
 #include "ndarray_properties.h"
+#include "numpy/create.h"
 #include "numpy/ndarray/ndarray_iter.h"
 
 #include "numpy/numpy.h"
@@ -33,13 +33,21 @@
 #include "user/user.h"
 #include "utils/utils.h"
 
-#define ULAB_VERSION 3.3.8
+#define ULAB_VERSION 5.0.7
 #define xstr(s) str(s)
 #define str(s) #s
+
+#if ULAB_SUPPORTS_COMPLEX
+#define ULAB_VERSION_STRING xstr(ULAB_VERSION) xstr(-) xstr(ULAB_MAX_DIMS) xstr(D-c)
+#else
 #define ULAB_VERSION_STRING xstr(ULAB_VERSION) xstr(-) xstr(ULAB_MAX_DIMS) xstr(D)
+#endif
 
 STATIC MP_DEFINE_STR_OBJ(ulab_version_obj, ULAB_VERSION_STRING);
 
+#ifdef ULAB_HASH
+STATIC MP_DEFINE_STR_OBJ(ulab_sha_obj, xstr(ULAB_HASH));
+#endif
 
 STATIC const mp_rom_map_elem_t ulab_ndarray_locals_dict_table[] = {
     #if ULAB_MAX_DIMS > 1
@@ -61,6 +69,9 @@ STATIC const mp_rom_map_elem_t ulab_ndarray_locals_dict_table[] = {
     #endif
     #if NDARRAY_HAS_TOBYTES
         { MP_ROM_QSTR(MP_QSTR_tobytes), MP_ROM_PTR(&ndarray_tobytes_obj) },
+    #endif
+    #if NDARRAY_HAS_TOLIST
+        { MP_ROM_QSTR(MP_QSTR_tolist), MP_ROM_PTR(&ndarray_tolist_obj) },
     #endif
     #if NDARRAY_HAS_SORT
         { MP_ROM_QSTR(MP_QSTR_sort), MP_ROM_PTR(&numerical_sort_inplace_obj) },
@@ -141,6 +152,9 @@ const mp_obj_type_t ndarray_flatiter_type = {
 STATIC const mp_map_elem_t ulab_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_ulab) },
     { MP_ROM_QSTR(MP_QSTR___version__), MP_ROM_PTR(&ulab_version_obj) },
+    #ifdef ULAB_HASH
+    { MP_ROM_QSTR(MP_QSTR___sha__), MP_ROM_PTR(&ulab_sha_obj) },
+    #endif
     #if ULAB_HAS_DTYPE_OBJECT
         { MP_OBJ_NEW_QSTR(MP_QSTR_dtype), (mp_obj_t)&ulab_dtype_type },
     #else
@@ -174,4 +188,10 @@ const mp_obj_module_t ulab_user_cmodule = {
     .globals = (mp_obj_dict_t*)&mp_module_ulab_globals,
 };
 
+// Use old three-argument MP_REGISTER_MODULE for
+// MicroPython <= v1.18.0: (1 << 16) | (18 << 8) | 0
+#if MICROPY_VERSION <= 70144
 MP_REGISTER_MODULE(MP_QSTR_ulab, ulab_user_cmodule, MODULE_ULAB_ENABLED);
+#else
+MP_REGISTER_MODULE(MP_QSTR_ulab, ulab_user_cmodule);
+#endif

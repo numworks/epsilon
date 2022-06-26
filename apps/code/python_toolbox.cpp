@@ -295,9 +295,20 @@ const ToolboxMessageTree ScipyModuleChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::ScipySpecialModule, ScipySpecialModuleChildren),
 };
 
+const ToolboxMessageTree UtilsModuleChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromUtils, I18n::Message::PythonImportUtils, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUtilsFunction, I18n::Message::PythonUtilsFunction, false, I18n::Message::PythonCommandUtilsFunctionWithoutArg),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUtilsSpectrogram),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUtilsFromInt16Buffer),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUtilsFromUint16Buffer),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUtilsFromInt32Buffer),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUtilsFromUint32Buffer),
+};
+
 const ToolboxMessageTree UlabModuleChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::NumpyModule, NumpyModuleChildren),
   ToolboxMessageTree::Node(I18n::Message::ScipyModule, ScipyModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::UtilsModule, UtilsModuleChildren),
   ToolboxMessageTree::Leaf(I18n::Message::UlabDocumentation, I18n::Message::UlabDocumentationLink)
 };
 

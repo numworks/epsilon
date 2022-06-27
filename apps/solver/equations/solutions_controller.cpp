@@ -103,19 +103,19 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
 SolutionsController::SolutionsController(Responder * parentResponder, EquationStore * equationStore) :
   ViewController(parentResponder),
   m_equationStore(equationStore),
-  m_deltaCell(KDContext::k_alignCenter, KDContext::k_alignCenter),
+  m_deltaCell(KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, k_deltaFont),
   m_contentView(this)
 {
   const char * delta = GlobalPreferences::sharedGlobalPreferences()->discriminantSymbol();
   size_t lenDelta = strlen(delta);
   const char * equalB = "=b";
   m_delta2Layout = Poincare::HorizontalLayout::Builder(
-    LayoutHelper::String(delta, lenDelta, k_deltaFont),
-    LayoutHelper::String(equalB, strlen(equalB), k_deltaFont),
-    VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', k_deltaFont), VerticalOffsetLayoutNode::Position::Superscript),
-    LayoutHelper::String("-4ac", 4, k_deltaFont)
+    LayoutHelper::String(delta, lenDelta),
+    LayoutHelper::String(equalB, strlen(equalB)),
+    VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript),
+    LayoutHelper::String("-4ac", 4)
   );
-  m_delta3Layout = LayoutHelper::String(delta, lenDelta, k_deltaFont);
+  m_delta3Layout = LayoutHelper::String(delta, lenDelta);
   for (int i = 0; i < k_numberOfExactValueCells; i++) {
     m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }

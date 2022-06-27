@@ -99,12 +99,12 @@ void TestCurveView::drawZLabelAndZGraduation(KDContext * ctx, float z) const {
     return;
   }
   if (m_test->hypothesisParams()->comparisonOperator() == HypothesisParams::ComparisonOperator::Different) {
-    Poincare::AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(m_test->testCriticalValueSymbol(k_font));
+    Poincare::AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(m_test->testCriticalValueSymbol());
     drawLabelAndGraduationAtPosition(ctx, std::abs(z), absolute);
     absolute.invalidAllSizesPositionsAndBaselines();
-    drawLabelAndGraduationAtPosition(ctx, -std::abs(z), Poincare::HorizontalLayout::Builder(Poincare::CodePointLayout::Builder('-', k_font), absolute));
+    drawLabelAndGraduationAtPosition(ctx, -std::abs(z), Poincare::HorizontalLayout::Builder(Poincare::CodePointLayout::Builder('-'), absolute));
   } else {
-    drawLabelAndGraduationAtPosition(ctx, z, m_test->testCriticalValueSymbol(k_font));
+    drawLabelAndGraduationAtPosition(ctx, z, m_test->testCriticalValueSymbol());
   }
 }
 

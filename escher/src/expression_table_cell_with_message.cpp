@@ -4,8 +4,8 @@
 
 namespace Escher {
 
-ExpressionTableCellWithMessage::ExpressionTableCellWithMessage(Responder * parentResponder, I18n::Message subLabelMessage) :
-  ExpressionTableCell(parentResponder),
+ExpressionTableCellWithMessage::ExpressionTableCellWithMessage(Responder * parentResponder, I18n::Message subLabelMessage, const KDFont * expressionFont) :
+  ExpressionTableCell(parentResponder, expressionFont),
   m_subLabelView(KDFont::SmallFont, subLabelMessage, KDContext::k_alignLeft, KDContext::k_alignCenter, Palette::GrayDark, KDColorWhite)
 {
 }

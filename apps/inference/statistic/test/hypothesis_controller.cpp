@@ -32,14 +32,14 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
       m_next(&m_selectableTableView, I18n::Message::Next, Escher::Invocation(&HypothesisController::ButtonAction, this)),
       m_test(test) {
   Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
-      Poincare::CodePointLayout::Builder('H', KDFont::LargeFont),
+      Poincare::CodePointLayout::Builder('H'),
       Poincare::VerticalOffsetLayout::Builder(
-          Poincare::CodePointLayout::Builder('0', KDFont::LargeFont),
+          Poincare::CodePointLayout::Builder('0'),
           Poincare::VerticalOffsetLayoutNode::Position::Subscript));
   Poincare::Layout ha = Poincare::HorizontalLayout::Builder(
-      Poincare::CodePointLayout::Builder('H', KDFont::LargeFont),
+      Poincare::CodePointLayout::Builder('H'),
       Poincare::VerticalOffsetLayout::Builder(
-          Poincare::CodePointLayout::Builder('a', KDFont::LargeFont),
+          Poincare::CodePointLayout::Builder('a'),
           Poincare::VerticalOffsetLayoutNode::Position::Subscript));
   m_h0.setLayout(h0);
   m_h0.setSubLabelMessage(I18n::Message::H0Sub);

@@ -19,7 +19,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Esch
   SelectableListViewController(parentResponder),
   m_changeRegressionCell(I18n::Message::RegressionModel),
   m_regressionEquationCell(&m_selectableTableView, I18n::Message::RegressionEquation),
-  m_r2Cell(&m_selectableTableView),
+  m_r2Cell(&m_selectableTableView, I18n::Message::Default, KDFont::LargeFont),
   m_residualPlotCell(I18n::Message::ResidualPlot),
   m_xParameterCell(I18n::Message::XPrediction),
   m_yParameterCell(I18n::Message::YPrediction),
@@ -34,9 +34,9 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Esch
   m_graphController(graphController)
 {
   m_r2Cell.setLayout(Poincare::HorizontalLayout::Builder(
-      {Poincare::CodePointLayout::Builder('r', KDFont::LargeFont),
+      {Poincare::CodePointLayout::Builder('r'),
        Poincare::VerticalOffsetLayout::Builder(
-           Poincare::CodePointLayout::Builder('2', KDFont::LargeFont),
+           Poincare::CodePointLayout::Builder('2'),
            Poincare::VerticalOffsetLayoutNode::Position::Superscript)}));
 }
 

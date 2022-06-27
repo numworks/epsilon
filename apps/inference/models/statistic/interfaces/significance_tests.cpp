@@ -414,7 +414,7 @@ ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int i) {
     case ParamsOrder::x1: {
       Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
           CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{x1, I18n::Message::Sample1Mean};
     }
@@ -431,7 +431,7 @@ ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int i) {
     case ParamsOrder::x2: {
       Poincare::HorizontalLayout x2 = Poincare::HorizontalLayout::Builder(
           CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{x2, I18n::Message::Sample2Mean};
     }
@@ -619,28 +619,28 @@ ParameterRepresentation TwoProportions::ParameterRepresentationAtIndex(int i) {
     case ParamsOrder::x1: {
       Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('x'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{x1, I18n::Message::SuccessSample1};
     }
     case ParamsOrder::n1: {
       Poincare::HorizontalLayout n1 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('n'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1', KDFont::LargeFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{n1, I18n::Message::Sample1Size};
     }
     case ParamsOrder::x2: {
       Poincare::HorizontalLayout x2 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('x'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{x2, I18n::Message::SuccessSample2};
     }
     case ParamsOrder::n2: {
       Poincare::HorizontalLayout n2 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('n'),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::LargeFont),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
                                         VerticalOffsetLayoutNode::Position::Subscript));
       return ParameterRepresentation{n2, I18n::Message::Sample2Size};
     }

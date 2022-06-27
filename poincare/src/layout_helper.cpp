@@ -66,11 +66,11 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
   return std::move(result);
 }
 
-Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
+Layout LayoutHelper::String(const char * buffer, int bufferLen) {
   if (bufferLen < 0) {
     bufferLen = strlen(buffer);
   }
-  return UTF8Helper::StringGlyphLength(buffer) <= 1 ? StringToCodePointsLayout(buffer, bufferLen, font) : StringToStringLayout(buffer, bufferLen, font);
+  return UTF8Helper::StringGlyphLength(buffer) <= 1 ? StringToCodePointsLayout(buffer, bufferLen) : StringToStringLayout(buffer, bufferLen);
 }
 
 Layout LayoutHelper::StringLayoutOfSerialization(const Expression & expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) {
@@ -79,7 +79,7 @@ Layout LayoutHelper::StringLayoutOfSerialization(const Expression & expression, 
   return LayoutHelper::String(buffer, length);
 }
 
-Layout LayoutHelper::StringToCodePointsLayout(const char * buffer, int bufferLen, const KDFont * font) {
+Layout LayoutHelper::StringToCodePointsLayout(const char * buffer, int bufferLen) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   UTF8Decoder decoder(buffer);
@@ -93,11 +93,11 @@ Layout LayoutHelper::StringToCodePointsLayout(const char * buffer, int bufferLen
     CodePoint nextCodePoint = decoder.nextCodePoint();
     Layout nextChild;
     if (nextCodePoint.isCombining()) {
-      nextChild = CombinedCodePointsLayout::Builder(codePoint, nextCodePoint, font);
+      nextChild = CombinedCodePointsLayout::Builder(codePoint, nextCodePoint);
       nextPointer = decoder.stringPosition();
       nextCodePoint = decoder.nextCodePoint();
     } else {
-      nextChild = CodePointLayout::Builder(codePoint, font);
+      nextChild = CodePointLayout::Builder(codePoint);
     }
     resultLayout.addChildAtIndex(nextChild, layoutIndex, layoutIndex, nullptr);
     layoutIndex++;
@@ -110,22 +110,22 @@ Layout LayoutHelper::StringToCodePointsLayout(const char * buffer, int bufferLen
   return resultLayout.squashUnaryHierarchyInPlace();
 }
 
-Layout LayoutHelper::StringToStringLayout(const char * buffer, int bufferLen, const KDFont * font) {
+Layout LayoutHelper::StringToStringLayout(const char * buffer, int bufferLen) {
   assert(bufferLen > 0);
   /* MiddleDot MUST be handled as code point.
    * If you hit this assertion, use the method 'StringToCodePointsLayout'
    * to turn your string into an haroizontal layout filled with code points.*/
   assert(!UTF8Helper::HasCodePoint(buffer, UCodePointMiddleDot));
-  return StringLayout::Builder(buffer, bufferLen + 1, font);
+  return StringLayout::Builder(buffer, bufferLen + 1);
 }
 
-Layout LayoutHelper::CodePointsToLayout(const CodePoint * buffer, int bufferLen, const KDFont * font) {
+Layout LayoutHelper::CodePointsToLayout(const CodePoint * buffer, int bufferLen) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   for (int i = 0; i < bufferLen; i++) {
     assert(!buffer[i].isCombining());
     // TODO support combining code point?
-    resultLayout.addChildAtIndex(CodePointLayout::Builder(buffer[i], font), i, i, nullptr);
+    resultLayout.addChildAtIndex(CodePointLayout::Builder(buffer[i]), i, i, nullptr);
   }
   return resultLayout.squashUnaryHierarchyInPlace();
 }
@@ -143,7 +143,7 @@ Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
 HorizontalLayout LayoutHelper::CodePointSubscriptCodePointLayout(CodePoint base, CodePoint subscript) {
   return HorizontalLayout::Builder(
       CodePointLayout::Builder(base),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder(subscript, KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript));
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder(subscript), VerticalOffsetLayoutNode::Position::Subscript));
 }
 
 }

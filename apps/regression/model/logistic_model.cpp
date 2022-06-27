@@ -15,19 +15,19 @@ namespace Regression {
 Layout LogisticModel::layout() {
   if (m_layout.isUninitialized()) {
     m_layout = FractionLayout::Builder(
-      CodePointLayout::Builder('c', k_layoutFont),
+      CodePointLayout::Builder('c'),
       HorizontalLayout::Builder({
-        CodePointLayout::Builder('1', k_layoutFont),
-        CodePointLayout::Builder('+', k_layoutFont),
-        CodePointLayout::Builder('a', k_layoutFont),
-        CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-        CodePointLayout::Builder('e', k_layoutFont),
+        CodePointLayout::Builder('1'),
+        CodePointLayout::Builder('+'),
+        CodePointLayout::Builder('a'),
+        CodePointLayout::Builder(UCodePointMiddleDot),
+        CodePointLayout::Builder('e'),
         VerticalOffsetLayout::Builder(
           HorizontalLayout::Builder({
-            CodePointLayout::Builder('-', k_layoutFont),
-            CodePointLayout::Builder('b', k_layoutFont),
-            CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-            CodePointLayout::Builder('x', k_layoutFont)
+            CodePointLayout::Builder('-'),
+            CodePointLayout::Builder('b'),
+            CodePointLayout::Builder(UCodePointMiddleDot),
+            CodePointLayout::Builder('x')
           }),
           VerticalOffsetLayoutNode::Position::Superscript
         )

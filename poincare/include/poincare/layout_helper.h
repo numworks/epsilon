@@ -22,15 +22,15 @@ namespace LayoutHelper {
   /* Create special layouts */
   Layout Parentheses(Layout layout, bool cloneLayout);
   /* Create StringLayout from buffer (or CodePointLayout if bufferLen = 1) */
-  Layout String(const char * buffer, int bufferLen = -1, const KDFont * font = StringFormat::k_defaultFont);
+  Layout String(const char * buffer, int bufferLen = -1);
   /* Create StringLayout from expression */
   Layout StringLayoutOfSerialization(const Expression & expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits);
   /* Create HorizontalLayout with CodePointLayouts from buffer */
-  Layout StringToCodePointsLayout(const char * buffer, int bufferLen, const KDFont * font = StringFormat::k_defaultFont);
+  Layout StringToCodePointsLayout(const char * buffer, int bufferLen);
   /* Create StringLayout from buffer */
-  Layout StringToStringLayout(const char * buffer, int bufferLen, const KDFont * font = StringFormat::k_defaultFont);
+  Layout StringToStringLayout(const char * buffer, int bufferLen);
   /* Create HorizontalLayout with CodePointLayouts from buffer */
-  Layout CodePointsToLayout(const CodePoint * buffer, int bufferLen, const KDFont * font = StringFormat::k_defaultFont);
+  Layout CodePointsToLayout(const CodePoint * buffer, int bufferLen);
 
   Layout Logarithm(Layout argument, Layout index);
   HorizontalLayout CodePointSubscriptCodePointLayout(CodePoint base, CodePoint subscript);

@@ -26,9 +26,9 @@ bool CombinedCodePointsLayoutNode::protectedIsIdenticalTo(Layout l) {
   return CombinedCodePoints() == cpl.CombinedCodePoints() && CodePointLayoutNode::protectedIsIdenticalTo(l);
 }
 
-CombinedCodePointsLayout CombinedCodePointsLayout::Builder(CodePoint mainCodePoint, CodePoint CombinedCodePoints, const KDFont * font) {
+CombinedCodePointsLayout CombinedCodePointsLayout::Builder(CodePoint mainCodePoint, CodePoint CombinedCodePoints) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(CombinedCodePointsLayoutNode));
-  CombinedCodePointsLayoutNode * node = new (bufferNode) CombinedCodePointsLayoutNode(mainCodePoint, CombinedCodePoints, font);
+  CombinedCodePointsLayoutNode * node = new (bufferNode) CombinedCodePointsLayoutNode(mainCodePoint, CombinedCodePoints);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<CombinedCodePointsLayout &>(h);
 }

@@ -26,7 +26,7 @@ public:
   void compute() override { TwoMeans::ComputeZInterval(this); }
   const char * estimateSymbol() const override { return TwoMeans::EstimateSymbol(); }
   Poincare::Layout estimateLayout() const override { return TwoMeans::EstimateLayout(&m_estimateLayout); }
-  Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionZ::TestCriticalValueSymbol(font); }
+  Poincare::Layout testCriticalValueSymbol() override { return DistributionZ::TestCriticalValueSymbol(); }
   I18n::Message estimateDescription() override { return TwoMeans::EstimateDescription(); };
 
   // Distribution: z

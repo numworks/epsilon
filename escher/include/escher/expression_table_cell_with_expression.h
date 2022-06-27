@@ -7,7 +7,7 @@
 namespace Escher {
 class ExpressionTableCellWithExpression : public ExpressionTableCell {
 public:
-  ExpressionTableCellWithExpression(Responder * parentResponder = nullptr);
+  ExpressionTableCellWithExpression(Responder * parentResponder = nullptr, const KDFont * font = KDFont::LargeFont);
   const View * subLabelView() const override { return &m_subLabelExpressionView; }
   void setHighlighted(bool highlight) override;
   void setSubLabelLayout(Poincare::Layout l);

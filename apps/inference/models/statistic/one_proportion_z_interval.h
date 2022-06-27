@@ -24,7 +24,7 @@ public:
   void compute() override { OneProportion::ComputeInterval(this); }
 
   const char * estimateSymbol() const override { return OneProportion::EstimateSymbol(); }
-  Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionZ::TestCriticalValueSymbol(font); }
+  Poincare::Layout testCriticalValueSymbol() override { return DistributionZ::TestCriticalValueSymbol(); }
   Poincare::Layout estimateLayout() const override { return OneProportion::EstimateLayout(&m_estimateLayout); }
   I18n::Message estimateDescription() override { return OneProportion::EstimateDescription(); };
 

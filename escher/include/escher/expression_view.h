@@ -35,6 +35,7 @@ public:
   KDPoint absoluteDrawingOrigin() const;
   bool layoutHasNode() const { return Poincare::TreeNode::IsValidIdentifier(m_layout.identifier()) && !m_layout.wasErasedByException(); }
   const KDFont * font() const { return m_font; }
+  void setFont(const KDFont * font) { m_font = font; }
 protected:
   /* Warning: we do not need to delete the previous expression layout when
    * deleting object or setting a new expression layout. Indeed, the expression

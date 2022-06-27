@@ -17,11 +17,10 @@ public:
   // Layout
   Type type() const override { return Type::EmptyLayout; }
 
-  EmptyLayoutNode(Color color = Color::Yellow, bool visible = true, const KDFont * font = KDFont::LargeFont, bool margins = true) :
+  EmptyLayoutNode(Color color = Color::Yellow, bool visible = true, bool margins = true) :
     LayoutNode(),
     m_isVisible(visible),
     m_color(color),
-    m_font(font),
     m_margins(margins)
   {}
 
@@ -71,14 +70,13 @@ private:
 
   bool m_isVisible;
   Color m_color;
-  const KDFont * m_font;
   bool m_margins;
 };
 
 class EmptyLayout final : public Layout {
 public:
   EmptyLayout(const EmptyLayoutNode * n);
-  static EmptyLayout Builder(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, const KDFont * font = KDFont::LargeFont, bool margins = true);
+  static EmptyLayout Builder(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, bool margins = true);
   void setVisible(bool visible) {
     node()->setVisible(visible);
   }

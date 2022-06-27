@@ -27,7 +27,7 @@ public:
   void compute() override { OneMean::ComputeTInterval(this); }
 
   const char * estimateSymbol() const override { return OneMean::EstimateSymbol(); }
-  Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) override { return DistributionT::TestCriticalValueSymbol(font); }
+  Poincare::Layout testCriticalValueSymbol() override { return DistributionT::TestCriticalValueSymbol(); }
 
   // Distribution: t
   float canonicalDensityFunction(float x) const override { return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom); }

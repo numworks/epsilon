@@ -44,7 +44,6 @@ protected:
   // Fit
   virtual void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
   virtual bool dataSuitableForFit(Store * store, int series) const;
-  constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;
   Poincare::Layout m_layout;
 private:
   // Model attributes

@@ -5,9 +5,9 @@ using namespace Poincare;
 namespace Escher {
 
 EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment, float verticalAlignment,
-    KDColor textColor, KDColor backgroundColor) :
+    KDColor textColor, KDColor backgroundColor, const KDFont * font) :
   EvenOddCell(),
-  m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor, font),
   m_leftMargin(0),
   m_rightMargin(0)
 {

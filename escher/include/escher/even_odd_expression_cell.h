@@ -11,7 +11,8 @@ public:
   EvenOddExpressionCell(float horizontalAlignment = KDContext::k_alignLeft,
                         float verticalAlignment = KDContext::k_alignCenter,
                         KDColor textColor = KDColorBlack,
-                        KDColor backgroundColor = KDColorWhite);
+                        KDColor backgroundColor = KDColorWhite,
+                        const KDFont * font = KDFont::LargeFont);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);
@@ -23,6 +24,7 @@ public:
   void setRightMargin(KDCoordinate margin);
   KDPoint drawingOrigin() const { return m_expressionView.drawingOrigin(); }
   Poincare::Layout layout() const override { return m_expressionView.layout(); }
+  const KDFont * font() const { return m_expressionView.font(); }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   int numberOfSubviews() const override;

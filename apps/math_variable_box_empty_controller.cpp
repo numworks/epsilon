@@ -8,7 +8,7 @@ using namespace Escher;
 
 MathVariableBoxEmptyController::MathVariableBoxEmptyView::MathVariableBoxEmptyView() :
   ModalViewEmptyView(),
-  m_layoutExample(KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen)
+  m_layoutExample(KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen, k_font)
 {
   initMessageViews();
 }
@@ -37,7 +37,7 @@ void MathVariableBoxEmptyController::setPage(int pageCastedToInt) {
       messages[1] = I18n::Message::EmptyExpressionBox1;
       messages[2] = I18n::Message::EmptyExpressionBox2;
       const char * storeExpression = "3→A";
-      layout = Poincare::LayoutHelper::String(storeExpression, strlen(storeExpression), MathVariableBoxEmptyView::k_font);
+      layout = Poincare::LayoutHelper::String(storeExpression, strlen(storeExpression));
       break;
     }
     case MathVariableBoxController::Page::Function:
@@ -46,7 +46,7 @@ void MathVariableBoxEmptyController::setPage(int pageCastedToInt) {
       messages[1] = I18n::Message::EmptyFunctionBox1;
       messages[2] = I18n::Message::EmptyFunctionBox2;
       const char * storeFunction = "3+x→f(x)";
-      layout = Poincare::LayoutHelper::String(storeFunction, strlen(storeFunction), MathVariableBoxEmptyView::k_font);
+      layout = Poincare::LayoutHelper::String(storeFunction, strlen(storeFunction));
       break;
     }
     case MathVariableBoxController::Page::Sequence:
@@ -62,7 +62,7 @@ void MathVariableBoxEmptyController::setPage(int pageCastedToInt) {
       messages[1] = I18n::Message::EmptyListBox1;
       messages[2] = I18n::Message::EmptyListBox2;
       const char * storeList = "{3,4}→L";
-      layout = Poincare::LayoutHelper::String(storeList, strlen(storeList), MathVariableBoxEmptyView::k_font);
+      layout = Poincare::LayoutHelper::String(storeList, strlen(storeList));
       break;
     }
     case MathVariableBoxController::Page::Matrix:
@@ -71,7 +71,7 @@ void MathVariableBoxEmptyController::setPage(int pageCastedToInt) {
       messages[1] = I18n::Message::EmptyMatrixBox1;
       messages[2] = I18n::Message::EmptyMatrixBox2;
       const char * storeExpression = "[[1,2][3,4]]→M";
-      layout = Poincare::LayoutHelper::String(storeExpression, strlen(storeExpression), MathVariableBoxEmptyView::k_font);
+      layout = Poincare::LayoutHelper::String(storeExpression, strlen(storeExpression));
       break;
     }
     default:

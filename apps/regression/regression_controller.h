@@ -34,6 +34,7 @@ private:
   constexpr static int k_numberOfRows = Model::k_numberOfModels - 1;
   constexpr static int k_numberOfCells = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight - 2*Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
   constexpr static Model::Type ModelTypeAtIndex(int index) { return static_cast<Model::Type>(index + 1); }
+  constexpr static const KDFont * k_modelLayoutFont = KDFont::SmallFont;
 
   // Display X?/Y? only when no other displayed title already names the series.
   bool displaySeriesNameAsTitle() const { return !m_displayedFromDataTab && m_store->seriesRegressionType(m_series) == Model::Type::None; }

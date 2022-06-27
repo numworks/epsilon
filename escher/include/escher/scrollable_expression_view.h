@@ -19,6 +19,7 @@ public:
                            const KDFont * font = KDFont::LargeFont);
   Poincare::Layout layout() const;
   const KDFont * font() const { return m_expressionView.font(); }
+  void setFont(const KDFont * font) { m_expressionView.setFont(font); }
   void setLayout(Poincare::Layout layout);
   void setTextColor(KDColor color) { m_expressionView.setTextColor(color); }
   void setBackgroundColor(KDColor backgroundColor) override;

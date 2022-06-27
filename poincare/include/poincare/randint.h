@@ -2,6 +2,7 @@
 #define POINCARE_RANDINT_H
 
 #include <poincare/expression.h>
+#include <poincare/default_parameter.h>
 #include <poincare/rational.h>
 
 namespace Poincare {
@@ -22,6 +23,11 @@ public:
 
   // Properties
   Type type() const override { return Type::Randint; }
+
+  // ExpressionNode
+  Expression defaultParameterAtIndex(int i) const override {
+    return i == 0 ? Rational::Builder(0) : ExpressionNode::defaultParameterAtIndex(i);
+  }
 
 private:
   // Layout
@@ -48,7 +54,7 @@ public:
   using ExpressionBuilder::ExpressionBuilder;
   static Expression OneChildUntypedBuilder(Expression children) {
     assert(children.numberOfChildren() == 1);
-    return Builder(Rational::Builder(0), children.childAtIndex(0));
+    return Builder(DefaultParameter::Builder(), children.childAtIndex(0));
   }
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 

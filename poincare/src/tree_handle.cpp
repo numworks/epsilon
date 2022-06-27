@@ -297,6 +297,7 @@ void TreeHandle::release(uint16_t identifier) {
 
 template Addition TreeHandle::NAryBuilder<Addition, AdditionNode>(const Tuple &);
 template ComplexCartesian TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>(const Tuple &);
+template DefaultParameter TreeHandle::FixedArityBuilder<DefaultParameter, DefaultParameterNode>(const Tuple &);
 template Dependency TreeHandle::FixedArityBuilder<Dependency, DependencyNode>(const Tuple &);
 template Derivative TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(const Tuple &);
 template DistributionDispatcher TreeHandle::NAryBuilder<DistributionDispatcher, DistributionDispatcherNode>(const Tuple &);

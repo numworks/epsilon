@@ -21,11 +21,6 @@ void CalculationSelectableTableView::scrollToBottom() {
 }
 
 void CalculationSelectableTableView::scrollToCell(int i, int j) {
-  if (m_contentView.bounds().height() < bounds().height()) {
-    setTopMargin(bounds().height() - m_contentView.bounds().height());
-  } else {
-    setTopMargin(0);
-  }
   ::SelectableTableView::scrollToCell(i, j);
   ScrollView::layoutSubviews();
   if (m_contentView.bounds().height() - contentOffset().y() < bounds().height()) {

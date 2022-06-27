@@ -45,6 +45,8 @@ class Expression : public TreeHandle {
   friend class Cosine;
   friend class Cotangent;
   friend class Decimal;
+  friend class DefaultParameter;
+  friend class DefaultParameterNode;
   friend class Dependency;
   friend class Derivative;
   friend class Determinant;

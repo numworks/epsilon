@@ -567,6 +567,7 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximation_is_bounded("randint(4,45)", 4.0f, 45.0f, true);
   assert_expression_approximation_is_bounded("randint(4,45)", 4.0, 45.0, true);
+  assert_expression_approximation_is_bounded("randint(10)", 0.0, 10.0, true);
   assert_expression_approximates_to<double>("1/randint(2,2)+1/2", "1");
   assert_expression_approximates_to<double>("randint(45,4)", Undefined::Name());
   assert_expression_approximates_to<double>("randint(1, inf)",Undefined::Name());

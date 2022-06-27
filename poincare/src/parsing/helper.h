@@ -96,6 +96,7 @@ private:
     &ListProduct::s_functionHelper,
     &Product::s_functionHelper,
     &DivisionQuotient::s_functionHelper,
+    &Randint::s_functionHelperOneChild,
     &Randint::s_functionHelper,
     &Random::s_functionHelper,
     &RealPart::s_functionHelper,

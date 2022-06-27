@@ -2,6 +2,7 @@
 #define POINCARE_RANDINT_H
 
 #include <poincare/expression.h>
+#include <poincare/rational.h>
 
 namespace Poincare {
 
@@ -45,7 +46,14 @@ class Randint final : public ExpressionTwoChildren<Randint, RandintNode> {
 friend class RandintNode;
 public:
   using ExpressionBuilder::ExpressionBuilder;
+  static Expression OneChildUntypedBuilder(Expression children) {
+    assert(children.numberOfChildren() == 1);
+    return Builder(Rational::Builder(0), children.childAtIndex(0));
+  }
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+
+  constexpr static Expression::FunctionHelper s_functionHelperOneChild = Expression::FunctionHelper(RandintNode::k_functionName, 1, &OneChildUntypedBuilder);
+
 };
 
 

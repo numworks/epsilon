@@ -41,6 +41,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
      * We also have tan(θ) = (s * t) / t = s
      * As a result, t' = t * cos(tan(s)) = t / sqrt(1 + s^2) */
     scrollSpeedFactor /= std::sqrt(1.0 + slope*slope);
+    // Add a sqrt(2) factor so that y=x isn't slowed down
+    scrollSpeedFactor *= std::sqrt(2.0);
     // Cap the scroll speed reduction to be able to cross vertical asymptotes
     scrollSpeedFactor = std::max(0.25, scrollSpeedFactor);
   }

@@ -9,14 +9,14 @@ namespace Shared {
 
 class SequenceTitleCell : public Shared::FunctionTitleCell {
 public:
-  SequenceTitleCell();
+  SequenceTitleCell(const KDFont * font = KDFont::LargeFont);
   void setLayout(Poincare::Layout layout);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
   void setOrientation(Orientation orientation) override;
   const KDFont * font() const override {
-    return Poincare::CodePointLayoutNode::k_defaultFont;
+    return m_titleTextView.font();
   }
   Poincare::Layout layout() const override {
     return m_titleTextView.layout();

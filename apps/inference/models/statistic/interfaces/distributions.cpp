@@ -49,11 +49,11 @@ float DistributionZ::YMax(double degreesOfFreedom) {
 
 /* Distribution chi 2 */
 
-Poincare::Layout DistributionChi2::TestCriticalValueSymbol(const KDFont * font) {
+Poincare::Layout DistributionChi2::TestCriticalValueSymbol() {
   return Poincare::HorizontalLayout::Builder(
-      Poincare::CodePointLayout::Builder(UCodePointGreekSmallLetterChi, font),
+      Poincare::CodePointLayout::Builder(UCodePointGreekSmallLetterChi),
       Poincare::VerticalOffsetLayout::Builder(
-          Poincare::CodePointLayout::Builder('2', font),
+          Poincare::CodePointLayout::Builder('2'),
           Poincare::VerticalOffsetLayoutNode::Position::Superscript));
 }
 

@@ -536,6 +536,7 @@ MathToolbox::MathToolbox() :
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setParentResponder(&m_selectableTableView);
+    m_leafCells->setFont(KDFont::LargeFont);
   }
 }
 
@@ -616,7 +617,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     }
     if (resultLayout.isUninitialized()) {
       // With Edition1D, pool exception or invalid syntax, use a simpler layout.
-      resultLayout = LayoutHelper::String(text, strlen(text), KDFont::LargeFont);
+      resultLayout = LayoutHelper::String(text, strlen(text));
     }
 
     myCell->setLayout(resultLayout);

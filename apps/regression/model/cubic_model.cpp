@@ -20,27 +20,27 @@ namespace Regression {
 Layout CubicModel::layout() {
   if (m_layout.isUninitialized()) {
     m_layout = HorizontalLayout::Builder({
-      CodePointLayout::Builder('a', k_layoutFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder('x', k_layoutFont),
+      CodePointLayout::Builder('a'),
+      CodePointLayout::Builder(UCodePointMiddleDot),
+      CodePointLayout::Builder('x'),
       VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('3', k_layoutFont),
+        CodePointLayout::Builder('3'),
         VerticalOffsetLayoutNode::Position::Superscript
       ),
-      CodePointLayout::Builder('+', k_layoutFont),
-      CodePointLayout::Builder('b', k_layoutFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder('x', k_layoutFont),
+      CodePointLayout::Builder('+'),
+      CodePointLayout::Builder('b'),
+      CodePointLayout::Builder(UCodePointMiddleDot),
+      CodePointLayout::Builder('x'),
       VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('2', k_layoutFont),
+        CodePointLayout::Builder('2'),
         VerticalOffsetLayoutNode::Position::Superscript
       ),
-      CodePointLayout::Builder('+', k_layoutFont),
-      CodePointLayout::Builder('c', k_layoutFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder('x', k_layoutFont),
-      CodePointLayout::Builder('+', k_layoutFont),
-      CodePointLayout::Builder('d', k_layoutFont),
+      CodePointLayout::Builder('+'),
+      CodePointLayout::Builder('c'),
+      CodePointLayout::Builder(UCodePointMiddleDot),
+      CodePointLayout::Builder('x'),
+      CodePointLayout::Builder('+'),
+      CodePointLayout::Builder('d'),
     });
   }
   return m_layout;

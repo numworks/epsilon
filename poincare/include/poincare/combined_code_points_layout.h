@@ -8,8 +8,8 @@ namespace Poincare {
 
 class CombinedCodePointsLayoutNode final : public CodePointLayoutNode {
 public:
-  CombinedCodePointsLayoutNode(CodePoint mainCodePoint, CodePoint CombinedCodePoints, const KDFont * font = k_defaultFont) :
-    CodePointLayoutNode(mainCodePoint, font),
+  CombinedCodePointsLayoutNode(CodePoint mainCodePoint, CodePoint CombinedCodePoints) :
+    CodePointLayoutNode(mainCodePoint),
     m_CombinedCodePoints(CombinedCodePoints)
   {}
 
@@ -45,7 +45,7 @@ private:
 class CombinedCodePointsLayout final : public CodePointLayout {
 public:
   CombinedCodePointsLayout(const CodePointLayoutNode * n) : CodePointLayout(n) {}
-  static CombinedCodePointsLayout Builder(CodePoint mainCodePoint, CodePoint CombinedCodePoints, const KDFont * font = KDFont::LargeFont);
+  static CombinedCodePointsLayout Builder(CodePoint mainCodePoint, CodePoint CombinedCodePoints);
   CodePoint CombinedCodePoints() const { return const_cast<CombinedCodePointsLayout *>(this)->node()->CombinedCodePoints(); }
 private:
   CombinedCodePointsLayoutNode * node() { return static_cast<CombinedCodePointsLayoutNode *>(Layout::node()); }

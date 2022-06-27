@@ -12,11 +12,10 @@ namespace Poincare {
 /* TODO: Make several code point classes depending on codepoint size?
  * (m_codePoint sometimes fits in a char, no need for a whole CodePoint */
 
-class CodePointLayoutNode : public LayoutNode, public StringFormat {
+class CodePointLayoutNode : public LayoutNode {
 public:
-  CodePointLayoutNode(CodePoint c = UCodePointNull, const KDFont * font = StringFormat::k_defaultFont) :
+  CodePointLayoutNode(CodePoint c = UCodePointNull) :
     LayoutNode(),
-    StringFormat(font),
     m_codePoint(c)
   {}
 
@@ -68,10 +67,8 @@ private:
 class CodePointLayout : public Layout {
 public:
   CodePointLayout(const CodePointLayoutNode * n) : Layout(n) {}
-  static CodePointLayout Builder(CodePoint c, const KDFont * font = StringFormat::k_defaultFont);
-  const KDFont * font() const { return const_cast<CodePointLayout *>(this)->node()->font(); }
+  static CodePointLayout Builder(CodePoint c);
   CodePoint codePoint() const { return const_cast<CodePointLayout *>(this)->node()->codePoint(); }
-  void setFont(const KDFont * font) { node()->setFont(font); }
 
 private:
   using Layout::node;

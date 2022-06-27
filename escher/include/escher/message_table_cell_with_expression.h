@@ -12,6 +12,7 @@ public:
   const View * subLabelView() const override { return &m_subtitleView; }
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);
+  void setFont(const KDFont * font) { m_subtitleView.setFont(font); }
 private:
   ExpressionView m_subtitleView;
 };

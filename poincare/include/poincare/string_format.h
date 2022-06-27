@@ -6,6 +6,9 @@
 
 namespace Poincare {
 
+/* TODO Hugo : Remove this font and update all const KDFont * k_defaultFont into
+ * the optimized enum StringFont. */
+
 class StringFormat {
 public:
   constexpr static const KDFont * k_defaultFont = KDFont::LargeFont;

@@ -142,9 +142,9 @@ bool CodePointLayoutNode::protectedIsIdenticalTo(Layout l) {
   return codePoint() == cpl.codePoint();
 }
 
-CodePointLayout CodePointLayout::Builder(CodePoint c, const KDFont * font) {
+CodePointLayout CodePointLayout::Builder(CodePoint c) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(CodePointLayoutNode));
-  CodePointLayoutNode * node = new (bufferNode) CodePointLayoutNode(c, font);
+  CodePointLayoutNode * node = new (bufferNode) CodePointLayoutNode(c);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<CodePointLayout &>(h);
 }

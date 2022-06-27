@@ -120,8 +120,8 @@ void Sequence::setInitialRank(int rank) {
 
 Poincare::Layout Sequence::nameLayout() {
   return HorizontalLayout::Builder(
-      CodePointLayout::Builder(fullName()[0], KDFont::SmallFont),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder(symbol(), KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Subscript)
+      CodePointLayout::Builder(fullName()[0]),
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder(symbol()), VerticalOffsetLayoutNode::Position::Subscript)
     );
 }
 
@@ -351,17 +351,17 @@ void Sequence::DefinitionModel::buildName(Sequence * sequence) {
   char name = sequence->fullName()[0];
   if (sequence->type() == Type::Explicit) {
     m_name = HorizontalLayout::Builder(
-        CodePointLayout::Builder(name, k_layoutFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String("n", 1, k_layoutFont), VerticalOffsetLayoutNode::Position::Subscript));
+        CodePointLayout::Builder(name),
+        VerticalOffsetLayout::Builder(LayoutHelper::String("n", 1), VerticalOffsetLayoutNode::Position::Subscript));
   } else if (sequence->type() == Type::SingleRecurrence) {
     m_name = HorizontalLayout::Builder(
-        CodePointLayout::Builder(name, k_layoutFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String("n+1", 3, k_layoutFont), VerticalOffsetLayoutNode::Position::Subscript));
+        CodePointLayout::Builder(name),
+        VerticalOffsetLayout::Builder(LayoutHelper::String("n+1", 3), VerticalOffsetLayoutNode::Position::Subscript));
   } else {
     assert(sequence->type() == Type::DoubleRecurrence);
     m_name = HorizontalLayout::Builder(
-        CodePointLayout::Builder(name, k_layoutFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String("n+2", 3, k_layoutFont), VerticalOffsetLayoutNode::Position::Subscript));
+        CodePointLayout::Builder(name),
+        VerticalOffsetLayout::Builder(LayoutHelper::String("n+2", 3), VerticalOffsetLayoutNode::Position::Subscript));
   }
 }
 
@@ -386,9 +386,9 @@ void Sequence::InitialConditionModel::buildName(Sequence * sequence) {
   assert((conditionIndex() == 0 && sequence->type() == Type::SingleRecurrence) || sequence->type() == Type::DoubleRecurrence);
   char buffer[k_initialRankNumberOfDigits+1];
   Integer(sequence->initialRank()+conditionIndex()).serialize(buffer, k_initialRankNumberOfDigits+1);
-  Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), k_layoutFont);
+  Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer));
   m_name = HorizontalLayout::Builder(
-      CodePointLayout::Builder(sequence->fullName()[0], k_layoutFont),
+      CodePointLayout::Builder(sequence->fullName()[0]),
       VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::Position::Subscript));
 }
 

@@ -6,9 +6,8 @@
 
 namespace Poincare {
 
-StringLayoutNode::StringLayoutNode(const char * string, int stringSize, const KDFont * font) :
-  LayoutNode(),
-  StringFormat(font)
+StringLayoutNode::StringLayoutNode(const char * string, int stringSize) :
+  LayoutNode()
   {
     strlcpy(m_string, string, stringSize);
   }
@@ -85,18 +84,18 @@ int StringLayoutNode::firstNonDigitIndex() {
   return nonDigitIndex;
 }
 
-StringLayout StringLayout::Builder(const char * string, int stringSize, const KDFont * font) {
+StringLayout StringLayout::Builder(const char * string, int stringSize) {
   if (stringSize < 1) {
     stringSize = strlen(string) + 1;
   }
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(StringLayoutNode) + sizeof(char) * stringSize);
-  StringLayoutNode * node = new (bufferNode) StringLayoutNode(string, stringSize, font);
+  StringLayoutNode * node = new (bufferNode) StringLayoutNode(string, stringSize);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<StringLayout &>(h);
 }
 
 Layout StringLayout::makeEditable() {
-  Layout editableLayout = LayoutHelper::StringToCodePointsLayout(string(), stringLength(), font());
+  Layout editableLayout = LayoutHelper::StringToCodePointsLayout(string(), stringLength());
   Layout myParent = this->parent();
   /* editableLayout can be an HorizontalLayout, so it needs to be merged with
    * parent if it is also an HorizontalLayout. */

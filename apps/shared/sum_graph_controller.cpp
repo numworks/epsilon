@@ -166,7 +166,7 @@ void SumGraphController::reloadBannerView() {
 /* Legend View */
 
 SumGraphController::LegendView::LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol) :
-  m_sum(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
+  m_sum(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle, k_font),
   m_legend(k_font, I18n::Message::Default, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
   m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, k_font,
                  KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
@@ -204,15 +204,15 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
     char buffer[k_editableZoneBufferSize];
     Layout endLayout;
     if (step == Step::SecondParameter) {
-      endLayout = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false);
+      endLayout = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, false);
     } else {
       PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(end, buffer, k_valuesBufferSize, k_valuesPrecision, Preferences::PrintFloatMode::Decimal);
-      endLayout = LayoutHelper::String(buffer, strlen(buffer), k_font);
+      endLayout = LayoutHelper::String(buffer, strlen(buffer));
     }
     PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(start, buffer, k_valuesBufferSize, k_valuesPrecision, Preferences::PrintFloatMode::Decimal);
     sumLayout = CondensedSumLayout::Builder(
         sumLayout,
-        LayoutHelper::String(buffer, strlen(buffer), k_font),
+        LayoutHelper::String(buffer, strlen(buffer)),
         endLayout);
     if (step == Step::Result) {
       int resultPrecision = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
@@ -221,8 +221,8 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
       sumLayout = HorizontalLayout::Builder(
           sumLayout,
           functionLayout,
-          LayoutHelper::String("= ", 2, k_font),
-          LayoutHelper::String(buffer, strlen(buffer), k_font));
+          LayoutHelper::String("= ", 2),
+          LayoutHelper::String(buffer, strlen(buffer)));
     }
   }
   m_sum.setLayout(sumLayout);
@@ -259,7 +259,7 @@ void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
   }
 
   KDRect frame = (step == Step::Result) ? KDRectZero : KDRect(
-    2 * KDFont::LargeFont->glyphSize().width(),
+    2 * KDFont::SmallFont->glyphSize().width(),
     k_symbolHeightMargin + k_sigmaHeight/2 - (step == Step::SecondParameter) * editableZoneHeight(),
     editableZoneWidth(), editableZoneHeight()
   );

@@ -102,9 +102,9 @@ bool EmptyLayoutNode::protectedIsIdenticalTo(Layout l) {
 
 EmptyLayout::EmptyLayout(const EmptyLayoutNode * n) : Layout(n) {}
 
-EmptyLayout EmptyLayout::Builder(EmptyLayoutNode::Color color, bool visible, const KDFont * font, bool margins) {
+EmptyLayout EmptyLayout::Builder(EmptyLayoutNode::Color color, bool visible, bool margins) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(EmptyLayoutNode));
-  EmptyLayoutNode * node = new (bufferNode) EmptyLayoutNode(color, visible, font, margins);
+  EmptyLayoutNode * node = new (bufferNode) EmptyLayoutNode(color, visible, margins);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<EmptyLayout &>(h);
 }

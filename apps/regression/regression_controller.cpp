@@ -25,7 +25,11 @@ RegressionController::RegressionController(Responder * parentResponder, Store * 
   m_store(store),
   m_series(-1),
   m_displayedFromDataTab(true)
-{}
+{
+  for (size_t i = 0; i < k_numberOfCells; i++) {
+    m_regressionCells[i].setFont(k_modelLayoutFont);
+  }
+}
 
 const char * RegressionController::title() {
   if (displaySeriesNameAsTitle()) {
@@ -67,6 +71,7 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
 KDCoordinate RegressionController::nonMemoizedRowHeight(int j) {
   assert (j >= 0 && j < numberOfRows());
   MessageTableCellWithExpression tempCell;
+  tempCell.setFont(k_modelLayoutFont);
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 

@@ -52,55 +52,55 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
     case I18n::Message::Degrees:
     {
       const char * degEx = "90°";
-      return LayoutHelper::String(degEx, strlen(degEx), k_layoutFont);
+      return LayoutHelper::String(degEx, strlen(degEx));
     }
     case I18n::Message::Radian:
       return FractionLayout::Builder(
-          CodePointLayout::Builder(UCodePointGreekSmallLetterPi, k_layoutFont),
-          CodePointLayout::Builder('2', k_layoutFont));
+          CodePointLayout::Builder(UCodePointGreekSmallLetterPi),
+          CodePointLayout::Builder('2'));
     case I18n::Message::Gradians:
     {
       const char * degEx = "100 gon";
-      return LayoutHelper::String(degEx, strlen(degEx), k_layoutFont);
+      return LayoutHelper::String(degEx, strlen(degEx));
     }
     // Display Mode format
     case I18n::Message::Decimal:
-      return LayoutHelper::String("0.1234", 6, k_layoutFont);
+      return LayoutHelper::String("0.1234", 6);
     case I18n::Message::Scientific:
     {
       const char * text = "1.234ᴇ-1";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+      return LayoutHelper::String(text, strlen(text));
     }
     case I18n::Message::Engineering:
     {
       const char * text = "123.4ᴇ-3";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+      return LayoutHelper::String(text, strlen(text));
     }
 
     // Edition mode
     case I18n::Message::Edition2D:
       return HorizontalLayout::Builder(
-          LayoutHelper::String("1+", 2, k_layoutFont),
-          FractionLayout::Builder(LayoutHelper::String("2", 1, k_layoutFont), LayoutHelper::String("3", 1, k_layoutFont))
+          LayoutHelper::String("1+", 2),
+          FractionLayout::Builder(LayoutHelper::String("2", 1), LayoutHelper::String("3", 1))
         );
     case I18n::Message::EditionLinear:
-      return LayoutHelper::String("1+2/3", 5, k_layoutFont);
+      return LayoutHelper::String("1+2/3", 5);
 
     // Complex format
     case I18n::Message::Real:
-      return CodePointLayout::Builder('x', k_layoutFont);
+      return CodePointLayout::Builder('x');
     case I18n::Message::Cartesian:
     {
       const char * text = "a+ib";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+      return LayoutHelper::String(text, strlen(text));
     }
     case I18n::Message::Polar:
     {
       const char * base = "re";
       const char * superscript = "iθ";
       return HorizontalLayout::Builder(
-          LayoutHelper::String(base, strlen(base), k_layoutFont),
-          VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, strlen(superscript), k_layoutFont), VerticalOffsetLayoutNode::Position::Superscript)
+          LayoutHelper::String(base, strlen(base)),
+          VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, strlen(superscript)), VerticalOffsetLayoutNode::Position::Superscript)
         );
     }
 
@@ -109,8 +109,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
     case I18n::Message::SmallFont:
     {
       const char * text = "abc";
-      const KDFont * font = message == I18n::Message::LargeFont ? KDFont::LargeFont : KDFont::SmallFont;
-      return LayoutHelper::String(text, strlen(text), font);
+      return LayoutHelper::String(text, strlen(text));
     }
 
     default:
@@ -122,7 +121,9 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
 void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithExpression * myCell = static_cast<MessageTableCellWithExpression *>(cell);
-  myCell->setLayout(layoutForPreferences(m_messageTreeModel->childAtIndex(index)->label()));
+  I18n::Message message = m_messageTreeModel->childAtIndex(index)->label();
+  myCell->setLayout(layoutForPreferences(message));
+  myCell->setFont(message == I18n::Message::SmallFont ? k_layoutFont : KDFont::LargeFont);
 }
 
 KDCoordinate PreferencesController::nonMemoizedRowHeight(int index) {

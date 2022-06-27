@@ -80,7 +80,7 @@ public:
   int indexOfThreshold() const { return numberOfStatisticParameters(); }
   virtual I18n::Message thresholdName() const = 0;
   virtual I18n::Message thresholdDescription() const = 0;
-  virtual Poincare::Layout testCriticalValueSymbol(const KDFont * font = KDFont::LargeFont) = 0;
+  virtual Poincare::Layout testCriticalValueSymbol() = 0;
 
   // Outputs
   virtual int numberOfResults() const = 0;

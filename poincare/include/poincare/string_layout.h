@@ -14,9 +14,9 @@
 
 namespace Poincare {
 
-class StringLayoutNode : public LayoutNode, public StringFormat {
+class StringLayoutNode : public LayoutNode {
 public:
-  StringLayoutNode(const char * string, int stringSize, const KDFont * font = StringFormat::k_defaultFont);
+  StringLayoutNode(const char * string, int stringSize);
 
   Type type() const override { return Type::StringLayout; }
 
@@ -65,10 +65,9 @@ public:
   static void DistributeThousandDisplayType(Layout l, int start, int stop);
 
   StringLayout(const StringLayoutNode * n) : Layout(n) {}
-  static StringLayout Builder(const char * string, int stringSize = -1, const KDFont * font = StringLayoutNode::k_defaultFont);
+  static StringLayout Builder(const char * string, int stringSize = -1);
   int stringLength() const { return const_cast<StringLayout *>(this)->node()->stringLength(); }
   const char * string() const { return const_cast<StringLayout *>(this)->node()->string(); }
-  const KDFont * font() const { return const_cast<StringLayout *>(this)->node()->font(); }
   Layout makeEditable();
 
 private:

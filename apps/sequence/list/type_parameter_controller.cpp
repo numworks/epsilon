@@ -111,11 +111,12 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
   const char * subscripts[3] = {"n", "n+1", "n+2"};
   m_layouts[j] = HorizontalLayout::Builder(
-        CodePointLayout::Builder(nextName[0], font),
-        VerticalOffsetLayout::Builder(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), font), VerticalOffsetLayoutNode::Position::Subscript)
+        CodePointLayout::Builder(nextName[0]),
+        VerticalOffsetLayout::Builder(LayoutHelper::String(subscripts[j], strlen(subscripts[j])), VerticalOffsetLayoutNode::Position::Subscript)
       );
   ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
   myCell->setLayout(m_layouts[j]);
+  myCell->setFont(font);
 }
 
 void TypeParameterController::setRecord(Ion::Storage::Record record) {

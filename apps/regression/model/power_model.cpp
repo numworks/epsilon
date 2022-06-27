@@ -14,11 +14,11 @@ namespace Regression {
 Layout PowerModel::layout() {
   if (m_layout.isUninitialized()) {
     m_layout = HorizontalLayout::Builder({
-      CodePointLayout::Builder('a', k_layoutFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
-      CodePointLayout::Builder('x', k_layoutFont),
+      CodePointLayout::Builder('a'),
+      CodePointLayout::Builder(UCodePointMiddleDot),
+      CodePointLayout::Builder('x'),
       VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('b', k_layoutFont),
+        CodePointLayout::Builder('b'),
         VerticalOffsetLayoutNode::Position::Superscript
       ),
     });

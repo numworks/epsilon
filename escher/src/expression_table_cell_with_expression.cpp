@@ -5,15 +5,16 @@
 
 namespace Escher {
 
-ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder * parentResponder) :
-    ExpressionTableCell(parentResponder),
+ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder * parentResponder, const KDFont * font) :
+    ExpressionTableCell(parentResponder, font),
     m_subLabelExpressionView(this,
                              0,
                              0,
                              KDContext::k_alignRight,
                              KDContext::k_alignCenter,
                              Palette::GrayDark,
-                             KDColorWhite) {
+                             KDColorWhite,
+                             font) {
 }
 
 void ExpressionTableCellWithExpression::setHighlighted(bool highlight) {

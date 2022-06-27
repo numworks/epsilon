@@ -559,16 +559,16 @@ double Store::cumulatedFrequencyValueAtIndex(int series, int i) const {
 }
 
 double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
-  double cumulatedOccurrences = 0.0, otherOccurrences = 0.0;
-  double value = cumulatedFrequencyValueAtIndex(series, i);
-  // Recompute sumOfOccurrences() here to save some computation.
+  double cumulatedOccurrences = 0.0;
+  int index = 0;
+  const double value = cumulatedFrequencyValueAtIndex(series, i);
   const int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int j = 0; j < numberOfPairs; j++) {
-    double x = get(series, 0, valueIndexAtSortedIndex(series, j));
-    (x <= value ? cumulatedOccurrences : otherOccurrences) += get(series, 1, valueIndexAtSortedIndex(series, j));
+  while (index < numberOfPairs && get(series, 0, valueIndexAtSortedIndex(series, index)) <= value) {
+    cumulatedOccurrences += get(series, 1, valueIndexAtSortedIndex(series, index));
+    index++;
   }
-  assert(std::abs(cumulatedOccurrences + otherOccurrences - sumOfOccurrences(series)) <= FLT_EPSILON);
-  return 100.0 * cumulatedOccurrences / (cumulatedOccurrences + otherOccurrences);
+  // Taking advantage of sumOfOccurrences being memoized.
+  return 100.0 * cumulatedOccurrences / sumOfOccurrences(series);
 }
 
 int Store::totalNormalProbabilityValues(int series) const {

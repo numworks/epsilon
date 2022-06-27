@@ -838,6 +838,7 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
 }
 
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvaluation, void * model, void * context, float firstBarAbscissa, float barWidth, bool fillBar, KDColor defaultColor, KDColor highlightColor, KDCoordinate borderWidth, KDColor borderColor,  float highlightLowerBound, float highlightUpperBound) const {
+  assert(borderWidth >= 0);
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
   float rectMinBinNumber = std::floor((rectMin - firstBarAbscissa)/barWidth);
   float rectMinLowerBound = firstBarAbscissa + rectMinBinNumber*barWidth;
@@ -858,7 +859,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvalu
     if (std::isnan(y)) {
       continue;
     }
-    KDCoordinate pxf = std::round(floatToPixel(Axis::Horizontal, x));
+    KDCoordinate pxf = std::round(floatToPixel(Axis::Horizontal, x)) + borderWidth;
     KDCoordinate pyf = std::round(floatToPixel(Axis::Vertical, y));
     KDCoordinate pixelBarWidth = fillBar ? std::round(floatToPixel(Axis::Horizontal, x+barWidth)) - std::round(floatToPixel(Axis::Horizontal, x))-1 : 2;
     KDRect binRect(pxf, pyf, pixelBarWidth, std::round(floatToPixel(Axis::Vertical, 0.0f)) - pyf);

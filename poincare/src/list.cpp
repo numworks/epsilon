@@ -113,6 +113,20 @@ template<typename T> Evaluation<T> ListNode::templatedApproximate(const Approxim
 
 // List
 
+Expression List::DefaultWeightsList(Expression listFunction) {
+  Expression firstParameter = listFunction.childAtIndex(0);
+  if (firstParameter.type() != ExpressionNode::Type::List) {
+    return Undefined::Builder();
+  }
+  int length = firstParameter.numberOfChildren();
+  List result = List::Builder();
+  for (int i = 0; i < length; i++) {
+    result.addChildAtIndexInPlace(Rational::Builder(1), i, i);
+  }
+  return result;
+}
+
+
 Expression List::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   // A list can't contain a matrix or a list
   if (node()->hasMatrixOrListChild(reductionContext.context())) {

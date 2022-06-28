@@ -10,23 +10,11 @@
 
 namespace Poincare {
 
-template<int U>
-int ListMedianNode<U>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListMedian::k_functionName);
-}
-
-template<int U>
-Layout ListMedianNode<U>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ListMedian(this), floatDisplayMode, numberOfSignificantDigits, ListMedian::k_functionName);
-}
-
-template<int U>
-Expression ListMedianNode<U>::shallowReduce(const ReductionContext& reductionContext) {
+Expression ListMedianNode::shallowReduce(const ReductionContext& reductionContext) {
   return ListMedian(this).shallowReduce(reductionContext);
 }
 
-template<int U>
-template<typename T> Evaluation<T> ListMedianNode<U>::templatedApproximate(const ApproximationContext& approximationContext) const {
+template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   ListComplex<T> evaluationArray[2];
   StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(this, approximationContext, evaluationArray);
   if (dataset.isUndefined()) {
@@ -60,12 +48,7 @@ Expression ListMedian::shallowReduce(const ExpressionNode::ReductionContext& red
   return div.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> ListMedianNode<1>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
-template Evaluation<float> ListMedianNode<2>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListMedianNode<1>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListMedianNode<2>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
-
-template class ListMedianNode<1>;
-template class ListMedianNode<2>;
+template Evaluation<float> ListMedianNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListMedianNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 
 }

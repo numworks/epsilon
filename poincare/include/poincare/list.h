@@ -55,6 +55,7 @@ public:
   List() : Expression() {}
   List(const ListNode * n) : Expression(n) {}
   static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
+  static Expression DefaultWeightsList(Expression listFunction);
   ListNode * node() const { return static_cast<ListNode *>(Expression::node()); }
   Expression extremum(const ExpressionNode::ReductionContext& reductionContext, bool minimum);
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);

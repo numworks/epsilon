@@ -1,34 +1,20 @@
 #include <poincare/list_variance.h>
 #include <poincare/addition.h>
 #include <poincare/default_parameter.h>
-#include <poincare/layout_helper.h>
 #include <poincare/list_mean.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
-#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/statistics_dataset.h>
 #include <poincare/subtraction.h>
 
 namespace Poincare {
 
-template<int U>
-int ListVarianceNode<U>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListVariance::k_functionName);
-}
-
-template<int U>
-Layout ListVarianceNode<U>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ListVariance(this), floatDisplayMode, numberOfSignificantDigits, ListVariance::k_functionName);
-}
-
-template<int U>
-Expression ListVarianceNode<U>::shallowReduce(const ReductionContext& reductionContext) {
+Expression ListVarianceNode::shallowReduce(const ReductionContext& reductionContext) {
   return ListVariance(this).shallowReduce(reductionContext);
 }
 
-template<int U>
-template<typename T> Evaluation<T> ListVarianceNode<U>::templatedApproximate(const ApproximationContext& approximationContext) const {
+template<typename T> Evaluation<T> ListVarianceNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   ListComplex<T> evaluationArray[2];
   StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(this, approximationContext, evaluationArray);
   if (dataset.isUndefined()) {
@@ -40,16 +26,16 @@ template<typename T> Evaluation<T> ListVarianceNode<U>::templatedApproximate(con
 Expression ListVariance::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   /* var(L) = mean(L^2) - mean(L)^2 */
   int n = numberOfChildren();
-  assert(n <= 2);
+  assert(n == 2);
   Expression children[2];
   if (!SimplificationHelper::getChildrenIfNonEmptyList(*this, children)) {
     return replaceWithUndefinedInPlace();
   }
-  Expression m = n == 2 ? ListMean::Builder(children[0].clone(), children[1].clone()) : ListMean::Builder(children[0].clone(), DefaultParameter::Builder());
+  Expression m = ListMean::Builder(children[0].clone(), children[1].clone());
   Power m2 = Power::Builder(m, Rational::Builder(2));
   m.shallowReduce(reductionContext);
   Power l2 = Power::Builder(children[0], Rational::Builder(2));
-  Expression ml2 = n == 2 ? ListMean::Builder(l2, children[1]) : ListMean::Builder(l2, DefaultParameter::Builder());
+  Expression ml2 = ListMean::Builder(l2, children[1]);
   l2.shallowReduce(reductionContext);
   Subtraction s = Subtraction::Builder(ml2, m2);
   ml2.shallowReduce(reductionContext);
@@ -58,11 +44,6 @@ Expression ListVariance::shallowReduce(const ExpressionNode::ReductionContext& r
   return s.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> ListVarianceNode<1>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
-template Evaluation<float> ListVarianceNode<2>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListVarianceNode<1>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListVarianceNode<2>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
-
-template class ListVarianceNode<1>;
-template class ListVarianceNode<2>;
+template Evaluation<float> ListVarianceNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListVarianceNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
 }

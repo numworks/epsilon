@@ -25,8 +25,12 @@ public:
   Type type() const override { return Type::Randint; }
 
   // ExpressionNode
+  bool canTakeDefaultParameterAtIndex(int i) const override {
+    return i == 0;
+  }
   Expression defaultParameterAtIndex(int i) const override {
-    return i == 0 ? Rational::Builder(0) : ExpressionNode::defaultParameterAtIndex(i);
+    assert(canTakeDefaultParameterAtIndex(i));
+    return Rational::Builder(0);
   }
 
 private:

@@ -20,6 +20,7 @@
 #include <poincare/cotangent.h>
 #include <poincare/ceiling.h>
 #include <poincare/decimal.h>
+#include <poincare/default_parameter.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/determinant.h>

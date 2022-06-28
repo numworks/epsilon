@@ -135,6 +135,7 @@ void ExpressionNode::setChildrenInPlace(Expression other) {
 }
 
 Expression ExpressionNode::defaultParameterAtIndex(int i) const {
+  assert(false);
   return Expression();
 }
 

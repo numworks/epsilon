@@ -450,8 +450,6 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
     return;
   }
   int numberOfParameters = parameters.numberOfChildren();
-  /* FunctionHelpers with negative numberOfChildren value expect any number of
-   * children greater than this value (in absolute). */
   if ((**functionHelper).numberOfChildren() >= 0) {
     while (numberOfParameters > (**functionHelper).numberOfChildren()) {
       functionHelper++;
@@ -461,13 +459,18 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
       }
     }
   }
-  if (numberOfParameters < abs((**functionHelper).numberOfChildren())) {
+
+  int functionHelperNumberOfChildren = (**functionHelper).numberOfChildren();
+  if (functionHelperNumberOfChildren < 0 && numberOfParameters < abs(functionHelperNumberOfChildren)) {
+    /* FunctionHelpers with negative numberOfChildren value expect any number of
+     * children greater than this value (in absolute). */
     m_status = Status::Error; // Too few parameters provided.
     return;
   }
+
   leftHandSide = (**functionHelper).build(parameters);
   if (leftHandSide.isUninitialized()) {
-    m_status = Status::Error; // Incorrect parameter type.
+    m_status = Status::Error; // Incorrect parameter type or too few args
     return;
   }
 }

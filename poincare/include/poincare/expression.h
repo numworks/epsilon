@@ -238,6 +238,9 @@ public:
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
+  /* Default parameter */
+  bool canTakeDefaultParameterAtIndex(int i) { return node()->canTakeDefaultParameterAtIndex(i); }
+
   /* Units */
   Expression removeUnit(Expression * unit) { return node()->removeUnit(unit); }
   bool hasUnit() const;

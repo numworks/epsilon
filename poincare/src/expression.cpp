@@ -7,6 +7,7 @@
 #include <poincare/comparison_operator.h>
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
+#include <poincare/default_parameter.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/ghost.h>
@@ -1182,8 +1183,18 @@ static Expression maker(Expression children, int nbChildren, TreeNode::Initializ
   assert(children.type() == ExpressionNode::Type::List);
   TreeHandle handle = TreeHandle::Builder(initializer, size);
   Expression result = static_cast<Expression &>(handle);
+  int numberOfDefinedChildren = children.numberOfChildren();
+  for (int i = numberOfDefinedChildren; i < nbChildren; i++) {
+    if (!result.canTakeDefaultParameterAtIndex(i)) {
+      return Expression();
+    }
+  }
   for (size_t i = 0; i < static_cast<size_t>(nbChildren); i++) {
-    result.replaceChildAtIndexInPlace(i, children.childAtIndex(i));
+    if (i >= numberOfDefinedChildren) {
+      result.replaceChildAtIndexInPlace(i, DefaultParameter::Builder());
+    } else {
+      result.replaceChildAtIndexInPlace(i, children.childAtIndex(i));
+    }
   }
   return result;
 }

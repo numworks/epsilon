@@ -456,7 +456,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("quo(1,2)", DivisionQuotient::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("random()", Random::Builder());
   assert_parsed_expression_is("randint(1,2)", Randint::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
-  assert_parsed_expression_is("randint(2)", Randint::Builder(Rational::Builder(0),BasedInteger::Builder(2)));
+  assert_parsed_expression_is("randint(2)", Randint::Builder(DefaultParameter::Builder(),BasedInteger::Builder(2)));
   assert_parsed_expression_is("re(1)", RealPart::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("ref(1)", MatrixRowEchelonForm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("rem(1,2)", DivisionRemainder::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));

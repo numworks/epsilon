@@ -9,7 +9,7 @@ ResidualPlotController::ResidualPlotController(Escher::Responder * parentRespond
   Escher::ViewController(parentResponder),
   m_store(store),
   m_cursor(FLT_MAX),
-  m_bannerView(),
+  m_bannerView(this, nullptr, nullptr),
   m_curveView(&m_range, &m_cursor, &m_bannerView, &m_cursorView, this),
   m_selectedDotIndex(0),
   m_selectedSeriesIndex(0)
@@ -28,11 +28,12 @@ void ResidualPlotController::updateCursor() {
 
   const int significantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
-  constexpr size_t bufferSize = Shared::BannerView::k_maxLengthDisplayed;
+  constexpr size_t bufferSize = Shared::BannerView::k_maxLengthDisplayed - 2;
   char buffer[bufferSize];
 
-  Poincare::Print::customPrintf(buffer, bufferSize, "x=%*.*ed", x, displayMode, significantDigits);
-  m_bannerView.abscissaView()->setText(buffer);
+  Poincare::Print::customPrintf(buffer, bufferSize, "%*.*ed", x, displayMode, significantDigits);
+  m_bannerView.abscissaValue()->setText(buffer);
+  m_bannerView.abscissaSymbol()->setText("x=");
 
   Poincare::Print::customPrintf(buffer, bufferSize, "%s%s%*.*ed",
     I18n::translate(I18n::Message::Residual),

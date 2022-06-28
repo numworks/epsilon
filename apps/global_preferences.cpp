@@ -24,7 +24,7 @@ int GlobalPreferences::sequencesInitialRank() const {
   case CountryPreferences::SequencesInitialRank::Zero:
     return 0;
   default:
-    assert(preferences().sequencesInitialRank() == CountryPreferences::SequencesInitialRank::One):
+    assert(preferences().sequencesInitialRank() == CountryPreferences::SequencesInitialRank::One);
     return 1;
   }
 }

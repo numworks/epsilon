@@ -313,8 +313,6 @@ template List TreeHandle::NAryBuilder<List, ListNode>(const Tuple &);
 template ListComplex<double> TreeHandle::NAryBuilder<ListComplex<double>, ListComplexNode<double> >(const Tuple &);
 template ListComplex<float> TreeHandle::NAryBuilder<ListComplex<float>, ListComplexNode<float> >(const Tuple &);
 template ListElement TreeHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>(const Tuple &);
-template ListMean TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<1>>(const Tuple &);
-template ListMean TreeHandle::FixedArityBuilder<ListMean, ListMeanNode<2>>(const Tuple &);
 template ListSlice TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(const Tuple &);
 template ListSequence TreeHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(const Tuple &);
 template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(const Tuple &);

@@ -25,8 +25,8 @@ private:
 
   class ContentView : public Escher::View {
   public:
-    constexpr static const KDFont * k_legendFont = KDFont::SmallFont;
-    constexpr static KDCoordinate k_legendHeight = 2 * Escher::Metric::BannerTextMargin + 14; // k_legendFont->glyphSize().height() = 14
+    constexpr static KDFont::Size k_legendFont = KDFont::Size::Small;
+    constexpr static KDCoordinate k_legendHeight = 2 * Escher::Metric::BannerTextMargin + 14; // KDFont::Font(k_legendFont)->glyphSize().height() = 14
     ContentView(CurveView * curveView);
     void layoutSubviews(bool force = false) override;
     CurveView * curveView();

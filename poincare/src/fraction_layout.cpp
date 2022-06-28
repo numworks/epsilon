@@ -190,7 +190,7 @@ void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
   }
 }
 
-KDSize FractionLayoutNode::computeSize(const KDFont * font) {
+KDSize FractionLayoutNode::computeSize(KDFont::Size font) {
   KDCoordinate width = std::max(numeratorLayout()->layoutSize(font).width(), denominatorLayout()->layoutSize(font).width())
     + 2*Escher::Metric::FractionAndConjugateHorizontalOverflow+2*Escher::Metric::FractionAndConjugateHorizontalMargin;
   KDCoordinate height = numeratorLayout()->layoutSize(font).height()
@@ -199,11 +199,11 @@ KDSize FractionLayoutNode::computeSize(const KDFont * font) {
   return KDSize(width, height);
 }
 
-KDCoordinate FractionLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate FractionLayoutNode::computeBaseline(KDFont::Size font) {
   return numeratorLayout()->layoutSize(font).height() + k_fractionLineMargin + k_fractionLineHeight;
 }
 
-KDPoint FractionLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+KDPoint FractionLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   if (child == numeratorLayout()) {
@@ -217,7 +217,7 @@ KDPoint FractionLayoutNode::positionOfChild(LayoutNode * child, const KDFont * f
   return KDPoint(x, y);
 }
 
-void FractionLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void FractionLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDCoordinate fractionLineY = p.y() + numeratorLayout()->layoutSize(font).height() + k_fractionLineMargin;
   ctx->fillRect(KDRect(p.x()+Escher::Metric::FractionAndConjugateHorizontalMargin, fractionLineY, layoutSize(font).width()-2*Escher::Metric::FractionAndConjugateHorizontalMargin, k_fractionLineHeight), expressionColor);
 }

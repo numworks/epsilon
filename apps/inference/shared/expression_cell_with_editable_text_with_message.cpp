@@ -16,7 +16,7 @@ ExpressionCellWithEditableTextWithMessage::ExpressionCellWithEditableTextWithMes
                   Escher::TextField::maxBufferSize(),
                   inputEventHandlerDelegate,
                   this,
-                  KDFont::LargeFont,
+                  KDFont::Size::Large,
                   1.) {
   m_textBody[0] = '\0';
 }

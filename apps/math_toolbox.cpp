@@ -536,7 +536,7 @@ MathToolbox::MathToolbox() :
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setParentResponder(&m_selectableTableView);
-    m_leafCells->setFont(KDFont::LargeFont);
+    m_leafCells->setFont(KDFont::Size::Large);
   }
 }
 

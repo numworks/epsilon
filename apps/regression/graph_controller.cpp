@@ -22,7 +22,7 @@ GraphController::GraphController(Responder * parentResponder, Escher::InputEvent
   m_store(store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
   m_seriesSelectionController(this),
-  m_calculusButton(this, I18n::Message::Regression, calculusButtonInvocation(), KDFont::SmallFont),
+  m_calculusButton(this, I18n::Message::Regression, calculusButtonInvocation(), KDFont::Size::Small),
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex),
   m_selectedModelType((Model::Type)-1)
@@ -131,7 +131,7 @@ KDCoordinate GraphController::SeriesSelectionController::rowHeight(int j) {
   if (j < 0 || j >= numberOfRows()) {
     return 0;
   }
-  return KDFont::LargeFont->glyphSize().height() + Metric::CellTopMargin + Metric::CellBottomMargin;
+  return KDFont::Font(KDFont::Size::Large)->glyphSize().height() + Metric::CellTopMargin + Metric::CellBottomMargin;
 }
 
 void GraphController::SeriesSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {

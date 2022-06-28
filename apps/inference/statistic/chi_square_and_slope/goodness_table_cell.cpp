@@ -13,7 +13,7 @@ GoodnessTableCell::GoodnessTableCell(Responder * parentResponder, DynamicSizeTab
   for (int i = 0; i < GoodnessTest::k_maxNumberOfColumns; i++) {
     m_header[i].setMessage(k_columnHeaders[i]);
     m_header[i].setEven(true);
-    m_header[i].setMessageFont(KDFont::SmallFont);
+    m_header[i].setMessageFont(KDFont::Size::Small);
   }
 }
 

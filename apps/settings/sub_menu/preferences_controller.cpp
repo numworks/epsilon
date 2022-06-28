@@ -123,7 +123,7 @@ void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int in
   MessageTableCellWithExpression * myCell = static_cast<MessageTableCellWithExpression *>(cell);
   I18n::Message message = m_messageTreeModel->childAtIndex(index)->label();
   myCell->setLayout(layoutForPreferences(message));
-  myCell->setFont(message == I18n::Message::SmallFont ? k_layoutFont : KDFont::LargeFont);
+  myCell->setFont(message == I18n::Message::SmallFont ? k_layoutFont : KDFont::Size::Large);
 }
 
 KDCoordinate PreferencesController::nonMemoizedRowHeight(int index) {
@@ -149,7 +149,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
-    GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::LargeFont : KDFont::SmallFont);
+    GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::Size::Large : KDFont::Size::Small);
   }
 
 }
@@ -169,7 +169,7 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
     return (int)preferences->complexFormat();
   }
   if (message == I18n::Message::FontSizes) {
-    return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
+    return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::Size::Large ? 0 : 1;
   }
   return 0;
 }

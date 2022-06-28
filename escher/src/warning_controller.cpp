@@ -6,8 +6,8 @@ namespace Escher {
 
 WarningController::ContentView::ContentView() :
   SolidColorView(KDColorBlack),
-  m_textView1(KDFont::SmallFont, (I18n::Message)0, k_middleAlignment, k_middleAlignment, KDColorWhite, KDColorBlack),
-  m_textView2(KDFont::SmallFont, (I18n::Message)0, k_middleAlignment, (1.0f-k_shiftedAlignment), KDColorWhite, KDColorBlack)
+  m_textView1(KDFont::Size::Small, (I18n::Message)0, k_middleAlignment, k_middleAlignment, KDColorWhite, KDColorBlack),
+  m_textView2(KDFont::Size::Small, (I18n::Message)0, k_middleAlignment, (1.0f-k_shiftedAlignment), KDColorWhite, KDColorBlack)
 {
 }
 

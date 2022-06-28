@@ -165,7 +165,7 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
     return Metric::StoreRowHeight;
   }
   KDCoordinate modelHeight = m->layout().layoutSize(k_font).height();
-  KDCoordinate modelHeightWithMargins = modelHeight + Metric::StoreRowHeight - k_font->glyphSize().height();
+  KDCoordinate modelHeightWithMargins = modelHeight + Metric::StoreRowHeight - KDFont::Font(k_font)->glyphSize().height();
   return Metric::StoreRowHeight > modelHeightWithMargins ? Metric::StoreRowHeight : modelHeightWithMargins;
 }
 

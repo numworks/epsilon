@@ -7,7 +7,7 @@
 namespace Escher {
 /* TextInput::ContentView */
 
-void TextInput::ContentView::setFont(const KDFont * font) {
+void TextInput::ContentView::setFont(KDFont::Size font) {
   m_font = font;
   markRectAsDirty(bounds());
 }

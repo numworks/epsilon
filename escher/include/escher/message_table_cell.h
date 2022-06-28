@@ -14,7 +14,7 @@ public:
   void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message message);
   void setTextColor(KDColor color);
-  void setMessageFont(const KDFont * font);
+  void setMessageFont(KDFont::Size font);
   void setBackgroundColor(KDColor color);
 protected:
   KDColor backgroundColor() const override { return m_backgroundColor; }

@@ -41,12 +41,12 @@ int EmptyLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Print
   return 0;
 }
 
-KDSize EmptyLayoutNode::computeSize(const KDFont * font) {
+KDSize EmptyLayoutNode::computeSize(KDFont::Size font) {
   KDCoordinate sizeWidth = m_isVisible ? width(font) + 2*(m_margins ? k_marginWidth : 0) : 0;
   return KDSize(sizeWidth, height(font) + 2*(m_margins ? k_marginHeight : 0));
 }
 
-KDCoordinate EmptyLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate EmptyLayoutNode::computeBaseline(KDFont::Size font) {
   return (m_margins ? k_marginHeight : 0) + height(font)/2;
 }
 
@@ -86,7 +86,7 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
   }
 }
 
-void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   if (m_isVisible) {
     KDColor fillColor = m_color == Color::Yellow ? Escher::Palette::YellowDark : Escher::Palette::GrayBright;
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(font), height(font)), fillColor);

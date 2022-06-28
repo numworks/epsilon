@@ -14,7 +14,7 @@ HomogeneityTableDataSource::HomogeneityTableDataSource() :
 }
 
 void HomogeneityTableDataSource::initCell(EvenOddBufferTextCell, void * cell, int index) {
-  static_cast<EvenOddBufferTextCell *>(cell)->setFont(KDFont::SmallFont);
+  static_cast<EvenOddBufferTextCell *>(cell)->setFont(KDFont::Size::Small);
 }
 
 int HomogeneityTableDataSource::reusableCellCount(int type) {
@@ -56,13 +56,13 @@ void HomogeneityTableDataSource::willDisplayCellAtLocation(Escher::HighlightCell
     char digit;
     if (row == 0) {
       myCell->setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
-      myCell->setFont(KDFont::SmallFont);
+      myCell->setFont(KDFont::Size::Small);
       myCell->setEven(true);
       assert(column - 1 <= '9' - '1');
       digit = '1' + (column - 1);
     } else {
       myCell->setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
-      myCell->setFont(KDFont::SmallFont);
+      myCell->setFont(KDFont::Size::Small);
       myCell->setEven(row % 2 == 0);
       assert(row - 1 <= 'Z' - 'A');
       digit = 'A' + (row - 1);

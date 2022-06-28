@@ -34,8 +34,8 @@ void LCDDataTestController::viewWillAppear() {
 
 LCDDataTestController::ContentView::ContentView() :
   SolidColorView(KDColorWhite),
-  m_lcdDataStateView(KDFont::LargeFont, KDContext::k_alignCenter, KDContext::k_alignCenter),
-  m_lcdNumberPixelFailuresView(KDFont::SmallFont, KDContext::k_alignCenter, KDContext::k_alignCenter)
+  m_lcdDataStateView(KDFont::Size::Large, KDContext::k_alignCenter, KDContext::k_alignCenter),
+  m_lcdNumberPixelFailuresView(KDFont::Size::Small, KDContext::k_alignCenter, KDContext::k_alignCenter)
 {
 }
 

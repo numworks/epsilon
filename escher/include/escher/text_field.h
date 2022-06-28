@@ -25,7 +25,7 @@ public:
             size_t draftTextBufferSize,
             InputEventHandlerDelegate * inputEventHandlerDelegate,
             TextFieldDelegate * delegate = nullptr,
-            const KDFont * font = KDFont::LargeFont,
+            KDFont::Size font = KDFont::Size::Large,
             float horizontalAlignment = KDContext::k_alignLeft,
             float verticalAlignment = KDContext::k_alignCenter,
             KDColor textColor = KDColorBlack,
@@ -52,7 +52,7 @@ public:
   void scrollToCursor() override;
   // TODO: factorize with TextField (see TODO of EditableField)
   bool shouldFinishEditing(Ion::Events::Event event) override;
-  const KDFont * font() const { return m_contentView.font(); }
+  KDFont::Size font() const { return m_contentView.font(); }
 protected:
 
   class ContentView : public TextInput::ContentView {
@@ -67,7 +67,7 @@ protected:
      * = 212 characters. */
     constexpr static int k_maxBufferSize = 220;
 
-    ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor);
+    ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor);
     void setBackgroundColor(KDColor backgroundColor);
     KDColor backgroundColor() const { return m_backgroundColor; }
     void setTextColor(KDColor textColor);

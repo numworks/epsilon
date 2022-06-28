@@ -13,7 +13,7 @@ namespace Escher {
 class TextInput : public ScrollableView, public ScrollViewDataSource {
 public:
   TextInput(Responder * parentResponder, View * contentView) : ScrollableView(parentResponder, contentView, this) {}
-  void setFont(const KDFont * font) { contentView()->setFont(font); }
+  void setFont(KDFont::Size font) { contentView()->setFont(font); }
   const char * text() const { return nonEditableContentView()->text(); }
   bool removePreviousGlyph();
   const char * cursorLocation() const { return nonEditableContentView()->cursorLocation(); }
@@ -29,7 +29,7 @@ protected:
 
   class ContentView : public View {
   public:
-    ContentView(const KDFont * font,
+    ContentView(KDFont::Size font,
                 float horizontalAlignment = KDContext::k_alignLeft,
                 float verticalAlignment = KDContext::k_alignCenter) :
         View(),
@@ -41,8 +41,8 @@ protected:
         m_verticalAlignment(verticalAlignment) {}
 
     // Font
-    void setFont(const KDFont * font);
-    const KDFont * font() const { return m_font; }
+    void setFont(KDFont::Size font);
+    KDFont::Size font() const { return m_font; }
 
     // Cursor location
     const char * cursorLocation() const { assert(m_cursorLocation != nullptr); return m_cursorLocation; }
@@ -75,7 +75,7 @@ protected:
     virtual KDRect glyphFrameAtPosition(const char * buffer, const char * position) const = 0;
     virtual KDRect dirtyRectFromPosition(const char * position, bool includeFollowingLines) const;
     TextCursorView m_cursorView;
-    const KDFont * m_font;
+    KDFont::Size m_font;
     const char * m_selectionStart;
     const char * m_selectionEnd;
     const char * m_cursorLocation;

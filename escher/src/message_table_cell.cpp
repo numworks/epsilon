@@ -6,7 +6,7 @@ namespace Escher {
 
 MessageTableCell::MessageTableCell(I18n::Message label) :
   TableCell(),
-  m_messageTextView(KDFont::LargeFont, label, 0, 0.5, KDColorBlack, KDColorWhite),
+  m_messageTextView(KDFont::Size::Large, label, 0, 0.5, KDColorBlack, KDColorWhite),
   m_backgroundColor(KDColorWhite)
 {
 }
@@ -25,7 +25,7 @@ void MessageTableCell::setTextColor(KDColor color) {
   m_messageTextView.setTextColor(color);
 }
 
-void MessageTableCell::setMessageFont(const KDFont * font) {
+void MessageTableCell::setMessageFont(KDFont::Size font) {
   m_messageTextView.setFont(font);
 }
 

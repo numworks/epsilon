@@ -20,7 +20,7 @@ static char s_draftTextBuffer[TextField::maxBufferSize()];
 
 /* TextField::ContentView */
 
-TextField::ContentView::ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
+TextField::ContentView::ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   TextInput::ContentView(font, horizontalAlignment, verticalAlignment),
   m_isEditing(false),
   m_textBuffer(textBuffer),
@@ -152,8 +152,8 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
 }
 
 KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
-  KDSize stringSize = m_font->stringSize(text());
-  assert(stringSize.height() == m_font->glyphSize().height());
+  KDSize stringSize = KDFont::Font(m_font)->stringSize(text());
+  assert(stringSize.height() == KDFont::Font(m_font)->glyphSize().height());
   if (m_isEditing) {
     return KDSize(stringSize.width() + m_cursorView.minimalSizeForOptimalDisplay().width(), stringSize.height());
   }
@@ -241,12 +241,12 @@ void TextField::ContentView::layoutSubviews(bool force) {
 KDRect TextField::ContentView::glyphFrameAtPosition(const char * buffer, const char * position) const {
   assert(buffer != nullptr && position != nullptr);
   assert(position >= buffer);
-  KDSize glyphSize = m_font->glyphSize();
+  KDSize glyphSize = KDFont::Font(m_font)->glyphSize();
   KDCoordinate cursorWidth = m_cursorView.minimalSizeForOptimalDisplay().width();
   KDCoordinate horizontalOffset = m_horizontalAlignment == 0.0f ? 0.0f :
-    m_horizontalAlignment * (m_frame.width() - m_font->stringSize(buffer).width() - cursorWidth);
+    m_horizontalAlignment * (m_frame.width() - KDFont::Font(m_font)->stringSize(buffer).width() - cursorWidth);
   return KDRect(
-      horizontalOffset + m_font->stringSizeUntil(buffer, position).width(),
+      horizontalOffset + KDFont::Font(m_font)->stringSizeUntil(buffer, position).width(),
       m_verticalAlignment * (m_frame.height() - glyphSize.height()),
       glyphSize);
 }
@@ -254,7 +254,7 @@ KDRect TextField::ContentView::glyphFrameAtPosition(const char * buffer, const c
 /* TextField */
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize,
-    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, const KDFont * font,
+    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, KDFont::Size font,
     float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   TextInput(parentResponder, &m_contentView),
   EditableField(inputEventHandlerDelegate),

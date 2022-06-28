@@ -73,8 +73,8 @@ public:
   }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
-  KDCoordinate cursorHeightWithoutSelection(const KDFont * font);
-  KDCoordinate baselineWithoutSelection(const KDFont * font);
+  KDCoordinate cursorHeightWithoutSelection(KDFont::Size font);
+  KDCoordinate baselineWithoutSelection(KDFont::Size font);
 
 
   /* Comparison */
@@ -134,7 +134,7 @@ private:
       m_layout = Layout(n);
     }
   }
-  KDCoordinate layoutHeight(const KDFont * font);
+  KDCoordinate layoutHeight(KDFont::Size font);
   void privateAddEmptyPowerLayout(VerticalOffsetLayout v);
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);

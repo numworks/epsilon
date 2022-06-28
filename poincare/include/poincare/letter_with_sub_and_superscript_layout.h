@@ -27,14 +27,14 @@ protected:
   constexpr static KDCoordinate k_symbolBaseline = 11;
   constexpr static KDCoordinate k_symbolWidth = 12;
   constexpr static KDCoordinate k_symbolWidthWithMargins = k_symbolWidth + 2 * k_margin;
-  KDSize computeSize(const KDFont * font) override;
-  KDCoordinate computeBaseline(const KDFont * font) override;
-  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override;
+  KDSize computeSize(KDFont::Size font) override;
+  KDCoordinate computeBaseline(KDFont::Size font) override;
+  KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
   virtual void renderLetter(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
 private:
-  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
-  KDCoordinate aboveSymbol(const KDFont * font);
-  KDCoordinate totalHeight(const KDFont * font);
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  KDCoordinate aboveSymbol(KDFont::Size font);
+  KDCoordinate totalHeight(KDFont::Size font);
   LayoutNode * nLayout() { return childAtIndex(0); }
   LayoutNode * kLayout() { return childAtIndex(1); }
 };

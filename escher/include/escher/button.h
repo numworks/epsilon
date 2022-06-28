@@ -12,7 +12,7 @@ namespace Escher {
 
 class Button : public HighlightCell, public Responder {
 public:
-  Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, const KDFont * font = KDFont::SmallFont, KDColor textColor = KDColorBlack);
+  Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDFont::Size font = KDFont::Size::Small, KDColor textColor = KDColorBlack);
   void setMessage(I18n::Message message);
   bool handleEvent(Ion::Events::Event event) override;
   void setHighlighted(bool highlight) override;
@@ -32,7 +32,7 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   Invocation m_invocation;
-  const KDFont * m_font;
+  KDFont::Size m_font;
 };
 
 }

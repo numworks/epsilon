@@ -13,8 +13,8 @@ namespace Settings {
 PressToTestController::PressToTestController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, this, &m_view),
-  m_topMessageView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
-  m_bottomMessageView(KDFont::SmallFont, I18n::Message::ToDeactivatePressToTest1, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen),
+  m_topMessageView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
+  m_bottomMessageView(KDFont::Size::Small, I18n::Message::ToDeactivatePressToTest1, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen),
   m_view(&m_selectableTableView, this, &m_topMessageView, &m_bottomMessageView),
   m_tempPressToTestParams{},
   m_activateButton(&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {

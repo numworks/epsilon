@@ -5,7 +5,7 @@ using namespace Escher;
 
 namespace Shared {
 
-BufferFunctionTitleCell::BufferFunctionTitleCell(Orientation orientation, const KDFont * font) :
+BufferFunctionTitleCell::BufferFunctionTitleCell(Orientation orientation, KDFont::Size font) :
   FunctionTitleCell(orientation),
   m_bufferTextView(font, KDContext::k_alignCenter, k_verticalAlignment)
 {

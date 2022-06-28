@@ -58,7 +58,7 @@ bool BracketLayoutNode::isCollapsable(int * numberOfOpenBrackets, bool goingLeft
   return true;
 }
 
-KDCoordinate BracketLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate BracketLayoutNode::computeBaseline(KDFont::Size font) {
   LayoutNode * parentLayout = parent();
   assert(parentLayout != nullptr);
   int idxInParent = parentLayout->indexOfChild(this);
@@ -110,7 +110,7 @@ KDCoordinate BracketLayoutNode::computeBaseline(const KDFont * font) {
   return result + (layoutSize(font).height() - childHeight(font)) / 2;
 }
 
-KDCoordinate BracketLayoutNode::childHeight(const KDFont * font) {
+KDCoordinate BracketLayoutNode::childHeight(KDFont::Size font) {
   if (!m_childHeightComputed) {
     m_childHeight = computeChildHeight(font);
     m_childHeightComputed = true;
@@ -118,7 +118,7 @@ KDCoordinate BracketLayoutNode::childHeight(const KDFont * font) {
   return m_childHeight;
 }
 
-KDCoordinate BracketLayoutNode::computeChildHeight(const KDFont * font) {
+KDCoordinate BracketLayoutNode::computeChildHeight(KDFont::Size font) {
   LayoutNode * parentLayout = parent();
   assert(parentLayout != nullptr);
   KDCoordinate result = 0;
@@ -170,7 +170,7 @@ KDCoordinate BracketLayoutNode::computeChildHeight(const KDFont * font) {
   return std::max<KDCoordinate>(result, maxUnderBaseline + maxAboveBaseline);
 }
 
-KDPoint BracketLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+KDPoint BracketLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   assert(false);
   return KDPointZero;
 }

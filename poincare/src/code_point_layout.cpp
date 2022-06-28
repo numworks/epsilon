@@ -99,8 +99,8 @@ bool CodePointLayoutNode::canBeOmittedMultiplicationRightFactor() const {
 }
 
 // Sizing and positioning
-KDSize CodePointLayoutNode::computeSize(const KDFont * font) {
-  KDSize glyph = font->glyphSize();
+KDSize CodePointLayoutNode::computeSize(KDFont::Size font) {
+  KDSize glyph = KDFont::Font(font)->glyphSize();
   KDCoordinate width = glyph.width();
 
   // Handle the case of the middle dot which is thinner than the other glyphs
@@ -110,15 +110,15 @@ KDSize CodePointLayoutNode::computeSize(const KDFont * font) {
   return KDSize(width, glyph.height());
 }
 
-KDCoordinate CodePointLayoutNode::computeBaseline(const KDFont * font) {
-  return font->glyphSize().height()/2;
+KDCoordinate CodePointLayoutNode::computeBaseline(KDFont::Size font) {
+  return KDFont::Font(font)->glyphSize().height()/2;
 }
 
-void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Handle the case of the middle dot which has to be drawn by hand since it is thinner than the other glyphs.
   if (m_codePoint == UCodePointMiddleDot) {
     int width = k_middleDotWidth;
-    int height = font->glyphSize().height();
+    int height = KDFont::Font(font)->glyphSize().height();
     ctx->fillRect(KDRect(p, width, height), backgroundColor);
     ctx->fillRect(KDRect(p.translatedBy(KDPoint(width / 2, height / 2 - 1)), 1, 1), expressionColor);
     return;

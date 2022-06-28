@@ -45,15 +45,15 @@ public:
 
 protected:
   // LayoutNode
-  KDSize computeSize(const KDFont * font) override;
-  KDCoordinate computeBaseline(const KDFont * font) override;
-  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override;
+  KDSize computeSize(KDFont::Size font) override;
+  KDCoordinate computeBaseline(KDFont::Size font) override;
+  KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
 private:
   constexpr static KDCoordinate k_heightMargin = 2;
   constexpr static KDCoordinate k_widthMargin = 2;
   constexpr static KDCoordinate k_radixLineThickness = 1;
-  KDSize adjustedIndexSize(const KDFont * font);
-  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  KDSize adjustedIndexSize(KDFont::Size font);
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   bool protectedIsIdenticalTo(Layout l) override;
   LayoutNode * radicandLayout() { return childAtIndex(0); }
   LayoutNode * indexLayout() { return m_hasIndex ? childAtIndex(1) : nullptr; }

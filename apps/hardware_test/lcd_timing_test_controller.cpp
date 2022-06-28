@@ -35,8 +35,8 @@ void LCDTimingTestController::viewWillAppear() {
 
 LCDTimingTestController::ContentView::ContentView() :
   SolidColorView(KDColorWhite),
-  m_lcdTimingStateView(KDFont::LargeFont, KDContext::k_alignCenter, KDContext::k_alignCenter),
-  m_lcdNumberGlyphFailuresView(KDFont::SmallFont, KDContext::k_alignCenter, KDContext::k_alignCenter)
+  m_lcdTimingStateView(KDFont::Size::Large, KDContext::k_alignCenter, KDContext::k_alignCenter),
+  m_lcdNumberGlyphFailuresView(KDFont::Size::Small, KDContext::k_alignCenter, KDContext::k_alignCenter)
 {
 }
 

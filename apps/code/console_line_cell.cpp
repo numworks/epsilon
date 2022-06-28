@@ -25,7 +25,7 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(KDCon
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::minimalSizeForOptimalDisplay() const {
-  return m_line ? GlobalPreferences::sharedGlobalPreferences()->font()->stringSize(m_line->text()) : KDSizeZero;
+  return m_line ? KDFont::Font(GlobalPreferences::sharedGlobalPreferences()->font())->stringSize(m_line->text()) : KDSizeZero;
 }
 
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder * parentResponder) :
@@ -81,7 +81,7 @@ View * ConsoleLineCell::subviewAtIndex(int index) {
 
 void ConsoleLineCell::layoutSubviews(bool force) {
   if (m_line.isCommand()) {
-    KDSize promptSize = GlobalPreferences::sharedGlobalPreferences()->font()->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
+    KDSize promptSize = KDFont::Font(GlobalPreferences::sharedGlobalPreferences()->font())->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
     m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()), force);
     m_scrollableView.setFrame(KDRect(KDPoint(promptSize.width(), 0), bounds().width() - promptSize.width(), bounds().height()), force);
     return;

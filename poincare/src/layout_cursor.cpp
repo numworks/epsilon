@@ -16,12 +16,12 @@ namespace Poincare {
 
 /* Getters and setters */
 
-KDCoordinate LayoutCursor::cursorHeightWithoutSelection(const KDFont * font) {
+KDCoordinate LayoutCursor::cursorHeightWithoutSelection(KDFont::Size font) {
   KDCoordinate height = layoutHeight(font);
   return height == 0 ? k_cursorHeight : height;
 }
 
-KDCoordinate LayoutCursor::baselineWithoutSelection(const KDFont * font) {
+KDCoordinate LayoutCursor::baselineWithoutSelection(KDFont::Size font) {
   if (layoutHeight(font) == 0) {
     return k_cursorHeight/2;
   }
@@ -55,9 +55,9 @@ KDPoint LayoutCursor::middleLeftPoint() {
    *   - Comparing middleLeftPoints in the wrong font is be equivalent
    *   - Asking for the LargeFont's absoluteOrigin/layoutSize/baseline of a
    *     layout usually displayed in SmallFont is handled. */
-  KDPoint layoutOrigin = layout().absoluteOrigin(KDFont::LargeFont);
-  KDCoordinate x = layoutOrigin.x() + (m_position == Position::Left ? 0 : m_layout.layoutSize(KDFont::LargeFont).width());
-  KDCoordinate y = layoutOrigin.y() + m_layout.baseline(KDFont::LargeFont) - k_cursorHeight/2;
+  KDPoint layoutOrigin = layout().absoluteOrigin(KDFont::Size::Large);
+  KDCoordinate x = layoutOrigin.x() + (m_position == Position::Left ? 0 : m_layout.layoutSize(KDFont::Size::Large).width());
+  KDCoordinate y = layoutOrigin.y() + m_layout.baseline(KDFont::Size::Large) - k_cursorHeight/2;
   return KDPoint(x,y);
 }
 
@@ -250,7 +250,7 @@ void LayoutCursor::clearLayout() {
 
 /* Private */
 
-KDCoordinate LayoutCursor::layoutHeight(const KDFont * font) {
+KDCoordinate LayoutCursor::layoutHeight(KDFont::Size font) {
   Layout equivalentLayout = m_layout.equivalentCursor(this).layout();
   if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
     return equivalentLayout.layoutSize(font).height();

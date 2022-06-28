@@ -22,13 +22,13 @@ public:
   void getPixels(KDRect r, KDColor * pixels);
 
   // Text
-  KDPoint drawString(const char * text, KDPoint p, const KDFont * font = KDFont::LargeFont,
+  KDPoint drawString(const char * text, KDPoint p, KDFont::Size font = KDFont::Size::Large,
                      KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite,
                      int maxLength = -1);
   KDPoint alignAndDrawString(const char * text, KDPoint p, KDSize frame,
                              float horizontalAlignment = KDContext::k_alignCenter,
                              float verticalAlignment = KDContext::k_alignCenter,
-                             const KDFont * font = KDFont::LargeFont,
+                             KDFont::Size font = KDFont::Size::Large,
                              KDColor textColor = KDColorBlack,
                              KDColor backgroundColor = KDColorWhite, int maxLength = -1);
 
@@ -54,10 +54,10 @@ protected:
 
 private:
   KDPoint alignAndDrawSingleLineString(const char * text, KDPoint p, KDSize frame,
-                                       float horizontalAlignment, const KDFont * font,
+                                       float horizontalAlignment, KDFont::Size font,
                                        KDColor textColor, KDColor backgroundColor, int maxLength);
   KDRect absoluteFillRect(KDRect rect);
-  KDPoint pushOrPullString(const char * text, KDPoint p, const KDFont * font, KDColor textColor,
+  KDPoint pushOrPullString(const char * text, KDPoint p, KDFont::Size font, KDColor textColor,
                            KDColor backgroundColor, int maxByteLength, bool push,
                            int * result = nullptr);
   KDPoint m_origin;

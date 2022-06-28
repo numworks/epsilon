@@ -9,7 +9,7 @@ ButtonWithSeparator::ButtonWithSeparator(Responder * parentResponder,
                                          Escher::Invocation invocation,
                                          KDColor backgroundColor,
                                          KDCoordinate horizontalMargins) :
-      Button(parentResponder, textBody, invocation, KDFont::LargeFont, KDColorBlack),
+      Button(parentResponder, textBody, invocation, KDFont::Size::Large, KDColorBlack),
       m_backgroundColor(backgroundColor),
       m_horizontalMargins(horizontalMargins)
 {

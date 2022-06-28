@@ -5,7 +5,7 @@
 
 namespace Escher {
 
-ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder * parentResponder, const KDFont * font) :
+ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(Responder * parentResponder, KDFont::Size font) :
     ExpressionTableCell(parentResponder, font),
     m_subLabelExpressionView(this,
                              0,

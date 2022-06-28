@@ -29,7 +29,7 @@ public:
                          GraphButtonRowDelegate * delegate = static_cast<GraphButtonRowDelegate *>(context);
                          delegate->pushTypeController();
                          return true;
-                       }, this), KDFont::SmallFont)
+                       }, this), KDFont::Size::Small)
   {}
 
   Escher::StackViewController * stackController() {

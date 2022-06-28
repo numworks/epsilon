@@ -194,15 +194,15 @@ int GridLayoutNode::indexAtRowColumn(int rowIndex, int columnIndex) const {
   return rowIndex * m_numberOfColumns + columnIndex;
 }
 
-KDSize GridLayoutNode::computeSize(const KDFont * font) {
+KDSize GridLayoutNode::computeSize(KDFont::Size font) {
   return gridSize(font);
 }
 
-KDCoordinate GridLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate GridLayoutNode::computeBaseline(KDFont::Size font) {
   return (height(font)+1)/2;
 }
 
-KDPoint GridLayoutNode::positionOfChild(LayoutNode * l, const KDFont * font) {
+KDPoint GridLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   int childIndex = indexOfChild(l);
   int rowIndex = rowAtChildIndex(childIndex);
   int columnIndex = columnAtChildIndex(childIndex);
@@ -221,7 +221,7 @@ KDPoint GridLayoutNode::positionOfChild(LayoutNode * l, const KDFont * font) {
 
 // Private
 
-KDCoordinate GridLayoutNode::rowBaseline(int i, const KDFont * font) {
+KDCoordinate GridLayoutNode::rowBaseline(int i, KDFont::Size font) {
   assert(m_numberOfColumns > 0);
   KDCoordinate rowBaseline = 0;
   int j = 0;
@@ -235,7 +235,7 @@ KDCoordinate GridLayoutNode::rowBaseline(int i, const KDFont * font) {
   return rowBaseline;
 }
 
-KDCoordinate GridLayoutNode::rowHeight(int i, const KDFont * font) const {
+KDCoordinate GridLayoutNode::rowHeight(int i, KDFont::Size font) const {
   KDCoordinate underBaseline = 0;
   KDCoordinate aboveBaseline = 0;
   int j = 0;
@@ -251,7 +251,7 @@ KDCoordinate GridLayoutNode::rowHeight(int i, const KDFont * font) const {
   return aboveBaseline+underBaseline;
 }
 
-KDCoordinate GridLayoutNode::height(const KDFont * font) const {
+KDCoordinate GridLayoutNode::height(KDFont::Size font) const {
   KDCoordinate totalHeight = 0;
   for (int i = 0; i < m_numberOfRows; i++) {
     totalHeight += rowHeight(i, font);
@@ -260,7 +260,7 @@ KDCoordinate GridLayoutNode::height(const KDFont * font) const {
   return totalHeight;
 }
 
-KDCoordinate GridLayoutNode::columnWidth(int j, const KDFont * font) const {
+KDCoordinate GridLayoutNode::columnWidth(int j, KDFont::Size font) const {
   KDCoordinate columnWidth = 0;
   int childIndex = j;
   int lastIndex = (m_numberOfRows-1)*m_numberOfColumns + j;
@@ -276,7 +276,7 @@ KDCoordinate GridLayoutNode::columnWidth(int j, const KDFont * font) const {
   return columnWidth;
 }
 
-KDCoordinate GridLayoutNode::width(const KDFont * font) const {
+KDCoordinate GridLayoutNode::width(KDFont::Size font) const {
   KDCoordinate totalWidth = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
     totalWidth += columnWidth(j, font);

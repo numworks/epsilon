@@ -41,10 +41,10 @@ public:
 
 protected:
   // LayoutNode
-  KDSize computeSize(const KDFont * font) override;
-  KDCoordinate computeBaseline(const KDFont * font) override;
-  KDCoordinate centralArgumentHeight(const KDFont * font);
-  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override;
+  KDSize computeSize(KDFont::Size font) override;
+  KDCoordinate computeBaseline(KDFont::Size font) override;
+  KDCoordinate centralArgumentHeight(KDFont::Size font);
+  KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
 
 private:
   constexpr static int k_integrandLayoutIndex = 0;
@@ -60,7 +60,7 @@ private:
   LayoutNode * differentialLayout() { return childAtIndex(k_differentialLayoutIndex); } // dx
   LayoutNode * lowerBoundLayout() { return childAtIndex(2); } // a
   LayoutNode * upperBoundLayout() { return childAtIndex(3); } // b
-  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
   enum class BoundPosition : uint8_t{
     UpperBound,
@@ -76,7 +76,7 @@ private:
   IntegralLayoutNode * nextNestedIntegral();
   IntegralLayoutNode * previousNestedIntegral();
   IntegralLayoutNode * nestedIntegral(NestedPosition position) { return position == NestedPosition::Next ? nextNestedIntegral() : previousNestedIntegral(); }
-  KDCoordinate boundMaxHeight(BoundPosition position, const KDFont * font);
+  KDCoordinate boundMaxHeight(BoundPosition position, KDFont::Size font);
   IntegralLayoutNode * mostNestedIntegral (NestedPosition position);
 };
 

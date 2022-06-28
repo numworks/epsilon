@@ -15,7 +15,7 @@
 namespace Escher {
 /* TextArea */
 
-TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont * font) :
+TextArea::TextArea(Responder * parentResponder, View * contentView, KDFont::Size font) :
   TextInput(parentResponder, contentView),
   InputEventHandler(nullptr),
   m_delegate(nullptr)
@@ -428,8 +428,8 @@ TextArea::Text::Line::Line(const char * text) :
   }
 }
 
-KDCoordinate TextArea::Text::Line::glyphWidth(const KDFont * const font) const {
-  return font->stringSizeUntil(m_text, m_text + m_charLength).width();
+KDCoordinate TextArea::Text::Line::glyphWidth(KDFont::Size const font) const {
+  return KDFont::Font(font)->stringSizeUntil(m_text, m_text + m_charLength).width();
 }
 
 bool TextArea::Text::Line::contains(const char * c) const {
@@ -452,7 +452,7 @@ TextArea::Text::LineIterator & TextArea::Text::LineIterator::operator++() {
 
 /* TextArea::Text::Position */
 
-KDSize TextArea::Text::span(const KDFont * const font) const {
+KDSize TextArea::Text::span(KDFont::Size const font) const {
   assert(m_buffer != nullptr);
   KDCoordinate width = 0;
   int numberOfLines = 0;
@@ -463,7 +463,7 @@ KDSize TextArea::Text::span(const KDFont * const font) const {
     }
     numberOfLines++;
   }
-  return KDSize(width, numberOfLines * font->glyphSize().height());
+  return KDSize(width, numberOfLines * KDFont::Font(font)->glyphSize().height());
 }
 
 /* TextArea::ContentView */
@@ -472,7 +472,7 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   // TODO: We're clearing areas we'll draw text over. It's not needed.
   clearRect(ctx, rect);
 
-  KDSize glyphSize = m_font->glyphSize();
+  KDSize glyphSize = KDFont::Font(m_font)->glyphSize();
 
   // We want to draw even partially visible characters. So we need to round
   // down for the top left corner and up for the bottom right one.
@@ -500,7 +500,7 @@ void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, 
   if (length < 0) {
     return;
   }
-  KDSize glyphSize = m_font->glyphSize();
+  KDSize glyphSize = KDFont::Font(m_font)->glyphSize();
 
   bool drawSelection = selectionStart != nullptr && selectionEnd > text && selectionStart < text + length;
   KDPoint nextPoint = ctx->drawString(
@@ -540,7 +540,7 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(
     /* We take into account the space required to draw a cursor at the end of
      * line by adding glyphSize.width() to the width. */
-    span.width() + m_font->glyphSize().width(),
+    span.width() + KDFont::Font(m_font)->glyphSize().width(),
     span.height()
   );
 }
@@ -622,7 +622,7 @@ size_t TextArea::ContentView::deleteSelection() {
 
 KDRect TextArea::ContentView::glyphFrameAtPosition(const char * text, const char * position) const {
   assert(text == m_text.text());
-  KDSize glyphSize = m_font->glyphSize();
+  KDSize glyphSize = KDFont::Font(m_font)->glyphSize();
   Text::Position p = m_text.positionAtPointer(position);
 
   KDCoordinate x = 0;
@@ -630,7 +630,7 @@ KDRect TextArea::ContentView::glyphFrameAtPosition(const char * text, const char
   int y = 0;
   for (Text::Line l : m_text) {
     if (p.line() == y) {
-      x = m_font->stringSizeUntil(l.text(), position).width();
+      x = KDFont::Font(m_font)->stringSizeUntil(l.text(), position).width();
       found = true;
       break;
     }

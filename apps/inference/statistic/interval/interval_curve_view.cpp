@@ -49,10 +49,10 @@ void IntervalCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
     KDPoint labelPosition = positionLabel(
         std::round(floatToPixel(Axis::Horizontal, estimate)),
         std::round(floatToPixel(Axis::Vertical, verticalPosition)) + k_labelGraduationLength,
-        KDFont::SmallFont->stringSize(buffer), RelativePosition::None, RelativePosition::After);
+        KDFont::Font(KDFont::Size::Small)->stringSize(buffer), RelativePosition::None, RelativePosition::After);
     KDColor textColor = isMainInterval ? KDColorBlack : Escher::Palette::GrayDarkMiddle;
     if (rect.contains(labelPosition)) {
-      ctx->drawString(buffer, labelPosition, KDFont::SmallFont, textColor, k_backgroundColor);
+      ctx->drawString(buffer, labelPosition, KDFont::Size::Small, textColor, k_backgroundColor);
     }
 
     // Draw the interval segment : --------
@@ -89,10 +89,10 @@ void IntervalCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float 
     // Label
     KDPoint labelPosition = positionLabel(graduationPosition,
                                           verticalOrigin,
-                                          KDFont::SmallFont->stringSize(text),
+                                          KDFont::Font(KDFont::Size::Small)->stringSize(text),
                                           horizontalPosition,
                                           RelativePosition::Before);
-    ctx->drawString(text, labelPosition, KDFont::SmallFont, KDColorBlack, k_backgroundColor);
+    ctx->drawString(text, labelPosition, KDFont::Size::Small, KDColorBlack, k_backgroundColor);
   }
 }
 
@@ -101,7 +101,7 @@ void IntervalCurveView::drawIntervalLabelAndGraduation(KDContext * ctx) const {
   float upperBound = m_interval->estimate() + m_interval->marginOfError();
   float spaceBetweenBounds = floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound);
   // Align labels left and right if they would overlap
-  bool realignLabels = spaceBetweenBounds <= k_labelBufferMaxGlyphLength * KDFont::SmallFont->glyphSize().width();
+  bool realignLabels = spaceBetweenBounds <= k_labelBufferMaxGlyphLength * KDFont::Font(KDFont::Size::Small)->glyphSize().width();
   char buffer[k_labelBufferMaxSize];
   convertFloatToText(lowerBound, buffer, k_labelBufferMaxSize);
   drawLabelAndGraduationAtPosition(ctx, lowerBound, buffer, realignLabels ? RelativePosition::Before : RelativePosition::None);

@@ -11,7 +11,7 @@ namespace Escher {
 class BufferTableCell : public TableCell {
 public:
   BufferTableCell();
-  BufferTableCell(const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, size_t maxNumberOfChars);
+  BufferTableCell(KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, size_t maxNumberOfChars);
   const View * labelView() const override { return &m_labelView; }
   void setHighlighted(bool highlight) override;
   void setLabelText(const char * textBody);

@@ -18,7 +18,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
     ListController * list = (ListController *)context;
     list->resolveEquations();
     return true;
-  }, this), KDFont::LargeFont, Palette::PurpleBright),
+  }, this), KDFont::Size::Large, Palette::PurpleBright),
   m_modelsParameterController(this, equationStore, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, StackViewController::Style::PurpleWhite)
 {

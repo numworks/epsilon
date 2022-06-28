@@ -11,7 +11,7 @@ BufferTableCell::BufferTableCell():
 {
 }
 
-BufferTableCell::BufferTableCell(const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, size_t maxNumberOfChars) :
+BufferTableCell::BufferTableCell(KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, size_t maxNumberOfChars) :
   TableCell(),
   m_labelView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor, maxNumberOfChars),
   m_backgroundColor(backgroundColor)

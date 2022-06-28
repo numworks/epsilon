@@ -4,7 +4,7 @@
 
 namespace Escher {
 
-Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, const KDFont * font, KDColor textColor) :
+Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDFont::Size font, KDColor textColor) :
   HighlightCell(),
   Responder(parentResponder),
   m_messageTextView(font, textBody, KDContext::k_alignCenter, KDContext::k_alignCenter, textColor),
@@ -47,7 +47,7 @@ void Button::setHighlighted(bool highlight) {
 
 KDSize Button::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_messageTextView.minimalSizeForOptimalDisplay();
-  if (m_font == KDFont::SmallFont) {
+  if (m_font == KDFont::Size::Small) {
     return KDSize(textSize.width() + k_horizontalMarginSmall, textSize.height() + k_verticalMarginSmall);
   }
   return KDSize(textSize.width() + k_horizontalMarginLarge, textSize.height() + k_verticalMarginLarge);

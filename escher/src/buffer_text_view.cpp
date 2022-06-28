@@ -6,7 +6,7 @@
 
 namespace Escher {
 
-BufferTextView::BufferTextView(const KDFont * font, float horizontalAlignment, float verticalAlignment,
+BufferTextView::BufferTextView(KDFont::Size font, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor, size_t maxDisplayedTextLength) :
   TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_buffer(),
@@ -39,7 +39,7 @@ void BufferTextView::appendText(const char * text) {
 }
 
 KDSize BufferTextView::minimalSizeForOptimalDisplay() const  {
-  return m_font->stringSize(text());
+  return KDFont::Font(m_font)->stringSize(text());
 }
 
 }

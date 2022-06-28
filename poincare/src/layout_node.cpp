@@ -20,7 +20,7 @@ bool LayoutNode::isIdenticalTo(Layout l) {
 
 // Rendering
 
-void LayoutNode::draw(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   bool isSelected = selectionStart != nullptr && selectionEnd != nullptr
     && !selectionStart->isUninitialized() && !selectionStart->isUninitialized()
     && reinterpret_cast<char *>(this) >= reinterpret_cast<char *>(selectionStart->node())
@@ -36,7 +36,7 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, const KDFont * font, KDColor e
   }
 }
 
-KDPoint LayoutNode::absoluteOrigin(const KDFont * font) {
+KDPoint LayoutNode::absoluteOrigin(KDFont::Size font) {
   LayoutNode * p = parent();
   if (!m_positioned) {
     if (p != nullptr) {
@@ -49,7 +49,7 @@ KDPoint LayoutNode::absoluteOrigin(const KDFont * font) {
   return m_frame.origin().translatedBy(KDPoint(leftMargin(), 0));;
 }
 
-KDSize LayoutNode::layoutSize(const KDFont * font) {
+KDSize LayoutNode::layoutSize(KDFont::Size font) {
   if (!m_sized) {
     KDSize size = computeSize(font);
     m_frame.setSize(KDSize(size.width() + leftMargin(), size.height()));
@@ -59,7 +59,7 @@ KDSize LayoutNode::layoutSize(const KDFont * font) {
   return m_frame.size();
 }
 
-KDCoordinate LayoutNode::baseline(const KDFont * font) {
+KDCoordinate LayoutNode::baseline(KDFont::Size font) {
   if (!m_baselined) {
     m_baseline = computeBaseline(font);
     m_baselined = true;

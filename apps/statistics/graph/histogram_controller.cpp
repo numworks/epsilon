@@ -26,7 +26,7 @@ HistogramController::HistogramController(Responder * parentResponder, Escher::In
     HistogramController * histogramController = static_cast<HistogramController * >(context);
     histogramController->stackController()->push(histogramController->histogramParameterController());
     return true;
-  }, this), KDFont::SmallFont)
+  }, this), KDFont::Size::Small)
 {
 }
 
@@ -83,7 +83,7 @@ bool HistogramController::reloadBannerView() {
 
   int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
-  // With 7 = KDFont::SmallFont->glyphSize().width()
+  // With 7 = KDFont::Font(KDFont::Size::Small)->glyphSize().width()
   constexpr static int k_bufferSize = 1 + Ion::Display::Width / 7;
   char buffer[k_bufferSize] = "";
 

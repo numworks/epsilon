@@ -13,7 +13,7 @@ SelectableViewWithMessages::SelectableViewWithMessages(SelectableTableView * sel
   m_numberOfMessages(0)
 {
   for (int i = 0; i < k_maxNumberOfLines; i++) {
-    m_messageLines[i].setFont(KDFont::SmallFont);
+    m_messageLines[i].setFont(KDFont::Size::Small);
     m_messageLines[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
     m_messageLines[i].setBackgroundColor(Palette::WallScreen);
   }
@@ -47,7 +47,7 @@ View * SelectableViewWithMessages::subviewAtIndex(int index) {
 
 void SelectableViewWithMessages::layoutSubviews(bool force) {
   // Prioritize text position
-  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
+  KDCoordinate textHeight = KDFont::Font(KDFont::Size::Small)->glyphSize().height();
   KDCoordinate defOrigin = std::max<KDCoordinate>(
     bounds().height() - Metric::CommonBottomMargin - m_numberOfMessages*textHeight,
     Metric::CommonBottomMargin + k_minSelectableTableViewHeight + Metric::CommonBottomMargin);

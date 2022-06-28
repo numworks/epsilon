@@ -17,7 +17,7 @@ public:
 protected:
   class ModalViewEmptyView : public View, public Bordered {
   public:
-    constexpr static const KDFont * k_font = KDFont::SmallFont;
+    constexpr static KDFont::Size k_font = KDFont::Size::Small;
     void initMessageViews();
     void setMessages(I18n::Message * message);
     void drawRect(KDContext * ctx, KDRect rect) const override;

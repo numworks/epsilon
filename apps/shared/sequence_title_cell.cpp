@@ -6,7 +6,7 @@ using namespace Escher;
 
 namespace Shared {
 
-SequenceTitleCell::SequenceTitleCell(const KDFont * font) :
+SequenceTitleCell::SequenceTitleCell(KDFont::Size font) :
   Shared::FunctionTitleCell(Orientation::VerticalIndicator),
   m_titleTextView(k_verticalOrientationHorizontalAlignment, k_horizontalOrientationAlignment, KDColorBlack, KDColorWhite, font)
 {

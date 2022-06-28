@@ -31,16 +31,16 @@ bool StringLayoutNode::protectedIsIdenticalTo(Layout l) {
 }
 
 // Sizing and positioning
-KDSize StringLayoutNode::computeSize(const KDFont * font) {
-  KDSize glyph = font->glyphSize();
+KDSize StringLayoutNode::computeSize(KDFont::Size font) {
+  KDSize glyph = KDFont::Font(font)->glyphSize();
   return KDSize(UTF8Helper::StringGlyphLength(m_string) * glyph.width() + numberOfThousandsSeparators() * Escher::Metric::ThousandsSeparatorWidth, glyph.height());
 }
 
-KDCoordinate StringLayoutNode::computeBaseline(const KDFont * font) {
-  return font->glyphSize().height() / 2;
+KDCoordinate StringLayoutNode::computeBaseline(KDFont::Size font) {
+  return KDFont::Font(font)->glyphSize().height() / 2;
 }
 
-void StringLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void StringLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   int nThousandsSeparators = numberOfThousandsSeparators();
   if (nThousandsSeparators == 0) {
     ctx->drawString(m_string, p, font, expressionColor, backgroundColor);

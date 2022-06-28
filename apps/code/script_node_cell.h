@@ -15,12 +15,12 @@ public:
   constexpr static char k_parentheses[] = "()";
   constexpr static char k_parenthesesWithEmpty[] = "(\x11)";
   // Labels can be formed from user variables, a char limit is enforced.
-  constexpr static int k_maxNumberOfCharsInLabel = (Ion::Display::Width - Escher::Metric::PopUpLeftMargin - 2 * Escher::Metric::CellSeparatorThickness - Escher::Metric::CellLeftMargin - Escher::Metric::CellRightMargin - Escher::Metric::PopUpRightMargin) / 10; // With 10 = KDFont::LargeFont->glyphSize().width()
+  constexpr static int k_maxNumberOfCharsInLabel = (Ion::Display::Width - Escher::Metric::PopUpLeftMargin - 2 * Escher::Metric::CellSeparatorThickness - Escher::Metric::CellLeftMargin - Escher::Metric::CellRightMargin - Escher::Metric::PopUpRightMargin) / 10; // With 10 = KDFont::Font(KDFont::Size::Large)->glyphSize().width()
   static_assert(k_maxNumberOfCharsInLabel < Escher::BufferTextView::k_maxNumberOfChar, "k_maxNumberOfCharsInLabel is too high");
   ScriptNodeCell() :
     TableCell(),
-    m_labelView(KDFont::LargeFont, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, k_maxNumberOfCharsInLabel),
-    m_subLabelView(KDFont::SmallFont, KDContext::k_alignLeft, KDContext::k_alignCenter, Escher::Palette::GrayDark)
+    m_labelView(KDFont::Size::Large, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, k_maxNumberOfCharsInLabel),
+    m_subLabelView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, Escher::Palette::GrayDark)
   {}
   void setScriptNode(ScriptNode * node);
 

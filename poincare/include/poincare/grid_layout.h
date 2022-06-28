@@ -25,7 +25,7 @@ public:
   // Layout
   Type type() const override { return Type::GridLayout; }
 
-  KDSize gridSize(const KDFont * font) const { return KDSize(width(font), height(font)); }
+  KDSize gridSize(KDFont::Size font) const { return KDSize(width(font), height(font)); }
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
@@ -68,19 +68,19 @@ protected:
   int indexAtRowColumn(int rowIndex, int columnIndex) const;
 
   // LayoutNode
-  KDSize computeSize(const KDFont * font) override;
-  KDCoordinate computeBaseline(const KDFont * font) override;
-  KDPoint positionOfChild(LayoutNode * l, const KDFont * font) override;
+  KDSize computeSize(KDFont::Size font) override;
+  KDCoordinate computeBaseline(KDFont::Size font) override;
+  KDPoint positionOfChild(LayoutNode * l, KDFont::Size font) override;
 
 private:
   // GridLayoutNode
   constexpr static KDCoordinate k_gridEntryMargin = 6;
-  KDCoordinate rowBaseline(int i, const KDFont * font);
-  KDCoordinate rowHeight(int i, const KDFont * font) const;
-  KDCoordinate height(const KDFont * font) const;
-  KDCoordinate columnWidth(int j, const KDFont * font) const;
-  KDCoordinate width(const KDFont * font) const;
-  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
+  KDCoordinate rowBaseline(int i, KDFont::Size font);
+  KDCoordinate rowHeight(int i, KDFont::Size font) const;
+  KDCoordinate height(KDFont::Size font) const;
+  KDCoordinate columnWidth(int j, KDFont::Size font) const;
+  KDCoordinate width(KDFont::Size font) const;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
 };
 
 class GridLayout : public Layout {

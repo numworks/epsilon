@@ -230,7 +230,7 @@ IntegralLayoutNode * IntegralLayoutNode::previousNestedIntegral() {
 
 /* Return the height of the tallest upper/lower bound amongst a row of integrals
  * If the integral is alone, will return its upper/lower bound height*/
-KDCoordinate IntegralLayoutNode::boundMaxHeight(BoundPosition position, const KDFont * font) {
+KDCoordinate IntegralLayoutNode::boundMaxHeight(BoundPosition position, KDFont::Size font) {
   IntegralLayoutNode * p = mostNestedIntegral(NestedPosition::Next);
   LayoutNode * bound = p->boundLayout(position);
   KDCoordinate max = bound->layoutSize(font).height();
@@ -318,8 +318,8 @@ Horizontal margins and offsets
 a = k_symbolWidth - k_lineThickness
 */
 
-KDSize IntegralLayoutNode::computeSize(const KDFont * font) {
-  KDSize dSize = font->stringSize("d");
+KDSize IntegralLayoutNode::computeSize(KDFont::Size font) {
+  KDSize dSize = KDFont::Font(font)->stringSize("d");
   KDSize integrandSize = integrandLayout()->layoutSize(font);
   KDSize differentialSize = differentialLayout()->layoutSize(font);
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize(font);
@@ -335,7 +335,7 @@ KDSize IntegralLayoutNode::computeSize(const KDFont * font) {
   return KDSize(width, height);
 }
 
-KDCoordinate IntegralLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate IntegralLayoutNode::computeBaseline(KDFont::Size font) {
   IntegralLayoutNode * last = mostNestedIntegral(NestedPosition::Next);
   if (this == last) {
     return k_boundVerticalMargin + boundMaxHeight(BoundPosition::UpperBound, font) + k_integrandVerticalMargin + std::max(integrandLayout()->baseline(font), differentialLayout()->baseline(font));
@@ -345,7 +345,7 @@ KDCoordinate IntegralLayoutNode::computeBaseline(const KDFont * font) {
   }
 }
 
-KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize(font);
   KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
   KDCoordinate x = 0;
@@ -368,7 +368,7 @@ KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child, const KDFont * f
   return KDPoint(x,y);
 }
 
-KDCoordinate IntegralLayoutNode::centralArgumentHeight(const KDFont * font) {
+KDCoordinate IntegralLayoutNode::centralArgumentHeight(KDFont::Size font) {
   // When integrals are in a row, the last one is the tallest. We take its central argument height to define the one of the others integrals
   IntegralLayoutNode * last = mostNestedIntegral(NestedPosition::Next);
   if (this == last) {
@@ -382,7 +382,7 @@ KDCoordinate IntegralLayoutNode::centralArgumentHeight(const KDFont * font) {
   }
 }
 
-void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDSize integrandSize = integrandLayout()->layoutSize(font);
   KDCoordinate centralArgHeight = centralArgumentHeight(font);
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
@@ -407,7 +407,7 @@ void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font,
   ctx->blendRectWithMask(bottomSymbolFrame, expressionColor, (const uint8_t *)bottomSymbolPixel, (KDColor *)workingBuffer);
 
   // Render "d"
-  KDPoint dPosition = p.translatedBy(positionOfChild(integrandLayout(), font)).translatedBy(KDPoint(integrandSize.width() + k_differentialHorizontalMargin, integrandLayout()->baseline(font) - font->glyphSize().height()/2));
+  KDPoint dPosition = p.translatedBy(positionOfChild(integrandLayout(), font)).translatedBy(KDPoint(integrandSize.width() + k_differentialHorizontalMargin, integrandLayout()->baseline(font) - KDFont::Font(font)->glyphSize().height()/2));
   ctx->drawString("d", dPosition, font, expressionColor, backgroundColor);
 }
 

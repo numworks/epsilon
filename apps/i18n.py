@@ -33,7 +33,7 @@ args = parser.parse_args()
 
 message_length_limit_for_type = {
     "toolbox" : 35, # Toolbox maximal available space with small font
-    "default" : 45  # Ion::Display::Width / KDFont::SmallFont->glyphSize().width()
+    "default" : 45  # Ion::Display::Width / KDFont::Font(KDFont::Size::Small)->glyphSize().width()
 }
 
 # When building with less locales, redundant messages are not checked for

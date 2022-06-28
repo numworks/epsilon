@@ -5,7 +5,7 @@
 
 namespace Escher {
 
-ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder, KDCoordinate leftRightMargin, KDCoordinate topBottomMargin, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, const KDFont * font) :
+ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder, KDCoordinate leftRightMargin, KDCoordinate topBottomMargin, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, KDFont::Size font) :
   ScrollableView(parentResponder, &m_expressionView, this),
   m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor, font)
 {

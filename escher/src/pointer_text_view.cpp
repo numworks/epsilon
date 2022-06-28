@@ -3,7 +3,7 @@
 
 namespace Escher {
 
-PointerTextView::PointerTextView(const KDFont * font, const char * text, float horizontalAlignment, float verticalAlignment,
+PointerTextView::PointerTextView(KDFont::Size font, const char * text, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_text(text)

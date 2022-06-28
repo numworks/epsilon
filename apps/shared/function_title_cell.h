@@ -23,7 +23,7 @@ public:
   virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBaseline(KDCoordinate baseline);
-  virtual const KDFont * font() const = 0;
+  virtual KDFont::Size font() const = 0;
   void connectColorIndicator(bool status) { m_connectColorIndicator = status; }
 protected:
   constexpr static KDCoordinate k_separatorThickness = Escher::Metric::CellSeparatorThickness;

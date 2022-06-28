@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Escher {
 
 ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignment,
-    KDColor textColor, KDColor backgroundColor, const KDFont * font, Poincare::Layout * selectionStart, Poincare::Layout * selectionEnd ) :
+    KDColor textColor, KDColor backgroundColor, KDFont::Size font, Poincare::Layout * selectionStart, Poincare::Layout * selectionEnd ) :
   m_textColor(textColor),
   m_backgroundColor(backgroundColor),
   m_selectionStart(selectionStart),

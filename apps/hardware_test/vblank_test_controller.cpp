@@ -28,7 +28,7 @@ void VBlankTestController::viewWillAppear() {
 
 VBlankTestController::ContentView::ContentView() :
   SolidColorView(KDColorWhite),
-  m_vBlankStateView(KDFont::LargeFont, KDContext::k_alignCenter, KDContext::k_alignCenter)
+  m_vBlankStateView(KDFont::Size::Large, KDContext::k_alignCenter, KDContext::k_alignCenter)
 {
 }
 

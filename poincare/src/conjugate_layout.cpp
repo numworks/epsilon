@@ -55,7 +55,7 @@ int ConjugateLayoutNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.name(), true);
 }
 
-KDSize ConjugateLayoutNode::computeSize(const KDFont * font) {
+KDSize ConjugateLayoutNode::computeSize(KDFont::Size font) {
   KDSize childSize = childLayout()->layoutSize(font);
   KDCoordinate newWidth =
     Escher::Metric::FractionAndConjugateHorizontalMargin +
@@ -70,18 +70,18 @@ KDSize ConjugateLayoutNode::computeSize(const KDFont * font) {
   return KDSize(newWidth, newHeight);
 }
 
-KDCoordinate ConjugateLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate ConjugateLayoutNode::computeBaseline(KDFont::Size font) {
   return childLayout()->baseline(font) + k_overlineWidth + k_overlineVerticalMargin;
 }
 
-KDPoint ConjugateLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+KDPoint ConjugateLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   assert(child == childLayout());
   return KDPoint(
       Escher::Metric::FractionAndConjugateHorizontalMargin + Escher::Metric::FractionAndConjugateHorizontalOverflow,
       k_overlineWidth + k_overlineVerticalMargin);
 }
 
-void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   ctx->fillRect(
       KDRect(
         p.x() + Escher::Metric::FractionAndConjugateHorizontalMargin,

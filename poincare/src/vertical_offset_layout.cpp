@@ -178,7 +178,7 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
   return std::min(numberOfChar, bufferSize-1);
 }
 
-KDSize VerticalOffsetLayoutNode::computeSize(const KDFont * font) {
+KDSize VerticalOffsetLayoutNode::computeSize(KDFont::Size font) {
   KDSize indiceSize = indiceLayout()->layoutSize(font);
   KDCoordinate width = indiceSize.width();
   if (m_position == Position::Superscript) {
@@ -194,7 +194,7 @@ KDSize VerticalOffsetLayoutNode::computeSize(const KDFont * font) {
   return KDSize(width, height);
 }
 
-KDCoordinate VerticalOffsetLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate VerticalOffsetLayoutNode::computeBaseline(KDFont::Size font) {
   if (m_position == Position::Subscript) {
     return baseLayout()->baseline(font);
   } else {
@@ -202,7 +202,7 @@ KDCoordinate VerticalOffsetLayoutNode::computeBaseline(const KDFont * font) {
   }
 }
 
-KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   assert(child == indiceLayout());
   if (m_position == Position::Superscript) {
     return KDPointZero;

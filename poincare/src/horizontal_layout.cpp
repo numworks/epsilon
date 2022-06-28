@@ -257,7 +257,7 @@ bool HorizontalLayoutNode::hasText() const {
 
 // Protected
 
-KDSize HorizontalLayoutNode::computeSize(const KDFont * font) {
+KDSize HorizontalLayoutNode::computeSize(KDFont::Size font) {
   KDCoordinate totalWidth = 0;
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
@@ -270,7 +270,7 @@ KDSize HorizontalLayoutNode::computeSize(const KDFont * font) {
   return KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline);
 }
 
-KDCoordinate HorizontalLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate HorizontalLayoutNode::computeBaseline(KDFont::Size font) {
   KDCoordinate result = 0;
   for (LayoutNode * l : children()) {
     result = std::max(result, l->baseline(font));
@@ -278,7 +278,7 @@ KDCoordinate HorizontalLayoutNode::computeBaseline(const KDFont * font) {
   return result;
 }
 
-KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l, const KDFont * font) {
+KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   assert(hasChild(l));
   KDCoordinate x = 0;
   for (LayoutNode * c : children()) {
@@ -292,7 +292,7 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l, const KDFont * fon
   return KDPoint(x, y);
 }
 
-KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, const KDFont * font) const {
+KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const {
   assert(selectionStart != nullptr && !selectionStart->isUninitialized());
   assert(selectionEnd != nullptr && !selectionEnd->isUninitialized());
   HorizontalLayout thisLayout = HorizontalLayout(const_cast<HorizontalLayoutNode *>(this));

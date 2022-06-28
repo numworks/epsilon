@@ -9,13 +9,13 @@ namespace Shared {
 
 class SequenceTitleCell : public Shared::FunctionTitleCell {
 public:
-  SequenceTitleCell(const KDFont * font = KDFont::LargeFont);
+  SequenceTitleCell(KDFont::Size font = KDFont::Size::Large);
   void setLayout(Poincare::Layout layout);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
   void setOrientation(Orientation orientation) override;
-  const KDFont * font() const override {
+  KDFont::Size font() const override {
     return m_titleTextView.font();
   }
   Poincare::Layout layout() const override {

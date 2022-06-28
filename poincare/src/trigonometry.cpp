@@ -27,6 +27,7 @@
 #include <poincare/tangent.h>
 #include <poincare/trigonometry_cheat_table.h>
 #include <poincare/undefined.h>
+#include <poincare/unit.h>
 #include <poincare/opposite.h>
 #include <ion.h>
 #include <assert.h>
@@ -44,7 +45,6 @@ constexpr static int s_piDivisor[] {
   180,
   200
 };
-
 
 Expression Trigonometry::PiExpressionInAngleUnit(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Radian) {
@@ -150,18 +150,33 @@ bool Trigonometry::ExpressionIsEquivalentToInverseOfTangent(const Expression & e
 Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isDirectTrigonometryFunction(e));
 
-  // Step 0. Map on list child if possible
+  // Step 0.0 Map on list child if possible
   {
     Expression eReduced = SimplificationHelper::defaultShallowReduce(
         e,
         &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits,
+        SimplificationHelper::UnitReduction::KeepUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
         );
     if (!eReduced.isUninitialized()) {
       return eReduced;
+    }
+  }
+
+  // Step 0.1 Eliminate angle unit if there is one
+  Expression unit;
+  e.childAtIndex(0).removeUnit(&unit);
+  if (!unit.isUninitialized()) {
+    // There is a unit on the argument
+    assert(unit.type() == ExpressionNode::Type::Unit);
+    Unit unitRef = static_cast<Unit &>(unit);
+    if (unitRef.representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector()) {
+      // Should have been converted to radians already by the reduction
+      assert(unitRef.representative()->isBaseUnit());
+    } else {
+      return e.replaceWithUndefinedInPlace();
     }
   }
 
@@ -460,6 +475,9 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
 }
 
 Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+{
+  /* Since the child always ends in a direct function, angle units are left
+   * untouched here */
   assert(isAdvancedTrigonometryFunction(e));
   // Step 0. Replace with inverse (^-1) of equivalent direct function.
   Expression result;

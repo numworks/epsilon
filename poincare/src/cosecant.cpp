@@ -39,7 +39,7 @@ Expression Cosecant::shallowReduce(ExpressionNode::ReductionContext reductionCon
         *this,
         &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits
+        SimplificationHelper::UnitReduction::KeepUnits
     );
     if (!e.isUninitialized()) {
       return e;

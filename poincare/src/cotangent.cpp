@@ -41,7 +41,7 @@ Expression Cotangent::shallowReduce(ExpressionNode::ReductionContext reductionCo
         *this,
         &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits
+        SimplificationHelper::UnitReduction::KeepUnits
     );
     if (!e.isUninitialized()) {
       return e;

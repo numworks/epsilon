@@ -39,7 +39,7 @@ Expression Secant::shallowReduce(ExpressionNode::ReductionContext reductionConte
         *this,
         &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits,
+        SimplificationHelper::UnitReduction::KeepUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
     );

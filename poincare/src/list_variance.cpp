@@ -1,5 +1,6 @@
 #include <poincare/list_variance.h>
 #include <poincare/addition.h>
+#include <poincare/default_parameter.h>
 #include <poincare/layout_helper.h>
 #include <poincare/list_mean.h>
 #include <poincare/multiplication.h>
@@ -44,11 +45,11 @@ Expression ListVariance::shallowReduce(const ExpressionNode::ReductionContext& r
   if (!SimplificationHelper::getChildrenIfNonEmptyList(*this, children)) {
     return replaceWithUndefinedInPlace();
   }
-  Expression m = n == 2 ? ListMean::Builder(children[0].clone(), children[1].clone()) : ListMean::Builder(children[0].clone());
+  Expression m = n == 2 ? ListMean::Builder(children[0].clone(), children[1].clone()) : ListMean::Builder(children[0].clone(), DefaultParameter::Builder());
   Power m2 = Power::Builder(m, Rational::Builder(2));
   m.shallowReduce(reductionContext);
   Power l2 = Power::Builder(children[0], Rational::Builder(2));
-  Expression ml2 = n == 2 ? ListMean::Builder(l2, children[1]) : ListMean::Builder(l2);
+  Expression ml2 = n == 2 ? ListMean::Builder(l2, children[1]) : ListMean::Builder(l2, DefaultParameter::Builder());
   l2.shallowReduce(reductionContext);
   Subtraction s = Subtraction::Builder(ml2, m2);
   ml2.shallowReduce(reductionContext);

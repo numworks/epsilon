@@ -145,7 +145,7 @@ void EditableCategoricalTableCell::initCell(EvenOddEditableTextCell, void * cell
   EvenOddEditableTextCell * c = static_cast<EvenOddEditableTextCell *>(cell);
   c->setParentResponder(&m_selectableTableView);
   c->editableTextCell()->textField()->setDelegates(App::app(), this);
-  c->setFont(KDFont::SmallFont);
+  c->setFont(KDFont::Size::Small);
 }
 
 bool EditableCategoricalTableCell::deleteSelectedValue() {

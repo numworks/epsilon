@@ -119,8 +119,8 @@ bool KDFont::CanBeWrittenWithGlyphs(const char * text) {
   UTF8Decoder decoder(text);
   CodePoint cp = decoder.nextCodePoint();
   while(cp != UCodePointNull) {
-    if (LargeFont->indexForCodePoint(cp) == k_indexForReplacementCharacterCodePoint
-     || SmallFont->indexForCodePoint(cp) == k_indexForReplacementCharacterCodePoint)
+    if (privateLargeFont.indexForCodePoint(cp) == k_indexForReplacementCharacterCodePoint
+     || privateSmallFont.indexForCodePoint(cp) == k_indexForReplacementCharacterCodePoint)
     {
       return false;
     }

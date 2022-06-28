@@ -21,7 +21,7 @@ void StackView::drawRect(KDContext * ctx, KDRect rect) const {
   drawBorderOfRect(ctx, b, m_separatorColor);
   drawInnerRect(ctx, b, m_backgroundColor);
   // Write title
-  const KDFont * font = KDFont::SmallFont;
+  KDFont::Size font = KDFont::Size::Small;
   ctx->alignAndDrawString(m_controller->title(), KDPointZero, m_frame.size(), KDContext::k_alignCenter, KDContext::k_alignCenter,
                           font, m_textColor, m_backgroundColor);
 }

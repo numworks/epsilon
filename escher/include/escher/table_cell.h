@@ -51,8 +51,8 @@ public:
   virtual bool giveAccessoryAllWidth() const { return false; }
 
   static KDCoordinate minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate minAccessoryWidth, KDCoordinate width);
-  constexpr static KDCoordinate k_minimalLargeFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 18 + Metric::CellTopMargin; // KDFont::LargeFont->glyphSize().height() = 18
-  constexpr static KDCoordinate k_minimalSmallFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 14 + Metric::CellTopMargin; // KDFont::SmallFont->glyphSize().height() = 14
+  constexpr static KDCoordinate k_minimalLargeFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 18 + Metric::CellTopMargin; // KDFont::Font(KDFont::Size::Large)->glyphSize().height() = 18
+  constexpr static KDCoordinate k_minimalSmallFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + 14 + Metric::CellTopMargin; // KDFont::Font(KDFont::Size::Small)->glyphSize().height() = 14
 protected:
   virtual KDColor backgroundColor() const { return KDColorWhite; }
   int numberOfSubviews() const override;

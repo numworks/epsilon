@@ -171,7 +171,7 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name(), true);
 }
 
-KDSize NthRootLayoutNode::computeSize(const KDFont * font) {
+KDSize NthRootLayoutNode::computeSize(KDFont::Size font) {
   KDSize radicandSize = radicandLayout()->layoutSize(font);
   KDSize indexSize = adjustedIndexSize(font);
   KDSize newSize = KDSize(
@@ -181,13 +181,13 @@ KDSize NthRootLayoutNode::computeSize(const KDFont * font) {
   return newSize;
 }
 
-KDCoordinate NthRootLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate NthRootLayoutNode::computeBaseline(KDFont::Size font) {
   return std::max<KDCoordinate>(
       radicandLayout()->baseline(font) + k_radixLineThickness + k_heightMargin,
       adjustedIndexSize(font).height());
 }
 
-KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   KDSize indexSize = adjustedIndexSize(font);
@@ -203,13 +203,13 @@ KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child, const KDFont * fo
   return KDPoint(x,y);
 }
 
-KDSize NthRootLayoutNode::adjustedIndexSize(const KDFont * font) {
+KDSize NthRootLayoutNode::adjustedIndexSize(KDFont::Size font) {
   return indexLayout() == nullptr ?
     KDSize(k_leftRadixWidth, 0) :
     KDSize(std::max(k_leftRadixWidth, indexLayout()->layoutSize(font).width()), indexLayout()->layoutSize(font).height());
 }
 
-void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDSize radicandSize = radicandLayout()->layoutSize(font);
   KDSize indexSize = adjustedIndexSize(font);
   KDColor workingBuffer[k_leftRadixWidth*k_leftRadixHeight];

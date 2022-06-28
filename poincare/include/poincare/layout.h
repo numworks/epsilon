@@ -32,15 +32,15 @@ public:
   bool isIdenticalTo(Layout l) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l); }
 
   // Rendering
-  void draw(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = Escher::Palette::Select) {
+  void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = Escher::Palette::Select) {
     return node()->draw(ctx, p, font, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
   }
-  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) {
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) {
     return node()->render(ctx, p, font, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
   }
-  KDSize layoutSize(const KDFont * font) const { return node()->layoutSize(font); }
-  KDPoint absoluteOrigin(const KDFont * font) const { return node()->absoluteOrigin(font); }
-  KDCoordinate baseline(const KDFont * font) { return node()->baseline(font); }
+  KDSize layoutSize(KDFont::Size font) const { return node()->layoutSize(font); }
+  KDPoint absoluteOrigin(KDFont::Size font) const { return node()->absoluteOrigin(font); }
+  KDCoordinate baseline(KDFont::Size font) { return node()->baseline(font); }
   void invalidAllSizesPositionsAndBaselines() { return node()->invalidAllSizesPositionsAndBaselines(); }
 
   // Serialization

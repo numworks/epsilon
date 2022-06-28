@@ -4,7 +4,7 @@
 
 namespace Escher {
 
-ButtonState::ButtonState(Responder * parentResponder, I18n::Message textBody, Invocation invocation, ToggleableView * stateView, const KDFont * font, KDColor textColor) :
+ButtonState::ButtonState(Responder * parentResponder, I18n::Message textBody, Invocation invocation, ToggleableView * stateView, KDFont::Size font, KDColor textColor) :
   Button(parentResponder, textBody, invocation, font, textColor),
   m_stateView(stateView)
 {}

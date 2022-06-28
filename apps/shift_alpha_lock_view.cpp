@@ -5,7 +5,7 @@ using namespace Escher;
 
 ShiftAlphaLockView::ShiftAlphaLockView() :
   View(),
-  m_shiftAlphaView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignRight, KDContext::k_alignCenter, KDColorWhite, Palette::YellowDark),
+  m_shiftAlphaView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignRight, KDContext::k_alignCenter, KDColorWhite, Palette::YellowDark),
   m_status(Ion::Events::ShiftAlphaStatus::Default)
 {
 }
@@ -42,7 +42,7 @@ bool ShiftAlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
 }
 
 KDSize ShiftAlphaLockView::minimalSizeForOptimalDisplay() const {
-  KDSize modifierSize = KDFont::SmallFont->stringSize(I18n::translate(I18n::Message::Alpha));
+  KDSize modifierSize = KDFont::Font(KDFont::Size::Small)->stringSize(I18n::translate(I18n::Message::Alpha));
   KDSize lockSize = m_lockView.minimalSizeForOptimalDisplay();
   KDCoordinate height = lockSize.height() > modifierSize.height() ? lockSize.height() : modifierSize.height();
   return KDSize(modifierSize.width() + lockSize.width() + k_lockRightMargin, height);
@@ -73,7 +73,7 @@ View * ShiftAlphaLockView::subviewAtIndex(int index) {
 }
 
 void ShiftAlphaLockView::layoutSubviews(bool force) {
-  KDSize modifierSize = KDFont::SmallFont->stringSize(I18n::translate(I18n::Message::Alpha));
+  KDSize modifierSize = KDFont::Font(KDFont::Size::Small)->stringSize(I18n::translate(I18n::Message::Alpha));
   m_shiftAlphaView.setFrame(KDRect(bounds().width() - modifierSize.width(), (bounds().height()- modifierSize.height())/2, modifierSize), force);
 
   KDSize lockSize = m_lockView.minimalSizeForOptimalDisplay();

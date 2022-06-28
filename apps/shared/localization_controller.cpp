@@ -12,7 +12,7 @@ constexpr int LocalizationController::ContentView::k_numberOfCountryWarningLines
 LocalizationController::ContentView::ContentView(LocalizationController * controller, SelectableTableViewDataSource * dataSource) :
   m_controller(controller),
   m_selectableTableView(controller, controller, dataSource),
-  m_countryTitleMessage(KDFont::LargeFont, I18n::Message::Country),
+  m_countryTitleMessage(KDFont::Size::Large, I18n::Message::Country),
   m_borderView(Palette::GrayBright)
 {
   m_countryTitleMessage.setBackgroundColor(Palette::WallScreen);
@@ -21,7 +21,7 @@ LocalizationController::ContentView::ContentView(LocalizationController * contro
   I18n::Message textMessages[k_numberOfCountryWarningLines] = {I18n::Message::CountryWarning1, I18n::Message::CountryWarning2};
   for (int i = 0; i < k_numberOfCountryWarningLines; i++) {
     m_countryWarningLines[i].setBackgroundColor(Palette::WallScreen);
-    m_countryWarningLines[i].setFont(KDFont::SmallFont);
+    m_countryWarningLines[i].setFont(KDFont::Size::Small);
     m_countryWarningLines[i].setTextColor(Escher::Palette::GrayDark);
     m_countryWarningLines[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
     m_countryWarningLines[i].setMessage(textMessages[i]);
@@ -68,14 +68,14 @@ void LocalizationController::ContentView::layoutSubviews(bool force) {
 }
 
 KDCoordinate LocalizationController::ContentView::layoutTitleSubview(bool force, KDCoordinate verticalOrigin) {
-  KDCoordinate titleHeight = m_countryTitleMessage.font()->glyphSize().height();
+  KDCoordinate titleHeight = KDFont::Font(m_countryTitleMessage.font())->glyphSize().height();
   m_countryTitleMessage.setFrame(KDRect(0, verticalOrigin, bounds().width(), titleHeight), force);
   return verticalOrigin + titleHeight;
 }
 
 KDCoordinate LocalizationController::ContentView::layoutWarningSubview(bool force, KDCoordinate verticalOrigin) {
   assert(k_numberOfCountryWarningLines > 0);
-  KDCoordinate textHeight = m_countryWarningLines[0].font()->glyphSize().height();
+  KDCoordinate textHeight = KDFont::Font(m_countryWarningLines[0].font())->glyphSize().height();
   for (int i = 0; i < k_numberOfCountryWarningLines; i++) {
     m_countryWarningLines[i].setFrame(KDRect(0, verticalOrigin, bounds().width(), textHeight), force);
     verticalOrigin += textHeight;

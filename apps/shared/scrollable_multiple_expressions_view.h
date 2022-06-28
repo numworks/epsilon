@@ -45,7 +45,7 @@ public:
 protected:
   class ContentCell : public Escher::EvenOddCell {
   public:
-    constexpr static const KDFont * k_font = KDFont::LargeFont;
+    constexpr static KDFont::Size k_font = KDFont::Size::Large;
 
     static KDCoordinate StandardApproximateViewAndMarginsSize();
     ContentCell();
@@ -104,7 +104,7 @@ public:
     );
   }
   KDSize minimalSizeForOptimalDisplayFullSize() const;
-  const KDFont * font() const { return ContentCell::k_font; }
+  KDFont::Size font() const { return ContentCell::k_font; }
 private:
   ContentCell *  contentCell() override { return &m_contentCell; };
   const ContentCell *  constContentCell() const override { return &m_contentCell; };

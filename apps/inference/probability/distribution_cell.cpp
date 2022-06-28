@@ -6,7 +6,7 @@ namespace Inference {
 
 DistributionCell::DistributionCell() :
     TableCell(),
-    m_messageView(KDFont::LargeFont, (I18n::Message)0, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
+    m_messageView(KDFont::Size::Large, (I18n::Message)0, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
 {
   m_iconView.setBackgroundColor(KDColorWhite);
 }

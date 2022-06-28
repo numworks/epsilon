@@ -15,7 +15,7 @@ SlopeTableCell::SlopeTableCell(Responder * parentResponder, DynamicSizeTableView
     m_header[i].setColor(Escher::Palette::Red);
     m_header[i].setOrientation(Shared::FunctionTitleCell::Orientation::HorizontalIndicator);
     m_header[i].setEven(true);
-    m_header[i].setFont(KDFont::SmallFont);
+    m_header[i].setFont(KDFont::Size::Small);
   }
 }
 

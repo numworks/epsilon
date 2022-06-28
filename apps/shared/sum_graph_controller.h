@@ -62,9 +62,9 @@ private:
     constexpr static int k_valuesPrecision = Poincare::Preferences::MediumNumberOfSignificantDigits;
     constexpr static int k_valuesBufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(k_valuesPrecision);
     constexpr static KDCoordinate k_legendHeight = 35;
-    constexpr static const KDFont * k_font = KDFont::SmallFont;
-    static KDCoordinate editableZoneWidth() { return 12*k_font->glyphSize().width(); }
-    static KDCoordinate editableZoneHeight() { return k_font->glyphSize().height(); }
+    constexpr static KDFont::Size k_font = KDFont::Size::Small;
+    static KDCoordinate editableZoneWidth() { return 12*KDFont::Font(k_font)->glyphSize().width(); }
+    static KDCoordinate editableZoneHeight() { return KDFont::Font(k_font)->glyphSize().height(); }
     constexpr static KDCoordinate k_symbolHeightMargin = 8;
     constexpr static KDCoordinate k_sigmaHeight = 18;
     int numberOfSubviews() const override { return 3; }

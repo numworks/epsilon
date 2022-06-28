@@ -14,7 +14,7 @@ public:
       size_t draftTextBufferSize,
       Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
       Escher::TextFieldDelegate * delegate = nullptr,
-      const KDFont * size = KDFont::LargeFont,
+      KDFont::Size size = KDFont::Size::Large,
       float horizontalAlignment = KDContext::k_alignLeft,
       float verticalAlignment = KDContext::k_alignCenter,
       KDColor textColor = KDColorBlack,

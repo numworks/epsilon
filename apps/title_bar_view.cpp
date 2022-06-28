@@ -12,9 +12,9 @@ using namespace Escher;
 
 TitleBarView::TitleBarView() :
   View(),
-  m_titleView(KDFont::SmallFont, I18n::Message::Default, KDContext::k_alignCenter,
+  m_titleView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter,
               KDContext::k_alignCenter, KDColorWhite, Palette::YellowDark),
-  m_preferenceView(KDFont::SmallFont, KDContext::k_alignRight, KDContext::k_alignCenter, KDColorWhite, Palette::YellowDark)
+  m_preferenceView(KDFont::Size::Small, KDContext::k_alignRight, KDContext::k_alignCenter, KDColorWhite, Palette::YellowDark)
 {
   m_examModeIconView.setImage(ImageStore::ExamIcon);
 }

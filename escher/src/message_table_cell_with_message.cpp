@@ -6,7 +6,7 @@ namespace Escher {
 
 MessageTableCellWithMessage::MessageTableCellWithMessage(I18n::Message message, I18n::Message subLabelMessage) :
   MessageTableCell(message),
-  m_subLabelView(KDFont::SmallFont, subLabelMessage, KDContext::k_alignLeft, KDContext::k_alignCenter, Palette::GrayDark)
+  m_subLabelView(KDFont::Size::Small, subLabelMessage, KDContext::k_alignLeft, KDContext::k_alignCenter, Palette::GrayDark)
 {
 }
 

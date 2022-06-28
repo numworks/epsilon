@@ -5,7 +5,7 @@
 
 namespace Escher {
 
-ExpressionTableCell::ExpressionTableCell(Responder * parentResponder, const KDFont * font) :
+ExpressionTableCell::ExpressionTableCell(Responder * parentResponder, KDFont::Size font) :
   Responder(parentResponder),
   TableCell(),
   m_labelExpressionView(this, 0, 0, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, font)

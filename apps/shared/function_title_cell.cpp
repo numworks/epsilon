@@ -34,7 +34,7 @@ void FunctionTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
     // Draw some background
     ctx->fillRect(KDRect(bounds().width() - k_equalWidthWithMargins, 0, k_equalWidthWithMargins, bounds().height() - k_separatorThickness), backgroundColor);
     // Draw '='
-    KDPoint p = KDPoint(bounds().width() - k_equalWidthWithMargins, m_baseline - font()->glyphSize().height()/2 - 1); // -1 is visually needed
+    KDPoint p = KDPoint(bounds().width() - k_equalWidthWithMargins, m_baseline - KDFont::Font(font())->glyphSize().height()/2 - 1); // -1 is visually needed
     ctx->drawString("=", p, font(), m_functionColor, backgroundColor);
   } else {
     // Draw the color indicator

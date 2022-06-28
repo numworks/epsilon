@@ -57,11 +57,11 @@ private:
   static bool ChildHeightDictatesHeight(KDCoordinate childHeight) { return childHeight >= k_minimalChildHeight; }
 
   // LayoutNode
-  KDCoordinate computeBaseline(const KDFont * font) override;
-  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override;
-  KDCoordinate childHeight(const KDFont * font);
-  KDCoordinate computeChildHeight(const KDFont * font);
-  KDSize computeSize(const KDFont * font) override { return KDSize(width(), HeightGivenChildHeight(childHeight(font))); }
+  KDCoordinate computeBaseline(KDFont::Size font) override;
+  KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
+  KDCoordinate childHeight(KDFont::Size font);
+  KDCoordinate computeChildHeight(KDFont::Size font);
+  KDSize computeSize(KDFont::Size font) override { return KDSize(width(), HeightGivenChildHeight(childHeight(font))); }
   virtual KDCoordinate width() const = 0;
 
   bool m_childHeightComputed;

@@ -48,9 +48,9 @@ PopUpController::ContentView::ContentView(Responder * parentResponder, Invocatio
         Container::activeApp()->dismissModalViewController();
         return true;
       }, this),
-    KDFont::SmallFont),
-  m_okButton(this, okMessage, okInvocation, KDFont::SmallFont),
-  m_warningTextView(KDFont::SmallFont, warningMessage, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorWhite, KDColorBlack),
+    KDFont::Size::Small),
+  m_okButton(this, okMessage, okInvocation, KDFont::Size::Small),
+  m_warningTextView(KDFont::Size::Small, warningMessage, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorWhite, KDColorBlack),
   m_detailTextView(detailTextView)
 {
 }
@@ -78,7 +78,7 @@ View * PopUpController::ContentView::subviewAtIndex(int index) {
 void PopUpController::ContentView::layoutSubviews(bool force) {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
+  KDCoordinate textHeight = KDFont::Font(KDFont::Size::Small)->glyphSize().height();
   KDCoordinate detailTextHeight = m_detailTextView->minimalSizeForOptimalDisplay().height();
 
   m_warningTextView.setFrame(KDRect(0, k_topMargin, width, textHeight), force);
@@ -87,7 +87,7 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
   m_cancelButton.setFrame(KDRect(k_buttonMargin, height - k_buttonMargin - k_buttonHeight, (width - 3 * k_buttonMargin) / 2, k_buttonHeight), force);
   m_okButton.setFrame(KDRect(2 * k_buttonMargin + (width - 3 * k_buttonMargin) / 2, height - k_buttonMargin - k_buttonHeight, (width - 3 * k_buttonMargin) / 2, k_buttonHeight), force);
 
-  m_detailTextView->setFont(KDFont::SmallFont);
+  m_detailTextView->setFont(KDFont::Size::Small);
   m_detailTextView->setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
   m_detailTextView->setBackgroundColor(KDColorBlack);
   m_detailTextView->setTextColor(KDColorWhite);

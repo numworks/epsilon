@@ -20,7 +20,7 @@ protected:
   constexpr static int k_totalNumberOfCell = 3;
   int initialSelectedRow() const override { return valueIndexForPreference(m_messageTreeModel->label()); }
 private:
-  constexpr static const KDFont * k_layoutFont = KDFont::SmallFont;
+  constexpr static KDFont::Size k_layoutFont = KDFont::Size::Small;
   Poincare::Layout layoutForPreferences(I18n::Message message);
   void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);
   int valueIndexForPreference(I18n::Message message) const;

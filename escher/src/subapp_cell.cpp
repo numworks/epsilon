@@ -7,8 +7,8 @@ namespace Escher {
 
 SubappCell::SubappCell() {
   m_icon.setBackgroundColor(KDColorWhite);
-  m_title.setFont(KDFont::LargeFont);
-  m_subTitle.setFont(KDFont::SmallFont);
+  m_title.setFont(KDFont::Size::Large);
+  m_subTitle.setFont(KDFont::Size::Small);
   m_subTitle.setTextColor(Palette::GrayDark);
 }
 

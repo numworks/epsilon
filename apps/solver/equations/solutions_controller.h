@@ -56,7 +56,7 @@ private:
     void setWarningMessages(I18n::Message message0, I18n::Message message1);
     Escher::SelectableTableView * selectableTableView() { return &m_selectableTableView; }
   private:
-    constexpr static const KDFont * k_warningMessageFont = KDFont::SmallFont;
+    constexpr static KDFont::Size k_warningMessageFont = KDFont::Size::Small;
 
     int numberOfSubviews() const override;
     Escher::View * subviewAtIndex(int index) override;
@@ -69,7 +69,7 @@ private:
 
   class MessageCell : public Escher::HighlightCell {
   public:
-    MessageCell() : m_messageView(KDFont::SmallFont, (I18n::Message)0, 0.0f, k_verticalAlignment, KDColorBlack, SolutionsController::ContentView::k_backgroundColor) {}
+    MessageCell() : m_messageView(KDFont::Size::Small, (I18n::Message)0, 0.0f, k_verticalAlignment, KDColorBlack, SolutionsController::ContentView::k_backgroundColor) {}
     void setBackgroundColor(KDColor color) { m_messageView.setBackgroundColor(color); }
     void setHorizontalAlignment(float alignment) { m_messageView.setAlignment(alignment, k_verticalAlignment); }
     void setMessage(I18n::Message message) { m_messageView.setMessage(message); }
@@ -99,7 +99,7 @@ private:
 
   // Heights and widths
   constexpr static KDCoordinate k_defaultCellHeight = 20;
-  constexpr static int k_symbolCellWidth = 10 * (Poincare::SymbolAbstract::k_maxNameSize - 1 + 2) + 2 * Escher::EvenOddBufferTextCell::k_horizontalMargin; // We concatenate symbol name with a number of at most 2 digits and KDFont::LargeFont->glyphSize().width() = 10
+  constexpr static int k_symbolCellWidth = 10 * (Poincare::SymbolAbstract::k_maxNameSize - 1 + 2) + 2 * Escher::EvenOddBufferTextCell::k_horizontalMargin; // We concatenate symbol name with a number of at most 2 digits and KDFont::Font(KDFont::Size::Large)->glyphSize().width() = 10
   constexpr static int k_valueCellWidth = 190;
 
   // Number of cells
@@ -115,8 +115,8 @@ private:
   constexpr static int k_numberOfEmptyCells = 2;
 
   // Fonts
-  constexpr static const KDFont * k_deltaFont = KDFont::SmallFont;
-  constexpr static const KDFont * k_solutionsFont = KDFont::LargeFont;
+  constexpr static KDFont::Size k_deltaFont = KDFont::Size::Small;
+  constexpr static KDFont::Size k_solutionsFont = KDFont::Size::Large;
 
   bool usedUserVariables() const { return m_equationStore->userVariablesUsed(); }
   int userVariablesMessageRow() const;

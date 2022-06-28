@@ -15,7 +15,7 @@ using namespace Poincare;
 
 namespace Escher {
 
-LayoutField::ContentView::ContentView(const KDFont * font) :
+LayoutField::ContentView::ContentView(KDFont::Size font) :
     m_expressionView(KDContext::k_alignLeft,
                      KDContext::k_alignCenter,
                      KDColorBlack,

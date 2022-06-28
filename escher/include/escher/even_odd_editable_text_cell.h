@@ -12,7 +12,7 @@ public:
   EvenOddEditableTextCell(Responder * parentResponder = nullptr,
                           InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,
                           TextFieldDelegate * delegate = nullptr,
-                          const KDFont * font = KDFont::LargeFont,
+                          KDFont::Size font = KDFont::Size::Large,
                           float horizontalAlignment = KDContext::k_alignRight,
                           float verticalAlignment = KDContext::k_alignCenter,
                           KDCoordinate topMargin = 0,
@@ -25,7 +25,7 @@ public:
   Responder * responder() override { return this; }
   const char * text() const override { return m_editableCell.text(); }
   void didBecomeFirstResponder() override;
-  void setFont(const KDFont * font) { m_editableCell.textField()->setFont(font); }
+  void setFont(KDFont::Size font) { m_editableCell.textField()->setFont(font); }
 
 private:
   int numberOfSubviews() const override;

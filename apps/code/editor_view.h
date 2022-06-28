@@ -36,14 +36,14 @@ private:
 
   class GutterView : public View {
   public:
-    GutterView(const KDFont * font) : View(), m_font(font), m_offset(0) {}
+    GutterView(KDFont::Size font) : View(), m_font(font), m_offset(0) {}
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setOffset(KDCoordinate offset);
     KDSize minimalSizeForOptimalDisplay() const override;
   private:
     constexpr static KDCoordinate k_margin = 2;
     constexpr static int k_lineNumberCharLength = 3;
-    const KDFont * m_font;
+    KDFont::Size m_font;
     KDCoordinate m_offset;
   };
 

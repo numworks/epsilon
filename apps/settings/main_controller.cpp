@@ -220,7 +220,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       childIndex = (int)preferences->complexFormat();
       break;
     case I18n::Message::FontSizes:
-      childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::LargeFont ? 0 : 1;
+      childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::Size::Large ? 0 : 1;
       break;
     default:
       childIndex = -1;

@@ -203,7 +203,7 @@ View * AbstractScrollableMultipleExpressionsView::ContentCell::subviewAtIndex(in
 }
 
 KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::StandardApproximateViewAndMarginsSize() {
-   return 2 * AbstractScrollableMultipleExpressionsView::k_horizontalMargin + k_font->stringSize(I18n::translate(k_defaultApproximateMessage)).width();
+   return 2 * AbstractScrollableMultipleExpressionsView::k_horizontalMargin + KDFont::Font(k_font)->stringSize(I18n::translate(k_defaultApproximateMessage)).width();
 }
 
 void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(bool force) {

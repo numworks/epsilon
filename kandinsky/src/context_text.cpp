@@ -7,23 +7,23 @@
 
 constexpr static int k_tabCharacterWidth = 4;
 
-KDPoint KDContext::alignAndDrawSingleLineString(const char * text, KDPoint p, KDSize frame, float horizontalAlignment, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {
-  KDSize textSize = font->stringSize(text, maxLength);
+KDPoint KDContext::alignAndDrawSingleLineString(const char * text, KDPoint p, KDSize frame, float horizontalAlignment, KDFont::Size font, KDColor textColor, KDColor backgroundColor, int maxLength) {
+  KDSize textSize = KDFont::Font(font)->stringSize(text, maxLength);
   assert(textSize.width() <= frame.width() && textSize.height() <= frame.height());
   KDPoint origin(p.x() + std::round(horizontalAlignment * (frame.width() - textSize.width())),
                  p.y());
   return drawString(text, origin, font, textColor, backgroundColor, maxLength);
 }
 
-KDPoint KDContext::alignAndDrawString(const char * text, KDPoint p, KDSize frame, float horizontalAlignment, float verticalAlignment, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {
+KDPoint KDContext::alignAndDrawString(const char * text, KDPoint p, KDSize frame, float horizontalAlignment, float verticalAlignment, KDFont::Size font, KDColor textColor, KDColor backgroundColor, int maxLength) {
   assert(horizontalAlignment >= 0.0f && horizontalAlignment <= 1.0f && verticalAlignment >= 0.0f && verticalAlignment <= 1.0f);
   /* Align vertically
    * Then split lines and horizontal-align each independently */
-  KDSize textSize = font->stringSize(text, maxLength);
+  KDSize textSize = KDFont::Font(font)->stringSize(text, maxLength);
   assert(textSize.width() <= frame.width() && textSize.height() <= frame.height());
   // We ceil vertical alignment to prefer shifting down than up.
   KDPoint origin(p.x(), p.y() + std::ceil(verticalAlignment * (frame.height() - textSize.height())));
-  KDSize lineFrame = KDSize(frame.width(), font->glyphSize().height());
+  KDSize lineFrame = KDSize(frame.width(), KDFont::Font(font)->glyphSize().height());
 
   UTF8Decoder decoder(text);
   const char * startLine = text;
@@ -45,10 +45,10 @@ KDPoint KDContext::alignAndDrawString(const char * text, KDPoint p, KDSize frame
                                       textColor, backgroundColor, maxLength + text - startLine);
 }
 
-KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxByteLength) {
+KDPoint KDContext::drawString(const char * text, KDPoint p, KDFont::Size font, KDColor textColor, KDColor backgroundColor, int maxByteLength) {
   KDPoint position = p;
-  KDSize glyphSize = font->glyphSize();
-  KDFont::RenderPalette palette = font->renderPalette(textColor, backgroundColor);
+  KDSize glyphSize = KDFont::Font(font)->glyphSize();
+  KDFont::RenderPalette palette = KDFont::Font(font)->renderPalette(textColor, backgroundColor);
   KDFont::GlyphBuffer glyphBuffer;
 
   UTF8Decoder decoder(text);
@@ -68,14 +68,14 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
       codePoint = decoder.nextCodePoint();
     } else {
       assert(!codePoint.isCombining());
-      font->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
+      KDFont::Font(font)->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
       codePoint = decoder.nextCodePoint();
       while (codePoint.isCombining()) {
-        font->accumulateGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
+        KDFont::Font(font)->accumulateGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
         codePointPointer = decoder.stringPosition();
         codePoint = decoder.nextCodePoint();
       }
-      font->colorizeGlyphBuffer(&palette, &glyphBuffer);
+      KDFont::Font(font)->colorizeGlyphBuffer(&palette, &glyphBuffer);
       // Push the character on the screen
       fillRectWithPixels(
           KDRect(position, glyphSize),

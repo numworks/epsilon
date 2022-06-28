@@ -13,7 +13,7 @@ int CombinedCodePointsLayoutNode::serialize(char * buffer, int bufferSize, Prefe
   return numberOfChar;
 }
 
-void CombinedCodePointsLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void CombinedCodePointsLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   constexpr int bufferSize =  2 * sizeof(CodePoint)/sizeof(char) + 1; // Null-terminating char
   char buffer[bufferSize];
   serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, 0);

@@ -60,7 +60,7 @@ protected:
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
 
 private:
-  constexpr static const KDFont * k_font = KDFont::SmallFont;
+  constexpr static KDFont::Size k_font = KDFont::Size::Small;
 
   virtual FunctionGraphView * functionGraphView() = 0;
 

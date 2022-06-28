@@ -9,7 +9,7 @@ namespace Escher {
 
 class ExpressionTableCellWithMessage : public ExpressionTableCell {
 public:
-  ExpressionTableCellWithMessage(Responder * responder = nullptr, I18n::Message subLabelMessage = (I18n::Message)0, const KDFont * font = KDFont::LargeFont);
+  ExpressionTableCellWithMessage(Responder * responder = nullptr, I18n::Message subLabelMessage = (I18n::Message)0, KDFont::Size font = KDFont::Size::Large);
   const View * subLabelView() const override { return &m_subLabelView; }
   void setHighlighted(bool highlight) override;
   void setSubLabelMessage(I18n::Message messageBody);

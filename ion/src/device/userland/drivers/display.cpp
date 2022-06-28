@@ -30,7 +30,7 @@ void drawString(const char * text, KDPoint point, bool largeFont, KDColor textCo
   KDContext * ctx = KDIonContext::sharedContext();
   ctx->setOrigin(KDPointZero);
   ctx->setClippingRect(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
-  ctx->drawString(text, point, largeFont ? KDFont::LargeFont : KDFont::SmallFont, textColor, backgroundColor, 255);
+  ctx->drawString(text, point, largeFont ? KDFont::Size::Large : KDFont::Size::Small, textColor, backgroundColor, 255);
 }
 
 void saveScreenshot() {}

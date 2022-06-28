@@ -30,7 +30,7 @@ int SumLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SequenceLayoutNode::writeDerivedClassInBuffer("sum", buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
-void SumLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void SumLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Creates half size sigma symbol from one branch
   uint8_t symbolPixel[k_symbolHeight * k_symbolWidth];
   int whiteOffset;

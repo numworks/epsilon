@@ -19,7 +19,7 @@ public:
                  float verticalAlignment = KDContext::k_alignCenter,
                  KDColor textColor = KDColorBlack,
                  KDColor backgroundColor = KDColorWhite,
-                 const KDFont * font = KDFont::LargeFont,
+                 KDFont::Size font = KDFont::Size::Large,
                  Poincare::Layout * selectionStart = nullptr,
                  Poincare::Layout * selectionEnd = nullptr);
   Poincare::Layout layout() const { return m_layout; }
@@ -34,8 +34,8 @@ public:
   KDPoint drawingOrigin() const;
   KDPoint absoluteDrawingOrigin() const;
   bool layoutHasNode() const { return Poincare::TreeNode::IsValidIdentifier(m_layout.identifier()) && !m_layout.wasErasedByException(); }
-  const KDFont * font() const { return m_font; }
-  void setFont(const KDFont * font) { m_font = font; }
+  KDFont::Size font() const { return m_font; }
+  void setFont(KDFont::Size font) { m_font = font; }
 protected:
   /* Warning: we do not need to delete the previous expression layout when
    * deleting object or setting a new expression layout. Indeed, the expression
@@ -51,7 +51,7 @@ private:
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDCoordinate m_horizontalMargin;
-  const KDFont * m_font;
+  KDFont::Size m_font;
 };
 
 }

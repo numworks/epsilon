@@ -535,10 +535,10 @@ void PythonToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     MessageTableCellWithMessage * myCell = static_cast<MessageTableCellWithMessage *>(cell);
     if (messageTree->text() == I18n::Message::Default && UTF8Helper::HasCodePoint(I18n::translate(messageTree->label()), '\n')) {
       // Leaf node with a multiple row label and no subLabel have a small font.
-      myCell->setMessageFont(KDFont::SmallFont);
+      myCell->setMessageFont(KDFont::Size::Small);
     } else {
       // Reset cell's font (to prevent a small font from being memoized)
-      myCell->setMessageFont(KDFont::LargeFont);
+      myCell->setMessageFont(KDFont::Size::Large);
     }
     myCell->setMessage(messageTree->label());
     myCell->setSubLabelMessage(messageTree->text());

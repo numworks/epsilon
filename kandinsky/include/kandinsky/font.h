@@ -38,8 +38,11 @@ private:
   static const KDFont privateSmallFont;
 
 public:
-  constexpr static const KDFont * LargeFont = &privateLargeFont;
-  constexpr static const KDFont * SmallFont = &privateSmallFont;
+  enum class Size : bool {
+    Small,
+    Large
+  };
+  constexpr static const KDFont * Font(Size size) { return size == Size::Small ? &privateSmallFont : &privateLargeFont; }
 
   static bool CanBeWrittenWithGlyphs(const char * text);
 

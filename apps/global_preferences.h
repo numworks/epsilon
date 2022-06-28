@@ -43,8 +43,8 @@ public:
   int brightnessLevel() const { return m_brightnessLevel; }
   void setBrightnessLevel(int brightnessLevel);
 
-  const KDFont * font() const { return m_font; }
-  void setFont(const KDFont * font) { m_font = font; }
+  KDFont::Size font() const { return m_font; }
+  void setFont(KDFont::Size font) { m_font = font; }
 
 private:
   const CountryPreferences & preferences() const { return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)]; }
@@ -56,13 +56,13 @@ private:
     m_country((I18n::Country)0),
     m_showPopUp(true),
     m_brightnessLevel(Ion::Backlight::MaxBrightness),
-    m_font(KDFont::LargeFont) {}
+    m_font(KDFont::Size::Large) {}
 
   I18n::Language m_language;
   I18n::Country m_country;
   bool m_showPopUp;
   int m_brightnessLevel;
-  const KDFont * m_font;
+  KDFont::Size m_font;
 };
 
 #endif

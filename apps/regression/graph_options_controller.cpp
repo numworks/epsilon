@@ -19,7 +19,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Esch
   SelectableListViewController(parentResponder),
   m_changeRegressionCell(I18n::Message::RegressionModel),
   m_regressionEquationCell(&m_selectableTableView, I18n::Message::RegressionEquation),
-  m_r2Cell(&m_selectableTableView, I18n::Message::Default, KDFont::LargeFont),
+  m_r2Cell(&m_selectableTableView, I18n::Message::Default, KDFont::Size::Large),
   m_residualPlotCell(I18n::Message::ResidualPlot),
   m_xParameterCell(I18n::Message::XPrediction),
   m_yParameterCell(I18n::Message::YPrediction),

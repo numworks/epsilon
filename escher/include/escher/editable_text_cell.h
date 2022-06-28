@@ -15,7 +15,7 @@ public:
   EditableTextCell(Responder * parentResponder = nullptr,
                    InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,
                    TextFieldDelegate * delegate = nullptr,
-                   const KDFont * font = KDFont::LargeFont,
+                   KDFont::Size font = KDFont::Size::Large,
                    float horizontalAlignment = KDContext::k_alignLeft,
                    float verticalAlignment = KDContext::k_alignCenter,
                    KDColor textColor = KDColorBlack,

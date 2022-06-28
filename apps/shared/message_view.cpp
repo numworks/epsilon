@@ -8,7 +8,7 @@ namespace Shared {
 MessageView::MessageView(const I18n::Message * messages, const KDColor * colors, uint8_t numberOfMessages) {
   m_numberOfMessages = numberOfMessages < k_maxNumberOfMessages ? numberOfMessages : k_maxNumberOfMessages;
   for (uint8_t i = 0; i < m_numberOfMessages; i++) {
-    m_messageTextViews[i].setFont(i == 0 ? KDFont::LargeFont : KDFont::SmallFont);
+    m_messageTextViews[i].setFont(i == 0 ? KDFont::Size::Large : KDFont::Size::Small);
     m_messageTextViews[i].setMessage(messages[i]);
     m_messageTextViews[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
     m_messageTextViews[i].setTextColor(colors[i]);
@@ -33,7 +33,7 @@ void MessageView::layoutSubviews(bool force) {
   }
   KDCoordinate width = bounds().width();
   KDCoordinate titleHeight = m_messageTextViews[0].minimalSizeForOptimalDisplay().height();
-  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
+  KDCoordinate textHeight = KDFont::Font(KDFont::Size::Small)->glyphSize().height();
   m_messageTextViews[0].setFrame(KDRect(0, k_titleMargin, width, titleHeight), force);
   for (uint8_t i = 1; i < m_numberOfMessages; i++) {
     m_messageTextViews[i].setFrame(KDRect(0, k_paragraphHeight + (i-1) * textHeight, width, textHeight), force);

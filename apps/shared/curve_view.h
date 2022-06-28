@@ -137,7 +137,7 @@ protected:
   CurveViewCursor * m_curveViewCursor;
 
 private:
-  constexpr static const KDFont * k_font = KDFont::SmallFont;
+  constexpr static KDFont::Size k_font = KDFont::Size::Small;
 
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */

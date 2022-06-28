@@ -10,7 +10,7 @@
 namespace Inference {
 
 IntervalConclusionView::IntervalConclusionView() {
-  setFont(KDFont::LargeFont);
+  setFont(KDFont::Size::Large);
   setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
   setBackgroundColor(Escher::Palette::WallScreen);
 }

@@ -3,7 +3,7 @@
 
 namespace Escher {
 
-EvenOddBufferTextCell::EvenOddBufferTextCell(const KDFont * font, float horizontalAlignment, float verticalAlignment) :
+EvenOddBufferTextCell::EvenOddBufferTextCell(KDFont::Size font, float horizontalAlignment, float verticalAlignment) :
   EvenOddCell(),
   m_bufferTextView(font, horizontalAlignment, verticalAlignment)
 {

@@ -16,7 +16,7 @@ BoxController::BoxController(Responder * parentResponder, ButtonRowController * 
     BoxController * boxController = static_cast<BoxController * >(context);
     boxController->stackController()->push(boxController->boxParameterController());
     return true;
-  }, this), KDFont::SmallFont)
+  }, this), KDFont::Size::Small)
 {
 }
 
@@ -44,7 +44,7 @@ bool BoxController::reloadBannerView() {
 
   int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
-  // With 7 = KDFont::SmallFont->glyphSize().width(), should fit in one line
+  // With 7 = KDFont::Font(KDFont::Size::Small)->glyphSize().width(), should fit in one line
   constexpr static int k_bufferSize = 1 + Ion::Display::Width / 7 - sizeof("V1/N1");
   char buffer[k_bufferSize] = "";
 

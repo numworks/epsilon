@@ -3,7 +3,7 @@
 
 namespace Escher {
 
-MessageTextView::MessageTextView(const KDFont * font, I18n::Message message, float horizontalAlignment, float verticalAlignment,
+MessageTextView::MessageTextView(KDFont::Size font, I18n::Message message, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_message(message)
@@ -26,7 +26,7 @@ void MessageTextView::setMessage(I18n::Message message) {
 }
 
 KDSize MessageTextView::minimalSizeForOptimalDisplay() const  {
-  return m_font->stringSize(text());
+  return KDFont::Font(m_font)->stringSize(text());
 }
 
 }

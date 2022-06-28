@@ -99,7 +99,7 @@ private:
   constexpr static uint8_t k_maxSpeed = 10;
   constexpr static KDColor k_defaultColor = KDColorBlack;
   constexpr static uint8_t k_defaultPenSize = 1;
-  constexpr static const KDFont * k_font = KDFont::LargeFont;
+  constexpr static KDFont::Size k_font = KDFont::Size::Large;
   constexpr static mp_float_t k_maxPosition = KDCOORDINATE_MAX * 0.75f;
 
   enum class PawType : uint8_t {

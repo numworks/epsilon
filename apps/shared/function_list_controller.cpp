@@ -14,13 +14,13 @@ FunctionListController::FunctionListController(Responder * parentResponder, Butt
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(1);
       return true;
-    }, this), KDFont::SmallFont, Palette::PurpleBright),
+    }, this), KDFont::Size::Small, Palette::PurpleBright),
   m_valuesButton(this, I18n::Message::DisplayValues, Invocation([](void * context, void * sender) {
       FunctionListController * list = (FunctionListController *)context;
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(2);
       return true;
-    }, this), KDFont::SmallFont, Palette::PurpleBright)
+    }, this), KDFont::Size::Small, Palette::PurpleBright)
 {}
 
 /* ButtonRowDelegate */

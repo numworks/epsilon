@@ -3,7 +3,7 @@
 
 namespace Escher {
 
-EvenOddMessageTextCell::EvenOddMessageTextCell(const KDFont * font, float horizontalAlignment) :
+EvenOddMessageTextCell::EvenOddMessageTextCell(KDFont::Size font, float horizontalAlignment) :
   EvenOddCell(),
   m_messageTextView(font, (I18n::Message)0, horizontalAlignment, KDContext::k_alignCenter)
 {

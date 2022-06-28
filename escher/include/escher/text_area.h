@@ -14,7 +14,7 @@ class TextArea : public TextInput, public InputEventHandler {
 public:
   constexpr static int k_indentationSpaces = 2;
 
-  TextArea(Responder * parentResponder, View * contentView, const KDFont * font = KDFont::LargeFont);
+  TextArea(Responder * parentResponder, View * contentView, KDFont::Size font = KDFont::Size::Large);
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextAreaDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
@@ -41,7 +41,7 @@ protected:
       Line(const char * text);
       const char * text() const { return m_text; }
       size_t charLength() const { return m_charLength; }
-      KDCoordinate glyphWidth(const KDFont * const font) const;
+      KDCoordinate glyphWidth(KDFont::Size const font) const;
       bool contains(const char * c) const;
     private:
       const char * m_text;
@@ -74,7 +74,7 @@ protected:
     LineIterator begin() const { return LineIterator(m_buffer); };
     LineIterator end() const { return LineIterator(nullptr); };
 
-    KDSize span(const KDFont * const font) const;
+    KDSize span(KDFont::Size const font) const;
 
     Position positionAtPointer(const char * pointer) const;
     const char * pointerAtPosition(Position p);
@@ -105,7 +105,7 @@ protected:
 
   class ContentView : public TextInput::ContentView {
   public:
-    ContentView(const KDFont * font) :
+    ContentView(KDFont::Size font) :
       TextInput::ContentView(font),
       m_text(nullptr, 0)
     {

@@ -96,10 +96,10 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
 
 void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   const char * nextName = sequenceStore()->firstAvailableName();
-  const KDFont * font = KDFont::LargeFont;
+  KDFont::Size font = KDFont::Size::Large;
   if (!m_record.isNull()) {
     nextName = sequence()->fullName();
-    font = KDFont::SmallFont;
+    font = KDFont::Size::Small;
   }
   if (nextName == nullptr) {
     /* When unselecting this controller, rowHeight and willDisplayCellForIndex

@@ -13,7 +13,7 @@ namespace Inference {
 CalculationCell::CalculationCell(Responder * parentResponder,
                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                  TextFieldDelegate * textFieldDelegate) :
-    m_text(KDFont::LargeFont, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter),
+    m_text(KDFont::Size::Large, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter),
     m_calculation(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
     m_isResponder(true) {
 }
@@ -38,7 +38,7 @@ KDSize CalculationCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
   return KDSize(2 * k_margin + textSize.width() + calculationCellWidth() +
                     2 * Escher::Metric::CellSeparatorThickness,
-                KDFont::LargeFont->glyphSize().height());
+                KDFont::Font(KDFont::Size::Large)->glyphSize().height());
 }
 
 void CalculationCell::drawRect(KDContext * ctx, KDRect rect) const {
@@ -88,7 +88,7 @@ void CalculationCell::layoutSubviews(bool force) {
 
 KDCoordinate CalculationCell::calculationCellWidth() const {
   KDCoordinate calculationCellWidth = m_calculation.minimalSizeForOptimalDisplay().width();
-  KDCoordinate glyphWidth = KDFont::LargeFont->glyphSize().width();
+  KDCoordinate glyphWidth = KDFont::Font(KDFont::Size::Large)->glyphSize().width();
   KDCoordinate minTextFieldWidth = 4 * glyphWidth + TextCursorView::k_width;
   KDCoordinate maxTextFieldWidth = 14 * glyphWidth + TextCursorView::k_width;
   return std::min(maxTextFieldWidth, std::max(minTextFieldWidth, calculationCellWidth));

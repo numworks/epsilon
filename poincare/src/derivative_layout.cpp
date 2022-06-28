@@ -124,7 +124,7 @@ Layout DerivativeLayoutNode::XNTLayout(int childIndex) const {
   return LayoutNode::XNTLayout();
 }
 
-KDSize DerivativeLayoutNode::computeSize(const KDFont * font) {
+KDSize DerivativeLayoutNode::computeSize(KDFont::Size font) {
   KDPoint abscissaPosition = positionOfChild(abscissaLayout(), font);
   KDSize abscissaSize = abscissaLayout()->layoutSize(font);
   return KDSize(
@@ -132,13 +132,13 @@ KDSize DerivativeLayoutNode::computeSize(const KDFont * font) {
       std::max(abscissaPosition.y() + abscissaSize.height(), positionOfVariableInAssignmentSlot(font).y() + variableLayout()->layoutSize(font).height()));
 }
 
-KDCoordinate DerivativeLayoutNode::computeBaseline(const KDFont * font) {
-  KDCoordinate dBaseline = font->stringSize("d").height() + FractionLayoutNode::k_fractionLineMargin + FractionLayoutNode::k_fractionLineHeight;
+KDCoordinate DerivativeLayoutNode::computeBaseline(KDFont::Size font) {
+  KDCoordinate dBaseline = KDFont::Font(font)->stringSize("d").height() + FractionLayoutNode::k_fractionLineMargin + FractionLayoutNode::k_fractionLineHeight;
   KDCoordinate fBaseline = ParenthesisLayoutNode::BaselineGivenChildHeightAndBaseline(derivandLayout()->layoutSize(font).height(), derivandLayout()->baseline(font));
   return std::max(dBaseline, fBaseline);
 }
 
-KDPoint DerivativeLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+KDPoint DerivativeLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   if (child == variableLayout()) {
     return m_variableChildInFractionSlot ? positionOfVariableInFractionSlot(font) : positionOfVariableInAssignmentSlot(font);
   }
@@ -149,23 +149,23 @@ KDPoint DerivativeLayoutNode::positionOfChild(LayoutNode * child, const KDFont *
   }
   assert(child == abscissaLayout());
   return KDPoint(
-      positionOfChild(derivandLayout(), font).x() + derivandLayout()->layoutSize(font).width() + ParenthesisLayoutNode::k_parenthesisWidth + 2 * k_barHorizontalMargin + k_barWidth + variableLayout()->layoutSize(font).width() + font->stringSize("=").width(),
+      positionOfChild(derivandLayout(), font).x() + derivandLayout()->layoutSize(font).width() + ParenthesisLayoutNode::k_parenthesisWidth + 2 * k_barHorizontalMargin + k_barWidth + variableLayout()->layoutSize(font).width() + KDFont::Font(font)->stringSize("=").width(),
       abscissaBaseline(font) - abscissaLayout()->baseline(font));
 }
 
-KDPoint DerivativeLayoutNode::positionOfVariableInFractionSlot(const KDFont * font) {
+KDPoint DerivativeLayoutNode::positionOfVariableInFractionSlot(KDFont::Size font) {
   return KDPoint(
-      Escher::Metric::FractionAndConjugateHorizontalMargin + Escher::Metric::FractionAndConjugateHorizontalOverflow + font->stringSize("d").width() + k_dxHorizontalMargin,
+      Escher::Metric::FractionAndConjugateHorizontalMargin + Escher::Metric::FractionAndConjugateHorizontalOverflow + KDFont::Font(font)->stringSize("d").width() + k_dxHorizontalMargin,
       baseline(font) + FractionLayoutNode::k_fractionLineMargin);
 }
 
-KDPoint DerivativeLayoutNode::positionOfVariableInAssignmentSlot(const KDFont * font) {
+KDPoint DerivativeLayoutNode::positionOfVariableInAssignmentSlot(KDFont::Size font) {
   return KDPoint(
       2 * (Escher::Metric::FractionAndConjugateHorizontalMargin + k_barHorizontalMargin) + fractionBarWidth(font) + parenthesesWidth(font) + k_barWidth,
       abscissaBaseline(font) - variableLayout()->baseline(font));
 }
 
-KDCoordinate DerivativeLayoutNode::abscissaBaseline(const KDFont * font) {
+KDCoordinate DerivativeLayoutNode::abscissaBaseline(KDFont::Size font) {
   KDCoordinate variableHeight = variableLayout()->layoutSize(font).height();
   KDCoordinate dfdxBottom = std::max(
       positionOfVariableInFractionSlot(font).y() + variableHeight,
@@ -174,11 +174,11 @@ KDCoordinate DerivativeLayoutNode::abscissaBaseline(const KDFont * font) {
   return dfdxBottom - variableHeight + variableLayout()->baseline(font);
 }
 
-KDCoordinate DerivativeLayoutNode::fractionBarWidth(const KDFont * font) {
-  return 2 * Escher::Metric::FractionAndConjugateHorizontalOverflow + font->stringSize("d").width() + k_dxHorizontalMargin + variableLayout()->layoutSize(font).width();
+KDCoordinate DerivativeLayoutNode::fractionBarWidth(KDFont::Size font) {
+  return 2 * Escher::Metric::FractionAndConjugateHorizontalOverflow + KDFont::Font(font)->stringSize("d").width() + k_dxHorizontalMargin + variableLayout()->layoutSize(font).width();
 }
 
-KDCoordinate DerivativeLayoutNode::parenthesesWidth(const KDFont * font) {
+KDCoordinate DerivativeLayoutNode::parenthesesWidth(KDFont::Size font) {
   return 2 * ParenthesisLayoutNode::k_parenthesisWidth + derivandLayout()->layoutSize(font).width();
 }
 
@@ -189,13 +189,13 @@ void DerivativeLayoutNode::setVariableSlot(bool fractionSlot, bool * shouldRecom
   }
 }
 
-void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDPoint variableFractionPosition = positionOfVariableInFractionSlot(font);
   KDSize variableSize = variableLayout()->layoutSize(font);
   KDCoordinate xOffset = Escher::Metric::FractionAndConjugateHorizontalMargin;
 
   // d/dx...
-  KDSize dSize = font->stringSize("d");
+  KDSize dSize = KDFont::Font(font)->stringSize("d");
   KDCoordinate charBaseline = dSize.height() / 2;
   KDPoint dPosition((variableSize.width() + k_dxHorizontalMargin) / 2 + xOffset + Escher::Metric::FractionAndConjugateHorizontalOverflow, variableFractionPosition.y() - dSize.height() - 2 * FractionLayoutNode::k_fractionLineMargin - FractionLayoutNode::k_fractionLineHeight);
   ctx->drawString("d", dPosition.translatedBy(p), font, expressionColor, backgroundColor);

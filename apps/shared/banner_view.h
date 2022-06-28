@@ -9,7 +9,7 @@ namespace Shared {
 
 class BannerView : public Escher::View {
 public:
-  // Ion::Display::Width / KDFont::SmallFont->glyphSize().width()
+  // Ion::Display::Width / KDFont::Font(KDFont::Size::Small)->glyphSize().width()
   constexpr static float k_maxLengthDisplayed = 45;
 
   static KDCoordinate HeightGivenNumberOfLines(int linesCount);
@@ -17,7 +17,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   KDCoordinate minimalHeightForOptimalDisplayGivenWidth(KDCoordinate width) const;
   void reload() { layoutSubviews(); }
-  constexpr static const KDFont * Font() { return KDFont::SmallFont; }
+  constexpr static KDFont::Size Font() { return KDFont::Size::Small; }
   constexpr static KDColor TextColor() { return KDColorBlack; }
   constexpr static KDColor BackgroundColor() { return Escher::Palette::GrayMiddle; }
 

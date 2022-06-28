@@ -14,7 +14,7 @@ public:
     MiddleOfIdentifier,
     NoIdentifier
   };
-  PythonTextArea(Escher::Responder * parentResponder, App * pythonDelegate, const KDFont * font) :
+  PythonTextArea(Escher::Responder * parentResponder, App * pythonDelegate, KDFont::Size font) :
     Escher::TextArea(parentResponder, &m_contentView, font),
     m_contentView(pythonDelegate, font),
     m_autocompletionResultIndex(0),
@@ -38,7 +38,7 @@ public:
 protected:
   class ContentView : public Escher::TextArea::ContentView {
   public:
-    ContentView(App * pythonDelegate, const KDFont * font) :
+    ContentView(App * pythonDelegate, KDFont::Size font) :
       Escher::TextArea::ContentView(font),
       m_pythonDelegate(pythonDelegate),
       m_autocomplete(false),

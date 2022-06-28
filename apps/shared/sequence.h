@@ -82,7 +82,7 @@ public:
   void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const override;
 
 private:
-  constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;
+  constexpr static KDFont::Size k_layoutFont = KDFont::Size::Large;
 
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a Sequence. See comment in

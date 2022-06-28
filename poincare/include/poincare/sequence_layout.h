@@ -30,24 +30,24 @@ protected:
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
   constexpr static const char * k_equal = "=";
 
-  KDSize lowerBoundSizeWithVariableEquals(const KDFont * font);
+  KDSize lowerBoundSizeWithVariableEquals(KDFont::Size font);
 
   // LayoutNode
-  KDSize computeSize(const KDFont * font) override;
-  KDCoordinate computeBaseline(const KDFont * font) override;
-  KDPoint positionOfChild(LayoutNode * child, const KDFont * font) override;
+  KDSize computeSize(KDFont::Size font) override;
+  KDCoordinate computeBaseline(KDFont::Size font) override;
+  KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
 
   int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
   LayoutNode * argumentLayout() { return childAtIndex(k_argumentLayoutIndex); }
   LayoutNode * variableLayout() { return childAtIndex(k_variableLayoutIndex); }
   LayoutNode * lowerBoundLayout() { return childAtIndex(2); }
   LayoutNode * upperBoundLayout() { return childAtIndex(3); }
-  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 private:
   constexpr static int k_argumentLayoutIndex = 0;
   constexpr static int k_variableLayoutIndex = 1;
-  KDCoordinate completeLowerBoundX(const KDFont * font);
-  KDCoordinate subscriptBaseline(const KDFont * font);
+  KDCoordinate completeLowerBoundX(KDFont::Size font);
+  KDCoordinate subscriptBaseline(KDFont::Size font);
 };
 
 }

@@ -192,7 +192,7 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 
 // Protected
 
-KDSize MatrixLayoutNode::computeSize(const KDFont * font) {
+KDSize MatrixLayoutNode::computeSize(KDFont::Size font) {
   KDSize sizeWithoutBrackets = gridSize(font);
   KDSize sizeWithBrackets = KDSize(
       sizeWithoutBrackets.width() + 2 * BracketPairLayoutNode::k_squareBracketWidth,
@@ -200,7 +200,7 @@ KDSize MatrixLayoutNode::computeSize(const KDFont * font) {
   return sizeWithBrackets;
 }
 
-KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l, const KDFont * font) {
+KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   assert(indexOfChild(l) >= 0);
   return GridLayoutNode::positionOfChild(l, font).translatedBy(KDPoint(KDPoint(BracketPairLayoutNode::k_squareBracketWidth, BracketPairLayoutNode::k_lineThickness)));
 }
@@ -331,7 +331,7 @@ bool MatrixLayoutNode::hasGraySquares() const {
   return false;
 }
 
-void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   BracketPairLayoutNode::RenderWithChildSize(gridSize(font), ctx, p, expressionColor, backgroundColor);
 }
 

@@ -20,7 +20,7 @@ public:
 class AlternateEmptyViewDefaultDelegate : public AlternateEmptyViewDelegate {
 public:
   AlternateEmptyViewDefaultDelegate() :
-      m_message(KDFont::SmallFont,
+      m_message(KDFont::Size::Small,
                 (I18n::Message)0,
                 KDContext::k_alignCenter,
                 KDContext::k_alignCenter,

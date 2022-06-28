@@ -82,25 +82,25 @@ void LetterWithSubAndSuperscriptLayoutNode::moveCursorDown(LayoutCursor * cursor
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-KDCoordinate LetterWithSubAndSuperscriptLayoutNode::aboveSymbol(const KDFont * font) {
+KDCoordinate LetterWithSubAndSuperscriptLayoutNode::aboveSymbol(KDFont::Size font) {
   return std::max<KDCoordinate>(nLayout()->baseline(font), kLayout()->baseline(font) - k_symbolHeight);
 }
 
-KDCoordinate LetterWithSubAndSuperscriptLayoutNode::totalHeight(const KDFont * font) {
+KDCoordinate LetterWithSubAndSuperscriptLayoutNode::totalHeight(KDFont::Size font) {
     KDCoordinate underSymbol = std::max<KDCoordinate>(kLayout()->layoutSize(font).height() - kLayout()->baseline(font), nLayout()->layoutSize(font).height() - nLayout()->baseline(font) - k_symbolHeight);
     return aboveSymbol(font) + k_symbolHeight + underSymbol;
 }
 
-KDSize LetterWithSubAndSuperscriptLayoutNode::computeSize(const KDFont * font) {
+KDSize LetterWithSubAndSuperscriptLayoutNode::computeSize(KDFont::Size font) {
   KDCoordinate width = nLayout()->layoutSize(font).width() + k_symbolWidthWithMargins + kLayout()->layoutSize(font).width();
   return KDSize(width, totalHeight(font));
 }
 
-KDCoordinate LetterWithSubAndSuperscriptLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate LetterWithSubAndSuperscriptLayoutNode::computeBaseline(KDFont::Size font) {
   return std::max(0, aboveSymbol(font) + k_symbolBaseline);
 }
 
-KDPoint LetterWithSubAndSuperscriptLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+KDPoint LetterWithSubAndSuperscriptLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   if (child == nLayout()) {
     return KDPoint(0, aboveSymbol(font) - nLayout()->baseline(font));
   }
@@ -109,7 +109,7 @@ KDPoint LetterWithSubAndSuperscriptLayoutNode::positionOfChild(LayoutNode * chil
                  aboveSymbol(font) + k_symbolHeight - kLayout()->baseline(font));
 }
 
-void LetterWithSubAndSuperscriptLayoutNode::render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void LetterWithSubAndSuperscriptLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDCoordinate combinationSymbolX = nLayout()->layoutSize(font).width();
   KDCoordinate combinationSymbolY = aboveSymbol(font);
   KDPoint base = p.translatedBy(KDPoint(combinationSymbolX, combinationSymbolY));

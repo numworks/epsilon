@@ -12,7 +12,7 @@ namespace Escher {
 
 class TextView : public View {
 public:
-  TextView(const KDFont * font = KDFont::LargeFont,
+  TextView(KDFont::Size font = KDFont::Size::Large,
            float horizontalAlignment = KDContext::k_alignLeft,
            float verticalAlignment = KDContext::k_alignTop,
            KDColor textColor = KDColorBlack,
@@ -30,13 +30,13 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   virtual const char * text() const = 0;
   virtual void setText(const char * text) = 0;
-  const KDFont * font() const { return m_font; }
-  void setFont(const KDFont * font);
+  KDFont::Size font() const { return m_font; }
+  void setFont(KDFont::Size font);
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override { return "TextView"; }
 #endif
-  const KDFont * m_font;
+  KDFont::Size m_font;
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDColor m_textColor;

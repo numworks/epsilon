@@ -28,7 +28,7 @@ void ColorsLCDTestController::viewWillAppear() {
 
 ColorsLCDTestController::ContentView::ContentView() :
   SolidColorView(KDColorWhite),
-  m_colorsLCDStateView(KDFont::LargeFont, KDContext::k_alignCenter, KDContext::k_alignCenter)
+  m_colorsLCDStateView(KDFont::Size::Large, KDContext::k_alignCenter, KDContext::k_alignCenter)
 {
 }
 

@@ -22,7 +22,7 @@ void TextView::setAlignment(float horizontalAlignment, float verticalAlignment) 
   markRectAsDirty(bounds());
 }
 
-void TextView::setFont(const KDFont * font) {
+void TextView::setFont(KDFont::Size font) {
   m_font = font;
   markRectAsDirty(bounds());
 }
@@ -31,7 +31,7 @@ KDSize TextView::minimalSizeForOptimalDisplay() const  {
   if (text() == nullptr) {
     return KDSize(0,0);
   }
-  return m_font->stringSize(text());
+  return KDFont::Font(m_font)->stringSize(text());
 }
 
 void TextView::drawRect(KDContext * ctx, KDRect rect) const {

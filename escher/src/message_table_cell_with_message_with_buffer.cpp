@@ -5,7 +5,7 @@ namespace Escher {
 
 MessageTableCellWithMessageWithBuffer::MessageTableCellWithMessageWithBuffer(I18n::Message message) :
   MessageTableCellWithMessage(message),
-  m_accessoryView(KDFont::LargeFont, 1.0f, 0.5f, KDColorBlack)
+  m_accessoryView(KDFont::Size::Large, 1.0f, 0.5f, KDColorBlack)
 {
 }
 

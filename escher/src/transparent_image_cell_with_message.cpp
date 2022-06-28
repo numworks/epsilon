@@ -6,7 +6,7 @@ namespace Escher {
 
 TransparentImageCellWithMessage::TransparentImageCellWithMessage() :
     TableCell(),
-    m_messageTextView(KDFont::LargeFont, static_cast<I18n::Message>(0), 0, 0.5, KDColorBlack, KDColorWhite) {
+    m_messageTextView(KDFont::Size::Large, static_cast<I18n::Message>(0), 0, 0.5, KDColorBlack, KDColorWhite) {
    m_icon.setBackgroundColor(KDColorWhite);
 }
 

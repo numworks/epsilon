@@ -10,7 +10,7 @@ namespace Shared {
 class HideableEvenOddEditableTextCell : public Escher::EvenOddEditableTextCell, public Hideable {
 public:
   HideableEvenOddEditableTextCell(Escher::Responder * parentResponder = nullptr, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, Escher::TextFieldDelegate * delegate = nullptr) :
-    Escher::EvenOddEditableTextCell(parentResponder, inputEventHandlerDelegate, delegate, KDFont::SmallFont),
+    Escher::EvenOddEditableTextCell(parentResponder, inputEventHandlerDelegate, delegate, KDFont::Size::Small),
     Hideable()
   {}
   KDColor backgroundColor() const override;

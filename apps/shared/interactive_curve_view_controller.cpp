@@ -22,19 +22,19 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     graphController->autoButtonAction();
     return true;
-  }, this), &m_autoDotView, KDFont::SmallFont),
+  }, this), &m_autoDotView, KDFont::Size::Small),
   m_navigationButton(this, I18n::Message::Navigate, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     graphController->navigationButtonAction();
     return true;
-  }, this), KDFont::SmallFont),
+  }, this), KDFont::Size::Small),
   m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     graphController->rangeParameterController()->setRange(graphController->interactiveCurveViewRange());
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
     return true;
-  }, this), &m_rangeUnequalView, KDFont::SmallFont)
+  }, this), &m_rangeUnequalView, KDFont::Size::Small)
 {
   m_autoButton.setState(m_interactiveRange->zoomAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());

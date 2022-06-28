@@ -5,11 +5,11 @@
 
 namespace Poincare {
 
-KDCoordinate CondensedSumLayoutNode::computeBaseline(const KDFont * font) {
+KDCoordinate CondensedSumLayoutNode::computeBaseline(KDFont::Size font) {
   return baseLayout()->baseline(font) + std::max(0, superscriptLayout()->layoutSize(font).height() - baseLayout()->layoutSize(font).height()/2);
 }
 
-KDSize CondensedSumLayoutNode::computeSize(const KDFont * font) {
+KDSize CondensedSumLayoutNode::computeSize(KDFont::Size font) {
   KDSize baseSize = baseLayout()->layoutSize(font);
   KDSize subscriptSize = subscriptLayout()->layoutSize(font);
   KDSize superscriptSize = superscriptLayout()->layoutSize(font);
@@ -18,7 +18,7 @@ KDSize CondensedSumLayoutNode::computeSize(const KDFont * font) {
   return KDSize(sizeWidth, sizeHeight);
 }
 
-KDPoint CondensedSumLayoutNode::positionOfChild(LayoutNode * child, const KDFont * font) {
+KDPoint CondensedSumLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   KDSize baseSize = baseLayout()->layoutSize(font);

@@ -175,5 +175,5 @@ QUIZ_CASE(poincare_layout_parentheses_size) {
   layout.addChildAtIndex(CodePointLayout::Builder('6'), 5, 5, nullptr);
   layout.addChildAtIndex(rightPar, 7, 7, nullptr);
   layout.addChildAtIndex(CodePointLayout::Builder('1'), 8, 8, nullptr);
-  quiz_assert(leftPar.layoutSize(KDFont::LargeFont).height() == rightPar.layoutSize(KDFont::LargeFont).height());
+  quiz_assert(leftPar.layoutSize(KDFont::Size::Large).height() == rightPar.layoutSize(KDFont::Size::Large).height());
 }

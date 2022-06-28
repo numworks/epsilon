@@ -55,7 +55,7 @@ private:
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfReusableInputs];
   Escher::MessageTableCellWithSublabelAndDropdown m_dropdownCell;
 
-  constexpr static int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::SmallFont->glyphSize().width() = 7
+  constexpr static int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::Font(KDFont::Size::Small)->glyphSize().width() = 7
   char m_titleBuffer[k_titleBufferSize];
 
   FinanceResultController * m_financeResultController;

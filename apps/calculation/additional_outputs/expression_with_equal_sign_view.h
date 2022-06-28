@@ -16,7 +16,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  constexpr static const KDFont * k_font = KDFont::LargeFont;
+  constexpr static KDFont::Size k_font = KDFont::Size::Large;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   int numberOfSubviews() const override { return 1; }

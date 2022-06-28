@@ -32,7 +32,7 @@ protected:
 
 private:
   KDCoordinate width() const override { return k_parenthesisWidth; }
-  void render(KDContext * ctx, KDPoint p, const KDFont * font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {
     RenderWithChildHeight(type() == Type::LeftParenthesisLayout, OptimalChildHeightGivenLayoutHeight(layoutSize(font).height()), ctx, p, expressionColor, backgroundColor);
   }
 };

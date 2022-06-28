@@ -26,7 +26,7 @@ namespace Graph {
 
 FunctionCell::FunctionCell() :
     EvenOddCell(),
-    m_messageTextView(KDFont::SmallFont,
+    m_messageTextView(KDFont::Size::Small,
                       (I18n::Message)0,
                       0.0f,
                       0.0f,

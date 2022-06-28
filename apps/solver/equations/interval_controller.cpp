@@ -9,9 +9,9 @@ using namespace Escher;
 namespace Solver {
 
 IntervalController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_instructions0(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction0, KDContext::k_alignCenter,
+  m_instructions0(KDFont::Size::Small, I18n::Message::ApproximateSolutionIntervalInstruction0, KDContext::k_alignCenter,
                   KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen),
-  m_instructions1(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction1, KDContext::k_alignCenter,
+  m_instructions1(KDFont::Size::Small, I18n::Message::ApproximateSolutionIntervalInstruction1, KDContext::k_alignCenter,
                   KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
@@ -37,7 +37,7 @@ View * IntervalController::ContentView::subviewAtIndex(int index) {
 }
 
 void IntervalController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
+  KDCoordinate textHeight = KDFont::Font(KDFont::Size::Small)->glyphSize().height();
   m_instructions0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight), force);
   m_instructions1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight), force);
   m_selectableTableView->setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin), force);

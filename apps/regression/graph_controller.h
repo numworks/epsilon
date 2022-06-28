@@ -23,6 +23,8 @@ public:
   int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
   Poincare::Context * globalContext() const;
 
+  void didBecomeFirstResponder() override;
+
   // moveCursorHorizontally and Vertically are public to be used in tests
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   bool moveCursorVertically(int direction) override;
@@ -50,6 +52,8 @@ private:
     GraphController * graphController() const { return static_cast<GraphController *>(const_cast<InteractiveCurveViewController *>(m_graphController)); }
     CurveSelectionCell m_cells[Store::k_numberOfSeries];
   };
+
+  void setAbscissaInputAsFirstResponder();
 
   bool buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
   bool selectedSeriesIsScatterPlot() const { return m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::None; }

@@ -6,8 +6,11 @@ using namespace Escher;
 
 namespace Regression {
 
-BannerView::BannerView() :
-  XYBannerView(),
+BannerView::BannerView(
+    Responder * parentResponder,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    TextFieldDelegate * textFieldDelegate) :
+  Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
   m_otherView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_dataNotSuitableView(Font(), I18n::Message::DataNotSuitableForRegression, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_displayOtherView(false),

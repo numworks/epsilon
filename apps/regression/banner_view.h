@@ -3,7 +3,7 @@
 
 #include <escher/buffer_text_view.h>
 #include <escher/message_text_view.h>
-#include "xy_banner_view.h"
+#include <apps/shared/xy_banner_view.h>
 
 namespace Regression {
 
@@ -12,9 +12,13 @@ namespace Regression {
  *  - m_otherView : A buffer text either postionned first or after ordinateView
  *  - m_dataNotSuitableView : A message text displayed last */
 
-class BannerView : public XYBannerView {
+class BannerView : public Shared::XYBannerView {
 public:
-  BannerView();
+  BannerView(
+      Escher::Responder * parentResponder,
+      Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
+      Escher::TextFieldDelegate * textFieldDelegate
+  );
   Escher::BufferTextView * otherView() { return &m_otherView; }
   void setDisplayParameters(bool displayOtherView, bool otherViewIsFirst, bool displayDataNotSuitable);
 

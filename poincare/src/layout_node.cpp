@@ -54,8 +54,10 @@ KDSize LayoutNode::layoutSize(KDFont::Size font) {
     KDSize size = computeSize(font);
     m_frame.setSize(KDSize(size.width() + leftMargin(), size.height()));
     m_sized = true;
+  } else {
+    // Assert the font did not change since size has been memoized
+    assert(computeSize(font) + KDSize(leftMargin(), 0) == m_frame.size());
   }
-  // TODO Hugo : Assert font did not change
   return m_frame.size();
 }
 

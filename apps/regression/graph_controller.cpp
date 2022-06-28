@@ -17,7 +17,7 @@ namespace Regression {
 
 GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor, rangeVersion),
-  m_bannerView(),
+  m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
   m_store(store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
@@ -69,6 +69,19 @@ void GraphController::viewWillAppear() {
   /* Since *m_selectedDotIndex is altered by initCursorParameters(),
    * the following must absolutely come at the end. */
   setRoundCrossCursorView();
+}
+
+void GraphController::didBecomeFirstResponder() {
+  if (*m_selectedDotIndex == -1 && curveView()->isMainViewSelected()) {
+    setAbscissaInputAsFirstResponder();
+  }
+  Shared::InteractiveCurveViewController::didBecomeFirstResponder();
+}
+
+void GraphController::setAbscissaInputAsFirstResponder() {
+  m_bannerView.abscissaValue()->setParentResponder(this);
+  m_bannerView.abscissaValue()->setDelegates(textFieldDelegateApp(), this);
+  Container::activeApp()->setFirstResponder(m_bannerView.abscissaValue());
 }
 
 Poincare::Context * GraphController::globalContext() const {
@@ -169,11 +182,9 @@ void GraphController::reloadBannerView() {
   /* Use "x=..." or "xmean=..." (\xCC\x85 represents the combining overline ' ̅')
    * if the mean dot is selected. Same with y. */
   double x = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 0) : m_cursor->x();
-  Poincare::Print::customPrintf(
-    buffer, k_bannerViewTextBufferSize, "%s=%*.*ed",
-    (displayMean ? "x\xCC\x85" : "x"),
-    x, displayMode, significantDigits);
-  m_bannerView.abscissaView()->setText(buffer);
+  Poincare::Print::customPrintf(buffer, k_bannerViewTextBufferSize - 2, "%*.*ed", x, displayMode, significantDigits);
+  m_bannerView.abscissaValue()->setText(buffer);
+  m_bannerView.abscissaSymbol()->setText(displayMean ? "x\xCC\x85=" : "x=");
 
   double y = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 1) : m_cursor->y();
   Poincare::Print::customPrintf(
@@ -324,6 +335,7 @@ bool GraphController::moveCursorVertically(int direction) {
     *m_selectedDotIndex = -1;
     setRoundCrossCursorView();
     m_cursor->moveTo(x, x, yValue(*m_selectedSeriesIndex, x, context));
+    setAbscissaInputAsFirstResponder();
     return true;
   }
 
@@ -344,6 +356,7 @@ bool GraphController::moveCursorVertically(int direction) {
       double y = m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex);
       m_cursor->moveTo(x, x, y);
     }
+    Container::activeApp()->setFirstResponder(this); // abscissa input must resolve first responder
     return true;
   }
 

@@ -4,7 +4,6 @@
 #include <poincare/expression.h>
 #include <poincare/layout.h>
 #include <poincare/horizontal_layout.h>
-#include <poincare/string_format.h>
 
 /* WARNING : "String" creates a stringLayout if the buffer is more than 1 codepoint long.
  * If you want to specifically create CodePoints layouts, use the function

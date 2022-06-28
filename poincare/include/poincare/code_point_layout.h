@@ -5,7 +5,6 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/string_format.h>
 
 namespace Poincare {
 

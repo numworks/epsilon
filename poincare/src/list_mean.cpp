@@ -1,36 +1,14 @@
 #include <poincare/list_mean.h>
 #include <poincare/statistics_dataset.h>
-#include <poincare/layout_helper.h>
 #include <poincare/list_complex.h>
 #include <poincare/list_sum.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
-#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 
 namespace Poincare {
-
-Expression ListMeanNode::defaultParameterAtIndex(int i) const {
-  assert(canTakeDefaultParameterAtIndex(i));
-  if (childAtIndex(0)->type() != Type::List) {
-    return Undefined::Builder();
-  }
-  List result = List::Builder();
-  for (int i = 0; i < childAtIndex(0)->numberOfChildren(); i++) {
-    result.addChildAtIndexInPlace(Rational::Builder(1), i, i);
-  }
-  return result;
-}
-
-int ListMeanNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, k_functionName);
-}
-
-Layout ListMeanNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ListMean(this), floatDisplayMode, numberOfSignificantDigits, k_functionName);
-}
 
 Expression ListMeanNode::shallowReduce(const ReductionContext& reductionContext) {
   return ListMean(this).shallowReduce(reductionContext);

@@ -2,6 +2,7 @@
 #define CALCULATION_EXPRESSION_FIELD_H
 
 #include <escher/expression_field.h>
+#include <algorithm>
 
 namespace Calculation {
 
@@ -22,12 +23,11 @@ private:
     NotCycling
   };
 
-  constexpr static const char * k_1DMixedFractionCommand = " /";
-  constexpr static const char * k_1DAnsFraction = "Ans/";
-  constexpr static const char * k_serializedEmptyFraction = "\U00000012\U00000012\U00000013/\U00000012\U00000013\U00000013";
-  // This is a table to be able to compute its size.
+  constexpr static const char k_1DMixedFractionCommand[] = " /";
+  constexpr static const char k_1DAnsFraction[] = "Ans/";
+  constexpr static const char k_serializedEmptyFraction[] = "\U00000012\U00000012\U00000013/\U00000012\U00000013\U00000013";
   constexpr static const char k_serializedAnsFraction[] = "\U00000012\U00000012Ans\U00000013/\U00000012\U00000013\U00000013";
-  constexpr static int k_divisionCycleCheckBufferSize = sizeof(k_serializedAnsFraction) + 1;
+  constexpr static int k_divisionCycleCheckBufferSize = std::max({sizeof(k_1DMixedFractionCommand), sizeof(k_1DAnsFraction), sizeof(k_serializedEmptyFraction), sizeof(k_serializedAnsFraction)}) + 1;
 
   bool fieldContainsSingleMinusSymbol() const;
   DivisionCycleStep currentStepOfDivisionCycling();

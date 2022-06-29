@@ -959,24 +959,6 @@ int Expression::lengthOfListChildren() const {
   return lastLength;
 }
 
-Expression Expression::convertMixedFractionIntoAdditionDependingOnCountry() {
-  if (Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
-    return *this;
-  }
-  if (type() == ExpressionNode::Type::MixedFraction) {
-    Expression result = Addition::Builder(childAtIndex(0), childAtIndex(1));
-    replaceWithInPlace(result);
-    return result;
-  }
-  int nChildren = numberOfChildren();
-  for (int i = 0; i < nChildren; i++) {
-    childAtIndex(i).convertMixedFractionIntoAdditionDependingOnCountry();
-  }
-  Expression result = addMissingParentheses();
-  replaceWithInPlace(result);
-  return result;
-}
-
 /* Evaluation */
 
 template<typename U>

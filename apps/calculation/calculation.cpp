@@ -96,7 +96,6 @@ Layout Calculation::createInputLayout() {
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     Expression e = input();
-    e = e.convertMixedFractionIntoAdditionDependingOnCountry();
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
     }

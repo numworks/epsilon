@@ -14,12 +14,17 @@ namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text, Context * context) : m_context(context), m_decoder(text), m_encounteredRightwardsArrow(false), m_endOfMixedFractionIndex(nullptr) {}
+  Tokenizer(const char * text, Context * context) : m_context(context), m_decoder(text), m_encounteredRightwardsArrow(false) {}
   Token popToken();
   void setContext(Context * context) { m_context = context; }
-  // This is used to know if there is a mixed fraction.
-  bool followingStringIsIntegersFraction();
 
+  // Rewind tokenizer
+  const char * currentPosition() { return m_decoder.stringPosition(); }
+  void goToPreviousPosition(const char * position) {
+    if (position < m_decoder.stringPosition()) {
+      m_decoder.setPosition(position);
+    }
+  }
 private:
   typedef bool (*PopTest)(CodePoint c, CodePoint context);
   static bool ShouldAddCodePointToIdentifier(const CodePoint c, const CodePoint context);
@@ -40,9 +45,6 @@ private:
    * the storage. 5->abc should NOT be parsed as 5->a*b*c
    * */
   bool m_encounteredRightwardsArrow;
-  /* Remember the end of a mixed fraction when parsing it to pop the
-   * MixedFractionEnd token when needed.*/
-  const char * m_endOfMixedFractionIndex;
 };
 
 }

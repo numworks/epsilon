@@ -28,7 +28,6 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
     &Parser::parseUnexpected,      // Token::EndOfStream
-    &Parser::parseUnexpected,      // Token::MixedFractionEnd
     &Parser::parseRightwardsArrow, // Token::RightwardsArrow
     &Parser::parseEqual,           // Token::Equal
     &Parser::parseSuperior,        // Token::Superior
@@ -103,7 +102,12 @@ bool Parser::popTokenIfType(Token::Type type) {
 }
 
 bool Parser::nextTokenHasPrecedenceOver(Token::Type stoppingType) {
-  return ((m_pendingImplicitMultiplication) ? Token::ImplicitTimes : m_nextToken.type()) > stoppingType;
+  Token::Type nextTokenType = (m_pendingImplicitMultiplication) ? Token::ImplicitTimes : m_nextToken.type();
+  if (m_waitingSlashForMixedFraction && nextTokenType == Token::Type::Slash) {
+    m_waitingSlashForMixedFraction = false;
+    return true;
+  }
+  return nextTokenType > stoppingType;
 }
 
 void Parser::isThereImplicitMultiplication() {
@@ -137,11 +141,12 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
     return;
   }
   leftHandSide = m_currentToken.expression();
-  bool isMixedFraction = generateMixedFractionIfNeeded(leftHandSide);
-  if (!isMixedFraction
-      && (m_nextToken.isNumber() // No implicit multiplication between two numbers
-       // No implicit multiplication between a hexadecimal number and an identifer (avoid parsing 0x2abch as 0x2ABC*h)
-      || (m_currentToken.is(Token::Type::HexadecimalNumber) && (m_nextToken.is(Token::Type::CustomIdentifier) || m_nextToken.is(Token::Type::SpecialIdentifier) || m_nextToken.is(Token::Type::ReservedFunction))))) {
+  if(generateMixedFractionIfNeeded(leftHandSide)) {
+    return;
+  }
+  if (m_nextToken.isNumber() // No implicit multiplication between two numbers
+       // No implicit multiplication between a hexadecimal number and an identifier (avoid parsing 0x2abch as 0x2ABC*h)
+      || (m_currentToken.is(Token::Type::HexadecimalNumber) && (m_nextToken.is(Token::Type::CustomIdentifier) || m_nextToken.is(Token::Type::SpecialIdentifier) || m_nextToken.is(Token::Type::ReservedFunction)))) {
     m_status = Status::Error;
     return;
   }
@@ -698,23 +703,50 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
   isThereImplicitMultiplication();
 }
 
+bool IsIntegerBaseTenOrEmptyExpression(Expression e) {
+  return (e.type() == ExpressionNode::Type::BasedInteger
+          && static_cast<BasedInteger &>(e).base() == Integer::Base::Decimal)
+        || e.type() == ExpressionNode::Type::EmptyExpression;
+}
 bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
-  // Check for mixed fraction. There is a mixed fraction if :
-  if (( // The number is an integer
-        (leftHandSide.type() == ExpressionNode::Type::BasedInteger && static_cast<BasedInteger &>(leftHandSide).base() == Integer::Base::Decimal)
-        // Or it's an empty expression
-        || leftHandSide.type() == ExpressionNode::Type::EmptyExpression)
-      // The next token is either a number, a system parenthesis or empty
-      && (m_nextToken.is(Token::Type::LeftSystemParenthesis) || m_nextToken.is(Token::Type::Number) || m_nextToken.is(Token::Type::Empty))
-      // The following expression looks like "int/int"
-      && m_tokenizer.followingStringIsIntegersFraction()) {
-    Expression rightHandSide = parseUntil(Token::MixedFractionEnd);
-    leftHandSide = MixedFraction::Builder(leftHandSide, rightHandSide);
-    // Pop Token::MixedFractionEnd
-    popToken();
-    return true;
+  if (m_context && !Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
+    /* If m_context == nullptr, the expression has already been parsed and
+     * and can be a mixed fraction inputed earlier with a different
+     * country preferences. So we parse it as mixed fraction. */
+    return false;
   }
+  Token storedNextToken;
+  Token storedCurrentToken;
+  const char * tokenizerPosition;
+  rememberCurrentParsingPosition(&storedCurrentToken, &storedNextToken, &tokenizerPosition);
+  // Check for mixed fraction. There is a mixed fraction if :
+  if (IsIntegerBaseTenOrEmptyExpression(leftHandSide)
+      // The next token is either a number, a system parenthesis or empty
+      && (m_nextToken.is(Token::Type::LeftSystemParenthesis) || m_nextToken.is(Token::Type::Number) || m_nextToken.is(Token::Type::Empty))) {
+    m_waitingSlashForMixedFraction = true;
+    Expression rightHandSide = parseUntil(Token::LeftBrace);
+    m_waitingSlashForMixedFraction = false;
+    if (rightHandSide.type() == ExpressionNode::Type::Division
+        && IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(0))
+        && IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(1))) {
+      // The following expression looks like "int/int" -> it's a mixedFraction
+      leftHandSide = MixedFraction::Builder(leftHandSide, rightHandSide);
+      return true;
+    }
+  }
+  restorePreviousParsingPosition(storedCurrentToken, storedNextToken, tokenizerPosition);
   return false;
+}
+
+void Parser::rememberCurrentParsingPosition(Token * storedCurrentToken, Token * storedNextToken, const char ** tokenizerPosition) {
+  *storedCurrentToken = m_currentToken;
+  *storedNextToken = m_nextToken;
+  *tokenizerPosition = m_tokenizer.currentPosition();
+}
+void Parser::restorePreviousParsingPosition(Token storedCurrentToken, Token storedNextToken, const char * tokenizerPosition) {
+  m_tokenizer.goToPreviousPosition(tokenizerPosition);
+  m_currentToken = storedCurrentToken;
+  m_nextToken = storedNextToken;
 }
 
 

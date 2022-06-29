@@ -343,9 +343,10 @@ Expression Addition::shallowReduce(const ExpressionNode::ReductionContext& reduc
     i++;
   }
 
-  // Factorizing terms might have create dependencies.
+  // Factorizing terms might have created dependencies.
   Expression eBubbledUp = SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
   if (!eBubbledUp.isUninitialized()) {
+    // bubbleUpDependencies shallowReduces the expression
     return eBubbledUp;
   }
 

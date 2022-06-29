@@ -868,7 +868,7 @@ Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductio
        * - x^(1/2)^4 needs a dependency since x^2 loses the info of x
        *   needing to be positive (in real mode).
        * - x^(1/2)^3 does not need a dependency since x^(3/2) keeps the
-       *   same interval of definition than x^(1/2) */
+       *   same interval of definition as x^(1/2) */
       List listOfDependencies = List::Builder();
       AddPowerToListOfDependenciesIfNeeded(base, *this, listOfDependencies, reductionContext, false);
       if (listOfDependencies.numberOfChildren() > 0) {

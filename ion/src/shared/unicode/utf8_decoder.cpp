@@ -88,7 +88,7 @@ const char * UTF8Decoder::previousGlyphPosition() {
 }
 
 void UTF8Decoder::setPosition(const char * position) {
- assert(m_stringPosition >= m_string && m_stringPosition <= m_string + strlen(m_string) + 1); // Why does this line exists ?
+  assert(position >= m_string && position <= m_string + strlen(m_string));
   assert(!IsInTheMiddleOfACodePoint(*position));
   m_stringPosition = position;
 }

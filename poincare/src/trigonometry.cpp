@@ -475,7 +475,6 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
 }
 
 Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
-{
   /* Since the child always ends in a direct function, angle units are left
    * untouched here */
   assert(isAdvancedTrigonometryFunction(e));

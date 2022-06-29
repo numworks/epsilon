@@ -49,7 +49,7 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
   } else if (ComparisonNode::IsBinaryEquality(expressionRed)) {
     Preferences * preferences = Preferences::sharedPreferences();
     returnedExpression = Subtraction::Builder(expressionRed.childAtIndex(0), expressionRed.childAtIndex(1));
-    returnedExpression = returnedExpression.cloneAndReduce(ExpressionNode::ReductionContext(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget));
+    returnedExpression = returnedExpression.cloneAndReduce(ExpressionNode::ReductionContext(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expressionInputWithoutFunctions, context), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget));
   } else {
     assert(expressionRed.type() == ExpressionNode::Type::Boolean);
     /* The equality was reduced which means the equality was either

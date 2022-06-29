@@ -1,5 +1,6 @@
 #include "poincare_helpers.h"
 #include <apps/exam_mode_configuration.h>
+#include <poincare/unit.h>
 
 using namespace Poincare;
 namespace Shared {
@@ -53,7 +54,7 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
           ExpressionNode::Type::Derivative,
           ExpressionNode::Type::Sequence,
           ExpressionNode::Type::DistributionDispatcher,
-        });
+        }) || (e.type() == ExpressionNode::Type::Unit && static_cast<const Unit&>(e).representative()->dimensionVector() != Unit::AngleRepresentative::Default().dimensionVector());
       }, context);
 }
 

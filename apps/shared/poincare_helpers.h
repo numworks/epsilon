@@ -37,21 +37,24 @@ template <class T>
 inline Poincare::Expression Approximate(const Poincare::Expression e, Poincare::Context * context) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
-  return e.approximate<T>(context, complexFormat, preferences->angleUnit());
+  Poincare::Preferences::AngleUnit angleUnit = Poincare::Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), e, context);
+  return e.approximate<T>(context, complexFormat, angleUnit);
 }
 
 template <class T>
 inline T ApproximateToScalar(const Poincare::Expression e, Poincare::Context * context) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
-  return e.approximateToScalar<T>(context, complexFormat, preferences->angleUnit());
+  Poincare::Preferences::AngleUnit angleUnit = Poincare::Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), e, context);
+  return e.approximateToScalar<T>(context, complexFormat, angleUnit);
 }
 
 template <class T>
 inline T ApproximateWithValueForSymbol(const Poincare::Expression e, const char * symbol, T x, Poincare::Context * context) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
-  return e.approximateWithValueForSymbol<T>(symbol, x, context, complexFormat, preferences->angleUnit());
+  Poincare::Preferences::AngleUnit angleUnit = Poincare::Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), e, context);
+  return e.approximateWithValueForSymbol<T>(symbol, x, context, complexFormat, angleUnit);
 }
 
 template <class T>
@@ -68,15 +71,15 @@ inline Poincare::Expression ParseAndSimplify(const char * text, Poincare::Contex
 inline void CloneAndSimplify(Poincare::Expression * e, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion unitConversion = Poincare::ExpressionNode::UnitConversion::Default) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), *e, context);
-
-  *e = e->cloneAndSimplify(Poincare::ExpressionNode::ReductionContext(context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), target, symbolicComputation, unitConversion));
+  Poincare::Preferences::AngleUnit angleUnit = Poincare::Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), *e, context);
+  *e = e->cloneAndSimplify(Poincare::ExpressionNode::ReductionContext(context, complexFormat, angleUnit, GlobalPreferences::sharedGlobalPreferences()->unitFormat(), target, symbolicComputation, unitConversion));
 }
 
 inline void CloneAndReduce(Poincare::Expression * e, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion unitConversion = Poincare::ExpressionNode::UnitConversion::Default) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), *e, context);
-
-  *e = e->cloneAndReduce(Poincare::ExpressionNode::ReductionContext(context, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), target, symbolicComputation, unitConversion));
+  Poincare::Preferences::AngleUnit angleUnit = Poincare::Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), *e, context);
+  *e = e->cloneAndReduce(Poincare::ExpressionNode::ReductionContext(context, complexFormat, angleUnit, GlobalPreferences::sharedGlobalPreferences()->unitFormat(), target, symbolicComputation, unitConversion));
 }
 
 inline void ReduceAndRemoveUnit(Poincare::Expression * e, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::Expression * unit, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion unitConversion = Poincare::ExpressionNode::UnitConversion::Default) {
@@ -92,26 +95,29 @@ inline void ParseAndSimplifyAndApproximate(const char * text, Poincare::Expressi
 inline typename Poincare::Coordinate2D<double> NextMinimum(const Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
-  return e.nextMinimum(symbol, start, max, context, complexFormat, preferences->angleUnit(), relativePrecision, minimalStep, maximalStep);
+  Poincare::Preferences::AngleUnit angleUnit = Poincare::Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), e, context);
+  return e.nextMinimum(symbol, start, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
 }
 
 inline typename Poincare::Coordinate2D<double> NextMaximum(const Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
-  return e.nextMaximum(symbol, start, max, context, complexFormat, preferences->angleUnit(), relativePrecision, minimalStep, maximalStep);
+  Poincare::Preferences::AngleUnit angleUnit = Poincare::Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), e, context);
+  return e.nextMaximum(symbol, start, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
 }
 
 inline double NextRoot(const Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
-  return e.nextRoot(symbol, start, max, context, complexFormat, preferences->angleUnit(), relativePrecision, minimalStep, maximalStep);
+  Poincare::Preferences::AngleUnit angleUnit = Poincare::Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), e, context);
+  return e.nextRoot(symbol, start, max, context, complexFormat, angleUnit, relativePrecision, minimalStep, maximalStep);
 }
 
 inline typename Poincare::Coordinate2D<double> NextIntersection(const Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, const Poincare::Expression expression, double relativePrecision, double minimalStep, double maximalStep) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), e, context);
-  complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(complexFormat, expression, context);
-  return e.nextIntersection(symbol, start, max, context, complexFormat, preferences->angleUnit(), expression, relativePrecision, minimalStep, maximalStep);
+  Poincare::Preferences::AngleUnit angleUnit = Poincare::Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expression, context);
+  return e.nextIntersection(symbol, start, max, context, complexFormat, angleUnit, expression, relativePrecision, minimalStep, maximalStep);
 }
 
 inline bool EqualOrBothNan(double a, double b) { return a == b || (std::isnan(a) && std::isnan(b)); }

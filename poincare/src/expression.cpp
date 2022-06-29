@@ -33,6 +33,7 @@
 #include <utility>
 
 #include "parsing/parser.h"
+#include "poincare/unit.h"
 
 namespace Poincare {
 
@@ -590,6 +591,50 @@ bool Expression::hasComplexI(Context * context, ExpressionNode::SymbolicComputat
       context, replaceSymbols);
 }
 
+Preferences::AngleUnit Expression::UpdatedAngleUnitWithExpressionInput(Preferences::AngleUnit angleUnit, const Expression & exp, Context * context) {
+  bool hasTrigonometry = exp.recursivelyMatches(
+      [](const Expression e, Context * context) {
+        return e.isOfType({
+            ExpressionNode::Type::Sine, ExpressionNode::Type::Cosine, ExpressionNode::Type::Tangent,
+            ExpressionNode::Type::Secant, ExpressionNode::Type::Cosecant, ExpressionNode::Type::Cotangent
+          });
+      },
+      context);
+  if (hasTrigonometry) {
+    return angleUnit;
+  }
+  bool hasDegrees = exp.recursivelyMatches(
+    [](const Expression e, Context * context) {
+      if (e.type() != ExpressionNode::Type::Unit) {
+        return false;
+      }
+      const Unit::Representative * representative = static_cast<const Unit &>(e).representative();
+      return representative == &Unit::k_angleRepresentatives[Unit::k_degreeRepresentativeIndex]
+        || representative == &Unit::k_angleRepresentatives[Unit::k_arcMinuteRepresentativeIndex]
+        || representative == &Unit::k_angleRepresentatives[Unit::k_arcSecondRepresentativeIndex];
+    }, context);
+  bool hasRadians = exp.recursivelyMatches(
+    [](const Expression e, Context * context) {
+        return e.type() == ExpressionNode::Type::Unit
+                && static_cast<const Unit &>(e).representative()==&Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
+    }, context);
+  bool hasGradians = exp.recursivelyMatches(
+    [](const Expression e, Context * context) {
+        return e.type() == ExpressionNode::Type::Unit
+                && static_cast<const Unit &>(e).representative()==&Unit::k_angleRepresentatives[Unit::k_gradianRepresentativeIndex];
+    }, context);
+  if (hasDegrees && !hasGradians && !hasRadians) {
+    return Preferences::AngleUnit::Degree;
+  }
+  if (!hasDegrees && hasGradians && !hasRadians) {
+    return Preferences::AngleUnit::Gradian;
+  }
+  if (!hasDegrees && !hasGradians && hasRadians) {
+    return Preferences::AngleUnit::Radian;
+  }
+  return angleUnit;
+}
+
 bool Expression::isReal(Context * context, bool canContainMatrices) const {
   /* We could do something virtual instead of implementing a disjunction on
    * types but many expressions have the same implementation so it is easier to
@@ -736,6 +781,7 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
     return Undefined::Builder();
   }
   complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
+  angleUnit = UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
   exp = exp.cloneAndSimplify(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion));
   assert(!exp.isUninitialized());
   return exp;
@@ -745,6 +791,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
   assert(simplifiedExpression);
   Expression exp = Parse(text, context, false);
   complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
+  angleUnit = UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
   if (exp.isUninitialized()) {
     *simplifiedExpression = Undefined::Builder();
     *approximateExpression = Undefined::Builder();
@@ -1074,6 +1121,7 @@ template<typename U>
 U Expression::ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) {
   Expression exp = ParseAndSimplify(text, context, complexFormat, angleUnit, unitFormat, symbolicComputation);
   complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
+  angleUnit = UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
   assert(!exp.isUninitialized());
   return exp.approximateToScalar<U>(context, complexFormat, angleUnit);
 }

@@ -11,14 +11,14 @@ jobs:
       - run: pip3 install lz4 pypng stringcase pyelftools
       - name: Install ARM toolchain
         uses: numworks/setup-arm-toolchain@latest
-      - name: Checkout PR base
+      - name: Checkout head of target branch
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          ref: ${{ github.event.pull_request.base.ref }}
           path: base
       - name: Build base for N0110
         run: make -C base kernel.A.elf && make -C base userland.A.elf
-      - name: Checkout PR head
+      - name: Checkout head of PR merged on target branch
         uses: actions/checkout@v2
         with:
           ref: "refs/pull/${{ github.event.number }}/merge"

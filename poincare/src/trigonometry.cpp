@@ -169,8 +169,10 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
   Expression unit;
   e.childAtIndex(0).removeUnit(&unit);
   if (!unit.isUninitialized()) {
-    // There is a unit on the argument
-    assert(unit.type() == ExpressionNode::Type::Unit);
+    // _unit^-1 and _unit*_unit cannot be valid angle units
+    if (unit.type() != ExpressionNode::Type::Unit) {
+      return e.replaceWithUndefinedInPlace();
+    }
     Unit unitRef = static_cast<Unit &>(unit);
     if (unitRef.representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector()) {
       // Should have been converted to radians already by the reduction

@@ -1210,7 +1210,7 @@ void Power::AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, 
     DependencyType depType = static_cast<Power &>(e).typeOfDependency(reductionContext);
     if (depType != DependencyType::None && depType != compareTo.typeOfDependency(reductionContext)) {
       int n = l.numberOfChildren();
-      clone ? l.addChildAtIndexInPlace(e.clone(), n, n) : l.addChildAtIndexInPlace(e, n, n);
+      l.addChildAtIndexInPlace(clone ? e.clone() : e, n, n);
     }
   }
 }

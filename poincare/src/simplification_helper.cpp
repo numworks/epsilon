@@ -186,6 +186,7 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, cons
 
 
 Expression SimplificationHelper::bubbleUpDependencies(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
+  assert(e.type() != ExpressionNode::Type::Store);
   if (ComparisonOperator::IsComparisonOperatorType(e.type())) {
     return Expression();
   }

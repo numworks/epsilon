@@ -1,5 +1,7 @@
 #include "trigonometry_list_controller.h"
 #include "../app.h"
+#include "apps/shared/poincare_helpers.h"
+#include "poincare/expression_node.h"
 #include <poincare/variable_context.h>
 #include <poincare/symbol.h>
 
@@ -21,9 +23,11 @@ void TrigonometryListController::setExpression(Poincare::Expression e) {
   m_calculationStore.push("θ", &context, CalculationHeight);
 
   // Set trigonometry illustration
-  Expression approximate = m_calculationStore.calculationAtIndex(0)->approximateOutput( Calculation::NumberOfSignificantDigits::Maximal);
-  assert(!approximate.isUninitialized());
-  float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(approximate, &context);
+  Expression copy = e.childAtIndex(0).clone();
+  Expression unit;
+  Shared::PoincareHelpers::ReduceAndRemoveUnit(&copy, &context, ExpressionNode::ReductionTarget::User, &unit);
+  assert(unit.isUninitialized() || static_cast<Unit &>(unit).representative()->dimensionVector() != Unit::AngleRepresentative::Default().dimensionVector());
+  float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(copy, &context);
   m_model.setAngle(angle);
 }
 

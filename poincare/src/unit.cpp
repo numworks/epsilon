@@ -492,6 +492,28 @@ const UnitNode::Representative * UnitNode::AngleRepresentative::standardRepresen
   return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, 3, prefix);
 }
 
+int UnitNode::AngleRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
+  assert(availableLength >= 2);
+  int numberOfResults = 0;
+  // Convert in radians
+  value = value * ratio();
+  if (this == representativesOfSameDimension() + Unit::k_radianRepresentativeIndex || this == representativesOfSameDimension() + Unit::k_gradianRepresentativeIndex) {
+    // Convert to degrees
+    const Representative * degree = representativesOfSameDimension() + Unit::k_degreeRepresentativeIndex;
+    double adjustedValue = value / degree->ratio();
+    dest[numberOfResults++] = Multiplication::Builder(Float<double>::Builder(adjustedValue), Unit::Builder(degree, Prefix::EmptyPrefix()));
+    return numberOfResults;
+  }
+  // Degrees and its subunits
+  const Unit splitUnits[] = {
+    Unit::Builder(representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_arcMinuteRepresentativeIndex, Prefix::EmptyPrefix()),
+    Unit::Builder(representativesOfSameDimension() + Unit::k_degreeRepresentativeIndex, Prefix::EmptyPrefix()),
+  };
+  dest[numberOfResults++] = Unit::BuildSplit(value, splitUnits, sizeof(splitUnits)/sizeof(Unit), reductionContext);
+  return numberOfResults;
+}
+
 const UnitNode::Prefix * UnitNode::MassRepresentative::basePrefix() const {
   return isBaseUnit() ? Prefix::Prefixes() + Unit::k_kiloPrefixIndex : Prefix::EmptyPrefix();
 }

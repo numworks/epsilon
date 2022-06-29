@@ -140,13 +140,14 @@ const Expression GlobalContext::expressionForSequence(const SymbolAbstract & sym
   Sequence seq(r);
   Expression rank = symbol.childAtIndex(0).clone();
   bool rankIsInteger = false;
+  rank = rank.cloneAndSimplify(ExpressionNode::ReductionContext(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::SystemForApproximation));
   double rankValue = rank.approximateToScalar<double>(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
   if (rank.type() == ExpressionNode::Type::Rational) {
     Rational n = static_cast<Rational &>(rank);
     rankIsInteger = n.isInteger();
   } else if (!std::isnan(rankValue)) {
     /* WARNING:
-     * in some edge cases were, because of quantification, we have
+     * in some edge cases, because of quantification, we have
      * floor(x) = x while x is not integer.*/
     rankIsInteger = std::floor(rankValue) == rankValue;
   }

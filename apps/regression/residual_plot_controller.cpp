@@ -28,7 +28,7 @@ void ResidualPlotController::updateCursor() {
 
   const int significantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
-  constexpr size_t bufferSize = Shared::BannerView::k_maxLengthDisplayed - 2;
+  constexpr size_t bufferSize = Shared::BannerView::k_maxLengthDisplayed - 2; // -2 for "x="
   char buffer[bufferSize];
 
   Poincare::Print::customPrintf(buffer, bufferSize, "%*.*ed", x, displayMode, significantDigits);

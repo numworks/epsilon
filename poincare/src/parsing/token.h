@@ -17,7 +17,6 @@ public:
   enum Type {
     // Ordered from lower to higher precedence to make Parser's job easier
     EndOfStream = 0, // Must be the first
-    MixedFractionEnd, // Popped when reaching the end of a mixed fraction
     RightwardsArrow,
     Equal,
     Superior,
@@ -64,7 +63,7 @@ public:
     Undefined
   };
 
-  Token(Type type) : m_type(type), m_text(0), m_length(0) {};
+  Token(Type type = Type::Undefined) : m_type(type), m_text(0), m_length(0) {};
 
   Type type() const { return m_type; }
   void setType(Type t) { m_type = t; }

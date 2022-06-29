@@ -250,11 +250,6 @@ Token Tokenizer::popNumber() {
 }
 
 Token Tokenizer::popToken() {
-  if (m_endOfMixedFractionIndex != nullptr && m_decoder.stringPosition() == m_endOfMixedFractionIndex) {
-    // The end of a mixed fraction was reached
-    m_endOfMixedFractionIndex = nullptr;
-    return Token(Token::MixedFractionEnd);
-  }
   // Skip whitespaces
   while (canPopCodePoint(' ')) {}
 
@@ -413,55 +408,6 @@ Token Tokenizer::popToken() {
     return Token(Token::EndOfStream);
   }
   return Token(Token::Undefined);
-}
-
-// Detect if there is an expression which looks like "int/int"
-bool Tokenizer::followingStringIsIntegersFraction() {
-  const char * start = m_decoder.stringPosition();
-  bool hasSlash = false;
-  int numberOfOpenedParenthesis = 0;
-  // Rewind from 1 codePoint to get the eventual LeftSystemParenthesis
-  m_decoder.previousCodePoint();
-  CodePoint c = m_decoder.nextCodePoint();
-  // Indicate to stop searching after final parenthesis.
-  bool waitForFinalSystemParenthesis = false;
-  if (c == UCodePointLeftSystemParenthesis) {
-    waitForFinalSystemParenthesis = true;
-    numberOfOpenedParenthesis++;
-    c = m_decoder.nextCodePoint();
-  }
-  /* The first condition is to ensure it stops searching when reaching
-   * the final parenthesis.
-   * */
-  while((!waitForFinalSystemParenthesis || numberOfOpenedParenthesis > 0)
-      && (c.isDecimalDigit()
-        || (c == '/' && !hasSlash)
-        || c == UCodePointEmpty
-        || c == UCodePointLeftSystemParenthesis
-        || (c == UCodePointRightSystemParenthesis && numberOfOpenedParenthesis > 0)
-      )){
-    if (c == '/') {
-      hasSlash = true;
-    } else if (c == UCodePointLeftSystemParenthesis) {
-      numberOfOpenedParenthesis++;
-    } else if (c == UCodePointRightSystemParenthesis) {
-      numberOfOpenedParenthesis--;
-      if (waitForFinalSystemParenthesis && numberOfOpenedParenthesis == 0) {
-        c = m_decoder.nextCodePoint();
-        break;
-      }
-    }
-    c = m_decoder.nextCodePoint();
-  }
-  bool result = false;
-  if (hasSlash && numberOfOpenedParenthesis == 0) {
-    // Rememeber the end of the mixed fraction
-    m_decoder.previousCodePoint();
-    m_endOfMixedFractionIndex = m_decoder.stringPosition();
-    result = true;
-  }
-  m_decoder.setPosition(start);
-  return result;
 }
 
 }

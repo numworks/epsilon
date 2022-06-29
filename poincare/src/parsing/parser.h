@@ -26,7 +26,8 @@ public:
     m_currentToken(Token(Token::Undefined)),
     m_nextToken(m_tokenizer.popToken()),
     m_pendingImplicitMultiplication(false),
-    m_symbolPlusParenthesesAreFunctions(false) {}
+    m_symbolPlusParenthesesAreFunctions(false),
+    m_waitingSlashForMixedFraction(false) {}
 
   Expression parse();
   Status getStatus() const { return m_status; }
@@ -84,6 +85,9 @@ private:
   void parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter);
   void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
   bool generateMixedFractionIfNeeded(Expression & leftHandSide);
+  // Allows you to rewind to previous position
+  void rememberCurrentParsingPosition(Token * storedCurrentToken, Token * storedNextToken, const char ** tokenizerPosition);
+  void restorePreviousParsingPosition(Token storedCurrentToken, Token storedNextToken, const char * tokenizerPosition);
   // Data members
   Context * m_context;
   Status m_status;
@@ -95,6 +99,7 @@ private:
   Token m_nextToken;
   bool m_pendingImplicitMultiplication;
   bool m_symbolPlusParenthesesAreFunctions;
+  bool m_waitingSlashForMixedFraction;
 };
 
 }

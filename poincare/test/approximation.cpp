@@ -7,8 +7,9 @@
 using namespace Poincare;
 
 template<typename T>
-void assert_expression_approximates_to_scalar(const char * expression, T approximation, Preferences::AngleUnit angleUnit = Degree, Preferences::ComplexFormat complexFormat = Cartesian) {
+void assert_expression_approximates_to_scalar(const char * expression, T approximation, Preferences::AngleUnit angleUnit = Degree, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::MixedFractions mixedFractionsParameter = Preferences::MixedFractions::Enabled) {
   Shared::GlobalContext globalContext;
+  Preferences::sharedPreferences()->enableMixedFractions(mixedFractionsParameter);
   Expression e = parse_expression(expression, &globalContext, false);
   T result = e.approximateToScalar<T>(&globalContext, complexFormat, angleUnit);
   quiz_assert_print_if_failure(roughly_equal(result, approximation, Poincare::Float<T>::EpsilonLax(), true), expression);
@@ -1360,6 +1361,6 @@ QUIZ_CASE(poincare_approximation_floor_ceil_integer) {
   }
 }
 
-template void assert_expression_approximates_to_scalar(const char * expression, float approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
-template void assert_expression_approximates_to_scalar(const char * expression, double approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
+template void assert_expression_approximates_to_scalar(const char * expression, float approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, Preferences::MixedFractions mixedFractionsParameter);
+template void assert_expression_approximates_to_scalar(const char * expression, double approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, Preferences::MixedFractions mixedFractionsParameter);
 

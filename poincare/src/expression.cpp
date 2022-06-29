@@ -592,44 +592,43 @@ bool Expression::hasComplexI(Context * context, ExpressionNode::SymbolicComputat
 }
 
 Preferences::AngleUnit Expression::UpdatedAngleUnitWithExpressionInput(Preferences::AngleUnit angleUnit, const Expression & exp, Context * context) {
-  bool hasTrigonometry = exp.recursivelyMatches(
-      [](const Expression e, Context * context) {
-        return e.isOfType({
+  struct AngleInformations {
+    bool hasTrigonometry;
+    bool hasRadians;
+    bool hasDegrees;
+    bool hasGradians;
+  };
+  AngleInformations angleInformations = {};
+  exp.recursivelyMatches(
+    [](const Expression e, Context * context, void * data) {
+      AngleInformations * angleInformations = static_cast<AngleInformations*>(data);
+        angleInformations->hasTrigonometry |= e.isOfType({
             ExpressionNode::Type::Sine, ExpressionNode::Type::Cosine, ExpressionNode::Type::Tangent,
             ExpressionNode::Type::Secant, ExpressionNode::Type::Cosecant, ExpressionNode::Type::Cotangent
           });
+        if (e.type() != ExpressionNode::Type::Unit) {
+          return RecursiveSearchResult::Maybe;
+        }
+        const Unit::Representative * representative = static_cast<const Unit &>(e).representative();
+        angleInformations->hasRadians |= representative == &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
+        angleInformations->hasGradians |= representative == &Unit::k_angleRepresentatives[Unit::k_gradianRepresentativeIndex];
+        angleInformations->hasDegrees |= representative == &Unit::k_angleRepresentatives[Unit::k_degreeRepresentativeIndex]
+          || representative == &Unit::k_angleRepresentatives[Unit::k_arcMinuteRepresentativeIndex]
+          || representative == &Unit::k_angleRepresentatives[Unit::k_arcSecondRepresentativeIndex];
+        return RecursiveSearchResult::Maybe;
+
       },
-      context);
-  if (hasTrigonometry) {
+    context, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(&angleInformations));
+  if (angleInformations.hasTrigonometry) {
     return angleUnit;
   }
-  bool hasDegrees = exp.recursivelyMatches(
-    [](const Expression e, Context * context) {
-      if (e.type() != ExpressionNode::Type::Unit) {
-        return false;
-      }
-      const Unit::Representative * representative = static_cast<const Unit &>(e).representative();
-      return representative == &Unit::k_angleRepresentatives[Unit::k_degreeRepresentativeIndex]
-        || representative == &Unit::k_angleRepresentatives[Unit::k_arcMinuteRepresentativeIndex]
-        || representative == &Unit::k_angleRepresentatives[Unit::k_arcSecondRepresentativeIndex];
-    }, context);
-  bool hasRadians = exp.recursivelyMatches(
-    [](const Expression e, Context * context) {
-        return e.type() == ExpressionNode::Type::Unit
-                && static_cast<const Unit &>(e).representative()==&Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
-    }, context);
-  bool hasGradians = exp.recursivelyMatches(
-    [](const Expression e, Context * context) {
-        return e.type() == ExpressionNode::Type::Unit
-                && static_cast<const Unit &>(e).representative()==&Unit::k_angleRepresentatives[Unit::k_gradianRepresentativeIndex];
-    }, context);
-  if (hasDegrees && !hasGradians && !hasRadians) {
+  if (angleInformations.hasDegrees && !angleInformations.hasGradians && !angleInformations.hasRadians) {
     return Preferences::AngleUnit::Degree;
   }
-  if (!hasDegrees && hasGradians && !hasRadians) {
+  if (!angleInformations.hasDegrees && angleInformations.hasGradians && !angleInformations.hasRadians) {
     return Preferences::AngleUnit::Gradian;
   }
-  if (!hasDegrees && !hasGradians && hasRadians) {
+  if (!angleInformations.hasDegrees && !angleInformations.hasGradians && angleInformations.hasRadians) {
     return Preferences::AngleUnit::Radian;
   }
   return angleUnit;

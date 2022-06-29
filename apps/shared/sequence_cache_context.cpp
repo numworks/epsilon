@@ -43,6 +43,8 @@ const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(c
       if (!record.isNull()) {
         assert(record.fullName()[0] == symbol.name()[0]);
         Sequence * seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
+        /* The lastDesendantContext might contain informations on variables
+         * that are contained in the rank expression. */
         T n = PoincareHelpers::ApproximateToScalar<T>(rank, lastDescendantContext ? lastDescendantContext : this);
         // In case the sequence referenced is not defined or if the rank is not an int, return NAN
         if (seq->fullName() != nullptr) {

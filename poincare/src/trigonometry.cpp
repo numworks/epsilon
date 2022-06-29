@@ -175,7 +175,8 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
     }
     Unit unitRef = static_cast<Unit &>(unit);
     if (unitRef.representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector()) {
-      // Should have been converted to radians already by the reduction
+      // The child has been converted to radians already by the reduction
+      reductionContext.setAngleUnit(Preferences::AngleUnit::Radian);
       assert(unitRef.representative()->isBaseUnit());
     } else {
       return e.replaceWithUndefinedInPlace();

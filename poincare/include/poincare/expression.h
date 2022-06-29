@@ -251,6 +251,7 @@ public:
   static bool EncounteredComplex();
   static void SetEncounteredComplex(bool encounterComplex);
   static Preferences::ComplexFormat UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & e, Context * context);
+  static Preferences::AngleUnit UpdatedAngleUnitWithExpressionInput(Preferences::AngleUnit angleUnit, const Expression & exp, Context * context);
   bool hasComplexI(Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
   // WARNING: this methods must be called on reduced expressions
   bool isReal(Context * context, bool canContainMatrices = true) const;

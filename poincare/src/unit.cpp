@@ -481,7 +481,15 @@ int UnitNode::DistanceRepresentative::setAdditionalExpressions(double value, Exp
 }
 
 const UnitNode::Representative * UnitNode::AngleRepresentative::standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const {
-  return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), numberOfRepresentatives(), prefix);
+  if (reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Radian) {
+    return &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
+  }
+  if (reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Gradian) {
+    return &Unit::k_angleRepresentatives[Unit::k_gradianRepresentativeIndex];
+  }
+  assert(reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Degree);
+  // Choose between degree and its subunits
+  return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, 3, prefix);
 }
 
 const UnitNode::Prefix * UnitNode::MassRepresentative::basePrefix() const {

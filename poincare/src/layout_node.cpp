@@ -38,41 +38,41 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor exp
 
 KDPoint LayoutNode::absoluteOrigin(KDFont::Size font) {
   LayoutNode * p = parent();
-  if (!m_positioned) {
+  if (!m_flags.m_positioned || m_flags.m_positionFontSize != font) {
     if (p != nullptr) {
       m_frame.setOrigin(p->absoluteOrigin(font).translatedBy(p->positionOfChild(this, font)));
     } else {
       m_frame.setOrigin(KDPointZero);
     }
-    m_positioned = true;
+    m_flags.m_positioned = true;
+    m_flags.m_positionFontSize = font;
   }
   return m_frame.origin().translatedBy(KDPoint(leftMargin(), 0));;
 }
 
 KDSize LayoutNode::layoutSize(KDFont::Size font) {
-  if (!m_sized) {
+  if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {
     KDSize size = computeSize(font);
     m_frame.setSize(KDSize(size.width() + leftMargin(), size.height()));
-    m_sized = true;
-  } else {
-    // Assert the font did not change since size has been memoized
-    assert(computeSize(font) + KDSize(leftMargin(), 0) == m_frame.size());
+    m_flags.m_sized = true;
+    m_flags.m_sizeFontSize = font;
   }
   return m_frame.size();
 }
 
 KDCoordinate LayoutNode::baseline(KDFont::Size font) {
-  if (!m_baselined) {
+  if (!m_flags.m_baselined || m_flags.m_baselineFontSize != font) {
     m_baseline = computeBaseline(font);
-    m_baselined = true;
+    m_flags.m_baselined = true;
+    m_flags.m_baselineFontSize = font;
   }
   return m_baseline;
 }
 
 void LayoutNode::invalidAllSizesPositionsAndBaselines() {
-  m_sized = false;
-  m_positioned = false;
-  m_baselined = false;
+  m_flags.m_sized = false;
+  m_flags.m_positioned = false;
+  m_flags.m_baselined = false;
   for (LayoutNode * l : children()) {
     l->invalidAllSizesPositionsAndBaselines();
   }

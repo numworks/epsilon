@@ -58,10 +58,15 @@ public:
     TreeNode(),
     m_frame(KDRectZero),
     m_baseline(0),
-    m_baselined(false),
-    m_positioned(false),
-    m_sized(false),
-    m_margin(false)
+    m_flags({
+      .m_baselined = false,
+      .m_positioned = false,
+      .m_sized = false,
+      .m_margin = false,
+      .m_baselineFontSize = KDFont::Size::Small,
+      .m_positionFontSize = KDFont::Size::Small,
+      .m_sizeFontSize = KDFont::Size::Small,
+    })
   {
   }
 
@@ -76,8 +81,8 @@ public:
   KDPoint absoluteOrigin(KDFont::Size font);
   KDSize layoutSize(KDFont::Size font);
   KDCoordinate baseline(KDFont::Size font);
-  void setMargin(bool hasMargin) { m_margin = hasMargin; }
-  int leftMargin() { return m_margin ? Escher::Metric::OperatorHorizontalMargin : 0; }
+  void setMargin(bool hasMargin) { m_flags.m_margin = hasMargin; }
+  int leftMargin() { return m_flags.m_margin ? Escher::Metric::OperatorHorizontalMargin : 0; }
   //TODO: invalid cache when tempering with hierarchy
   virtual void invalidAllSizesPositionsAndBaselines();
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override { assert(false); return 0; }
@@ -167,16 +172,7 @@ protected:
   virtual KDCoordinate computeBaseline(KDFont::Size font) = 0;
   virtual KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) = 0;
 
-  /* m_baseline is the signed vertical distance from the top of the layout to
-   * the fraction bar of an hypothetical fraction sibling layout. If the top of
-   * the layout is under that bar, the baseline is negative. */
-  KDRect m_frame;
-  KDCoordinate m_baseline;
-  // These bools are aligned on 1 byte. They could be squashed into one uint8.
-  bool m_baselined;
-  bool m_positioned;
-  bool m_sized;
-  bool m_margin;
+
 
 private:
   void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection);
@@ -190,6 +186,25 @@ private:
     bool forSelection);
   virtual void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) = 0;
   void changeGraySquaresOfAllMatrixRelatives(bool add, bool ancestors, bool * changedSquares);
+
+  KDRect m_frame;
+  /* m_baseline is the signed vertical distance from the top of the layout to
+   * the fraction bar of an hypothetical fraction sibling layout. If the top of
+   * the layout is under that bar, the baseline is negative. */
+  KDCoordinate m_baseline;
+  /* Squash multiple bool member variables into a packed struct. Taking
+   * advantage of LayoutNode's data structure having room for many more booleans
+   */
+  struct Flags {
+    bool m_baselined: 1;
+    bool m_positioned: 1;
+    bool m_sized: 1;
+    bool m_margin: 1;
+    KDFont::Size m_baselineFontSize: 1;
+    KDFont::Size m_positionFontSize: 1;
+    KDFont::Size m_sizeFontSize: 1;
+  };
+  Flags m_flags;
 };
 
 }

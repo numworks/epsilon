@@ -596,6 +596,9 @@ QUIZ_CASE(poincare_simplification_units) {
   /* Valid expressions */
   assert_parsed_expression_simplify_to("-2×_A", "-2×_A");
   assert_parsed_expression_simplify_to("cos(1_s/1_s)", "cos(1)");
+  assert_parsed_expression_simplify_to("sin(90_°)", "1", User, Radian);
+  assert_parsed_expression_simplify_to("cos(π_rad/4)", "√(2)/2", User, Degree);
+  assert_parsed_expression_simplify_to("cot((π/4)_rad)", "1", User, Gradian);
   assert_parsed_expression_simplify_to("1_m+π_m+√(2)_m-cos(15)_m", "6.3154941288217×_m");
   assert_parsed_expression_simplify_to("√(16×_m^2)", "4×_m");
   assert_parsed_expression_simplify_to("1×_A_kg", "2.2046226218488×_A×_lb", User, Radian, Imperial);
@@ -1386,6 +1389,9 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("10_m/_s→_km", Undefined::Name());
 
+  assert_parsed_expression_simplify_to("π_rad→_'", "10800×_'");
+  assert_parsed_expression_simplify_to("1_°+60_'+3600_\"→_°", "3×_°");
+  assert_parsed_expression_simplify_to("1°+60'+3600\"→°", "3×_°");
   assert_parsed_expression_simplify_to("0_K→_°C", "-273.15×_°C");
   assert_parsed_expression_simplify_to("0_°C→_K", "273.15×_K");
   assert_parsed_expression_simplify_to("_°C→_K", "274.15×_K");

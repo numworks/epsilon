@@ -901,7 +901,7 @@ Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext&
           Dependency dep = Dependency::Builder(c, List::Builder());
           removeChildAtIndexInPlace(0);
           replaceWithInPlace(dep);
-          dep.addDependency(*this);
+          dep.addDependency(numberOfChildren() > 1 ? *this : childAtIndex(0));
           return dep.shallowReduce(reductionContext);
         }
         replaceWithInPlace(c);

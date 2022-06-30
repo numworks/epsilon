@@ -57,17 +57,4 @@ Expression MixedFraction::shallowReduce(const ExpressionNode::ReductionContext& 
   return result.shallowReduce(context);
 }
 
-Expression MixedFraction::CreateMixedFractionFromIntegers(const Integer & num, const Integer & denom) {
-  Integer numPositive(num), denomPositive(denom);
-  numPositive.setNegative(false);
-  denomPositive.setNegative(false);
-  Expression quo = DivisionQuotient::Reduce(numPositive, denomPositive);
-  Expression rem = DivisionRemainder::Reduce(numPositive, denomPositive);
-  Expression mixedFraction = Builder(quo, Division::Builder(rem, Rational::Builder(denomPositive)));
-  if (num.isNegative() != denom.isNegative()) {
-    mixedFraction = Opposite::Builder(mixedFraction);
-  }
-  return mixedFraction;
-}
-
 }

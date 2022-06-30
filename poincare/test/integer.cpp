@@ -313,14 +313,21 @@ QUIZ_CASE(poincare_integer_euclidian_division) {
   assert_division_computes_to(-40, 2, "-40=2×(-20)+0");
 }
 
-void assert_mixed_fraction_computes_to(int n, int m, const char * frac) {
- // assert_expression_serialize_to(Integer::CreateMixedFraction(Integer(n), Integer(m)), frac);
+void assert_mixed_fraction_computes_to(int n, int m, const char * frac, bool mixedFractionsEnabled = true) {
+  Preferences::sharedPreferences()->enableMixedFractions(mixedFractionsEnabled ? Preferences::MixedFractions::Enabled : Preferences::MixedFractions::Disabled);
+  assert_expression_serialize_to(Integer::CreateMixedFraction(Integer(n), Integer(m)), frac);
 }
 
 QUIZ_CASE(poincare_integer_mixed_fraction) {
-  assert_mixed_fraction_computes_to(47, 8, "5+7/8");
-  assert_mixed_fraction_computes_to(1, 5, "0+1/5");
-  assert_mixed_fraction_computes_to(-33, 7, "-4-5/7");
-  assert_mixed_fraction_computes_to(-28, 101, "0-28/101");
-  assert_mixed_fraction_computes_to(16, 12, "1+1/3");
+  assert_mixed_fraction_computes_to(47, 8, "5 7/8");
+  assert_mixed_fraction_computes_to(1, 5, "0 1/5");
+  assert_mixed_fraction_computes_to(-33, 7, "-4 5/7");
+  assert_mixed_fraction_computes_to(-28, 101, "-0 28/101");
+  assert_mixed_fraction_computes_to(16, 12, "1 1/3");
+
+  assert_mixed_fraction_computes_to(47, 8, "5+7/8", false);
+  assert_mixed_fraction_computes_to(1, 5, "0+1/5", false);
+  assert_mixed_fraction_computes_to(-33, 7, "-4-5/7", false);
+  assert_mixed_fraction_computes_to(-28, 101, "0-28/101", false);
+  assert_mixed_fraction_computes_to(16, 12, "1+1/3", false);
 }

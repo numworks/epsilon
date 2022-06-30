@@ -3,6 +3,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/integer.h>
+#include <poincare/division.h>
 
 namespace Poincare {
 
@@ -39,14 +40,16 @@ private:
   template <typename T> Evaluation<T> templateApproximate(const ApproximationContext& approximationContext) const;
 };
 
-class MixedFraction final : public ExpressionTwoChildren<MixedFraction, MixedFractionNode> {
+class MixedFraction final : public Expression {
 public:
-  using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& context);
+  MixedFraction(const MixedFractionNode * n) : Expression(n) {}
+  static Expression Builder(Expression integerPart, Expression numerator, Expression denominator) { return Builder(integerPart, Division::Builder(numerator, denominator)); }
+  static Expression Builder(Expression integerPart, Division fractionPart) { return TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>({integerPart, fractionPart}); }
   static Expression CreateMixedFractionFromIntegers(const Integer & num, const Integer & denom);
+
+  Expression shallowReduce(const ExpressionNode::ReductionContext& context);
 };
 
 }
 
 #endif
-

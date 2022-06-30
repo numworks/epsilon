@@ -1,7 +1,6 @@
 #include <poincare/mixed_fraction.h>
 #include <poincare/addition.h>
 #include <poincare/complex.h>
-#include <poincare/division.h>
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
 #include <poincare/evaluation.h>

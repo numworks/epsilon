@@ -730,7 +730,7 @@ bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
         && IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(0))
         && IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(1))) {
       // The following expression looks like "int/int" -> it's a mixedFraction
-      leftHandSide = MixedFraction::Builder(leftHandSide, rightHandSide);
+      leftHandSide = MixedFraction::Builder(leftHandSide, static_cast<Division &>(rightHandSide));
       return true;
     }
   }

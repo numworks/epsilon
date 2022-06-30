@@ -75,9 +75,13 @@ inline uint64_t ValidKeys(uint64_t state) {
  * the single OnOff/Home row, only once right before entering DFU mode and
  * thereby interrupt DFU only on Home/OnOff keys. */
 constexpr int RowActivationDelay = 10; // us
-constexpr int DebouncingDelay = 80;
-constexpr int PollDelay = Clocks::Config::AHBLowFrequencyPrescaler * 100;
-
+/* The two following values are approximately in tenth of milliseconds. We can
+ * hardly get a more precise value since they are used by timers which are
+ * dependent on the varying board frequency. */
+/* Both are set to 25ms, which allows for 20 keypress/release cycles per second,
+ * likely the maximal useful speed one can hope on a calculator. */
+constexpr int DebouncingDelay = 250;
+constexpr int PollDelay = 250;
 
 }
 }

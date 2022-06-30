@@ -325,6 +325,7 @@ template Logarithm TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2> >(c
 template Matrix TreeHandle::NAryBuilder<Matrix, MatrixNode>(const Tuple &);
 template MatrixComplex<double> TreeHandle::NAryBuilder<MatrixComplex<double>, MatrixComplexNode<double> >(const Tuple &);
 template MatrixComplex<float> TreeHandle::NAryBuilder<MatrixComplex<float>, MatrixComplexNode<float> >(const Tuple &);
+template MixedFraction TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>(const Tuple &);
 template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tuple &);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);

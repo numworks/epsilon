@@ -141,7 +141,7 @@ bool PowerNode::childAtIndexNeedsUserParentheses(const Expression & child, int c
       return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
     }
     // ^(2+3,4) --> (2+3)^{4}
-    return child.isOfType({Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition});
+    return child.isOfType({Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition, Type::MixedFraction});
   }
   return false;
 }
@@ -257,7 +257,7 @@ bool PowerNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * chil
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
-  return static_cast<const ExpressionNode *>(child)->isOfType({Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition});
+  return static_cast<const ExpressionNode *>(child)->isOfType({Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition, Type::MixedFraction});
 }
 
 int PowerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

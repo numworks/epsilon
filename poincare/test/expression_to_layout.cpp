@@ -140,3 +140,8 @@ QUIZ_CASE(poincare_expression_to_layout_serializes_to_self) {
   assert_parsed_expression_layout_serialize_to_self("binomial\u0012\u00127\u0013,\u00126\u0013\u0013");
   assert_parsed_expression_layout_serialize_to_self("root\u0012\u00127\u0013,\u00123\u0013\u0013");
 }
+
+QUIZ_CASE(poincare_expression_to_layout_mixed_fraction) {
+  assert_expression_layouts_and_serializes_to(MixedFraction::Builder(Rational::Builder(1),Division::Builder(Rational::Builder(2),Rational::Builder(3))), "1\u0012\u00122\u0013/\u00123\u0013\u0013");
+  assert_expression_layouts_and_serializes_to(Division::Builder(MixedFraction::Builder(Rational::Builder(1),Division::Builder(Rational::Builder(2),Rational::Builder(3))), Rational::Builder(4)), "\u0012\u00121\u0012\u00122\u0013/\u00123\u0013\u0013\u0013/\u00124\u0013\u0013");
+}

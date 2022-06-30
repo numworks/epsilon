@@ -11,17 +11,24 @@ jobs:
       - run: pip3 install lz4 pypng stringcase pyelftools
       - name: Install ARM toolchain
         uses: numworks/setup-arm-toolchain@latest
-      - name: Checkout head of target branch
+      - name: Fetch target branch and PR branch
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
+          fetch-depth: 0
+      - name: Find most recent ancestor of PR and target branch
+        id: common_ancestor
+        run: echo "::set-output name=commit_sha::$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})"
+      - name: Checkout to most recent ancestor
+        uses: actions/checkout@v2
+        with:
+          ref:  ${{ steps.common_ancestor.outputs.commit_sha }}
           path: base
-      - name: Build base for N0110
+      - name: Build common ancestor for N0110
         run: make -C base kernel.A.elf && make -C base userland.A.elf
-      - name: Checkout head of PR merged on target branch
+      - name: Find head of PR
         uses: actions/checkout@v2
         with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
+          ref: ${{ github.event.pull_request.head.sha }}
           path: head
       - name: Build head for N0110
         run: make -C head kernel.A.elf && make -C head userland.A.elf

@@ -10,6 +10,7 @@
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
 #include <poincare/equal.h>
+#include <poincare/mixed_fraction.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/string_layout.h>
@@ -709,6 +710,29 @@ Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer &
   ExpressionNode::ReductionContext defaultReductionContext = ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   e = e.deepBeautify(defaultReductionContext);
   return e;
+}
+
+Expression Integer::CreateMixedFraction(const Integer & num, const Integer & denom) {
+  Integer numPositive(num), denomPositive(denom);
+  numPositive.setNegative(false);
+  denomPositive.setNegative(false);
+  IntegerDivision division = Division(numPositive, denomPositive);
+  Expression integerPart = Rational::Builder(division.quotient);
+  Rational fractionPart = Rational::Builder(division.remainder, denomPositive);
+  // If mixed fractions are enabled
+  if (Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
+    Expression mixedFraction = MixedFraction::Builder(integerPart, Rational::Builder(fractionPart.unsignedIntegerNumerator()), Rational::Builder(fractionPart.integerDenominator()));
+    if (num.isNegative() != denom.isNegative()) {
+      mixedFraction = Opposite::Builder(mixedFraction);
+    }
+    return mixedFraction;
+  }
+  // If mixed fractions don't exist in this country
+  if (num.isNegative() == denom.isNegative()) {
+    return Addition::Builder(integerPart, fractionPart);
+  }
+  /* Do not add a minus sign before a zero. */
+  return Subtraction::Builder(NaturalOrder(numPositive, denomPositive) < 0 ? integerPart : Opposite::Builder(integerPart), fractionPart);
 }
 
 template float Integer::approximate<float>() const;

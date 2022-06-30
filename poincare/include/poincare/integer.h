@@ -159,6 +159,7 @@ public:
 
   // Derived expression builder
   static Expression CreateEuclideanDivision(const Integer & num, const Integer & denom);
+  static Expression CreateMixedFraction(const Integer & num, const Integer & denom);
 
   constexpr static int k_maxNumberOfDigits = 32;
 private:

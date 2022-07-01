@@ -108,6 +108,7 @@ private:
   void factorizeBase(int i, int j, const ExpressionNode::ReductionContext& reductionContext, List dependenciesCreatedDuringReduction);
   void mergeInChildByFactorizingBase(int i, Expression e, const ExpressionNode::ReductionContext& reductionContext, List dependenciesCreatedDuringReduction = List());
   void factorizeExponent(int i, int j, const ExpressionNode::ReductionContext& reductionContext);
+  Expression gatherLikeTerms(const ExpressionNode::ReductionContext & reductionContext);
   bool gatherRationalPowers(int i, int j, const ExpressionNode::ReductionContext& reductionContext);
   Expression distributeOnOperandAtIndex(int index, const ExpressionNode::ReductionContext& reductionContext);
   void addMissingFactors(Expression factor, const ExpressionNode::ReductionContext& reductionContext);

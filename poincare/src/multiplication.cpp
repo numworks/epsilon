@@ -789,49 +789,10 @@ Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext&
     return resultMatrix.shallowReduce(context);
   }
 
-  /* Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
-   * the simplification order, such terms are guaranteed to be next to each
-   * other. */
-  int i = 0;
-  List dependencies = List::Builder();
-  while (i < numberOfChildren()-1) {
-    Expression oi = childAtIndex(i);
-    Expression oi1 = childAtIndex(i+1);
-    if (oi.recursivelyMatches(Expression::IsRandom, context)) {
-      // Do not factorize random or randint
-    } else if (TermsHaveIdenticalBase(oi, oi1)
-        && (!TermHasNumeralBase(oi)
-          || (oi.type() == ExpressionNode::Type::Power && oi1.type() == ExpressionNode::Type::Power))) {
-      /* The previous condition exists because combining powers
-       * of a given rational isn't straightforward. Indeed,
-       * there are two cases we want to deal with:
-       *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
-       *  - 2^(1/2)*2^(3/2) we want to combine. */
-      factorizeBase(i, i+1, reductionContext, dependencies);
-      /* An undef term could have appeared when factorizing 1^inf and 1^-inf
-       * for instance. In that case, we escape and return undef. */
-      if (childAtIndex(i).isUndefined()) {
-        return replaceWithUndefinedInPlace();
-      }
-      continue;
-    } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
-      factorizeExponent(i, i+1, reductionContext);
-      continue;
-    } else if (TermIsPowerOfRationals(oi) && TermIsPowerOfRationals(oi1)
-            && !(oi.childAtIndex(1).convert<Rational>().isInteger() || oi1.childAtIndex(1).convert<Rational>().isInteger()))
-    {
-      if (gatherRationalPowers(i, i+1, reductionContext)) {
-        continue;
-      }
-    }
-    i++;
-  }
-  if (dependencies.numberOfChildren() > 0) {
-    Dependency dep = Dependency::Builder(Undefined::Builder(), dependencies);
-    replaceWithInPlace(dep);
-    dep.replaceChildAtIndexInPlace(0, *this);
-    shallowReduce(reductionContext);
-    return dep.shallowReduce(reductionContext);
+  // Gather like terms together
+  Expression gatheredExpression = gatherLikeTerms(reductionContext);
+  if (!gatheredExpression.isUninitialized()) {
+    return gatheredExpression;
   }
 
   /* We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
@@ -857,12 +818,16 @@ Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext&
       }
     }
   }
+
   if (hasFactorizedTangent) {
-    /* Return at the beginning of reduction in case some factors that already
-     * existed have appeared.
+    /* Regather terms in case some factors that already existed have appeared.
      * For example: tan(3)*cos(3)^-1*sin(3) = tan(3)*tan(3) */
-    return shallowReduce(reductionContext);
+    gatheredExpression = gatherLikeTerms(reductionContext);
+    if (!gatheredExpression.isUninitialized()) {
+      return gatheredExpression;
+    }
   }
+
   /* We remove rational children that appeared in the middle of sorted
    * children. It's important to do this after having factorized because
    * factorization can lead to new ones. Indeed:
@@ -871,7 +836,7 @@ Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext&
    * 2^(1/2)*2^(1/2) -> 2
    * sin(x)*cos(x) -> 1*tan(x)
    */
-  i = 1;
+  int i = 1;
   while (i < numberOfChildren()) {
     Expression o = childAtIndex(i);
     if (o.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(o).isOne()) {
@@ -1064,6 +1029,56 @@ void Multiplication::factorizeExponent(int i, int j, const ExpressionNode::Reduc
   if (p.type() == ExpressionNode::Type::Multiplication) {
     mergeChildrenAtIndexInPlace(p, i);
   }
+}
+
+Expression Multiplication::gatherLikeTerms(const ExpressionNode::ReductionContext & reductionContext) {
+  /* Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
+   * the simplification order, such terms are guaranteed to be next to each
+   * other. */
+  int i = 0;
+  List dependencies = List::Builder();
+  while (i < numberOfChildren()-1) {
+    Expression oi = childAtIndex(i);
+    Expression oi1 = childAtIndex(i+1);
+    if (oi.recursivelyMatches(Expression::IsRandom, reductionContext.context())) {
+      // Do not factorize random or randint
+    } else if (TermsHaveIdenticalBase(oi, oi1)
+        && (!TermHasNumeralBase(oi)
+          || (oi.type() == ExpressionNode::Type::Power && oi1.type() == ExpressionNode::Type::Power))) {
+      /* The previous condition exists because combining powers
+       * of a given rational isn't straightforward. Indeed,
+       * there are two cases we want to deal with:
+       *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
+       *  - 2^(1/2)*2^(3/2) we want to combine. */
+      factorizeBase(i, i+1, reductionContext, dependencies);
+      /* An undef term could have appeared when factorizing 1^inf and 1^-inf
+       * for instance. In that case, we escape and return undef. */
+      if (childAtIndex(i).isUndefined()) {
+        return replaceWithUndefinedInPlace();
+      }
+      continue;
+    } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
+      factorizeExponent(i, i+1, reductionContext);
+      continue;
+    } else if (TermIsPowerOfRationals(oi) && TermIsPowerOfRationals(oi1)
+            && !(oi.childAtIndex(1).convert<Rational>().isInteger() || oi1.childAtIndex(1).convert<Rational>().isInteger()))
+    {
+      if (gatherRationalPowers(i, i+1, reductionContext)) {
+        continue;
+      }
+    }
+    i++;
+  }
+
+  if (dependencies.numberOfChildren() > 0) {
+    Dependency dep = Dependency::Builder(Undefined::Builder(), dependencies);
+    replaceWithInPlace(dep);
+    dep.replaceChildAtIndexInPlace(0, *this);
+    shallowReduce(reductionContext);
+    return dep.shallowReduce(reductionContext);
+  }
+
+  return Expression();
 }
 
 bool Multiplication::gatherRationalPowers(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {

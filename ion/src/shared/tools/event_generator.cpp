@@ -4,14 +4,16 @@
 #include <cstdio>
 #include <ion/events.h>
 
+// TODO : Update this script to handle state file headers
+
 void writeEventsToFile(std::ofstream & file, int numberOfEvents, std::mt19937 & rng) {
-  std::uniform_int_distribution<int> distribution(0,4*Ion::Events::Event::PageSize);
+  std::uniform_int_distribution<int> distribution(0, Ion::Events::Event::k_specialEventsOffset);
 
   int i = numberOfEvents;
   while (i > 0) {
     int prEventId = distribution(rng);
     Ion::Events::Event e(prEventId);
-    if (e.isDefined() && e != Ion::Events::Termination) {
+    if (Ion::Events::isDefined(prEventId) && e != Ion::Events::Termination) {
       i--;
       file << (unsigned char)(prEventId);
     }

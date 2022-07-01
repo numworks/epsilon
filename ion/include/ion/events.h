@@ -2,62 +2,48 @@
 #define ION_EVENTS_H
 
 #include <ion/keyboard.h>
+#if ION_EVENTS_JOURNAL
 #include <string.h>
+#endif
 
 namespace Ion {
 namespace Events {
 
 class Event {
 public:
-  constexpr static Event PlainKey(Keyboard::Key k) { return Event((int)k); }
-  constexpr static Event ShiftKey(Keyboard::Key k) { return Event(k_shiftEventsOffset+(int)k); }
-  constexpr static Event AlphaKey(Keyboard::Key k) { return Event(k_alphaEventsOffset+(int)k); }
-  constexpr static Event ShiftAlphaKey(Keyboard::Key k) { return Event(k_shiftAlphaEventsOffset+(int)k); }
-  constexpr static Event Special(int i) { return Event(k_specialEventsOffset+i); }
-
-  constexpr Event() : m_id(k_specialEventsOffset){} // Return Ion::Event::None by default
-  constexpr Event(int i) : m_id(i){} // TODO: Assert here that i>=0 && i<255
-
-  constexpr explicit operator uint8_t() const { return m_id; }
-#ifndef NDEBUG
-  const char * name() const;
-#endif
-  Event(Keyboard::Key key, bool shift, bool alpha, bool lock);
-
-  bool operator==(const Event & other) const {
-    return (m_id == other.m_id);
-  }
-  bool operator!=(const Event & other) const {
-    return (m_id != other.m_id);
-  }
-  const char * text() const;
-  // Return the length of the copied text (and not the size)
-  bool isKeyboardEvent() const { return m_id < k_specialEventsOffset; }
-  bool isSpecialEvent() const { return m_id >= k_specialEventsOffset; }
   constexpr static int k_pageSize = Keyboard::NumberOfKeys;
   constexpr static int k_plainEventsOffset = 0;
   constexpr static int k_shiftEventsOffset = 1 * k_pageSize;
   constexpr static int k_alphaEventsOffset = 2 * k_pageSize;
   constexpr static int k_shiftAlphaEventsOffset = 3 * k_pageSize;
   constexpr static int k_specialEventsOffset = 4 * k_pageSize;
+  constexpr static Event PlainKey(Keyboard::Key k) { return Event((int)k); }
+  constexpr static Event ShiftKey(Keyboard::Key k) { return Event(k_shiftEventsOffset+(int)k); }
+  constexpr static Event AlphaKey(Keyboard::Key k) { return Event(k_alphaEventsOffset+(int)k); }
+  constexpr static Event ShiftAlphaKey(Keyboard::Key k) { return Event(k_shiftAlphaEventsOffset+(int)k); }
+  constexpr static Event Special(int i) { return Event(k_specialEventsOffset+i); }
+
+  // Return Ion::Event::None by default
+  constexpr Event() : m_id(k_specialEventsOffset) {}
+  constexpr Event(int i) : m_id(i) { assert(static_cast<int>(m_id) == i); }
+  constexpr explicit operator uint8_t() const { return m_id; }
+
+  Event(Keyboard::Key key, bool shift, bool alpha, bool lock);
+
+  bool operator==(const Event & other) const { return (m_id == other.m_id); }
+  bool operator!=(const Event & other) const { return (m_id != other.m_id); }
+  // Return the length of the copied text (and not the size)
+  bool isKeyboardEvent() const { return m_id < k_specialEventsOffset; }
+  bool isSpecialEvent() const { return m_id >= k_specialEventsOffset; }
+  const char * text() const;
+#ifndef NDEBUG
+  const char * name() const;
+#endif
+
 private:
   const char * defaultText() const;
   uint8_t m_id;
 };
-
-enum class ShiftAlphaStatus : uint8_t {
-  Default,
-  Shift,
-  Alpha,
-  ShiftAlpha,
-  AlphaLock,
-  ShiftAlphaLock,
-  NumberOfStatus
-};
-
-Event getEvent(int * timeout);
-size_t copyText(uint8_t eventId, char * buffer, size_t bufferSize);
-bool isDefined(uint8_t eventId);
 
 #if ION_EVENTS_JOURNAL
 class Journal {
@@ -76,6 +62,19 @@ void replayFrom(Journal * l);
 void logTo(Journal * l);
 #endif
 
+enum class ShiftAlphaStatus : uint8_t {
+  Default,
+  Shift,
+  Alpha,
+  ShiftAlpha,
+  AlphaLock,
+  ShiftAlphaLock,
+  NumberOfStatus
+};
+
+Event getEvent(int * timeout);
+size_t copyText(uint8_t eventId, char * buffer, size_t bufferSize);
+bool isDefined(uint8_t eventId);
 ShiftAlphaStatus shiftAlphaStatus();
 void setShiftAlphaStatus(ShiftAlphaStatus s);
 void setSpinner(bool spinner);
@@ -91,7 +90,7 @@ constexpr Event Right = Event::PlainKey(Keyboard::Key::Right);
 constexpr Event OK    = Event::PlainKey(Keyboard::Key::OK);
 constexpr Event Back  = Event::PlainKey(Keyboard::Key::Back);
 
-/* The Home event is only used on simulators, as they cannot handle preemption. */
+// The Home event is only used on simulators, as they cannot handle preemption.
 constexpr Event Home  = Event::PlainKey(Keyboard::Key::Home);
 constexpr Event OnOff = Event::PlainKey(Keyboard::Key::OnOff);
 
@@ -254,7 +253,7 @@ constexpr Event BatteryCharging = Event::Special(5);
  * associated with a key. */
 constexpr Event ExternalText = Event::Special(6);
 /* These events are used by the simulator to notify the AppsContainer that the
- * cursor must be made visible to appear on the screnshot. */
+ * cursor must be made visible to appear on the screenshot. */
 constexpr Event SaveScreenshot = Event::Special(7);
 constexpr Event CopyScreenshot = Event::Special(8);
 

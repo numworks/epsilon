@@ -428,13 +428,26 @@ constexpr ToolboxMessageTree matricesVectorsChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::Vectors, vectorsChildren),
 };
 
-constexpr ToolboxMessageTree arithmeticChildren[] = {
+constexpr ToolboxMessageTree arithmeticChildrenWithMixedFractions[] = {
   ToolboxMessageTree::Leaf(I18n::Message::GcdCommandWithArg, I18n::Message::GreatCommonDivisor),
   ToolboxMessageTree::Leaf(I18n::Message::LcmCommandWithArg, I18n::Message::LeastCommonMultiple),
   ToolboxMessageTree::Leaf(I18n::Message::FactorCommandWithArg, I18n::Message::PrimeFactorDecomposition),
   ToolboxMessageTree::Leaf(I18n::Message::MixedFractionCommandWithArg, I18n::Message::MixedFraction, false, I18n::Message::MixedFractionCommand),
   ToolboxMessageTree::Leaf(I18n::Message::RemCommandWithArg, I18n::Message::Remainder),
   ToolboxMessageTree::Leaf(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient)
+};
+
+constexpr ToolboxMessageTree arithmeticChildrenWithoutMixedFractions[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::GcdCommandWithArg, I18n::Message::GreatCommonDivisor),
+  ToolboxMessageTree::Leaf(I18n::Message::LcmCommandWithArg, I18n::Message::LeastCommonMultiple),
+  ToolboxMessageTree::Leaf(I18n::Message::FactorCommandWithArg, I18n::Message::PrimeFactorDecomposition),
+  ToolboxMessageTree::Leaf(I18n::Message::RemCommandWithArg, I18n::Message::Remainder),
+  ToolboxMessageTree::Leaf(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient)
+};
+
+constexpr ToolboxMessageTree arithmeticFork[] = {
+  ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildrenWithMixedFractions),
+  ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildrenWithoutMixedFractions)
 };
 
 constexpr ToolboxMessageTree hyperbolicTrigonometryChildren[] = {
@@ -511,7 +524,7 @@ constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitAndConstant, unitChildren),
   ToolboxMessageTree::Node(I18n::Message::MatricesAndVectors, matricesVectorsChildren),
   ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),
-  ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
+  ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticFork, true),
   ToolboxMessageTree::Node(I18n::Message::Trigonometry, trigonometryChildren),
   ToolboxMessageTree::Node(I18n::Message::DecimalNumbers, decimalNumbersChildren)
 };
@@ -671,12 +684,17 @@ int MathToolbox::controlChecksum() const {
   return static_cast<int>(Preferences::sharedPreferences()->examMode()) * I18n::NumberOfCountries + static_cast<int>(GlobalPreferences::sharedGlobalPreferences()->country());
 }
 
-int MathToolbox::indexAfterFork() const {
-    Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
-    if (unitFormat == Preferences::UnitFormat::Metric) {
+int MathToolbox::indexAfterFork(const ToolboxMessageTree * forkMessageTree) const {
+  if (forkMessageTree->childrenList() == arithmeticFork) {
+    if (Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
       return 0;
     }
-    assert(unitFormat == Preferences::UnitFormat::Imperial);
     return 1;
+  }
+  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
+  if (unitFormat == Preferences::UnitFormat::Metric) {
+    return 0;
+  }
+  assert(unitFormat == Preferences::UnitFormat::Imperial);
+  return 1;
 }
-

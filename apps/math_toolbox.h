@@ -26,7 +26,7 @@ protected:
 private:
   bool isMessageTreeDisabled(const Escher::ToolboxMessageTree * messageTree) const;
   bool displayMessageTreeDisabledPopUp(const Escher::ToolboxMessageTree * messageTree);
-  int indexAfterFork() const override;
+  int indexAfterFork(const Escher::ToolboxMessageTree * forkMessageTree) const override;
 
   Escher::ExpressionTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
   Escher::MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];

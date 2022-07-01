@@ -28,7 +28,7 @@ protected:
   virtual const ToolboxMessageTree * rootModel() const = 0;
   /* indexAfterFork is called when a fork-node is encountered to choose which
    * of its children should be selected, based on external context. */
-  virtual int indexAfterFork() const { assert(false); return 0; };
+  virtual int indexAfterFork(const ToolboxMessageTree * forkMessageTree) const { assert(false); return 0; };
   HighlightCell * leafCellAtIndex(int index) override = 0;
   MessageTableCellWithChevron * nodeCellAtIndex(int index) override = 0;
   I18n::Message subTitle() override { return m_messageTreeModel->label(); }

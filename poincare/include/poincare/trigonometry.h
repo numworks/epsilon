@@ -32,6 +32,8 @@ public:
   static Expression table(const Expression e, ExpressionNode::Type type,  const ExpressionNode::ReductionContext& reductionContext); // , Function f, bool inverse
   template <typename T> static std::complex<T> ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   template <typename T> static std::complex<T> ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit);
+private:
+static bool ExpressionIsTangentOrInverseOfTangent(const Expression & e, bool inverse);
 };
 
 }

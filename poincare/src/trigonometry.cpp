@@ -120,34 +120,31 @@ Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit, P
   return Division::Builder(PiExpressionInAngleUnit(toUnit), PiExpressionInAngleUnit(fromUnit));
 }
 
-bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
-  // We look for (sin * cos^-1)
+bool Trigonometry::ExpressionIsTangentOrInverseOfTangent(const Expression & e, bool inverse) {
+  // We look for (sin(x) * cos(x)^-1) or (sin(x)^-1 * cos(x))
   assert(ExpressionNode::Type::Sine < ExpressionNode::Type::Cosine);
+  ExpressionNode::Type numeratorType = inverse ? ExpressionNode::Type::Cosine : ExpressionNode::Type::Sine;
+  ExpressionNode::Type denominatorType = inverse ? ExpressionNode::Type::Sine : ExpressionNode::Type::Cosine;
+  int numeratorIndex = inverse ? 1 : 0; // Cos is always after sin;
+  int denominatorIndex = inverse ? 0 : 1;
   if (e.type() == ExpressionNode::Type::Multiplication
-      && e.childAtIndex(0).type() == ExpressionNode::Type::Sine
-      && e.childAtIndex(1).type() == ExpressionNode::Type::Power
-      && e.childAtIndex(1).childAtIndex(0).type() == ExpressionNode::Type::Cosine
-      && e.childAtIndex(1).childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && e.childAtIndex(1).childAtIndex(1).convert<Rational>().isMinusOne()
-      && e.childAtIndex(0).childAtIndex(0).isIdenticalTo(e.childAtIndex(1).childAtIndex(0).childAtIndex(0))) {
+    && e.childAtIndex(numeratorIndex).type() == numeratorType
+    && e.childAtIndex(denominatorIndex).type() == ExpressionNode::Type::Power
+    && e.childAtIndex(denominatorIndex).childAtIndex(0).type() == denominatorType
+    && e.childAtIndex(denominatorIndex).childAtIndex(1).type() == ExpressionNode::Type::Rational
+    && e.childAtIndex(denominatorIndex).childAtIndex(1).convert<Rational>().isMinusOne()
+    && e.childAtIndex(numeratorIndex).childAtIndex(0).isIdenticalTo(e.childAtIndex(denominatorIndex).childAtIndex(0).childAtIndex(0))) {
     return true;
   }
   return false;
 }
 
+bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
+  return ExpressionIsTangentOrInverseOfTangent(e, false);
+}
+
 bool Trigonometry::ExpressionIsEquivalentToInverseOfTangent(const Expression & e) {
-  // We look for (sin * cos^-1)
-  assert(ExpressionNode::Type::Sine < ExpressionNode::Type::Cosine);
-  if (e.type() == ExpressionNode::Type::Multiplication
-      && e.childAtIndex(1).type() == ExpressionNode::Type::Cosine
-      && e.childAtIndex(0).type() == ExpressionNode::Type::Power
-      && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Sine
-      && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()
-      && e.childAtIndex(1).childAtIndex(0).isIdenticalTo(e.childAtIndex(0).childAtIndex(0).childAtIndex(0))) {
-    return true;
-  }
-  return false;
+  return ExpressionIsTangentOrInverseOfTangent(e, true);
 }
 
 Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext) {

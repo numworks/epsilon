@@ -26,7 +26,6 @@ public:
     m_currentToken(Token(Token::Undefined)),
     m_nextToken(m_tokenizer.popToken()),
     m_pendingImplicitMultiplication(false),
-    m_symbolPlusParenthesesAreFunctions(false),
     m_waitingSlashForMixedFraction(false) {}
 
   Expression parse();
@@ -98,7 +97,6 @@ private:
   Token m_currentToken;
   Token m_nextToken;
   bool m_pendingImplicitMultiplication;
-  bool m_symbolPlusParenthesesAreFunctions;
   bool m_waitingSlashForMixedFraction;
 };
 

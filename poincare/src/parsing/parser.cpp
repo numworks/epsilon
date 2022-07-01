@@ -303,10 +303,11 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
   size_t tokenNameLength = m_nextToken.length();
   /* Right part of the RightwardsArrow are either a Symbol, a Function or units.
    * Even undefined function "plouf(x)" should be interpreted as function and
-   * not as a multiplication. */
-  m_symbolPlusParenthesesAreFunctions = true;
+   * not as a multiplication. This is done by removing the context temporarily */
+  Context * ctx = m_context;
+  m_context = nullptr;
   Expression rightHandSide = parseUntil(stoppingType);
-  m_symbolPlusParenthesesAreFunctions = false;
+  m_context = ctx;
   if (m_status != Status::Progress) {
     return;
   }
@@ -563,11 +564,13 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
   }
   bool poppedParenthesisIsSystem = false;
 
-  /* If m_symbolPlusParenthesesAreFunctions is false, check the context: if the
-   * identifier does not already exist as a function, seq or list, interpret it
-   * as a symbol, even if there are parentheses afterwards. */
+  /* Check the context: if the identifier does not already exist as a function,
+   * seq or list, interpret it as a symbol, even if there are parentheses
+   * afterwards.
+   * If there is no context, f(x) is always parsed as a function and u{n} as
+   * a sequence*/
   Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
-  if (m_context != nullptr && !m_symbolPlusParenthesesAreFunctions) {
+  if (m_context != nullptr) {
     idType = m_context->expressionTypeForIdentifier(name, length);
     if (idType != Context::SymbolAbstractType::Function && idType != Context::SymbolAbstractType::Sequence && idType != Context::SymbolAbstractType::List) {
       leftHandSide = Symbol::Builder(name, length);
@@ -575,9 +578,8 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
     }
   }
 
-  if (!m_symbolPlusParenthesesAreFunctions
-      && (idType == Context::SymbolAbstractType::Sequence
-        || (idType == Context::SymbolAbstractType::None && m_nextToken.type() == Token::LeftBrace))) {
+  if (idType == Context::SymbolAbstractType::Sequence
+        || (idType == Context::SymbolAbstractType::None && m_nextToken.type() == Token::LeftBrace)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
      * by braces, it's a sequence call. */

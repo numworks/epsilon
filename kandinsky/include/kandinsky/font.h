@@ -78,6 +78,7 @@ public:
     return RenderPalette::Gradient(textColor, backgroundColor);
   }
   KDSize glyphSize() const { return m_glyphSize; }
+  const KDFont * toItalic() const; // Return the font in italic style, or the font itself if it is already italic
 
   constexpr KDFont(size_t tableLength, const CodePointIndexPair * table, KDCoordinate glyphWidth, KDCoordinate glyphHeight, const uint16_t * glyphDataOffset, const uint8_t * data) :
     m_tableLength(tableLength), m_table(table), m_glyphSize(glyphWidth, glyphHeight), m_glyphDataOffset(glyphDataOffset), m_data(data) { }

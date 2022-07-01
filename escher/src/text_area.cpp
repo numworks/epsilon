@@ -516,13 +516,15 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
 void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, const char * text, int length, KDColor textColor, KDColor backgroundColor, const char * selectionStart, const char * selectionEnd, KDColor backgroundHighlightColor, bool isItalic) const {
   if (length < 0) {
     return;
-  } 
-  const KDFont * ItalicFont = (m_font == KDFont::LargeFont) ?  KDFont::ItalicLargeFont : KDFont::ItalicSmallFont;
-  const KDFont * usedFont = isItalic ? ItalicFont : m_font;
-  
-  
+  }
+
+  const KDFont * usedFont = m_font;
+  if (isItalic) {
+    usedFont = m_font->toItalic();
+  }
+
   KDSize glyphSize = usedFont->glyphSize();
-  
+
   bool drawSelection = selectionStart != nullptr && selectionEnd > text && selectionStart < text + length;
 
   KDPoint nextPoint = ctx->drawString(
@@ -563,7 +565,7 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(
     /* We take into account the space required to draw a cursor at the end of
      * line by adding glyphSize.width() to the width. */
-    span.width() + m_font->glyphSize().width() + 4,
+    span.width() + m_font->glyphSize().width(),
     span.height()
   );
 }

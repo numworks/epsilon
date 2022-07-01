@@ -41,6 +41,16 @@ KDSize KDFont::stringSizeUntil(const char * text, const char * limit) const {
   return stringSize;
 }
 
+const KDFont * KDFont::toItalic() const {
+  if (this == KDFont::LargeFont) {
+    return KDFont::ItalicLargeFont;
+  } else if (this == KDFont::SmallFont) {
+    return KDFont::ItalicSmallFont;
+  }
+
+  return this;
+}
+
 void KDFont::setGlyphGrayscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const {
   fetchGrayscaleGlyphAtIndex(indexForCodePoint(codePoint), glyphBuffer->grayscaleBuffer());
 }

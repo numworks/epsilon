@@ -59,6 +59,7 @@ endif
 
 ifeq ("$(PLATFORM)", "device")
   SFLAGS += -DPLATFORM_DEVICE
+  ESCHER_LOG_EVENTS_NAME = 0
 endif
 
 # Host detection

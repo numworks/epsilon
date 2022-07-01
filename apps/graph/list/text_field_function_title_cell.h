@@ -11,7 +11,7 @@ class ListController;
 
 class TextFieldFunctionTitleCell : public Shared::FunctionTitleCell, public Responder {
 public:
-  TextFieldFunctionTitleCell(ListController * listController, Orientation orientation = Orientation::VerticalIndicator, const KDFont * font = KDFont::LargeFont);
+  TextFieldFunctionTitleCell(ListController * listController, Orientation orientation = Orientation::VerticalIndicator, const KDFont * font = KDFont::ItalicLargeFont);
   TextField * textField() { return &m_textField; }
   void setEditing(bool editing);
   bool isEditing() const;

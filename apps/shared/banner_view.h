@@ -12,7 +12,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   KDCoordinate minimalHeightForOptimalDisplayGivenWidth(KDCoordinate width) const;
   void reload() { layoutSubviews(); }
-  static constexpr const KDFont * Font() { return KDFont::SmallFont; }
+  static constexpr const KDFont * Font() { return KDFont::ItalicSmallFont; }
   static constexpr KDColor TextColor() { return Palette::PrimaryText; }
   static constexpr KDColor BackgroundColor() { return Palette::SubMenuBackground; }
 private:

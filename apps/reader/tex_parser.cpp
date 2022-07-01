@@ -5,7 +5,8 @@ namespace Reader {
 
   // List of available Symbols
   static constexpr char const * k_SymbolsCommands[] = {
-    "times", "div", "forall", "partial", "exists", "pm", "approx", "infty", "neq", "equiv", "leq", "geq",
+    "times", "div", "forall", "partial", "exists", "nexists", "pm", "approx", "infty", "neq", "equiv", "leq", "geq",
+    "cap", "cup", "Cap", "Cup", "subset", "nsubset", "In", "Notin",
     "leftarrow", "uparrow", "rightarrow", "downarrow","leftrightarrow", "updownarrow", "Leftarrow", "Uparrow", "Rightarrow", "Downarrow",
     "nwarrow", "nearrow", "swarrow", "searrow", "in", "cdot", "cdots", "ldots",
     "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda",
@@ -19,7 +20,8 @@ namespace Reader {
 
   // List of the available Symbol's CodePoints in the same order of the Symbol's list
   static constexpr uint32_t const k_SymbolsCodePoints[] = {
-    0xd7, 0xf7, 0x2200, 0x2202, 0x2203, 0xb1, 0x2248, 0x221e, 0x2260, 0x2261, 0x2264, 0x2265,
+    0xd7, 0xf7, 0x2200, 0x2202, 0x2203, 0x2204, 0xb1, 0x2248, 0x221e, 0x2260, 0x2261, 0x2264, 0x2265,
+    0x2229, 0x222a, 0x22c2, 0x22c3, 0x2282, 0x2284, 0x2208, 0x2209,
     0x2190, 0x2191, 0x2192, 0x2193, 0x2194, 0x2195, 0x21d0, 0x21d1, 0x21d2, 0x21d3,
     0x2196, 0x2197, 0x2198, 0x2199, 0x454, 0xb7, 0x2505, 0x2026,
     0x391, 0x392, 0x393, 0x394, 0x395, 0x396, 0x397, 0x398, 0x399, 0x39a, 0x39b,
@@ -225,7 +227,18 @@ Layout TexParser::popCommand() {
       return popSumCommand();
     }
   }
-
+  if (strncmp(k_overlineCommand, m_text, strlen(k_overlineCommand)) == 0) {
+    if (isCommandEnded(*(m_text + strlen(k_overlineCommand)))) {
+      m_text += strlen(k_overlineCommand);
+      return popOverlineCommand();
+    }
+  }
+  if (strncmp(k_intsetCommand, m_text, strlen(k_intsetCommand)) == 0) {
+    if (isCommandEnded(*(m_text + strlen(k_intsetCommand)))) {
+      m_text += strlen(k_intsetCommand);
+      return popIntsetCommand();
+    }
+  }
   for (int i = 0; i < k_NumberOfSymbols; i++) {
     if (strncmp(k_SymbolsCommands[i], m_text, strlen(k_SymbolsCommands[i])) == 0) {
       if (isCommandEnded(*(m_text + strlen(k_SymbolsCommands[i])))) {

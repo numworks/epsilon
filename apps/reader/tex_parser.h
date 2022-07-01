@@ -35,7 +35,6 @@ private:
   Layout popSumCommand();
   Layout popSpaceCommand();
 
-
   //Symbols
   Layout popSymbolCommand(int SymbolIndex);
 
@@ -60,8 +59,6 @@ private:
   static constexpr char const * k_spaceCommand = "space";
   static constexpr char const * k_sqrtCommand = "sqrt";
   static constexpr char const * k_sumCommand = "sum";
-
-  
 };
 
 }

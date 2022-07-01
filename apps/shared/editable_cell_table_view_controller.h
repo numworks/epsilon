@@ -24,7 +24,7 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
 
-  virtual bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
 protected:
   constexpr static KDCoordinate k_cellHeight = 20;

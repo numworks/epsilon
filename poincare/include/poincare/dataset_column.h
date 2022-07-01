@@ -15,7 +15,7 @@ class ConstantDatasetColumn : public DatasetColumn<T> {
 public:
   ConstantDatasetColumn(T value, int length) : m_value(value), m_length(length) {}
   T valueAtIndex(int index) const override { return m_value; }
-  virtual int length() const override { return m_length; }
+  int length() const override { return m_length; }
 private:
   T m_value;
   int m_length;

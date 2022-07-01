@@ -9,8 +9,8 @@ namespace Poincare {
 
 class PairNode : public TreeNode {
 public:
-  virtual size_t size() const override { return sizeof(PairNode); }
-  virtual int numberOfChildren() const override { return 2; }
+  size_t size() const override { return sizeof(PairNode); }
+  int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "Pair";

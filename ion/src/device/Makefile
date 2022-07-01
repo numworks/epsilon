@@ -13,7 +13,7 @@ endif
 initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
 $(call object_for,ion/src/$(PLATFORM)/kernel/drivers/kernel_header.cpp ion/src/$(PLATFORM)/userland/drivers/userland_header.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
 
-ION_DEVICE_SFLAGS += -Iion/src/$(PLATFORM)/include/$(MODEL) -Iion/src/$(PLATFORM)/shared -Iion/src/$(PLATFORM) #TODO EMILIE: remove */shared and specify shared in inclusions
+ION_DEVICE_SFLAGS += -Iion/src/$(PLATFORM)/include/$(MODEL) -Iion/src/$(PLATFORM)/shared -Iion/src/$(PLATFORM) # TODO: remove */shared and specify shared in inclusions
 ION_DEVICE_SFLAGS += -DDEVELOPMENT=$(DEVELOPMENT)
 
 IN_FACTORY ?= 0

@@ -426,7 +426,7 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
   }
 
   if (!optimizeRange) {
-    // TODO Hugo : Adapt protectedFullRangeForDisplay for functions with two curves
+    // TODO: Adapt protectedFullRangeForDisplay for functions with two curves
     protectedFullRangeForDisplay(xMin, xMax, (xMax - xMin) / (Ion::Display::Width / 4), yMin, yMax, context, false);
     return;
   }
@@ -435,7 +435,7 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
     return static_cast<const ContinuousFunction *>(auxiliary)->evaluateXYAtParameter(x, context, 0).x2();
   };
 
-  /* TODO Hugo : yRangeForDisplay currently doesn't support ContinuousFunctions
+  /* TODO: yRangeForDisplay currently doesn't support ContinuousFunctions
    * with multiple curves. For that, RangeWithRatioForDisplay should be changed
    * to handle a second evaluation. In the meantime, all ContinuousFunctions
    * having two curves are displayed orthonormal. */

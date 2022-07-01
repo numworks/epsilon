@@ -1189,7 +1189,7 @@ bool Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::
   Number tanPower = p;
   int tanIndex = i;
   int otherIndex = j;
-  //Second case: Replace cos(x)^q by tan(x)^(-q)
+  // Second case: Replace cos(x)^q by tan(x)^(-q)
   if (Number::NaturalOrder(absP, absQ) >= 0) {
     tanPower = Number::Multiplication(q, Rational::Builder(-1));
     tanIndex = j;

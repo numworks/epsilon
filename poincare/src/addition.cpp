@@ -347,9 +347,12 @@ Expression Addition::shallowReduce(const ExpressionNode::ReductionContext& reduc
   // Step 6.2: factorize sin^2+cos^2
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression baseOfSquaredCos;
+    // Find y*cos^2(x)
     if (TermHasSquaredCos(childAtIndex(i), reductionContext, baseOfSquaredCos)) {
+      // Try to find y*sin^2(x) and turn sum into y
       Expression additionWithFactorizedSumOfSquaredTrigFunction = factorizeSquaredTrigFunction(baseOfSquaredCos, reductionContext);
       if (!additionWithFactorizedSumOfSquaredTrigFunction.isUninitialized()) {
+        // If it's initialized, it means that the pattern was found
         return additionWithFactorizedSumOfSquaredTrigFunction;
       }
     }

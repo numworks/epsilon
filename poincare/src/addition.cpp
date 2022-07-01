@@ -656,8 +656,8 @@ bool Addition::TermHasSquaredTrigFunctionWithBase(const Expression & e, const Ex
 }
 
 Expression Addition::factorizeSquaredTrigFunction(Expression & baseOfTrigFunction, const ExpressionNode::ReductionContext& reductionContext) {
-  Addition totalCoefOfSine = Addition::Builder(Rational::Builder(0));
-  Addition totalCoefOfCosine = Addition::Builder(Rational::Builder(0));
+  Addition totalCoefOfSine = Addition::Builder();
+  Addition totalCoefOfCosine = Addition::Builder();
   Expression thisClone = clone();
   assert(thisClone.type() == ExpressionNode::Type::Addition);
   Addition result = static_cast<Addition &>(thisClone);
@@ -674,6 +674,9 @@ Expression Addition::factorizeSquaredTrigFunction(Expression & baseOfTrigFunctio
       result.removeChildAtIndexInPlace(i);
       i--;
     }
+  }
+  if (totalCoefOfSine.numberOfChildren() == 0 || totalCoefOfCosine.numberOfChildren() == 0) {
+    return Expression();
   }
   Expression totalCoefOfSineReduced = totalCoefOfSine.shallowReduce(reductionContext);
   Expression totalCoefOfCosineReduced = totalCoefOfCosine.shallowReduce(reductionContext);

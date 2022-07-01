@@ -25,7 +25,7 @@ jobs:
           name: epsilon-android.apk
           path: output/release/simulator/android/epsilon.apk
   n0110:
-    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
+    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4 pypng stringcase
@@ -41,7 +41,7 @@ jobs:
           name: epsilon-n0110.dfu
           path: output/release/device/n0110/epsilon.dfu
   n0120:
-    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
+    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
       - run: pip3 install lz4 pypng stringcase
@@ -76,7 +76,7 @@ jobs:
           name: epsilon-windows.exe
           path: output/release/simulator/windows/epsilon.exe
   web:
-    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest'  }}
+    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-emscripten@v1
         with:

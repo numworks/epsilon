@@ -8,7 +8,7 @@
 namespace Ion {
 namespace Events {
 
-extern const EventData s_dataForEvent[4*Event::PageSize];
+extern const EventData s_dataForEvent[Event::k_specialEventsOffset];
 
 #ifndef NDEBUG
 extern const char * const s_nameForEvent[255];

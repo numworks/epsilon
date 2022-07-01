@@ -10,12 +10,12 @@ namespace Events {
 class Event {
 public:
   constexpr static Event PlainKey(Keyboard::Key k) { return Event((int)k); }
-  constexpr static Event ShiftKey(Keyboard::Key k) { return Event(PageSize+(int)k); }
-  constexpr static Event AlphaKey(Keyboard::Key k) { return Event(2*PageSize+(int)k); }
-  constexpr static Event ShiftAlphaKey(Keyboard::Key k) { return Event(3*PageSize+(int)k); }
-  constexpr static Event Special(int i) { return Event(4*PageSize+i); }
+  constexpr static Event ShiftKey(Keyboard::Key k) { return Event(k_shiftEventsOffset+(int)k); }
+  constexpr static Event AlphaKey(Keyboard::Key k) { return Event(k_alphaEventsOffset+(int)k); }
+  constexpr static Event ShiftAlphaKey(Keyboard::Key k) { return Event(k_shiftAlphaEventsOffset+(int)k); }
+  constexpr static Event Special(int i) { return Event(k_specialEventsOffset+i); }
 
-  constexpr Event() : m_id(4*PageSize){} // Return Ion::Event::None by default
+  constexpr Event() : m_id(k_specialEventsOffset){} // Return Ion::Event::None by default
   constexpr Event(int i) : m_id(i){} // TODO: Assert here that i>=0 && i<255
 
   constexpr explicit operator uint8_t() const { return m_id; }
@@ -32,9 +32,14 @@ public:
   }
   const char * text() const;
   // Return the length of the copied text (and not the size)
-  bool isKeyboardEvent() const { return m_id < 4*PageSize; }
-  bool isSpecialEvent() const { return m_id >= 4*PageSize; }
-  constexpr static int PageSize = Keyboard::NumberOfKeys;
+  bool isKeyboardEvent() const { return m_id < k_specialEventsOffset; }
+  bool isSpecialEvent() const { return m_id >= k_specialEventsOffset; }
+  constexpr static int k_pageSize = Keyboard::NumberOfKeys;
+  constexpr static int k_plainEventsOffset = 0;
+  constexpr static int k_shiftEventsOffset = 1 * k_pageSize;
+  constexpr static int k_alphaEventsOffset = 2 * k_pageSize;
+  constexpr static int k_shiftAlphaEventsOffset = 3 * k_pageSize;
+  constexpr static int k_specialEventsOffset = 4 * k_pageSize;
 private:
   const char * defaultText() const;
   uint8_t m_id;

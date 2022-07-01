@@ -32,20 +32,20 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
   assert((int)key >= 0 && (int)key < Keyboard::NumberOfKeys);
   m_id = Events::None.m_id;
 
-  int noFallbackOffsets[] = {0};
-  int shiftFallbackOffsets[] = {PageSize, 0};
-  int alphaFallbackOffsets[] = {2*PageSize, 0};
-  int shiftAlphaFallbackOffsets[] = {3*PageSize, 2*PageSize, 0};
+  int noFallbackOffsets[] = {k_plainEventsOffset};
+  int shiftFallbackOffsets[] = {k_shiftEventsOffset, k_plainEventsOffset};
+  int alphaFallbackOffsets[] = {k_alphaEventsOffset, k_plainEventsOffset};
+  int shiftAlphaFallbackOffsets[] = {k_shiftAlphaEventsOffset, k_alphaEventsOffset, k_plainEventsOffset};
 
   int * fallbackOffsets[] = {noFallbackOffsets, shiftFallbackOffsets, alphaFallbackOffsets, shiftAlphaFallbackOffsets};
 
-  int * fallbackOffset = fallbackOffsets[shift+2*alpha];
-  int i=0;
-  int offset = 0;
+  int * fallbackOffset = fallbackOffsets[shift + 2 * alpha];
+  int i = 0;
+  int offset = k_plainEventsOffset;
   do {
     offset = fallbackOffset[i++];
     m_id = offset + (int)key;
-  } while (offset > 0 && !s_dataForEvent[m_id].isDefined() && m_id < 4*PageSize);
+  } while (offset > k_plainEventsOffset && !s_dataForEvent[m_id].isDefined() && m_id < k_specialEventsOffset);
 
   //If we press percent in alphalock, change to backspace
   if (m_id == static_cast<uint8_t>(Ion::Events::Percent) && lock){
@@ -57,7 +57,7 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
 const char * Event::defaultText() const {
   /* As the ExternalText event is only available on the simulator, we save a
    * comparison by not handling it on the device. */
-  if (m_id >= 4*PageSize) {
+  if (m_id >= k_specialEventsOffset) {
     return nullptr;
   }
   return s_dataForEvent[m_id].text();

@@ -9,7 +9,7 @@ namespace Events {
 #define T(x) EventData::Text(x)
 
 static_assert('\x11' == UCodePointEmpty, "Unicode error");
-const EventData s_dataForEvent[4 * Event::PageSize] = {
+const EventData s_dataForEvent[Event::k_specialEventsOffset] = {
 // Plain
   TL(), TL(), TL(), TL(), TL(), TL(),
   TL(), TL(), U(), U(),  U(),  U(),

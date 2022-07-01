@@ -30,7 +30,7 @@ ion_device_dfu_deps_src += $(addprefix ion/src/device/shared/drivers/, \
 ion_device_dfu_binary_src += $(ion_device_usb_src) $(ion_device_dfu_deps_src)
 
 # TODO: this could be factorized with ion/src/device/Makefile defining the same flags for the target being built
-$(call flavored_object_for,$(ion_device_dfu_binary_src),n0100): SFLAGS += -Iion/src/device/$(FIRMWARE_COMPONENT) -Iion/src/$(PLATFORM)/include/$(MODEL) -Iion/src/device/shared -Iion/src/device #TODO EMILIE: remove */shared and specify shared in inclusions
+$(call flavored_object_for,$(ion_device_dfu_binary_src),n0100): SFLAGS += -Iion/src/device/$(FIRMWARE_COMPONENT) -Iion/src/$(PLATFORM)/include/$(MODEL) -Iion/src/device/shared -Iion/src/device # TODO: remove */shared and specify shared in inclusions
 
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT = ion/src/device/shared/usb/dfu.ld
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDFLAGS += -Lion/src/device/shared

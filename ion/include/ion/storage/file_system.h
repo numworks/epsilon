@@ -48,7 +48,7 @@ public:
   int numberOfRecordsWithExtension(const char * extension) {
     return numberOfRecordsWithFilter(extension, ExtensionOnlyFilter);
   }
-  // TODO Hugo : Maybe handle a "hidden" status at Record level instead ?
+  // NOTE: We could handle the "hidden" status at Record level instead of this
   int numberOfRecordsStartingWithout(const char nonStartingChar, const char * extension) {
     return numberOfRecordsWithFilter(extension, FirstCharFilter, &nonStartingChar);
   }

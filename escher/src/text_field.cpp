@@ -388,8 +388,8 @@ void TextField::removePreviousGlyphIfRepetition(bool defaultXNTHasChanged) {
     bool success = removePreviousGlyph();
     assert(success);
     (void) success; // Silence compilation warnings
-    /* TODO Hugo : Handle cycling with non-default layouts.
-     * TODO Hugo : Fix issues with repetition over a syntax error dismissal */
+    /* TODO: Handle cycling with non-default layouts and Fix issues with
+     * repetition over a syntax error dismissal */
   }
 }
 

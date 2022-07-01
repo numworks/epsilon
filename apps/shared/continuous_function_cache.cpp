@@ -98,8 +98,8 @@ void ContinuousFunctionCache::setRange(ContinuousFunction * function, float tMin
 
 int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * function, float t, int curveIndex) const {
   if (curveIndex != 0) {
-    /* TODO Hugo : For now, second curves are not cached. It may (or not) be
-     * slightly better to cache both, but it should also be handled in pan. */
+    /* TODO: For now, second curves are not cached. It may (or not) be slightly
+     * better to cache both, but it should also be handled in pan. */
     return -1;
   }
   float delta = (t - m_tMin) / m_tStep;
@@ -145,7 +145,7 @@ void ContinuousFunctionCache::pan(ContinuousFunction * function, float newTMin) 
     clear();
     return;
   }
-  /* TODO Hugo : Instead of invalidating the entire cache when
+  /* TODO : Instead of invalidating the entire cache when
    * std::fabs(dT - dI) > k_cacheHitTolerance
    * Incrementing m_tMin by dI * m_tStep could preserve most of computed values
    * and increase performances as we could still have many cache hits.

@@ -2,6 +2,7 @@
 #define POINCARE_UNIT_H
 
 #include <poincare/expression.h>
+#include <poincare/name.h>
 
 namespace Poincare {
 
@@ -97,7 +98,7 @@ public:
     constexpr static int k_numberOfDimensions = 24;
     static const Representative * const * DefaultRepresentatives();
     static const Representative * RepresentativeForDimension(Vector<int> vector);
-    constexpr Representative(const char * rootSymbol, const char * ratioExpression, double ratio, Prefixable inputPrefixable, Prefixable outputPrefixable) :
+    constexpr Representative(Name rootSymbol, const char * ratioExpression, double ratio, Prefixable inputPrefixable, Prefixable outputPrefixable) :
       m_rootSymbol(rootSymbol),
       m_ratioExpression(ratioExpression),
       m_inputPrefixable(inputPrefixable),
@@ -119,7 +120,7 @@ public:
     virtual bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const { return false; }
     virtual int setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const { return 0; }
 
-    const char * rootSymbol() const { return m_rootSymbol; }
+    Name rootSymbol() const { return m_rootSymbol; }
     double ratio() const { return m_ratio; }
     bool isInputPrefixable() const { return m_inputPrefixable != Prefixable::None; }
     bool isOutputPrefixable() const { return m_outputPrefixable != Prefixable::None; }
@@ -135,7 +136,7 @@ public:
 
     Expression ratioExpressionReduced(const ExpressionNode::ReductionContext& reductionContext) const { return Expression::Parse(m_ratioExpression, nullptr).deepReduce(reductionContext); }
 
-    const char * m_rootSymbol;
+    Name m_rootSymbol;
     /* m_ratio is the factor used to convert a unit made of the representative
      * and its base prefix into base SI units.
      * ex : m_ratio for Liter is 1e-3 (as 1_L = 1e-3_m).
@@ -617,7 +618,7 @@ public:
   };
   typedef UnitNode::VolumeRepresentative VolumeRepresentative;
   constexpr static const VolumeRepresentative k_volumeRepresentatives[] = {
-    VolumeRepresentative("L", DEFINE_TWICE(0.001), Prefixable::All, Prefixable::Negative),
+    VolumeRepresentative("\01\02L\00\01\02l\00", DEFINE_TWICE(0.001), Prefixable::All, Prefixable::Negative),
     VolumeRepresentative("tsp", DEFINE_TWICE(0.00000492892159375), Prefixable::None, Prefixable::None),
     VolumeRepresentative("tbsp", DEFINE_TWICE(3*0.00000492892159375), Prefixable::None, Prefixable::None),
     VolumeRepresentative("floz", DEFINE_TWICE(0.0000295735295625), Prefixable::None, Prefixable::None),
@@ -677,7 +678,7 @@ public:
   constexpr static int k_acreRepresentativeIndex = 1;
   static_assert(strings_equal(k_surfaceRepresentatives[k_acreRepresentativeIndex].m_rootSymbol, "acre"), "Index for the Acre Representative is incorrect.");
   constexpr static int k_literRepresentativeIndex = 0;
-  static_assert(strings_equal(k_volumeRepresentatives[k_literRepresentativeIndex].m_rootSymbol, "L"), "Index for the Liter Representative is incorrect.");
+  static_assert(strings_equal(k_volumeRepresentatives[k_literRepresentativeIndex].m_rootSymbol, "\01\02L\00\01\02l\00"), "Index for the Liter Representative is incorrect.");
   constexpr static int k_cupRepresentativeIndex = 4;
   static_assert(strings_equal(k_volumeRepresentatives[k_cupRepresentativeIndex].m_rootSymbol, "cup"), "Index for the Cup Representative is incorrect.");
   constexpr static int k_pintRepresentativeIndex = 5;

@@ -290,7 +290,7 @@ int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Pre
   buffer += length;
   bufferSize -= length;
   assert(bufferSize >= 0);
-  length += std::min<int>(strlcpy(buffer, m_rootSymbol, bufferSize), bufferSize - 1);
+  length += std::min<int>(strlcpy(buffer, m_rootSymbol.mainName(), bufferSize), bufferSize - 1);
   return length;
 }
 
@@ -300,11 +300,12 @@ bool UnitNode::Representative::canParseWithEquivalents(const char * symbol, size
     return false;
   }
   for (int i = 0; i < numberOfRepresentatives(); i++) {
-    const char * rootSymbol = (candidate + i)->rootSymbol();
-    size_t rootSymbolLength = strlen(rootSymbol);
+    Name rootSymbol = (candidate + i)->rootSymbol();
+    // WARNING: This algo only works if all aliases have same length.
+    size_t rootSymbolLength = strlen(rootSymbol.mainName());
     int potentialPrefixLength = length - rootSymbolLength;
     if (potentialPrefixLength >= 0
-     && strncmp(rootSymbol, symbol + potentialPrefixLength, rootSymbolLength) == 0
+     && rootSymbol.isEquivalentTo(symbol + potentialPrefixLength, rootSymbolLength)
      && candidate[i].canParse(symbol, potentialPrefixLength, prefix)) {
       *representative = (candidate + i);
       return true;

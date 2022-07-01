@@ -43,6 +43,7 @@ public:
     Trigonometry,
     Unit,
     Matrix,
+    Vector,
     Complex
   };
   static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }

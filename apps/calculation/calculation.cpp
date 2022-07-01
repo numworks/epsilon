@@ -5,6 +5,7 @@
 #include "../exam_mode_configuration.h"
 #include "app.h"
 #include <poincare/exception_checkpoint.h>
+#include <poincare/matrix.h>
 #include <poincare/undefined.h>
 #include <poincare/unit.h>
 #include <poincare/nonreal.h>
@@ -272,6 +273,9 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType() 
     return AdditionalInformationType::Complex;
   }
   if (o.type() == ExpressionNode::Type::Matrix) {
+    if (static_cast<const Matrix&>(o).vectorType() != Array::VectorType::None) {
+      return AdditionalInformationType::Vector;
+    }
     return AdditionalInformationType::Matrix;
   }
   return AdditionalInformationType::None;

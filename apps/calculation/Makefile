@@ -24,6 +24,7 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/trigonometry_list_controller.cpp \
   additional_outputs/trigonometry_model.cpp \
   additional_outputs/unit_list_controller.cpp \
+  additional_outputs/vector_list_controller.cpp \
   app.cpp \
   edit_expression_controller.cpp \
   expression_field.cpp \

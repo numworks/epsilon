@@ -975,8 +975,8 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
 }
 
 static void clipBarycentricCoordinatesBetweenBounds(float & start, float & end, const KDCoordinate * bounds, const float p1f, const float p2f) {
-  static constexpr int lower = 0;
-  static constexpr int upper = 1;
+  constexpr static int lower = 0;
+  constexpr static int upper = 1;
   if (p1f == p2f) {
     if (p1f < bounds[lower] || bounds[upper] < p1f) {
       start = 1;

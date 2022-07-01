@@ -79,7 +79,7 @@ public:
   Expression dot(Matrix * b, const ExpressionNode::ReductionContext& reductionContext) const;
   Matrix cross(Matrix * b, const ExpressionNode::ReductionContext& reductionContext) const;
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
-  static constexpr int k_maxNumberOfCoefficients = 100;
+  constexpr static int k_maxNumberOfCoefficients = 100;
 
   // Expression
   Expression shallowReduce(Context * context);

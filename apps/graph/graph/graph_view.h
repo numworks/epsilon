@@ -18,7 +18,7 @@ public:
    * 10.0938275501223 which are hopefully rare enough.
    * TODO: The drawCurve algorithm should use the derivative function to know
    * how fast the function moves... */
-  static constexpr float k_graphStepDenominator = 10.0938275501223f;
+  constexpr static float k_graphStepDenominator = 10.0938275501223f;
 
   GraphView(Shared::InteractiveCurveViewRange * graphRange,
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);

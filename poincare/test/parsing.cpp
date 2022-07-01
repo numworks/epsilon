@@ -342,7 +342,7 @@ QUIZ_CASE(poincare_parsing_units) {
     const Unit::Representative * dim = Unit::Representative::DefaultRepresentatives()[i];
     for (int j = 0; j < dim->numberOfRepresentatives(); j++) {
       const Unit::Representative * rep = dim->representativesOfSameDimension() + j;
-      static constexpr size_t bufferSize = 10;
+      constexpr static size_t bufferSize = 10;
       char buffer[bufferSize];
       Unit::Builder(rep, Unit::Prefix::EmptyPrefix()).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
       Expression unit = parse_expression(buffer, nullptr, false);

@@ -11,7 +11,7 @@ namespace Poincare {
 template<int T>
 class LogarithmNode final : public ExpressionNode {
 public:
-  static constexpr char k_functionName[] = "log";
+  constexpr static char k_functionName[] = "log";
 
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }

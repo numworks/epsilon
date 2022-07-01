@@ -12,7 +12,7 @@ namespace Escher {
 
 class TextArea : public TextInput, public InputEventHandler {
 public:
-  static constexpr int k_indentationSpaces = 2;
+  constexpr static int k_indentationSpaces = 2;
 
   TextArea(Responder * parentResponder, View * contentView, const KDFont * font = KDFont::LargeFont);
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextAreaDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }

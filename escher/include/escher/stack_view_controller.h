@@ -39,7 +39,7 @@ public:
   void setupHeadersBorderOverlaping(bool headersOverlapHeaders = true, bool headersOverlapContent = false, KDColor headersContentBorderColor = Palette::GrayBright) {
     m_view.setupHeadersBorderOverlaping(headersOverlapHeaders, headersOverlapContent, headersContentBorderColor);
   }
-  static constexpr uint8_t k_maxNumberOfChildren = k_MaxNumberOfStacks;
+  constexpr static uint8_t k_maxNumberOfChildren = k_MaxNumberOfStacks;
 private:
   class ControllerView : public View {
   public:

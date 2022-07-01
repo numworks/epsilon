@@ -20,10 +20,10 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
-  static constexpr int k_numberOfDeactivationMessageLines = 3;
+  constexpr static int k_numberOfDeactivationMessageLines = 3;
   int initialSelectedRow() const override;
   Poincare::Preferences::ExamMode examMode();
-  static constexpr int k_maxNumberOfCells = 4;
+  constexpr static int k_maxNumberOfCells = 4;
   SelectableViewWithMessages m_contentView;
   Escher::MessageTableCell m_cell[k_maxNumberOfCells];
 };

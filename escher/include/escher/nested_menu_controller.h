@@ -43,8 +43,8 @@ protected:
 
   // A state is needed for all StackView children but the first
   constexpr static int k_maxModelTreeDepth = StackViewController::k_maxNumberOfChildren-1;
-  static constexpr int k_leafCellType = 0;
-  static constexpr int k_nodeCellType = 1;
+  constexpr static int k_leafCellType = 0;
+  constexpr static int k_nodeCellType = 1;
   int stackDepth() { return m_stack.length(); }
   virtual bool selectSubMenu(int selectedRow);
   virtual bool returnToPreviousMenu();
@@ -104,7 +104,7 @@ private:
   Ion::RingBuffer<StackState, k_maxModelTreeDepth> m_stack;
   StackState m_lastState;
   int m_savedChecksum;
-  static constexpr int k_nestedMenuStackDepth = 1;
+  constexpr static int k_nestedMenuStackDepth = 1;
 };
 
 }

@@ -13,9 +13,9 @@ using namespace Regs;
 #warning Do same computation than for N0120?
 constexpr uint16_t PWMPeriod = 40000;
 
-static constexpr int RedChannel = 2;
-static constexpr int GreenChannel = 4;
-static constexpr int BlueChannel = 3;
+constexpr static int RedChannel = 2;
+constexpr static int GreenChannel = 4;
+constexpr static int BlueChannel = 3;
 
 constexpr static AFGPIOPin RGBPins[] = {
   AFGPIOPin(GPIOC, 7,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::Low), // RED

@@ -61,7 +61,7 @@ const UTF8Helper::TextPair * Clipboard::PythonTextPairs() {
    * for other apps. Therefore if we want to convert "3**3" into "3^3", the
    * function must look for "**" paterns before "*". Otherwise, we will get
    * "3××3". */
-  static constexpr UTF8Helper::TextPair k_pythonTextPairs[k_numberOfPythonTextPairs] = {
+  constexpr static UTF8Helper::TextPair k_pythonTextPairs[k_numberOfPythonTextPairs] = {
     UTF8Helper::TextPair("√(\x11)", "sqrt(\x11)", true),
     UTF8Helper::TextPair("e^(\x11)", "exp(\x11)", true),
     UTF8Helper::TextPair("log(\x11)", "log10(\x11)", true),

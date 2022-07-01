@@ -12,10 +12,10 @@ public:
   /* These margins are obtained from instance methods of the various derived
    * class of SimpleInteractiveCurveViewController. As we cannot create an
    * instance of this class here, we define those directly. */
-  static constexpr float k_topMargin = 0.068f;
-  static constexpr float k_bottomMargin = 0.132948f;
-  static constexpr float k_leftMargin = 0.04f;
-  static constexpr float k_rightMargin = 0.04f;
+  constexpr static float k_topMargin = 0.068f;
+  constexpr static float k_bottomMargin = 0.132948f;
+  constexpr static float k_leftMargin = 0.04f;
+  constexpr static float k_rightMargin = 0.04f;
 
   static float Ratio() { return InteractiveCurveViewRange::NormalYXRatio() / (1.f + k_topMargin + k_bottomMargin); }
 

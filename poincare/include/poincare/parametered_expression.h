@@ -33,8 +33,8 @@ class ParameteredExpression : public Expression {
   friend class ParameteredExpressionNode;
 public:
   // ParameteredExpression
-  static constexpr int ParameteredChildIndex() { return 0; }
-  static constexpr int ParameterChildIndex() { return 1; }
+  constexpr static int ParameteredChildIndex() { return 0; }
+  constexpr static int ParameterChildIndex() { return 1; }
 
   static bool ParameterText(const char * text, const char * * parameterText, size_t * parameterLength);
 

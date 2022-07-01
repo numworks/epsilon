@@ -39,8 +39,8 @@ public:
   static Product Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Product, ProductNode>({child0, child1, child2, child3}); }
   static Expression UntypedBuilder(Expression children);
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("product", 4, &UntypedBuilder);
-  static constexpr char k_defaultXNTChar = SumAndProduct::k_defaultXNTChar;
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("product", 4, &UntypedBuilder);
+  constexpr static char k_defaultXNTChar = SumAndProduct::k_defaultXNTChar;
 };
 
 }

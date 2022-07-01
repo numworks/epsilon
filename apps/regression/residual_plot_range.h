@@ -11,7 +11,7 @@ public:
   // Calibrate the range to respect margin and display all data
   void calibrate(double xMin, double xMax, double yMin, double yMax, KDCoordinate height, KDCoordinate bannerHeight);
 private:
-  static constexpr double k_relativeMargin = 0.1;
+  constexpr static double k_relativeMargin = 0.1;
 };
 
 }

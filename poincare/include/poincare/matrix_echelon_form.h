@@ -11,7 +11,7 @@ public:
   // TreeNode
   int numberOfChildren() const override;
   virtual bool isFormReduced() const = 0;
-  static constexpr int sNumberOfChildren = 1;
+  constexpr static int sNumberOfChildren = 1;
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

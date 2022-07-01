@@ -89,18 +89,18 @@ public:
   bool isOutOfBounds() const;
 
 private:
-  static constexpr mp_float_t k_headingScale = M_PI / 180;
+  constexpr static mp_float_t k_headingScale = M_PI / 180;
   /* The Y axis is oriented upwards in Turtle and downwards in Kandinsky, so we
    * need to invert some values, hence k_invertedYAxisCoefficient. */
-  static constexpr int k_invertedYAxisCoefficient = -1;
-  static constexpr KDCoordinate k_xOffset = Ion::Display::Width / 2;
-  static constexpr KDCoordinate k_yOffset = (Ion::Display::Height - Escher::Metric::TitleBarHeight) / 2;
-  static constexpr uint8_t k_defaultSpeed = 8;
-  static constexpr uint8_t k_maxSpeed = 10;
-  static constexpr KDColor k_defaultColor = KDColorBlack;
-  static constexpr uint8_t k_defaultPenSize = 1;
-  static constexpr const KDFont * k_font = KDFont::LargeFont;
-  static constexpr mp_float_t k_maxPosition = KDCOORDINATE_MAX * 0.75f;
+  constexpr static int k_invertedYAxisCoefficient = -1;
+  constexpr static KDCoordinate k_xOffset = Ion::Display::Width / 2;
+  constexpr static KDCoordinate k_yOffset = (Ion::Display::Height - Escher::Metric::TitleBarHeight) / 2;
+  constexpr static uint8_t k_defaultSpeed = 8;
+  constexpr static uint8_t k_maxSpeed = 10;
+  constexpr static KDColor k_defaultColor = KDColorBlack;
+  constexpr static uint8_t k_defaultPenSize = 1;
+  constexpr static const KDFont * k_font = KDFont::LargeFont;
+  constexpr static mp_float_t k_maxPosition = KDCOORDINATE_MAX * 0.75f;
 
   enum class PawType : uint8_t {
     FrontRight = 0,
@@ -166,9 +166,9 @@ private:
    * emulator than on the calculator. We thus decided to sleep less often on the
    * emscripten platform. */
 #if __EMSCRIPTEN__
-  static constexpr uint16_t k_mileageLimit = 10000;
+  constexpr static uint16_t k_mileageLimit = 10000;
 #else
-  static constexpr uint16_t k_mileageLimit = 1000;
+  constexpr static uint16_t k_mileageLimit = 1000;
 #endif
 
   uint16_t m_mileage;

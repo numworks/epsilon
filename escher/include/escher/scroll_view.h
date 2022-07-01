@@ -62,7 +62,7 @@ public:
   private:
     ScrollViewVerticalBar m_verticalBar;
     ScrollViewHorizontalBar m_horizontalBar;
-    static constexpr KDCoordinate k_barsFrameBreadth = Metric::CommonRightMargin;
+    constexpr static KDCoordinate k_barsFrameBreadth = Metric::CommonRightMargin;
   };
 
   class ArrowDecorator : public Decorator {

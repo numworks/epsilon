@@ -18,7 +18,7 @@ public:
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double p) const override;
 private:
-  static constexpr double k_maxK = 31500.0;
+  constexpr static double k_maxK = 31500.0;
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {
     return ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::DegreesOfFreedomDefinition};
   }

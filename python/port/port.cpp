@@ -210,7 +210,7 @@ void MicroPython::collectRootsAtAddress(char * address, int byteLength) {
 }
 
 KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode){
-  static constexpr int maxColorIntensity = static_cast<int>(Mode::MaxIntensity255);
+  constexpr static int maxColorIntensity = static_cast<int>(Mode::MaxIntensity255);
   if (mp_obj_is_str(input)) {
     size_t l;
     const char * color = mp_obj_str_get_data(input, &l);

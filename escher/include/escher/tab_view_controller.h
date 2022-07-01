@@ -53,7 +53,7 @@ private:
 
   ContentView m_view;
 
-  static constexpr uint8_t k_maxNumberOfChildren = 4;
+  constexpr static uint8_t k_maxNumberOfChildren = 4;
   ViewController * m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   TabViewDataSource * m_dataSource;

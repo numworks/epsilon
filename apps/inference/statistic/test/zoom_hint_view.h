@@ -19,7 +19,7 @@ private:
   constexpr static int k_numberOfTokens = 2;
   constexpr static KDCoordinate k_tokenWidth = 10;
   constexpr static KDCoordinate k_legendHeight = 2 * Escher::Metric::BannerTextMargin + 14; // k_legendFont->glyphSize().height() = 14
-  static constexpr KDColor BackgroundColor() { return Shared::BannerView::BackgroundColor(); }
+  constexpr static KDColor BackgroundColor() { return Shared::BannerView::BackgroundColor(); }
   void layoutSubviews(bool force = false) override;
   int numberOfSubviews() const override;
   Escher::View * subviewAtIndex(int index) override;

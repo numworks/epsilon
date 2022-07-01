@@ -18,7 +18,7 @@ public:
 
   void setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) override;
 private:
-  static constexpr char k_symbol[] = "z";
+  constexpr static char k_symbol[] = "z";
   const char * symbol() const override { return k_symbol; }
   Escher::HighlightCell * illustrationCell() override { return &m_complexGraphCell; }
   ComplexGraphCell m_complexGraphCell;

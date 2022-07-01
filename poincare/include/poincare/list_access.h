@@ -10,7 +10,7 @@ namespace Poincare {
 template<int U>
 class ListAccessNode : public ExpressionNode {
 public:
-  static constexpr int k_listChildIndex = U;
+  constexpr static int k_listChildIndex = U;
 
   size_t size() const override { return sizeof(ListAccessNode); }
   int numberOfChildren() const override { return U + 1; }

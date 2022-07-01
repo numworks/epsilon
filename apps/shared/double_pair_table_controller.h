@@ -40,9 +40,9 @@ public:
 
 protected:
   constexpr static int k_maxNumberOfDisplayableRows = 11;
-  static constexpr KDCoordinate k_cellHeight = 20;
-  static constexpr KDCoordinate k_margin = 8;
-  static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
+  constexpr static KDCoordinate k_cellHeight = 20;
+  constexpr static KDCoordinate k_margin = 8;
+  constexpr static KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 
   virtual DoublePairStore * store() const = 0;
   Escher::Responder * tabController() const override { return (parentResponder()->parentResponder()->parentResponder()); }

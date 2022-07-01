@@ -50,8 +50,8 @@ public:
   Derivative(const DerivativeNode * n) : ParameteredExpression(n) {}
   static Derivative Builder(Expression child0, Symbol child1, Expression child2) { return TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>({child0, child1, child2}); }
   static Expression UntypedBuilder(Expression children);
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
-  static constexpr char k_defaultXNTChar = 'x';
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
+  constexpr static char k_defaultXNTChar = 'x';
   static void DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, const ExpressionNode::ReductionContext& reductionContext);
 
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);

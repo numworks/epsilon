@@ -5,7 +5,7 @@ namespace Ion {
 namespace Device {
 namespace Config {
 
-static constexpr const char * fccIdText = "2ALWP-N0110";
+constexpr static const char * fccIdText = "2ALWP-N0110";
 
 }
 }

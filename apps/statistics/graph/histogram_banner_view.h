@@ -16,7 +16,7 @@ public:
   Escher::BufferTextView * frequencyView() { return &m_frequencyBuffer; }
   Escher::BufferTextView * relativeFrequencyView() { return &m_relativeFrequencyBuffer; }
 private:
-  static constexpr int k_numberOfSubviews = 4;
+  constexpr static int k_numberOfSubviews = 4;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   Escher::View * subviewAtIndex(int index) override;
 

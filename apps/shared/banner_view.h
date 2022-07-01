@@ -17,9 +17,9 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   KDCoordinate minimalHeightForOptimalDisplayGivenWidth(KDCoordinate width) const;
   void reload() { layoutSubviews(); }
-  static constexpr const KDFont * Font() { return KDFont::SmallFont; }
-  static constexpr KDColor TextColor() { return KDColorBlack; }
-  static constexpr KDColor BackgroundColor() { return Escher::Palette::GrayMiddle; }
+  constexpr static const KDFont * Font() { return KDFont::SmallFont; }
+  constexpr static KDColor TextColor() { return KDColorBlack; }
+  constexpr static KDColor BackgroundColor() { return Escher::Palette::GrayMiddle; }
 
 protected:
   class LabelledView : public Escher::View {
@@ -39,8 +39,8 @@ protected:
   virtual bool lineBreakBeforeSubview(Escher::View * subview) const { return false; }
 
 private:
-  static constexpr KDCoordinate LineSpacing = Escher::Metric::BannerTextMargin;
-  static constexpr KDCoordinate k_minimalSpaceBetweenSubviews = 14; // Width of '  ' in SmallFont
+  constexpr static KDCoordinate LineSpacing = Escher::Metric::BannerTextMargin;
+  constexpr static KDCoordinate k_minimalSpaceBetweenSubviews = 14; // Width of '  ' in SmallFont
   int numberOfSubviews() const override = 0;
   View * subviewAtIndex(int index) override = 0;
   void layoutSubviews(bool force = false) override;

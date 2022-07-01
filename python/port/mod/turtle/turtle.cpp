@@ -10,10 +10,10 @@ extern "C" {
 
 static inline mp_float_t absF(mp_float_t x) { return x >= 0 ? x : -x;}
 
-static constexpr KDCoordinate k_iconSize = 15;
-static constexpr KDCoordinate k_iconBodySize = 5;
-static constexpr KDCoordinate k_iconHeadSize = 3;
-static constexpr KDCoordinate k_iconPawSize = 2;
+constexpr static KDCoordinate k_iconSize = 15;
+constexpr static KDCoordinate k_iconBodySize = 5;
+constexpr static KDCoordinate k_iconHeadSize = 3;
+constexpr static KDCoordinate k_iconPawSize = 2;
 
 constexpr KDColor Turtle::k_defaultColor;
 
@@ -184,7 +184,7 @@ void Turtle::write(const char * string) {
   erase();
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDContext * ctx = KDIonContext::sharedContext();
-  static constexpr KDCoordinate headOffsetLength = 6;
+  constexpr static KDCoordinate headOffsetLength = 6;
   KDCoordinate headOffsetX = headOffsetLength * std::cos(m_heading * k_headingScale);
   KDCoordinate headOffsetY = k_invertedYAxisCoefficient * headOffsetLength * std::sin(m_heading * k_headingScale);
   KDPoint headOffset(headOffsetX, headOffsetY);

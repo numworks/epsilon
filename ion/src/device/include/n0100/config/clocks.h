@@ -42,26 +42,26 @@ enum class ClockSource : uint8_t {
   PLL_Prescaled, // Prescaled by a factor of 8
 };
 
-static constexpr ClockSource SuspendClockSource = ClockSource::PLL_Prescaled;
+constexpr static ClockSource SuspendClockSource = ClockSource::PLL_Prescaled;
 
-static constexpr float HCLK(ClockSource source) {
+constexpr static float HCLK(ClockSource source) {
   return SYSCLKFrequency / (source == ClockSource::PLL ? AHBPrescaler : AHBLowFrequencyPrescaler);
 }
 static_assert(HCLK(ClockSource::PLL) == 96, "HCLK frequency changed!");
 
-static constexpr float Systick(ClockSource source) {
+constexpr static float Systick(ClockSource source) {
   return HCLK(source);
 }
 
-static constexpr float APB1(ClockSource source) {
+constexpr static float APB1(ClockSource source) {
   return HCLK(source) / APB1Prescaler;
 }
 
-static constexpr float APB1Timer(ClockSource source) {
+constexpr static float APB1Timer(ClockSource source) {
   return APB1(source) * 2;
 }
 
-static constexpr float AHB(ClockSource source) {
+constexpr static float AHB(ClockSource source) {
   return HCLK(source);
 }
 

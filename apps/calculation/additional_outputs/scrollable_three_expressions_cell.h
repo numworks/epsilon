@@ -13,7 +13,7 @@ namespace Calculation {
 
 class ScrollableThreeExpressionsView : public Shared::AbstractScrollableMultipleExpressionsView {
 public:
-  static constexpr KDCoordinate k_margin = Escher::Metric::CommonSmallMargin;
+  constexpr static KDCoordinate k_margin = Escher::Metric::CommonSmallMargin;
   ScrollableThreeExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell) {
     setMargins(k_margin, k_margin, k_margin, k_margin); // Left Right margins are already added by TableCell
     setBackgroundColor(KDColorWhite);

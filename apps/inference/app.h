@@ -71,7 +71,7 @@ public:
   void * buffer(size_t offset = 0) { return m_buffer + offset; }
   void cleanBuffer(DynamicCellsDataSourceDestructor * destructor);
 
-  static constexpr int k_bufferSize = std::max({
+  constexpr static int k_bufferSize = std::max({
       sizeof(ExpressionCellWithBufferWithMessage) * k_maxNumberOfExpressionCellsWithBufferWithMessage, // 824 * 5 = 4120
       sizeof(ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage, // 1040 * 8 = 8320
       sizeof(EvenOddBufferTextCell) * (k_homogeneityTableNumberOfReusableHeaderCells + k_homogeneityTableNumberOfReusableInnerCells), // 360 * (5 + 9 + 45) = 21 240

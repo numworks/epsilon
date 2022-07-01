@@ -59,7 +59,7 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   if (!test) {
     char * position = information;
     size_t remainingLength = bufferSize;
-    static constexpr size_t numberOfPieces = 6;
+    constexpr static size_t numberOfPieces = 6;
     const char * piecesOfInformation[numberOfPieces] = {
       "  ",
       expression,

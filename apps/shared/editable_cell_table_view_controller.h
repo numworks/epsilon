@@ -27,9 +27,9 @@ public:
   virtual bool handleEvent(Ion::Events::Event event) override;
 
 protected:
-  static constexpr KDCoordinate k_cellHeight = 20;
-  static constexpr KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
-  static constexpr KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
+  constexpr static KDCoordinate k_cellHeight = 20;
+  constexpr static KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
+  constexpr static KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 
   // ClearColumnHelper
   Escher::SelectableTableView * table() override { return selectableTableView(); }

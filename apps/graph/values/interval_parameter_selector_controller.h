@@ -21,7 +21,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::ContinuousFunction::SymbolType symbolType);
 private:
-  static constexpr size_t k_numberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
+  constexpr static size_t k_numberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
   Shared::ContinuousFunction::SymbolType symbolTypeAtRow(int j) const;
   I18n::Message messageForType(Shared::ContinuousFunction::SymbolType symbolType);
   Escher::MessageTableCellWithChevron m_intervalParameterCell[k_numberOfSymbolTypes];

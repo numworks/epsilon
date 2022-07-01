@@ -19,8 +19,8 @@ public:
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 private:
-  static constexpr int k_resultFormatType = 0;
-  static constexpr int k_significantDigitsType = 1;
+  constexpr static int k_resultFormatType = 0;
+  constexpr static int k_significantDigitsType = 1;
   MessageTableCellWithEditableTextWithSeparator m_editableCell;
 };
 

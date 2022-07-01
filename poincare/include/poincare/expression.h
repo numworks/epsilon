@@ -220,7 +220,7 @@ public:
    * variables would overflow the maxNumberOfVariables, getVariables return -1.
    * If one of the variable lengths overflows maxVariableLength, getVariables
    * returns -2. */
-  static constexpr int k_maxNumberOfVariables = 6;
+  constexpr static int k_maxNumberOfVariables = 6;
   int getVariables(Context * context, ExpressionNode::isVariableTest isVariable, char * variables, int maxVariableLength, int nextVariableIndex = 0) const { return node()->getVariables(context, isVariable, variables, maxVariableLength, nextVariableIndex); }
   /* getLinearCoefficients return false if the expression is not linear with
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
@@ -231,8 +231,8 @@ public:
    * of the first 3 polynomial coefficients and returns the  polynomial degree.
    * It is supposed to be called on a reduced expression.
    * coefficients has up to 3 entries.  */
-  static constexpr int k_maxPolynomialDegree = 3;
-  static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
+  constexpr static int k_maxPolynomialDegree = 3;
+  constexpr static int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
@@ -308,8 +308,8 @@ public:
    * - a number >= 0 if all the lists have the same size,
    * - -1 if there are no lists in the children
    * - -2 if there are lists of differents lengths. */
-  static constexpr int k_noList = -1;
-  static constexpr int k_mismatchedLists = -2;
+  constexpr static int k_noList = -1;
+  constexpr static int k_mismatchedLists = -2;
   /* LengthOfListChildren is to be called during reduction, when all children
    * are already reduced. If you expression is NAry, it must be sorted before
    * calling this function. */
@@ -470,10 +470,10 @@ protected:
   Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) { return node()->unaryFunctionDifferential(reductionContext); }
 
 private:
-  static constexpr int k_maxSymbolReplacementsCount = 10;
+  constexpr static int k_maxSymbolReplacementsCount = 10;
   // Solver parameters
-  static constexpr double k_solverStepPrecision = 1e-2;
-  static constexpr double k_solverMinimalStep = 1e-3;
+  constexpr static double k_solverStepPrecision = 1e-2;
+  constexpr static double k_solverMinimalStep = 1e-3;
 
   /* Add missing parenthesis will add parentheses that easen the reading of the
    * expression or that are required by math rules. For example:
@@ -488,7 +488,7 @@ private:
    * any precision loss in IEEE754 double representation is 2E53 as the
    * mantissa is stored on 53 bits (2E308 can be stored exactly in IEEE754
    * representation but some smaller integers can't - like 2E308-1). */
-  static constexpr double k_largestExactIEEE754Integer = 9007199254740992.0;
+  constexpr static double k_largestExactIEEE754Integer = 9007199254740992.0;
   Expression deepReduce(const ExpressionNode::ReductionContext& reductionContext);
   void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
     node()->deepReduceChildren(reductionContext);
@@ -546,7 +546,7 @@ public:
     TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2, child3, child4});
     return static_cast<T&>(h);
   }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::k_functionName, N, Initializer<U>, sizeof(U));
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::k_functionName, N, Initializer<U>, sizeof(U));
 };
 
 template<typename T, typename U, typename P = Expression> using ExpressionNoChildren = ExpressionBuilder<T,U,0,P>;

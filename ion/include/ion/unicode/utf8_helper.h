@@ -15,7 +15,7 @@ public:
   const char * secondString() { return m_secondString; }
   bool removeParenthesesExtension() { return m_removeParenthesesExtension; }
   bool shouldReplace(const char * s, int length, int position) { return m_rule ? m_rule(s, length, position) : true; }
-  static constexpr int k_maxLength = 20;
+  constexpr static int k_maxLength = 20;
 private:
   const char * m_firstString;
   const char * m_secondString;

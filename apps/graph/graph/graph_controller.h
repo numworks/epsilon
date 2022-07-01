@@ -28,7 +28,7 @@ private:
     CurveSelectionCell * reusableCell(int index, int type) override { assert(index >= 0 && index < k_maxNumberOfDisplayableFunctions); return m_cells + index; }
     int reusableCellCount(int type) override { return k_maxNumberOfDisplayableFunctions; }
   private:
-    static constexpr int k_maxNumberOfDisplayableFunctions = 7;
+    constexpr static int k_maxNumberOfDisplayableFunctions = 7;
     Poincare::Layout nameLayoutAtIndex(int j) const override;
     CurveSelectionCell m_cells[k_maxNumberOfDisplayableFunctions];
   };

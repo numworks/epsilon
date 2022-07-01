@@ -14,7 +14,7 @@ public:
   Escher::BufferTextView * seriesName() { return &m_seriesName; }
   Escher::BufferTextView * calculationValue() { return &m_calculationBuffer; }
 private:
-  static constexpr int k_numberOfSubviews = 2;
+  constexpr static int k_numberOfSubviews = 2;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   Escher::View * subviewAtIndex(int index) override;
   Escher::BufferTextView m_seriesName;

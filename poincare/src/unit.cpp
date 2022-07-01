@@ -189,8 +189,8 @@ Expression UnitNode::Vector<int>::toBaseUnits() const {
 
 // UnitNode::Representative
 const UnitNode::Representative * const * UnitNode::Representative::DefaultRepresentatives() {
-  static constexpr SpeedRepresentative defaultSpeedRepresentative = SpeedRepresentative::Default();
-  static constexpr const Representative * defaultRepresentatives[k_numberOfDimensions] = {
+  constexpr static SpeedRepresentative defaultSpeedRepresentative = SpeedRepresentative::Default();
+  constexpr static const Representative * defaultRepresentatives[k_numberOfDimensions] = {
     Unit::k_timeRepresentatives,
     Unit::k_distanceRepresentatives,
     Unit::k_massRepresentatives,
@@ -664,7 +664,7 @@ Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
   /* TODO: compute the bufferSize more precisely... So far the longest unit is
    * "month" of size 6 but later, we might add unicode to represent ohm or µ
    * which would change the required size?*/
-  static constexpr size_t bufferSize = 10;
+  constexpr static size_t bufferSize = 10;
   char buffer[bufferSize];
   return LayoutHelper::StringLayoutOfSerialization(Unit(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }

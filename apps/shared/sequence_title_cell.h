@@ -23,8 +23,8 @@ public:
   }
   void reloadCell() override;
 private:
-  static constexpr float k_horizontalOrientationAlignment = KDContext::k_alignCenter;
-  static constexpr float k_verticalOrientationHorizontalAlignment = 0.9f;
+  constexpr static float k_horizontalOrientationAlignment = KDContext::k_alignCenter;
+  constexpr static float k_verticalOrientationHorizontalAlignment = 0.9f;
   int numberOfSubviews() const override;
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

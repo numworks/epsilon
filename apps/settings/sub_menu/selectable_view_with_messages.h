@@ -18,9 +18,9 @@ private:
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   Escher::SelectableTableView * m_selectableTableView;
-  static constexpr int k_maxNumberOfLines = 3;
+  constexpr static int k_maxNumberOfLines = 3;
   // When displaying the message, only one row is displayed.
-  static constexpr KDCoordinate k_minSelectableTableViewHeight = Escher::TableCell::k_minimalLargeFontCellHeight;
+  constexpr static KDCoordinate k_minSelectableTableViewHeight = Escher::TableCell::k_minimalLargeFontCellHeight;
   Escher::MessageTextView m_messageLines[k_maxNumberOfLines];
   int m_numberOfMessages;
 };

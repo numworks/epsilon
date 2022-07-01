@@ -27,26 +27,26 @@ public:
   int m_numberOfEvents;
 };
 
-static constexpr Event scenarioCalculation[] = {
+constexpr static Event scenarioCalculation[] = {
   OK, Pi, Plus, One, Division, Two, OK, OK, Sqrt, Zero, Dot, Two, OK, OK, Up, Up, Up, Up, Down, Down, Down, Down, Home, Home
 };
 
-static constexpr Event scenarioFunctionCosSin[] = { Right, OK, OK, Cosine, XNT, OK, Down, OK, Sine, XNT, OK, Down, Down, OK, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Home, Home
+constexpr static Event scenarioFunctionCosSin[] = { Right, OK, OK, Cosine, XNT, OK, Down, OK, Sine, XNT, OK, Down, Down, OK, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Left, Home, Home
 };
 
-static constexpr Event scenarioPythonMandelbrot[] = { Right, Right, OK, Down, Down, Down, Down, OK, Var, Down, OK, One, Five, OK, Home, Home
+constexpr static Event scenarioPythonMandelbrot[] = { Right, Right, OK, Down, Down, Down, Down, OK, Var, Down, OK, One, Five, OK, Home, Home
 };
 
-static constexpr Event scenarioStatistics[] = { Down, OK, One, OK, Two, OK, Right, Five, OK, One, Zero, OK, Back, Right, OK, Right, Right, Right, OK, One, OK, Down, OK, Back, Right, OK, Back, Right, OK, Down, Down, Down, Down, Down, Down, Down, Down, Down, Down, Up, Up, Up, Up, Up, Up, Up, Up, Up, Home, Home
+constexpr static Event scenarioStatistics[] = { Down, OK, One, OK, Two, OK, Right, Five, OK, One, Zero, OK, Back, Right, OK, Right, Right, Right, OK, One, OK, Down, OK, Back, Right, OK, Back, Right, OK, Down, Down, Down, Down, Down, Down, Down, Down, Down, Down, Up, Up, Up, Up, Up, Up, Up, Up, Up, Home, Home
 };
 
-static constexpr Event scenarioProbability[] = { Down, Right, OK, Down, Down, Down, OK, Two, OK, Zero, Dot, Three, OK, OK, Left, Down, Down, OK, Right, Right, Right, Zero, Dot, Eight, OK, Home, Home
+constexpr static Event scenarioProbability[] = { Down, Right, OK, Down, Down, Down, OK, Two, OK, Zero, Dot, Three, OK, OK, Left, Down, Down, OK, Right, Right, Right, Zero, Dot, Eight, OK, Home, Home
 };
 
-static constexpr Event scenarioEquation[] = { Down, Right, Right, OK, OK, Down, Down, OK, Six, OK, Down, Down, OK, Left, Left, Left, Down, Down, Home, Home
+constexpr static Event scenarioEquation[] = { Down, Right, Right, OK, OK, Down, Down, OK, Six, OK, Down, Down, OK, Left, Left, Left, Down, Down, Home, Home
 };
 
-static constexpr Scenario scenarios[] = {
+constexpr static Scenario scenarios[] = {
   Scenario::build("Calc scrolling", scenarioCalculation),
   Scenario::build("Sin/Cos graph", scenarioFunctionCosSin),
   Scenario::build("Mandelbrot(15)", scenarioPythonMandelbrot),

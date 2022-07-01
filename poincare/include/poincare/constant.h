@@ -93,7 +93,7 @@ public:
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
-  static constexpr ConstantNode::ConstantInfo k_constants[] = {
+  constexpr static ConstantNode::ConstantInfo k_constants[] = {
     ConstantNode::ConstantInfo("i", 0),
     ConstantNode::ConstantInfo("π", 1, M_PI),
     ConstantNode::ConstantInfo("e", 2, M_E),

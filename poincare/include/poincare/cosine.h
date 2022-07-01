@@ -9,7 +9,7 @@ namespace Poincare {
 
 class CosineNode final : public ExpressionNode  {
 public:
-  static constexpr char k_functionName[] = "cos";
+  constexpr static char k_functionName[] = "cos";
 
   // TreeNode
   size_t size() const override { return sizeof(CosineNode); }

@@ -38,7 +38,7 @@ namespace Poincare {
 /* The values must be in the order defined in poincare/preferences:
  * Radians / Degrees / Gradians */
 
-static constexpr int s_piDivisor[] {
+constexpr static int s_piDivisor[] {
   1,
   180,
   200

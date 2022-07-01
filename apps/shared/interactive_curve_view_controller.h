@@ -17,7 +17,7 @@ namespace Shared {
 
 class InteractiveCurveViewController : public SimpleInteractiveCurveViewController, public InteractiveCurveViewRangeDelegate, public Escher::ButtonRowDelegate, public Escher::AlternateEmptyViewDefaultDelegate {
 public:
-  static constexpr int k_graphControllerStackDepth = 1;
+  constexpr static int k_graphControllerStackDepth = 1;
 
   InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion);
 

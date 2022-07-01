@@ -40,7 +40,7 @@ void App::Snapshot::reset() {
   memset(m_regressionTypes, 0, sizeof(m_regressionTypes));
 }
 
-static constexpr App::Descriptor sDescriptor;
+constexpr static App::Descriptor sDescriptor;
 
 const App::Descriptor * App::Snapshot::descriptor() const {
   return &sDescriptor;

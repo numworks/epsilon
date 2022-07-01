@@ -16,8 +16,8 @@ class CurveView : public Escher::View {
 public:
   /* We want a 3 characters margin before the first label tick, so that most
    * labels appear completely. This gives 3*charWidth/320 = 3*7/320= 0.066 */
-  static constexpr float k_labelsHorizontalMarginRatio = 0.066f;
-  static constexpr int k_numberOfPatternAreas = 4;
+  constexpr static float k_labelsHorizontalMarginRatio = 0.066f;
+  constexpr static int k_numberOfPatternAreas = 4;
 
   typedef Poincare::Coordinate2D<float> (*EvaluateXYForFloatParameter)(float t, void * model, void * context);
   typedef Poincare::Coordinate2D<double> (*EvaluateXYForDoubleParameter)(double t, void * model, void * context);
@@ -137,7 +137,7 @@ protected:
   CurveViewCursor * m_curveViewCursor;
 
 private:
-  static constexpr const KDFont * k_font = KDFont::SmallFont;
+  constexpr static const KDFont * k_font = KDFont::SmallFont;
 
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */

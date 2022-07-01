@@ -10,7 +10,7 @@ class ParsingHelper {
 public:
   /* The method GetReservedFunction passes through the successive
    * entries of the reserved functions array in order to determine
-   * whether a token corresponds to an entry. The static constexpr
+   * whether a token corresponds to an entry. The constexpr static
    * s_reservedFunctionsUpperBound marks the end of the array. */
   static const Expression::FunctionHelper * const * GetReservedFunction(const char * name, size_t nameLength);
   static const Expression::FunctionHelper * const * ReservedFunctionsUpperBound() { return s_reservedFunctionsUpperBound; }

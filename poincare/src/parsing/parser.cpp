@@ -26,7 +26,7 @@ bool Parser::IsReservedName(const char * name, size_t nameLength) {
 
 Expression Parser::parseUntil(Token::Type stoppingType) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
-  static constexpr TokenParser tokenParsers[] = {
+  constexpr static TokenParser tokenParsers[] = {
     &Parser::parseUnexpected,      // Token::EndOfStream
     &Parser::parseRightwardsArrow, // Token::RightwardsArrow
     &Parser::parseEqual,           // Token::Equal

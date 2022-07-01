@@ -66,7 +66,7 @@ public:
   ComplexCartesian multiply(ComplexCartesian & other,const ExpressionNode::ReductionContext& reductionContext);
   ComplexCartesian power(ComplexCartesian & other, const ExpressionNode::ReductionContext& reductionContext);
 private:
-  static constexpr int k_maxNumberOfNodesBeforeInterrupting = 50;
+  constexpr static int k_maxNumberOfNodesBeforeInterrupting = 50;
   void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, const ExpressionNode::ReductionContext& reductionContext);
   ComplexCartesian interruptComputationIfManyNodes();
   static Multiplication squareRootHelper(Expression e, const ExpressionNode::ReductionContext& reductionContext);

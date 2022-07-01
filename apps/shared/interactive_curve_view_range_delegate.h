@@ -12,7 +12,7 @@ class FunctionStore;
 
 class InteractiveCurveViewRangeDelegate {
 public:
-  static constexpr float k_defaultXHalfRange = 10.0f;
+  constexpr static float k_defaultXHalfRange = 10.0f;
 
   static void DefaultComputeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context, FunctionStore * functionStore);
   static void DefaultComputeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float ratio, float * yMin, float * yMax, Poincare::Context * context, FunctionStore * functionStore, bool optimizeRange);

@@ -39,12 +39,12 @@ public:
    *
    */
   // Horizontal range
-  static constexpr float k_minHorizontalMarginFactor = -1.0f;
-  static constexpr float k_maxHorizontalMarginFactor = 2.0f;
+  constexpr static float k_minHorizontalMarginFactor = -1.0f;
+  constexpr static float k_maxHorizontalMarginFactor = 2.0f;
   // Vertical range
-  static constexpr KDCoordinate k_width = Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin;
-  static constexpr KDCoordinate k_height = IllustratedListController::k_illustrationHeight;
-  static constexpr KDCoordinate k_unit = k_width/3;
+  constexpr static KDCoordinate k_width = Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin;
+  constexpr static KDCoordinate k_height = IllustratedListController::k_illustrationHeight;
+  constexpr static KDCoordinate k_unit = k_width/3;
   /*
    *  VerticalMaring = k_height - k_unit
    *
@@ -63,8 +63,8 @@ public:
    *      = 1/3*(2 + k_height/k_unit)*imag
    *
    * */
-  static constexpr float k_minVerticalMarginFactor = 2.0f/3.0f*(1.0f - (float)k_height/(float)k_unit);
-  static constexpr float k_maxVerticalMarginFactor = 1.0f/3.0f*(2.0f + (float)k_height/(float)k_unit);
+  constexpr static float k_minVerticalMarginFactor = 2.0f/3.0f*(1.0f - (float)k_height/(float)k_unit);
+  constexpr static float k_maxVerticalMarginFactor = 1.0f/3.0f*(2.0f + (float)k_height/(float)k_unit);
 
 private:
   float rangeBound(float direction, bool horizontal) const;

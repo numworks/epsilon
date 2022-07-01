@@ -14,32 +14,32 @@ namespace Poincare {
 const Distribution * Distribution::Get(Type type) {
   switch (type) {
   case Type::Binomial:
-    static constexpr BinomialDistribution binomial;
+    constexpr static BinomialDistribution binomial;
     return &binomial;
   case Type::Normal:
-    static constexpr NormalDistribution normal;
+    constexpr static NormalDistribution normal;
     return &normal;
   case Type::Student:
-    static constexpr StudentDistribution student;
+    constexpr static StudentDistribution student;
     return &student;
   case Type::Geometric:
-    static constexpr GeometricDistribution geometric;
+    constexpr static GeometricDistribution geometric;
     return &geometric;
   case Type::Fisher:
-    static constexpr FisherDistribution fisher;
+    constexpr static FisherDistribution fisher;
     return &fisher;
   case Type::Uniform:
-    static constexpr UniformDistribution uniform;
+    constexpr static UniformDistribution uniform;
     return &uniform;
   case Type::Exponential:
-    static constexpr ExponentialDistribution exponential;
+    constexpr static ExponentialDistribution exponential;
     return &exponential;
   case Type::Poisson:
-    static constexpr PoissonDistribution poisson;
+    constexpr static PoissonDistribution poisson;
     return &poisson;
   default:
     assert(type == Type::ChiSquared);
-    static constexpr Chi2Distribution chiSquared;
+    constexpr static Chi2Distribution chiSquared;
     return &chiSquared;
   }
 }

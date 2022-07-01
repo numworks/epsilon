@@ -8,7 +8,7 @@ namespace Poincare {
 
 class StringFormat {
 public:
-  static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
+  constexpr static const KDFont * k_defaultFont = KDFont::LargeFont;
 
   StringFormat(const KDFont * font) {
     setFont(font);

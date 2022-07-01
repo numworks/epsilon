@@ -14,7 +14,7 @@ class ExpressionModelListController : public Escher::ViewController, public Esch
 public:
   ExpressionModelListController(Escher::Responder * parentResponder, I18n::Message text);
 protected:
-  static constexpr KDCoordinate k_expressionMargin = 5;
+  constexpr static KDCoordinate k_expressionMargin = 5;
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   // TableViewDataSource
@@ -38,7 +38,7 @@ protected:
   virtual ExpressionModelStore * modelStore() = 0;
   virtual Escher::InputViewController * inputController() = 0;
   // Memoization
-  static constexpr int k_memoizedCellsCount = 7;
+  constexpr static int k_memoizedCellsCount = 7;
   /* We use memoization to speed up indexFromHeight(offset) in the children
    * classes: if offset is "around" the memoized cumulatedHeightForIndex, we can
    * compute its value easily by adding/substracting memoized row heights. We
@@ -60,7 +60,7 @@ protected:
   Escher::EvenOddMessageTextCell m_addNewModel;
 private:
   // Memoization
-  static constexpr int k_resetedMemoizedValue = -1;
+  constexpr static int k_resetedMemoizedValue = -1;
   void resetMemoization();
 
   bool addEmptyModel();

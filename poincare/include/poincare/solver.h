@@ -31,9 +31,9 @@ private:
 
 class Solver {
 public:
-  static constexpr double k_zeroPrecision = 1e-5;
-  static constexpr double k_relativePrecision = 1e-2;
-  static constexpr double k_minimalStep = 1e-3;
+  constexpr static double k_zeroPrecision = 1e-5;
+  constexpr static double k_relativePrecision = 1e-2;
+  constexpr static double k_minimalStep = 1e-3;
 
   typedef SolverHelper<double>::ValueAtAbscissa ValueAtAbscissa;
 
@@ -57,8 +57,8 @@ private:
   constexpr static double k_maxProbability = 0.9999995;
   constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
   constexpr static double k_goldenRatio = 0.381966011250105151795413165634361882279690820194237137864; // (3-sqrt(5))/2
-  static constexpr double k_maxFloat = 1e100;
-  static constexpr double k_precisionByGradUnit = 1e6;
+  constexpr static double k_maxFloat = 1e100;
+  constexpr static double k_precisionByGradUnit = 1e6;
 
   static Coordinate2D<double> BrentMinimum(double ax, double bx, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
   static double BrentRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);

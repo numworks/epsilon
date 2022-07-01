@@ -14,7 +14,7 @@ namespace USB {
 
 class ExtendedCompatIDDescriptor : public Streamable {
 public:
-  static constexpr uint8_t Index = 0x0004;
+  constexpr static uint8_t Index = 0x0004;
   ExtendedCompatIDDescriptor(const char * compatibleID);
 protected:
   void push(Channel * c) const override;

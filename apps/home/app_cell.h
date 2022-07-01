@@ -23,11 +23,11 @@ public:
   void setBuiltinAppDescriptor(const Escher::App::Descriptor * appDescriptor);
   void setExternalApp(Ion::ExternalApps::App app);
 private:
-  static constexpr KDCoordinate k_iconMargin = 22;
-  static constexpr KDCoordinate k_iconWidth = 55;
-  static constexpr KDCoordinate k_iconHeight = 56;
-  static constexpr KDCoordinate k_nameWidthMargin = 4;
-  static constexpr KDCoordinate k_nameHeightMargin = 1;
+  constexpr static KDCoordinate k_iconMargin = 22;
+  constexpr static KDCoordinate k_iconWidth = 55;
+  constexpr static KDCoordinate k_iconHeight = 56;
+  constexpr static KDCoordinate k_nameWidthMargin = 4;
+  constexpr static KDCoordinate k_nameHeightMargin = 1;
   const Escher::TextView * textView() const;
   Escher::ImageView m_iconView;
   Escher::MessageTextView m_messageNameView;

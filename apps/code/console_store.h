@@ -19,11 +19,11 @@ public:
   void deleteLastLineIfEmpty();
   int deleteCommandAndResultsAtIndex(int index);
 private:
-  static constexpr char CurrentSessionCommandMarker = 0x01;
-  static constexpr char CurrentSessionResultMarker = 0x02;
-  static constexpr char PreviousSessionCommandMarker = 0x03;
-  static constexpr char PreviousSessionResultMarker = 0x04;
-  static constexpr size_t k_historySize = 1024;
+  constexpr static char CurrentSessionCommandMarker = 0x01;
+  constexpr static char CurrentSessionResultMarker = 0x02;
+  constexpr static char PreviousSessionCommandMarker = 0x03;
+  constexpr static char PreviousSessionResultMarker = 0x04;
+  constexpr static size_t k_historySize = 1024;
   static char makePrevious(char marker) {
     if (marker == CurrentSessionCommandMarker || marker == CurrentSessionResultMarker) {
       return marker + 0x02;

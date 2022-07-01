@@ -7,11 +7,11 @@
 
 class KDContext {
 public:
-  static constexpr float k_alignLeft = 0.;
-  static constexpr float k_alignRight = 1.;
-  static constexpr float k_alignCenter = 0.5;
-  static constexpr float k_alignTop = 0.;
-  static constexpr float k_alignBottom = 1.;
+  constexpr static float k_alignLeft = 0.;
+  constexpr static float k_alignRight = 1.;
+  constexpr static float k_alignCenter = 0.5;
+  constexpr static float k_alignTop = 0.;
+  constexpr static float k_alignBottom = 1.;
 
   void setOrigin(KDPoint origin) { m_origin = origin; }
   void setClippingRect(KDRect clippingRect) { m_clippingRect = clippingRect; }

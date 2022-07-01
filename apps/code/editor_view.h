@@ -41,8 +41,8 @@ private:
     void setOffset(KDCoordinate offset);
     KDSize minimalSizeForOptimalDisplay() const override;
   private:
-    static constexpr KDCoordinate k_margin = 2;
-    static constexpr int k_lineNumberCharLength = 3;
+    constexpr static KDCoordinate k_margin = 2;
+    constexpr static int k_lineNumberCharLength = 3;
     const KDFont * m_font;
     KDCoordinate m_offset;
   };

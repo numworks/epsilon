@@ -15,7 +15,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
 private:
-  static constexpr KDCoordinate k_rightMargin = Escher::Metric::SmallCellMargin;
+  constexpr static KDCoordinate k_rightMargin = Escher::Metric::SmallCellMargin;
   void didSetSeparator() override;
 };
 

@@ -18,10 +18,10 @@ namespace Poincare {
 template<typename T>
 class IEEE754 final {
 public:
-  static constexpr uint16_t exponentOffset() {
+  constexpr static uint16_t exponentOffset() {
     return (1 << (k_exponentNbBits - 1)) - 1;
   }
-  static constexpr uint16_t maxExponent() {
+  constexpr static uint16_t maxExponent() {
     return (1 << k_exponentNbBits) - 1;
   }
   static int size() {

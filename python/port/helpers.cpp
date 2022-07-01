@@ -14,7 +14,7 @@ bool micropython_port_vm_hook_loop() {
    * only do things once in a while and return as soon as possible otherwise. */
 
   static uint64_t t = Ion::Timing::millis();
-  static constexpr uint64_t delay = 100;
+  constexpr static uint64_t delay = 100;
 
   uint64_t t2 = Ion::Timing::millis();
   if (t2 - t < delay) {

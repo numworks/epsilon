@@ -30,7 +30,7 @@ public:
 private:
   constexpr static int k_cumulatedFrequencyRelativeColumnIndex = 2;
   constexpr static int k_columnTitleSize = 50;
-  static constexpr int k_nonEditableCellType = Shared::StoreController::k_editableCellType + 1;
+  constexpr static int k_nonEditableCellType = Shared::StoreController::k_editableCellType + 1;
   // At most 1 non editable column every 3 columns
   constexpr static int k_maxNumberOfDisplayableNonEditableColumns = 1 + k_maxNumberOfDisplayableColumns / 3;
   constexpr static int k_maxNumberOfNonEditableCells = k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableNonEditableColumns;

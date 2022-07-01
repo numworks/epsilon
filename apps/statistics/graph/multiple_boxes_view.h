@@ -28,7 +28,7 @@ public:
 private:
   constexpr static KDCoordinate TopToFirstBoxMargin(int numberOfSeries) { return numberOfSeries == 1 ? 48 : 14; }
   constexpr static KDCoordinate BoxToBoxMargin(int numberOfSeries) { return numberOfSeries == 3 ? 12 : 24; }
-  static constexpr KDCoordinate k_axisViewHeight = 21;
+  constexpr static KDCoordinate k_axisViewHeight = 21;
 
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void changeDataViewSeriesSelection(int series, bool select) override;

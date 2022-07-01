@@ -9,11 +9,11 @@ namespace Events {
 
 class Event {
 public:
-  static constexpr Event PlainKey(Keyboard::Key k) { return Event((int)k); }
-  static constexpr Event ShiftKey(Keyboard::Key k) { return Event(PageSize+(int)k); }
-  static constexpr Event AlphaKey(Keyboard::Key k) { return Event(2*PageSize+(int)k); }
-  static constexpr Event ShiftAlphaKey(Keyboard::Key k) { return Event(3*PageSize+(int)k); }
-  static constexpr Event Special(int i) { return Event(4*PageSize+i); }
+  constexpr static Event PlainKey(Keyboard::Key k) { return Event((int)k); }
+  constexpr static Event ShiftKey(Keyboard::Key k) { return Event(PageSize+(int)k); }
+  constexpr static Event AlphaKey(Keyboard::Key k) { return Event(2*PageSize+(int)k); }
+  constexpr static Event ShiftAlphaKey(Keyboard::Key k) { return Event(3*PageSize+(int)k); }
+  constexpr static Event Special(int i) { return Event(4*PageSize+i); }
 
   constexpr Event() : m_id(4*PageSize){} // Return Ion::Event::None by default
   constexpr Event(int i) : m_id(i){} // TODO: Assert here that i>=0 && i<255
@@ -34,7 +34,7 @@ public:
   // Return the length of the copied text (and not the size)
   bool isKeyboardEvent() const { return m_id < 4*PageSize; }
   bool isSpecialEvent() const { return m_id >= 4*PageSize; }
-  static constexpr int PageSize = Keyboard::NumberOfKeys;
+  constexpr static int PageSize = Keyboard::NumberOfKeys;
 private:
   const char * defaultText() const;
   uint8_t m_id;
@@ -62,7 +62,7 @@ public:
   virtual bool isEmpty() = 0;
   const char * startingLanguage() const { return m_startingLanguage; }
   void setStartingLanguage(const char * language) { strlcpy(m_startingLanguage, language, k_languageSize); }
-  static constexpr int k_languageSize = 3;
+  constexpr static int k_languageSize = 3;
 private:
   char m_startingLanguage[k_languageSize] = {0};
 };

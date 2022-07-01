@@ -17,7 +17,7 @@ public:
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 2; }
 private:
-  virtual void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override = 0;
+  void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override = 0;
 };
 
 }

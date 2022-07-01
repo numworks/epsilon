@@ -39,7 +39,7 @@ public:
   // ListViewDataSource
   int typeAtIndex(int index) override { return index; } // One cell per type
   int numberOfRows() const override { return indexOfNextCell() + 1; }
-  virtual Escher::HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate rowHeight(int index) override;
   int reusableCellCount(int type) override { return 1; }
 
@@ -77,10 +77,10 @@ public:
   void tableViewDataSourceDidChangeSize() override;
 
   // ListViewDataSource
-  virtual Escher::HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
 
 protected:
-  virtual EditableCategoricalTableCell * categoricalTableCell() override = 0;
+  EditableCategoricalTableCell * categoricalTableCell() override = 0;
   virtual int indexOfSignificanceCell() const = 0;
   int indexOfNextCell() const override { return indexOfSignificanceCell() + 1; }
   bool handleEditedValue(int i, double p, Escher::TextField * textField, Ion::Events::Event event);

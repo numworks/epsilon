@@ -15,7 +15,7 @@ public:
       m_eventStorage.push(e);
     }
   }
-  virtual Ion::Events::Event popEvent() override {
+  Ion::Events::Event popEvent() override {
     if (isEmpty()) {
       return Ion::Events::None;
     }
@@ -23,7 +23,7 @@ public:
     m_eventStorage.pop();
     return e;
   }
-  virtual bool isEmpty() override {
+  bool isEmpty() override {
     return m_eventStorage.empty();
   }
 private:

@@ -26,7 +26,7 @@ public:
   int typeAtLocation(int i, int j) override { assert(i==0); return typeAtIndex(j); }
   /* cellHeight have a default implementation for specific simple
    * lists. Most implementations should override them.*/
-  virtual KDCoordinate rowHeight(int index) override;
+  KDCoordinate rowHeight(int index) override;
   // Used to easily override nonMemoizedRowHeight
   KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index);
 protected:

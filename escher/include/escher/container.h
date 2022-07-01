@@ -31,7 +31,7 @@ public:
   Container& operator=(Container&& other) = delete;
   virtual void * currentAppBuffer() = 0;
   virtual void run();
-  virtual bool dispatchEvent(Ion::Events::Event event) override;
+  bool dispatchEvent(Ion::Events::Event event) override;
   virtual void switchToBuiltinApp(App::Snapshot * snapshot);
 protected:
   virtual Window * window() = 0;

@@ -19,7 +19,7 @@ public:
   const char * title() override { return I18n::translate(I18n::Message::InputGoodnessControllerTitle); }
 
   // ListViewDataSource
-  virtual Escher::HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
 
 private:
   constexpr static int k_indexOfDegreeOfFreedom = 1;

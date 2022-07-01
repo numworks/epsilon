@@ -73,7 +73,7 @@ protected:
     void setDisplayableCenter(bool displayable) {m_displayableCenter = displayable;}
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
-    virtual Poincare::Layout layout() const override;
+    Poincare::Layout layout() const override;
     KDCoordinate baseline(KDCoordinate * leftBaseline = nullptr, KDCoordinate * centerBaseline = nullptr, KDCoordinate * rightBaseline = nullptr) const;
     void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame);
   private:

@@ -57,7 +57,7 @@ public:
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  virtual bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
   // Responder
   bool handleEvent(Ion::Events::Event e) override;

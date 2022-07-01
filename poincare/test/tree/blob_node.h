@@ -9,9 +9,9 @@ namespace Poincare {
 class BlobNode : public TreeNode {
 public:
   BlobNode(int data) : m_data(data) {}
-  virtual size_t size() const override { return sizeof(BlobNode); }
+  size_t size() const override { return sizeof(BlobNode); }
   int data() { return m_data; }
-  virtual int numberOfChildren() const override { return 0; }
+  int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "Blob";
